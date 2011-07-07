@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2008 IBM Corporation and others.
+ *  Copyright (c) 2005, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -10,10 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
+import java.util.*;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 
@@ -100,27 +97,14 @@ class FeatureTable {
 		return (Idver) fModel2idver.get(model);
 	}
 
-	/**
-	 * @param id
-	 * @param version
-	 * @return IFeatureModel[]
-	 */
 	public synchronized IFeatureModel[] get(String id, String version) {
 		return getImpl(new Idver(id, version));
 	}
 
-	/**
-	 * @param idver
-	 * @return IFeatureModel[]
-	 */
 	public synchronized IFeatureModel[] get(Idver idver) {
 		return getImpl(idver);
 	}
 
-	/**
-	 * @param idver
-	 * @return
-	 */
 	private IFeatureModel[] getImpl(Idver idver) {
 		ArrayList models = (ArrayList) fIdver2models.get(idver);
 		if (models == null) {
@@ -149,9 +133,6 @@ class FeatureTable {
 		return getAllImpl();
 	}
 
-	/**
-	 * @return
-	 */
 	private IFeatureModel[] getAllImpl() {
 		return (IFeatureModel[]) fModel2idver.keySet().toArray(new IFeatureModel[fModel2idver.size()]);
 	}
@@ -165,10 +146,6 @@ class FeatureTable {
 		return removeImpl(model);
 	}
 
-	/**
-	 * @param model
-	 * @return
-	 */
 	private Idver removeImpl(IFeatureModel model) {
 		Idver idver = (Idver) fModel2idver.remove(model);
 		if (idver == null) {

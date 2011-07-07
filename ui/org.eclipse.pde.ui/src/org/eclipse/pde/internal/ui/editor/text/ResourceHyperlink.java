@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2008 IBM Corporation and others.
+ *  Copyright (c) 2005, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -52,9 +52,6 @@ public class ResourceHyperlink extends AbstractHyperlink {
 		}
 	}
 
-	/**
-	 * @return
-	 */
 	private IResource processAbsolutePathes() {
 		// Check to see if we got an absolute path
 		if (fElement.startsWith("/") == false) { //$NON-NLS-1$

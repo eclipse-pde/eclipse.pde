@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2008 IBM Corporation and others.
+ *  Copyright (c) 2007, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -14,10 +14,6 @@ package org.eclipse.pde.internal.ui.editor.validation;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.IMessageManager;
 
-/**
- * IValidatorMessageHandler
- *
- */
 public interface IValidatorMessageHandler {
 
 	/**
@@ -50,19 +46,16 @@ public interface IValidatorMessageHandler {
 
 	/**
 	 * Get the managed form.
-	 * @return
 	 */
 	public IManagedForm getManagedForm();
 
 	/**
 	 * Get the message manager.
-	 * @return
 	 */
 	public IMessageManager getMessageManager();
 
 	/**
 	 * Get the optional message prefix.
-	 * @return
 	 */
 	public String getMessagePrefix();
 

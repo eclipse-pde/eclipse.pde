@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2008 IBM Corporation and others.
+ *  Copyright (c) 2007, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -17,10 +17,6 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.IManagedForm;
 
-/**
- * TextControlValidator
- *
- */
 public abstract class TextValidator extends AbstractControlValidator {
 
 	private ModifyListener fModifyListener;
@@ -29,12 +25,6 @@ public abstract class TextValidator extends AbstractControlValidator {
 
 	private String fCurrentText;
 
-	/**
-	 * @param managedForm
-	 * @param control
-	 * @param project
-	 * @param autoValidate
-	 */
 	public TextValidator(IManagedForm managedForm, Text control, IProject project, boolean autoValidate) {
 		super(managedForm, control, project);
 		// Turn on / off auto-validation
@@ -45,9 +35,6 @@ public abstract class TextValidator extends AbstractControlValidator {
 		intialize();
 	}
 
-	/**
-	 * 
-	 */
 	private void intialize() {
 		// Save the current contents of the Text field
 		fCurrentText = getText().getText();
@@ -85,9 +72,6 @@ public abstract class TextValidator extends AbstractControlValidator {
 		}
 	}
 
-	/**
-	 * 
-	 */
 	protected void createListeners() {
 		fModifyListener = new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
@@ -96,9 +80,6 @@ public abstract class TextValidator extends AbstractControlValidator {
 		};
 	}
 
-	/**
-	 * @param e
-	 */
 	protected void handleModifyTextEvent(ModifyEvent e) {
 		// Validation is not required if the current text contents is the 
 		// same as the new text contents
@@ -112,23 +93,14 @@ public abstract class TextValidator extends AbstractControlValidator {
 		validate();
 	}
 
-	/**
-	 * 
-	 */
 	protected void addListeners() {
 		getText().addModifyListener(fModifyListener);
 	}
 
-	/**
-	 * 
-	 */
 	protected void removeListeners() {
 		getText().removeModifyListener(fModifyListener);
 	}
 
-	/**
-	 * @return
-	 */
 	protected Text getText() {
 		return (Text) getControl();
 	}

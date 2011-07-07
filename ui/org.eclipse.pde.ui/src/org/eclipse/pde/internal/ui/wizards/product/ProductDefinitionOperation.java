@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,14 +53,6 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 		fProject = null;
 	}
 
-	/**
-	 * @param product
-	 * @param pluginId
-	 * @param productId
-	 * @param application
-	 * @param shell
-	 * @param project
-	 */
 	public ProductDefinitionOperation(IProduct product, String pluginId, String productId, String application, Shell shell, IProject project) {
 		super(shell, pluginId);
 		fProductId = productId;
@@ -70,10 +62,6 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 		fProject = project;
 	}
 
-	/**
-	 * @param id
-	 * @return
-	 */
 	protected String getFormattedPackageName(String id) {
 		StringBuffer buffer = new StringBuffer();
 		for (int i = 0; i < id.length(); i++) {
@@ -89,9 +77,6 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 		return buffer.toString().toLowerCase(Locale.ENGLISH);
 	}
 
-	/**
-	 * @return
-	 */
 	protected String createTargetPackage() {
 		// Package name addition to create a location for containing
 		// any classes required by the splash handlers. 
@@ -148,9 +133,6 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 				getSplashHandlerType();
 	}
 
-	/**
-	 * @return
-	 */
 	private UpdateSplashProgressOperation getUpdateSplashProgressOperation() {
 		if (fUpdateSplashProgressOperation == null) {
 			fUpdateSplashProgressOperation = new UpdateSplashProgressOperation();
@@ -160,11 +142,6 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 		return fUpdateSplashProgressOperation;
 	}
 
-	/**
-	 * @param model
-	 * @param monitor
-	 * @throws CoreException
-	 */
 	private void updateSplashProgress(IPluginModelBase model, IProgressMonitor monitor) throws CoreException {
 		// Sanity checks
 		if (fProject == null) {
@@ -185,9 +162,6 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 		operation.run(monitor);
 	}
 
-	/**
-	 * @return
-	 */
 	private boolean isProgressDefined() {
 		// Get the splash info from the model
 		ISplashInfo info = fProduct.getProduct().getSplashInfo();
@@ -199,9 +173,6 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 		return info.isDefinedGeometry();
 	}
 
-	/**
-	 * @return
-	 */
 	private String getSplashHandlerType() {
 		// Get the splash info from the model
 		ISplashInfo info = fProduct.getProduct().getSplashInfo();
@@ -216,11 +187,6 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 		return info.getFieldSplashHandlerType();
 	}
 
-	/**
-	 * @param model
-	 * @param monitor
-	 * @throws CoreException
-	 */
 	private void updateSplashHandler(IPluginModelBase model, IProgressMonitor monitor) throws CoreException {
 		// Copy the applicable splash handler artifacts and perform parameter
 		// substitution (like in templates plug-in)
@@ -231,11 +197,6 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 		updateSplashHandlerModel(model, monitor);
 	}
 
-	/**
-	 * @param model
-	 * @param monitor
-	 * @throws CoreException
-	 */
 	private void updateSplashHandlerFiles(IPluginModelBase model, IProgressMonitor monitor) throws CoreException {
 		// If the project is not defined, abort this operation
 		if (fProject == null) {
@@ -256,11 +217,6 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 		generator.generateFiles(monitor);
 	}
 
-	/**
-	 * @param model
-	 * @param monitor
-	 * @throws CoreException
-	 */
 	private void updateSplashHandlerModel(IPluginModelBase model, IProgressMonitor monitor) throws CoreException {
 		// Get the splash handler type
 		String splashHandlerType = getSplashHandlerType();
@@ -272,10 +228,6 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 		}
 	}
 
-	/**
-	 * @param model
-	 * @param monitor
-	 */
 	private void runRemoveSplashAction(IPluginModelBase model, IProgressMonitor monitor) throws CoreException {
 		// Create the remove splash handler action
 		fRemoveSplashAction = new RemoveSplashHandlerBindingAction();
@@ -291,12 +243,6 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 		fRemoveSplashAction.hasException();
 	}
 
-	/**
-	 * @param model
-	 * @param monitor
-	 * @param splashHandlerType
-	 * @throws CoreException
-	 */
 	private void runUpdateSplashAction(IPluginModelBase model, IProgressMonitor monitor, String splashHandlerType) throws CoreException {
 		// Create the update splash handler action
 		fUpdateSplashAction = new UpdateSplashHandlerAction();

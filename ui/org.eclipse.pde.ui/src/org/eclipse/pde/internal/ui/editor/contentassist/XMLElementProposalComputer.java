@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2008 IBM Corporation and others.
+ *  Copyright (c) 2006, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -16,10 +16,6 @@ import java.util.TreeSet;
 import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 
-/**
- * XMLElementProposalComputer
- *
- */
 public class XMLElementProposalComputer {
 
 	/**
@@ -37,11 +33,6 @@ public class XMLElementProposalComputer {
 		return computeElementProposal(sElement, tagNameMap);
 	}
 
-	/**
-	 * @param sElement
-	 * @param tagNameMap
-	 * @return
-	 */
 	private static TreeSet computeElementProposal(ISchemaElement sElement, HashMap tagNameMap) {
 
 		TreeSet elementSet = new TreeSet(new XMLElementProposalComparator());

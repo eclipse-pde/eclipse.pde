@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2008 IBM Corporation and others.
+ *  Copyright (c) 2007, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -16,10 +16,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
-/**
- * FormLayoutFactory
- *
- */
 public class FormLayoutFactory {
 
 	// Used in place of 0.  If 0 is used, widget borders will appear clipped
@@ -106,7 +102,6 @@ public class FormLayoutFactory {
 	 * For form bodies.
 	 * @param makeColumnsEqualWidth
 	 * @param numColumns
-	 * @return
 	 */
 	public static GridLayout createFormGridLayout(boolean makeColumnsEqualWidth, int numColumns) {
 		GridLayout layout = new GridLayout();
@@ -133,7 +128,6 @@ public class FormLayoutFactory {
 	 * For sections (as a whole - header plus client).
 	 * @param makeColumnsEqualWidth
 	 * @param numColumns
-	 * @return
 	 */
 	public static GridLayout createClearGridLayout(boolean makeColumnsEqualWidth, int numColumns) {
 		GridLayout layout = new GridLayout();
@@ -159,7 +153,6 @@ public class FormLayoutFactory {
 	 * For form bodies.
 	 * @param makeColumnsEqualWidth
 	 * @param numColumns
-	 * @return
 	 */
 	public static TableWrapLayout createFormTableWrapLayout(boolean makeColumnsEqualWidth, int numColumns) {
 		TableWrapLayout layout = new TableWrapLayout();
@@ -182,7 +175,6 @@ public class FormLayoutFactory {
 	 * For composites used to group sections in left and right panes.
 	 * @param makeColumnsEqualWidth
 	 * @param numColumns
-	 * @return
 	 */
 	public static TableWrapLayout createFormPaneTableWrapLayout(boolean makeColumnsEqualWidth, int numColumns) {
 		TableWrapLayout layout = new TableWrapLayout();
@@ -205,7 +197,6 @@ public class FormLayoutFactory {
 	 * For composites used to group sections in left and right panes.
 	 * @param makeColumnsEqualWidth
 	 * @param numColumns
-	 * @return
 	 */
 	public static GridLayout createFormPaneGridLayout(boolean makeColumnsEqualWidth, int numColumns) {
 		GridLayout layout = new GridLayout();
@@ -232,7 +223,6 @@ public class FormLayoutFactory {
 	 * For sections (as a whole - header plus client).
 	 * @param makeColumnsEqualWidth
 	 * @param numColumns
-	 * @return
 	 */
 	public static TableWrapLayout createClearTableWrapLayout(boolean makeColumnsEqualWidth, int numColumns) {
 		TableWrapLayout layout = new TableWrapLayout();
@@ -255,7 +245,6 @@ public class FormLayoutFactory {
 	 * For master sections belonging to a master details block.
 	 * @param makeColumnsEqualWidth
 	 * @param numColumns
-	 * @return
 	 */
 	public static GridLayout createMasterGridLayout(boolean makeColumnsEqualWidth, int numColumns) {
 		GridLayout layout = new GridLayout();
@@ -295,7 +284,6 @@ public class FormLayoutFactory {
 	 * For details sections belonging to a master details block.
 	 * @param makeColumnsEqualWidth
 	 * @param numColumns
-	 * @return
 	 */
 	public static GridLayout createDetailsGridLayout(boolean makeColumnsEqualWidth, int numColumns) {
 		GridLayout layout = new GridLayout();
@@ -336,7 +324,6 @@ public class FormLayoutFactory {
 	 * For composites containg form text.
 	 * @param makeColumnsEqualWidth
 	 * @param numColumns
-	 * @return
 	 */
 	public static GridLayout createSectionClientGridLayout(boolean makeColumnsEqualWidth, int numColumns) {
 		GridLayout layout = new GridLayout();
@@ -363,7 +350,6 @@ public class FormLayoutFactory {
 	 * For composites containg form text.
 	 * @param makeColumnsEqualWidth
 	 * @param numColumns
-	 * @return
 	 */
 	public static TableWrapLayout createSectionClientTableWrapLayout(boolean makeColumnsEqualWidth, int numColumns) {
 		TableWrapLayout layout = new TableWrapLayout();

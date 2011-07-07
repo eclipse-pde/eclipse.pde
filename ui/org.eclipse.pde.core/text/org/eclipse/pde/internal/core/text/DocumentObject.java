@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2010 IBM Corporation and others.
+ *  Copyright (c) 2007, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -90,9 +90,6 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 		return fModel.isEditable();
 	}
 
-	/**
-	 * @return
-	 */
 	protected boolean shouldFireEvent() {
 		if (isInTheModel() && isEditable()) {
 			return true;
@@ -240,11 +237,6 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 		return node;
 	}
 
-	/**
-	 * @param child
-	 * @param fireEvent
-	 * @return
-	 */
 	public IDocumentElementNode removeChildNode(IDocumentElementNode child, boolean fireEvent) {
 		IDocumentElementNode node = removeChildNode(child);
 		// Fire event
@@ -254,12 +246,6 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 		return node;
 	}
 
-	/**
-	 * @param index
-	 * @param clazz
-	 * @param fireEvent
-	 * @return
-	 */
 	public IDocumentElementNode removeChildNode(int index, Class clazz, boolean fireEvent) {
 		IDocumentElementNode node = removeChildNode(index, clazz);
 		// Fire event
@@ -335,10 +321,6 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 		removeChildNode(oldNode, fireEvent);
 	}
 
-	/**
-	 * @param clazz
-	 * @return
-	 */
 	public IDocumentElementNode getChildNode(Class clazz) {
 		// Linear search O(n)
 		ArrayList children = getChildNodesList();
@@ -352,10 +334,6 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 		return null;
 	}
 
-	/**
-	 * @param clazz
-	 * @return
-	 */
 	public int getChildNodeCount(Class clazz) {
 		// Linear search O(n)
 		int count = 0;
@@ -370,18 +348,10 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 		return count;
 	}
 
-	/**
-	 * @param clazz
-	 * @return
-	 */
 	public ArrayList getChildNodesList(Class clazz, boolean match) {
 		return getChildNodesList(new Class[] {clazz}, match);
 	}
 
-	/**
-	 * @param classes
-	 * @return
-	 */
 	public ArrayList getChildNodesList(Class[] classes, boolean match) {
 		ArrayList filteredChildren = new ArrayList();
 		ArrayList children = getChildNodesList();
@@ -399,11 +369,6 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 		return filteredChildren;
 	}
 
-	/**
-	 * @param node
-	 * @param clazz
-	 * @return
-	 */
 	public IDocumentElementNode getNextSibling(IDocumentElementNode node, Class clazz) {
 		int position = indexOf(node);
 		int lastIndex = getChildCount() - 1;
@@ -422,11 +387,6 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 		return null;
 	}
 
-	/**
-	 * @param node
-	 * @param clazz
-	 * @return
-	 */
 	public IDocumentElementNode getPreviousSibling(IDocumentElementNode node, Class clazz) {
 		int position = indexOf(node);
 		if ((position <= 0) || (position >= getChildCount())) {
@@ -444,10 +404,6 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 		return null;
 	}
 
-	/**
-	 * @param clazz
-	 * @return
-	 */
 	public boolean hasChildNodes(Class clazz) {
 		ArrayList children = getChildNodesList();
 		Iterator iterator = children.iterator();
@@ -460,11 +416,6 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 		return false;
 	}
 
-	/**
-	 * @param node
-	 * @param clazz
-	 * @return
-	 */
 	public boolean isFirstChildNode(IDocumentElementNode node, Class clazz) {
 		int position = indexOf(node);
 		// Check to see if node is found
@@ -488,11 +439,6 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 		return true;
 	}
 
-	/**
-	 * @param node
-	 * @param clazz
-	 * @return
-	 */
 	public boolean isLastChildNode(IDocumentElementNode node, Class clazz) {
 		int position = indexOf(node);
 		int lastIndex = getChildCount() - 1;
@@ -581,10 +527,6 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 		}
 	}
 
-	/**
-	 * @param node
-	 * @return
-	 */
 	public IDocumentElementNode clone(IDocumentElementNode node) {
 		IDocumentElementNode clone = null;
 		try {
@@ -611,11 +553,6 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 		return clone;
 	}
 
-	/**
-	 * @param name
-	 * @param defaultValue
-	 * @return
-	 */
 	public boolean getBooleanAttributeValue(String name, boolean defaultValue) {
 		String value = getXMLAttributeValue(name);
 		if (value == null) {
@@ -628,20 +565,11 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 		return defaultValue;
 	}
 
-	/**
-	 * @param name
-	 * @param value
-	 * @return
-	 */
 	public boolean setBooleanAttributeValue(String name, boolean value) {
 		String newValue = Boolean.valueOf(value).toString();
 		return setXMLAttribute(name, newValue);
 	}
 
-	/**
-	 * @param name
-	 * @param newValue
-	 */
 	public boolean setXMLAttribute(String name, String newValue) {
 		String oldValue = getXMLAttributeValue(name);
 		boolean changed = super.setXMLAttribute(name, newValue);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -197,10 +197,6 @@ public class BuildEntry implements IBuildEntry, IDocumentKey {
 		getModel().fireModelObjectChanged(this, getName(), new Object[] {obj1, obj2}, new Object[] {obj2, obj1});
 	}
 
-	/**
-	 * @param targetToken
-	 * @return
-	 */
 	public String getPreviousToken(String targetToken) {
 		// Ensure we have tokens
 		if (fTokens.size() <= 1) {
@@ -223,10 +219,6 @@ public class BuildEntry implements IBuildEntry, IDocumentKey {
 		return previousToken;
 	}
 
-	/**
-	 * @param targetToken
-	 * @return
-	 */
 	public String getNextToken(String targetToken) {
 		// Ensure we have tokens
 		if (fTokens.size() <= 1) {
@@ -251,18 +243,10 @@ public class BuildEntry implements IBuildEntry, IDocumentKey {
 		return nextToken;
 	}
 
-	/**
-	 * @param targetToken
-	 * @return
-	 */
 	public int getIndexOf(String targetToken) {
 		return fTokens.indexOf(targetToken);
 	}
 
-	/**
-	 * @param token
-	 * @param position
-	 */
 	public void addToken(String token, int position) {
 		// Validate position
 		if (position < 0) {

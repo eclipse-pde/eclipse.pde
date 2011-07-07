@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2008 IBM Corporation and others.
+ *  Copyright (c) 2007, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -31,11 +31,6 @@ import org.osgi.framework.InvalidSyntaxException;
  */
 public class ControlValidationUtility {
 
-	/**
-	 * @param text
-	 * @param validator
-	 * @return
-	 */
 	public static boolean validateRequiredField(String value, IValidatorMessageHandler validator, int messageType) {
 		// Check to see if a value was specified
 		if (value.length() == 0) {
@@ -45,14 +40,6 @@ public class ControlValidationUtility {
 		return true;
 	}
 
-	/**
-	 * @param text
-	 * @param validator
-	 * @param required
-	 * @param model
-	 * @param project
-	 * @return
-	 */
 	public static boolean validateTranslatableField(String value, IValidatorMessageHandler validator, IPluginModelBase model, IProject project) {
 
 		// Check the compiler flag and translate it into a message type
@@ -80,12 +67,6 @@ public class ControlValidationUtility {
 		return true;
 	}
 
-	/**
-	 * @param text
-	 * @param validator
-	 * @param required
-	 * @return
-	 */
 	public static boolean validateVersionField(String value, IValidatorMessageHandler validator) {
 		// Check for invalid version
 		IStatus status = VersionUtil.validateVersion(value);
@@ -96,12 +77,6 @@ public class ControlValidationUtility {
 		return true;
 	}
 
-	/**
-	 * @param text
-	 * @param validator
-	 * @param model
-	 * @param project
-	 */
 	public static boolean validatePlatformFilterField(String value, IValidatorMessageHandler validator) {
 		// Check to see if the platform filter syntax is valid
 		try {
@@ -114,12 +89,6 @@ public class ControlValidationUtility {
 		return true;
 	}
 
-	/**
-	 * @param text
-	 * @param validator
-	 * @param project
-	 * @return
-	 */
 	public static boolean validateActivatorField(String value, IValidatorMessageHandler validator, IProject project) {
 
 		// Check the compiler flag and translate it into a message type
@@ -147,13 +116,6 @@ public class ControlValidationUtility {
 		return true;
 	}
 
-	/**
-	 * @param value
-	 * @param validator
-	 * @param model
-	 * @param project
-	 * @return
-	 */
 	public static boolean validateFragmentHostPluginField(String value, IValidatorMessageHandler validator, IProject project) {
 
 		// Check the compiler flag and translate it into a message type

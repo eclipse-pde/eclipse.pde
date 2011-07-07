@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2008 IBM Corporation and others.
+ *  Copyright (c) 2007, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -18,17 +18,10 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 
-/**
- * FileExtensionsFilter
- *
- */
 public class FileExtensionsFilter extends ViewerFilter {
 
 	private HashSet fExtensions;
 
-	/**
-	 * 
-	 */
 	public FileExtensionsFilter() {
 		fExtensions = new HashSet();
 	}
@@ -48,10 +41,6 @@ public class FileExtensionsFilter extends ViewerFilter {
 		return false;
 	}
 
-	/**
-	 * @param element
-	 * @return
-	 */
 	private boolean processContainer(IContainer container, Viewer viewer, Object parentElement) {
 		// Skip closed projects
 		if ((container instanceof IProject) && (((IProject) container).isOpen() == false)) {
@@ -71,9 +60,6 @@ public class FileExtensionsFilter extends ViewerFilter {
 		return false;
 	}
 
-	/**
-	 * @param element
-	 */
 	private boolean processFile(IFile file) {
 		// Get the file's name (including extension)
 		String fileName = file.getName().toLowerCase(Locale.ENGLISH);
@@ -92,9 +78,6 @@ public class FileExtensionsFilter extends ViewerFilter {
 		return fExtensions.contains(extension);
 	}
 
-	/**
-	 * @param extension
-	 */
 	public void addFileExtension(String extension) {
 		fExtensions.add(extension);
 	}

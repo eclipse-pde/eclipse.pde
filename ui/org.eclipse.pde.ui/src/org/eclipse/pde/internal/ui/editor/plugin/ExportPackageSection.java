@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2008 IBM Corporation and others.
+ *  Copyright (c) 2005, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -190,9 +190,6 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
 		return true;
 	}
 
-	/**
-	 * @return
-	 */
 	private boolean canAddExportedPackages() {
 		// Ensure model is editable
 		if (isEditable() == false) {
@@ -227,9 +224,6 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
 		return true;
 	}
 
-	/**
-	 * @return
-	 */
 	private HashMap createCurrentExportPackageMap() {
 		// Dummy hash map created in order to return a defined but empty map
 		HashMap packageFragments = new HashMap(0);
@@ -280,16 +274,10 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
 		return PDEJavaHelper.getPackageFragmentsHash(javaProject, currentExportPackages, allowJavaPackages());
 	}
 
-	/**
-	 * @return
-	 */
 	private IPluginModelBase getModel() {
 		return (IPluginModelBase) getPage().getModel();
 	}
 
-	/**
-	 * @return
-	 */
 	private boolean allowJavaPackages() {
 		return "true".equals(getBundle().getHeader(ICoreConstants.ECLIPSE_JREBUNDLE)); //$NON-NLS-1$
 	}

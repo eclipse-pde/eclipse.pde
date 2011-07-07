@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -12,17 +12,8 @@
 package org.eclipse.pde.internal.core.util;
 
 import java.lang.ref.SoftReference;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.FactoryConfigurationError;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
+import java.util.*;
+import javax.xml.parsers.*;
 import org.xml.sax.SAXException;
 
 /**
@@ -132,10 +123,6 @@ public class PDEXMLHelper {
 		return buf.toString();
 	}
 
-	/**
-	 * @param source
-	 * @return
-	 */
 	public static String getWritableAttributeString(String source) {
 		// Ensure source is defined
 		if (source == null) {

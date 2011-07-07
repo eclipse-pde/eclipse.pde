@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2008 IBM Corporation and others.
+ *  Copyright (c) 2007, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -42,7 +42,6 @@ public interface IPDEDropParticipant {
 	 * @param targetObject The original target object
 	 * @param sourceObjects The original source objects
 	 * @param targetLocation ViewerDropAdapter:  LOCATION_ON, LOCATION_BEFORE, LOCATION_AFTER
-	 * @return
 	 */
 	public boolean canDropCopy(Object targetObject, Object[] sourceObjects, int targetLocation);
 
@@ -50,7 +49,6 @@ public interface IPDEDropParticipant {
 	 * @param targetObject The original target object
 	 * @param sourceObjects The original source objects
 	 * @param targetLocation ViewerDropAdapter:  LOCATION_ON, LOCATION_BEFORE, LOCATION_AFTER
-	 * @return
 	 */
 	public boolean canDropMove(Object targetObject, Object[] sourceObjects, int targetLocation);
 
@@ -58,7 +56,6 @@ public interface IPDEDropParticipant {
 	 * @param targetObject The original target object
 	 * @param sourceObjects The original source objects
 	 * @param targetLocation ViewerDropAdapter:  LOCATION_ON, LOCATION_BEFORE, LOCATION_AFTER
-	 * @return
 	 */
 	public boolean canDropLink(Object targetObject, Object[] sourceObjects, int targetLocation);
 

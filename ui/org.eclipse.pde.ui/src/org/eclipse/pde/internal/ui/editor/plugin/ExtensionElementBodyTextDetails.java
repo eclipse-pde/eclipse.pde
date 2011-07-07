@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2008 IBM Corporation and others.
+ *  Copyright (c) 2007, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -33,10 +33,6 @@ import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.*;
 
-/**
- * ExtensionElementBodyTextDetails
- *
- */
 public class ExtensionElementBodyTextDetails extends AbstractPluginElementDetails implements IControlHoverContentProvider {
 
 	private IPluginElement fPluginElement;
@@ -53,9 +49,6 @@ public class ExtensionElementBodyTextDetails extends AbstractPluginElementDetail
 
 	private IInformationControl fInfoControlHover;
 
-	/**
-	 * 
-	 */
 	public ExtensionElementBodyTextDetails(PDESection masterSection) {
 		super(masterSection);
 		fPluginElement = null;
@@ -78,9 +71,6 @@ public class ExtensionElementBodyTextDetails extends AbstractPluginElementDetail
 		createListeners();
 	}
 
-	/**
-	 * 
-	 */
 	private void createListeners() {
 		// Create the listeners for the body text field
 		createListenersTextBody();
@@ -90,9 +80,6 @@ public class ExtensionElementBodyTextDetails extends AbstractPluginElementDetail
 		createListenersModel();
 	}
 
-	/**
-	 * 
-	 */
 	private void createListenersHyperlinkBody() {
 		// Listen to hyperlink clicks
 		fHyperlinkBody.addHyperlinkListener(new HyperlinkAdapter() {
@@ -104,9 +91,6 @@ public class ExtensionElementBodyTextDetails extends AbstractPluginElementDetail
 		PDETextHover.addHoverListenerToControl(fInfoControlHover, fHyperlinkBody, this);
 	}
 
-	/**
-	 * 
-	 */
 	private void handleHyperlinkBodyLinkActivated() {
 		boolean opened = false;
 		// Open the reference if this is not a reference model
@@ -119,9 +103,6 @@ public class ExtensionElementBodyTextDetails extends AbstractPluginElementDetail
 		}
 	}
 
-	/**
-	 * 
-	 */
 	private boolean openReference() {
 		// Ensure a plugin element was specified
 		if (fPluginElement == null) {
@@ -135,17 +116,11 @@ public class ExtensionElementBodyTextDetails extends AbstractPluginElementDetail
 		return link.getOpened();
 	}
 
-	/**
-	 * 
-	 */
 	private void createListenersModel() {
 		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
 		model.addModelChangedListener(this);
 	}
 
-	/**
-	 * 
-	 */
 	private void createListenersTextBody() {
 		// Listen for text input
 		fTextBody.setFormEntryListener(new FormEntryAdapter(this) {
@@ -157,9 +132,6 @@ public class ExtensionElementBodyTextDetails extends AbstractPluginElementDetail
 		PDETextHover.addHoverListenerToControl(fInfoControlHover, fTextBody.getText(), this);
 	}
 
-	/**
-	 * 
-	 */
 	private void handleTextBodyValueChanged() {
 		// Plugin element data not defined, nothing to update
 		if (fPluginElement == null) {
@@ -174,23 +146,14 @@ public class ExtensionElementBodyTextDetails extends AbstractPluginElementDetail
 		}
 	}
 
-	/**
-	 * @param parent
-	 */
 	private void configureParentLayout(Composite parent) {
 		parent.setLayout(FormLayoutFactory.createDetailsGridLayout(false, 1));
 	}
 
-	/**
-	 * 
-	 */
 	private void createUIToolkit() {
 		fToolkit = getManagedForm().getToolkit();
 	}
 
-	/**
-	 * @param parent
-	 */
 	private void createUI(Composite parent) {
 		// Create the element details section
 		createUISectionElementDetails(parent);
@@ -209,25 +172,16 @@ public class ExtensionElementBodyTextDetails extends AbstractPluginElementDetail
 		markDetailsPart(fSectionElementDetails);
 	}
 
-	/**
-	 * @param client
-	 */
 	private void createUIInfoHoverControl(Composite client) {
 		// Shared between the body text field and body text hyperlink / label
 		fInfoControlHover = PDETextHover.getInformationControlCreator().createInformationControl(client.getShell());
 		fInfoControlHover.setSizeConstraints(300, 600);
 	}
 
-	/**
-	 * @param client
-	 */
 	private void createUIHyperlinkBody(Composite client) {
 		fHyperlinkBody = fToolkit.createHyperlink(client, PDEUIMessages.ExtensionElementBodyTextDetails_labelBodyText, SWT.NULL);
 	}
 
-	/**
-	 * @return
-	 */
 	private boolean isReferenceModel() {
 		// If the model has no underlying resource, then it is a reference
 		// model
@@ -237,19 +191,12 @@ public class ExtensionElementBodyTextDetails extends AbstractPluginElementDetail
 		return false;
 	}
 
-	/**
-	 * @param section
-	 * @return
-	 */
 	private Composite createUISectionContainer(Section section) {
 		Composite client = fToolkit.createComposite(section);
 		client.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 1));
 		return client;
 	}
 
-	/**
-	 * @param parent
-	 */
 	private void createUISectionElementDetails(Composite parent) {
 		int section_style = Section.DESCRIPTION | ExpandableComposite.TITLE_BAR;
 		fSectionElementDetails = fToolkit.createSection(parent, section_style);
@@ -266,9 +213,6 @@ public class ExtensionElementBodyTextDetails extends AbstractPluginElementDetail
 		getPage().alignSectionHeaders(getMasterSection().getSection(), fSectionElementDetails);
 	}
 
-	/**
-	 * @param parent
-	 */
 	private void createUITextBody(Composite parent) {
 		int widget_style = SWT.MULTI | SWT.WRAP | SWT.V_SCROLL;
 		fTextBody = new FormEntry(parent, fToolkit, null, widget_style);
@@ -294,9 +238,6 @@ public class ExtensionElementBodyTextDetails extends AbstractPluginElementDetail
 		updateUI();
 	}
 
-	/**
-	 * 
-	 */
 	private void updateUI() {
 		// Update the section description
 		updateUISectionElementDetails();
@@ -304,9 +245,6 @@ public class ExtensionElementBodyTextDetails extends AbstractPluginElementDetail
 		updateUITextBody();
 	}
 
-	/**
-	 * 
-	 */
 	private void updateUISectionElementDetails() {
 		// Set the general or specifc section description depending if whether
 		// the plugin element data is defined
@@ -319,9 +257,6 @@ public class ExtensionElementBodyTextDetails extends AbstractPluginElementDetail
 		fSectionElementDetails.layout();
 	}
 
-	/**
-	 * 
-	 */
 	private void updateUITextBody() {
 		// Set the new body text value from the new plugin element data if 
 		// defined
@@ -434,9 +369,6 @@ public class ExtensionElementBodyTextDetails extends AbstractPluginElementDetail
 		return null;
 	}
 
-	/**
-	 * @return
-	 */
 	private String getHyperlinkDescription() {
 		// Ensure there is an associated schema
 		if (fSchemaElement == null) {
@@ -446,10 +378,6 @@ public class ExtensionElementBodyTextDetails extends AbstractPluginElementDetail
 		return fSchemaElement.getDescription();
 	}
 
-	/**
-	 * @param text
-	 * @return
-	 */
 	private String getTextDescription(Text text) {
 		// Ensure there is an associated schema
 		if (fSchemaElement == null) {
@@ -471,9 +399,6 @@ public class ExtensionElementBodyTextDetails extends AbstractPluginElementDetail
 		return null;
 	}
 
-	/**
-	 * @param schemaElement
-	 */
 	public void setSchemaElement(ISchemaElement schemaElement) {
 		fSchemaElement = schemaElement;
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2008 IBM Corporation and others.
+ *  Copyright (c) 2004, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -11,17 +11,8 @@
 
 package org.eclipse.pde.internal.core;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import java.io.*;
+import org.w3c.dom.*;
 
 public class XMLPrintHandler {
 	//	used to print XML file
@@ -37,10 +28,6 @@ public class XMLPrintHandler {
 	public static final String XML_SLASH = "/"; //$NON-NLS-1$
 	public static final String XML_INDENT = "   "; //$NON-NLS-1$
 
-	/**
-	 * @param level
-	 * @return
-	 */
 	public static String generateIndent(int level) {
 		StringBuffer buffer = new StringBuffer();
 		for (int i = 0; i < level; i++) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2008 IBM Corporation and others.
+ *  Copyright (c) 2007, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -20,10 +20,6 @@ import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.util.PDETextHelper;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 
-/**
- * RemoveSplashHandlerBindingAction
- *
- */
 public class RemoveSplashHandlerBindingAction extends Action implements ISplashHandlerConstants {
 
 	private IPluginModelBase fModel;
@@ -36,30 +32,18 @@ public class RemoveSplashHandlerBindingAction extends Action implements ISplashH
 
 	private String fFieldTargetPackage;
 
-	/**
-	 * 
-	 */
 	public RemoveSplashHandlerBindingAction() {
 		reset();
 	}
 
-	/**
-	 * @param fieldProductID the fFieldProductID to set
-	 */
 	public void setFieldProductID(String fieldProductID) {
 		fFieldProductID = fieldProductID;
 	}
 
-	/**
-	 * @param fieldTargetPackage
-	 */
 	public void setFieldTargetPackage(String fieldTargetPackage) {
 		fFieldTargetPackage = fieldTargetPackage;
 	}
 
-	/**
-	 * 
-	 */
 	public void reset() {
 		fModel = null;
 		fMonitor = null;
@@ -80,9 +64,6 @@ public class RemoveSplashHandlerBindingAction extends Action implements ISplashH
 		}
 	}
 
-	/**
-	 * @throws CoreException
-	 */
 	public void hasException() throws CoreException {
 		// Release any caught exceptions
 		if (fException != null) {
@@ -90,23 +71,14 @@ public class RemoveSplashHandlerBindingAction extends Action implements ISplashH
 		}
 	}
 
-	/**
-	 * @param model
-	 */
 	public void setModel(IPluginModelBase model) {
 		fModel = model;
 	}
 
-	/**
-	 * @param monitor
-	 */
 	public void setMonitor(IProgressMonitor monitor) {
 		fMonitor = monitor;
 	}
 
-	/**
-	 * @throws CoreException
-	 */
 	private void updateModel() throws CoreException {
 		// Find the first splash handler extension
 		// We don't care about other splash handler extensions manually added
@@ -128,11 +100,6 @@ public class RemoveSplashHandlerBindingAction extends Action implements ISplashH
 		fMonitor.done();
 	}
 
-	/**
-	 * @param extension
-	 * @param productBindingElements
-	 * @throws CoreException
-	 */
 	private void removeMatchingProductBindingElements(IPluginExtension extension, IPluginElement[] productBindingElements) throws CoreException {
 		// If there are no product binding elements, then our job is done
 		if ((productBindingElements == null) || (productBindingElements.length == 0)) {
@@ -166,10 +133,6 @@ public class RemoveSplashHandlerBindingAction extends Action implements ISplashH
 		}
 	}
 
-	/**
-	 * @param value
-	 * @return
-	 */
 	private boolean isGeneratedSplashID(String value) {
 		String[][] choices = ISplashHandlerConstants.F_SPLASH_SCREEN_TYPE_CHOICES;
 		// Check to see if the splash ID matches any of the pre-generated
@@ -183,10 +146,6 @@ public class RemoveSplashHandlerBindingAction extends Action implements ISplashH
 		return false;
 	}
 
-	/**
-	 * @param extension
-	 * @return
-	 */
 	private IPluginElement[] findProductBindingElements(IPluginExtension extension) {
 		ArrayList elements = new ArrayList();
 		// Check to see if the extension has any children
@@ -213,10 +172,6 @@ public class RemoveSplashHandlerBindingAction extends Action implements ISplashH
 		return (IPluginElement[]) elements.toArray(new IPluginElement[elements.size()]);
 	}
 
-	/**
-	 * @param extensionPointID
-	 * @return
-	 */
 	private IPluginExtension findFirstExtension(String extensionPointID) {
 		// Get all the extensions
 		IPluginExtension[] extensions = fModel.getPluginBase().getExtensions();

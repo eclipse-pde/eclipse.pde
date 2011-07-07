@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2009 IBM Corporation and others.
+ *  Copyright (c) 2000, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -241,7 +241,6 @@ public class FormEntry {
 	/**
 	 * Returns the text control.
 	 * 
-	 * @return
 	 */
 	public Text getText() {
 		return fText;
@@ -253,7 +252,6 @@ public class FormEntry {
 
 	/**
 	 * Returns the browse button control.
-	 * @return
 	 */
 	public Button getButton() {
 		return fBrowse;
@@ -263,7 +261,6 @@ public class FormEntry {
 	 * Returns the current entry value. If the entry is dirty and was not
 	 * commited, the value may be different from the text in the widget.
 	 * 
-	 * @return
 	 */
 	public String getValue() {
 		return fValue.trim();
@@ -272,7 +269,6 @@ public class FormEntry {
 	/**
 	 * Returns true if the text has been modified.
 	 * 
-	 * @return
 	 */
 	public boolean isDirty() {
 		return fDirty;

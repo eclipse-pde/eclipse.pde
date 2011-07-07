@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2008 IBM Corporation and others.
+ *  Copyright (c) 2006, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -17,10 +17,6 @@ import org.eclipse.jface.fieldassist.IContentProposal;
 import org.eclipse.jface.fieldassist.IContentProposalProvider;
 import org.eclipse.swt.graphics.Image;
 
-/**
- * TypeContentProposalProvider
- *
- */
 public class TypeContentProposalProvider extends TypePackageCompletionProcessor implements IContentProposalProvider {
 
 	public static final char F_DOT = '.';
@@ -35,9 +31,6 @@ public class TypeContentProposalProvider extends TypePackageCompletionProcessor 
 
 	private Comparator fComparator;
 
-	/**
-	 * 
-	 */
 	public TypeContentProposalProvider(IProject project, int scope) {
 		fProject = project;
 		fTypeScope = scope;
@@ -46,15 +39,8 @@ public class TypeContentProposalProvider extends TypePackageCompletionProcessor 
 		reset();
 	}
 
-	/**
-	 * TypeComparator
-	 *
-	 */
 	private static class TypeComparator implements Comparator {
 
-		/**
-		 * 
-		 */
 		public TypeComparator() {
 			// NO-OP
 		}
@@ -103,9 +89,6 @@ public class TypeContentProposalProvider extends TypePackageCompletionProcessor 
 		return convertResultsToSortedProposals(currentContentProposals);
 	}
 
-	/**
-	 * 
-	 */
 	public void reset() {
 		fInitialContentProposals = null;
 	}
@@ -121,10 +104,6 @@ public class TypeContentProposalProvider extends TypePackageCompletionProcessor 
 		collection.add(proposal);
 	}
 
-	/**
-	 * @param string
-	 * @return
-	 */
 	private boolean endsWithDot(String string) {
 		int index = string.lastIndexOf(F_DOT);
 		if ((index + 1) == string.length()) {
@@ -133,10 +112,6 @@ public class TypeContentProposalProvider extends TypePackageCompletionProcessor 
 		return false;
 	}
 
-	/**
-	 * @param currentContent
-	 * @return
-	 */
 	private ArrayList generateContentProposals(String currentContent) {
 		fInitialContentProposals = new ArrayList();
 		// Store the initial field contents to determine if we need to
@@ -146,10 +121,6 @@ public class TypeContentProposalProvider extends TypePackageCompletionProcessor 
 		return fInitialContentProposals;
 	}
 
-	/**
-	 * @param list
-	 * @return
-	 */
 	private IContentProposal[] convertResultsToSortedProposals(ArrayList list) {
 		IContentProposal[] proposals = null;
 		if ((list != null) && (list.size() != 0)) {
@@ -164,10 +135,6 @@ public class TypeContentProposalProvider extends TypePackageCompletionProcessor 
 		return proposals;
 	}
 
-	/**
-	 * @param currentContent
-	 * @return
-	 */
 	private ArrayList filterContentProposals(String currentContent) {
 		String lowerCaseCurrentContent = currentContent.toLowerCase();
 		ListIterator iterator = fInitialContentProposals.listIterator();

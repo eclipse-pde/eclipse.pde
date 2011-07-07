@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2010 IBM Corporation and others.
+ *  Copyright (c) 2000, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -450,10 +450,6 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 		addSourcePage(BuildInputContext.CONTEXT_ID);
 	}
 
-	/**
-	 * @param pageID
-	 * @return
-	 */
 	private boolean isSourcePageID(String pageID) {
 		// Determine whether the page ID is a source page ID
 		if (pageID == null) {
@@ -551,9 +547,6 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 		}
 	}
 
-	/**
-	 * @return
-	 */
 	private String getPrimarySourceInputContextID() {
 		// Get the input context used to open this editor
 		InputContext primary = fInputContextManager.getPrimaryContext();

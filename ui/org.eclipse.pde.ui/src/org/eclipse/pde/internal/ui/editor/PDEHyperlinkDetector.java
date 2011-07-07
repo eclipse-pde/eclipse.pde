@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2008 IBM Corporation and others.
+ *  Copyright (c) 2007, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -18,17 +18,10 @@ import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.pde.internal.core.text.*;
 import org.eclipse.pde.internal.ui.editor.text.XMLUtil;
 
-/**
- * PDEHyperlinkDetector
- *
- */
 public abstract class PDEHyperlinkDetector implements IHyperlinkDetector {
 
 	private PDESourcePage fSourcePage;
 
-	/**
-	 * @param page
-	 */
 	public PDEHyperlinkDetector(PDESourcePage page) {
 		fSourcePage = page;
 	}
@@ -54,26 +47,14 @@ public abstract class PDEHyperlinkDetector implements IHyperlinkDetector {
 		return null;
 	}
 
-	/**
-	 * @param attr
-	 * @return
-	 */
 	protected IHyperlink[] detectAttributeHyperlink(IDocumentAttributeNode attr) {
 		return null;
 	}
 
-	/**
-	 * @param node
-	 * @return
-	 */
 	protected IHyperlink[] detectNodeHyperlink(IDocumentElementNode node) {
 		return null;
 	}
 
-	/**
-	 * @param node
-	 * @return
-	 */
 	protected IHyperlink[] detectTextNodeHyperlink(IDocumentTextNode node) {
 		return null;
 	}

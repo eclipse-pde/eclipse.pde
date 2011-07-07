@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2008 IBM Corporation and others.
+ * Copyright (c) 2003, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -180,10 +180,6 @@ public class SchemaEditor extends MultiSourceEditor {
 		return false;
 	}
 
-	/**
-	 * @param file
-	 * @return
-	 */
 	public static boolean openSchema(File file) {
 		// Ensure the file exists
 		if ((file == null) || (file.exists() == false)) {
@@ -201,9 +197,6 @@ public class SchemaEditor extends MultiSourceEditor {
 		return openEditor(input);
 	}
 
-	/**
-	 * @param input
-	 */
 	private static boolean openEditor(IEditorInput input) {
 		IEditorPart part = null;
 		try {
@@ -221,11 +214,6 @@ public class SchemaEditor extends MultiSourceEditor {
 		return true;
 	}
 
-	/**
-	 * @param jarFile
-	 * @param schemaJarFileEntry
-	 * @return
-	 */
 	public static boolean openSchema(File jarFile, String schemaJarFileEntry) {
 		// Ensure the file exists
 		if ((jarFile == null) || (jarFile.exists() == false)) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -137,7 +137,6 @@ public class PDEJavaHelper {
 	 * @param packageName - the name of the package
 	 * @param pluginID - the id of the containing plug-in - can be null if <code>project</code> is not null
 	 * @param project - if null will search for an external package fragment, otherwise will search in project
-	 * @return
 	 */
 	public static IPackageFragment getPackageFragment(String packageName, String pluginID, IProject project) {
 		if (project == null)
@@ -257,23 +256,11 @@ public class PDEJavaHelper {
 		return null;
 	}
 
-	/**
-	 * @param jProject
-	 * @param existingPackages
-	 * @param allowJava
-	 * @return
-	 */
 	public static IPackageFragment[] getPackageFragments(IJavaProject jProject, Collection existingPackages, boolean allowJava) {
 		HashMap map = getPackageFragmentsHash(jProject, existingPackages, allowJava);
 		return (IPackageFragment[]) map.values().toArray(new IPackageFragment[map.size()]);
 	}
 
-	/**
-	 * @param jProject
-	 * @param existingPackages
-	 * @param allowJava
-	 * @return
-	 */
 	public static HashMap getPackageFragmentsHash(IJavaProject jProject, Collection existingPackages, boolean allowJava) {
 		HashMap map = new HashMap();
 		try {
@@ -310,18 +297,10 @@ public class PDEJavaHelper {
 		return (IPackageFragmentRoot[]) result.toArray(new IPackageFragmentRoot[result.size()]);
 	}
 
-	/**
-	 * @param project
-	 * @return
-	 */
 	public static String getJavaSourceLevel(IProject project) {
 		return getJavaLevel(project, JavaCore.COMPILER_SOURCE);
 	}
 
-	/**
-	 * @param project
-	 * @return
-	 */
 	public static String getJavaComplianceLevel(IProject project) {
 		return getJavaLevel(project, JavaCore.COMPILER_COMPLIANCE);
 	}
@@ -331,7 +310,6 @@ public class PDEJavaHelper {
 	 * (2) General preference option; (3) Default option; (4) Java 1.3
 	 * @param project
 	 * @param optionName
-	 * @return
 	 */
 	public static String getJavaLevel(IProject project, String optionName) {
 		// Returns the corresponding java project

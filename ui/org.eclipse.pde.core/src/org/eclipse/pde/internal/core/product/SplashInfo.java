@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2008 IBM Corporation and others.
+ *  Copyright (c) 2005, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@ package org.eclipse.pde.internal.core.product;
 
 import java.io.PrintWriter;
 import java.util.StringTokenizer;
-
 import org.eclipse.pde.internal.core.iproduct.IProductModel;
 import org.eclipse.pde.internal.core.iproduct.ISplashInfo;
 import org.w3c.dom.Element;
@@ -184,9 +183,6 @@ public class SplashInfo extends ProductObject implements ISplashInfo {
 		return (fLocation != null && fLocation.length() > 0) || (fCustomizeForegroundColor && fForegroundColor != null && isValidHexValue(fForegroundColor)) || isDefinedGeometry() || isDefinedSplashHandlerType();
 	}
 
-	/**
-	 * @return
-	 */
 	public boolean isDefinedSplashHandlerType() {
 		if ((fFieldSplashHandlerType != null) && (fFieldSplashHandlerType.length() > 0)) {
 			return true;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -149,12 +149,6 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 		return null;
 	}
 
-	/**
-	 * @param proposals
-	 * @param id
-	 * @param print
-	 * @return
-	 */
 	protected ICompletionProposal[] debugPrintProposals(ICompletionProposal[] proposals, String id, boolean print) {
 		if (proposals == null) {
 			System.out.println("[0] " + id); //$NON-NLS-1$
@@ -275,12 +269,6 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 		return null;
 	}
 
-	/**
-	 * @param attribute
-	 * @param offset
-	 * @param currentAttributeValue
-	 * @return
-	 */
 	private ICompletionProposal[] computeExtPointAttrProposals(IDocumentAttributeNode attribute, int offset, String currentAttributeValue) {
 		// Get all the applicable extension points
 		ArrayList allExtensionPoints = getAllExtensionPoints(F_EXTENSION_ATTRIBUTE_POINT_VALUE);
@@ -302,12 +290,6 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 		return convertListToProposal(filteredProposalList, attribute, offset);
 	}
 
-	/**
-	 * @param node
-	 * @param offset
-	 * @param filter
-	 * @return
-	 */
 	private ICompletionProposal[] computeRootNodeProposals(IDocumentElementNode node, int offset, String filter) {
 		// Create the filtered proposal list
 		ArrayList filteredProposalList = new ArrayList();
@@ -671,10 +653,6 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 	public void selectionChanged(ICompletionProposal proposal, boolean smartToggle) {
 	}
 
-	/**
-	 * @param vSchemaType
-	 * @return
-	 */
 	private ArrayList getAllExtensionPoints(int vSchemaType) {
 		// Return the previous extension points if defined
 		if (fAllExtPoints != null) {
@@ -701,10 +679,6 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 		return fAllExtPoints;
 	}
 
-	/**
-	 * @param model
-	 * @return
-	 */
 	private ArrayList getExternalExtensionPoints(IPluginModelBase model, int vSchemaType) {
 		// Return the previous external extension points if defined
 		if (fExternalExtPoints != null) {
@@ -766,10 +740,6 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 		}
 	}
 
-	/**
-	 * @param model
-	 * @return
-	 */
 	private ArrayList getInternalExtensionPoints(IPluginModelBase model, int vSchemaType) {
 		// Return the previous internal extension points if defined
 		if (fInternalExtPoints != null) {
@@ -792,7 +762,6 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 	 * Returns a BundlePluginModel which has a getId() method that works.
 	 * getModel() method returns a PluginModel whose getId() method does not
 	 * work.
-	 * @return 
 	 */
 	private IPluginModelBase getPluginModelBase() {
 		FormEditor formEditor = fSourcePage.getEditor();
@@ -836,9 +805,6 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 				fImages[i].dispose();
 	}
 
-	/**
-	 * @return
-	 */
 	public PDESourcePage getSourcePage() {
 		return fSourcePage;
 	}

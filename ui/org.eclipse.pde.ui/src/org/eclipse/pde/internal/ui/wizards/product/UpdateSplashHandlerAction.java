@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2008 IBM Corporation and others.
+ *  Copyright (c) 2007, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -19,10 +19,6 @@ import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.util.PDETextHelper;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 
-/**
- * UpdateSplashHandlerInModelAction
- *
- */
 public class UpdateSplashHandlerAction extends Action implements ISplashHandlerConstants {
 
 	private IPluginModelBase fModel;
@@ -43,9 +39,6 @@ public class UpdateSplashHandlerAction extends Action implements ISplashHandlerC
 
 	private String fFieldPluginID;
 
-	/**
-	 * 
-	 */
 	public UpdateSplashHandlerAction() {
 		reset();
 	}
@@ -108,16 +101,10 @@ public class UpdateSplashHandlerAction extends Action implements ISplashHandlerC
 		fFieldPluginID = null;
 	}
 
-	/**
-	 * @param model
-	 */
 	public void setModel(IPluginModelBase model) {
 		fModel = model;
 	}
 
-	/**
-	 * @param monitor
-	 */
 	public void setMonitor(IProgressMonitor monitor) {
 		fMonitor = monitor;
 	}
@@ -133,9 +120,6 @@ public class UpdateSplashHandlerAction extends Action implements ISplashHandlerC
 		}
 	}
 
-	/**
-	 * @throws CoreException
-	 */
 	public void hasException() throws CoreException {
 		// Release any caught exceptions
 		if (fException != null) {
@@ -143,9 +127,6 @@ public class UpdateSplashHandlerAction extends Action implements ISplashHandlerC
 		}
 	}
 
-	/**
-	 * @throws CoreException
-	 */
 	private void updateModel() throws CoreException {
 		// Find the first splash handler extension
 		IPluginExtension extension = findFirstExtension(F_SPLASH_HANDLERS_EXTENSION);
@@ -182,9 +163,6 @@ public class UpdateSplashHandlerAction extends Action implements ISplashHandlerC
 		}
 	}
 
-	/**
-	 * @throws CoreException
-	 */
 	private void addExtensionSplash() throws CoreException {
 		// Update progress work units
 		String fullExtensionPointID = fFieldPluginID + '.' + F_SPLASH_EXTENSION_POINT;
@@ -197,9 +175,6 @@ public class UpdateSplashHandlerAction extends Action implements ISplashHandlerC
 		fMonitor.done();
 	}
 
-	/**
-	 * @throws CoreException
-	 */
 	private void addExtensionPointSplashExtension() throws CoreException {
 		// Update progress work units
 		fMonitor.beginTask(NLS.bind(PDEUIMessages.UpdateSplashHandlerInModelAction_msgAddingExtensionPoint, F_SPLASH_EXTENSION_POINT), 1);
@@ -211,10 +186,6 @@ public class UpdateSplashHandlerAction extends Action implements ISplashHandlerC
 		fMonitor.done();
 	}
 
-	/**
-	 * @return
-	 * @throws CoreException
-	 */
 	private IPluginExtensionPoint createExtensionPointSplash() throws CoreException {
 		// Create the extension point
 		IPluginExtensionPoint extensionPoint = fModel.getFactory().createExtensionPoint();
@@ -228,10 +199,6 @@ public class UpdateSplashHandlerAction extends Action implements ISplashHandlerC
 		return extensionPoint;
 	}
 
-	/**
-	 * @param extensionPointID
-	 * @return
-	 */
 	private IPluginExtension findFirstExtension(String extensionPointID) {
 		// Get all the extensions
 		IPluginExtension[] extensions = fModel.getPluginBase().getExtensions();
@@ -245,10 +212,6 @@ public class UpdateSplashHandlerAction extends Action implements ISplashHandlerC
 		return null;
 	}
 
-	/**
-	 * @param extensionPointID
-	 * @return
-	 */
 	private IPluginExtensionPoint findFirstExtensionPoint(String extensionPointID) {
 		// Get all the extension points
 		IPluginExtensionPoint[] extensionPoints = fModel.getPluginBase().getExtensionPoints();
@@ -264,9 +227,6 @@ public class UpdateSplashHandlerAction extends Action implements ISplashHandlerC
 		return null;
 	}
 
-	/**
-	 * @throws CoreException
-	 */
 	private void addExtensionSplashHandlers() throws CoreException {
 		// Update progress work units
 		fMonitor.beginTask(NLS.bind(PDEUIMessages.UpdateSplashHandlerInModelAction_msgAddingExtension, F_SPLASH_HANDLERS_EXTENSION), 1);
@@ -277,10 +237,6 @@ public class UpdateSplashHandlerAction extends Action implements ISplashHandlerC
 		fMonitor.done();
 	}
 
-	/**
-	 * @return
-	 * @throws CoreException
-	 */
 	private IPluginExtension createExtensionSplashHandlers() throws CoreException {
 		// Create the extension
 		IPluginExtension extension = fModel.getFactory().createExtension();
@@ -294,10 +250,6 @@ public class UpdateSplashHandlerAction extends Action implements ISplashHandlerC
 		return extension;
 	}
 
-	/**
-	 * @param extension
-	 * @throws CoreException
-	 */
 	private void createExtensionChildrenSplashHandlers(IPluginExtension extension) throws CoreException {
 		// Add a splash handler element
 		addElementSplashHandler(extension);
@@ -305,10 +257,6 @@ public class UpdateSplashHandlerAction extends Action implements ISplashHandlerC
 		addElementProductBinding(extension);
 	}
 
-	/**
-	 * @param extension
-	 * @throws CoreException
-	 */
 	private void addElementSplashHandler(IPluginExtension extension) throws CoreException {
 		// Create the element
 		IPluginElement splashHandlerElement = createElementSplashHandler(extension);
@@ -321,10 +269,6 @@ public class UpdateSplashHandlerAction extends Action implements ISplashHandlerC
 		}
 	}
 
-	/**
-	 * @param extension
-	 * @throws CoreException
-	 */
 	private void addElementProductBinding(IPluginExtension extension) throws CoreException {
 		// Create the element
 		IPluginElement productBindingElement = createElementProductBinding(extension);
@@ -337,11 +281,6 @@ public class UpdateSplashHandlerAction extends Action implements ISplashHandlerC
 		}
 	}
 
-	/**
-	 * @param extension
-	 * @return
-	 * @throws CoreException
-	 */
 	private IPluginElement createElementSplashHandler(IPluginExtension extension) throws CoreException {
 		// Create the element
 		IPluginElement element = extension.getModel().getFactory().createElement(extension);
@@ -355,11 +294,6 @@ public class UpdateSplashHandlerAction extends Action implements ISplashHandlerC
 		return element;
 	}
 
-	/**
-	 * @param extension
-	 * @return
-	 * @throws CoreException
-	 */
 	private IPluginElement createElementProductBinding(IPluginExtension extension) throws CoreException {
 		// Create the element
 		IPluginElement element = extension.getModel().getFactory().createElement(extension);
@@ -373,10 +307,6 @@ public class UpdateSplashHandlerAction extends Action implements ISplashHandlerC
 		return element;
 	}
 
-	/**
-	 * @param extension
-	 * @throws CoreException
-	 */
 	private void modifyExtensionSplashHandlers(IPluginExtension extension) throws CoreException {
 		// Update progress work units
 		fMonitor.beginTask(NLS.bind(PDEUIMessages.UpdateSplashHandlerInModelAction_msgModifyingExtension, F_SPLASH_HANDLERS_EXTENSION), 1);
@@ -386,10 +316,6 @@ public class UpdateSplashHandlerAction extends Action implements ISplashHandlerC
 		fMonitor.done();
 	}
 
-	/**
-	 * @param extension
-	 * @throws CoreException
-	 */
 	private void modifyExtensionChildrenSplashHandlers(IPluginExtension extension) throws CoreException {
 		// Find a matching pre-generated splash handler element
 		IPluginElement splashHandlerElement = findSplashHandlerElement(extension);
@@ -421,9 +347,6 @@ public class UpdateSplashHandlerAction extends Action implements ISplashHandlerC
 		}
 	}
 
-	/**
-	 * @param extension
-	 */
 	private void removeMatchingProductBindingElements(IPluginExtension extension) throws CoreException {
 		// Check to see if the extension has any children
 		if (extension.getChildCount() == 0) {
@@ -457,10 +380,6 @@ public class UpdateSplashHandlerAction extends Action implements ISplashHandlerC
 		}
 	}
 
-	/**
-	 * @param extension
-	 * @return
-	 */
 	private IPluginElement findSplashHandlerElement(IPluginExtension extension) {
 		// Check to see if the extension has any children
 		if (extension.getChildCount() == 0) {
@@ -487,10 +406,6 @@ public class UpdateSplashHandlerAction extends Action implements ISplashHandlerC
 		return null;
 	}
 
-	/**
-	 * @param element
-	 * @throws CoreException
-	 */
 	private void syncSplashHandlerElement(IPluginElement element) throws CoreException {
 		// Get the class attribute
 		IPluginAttribute classAttribute = element.getAttribute(F_ATTRIBUTE_CLASS);
@@ -503,10 +418,6 @@ public class UpdateSplashHandlerAction extends Action implements ISplashHandlerC
 		element.setAttribute(F_ATTRIBUTE_CLASS, fFieldClass);
 	}
 
-	/**
-	 * @param element
-	 * @throws CoreException
-	 */
 	private void syncProductBindingElement(IPluginElement element) throws CoreException {
 		// Get the product ID attribute
 		IPluginAttribute productIDAttribute = element.getAttribute(F_ATTRIBUTE_PRODUCT_ID);
@@ -519,10 +430,6 @@ public class UpdateSplashHandlerAction extends Action implements ISplashHandlerC
 		element.setAttribute(F_ATTRIBUTE_PRODUCT_ID, fFieldProductID);
 	}
 
-	/**
-	 * @param extension
-	 * @return
-	 */
 	private IPluginElement findProductBindingElement(IPluginExtension extension) {
 		// Check to see if the extension has any children
 		if (extension.getChildCount() == 0) {
@@ -549,10 +456,6 @@ public class UpdateSplashHandlerAction extends Action implements ISplashHandlerC
 		return null;
 	}
 
-	/**
-	 * @return
-	 * @throws CoreException
-	 */
 	private IPluginExtension createExtensionSplash() throws CoreException {
 
 		String fullExtensionPointID = fFieldPluginID + '.' + F_SPLASH_EXTENSION_POINT;
@@ -568,10 +471,6 @@ public class UpdateSplashHandlerAction extends Action implements ISplashHandlerC
 		return extension;
 	}
 
-	/**
-	 * @param extension
-	 * @throws CoreException
-	 */
 	private void createExtensionChildrenSplash(IPluginExtension extension) throws CoreException {
 
 		String iconsDir = "icons" + '/'; //$NON-NLS-1$
@@ -603,14 +502,6 @@ public class UpdateSplashHandlerAction extends Action implements ISplashHandlerC
 		}
 	}
 
-	/**
-	 * @param extension
-	 * @param id
-	 * @param icon
-	 * @param tooltip
-	 * @return
-	 * @throws CoreException
-	 */
 	private IPluginElement createElementSplash(IPluginExtension extension, String id, String icon, String tooltip) throws CoreException {
 		// Create the element
 		IPluginElement element = extension.getModel().getFactory().createElement(extension);
@@ -626,10 +517,6 @@ public class UpdateSplashHandlerAction extends Action implements ISplashHandlerC
 		return element;
 	}
 
-	/**
-	 * @param template
-	 * @return true if the extension template was selected; false, otherwise
-	 */
 	public static boolean isExtensibleTemplateSelected(String template) {
 		if (template.equals(F_SPLASH_SCREEN_TYPE_CHOICES[2][0])) {
 			return true;

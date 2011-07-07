@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2010 IBM Corporation and others.
+ *  Copyright (c) 2000, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -161,11 +161,6 @@ public class OverviewPage extends LaunchShortcutOverviewPage {
 		section.setClient(container);
 	}
 
-	/**
-	 * @param toolkit
-	 * @param parent
-	 * @return
-	 */
 	protected Composite createStaticSectionClient(FormToolkit toolkit, Composite parent) {
 		Composite container = toolkit.createComposite(parent, SWT.NONE);
 		container.setLayout(FormLayoutFactory.createSectionClientTableWrapLayout(false, 1));

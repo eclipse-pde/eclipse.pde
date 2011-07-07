@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2008 IBM Corporation and others.
+ *  Copyright (c) 2006, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -14,10 +14,6 @@ package org.eclipse.pde.internal.ui.editor.contentassist;
 import org.eclipse.jface.fieldassist.IContentProposal;
 import org.eclipse.swt.graphics.Image;
 
-/**
- * TypeContentProposal
- *
- */
 public class TypeContentProposal implements IContentProposal {
 
 	private String fLabel;
@@ -28,9 +24,6 @@ public class TypeContentProposal implements IContentProposal {
 
 	private Image fImage;
 
-	/**
-	 * 
-	 */
 	public TypeContentProposal(String label, String content, String description, Image image) {
 		fLabel = label;
 		fContent = content;
@@ -69,9 +62,6 @@ public class TypeContentProposal implements IContentProposal {
 		return fLabel;
 	}
 
-	/**
-	 * @return
-	 */
 	public Image getImage() {
 		return fImage;
 	}

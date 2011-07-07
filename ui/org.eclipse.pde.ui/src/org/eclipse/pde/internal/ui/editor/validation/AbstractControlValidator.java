@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2008 IBM Corporation and others.
+ *  Copyright (c) 2006, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -54,9 +54,6 @@ public abstract class AbstractControlValidator implements IControlValidator, IVa
 		reset();
 	}
 
-	/**
-	 * @return
-	 */
 	protected boolean autoEnable() {
 		boolean isBinaryProject = WorkspaceModelManager.isBinaryProject(fProject);
 		// Enable validator if this is a source projec, the control is enabled 
@@ -113,9 +110,6 @@ public abstract class AbstractControlValidator implements IControlValidator, IVa
 		return fIsValid;
 	}
 
-	/**
-	 * @return
-	 */
 	protected abstract boolean validateControl();
 
 	/* (non-Javadoc)
@@ -142,10 +136,6 @@ public abstract class AbstractControlValidator implements IControlValidator, IVa
 		fManagedForm.getMessageManager().addMessage(F_DEFAULT_MESSAGE_KEY, messageText, null, messageType, fControl);
 	}
 
-	/**
-	 * @param status
-	 * @return
-	 */
 	public static int getMessageType(IStatus status) {
 		int severity = status.getSeverity();
 		// Translate severity to the equivalent message provider type
@@ -162,11 +152,6 @@ public abstract class AbstractControlValidator implements IControlValidator, IVa
 		return IMessageProvider.NONE;
 	}
 
-	/**
-	 * @param project
-	 * @param compilerFlagId
-	 * @return
-	 */
 	public static int getMessageType(IProject project, String compilerFlagId) {
 		int severity = CompilerFlags.getFlag(project, compilerFlagId);
 		// Translate severity to the equivalent message provider type

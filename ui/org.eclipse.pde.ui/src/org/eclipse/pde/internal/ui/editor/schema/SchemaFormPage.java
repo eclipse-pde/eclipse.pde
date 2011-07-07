@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2009 IBM Corporation and others.
+ *  Copyright (c) 2000, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -119,9 +119,6 @@ public class SchemaFormPage extends PDEFormPage implements IModelChangedListener
 		initialize();
 	}
 
-	/**
-	 * @return
-	 */
 	private ControlContribution createUIControlConPreviewRefDoc() {
 		return new ControlContribution("Preview") { //$NON-NLS-1$
 			protected Control createControl(Composite parent) {
@@ -134,9 +131,6 @@ public class SchemaFormPage extends PDEFormPage implements IModelChangedListener
 		};
 	}
 
-	/**
-	 * @param parent
-	 */
 	private void createUIImageHyperlinkPreviewRefDoc(Composite parent) {
 		fImageHyperlinkPreviewRefDoc = new ImageHyperlink(parent, SWT.NONE);
 		fImageHyperlinkPreviewRefDoc.setText(PDEUIMessages.SchemaEditor_previewLink);
@@ -144,9 +138,6 @@ public class SchemaFormPage extends PDEFormPage implements IModelChangedListener
 		fImageHyperlinkPreviewRefDoc.setForeground(getManagedForm().getToolkit().getHyperlinkGroup().getForeground());
 	}
 
-	/**
-	 * 
-	 */
 	private void createUIListenerImageHyperlinkPreviewRefDoc() {
 		fImageHyperlinkPreviewRefDoc.addHyperlinkListener(new IHyperlinkListener() {
 			public void linkActivated(HyperlinkEvent e) {
@@ -163,9 +154,6 @@ public class SchemaFormPage extends PDEFormPage implements IModelChangedListener
 		});
 	}
 
-	/**
-	 * @param message
-	 */
 	private void handleLinkEnteredPreviewRefDoc(String message) {
 		// Update colour
 		fImageHyperlinkPreviewRefDoc.setForeground(getManagedForm().getToolkit().getHyperlinkGroup().getActiveForeground());
@@ -173,9 +161,6 @@ public class SchemaFormPage extends PDEFormPage implements IModelChangedListener
 		getEditor().getEditorSite().getActionBars().getStatusLineManager().setMessage(message);
 	}
 
-	/**
-	 *
-	 */
 	private void handleLinkExitedPreviewRefDoc() {
 		// Update colour
 		fImageHyperlinkPreviewRefDoc.setForeground(getManagedForm().getToolkit().getHyperlinkGroup().getForeground());
@@ -183,9 +168,6 @@ public class SchemaFormPage extends PDEFormPage implements IModelChangedListener
 		getEditor().getEditorSite().getActionBars().getStatusLineManager().setMessage(null);
 	}
 
-	/**
-	 * 
-	 */
 	private void handleLinkActivatedPreviewRefDoc() {
 		ISchema schema = (ISchema) ((SchemaEditor) getEditor()).getAggregateModel();
 		if (fPreviewAction == null) {
@@ -232,9 +214,6 @@ public class SchemaFormPage extends PDEFormPage implements IModelChangedListener
 		}
 	}
 
-	/**
-	 * @param event
-	 */
 	private void handleModelEventWorldChanged(IModelChangedEvent event) {
 		// Note:  Cannot use event.  There are no changed objects within it
 		// This method acts like a refresh

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -160,12 +160,6 @@ public class PDEModelUtility {
 		return (SchemaEditor) getOpenEditor(IPDEUIConstants.SCHEMA_EDITOR_ID, SchemaInputContext.CONTEXT_ID, file);
 	}
 
-	/**
-	 * @param editorID
-	 * @param inputContextID
-	 * @param file
-	 * @return
-	 */
 	private static PDEFormEditor getOpenEditor(String editorID, String inputContextID, IFile file) {
 		// Get the file's project
 		IProject project = file.getProject();
@@ -227,11 +221,6 @@ public class PDEModelUtility {
 		return null;
 	}
 
-	/**
-	* 
-	* @param doc
-	* @return
-	*/
 	public static IEditingModel getOpenModel(IDocument doc) {
 		Iterator it = fOpenPDEEditors.values().iterator();
 		while (it.hasNext()) {

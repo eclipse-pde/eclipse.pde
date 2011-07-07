@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2008 IBM Corporation and others.
+ *  Copyright (c) 2005, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -10,11 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.text.bundle;
 
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.Vector;
-
+import java.util.*;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.bundle.BundleObject;
@@ -208,7 +204,6 @@ public class CompositeManifestHeader extends ManifestHeader {
 	/**
 	 * Method not applicable for headers that are sorted
 	 * @param targetElement
-	 * @return
 	 */
 	public PDEManifestElement getPreviousElement(PDEManifestElement targetElement) {
 		// Ensure we have elements
@@ -239,7 +234,6 @@ public class CompositeManifestHeader extends ManifestHeader {
 	/**
 	 * Method not applicable for headers that are sorted
 	 * @param targetElement
-	 * @return
 	 */
 	public PDEManifestElement getNextElement(PDEManifestElement targetElement) {
 		// Ensure we have elements
@@ -312,7 +306,6 @@ public class CompositeManifestHeader extends ManifestHeader {
 	/**
 	 * Method not applicable for headers that are sorted
 	 * @param targetElement
-	 * @return
 	 */
 	public int indexOf(PDEManifestElement targetElement) {
 		if (fSort) {
@@ -329,7 +322,6 @@ public class CompositeManifestHeader extends ManifestHeader {
 	 * Method not applicable for headers that are sorted
 	 * @param element
 	 * @param update
-	 * @return
 	 */
 	protected PDEManifestElement removeManifestElement(PDEManifestElement element, boolean update) {
 		if (fSort) {

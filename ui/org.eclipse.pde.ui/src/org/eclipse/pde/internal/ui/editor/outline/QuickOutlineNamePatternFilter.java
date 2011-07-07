@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2008 IBM Corporation and others.
+ *  Copyright (c) 2006, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -14,17 +14,10 @@ package org.eclipse.pde.internal.ui.editor.outline;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.ui.util.StringMatcher;
 
-/**
- * QuickOutlineNamePatternFilter
- *
- */
 public class QuickOutlineNamePatternFilter extends ViewerFilter {
 
 	private StringMatcher fStringMatcher;
 
-	/**
-	 * 
-	 */
 	public QuickOutlineNamePatternFilter() {
 		fStringMatcher = null;
 	}
@@ -49,11 +42,6 @@ public class QuickOutlineNamePatternFilter extends ViewerFilter {
 		return hasUnfilteredChild(treeViewer, element);
 	}
 
-	/**
-	 * @param viewer
-	 * @param element
-	 * @return
-	 */
 	private boolean hasUnfilteredChild(TreeViewer viewer, Object element) {
 		// No point calling hasChildren() because the operation is the same cost
 		// as getting the children
@@ -69,9 +57,6 @@ public class QuickOutlineNamePatternFilter extends ViewerFilter {
 		return false;
 	}
 
-	/**
-	 * @param stringMatcher
-	 */
 	public void setStringMatcher(StringMatcher stringMatcher) {
 		fStringMatcher = stringMatcher;
 	}

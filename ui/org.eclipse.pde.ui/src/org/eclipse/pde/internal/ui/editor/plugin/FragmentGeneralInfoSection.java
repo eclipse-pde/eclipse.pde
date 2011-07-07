@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
-import org.eclipse.pde.internal.ui.dialogs.PluginSelectionDialog;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
@@ -23,6 +21,7 @@ import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.dialogs.PluginSelectionDialog;
 import org.eclipse.pde.internal.ui.editor.FormEntryAdapter;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.validation.ControlValidationUtility;
@@ -125,9 +124,6 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 		};
 	}
 
-	/**
-	 * @return
-	 */
 	private boolean validatePluginId() {
 		// Validate host plugin
 		return ControlValidationUtility.validateFragmentHostPluginField(fPluginIdEntry.getText().getText(), fPluginIdValidator, getProject());
@@ -218,9 +214,6 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 		fPluginMaxVersionBound.addSelectionListener(comboListener);
 	}
 
-	/**
-	 * @return
-	 */
 	private boolean validatePluginMaxVersion() {
 		// No validation required for an optional field
 		if (fPluginMaxVersionEntry.getText().getText().length() == 0) {
@@ -230,9 +223,6 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 		return ControlValidationUtility.validateVersionField(fPluginMaxVersionEntry.getText().getText(), fPluginMaxVersionValidator);
 	}
 
-	/**
-	 * @return
-	 */
 	private boolean validatePluginMinVersion() {
 		// No validation required for an optional field
 		if (fPluginMinVersionEntry.getText().getText().length() == 0) {

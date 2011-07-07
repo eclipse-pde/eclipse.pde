@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2008 IBM Corporation and others.
+ *  Copyright (c) 2006, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -27,7 +27,6 @@ public class PDELabelUtility {
 	 * variable or if the label's text is set elsewhere.  Note:  Hyperlink 
 	 * label text will not be detected.
 	 * @param control
-	 * @return
 	 */
 	public static String getFieldLabel(Control control) {
 		// Note:  Does not handle hyperlink labels
@@ -77,11 +76,6 @@ public class PDELabelUtility {
 		return labelText;
 	}
 
-	/**
-	 * @param qualification
-	 * @param message
-	 * @return
-	 */
 	public static String qualifyMessage(String qualification, String message) {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(qualification);
@@ -91,10 +85,6 @@ public class PDELabelUtility {
 		return buffer.toString();
 	}
 
-	/**
-	 * @param base
-	 * @param set
-	 */
 	private static void addNumberToBase(StringBuffer base, boolean bracketed, HashSet set) {
 		if (set.size() > 0) {
 			// Limit on the number of auto-generated item numbers to check for
@@ -188,9 +178,6 @@ public class PDELabelUtility {
 		}
 	}
 
-	/**
-	 * @return
-	 */
 	public static String generateName(String[] names, String base) {
 		return generateName(names, base, true);
 	}

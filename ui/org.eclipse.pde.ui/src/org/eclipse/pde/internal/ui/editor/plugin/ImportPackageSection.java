@@ -313,9 +313,6 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 		}
 	}
 
-	/**
-	 * @return
-	 */
 	private String getImportedPackageHeader() {
 		return Constants.IMPORT_PACKAGE;
 	}

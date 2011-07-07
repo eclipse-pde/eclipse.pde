@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -96,10 +96,6 @@ public class HistoryListDialog extends StatusDialog {
 		return composite;
 	}
 
-	/**
-	 * @param parent
-	 * @return
-	 */
 	private Composite createListArea(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
 		GridLayout layout1 = new GridLayout();
@@ -114,9 +110,6 @@ public class HistoryListDialog extends StatusDialog {
 		return container;
 	}
 
-	/**
-	 * @param container
-	 */
 	private void createListButtons(Composite parent) {
 		fRemoveButton = new Button(parent, SWT.PUSH);
 		fRemoveButton.setText(PDEUIMessages.HistoryListDialog_remove_button);
@@ -139,10 +132,6 @@ public class HistoryListDialog extends StatusDialog {
 		});
 	}
 
-	/**
-	 * @param parent
-	 * @return
-	 */
 	private Control createTableArea(Composite parent) {
 		Table table = new Table(parent, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL);
 		GridData gd = new GridData(GridData.FILL_BOTH);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2008 IBM Corporation and others.
+ *  Copyright (c) 2007, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -16,10 +16,6 @@ import org.eclipse.jface.viewers.ViewerDropAdapter;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.TransferData;
 
-/**
- * PDEDropAdapter
- *
- */
 public class PDEDropAdapter extends ViewerDropAdapter {
 
 	private IPDEDropParticipant fDropParticipant;
@@ -28,9 +24,6 @@ public class PDEDropAdapter extends ViewerDropAdapter {
 
 	private int fLastValidOperation;
 
-	/**
-	 * @param viewer
-	 */
 	public PDEDropAdapter(Viewer viewer, IPDEDropParticipant dropParticipant, IPDESourceParticipant sourceParticipant) {
 		super(viewer);
 		fDropParticipant = dropParticipant;
@@ -38,17 +31,10 @@ public class PDEDropAdapter extends ViewerDropAdapter {
 		resetLastValidOperation();
 	}
 
-	/**
-	 * 
-	 */
 	protected void resetLastValidOperation() {
 		fLastValidOperation = DND.DROP_NONE;
 	}
 
-	/**
-	 * @param currentOperation
-	 * @return
-	 */
 	protected int getLastValidOperation(int currentOperation) {
 		if (currentOperation != DND.DROP_NONE) {
 			fLastValidOperation = currentOperation;
@@ -139,22 +125,10 @@ public class PDEDropAdapter extends ViewerDropAdapter {
 		return false;
 	}
 
-	/**
-	 * @param targetObject
-	 * @param sourceObjects
-	 * @param targetLocation
-	 * @return
-	 */
 	protected boolean validateDropCopy(Object targetObject, Object[] sourceObjects, int targetLocation) {
 		return fDropParticipant.canDropCopy(targetObject, sourceObjects, targetLocation);
 	}
 
-	/**
-	 * @param targetObject
-	 * @param sourceObjects
-	 * @param targetLocation
-	 * @return
-	 */
 	protected boolean validateDropMove(Object targetObject, Object[] sourceObjects, int targetLocation) {
 		// Source objects have not been serialized yet.
 		// As a result we can compare whether a source and target object is
@@ -171,22 +145,10 @@ public class PDEDropAdapter extends ViewerDropAdapter {
 		return fDropParticipant.canDropMove(targetObject, sourceObjects, targetLocation);
 	}
 
-	/**
-	 * @param targetObject
-	 * @param sourceObjects
-	 * @param targetLocation
-	 * @return
-	 */
 	protected boolean validateDropLink(Object targetObject, Object[] sourceObjects, int targetLocation) {
 		return fDropParticipant.canDropLink(targetObject, sourceObjects, targetLocation);
 	}
 
-	/**
-	 * @param targetObject
-	 * @param sourceObjects
-	 * @param targetLocation
-	 * @return
-	 */
 	protected boolean validateDropDefault(Object targetObject, Object[] sourceObjects, int targetLocation) {
 		return validateDropMove(targetObject, sourceObjects, targetLocation);
 	}

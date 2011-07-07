@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2009 IBM Corporation and others.
+ *  Copyright (c) 2006, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -26,10 +26,6 @@ import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Point;
 
-/**
- * ExtensionAttributePointDectector
- *
- */
 public class ExtensionAttributePointDectector implements MouseListener, KeyListener {
 
 	private ManifestSourcePage fSourcePage;
@@ -38,25 +34,16 @@ public class ExtensionAttributePointDectector implements MouseListener, KeyListe
 
 	private ISelection fSelection;
 
-	/**
-	 * 
-	 */
 	public ExtensionAttributePointDectector() {
 		fSelection = null;
 		fStyledText = null;
 		fSourcePage = null;
 	}
 
-	/**
-	 * @return
-	 */
 	public ISelection getSelection() {
 		return fSelection;
 	}
 
-	/**
-	 * @param editor
-	 */
 	public void setTextEditor(ManifestSourcePage editor) {
 		fSourcePage = editor;
 		// Get the new styled text widget
@@ -81,9 +68,6 @@ public class ExtensionAttributePointDectector implements MouseListener, KeyListe
 		checkIfOnTarget();
 	}
 
-	/**
-	 * @return
-	 */
 	private void checkIfOnTarget() {
 		// Reset the Selection
 		fSelection = null;
@@ -142,9 +126,6 @@ public class ExtensionAttributePointDectector implements MouseListener, KeyListe
 		fSelection = new StructuredSelection(extension);
 	}
 
-	/**
-	 * 
-	 */
 	private void removeListeners() {
 		if (isInputInitialized() == false) {
 			return;
@@ -153,9 +134,6 @@ public class ExtensionAttributePointDectector implements MouseListener, KeyListe
 		fStyledText.removeKeyListener(this);
 	}
 
-	/**
-	 * @return
-	 */
 	private boolean isInputInitialized() {
 		if ((fStyledText == null) || (fStyledText.isDisposed())) {
 			return false;
@@ -163,9 +141,6 @@ public class ExtensionAttributePointDectector implements MouseListener, KeyListe
 		return true;
 	}
 
-	/**
-	 * 
-	 */
 	private void addListeners() {
 		if (isInputInitialized() == false) {
 			return;

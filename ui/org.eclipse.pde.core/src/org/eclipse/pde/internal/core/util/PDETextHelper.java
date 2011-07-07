@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2008 IBM Corporation and others.
+ *  Copyright (c) 2006, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -11,24 +11,14 @@
 
 package org.eclipse.pde.internal.core.util;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * PDETextHelper
- *
- */
 public class PDETextHelper {
 
 	public static final String F_DOTS = "..."; //$NON-NLS-1$
 
-	/**
-	 * @param text
-	 * @return
-	 */
 	public static String truncateAndTrailOffText(String text, int limit) {
 		String trimmed = text.trim();
 		int dotsLength = F_DOTS.length();
@@ -46,10 +36,6 @@ public class PDETextHelper {
 		return trimmed.substring(0, limitWithDots) + F_DOTS;
 	}
 
-	/**
-	 * @param text
-	 * @return
-	 */
 	public static boolean isDefined(String text) {
 		if ((text == null) || (text.length() == 0)) {
 			return false;
@@ -57,10 +43,6 @@ public class PDETextHelper {
 		return true;
 	}
 
-	/**
-	 * @param text
-	 * @return
-	 */
 	public static boolean isDefinedAfterTrim(String text) {
 		if (text == null) {
 			return false;
@@ -116,21 +98,10 @@ public class PDETextHelper {
 		return result;
 	}
 
-	/**
-	 * @param text
-	 * @param substituteChars
-	 * @return
-	 */
 	public static String translateWriteText(String text, HashMap substituteChars) {
 		return translateWriteText(text, null, substituteChars);
 	}
 
-	/**
-	 * @param text
-	 * @param tagExceptions
-	 * @param substituteChars
-	 * @return
-	 */
 	public static String translateWriteText(String text, HashSet tagExceptions, HashMap substituteChars) {
 		// Ensure not null
 		if (text == null) {
@@ -179,12 +150,6 @@ public class PDETextHelper {
 		return buffer.toString();
 	}
 
-	/**
-	 * @param currentChar
-	 * @param substituteChars
-	 * @param buffer
-	 * @return
-	 */
 	private static boolean processSubstituteChars(char currentChar, HashMap substituteChars, StringBuffer buffer) {
 		Character character = new Character(currentChar);
 		if (substituteChars.containsKey(character)) {
@@ -199,15 +164,6 @@ public class PDETextHelper {
 		return false;
 	}
 
-	/**
-	 * @param currentChar
-	 * @param tagExceptions
-	 * @param buffer
-	 * @param scanLimit
-	 * @param inputText
-	 * @param index
-	 * @return
-	 */
 	private static boolean processTagExceptions(char currentChar, HashMap substituteChars, HashSet tagExceptions, StringBuffer buffer, int scanLimit, String text, IntegerPointer index) {
 		// If the current character is an open angle bracket, then it may be
 		// part of a valid tag exception
@@ -245,11 +201,6 @@ public class PDETextHelper {
 		return false;
 	}
 
-	/**
-	 * @param substituteChars
-	 * @param buffer
-	 * @param text
-	 */
 	private static void processTagExceptionCharacters(HashMap substituteChars, StringBuffer buffer, String text) {
 		// Get the tag name
 		String tagName = getTagName(text);
@@ -312,11 +263,6 @@ public class PDETextHelper {
 		buffer.append('>');
 	}
 
-	/**
-	 * @param tagExceptions
-	 * @param buffer
-	 * @return
-	 */
 	private static boolean isValidTagException(HashSet tagExceptions, String buffer) {
 		// Sample buffer format:
 		// NO '<'
@@ -331,10 +277,6 @@ public class PDETextHelper {
 		return false;
 	}
 
-	/**
-	 * @param text
-	 * @return
-	 */
 	private static boolean isValidTagAttributeList(String text) {
 		// Determine whether the given attribute list is formatted in the
 		// valid name="value" XML format
@@ -351,10 +293,6 @@ public class PDETextHelper {
 		return matcher.find();
 	}
 
-	/**
-	 * @param buffer
-	 * @return
-	 */
 	private static String getTagName(String buffer) {
 		// Sample buffer format:
 		// NO '<'
@@ -373,10 +311,6 @@ public class PDETextHelper {
 		return tagName.toString();
 	}
 
-	/**
-	 * @param set
-	 * @return
-	 */
 	private static int determineMaxLength(HashSet set) {
 		Iterator iterator = set.iterator();
 		int maxLength = -1;
@@ -390,38 +324,22 @@ public class PDETextHelper {
 		return maxLength;
 	}
 
-	/**
-	 * IntegerPointer
-	 *
-	 */
 	private static class IntegerPointer {
 
 		private int fInteger;
 
-		/**
-		 * 
-		 */
 		public IntegerPointer(int integer) {
 			fInteger = integer;
 		}
 
-		/**
-		 * @return
-		 */
 		public int getInteger() {
 			return fInteger;
 		}
 
-		/**
-		 * @param integer
-		 */
 		public void setInteger(int integer) {
 			fInteger = integer;
 		}
 
-		/**
-		 * 
-		 */
 		public void increment() {
 			fInteger++;
 		}

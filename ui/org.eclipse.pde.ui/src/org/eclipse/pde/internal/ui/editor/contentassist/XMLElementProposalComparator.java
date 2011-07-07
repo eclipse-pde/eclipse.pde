@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2008 IBM Corporation and others.
+ *  Copyright (c) 2007, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -14,15 +14,8 @@ package org.eclipse.pde.internal.ui.editor.contentassist;
 import java.util.Comparator;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
 
-/**
- * XMLElementProposalComparator
- *
- */
 public class XMLElementProposalComparator implements Comparator {
 
-	/**
-	 * 
-	 */
 	public XMLElementProposalComparator() {
 		// NO-OP
 	}
@@ -37,10 +30,6 @@ public class XMLElementProposalComparator implements Comparator {
 		return proposal1.compareToIgnoreCase(proposal2);
 	}
 
-	/**
-	 * @param proposal
-	 * @return
-	 */
 	private String getSortKey(ISchemaElement proposal) {
 		return proposal.getName();
 	}

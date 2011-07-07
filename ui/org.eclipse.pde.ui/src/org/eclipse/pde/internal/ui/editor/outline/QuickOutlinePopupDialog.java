@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2008 IBM Corporation and others.
+ *  Copyright (c) 2006, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -26,10 +26,6 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 
-/**
- * AbstractInfoPopupDialog
- *
- */
 public class QuickOutlinePopupDialog extends PopupDialog implements IInformationControl, IInformationControlExtension, IInformationControlExtension2, DisposeListener {
 
 	private TreeViewer fTreeViewer;
@@ -67,9 +63,6 @@ public class QuickOutlinePopupDialog extends PopupDialog implements IInformation
 		create();
 	}
 
-	/**
-	 * 
-	 */
 	private void initialize() {
 		setInfoText(PDEUIMessages.QuickOutlinePopupDialog_infoTextPressEscToExit);
 
@@ -105,9 +98,6 @@ public class QuickOutlinePopupDialog extends PopupDialog implements IInformation
 		return fTreeViewer.getControl();
 	}
 
-	/**
-	 * 
-	 */
 	private void createUIActions() {
 		// Add sort action to dialog menu
 		fSortAction = new SortAction(fTreeViewer, PDEUIMessages.PDEMultiPageContentOutline_SortingAction_tooltip, fTreeViewerComparator, fTreeViewerDefaultComparator, null);
@@ -125,9 +115,6 @@ public class QuickOutlinePopupDialog extends PopupDialog implements IInformation
 		super.fillDialogMenu(dialogMenu);
 	}
 
-	/**
-	 * @param parent
-	 */
 	private void createUIWidgetTreeViewer(Composite parent) {
 
 		// NOTE: Instructions to implement for PDE form pages:
@@ -169,9 +156,6 @@ public class QuickOutlinePopupDialog extends PopupDialog implements IInformation
 		fTreeViewer.setInput(fOutlineContentCreator.getOutlineInput());
 	}
 
-	/**
-	 * 
-	 */
 	private void createUIListenersTreeViewer() {
 		// Get the underlying tree widget
 		final Tree tree = fTreeViewer.getTree();
@@ -208,10 +192,6 @@ public class QuickOutlinePopupDialog extends PopupDialog implements IInformation
 		});
 	}
 
-	/**
-	 * @param tree
-	 * @param e
-	 */
 	private void handleTreeViewerMouseUp(final Tree tree, MouseEvent e) {
 		// Ensure a selection was made, the first mouse button was
 		// used and the event happened in the tree
@@ -226,9 +206,6 @@ public class QuickOutlinePopupDialog extends PopupDialog implements IInformation
 		}
 	}
 
-	/**
-	 * @return
-	 */
 	private Object getSelectedElement() {
 		if (fTreeViewer == null) {
 			return null;
@@ -410,10 +387,6 @@ public class QuickOutlinePopupDialog extends PopupDialog implements IInformation
 		return fFilterText;
 	}
 
-	/**
-	 * @param parent
-	 * @return
-	 */
 	private void createUIWidgetFilterText(Composite parent) {
 		// Create the widget
 		fFilterText = new Text(parent, SWT.NONE);
@@ -430,9 +403,6 @@ public class QuickOutlinePopupDialog extends PopupDialog implements IInformation
 		fFilterText.setLayoutData(data);
 	}
 
-	/**
-	 * 
-	 */
 	private void gotoSelectedElement() {
 		Object selectedElement = getSelectedElement();
 		if (selectedElement == null) {
@@ -445,9 +415,6 @@ public class QuickOutlinePopupDialog extends PopupDialog implements IInformation
 		fOutlineSelectionHandler.getContentOutline().setSelection(new StructuredSelection(selectedElement));
 	}
 
-	/**
-	 * 
-	 */
 	private void createUIListenersFilterText() {
 		// Handle key events
 		fFilterText.addKeyListener(new KeyListener() {
@@ -546,10 +513,6 @@ public class QuickOutlinePopupDialog extends PopupDialog implements IInformation
 		}
 	}
 
-	/**
-	 * @param items
-	 * @return
-	 */
 	private Object findFirstMatchToPattern(TreeItem[] items) {
 		// Match the string pattern against labels
 		ILabelProvider labelProvider = (ILabelProvider) fTreeViewer.getLabelProvider();

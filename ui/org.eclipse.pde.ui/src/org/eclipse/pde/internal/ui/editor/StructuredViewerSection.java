@@ -133,20 +133,11 @@ public abstract class StructuredViewerSection extends PDESection implements IPDE
 		return fViewerPart.getViewer().getSelection();
 	}
 
-	/**
-	 * @param targetObject
-	 * @param sourceObjects
-	 */
 	protected void doPaste(Object targetObject, Object[] sourceObjects) {
 		// NO-OP
 		// Children will override to provide fuctionality
 	}
 
-	/**
-	 * @param targetObject
-	 * @param sourceObjects
-	 * @return
-	 */
 	protected boolean canPaste(Object targetObject, Object[] sourceObjects) {
 		return false;
 	}
@@ -268,9 +259,6 @@ public abstract class StructuredViewerSection extends PDESection implements IPDE
 		return DND.DROP_MOVE;
 	}
 
-	/**
-	 * 
-	 */
 	protected void initializeDragAndDrop() {
 		// Ensure the model is editable and we have a viewer part
 		if (isEditable() == false) {
@@ -308,37 +296,22 @@ public abstract class StructuredViewerSection extends PDESection implements IPDE
 		return fDragAdapter.getSourceObjects();
 	}
 
-	/**
-	 * @return
-	 */
 	protected Transfer[] getDragTransfers() {
 		return new Transfer[] {ModelDataTransfer.getInstance(), TextTransfer.getInstance()};
 	}
 
-	/**
-	 * @return
-	 */
 	protected Transfer[] getDropTransfers() {
 		return getDragTransfers();
 	}
 
-	/**
-	 * @return
-	 */
 	protected boolean isDragAndDropEnabled() {
 		return false;
 	}
 
-	/**
-	 * @param select
-	 */
 	protected void doSelect(boolean select) {
 		fDoSelection = select;
 	}
 
-	/**
-	 * @return
-	 */
 	protected boolean canSelect() {
 		return fDoSelection;
 	}

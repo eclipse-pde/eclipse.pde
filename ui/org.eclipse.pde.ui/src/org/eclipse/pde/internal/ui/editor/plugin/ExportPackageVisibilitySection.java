@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,6 @@
  *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 201572
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
-
-import org.eclipse.pde.internal.ui.dialogs.PluginSelectionDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +24,7 @@ import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.core.text.bundle.ExportPackageObject;
 import org.eclipse.pde.internal.core.text.bundle.PackageFriend;
 import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.dialogs.PluginSelectionDialog;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
@@ -212,9 +211,6 @@ public class ExportPackageVisibilitySection extends TableSection implements IPar
 		return true;
 	}
 
-	/**
-	 * @return
-	 */
 	private boolean isOneObjectSelected() {
 		if ((fSelectedObjects == null) || (fSelectedObjects.length != 1)) {
 			return false;

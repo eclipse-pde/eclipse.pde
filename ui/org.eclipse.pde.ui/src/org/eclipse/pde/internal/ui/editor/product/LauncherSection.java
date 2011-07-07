@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -268,19 +268,10 @@ public class LauncherSection extends PDESection {
 		return comp;
 	}
 
-	/**
-	 * @param ientry
-	 * @return
-	 */
 	private boolean validateSingleWinIcon(IconEntry ientry) {
 		return EditorUtilities.imageEntryHasValidIco(fSingleWinIconValidator, ientry, getProduct());
 	}
 
-	/**
-	 * @param ientry
-	 * @param index
-	 * @return
-	 */
 	private boolean validateMultipleWinIcon(IconEntry ientry, int index) {
 		return EditorUtilities.imageEntryHasExactDepthAndSize(fMultipleWinIconValidator[index], ientry, getProduct(), F_WIN_ICON_DIMENSIONS[index][0], F_WIN_ICON_DIMENSIONS[index][1], F_WIN_ICON_DEPTHS[index]);
 	}

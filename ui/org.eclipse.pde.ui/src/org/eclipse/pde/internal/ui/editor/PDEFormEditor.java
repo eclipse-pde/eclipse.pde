@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2009 IBM Corporation and others.
+ *  Copyright (c) 2000, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -379,9 +379,6 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 		}
 	}
 
-	/**
-	 * @return
-	 */
 	private boolean doRevertFormPage() {
 		boolean reverted = false;
 		IBaseModel model = getAggregateModel();
@@ -393,9 +390,6 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 		return reverted;
 	}
 
-	/**
-	 * @return
-	 */
 	private boolean doRevertSourcePages() {
 		boolean reverted = false;
 		IFormPage[] pages = getPages();
@@ -444,9 +438,6 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 		}
 	}
 
-	/**
-	 * @return
-	 */
 	public String getContextIDForSaveAs() {
 		// Sub-classes must override this method and the isSaveAsAllowed 
 		// method to perform save as operations
@@ -540,15 +531,8 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 		return section.get(getEditorID());
 	}
 
-	/**
-	 * @return
-	 */
 	protected abstract String getEditorID();
 
-	/**
-	 * @param input
-	 * @param pageId
-	 */
 	protected void setPropertyEditorPageKey(IFileEditorInput input, String pageId) {
 		// We are using the file itself to persist the editor page key property
 		// The value persists even after the editor is closed
@@ -561,9 +545,6 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 		}
 	}
 
-	/**
-	 * @return
-	 */
 	private String loadDefaultPage() {
 		IEditorInput input = getEditorInput();
 		if (input instanceof IFileEditorInput) {
@@ -578,10 +559,6 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 		return null;
 	}
 
-	/**
-	 * @param input
-	 * @return
-	 */
 	protected String getPropertyEditorPageKey(IFileEditorInput input) {
 		// We are using the file itself to persist the editor page key property
 		// The value persists even after the editor is closed
@@ -663,9 +640,6 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 		}
 	}
 
-	/**
-	 * @return
-	 */
 	private IDialogSettings getSettingsSection() {
 		// Store global settings that will persist when the editor is closed
 		// in the dialog settings (This is cheating)
@@ -813,9 +787,6 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 		}
 	}
 
-	/**
-	 * @param selection
-	 */
 	private void copyToClipboard(ISelection selection) {
 		Object[] objects = null;
 		String textVersion = null;
@@ -967,9 +938,6 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 
 	public abstract void editorContextAdded(InputContext context);
 
-	/**
-	 * @return
-	 */
 	protected IProgressMonitor getProgressMonitor() {
 		IProgressMonitor monitor = null;
 		IStatusLineManager manager = getStatusLineManager();
@@ -982,9 +950,6 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 		return monitor;
 	}
 
-	/**
-	 * @return
-	 */
 	protected IStatusLineManager getStatusLineManager() {
 		return getEditorSite().getActionBars().getStatusLineManager();
 	}

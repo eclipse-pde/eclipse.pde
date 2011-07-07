@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2008 IBM Corporation and others.
+ *  Copyright (c) 2006, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -24,16 +24,8 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.text.XMLUtil;
 
-/**
- * XMLInsertionComputer
- *
- */
 public class XMLInsertionComputer {
 
-	/**
-	 * @param sElement
-	 * @param pElement
-	 */
 	public static void computeInsertion(ISchemaElement sElement, IPluginParent pElement) {
 		HashSet visited = new HashSet();
 		if ((sElement == null) || (pElement == null)) {
@@ -51,12 +43,6 @@ public class XMLInsertionComputer {
 		}
 	}
 
-	/**
-	 * @param sElement
-	 * @param pElement
-	 * @param visited
-	 * @throws CoreException
-	 */
 	protected static void computeInsertionParent(ISchemaElement sElement, IPluginParent pElement, HashSet visited) throws CoreException {
 		// Determine if the edge case is applicable
 		if (isSingleZeroElementEdgeCase(sElement, pElement)) {
@@ -106,11 +92,6 @@ public class XMLInsertionComputer {
 		pElement.add(childElement);
 	}
 
-	/**
-	 * @param sElement
-	 * @param pElement
-	 * @return
-	 */
 	protected static boolean isSingleZeroElementEdgeCase(ISchemaElement sElement, IPluginParent pElement) {
 		// Determine whether the edge case is applicable
 		if ((sElement.getType() instanceof ISchemaComplexType) && (pElement instanceof IPluginExtension)) {
@@ -140,12 +121,6 @@ public class XMLInsertionComputer {
 		return false;
 	}
 
-	/**
-	 * @param sElement
-	 * @param pElement
-	 * @param visited
-	 * @throws CoreException
-	 */
 	protected static void computeInsertionType(ISchemaElement sElement, IPluginParent pElement, HashSet visited) throws CoreException {
 
 		if ((sElement == null) || (pElement == null)) {
@@ -177,12 +152,6 @@ public class XMLInsertionComputer {
 		}
 	}
 
-	/**
-	 * @param pElement
-	 * @param visited
-	 * @param schemaObject
-	 * @throws CoreException
-	 */
 	protected static void computeInsertionObject(IPluginParent pElement, HashSet visited, ISchemaObject schemaObject) throws CoreException {
 		if (schemaObject instanceof ISchemaElement) {
 			ISchemaElement schemaElement = (ISchemaElement) schemaObject;
@@ -195,10 +164,6 @@ public class XMLInsertionComputer {
 		}
 	}
 
-	/**
-	 * @param pElement
-	 * @param compositor
-	 */
 	protected static boolean isSequenceCompositor(ISchemaCompositor compositor) {
 		if (compositor == null) {
 			return false;
@@ -221,12 +186,6 @@ public class XMLInsertionComputer {
 		}
 	}
 
-	/**
-	 * @param pElement
-	 * @param visited
-	 * @param schemaElement
-	 * @throws CoreException
-	 */
 	protected static void computeInsertionElement(IPluginParent pElement, HashSet visited, ISchemaElement schemaElement) throws CoreException {
 		for (int j = 0; j < schemaElement.getMinOccurs(); j++) {
 			// Update Model
@@ -249,7 +208,6 @@ public class XMLInsertionComputer {
 	 * parent.  Callers responsibility to add the child element to the parent.
 	 * @param pElement
 	 * @param schemaElement
-	 * @return
 	 * @throws CoreException
 	 */
 	protected static IPluginElement createElement(IPluginParent pElement, ISchemaElement schemaElement) throws CoreException {
@@ -259,11 +217,6 @@ public class XMLInsertionComputer {
 		return childElement;
 	}
 
-	/**
-	 * @param pElement
-	 * @param type
-	 * @param attributes
-	 */
 	protected static void computeInsertionAllAttributes(IPluginParent pElement, ISchemaElement sElement) {
 		// Has to be a complex type if there are attributes
 		ISchemaComplexType type = (ISchemaComplexType) sElement.getType();
@@ -306,12 +259,6 @@ public class XMLInsertionComputer {
 		}
 	}
 
-	/**
-	 * @param project
-	 * @param counter
-	 * @param attribute
-	 * @return
-	 */
 	protected static String generateAttributeValue(IProject project, int counter, ISchemaAttribute attribute) {
 		String value = ""; //$NON-NLS-1$
 		ISchemaRestriction restriction = attribute.getType().getRestriction();
@@ -360,11 +307,6 @@ public class XMLInsertionComputer {
 		return defaultValue;
 	}
 
-	/**
-	 * @param compositor
-	 * @param pElement
-	 * @param visited
-	 */
 	protected static void computeInsertionSequence(ISchemaCompositor compositor, IPluginParent pElement, HashSet visited) throws CoreException {
 		if (compositor == null)
 			return;
@@ -382,13 +324,6 @@ public class XMLInsertionComputer {
 		}
 	}
 
-	/**
-	 * @param parent
-	 * @param attName
-	 * @param attValue
-	 * @param counter
-	 * @throws CoreException
-	 */
 	protected static void setAttribute(IPluginParent parent, String attName, String attValue, int counter) throws CoreException {
 		if (parent instanceof IPluginElement) {
 			((IPluginElement) parent).setAttribute(attName, attValue);

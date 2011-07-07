@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,9 +29,6 @@ import org.eclipse.pde.internal.ui.IPDEUIConstants;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.text.edits.*;
 
-/**
- * UpdateSplashProgressOperation
- */
 public class UpdateSplashProgressOperation implements IWorkspaceRunnable {
 
 	public static final String F_EXTENSION_PRODUCT = "org.eclipse.core.runtime.products"; //$NON-NLS-1$
@@ -71,23 +68,14 @@ public class UpdateSplashProgressOperation implements IWorkspaceRunnable {
 		fTextFileBuffer = null;
 	}
 
-	/**
-	 * @param pluginID
-	 */
 	public void setPluginID(String pluginID) {
 		fPluginId = pluginID;
 	}
 
-	/**
-	 * @param model
-	 */
 	public void setModel(IPluginModelBase model) {
 		fModel = model;
 	}
 
-	/**
-	 * @param monitor
-	 */
 	private void setMonitor(IProgressMonitor monitor) {
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
@@ -95,23 +83,14 @@ public class UpdateSplashProgressOperation implements IWorkspaceRunnable {
 		fMonitor = monitor;
 	}
 
-	/**
-	 * @param showProgress
-	 */
 	public void setShowProgress(boolean showProgress) {
 		fShowProgress = showProgress;
 	}
 
-	/**
-	 * @param productID
-	 */
 	public void setProductID(String productID) {
 		fProductID = productID;
 	}
 
-	/**
-	 * @param project
-	 */
 	public void setProject(IProject project) {
 		fProject = project;
 	}
@@ -131,9 +110,6 @@ public class UpdateSplashProgressOperation implements IWorkspaceRunnable {
 		}
 	}
 
-	/**
-	 * @throws CoreException
-	 */
 	private void update() throws CoreException {
 		// Find the product extension
 		IPluginExtension productExtension = findProductExtension();
@@ -178,10 +154,6 @@ public class UpdateSplashProgressOperation implements IWorkspaceRunnable {
 		fMonitor.worked(4);
 	}
 
-	/**
-	 * @param valueAttribute
-	 * @return
-	 */
 	private boolean isAttributeValueDefined(IPluginAttribute valueAttribute) {
 		if (valueAttribute == null) {
 			return false;
@@ -189,10 +161,6 @@ public class UpdateSplashProgressOperation implements IWorkspaceRunnable {
 		return PDETextHelper.isDefined(valueAttribute.getValue());
 	}
 
-	/**
-	 * @param resource
-	 * @return
-	 */
 	private boolean isFileExist(IResource resource) {
 		if (resource == null) {
 			return false;
@@ -200,10 +168,6 @@ public class UpdateSplashProgressOperation implements IWorkspaceRunnable {
 		return (resource instanceof IFile);
 	}
 
-	/**
-	 * @param propertyElement
-	 * @throws CoreException
-	 */
 	private void updatePreferenceCustomizationElement(IPluginElement propertyElement) throws CoreException {
 		// Get the plug-in customization ini file name
 		IPluginAttribute valueAttribute = propertyElement.getAttribute(F_ATTRIBUTE_VALUE);
@@ -244,29 +208,16 @@ public class UpdateSplashProgressOperation implements IWorkspaceRunnable {
 		updatePluginCustomizationFile((IFile) resource);
 	}
 
-	/**
-	 * @param message
-	 * @param exception
-	 * @return
-	 */
 	private CoreException createCoreException(String message, Throwable exception) {
 		IStatus status = new Status(IStatus.ERROR, IPDEUIConstants.PLUGIN_ID, message, exception);
 		return new CoreException(status);
 	}
 
-	/**
-	 * @param message
-	 * @return
-	 */
 	private CoreException createCoreException(String message) {
 		IStatus status = new Status(IStatus.ERROR, IPDEUIConstants.PLUGIN_ID, message);
 		return new CoreException(status);
 	}
 
-	/**
-	 * @return
-	 * @throws CoreException
-	 */
 	private ITextFileBufferManager getTextFileBufferManager() throws CoreException {
 		if (fTextFileBufferManager == null) {
 			// Get the text file buffer manager
@@ -279,11 +230,6 @@ public class UpdateSplashProgressOperation implements IWorkspaceRunnable {
 		return fTextFileBufferManager;
 	}
 
-	/**
-	 * @param file
-	 * @return
-	 * @throws CoreException
-	 */
 	private ITextFileBuffer getPluginCustomizationBuffer(IFile file) throws CoreException {
 		IPath path = file.getFullPath();
 		LocationKind kind = LocationKind.IFILE;
@@ -296,11 +242,6 @@ public class UpdateSplashProgressOperation implements IWorkspaceRunnable {
 		return fTextFileBuffer;
 	}
 
-	/**
-	 * @param file
-	 * @return
-	 * @throws CoreException
-	 */
 	private BuildModel getBuildModel(IFile file) throws CoreException {
 		// Convert the file to a document
 		// Defines a text file buffer
@@ -318,10 +259,6 @@ public class UpdateSplashProgressOperation implements IWorkspaceRunnable {
 		return pluginCustomModel;
 	}
 
-	/**
-	 * @param file
-	 * @throws CoreException
-	 */
 	private void updatePluginCustomizationFile(IFile file) throws CoreException {
 		IPath path = file.getFullPath();
 		LocationKind kind = LocationKind.IFILE;
@@ -356,12 +293,6 @@ public class UpdateSplashProgressOperation implements IWorkspaceRunnable {
 		}
 	}
 
-	/**
-	 * @param pluginCustomModel
-	 * @throws CoreException
-	 * @throws MalformedTreeException
-	 * @throws BadLocationException
-	 */
 	private void savePluginCustomFileChanges(BuildModel pluginCustomModel) throws CoreException, MalformedTreeException, BadLocationException {
 		// Ensure there is something to save
 		if (pluginCustomModel.isDirty() == false) {
@@ -393,10 +324,6 @@ public class UpdateSplashProgressOperation implements IWorkspaceRunnable {
 		fTextFileBuffer.commit(new SubProgressMonitor(fMonitor, 1), true);
 	}
 
-	/**
-	 * @param value
-	 * @return
-	 */
 	private String getBooleanValue(boolean value) {
 		if (value) {
 			return Boolean.TRUE.toString();
@@ -404,10 +331,6 @@ public class UpdateSplashProgressOperation implements IWorkspaceRunnable {
 		return Boolean.FALSE.toString();
 	}
 
-	/**
-	 * @param showProgressEntry
-	 * @throws CoreException
-	 */
 	private void updateShowProgressEntry(IBuildEntry showProgressEntry) throws CoreException {
 		// Convert boolean to String
 		String newBooleanValue = getBooleanValue(fShowProgress);
@@ -436,11 +359,6 @@ public class UpdateSplashProgressOperation implements IWorkspaceRunnable {
 		// Nothing to do if the value is the same already
 	}
 
-	/**
-	 * @param showProgressEntry
-	 * @param values
-	 * @throws CoreException
-	 */
 	private void removeEntryTokens(IBuildEntry showProgressEntry, String[] values) throws CoreException {
 		// Remove each token
 		for (int i = 0; i < values.length; i++) {
@@ -448,10 +366,6 @@ public class UpdateSplashProgressOperation implements IWorkspaceRunnable {
 		}
 	}
 
-	/**
-	 * @param pluginCustomModel
-	 * @throws CoreException
-	 */
 	private void addShowProgressEntry(IBuildModel pluginCustomModel) throws CoreException {
 		// Create the show progress key
 		IBuildEntry showProgressEntry = pluginCustomModel.getFactory().createEntry(F_KEY_SHOW_PROGRESS);
@@ -461,9 +375,6 @@ public class UpdateSplashProgressOperation implements IWorkspaceRunnable {
 		pluginCustomModel.getBuild().add(showProgressEntry);
 	}
 
-	/**
-	 * @throws CoreException
-	 */
 	private void createPluginCustomizationFile() throws CoreException {
 		// Create a handle to the workspace file
 		// (Does not exist yet)
@@ -493,10 +404,6 @@ public class UpdateSplashProgressOperation implements IWorkspaceRunnable {
 		}
 	}
 
-	/**
-	 * @param productElement
-	 * @throws CoreException
-	 */
 	private void addPreferenceCustomizationElement(IPluginElement productElement) throws CoreException {
 		// Get the factory
 		IExtensionsModelFactory factory = productElement.getModel().getFactory();
@@ -511,9 +418,6 @@ public class UpdateSplashProgressOperation implements IWorkspaceRunnable {
 		createDefaultPluginCustomizationFile(propertyElement);
 	}
 
-	/**
-	 * @throws CoreException
-	 */
 	private void createDefaultPluginCustomizationFile(IPluginElement propertyElement) throws CoreException {
 		// Define the value as the default plugin customization ini file name
 		propertyElement.setAttribute(F_ATTRIBUTE_VALUE, F_FILE_NAME_PLUGIN_CUSTOM);
@@ -531,9 +435,6 @@ public class UpdateSplashProgressOperation implements IWorkspaceRunnable {
 		}
 	}
 
-	/**
-	 * @throws CoreException
-	 */
 	private void updateDefaultPluginCustomizationFile() throws CoreException {
 		// Check to see if the default file already exists in the project
 		IResource resource = fProject.findMember(F_FILE_NAME_PLUGIN_CUSTOM);
@@ -544,10 +445,6 @@ public class UpdateSplashProgressOperation implements IWorkspaceRunnable {
 		}
 	}
 
-	/**
-	 * @param productElement
-	 * @return
-	 */
 	private IPluginElement findPrefCustPropertyElement(IPluginElement productElement) {
 		// Ensure the produce element has children
 		if (productElement.getChildCount() == 0) {
@@ -582,10 +479,6 @@ public class UpdateSplashProgressOperation implements IWorkspaceRunnable {
 		return null;
 	}
 
-	/**
-	 * @param extension
-	 * @return
-	 */
 	private IPluginElement findProductElement(IPluginExtension extension) {
 		// The product extension is only allowed one child
 		if (extension.getChildCount() != 1) {
@@ -604,9 +497,6 @@ public class UpdateSplashProgressOperation implements IWorkspaceRunnable {
 		return (IPluginElement) pluginObject;
 	}
 
-	/**
-	 * @return
-	 */
 	private IPluginExtension findProductExtension() {
 		// Get all the extensions
 		IPluginExtension[] extensions = fModel.getPluginBase().getExtensions();

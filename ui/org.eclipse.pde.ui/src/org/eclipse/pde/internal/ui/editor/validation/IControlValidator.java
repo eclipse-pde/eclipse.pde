@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2008 IBM Corporation and others.
+ *  Copyright (c) 2006, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -13,10 +13,6 @@ package org.eclipse.pde.internal.ui.editor.validation;
 
 import org.eclipse.swt.widgets.Control;
 
-/**
- * IControlValdiator
- *
- */
 public interface IControlValidator {
 
 	/**
@@ -27,26 +23,22 @@ public interface IControlValidator {
 
 	/**
 	 * Determine whether the validator is enabled / disabled 
-	 * @return
 	 */
 	public boolean getEnabled();
 
 	/**
 	 * Validate the control (manual validation).
-	 * @return
 	 */
 	public boolean validate();
 
 	/**
 	 * Get the control that this validator validates.
-	 * @return
 	 */
 	public Control getControl();
 
 	/**
 	 * Determine whether the control contents are valid.  No validation is
 	 * done.  Validity is determined by the last time the control was validated
-	 * @return
 	 */
 	public boolean isValid();
 

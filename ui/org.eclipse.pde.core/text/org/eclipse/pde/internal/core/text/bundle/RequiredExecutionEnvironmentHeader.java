@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2008 IBM Corporation and others.
+ *  Copyright (c) 2005, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.core.text.bundle;
 
 import java.util.ArrayList;
-
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
@@ -72,7 +71,6 @@ public class RequiredExecutionEnvironmentHeader extends CompositeManifestHeader 
 	/**
 	 * Remove operation performed using the actual object rather than its value
 	 * @param environment
-	 * @return
 	 */
 	public ExecutionEnvironment removeExecutionEnvironmentUnique(ExecutionEnvironment environment) {
 		return (ExecutionEnvironment) removeManifestElement(environment, true);

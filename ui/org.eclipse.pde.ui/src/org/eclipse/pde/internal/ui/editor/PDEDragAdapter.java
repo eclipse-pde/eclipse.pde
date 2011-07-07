@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2008 IBM Corporation and others.
+ *  Copyright (c) 2007, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -17,10 +17,6 @@ import org.eclipse.pde.internal.core.plugin.IWritableDelimiter;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.widgets.*;
 
-/**
- * PDEDragAdapter
- *
- */
 public class PDEDragAdapter implements DragSourceListener, IPDESourceParticipant {
 
 	private IPDEDragParticipant fParticipant;
@@ -36,17 +32,11 @@ public class PDEDragAdapter implements DragSourceListener, IPDESourceParticipant
 
 	public static final int F_TRANSFER_TYPE_TEXT = 0x02;
 
-	/**
-	 * @param participant
-	 */
 	public PDEDragAdapter(IPDEDragParticipant participant) {
 		fParticipant = participant;
 		resetSourceObjects();
 	}
 
-	/**
-	 * @param objects
-	 */
 	protected void setSourceObjects(Object[] objects) {
 		fSourceObjects = objects;
 	}
@@ -58,17 +48,11 @@ public class PDEDragAdapter implements DragSourceListener, IPDESourceParticipant
 		return fSourceObjects;
 	}
 
-	/**
-	 * 
-	 */
 	protected void resetSourceObjects() {
 		fSourceObjects = null;
 		fTransferType = F_TRANSFER_TYPE_NONE;
 	}
 
-	/**
-	 * @return
-	 */
 	protected boolean isCopyOperationSupported() {
 		if ((fParticipant.getSupportedDNDOperations() & DND.DROP_COPY) == DND.DROP_COPY) {
 			return true;
@@ -76,9 +60,6 @@ public class PDEDragAdapter implements DragSourceListener, IPDESourceParticipant
 		return false;
 	}
 
-	/**
-	 * @return
-	 */
 	protected boolean isMoveOperationSupported() {
 		if ((fParticipant.getSupportedDNDOperations() & DND.DROP_MOVE) == DND.DROP_MOVE) {
 			return true;
@@ -86,9 +67,6 @@ public class PDEDragAdapter implements DragSourceListener, IPDESourceParticipant
 		return false;
 	}
 
-	/**
-	 * @return
-	 */
 	protected boolean isLinkOperationSupported() {
 		if ((fParticipant.getSupportedDNDOperations() & DND.DROP_LINK) == DND.DROP_LINK) {
 			return true;
@@ -118,9 +96,6 @@ public class PDEDragAdapter implements DragSourceListener, IPDESourceParticipant
 		fParticipant.doDragRemove(getSourceObjects());
 	}
 
-	/**
-	 * @param event
-	 */
 	protected void validateDrag(DragSourceEvent event) {
 		// Nothing to do if drag event is not enabled
 		if (event.doit == false) {
@@ -187,9 +162,6 @@ public class PDEDragAdapter implements DragSourceListener, IPDESourceParticipant
 		}
 	}
 
-	/**
-	 * @return
-	 */
 	protected Object createTextualRepresentation() {
 		String textualRepresentation = null;
 		StringWriter stringWriter = new StringWriter();

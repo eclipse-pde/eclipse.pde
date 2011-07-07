@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2008 IBM Corporation and others.
+ *  Copyright (c) 2007, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -27,10 +27,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
-/**
- * CSSourceViewerFactory
- *
- */
 public class PDESourceViewer {
 
 	private static XMLConfiguration fSourceConfiguration = null;
@@ -45,32 +41,20 @@ public class PDESourceViewer {
 
 	private IDocument fDocument;
 
-	/**
-	 * @param page
-	 */
 	public PDESourceViewer(PDEFormPage page) {
 		// Create the underlying document
 		fDocument = new Document();
 		fPage = page;
 	}
 
-	/**
-	 * @return
-	 */
 	public IDocument getDocument() {
 		return fDocument;
 	}
 
-	/**
-	 * @return
-	 */
 	public SourceViewer getViewer() {
 		return fViewer;
 	}
 
-	/**
-	 * @return
-	 */
 	private XMLConfiguration getConfiguration() {
 		if (fSourceConfiguration == null) {
 			// Get the color manager
@@ -111,9 +95,6 @@ public class PDESourceViewer {
 		createUIListenersStyledText(fViewer.getTextWidget());
 	}
 
-	/**
-	 * 
-	 */
 	public void createUIListeners() {
 		// Ensure the viewer was created
 		if (fViewer == null) {
@@ -134,9 +115,6 @@ public class PDESourceViewer {
 		});
 	}
 
-	/**
-	 * @param textWidget
-	 */
 	private void createUIListenersStyledText(StyledText textWidget) {
 		// Track the number of source viewers created
 		fSourceViewerCount++;
@@ -153,9 +131,6 @@ public class PDESourceViewer {
 		});
 	}
 
-	/**
-	 * 
-	 */
 	private void dispose() {
 		// TODO: MP: CompCS: Profile Sleek when making static to ensure no leaks
 		// Dispose of the color manager
@@ -170,11 +145,6 @@ public class PDESourceViewer {
 		}
 	}
 
-	/**
-	 * @param heightHint
-	 * @param widthHint
-	 * @param styledText
-	 */
 	private void configureUIStyledText(GridData data, StyledText styledText) {
 		// Configure the underlying styled text widget
 		styledText.setMenu(fPage.getPDEEditor().getContextMenu());
@@ -207,7 +177,6 @@ public class PDESourceViewer {
 	 * 
 	 * @param actionId
 	 * @param viewer
-	 * @return
 	 */
 	public boolean doGlobalAction(String actionId) {
 		// Ensure the viewer was created
@@ -240,10 +209,6 @@ public class PDESourceViewer {
 		return false;
 	}
 
-	/**
-	 * @param viewer
-	 * @return
-	 */
 	public boolean canPaste() {
 		// Ensure the viewer was created
 		if (fViewer == null) {

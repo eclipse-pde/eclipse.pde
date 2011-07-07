@@ -137,10 +137,6 @@ public class OpenSchemaAction extends Action {
 		fSchema = findSchema(point);
 	}
 
-	/**
-	 * @param point
-	 * @return
-	 */
 	private ISchema findSchema(IPluginExtensionPoint point) {
 		// Find the corresponding schema URL for the extension point
 		URL url = SchemaRegistry.getSchemaURL(point);
