@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -39,7 +39,6 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
  * 
  * @since 2.0
  */
-
 public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 	private ArrayList pages = new ArrayList();
 
@@ -115,6 +114,7 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 	 * Returns the wizard page at the specified index. Pages must be created
 	 * prior to calling this method.
 	 * 
+	 * @param pageIndex the index to get the page for 
 	 * @return the wizard page at the specified index or <samp>null </samp> if
 	 *         invalid index.
 	 * @see #createPage(int)
@@ -137,6 +137,7 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 	 *            example, if a template needs to have two pages, you have to
 	 *            call this method twice (once with index 0 and again with index
 	 *            1).
+	 * @return the created wizard page
 	 * @see #setPageCount(int)
 	 * @see BaseOptionTemplateSection#addOption
 	 */
@@ -163,6 +164,7 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 	 *            the Id of the help context defined in the contributing plug-in
 	 *            that will be used to locate content of the info-pop displayed
 	 *            when F1 is pressed.
+	 * @return the created wizard page
 	 * @see #setPageCount(int)
 	 * @see BaseOptionTemplateSection#addOption
 	 */
@@ -327,6 +329,8 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 
 	/**
 	 * Validate options given a template option
+	 * 
+	 * @param source the template option to validate
 	 */
 	public void validateOptions(TemplateOption source) {
 		if (source.isRequired() && source.isEmpty()) {

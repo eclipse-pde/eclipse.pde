@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,8 +40,20 @@ import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
  * @since 3.5
  */
 public abstract class NewPluginProjectFromTemplateWizard extends NewWizard implements IExecutableExtension {
+
+	/**
+	 * Key for storing the project name in the wizard default values
+	 */
 	public static final String DEF_PROJECT_NAME = "project_name"; //$NON-NLS-1$
+
+	/**
+	 * Key for storign the extension point name in the wizard default values
+	 */
 	public static final String PLUGIN_POINT = "pluginContent"; //$NON-NLS-1$
+
+	/**
+	 * The extension element that contains the wizard class 
+	 */
 	public static final String TAG_WIZARD = "wizard"; //$NON-NLS-1$
 
 	private AbstractFieldData fPluginData;
@@ -51,6 +63,9 @@ public abstract class NewPluginProjectFromTemplateWizard extends NewWizard imple
 	private IProjectProvider fProjectProvider;
 	private IConfigurationElement fConfig;
 
+	/**
+	 * Constructor to create a new wizard
+	 */
 	public NewPluginProjectFromTemplateWizard() {
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWPPRJ_WIZ);
 		setDialogSettings(PDEPlugin.getDefault().getDialogSettings());

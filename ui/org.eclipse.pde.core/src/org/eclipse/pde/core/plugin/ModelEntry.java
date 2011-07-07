@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2008 IBM Corporation and others.
+ *  Copyright (c) 2007, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -29,7 +29,15 @@ import org.eclipse.osgi.service.resolver.BundleDescription;
 public class ModelEntry extends PlatformObject {
 
 	private String fId;
+
+	/**
+	 * The list of workspace models with the same entry ID
+	 */
 	protected ArrayList fWorkspaceEntries = new ArrayList(1);
+
+	/**
+	 * The list of external models with the same entry ID
+	 */
 	protected ArrayList fExternalEntries = new ArrayList(1);
 
 	/**

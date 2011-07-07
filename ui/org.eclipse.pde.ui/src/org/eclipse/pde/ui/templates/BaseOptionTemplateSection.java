@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -327,13 +327,16 @@ public abstract class BaseOptionTemplateSection extends AbstractTemplateSection 
 		return super.getReplacementString(fileName, key);
 	}
 
-	/**
-	 * Modifies the superclass implementation by adding the initialization step
-	 * before commencing execution. This is important because some options may
-	 * not be initialized and users may choose to press 'Finish' before the
-	 * wizard page where the options are were shown for the first time.
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#execute(org.eclipse.core.resources.IProject, org.eclipse.pde.core.plugin.IPluginModelBase, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void execute(IProject project, IPluginModelBase model, IProgressMonitor monitor) throws CoreException {
+		/*
+		 * Modifies the superclass implementation by adding the initialization step
+		 * before commencing execution. This is important because some options may
+		 * not be initialized and users may choose to press 'Finish' before the
+		 * wizard page where the options are were shown for the first time.
+		 */
 		initializeFields(model);
 		super.execute(project, model, monitor);
 	}

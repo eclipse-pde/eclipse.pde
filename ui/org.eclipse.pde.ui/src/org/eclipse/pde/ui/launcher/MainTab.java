@@ -43,6 +43,9 @@ public class MainTab extends AbstractLauncherTab implements IPDELauncherConstant
 
 	private Image fImage;
 
+	/**
+	 * Contructor to create a new main tab
+	 */
 	public MainTab() {
 		createWorkspaceDataBlock();
 		createProgramBlock();

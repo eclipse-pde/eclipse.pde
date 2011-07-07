@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,6 +54,7 @@ public interface IPluginImport extends IPluginObject, IPluginReference {
 	 * is not editable.
 	 *
 	 * @param value true if reexporting is desired
+	 * @throws CoreException if the model is not editable
 	 */
 	void setReexported(boolean value) throws CoreException;
 
@@ -62,6 +63,7 @@ public interface IPluginImport extends IPluginObject, IPluginReference {
 	 * not create an error condition when they cannot be resolved.
 	 *
 	 * @param value true if import is optional
+	 * @throws CoreException if the model is not editable
 	 */
 	void setOptional(boolean value) throws CoreException;
 

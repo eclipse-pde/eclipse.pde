@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -87,9 +87,8 @@ public abstract class AbstractChoiceOption extends TemplateOption {
 
 	protected abstract void setOptionValue(Object value);
 
-	/**
-	 * Implements the superclass method by updating the enable state of the
-	 * option's widget.
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.ui.templates.TemplateOption#setEnabled(boolean)
 	 */
 	public void setEnabled(boolean enabled) {
 		super.setEnabled(enabled);

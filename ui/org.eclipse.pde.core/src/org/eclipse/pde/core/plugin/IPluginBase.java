@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,6 +57,7 @@ public interface IPluginBase extends IExtensions, IIdentifiable {
 	 * model is not editable.
 	 *
 	 * @param library the new library
+	 * @throws CoreException if the model is not editable
 	 */
 	void add(IPluginLibrary library) throws CoreException;
 
@@ -66,6 +67,7 @@ public interface IPluginBase extends IExtensions, IIdentifiable {
 	 * model is not editable.
 	 *
 	 * @param pluginImport the new import object
+	 * @throws CoreException if the model is not editable
 	 */
 	void add(IPluginImport pluginImport) throws CoreException;
 
@@ -75,6 +77,7 @@ public interface IPluginBase extends IExtensions, IIdentifiable {
 	 * the model is not editable.
 	 *
 	 * @param pluginImport the import object
+	 * @throws CoreException if the model is not editable
 	 */
 	void remove(IPluginImport pluginImport) throws CoreException;
 
@@ -111,6 +114,7 @@ public interface IPluginBase extends IExtensions, IIdentifiable {
 	 * the model is not editable.
 	 *
 	 * @param library the library object
+	 * @throws CoreException if the model is not editable
 	 */
 	void remove(IPluginLibrary library) throws CoreException;
 
@@ -120,6 +124,7 @@ public interface IPluginBase extends IExtensions, IIdentifiable {
 	 * if the model is not editable.
 	 *
 	 * @param providerName the new provider name
+	 * @throws CoreException if the model is not editable
 	 */
 	void setProviderName(String providerName) throws CoreException;
 
@@ -129,6 +134,7 @@ public interface IPluginBase extends IExtensions, IIdentifiable {
 	 * if the model is not editable.
 	 *
 	 * @param version the new plug-in version
+	 * @throws CoreException if the model is not editable
 	 */
 	void setVersion(String version) throws CoreException;
 
@@ -142,6 +148,7 @@ public interface IPluginBase extends IExtensions, IIdentifiable {
 	 *
 	 * @param l1 the first library object
 	 * @param l2 the second library object
+	 * @throws CoreException if the model is not editable
 	 */
 	void swap(IPluginLibrary l1, IPluginLibrary l2) throws CoreException;
 
@@ -152,6 +159,7 @@ public interface IPluginBase extends IExtensions, IIdentifiable {
 	 *
 	 * @param import1 the first import object
 	 * @param import2 the second import object
+	 * @throws CoreException if the model is not editable
 	 */
 	void swap(IPluginImport import1, IPluginImport import2) throws CoreException;
 
@@ -164,6 +172,7 @@ public interface IPluginBase extends IExtensions, IIdentifiable {
 	/**
 	 * Sets the R3.0 compatibility flag
 	 * @param schemaVersion version of the manifest grammar
+	 * @throws CoreException if the model is not editable
 	 */
 	void setSchemaVersion(String schemaVersion) throws CoreException;
 

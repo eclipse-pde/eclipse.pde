@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,6 +50,8 @@ public interface IPluginObject extends IWritable, IAdaptable {
 	 * It is useful to ignore modification events of objects
 	 * that have not yet being added to the model or if they
 	 * have been removed.
+	 * 
+	 * @return whether this object is currently part of a model 
 	 */
 	boolean isInTheModel();
 
@@ -58,6 +60,8 @@ public interface IPluginObject extends IWritable, IAdaptable {
 	 * It is useful to ignore modification events of objects
 	 * that have not yet being added to the model or if they
 	 * have been removed.
+	 * 
+	 * @param inModel whether the object is currently part of a model 
 	 */
 	void setInTheModel(boolean inModel);
 
@@ -100,6 +104,7 @@ public interface IPluginObject extends IWritable, IAdaptable {
 	 * if the model is not editable.
 	 *
 	 * @param name the new object name
+	 * @throws CoreException if the model is not editable
 	 */
 	void setName(String name) throws CoreException;
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 ThoughtWorks, Inc. and others.
+ * Copyright (c) 2009, 2011 ThoughtWorks, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.launcher;
 
-import org.eclipse.pde.launching.IPDELauncherConstants;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -20,6 +18,7 @@ import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.jdt.junit.launcher.JUnitLaunchConfigurationTab;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.launching.IPDELauncherConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -44,6 +43,9 @@ public class TestTab extends AbstractLaunchConfigurationTab {
 	private final JUnitLaunchConfigurationTab junitLaunchTab;
 	private Button runInUIThread;
 
+	/**
+	 * Constructor to create a new junit test tab
+	 */
 	public TestTab() {
 		this.junitLaunchTab = new JUnitLaunchConfigurationTab();
 	}

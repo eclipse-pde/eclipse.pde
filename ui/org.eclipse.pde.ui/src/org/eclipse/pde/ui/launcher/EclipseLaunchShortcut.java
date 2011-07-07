@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,6 +47,9 @@ import org.eclipse.ui.IEditorPart;
  */
 public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 
+	/**
+	 * The launch configuration type name that this shortcut uses
+	 */
 	public static final String CONFIGURATION_TYPE = IPDELauncherConstants.ECLIPSE_APPLICATION_LAUNCH_CONFIGURATION_TYPE;
 
 	private IPluginModelBase fModel = null;

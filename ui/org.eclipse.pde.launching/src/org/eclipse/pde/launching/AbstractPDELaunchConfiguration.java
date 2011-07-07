@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2010 IBM Corporation and others.
+ *  Copyright (c) 2005, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -153,6 +153,7 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 	 * launching the given configuration or <code>null</code> if unspecified.
 	 * 
 	 * @param configuration launch configuration
+	 * @return the environment variables to be used when launching or <code>null</code>
 	 * @throws CoreException if unable to access associated attribute or if
 	 * unable to resolve a variable in an environment variable's value
 	 */

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -41,8 +41,8 @@ public abstract class AbstractNewPluginTemplateWizard extends Wizard implements 
 		setNeedsProgressMonitor(true);
 	}
 
-	/**
-	 * @see org.eclipse.pde.ui.IPluginContentWizard#init(IFieldData)
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.ui.IPluginContentWizard#init(org.eclipse.pde.ui.IFieldData)
 	 */
 	public void init(IFieldData data) {
 		this.data = data;
@@ -71,7 +71,7 @@ public abstract class AbstractNewPluginTemplateWizard extends Wizard implements 
 		addAdditionalPages();
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.Wizard#performFinish()
 	 */
 	public boolean performFinish() {
@@ -118,8 +118,8 @@ public abstract class AbstractNewPluginTemplateWizard extends Wizard implements 
 	 */
 	public abstract ITemplateSection[] getTemplateSections();
 
-	/**
-	 * @see org.eclipse.pde.ui.IPluginContentWizard#getDependencies(String)
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.ui.IPluginContentWizard#getDependencies(java.lang.String)
 	 */
 	public IPluginReference[] getDependencies(String schemaVersion) {
 		ArrayList result = new ArrayList();
@@ -134,7 +134,7 @@ public abstract class AbstractNewPluginTemplateWizard extends Wizard implements 
 		return (IPluginReference[]) result.toArray(new IPluginReference[result.size()]);
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.IPluginContentWizard#getNewFiles()
 	 */
 	public String[] getNewFiles() {
@@ -150,8 +150,9 @@ public abstract class AbstractNewPluginTemplateWizard extends Wizard implements 
 		return (String[]) result.toArray(new String[result.size()]);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.IPluginContentWizard#hasPages()
+	/**
+	 * Returns whether this wizard has at least one page
+	 * @return whether this wizard has at least one page
 	 */
 	public boolean hasPages() {
 		return getTemplateSections().length > 0;

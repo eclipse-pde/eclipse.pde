@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,6 +42,9 @@ public class BundlesTab extends AbstractLauncherTab {
 	private static final int PLUGIN_SELECTION = 1;
 	private static final int FEATURE_SELECTION = 2;
 
+	/**
+	 * Constructor to create a new bundle tab
+	 */
 	public BundlesTab() {
 		fImage = PDEPluginImages.DESC_PLUGINS_FRAGMENTS.createImage();
 		fBlock = new BlockAdapter(new OSGiBundleBlock(this), new FeatureBlock(this));

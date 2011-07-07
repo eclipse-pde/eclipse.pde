@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,6 +33,7 @@ public interface IPluginParent extends IPluginObject {
 	 *
 	 * @param index the location of the child
 	 * @param child the object to add
+	 * @throws CoreException if the model is not editable
 	 */
 	void add(int index, IPluginObject child) throws CoreException;
 
@@ -42,6 +43,7 @@ public interface IPluginParent extends IPluginObject {
 	 * the model is not editable.
 	 *
 	 * @param child the object to add
+	 * @throws CoreException if the model is not editable
 	 */
 	void add(IPluginObject child) throws CoreException;
 
@@ -83,6 +85,7 @@ public interface IPluginParent extends IPluginObject {
 	 * the model is not editable.
 	 *
 	 * @param child the object to remove
+	 * @throws CoreException if the model is not editable
 	 */
 	void remove(IPluginObject child) throws CoreException;
 }

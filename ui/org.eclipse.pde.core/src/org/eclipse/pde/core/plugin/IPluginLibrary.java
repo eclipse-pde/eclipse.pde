@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -86,7 +86,9 @@ public interface IPluginLibrary extends IPluginObject {
 	boolean isFullyExported();
 
 	/**
-	 * Returns a type of this library (CODE or RESOURCE)
+	 * Returns the type of this library.  Will be one of {@link #CODE} or {@link #RESOURCE}.
+	 * 
+	 * @return The type of this library
 	 */
 	String getType();
 
@@ -97,6 +99,7 @@ public interface IPluginLibrary extends IPluginObject {
 	 * editable.
 	 *
 	 * @param filters an array of filter strings
+	 * @throws CoreException if the model is not editable
 	 */
 	void setContentFilters(String[] filters) throws CoreException;
 
@@ -106,6 +109,7 @@ public interface IPluginLibrary extends IPluginObject {
 	 * the model is not editable.
 	 *
 	 * @param filter a package name
+	 * @throws CoreException if the model is not editable
 	 */
 	void addContentFilter(String filter) throws CoreException;
 
@@ -115,6 +119,7 @@ public interface IPluginLibrary extends IPluginObject {
 	 * the model is not editable.
 	 *
 	 * @param filter a package name
+	 * @throws CoreException if the model is not editable
 	 */
 	void removeContentFilter(String filter) throws CoreException;
 
@@ -124,6 +129,7 @@ public interface IPluginLibrary extends IPluginObject {
 	 * editable.
 	 *
 	 * @param packages an array of package prefixes
+	 * @throws CoreException if the model is not editable
 	 */
 	void setPackages(String[] packages) throws CoreException;
 
@@ -132,11 +138,16 @@ public interface IPluginLibrary extends IPluginObject {
 	 * visible to other plug-ins. This method
 	 * may throw a CoreException if the model is
 	 * not editable.
+	 * 
+	 * @param value whether the types in the library should be exported
+	 * @throws CoreException if the model is not editable 
 	 */
 	void setExported(boolean value) throws CoreException;
 
 	/**
-	 * Sets the library type. Must be either CODE or RESOURCE.
+	 * Sets the library type. Must be either {@link #CODE} or {@link #RESOURCE}.
+	 * 
+	 * @param type The library type
 	 * @throws CoreException if the model is not editable.
 	 */
 	void setType(String type) throws CoreException;

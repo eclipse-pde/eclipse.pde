@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -92,6 +92,7 @@ public interface IPluginElement extends IPluginParent {
 	 *
 	 * @param name the name of the attribute
 	 * @param value the value to be set 
+	 * @throws CoreException if the model is not editable
 	 */
 	void setAttribute(String name, String value) throws CoreException;
 
@@ -102,6 +103,7 @@ public interface IPluginElement extends IPluginParent {
 	 * model is not editable.
 	 *
 	 * @param text the new body text of this element
+	 * @throws CoreException if the model is not editable
 	 */
 	void setText(String text) throws CoreException;
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -64,6 +64,7 @@ public interface IBuildEntry extends IWritable {
 	 * the model is not editable.
 	 *
 	 * @param token a name to be added to the list of tokens
+	 * @throws CoreException if the model is not editable
 	 */
 	void addToken(String token) throws CoreException;
 
@@ -87,6 +88,7 @@ public interface IBuildEntry extends IWritable {
 
 	/**
 	 * Returns true if the provided token exists in this entry.
+	 * @param token the string token to look for
 	 * @return true if the token exists in the entry
 	 */
 	boolean contains(String token);
@@ -97,6 +99,7 @@ public interface IBuildEntry extends IWritable {
 	 * the model is not editable.
 	 *
 	 * @param token a name to be removed from the list of tokens
+	 * @throws CoreException if the model is not editable
 	 */
 	void removeToken(String token) throws CoreException;
 
@@ -107,6 +110,7 @@ public interface IBuildEntry extends IWritable {
 	 *
 	 * @param oldToken the old token name
 	 * @param newToken the new token name
+	 * @throws CoreException if the model is not editable
 	 */
 	void renameToken(String oldToken, String newToken) throws CoreException;
 
@@ -116,6 +120,7 @@ public interface IBuildEntry extends IWritable {
 	 * model is not editable.
 	 *
 	 * @param name the new name for the entry
+	 * @throws CoreException if the model is not editable
 	 */
 	void setName(String name) throws CoreException;
 }

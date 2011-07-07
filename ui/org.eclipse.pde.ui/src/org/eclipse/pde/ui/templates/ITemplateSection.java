@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -94,12 +94,14 @@ public interface ITemplateSection {
 	/**
 	 * Returns a wizard page at the provided index.
 	 * 
+	 * @param pageIndex the index to get the page for 
 	 * @return wizard page index.
 	 */
 	public WizardPage getPage(int pageIndex);
 
 	/**
 	 * Returns number of pages that are contributed by this template.
+	 * @return the contributed page count
 	 */
 	public int getPageCount();
 
@@ -156,6 +158,7 @@ public interface ITemplateSection {
 	 *            structured representation of the plug-in manifest
 	 * @param monitor
 	 *            progress monitor to indicate execution progress
+	 * @throws CoreException if there is a problem generating resources
 	 */
 	public void execute(IProject project, IPluginModelBase model, IProgressMonitor monitor) throws CoreException;
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -66,51 +66,43 @@ public class ModelChangedEvent implements IModelChangedEvent {
 		this.newValue = newValue;
 	}
 
-	/**
-	 * @see IModelChangedEvent#getChangeProvider
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.IModelChangedEvent#getChangeProvider()
 	 */
 	public IModelChangeProvider getChangeProvider() {
 		return provider;
 	}
 
-	/**
-	 * @see IModelChangedEvent#getChangedObjects
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.IModelChangedEvent#getChangedObjects()
 	 */
 	public Object[] getChangedObjects() {
 		return (changedObjects == null) ? new Object[0] : changedObjects;
 	}
 
-	/**
-	 * @see IModelChangedEvent#getChangedProperty
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.IModelChangedEvent#getChangedProperty()
 	 */
 	public String getChangedProperty() {
 		return changedProperty;
 	}
 
-	/**
-	 *  Returns the old property value.
-	 * 
-	 * @return the value before the change
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.IModelChangedEvent#getOldValue()
 	 */
 	public Object getOldValue() {
 		return oldValue;
 	}
 
-	/**
-	 *  Returns the new property value.
-	 * 
-	 * @return the value after the change
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.IModelChangedEvent#getNewValue()
 	 */
 	public Object getNewValue() {
 		return newValue;
 	}
 
-	/**
-	 *  Returns the event change type
-	 *  
-	 *  @return the event change type
-	 *  
-	 *  @see IModelChangedEvent#getChangeType
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.IModelChangedEvent#getChangeType()
 	 */
 	public int getChangeType() {
 		return type;

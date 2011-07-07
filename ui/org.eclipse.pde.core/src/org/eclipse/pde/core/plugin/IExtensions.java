@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,6 +35,7 @@ public interface IExtensions extends IPluginObject {
 	 * model is not editable.
 	 *
 	 * @param extension the extension object
+	 * @throws CoreException if the model is not editable
 	 */
 	void add(IPluginExtension extension) throws CoreException;
 
@@ -43,6 +44,7 @@ public interface IExtensions extends IPluginObject {
 	 * This method will throw a CoreException if the model is not editable.
 	 * 
 	 * @param extensionPoint the extension point
+	 * @throws CoreException if the model is not editable
 	 */
 	void add(IPluginExtensionPoint extensionPoint) throws CoreException;
 
@@ -65,6 +67,7 @@ public interface IExtensions extends IPluginObject {
 	 * the model is not editable.
 	 *
 	 * @param extension the extension object
+	 * @throws CoreException if the model is not editable
 	 */
 	void remove(IPluginExtension extension) throws CoreException;
 
@@ -74,6 +77,7 @@ public interface IExtensions extends IPluginObject {
 	 * the model is not editable.
 	 *
 	 * @param extensionPoint the extension point object
+	 * @throws CoreException if the model is not editable
 	 */
 	void remove(IPluginExtensionPoint extensionPoint) throws CoreException;
 
@@ -83,6 +87,7 @@ public interface IExtensions extends IPluginObject {
 	 *
 	 * @param e1 the first extension object
 	 * @param e2 the second extension object
+	 * @throws CoreException if the model is not editable
 	 */
 	void swap(IPluginExtension e1, IPluginExtension e2) throws CoreException;
 

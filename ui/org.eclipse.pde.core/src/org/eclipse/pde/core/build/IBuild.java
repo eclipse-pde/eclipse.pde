@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,6 +27,7 @@ public interface IBuild extends IWritable {
 	 * 
 	 * @param entry
 	 *            an entry to be added
+	 * @throws CoreException if the model is not editable
 	 */
 	void add(IBuildEntry entry) throws CoreException;
 
@@ -53,6 +54,7 @@ public interface IBuild extends IWritable {
 	 * 
 	 * @param entry
 	 *            an entry to be removed
+	 * @throws CoreException if the model is not editable
 	 */
 	void remove(IBuildEntry entry) throws CoreException;
 }
