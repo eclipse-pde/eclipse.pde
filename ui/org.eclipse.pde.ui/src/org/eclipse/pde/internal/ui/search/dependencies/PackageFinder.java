@@ -1,10 +1,10 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2008 IBM Corporation and others.
+ *  Copyright (c) 2007, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -43,7 +43,7 @@ public class PackageFinder {
 		char[][] interfaces = cfr.getInterfaceNames();
 		if (interfaces != null) {
 			for (int i = 0; i < interfaces.length; i++) {
-				//note: have to convert names like Ljava/lang/Object; to java.lang.Object				
+				//note: have to convert names like Ljava/lang/Object; to java.lang.Object
 				packages.add(getPackage(new String(interfaces[i]).replace('/', '.')));
 			}
 		}
@@ -58,7 +58,7 @@ public class PackageFinder {
 
 			String fieldName = new String(fieldInfo[i].getDescriptor());
 			if (!isPrimitiveTypeSignature(fieldName)) {
-				String fieldDescriptor = extractFullyQualifiedType(fieldName);
+				String fieldDescriptor = extractFullyQualifiedTopLevelType(fieldName);
 				packages.add(getPackage(new String(fieldDescriptor)));
 			}
 		}
@@ -79,13 +79,13 @@ public class PackageFinder {
 			for (int j = 0; j < parameterTypes.length; j++) {
 				//have to parse to convert [Ljava/lang/String; to java.lang.String
 				if (!isPrimitiveTypeSignature(parameterTypes[j])) {
-					packages.add(getPackage(new String(extractFullyQualifiedType(parameterTypes[j]))));
+					packages.add(getPackage(new String(extractFullyQualifiedTopLevelType(parameterTypes[j]))));
 				}
 			}
 			//add return type
 			String returnType = Signature.getReturnType(descriptor);
 			if (!isPrimitiveTypeSignature(returnType)) {
-				returnType = extractFullyQualifiedType(returnType);
+				returnType = extractFullyQualifiedTopLevelType(returnType);
 				packages.add(getPackage(returnType));
 			}
 		}
@@ -101,7 +101,7 @@ public class PackageFinder {
 					entry = pool.decodeEntry(i);
 					//note: may have to convert names like Ljava/lang/Object; to java.lang.Object
 					String className = new String(entry.getClassInfoName()).replace('/', '.');
-					className = className.indexOf(';') >= 0 ? extractFullyQualifiedType(className) : className;
+					className = className.indexOf(';') >= 0 ? extractFullyQualifiedTopLevelType(className) : className;
 					packages.add(getPackage(className));
 					break;
 
@@ -120,13 +120,13 @@ public class PackageFinder {
 							String[] parameterTypes = Signature.getParameterTypes(descriptor);
 							for (int j = 0; j < parameterTypes.length; j++) {
 								if (!isPrimitiveTypeSignature(parameterTypes[j])) {
-									packages.add(getPackage(extractFullyQualifiedType(parameterTypes[j])));
+									packages.add(getPackage(extractFullyQualifiedTopLevelType(parameterTypes[j])));
 								}
 							}
 							//add return type
 							String returnType = Signature.getReturnType(descriptor);
 							if (!isPrimitiveTypeSignature(returnType)) {
-								returnType = extractFullyQualifiedType(returnType);
+								returnType = extractFullyQualifiedTopLevelType(returnType);
 								packages.add(getPackage(returnType));
 							}
 
@@ -134,7 +134,7 @@ public class PackageFinder {
 							// Field type.
 							String typeString = new String(type);
 							if (!isPrimitiveTypeSignature(typeString)) {
-								packages.add(getPackage(extractFullyQualifiedType(typeString)));
+								packages.add(getPackage(extractFullyQualifiedTopLevelType(typeString)));
 							}
 						}
 					}
@@ -159,20 +159,18 @@ public class PackageFinder {
 		return false;
 	}
 
-	static String extractFullyQualifiedType(String typeName) {
+	static String extractFullyQualifiedTopLevelType(String typeName) {
 
 		//first convert from / to .
 		typeName = typeName.replace('/', '.');
 
-		//hack to handle inner classes
-		if (typeName.indexOf('$') >= 0) {
-			//inner class
-			typeName = Signature.toString(typeName);
-			typeName = typeName.substring(0, typeName.lastIndexOf('.')) + "$" + typeName.substring(typeName.lastIndexOf('.') + 1); //$NON-NLS-1$
-		} else {
-			//not an inner class
-			typeName = Signature.toString(typeName);
-		}
+		//get rid of anonymous and/or possible inner classes (bug 330278)
+		//(they aren't relevant for packages)
+		int innerClassIndicator = typeName.indexOf('$');
+		typeName = innerClassIndicator > 0 ? typeName.substring(0, innerClassIndicator).concat(";") : typeName; //$NON-NLS-1$
+
+		//create signature
+		typeName = Signature.toString(typeName);
 
 		//remove array indicator if it is there
 		typeName = typeName.endsWith("[]") ? typeName.substring(0, typeName.length() - 2) : typeName; //$NON-NLS-1$
