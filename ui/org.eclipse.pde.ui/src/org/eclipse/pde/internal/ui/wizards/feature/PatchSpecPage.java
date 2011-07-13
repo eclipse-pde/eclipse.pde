@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 
 package org.eclipse.pde.internal.ui.wizards.feature;
 
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.IWizardPage;
@@ -22,6 +23,7 @@ import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.dialogs.FeatureSelectionDialog;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
+import org.eclipse.pde.internal.ui.wizards.BundleProviderHistoryUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
@@ -30,7 +32,7 @@ import org.eclipse.swt.widgets.*;
 
 public class PatchSpecPage extends AbstractFeatureSpecPage {
 
-	private Text fPatchProviderText;
+	private Combo fPatchProviderCombo;
 	private Button fBrowseButton;
 	private Text fPatchIdText;
 	private Text fPatchNameText;
@@ -85,9 +87,9 @@ public class PatchSpecPage extends AbstractFeatureSpecPage {
 	}
 
 	private String getPatchProvider() {
-		if (fPatchProviderText == null)
+		if (fPatchProviderCombo == null)
 			return ""; //$NON-NLS-1$
-		return fPatchProviderText.getText();
+		return fPatchProviderCombo.getText();
 	}
 
 	public FeatureData getFeatureData() {
@@ -136,8 +138,9 @@ public class PatchSpecPage extends AbstractFeatureSpecPage {
 
 		label = new Label(patchGroup, SWT.NULL);
 		label.setText(PDEUIMessages.NewFeaturePatch_SpecPage_provider);
-		fPatchProviderText = new Text(patchGroup, SWT.BORDER);
-		fPatchProviderText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		fPatchProviderCombo = new Combo(patchGroup, SWT.BORDER | SWT.DROP_DOWN);
+		fPatchProviderCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		BundleProviderHistoryUtil.loadHistory(fPatchProviderCombo, getDialogSettings());
 
 		createInstallHandlerText(patchGroup);
 	}
@@ -197,7 +200,7 @@ public class PatchSpecPage extends AbstractFeatureSpecPage {
 	protected void attachListeners(ModifyListener listener) {
 		fPatchIdText.addModifyListener(listener);
 		fPatchNameText.addModifyListener(listener);
-		fPatchProviderText.addModifyListener(listener);
+		fPatchProviderCombo.addModifyListener(listener);
 		fFeatureIdText.addModifyListener(listener);
 	}
 
@@ -212,7 +215,13 @@ public class PatchSpecPage extends AbstractFeatureSpecPage {
 		String id = IdUtil.getValidId(getProjectName());
 		fPatchIdText.setText(id);
 		fPatchNameText.setText(IdUtil.getValidName(id));
-		fPatchProviderText.setText(IdUtil.getValidProvider(id));
+		if (0 == fPatchProviderCombo.getText().length()) {
+			fPatchProviderCombo.setText(IdUtil.getValidProvider(id));
+		}
 		fSelfModification = false;
+	}
+
+	protected void saveSettings(IDialogSettings settings) {
+		BundleProviderHistoryUtil.saveHistory(fPatchProviderCombo, settings);
 	}
 }

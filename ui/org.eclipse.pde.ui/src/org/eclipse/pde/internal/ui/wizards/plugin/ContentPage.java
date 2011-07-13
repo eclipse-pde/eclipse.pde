@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.internal.core.PDECoreMessages;
@@ -19,14 +20,14 @@ import org.eclipse.pde.internal.core.util.IdUtil;
 import org.eclipse.pde.internal.core.util.VersionUtil;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.util.PDELabelUtility;
+import org.eclipse.pde.internal.ui.wizards.BundleProviderHistoryUtil;
 import org.eclipse.pde.internal.ui.wizards.IProjectProvider;
 import org.eclipse.pde.ui.IFieldData;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 
 public abstract class ContentPage extends WizardPage {
 
@@ -34,7 +35,7 @@ public abstract class ContentPage extends WizardPage {
 	protected Text fIdText;
 	protected Text fVersionText;
 	protected Text fNameText;
-	protected Text fProviderText;
+	protected Combo fProviderCombo;
 
 	protected NewProjectCreationPage fMainPage;
 	protected AbstractFieldData fData;
@@ -73,6 +74,18 @@ public abstract class ContentPage extends WizardPage {
 		text.setLayoutData(data);
 		text.addModifyListener(listener);
 		return text;
+	}
+
+	protected Combo createProviderCombo(Composite parent, ModifyListener listener, int horizSpan) {
+		Combo combo = new Combo(parent, SWT.BORDER | SWT.DROP_DOWN);
+		GridData data = new GridData(GridData.FILL_HORIZONTAL);
+		data.horizontalSpan = horizSpan;
+		combo.setLayoutData(data);
+		BundleProviderHistoryUtil.loadHistory(combo, getDialogSettings());
+		// Add listener only now, otherwise combo.select(0) would trigger it
+		// and cause a NPE during validation.
+		combo.addModifyListener(listener);
+		return combo;
 	}
 
 	protected abstract void validatePage();
@@ -152,7 +165,9 @@ public abstract class ContentPage extends WizardPage {
 				fIdText.setText(id);
 				fVersionText.setText("1.0.0.qualifier"); //$NON-NLS-1$
 				fNameText.setText(IdUtil.getValidName(id));
-				fProviderText.setText(IdUtil.getValidProvider(id));
+				if (0 == fProviderCombo.getText().length()) {
+					fProviderCombo.setText(IdUtil.getValidProvider(id));
+				}
 				fChangedGroups = oldfChanged;
 			}
 			if (fInitialized)
@@ -167,11 +182,15 @@ public abstract class ContentPage extends WizardPage {
 		return IdUtil.getValidId(fProjectProvider.getProjectName());
 	}
 
+	public void saveSettings(IDialogSettings settings) {
+		BundleProviderHistoryUtil.saveHistory(fProviderCombo, settings);
+	}
+
 	public void updateData() {
 		fData.setId(fIdText.getText().trim());
 		fData.setVersion(fVersionText.getText().trim());
 		fData.setName(fNameText.getText().trim());
-		fData.setProvider(fProviderText.getText().trim());
+		fData.setProvider(fProviderCombo.getText().trim());
 	}
 
 	public IFieldData getData() {

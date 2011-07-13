@@ -125,7 +125,7 @@ public class PluginContentPage extends ContentPage {
 
 		label = new Label(propertiesGroup, SWT.NONE);
 		label.setText(PDEUIMessages.ContentPage_pprovider);
-		fProviderText = createText(propertiesGroup, propertiesListener, 2);
+		fProviderCombo = createProviderCombo(propertiesGroup, propertiesListener, 2);
 
 		createExecutionEnvironmentControls(propertiesGroup);
 	}
@@ -367,6 +367,7 @@ public class PluginContentPage extends ContentPage {
 	 * @param settings
 	 */
 	public void saveSettings(IDialogSettings settings) {
+		super.saveSettings(settings);
 		settings.put(S_GENERATE_ACTIVATOR, !fGenerateActivator.getSelection());
 		if (fUIPlugin.isEnabled()) {
 			settings.put(S_UI_PLUGIN, !fUIPlugin.getSelection());

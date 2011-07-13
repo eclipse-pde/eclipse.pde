@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,9 +11,11 @@
 
 package org.eclipse.pde.internal.ui.wizards.feature;
 
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.pde.internal.core.util.IdUtil;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.wizards.BundleProviderHistoryUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
@@ -22,7 +24,7 @@ import org.eclipse.swt.widgets.*;
 
 public class FeatureSpecPage extends AbstractFeatureSpecPage {
 
-	private Text fFeatureProviderText;
+	private Combo fFeatureProviderCombo;
 	private Text fFeatureIdText;
 
 	public FeatureSpecPage() {
@@ -45,7 +47,7 @@ public class FeatureSpecPage extends AbstractFeatureSpecPage {
 		FeatureData data = new FeatureData();
 		data.id = fFeatureIdText.getText();
 		data.version = fFeatureVersionText.getText();
-		data.provider = fFeatureProviderText.getText();
+		data.provider = fFeatureProviderCombo.getText();
 		data.name = fFeatureNameText.getText();
 		data.library = getInstallHandlerLibrary();
 		return data;
@@ -77,14 +79,15 @@ public class FeatureSpecPage extends AbstractFeatureSpecPage {
 
 		label = new Label(group, SWT.NULL);
 		label.setText(PDEUIMessages.NewFeatureWizard_SpecPage_provider);
-		fFeatureProviderText = new Text(group, SWT.BORDER);
-		fFeatureProviderText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		fFeatureProviderCombo = new Combo(group, SWT.BORDER | SWT.DROP_DOWN);
+		fFeatureProviderCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		BundleProviderHistoryUtil.loadHistory(fFeatureProviderCombo, getDialogSettings());
 
 		createInstallHandlerText(group);
 	}
 
 	protected void attachListeners(ModifyListener listener) {
-		fFeatureProviderText.addModifyListener(listener);
+		fFeatureProviderCombo.addModifyListener(listener);
 		fFeatureIdText.addModifyListener(listener);
 	}
 
@@ -99,7 +102,16 @@ public class FeatureSpecPage extends AbstractFeatureSpecPage {
 		String id = IdUtil.getValidId(getProjectName());
 		fFeatureIdText.setText(id);
 		fFeatureNameText.setText(IdUtil.getValidName(id));
-		fFeatureProviderText.setText(IdUtil.getValidProvider(id));
+		if (0 == fFeatureProviderCombo.getText().length()) {
+			fFeatureProviderCombo.setText(IdUtil.getValidProvider(id));
+		}
 		fSelfModification = false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.ui.wizards.feature.AbstractFeatureSpecPage#saveSettings(org.eclipse.jface.dialogs.IDialogSettings)
+	 */
+	protected void saveSettings(IDialogSettings settings) {
+		BundleProviderHistoryUtil.saveHistory(fFeatureProviderCombo, settings);
 	}
 }

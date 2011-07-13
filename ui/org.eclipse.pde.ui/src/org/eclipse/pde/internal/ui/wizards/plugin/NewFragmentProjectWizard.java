@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.ui.wizards.plugin;
 import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.wizards.IProjectProvider;
@@ -30,6 +31,7 @@ public class NewFragmentProjectWizard extends NewWizard implements IExecutableEx
 
 	public NewFragmentProjectWizard() {
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_NEWFRAGPRJ_WIZ);
+		setDialogSettings(PDEPlugin.getDefault().getDialogSettings());
 		setWindowTitle(PDEUIMessages.NewFragmentProjectWizard_title);
 		setNeedsProgressMonitor(true);
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
@@ -79,6 +81,12 @@ public class NewFragmentProjectWizard extends NewWizard implements IExecutableEx
 		try {
 			fMainPage.updateData();
 			fContentPage.updateData();
+			IDialogSettings settings = getDialogSettings();
+			if (settings != null) {
+				fMainPage.saveSettings(settings);
+				fContentPage.saveSettings(settings);
+			}
+
 			BasicNewProjectResourceWizard.updatePerspective(fConfig);
 			getContainer().run(false, true, new NewProjectCreationOperation(fFragmentData, fProjectProvider, null));
 

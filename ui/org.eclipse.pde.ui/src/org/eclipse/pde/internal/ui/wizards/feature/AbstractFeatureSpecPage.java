@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.ui.wizards.feature;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.util.IdUtil;
 import org.eclipse.pde.internal.core.util.VersionUtil;
@@ -60,6 +61,8 @@ public abstract class AbstractFeatureSpecPage extends WizardNewProjectCreationPa
 	protected abstract void attachListeners(ModifyListener listener);
 
 	protected abstract String getHelpId();
+
+	protected abstract void saveSettings(IDialogSettings settings);
 
 	protected void createCommonInput(Composite common) {
 		Label label = new Label(common, SWT.NULL);
