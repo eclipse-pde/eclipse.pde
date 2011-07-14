@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -685,18 +685,6 @@ public class CtxHelpTreeSection extends TreeSection {
 			}
 		}
 
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.AbstractFormPart#refresh()
-	 */
-	public void refresh() {
-		CtxHelpModel model = (CtxHelpModel) getPage().getModel();
-		fTree.setInput(model);
-		fTree.expandToLevel(2);
-		fTree.setSelection(new StructuredSelection(model.getCtxHelpRoot()), true);
-		getManagedForm().fireSelectionChanged(this, fTree.getSelection());
-		super.refresh();
 	}
 
 	/* (non-Javadoc)
