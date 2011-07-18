@@ -225,6 +225,7 @@ public class LicenseFeatureSection extends PDESection {
 			fSharedLicenseButton.setSelection(true);
 			stackLayout.topControl = licenseFeatureComposite;
 		}
+		model.addModelChangedListener(this);
 
 		toolkit.paintBordersFor(licenseFeatureComposite);
 
