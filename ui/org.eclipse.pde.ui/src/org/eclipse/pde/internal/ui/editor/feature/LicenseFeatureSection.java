@@ -13,8 +13,7 @@ package org.eclipse.pde.internal.ui.editor.feature;
 import java.util.ArrayList;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.text.Document;
-import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.window.Window;
@@ -178,6 +177,14 @@ public class LicenseFeatureSection extends PDESection {
 		styledText.setFont(JFaceResources.getTextFont());
 		styledText.setMenu(getPage().getPDEEditor().getContextMenu());
 		styledText.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
+		fDocument.addDocumentListener(new IDocumentListener() {
+			public void documentChanged(DocumentEvent e) {
+				infoModified();
+			}
+
+			public void documentAboutToBeChanged(DocumentEvent e) {
+			}
+		});
 
 		if (SWT.getPlatform().equals("motif") == false) { //$NON-NLS-1$
 			toolkit.paintBordersFor(localLicenseComposite);
