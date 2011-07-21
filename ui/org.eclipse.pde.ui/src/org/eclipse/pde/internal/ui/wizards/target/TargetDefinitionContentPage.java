@@ -32,7 +32,6 @@ import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
 import org.eclipse.pde.internal.ui.shared.target.*;
 import org.eclipse.pde.internal.ui.util.LocaleUtil;
-import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
@@ -671,35 +670,27 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 	private void createImpButtons(Composite container) {
 		Composite buttonContainer = SWTFactory.createComposite(container, 1, 1, GridData.FILL_VERTICAL, 0, 0);
 
-		fAddButton = new Button(buttonContainer, SWT.PUSH);
-		fAddButton.setText(PDEUIMessages.SourceBlock_add);
-		fAddButton.setLayoutData(new GridData(GridData.FILL | GridData.VERTICAL_ALIGN_BEGINNING));
-		SWTUtil.setButtonDimensionHint(fAddButton);
+		fAddButton = SWTFactory.createPushButton(buttonContainer, PDEUIMessages.SourceBlock_add, null);
 		fAddButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				handleAdd();
 			}
 		});
 
-		fRemoveButton = new Button(buttonContainer, SWT.PUSH);
-		fRemoveButton.setText(PDEUIMessages.SourceBlock_remove);
-		fRemoveButton.setLayoutData(new GridData(GridData.FILL | GridData.VERTICAL_ALIGN_BEGINNING));
-		SWTUtil.setButtonDimensionHint(fRemoveButton);
+		fRemoveButton = SWTFactory.createPushButton(buttonContainer, PDEUIMessages.SourceBlock_remove, null);
 		fRemoveButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				handleRemove();
 			}
 		});
 
-		fRemoveAllButton = new Button(buttonContainer, SWT.PUSH);
-		fRemoveAllButton.setText(PDEUIMessages.TargetImplicitPluginsTab_removeAll3);
-		fRemoveAllButton.setLayoutData(new GridData(GridData.FILL | GridData.VERTICAL_ALIGN_BEGINNING));
-		SWTUtil.setButtonDimensionHint(fRemoveAllButton);
+		fRemoveAllButton = SWTFactory.createPushButton(buttonContainer, PDEUIMessages.TargetImplicitPluginsTab_removeAll3, null);
 		fRemoveAllButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				handleRemoveAll();
 			}
 		});
+
 		updateImpButtons();
 	}
 
