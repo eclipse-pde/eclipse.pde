@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -368,13 +368,26 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 				return;
 			}
 
+			// If there are problems resolving, values may be null, set preferences as though target is empty (bug 347668)
+			IResolvedBundle[] includedBundles = fTarget.getBundles();
+			if (includedBundles == null) {
+				includedBundles = new IResolvedBundle[0];
+			}
+			IResolvedBundle[] allBundles = fTarget.getAllBundles();
+			if (allBundles == null) {
+				allBundles = new IResolvedBundle[0];
+			}
+			IFeatureModel[] allFeatures = fTarget.getAllFeatures();
+			if (allFeatures == null) {
+				allFeatures = new IFeatureModel[0];
+			}
+
 			// collect all bundles, ignoring duplicates (symbolic name & version)
-			IResolvedBundle[] resolved = fTarget.getBundles();
 			List pooled = new ArrayList();
 			boolean considerPool = false;
-			for (int i = 0; i < resolved.length; i++) {
-				if (resolved[i].getStatus().isOK()) {
-					BundleInfo bundleInfo = resolved[i].getBundleInfo();
+			for (int i = 0; i < includedBundles.length; i++) {
+				if (includedBundles[i].getStatus().isOK()) {
+					BundleInfo bundleInfo = includedBundles[i].getBundleInfo();
 					NameVersionDescriptor desc = new NameVersionDescriptor(bundleInfo.getSymbolicName(), bundleInfo.getVersion());
 					File file = new File(bundleInfo.getLocation());
 					boolean inPool = P2TargetUtils.BUNDLE_POOL.isPrefixOf(new Path(file.getAbsolutePath()));
@@ -395,9 +408,8 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 			List missing = new ArrayList();
 			NameVersionDescriptor[] restrictions = fTarget.getIncluded();
 			if (restrictions != null) {
-				IResolvedBundle[] all = fTarget.getAllBundles();
-				for (int j = 0; j < all.length; j++) {
-					IResolvedBundle bi = all[j];
+				for (int j = 0; j < allBundles.length; j++) {
+					IResolvedBundle bi = allBundles[j];
 					if (!included.contains(bi.getBundleInfo())) {
 						missing.add(bi.getBundleInfo());
 					}
@@ -497,10 +509,8 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 
 			// Save the feature list for the external feature model manager to EXTERNAL_FEATURES
 			StringBuffer featureList = new StringBuffer();
-			IFeatureModel[] features = fTarget.getAllFeatures();
 
 			// If the target has includes, but only plug-ins are specified, just include all features
-
 			// If the target has feature includes, only add features that are included (bug 308693)
 			NameVersionDescriptor[] includes = fTarget.getIncluded();
 			boolean featuresFound = false; // If only plug-ins are specified, include all features
@@ -509,27 +519,27 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 					if (includes[i].getType() == NameVersionDescriptor.TYPE_FEATURE) {
 						featuresFound = true;
 						IFeatureModel bestMatch = null;
-						for (int j = 0; j < features.length; j++) {
-							if (features[j].getFeature().getId().equals(includes[i].getId())) {
+						for (int j = 0; j < allFeatures.length; j++) {
+							if (allFeatures[j].getFeature().getId().equals(includes[i].getId())) {
 								if (includes[i].getVersion() != null) {
 									// Try to find an exact feature match
-									if (includes[i].getVersion().equals(features[j].getFeature().getVersion())) {
+									if (includes[i].getVersion().equals(allFeatures[j].getFeature().getVersion())) {
 										// Exact match
-										bestMatch = features[j];
+										bestMatch = allFeatures[j];
 										break;
 									}
 								} else if (bestMatch != null) {
 									// If no version specified take the highest version
-									Version v1 = Version.parseVersion(features[j].getFeature().getVersion());
+									Version v1 = Version.parseVersion(allFeatures[j].getFeature().getVersion());
 									Version v2 = Version.parseVersion(bestMatch.getFeature().getVersion());
 									if (v1.compareTo(v2) > 0) {
-										bestMatch = features[j];
+										bestMatch = allFeatures[j];
 									}
 								}
 
 								if (bestMatch == null) {
 									// If we can't find a version match, just take any name match
-									bestMatch = features[j];
+									bestMatch = allFeatures[j];
 								}
 							}
 						}
@@ -547,11 +557,11 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 
 			if (includes == null || !featuresFound) {
 				// Add all features to the list
-				for (int i = 0; i < features.length; i++) {
-					featureList.append(features[i].getFeature().getId());
+				for (int i = 0; i < allFeatures.length; i++) {
+					featureList.append(allFeatures[i].getFeature().getId());
 					featureList.append('@');
-					featureList.append(features[i].getFeature().getVersion());
-					if (i < features.length - 1) {
+					featureList.append(allFeatures[i].getFeature().getVersion());
+					if (i < allFeatures.length - 1) {
 						featureList.append(',');
 					}
 				}
