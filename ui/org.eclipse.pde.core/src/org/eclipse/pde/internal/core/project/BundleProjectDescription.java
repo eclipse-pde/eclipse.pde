@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -75,7 +75,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	public BundleProjectDescription(IProject project) throws CoreException {
 		fProject = project;
 		if (project.exists() && project.isOpen()) {
-			initiaize(project);
+			initialize(project);
 		}
 	}
 
@@ -155,7 +155,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	 * @param project project
 	 * @exception CoreException if unable to initialize
 	 */
-	private void initiaize(IProject project) throws CoreException {
+	private void initialize(IProject project) throws CoreException {
 		IContainer root = PDEProject.getBundleRoot(project);
 		if (root != project) {
 			setBundleRoot(root.getProjectRelativePath());
