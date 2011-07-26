@@ -334,35 +334,6 @@ public class TargetPlatformHelper {
 		return ICoreConstants.TARGET37;
 	}
 
-	public static double getHostVersion() {
-		BundleContext context = PDECore.getDefault().getBundleContext();
-		Bundle bundle = context.getBundle(0);
-		String version = (String) bundle.getHeaders().get(Constants.BUNDLE_VERSION);
-		if (version == null)
-			return Double.parseDouble(ICoreConstants.TARGET37);
-
-		if (VersionUtil.validateVersion(version).getSeverity() == IStatus.OK) {
-			Version vid = new Version(version);
-			int major = vid.getMajor();
-			int minor = vid.getMinor();
-			if (major == 3 && minor == 0)
-				return Double.parseDouble(ICoreConstants.TARGET30);
-			if (major == 3 && minor == 1)
-				return Double.parseDouble(ICoreConstants.TARGET31);
-			if (major == 3 && minor == 2)
-				return Double.parseDouble(ICoreConstants.TARGET32);
-			if (major == 3 && minor == 3)
-				return Double.parseDouble(ICoreConstants.TARGET33);
-			if (major == 3 && minor == 4)
-				return Double.parseDouble(ICoreConstants.TARGET34);
-			if (major == 3 && minor == 5)
-				return Double.parseDouble(ICoreConstants.TARGET35);
-			if (major == 3 && minor == 6)
-				return Double.parseDouble(ICoreConstants.TARGET36);
-		}
-		return Double.parseDouble(ICoreConstants.TARGET37);
-	}
-
 	public static double getTargetVersion() {
 		return Double.parseDouble(getTargetVersionString());
 	}
