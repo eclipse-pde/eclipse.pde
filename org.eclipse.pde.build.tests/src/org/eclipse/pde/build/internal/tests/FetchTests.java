@@ -19,6 +19,7 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.build.tests.BuildConfiguration;
 import org.eclipse.pde.build.tests.PDETestCase;
+import org.eclipse.pde.internal.build.FetchScriptGenerator;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
 
 /**
@@ -290,5 +291,35 @@ public class FetchTests extends PDETestCase {
 
 		Manifest m = Utils.loadManifest(buildFolder.getFile("tmp/eclipse/plugins/org.eclipse.osgi.util_3.2.100.vR_v20100108/META-INF/MANIFEST.MF"));
 		assertEquals(m.getMainAttributes().getValue("Bundle-Version"), "3.2.100.vR_v20100108");
+	}
+
+	public void testBug351740() throws Exception {
+
+		FetchScriptGenerator generator = new FetchScriptGenerator();
+
+		generator.setFetchTagAsString("CVS=HEAD,GIT=master;platform.ui=development,SVN=trunk;platform.ui=maintenance");
+
+		Properties tags = generator.getOverrideTags("CVS");
+		assertEquals(tags.getProperty("CVS"), "HEAD");
+		assertEquals(tags.getProperty("GIT"), "master");
+		assertEquals(tags.getProperty("SVN"), "trunk");
+		assertFalse(tags.containsKey("platform.ui"));
+
+		tags = generator.getOverrideTags("GIT");
+		assertEquals(tags.getProperty("GIT"), "master");
+		assertEquals(tags.getProperty("platform.ui"), "development");
+
+		tags = generator.getOverrideTags("SVN");
+		assertEquals(tags.getProperty("platform.ui"), "maintenance");
+
+		generator.setFetchTagAsString("GIT=master,HEAD;foo=bar");
+		tags = generator.getOverrideTags("GIT");
+		assertEquals(tags.getProperty("GIT"), "master");
+		assertEquals(tags.getProperty("CVS"), "HEAD");
+		assertEquals(tags.size(), 2);
+
+		tags = generator.getOverrideTags("CVS");
+		assertEquals(tags.getProperty("foo"), "bar");
+		assertEquals(tags.size(), 3);
 	}
 }

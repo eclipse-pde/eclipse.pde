@@ -50,6 +50,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 	protected boolean fetchChildren = true;
 
 	protected Properties fetchTags = null;
+	protected Map fetchOverrides = null;
 
 	// The element (an entry of the map file) for which we create the script 
 	protected String element;
@@ -183,6 +184,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 			generator.setCvsPassFileLocation(cvsPassFileLocation);
 			generator.setRecursiveGeneration(recursiveGeneration);
 			generator.setFetchTag(fetchTags);
+			generator.setFetchOverrides(fetchOverrides);
 			generator.setDirectory(directory);
 			generator.setDirectoryFile(directoryFile);
 			generator.setBuildSiteFactory(siteFactory);
@@ -307,7 +309,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 		entryInfos.put(IFetchFactory.KEY_ELEMENT_NAME, currentElement);
 
 		// add infos from registered builder
-		fetchTaskFactory.parseMapFileEntry(repoSpecificSegment, fetchTags, entryInfos);
+		fetchTaskFactory.parseMapFileEntry(repoSpecificSegment, getOverrideTags(repoIdentifier), entryInfos);
 
 		// store builder
 		entryInfos.put(FETCH_TASK_FACTORY, fetchTaskFactory);
@@ -316,6 +318,16 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 		// keep track of the version of the element as found in the map file
 		entryInfos.put(MATCHED_VERSION, match[1]);
 		return entryInfos;
+	}
+
+	public Properties getOverrideTags(String repoIdentifier) {
+		if (fetchOverrides != null && fetchOverrides.containsKey(repoIdentifier)) {
+			Properties overrides = new Properties();
+			overrides.putAll(fetchTags);
+			overrides.putAll((Map) fetchOverrides.get(repoIdentifier));
+			return overrides;
+		}
+		return fetchTags;
 	}
 
 	protected void generateFetchRecusivelyTarget() throws CoreException {
@@ -773,6 +785,10 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 		fetchTags = value;
 	}
 
+	public void setFetchOverrides(Map value) {
+		fetchOverrides = value;
+	}
+
 	public void setSourceReferences(Properties sourceReferences) {
 		this.sourceReferences = sourceReferences;
 	}
@@ -785,18 +801,43 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 	 * @param value a string CVS tag
 	 */
 	public void setFetchTagAsString(String value) {
+		fetchOverrides = new HashMap();
 		fetchTags = new Properties();
+
 		String[] entries = Utils.getArrayFromString(value);
-		//Backward compatibility
-		if (entries.length == 1 && (entries[0].indexOf('=') == -1)) {
-			fetchTags.put(CVSFetchTaskFactory.OVERRIDE_TAG, entries[0]);
-			return;
-		}
 		for (int i = 0; i < entries.length; i++) {
-			String[] valueForRepo = Utils.getArrayFromString(entries[i], "="); //$NON-NLS-1$
-			if (valueForRepo == null || valueForRepo.length != 2)
-				throw new IllegalArgumentException("FetchTag " + entries[i]); //$NON-NLS-1$
-			fetchTags.put(valueForRepo[0], valueForRepo[1]);
+			if (entries[i] == null)
+				continue;
+
+			String[] elements = Utils.getArrayFromString(entries[i], ";"); //$NON-NLS-1$
+
+			// REPO=tag;project=otherTag;project2=tag3
+			if (elements.length > 0) {
+
+				String repoElement = elements[0];
+				int idx = repoElement.indexOf('=');
+
+				String repoKey = (idx == -1) ? CVSFetchTaskFactory.OVERRIDE_TAG : repoElement.substring(0, idx);
+
+				Properties overrides = null;
+				if (fetchOverrides.containsKey(repoKey)) {
+					overrides = (Properties) fetchOverrides.get(repoKey);
+				} else {
+					overrides = new Properties();
+					fetchOverrides.put(repoKey, overrides);
+				}
+
+				fetchTags.setProperty(repoKey, repoElement.substring(idx + 1, repoElement.length()).trim());
+
+				for (int j = 1; j < elements.length; j++) {
+					String projectOverride = elements[j];
+					idx = projectOverride.indexOf('=');
+					if (idx != -1)
+						overrides.setProperty(projectOverride.substring(0, idx), projectOverride.substring(idx + 1, projectOverride.length()).trim());
+					else
+						throw new IllegalArgumentException("FetchTag " + entries[i]); //$NON-NLS-1$
+				}
+			}
 		}
 	}
 
