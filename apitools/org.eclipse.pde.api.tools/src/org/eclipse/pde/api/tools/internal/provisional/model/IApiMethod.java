@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -70,4 +70,10 @@ public interface IApiMethod extends IApiMember {
 	 */
 	public boolean isSynthetic();
 
+	/**
+	 * Returns whether this method is polymorphic.
+	 * 
+	 * @return whether this method is polymorphic
+	 */
+	public boolean isPolymorphic();
 }

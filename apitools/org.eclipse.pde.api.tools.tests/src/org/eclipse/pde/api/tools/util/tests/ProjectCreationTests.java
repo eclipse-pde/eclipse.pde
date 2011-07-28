@@ -14,7 +14,6 @@ import java.io.File;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -51,28 +50,27 @@ public class ProjectCreationTests extends AbstractApiTest {
 		JAVADOC_SRC_DIR = getSourceDirectory("javadoc");
 		JAVADOC_READ_SRC_DIR = getSourceDirectory(new Path("a").append("b").append("c"));
 	}
-
-	private static IJavaProject project = null;
-	private static IPackageFragmentRoot srcroot = null;
-
-	/**
-	 * Tests creating a new {@link IJavaProject} for the plugin test suite
-	 * 
-	 * @throws Exception
+	
+	/* (non-Javadoc)
+	 * @see junit.framework.TestCase#setUp()
 	 */
-	public void testProjectCreation() throws Exception {
-		// delete any pre-existing project
-		IProject pro = ResourcesPlugin.getWorkspace().getRoot().getProject(TESTING_PROJECT_NAME);
-		if (pro.exists()) {
-			pro.delete(true, true, null);
-		}
-		// create project and import source
-		project = ProjectUtils.createJavaProject(TESTING_PROJECT_NAME, null);
+	@Override
+	protected void setUp() throws Exception {
+		super.setUp();
+		createProject(TESTING_PROJECT_NAME, null);
+		IJavaProject project = getTestingJavaProject(TESTING_PROJECT_NAME);
 		assertNotNull("The java project must have been created", project);
-		srcroot = ProjectUtils.addSourceContainer(project, ProjectUtils.SRC_FOLDER);
-		assertNotNull("the src root must have been created", srcroot);
 	}
-
+	
+	/* (non-Javadoc)
+	 * @see junit.framework.TestCase#tearDown()
+	 */
+	@Override
+	protected void tearDown() throws Exception {
+		super.tearDown();
+		deleteProject(TESTING_PROJECT_NAME);
+	}
+	
 	/**
 	 * Tests importing the java source for the Javadoc tag update tests
 	 */
@@ -81,29 +79,10 @@ public class ProjectCreationTests extends AbstractApiTest {
 			File dest = new File(JAVADOC_SRC_DIR);
 			assertTrue("the source dir must exist", dest.exists());
 			assertTrue("the source dir must be a directory", dest.isDirectory());
+			IJavaProject project = getTestingJavaProject(TESTING_PROJECT_NAME);
+			IPackageFragmentRoot srcroot = project.getPackageFragmentRoot(ProjectUtils.SRC_FOLDER);
 			assertNotNull("the srcroot for the test java project must not be null", srcroot);
-			FileUtils.importFilesFromDirectory(dest, srcroot.getPath().append("javadoc"), new NullProgressMonitor());
-			//try to look up a file to test if it worked
-			IType type = project.findType("javadoc.JavadocTestClass1", new NullProgressMonitor());
-			assertNotNull("the JavadocTestClass1 type should exist in the javadoc package", type);
-		}
-		catch (Exception e) {
-			fail(e.getMessage());
-		}
-	}
-
-	/**
-	 * Tests importing the java source for the Javadoc tag update tests to compare
-	 * against. These source files are copies of originals prior to tag updating used for verification
-	 * that tags have been updated correctly.
-	 */
-	public void testImportJavadocTestSourceOriginal() {
-		try {
-			File dest = new File(JAVADOC_SRC_DIR);
-			assertTrue("the original source dir must exist", dest.exists());
-			assertTrue("the original source dir must be a directory", dest.isDirectory());
-			assertNotNull("the srcroot for the test java project must not be null", srcroot);
-			FileUtils.importFilesFromDirectory(dest, srcroot.getPath().append("javadoc").append("orig"), new NullProgressMonitor());
+			FileUtils.importFilesFromDirectory(dest, project.getPath().append(srcroot.getPath()).append("javadoc"), new NullProgressMonitor());
 			//try to look up a file to test if it worked
 			IType type = project.findType("javadoc.JavadocTestClass1", new NullProgressMonitor());
 			assertNotNull("the JavadocTestClass1 type should exist in the javadoc package", type);
@@ -121,8 +100,10 @@ public class ProjectCreationTests extends AbstractApiTest {
 			File dest = new File(JAVADOC_READ_SRC_DIR);
 			assertTrue("the source dir must exist", dest.exists());
 			assertTrue("the source dir must be a directory", dest.isDirectory());
+			IJavaProject project = getTestingJavaProject(TESTING_PROJECT_NAME);
+			IPackageFragmentRoot srcroot = project.getPackageFragmentRoot(ProjectUtils.SRC_FOLDER);
 			assertNotNull("the srcroot for the test java project must not be null", srcroot);
-			FileUtils.importFilesFromDirectory(dest, srcroot.getPath().append("a").append("b").append("c"), new NullProgressMonitor());
+			FileUtils.importFilesFromDirectory(dest, project.getPath().append(srcroot.getPath()).append("a").append("b").append("c"), new NullProgressMonitor());
 		}
 		catch (Exception e) {
 			fail(e.getMessage());
@@ -134,7 +115,7 @@ public class ProjectCreationTests extends AbstractApiTest {
 	 */
 	public void testCreatePluginProject() {
 		try {
-			IJavaProject jproject = createPluginProject("test_plugin_project");
+			IJavaProject jproject = getTestingJavaProject(TESTING_PROJECT_NAME);
 			IProject project = jproject.getProject();
 			assertTrue("project must have the PDE nature", project.hasNature(PDE.PLUGIN_NATURE));
 			assertTrue("project must have the java nature", project.hasNature(JavaCore.NATURE_ID));
@@ -149,28 +130,7 @@ public class ProjectCreationTests extends AbstractApiTest {
 		}
 	}
 
-	/**
-	 * Proxy to creating a plugin project, which deletes any existing projects with the same name first
-	 * @param name
-	 * @return a new {@link IJavaProject} with the given name
-	 */
-	private IJavaProject createPluginProject(String name) {
-		IJavaProject jproject = null;
-		try {
-			// delete any pre-existing project
-			IProject pro = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
-			if (pro.exists()) {
-				pro.delete(true, true, new NullProgressMonitor());
-			}
-			jproject = ProjectUtils.createPluginProject(name, new String[] {ApiPlugin.NATURE_ID});
-		}
-		catch(Exception e) {
-			e.printStackTrace();
-			fail(e.getMessage());
-		}
-		return jproject;
-	}
-	
+
 	/**
 	 * Finds the specified package export.
 	 * 
@@ -211,7 +171,7 @@ public class ProjectCreationTests extends AbstractApiTest {
 	 */
 	public void testAddRawExportedPackage() throws CoreException {
 		String packagename = "org.eclipse.apitools.test";
-		IJavaProject jproject = createPluginProject("test_plugin_project");
+		IJavaProject jproject = getTestingJavaProject(TESTING_PROJECT_NAME);
 		IProject project = jproject.getProject();
 		ProjectUtils.addExportedPackage(project, packagename, false, null);
 		IPackageExportDescription[] exports = ProjectUtils.getExportedPackages(project);
@@ -223,7 +183,7 @@ public class ProjectCreationTests extends AbstractApiTest {
 	 */
 	public void testAddInternalExportedPackage() throws CoreException {
 		String packagename = "org.eclipse.apitools.test.internal";
-		IJavaProject jproject = createPluginProject("test_plugin_project");
+		IJavaProject jproject = getTestingJavaProject(TESTING_PROJECT_NAME);
 		IProject project = jproject.getProject();
 		ProjectUtils.addExportedPackage(project, packagename, true, null);
 		IPackageExportDescription[] exports = ProjectUtils.getExportedPackages(project);
@@ -235,7 +195,7 @@ public class ProjectCreationTests extends AbstractApiTest {
 	 */
 	public void testAddExternalPackageWithFriends() throws CoreException {
 		String packagename = "org.eclipse.apitools.test.4friends";
-		IJavaProject jproject = createPluginProject("test_plugin_project");
+		IJavaProject jproject = getTestingJavaProject(TESTING_PROJECT_NAME);
 		IProject project = jproject.getProject();
 		ProjectUtils.addExportedPackage(project, packagename, false, new String[] {"F1", "F2", "F3", "F4"});
 		IPackageExportDescription[] exports = ProjectUtils.getExportedPackages(project);
@@ -246,7 +206,7 @@ public class ProjectCreationTests extends AbstractApiTest {
 	 * Tests adding more than one exported package
 	 */
 	public void testAddMultipleExportedPackages() throws CoreException {
-		IJavaProject jproject = createPluginProject("test_plugin_project");
+		IJavaProject jproject = getTestingJavaProject(TESTING_PROJECT_NAME);
 		IProject project = jproject.getProject();
 		ProjectUtils.addExportedPackage(project, "org.eclipse.apitools.test.multi.friends", false, new String[] {"F1", "F2", "F3", "F4"});
 		ProjectUtils.addExportedPackage(project, "org.eclipse.apitools.test.multi.internal", true, null);
@@ -259,7 +219,7 @@ public class ProjectCreationTests extends AbstractApiTest {
 	 * Tests removing an exported package 
 	 */
 	public void testRemoveExistingExportedPackage() throws CoreException {
-		IJavaProject jproject = createPluginProject("test_plugin_project");
+		IJavaProject jproject = getTestingJavaProject(TESTING_PROJECT_NAME);
 		IProject project = jproject.getProject();
 		ProjectUtils.addExportedPackage(project, "org.eclipse.apitools.test.remove1", false, new String[] {"F1"});
 		ProjectUtils.addExportedPackage(project, "org.eclipse.apitools.test.remove2", true, null);
@@ -276,7 +236,7 @@ public class ProjectCreationTests extends AbstractApiTest {
 	 * Tests trying to remove a package that does not exist in the header
 	 */
 	public void testRemoveNonExistingExportedPackage() throws CoreException {
-		IJavaProject jproject = createPluginProject("test_plugin_project");
+		IJavaProject jproject = getTestingJavaProject(TESTING_PROJECT_NAME);
 		IProject project = jproject.getProject();
 		ProjectUtils.addExportedPackage(project, "org.eclipse.apitools.test.removeA", false, new String[] {"F1"});
 		IPackageExportDescription[] exports = ProjectUtils.getExportedPackages(project);

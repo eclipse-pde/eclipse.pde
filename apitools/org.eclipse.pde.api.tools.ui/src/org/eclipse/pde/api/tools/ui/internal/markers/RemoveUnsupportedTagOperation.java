@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -89,7 +89,7 @@ public class RemoveUnsupportedTagOperation extends UIJob {
 						Util.updateMonitor(localMonitor, 1);
 					}
 					Util.updateMonitor(localMonitor, 1);
-					ASTParser parser = ASTParser.newParser(AST.JLS3);
+					ASTParser parser = ASTParser.newParser(AST.JLS4);
 					parser.setSource(compilationUnit);
 					Integer charStartAttribute = null;
 					charStartAttribute = (Integer) this.markers[i].getAttribute(IMarker.CHAR_START);
