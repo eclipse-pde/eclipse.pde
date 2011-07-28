@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.AST;
@@ -40,6 +41,8 @@ import org.eclipse.pde.api.tools.internal.ApiDescriptionProcessor;
 import org.eclipse.pde.api.tools.internal.util.Signatures;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 import org.eclipse.pde.api.tools.tests.AbstractApiTest;
+import org.eclipse.pde.api.tools.tests.util.FileUtils;
+import org.eclipse.pde.api.tools.tests.util.ProjectUtils;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 import org.eclipse.pde.api.tools.ui.internal.wizards.ApiToolingSetupRefactoring;
 import org.eclipse.pde.api.tools.ui.internal.wizards.WizardMessages;
@@ -56,6 +59,14 @@ import com.ibm.icu.text.MessageFormat;
 @SuppressWarnings("unchecked")
 public class ApiDescriptionProcessorTests extends AbstractApiTest {
 
+	/**
+	 * The source directory for the javadoc updating test source
+	 */
+	private static String JAVADOC_SRC_DIR = null;
+	static {
+		JAVADOC_SRC_DIR = TestSuiteHelper.getPluginDirectoryPath().append("test-source").append("javadoc").toOSString(); 
+	}
+	
 	/**
 	 * Visitor used to inspect the 'after' class files once they have had tags
 	 * added to ensure the tags as specified in the component.xml file were
@@ -176,7 +187,40 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 
 	private static IPath ROOT_PATH = TestSuiteHelper.getPluginDirectoryPath().append("test-source").append("javadoc");
 	private static File componentxml = new File(ROOT_PATH.append("component.xml").toOSString());
-	private static IJavaProject project = null;
+	
+	/* (non-Javadoc)
+	 * @see junit.framework.TestCase#setUp()
+	 */
+	@Override
+	protected void setUp() throws Exception {
+		super.setUp();
+		createProject(TESTING_PROJECT_NAME, null);
+		IJavaProject project = getTestingJavaProject(TESTING_PROJECT_NAME);
+		assertNotNull("The java project must have been created", project);
+		IPackageFragmentRoot srcroot = ProjectUtils.addSourceContainer(project, ProjectUtils.SRC_FOLDER);
+		assertNotNull("the src root must have been created", srcroot);
+		
+		File src = new File(JAVADOC_SRC_DIR);
+		assertTrue("the source dir must exist", src.exists());
+		assertTrue("the source dir must be a directory", src.isDirectory());
+		assertNotNull("the srcroot for the test java project must not be null", srcroot);
+		FileUtils.importFilesFromDirectory(src, srcroot.getPath().append("javadoc"), new NullProgressMonitor());
+		
+		ApiToolingSetupRefactoring refactoring = new ApiToolingSetupRefactoring();
+		CompositeChange change = new CompositeChange("Test");
+		createTagChanges(change, project, componentxml);
+		refactoring.addChange(change);
+		performRefactoring(refactoring);
+	}
+	
+	/* (non-Javadoc)
+	 * @see junit.framework.TestCase#tearDown()
+	 */
+	@Override
+	protected void tearDown() throws Exception {
+		super.tearDown();
+		deleteProject(TESTING_PROJECT_NAME);
+	}
 
 	/**
 	 * Tests that the component.xml file is parsed if it is provided in one of
@@ -196,31 +240,6 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 		assertNotNull("The component xml file must exist and be parsable from a jar file", xml);
 	}
 
-	/**
-	 * Tests getting the java project to use with these tests
-	 */
-	public void testGetTestingProject() {
-		project = getTestingJavaProject(TESTING_PROJECT_NAME);
-		assertNotNull("the testing project must not be null", project);
-		assertNotNull("the testing project must exist", project.exists());
-	}
-
-	/**
-	 * Tests the actual updating process, it should not fail
-	 */
-	public void testProcessUpdate() {
-		try {
-			ApiToolingSetupRefactoring refactoring = new ApiToolingSetupRefactoring();
-			CompositeChange change = new CompositeChange("Test");
-			createTagChanges(change, project, componentxml);
-			refactoring.addChange(change);
-			performRefactoring(refactoring);
-		}
-		catch (CoreException e) {
-			fail(e.getMessage());
-		} 
-	}
-	
 	/**
 	 * Creates all of the text edit changes collected from the processor. The collected edits are arranged as multi-edits 
 	 * for the one file that they belong to
@@ -270,11 +289,12 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 	 * @param signature the signature of the member
 	 * @param the tags we expect to see
 	 */
-	protected void processUpdatedItem(String typename, String innertypename, String membername, String signature, String[] expectedtags) {
+	protected void processUpdatedItem(String typename, String innertypename, String membername, String signature, String[] expectedtags) throws Exception{
 		try {
+			IJavaProject project = getTestingJavaProject(TESTING_PROJECT_NAME);
 			IType type = project.findType("javadoc", typename);
 			assertNotNull("the type for javadoc." + typename + " must exist", type);
-			ASTParser parser = ASTParser.newParser(AST.JLS3);
+			ASTParser parser = ASTParser.newParser(AST.JLS4);
 			parser.setSource(type.getCompilationUnit());
 			CompilationUnit cunit = (CompilationUnit) parser.createAST(new NullProgressMonitor());
 			ChangeVisitor visitor = new ChangeVisitor(typename, innertypename, membername, signature, expectedtags); 
@@ -289,7 +309,7 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 	 * Tests the addition of a javadoc tag to a class. Uses
 	 * <code>JavadocTestClass1</code>
 	 */
-	public void testProcessClassAddition() {
+	public void testProcessClassAddition() throws Exception {
 		processUpdatedItem("JavadocTestClass1", null, null, null, new String[] {"@noinstantiate"});
 	}
 
@@ -297,7 +317,7 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 	 * Tests the addition of a javadoc tag to a class that does not have a
 	 * javadoc section yet Uses <code>JavadocTestClass7</code>
 	 */
-	public void testProcessClassAdditionNoDocElement() {
+	public void testProcessClassAdditionNoDocElement() throws Exception {
 		processUpdatedItem("JavadocTestClass7", null, null, null, new String[] {"@noextend", "@noinstantiate"});
 	}
 
@@ -305,7 +325,7 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 	 * Tests the addition of a javadoc tag to a method that does not have a
 	 * javadoc section yet Uses <code>JavadocTestClass7</code>
 	 */
-	public void testProcessMethodAdditionNoDocElement() {
+	public void testProcessMethodAdditionNoDocElement() throws Exception {
 		processUpdatedItem("JavadocTestClass7", null, "m1", "()V", new String[] {"@nooverride"});
 	}
 
@@ -313,7 +333,7 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 	 * Tests the addition of a javadoc tag to a field that does not have a
 	 * javadoc section yet Uses <code>JavadocTestClass7</code>
 	 */
-	public void testProcessFieldAdditionNoDocElement() {
+	public void testProcessFieldAdditionNoDocElement() throws Exception {
 		processUpdatedItem("JavadocTestClass7", null, "f1", null, new String[] {"@noreference"});
 	}
 	
@@ -321,7 +341,7 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 	 * Tests the addition of a javadoc tag to an inner class. Uses
 	 * <code>JavadocTestClass2</code>
 	 */
-	public void testProcessInnerClassAddition() {
+	public void testProcessInnerClassAddition() throws Exception {
 		processUpdatedItem("JavadocTestClass2", "Inner", null, null, new String[] {"@noinstantiate"});
 	}
 
@@ -329,7 +349,7 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 	 * Tests the addition of a javadoc tags to methods. Uses
 	 * <code>JavadocTestClass3</code>
 	 */
-	public void testProcessMethodAddition() {
+	public void testProcessMethodAddition() throws Exception {
 		processUpdatedItem("JavadocTestClass3", null, "m1", "()V", new String[] {"@nooverride"});
 		processUpdatedItem("JavadocTestClass3", null, "m2", "()V", new String[] {"@noreference"});
 	}
@@ -338,7 +358,7 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 	 * Tests the addition of a javadoc tags to fields. Uses
 	 * <code>JavadocTestClass4</code>
 	 */
-	public void testProcessFieldAddition() {
+	public void testProcessFieldAddition() throws Exception {
 		processUpdatedItem("JavadocTestClass4", null, "f1", null, new String[] {"@noreference"});
 		processUpdatedItem("JavadocTestClass4", null, "f2", null, new String[] {"@noreference"});
 	}
@@ -347,7 +367,7 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 	 * Tests the addition of a javadoc tags to methods in inner classes. Uses
 	 * <code>JavadocTestClass6</code>
 	 */
-	public void testProcessInnerMethodAddition() {
+	public void testProcessInnerMethodAddition() throws Exception {
 		processUpdatedItem("JavadocTestClass6", "Inner2", "m1", "()V", new String[] {"@nooverride"});
 		processUpdatedItem("JavadocTestClass6", "Inner2", "m2", "()V", new String[] {"@noreference"});
 	}
@@ -356,7 +376,7 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 	 * Tests the addition of a javadoc tags to fields in inner classes. Uses
 	 * <code>JavadocTestClass5</code>
 	 */
-	public void testProcessInnerFieldAddition() {
+	public void testProcessInnerFieldAddition() throws Exception {
 		processUpdatedItem("JavadocTestClass5", "Inner2", "f1", null, new String[] {"@noreference"});
 		processUpdatedItem("JavadocTestClass5", "Inner2", "f2", null, new String[] {"@noreference"});
 	}
@@ -366,7 +386,7 @@ public class ApiDescriptionProcessorTests extends AbstractApiTest {
 	 * Tests the case of bug 210786 (https://bugs.eclipse.org/bugs/show_bug.cgi?id=210786)
 	 * Uses <code>JavadocTestClass8</code> 
 	 */
-	public void testProcessSubclassAttribute() {
+	public void testProcessSubclassAttribute() throws Exception {
 		processUpdatedItem("JavadocTestClass8", null, null, null, new String[] {"@noextend"});
 	}
 }

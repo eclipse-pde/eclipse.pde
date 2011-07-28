@@ -1232,9 +1232,11 @@ public class BundleComponent extends Component {
 						temp = new String[] { ProfileModifiers.J2SE_1_4_NAME };
 					} else if (ProfileModifiers.isJ2SE_1_5(values)) {
 						temp = new String[] { ProfileModifiers.J2SE_1_5_NAME };
-					} else {
-						// this is 1.6
+					} else if (ProfileModifiers.isJAVASE_1_6(values)) {
 						temp = new String[] { ProfileModifiers.JAVASE_1_6_NAME };
+					} else {
+						// this is 1.7
+						temp = new String[] { ProfileModifiers.JAVASE_1_7_NAME };
 					}
 				}
 				if (ProfileModifiers.isCDC_Foundation(values)) {

@@ -26,11 +26,13 @@ import org.osgi.service.prefs.BackingStoreException;
  */
 public class PreferencesTests extends AbstractApiTest {
 
-	/**
-	 * Sets up a variety of preferences, including adding project specific preferences 
-	 * to the test project
+	/* (non-Javadoc)
+	 * @see junit.framework.TestCase#setUp()
 	 */
-	public void testSetupSettings() {
+	@Override
+	protected void setUp() throws Exception {
+		super.setUp();
+		
 		IEclipsePreferences inode = InstanceScope.INSTANCE.getNode(ApiPlugin.PLUGIN_ID);
 		assertNotNull("The instance node must exist", inode);
 		inode.put(IApiProblemTypes.ILLEGAL_INSTANTIATE, ApiPlugin.VALUE_ERROR);
@@ -40,7 +42,10 @@ public class PreferencesTests extends AbstractApiTest {
 			fail(e1.getMessage());
 		}
 		
+		createProject(TESTING_PROJECT_NAME, null);
+		
 		IJavaProject project = getTestingJavaProject(TESTING_PROJECT_NAME);
+		assertNotNull("the testing project must not be null", project);
 		ProjectScope scope = new ProjectScope(project.getProject());
 		IEclipsePreferences eprefs = scope.getNode(ApiPlugin.PLUGIN_ID);
 		assertNotNull("The ApiPlugin section for project settings should be available", eprefs);
@@ -50,6 +55,15 @@ public class PreferencesTests extends AbstractApiTest {
 		} catch (BackingStoreException e) {
 			fail(e.getMessage());
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see junit.framework.TestCase#tearDown()
+	 */
+	@Override
+	protected void tearDown() throws Exception {
+		super.tearDown();
+		deleteProject(TESTING_PROJECT_NAME);
 	}
 	
 	/**

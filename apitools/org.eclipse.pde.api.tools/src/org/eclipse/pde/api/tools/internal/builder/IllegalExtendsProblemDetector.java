@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -205,7 +205,7 @@ public class IllegalExtendsProblemDetector extends AbstractIllegalTypeReference 
 			String name = ltype.getSimpleName();
 			ICompilationUnit cunit = type.getCompilationUnit();
 			if(cunit.isWorkingCopy()) {
-				cunit.reconcile(AST.JLS3, false, null, null);
+				cunit.reconcile(AST.JLS4, false, null, null);
 			}
 			IType localtype = type;
 			method = getEnclosingMethod(type, reference, doc);
@@ -254,7 +254,7 @@ public class IllegalExtendsProblemDetector extends AbstractIllegalTypeReference 
 			if(method == null) {
 				//look it up the hard way
 				ISourceRange range = jtype.getCompilationUnit().getSourceRange();
-				ASTParser parser = ASTParser.newParser(AST.JLS3);
+				ASTParser parser = ASTParser.newParser(AST.JLS4);
 				parser.setSource(jtype.getCompilationUnit());
 				parser.setSourceRange(range.getOffset(), range.getLength());
 				parser.setResolveBindings(true);

@@ -453,6 +453,13 @@ public class Reference implements IReference {
 				break;
 			case IReference.REF_VIRTUALMETHOD :
 			case IReference.REF_SPECIALMETHOD :
+				// check polymorphic methods: polymorphic method signature is ([Ljava/lang/Object;)Ljava/lang/Object;
+				target = type.getMethod(methodName, "([Ljava/lang/Object;)Ljava/lang/Object;"); //$NON-NLS-1$
+				if (target != null) {
+					if (methodName.equals(target.getName()) && target.isPolymorphic()) {
+						return true;
+					}
+				}
 				superclassName = type.getSuperclassName();
 				if (superclassName != null) {
 					IApiTypeRoot classFile = Util.getClassFile(
