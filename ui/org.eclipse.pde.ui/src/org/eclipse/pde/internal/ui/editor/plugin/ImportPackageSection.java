@@ -13,7 +13,7 @@ package org.eclipse.pde.internal.ui.editor.plugin;
 import java.util.*;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaUI;
@@ -52,6 +52,7 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
+import org.eclipse.ui.progress.UIJob;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Version;
 
@@ -584,47 +585,55 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 		return true;
 	}
 
-	public void modelChanged(IModelChangedEvent event) {
+	public void modelChanged(final IModelChangedEvent event) {
 		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
 			fHeader = null;
 			markStale();
 			return;
 		}
 
-		if (Constants.IMPORT_PACKAGE.equals(event.getChangedProperty())) {
-			refresh();
-			// Bug 171896
-			// Since the model sends a CHANGE event instead of
-			// an INSERT event on the very first addition to the empty table
-			// Selection should fire here to take this first insertion into account
-			Object lastElement = fPackageViewer.getElementAt(fPackageViewer.getTable().getItemCount() - 1);
-			if (lastElement != null) {
-				fPackageViewer.setSelection(new StructuredSelection(lastElement));
-			}
-			return;
-		}
-
-		Object[] objects = event.getChangedObjects();
-		for (int i = 0; i < objects.length; i++) {
-			if (objects[i] instanceof ImportPackageObject) {
-				ImportPackageObject object = (ImportPackageObject) objects[i];
-				switch (event.getChangeType()) {
-					case IModelChangedEvent.INSERT :
-						fPackageViewer.add(object);
-						fPackageViewer.setSelection(new StructuredSelection(object));
-						fPackageViewer.getTable().setFocus();
-						break;
-					case IModelChangedEvent.REMOVE :
-						Table table = fPackageViewer.getTable();
-						int index = table.getSelectionIndex();
-						fPackageViewer.remove(object);
-						table.setSelection(index < table.getItemCount() ? index : table.getItemCount() - 1);
-						break;
-					default :
-						fPackageViewer.refresh(object);
+		// Model change may have come from a non UI thread such as the auto add dependencies operation. See bug 333533 
+		UIJob job = new UIJob("Update package imports") { //$NON-NLS-1$
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+				if (Constants.IMPORT_PACKAGE.equals(event.getChangedProperty())) {
+					refresh();
+					// Bug 171896
+					// Since the model sends a CHANGE event instead of
+					// an INSERT event on the very first addition to the empty table
+					// Selection should fire here to take this first insertion into account
+					Object lastElement = fPackageViewer.getElementAt(fPackageViewer.getTable().getItemCount() - 1);
+					if (lastElement != null) {
+						fPackageViewer.setSelection(new StructuredSelection(lastElement));
+					}
+					return Status.OK_STATUS;
 				}
+
+				Object[] objects = event.getChangedObjects();
+				for (int i = 0; i < objects.length; i++) {
+					if (objects[i] instanceof ImportPackageObject) {
+						ImportPackageObject object = (ImportPackageObject) objects[i];
+						switch (event.getChangeType()) {
+							case IModelChangedEvent.INSERT :
+								fPackageViewer.add(object);
+								fPackageViewer.setSelection(new StructuredSelection(object));
+								fPackageViewer.getTable().setFocus();
+								break;
+							case IModelChangedEvent.REMOVE :
+								Table table = fPackageViewer.getTable();
+								int index = table.getSelectionIndex();
+								fPackageViewer.remove(object);
+								table.setSelection(index < table.getItemCount() ? index : table.getItemCount() - 1);
+								break;
+							default :
+								fPackageViewer.refresh(object);
+						}
+					}
+				}
+				return Status.OK_STATUS;
 			}
-		}
+		};
+		job.setSystem(true);
+		job.schedule();
 	}
 
 	public void refresh() {

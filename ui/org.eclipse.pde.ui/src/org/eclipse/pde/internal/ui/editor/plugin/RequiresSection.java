@@ -12,7 +12,7 @@ package org.eclipse.pde.internal.ui.editor.plugin;
 
 import java.io.*;
 import java.util.*;
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -48,6 +48,7 @@ import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
+import org.eclipse.ui.progress.UIJob;
 
 public class RequiresSection extends TableSection implements IModelChangedListener, IPluginModelListener, IPropertyChangeListener {
 
@@ -534,76 +535,87 @@ public class RequiresSection extends TableSection implements IModelChangedListen
 		super.refresh();
 	}
 
-	public void modelChanged(IModelChangedEvent event) {
+	public void modelChanged(final IModelChangedEvent event) {
 		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
 			markStale();
 			return;
 		}
-		if (event.getChangedProperty() == IPluginBase.P_IMPORT_ORDER) {
-			refresh();
-			updateButtons();
-			return;
-		}
 
-		Object[] changedObjects = event.getChangedObjects();
-		if (changedObjects[0] instanceof IPluginImport) {
-			int index = 0;
-			for (int i = 0; i < changedObjects.length; i++) {
-				Object changeObject = changedObjects[i];
-				IPluginImport iimport = (IPluginImport) changeObject;
-				if (event.getChangeType() == IModelChangedEvent.INSERT) {
-					ImportObject iobj = new ImportObject(iimport);
-					if (fImports == null) {
-						// createImportObjects method will find new addition
-						createImportObjects();
-					} else {
-						int insertIndex = getImportInsertIndex();
-						if (insertIndex < 0) {
-							// Add Button
-							fImports.add(iobj);
+		// Model change may have come from a non UI thread such as the auto add dependencies operation. See bug 333533 
+		UIJob job = new UIJob("Update required bundles") { //$NON-NLS-1$
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+
+				if (event.getChangedProperty() == IPluginBase.P_IMPORT_ORDER) {
+					refresh();
+					updateButtons();
+					return Status.OK_STATUS;
+				}
+
+				Object[] changedObjects = event.getChangedObjects();
+				if (changedObjects[0] instanceof IPluginImport) {
+					int index = 0;
+					for (int i = 0; i < changedObjects.length; i++) {
+						Object changeObject = changedObjects[i];
+						IPluginImport iimport = (IPluginImport) changeObject;
+						if (event.getChangeType() == IModelChangedEvent.INSERT) {
+							ImportObject iobj = new ImportObject(iimport);
+							if (fImports == null) {
+								// createImportObjects method will find new addition
+								createImportObjects();
+							} else {
+								int insertIndex = getImportInsertIndex();
+								if (insertIndex < 0) {
+									// Add Button
+									fImports.add(iobj);
+								} else {
+									// DND
+									fImports.add(insertIndex, iobj);
+								}
+							}
 						} else {
-							// DND
-							fImports.add(insertIndex, iobj);
+							ImportObject iobj = findImportObject(iimport);
+							if (iobj != null) {
+								if (event.getChangeType() == IModelChangedEvent.REMOVE) {
+									if (fImports == null)
+										// createImportObjects method will not include the removed import
+										createImportObjects();
+									else
+										fImports.remove(iobj);
+									Table table = fImportViewer.getTable();
+									index = table.getSelectionIndex();
+									fImportViewer.remove(iobj);
+								} else {
+									fImportViewer.update(iobj, null);
+								}
+							}
 						}
+					}
+					if (event.getChangeType() == IModelChangedEvent.INSERT) {
+						if (changedObjects.length > 0) {
+							// Refresh the viewer
+							fImportViewer.refresh();
+							// Get the last import added to the viewer
+							IPluginImport lastImport = (IPluginImport) changedObjects[changedObjects.length - 1];
+							// Find the corresponding bundle object for the plug-in import
+							ImportObject lastImportObject = findImportObject(lastImport);
+							if (lastImportObject != null) {
+								fImportViewer.setSelection(new StructuredSelection(lastImportObject));
+							}
+							fImportViewer.getTable().setFocus();
+						}
+					} else if (event.getChangeType() == IModelChangedEvent.REMOVE) {
+						Table table = fImportViewer.getTable();
+						table.setSelection(index < table.getItemCount() ? index : table.getItemCount() - 1);
 					}
 				} else {
-					ImportObject iobj = findImportObject(iimport);
-					if (iobj != null) {
-						if (event.getChangeType() == IModelChangedEvent.REMOVE) {
-							if (fImports == null)
-								// createImportObjects method will not include the removed import
-								createImportObjects();
-							else
-								fImports.remove(iobj);
-							Table table = fImportViewer.getTable();
-							index = table.getSelectionIndex();
-							fImportViewer.remove(iobj);
-						} else {
-							fImportViewer.update(iobj, null);
-						}
-					}
+					fImportViewer.update(((IStructuredSelection) fImportViewer.getSelection()).toArray(), null);
 				}
+
+				return Status.OK_STATUS;
 			}
-			if (event.getChangeType() == IModelChangedEvent.INSERT) {
-				if (changedObjects.length > 0) {
-					// Refresh the viewer
-					fImportViewer.refresh();
-					// Get the last import added to the viewer
-					IPluginImport lastImport = (IPluginImport) changedObjects[changedObjects.length - 1];
-					// Find the corresponding bundle object for the plug-in import
-					ImportObject lastImportObject = findImportObject(lastImport);
-					if (lastImportObject != null) {
-						fImportViewer.setSelection(new StructuredSelection(lastImportObject));
-					}
-					fImportViewer.getTable().setFocus();
-				}
-			} else if (event.getChangeType() == IModelChangedEvent.REMOVE) {
-				Table table = fImportViewer.getTable();
-				table.setSelection(index < table.getItemCount() ? index : table.getItemCount() - 1);
-			}
-		} else {
-			fImportViewer.update(((IStructuredSelection) fImportViewer.getSelection()).toArray(), null);
-		}
+		};
+		job.setSystem(true);
+		job.schedule();
 	}
 
 	public void modelsChanged(PluginModelDelta delta) {
