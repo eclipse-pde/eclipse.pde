@@ -182,13 +182,16 @@ public abstract class ApiBuilderTest extends BuilderTests {
 		int length = jdtMarkers.length;
 		if (length != 0) {
 			boolean condition = false;
+			String cause = "No marker message";
 			for (int i = 0; i < length; i++) {
 				condition = condition || jdtMarkers[i].getAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING) == IMarker.SEVERITY_ERROR;
 				if (condition) {
-					System.err.println(jdtMarkers[i].getAttribute(IMarker.MESSAGE));
+					cause = (String)jdtMarkers[i].getAttribute(IMarker.MESSAGE);
+					System.err.println("Unexpected JDT Marker");
+					System.err.println(cause);
 				}
 			}
-			assertFalse("Should not be a JDT error", condition);
+			assertFalse("Should not be a JDT error:" + cause, condition);
 		}
 	}
 	
