@@ -12,6 +12,7 @@ package org.eclipse.pde.api.tools.builder.tests.usage;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -26,6 +27,7 @@ import org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest;
 import org.eclipse.pde.api.tools.builder.tests.ApiProblem;
 import org.eclipse.pde.api.tools.builder.tests.ApiTestingEnvironment;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
+import org.eclipse.pde.api.tools.tests.util.ProjectUtils;
 
 /**
  * Tests usage scanning in source
@@ -137,12 +139,13 @@ public abstract class UsageTest extends ApiBuilderTest {
 	 */
 	@Override
 	protected void setUp() throws Exception {
+		super.setUp();
 		ApiTestingEnvironment env = getEnv();
 		if (env != null) {
 			env.setRevert(true);
 			env.setRevertSourcePath(null);
 		}
-		super.setUp();
+	
 		IProject project = getEnv().getWorkspace().getRoot().getProject(getTestingProjectName());
 		if (!project.exists()) {
 			// populate the workspace with initial plug-ins/projects
@@ -207,22 +210,25 @@ public abstract class UsageTest extends ApiBuilderTest {
 	 * @return all of the child test classes of this class
 	 */
 	private static Class[] getAllTestClasses() {
-		Class[] classes = new Class[] {
-				FieldUsageTests.class,
-				Java5FieldUsageTests.class,
-				Java7FieldUsageTests.class,
-				MethodUsageTests.class,
-				Java5MethodUsageTests.class,
-				Java7MethodUsageTests.class,
-				ConstructorUsageTests.class,
-				ClassUsageTests.class,
-				Java5ClassUsageTests.class,
-				Java7ClassUsageTests.class,
-				InterfaceUsageTests.class,
-				UnusedApiProblemFilterTests.class,
-				DependentUsageTests.class,
-				FragmentUsageTests.class
-		};
-		return classes;
+		ArrayList<Class> classes = new ArrayList<Class>();
+		classes.add(FieldUsageTests.class);
+		classes.add(MethodUsageTests.class);
+		classes.add(ConstructorUsageTests.class);
+		classes.add(ClassUsageTests.class);
+		classes.add(InterfaceUsageTests.class);
+		classes.add(UnusedApiProblemFilterTests.class);
+		classes.add(DependentUsageTests.class);
+		classes.add(FragmentUsageTests.class);
+		if(ProjectUtils.isJava5Compatible()) {
+			classes.add(Java5FieldUsageTests.class);
+			classes.add(Java5MethodUsageTests.class);
+			classes.add(Java5ClassUsageTests.class);
+		}
+		if(ProjectUtils.isJava7Compatible()) {
+			classes.add(Java7MethodUsageTests.class);
+			classes.add(Java7ClassUsageTests.class);
+			
+		}
+		return classes.toArray(new Class[classes.size()]);
 	}
 }

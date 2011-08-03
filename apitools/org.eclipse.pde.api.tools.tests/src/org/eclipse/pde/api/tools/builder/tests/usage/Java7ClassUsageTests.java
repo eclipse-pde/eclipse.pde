@@ -10,11 +10,14 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.builder.tests.usage;
 
+import java.io.File;
+
 import junit.framework.Test;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
+import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 
 /**
  * Test class usage for Java 7 code snippets
@@ -38,7 +41,22 @@ public class Java7ClassUsageTests extends ClassUsageTests {
 		return buildTestSuite(Java7ClassUsageTests.class);
 	}
 	
-	/**
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#createExistingProjects(java.lang.String, boolean, boolean, boolean)
+	 */
+	@Override
+	protected void createExistingProjects(String projectsdir, boolean buildimmediately, boolean importfiles, boolean usetestcompliance) throws Exception {
+		// Import the Java 7 specific test project then continue importing the normal usage tests and run the build
+		IPath path = TestSuiteHelper.getPluginDirectoryPath().append(TEST_SOURCE_ROOT).append("usageprojectjava7");
+		File dir = path.toFile();
+		assertTrue("Test data directory does not exist: " + path.toOSString(), dir.exists());
+		createExistingProject(dir, importfiles, usetestcompliance);
+		
+		// Super method is called after the import so a full build is only performed once
+		super.createExistingProjects(projectsdir, buildimmediately, importfiles, usetestcompliance);
+	}
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getTestCompliance()
 	 */
 	@Override
@@ -46,6 +64,9 @@ public class Java7ClassUsageTests extends ClassUsageTests {
 		return CompilerOptions.VERSION_1_7;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.builder.tests.usage.ClassUsageTests#getTestSourcePath()
+	 */
 	@Override
 	protected IPath getTestSourcePath() {
 		return super.getTestSourcePath().removeLastSegments(1).append("java7");

@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: usageprojectjava7
+Bundle-SymbolicName: usageprojectjava7
+Bundle-Version: 1.0.0
+Export-Package: c
+Bundle-RequiredExecutionEnvironment: J2SE-1.7
