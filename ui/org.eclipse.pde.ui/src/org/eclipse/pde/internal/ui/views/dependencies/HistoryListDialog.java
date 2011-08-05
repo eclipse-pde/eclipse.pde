@@ -124,9 +124,9 @@ public class HistoryListDialog extends StatusDialog {
 			public void widgetSelected(SelectionEvent e) {
 				ISelection selection = fHistoryViewer.getSelection();
 				if (!selection.isEmpty() && selection instanceof IStructuredSelection) {
-					Object removalCandiate = ((IStructuredSelection) selection).getFirstElement();
-					fHistoryList.remove(removalCandiate);
-					fHistoryViewer.remove(removalCandiate);
+					Object removalCandidate = ((IStructuredSelection) selection).getFirstElement();
+					fHistoryList.remove(removalCandidate);
+					fHistoryViewer.remove(removalCandidate);
 				}
 			}
 		});
