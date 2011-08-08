@@ -34,6 +34,8 @@ public class MarkerMessages extends NLS {
 	public static String FilterProblemResolution_api_component;
 	public static String FilterProblemWithCommentResolution_create_commented_filter;
 	public static String FilterProblemWithCommentResolution_create_commented_filters;
+	public static String InstallEEDescriptionProblemResolution_0;
+	public static String InstallEEDescriptionProblemResolution_1;
 	public static String MissingEEDescriptionProblemResolution_0;
 	public static String MissingEEDescriptionProblemResolution_1;
 	public static String OpenPropertyPageResolution_element_cannot_be_null;

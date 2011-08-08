@@ -43,6 +43,10 @@ public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator2
 	 */
 	private final IMarkerResolution[] NO_RESOLUTIONS = new IMarkerResolution[0];
 	
+	private MissingEEDescriptionProblemResolution eeResolution = new MissingEEDescriptionProblemResolution();
+	private InstallEEDescriptionProblemResolution installEEResolution = new InstallEEDescriptionProblemResolution();
+	private DefaultApiProfileResolution profileResolution = new DefaultApiProfileResolution();
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IMarkerResolutionGenerator#getResolutions(org.eclipse.core.resources.IMarker)
 	 */
@@ -54,10 +58,7 @@ public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator2
 			case IApiMarkerConstants.API_USAGE_MARKER_ID : {
 				int id = ApiProblemFactory.getProblemId(marker);
 				if(id > -1 && ApiProblemFactory.getProblemKind(id) == IApiProblem.MISSING_EE_DESCRIPTIONS) {
-					return new IMarkerResolution[] {
-							new MissingEEDescriptionProblemResolution(),
-							new FilterProblemResolution(marker), 
-							new FilterProblemWithCommentResolution(marker)};
+					return new IMarkerResolution[] {installEEResolution, eeResolution};
 				}
 				return new IMarkerResolution[] {new FilterProblemResolution(marker), new FilterProblemWithCommentResolution(marker)};
 			}
@@ -65,7 +66,7 @@ public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator2
 				return new IMarkerResolution[] {new FilterProblemResolution(marker), new FilterProblemWithCommentResolution(marker)};
 			}
 			case IApiMarkerConstants.DEFAULT_API_BASELINE_MARKER_ID : {
-				return new IMarkerResolution[] {new DefaultApiProfileResolution()};
+				return new IMarkerResolution[] {profileResolution};
 			}
 			case IApiMarkerConstants.SINCE_TAG_MARKER_ID : {
 				return new IMarkerResolution[] {new SinceTagResolution(marker), new FilterProblemResolution(marker), new FilterProblemWithCommentResolution(marker)};

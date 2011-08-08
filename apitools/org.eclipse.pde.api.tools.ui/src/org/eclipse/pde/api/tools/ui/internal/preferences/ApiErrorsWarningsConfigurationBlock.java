@@ -82,7 +82,8 @@ import com.ibm.icu.text.MessageFormat;
  */
 public class ApiErrorsWarningsConfigurationBlock {
 	
-	private static final String P2_INSTALL_COMMAND_HANDLER = "org.eclipse.equinox.p2.ui.sdk.install"; //$NON-NLS-1$
+	public static final String P2_INSTALL_COMMAND_HANDLER = "org.eclipse.equinox.p2.ui.sdk.install"; //$NON-NLS-1$
+	
 	/**
 	 * Provides data information for created controls
 	 */
@@ -1417,7 +1418,7 @@ public class ApiErrorsWarningsConfigurationBlock {
 		}
 	}
 
-	static void handleCommandException() {
+	public static void handleCommandException() {
 		MessageDialog.openError(
 				PlatformUI.getWorkbench().getModalDialogShellProvider().getShell(),
 				PreferenceMessages.ApiProblemSeveritiesConfigurationBlock_checkable_ees_error_dialog_title,
