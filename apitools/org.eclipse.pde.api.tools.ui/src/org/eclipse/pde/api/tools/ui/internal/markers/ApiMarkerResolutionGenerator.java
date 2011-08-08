@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 IBM Corporation and others.
+ * Copyright (c) 2008, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.api.tools.internal.ApiBaselineManager;
+import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFilter;
 import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
@@ -50,7 +51,16 @@ public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator2
 			return NO_RESOLUTIONS;
 		}
 		switch(marker.getAttribute(IApiMarkerConstants.API_MARKER_ATTR_ID, -1)) {
-			case IApiMarkerConstants.API_USAGE_MARKER_ID : 
+			case IApiMarkerConstants.API_USAGE_MARKER_ID : {
+				int id = ApiProblemFactory.getProblemId(marker);
+				if(id > -1 && ApiProblemFactory.getProblemKind(id) == IApiProblem.MISSING_EE_DESCRIPTIONS) {
+					return new IMarkerResolution[] {
+							new MissingEEDescriptionProblemResolution(),
+							new FilterProblemResolution(marker), 
+							new FilterProblemWithCommentResolution(marker)};
+				}
+				return new IMarkerResolution[] {new FilterProblemResolution(marker), new FilterProblemWithCommentResolution(marker)};
+			}
 			case IApiMarkerConstants.COMPATIBILITY_MARKER_ID : {
 				return new IMarkerResolution[] {new FilterProblemResolution(marker), new FilterProblemWithCommentResolution(marker)};
 			}

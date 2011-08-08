@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 IBM Corporation and others.
+ * Copyright (c) 2008, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,9 @@ import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.pde.api.tools.internal.builder.BuilderMessages;
+import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
@@ -339,6 +341,21 @@ public class ApiProblemFactory {
 	}
 	
 	/**
+	 * Returns the {@link IApiProblem} id from the given marker or <code>-1</code> if the marker is <code>null</code> or the marker 
+	 * does not contain the {@link IApiMarkerConstants#MARKER_ATTR_PROBLEM_ID} attribute
+	 * 
+	 * @param marker
+	 * @return the {@link IApiProblem} id or <code>-1</code>
+	 * @since 1.0.400
+	 */
+	public static int getProblemId(IMarker marker) {
+		if(marker != null) {
+			return marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_PROBLEM_ID, -1);
+		}
+		return -1;
+	}
+	
+	/**
 	 * Returns the kind of the problem from the given problem id. The returned kind is not checked to see if it
 	 * is correct or existing.
 	 * 
@@ -484,6 +501,7 @@ public class ApiProblemFactory {
 							default: return 36;
 						}
 					case IApiProblem.UNUSED_PROBLEM_FILTERS: return 30;
+					case IApiProblem.MISSING_EE_DESCRIPTIONS: return 38;
 				}
 				break;
 			}
@@ -691,6 +709,7 @@ public class ApiProblemFactory {
 					case IApiProblem.DUPLICATE_TAG_USE: return IApiProblemTypes.INVALID_JAVADOC_TAG;
 					case IApiProblem.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES: return IApiProblemTypes.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES;
 					case IApiProblem.UNUSED_PROBLEM_FILTERS: return IApiProblemTypes.UNUSED_PROBLEM_FILTERS;
+					case IApiProblem.MISSING_EE_DESCRIPTIONS: return IApiProblemTypes.MISSING_EE_DESCRIPTIONS;
 				}
 				break;
 			}

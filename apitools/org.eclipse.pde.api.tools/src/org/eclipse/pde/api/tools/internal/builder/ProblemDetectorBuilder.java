@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 IBM Corporation and others.
+ * Copyright (c) 2008, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import java.util.Set;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.pde.api.tools.internal.model.ProjectComponent;
+import org.eclipse.pde.api.tools.internal.model.StubApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
@@ -228,8 +229,9 @@ public class ProblemDetectorBuilder extends ApiDescriptionVisitor {
 	 */
 	private void addSystemDetector(List detectors, IProject project) {
 		if (project != null) {
+			//do not add the detector even if the setting is not ingonre if there are no EE descriptions installed
 			if (!isIgnore(IApiProblemTypes.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES, project)
-					 && fSystemApiDetector == null) {
+					 && fSystemApiDetector == null && StubApiComponent.getInstalledMetadata().length > 0) {
 				fSystemApiDetector = new SystemApiDetector();
 				fDetectors.add(fSystemApiDetector);
 			}

@@ -254,6 +254,11 @@ public interface IApiProblemTypes {
 	 */
 	public static final String UNUSED_PROBLEM_FILTERS = "UNUSED_PROBLEM_FILTERS"; //$NON-NLS-1$
 	/**
+	 * Key for the severity of no EE descriptions being installed
+	 * @since 1.0.400
+	 */
+	public static final String MISSING_EE_DESCRIPTIONS = "MISSING_EE_DESCRIPTIONS"; //$NON-NLS-1$
+	/**
 	 * Key for the severity of API Use Scan Type breakage problems.
 	 */
 	public static final String API_USE_SCAN_TYPE_SEVERITY = "API_USE_SCAN_TYPE_SEVERITY";	 //$NON-NLS-1$

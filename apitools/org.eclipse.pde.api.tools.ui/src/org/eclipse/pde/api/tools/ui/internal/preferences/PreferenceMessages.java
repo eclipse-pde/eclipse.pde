@@ -17,6 +17,7 @@ public class PreferenceMessages extends NLS {
 	public static String ApiErrorsWarningsConfigurationBlock_0;
 	public static String ApiErrorsWarningsConfigurationBlock_1;
 	public static String ApiErrorsWarningsConfigurationBlock_2;
+	public static String ApiErrorsWarningsConfigurationBlock_3;
 	public static String ApiErrorsWarningsConfigurationBlock_automatically_remove_problem_filters;
 	public static String ApiErrorsWarningsPreferencePage_0;
 	public static String ApiErrorsWarningsPreferencePage_1;

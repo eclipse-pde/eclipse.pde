@@ -234,6 +234,7 @@ public class ApiErrorsWarningsConfigurationBlock {
 	private static final Key KEY_INVALID_JAVADOC_TAG = getApiToolsKey(IApiProblemTypes.INVALID_JAVADOC_TAG);
 	private static final Key KEY_INVALID_REFERENCE_IN_SYSTEM_LIBRARIES = getApiToolsKey(IApiProblemTypes.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES);
 	private static final Key KEY_UNUSED_PROBLEM_FILTERS = getApiToolsKey(IApiProblemTypes.UNUSED_PROBLEM_FILTERS);
+	private static final Key KEY_MISSING_EE_DESCRIPTIONS = getApiToolsKey(IApiProblemTypes.MISSING_EE_DESCRIPTIONS);
 	
 	//compatibility keys
 	private static final Key KEY_API_COMPONENT_REMOVED_API_TYPE =
@@ -521,6 +522,7 @@ public class ApiErrorsWarningsConfigurationBlock {
 		KEY_LEAK_METHOD_RETURN_TYPE,
 		KEY_INVALID_JAVADOC_TAG,
 		KEY_INVALID_REFERENCE_IN_SYSTEM_LIBRARIES,
+		KEY_MISSING_EE_DESCRIPTIONS
 	};
 
 	static Key[] fgAllVersionManagementKeys = {
@@ -553,6 +555,7 @@ public class ApiErrorsWarningsConfigurationBlock {
 		KEY_INVALID_JAVADOC_TAG,
 		KEY_INVALID_REFERENCE_IN_SYSTEM_LIBRARIES,
 		KEY_UNUSED_PROBLEM_FILTERS,
+		KEY_MISSING_EE_DESCRIPTIONS,
 		KEY_API_COMPONENT_REMOVED_API_TYPE,
 		KEY_API_COMPONENT_REMOVED_TYPE,
 		KEY_API_COMPONENT_REMOVED_REEXPORTED_API_TYPE,
@@ -1324,6 +1327,9 @@ public class ApiErrorsWarningsConfigurationBlock {
 					KEY_INVALID_REFERENCE_IN_SYSTEM_LIBRARIES,
 				});
 		initializeInstalledMetatadata(client);
+		initializeComboControls(client,
+				new String[] {PreferenceMessages.ApiErrorsWarningsConfigurationBlock_3}, 
+				new Key[] {KEY_MISSING_EE_DESCRIPTIONS});
 		client = createExpansibleComposite(sbody, PreferenceMessages.ApiErrorsWarningsConfigurationBlock_restrictions);
 		initializeComboControls(client,
 			new String[] {
@@ -1365,7 +1371,7 @@ public class ApiErrorsWarningsConfigurationBlock {
 	 * @param parent
 	 */
 	private void initializeInstalledMetatadata(final Composite parent) {
-		Composite comp = SWTFactory.createComposite(parent, 1, 2, GridData.FILL_HORIZONTAL, 0, 0);
+		Composite comp = SWTFactory.createComposite(parent, 2, 2, GridData.FILL_HORIZONTAL, 0, 0);
 		GridData gd = (GridData) comp.getLayoutData();
 		gd.horizontalIndent = 15;
 		Group group = SWTFactory.createGroup(comp, PreferenceMessages.ApiProblemSeveritiesConfigurationBlock_checkable_ees, 3, 3, GridData.FILL_BOTH);

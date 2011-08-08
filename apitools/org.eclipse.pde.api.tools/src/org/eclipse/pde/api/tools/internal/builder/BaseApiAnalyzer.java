@@ -68,6 +68,7 @@ import org.eclipse.pde.api.tools.internal.ApiFilterStore;
 import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 import org.eclipse.pde.api.tools.internal.comparator.Delta;
 import org.eclipse.pde.api.tools.internal.model.ProjectComponent;
+import org.eclipse.pde.api.tools.internal.model.StubApiComponent;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFilter;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
@@ -221,7 +222,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 						));
 				}
 				if (buffer != null) {
-					// api component has errors that should be reported
+					// API component has errors that should be reported
 					createApiComponentResolutionProblem(component, String.valueOf(buffer));
 					if (baseline == null) {
 						checkDefaultBaselineSet();
@@ -267,6 +268,10 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 				checkDefaultBaselineSet();
 				Util.updateMonitor(localMonitor);
 			}
+			
+			//check E description status
+			checkEEDescriptions();
+			
 			//usage checks
 			checkApiUsage(bcontext, component, localMonitor.newChild(1));
 			Util.updateMonitor(localMonitor);
@@ -297,6 +302,50 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		}
 	}
 
+	/**
+	 * Checks if the setting to scan for invalid references is not set to be ignored AND there are no descriptions installed
+	 * 
+	 * @param component
+	 * @param monitor
+	 * @since 1.0.400
+	 */
+	void checkEEDescriptions() {
+		if(ignoreEEDescriptionCheck()) {
+			if(DEBUG) {
+				System.out.println("Ignoring check for API EE descriptions"); //$NON-NLS-1$
+			}
+			return;
+		}
+		if(DEBUG) {
+			System.out.println("Checking if there are any API EE descriptions installed if the preference is set to not be 'ignore'"); //$NON-NLS-1$
+		}
+		String[] ees = StubApiComponent.getInstalledMetadata();
+		if(ees.length < 1) {
+			IApiProblem problem = ApiProblemFactory.newApiUsageProblem(
+					Path.EMPTY.toString(), 
+					null, 
+					new String[] {fJavaProject.getElementName()}, 
+					new String[] {IApiMarkerConstants.API_MARKER_ATTR_ID},
+					new Object[] {new Integer(IApiMarkerConstants.API_USAGE_MARKER_ID)}, 
+					-1, 
+					-1, 
+					-1, 
+					IElementDescriptor.RESOURCE, 
+					IApiProblem.MISSING_EE_DESCRIPTIONS);
+			addProblem(problem);
+		}
+	}
+	
+	/**
+	 * @return if the API EE description check should be ignored or not
+	 */
+	private boolean ignoreEEDescriptionCheck() {
+		if(fJavaProject == null) {
+			return true;
+		}
+		return ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES, fJavaProject.getProject().getProject()) == ApiPlugin.SEVERITY_IGNORE;
+	}
+	
 	/**
 	 * Processes the API Use Scan report for the given API Component
 	 * 
