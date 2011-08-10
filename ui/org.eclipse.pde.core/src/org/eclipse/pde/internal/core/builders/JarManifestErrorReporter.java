@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,8 +15,8 @@ import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.text.*;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.osgi.util.NLS;
@@ -185,7 +185,16 @@ public class JarManifestErrorReporter extends ErrorReporter {
 			}
 			if (header != null) {
 				// lingering header, line not terminated
-				report(PDECoreMessages.BundleErrorReporter_noLineTermination, l, CompilerFlags.ERROR, PDEMarkerFactory.CAT_FATAL);
+				IMarker marker = report(PDECoreMessages.BundleErrorReporter_noLineTermination, l, CompilerFlags.ERROR, PDEMarkerFactory.M_NO_LINE_TERMINATION, PDEMarkerFactory.CAT_FATAL);
+				try {
+					if (marker != null) {
+						// Check whether last line is purely whitespace, and add this information to the marker.
+						IRegion lineInfo = document.getLineInformation(document.getNumberOfLines() - 1);
+						String line = document.get(lineInfo.getOffset(), lineInfo.getLength());
+						marker.setAttribute(PDEMarkerFactory.ATTR_HAS_CONTENT, !line.matches("\\s+")); //$NON-NLS-1$
+					}
+				} catch (CoreException e) {
+				}
 				return;
 			}
 			// If there is any more headers, not starting with a Name header

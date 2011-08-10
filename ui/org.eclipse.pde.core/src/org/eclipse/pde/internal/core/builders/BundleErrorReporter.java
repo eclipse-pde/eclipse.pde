@@ -985,10 +985,10 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			IMarker marker = report(message, line + 1, severity, PDEMarkerFactory.M_DEPRECATED_AUTOSTART, PDEMarkerFactory.CAT_DEPRECATION);
 			if (marker != null) {
 				try {
-					marker.setAttribute("header", ICoreConstants.ECLIPSE_AUTOSTART); //$NON-NLS-1$
+					marker.setAttribute(PDEMarkerFactory.ATTR_HEADER, ICoreConstants.ECLIPSE_AUTOSTART);
 					ManifestElement elem = header.getElements()[0];
 					boolean unnecessary = elem.getValue().equals("false") && elem.getAttribute("excludes") == null; //$NON-NLS-1$ //$NON-NLS-2$
-					marker.setAttribute("canAdd", !unnecessary); //$NON-NLS-1$
+					marker.setAttribute(PDEMarkerFactory.ATTR_CAN_ADD, !unnecessary);
 				} catch (CoreException e) {
 				}
 			}
@@ -1011,11 +1011,11 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 				IMarker marker = report(message, line + 1, severity, PDEMarkerFactory.M_DEPRECATED_AUTOSTART, PDEMarkerFactory.CAT_DEPRECATION);
 				if (marker != null) {
 					try {
-						marker.setAttribute("header", ICoreConstants.ECLIPSE_LAZYSTART); //$NON-NLS-1$
+						marker.setAttribute(PDEMarkerFactory.ATTR_HEADER, ICoreConstants.ECLIPSE_LAZYSTART);
 						ManifestElement elem = header.getElements()[0];
 
 						boolean unnecessary = elem.getValue().equals("false") && elem.getAttribute("excludes") == null; //$NON-NLS-1$ //$NON-NLS-2$
-						marker.setAttribute("canAdd", !unnecessary); //$NON-NLS-1$
+						marker.setAttribute(PDEMarkerFactory.ATTR_CAN_ADD, !unnecessary);
 					} catch (CoreException e) {
 					}
 				}

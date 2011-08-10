@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,6 +47,7 @@ public class PDEMarkerFactory {
 	public static final int M_MISSING_BUNDLE_CLASSPATH_ENTRY = 0x1021; // fatal problem
 	public static final int M_LAZYLOADING_HAS_NO_EFFECT = 0x1022; //other problem
 	public static final int M_DISCOURAGED_CLASS = 0x1023; //other problem
+	public static final int M_NO_LINE_TERMINATION = 0x1024; // fatal problem
 
 	// build properties fixes
 	public static final int B_APPEND_SLASH_FOLDER_ENTRY = 0x2001;
@@ -67,6 +68,14 @@ public class PDEMarkerFactory {
 	public static final String BK_BUILD_ENTRY = "buildEntry.key"; //$NON-NLS-1$
 	public static final String BK_BUILD_TOKEN = "buildEntry.tokenValue"; //$NON-NLS-1$
 	public static final String MPK_LOCATION_PATH = "xmlTree.locationPath"; //$NON-NLS-1$
+	public static final String ATTR_CAN_ADD = "deprecatedAutostart.canAdd"; //$NON-NLS-1$
+	public static final String ATTR_HEADER = "deprecatedAutostart.header"; //$NON-NLS-1$
+	/**
+	 * Boolean attribute for marker added when no newline is found at the end of a manifest. Value is
+	 * <code>true</code> if there is character content on the last line that should be
+	 * saved or <code>false</code> if the line only contains whitespace characters.
+	 */
+	public static final String ATTR_HAS_CONTENT = "noLineTermination.hasContent"; //$NON-NLS-1$
 
 	// problem categories
 	public static final String CAT_FATAL = "fatal"; //$NON-NLS-1$
