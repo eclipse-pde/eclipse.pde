@@ -606,6 +606,7 @@ public class RequiresSection extends TableSection implements IModelChangedListen
 					} else if (event.getChangeType() == IModelChangedEvent.REMOVE) {
 						Table table = fImportViewer.getTable();
 						table.setSelection(index < table.getItemCount() ? index : table.getItemCount() - 1);
+						updateButtons();
 					}
 				} else {
 					fImportViewer.update(((IStructuredSelection) fImportViewer.getSelection()).toArray(), null);

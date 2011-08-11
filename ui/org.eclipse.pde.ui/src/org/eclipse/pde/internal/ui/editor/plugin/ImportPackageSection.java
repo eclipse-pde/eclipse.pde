@@ -614,6 +614,7 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 						ImportPackageObject object = (ImportPackageObject) objects[i];
 						switch (event.getChangeType()) {
 							case IModelChangedEvent.INSERT :
+								fPackageViewer.remove(object); // If another thread has modified the header, avoid creating a duplicate
 								fPackageViewer.add(object);
 								fPackageViewer.setSelection(new StructuredSelection(object));
 								fPackageViewer.getTable().setFocus();
@@ -623,6 +624,7 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 								int index = table.getSelectionIndex();
 								fPackageViewer.remove(object);
 								table.setSelection(index < table.getItemCount() ? index : table.getItemCount() - 1);
+								updateButtons();
 								break;
 							default :
 								fPackageViewer.refresh(object);
