@@ -313,7 +313,7 @@ class ExternalLibraryCache {
 		InputStream in = null;
 		try {
 			ZipEntry libEntry = f.getEntry(libName);
-			if (libEntry == null) {
+			if (libEntry == null || libEntry.isDirectory()) {
 				return null;
 			}
 			fTargetFile.getParentFile().mkdirs();
