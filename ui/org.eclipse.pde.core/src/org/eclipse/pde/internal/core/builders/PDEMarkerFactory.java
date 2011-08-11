@@ -48,6 +48,7 @@ public class PDEMarkerFactory {
 	public static final int M_LAZYLOADING_HAS_NO_EFFECT = 0x1022; //other problem
 	public static final int M_DISCOURAGED_CLASS = 0x1023; //other problem
 	public static final int M_NO_LINE_TERMINATION = 0x1024; // fatal problem
+	public static final int M_R4_SYNTAX_IN_R3_BUNDLE = 0x1025; // other problem
 
 	// build properties fixes
 	public static final int B_APPEND_SLASH_FOLDER_ENTRY = 0x2001;

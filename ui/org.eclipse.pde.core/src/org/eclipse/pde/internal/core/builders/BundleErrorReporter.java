@@ -151,6 +151,10 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		validatePluginId(header, id);
 		validateSingleton(header, elements[0]);
 
+		// Header introduced in OSGi R4 - warn if R3 manifest
+		if (!fOsgiR4)
+			report(NLS.bind(PDECoreMessages.BundleErrorReporter_R4SyntaxInR3Bundle, Constants.BUNDLE_SYMBOLICNAME), header.getLineNumber() + 1, CompilerFlags.WARNING, PDEMarkerFactory.M_R4_SYNTAX_IN_R3_BUNDLE, PDEMarkerFactory.CAT_OTHER);
+
 		return true;
 	}
 
@@ -229,6 +233,10 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 				report(PDECoreMessages.BundleErrorReporter_HostNeeded, 1, CompilerFlags.P_NO_REQUIRED_ATT, PDEMarkerFactory.CAT_FATAL);
 			return;
 		}
+
+		// Header introduced in OSGi R4 - warn if R3 manifest
+		if (!fOsgiR4)
+			report(NLS.bind(PDECoreMessages.BundleErrorReporter_R4SyntaxInR3Bundle,Constants.FRAGMENT_HOST), header.getLineNumber() + 1, CompilerFlags.WARNING, PDEMarkerFactory.M_R4_SYNTAX_IN_R3_BUNDLE, PDEMarkerFactory.CAT_OTHER);
 
 		if (!isCheckUnresolvedImports())
 			return;
@@ -550,6 +558,11 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 				}
 			}
 		}
+
+		// Header introduced in OSGi R4 - warn if R3 manifest
+		if (!fOsgiR4)
+			report(NLS.bind(PDECoreMessages.BundleErrorReporter_R4SyntaxInR3Bundle, Constants.REQUIRE_BUNDLE), header.getLineNumber() + 1, CompilerFlags.WARNING, PDEMarkerFactory.M_R4_SYNTAX_IN_R3_BUNDLE, PDEMarkerFactory.CAT_OTHER);
+
 	}
 
 	private void validateBundleVersionAttribute(IHeader header, ManifestElement element) {
@@ -966,6 +979,11 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_DEPRECATED);
 		if (header == null)
 			return;
+
+		// Header introduced in OSGi R4 - warn if R3 manifest
+		if (!fOsgiR4)
+			report(NLS.bind(PDECoreMessages.BundleErrorReporter_R4SyntaxInR3Bundle, Constants.BUNDLE_ACTIVATIONPOLICY), header.getLineNumber() + 1, CompilerFlags.WARNING, PDEMarkerFactory.M_R4_SYNTAX_IN_R3_BUNDLE, PDEMarkerFactory.CAT_OTHER);
+
 		if (TargetPlatformHelper.getTargetVersion() >= 3.3) {
 			validateHeaderValue(header, new String[] {Constants.ACTIVATION_LAZY});
 		} else if (severity != CompilerFlags.IGNORE && !containsValidActivationHeader()) {
@@ -1129,6 +1147,10 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			fileName = location;
 			location = new String();
 		}
+
+		// Header introduced in OSGi R4 - warn if R3 manifest
+		if (!fOsgiR4)
+			report(NLS.bind(PDECoreMessages.BundleErrorReporter_R4SyntaxInR3Bundle, Constants.BUNDLE_LOCALIZATION), header.getLineNumber() + 1, CompilerFlags.WARNING, PDEMarkerFactory.M_R4_SYNTAX_IN_R3_BUNDLE, PDEMarkerFactory.CAT_OTHER);
 
 		IResource res = PDEProject.getBundleRoot(fProject).findMember(location);
 		if (res == null || !(res instanceof IContainer)) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -187,6 +187,7 @@ public class PDECoreMessages extends NLS {
 	public static String BundleErrorReporter_InvalidFormatInBundleVersion;
 	public static String BundleErrorReporter_NotExistInProject;
 	public static String BundleErrorReporter_BundleRangeInvalidInBundleVersion;
+	public static String BundleErrorReporter_R4SyntaxInR3Bundle;
 
 	public static String BundleErrorReporter_invalidVersionRangeFormat;
 	public static String BundleErrorReporter_NotExistPDE;

@@ -2944,6 +2944,9 @@ public class PDEUIMessages extends NLS {
 	public static String AddExportPackageResolution_Label;
 	public static String AddBundleClassPathResolution_add;
 
+	public static String AddBundleManifestVersionResolution_description;
+	public static String AddBundleManifestVersionResolution_label;
+
 	public static String AddToJavaSearchJob_0;
 
 	public static String AntGeneratingExportWizard_0;

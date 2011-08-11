@@ -110,6 +110,8 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 					return new IMarkerResolution[] {new NoLineTerminationResolution(AbstractPDEMarkerResolution.CREATE_TYPE)};
 				}
 				return new IMarkerResolution[] {new NoLineTerminationResolution(AbstractPDEMarkerResolution.REMOVE_TYPE)};
+			case PDEMarkerFactory.M_R4_SYNTAX_IN_R3_BUNDLE :
+				return new IMarkerResolution[] {new AddBundleManifestVersionResolution()};
 		}
 		return NO_RESOLUTIONS;
 	}
