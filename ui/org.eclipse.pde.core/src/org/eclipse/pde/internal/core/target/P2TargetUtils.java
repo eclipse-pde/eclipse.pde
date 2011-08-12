@@ -1122,6 +1122,17 @@ public class P2TargetUtils {
 		}
 	}
 
+	/**
+	 * Sets up a slice operation to download the set of installable units that are both required
+	 * by the provided root IUs and available in the repositories specified in the metadata.
+	 * 
+	 * @param units The set of root IUs to search for dependencies of in the repositories
+	 * @param allMetadata metadata describing the repositories where the slicer can search
+	 * @param definition the target definition this operation is being executed for
+	 * @param monitor progress monitor, done will not be called
+	 * @return the result of the slice operation
+	 * @throws CoreException if a problem occurs during the slice operation that should stop this location from resolving
+	 */
 	private IQueryResult slice(IInstallableUnit[] units, IQueryable allMetadata, ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
 		SubMonitor subMonitor = SubMonitor.convert(monitor, 100);
 		// slice IUs and all prerequisites
@@ -1138,12 +1149,25 @@ public class P2TargetUtils {
 			slicer = new PermissiveSlicer(allMetadata, props, true, false, false, true, false);
 		}
 		IQueryable slice = slicer.slice(units, subMonitor.newChild(50));
-		if (!slicer.getStatus().isOK()) {
-			throw new CoreException(slicer.getStatus());
+		IStatus sliceStatus = slicer.getStatus();
+		// If the slicer encounters an error, stop the operation
+		if (sliceStatus.getSeverity() == IStatus.ERROR) {
+			throw new CoreException(sliceStatus);
 		}
+
+		// Collect the IUs from the sliced
 		IQueryResult queryResult = null;
 		if (slice != null)
 			queryResult = slice.query(QueryUtil.createIUAnyQuery(), subMonitor.newChild(50));
+
+		// If the slicer encounters a non-error status, only report it if the slice returned no IU results
+		// It would be better to inform the user, but we do not want to stop the location from resolving (bug 350772)
+		if (!sliceStatus.isOK()) {
+			if (!queryResult.iterator().hasNext()) {
+				throw new CoreException(sliceStatus);
+			}
+		}
+
 		return queryResult;
 	}
 
