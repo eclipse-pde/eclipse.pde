@@ -57,7 +57,6 @@ public class BuildTimeFeature extends Feature {
 				continue;
 			included.add(entries[i]);
 		}
-
 		return (FeatureEntry[]) included.toArray(new FeatureEntry[included.size()]);
 	}
 
