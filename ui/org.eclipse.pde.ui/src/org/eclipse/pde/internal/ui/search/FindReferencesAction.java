@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,7 +49,8 @@ public class FindReferencesAction extends BaseSearchAction {
 			IPluginModelBase model = ((IPluginExtensionPoint) fSelectedObject).getPluginModel();
 
 			// Only plug-in xmls created with 3.2 or later support fully qualified names, assume no file version means a > 3.2 version
-			Version fileVersion = new Version(model.getPluginBase().getSchemaVersion());
+			String schemaVersion = model.getPluginBase().getSchemaVersion();
+			Version fileVersion = schemaVersion != null ? new Version(schemaVersion) : null;
 			if ((fileVersion == null || fileVersion.compareTo(new Version("3.2")) >= 0) && extensionID.indexOf('.') >= 0) { //$NON-NLS-1$
 				// Fully qualified extension point, don't prefix with plug-in id
 				input.setSearchString(extensionID);
