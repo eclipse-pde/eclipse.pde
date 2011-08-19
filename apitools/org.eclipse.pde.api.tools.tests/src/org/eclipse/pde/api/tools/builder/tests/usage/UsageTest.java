@@ -139,12 +139,13 @@ public abstract class UsageTest extends ApiBuilderTest {
 	 */
 	@Override
 	protected void setUp() throws Exception {
-		super.setUp();
+		// If we have an existing environment, set it to revert rather than delete the workspace to improve performance
 		ApiTestingEnvironment env = getEnv();
 		if (env != null) {
 			env.setRevert(true);
 			env.setRevertSourcePath(null);
 		}
+		super.setUp();
 	
 		IProject project = getEnv().getWorkspace().getRoot().getProject(getTestingProjectName());
 		if (!project.exists()) {
