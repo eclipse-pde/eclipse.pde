@@ -17,7 +17,10 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.osgi.service.resolver.BundleSpecification;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.project.BundleProjectService;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -135,14 +138,23 @@ public class ImportActionGroup extends ActionGroup {
 
 	private static IPluginModelBase getModel(Object next) {
 		IPluginModelBase model = null;
-		if (next instanceof IPluginModelBase)
+		if (next instanceof IPluginModelBase) {
 			model = (IPluginModelBase) next;
-		else if (next instanceof IPluginBase)
+		} else if (next instanceof IPluginBase) {
 			model = ((IPluginBase) next).getPluginModel();
-		else if (next instanceof IPluginExtension)
+		} else if (next instanceof IPluginExtension) {
 			model = ((IPluginExtension) next).getPluginModel();
-		else if (next instanceof IPluginExtensionPoint)
+		} else if (next instanceof IPluginExtensionPoint) {
 			model = ((IPluginExtensionPoint) next).getPluginModel();
+		} else if (next instanceof BundleDescription) {
+			model = PDECore.getDefault().getModelManager().findModel((BundleDescription) next);
+		} else if (next instanceof BundleSpecification) {
+			BundleDescription desc = (BundleDescription) ((BundleSpecification) next).getSupplier();
+			if (desc != null) {
+				model = PDECore.getDefault().getModelManager().findModel(desc);
+			}
+		}
 		return model;
+
 	}
 }

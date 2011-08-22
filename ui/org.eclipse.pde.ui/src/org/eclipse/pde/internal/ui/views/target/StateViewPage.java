@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,11 +27,13 @@ import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
 import org.eclipse.pde.internal.ui.views.dependencies.DependenciesViewComparator;
+import org.eclipse.pde.internal.ui.views.plugins.ImportActionGroup;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.dialogs.PatternFilter;
 import org.eclipse.ui.part.Page;
@@ -392,6 +394,12 @@ public class StateViewPage extends Page implements IStateDeltaListener, IPluginM
 				};
 			}
 			menu.add(fOpenAction);
+			if (ImportActionGroup.canImport(selection)) {
+				ImportActionGroup actionGroup = new ImportActionGroup();
+				actionGroup.setContext(new ActionContext(selection));
+				actionGroup.fillContextMenu(menu);
+				menu.add(new Separator());
+			}
 			menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 		}
 	}

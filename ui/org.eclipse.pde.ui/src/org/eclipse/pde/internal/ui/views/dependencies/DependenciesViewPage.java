@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,9 +28,11 @@ import org.eclipse.pde.internal.ui.refactoring.PDERefactoringAction;
 import org.eclipse.pde.internal.ui.refactoring.RefactoringActionFactory;
 import org.eclipse.pde.internal.ui.search.dependencies.DependencyExtentAction;
 import org.eclipse.pde.internal.ui.search.dependencies.UnusedDependenciesAction;
+import org.eclipse.pde.internal.ui.views.plugins.ImportActionGroup;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.part.Page;
 
 public abstract class DependenciesViewPage extends Page {
@@ -136,6 +138,14 @@ public abstract class DependenciesViewPage extends Page {
 			manager.add(fOpenAction);
 			manager.add(new Separator());
 		}
+
+		if (ImportActionGroup.canImport(selection)) {
+			ImportActionGroup actionGroup = new ImportActionGroup();
+			actionGroup.setContext(new ActionContext(selection));
+			actionGroup.fillContextMenu(manager);
+			manager.add(new Separator());
+		}
+
 		fFocusOnSelectionAction.update(getSelectedObject());
 		if (fFocusOnSelectionAction.isEnabled())
 			manager.add(fFocusOnSelectionAction);
