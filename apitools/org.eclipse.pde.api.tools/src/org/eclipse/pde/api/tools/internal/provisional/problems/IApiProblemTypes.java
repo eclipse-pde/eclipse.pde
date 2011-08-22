@@ -270,9 +270,4 @@ public interface IApiProblemTypes {
 	 * Key for the severity of API Use Scan Field breakage problems.
 	 */
 	public static final String API_USE_SCAN_FIELD_SEVERITY = "API_USE_SCAN_FIELD_SEVERITY"; //$NON-NLS-1$
-	
-	/**
-	 * Keys which are only defined in the workspace i.e. not project specific.
-	 */
-	public static final String[] WORKSPACE_ONLY_PROBLEM_TYPES= { MISSING_DEFAULT_API_BASELINE };
 }
