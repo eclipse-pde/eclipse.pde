@@ -157,7 +157,7 @@ public class DSCreationOperation extends WorkspaceModifyOperation {
 			if (containsValue(header, filePath)) {
 				return;
 			}
-			filePath = header + ", " + filePath; //$NON-NLS-1$
+			filePath = header + ",\n " + filePath; //$NON-NLS-1$
 		}
 		bundleModel.getBundle().setHeader(DS_MANIFEST_KEY, filePath);
 	}
