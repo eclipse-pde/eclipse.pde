@@ -265,6 +265,12 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		try {
 			if (resource != null && resource.isAccessible()) {
 				resource.deleteMarkers(IApiMarkerConstants.API_USAGE_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
+				if(resource.getType() != IResource.PROJECT) {
+					IProject pj = resource.getProject();
+					if(pj != null) {
+						pj.deleteMarkers(IApiMarkerConstants.API_USAGE_PROBLEM_MARKER, false, IResource.DEPTH_ZERO);
+					}
+				}
 			}
 		} catch(CoreException e) {
 			ApiPlugin.log(e.getStatus());
