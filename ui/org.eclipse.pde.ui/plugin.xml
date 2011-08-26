@@ -925,6 +925,18 @@
                id="org.eclipse.pde.ui.OpenManifestAction"> 
          </action> 
       </objectContribution>
+      <objectContribution
+            adaptable="false"
+            id="org.eclipse.pde.ui.referencedLibsToolSet"
+            objectClass="org.eclipse.jdt.core.IPackageFragmentRoot">
+         <action
+               class="org.eclipse.pde.internal.ui.views.plugins.ImportFromRepositoryActionDelegate"
+               icon="icons/etool16/imp_extplug.gif"
+               id="org.eclipse.pde.ui.importFromRepo"
+               label="%importFromRepository.label"
+               menubarPath="group.import">
+         </action>
+      </objectContribution>
    </extension>
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTypeImages">

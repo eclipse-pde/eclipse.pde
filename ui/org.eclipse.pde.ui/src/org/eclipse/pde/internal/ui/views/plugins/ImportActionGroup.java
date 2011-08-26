@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.ui.views.plugins;
 
 import java.util.*;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
@@ -81,7 +82,7 @@ public class ImportActionGroup extends ActionGroup {
 		}
 	}
 
-	private void handleImport(int importType, IStructuredSelection selection) {
+	static void handleImport(int importType, IStructuredSelection selection) {
 		ArrayList externalModels = new ArrayList();
 		for (Iterator iter = selection.iterator(); iter.hasNext();) {
 			IPluginModelBase model = getModel(iter.next());
@@ -111,7 +112,7 @@ public class ImportActionGroup extends ActionGroup {
 	 * @param models candidate models
 	 * @return  map of importer to import descriptions
 	 */
-	private Map getImportDescriptions(Shell shell, IPluginModelBase[] models) {
+	private static Map getImportDescriptions(Shell shell, IPluginModelBase[] models) {
 		BundleProjectService service = (BundleProjectService) BundleProjectService.getDefault();
 		try {
 			Map descriptions = service.getImportDescriptions(models); // all possible descriptions
@@ -149,9 +150,22 @@ public class ImportActionGroup extends ActionGroup {
 		} else if (next instanceof BundleDescription) {
 			model = PDECore.getDefault().getModelManager().findModel((BundleDescription) next);
 		} else if (next instanceof BundleSpecification) {
+			// Required for contents of Target Platform State View
 			BundleDescription desc = (BundleDescription) ((BundleSpecification) next).getSupplier();
 			if (desc != null) {
 				model = PDECore.getDefault().getModelManager().findModel(desc);
+			}
+		} else if (next instanceof IPackageFragmentRoot) {
+			// Required for context menu on PDE classpath container entries
+			IPackageFragmentRoot root = (IPackageFragmentRoot) next;
+			if (root.isExternal()) {
+				String path = root.getPath().toOSString();
+				IPluginModelBase[] externalModels = PDECore.getDefault().getModelManager().getExternalModels();
+				for (int i = 0; i < externalModels.length; i++) {
+					if (path.equals(externalModels[i].getInstallLocation())) {
+						return externalModels[i];
+					}
+				}
 			}
 		}
 		return model;
