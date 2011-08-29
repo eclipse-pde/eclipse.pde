@@ -695,7 +695,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 	}
 
 	protected void handleAdd() {
-		ElementListSelectionDialog dialog = new ElementListSelectionDialog(PDEPlugin.getActiveWorkbenchShell(), new StyledBundleLabelProvider(false, false));
+		ElementListSelectionDialog dialog = new ElementListSelectionDialog(getShell(), new StyledBundleLabelProvider(false, false));
 
 		try {
 			dialog.setElements(getValidBundles());
