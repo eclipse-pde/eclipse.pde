@@ -1394,6 +1394,9 @@ public class ApiErrorsWarningsConfigurationBlock {
 			final Command command = commandService.getCommand(P2_INSTALL_COMMAND_HANDLER);
 			if (command.isHandled()) {
 				String linkedName = PreferenceMessages.ApiProblemSeveritiesConfigurationBlock_checkable_ees_link_label;
+				if(stubs.length == 0) {
+					linkedName = PreferenceMessages.install_ee_descriptions;
+				}
 				SWTFactory.createVerticalSpacer(group, 1);
 				Link link = SWTFactory.createLink(group, linkedName, JFaceResources.getDialogFont(), 3);
 				link.setToolTipText(PreferenceMessages.ApiProblemSeveritiesConfigurationBlock_checkable_ees_tooltip);
