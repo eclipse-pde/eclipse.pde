@@ -10,12 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.views.plugins;
 
-import org.eclipse.jface.action.IAction;
+import org.eclipse.core.commands.*;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.internal.ui.wizards.imports.PluginImportOperation;
-import org.eclipse.ui.IObjectActionDelegate;
-import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.handlers.HandlerUtil;
 
 /**
  * Action delegate to import a selected object if it represents a plug-in with a
@@ -23,38 +22,15 @@ import org.eclipse.ui.IWorkbenchPart;
  * 
  * @see ImportActionGroup
  */
-public class ImportFromRepositoryActionDelegate implements IObjectActionDelegate {
+public class ImportFromRepositoryActionDelegate extends AbstractHandler {
 
-	/**
-	 * Stores the last selection to pass to import operation
-	 */
-	private ISelection fSelection;
+	public Object execute(ExecutionEvent event) throws ExecutionException {
+//			enable = ImportActionGroup.canImport((IStructuredSelection) selection);
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
-	 */
-	public void run(IAction action) {
-		if (fSelection instanceof IStructuredSelection) {
-			ImportActionGroup.handleImport(PluginImportOperation.IMPORT_FROM_REPOSITORY, (IStructuredSelection) fSelection);
+		ISelection selection = HandlerUtil.getCurrentSelection(event);
+		if (selection instanceof IStructuredSelection) {
+			ImportActionGroup.handleImport(PluginImportOperation.IMPORT_FROM_REPOSITORY, (IStructuredSelection) selection);
 		}
+		return null;
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
-	 */
-	public void selectionChanged(IAction action, ISelection selection) {
-		fSelection = selection;
-		boolean enable = false;
-		if (selection instanceof IStructuredSelection && !selection.isEmpty()) {
-			enable = ImportActionGroup.canImport((IStructuredSelection) selection);
-		}
-		action.setEnabled(enable);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.action.IAction, org.eclipse.ui.IWorkbenchPart)
-	 */
-	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
-	}
-
 }

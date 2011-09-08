@@ -571,6 +571,11 @@
                optional="true">
          </commandParameter>
       </command>
+      <command
+            description="%importFromRepository.action.desc"
+            id="org.eclipse.pde.ui.import.repository"
+            name="%importFromRepository.action.name">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.popupMenus">
@@ -924,18 +929,6 @@
                enablesFor="+"
                id="org.eclipse.pde.ui.OpenManifestAction"> 
          </action> 
-      </objectContribution>
-      <objectContribution
-            adaptable="false"
-            id="org.eclipse.pde.ui.referencedLibsToolSet"
-            objectClass="org.eclipse.jdt.core.IPackageFragmentRoot">
-         <action
-               class="org.eclipse.pde.internal.ui.views.plugins.ImportFromRepositoryActionDelegate"
-               icon="icons/etool16/imp_extplug.gif"
-               id="org.eclipse.pde.ui.importFromRepo"
-               label="%importFromRepository.label"
-               menubarPath="group.import">
-         </action>
       </objectContribution>
    </extension>
    <extension
@@ -1921,6 +1914,10 @@
                 class="org.eclipse.pde.internal.ui.views.plugins.AddAllPluginsToJavaSearchHandler"
                 commandId="org.eclipse.pde.ui.addAllPluginsToJavaSearch">
           </handler>
+          <handler
+                class="org.eclipse.pde.internal.ui.views.plugins.ImportFromRepositoryActionDelegate"
+                commandId="org.eclipse.pde.ui.import.repository">
+          </handler>
        </extension>
        <extension
              point="org.eclipse.ui.menus">
@@ -1966,6 +1963,35 @@
                    icon="$nl$/icons/obj16/plugin_javasearch.gif"
                    label="%addpluginstojavasearch.action.name"
                    style="push">
+             </command>
+          </menuContribution>
+          <menuContribution
+                allPopups="false"
+                locationURI="popup:org.eclipse.ui.popup.any?after=additions">
+             <command
+                   commandId="org.eclipse.pde.ui.import.repository"
+                   disabledIcon="icons/dtool16/imp_extplug.gif"
+                   icon="icons/etool16/imp_extplug.gif"
+                   label="%importFromRepository.action.menu.name"
+                   style="push"
+                   tooltip="%importFromRepository.action.desc">
+                <visibleWhen>
+                   <and>
+                    <iterate
+                          ifEmpty="false"
+                          operator="or">
+                       <and>
+                        <test
+                   property="org.eclipse.core.resources.projectNature"
+                   value="org.eclipse.pde.PluginNature">
+             </test>
+                          <instanceof
+                                value="org.eclipse.jdt.core.IPackageFragmentRoot">
+                          </instanceof>
+                       </and>
+    				</iterate>
+                   </and>
+                </visibleWhen>
              </command>
           </menuContribution>
           <!--
