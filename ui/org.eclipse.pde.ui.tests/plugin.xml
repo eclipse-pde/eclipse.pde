@@ -131,4 +131,20 @@
             id="org.eclipse.pde.ui.tests.classpath.container">
       </classpathContainerInitializer>
    </extension>
+   <extension
+         point="org.eclipse.pde.core.bundleClasspathResolvers">
+      <resolver
+            class="org.eclipse.pde.ui.tests.classpathresolver.TestBundleClasspathResolver"
+            nature="org.eclipse.pde.ui.tests.testNature">
+      </resolver>
+   </extension>
+   <extension
+         id="testNature"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+               class="org.eclipse.pde.ui.tests.classpathresolver.TestProjectNature">
+         </run>
+      </runtime>
+   </extension>
 </plugin>

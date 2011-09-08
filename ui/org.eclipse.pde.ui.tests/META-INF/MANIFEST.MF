@@ -12,7 +12,7 @@ Require-Bundle: org.junit,
  org.eclipse.core.resources,
  org.eclipse.core.runtime,
  org.eclipse.jdt.core,
- org.eclipse.test.performance,
+ org.eclipse.test.performance;resolution:=optional,
  org.eclipse.ui.ide,
  org.eclipse.team.core,
  org.eclipse.jdt.ui,
@@ -35,6 +35,7 @@ Require-Bundle: org.junit,
  org.eclipse.search,
  org.eclipse.ui.editors,
  org.eclipse.ui.views.log,
- org.eclipse.team.cvs.core
+ org.eclipse.team.cvs.core,
+ org.eclipse.debug.core
 Eclipse-LazyStart: true
 Bundle-RequiredExecutionEnvironment: J2SE-1.4

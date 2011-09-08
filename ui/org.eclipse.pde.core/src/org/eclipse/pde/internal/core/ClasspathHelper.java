@@ -17,6 +17,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.jdt.core.*;
+import org.eclipse.pde.core.IBundleClasspathResolver;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.plugin.*;
@@ -201,6 +202,24 @@ public class ClasspathHelper {
 				map.put(source, list);
 			}
 		}
+
+		// Add additional entries from contributed bundle classpath resolvers
+		IBundleClasspathResolver[] resolvers = PDECore.getDefault().getClasspathContainerResolverManager().getBundleClasspathResolvers(project);
+		for (int i = 0; i < resolvers.length; i++) {
+			Map resolved = resolvers[i].getAdditionalClasspathEntries(jProject);
+			Iterator resolvedIter = resolved.entrySet().iterator();
+			while (resolvedIter.hasNext()) {
+				Map.Entry resolvedEntry = (Map.Entry) resolvedIter.next();
+				IPath ceSource = (IPath) resolvedEntry.getKey();
+				ArrayList list = (ArrayList) map.get(ceSource);
+				if (list == null) {
+					list = new ArrayList();
+					map.put(ceSource, list);
+				}
+				list.addAll((Collection) resolvedEntry.getValue());
+			}
+		}
+
 		return map;
 	}
 
@@ -213,9 +232,9 @@ public class ClasspathHelper {
 			for (int j = 0; j < resources.length; j++) {
 				IResource res = project.findMember(resources[j]);
 				if (res != null) {
-					ArrayList list = (ArrayList) classpathMap.get(res.getFullPath());
+					Collection list = (Collection) classpathMap.get(res.getFullPath());
 					if (list != null) {
-						ListIterator li = list.listIterator();
+						Iterator li = list.iterator();
 						while (li.hasNext())
 							paths.add(li.next());
 					}
@@ -231,11 +250,13 @@ public class ClasspathHelper {
 			IResource res = project.findMember(libName);
 			if (res != null)
 				path = res.getFullPath();
+			else
+				path = new Path(libName);
 		}
 
-		ArrayList list = (ArrayList) classpathMap.get(path);
+		Collection list = (Collection) classpathMap.get(path);
 		if (list != null) {
-			ListIterator li = list.listIterator();
+			Iterator li = list.iterator();
 			while (li.hasNext())
 				paths.add(li.next());
 		}
@@ -271,7 +292,7 @@ public class ClasspathHelper {
 									Iterator iterator = classpathMap.values().iterator();
 									List collect = new ArrayList();
 									while (iterator.hasNext()) {
-										ArrayList list = (ArrayList) iterator.next();
+										Collection list = (Collection) iterator.next();
 										collect.addAll(list);
 									}
 									paths = (IPath[]) collect.toArray(new IPath[collect.size()]);

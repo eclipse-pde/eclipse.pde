@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import java.util.Hashtable;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.pde.core.IBundleClasspathResolver;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.project.IBundleProjectService;
 import org.eclipse.pde.internal.core.builders.FeatureRebuilder;
@@ -130,6 +131,7 @@ public class PDECore extends Plugin {
 	private SourceLocationManager fSourceLocationManager;
 	private JavadocLocationManager fJavadocLocationManager;
 	private SearchablePluginsManager fSearchablePluginsManager;
+	private ClasspathContainerResolverManager fClasspathContainerResolverManager;
 
 	// Tracing options manager
 	private TracingOptionsManager fTracingOptionsManager;
@@ -213,6 +215,20 @@ public class PDECore extends Plugin {
 		if (fSourceLocationManager == null)
 			fSourceLocationManager = new SourceLocationManager();
 		return fSourceLocationManager;
+	}
+
+	/**
+	 * Returns the singleton instance of the classpath container resolver manager used to dynamically
+	 * resolve a project's classpath. Clients may contribute a {@link IBundleClasspathResolver} to the
+	 * manager through the <code>org.eclipse.pde.core.bundleClasspathResolvers</code> extension.
+	 * 
+	 * @return singleton instance of the classpath container resolver manager
+	 */
+	public synchronized ClasspathContainerResolverManager getClasspathContainerResolverManager() {
+		if (fClasspathContainerResolverManager == null) {
+			fClasspathContainerResolverManager = new ClasspathContainerResolverManager();
+		}
+		return fClasspathContainerResolverManager;
 	}
 
 	public synchronized JavadocLocationManager getJavadocLocationManager() {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,6 @@
  *     Code 9 Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.launching.sourcelookup;
-
-import org.eclipse.pde.internal.launching.PDELaunchingPlugin;
 
 import java.io.File;
 import java.util.*;
@@ -25,9 +23,10 @@ import org.eclipse.jdt.debug.core.*;
 import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.sourcelookup.containers.JavaSourceLookupParticipant;
+import org.eclipse.pde.core.IBundleClasspathResolver;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.PDEClasspathContainer;
-import org.eclipse.pde.internal.core.TargetPlatformHelper;
+import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.launching.PDELaunchingPlugin;
 
 public class PDESourceLookupDirector extends AbstractSourceLookupDirector {
 
@@ -208,6 +207,12 @@ public class PDESourceLookupDirector extends AbstractSourceLookupDirector {
 				if (rte != null)
 					result.add(rte);
 			}
+		}
+
+		// Add additional entries from contributed classpath container resolvers
+		IBundleClasspathResolver[] resolvers = PDECore.getDefault().getClasspathContainerResolverManager().getBundleClasspathResolvers(project);
+		for (int i = 0; i < resolvers.length; i++) {
+			result.addAll(resolvers[i].getAdditionalSourceEntries(jProject));
 		}
 	}
 

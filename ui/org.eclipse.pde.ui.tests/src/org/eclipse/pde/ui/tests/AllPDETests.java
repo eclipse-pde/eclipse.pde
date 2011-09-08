@@ -13,6 +13,7 @@ package org.eclipse.pde.ui.tests;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.pde.ui.tests.build.properties.AllValidatorTests;
+import org.eclipse.pde.ui.tests.classpathresolver.ClasspathResolverTest;
 import org.eclipse.pde.ui.tests.ee.ExportBundleTests;
 import org.eclipse.pde.ui.tests.imports.AllImportTests;
 import org.eclipse.pde.ui.tests.launcher.AllLauncherTests;
@@ -46,6 +47,7 @@ public class AllPDETests {
 		suite.addTest(ProjectCreationTests.suite());
 		suite.addTest(BundleRootTests.suite());
 		suite.addTest(PluginRegistryTests.suite());
+		suite.addTest(ClasspathResolverTest.suite());
 		return suite;
 	}
 
