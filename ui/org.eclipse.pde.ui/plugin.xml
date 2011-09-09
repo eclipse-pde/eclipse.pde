@@ -577,6 +577,11 @@
             id="org.eclipse.pde.ui.openManifest"
             name="%open.manifest.name">
       </command>
+      <command
+            description="%importFromRepository.action.desc"
+            id="org.eclipse.pde.ui.import.repository"
+            name="%importFromRepository.action.name">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.popupMenus">
@@ -1917,6 +1922,10 @@
                 class="org.eclipse.pde.internal.ui.editor.OpenManifestHandler"
                 commandId="org.eclipse.pde.ui.openManifest">
           </handler>
+          <handler
+                class="org.eclipse.pde.internal.ui.views.plugins.ImportFromRepositoryActionDelegate"
+                commandId="org.eclipse.pde.ui.import.repository">
+          </handler>
        </extension>
        <extension
              point="org.eclipse.ui.menus">
@@ -1991,6 +2000,30 @@
                    helpContextId="org.eclipse.pde.doc.user.open_manifest"
                    label="%OpenManifest.label"
                    style="push">
+             </command>
+          </menuContribution>
+          <menuContribution
+                allPopups="false"
+                locationURI="popup:org.eclipse.ui.popup.any?after=additions">
+             <command
+                   commandId="org.eclipse.pde.ui.import.repository"
+                   disabledIcon="icons/dtool16/imp_extplug.gif"
+                   icon="icons/etool16/imp_extplug.gif"
+                   label="%importFromRepository.action.menu.name"
+                   style="push"
+                   tooltip="%importFromRepository.action.desc">
+                <visibleWhen>
+                    <iterate
+                          ifEmpty="false"
+                          operator="or">
+                          <adapt
+                                type="org.eclipse.jdt.core.IPackageFragmentRoot">
+                             <test
+                                   property="org.eclipse.pde.core.inPluginContainer">
+                             </test>
+                          </adapt>
+    				</iterate>
+                </visibleWhen>
              </command>
           </menuContribution>
           <!--

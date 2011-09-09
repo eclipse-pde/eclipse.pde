@@ -353,4 +353,14 @@
       <factory class="org.eclipse.pde.internal.core.content.DefaultDocumentFactory"
                contentTypeId="org.eclipse.pde.schema"/>
     </extension>
+    <extension
+         point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+            class="org.eclipse.pde.internal.core.util.PackageFragmentRootPropertyTester"
+            id="org.eclipse.pde.core.packageFragmentRoot"
+            namespace="org.eclipse.pde.core"
+            properties="inPluginContainer"
+            type="org.eclipse.jdt.core.IPackageFragmentRoot">
+      </propertyTester>
+   </extension>
 </plugin>
