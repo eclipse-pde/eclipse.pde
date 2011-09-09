@@ -1976,21 +1976,16 @@
                    style="push"
                    tooltip="%importFromRepository.action.desc">
                 <visibleWhen>
-                   <and>
                     <iterate
                           ifEmpty="false"
                           operator="or">
-                       <and>
-                        <test
-                   property="org.eclipse.core.resources.projectNature"
-                   value="org.eclipse.pde.PluginNature">
-             </test>
-                          <instanceof
-                                value="org.eclipse.jdt.core.IPackageFragmentRoot">
-                          </instanceof>
-                       </and>
+                          <adapt
+                                type="org.eclipse.jdt.core.IPackageFragmentRoot">
+                             <test
+                                   property="org.eclipse.pde.core.inPluginContainer">
+                             </test>
+                          </adapt>
     				</iterate>
-                   </and>
                 </visibleWhen>
              </command>
           </menuContribution>
