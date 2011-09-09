@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2010 IBM Corporation and others.
+ *  Copyright (c) 2006, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -13,12 +13,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
+import org.eclipse.core.commands.*;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -27,37 +26,45 @@ import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.ui.*;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.model.IWorkbenchAdapter;
 
-public class OpenManifestAction implements IWorkbenchWindowActionDelegate {
+public class OpenManifestHandler extends AbstractHandler {
 
-	private ISelection fSelection;
-
-	public OpenManifestAction() {
-		super();
-	}
-
-	public void dispose() {
-	}
-
-	public void init(IWorkbenchWindow window) {
-	}
-
-	public void run(IAction action) {
-		if (fSelection instanceof IStructuredSelection) {
-			IStructuredSelection ssel = (IStructuredSelection) fSelection;
+	public Object execute(ExecutionEvent event) throws ExecutionException {
+		ISelection selection = HandlerUtil.getCurrentSelection(event);
+		if (selection instanceof IStructuredSelection) {
+			IStructuredSelection ssel = (IStructuredSelection) selection;
 			Iterator it = ssel.iterator();
-			final ArrayList projects = new ArrayList();
+			final HashSet projects = new HashSet();
 			while (it.hasNext()) {
 				Object element = it.next();
 				IProject proj = null;
 				if (element instanceof IFile)
 					proj = ((IFile) element).getProject();
-				else if (element instanceof IProject)
+				if ((proj == null) && (element instanceof IProject))
 					proj = (IProject) element;
-				else if (element instanceof IAdaptable)
-					proj = (IProject) ((IAdaptable) element).getAdapter(IProject.class);
+				if ((proj == null) && (element instanceof IAdaptable)) {
+					IResource resource = (IResource) ((IAdaptable) element).getAdapter(IResource.class);
+					if (resource != null) {
+						proj = resource.getProject();
+					}
+					if (proj == null) {
+						IWorkbenchAdapter workbenchAdapter = (IWorkbenchAdapter) ((IAdaptable) element).getAdapter(IWorkbenchAdapter.class);
+						if (workbenchAdapter != null) {
+							Object o = workbenchAdapter.getParent(element);
+							if (o instanceof IAdaptable) {
+								resource = (IResource) ((IAdaptable) o).getAdapter(IResource.class);
+								if (resource != null) {
+									proj = resource.getProject();
+								}
+							}
+						}
+					}
+				}
+
 				if (proj != null && WorkspaceModelManager.isPluginProject(proj))
 					projects.add(proj);
 			}
@@ -86,9 +93,6 @@ public class OpenManifestAction implements IWorkbenchWindowActionDelegate {
 			} else
 				MessageDialog.openInformation(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.OpenManifestsAction_title, PDEUIMessages.OpenManifestAction_noManifest);
 		}
-	}
-
-	public void selectionChanged(IAction action, ISelection selection) {
-		fSelection = selection;
+		return null;
 	}
 }

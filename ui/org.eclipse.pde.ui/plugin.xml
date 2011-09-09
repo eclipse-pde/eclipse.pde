@@ -571,6 +571,12 @@
                optional="true">
          </commandParameter>
       </command>
+      <command
+            categoryId="org.eclipse.ui.category.navigate"
+            description="%open.manifest.description"
+            id="org.eclipse.pde.ui.openManifest"
+            name="%open.manifest.name">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.popupMenus">
@@ -915,14 +921,6 @@
                menubarPath="org.eclipse.pde.ui.project.tools/group1"
                enablesFor="+"
                id="org.eclipse.pde.ui.OrganizeManifest"> 
-         </action> 
-         <action
-               label="%OpenManifest.label"
-			   helpContextId="org.eclipse.pde.doc.user.open_manifest"
-               class="org.eclipse.pde.internal.ui.editor.OpenManifestAction"
-               menubarPath="org.eclipse.pde.ui.project.tools/group0"
-               enablesFor="+"
-               id="org.eclipse.pde.ui.OpenManifestAction"> 
          </action> 
       </objectContribution>
    </extension>
@@ -1407,6 +1405,12 @@
             contextId="org.eclipse.ui.contexts.window"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M1+M2+M3+A">
+      </key>
+      <key
+            commandId="org.eclipse.pde.ui.openManifest"
+            contextId="org.eclipse.ui.contexts.window"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+M2+M3+M">
       </key>
    </extension>
    <extension
@@ -1909,6 +1913,10 @@
                 class="org.eclipse.pde.internal.ui.views.plugins.AddAllPluginsToJavaSearchHandler"
                 commandId="org.eclipse.pde.ui.addAllPluginsToJavaSearch">
           </handler>
+          <handler
+                class="org.eclipse.pde.internal.ui.editor.OpenManifestHandler"
+                commandId="org.eclipse.pde.ui.openManifest">
+          </handler>
        </extension>
        <extension
              point="org.eclipse.ui.menus">
@@ -1953,6 +1961,35 @@
                    commandId="org.eclipse.pde.ui.addAllPluginsToJavaSearch"
                    icon="$nl$/icons/obj16/plugin_javasearch.gif"
                    label="%addpluginstojavasearch.action.name"
+                   style="push">
+             </command>
+          </menuContribution>
+          <menuContribution
+                locationURI="popup:org.eclipse.ui.popup.any">
+             <menu
+                   id="org.eclipse.pde.ui.project.tools"
+                   label="%org.eclipse.pde.ui.tools">
+                <visibleWhen
+                      checkEnabled="false">
+                   <iterate
+                         ifEmpty="false">
+                      <adapt
+                            type="org.eclipse.core.resources.IResource">
+                         <test
+                               property="org.eclipse.core.resources.projectNature"
+                               value="org.eclipse.pde.PluginNature">
+                         </test>
+                      </adapt>
+                   </iterate>
+                </visibleWhen>
+             </menu>
+          </menuContribution>
+          <menuContribution
+                locationURI="popup:org.eclipse.pde.ui.project.tools">
+             <command
+                   commandId="org.eclipse.pde.ui.openManifest"
+                   helpContextId="org.eclipse.pde.doc.user.open_manifest"
+                   label="%OpenManifest.label"
                    style="push">
              </command>
           </menuContribution>
