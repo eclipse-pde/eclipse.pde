@@ -11,6 +11,7 @@
 package org.eclipse.pde.ui.tests.classpathresolver;
 
 import java.io.*;
+import java.net.URL;
 import java.util.Properties;
 import junit.framework.*;
 import org.eclipse.core.resources.*;
@@ -23,6 +24,7 @@ import org.eclipse.pde.core.IBundleClasspathResolver;
 import org.eclipse.pde.internal.core.ClasspathHelper;
 import org.eclipse.pde.internal.launching.sourcelookup.PDESourceLookupDirector;
 import org.eclipse.pde.internal.launching.sourcelookup.PDESourceLookupQuery;
+import org.eclipse.pde.internal.ui.tests.macro.MacroPlugin;
 
 /**
  * Tests {@link IBundleClasspathResolver} API to extend how the classpath and source lookup path
@@ -108,7 +110,9 @@ public class ClasspathResolverTest extends TestCase {
 		String prjName = "classpathresolver";
 		File rootFile = workspace.getRoot().getLocation().toFile();
 
-		File srcBasedir = new File("tests/projects/classpathresolver");
+		URL srcURL = MacroPlugin.getBundleContext().getBundle().getEntry("tests/projects/classpathresolver");
+		File srcBasedir = new File(FileLocator.toFileURL(srcURL).getFile());
+		
 		File dstBasedir = new File(rootFile, prjName);
 		copyFile(srcBasedir, dstBasedir, ".project");
 		copyFile(srcBasedir, dstBasedir, ".classpath");
