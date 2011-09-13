@@ -80,7 +80,7 @@ public class ClasspathResolverTest extends TestCase {
 			is.close();
 		}
 
-		assertEquals(project.getFolder("cpe").getLocation().toOSString(), properties.get("classpathresolver"));
+		assertEquals(project.getFolder("cpe").getLocation().toPortableString(), properties.get("classpathresolver"));
 	}
 
 	/**
