@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,8 +14,7 @@ package org.eclipse.pde.internal.ui.wizards.tools;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.pde.core.IBaseModel;
@@ -46,6 +45,7 @@ import org.osgi.framework.Constants;
 public class ConvertProjectToPluginOperation extends WorkspaceModifyOperation {
 
 	private IProject[] projectsToConvert;
+	private boolean enableApiAnalysis;
 
 	private String fLibraryName;
 	private String[] fSrcEntries;
@@ -55,12 +55,12 @@ public class ConvertProjectToPluginOperation extends WorkspaceModifyOperation {
 	 * Workspace operation to convert the specified project into a plug-in
 	 * project.
 	 * 
-	 * @param theProjectsToConvert
-	 *            The project to be converted.
+	 * @param theProjectsToConvert The project to be converted.
+	 * @param enableApiAnalysis Whether to set up API Tooling analysis on the projects
 	 */
-	public ConvertProjectToPluginOperation(IProject[] theProjectsToConvert) {
-
+	public ConvertProjectToPluginOperation(IProject[] theProjectsToConvert, boolean enableApiAnalysis) {
 		this.projectsToConvert = theProjectsToConvert;
+		this.enableApiAnalysis = enableApiAnalysis;
 	}
 
 	/**
@@ -133,6 +133,11 @@ public class ConvertProjectToPluginOperation extends WorkspaceModifyOperation {
 				build.add(entry);
 
 			model.save();
+		}
+
+		// Setup API Tooling
+		if (enableApiAnalysis) {
+			addApiAnalysisNature(projectToConvert);
 		}
 	}
 
@@ -267,6 +272,24 @@ public class ConvertProjectToPluginOperation extends WorkspaceModifyOperation {
 
 	private boolean isOldTarget() {
 		return TargetPlatformHelper.getTargetVersion() < 3.1;
+	}
+
+	/**
+	 * Adds the API analysis nature to the project
+	 * @param project the project to add the nature to
+	 */
+	private void addApiAnalysisNature(IProject project) {
+		try {
+			IProjectDescription description = project.getDescription();
+			String[] prevNatures = description.getNatureIds();
+			String[] newNatures = new String[prevNatures.length + 1];
+			System.arraycopy(prevNatures, 0, newNatures, 0, prevNatures.length);
+			newNatures[prevNatures.length] = "org.eclipse.pde.api.tools.apiAnalysisNature"; //$NON-NLS-1$
+			description.setNatureIds(newNatures);
+			project.setDescription(description, new NullProgressMonitor());
+		} catch (CoreException ce) {
+			//ignore
+		}
 	}
 
 }

@@ -1294,6 +1294,8 @@ public class PDEUIMessages extends NLS {
 	public static String NewSchemaFileMainPage_invalidContainer;
 	public static String NewSchemaFileMainPage_nonExistingContainer;
 
+	public static String ConvertedProjectsPage_DeselectAll;
+	public static String ConvertedProjectsPage_SelectAll;
 	public static String ConvertedProjectWizard_title;
 	public static String ConvertedProjectWizard_desc;
 	public static String ConvertedProjectWizard_projectList;
