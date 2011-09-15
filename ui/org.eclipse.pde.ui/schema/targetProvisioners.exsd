@@ -129,7 +129,7 @@ represent the provisioner.
 The following is an example of the extension point:
 &lt;pre&gt;
    &lt;extension
-         point=&quot;org.eclipse.pde.ui.provisioners&quot;&gt;
+         point=&quot;org.eclipse.pde.ui.targetprovisioners&quot;&gt;
       &lt;provisioner
             class=&quot;org.eclipse.pde.internal.ui.wizards.provisioner.FileSystemProvisionerWizard&quot;
             id=&quot;org.eclipse.pde.ui.directory&quot;
