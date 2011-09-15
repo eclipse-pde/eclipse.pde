@@ -493,14 +493,14 @@ public class TargetContentsGroup {
 		fSelectRequiredButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				Object[] allChecked = fTree.getCheckedLeafElements();
-				Object[] required = null;
+				Collection required = null;
 				if (fFeaureModeButton.getSelection()) {
 					required = getRequiredFeatures(fTargetDefinition.getAllFeatures(), allChecked);
 				} else {
 					required = getRequiredPlugins(fAllBundles, allChecked);
 				}
-				for (int i = 0; i < required.length; i++) {
-					fTree.setChecked(required[i], true);
+				for (Iterator iterator = required.iterator(); iterator.hasNext();) {
+					fTree.setChecked(iterator.next(), true);
 				}
 				saveIncludedBundleState();
 				contentChanged();
@@ -696,7 +696,7 @@ public class TargetContentsGroup {
 	 * @param checkedBundles list of bundles to get requirements for
 	 * @return list of resolved bundles from the collection to be checked
 	 */
-	private Object[] getRequiredPlugins(final Collection allBundles, final Object[] checkedBundles) {
+	private List/*<IResolvedBundle>*/getRequiredPlugins(final Collection/*<IResolvedBundle>*/allBundles, final Object[] checkedBundles) {
 		final Set dependencies = new HashSet();
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
@@ -794,13 +794,13 @@ public class TargetContentsGroup {
 					toCheck.add(bundle);
 				}
 			}
-			return toCheck.toArray();
+			return toCheck;
 		} catch (InvocationTargetException e) {
 			PDEPlugin.log(e);
 		} catch (InterruptedException e) {
 		}
 
-		return new Object[0];
+		return new ArrayList(0);
 	}
 
 	/**
@@ -809,33 +809,35 @@ public class TargetContentsGroup {
 	 * 
 	 * @param allFeatures list of all features to search requirements in
 	 * @param checkedFeatures list of features to get requirements for
-	 * @return list of features to be checked
+	 * @return set of features to be checked
 	 */
-	private Object[] getRequiredFeatures(final IFeatureModel[] allFeatures, final Object[] checkedFeatures) {
-		ArrayList required = new ArrayList();
+	private Set getRequiredFeatures(final IFeatureModel[] allFeatures, final Object[] checkedFeatures) {
+		Set required = new HashSet();
 		for (int j = 0; j < checkedFeatures.length; j++) {
 			if (checkedFeatures[j] instanceof IFeatureModel) {
 				getFeatureDependencies((IFeatureModel) checkedFeatures[j], allFeatures, required);
 			}
 		}
-		return required.toArray();
+		return required;
 	}
 
 	/**
 	 * Recursively gets the ID of required features of this feature and adds them to the list
 	 * @param model feature model to get requirements of
-	 * @param requiredFeatureList collector for the required features
+	 * @param requiredFeatures collector for the required features
 	 */
-	private void getFeatureDependencies(IFeatureModel model, IFeatureModel[] allFeatures, ArrayList requiredFeatureList) {
+	private void getFeatureDependencies(IFeatureModel model, IFeatureModel[] allFeatures, Set/*<IFeatureModel>*/requiredFeatures) {
 		IFeature feature = model.getFeature();
 		IFeatureImport[] featureImports = feature.getImports();
 		for (int i = 0; i < featureImports.length; i++) {
 			if (featureImports[i].getType() == IFeatureImport.FEATURE) {
 				for (int j = 0; j < allFeatures.length; j++) {
 					if (allFeatures[j].getFeature().getId().equals(featureImports[i].getId())) {
-						requiredFeatureList.add(allFeatures[j]);
-						getFeatureDependencies(allFeatures[j], allFeatures, requiredFeatureList);
-						break;
+						if (!requiredFeatures.contains(allFeatures[j])) {
+							requiredFeatures.add(allFeatures[j]);
+							getFeatureDependencies(allFeatures[j], allFeatures, requiredFeatures);
+							break;
+						}
 					}
 				}
 
@@ -843,12 +845,13 @@ public class TargetContentsGroup {
 		}
 		IFeatureChild[] featureIncludes = feature.getIncludedFeatures();
 		for (int i = 0; i < featureIncludes.length; i++) {
-			requiredFeatureList.add(featureIncludes[i].getId());
 			for (int j = 0; j < allFeatures.length; j++) {
 				if (allFeatures[j].getFeature().getId().equals(featureIncludes[i].getId())) {
-					requiredFeatureList.add(allFeatures[j]);
-					getFeatureDependencies(allFeatures[j], allFeatures, requiredFeatureList);
-					break;
+					if (!requiredFeatures.contains(allFeatures[j])) {
+						requiredFeatures.add(allFeatures[j]);
+						getFeatureDependencies(allFeatures[j], allFeatures, requiredFeatures);
+						break;
+					}
 				}
 			}
 		}
