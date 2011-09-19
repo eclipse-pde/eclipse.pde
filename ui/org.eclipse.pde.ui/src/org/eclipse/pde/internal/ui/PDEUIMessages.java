@@ -1739,24 +1739,16 @@ public class PDEUIMessages extends NLS {
 	public static String CategorySection_newCategoryLabel;
 
 	// Target Export ########################################
-	public static String ExportTargetDefinition_task;
-	public static String ExportTargetDeleteOldData;
-	public static String ExportTargetExportFeatures;
-	public static String ExportTargetExportPlugins;
 	public static String ExportActiveTargetDefinition;
 	public static String ExportActiveTargetDefinition_message;
+	public static String ExportTargetError_ChooseDestination;
+	public static String ExportTargetError_validPath;
 	public static String ExportTargetCurrentTarget;
 	public static String ExportTargetChooseFolder;
 	public static String ExportTargetBrowse;
 	public static String ExportTargetSelectDestination;
 	public static String ExportTargetSpecifyDestination;
 	public static String ExportTargetClearDestination;
-	public static String ExportTargetError_ChooseDestination;
-	public static String ExportTargetError_validPath;
-
-	public static String ExportTargetJob_ConfiguringDestination;
-
-	public static String ExportTargetJob_ExportingTargetContents;
 
 	public static String CategoryDetails_title;
 	public static String CategoryDetails_sectionDescription;

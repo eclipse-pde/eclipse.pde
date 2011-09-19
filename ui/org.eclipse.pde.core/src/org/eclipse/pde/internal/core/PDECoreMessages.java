@@ -99,7 +99,7 @@ public class PDECoreMessages extends NLS {
 		NLS.initializeMessages(BUNDLE_NAME, PDECoreMessages.class);
 	}
 
-	// Builders and natures 
+	// Builders and natures
 	public static String Builders_updating;
 	public static String Builders_verifying;
 
@@ -334,5 +334,14 @@ public class PDECoreMessages extends NLS {
 	public static String UpdateSiteBuilder_0;
 
 	public static String VMHelper_noJreForExecEnv;
+
+	// Target Export ########################################
+	public static String ExportTargetDefinition_task;
+	public static String ExportTargetDeleteOldData;
+	public static String ExportTargetExportFeatures;
+	public static String ExportTargetExportPlugins;
+
+	public static String ExportTargetJob_ConfiguringDestination;
+	public static String ExportTargetJob_ExportingTargetContents;
 
 }
