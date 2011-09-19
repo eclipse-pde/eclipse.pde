@@ -32,6 +32,8 @@ public class ConvertProjectToPluginTestCase extends PDETestCase {
 
 	private static String PROJECT_NAME_1 = "Foo";
 	private static String PROJECT_NAME_2 = "Bar";
+	
+	private final static String API_TOOLS_NATURE = "org.eclipse.pde.api.tools.apiAnalysisNature";
 
 	public static Test suite() {
 		return new TestSuite(ConvertProjectToPluginTestCase.class);
@@ -50,10 +52,12 @@ public class ConvertProjectToPluginTestCase extends PDETestCase {
 		assertNotNull(project);
 		assertTrue(project.exists());
 		assertFalse(project.hasNature(PDE.PLUGIN_NATURE));
+		assertFalse(project.hasNature(API_TOOLS_NATURE));
 
-		convertProject(project);
+		convertProjects(new IProject[]{project}, false);
 
 		assertTrue(project.hasNature(PDE.PLUGIN_NATURE));
+		assertFalse(project.hasNature(API_TOOLS_NATURE));
 		assertTrue(PDEProject.getManifest(project).exists());
 		assertTrue(PDEProject.getBuildProperties(project).exists());
 	}
@@ -76,26 +80,50 @@ public class ConvertProjectToPluginTestCase extends PDETestCase {
 			assertNotNull(project);
 			assertTrue(project.exists());
 			assertFalse(project.hasNature(PDE.PLUGIN_NATURE));
+			assertFalse(project.hasNature(API_TOOLS_NATURE));
 		}
 
-		convertProjects(projects);
+		convertProjects(projects, false);
 
 		for (int i = 0; i < projects.length; i++) {
 			IProject project = projects[i];
 			assertTrue(project.hasNature(PDE.PLUGIN_NATURE));
+			assertFalse(project.hasNature(API_TOOLS_NATURE));
 			assertTrue(PDEProject.getManifest(project).exists());
 			assertTrue(PDEProject.getBuildProperties(project).exists());
 		}
 	}
-
+	
 	/**
-	 * Convert a project to a plugin project
+	 * Test the conversion of a project can add the api tools nature correctly
 	 * 
-	 * @param project
-	 *            The project to convert
+	 * @throws Exception
+	 *             If there's a problem.
 	 */
-	private void convertProject(IProject project) {
-		convertProjects(new IProject[] {project});
+	public void testApiToolsSetup() throws Exception {
+
+		IProject project1 = createProject(PROJECT_NAME_1);
+		IProject project2 = createProject(PROJECT_NAME_2);
+
+		IProject[] projects = new IProject[] {project1, project2};
+
+		for (int i = 0; i < projects.length; i++) {
+			IProject project = projects[i];
+			assertNotNull(project);
+			assertTrue(project.exists());
+			assertFalse(project.hasNature(PDE.PLUGIN_NATURE));
+			assertFalse(project.hasNature(API_TOOLS_NATURE));
+		}
+
+		convertProjects(projects, true);
+
+		for (int i = 0; i < projects.length; i++) {
+			IProject project = projects[i];
+			assertTrue(project.hasNature(PDE.PLUGIN_NATURE));
+			assertTrue(project.hasNature(API_TOOLS_NATURE));
+			assertTrue(PDEProject.getManifest(project).exists());
+			assertTrue(PDEProject.getBuildProperties(project).exists());
+		}
 	}
 
 	/**
@@ -103,10 +131,11 @@ public class ConvertProjectToPluginTestCase extends PDETestCase {
 	 * 
 	 * @param projects
 	 *            The projects to convert
+	 * @param enableApiTools whether to enable the api tools nature on the projects
 	 */
-	private void convertProjects(IProject[] projects) {
+	private void convertProjects(IProject[] projects, boolean enableApiTools) {
 		IRunnableWithProgress convertOperation;
-		convertOperation = new ConvertProjectToPluginOperation(projects);
+		convertOperation = new ConvertProjectToPluginOperation(projects,enableApiTools);
 
 		IProgressService progressService = PlatformUI.getWorkbench().getProgressService();
 		try {
@@ -116,7 +145,6 @@ public class ConvertProjectToPluginTestCase extends PDETestCase {
 		} catch (InterruptedException e) {
 			fail("Plug-in project conversion failed...");
 		}
-
 	}
 
 	/**
