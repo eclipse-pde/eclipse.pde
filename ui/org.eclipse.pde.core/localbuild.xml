@@ -1,0 +1,40 @@
+<?xml version="1.0"?><!--
+     Copyright (c) 2011 IBM Corporation and others.
+     All rights reserved. This program and the accompanying materials
+     are made available under the terms of the Eclipse Public License v1.0
+     which accompanies this distribution, and is available at
+     http://www.eclipse.org/legal/epl-v10.html
+
+     Contributors:
+         IBM Corporation - initial API and implementation
+ -->
+
+<project name="project" default="default">
+	<description>
+    	 Build the pde-ant.jar.  Either from scratch (default target), or by
+    	 gathering up the results of a workspace build from binary.
+    </description>
+
+	<!-- =================================
+          target: default
+         ================================= -->
+	<target name="default" description="--> description">
+		<tstamp/>
+		<eclipse.buildScript elements="plugin@org.eclipse.pde.core"
+			buildDirectory="${buildDirectory}"
+			configInfo="*,*,*"
+			baseLocation="${baseLocation}"
+			buildingOSGi="true"
+			outputUpdateJars="false"
+			pluginpath="${thisPlugin}"
+			forceContextQualifier="z${DSTAMP}${TSTAMP}"
+			/>
+		<delete file="ant_tasks/pde-ant.jar" failonerror="false"/>
+		<ant antfile="build.xml" target="ant_tasks/pde-ant.jar"/>
+	</target>
+	<target name="workspaceBinaries" description="Jar up the binaries that were compiled by the jdt builder" >
+		<mkdir dir="ant_tasks" />
+		<delete file="ant_tasks/pde-ant.jar" failonerror="false"/>
+		<jar destfile="ant_tasks/pde-ant.jar" basedir="binary"/>
+	</target>
+</project>
