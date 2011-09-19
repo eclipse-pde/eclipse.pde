@@ -71,6 +71,10 @@ public class PDECoreMessages extends NLS {
 
 	public static String TargetPlatform_exceptionThrown;
 
+	public static String TargetPlatformProvisionTask_ErrorDefinitionNotFoundAtSpecifiedLocation;
+	public static String TargetPlatformProvisionTask_ErrorDefinitionNotSet;
+	public static String TargetPlatformProvisionTask_ErrorDestinationNotSet;
+
 	public static String FeatureBasedExportOperation_ProblemDuringExport;
 
 	public static String FeatureConsistencyChecker_0;
