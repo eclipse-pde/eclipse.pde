@@ -1106,8 +1106,9 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 */
 	private void processType(String typename) {
 		try {
-			IMember type = fJavaProject.findType(typename);
-			if(type != null) {
+			IType type = fJavaProject.findType(typename);
+			if(type != null && !type.isMember()) {
+				// member types are processed while processing the compilation unit
 				ICompilationUnit cunit = type.getCompilationUnit();
 				if(cunit != null) {
 					processType(cunit);
