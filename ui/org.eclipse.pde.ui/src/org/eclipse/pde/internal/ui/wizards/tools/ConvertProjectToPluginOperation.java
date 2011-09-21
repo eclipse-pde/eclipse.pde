@@ -14,7 +14,8 @@ package org.eclipse.pde.internal.ui.wizards.tools;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.pde.core.IBaseModel;
@@ -102,6 +103,13 @@ public class ConvertProjectToPluginOperation extends WorkspaceModifyOperation {
 		}
 
 		CoreUtility.addNatureToProject(projectToConvert, PDE.PLUGIN_NATURE, monitor);
+		// Setup API Tooling, which requires the java nature
+		if (enableApiAnalysis) {
+			if (!projectToConvert.hasNature(JavaCore.NATURE_ID)) {
+				CoreUtility.addNatureToProject(projectToConvert, JavaCore.NATURE_ID, monitor);
+			}
+			CoreUtility.addNatureToProject(projectToConvert, "org.eclipse.pde.api.tools.apiAnalysisNature", monitor); //$NON-NLS-1$
+		}
 
 		loadClasspathEntries(projectToConvert, monitor);
 		loadLibraryName(projectToConvert);
@@ -133,11 +141,6 @@ public class ConvertProjectToPluginOperation extends WorkspaceModifyOperation {
 				build.add(entry);
 
 			model.save();
-		}
-
-		// Setup API Tooling
-		if (enableApiAnalysis) {
-			addApiAnalysisNature(projectToConvert);
 		}
 	}
 
@@ -272,24 +275,6 @@ public class ConvertProjectToPluginOperation extends WorkspaceModifyOperation {
 
 	private boolean isOldTarget() {
 		return TargetPlatformHelper.getTargetVersion() < 3.1;
-	}
-
-	/**
-	 * Adds the API analysis nature to the project
-	 * @param project the project to add the nature to
-	 */
-	private void addApiAnalysisNature(IProject project) {
-		try {
-			IProjectDescription description = project.getDescription();
-			String[] prevNatures = description.getNatureIds();
-			String[] newNatures = new String[prevNatures.length + 1];
-			System.arraycopy(prevNatures, 0, newNatures, 0, prevNatures.length);
-			newNatures[prevNatures.length] = "org.eclipse.pde.api.tools.apiAnalysisNature"; //$NON-NLS-1$
-			description.setNatureIds(newNatures);
-			project.setDescription(description, new NullProgressMonitor());
-		} catch (CoreException ce) {
-			//ignore
-		}
 	}
 
 }
