@@ -12,7 +12,6 @@ package org.eclipse.pde.ui.tests.imports;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.pde.ui.tests.project.BundleImporterTests;
 
 public class AllImportTests {
 
@@ -24,8 +23,8 @@ public class AllImportTests {
 		
 		// Temporarily disabled until git migration is complete and we have access to a stable cvs repo (bug 355873)
 //		suite.addTest(ImportFromRepoTestCase.suite());
+//		suite.addTest(BundleImporterTests.suite());
 		
-		suite.addTest(BundleImporterTests.suite());
 		suite.addTest(ImportFeatureProjectsTestCase.suite());
 		return suite;
 	}
