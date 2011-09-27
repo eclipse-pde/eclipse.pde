@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -73,7 +73,9 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 
 	private static final String[] COMMON_LABEL_PROPERTIES = {"label", //$NON-NLS-1$
 			"name", //$NON-NLS-1$
-			"id"}; //$NON-NLS-1$
+			"id", //$NON-NLS-1$
+			"commandId", //$NON-NLS-1$
+			"activityId"}; //$NON-NLS-1$ 
 
 	private static final String[] VALID_IMAGE_TYPES = {"png", "bmp", "ico", "gif", "jpg", "tiff"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 
