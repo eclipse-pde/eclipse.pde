@@ -166,7 +166,7 @@ public interface ICoreConstants {
 	public final static String ECLIPSE_JREBUNDLE = "Eclipse-JREBundle"; //$NON-NLS-1$
 	public static final String ECLIPSE_BUDDY_POLICY = "Eclipse-BuddyPolicy"; //$NON-NLS-1$
 	public static final String ECLIPSE_REGISTER_BUDDY = "Eclipse-RegisterBuddy"; //$NON-NLS-1$
-	public static final String ECLIPSE_GENERIC_CAPABILITY = "Eclipse-GenericCapabilty"; //$NON-NLS-1$
+	public static final String ECLIPSE_GENERIC_CAPABILITY = "Eclipse-GenericCapability"; //$NON-NLS-1$
 	public static final String ECLIPSE_GENERIC_REQUIRED = "Eclipse-GenericRequire"; //$NON-NLS-1$
 	public static final String PLATFORM_FILTER = "Eclipse-PlatformFilter"; //$NON-NLS-1$
 	public static final String ECLIPSE_SOURCE_BUNDLE = "Eclipse-SourceBundle"; //$NON-NLS-1$
