@@ -474,7 +474,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			return;
 		}
 		String message;
-		if (fOsgiR4 && isCheckDeprecated()) {
+		if ((TargetPlatformHelper.getTargetVersion() >= 3.7) && isCheckDeprecated()) {
 			message = NLS.bind(PDECoreMessages.BundleErrorReporter_eclipse_genericCapabilityDeprecated, ICoreConstants.ECLIPSE_GENERIC_CAPABILITY, Constants.PROVIDE_CAPABILITY);
 			report(message, header.getLineNumber() + 1, CompilerFlags.P_DEPRECATED, PDEMarkerFactory.CAT_DEPRECATION);
 		}
@@ -487,7 +487,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			return;
 		}
 		String message;
-		if (fOsgiR4 && isCheckDeprecated()) {
+		if ((TargetPlatformHelper.getTargetVersion() >= 3.7) && isCheckDeprecated()) {
 			message = NLS.bind(PDECoreMessages.BundleErrorReporter_eclipse_genericRequireDeprecated, ICoreConstants.ECLIPSE_GENERIC_REQUIRED, Constants.REQUIRE_CAPABILITY);
 			report(message, header.getLineNumber() + 1, CompilerFlags.P_DEPRECATED, PDEMarkerFactory.CAT_DEPRECATION);
 		}
