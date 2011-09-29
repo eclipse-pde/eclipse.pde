@@ -72,6 +72,8 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		validateBundleLocalization();
 		validateProvidePackage();
 		validateEclipseBundleShape();
+		validateEclipseGenericCapability();
+		validateEclipseGenericRequire();
 	}
 
 	private boolean validateBundleManifestVersion() {
@@ -236,7 +238,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 
 		// Header introduced in OSGi R4 - warn if R3 manifest
 		if (!fOsgiR4)
-			report(NLS.bind(PDECoreMessages.BundleErrorReporter_R4SyntaxInR3Bundle,Constants.FRAGMENT_HOST), header.getLineNumber() + 1, CompilerFlags.WARNING, PDEMarkerFactory.M_R4_SYNTAX_IN_R3_BUNDLE, PDEMarkerFactory.CAT_OTHER);
+			report(NLS.bind(PDECoreMessages.BundleErrorReporter_R4SyntaxInR3Bundle, Constants.FRAGMENT_HOST), header.getLineNumber() + 1, CompilerFlags.WARNING, PDEMarkerFactory.M_R4_SYNTAX_IN_R3_BUNDLE, PDEMarkerFactory.CAT_OTHER);
 
 		if (!isCheckUnresolvedImports())
 			return;
@@ -464,6 +466,32 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		} catch (InvalidSyntaxException ise) {
 			report(PDECoreMessages.BundleErrorReporter_invalidFilterSyntax, header.getLineNumber() + 1, CompilerFlags.ERROR, PDEMarkerFactory.CAT_FATAL);
 		}
+	}
+
+	private void validateEclipseGenericCapability() {
+		IHeader header = getHeader(ICoreConstants.ECLIPSE_GENERIC_CAPABILITY);
+		if (header == null) {
+			return;
+		}
+		String message;
+		if (fOsgiR4 && isCheckDeprecated()) {
+			message = NLS.bind(PDECoreMessages.BundleErrorReporter_eclipse_genericCapabilityDeprecated, ICoreConstants.ECLIPSE_GENERIC_CAPABILITY, Constants.PROVIDE_CAPABILITY);
+			report(message, header.getLineNumber() + 1, CompilerFlags.P_DEPRECATED, PDEMarkerFactory.CAT_DEPRECATION);
+		}
+
+	}
+
+	private void validateEclipseGenericRequire() {
+		IHeader header = getHeader(ICoreConstants.ECLIPSE_GENERIC_REQUIRED);
+		if (header == null) {
+			return;
+		}
+		String message;
+		if (fOsgiR4 && isCheckDeprecated()) {
+			message = NLS.bind(PDECoreMessages.BundleErrorReporter_eclipse_genericRequireDeprecated, ICoreConstants.ECLIPSE_GENERIC_REQUIRED, Constants.REQUIRE_CAPABILITY);
+			report(message, header.getLineNumber() + 1, CompilerFlags.P_DEPRECATED, PDEMarkerFactory.CAT_DEPRECATION);
+		}
+
 	}
 
 	private void validateBundleActivator() {
