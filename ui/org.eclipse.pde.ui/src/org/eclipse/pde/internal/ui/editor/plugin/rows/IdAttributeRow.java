@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -84,11 +84,13 @@ public class IdAttributeRow extends ButtonAttributeRow {
 	 */
 	protected void browse() {
 		ElementListSelectionDialog dialog = new ElementListSelectionDialog(PDEPlugin.getActiveWorkbenchShell(), new IdAttributeLabelProvider());
+
 		dialog.setTitle(PDEUIMessages.IdAttributeRow_title);
 		dialog.setMessage(PDEUIMessages.IdAttributeRow_message);
 		dialog.setEmptyListMessage(PDEUIMessages.IdAttributeRow_emptyMessage);
 		Map attributeMap = PDESchemaHelper.getValidAttributes(getAttribute());
 		dialog.setElements(attributeMap.entrySet().toArray());
+		dialog.setFilter("*"); //$NON-NLS-1$
 		if (dialog.open() == Window.OK) {
 			Map.Entry entry = (Map.Entry) dialog.getFirstResult();
 			text.setText(entry.getKey().toString());

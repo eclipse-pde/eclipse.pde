@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -717,7 +717,8 @@ public class ElementSection extends TreeSection {
 			else {
 				ISchemaInclude[] includes = fSchema.getIncludes();
 				for (int i = 0; i < includes.length; i++) {
-					if (includes[i].getIncludedSchema().equals(schema)) {
+					ISchema includedSchema = includes[i].getIncludedSchema();
+					if (includedSchema != null && includedSchema.equals(schema)) {
 						String location = includes[i].getLocation();
 						SchemaEditor.openToElement(new Path(location), element);
 						break;

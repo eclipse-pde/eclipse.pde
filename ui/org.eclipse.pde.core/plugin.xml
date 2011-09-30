@@ -367,12 +367,5 @@
             properties="inPluginContainer"
             type="org.eclipse.jdt.core.IPackageFragmentRoot">
       </propertyTester>
-      <propertyTester
-            class="org.eclipse.pde.internal.core.util.CustomBuildPropertyTester"
-            id="org.eclipse.pde.core.customBuild"
-            namespace="org.eclipse.pde.core"
-            properties="isCustomBuild"
-            type="org.eclipse.core.resources.IResource">
-      </propertyTester>
    </extension>
 </plugin>
