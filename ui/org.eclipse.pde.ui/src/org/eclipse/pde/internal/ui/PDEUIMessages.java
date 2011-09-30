@@ -2862,6 +2862,10 @@ public class PDEUIMessages extends NLS {
 
 	public static String OrganizeManifestsWizardPage_addDependencies;
 
+	public static String OrganizeManifestsWizardPage_ProjectsUsingCustomBuildWarning;
+
+	public static String OrganizeManifestsWizardPage_ProjectsUsingCustomBuildWarningPlural;
+
 	public static String AddNewDependenciesAction_title;
 
 	public static String AddNewDependenciesAction_notFound;

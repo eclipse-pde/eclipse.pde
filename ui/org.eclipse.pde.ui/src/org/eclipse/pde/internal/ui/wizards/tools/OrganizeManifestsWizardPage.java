@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,12 +11,15 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.tools;
 
+import java.util.Iterator;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.ltk.ui.refactoring.UserInputWizardPage;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.launching.ILaunchingPreferenceConstants;
-import org.eclipse.pde.internal.ui.IHelpContextIds;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.refactoring.PDERefactor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -46,22 +49,25 @@ public class OrganizeManifestsWizardPage extends UserInputWizardPage implements 
 	private Button[] fTopLevelButtons; // used for setting page complete state
 
 	private OrganizeManifestsProcessor fProcessor;
+	private java.util.List fCustomProjects;
 
 	private static String title = PDEUIMessages.OrganizeManifestsWizardPage_title;
 
-	protected OrganizeManifestsWizardPage() {
+	protected OrganizeManifestsWizardPage(java.util.List/*<IProject>*/customProjects) {
 		super(title);
 		setTitle(title);
 		setDescription(PDEUIMessages.OrganizeManifestsWizardPage_description);
+		fCustomProjects = customProjects;
 	}
 
 	public void createControl(Composite parent) {
-		Composite container = new Composite(parent, SWT.NONE);
-		container.setLayout(new GridLayout());
-		container.setLayoutData(new GridData(GridData.FILL_BOTH));
+		Composite container = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_HORIZONTAL);
 
 		fProcessor = (OrganizeManifestsProcessor) ((PDERefactor) getRefactoring()).getProcessor();
 
+		if (!fCustomProjects.isEmpty()) {
+			createCustomBuildWarning(container);
+		}
 		createExportedPackagesGroup(container);
 		createRequireImportGroup(container);
 		createGeneralGroup(container);
@@ -77,8 +83,39 @@ public class OrganizeManifestsWizardPage extends UserInputWizardPage implements 
 		Dialog.applyDialogFont(container);
 	}
 
+	private void createCustomBuildWarning(Composite container) {
+		Composite parent = SWTFactory.createComposite(container, 2, 1, GridData.FILL_HORIZONTAL);
+
+		Label image = new Label(parent, SWT.NONE);
+		image.setImage(JFaceResources.getImage(Dialog.DLG_IMG_MESSAGE_WARNING));
+		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		image.setLayoutData(gd);
+
+		String message;
+		if (fCustomProjects.size() == 1) {
+			message = NLS.bind(PDEUIMessages.OrganizeManifestsWizardPage_ProjectsUsingCustomBuildWarning, ((IProject) fCustomProjects.get(0)).getName());
+		} else {
+			StringBuffer buf = new StringBuffer();
+			for (Iterator iterator = fCustomProjects.iterator(); iterator.hasNext();) {
+				IProject project = (IProject) iterator.next();
+				buf.append(project.getName());
+				if (iterator.hasNext()) {
+					buf.append(',').append(' ');
+				}
+			}
+			message = NLS.bind(PDEUIMessages.OrganizeManifestsWizardPage_ProjectsUsingCustomBuildWarningPlural, buf.toString());
+		}
+
+		// Using a link as a wrap label appear to force the wizard to max vertical space
+		Link link = new Link(parent, SWT.WRAP);
+		link.setText(message);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.widthHint = 200;
+		link.setLayoutData(gd);
+	}
+
 	private void createExportedPackagesGroup(Composite container) {
-		Group group = createGroup(container, PDEUIMessages.OrganizeManifestsWizardPage_exportedGroup, 1, true);
+		Group group = SWTFactory.createGroup(container, PDEUIMessages.OrganizeManifestsWizardPage_exportedGroup, 1, 1, GridData.FILL_HORIZONTAL);
 
 		fAddMissing = new Button(group, SWT.CHECK);
 		fAddMissing.setText(PDEUIMessages.OrganizeManifestsWizardPage_addMissing);
@@ -113,7 +150,7 @@ public class OrganizeManifestsWizardPage extends UserInputWizardPage implements 
 	}
 
 	private void createRequireImportGroup(Composite container) {
-		Group group = createGroup(container, PDEUIMessages.OrganizeManifestsWizardPage_dependenciesGroup, 1, true);
+		Group group = SWTFactory.createGroup(container, PDEUIMessages.OrganizeManifestsWizardPage_dependenciesGroup, 1, 1, GridData.FILL_HORIZONTAL);
 
 		Composite comp = new Composite(group, SWT.NONE);
 		GridLayout layout = new GridLayout(3, false);
@@ -138,7 +175,7 @@ public class OrganizeManifestsWizardPage extends UserInputWizardPage implements 
 	}
 
 	private void createGeneralGroup(Composite container) {
-		Group group = createGroup(container, PDEUIMessages.OrganizeManifestsWizardPage_generalGroup, 1, true);
+		Group group = SWTFactory.createGroup(container, PDEUIMessages.OrganizeManifestsWizardPage_generalGroup, 1, 1, GridData.FILL_HORIZONTAL);
 
 		fRemoveLazy = new Button(group, SWT.CHECK);
 		fRemoveLazy.setText(PDEUIMessages.OrganizeManifestsWizardPage_lazyStart);
@@ -149,24 +186,13 @@ public class OrganizeManifestsWizardPage extends UserInputWizardPage implements 
 	}
 
 	private void createNLSGroup(Composite container) {
-		Group group = createGroup(container, PDEUIMessages.OrganizeManifestsWizardPage_internationalizationGroup, 1, true);
+		Group group = SWTFactory.createGroup(container, PDEUIMessages.OrganizeManifestsWizardPage_internationalizationGroup, 1, 1, GridData.FILL_HORIZONTAL);
 
 		fFixIconNLSPaths = new Button(group, SWT.CHECK);
 		fFixIconNLSPaths.setText(PDEUIMessages.OrganizeManifestsWizardPage_prefixNL);
 
 		fRemovedUnusedKeys = new Button(group, SWT.CHECK);
 		fRemovedUnusedKeys.setText(PDEUIMessages.OrganizeManifestsWizardPage_removeUnusedKeys);
-	}
-
-	private Group createGroup(Composite parent, String text, int span, boolean colsEqual) {
-		Group group = new Group(parent, SWT.NONE);
-		group.setText(text);
-		GridLayout layout = new GridLayout(span, colsEqual);
-		layout.marginHeight = layout.marginWidth = 10;
-		group.setLayout(layout);
-		GridData gd = new GridData(GridData.FILL_BOTH);
-		group.setLayoutData(gd);
-		return group;
 	}
 
 	private void presetOptions() {
