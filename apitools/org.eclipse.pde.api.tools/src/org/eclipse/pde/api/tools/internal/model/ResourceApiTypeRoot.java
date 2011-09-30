@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,7 +48,7 @@ public class ResourceApiTypeRoot extends AbstractApiTypeRoot {
 	 * @see org.eclipse.pde.api.tools.internal.model.AbstractApiTypeRoot#getContents()
 	 */
 	public byte[] getContents() throws CoreException {
-		InputStream stream = fFile.getContents();
+		InputStream stream = fFile.getContents(true);
 		try {
 			return Util.getInputStreamAsByteArray(stream, -1);
 		}
