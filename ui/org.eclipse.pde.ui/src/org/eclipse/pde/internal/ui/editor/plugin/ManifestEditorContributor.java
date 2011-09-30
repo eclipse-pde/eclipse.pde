@@ -32,10 +32,9 @@ public class ManifestEditorContributor extends PDEFormTextEditorContributor {
 			if (getEditor() != null) {
 				BusyIndicator.showWhile(SWTUtil.getStandardDisplay(), new Runnable() {
 					public void run() {
-						GetNonExternalizedStringsAction fGetExternAction = new GetNonExternalizedStringsAction();
+						GetNonExternalizedStringsAction externalizeAction = new GetNonExternalizedStringsAction();
 						IStructuredSelection selection = new StructuredSelection(getEditor().getCommonProject());
-						fGetExternAction.selectionChanged(ExternalizeAction.this, selection);
-						fGetExternAction.run(ExternalizeAction.this);
+						externalizeAction.runGetNonExternalizedStringsAction(selection);
 					}
 				});
 			}

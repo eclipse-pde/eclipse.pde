@@ -219,13 +219,11 @@ public class OverviewPage extends LaunchShortcutOverviewPage {
 		} else if (href.equals("organize")) { //$NON-NLS-1$
 			getEditor().doSave(null);
 			OrganizeManifestsAction organizeAction = new OrganizeManifestsAction();
-			organizeAction.selectionChanged(null, new StructuredSelection(getPDEEditor().getCommonProject()));
-			organizeAction.run(null);
+			organizeAction.runOrganizeManfestsAction(new StructuredSelection(getPDEEditor().getCommonProject()));
 		} else if (href.equals("externalize")) { //$NON-NLS-1$
 			getEditor().doSave(null);
 			GetNonExternalizedStringsAction externalizeAction = new GetNonExternalizedStringsAction();
-			externalizeAction.selectionChanged(null, new StructuredSelection(getPDEEditor().getCommonProject()));
-			externalizeAction.run(null);
+			externalizeAction.runGetNonExternalizedStringsAction(new StructuredSelection(getPDEEditor().getCommonProject()));
 		} else
 			super.linkActivated(e);
 	}

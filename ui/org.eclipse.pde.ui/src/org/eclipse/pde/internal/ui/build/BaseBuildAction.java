@@ -14,6 +14,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import org.eclipse.ant.internal.ui.launchConfigurations.AntLaunchShortcut;
 import org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants;
+import org.eclipse.core.commands.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -25,7 +26,6 @@ import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
@@ -38,18 +38,24 @@ import org.eclipse.pde.internal.core.exports.BuildUtilities;
 import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.ui.*;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.handlers.HandlerUtil;
 
-public abstract class BaseBuildAction implements IObjectActionDelegate {
+public abstract class BaseBuildAction extends AbstractHandler {
 
 	protected IFile fManifestFile;
 
-	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
-	}
+	public Object execute(ExecutionEvent event) throws ExecutionException {
+		ISelection selection = HandlerUtil.getCurrentSelection(event);
+		if (selection instanceof IStructuredSelection) {
+			Object obj = ((IStructuredSelection) selection).getFirstElement();
+			if (obj != null && obj instanceof IFile) {
+				this.fManifestFile = (IFile) obj;
+			}
+		}
 
-	public void run(IAction action) {
-		if (!fManifestFile.exists())
-			return;
+		if (fManifestFile == null || !fManifestFile.exists())
+			return null;
 
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
@@ -75,17 +81,7 @@ public abstract class BaseBuildAction implements IObjectActionDelegate {
 		} catch (InvocationTargetException e) {
 			PDEPlugin.logException(e);
 		}
-
-	}
-
-	public void selectionChanged(IAction action, ISelection selection) {
-		if (selection instanceof IStructuredSelection) {
-			Object obj = ((IStructuredSelection) selection).getFirstElement();
-			if (obj != null && obj instanceof IFile) {
-				this.fManifestFile = (IFile) obj;
-			}
-		}
-
+		return null;
 	}
 
 	private void doBuild(IProgressMonitor monitor) throws CoreException, InvocationTargetException {

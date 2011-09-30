@@ -1,48 +1,50 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *     Team Azure - initial API and implementation
+ *     IBM Corporation - ongoing enhancements
+ *     
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.nls;
 
 import java.lang.reflect.InvocationTargetException;
-import org.eclipse.jface.action.IAction;
+import org.eclipse.core.commands.*;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.ui.*;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.handlers.HandlerUtil;
 
 /**
  * This action class is responsible for creating and initializing the
  * InternationalizeWizard.
- * 
- * @author Team Azure
- *
  */
-public class InternationalizeAction implements IWorkbenchWindowActionDelegate {
+public class InternationalizeAction extends AbstractHandler {
 
-	private IStructuredSelection fSelection;
-
-	public InternationalizeAction() {
-	}
-
-	public void run(IAction action) {
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.commands.AbstractHandler#execute(org.eclipse.core.commands.ExecutionEvent)
+	 */
+	public Object execute(ExecutionEvent event) throws ExecutionException {
 		//Create an InternationalizeOperation on the workbench selection.
-		InternationalizeOperation runnable = new InternationalizeOperation(fSelection);
+		ISelection selection = HandlerUtil.getCurrentSelection(event);
+		if (!(selection instanceof IStructuredSelection)) {
+			return null;
+		}
+		InternationalizeOperation runnable = new InternationalizeOperation(selection);
 		try {
 			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(runnable);
 		} catch (InvocationTargetException e) {
 		} catch (InterruptedException e) {
 		} finally {
 			if (runnable.wasCanceled()) {
-				return;
+				return null;
 			}
 
 			/*	Get the plugin model table containing the list of workspace and 
@@ -52,8 +54,8 @@ public class InternationalizeAction implements IWorkbenchWindowActionDelegate {
 
 			if (!pluginTable.isEmpty()) {
 
-				InternationalizeWizard wizard = new InternationalizeWizard(action, pluginTable);
-				wizard.init(PlatformUI.getWorkbench(), fSelection);
+				InternationalizeWizard wizard = new InternationalizeWizard(pluginTable);
+				wizard.init(PlatformUI.getWorkbench(), (IStructuredSelection) selection);
 
 				//Create an operation to start and run the wizard
 				InternationalizeWizardOpenOperation op = new InternationalizeWizardOpenOperation(wizard);
@@ -65,15 +67,6 @@ public class InternationalizeAction implements IWorkbenchWindowActionDelegate {
 				MessageDialog.openInformation(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), PDEUIMessages.InternationalizeAction_internationalizeTitle, PDEUIMessages.InternationalizeAction_internationalizeMessage);
 			}
 		}
-	}
-
-	public void selectionChanged(IAction action, ISelection selection) {
-		fSelection = (IStructuredSelection) selection;
-	}
-
-	public void dispose() {
-	}
-
-	public void init(IWorkbenchWindow window) {
+		return null;
 	}
 }

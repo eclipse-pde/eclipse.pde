@@ -20,7 +20,7 @@ import org.eclipse.pde.internal.core.PDECore;
  * use with the command/menu framework.  This tester is registered for the type
  * {@link IPackageFragmentRoot}.
  * 
- * <p>This class must always have a default contructor to function as a property tester</p>
+ * <p>This class must always have a default constructor to function as a property tester</p>
  */
 public class PackageFragmentRootPropertyTester extends PropertyTester {
 

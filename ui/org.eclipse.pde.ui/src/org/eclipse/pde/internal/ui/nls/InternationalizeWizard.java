@@ -1,19 +1,20 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 IBM Corporation and others.
+ * Copyright (c) 2008, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *     Team Azure - initial API and implementation
+ *     IBM Corporation - ongoing enhancements
+ *     
  *******************************************************************************/
 
 package org.eclipse.pde.internal.ui.nls;
 
 import java.util.*;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -33,18 +34,10 @@ import org.eclipse.ui.IWorkbench;
  * allows the user to select the desired plug-ins and the second page the desired
  * locales. Also, the wizard ensures the plug-ins are externalized before proceeding
  * with internationlization.
- * 
- * @author Team Azure
  *
  */
 public class InternationalizeWizard extends Wizard implements IImportWizard {
 	private static final String STORE_SECTION = "InternationalizeWizard"; //$NON-NLS-1$
-
-	private IAction action;
-	private IStructuredSelection selection;
-
-	//An intermediate selection passed to the ExternalizeStringsWizard
-	private IStructuredSelection externalizeSelection;
 
 	private InternationalizeWizardPluginPage page1;
 	private InternationalizeWizardLocalePage page2;
@@ -55,14 +48,13 @@ public class InternationalizeWizard extends Wizard implements IImportWizard {
 	//Contains the list of locales
 	private InternationalizeModelTable fInternationalizeLocaleModelTable;
 
-	public InternationalizeWizard(IAction action, InternationalizeModelTable pluginTable) {
+	public InternationalizeWizard(InternationalizeModelTable pluginTable) {
 		fInternationalizePluginModelTable = pluginTable;
 		populateLocaleModelTable();
 		IDialogSettings masterSettings = PDEPlugin.getDefault().getDialogSettings();
 		setDialogSettings(getSettingsSection(masterSettings));
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_XHTML_CONVERT_WIZ);
 		setWindowTitle(PDEUIMessages.InternationalizeWizard_title);
-		this.action = action;
 	}
 
 	/**
@@ -81,8 +73,6 @@ public class InternationalizeWizard extends Wizard implements IImportWizard {
 	 * Initialises selections
 	 */
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
-		this.selection = selection;
-		externalizeSelection = this.selection;
 	}
 
 	/**
@@ -174,7 +164,6 @@ public class InternationalizeWizard extends Wizard implements IImportWizard {
 
 		List projects = new ArrayList();
 		List pluginModels = getPluginModelsForInternationalization();
-		selection = new StructuredSelection(pluginModels); //Save the plug-ins selected for internationalization in a StructuredSelection
 
 		for (Iterator it = pluginModels.iterator(); it.hasNext();) {
 			IPluginModelBase pluginModel = (IPluginModelBase) it.next();
@@ -187,12 +176,10 @@ public class InternationalizeWizard extends Wizard implements IImportWizard {
 
 		//Set the selection for the non-externalized plug-ins that 
 		//should be passed to the ExternalizeStringsWizard
-		externalizeSelection = new StructuredSelection(projects);
-
-		externalize.selectionChanged(action, externalizeSelection);
+		IStructuredSelection externalizeSelection = new StructuredSelection(projects);
 		externalize.setExternalizeSelectedPluginsOnly(true);
 		externalize.setSkipMessageDialog(true);
-		externalize.run(action);
+		externalize.runGetNonExternalizedStringsAction(externalizeSelection);
 	}
 
 	public boolean performCancel() {

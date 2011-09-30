@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -11,12 +11,12 @@
 package org.eclipse.pde.internal.ui.wizards.tools;
 
 import java.util.ArrayList;
+import org.eclipse.core.commands.*;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -27,23 +27,23 @@ import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.ui.IViewActionDelegate;
-import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.handlers.HandlerUtil;
 
-public class UpdateClasspathAction implements IViewActionDelegate {
-	private ISelection fSelection;
+/**
+ * Command handler to update the bundle classpath for the selected projects
+ *
+ */
+public class UpdateClasspathAction extends AbstractHandler {
 
-	/*
-	 * @see IActionDelegate#run(IAction)
-	 */
-	public void run(IAction action) {
+	public Object execute(ExecutionEvent event) throws ExecutionException {
 		IPluginModelBase[] fUnupdated = getModelsToUpdate();
 		if (fUnupdated.length == 0) {
 			MessageDialog.openInformation(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.UpdateClasspathAction_find, PDEUIMessages.UpdateClasspathAction_none);
-			return;
+			return null;
 		}
-		if (fSelection instanceof IStructuredSelection) {
-			Object[] elems = ((IStructuredSelection) fSelection).toArray();
+		ISelection selection = HandlerUtil.getCurrentSelection(event);
+		if (selection instanceof IStructuredSelection) {
+			Object[] elems = ((IStructuredSelection) selection).toArray();
 			ArrayList models = new ArrayList(elems.length);
 			for (int i = 0; i < elems.length; i++) {
 				Object elem = elems[i];
@@ -79,19 +79,7 @@ public class UpdateClasspathAction implements IViewActionDelegate {
 				}
 			});
 		}
-	}
-
-	/*
-	 * @see IWorkbenchWindowActionDelegate#init(IWorkbenchWindow)
-	 */
-	public void init(IViewPart view) {
-	}
-
-	/*
-	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
-	 */
-	public void selectionChanged(IAction action, ISelection selection) {
-		fSelection = selection;
+		return null;
 	}
 
 	private IPluginModelBase[] getModelsToUpdate() {

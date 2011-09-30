@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -21,7 +21,10 @@ import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.feature.FeatureChild;
 import org.eclipse.pde.internal.core.ifeature.*;
 
-public class BuildFeatureAction extends BaseBuildAction {
+/**
+ * Action to generate an ant build file that contains the ant targets to build this bundle
+ */
+public class CreateAntBuildFileAction extends BaseBuildAction {
 
 	private IFeatureModel fFeatureModel;
 

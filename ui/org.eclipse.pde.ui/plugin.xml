@@ -572,176 +572,49 @@
          </commandParameter>
       </command>
       <command
-            categoryId="org.eclipse.ui.category.navigate"
-            description="%open.manifest.description"
-            id="org.eclipse.pde.ui.openManifest"
-            name="%open.manifest.name">
+            description="%importFromRepository.action.desc"
+            id="org.eclipse.pde.ui.importFromRepository"
+            name="%importFromRepository.action.name">
       </command>
       <command
-            description="%importFromRepository.action.desc"
-            id="org.eclipse.pde.ui.import.repository"
-            name="%importFromRepository.action.name">
+            categoryId="org.eclipse.ui.category.navigate"
+            description="%command.openManifest.description"
+            id="org.eclipse.pde.ui.openManifest"
+            name="%command.openManifest.name">
+      </command>
+      <command
+            description="%command.organizeManifests.description"
+            id="org.eclipse.pde.ui.organizeManifest"
+            name="%command.organizeManifests.name">
+      </command>
+      <command
+            description="%command.externalizeStrings.description"
+            id="org.eclipse.pde.ui.externalizeStrings"
+            name="%command.externalizeStrings.name">
+      </command>
+      <command
+            description="%command.internationalize.description"
+            id="org.eclipse.pde.ui.internationalize"
+            name="%command.internationalize.name">
+      </command>
+      <command
+            description="%command.createAntBuild.description"
+            id="org.eclipse.pde.ui.createAntBuildFile"
+            name="%command.createAntBuild.name">
+      </command>
+      <command
+            description="%command.updateClasspath.description"
+            id="org.eclipse.pde.ui.updateClasspath"
+            name="%command.updateClasspath.name">
+      </command>
+      <command
+            description="%command.openDependencies.description"
+            id="org.eclipse.pde.ui.openDependencies"
+            name="%command.openDependencies.name">
       </command>
    </extension>
    <extension
          point="org.eclipse.ui.popupMenus">
-      <objectContribution
-            objectClass="org.eclipse.core.resources.IFile"
-            nameFilter="feature.xml"
-            id="org.eclipse.pde.ui.featureToolSet">
-         <menu
-               label="%org.eclipse.pde.ui.tools"
-               id="org.eclipse.pde.ui.feature.tools">
-            <separator
-                  name="group0">
-            </separator>
-         </menu>
-         <filter
-               name="projectNature"
-               value="org.eclipse.pde.FeatureNature">
-         </filter>
-         <action
-               label="%popupMenus.createJar.label"
-               helpContextId="org.eclipse.pde.doc.user.create_feature_jars"
-               class="org.eclipse.pde.internal.ui.build.BuildFeatureAction"
-               menubarPath="org.eclipse.pde.ui.feature.tools/group0"
-               enablesFor="1"
-               id="org.eclipse.pde.ui.BuildFeatureJar">
-         </action>
-      </objectContribution>
-      <objectContribution
-            objectClass="org.eclipse.core.resources.IFile"
-            nameFilter="plugin.xml"
-            id="org.eclipse.pde.ui.pluginToolSet">
-         <menu
-               label="%org.eclipse.pde.ui.tools"
-               id="org.eclipse.pde.ui.plugin.tools">
-            <separator
-                  name="group0">
-            </separator>
-            <separator
-                  name="group1">
-            </separator>
-         </menu>
-          <action
-			   label="%Internationalize.label"
-			   helpContextId="org.eclipse.pde.doc.user.internationalize_plugins"
-			   class="org.eclipse.pde.internal.ui.nls.InternationalizeAction"
-			   menubarPath="org.eclipse.pde.ui.plugin.tools/group0"
-               enablesFor="+"
-               id="org.eclipse.pde.ui.Internationalize">
-         </action>
-         <action
-               label="%ExternalizeStrings.label"
-               helpContextId="org.eclipse.pde.doc.user.externalize_strings"
-               class="org.eclipse.pde.internal.ui.nls.GetNonExternalizedStringsAction"
-               menubarPath="org.eclipse.pde.ui.plugin.tools/group0"
-               enablesFor="+"
-               id="org.eclipse.pde.ui.ExternalizeStrings">
-         </action>
-         <action
-               label="%OrganizeManifest.label"
-               helpContextId="org.eclipse.pde.doc.user.organize_manifest"
-               class="org.eclipse.pde.internal.ui.wizards.tools.OrganizeManifestsAction"
-               menubarPath="org.eclipse.pde.ui.plugin.tools/group0"
-               enablesFor="+"
-               id="org.eclipse.pde.ui.OrganizeManifest"> 
-         </action>
-         <action
-               label="%popupMenus.buildPlugin.label"
-               helpContextId="org.eclipse.pde.doc.user.create_plugin_jars"
-               class="org.eclipse.pde.internal.ui.build.BuildPluginAction"
-               menubarPath="org.eclipse.pde.ui.plugin.tools/group1"
-               enablesFor="1"
-               id="org.eclipse.pde.ui.BuildPluginAction">
-         </action>
-         
-      </objectContribution>
-      <objectContribution
-            objectClass="org.eclipse.core.resources.IFile"
-            nameFilter="MANIFEST.MF"
-            id="org.eclipse.pde.ui.manifestToolSet">
-         <menu
-               label="%org.eclipse.pde.ui.tools"
-               id="org.eclipse.pde.ui.manifest.tools">
-            <separator
-                  name="group0">
-            </separator>
-            <separator
-                  name="group1">
-            </separator>
-         </menu>
-          <action
-			   label="%Internationalize.label"
-			   class="org.eclipse.pde.internal.ui.nls.InternationalizeAction"
-			   menubarPath="org.eclipse.pde.ui.manifest.tools/group0"
-               enablesFor="+"
-               id="org.eclipse.pde.ui.Internationalize">
-         </action>
-         <action
-               label="%ExternalizeStrings.label"
-               helpContextId="org.eclipse.pde.doc.user.externalize_strings"
-               class="org.eclipse.pde.internal.ui.nls.GetNonExternalizedStringsAction"
-               menubarPath="org.eclipse.pde.ui.manifest.tools/group0"
-               enablesFor="+"
-               id="org.eclipse.pde.ui.ExternalizeStrings">
-         </action>
-         <action
-               label="%OrganizeManifest.label"
-               helpContextId="org.eclipse.pde.doc.user.organize_manifest"
-               class="org.eclipse.pde.internal.ui.wizards.tools.OrganizeManifestsAction"
-               menubarPath="org.eclipse.pde.ui.manifest.tools/group0"
-               enablesFor="+"
-               id="org.eclipse.pde.ui.OrganizeManifest"> 
-         </action> 
-         <action
-               label="%popupMenus.buildPlugin.label"
-               helpContextId="org.eclipse.pde.doc.user.create_plugin_jars"
-               class="org.eclipse.pde.internal.ui.build.BuildPluginAction"
-               menubarPath="org.eclipse.pde.ui.manifest.tools/group1"
-               enablesFor="1"
-               id="org.eclipse.pde.ui.BuildPluginAction2">
-         </action>
-      </objectContribution>
-      <objectContribution
-            objectClass="org.eclipse.core.resources.IFile"
-            nameFilter="fragment.xml"
-            id="org.eclipse.pde.ui.fragmentToolSet">
-         <menu
-               label="%org.eclipse.pde.ui.tools"
-               id="org.eclipse.pde.ui.fragment.tools">
-            <separator
-                  name="group0">
-            </separator>
-            <separator
-                  name="group1">
-            </separator>
-         </menu>
-        <action
-               label="%OrganizeManifest.label"
-               helpContextId="org.eclipse.pde.doc.user.organize_manifest"
-               class="org.eclipse.pde.internal.ui.wizards.tools.OrganizeManifestsAction"
-               menubarPath="org.eclipse.pde.ui.fragment.tools/group0"
-               enablesFor="+"
-               id="org.eclipse.pde.ui.OrganizeManifest"> 
-         </action> 
-         <action
-               label="%ExternalizeStrings.label"
-               helpContextId="org.eclipse.pde.doc.user.externalize_strings"
-               class="org.eclipse.pde.internal.ui.nls.GetNonExternalizedStringsAction"
-               menubarPath="org.eclipse.pde.ui.fragment.tools/group0"
-               enablesFor="+"
-               id="org.eclipse.pde.ui.ExternalizeStrings">
-         </action> 
-         <action
-               label="%popupMenus.buildFragment.label"
-               helpContextId="org.eclipse.pde.doc.user.create_fragment_jars"
-               class="org.eclipse.pde.internal.ui.build.BuildPluginAction"
-               menubarPath="org.eclipse.pde.ui.fragment.tools/group1"
-               enablesFor="1"
-               id="org.eclipse.pde.ui.BuildFragmentAction">
-         </action>
-      </objectContribution>
       <objectContribution
             objectClass="org.eclipse.core.resources.IFile"
             nameFilter="site.xml"
@@ -763,64 +636,9 @@
          </action>
       </objectContribution>
       <objectContribution
-            objectClass="org.eclipse.core.resources.IFile"
-            nameFilter="build.properties"
-            id="org.eclipse.pde.ui.buildPropertiesFeatureToolSet">
-         <menu
-               label="%org.eclipse.pde.ui.tools"
-               id="org.eclipse.pde.ui.build.feature.tools">
-            <separator
-                  name="group0">
-            </separator>
-         </menu>
-         <filter
-               name="projectNature"
-               value="org.eclipse.pde.FeatureNature">
-         </filter>
-         <action
-               label="%popupMenus.buildPlugin.label"
-               helpContextId="org.eclipse.pde.doc.user.create_feature_jars"
-               class="org.eclipse.pde.internal.ui.build.BuildFeatureAction"
-               menubarPath="org.eclipse.pde.ui.build.feature.tools/group0"
-               enablesFor="1"
-               id="org.eclipse.pde.ui.BuildFeatureJar2">
-         </action>
-      </objectContribution>
-      <objectContribution
-            objectClass="org.eclipse.core.resources.IFile"
-            nameFilter="build.properties"
-            id="org.eclipse.pde.ui.buildPropertiesPluginToolSet">
-         <menu
-               label="%org.eclipse.pde.ui.tools"
-               id="org.eclipse.pde.ui.build.plugin.tools">
-            <separator
-                  name="group0">
-            </separator>
-         </menu>
-         <filter
-               name="projectNature"
-               value="org.eclipse.pde.PluginNature">
-         </filter>
-         <action
-               label="%popupMenus.buildPlugin.label"
-               helpContextId="org.eclipse.pde.doc.user.create_plugin_jars"
-               class="org.eclipse.pde.internal.ui.build.BuildPluginAction"
-               menubarPath="org.eclipse.pde.ui.build.plugin.tools/group0"
-               enablesFor="1"
-               id="org.eclipse.pde.ui.BuildPluginAction3">
-         </action>
-      </objectContribution>
-      <objectContribution
             objectClass="org.eclipse.core.resources.IProject"
             adaptable="true"
-            id="org.eclipse.pde.ui.pluginProjectToolSet">
-         <menu
-               label="%org.eclipse.pde.ui.tools"
-               id="org.eclipse.pde.ui.project.tools">
-            <separator
-               name="group0">
-            </separator>
-         </menu>
+            id="org.eclipse.pde.ui.convertPluginProjectToolSet">
        	 <visibility>
         	<not>
         	<or>
@@ -853,80 +671,12 @@
             id="org.eclipse.pde.ui.pluginJarfileToolSet"
             nameFilter="*.jar"
             objectClass="org.eclipse.jdt.core.IPackageFragmentRoot">
-         <menu
-               id="org.eclipse.pde.ui.jarfile.tools"
-               label="%org.eclipse.pde.ui.tools">
-            <separator
-                  name="group0">
-            </separator>
-         </menu>
          <action
                class="org.eclipse.pde.internal.ui.wizards.tools.ConvertJarsAction"
                id="org.eclipse.pde.ui.ConvertJars"
                label="%popupMenus.convertJars.label"
                menubarPath="org.eclipse.ui.projectConfigure/additions">
          </action>
-      </objectContribution>
-      <objectContribution
-            objectClass="org.eclipse.core.resources.IProject"
-            adaptable="true"
-            id="org.eclipse.pde.ui.pluginProjectToolSet">
-         <menu
-               label="%org.eclipse.pde.ui.tools"
-               id="org.eclipse.pde.ui.project.tools">
-            <separator
-                  name="group0">
-            </separator>
-            <separator
-                  name="group1">
-            </separator>
-            <separator
-                  name="group2">
-            </separator>
-         </menu>
-         <filter
-               name="projectNature"
-		       value="org.eclipse.pde.PluginNature">
-         </filter>
-         <action
-               label="%OpenDependenciesAction.label"
-               helpContextId="org.eclipse.pde.doc.user.open_dependencies"
-               class="org.eclipse.pde.internal.ui.views.dependencies.OpenDependenciesAction"
-               menubarPath="org.eclipse.pde.ui.project.tools/group2"
-               enablesFor="+"
-               id="org.eclipse.pde.ui.OpenDependenciesAction3">
-         </action>
-         <action
-               label="%UpdateClasspathAction.label"
-               helpContextId="org.eclipse.pde.doc.user.update_classpath"
-               class="org.eclipse.pde.internal.ui.wizards.tools.UpdateClasspathAction"
-               menubarPath="org.eclipse.pde.ui.project.tools/group2"
-               enablesFor="*"
-               id="org.eclipse.pde.ui.UpdateClasspathAction3">
-         </action>
-          <action
-			   label="%Internationalize.label"
-			   class="org.eclipse.pde.internal.ui.nls.InternationalizeAction"
-			   menubarPath="org.eclipse.pde.ui.project.tools/group1"
-               enablesFor="+"
-               id="org.eclipse.pde.ui.Internationalize">
-         </action>
-         <action
-               label="%ExternalizeStrings.label"
-               helpContextId="org.eclipse.pde.doc.user.externalize_strings"
-               class="org.eclipse.pde.internal.ui.nls.GetNonExternalizedStringsAction"
-               menubarPath="org.eclipse.pde.ui.project.tools/group1"
-               enablesFor="+"
-               id="org.eclipse.pde.ui.ExternalizeStrings">
-         </action>
-         <action
-               label="%OrganizeManifest.label"
-               helpContextId="org.eclipse.pde.doc.user.organize_manifest"
-               class="org.eclipse.pde.internal.ui.wizards.tools.OrganizeManifestsAction"
-               menubarPath="org.eclipse.pde.ui.project.tools/group1"
-               enablesFor="+"
-               id="org.eclipse.pde.ui.OrganizeManifest"> 
-         </action> 
       </objectContribution>
    </extension>
    <extension
@@ -1919,12 +1669,36 @@
                 commandId="org.eclipse.pde.ui.addAllPluginsToJavaSearch">
           </handler>
           <handler
+                class="org.eclipse.pde.internal.ui.views.plugins.ImportFromRepositoryActionDelegate"
+                commandId="org.eclipse.pde.ui.importFromRepository">
+          </handler>
+          <handler
                 class="org.eclipse.pde.internal.ui.editor.OpenManifestHandler"
                 commandId="org.eclipse.pde.ui.openManifest">
           </handler>
           <handler
-                class="org.eclipse.pde.internal.ui.views.plugins.ImportFromRepositoryActionDelegate"
-                commandId="org.eclipse.pde.ui.import.repository">
+                class="org.eclipse.pde.internal.ui.wizards.tools.OrganizeManifestsAction"
+                commandId="org.eclipse.pde.ui.organizeManifest">
+          </handler>
+          <handler
+                class="org.eclipse.pde.internal.ui.nls.GetNonExternalizedStringsAction"
+                commandId="org.eclipse.pde.ui.externalizeStrings">
+          </handler>
+          <handler
+                class="org.eclipse.pde.internal.ui.nls.InternationalizeAction"
+                commandId="org.eclipse.pde.ui.internationalize">
+          </handler>
+          <handler
+                class="org.eclipse.pde.internal.ui.build.CreateAntBuildFileAction"
+                commandId="org.eclipse.pde.ui.createAntBuildFile">
+          </handler>
+          <handler
+                class="org.eclipse.pde.internal.ui.wizards.tools.UpdateClasspathAction"
+                commandId="org.eclipse.pde.ui.updateClasspath">
+          </handler>
+          <handler
+                class="org.eclipse.pde.internal.ui.views.dependencies.OpenDependenciesAction"
+                commandId="org.eclipse.pde.ui.openDependencies">
           </handler>
        </extension>
        <extension
@@ -1974,55 +1748,149 @@
              </command>
           </menuContribution>
           <menuContribution
-                locationURI="popup:org.eclipse.ui.popup.any">
-             <menu
-                   id="org.eclipse.pde.ui.project.tools"
-                   label="%org.eclipse.pde.ui.tools">
-                <visibleWhen
-                      checkEnabled="false">
-                   <iterate
-                         ifEmpty="false">
-                      <adapt
-                            type="org.eclipse.core.resources.IResource">
-                         <test
-                               property="org.eclipse.core.resources.projectNature"
-                               value="org.eclipse.pde.PluginNature">
-                         </test>
-                      </adapt>
-                   </iterate>
-                </visibleWhen>
-             </menu>
-          </menuContribution>
-          <menuContribution
-                locationURI="popup:org.eclipse.pde.ui.project.tools">
-             <command
-                   commandId="org.eclipse.pde.ui.openManifest"
-                   helpContextId="org.eclipse.pde.doc.user.open_manifest"
-                   label="%OpenManifest.label"
-                   style="push">
-             </command>
-          </menuContribution>
-          <menuContribution
                 allPopups="false"
                 locationURI="popup:org.eclipse.ui.popup.any?after=additions">
              <command
-                   commandId="org.eclipse.pde.ui.import.repository"
+                   commandId="org.eclipse.pde.ui.importFromRepository"
                    disabledIcon="icons/dtool16/imp_extplug.gif"
                    icon="icons/etool16/imp_extplug.gif"
                    label="%importFromRepository.action.menu.name"
                    style="push"
                    tooltip="%importFromRepository.action.desc">
                 <visibleWhen>
-                    <iterate
-                          ifEmpty="false"
-                          operator="or">
-                          <adapt
-                                type="org.eclipse.jdt.core.IPackageFragmentRoot">
-                             <test
-                                   property="org.eclipse.pde.core.inPluginContainer">
-                             </test>
-                          </adapt>
-    				</iterate>
+                   <iterate
+                         ifEmpty="false"
+                         operator="or">
+                      <adapt
+                            type="org.eclipse.jdt.core.IPackageFragmentRoot">
+                         <test
+                               property="org.eclipse.pde.core.inPluginContainer">
+                         </test>
+                      </adapt>
+                   </iterate>
+                </visibleWhen>
+             </command>
+          </menuContribution>
+          <menuContribution
+                locationURI="popup:org.eclipse.ui.popup.any">
+             <menu
+                   id="org.eclipse.pde.ui.tools"
+                   label="%org.eclipse.pde.ui.tools">
+                <visibleWhen
+                      checkEnabled="false">
+                   <or>
+                      <reference
+                            definitionId="org.eclipse.pde.ui.pluginFile">
+                      </reference>
+                      <reference
+                            definitionId="org.eclipse.pde.ui.featureFile">
+                      </reference>
+                   </or>
+                   
+                </visibleWhen>
+             </menu>
+          </menuContribution>
+          <menuContribution
+                allPopups="false"
+                locationURI="popup:org.eclipse.pde.ui.tools">
+             <separator
+                   name="group0"
+                   visible="false">
+             </separator>
+             <command
+                   commandId="org.eclipse.pde.ui.openManifest"
+                   icon="icons/obj16/plugin_mf_obj.gif"
+                   label="%command.openManifest.label"
+                   style="push">
+                <visibleWhen
+                      checkEnabled="false">
+                   <reference
+                         definitionId="org.eclipse.pde.ui.pluginFile">
+                   </reference>
+                </visibleWhen>
+             </command>
+             <separator
+                   name="group1"
+                   visible="true">
+             </separator>
+             <command
+                   commandId="org.eclipse.pde.ui.organizeManifest"
+                   helpContextId="org.eclipse.pde.doc.user.organize_manifest"
+                   icon="icons/obj16/toc_leaftopic_obj.gif"
+                   label="%command.organizeManifests.label"
+                   style="push">
+                <visibleWhen
+                      checkEnabled="false">
+                   <reference
+                         definitionId="org.eclipse.pde.ui.pluginFile">
+                   </reference>
+                </visibleWhen>
+             </command>
+             <command
+                   commandId="org.eclipse.pde.ui.externalizeStrings"
+                   icon="icons/elcl16/properties.gif"
+                   label="%command.externalizeStrings.label"
+                   style="push">
+                <visibleWhen
+                      checkEnabled="false">
+                   <reference
+                         definitionId="org.eclipse.pde.ui.pluginFile">
+                   </reference>
+                </visibleWhen>
+             </command>
+             <command
+                   commandId="org.eclipse.pde.ui.internationalize"
+                   icon="icons/obj16/discovery.gif"
+                   label="%command.internationalize.label"
+                   style="push">
+                <visibleWhen
+                      checkEnabled="false">
+                   <reference
+                         definitionId="org.eclipse.pde.ui.pluginFile">
+                   </reference>
+                </visibleWhen>
+             </command>
+             <command
+                   commandId="org.eclipse.pde.ui.createAntBuildFile"
+                   label="%command.createAntBuild.label"
+                   style="push">
+                <visibleWhen
+                      checkEnabled="false">
+                   <or>
+                      <reference
+                            definitionId="org.eclipse.pde.ui.pluginFile">
+                      </reference>
+                      <reference
+                            definitionId="org.eclipse.pde.ui.featureFile">
+                      </reference>
+                   </or>
+                </visibleWhen>
+             </command>
+             <separator
+                   name="group2"
+                   visible="true">
+             </separator>
+             <command
+                   commandId="org.eclipse.pde.ui.updateClasspath"
+                   label="%command.updateClasspath.label"
+                   style="push">
+                <visibleWhen
+                      checkEnabled="false">
+                   <reference
+                         definitionId="org.eclipse.pde.ui.pluginFile">
+                   </reference>
+                </visibleWhen>
+             </command>
+             <command
+                   commandId="org.eclipse.pde.ui.openDependencies"
+                   icon="icons/obj16/req_plugins_obj.gif"
+                   label="%command.openDependencies.label"
+                   style="push">
+                <visibleWhen
+                      checkEnabled="false">
+                   <reference
+                         definitionId="org.eclipse.pde.ui.pluginFile">
+                   </reference>
                 </visibleWhen>
              </command>
           </menuContribution>
@@ -2164,5 +2032,82 @@
             <test property="org.eclipse.ui.console.consoleTypeTest" value="osgiConsole"/>
          </enablement>
       </consolePageParticipant>
+   </extension>
+   <extension
+         point="org.eclipse.core.expressions.definitions">
+      <definition
+            id="org.eclipse.pde.ui.pluginFile">
+            <iterate
+             ifEmpty="false"
+             operator="or">
+             <and>
+          <adapt
+                type="org.eclipse.core.resources.IResource">
+             <test
+                   property="org.eclipse.core.resources.projectNature"
+                   value="org.eclipse.pde.PluginNature">
+             </test>
+          </adapt>
+          <or>
+             <adapt
+                   type="org.eclipse.core.resources.IProject">
+                <instanceof
+                      value="org.eclipse.core.resources.IProject">
+                </instanceof>
+             </adapt>
+             <test
+                   property="org.eclipse.core.resources.name"
+                   value="plugin.*">
+             </test>
+             <test
+                   property="org.eclipse.core.resources.name"
+                   value="fragment.*">
+             </test>
+             <test
+                   property="org.eclipse.core.resources.name"
+                   value="build.properties">
+             </test>
+             <test
+                   property="org.eclipse.core.resources.name"
+                   value="manifest.mf">
+             </test>
+             <test
+                   property="org.eclipse.core.resources.name"
+                   value="meta-inf">
+             </test>
+          </or>
+          </and>
+       </iterate>
+      </definition>
+      <definition
+            id="org.eclipse.pde.ui.featureFile">
+         <iterate>
+            <and>
+               <adapt
+                     type="org.eclipse.core.resources.IResource">
+                  <test
+                        property="org.eclipse.core.resources.projectNature"
+                        value="org.eclipse.pde.FeatureNature">
+                  </test>
+               </adapt>
+               <or>
+                  <adapt
+                        type="org.eclipse.core.resources.IProject">
+                     <instanceof
+                           value="org.eclipse.core.resources.IProject">
+                     </instanceof>
+                  </adapt>
+                  <test
+                        property="org.eclipse.core.resources.name"
+                        value="feature.xml">
+                  </test>
+                  <test
+                        property="org.eclipse.core.resources.name"
+                        value="build.properties">
+                  </test>
+               </or>
+            </and>
+         </iterate>
+      </definition>
    </extension>
 </plugin>

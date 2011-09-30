@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -10,27 +10,27 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.views.dependencies;
 
+import org.eclipse.core.commands.*;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.IWorkbenchWindowActionDelegate;
+import org.eclipse.ui.handlers.HandlerUtil;
 
-public class OpenDependenciesAction implements IWorkbenchWindowActionDelegate {
-	private ISelection fSelection;
+public class OpenDependenciesAction extends AbstractHandler {
 
-	/*
-	 * @see IActionDelegate#run(IAction)
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.commands.AbstractHandler#execute(org.eclipse.core.commands.ExecutionEvent)
 	 */
-	public void run(IAction action) {
-		if (fSelection instanceof IStructuredSelection) {
-			IStructuredSelection ssel = (IStructuredSelection) fSelection;
+	public Object execute(ExecutionEvent event) throws ExecutionException {
+		ISelection selection = HandlerUtil.getCurrentSelection(event);
+		if (selection instanceof IStructuredSelection) {
+			IStructuredSelection ssel = (IStructuredSelection) selection;
 			openDependencies(ssel.getFirstElement());
 		}
+		return null;
 	}
 
 	private void openDependencies(Object el) {
@@ -49,24 +49,5 @@ public class OpenDependenciesAction implements IWorkbenchWindowActionDelegate {
 		if (el instanceof IPluginModelBase) {
 			new OpenPluginDependenciesAction((IPluginModelBase) el).run();
 		}
-	}
-
-	/*
-	 * @see IWorkbenchWindowActionDelegate#dispose()
-	 */
-	public void dispose() {
-	}
-
-	/*
-	 * @see IWorkbenchWindowActionDelegate#init(IWorkbenchWindow)
-	 */
-	public void init(IWorkbenchWindow window) {
-	}
-
-	/*
-	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
-	 */
-	public void selectionChanged(IAction action, ISelection selection) {
-		fSelection = selection;
 	}
 }

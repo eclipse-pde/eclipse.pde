@@ -30,8 +30,7 @@ public class ExternalizeStringsResolution extends AbstractPDEMarkerResolution {
 			public void run() {
 				GetNonExternalizedStringsAction fGetExternAction = new GetNonExternalizedStringsAction();
 				IStructuredSelection selection = new StructuredSelection(marker.getResource().getProject());
-				fGetExternAction.selectionChanged(null, selection);
-				fGetExternAction.run(null);
+				fGetExternAction.runGetNonExternalizedStringsAction(selection);
 			}
 		});
 	}

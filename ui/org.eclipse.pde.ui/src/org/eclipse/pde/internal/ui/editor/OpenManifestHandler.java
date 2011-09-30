@@ -31,8 +31,15 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
+/**
+ * Command handler that opens the manifest file for the plug-in in the
+ * manifest editor.
+ */
 public class OpenManifestHandler extends AbstractHandler {
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.commands.AbstractHandler#execute(org.eclipse.core.commands.ExecutionEvent)
+	 */
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		ISelection selection = HandlerUtil.getCurrentSelection(event);
 		if (selection instanceof IStructuredSelection) {
