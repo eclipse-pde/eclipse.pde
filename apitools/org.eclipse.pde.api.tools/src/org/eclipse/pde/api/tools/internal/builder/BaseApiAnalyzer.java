@@ -1344,6 +1344,12 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 						exporter = component;
 					}
 					delta = ApiComparator.compare(classFile, reference, provider, exporter, reference.getBaseline(), provider.getBaseline(), VisibilityModifiers.API, localmonitor.newChild(1));
+				} catch(OperationCanceledException oce) {
+					//do nothing, but don't forward it
+					//https://bugs.eclipse.org/bugs/show_bug.cgi?id=304315
+					if(DEBUG) {
+						System.out.println("Trapped OperationCanceledException"); //$NON-NLS-1$
+					}
 				} catch(Exception e) {
 					ApiPlugin.log(e);
 				} finally {
