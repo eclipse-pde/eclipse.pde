@@ -15,6 +15,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Vector;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.WizardPage;
@@ -38,6 +39,8 @@ public class ConvertedProjectsPage extends WizardPage {
 	private Button fSelectButton;
 	private Button fDeselectButton;
 	private Button fApiAnalysisButton;
+
+	private final static String S_API_ANALYSIS = "apiAnalysis"; //$NON-NLS-1$
 
 	/**
 	 * Items to select when the table is created, based off what the user had selected when opening the wizard
@@ -110,6 +113,8 @@ public class ConvertedProjectsPage extends WizardPage {
 
 		fApiAnalysisButton = SWTFactory.createCheckButton(container, PDEUIMessages.PluginContentPage_enable_api_analysis, null, false, 2);
 
+		loadSettings();
+
 		setControl(container);
 		Dialog.applyDialogFont(container);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IHelpContextIds.CONVERTED_PROJECTS);
@@ -121,7 +126,23 @@ public class ConvertedProjectsPage extends WizardPage {
 		fDeselectButton.setEnabled(count > 0);
 	}
 
+	private void storeSettings() {
+		IDialogSettings settings = getDialogSettings();
+		if (settings != null) {
+			settings.put(S_API_ANALYSIS, Boolean.toString(fApiAnalysisButton.getSelection()));
+		}
+	}
+
+	private void loadSettings() {
+		IDialogSettings settings = getDialogSettings();
+		if (settings != null) {
+			fApiAnalysisButton.setSelection(settings.getBoolean(S_API_ANALYSIS));
+		}
+	}
+
 	public boolean finish() {
+		storeSettings();
+
 		Object[] selected = fProjectViewer.getCheckedElements();
 		final IProject[] projects = new IProject[selected.length];
 		for (int i = 0; i < selected.length; i++) {
