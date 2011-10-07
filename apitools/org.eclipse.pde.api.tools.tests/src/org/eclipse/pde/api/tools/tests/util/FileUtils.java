@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -291,17 +291,20 @@ public class FileUtils {
 	 */
 	public static void writeToFile(String contents, String destinationFilePath) {
 		File destFile = new File(destinationFilePath);
+		PrintWriter writer = null;
 		FileOutputStream output = null;
 		try {
 			output = new FileOutputStream(destFile);
-			PrintWriter writer = new PrintWriter(output);
+			writer = new PrintWriter(output);
 			writer.print(contents);
 			writer.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
 			return;
 		} finally {
-			if (output != null) {
+			if (writer != null) {
+				writer.close();
+			} else if (output != null) {
 				try {
 					output.close();
 				} catch (IOException e2) {
