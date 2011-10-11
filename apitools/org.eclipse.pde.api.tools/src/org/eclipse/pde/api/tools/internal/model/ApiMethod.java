@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,6 +28,10 @@ import org.objectweb.asm.Opcodes;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class ApiMethod extends ApiMember implements IApiMethod {
+	/**
+	 * Extra flags for polymorphic methods. Value doesn't collide with any of the values in org.eclipse.jdt.internal.compiler.classfmt.ClassFileConstants
+	 */
+	public static final int Polymorphic = 0x200000;
 	
 	private static final String INIT = "<init>"; //$NON-NLS-1$
 	private static final String CLINIT = "<clinit>"; //$NON-NLS-1$	
@@ -111,6 +115,13 @@ public class ApiMethod extends ApiMember implements IApiMethod {
 		return (getModifiers() & Opcodes.ACC_SYNTHETIC) != 0;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiMethod#isSynthetic()
+	 */
+	public boolean isPolymorphic() {
+		return (getModifiers() & Polymorphic) != 0;
+	}
+
 	/**
 	 * @see java.lang.Object#toString()
 	 */

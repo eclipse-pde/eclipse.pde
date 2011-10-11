@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -161,6 +161,12 @@ public class TypeStructureBuilder extends ClassAdapter {
 		}
 		final ApiMethod method = fType.addMethod(name, desc, signature, laccess, names);
 		return new MethodAdapter(super.visitMethod(laccess, name, desc, signature, exceptions)) {
+			public AnnotationVisitor visitAnnotation(String sig, boolean visible) {
+				if (visible && "Ljava/lang/invoke/MethodHandle$PolymorphicSignature;".equals(sig)) { //$NON-NLS-1$
+					method.isPolymorphic();
+				}
+				return super.visitAnnotation(sig, visible);
+			}
 			public AnnotationVisitor visitAnnotationDefault() {
 				return new TraceAnnotationVisitor() {
 					public void visitEnd() {
@@ -333,7 +339,7 @@ public class TypeStructureBuilder extends ClassAdapter {
 			}
 			int access = 0;
 			// access flag was added in version 2 of the stub format
-			if (currentVersion == 2) {
+			if (currentVersion >= 2) {
 				access = inputStream.readChar();
 			}
 			int classIndex = inputStream.readShort();
@@ -364,9 +370,13 @@ public class TypeStructureBuilder extends ClassAdapter {
 			}
 			int methodsLength = inputStream.readShort();
 			for (int i = 0; i < methodsLength; i++) {
+				int isPolymorphic = 0;
 				String methodSelector = (String) pool.get(new Integer(inputStream.readShort()));
 				String methodSignature = (String) pool.get(new Integer(inputStream.readShort()));
-				type.addMethod(methodSelector, methodSignature, null, 0, null);
+				if (currentVersion == 3) {
+					isPolymorphic = inputStream.readByte();
+				}
+				type.addMethod(methodSelector, methodSignature, null, isPolymorphic == 1 ? ApiMethod.Polymorphic : 0, null);
 			}
 		} catch (IOException e) {
 			ApiPlugin.log(e);

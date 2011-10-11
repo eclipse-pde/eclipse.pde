@@ -389,7 +389,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	 * @throws BadLocationException
 	 */
 	private void updateTagInSource(ICompilationUnit unit, String membername, String signature, String tagname, boolean remove) throws CoreException, MalformedTreeException, BadLocationException {
-		ASTParser parser = ASTParser.newParser(AST.JLS3);
+		ASTParser parser = ASTParser.newParser(AST.JLS4);
 		parser.setSource(unit);
 		CompilationUnit cunit = (CompilationUnit) parser.createAST(new NullProgressMonitor());
 		assertNotNull("the ast compilation unit cannot be null", cunit);

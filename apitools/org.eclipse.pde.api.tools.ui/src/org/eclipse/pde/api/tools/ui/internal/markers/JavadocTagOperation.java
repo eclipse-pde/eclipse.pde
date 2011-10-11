@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -84,7 +84,7 @@ public class JavadocTagOperation {
 	 * @return a new {@link AST}
 	 */
 	protected CompilationUnit createAST(final ICompilationUnit unit, int focalposition, boolean resolvebindings) {
-		ASTParser parser = ASTParser.newParser(AST.JLS3);
+		ASTParser parser = ASTParser.newParser(AST.JLS4);
 		parser.setSource(unit);
 		parser.setFocalPosition(focalposition);
 		parser.setResolveBindings(resolvebindings);

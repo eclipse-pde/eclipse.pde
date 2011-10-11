@@ -79,6 +79,7 @@ public class AbstractApiTest extends TestCase {
 	 */
 	protected IApiComponent getProjectApiComponent(String projectname) {
 		IJavaProject project = getTestingJavaProject(projectname);
+		assertNotNull("the project " + projectname + " must exist", project);
 		IApiBaseline profile = ApiPlugin.getDefault().getApiBaselineManager().getWorkspaceBaseline();
 		assertNotNull("the workspace profile must exist", profile);
 		return profile.getApiComponent(project.getElementName());
