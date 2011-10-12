@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,7 +27,7 @@ import junit.framework.TestCase;
 public class CRCTests extends TestCase {
 	
 	/**
-	 * Test that a CRC code for a type's API description is the same for equivaent descriptions.
+	 * Test that a CRC code for a type's API description is the same for equivalent descriptions.
 	 */
 	public void testCRCEqual() {
 		ApiDescription description = new ApiDescription("test.component");

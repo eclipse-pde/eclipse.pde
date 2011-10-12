@@ -75,6 +75,10 @@ import org.eclipse.text.edits.TextEdit;
 @SuppressWarnings("unchecked")
 public class ApiBaselineManagerTests extends AbstractApiTest {
 
+	static final String THREE = "three";
+	static final String TESTDEFAULT = "testdefault";
+	static final String ADDTEST = "addtest";
+
 	class SourceChangeVisitor extends ASTVisitor {
 		String name = null;
 		String signature = null;
@@ -188,8 +192,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	 * @return
 	 */
 	protected IApiBaseline getTestBaseline(String id) {
-		IApiBaseline baseline = null;
-		baseline = ApiModelFactory.newApiBaseline(id);
+		IApiBaseline baseline = ApiModelFactory.newApiBaseline(id);
 		fPMmanager.addApiBaseline(baseline);
 		return baseline;
 	}
@@ -203,17 +206,16 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	}
 	
 	/**
-	 * Tests that an api baseline can be added and retrieved successfully 
+	 * Tests that an API baseline can be added and retrieved successfully 
 	 */
 	public void testAddBaseline() {
-		IApiBaseline baseline = getTestBaseline("addtest");
+		IApiBaseline baseline = getTestBaseline(ADDTEST);
 		assertTrue("the test baseline must have been created", baseline != null);
-		baseline = fPMmanager.getApiBaseline("addtest");
-		assertTrue("the testadd baseline must be in the manager", baseline != null);
+		assertTrue("the testadd baseline must be in the manager", fPMmanager.removeApiBaseline(ADDTEST));
 	}
 	
 	/**
-	 * Tests that an api baseline can be added/removed successfully
+	 * Tests that an API baseline can be added/removed successfully
 	 */
 	public void testRemoveBaseline() {
 		IApiBaseline baseline = getTestBaseline("removetest");
@@ -227,29 +229,56 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	 * Tests that the default baseline can be set/retrieved
 	 */
 	public void testSetDefaultBaseline() {
-		IApiBaseline baseline = getTestBaseline("testdefault");
-		assertTrue("the testdefault baseline must exist", baseline != null);
-		fPMmanager.setDefaultApiBaseline("testdefault");
-		baseline = fPMmanager.getDefaultApiBaseline();
-		assertTrue("the default baseline must be the testdefault baseline", baseline != null);
+		try {
+			IApiBaseline baseline = getTestBaseline(TESTDEFAULT);
+			assertTrue("the testdefault baseline must exist", baseline != null);
+			fPMmanager.setDefaultApiBaseline(TESTDEFAULT);
+			baseline = fPMmanager.getDefaultApiBaseline();
+			assertTrue("the default baseline must be the testdefault baseline", baseline != null);
+		}
+		finally {
+			fPMmanager.removeApiBaseline(TESTDEFAULT);
+		}
 	}
 	
 	/**
 	 * Tests that all baselines added to the manager can be retrieved
 	 */
 	public void testGetAllBaselines() {
-		getTestBaseline("three");
-		IApiBaseline[] baselines = fPMmanager.getApiBaselines();
-		assertTrue("there should be three baselines", baselines.length == 3);
+		try {
+			fPMmanager.addApiBaseline(getTestBaseline(ADDTEST));
+			fPMmanager.addApiBaseline(getTestBaseline(TESTDEFAULT));
+			fPMmanager.addApiBaseline(getTestBaseline(THREE));
+			IApiBaseline[] baselines = fPMmanager.getApiBaselines();
+			assertTrue("there should be three baselines", baselines.length == 3);
+		}
+		finally {
+			fPMmanager.removeApiBaseline(ADDTEST);
+			fPMmanager.removeApiBaseline(TESTDEFAULT);
+			fPMmanager.removeApiBaseline(THREE);
+		}
 	}
 	
 	/**
 	 * Tests that all of the baselines have been removed
 	 */
 	public void testCleanUpMmanager() {
-		assertTrue("the testadd baseline should have been removed", fPMmanager.removeApiBaseline("addtest"));
-		assertTrue("the testdefault baseline should have been removed", fPMmanager.removeApiBaseline("testdefault"));
-		assertTrue("the three baseline should have been removed", fPMmanager.removeApiBaseline("three"));
+		try {
+			fPMmanager.addApiBaseline(getTestBaseline(ADDTEST));
+			fPMmanager.addApiBaseline(getTestBaseline(TESTDEFAULT));
+			fPMmanager.addApiBaseline(getTestBaseline(THREE));
+			IApiBaseline[] baselines = fPMmanager.getApiBaselines();
+			assertTrue("there should be three baselines", baselines.length == 3);
+			assertTrue("the testadd baseline should have been removed", fPMmanager.removeApiBaseline(ADDTEST));
+			assertTrue("the testdefault baseline should have been removed", fPMmanager.removeApiBaseline(TESTDEFAULT));
+			assertTrue("the three baseline should have been removed", fPMmanager.removeApiBaseline(THREE));
+			assertTrue("There sould be no more baselines", fPMmanager.getApiBaselines().length == 0);
+		}
+		finally {
+			fPMmanager.removeApiBaseline(ADDTEST);
+			fPMmanager.removeApiBaseline(TESTDEFAULT);
+			fPMmanager.removeApiBaseline(THREE);
+		}
 	}
 	
 	/**

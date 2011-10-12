@@ -139,17 +139,20 @@ public class ClassFileScannerTests extends TestCase {
 		return ref;
 	}
 	
-	/**
-	 * Compiles the test-classes workspace
-	 * @throws CoreException 
+	/* (non-Javadoc)
+	 * @see junit.framework.TestCase#setUp()
 	 */
-	public void testCompileClassWorkspace() throws CoreException {
-		String[] sourceFilePaths = new String[] {ROOT_PATH.toOSString()};
-		assertTrue("working directory should compile", TestSuiteHelper.compile(sourceFilePaths, WORKSPACE_ROOT.toOSString(), TestSuiteHelper.COMPILER_OPTIONS));
-		assertTrue("Test12 should compile to 1.4", TestSuiteHelper.compile(ROOT_PATH.append("Test12.java").toOSString(),
-				WORKSPACE_ROOT.toOSString(), 
-				new String[] {"-1.4", "-preserveAllLocals", "-nowarn"}));
-		container = new DirectoryApiTypeContainer(null, WORKSPACE_ROOT.append("classes").toOSString());
+	@Override
+	protected void setUp() throws Exception {
+		super.setUp();
+		if(container == null) {
+			String[] sourceFilePaths = new String[] {ROOT_PATH.toOSString()};
+			assertTrue("working directory should compile", TestSuiteHelper.compile(sourceFilePaths, WORKSPACE_ROOT.toOSString(), TestSuiteHelper.COMPILER_OPTIONS));
+			assertTrue("Test12 should compile to 1.4", TestSuiteHelper.compile(ROOT_PATH.append("Test12.java").toOSString(),
+					WORKSPACE_ROOT.toOSString(), 
+					new String[] {"-1.4", "-preserveAllLocals", "-nowarn"}));
+			container = new DirectoryApiTypeContainer(null, WORKSPACE_ROOT.append("classes").toOSString());
+		}
 	}
 	
 	/**

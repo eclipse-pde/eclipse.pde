@@ -28,6 +28,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
+import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
  * Test creation of states and components.
@@ -36,24 +37,29 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
  */
 public class ApiBaselineTests extends TestCase {
 	
-	/**
-	 * Creates and validates simple state.
-	 * 
-	 * @throws FileNotFoundException
-	 * @throws CoreException
-	 */
-	public void testCreateBaseline() throws FileNotFoundException, CoreException {
-		IApiBaseline baseline = TestSuiteHelper.createTestingBaseline("test-plugins");
-		assertNotNull("the testing baseline should exist", baseline);
-		List<IRequiredComponentDescription> reqs = new ArrayList<IRequiredComponentDescription>();
-		reqs.add(new RequiredComponentDescription("org.eclipse.core.runtime", new BundleVersionRange("")));
-		validateComponent(baseline, "component.a", "A Plug-in", "1.0.0", "J2SE-1.5", reqs);
+	static final String _1_0_0 = "1.0.0";
+	static final String COMPONENT_B = "component.b";
+	static final String COMPONENT_A = "component.a";
+	static final String TEST_PLUGINS = "test-plugins";
 
-		reqs = new ArrayList<IRequiredComponentDescription>();
-		reqs.add(new RequiredComponentDescription("org.eclipse.core.runtime", new BundleVersionRange("")));
-		reqs.add(new RequiredComponentDescription("component.a", new BundleVersionRange("")));
-		validateComponent(baseline, "component.b", "B Plug-in", "1.0.0", "J2SE-1.4", reqs);
-		
+	IApiBaseline fBaseline = null;
+	
+	/* (non-Javadoc)
+	 * @see junit.framework.TestCase#setUp()
+	 */
+	public void setUp() throws Exception {
+		if(fBaseline == null) {
+			fBaseline = TestSuiteHelper.createTestingBaseline(TEST_PLUGINS);
+			assertNotNull("the testing baseline should exist", fBaseline);
+			List<IRequiredComponentDescription> reqs = new ArrayList<IRequiredComponentDescription>();
+			reqs.add(new RequiredComponentDescription("org.eclipse.core.runtime", new BundleVersionRange(Util.EMPTY_STRING)));
+			validateComponent(fBaseline, COMPONENT_A, "A Plug-in", _1_0_0, "J2SE-1.5", reqs);
+	
+			reqs = new ArrayList<IRequiredComponentDescription>();
+			reqs.add(new RequiredComponentDescription("org.eclipse.core.runtime", new BundleVersionRange(Util.EMPTY_STRING)));
+			reqs.add(new RequiredComponentDescription(COMPONENT_A, new BundleVersionRange(Util.EMPTY_STRING)));
+			validateComponent(fBaseline, COMPONENT_B, "B Plug-in", _1_0_0, "J2SE-1.4", reqs);
+		}
 	}
 	
 	/**
@@ -63,12 +69,11 @@ public class ApiBaselineTests extends TestCase {
 	 * @throws CoreException
 	 */
 	public void testResolvePackage() throws FileNotFoundException, CoreException {
-		IApiBaseline baseline = TestSuiteHelper.createTestingBaseline("test-plugins");
-		assertNotNull("the testing baseline should exist", baseline);
-		IApiComponent[] components = baseline.resolvePackage(baseline.getApiComponent("component.b"), "component.a");
+		assertNotNull("the testing baseline should exist", fBaseline);
+		IApiComponent[] components = fBaseline.resolvePackage(fBaseline.getApiComponent(COMPONENT_B), COMPONENT_A);
 		assertNotNull("No component", components);
 		assertEquals("Wrong size", 1, components.length);
-		assertEquals("Wrong provider for package", baseline.getApiComponent("component.a"), components[0]);
+		assertEquals("Wrong provider for package", fBaseline.getApiComponent(COMPONENT_A), components[0]);
 	}
 	
 	/**
@@ -78,12 +83,11 @@ public class ApiBaselineTests extends TestCase {
 	 * @throws CoreException
 	 */
 	public void testResolvePackageWithinComponent() throws FileNotFoundException, CoreException {
-		IApiBaseline baseline = TestSuiteHelper.createTestingBaseline("test-plugins");
-		assertNotNull("the testing baseline should exist", baseline);
-		IApiComponent[] components = baseline.resolvePackage(baseline.getApiComponent("component.a"), "a.b.c");
+		assertNotNull("the testing baseline should exist", fBaseline);
+		IApiComponent[] components = fBaseline.resolvePackage(fBaseline.getApiComponent(COMPONENT_A), "a.b.c");
 		assertNotNull("No component", components);
 		assertEquals("Wrong size", 1, components.length);
-		assertEquals("Wrong provider for package", baseline.getApiComponent("component.a"), components[0]);
+		assertEquals("Wrong provider for package", fBaseline.getApiComponent(COMPONENT_A), components[0]);
 	}	
 	
 	/**
@@ -93,12 +97,11 @@ public class ApiBaselineTests extends TestCase {
 	 * @throws CoreException
 	 */
 	public void testResolveJavaLangPackage() throws FileNotFoundException, CoreException {
-		IApiBaseline baseline = TestSuiteHelper.createTestingBaseline("test-plugins");
-		assertNotNull("the testing baseline should exist", baseline);
-		IApiComponent[] components = baseline.resolvePackage(baseline.getApiComponent("component.b"), "java.lang");
+		assertNotNull("the testing baseline should exist", fBaseline);
+		IApiComponent[] components = fBaseline.resolvePackage(fBaseline.getApiComponent(COMPONENT_B), "java.lang");
 		assertNotNull("No component", components);
 		assertEquals("Wrong size", 1, components.length);
-		assertEquals("Wrong provider for package", baseline.getApiComponent(baseline.getExecutionEnvironment()), components[0]);
+		assertEquals("Wrong provider for package", fBaseline.getApiComponent(fBaseline.getExecutionEnvironment()), components[0]);
 	}
 	
 	/**
@@ -108,12 +111,11 @@ public class ApiBaselineTests extends TestCase {
 	 * @throws CoreException
 	 */
 	public void testResolveSystemPackage() throws FileNotFoundException, CoreException {
-		IApiBaseline baseline = TestSuiteHelper.createTestingBaseline("test-plugins");
-		assertNotNull("the testing baseline should exist", baseline);
-		IApiComponent[] components = baseline.resolvePackage(baseline.getApiComponent("component.b"), "org.w3c.dom");
+		assertNotNull("the testing baseline should exist", fBaseline);
+		IApiComponent[] components = fBaseline.resolvePackage(fBaseline.getApiComponent(COMPONENT_B), "org.w3c.dom");
 		assertNotNull("No component", components);
 		assertEquals("Wrong size", 1, components.length);
-		assertEquals("Wrong provider for package", baseline.getApiComponent(baseline.getExecutionEnvironment()), components[0]);
+		assertEquals("Wrong provider for package", fBaseline.getApiComponent(fBaseline.getExecutionEnvironment()), components[0]);
 	}	
 	
 	/**
@@ -123,12 +125,11 @@ public class ApiBaselineTests extends TestCase {
 	 * @throws CoreException
 	 */
 	public void testFindJavaLangObject() throws FileNotFoundException, CoreException {
-		IApiBaseline baseline = TestSuiteHelper.createTestingBaseline("test-plugins");
-		assertNotNull("the testing baseline should exist", baseline);
-		IApiComponent[] components = baseline.resolvePackage(baseline.getApiComponent("component.b"), "java.lang");
+		assertNotNull("the testing baseline should exist", fBaseline);
+		IApiComponent[] components = fBaseline.resolvePackage(fBaseline.getApiComponent(COMPONENT_B), "java.lang");
 		assertNotNull("No component", components);
 		assertEquals("Wrong size", 1, components.length);
-		assertEquals("Wrong provider for package", baseline.getApiComponent(baseline.getExecutionEnvironment()), components[0]);
+		assertEquals("Wrong provider for package", fBaseline.getApiComponent(fBaseline.getExecutionEnvironment()), components[0]);
 		IApiTypeRoot classFile = components[0].findTypeRoot("java.lang.Object");
 		assertNotNull("Missing java.lang.Object", classFile);
 		assertEquals("Wrong type name", "java.lang.Object", classFile.getTypeName());
@@ -171,7 +172,7 @@ public class ApiBaselineTests extends TestCase {
 	 */
 	public void testNestedJarComponent() throws CoreException {
 		IApiBaseline baseline = TestSuiteHelper.createTestingBaseline("test-nested-jars");
-		IApiComponent component = baseline.getApiComponent("component.a");
+		IApiComponent component = baseline.getApiComponent(COMPONENT_A);
 		assertNotNull("missing component.a", component);
 		IApiTypeContainer[] containers = component.getApiTypeContainers();
 		assertTrue("Missing containers:", containers.length > 0);
@@ -180,7 +181,7 @@ public class ApiBaselineTests extends TestCase {
 			IApiTypeContainer container = containers[i];
 			String[] names = container.getPackageNames();
 			for (int j = 0; j < names.length; j++) {
-				if (names[j].equals("component.a")) {
+				if (names[j].equals(COMPONENT_A)) {
 					file = container.findTypeRoot("component.a.A");
 					break;
 				}
@@ -201,8 +202,7 @@ public class ApiBaselineTests extends TestCase {
 	 * @throws CoreException 
 	 */
 	public void testXFriendsDirective() throws CoreException {
-		IApiBaseline baseline = TestSuiteHelper.createTestingBaseline("test-plugins");
-		IApiComponent component = baseline.getApiComponent("component.a");
+		IApiComponent component = fBaseline.getApiComponent(COMPONENT_A);
 		assertNotNull("Missing component.a", component);
 		IApiDescription description = component.getApiDescription();
 		IApiAnnotations result = description.resolveAnnotations(Factory.typeDescriptor("component.a.friend.of.b.FriendOfB"));
@@ -218,8 +218,7 @@ public class ApiBaselineTests extends TestCase {
 	 * @throws CoreException 
 	 */
 	public void testXInternalDirective() throws CoreException {
-		IApiBaseline baseline = TestSuiteHelper.createTestingBaseline("test-plugins");
-		IApiComponent component = baseline.getApiComponent("component.a");
+		IApiComponent component = fBaseline.getApiComponent(COMPONENT_A);
 		assertNotNull("Missing component.a", component);
 		IApiDescription description = component.getApiDescription();
 		IApiAnnotations result = description.resolveAnnotations(Factory.typeDescriptor("component.a.internal.InternalClass"));
@@ -235,8 +234,7 @@ public class ApiBaselineTests extends TestCase {
 	 * @throws CoreException 
 	 */
 	public void testUsesDirective() throws CoreException {
-		IApiBaseline baseline = TestSuiteHelper.createTestingBaseline("test-plugins");
-		IApiComponent component = baseline.getApiComponent("component.a");
+		IApiComponent component = fBaseline.getApiComponent(COMPONENT_A);
 		assertNotNull("Missing component.a", component);
 		IApiDescription description = component.getApiDescription();
 		IApiAnnotations result = description.resolveAnnotations(Factory.typeDescriptor("component.a.A"));
@@ -252,8 +250,7 @@ public class ApiBaselineTests extends TestCase {
 	 * @throws CoreException 
 	 */
 	public void testNotExported() throws CoreException {
-		IApiBaseline baseline = TestSuiteHelper.createTestingBaseline("test-plugins");
-		IApiComponent component = baseline.getApiComponent("component.a");
+		IApiComponent component = fBaseline.getApiComponent(COMPONENT_A);
 		assertNotNull("Missing component.a", component);
 		IApiDescription description = component.getApiDescription();
 		IApiAnnotations result = description.resolveAnnotations(Factory.typeDescriptor("component.a.not.exported.NotExported"));
@@ -268,9 +265,8 @@ public class ApiBaselineTests extends TestCase {
 	 * @throws CoreException
 	 */
 	public void testPrerequisites() throws CoreException {
-		IApiBaseline baseline = TestSuiteHelper.createTestingBaseline("test-plugins");
-		IApiComponent component = baseline.getApiComponent("component.a");
-		IApiComponent[] prerequisiteComponents = baseline.getPrerequisiteComponents(new IApiComponent[]{component});
+		IApiComponent component = fBaseline.getApiComponent(COMPONENT_A);
+		IApiComponent[] prerequisiteComponents = fBaseline.getPrerequisiteComponents(new IApiComponent[]{component});
 		for (int i = 0; i < prerequisiteComponents.length; i++) {
 			IApiComponent apiComponent = prerequisiteComponents[i];
 			if (apiComponent.getSymbolicName().equals("org.eclipse.osgi")) {
@@ -287,13 +283,12 @@ public class ApiBaselineTests extends TestCase {
 	 * @throws CoreException
 	 */
 	public void testDependents() throws CoreException {
-		IApiBaseline baseline = TestSuiteHelper.createTestingBaseline("test-plugins");
-		IApiComponent component = baseline.getApiComponent("component.a");
-		IApiComponent[] dependents = baseline.getDependentComponents(new IApiComponent[]{component});
+		IApiComponent component = fBaseline.getApiComponent(COMPONENT_A);
+		IApiComponent[] dependents = fBaseline.getDependentComponents(new IApiComponent[]{component});
 		assertEquals("Wrong number of dependents", 2, dependents.length);
 		for (int i = 0; i < dependents.length; i++) {
 			IApiComponent apiComponent = dependents[i];
-			if (apiComponent.getSymbolicName().equals("component.b")) {
+			if (apiComponent.getSymbolicName().equals(COMPONENT_B)) {
 				// done
 				return;
 			}
@@ -305,9 +300,8 @@ public class ApiBaselineTests extends TestCase {
 	 * Tests getting the location from an 'old' baseline
 	 */
 	public void testGetLocation() throws Exception {
-		IApiBaseline baseline = TestSuiteHelper.createTestingBaseline("test-plugins");
-		assertNull("The location must be null", baseline.getLocation());
-		baseline.setLocation("new_loc");
-		assertNotNull("The location must not be null", baseline.getLocation());
+		assertNull("The location must be null", fBaseline.getLocation());
+		fBaseline.setLocation("new_loc");
+		assertNotNull("The location must not be null", fBaseline.getLocation());
 	}
 }

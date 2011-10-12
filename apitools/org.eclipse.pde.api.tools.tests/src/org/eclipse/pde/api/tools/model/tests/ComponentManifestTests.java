@@ -51,35 +51,39 @@ public class ComponentManifestTests extends TestCase {
 		File file = path.toFile();
 		assertTrue("Missing manifest directory", file.exists());
 		IApiBaseline baseline = TestSuiteHelper.newApiBaseline("test", TestSuiteHelper.getEEDescriptionFile());
-		IApiComponent component = ApiModelFactory.newApiComponent(baseline, file.getAbsolutePath());
-		baseline.addApiComponents(new IApiComponent[] { component });
-		assertEquals("Id: ", "org.eclipse.debug.ui" , component.getSymbolicName());
-		assertEquals("Name: ", "Debug Platform UI" , component.getName());
-		assertEquals("Version: ", "3.3.100" , component.getVersion());
-		String[] envs = component.getExecutionEnvironments();
-		assertEquals("Wrong number of execution environments", 1, envs.length);
-		assertEquals("Version: ", "J2SE-1.4" , envs[0]);
-		
-		IRequiredComponentDescription[] requiredComponents = component.getRequiredComponents();
-		assertEquals("Wrong number of required components", 11, requiredComponents.length);
-		
-		List<RequiredComponentDescription> reqs = new ArrayList<RequiredComponentDescription>();
-		reqs.add(new RequiredComponentDescription("org.eclipse.core.expressions", new BundleVersionRange("(3.3.0,4.0.0)")));
-		reqs.add(new RequiredComponentDescription("org.eclipse.core.variables", new BundleVersionRange("[3.2.0,4.0.0]")));
-		reqs.add(new RequiredComponentDescription("org.eclipse.ui", new BundleVersionRange("[3.3.0,4.0.0]")));
-		reqs.add(new RequiredComponentDescription("org.eclipse.ui.console", new BundleVersionRange("[3.2.0,4.0.0)")));
-		reqs.add(new RequiredComponentDescription("org.eclipse.help", new BundleVersionRange("3.3.0")));
-		reqs.add(new RequiredComponentDescription("org.eclipse.debug.core", new BundleVersionRange("3.4.0")));
-		reqs.add(new RequiredComponentDescription("org.eclipse.jface.text", new BundleVersionRange("[3.3.0,4.0.0)")));
-		reqs.add(new RequiredComponentDescription("org.eclipse.ui.workbench.texteditor", new BundleVersionRange("[3.3.0,4.0.0)")));
-		reqs.add(new RequiredComponentDescription("org.eclipse.ui.ide", new BundleVersionRange("[3.3.0,4.0.0)")));
-		reqs.add(new RequiredComponentDescription("org.eclipse.ui.editors", new BundleVersionRange("[3.3.0,4.0.0)")));
-		reqs.add(new RequiredComponentDescription("org.eclipse.core.runtime", new BundleVersionRange("[3.3.0,4.0.0)")));
-		
-		for (int i = 0; i < reqs.size(); i++) {
-			assertEquals("Wrong required component", reqs.get(i), requiredComponents[i]);
+		try {
+			IApiComponent component = ApiModelFactory.newApiComponent(baseline, file.getAbsolutePath());
+			baseline.addApiComponents(new IApiComponent[] { component });
+			assertEquals("Id: ", "org.eclipse.debug.ui" , component.getSymbolicName());
+			assertEquals("Name: ", "Debug Platform UI" , component.getName());
+			assertEquals("Version: ", "3.3.100" , component.getVersion());
+			String[] envs = component.getExecutionEnvironments();
+			assertEquals("Wrong number of execution environments", 1, envs.length);
+			assertEquals("Version: ", "J2SE-1.4" , envs[0]);
+			
+			IRequiredComponentDescription[] requiredComponents = component.getRequiredComponents();
+			assertEquals("Wrong number of required components", 11, requiredComponents.length);
+			
+			List<RequiredComponentDescription> reqs = new ArrayList<RequiredComponentDescription>();
+			reqs.add(new RequiredComponentDescription("org.eclipse.core.expressions", new BundleVersionRange("(3.3.0,4.0.0)")));
+			reqs.add(new RequiredComponentDescription("org.eclipse.core.variables", new BundleVersionRange("[3.2.0,4.0.0]")));
+			reqs.add(new RequiredComponentDescription("org.eclipse.ui", new BundleVersionRange("[3.3.0,4.0.0]")));
+			reqs.add(new RequiredComponentDescription("org.eclipse.ui.console", new BundleVersionRange("[3.2.0,4.0.0)")));
+			reqs.add(new RequiredComponentDescription("org.eclipse.help", new BundleVersionRange("3.3.0")));
+			reqs.add(new RequiredComponentDescription("org.eclipse.debug.core", new BundleVersionRange("3.4.0")));
+			reqs.add(new RequiredComponentDescription("org.eclipse.jface.text", new BundleVersionRange("[3.3.0,4.0.0)")));
+			reqs.add(new RequiredComponentDescription("org.eclipse.ui.workbench.texteditor", new BundleVersionRange("[3.3.0,4.0.0)")));
+			reqs.add(new RequiredComponentDescription("org.eclipse.ui.ide", new BundleVersionRange("[3.3.0,4.0.0)")));
+			reqs.add(new RequiredComponentDescription("org.eclipse.ui.editors", new BundleVersionRange("[3.3.0,4.0.0)")));
+			reqs.add(new RequiredComponentDescription("org.eclipse.core.runtime", new BundleVersionRange("[3.3.0,4.0.0)")));
+			
+			for (int i = 0; i < reqs.size(); i++) {
+				assertEquals("Wrong required component", reqs.get(i), requiredComponents[i]);
+			}
 		}
-		baseline.dispose();
+		finally {
+			baseline.dispose();
+		}
 	}
 	
 	public void testReExport() throws FileNotFoundException, CoreException {
@@ -88,22 +92,26 @@ public class ComponentManifestTests extends TestCase {
 		File file = path.toFile();
 		assertTrue("Missing manifest directory", file.exists());
 		IApiBaseline baseline = TestSuiteHelper.newApiBaseline("test", TestSuiteHelper.getEEDescriptionFile());
-		IApiComponent component = ApiModelFactory.newApiComponent(baseline, file.getAbsolutePath());
-		baseline.addApiComponents(new IApiComponent[] { component });
-		
-		boolean debugCoreExport = false;
-		boolean others = false;
-		IRequiredComponentDescription[] requiredComponents = component.getRequiredComponents();		
-		for (int i = 0; i < requiredComponents.length; i++) {
-			IRequiredComponentDescription description = requiredComponents[i];
-			if (description.getId().equals("org.eclipse.debug.core")) {
-				debugCoreExport = description.isExported();
-			} else {
-				others = others || description.isExported();
+		try {
+			IApiComponent component = ApiModelFactory.newApiComponent(baseline, file.getAbsolutePath());
+			baseline.addApiComponents(new IApiComponent[] { component });
+			
+			boolean debugCoreExport = false;
+			boolean others = false;
+			IRequiredComponentDescription[] requiredComponents = component.getRequiredComponents();		
+			for (int i = 0; i < requiredComponents.length; i++) {
+				IRequiredComponentDescription description = requiredComponents[i];
+				if (description.getId().equals("org.eclipse.debug.core")) {
+					debugCoreExport = description.isExported();
+				} else {
+					others = others || description.isExported();
+				}
 			}
+			assertTrue("org.eclipse.debug.core should be re-exported", debugCoreExport);
+			assertFalse("Other components should not be re-exported", others);
 		}
-		baseline.dispose();
-		assertTrue("org.eclipse.debug.core should be re-exported", debugCoreExport);
-		assertFalse("Other components should not be re-exported", others);
+		finally {
+			baseline.dispose();
+		}
 	}
 }
