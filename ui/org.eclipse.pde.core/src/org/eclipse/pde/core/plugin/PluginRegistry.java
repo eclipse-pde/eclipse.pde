@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,7 +26,7 @@ import org.osgi.framework.Version;
 
 /**
  * The central access point for models representing plug-ins found in the workspace
- * and in the targret platform.
+ * and in the target platform.
  * <p>
  * This class provides static methods only; it is not intended to be
  * instantiated or subclassed by clients.
