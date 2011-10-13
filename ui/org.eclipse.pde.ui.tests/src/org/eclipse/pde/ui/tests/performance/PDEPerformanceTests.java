@@ -21,7 +21,7 @@ public class PDEPerformanceTests {
 		suite.addTest(SchemaLoaderPerfTest.suite());
 		suite.addTest(SchemaTraversePerfTest.suite());
 		suite.addTest(OpenManifestEditorPerfTest.suite());
-		suite.addTest(new TargetPlatformPerfTest());
+		suite.addTest(TargetPlatformPerfTest.suite());
 		return suite;
 	}
 
