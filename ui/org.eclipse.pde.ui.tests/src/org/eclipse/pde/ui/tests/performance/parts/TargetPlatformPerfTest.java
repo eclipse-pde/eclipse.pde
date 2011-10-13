@@ -10,13 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.performance.parts;
 
-import org.eclipse.pde.ui.tests.util.TestBundleCreator;
-
 import java.io.*;
 import java.net.URL;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.BundleSpecification;
@@ -29,6 +29,7 @@ import org.eclipse.pde.internal.core.target.TargetPlatformService;
 import org.eclipse.pde.internal.core.target.provisional.*;
 import org.eclipse.pde.internal.ui.tests.macro.MacroPlugin;
 import org.eclipse.pde.ui.tests.target.LocalTargetDefinitionTests;
+import org.eclipse.pde.ui.tests.util.TestBundleCreator;
 import org.eclipse.test.performance.Dimension;
 import org.eclipse.test.performance.PerformanceTestCase;
 import org.osgi.framework.Version;
@@ -52,6 +53,10 @@ public class TargetPlatformPerfTest extends PerformanceTestCase {
 
 	private static final String TEST_PLUGIN_LOCATION = "/tests/performance/target/targetPerfTestPlugins.zip";
 
+	public static Test suite() {
+		return new TestSuite(TargetPlatformPerfTest.class);
+	}
+	
 	/**
 	 * Resolves an example target definition
 	 */
