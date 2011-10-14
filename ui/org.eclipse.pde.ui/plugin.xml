@@ -2039,55 +2039,12 @@
             id="org.eclipse.pde.ui.pluginFile">
             <iterate
              ifEmpty="false"
-             operator="or">
-             <and>
-          <adapt
-                type="org.eclipse.core.resources.IResource">
-             <test
-                   property="org.eclipse.core.resources.projectNature"
-                   value="org.eclipse.pde.PluginNature">
-             </test>
-          </adapt>
-          <or>
-             <adapt
-                   type="org.eclipse.core.resources.IProject">
-                <instanceof
-                      value="org.eclipse.core.resources.IProject">
-                </instanceof>
-             </adapt>
-             <test
-                   property="org.eclipse.core.resources.name"
-                   value="plugin.*">
-             </test>
-             <test
-                   property="org.eclipse.core.resources.name"
-                   value="fragment.*">
-             </test>
-             <test
-                   property="org.eclipse.core.resources.name"
-                   value="build.properties">
-             </test>
-             <test
-                   property="org.eclipse.core.resources.name"
-                   value="manifest.mf">
-             </test>
-             <test
-                   property="org.eclipse.core.resources.name"
-                   value="meta-inf">
-             </test>
-          </or>
-          </and>
-       </iterate>
-      </definition>
-      <definition
-            id="org.eclipse.pde.ui.featureFile">
-         <iterate>
-            <and>
+             operator="and">
                <adapt
                      type="org.eclipse.core.resources.IResource">
                   <test
                         property="org.eclipse.core.resources.projectNature"
-                        value="org.eclipse.pde.FeatureNature">
+                        value="org.eclipse.pde.PluginNature">
                   </test>
                </adapt>
                <or>
@@ -2099,14 +2056,55 @@
                   </adapt>
                   <test
                         property="org.eclipse.core.resources.name"
-                        value="feature.xml">
+                        value="plugin.*">
+                  </test>
+                  <test
+                        property="org.eclipse.core.resources.name"
+                        value="fragment.*">
                   </test>
                   <test
                         property="org.eclipse.core.resources.name"
                         value="build.properties">
                   </test>
+                  <test
+                        property="org.eclipse.core.resources.name"
+                        value="manifest.mf">
+                  </test>
+                  <test
+                        property="org.eclipse.core.resources.name"
+                        value="meta-inf">
+                  </test>
                </or>
-            </and>
+       </iterate>
+      </definition>
+      <definition
+            id="org.eclipse.pde.ui.featureFile">
+         <iterate
+               ifEmpty="false"
+               operator="and">
+            <adapt
+                  type="org.eclipse.core.resources.IResource">
+               <test
+                     property="org.eclipse.core.resources.projectNature"
+                     value="org.eclipse.pde.FeatureNature">
+               </test>
+            </adapt>
+            <or>
+               <adapt
+                     type="org.eclipse.core.resources.IProject">
+                  <instanceof
+                        value="org.eclipse.core.resources.IProject">
+                  </instanceof>
+               </adapt>
+               <test
+                     property="org.eclipse.core.resources.name"
+                     value="feature.xml">
+               </test>
+               <test
+                     property="org.eclipse.core.resources.name"
+                     value="build.properties">
+               </test>
+            </or>
          </iterate>
       </definition>
    </extension>
