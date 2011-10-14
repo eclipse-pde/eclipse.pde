@@ -13,3 +13,4 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
 Bundle-Localization: plugin
 Bundle-Vendor: %providerName
+Export-Package: org.eclipse.pde.internal.ds.tests;x-internal:=true
