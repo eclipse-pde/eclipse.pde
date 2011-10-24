@@ -24,9 +24,9 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.core.project.IBundleProjectDescription;
 import org.eclipse.pde.core.project.IBundleProjectService;
+import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.target.TargetPlatformService;
-import org.eclipse.pde.internal.core.target.provisional.*;
 import org.eclipse.pde.internal.ui.tests.macro.MacroPlugin;
 import org.eclipse.pde.ui.tests.target.LocalTargetDefinitionTests;
 import org.eclipse.pde.ui.tests.util.TestBundleCreator;
@@ -67,7 +67,7 @@ public class TargetPlatformPerfTest extends PerformanceTestCase {
 		ITargetPlatformService tps = (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
 
 		ITargetDefinition originalTarget = tps.newTarget();
-		originalTarget.setBundleContainers(new IBundleContainer[] {tps.newDirectoryContainer(testBundles.toPortableString())});
+		originalTarget.setTargetLocations(new ITargetLocation[]{tps.newDirectoryLocation(testBundles.toPortableString())});
 		tps.saveTargetDefinition(originalTarget);
 		ITargetHandle handle = originalTarget.getHandle();
 
@@ -116,7 +116,7 @@ public class TargetPlatformPerfTest extends PerformanceTestCase {
 
 			// Set the example target as active
 			ITargetDefinition target = tps.newTarget();
-			target.setBundleContainers(new IBundleContainer[] {tps.newDirectoryContainer(testBundles.toPortableString())});
+			target.setTargetLocations(new ITargetLocation[] {tps.newDirectoryLocation(testBundles.toPortableString())});
 			target.resolve(null);
 			LoadTargetDefinitionJob job = new LoadTargetDefinitionJob(target);
 			job.runInWorkspace(new NullProgressMonitor());
@@ -158,7 +158,7 @@ public class TargetPlatformPerfTest extends PerformanceTestCase {
 		ITargetPlatformService tps = (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
 
 		ITargetDefinition target = tps.newTarget();
-		target.setBundleContainers(new IBundleContainer[] {tps.newDirectoryContainer(testBundles.toPortableString())});
+		target.setTargetLocations(new ITargetLocation[] {tps.newDirectoryLocation(testBundles.toPortableString())});
 		target.resolve(null);
 		LoadTargetDefinitionJob job = new LoadTargetDefinitionJob(target);
 
