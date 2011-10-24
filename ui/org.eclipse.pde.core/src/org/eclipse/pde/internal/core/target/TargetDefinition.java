@@ -22,11 +22,11 @@ import org.eclipse.equinox.frameworkadmin.BundleInfo;
 import org.eclipse.equinox.p2.metadata.Version;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.TargetPlatform;
+import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.internal.core.ExternalFeatureModelManager;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
-import org.eclipse.pde.internal.core.target.provisional.*;
 import org.xml.sax.SAXException;
 
 /**
@@ -41,7 +41,6 @@ public class TargetDefinition implements ITargetDefinition {
 
 	// included and optional filtering
 	private NameVersionDescriptor[] fIncluded;
-	private NameVersionDescriptor[] fOptional;
 
 	// arguments
 	private String fProgramArgs;
@@ -55,7 +54,7 @@ public class TargetDefinition implements ITargetDefinition {
 	private String fNL;
 
 	// bundle containers
-	private IBundleContainer[] fContainers;
+	private ITargetLocation[] fContainers;
 
 	// handle
 	private ITargetHandle fHandle;
@@ -72,8 +71,9 @@ public class TargetDefinition implements ITargetDefinition {
 	private Map fFeaturesInLocation = new HashMap();
 
 	// internal cache for features.  A target managed by features will contain a set of features as well as a set of plug-ins that don't belong to a feature
+	private TargetFeature[] fFeatures;
 	private IFeatureModel[] fFeatureModels;
-	private IResolvedBundle[] fOtherBundles;
+	private TargetBundle[] fOtherBundles;
 
 	private int fSequenceNumber = -1;
 
@@ -85,63 +85,63 @@ public class TargetDefinition implements ITargetDefinition {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#getArch()
+	 * @see org.eclipse.pde.core.target.ITargetDefinition#getArch()
 	 */
 	public String getArch() {
 		return fArch;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#getBundleContainers()
+	 * @see org.eclipse.pde.core.target.ITargetDefinition#getBundleContainers()
 	 */
-	public IBundleContainer[] getBundleContainers() {
+	public ITargetLocation[] getTargetLocations() {
 		return fContainers;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#getNL()
+	 * @see org.eclipse.pde.core.target.ITargetDefinition#getNL()
 	 */
 	public String getNL() {
 		return fNL;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#getName()
+	 * @see org.eclipse.pde.core.target.ITargetDefinition#getName()
 	 */
 	public String getName() {
 		return fName;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#getOS()
+	 * @see org.eclipse.pde.core.target.ITargetDefinition#getOS()
 	 */
 	public String getOS() {
 		return fOS;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#getProgramArguments()
+	 * @see org.eclipse.pde.core.target.ITargetDefinition#getProgramArguments()
 	 */
 	public String getProgramArguments() {
 		return fProgramArgs;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#getVMArguments()
+	 * @see org.eclipse.pde.core.target.ITargetDefinition#getVMArguments()
 	 */
 	public String getVMArguments() {
 		return fVMArgs;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#getWS()
+	 * @see org.eclipse.pde.core.target.ITargetDefinition#getWS()
 	 */
 	public String getWS() {
 		return fWS;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#setArch(java.lang.String)
+	 * @see org.eclipse.pde.core.target.ITargetDefinition#setArch(java.lang.String)
 	 */
 	public void setArch(String arch) {
 		incrementSequenceNumber();
@@ -149,7 +149,7 @@ public class TargetDefinition implements ITargetDefinition {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#setNL(java.lang.String)
+	 * @see org.eclipse.pde.core.target.ITargetDefinition#setNL(java.lang.String)
 	 */
 	public void setNL(String nl) {
 		incrementSequenceNumber();
@@ -157,14 +157,14 @@ public class TargetDefinition implements ITargetDefinition {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#setName(java.lang.String)
+	 * @see org.eclipse.pde.core.target.ITargetDefinition#setName(java.lang.String)
 	 */
 	public void setName(String name) {
 		fName = name;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#setOS(java.lang.String)
+	 * @see org.eclipse.pde.core.target.ITargetDefinition#setOS(java.lang.String)
 	 */
 	public void setOS(String os) {
 		incrementSequenceNumber();
@@ -172,7 +172,7 @@ public class TargetDefinition implements ITargetDefinition {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#setProgramArguments(java.lang.String)
+	 * @see org.eclipse.pde.core.target.ITargetDefinition#setProgramArguments(java.lang.String)
 	 */
 	public void setProgramArguments(String args) {
 		if (args != null && args.length() == 0) {
@@ -182,7 +182,7 @@ public class TargetDefinition implements ITargetDefinition {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#setVMArguments(java.lang.String)
+	 * @see org.eclipse.pde.core.target.ITargetDefinition#setVMArguments(java.lang.String)
 	 */
 	public void setVMArguments(String args) {
 		if (args != null && args.length() == 0) {
@@ -192,7 +192,7 @@ public class TargetDefinition implements ITargetDefinition {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#setWS(java.lang.String)
+	 * @see org.eclipse.pde.core.target.ITargetDefinition#setWS(java.lang.String)
 	 */
 	public void setWS(String ws) {
 		incrementSequenceNumber();
@@ -200,26 +200,27 @@ public class TargetDefinition implements ITargetDefinition {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#setBundleContainers(org.eclipse.pde.internal.core.target.provisional.IBundleContainer[])
+	 * @see org.eclipse.pde.core.target.ITargetDefinition#setBundleContainers(org.eclipse.pde.core.target.ITargetLocation[])
 	 */
-	public void setBundleContainers(IBundleContainer[] containers) {
+	public void setTargetLocations(ITargetLocation[] locations) {
 		incrementSequenceNumber();
 		// Clear the feature model cache as it is based on the bundle container locations
 		fFeatureModels = null;
 		fOtherBundles = null;
 
-		if (containers != null && containers.length == 0) {
-			containers = null;
+		if (locations != null && locations.length == 0) {
+			locations = null;
 		}
 
-		fContainers = containers;
+		fContainers = locations;
 
-		if (containers == null) {
+		if (locations == null) {
 			fIncluded = null;
-			fOptional = null;
 		} else {
-			for (int i = 0; i < containers.length; i++) {
-				((AbstractBundleContainer) containers[i]).associateWithTarget(this);
+			for (int i = 0; i < locations.length; i++) {
+				if (locations[i] instanceof AbstractBundleContainer) {
+					((AbstractBundleContainer) locations[i]).associateWithTarget(this);
+				}
 			}
 		}
 	}
@@ -240,15 +241,14 @@ public class TargetDefinition implements ITargetDefinition {
 		}
 		if (fContainers == null) {
 			fIncluded = null;
-			fOptional = null;
 		}
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#resolve(org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.pde.core.target.ITargetDefinition#resolve(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public IStatus resolve(IProgressMonitor monitor) {
-		IBundleContainer[] containers = getBundleContainers();
+		ITargetLocation[] containers = getTargetLocations();
 		int num = 0;
 		if (containers != null) {
 			num = containers.length;
@@ -281,13 +281,13 @@ public class TargetDefinition implements ITargetDefinition {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#isResolved()
+	 * @see org.eclipse.pde.core.target.ITargetDefinition#isResolved()
 	 */
 	public boolean isResolved() {
-		IBundleContainer[] containers = getBundleContainers();
+		ITargetLocation[] containers = getTargetLocations();
 		if (containers != null) {
 			for (int i = 0; i < containers.length; i++) {
-				IBundleContainer container = containers[i];
+				ITargetLocation container = containers[i];
 				if (!container.isResolved()) {
 					return false;
 				}
@@ -297,16 +297,16 @@ public class TargetDefinition implements ITargetDefinition {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#getBundleStatus()
+	 * @see org.eclipse.pde.core.target.ITargetDefinition#getBundleStatus()
 	 */
-	public IStatus getBundleStatus() {
+	public IStatus getStatus() {
 		if (isResolved()) {
-			IBundleContainer[] containers = getBundleContainers();
+			ITargetLocation[] containers = getTargetLocations();
 			if (containers != null) {
 				// Check if the containers have any resolution problems
 				MultiStatus result = new MultiStatus(PDECore.PLUGIN_ID, 0, Messages.TargetDefinition_5, null);
 				for (int i = 0; i < containers.length; i++) {
-					IBundleContainer container = containers[i];
+					ITargetLocation container = containers[i];
 					IStatus containerStatus = container.getStatus();
 					if (containerStatus != null && !containerStatus.isOK()) {
 						result.add(containerStatus);
@@ -315,7 +315,7 @@ public class TargetDefinition implements ITargetDefinition {
 
 				// Check if any of the included bundles have problems
 				// build status from bundle list
-				IResolvedBundle[] bundles = getBundles();
+				TargetBundle[] bundles = getBundles();
 				for (int i = 0; i < bundles.length; i++) {
 					if (!bundles[i].getStatus().isOK()) {
 						result.add(bundles[i].getStatus());
@@ -334,45 +334,30 @@ public class TargetDefinition implements ITargetDefinition {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#setIncluded(org.eclipse.pde.internal.core.target.provisional.NameVersionDescriptor[])
+	 * @see org.eclipse.pde.core.target.ITargetDefinition#setIncluded(org.eclipse.pde.core.target.NameVersionDescriptor[])
 	 */
 	public void setIncluded(NameVersionDescriptor[] included) {
 		fIncluded = included;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#getIncluded()
+	 * @see org.eclipse.pde.core.target.ITargetDefinition#getIncluded()
 	 */
 	public NameVersionDescriptor[] getIncluded() {
 		return fIncluded;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#setOptional(org.eclipse.pde.internal.core.target.provisional.NameVersionDescriptor[])
+	 * @see org.eclipse.pde.core.target.ITargetDefinition#getBundles()
 	 */
-	public void setOptional(NameVersionDescriptor[] optional) {
-		fOptional = optional;
-
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#getOptional()
-	 */
-	public NameVersionDescriptor[] getOptional() {
-		return fOptional;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#getBundles()
-	 */
-	public IResolvedBundle[] getBundles() {
+	public TargetBundle[] getBundles() {
 		return getBundles(false);
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#getAllBundles()
+	 * @see org.eclipse.pde.core.target.ITargetDefinition#getAllBundles()
 	 */
-	public IResolvedBundle[] getAllBundles() {
+	public TargetBundle[] getAllBundles() {
 		return getBundles(true);
 	}
 
@@ -383,42 +368,40 @@ public class TargetDefinition implements ITargetDefinition {
 	 * @param allBundles whether to consider all bundles, or just those included/optional
 	 * @return bundles or <code>null</code>
 	 */
-	private IResolvedBundle[] getBundles(boolean allBundles) {
+	private TargetBundle[] getBundles(boolean allBundles) {
 		if (isResolved()) {
-			IBundleContainer[] containers = getBundleContainers();
+			ITargetLocation[] containers = getTargetLocations();
 			if (containers != null) {
 				List all = new ArrayList();
 				for (int i = 0; i < containers.length; i++) {
-					IBundleContainer container = containers[i];
-					IResolvedBundle[] bundles = container.getBundles();
+					ITargetLocation container = containers[i];
+					TargetBundle[] bundles = container.getBundles();
 					if (bundles != null) {
 						for (int j = 0; j < bundles.length; j++) {
-							IResolvedBundle rb = bundles[j];
+							TargetBundle rb = bundles[j];
 							all.add(rb);
 						}
 					}
 				}
 
-				IResolvedBundle[] allResolvedBundles = (IResolvedBundle[]) all.toArray(new IResolvedBundle[all.size()]);
+				TargetBundle[] allResolvedBundles = (TargetBundle[]) all.toArray(new TargetBundle[all.size()]);
 				if (allBundles) {
 					return allResolvedBundles;
 				}
 				return filterBundles(allResolvedBundles, getIncluded());
 			}
-			return new IResolvedBundle[0];
+			return new TargetBundle[0];
 		}
 		return null;
 	}
 
-	private IResolvedBundle[] filterBundles(IResolvedBundle[] bundles, NameVersionDescriptor[] filter) {
+	private TargetBundle[] filterBundles(TargetBundle[] bundles, NameVersionDescriptor[] filter) {
 		if (filter == null) {
-			// All bundles are included, but still need to check for optional bundles
-			IBundleContainer parent = fContainers != null && fContainers.length > 0 ? fContainers[0] : null;
-			List resolved = getMatchingBundles(bundles, null, fOptional, parent);
-			return (IResolvedBundle[]) resolved.toArray(new IResolvedBundle[resolved.size()]);
+			// No filtering to do
+			return bundles;
 		}
 		if (filter.length == 0) {
-			return new IResolvedBundle[0];
+			return new TargetBundle[0];
 		}
 
 		// If there are features, don't set errors for missing bundles as they are caused by missing OS specific fragments
@@ -434,38 +417,39 @@ public class TargetDefinition implements ITargetDefinition {
 				included.add(filter[i]);
 			} else if (filter[i].getType() == NameVersionDescriptor.TYPE_FEATURE) {
 				containsFeatures = true;
-				IFeatureModel[] features = getAllFeatures();
-				IFeatureModel bestMatch = null;
+				TargetFeature[] features = getAllFeatures();
+				TargetFeature bestMatch = null;
 				for (int j = 0; j < features.length; j++) {
-					if (features[j].getFeature().getId().equals(filter[i].getId())) {
+					TargetFeature feature = features[j];
+					if (feature.getId().equals(filter[i].getId())) {
 						if (filter[i].getVersion() != null) {
 							// Try to find an exact feature match
-							if (filter[i].getVersion().equals(features[j].getFeature().getVersion())) {
+							if (filter[i].getVersion().equals(feature.getVersion())) {
 								// Exact match
-								bestMatch = features[j];
+								bestMatch = feature;
 								break;
 							}
 						} else if (bestMatch != null) {
 							// If no version specified take the highest version
-							Version v1 = Version.parseVersion(features[j].getFeature().getVersion());
-							Version v2 = Version.parseVersion(bestMatch.getFeature().getVersion());
+							Version v1 = Version.parseVersion(feature.getVersion());
+							Version v2 = Version.parseVersion(bestMatch.getVersion());
 							if (v1.compareTo(v2) > 0) {
-								bestMatch = features[j];
+								bestMatch = feature;
 							}
 						}
 
 						if (bestMatch == null) {
 							// If we can't find a version match, just take any name match
-							bestMatch = features[j];
+							bestMatch = feature;
 						}
 					}
 				}
 
 				// Add the required plugins from the feature to the list of includes
 				if (bestMatch != null) {
-					IFeaturePlugin[] plugins = bestMatch.getFeature().getPlugins();
+					NameVersionDescriptor[] plugins = bestMatch.getPlugins();
 					for (int j = 0; j < plugins.length; j++) {
-						included.add(new NameVersionDescriptor(plugins[j].getId(), plugins[j].getVersion()));
+						included.add(plugins[j]);
 					}
 				} else {
 					missingFeatures.add(filter[i]);
@@ -473,9 +457,8 @@ public class TargetDefinition implements ITargetDefinition {
 			}
 		}
 
-		// Return matching bundles
-		IBundleContainer parent = fContainers != null && fContainers.length > 0 ? fContainers[0] : null;
-		List result = getMatchingBundles(bundles, (NameVersionDescriptor[]) included.toArray(new NameVersionDescriptor[included.size()]), fOptional, containsFeatures ? null : parent);
+		// Return matching bundles, if we are organizing by feature, do not create invalid target bundles for missing bundle includes
+		List result = getMatchingBundles(bundles, (NameVersionDescriptor[]) included.toArray(new NameVersionDescriptor[included.size()]), !containsFeatures);
 
 		// Add in missing features as resolved bundles with error statuses
 		if (containsFeatures && !missingFeatures.isEmpty()) {
@@ -483,12 +466,12 @@ public class TargetDefinition implements ITargetDefinition {
 				NameVersionDescriptor missing = (NameVersionDescriptor) iterator.next();
 				BundleInfo info = new BundleInfo(missing.getId(), missing.getVersion(), null, BundleInfo.NO_LEVEL, false);
 				String message = NLS.bind(Messages.TargetDefinition_RequiredFeatureCouldNotBeFound, missing.getId());
-				Status status = new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IResolvedBundle.STATUS_FEATURE_DOES_NOT_EXIST, message, null);
-				result.add(new ResolvedBundle(info, parent, status, null, false, false));
+				Status status = new Status(IStatus.ERROR, PDECore.PLUGIN_ID, TargetBundle.STATUS_FEATURE_DOES_NOT_EXIST, message, null);
+				result.add(new InvalidTargetBundle(info, status));
 			}
 		}
 
-		return (IResolvedBundle[]) result.toArray(new IResolvedBundle[result.size()]);
+		return (TargetBundle[]) result.toArray(new TargetBundle[result.size()]);
 	}
 
 	/**
@@ -496,19 +479,18 @@ public class TargetDefinition implements ITargetDefinition {
 	 * and/or version in the specified criteria. When no version is specified
 	 * the newest version (if any) is selected.
 	 * <p>
-	 * If a parent error container is specified, bundles listed in the included and optional filters that
-	 * are not found in the given collection will be added as IResolvedBundles with error statuses explaining
-	 * the problem.  If no parent container is specified, missing included and optional bundles will be ignored.
-	 * </p> 
+	 * If handleMissingBundles is <code>true</code>, the returned list will contain {@link InvalidTargetBundle}s
+	 * for any included filters that do not have a matching bundle in the collection. The invalid bundles
+	 * will contain statuses describing what couldn't be matched.
+	 * </p>
 	 * @param collection bundles to resolve against match criteria
 	 * @param included bundles to include or <code>null</code> if no restrictions
-	 * @param optional optional bundles or <code>null</code> of no optional bundles
-	 * @param errorParentContainer 
+	 * @param handleMissingBundles whether to create {@link InvalidTargetBundle}s for missing includes
 	 * 
 	 * @return list of IResolvedBundle bundles that match this container's restrictions
 	 */
-	static List getMatchingBundles(IResolvedBundle[] collection, NameVersionDescriptor[] included, NameVersionDescriptor[] optional, IBundleContainer errorParentContainer) {
-		if (included == null && optional == null) {
+	static List getMatchingBundles(TargetBundle[] collection, NameVersionDescriptor[] included, boolean handleMissingBundles) {
+		if (included == null) {
 			ArrayList result = new ArrayList();
 			result.addAll(Arrays.asList(collection));
 			return result;
@@ -516,7 +498,7 @@ public class TargetDefinition implements ITargetDefinition {
 		// map bundles names to available versions
 		Map bundleMap = new HashMap(collection.length);
 		for (int i = 0; i < collection.length; i++) {
-			IResolvedBundle resolved = collection[i];
+			TargetBundle resolved = collection[i];
 			List list = (List) bundleMap.get(resolved.getBundleInfo().getSymbolicName());
 			if (list == null) {
 				list = new ArrayList(3);
@@ -532,27 +514,9 @@ public class TargetDefinition implements ITargetDefinition {
 		} else {
 			for (int i = 0; i < included.length; i++) {
 				BundleInfo info = new BundleInfo(included[i].getId(), included[i].getVersion(), null, BundleInfo.NO_LEVEL, false);
-				IResolvedBundle bundle = resolveBundle(bundleMap, info, false, errorParentContainer);
+				TargetBundle bundle = resolveBundle(bundleMap, info, handleMissingBundles);
 				if (bundle != null) {
 					resolved.add(bundle);
-				}
-			}
-		}
-		if (optional != null) {
-			for (int i = 0; i < optional.length; i++) {
-				BundleInfo option = new BundleInfo(optional[i].getId(), optional[i].getVersion(), null, BundleInfo.NO_LEVEL, false);
-				IResolvedBundle resolveBundle = resolveBundle(bundleMap, option, true, errorParentContainer);
-				if (resolveBundle != null) {
-					IStatus status = resolveBundle.getStatus();
-					if (status.isOK()) {
-						// add to list if not there already
-						if (!resolved.contains(resolveBundle)) {
-							resolved.add(resolveBundle);
-						}
-					} else {
-						// missing optional bundle - add it to the list
-						resolved.add(resolveBundle);
-					}
 				}
 			}
 		}
@@ -561,21 +525,21 @@ public class TargetDefinition implements ITargetDefinition {
 
 	/**
 	 * Resolves a bundle for the given info from the given map. The map contains
-	 * keys of symbolic names and values are lists of {@link IResolvedBundle}'s available
+	 * keys of symbolic names and values are lists of {@link TargetBundle}'s available
 	 * that match the names.
 	 * <p>
-	 * If an parent container for errors is provided, if a resolve bundle matching the requirements cannot be found
-	 * a IResolvedBundle will be returned containing an status.  If no parent container is specified,
-	 * missing bundles will result in a return value of <code>null</code>
+	 * If handleMissingBundles is <code>true</code>, a {@link InvalidTargetBundle} will be created and 
+	 * returned if the give info does not match up with a map entry. The returned bundle will have
+	 * a status giving more details on what is missing. If handleMissingBundles is <code>false</code>,
+	 * <code>null</code> will be returned.
 	 * </p>
 	 * 
 	 * @param bundleMap available bundles to resolve against
 	 * @param info name and version to match against
-	 * @param optional whether the bundle is optional
-	 * @param errorParentContainer bundle container the resolved bundle belongs too
+	 * @param handleMissingBundles whether to return an {@link InvalidTargetBundle} for a info that does not match with a map entry or <code>null</code>
 	 * @return resolved bundle or <code>null</code>
 	 */
-	private static IResolvedBundle resolveBundle(Map bundleMap, BundleInfo info, boolean optional, IBundleContainer errorParentContainer) {
+	private static TargetBundle resolveBundle(Map bundleMap, BundleInfo info, boolean handleMissingBundles) {
 		List list = (List) bundleMap.get(info.getSymbolicName());
 		if (list != null) {
 			String version = info.getVersion();
@@ -585,52 +549,45 @@ public class TargetDefinition implements ITargetDefinition {
 					// sort the list
 					Collections.sort(list, new Comparator() {
 						public int compare(Object o1, Object o2) {
-							BundleInfo b1 = ((IResolvedBundle) o1).getBundleInfo();
-							BundleInfo b2 = ((IResolvedBundle) o2).getBundleInfo();
+							BundleInfo b1 = ((TargetBundle) o1).getBundleInfo();
+							BundleInfo b2 = ((TargetBundle) o2).getBundleInfo();
 							return b1.getVersion().compareTo(b2.getVersion());
 						}
 					});
 				}
 				// select the last one
-				ResolvedBundle rb = (ResolvedBundle) list.get(list.size() - 1);
-				rb.setOptional(optional);
+				TargetBundle rb = (TargetBundle) list.get(list.size() - 1);
 				return rb;
 			}
 			Iterator iterator = list.iterator();
 			while (iterator.hasNext()) {
-				IResolvedBundle bundle = (IResolvedBundle) iterator.next();
+				TargetBundle bundle = (TargetBundle) iterator.next();
 				if (bundle.getBundleInfo().getVersion().equals(version)) {
-					((ResolvedBundle) bundle).setOptional(optional);
 					return bundle;
 				}
 			}
+
 			// VERSION DOES NOT EXIST
-			if (errorParentContainer == null) {
+			if (!handleMissingBundles) {
 				return null;
 			}
 			int sev = IStatus.ERROR;
 			String message = NLS.bind(Messages.AbstractBundleContainer_1, new Object[] {info.getVersion(), info.getSymbolicName()});
-			if (optional) {
-				sev = IStatus.INFO;
-				message = NLS.bind(Messages.AbstractBundleContainer_2, new Object[] {info.getVersion(), info.getSymbolicName()});
-			}
-			return new ResolvedBundle(info, errorParentContainer, new Status(sev, PDECore.PLUGIN_ID, IResolvedBundle.STATUS_VERSION_DOES_NOT_EXIST, message, null), null, optional, false);
+			IStatus status = new Status(sev, PDECore.PLUGIN_ID, TargetBundle.STATUS_VERSION_DOES_NOT_EXIST, message, null);
+			return new InvalidTargetBundle(info, status);
 		}
 		// DOES NOT EXIST
-		if (errorParentContainer == null) {
+		if (!handleMissingBundles) {
 			return null;
 		}
 		int sev = IStatus.ERROR;
 		String message = NLS.bind(Messages.AbstractBundleContainer_3, info.getSymbolicName());
-		if (optional) {
-			sev = IStatus.INFO;
-			message = NLS.bind(Messages.AbstractBundleContainer_4, info.getSymbolicName());
-		}
-		return new ResolvedBundle(info, errorParentContainer, new Status(sev, PDECore.PLUGIN_ID, IResolvedBundle.STATUS_PLUGIN_DOES_NOT_EXIST, message, null), null, optional, false);
+		IStatus status = new Status(sev, PDECore.PLUGIN_ID, TargetBundle.STATUS_PLUGIN_DOES_NOT_EXIST, message, null);
+		return new InvalidTargetBundle(info, status);
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#getHandle()
+	 * @see org.eclipse.pde.core.target.ITargetDefinition#getHandle()
 	 */
 	public ITargetHandle getHandle() {
 		return fHandle;
@@ -680,6 +637,8 @@ public class TargetDefinition implements ITargetDefinition {
 			abort(Messages.TargetDefinition_3, e);
 		} catch (TransformerException e) {
 			abort(Messages.TargetDefinition_3, e);
+		} catch (SAXException e) {
+			abort(Messages.TargetDefinition_3, e);
 		}
 	}
 
@@ -696,14 +655,14 @@ public class TargetDefinition implements ITargetDefinition {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#getImplicitDependencies()
+	 * @see org.eclipse.pde.core.target.ITargetDefinition#getImplicitDependencies()
 	 */
 	public NameVersionDescriptor[] getImplicitDependencies() {
 		return fImplicit;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#setImplicitDependencies(org.eclipse.pde.internal.core.target.provisional.NameVersionDescriptor[])
+	 * @see org.eclipse.pde.core.target.ITargetDefinition#setImplicitDependencies(org.eclipse.pde.core.target.NameVersionDescriptor[])
 	 */
 	public void setImplicitDependencies(NameVersionDescriptor[] bundles) {
 		if (bundles != null && bundles.length == 0) {
@@ -713,14 +672,14 @@ public class TargetDefinition implements ITargetDefinition {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#getJREContainer()
+	 * @see org.eclipse.pde.core.target.ITargetDefinition#getJREContainer()
 	 */
 	public IPath getJREContainer() {
 		return fJREContainer;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#setJREContainer(org.eclipse.core.runtime.IPath)
+	 * @see org.eclipse.pde.core.target.ITargetDefinition#setJREContainer(org.eclipse.core.runtime.IPath)
 	 */
 	public void setJREContainer(IPath containerPath) {
 		fJREContainer = containerPath;
@@ -735,10 +694,10 @@ public class TargetDefinition implements ITargetDefinition {
 	public boolean isContentEqual(ITargetDefinition definition) {
 		if (isNullOrEqual(getName(), definition.getName()) && isNullOrEqual(getArch(), definition.getArch()) && isNullOrEqual(getNL(), definition.getNL()) && isNullOrEqual(getOS(), definition.getOS()) && isNullOrEqual(getWS(), definition.getWS()) && isNullOrEqual(getProgramArguments(), definition.getProgramArguments()) && isNullOrEqual(getVMArguments(), definition.getVMArguments()) && isNullOrEqual(getJREContainer(), definition.getJREContainer())) {
 			// Check includes/optional
-			if (isNullOrEqual(getIncluded(), definition.getIncluded()) && isNullOrEqual(getOptional(), definition.getOptional())) {
+			if (isNullOrEqual(getIncluded(), definition.getIncluded())) {
 				// Check containers
-				IBundleContainer[] c1 = getBundleContainers();
-				IBundleContainer[] c2 = definition.getBundleContainers();
+				ITargetLocation[] c1 = getTargetLocations();
+				ITargetLocation[] c2 = definition.getTargetLocations();
 				if (areContainersEqual(c1, c2)) {
 					// Check implicit dependencies
 					return isNullOrEqual(getImplicitDependencies(), definition.getImplicitDependencies());
@@ -759,10 +718,10 @@ public class TargetDefinition implements ITargetDefinition {
 	public boolean isContentEquivalent(ITargetDefinition definition) {
 		if (isNullOrEqual(getArch(), definition.getArch()) && isNullOrEqual(getNL(), definition.getNL()) && isNullOrEqual(getOS(), definition.getOS()) && isNullOrEqual(getWS(), definition.getWS()) && isArgsNullOrEqual(getProgramArguments(), definition.getProgramArguments()) && isArgsNullOrEqual(getVMArguments(), definition.getVMArguments()) && isNullOrEqual(getJREContainer(), definition.getJREContainer())) {
 			// Check includes/optional
-			if (isNullOrEqual(getIncluded(), definition.getIncluded()) && isNullOrEqual(getOptional(), definition.getOptional())) {
+			if (isNullOrEqual(getIncluded(), definition.getIncluded())) {
 				// Check containers
-				IBundleContainer[] c1 = getBundleContainers();
-				IBundleContainer[] c2 = definition.getBundleContainers();
+				ITargetLocation[] c1 = getTargetLocations();
+				ITargetLocation[] c2 = definition.getTargetLocations();
 				if (areContainersEqual(c1, c2)) {
 					// Check implicit dependencies
 					return isNullOrEqual(getImplicitDependencies(), definition.getImplicitDependencies());
@@ -827,7 +786,7 @@ public class TargetDefinition implements ITargetDefinition {
 		return false;
 	}
 
-	private boolean areContainersEqual(IBundleContainer[] c1, IBundleContainer[] c2) {
+	private boolean areContainersEqual(ITargetLocation[] c1, ITargetLocation[] c2) {
 		if (c1 == null) {
 			return c2 == null;
 		}
@@ -882,7 +841,7 @@ public class TargetDefinition implements ITargetDefinition {
 	 * @param monitor progress monitor
 	 * @throws CoreException if there is a problem substituting a string variable
 	 */
-	public IFeatureModel[] getFeatureModels(String locationPath, IProgressMonitor monitor) throws CoreException {
+	public TargetFeature[] resolveFeatures(String locationPath, IProgressMonitor monitor) throws CoreException {
 		String path = locationPath;
 		if (path == null) {
 			path = TargetPlatform.getDefaultLocation();
@@ -891,50 +850,63 @@ public class TargetDefinition implements ITargetDefinition {
 			path = manager.performStringSubstitution(path);
 		}
 
-		IFeatureModel[] models = null;
+		TargetFeature[] models = null;
 		if (fFeaturesInLocation != null) {
-			models = (IFeatureModel[]) fFeaturesInLocation.get(path);
+			models = (TargetFeature[]) fFeaturesInLocation.get(path);
 		}
 
 		if (models != null) {
 			return models; /*(IFeatureModel[])models.toArray(new IFeatureModel[models.size()]);*/
 		}
 
-		models = ExternalFeatureModelManager.createModels(path, new ArrayList(), monitor);
+		models = ExternalFeatureModelManager.createFeatures(path, new ArrayList(), monitor);
 		fFeaturesInLocation.put(path, models);
 		return models;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetDefinition#getAllFeatures()
+	 * @see org.eclipse.pde.core.target.ITargetDefinition#getAllFeatures()
 	 */
-	public IFeatureModel[] getAllFeatures() {
+	public TargetFeature[] getAllFeatures() {
 		if (!isResolved()) {
 			return null;
 		}
 
-		if (fFeatureModels != null) {
-			return fFeatureModels;
+		if (fFeatures != null) {
+			return fFeatures;
 		}
 
-		IBundleContainer[] containers = getBundleContainers();
+		ITargetLocation[] containers = getTargetLocations();
 
 		// collect up all features from all containers and remove duplicates.
 		Map result = new HashMap();
 		if (containers != null && containers.length > 0) {
 			for (int i = 0; i < containers.length; i++) {
-				IFeatureModel[] currentFeatures = containers[i].getFeatures();
+				TargetFeature[] currentFeatures = containers[i].getFeatures();
 				if (currentFeatures != null && currentFeatures.length > 0) {
 					for (int j = 0; j < currentFeatures.length; j++) {
-						IFeatureModel feature = currentFeatures[j];
-						NameVersionDescriptor key = new NameVersionDescriptor(feature.getFeature().getId(), feature.getFeature().getVersion());
+						TargetFeature feature = currentFeatures[j];
+						NameVersionDescriptor key = new NameVersionDescriptor(feature.getId(), feature.getVersion());
 						result.put(key, feature);
 					}
 				}
 			}
 		}
 
-		fFeatureModels = (IFeatureModel[]) result.values().toArray(new IFeatureModel[result.size()]);
+		fFeatures = (TargetFeature[]) result.values().toArray(new TargetFeature[result.size()]);
+		fFeatureModels = new IFeatureModel[fFeatures.length];
+		for (int i = 0; i < fFeatures.length; i++) {
+
+		}
+		return fFeatures;
+	}
+
+	public IFeatureModel[] getAllFeatureModels() {
+		if (fFeatureModels != null) {
+			return fFeatureModels;
+		}
+
+		getAllFeatures();
 		return fFeatureModels;
 	}
 
@@ -944,7 +916,7 @@ public class TargetDefinition implements ITargetDefinition {
 	 * @see #getAllFeatures()
 	 * @return set of resolved bundles available in this target that don't belong to any features, possibly empty
 	 */
-	public IResolvedBundle[] getOtherBundles() {
+	public TargetBundle[] getOtherBundles() {
 		if (!isResolved()) {
 			return null;
 		}
@@ -953,13 +925,13 @@ public class TargetDefinition implements ITargetDefinition {
 			return fOtherBundles;
 		}
 
-		IResolvedBundle[] allBundles = getAllBundles();
+		TargetBundle[] allBundles = getAllBundles();
 		Map remaining = new HashMap();
 		for (int i = 0; i < allBundles.length; i++) {
 			remaining.put(allBundles[i].getBundleInfo().getSymbolicName(), allBundles[i]);
 		}
 
-		IFeatureModel[] features = getAllFeatures();
+		IFeatureModel[] features = getAllFeatureModels();
 		for (int i = 0; i < features.length; i++) {
 			IFeaturePlugin[] plugins = features[i].getFeature().getPlugins();
 			for (int j = 0; j < plugins.length; j++) {
@@ -968,7 +940,7 @@ public class TargetDefinition implements ITargetDefinition {
 		}
 
 		Collection values = remaining.values();
-		fOtherBundles = (IResolvedBundle[]) values.toArray(new IResolvedBundle[values.size()]);
+		fOtherBundles = (TargetBundle[]) values.toArray(new TargetBundle[values.size()]);
 		return fOtherBundles;
 	}
 
@@ -987,13 +959,12 @@ public class TargetDefinition implements ITargetDefinition {
 			return null;
 		}
 
-		IFeatureModel[] allFeatures = getAllFeatures();
-		IResolvedBundle[] allExtraBundles = getOtherBundles();
+		IFeatureModel[] allFeatures = getAllFeatureModels();
+		TargetBundle[] allExtraBundles = getOtherBundles();
 
 		NameVersionDescriptor[] included = getIncluded();
-		NameVersionDescriptor[] optional = getOptional();
 
-		if (included == null && optional == null) {
+		if (included == null) {
 			Set result = new HashSet();
 			result.addAll(Arrays.asList(allFeatures));
 			result.addAll(Arrays.asList(allExtraBundles));
@@ -1012,16 +983,6 @@ public class TargetDefinition implements ITargetDefinition {
 				for (int j = 0; j < allFeatures.length; j++) {
 					if (allFeatures[j].getFeature().getId().equals(included[i].getId())) {
 						result.add(allFeatures[j]);
-					}
-				}
-			}
-		}
-
-		if (optional != null) {
-			for (int i = 0; i < optional.length; i++) {
-				for (int j = 0; j < allExtraBundles.length; j++) {
-					if (allExtraBundles[j].getBundleInfo().getSymbolicName().equals(optional[i].getId())) {
-						result.add(allExtraBundles[j]);
 					}
 				}
 			}

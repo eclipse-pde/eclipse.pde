@@ -13,8 +13,15 @@
 package org.eclipse.pde.internal.core.target;
 
 import java.io.File;
+import java.io.StringWriter;
 import java.net.URI;
 import java.util.*;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.p2.director.PermissiveSlicer;
 import org.eclipse.equinox.p2.engine.IProfile;
@@ -23,9 +30,10 @@ import org.eclipse.equinox.p2.query.*;
 import org.eclipse.equinox.p2.repository.artifact.IFileArtifactRepository;
 import org.eclipse.equinox.p2.touchpoint.eclipse.query.OSGiBundleQuery;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
-import org.eclipse.pde.internal.core.target.provisional.*;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * A bundle container that references IU's in one or more repositories.
@@ -96,6 +104,12 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 */
 	private P2TargetUtils fSynchronizer;
 
+	/**
+	 * The target definition that this bundle container was last resolved in
+	 * or <code>null</code> if not resolved.
+	 */
+	private ITargetDefinition fTarget;
+
 	private static final boolean DEBUG_PROFILE;
 
 	static {
@@ -162,11 +176,22 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.AbstractBundleContainer#resolveFeatures(org.eclipse.pde.internal.core.target.provisional.ITargetDefinition, org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.pde.internal.core.target.AbstractBundleContainer#resolveFeatures(org.eclipse.pde.core.target.ITargetDefinition, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	protected IFeatureModel[] resolveFeatures(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
+	protected TargetFeature[] resolveFeatures(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
+		fTarget = definition;
 		fSynchronizer.synchronize(definition, monitor);
 		return fFeatures;
+	}
+
+	/**
+	 * Returns the target definition that was used to resolve this bundle container or <code>null</code>
+	 * if this container is not resolved.
+	 * 
+	 * @return target definition or <code>null</code>
+	 */
+	public ITargetDefinition getTarget() {
+		return isResolved() ? fTarget : null;
 	}
 
 	/**
@@ -174,7 +199,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 * NOTE: this method expects the synchronizer to be synchronized and is called
 	 * as a result of a synchronization operation.
 	 */
-	IFeatureModel[] cacheFeatures(ITargetDefinition target) throws CoreException {
+	TargetFeature[] cacheFeatures(ITargetDefinition target) throws CoreException {
 		// Ideally we would compute the list of features specific to this container but that 
 		// would require running the slicer again to follow the dependencies from this 
 		// container's roots.  Instead, here we find all features in the shared profile.  This means
@@ -184,7 +209,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		Set features = new HashSet();
 		IQueryResult queryResult = fSynchronizer.getProfile().query(QueryUtil.createIUAnyQuery(), null);
 		if (queryResult.isEmpty()) {
-			return new IFeatureModel[0];
+			return new TargetFeature[0];
 		}
 
 		for (Iterator i = queryResult.iterator(); i.hasNext();) {
@@ -199,28 +224,29 @@ public class IUBundleContainer extends AbstractBundleContainer {
 			}
 		}
 		if (features.isEmpty()) {
-			return new IFeatureModel[0];
+			return new TargetFeature[0];
 		}
 
-		// Now get feature models for all known features
-		IFeatureModel[] allFeatures = ((TargetDefinition) target).getFeatureModels(getLocation(false), new NullProgressMonitor());
+		// Now get features for all known features
+		TargetFeature[] allFeatures = ((TargetDefinition) target).resolveFeatures(getLocation(false), new NullProgressMonitor());
 
 		// Build a final set of the models for the features in the profile.
 		List result = new ArrayList();
 		for (int i = 0; i < allFeatures.length; i++) {
-			NameVersionDescriptor candidate = new NameVersionDescriptor(allFeatures[i].getFeature().getId(), allFeatures[i].getFeature().getVersion(), NameVersionDescriptor.TYPE_FEATURE);
+			NameVersionDescriptor candidate = new NameVersionDescriptor(allFeatures[i].getId(), allFeatures[i].getVersion(), NameVersionDescriptor.TYPE_FEATURE);
 			if (features.contains(candidate)) {
 				result.add(allFeatures[i]);
 			}
 		}
-		fFeatures = (IFeatureModel[]) result.toArray(new IFeatureModel[result.size()]);
+		fFeatures = (TargetFeature[]) result.toArray(new TargetFeature[result.size()]);
 		return fFeatures;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer#resolveBundles(org.eclipse.pde.internal.core.target.provisional.ITargetDefinition, org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer#resolveBundles(org.eclipse.pde.core.target.ITargetDefinition, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	protected IResolvedBundle[] resolveBundles(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
+	protected TargetBundle[] resolveBundles(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
+		fTarget = definition;
 		fSynchronizer.synchronize(definition, monitor);
 		return fBundles;
 	}
@@ -249,7 +275,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 * NOTE: this method expects the synchronizer to be synchronized and is called
 	 * as a result of a synchronization operation.
 	 */
-	IResolvedBundle[] cacheBundles(ITargetDefinition target) throws CoreException {
+	TargetBundle[] cacheBundles(ITargetDefinition target) throws CoreException {
 		// slice the profile to find the bundles attributed to this container.
 		// Look only for strict dependencies if we are using the slicer.
 		// We can always consider all platforms since the profile wouldn't contain it if it was not interesting
@@ -287,7 +313,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 			return fBundles = null;
 		}
 
-		fBundles = (ResolvedBundle[]) bundles.values().toArray(new ResolvedBundle[bundles.size()]);
+		fBundles = (TargetBundle[]) bundles.values().toArray(new TargetBundle[bundles.size()]);
 		return fBundles;
 	}
 
@@ -308,14 +334,14 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 * 
 	 * @param toUpdate the set of IU ids in this container to consider updating.  If empty
 	 * then update everything
-	 * @return a bitmasked int indicating how/if this container changed.  See DIRTY and UPDATED. 
+	 * @param monitor progress monitor or <code>null</code>
+	 * @return whether this container was changed as part of this update and must be resolved 
 	 * @exception CoreException if unable to retrieve IU's
 	 */
-	public synchronized int update(Set toUpdate, IProgressMonitor monitor) throws CoreException {
+	public synchronized boolean update(Set/*<type>*/toUpdate, IProgressMonitor monitor) throws CoreException {
 		SubMonitor progress = SubMonitor.convert(monitor, 100);
 		IQueryable source = P2TargetUtils.getQueryableMetadata(fRepos, progress.newChild(30));
-		int dirty = 0;
-		int updated = 0;
+		boolean updated = false;
 		SubMonitor loopProgress = progress.newChild(70).setWorkRemaining(fIds.length);
 		for (int i = 0; i < fIds.length; i++) {
 			if (!toUpdate.isEmpty() && !toUpdate.contains(fIds[i]))
@@ -329,19 +355,18 @@ public class IUBundleContainer extends AbstractBundleContainer {
 			IInstallableUnit iu = (IInstallableUnit) it.next();
 			// if the version is different from the spec (up or down), record the change.
 			if (!iu.getVersion().equals(fVersions[i])) {
-				updated = UpdateTargetJob.UPDATED;
+				updated = true;
 				// if the spec was not specific (e.g., 0.0.0) the target def itself has changed.
 				if (!fVersions[i].equals(Version.emptyVersion)) {
 					fVersions[i] = iu.getVersion();
-					dirty = UpdateTargetJob.DIRTY;
 				}
 			}
 		}
-		if (updated == UpdateTargetJob.UPDATED) {
+		if (!updated) {
 			// Things have changed so mark the container as unresolved
 			clearResolutionStatus();
 		}
-		return dirty | updated;
+		return updated;
 	}
 
 	protected void clearResolutionStatus() {
@@ -389,7 +414,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		for (Iterator iterator2 = artifacts.iterator(); iterator2.hasNext();) {
 			File file = repo.getArtifactFile((IArtifactKey) iterator2.next());
 			if (file != null) {
-				IResolvedBundle bundle = generateBundle(file);
+				TargetBundle bundle = new TargetBundle(file);
 				if (bundle != null) {
 					bundles.put(bundle.getBundleInfo(), bundle);
 				}
@@ -576,5 +601,49 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		fSynchronizer.setIncludeAllRequired((fFlags & INCLUDE_REQUIRED) == INCLUDE_REQUIRED);
 		fSynchronizer.setIncludeAllEnvironments((fFlags & INCLUDE_ALL_ENVIRONMENTS) == INCLUDE_ALL_ENVIRONMENTS);
 		fSynchronizer.setIncludeSource((fFlags & INCLUDE_SOURCE) == INCLUDE_SOURCE);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.AbstractBundleContainer#serialize()
+	 */
+	public String serialize() {
+		Element containerElement;
+		Document document;
+		try {
+			DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			document = docBuilder.newDocument();
+			containerElement = document.createElement(TargetDefinitionPersistenceHelper.LOCATION);
+		} catch (Exception e) {
+			return null;
+		}
+		containerElement.setAttribute(TargetDefinitionPersistenceHelper.ATTR_LOCATION_TYPE, getType());
+		containerElement.setAttribute(TargetDefinitionPersistenceHelper.ATTR_INCLUDE_MODE, getIncludeAllRequired() ? TargetDefinitionPersistenceHelper.MODE_PLANNER : TargetDefinitionPersistenceHelper.MODE_SLICER);
+		containerElement.setAttribute(TargetDefinitionPersistenceHelper.ATTR_INCLUDE_ALL_PLATFORMS, Boolean.toString(getIncludeAllEnvironments()));
+		containerElement.setAttribute(TargetDefinitionPersistenceHelper.ATTR_INCLUDE_SOURCE, Boolean.toString(getIncludeSource()));
+		String[] ids = getIds();
+		Version[] versions = getVersions();
+		for (int i = 0; i < ids.length; i++) {
+			Element unit = document.createElement(TargetDefinitionPersistenceHelper.INSTALLABLE_UNIT);
+			unit.setAttribute(TargetDefinitionPersistenceHelper.ATTR_ID, ids[i]);
+			unit.setAttribute(TargetDefinitionPersistenceHelper.ATTR_VERSION, versions[i].toString());
+			containerElement.appendChild(unit);
+		}
+		URI[] repositories = getRepositories();
+		if (repositories != null) {
+			for (int i = 0; i < repositories.length; i++) {
+				Element repo = document.createElement(TargetDefinitionPersistenceHelper.REPOSITORY);
+				repo.setAttribute(TargetDefinitionPersistenceHelper.LOCATION, repositories[i].toASCIIString());
+				containerElement.appendChild(repo);
+			}
+		}
+
+		try {
+			document.appendChild(containerElement);
+			StreamResult result = new StreamResult(new StringWriter());
+			TransformerFactory.newInstance().newTransformer().transform(new DOMSource(document), result);
+			return result.getWriter().toString();
+		} catch (TransformerException ex) {
+			return null;
+		}
 	}
 }

@@ -1,5 +1,5 @@
 /******************************************************************************* 
-* Copyright (c) 2010 EclipseSource and others. All rights reserved. This
+* Copyright (c) 2010, 2011 EclipseSource and others. All rights reserved. This
 * program and the accompanying materials are made available under the terms of
 * the Eclipse Public License v1.0 which accompanies this distribution, and is
 * available at http://www.eclipse.org/legal/epl-v10.html
@@ -9,6 +9,8 @@
 *   IBM - Further improvements
 ******************************************************************************/
 package org.eclipse.pde.internal.ui.search.dialogs;
+
+import org.eclipse.pde.core.target.*;
 
 import java.net.URI;
 import java.util.HashSet;
@@ -22,7 +24,6 @@ import org.eclipse.equinox.p2.query.QueryUtil;
 import org.eclipse.jface.window.Window;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.target.IUBundleContainer;
-import org.eclipse.pde.internal.core.target.provisional.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
@@ -80,15 +81,15 @@ public class TargetRepositorySearchHandler extends AbstractHandler implements IH
 		ITargetDefinition definition = currentTarget.getTargetDefinition();
 		// Force the target into slicer mode as all requirements may not be available
 		int flags = IUBundleContainer.INCLUDE_ALL_ENVIRONMENTS | IUBundleContainer.INCLUDE_SOURCE;
-		IUBundleContainer container = (IUBundleContainer) service.newIUContainer(units, repositories, flags);
-		IBundleContainer[] oldContainers = definition.getBundleContainers();
+		IUBundleContainer container = (IUBundleContainer) service.newIULocation(units, repositories, flags);
+		ITargetLocation[] oldContainers = definition.getTargetLocations();
 		if (oldContainers == null) {
-			definition.setBundleContainers(new IBundleContainer[] {container});
+			definition.setTargetLocations(new ITargetLocation[] {container});
 		} else {
-			IBundleContainer[] newContainers = new IBundleContainer[oldContainers.length + 1];
+			ITargetLocation[] newContainers = new ITargetLocation[oldContainers.length + 1];
 			System.arraycopy(oldContainers, 0, newContainers, 0, oldContainers.length);
 			newContainers[newContainers.length - 1] = container;
-			definition.setBundleContainers(newContainers);
+			definition.setTargetLocations(newContainers);
 			service.saveTargetDefinition(definition);
 			LoadTargetDefinitionJob.load(definition);
 		}

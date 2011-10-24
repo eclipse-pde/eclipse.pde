@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target;
 
+import org.eclipse.pde.core.target.ITargetDefinition;
+import org.eclipse.pde.core.target.ITargetHandle;
+
 import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -17,8 +20,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
-import org.eclipse.pde.internal.core.target.provisional.ITargetHandle;
 
 /**
  * A handle to a target stored with workspace metadata.
@@ -113,7 +114,7 @@ public class LocalTargetHandle extends AbstractTargetHandle {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetHandle#getMemento()
+	 * @see org.eclipse.pde.core.target.ITargetHandle#getMemento()
 	 */
 	public String getMemento() throws CoreException {
 		try {
@@ -125,7 +126,7 @@ public class LocalTargetHandle extends AbstractTargetHandle {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetHandle#exists()
+	 * @see org.eclipse.pde.core.target.ITargetHandle#exists()
 	 */
 	public boolean exists() {
 		return getFile().exists();
@@ -195,7 +196,7 @@ public class LocalTargetHandle extends AbstractTargetHandle {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.impl.AbstractTargetHandle#save(org.eclipse.pde.internal.core.target.provisional.ITargetDefinition)
+	 * @see org.eclipse.pde.internal.core.target.impl.AbstractTargetHandle#save(org.eclipse.pde.core.target.ITargetDefinition)
 	 */
 	void save(ITargetDefinition definition) throws CoreException {
 		OutputStream stream = getOutputStream();

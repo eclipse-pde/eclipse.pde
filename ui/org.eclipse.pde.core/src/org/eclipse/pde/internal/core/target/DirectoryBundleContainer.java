@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 IBM Corporation and others.
+ * Copyright (c) 2008, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,11 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
-import org.eclipse.pde.internal.core.target.provisional.IResolvedBundle;
-import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
 
 /**
  * A directory of bundles.
@@ -66,9 +64,9 @@ public class DirectoryBundleContainer extends AbstractBundleContainer {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer#resolveBundles(org.eclipse.pde.internal.core.target.provisional.ITargetDefinition, org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer#resolveBundles(org.eclipse.pde.core.target.ITargetDefinition, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	protected IResolvedBundle[] resolveBundles(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
+	protected TargetBundle[] resolveBundles(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
 		File dir = getDirectory();
 		if (dir.isDirectory()) {
 			File site = getSite(dir);
@@ -77,10 +75,10 @@ public class DirectoryBundleContainer extends AbstractBundleContainer {
 			List bundles = new ArrayList(files.length);
 			for (int i = 0; i < files.length; i++) {
 				if (localMonitor.isCanceled()) {
-					return new IResolvedBundle[0];
+					return new TargetBundle[0];
 				}
 				try {
-					IResolvedBundle rb = generateBundle(files[i]);
+					TargetBundle rb = new TargetBundle(files[i]);
 					if (rb != null) {
 						bundles.add(rb);
 					}
@@ -90,19 +88,19 @@ public class DirectoryBundleContainer extends AbstractBundleContainer {
 				localMonitor.worked(1);
 			}
 			localMonitor.done();
-			return (IResolvedBundle[]) bundles.toArray(new IResolvedBundle[bundles.size()]);
+			return (TargetBundle[]) bundles.toArray(new TargetBundle[bundles.size()]);
 		}
 		throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.DirectoryBundleContainer_1, dir.toString())));
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.AbstractBundleContainer#resolveFeatures(org.eclipse.pde.internal.core.target.provisional.ITargetDefinition, org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.pde.internal.core.target.AbstractBundleContainer#resolveFeatures(org.eclipse.pde.core.target.ITargetDefinition, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	protected IFeatureModel[] resolveFeatures(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
+	protected TargetFeature[] resolveFeatures(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
 		if (definition instanceof TargetDefinition) {
-			return ((TargetDefinition) definition).getFeatureModels(getLocation(false), monitor);
+			return ((TargetDefinition) definition).resolveFeatures(getLocation(false), monitor);
 		}
-		return new IFeatureModel[0];
+		return new TargetFeature[0];
 	}
 
 	/**

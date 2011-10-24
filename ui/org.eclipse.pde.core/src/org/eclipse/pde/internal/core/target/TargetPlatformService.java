@@ -21,8 +21,8 @@ import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.target.provisional.*;
 
 /**
  * Target platform service implementation.
@@ -83,7 +83,7 @@ public class TargetPlatformService implements ITargetPlatformService {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService#deleteTarget(org.eclipse.pde.internal.core.target.provisional.ITargetHandle)
+	 * @see org.eclipse.pde.core.target.ITargetPlatformService#deleteTarget(org.eclipse.pde.core.target.ITargetHandle)
 	 */
 	public void deleteTarget(ITargetHandle handle) throws CoreException {
 		if (handle instanceof ExternalFileTargetHandle)
@@ -92,14 +92,14 @@ public class TargetPlatformService implements ITargetPlatformService {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService#getTarget(org.eclipse.core.resources.IFile)
+	 * @see org.eclipse.pde.core.target.ITargetPlatformService#getTarget(org.eclipse.core.resources.IFile)
 	 */
 	public ITargetHandle getTarget(IFile file) {
 		return new WorkspaceFileTargetHandle(file);
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService#getTarget(java.lang.String)
+	 * @see org.eclipse.pde.core.target.ITargetPlatformService#getTarget(java.lang.String)
 	 */
 	public ITargetHandle getTarget(String memento) throws CoreException {
 		try {
@@ -119,7 +119,7 @@ public class TargetPlatformService implements ITargetPlatformService {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService#getTarget(java.net.URI)
+	 * @see org.eclipse.pde.core.target.ITargetPlatformService#getTarget(java.net.URI)
 	 */
 	public ITargetHandle getTarget(URI uri) {
 		if (fExtTargetHandles == null)
@@ -133,7 +133,7 @@ public class TargetPlatformService implements ITargetPlatformService {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService#getTargets(org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.pde.core.target.ITargetPlatformService#getTargets(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public ITargetHandle[] getTargets(IProgressMonitor monitor) {
 		List local = findLocalTargetDefinitions();
@@ -217,42 +217,42 @@ public class TargetPlatformService implements ITargetPlatformService {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService#newDirectoryContainer(java.lang.String)
+	 * @see org.eclipse.pde.core.target.ITargetPlatformService#newDirectoryLocation(java.lang.String)
 	 */
-	public IBundleContainer newDirectoryContainer(String path) {
+	public ITargetLocation newDirectoryLocation(String path) {
 		return new DirectoryBundleContainer(path);
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService#newProfileContainer(java.lang.String, java.lang.String)
+	 * @see org.eclipse.pde.core.target.ITargetPlatformService#newProfileLocation(java.lang.String, java.lang.String)
 	 */
-	public IBundleContainer newProfileContainer(String home, String configurationLocation) {
+	public ITargetLocation newProfileLocation(String home, String configurationLocation) {
 		return new ProfileBundleContainer(home, configurationLocation);
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService#newTarget()
+	 * @see org.eclipse.pde.core.target.ITargetPlatformService#newTarget()
 	 */
 	public ITargetDefinition newTarget() {
 		return new TargetDefinition(new LocalTargetHandle());
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService#saveTargetDefinition(org.eclipse.pde.internal.core.target.provisional.ITargetDefinition)
+	 * @see org.eclipse.pde.core.target.ITargetPlatformService#saveTargetDefinition(org.eclipse.pde.core.target.ITargetDefinition)
 	 */
 	public void saveTargetDefinition(ITargetDefinition definition) throws CoreException {
 		((AbstractTargetHandle) definition.getHandle()).save(definition);
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService#newFeatureContainer(java.lang.String, java.lang.String, java.lang.String)
+	 * @see org.eclipse.pde.core.target.ITargetPlatformService#newFeatureLocation(java.lang.String, java.lang.String, java.lang.String)
 	 */
-	public IBundleContainer newFeatureContainer(String home, String id, String version) {
+	public ITargetLocation newFeatureLocation(String home, String id, String version) {
 		return new FeatureBundleContainer(home, id, version);
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService#getWorkspaceTargetDefinition()
+	 * @see org.eclipse.pde.core.target.ITargetPlatformService#getWorkspaceTargetDefinition()
 	 */
 	public ITargetHandle getWorkspaceTargetHandle() throws CoreException {
 		// If the plug-in registry has not been initialized we may not have a target set, getting the start forces the init
@@ -270,7 +270,7 @@ public class TargetPlatformService implements ITargetPlatformService {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService#copyTargetDefinition(org.eclipse.pde.internal.core.target.provisional.ITargetDefinition, org.eclipse.pde.internal.core.target.provisional.ITargetDefinition)
+	 * @see org.eclipse.pde.core.target.ITargetPlatformService#copyTargetDefinition(org.eclipse.pde.core.target.ITargetDefinition, org.eclipse.pde.core.target.ITargetDefinition)
 	 */
 	public void copyTargetDefinition(ITargetDefinition from, ITargetDefinition to) throws CoreException {
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -280,7 +280,7 @@ public class TargetPlatformService implements ITargetPlatformService {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService#loadTargetDefinition(org.eclipse.pde.internal.core.target.provisional.ITargetDefinition, java.lang.String)
+	 * @see org.eclipse.pde.core.target.ITargetPlatformService#loadTargetDefinition(org.eclipse.pde.core.target.ITargetDefinition, java.lang.String)
 	 */
 	public void loadTargetDefinition(ITargetDefinition definition, String targetExtensionId) throws CoreException {
 		IConfigurationElement elem = PDECore.getDefault().getTargetProfileManager().getTarget(targetExtensionId);
@@ -408,14 +408,14 @@ public class TargetPlatformService implements ITargetPlatformService {
 		} else {
 			home = preferences.getString(ICoreConstants.PLATFORM_PATH);
 		}
-		IBundleContainer primary = null;
+		ITargetLocation primary = null;
 		if (profile) {
-			primary = newProfileContainer(home, configLocation);
+			primary = newProfileLocation(home, configLocation);
 		} else {
-			primary = newDirectoryContainer(home);
+			primary = newDirectoryLocation(home);
 		}
 		target.setName(Messages.TargetPlatformService_5);
-		target.setBundleContainers(new IBundleContainer[] {primary});
+		target.setTargetLocations(new ITargetLocation[] {primary});
 	}
 
 	private void initializeAdditionalLocsInfo(PDEPreferencesManager preferences, ITargetDefinition target) {
@@ -423,13 +423,13 @@ public class TargetPlatformService implements ITargetPlatformService {
 		StringTokenizer tokenizer = new StringTokenizer(additional, ","); //$NON-NLS-1$
 		int size = tokenizer.countTokens();
 		if (size > 0) {
-			IBundleContainer[] locations = new IBundleContainer[size + 1];
-			locations[0] = target.getBundleContainers()[0];
+			ITargetLocation[] locations = new ITargetLocation[size + 1];
+			locations[0] = target.getTargetLocations()[0];
 			int i = 1;
 			while (tokenizer.hasMoreTokens()) {
-				locations[i++] = newDirectoryContainer(tokenizer.nextToken().trim());
+				locations[i++] = newDirectoryLocation(tokenizer.nextToken().trim());
 			}
-			target.setBundleContainers(locations);
+			target.setTargetLocations(locations);
 		}
 	}
 
@@ -441,7 +441,7 @@ public class TargetPlatformService implements ITargetPlatformService {
 		String value = preferences.getString(ICoreConstants.CHECKED_PLUGINS);
 		if (value.length() == 0 || value.equals(ICoreConstants.VALUE_SAVED_NONE)) {
 			// no bundles
-			target.setBundleContainers(null);
+			target.setTargetLocations(null);
 			return;
 		}
 		if (!value.equals(ICoreConstants.VALUE_SAVED_ALL)) {
@@ -505,8 +505,8 @@ public class TargetPlatformService implements ITargetPlatformService {
 				}
 			}
 		}
-		IBundleContainer container = newProfileContainer("${eclipse_home}", configLocation); //$NON-NLS-1$
-		target.setBundleContainers(new IBundleContainer[] {container});
+		ITargetLocation container = newProfileLocation("${eclipse_home}", configLocation); //$NON-NLS-1$
+		target.setTargetLocations(new ITargetLocation[] {container});
 		target.setName(Messages.TargetPlatformService_7);
 		PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
 
@@ -521,7 +521,7 @@ public class TargetPlatformService implements ITargetPlatformService {
 		target.setNL(value);
 
 		// initialize vm arguments from the default container
-		IBundleContainer[] containers = target.getBundleContainers();
+		ITargetLocation[] containers = target.getTargetLocations();
 		StringBuffer arguments = new StringBuffer(""); //$NON-NLS-1$
 		for (int i = 0; i < containers.length; i++) {
 			String[] vmargs = containers[i].getVMArguments();
@@ -537,7 +537,7 @@ public class TargetPlatformService implements ITargetPlatformService {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService#compareWithTargetPlatform(org.eclipse.pde.internal.core.target.provisional.ITargetDefinition)
+	 * @see org.eclipse.pde.core.target.ITargetPlatformService#compareWithTargetPlatform(org.eclipse.pde.core.target.ITargetDefinition)
 	 */
 	public IStatus compareWithTargetPlatform(ITargetDefinition target) throws CoreException {
 		if (!target.isResolved()) {
@@ -556,10 +556,10 @@ public class TargetPlatformService implements ITargetPlatformService {
 
 		// Compare the platform bundles against the definition ones and collect any missing bundles
 		MultiStatus multi = new MultiStatus(PDECore.PLUGIN_ID, 0, "", null); //$NON-NLS-1$ 
-		IResolvedBundle[] bundles = target.getAllBundles();
+		TargetBundle[] bundles = target.getAllBundles();
 		Set alreadyConsidered = new HashSet(bundles.length);
 		for (int i = 0; i < bundles.length; i++) {
-			IResolvedBundle bundle = bundles[i];
+			TargetBundle bundle = bundles[i];
 			BundleInfo info = bundle.getBundleInfo();
 			File file = URIUtil.toFile(info.getLocation());
 			String location = file.getAbsolutePath();
@@ -572,7 +572,7 @@ public class TargetPlatformService implements ITargetPlatformService {
 					// it's not in the state... if it's not really in the target either (missing) this
 					// is not an error
 					IStatus status = bundle.getStatus();
-					if (status.isOK() || (status.getCode() != IResolvedBundle.STATUS_PLUGIN_DOES_NOT_EXIST && status.getCode() != IResolvedBundle.STATUS_FEATURE_DOES_NOT_EXIST && status.getCode() != IResolvedBundle.STATUS_VERSION_DOES_NOT_EXIST)) {
+					if (status.isOK() || (status.getCode() != TargetBundle.STATUS_PLUGIN_DOES_NOT_EXIST && status.getCode() != TargetBundle.STATUS_FEATURE_DOES_NOT_EXIST && status.getCode() != TargetBundle.STATUS_VERSION_DOES_NOT_EXIST)) {
 						// its in the target, missing in the state
 						IStatus s = new Status(IStatus.WARNING, PDECore.PLUGIN_ID, ITargetPlatformService.STATUS_MISSING_FROM_TARGET_PLATFORM, bundle.getBundleInfo().getSymbolicName(), null);
 						multi.add(s);
@@ -597,16 +597,17 @@ public class TargetPlatformService implements ITargetPlatformService {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService#newIUContainer(org.eclipse.equinox.p2.metadata.IInstallableUnit[], java.net.URI[], int)
+	 * @see org.eclipse.pde.core.target.ITargetPlatformService#newIULocation(org.eclipse.equinox.p2.metadata.IInstallableUnit[], java.net.URI[], int)
 	 */
-	public IBundleContainer newIUContainer(IInstallableUnit[] units, URI[] repositories, int resolutionFlags) {
+	public ITargetLocation newIULocation(IInstallableUnit[] units, URI[] repositories, int resolutionFlags) {
 		return new IUBundleContainer(units, repositories, resolutionFlags);
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService#newIUContainer(java.lang.String[], java.lang.String[], java.net.URI[], int)
+	 * @see org.eclipse.pde.core.target.ITargetPlatformService#newIULocation(java.lang.String[], java.lang.String[], java.net.URI[], int)
 	 */
-	public IBundleContainer newIUContainer(String[] unitIds, String[] versions, URI[] repositories, int resolutionFlags) {
+	public ITargetLocation newIULocation(String[] unitIds, String[] versions, URI[] repositories, int resolutionFlags) {
 		return new IUBundleContainer(unitIds, versions, repositories, resolutionFlags);
 	}
+
 }

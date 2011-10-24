@@ -15,7 +15,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.core.runtime.*;
-import org.eclipse.pde.internal.core.target.provisional.*;
+import org.eclipse.pde.core.target.*;
 import org.w3c.dom.*;
 
 /**
@@ -71,8 +71,8 @@ public class TargetPersistence36Helper {
 							}
 						}
 					}
-					definition.setBundleContainers((IBundleContainer[]) bundleContainers.toArray(new IBundleContainer[bundleContainers.size()]));
-				} else if (nodeName.equalsIgnoreCase(TargetDefinitionPersistenceHelper.INCLUDE_BUNDLES)) {
+					definition.setTargetLocations((ITargetLocation[]) bundleContainers.toArray(new ITargetLocation[bundleContainers.size()]));
+				} else if (nodeName.equalsIgnoreCase(TargetDefinitionPersistenceHelper.INCLUDE_BUNDLES) || nodeName.equalsIgnoreCase(TargetPersistence35Helper.OPTIONAL_BUNDLES)) {
 					NodeList children = element.getChildNodes();
 					List included = new ArrayList();
 					for (int j = 0; j < children.getLength(); ++j) {
@@ -90,22 +90,18 @@ public class TargetPersistence36Helper {
 							}
 						}
 					}
-					definition.setIncluded((NameVersionDescriptor[]) included.toArray(new NameVersionDescriptor[included.size()]));
-				} else if (nodeName.equalsIgnoreCase(TargetDefinitionPersistenceHelper.OPTIONAL_BUNDLES)) {
-					NodeList children = element.getChildNodes();
-					List optional = new ArrayList();
-					for (int j = 0; j < children.getLength(); ++j) {
-						Node child = children.item(j);
-						if (child.getNodeType() == Node.ELEMENT_NODE) {
-							Element optionalElement = (Element) child;
-							if (optionalElement.getNodeName().equalsIgnoreCase(TargetDefinitionPersistenceHelper.PLUGIN)) {
-								String id = optionalElement.getAttribute(TargetDefinitionPersistenceHelper.ATTR_ID);
-								String version = optionalElement.getAttribute(TargetDefinitionPersistenceHelper.ATTR_VERSION);
-								optional.add(new NameVersionDescriptor(id, version.length() > 0 ? version : null));
-							}
+					// Don't overwrite includes with optional or vice versa
+					NameVersionDescriptor[] previousIncluded = definition.getIncluded();
+					if (previousIncluded == null || previousIncluded.length == 0) {
+						definition.setIncluded((NameVersionDescriptor[]) included.toArray(new NameVersionDescriptor[included.size()]));
+					} else {
+						List allIncluded = new ArrayList();
+						for (int j = 0; j < previousIncluded.length; j++) {
+							allIncluded.add(previousIncluded[j]);
 						}
+						allIncluded.addAll(included);
+						definition.setIncluded((NameVersionDescriptor[]) allIncluded.toArray(new NameVersionDescriptor[included.size()]));
 					}
-					definition.setOptional((NameVersionDescriptor[]) optional.toArray(new NameVersionDescriptor[optional.size()]));
 				} else if (nodeName.equalsIgnoreCase(TargetDefinitionPersistenceHelper.ENVIRONMENT)) {
 					NodeList envEntries = element.getChildNodes();
 					for (int j = 0; j < envEntries.getLength(); ++j) {
@@ -177,10 +173,10 @@ public class TargetPersistence36Helper {
 	 * sets may be null to indicate that no container has specified inclusion restrictions yet.
 	 * 
 	 * @param location document element representing a bundle container
-	 * @return bundle container instance
+	 * @return target location instance
 	 * @throws CoreException
 	 */
-	private static IBundleContainer deserializeBundleContainer(Element location) throws CoreException {
+	private static ITargetLocation deserializeBundleContainer(Element location) throws CoreException {
 		String path = location.getAttribute(TargetDefinitionPersistenceHelper.ATTR_LOCATION_PATH);
 		String type = location.getAttribute(TargetDefinitionPersistenceHelper.ATTR_LOCATION_TYPE);
 		if (type.length() == 0) {
@@ -190,15 +186,15 @@ public class TargetPersistence36Helper {
 				type = ProfileBundleContainer.TYPE;
 			}
 		}
-		IBundleContainer container = null;
+		ITargetLocation container = null;
 		if (DirectoryBundleContainer.TYPE.equals(type)) {
-			container = TargetDefinitionPersistenceHelper.getTargetPlatformService().newDirectoryContainer(path);
+			container = TargetDefinitionPersistenceHelper.getTargetPlatformService().newDirectoryLocation(path);
 		} else if (ProfileBundleContainer.TYPE.equals(type)) {
 			String configArea = location.getAttribute(TargetDefinitionPersistenceHelper.ATTR_CONFIGURATION);
-			container = TargetDefinitionPersistenceHelper.getTargetPlatformService().newProfileContainer(path, configArea.length() > 0 ? configArea : null);
+			container = TargetDefinitionPersistenceHelper.getTargetPlatformService().newProfileLocation(path, configArea.length() > 0 ? configArea : null);
 		} else if (FeatureBundleContainer.TYPE.equals(type)) {
 			String version = location.getAttribute(TargetDefinitionPersistenceHelper.ATTR_VERSION);
-			container = TargetDefinitionPersistenceHelper.getTargetPlatformService().newFeatureContainer(path, location.getAttribute(TargetDefinitionPersistenceHelper.ATTR_ID), version.length() > 0 ? version : null);
+			container = TargetDefinitionPersistenceHelper.getTargetPlatformService().newFeatureLocation(path, location.getAttribute(TargetDefinitionPersistenceHelper.ATTR_ID), version.length() > 0 ? version : null);
 		} else if (IUBundleContainer.TYPE.equals(type)) {
 			String includeMode = location.getAttribute(TargetDefinitionPersistenceHelper.ATTR_INCLUDE_MODE);
 			String includeAllPlatforms = location.getAttribute(TargetDefinitionPersistenceHelper.ATTR_INCLUDE_ALL_PLATFORMS);

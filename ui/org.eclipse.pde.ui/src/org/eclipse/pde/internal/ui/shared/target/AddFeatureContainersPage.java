@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.shared.target;
 
+import org.eclipse.pde.core.target.ITargetLocation;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +22,6 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.feature.ExternalFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
-import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -35,7 +36,7 @@ import org.eclipse.ui.PlatformUI;
  * 
  * @see AddBundleContainerWizard
  * @see AddBundleContainerSelectionPage
- * @see IBundleContainer
+ * @see ITargetLocation
  */
 public class AddFeatureContainersPage extends EditDirectoryContainerPage {
 
@@ -210,11 +211,11 @@ public class AddFeatureContainersPage extends EditDirectoryContainerPage {
 	}
 
 	/**
-	 * This wizard will be returning multiple containers, not just one so we can't just use {@link #getBundleContainer()}
+	 * This wizard will be returning multiple containers, not just one so we can't just use {@link #getTargetLocation()}
 	 * @return array of containers created by this wizard
 	 * @throws CoreException if there was a problem acquiring the target service
 	 */
-	public IBundleContainer[] getBundleContainers() throws CoreException {
+	public ITargetLocation[] getBundleContainers() throws CoreException {
 		Object[] elements = fFeatureTable.getCheckedElements();
 		List containers = new ArrayList(elements.length);
 		for (int i = 0; i < elements.length; i++) {
@@ -229,13 +230,13 @@ public class AddFeatureContainersPage extends EditDirectoryContainerPage {
 					location = location.getParentFile();
 				}
 
-				containers.add(getTargetPlatformService().newFeatureContainer(location.getPath(), ((IFeatureModel) elements[i]).getFeature().getId(), version));
+				containers.add(getTargetPlatformService().newFeatureLocation(location.getPath(), ((IFeatureModel) elements[i]).getFeature().getId(), version));
 			}
 		}
 		if (containers.size() == 0) {
 			return null;
 		}
-		return (IBundleContainer[]) containers.toArray(new IBundleContainer[containers.size()]);
+		return (ITargetLocation[]) containers.toArray(new ITargetLocation[containers.size()]);
 	}
 
 	/**

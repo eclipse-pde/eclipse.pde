@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target;
 
+import org.eclipse.pde.core.target.*;
+
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -35,7 +37,6 @@ import org.eclipse.equinox.p2.repository.artifact.*;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.target.provisional.*;
 import org.osgi.framework.*;
 
 public class P2TargetUtils {
@@ -493,7 +494,7 @@ public class P2TargetUtils {
 			IInstallableUnit unit = (IInstallableUnit) iterator.next();
 			installedIUs.add(new NameVersionDescriptor(unit.getId(), unit.getVersion().toString()));
 		}
-		IBundleContainer[] containers = target.getBundleContainers();
+		ITargetLocation[] containers = target.getTargetLocations();
 		if (containers == null) {
 			return installedIUs.isEmpty();
 		}
@@ -730,10 +731,10 @@ public class P2TargetUtils {
 		// the container caches (e.g., featureModels)
 		((TargetDefinition) target).flushCaches(P2TargetUtils.BUNDLE_POOL.toOSString());
 		// Now proactively recompute all the related container caches.
-		IBundleContainer[] containers = target.getBundleContainers();
+		ITargetLocation[] containers = target.getTargetLocations();
 		if (containers != null) {
 			for (int i = 0; i < containers.length; i++) {
-				IBundleContainer container = containers[i];
+				ITargetLocation container = containers[i];
 				if (container instanceof IUBundleContainer) {
 					((IUBundleContainer) container).synchronizerChanged(target);
 				}
@@ -1186,10 +1187,10 @@ public class P2TargetUtils {
 	 */
 	private URI[] getArtifactRepositories(ITargetDefinition target) throws CoreException {
 		Set result = new HashSet();
-		IBundleContainer[] containers = target.getBundleContainers();
+		ITargetLocation[] containers = target.getTargetLocations();
 		IArtifactRepositoryManager manager = getArtifactRepositoryManager();
 		for (int i = 0; i < containers.length; i++) {
-			IBundleContainer container = containers[i];
+			ITargetLocation container = containers[i];
 			if (container instanceof IUBundleContainer) {
 				URI[] repos = ((IUBundleContainer) container).getRepositories();
 				if (repos == null) {
@@ -1291,9 +1292,9 @@ public class P2TargetUtils {
 	 */
 	private IInstallableUnit[] getRootIUs(ITargetDefinition definition) throws CoreException {
 		HashSet result = new HashSet();
-		IBundleContainer[] containers = definition.getBundleContainers();
+		ITargetLocation[] containers = definition.getTargetLocations();
 		for (int i = 0; i < containers.length; i++) {
-			IBundleContainer container = containers[i];
+			ITargetLocation container = containers[i];
 			if (container instanceof IUBundleContainer) {
 				IUBundleContainer iuContainer = (IUBundleContainer) container;
 				IQueryable repos = getQueryableMetadata(iuContainer.getRepositories(), new NullProgressMonitor());
@@ -1320,10 +1321,10 @@ public class P2TargetUtils {
 	 */
 	private URI[] getMetadataRepositories(ITargetDefinition target) throws CoreException {
 		Set result = new HashSet();
-		IBundleContainer[] containers = target.getBundleContainers();
+		ITargetLocation[] containers = target.getTargetLocations();
 		IMetadataRepositoryManager manager = getRepoManager();
 		for (int i = 0; i < containers.length; i++) {
-			IBundleContainer container = containers[i];
+			ITargetLocation container = containers[i];
 			if (container instanceof IUBundleContainer) {
 				URI[] repos = ((IUBundleContainer) container).getRepositories();
 				if (repos == null) {

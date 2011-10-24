@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
-import org.eclipse.pde.internal.core.target.provisional.*;
+import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.internal.core.util.VMUtil;
 import org.w3c.dom.*;
 
@@ -183,10 +183,10 @@ public class TargetPersistence34Helper {
 				}
 			}
 		}
-		definition.setBundleContainers((IBundleContainer[]) bundleContainers.toArray(new IBundleContainer[bundleContainers.size()]));
+		definition.setTargetLocations((ITargetLocation[]) bundleContainers.toArray(new ITargetLocation[bundleContainers.size()]));
 	}
 
-	private static IBundleContainer deserializeBundleContainer(Element location) throws CoreException {
+	private static ITargetLocation deserializeBundleContainer(Element location) throws CoreException {
 		String def = location.getAttribute(TargetDefinitionPersistenceHelper.ATTR_USE_DEFAULT);
 		String path = null;
 		String type = null;
@@ -204,12 +204,12 @@ public class TargetPersistence34Helper {
 				type = ProfileBundleContainer.TYPE;
 			}
 		}
-		IBundleContainer container = null;
+		ITargetLocation container = null;
 		if (DirectoryBundleContainer.TYPE.equals(type)) {
-			container = TargetDefinitionPersistenceHelper.getTargetPlatformService().newDirectoryContainer(path);
+			container = TargetDefinitionPersistenceHelper.getTargetPlatformService().newDirectoryLocation(path);
 		} else if (ProfileBundleContainer.TYPE.equals(type)) {
 			String configArea = location.getAttribute(TargetDefinitionPersistenceHelper.ATTR_CONFIGURATION);
-			container = TargetDefinitionPersistenceHelper.getTargetPlatformService().newProfileContainer(path, configArea.length() > 0 ? configArea : null);
+			container = TargetDefinitionPersistenceHelper.getTargetPlatformService().newProfileLocation(path, configArea.length() > 0 ? configArea : null);
 		}
 
 		return container;
@@ -227,7 +227,6 @@ public class TargetPersistence34Helper {
 		List containers = new ArrayList();
 		NodeList list = content.getChildNodes();
 		List included = new ArrayList(list.getLength());
-		List optional = new ArrayList();
 		for (int i = 0; i < list.getLength(); ++i) {
 			Node node = list.item(i);
 			if (node.getNodeType() == Node.ELEMENT_NODE) {
@@ -239,19 +238,14 @@ public class TargetPersistence34Helper {
 						if (lNode.getNodeType() == Node.ELEMENT_NODE) {
 							Element plugin = (Element) lNode;
 							String id = plugin.getAttribute(TargetDefinitionPersistenceHelper.ATTR_ID);
-							boolean isOptional = plugin.getAttribute(TargetDefinitionPersistenceHelper.ATTR_OPTIONAL).equalsIgnoreCase(Boolean.toString(true));
 							if (id.length() > 0) {
 								NameVersionDescriptor info = new NameVersionDescriptor(id, null);
-								if (isOptional) {
-									optional.add(info);
-								} else {
-									included.add(info);
-								}
+								included.add(info);
 							}
 						}
 					}
 					// Primary container is only added by default if useAllPlugins='true'
-					if (included.size() > 0 || optional.size() > 0) {
+					if (included.size() > 0) {
 						containers.add(primaryContainer);
 					}
 				} else if (element.getNodeName().equalsIgnoreCase(TargetDefinitionPersistenceHelper.EXTRA_LOCATIONS)) {
@@ -262,7 +256,7 @@ public class TargetPersistence34Helper {
 							Element location = (Element) lNode;
 							String path = location.getAttribute(TargetDefinitionPersistenceHelper.ATTR_LOCATION_PATH);
 							if (path.length() > 0) {
-								containers.add(TargetDefinitionPersistenceHelper.getTargetPlatformService().newDirectoryContainer(path));
+								containers.add(TargetDefinitionPersistenceHelper.getTargetPlatformService().newDirectoryLocation(path));
 							}
 						}
 					}
@@ -275,7 +269,7 @@ public class TargetPersistence34Helper {
 							String id = feature.getAttribute(TargetDefinitionPersistenceHelper.ATTR_ID);
 							if (id.length() > 0) {
 								if (primaryContainer != null) {
-									containers.add(TargetDefinitionPersistenceHelper.getTargetPlatformService().newFeatureContainer(primaryContainer.getLocation(false), id, null));
+									containers.add(TargetDefinitionPersistenceHelper.getTargetPlatformService().newFeatureLocation(primaryContainer.getLocation(false), id, null));
 								}
 							}
 						}
@@ -285,12 +279,9 @@ public class TargetPersistence34Helper {
 			}
 		}
 		// restrictions are global to all containers
-		if (!useAll && (included.size() > 0 || optional.size() > 0)) {
+		if (!useAll && included.size() > 0) {
 			if (included.size() > 0) {
 				definition.setIncluded((NameVersionDescriptor[]) included.toArray(new NameVersionDescriptor[included.size()]));
-			}
-			if (optional.size() > 0) {
-				definition.setOptional((NameVersionDescriptor[]) optional.toArray(new NameVersionDescriptor[optional.size()]));
 			}
 		}
 		return containers;

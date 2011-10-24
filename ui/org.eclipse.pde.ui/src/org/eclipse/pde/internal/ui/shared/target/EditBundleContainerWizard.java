@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,11 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.shared.target;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.pde.core.target.ITargetDefinition;
+import org.eclipse.pde.core.target.ITargetLocation;
 import org.eclipse.pde.internal.core.target.*;
-import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
-import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 
 /**
@@ -24,10 +26,10 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 public class EditBundleContainerWizard extends Wizard {
 
 	private ITargetDefinition fTarget;
-	private IBundleContainer fContainer;
+	private ITargetLocation fContainer;
 	private IEditBundleContainerPage fPage;
 
-	public EditBundleContainerWizard(ITargetDefinition target, IBundleContainer container) {
+	public EditBundleContainerWizard(ITargetDefinition target, ITargetLocation container) {
 		fTarget = target;
 		fContainer = container;
 		IDialogSettings settings = PDEPlugin.getDefault().getDialogSettings().getSection(AddBundleContainerSelectionPage.SETTINGS_SECTION);
@@ -62,17 +64,24 @@ public class EditBundleContainerWizard extends Wizard {
 	public boolean performFinish() {
 		if (fPage != null) {
 			fPage.storeSettings();
-			fContainer = fPage.getBundleContainer();
+
+			// Add the new container or replace the old one
+			ITargetLocation newContainer = fPage.getBundleContainer();
+			if (newContainer != null) {
+				ITargetLocation[] containers = fTarget.getTargetLocations();
+				List newContainers = new ArrayList(containers.length);
+				for (int i = 0; i < containers.length; i++) {
+					if (!containers[i].equals(fContainer)) {
+						newContainers.add(containers[i]);
+					}
+				}
+				newContainers.add(newContainer);
+				fTarget.setTargetLocations((ITargetLocation[]) newContainers.toArray(new ITargetLocation[newContainers.size()]));
+			}
+
 			return true;
 		}
 		return false;
-	}
-
-	/**
-	 * @return the edited bundle container (may not be the same container as provided in the contructor)
-	 */
-	public IBundleContainer getBundleContainer() {
-		return fContainer;
 	}
 
 }

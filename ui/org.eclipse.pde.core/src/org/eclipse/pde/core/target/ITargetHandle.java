@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,14 +8,14 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.internal.core.target.provisional;
+package org.eclipse.pde.core.target;
 
 import org.eclipse.core.runtime.CoreException;
 
 /**
  * A handle to a target definition.
  * 
- * @since 3.5
+ * @since 3.8
  */
 public interface ITargetHandle {
 

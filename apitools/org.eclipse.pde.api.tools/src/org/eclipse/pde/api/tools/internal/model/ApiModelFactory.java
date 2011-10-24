@@ -30,10 +30,10 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
-import org.eclipse.pde.internal.core.target.provisional.IResolvedBundle;
-import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
-import org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService;
+import org.eclipse.pde.core.target.ITargetDefinition;
+import org.eclipse.pde.core.target.ITargetLocation;
+import org.eclipse.pde.core.target.ITargetPlatformService;
+import org.eclipse.pde.core.target.TargetBundle;
 
 /**
  * Utility class for creating new {@link org.eclipse.pde.api.tools.internal.provisional.model.IApiElement}s
@@ -230,12 +230,12 @@ public class ApiModelFactory {
 			if (plugin != null){
 				service = (ITargetPlatformService) ApiPlugin.getDefault().acquireService(ITargetPlatformService.class.getName());
 				Util.updateMonitor(subMonitor, 1);
-				IBundleContainer container = service.newProfileContainer(installLocation, null);
+				ITargetLocation container = service.newProfileLocation(installLocation, null);
 				ITargetDefinition definition = service.newTarget();
 				subMonitor.subTask(Messages.resolving_target_definition);
 				container.resolve(definition, subMonitor.newChild(30));
 				Util.updateMonitor(subMonitor, 1);
-				IResolvedBundle[] bundles = container.getBundles();
+				TargetBundle[] bundles = container.getBundles();
 				List components = new ArrayList();
 				if (bundles.length > 0) {
 					subMonitor.setWorkRemaining(bundles.length);

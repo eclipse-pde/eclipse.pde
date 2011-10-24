@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,13 +14,22 @@ import java.io.*;
 import java.net.URL;
 import java.util.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IModelProviderEvent;
 import org.eclipse.pde.core.IModelProviderListener;
+import org.eclipse.pde.core.target.TargetFeature;
 import org.eclipse.pde.internal.core.feature.ExternalFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+import org.eclipse.pde.internal.core.target.Messages;
 import org.osgi.framework.Version;
 
+/**
+ * Manages the features known to the PDE state that come from the target platform.
+ * <p>
+ * Contains utility methods to create feature models for locations.
+ * </p>
+ */
 public class ExternalFeatureModelManager {
 
 	/**
@@ -28,9 +37,10 @@ public class ExternalFeatureModelManager {
 	 * file.
 	 * 
 	 * @param manifest feature XML file in the local file system
-	 * @return ExternalFeatureModel or null
+	 * @return {@link ExternalFeatureModel} containing information loaded from the xml
+	 * @throws CoreException if there is a problem reading the feature xml
 	 */
-	public static IFeatureModel createModel(File manifest) {
+	public static IFeatureModel createModel(File manifest) throws CoreException {
 		ExternalFeatureModel model = new ExternalFeatureModel();
 		model.setInstallLocation(manifest.getParent());
 		InputStream stream = null;
@@ -38,7 +48,8 @@ public class ExternalFeatureModelManager {
 			stream = new BufferedInputStream(new FileInputStream(manifest));
 			model.load(stream, false);
 			return model;
-		} catch (Exception e) {
+		} catch (FileNotFoundException e) {
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.TargetFeature_FileDoesNotExist, manifest)));
 		} finally {
 			if (stream != null) {
 				try {
@@ -47,7 +58,6 @@ public class ExternalFeatureModelManager {
 				}
 			}
 		}
-		return null;
 	}
 
 	public static IFeatureModel[] createModels(String platformHome, ArrayList additionalLocations, IProgressMonitor monitor) {
@@ -87,10 +97,14 @@ public class ExternalFeatureModelManager {
 				monitor.worked(1);
 				continue;
 			}
-			IFeatureModel model = createModel(manifest);
-			if (model != null && model.isLoaded()) {
-				IFeature feature = model.getFeature();
-				uniqueFeatures.put(feature.getId() + "_" + feature.getVersion(), model); //$NON-NLS-1$
+			try {
+				IFeatureModel model = createModel(manifest);
+				if (model != null && model.isLoaded()) {
+					IFeature feature = model.getFeature();
+					uniqueFeatures.put(feature.getId() + "_" + feature.getVersion(), model); //$NON-NLS-1$
+				}
+			} catch (CoreException e) {
+				PDECore.log(e);
 			}
 			monitor.worked(1);
 		}
@@ -219,5 +233,54 @@ public class ExternalFeatureModelManager {
 
 	public IFeatureModel[] getModels() {
 		return fModels;
+	}
+
+	public static TargetFeature[] createFeatures(String platformHome, ArrayList additionalLocations, IProgressMonitor monitor) {
+		if (platformHome != null && platformHome.length() > 0) {
+			URL[] featureURLs = PluginPathFinder.getFeaturePaths(platformHome);
+
+			if (additionalLocations.size() == 0)
+				return createFeatures(featureURLs, monitor);
+
+			File[] dirs = new File[additionalLocations.size()];
+			for (int i = 0; i < dirs.length; i++) {
+				String directory = additionalLocations.get(i).toString();
+				File dir = new File(directory, "features"); //$NON-NLS-1$
+				if (!dir.exists())
+					dir = new File(directory);
+				dirs[i] = dir;
+			}
+
+			URL[] newUrls = PluginPathFinder.scanLocations(dirs);
+
+			URL[] result = new URL[featureURLs.length + newUrls.length];
+			System.arraycopy(featureURLs, 0, result, 0, featureURLs.length);
+			System.arraycopy(newUrls, 0, result, featureURLs.length, newUrls.length);
+			return createFeatures(result, monitor);
+		}
+		return new TargetFeature[0];
+	}
+
+	private static TargetFeature[] createFeatures(URL[] featurePaths, IProgressMonitor monitor) {
+		if (monitor == null)
+			monitor = new NullProgressMonitor();
+		monitor.beginTask("", featurePaths.length); //$NON-NLS-1$
+		Map uniqueFeatures = new HashMap();
+		for (int i = 0; i < featurePaths.length; i++) {
+			File manifest = new File(featurePaths[i].getFile(), ICoreConstants.FEATURE_FILENAME_DESCRIPTOR);
+			if (!manifest.exists() || !manifest.isFile()) {
+				monitor.worked(1);
+				continue;
+			}
+			try {
+				TargetFeature model = new TargetFeature(manifest);
+				uniqueFeatures.put(model.getId() + "_" + model.getVersion(), model); //$NON-NLS-1$
+			} catch (CoreException e) {
+				// Ignore bad files in the collection
+			}
+			monitor.worked(1);
+		}
+		Collection models = uniqueFeatures.values();
+		return (TargetFeature[]) models.toArray(new TargetFeature[models.size()]);
 	}
 }

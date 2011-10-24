@@ -11,20 +11,20 @@
 package org.eclipse.pde.internal.ui.shared.target;
 
 import org.eclipse.jface.wizard.IWizardPage;
-import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
+import org.eclipse.pde.core.target.ITargetLocation;
 
 /**
- * Interface for wizard pages used to edit bundle containers.
+ * Interface for wizard pages used to edit target locations.
  * 
  * @see EditBundleContainerWizard
  */
 public interface IEditBundleContainerPage extends IWizardPage {
 
 	/**
-	 * Returns a bundle container containing edited values taken from the wizard page.
-	 * @return bundle container
+	 * Returns a target location containing edited values taken from the wizard page.
+	 * @return target location
 	 */
-	public IBundleContainer getBundleContainer();
+	public ITargetLocation getBundleContainer();
 
 	/**
 	 * Informs the wizard page that the wizard is closing and any settings/preferences

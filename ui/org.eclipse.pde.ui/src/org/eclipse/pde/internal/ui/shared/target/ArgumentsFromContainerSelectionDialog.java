@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.shared.target;
 
+import org.eclipse.pde.core.target.ITargetDefinition;
+import org.eclipse.pde.core.target.ITargetLocation;
+
 import java.util.*;
 import java.util.List;
 import org.eclipse.core.runtime.IStatus;
@@ -17,8 +20,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
-import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -68,7 +69,7 @@ public class ArgumentsFromContainerSelectionDialog extends TrayDialog {
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createDialogArea(Composite parent) {
-		IBundleContainer[] containers = fTarget.getBundleContainers();
+		ITargetLocation[] containers = fTarget.getTargetLocations();
 		boolean foundArguments = false;
 		if (containers != null) {
 			fAllArguments = new HashMap(containers.length);
@@ -102,7 +103,7 @@ public class ArgumentsFromContainerSelectionDialog extends TrayDialog {
 		fTree.setLabelProvider(new StyledBundleLabelProvider(true, false));
 		fTree.setContentProvider(new ITreeContentProvider() {
 			public Object[] getChildren(Object element) {
-				if (element instanceof IBundleContainer) {
+				if (element instanceof ITargetLocation) {
 					Object args = fAllArguments.get(element);
 					if (args != null) {
 						return (Object[]) args;
@@ -197,7 +198,7 @@ public class ArgumentsFromContainerSelectionDialog extends TrayDialog {
 	 * Updates the check state of the parent and any children of the element
 	 */
 	private void updateCheckState(Object element) {
-		if (element instanceof IBundleContainer) {
+		if (element instanceof ITargetLocation) {
 			fTree.setSubtreeChecked(element, fTree.getChecked(element));
 		} else {
 			TreeItem[] containers = fTree.getTree().getItems();

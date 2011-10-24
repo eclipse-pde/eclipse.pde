@@ -7,7 +7,9 @@
       </appInfo>
       <documentation>
          &lt;p&gt;
-This extension point is used to register new target plug-in provisioners. Each plug-in provisioner is listed when the user attempts to add plug-ins from the PDE Target Platform&apos;s Preference Page.  The selected provisioner is responsible for providing the locations of directories which contain plug-ins the user wants to add to the Target Platform.
+This extension point is used to register new target plug-in provisioners. Each plug-in provisioner is listed when the user attempts to add plug-ins from the PDE Target Platform&apos;s Preference Page.  The selected provisioner is responsible for providing the target location which contain plug-ins the user wants to add to the Target Platform.
+&lt;/p&gt;&lt;p&gt;
+This extension point is deprecated.  Please use the &lt;code&gt;org.eclipse.pde.ui.targetLocationProvisioners&lt;/code&gt; extension point instead.
 &lt;/p&gt;
       </documentation>
    </annotation>
@@ -15,7 +17,7 @@ This extension point is used to register new target plug-in provisioners. Each p
    <element name="extension">
       <annotation>
          <appInfo>
-            <meta.element deprecated="true" />
+            <meta.element />
          </appInfo>
       </annotation>
       <complexType>
@@ -87,13 +89,13 @@ represent the provisioner.
                </appInfo>
             </annotation>
          </attribute>
-         <attribute name="class" type="string" use="required">
+         <attribute name="class" type="string">
             <annotation>
                <documentation>
                   a class that provides a wizard for the user to add plug-ins through the provisioner.  The value of this attribute is the fully qualified name of the Java class that implements &lt;code&gt;org.eclipse.pde.ui.IProvisionerWizard&lt;/code&gt;.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.pde.ui.IProvisionerWizard"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.pde.ui.IProvisionerWizard" deprecated="true"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -113,6 +115,15 @@ represent the provisioner.
 
    <annotation>
       <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         Each template must provide a class that implements &lt;code&gt;org.eclipse.pde.ui.IProvisionerWizard&lt;/code&gt; interface.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
          <meta.section type="since"/>
       </appInfo>
       <documentation>
@@ -129,13 +140,14 @@ represent the provisioner.
 The following is an example of the extension point:
 &lt;pre&gt;
    &lt;extension
-         point=&quot;org.eclipse.pde.ui.targetprovisioners&quot;&gt;
+         point=&quot;org.eclipse.pde.ui.targetProvisioners&quot;&gt;
       &lt;provisioner
-            class=&quot;org.eclipse.pde.internal.ui.wizards.provisioner.FileSystemProvisionerWizard&quot;
-            id=&quot;org.eclipse.pde.ui.directory&quot;
-            name=&quot;%provisioner.file.name&quot;&gt;
+            class=&quot;org.eclipse.pde.internal.ui.shared.target.InstallableUnitWizard&quot;
+            icon=&quot;icons/obj16/metadata_repo_obj.gif&quot;
+            id=&quot;org.eclipse.pde.ui.InstallableUnit&quot;
+            name=&quot;%targetProvisioner.IU.name&quot;&gt;
          &lt;description&gt;
-               %provisioner.file.description
+            %targetProvisioner.IU.description
          &lt;/description&gt;
       &lt;/provisioner&gt;
    &lt;/extension&gt;
@@ -143,32 +155,13 @@ The following is an example of the extension point:
       </documentation>
    </annotation>
 
-   <annotation>
-      <appInfo>
-         <meta.section type="apiInfo"/>
-      </appInfo>
-      <documentation>
-         Each template must provide a class that implements &lt;code&gt;org.eclipse.pde.ui.IProvisionerWizard&lt;/code&gt; interface.
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="implementation"/>
-      </appInfo>
-      <documentation>
-         &lt;p&gt;
-PDE supplies a File System provisioner extension to add plug-ins from the file system, and an update site provisioner to add plug-ins from repositories.
-&lt;/p&gt;
-      </documentation>
-   </annotation>
 
    <annotation>
       <appInfo>
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2006 IBM Corporation and others.
+         Copyright (c) 2006, 2011 IBM Corporation and others.
 &lt;br&gt;
 All rights reserved. This program and the accompanying materials are made 
 available under the terms of the Eclipse Public License v1.0 which 

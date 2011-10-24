@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.shared.target;
 
+import org.eclipse.pde.core.target.ITargetLocation;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +21,6 @@ import org.eclipse.debug.ui.StringVariableSelectionDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.pde.internal.core.target.ProfileBundleContainer;
-import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.SWTFactory;
 import org.eclipse.swt.SWT;
@@ -33,7 +34,7 @@ import org.eclipse.ui.PlatformUI;
  * 
  * @see AddBundleContainerWizard
  * @see AddBundleContainerSelectionPage
- * @see IBundleContainer
+ * @see ITargetLocation
  */
 public class EditProfileContainerPage extends EditDirectoryContainerPage {
 
@@ -62,7 +63,7 @@ public class EditProfileContainerPage extends EditDirectoryContainerPage {
 		super(null, "EditProfileContainer"); //$NON-NLS-1$
 	}
 
-	public EditProfileContainerPage(IBundleContainer container) {
+	public EditProfileContainerPage(ITargetLocation container) {
 		super(container, "EditProfileContainer"); //$NON-NLS-1$
 	}
 
@@ -212,9 +213,9 @@ public class EditProfileContainerPage extends EditDirectoryContainerPage {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.shared.target.EditDirectoryContainerPage#initializeInputFields(org.eclipse.pde.internal.core.target.provisional.IBundleContainer)
+	 * @see org.eclipse.pde.internal.ui.shared.target.EditDirectoryContainerPage#initializeInputFields(org.eclipse.pde.core.target.ITargetLocation)
 	 */
-	protected void initializeInputFields(IBundleContainer container) {
+	protected void initializeInputFields(ITargetLocation container) {
 		if (container instanceof ProfileBundleContainer) {
 			String configLocation = ((ProfileBundleContainer) container).getConfigurationLocation();
 			if (configLocation == null) {
@@ -276,10 +277,10 @@ public class EditProfileContainerPage extends EditDirectoryContainerPage {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.shared.target.EditDirectoryContainerPage#refreshContainer(org.eclipse.pde.internal.core.target.provisional.IBundleContainer)
+	 * @see org.eclipse.pde.internal.ui.shared.target.EditDirectoryContainerPage#createContainer(org.eclipse.pde.core.target.ITargetLocation)
 	 */
-	protected IBundleContainer createContainer(IBundleContainer previous) throws CoreException {
-		return getTargetPlatformService().newProfileContainer(fInstallLocation.getText(), fConfigLocation.isEnabled() ? fConfigLocation.getText() : null);
+	protected ITargetLocation createContainer(ITargetLocation previous) throws CoreException {
+		return getTargetPlatformService().newProfileLocation(fInstallLocation.getText(), fConfigLocation.isEnabled() ? fConfigLocation.getText() : null);
 	}
 
 }

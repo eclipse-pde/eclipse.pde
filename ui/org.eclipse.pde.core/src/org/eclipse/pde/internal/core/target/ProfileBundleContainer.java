@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 IBM Corporation and others.
+ * Copyright (c) 2008, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,19 +11,16 @@
 package org.eclipse.pde.internal.core.target;
 
 import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.*;
 import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.frameworkadmin.BundleInfo;
 import org.eclipse.equinox.internal.p2.engine.EngineActivator;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.internal.build.site.PluginPathFinder;
 import org.eclipse.pde.internal.core.P2Utils;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
-import org.eclipse.pde.internal.core.target.provisional.IResolvedBundle;
-import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
 
 /**
  * A bundle container representing an installed profile.
@@ -98,9 +95,9 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer#resolveBundles(org.eclipse.pde.internal.core.target.provisional.ITargetDefinition, org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer#resolveBundles(org.eclipse.pde.core.target.ITargetDefinition, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	protected IResolvedBundle[] resolveBundles(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
+	protected TargetBundle[] resolveBundles(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
 		String home = resolveHomeLocation().toOSString();
 		if (!new File(home).isDirectory()) {
 			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.ProfileBundleContainer_0, home)));
@@ -115,7 +112,7 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 
 		BundleInfo[] infos = P2Utils.readBundles(home, configUrl);
 		if (infos == null) {
-			IResolvedBundle[] platformXML = resolvePlatformXML(definition, home, monitor);
+			TargetBundle[] platformXML = resolvePlatformXML(definition, home, monitor);
 			if (platformXML != null) {
 				return platformXML;
 			}
@@ -123,45 +120,45 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 		}
 
 		if (monitor.isCanceled()) {
-			return new IResolvedBundle[0];
+			return new TargetBundle[0];
 		}
 
 		BundleInfo[] source = P2Utils.readSourceBundles(home, configUrl);
 		if (source == null) {
 			source = new BundleInfo[0];
 		}
-		IResolvedBundle[] all = new IResolvedBundle[infos.length + source.length];
-		SubMonitor localMonitor = SubMonitor.convert(monitor, Messages.DirectoryBundleContainer_0, all.length);
+		List/*<TargetBundle>*/all = new ArrayList/*<TargetBundle>*/();
+		SubMonitor localMonitor = SubMonitor.convert(monitor, Messages.DirectoryBundleContainer_0, infos.length + source.length);
+		// Add executable bundles
 		for (int i = 0; i < infos.length; i++) {
 			if (monitor.isCanceled()) {
-				return new IResolvedBundle[0];
+				return new TargetBundle[0];
 			}
-			BundleInfo info = infos[i];
-			all[i] = resolveBundle(info, false);
+			URI location = infos[i].getLocation();
+			all.add(new TargetBundle(URIUtil.toFile(location)));
 			localMonitor.worked(1);
 		}
-		int index = 0;
-		for (int i = infos.length; i < all.length; i++) {
+		// Add source bundles
+		for (int i = 0; i < source.length; i++) {
 			if (monitor.isCanceled()) {
-				return new IResolvedBundle[0];
+				return new TargetBundle[0];
 			}
-			BundleInfo info = source[index];
-			all[i] = resolveBundle(info, true);
-			index++;
+			URI location = source[i].getLocation();
+			all.add(new TargetBundle(URIUtil.toFile(location)));
 			localMonitor.worked(1);
 		}
 		localMonitor.done();
-		return all;
+		return (TargetBundle[]) all.toArray(new TargetBundle[all.size()]);
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.AbstractBundleContainer#resolveFeatures(org.eclipse.pde.internal.core.target.provisional.ITargetDefinition, org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.pde.internal.core.target.AbstractBundleContainer#resolveFeatures(org.eclipse.pde.core.target.ITargetDefinition, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	protected IFeatureModel[] resolveFeatures(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
+	protected TargetFeature[] resolveFeatures(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
 		if (definition instanceof TargetDefinition) {
-			return ((TargetDefinition) definition).getFeatureModels(getLocation(false), monitor);
+			return ((TargetDefinition) definition).resolveFeatures(getLocation(false), monitor);
 		}
-		return new IFeatureModel[0];
+		return new TargetFeature[0];
 	}
 
 	/**
@@ -173,7 +170,7 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 	 * @return resolved bundles or <code>null</code> if none
 	 * @throws CoreException
 	 */
-	protected IResolvedBundle[] resolvePlatformXML(ITargetDefinition definition, String home, IProgressMonitor monitor) throws CoreException {
+	protected TargetBundle[] resolvePlatformXML(ITargetDefinition definition, String home, IProgressMonitor monitor) throws CoreException {
 		File[] files = PluginPathFinder.getPaths(home, false, false);
 		if (files.length > 0) {
 			List all = new ArrayList(files.length);
@@ -183,7 +180,7 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 					throw new OperationCanceledException();
 				}
 				try {
-					IResolvedBundle rb = generateBundle(files[i]);
+					TargetBundle rb = new TargetBundle(files[i]);
 					if (rb != null) {
 						all.add(rb);
 					}
@@ -194,7 +191,7 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 			}
 			localMonitor.done();
 			if (!all.isEmpty()) {
-				return (IResolvedBundle[]) all.toArray(new IResolvedBundle[all.size()]);
+				return (TargetBundle[]) all.toArray(new TargetBundle[all.size()]);
 			}
 		}
 		return null;

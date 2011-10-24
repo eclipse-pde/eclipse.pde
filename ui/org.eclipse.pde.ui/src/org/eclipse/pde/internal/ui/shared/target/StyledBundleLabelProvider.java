@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,12 +18,12 @@ import org.eclipse.equinox.internal.p2.metadata.TranslationSupport;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.target.*;
-import org.eclipse.pde.internal.core.target.provisional.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
-import org.eclipse.pde.internal.ui.shared.target.TargetLocationsGroup.IUWrapper;
+import org.eclipse.pde.internal.ui.shared.target.IUContentProvider.IUWrapper;
 import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.ISharedImages;
@@ -80,8 +80,8 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 			appendBundleInfo(styledString, ((BundleInfo) element));
 		} else if (element instanceof NameVersionDescriptor) {
 			appendBundleInfo(styledString, new BundleInfo(((NameVersionDescriptor) element).getId(), ((NameVersionDescriptor) element).getVersion(), null, BundleInfo.NO_LEVEL, false));
-		} else if (element instanceof IResolvedBundle) {
-			IResolvedBundle bundle = ((IResolvedBundle) element);
+		} else if (element instanceof TargetBundle) {
+			TargetBundle bundle = ((TargetBundle) element);
 			if (bundle.getStatus().isOK()) {
 				appendBundleInfo(styledString, bundle.getBundleInfo());
 			} else {
@@ -201,7 +201,7 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 	 * @param styledString label to append to
 	 * @param container bundle container to check for inclusions
 	 */
-	private void appendBundleCount(StyledString styledString, IBundleContainer container) {
+	private void appendBundleCount(StyledString styledString, ITargetLocation container) {
 		if (!container.isResolved() || (!container.getStatus().isOK() && !container.getStatus().isMultiStatus()) || container.getBundles() == null) {
 			return;
 		}
@@ -219,9 +219,9 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 	 * @return image or <code>null</code>
 	 */
 	public Image getImage(Object element) {
-		if (element instanceof IResolvedBundle) {
+		if (element instanceof TargetBundle) {
 
-			IResolvedBundle bundle = (IResolvedBundle) element;
+			TargetBundle bundle = (TargetBundle) element;
 			int flag = 0;
 			if (bundle.getStatus().getSeverity() == IStatus.WARNING || bundle.getStatus().getSeverity() == IStatus.INFO) {
 				flag = SharedLabelProvider.F_WARNING;
@@ -229,7 +229,7 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 				flag = SharedLabelProvider.F_ERROR;
 			}
 
-			if (bundle.getStatus().getSeverity() == IStatus.ERROR && bundle.getStatus().getCode() == IResolvedBundle.STATUS_FEATURE_DOES_NOT_EXIST) {
+			if (bundle.getStatus().getSeverity() == IStatus.ERROR && bundle.getStatus().getCode() == TargetBundle.STATUS_FEATURE_DOES_NOT_EXIST) {
 				// Missing features are represented by resolved bundles in the tree
 				return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_FEATURE_OBJ, flag);
 			} else if (bundle.isFragment()) {
@@ -258,9 +258,9 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 			return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
 		} else if (element instanceof IFeatureModel) {
 			return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_FEATURE_OBJ);
-		} else if (element instanceof IBundleContainer) {
+		} else if (element instanceof ITargetLocation) {
 			int flag = 0;
-			IBundleContainer container = (IBundleContainer) element;
+			ITargetLocation container = (ITargetLocation) element;
 			if (container.isResolved()) {
 				IStatus status = container.getStatus();
 				if (status.getSeverity() == IStatus.WARNING || status.getSeverity() == IStatus.INFO) {

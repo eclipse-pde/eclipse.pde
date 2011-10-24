@@ -20,11 +20,9 @@ import org.eclipse.equinox.p2.internal.repository.tools.RepositoryDescriptor;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.p2.metadata.IProvidedCapability;
 import org.eclipse.equinox.p2.query.IQueryResult;
+import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDECoreMessages;
-import org.eclipse.pde.internal.core.feature.ExternalFeatureModel;
-import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
-import org.eclipse.pde.internal.core.target.provisional.*;
 
 /**
  * This job exports the bundles and features that make up your target.
@@ -49,7 +47,7 @@ public class ExportTargetJob extends Job {
 	protected IStatus run(IProgressMonitor monitor) {
 		try {
 			constructFilter(fTarget);
-			IBundleContainer[] containers = fTarget.getBundleContainers();
+			ITargetLocation[] containers = fTarget.getTargetLocations();
 			int totalWork = containers.length;
 			monitor.beginTask(PDECoreMessages.ExportTargetDefinition_task, totalWork);
 
@@ -58,7 +56,7 @@ public class ExportTargetJob extends Job {
 
 			monitor.subTask(PDECoreMessages.ExportTargetJob_ExportingTargetContents);
 			for (int i = 0; i < containers.length; i++) {
-				IBundleContainer container = containers[i];
+				ITargetLocation container = containers[i];
 				container.resolve(fTarget, monitor);
 				if (!(container instanceof IUBundleContainer))
 					exportContainer(container, fTarget, featureDir, pluginDir, fileSystem, monitor);
@@ -123,16 +121,14 @@ public class ExportTargetJob extends Job {
 		return false;
 	}
 
-	private boolean shouldExport(IFeatureModel feature) {
+	private boolean shouldExport(TargetFeature feature) {
 		if (filter == null)
 			return true;
-		if (!feature.isEnabled() || !(feature instanceof ExternalFeatureModel))
-			return false;
-		NameVersionDescriptor descriptor = new NameVersionDescriptor(feature.getFeature().getId(), feature.getFeature().getVersion(), NameVersionDescriptor.TYPE_FEATURE);
+		NameVersionDescriptor descriptor = new NameVersionDescriptor(feature.getId(), feature.getVersion(), NameVersionDescriptor.TYPE_FEATURE);
 		return shouldExport(descriptor);
 	}
 
-	private boolean shouldExport(IResolvedBundle bundle) {
+	private boolean shouldExport(TargetBundle bundle) {
 		if (filter == null)
 			return true;
 		NameVersionDescriptor descriptor = new NameVersionDescriptor(bundle.getBundleInfo().getSymbolicName(), bundle.getBundleInfo().getVersion(), NameVersionDescriptor.TYPE_PLUGIN);
@@ -168,17 +164,17 @@ public class ExportTargetJob extends Job {
 		return null;
 	}
 
-	private void exportContainer(IBundleContainer container, ITargetDefinition target, IFileStore featureDir, IFileStore pluginDir, IFileSystem fileSystem, IProgressMonitor monitor) throws CoreException {
-		IFeatureModel[] features = container.getFeatures();
+	private void exportContainer(ITargetLocation container, ITargetDefinition target, IFileStore featureDir, IFileStore pluginDir, IFileSystem fileSystem, IProgressMonitor monitor) throws CoreException {
+		TargetFeature[] features = container.getFeatures();
 		if (features != null) {
 			monitor.subTask(PDECoreMessages.ExportTargetExportFeatures);
 			for (int i = 0; i < features.length; i++) {
 				if (shouldExport(features[i]))
-					copy(features[i].getInstallLocation(), featureDir, fileSystem, monitor);
+					copy(features[i].getLocation(), featureDir, fileSystem, monitor);
 			}
 		}
 
-		IResolvedBundle[] bundles = container.getBundles();
+		TargetBundle[] bundles = container.getBundles();
 		if (bundles != null) {
 			monitor.subTask(PDECoreMessages.ExportTargetExportPlugins);
 			for (int i = 0; i < bundles.length; i++) {

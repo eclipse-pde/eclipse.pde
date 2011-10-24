@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.core.target;
 
 import java.io.*;
-import java.net.URI;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.xml.parsers.*;
@@ -19,10 +18,9 @@ import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.eclipse.core.runtime.*;
-import org.eclipse.equinox.p2.metadata.Version;
+import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.target.provisional.*;
 import org.w3c.dom.*;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -46,7 +44,6 @@ public class TargetDefinitionPersistenceHelper {
 	static final String ATTR_LOCATION_TYPE = "type"; //$NON-NLS-1$
 	static final String ATTR_USE_DEFAULT = "useDefault"; //$NON-NLS-1$
 	static final String INCLUDE_BUNDLES = "includeBundles"; //$NON-NLS-1$
-	static final String OPTIONAL_BUNDLES = "optionalBundles"; //$NON-NLS-1$
 	static final String ENVIRONMENT = "environment"; //$NON-NLS-1$
 	static final String OS = "os"; //$NON-NLS-1$
 	static final String WS = "ws"; //$NON-NLS-1$
@@ -69,7 +66,6 @@ public class TargetDefinitionPersistenceHelper {
 	public static final String MODE_PLANNER = "planner"; //$NON-NLS-1$
 	static final String ATTR_INCLUDE_ALL_PLATFORMS = "includeAllPlatforms"; //$NON-NLS-1$
 	static final String ATTR_INCLUDE_SOURCE = "includeSource"; //$NON-NLS-1$
-	static final String ATTR_OPTIONAL = "optional"; //$NON-NLS-1$
 	static final String ATTR_VERSION = "version"; //$NON-NLS-1$
 	static final String ATTR_CONFIGURATION = "configuration"; //$NON-NLS-1$
 	static final String ATTR_SEQUENCE_NUMBER = "sequenceNumber"; //$NON-NLS-1$
@@ -81,6 +77,16 @@ public class TargetDefinitionPersistenceHelper {
 	static final String EXTRA_LOCATIONS = "extraLocations"; //$NON-NLS-1$
 	private static ITargetPlatformService fTargetService;
 
+	private static DocumentBuilder docBuilder;
+
+	private static DocumentBuilder getDocumentBuilder() throws ParserConfigurationException {
+		if (docBuilder == null) {
+			DocumentBuilderFactory dfactory = DocumentBuilderFactory.newInstance();
+			docBuilder = dfactory.newDocumentBuilder();
+		}
+		return docBuilder;
+	}
+
 	/**
 	 * Serializes a target definition to xml and writes the xml to the given stream
 	 * @param definition target definition to serialize
@@ -89,13 +95,12 @@ public class TargetDefinitionPersistenceHelper {
 	 * @throws ParserConfigurationException
 	 * @throws TransformerException
 	 * @throws IOException 
+	 * @throws SAXException 
 	 */
-	public static void persistXML(ITargetDefinition definition, OutputStream output) throws CoreException, ParserConfigurationException, TransformerException, IOException {
-		DocumentBuilderFactory dfactory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder docBuilder = dfactory.newDocumentBuilder();
-		Document doc = docBuilder.newDocument();
+	public static void persistXML(ITargetDefinition definition, OutputStream output) throws CoreException, ParserConfigurationException, TransformerException, IOException, SAXException {
+		Document doc = getDocumentBuilder().newDocument();
 
-		ProcessingInstruction instruction = doc.createProcessingInstruction(PDE_INSTRUCTION, ATTR_VERSION + "=\"" + ICoreConstants.TARGET36 + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		ProcessingInstruction instruction = doc.createProcessingInstruction(PDE_INSTRUCTION, ATTR_VERSION + "=\"" + ICoreConstants.TARGET38 + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		doc.appendChild(instruction);
 
 		Element rootElement = doc.createElement(ROOT);
@@ -110,12 +115,14 @@ public class TargetDefinitionPersistenceHelper {
 
 		rootElement.setAttribute(ATTR_SEQUENCE_NUMBER, Integer.toString(((TargetDefinition) definition).getSequenceNumber()));
 
-		IBundleContainer[] containers = definition.getBundleContainers();
+		ITargetLocation[] containers = definition.getTargetLocations();
 		if (containers != null && containers.length > 0) {
 			Element containersElement = doc.createElement(LOCATIONS);
 			for (int i = 0; i < containers.length; i++) {
-				Element containerElement = serializeBundleContainer(doc, (AbstractBundleContainer) containers[i]);
-				containersElement.appendChild(containerElement);
+				Element containerElement = serializeBundleContainer(doc, containers[i]);
+				if (containerElement != null) {
+					containersElement.appendChild(containerElement);
+				}
 			}
 			rootElement.appendChild(containersElement);
 		}
@@ -125,12 +132,6 @@ public class TargetDefinitionPersistenceHelper {
 			Element includedElement = doc.createElement(INCLUDE_BUNDLES);
 			serializeBundles(doc, includedElement, included);
 			rootElement.appendChild(includedElement);
-		}
-		NameVersionDescriptor[] optional = definition.getOptional();
-		if (optional != null) {
-			Element optionalElement = doc.createElement(OPTIONAL_BUNDLES);
-			serializeBundles(doc, optionalElement, optional);
-			rootElement.appendChild(optionalElement);
 		}
 
 		if (definition.getOS() != null || definition.getWS() != null || definition.getArch() != null || definition.getNL() != null) {
@@ -245,8 +246,10 @@ public class TargetDefinitionPersistenceHelper {
 
 		// Select the correct helper class to use
 		if (version == null || version.length() == 0) {
-			TargetPersistence36Helper.initFromDoc(definition, root);
-		} else if (version.equals(ICoreConstants.TARGET36)) {
+			TargetPersistence38Helper.initFromDoc(definition, root);
+		} else if (version.equals(ICoreConstants.TARGET38)) {
+			TargetPersistence38Helper.initFromDoc(definition, root);
+		} else if (version.equals(ICoreConstants.TARGET36)) { // it can not be 3.7
 			TargetPersistence36Helper.initFromDoc(definition, root);
 		} else if (version.equals(ICoreConstants.TARGET35)) {
 			TargetPersistence35Helper.initFromDoc(definition, root);
@@ -283,44 +286,35 @@ public class TargetDefinitionPersistenceHelper {
 		return result.toString();
 	}
 
-	private static Element serializeBundleContainer(Document doc, AbstractBundleContainer container) throws CoreException {
+	private static Element serializeBundleContainer(Document doc, ITargetLocation targetLocation) throws CoreException, SAXException, IOException, ParserConfigurationException {
 		Element containerElement = doc.createElement(LOCATION);
-		if (!(container instanceof IUBundleContainer)) {
-			containerElement.setAttribute(ATTR_LOCATION_PATH, container.getLocation(false));
+		if (targetLocation instanceof DirectoryBundleContainer || targetLocation instanceof FeatureBundleContainer || targetLocation instanceof ProfileBundleContainer) {
+			containerElement.setAttribute(ATTR_LOCATION_PATH, targetLocation.getLocation(false));
 		}
-		containerElement.setAttribute(ATTR_LOCATION_TYPE, container.getType());
-		if (container instanceof FeatureBundleContainer) {
-			containerElement.setAttribute(ATTR_ID, ((FeatureBundleContainer) container).getFeatureId());
-			String version = ((FeatureBundleContainer) container).getFeatureVersion();
+		containerElement.setAttribute(ATTR_LOCATION_TYPE, targetLocation.getType());
+		if (targetLocation instanceof DirectoryBundleContainer) {
+			//do nothing;
+		} else if (targetLocation instanceof FeatureBundleContainer) {
+			containerElement.setAttribute(ATTR_ID, ((FeatureBundleContainer) targetLocation).getFeatureId());
+			String version = ((FeatureBundleContainer) targetLocation).getFeatureVersion();
 			if (version != null) {
 				containerElement.setAttribute(ATTR_VERSION, version);
 			}
-		} else if (container instanceof ProfileBundleContainer) {
-			String configurationArea = ((ProfileBundleContainer) container).getConfigurationLocation();
+		} else if (targetLocation instanceof ProfileBundleContainer) {
+			String configurationArea = ((ProfileBundleContainer) targetLocation).getConfigurationLocation();
 			if (configurationArea != null) {
 				containerElement.setAttribute(ATTR_CONFIGURATION, configurationArea);
 			}
-		} else if (container instanceof IUBundleContainer) {
-			IUBundleContainer iubc = (IUBundleContainer) container;
-			containerElement.setAttribute(ATTR_INCLUDE_MODE, iubc.getIncludeAllRequired() ? MODE_PLANNER : MODE_SLICER);
-			containerElement.setAttribute(ATTR_INCLUDE_ALL_PLATFORMS, Boolean.toString(iubc.getIncludeAllEnvironments()));
-			containerElement.setAttribute(ATTR_INCLUDE_SOURCE, Boolean.toString(iubc.getIncludeSource()));
-			String[] ids = iubc.getIds();
-			Version[] versions = iubc.getVersions();
-			for (int i = 0; i < ids.length; i++) {
-				Element unit = doc.createElement(INSTALLABLE_UNIT);
-				unit.setAttribute(ATTR_ID, ids[i]);
-				unit.setAttribute(ATTR_VERSION, versions[i].toString());
-				containerElement.appendChild(unit);
+		} else {
+			String xml = targetLocation.serialize();
+			if (xml == null)
+				return null;
+			Document document = getDocumentBuilder().parse(new ByteArrayInputStream(xml.getBytes("UTF-8"))); //$NON-NLS-1$
+			NodeList locationNode = document.getElementsByTagName(LOCATION);
+			if (locationNode == null || locationNode.getLength() == 0) {
+				return null;
 			}
-			URI[] repositories = iubc.getRepositories();
-			if (repositories != null) {
-				for (int i = 0; i < repositories.length; i++) {
-					Element repo = doc.createElement(REPOSITORY);
-					repo.setAttribute(LOCATION, repositories[i].toASCIIString());
-					containerElement.appendChild(repo);
-				}
-			}
+			return (Element) containerElement.getOwnerDocument().importNode(locationNode.item(0), true);
 		}
 		return containerElement;
 	}

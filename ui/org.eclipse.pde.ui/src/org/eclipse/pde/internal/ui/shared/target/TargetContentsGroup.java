@@ -28,11 +28,11 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.internal.core.DependencyManager;
 import org.eclipse.pde.internal.core.PDEState;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.core.target.TargetDefinition;
-import org.eclipse.pde.internal.core.target.provisional.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.SWTFactory;
 import org.eclipse.pde.internal.ui.editor.targetdefinition.TargetEditor;
@@ -59,7 +59,7 @@ import org.osgi.framework.BundleException;
  * @see TargetEditor
  * @see TargetDefinitionContentPage
  * @see ITargetDefinition
- * @see IResolvedBundle
+ * @see TargetBundle
  */
 public class TargetContentsGroup {
 
@@ -84,14 +84,14 @@ public class TargetContentsGroup {
 	private ViewerFilter fSourceFilter;
 	private ViewerFilter fPluginFilter;
 
-	private ITargetDefinition fTargetDefinition;
+	private TargetDefinition fTargetDefinition;
 	/**
 	 * Maps file paths to a list of bundles that reside in that location, use {@link #getFileBundleMapping()} rather than accessing the field directly
 	 */
 	private Map fFileBundleMapping;
 
 	/**
-	 * List of IResolvedBundles that are being used to display error statuses for missing plug-ins/features, possibly <code>null</code>
+	 * List of TargetBundles that are being used to display error statuses for missing plug-ins/features, possibly <code>null</code>
 	 */
 	private List fMissing;
 
@@ -242,7 +242,7 @@ public class TargetContentsGroup {
 				saveIncludedBundleState();
 				contentChanged();
 				updateButtons();
-				fTree.update(fTargetDefinition.getBundleContainers(), new String[] {IBasicPropertyConstants.P_TEXT});
+				fTree.update(fTargetDefinition.getTargetLocations(), new String[] {IBasicPropertyConstants.P_TEXT});
 			}
 		});
 		fTree.addCheckStateListener(new ICheckStateListener() {
@@ -250,7 +250,7 @@ public class TargetContentsGroup {
 				saveIncludedBundleState();
 				contentChanged();
 				updateButtons();
-				fTree.update(fTargetDefinition.getBundleContainers(), new String[] {IBasicPropertyConstants.P_TEXT});
+				fTree.update(fTargetDefinition.getTargetLocations(), new String[] {IBasicPropertyConstants.P_TEXT});
 			}
 		});
 		fTree.addSelectionChangedListener(new ISelectionChangedListener() {
@@ -268,15 +268,15 @@ public class TargetContentsGroup {
 						return -1;
 					}
 				}
-				if (e1 instanceof IResolvedBundle && !(e2 instanceof IResolvedBundle)) {
+				if (e1 instanceof TargetBundle && !(e2 instanceof TargetBundle)) {
 					return -1;
 				}
-				if (e2 instanceof IResolvedBundle && !(e1 instanceof IResolvedBundle)) {
+				if (e2 instanceof TargetBundle && !(e1 instanceof TargetBundle)) {
 					return 1;
 				}
-				if (e1 instanceof IResolvedBundle && e2 instanceof IResolvedBundle) {
-					IStatus status1 = ((IResolvedBundle) e1).getStatus();
-					IStatus status2 = ((IResolvedBundle) e2).getStatus();
+				if (e1 instanceof TargetBundle && e2 instanceof TargetBundle) {
+					IStatus status1 = ((TargetBundle) e1).getStatus();
+					IStatus status2 = ((TargetBundle) e2).getStatus();
 					if (!status1.isOK() && status2.isOK()) {
 						return -1;
 					}
@@ -450,7 +450,7 @@ public class TargetContentsGroup {
 					saveIncludedBundleState();
 					contentChanged();
 					updateButtons();
-					fTree.update(fTargetDefinition.getBundleContainers(), new String[] {IBasicPropertyConstants.P_TEXT});
+					fTree.update(fTargetDefinition.getTargetLocations(), new String[] {IBasicPropertyConstants.P_TEXT});
 				}
 			}
 		});
@@ -465,7 +465,7 @@ public class TargetContentsGroup {
 					saveIncludedBundleState();
 					contentChanged();
 					updateButtons();
-					fTree.update(fTargetDefinition.getBundleContainers(), new String[] {IBasicPropertyConstants.P_TEXT});
+					fTree.update(fTargetDefinition.getTargetLocations(), new String[] {IBasicPropertyConstants.P_TEXT});
 				}
 			}
 		});
@@ -476,7 +476,7 @@ public class TargetContentsGroup {
 				saveIncludedBundleState();
 				contentChanged();
 				updateButtons();
-				fTree.update(fTargetDefinition.getBundleContainers(), new String[] {IBasicPropertyConstants.P_TEXT});
+				fTree.update(fTargetDefinition.getTargetLocations(), new String[] {IBasicPropertyConstants.P_TEXT});
 			}
 		});
 
@@ -486,7 +486,7 @@ public class TargetContentsGroup {
 				saveIncludedBundleState();
 				contentChanged();
 				updateButtons();
-				fTree.update(fTargetDefinition.getBundleContainers(), new String[] {IBasicPropertyConstants.P_TEXT});
+				fTree.update(fTargetDefinition.getTargetLocations(), new String[] {IBasicPropertyConstants.P_TEXT});
 			}
 		});
 
@@ -495,7 +495,7 @@ public class TargetContentsGroup {
 				Object[] allChecked = fTree.getCheckedLeafElements();
 				Collection required = null;
 				if (fFeaureModeButton.getSelection()) {
-					required = getRequiredFeatures(fTargetDefinition.getAllFeatures(), allChecked);
+					required = getRequiredFeatures(fTargetDefinition.getAllFeatureModels(), allChecked);
 				} else {
 					required = getRequiredPlugins(fAllBundles, allChecked);
 				}
@@ -505,7 +505,7 @@ public class TargetContentsGroup {
 				saveIncludedBundleState();
 				contentChanged();
 				updateButtons();
-				fTree.update(fTargetDefinition.getBundleContainers(), new String[] {IBasicPropertyConstants.P_TEXT});
+				fTree.update(fTargetDefinition.getTargetLocations(), new String[] {IBasicPropertyConstants.P_TEXT});
 			}
 		});
 
@@ -602,8 +602,8 @@ public class TargetContentsGroup {
 	private void initializeFilters() {
 		fSourceFilter = new ViewerFilter() {
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
-				if (element instanceof IResolvedBundle) {
-					if (((IResolvedBundle) element).isSourceBundle()) {
+				if (element instanceof TargetBundle) {
+					if (((TargetBundle) element).isSourceBundle()) {
 						return false;
 					}
 				}
@@ -612,8 +612,8 @@ public class TargetContentsGroup {
 		};
 		fPluginFilter = new ViewerFilter() {
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
-				if (element instanceof IResolvedBundle) {
-					if (!((IResolvedBundle) element).isSourceBundle()) {
+				if (element instanceof TargetBundle) {
+					if (!((TargetBundle) element).isSourceBundle()) {
 						return false;
 					}
 				}
@@ -629,7 +629,7 @@ public class TargetContentsGroup {
 	 * @param bundle bundle to lookup parent path for
 	 * @return path of parent directory, if unknown it will be a path object containing "Unknown"
 	 */
-	private IPath getParentPath(IResolvedBundle bundle) {
+	private IPath getParentPath(TargetBundle bundle) {
 		URI location = bundle.getBundleInfo().getLocation();
 		if (location == null) {
 			return new Path(Messages.TargetContentsGroup_8);
@@ -696,7 +696,7 @@ public class TargetContentsGroup {
 	 * @param checkedBundles list of bundles to get requirements for
 	 * @return list of resolved bundles from the collection to be checked
 	 */
-	private List/*<IResolvedBundle>*/getRequiredPlugins(final Collection/*<IResolvedBundle>*/allBundles, final Object[] checkedBundles) {
+	private List/*<TargetBundle>*/getRequiredPlugins(final Collection/*<TargetBundle>*/allBundles, final Object[] checkedBundles) {
 		final Set dependencies = new HashSet();
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
@@ -706,7 +706,7 @@ public class TargetContentsGroup {
 					// Get all the bundle locations
 					List allLocations = new ArrayList(allBundles.size());
 					for (Iterator iterator = allBundles.iterator(); iterator.hasNext();) {
-						IResolvedBundle current = (IResolvedBundle) iterator.next();
+						TargetBundle current = (TargetBundle) iterator.next();
 						try {
 							// Some bundles, such as those with errors, may not have locations
 							URI location = current.getBundleInfo().getLocation();
@@ -734,8 +734,8 @@ public class TargetContentsGroup {
 					IPluginModelBase[] models = state.getTargetModels();
 					List checkedModels = new ArrayList(checkedBundles.length);
 					for (int i = 0; i < checkedBundles.length; i++) {
-						if (checkedBundles[i] instanceof IResolvedBundle) {
-							BundleInfo bundle = ((IResolvedBundle) checkedBundles[i]).getBundleInfo();
+						if (checkedBundles[i] instanceof TargetBundle) {
+							BundleInfo bundle = ((TargetBundle) checkedBundles[i]).getBundleInfo();
 							for (int j = 0; j < models.length; j++) {
 								if (models[j].getBundleDescription().getSymbolicName().equals(bundle.getSymbolicName()) && models[j].getBundleDescription().getVersion().toString().equals(bundle.getVersion())) {
 									checkedModels.add(models[j]);
@@ -777,14 +777,14 @@ public class TargetContentsGroup {
 			// We want to check the dependents, the source of the dependents, and the source of the originally checked
 			Set checkedNames = new HashSet(checkedBundles.length);
 			for (int i = 0; i < checkedBundles.length; i++) {
-				if (checkedBundles[i] instanceof IResolvedBundle) {
-					checkedNames.add(((IResolvedBundle) checkedBundles[i]).getBundleInfo().getSymbolicName());
+				if (checkedBundles[i] instanceof TargetBundle) {
+					checkedNames.add(((TargetBundle) checkedBundles[i]).getBundleInfo().getSymbolicName());
 				}
 			}
 
 			List toCheck = new ArrayList();
 			for (Iterator iterator = fAllBundles.iterator(); iterator.hasNext();) {
-				IResolvedBundle bundle = (IResolvedBundle) iterator.next();
+				TargetBundle bundle = (TargetBundle) iterator.next();
 				if (bundle.isSourceBundle()) {
 					String name = bundle.getSourceTarget().getSymbolicName();
 					if (name != null && (dependencies.contains(name) || checkedNames.contains(name))) {
@@ -885,7 +885,7 @@ public class TargetContentsGroup {
 			boolean noneSelected = true;
 			for (int i = 0; i < selection.length; i++) {
 				if (!hasResolveBundle || !hasParent) {
-					if (selection[i] instanceof IResolvedBundle) {
+					if (selection[i] instanceof TargetBundle) {
 						hasResolveBundle = true;
 					} else {
 						hasParent = true;
@@ -935,7 +935,12 @@ public class TargetContentsGroup {
 	 * @param input bundle container or <code>null</code>
 	 */
 	public void setInput(ITargetDefinition input) {
-		fTargetDefinition = input;
+		if (input instanceof TargetDefinition) {
+			fTargetDefinition = (TargetDefinition) input;
+		} else {
+			setEnabled(false);
+			return;
+		}
 
 		// Update the cached data
 		fFileBundleMapping = null;
@@ -947,7 +952,7 @@ public class TargetContentsGroup {
 			return;
 		}
 
-		IResolvedBundle[] allResolvedBundles = input.getAllBundles();
+		TargetBundle[] allResolvedBundles = input.getAllBundles();
 		if (allResolvedBundles == null || allResolvedBundles.length == 0) {
 			fTree.setInput(Messages.TargetContentsGroup_11);
 			setEnabled(false);
@@ -983,7 +988,7 @@ public class TargetContentsGroup {
 			result.addAll(((TargetDefinition) fTargetDefinition).getFeaturesAndBundles());
 		} else {
 			// Bundles with errors are already included from fMissing, do not add twice
-			IResolvedBundle[] bundles = fTargetDefinition.getBundles();
+			TargetBundle[] bundles = fTargetDefinition.getBundles();
 			for (int i = 0; i < bundles.length; i++) {
 				if (bundles[i].getStatus().isOK()) {
 					result.add(bundles[i]);
@@ -1015,7 +1020,7 @@ public class TargetContentsGroup {
 		// Map the bundles into their file locations
 		fFileBundleMapping = new HashMap();
 		for (Iterator iterator = fAllBundles.iterator(); iterator.hasNext();) {
-			IResolvedBundle currentBundle = (IResolvedBundle) iterator.next();
+			TargetBundle currentBundle = (TargetBundle) iterator.next();
 			IPath parentPath = getParentPath(currentBundle);
 			List bundles = (List) fFileBundleMapping.get(parentPath);
 			if (bundles == null) {
@@ -1035,8 +1040,8 @@ public class TargetContentsGroup {
 			result = fAllBundles.toArray();
 		} else if (fFeaureModeButton.getSelection() && parent == OTHER_CATEGORY) {
 			result = ((TargetDefinition) fTargetDefinition).getOtherBundles();
-		} else if (fGrouping == GROUP_BY_CONTAINER && parent instanceof IBundleContainer) {
-			IBundleContainer container = (IBundleContainer) parent;
+		} else if (fGrouping == GROUP_BY_CONTAINER && parent instanceof ITargetLocation) {
+			ITargetLocation container = (ITargetLocation) parent;
 			result = container.getBundles();
 		} else if (fGrouping == GROUP_BY_FILE_LOC && parent instanceof IPath) {
 			List bundles = (List) getFileBundleMapping().get(parent);
@@ -1090,16 +1095,16 @@ public class TargetContentsGroup {
 				if (checked[i] instanceof IFeatureModel) {
 					included.add(new NameVersionDescriptor(((IFeatureModel) checked[i]).getFeature().getId(), null, NameVersionDescriptor.TYPE_FEATURE));
 				}
-				if (checked[i] instanceof IResolvedBundle) {
-					// Missing features are included as IResolvedBundles, save them as features instead
-					if (((IResolvedBundle) checked[i]).getStatus().getCode() == IResolvedBundle.STATUS_PLUGIN_DOES_NOT_EXIST) {
-						included.add(new NameVersionDescriptor(((IResolvedBundle) checked[i]).getBundleInfo().getSymbolicName(), null, NameVersionDescriptor.TYPE_PLUGIN));
+				if (checked[i] instanceof TargetBundle) {
+					// Missing features are included as TargetBundles, save them as features instead
+					if (((TargetBundle) checked[i]).getStatus().getCode() == TargetBundle.STATUS_PLUGIN_DOES_NOT_EXIST) {
+						included.add(new NameVersionDescriptor(((TargetBundle) checked[i]).getBundleInfo().getSymbolicName(), null, NameVersionDescriptor.TYPE_PLUGIN));
 						missingCount++;
-					} else if (((IResolvedBundle) checked[i]).getStatus().getCode() == IResolvedBundle.STATUS_FEATURE_DOES_NOT_EXIST) {
-						included.add(new NameVersionDescriptor(((IResolvedBundle) checked[i]).getBundleInfo().getSymbolicName(), null, NameVersionDescriptor.TYPE_FEATURE));
+					} else if (((TargetBundle) checked[i]).getStatus().getCode() == TargetBundle.STATUS_FEATURE_DOES_NOT_EXIST) {
+						included.add(new NameVersionDescriptor(((TargetBundle) checked[i]).getBundleInfo().getSymbolicName(), null, NameVersionDescriptor.TYPE_FEATURE));
 						missingCount++;
 					} else {
-						included.add(new NameVersionDescriptor(((IResolvedBundle) checked[i]).getBundleInfo().getSymbolicName(), null));
+						included.add(new NameVersionDescriptor(((TargetBundle) checked[i]).getBundleInfo().getSymbolicName(), null));
 					}
 				}
 			}
@@ -1116,7 +1121,7 @@ public class TargetContentsGroup {
 			Set multi = new HashSet(); // BSNs of bundles with multiple versions available
 			Set all = new HashSet();
 			for (Iterator iterator = fAllBundles.iterator(); iterator.hasNext();) {
-				IResolvedBundle rb = (IResolvedBundle) iterator.next();
+				TargetBundle rb = (TargetBundle) iterator.next();
 				if (!all.add(rb.getBundleInfo().getSymbolicName())) {
 					multi.add(rb.getBundleInfo().getSymbolicName());
 				}
@@ -1126,13 +1131,13 @@ public class TargetContentsGroup {
 			List included = new ArrayList();
 			Object[] checked = fTree.getCheckedLeafElements();
 			for (int i = 0; i < checked.length; i++) {
-				if (checked[i] instanceof IResolvedBundle) {
+				if (checked[i] instanceof TargetBundle) {
 					// Create the bundle info object
-					String bsn = ((IResolvedBundle) checked[i]).getBundleInfo().getSymbolicName();
+					String bsn = ((TargetBundle) checked[i]).getBundleInfo().getSymbolicName();
 					NameVersionDescriptor info = null;
 					if (multi.contains(bsn)) {
 						// include version info
-						info = new NameVersionDescriptor(bsn, ((IResolvedBundle) checked[i]).getBundleInfo().getVersion());
+						info = new NameVersionDescriptor(bsn, ((TargetBundle) checked[i]).getBundleInfo().getVersion());
 					} else {
 						// don't store version info
 						info = new NameVersionDescriptor(bsn, null);
@@ -1168,10 +1173,10 @@ public class TargetContentsGroup {
 			if (fFeaureModeButton.getSelection() && element == OTHER_CATEGORY) {
 				return true;
 			}
-			if (fGrouping == GROUP_BY_NONE || element instanceof IResolvedBundle) {
+			if (fGrouping == GROUP_BY_NONE || element instanceof TargetBundle) {
 				return false;
 			}
-			if (element instanceof IBundleContainer || element instanceof IPath) {
+			if (element instanceof ITargetLocation || element instanceof IPath) {
 				return getBundleChildren(element).length > 0;
 			}
 			return false;
@@ -1187,7 +1192,7 @@ public class TargetContentsGroup {
 				} else {
 					fMissing.clear();
 				}
-				IResolvedBundle[] bundles = fTargetDefinition.getBundles();
+				TargetBundle[] bundles = fTargetDefinition.getBundles();
 				for (int i = 0; i < bundles.length; i++) {
 					if (!bundles[i].getStatus().isOK()) {
 						fMissing.add(bundles[i]);
@@ -1196,7 +1201,7 @@ public class TargetContentsGroup {
 				}
 
 				if (fFeaureModeButton.getSelection()) {
-					IFeatureModel[] features = fTargetDefinition.getAllFeatures();
+					IFeatureModel[] features = fTargetDefinition.getAllFeatureModels();
 					result.addAll(Arrays.asList(features));
 
 					// Check if we need the other category
@@ -1204,10 +1209,10 @@ public class TargetContentsGroup {
 						result.add(OTHER_CATEGORY);
 					}
 				} else if (fGrouping == GROUP_BY_CONTAINER) {
-					result.addAll(Arrays.asList(fTargetDefinition.getBundleContainers()));
+					result.addAll(Arrays.asList(fTargetDefinition.getTargetLocations()));
 				} else if (fGrouping == GROUP_BY_NONE) {
 					// Missing bundles are already handled by adding to fMissing, avoid adding twice
-					IResolvedBundle[] allBundles = fTargetDefinition.getAllBundles();
+					TargetBundle[] allBundles = fTargetDefinition.getAllBundles();
 					for (int i = 0; i < allBundles.length; i++) {
 						if (allBundles[i].getStatus().isOK()) {
 							result.add(allBundles[i]);

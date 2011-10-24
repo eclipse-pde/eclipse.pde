@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 IBM Corporation and others.
+ * Copyright (c) 2008, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,8 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
+
+import org.eclipse.pde.core.target.*;
 
 import java.io.*;
 import java.net.URL;
@@ -21,7 +23,6 @@ import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.target.TargetDefinition;
 import org.eclipse.pde.internal.core.target.TargetDefinitionPersistenceHelper;
-import org.eclipse.pde.internal.core.target.provisional.*;
 import org.eclipse.pde.internal.launching.launcher.LaunchArgumentsHelper;
 import org.eclipse.pde.internal.ui.tests.macro.MacroPlugin;
 import org.osgi.framework.ServiceReference;
@@ -65,7 +66,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		if (!target.isResolved()) {
 			target.resolve(null);
 		}
-		IResolvedBundle[] bundles = target.getBundles();
+		TargetBundle[] bundles = target.getBundles();
 		Set urls = new HashSet(bundles.length);
 		for (int i = 0; i < bundles.length; i++) {
 			urls.add(new File(bundles[i].getBundleInfo().getLocation()).toURL());
@@ -83,7 +84,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		ITargetDefinition definition = getDefaultTargetPlatorm();
 		Set urls = getAllBundleURLs(definition);
 		Set fragments = new HashSet();
-		IResolvedBundle[] bundles = definition.getBundles();
+		TargetBundle[] bundles = definition.getBundles();
 		for (int i = 0; i < bundles.length; i++) {
 			if (bundles[i].isFragment()) {
 				fragments.add(new File(bundles[i].getBundleInfo().getLocation()).toURL());
@@ -116,8 +117,8 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	public void testDefaultTargetPlatform() throws Exception {
 		// the new way
 		ITargetDefinition definition = getNewTarget();
-		IBundleContainer container = getTargetService().newProfileContainer(TargetPlatform.getDefaultLocation(), null);
-		definition.setBundleContainers(new IBundleContainer[]{container});
+		ITargetLocation container = getTargetService().newProfileLocation(TargetPlatform.getDefaultLocation(), null);
+		definition.setTargetLocations(new ITargetLocation[]{container});
 		Set urls = getAllBundleURLs(definition);	
 		
 		// the old way
@@ -140,12 +141,12 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	 */
 	public void testRestrictedDefaultTargetPlatform() throws Exception {
 		ITargetDefinition definition = getNewTarget();
-		IBundleContainer container = getTargetService().newProfileContainer(TargetPlatform.getDefaultLocation(), null);
+		ITargetLocation container = getTargetService().newProfileLocation(TargetPlatform.getDefaultLocation(), null);
 		NameVersionDescriptor[] restrictions = new NameVersionDescriptor[]{
 				new NameVersionDescriptor("org.eclipse.jdt.launching", null),
 				new NameVersionDescriptor("org.eclipse.jdt.debug", null)
 		};
-		definition.setBundleContainers(new IBundleContainer[]{container});
+		definition.setTargetLocations(new ITargetLocation[]{container});
 		definition.setIncluded(restrictions);
 		List infos = getAllBundleInfos(definition);
 		
@@ -167,8 +168,8 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	 */
 	public void testVersionRestrictedDefaultTargetPlatform() throws Exception {
 		ITargetDefinition definition = getNewTarget();
-		IBundleContainer container = getTargetService().newProfileContainer(TargetPlatform.getDefaultLocation(), null);
-		definition.setBundleContainers(new IBundleContainer[]{container});
+		ITargetLocation container = getTargetService().newProfileLocation(TargetPlatform.getDefaultLocation(), null);
+		definition.setTargetLocations(new ITargetLocation[]{container});
 		List infos = getAllBundleInfos(definition);
 		// find right versions
 		String v1 = null;
@@ -215,20 +216,20 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	 */
 	public void testMissingVersionRestrictedDefaultTargetPlatform() throws Exception {
 		ITargetDefinition definition = getNewTarget();
-		IBundleContainer container = getTargetService().newProfileContainer(TargetPlatform.getDefaultLocation(), null);
+		ITargetLocation container = getTargetService().newProfileLocation(TargetPlatform.getDefaultLocation(), null);
 		NameVersionDescriptor[] restrictions = new NameVersionDescriptor[]{
 				new NameVersionDescriptor("org.eclipse.jdt.launching", "xyz"),
 				new NameVersionDescriptor("org.eclipse.jdt.debug", "abc")
 		};
-		definition.setBundleContainers(new IBundleContainer[]{container});
+		definition.setTargetLocations(new ITargetLocation[]{container});
 		definition.setIncluded(restrictions);
 		definition.resolve(null);
-		IResolvedBundle[] bundles = definition.getBundles();
+		TargetBundle[] bundles = definition.getBundles();
 		
 		assertEquals("Wrong number of bundles", 2, bundles.length);
 		for (int i = 0; i < bundles.length; i++) {
-			IResolvedBundle rb = bundles[i];
-			assertEquals("Should be a missing bundle version", IResolvedBundle.STATUS_VERSION_DOES_NOT_EXIST, rb.getStatus().getCode());
+			TargetBundle rb = bundles[i];
+			assertEquals("Should be a missing bundle version", TargetBundle.STATUS_VERSION_DOES_NOT_EXIST, rb.getStatus().getCode());
 			assertEquals("Should be an error", IStatus.ERROR, rb.getStatus().getSeverity());
 		}
 	}	
@@ -244,8 +245,8 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	public void testEclipseHomeTargetPlatform() throws Exception {
 		// the new way
 		ITargetDefinition definition = getNewTarget();
-		IBundleContainer container = getTargetService().newProfileContainer("${eclipse_home}", null);
-		definition.setBundleContainers(new IBundleContainer[]{container});
+		ITargetLocation container = getTargetService().newProfileLocation("${eclipse_home}", null);
+		definition.setTargetLocations(new ITargetLocation[]{container});
 		Set urls = getAllBundleURLs(definition);
 		
 		// the old way
@@ -271,8 +272,8 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	public void testEclipseHomeTargetPlatformAndConfigurationArea() throws Exception {
 		// the new way
 		ITargetDefinition definition = getNewTarget();
-		IBundleContainer container = getTargetService().newProfileContainer("${eclipse_home}", "${eclipse_home}/configuration");
-		definition.setBundleContainers(new IBundleContainer[]{container});
+		ITargetLocation container = getTargetService().newProfileLocation("${eclipse_home}", "${eclipse_home}/configuration");
+		definition.setTargetLocations(new ITargetLocation[]{container});
 		Set urls = getAllBundleURLs(definition);
 		
 		// the old way
@@ -299,9 +300,9 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	public void testWovenTargetPlatform() throws Exception {
 		// the new way
 		ITargetDefinition definition = getNewTarget();
-		IBundleContainer container = getTargetService().newProfileContainer(TargetPlatform.getDefaultLocation(),
+		ITargetLocation container = getTargetService().newProfileLocation(TargetPlatform.getDefaultLocation(),
 				new File(Platform.getConfigurationLocation().getURL().getFile()).getAbsolutePath());
-		definition.setBundleContainers(new IBundleContainer[]{container});
+		definition.setTargetLocations(new ITargetLocation[]{container});
 		Set urls = getAllBundleURLs(definition);
 		
 		// the old way
@@ -322,8 +323,8 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	public void testDirectoryBundleContainer() throws Exception {
 		// the new way
 		ITargetDefinition definition = getNewTarget();
-		IBundleContainer container = getTargetService().newDirectoryContainer(TargetPlatform.getDefaultLocation() + "/plugins");
-		definition.setBundleContainers(new IBundleContainer[]{container});
+		ITargetLocation container = getTargetService().newDirectoryLocation(TargetPlatform.getDefaultLocation() + "/plugins");
+		definition.setTargetLocations(new ITargetLocation[]{container});
 		Set urls = getAllBundleURLs(definition);
 		
 		Preferences store = PDECore.getDefault().getPluginPreferences();
@@ -352,8 +353,8 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	public void testVariableDirectoryBundleContainer() throws Exception {
 		// the new way
 		ITargetDefinition definition = getNewTarget();
-		IBundleContainer container = getTargetService().newDirectoryContainer("${eclipse_home}/plugins");
-		definition.setBundleContainers(new IBundleContainer[]{container});
+		ITargetLocation container = getTargetService().newDirectoryLocation("${eclipse_home}/plugins");
+		definition.setTargetLocations(new ITargetLocation[]{container});
 		Set urls = getAllBundleURLs(definition);
 		
 		Preferences store = PDECore.getDefault().getPluginPreferences();
@@ -384,8 +385,8 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		
 		// the new way
 		ITargetDefinition definition = getNewTarget();
-		IBundleContainer container = getTargetService().newDirectoryContainer(location.toOSString());
-		definition.setBundleContainers(new IBundleContainer[]{container});
+		ITargetLocation container = getTargetService().newDirectoryLocation(location.toOSString());
+		definition.setTargetLocations(new ITargetLocation[]{container});
 		Set urls = getAllBundleURLs(definition);
 		assertTrue("Must be bundles", urls.size() > 0);
 		
@@ -419,14 +420,14 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		
 		// the new way
 		ITargetDefinition definition = getNewTarget();
-		IBundleContainer container = getTargetService().newDirectoryContainer(location.toOSString());
-		definition.setBundleContainers(new IBundleContainer[]{container});
+		ITargetLocation container = getTargetService().newDirectoryLocation(location.toOSString());
+		definition.setTargetLocations(new ITargetLocation[]{container});
 		
 		definition.resolve(null);
-		IResolvedBundle[] bundles = definition.getBundles();
+		TargetBundle[] bundles = definition.getBundles();
 		List source = new ArrayList();
 		for (int i = 0; i < bundles.length; i++) {
-			IResolvedBundle sb = bundles[i];
+			TargetBundle sb = bundles[i];
 			if (sb.isSourceBundle()) {
 				source.add(sb);
 			}
@@ -435,7 +436,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		assertEquals("Wrong number of source bundles", 4, source.size());
 		Set names = new HashSet();
 		for (int i = 0; i < source.size(); i++) {
-			names.add(((IResolvedBundle)source.get(i)).getBundleInfo().getSymbolicName());
+			names.add(((TargetBundle)source.get(i)).getBundleInfo().getSymbolicName());
 		}
 		String[] expected = new String[]{"org.eclipse.platform.source", "org.eclipse.jdt.source", "org.eclipse.pde.source", "org.eclipse.platform.source.win32.win32.x86"};
 		for (int i = 0; i < expected.length; i++) {
@@ -455,10 +456,10 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		
 		// the new way
 		ITargetDefinition definition = getNewTarget();
-		IBundleContainer container = getTargetService().newDirectoryContainer(location.toOSString());
-		definition.setBundleContainers(new IBundleContainer[]{container});
+		ITargetLocation container = getTargetService().newDirectoryLocation(location.toOSString());
+		definition.setTargetLocations(new ITargetLocation[]{container});
 		definition.resolve(null);
-		IResolvedBundle[] bundles = definition.getAllBundles();
+		TargetBundle[] bundles = definition.getAllBundles();
 		assertEquals("Wrong number of bundles", 1, bundles.length);
 		assertEquals("Wrong bundle", "org.eclipse.core.variables", bundles[0].getBundleInfo().getSymbolicName());				
 	}	
@@ -546,9 +547,9 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		
 		// the new way
 		ITargetDefinition definition = getNewTarget();
-		IBundleContainer container = getTargetService().newFeatureContainer(location.toOSString(), "org.eclipse.jdt", null);
+		ITargetLocation container = getTargetService().newFeatureLocation(location.toOSString(), "org.eclipse.jdt", null);
 		container.resolve(definition, null);
-		IResolvedBundle[] bundles = container.getBundles();
+		TargetBundle[] bundles = container.getBundles();
 		
 		List expected = new ArrayList();
 		expected.add("org.eclipse.jdt");
@@ -574,7 +575,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		
 		// should be no source bundles
 		for (int i = 0; i < bundles.length; i++) {
-			IResolvedBundle bundle = bundles[i];
+			TargetBundle bundle = bundles[i];
 			assertFalse("Should be no source bundles", bundle.isSourceBundle());
 		}
 	}
@@ -590,9 +591,9 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		
 		ITargetDefinition definition = getNewTarget();
 		definition.setOS(Platform.OS_MACOSX);
-		IBundleContainer container = getTargetService().newFeatureContainer(location.toOSString(), "org.eclipse.jdt", null);
+		ITargetLocation container = getTargetService().newFeatureLocation(location.toOSString(), "org.eclipse.jdt", null);
 		container.resolve(definition, null);
-		IResolvedBundle[] bundles = container.getBundles();
+		TargetBundle[] bundles = container.getBundles();
 		
 		List expected = new ArrayList();
 		expected.add("org.eclipse.jdt");
@@ -614,7 +615,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 					assertTrue("Mac bundle should be present", status.isOK());
 				} else {
 					assertFalse("Mac bundle should be missing", status.isOK());
-					assertEquals("Mac bundle should be mssing", IResolvedBundle.STATUS_PLUGIN_DOES_NOT_EXIST, status.getCode());
+					assertEquals("Mac bundle should be mssing", TargetBundle.STATUS_PLUGIN_DOES_NOT_EXIST, status.getCode());
 				}
 			}
 		}
@@ -628,7 +629,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		
 		// should be no source bundles
 		for (int i = 0; i < bundles.length; i++) {
-			IResolvedBundle bundle = bundles[i];
+			TargetBundle bundle = bundles[i];
 			assertFalse("Should be no source bundles", bundle.isSourceBundle());
 		}
 	}	
@@ -643,12 +644,12 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		IPath location = extractModifiedFeatures();
 		
 		ITargetDefinition definition = getNewTarget();
-		IBundleContainer container = getTargetService().newFeatureContainer(location.toOSString(), "org.eclipse.jdt", null);
+		ITargetLocation container = getTargetService().newFeatureLocation(location.toOSString(), "org.eclipse.jdt", null);
 		NameVersionDescriptor[] restrictions = new NameVersionDescriptor[]{
 				new NameVersionDescriptor("org.eclipse.jdt", null),
 				new NameVersionDescriptor("org.junit", "3.8.2.v20090203-1005")
 		};
-		definition.setBundleContainers(new IBundleContainer[]{container});
+		definition.setTargetLocations(new ITargetLocation[]{container});
 		definition.setIncluded(restrictions);
 		List infos = getAllBundleInfos(definition);
 		
@@ -671,9 +672,9 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		IPath location = extractModifiedFeatures();
 		
 		ITargetDefinition definition = getNewTarget();
-		IBundleContainer container = getTargetService().newFeatureContainer(location.toOSString(), "org.eclipse.jdt.source", null);
+		ITargetLocation container = getTargetService().newFeatureLocation(location.toOSString(), "org.eclipse.jdt.source", null);
 		container.resolve(definition, null);
-		IResolvedBundle[] bundles = container.getBundles();
+		TargetBundle[] bundles = container.getBundles();
 	
 		List expected = new ArrayList();
 		expected.add("org.eclipse.jdt.source");
@@ -711,9 +712,9 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 			assertTrue("Missing version id", index > 0);
 			String version = segment.substring(index + 1);
 			ITargetDefinition target = getNewTarget();
-			IBundleContainer container = getTargetService().newFeatureContainer("${eclipse_home}", "org.eclipse.jdt", version);
+			ITargetLocation container = getTargetService().newFeatureLocation("${eclipse_home}", "org.eclipse.jdt", version);
 			
-			target.setBundleContainers(new IBundleContainer[]{container});
+			target.setTargetLocations(new ITargetLocation[]{container});
 			
 			setTargetPlatform(target);
 			
@@ -814,7 +815,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	 */
 	public void testArgumentsPluginsDirectory() throws Exception {
 		// test bundle containers for known arguments
-		IBundleContainer directoryContainer = getTargetService().newDirectoryContainer(TargetPlatform.getDefaultLocation() + "/plugins");
+		ITargetLocation directoryContainer = getTargetService().newDirectoryLocation(TargetPlatform.getDefaultLocation() + "/plugins");
 		assertNull("Plugins directory containers should not have arguments", directoryContainer.getVMArguments());
 	}
 	
@@ -824,7 +825,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	 * @throws Exception
 	 */
 	public void testArgumentsInstallDirectory() throws Exception {
-		IBundleContainer installDirectory = getTargetService().newDirectoryContainer(TargetPlatform.getDefaultLocation());
+		ITargetLocation installDirectory = getTargetService().newDirectoryLocation(TargetPlatform.getDefaultLocation());
 		String[] installArgs = installDirectory.getVMArguments();
 		assertNotNull("Install directory should have arguments", installArgs);
 		assertTrue("Install directory should have arguments", installArgs.length > 0);
@@ -836,7 +837,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	 * @throws Exception
 	 */
 	public void testArgumentsFeatureContainer() throws Exception {		
-		IBundleContainer featureContainer = getTargetService().newFeatureContainer(TargetPlatform.getDefaultLocation(), "DOES NOT EXIST", "DOES NOT EXIST");
+		ITargetLocation featureContainer = getTargetService().newFeatureLocation(TargetPlatform.getDefaultLocation(), "DOES NOT EXIST", "DOES NOT EXIST");
 		assertNull("Feature containers should not have arguments", featureContainer.getVMArguments());
 	}
 	
@@ -846,7 +847,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	 * @throws Exception
 	 */
 	public void testArgumentsProfileContainer() throws Exception {
-		IBundleContainer profileContainer = getTargetService().newProfileContainer(TargetPlatform.getDefaultLocation(), null);
+		ITargetLocation profileContainer = getTargetService().newProfileLocation(TargetPlatform.getDefaultLocation(), null);
 		String[] arguments = profileContainer.getVMArguments();
 		assertNotNull("Profile containers should have arguments", arguments);
 		assertTrue("Profile containers should have arguments", arguments.length > 0);		
@@ -935,8 +936,8 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		
 		IPath extras = extractMultiVersionPlugins();
 		ITargetDefinition target = getNewTarget();
-		IBundleContainer container = getTargetService().newDirectoryContainer(extras.toOSString());
-		target.setBundleContainers(new IBundleContainer[]{container});
+		ITargetLocation container = getTargetService().newDirectoryLocation(extras.toOSString());
+		target.setTargetLocations(new ITargetLocation[]{container});
 		target.setIncluded(descriptions);
 		try {
 			getTargetService().saveTargetDefinition(target);

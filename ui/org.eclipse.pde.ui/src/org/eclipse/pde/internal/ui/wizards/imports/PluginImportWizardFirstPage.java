@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.imports;
 
+import org.eclipse.pde.core.target.*;
+
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
@@ -27,7 +29,6 @@ import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.project.BundleProjectService;
-import org.eclipse.pde.internal.core.target.provisional.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.preferences.TargetPlatformPreferenceNode;
 import org.eclipse.swt.SWT;
@@ -550,14 +551,14 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		ITargetPlatformService service = getTargetPlatformService();
 		if (service != null) {
 			File plugins = new File(location, "plugins"); //$NON-NLS-1$
-			IBundleContainer container = null;
+			ITargetLocation container = null;
 			if (plugins.exists()) {
-				container = service.newDirectoryContainer(plugins.getAbsolutePath());
+				container = service.newDirectoryLocation(plugins.getAbsolutePath());
 			} else {
-				container = service.newDirectoryContainer(location);
+				container = service.newDirectoryLocation(location);
 			}
 			ITargetDefinition target = service.newTarget(); // temporary target
-			target.setBundleContainers(new IBundleContainer[] {container});
+			target.setTargetLocations(new ITargetLocation[] {container});
 			resolveTargetDefinition(target, getImportType());
 		}
 	}
@@ -578,11 +579,11 @@ public class PluginImportWizardFirstPage extends WizardPage {
 				if (monitor.isCanceled()) {
 					return;
 				}
-				IResolvedBundle[] bundles = target.getBundles();
+				TargetBundle[] bundles = target.getBundles();
 				Map sourceMap = new HashMap();
 				List/*<URL>*/all = new ArrayList();
 				for (int i = 0; i < bundles.length; i++) {
-					IResolvedBundle bundle = bundles[i];
+					TargetBundle bundle = bundles[i];
 					try {
 						if (bundle.getStatus().isOK()) {
 							all.add(new File(bundle.getBundleInfo().getLocation()).toURL());
@@ -603,13 +604,13 @@ public class PluginImportWizardFirstPage extends WizardPage {
 				List sourceBundles = new ArrayList();
 				for (int i = 0; i < models.length; i++) {
 					IPluginBase base = models[i].getPluginBase();
-					IResolvedBundle bundle = (IResolvedBundle) sourceMap.get(new SourceLocationKey(base.getId(), new Version(base.getVersion())));
+					TargetBundle bundle = (TargetBundle) sourceMap.get(new SourceLocationKey(base.getId(), new Version(base.getVersion())));
 					if (bundle != null) {
 						sourceModels.add(models[i]);
 						sourceBundles.add(bundle);
 					}
 				}
-				alternateSource = new AlternateSourceLocations((IPluginModelBase[]) sourceModels.toArray(new IPluginModelBase[sourceModels.size()]), (IResolvedBundle[]) sourceBundles.toArray(new IResolvedBundle[sourceBundles.size()]));
+				alternateSource = new AlternateSourceLocations((IPluginModelBase[]) sourceModels.toArray(new IPluginModelBase[sourceModels.size()]), (TargetBundle[]) sourceBundles.toArray(new TargetBundle[sourceBundles.size()]));
 				try {
 					buildImportDescriptions(pm, type);
 				} catch (CoreException e) {

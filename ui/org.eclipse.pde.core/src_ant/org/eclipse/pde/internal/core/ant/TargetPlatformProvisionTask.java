@@ -16,13 +16,13 @@ import org.apache.tools.ant.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.internal.build.BundleHelper;
 import org.eclipse.pde.internal.build.tasks.TaskHelper;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.target.ExportTargetJob;
 import org.eclipse.pde.internal.core.target.TargetPlatformService;
-import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
 
 /**
  * Exports the bundles and plug-ins of a target definition to a directory

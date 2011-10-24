@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,9 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ifeature.*;
-import org.eclipse.pde.internal.core.target.provisional.*;
 
 /**
  * A container of the bundles contained in a feature.
@@ -109,20 +109,20 @@ public class FeatureBundleContainer extends AbstractBundleContainer {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer#resolveBundles(org.eclipse.pde.internal.core.target.provisional.ITargetDefinition, org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer#resolveBundles(org.eclipse.pde.core.target.ITargetDefinition, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	protected IResolvedBundle[] resolveBundles(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
+	protected TargetBundle[] resolveBundles(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
 		IFeatureModel model = null;
 		try {
 			if (monitor.isCanceled()) {
-				return new IResolvedBundle[0];
+				return new TargetBundle[0];
 			}
 
-			IFeatureModel[] features = resolveFeatures(definition, null);
+			TargetFeature[] features = resolveFeatures(definition, null);
 			if (features.length == 0) {
 				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.FeatureBundleContainer_1, fId)));
 			}
-			File location = new File(features[0].getInstallLocation());
+			File location = new File(features[0].getLocation());
 			if (!location.exists()) {
 				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.FeatureBundleContainer_0, location.toString())));
 			}
@@ -144,18 +144,18 @@ public class FeatureBundleContainer extends AbstractBundleContainer {
 				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.FeatureBundleContainer_5, fId)));
 			}
 			if (monitor.isCanceled()) {
-				return new IResolvedBundle[0];
+				return new TargetBundle[0];
 			}
 
-			IBundleContainer container = service.newDirectoryContainer(dir.getAbsolutePath());
+			ITargetLocation container = service.newDirectoryLocation(dir.getAbsolutePath());
 			container.resolve(definition, monitor);
-			IResolvedBundle[] bundles = container.getBundles();
+			TargetBundle[] bundles = container.getBundles();
 			IFeature feature = model.getFeature();
 			IFeaturePlugin[] plugins = feature.getPlugins();
 			List matchInfos = new ArrayList(plugins.length);
 			for (int i = 0; i < plugins.length; i++) {
 				if (monitor.isCanceled()) {
-					return new IResolvedBundle[0];
+					return new TargetBundle[0];
 				}
 				IFeaturePlugin plugin = plugins[i];
 				// only include if plug-in matches environment
@@ -164,12 +164,8 @@ public class FeatureBundleContainer extends AbstractBundleContainer {
 				}
 			}
 
-			// Because we used the directory container to get our bundles, we need to replace their parent
-			for (int i = 0; i < bundles.length; i++) {
-				bundles[i].setParentContainer(this);
-			}
-			List result = TargetDefinition.getMatchingBundles(bundles, (NameVersionDescriptor[]) matchInfos.toArray(new NameVersionDescriptor[matchInfos.size()]), null, this);
-			return (IResolvedBundle[]) result.toArray(new IResolvedBundle[result.size()]);
+			List result = TargetDefinition.getMatchingBundles(bundles, (NameVersionDescriptor[]) matchInfos.toArray(new NameVersionDescriptor[matchInfos.size()]), true);
+			return (TargetBundle[]) result.toArray(new TargetBundle[result.size()]);
 		} finally {
 			if (model != null) {
 				model.dispose();
@@ -178,20 +174,20 @@ public class FeatureBundleContainer extends AbstractBundleContainer {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.AbstractBundleContainer#resolveFeatures(org.eclipse.pde.internal.core.target.provisional.ITargetDefinition, org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.pde.internal.core.target.AbstractBundleContainer#resolveFeatures(org.eclipse.pde.core.target.ITargetDefinition, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	protected IFeatureModel[] resolveFeatures(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
+	protected TargetFeature[] resolveFeatures(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
 		if (definition instanceof TargetDefinition) {
-			IFeatureModel[] allFeatures = ((TargetDefinition) definition).getFeatureModels(getLocation(false), monitor);
+			TargetFeature[] allFeatures = ((TargetDefinition) definition).resolveFeatures(getLocation(false), monitor);
 			for (int i = 0; i < allFeatures.length; i++) {
-				if (allFeatures[i].getFeature().getId().equals(fId)) {
-					if (fVersion == null || allFeatures[i].getFeature().getVersion().equals(fVersion)) {
-						return new IFeatureModel[] {allFeatures[i]};
+				if (allFeatures[i].getId().equals(fId)) {
+					if (fVersion == null || allFeatures[i].getVersion().equals(fVersion)) {
+						return new TargetFeature[] {allFeatures[i]};
 					}
 				}
 			}
 		}
-		return new IFeatureModel[0];
+		return new TargetFeature[0];
 	}
 
 	/**
@@ -242,7 +238,7 @@ public class FeatureBundleContainer extends AbstractBundleContainer {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.IBundleContainer#getVMArguments()
+	 * @see org.eclipse.pde.internal.core.target.AbstractBundleContainer#getVMArguments()
 	 */
 	public String[] getVMArguments() {
 		return null;

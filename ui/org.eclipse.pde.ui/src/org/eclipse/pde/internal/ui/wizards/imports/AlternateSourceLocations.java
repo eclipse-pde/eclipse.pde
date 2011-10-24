@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,14 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.imports;
 
-import org.eclipse.pde.internal.core.target.ResolvedBundle;
-
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.target.TargetBundle;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.target.provisional.IResolvedBundle;
 
 /**
  * Used to locate source when performing an import that is *not* from the active
@@ -33,7 +31,7 @@ public class AlternateSourceLocations extends SourceLocationManager {
 	/**
 	 * Resolved bundles corresponding to models
 	 */
-	private IResolvedBundle[] bundles;
+	private TargetBundle[] bundles;
 
 	/**
 	 * List of source locations that reference root folders containing
@@ -48,7 +46,7 @@ public class AlternateSourceLocations extends SourceLocationManager {
 	 * @param plugins models to consider as source locations
 	 * @param rbs corresponding resolved bundles
 	 */
-	public AlternateSourceLocations(IPluginModelBase[] plugins, IResolvedBundle rbs[]) {
+	public AlternateSourceLocations(IPluginModelBase[] plugins, TargetBundle rbs[]) {
 		models = plugins;
 		bundles = rbs;
 	}
@@ -76,7 +74,7 @@ public class AlternateSourceLocations extends SourceLocationManager {
 		if (oldSourceRoots == null) {
 			oldSourceRoots = new ArrayList();
 			for (int i = 0; i < bundles.length; i++) {
-				String path = ((ResolvedBundle) bundles[i]).getSourcePath();
+				String path = ((TargetBundle) bundles[i]).getSourcePath();
 				if (path != null) {
 					oldSourceRoots.add(new SourceLocation(new Path(models[i].getInstallLocation()).append(path)));
 				}

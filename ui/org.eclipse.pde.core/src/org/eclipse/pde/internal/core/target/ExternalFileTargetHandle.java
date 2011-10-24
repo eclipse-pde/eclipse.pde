@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,14 +10,15 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target;
 
+import org.eclipse.pde.core.target.ITargetDefinition;
+import org.eclipse.pde.core.target.ITargetHandle;
+
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URI;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
-import org.eclipse.pde.internal.core.target.provisional.ITargetHandle;
 
 /**
  * A handle to a target stored in a remote file (outside workspace) and accessed using its URI.
@@ -72,7 +73,7 @@ public class ExternalFileTargetHandle extends AbstractTargetHandle {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.impl.AbstractTargetHandle#save(org.eclipse.pde.internal.core.target.provisional.ITargetDefinition)
+	 * @see org.eclipse.pde.internal.core.target.impl.AbstractTargetHandle#save(org.eclipse.pde.core.target.ITargetDefinition)
 	 */
 	void save(ITargetDefinition definition) throws CoreException {
 		try {
@@ -85,14 +86,14 @@ public class ExternalFileTargetHandle extends AbstractTargetHandle {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetHandle#exists()
+	 * @see org.eclipse.pde.core.target.ITargetHandle#exists()
 	 */
 	public boolean exists() {
 		return fFile != null && fFile.exists();
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetHandle#getMemento()
+	 * @see org.eclipse.pde.core.target.ITargetHandle#getMemento()
 	 */
 	public String getMemento() throws CoreException {
 		return fURI.toString();

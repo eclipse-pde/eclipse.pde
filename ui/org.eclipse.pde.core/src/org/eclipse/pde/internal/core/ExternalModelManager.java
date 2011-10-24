@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
+import org.eclipse.pde.core.target.NameVersionDescriptor;
+
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -22,7 +24,6 @@ import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.target.P2TargetUtils;
-import org.eclipse.pde.internal.core.target.provisional.NameVersionDescriptor;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 
 public class ExternalModelManager extends AbstractModelManager {

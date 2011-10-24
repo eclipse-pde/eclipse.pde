@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
+import org.eclipse.pde.core.target.*;
+
 import java.io.*;
 import java.net.URL;
 import java.util.*;
@@ -19,7 +21,6 @@ import junit.framework.TestCase;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.frameworkadmin.BundleInfo;
 import org.eclipse.pde.core.plugin.TargetPlatform;
-import org.eclipse.pde.internal.core.target.provisional.*;
 import org.eclipse.pde.internal.ui.tests.macro.MacroPlugin;
 import org.osgi.framework.ServiceReference;
 
@@ -238,9 +239,9 @@ public abstract class AbstractTargetTest extends TestCase {
 	 */
 	protected ITargetDefinition getDefaultTargetPlatorm() {
 		ITargetDefinition definition = getNewTarget();
-		IBundleContainer container = getTargetService().newProfileContainer(TargetPlatform.getDefaultLocation(),
+		ITargetLocation container = getTargetService().newProfileLocation(TargetPlatform.getDefaultLocation(),
 				new File(Platform.getConfigurationLocation().getURL().getFile()).getAbsolutePath());
-		definition.setBundleContainers(new IBundleContainer[]{container});
+		definition.setTargetLocations(new ITargetLocation[]{container});
 		return definition;
 	}	
 	
@@ -293,7 +294,7 @@ public abstract class AbstractTargetTest extends TestCase {
 		if (!target.isResolved()) {
 			target.resolve(null);
 		}
-		IResolvedBundle[] bundles = target.getBundles();
+		TargetBundle[] bundles = target.getBundles();
 		List list = new ArrayList(bundles.length);
 		for (int i = 0; i < bundles.length; i++) {
 			list.add(bundles[i].getBundleInfo());
@@ -308,8 +309,8 @@ public abstract class AbstractTargetTest extends TestCase {
 	 * @return included bundles
 	 * @throws Exception
 	 */
-	protected List getBundleInfos(IBundleContainer container) throws Exception {
-		IResolvedBundle[] bundles = container.getBundles();
+	protected List getBundleInfos(ITargetLocation container) throws Exception {
+		TargetBundle[] bundles = container.getBundles();
 		List list = new ArrayList(bundles.length);
 		for (int i = 0; i < bundles.length; i++) {
 			list.add(bundles[i].getBundleInfo());

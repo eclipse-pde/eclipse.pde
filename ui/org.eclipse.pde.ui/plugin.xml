@@ -20,6 +20,7 @@
    <extension-point id="templates" name="%expoint.templates.name" schema="schema/templates.exsd"/>
    <extension-point id="samples" name="%expoint.samples.name" schema="schema/samples.exsd"/>
    <extension-point id="targetProvisioners" name="%extension-point.name.0" schema="schema/targetProvisioners.exsd"/>
+   <extension-point id="targetLocationProvisioners" name="%extension-point.name.2" schema="schema/targetLocationProvisioners.exsd"/>
    <extension-point id="launchShortcuts" name="%extension-point.name.1" schema="schema/launchShortcuts.exsd"/>
 
 <!-- Extensions -->
@@ -2107,5 +2108,36 @@
             </or>
          </iterate>
       </definition>
+   </extension>
+      <extension
+         point="org.eclipse.core.runtime.adapters">
+      <factory
+            adaptableType="org.eclipse.pde.core.target.ITargetLocation"
+            class="org.eclipse.pde.internal.ui.shared.target.IUFactory">
+         <adapter
+               type="org.eclipse.jface.viewers.ILabelProvider">
+         </adapter>
+         <adapter
+               type="org.eclipse.jface.viewers.ITreeContentProvider">
+         </adapter>
+         <adapter
+               type="org.eclipse.pde.ui.target.ITargetLocationEditor">
+         </adapter>
+         <adapter
+               type="org.eclipse.pde.ui.target.ITargetLocationUpdater">
+         </adapter>
+      </factory>
+   </extension>
+   <extension
+         point="org.eclipse.pde.ui.targetLocationProvisioners">
+      <locationProvider
+            class="org.eclipse.pde.internal.ui.shared.target.InstallableUnitWizard"
+            icon="icons/obj16/metadata_repo_obj.gif"
+            id="org.eclipse.pde.ui.InstallableUnitProvisioner"
+            name="%targetLocationProvider.IU.name">
+         <description>
+            %targetLocationProvider.IU.description
+         </description>
+      </locationProvider>
    </extension>
 </plugin>

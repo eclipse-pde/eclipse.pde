@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.preferences;
 
+import org.eclipse.pde.core.target.TargetBundle;
+import org.eclipse.pde.core.target.ITargetDefinition;
+
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.core.resources.WorkspaceJob;
@@ -19,8 +22,6 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.SearchablePluginsManager;
-import org.eclipse.pde.internal.core.target.provisional.IResolvedBundle;
-import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 /**
@@ -129,7 +130,7 @@ public class AddToJavaSearchJob extends WorkspaceJob {
 					return Status.CANCEL_STATUS;
 				}
 
-				IResolvedBundle[] bundles = fTargetDefinition.getBundles();
+				TargetBundle[] bundles = fTargetDefinition.getBundles();
 				fAdd = true;
 				List models = new ArrayList(bundles.length);
 				for (int index = 0; index < bundles.length; index++) {

@@ -18,9 +18,7 @@ import org.eclipse.osgi.util.NLS;
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.pde.internal.core.target.Messages"; //$NON-NLS-1$
 	public static String AbstractBundleContainer_1;
-	public static String AbstractBundleContainer_2;
 	public static String AbstractBundleContainer_3;
-	public static String AbstractBundleContainer_4;
 	public static String AbstractTargetHandle_0;
 	public static String DirectoryBundleContainer_0;
 	public static String DirectoryBundleContainer_1;
@@ -75,6 +73,7 @@ public class Messages extends NLS {
 	public static String TargetDefinition_RequiredFeatureCouldNotBeFound;
 	public static String TargetDefinitionPersistenceHelper_0;
 	public static String TargetDefinitionPersistenceHelper_1;
+	public static String TargetFeature_FileDoesNotExist;
 	public static String TargetPlatformService_0;
 	public static String TargetPlatformService_1;
 	public static String TargetPlatformService_2;
@@ -82,9 +81,6 @@ public class Messages extends NLS {
 	public static String TargetPlatformService_4;
 	public static String TargetPlatformService_5;
 	public static String TargetPlatformService_7;
-	public static String UpdateTargetJob_UpdateJobName;
-	public static String UpdateTargetJob_UpdatingContainer;
-	public static String UpdateTargetJob_UpdatingTarget;
 	public static String WorkspaceFileTargetHandle_0;
 	static {
 		// initialize resource bundle

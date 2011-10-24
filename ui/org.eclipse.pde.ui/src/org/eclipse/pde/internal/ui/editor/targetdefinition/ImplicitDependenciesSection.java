@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.targetdefinition;
 
+import org.eclipse.pde.core.target.*;
+
 import java.util.*;
 import java.util.List;
 import org.eclipse.core.runtime.*;
@@ -17,7 +19,6 @@ import org.eclipse.equinox.frameworkadmin.BundleInfo;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.internal.core.target.provisional.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
@@ -233,7 +234,7 @@ public class ImplicitDependenciesSection extends SectionPart {
 		}
 
 		List targetBundles = new ArrayList();
-		IResolvedBundle[] allTargetBundles = getTarget().getAllBundles();
+		TargetBundle[] allTargetBundles = getTarget().getAllBundles();
 		if (allTargetBundles == null || allTargetBundles.length == 0) {
 			throw new CoreException(new Status(IStatus.WARNING, PDEPlugin.getPluginId(), PDEUIMessages.ImplicitDependenciesSection_0));
 		}

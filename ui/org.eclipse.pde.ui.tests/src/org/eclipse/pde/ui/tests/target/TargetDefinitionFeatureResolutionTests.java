@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
+import org.eclipse.pde.core.target.*;
+
 import java.util.*;
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -17,7 +19,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
-import org.eclipse.pde.internal.core.target.provisional.*;
 
 /**
  * Tests whether targets and bundle containers manage features correctly.
@@ -35,7 +36,7 @@ public class TargetDefinitionFeatureResolutionTests extends AbstractTargetTest {
 	 */
 	public void testDirectoryBundleContainer() throws Exception{
 		ITargetDefinition definition = getNewTarget();
-		IBundleContainer directoryContainer = getTargetService().newDirectoryContainer(TargetPlatform.getDefaultLocation());
+		ITargetLocation directoryContainer = getTargetService().newDirectoryLocation(TargetPlatform.getDefaultLocation());
 		
 		assertNull(directoryContainer.getFeatures());
 		
@@ -46,11 +47,11 @@ public class TargetDefinitionFeatureResolutionTests extends AbstractTargetTest {
 		}
 				
 		directoryContainer.resolve(definition, null);
-		IFeatureModel[] features = directoryContainer.getFeatures();
+		TargetFeature[] features = directoryContainer.getFeatures();
 		assertNotNull(features);
 		
 		for (int i = 0; i < features.length; i++) {
-			String currentID = features[i].getFeature().getId();
+			String currentID = features[i].getId();
 			assertTrue("Extra feature in result: " + currentID, expectedIDs.contains(currentID));
 			expectedIDs.remove(currentID);
 		}
@@ -63,7 +64,7 @@ public class TargetDefinitionFeatureResolutionTests extends AbstractTargetTest {
 	 */
 	public void testProfileBundleContainer() throws Exception{
 		ITargetDefinition definition = getNewTarget();
-		IBundleContainer profileContainer = getTargetService().newProfileContainer(TargetPlatform.getDefaultLocation(), null);
+		ITargetLocation profileContainer = getTargetService().newProfileLocation(TargetPlatform.getDefaultLocation(), null);
 		
 		assertNull(profileContainer.getFeatures());
 		
@@ -74,11 +75,11 @@ public class TargetDefinitionFeatureResolutionTests extends AbstractTargetTest {
 		}
 				
 		profileContainer.resolve(definition, null);
-		IFeatureModel[] features = profileContainer.getFeatures();
+		TargetFeature[] features = profileContainer.getFeatures();
 		assertNotNull(features);
 		
 		for (int i = 0; i < features.length; i++) {
-			String currentID = features[i].getFeature().getId();
+			String currentID = features[i].getId();
 			assertTrue("Extra feature in result: " + currentID, expectedIDs.contains(currentID));
 			expectedIDs.remove(currentID);
 		}
@@ -91,7 +92,7 @@ public class TargetDefinitionFeatureResolutionTests extends AbstractTargetTest {
 	 */
 	public void testFeatureBundleContainer() throws Exception{
 		ITargetDefinition definition = getNewTarget();
-		IBundleContainer featureContainer = getTargetService().newFeatureContainer(TargetPlatform.getDefaultLocation(), "org.eclipse.pde", null);
+		ITargetLocation featureContainer = getTargetService().newFeatureLocation(TargetPlatform.getDefaultLocation(), "org.eclipse.pde", null);
 		
 		assertNull(featureContainer.getFeatures());
 		
@@ -99,10 +100,10 @@ public class TargetDefinitionFeatureResolutionTests extends AbstractTargetTest {
 		assertTrue(possibleFeatures.length > 0);
 				
 		featureContainer.resolve(definition, null);
-		IFeatureModel[] features = featureContainer.getFeatures();
+		TargetFeature[] features = featureContainer.getFeatures();
 		assertNotNull(features);
 		assertEquals(features.length, 1);
-		assertEquals(features[0].getFeature().getId(),possibleFeatures[0].getFeature().getId());
+		assertEquals(features[0].getId(),possibleFeatures[0].getFeature().getId());
 	}
 	
 	public void testExplicitIncludes() throws Exception{
@@ -110,8 +111,8 @@ public class TargetDefinitionFeatureResolutionTests extends AbstractTargetTest {
 		ITargetDefinition definition = getNewTarget();
 		IPath location = extractModifiedFeatures();
 		
-		IBundleContainer container = getTargetService().newDirectoryContainer(location.toOSString());
-		definition.setBundleContainers(new IBundleContainer[]{container});
+		ITargetLocation container = getTargetService().newDirectoryLocation(location.toOSString());
+		definition.setTargetLocations(new ITargetLocation[]{container});
 		definition.resolve(null);
 		
 		List expected = new ArrayList();
@@ -134,7 +135,7 @@ public class TargetDefinitionFeatureResolutionTests extends AbstractTargetTest {
 				new NameVersionDescriptor("org.eclipse.jdt.source", "3.6.0.v20100105-0800-7z8VFR9FMTb52_pOyKHhoek1", NameVersionDescriptor.TYPE_FEATURE)
 			};
 		definition.setIncluded(allFeatures);
-		IResolvedBundle[] bundles = definition.getBundles();
+		TargetBundle[] bundles = definition.getBundles();
 		
 		for (int i = 0; i < bundles.length; i++) {
 			String symbolicName = bundles[i].getBundleInfo().getSymbolicName();
@@ -146,7 +147,7 @@ public class TargetDefinitionFeatureResolutionTests extends AbstractTargetTest {
 					assertTrue("Mac bundle should be present", status.isOK());
 				} else {
 					assertFalse("Mac bundle should be missing", status.isOK());
-					assertEquals("Mac bundle should be mssing", IResolvedBundle.STATUS_PLUGIN_DOES_NOT_EXIST, status.getCode());
+					assertEquals("Mac bundle should be mssing", TargetBundle.STATUS_PLUGIN_DOES_NOT_EXIST, status.getCode());
 				}
 			}
 		}
@@ -164,8 +165,8 @@ public class TargetDefinitionFeatureResolutionTests extends AbstractTargetTest {
 		ITargetDefinition definition = getNewTarget();
 		IPath location = extractModifiedFeatures();
 		
-		IBundleContainer container = getTargetService().newDirectoryContainer(location.toOSString());
-		definition.setBundleContainers(new IBundleContainer[]{container});
+		ITargetLocation container = getTargetService().newDirectoryLocation(location.toOSString());
+		definition.setTargetLocations(new ITargetLocation[]{container});
 		definition.resolve(null);
 		
 		List expected = new ArrayList();
@@ -183,7 +184,7 @@ public class TargetDefinitionFeatureResolutionTests extends AbstractTargetTest {
 				new NameVersionDescriptor("org.eclipse.jdt", null, NameVersionDescriptor.TYPE_FEATURE)
 		};
 		definition.setIncluded(allFeatures);
-		IResolvedBundle[] bundles = definition.getBundles();
+		TargetBundle[] bundles = definition.getBundles();
 		
 		for (int i = 0; i < bundles.length; i++) {
 			String symbolicName = bundles[i].getBundleInfo().getSymbolicName();
@@ -195,7 +196,7 @@ public class TargetDefinitionFeatureResolutionTests extends AbstractTargetTest {
 					assertTrue("Mac bundle should be present", status.isOK());
 				} else {
 					assertFalse("Mac bundle should be missing", status.isOK());
-					assertEquals("Mac bundle should be missing", IResolvedBundle.STATUS_PLUGIN_DOES_NOT_EXIST, status.getCode());
+					assertEquals("Mac bundle should be missing", TargetBundle.STATUS_PLUGIN_DOES_NOT_EXIST, status.getCode());
 				}
 			}
 		}
@@ -212,8 +213,8 @@ public class TargetDefinitionFeatureResolutionTests extends AbstractTargetTest {
 		ITargetDefinition definition = getNewTarget();
 		IPath location = extractModifiedFeatures();
 		
-		IBundleContainer container = getTargetService().newDirectoryContainer(location.toOSString());
-		definition.setBundleContainers(new IBundleContainer[]{container});
+		ITargetLocation container = getTargetService().newDirectoryLocation(location.toOSString());
+		definition.setTargetLocations(new ITargetLocation[]{container});
 		definition.resolve(null);
 		
 		List expected = new ArrayList();
@@ -232,7 +233,7 @@ public class TargetDefinitionFeatureResolutionTests extends AbstractTargetTest {
 				new NameVersionDescriptor("org.eclipse.jdt", null, NameVersionDescriptor.TYPE_PLUGIN)
 		};
 		definition.setIncluded(allFeatures);
-		IResolvedBundle[] bundles = definition.getBundles();
+		TargetBundle[] bundles = definition.getBundles();
 		
 		for (int i = 0; i < bundles.length; i++) {
 			String symbolicName = bundles[i].getBundleInfo().getSymbolicName();
@@ -244,7 +245,7 @@ public class TargetDefinitionFeatureResolutionTests extends AbstractTargetTest {
 					assertTrue("Mac bundle should be present", status.isOK());
 				} else {
 					assertFalse("Mac bundle should be missing", status.isOK());
-					assertEquals("Mac bundle should be mssing", IResolvedBundle.STATUS_PLUGIN_DOES_NOT_EXIST, status.getCode());
+					assertEquals("Mac bundle should be mssing", TargetBundle.STATUS_PLUGIN_DOES_NOT_EXIST, status.getCode());
 				}
 			}
 		}
@@ -261,31 +262,31 @@ public class TargetDefinitionFeatureResolutionTests extends AbstractTargetTest {
 		ITargetDefinition definition = getNewTarget();
 		IPath location = extractModifiedFeatures();
 		
-		IBundleContainer container = getTargetService().newDirectoryContainer(location.toOSString());
-		definition.setBundleContainers(new IBundleContainer[]{container});
+		ITargetLocation container = getTargetService().newDirectoryLocation(location.toOSString());
+		definition.setTargetLocations(new ITargetLocation[]{container});
 		definition.resolve(null);
 		
 		NameVersionDescriptor[] allFeatures = new NameVersionDescriptor[]{
 				new NameVersionDescriptor("DOES_NOT_EXIST", null, NameVersionDescriptor.TYPE_FEATURE),
 		};
 		definition.setIncluded(allFeatures);
-		IResolvedBundle[] bundles = definition.getBundles();
+		TargetBundle[] bundles = definition.getBundles();
 		
 		assertNotNull("Target didn't resolve",bundles);
 		assertEquals("Wrong number of included bundles", 1, bundles.length);
 		
-		IStatus definitionStatus = definition.getBundleStatus();
+		IStatus definitionStatus = definition.getStatus();
 		assertEquals("Wrong severity", IStatus.ERROR, definitionStatus.getSeverity());
 
 		IStatus[] children = definitionStatus.getChildren();
 		assertEquals("Wrong number of statuses", 1, children.length);
 		assertEquals("Wrong severity", IStatus.ERROR, children[0].getSeverity());
-		assertEquals(IResolvedBundle.STATUS_FEATURE_DOES_NOT_EXIST, children[0].getCode());
+		assertEquals(TargetBundle.STATUS_FEATURE_DOES_NOT_EXIST, children[0].getCode());
 		
 		// Check that removing the included bundles and resolving removes the errors.
 		definition.setIncluded(null);
 		assertTrue(definition.isResolved());
-		assertTrue(definition.getBundleStatus().isOK());
+		assertTrue(definition.getStatus().isOK());
 		assertTrue(definition.getBundles().length > 4);
 	}
 	
@@ -294,8 +295,8 @@ public class TargetDefinitionFeatureResolutionTests extends AbstractTargetTest {
 		ITargetDefinition definition = getNewTarget();
 		IPath location = extractModifiedFeatures();
 		
-		IBundleContainer container = getTargetService().newDirectoryContainer(location.toOSString());
-		definition.setBundleContainers(new IBundleContainer[]{container});
+		ITargetLocation container = getTargetService().newDirectoryLocation(location.toOSString());
+		definition.setTargetLocations(new ITargetLocation[]{container});
 		definition.resolve(null);
 		
 		List expected = new ArrayList();
@@ -313,7 +314,7 @@ public class TargetDefinitionFeatureResolutionTests extends AbstractTargetTest {
 				new NameVersionDescriptor("org.eclipse.jdt", "DOES_NOT_EXIST", NameVersionDescriptor.TYPE_FEATURE)
 		};
 		definition.setIncluded(allFeatures);
-		IResolvedBundle[] bundles = definition.getBundles();
+		TargetBundle[] bundles = definition.getBundles();
 		
 		for (int i = 0; i < bundles.length; i++) {
 			String symbolicName = bundles[i].getBundleInfo().getSymbolicName();
@@ -325,7 +326,7 @@ public class TargetDefinitionFeatureResolutionTests extends AbstractTargetTest {
 					assertTrue("Mac bundle should be present", status.isOK());
 				} else {
 					assertFalse("Mac bundle should be missing", status.isOK());
-					assertEquals("Mac bundle should be mssing", IResolvedBundle.STATUS_PLUGIN_DOES_NOT_EXIST, status.getCode());
+					assertEquals("Mac bundle should be mssing", TargetBundle.STATUS_PLUGIN_DOES_NOT_EXIST, status.getCode());
 				}
 			}
 		}
@@ -342,8 +343,8 @@ public class TargetDefinitionFeatureResolutionTests extends AbstractTargetTest {
 		ITargetDefinition definition = getNewTarget();
 		IPath location = extractModifiedFeatures();
 		
-		IBundleContainer container = getTargetService().newDirectoryContainer(location.toOSString());
-		definition.setBundleContainers(new IBundleContainer[]{container});
+		ITargetLocation container = getTargetService().newDirectoryLocation(location.toOSString());
+		definition.setTargetLocations(new ITargetLocation[]{container});
 		definition.resolve(null);
 
 		NameVersionDescriptor[] allFeatures = new NameVersionDescriptor[]{
@@ -352,23 +353,23 @@ public class TargetDefinitionFeatureResolutionTests extends AbstractTargetTest {
 				new NameVersionDescriptor("org.eclipse.jdt", "DOES_NOT_EXIST", NameVersionDescriptor.TYPE_PLUGIN),
 		};
 		definition.setIncluded(allFeatures);
-		IResolvedBundle[] bundles = definition.getBundles();
+		TargetBundle[] bundles = definition.getBundles();
 		
 		assertNotNull("Target didn't resolve",bundles);
 		assertEquals("Wrong number of included bundles", 1, bundles.length);
 		
-		IStatus definitionStatus = definition.getBundleStatus();
+		IStatus definitionStatus = definition.getStatus();
 		assertEquals("Wrong severity", IStatus.ERROR, definitionStatus.getSeverity());
 
 		IStatus[] children = definitionStatus.getChildren();
 		assertEquals("Wrong number of statuses", 1, children.length);
 		assertEquals("Wrong severity", IStatus.ERROR, children[0].getSeverity());
-		assertEquals(IResolvedBundle.STATUS_FEATURE_DOES_NOT_EXIST, children[0].getCode());
+		assertEquals(TargetBundle.STATUS_FEATURE_DOES_NOT_EXIST, children[0].getCode());
 		
 		// Check that removing the included bundles and resolving removes the errors.
 		definition.setIncluded(null);
 		assertTrue(definition.isResolved());
-		assertTrue(definition.getBundleStatus().isOK());
+		assertTrue(definition.getStatus().isOK());
 		assertTrue(definition.getBundles().length > 4);
 	}
 	

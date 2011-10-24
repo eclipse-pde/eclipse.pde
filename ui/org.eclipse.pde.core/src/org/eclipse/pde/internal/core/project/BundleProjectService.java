@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.project;
 
+import org.eclipse.pde.core.target.TargetBundle;
+
 import java.io.*;
 import java.util.*;
 import java.util.jar.JarFile;
@@ -25,7 +27,6 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.project.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.target.Messages;
-import org.eclipse.pde.internal.core.target.provisional.IResolvedBundle;
 import org.eclipse.team.core.ScmUrlImportDescription;
 import org.eclipse.team.core.Team;
 import org.eclipse.team.core.importing.provisional.IBundleImporter;
@@ -262,9 +263,9 @@ public final class BundleProjectService implements IBundleProjectService {
 			}
 			return ManifestElement.parseBundleManifest(manifestStream, new Hashtable(10));
 		} catch (BundleException e) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IResolvedBundle.STATUS_INVALID_MANIFEST, NLS.bind(Messages.DirectoryBundleContainer_3, bundleLocation.getAbsolutePath()), e));
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, TargetBundle.STATUS_INVALID_MANIFEST, NLS.bind(Messages.DirectoryBundleContainer_3, bundleLocation.getAbsolutePath()), e));
 		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IResolvedBundle.STATUS_INVALID_MANIFEST, NLS.bind(Messages.DirectoryBundleContainer_3, bundleLocation.getAbsolutePath()), e));
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, TargetBundle.STATUS_INVALID_MANIFEST, NLS.bind(Messages.DirectoryBundleContainer_3, bundleLocation.getAbsolutePath()), e));
 		} finally {
 			closeZipFileAndStream(manifestStream, jarFile);
 		}

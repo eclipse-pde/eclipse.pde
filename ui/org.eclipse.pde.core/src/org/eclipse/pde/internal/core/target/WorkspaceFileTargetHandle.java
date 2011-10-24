@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 IBM Corporation and others.
+ * Copyright (c) 2008, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target;
 
+import org.eclipse.pde.core.target.ITargetDefinition;
+import org.eclipse.pde.core.target.ITargetHandle;
+
 import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -17,8 +20,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
-import org.eclipse.pde.internal.core.target.provisional.ITargetHandle;
 
 /**
  * A handle to a target stored in the workspace as a <code>.target</code> file.
@@ -57,7 +58,7 @@ public class WorkspaceFileTargetHandle extends AbstractTargetHandle {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetHandle#getMemento()
+	 * @see org.eclipse.pde.core.target.ITargetHandle#getMemento()
 	 */
 	public String getMemento() throws CoreException {
 		try {
@@ -76,7 +77,7 @@ public class WorkspaceFileTargetHandle extends AbstractTargetHandle {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetHandle#exists()
+	 * @see org.eclipse.pde.core.target.ITargetHandle#exists()
 	 */
 	public boolean exists() {
 		return fFile.exists();
@@ -111,7 +112,7 @@ public class WorkspaceFileTargetHandle extends AbstractTargetHandle {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.impl.AbstractTargetHandle#save(org.eclipse.pde.internal.core.target.provisional.ITargetDefinition)
+	 * @see org.eclipse.pde.internal.core.target.impl.AbstractTargetHandle#save(org.eclipse.pde.core.target.ITargetDefinition)
 	 */
 	public void save(ITargetDefinition definition) throws CoreException {
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();

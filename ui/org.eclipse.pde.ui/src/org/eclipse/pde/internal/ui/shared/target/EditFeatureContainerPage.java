@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,8 @@
 package org.eclipse.pde.internal.ui.shared.target;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.core.target.ITargetLocation;
 import org.eclipse.pde.internal.core.target.FeatureBundleContainer;
-import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -26,7 +26,7 @@ import org.eclipse.ui.PlatformUI;
  */
 public class EditFeatureContainerPage extends EditDirectoryContainerPage {
 
-	public EditFeatureContainerPage(IBundleContainer container) {
+	public EditFeatureContainerPage(ITargetLocation container) {
 		super(container, "EditFeatureContainer"); //$NON-NLS-1$
 	}
 
@@ -71,9 +71,9 @@ public class EditFeatureContainerPage extends EditDirectoryContainerPage {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.shared.target.EditDirectoryContainerPage#initializeInputFields(org.eclipse.pde.internal.core.target.provisional.IBundleContainer)
+	 * @see org.eclipse.pde.internal.ui.shared.target.EditDirectoryContainerPage#initializeInputFields(org.eclipse.pde.core.target.ITargetLocation)
 	 */
-	protected void initializeInputFields(IBundleContainer container) {
+	protected void initializeInputFields(ITargetLocation container) {
 		containerChanged(0);
 	}
 
@@ -92,9 +92,9 @@ public class EditFeatureContainerPage extends EditDirectoryContainerPage {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.shared.target.EditDirectoryContainerPage#refreshContainer(org.eclipse.pde.internal.core.target.provisional.IBundleContainer)
+	 * @see org.eclipse.pde.internal.ui.shared.target.EditDirectoryContainerPage#createContainer(org.eclipse.pde.core.target.ITargetLocation)
 	 */
-	protected IBundleContainer createContainer(IBundleContainer previous) throws CoreException {
+	protected ITargetLocation createContainer(ITargetLocation previous) throws CoreException {
 		return getBundleContainer();
 	}
 

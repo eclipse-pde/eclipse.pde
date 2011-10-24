@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 IBM Corporation and others.
+ * Copyright (c) 2008, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,10 +11,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target;
 
+import org.eclipse.pde.core.target.ITargetDefinition;
+import org.eclipse.pde.core.target.ITargetHandle;
+
 import java.io.InputStream;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.internal.core.target.provisional.ITargetDefinition;
-import org.eclipse.pde.internal.core.target.provisional.ITargetHandle;
 
 /**
  * Common implementation of target handles.
@@ -24,7 +25,7 @@ import org.eclipse.pde.internal.core.target.provisional.ITargetHandle;
 public abstract class AbstractTargetHandle implements ITargetHandle {
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.provisional.ITargetHandle#getTargetDefinition()
+	 * @see org.eclipse.pde.core.target.ITargetHandle#getTargetDefinition()
 	 */
 	public ITargetDefinition getTargetDefinition() throws CoreException {
 		TargetDefinition definition = new TargetDefinition(this);

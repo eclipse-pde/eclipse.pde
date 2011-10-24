@@ -11,6 +11,7 @@
 package org.eclipse.pde.ui;
 
 import java.io.File;
+import org.eclipse.pde.ui.target.ITargetLocationWizard;
 
 /**
  * This interface represents a wizard which will be used to add plug-ins to 
@@ -19,6 +20,7 @@ import java.io.File;
  * cases it may not contribute any wizard pages.
  * 
  * @noextend This interface is not intended to be extended by clients.
+ * @deprecated Use org.eclipse.pde.ui.targetLocationProviders extension with {@link ITargetLocationWizard} instead
  * @since 3.3
  */
 

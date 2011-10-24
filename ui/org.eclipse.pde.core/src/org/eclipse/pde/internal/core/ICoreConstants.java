@@ -111,6 +111,7 @@ public interface ICoreConstants {
 	public final static String TARGET35 = "3.5"; //$NON-NLS-1$
 	public final static String TARGET36 = "3.6"; //$NON-NLS-1$
 	public final static String TARGET37 = "3.7"; //$NON-NLS-1$
+	public final static String TARGET38 = "3.8"; //$NON-NLS-1$
 
 	public final static String EQUINOX = "Equinox"; //$NON-NLS-1$
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,10 +20,10 @@ import org.eclipse.debug.ui.StringVariableSelectionDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.pde.core.target.ITargetLocation;
+import org.eclipse.pde.core.target.ITargetPlatformService;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.target.AbstractBundleContainer;
-import org.eclipse.pde.internal.core.target.provisional.IBundleContainer;
-import org.eclipse.pde.internal.core.target.provisional.ITargetPlatformService;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -37,7 +37,7 @@ import org.eclipse.ui.progress.UIJob;
  * 
  * @see AddBundleContainerWizard
  * @see AddBundleContainerSelectionPage
- * @see IBundleContainer
+ * @see ITargetLocation
  */
 public class EditDirectoryContainerPage extends WizardPage implements IEditBundleContainerPage {
 
@@ -48,7 +48,7 @@ public class EditDirectoryContainerPage extends WizardPage implements IEditBundl
 
 	private static ITargetPlatformService fTargetService;
 	protected Combo fInstallLocation;
-	protected IBundleContainer fContainer;
+	protected ITargetLocation fContainer;
 	private Job fTextChangedJob;
 
 	/**
@@ -66,7 +66,7 @@ public class EditDirectoryContainerPage extends WizardPage implements IEditBundl
 	 */
 	private static final String SETTINGS_LOCATION_3 = "location3"; //$NON-NLS-1$
 
-	protected EditDirectoryContainerPage(IBundleContainer container) {
+	protected EditDirectoryContainerPage(ITargetLocation container) {
 		this();
 		fContainer = container;
 	}
@@ -75,7 +75,7 @@ public class EditDirectoryContainerPage extends WizardPage implements IEditBundl
 		super("EditDirectoryContainer"); //$NON-NLS-1$
 	}
 
-	public EditDirectoryContainerPage(IBundleContainer container, String name) {
+	public EditDirectoryContainerPage(ITargetLocation container, String name) {
 		super(name);
 		fContainer = container;
 	}
@@ -187,7 +187,7 @@ public class EditDirectoryContainerPage extends WizardPage implements IEditBundl
 	 * the given container or set to default values if the container is <code>null</code>.
 	 * @param container bundle container being edited, possibly <code>null</code>
 	 */
-	protected void initializeInputFields(IBundleContainer container) {
+	protected void initializeInputFields(ITargetLocation container) {
 		if (container instanceof AbstractBundleContainer) {
 			try {
 				String currentLocation = ((AbstractBundleContainer) container).getLocation(false);
@@ -245,7 +245,7 @@ public class EditDirectoryContainerPage extends WizardPage implements IEditBundl
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.shared.target.IEditBundleContainerPage#storeSettings()
+	 * @see org.eclipse.pde.internal.ui.shared.target.IEditTargetLocationPage#storeSettings()
 	 */
 	public void storeSettings() {
 		String newLocation = fInstallLocation.getText().trim();
@@ -275,9 +275,9 @@ public class EditDirectoryContainerPage extends WizardPage implements IEditBundl
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.shared.target.IEditBundleContainerPage#getBundleContainer()
+	 * @see org.eclipse.pde.internal.ui.shared.target.IEditTargetLocationPage#getBundleContainer()
 	 */
-	public IBundleContainer getBundleContainer() {
+	public ITargetLocation getBundleContainer() {
 		return fContainer;
 	}
 
@@ -339,8 +339,8 @@ public class EditDirectoryContainerPage extends WizardPage implements IEditBundl
 	 * @return a new or modified bundle container
 	 * @throws CoreException
 	 */
-	protected IBundleContainer createContainer(IBundleContainer previous) throws CoreException {
-		return getTargetPlatformService().newDirectoryContainer(fInstallLocation.getText());
+	protected ITargetLocation createContainer(ITargetLocation previous) throws CoreException {
+		return getTargetPlatformService().newDirectoryLocation(fInstallLocation.getText());
 	}
 
 	/**

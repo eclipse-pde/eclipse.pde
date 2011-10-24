@@ -10,15 +10,28 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.util;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.io.*;
+import java.util.*;
+import java.util.jar.JarFile;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
+import org.eclipse.osgi.service.pluginconversion.PluginConversionException;
+import org.eclipse.osgi.service.pluginconversion.PluginConverter;
+import org.eclipse.osgi.util.ManifestElement;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
+import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.project.PDEProject;
+import org.eclipse.pde.internal.core.target.Messages;
+import org.osgi.framework.BundleException;
+import org.osgi.framework.Constants;
 
 public class ManifestUtils {
 
@@ -87,6 +100,117 @@ public class ManifestUtils {
 	public static boolean isImmediateRoot(IPackageFragmentRoot root) throws JavaModelException {
 		int kind = root.getKind();
 		return kind == IPackageFragmentRoot.K_SOURCE || (kind == IPackageFragmentRoot.K_BINARY && !root.isExternal());
+	}
+
+	/**
+	 * Utility method to parse a bundle's manifest into a dictionary. The bundle may be in 
+	 * a directory or an archive at the specified location.
+	 * 
+	 * TODO This method may be removed in favour of one that caches manifest contents
+	 * 
+	 * @param bundleLocation root location of the bundle
+	 * @return bundle manifest dictionary
+	 * @throws CoreException if manifest has invalid syntax or is missing
+	 */
+	public static Map loadManifest(File bundleLocation) throws CoreException {
+		ZipFile jarFile = null;
+		InputStream manifestStream = null;
+		String extension = new Path(bundleLocation.getName()).getFileExtension();
+		try {
+			if (extension != null && extension.equals("jar") && bundleLocation.isFile()) { //$NON-NLS-1$
+				jarFile = new ZipFile(bundleLocation, ZipFile.OPEN_READ);
+				ZipEntry manifestEntry = jarFile.getEntry(JarFile.MANIFEST_NAME);
+				if (manifestEntry != null) {
+					manifestStream = jarFile.getInputStream(manifestEntry);
+				}
+			} else {
+				File file = new File(bundleLocation, JarFile.MANIFEST_NAME);
+				if (file.exists()) {
+					manifestStream = new FileInputStream(file);
+				} else {
+					Map map = loadPluginXML(bundleLocation);
+					if (map != null) {
+						return map; // else fall through to invalid manifest
+					}
+				}
+			}
+			if (manifestStream == null) {
+				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, 0, NLS.bind(Messages.DirectoryBundleContainer_3, bundleLocation.getAbsolutePath()), null));
+			}
+			Map map = ManifestElement.parseBundleManifest(manifestStream, new Hashtable(10));
+			// Validate manifest - BSN must be present.
+			// Else look for plugin.xml in case it's an old style plug-in
+			String bsn = (String) map.get(Constants.BUNDLE_SYMBOLICNAME);
+			if (bsn == null && bundleLocation.isDirectory()) {
+				map = loadPluginXML(bundleLocation); // not a bundle manifest, try plugin.xml
+			}
+			if (map == null) {
+				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, 0, NLS.bind(Messages.DirectoryBundleContainer_3, bundleLocation.getAbsolutePath()), null));
+			}
+			return map;
+		} catch (BundleException e) {
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, 0, NLS.bind(Messages.DirectoryBundleContainer_3, bundleLocation.getAbsolutePath()), e));
+		} catch (IOException e) {
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, 0, NLS.bind(Messages.DirectoryBundleContainer_3, bundleLocation.getAbsolutePath()), e));
+		} finally {
+			closeZipFileAndStream(manifestStream, jarFile);
+		}
+	}
+
+	/**
+	 * Parses an old style plug-in's (or fragment's) XML definition file into a dictionary.
+	 * The plug-in must be in a directory at the specified location.
+	 * 
+	 * @param pluginDir root location of the plug-in
+	 * @return bundle manifest dictionary or <code>null</code> if none
+	 * @throws CoreException if manifest has invalid syntax
+	 */
+	public static Map loadPluginXML(File pluginDir) throws CoreException {
+		File pxml = new File(pluginDir, ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR);
+		File fxml = new File(pluginDir, ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR);
+		if (pxml.exists() || fxml.exists()) {
+			// support classic non-OSGi plug-in
+			PluginConverter converter = (PluginConverter) PDECore.getDefault().acquireService(PluginConverter.class.getName());
+			if (converter != null) {
+				try {
+					Dictionary convert = converter.convertManifest(pluginDir, false, null, false, null);
+					if (convert != null) {
+						Map map = new HashMap(convert.size(), 1.0f);
+						Enumeration keys = convert.keys();
+						while (keys.hasMoreElements()) {
+							Object key = keys.nextElement();
+							map.put(key, convert.get(key));
+						}
+						return map;
+					}
+				} catch (PluginConversionException e) {
+					throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.DirectoryBundleContainer_2, pluginDir.getAbsolutePath()), e));
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Closes the stream and file
+	 * @param stream
+	 * @param jarFile
+	 */
+	private static void closeZipFileAndStream(InputStream stream, ZipFile jarFile) {
+		try {
+			if (stream != null) {
+				stream.close();
+			}
+		} catch (IOException e) {
+			PDECore.log(e);
+		}
+		try {
+			if (jarFile != null) {
+				jarFile.close();
+			}
+		} catch (IOException e) {
+			PDECore.log(e);
+		}
 	}
 
 }

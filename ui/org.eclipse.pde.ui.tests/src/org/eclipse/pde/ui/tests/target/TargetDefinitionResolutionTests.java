@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,8 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
+
+import org.eclipse.pde.core.target.*;
 
 import java.io.FileWriter;
 
@@ -23,7 +25,6 @@ import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.target.IUBundleContainer;
 import org.eclipse.pde.internal.core.target.TargetPlatformService;
-import org.eclipse.pde.internal.core.target.provisional.*;
 
 public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 	
@@ -34,79 +35,51 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 	public void testMissingBundles() throws Exception {
 		ITargetDefinition definition = getNewTarget();
 		
-		IBundleContainer directoryContainer = getTargetService().newDirectoryContainer(TargetPlatform.getDefaultLocation() + "/plugins");
+		ITargetLocation directoryContainer = getTargetService().newDirectoryLocation(TargetPlatform.getDefaultLocation() + "/plugins");
 		
-		IBundleContainer profileContainer = getTargetService().newProfileContainer(TargetPlatform.getDefaultLocation(), null);
+		ITargetLocation profileContainer = getTargetService().newProfileLocation(TargetPlatform.getDefaultLocation(), null);
 		
-		definition.setBundleContainers(new IBundleContainer[]{directoryContainer, profileContainer});
+		definition.setTargetLocations(new ITargetLocation[]{directoryContainer, profileContainer});
 		definition.setIncluded(new NameVersionDescriptor[]{new NameVersionDescriptor("bogus",null),new NameVersionDescriptor("org.eclipse.platform","666.666.666")});
 		definition.resolve(null);
 		
 		assertNotNull("Target didn't resolve",definition.getBundles());
 		assertEquals("Wrong number of included bundles", 2, definition.getBundles().length);
 		
-		IStatus definitionStatus = definition.getBundleStatus();
+		IStatus definitionStatus = definition.getStatus();
 		assertEquals("Wrong severity", IStatus.ERROR, definitionStatus.getSeverity());
 
 		IStatus[] children = definitionStatus.getChildren();
 		assertEquals("Wrong number of statuses", 2, children.length);
 		assertEquals("Wrong severity", IStatus.ERROR, children[0].getSeverity());
-		assertEquals(IResolvedBundle.STATUS_PLUGIN_DOES_NOT_EXIST, children[0].getCode());
+		assertEquals(TargetBundle.STATUS_PLUGIN_DOES_NOT_EXIST, children[0].getCode());
 		assertEquals("Wrong severity", IStatus.ERROR, children[1].getSeverity());
-		assertEquals(IResolvedBundle.STATUS_VERSION_DOES_NOT_EXIST, children[1].getCode());
+		assertEquals(TargetBundle.STATUS_VERSION_DOES_NOT_EXIST, children[1].getCode());
 		
 		// Check that removing the included bundles and resolving removes the errors.
 		definition.setIncluded(null);
 		assertTrue(definition.isResolved());
-		assertTrue(definition.getBundleStatus().isOK());
+		assertTrue(definition.getStatus().isOK());
 		assertTrue(definition.getBundles().length > 4);
 	}
 	
-	public void testMissingOptionalBundles() throws Exception {
-		ITargetDefinition definition = getNewTarget();
-		
-		IBundleContainer directoryContainer = getTargetService().newDirectoryContainer(TargetPlatform.getDefaultLocation() + "/plugins");
-		IBundleContainer profileContainer = getTargetService().newProfileContainer(TargetPlatform.getDefaultLocation(), null);
-		
-		definition.setBundleContainers(new IBundleContainer[]{directoryContainer, profileContainer});
-		definition.setOptional(new NameVersionDescriptor[]{new NameVersionDescriptor("bogus",null),new NameVersionDescriptor("org.eclipse.platform","666.666.666")});
-		definition.resolve(null);
-		
-		assertNotNull("Target didn't resolve",definition.getBundles());
-		
-		IStatus definitionStatus = definition.getBundleStatus();
-		assertEquals("Wrong severity", IStatus.INFO, definitionStatus.getSeverity());
-
-		IStatus[] children = definitionStatus.getChildren();
-		assertEquals("Wrong number of statuses", 2, children.length);
-		assertEquals("Wrong severity", IStatus.INFO, children[0].getSeverity());
-		assertEquals(IResolvedBundle.STATUS_PLUGIN_DOES_NOT_EXIST, children[0].getCode());
-		assertEquals("Wrong severity", IStatus.INFO, children[1].getSeverity());
-		assertEquals(IResolvedBundle.STATUS_VERSION_DOES_NOT_EXIST, children[1].getCode());
-		
-		// Check that removing the optional bundles and resolving removes the errors.
-		definition.setOptional(null);
-		assertTrue(definition.isResolved());
-		assertTrue(definition.getBundleStatus().isOK());
-		assertTrue(definition.getBundles().length > 4);
-	}
 	
 	public void testInvalidBundleContainers() throws Exception {
 		ITargetDefinition definition = getNewTarget();
 		
-		IBundleContainer directoryContainer = getTargetService().newDirectoryContainer("***SHOULD NOT EXIST***");
+		ITargetLocation directoryContainer = getTargetService().newDirectoryLocation("***SHOULD NOT EXIST***");
 		IStatus status = directoryContainer.resolve(definition, null);
 		assertEquals("Incorrect severity", IStatus.ERROR, status.getSeverity());
 		
-		IBundleContainer profileContainer = getTargetService().newProfileContainer("***SHOULD NOT EXIST***", null);
+		ITargetLocation profileContainer = getTargetService().newProfileLocation("***SHOULD NOT EXIST***", null);
 		status = directoryContainer.resolve(definition, null);
 		assertEquals("Incorrect severity", IStatus.ERROR, status.getSeverity());
 		
-		IBundleContainer featureContainer = getTargetService().newFeatureContainer("***SHOULD NOT EXIST***", "org.eclipse.jdt", "");
+		ITargetLocation featureContainer = getTargetService().newFeatureLocation("***SHOULD NOT EXIST***", "org.eclipse.jdt", "");
 		status = directoryContainer.resolve(definition, null);
 		assertEquals("Incorrect severity", IStatus.ERROR, status.getSeverity());
 		
-		definition.setBundleContainers(new IBundleContainer[]{directoryContainer, profileContainer, featureContainer});
+		definition.setTargetLocations(new ITargetLocation[]{directoryContainer, profileContainer, featureContainer});
 		status = definition.resolve(null);
 		IStatus[] children = status.getChildren();
 		assertEquals("Wrong number of children", 3, children.length);
@@ -119,7 +92,7 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 	/**
 	 * Tests that if we find a bundle with a bad or missing manifest when resolving we create the
 	 * correct status.
-	 * @see IResolvedBundle.STATUS_INVALID_MANIFEST
+	 * @see TargetBundle.STATUS_INVALID_MANIFEST
 	 * @throws Exception
 	 */
 	public void testInvalidManifest() throws Exception {
@@ -133,10 +106,10 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 		assertEquals("Wrong number of bundles", 0, definition.getBundles().length);
 		
 		// Resolving with errors should stay resolved, solving a definition should resolve all targets
-		IBundleContainer brokenContainer = getTargetService().newDirectoryContainer("***SHOULD NOT EXIST***");
+		ITargetLocation brokenContainer = getTargetService().newDirectoryLocation("***SHOULD NOT EXIST***");
 		assertFalse(brokenContainer.isResolved());
 		assertNull("Bundles available when unresolved", brokenContainer.getBundles());
-		definition.setBundleContainers(new IBundleContainer[]{brokenContainer});
+		definition.setTargetLocations(new ITargetLocation[]{brokenContainer});
 		assertFalse(definition.isResolved());
 		assertNull("Bundles available when unresolved", definition.getBundles());
 		IStatus status = definition.resolve(null);
@@ -147,22 +120,22 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 		assertNotNull("Bundles not available when resolved", definition.getBundles());
 		
 		// Adding an unresolved container should make the target unresolved, resolving the container should resolve the target
-		IBundleContainer profileContainer = getTargetService().newProfileContainer(TargetPlatform.getDefaultLocation(), null);
+		ITargetLocation profileContainer = getTargetService().newProfileLocation(TargetPlatform.getDefaultLocation(), null);
 		assertFalse(profileContainer.isResolved());
 		assertNull("Bundles available when unresolved", profileContainer.getBundles());
-		definition.setBundleContainers(new IBundleContainer[]{brokenContainer, profileContainer});
+		definition.setTargetLocations(new ITargetLocation[]{brokenContainer, profileContainer});
 		assertFalse(definition.isResolved());
 		assertNull("Bundles available when unresolved", definition.getBundles());
 		status = profileContainer.resolve(definition, null);
 		assertEquals("Incorrect Severity", IStatus.OK, status.getSeverity());
-		assertEquals("Incorrect Severity", IStatus.ERROR, definition.getBundleStatus().getSeverity());
+		assertEquals("Incorrect Severity", IStatus.ERROR, definition.getStatus().getSeverity());
 		assertTrue(profileContainer.isResolved());
 		assertNotNull("Bundles not available when resolved", profileContainer.getBundles());
 		assertTrue(definition.isResolved());
 		assertNotNull("Bundles not available when resolved", definition.getBundles());
 		
 		// Having a bundle status does not prevent the resolution, adding a resolved container should leave the target resolved
-		IBundleContainer includesContainer = getTargetService().newProfileContainer(TargetPlatform.getDefaultLocation(), null);
+		ITargetLocation includesContainer = getTargetService().newProfileLocation(TargetPlatform.getDefaultLocation(), null);
 		assertFalse(includesContainer.isResolved());
 		assertNull("Bundles available when unresolved", includesContainer.getBundles());
 		status = includesContainer.resolve(definition, null);
@@ -170,18 +143,15 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 		assertNotNull("Bundles not available when resolved", includesContainer.getBundles());
 		assertEquals("Incorrect Severity", IStatus.OK, status.getSeverity());
 		assertEquals("Incorrect Severity", IStatus.OK, includesContainer.getStatus().getSeverity());
-		definition.setBundleContainers(new IBundleContainer[]{brokenContainer, profileContainer});
-		definition.setOptional(new NameVersionDescriptor[]{new NameVersionDescriptor("bogus",null),new NameVersionDescriptor("org.eclipse.platform","666.666.666")});
+		definition.setTargetLocations(new ITargetLocation[]{brokenContainer, profileContainer});
 		definition.setIncluded(new NameVersionDescriptor[]{new NameVersionDescriptor("bogus",null),new NameVersionDescriptor("org.eclipse.platform","666.666.666")});
 		assertTrue(definition.isResolved());
-		assertEquals("Incorrect Severity", IStatus.ERROR, definition.getBundleStatus().getSeverity());
+		assertEquals("Incorrect Severity", IStatus.ERROR, definition.getStatus().getSeverity());
 		assertNotNull("Bundles not available when resolved", definition.getBundles());
 		
-		// Setting includes, optional, etc. should not unresolve the target
-		definition.setOptional(null);
+		// Setting includes, etc. should not unresolve the target
 		definition.setIncluded(null);
 		assertTrue(definition.isResolved());
-		definition.setOptional(new NameVersionDescriptor[]{new NameVersionDescriptor("bogus",null),new NameVersionDescriptor("org.eclipse.platform","666.666.666")});
 		definition.setIncluded(new NameVersionDescriptor[]{new NameVersionDescriptor("bogus",null),new NameVersionDescriptor("org.eclipse.platform","666.666.666")});		assertTrue(definition.isResolved());
 		definition.setName("name");
 		definition.setOS("os");
@@ -208,7 +178,7 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 		definition.setImplicitDependencies(null);
 		assertTrue(definition.isResolved());
 		
-		definition.setBundleContainers(null);
+		definition.setTargetLocations(null);
 		assertTrue(definition.isResolved());
 		assertNotNull("Bundles not available when resolved", definition.getBundles());
 		
@@ -260,10 +230,10 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 		IPath location = extractAbcdePlugins();
 		IPath dirPath = location.append("plugins");
 		ITargetDefinition definition = getNewTarget();
-		IBundleContainer container = getTargetService().newDirectoryContainer(dirPath.toOSString());
-		definition.setBundleContainers(new IBundleContainer[]{container});
+		ITargetLocation container = getTargetService().newDirectoryLocation(dirPath.toOSString());
+		definition.setTargetLocations(new ITargetLocation[]{container});
 		definition.resolve(null);
-		IResolvedBundle[] allBundles = definition.getAllBundles();
+		TargetBundle[] allBundles = definition.getAllBundles();
 		assertEquals(10, allBundles.length);
 		
 		try {
@@ -285,11 +255,11 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 		IPath location = extractAbcdePlugins();
 		IPath dirPath = location.append("plugins");
 		ITargetDefinition definition = getNewTarget();
-		IBundleContainer container = getTargetService().newDirectoryContainer(dirPath.toOSString());
-		IBundleContainer container2 = getTargetService().newDirectoryContainer(dirPath.toOSString());
-		definition.setBundleContainers(new IBundleContainer[]{container, container2});
+		ITargetLocation container = getTargetService().newDirectoryLocation(dirPath.toOSString());
+		ITargetLocation container2 = getTargetService().newDirectoryLocation(dirPath.toOSString());
+		definition.setTargetLocations(new ITargetLocation[]{container, container2});
 		definition.resolve(null);
-		IResolvedBundle[] allBundles = definition.getAllBundles();
+		TargetBundle[] allBundles = definition.getAllBundles();
 		assertEquals(20, allBundles.length);
 		
 		try {
@@ -311,8 +281,8 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 		IPath location = extractAbcdePlugins();
 		IPath dirPath = location.append("plugins");
 		ITargetDefinition definition = getNewTarget();
-		IBundleContainer container = getTargetService().newDirectoryContainer(dirPath.toOSString());
-		definition.setBundleContainers(new IBundleContainer[]{container});
+		ITargetLocation container = getTargetService().newDirectoryLocation(dirPath.toOSString());
+		definition.setTargetLocations(new ITargetLocation[]{container});
 		
 		try {
 			setTargetPlatform(definition);
@@ -353,10 +323,10 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 		jar.renameTo(xxx);
 		
 		ITargetDefinition definition = getTargetService().newTarget();
-		IBundleContainer container = getTargetService().newDirectoryContainer(dirPath.toOSString());
-		definition.setBundleContainers(new IBundleContainer[]{container});
+		ITargetLocation container = getTargetService().newDirectoryLocation(dirPath.toOSString());
+		definition.setTargetLocations(new ITargetLocation[]{container});
 		definition.resolve(null);
-		IResolvedBundle[] allBundles = definition.getAllBundles();
+		TargetBundle[] allBundles = definition.getAllBundles();
 		assertEquals(9, allBundles.length);
 		
 		try {
@@ -392,17 +362,17 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 		// the new way
 		ITargetDefinition definition = getNewTarget();
 		String home = location.removeLastSegments(1).toOSString();
-		IBundleContainer container = getTargetService().newProfileContainer(home, null);
-		definition.setBundleContainers(new IBundleContainer[]{container});
+		ITargetLocation container = getTargetService().newProfileLocation(home, null);
+		definition.setTargetLocations(new ITargetLocation[]{container});
 		definition.resolve(null);
-		IResolvedBundle[] bundles = definition.getAllBundles();
+		TargetBundle[] bundles = definition.getAllBundles();
 		
 		int source = 0;
 		int frag = 0;
 		int bin = 0;
 		
 		for (int i = 0; i < bundles.length; i++) {
-			IResolvedBundle bundle = bundles[i];
+			TargetBundle bundle = bundles[i];
 			if (bundle.isFragment()) {
 				frag++;
 				if (bundle.isSourceBundle()) {
@@ -444,17 +414,17 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 		
 		ITargetDefinition definition = getNewTarget();
 		String home = location.removeLastSegments(1).toOSString();
-		IBundleContainer container = getTargetService().newProfileContainer(home, null);
-		definition.setBundleContainers(new IBundleContainer[]{container});
+		ITargetLocation container = getTargetService().newProfileLocation(home, null);
+		definition.setTargetLocations(new ITargetLocation[]{container});
 		definition.resolve(null);
-		IResolvedBundle[] bundles = definition.getAllBundles();
+		TargetBundle[] bundles = definition.getAllBundles();
 		
 		int source = 0;
 		int frag = 0;
 		int bin = 0;
 		
 		for (int i = 0; i < bundles.length; i++) {
-			IResolvedBundle bundle = bundles[i];
+			TargetBundle bundle = bundles[i];
 			if (bundle.isFragment()) {
 				frag++;
 				if (bundle.isSourceBundle()) {
@@ -474,8 +444,8 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 		
 		// Check that the directory container doesn't find any linked plugins
 		definition = getNewTarget();
-		container = getTargetService().newDirectoryContainer(home);
-		definition.setBundleContainers(new IBundleContainer[]{container});
+		container = getTargetService().newDirectoryLocation(home);
+		definition.setTargetLocations(new ITargetLocation[]{container});
 		definition.resolve(null);
 		bundles = definition.getAllBundles();
 		
@@ -484,7 +454,7 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 		bin = 0;
 		
 		for (int i = 0; i < bundles.length; i++) {
-			IResolvedBundle bundle = bundles[i];
+			TargetBundle bundle = bundles[i];
 			if (bundle.isFragment()) {
 				frag++;
 				if (bundle.isSourceBundle()) {
@@ -510,27 +480,27 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 	public void testSourceBundleRecognition() throws Exception {
 		ITargetDefinition definition = getNewTarget();
 		
-		IBundleContainer directoryContainer = getTargetService().newDirectoryContainer(TargetPlatform.getDefaultLocation() + "/plugins");
+		ITargetLocation directoryContainer = getTargetService().newDirectoryLocation(TargetPlatform.getDefaultLocation() + "/plugins");
 		
-		IBundleContainer profileContainer = getTargetService().newProfileContainer(TargetPlatform.getDefaultLocation(), null);
+		ITargetLocation profileContainer = getTargetService().newProfileLocation(TargetPlatform.getDefaultLocation(), null);
 		
-		IBundleContainer featureContainer = getTargetService().newFeatureContainer(TargetPlatform.getDefaultLocation(), "org.eclipse.jdt", null);
+		ITargetLocation featureContainer = getTargetService().newFeatureLocation(TargetPlatform.getDefaultLocation(), "org.eclipse.jdt", null);
 		
-		IBundleContainer featureContainer2 = getTargetService().newFeatureContainer(TargetPlatform.getDefaultLocation(), "org.eclipse.jdt.source", null);
+		ITargetLocation featureContainer2 = getTargetService().newFeatureLocation(TargetPlatform.getDefaultLocation(), "org.eclipse.jdt.source", null);
 	
-		definition.setBundleContainers(new IBundleContainer[]{directoryContainer, profileContainer, featureContainer, featureContainer2});
+		definition.setTargetLocations(new ITargetLocation[]{directoryContainer, profileContainer, featureContainer, featureContainer2});
 		definition.resolve(null);
 		
-		IResolvedBundle[] bundles = definition.getBundles();
+		TargetBundle[] bundles = definition.getBundles();
 		
 		assertNotNull("Target didn't resolve",bundles);
 		
-		IStatus definitionStatus = definition.getBundleStatus();
+		IStatus definitionStatus = definition.getStatus();
 		assertEquals("Wrong severity", IStatus.OK, definitionStatus.getSeverity());
 		
 		// Ensure that all source bundles know what they provide source for.
 		for (int i = 0; i < bundles.length; i++) {
-			IResolvedBundle bundle = bundles[i];
+			TargetBundle bundle = bundles[i];
 			if (bundle.isSourceBundle()){
 				BundleInfo info = bundle.getSourceTarget();
 				assertNotNull("Missing source target for " + bundle,info);
@@ -550,53 +520,14 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 	}
 	
 	/**
-	 * Tests that resolved bundles know what their parent container is
-	 * @throws Exception
-	 */
-	public void testGetParentContainer() throws Exception {
-		ITargetDefinition definition = getNewTarget();
-		
-		IBundleContainer directoryContainer = getTargetService().newDirectoryContainer(TargetPlatform.getDefaultLocation() + "/plugins");
-		
-		IBundleContainer profileContainer = getTargetService().newProfileContainer(TargetPlatform.getDefaultLocation(), null);
-		
-		IBundleContainer featureContainer = getTargetService().newFeatureContainer(TargetPlatform.getDefaultLocation(), "org.eclipse.jdt", null);
-		
-		definition.setBundleContainers(new IBundleContainer[]{directoryContainer, profileContainer, featureContainer});
-		definition.resolve(null);
-		
-		IResolvedBundle[] bundles = definition.getBundles();
-		
-		assertNotNull("Target didn't resolve",bundles);
-		
-		IStatus definitionStatus = definition.getBundleStatus();
-		assertEquals("Wrong severity", IStatus.OK, definitionStatus.getSeverity());
-		
-		bundles = directoryContainer.getBundles();
-		for (int i = 0; i < bundles.length; i++) {
-			assertEquals("Wrong parent", directoryContainer, bundles[i].getParentContainer());
-		}
-		
-		bundles = profileContainer.getBundles();
-		for (int i = 0; i < bundles.length; i++) {
-			assertEquals("Wrong parent", profileContainer, bundles[i].getParentContainer());
-		}
-		
-		bundles = featureContainer.getBundles();
-		for (int i = 0; i < bundles.length; i++) {
-			assertEquals("Wrong parent", featureContainer, bundles[i].getParentContainer());
-		}
-	}
-	
-	/**
 	 * Tests the two options on IU bundle containers for controlling how the site will be resolved
 	 * @throws Exception
 	 */
 	public void testSiteContainerIncludeSettings() throws Exception{
 		ITargetDefinition target = getNewTarget();
-		IUBundleContainer containerA = (IUBundleContainer)getTargetService().newIUContainer(new IInstallableUnit[0], null, IUBundleContainer.INCLUDE_REQUIRED);
-		IUBundleContainer containerB = (IUBundleContainer)getTargetService().newIUContainer(new String[]{"unit1", "unit2"}, new String[]{"1.0","2.0"}, null, IUBundleContainer.INCLUDE_REQUIRED);
-		target.setBundleContainers(new IBundleContainer[]{containerA, containerB});
+		IUBundleContainer containerA = (IUBundleContainer)getTargetService().newIULocation(new IInstallableUnit[0], null, IUBundleContainer.INCLUDE_REQUIRED);
+		IUBundleContainer containerB = (IUBundleContainer)getTargetService().newIULocation(new String[]{"unit1", "unit2"}, new String[]{"1.0","2.0"}, null, IUBundleContainer.INCLUDE_REQUIRED);
+		target.setTargetLocations(new ITargetLocation[]{containerA, containerB});
 		
 		// Check default settings
 		assertTrue(containerA.getIncludeAllRequired());
@@ -608,20 +539,20 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 		
 		// Check basic changes
 		int flags = IUBundleContainer.INCLUDE_ALL_ENVIRONMENTS | IUBundleContainer.INCLUDE_SOURCE;
-		containerA = (IUBundleContainer)getTargetService().newIUContainer(new IInstallableUnit[0], null, flags);
-		containerB = (IUBundleContainer)getTargetService().newIUContainer(new String[]{"unit1", "unit2"}, new String[]{"1.0","2.0"}, null, flags);
-		target.setBundleContainers(new IBundleContainer[]{containerA, containerB});
+		containerA = (IUBundleContainer)getTargetService().newIULocation(new IInstallableUnit[0], null, flags);
+		containerB = (IUBundleContainer)getTargetService().newIULocation(new String[]{"unit1", "unit2"}, new String[]{"1.0","2.0"}, null, flags);
+		target.setTargetLocations(new ITargetLocation[]{containerA, containerB});
 		assertFalse(containerA.getIncludeAllRequired());
 		assertTrue(containerA.getIncludeAllEnvironments());
 		assertTrue(containerA.getIncludeSource());
 		
 		// Check that all containers are updated in the target if target is passed as argument
 		flags = IUBundleContainer.INCLUDE_ALL_ENVIRONMENTS | IUBundleContainer.INCLUDE_SOURCE;
-		containerA = (IUBundleContainer)getTargetService().newIUContainer(new IInstallableUnit[0], null, flags);
+		containerA = (IUBundleContainer)getTargetService().newIULocation(new IInstallableUnit[0], null, flags);
 		flags = IUBundleContainer.INCLUDE_REQUIRED;
-		containerB = (IUBundleContainer)getTargetService().newIUContainer(new String[]{"unit1", "unit2"}, new String[]{"1.0","2.0"}, null, flags);
+		containerB = (IUBundleContainer)getTargetService().newIULocation(new String[]{"unit1", "unit2"}, new String[]{"1.0","2.0"}, null, flags);
 
-		target.setBundleContainers(new IBundleContainer[]{containerA, containerB});
+		target.setTargetLocations(new ITargetLocation[]{containerA, containerB});
 		assertTrue(containerA.getIncludeAllRequired());
 		assertFalse(containerA.getIncludeAllEnvironments());
 		assertFalse(containerA.getIncludeSource());
@@ -630,7 +561,7 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 		assertFalse(containerB.getIncludeSource());
 
 		// now switch the order of A and B
-		target.setBundleContainers(new IBundleContainer[]{containerB, containerA});
+		target.setTargetLocations(new ITargetLocation[]{containerB, containerA});
 		assertFalse(containerA.getIncludeAllRequired());
 		assertTrue(containerA.getIncludeAllEnvironments());
 		assertTrue(containerA.getIncludeSource());

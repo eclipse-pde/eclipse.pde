@@ -28,10 +28,10 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.SameShellProvider;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.target.IUBundleContainer;
 import org.eclipse.pde.internal.core.target.P2TargetUtils;
-import org.eclipse.pde.internal.core.target.provisional.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -123,9 +123,9 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.shared.target.IEditBundleContainerPage#getBundleContainer()
+	 * @see org.eclipse.pde.internal.ui.shared.target.IEditTargetLocationPage#getBundleContainer()
 	 */
-	public IBundleContainer getBundleContainer() {
+	public ITargetLocation getBundleContainer() {
 		ITargetPlatformService service = (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
 		if (service == null) {
 			PDEPlugin.log(new Status(IStatus.ERROR, PDEPlugin.getPluginId(), Messages.EditIUContainerPage_9));
@@ -133,12 +133,12 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 		int flags = fIncludeRequiredButton.getSelection() ? IUBundleContainer.INCLUDE_REQUIRED : 0;
 		flags |= fAllPlatformsButton.getSelection() ? IUBundleContainer.INCLUDE_ALL_ENVIRONMENTS : 0;
 		flags |= fIncludeSourceButton.getSelection() ? IUBundleContainer.INCLUDE_SOURCE : 0;
-		IUBundleContainer container = (IUBundleContainer) service.newIUContainer(fAvailableIUGroup.getCheckedLeafIUs(), fRepoLocation != null ? new URI[] {fRepoLocation} : null, flags);
+		IUBundleContainer container = (IUBundleContainer) service.newIULocation(fAvailableIUGroup.getCheckedLeafIUs(), fRepoLocation != null ? new URI[] {fRepoLocation} : null, flags);
 		return container;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.shared.target.IEditBundleContainerPage#storeSettings()
+	 * @see org.eclipse.pde.internal.ui.shared.target.IEditTargetLocationPage#storeSettings()
 	 */
 	public void storeSettings() {
 		IDialogSettings settings = getDialogSettings();
@@ -307,7 +307,7 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 	private void warnIfGlobalSettingChanged() {
 		boolean noChange = true;
 		IUBundleContainer iuContainer = null;
-		IBundleContainer[] containers = fTarget.getBundleContainers();
+		ITargetLocation[] containers = fTarget.getTargetLocations();
 		if (containers != null) {
 			// Look for a IUBundleContainer to compare against.
 			for (int i = 0; i < containers.length; i++) {
@@ -463,7 +463,7 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 			fIncludeSourceButton.setSelection(fEditContainer.getIncludeSource());
 		} else {
 			// If we are creating a new container, but there is an existing iu container we should use it's settings (otherwise we overwrite them)
-			IBundleContainer[] knownContainers = fTarget.getBundleContainers();
+			ITargetLocation[] knownContainers = fTarget.getTargetLocations();
 			if (knownContainers != null) {
 				for (int i = 0; i < knownContainers.length; i++) {
 					if (knownContainers[i] instanceof IUBundleContainer) {
@@ -476,7 +476,7 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 		// If the user can create two containers with different settings for include required we won't resolve correctly
 		// If the user has an existing container, don't let them edit the options, bug 275013
 		if (fTarget != null) {
-			IBundleContainer[] containers = fTarget.getBundleContainers();
+			ITargetLocation[] containers = fTarget.getTargetLocations();
 			if (containers != null) {
 				for (int i = 0; i < containers.length; i++) {
 					if (containers[i] instanceof IUBundleContainer && containers[i] != fEditContainer) {

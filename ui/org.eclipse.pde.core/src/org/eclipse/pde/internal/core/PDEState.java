@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
+import org.eclipse.pde.core.target.LoadTargetDefinitionJob;
+
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -26,7 +28,6 @@ import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.bundle.*;
 import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.internal.core.project.PDEProject;
-import org.eclipse.pde.internal.core.target.provisional.LoadTargetDefinitionJob;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 
 public class PDEState extends MinimalState {

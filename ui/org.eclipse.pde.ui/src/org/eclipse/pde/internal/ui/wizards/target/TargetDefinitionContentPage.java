@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.target;
 
+import org.eclipse.pde.core.target.*;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.List;
@@ -26,7 +28,6 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.target.provisional.*;
 import org.eclipse.pde.internal.core.util.VMUtil;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
@@ -224,7 +225,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 				if (fLocationTree != source) {
 					fLocationTree.setInput(definition);
 				}
-				if (definition.isResolved() && definition.getBundleStatus().getSeverity() == IStatus.ERROR) {
+				if (definition.isResolved() && definition.getStatus().getSeverity() == IStatus.ERROR) {
 					fLocationTab.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_ERROR_TSK));
 				} else {
 					fLocationTab.setImage(null);
@@ -264,7 +265,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 					}
 					fContentTree.setInput(definition);
 					fLocationTree.setInput(definition);
-					if (definition.isResolved() && definition.getBundleStatus().getSeverity() == IStatus.ERROR) {
+					if (definition.isResolved() && definition.getStatus().getSeverity() == IStatus.ERROR) {
 						fLocationTab.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_ERROR_TSK));
 					} else {
 						fLocationTab.setImage(null);
@@ -742,7 +743,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		}
 
 		List targetBundles = new ArrayList();
-		IResolvedBundle[] allTargetBundles = getTargetDefinition().getAllBundles();
+		TargetBundle[] allTargetBundles = getTargetDefinition().getAllBundles();
 		if (allTargetBundles == null || allTargetBundles.length == 0) {
 			throw new CoreException(new Status(IStatus.WARNING, PDEPlugin.getPluginId(), PDEUIMessages.ImplicitDependenciesSection_0));
 		}
