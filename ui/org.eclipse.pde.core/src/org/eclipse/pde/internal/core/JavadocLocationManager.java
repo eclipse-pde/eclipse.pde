@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,15 +28,20 @@ public class JavadocLocationManager {
 	private HashMap fLocations;
 
 	public String getJavadocLocation(IPluginModelBase model) {
-		File file = new File(model.getInstallLocation());
-		if (file.isDirectory()) {
-			File doc = new File(file, "doc"); //$NON-NLS-1$
-			if (new File(doc, "package-list").exists()) //$NON-NLS-1$
-				return "file:/" + doc.getAbsolutePath(); //$NON-NLS-1$
-		} else if (CoreUtility.jarContainsResource(file, "doc/package-list", false)) { //$NON-NLS-1$
-			return "jar:file:/" + file.getAbsolutePath() + "!/doc"; //$NON-NLS-1$ //$NON-NLS-2$
+		try {
+			File file = new File(model.getInstallLocation());
+			if (file.isDirectory()) {
+				File doc = new File(file, "doc"); //$NON-NLS-1$
+				if (new File(doc, "package-list").exists()) //$NON-NLS-1$
+					return doc.toURL().toString();
+			} else if (CoreUtility.jarContainsResource(file, "doc/package-list", false)) { //$NON-NLS-1$
+				return "jar:" + file.toURL().toString() + "!/doc"; //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			return getEntry(model);
+		} catch (MalformedURLException e) {
+			PDECore.log(e);
+			return null;
 		}
-		return getEntry(model);
 	}
 
 	private synchronized String getEntry(IPluginModelBase model) {
