@@ -12,6 +12,7 @@
 package org.eclipse.pde.internal.ui.wizards.tools;
 
 import java.util.Iterator;
+import java.util.Set;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -49,11 +50,11 @@ public class OrganizeManifestsWizardPage extends UserInputWizardPage implements 
 	private Button[] fTopLevelButtons; // used for setting page complete state
 
 	private OrganizeManifestsProcessor fProcessor;
-	private java.util.List fCustomProjects;
+	private Set fCustomProjects;
 
 	private static String title = PDEUIMessages.OrganizeManifestsWizardPage_title;
 
-	protected OrganizeManifestsWizardPage(java.util.List/*<IProject>*/customProjects) {
+	protected OrganizeManifestsWizardPage(java.util.Set/*<IProject>*/customProjects) {
 		super(title);
 		setTitle(title);
 		setDescription(PDEUIMessages.OrganizeManifestsWizardPage_description);
@@ -93,7 +94,7 @@ public class OrganizeManifestsWizardPage extends UserInputWizardPage implements 
 
 		String message;
 		if (fCustomProjects.size() == 1) {
-			message = NLS.bind(PDEUIMessages.OrganizeManifestsWizardPage_ProjectsUsingCustomBuildWarning, ((IProject) fCustomProjects.get(0)).getName());
+			message = NLS.bind(PDEUIMessages.OrganizeManifestsWizardPage_ProjectsUsingCustomBuildWarning, ((IProject) fCustomProjects.iterator().next()).getName());
 		} else {
 			StringBuffer buf = new StringBuffer();
 			for (Iterator iterator = fCustomProjects.iterator(); iterator.hasNext();) {

@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.tools;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -46,7 +46,7 @@ public class OrganizeManifestsWizard extends RefactoringWizard {
 		setDefaultPageTitle(getRefactoring().getName());
 
 		// Collect any custom build projects and warn the user
-		List customProjects = getProjectsWithCustomBuild(((PDERefactor) getRefactoring()).getProcessor().getElements());
+		Set customProjects = getProjectsWithCustomBuild(((PDERefactor) getRefactoring()).getProcessor().getElements());
 		fMainPage = new OrganizeManifestsWizardPage(customProjects);
 		addPage(fMainPage);
 	}
@@ -58,8 +58,8 @@ public class OrganizeManifestsWizard extends RefactoringWizard {
 	 * @param elements the elements the refactoring is applying to, usually IProjects
 	 * @return a list of IProjects that have the custom build property set, possibly empty
 	 */
-	private List/*<IProject>*/getProjectsWithCustomBuild(Object[] elements) {
-		List result = new ArrayList();
+	private Set/*<IProject>*/getProjectsWithCustomBuild(Object[] elements) {
+		Set result = new HashSet();
 		for (int i = 0; i < elements.length; i++) {
 			try {
 				if (elements[i] instanceof IResource) {
