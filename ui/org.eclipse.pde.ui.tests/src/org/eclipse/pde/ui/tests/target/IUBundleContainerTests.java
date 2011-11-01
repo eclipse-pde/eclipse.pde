@@ -484,7 +484,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 		assertIncludeAllPlatform(xml, true);
 		assertIncludeMode(xml, "slicer");
 		assertIncludeSource(xml, false);
-		deserializationTest(xml, location);
+		deserializationTest(location);
 	}
 	
 	
@@ -494,7 +494,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 		assertIncludeAllPlatform(xml, false);
 		assertIncludeMode(xml, "planner");
 		assertIncludeSource(xml, false);
-		deserializationTest(xml, location);
+		deserializationTest(location);
 	}
 	
 	public void testSerialization3() throws Exception {
@@ -506,27 +506,26 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 		assertIncludeAllPlatform(xml, true);
 		assertIncludeMode(xml, "slicer");
 		assertIncludeSource(xml, true);
-		deserializationTest(xml, location);
+		deserializationTest(location);
 	}
 
-	public void deserializationTest(String xml, IUBundleContainer location) {
-		try {
- 			xml = xml.replaceAll("<\\?xml version=\"1.0\" encoding=\"UTF-8\"\\?>", "<target><locations>");
-			xml = xml + "</locations></target>";
-			DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-			parser.setErrorHandler(new DefaultHandler());
-			Document doc = parser.parse(new InputSource(new ByteArrayInputStream(xml.getBytes("UTF-8"))));
+	public void deserializationTest(IUBundleContainer location) throws Exception {
+		ITargetDefinition td = getTargetService().newTarget();
+		td.setTargetLocations(new ITargetLocation[] {location});
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		TargetDefinitionPersistenceHelper.persistXML(td, out);
+		String xml = new String(out.toByteArray());
+		DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+		parser.setErrorHandler(new DefaultHandler());
+		Document doc = parser.parse(new InputSource(new ByteArrayInputStream(xml.getBytes("UTF-8"))));
 
-			ITargetDefinition definition = getTargetService().newTarget();
-			Element root = doc.getDocumentElement();
-			TargetPersistence38Helper.initFromDoc(definition, root);
-			ITargetLocation[] locations = definition.getTargetLocations();
-			assertEquals(1, locations.length);
-			assertTrue(locations[0] instanceof IUBundleContainer);
-			assertTrue(((IUBundleContainer)locations[0]).isContentEqual(location));
-		} catch (Exception e) {
-			fail(e.getMessage() + "\nTarget:\n" + xml);
-		}
+		ITargetDefinition definition = getTargetService().newTarget();
+		Element root = doc.getDocumentElement();
+		TargetPersistence38Helper.initFromDoc(definition, root);
+		ITargetLocation[] locations = definition.getTargetLocations();
+		assertEquals(1, locations.length);
+		assertTrue(locations[0] instanceof IUBundleContainer);
+		assertTrue(((IUBundleContainer)locations[0]).isContentEqual(location));
 	}
 	
 	private void assertIncludeAllPlatform(String xml, boolean expectedValue) {
