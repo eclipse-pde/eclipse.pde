@@ -22,6 +22,7 @@ import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.natures.PDE;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.wizards.feature.*;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IProgressService;
@@ -62,9 +63,9 @@ public class NewFeatureProjectTestCase extends NewProjectTestCase {
 			fail("Unaccepted model object passed..." + modelObject);
 
 		if (patch)
-			op = new CreateFeaturePatchOperation(project, path, fd, (IFeatureModel) modelObject, getShell());
+			op = new CreateFeaturePatchOperation(project, path, fd, (IFeatureModel) modelObject, PDEPlugin.getActiveWorkbenchShell());
 		else
-			op = new CreateFeatureProjectOperation(project, path, fd, (IPluginBase[]) modelObject, getShell());
+			op = new CreateFeatureProjectOperation(project, path, fd, (IPluginBase[]) modelObject, PDEPlugin.getActiveWorkbenchShell());
 		IProgressService progressService = PlatformUI.getWorkbench().getProgressService();
 		progressService.runInUI(progressService, op, null);
 	}

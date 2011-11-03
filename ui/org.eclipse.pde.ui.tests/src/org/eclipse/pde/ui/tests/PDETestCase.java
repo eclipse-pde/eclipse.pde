@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2008 IBM Corporation and others.
+ *  Copyright (c) 2005, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -11,20 +11,16 @@
 package org.eclipse.pde.ui.tests;
 
 import junit.framework.TestCase;
-
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.PlatformUI;
 
+/**
+ * Provides a default {@link #tearDown()} implementation to delete all
+ * projects in the workspace.
+ *
+ */
 public abstract class PDETestCase extends TestCase {
-
-	protected Shell getShell() {
-		return PlatformUI.getWorkbench().getDisplay().getActiveShell();
-	}
 
 	protected void tearDown() {
 		IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
