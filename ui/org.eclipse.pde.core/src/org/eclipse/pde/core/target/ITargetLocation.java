@@ -138,10 +138,15 @@ public interface ITargetLocation extends IAdaptable {
 	public String[] getVMArguments();
 
 	/**
-	 * Returns an XML String that stores information about this location so that it can be instantiated 
-	 * later using a {@link ITargetLocationFactory}.
-	 * 
-	 * @return an XML string storing all location information
+	 * Returns a serialized XML string that stores information about this location so it can 
+	 * be restored later using a {@link ITargetLocationFactory}.  May return <code>null</code>
+	 * to have this location ignored when saving a target definition.
+	 * <p>
+	 * The returned xml must contain a single root element named <code>location</code>. The root
+	 * element may have attributes set and children.  The xml should not be prefixed by a XML 
+	 * declaration such as <code>&lt?xml version="1.0" encoding="UTF-8"?&gt</code>.
+	 * </p>
+	 * @return an XML string storing all location information or <code>null</code>
 	 */
 	public String serialize();
 }

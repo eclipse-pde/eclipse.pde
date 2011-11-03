@@ -73,7 +73,9 @@ public class Messages extends NLS {
 	public static String TargetDefinition_RequiredFeatureCouldNotBeFound;
 	public static String TargetDefinitionPersistenceHelper_0;
 	public static String TargetDefinitionPersistenceHelper_1;
+	public static String TargetDefinitionPersistenceHelper_WrongRootElementInXML;
 	public static String TargetFeature_FileDoesNotExist;
+	public static String TargetPersistence38Helper_NoTargetLocationExtension;
 	public static String TargetPlatformService_0;
 	public static String TargetPlatformService_1;
 	public static String TargetPlatformService_2;

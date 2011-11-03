@@ -25,6 +25,12 @@ public interface ITargetLocationFactory {
 	/**
 	 * Returns an instance of an {@link ITargetLocation} from the provided serialized xml string
 	 * or throws a {@link CoreException} if unable to do so.
+	 * <p>
+	 * The serialized xml will not be prefixed by a XML declaration such as 
+	 * <code>&lt?xml version="1.0" encoding="UTF-8"?&gt</code>.  The xml will contain a single
+	 * root element named <code>location</code> with the attribute <code>type</code> that matches
+	 * the type parameter.  The root element may have children and other attributes set.
+	 * </p>
 	 * 
 	 * @param type the string type describing the implementation of ITargetLocation expected, see {@link ITargetLocation#getType()}
 	 * @param serializedXML	the xml string describing the location to create, see {@link ITargetLocation#serialize()}

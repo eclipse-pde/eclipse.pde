@@ -13,11 +13,13 @@ package org.eclipse.pde.internal.core.target;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.target.*;
+import org.eclipse.pde.internal.core.PDECore;
 import org.w3c.dom.*;
 
 /**
@@ -31,20 +33,31 @@ import org.w3c.dom.*;
  */
 public class TargetPersistence38Helper {
 
-	/* Example of Software location in Target XML
+	/* Example 3.8 target file
 
-	<?xml version="1.0" encoding="UTF-8"?><?pde version="3.6"?><target name="SoftwareSiteTarget" sequenceNumber="6">
+	<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+	<?pde version="3.8"?>
+	
+	<target name="test" sequenceNumber="9">
 	<locations>
-	<location includeAllPlatforms="false" includeMode="slicer" includeSource="true" type="InstallableUnit">
-	<unit id="org.eclipse.egit.feature.group" version="0.11.3"/>
-	<unit id="org.eclipse.jgit.feature.group" version="0.11.3"/>
-	<repository location="http://download.eclipse.org/releases/indigo"/>
+	<location path="${eclipse_home}" type="Directory"/>
+	<location path="${eclipse_home}" type="Profile"/>
+	<location id="org.eclipse.cvs" path="${eclipse_home}" type="Feature"/>
+	<location id="org.eclipse.emf.ecore" path="${eclipse_home}" type="Feature"/>
+	<location id="org.eclipse.egit" path="${eclipse_home}" type="Feature"/>
+	<location includeAllPlatforms="false" includeMode="slicer" includeSource="false" type="InstallableUnit">
+	<unit id="org.eclipse.releng.tools.feature.group" version="3.4.100.v20110503-45-7w31221634"/>
+	<repository location="http://fullmoon.ottawa.ibm.com/updates/3.8-I-builds/"/>
+	</location>
+	<location includeAllPlatforms="false" includeMode="slicer" includeSource="false" type="InstallableUnit">
+	<unit id="org.eclipse.sdk.ide" version="3.7.0.I20110603-0909"/>
+	<repository location="http://fullmoon.ottawa.ibm.com/updates/3.7-I-builds/"/>
 	</location>
 	</locations>
 	</target>
 	
 	*/
-	public static void initFromDoc(ITargetDefinition definition, Element root) throws CoreException {
+	public static void initFromDoc(ITargetDefinition definition, Element root) {
 		String name = root.getAttribute(TargetDefinitionPersistenceHelper.ATTR_NAME);
 		if (name.length() > 0) {
 			definition.setName(name);
@@ -69,9 +82,14 @@ public class TargetPersistence38Helper {
 						if (locationNode.getNodeType() == Node.ELEMENT_NODE) {
 							Element locationElement = (Element) locationNode;
 							if (locationElement.getNodeName().equalsIgnoreCase(TargetDefinitionPersistenceHelper.LOCATION)) {
-								ITargetLocation container = deserializeBundleContainer(locationElement);
-								if (container != null) {
-									bundleContainers.add(container);
+								try {
+									ITargetLocation container = deserializeBundleContainer(locationElement);
+									if (container != null) {
+										bundleContainers.add(container);
+									}
+								} catch (CoreException e) {
+									// Log the problem and move on to the next location
+									PDECore.log(e);
 								}
 							}
 						}
@@ -183,8 +201,10 @@ public class TargetPersistence38Helper {
 	 * @throws CoreException
 	 */
 	private static ITargetLocation deserializeBundleContainer(Element location) throws CoreException {
-		String path = location.getAttribute(TargetDefinitionPersistenceHelper.ATTR_LOCATION_PATH);
 		String type = location.getAttribute(TargetDefinitionPersistenceHelper.ATTR_LOCATION_TYPE);
+		String path = location.getAttribute(TargetDefinitionPersistenceHelper.ATTR_LOCATION_PATH);
+
+		// Type should always be specified, but if not set, guess at type
 		if (type.length() == 0) {
 			if (path.endsWith("plugins")) { //$NON-NLS-1$
 				type = DirectoryBundleContainer.TYPE;
@@ -205,10 +225,22 @@ public class TargetPersistence38Helper {
 		} else {
 			// The container is of an unknown type, should have a contribution through
 			try {
+				// Convert the xml to a string to pass to the extension
+				ITargetLocationFactory locFactory = TargetLocationTypeManager.getInstance().getTargetLocationFactory(type);
+				if (locFactory == null) {
+					throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.TargetPersistence38Helper_NoTargetLocationExtension, type)));
+				}
 				StreamResult result = new StreamResult(new StringWriter());
-				TransformerFactory.newInstance().newTransformer().transform(new DOMSource(location), result);
-				container = TargetLocationTypeManager.getInstance().getTargetLocation(type, result.getWriter().toString());
-			} catch (Exception e) {
+				Transformer transformer = TransformerFactory.newInstance().newTransformer();
+				transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes"); //$NON-NLS-1$
+				transformer.transform(new DOMSource(location), result);
+				container = locFactory.getTargetLocation(type, result.getWriter().toString());
+			} catch (TransformerConfigurationException e) {
+				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.TargetDefinitionPersistenceHelper_0, e));
+			} catch (TransformerException e) {
+				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.TargetDefinitionPersistenceHelper_0, e));
+			} catch (TransformerFactoryConfigurationError e) {
+				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.TargetDefinitionPersistenceHelper_0, e));
 			}
 		}
 		return container;

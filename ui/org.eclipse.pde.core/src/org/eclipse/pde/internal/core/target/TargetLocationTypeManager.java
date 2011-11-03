@@ -51,24 +51,13 @@ public class TargetLocationTypeManager {
 	}
 
 	/**
-	 * Returns an instance of {@link ITargetLocation} from the factory that supports
-	 * the location type.  Will throw a {@link CoreException} if no factory can be
-	 * found or the xml is invalid.
+	 * Returns an instance of {@link ITargetLocationFactory} from an extension that provides
+	 * them for locations of the given type or <code>null</code> if no extension can be found.
 	 * 
 	 * @param type string identifying the type of target location, see {@link ITargetLocation#getType()}
-	 * @param serializedXML xml string containing serialized location, see {@link ITargetLocation#serialize()}
-	 * @return an instance of <code>ITargetLocation</code>
-	 * @throws CoreException if there is a problem finding a factory or the xml is invalid 
+	 * @return an instance of <code>ITargetLocationFactory</code> or <code>null</code>
 	 */
-	public ITargetLocation getTargetLocation(String type, String serializedXML) throws CoreException {
-		ITargetLocationFactory factory = getFactory(type);
-		if (factory != null) {
-			return factory.getTargetLocation(type, serializedXML);
-		}
-		return null;
-	}
-
-	private ITargetLocationFactory getFactory(String type) {
+	public ITargetLocationFactory getTargetLocationFactory(String type) {
 		ITargetLocationFactory factory = (ITargetLocationFactory) fFactoryMap.get(type);
 		if (factory == null) {
 			IConfigurationElement extension = (IConfigurationElement) fExtentionMap.get(type);

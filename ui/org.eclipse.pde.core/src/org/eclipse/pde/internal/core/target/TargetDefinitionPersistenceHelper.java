@@ -18,6 +18,7 @@ import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
@@ -287,36 +288,42 @@ public class TargetDefinitionPersistenceHelper {
 	}
 
 	private static Element serializeBundleContainer(Document doc, ITargetLocation targetLocation) throws CoreException, SAXException, IOException, ParserConfigurationException {
-		Element containerElement = doc.createElement(LOCATION);
-		if (targetLocation instanceof DirectoryBundleContainer || targetLocation instanceof FeatureBundleContainer || targetLocation instanceof ProfileBundleContainer) {
-			containerElement.setAttribute(ATTR_LOCATION_PATH, targetLocation.getLocation(false));
-		}
-		containerElement.setAttribute(ATTR_LOCATION_TYPE, targetLocation.getType());
 		if (targetLocation instanceof DirectoryBundleContainer) {
-			//do nothing;
+			Element containerElement = doc.createElement(LOCATION);
+			containerElement.setAttribute(ATTR_LOCATION_TYPE, targetLocation.getType());
+			containerElement.setAttribute(ATTR_LOCATION_PATH, targetLocation.getLocation(false));
+			return containerElement;
 		} else if (targetLocation instanceof FeatureBundleContainer) {
+			Element containerElement = doc.createElement(LOCATION);
+			containerElement.setAttribute(ATTR_LOCATION_TYPE, targetLocation.getType());
+			containerElement.setAttribute(ATTR_LOCATION_PATH, targetLocation.getLocation(false));
 			containerElement.setAttribute(ATTR_ID, ((FeatureBundleContainer) targetLocation).getFeatureId());
 			String version = ((FeatureBundleContainer) targetLocation).getFeatureVersion();
 			if (version != null) {
 				containerElement.setAttribute(ATTR_VERSION, version);
 			}
+			return containerElement;
 		} else if (targetLocation instanceof ProfileBundleContainer) {
+			Element containerElement = doc.createElement(LOCATION);
+			containerElement.setAttribute(ATTR_LOCATION_TYPE, targetLocation.getType());
+			containerElement.setAttribute(ATTR_LOCATION_PATH, targetLocation.getLocation(false));
 			String configurationArea = ((ProfileBundleContainer) targetLocation).getConfigurationLocation();
 			if (configurationArea != null) {
 				containerElement.setAttribute(ATTR_CONFIGURATION, configurationArea);
 			}
+			return containerElement;
 		} else {
 			String xml = targetLocation.serialize();
 			if (xml == null)
 				return null;
 			Document document = getDocumentBuilder().parse(new ByteArrayInputStream(xml.getBytes("UTF-8"))); //$NON-NLS-1$
-			NodeList locationNode = document.getElementsByTagName(LOCATION);
-			if (locationNode == null || locationNode.getLength() == 0) {
-				return null;
+			Element root = document.getDocumentElement();
+			if (!root.getNodeName().equalsIgnoreCase(LOCATION)) {
+				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.TargetDefinitionPersistenceHelper_WrongRootElementInXML, targetLocation.getType(), xml)));
 			}
-			return (Element) containerElement.getOwnerDocument().importNode(locationNode.item(0), true);
+			root.setAttribute(ATTR_LOCATION_TYPE, targetLocation.getType());
+			return (Element) doc.importNode(root, true);
 		}
-		return containerElement;
 	}
 
 	private static void serializeBundles(Document doc, Element parent, NameVersionDescriptor[] bundles) {

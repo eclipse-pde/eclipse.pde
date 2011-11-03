@@ -18,8 +18,7 @@ import java.net.URI;
 import java.util.*;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.eclipse.core.runtime.*;
@@ -612,10 +611,12 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		try {
 			DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			document = docBuilder.newDocument();
-			containerElement = document.createElement(TargetDefinitionPersistenceHelper.LOCATION);
 		} catch (Exception e) {
+			PDECore.log(e);
 			return null;
 		}
+
+		containerElement = document.createElement(TargetDefinitionPersistenceHelper.LOCATION);
 		containerElement.setAttribute(TargetDefinitionPersistenceHelper.ATTR_LOCATION_TYPE, getType());
 		containerElement.setAttribute(TargetDefinitionPersistenceHelper.ATTR_INCLUDE_MODE, getIncludeAllRequired() ? TargetDefinitionPersistenceHelper.MODE_PLANNER : TargetDefinitionPersistenceHelper.MODE_SLICER);
 		containerElement.setAttribute(TargetDefinitionPersistenceHelper.ATTR_INCLUDE_ALL_PLATFORMS, Boolean.toString(getIncludeAllEnvironments()));
@@ -640,7 +641,9 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		try {
 			document.appendChild(containerElement);
 			StreamResult result = new StreamResult(new StringWriter());
-			TransformerFactory.newInstance().newTransformer().transform(new DOMSource(document), result);
+			Transformer transformer = TransformerFactory.newInstance().newTransformer();
+			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes"); //$NON-NLS-1$
+			transformer.transform(new DOMSource(document), result);
 			return result.getWriter().toString();
 		} catch (TransformerException ex) {
 			return null;

@@ -250,8 +250,8 @@ public abstract class AbstractBundleContainer extends PlatformObject implements 
 	 * @see org.eclipse.pde.core.target.ITargetLocation#serialize()
 	 */
 	public String serialize() {
-		// The default implementation returns an empty string because the peristence helper does the work
-		return ""; //$NON-NLS-1$
+		// The default implementation returns null as most containers do not use the new UI
+		return null;
 	}
 
 }
