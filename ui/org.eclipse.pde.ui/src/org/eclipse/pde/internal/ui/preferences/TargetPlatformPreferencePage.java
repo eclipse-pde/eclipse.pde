@@ -59,9 +59,9 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 
 		public TargetLabelProvider() {
 			PDEPlugin.getDefault().getLabelProvider().connect(this);
-			TargetPlatformService service = (TargetPlatformService) getTargetService();
+			ITargetPlatformService service = getTargetService();
 			if (service != null) {
-				fRunningHost = (TargetDefinition) service.newDefaultTargetDefinition();
+				fRunningHost = (TargetDefinition) service.newDefaultTarget();
 			}
 		}
 
@@ -630,9 +630,8 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 	public void performDefaults() {
 		// add a default target platform and select it (or just select it if present)
 		ITargetPlatformService service = getTargetService();
-		if (service instanceof TargetPlatformService) {
-			TargetPlatformService ts = (TargetPlatformService) service;
-			ITargetDefinition deflt = ts.newDefaultTargetDefinition();
+		if (service != null) {
+			ITargetDefinition deflt = service.newDefaultTarget();
 			Iterator iterator = fTargets.iterator();
 			ITargetDefinition reuse = null;
 			while (iterator.hasNext()) {

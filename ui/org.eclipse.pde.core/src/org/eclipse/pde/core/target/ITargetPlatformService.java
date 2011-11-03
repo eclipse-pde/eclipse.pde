@@ -224,4 +224,13 @@ public interface ITargetPlatformService {
 	 */
 	public void loadTargetDefinition(ITargetDefinition definition, String targetExtensionId) throws CoreException;
 
+	/**
+	 * Returns a new target definition with default settings. The default target contains all plug-ins
+	 * and features from the running host.  It uses an explicit configuration area if not equal to the
+	 * default location.
+	 * 
+	 * @return a new target definition with default settings
+	 */
+	public ITargetDefinition newDefaultTarget();
+
 }

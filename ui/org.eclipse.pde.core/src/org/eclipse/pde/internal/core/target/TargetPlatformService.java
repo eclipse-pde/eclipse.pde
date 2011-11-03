@@ -474,13 +474,7 @@ public class TargetPlatformService implements ITargetPlatformService {
 
 	}
 
-	/**
-	 * Creates a target definition with default settings - i.e. the running host.
-	 * Uses an explicit configuration area if not equal to the default location.
-	 * 
-	 * @return target definition
-	 */
-	public ITargetDefinition newDefaultTargetDefinition() {
+	public ITargetDefinition newDefaultTarget() {
 		ITargetDefinition target = newTarget();
 		Location configArea = Platform.getConfigurationLocation();
 		String configLocation = null;

@@ -10,14 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.target;
 
-import org.eclipse.pde.core.target.ITargetDefinition;
-import org.eclipse.pde.core.target.ITargetPlatformService;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardSelectionPage;
+import org.eclipse.pde.core.target.ITargetDefinition;
+import org.eclipse.pde.core.target.ITargetPlatformService;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.target.TargetPlatformService;
 import org.eclipse.pde.internal.ui.*;
@@ -180,10 +179,9 @@ public class TargetCreationPage extends WizardSelectionPage {
 	 */
 	private void populateBasicTarget(ITargetDefinition definition) throws CoreException {
 		ITargetPlatformService service = getTargetService();
-		if (service instanceof TargetPlatformService) {
-			TargetPlatformService ts = (TargetPlatformService) service;
-			ITargetDefinition def = ts.newDefaultTargetDefinition();
-			ts.copyTargetDefinition(def, definition);
+		if (service != null) {
+			ITargetDefinition def = service.newDefaultTarget();
+			service.copyTargetDefinition(def, definition);
 		}
 	}
 

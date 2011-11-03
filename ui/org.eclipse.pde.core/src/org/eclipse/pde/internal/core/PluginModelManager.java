@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import org.eclipse.pde.core.target.*;
-
 import java.util.*;
 import java.util.Map.Entry;
 import org.eclipse.core.resources.IProject;
@@ -25,6 +23,7 @@ import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.internal.core.target.*;
 
 public class PluginModelManager implements IModelProviderListener {
@@ -604,7 +603,7 @@ public class PluginModelManager implements IModelProviderListener {
 					}
 					if (wsHandle == null) {
 						// restore settings from preferences
-						ITargetDefinition def = ts.newDefaultTargetDefinition();
+						ITargetDefinition def = ts.newDefaultTarget();
 						String defVMargs = def.getVMArguments();
 						if (curr.getVMArguments() == null) {
 							// previous to 3.5, default VM arguments were null instead of matching the host's

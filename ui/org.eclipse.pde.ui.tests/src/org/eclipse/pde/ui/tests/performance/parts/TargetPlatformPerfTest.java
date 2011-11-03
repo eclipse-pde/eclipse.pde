@@ -26,7 +26,6 @@ import org.eclipse.pde.core.project.IBundleProjectDescription;
 import org.eclipse.pde.core.project.IBundleProjectService;
 import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.target.TargetPlatformService;
 import org.eclipse.pde.internal.ui.tests.macro.MacroPlugin;
 import org.eclipse.pde.ui.tests.target.LocalTargetDefinitionTests;
 import org.eclipse.pde.ui.tests.util.TestBundleCreator;
@@ -142,7 +141,7 @@ public class TargetPlatformPerfTest extends PerformanceTestCase {
 			// Delete the created project
 			proj.delete(true, true, null);
 			// Restore the default target platform
-			ITargetDefinition defaultTarget = ((TargetPlatformService) tps).newDefaultTargetDefinition();
+			ITargetDefinition defaultTarget = tps.newDefaultTarget();
 			LoadTargetDefinitionJob restoreJob = new LoadTargetDefinitionJob(defaultTarget);
 			restoreJob.runInWorkspace(null);
 		}
@@ -181,7 +180,7 @@ public class TargetPlatformPerfTest extends PerformanceTestCase {
 
 		} finally {
 			// Restore the default target platform
-			ITargetDefinition defaultTarget = ((TargetPlatformService) tps).newDefaultTargetDefinition();
+			ITargetDefinition defaultTarget = tps.newDefaultTarget();
 			LoadTargetDefinitionJob restoreJob = new LoadTargetDefinitionJob(defaultTarget);
 			restoreJob.runInWorkspace(null);
 		}
