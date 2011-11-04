@@ -938,6 +938,8 @@ public class P2TargetUtils {
 		phases.add(new Uninstall(50, true));
 		phases.add(new Install(50));
 		phases.add(new CollectNativesPhase(100));
+		phases.add(new Configure(100));
+
 		return new PhaseSet((Phase[]) phases.toArray(new Phase[phases.size()]));
 	}
 
