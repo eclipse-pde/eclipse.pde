@@ -18,8 +18,7 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.launching.IPDELauncherConstants;
 import org.eclipse.pde.ui.launcher.AbstractLauncherTab;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -62,6 +61,14 @@ public class ConfigurationAreaBlock extends BaseBlock {
 		});
 
 		createText(group, PDEUIMessages.ConfigurationTab_configLog, 20);
+		fLocationText.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				if (!fUseDefaultLocationButton.getSelection()) {
+					// As the user types, save the text and restore it if default button is toggled
+					fLastEnteredConfigArea = getLocation();
+				}
+			}
+		});
 
 		Composite buttons = new Composite(group, SWT.NONE);
 		GridLayout layout = new GridLayout(4, false);
@@ -89,28 +96,24 @@ public class ConfigurationAreaBlock extends BaseBlock {
 			fLocationText.setEnabled(true);
 
 		fClearConfig.setSelection(configuration.getAttribute(IPDELauncherConstants.CONFIG_CLEAR_AREA, false));
-		fLastEnteredConfigArea = configuration.getAttribute(IPDELauncherConstants.CONFIG_LOCATION, ""); //$NON-NLS-1$
 
-		if (useDefaultArea)
-			fLocationText.setText(DEFAULT_DIR + fLastKnownConfigName);
-		else
-			fLocationText.setText(fLastEnteredConfigArea);
+		if (useDefaultArea) {
+			fLastEnteredConfigArea = DEFAULT_DIR + fLastKnownConfigName;
+		} else {
+			// If no attribute is set, use the default area instead of an empty string to avoid deleting the home directory, bug 356853
+			fLastEnteredConfigArea = configuration.getAttribute(IPDELauncherConstants.CONFIG_LOCATION, DEFAULT_DIR + fLastKnownConfigName);
+		}
+		fLocationText.setText(fLastEnteredConfigArea);
 	}
 
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		configuration.setAttribute(IPDELauncherConstants.CONFIG_USE_DEFAULT_AREA, fUseDefaultLocationButton.getSelection());
 
-		if (!fLastKnownConfigName.equals(configuration.getName())) {
-			fLastKnownConfigName = configuration.getName();
-			if (fUseDefaultLocationButton.getSelection()) {
-				fLastEnteredConfigArea = DEFAULT_DIR + fLastKnownConfigName;
-				fLocationText.setText(fLastEnteredConfigArea);
-			} else {
-				fLastEnteredConfigArea = getLocation();
-			}
+		// Check if the default area has changed because the launch config name changed
+		if (fUseDefaultLocationButton.getSelection() && !fLastKnownConfigName.equals(configuration.getName())) {
+			fLocationText.setText(DEFAULT_DIR + configuration.getName());
 		}
-
-		configuration.setAttribute(IPDELauncherConstants.CONFIG_LOCATION, fLastEnteredConfigArea);
+		configuration.setAttribute(IPDELauncherConstants.CONFIG_LOCATION, getLocation());
 		configuration.setAttribute(IPDELauncherConstants.CONFIG_CLEAR_AREA, fClearConfig.getSelection());
 	}
 
