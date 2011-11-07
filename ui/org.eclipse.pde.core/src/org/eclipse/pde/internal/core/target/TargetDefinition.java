@@ -507,19 +507,15 @@ public class TargetDefinition implements ITargetDefinition {
 			list.add(resolved);
 		}
 		List resolved = new ArrayList();
-		if (included == null) {
-			for (int i = 0; i < collection.length; i++) {
-				resolved.add(collection[i]);
-			}
-		} else {
-			for (int i = 0; i < included.length; i++) {
-				BundleInfo info = new BundleInfo(included[i].getId(), included[i].getVersion(), null, BundleInfo.NO_LEVEL, false);
-				TargetBundle bundle = resolveBundle(bundleMap, info, handleMissingBundles);
-				if (bundle != null) {
-					resolved.add(bundle);
-				}
+
+		for (int i = 0; i < included.length; i++) {
+			BundleInfo info = new BundleInfo(included[i].getId(), included[i].getVersion(), null, BundleInfo.NO_LEVEL, false);
+			TargetBundle bundle = resolveBundle(bundleMap, info, handleMissingBundles);
+			if (bundle != null) {
+				resolved.add(bundle);
 			}
 		}
+
 		return resolved;
 	}
 
