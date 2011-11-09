@@ -7,3 +7,4 @@ Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Require-Bundle: refproject;bundle-version="1.0.0"
 Export-Package: internal.x.y.z;x-internal:=true,
  x.y.z
+Import-Package: d

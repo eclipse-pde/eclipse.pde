@@ -12,7 +12,7 @@ package x.y.z;
 
 import java.io.IOException;
 
-import c.TryWithResourcesClass;
+import d.TryWithResourcesClass;
 
 public class testCTryWith {
 
