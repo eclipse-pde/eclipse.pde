@@ -113,6 +113,9 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 	 * @see org.eclipse.core.resources.WorkspaceJob#runInWorkspace(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
+		if (monitor == null) {
+			monitor = new NullProgressMonitor();
+		}
 		try {
 			PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
 			monitor.beginTask(Messages.LoadTargetOperation_mainTaskName, 100);

@@ -78,16 +78,6 @@ public class TargetDefinitionPersistenceHelper {
 	static final String EXTRA_LOCATIONS = "extraLocations"; //$NON-NLS-1$
 	private static ITargetPlatformService fTargetService;
 
-	private static DocumentBuilder docBuilder;
-
-	private static DocumentBuilder getDocumentBuilder() throws ParserConfigurationException {
-		if (docBuilder == null) {
-			DocumentBuilderFactory dfactory = DocumentBuilderFactory.newInstance();
-			docBuilder = dfactory.newDocumentBuilder();
-		}
-		return docBuilder;
-	}
-
 	/**
 	 * Serializes a target definition to xml and writes the xml to the given stream
 	 * @param definition target definition to serialize
@@ -99,7 +89,9 @@ public class TargetDefinitionPersistenceHelper {
 	 * @throws SAXException 
 	 */
 	public static void persistXML(ITargetDefinition definition, OutputStream output) throws CoreException, ParserConfigurationException, TransformerException, IOException, SAXException {
-		Document doc = getDocumentBuilder().newDocument();
+		DocumentBuilderFactory dfactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder docBuilder = dfactory.newDocumentBuilder();
+		Document doc = docBuilder.newDocument();
 
 		ProcessingInstruction instruction = doc.createProcessingInstruction(PDE_INSTRUCTION, ATTR_VERSION + "=\"" + ICoreConstants.TARGET38 + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		doc.appendChild(instruction);
@@ -120,7 +112,7 @@ public class TargetDefinitionPersistenceHelper {
 		if (containers != null && containers.length > 0) {
 			Element containersElement = doc.createElement(LOCATIONS);
 			for (int i = 0; i < containers.length; i++) {
-				Element containerElement = serializeBundleContainer(doc, containers[i]);
+				Element containerElement = serializeBundleContainer(docBuilder, doc, containers[i]);
 				if (containerElement != null) {
 					containersElement.appendChild(containerElement);
 				}
@@ -205,6 +197,7 @@ public class TargetDefinitionPersistenceHelper {
 		transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
 		transformer.setOutputProperty(OutputKeys.INDENT, "yes"); //$NON-NLS-1$
 		transformer.transform(source, outputTarget);
+
 	}
 
 	/**
@@ -287,7 +280,7 @@ public class TargetDefinitionPersistenceHelper {
 		return result.toString();
 	}
 
-	private static Element serializeBundleContainer(Document doc, ITargetLocation targetLocation) throws CoreException, SAXException, IOException, ParserConfigurationException {
+	private static Element serializeBundleContainer(DocumentBuilder docBuilder, Document doc, ITargetLocation targetLocation) throws CoreException, SAXException, IOException, ParserConfigurationException {
 		if (targetLocation instanceof DirectoryBundleContainer) {
 			Element containerElement = doc.createElement(LOCATION);
 			containerElement.setAttribute(ATTR_LOCATION_TYPE, targetLocation.getType());
@@ -316,7 +309,7 @@ public class TargetDefinitionPersistenceHelper {
 			String xml = targetLocation.serialize();
 			if (xml == null)
 				return null;
-			Document document = getDocumentBuilder().parse(new ByteArrayInputStream(xml.getBytes("UTF-8"))); //$NON-NLS-1$
+			Document document = docBuilder.parse(new ByteArrayInputStream(xml.getBytes("UTF-8"))); //$NON-NLS-1$
 			Element root = document.getDocumentElement();
 			if (!root.getNodeName().equalsIgnoreCase(LOCATION)) {
 				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.TargetDefinitionPersistenceHelper_WrongRootElementInXML, targetLocation.getType(), xml)));
