@@ -12,7 +12,8 @@ package x.y.z;
 
 import java.io.IOException;
 
-import d.TryWithResourcesClass;
+import c.TryWithResourcesClass;
+
 
 public class testCTryWith {
 
