@@ -151,41 +151,41 @@ public class TargetPlatformPerfTest extends PerformanceTestCase {
 	/**
 	 * Loads an example target definition as the active target platform
 	 */
-	public void testChangeTargetPlatform() throws Exception {
-		tagAsSummary("Change target platform", Dimension.ELAPSED_PROCESS); //$NON-NLS-1$
-		IPath testBundles = extractTargetPerfTestPlugins();
-
-		ITargetPlatformService tps = (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
-
-		ITargetDefinition target = tps.newTarget();
-		target.setBundleContainers(new IBundleContainer[] {tps.newDirectoryContainer(testBundles.toPortableString())});
-		target.resolve(null);
-		LoadTargetDefinitionJob job = new LoadTargetDefinitionJob(target);
-
-		try {
-
-			// Warm-up Iterations
-			for (int i = 0; i < 2; i++) {
-				// Execute test from this thread
-				job.runInWorkspace(new NullProgressMonitor());
-			}
-			// Test Iterations
-			for (int i = 0; i < 150; i++) {
-				// Execute test from this thread
-				startMeasuring();
-				job.runInWorkspace(new NullProgressMonitor());
-				stopMeasuring();
-			}
-			commitMeasurements();
-			assertPerformance();
-
-		} finally {
-			// Restore the default target platform
-			ITargetDefinition defaultTarget = ((TargetPlatformService) tps).newDefaultTargetDefinition();
-			LoadTargetDefinitionJob restoreJob = new LoadTargetDefinitionJob(defaultTarget);
-			restoreJob.runInWorkspace(null);
-		}
-	}
+//	public void testChangeTargetPlatform() throws Exception {
+//		tagAsSummary("Change target platform", Dimension.ELAPSED_PROCESS); //$NON-NLS-1$
+//		IPath testBundles = extractTargetPerfTestPlugins();
+//
+//		ITargetPlatformService tps = (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
+//
+//		ITargetDefinition target = tps.newTarget();
+//		target.setBundleContainers(new IBundleContainer[] {tps.newDirectoryContainer(testBundles.toPortableString())});
+//		target.resolve(null);
+//		LoadTargetDefinitionJob job = new LoadTargetDefinitionJob(target);
+//
+//		try {
+//
+//			// Warm-up Iterations
+//			for (int i = 0; i < 2; i++) {
+//				// Execute test from this thread
+//				job.runInWorkspace(new NullProgressMonitor());
+//			}
+//			// Test Iterations
+//			for (int i = 0; i < 150; i++) {
+//				// Execute test from this thread
+//				startMeasuring();
+//				job.runInWorkspace(new NullProgressMonitor());
+//				stopMeasuring();
+//			}
+//			commitMeasurements();
+//			assertPerformance();
+//
+//		} finally {
+//			// Restore the default target platform
+//			ITargetDefinition defaultTarget = ((TargetPlatformService) tps).newDefaultTargetDefinition();
+//			LoadTargetDefinitionJob restoreJob = new LoadTargetDefinitionJob(defaultTarget);
+//			restoreJob.runInWorkspace(null);
+//		}
+//	}
 
 	private void executeSearchTest() {
 		IPluginModelBase[] models;
