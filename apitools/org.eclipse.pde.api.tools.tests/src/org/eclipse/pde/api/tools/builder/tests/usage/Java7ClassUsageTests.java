@@ -14,6 +14,7 @@ import java.io.File;
 
 import junit.framework.Test;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
@@ -42,18 +43,18 @@ public class Java7ClassUsageTests extends ClassUsageTests {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#createExistingProjects(java.lang.String, boolean, boolean, boolean)
+	 * @see org.eclipse.pde.api.tools.builder.tests.usage.UsageTest#setUp()
 	 */
 	@Override
-	protected void createExistingProjects(String projectsdir, boolean buildimmediately, boolean importfiles, boolean usetestcompliance) throws Exception {
-		// Import the Java 7 specific test project then continue importing the normal usage tests and run the build
-		IPath path = TestSuiteHelper.getPluginDirectoryPath().append(TEST_SOURCE_ROOT).append("usageprojectjava7");
-		File dir = path.toFile();
-		assertTrue("Test data directory does not exist: " + path.toOSString(), dir.exists());
-		createExistingProject(dir, importfiles, usetestcompliance);
-		
-		// Super method is called after the import so a full build is only performed once
-		super.createExistingProjects(projectsdir, buildimmediately, importfiles, usetestcompliance);
+	protected void setUp() throws Exception {
+		super.setUp();
+		IProject project = getEnv().getWorkspace().getRoot().getProject("usageprojectjava7");
+		if (!project.exists()) {
+			IPath path = TestSuiteHelper.getPluginDirectoryPath().append(TEST_SOURCE_ROOT).append("usageprojectjava7");
+			File dir = path.toFile();
+			assertTrue("Test data directory does not exist: " + path.toOSString(), dir.exists());
+			createExistingProject(dir, true, true);
+		}
 	}
 	
 	/* (non-Javadoc)
