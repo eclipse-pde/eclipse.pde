@@ -898,6 +898,7 @@ public class PublishingTests extends P2TestCase {
 		properties.put("sign.storepass", "storepass");
 		properties.put("sign.keypass", "keypass");
 		properties.put("jarProcessor.unsign", "true");
+		// TODO change this to "false" if you want to run the tests in 4.x builds.
 		properties.put("filteredDependencyCheck", "true");
 
 		Utils.storeBuildProperties(buildFolder, properties);
