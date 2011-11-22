@@ -10,11 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target;
 
-import org.eclipse.pde.core.target.*;
-
 import java.io.File;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
@@ -36,6 +33,7 @@ import org.eclipse.equinox.p2.repository.*;
 import org.eclipse.equinox.p2.repository.artifact.*;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.osgi.framework.*;
 
@@ -1236,15 +1234,9 @@ public class P2TargetUtils {
 			return;
 		String[] recents = recent.split("\n"); //$NON-NLS-1$
 		for (int i = 0; i < recents.length; i++) {
-			String bundlePool = recents[i] + "/.metadata/.plugins/org.eclipse.pde.core/.bundle_pool"; //$NON-NLS-1$
-			if (new File(bundlePool).exists()) {
-				URI uri;
-				try {
-					uri = new URI("file", bundlePool, null); //$NON-NLS-1$
-					additionalRepos.add(uri);
-				} catch (URISyntaxException e) {
-					// should never happen
-				}
+			File bundlePool = new File(recents[i] + "/.metadata/.plugins/org.eclipse.pde.core/.bundle_pool"); //$NON-NLS-1$
+			if (bundlePool.exists()) {
+				additionalRepos.add(bundlePool.toURI().normalize());
 			}
 		}
 	}
