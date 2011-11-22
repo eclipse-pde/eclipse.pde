@@ -25,8 +25,6 @@ import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.internal.core.ExternalFeatureModelManager;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
-import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
 import org.xml.sax.SAXException;
 
 /**
@@ -72,7 +70,6 @@ public class TargetDefinition implements ITargetDefinition {
 
 	// internal cache for features.  A target managed by features will contain a set of features as well as a set of plug-ins that don't belong to a feature
 	private TargetFeature[] fFeatures;
-	private IFeatureModel[] fFeatureModels;
 	private TargetBundle[] fOtherBundles;
 
 	private int fSequenceNumber = -1;
@@ -205,7 +202,7 @@ public class TargetDefinition implements ITargetDefinition {
 	public void setTargetLocations(ITargetLocation[] locations) {
 		incrementSequenceNumber();
 		// Clear the feature model cache as it is based on the bundle container locations
-		fFeatureModels = null;
+		fFeatures = null;
 		fOtherBundles = null;
 
 		if (locations != null && locations.length == 0) {
@@ -232,7 +229,7 @@ public class TargetDefinition implements ITargetDefinition {
 	 */
 	public void flushCaches(String location) {
 		// Clear the feature model cache as it is based on the bundle container locations
-		fFeatureModels = null;
+		fFeatures = null;
 		fOtherBundles = null;
 		if (location == null) {
 			fFeaturesInLocation.clear();
@@ -898,20 +895,7 @@ public class TargetDefinition implements ITargetDefinition {
 		}
 
 		fFeatures = (TargetFeature[]) result.values().toArray(new TargetFeature[result.size()]);
-		fFeatureModels = new IFeatureModel[fFeatures.length];
-		for (int i = 0; i < fFeatures.length; i++) {
-
-		}
 		return fFeatures;
-	}
-
-	public IFeatureModel[] getAllFeatureModels() {
-		if (fFeatureModels != null) {
-			return fFeatureModels;
-		}
-
-		getAllFeatures();
-		return fFeatureModels;
 	}
 
 	/**
@@ -935,9 +919,9 @@ public class TargetDefinition implements ITargetDefinition {
 			remaining.put(allBundles[i].getBundleInfo().getSymbolicName(), allBundles[i]);
 		}
 
-		IFeatureModel[] features = getAllFeatureModels();
+		TargetFeature[] features = getAllFeatures();
 		for (int i = 0; i < features.length; i++) {
-			IFeaturePlugin[] plugins = features[i].getFeature().getPlugins();
+			NameVersionDescriptor[] plugins = features[i].getPlugins();
 			for (int j = 0; j < plugins.length; j++) {
 				remaining.remove(plugins[j].getId());
 			}
@@ -963,7 +947,7 @@ public class TargetDefinition implements ITargetDefinition {
 			return null;
 		}
 
-		IFeatureModel[] allFeatures = getAllFeatureModels();
+		TargetFeature[] allFeatures = getAllFeatures();
 		TargetBundle[] allExtraBundles = getOtherBundles();
 
 		NameVersionDescriptor[] included = getIncluded();
@@ -985,7 +969,7 @@ public class TargetDefinition implements ITargetDefinition {
 				}
 			} else if (included[i].getType() == NameVersionDescriptor.TYPE_FEATURE) {
 				for (int j = 0; j < allFeatures.length; j++) {
-					if (allFeatures[j].getFeature().getId().equals(included[i].getId())) {
+					if (allFeatures[j].getId().equals(included[i].getId())) {
 						result.add(allFeatures[j]);
 					}
 				}

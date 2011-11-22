@@ -82,6 +82,15 @@ public class PluginPathFinder {
 				}
 			}
 		}
+
+		// If there is no features/plugins folder and no linked files, try the home location
+		if (sites.isEmpty()) {
+			file = new File(platformHome);
+			if (file.exists()) {
+				sites.add(file);
+			}
+		}
+
 		return (File[]) sites.toArray(new File[sites.size()]);
 	}
 

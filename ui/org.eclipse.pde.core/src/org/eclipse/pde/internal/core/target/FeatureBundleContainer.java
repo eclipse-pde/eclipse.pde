@@ -139,15 +139,15 @@ public class FeatureBundleContainer extends AbstractBundleContainer {
 			if (service == null) {
 				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.FeatureBundleContainer_4));
 			}
-			File dir = new File(manifest.getParentFile().getParentFile().getParentFile(), "plugins"); //$NON-NLS-1$
-			if (!dir.exists() || !dir.isDirectory()) {
-				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.FeatureBundleContainer_5, fId)));
-			}
+//			File dir = new File(manifest.getParentFile().getParentFile().getParentFile(), "plugins"); //$NON-NLS-1$
+//			if (!dir.exists() || !dir.isDirectory()) {
+//				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.FeatureBundleContainer_5, fId)));
+//			}
 			if (monitor.isCanceled()) {
 				return new TargetBundle[0];
 			}
 
-			ITargetLocation container = service.newDirectoryLocation(dir.getAbsolutePath());
+			ITargetLocation container = service.newDirectoryLocation(getLocation(false));
 			container.resolve(definition, monitor);
 			TargetBundle[] bundles = container.getBundles();
 			IFeature feature = model.getFeature();

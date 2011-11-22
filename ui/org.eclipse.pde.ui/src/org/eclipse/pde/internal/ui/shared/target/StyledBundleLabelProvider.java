@@ -19,7 +19,6 @@ import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.target.*;
-import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.target.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
@@ -92,9 +91,9 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 			styledString.append(((IStatus) element).getMessage());
 		} else if (element instanceof IPath) {
 			styledString.append(((IPath) element).removeFirstSegments(1).toString());
-		} else if (element instanceof IFeatureModel) {
+		} else if (element instanceof TargetFeature) {
 			// Use a bundle info to reuse existing code
-			appendBundleInfo(styledString, new BundleInfo(((IFeatureModel) element).getFeature().getId(), ((IFeatureModel) element).getFeature().getVersion(), null, BundleInfo.NO_LEVEL, false));
+			appendBundleInfo(styledString, new BundleInfo(((TargetFeature) element).getId(), ((TargetFeature) element).getVersion(), null, BundleInfo.NO_LEVEL, false));
 		} else if (element instanceof FeatureBundleContainer) {
 			FeatureBundleContainer container = (FeatureBundleContainer) element;
 			styledString.append(container.getFeatureId());
@@ -256,7 +255,7 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 			}
 		} else if (element instanceof IPath) {
 			return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
-		} else if (element instanceof IFeatureModel) {
+		} else if (element instanceof TargetFeature) {
 			return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_FEATURE_OBJ);
 		} else if (element instanceof ITargetLocation) {
 			int flag = 0;

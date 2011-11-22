@@ -31,7 +31,6 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.internal.core.DependencyManager;
 import org.eclipse.pde.internal.core.PDEState;
-import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.core.target.TargetDefinition;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.SWTFactory;
@@ -495,7 +494,7 @@ public class TargetContentsGroup {
 				Object[] allChecked = fTree.getCheckedLeafElements();
 				Collection required = null;
 				if (fFeaureModeButton.getSelection()) {
-					required = getRequiredFeatures(fTargetDefinition.getAllFeatureModels(), allChecked);
+					required = getRequiredFeatures(fTargetDefinition.getAllFeatures(), allChecked);
 				} else {
 					required = getRequiredPlugins(fAllBundles, allChecked);
 				}
@@ -811,47 +810,31 @@ public class TargetContentsGroup {
 	 * @param checkedFeatures list of features to get requirements for
 	 * @return set of features to be checked
 	 */
-	private Set getRequiredFeatures(final IFeatureModel[] allFeatures, final Object[] checkedFeatures) {
+	private Set getRequiredFeatures(final TargetFeature[] allFeatures, final Object[] checkedFeatures) {
 		Set required = new HashSet();
 		for (int j = 0; j < checkedFeatures.length; j++) {
-			if (checkedFeatures[j] instanceof IFeatureModel) {
-				getFeatureDependencies((IFeatureModel) checkedFeatures[j], allFeatures, required);
+			if (checkedFeatures[j] instanceof TargetFeature) {
+				getFeatureDependencies((TargetFeature) checkedFeatures[j], allFeatures, required);
 			}
 		}
 		return required;
 	}
 
 	/**
-	 * Recursively gets the ID of required features of this feature and adds them to the list
-	 * @param model feature model to get requirements of
-	 * @param requiredFeatures collector for the required features
+	 * Recursively gets the ID of required features of this feature and adds them to the required features list
+	 * @param model target feature to get requirements of
+	 * @param requiredFeatures collector for the required target features {@link TargetFeature}
 	 */
-	private void getFeatureDependencies(IFeatureModel model, IFeatureModel[] allFeatures, Set/*<IFeatureModel>*/requiredFeatures) {
-		IFeature feature = model.getFeature();
-		IFeatureImport[] featureImports = feature.getImports();
-		for (int i = 0; i < featureImports.length; i++) {
-			if (featureImports[i].getType() == IFeatureImport.FEATURE) {
-				for (int j = 0; j < allFeatures.length; j++) {
-					if (allFeatures[j].getFeature().getId().equals(featureImports[i].getId())) {
-						if (!requiredFeatures.contains(allFeatures[j])) {
-							requiredFeatures.add(allFeatures[j]);
-							getFeatureDependencies(allFeatures[j], allFeatures, requiredFeatures);
-							break;
-						}
-					}
-				}
-
-			}
-		}
-		IFeatureChild[] featureIncludes = feature.getIncludedFeatures();
-		for (int i = 0; i < featureIncludes.length; i++) {
+	private void getFeatureDependencies(TargetFeature feature, TargetFeature[] allFeatures, Set/*<TargetFeature>*/requiredFeatures) {
+		NameVersionDescriptor[] dependents = feature.getDependentFeatures();
+		for (int i = 0; i < dependents.length; i++) {
 			for (int j = 0; j < allFeatures.length; j++) {
-				if (allFeatures[j].getFeature().getId().equals(featureIncludes[i].getId())) {
+				if (allFeatures[j].getId().equals(dependents[i].getId())) {
 					if (!requiredFeatures.contains(allFeatures[j])) {
 						requiredFeatures.add(allFeatures[j]);
 						getFeatureDependencies(allFeatures[j], allFeatures, requiredFeatures);
-						break;
 					}
+					break;
 				}
 			}
 		}
@@ -1092,8 +1075,8 @@ public class TargetContentsGroup {
 			int missingCount = 0;
 			Object[] checked = fTree.getCheckedLeafElements();
 			for (int i = 0; i < checked.length; i++) {
-				if (checked[i] instanceof IFeatureModel) {
-					included.add(new NameVersionDescriptor(((IFeatureModel) checked[i]).getFeature().getId(), null, NameVersionDescriptor.TYPE_FEATURE));
+				if (checked[i] instanceof TargetFeature) {
+					included.add(new NameVersionDescriptor(((TargetFeature) checked[i]).getId(), null, NameVersionDescriptor.TYPE_FEATURE));
 				}
 				if (checked[i] instanceof TargetBundle) {
 					// Missing features are included as TargetBundles, save them as features instead
@@ -1201,11 +1184,11 @@ public class TargetContentsGroup {
 				}
 
 				if (fFeaureModeButton.getSelection()) {
-					IFeatureModel[] features = fTargetDefinition.getAllFeatureModels();
+					TargetFeature[] features = fTargetDefinition.getAllFeatures();
 					result.addAll(Arrays.asList(features));
 
 					// Check if we need the other category
-					if (((TargetDefinition) fTargetDefinition).getOtherBundles().length > 0) {
+					if (fTargetDefinition.getOtherBundles().length > 0) {
 						result.add(OTHER_CATEGORY);
 					}
 				} else if (fGrouping == GROUP_BY_CONTAINER) {
