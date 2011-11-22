@@ -22,9 +22,9 @@ import org.eclipse.pde.internal.core.feature.FeatureChild;
 import org.eclipse.pde.internal.core.ifeature.*;
 
 /**
- * Action to generate an ant build file that contains the ant targets to build this bundle
+ * Action to generate an ant build file for a feature that contains the ant targets to build this bundle
  */
-public class CreateAntBuildFileAction extends BaseBuildAction {
+public class GenerateFeatureBuildFileAction extends BaseBuildAction {
 
 	private IFeatureModel fFeatureModel;
 

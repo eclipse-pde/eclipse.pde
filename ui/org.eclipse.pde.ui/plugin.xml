@@ -1690,8 +1690,22 @@
                 commandId="org.eclipse.pde.ui.internationalize">
           </handler>
           <handler
-                class="org.eclipse.pde.internal.ui.build.CreateAntBuildFileAction"
+                class="org.eclipse.pde.internal.ui.build.GenerateFeatureBuildFileAction"
                 commandId="org.eclipse.pde.ui.createAntBuildFile">
+             <activeWhen>
+                <reference
+                      definitionId="org.eclipse.pde.ui.featureFile">
+                </reference>
+             </activeWhen>
+          </handler>
+           <handler
+                class="org.eclipse.pde.internal.ui.build.GeneratePluginBuildFileAction"
+                commandId="org.eclipse.pde.ui.createAntBuildFile">
+             <activeWhen>
+                <reference
+                      definitionId="org.eclipse.pde.ui.pluginFile">
+                </reference>
+             </activeWhen>
           </handler>
           <handler
                 class="org.eclipse.pde.internal.ui.wizards.tools.UpdateClasspathAction"

@@ -36,6 +36,10 @@ import org.eclipse.pde.internal.ui.util.PDEModelUtility;
 import org.eclipse.ui.*;
 import org.eclipse.ui.progress.IProgressConstants;
 
+/**
+ * Generates an ant build file for an update site
+ *
+ */
 public class BuildSiteAction implements IObjectActionDelegate {
 
 	private ISiteModel fModel;

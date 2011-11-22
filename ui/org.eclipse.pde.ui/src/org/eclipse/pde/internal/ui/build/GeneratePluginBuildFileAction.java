@@ -26,7 +26,11 @@ import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.builders.BuildErrorReporter;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 
-public class BuildPluginAction extends BaseBuildAction {
+/**
+ * Creates an ant build file for a plugin
+ *
+ */
+public class GeneratePluginBuildFileAction extends BaseBuildAction {
 
 	protected void makeScripts(IProgressMonitor monitor) throws InvocationTargetException, CoreException {
 
