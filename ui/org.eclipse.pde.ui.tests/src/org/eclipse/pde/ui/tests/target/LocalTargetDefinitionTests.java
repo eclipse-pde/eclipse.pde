@@ -700,19 +700,18 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	
 	
 	/**
-	 * Tests setting the target platform to the JDT feature with a specific version.
+	 * Tests setting the target platform to the stored JDT feature test data
 	 * 
 	 * @throws Exception 
 	 */
 	public void testSetTargetPlatformToJdtFeature() throws Exception {
 		try {
-			IPath location = getJdtFeatureLocation();
-			String segment = location.lastSegment();
-			int index = segment.indexOf('_');
-			assertTrue("Missing version id", index > 0);
-			String version = segment.substring(index + 1);
+			// extract the feature
+			IPath location = extractModifiedFeatures();
+			//org.eclipse.jdt_3.6.0.v20100105-0800-7z8VFR9FMTb52_pOyKHhoek1
+			
 			ITargetDefinition target = getNewTarget();
-			ITargetLocation container = getTargetService().newFeatureLocation("${eclipse_home}", "org.eclipse.jdt", version);
+			ITargetLocation container = getTargetService().newFeatureLocation(location.toOSString(), "org.eclipse.jdt", "3.6.0.v20100105-0800-7z8VFR9FMTb52_pOyKHhoek1");
 			
 			target.setTargetLocations(new ITargetLocation[]{container});
 			
@@ -720,33 +719,11 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 			
 			List expected = new ArrayList();
 			expected.add("org.eclipse.jdt");
-			expected.add("org.eclipse.ant.launching");
-			expected.add("org.eclipse.ant.ui");
-			expected.add("org.eclipse.jdt.apt.core");
-			expected.add("org.eclipse.jdt.apt.ui");
-			expected.add("org.eclipse.jdt.apt.pluggable.core");
-			expected.add("org.eclipse.jdt.compiler.apt");
-			expected.add("org.eclipse.jdt.compiler.tool");
-			expected.add("org.eclipse.jdt.core");
-			expected.add("org.eclipse.jdt.core.manipulation");
-			expected.add("org.eclipse.jdt.debug.ui");
-			expected.add("org.eclipse.jdt.debug");
-			expected.add("org.eclipse.jdt.junit");
-			expected.add("org.eclipse.jdt.junit.core");
-			expected.add("org.eclipse.jdt.junit.runtime");
-			expected.add("org.eclipse.jdt.junit4.runtime");
 			expected.add("org.eclipse.jdt.launching");
-			expected.add("org.eclipse.jdt.ui");
 			// 2 versions of JUnit
 			expected.add("org.junit");
 			expected.add("org.junit");
 			expected.add("org.junit4");
-			expected.add("org.eclipse.jdt.doc.user");
-			expected.add("org.hamcrest.core");
-			if (Platform.getOS().equals(Platform.OS_MACOSX)) {
-				expected.add("org.eclipse.jdt.launching.macosx");
-				expected.add("org.eclipse.jdt.launching.ui.macosx");
-			}
 			
 			// current platform
 			IPluginModelBase[] models = TargetPlatformHelper.getPDEState().getTargetModels();
