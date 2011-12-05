@@ -724,6 +724,9 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 			expected.add("org.junit");
 			expected.add("org.junit");
 			expected.add("org.junit4");
+			if (Platform.getOS().equals(Platform.OS_MACOSX)) {
+				expected.add("org.eclipse.jdt.launching.macosx");
+			}
 			
 			// current platform
 			IPluginModelBase[] models = TargetPlatformHelper.getPDEState().getTargetModels();
