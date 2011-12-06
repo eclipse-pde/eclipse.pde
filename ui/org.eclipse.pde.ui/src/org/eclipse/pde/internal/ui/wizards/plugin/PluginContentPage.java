@@ -238,7 +238,7 @@ public class PluginContentPage extends ContentPage {
 		data.setDoGenerateClass(fGenerateActivator.getSelection());
 		data.setRCPApplicationPlugin(!fData.isSimple() && !isPureOSGi() && fYesButton.getSelection());
 		// Don't turn on API analysis if disabled (no java project available)
-		data.setEnableAPITooling(fApiAnalysisButton.isVisible() && fApiAnalysisButton.getSelection());
+		data.setEnableAPITooling(fApiAnalysisButton.isEnabled() && fApiAnalysisButton.getSelection());
 		if (fEEChoice.isEnabled() && !fEEChoice.getText().equals(NO_EXECUTION_ENVIRONMENT)) {
 			fData.setExecutionEnvironment(fEEChoice.getText().trim());
 		} else {
