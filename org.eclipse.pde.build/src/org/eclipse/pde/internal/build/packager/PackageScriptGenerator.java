@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.build.packager;
 import java.io.*;
 import java.util.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.equinox.internal.p2.publisher.eclipse.ProductFile;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.build.*;
 import org.eclipse.pde.internal.build.ant.AntScript;
@@ -90,10 +91,10 @@ public class PackageScriptGenerator extends AssembleScriptGenerator {
 			ProductFile product = configScriptGenerator.getProductFile();
 			String productPath = null;
 			if (product != null) {
-				File productFile = new File(product.getLocation());
+				File productFile = product.getLocation();
 				String modLocation = getProductDir() + productFile.getName();
 				script.printAvailableTask(PROPERTY_P2_PRODUCT_MOD, modLocation, modLocation);
-				script.printProperty(PROPERTY_P2_PRODUCT_MOD, product.getLocation());
+				script.printProperty(PROPERTY_P2_PRODUCT_MOD, product.getLocation().getPath());
 				productPath = Utils.getPropertyFormat(PROPERTY_P2_PRODUCT_MOD);
 			}
 

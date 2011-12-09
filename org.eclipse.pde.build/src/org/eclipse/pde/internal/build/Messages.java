@@ -54,7 +54,6 @@ public class Messages extends NLS {
 	public static String exception_writeScript;
 	public static String exception_pluginParse;
 	public static String exception_featureParse;
-	public static String exception_productParse;
 	public static String exception_readingFile;
 	public static String exception_writingFile;
 	public static String exception_url;

@@ -16,6 +16,7 @@ import java.net.URISyntaxException;
 import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.p2.engine.SimpleProfileRegistry;
+import org.eclipse.equinox.internal.p2.publisher.eclipse.ProductFile;
 import org.eclipse.equinox.p2.core.IAgentLocation;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
 import org.eclipse.equinox.p2.engine.IProfile;
@@ -521,7 +522,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 			return f.getAbsolutePath();
 
 		//relative to .product file
-		f = new File(new File(productFile.getLocation()).getParent(), path);
+		f = new File(productFile.getLocation().getParent(), path);
 		if (f.exists() && f.isFile())
 			return f.getAbsolutePath();
 

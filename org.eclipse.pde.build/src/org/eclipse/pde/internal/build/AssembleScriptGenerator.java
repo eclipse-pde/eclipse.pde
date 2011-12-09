@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.build;
 import java.io.File;
 import java.util.*;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.equinox.internal.p2.publisher.eclipse.ProductFile;
 import org.eclipse.pde.internal.build.builder.BuildDirector;
 
 public class AssembleScriptGenerator extends AbstractScriptGenerator {
@@ -189,13 +190,12 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 	protected void generateReplaceProductTarget() {
 		ProductFile product = configScriptGenerator.getProductFile();
 		if (product != null) {
-			String productPath = product.getLocation();
-			File productFile = new File(productPath);
+			File productFile = product.getLocation();
 			String newProduct = getProductDir() + productFile.getName();
 			File p2Inf = new File(productFile.getParentFile(), "p2.inf"); //$NON-NLS-1$
 
 			script.printTargetDeclaration(TARGET_P2_REPLACE_PRODUCT, null, null, null, null);
-			script.printCopyFileTask(productPath, newProduct, true);
+			script.printCopyFileTask(productFile.getPath(), newProduct, true);
 			if (p2Inf.exists())
 				script.printCopyTask(p2Inf.getAbsolutePath(), getProductDir(), null, false, true);
 			generateProductReplaceTask(product, newProduct, assemblageInformation);
@@ -215,10 +215,10 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 			script.printProperty(PROPERTY_P2_METADATA_REPO_NAME, ""); //$NON-NLS-1$
 			script.printProperty(PROPERTY_P2_ARTIFACT_REPO_NAME, ""); //$NON-NLS-1$
 			if (product != null) {
-				File productFile = new File(product.getLocation());
+				File productFile = product.getLocation();
 				String modLocation = getProductDir() + productFile.getName();
 				script.printAvailableTask(PROPERTY_P2_PRODUCT_MOD, modLocation, modLocation);
-				script.printProperty(PROPERTY_P2_PRODUCT_MOD, product.getLocation());
+				script.printProperty(PROPERTY_P2_PRODUCT_MOD, product.getLocation().getPath());
 			}
 			script.printTab();
 			script.print("<p2.generator "); //$NON-NLS-1$

@@ -15,6 +15,7 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.frameworkadmin.BundleInfo;
 import org.eclipse.equinox.internal.p2.publisher.QuotedTokenizer;
+import org.eclipse.equinox.internal.p2.publisher.eclipse.ProductFile;
 import org.eclipse.equinox.p2.publisher.eclipse.FeatureEntry;
 import org.eclipse.equinox.simpleconfigurator.manipulator.SimpleConfiguratorManipulator;
 import org.eclipse.osgi.service.resolver.BundleDescription;
@@ -137,7 +138,7 @@ public class ProductGenerator extends AbstractScriptGenerator {
 		boolean cus = true;
 		boolean launchers = true;
 
-		File initialInf = new File(new File(productFile.getLocation()).getParent(), "p2.inf"); //$NON-NLS-1$
+		File initialInf = new File(productFile.getLocation().getParent(), "p2.inf"); //$NON-NLS-1$
 		if (initialInf.exists()) {
 			Properties properties = readProperties(initialInf.getParent(), "p2.inf", IStatus.OK); //$NON-NLS-1$
 			if (!Boolean.valueOf(properties.getProperty(P2_INF_APPEND, TRUE)).booleanValue())
