@@ -278,7 +278,8 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 						continue;
 					if (suppliers[i].isResolved()) {
 						Version version = suppliers[i].getVersion();
-						VersionRange range = host.getVersionRange();
+						// use fully qualified name to avoid conflict with other VersionRange class
+						org.eclipse.osgi.service.resolver.VersionRange range = host.getVersionRange();
 						if (!range.isIncluded(version)) {
 							String versionRange = host.getVersionRange().toString();
 							report(NLS.bind(PDECoreMessages.BundleErrorReporter_BundleRangeInvalidInBundleVersion, versionRange), getLine(header, versionRange), CompilerFlags.P_UNRESOLVED_IMPORTS, PDEMarkerFactory.CAT_FATAL);
@@ -726,7 +727,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 				if (export != null) {
 					if (export.getSupplier().isResolved()) {
 						Version version = export.getVersion();
-						VersionRange range = importSpec.getVersionRange();
+						org.eclipse.osgi.service.resolver.VersionRange range = importSpec.getVersionRange();
 						if (range != null && !range.isIncluded(version)) {
 							report(NLS.bind(PDECoreMessages.BundleErrorReporter_unsatisfiedConstraint, importSpec.toString()), getPackageLine(header, elements[i]), severity, PDEMarkerFactory.CAT_FATAL);
 						}

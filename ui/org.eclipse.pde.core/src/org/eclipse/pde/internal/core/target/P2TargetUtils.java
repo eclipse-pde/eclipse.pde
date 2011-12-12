@@ -1021,7 +1021,8 @@ public class P2TargetUtils {
 			if (profileIU.satisfies(bundleRequirement)) {
 				String id = profileIU.getId() + ".source"; //$NON-NLS-1$
 				Version version = profileIU.getVersion();
-				VersionRange range = new VersionRange(version, true, version, true);
+				// use fully qualified name to avoid conflict with other VersionRange class
+				org.eclipse.equinox.p2.metadata.VersionRange range = new org.eclipse.equinox.p2.metadata.VersionRange(version, true, version, true);
 				IRequirement sourceRequirement = MetadataFactory.createRequirement("osgi.bundle", id, range, null, true, false, true); //$NON-NLS-1$
 				requirements.add(sourceRequirement);
 			}
