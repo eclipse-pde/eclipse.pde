@@ -1,7 +1,7 @@
 #Wed Jun 02 08:55:19 EDT 2010
 compilers.f.unresolved-features=1
 compilers.f.unresolved-plugins=1
-compilers.incompatible-environment=1
+compilers.incompatible-environment=0
 compilers.p.build=1
 compilers.p.build.bin.includes=1
 compilers.p.build.encodings=2
