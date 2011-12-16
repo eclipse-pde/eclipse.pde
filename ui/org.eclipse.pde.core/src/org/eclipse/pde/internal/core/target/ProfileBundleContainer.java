@@ -180,10 +180,7 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 					throw new OperationCanceledException();
 				}
 				try {
-					TargetBundle rb = new TargetBundle(files[i]);
-					if (rb != null) {
-						all.add(rb);
-					}
+					all.add(new TargetBundle(files[i]));
 				} catch (CoreException e) {
 					// ignore invalid bundles
 				}
