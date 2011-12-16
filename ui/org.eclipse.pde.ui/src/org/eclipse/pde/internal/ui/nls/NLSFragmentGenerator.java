@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 IBM Corporation and others.
+ * Copyright (c) 2008, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,7 +52,6 @@ public class NLSFragmentGenerator {
 	private static final String CLASS_EXTENSION = ".class"; //$NON-NLS-1$
 	private static final String JAVA_EXTENSION = ".java"; //$NON-NLS-1$
 	private static final String PROPERTIES_EXTENSION = ".properties"; //$NON-NLS-1$
-	private static final String JAR_EXTENSION = ".jar"; //$NON-NLS-1$
 
 	private static final String BIN = "/bin/"; //$NON-NLS-1$
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
@@ -331,7 +330,7 @@ public class NLSFragmentGenerator {
 		if (plugin instanceof ExternalPluginModelBase) {
 			final String installLocation = plugin.getInstallLocation();
 			//Case 1a: External plug-in is a jar file
-			if (installLocation.endsWith(JAR_EXTENSION)) {
+			if (new File(installLocation).isFile()) {
 				ZipFile zf = new ZipFile(installLocation);
 				for (Enumeration e = zf.entries(); e.hasMoreElements();) {
 					worked();

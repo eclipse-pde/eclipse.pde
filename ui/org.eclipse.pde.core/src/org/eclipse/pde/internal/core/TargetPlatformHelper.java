@@ -136,6 +136,7 @@ public class TargetPlatformHelper {
 				if (underscoreIndex >= 0) {
 					id = id.substring(0, underscoreIndex);
 				}
+				// TODO If a relative path is used with a non .jar extension and does not have a version, we have no way of recognizing what the symbolic name is (bug 355890) 
 				if (id.endsWith(JAR_EXTENSION)) {
 					id = id.substring(0, id.length() - 4);
 				}
