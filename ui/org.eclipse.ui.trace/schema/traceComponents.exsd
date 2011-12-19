@@ -1,0 +1,160 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.ui.trace" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appinfo>
+         <meta.schema plugin="org.eclipse.ui.trace" id="traceComponents" name="Trace Components"/>
+      </appinfo>
+      <documentation>
+         This extension point introduces a logical tracing component which includes all option-paths from a set of bundles .options file. These options can be dynamically enabled or disabled via the OSGi DebugOptions service.
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <annotation>
+         <appinfo>
+            <meta.element />
+         </appinfo>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="component" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="component">
+      <annotation>
+         <documentation>
+            A tracing component
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="bundle" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  unqiue identifier for this component
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="label" type="string">
+            <annotation>
+               <documentation>
+                  A human readable label for the component which will be displayed in the tracing dialog.  If no label is provided then the label &quot;Missing Label&quot; will be displayed.
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="bundle">
+      <annotation>
+         <documentation>
+            An Eclipse bundle.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  The symbolic name of a specific bundle or a regular expression defining the name of a set of bundles.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="consumed" type="boolean">
+            <annotation>
+               <documentation>
+                  Describes if the bundle (or bundles) is consumed by this component.  A consumed bundle is one that will not show up in any other tracing component except for this component.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="since"/>
+      </appinfo>
+      <documentation>
+         1.0
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="examples"/>
+      </appinfo>
+      <documentation>
+         The following is an example for the extension point where a component called &apos;Equinox Framework&apos; includes all of the option-paths from the .options file in the org.eclipse.osgi bundle.  As well, a second component called &apos;JDT Core&apos; includes all of the option-paths from the .options files found in any bundle matching org.eclipse.jdt.*core*.
+&lt;p&gt;
+&lt;pre&gt;
+   &lt;extension
+         point=&quot;org.eclipse.ui.trace.traceComponent&quot;&gt;
+      &lt;component
+            id=&quot;org.eclipse.ui.trace.osgitrace&quot;
+            label=&quot;Equinox Framework&quot;&gt;
+         &lt;bundle
+               name=&quot;org.eclipse.osgi&quot;&gt;
+         &lt;/bundle&gt;
+      &lt;/component&gt;
+   &lt;/extension&gt;
+   &lt;extension
+         point=&quot;org.eclipse.ui.trace.traceComponent&quot;&gt;
+      &lt;component
+            id=&quot;org.eclipse.ui.trace.jdtcoretrace&quot;
+            label=&quot;JDT Core&quot;&gt;
+         &lt;bundle
+               name=&quot;org.eclipse.jdt.*core*&quot;&gt;
+         &lt;/bundle&gt;
+      &lt;/component&gt;
+   &lt;/extension&gt;
+&lt;/pre&gt;
+&lt;/p&gt;
+      </documentation>
+   </annotation>
+
+
+
+   <annotation>
+      <appinfo>
+         <meta.section type="copyright"/>
+      </appinfo>
+      <documentation>
+         Copyright (c) 2011 IBM Corporation and others.&lt;br&gt;
+All rights reserved. This program and the accompanying materials are made
+available under the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at &lt;a 
+href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;
+      </documentation>
+   </annotation>
+
+</schema>

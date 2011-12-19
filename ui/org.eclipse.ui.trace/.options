@@ -1,0 +1,6 @@
+org.eclipse.ui.trace/debug=false
+org.eclipse.ui.trace/debug/preferences=false
+org.eclipse.ui.trace/debug/model=false
+org.eclipse.ui.trace/debug/ui=false
+org.eclipse.ui.trace/debug/ui/listeners=false
+org.eclipse.ui.trace/debug/ui/providers=false
