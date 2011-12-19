@@ -307,20 +307,19 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 	}	
 	
 	/**
-	 * Tests that a target definition is not in synch with the target platform when a
-	 * bundle is added to the underlying file system (target platform).
+	 * Tests that a target definition will warn if an expected bundle does not exist on the file
+	 * system.
 	 * 
 	 * @throws Exception
 	 */
 	public void testTargetPlatformMissingBundle() throws Exception {
 		IPath location = extractAbcdePlugins();
 		IPath dirPath = location.append("plugins");
-		// delete a bundle (by renaming it)
+		// delete a bundle
 		IPath bundle = dirPath.append("bundle.a_1.0.0.jar");
 		File jar = bundle.toFile();
 		assertTrue(jar.exists());
-		File xxx = new File(jar.getParentFile(), "bundle.a_1.0.0.xxx");
-		jar.renameTo(xxx);
+		jar.delete();
 		
 		ITargetDefinition definition = getTargetService().newTarget();
 		ITargetLocation container = getTargetService().newDirectoryLocation(dirPath.toOSString());
@@ -335,7 +334,7 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 			ITargetDefinition copy = getTargetService().newTarget();
 			getTargetService().copyTargetDefinition(definition, copy);
 			// add the bundle back to the file system
-			xxx.renameTo(jar);
+			extractAbcdePlugins();
 			
 			copy.resolve(null);
 			IStatus status = getTargetService().compareWithTargetPlatform(copy);
