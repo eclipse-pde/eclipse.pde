@@ -193,15 +193,17 @@ public class PDERegistryStrategy extends RegistryStrategy {
 		ZipFile jfile = null;
 
 		try {
-			if (input.getName().endsWith(".jar")) { //$NON-NLS-1$
+			if (new File(base.getInstallLocation()).isDirectory()) {
+				// Directory bundle, access the extensions file directly
+				is = new FileInputStream(input);
+			} else {
+				// Archived bundle, need to extract the file
 				jfile = new ZipFile(input, ZipFile.OPEN_READ);
 				String fileName = (base.isFragmentModel()) ? ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR : ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR;
 				ZipEntry entry = jfile.getEntry(fileName);
 				if (entry != null) {
 					is = jfile.getInputStream(entry);
 				}
-			} else {
-				is = new FileInputStream(input);
 			}
 			if (is != null) {
 				registry.addContribution(new BufferedInputStream(is), contributor, true, input.getPath(), null, fKey);

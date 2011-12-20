@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,7 +39,7 @@ public class ExternalBuildModel extends BuildModel {
 		try {
 			URL url = null;
 			File file = new File(getInstallLocation());
-			if (file.isFile() && file.getName().endsWith(".jar")) { //$NON-NLS-1$
+			if (file.isFile()) {
 				url = new URL("jar:file:" + file.getAbsolutePath() + "!/build.properties"); //$NON-NLS-1$ //$NON-NLS-2$
 			} else {
 				url = new URL("file:" + file.getAbsolutePath() + IPath.SEPARATOR + ICoreConstants.BUILD_FILENAME_DESCRIPTOR); //$NON-NLS-1$

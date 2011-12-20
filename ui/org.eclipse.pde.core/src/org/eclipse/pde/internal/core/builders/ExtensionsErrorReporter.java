@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -469,10 +469,10 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 				if (model != null && model.isEnabled()) {
 					path = path.setDevice(null).removeFirstSegments(2);
 					String bundleLocation = model.getInstallLocation();
-					if (bundleLocation.endsWith(".jar")) { //$NON-NLS-1$
-						bundleJar = bundleLocation;
-					} else {
+					if (new File(bundleLocation).isDirectory()) {
 						path = new Path(model.getInstallLocation()).append(path);
+					} else {
+						bundleJar = bundleLocation;
 					}
 					location = path.toString();
 				}
@@ -484,10 +484,10 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 				if (model != null && model.isEnabled()) {
 					path = path.removeFirstSegments(3);
 					String bundleLocation = model.getInstallLocation();
-					if (bundleLocation.endsWith(".jar")) { //$NON-NLS-1$
-						bundleJar = bundleLocation;
-					} else {
+					if (new File(bundleLocation).isDirectory()) {
 						path = new Path(model.getInstallLocation()).append(path);
+					} else {
+						bundleJar = bundleLocation;
 					}
 					location = path.toString();
 				}
