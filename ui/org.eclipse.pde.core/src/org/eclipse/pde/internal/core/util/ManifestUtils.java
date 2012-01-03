@@ -142,7 +142,7 @@ public class ManifestUtils {
 			if (bsn == null && bundleLocation.isDirectory()) {
 				map = loadPluginXML(bundleLocation); // not a bundle manifest, try plugin.xml
 			}
-			if (map == null) {
+			if (map == null || map.get(Constants.BUNDLE_SYMBOLICNAME) == null) {
 				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, 0, NLS.bind(Messages.DirectoryBundleContainer_3, bundleLocation.getAbsolutePath()), null));
 			}
 			return map;
