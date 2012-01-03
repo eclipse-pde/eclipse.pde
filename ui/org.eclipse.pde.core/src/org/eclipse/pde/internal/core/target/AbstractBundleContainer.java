@@ -217,45 +217,6 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 	 * Parses a bunlde's manifest into a dictionary. The bundle may be in a jar
 	 * or in a directory at the specified location.
 	 * 
-	 * @param bundle the bundle
-	 * @return bundle manifest dictionary or <code>null</code> if none
-	 * @throws CoreException if unable to read
-	 */
-	protected Map loadManifest(BundleInfo bundle) throws CoreException {
-		ZipFile jarFile = null;
-		InputStream manifestStream = null;
-		try {
-			String path = bundle.getLocation().toURL().getFile();
-			File dirOrJar = new File(path);
-			String extension = new Path(path).getFileExtension();
-			if (extension != null && extension.equals("jar") && dirOrJar.isFile()) { //$NON-NLS-1$
-				jarFile = new ZipFile(dirOrJar, ZipFile.OPEN_READ);
-				ZipEntry manifestEntry = jarFile.getEntry(JarFile.MANIFEST_NAME);
-				if (manifestEntry != null) {
-					manifestStream = jarFile.getInputStream(manifestEntry);
-				}
-			} else {
-				File file = new File(dirOrJar, JarFile.MANIFEST_NAME);
-				if (file.exists())
-					manifestStream = new FileInputStream(file);
-			}
-			if (manifestStream == null) {
-				return null;
-			}
-			return ManifestElement.parseBundleManifest(manifestStream, new Hashtable(10));
-		} catch (BundleException e) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IResolvedBundle.STATUS_INVALID_MANIFEST, NLS.bind(Messages.DirectoryBundleContainer_3, bundle.getSymbolicName()), e));
-		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IResolvedBundle.STATUS_INVALID_MANIFEST, NLS.bind(Messages.DirectoryBundleContainer_3, bundle.getSymbolicName()), e));
-		} finally {
-			closeZipFileAndStream(manifestStream, jarFile);
-		}
-	}
-
-	/**
-	 * Parses a bunlde's manifest into a dictionary. The bundle may be in a jar
-	 * or in a directory at the specified location.
-	 * 
 	 * @param bundleLocation root location of the bundle
 	 * @return bundle manifest dictionary
 	 * @throws CoreException if manifest has invalid syntax or is missing
@@ -263,9 +224,8 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 	protected Map loadManifest(File bundleLocation) throws CoreException {
 		ZipFile jarFile = null;
 		InputStream manifestStream = null;
-		String extension = new Path(bundleLocation.getName()).getFileExtension();
 		try {
-			if (extension != null && extension.equals("jar") && bundleLocation.isFile()) { //$NON-NLS-1$
+			if (bundleLocation.isFile()) {
 				jarFile = new ZipFile(bundleLocation, ZipFile.OPEN_READ);
 				ZipEntry manifestEntry = jarFile.getEntry(JarFile.MANIFEST_NAME);
 				if (manifestEntry != null) {
@@ -283,7 +243,7 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 				}
 			}
 			if (manifestStream == null) {
-				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IResolvedBundle.STATUS_INVALID_MANIFEST, NLS.bind(Messages.DirectoryBundleContainer_3, bundleLocation.getAbsolutePath()), null));
+				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, 0, NLS.bind(Messages.DirectoryBundleContainer_3, bundleLocation.getAbsolutePath()), null));
 			}
 			Map map = ManifestElement.parseBundleManifest(manifestStream, new Hashtable(10));
 			// Validate manifest - BSN must be present.
@@ -292,14 +252,14 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 			if (bsn == null && bundleLocation.isDirectory()) {
 				map = loadPluginXML(bundleLocation); // not a bundle manifest, try plugin.xml
 			}
-			if (map == null) {
-				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IResolvedBundle.STATUS_INVALID_MANIFEST, NLS.bind(Messages.DirectoryBundleContainer_3, bundleLocation.getAbsolutePath()), null));
+			if (map == null || map.get(Constants.BUNDLE_SYMBOLICNAME) == null) {
+				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, 0, NLS.bind(Messages.DirectoryBundleContainer_3, bundleLocation.getAbsolutePath()), null));
 			}
 			return map;
 		} catch (BundleException e) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IResolvedBundle.STATUS_INVALID_MANIFEST, NLS.bind(Messages.DirectoryBundleContainer_3, bundleLocation.getAbsolutePath()), e));
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, 0, NLS.bind(Messages.DirectoryBundleContainer_3, bundleLocation.getAbsolutePath()), e));
 		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IResolvedBundle.STATUS_INVALID_MANIFEST, NLS.bind(Messages.DirectoryBundleContainer_3, bundleLocation.getAbsolutePath()), e));
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, 0, NLS.bind(Messages.DirectoryBundleContainer_3, bundleLocation.getAbsolutePath()), e));
 		} finally {
 			closeZipFileAndStream(manifestStream, jarFile);
 		}
@@ -520,7 +480,7 @@ public abstract class AbstractBundleContainer implements IBundleContainer {
 				FrameworkAdmin fwAdmin = (FrameworkAdmin) PDECore.getDefault().acquireService(FrameworkAdmin.class.getName());
 				if (fwAdmin == null) {
 					Bundle fwAdminBundle = Platform.getBundle(FWK_ADMIN_EQ);
-					if (fwAdminBundle != null){
+					if (fwAdminBundle != null) {
 						fwAdminBundle.start();
 						fwAdmin = (FrameworkAdmin) PDECore.getDefault().acquireService(FrameworkAdmin.class.getName());
 					}
