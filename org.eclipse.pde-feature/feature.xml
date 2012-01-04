@@ -4,7 +4,7 @@
       label="%featureName"
       version="3.8.0.qualifier"
       provider-name="%providerName"
-      image="eclipse_update_120.jpg"   
+      image="eclipse_update_120.jpg"
       license-feature="org.eclipse.license"
       license-feature-version="1.0.0.qualifier">
 
@@ -113,40 +113,47 @@
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-         
+
    <plugin
          id="org.eclipse.pde.ds.core"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-         
+
    <plugin
          id="org.eclipse.pde.ds.ui"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-                  
+
    <plugin
          id="org.eclipse.pde.launching"
          download-size="0"
          install-size="0"
          version="0.0.0"
-         unpack="false"/>               
-         
+         unpack="false"/>
+
    <plugin
          id="org.eclipse.pde.ua.core"
          download-size="0"
          install-size="0"
          version="0.0.0"
-         unpack="false"/>       
-  
-  <plugin
+         unpack="false"/>
+
+   <plugin
          id="org.eclipse.pde.ua.ui"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-         
+
+   <plugin
+         id="org.eclipse.ui.trace"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
 </feature>
