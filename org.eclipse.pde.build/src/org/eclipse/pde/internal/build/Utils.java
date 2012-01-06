@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1049,5 +1049,68 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 			}
 		}
 		return result.toString();
+	}
+
+	static public String toString(VersionRange range) {
+		// never qualify for now since p2 does not support fully qualified versions with empty qualifiers
+		return toString(range, false);
+	}
+
+	private static String toString(VersionRange range, boolean qualify) {
+		// Do not use the VersionRange.toString method because it will fully qualify the versions
+		Version left = range.getLeft();
+		Version right = range.getRight();
+		String leftVersion = left.toString();
+		if (right == null) {
+			return toString(left, range.getLeftType(), qualify);
+		}
+		String rightVerion = right.toString();
+		StringBuffer result = new StringBuffer(leftVersion.length() + rightVerion.length() + 5);
+		result.append(range.getLeftType());
+		result.append(toString(left, range.getLeftType(), qualify));
+		result.append(',');
+		result.append(toString(right, range.getRightType(), qualify));
+		result.append(range.getRightType());
+		return result.toString();
+	}
+
+	private static String toString(Version version, char endPointType, boolean qualify) {
+		// need to avoid fully qualifying the versions if not needed.
+		if (version == null)
+			return ""; //$NON-NLS-1$
+		int q = version.getQualifier().length();
+		if (q > 0) {
+			return version.toString();
+		}
+		StringBuffer buffer = new StringBuffer(version.toString().length() + 1);
+		buffer.append(version.getMajor());
+		buffer.append('.');
+		buffer.append(version.getMinor());
+		buffer.append('.');
+		buffer.append(version.getMicro());
+		if (!qualify) // we never want to qualify in this case
+			return buffer.toString();
+		char separator = version.isReleaseVersion() ? '.' : '-';
+		switch (endPointType) {
+			case VersionRange.LEFT_CLOSED :
+				if (separator == '.') // left release version [x.y.z. must fully qualify
+					buffer.append(separator);
+				break;
+			case VersionRange.LEFT_OPEN :
+				if (separator == '-') // left pre-release version [x.y.z- must fully qualify
+					buffer.append(separator);
+				break;
+			case VersionRange.RIGHT_CLOSED :
+				if (separator == '-') // right release version x.y.z.) must fully qualify
+					buffer.append(separator);
+				break;
+			case VersionRange.RIGHT_OPEN :
+				if (separator == '.') // right pre-release version x.y.z-] must fully qualify
+					buffer.append(separator);
+				break;
+			default :
+				break;
+		}
+		return buffer.toString();
 	}
 }

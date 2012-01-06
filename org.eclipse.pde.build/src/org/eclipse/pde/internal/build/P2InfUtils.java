@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2009, 2012 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -92,7 +92,7 @@ public class P2InfUtils {
 	}
 
 	public static void printRequires(StringBuffer buffer, String prefix, int i, String namespace, String name, VersionRange range, String filter, boolean greedy) {
-		printRequires(buffer, prefix, i, namespace, name, range.toString(), filter, greedy);
+		printRequires(buffer, prefix, i, namespace, name, Utils.toString(range), filter, greedy);
 	}
 
 	public static void printRequires(StringBuffer buffer, String prefix, int i, String namespace, String name, String range, String filter, boolean greedy) {
@@ -118,7 +118,7 @@ public class P2InfUtils {
 			prefix = ""; //$NON-NLS-1$
 		buffer.append(prefix + "hostRequirements." + i + ".namespace=" + namespace + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		buffer.append(prefix + "hostRequirements." + i + ".name=" + name + '\n'); //$NON-NLS-1$ //$NON-NLS-2$
-		buffer.append(prefix + "hostRequirements." + i + ".range=" + range.toString() + '\n'); //$NON-NLS-1$ //$NON-NLS-2$
+		buffer.append(prefix + "hostRequirements." + i + ".range=" + Utils.toString(range) + '\n'); //$NON-NLS-1$ //$NON-NLS-2$
 		buffer.append(prefix + "hostRequirements." + i + ".greedy=" + Boolean.toString(greedy) + '\n'); //$NON-NLS-1$ //$NON-NLS-2$ 
 	}
 
