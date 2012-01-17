@@ -62,6 +62,7 @@ Export-Package:
  org.eclipse.pde.internal.ui.wizards.tools;x-internal:=true,
  org.eclipse.pde.ui,
  org.eclipse.pde.ui.launcher,
+ org.eclipse.pde.ui.target,
  org.eclipse.pde.ui.templates
 Require-Bundle: 
  org.eclipse.pde.core;bundle-version="[3.6.0,4.0.0)";visibility:=reexport,
