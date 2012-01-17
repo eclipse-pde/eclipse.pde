@@ -966,29 +966,29 @@ public abstract class AbstractPluginBlock {
 			fOperation = createValidationOperation();
 		try {
 			fOperation.run(new NullProgressMonitor());
+
+			if (fDialog == null) {
+				if (fOperation.hasErrors()) {
+					fDialog = new PluginStatusDialog(getShell(), SWT.MODELESS | SWT.CLOSE | SWT.BORDER | SWT.TITLE | SWT.RESIZE);
+					fDialog.setInput(fOperation.getInput());
+					fDialog.open();
+					fDialog = null;
+				} else if (fOperation.isEmpty()) {
+					MessageDialog.openInformation(getShell(), PDEUIMessages.PluginStatusDialog_pluginValidation, NLS.bind(PDEUIMessages.AbstractLauncherToolbar_noSelection, fTab.getName().toLowerCase(Locale.ENGLISH)));
+				} else {
+					MessageDialog.openInformation(getShell(), PDEUIMessages.PluginStatusDialog_pluginValidation, PDEUIMessages.AbstractLauncherToolbar_noProblems);
+				}
+			} else {
+				if (fOperation.getInput().size() > 0)
+					fDialog.refresh(fOperation.getInput());
+				else {
+					Map input = new HashMap(1);
+					input.put(PDEUIMessages.AbstractLauncherToolbar_noProblems, Status.OK_STATUS);
+					fDialog.refresh(input);
+				}
+			}
 		} catch (CoreException e) {
 			PDEPlugin.log(e);
-		}
-
-		if (fDialog == null) {
-			if (fOperation.hasErrors()) {
-				fDialog = new PluginStatusDialog(getShell(), SWT.MODELESS | SWT.CLOSE | SWT.BORDER | SWT.TITLE | SWT.RESIZE);
-				fDialog.setInput(fOperation.getInput());
-				fDialog.open();
-				fDialog = null;
-			} else if (fOperation.isEmpty()) {
-				MessageDialog.openInformation(getShell(), PDEUIMessages.PluginStatusDialog_pluginValidation, NLS.bind(PDEUIMessages.AbstractLauncherToolbar_noSelection, fTab.getName().toLowerCase(Locale.ENGLISH)));
-			} else {
-				MessageDialog.openInformation(getShell(), PDEUIMessages.PluginStatusDialog_pluginValidation, PDEUIMessages.AbstractLauncherToolbar_noProblems);
-			}
-		} else {
-			if (fOperation.getInput().size() > 0)
-				fDialog.refresh(fOperation.getInput());
-			else {
-				Map input = new HashMap(1);
-				input.put(PDEUIMessages.AbstractLauncherToolbar_noProblems, Status.OK_STATUS);
-				fDialog.refresh(input);
-			}
 		}
 	}
 
