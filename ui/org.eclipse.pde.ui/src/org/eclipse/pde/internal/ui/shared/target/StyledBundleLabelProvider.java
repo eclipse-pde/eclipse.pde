@@ -166,7 +166,17 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 	 * @param info element to append
 	 */
 	private void appendBundleInfo(StyledString styledString, BundleInfo info) {
-		styledString.append(info.getSymbolicName());
+		String name = info.getSymbolicName();
+		if (name == null) {
+			// Try the location instead
+			URI location = info.getLocation();
+			if (location != null) {
+				name = location.toString();
+			}
+		}
+		if (name != null) {
+			styledString.append(name);
+		}
 		if (fShowVersion) {
 			String version = info.getVersion();
 			if (version != null && !version.equals(BundleInfo.EMPTY_VERSION)) {
