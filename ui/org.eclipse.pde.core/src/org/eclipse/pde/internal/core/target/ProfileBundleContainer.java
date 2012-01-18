@@ -135,7 +135,11 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 				return new TargetBundle[0];
 			}
 			URI location = infos[i].getLocation();
-			all.add(new TargetBundle(URIUtil.toFile(location)));
+			try {
+				all.add(new TargetBundle(URIUtil.toFile(location)));
+			} catch (CoreException e) {
+				all.add(new InvalidTargetBundle(new BundleInfo(location), e.getStatus()));
+			}
 			localMonitor.worked(1);
 		}
 		// Add source bundles
@@ -144,7 +148,11 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 				return new TargetBundle[0];
 			}
 			URI location = source[i].getLocation();
-			all.add(new TargetBundle(URIUtil.toFile(location)));
+			try {
+				all.add(new TargetBundle(URIUtil.toFile(location)));
+			} catch (CoreException e) {
+				all.add(new InvalidTargetBundle(new BundleInfo(location), e.getStatus()));
+			}
 			localMonitor.worked(1);
 		}
 		localMonitor.done();
@@ -182,7 +190,7 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 				try {
 					all.add(new TargetBundle(files[i]));
 				} catch (CoreException e) {
-					// ignore invalid bundles
+					// ignore files that are not valid bundles (users may have non-bundle files in their target directory)
 				}
 				localMonitor.worked(1);
 			}

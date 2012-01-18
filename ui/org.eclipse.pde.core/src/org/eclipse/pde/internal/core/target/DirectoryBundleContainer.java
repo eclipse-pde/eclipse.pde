@@ -83,7 +83,7 @@ public class DirectoryBundleContainer extends AbstractBundleContainer {
 						bundles.add(rb);
 					}
 				} catch (CoreException e) {
-					// ignore invalid bundles
+					// ignore files that are not valid bundles (users may have non-bundle files in their target directory)
 				}
 				localMonitor.worked(1);
 			}
