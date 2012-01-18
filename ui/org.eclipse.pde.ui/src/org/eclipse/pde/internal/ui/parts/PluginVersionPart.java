@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2008 IBM Corporation and others.
+ *  Copyright (c) 2005, 2012 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -192,9 +192,9 @@ public class PluginVersionPart {
 	}
 
 	public void preloadFields() {
+		fMinVersionText.setText(getMinumum(fVersionRange));
 		if (fRangeAllowed) {
-			fMinVersionText.setText((fVersionRange != null) ? fVersionRange.getMinimum().toString() : ""); //$NON-NLS-1$
-			fMaxVersionText.setText((fVersionRange != null && fVersionRange.getMaximum().getMajor() != Integer.MAX_VALUE) ? fVersionRange.getMaximum().toString() : ""); //$NON-NLS-1$
+			fMaxVersionText.setText(getMaximum(fVersionRange));
 
 			if (fVersionRange != null)
 				fMinVersionBound.select((fVersionRange.getIncludeMinimum()) ? 0 : 1);
@@ -206,7 +206,58 @@ public class PluginVersionPart {
 			else
 				fMaxVersionBound.select(1);
 		}
-		fMinVersionText.setText((fVersionRange != null) ? fVersionRange.getMinimum().toString() : ""); //$NON-NLS-1$
+	}
+
+	private String getMinumum(VersionRange range) {
+		if (range == null)
+			return ""; //$NON-NLS-1$
+		return toString(range.getLeft(), range.getLeftType());
+
+	}
+
+	private String getMaximum(VersionRange range) {
+		if (range == null)
+			return ""; //$NON-NLS-1$
+		return toString(range.getRight(), range.getRightType());
+
+	}
+
+	private static String toString(Version version, char endPointType) {
+		// need to avoid fully qualifying the versions if not needed.
+		if (version == null)
+			return ""; //$NON-NLS-1$
+		int q = version.getQualifier().length();
+		if (q > 0) {
+			return version.toString();
+		}
+		StringBuffer buffer = new StringBuffer(version.toString().length() + 1);
+		buffer.append(version.getMajor());
+		buffer.append('.');
+		buffer.append(version.getMinor());
+		buffer.append('.');
+		buffer.append(version.getMicro());
+		char separator = version.isReleaseVersion() ? '.' : '-';
+		switch (endPointType) {
+			case org.osgi.framework.VersionRange.LEFT_CLOSED :
+				if (separator == '.') // left release version [x.y.z. must fully qualify
+					buffer.append(separator);
+				break;
+			case org.osgi.framework.VersionRange.LEFT_OPEN :
+				if (separator == '-') // left pre-release version [x.y.z- must fully qualify
+					buffer.append(separator);
+				break;
+			case org.osgi.framework.VersionRange.RIGHT_CLOSED :
+				if (separator == '-') // right release version x.y.z.) must fully qualify
+					buffer.append(separator);
+				break;
+			case org.osgi.framework.VersionRange.RIGHT_OPEN :
+				if (separator == '.') // right pre-release version x.y.z-] must fully qualify
+					buffer.append(separator);
+				break;
+			default :
+				break;
+		}
+		return buffer.toString();
 	}
 
 	private IStatus validateVersion(String text, Text textWidget, boolean shortErrorMessage) {
@@ -316,7 +367,6 @@ public class PluginVersionPart {
 	}
 
 	public String getVersion() {
-		String version;
 		if (fIsRanged) {
 			// if versions are equal they must be inclusive for a range to be valid
 			// blindly set for the user
@@ -326,15 +376,18 @@ public class PluginVersionPart {
 			boolean maxI = getMaxInclusive();
 			if (minV.equals(maxV))
 				minI = maxI = true;
-			version = new VersionRange(new Version(minV), minI, new Version(maxV), maxI).toString();
-		} else {
-			String singleversion = extractSingleVersionFromText();
-			if (singleversion == null || singleversion.length() == 0)
-				version = ""; //$NON-NLS-1$
-			else
-				version = new Version(singleversion).toString();
+			StringBuffer buffer = new StringBuffer(minV.length() + maxV.length() + 3);
+			buffer.append(minI ? org.osgi.framework.VersionRange.LEFT_CLOSED : org.osgi.framework.VersionRange.LEFT_OPEN);
+			buffer.append(minV);
+			buffer.append(',');
+			buffer.append(maxV);
+			buffer.append(maxI ? org.osgi.framework.VersionRange.RIGHT_CLOSED : org.osgi.framework.VersionRange.RIGHT_OPEN);
+			return new VersionRange(buffer.toString()).toString();
 		}
-		return version;
+		String singleversion = extractSingleVersionFromText();
+		if (singleversion == null || singleversion.length() == 0)
+			return ""; //$NON-NLS-1$
+		return new Version(singleversion).toString();
 	}
 
 	public void addListeners(ModifyListener minListener, ModifyListener maxListener) {
