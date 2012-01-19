@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -199,7 +199,7 @@ public class ProductGenerator extends AbstractScriptGenerator {
 			productVersionString = productVersion.getMajor() + "." + productVersion.getMinor() + "." + productVersion.getMicro() + ".$qualifier$"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			productRangeString = "[" + productVersionString + "," + productVersionString + "]"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		} else {
-			productRangeString = Utils.toString(new VersionRange(new Version(productVersionString), true, new Version(productVersionString), true));
+			productRangeString = new VersionRange(new Version(productVersionString), true, new Version(productVersionString), true).toString();
 		}
 
 		if (cus) {
@@ -256,7 +256,7 @@ public class ProductGenerator extends AbstractScriptGenerator {
 			//in case of no version on the product, the branding defaults to the version of the launcher provider
 			if (executableFeature != null && productVersionString.equals(Version.emptyVersion.toString())) {
 				String brandedVersion = executableFeature.getVersion();
-				brandedRange = Utils.toString(new VersionRange(new Version(brandedVersion), true, new Version(brandedVersion), true));
+				brandedRange = new VersionRange(new Version(brandedVersion), true, new Version(brandedVersion), true).toString();
 			}
 
 			List configs = getConfigInfos();
