@@ -62,7 +62,7 @@ public class PreferenceHandler extends AbstractPreferenceInitializer {
 	 */
 	public final static Map<String, String> getPreferenceProperties() {
 
-		IEclipsePreferences tracingPrefs = InstanceScope.INSTANCE.getNode(TracingConstants.BUNDLE_ID);
+		IEclipsePreferences tracingPrefs = new InstanceScope().getNode(TracingConstants.BUNDLE_ID);
 		final String componentsAsString = tracingPrefs.get(TracingConstants.PREFERENCE_ENTRIES_IDENTIFIER, TracingConstants.EMPTY_STRING);
 		Map<String, String> options = null;
 		if (!componentsAsString.equals(TracingConstants.EMPTY_STRING)) {
