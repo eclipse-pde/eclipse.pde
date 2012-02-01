@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 IBM Corporation and others.
+ * Copyright (c) 2011, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -310,7 +310,7 @@ public class TracingPreferencePage extends PreferencePage implements IWorkbenchP
 		// add the 'max count' label
 		this.tracingFileMaxCountLabel = new Label(detailsComp, SWT.NONE);
 		this.tracingFileMaxCountLabel.setText(Messages.tracingFileMaxCountLabel);
-		GridDataFactory.fillDefaults().applyTo(this.tracingFileMaxCountLabel);
+
 		// add the 'max count' input field
 		this.maximumFileCountSpinner = new Spinner(detailsComp, SWT.SINGLE | SWT.BORDER);
 		this.maximumFileCountSpinner.setValues(10, 10, 100, 0, 5, 10);
@@ -324,13 +324,12 @@ public class TracingPreferencePage extends PreferencePage implements IWorkbenchP
 		GridDataFactory.fillDefaults().applyTo(this.maximumFileCountSpinner);
 
 		Label spacer = new Label(detailsComp, SWT.NONE);
-		GridDataFactory.fillDefaults().span(1, 0).applyTo(spacer);
+		GridDataFactory.fillDefaults().hint(10, 10).applyTo(spacer);
 
 		// add the 'max size' label
 		this.tracingFileMaxSizeLabel = new Label(detailsComp, SWT.NONE);
 		this.tracingFileMaxSizeLabel.setText(Messages.tracingFileMaxSizeLabel);
-		GridDataFactory.fillDefaults().applyTo(this.tracingFileMaxSizeLabel);
-//		GridDataFactory.fillDefaults().align(SWT.END, SWT.BEGINNING).applyTo(this.tracingFileMaxSizeLabel);
+
 		// add the 'max size' input field
 		this.maximumFileSizeSpinner = new Spinner(detailsComp, SWT.SINGLE | SWT.BORDER);
 		this.maximumFileSizeSpinner.setValues(100, 100, 10000, 0, 100, 1000);
