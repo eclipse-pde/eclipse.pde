@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 IBM Corporation and others.
+ * Copyright (c) 2007, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,16 +14,19 @@ import java.io.File;
 import java.util.Iterator;
 import java.util.List;
 
+import junit.framework.Test;
 import junit.framework.TestCase;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.api.tools.internal.model.DirectoryApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.provisional.builder.IReference;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiMember;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
+import org.eclipse.test.OrderedTestSuite;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 
 /**
  * This class tests the class file scanner and the class file visitor
@@ -32,7 +35,34 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
  */
 @SuppressWarnings("unchecked")
 public class ClassFileScannerTests extends TestCase {
-	
+
+
+	public static Test suite() {
+		return new OrderedTestSuite(ClassFileScannerTests.class, new String[] {
+			"testScanEmptyClass",
+			"testScanEmptyGenericClass",
+			"testScanInnerClass",
+			"testScanInnerStaticClass",
+			"testScanInnerStaticInnerClass",
+			"testScanOuterClass",
+			"testScanInnerOuterClass",
+			"testScanInnerGenericClass",
+			"testScanInnerStaticInnerGenericClass",
+			"testScanClassExtendsImplements",
+			"testScanGenericClassExtendsImplements",
+			"testScanMethodDecl",
+			"testScanMethodDeclArrayTypes",
+			"testScanMethodDeclGenerics",
+			"testScanFieldDecl",
+			"testScanLocalVariableArrays",
+			"testScanConstantPoolAccess",
+			"testScanConstantPoolAccess1_4",
+			"testScanMethodCalls",
+			"testCleanup",
+		});
+	}
+
+
 	private static IPath WORKSPACE_ROOT = null;
 	private static String WORKSPACE_NAME = "test_classes_workspace";
 	private static IPath ROOT_PATH = null;
