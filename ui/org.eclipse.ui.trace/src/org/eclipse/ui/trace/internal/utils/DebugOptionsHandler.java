@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 IBM Corporation and others.
+ * Copyright (c) 2011, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,7 @@ public class DebugOptionsHandler {
 	 * 
 	 * @return The DebugOptions object for the product
 	 */
+	@SuppressWarnings({"unchecked", "rawtypes"})
 	public final static DebugOptions getDebugOptions() {
 
 		if (TracingUIActivator.DEBUG) {
@@ -77,6 +78,7 @@ public class DebugOptionsHandler {
 	}
 
 	/** The debug service for this product */
+	@SuppressWarnings("rawtypes")
 	private static ServiceTracker debugTracker = null;
 
 	/** Trace object for this bundle */
