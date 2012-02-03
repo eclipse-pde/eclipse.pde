@@ -298,7 +298,9 @@ public class TracingPreferencePage extends PreferencePage implements IWorkbenchP
 				final FileDialog dialog = new FileDialog(TracingPreferencePage.this.tracingOptionsGroup.getShell(), SWT.SAVE);
 				dialog.setFileName(TracingPreferencePage.this.tracingFileText.getText());
 				final String result = dialog.open();
-				TracingPreferencePage.this.tracingFileText.setText(result);
+				if (result != null) {
+					TracingPreferencePage.this.tracingFileText.setText(result);
+				}
 			}
 		});
 		GridDataFactory.fillDefaults().applyTo(this.tracingFileBrowseButton);
