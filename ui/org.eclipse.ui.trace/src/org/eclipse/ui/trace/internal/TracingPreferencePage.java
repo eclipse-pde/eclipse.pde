@@ -15,11 +15,14 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.layout.*;
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.osgi.service.debug.DebugTrace;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
@@ -179,6 +182,28 @@ public class TracingPreferencePage extends PreferencePage implements IWorkbenchP
 		if (TracingUIActivator.DEBUG_UI) {
 			TRACE.traceEntry(TracingConstants.TRACE_UI_STRING, parent);
 		}
+
+		// If the preferences are being overridden by debug mode at launch time, warn the user
+		if (DebugOptionsHandler.isLaunchInDebugMode()) {
+			Composite warningComp = new Composite(parent, SWT.NONE);
+			GridData gd = new GridData(GridData.FILL, GridData.BEGINNING, true, false);
+			warningComp.setLayoutData(gd);
+			GridLayout gl = new GridLayout(2, false);
+			gl.marginWidth = gl.marginHeight = 0;
+			warningComp.setLayout(gl);
+
+			Label warningImage = new Label(warningComp, SWT.NONE);
+			warningImage.setImage(JFaceResources.getImage(org.eclipse.jface.dialogs.Dialog.DLG_IMG_MESSAGE_WARNING));
+			gd = new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false);
+			warningImage.setLayoutData(gd);
+
+			Label warningText = new Label(warningComp, SWT.WRAP);
+			warningText.setText(Messages.TracingPreferencePage_applicationLaunchedInDebugModeWarning);
+			gd = new GridData(GridData.FILL, GridData.BEGINNING, true, false);
+			gd.widthHint = 200;
+			warningText.setLayoutData(gd);
+		}
+
 		this.enableTracingButton = new Button(parent, SWT.CHECK);
 		this.enableTracingButton.setText(Messages.enableTracingButtonLabel);
 		GridDataFactory.fillDefaults().align(SWT.BEGINNING, SWT.BEGINNING).grab(true, false).applyTo(this.enableTracingButton);
@@ -357,15 +382,22 @@ public class TracingPreferencePage extends PreferencePage implements IWorkbenchP
 		if (TracingUIActivator.DEBUG_UI) {
 			TRACE.traceEntry(TracingConstants.TRACE_UI_STRING);
 		}
-		// acquire the preferences service
-		boolean tracingEnabled = PreferenceHandler.isTracingEnabled();
-		// HACK: because there is no way for me to enable tracing during preference import (??) - I am doing it here.
-		if (tracingEnabled && !DebugOptionsHandler.getDebugOptions().isDebugEnabled()) {
-			// the preferences say that tracing should be enabled
-			DebugOptionsHandler.getDebugOptions().setDebugEnabled(true);
+
+		// If in debug mode, tracing defaults to disabled 
+		if (!DebugOptionsHandler.isLaunchInDebugMode()) {
+			// acquire the preferences service
+			boolean tracingEnabled = PreferenceHandler.isTracingEnabled();
+			// HACK: because there is no way for me to enable tracing during preference import (??) - I am doing it here.
+			if (tracingEnabled && !DebugOptionsHandler.getDebugOptions().isDebugEnabled()) {
+				// the preferences say that tracing should be enabled
+				DebugOptionsHandler.getDebugOptions().setDebugEnabled(true);
+			}
+			// set enablement button
+			this.enableTracingButton.setSelection(tracingEnabled);
+		} else {
+			this.enableTracingButton.setSelection(false);
 		}
-		// set enablement button
-		this.enableTracingButton.setSelection(tracingEnabled);
+
 		// set the tracing file name.
 		this.tracingFileText.setText(PreferenceHandler.getFilePath());
 		// set the max counter field
@@ -605,6 +637,17 @@ public class TracingPreferencePage extends PreferencePage implements IWorkbenchP
 		boolean result = super.performOk();
 		// get the enablement state
 		boolean enableTracing = this.enableTracingButton.getSelection();
+
+		if (DebugOptionsHandler.isLaunchInDebugMode()) {
+			if (enableTracing) {
+				// User wants to override current settings
+				DebugOptionsHandler.setLaunchInDebugMode(false);
+			} else {
+				// Don't change tracing options
+				return result;
+			}
+		}
+
 		// save the preferences
 		this.savePreferences(enableTracing);
 		if (TracingUIActivator.DEBUG_UI) {

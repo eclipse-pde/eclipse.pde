@@ -21,12 +21,12 @@ import org.osgi.util.tracker.ServiceTracker;
 public class DebugOptionsHandler {
 
 	/**
-	 * Accessor for the products DebugOptions
+	 * Accessor for the product's DebugOptions
 	 * 
 	 * @return The DebugOptions object for the product
 	 */
 	@SuppressWarnings({"unchecked", "rawtypes"})
-	public final static DebugOptions getDebugOptions() {
+	public static DebugOptions getDebugOptions() {
 
 		if (TracingUIActivator.DEBUG) {
 			TRACE.traceEntry(null);
@@ -47,7 +47,7 @@ public class DebugOptionsHandler {
 	 * 
 	 * @return Returns true of tracing is enabled for this product; Otherwise false.
 	 */
-	public final static boolean isTracingEnabled() {
+	public static boolean isTracingEnabled() {
 
 		if (TracingUIActivator.DEBUG) {
 			TRACE.traceEntry(null);
@@ -66,7 +66,7 @@ public class DebugOptionsHandler {
 	 *            The value to enable or disable platform debugging. If it is set to true then platform debugging is
 	 *            enabled.
 	 */
-	public final static void setDebugEnabled(final boolean value) {
+	public static void setDebugEnabled(boolean value) {
 
 		if (TracingUIActivator.DEBUG) {
 			TRACE.traceEntry(null);
@@ -77,10 +77,32 @@ public class DebugOptionsHandler {
 		}
 	}
 
+	/**
+	 * @return whether the current debug options were set from trace files rather than preferences
+	 */
+	public static boolean isLaunchInDebugMode() {
+		return launchInDebugMode;
+	}
+
+	/**
+	 * Sets the flag indicated the current debug options were set from trace files rather than preferences.
+	 * This method should be called when the trace plug-in is activated.
+	 * 
+	 * @param mode whether current options were set from trace files
+	 */
+	public static void setLaunchInDebugMode(boolean mode) {
+		launchInDebugMode = mode;
+	}
+
 	/** The debug service for this product */
 	@SuppressWarnings("rawtypes")
 	private static ServiceTracker debugTracker = null;
 
 	/** Trace object for this bundle */
-	protected final static DebugTrace TRACE = TracingUIActivator.getDefault().getTrace();
+	protected static DebugTrace TRACE = TracingUIActivator.getDefault().getTrace();
+
+	/**
+	 * Flag is set in activator if debug options were set using debug mode and trace files rather than preferences
+	 */
+	private static boolean launchInDebugMode;
 }

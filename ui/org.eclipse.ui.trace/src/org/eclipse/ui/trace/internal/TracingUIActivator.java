@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 IBM Corporation and others.
+ * Copyright (c) 2011, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -62,7 +62,13 @@ public class TracingUIActivator extends AbstractUIPlugin implements DebugOptions
 		super.start(context);
 		TracingUIActivator.plugin = this;
 
-		if (PreferenceHandler.isTracingEnabled()) {
+		if (DebugOptionsHandler.isTracingEnabled()) {
+			// Tracing options have been enabled using options file and debug mode
+			// Set option so we know debug mode is set, not preferences
+			DebugOptionsHandler.setLaunchInDebugMode(true);
+
+		} else if (PreferenceHandler.isTracingEnabled()) {
+			// User has previously enabled tracing options
 			DebugOptionsHandler.setDebugEnabled(true);
 			DebugOptionsHandler.getDebugOptions().setFile(new File(PreferenceHandler.getFilePath()));
 			System.setProperty(TracingConstants.PROP_TRACE_SIZE_MAX, String.valueOf(PreferenceHandler.getMaxFileSize()));
