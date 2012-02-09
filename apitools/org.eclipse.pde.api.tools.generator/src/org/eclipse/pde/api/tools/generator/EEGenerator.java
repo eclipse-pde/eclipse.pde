@@ -1884,7 +1884,7 @@ public class EEGenerator {
 		EEGenerator generator = new EEGenerator();
 		generator.configure(args);
 		if (!generator.isInitialized()) {
-			System.err.println("Usage: -output <path to root to output files> -config <path to configuration file> -EE <list of EE to generate separated with commas>");
+			System.err.println("Usage: -output <path to root to output files> -config <path to configuration file> -EEs <list of EE to generate separated with commas>");
 			return;
 		}
 		String property = System.getProperty("DEBUG");
@@ -1975,6 +1975,9 @@ public class EEGenerator {
 					mode = DEFAULT;
 					continue;
 			}
+		}
+		if (this.output == null) {
+			throw new IllegalArgumentException("output value is missing"); //$NON-NLS-1$
 		}
 		// check output
 		File file = new File(this.output);
