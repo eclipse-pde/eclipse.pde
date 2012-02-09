@@ -1844,7 +1844,7 @@ public class EEGenerator {
 	}
 	static boolean CACHE_ENABLED = true;
 	static boolean DEBUG = false;
-	static boolean ONLY_USE_CACHE = true;
+	static boolean ONLY_USE_CACHE = false;
 	static final String PROPERTY_JRE_LIB = ".jreLib";
 	static final String PROPERTY_OSGI_PROFILE = ".osgiProfile";
 	static final String PROPERTY_JRE_DOC = ".jreDoc";
