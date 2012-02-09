@@ -2038,7 +2038,7 @@ public class EEGenerator {
 			}
 			key = EE + PROPERTY_JRE_URL;
 			String jreUrlProperty = properties.getProperty(key, null);
-			if (jreUrlProperty != null && jreUrlProperty.isEmpty()) {
+			if (jreUrlProperty != null && !jreUrlProperty.isEmpty()) {
 				if (Util.getURLContents(jreUrlProperty + docRootProperty + "java/lang/Object.html") == null) {
 					throw new IllegalArgumentException("Wrong property value : " + key);
 				}
