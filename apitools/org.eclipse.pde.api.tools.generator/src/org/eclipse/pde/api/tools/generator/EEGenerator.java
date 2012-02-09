@@ -396,6 +396,10 @@ public class EEGenerator {
 		}
 
 		private static boolean checkDocStatus(ProfileInfo info, Type type, ZipFile docZip, String docURL, String docRoot) {
+			if (docZip == null && docURL == null) {
+				// if no doc to validate we accept it if on white list
+				return info.isOnWhiteList(type);
+			}
 			String typeName = getDocTypeName(docRoot, type);
 			if (docZip == null) {
 				char[] contents = info.getOnlineDocContents(docURL, typeName);
