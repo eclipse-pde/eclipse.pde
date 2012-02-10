@@ -13,12 +13,96 @@
       %copyright
    </copyright>
 
-   <license url="http://www.example.com/license">
+   <license url="http://www.eclipse.org/org/documents/epl-v10.php">
       %license
    </license>
 
    <url>
       <update label="API Tools Execution Environment Descriptions" url="http://www.eclipse.org/pde/pde-api-tools/updates/"/>
    </url>
+
+   <plugin
+         id="org.eclipse.pde.api.tools.ee.cdcfoundation10"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         fragment="true"/>
+
+   <plugin
+         id="org.eclipse.pde.api.tools.ee.cdcfoundation11"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         fragment="true"/>
+
+   <plugin
+         id="org.eclipse.pde.api.tools.ee.j2se12"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         fragment="true"/>
+
+   <plugin
+         id="org.eclipse.pde.api.tools.ee.j2se13"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         fragment="true"/>
+
+   <plugin
+         id="org.eclipse.pde.api.tools.ee.j2se14"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         fragment="true"/>
+
+   <plugin
+         id="org.eclipse.pde.api.tools.ee.j2se15"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         fragment="true"/>
+
+   <plugin
+         id="org.eclipse.pde.api.tools.ee.javase16"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         fragment="true"/>
+
+   <plugin
+         id="org.eclipse.pde.api.tools.ee.javase17"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         fragment="true"/>
+
+   <plugin
+         id="org.eclipse.pde.api.tools.ee.jre11"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         fragment="true"/>
+
+   <plugin
+         id="org.eclipse.pde.api.tools.ee.osgiminimum10"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         fragment="true"/>
+
+   <plugin
+         id="org.eclipse.pde.api.tools.ee.osgiminimum11"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         fragment="true"/>
+
+   <plugin
+         id="org.eclipse.pde.api.tools.ee.osgiminimum12"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         fragment="true"/>
 
 </feature>
