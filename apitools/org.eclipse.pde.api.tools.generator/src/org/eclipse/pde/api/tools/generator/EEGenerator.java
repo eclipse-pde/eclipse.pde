@@ -24,6 +24,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.LineNumberReader;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -391,19 +392,11 @@ public class EEGenerator {
 	}
 
 	static class ProfileInfo {
-		private static final String OTHER_PACKAGES = "org.osgi.framework.system.packages";
+		private static final String BLACK_LIST_NAME = "_blackList_.txt";
 		private static final String CDC_SUBDIR = "cdc";
 		private static final String JRE_SUBDIR = "jre";
 		private static final String OSGI_SUBDIR = "osgi";
-
-		public static String getDocTypeName(String docRoot, Type type) {
-			StringBuffer buffer = new StringBuffer(docRoot);
-			char[] typeNameForDoc = CharOperation.replaceOnCopy(type.name, '.', '/');
-			typeNameForDoc = CharOperation.replaceOnCopy(typeNameForDoc, '$', '.');
-			buffer.append(typeNameForDoc);
-			buffer.append(".html");
-			return String.valueOf(buffer);
-		}
+		private static final String OTHER_PACKAGES = "org.osgi.framework.system.packages";
 
 		private static boolean checkDocStatus(ProfileInfo info, Type type, ZipFile docZip, String docURL, String docRoot) {
 			if (docZip == null && docURL == null) {
@@ -428,6 +421,15 @@ public class EEGenerator {
 				return true;
 			}
 			return docZip.getEntry(typeName) != null || info.isOnWhiteList(type);
+		}
+
+		public static String getDocTypeName(String docRoot, Type type) {
+			StringBuffer buffer = new StringBuffer(docRoot);
+			char[] typeNameForDoc = CharOperation.replaceOnCopy(type.name, '.', '/');
+			typeNameForDoc = CharOperation.replaceOnCopy(typeNameForDoc, '$', '.');
+			buffer.append(typeNameForDoc);
+			buffer.append(".html");
+			return String.valueOf(buffer);
 		}
 
 		public static ProfileInfo getProfileInfo(
@@ -501,6 +503,8 @@ public class EEGenerator {
 		}
 
 		File[] allFiles;
+		// set of type names that don't have javadoc
+		Set<String> blackList;
 		String cacheLocation;
 		Map<String, Package> data;
 		String docRoot;
@@ -508,11 +512,13 @@ public class EEGenerator {
 		String JREdoc;
 		String JRElib;
 		String JREURL;
-		String OSGiProfile;
 
+		String OSGiProfile;
 		String profileName;
 		long totalSize;
+		
 		Set<String> whiteList;
+
 		private ProfileInfo(
 				String profileName,
 				String jreLib,
@@ -532,6 +538,15 @@ public class EEGenerator {
 			this.whiteList = initializeWhiteList(whiteList);
 		}
 		
+		private void addToBlackList(String typeName) {
+			if (this.blackList != null) {
+				this.blackList.add(typeName);
+				return;
+			}
+			this.blackList = new TreeSet<String>();
+			this.blackList.add(typeName);
+		}
+
 		public void dumpToCache(String typeName, char[] contents) {
 			if (!CACHE_ENABLED || this.cacheLocation == null) {
 				return;
@@ -580,6 +595,16 @@ public class EEGenerator {
 				}
 			}
 		}
+		
+		void generateEEDescription(String outputDir) {
+			if (this.data == null) {
+				System.err.println("No data to persist for " + this.getProfileName());
+				return;
+			}
+			String subDir = getSubDir();
+			persistData(outputDir, subDir);
+			persistDataAsClassFilesInZipFormat(outputDir, subDir);
+		}
 
 		public Map<String,Type> getAllTypes() {
 			Map<String,Type> result = new HashMap<String,Type>();
@@ -598,7 +623,18 @@ public class EEGenerator {
 			}
 			return result;
 		}
-		
+
+		private File getCacheRoot() {
+			File cacheDir = new File(this.cacheLocation);
+			if (cacheDir.exists() || cacheDir.mkdirs()) {
+				File profileCache = new File(cacheDir, getProfileFileName());
+				if (profileCache.exists() || profileCache.mkdirs()) {
+					return profileCache;
+				}
+			}
+			return null;
+		}
+
 		public byte[] getClassFileBytes(Type type) {
 			if (this.allFiles == null) {
 				throw new IllegalStateException("No jar files to open");
@@ -644,27 +680,24 @@ public class EEGenerator {
 			if (!CACHE_ENABLED || this.cacheLocation == null) {
 				return null;
 			}
-			File cacheDir = new File(this.cacheLocation);
-			if (cacheDir.exists()) {
-				File profileCache = new File(cacheDir, getProfileFileName());
-				if (profileCache.exists()) {
-					File docType = new File(profileCache, typeName);
-					if (docType.exists()) {
-						BufferedInputStream stream = null;
-						try {
-							stream = new BufferedInputStream(new FileInputStream(docType));
-							return Util.getInputStreamAsCharArray(stream, -1, null);
-						} catch (FileNotFoundException e) {
-							e.printStackTrace();
-						} catch (IOException e) {
-							e.printStackTrace();
-						} finally {
-							if (stream != null)  {
-								try {
-									stream.close();
-								} catch(IOException e) {
-									// ignore
-								}
+			File profileCache = getCacheRoot();
+			if (profileCache != null) {
+				File docType = new File(profileCache, typeName);
+				if (docType.exists()) {
+					BufferedInputStream stream = null;
+					try {
+						stream = new BufferedInputStream(new FileInputStream(docType));
+						return Util.getInputStreamAsCharArray(stream, -1, null);
+					} catch (FileNotFoundException e) {
+						e.printStackTrace();
+					} catch (IOException e) {
+						e.printStackTrace();
+					} finally {
+						if (stream != null)  {
+							try {
+								stream.close();
+							} catch(IOException e) {
+								// ignore
 							}
 						}
 					}
@@ -672,13 +705,19 @@ public class EEGenerator {
 			}
 			return null;
 		}
+
 		private char[] getOnlineDocContents(String docURL, String typeName) {
 			// check the doc online
 			String typeDocURL = docURL + typeName;
 			char[] contents = this.getFromCache(typeName);
 			if (contents == null && !ONLY_USE_CACHE) {
+				// check the black list
+				if (this.isOnBlackList(typeName)) {
+					return null;
+				}
 				contents = Util.getURLContents(typeDocURL);
 				if (contents == null) {
+					this.addToBlackList(typeName);
 					return null;
 				} else {
 					this.dumpToCache(typeName, contents);
@@ -695,7 +734,6 @@ public class EEGenerator {
 			return this.profileName;
 		}
 
-
 		private String getSubDir() {
 			if (Util.getProfileFileName(ProfileModifiers.CDC_1_0_FOUNDATION_1_0_NAME).equals(this.profileName)
 					|| Util.getProfileFileName(ProfileModifiers.CDC_1_1_FOUNDATION_1_1_NAME).equals(this.profileName)) {
@@ -707,6 +745,37 @@ public class EEGenerator {
 			} else {
 				return JRE_SUBDIR;
 			}
+		}
+
+		private Set<String> initializeBlackList() {
+			File cacheRoot = getCacheRoot();
+			File blackListFile = new File(cacheRoot, BLACK_LIST_NAME);
+			Set<String> values = new TreeSet<String>();
+			if (blackListFile.exists()) {
+				LineNumberReader reader = null;
+				try {
+					reader = new LineNumberReader(new BufferedReader(new FileReader(blackListFile)));
+					String line;
+					while ((line = reader.readLine()) != null) {
+						String trimmedLine = line.trim();
+						if (!trimmedLine.isEmpty()) {
+							// only non-empty lines are added trimmed on both ends
+							values.add(trimmedLine);
+						}
+					}
+				} catch(IOException e) {
+					// ignore
+				} finally {
+					if (reader != null) {
+						try {
+							reader.close();
+						} catch(IOException e) {
+							// ignore
+						}
+					}
+				}
+			}
+			return values;
 		}
 
 		public void initializeData() throws IOException {
@@ -812,6 +881,10 @@ public class EEGenerator {
 			}
 
 			this.data = typesPerPackage;
+			if (this.blackList != null) {
+				// persist black list
+				this.persistBlackList();
+			}
 		}
 
 		private boolean isMatching(Set<String> knownPackages, char[] packageName) {
@@ -824,20 +897,43 @@ public class EEGenerator {
 			String currentPackage = new String(CharOperation.replaceOnCopy(packageName, '/', '.'));
 			return knownPackages.contains(currentPackage) || this.isOnWhiteList(currentPackage);
 		}
+
+		private boolean isOnBlackList(String typeName) {
+			if (this.blackList != null) {
+				return this.blackList.contains(typeName);
+			}
+			// retrieve black list if it exists
+			this.blackList = initializeBlackList();
+			return this.blackList.contains(typeName);
+		}
 		private boolean isOnWhiteList(String packageName) {
 			return packageName.startsWith("java.") || this.whiteList.contains(packageName);
 		}
 		private boolean isOnWhiteList(Type type) {
 			return isOnWhiteList(type.getPackage());
 		}
-		void generateEEDescription(String outputDir) {
-			if (this.data == null) {
-				System.err.println("No data to persist for " + this.getProfileName());
+		private void persistBlackList() {
+			if (this.blackList == null || this.blackList.isEmpty()) {
 				return;
 			}
-			String subDir = getSubDir();
-			persistData(outputDir, subDir);
-			persistDataAsClassFilesInZipFormat(outputDir, subDir);
+			File cacheRoot = getCacheRoot();
+			File blackListFile = new File(cacheRoot, BLACK_LIST_NAME);
+			if (!blackListFile.exists()) {
+				PrintWriter writer = null;
+				try {
+					writer = new PrintWriter(new BufferedWriter(new FileWriter(blackListFile)));
+					for (Iterator<String> iterator = this.blackList.iterator(); iterator.hasNext();) {
+						writer.println(iterator.next());
+					}
+					writer.flush();
+				} catch(IOException e) {
+					// ignore
+				} finally {
+					if (writer != null) {
+						writer.close();
+					}
+				}
+			}
 		}
 		private void persistChildren(
 				Document document,
@@ -1882,17 +1978,17 @@ public class EEGenerator {
 			return String.valueOf(buffer);
 		}
 	}
+	static SortedSet<String> ACCEPTED_EEs;
 	static boolean CACHE_ENABLED = true;
 	static boolean DEBUG = false;
 	static boolean ONLY_USE_CACHE = false;
-	static final String PROPERTY_JRE_LIB = ".jreLib";
-	static final String PROPERTY_OSGI_PROFILE = ".osgiProfile";
-	static final String PROPERTY_JRE_DOC = ".jreDoc";
-	static final String PROPERTY_JRE_URL = ".jreURL";
-	static final String PROPERTY_DOC_ROOT = ".docRoot";
 	static final String PROPERTY_CACHE_LOCATION = ".cacheLocation";
+	static final String PROPERTY_DOC_ROOT = ".docRoot";
+	static final String PROPERTY_JRE_DOC = ".jreDoc";
+	static final String PROPERTY_JRE_LIB = ".jreLib";
+	static final String PROPERTY_JRE_URL = ".jreURL";
+	static final String PROPERTY_OSGI_PROFILE = ".osgiProfile";
 	static final String PROPERTY_WHITE_LIST = ".whiteList";
-	static SortedSet<String> ACCEPTED_EEs;
 
 	static {
 		String[] ees = new String[] {
@@ -1914,12 +2010,17 @@ public class EEGenerator {
 			ACCEPTED_EEs.add(ee);
 		}
 	}
-	private ProfileInfo[] allProfiles;
+	private static String getAllEEValues() {
+		StringBuffer buffer = new StringBuffer();
+		for (String ee : ACCEPTED_EEs) {
+			if (buffer.length() != 0) {
+				buffer.append(", ");
+			}
+			buffer.append(ee);
+		}
+		return String.valueOf(buffer);
+	}
 
-	String configurationFile;
-	String[] EEToGenerate;
-	String output;
-	
 	public static void main(String[] args) throws IOException {
 		EEGenerator generator = new EEGenerator();
 		generator.configure(args);
@@ -1931,29 +2032,27 @@ public class EEGenerator {
 		DEBUG = (property != null) && "true".equalsIgnoreCase(property);
 		generator.run();
 	}
+	private ProfileInfo[] allProfiles;
+	String configurationFile;
+	
+	String[] EEToGenerate;
 
-	private void run() {
-		if (allProfiles == null) {
-			System.err.println("No descriptions to generate");
-			return;
+	String output;
+
+	private boolean checkFileProperty(String property) {
+		if (property == null) {
+			return false;
 		}
-		int numberOfProfiles = allProfiles.length;
-		for (int i = 0; i < numberOfProfiles; i++) {
-			ProfileInfo profileInfo = allProfiles[i];
-			if (profileInfo != null) {
-				try {
-					profileInfo.initializeData();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				// persist the EE description
-				profileInfo.generateEEDescription(this.output);
-			}
-		}
+		File jreDocFile = new File(property);
+		return jreDocFile.exists() && jreDocFile.isFile();
 	}
 
-	private boolean isInitialized() {
-		return this.configurationFile != null && this.EEToGenerate != null && this.output != null;
+	private boolean checkJREProperty(String property) {
+		if (property == null) {
+			return false;
+		}
+		File jreLibFolder = new File(property);
+		return jreLibFolder.exists() && jreLibFolder.isDirectory();
 	}
 
 	private void configure(String[] args) {
@@ -2121,30 +2220,27 @@ public class EEGenerator {
 		infos.toArray(allProfiles = new ProfileInfo[infos.size()]);
 	}
 
-	private static String getAllEEValues() {
-		StringBuffer buffer = new StringBuffer();
-		for (String ee : ACCEPTED_EEs) {
-			if (buffer.length() != 0) {
-				buffer.append(", ");
+	private boolean isInitialized() {
+		return this.configurationFile != null && this.EEToGenerate != null && this.output != null;
+	}
+
+	private void run() {
+		if (allProfiles == null) {
+			System.err.println("No descriptions to generate");
+			return;
+		}
+		int numberOfProfiles = allProfiles.length;
+		for (int i = 0; i < numberOfProfiles; i++) {
+			ProfileInfo profileInfo = allProfiles[i];
+			if (profileInfo != null) {
+				try {
+					profileInfo.initializeData();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				// persist the EE description
+				profileInfo.generateEEDescription(this.output);
 			}
-			buffer.append(ee);
 		}
-		return String.valueOf(buffer);
-	}
-
-	private boolean checkJREProperty(String property) {
-		if (property == null) {
-			return false;
-		}
-		File jreLibFolder = new File(property);
-		return jreLibFolder.exists() && jreLibFolder.isDirectory();
-	}
-
-	private boolean checkFileProperty(String property) {
-		if (property == null) {
-			return false;
-		}
-		File jreDocFile = new File(property);
-		return jreDocFile.exists() && jreDocFile.isFile();
 	}
 }
