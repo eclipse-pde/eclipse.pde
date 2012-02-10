@@ -408,12 +408,21 @@ public class EEGenerator {
 		private static boolean checkDocStatus(ProfileInfo info, Type type, ZipFile docZip, String docURL, String docRoot) {
 			if (docZip == null && docURL == null) {
 				// if no doc to validate we accept it if on white list
+				if (DEBUG) {
+					System.out.println("No javadoc zip or url for " + info.profileName);
+				}
 				return info.isOnWhiteList(type);
 			}
 			String typeName = getDocTypeName(docRoot, type);
+			if (DEBUG) {
+				System.out.println("Retrieving javadoc for type: " + typeName);
+			}
 			if (docZip == null) {
 				char[] contents = info.getOnlineDocContents(docURL, typeName);
 				if (contents == null) {
+					if (DEBUG) {
+						System.out.println("Found no doc for " + typeName + " - check whitelist");
+					}
 					return info.isOnWhiteList(type);
 				}
 				return true;
@@ -1267,16 +1276,34 @@ public class EEGenerator {
 				String docURL,
 				String docRoot) {
 			if (docZip == null && docURL == null) {
+				if (DEBUG) {
+					System.out.println("No javadoc zip or url specified for " + info.getProfileFileName());
+				}
 				return null;
 			}
 			String typeName = ProfileInfo.getDocTypeName(docRoot, type);
+			if (DEBUG) {
+				System.out.println("Retrieve javadoc for type " + typeName);
+			}
 			if (docZip == null) {
 				// docURL is not null
+				if (DEBUG) {
+					System.out.println("Retrieve javadoc for type " + typeName + " using javadoc url");
+				}
 				return info.getOnlineDocContents(docURL, typeName);
+			}
+			if (DEBUG) {
+				System.out.println("Retrieve javadoc for type " + typeName + " using javadoc zip");
 			}
 			ZipEntry entry = docZip.getEntry(typeName);
 			if (entry == null) {
+				if (DEBUG) {
+					System.out.println("No entry found in javadoc zip for " + typeName);
+				}
 				return null;
+			}
+			if (DEBUG) {
+				System.out.println("Got an entry found in javadoc zip for " + typeName);
 			}
 			InputStream inputStream = null;
 			try {
