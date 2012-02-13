@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %fragmentName
 Bundle-SymbolicName: org.eclipse.pde.api.tools.ee.j2se15
-Bundle-Version: 1.0.100.qualifier
+Bundle-Version: 1.0.200.qualifier
 Bundle-Vendor: %providerName
 Fragment-Host: org.eclipse.pde.api.tools;bundle-version="1.0.300"
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
