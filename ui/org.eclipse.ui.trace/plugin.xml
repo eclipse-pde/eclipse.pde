@@ -68,10 +68,5 @@
             label="%keyword.debug">
       </keyword>
    </extension>
-   <extension
-         point="org.eclipse.ui.startup">
-      <startup
-            class="org.eclipse.ui.trace.internal.utils.TracingInitializer"></startup>
-   </extension>
 
 </plugin>

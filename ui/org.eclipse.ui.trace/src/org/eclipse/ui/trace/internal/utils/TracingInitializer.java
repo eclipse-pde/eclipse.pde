@@ -11,16 +11,13 @@
 package org.eclipse.ui.trace.internal.utils;
 
 import org.eclipse.osgi.service.debug.DebugOptions;
-import org.eclipse.ui.IStartup;
 
 /**
  * Reads the preferences and initialises the {@link DebugOptions} options
  */
-public class TracingInitializer implements IStartup {
+public class TracingInitializer {
 
-	public void earlyStartup() {
-		// Empty extension to trigger the bundle loading
-		// TracingUIActivator.startup sets options from the preferences 
-	}
+	// Empty service component to trigger the bundle loading
+	// TracingUIActivator.startup sets options from the preferences 
 
 }
