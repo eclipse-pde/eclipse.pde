@@ -49,15 +49,6 @@
       </initializer>
    </extension>
    <extension
-         point="org.eclipse.ui.trace.traceComponents">
-      <component
-            id="org.eclipse.ui.trace.tracingPrefPage"
-            label="%traceComponent.label">
-         <bundle
-               name="org.eclipse.ui.trace"></bundle>
-      </component>
-   </extension>
-   <extension
          point="org.eclipse.ui.keywords">
       <keyword
             id="org.eclipse.ui.trace.keyword.trace"

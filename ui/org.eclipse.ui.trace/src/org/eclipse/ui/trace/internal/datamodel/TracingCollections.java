@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 IBM Corporation and others.
+ * Copyright (c) 2011, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,8 +12,6 @@ package org.eclipse.ui.trace.internal.datamodel;
 
 import java.util.*;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.osgi.service.debug.DebugTrace;
-import org.eclipse.ui.trace.internal.TracingUIActivator;
 import org.eclipse.ui.trace.internal.utils.TracingConstants;
 import org.eclipse.ui.trace.internal.utils.TracingUtils;
 import org.osgi.framework.Bundle;
@@ -41,7 +39,7 @@ public class TracingCollections {
 	 * 
 	 * @return Return the single instance of the {@link TracingCollections}
 	 */
-	public final static TracingCollections getInstance() {
+	public static TracingCollections getInstance() {
 
 		if (TracingCollections.instance == null) {
 			TracingCollections.instance = new TracingCollections();
@@ -54,8 +52,8 @@ public class TracingCollections {
 	 * 
 	 * @return Return the <code>ModifiedDebugOptions</code> model
 	 */
-	public final ModifiedDebugOptions getModifiedDebugOptions() {
-		return this.fModifiedDebugOptions;
+	public ModifiedDebugOptions getModifiedDebugOptions() {
+		return fModifiedDebugOptions;
 	}
 
 	/**
@@ -64,32 +62,18 @@ public class TracingCollections {
 	 * @param newDebugOption
 	 *            The {@link TracingComponentDebugOption} to add to the collection.
 	 */
-	public final void storeTracingDebugOption(final TracingComponentDebugOption newDebugOption) {
-
-		if (TracingUIActivator.DEBUG_MODEL) {
-			TRACE.traceEntry(TracingConstants.TRACE_MODEL_STRING, newDebugOption);
-		}
+	public void storeTracingDebugOption(final TracingComponentDebugOption newDebugOption) {
 		if (newDebugOption != null) {
 			List<TracingComponentDebugOption> debugOptions = this.fDebugOptionCollection.get(newDebugOption.getOptionPath());
-			if (TracingUIActivator.DEBUG_MODEL) {
-				TRACE.trace(TracingConstants.TRACE_MODEL_STRING, "Existing debug options for '" //$NON-NLS-1$
-						+ newDebugOption.getOptionPath() + "': " + debugOptions); //$NON-NLS-1$
-			}
 			if (debugOptions == null) {
 				// create the list of {@link TracingComponentDebugOption} elements
 				debugOptions = new ArrayList<TracingComponentDebugOption>();
-				this.fDebugOptionCollection.put(newDebugOption.getOptionPath(), debugOptions);
+				fDebugOptionCollection.put(newDebugOption.getOptionPath(), debugOptions);
 			}
 			// add the newly created {@link TracingComponentDebugOption}
 			if (!debugOptions.contains(newDebugOption)) {
-				if (TracingUIActivator.DEBUG_MODEL) {
-					TRACE.trace(TracingConstants.TRACE_MODEL_STRING, "Caching '" + newDebugOption + "'"); //$NON-NLS-1$ //$NON-NLS-2$
-				}
 				debugOptions.add(newDebugOption);
 			}
-		}
-		if (TracingUIActivator.DEBUG_MODEL) {
-			TRACE.traceExit(TracingConstants.TRACE_MODEL_STRING);
 		}
 	}
 
@@ -100,23 +84,13 @@ public class TracingCollections {
 	 *            The name of the option-path.
 	 * @return An array of stored {@link TracingComponentDebugOption} elements that contain the option-path value.
 	 */
-	public final TracingComponentDebugOption[] getTracingDebugOptions(final String optionPath) {
-
-		if (TracingUIActivator.DEBUG_MODEL) {
-			TRACE.traceEntry(TracingConstants.TRACE_MODEL_STRING, optionPath);
-		}
+	public TracingComponentDebugOption[] getTracingDebugOptions(final String optionPath) {
 		List<TracingComponentDebugOption> debugOptions = null;
 		if (optionPath != null) {
-			debugOptions = this.fDebugOptionCollection.get(optionPath);
+			debugOptions = fDebugOptionCollection.get(optionPath);
 		}
 		if (debugOptions == null) {
-			if (TracingUIActivator.DEBUG_MODEL) {
-				TRACE.trace(TracingConstants.TRACE_MODEL_STRING, "There are no debug options for '" + optionPath + "' so returning an empty list."); //$NON-NLS-1$ //$NON-NLS-2$
-			}
 			debugOptions = Collections.emptyList();
-		}
-		if (TracingUIActivator.DEBUG_MODEL) {
-			TRACE.traceExit(TracingConstants.TRACE_MODEL_STRING, debugOptions);
 		}
 		return debugOptions.toArray(new TracingComponentDebugOption[debugOptions.size()]);
 	}
@@ -130,32 +104,19 @@ public class TracingCollections {
 	 * @return Returns a {@link TracingComponent} object based on the information in the specified
 	 *         {@link IConfigurationElement}.
 	 */
-	public final TracingComponent getTracingComponent(final IConfigurationElement element) {
-
-		if (TracingUIActivator.DEBUG_MODEL) {
-			TRACE.traceEntry(TracingConstants.TRACE_MODEL_STRING, element);
-		}
+	public TracingComponent getTracingComponent(final IConfigurationElement element) {
 		TracingComponent component = null;
 		if (element != null) {
 			String id = element.getAttribute(TracingConstants.TRACING_EXTENSION_ID_ATTRIBUTE);
-			if (TracingUIActivator.DEBUG_MODEL) {
-				TRACE.trace(TracingConstants.TRACE_MODEL_STRING, "tracing component id: " + id); //$NON-NLS-1$
-			}
 			if (id != null) {
-				component = this.fComponentCollection.get(id);
+				component = fComponentCollection.get(id);
 				if (component == null) {
-					if (TracingUIActivator.DEBUG_MODEL) {
-						TRACE.trace(TracingConstants.TRACE_MODEL_STRING, "Creating a new tracing component for id: " + id); //$NON-NLS-1$
-					}
 					// create a new tracing component since one doesn't exist with this id
 					component = new TracingComponent(element);
-					this.fComponentCollection.put(id, component);
+					fComponentCollection.put(id, component);
 				} else {
 					// A tracing component already exists with this id. Add the bundles provided by
 					// the new component to the existing one.
-					if (TracingUIActivator.DEBUG_MODEL) {
-						TRACE.trace(TracingConstants.TRACE_MODEL_STRING, "The tracing component for id '" + id + "' already exists.  The bundles for this new component are added to the existing component."); //$NON-NLS-1$ //$NON-NLS-2$
-					}
 					component.addBundles(element);
 					// update the label (if necessary)
 					final String newComponentLabel = element.getAttribute(TracingConstants.TRACING_EXTENSION_LABEL_ATTRIBUTE);
@@ -164,9 +125,6 @@ public class TracingCollections {
 					}
 				}
 			}
-		}
-		if (TracingUIActivator.DEBUG_MODEL) {
-			TRACE.traceExit(TracingConstants.TRACE_MODEL_STRING, component);
 		}
 		return component;
 	}
@@ -182,26 +140,16 @@ public class TracingCollections {
 	 * @return A {@link Properties} of debug options where the key of the {@link Properties} is the debug option path
 	 *         and the value of the {@link Properties} is the debug option value.
 	 */
-	public final Properties getDebugOptions(final Bundle bundle) {
-
-		if (TracingUIActivator.DEBUG_MODEL) {
-			TRACE.traceEntry(TracingConstants.TRACE_MODEL_STRING, bundle);
-		}
+	public Properties getDebugOptions(final Bundle bundle) {
 		Properties results = null;
 		if (bundle != null) {
-			results = this.fBundleOptionsCollection.get(bundle);
+			results = fBundleOptionsCollection.get(bundle);
 			if (results == null) {
 				// this bundle has not been processed yet - so do it now.
-				if (TracingUIActivator.DEBUG_MODEL) {
-					TRACE.trace(TracingConstants.TRACE_MODEL_STRING, "The options for bundle '" + bundle + "' have not been processed."); //$NON-NLS-1$ //$NON-NLS-2$
-				}
 				results = TracingUtils.loadOptionsFromBundle(bundle);
 				// and store the results
-				this.fBundleOptionsCollection.put(bundle, results);
+				fBundleOptionsCollection.put(bundle, results);
 			}
-		}
-		if (TracingUIActivator.DEBUG_MODEL) {
-			TRACE.traceExit(TracingConstants.TRACE_MODEL_STRING, results);
 		}
 		return results;
 	}
@@ -214,16 +162,9 @@ public class TracingCollections {
 	 * @param consumed
 	 *            Is this bundle consumed by another tracing component?
 	 */
-	public final void setBundleIsConsumed(final Bundle bundle, final boolean consumed) {
-
-		if (TracingUIActivator.DEBUG_MODEL) {
-			TRACE.traceEntry(TracingConstants.TRACE_MODEL_STRING, new Object[] {bundle, Boolean.valueOf(consumed)});
-		}
+	public void setBundleIsConsumed(final Bundle bundle, final boolean consumed) {
 		if (bundle != null) {
-			this.fBundleConsumedCollection.put(bundle, Boolean.valueOf(consumed));
-		}
-		if (TracingUIActivator.DEBUG_MODEL) {
-			TRACE.traceExit(TracingConstants.TRACE_MODEL_STRING);
+			fBundleConsumedCollection.put(bundle, Boolean.valueOf(consumed));
 		}
 	}
 
@@ -235,23 +176,13 @@ public class TracingCollections {
 	 * @return Returns true if this bundle has been previous consumed by another tracing component. Otherwise, false is
 	 *         returned.
 	 */
-	public final boolean isBundleConsumed(final Bundle bundle) {
-
-		if (TracingUIActivator.DEBUG_MODEL) {
-			TRACE.traceEntry(TracingConstants.TRACE_MODEL_STRING, bundle);
-		}
+	public boolean isBundleConsumed(final Bundle bundle) {
 		boolean result = false;
 		if (bundle != null) {
-			Boolean isConsumed = this.fBundleConsumedCollection.get(bundle);
-			if (TracingUIActivator.DEBUG_MODEL) {
-				TRACE.trace(TracingConstants.TRACE_MODEL_STRING, "Checking the collection if the bundle '" + bundle.getSymbolicName() + "' is consumed... result: " + isConsumed); //$NON-NLS-1$ //$NON-NLS-2$
-			}
+			Boolean isConsumed = fBundleConsumedCollection.get(bundle);
 			if (isConsumed != null) {
 				result = isConsumed.booleanValue();
 			}
-		}
-		if (TracingUIActivator.DEBUG_MODEL) {
-			TRACE.traceExit(TracingConstants.TRACE_MODEL_STRING, Boolean.valueOf(result));
 		}
 		return result;
 	}
@@ -264,27 +195,14 @@ public class TracingCollections {
 	 * @param bundle
 	 *            The {@link Bundle} included in the specified {@link TracingComponent}.
 	 */
-	public final void storeBundleInComponent(final TracingComponent component, final Bundle bundle) {
-
-		if (TracingUIActivator.DEBUG_MODEL) {
-			TRACE.traceEntry(TracingConstants.TRACE_MODEL_STRING, new Object[] {component, bundle});
-		}
+	public void storeBundleInComponent(final TracingComponent component, final Bundle bundle) {
 		if ((bundle != null) && (component != null)) {
-			List<TracingComponent> components = this.fBundleComponentCollection.get(bundle);
-			if (TracingUIActivator.DEBUG_MODEL) {
-				TRACE.trace(TracingConstants.TRACE_MODEL_STRING, "Existing components in collection: " + components); //$NON-NLS-1$
-			}
+			List<TracingComponent> components = fBundleComponentCollection.get(bundle);
 			if (components == null) {
 				components = new ArrayList<TracingComponent>();
-				this.fBundleComponentCollection.put(bundle, components);
-			}
-			if (TracingUIActivator.DEBUG_MODEL) {
-				TRACE.trace(TracingConstants.TRACE_MODEL_STRING, "Adding component to collection: " + component); //$NON-NLS-1$
+				fBundleComponentCollection.put(bundle, components);
 			}
 			components.add(component);
-		}
-		if (TracingUIActivator.DEBUG_MODEL) {
-			TRACE.traceExit(TracingConstants.TRACE_MODEL_STRING);
 		}
 	}
 
@@ -295,26 +213,13 @@ public class TracingCollections {
 	 *            The {@link Bundle} used to locate the {@link TracingComponent} that include it.
 	 * @return An array of {@link TracingComponent} objects that contain the specified {@link Bundle}.
 	 */
-	public final TracingComponent[] getComponentsContainingBundle(final Bundle bundle) {
-
-		if (TracingUIActivator.DEBUG_MODEL) {
-			TRACE.traceEntry(TracingConstants.TRACE_MODEL_STRING, bundle);
-		}
+	public TracingComponent[] getComponentsContainingBundle(final Bundle bundle) {
 		List<TracingComponent> components = null;
 		if (bundle != null) {
-			components = this.fBundleComponentCollection.get(bundle);
-			if (TracingUIActivator.DEBUG_MODEL) {
-				TRACE.trace(TracingConstants.TRACE_MODEL_STRING, "Existing components in collection: " + components); //$NON-NLS-1$
-			}
+			components = fBundleComponentCollection.get(bundle);
 		}
 		if (components == null) {
-			if (TracingUIActivator.DEBUG_MODEL) {
-				TRACE.trace(TracingConstants.TRACE_MODEL_STRING, "There are no components in the collection so creating an empty list."); //$NON-NLS-1$
-			}
 			components = Collections.emptyList();
-		}
-		if (TracingUIActivator.DEBUG_MODEL) {
-			TRACE.traceExit(TracingConstants.TRACE_MODEL_STRING, components);
 		}
 		return components.toArray(new TracingComponent[components.size()]);
 	}
@@ -323,18 +228,11 @@ public class TracingCollections {
 	 * Clear the various collections
 	 */
 	public final void clear() {
-
-		if (TracingUIActivator.DEBUG_MODEL) {
-			TRACE.traceEntry(TracingConstants.TRACE_MODEL_STRING);
-		}
-		this.fComponentCollection.clear();
-		this.fDebugOptionCollection.clear();
-		this.fBundleOptionsCollection.clear();
-		this.fBundleConsumedCollection.clear();
-		this.fBundleComponentCollection.clear();
-		if (TracingUIActivator.DEBUG_MODEL) {
-			TRACE.traceExit(TracingConstants.TRACE_MODEL_STRING);
-		}
+		fComponentCollection.clear();
+		fDebugOptionCollection.clear();
+		fBundleOptionsCollection.clear();
+		fBundleConsumedCollection.clear();
+		fBundleComponentCollection.clear();
 	}
 
 	/** The debug options {@link ModifiedDebugOptions} added or removed */
@@ -363,9 +261,6 @@ public class TracingCollections {
 	 * contain this bundle)
 	 */
 	private Map<Bundle, List<TracingComponent>> fBundleComponentCollection = null;
-
-	/** Trace object for this bundle */
-	private final static DebugTrace TRACE = TracingUIActivator.getDefault().getTrace();
 
 	/** The singleton instance of this class */
 	private static TracingCollections instance = null;

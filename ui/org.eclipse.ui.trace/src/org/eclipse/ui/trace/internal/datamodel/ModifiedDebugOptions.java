@@ -22,9 +22,8 @@ public class ModifiedDebugOptions {
 	 * Construct a new ModifiedDebugOptions object
 	 */
 	public ModifiedDebugOptions() {
-
-		this.debugOptionsToAdd = new ArrayList<TracingComponentDebugOption>();
-		this.debugOptionsToRemove = new ArrayList<TracingComponentDebugOption>();
+		debugOptionsToAdd = new ArrayList<TracingComponentDebugOption>();
+		debugOptionsToRemove = new ArrayList<TracingComponentDebugOption>();
 	}
 
 	/**
@@ -35,8 +34,7 @@ public class ModifiedDebugOptions {
 	 *         preference page
 	 */
 	public final TracingComponentDebugOption[] getDebugOptionsToAdd() {
-
-		return this.debugOptionsToAdd.toArray(new TracingComponentDebugOption[this.debugOptionsToAdd.size()]);
+		return debugOptionsToAdd.toArray(new TracingComponentDebugOption[debugOptionsToAdd.size()]);
 	}
 
 	/**
@@ -47,8 +45,7 @@ public class ModifiedDebugOptions {
 	 *         preference page
 	 */
 	public final TracingComponentDebugOption[] getDebugOptionsToRemove() {
-
-		return this.debugOptionsToRemove.toArray(new TracingComponentDebugOption[this.debugOptionsToRemove.size()]);
+		return debugOptionsToRemove.toArray(new TracingComponentDebugOption[debugOptionsToRemove.size()]);
 	}
 
 	/**
@@ -58,15 +55,14 @@ public class ModifiedDebugOptions {
 	 *            The {@link TracingComponentDebugOption} option to add
 	 */
 	public final void addDebugOption(final TracingComponentDebugOption option) {
-
 		if (option != null) {
-			boolean isBeingRemoved = this.debugOptionsToRemove.contains(option);
+			boolean isBeingRemoved = debugOptionsToRemove.contains(option);
 			if (isBeingRemoved) {
 				// remove it from the list of debug options to remove
-				this.debugOptionsToRemove.remove(option);
+				debugOptionsToRemove.remove(option);
 			}
 			// add it to the list of debug options to add
-			this.debugOptionsToAdd.add(option);
+			debugOptionsToAdd.add(option);
 		}
 	}
 
@@ -77,15 +73,14 @@ public class ModifiedDebugOptions {
 	 *            The {@link TracingComponentDebugOption} option to add
 	 */
 	public final void removeDebugOption(final TracingComponentDebugOption option) {
-
 		if (option != null) {
-			boolean isBeingAdded = this.debugOptionsToAdd.contains(option);
+			boolean isBeingAdded = debugOptionsToAdd.contains(option);
 			if (isBeingAdded) {
 				// remove it from the list of debug options to add
-				this.debugOptionsToAdd.remove(option);
+				debugOptionsToAdd.remove(option);
 			}
 			// add it to the list of debug options to remove
-			this.debugOptionsToRemove.add(option);
+			debugOptionsToRemove.add(option);
 		}
 	}
 
@@ -93,9 +88,8 @@ public class ModifiedDebugOptions {
 	 * Purge the list of bundles to add and remove
 	 */
 	public final void clear() {
-
-		this.debugOptionsToAdd.clear();
-		this.debugOptionsToRemove.clear();
+		debugOptionsToAdd.clear();
+		debugOptionsToRemove.clear();
 	}
 
 	/**

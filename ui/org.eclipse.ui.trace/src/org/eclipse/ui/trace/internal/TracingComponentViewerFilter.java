@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 IBM Corporation and others.
+ * Copyright (c) 2011, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,8 +28,8 @@ public class TracingComponentViewerFilter extends PatternFilter {
 	 */
 	public TracingComponentViewerFilter() {
 
-		this.visibleTracingComponentsCache = new HashMap<TracingComponent, Boolean>();
-		this.visibleTracingDebugOptions = new HashMap<TracingComponentDebugOption, Boolean>();
+		visibleTracingComponentsCache = new HashMap<TracingComponent, Boolean>();
+		visibleTracingDebugOptions = new HashMap<TracingComponentDebugOption, Boolean>();
 	}
 
 	@Override
@@ -39,8 +39,8 @@ public class TracingComponentViewerFilter extends PatternFilter {
 		/**
 		 * Hack to clear my own caches (whenever the contents changes)
 		 */
-		this.visibleTracingComponentsCache.clear();
-		this.visibleTracingDebugOptions.clear();
+		visibleTracingComponentsCache.clear();
+		visibleTracingDebugOptions.clear();
 	}
 
 	/*
@@ -50,9 +50,9 @@ public class TracingComponentViewerFilter extends PatternFilter {
 
 		for (int optionsIndex = 0; optionsIndex < options.length; optionsIndex++) {
 			if (options[optionsIndex].hasChildren()) {
-				this.forceVisibleDebugOptions(options[optionsIndex].getChildren());
+				forceVisibleDebugOptions(options[optionsIndex].getChildren());
 			}
-			this.visibleTracingDebugOptions.put(options[optionsIndex], Boolean.TRUE);
+			visibleTracingDebugOptions.put(options[optionsIndex], Boolean.TRUE);
 		}
 	}
 
@@ -71,17 +71,17 @@ public class TracingComponentViewerFilter extends PatternFilter {
 			if (textMatches) {
 				// the text matches - make sure all children of this component are visible
 				isVisible = true;
-				this.visibleTracingComponentsCache.put(component, Boolean.TRUE);
+				visibleTracingComponentsCache.put(component, Boolean.TRUE);
 				// show all children
-				this.forceVisibleDebugOptions(component.getChildren());
+				forceVisibleDebugOptions(component.getChildren());
 			} else {
 				// show only if has 1 child that matches
 				isVisible = super.isElementVisible(viewer, element);
-				this.visibleTracingComponentsCache.put(component, Boolean.valueOf(isVisible));
+				visibleTracingComponentsCache.put(component, Boolean.valueOf(isVisible));
 			}
 		} else if (element instanceof TracingComponentDebugOption) {
 			// check to see if this debug option is forced to be visible
-			Boolean enabled = this.visibleTracingDebugOptions.get(element);
+			Boolean enabled = visibleTracingDebugOptions.get(element);
 			if (enabled != null) {
 				// it should be enabled because the parent is enabled and forced it to be enabled
 				isVisible = enabled.booleanValue();

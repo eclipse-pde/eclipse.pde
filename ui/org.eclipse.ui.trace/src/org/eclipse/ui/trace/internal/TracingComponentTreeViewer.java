@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 IBM Corporation and others.
+ * Copyright (c) 2011, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,7 +31,7 @@ public class TracingComponentTreeViewer extends FilteredTree {
 	public TracingComponentTreeViewer(final Composite parent) {
 
 		super(parent, SWT.NONE, new TracingComponentViewerFilter(), true);
-		this.setInitialText(Messages.filterSearchText);
+		setInitialText(Messages.filterSearchText);
 	}
 
 	@Override
@@ -43,8 +43,8 @@ public class TracingComponentTreeViewer extends FilteredTree {
 	@Override
 	public void setEnabled(final boolean enabled) {
 
-		this.filterComposite.setEnabled(enabled);
-		this.getViewer().getTree().setEnabled(enabled);
-		this.getFilterControl().setEnabled(enabled);
+		filterComposite.setEnabled(enabled);
+		getViewer().getTree().setEnabled(enabled);
+		getFilterControl().setEnabled(enabled);
 	}
 }

@@ -11,7 +11,6 @@
 package org.eclipse.ui.trace.internal.utils;
 
 import org.eclipse.osgi.service.debug.DebugOptions;
-import org.eclipse.osgi.service.debug.DebugTrace;
 import org.eclipse.ui.trace.internal.TracingUIActivator;
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -27,19 +26,11 @@ public class DebugOptionsHandler {
 	 */
 	@SuppressWarnings({"unchecked", "rawtypes"})
 	public static DebugOptions getDebugOptions() {
-
-		if (TracingUIActivator.DEBUG) {
-			TRACE.traceEntry(null);
-		}
 		if (DebugOptionsHandler.debugTracker == null) {
 			DebugOptionsHandler.debugTracker = new ServiceTracker(TracingUIActivator.getDefault().getBundle().getBundleContext(), DebugOptions.class.getName(), null);
 			DebugOptionsHandler.debugTracker.open();
 		}
-		final DebugOptions debugOptions = (DebugOptions) DebugOptionsHandler.debugTracker.getService();
-		if (TracingUIActivator.DEBUG) {
-			TRACE.traceExit(null, debugOptions);
-		}
-		return debugOptions;
+		return (DebugOptions) DebugOptionsHandler.debugTracker.getService();
 	}
 
 	/**
@@ -48,15 +39,7 @@ public class DebugOptionsHandler {
 	 * @return Returns true of tracing is enabled for this product; Otherwise false.
 	 */
 	public static boolean isTracingEnabled() {
-
-		if (TracingUIActivator.DEBUG) {
-			TRACE.traceEntry(null);
-		}
-		boolean result = DebugOptionsHandler.getDebugOptions().isDebugEnabled();
-		if (TracingUIActivator.DEBUG) {
-			TRACE.traceExit(null, Boolean.valueOf(result));
-		}
-		return result;
+		return DebugOptionsHandler.getDebugOptions().isDebugEnabled();
 	}
 
 	/**
@@ -67,14 +50,7 @@ public class DebugOptionsHandler {
 	 *            enabled.
 	 */
 	public static void setDebugEnabled(boolean value) {
-
-		if (TracingUIActivator.DEBUG) {
-			TRACE.traceEntry(null);
-		}
 		DebugOptionsHandler.getDebugOptions().setDebugEnabled(value);
-		if (TracingUIActivator.DEBUG) {
-			TRACE.traceExit(null);
-		}
 	}
 
 	/**
@@ -97,9 +73,6 @@ public class DebugOptionsHandler {
 	/** The debug service for this product */
 	@SuppressWarnings("rawtypes")
 	private static ServiceTracker debugTracker = null;
-
-	/** Trace object for this bundle */
-	protected static DebugTrace TRACE = TracingUIActivator.getDefault().getTrace();
 
 	/**
 	 * Flag is set in activator if debug options were set using debug mode and trace files rather than preferences
