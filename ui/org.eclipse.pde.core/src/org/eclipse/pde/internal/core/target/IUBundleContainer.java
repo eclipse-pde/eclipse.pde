@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 IBM Corporation and others.
+ * Copyright (c) 2009, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -72,6 +72,11 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	public static final int INCLUDE_SOURCE = 1 << 2;
 
 	/**
+	 * Whether this container should execute the configure phase after fetching the selected units
+	 */
+	public static final int INCLUDE_CONFIGURE_PHASE = 1 << 3;
+
+	/**
 	 * IU identifiers.
 	 */
 	private String[] fIds;
@@ -121,7 +126,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 * @param ids IU identifiers
 	 * @param versions IU versions
 	 * @param repositories metadata repositories used to search for IU's or <code>null</code> for default set
-	 * @param resolutionFlags bitmask of flags to control IU resolution, possible flags are {@link IUBundleContainer#INCLUDE_ALL_ENVIRONMENTS}, {@link IUBundleContainer#INCLUDE_REQUIRED}, {@link IUBundleContainer#INCLUDE_SOURCE}
+	 * @param resolutionFlags bitmask of flags to control IU resolution, possible flags are {@link IUBundleContainer#INCLUDE_ALL_ENVIRONMENTS}, {@link IUBundleContainer#INCLUDE_REQUIRED}, {@link IUBundleContainer#INCLUDE_SOURCE}, {@link IUBundleContainer#INCLUDE_CONFIGURE_PHASE}
 	 */
 	IUBundleContainer(String[] ids, String[] versions, URI[] repositories, int resolutionFlags) {
 		fIds = ids;
@@ -143,7 +148,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 * 
 	 * @param units IU's
 	 * @param repositories metadata repositories used to search for IU's or <code>null</code> for default set
-	 * @param resolutionFlags bitmask of flags to control IU resolution, possible flags are {@link IUBundleContainer#INCLUDE_ALL_ENVIRONMENTS}, {@link IUBundleContainer#INCLUDE_REQUIRED}, {@link IUBundleContainer#INCLUDE_SOURCE}
+	 * @param resolutionFlags bitmask of flags to control IU resolution, possible flags are {@link IUBundleContainer#INCLUDE_ALL_ENVIRONMENTS}, {@link IUBundleContainer#INCLUDE_REQUIRED}, {@link IUBundleContainer#INCLUDE_SOURCE}, {@link IUBundleContainer#INCLUDE_CONFIGURE_PHASE}
 	 */
 	IUBundleContainer(IInstallableUnit[] units, URI[] repositories, int resolutionFlags) {
 		fIds = new String[units.length];
@@ -431,6 +436,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 			result &= iuContainer.getIncludeAllRequired() == getIncludeAllRequired();
 			result &= iuContainer.getIncludeAllEnvironments() == getIncludeAllEnvironments();
 			result &= iuContainer.getIncludeSource() == getIncludeSource();
+			result &= iuContainer.getIncludeConfigurePhase() == getIncludeConfigurePhase();
 			return result && isEqualOrNull(fIds, iuContainer.fIds) && isEqualOrNull(fVersions, iuContainer.fVersions) && isEqualOrNull(fRepos, iuContainer.fRepos);
 		}
 		return false;
@@ -538,6 +544,18 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	}
 
 	/**
+	 * Returns whether or not the configuration phase should be executed while installing the IUS
+	 * 
+	 * @return whether or not the configuration phase should be executed
+	 */
+	public boolean getIncludeConfigurePhase() {
+		// if this container has not been associated with a container, return its own value
+		if (fSynchronizer == null)
+			return (fFlags & INCLUDE_CONFIGURE_PHASE) == INCLUDE_CONFIGURE_PHASE;
+		return fSynchronizer.getIncludeConfigurePhase();
+	}
+
+	/**
 	 * Returns the installable units defined by this container
 	 * 
 	 * @return the discovered IUs
@@ -600,6 +618,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		fSynchronizer.setIncludeAllRequired((fFlags & INCLUDE_REQUIRED) == INCLUDE_REQUIRED);
 		fSynchronizer.setIncludeAllEnvironments((fFlags & INCLUDE_ALL_ENVIRONMENTS) == INCLUDE_ALL_ENVIRONMENTS);
 		fSynchronizer.setIncludeSource((fFlags & INCLUDE_SOURCE) == INCLUDE_SOURCE);
+		fSynchronizer.setIncludeConfigurePhase((fFlags & INCLUDE_CONFIGURE_PHASE) == INCLUDE_CONFIGURE_PHASE);
 	}
 
 	/* (non-Javadoc)
@@ -621,6 +640,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		containerElement.setAttribute(TargetDefinitionPersistenceHelper.ATTR_INCLUDE_MODE, getIncludeAllRequired() ? TargetDefinitionPersistenceHelper.MODE_PLANNER : TargetDefinitionPersistenceHelper.MODE_SLICER);
 		containerElement.setAttribute(TargetDefinitionPersistenceHelper.ATTR_INCLUDE_ALL_PLATFORMS, Boolean.toString(getIncludeAllEnvironments()));
 		containerElement.setAttribute(TargetDefinitionPersistenceHelper.ATTR_INCLUDE_SOURCE, Boolean.toString(getIncludeSource()));
+		containerElement.setAttribute(TargetDefinitionPersistenceHelper.ATTR_INCLUDE_CONFIGURE_PHASE, Boolean.toString(getIncludeConfigurePhase()));
 		String[] ids = getIds();
 		Version[] versions = getVersions();
 		for (int i = 0; i < ids.length; i++) {

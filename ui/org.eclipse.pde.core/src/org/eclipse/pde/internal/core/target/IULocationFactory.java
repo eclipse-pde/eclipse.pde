@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 IBM Corporation and others.
+ * Copyright (c) 2011, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,6 +54,8 @@ public class IULocationFactory implements ITargetLocationFactory {
 			String includeMode = location.getAttribute(TargetDefinitionPersistenceHelper.ATTR_INCLUDE_MODE);
 			String includeAllPlatforms = location.getAttribute(TargetDefinitionPersistenceHelper.ATTR_INCLUDE_ALL_PLATFORMS);
 			String includeSource = location.getAttribute(TargetDefinitionPersistenceHelper.ATTR_INCLUDE_SOURCE);
+			String includeConfigurePhase = location.getAttribute(TargetDefinitionPersistenceHelper.ATTR_INCLUDE_CONFIGURE_PHASE);
+
 			NodeList list = location.getChildNodes();
 			List ids = new ArrayList();
 			List versions = new ArrayList();
@@ -94,6 +96,7 @@ public class IULocationFactory implements ITargetLocationFactory {
 			}
 			flags |= Boolean.valueOf(includeAllPlatforms).booleanValue() ? IUBundleContainer.INCLUDE_ALL_ENVIRONMENTS : 0;
 			flags |= Boolean.valueOf(includeSource).booleanValue() ? IUBundleContainer.INCLUDE_SOURCE : 0;
+			flags |= Boolean.valueOf(includeConfigurePhase).booleanValue() ? IUBundleContainer.INCLUDE_CONFIGURE_PHASE : 0;
 			IUBundleContainer targetLocation = new IUBundleContainer(iuIDs, iuVer, uris, flags);
 			return targetLocation;
 		}

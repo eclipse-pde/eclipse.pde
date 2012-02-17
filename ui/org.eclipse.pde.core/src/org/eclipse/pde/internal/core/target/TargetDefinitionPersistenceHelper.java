@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 IBM Corporation and others.
+ * Copyright (c) 2009, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -67,6 +67,7 @@ public class TargetDefinitionPersistenceHelper {
 	public static final String MODE_PLANNER = "planner"; //$NON-NLS-1$
 	static final String ATTR_INCLUDE_ALL_PLATFORMS = "includeAllPlatforms"; //$NON-NLS-1$
 	static final String ATTR_INCLUDE_SOURCE = "includeSource"; //$NON-NLS-1$
+	static final String ATTR_INCLUDE_CONFIGURE_PHASE = "includeConfigurePhase"; //$NON-NLS-1$
 	static final String ATTR_VERSION = "version"; //$NON-NLS-1$
 	static final String ATTR_CONFIGURATION = "configuration"; //$NON-NLS-1$
 	static final String ATTR_SEQUENCE_NUMBER = "sequenceNumber"; //$NON-NLS-1$

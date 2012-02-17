@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 IBM Corporation and others.
+ * Copyright (c) 2009, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -88,6 +88,7 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 	private Button fIncludeRequiredButton;
 	private Button fAllPlatformsButton;
 	private Button fIncludeSourceButton;
+	private Button fConfigurePhaseButton;
 	private Text fDetailsText;
 	private ProvisioningUI profileUI;
 
@@ -133,6 +134,7 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 		int flags = fIncludeRequiredButton.getSelection() ? IUBundleContainer.INCLUDE_REQUIRED : 0;
 		flags |= fAllPlatformsButton.getSelection() ? IUBundleContainer.INCLUDE_ALL_ENVIRONMENTS : 0;
 		flags |= fIncludeSourceButton.getSelection() ? IUBundleContainer.INCLUDE_SOURCE : 0;
+		flags |= fConfigurePhaseButton.getSelection() ? IUBundleContainer.INCLUDE_CONFIGURE_PHASE : 0;
 		IUBundleContainer container = (IUBundleContainer) service.newIULocation(fAvailableIUGroup.getCheckedLeafIUs(), fRepoLocation != null ? new URI[] {fRepoLocation} : null, flags);
 		return container;
 	}
@@ -302,6 +304,13 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 				warnIfGlobalSettingChanged();
 			}
 		});
+		fConfigurePhaseButton = SWTFactory.createCheckButton(slicerGroup, Messages.EditIUContainerPage_IncludeConfigurePhase, null, true, 1);
+		fConfigurePhaseButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				warnIfGlobalSettingChanged();
+			}
+		});
+
 	}
 
 	private void warnIfGlobalSettingChanged() {
@@ -322,6 +331,7 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 				noChange &= fIncludeRequiredButton.getSelection() == iuContainer.getIncludeAllRequired();
 				noChange &= fAllPlatformsButton.getSelection() == iuContainer.getIncludeAllEnvironments();
 				noChange &= fIncludeSourceButton.getSelection() == iuContainer.getIncludeSource();
+				noChange &= fConfigurePhaseButton.getSelection() == iuContainer.getIncludeConfigurePhase();
 			}
 		}
 		if (noChange) {
@@ -461,6 +471,7 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 			fIncludeRequiredButton.setSelection(fEditContainer.getIncludeAllRequired());
 			fAllPlatformsButton.setSelection(fEditContainer.getIncludeAllEnvironments());
 			fIncludeSourceButton.setSelection(fEditContainer.getIncludeSource());
+			fConfigurePhaseButton.setSelection(fEditContainer.getIncludeConfigurePhase());
 		} else {
 			// If we are creating a new container, but there is an existing iu container we should use it's settings (otherwise we overwrite them)
 			ITargetLocation[] knownContainers = fTarget.getTargetLocations();
@@ -468,6 +479,9 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 				for (int i = 0; i < knownContainers.length; i++) {
 					if (knownContainers[i] instanceof IUBundleContainer) {
 						fIncludeRequiredButton.setSelection(((IUBundleContainer) knownContainers[i]).getIncludeAllRequired());
+						fAllPlatformsButton.setSelection(((IUBundleContainer) knownContainers[i]).getIncludeAllEnvironments());
+						fIncludeSourceButton.setSelection(((IUBundleContainer) knownContainers[i]).getIncludeSource());
+						fConfigurePhaseButton.setSelection(((IUBundleContainer) knownContainers[i]).getIncludeConfigurePhase());
 					}
 				}
 			}

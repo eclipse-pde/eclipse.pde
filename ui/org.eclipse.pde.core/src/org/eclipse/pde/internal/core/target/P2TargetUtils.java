@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 EclipseSource Inc. and others.
+ * Copyright (c) 2010, 2012 EclipseSource Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -99,6 +99,11 @@ public class P2TargetUtils {
 	static final String PROP_AUTO_INCLUDE_SOURCE = PDECore.PLUGIN_ID + ".autoIncludeSource"; //$NON-NLS-1$	
 
 	/**
+	 * Profile property that tracks whether or not the configuration phase should be executed when installing
+	 */
+	static final String PROP_INCLUDE_CONFIGURE_PHASE = PDECore.PLUGIN_ID + ".includeConfigure"; //$NON-NLS-1$
+
+	/**
 	 * Table mapping target location to synchronizer (P2TargetUtils) instance.
 	 */
 	private static Map synchronizers = new HashMap();
@@ -132,9 +137,18 @@ public class P2TargetUtils {
 	 * Whether this container should download and include source bundles for the selected units if the associated
 	 * source is available in the repository.
 	 * <p>
-	 * <code>false</code>by default
+	 * <code>false</code> by default
+	 * </p>
 	 */
 	private boolean fIncludeSource = false;
+
+	/**
+	 * Whether this container should execute the configure phase when installing the IUs
+	 * <p>
+	 * <code>false</code> by default
+	 * </p>
+	 */
+	private boolean fIncludeConfigurePhase = false;
 
 	/**
 	 * Whether or not this synchronizer is dirty by means other than target tweaks etc.
@@ -482,6 +496,10 @@ public class P2TargetUtils {
 			return false;
 		}
 
+		if (getIncludeConfigurePhase() != Boolean.valueOf(fProfile.getProperty(PROP_INCLUDE_CONFIGURE_PHASE)).booleanValue()) {
+			return false;
+		}
+
 		// check top level IU's. If any have been removed from the containers that are
 		// still in the profile, we need to recreate (rather than uninstall)
 		IUProfilePropertyQuery propertyQuery = new IUProfilePropertyQuery(PROP_INSTALLED_IU, Boolean.toString(true));
@@ -592,6 +610,24 @@ public class P2TargetUtils {
 	 */
 	public boolean getIncludeSource() {
 		return fIncludeSource;
+	}
+
+	/**
+	 * Set whether or not the configuration phase should be executed when installing the IUs
+	 * 
+	 * @param value whether or not to execute configuration phase
+	 */
+	public void setIncludeConfigurePhase(boolean value) {
+		fIncludeConfigurePhase = value;
+	}
+
+	/**
+	 * Returns whether or not the configuration phase should be executed when installing the IUs
+	 * 
+	 * @return whether or not to execute configuration phase
+	 */
+	public boolean getIncludeConfigurePhase() {
+		return fIncludeConfigurePhase;
 	}
 
 	/**
@@ -718,6 +754,7 @@ public class P2TargetUtils {
 		properties.put(PROP_PROVISION_MODE, getProvisionMode(target));
 		properties.put(PROP_ALL_ENVIRONMENTS, Boolean.toString(getIncludeAllEnvironments()));
 		properties.put(PROP_AUTO_INCLUDE_SOURCE, Boolean.toString(getIncludeSource()));
+		properties.put(PROP_INCLUDE_CONFIGURE_PHASE, Boolean.toString(getIncludeConfigurePhase()));
 		fProfile = registry.addProfile(getProfileId(target), properties);
 	}
 
@@ -926,9 +963,13 @@ public class P2TargetUtils {
 		plan.setProfileProperty(PROP_PROVISION_MODE, mode);
 		plan.setProfileProperty(PROP_ALL_ENVIRONMENTS, Boolean.toString(getIncludeAllEnvironments()));
 		plan.setProfileProperty(PROP_AUTO_INCLUDE_SOURCE, Boolean.toString(getIncludeSource()));
+		plan.setProfileProperty(PROP_INCLUDE_CONFIGURE_PHASE, Boolean.toString(getIncludeConfigurePhase()));
 		plan.setProfileProperty(PROP_SEQUENCE_NUMBER, Integer.toString(((TargetDefinition) definition).getSequenceNumber()));
 	}
 
+	/**
+	 * @return the phase set to execute, includes the configuration phase if {@link #getIncludeConfigurePhase()} is <code>true<code>
+	 */
 	private IPhaseSet createPhaseSet() {
 		ArrayList phases = new ArrayList(4);
 		phases.add(new Collect(100));
@@ -936,7 +977,9 @@ public class P2TargetUtils {
 		phases.add(new Uninstall(50, true));
 		phases.add(new Install(50));
 		phases.add(new CollectNativesPhase(100));
-		phases.add(new Configure(100));
+		if (getIncludeConfigurePhase()) {
+			phases.add(new Configure(100));
+		}
 
 		return new PhaseSet((Phase[]) phases.toArray(new Phase[phases.size()]));
 	}
