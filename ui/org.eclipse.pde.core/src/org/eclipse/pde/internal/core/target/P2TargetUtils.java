@@ -104,7 +104,7 @@ public class P2TargetUtils {
 	static final String PROP_INCLUDE_CONFIGURE_PHASE = PDECore.PLUGIN_ID + ".includeConfigure"; //$NON-NLS-1$
 
 	/**
-	 * Table mapping target location to synchronizer (P2TargetUtils) instance.
+	 * Table mapping {@link ITargetDefinition} to synchronizer (P2TargetUtils) instance.
 	 */
 	private static Map synchronizers = new HashMap();
 
@@ -154,14 +154,6 @@ public class P2TargetUtils {
 	 * Whether or not this synchronizer is dirty by means other than target tweaks etc.
 	 */
 	private boolean fDirty = false;
-
-	public P2TargetUtils(ITargetDefinition target) {
-		try {
-			synchronizers.put(target.getHandle().getMemento(), this);
-		} catch (CoreException e) {
-			// This should never happen
-		}
-	}
 
 	/**
 	 * Deletes any profiles associated with target definitions that no longer exist
@@ -659,19 +651,13 @@ public class P2TargetUtils {
 	 * @return the discovered or created synchronizer
 	 */
 	static synchronized P2TargetUtils getSynchronizer(ITargetDefinition target) {
-		try {
-			String memento = target.getHandle().getMemento();
-			P2TargetUtils result = (P2TargetUtils) synchronizers.get(memento);
-			if (result != null)
-				return result;
-
-			result = new P2TargetUtils(target);
-			synchronizers.put(memento, result);
+		P2TargetUtils result = (P2TargetUtils) synchronizers.get(target);
+		if (result != null)
 			return result;
-		} catch (CoreException e) {
-			// Should never happen
-			throw new IllegalStateException(e.toString());
-		}
+
+		result = new P2TargetUtils();
+		synchronizers.put(target, result);
+		return result;
 	}
 
 	/**
