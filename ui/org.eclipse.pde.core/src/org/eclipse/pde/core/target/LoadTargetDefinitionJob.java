@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 IBM Corporation and others.
+ * Copyright (c) 2009, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -573,17 +573,50 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 
 			pref.setValue(ICoreConstants.EXTERNAL_FEATURES, featureList.toString());
 
-			Job job = new TargetPlatformResetJob(state);
-			job.schedule();
-			try {
-				job.join();
-			} catch (InterruptedException e) {
-			}
+			// Reset the PDE models based on the new state
+			performPlatformReset(state);
+
 		} finally {
 			if (monitor != null) {
 				monitor.done();
 			}
 			subMon.done();
+		}
+	}
+
+	/**
+	 * Resets the PDE workspace models with the new state information
+	 */
+	private void performPlatformReset(PDEState state) {
+		EclipseHomeInitializer.resetEclipseHomeVariable();
+		PDECore.getDefault().getSourceLocationManager().reset();
+		PDECore.getDefault().getJavadocLocationManager().reset();
+		IPluginModelBase[] models = state.getTargetModels();
+		removeDisabledBundles(state, models);
+		PluginModelManager manager = PDECore.getDefault().getModelManager();
+		manager.getExternalModelManager().setModels(models);
+		// trigger Extension Registry reloaded before resetState call so listeners can update their extensions points accurately when target is reloaded
+		PDECore.getDefault().getExtensionsRegistry().targetReloaded();
+		manager.resetState(state);
+		PDECore.getDefault().getFeatureModelManager().targetReloaded();
+	}
+
+	/**
+	 * Iterates through the given set of models and removes models from the state that are not enabled (unchecked on the content tab)
+	 * 
+	 * @param state state to remove models from
+	 * @param models list of models to look for disabled models
+	 */
+	private void removeDisabledBundles(PDEState state, IPluginModelBase[] models) {
+		int number = models.length;
+		for (int i = 0; i < models.length; i++) {
+			if (!models[i].isEnabled()) {
+				state.removeBundleDescription(models[i].getBundleDescription());
+				number -= 1;
+			}
+		}
+		if (number < models.length) {
+			state.resolveState(true);
 		}
 	}
 }

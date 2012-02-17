@@ -286,8 +286,6 @@ public class PDECoreMessages extends NLS {
 
 	public static String FeatureExportOperation_workspaceBuildErrorsFoundDuringExport;
 
-	public static String TargetPlatformResetJob_resetTarget;
-
 	public static String XMLErrorReporter_ExternalEntityResolution;
 
 	public static String ExtensionsErrorReporter_InvalidSchema;
