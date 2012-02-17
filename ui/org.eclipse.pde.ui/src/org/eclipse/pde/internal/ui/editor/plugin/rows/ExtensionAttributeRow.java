@@ -21,9 +21,12 @@ import org.eclipse.pde.internal.ui.editor.text.IControlHoverContentProvider;
 import org.eclipse.pde.internal.ui.editor.text.PDETextHover;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Hyperlink;
+import org.eclipse.ui.keys.IBindingService;
 
 public abstract class ExtensionAttributeRow implements IControlHoverContentProvider {
 	protected IContextPart part;
@@ -100,16 +103,27 @@ public abstract class ExtensionAttributeRow implements IControlHoverContentProvi
 	}
 
 	public String getHoverContent(Control c) {
-		if (c instanceof Label || c instanceof Hyperlink)
-			return getDescription();
+		if (c instanceof Label || c instanceof Hyperlink) {
+			// reveal keybinding for shortcut to filtering
+			String filterBinding = ((IBindingService) PlatformUI.getWorkbench().getAdapter(IBindingService.class)).getBestActiveBindingFormattedFor(ActionFactory.FIND.getCommandId());
+			String findKeybinding = (getValue().length() > 0) ? "<br><br>Press " + filterBinding + " within text to filter for this attribute." : ""; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			String description = getDescription().trim(); // prettify help text
+			if (description.length() > 0) {
+				String first = String.valueOf(description.charAt(0)); // always make first letter uppercase
+				return getDescription().replaceFirst(first, first.toUpperCase()) + findKeybinding;
+			}
+			return description;
+		}
 		if (c instanceof Text) {
 			String text = ((Text) c).getText();
 			ISchemaAttribute sAtt = getAttribute();
 			String translated = null;
-			if (input != null && sAtt != null && sAtt.isTranslatable() && text.startsWith("%")) //$NON-NLS-1$
+			if (input != null && sAtt != null && sAtt.isTranslatable() && text.startsWith("%")) { //$NON-NLS-1$
 				translated = input.getResourceString(text);
-			if (!text.equals(translated))
+			}
+			if (!text.equals(translated)) {
 				return translated;
+		}
 		}
 		return null;
 	}

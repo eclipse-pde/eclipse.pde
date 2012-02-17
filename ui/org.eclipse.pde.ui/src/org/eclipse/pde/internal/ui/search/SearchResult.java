@@ -7,6 +7,7 @@
  * 
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sascha Becher <s.becher@qualitype.de> - bug 360894
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.search;
 
@@ -29,9 +30,15 @@ import org.eclipse.ui.texteditor.ITextEditor;
 
 public class SearchResult extends AbstractTextSearchResult implements IEditorMatchAdapter {
 	protected ISearchQuery fQuery;
+	private final ImageDescriptor fImage;
 
 	public SearchResult(ISearchQuery query) {
 		fQuery = query;
+		if (fQuery instanceof FindExtensionsByAttributeQuery) {
+			fImage = PDEPluginImages.DESC_ESEARCH_OBJ;
+		} else {
+			fImage = PDEPluginImages.DESC_PSEARCH_OBJ;
+		}
 	}
 
 	/* (non-Javadoc)
@@ -60,7 +67,7 @@ public class SearchResult extends AbstractTextSearchResult implements IEditorMat
 	 * @see org.eclipse.search.ui.ISearchResult#getImageDescriptor()
 	 */
 	public ImageDescriptor getImageDescriptor() {
-		return PDEPluginImages.DESC_PSEARCH_OBJ;
+		return fImage;
 	}
 
 	/* (non-Javadoc)

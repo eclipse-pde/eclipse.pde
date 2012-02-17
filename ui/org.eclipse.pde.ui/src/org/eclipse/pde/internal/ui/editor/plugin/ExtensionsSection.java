@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,14 +8,19 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Peter Friese <peter.friese@gentleware.com> - bug 194529, bug 196867
+ *     Sascha Becher <s.becher@qualitype.com> - bug 360894
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
 import java.util.*;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.IMessageProvider;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
@@ -30,54 +35,68 @@ import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.core.text.plugin.PluginBaseNode;
+import org.eclipse.pde.internal.core.text.plugin.PluginExtensionNode;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
-import org.eclipse.pde.internal.ui.editor.actions.CollapseAction;
-import org.eclipse.pde.internal.ui.editor.actions.SortAction;
+import org.eclipse.pde.internal.ui.editor.actions.*;
 import org.eclipse.pde.internal.ui.editor.contentassist.XMLElementProposalComputer;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.TreePart;
+import org.eclipse.pde.internal.ui.search.ExtensionsPatternFilter;
 import org.eclipse.pde.internal.ui.search.PluginSearchActionGroup;
-import org.eclipse.pde.internal.ui.util.SWTUtil;
+import org.eclipse.pde.internal.ui.util.*;
 import org.eclipse.pde.internal.ui.wizards.extension.ExtensionEditorWizard;
 import org.eclipse.pde.internal.ui.wizards.extension.NewExtensionWizard;
 import org.eclipse.pde.ui.IExtensionEditorWizard;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.Cursor;
-import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.internal.BidiUtil;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.dialogs.PatternFilter;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
+import org.eclipse.ui.progress.WorkbenchJob;
 
 public class ExtensionsSection extends TreeSection implements IModelChangedListener, IPropertyChangeListener {
+	private static final int REFRESHJOB_DELAY_TIME = 1200; // milliseconds to wait
+	private static final int ACCELERATED_SCROLLING = 15; // lines to skip
 	private static final int BUTTON_MOVE_DOWN = 4;
 	private static final int BUTTON_MOVE_UP = 3;
 	private static final int BUTTON_EDIT = 2;
 	private static final int BUTTON_REMOVE = 1;
+	private static final int BUTTON_ADD = 0;
 	private TreeViewer fExtensionTree;
 	private Image fExtensionImage;
 	private Image fGenericElementImage;
 	private FormFilteredTree fFilteredTree;
+	private ExtensionsPatternFilter fPatternFilter;
 	private SchemaRegistry fSchemaRegistry;
 	private Hashtable fEditorWizards;
 	private SortAction fSortAction;
 	private CollapseAction fCollapseAction;
+	private ToggleExpandStateAction fExpandAction;
+	private FilterRelatedExtensionsAction fFilterRelatedAction;
+	private SearchExtensionsAction fSearchAction;
+	private boolean fBypassFilterDelay = false;
 
-	private static final int BUTTON_ADD = 0;
-
-	private static final String[] COMMON_LABEL_PROPERTIES = {"label", //$NON-NLS-1$
-			"name", //$NON-NLS-1$
-			"id", //$NON-NLS-1$
-			"commandId", //$NON-NLS-1$
-			"activityId"}; //$NON-NLS-1$ 
+	/**
+	 * <code>label, name, class, id, commandId, property, activityId, attribute, value</code>
+	 * <br>
+	 * While adding elements to the array at the end is possible without concern, changing 
+	 * previous elements requires to refactor occurences with indexed access to the array.
+	 */
+	// TODO common label properties might be configured through preferences
+	public static final String[] COMMON_LABEL_ATTRIBUTES = {"label", //$NON-NLS-1$
+			"name", "locationURI", "class", "id", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			"commandId", "property", "activityId", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			"attribute", "value"}; //$NON-NLS-1$ //$NON-NLS-2$
 
 	private static final String[] VALID_IMAGE_TYPES = {"png", "bmp", "ico", "gif", "jpg", "tiff"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+	private static final String MENU_NEW_ID = "NewMenu"; //$NON-NLS-1$
 
 	class ExtensionContentProvider extends DefaultContentProvider implements ITreeContentProvider {
 		public Object[] getChildren(Object parent) {
@@ -112,13 +131,20 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		}
 	}
 
-	class ExtensionLabelProvider extends LabelProvider {
+	class ExtensionLabelProvider extends LabelProvider implements IFontProvider {
 		public String getText(Object obj) {
 			return resolveObjectName(obj);
 		}
 
 		public Image getImage(Object obj) {
 			return resolveObjectImage(obj);
+		}
+
+		public Font getFont(Object element) {
+			if (fFilteredTree.isFiltered() && fPatternFilter.getMatchingLeafs().contains(element)) {
+				return JFaceResources.getFontRegistry().getBold(JFaceResources.DIALOG_FONT);
+			}
+			return null;
 		}
 	}
 
@@ -221,9 +247,11 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		section.setText(PDEUIMessages.ManifestEditor_DetailExtension_title);
 		initialize((IPluginModelBase) getPage().getModel());
 		createSectionToolbar(section, toolkit);
+		// accelerated tree scrolling enabled
+		fFilteredTree.addMouseWheelListener(new AcceleratedTreeScrolling(fExtensionTree.getTree(), ACCELERATED_SCROLLING));
 		// Create the adapted listener for the filter entry field
 		fFilteredTree.createUIListenerEntryFilter(this);
-		Text filterText = fFilteredTree.getFilterControl();
+		final Text filterText = fFilteredTree.getFilterControl();
 		if (filterText != null) {
 			filterText.addModifyListener(new ModifyListener() {
 				public void modifyText(ModifyEvent e) {
@@ -252,9 +280,33 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 				}
 			}
 		});
+		// Add action to filter tree with some of the selection's attributes
+		fFilterRelatedAction = new FilterRelatedExtensionsAction(fExtensionTree, fFilteredTree, this, false);
+		toolBarManager.add(fFilterRelatedAction);
+		// Add action to search all workspace plugins with current filtering applied to the tree viewer
+		fSearchAction = new SearchExtensionsAction(fFilteredTree, PDEUIMessages.ExtensionsPage_searchWithExtensionsFilter);
+		toolBarManager.add(fSearchAction);
+		// Add separator
+		Separator separator = new Separator();
+		toolBarManager.add(separator);
 		// Add sort action to the tool bar
-		fSortAction = new SortAction(fExtensionTree, PDEUIMessages.ExtensionsPage_sortAlpha, null, null, this);
+		fSortAction = new SortAction(fExtensionTree, PDEUIMessages.ExtensionsPage_sortAlpha, null, null, this) {
+			public void run() {
+				Object[] expanded = fFilteredTree.getViewer().getVisibleExpandedElements();
+				try {
+					fFilteredTree.setRedraw(false);
+					super.run();
+					// bugfix: retain tree expand state after sort action
+					fFilteredTree.getViewer().setExpandedElements(expanded);
+				} finally {
+					fFilteredTree.setRedraw(true);
+				}
+			}
+		};
 		toolBarManager.add(fSortAction);
+		// Add expand selected leafs action to the toolbar
+		fExpandAction = new ToggleExpandStateAction(fFilteredTree, fExtensionTree);
+		toolBarManager.add(fExpandAction);
 		// Add collapse action to the tool bar
 		fCollapseAction = new CollapseAction(fExtensionTree, PDEUIMessages.ExtensionsPage_collapseAll);
 		toolBarManager.add(fCollapseAction);
@@ -309,11 +361,13 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#doGlobalAction(java.lang.String)
 	 */
 	public boolean doGlobalAction(String actionId) {
-
+		if (actionId.equals(ActionFactory.FIND.getId()) && fFilterRelatedAction != null) {
+			fFilterRelatedAction.run();
+			return true;
+		}
 		if (!isEditable()) {
 			return false;
 		}
-
 		if (actionId.equals(ActionFactory.DELETE.getId())) {
 			handleDelete();
 			return true;
@@ -348,13 +402,14 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 
 	protected void fillContextMenu(IMenuManager manager) {
 		ISelection selection = fExtensionTree.getSelection();
-		IStructuredSelection ssel = (IStructuredSelection) selection;
+		final IStructuredSelection ssel = (IStructuredSelection) selection;
 		if (ssel.size() == 1) {
 			Object object = ssel.getFirstElement();
 			if (object instanceof IPluginParent) {
 				IPluginParent parent = (IPluginParent) object;
 				if (parent.getModel().getUnderlyingResource() != null) {
-					fillContextMenu(getPage(), parent, manager);
+					boolean removeEnabled = !fFilteredTree.isFiltered() || isRemoveEnabled(ssel);
+					fillContextMenu(getPage(), parent, manager, false, removeEnabled);
 					manager.add(new Separator());
 				}
 			}
@@ -366,6 +421,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 				manager.add(new Separator());
 			}
 		} else if (ssel.size() > 1) {
+			boolean removeEnabled = !fFilteredTree.isFiltered() || isRemoveEnabled(ssel);
 			// multiple
 			Action delAction = new Action() {
 				public void run() {
@@ -375,14 +431,34 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 			delAction.setText(PDEUIMessages.Actions_delete_label);
 			manager.add(delAction);
 			manager.add(new Separator());
-			delAction.setEnabled(isEditable());
+			delAction.setEnabled(isEditable() && removeEnabled);
+		}
+		if (ssel.size() > 0) {
+			if (ExtensionsFilterUtil.isFilterRelatedEnabled(ssel)) {
+				FilterRelatedExtensionsAction filterRelatedAction = new FilterRelatedExtensionsAction(fExtensionTree, fFilteredTree, this, true);
+				manager.add(filterRelatedAction);
+				SearchExtensionsAction searchRelatedAction = new SearchExtensionsAction(ssel, PDEUIMessages.Actions_search_relatedPluginElements);
+				manager.add(searchRelatedAction);
+				manager.add(new Separator());
+			}
 		}
 		manager.add(new Separator());
+
+		if (fFilteredTree.isFiltered()) {
+			// Add action to reveal all extensions when the tree is in filter mode
+			ShowAllExtensionsAction fShowAllAction = new ShowAllExtensionsAction(getPage().getModel(), fFilteredTree, fPatternFilter);
+			if (manager.find(MENU_NEW_ID) != null) {
+				manager.insertAfter(MENU_NEW_ID, fShowAllAction);
+			} else {
+				manager.add(fShowAllAction);
+				manager.add(new Separator());
+			}
+		}
 		if (ssel.size() < 2) { // only cut things when the selection is one
 			getPage().getPDEEditor().getContributor().addClipboardActions(manager);
 		}
 		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(manager, false);
-
+		this.fFilteredTree.update();
 	}
 
 	static IMenuManager fillContextMenu(PDEFormPage page, final IPluginParent parent, IMenuManager manager) {
@@ -394,7 +470,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 	}
 
 	static IMenuManager fillContextMenu(PDEFormPage page, final IPluginParent parent, IMenuManager manager, boolean addSiblingItems, boolean fullMenu) {
-		MenuManager menu = new MenuManager(PDEUIMessages.Menus_new_label);
+		MenuManager menu = new MenuManager(PDEUIMessages.Menus_new_label, MENU_NEW_ID);
 		IPluginExtension extension = getExtension(parent);
 		ISchema schema = getSchema(extension);
 		if (schema == null) {
@@ -493,6 +569,45 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		}
 	}
 
+	public FormFilteredTree getFormFilteredTree() {
+		return fFilteredTree;
+	}
+
+	/**
+	 * Adds another value to filter text and a preceding separator character if necessary.
+	 * Empty values as well as <code>true</code> and <code>false</code> are omitted.
+	 * 
+	 * @param attributeValue Value to be trimmed and added to the filter text
+	 * @param clearFilterText When <code>true</code> the filter text is replaced with the attribute value, appended otherwise.
+	 */
+	public void addAttributeToFilter(String attributeValue, boolean clearFilterText) {
+		Text filterControl = fFilteredTree.getFilterControl();
+		if (filterControl != null && attributeValue != null) {
+			String trimmedValue = attributeValue.trim();
+			if (trimmedValue.length() > 0 && ExtensionsFilterUtil.isNotBoolean(trimmedValue)) {
+				if (trimmedValue.startsWith("%")) {//$NON-NLS-1$
+					IPluginModelBase model = getPluginModelBase();
+					trimmedValue = ((model != null) ? model.getResourceString(trimmedValue) : trimmedValue).replaceAll("\"", ""); //$NON-NLS-1$ //$NON-NLS-2$
+				}
+				String filterPattern;
+				if (clearFilterText) {
+					filterPattern = trimmedValue;
+				} else {
+					filterPattern = filterControl.getText();
+					if (filterPattern.length() > 0 && !filterPattern.endsWith("/")) { //$NON-NLS-1$
+						filterPattern += "/"; //$NON-NLS-1$
+					}
+					filterPattern += trimmedValue;
+				}
+				if (filterPattern.indexOf('/') != -1) { // quote when
+					filterPattern = "\"" + filterPattern + "\""; //$NON-NLS-1$ //$NON-NLS-2$
+				}
+				setBypassFilterDelay(true); // force immediate job run
+				filterControl.setText(filterPattern);
+			}
+		}
+	}
+
 	private void handleNew() {
 		final IProject project = getPage().getPDEEditor().getCommonProject();
 		BusyIndicator.showWhile(fExtensionTree.getTree().getDisplay(), new Runnable() {
@@ -555,6 +670,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 
 	private void handleSelectAll() {
 		fExtensionTree.getTree().selectAll();
+		updateButtons(fFilteredTree.getViewer().getSelection());
 	}
 
 	private ArrayList getEditorWizards(IStructuredSelection selection) {
@@ -643,13 +759,62 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		// The model changed but the editor is still open, we should try to retain expansion, selection will be retained on its own
 		Object[] expanded = fExtensionTree.getExpandedElements();
 		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
-		fExtensionTree.getControl().setRedraw(false);
-		fExtensionTree.setInput(model.getPluginBase());
-		fExtensionTree.setExpandedElements(expanded);
-		fExtensionTree.getControl().setRedraw(true);
-		reportMissingExtensionPointSchemas(model.getPluginBase());
-		getManagedForm().fireSelectionChanged(ExtensionsSection.this, fExtensionTree.getSelection());
-		super.refresh();
+		int[] indexPath = getTreeIndexPath(fExtensionTree.getTree());
+		try {
+			fExtensionTree.getControl().setRedraw(false);
+			fExtensionTree.setInput(model.getPluginBase());
+			fExtensionTree.setExpandedElements(expanded);
+
+			reportMissingExtensionPointSchemas(model.getPluginBase());
+			getManagedForm().fireSelectionChanged(ExtensionsSection.this, fExtensionTree.getSelection());
+			super.refresh();
+
+			if (indexPath != null) {
+				// fix for Bug 371066
+				revealTopItem(fExtensionTree.getTree(), indexPath);
+			}
+		} finally {
+			fExtensionTree.getControl().setRedraw(true);
+		}
+	}
+
+	private static int[] getTreeIndexPath(Tree tree) {
+		int[] indexPath = null;
+		if (tree != null) {
+			TreeItem item = tree.getTopItem();
+			int count = 1;
+			while (item != null && (item = item.getParentItem()) != null) {
+				count++;
+			}
+			indexPath = new int[count];
+			int index = 0;
+			item = tree.getTopItem();
+			while (item != null && index < count) {
+				TreeItem parent = item.getParentItem();
+				if (parent != null) {
+					indexPath[index++] = parent.indexOf(item);
+				} else {
+					indexPath[index++] = tree.indexOf(item);
+				}
+				item = parent;
+			}
+		}
+		return indexPath;
+	}
+
+	private static void revealTopItem(Tree tree, int[] indexPath) {
+		TreeItem itemFound = null;
+		for (int i = indexPath.length - 1; i >= 0; i--) {
+			int index = indexPath[i];
+			if (itemFound != null) {
+				itemFound = (itemFound.getItemCount() > index) ? itemFound.getItem(indexPath[i]) : null;
+			} else if (i == indexPath.length - 1) {
+				itemFound = (tree.getItemCount() > index) ? tree.getItem(indexPath[i]) : null;
+			}
+		}
+		if (itemFound != null) {
+			tree.setTopItem(itemFound);
+		}
 	}
 
 	public void modelChanged(IModelChangedEvent event) {
@@ -669,6 +834,18 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 			IPluginObject pobj = (IPluginObject) changeObject;
 			IPluginObject parent = changeObject instanceof IPluginExtension ? ((IPluginModelBase) getPage().getModel()).getPluginBase() : pobj.getParent();
 			if (event.getChangeType() == IModelChangedEvent.INSERT) {
+				// enables adding extensions while tree is filtered
+				if (fFilteredTree.isFiltered()) {
+					Object[] inserted = event.getChangedObjects();
+					for (int i = 0; i < inserted.length; i++) {
+						fPatternFilter.addElement(inserted[i]);
+					}
+					if (inserted.length == 1) {
+						fFilteredTree.getViewer().setSelection(new StructuredSelection(inserted[0]));
+					}
+				}
+
+				//
 				fExtensionTree.refresh(parent);
 				if (changeObject instanceof IPluginExtension) {
 					IPluginExtension ext = (IPluginExtension) changeObject;
@@ -809,9 +986,9 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 			if (labelAtt == null) {
 				// try some hard-coded attributes that
 				// are used frequently
-				for (int i = 0; i < COMMON_LABEL_PROPERTIES.length; i++) {
-					labelAtt = element.getAttribute(COMMON_LABEL_PROPERTIES[i]);
-					if (labelAtt != null)
+				for (int i = 0; i < COMMON_LABEL_ATTRIBUTES.length; i++) {
+					labelAtt = element.getAttribute(COMMON_LABEL_ATTRIBUTES[i]);
+					if (labelAtt != null && labelAtt.getValue().length() > 0)
 						break;
 				}
 				if (labelAtt == null) {
@@ -821,9 +998,14 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 						labelAtt = element.getAttributes()[0];
 				}
 			}
-			if (labelAtt != null && labelAtt.getValue() != null)
+			if (labelAtt != null && labelAtt.getValue() != null) {
 				fullName = stripShortcuts(labelAtt.getValue());
+				if (labelAtt.getName().equals(COMMON_LABEL_ATTRIBUTES[3])) { // remove package from handler class 
+					fullName = fullName.substring(fullName.lastIndexOf('.') + 1, fullName.length());
+				}
+			}
 			fullName = element.getResourceString(fullName);
+
 			if (fullNames)
 				return fullName != null ? fullName : baseName;
 			if (fullName == null)
@@ -836,12 +1018,25 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 				return fullName + " \u200f(\u200e" + baseName + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 			return fullName + " (" + baseName + ')'; //$NON-NLS-1$
 		}
-		return obj.toString();
+		if (obj != null) {
+			return obj.toString();
+		}
+		return new String();
 	}
 
 	public void setFocus() {
 		if (fExtensionTree != null)
 			fExtensionTree.getTree().setFocus();
+	}
+
+	/**
+	 * Temporarily bypasses default {@link FormFilteredTree#getRefreshJobDelay()} for several actions to immediatly start tree 
+	 * filtering. Only the next job to call <code>getRefreshJobDelay()</code> will be affected and reset this value.
+	 * 
+	 * @param bypassFilterDelay <code>true</code> bypasses the refresh job delay by overriding it with <code>0</code> 
+	 */
+	public void setBypassFilterDelay(boolean bypassFilterDelay) {
+		fBypassFilterDelay = bypassFilterDelay;
 	}
 
 	public static String stripShortcuts(String input) {
@@ -855,6 +1050,24 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 			output.append(c);
 		}
 		return output.toString();
+	}
+
+	public boolean canCopy(ISelection selection) {
+		// Partial fix for Bug 360079, enables Ctrl+C in filter text if plugin model is editable
+		if (fFilteredTree.getFilterControl().isFocusControl() && !selection.isEmpty()) {
+			return true;
+		}
+		// TODO enable copy also when plugin model is not editable
+		return super.canCopy(selection);
+	}
+
+	public boolean canPaste(Clipboard clipboard) {
+		// Partial fix for Bug 360079, enables Ctrl+V in filter text if plugin model is editable
+		if (fFilteredTree.getFilterControl().isFocusControl()) {
+			return true;
+		}
+		// TODO enable paste also when plugin model is not editable
+		return super.canPaste(clipboard);
 	}
 
 	/* (non-Javadoc)
@@ -1081,6 +1294,18 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 	}
 
 	private void updateButtons(Object item) {
+		if (fExpandAction != null) {
+			fExpandAction.setEnabled(ToggleExpandStateAction.isExpandable((IStructuredSelection) fExtensionTree.getSelection()));
+		}
+		if (fFilterRelatedAction != null) {
+			fFilterRelatedAction.setEnabled(ExtensionsFilterUtil.isFilterRelatedEnabled((IStructuredSelection) fExtensionTree.getSelection()));
+		}
+		if (fSearchAction != null) {
+			Text filterControl = fFilteredTree.getFilterControl();
+			boolean searchEnabled = filterControl != null && filterControl.getText().length() > 0;
+			fSearchAction.setEnabled(searchEnabled);
+		}
+
 		if (getPage().getModel().isEditable() == false)
 			return;
 		boolean sorted = fSortAction != null && fSortAction.isChecked();
@@ -1089,44 +1314,42 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 			getTreePart().setButtonEnabled(BUTTON_MOVE_DOWN, false);
 			return;
 		}
+		IStructuredSelection selection = (item instanceof IStructuredSelection) ? (IStructuredSelection) item : null;
 
 		boolean filtered = fFilteredTree.isFiltered();
 		boolean addEnabled = true;
-		boolean removeEnabled = false;
+		boolean removeEnabled = true;
 		boolean upEnabled = false;
 		boolean downEnabled = false;
 
-		if (item != null) {
-			removeEnabled = true;
-		}
 		if (filtered) {
 			// Fix for bug 194529 and bug 194828
-			addEnabled = false;
+			// Update: adding during filtering enabled by additional filter capability
+			addEnabled = true;
 			upEnabled = false;
 			downEnabled = false;
+			removeEnabled = isRemoveEnabled(selection);
 		} else {
-			if (item instanceof IStructuredSelection) {
-				if (((IStructuredSelection) item).size() == 1) {
-					Object selected = ((IStructuredSelection) item).getFirstElement();
-					if (selected instanceof IPluginElement) {
-						IPluginElement element = (IPluginElement) selected;
-						IPluginParent parent = (IPluginParent) element.getParent();
-						// check up
-						int index = parent.getIndexOf(element);
-						if (index > 0)
-							upEnabled = true;
-						if (index < parent.getChildCount() - 1)
-							downEnabled = true;
-					} else if (selected instanceof IPluginExtension) {
-						IPluginExtension extension = (IPluginExtension) selected;
-						IExtensions extensions = (IExtensions) extension.getParent();
-						int index = extensions.getIndexOf(extension);
-						int size = extensions.getExtensions().length;
-						if (index > 0)
-							upEnabled = true;
-						if (index < size - 1)
-							downEnabled = true;
-					}
+			if (selection != null && selection.size() == 1) {
+				Object selected = selection.getFirstElement();
+				if (selected instanceof IPluginElement) {
+					IPluginElement element = (IPluginElement) selected;
+					IPluginParent parent = (IPluginParent) element.getParent();
+					// check up
+					int index = parent.getIndexOf(element);
+					if (index > 0)
+						upEnabled = true;
+					if (index < parent.getChildCount() - 1)
+						downEnabled = true;
+				} else if (selected instanceof IPluginExtension) {
+					IPluginExtension extension = (IPluginExtension) selected;
+					IExtensions extensions = (IExtensions) extension.getParent();
+					int index = extensions.getIndexOf(extension);
+					int size = extensions.getExtensions().length;
+					if (index > 0)
+						upEnabled = true;
+					if (index < size - 1)
+						downEnabled = true;
 				}
 			}
 		}
@@ -1136,11 +1359,95 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		getTreePart().setButtonEnabled(BUTTON_MOVE_DOWN, downEnabled);
 	}
 
+	/**
+	 * Since filtering potentially hides children of extensions, removing them when they still have children is intransparent.
+	 * Needs to be called only when the tree is filtered.
+	 *  
+	 * @param selection selection to be tested
+	 * @return whether removing the selected elements is enabled
+	 */
+	boolean isRemoveEnabled(IStructuredSelection selection) {
+		if (selection != null) {
+			for (Iterator iterator = selection.iterator(); iterator.hasNext();) {
+				Object element = iterator.next();
+				if (element instanceof PluginExtensionNode) {
+					return ((PluginExtensionNode) element).getChildCount() == 0;
+				}
+			}
+		}
+		return true;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.TreeSection#createTreeViewer(org.eclipse.swt.widgets.Composite, int)
 	 */
 	protected TreeViewer createTreeViewer(Composite parent, int style) {
-		fFilteredTree = new FormFilteredTree(parent, style, new PatternFilter());
+		fPatternFilter = new ExtensionsPatternFilter();
+		fFilteredTree = new FormFilteredTree(parent, style, fPatternFilter) {
+			protected WorkbenchJob doCreateRefreshJob() {
+				final WorkbenchJob job = super.doCreateRefreshJob();
+				job.addJobChangeListener(new JobChangeAdapter() {
+					private ISelection selection;
+					private boolean aboutToRunPassed = false;
+
+					public void scheduled(IJobChangeEvent event) {
+						((ExtensionsPatternFilter) fFilteredTree.getPatternFilter()).clearMatchingLeafs();
+						selection = fExtensionTree.getSelection();
+					}
+
+					public void aboutToRun(IJobChangeEvent event) {
+						aboutToRunPassed = true;
+					}
+
+					/* 
+					 * Restores selection after tree refresh and expands tree up to matching leafs only
+					 */
+					public void done(IJobChangeEvent event) {
+						if (aboutToRunPassed) { // restoring is only required if the job actually ran
+							try {
+								fFilteredTree.setRedraw(false);
+								ExtensionsPatternFilter extensionsPatternFilter = ((ExtensionsPatternFilter) fFilteredTree.getPatternFilter());
+								fExtensionTree.collapseAll();
+								Object[] leafs = extensionsPatternFilter.getMatchingLeafsAsArray();
+								for (int i = 0; i < leafs.length; i++) {
+									fExtensionTree.expandToLevel(leafs[i], 0);
+								}
+								if (selection != null && !(selection.isEmpty())) {
+									fExtensionTree.setSelection(selection, true);
+								}
+							} finally {
+								fFilteredTree.setRedraw(true);
+							}
+						}
+					}
+				});
+				return job;
+			}
+
+			protected long getRefreshJobDelay() {
+				// Prolonged job delay time is required because of the attribute search being more costly in nature.
+				// This can block input to the filter text severly. Thus it shouldn't happen when typing slowly.
+				// The delay of 1500ms is bypassed by some actions that use the filter text to initiate searches or clear the text.
+				long delay = (fBypassFilterDelay) ? 0 : REFRESHJOB_DELAY_TIME;
+				setBypassFilterDelay(false); // reset afterwards
+				return delay;
+			}
+
+			protected void clearText() {
+				// bugfix: additional notification with textChanged() would cause a needless 2nd refresh job run
+				// which in turn would have a longer delay time than the 1st run.
+				setFilterText(""); //$NON-NLS-1$
+			}
+
+			protected void textChanged() {
+				String filterText = getFilterString();
+				if (filterText != null && filterText.length() == 0) {
+					// clearing the filter text doesn't require a refresh job delay
+					setBypassFilterDelay(true);
+				}
+				super.textChanged();
+			}
+		};
 		parent.setData("filtered", Boolean.TRUE); //$NON-NLS-1$
 		return fFilteredTree.getViewer();
 	}

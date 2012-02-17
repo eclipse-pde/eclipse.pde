@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sascha Becher <s.becher@qualitype.de> - bug 360894
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.search;
 
@@ -16,10 +17,14 @@ import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.plugin.PluginObjectNode;
-import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
+import org.eclipse.pde.internal.ui.editor.plugin.*;
 import org.eclipse.search.ui.text.Match;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.forms.IFormPart;
+import org.eclipse.ui.forms.IManagedForm;
+import org.eclipse.ui.forms.editor.IFormPage;
 import org.osgi.framework.Constants;
 
 // TODO this needs a rewrite
@@ -30,10 +35,25 @@ public class ManifestEditorOpener {
 		editorPart = ManifestEditor.open(match.getElement(), true);
 		if (editorPart != null && editorPart instanceof ManifestEditor) {
 			ManifestEditor editor = (ManifestEditor) editorPart;
-			IDocument doc = editor.getDocument(match);
-			if (doc != null) {
-				Match exact = findExactMatch(doc, match, editor);
-				editor.openToSourcePage(match.getElement(), exact.getOffset(), exact.getLength());
+			if (match.getBaseUnit() != AttributesMatch.UNIT_ATTRIBUTE_SEARCH_PATTERN) {
+				IDocument doc = editor.getDocument(match);
+				if (doc != null) {
+					Match exact = findExactMatch(doc, match, editor);
+					editor.openToSourcePage(match.getElement(), exact.getOffset(), exact.getLength());
+				}
+			} else { // open to extensions page and initialize filter with search result's pattern text
+				IFormPage page = editor.setActivePage(ExtensionsPage.PAGE_ID);
+				IManagedForm form = page.getManagedForm();
+				IFormPart parts[] = form.getParts();
+				if (parts != null && parts.length > 0) {
+					ExtensionsSection section = (ExtensionsSection) parts[0];
+					String searchPattern = ((AttributesMatch) match).getSearchPattern();
+					Text filterText = section.getFormFilteredTree().getFilterControl();
+					if (!filterText.getText().equals(searchPattern)) {
+						section.setBypassFilterDelay(true); // force immediate job run
+						filterText.setText(searchPattern);
+					}
+				}
 			}
 		}
 		return editorPart;

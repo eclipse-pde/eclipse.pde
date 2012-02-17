@@ -54,6 +54,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String DependencyPropertiesDialog_exportGroupText;
 
+	public static String ExtensionsPage_toggleExpandState;
+	public static String ExtensionsPage_searchWithExtensionsFilter;
 	public static String ExternalizeStringsOperation_editNames_addComment;
 
 	public static String ExternalizeStringsOperation_editNames_insertProperty;
@@ -1425,6 +1427,8 @@ public class PDEUIMessages extends NLS {
 	public static String EditorActions_revert;
 	public static String Actions_open_label;
 	public static String Actions_delete_label;
+	public static String Actions_filter_relatedPluginElements;
+	public static String Actions_search_relatedPluginElements;
 	public static String Actions_synchronizeVersions_label;
 
 	public static String Menus_new_label;
@@ -1501,6 +1505,8 @@ public class PDEUIMessages extends NLS {
 	public static String SearchAction_Declaration;
 	public static String ShowDescriptionAction_label;
 	public static String ShowDescriptionAction_title;
+	public static String ShowAllExtensionsAction_label;
+	public static String HideUnfilteredExtensionsAction_label;
 	public static String ShowSampleAction_installing;
 	public static String ShowSampleAction_title;
 	public static String ShowSampleAction_msgDesc;
