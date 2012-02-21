@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 IBM Corporation and others.
+ * Copyright (c) 2008, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.pde.api.tools.internal.model.StubApiComponent;
+import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
 import org.eclipse.pde.api.tools.internal.provisional.IApiAccess;
 import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
@@ -431,6 +432,10 @@ public class Reference implements IReference {
 						IApiTypeRoot classFile = Util.getClassFile(
 								new IApiComponent[] { sourceComponent },
 								interfacesNames[i]);
+						if (classFile == null) {
+							ApiPlugin.logErrorMessage("Class file for " + interfacesNames[i] + " was not found for " + sourceComponent.getName()); //$NON-NLS-1$ //$NON-NLS-2$
+							return false;
+						}
 						IApiType superinterface = classFile.getStructure();
 						if (superinterface != null && resolveMethod(sourceComponent, superinterface, methodName, methodSignature)) {
 							return true;
@@ -444,6 +449,10 @@ public class Reference implements IReference {
 					IApiTypeRoot classFile = Util.getClassFile(
 							new IApiComponent[] { sourceComponent },
 							superclassName);
+					if (classFile == null) {
+						ApiPlugin.logErrorMessage("Class file for " + superclassName + " was not found for " + sourceComponent.getName()); //$NON-NLS-1$ //$NON-NLS-2$
+						return false;
+					}
 					IApiType superclass = classFile.getStructure();
 					boolean resolved = resolveMethod(sourceComponent, superclass, methodName, methodSignature);
 					if (resolved) {
@@ -465,6 +474,10 @@ public class Reference implements IReference {
 					IApiTypeRoot classFile = Util.getClassFile(
 							new IApiComponent[] { sourceComponent },
 							superclassName);
+					if (classFile == null) {
+						ApiPlugin.logErrorMessage("Class file for " + superclassName + " was not found for " + sourceComponent.getName()); //$NON-NLS-1$ //$NON-NLS-2$
+						return false;
+					}
 					IApiType superclass = classFile.getStructure();
 					boolean resolved = resolveMethod(sourceComponent, superclass, methodName, methodSignature);
 					if (resolved) {
@@ -478,6 +491,10 @@ public class Reference implements IReference {
 							IApiTypeRoot classFile = Util.getClassFile(
 									new IApiComponent[] { sourceComponent },
 									interfacesNames[i]);
+							if (classFile == null) {
+								ApiPlugin.logErrorMessage("Class file for " + interfacesNames[i] + " was not found for " + sourceComponent.getName()); //$NON-NLS-1$ //$NON-NLS-2$
+								return false;
+							}
 							IApiType superinterface = classFile.getStructure();
 							if (superinterface != null && resolveMethod(sourceComponent, superinterface, methodName, methodSignature)) {
 								return true;
