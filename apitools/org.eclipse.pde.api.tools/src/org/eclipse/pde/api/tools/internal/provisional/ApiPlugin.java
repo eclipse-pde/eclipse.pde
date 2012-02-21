@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 IBM Corporation and others.
+ * Copyright (c) 2007, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,11 +13,14 @@ package org.eclipse.pde.api.tools.internal.provisional;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
+import java.util.StringTokenizer;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.ISaveContext;
 import org.eclipse.core.resources.ISaveParticipant;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -36,9 +39,9 @@ import org.eclipse.pde.api.tools.internal.ApiBaselineManager;
 import org.eclipse.pde.api.tools.internal.ApiDescription;
 import org.eclipse.pde.api.tools.internal.ApiDescriptionManager;
 import org.eclipse.pde.api.tools.internal.ApiFilterStore;
-import org.eclipse.pde.api.tools.internal.WorkspaceDeltaProcessor;
 import org.eclipse.pde.api.tools.internal.JavadocTagManager;
 import org.eclipse.pde.api.tools.internal.SessionManager;
+import org.eclipse.pde.api.tools.internal.WorkspaceDeltaProcessor;
 import org.eclipse.pde.api.tools.internal.builder.AbstractProblemDetector;
 import org.eclipse.pde.api.tools.internal.builder.ApiAnalysisBuilder;
 import org.eclipse.pde.api.tools.internal.builder.ReferenceAnalyzer;
@@ -51,6 +54,9 @@ import org.eclipse.pde.api.tools.internal.provisional.comparator.ApiComparator;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
 import org.eclipse.pde.api.tools.internal.provisional.scanner.TagScanner;
 import org.eclipse.pde.api.tools.internal.util.FileManager;
+import org.eclipse.pde.api.tools.internal.util.Util;
+import org.eclipse.pde.core.target.NameVersionDescriptor;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.prefs.BackingStoreException;
@@ -63,6 +69,11 @@ import org.osgi.service.prefs.BackingStoreException;
  */
 public class ApiPlugin extends Plugin implements ISaveParticipant {
 	
+	/**
+	 * Constant representing the expected name for an execution environment description fragment
+	 * Value is <code>org.eclipse.pde.api.tools.ee"
+	 */
+	private static final String EE_DESCRIPTION_PREFIX = "org.eclipse.pde.api.tools.ee"; //$NON-NLS-1$
 	/**
 	 * Constant representing the name of the javadoc tag extension point.
 	 * Value is <code>apiJavadocTags</code>
@@ -144,7 +155,16 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 	 */
 	public static final String BUILDER_ID = PLUGIN_ID + ".apiAnalysisBuilder" ; //$NON-NLS-1$
 	
-	public static final String BASELINE_IS_DISPOSED = "baseline is disposed"; //$NON-NLS-1$
+	/**
+	 * Preference ID for a knownEEFragments of EE fragments that were previously installed, the stored preference
+	 * string must be a list of name followed by version separated by semicolons ';'.
+	 * <p>
+	 * ex: "org.eclipse.one;1.0.0;org.eclipse.two;2.0.0;"
+	 * </p><p>
+	 * Value is: <code>knownEEFragments</code>
+	 * </p>
+	 */
+	public static final String KNOWN_EE_FRAGMENTS = "knownEEFragments"; //$NON-NLS-1$
 	/**
 	 * Singleton instance of the plugin
 	 */
@@ -495,9 +515,102 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 			JavaCore.addElementChangedListener(deltaProcessor, ElementChangedEvent.POST_CHANGE);
 			ResourcesPlugin.getWorkspace().addResourceChangeListener(deltaProcessor, IResourceChangeEvent.PRE_DELETE | IResourceChangeEvent.PRE_CLOSE | IResourceChangeEvent.PRE_BUILD);
 			configurePluginDebugOptions();
+			checkForEEDescriptionChanges();
 		}
 	}
 	
+	/**
+	 * Checks if the current set of installed execution environment description fragments differs from the last
+	 * time this workspace was started.  If so, a full api analysis build is run.
+	 */
+	private void checkForEEDescriptionChanges() {
+		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(PLUGIN_ID);
+		String knownFragmentsList = node.get(KNOWN_EE_FRAGMENTS, null);
+		
+		// No preference stored yet, set the preference for future startup
+		if (knownFragmentsList == null){
+			String list = getListOfEEFragments();
+			node.put(KNOWN_EE_FRAGMENTS, list);
+			try {
+				node.flush();
+			} catch (BackingStoreException e) {
+				log(e);
+			}
+			return;
+		}
+		
+		// Break the list into a set we can search
+		Set knownFragments = new HashSet();
+		StringTokenizer tokenizer = new StringTokenizer(knownFragmentsList, ";"); //$NON-NLS-1$
+		String name = null;
+		while (tokenizer.hasMoreTokens()) {
+			name = tokenizer.nextToken().trim();
+			if (name.length() > 0 && tokenizer.hasMoreTokens()){
+				knownFragments.add(new NameVersionDescriptor(name, tokenizer.nextToken()));
+			}
+		}
+		
+		// Figure out if we need to rebuild (fragments added or removed
+		boolean mustRebuild = false; 
+		Bundle[] allFragments = Platform.getFragments(fBundleContext.getBundle());
+		for (int i = 0; i < allFragments.length; i++) {
+			// We only care about 
+			if (allFragments[i].getSymbolicName().indexOf(EE_DESCRIPTION_PREFIX) >= 0){
+				NameVersionDescriptor current = new NameVersionDescriptor(allFragments[i].getSymbolicName(), allFragments[i].getVersion().toString());
+				if (knownFragments.contains(current)){
+					knownFragments.remove(current);
+				} else {
+					// New EE fragment installed
+					mustRebuild = true;
+					break;
+				}
+			}
+		}
+			
+		if (knownFragments.size() > 0){
+			// EE fragment removed
+			mustRebuild = true;
+		}
+			
+		// Run a full api analysis build and update the preference
+		if (mustRebuild){
+			IProject[] projects = Util.getApiProjects();
+			for (int i = 0; i < projects.length; i++) {
+				try {
+					projects[i].build(IncrementalProjectBuilder.FULL_BUILD, ApiPlugin.BUILDER_ID, null, null);
+				} catch (CoreException e) {
+					log(e.getStatus());
+				}
+			}
+			
+			// Write out the preferences so we don't rebuild on next startup
+			String list = getListOfEEFragments();
+			node.put(KNOWN_EE_FRAGMENTS, list);
+			try {
+				node.flush();
+			} catch (BackingStoreException e) {
+				log(e);
+			}
+		}
+	}
+
+	private String getListOfEEFragments(){
+		StringBuffer result = new StringBuffer();
+		Bundle[] allFragments = Platform.getFragments(fBundleContext.getBundle());
+		for (int i = 0; i < allFragments.length; i++) {
+			if (allFragments[i].getSymbolicName().indexOf(EE_DESCRIPTION_PREFIX) >= 0){
+				result.append(allFragments[i].getSymbolicName());
+				result.append(';');
+				result.append(allFragments[i].getVersion().toString());
+				result.append(';');
+			}
+		}
+		return result.toString();
+	}
+		
+		
+		
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.Plugin#stop(org.osgi.framework.BundleContext)
 	 */
