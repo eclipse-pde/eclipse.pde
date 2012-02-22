@@ -37,6 +37,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import org.eclipse.jdt.core.compiler.CharOperation;
+import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 
 public class Util {
 	private static final int DEFAULT_READING_SIZE = 8192;
@@ -47,7 +48,7 @@ public class Util {
 	private static final byte[] CONTENT = new byte[] { 99, 111, 110, 116, 101, 110, 116, 61, 34 };
 	private static final byte[] CONTENT_TYPE = new byte[] { 34, 67, 111, 110, 116, 101, 110, 116, 45, 84, 121, 112, 101, 34 };
 	private static final CRC32 CRC32 = new CRC32();
-	public static final String LINE_SEPARATOR = System.getProperty("line.separator");
+	public static final String LINE_SEPARATOR = System.getProperty("line.separator"); //$NON-NLS-1$
 
 	public static boolean contains(char[] name, char[][] names) {
 		for (int i = 0, max = names.length; i < max; i++) {
@@ -233,10 +234,11 @@ public class Util {
 			rootDir.mkdirs();
 			File subDir = new File(rootDir, subDirName);
 			subDir.mkdirs();
-			if (fileName.indexOf('/') != -1) {
-				fileName = fileName.replace('/', '_');
+			String fname = fileName;
+			if (fname.indexOf('/') != -1) {
+				fname = fname.replace('/', '_');
 			}
-			writer = new BufferedWriter(new FileWriter(new File(subDir, fileName)));
+			writer = new BufferedWriter(new FileWriter(new File(subDir, fname)));
 			writer.write(contents);
 			writer.flush();
 		} catch (IOException e) {
@@ -303,7 +305,7 @@ public class Util {
 				return null;
 			}
 			String encoding = connection.getContentEncoding();
-			byte[] contents = org.eclipse.jdt.internal.compiler.util.Util.getInputStreamAsByteArray(stream, connection.getContentLength());
+			byte[] contents = Util.getInputStreamAsByteArray(stream, connection.getContentLength());
 			if (encoding == null) {
 				int index = getIndexOf(contents, CONTENT_TYPE, 0);
 				if (index != -1) {
@@ -315,7 +317,7 @@ public class Util {
 							final int charsetIndex = getIndexOf(contents, CHARSET, offset);
 							if (charsetIndex != -1) {
 								int start = charsetIndex + CHARSET.length;
-								encoding = new String(contents, start, index2 - start, org.eclipse.jdt.internal.compiler.util.Util.UTF_8);
+								encoding = new String(contents, start, index2 - start, IApiCoreConstants.UTF_8);
 							}
 						}
 					}
