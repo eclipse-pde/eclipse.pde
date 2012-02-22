@@ -594,23 +594,25 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 		}
 	}
 
+	/**
+	 * @return a list of fragments that consider this bundle their host and symbolic names contain {@link #EE_DESCRIPTION_PREFIX}
+	 */
 	private String getListOfEEFragments(){
 		StringBuffer result = new StringBuffer();
 		Bundle[] allFragments = Platform.getFragments(fBundleContext.getBundle());
-		for (int i = 0; i < allFragments.length; i++) {
-			if (allFragments[i].getSymbolicName().indexOf(EE_DESCRIPTION_PREFIX) >= 0){
-				result.append(allFragments[i].getSymbolicName());
-				result.append(';');
-				result.append(allFragments[i].getVersion().toString());
-				result.append(';');
+		if (allFragments != null){
+			for (int i = 0; i < allFragments.length; i++) {
+				if (allFragments[i].getSymbolicName().indexOf(EE_DESCRIPTION_PREFIX) >= 0){
+					result.append(allFragments[i].getSymbolicName());
+					result.append(';');
+					result.append(allFragments[i].getVersion().toString());
+					result.append(';');
+				}
 			}
 		}
 		return result.toString();
 	}
 		
-		
-		
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.Plugin#stop(org.osgi.framework.BundleContext)
 	 */
