@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 IBM Corporation and others.
+ * Copyright (c) 2009, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -90,9 +90,9 @@ public class TargetContentsGroup {
 	private Map fFileBundleMapping;
 
 	/**
-	 * List of TargetBundles that are being used to display error statuses for missing plug-ins/features, possibly <code>null</code>
+	 * Set of TargetBundles that are being used to display error statuses for missing plug-ins/features, possibly <code>null</code>
 	 */
-	private List fMissing;
+	private Set fMissing;
 
 	private static final NameVersionDescriptor OTHER_CATEGORY = new NameVersionDescriptor(Messages.TargetContentsGroup_OtherPluginsParent, null);
 
@@ -918,6 +918,15 @@ public class TargetContentsGroup {
 	 * @param input bundle container or <code>null</code>
 	 */
 	public void setInput(ITargetDefinition input) {
+		// Update the cached data
+		fFileBundleMapping = null;
+		fAllBundles.clear();
+
+		if (fMissing != null) {
+			fMissing.clear();
+			fMissing = null;
+		}
+
 		if (input instanceof TargetDefinition) {
 			fTargetDefinition = (TargetDefinition) input;
 		} else {
@@ -925,11 +934,7 @@ public class TargetContentsGroup {
 			return;
 		}
 
-		// Update the cached data
-		fFileBundleMapping = null;
-		fAllBundles.clear();
-
-		if (input == null || !input.isResolved()) {
+		if (!input.isResolved()) {
 			fTree.setInput(Messages.TargetContentsGroup_10);
 			setEnabled(false);
 			return;
@@ -1170,17 +1175,18 @@ public class TargetContentsGroup {
 				List result = new ArrayList();
 
 				// Check if there are any errors for missing features/bundles to display
-				if (fMissing == null) {
-					fMissing = new ArrayList();
-				} else {
-					fMissing.clear();
-				}
-				TargetBundle[] bundles = fTargetDefinition.getBundles();
-				for (int i = 0; i < bundles.length; i++) {
-					if (!bundles[i].getStatus().isOK()) {
-						fMissing.add(bundles[i]);
-						result.add(bundles[i]);
+				if (fMissing == null || fMissing.isEmpty()) {
+					fMissing = new HashSet(); // A set is used to remove copies of problem bundles
+					TargetBundle[] bundles = fTargetDefinition.getBundles();
+					for (int i = 0; i < bundles.length; i++) {
+						if (!bundles[i].getStatus().isOK()) {
+							fMissing.add(bundles[i]);
+						}
 					}
+					result.addAll(fMissing);
+				} else {
+					// As missing bundles are unchecked, we want to keep them in the table, only if locations change does fMissing become null
+					result.addAll(fMissing);
 				}
 
 				if (fFeaureModeButton.getSelection()) {
