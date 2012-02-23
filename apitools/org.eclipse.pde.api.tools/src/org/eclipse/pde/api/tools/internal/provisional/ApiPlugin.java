@@ -526,10 +526,13 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 	private void checkForEEDescriptionChanges() {
 		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(PLUGIN_ID);
 		String knownFragmentsList = node.get(KNOWN_EE_FRAGMENTS, null);
-		
+		Bundle[] allFragments = Platform.getFragments(fBundleContext.getBundle());
+		if (allFragments == null)
+			allFragments= new Bundle[0];
+
 		// No preference stored yet, set the preference for future startup
 		if (knownFragmentsList == null){
-			String list = getListOfEEFragments();
+			String list = getListOfEEFragments(allFragments);
 			node.put(KNOWN_EE_FRAGMENTS, list);
 			try {
 				node.flush();
@@ -552,7 +555,6 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 		
 		// Figure out if we need to rebuild (fragments added or removed
 		boolean mustRebuild = false; 
-		Bundle[] allFragments = Platform.getFragments(fBundleContext.getBundle());
 		for (int i = 0; i < allFragments.length; i++) {
 			// We only care about 
 			if (allFragments[i].getSymbolicName().indexOf(EE_DESCRIPTION_PREFIX) >= 0){
@@ -584,7 +586,7 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 			}
 			
 			// Write out the preferences so we don't rebuild on next startup
-			String list = getListOfEEFragments();
+			String list = getListOfEEFragments(allFragments);
 			node.put(KNOWN_EE_FRAGMENTS, list);
 			try {
 				node.flush();
@@ -597,17 +599,14 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 	/**
 	 * @return a list of fragments that consider this bundle their host and symbolic names contain {@link #EE_DESCRIPTION_PREFIX}
 	 */
-	private String getListOfEEFragments(){
+	private String getListOfEEFragments(Bundle[] allFragments){
 		StringBuffer result = new StringBuffer();
-		Bundle[] allFragments = Platform.getFragments(fBundleContext.getBundle());
-		if (allFragments != null){
-			for (int i = 0; i < allFragments.length; i++) {
-				if (allFragments[i].getSymbolicName().indexOf(EE_DESCRIPTION_PREFIX) >= 0){
-					result.append(allFragments[i].getSymbolicName());
-					result.append(';');
-					result.append(allFragments[i].getVersion().toString());
-					result.append(';');
-				}
+		for (int i = 0; i < allFragments.length; i++) {
+			if (allFragments[i].getSymbolicName().indexOf(EE_DESCRIPTION_PREFIX) >= 0){
+				result.append(allFragments[i].getSymbolicName());
+				result.append(';');
+				result.append(allFragments[i].getVersion().toString());
+				result.append(';');
 			}
 		}
 		return result.toString();
