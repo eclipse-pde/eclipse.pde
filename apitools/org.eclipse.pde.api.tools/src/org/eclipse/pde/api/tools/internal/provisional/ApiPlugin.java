@@ -525,6 +525,9 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 	 */
 	private void checkForEEDescriptionChanges() {
 		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(PLUGIN_ID);
+		if (node == null){
+			return;
+		}
 		String knownFragmentsList = node.get(KNOWN_EE_FRAGMENTS, null);
 		Bundle[] allFragments = Platform.getFragments(fBundleContext.getBundle());
 		if (allFragments == null)
@@ -577,11 +580,13 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 		// Run a full api analysis build and update the preference
 		if (mustRebuild){
 			IProject[] projects = Util.getApiProjects();
-			for (int i = 0; i < projects.length; i++) {
-				try {
-					projects[i].build(IncrementalProjectBuilder.FULL_BUILD, ApiPlugin.BUILDER_ID, null, null);
-				} catch (CoreException e) {
-					log(e.getStatus());
+			if (projects != null){
+				for (int i = 0; i < projects.length; i++) {
+					try {
+						projects[i].build(IncrementalProjectBuilder.FULL_BUILD, ApiPlugin.BUILDER_ID, null, null);
+					} catch (CoreException e) {
+						log(e.getStatus());
+					}
 				}
 			}
 			
