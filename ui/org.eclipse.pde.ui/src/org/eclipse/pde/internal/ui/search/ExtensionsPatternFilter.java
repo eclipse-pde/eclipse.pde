@@ -11,8 +11,6 @@
 package org.eclipse.pde.internal.ui.search;
 
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.bundle.BundlePlugin;
@@ -41,13 +39,14 @@ public class ExtensionsPatternFilter extends PatternFilter {
 
 	protected String fSearchPattern;
 
-	protected Set fAttributes = new HashSet();
+	protected Set fSearchPatterns = new HashSet();
 	protected final Set fMatchingLeafs = new HashSet();
 	protected final Set fFoundAnyElementsCache = new HashSet();
 
 	/**
-	 * Check if the leaf element is a match with the filter text. The
-	 * default behavior checks that the label of the element is a match.
+	 * Check if the leaf element is a match with the filter text. The default behavior 
+	 * checks that the element name or extension point is a match employing wildcards.
+	 * An implicit wild card is added at the end always (default behaviour).
 	 * 
 	 * Subclasses should override this method.
 	 * 
@@ -58,11 +57,10 @@ public class ExtensionsPatternFilter extends PatternFilter {
 	 * @return true if the given element's label matches the filter text
 	 */
 	protected boolean isLeafMatch(Viewer viewer, Object element) {
-		// match label; default behaviour
-		if (viewer != null && super.isLeafMatch(viewer, element)) {
+		// match element name or extension point with wildcards; modified default behaviour
+		if (isNameMatch(element)) {
 			return true;
 		}
-
 		// match all splitted attribute's values of IPluginElement against splitted filter patterns
 		if (element instanceof IPluginElement) {
 			return doIsLeafMatch((IPluginElement) element);
@@ -72,30 +70,33 @@ public class ExtensionsPatternFilter extends PatternFilter {
 
 	protected boolean doIsLeafMatch(IPluginElement pluginElement) {
 		List syntheticAttributes = ExtensionsFilterUtil.handlePropertyTester(pluginElement);
-		if (fAttributes != null && fAttributes.size() > 0) {
+		if (fSearchPatterns != null && fSearchPatterns.size() > 0) {
 			int attributeNumber = 0;
-			for (Iterator iterator = fAttributes.iterator(); iterator.hasNext();) {
-				String valuePattern = (String) iterator.next();
-				if (attributeNumber < fAttributes.size() && attributeNumber < ATTRIBUTE_LIMIT) {
-					boolean quoted = isQuoted(valuePattern);
-					if (valuePattern != null && valuePattern.length() > 0) {
+			for (Iterator iterator = fSearchPatterns.iterator(); iterator.hasNext();) {
+				String searchPattern = (String) iterator.next();
+				if (attributeNumber < fSearchPatterns.size() && attributeNumber < ATTRIBUTE_LIMIT) {
+					boolean quoted = isQuoted(searchPattern);
+					if (searchPattern != null && searchPattern.length() > 0) {
+						if (quoted) {
+							searchPattern = searchPattern.substring(1, searchPattern.length() - 1);
+						}
 						int attributeCount = pluginElement.getAttributeCount();
-						IPluginAttribute[] pluginAttributes = pluginElement.getAttributes();
+						IPluginAttribute[] elementAttributes = pluginElement.getAttributes();
 
 						for (int i = 0; i < attributeCount; i++) {
-							IPluginAttribute attributeElement = pluginAttributes[i];
+							IPluginAttribute attributeElement = elementAttributes[i];
 							if (attributeElement != null && attributeElement.getValue() != null) {
 								String[] attributes = getAttributeSplit(attributeElement.getValue(), quoted);
 								if (attributes != null) {
 									List attributeList = new ArrayList(Arrays.asList(attributes));
 									attributeList.addAll(syntheticAttributes);
-									if (matchWithAttributes(pluginElement, valuePattern, attributeList, quoted)) {
+									if (matchWithAttributes(pluginElement, searchPattern, attributeElement.getName(), attributeList, quoted)) {
 										return true;
 									}
 								}
 							}
 						}
-						if (valuePattern.equalsIgnoreCase(pluginElement.getName())) {
+						if (searchPattern.equalsIgnoreCase(pluginElement.getName())) {
 							return true;
 						}
 					}
@@ -106,24 +107,14 @@ public class ExtensionsPatternFilter extends PatternFilter {
 		return false;
 	}
 
-	private boolean matchWithAttributes(IPluginElement pluginElement, String valuePattern, List attributeList, boolean quoted) {
-		for (int k = 0; k < attributeList.size(); k++) {
-			String attribute = (String) attributeList.get(k);
-			if (attribute != null && attribute.length() > 0) {
-				if (!attribute.startsWith("%")) { //$NON-NLS-1$
-					int delimiterPosition = attribute.indexOf('?'); // strip right of '?'
-					if (delimiterPosition != -1) {
-						attribute = attribute.substring(0, delimiterPosition);
-					}
-				} else {
-					String resourceValue = pluginElement.getResourceString(attribute);
-					attribute = (resourceValue != null && resourceValue.length() > 0) ? resourceValue : attribute;
+	protected boolean isNameMatch(Object element) {
+		if (element != null) {
+			if (element instanceof IPluginElement) {
+				if (super.wordMatches(((IPluginElement) element).getName())) {
+					return true;
 				}
-				String pattern = valuePattern.toLowerCase();
-				if (quoted) {
-					pattern = pattern.substring(1, pattern.length() - 1);
-				}
-				if (attribute.toLowerCase().equals(pattern)) {
+			} else if (element instanceof IPluginExtension) {
+				if (super.wordMatches(((IPluginExtension) element).getPoint())) {
 					return true;
 				}
 			}
@@ -131,11 +122,78 @@ public class ExtensionsPatternFilter extends PatternFilter {
 		return false;
 	}
 
-	private static boolean isQuoted(String value) {
+	protected boolean matchWithAttributes(IPluginElement pluginElement, String searchPattern, String attributeName, List attributeList, boolean quoted) {
+		for (int k = 0; k < attributeList.size(); k++) {
+			String attributeValue = (String) attributeList.get(k);
+			if (attributeValue != null && attributeValue.length() > 0) {
+				if (!attributeValue.startsWith("%") || quoted) { //$NON-NLS-1$
+					int delimiterPosition = attributeValue.indexOf('?'); // strip right of '?'
+					if (delimiterPosition != -1) {
+						attributeValue = attributeValue.substring(0, delimiterPosition);
+					}
+					// case insensitive exact match required
+					if (attributeValue.equalsIgnoreCase(searchPattern)) {
+						return true;
+						// missing use of resource bundle localization requires wildcard enabled search
+					} else if (!quoted && isNoneResourceMatch(attributeValue, attributeName, searchPattern)) {
+						return true;
+					}
+				} else { // resource bundle key found
+					String resourceValue = pluginElement.getResourceString(attributeValue);
+					attributeValue = (resourceValue != null && resourceValue.length() > 0) ? resourceValue : attributeValue;
+					super.setPattern(new String(searchPattern));
+					// case insensitive match required with wildcards enabled
+					boolean match = (super.wordMatches(attributeValue));
+					super.setPattern(fSearchPattern);
+					if (match) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * While the plugin model offers resource bundle localization, some plugins may skip this and use fix text for display.
+	 * Wildcard enabled search of the PatternFilter should be available in this case. Only a list of attributes that 
+	 * are expected to contain resource bundles are evaluated as long as the value doesn't contain a point. On some elements
+	 * for example a name attribute can contain an id. Those are skipped though.
+	 * 
+	 * @param attributeValue
+	 * @param attributeName
+	 * @param searchPattern
+	 * @return whether this is a match
+	 */
+	protected boolean isNoneResourceMatch(String attributeValue, String attributeName, String searchPattern) {
+		if (ExtensionsFilterUtil.isAttributeNameMatch(attributeName, ExtensionsFilterUtil.RESOURCE_ATTRIBUTES)) {
+			if (attributeValue.indexOf('.') == -1 && searchPattern.indexOf('.') == -1) { // no ids
+				super.setPattern(searchPattern);
+				boolean match = super.wordMatches(attributeValue);
+				super.setPattern(fSearchPattern);
+				if (match) {
+					return true;
+				}
+				super.setPattern(fSearchPattern);
+			}
+		}
+		return false;
+	}
+
+	static boolean isQuoted(String value) {
 		return value.startsWith("\"") && value.endsWith("\""); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
-	private static String[] getAttributeSplit(String text, boolean quoted) {
+	/**
+	 * Splits attributes on occurrence of /<br>
+	 * If <code>quoted</code> is set to <code>true</code> parameter <code>text</code> is returned as the only
+	 * element in the array, thus skipping the splitting.
+	 * 
+	 * @param text text to split
+	 * @param quoted decides whether splitting actually occurs
+	 * @return split array containing the splitted attributes or one element containing the value of parameter <code>text</code>
+	 */
+	static String[] getAttributeSplit(String text, boolean quoted) {
 		if (text.length() < 2) {
 			return null;
 		}
@@ -225,28 +283,7 @@ public class ExtensionsPatternFilter extends PatternFilter {
 			text = text.replaceAll("\"{1,}", "\""); //$NON-NLS-1$//$NON-NLS-2$
 			// treat quoted text as a whole, thus enables searching for file paths
 			if (text.replaceAll("[^\"]", "").length() % 2 == 0) { //$NON-NLS-1$//$NON-NLS-2$
-				List patterns = new ArrayList();
-				List matchList = new ArrayList();
-				Pattern regex = Pattern.compile("[^\\s\"']+|\"[^\"]*\"|'[^']*'"); //$NON-NLS-1$
-				Matcher regexMatcher = regex.matcher(text);
-				while (regexMatcher.find()) {
-					matchList.add(regexMatcher.group());
-				}
-				for (int i = 0; i < matchList.size(); i++) {
-					String element = (String) matchList.get(i);
-					if (isQuoted(element)) {
-						patterns.add(element);
-					} else {
-						String[] elements = element.split("/"); //$NON-NLS-1$
-						for (int k = 0; k < elements.length; k++) {
-							String splitted = elements[k];
-							if (splitted.length() > 0) {
-								patterns.add(splitted);
-							}
-						}
-					}
-				}
-				return (String[]) patterns.toArray(new String[0]);
+				return text.split("/(?=([^\"]*\"[^\"]*\")*(?![^\"]*\"))"); //$NON-NLS-1$
 			} // filter text must have erroneous quoting, replacing all
 			text = text.replaceAll("[\"]", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
@@ -281,11 +318,14 @@ public class ExtensionsPatternFilter extends PatternFilter {
 		super.setPattern(patternString);
 		fSearchPattern = patternString;
 		String[] patterns = (patternString != null) ? splitWithQuoting(patternString) : new String[] {};
-		fAttributes.clear();
-		fAttributes.addAll(Arrays.asList(patterns));
+		fSearchPatterns.clear();
+		fSearchPatterns.addAll(Arrays.asList(patterns));
 		fFoundAnyElementsCache.clear();
 	}
 
+	/**
+	 * @return the whole filter text (unsplit) 
+	 */
 	public String getPattern() {
 		return fSearchPattern;
 	}

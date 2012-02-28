@@ -1429,6 +1429,7 @@ public class PDEUIMessages extends NLS {
 	public static String Actions_delete_label;
 	public static String Actions_filter_relatedPluginElements;
 	public static String Actions_search_relatedPluginElements;
+	public static String Actions_search_targetplatform;
 	public static String Actions_synchronizeVersions_label;
 
 	public static String Menus_new_label;

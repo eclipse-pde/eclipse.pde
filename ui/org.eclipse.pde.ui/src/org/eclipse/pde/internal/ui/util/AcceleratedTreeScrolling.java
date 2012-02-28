@@ -68,20 +68,22 @@ public class AcceleratedTreeScrolling implements MouseWheelListener {
 		if (index == 0) {
 			return parentItem;
 		}
-		TreeItem nextItem = parentItem == null ? tree.getItem(index - 1) : parentItem.getItem(index - 1);
-		int count = nextItem.getItemCount();
-		while (count > 0 && nextItem.getExpanded()) {
-			nextItem = nextItem.getItem(count - 1);
-			count = nextItem.getItemCount();
+		TreeItem previousItem = parentItem == null ? tree.getItem(index - 1) : parentItem.getItem(index - 1);
+		int count = previousItem.getItemCount();
+		while (count > 0 && previousItem.getExpanded()) {
+			previousItem = previousItem.getItem(count - 1);
+			count = previousItem.getItemCount();
 		}
-		return nextItem;
+		return previousItem;
 	}
 
 	TreeItem NextItem(Tree tree, TreeItem item) {
 		if (item == null)
 			return null;
 		if (item.getExpanded()) {
-			return item.getItem(0);
+			if (item.getItemCount() > 0) {
+				return item.getItem(0);
+			}
 		}
 		TreeItem childItem = item;
 		TreeItem parentItem = childItem.getParentItem();

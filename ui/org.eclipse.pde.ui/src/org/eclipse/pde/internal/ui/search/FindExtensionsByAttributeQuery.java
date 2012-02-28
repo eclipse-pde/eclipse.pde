@@ -77,12 +77,13 @@ public class FindExtensionsByAttributeQuery implements ISearchQuery {
 	 */
 	public ISearchResult getSearchResult() {
 		if (fSearchResult == null)
-			fSearchResult = new SearchResult(this);
+			fSearchResult = new SearchResult(this) {
+				public int getMatchCount() {
+					// returns overall count of plugins found when searching
+					return getElements().length;
+				}
+			};
 		return fSearchResult;
-	}
-
-	public PluginSearchInput getPluginSearchInput() {
-		return fSearchInput;
 	}
 
 }

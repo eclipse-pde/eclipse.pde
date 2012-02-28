@@ -24,12 +24,16 @@ public class ExtensionsFilterUtil {
 	public static final String ATTRIBUTE_CATEGORYID = "categoryId"; //$NON-NLS-1$
 	public static final String ATTRIBUTE_COMMANDID = "commandId"; //$NON-NLS-1$
 	public static final String ATTRIBUTE_DEFAULTHANDLER = "defaultHandler"; //$NON-NLS-1$
+	public static final String ATTRIBUTE_DESCRIPTION = "description"; //$NON-NLS-1$
 	public static final String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
+	public static final String ATTRIBUTE_LABEL = "label"; //$NON-NLS-1$
+	public static final String ATTRIBUTE_MNEMONIC = "mnemonic"; //$NON-NLS-1$
 	public static final String ATTRIBUTE_NAME = "name"; //$NON-NLS-1$
 	public static final String ATTRIBUTE_NAMESPACE = "namespace"; //$NON-NLS-1$
 	public static final String ATTRIBUTE_PROPERTIES = "properties"; //$NON-NLS-1$
 	public static final String ATTRIBUTE_PATTERN = "pattern"; //$NON-NLS-1$
 	public static final String ATTRIBUTE_REQUIREDACTIVITYID = "requiredActivityId"; //$NON-NLS-1$
+	public static final String ATTRIBUTE_TOOLTIP = "tooltip"; //$NON-NLS-1$
 	public static final String ATTRIBUTE_VALUE = "value"; //$NON-NLS-1$
 
 	public static final String ELEMENT_ACATEGORY = "org.eclipse.ui.activities.category"; //$NON-NLS-1$
@@ -37,15 +41,18 @@ public class ExtensionsFilterUtil {
 	public static final String ELEMENT_AR_BINDING = "org.eclipse.ui.activities.activityRequirementBinding"; //$NON-NLS-1$
 	public static final String ELEMENT_CA_BINDING = "org.eclipse.ui.activities.categoryActivityBinding"; //$NON-NLS-1$
 	public static final String ELEMENT_COMMAND = "org.eclipse.ui.commands.command"; //$NON-NLS-1$
-	public static final String ELEMENT_EQUALS = "org.eclipse.ui.handlers.equals"; //$NON-NLS-1$
+	public static final String ELEMENT_EQUALS = "equals"; //$NON-NLS-1$
 	public static final String ELEMENT_HELP_TOC = "org.eclipse.help.toc.toc"; //$NON-NLS-1$
-	public static final String ELEMENT_INSTANCEOF = "org.eclipse.ui.handlers.instanceof"; //$NON-NLS-1$
+	public static final String ELEMENT_INSTANCEOF = "instanceof"; //$NON-NLS-1$
 	public static final String ELEMENT_MENU_COMMAND = "org.eclipse.ui.menus.command"; //$NON-NLS-1$
+	public static final String ELEMENT_PARAMETER = "parameter"; //$NON-NLS-1$
 	public static final String ELEMENT_PATTERNBINDING = "org.eclipse.ui.activities.activityPatternBinding"; //$NON-NLS-1$
 	public static final String ELEMENT_PROPERTYTESTER = "org.eclipse.core.expressions.propertyTesters.propertyTester"; //$NON-NLS-1$
+	public static final String ELEMENT_VARIABLE = "variable"; //$NON-NLS-1$
 
 	public static final String[] HIGH_PRIORITY_ELEMENTS = new String[] {ELEMENT_COMMAND, ELEMENT_MENU_COMMAND, ELEMENT_INSTANCEOF, ELEMENT_EQUALS};
-	public static final String[] LOW_PRIORITY_ELEMENTS = new String[] {ELEMENT_CA_BINDING, ELEMENT_AR_BINDING, ELEMENT_HELP_TOC};
+	public static final String[] LOW_PRIORITY_ELEMENTS = new String[] {ELEMENT_PARAMETER, ELEMENT_CA_BINDING, ELEMENT_AR_BINDING, ELEMENT_VARIABLE, ELEMENT_HELP_TOC};
+	public static final String[] RESOURCE_ATTRIBUTES = new String[] {ATTRIBUTE_LABEL, ATTRIBUTE_NAME, ATTRIBUTE_TOOLTIP, ATTRIBUTE_MNEMONIC, ATTRIBUTE_DESCRIPTION};
 
 	public static final Map CUSTOM_RELATIONS;
 
@@ -54,11 +61,17 @@ public class ExtensionsFilterUtil {
 		CUSTOM_RELATIONS.put(ELEMENT_COMMAND, new String[] {ATTRIBUTE_ID, ATTRIBUTE_DEFAULTHANDLER});
 		CUSTOM_RELATIONS.put(ELEMENT_INSTANCEOF, new String[] {ATTRIBUTE_VALUE});
 		CUSTOM_RELATIONS.put(ELEMENT_EQUALS, new String[] {ATTRIBUTE_VALUE});
+		CUSTOM_RELATIONS.put(ELEMENT_PARAMETER, new String[] {ATTRIBUTE_NAME});
+		CUSTOM_RELATIONS.put(ELEMENT_VARIABLE, new String[] {ATTRIBUTE_NAME});
 		CUSTOM_RELATIONS.put(ELEMENT_MENU_COMMAND, new String[] {ATTRIBUTE_COMMANDID, ATTRIBUTE_ID});
 		CUSTOM_RELATIONS.put(ELEMENT_CA_BINDING, new String[] {ATTRIBUTE_ACTIVITYID, ATTRIBUTE_CATEGORYID});
 		CUSTOM_RELATIONS.put(ELEMENT_AR_BINDING, new String[] {ATTRIBUTE_REQUIREDACTIVITYID, ATTRIBUTE_ACTIVITYID});
 		CUSTOM_RELATIONS.put(ELEMENT_HELP_TOC, new String[] {ATTRIBUTE_CATEGORY});
 	}
+
+	private static String BOOLEAN_TRUE = "true"; //$NON-NLS-1$
+	private static String BOOLEAN_FALSE = "false"; //$NON-NLS-1$
+	private static String ADDITIONS = "additions"; //$NON-NLS-1$
 
 	public static boolean add(Set pattern, IPluginElement pluginElement, String attributeName) {
 		IPluginAttribute attribute = pluginElement.getAttribute(attributeName);
@@ -71,7 +84,7 @@ public class ExtensionsFilterUtil {
 	public static boolean add(Set pattern, String value) {
 		if (value != null && value.length() > 0) {
 			String trimmed = value.trim();
-			if (isNotBoolean(trimmed)) {
+			if (!isBoolean(trimmed)) {
 				return pattern.add(trimmed);
 			}
 		}
@@ -130,14 +143,17 @@ public class ExtensionsFilterUtil {
 							if (!value.startsWith("%")) { //$NON-NLS-1$
 								int delimiterPosition = value.indexOf('?'); // split before '?' and right after last '='
 								if (delimiterPosition == -1) {
-									if (!value.equalsIgnoreCase("true") && !value.equalsIgnoreCase("false")) { //$NON-NLS-1$ //$NON-NLS-2$
+									if (!isBoolean(value)) {
 										filterPatterns.add(value);
 									}
 								} else {
 									filterPatterns.add(value.substring(0, delimiterPosition));
 									int position = value.lastIndexOf('=');
 									if (position != -1) {
-										filterPatterns.add(value.substring(position + 1, value.length()));
+										String placeHolder = value.substring(position + 1, value.length());
+										if (!placeHolder.equalsIgnoreCase(ADDITIONS)) {
+											filterPatterns.add(placeHolder);
+										}
 									}
 								}
 							} else {
@@ -203,10 +219,12 @@ public class ExtensionsFilterUtil {
 
 	private static boolean addMatchingElements(Set customAttributes, IPluginElement pluginElement, String elementName, final String[] elements) {
 		boolean elementMatch = false;
-		for (int i = 0; i < elements.length; i++) {
-			if (elements[i].equals(elementName)) {
-				addAll(customAttributes, pluginElement, elements[i]);
-				elementMatch = true;
+		if (elementName != null) {
+			for (int i = 0; i < elements.length; i++) {
+				if (elementName.endsWith(elements[i])) {
+					addAll(customAttributes, pluginElement, elements[i]);
+					elementMatch = true;
+				}
 			}
 		}
 		return elementMatch;
@@ -232,23 +250,36 @@ public class ExtensionsFilterUtil {
 
 	public static List handlePropertyTester(IPluginElement pluginElement) {
 		List propertyTestAttributes = new ArrayList();
-		String elementName = getElementPath(pluginElement);
-		boolean elementMatch = false;
-		if (elementName == null) {
-			// workaround for non-editable plugins of the target platform
-			if (ELEMENT_PROPERTYTESTER.endsWith(pluginElement.getName())) {
-				elementMatch = true;
-			}
-		} else if (ELEMENT_PROPERTYTESTER.equalsIgnoreCase(elementName)) {
-			elementMatch = true;
-		}
-		if (elementMatch) {
+		if (isElementNameMatch(pluginElement, ELEMENT_PROPERTYTESTER)) {
 			Set attributes = handlePropertyTester(new HashSet(), pluginElement);
 			for (Iterator iterator = attributes.iterator(); iterator.hasNext();) {
 				propertyTestAttributes.add(iterator.next());
 			}
 		}
 		return propertyTestAttributes;
+	}
+
+	public static boolean isElementNameMatch(IPluginElement pluginElement, String expected) {
+		String elementName = getElementPath(pluginElement);
+		if (elementName == null) {
+			// workaround for non-editable plugins of the target platform
+			if (expected.endsWith(pluginElement.getName())) {
+				return true;
+			}
+		} else if (elementName.endsWith(expected)) {
+			return true;
+		}
+		return false;
+	}
+
+	public static boolean isAttributeNameMatch(String attributeName, String[] matches) {
+		for (int i = 0; i < matches.length; i++) {
+			String matchingAttribute = matches[i];
+			if (matchingAttribute.equals(attributeName)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public static boolean isFilterRelatedEnabled(IPluginElement pluginElement) {
@@ -260,13 +291,22 @@ public class ExtensionsFilterUtil {
 			}
 		}
 		// test for custom relations
-		Object attributes = CUSTOM_RELATIONS.get(getElementPath(pluginElement));
-		if (attributes != null) {
-			String[] attributesArray = (String[]) attributes;
-			for (int i = 0; i < attributesArray.length; i++) {
-				IPluginAttribute attribute = pluginElement.getAttribute(attributesArray[i]);
-				if (attribute != null) {
-					return true;
+		String elementName = getElementPath(pluginElement);
+		if (elementName != null) {
+			Set keySet = CUSTOM_RELATIONS.keySet();
+			for (Iterator iterator = keySet.iterator(); iterator.hasNext();) {
+				String key = (String) iterator.next();
+				if (elementName.endsWith(key)) {
+					Object attributes = CUSTOM_RELATIONS.get(key);
+					if (attributes != null) {
+						String[] attributesArray = (String[]) attributes;
+						for (int i = 0; i < attributesArray.length; i++) {
+							IPluginAttribute attribute = pluginElement.getAttribute(attributesArray[i]);
+							if (attribute != null) {
+								return true;
+							}
+						}
+					}
 				}
 			}
 		}
@@ -287,8 +327,8 @@ public class ExtensionsFilterUtil {
 		return createFilterRelatedAction;
 	}
 
-	public static boolean isNotBoolean(String bool) {
-		return !bool.equalsIgnoreCase(Boolean.TRUE.toString()) && !bool.equalsIgnoreCase(Boolean.FALSE.toString());
+	public static boolean isBoolean(String bool) {
+		return bool.equalsIgnoreCase(BOOLEAN_TRUE) || bool.equalsIgnoreCase(BOOLEAN_FALSE);
 	}
 
 }

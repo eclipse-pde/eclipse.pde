@@ -11,8 +11,7 @@
 package org.eclipse.pde.internal.ui.editor.actions;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.internal.core.search.PluginSearchInput;
 import org.eclipse.pde.internal.core.search.PluginSearchScope;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
@@ -30,31 +29,26 @@ import org.eclipse.search.ui.NewSearchUI;
  */
 public class SearchExtensionsAction extends Action {
 
-	protected FormFilteredTree fFilteredTree;
+	private FormFilteredTree fFilteredTree;
+	private boolean fUseCurrentFilter;
 
-	private IStructuredSelection fSelection;
-	private String fFilterRelatedText;
-
-	public SearchExtensionsAction(FormFilteredTree filteredTree, String actionText) {
-		this(filteredTree.getViewer().getSelection(), actionText);
-		fFilteredTree = filteredTree;
-	}
-
-	public SearchExtensionsAction(ISelection selection, String actionText) {
+	/**
+	 * @param filteredTree the extensions section tree
+	 * @param actionText description
+	 * @param useCurrentFilter when <code>true</code> the search is performed with the current filtering applied to the tree, 
+	 *        otherwise the filter text is generated from the current selection 
+	 */
+	public SearchExtensionsAction(FormFilteredTree filteredTree, String actionText, boolean useCurrentFilter) {
 		setImageDescriptor(PDEPluginImages.DESC_SEARCH_EXTENSIONS);
 		setDisabledImageDescriptor(PDEPluginImages.DESC_SEARCH_EXTENSIONS_DISABLED);
 		setText(actionText);
-		if (selection != null && selection instanceof IStructuredSelection) {
-			fSelection = (IStructuredSelection) selection;
-		}
+		fFilteredTree = filteredTree;
+		fUseCurrentFilter = useCurrentFilter;
 	}
 
 	public void run() {
-		if (fSelection != null) {
-			this.fFilterRelatedText = ExtensionsFilterUtil.getFilterRelatedPattern(fSelection);
-			NewSearchUI.activateSearchResultView();
-			NewSearchUI.runQueryInBackground(createSearchQuery());
-		}
+		NewSearchUI.activateSearchResultView();
+		NewSearchUI.runQueryInBackground(createSearchQuery());
 	}
 
 	protected ISearchQuery createSearchQuery() {
@@ -68,13 +62,23 @@ public class SearchExtensionsAction extends Action {
 	}
 
 	private String getFilterText() {
-		if (fFilterRelatedText != null && fFilterRelatedText.length() > 0) {
-			return fFilterRelatedText;
-		}
 		if (fFilteredTree != null) {
-			return fFilteredTree.getFilterControl().getText();
+			if (fUseCurrentFilter && fFilteredTree.isFiltered()) {
+				return fFilteredTree.getFilterControl().getText();
+			}
+			return ExtensionsFilterUtil.getFilterRelatedPattern(getSelection());
 		}
 		return new String();
+	}
+
+	private IStructuredSelection getSelection() {
+		if (fFilteredTree != null && fFilteredTree.getViewer() != null) {
+			ISelection selection = fFilteredTree.getViewer().getSelection();
+			if (selection != null && selection instanceof IStructuredSelection) {
+				return (IStructuredSelection) selection;
+			}
+		}
+		return new StructuredSelection();
 	}
 
 }

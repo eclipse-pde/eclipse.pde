@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.IMessageProvider;
+import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -54,6 +55,8 @@ import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.internal.BidiUtil;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionFactory;
@@ -64,11 +67,12 @@ import org.eclipse.ui.progress.WorkbenchJob;
 public class ExtensionsSection extends TreeSection implements IModelChangedListener, IPropertyChangeListener {
 	private static final int REFRESHJOB_DELAY_TIME = 1200; // milliseconds to wait
 	private static final int ACCELERATED_SCROLLING = 15; // lines to skip
-	private static final int BUTTON_MOVE_DOWN = 4;
-	private static final int BUTTON_MOVE_UP = 3;
-	private static final int BUTTON_EDIT = 2;
-	private static final int BUTTON_REMOVE = 1;
-	private static final int BUTTON_ADD = 0;
+	private static final int BUTTON_MOVE_DOWN = 5;
+	private static final int BUTTON_MOVE_UP = 4;
+	private static final int BUTTON_EDIT = 3;
+	private static final int BUTTON_REMOVE = 2;
+	private static final int BUTTON_ADD = 1;
+	private static final int BUTTON_SEARCH = 0;
 	private TreeViewer fExtensionTree;
 	private Image fExtensionImage;
 	private Image fGenericElementImage;
@@ -80,6 +84,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 	private CollapseAction fCollapseAction;
 	private ToggleExpandStateAction fExpandAction;
 	private FilterRelatedExtensionsAction fFilterRelatedAction;
+	private SearchExtensionsAction fSearchToolbarAction;
 	private SearchExtensionsAction fSearchAction;
 	private boolean fBypassFilterDelay = false;
 
@@ -149,7 +154,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 	}
 
 	public ExtensionsSection(PDEFormPage page, Composite parent) {
-		super(page, parent, Section.DESCRIPTION, new String[] {PDEUIMessages.ManifestEditor_DetailExtension_new, PDEUIMessages.ManifestEditor_DetailExtension_remove, PDEUIMessages.ManifestEditor_DetailExtension_edit, PDEUIMessages.ManifestEditor_DetailExtension_up, PDEUIMessages.ManifestEditor_DetailExtension_down});
+		super(page, parent, Section.DESCRIPTION, new String[] {PDEUIMessages.Actions_search_targetplatform, PDEUIMessages.ManifestEditor_DetailExtension_new, PDEUIMessages.ManifestEditor_DetailExtension_remove, PDEUIMessages.ManifestEditor_DetailExtension_edit, PDEUIMessages.ManifestEditor_DetailExtension_up, PDEUIMessages.ManifestEditor_DetailExtension_down});
 		fHandleDefaultButton = false;
 	}
 
@@ -237,6 +242,13 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		Composite container = createClientContainer(section, 2, toolkit);
 		TreePart treePart = getTreePart();
 		createViewerPartControl(container, SWT.MULTI, 2, toolkit);
+		// fix layout to place search button right to the filter text 
+		Control searchButton = treePart.getButton(BUTTON_SEARCH);
+		((GridLayout) searchButton.getParent().getLayout()).marginHeight = 2;
+		searchButton.setLayoutData(GridDataFactory.swtDefaults().align(SWT.BEGINNING, SWT.BEGINNING).grab(false, false).hint(SWT.DEFAULT, 19).create());
+		searchButton.setToolTipText(PDEUIMessages.ExtensionsPage_searchWithExtensionsFilter);
+		Control addButton = treePart.getButton(BUTTON_ADD);
+		((GridData) addButton.getLayoutData()).verticalIndent = 16;
 		fExtensionTree = treePart.getTreeViewer();
 		fExtensionTree.setContentProvider(new ExtensionContentProvider());
 		fExtensionTree.setLabelProvider(new ExtensionLabelProvider());
@@ -283,9 +295,11 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		// Add action to filter tree with some of the selection's attributes
 		fFilterRelatedAction = new FilterRelatedExtensionsAction(fExtensionTree, fFilteredTree, this, false);
 		toolBarManager.add(fFilterRelatedAction);
+		// Add action to search workspace for related elements according to tree selection
+		fSearchToolbarAction = new SearchExtensionsAction(fFilteredTree, PDEUIMessages.Actions_search_relatedPluginElements, false);
+		toolBarManager.add(fSearchToolbarAction);
 		// Add action to search all workspace plugins with current filtering applied to the tree viewer
-		fSearchAction = new SearchExtensionsAction(fFilteredTree, PDEUIMessages.ExtensionsPage_searchWithExtensionsFilter);
-		toolBarManager.add(fSearchAction);
+		fSearchAction = new SearchExtensionsAction(fFilteredTree, PDEUIMessages.ExtensionsPage_searchWithExtensionsFilter, true);
 		// Add separator
 		Separator separator = new Separator();
 		toolBarManager.add(separator);
@@ -324,6 +338,9 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 
 	protected void buttonSelected(int index) {
 		switch (index) {
+			case BUTTON_SEARCH :
+				fSearchAction.run();
+				break;
 			case BUTTON_ADD :
 				handleNew();
 				break;
@@ -437,7 +454,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 			if (ExtensionsFilterUtil.isFilterRelatedEnabled(ssel)) {
 				FilterRelatedExtensionsAction filterRelatedAction = new FilterRelatedExtensionsAction(fExtensionTree, fFilteredTree, this, true);
 				manager.add(filterRelatedAction);
-				SearchExtensionsAction searchRelatedAction = new SearchExtensionsAction(ssel, PDEUIMessages.Actions_search_relatedPluginElements);
+				SearchExtensionsAction searchRelatedAction = new SearchExtensionsAction(fFilteredTree, PDEUIMessages.Actions_search_relatedPluginElements, false);
 				manager.add(searchRelatedAction);
 				manager.add(new Separator());
 			}
@@ -584,7 +601,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		Text filterControl = fFilteredTree.getFilterControl();
 		if (filterControl != null && attributeValue != null) {
 			String trimmedValue = attributeValue.trim();
-			if (trimmedValue.length() > 0 && ExtensionsFilterUtil.isNotBoolean(trimmedValue)) {
+			if (trimmedValue.length() > 0 && !ExtensionsFilterUtil.isBoolean(trimmedValue)) {
 				if (trimmedValue.startsWith("%")) {//$NON-NLS-1$
 					IPluginModelBase model = getPluginModelBase();
 					trimmedValue = ((model != null) ? model.getResourceString(trimmedValue) : trimmedValue).replaceAll("\"", ""); //$NON-NLS-1$ //$NON-NLS-2$
@@ -1294,16 +1311,21 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 	}
 
 	private void updateButtons(Object item) {
+		boolean filterRelatedEnabled = false;
+		if (fExtensionTree != null) {
+			filterRelatedEnabled = ExtensionsFilterUtil.isFilterRelatedEnabled((IStructuredSelection) fExtensionTree.getSelection());
+		}
 		if (fExpandAction != null) {
 			fExpandAction.setEnabled(ToggleExpandStateAction.isExpandable((IStructuredSelection) fExtensionTree.getSelection()));
 		}
 		if (fFilterRelatedAction != null) {
-			fFilterRelatedAction.setEnabled(ExtensionsFilterUtil.isFilterRelatedEnabled((IStructuredSelection) fExtensionTree.getSelection()));
+			fFilterRelatedAction.setEnabled(filterRelatedEnabled);
 		}
-		if (fSearchAction != null) {
+		if (fSearchToolbarAction != null && fSearchAction != null) {
 			Text filterControl = fFilteredTree.getFilterControl();
 			boolean searchEnabled = filterControl != null && filterControl.getText().length() > 0;
-			fSearchAction.setEnabled(searchEnabled);
+			getTreePart().setButtonEnabled(BUTTON_SEARCH, searchEnabled);
+			fSearchToolbarAction.setEnabled(filterRelatedEnabled);
 		}
 
 		if (getPage().getModel().isEditable() == false)
