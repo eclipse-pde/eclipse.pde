@@ -653,14 +653,15 @@ public class PluginImportWizardFirstPage extends WizardPage {
 				Iterator iterator = importerToInstructions.entrySet().iterator();
 				while (iterator.hasNext()) {
 					Entry entry = (Entry) iterator.next();
-					IBundleImporter importer = (IBundleImporter) entry.getKey();
+					final IBundleImporter importer = (IBundleImporter) entry.getKey();
+					String importerId = importer.getId();
 					ScmUrlImportDescription[] descriptions = (ScmUrlImportDescription[]) entry.getValue();
-					IScmUrlImportWizardPage page = (IScmUrlImportWizardPage) importIdToWizardPage.get(importer.getId());
+					IScmUrlImportWizardPage page = (IScmUrlImportWizardPage) importIdToWizardPage.get(importerId);
 					if (page == null) {
-						page = TeamUI.getPages(importer.getId())[0];
+						page = TeamUI.getPages(importerId)[0];
 						if (page != null) {
 							page.setSelection(descriptions);
-							importIdToWizardPage.put(importer.getId(), page);
+							importIdToWizardPage.put(importerId, page);
 							((Wizard) getWizard()).addPage(page);
 						}
 					}

@@ -63,18 +63,19 @@ public class RepositoryImportWizard extends Wizard {
 		Iterator iterator = fImportMap.entrySet().iterator();
 		while (iterator.hasNext()) {
 			Entry entry = (Entry) iterator.next();
-			IBundleImporter importer = (IBundleImporter) entry.getKey();
+			final IBundleImporter importer = (IBundleImporter) entry.getKey();
+			final String importerId = importer.getId();
 			ScmUrlImportDescription[] descriptions = (ScmUrlImportDescription[]) entry.getValue();
-			IScmUrlImportWizardPage page = (IScmUrlImportWizardPage) fIdToPages.get(importer.getId());
+			IScmUrlImportWizardPage page = (IScmUrlImportWizardPage) fIdToPages.get(importerId);
 			if (page == null) {
 				try {
-					page = TeamUI.getPages(importer.getId())[0];
+					page = TeamUI.getPages(importerId)[0];
 				} catch (CoreException e) {
 					PDEPlugin.log(e);
 				}
 				if (page != null) {
 					page.setSelection(descriptions);
-					fIdToPages.put(importer.getId(), page);
+					fIdToPages.put(importerId, page);
 					addPage(page);
 				}
 			}
