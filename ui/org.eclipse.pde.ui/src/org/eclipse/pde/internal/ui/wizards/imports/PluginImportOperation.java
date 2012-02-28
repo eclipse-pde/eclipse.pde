@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -368,7 +368,8 @@ public class PluginImportOperation extends WorkspaceJob {
 						if (!safeDeleteCheck(project, monitor)) {
 							status.add(new Status(IStatus.ERROR, PDEPlugin.getPluginId(), NLS.bind(PDEUIMessages.PluginImportOperation_could_not_delete_project, project.getName())));
 						}
-						project.delete(true, true, monitor);
+						boolean deleteContent = project.getWorkspace().getRoot().getLocation().equals(project.getLocation().removeLastSegments(1));
+						project.delete(deleteContent, true, monitor);
 					} catch (CoreException ex) {
 						status.add(new Status(IStatus.ERROR, PDEPlugin.getPluginId(), IStatus.OK, NLS.bind(PDEUIMessages.PluginImportOperation_could_not_delete_project, project.getName()), ex));
 					}
