@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2011 IBM Corporation and others.
+ * Copyright (c) 2003, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,8 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.imports;
-
-import org.eclipse.pde.core.target.*;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
@@ -27,6 +25,7 @@ import org.eclipse.jface.preference.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.project.BundleProjectService;
 import org.eclipse.pde.internal.ui.*;
@@ -658,8 +657,9 @@ public class PluginImportWizardFirstPage extends WizardPage {
 					ScmUrlImportDescription[] descriptions = (ScmUrlImportDescription[]) entry.getValue();
 					IScmUrlImportWizardPage page = (IScmUrlImportWizardPage) importIdToWizardPage.get(importer.getId());
 					if (page == null) {
-						page = TeamUI.getPages(descriptions)[0];
+						page = TeamUI.getPages(importer.getId())[0];
 						if (page != null) {
+							page.setSelection(descriptions);
 							importIdToWizardPage.put(importer.getId(), page);
 							((Wizard) getWizard()).addPage(page);
 						}

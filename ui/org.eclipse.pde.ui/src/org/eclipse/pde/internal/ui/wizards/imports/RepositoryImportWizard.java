@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 IBM Corporation and others.
+ * Copyright (c) 2011, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -68,11 +68,12 @@ public class RepositoryImportWizard extends Wizard {
 			IScmUrlImportWizardPage page = (IScmUrlImportWizardPage) fIdToPages.get(importer.getId());
 			if (page == null) {
 				try {
-					page = TeamUI.getPages(descriptions)[0];
+					page = TeamUI.getPages(importer.getId())[0];
 				} catch (CoreException e) {
 					PDEPlugin.log(e);
 				}
 				if (page != null) {
+					page.setSelection(descriptions);
 					fIdToPages.put(importer.getId(), page);
 					addPage(page);
 				}
