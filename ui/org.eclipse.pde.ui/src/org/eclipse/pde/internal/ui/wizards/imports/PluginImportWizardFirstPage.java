@@ -655,12 +655,10 @@ public class PluginImportWizardFirstPage extends WizardPage {
 					Entry entry = (Entry) iterator.next();
 					final IBundleImporter importer = (IBundleImporter) entry.getKey();
 					String importerId = importer.getId();
-					ScmUrlImportDescription[] descriptions = (ScmUrlImportDescription[]) entry.getValue();
 					IScmUrlImportWizardPage page = (IScmUrlImportWizardPage) importIdToWizardPage.get(importerId);
 					if (page == null) {
 						page = TeamUI.getPages(importerId)[0];
 						if (page != null) {
-							page.setSelection(descriptions);
 							importIdToWizardPage.put(importerId, page);
 							((Wizard) getWizard()).addPage(page);
 						}
@@ -873,11 +871,6 @@ public class PluginImportWizardFirstPage extends WizardPage {
 				}
 			}
 		}
-
-		// First clear the selection for all pages
-		iterator = importIdToWizardPage.values().iterator();
-		while (iterator.hasNext())
-			((IScmUrlImportWizardPage) iterator.next()).setSelection(new ScmUrlImportDescription[0]);
 
 		iterator = importerToImportees.entrySet().iterator();
 		while (iterator.hasNext()) {
