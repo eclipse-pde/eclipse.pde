@@ -721,7 +721,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 				IBundleImporter importer = importers[i];
 				if (importerToInstructions.containsKey(importer)) {
 					IScmUrlImportWizardPage page = (IScmUrlImportWizardPage) importIdToWizardPage.get(importer.getId());
-					if (page != null && nextPages.contains(page)) {
+					if (page != null && nextPages.contains(page) && page.getSelection() != null) {
 						map.put(importer, page.getSelection());
 					}
 				}
