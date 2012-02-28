@@ -200,8 +200,10 @@ public class PluginImportOperation extends WorkspaceJob {
 					Entry entry = (Entry) iterator.next();
 					IBundleImporter importer = (IBundleImporter) entry.getKey();
 					ScmUrlImportDescription[] descriptions = (ScmUrlImportDescription[]) entry.getValue();
+					if (descriptions.length == 0)
+						continue;
 					IProject[] importedProjects = importer.performImport(descriptions, new SubProgressMonitor(monitor, descriptions.length));
-					if (importedProjects.length == descriptions.length)
+					if (importedProjects != null && importedProjects.length == descriptions.length)
 						continue;
 
 					ArrayList namesOfImportedProjects = new ArrayList(importedProjects.length);

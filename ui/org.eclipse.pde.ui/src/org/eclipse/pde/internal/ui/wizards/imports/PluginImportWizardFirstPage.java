@@ -873,6 +873,12 @@ public class PluginImportWizardFirstPage extends WizardPage {
 				}
 			}
 		}
+
+		// First clear the selection for all pages
+		iterator = importIdToWizardPage.values().iterator();
+		while (iterator.hasNext())
+			((IScmUrlImportWizardPage) iterator.next()).setSelection(new ScmUrlImportDescription[0]);
+
 		iterator = importerToImportees.entrySet().iterator();
 		while (iterator.hasNext()) {
 			Entry entry = (Entry) iterator.next();
