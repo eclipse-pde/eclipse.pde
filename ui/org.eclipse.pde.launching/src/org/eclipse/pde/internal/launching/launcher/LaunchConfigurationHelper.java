@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,6 +35,9 @@ public class LaunchConfigurationHelper {
 	private static final String PROP_OSGI_FRAMEWORK = "osgi.framework"; //$NON-NLS-1$
 	private static final String PROP_OSGI_BUNDLES = "osgi.bundles"; //$NON-NLS-1$
 	private static final String PROP_P2_DATA_AREA = "eclipse.p2.data.area"; //$NON-NLS-1$
+	private static final String PROP_PRODUCT = "eclipse.product"; //$NON-NLS-1$
+	private static final String PROP_APPLICATION = "eclipse.application"; //$NON-NLS-1$
+
 	private static final String DEFAULT_PROFILE_NAME = "SelfHostingProfile"; //$NON-NLS-1$
 
 	/**
@@ -104,13 +107,15 @@ public class LaunchConfigurationHelper {
 		Properties properties = null;
 		// if we are to generate a config.ini, start with the values in the target platform's config.ini - bug 141918
 		if (configuration.getAttribute(IPDELauncherConstants.CONFIG_GENERATE_DEFAULT, true)) {
+			String appID = configuration.getAttribute(IPDELauncherConstants.APPLICATION, TargetPlatform.getDefaultApplication());
 			properties = TargetPlatformHelper.getConfigIniProperties();
 			// if target's config.ini does not exist, lets try to fill in default values
 			if (properties == null)
 				properties = new Properties();
-			// keep properties only if we are launching the default product (bug 175437)
-			else if (productID == null || !productID.equals(properties.get("eclipse.product"))) //$NON-NLS-1$
+			// clear properties only if we are NOT launching the default product or app (bug 175437, bug 315039)
+			else if ((productID != null && !productID.equals(properties.get(PROP_PRODUCT)) || (appID != null && !appID.equals(properties.get(PROP_APPLICATION))))) {
 				properties.clear();
+			}
 			// if target's config.ini has the osgi.bundles header, then parse and compute the proper osgi.bundles value
 			String bundleList = properties.getProperty(PROP_OSGI_BUNDLES);
 			if (bundleList != null)
@@ -228,7 +233,7 @@ public class LaunchConfigurationHelper {
 	 */
 	private static String computeOSGiBundles(String bundleList, Map bundles, Map bundlesWithStartLevels) {
 
-		// if p2 and only simple configurator and 
+		// if p2 and only simple configurator and
 		// if simple configurator isn't selected & isn't in bundle list... hack it
 
 		// if using p2's simple configurator, a bundles.txt will be written, so we only need simple configurator in the config.ini
