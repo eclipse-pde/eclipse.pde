@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 IBM Corporation and others.
+ * Copyright (c) 2009, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.core.target;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.equinox.frameworkadmin.BundleInfo;
 
 /**
@@ -39,6 +40,7 @@ public class NameVersionDescriptor {
 	 * @param version version identifier, can be <code>null</code>
 	 */
 	public NameVersionDescriptor(String id, String version) {
+		Assert.isNotNull(id); // Better to throw the exception now then throw NPEs later
 		fId = id;
 		// If an empty version was passed to the constructor, treat it as if null was passed
 		if (version == null || version.equals(BundleInfo.EMPTY_VERSION)) {
