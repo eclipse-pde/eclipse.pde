@@ -1402,6 +1402,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String FeatureImportWizard_messages_updating;
 	public static String FeatureImportWizard_title;
+	public static String FeatureSection_addRequired;
+
 	public static String FeatureSection_removeAll;
 	public static String FeatureImportWizard_noToAll;
 	public static String FeatureImportWizard_messages_noFeatures;
