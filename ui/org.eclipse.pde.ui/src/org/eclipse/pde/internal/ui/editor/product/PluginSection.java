@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -424,6 +424,7 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 			IProductPlugin[] plugins = new IProductPlugin[objects.length];
 			System.arraycopy(objects, 0, plugins, 0, objects.length);
 			getProduct().removePlugins(plugins);
+			updateRemoveButtons(true, true);
 		}
 	}
 
