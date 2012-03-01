@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
+ * Copyright (c) 2007, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,18 +51,6 @@ public class ApiDescription implements IApiDescription {
 	
 	// flag to indicate visibility should be inherited from parent node
 	protected static final int VISIBILITY_INHERITED = 0;
-	
-	/**
-	 * Debug flag
-	 */
-	static boolean DEBUG = Util.DEBUG;
-	
-	/**
-	 * Method used for initializing tracing for API descriptions
-	 */
-	public static void setDebug(boolean debugValue) {
-		DEBUG = debugValue || Util.DEBUG;
-	}
 	
 	/**
 	 * API component identifier of the API component that owns this
@@ -172,7 +160,7 @@ public class ApiDescription implements IApiDescription {
 		 * @return true if this node has API visibility false otherwise
 		 */
 		protected boolean hasApiVisibility(ManifestNode node) {
-			if(DEBUG) {
+			if(ApiPlugin.DEBUG_API_DESCRIPTION) {
 				System.out.println("Checking node for API visibility:"+node); //$NON-NLS-1$
 			}
 			if(node != null) {
@@ -196,7 +184,7 @@ public class ApiDescription implements IApiDescription {
 		 * @return up to date node, or <code>null</code> if no longer exists
 		 */
 		protected ManifestNode refresh() {
-			if(DEBUG) {
+			if(ApiPlugin.DEBUG_API_DESCRIPTION) {
 				System.out.println("Refreshing manifest node: "+this); //$NON-NLS-1$
 			}
 			return this;
@@ -386,7 +374,7 @@ public class ApiDescription implements IApiDescription {
 	 * @return manifest node or <code>null</code>
 	 */
 	protected ManifestNode findNode(IElementDescriptor element, boolean write) {
-		if(DEBUG) {
+		if(ApiPlugin.DEBUG_API_DESCRIPTION) {
 			StringBuffer buffer = new StringBuffer();
 			buffer.append("Looking up manifest node for element: "); //$NON-NLS-1$
 			buffer.append(element);
@@ -409,7 +397,7 @@ public class ApiDescription implements IApiDescription {
 						return null;
 					}
 				} else {
-					if(DEBUG) {
+					if(ApiPlugin.DEBUG_API_DESCRIPTION) {
 						StringBuffer buffer = new StringBuffer();
 						buffer.append("Returning parent manifest node: "); //$NON-NLS-1$
 						buffer.append(parentNode);
@@ -425,7 +413,7 @@ public class ApiDescription implements IApiDescription {
 				map = node.children;
 			}
 		}
-		if(DEBUG) {
+		if(ApiPlugin.DEBUG_API_DESCRIPTION) {
 			StringBuffer buffer = new StringBuffer();
 			buffer.append("Manifest node found: "); //$NON-NLS-1$
 			buffer.append(node);
@@ -444,7 +432,7 @@ public class ApiDescription implements IApiDescription {
 		if (node != null) {
 			return resolveAnnotations(node, element);
 		}
-		else if(DEBUG){
+		else if(ApiPlugin.DEBUG_API_DESCRIPTION){
 			StringBuffer buffer = new StringBuffer();
 			buffer.append("Tried to resolve annotations for manifest node: "); //$NON-NLS-1$
 			buffer.append(node);
@@ -484,7 +472,7 @@ public class ApiDescription implements IApiDescription {
 		if (node.element.equals(element)) {
 			res = node.restrictions;
 		}
-		if(DEBUG) {
+		if(ApiPlugin.DEBUG_API_DESCRIPTION) {
 			StringBuffer stringBuffer = new StringBuffer();
 			stringBuffer.append("Resolved annotations for manifest node: "); //$NON-NLS-1$
 			stringBuffer.append(node);
@@ -502,7 +490,7 @@ public class ApiDescription implements IApiDescription {
 	 */
 	protected void clearPackages() {
 		if(fPackageMap != null) {
-			if(DEBUG) {
+			if(ApiPlugin.DEBUG_API_DESCRIPTION) {
 				System.out.println("Clearing package map"); //$NON-NLS-1$
 			}
 			fPackageMap.clear();
@@ -525,7 +513,7 @@ public class ApiDescription implements IApiDescription {
 		if (element.getElementType() == IElementDescriptor.PACKAGE) {
 			vis = VisibilityModifiers.API;
 		}
-		if(DEBUG) {
+		if(ApiPlugin.DEBUG_API_DESCRIPTION) {
 			StringBuffer buffer = new StringBuffer();
 			buffer.append("Creating new manifest node for element: "); //$NON-NLS-1$
 			buffer.append(element);
@@ -542,7 +530,7 @@ public class ApiDescription implements IApiDescription {
 	public IStatus setRestrictions(IElementDescriptor element, int restrictions) {
 		ManifestNode node = findNode(element, true);
 		if(node != null) {
-			if(DEBUG) {
+			if(ApiPlugin.DEBUG_API_DESCRIPTION) {
 				StringBuffer buffer = new StringBuffer();
 				buffer.append("Setting restrictions for manifest node: "); //$NON-NLS-1$
 				buffer.append(node);
@@ -565,7 +553,7 @@ public class ApiDescription implements IApiDescription {
 	public IStatus setVisibility(IElementDescriptor element, int visibility) {
 		ManifestNode node = findNode(element, true);
 		if(node != null) {
-			if(DEBUG) {
+			if(ApiPlugin.DEBUG_API_DESCRIPTION) {
 				StringBuffer buffer = new StringBuffer();
 				buffer.append("Setting visibility for manifest node: "); //$NON-NLS-1$
 				buffer.append(node);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 IBM Corporation and others.
+ * Copyright (c) 2008, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -132,11 +132,6 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	}
 	
 	/**
-	 * Constant used for controlling tracing in the API tool builder
-	 */
-	private static boolean DEBUG = Util.DEBUG;
-	
-	/**
 	 * The backing list of problems found so far
 	 */
 	private ArrayList fProblems = new ArrayList(25);
@@ -162,12 +157,6 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * The current preferences to use when the platform is not running.
 	 */
 	private Properties fPreferences = null;
-	/**
-	 * Method used for initializing tracing in the API tool builder
-	 */
-	public static void setDebug(boolean debugValue) {
-		DEBUG = debugValue || Util.DEBUG;
-	}
 	
 	/**
 	 * Constructs an API analyzer
@@ -293,7 +282,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		catch(OperationCanceledException oce) {
 			//do nothing, but don't forward it
 			//https://bugs.eclipse.org/bugs/show_bug.cgi?id=304315
-			if(DEBUG) {
+			if(ApiPlugin.DEBUG_API_ANALYZER) {
 				System.out.println("Trapped OperationCanceledException"); //$NON-NLS-1$
 			}
 		}
@@ -311,12 +300,12 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 */
 	void checkEEDescriptions() {
 		if(ignoreEEDescriptionCheck()) {
-			if(DEBUG) {
+			if(ApiPlugin.DEBUG_API_ANALYZER) {
 				System.out.println("Ignoring check for API EE descriptions"); //$NON-NLS-1$
 			}
 			return;
 		}
-		if(DEBUG) {
+		if(ApiPlugin.DEBUG_API_ANALYZER) {
 			System.out.println("Checking if there are any API EE descriptions installed if the preference is set to not be 'ignore'"); //$NON-NLS-1$
 		}
 		String[] ees = StubApiComponent.getInstalledMetadata();
@@ -359,7 +348,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			return;
 		}
 		String[] apiUseTypes = getApiUseTypes(bcontext);
-		if (DEBUG) {
+		if (ApiPlugin.DEBUG_API_ANALYZER) {
 			if(apiUseTypes.length < 1) {
 				System.out.println("Checking use scan dependencies for: "+apiComponent.getSymbolicName()+" ("+apiComponent.getVersion()+")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
@@ -566,7 +555,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 */
 	private void checkUnusedProblemFilters(final IBuildContext context, IApiComponent reference, IProgressMonitor monitor) {
 		if(ignoreUnusedProblemFilterCheck()) {
-			if(DEBUG) {
+			if(ApiPlugin.DEBUG_API_ANALYZER) {
 				System.out.println("Ignoring unused problem filter check"); //$NON-NLS-1$
 			}
 			Util.updateMonitor(monitor, 1);
@@ -1146,7 +1135,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 */
 	private void checkApiUsage(final IBuildContext context, final IApiComponent component, IProgressMonitor monitor) throws CoreException {
 		if(ignoreApiUsageScan()) {
-			if(DEBUG) {
+			if(ApiPlugin.DEBUG_API_ANALYZER) {
 				System.out.println("Ignoring API usage scan"); //$NON-NLS-1$
 			}
 			return;
@@ -1169,7 +1158,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			IApiProblem[] illegal = analyzer.analyze(component, scope, localMonitor.newChild(2));
 			Util.updateMonitor(localMonitor);
 			long end = System.currentTimeMillis();
-			if (DEBUG) {
+			if (ApiPlugin.DEBUG_API_ANALYZER) {
 				System.out.println("API usage scan: " + (end- start) + " ms\t" + illegal.length + " problems"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}		
 			for (int i = 0; i < illegal.length; i++) {
@@ -1178,7 +1167,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			Util.updateMonitor(localMonitor);
 		} 
 		catch (CoreException ce) {
-			if(DEBUG) {
+			if(ApiPlugin.DEBUG_API_ANALYZER) {
 				ApiPlugin.log(ce);
 			}
 		}
@@ -1234,7 +1223,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 */
 	private void checkCompatibility(final String typeName, final IApiComponent reference, final IApiComponent component, IProgressMonitor monitor) throws CoreException {
 		String id = component.getSymbolicName();
-		if (DEBUG) {
+		if (ApiPlugin.DEBUG_API_ANALYZER) {
 			System.out.println("comparing components ["+reference.getSymbolicName()+"] and ["+id+"] for type ["+typeName+"]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		}
 		IApiTypeRoot classFile = null;
@@ -1347,13 +1336,13 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 				} catch(OperationCanceledException oce) {
 					//do nothing, but don't forward it
 					//https://bugs.eclipse.org/bugs/show_bug.cgi?id=304315
-					if(DEBUG) {
+					if(ApiPlugin.DEBUG_API_ANALYZER) {
 						System.out.println("Trapped OperationCanceledException"); //$NON-NLS-1$
 					}
 				} catch(Exception e) {
 					ApiPlugin.log(e);
 				} finally {
-					if (DEBUG) {
+					if (ApiPlugin.DEBUG_API_ANALYZER) {
 						System.out.println("Time spent for " + typeName + " : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					}
 					fPendingDeltaInfos.clear();
@@ -1413,7 +1402,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 				try {
 					delta = ApiComparator.compare(reference, component, VisibilityModifiers.API, localmonitor.newChild(1));
 				} finally {
-					if (DEBUG) {
+					if (ApiPlugin.DEBUG_API_ANALYZER) {
 						System.out.println("Time spent for " + component.getSymbolicName() + " : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					}
 					fPendingDeltaInfos.clear();
@@ -1504,7 +1493,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			try {
 				if (visitor.hasNoComment() || visitor.isMissing()) {
 					if(ignoreSinceTagCheck(IApiProblemTypes.MISSING_SINCE_TAG)) {
-						if(DEBUG) {
+						if(ApiPlugin.DEBUG_API_ANALYZER) {
 							System.out.println("Ignoring missing since tag problem"); //$NON-NLS-1$
 						}
 						return;
@@ -1521,7 +1510,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 						String postfixString = tagVersion.postfixString();
 						if (tagVersion.getVersion() == null || Util.getFragmentNumber(tagVersion.getVersionString()) > 2) {
 							if(ignoreSinceTagCheck(IApiProblemTypes.MALFORMED_SINCE_TAG)) {
-								if(DEBUG) {
+								if(ApiPlugin.DEBUG_API_ANALYZER) {
 									System.out.println("Ignoring malformed since tag problem"); //$NON-NLS-1$
 								}
 								return;
@@ -1538,7 +1527,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 							problem = createSinceTagProblem(IApiProblem.SINCE_TAG_MALFORMED, new String[] {sinceVersion, Util.getDeltaArgumentString(delta)}, delta, member, String.valueOf(buffer));
 						} else {
 							if(ignoreSinceTagCheck(IApiProblemTypes.INVALID_SINCE_TAG_VERSION)) {
-								if(DEBUG) {
+								if(ApiPlugin.DEBUG_API_ANALYZER) {
 									System.out.println("Ignoring invalid tag version problem"); //$NON-NLS-1$
 								}
 								return;
@@ -1822,7 +1811,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 								case IDelta.METHOD_WITHOUT_DEFAULT_VALUE :
 								case IDelta.FIELD :
 								case IDelta.TYPE :
-									if (DEBUG) {
+									if (ApiPlugin.DEBUG_API_ANALYZER) {
 										String deltaDetails = "Delta : " + Util.getDetail(delta); //$NON-NLS-1$
 										System.out.println(deltaDetails + " is compatible"); //$NON-NLS-1$
 									}
@@ -1833,7 +1822,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 							break;
 						case IDelta.CHANGED :
 							if (flags == IDelta.INCREASE_ACCESS) {
-								if (DEBUG) {
+								if (ApiPlugin.DEBUG_API_ANALYZER) {
 									String deltaDetails = "Delta : " + Util.getDetail(delta); //$NON-NLS-1$
 									System.out.println(deltaDetails + " is compatible"); //$NON-NLS-1$
 								}
@@ -1857,7 +1846,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 						case IDelta.FIELD :
 							// ensure that there is a @since tag for the corresponding member
 							if (Util.isVisible(modifiers)) {
-								if (DEBUG) {
+								if (ApiPlugin.DEBUG_API_ANALYZER) {
 									String deltaDetails = "Delta : " + Util.getDetail(delta); //$NON-NLS-1$
 									System.err.println(deltaDetails + " is not compatible"); //$NON-NLS-1$
 								}
@@ -1879,7 +1868,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 */
 	private void checkApiComponentVersion(final IApiComponent reference, final IApiComponent component) throws CoreException {
 		if(ignoreComponentVersionCheck() || reference == null || component == null) {
-			if(DEBUG) {
+			if(ApiPlugin.DEBUG_API_ANALYZER) {
 				System.out.println("Ignoring component version check"); //$NON-NLS-1$
 			}
 			return;
@@ -1890,7 +1879,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		Version refversion = new Version(refversionval);
 		Version compversion = new Version(compversionval);
 		Version newversion = null;
-		if (DEBUG) {
+		if (ApiPlugin.DEBUG_API_ANALYZER) {
 			System.out.println("reference version of " + reference.getSymbolicName() + " : " + refversion); //$NON-NLS-1$ //$NON-NLS-2$
 			System.out.println("component version of " + component.getSymbolicName() + " : " + compversion); //$NON-NLS-1$ //$NON-NLS-2$
 		}
@@ -2205,12 +2194,12 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 */
 	private void checkDefaultBaselineSet() {
 		if(ignoreDefaultBaselineCheck()) {
-			if(DEBUG) {
+			if(ApiPlugin.DEBUG_API_ANALYZER) {
 				System.out.println("Ignoring check for default API baseline"); //$NON-NLS-1$
 			}
 			return;
 		}
-		if(DEBUG) {
+		if(ApiPlugin.DEBUG_API_ANALYZER) {
 			System.out.println("Checking if the default api baseline is set"); //$NON-NLS-1$
 		}
 		IApiProblem problem = ApiProblemFactory.newApiBaselineProblem(

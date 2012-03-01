@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 IBM Corporation and others.
+ * Copyright (c) 2009, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,11 +50,6 @@ public final class ApiSearchEngine {
 	 * Default empty array for no search matches
 	 */
 	public static final IReference[] NO_REFERENCES = new IReference[0];
-	
-	/**
-	 * Constant used for controlling tracing in the search engine
-	 */
-	private static boolean DEBUG = Util.DEBUG;
 	
 	/**
 	 * Visitor used to extract references from the component is is passed to
@@ -136,13 +131,6 @@ public final class ApiSearchEngine {
 			reporter.reportResults(this.element, (IReference[]) collector.toArray(new IReference[collector.size()]));
 			collector.clear();
 		}
-	}
-	
-	/**
-	 * Method used for initializing tracing
-	 */
-	public static void setDebug(boolean debugValue) {
-		DEBUG = debugValue || Util.DEBUG;
 	}
 	
 	/**
@@ -303,7 +291,7 @@ public final class ApiSearchEngine {
 				try {
 					taskname = MessageFormat.format(SearchMessages.ApiSearchEngine_searching_project, new String[] {scopeelements[i].getApiComponent().getSymbolicName(), fRequestorContext});
 					localmonitor.setTaskName(taskname);
-					if(DEBUG) {
+					if(ApiPlugin.DEBUG_SEARCH_ENGINE) {
 						loopstart = System.currentTimeMillis();
 						System.out.println("Searching "+scopeelements[i].getApiComponent().getSymbolicName()+"..."); //$NON-NLS-1$ //$NON-NLS-2$
 					}
@@ -314,7 +302,7 @@ public final class ApiSearchEngine {
 						return;
 					}
 					localmonitor.worked(1);
-					if(DEBUG) {
+					if(ApiPlugin.DEBUG_SEARCH_ENGINE) {
 						System.out.println(Math.round((((float)(i+1))/scopeelements.length)*100)+"% done in "+(System.currentTimeMillis()-loopstart)+" ms"); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 				}
@@ -325,7 +313,7 @@ public final class ApiSearchEngine {
 					mstatus.add(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, ce.getMessage(), ce));
 				}
 			}
-			if(DEBUG) {
+			if(ApiPlugin.DEBUG_SEARCH_ENGINE) {
 				System.out.println("Total Search Time: "+((System.currentTimeMillis()-start)/1000)+" seconds");  //$NON-NLS-1$//$NON-NLS-2$
 			}
 			if(mstatus != null) {

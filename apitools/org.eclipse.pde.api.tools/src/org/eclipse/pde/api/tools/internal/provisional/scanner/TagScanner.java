@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 IBM Corporation and others.
+ * Copyright (c) 2007, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -68,18 +68,6 @@ import org.eclipse.pde.api.tools.internal.util.Util;
  */
 public class TagScanner {
 
-	/**
-	 * Constant used for controlling tracing in the scanner
-	 */
-	private static boolean DEBUG = Util.DEBUG;
-	
-	/**
-	 * Method used for initializing tracing in the scanner
-	 */
-	public static void setDebug(boolean debugValue) {
-		DEBUG = debugValue || Util.DEBUG;
-	}
-	
 	/**
 	 * Visitor to scan a compilation unit. We only care about javadoc nodes that have either 
 	 * type or enum declarations as parents, so we have to override the ones we don't care 
@@ -524,7 +512,7 @@ public class TagScanner {
 			throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID,
 					MessageFormat.format("Compilation unit source not found: {0}", new String[]{source.getName()}), e)); //$NON-NLS-1$
 		} catch (IOException e) {
-			if (DEBUG) {
+			if (ApiPlugin.DEBUG_TAG_SCANNER) {
 				System.err.println(source.getName());
 			}
 			throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID,

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 IBM Corporation and others.
+ * Copyright (c) 2010, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,6 +27,7 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.api.tools.internal.builder.BuildState;
 import org.eclipse.pde.api.tools.internal.model.ApiBaseline;
+import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
@@ -37,18 +38,6 @@ import org.eclipse.pde.api.tools.internal.util.Util;
  */
 public class WorkspaceDeltaProcessor implements IElementChangedListener, IResourceChangeListener {
 
-	/**
-	 * Constant used for controlling tracing in the API tool builder
-	 */
-	private static boolean DEBUG = Util.DEBUG;
-	
-	/**
-	 * Method used for initializing tracing in the API tool builder
-	 */
-	public static void setDebug(boolean debugValue) {
-		DEBUG = debugValue || Util.DEBUG;
-	}
-	
 	ApiBaselineManager bmanager = ApiBaselineManager.getManager();
 	ApiDescriptionManager dmanager = ApiDescriptionManager.getManager();
 	
@@ -73,20 +62,20 @@ public class WorkspaceDeltaProcessor implements IElementChangedListener, IResour
 					switch (delta.getKind()) {
 						case IJavaElementDelta.CHANGED: {
 							if(!Util.isApiProject(proj)) {
-								if(DEBUG) {
+								if(ApiPlugin.DEBUG_WORKSPACE_DELTA_PROCESSOR) {
 									System.out.println("--> skipped processing CHANGED delta for project: "+proj.getElementName()); //$NON-NLS-1$
 								}
 								continue;
 							}
 							if((flags & IJavaElementDelta.F_OPENED) != 0) {
-								if(DEBUG) {
+								if(ApiPlugin.DEBUG_WORKSPACE_DELTA_PROCESSOR) {
 									System.out.println("--> processing OPEN project: ["+proj.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
 								}
 								bmanager.disposeWorkspaceBaseline();
 							}
 							else if( (flags & IJavaElementDelta.F_RESOLVED_CLASSPATH_CHANGED) != 0 ||
 								(flags & IJavaElementDelta.F_CLASSPATH_CHANGED) != 0) {
-									if(DEBUG) {
+									if(ApiPlugin.DEBUG_WORKSPACE_DELTA_PROCESSOR) {
 										System.out.println("--> processing CLASSPATH CHANGE project: ["+proj.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
 									}
 									bmanager.disposeWorkspaceBaseline();
@@ -97,14 +86,14 @@ public class WorkspaceDeltaProcessor implements IElementChangedListener, IResour
 									dmanager.flushElementCache(delta.getElement());
 							}
 							else if((flags & IJavaElementDelta.F_CHILDREN) != 0) {
-								if(DEBUG) {
+								if(ApiPlugin.DEBUG_WORKSPACE_DELTA_PROCESSOR) {
 									System.out.println("--> processing CHILDREN delta of project: ["+proj.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
 								}
 								processJavaElementDeltas(delta.getAffectedChildren(), proj);
 							} 
 							else if((flags & IJavaElementDelta.F_CONTENT) != 0) {
 								if (proj != null) {
-									if(DEBUG) {
+									if(ApiPlugin.DEBUG_WORKSPACE_DELTA_PROCESSOR) {
 										System.out.println("--> processing child CONTENT of project: ["+proj.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
 									}
 									IResourceDelta[] resourcedeltas = delta.getResourceDeltas();
@@ -113,7 +102,7 @@ public class WorkspaceDeltaProcessor implements IElementChangedListener, IResour
 										for (int j = 0; j < resourcedeltas.length; j++) {
 											rdelta = resourcedeltas[j].findMember(new Path(Util.MANIFEST_NAME));
 											if(rdelta!= null && rdelta.getKind() == IResourceDelta.CHANGED && (rdelta.getFlags() & IResourceDelta.CONTENT) > 0) {
-												if(DEBUG) {
+												if(ApiPlugin.DEBUG_WORKSPACE_DELTA_PROCESSOR) {
 													System.out.println("--> processing manifest delta"); //$NON-NLS-1$
 												}
 												bmanager.disposeWorkspaceBaseline();
@@ -123,7 +112,7 @@ public class WorkspaceDeltaProcessor implements IElementChangedListener, IResour
 									}
 								}
 								else {
-									if(DEBUG) {
+									if(ApiPlugin.DEBUG_WORKSPACE_DELTA_PROCESSOR) {
 										System.out.println("--> ignoring child CONTENT project context is null");  //$NON-NLS-1$
 									}
 								}
@@ -132,13 +121,13 @@ public class WorkspaceDeltaProcessor implements IElementChangedListener, IResour
 						}
 						case IJavaElementDelta.ADDED: {
 							if(!Util.isApiProject(proj)) {
-								if(DEBUG) {
+								if(ApiPlugin.DEBUG_WORKSPACE_DELTA_PROCESSOR) {
 									System.out.println("--> skipped processing ADDED delta for project: "+proj.getElementName()); //$NON-NLS-1$
 								}
 								continue;
 							}
 							if((flags & IJavaElementDelta.F_MOVED_FROM) != 0) {
-								if(DEBUG) {
+								if(ApiPlugin.DEBUG_WORKSPACE_DELTA_PROCESSOR) {
 									System.out.println("--> processing PROJECT RENAME from: ["+delta.getMovedFromElement().getJavaProject().getElementName()+"] to: ["+proj.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 								}
 								bmanager.disposeWorkspaceBaseline();
@@ -154,13 +143,13 @@ public class WorkspaceDeltaProcessor implements IElementChangedListener, IResour
 					if ((flags & (IJavaElementDelta.F_ARCHIVE_CONTENT_CHANGED
 							| IJavaElementDelta.F_ADDED_TO_CLASSPATH
 							| IJavaElementDelta.F_REMOVED_FROM_CLASSPATH)) != 0) {
-						if(DEBUG) {
+						if(ApiPlugin.DEBUG_WORKSPACE_DELTA_PROCESSOR) {
 							System.out.println("processed CLASSPATH CHANGED for package fragment root: ["+root.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
 						}
 						dmanager.projectClasspathChanged(project);
 					} 
 					if ((flags & IJavaElementDelta.F_CHILDREN) != 0) {
-						if(DEBUG) {
+						if(ApiPlugin.DEBUG_WORKSPACE_DELTA_PROCESSOR) {
 							System.out.println("processed CHILDREN for package fragment root: ["+root.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
 						}
 						processJavaElementDeltas(delta.getAffectedChildren(), project);
@@ -170,14 +159,14 @@ public class WorkspaceDeltaProcessor implements IElementChangedListener, IResour
 				case IJavaElement.PACKAGE_FRAGMENT: {
 					IPackageFragment fragment = (IPackageFragment) delta.getElement();
 					if(delta.getKind() == IJavaElementDelta.REMOVED) {
-						if(DEBUG) {
+						if(ApiPlugin.DEBUG_WORKSPACE_DELTA_PROCESSOR) {
 							System.out.println("processed REMOVED delta for package fragment: ["+fragment.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
 						}
 						((ApiBaseline)bmanager.getWorkspaceBaseline()).clearPackage(fragment.getElementName());
 					}
 					int flags = delta.getFlags();
 					if ((flags & IJavaElementDelta.F_CHILDREN) != 0) {
-						if(DEBUG) {
+						if(ApiPlugin.DEBUG_WORKSPACE_DELTA_PROCESSOR) {
 							System.out.println("processed CHILDREN delta for package fragment: ["+fragment.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
 						}
 						processJavaElementDeltas(delta.getAffectedChildren(), project);
@@ -192,7 +181,7 @@ public class WorkspaceDeltaProcessor implements IElementChangedListener, IResour
 											IJavaElementDelta.F_FINE_GRAINED | 
 											IJavaElementDelta.F_PRIMARY_RESOURCE)) != 0){
 								if (project != null) {
-									if(DEBUG) {
+									if(ApiPlugin.DEBUG_WORKSPACE_DELTA_PROCESSOR) {
 										System.out.println("processed CONTENT / FINE_GRAINED / PRIMARY_RESOURCE delta for: ["+delta.getElement().getElementName()+"]");  //$NON-NLS-1$//$NON-NLS-2$
 									}
 									dmanager.projectChanged(project);
@@ -205,7 +194,7 @@ public class WorkspaceDeltaProcessor implements IElementChangedListener, IResour
 						case IJavaElementDelta.ADDED :
 						case IJavaElementDelta.REMOVED : {
 							if (project != null) {
-								if(DEBUG) {
+								if(ApiPlugin.DEBUG_WORKSPACE_DELTA_PROCESSOR) {
 									if(delta.getKind() == IJavaElementDelta.ADDED) {
 										System.out.println("processed ADDED delta for: ["+delta.getElement().getElementName()+"]");  //$NON-NLS-1$//$NON-NLS-2$
 									}
@@ -231,7 +220,7 @@ public class WorkspaceDeltaProcessor implements IElementChangedListener, IResour
 		IResource resource = event.getResource();
 		switch(event.getType()) {
 			case IResourceChangeEvent.PRE_BUILD: {
-				if(DEBUG) {
+				if(ApiPlugin.DEBUG_WORKSPACE_DELTA_PROCESSOR) {
 					if (resource == null) {
 						System.out.println("processed PRE_BUILD delta for workspace."); //$NON-NLS-1$
 					} else {
@@ -263,12 +252,12 @@ public class WorkspaceDeltaProcessor implements IElementChangedListener, IResour
 				if(resource.getType() == IResource.PROJECT) {
 					IProject project = (IProject) resource;
 					if (Util.isApiProject(project) || Util.isJavaProject(project)) {
-						if(DEBUG) {
+						if(ApiPlugin.DEBUG_WORKSPACE_DELTA_PROCESSOR) {
 							if(event.getType() == IResourceChangeEvent.PRE_CLOSE) {
 								System.out.println("processed PRE_CLOSE delta for project: ["+resource.getName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
 							}
 							else {
-								if(DEBUG) {
+								if(ApiPlugin.DEBUG_WORKSPACE_DELTA_PROCESSOR) {
 									System.out.println("processed PRE_DELETE delta for project: ["+resource.getName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
 								}
 							}

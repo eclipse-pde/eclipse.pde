@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 IBM Corporation and others.
+ * Copyright (c) 2008, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -67,17 +67,7 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 	private static final String SETTINGS_FOLDER = ".settings"; //$NON-NLS-1$
 	public static final String GLOBAL = "!global!"; //$NON-NLS-1$
 	public static final int CURRENT_STORE_VERSION = 2;
-	/**
-	 * Constant used for controlling tracing in the plug-in workspace component
-	 */
-	static boolean DEBUG = Util.DEBUG;
-	
-	/**
-	 * Method used for initializing tracing in the plug-in workspace component
-	 */
-	public static void setDebug(boolean debugValue) {
-		DEBUG = debugValue || Util.DEBUG;
-	}
+
 	/**
 	 * Represents no filters
 	 */
@@ -125,14 +115,14 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 		final Map filters = new HashMap(fFilterMap);
 		WorkspaceJob job = new WorkspaceJob(Util.EMPTY_STRING) {
 			public IStatus runInWorkspace(IProgressMonitor monitor)	throws CoreException {
-				if(DEBUG) {
+				if(ApiPlugin.DEBUG_FILTER_STORE) {
 					System.out.println("persisting api filters for plugin project component ["+fProject.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				try {
 					SubMonitor localmonitor = SubMonitor.convert(monitor);
 					IProject project = fProject.getProject();
 					if(!project.isAccessible()) {
-						if(DEBUG) {
+						if(ApiPlugin.DEBUG_FILTER_STORE) {
 							System.out.println("project ["+fProject.getElementName()+"] is not accessible, saving terminated"); //$NON-NLS-1$ //$NON-NLS-2$
 						}
 						return Status.CANCEL_STATUS;
@@ -140,7 +130,7 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 					String xml = getStoreAsXml(filters);
 					IFile file = project.getFile(getFilterFilePath(false));
 					if(xml == null) {
-						if(DEBUG) {
+						if(ApiPlugin.DEBUG_FILTER_STORE) {
 							System.out.println("no XML to persist for plugin project component ["+fProject.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
 						}
 						// no filters - delete the file if it exists
@@ -197,7 +187,7 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 	 */
 	public synchronized void addFilters(IApiProblemFilter[] filters) {
 		if(filters == null) {
-			if(DEBUG) {
+			if(ApiPlugin.DEBUG_FILTER_STORE) {
 				System.out.println("null filters array, not adding filters"); //$NON-NLS-1$
 			}
 			return;
@@ -241,13 +231,13 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 	 */
 	public synchronized void addFiltersFor(IApiProblem[] problems) {
 		if(problems == null) {
-			if(DEBUG) {
+			if(ApiPlugin.DEBUG_FILTER_STORE) {
 				System.out.println("null problems array: not addding filters"); //$NON-NLS-1$
 			}
 			return;
 		}
 		if(problems.length < 1) {
-			if(DEBUG) {
+			if(ApiPlugin.DEBUG_FILTER_STORE) {
 				System.out.println("empty problem array: not addding filters"); //$NON-NLS-1$
 			}
 			return;
@@ -284,14 +274,14 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 		}
 		IResource resource = fProject.getProject().findMember(new Path(resourcePath));
 		if(resource == null) {
-			if(DEBUG) {
+			if(ApiPlugin.DEBUG_FILTER_STORE) {
 				System.out.println("no resource exists: ["+resourcePath+"]"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			return false;
 		}
 		IApiProblemFilter[] filters = this.getFilters(resource);
 		if(filters == null) {
-			if(DEBUG) {
+			if(ApiPlugin.DEBUG_FILTER_STORE) {
 				System.out.println("no filters defined for ["+resourcePath+"] return not filtered"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			return false;
@@ -300,14 +290,14 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 		for(int i = 0, max = filters.length; i < max; i++) {
 			filter = filters[i];
 			if(filter.getUnderlyingProblem().equals(problem)) {
-				if(DEBUG) {
+				if(ApiPlugin.DEBUG_FILTER_STORE) {
 					System.out.println("recording filter used: ["+filter.toString()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				recordFilterUsed(resource, filter);
 				return true;
 			}
 		}
-		if(DEBUG) {
+		if(ApiPlugin.DEBUG_FILTER_STORE) {
 			System.out.println("no filter defined for problem: ["+problem.toString()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return false;
@@ -342,13 +332,13 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 	 */
 	public synchronized boolean removeFilters(IApiProblemFilter[] filters) {
 		if(filters == null) {
-			if(DEBUG) {
+			if(ApiPlugin.DEBUG_FILTER_STORE) {
 				System.out.println("null filters array, not removing"); //$NON-NLS-1$
 			}
 			return false;
 		}
 		if(fFilterMap == null) {
-			if(DEBUG) {
+			if(ApiPlugin.DEBUG_FILTER_STORE) {
 				System.out.println("null filter map, not removing"); //$NON-NLS-1$
 			}
 			return false;
@@ -374,7 +364,7 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 			}
 			Set pfilters = (Set) pTypeNames.get(typeName);
 			if(pfilters != null && pfilters.remove(filters[i])) {
-				if(DEBUG) {
+				if(ApiPlugin.DEBUG_FILTER_STORE) {
 					System.out.println("removed filter: ["+filters[i]+"]"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				fNeedsSaving |= true;
@@ -402,13 +392,13 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 	 */
 	synchronized String getStoreAsXml(Map filtermap) throws CoreException {
 		if(filtermap == null) {
-			if(DEBUG) {
+			if(ApiPlugin.DEBUG_FILTER_STORE) {
 				System.out.println("no filter map returning null XML for project ["+fProject.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			return null;
 		}
 		if(filtermap.isEmpty()) {
-			if(DEBUG) {
+			if(ApiPlugin.DEBUG_FILTER_STORE) {
 				System.out.println("empty filter map returning null XML for project ["+fProject.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			return null;
@@ -531,14 +521,14 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 		if(fFilterMap != null) {
 			return;
 		}
-		if(DEBUG) {
+		if(ApiPlugin.DEBUG_FILTER_STORE) {
 			System.out.println("initializing api filter map for project ["+fProject.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		fFilterMap = new HashMap(5);
 		IPath filepath = getFilterFilePath(true);
 		IResource file = ResourcesPlugin.getWorkspace().getRoot().findMember(filepath, true);
 		if(file == null) {
-			if(DEBUG) {
+			if(ApiPlugin.DEBUG_FILTER_STORE) {
 				System.out.println(".api_filter file not found during initialization for project ["+fProject.getElementName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			return;
@@ -895,7 +885,7 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 			//via the persistApiFilters(..) method
 			//see https://bugs.eclipse.org/bugs/show_bug.cgi?id=222442
 			fTriggeredChange = false;
-			if(DEBUG) {
+			if(ApiPlugin.DEBUG_FILTER_STORE) {
 				System.out.println("ignoring triggered change"); //$NON-NLS-1$
 			}
 			return;
@@ -908,7 +898,7 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 			}
 			boolean needsbuild = false;
 			if(leafdelta.getKind() == IResourceDelta.REMOVED) {
-				if(DEBUG) {
+				if(ApiPlugin.DEBUG_FILTER_STORE) {
 					System.out.println("processed REMOVED delta"); //$NON-NLS-1$
 				}
 				if(fFilterMap != null) {
@@ -919,12 +909,12 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 			else if(leafdelta.getKind() == IResourceDelta.ADDED || 
 					(leafdelta.getFlags() & IResourceDelta.CONTENT) != 0 || 
 					(leafdelta.getFlags() & IResourceDelta.REPLACED) != 0) {
-				if(DEBUG) {
+				if(ApiPlugin.DEBUG_FILTER_STORE) {
 					System.out.println("processing ADDED or CONTENT or REPLACED"); //$NON-NLS-1$
 				}
 				IResource resource = leafdelta.getResource();
 				if(resource != null && resource.getType() == IResource.FILE) {
-					if(DEBUG) {
+					if(ApiPlugin.DEBUG_FILTER_STORE) {
 						System.out.println("processed FILE delta for ["+resource.getName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 					IFile file = (IFile) resource;

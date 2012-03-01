@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 IBM Corporation and others.
+ * Copyright (c) 2007, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -70,18 +70,6 @@ import org.xml.sax.helpers.DefaultHandler;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public final class ApiBaselineManager implements IApiBaselineManager, ISaveParticipant {
-	
-	/**
-	 * Constant used for controlling tracing in the API tool builder
-	 */
-	private static boolean DEBUG = Util.DEBUG;
-	
-	/**
-	 * Method used for initializing tracing in the API tool builder
-	 */
-	public static void setDebug(boolean debugValue) {
-		DEBUG = debugValue || Util.DEBUG;
-	}
 	
 	/**
 	 * Constant for the default API baseline.
@@ -289,7 +277,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 			String def = getDefaultProfilePref();
 			IApiBaseline baseline = (IApiBaseline) baselinecache.get(def);
 			defaultbaseline = (baseline != null ? def : null);
-			if(DEBUG) {
+			if(ApiPlugin.DEBUG_BASELINE_MANAGER) {
 				System.out.println("Time to initialize state cache: " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
@@ -496,7 +484,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 		if (baseline == null) {
 			abort("Invalid baseline description", null); //$NON-NLS-1$
 		}
-		if(DEBUG) {
+		if(ApiPlugin.DEBUG_BASELINE_MANAGER) {
 			System.out.println("Time to restore a persisted baseline : " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
@@ -633,7 +621,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 	 */
 	synchronized void disposeWorkspaceBaseline() {
 		if (workspacebaseline != null) {
-			if(DEBUG) {
+			if(ApiPlugin.DEBUG_BASELINE_MANAGER) {
 				System.out.println("disposing workspace baseline"); //$NON-NLS-1$
 			}
 			workspacebaseline.dispose();
@@ -672,7 +660,7 @@ public final class ApiBaselineManager implements IApiBaselineManager, ISaveParti
 			}
 			baseline.addApiComponents((IApiComponent[]) componentsList.toArray(new IApiComponent[componentsList.size()]));
 		} finally {
-			if (DEBUG) {
+			if (ApiPlugin.DEBUG_BASELINE_MANAGER) {
 				System.out.println("Time to create a workspace baseline : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}

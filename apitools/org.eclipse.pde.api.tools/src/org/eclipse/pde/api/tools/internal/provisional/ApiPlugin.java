@@ -12,6 +12,7 @@ package org.eclipse.pde.api.tools.internal.provisional;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -35,24 +36,14 @@ import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jdt.core.ElementChangedEvent;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.osgi.service.debug.DebugOptions;
+import org.eclipse.osgi.service.debug.DebugOptionsListener;
 import org.eclipse.pde.api.tools.internal.ApiBaselineManager;
-import org.eclipse.pde.api.tools.internal.ApiDescription;
 import org.eclipse.pde.api.tools.internal.ApiDescriptionManager;
-import org.eclipse.pde.api.tools.internal.ApiFilterStore;
 import org.eclipse.pde.api.tools.internal.JavadocTagManager;
 import org.eclipse.pde.api.tools.internal.SessionManager;
 import org.eclipse.pde.api.tools.internal.WorkspaceDeltaProcessor;
-import org.eclipse.pde.api.tools.internal.builder.AbstractProblemDetector;
-import org.eclipse.pde.api.tools.internal.builder.ApiAnalysisBuilder;
-import org.eclipse.pde.api.tools.internal.builder.ReferenceAnalyzer;
-import org.eclipse.pde.api.tools.internal.builder.ReferenceExtractor;
-import org.eclipse.pde.api.tools.internal.builder.ReferenceResolver;
-import org.eclipse.pde.api.tools.internal.comparator.ClassFileComparator;
-import org.eclipse.pde.api.tools.internal.descriptors.ElementDescriptorImpl;
-import org.eclipse.pde.api.tools.internal.model.ProjectComponent;
-import org.eclipse.pde.api.tools.internal.provisional.comparator.ApiComparator;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
-import org.eclipse.pde.api.tools.internal.provisional.scanner.TagScanner;
 import org.eclipse.pde.api.tools.internal.util.FileManager;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.core.target.NameVersionDescriptor;
@@ -67,7 +58,7 @@ import org.osgi.service.prefs.BackingStoreException;
  * 
  * @since 1.0.0
  */
-public class ApiPlugin extends Plugin implements ISaveParticipant {
+public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsListener {
 	
 	/**
 	 * Constant representing the expected name for an execution environment description fragment
@@ -181,11 +172,16 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 	 * This bundle's OSGi context
 	 */
 	private BundleContext fBundleContext = null;
+	
+	private static boolean DEBUG = false;
+	
 	/**
 	 * Private debug options
 	 */
+	private static final String DEBUG_FLAG = PLUGIN_ID + "/debug"; //$NON-NLS-1$
 	private static final String BUILDER_DEBUG = PLUGIN_ID + "/debug/builder" ; //$NON-NLS-1$
 	private static final String DELTA_DEBUG = PLUGIN_ID + "/debug/delta" ; //$NON-NLS-1$
+	private static final String SEARCH_DEBUG = PLUGIN_ID + "/debug/search"; //$NON-NLS-1$
 	private static final String CLASSFILE_VISITOR_DEBUG = PLUGIN_ID + "/debug/classfilevisitor" ; //$NON-NLS-1$
 	private static final String DESCRIPTOR_FRAMEWORK_DEBUG = PLUGIN_ID + "/debug/descriptor/framework" ; //$NON-NLS-1$
 	private static final String TAG_SCANNER_DEBUG = PLUGIN_ID + "/debug/tagscanner" ; //$NON-NLS-1$
@@ -197,9 +193,78 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 	private static final String REFERENCE_RESOLVER_DEBUG = PLUGIN_ID + "/debug/refresolver"; //$NON-NLS-1$
 	private static final String API_DESCRIPTION = PLUGIN_ID + "/debug/apidescription"; //$NON-NLS-1$
 	private static final String WORKSPACE_DELTA_PROCESSOR = PLUGIN_ID + "/debug/workspacedeltaprocessor"; //$NON-NLS-1$
+	private static final String API_ANALYZER_DEBUG = PLUGIN_ID + "/debug/apianalyzer"; //$NON-NLS-1$
+	private static final String USE_REPORT_CONVERTER_DEBUG = PLUGIN_ID + "/debug/usereportconverter"; //$NON-NLS-1$
 
-	public final static String TRUE = "true"; //$NON-NLS-1$
-
+	/**
+	 * Constant used for controlling tracing in the report converter
+	 */
+	public static boolean DEBUG_USE_REPORT_CONVERTER = false;
+	/**
+	 * Constant used for controlling tracing in the search engine
+	 */
+	public static boolean DEBUG_SEARCH_ENGINE = false;
+	/**
+	 * Constant used for controlling tracing in the scanner
+	 */
+	public static boolean DEBUG_TAG_SCANNER = false;
+	/**
+	 * Constant used for controlling tracing in the API comparator
+	 */
+	public static boolean DEBUG_API_COMPARATOR = false;
+	/**
+	 * Constant used for controlling tracing in the plug-in workspace component
+	 */
+	public static boolean DEBUG_PROJECT_COMPONENT = false;
+	/**
+	 * Constant used for controlling tracing in the descriptor framework
+	 */
+	public static boolean DEBUG_ELEMENT_DESCRIPTOR_FRAMEWORK = false;
+	/**
+	 * Constant used for controlling tracing in the class file comparator
+	 */
+	public static boolean DEBUG_CLASSFILE_COMPARATOR = false;
+	/**
+	 * Constant used for controlling tracing in the search engine
+	 */
+	public static boolean DEBUG_REFERENCE_RESOLVER = false;
+	/**
+	 * Constant used for controlling tracing in the visitor
+	 */
+	public static boolean DEBUG_REFERENCE_EXTRACTOR = false;
+	/**
+	 * Constant used for controlling tracing in the search engine
+	 */
+	public static boolean DEBUG_REFERENCE_ANALYZER = false;
+	/**
+	 * Constant used for controlling tracing in the API tool builder
+	 */
+	public static boolean DEBUG_API_ANALYZER = false;
+	/**
+	 * Constant used for controlling tracing in the problem detectors
+	 */
+	public static boolean DEBUG_PROBLEM_DETECTOR = false;
+	/**
+	 * Constant used for controlling tracing in the API tool builder
+	 */
+	public static boolean DEBUG_WORKSPACE_DELTA_PROCESSOR = false;
+	/**
+	 * Constant used for controlling tracing in the plug-in workspace component
+	 */
+	public static boolean DEBUG_FILTER_STORE = false;
+	/**
+	 * Constant used for controlling tracing in the API descriptions
+	 */
+	public static boolean DEBUG_API_DESCRIPTION = false;
+	/**
+	 * Constant used for controlling tracing in the API tool builder
+	 */
+	public static boolean DEBUG_BASELINE_MANAGER = false;
+	/**
+	 * Constant used for controlling tracing in the API tool builder
+	 */
+	public static boolean DEBUG_BUILDER = false;
+	
 	public static String[] AllCompatibilityKeys = new String[] {
 		IApiProblemTypes.API_COMPONENT_REMOVED_TYPE,
 		IApiProblemTypes.API_COMPONENT_REMOVED_API_TYPE,
@@ -296,7 +361,7 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 	 * Standard delta processor for Java element changes
 	 */
 	private WorkspaceDeltaProcessor deltaProcessor = null;
-
+	
 	private static final int RESOLUTION_LOG_BIT = 1;
 	private static final int BASELINE_DISPOSED_LOG_BIT = 2;
 
@@ -508,13 +573,15 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 	public void start(BundleContext context) throws Exception {
 		try {
 			super.start(context);
+			Hashtable props = new Hashtable(2);
+			props.put(org.eclipse.osgi.service.debug.DebugOptions.LISTENER_SYMBOLICNAME, PLUGIN_ID);
+			context.registerService(DebugOptionsListener.class.getName(), this, props);
 		} finally {
 			ResourcesPlugin.getWorkspace().addSaveParticipant(PLUGIN_ID, this);
 			fBundleContext = context;
 			deltaProcessor = new WorkspaceDeltaProcessor();
 			JavaCore.addElementChangedListener(deltaProcessor, ElementChangedEvent.POST_CHANGE);
 			ResourcesPlugin.getWorkspace().addResourceChangeListener(deltaProcessor, IResourceChangeEvent.PRE_DELETE | IResourceChangeEvent.PRE_CLOSE | IResourceChangeEvent.PRE_BUILD);
-			configurePluginDebugOptions();
 			checkForEEDescriptionChanges();
 		}
 	}
@@ -745,67 +812,6 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 		String value = service.get(prefkey, null, getPreferences(context));
 		return VALUE_ENABLED.equals(value);
 	}
-	/**
-	 * Method to configure all of the debug options for this plugin
-	 */
-	public void configurePluginDebugOptions(){
-		if(ApiPlugin.getDefault().isDebugging()){
-			String option = Platform.getDebugOption(BUILDER_DEBUG);
-			if(option != null) {
-				ApiAnalysisBuilder.setDebug(option.equalsIgnoreCase(TRUE));
-			}
-			option = Platform.getDebugOption(DELTA_DEBUG);
-			if(option != null) {
-				boolean debugValue = option.equalsIgnoreCase(TRUE);
-				ClassFileComparator.setDebug(debugValue);
-				ApiComparator.setDebug(debugValue);
-			}
-			option = Platform.getDebugOption(CLASSFILE_VISITOR_DEBUG);
-			if(option != null) {
-				ReferenceExtractor.setDebug(option.equalsIgnoreCase(TRUE));
-			}
-			option = Platform.getDebugOption(DESCRIPTOR_FRAMEWORK_DEBUG);
-			if(option != null) {
-				ElementDescriptorImpl.setDebug(option.equalsIgnoreCase(TRUE));
-			}
-			option = Platform.getDebugOption(TAG_SCANNER_DEBUG);
-			if(option != null) {
-				TagScanner.setDebug(option.equalsIgnoreCase(TRUE));
-			}
-			option = Platform.getDebugOption(PLUGIN_WORKSPACE_COMPONENT_DEBUG);
-			if(option != null) {
-				ProjectComponent.setDebug(option.equalsIgnoreCase(TRUE));
-			}
-			option = Platform.getDebugOption(API_PROFILE_MANAGER_DEBUG);
-			if(option != null) {
-				ApiBaselineManager.setDebug(option.equalsIgnoreCase(TRUE));
-			}
-			option = Platform.getDebugOption(API_FILTER_STORE_DEBUG);
-			if(option != null) {
-				ApiFilterStore.setDebug(option.equalsIgnoreCase(TRUE));
-			}
-			option = Platform.getDebugOption(API_REFERENCE_ANALYZER_DEBUG);
-			if(option != null) {
-				ReferenceAnalyzer.setDebug(option.equalsIgnoreCase(TRUE));
-			}
-			option = Platform.getDebugOption(REFERENCE_RESOLVER_DEBUG);
-			if(option != null) {
-				ReferenceResolver.setDebug(option.equalsIgnoreCase(TRUE));
-			}
-			option = Platform.getDebugOption(PROBLEM_DETECTOR_DEBUG);
-			if(option != null) {
-				AbstractProblemDetector.setDebug(option.equals(TRUE));
-			}
-			option = Platform.getDebugOption(API_DESCRIPTION);
-			if(option != null) {
-				ApiDescription.setDebug(option.equals(TRUE));
-			}
-			option = Platform.getDebugOption(WORKSPACE_DELTA_PROCESSOR);
-			if(option != null) {
-				WorkspaceDeltaProcessor.setDebug(option.equals(TRUE));
-			}
-		}
-	}
 	
 	/**
 	 * Returns a service with the specified name or <code>null</code> if none.
@@ -818,5 +824,30 @@ public class ApiPlugin extends Plugin implements ISaveParticipant {
 		if (reference == null)
 			return null;
 		return fBundleContext.getService(reference);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.osgi.service.debug.DebugOptionsListener#optionsChanged(org.eclipse.osgi.service.debug.DebugOptions)
+	 */
+	public void optionsChanged(DebugOptions options) {
+		DEBUG = options.getBooleanOption(DEBUG_FLAG, false);
+		boolean option = options.getBooleanOption(DELTA_DEBUG, false);
+		DEBUG_CLASSFILE_COMPARATOR = DEBUG && option;
+		DEBUG_API_COMPARATOR = DEBUG_CLASSFILE_COMPARATOR;
+		DEBUG_BUILDER = DEBUG && options.getBooleanOption(BUILDER_DEBUG, false);
+		DEBUG_SEARCH_ENGINE = DEBUG && options.getBooleanOption(SEARCH_DEBUG, false);
+		DEBUG_REFERENCE_EXTRACTOR = DEBUG && options.getBooleanOption(CLASSFILE_VISITOR_DEBUG, false);
+		DEBUG_ELEMENT_DESCRIPTOR_FRAMEWORK = DEBUG && options.getBooleanOption(DESCRIPTOR_FRAMEWORK_DEBUG, false);
+		DEBUG_TAG_SCANNER = DEBUG && options.getBooleanOption(TAG_SCANNER_DEBUG, false);
+		DEBUG_PROJECT_COMPONENT = DEBUG && options.getBooleanOption(PLUGIN_WORKSPACE_COMPONENT_DEBUG, false);
+		DEBUG_BASELINE_MANAGER = DEBUG && options.getBooleanOption(API_PROFILE_MANAGER_DEBUG, false);
+		DEBUG_FILTER_STORE = DEBUG && options.getBooleanOption(API_FILTER_STORE_DEBUG, false);
+		DEBUG_REFERENCE_ANALYZER = DEBUG && options.getBooleanOption(API_REFERENCE_ANALYZER_DEBUG, false);
+		DEBUG_REFERENCE_RESOLVER = DEBUG && options.getBooleanOption(REFERENCE_RESOLVER_DEBUG, false);
+		DEBUG_PROBLEM_DETECTOR = DEBUG && options.getBooleanOption(PROBLEM_DETECTOR_DEBUG, false);
+		DEBUG_API_DESCRIPTION = DEBUG && options.getBooleanOption(API_DESCRIPTION, false);
+		DEBUG_WORKSPACE_DELTA_PROCESSOR = DEBUG && options.getBooleanOption(WORKSPACE_DELTA_PROCESSOR, false);
+		DEBUG_API_ANALYZER = DEBUG && options.getBooleanOption(API_ANALYZER_DEBUG, false);
+		DEBUG_USE_REPORT_CONVERTER = DEBUG && options.getBooleanOption(USE_REPORT_CONVERTER_DEBUG, false);
 	}
 }

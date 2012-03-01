@@ -195,7 +195,7 @@ public class ProjectApiDescription extends ApiDescription {
 		 */
 		protected synchronized ManifestNode refresh() {
 			if (fRefreshing) {
-				if(DEBUG) {
+				if(ApiPlugin.DEBUG_API_DESCRIPTION) {
 					StringBuffer buffer = new StringBuffer();
 					buffer.append("Refreshing manifest node: "); //$NON-NLS-1$
 					buffer.append(this);
@@ -214,7 +214,7 @@ public class ProjectApiDescription extends ApiDescription {
 						try {
 							resource = unit.getUnderlyingResource();
 						} catch (JavaModelException e) {
-							if(DEBUG) {
+							if(ApiPlugin.DEBUG_API_DESCRIPTION) {
 								StringBuffer buffer = new StringBuffer();
 								buffer.append("Failed to get underlying resource for compilation unit: "); //$NON-NLS-1$
 								buffer.append(unit);
@@ -233,7 +233,7 @@ public class ProjectApiDescription extends ApiDescription {
 								CRCVisitor visitor = new CRCVisitor();
 								visitType(this, visitor);
 								long crc = visitor.getValue();
-								if(DEBUG) {
+								if(ApiPlugin.DEBUG_API_DESCRIPTION) {
 									StringBuffer buffer = new StringBuffer();
 									buffer.append("Resource has changed for type manifest node: "); //$NON-NLS-1$
 									buffer.append(this);
@@ -260,7 +260,7 @@ public class ProjectApiDescription extends ApiDescription {
 								if (crc != crc2) {
 									// update relative build time stamp
 									fBuildStamp = BuildStamps.getBuildStamp(resource.getProject());
-									if(DEBUG) {
+									if(ApiPlugin.DEBUG_API_DESCRIPTION) {
 										StringBuffer buffer = new StringBuffer();
 										buffer.append("CRC changed for type manifest node: "); //$NON-NLS-1$
 										buffer.append(this);
@@ -272,7 +272,7 @@ public class ProjectApiDescription extends ApiDescription {
 								}
 							}
 						} else {
-							if(DEBUG) {
+							if(ApiPlugin.DEBUG_API_DESCRIPTION) {
 								StringBuffer buffer = new StringBuffer();
 								buffer.append("Underlying resource for the type manifest node: "); //$NON-NLS-1$
 								buffer.append(this);
@@ -285,7 +285,7 @@ public class ProjectApiDescription extends ApiDescription {
 							return null;
 						}
 					} else {
-						if(DEBUG) {
+						if(ApiPlugin.DEBUG_API_DESCRIPTION) {
 							StringBuffer buffer = new StringBuffer();
 							buffer.append("Failed to look up compilation unit for "); //$NON-NLS-1$
 							buffer.append(fType);
@@ -359,7 +359,7 @@ public class ProjectApiDescription extends ApiDescription {
 				IJavaElement child = null;
 				ICompilationUnit unit = null;
 				for (int j = 0; j < fragments.length; j++) {
-					if (DEBUG) {
+					if (ApiPlugin.DEBUG_API_DESCRIPTION) {
 						System.out.println("\t" + fragments[j].getElementName()); //$NON-NLS-1$
 					}
 					IPackageDescriptor packageDescriptor = Factory.packageDescriptor(fragments[j].getElementName());
@@ -569,7 +569,7 @@ public class ProjectApiDescription extends ApiDescription {
 	 */
 	synchronized void refreshPackages() {
 		if (fRefreshingInProgress) {
-			if(DEBUG) {
+			if(ApiPlugin.DEBUG_API_DESCRIPTION) {
 				StringBuffer buffer = new StringBuffer();
 				buffer.append("Refreshing manifest node: "); //$NON-NLS-1$
 				buffer.append(this);

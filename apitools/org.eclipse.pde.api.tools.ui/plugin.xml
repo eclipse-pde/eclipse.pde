@@ -509,4 +509,15 @@
             id="org.eclipse.pde.api.tools.usescan.image">
       </launchConfigurationTypeImage>
    </extension>
+   <extension
+         point="org.eclipse.ui.trace.traceComponents">
+      <component
+            id="org.eclipse.pde.api.tools.core.component"
+            label="%APIToolsTrace.name">
+         <bundle
+               consumed="true"
+               name="org.eclipse.pde.api.tools">
+         </bundle>
+      </component>
+   </extension>
 </plugin>

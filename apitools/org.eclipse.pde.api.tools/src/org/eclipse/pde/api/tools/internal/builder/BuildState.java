@@ -539,7 +539,7 @@ public class BuildState {
 				try {
 					return read(in);
 				} finally {
-					if (ApiAnalysisBuilder.DEBUG) {
+					if (ApiPlugin.DEBUG_BUILDER) {
 						System.out.println("Saved state thinks last build failed for " + project.getName()); //$NON-NLS-1$
 					}
 					in.close();
@@ -548,7 +548,7 @@ public class BuildState {
 				e.printStackTrace();
 				throw new CoreException(new Status(IStatus.ERROR, JavaCore.PLUGIN_ID, Platform.PLUGIN_ERROR, "Error reading last build state for project "+ project.getName(), e)); //$NON-NLS-1$
 			}
-		} else if (ApiAnalysisBuilder.DEBUG) {
+		} else if (ApiPlugin.DEBUG_BUILDER) {
 			if (file == null) {
 				System.out.println("Project does not exist: " + project); //$NON-NLS-1$
 			} else {
@@ -603,13 +603,13 @@ public class BuildState {
 	 * @throws CoreException
 	 */
 	static void saveBuiltState(IProject project, BuildState state) throws CoreException {
-		if (ApiAnalysisBuilder.DEBUG) {
+		if (ApiPlugin.DEBUG_BUILDER) {
 			System.out.println("Saving build state for project: "+project.getName()); //$NON-NLS-1$
 		}
 		File file = BuildState.getSerializationFile(project);
 		if (file == null) return;
 		long t = 0;
-		if (ApiAnalysisBuilder.DEBUG) {
+		if (ApiPlugin.DEBUG_BUILDER) {
 			t = System.currentTimeMillis();
 		}
 		try {
@@ -638,7 +638,7 @@ public class BuildState {
 				new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, Platform.PLUGIN_ERROR,
 					NLS.bind(BuilderMessages.build_cannotSaveState, project.getName()), e)); 
 		}
-		if (ApiAnalysisBuilder.DEBUG) {
+		if (ApiPlugin.DEBUG_BUILDER) {
 			t = System.currentTimeMillis() - t;
 			System.out.println(NLS.bind(BuilderMessages.build_saveStateComplete, String.valueOf(t))); 
 		}

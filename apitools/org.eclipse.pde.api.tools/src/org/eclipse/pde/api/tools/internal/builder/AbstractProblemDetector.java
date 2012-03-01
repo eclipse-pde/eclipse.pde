@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 IBM Corporation and others.
+ * Copyright (c) 2008, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,18 +53,6 @@ import org.eclipse.pde.api.tools.internal.util.Util;
  */
 public abstract class AbstractProblemDetector implements IApiProblemDetector {
 
-	/**
-	 * Constant used for controlling tracing in the problem detectors
-	 */
-	protected static boolean DEBUG = Util.DEBUG;
-	
-	/**
-	 * Method used for initializing tracing in the problem detectors
-	 */
-	public static void setDebug(boolean debugValue) {
-		DEBUG = debugValue || Util.DEBUG;
-	}
-	
 	/**
 	 * List of potential {@link IReference} problems
 	 */

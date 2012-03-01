@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
+ * Copyright (c) 2007, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,18 +52,6 @@ import org.objectweb.asm.tree.ClassNode;
  * @since 1.0.0
  */
 public class ReferenceExtractor extends ClassAdapter {
-
-	/**
-	 * Constant used for controlling tracing in the visitor
-	 */
-	private static boolean DEBUG = Util.DEBUG;
-
-	/**
-	 * Method used for initializing tracing in the visitor
-	 */
-	public static void setDebug(boolean debugValue) {
-		DEBUG = debugValue || Util.DEBUG;
-	}
 
 	/**
 	 * A visitor for visiting java 5+ signatures
@@ -1129,7 +1117,7 @@ public class ReferenceExtractor extends ClassAdapter {
 	 */
 	public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
 		this.classname = this.processName(name);
-		if(DEBUG) {
+		if(ApiPlugin.DEBUG_REFERENCE_EXTRACTOR) {
 			System.out.println("Starting visit of type: ["+this.fType.getName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		this.enterMember(this.fType);
@@ -1169,7 +1157,7 @@ public class ReferenceExtractor extends ClassAdapter {
 		this.exitMember();
 		if (!this.fSuperStack.isEmpty()) {
 			String typeName = (String) this.fSuperStack.pop();
-			if(DEBUG) {
+			if(ApiPlugin.DEBUG_REFERENCE_EXTRACTOR) {
 				System.out.println("ending visit of type: ["+typeName+"]"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}

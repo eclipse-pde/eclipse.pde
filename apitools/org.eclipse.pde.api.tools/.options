@@ -1,5 +1,5 @@
-# Turn on debug tracing for org.eclipse.pde.api.tools plugin
-org.eclipse.pde.api.tools/debug=true
+# Turn on debug tracing for org.eclipse.pde.api.tools plug-in
+org.eclipse.pde.api.tools/debug=false
 
 # Reports incremental builder activity : nature of build, indictment process,...
 org.eclipse.pde.api.tools/debug/builder=false
@@ -39,3 +39,6 @@ org.eclipse.pde.api.tools/debug/apidescription=false
 
 #for our workspace delta processor
 org.eclipse.pde.api.tools/debug/workspacedeltaprocessor=false
+
+#for our use report converter
+org.eclipse.pde.api.tools/debug/usereportconverter=false

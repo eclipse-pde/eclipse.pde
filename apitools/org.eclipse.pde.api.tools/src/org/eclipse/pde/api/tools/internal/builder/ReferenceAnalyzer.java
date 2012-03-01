@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 IBM Corporation and others.
+ * Copyright (c) 2008, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,11 +47,6 @@ public class ReferenceAnalyzer {
 	 * Natural log of 2.
 	 */
 	private static final double LOG2 = Math.log(2);
-	
-	/**
-	 * Constant used for controlling tracing in the search engine
-	 */
-	private static boolean DEBUG = Util.DEBUG;	
 	
 	/**
 	 * Empty result collection.
@@ -143,13 +138,6 @@ public class ReferenceAnalyzer {
 	 * problem detectors.
 	 */
 	IApiProblemDetector[][] fIndexedDetectors;
-
-	/**
-	 * Method used for initializing tracing
-	 */
-	public static void setDebug(boolean debugValue) {
-		DEBUG = debugValue || Util.DEBUG;
-	}
 	
 	/**
 	 * Indexes the problem detectors by the reference kinds they are interested in.
@@ -219,7 +207,7 @@ public class ReferenceAnalyzer {
 			throw new CoreException(fStatus);
 		}
 		localMonitor.done();
-		if (DEBUG) {
+		if (ApiPlugin.DEBUG_REFERENCE_ANALYZER) {
 			System.out.println("Reference Analyzer: extracted " + fReferences.size() + " references in " + (end - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 	}	
@@ -323,7 +311,7 @@ public class ReferenceAnalyzer {
 				}
 			}
 			long end = System.currentTimeMillis();
-			if (DEBUG) {
+			if (ApiPlugin.DEBUG_REFERENCE_ANALYZER) {
 				System.out.println("Time to build problem detectors: " + (end-start) + "ms");  //$NON-NLS-1$//$NON-NLS-2$
 			}		
 			// add names from the leak component as well

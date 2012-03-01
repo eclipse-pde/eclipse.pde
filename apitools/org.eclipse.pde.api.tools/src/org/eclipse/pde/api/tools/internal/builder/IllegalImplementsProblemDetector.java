@@ -81,7 +81,7 @@ public class IllegalImplementsProblemDetector extends AbstractIllegalTypeReferen
 			}
 		}
 		catch(CoreException ce) {
-			if(DEBUG) {
+			if(ApiPlugin.DEBUG_PROBLEM_DETECTOR) {
 				ApiPlugin.log(ce);
 			}
 		}
@@ -106,7 +106,7 @@ public class IllegalImplementsProblemDetector extends AbstractIllegalTypeReferen
 			return true;
 		}
 		catch(CoreException ce) {
-			if(DEBUG) {
+			if(ApiPlugin.DEBUG_PROBLEM_DETECTOR) {
 				ApiPlugin.log(ce);
 			}
 		}

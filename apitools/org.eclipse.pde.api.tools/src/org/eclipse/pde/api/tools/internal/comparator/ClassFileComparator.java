@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 IBM Corporation and others.
+ * Copyright (c) 2008, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,18 +53,6 @@ import com.ibm.icu.text.MessageFormat;
  */
 public class ClassFileComparator {
 	
-	/**
-	 * Constant used for controlling tracing in the class file comparator
-	 */
-	private static boolean Debug = Util.DEBUG;
-	
-	/**
-	 * Method used for initializing tracing in the class file comparator
-	 */
-	public static void setDebug(boolean debugValue) {
-		Debug = debugValue || Util.DEBUG;
-	}
-
 	private boolean isCheckedException(IApiBaseline baseline, IApiComponent apiComponent, String exceptionName) {
 		if (baseline == null) {
 			return true;
@@ -91,7 +79,7 @@ public class ClassFileComparator {
 							superName);
 					if (result == null) {
 						// TODO should we report this failure ?
-						if (Debug) {
+						if (ApiPlugin.DEBUG_CLASSFILE_COMPARATOR) {
 							System.err.println("CHECKED EXCEPTION LOOKUP: Could not find " + superName + " in baseline " + baseline.getName() + " from component " + apiComponent.getSymbolicName()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 						}
 						break;
@@ -3273,7 +3261,7 @@ public class ClassFileComparator {
 		IApiComponent[] components = baseline.resolvePackage(component, packageName);
 		if (components == null) {
 			String msg = MessageFormat.format(ComparatorMessages.ClassFileComparator_1, new String[] {packageName, baseline.getName(), component.getSymbolicName()});
-			if (Debug) {
+			if (ApiPlugin.DEBUG_CLASSFILE_COMPARATOR) {
 				System.err.println("TYPE LOOKUP: "+msg); //$NON-NLS-1$
 			}
 			reportStatus(new Status(IStatus.ERROR, component.getSymbolicName(), msg));
@@ -3282,7 +3270,7 @@ public class ClassFileComparator {
 		IApiTypeRoot result = Util.getClassFile(components, typeName); 
 		if (result == null) {
 			String msg = MessageFormat.format(ComparatorMessages.ClassFileComparator_2, new String[] {typeName, baseline.getName(), component.getSymbolicName()});
-			if (Debug) {
+			if (ApiPlugin.DEBUG_CLASSFILE_COMPARATOR) {
 				System.err.println("TYPE LOOKUP: "+msg); //$NON-NLS-1$
 			}
 			reportStatus(new Status(IStatus.ERROR, component.getSymbolicName(), msg));

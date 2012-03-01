@@ -323,18 +323,18 @@ public class MissingRefReportConverter extends UseReportConverter {
 		}
 
 		long start = 0;
-		if (DEBUG) {
+		if (ApiPlugin.DEBUG_USE_REPORT_CONVERTER) {
 			start = System.currentTimeMillis();
 		}
 		writeNotSearchedPage(htmlRoot);
 
-		if (DEBUG) {
+		if (ApiPlugin.DEBUG_USE_REPORT_CONVERTER) {
 			System.out.println("done in: " + (System.currentTimeMillis() - start) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$
 			System.out.println("Parsing use scan..."); //$NON-NLS-1$
 			start = System.currentTimeMillis();
 		}
 		List result = parse();
-		if (DEBUG) {
+		if (ApiPlugin.DEBUG_USE_REPORT_CONVERTER) {
 			System.out.println("done in: " + (System.currentTimeMillis() - start) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$
 			System.out.println("Sorting reports and writing index..."); //$NON-NLS-1$
 			start = System.currentTimeMillis();

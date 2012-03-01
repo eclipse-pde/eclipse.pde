@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 IBM Corporation and others.
+ * Copyright (c) 2007, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,11 +43,6 @@ import org.osgi.framework.Version;
  * @since 1.0
  */
 public class ApiComparator {
-	/**
-	 * Constant used for controlling tracing in the API comparator
-	 */
-	static boolean DEBUG = Util.DEBUG;
-
 	/**
 	 * Default empty delta
 	 */
@@ -176,7 +171,7 @@ public class ApiComparator {
 							try {
 								delta = compare(apiComponent, apiComponent2, referenceBaseline, baseline, visibilityModifiers, localmonitor.newChild(1));
 							} finally {
-								if (DEBUG) {
+								if (ApiPlugin.DEBUG_API_COMPARATOR) {
 									System.out.println("Time spent for " + id+ " " + versionString + " : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 								}
 							}
@@ -266,7 +261,7 @@ public class ApiComparator {
 						try {
 							delta = compare(apiComponent2, component, visibilityModifiers, localmonitor.newChild(1));
 						} finally {
-							if (DEBUG) {
+							if (ApiPlugin.DEBUG_API_COMPARATOR) {
 								System.out.println("Time spent for " + id+ " " + component.getVersion() + " : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 							}
 						}
@@ -562,7 +557,7 @@ public class ApiComparator {
 			Util.updateMonitor(localmonitor, 1);
 			ClassFileComparator comparator = new ClassFileComparator(typeDescriptor, typeRoot2, component, component2, referenceBaseline, baseline, visibilityModifiers);
 			IDelta delta = comparator.getDelta(localmonitor.newChild(1));
-			if (DEBUG) {
+			if (ApiPlugin.DEBUG_API_COMPARATOR) {
 				IStatus status = comparator.getStatus();
 				if(status != null) {
 					ApiPlugin.log(status);
@@ -625,7 +620,7 @@ public class ApiComparator {
 						baseline,
 						visibilityModifiers);
 			delta = comparator.getDelta(SubMonitor.convert(monitor));
-			if (DEBUG) {
+			if (ApiPlugin.DEBUG_API_COMPARATOR) {
 				IStatus status = comparator.getStatus();
 				if(status != null) {
 					ApiPlugin.log(status);
@@ -910,7 +905,7 @@ public class ApiComparator {
 									typeRootBaseLineNames.add(typeName);
 									ClassFileComparator comparator = new ClassFileComparator(typeDescriptor, typeRoot2, component, provider, referenceBaseline, baseline, visibilityModifiers);
 									IDelta delta = comparator.getDelta(localmonitor.newChild(1));
-									if (DEBUG) {
+									if (ApiPlugin.DEBUG_API_COMPARATOR) {
 										IStatus status = comparator.getStatus();
 										if(status != null) {
 											ApiPlugin.log(status);
@@ -1182,12 +1177,5 @@ public class ApiComparator {
 			}
 		}
 		return globalDelta.isEmpty() ? NO_DELTA : globalDelta;
-	}
-
-	/**
-	 * Method used for initializing tracing in the API comparator
-	 */
-	public static void setDebug(boolean debugValue) {
-		DEBUG = debugValue || Util.DEBUG;
 	}
 }

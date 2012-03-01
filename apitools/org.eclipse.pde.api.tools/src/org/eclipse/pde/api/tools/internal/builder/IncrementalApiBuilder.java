@@ -125,7 +125,7 @@ public class IncrementalApiBuilder {
 						if (delta.getKind() == IResourceDelta.REMOVED) {
 							String typename = resolveTypeName(resource, CLASS_FILE);
 							if(typename != null) {
-								if (ApiAnalysisBuilder.DEBUG) {
+								if (ApiPlugin.DEBUG_BUILDER) {
 									System.out.println("Found removed class file " + typename); //$NON-NLS-1$
 								}
 								changes.add(new Change(STRUCTURAL, delta.getKind(), resource, typename, CLASS_FILE));
@@ -232,7 +232,7 @@ public class IncrementalApiBuilder {
 		catch(OperationCanceledException oce) {
 			//do nothing, but don't forward it
 			//https://bugs.eclipse.org/bugs/show_bug.cgi?id=304315
-			if(ApiAnalysisBuilder.DEBUG) {
+			if(ApiPlugin.DEBUG_BUILDER) {
 				System.out.println("Trapped OperationCanceledException"); //$NON-NLS-1$
 			}
 		}
@@ -491,7 +491,7 @@ public class IncrementalApiBuilder {
 					if (file == null) {
 						continue;
 					}
-					if (ApiAnalysisBuilder.DEBUG) {
+					if (ApiPlugin.DEBUG_BUILDER) {
 						System.out.println("  adding affected source file " + file.getName()); //$NON-NLS-1$
 					}
 					addDependentTypeToContext(file, kind);
@@ -514,7 +514,7 @@ public class IncrementalApiBuilder {
 		if (idx > 0) {
 			typeName = typeName.substring(0, idx);
 		}
-		if (simpleTypes.add(typeName) && packages.add(packageName) && ApiAnalysisBuilder.DEBUG) {
+		if (simpleTypes.add(typeName) && packages.add(packageName) && ApiPlugin.DEBUG_BUILDER) {
 			System.out.println("  will look for dependents of " + typeName + " in " + packageName);  //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}

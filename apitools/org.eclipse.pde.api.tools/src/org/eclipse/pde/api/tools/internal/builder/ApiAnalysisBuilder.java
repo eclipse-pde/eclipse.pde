@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 IBM Corporation and others.
+ * Copyright (c) 2007, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -78,11 +78,6 @@ import com.ibm.icu.text.MessageFormat;
  */
 public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	/**
-	 * Constant used for controlling tracing in the API tool builder
-	 */
-	static boolean DEBUG = Util.DEBUG;
-	
-	/**
 	 * Project relative path to the .settings folder
 	 * @since 1.0.1
 	 */
@@ -144,13 +139,6 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	static final String SOURCE = "API Tools"; //$NON-NLS-1$
 	
 	/**
-	 * Method used for initializing tracing in the API tool builder
-	 */
-	public static void setDebug(boolean debugValue) {
-		DEBUG = debugValue || Util.DEBUG;
-	}
-	
-	/**
 	 * The current project for which this builder was defined
 	 */
 	private IProject currentproject = null;
@@ -196,7 +184,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	void cleanApiUseScanMarkers(IResource resource) {
 		try {
 			if (resource != null && resource.isAccessible()) {
-				if (DEBUG) {
+				if (ApiPlugin.DEBUG_BUILDER) {
 					System.out.println("cleaning api use problems"); //$NON-NLS-1$
 				}
 				resource.deleteMarkers(IApiMarkerConstants.API_USESCAN_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
@@ -226,7 +214,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	void cleanupUnsupportedTagMarkers(IResource resource) {
 		try {
 			if(resource != null && resource.isAccessible()) {
-				if(DEBUG) {
+				if(ApiPlugin.DEBUG_BUILDER) {
 					System.out.println("cleaning unsupported tag problems"); //$NON-NLS-1$
 				}
 				resource.deleteMarkers(IApiMarkerConstants.UNSUPPORTED_TAG_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
@@ -316,13 +304,13 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		}
 		// update build time stamp
 		BuildStamps.incBuildStamp(this.currentproject);
-		if (DEBUG) {
+		if (ApiPlugin.DEBUG_BUILDER) {
 			System.out.println("\nApiAnalysis builder - Starting build of " + this.currentproject.getName() + " @ " + new Date(System.currentTimeMillis())); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		SubMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.api_analysis_builder, 8);
 		IApiBaseline wbaseline = ApiPlugin.getDefault().getApiBaselineManager().getWorkspaceBaseline();
 		if (wbaseline == null) {
-			if (DEBUG) {
+			if (ApiPlugin.DEBUG_BUILDER) {
 				System.err.println("Could not retrieve a workspace baseline");  //$NON-NLS-1$
 			}
 			return NO_PROJECTS;
@@ -332,7 +320,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		try {
 			switch(kind) {
 				case FULL_BUILD : {
-					if (DEBUG) {
+					if (ApiPlugin.DEBUG_BUILDER) {
 						System.out.println("Performing full build as requested by user"); //$NON-NLS-1$
 					}
 					buildAll(baseline, wbaseline, localMonitor.newChild(1));
@@ -381,7 +369,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 								}
 							}
 							if (full) {
-								if (DEBUG) {
+								if (ApiPlugin.DEBUG_BUILDER) {
 									System.out.println("Performing full build since MANIFEST.MF or .api_filters was modified"); //$NON-NLS-1$
 		 						}
 								buildAll(baseline, wbaseline, localMonitor.newChild(1));
@@ -406,7 +394,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		catch (OperationCanceledException oce) {
 			//do nothing, but don't forward it
 			//https://bugs.eclipse.org/bugs/show_bug.cgi?id=304315
-			if(DEBUG) {
+			if(ApiPlugin.DEBUG_BUILDER) {
 				System.out.println("Trapped OperationCanceledException"); //$NON-NLS-1$
 			}
 		}
@@ -471,12 +459,12 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			catch(OperationCanceledException oce) {
 				//do nothing, but don't forward it
 				//https://bugs.eclipse.org/bugs/show_bug.cgi?id=304315
-				if(DEBUG) {
+				if(ApiPlugin.DEBUG_BUILDER) {
 					System.out.println("Trapped OperationCanceledException"); //$NON-NLS-1$
 				}
 			}
 		}
-		if (DEBUG) {
+		if (ApiPlugin.DEBUG_BUILDER) {
 			System.out.println("Finished build of " + this.currentproject.getName() + " @ " + new Date(System.currentTimeMillis())); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return projects;
@@ -756,7 +744,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			if(type == null) {
 				continue;
 			}
-			if(DEBUG) {
+			if(ApiPlugin.DEBUG_BUILDER) {
 				System.out.println("creating marker for: " + problems[i].toString()); //$NON-NLS-1$
 			}
 			createMarkerForProblem(category, type, problems[i]);
@@ -877,7 +865,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			if(problem.getExtraMarkerAttributeIds().length > 0) {
 				marker.setAttributes(problem.getExtraMarkerAttributeIds(), problem.getExtraMarkerAttributeValues());
 			}
-			if (DEBUG) {
+			if (ApiPlugin.DEBUG_BUILDER) {
 				System.out.println("Created the marker: " + marker.getId() + " - " + marker.getAttributes().entrySet()); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		} catch (CoreException e) {
@@ -989,7 +977,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 					break loop;
 				}
 			}
-			else if(DEBUG) {
+			else if(ApiPlugin.DEBUG_BUILDER) {
 				System.out.println("Tried to look up bundle description for: " + workspaceModels[i].toString()); //$NON-NLS-1$
 			}
 		}
@@ -1002,13 +990,13 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 * @return
 	 */
 	IResourceDelta[] getDeltas(IProject[] projects) {
-		if(DEBUG) {
+		if(ApiPlugin.DEBUG_BUILDER) {
 			System.out.println("Searching for deltas for build of project: "+this.currentproject.getName()); //$NON-NLS-1$
 		}
 		ArrayList deltas = new ArrayList();
 		IResourceDelta delta = getDelta(this.currentproject);
 		if(delta != null) {
-			if (DEBUG) {
+			if (ApiPlugin.DEBUG_BUILDER) {
 				System.out.println("Found a delta: " + delta); //$NON-NLS-1$
 			}
 			deltas.add(delta);
@@ -1016,7 +1004,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		for(int i = 0; i < projects.length; i++) {
 			delta = getDelta(projects[i]);
 			if(delta != null) {
-				if (DEBUG) {
+				if (ApiPlugin.DEBUG_BUILDER) {
 					System.out.println("Found a delta: " + delta); //$NON-NLS-1$
 				}
 				deltas.add(delta);

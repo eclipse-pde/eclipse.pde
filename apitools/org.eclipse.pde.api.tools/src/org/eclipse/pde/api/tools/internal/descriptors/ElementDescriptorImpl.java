@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,8 +13,8 @@ package org.eclipse.pde.api.tools.internal.descriptors;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
-import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
  * Common base class for element descriptors.
@@ -23,18 +23,6 @@ import org.eclipse.pde.api.tools.internal.util.Util;
  */
 public abstract class ElementDescriptorImpl implements IElementDescriptor, Comparable {
 
-	/**
-	 * Constant used for controlling tracing in the descriptor framework
-	 */
-	private static boolean Debug = Util.DEBUG;
-	
-	/**
-	 * Method used for initializing tracing in the descriptor framework
-	 */
-	public static void setDebug(boolean debugValue) {
-		Debug = debugValue || Util.DEBUG;
-	}
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.model.component.IElementDescriptor#getParent()
 	 */
@@ -63,7 +51,7 @@ public abstract class ElementDescriptorImpl implements IElementDescriptor, Compa
 			ElementDescriptorImpl element = (ElementDescriptorImpl) o;
 			return getComparable().compareTo(element.getComparable());
 		}
-		if (Debug) {
+		if (ApiPlugin.DEBUG_ELEMENT_DESCRIPTOR_FRAMEWORK) {
 			System.err.println(o.getClass());
 		}
 		return -1;

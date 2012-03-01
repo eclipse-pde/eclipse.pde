@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 IBM Corporation and others.
+ * Copyright (c) 2009, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ import java.io.File;
 
 import org.apache.tools.ant.BuildException;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.search.UseReportConverter;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
@@ -113,7 +114,7 @@ public final class ApiUseReportConversionTask extends CommonUtilsTask {
 		try {
 			Util.delete(new File(this.htmlReportsLocation));
 			UseReportConverter converter = new UseReportConverter(this.htmlReportsLocation, this.xmlReportsLocation, this.toPatterns, this.filterPatterns);
-			UseReportConverter.setDebug(this.debug);
+			ApiPlugin.DEBUG_USE_REPORT_CONVERTER = this.debug;
 			converter.convert(this.xsltFileLocation, null);
 			File index = converter.getReportIndex();
 			System.out.println(NLS.bind(

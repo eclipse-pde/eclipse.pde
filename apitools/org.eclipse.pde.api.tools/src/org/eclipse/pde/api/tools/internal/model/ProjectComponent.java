@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 IBM Corporation and others.
+ * Copyright (c) 2007, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -69,18 +69,6 @@ public class ProjectComponent extends BundleComponent {
 	 */
 	public static final String EXTRA_PREFIX = "extra."; //$NON-NLS-1$
 
-	/**
-	 * Constant used for controlling tracing in the plug-in workspace component
-	 */
-	private static boolean DEBUG = Util.DEBUG;
-	
-	/**
-	 * Method used for initializing tracing in the plug-in workspace component
-	 */
-	public static void setDebug(boolean debugValue) {
-		DEBUG = debugValue || Util.DEBUG;
-	}
-		
 	/**
 	 * Associated Java project
 	 */
@@ -195,7 +183,7 @@ public class ProjectComponent extends BundleComponent {
 			setHasApiDescription(true);
 		}
 		IApiDescription apiDesc = ApiDescriptionManager.getManager().getApiDescription(this, getBundleDescription());
-		if (DEBUG) {
+		if (ApiPlugin.DEBUG_PROJECT_COMPONENT) {
 			System.out.println("Time to create api description for: ["+fProject.getElementName()+"] " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 		return apiDesc;
@@ -207,7 +195,7 @@ public class ProjectComponent extends BundleComponent {
 	protected IApiFilterStore createApiFilterStore() throws CoreException {
 		long time = System.currentTimeMillis();
 		IApiFilterStore store = new ApiFilterStore(getJavaProject());
-		if (DEBUG) {
+		if (ApiPlugin.DEBUG_PROJECT_COMPONENT) {
 			System.out.println("Time to create api filter store for: ["+fProject.getElementName()+"] " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 		return store;

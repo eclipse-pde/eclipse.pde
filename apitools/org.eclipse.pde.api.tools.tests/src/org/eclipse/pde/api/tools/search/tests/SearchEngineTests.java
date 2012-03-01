@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.search.tests;
 
+import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.builder.IReference;
 import org.eclipse.pde.api.tools.internal.provisional.search.ApiSearchEngine;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor;
@@ -214,7 +215,7 @@ public class SearchEngineTests extends SearchTest {
 					new String[] {P2_NAME, P3_NAME}, 
 					new int[][] {{IReference.REF_FIELDDECL}, {IReference.REF_FIELDDECL, IReference.REF_FIELDDECL}});
 			TEST_REPORTER.setExpectedNotSearched(null);
-			ApiSearchEngine.setDebug(true);
+			ApiPlugin.DEBUG_SEARCH_ENGINE = true;
 			engine.search(getTestBaseline(), TEST_REQUESTOR, TEST_REPORTER, null);
 		}
 		catch(Exception e) {

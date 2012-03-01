@@ -247,8 +247,6 @@ public final class Util {
 		}
 	}
 	
-	public static boolean DEBUG;
-
 	public static final String EMPTY_STRING = "";//$NON-NLS-1$
 	public static final String DEFAULT_PACKAGE_NAME = EMPTY_STRING;
 	public static final String MANIFEST_NAME = "MANIFEST.MF"; //$NON-NLS-1$
@@ -295,11 +293,6 @@ public final class Util {
 	public static final IPath MANIFEST_PROJECT_RELATIVE_PATH = new Path(JarFile.MANIFEST_NAME);
 
 	public static final String ORG_ECLIPSE_SWT = "org.eclipse.swt"; //$NON-NLS-1$
-
-	static {
-		String property = System.getProperty("DEBUG"); //$NON-NLS-1$
-		DEBUG = property != null && property.equalsIgnoreCase("TRUE"); //$NON-NLS-1$
-	}
 
 	/**
 	 * Throws an exception with the given message and underlying exception.

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 IBM Corporation and others.
+ * Copyright (c) 2009, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -141,7 +141,7 @@ public class UseReportConverter extends HTMLConvertor {
 		public void endVisitComponent(IComponentDescriptor target) {
 			try {
 				long start = 0;
-				if(DEBUG) {
+				if(ApiPlugin.DEBUG_USE_REPORT_CONVERTER) {
 					System.out.println("Writing report for bundle: "+target.getId()); //$NON-NLS-1$
 					start = System.currentTimeMillis();
 				}
@@ -151,7 +151,7 @@ public class UseReportConverter extends HTMLConvertor {
 				else {
 					this.reports.remove(this.currentreport);
 				}
-				if(DEBUG) {
+				if(ApiPlugin.DEBUG_USE_REPORT_CONVERTER) {
 					System.out.println("done in: "+(System.currentTimeMillis()-start)+ " ms"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
@@ -613,18 +613,6 @@ public class UseReportConverter extends HTMLConvertor {
 		REF_SCRIPT = buffer.toString();
 	}
 	
-	/**
-	 * Method used for initializing tracing in the report converter
-	 */
-	public static void setDebug(boolean debugValue) {
-		DEBUG = debugValue || Util.DEBUG;
-	}
-	
-	/**
-	 * Constant used for controlling tracing in the report converter
-	 */
-	protected static boolean DEBUG = Util.DEBUG;
-	
 	private String xmlLocation = null;
 	private String htmlLocation = null;
 	private File reportsRoot = null;
@@ -652,7 +640,7 @@ public class UseReportConverter extends HTMLConvertor {
 					pats.add(Pattern.compile(topatterns[i]));
 				}
 				catch(PatternSyntaxException pse) {
-					if(DEBUG) {
+					if(ApiPlugin.DEBUG_USE_REPORT_CONVERTER) {
 						System.out.println(NLS.bind(SearchMessages.UseReportConverter_filter_pattern_not_valid, topatterns[i]));
 						System.out.println(pse.getMessage());
 					}
@@ -669,7 +657,7 @@ public class UseReportConverter extends HTMLConvertor {
 					pats.add(Pattern.compile(frompatterns[i]));
 				}
 				catch(PatternSyntaxException pse) {
-					if(DEBUG) {
+					if(ApiPlugin.DEBUG_USE_REPORT_CONVERTER) {
 						System.out.println(NLS.bind(SearchMessages.UseReportConverter_filter_pattern_not_valid, frompatterns[i]));
 						System.out.println(pse.getMessage());
 					}
@@ -741,14 +729,14 @@ public class UseReportConverter extends HTMLConvertor {
 				}
 			}
 			long start = 0;
-			if(DEBUG) {
+			if(ApiPlugin.DEBUG_USE_REPORT_CONVERTER) {
 				start = System.currentTimeMillis();
 			}
 			localmonitor.setTaskName(SearchMessages.UseReportConverter_writing_not_searched);
 			this.hasmissing = writeMissingBundlesPage(htmlRoot);
 			writeNotSearchedPage(htmlRoot);
 			Util.updateMonitor(localmonitor, 1);
-			if(DEBUG) {
+			if(ApiPlugin.DEBUG_USE_REPORT_CONVERTER) {
 				System.out.println("done in: "+(System.currentTimeMillis()-start)+ " ms"); //$NON-NLS-1$ //$NON-NLS-2$
 				System.out.println("Parsing use scan..."); //$NON-NLS-1$
 				start = System.currentTimeMillis();
@@ -756,7 +744,7 @@ public class UseReportConverter extends HTMLConvertor {
 			localmonitor.setTaskName(SearchMessages.UseReportConverter_parsing_use_scan);
 			List result = parse(localmonitor.newChild(5));
 			Util.updateMonitor(localmonitor, 1);
-			if(DEBUG) {
+			if(ApiPlugin.DEBUG_USE_REPORT_CONVERTER) {
 				System.out.println("done in: "+(System.currentTimeMillis()-start)+ " ms"); //$NON-NLS-1$ //$NON-NLS-2$
 				System.out.println("Sorting reports and writing index..."); //$NON-NLS-1$
 				start = System.currentTimeMillis();
@@ -764,7 +752,7 @@ public class UseReportConverter extends HTMLConvertor {
 			localmonitor.setTaskName(SearchMessages.UseReportConverter_writing_root_index);
 			writeIndexPage(result);
 			Util.updateMonitor(localmonitor, 1);
-			if(DEBUG) {
+			if(ApiPlugin.DEBUG_USE_REPORT_CONVERTER) {
 				System.out.println("done in: "+(System.currentTimeMillis()-start)+ " ms"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			writeMetaPage(htmlRoot);

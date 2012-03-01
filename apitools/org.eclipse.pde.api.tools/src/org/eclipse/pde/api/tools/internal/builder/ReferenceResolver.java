@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,9 +18,9 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.builder.IReference;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiMember;
-import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
  * Utility class used to resolve {@link IReference}s
@@ -31,22 +31,10 @@ import org.eclipse.pde.api.tools.internal.util.Util;
 public final class ReferenceResolver {
 
 	/**
-	 * Constant used for controlling tracing in the search engine
-	 */
-	private static boolean DEBUG = Util.DEBUG;
-	
-	/**
 	 * Constructor
 	 * Private constructor, no instantiate
 	 */
 	private ReferenceResolver() {}
-	
-	/**
-	 * Method used for initializing tracing
-	 */
-	public static void setDebug(boolean debugValue) {
-		DEBUG = debugValue || Util.DEBUG;
-	}
 	
 	/**
 	 * Resolves retained references.
@@ -84,14 +72,14 @@ public final class ReferenceResolver {
 			return;
 		}
 		long end = System.currentTimeMillis();
-		if (DEBUG) {
+		if (ApiPlugin.DEBUG_REFERENCE_RESOLVER) {
 			System.out.println("Reference resolver: split into " + methodDecls.size() + " method overrides and " + sigtoref.size() + " unique references (" + (end - start) + "ms)");   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$ //$NON-NLS-4$
 		}
 		// resolve references
 		start = System.currentTimeMillis();
 		resolveReferenceSets(sigtoref, monitor);
 		end = System.currentTimeMillis();
-		if (DEBUG) {
+		if (ApiPlugin.DEBUG_REFERENCE_RESOLVER) {
 			System.out.println("Reference resolver: resolved unique references in " + (end - start) + "ms");  //$NON-NLS-1$//$NON-NLS-2$
 		}
 		// resolve method overrides
@@ -102,7 +90,7 @@ public final class ReferenceResolver {
 			reference.resolve();
 		}
 		end = System.currentTimeMillis();
-		if (DEBUG) {
+		if (ApiPlugin.DEBUG_REFERENCE_RESOLVER) {
 			System.out.println("Reference resolver: resolved method overrides in " + (end - start) + "ms");  //$NON-NLS-1$//$NON-NLS-2$
 		}
 	}

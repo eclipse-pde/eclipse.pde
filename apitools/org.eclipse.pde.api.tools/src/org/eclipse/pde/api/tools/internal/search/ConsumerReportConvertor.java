@@ -122,7 +122,7 @@ public class ConsumerReportConvertor extends UseReportConverter {
 		public void endVisitScan() {
 			try {
 				long start = 0;
-				if(DEBUG) {
+				if(ApiPlugin.DEBUG_USE_REPORT_CONVERTER) {
 					System.out.println("Writing consumer report for bundle: "+ consumer.name); //$NON-NLS-1$
 					start = System.currentTimeMillis();
 				}
@@ -130,7 +130,7 @@ public class ConsumerReportConvertor extends UseReportConverter {
 					writeConsumerReport(consumer, producers);
 					producers.clear();
 				}
-				if(DEBUG) {
+				if(ApiPlugin.DEBUG_USE_REPORT_CONVERTER) {
 					System.out.println("Done in: "+(System.currentTimeMillis()-start)+ " ms"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
@@ -158,14 +158,14 @@ public class ConsumerReportConvertor extends UseReportConverter {
 						producers.put(currentProducer.name, currentProducer);
 					}
 					long start = 0;
-					if(DEBUG) {
+					if(ApiPlugin.DEBUG_USE_REPORT_CONVERTER) {
 						System.out.println("Writing producer report for bundle: "+ currentProducer.name); //$NON-NLS-1$
 						start = System.currentTimeMillis();
 					}
 					if(consumer.counts.getTotalRefCount() > 0) {
 						writeProducerReport(consumer, currentProducer);
 					}
-					if(DEBUG) {
+					if(ApiPlugin.DEBUG_USE_REPORT_CONVERTER) {
 						System.out.println("Done in: "+(System.currentTimeMillis()-start)+ " ms"); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 				}
