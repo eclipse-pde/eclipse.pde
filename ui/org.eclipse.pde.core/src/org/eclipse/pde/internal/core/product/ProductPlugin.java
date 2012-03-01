@@ -25,7 +25,12 @@ public class ProductPlugin extends ProductObject implements IProductPlugin {
 	private static final long serialVersionUID = 1L;
 	private String fId;
 	private String fVersion;
-	private String fFragment; // Used to cache the fragment attribute value internally in order to not lose it in case the current plugin/fragment is not in the target platform anymore (see bug 264462) 
+
+	/**
+	 * Used to cache the fragment attribute value internally in order to not lose it in case the current 
+	 * plugin/fragment is not in the target platform anymore (see bug 264462)
+	 */
+	private boolean fFragment;
 
 	public ProductPlugin(IProductModel model) {
 		super(model);
@@ -39,7 +44,8 @@ public class ProductPlugin extends ProductObject implements IProductPlugin {
 			Element element = (Element) node;
 			fId = element.getAttribute("id"); //$NON-NLS-1$
 			fVersion = element.getAttribute("version"); //$NON-NLS-1$
-			fFragment = element.getAttribute("fragment"); //$NON-NLS-1$
+			String fragment = element.getAttribute("fragment"); //$NON-NLS-1$
+			fFragment = Boolean.valueOf(fragment).booleanValue();
 		}
 	}
 
@@ -51,14 +57,16 @@ public class ProductPlugin extends ProductObject implements IProductPlugin {
 		if (fVersion != null && fVersion.length() > 0 && !fVersion.equals("0.0.0")) { //$NON-NLS-1$
 			writer.print(" version=\"" + fVersion + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
+
+		// If the plugin is a known fragment or has a cached fragment setting, mark it as a fragment 		
 		if (PluginRegistry.findModel(fId) != null) {
 			if (PluginRegistry.findModel(fId) instanceof IFragmentModel) {
-				writer.print(" fragment=\"true\""); //$NON-NLS-1$
+				writer.print(" fragment=\"" + Boolean.TRUE.toString() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 			}
-		} else if (fFragment != null && fFragment.length() > 0) {
-			// save the cached value (bug 264462)
-			writer.print(" fragment=\"" + fFragment + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		} else if (fFragment) {
+			writer.print(" fragment=\"" + Boolean.TRUE.toString() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
+
 		writer.println("/>"); //$NON-NLS-1$
 	}
 
@@ -85,6 +93,20 @@ public class ProductPlugin extends ProductObject implements IProductPlugin {
 		fVersion = version;
 		if (isEditable())
 			firePropertyChanged("version", old, fVersion); //$NON-NLS-1$
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.iproduct.IProductPlugin#isFragment()
+	 */
+	public boolean isFragment() {
+		return fFragment;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.iproduct.IProductPlugin#setFragment(boolean)
+	 */
+	public void setFragment(boolean isFragment) {
+		fFragment = isFragment;
 	}
 
 }

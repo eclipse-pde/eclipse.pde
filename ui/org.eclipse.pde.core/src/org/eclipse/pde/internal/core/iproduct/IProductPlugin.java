@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,4 +20,17 @@ public interface IProductPlugin extends IProductObject {
 	String getVersion();
 
 	void setVersion(String version);
+
+	/**
+	 * @return whether this product plug-in is a fragment. <code>false</code> by default.
+	 * @see #setFragment(boolean)
+	 */
+	boolean isFragment();
+
+	/**
+	 * Sets whether this product plug-in is a fragment. <code>false</code> by default.
+	 * @param isFragment whether this product is a fragment
+	 * @see #isFragment()
+	 */
+	void setFragment(boolean isFragment);
 }
