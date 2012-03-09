@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 IBM Corporation and others.
+ * Copyright (c) 2008, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,6 @@
  *     Code 9 Corporation - on going enhancements and maintenance
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.preferences;
-
-import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 import com.ibm.icu.text.MessageFormat;
 import java.util.*;
@@ -45,7 +43,7 @@ import org.osgi.service.prefs.BackingStoreException;
  * 
  * @since 3.4
  */
-public class PDECompilersConfigurationBlock {
+public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 
 	/**
 	 * Provides data information for created controls
@@ -338,9 +336,9 @@ public class PDECompilersConfigurationBlock {
 	public PDECompilersConfigurationBlock(IProject project, IWorkbenchPreferenceContainer container) {
 		fProject = project;
 		if (fProject != null) {
-			fLookupOrder = new IScopeContext[] {new ProjectScope(fProject), new InstanceScope(), new DefaultScope()};
+			fLookupOrder = new IScopeContext[] {new ProjectScope(fProject), InstanceScope.INSTANCE, DefaultScope.INSTANCE};
 		} else {
-			fLookupOrder = new IScopeContext[] {new InstanceScope(), new DefaultScope()};
+			fLookupOrder = new IScopeContext[] {InstanceScope.INSTANCE, DefaultScope.INSTANCE};
 		}
 		if (container == null) {
 			fManager = new WorkingCopyManager();
@@ -628,6 +626,7 @@ public class PDECompilersConfigurationBlock {
 			fControlMap.put(mapkey, controls);
 		}
 		controls.add(combo);
+		addHighlight(parent, lbl, combo);
 	}
 
 	/**

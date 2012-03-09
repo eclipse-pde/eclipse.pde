@@ -35,7 +35,7 @@ Export-Package:
  org.eclipse.pde.internal.ui.launcher;x-internal:=true,
  org.eclipse.pde.internal.ui.nls;x-internal:=true,
  org.eclipse.pde.internal.ui.parts;x-internal:=true,
- org.eclipse.pde.internal.ui.preferences;x-internal:=true,
+ org.eclipse.pde.internal.ui.preferences;x-friends:="org.eclipse.pde.api.tools.ui",
  org.eclipse.pde.internal.ui.properties;x-internal:=true,
  org.eclipse.pde.internal.ui.refactoring;x-internal:=true,
  org.eclipse.pde.internal.ui.samples;x-internal:=true,

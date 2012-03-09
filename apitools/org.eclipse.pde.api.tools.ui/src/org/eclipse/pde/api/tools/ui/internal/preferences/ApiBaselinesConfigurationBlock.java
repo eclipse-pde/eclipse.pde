@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 IBM Corporation and others.
+ * Copyright (c) 2007, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,7 @@ import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.ui.internal.SWTFactory;
+import org.eclipse.pde.internal.ui.preferences.ConfigurationBlock;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -46,7 +47,7 @@ import org.osgi.service.prefs.BackingStoreException;
  * 
  * @since 1.0.0
  */
-public class ApiBaselinesConfigurationBlock {
+public class ApiBaselinesConfigurationBlock extends ConfigurationBlock {
 	/**
 	 * Provides data information for created controls
 	 */
@@ -377,7 +378,7 @@ public class ApiBaselinesConfigurationBlock {
 	}
 	
 	/**
-	 * Creates a {@link Label} | {@link Combo} control. The combo is initialized from the given {@link Key}
+	 * Creates a {@link Label} | {@link Combo} control. The combo is initialised from the given {@link Key}
 	 * @param parent
 	 * @param label
 	 * @param key
@@ -395,6 +396,7 @@ public class ApiBaselinesConfigurationBlock {
 		combo.setItems(SEVERITIES_LABELS);
 		combo.addSelectionListener(selectionlistener);
 		combo.select(data.getSelection(key.getStoredValue(fLookupOrder, false, fManager)));
+		addHighlight(parent, lbl, combo);
 		return combo;
 	}
 
