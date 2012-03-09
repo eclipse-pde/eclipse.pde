@@ -1425,6 +1425,9 @@ public class EEGenerator {
 		static boolean isInterface(int accessFlags) {
 			return (accessFlags & ClassFileConstants.AccInterface) != 0;
 		}
+		static boolean isPrivate(int accessFlags) {
+			return (accessFlags & ClassFileConstants.AccPrivate) != 0;
+		}
 		static boolean isProtected(int accessFlags) {
 			return (accessFlags & ClassFileConstants.AccProtected) != 0;
 		}
@@ -1467,7 +1470,7 @@ public class EEGenerator {
 				String docRoot) {
 			int accessFlags = reader.getAccessFlags();
 			int startingIndex = 0;
-			if (isPublic(accessFlags)) {
+			if (!isPrivate(accessFlags)) {
 				IInnerClassesAttribute innerClassesAttribute = reader.getInnerClassesAttribute();
 				if (innerClassesAttribute != null) {
 					// search the right entry
