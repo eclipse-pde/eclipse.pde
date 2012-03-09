@@ -1120,17 +1120,19 @@ public class TargetContentsGroup {
 			Object[] checked = fTree.getCheckedLeafElements();
 			for (int i = 0; i < checked.length; i++) {
 				if (checked[i] instanceof TargetBundle) {
-					// Create the bundle info object
+					// Create the bundle info object, if the bundle is an error with no symbolic name don't save it
 					String bsn = ((TargetBundle) checked[i]).getBundleInfo().getSymbolicName();
-					NameVersionDescriptor info = null;
-					if (multi.contains(bsn)) {
-						// include version info
-						info = new NameVersionDescriptor(bsn, ((TargetBundle) checked[i]).getBundleInfo().getVersion());
-					} else {
-						// don't store version info
-						info = new NameVersionDescriptor(bsn, null);
+					if (bsn != null) {
+						NameVersionDescriptor info = null;
+						if (multi.contains(bsn)) {
+							// include version info
+							info = new NameVersionDescriptor(bsn, ((TargetBundle) checked[i]).getBundleInfo().getVersion());
+						} else {
+							// don't store version info
+							info = new NameVersionDescriptor(bsn, null);
+						}
+						included.add(info);
 					}
-					included.add(info);
 				}
 			}
 

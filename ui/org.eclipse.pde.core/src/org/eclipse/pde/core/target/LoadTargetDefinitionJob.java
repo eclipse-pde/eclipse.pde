@@ -413,8 +413,10 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 			if (restrictions != null) {
 				for (int j = 0; j < allBundles.length; j++) {
 					TargetBundle bi = allBundles[j];
-					if (!included.contains(bi.getBundleInfo())) {
-						missing.add(bi.getBundleInfo());
+					if (bi.getStatus().isOK()) {
+						if (!included.contains(bi.getBundleInfo())) {
+							missing.add(bi.getBundleInfo());
+						}
 					}
 				}
 			}

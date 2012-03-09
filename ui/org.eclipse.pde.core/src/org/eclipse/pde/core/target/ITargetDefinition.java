@@ -74,6 +74,12 @@ public interface ITargetDefinition {
 	 * Does not filter based on any filters ({@link #getIncluded()}.
 	 * Returns <code>null</code> if this target has not been resolved. 
 	 * Use {@link #getBundles()} to get the filtered list of bundles.
+	 * <p>
+	 * Some of the returned bundles may have non-OK statuses. These bundles may be 
+	 * missing some information (location, version, source target). To get a bundle's 
+	 * status call {@link TargetBundle#getStatus()}. Calling {@link #getStatus()} 
+	 * will return all problems in this target definition.
+	 * </p>
 	 *  
 	 * @return collection of resolved bundles or <code>null</code>
 	 */
