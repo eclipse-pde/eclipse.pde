@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2009 IBM Corporation and others.
+ *  Copyright (c) 2005, 2012 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -46,7 +46,10 @@ public class LaunchConfigurationListener implements ILaunchConfigurationListener
 			if (delete) {
 				Job job = new Job("Clean Configuration Data") { //$NON-NLS-1$
 					protected IStatus run(IProgressMonitor monitor) {
-						CoreUtility.deleteContent(configDir);
+						CoreUtility.deleteContent(configDir, monitor);
+						if (monitor.isCanceled()) {
+							return Status.CANCEL_STATUS;
+						}
 						return Status.OK_STATUS;
 					}
 				};

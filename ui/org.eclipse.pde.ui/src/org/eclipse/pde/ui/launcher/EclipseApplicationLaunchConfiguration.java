@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -230,13 +230,23 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 		if (fWorkspaceLocation == null) {
 			fWorkspaceLocation = LaunchArgumentsHelper.getWorkspaceLocation(configuration);
 		}
+
+		SubMonitor subMon = SubMonitor.convert(monitor, 50);
+
 		// Clear workspace and prompt, if necessary
-		if (!LauncherUtils.clearWorkspace(configuration, fWorkspaceLocation, monitor))
+		if (!LauncherUtils.clearWorkspace(configuration, fWorkspaceLocation, subMon.newChild(25)))
 			throw new CoreException(Status.CANCEL_STATUS);
+
+		subMon.setWorkRemaining(25);
+		if (subMon.isCanceled()) {
+			throw new CoreException(Status.CANCEL_STATUS);
+		}
 
 		// clear config area, if necessary
 		if (configuration.getAttribute(org.eclipse.pde.launching.IPDELauncherConstants.CONFIG_CLEAR_AREA, false))
-			CoreUtility.deleteContent(getConfigDir(configuration));
+			CoreUtility.deleteContent(getConfigDir(configuration), subMon.newChild(25));
+
+		subMon.done();
 	}
 
 	/* (non-Javadoc)

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -94,17 +94,45 @@ public class CoreUtility {
 		return text.replaceAll("\\s+", " "); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
-	public static void deleteContent(File curr) {
-		if (curr.exists()) {
-			if (curr.isDirectory()) {
-				File[] children = curr.listFiles();
+	/**
+	 * Convenience method to delete the given file and any content (if the file is a
+	 * directory). Equivalent to calling {@link #deleteContent(File, IProgressMonitor)}
+	 * with <code>null</code> as the monitor.  This operation cannot be undone.
+	 * 
+	 * @param fileToDelete the file to delete
+	 */
+	public static void deleteContent(File fileToDelete) {
+		deleteContent(fileToDelete, null);
+	}
+
+	/**
+	 * Deletes the given file and any content (if the file is a directory).  There is
+	 * no way to undo this action. Providing a progress monitor allows for cancellation.
+	 * 
+	 * @param fileToDelete the file to delete
+	 * @param monitor progress monitor for reporting and cancellation, can be <code>null</code>
+	 */
+	public static void deleteContent(File fileToDelete, IProgressMonitor monitor) {
+		if (fileToDelete.exists()) {
+			SubMonitor subMon = SubMonitor.convert(monitor, 100);
+			if (fileToDelete.isDirectory()) {
+				File[] children = fileToDelete.listFiles();
 				if (children != null) {
+					subMon.setWorkRemaining(children.length * 10);
 					for (int i = 0; i < children.length; i++) {
-						deleteContent(children[i]);
+						if (subMon.isCanceled()) {
+							return;
+						}
+						deleteContent(children[i], subMon.newChild(10));
 					}
 				}
 			}
-			curr.delete();
+			fileToDelete.delete();
+
+			subMon.done();
+		}
+		if (monitor != null) {
+			monitor.done();
 		}
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2011 IBM Corporation and others.
+ * Copyright (c) 2003, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,9 +55,13 @@ public class LauncherUtils {
 		// brought up because no -data parameter will be specified on the 
 		// launch
 		if (workspace.length() == 0) {
-			monitor.done();
+			if (monitor != null) {
+				monitor.done();
+			}
 			return true;
 		}
+
+		SubMonitor subMon = SubMonitor.convert(monitor, 100);
 
 		// Check if the workspace is already in use, if so, open a message and stop the launch before clearing
 		boolean isLocked = false;
@@ -84,12 +88,20 @@ public class LauncherUtils {
 			isLocked = false;
 		}
 
+		subMon.setWorkRemaining(90);
+		if (subMon.isCanceled()) {
+			return false;
+		}
+
 		if (isLocked) {
 			Status status = new Status(IStatus.ERROR, IPDEConstants.PLUGIN_ID, WORKSPACE_LOCKED, null, null);
 			IStatusHandler statusHandler = DebugPlugin.getDefault().getStatusHandler(status);
 			if (statusHandler != null)
 				statusHandler.handleStatus(status, new Object[] {workspace, configuration, fLastLaunchMode});
-			monitor.done();
+			subMon.done();
+			if (monitor != null) {
+				monitor.done();
+			}
 			return false;
 		}
 
@@ -110,23 +122,34 @@ public class LauncherUtils {
 				}
 
 				if (result == 2 /*Cancel Button*/|| result == -1 /*Dialog close button*/) {
-					monitor.done();
+					subMon.done();
+					if (monitor != null) {
+						monitor.done();
+					}
 					return false;
 				} else if (result == 0) {
 					if (configuration.getAttribute(IPDEConstants.DOCLEARLOG, false)) {
 						LauncherUtils.clearWorkspaceLog(workspace);
 					} else {
-						CoreUtility.deleteContent(workspaceFile);
+						CoreUtility.deleteContent(workspaceFile, subMon.newChild(90));
 					}
 				}
 			} else if (configuration.getAttribute(IPDEConstants.DOCLEARLOG, false)) {
 				LauncherUtils.clearWorkspaceLog(workspace);
 			} else {
-				CoreUtility.deleteContent(workspaceFile);
+				CoreUtility.deleteContent(workspaceFile, subMon.newChild(90));
 			}
 		}
 
-		monitor.done();
+		if (subMon.isCanceled()) {
+			return false;
+		}
+
+		subMon.done();
+		if (monitor != null) {
+			monitor.done();
+		}
+
 		return true;
 	}
 
@@ -340,7 +363,7 @@ public class LauncherUtils {
 
 	public static boolean clearWorkspaceLog(String workspace) {
 		File logFile = new File(workspace, ".metadata" + File.separator + ".log"); //$NON-NLS-1$ //$NON-NLS-2$
-		if (logFile != null && logFile.exists()) {
+		if (logFile.exists()) {
 			return logFile.delete();
 		}
 		return true;

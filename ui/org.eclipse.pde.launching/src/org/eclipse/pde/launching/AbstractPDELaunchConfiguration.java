@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2011 IBM Corporation and others.
+ *  Copyright (c) 2005, 2012 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -397,7 +397,7 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 	 * @param monitor
 	 * 			the progress monitor
 	 * @throws CoreException
-	 * 			if unable to retrieve launch attribute values
+	 * 			if unable to retrieve launch attribute values or the clear operation was cancelled
 	 * @since 3.3
 	 */
 	protected void clear(ILaunchConfiguration configuration, IProgressMonitor monitor) throws CoreException {
