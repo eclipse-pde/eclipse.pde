@@ -511,7 +511,7 @@ public class TargetContentsGroup {
 		fPluginModeButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				// Moving from feature based filtering to plug-in based, need to update storage
-				((TargetDefinition) fTargetDefinition).setUIMode(TargetDefinition.MODE_PLUGIN);
+				fTargetDefinition.setUIMode(TargetDefinition.MODE_PLUGIN);
 				contentChanged();
 				fTargetDefinition.setIncluded(null);
 
@@ -538,7 +538,7 @@ public class TargetContentsGroup {
 		fFeaureModeButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				// Moving from plug-in based filtering to feature based, need to update storage
-				((TargetDefinition) fTargetDefinition).setUIMode(TargetDefinition.MODE_FEATURE);
+				fTargetDefinition.setUIMode(TargetDefinition.MODE_FEATURE);
 				contentChanged();
 				fTargetDefinition.setIncluded(null);
 
@@ -895,7 +895,7 @@ public class TargetContentsGroup {
 				total = 0;
 			} else {
 				total = fTargetDefinition.getAllFeatures().length;
-				total += ((TargetDefinition) fTargetDefinition).getOtherBundles().length;
+				total += fTargetDefinition.getOtherBundles().length;
 			}
 		}
 		if (fMissing != null) {
@@ -948,10 +948,13 @@ public class TargetContentsGroup {
 		}
 
 		for (int i = 0; i < allResolvedBundles.length; i++) {
-			fAllBundles.add(allResolvedBundles[i]);
+			// We only display bundles that have symbolic names
+			if (allResolvedBundles[i].getBundleInfo().getSymbolicName() != null) {
+				fAllBundles.add(allResolvedBundles[i]);
+			}
 		}
 
-		boolean isFeatureMode = ((TargetDefinition) fTargetDefinition).getUIMode() == TargetDefinition.MODE_FEATURE;
+		boolean isFeatureMode = fTargetDefinition.getUIMode() == TargetDefinition.MODE_FEATURE;
 		fFeaureModeButton.setSelection(isFeatureMode);
 		fPluginModeButton.setSelection(!isFeatureMode);
 		fGroupLabel.setEnabled(!isFeatureMode);
@@ -973,7 +976,7 @@ public class TargetContentsGroup {
 		}
 		if (fFeaureModeButton.getSelection()) {
 			// Checked features and plugins
-			result.addAll(((TargetDefinition) fTargetDefinition).getFeaturesAndBundles());
+			result.addAll(fTargetDefinition.getFeaturesAndBundles());
 		} else {
 			// Bundles with errors are already included from fMissing, do not add twice
 			TargetBundle[] bundles = fTargetDefinition.getBundles();
@@ -1027,7 +1030,7 @@ public class TargetContentsGroup {
 		if (parent == null) {
 			result = fAllBundles.toArray();
 		} else if (fFeaureModeButton.getSelection() && parent == OTHER_CATEGORY) {
-			result = ((TargetDefinition) fTargetDefinition).getOtherBundles();
+			result = fTargetDefinition.getOtherBundles();
 		} else if (fGrouping == GROUP_BY_CONTAINER && parent instanceof ITargetLocation) {
 			ITargetLocation container = (ITargetLocation) parent;
 			result = container.getBundles();
@@ -1099,7 +1102,7 @@ public class TargetContentsGroup {
 
 			if (included.size() == 0) {
 				fTargetDefinition.setIncluded(new NameVersionDescriptor[0]);
-			} else if (included.size() == 0 || included.size() - missingCount == fTargetDefinition.getAllFeatures().length + ((TargetDefinition) fTargetDefinition).getOtherBundles().length) {
+			} else if (included.size() == 0 || included.size() - missingCount == fTargetDefinition.getAllFeatures().length + fTargetDefinition.getOtherBundles().length) {
 				fTargetDefinition.setIncluded(null);
 			} else {
 				fTargetDefinition.setIncluded((NameVersionDescriptor[]) included.toArray(new NameVersionDescriptor[included.size()]));
@@ -1120,7 +1123,7 @@ public class TargetContentsGroup {
 			Object[] checked = fTree.getCheckedLeafElements();
 			for (int i = 0; i < checked.length; i++) {
 				if (checked[i] instanceof TargetBundle) {
-					// Create the bundle info object, if the bundle is an error with no symbolic name don't save it
+					// Create the bundle info object, if the bundle has no symbolic name don't save it
 					String bsn = ((TargetBundle) checked[i]).getBundleInfo().getSymbolicName();
 					if (bsn != null) {
 						NameVersionDescriptor info = null;
@@ -1182,7 +1185,10 @@ public class TargetContentsGroup {
 					TargetBundle[] bundles = fTargetDefinition.getBundles();
 					for (int i = 0; i < bundles.length; i++) {
 						if (!bundles[i].getStatus().isOK()) {
-							fMissing.add(bundles[i]);
+							// We only display error bundles that have symbolic names
+							if (bundles[i].getBundleInfo().getSymbolicName() != null) {
+								fMissing.add(bundles[i]);
+							}
 						}
 					}
 					result.addAll(fMissing);
@@ -1206,6 +1212,7 @@ public class TargetContentsGroup {
 					TargetBundle[] allBundles = fTargetDefinition.getAllBundles();
 					for (int i = 0; i < allBundles.length; i++) {
 						if (allBundles[i].getStatus().isOK()) {
+							// Assume that if the bundle is OK, it has a symbolic name
 							result.add(allBundles[i]);
 						}
 					}
