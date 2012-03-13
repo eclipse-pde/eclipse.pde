@@ -359,15 +359,6 @@ public class EEGenerator {
 				}
 			}
 		}
-		public void persistForZip(ZipOutputStream zipOutputStream, String OSGiProfileName) throws IOException {
-			if (this.types == null) return;
-			Collections.sort(this.types);
-			for (Iterator<Type> iterator2 = this.types.iterator(); iterator2.hasNext();) {
-				Type type = iterator2.next();
-				String simpleName = type.getSimpleName();
-				Util.writeZipFileEntry(zipOutputStream, this.name + '/' + simpleName, type.getBytes(OSGiProfileName));
-			}
-		}
 		public void persistXML(Document document, Element element, String OSGiProfileName) {
 			Element pkg = document.createElement(IApiXmlConstants.ELEMENT_PACKAGE);
 			pkg.setAttribute(IApiXmlConstants.ATTR_NAME, this.name);
@@ -672,6 +663,7 @@ public class EEGenerator {
 			if (visitor.shouldIgnore()) {
 				return null;
 			}
+			
 			return visitor.getStub().getBytes();
 		}
 
@@ -705,7 +697,7 @@ public class EEGenerator {
 			return null;
 		}
 
-		private char[] getOnlineDocContents(String docURL, String typeName) {
+		char[] getOnlineDocContents(String docURL, String typeName) {
 			// check the doc online
 			String typeDocURL = docURL + typeName;
 			char[] contents = this.getFromCache(typeName);
@@ -953,24 +945,6 @@ public class EEGenerator {
 				}
 			}
 		}
-		private void persistChildren(
-				ZipOutputStream zipOutputStream,
-				Map<String, Package> packageMap,
-				String OSGiProfileName) throws IOException {
-			Set<String> keySet = packageMap.keySet();
-			String[] sortedKeys = new String[keySet.size()];
-			keySet.toArray(sortedKeys);
-			Arrays.sort(sortedKeys);
-			for (int i = 0, max = sortedKeys.length; i < max; i++) {
-				String key = sortedKeys[i];
-				Package package1 = packageMap.get(key);
-				if (package1 != null) {
-					package1.persistForZip(zipOutputStream, OSGiProfileName);
-				} else {
-					System.err.println("Missing package for profile info zip serialization: " + key); //$NON-NLS-1$
-				}
-			}
-		}
 		private void persistChildrenAsClassFile(
 				ZipOutputStream zipOutputStream,
 				Map<String, Package> packageMap,
@@ -1049,45 +1023,6 @@ public class EEGenerator {
 			System.out.println("The stub for the profile " + this.profileName + " was generated from " + this.totalSize + " bytes."); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			System.out.println("Its generated size is " + this.generatedSize + " bytes."); //$NON-NLS-1$ //$NON-NLS-2$
 			System.out.println("Ratio : " + (((double) this.generatedSize / (double) this.totalSize) * 100.0) + "%"); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-		void persistDataInZipFormat(
-				String rootName,
-				String subDirName) {
-			ZipOutputStream zipOutputStream = null;
-			String profileName2 = this.getProfileName();
-			File root = new File(rootName);
-			if (!root.exists()) {
-				root.mkdirs();
-			}
-			File subDir = new File(root, subDirName);
-			if (!subDir.exists()) {
-				subDir.mkdir();
-			}
-			if (profileName2.indexOf('/') != 0) {
-				profileName2 = profileName2.replace('/', '_');
-			}
-			File file = new File(subDir, profileName2 + ".zip"); //$NON-NLS-1$
-			try {
-				zipOutputStream = Util.getOutputStream(file);
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			}
-			if (zipOutputStream == null) {
-				System.err.println("Could not create the output file : " + file.getAbsolutePath()); //$NON-NLS-1$
-				return;
-			}
-			try {
-				persistChildren(zipOutputStream, this.data, profileName2);
-				zipOutputStream.flush();
-			} catch (IOException e) {
-				e.printStackTrace();
-			} finally {
-				try {
-					zipOutputStream.close();
-				} catch (IOException e) {
-					// ignore
-				}
-			}
 		}
 		public String toString() {
 			return this.getProfileName();
@@ -1416,14 +1351,8 @@ public class EEGenerator {
 			}
 			return null;
 		}
-		static boolean isAbstract(int accessFlags) {
-			return (accessFlags & ClassFileConstants.AccAbstract) != 0;
-		}
 		static boolean isFinal(int accessFlags) {
 			return (accessFlags & ClassFileConstants.AccFinal) != 0;
-		}
-		static boolean isInterface(int accessFlags) {
-			return (accessFlags & ClassFileConstants.AccInterface) != 0;
 		}
 		static boolean isPrivate(int accessFlags) {
 			return (accessFlags & ClassFileConstants.AccPrivate) != 0;
@@ -1456,10 +1385,6 @@ public class EEGenerator {
 				return !isFinal(typeAccessFlags);
 			}
 			return false;
-		}
-
-		public static Type newMissingType(IClassFileReader reader) {
-			return new Type(reader);
 		}
 
 		public static Type newType(
@@ -1503,71 +1428,9 @@ public class EEGenerator {
 		int modifiers;
 
 		char[] name;
-
 		char[] superclassName;
-
 		char[][] superinterfacesNames;
 		
-		private Type(IClassFileReader reader) {
-			char[] className = reader.getClassName();
-			className = CharOperation.replaceOnCopy(className, '/', '.');
-			this.name = className;
-			char[] scname = reader.getSuperclassName();
-			if (scname != null) {
-				scname = CharOperation.replaceOnCopy(scname, '/', '.');
-				this.superclassName = scname;
-			}
-			char[][] interfaceNames = CharOperation.deepCopy(reader.getInterfaceNames());
-			for (int i = 0, max = interfaceNames.length; i < max; i++) {
-				CharOperation.replace(interfaceNames[i], '/', '.');
-			}
-			this.superinterfacesNames = interfaceNames;
-			this.modifiers = reader.getAccessFlags();
-			IFieldInfo[] fieldInfos = reader.getFieldInfos();
-			int length = fieldInfos.length;
-			for (int i = 0; i < length; i++) {
-				IFieldInfo fieldInfo = fieldInfos[i];
-				if (isVisibleField(this.modifiers, fieldInfo.getAccessFlags())) {
-					if (fields == null) {
-						this.fields = new HashSet<Field>();
-					}
-					fields.add(new Field(fieldInfo.getName(), fieldInfo.getDescriptor()));
-				}
-			}
-			IMethodInfo[] methodInfos = reader.getMethodInfos();
-			length = methodInfos.length;
-			for (int i = 0, max = methodInfos.length; i < max; i++) {
-				IMethodInfo methodInfo = methodInfos[i];
-				IClassFileAttribute[] attributes = methodInfo.getAttributes();
-				ISignatureAttribute signatureAttribute = null;
-				for (int j = 0, max2 = attributes.length; j < max2; j++) {
-					IClassFileAttribute currentAttribute = attributes[j];
-					if (CharOperation.equals(currentAttribute.getAttributeName(), IAttributeNamesConstants.SIGNATURE)) {
-						signatureAttribute = (ISignatureAttribute) currentAttribute;
-						break;
-					}
-				}
-				char[] signature = null;
-				if (signatureAttribute != null) {
-					signature = signatureAttribute.getSignature();
-				} else {
-					signature = methodInfo.getDescriptor();
-				}
-				int accessFlags = methodInfo.getAccessFlags();
-				if (isVisibleMethod(this.modifiers, accessFlags)) {
-					if (methods == null) {
-						this.methods = new HashSet<Method>();
-					}
-					methods.add(
-							new Method(
-									accessFlags,
-									methodInfo.getName(),
-									methodInfo.getDescriptor(),
-									signatureAttribute == null ? null : signature));
-				}
-			}
-		}
-
 		private Type(
 				ProfileInfo info,
 				int startingIndex,
@@ -1708,142 +1571,6 @@ public class EEGenerator {
 			Type other = (Type) obj;
 			return Arrays.equals(name, other.name);
 		}
-		public byte[] getBytes() {
-			StringBuilder builder = new StringBuilder();
-			builder.append(this.addedProfileValue).append("\n"); //$NON-NLS-1$
-			builder.append(this.removedProfileValue).append("\n"); //$NON-NLS-1$
-			if (this.fields != null) {
-				int size = this.fields.size();
-				Field[] allFields = new Field[size];
-				this.fields.toArray(allFields);
-				Arrays.sort(allFields);
-				builder.append(size).append("\n"); //$NON-NLS-1$
-				for (int i = 0; i < size; i++) {
-					Field field = allFields[i];
-					builder
-					.append(field.name)
-					.append(",") //$NON-NLS-1$
-					.append(field.addedProfileValue)
-					.append(",") //$NON-NLS-1$
-					.append(field.removedProfileValue)
-					.append("\n"); //$NON-NLS-1$
-				}
-			} else {
-				builder.append(0).append("\n"); //$NON-NLS-1$
-			}
-			if (this.methods != null) {
-				int size = this.methods.size();
-				Method[] allMethods = new Method[size];
-				this.methods.toArray(allMethods);
-				Arrays.sort(allMethods);
-				builder.append(size).append("\n"); //$NON-NLS-1$
-				for (int i = 0; i < size; i++) {
-					Method method = allMethods[i];
-					builder
-					.append(method.selector)
-					.append(",") //$NON-NLS-1$
-					.append(method.signature)
-					.append(",") //$NON-NLS-1$
-					.append(method.genericSignature)
-					.append(",") //$NON-NLS-1$
-					.append(method.addedProfileValue)
-					.append(",") //$NON-NLS-1$
-					.append(method.removedProfileValue)
-					.append("\n");; //$NON-NLS-1$
-				}
-			} else {
-				builder.append(0).append("\n"); //$NON-NLS-1$
-			}
-			return String.valueOf(builder).getBytes();
-		}
-		public byte[] getBytes(String profileName) {
-			StringBuilder builder = new StringBuilder();
-			builder.append(ProfileModifiers.getValue(profileName)).append("\n"); //$NON-NLS-1$
-			if (this.fields != null) {
-				int size = this.fields.size();
-				Field[] allFields = new Field[size];
-				this.fields.toArray(allFields);
-				Arrays.sort(allFields);
-				builder.append(size).append("\n"); //$NON-NLS-1$
-				for (int i = 0; i < size; i++) {
-					builder
-					.append(allFields[i].name)
-					.append(" ") //$NON-NLS-1$
-					.append(ProfileModifiers.getValue(profileName))
-					.append("\n"); //$NON-NLS-1$
-				}
-			} else {
-				builder.append(0).append("\n"); //$NON-NLS-1$
-			}
-			if (this.methods != null) {
-				int size = this.methods.size();
-				Method[] allMethods = new Method[size];
-				this.methods.toArray(allMethods);
-				Arrays.sort(allMethods);
-				builder.append(size).append("\n"); //$NON-NLS-1$
-				for (int i = 0; i < size; i++) {
-					Method method = allMethods[i];
-					builder
-					.append(method.selector)
-					.append(",") //$NON-NLS-1$
-					.append(method.signature)
-					.append(",") //$NON-NLS-1$
-					.append(method.genericSignature)
-					.append(",") //$NON-NLS-1$
-					.append(ProfileModifiers.getValue(profileName))
-					.append("\n");; //$NON-NLS-1$
-				}
-			} else {
-				builder.append(0).append("\n"); //$NON-NLS-1$
-			}
-			return String.valueOf(builder).getBytes();
-		}
-
-		public byte[] getBytes2(String profileName) {
-			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-			try {
-				DataOutputStream stream = new DataOutputStream(outputStream);
-				stream.writeInt(ProfileModifiers.getValue(profileName));
-				if (this.fields != null) {
-					Field[] allFields = new Field[this.fields.size()];
-					this.fields.toArray(allFields);
-					Arrays.sort(allFields);
-					stream.writeInt(allFields.length);
-					for (int i = 0, max = allFields.length; i < max; i++) {
-						stream.writeUTF(new String(allFields[i].name));
-						stream.writeInt(ProfileModifiers.getValue(profileName));
-					}
-				} else {
-					stream.writeInt(0);
-				}
-				if (this.methods != null) {
-					int size = this.methods.size();
-					Method[] allMethods = new Method[size];
-					this.methods.toArray(allMethods);
-					Arrays.sort(allMethods);
-					stream.writeInt(size);
-					for (int i = 0; i < size; i++) {
-						stream.writeUTF(new String(allMethods[i].selector));
-						stream.writeUTF(new String(allMethods[i].signature));
-						stream.writeUTF(new String(allMethods[i].genericSignature));
-						stream.writeInt(ProfileModifiers.getValue(profileName));
-					}
-				} else {
-					stream.writeInt(0);
-				}
-				outputStream.flush();
-			} catch (IOException e) {
-				e.printStackTrace();
-			} finally {
-				try {
-					outputStream.close();
-				} catch (IOException e) {
-					// ignore
-				}
-			}
-			return outputStream.toByteArray();
-		}
-
 		public Field getField(String fname) {
 			if (this.fields == null) return null;
 			Field fieldToFind = new Field(fname.toCharArray(), null);
@@ -1884,38 +1611,6 @@ public class EEGenerator {
 			int result = 1;
 			result = prime * result + Arrays.hashCode(name);
 			return result;
-		}
-
-		public void persistXML(Document document, Element parent, boolean isExhaustive) {
-			Element type = document.createElement(IApiXmlConstants.ELEMENT_TYPE);
-			parent.appendChild(type);
-			type.setAttribute(IApiXmlConstants.ATTR_NAME, getSimpleName());
-			persistAnnotations(type);
-			if (isExhaustive) {
-				if (this.superclassName != null) {
-					type.setAttribute(IApiXmlConstants.ATTR_SUPER_CLASS, new String(this.superclassName));
-				}
-				if (this.superinterfacesNames != null && this.superinterfacesNames.length != 0) {
-					type.setAttribute(IApiXmlConstants.ATTR_SUPER_INTERFACES, Util.getInterfaces(this.superinterfacesNames));
-				}
-				type.setAttribute(IApiXmlConstants.ATTR_INTERFACE, Boolean.toString((this.modifiers & ClassFileConstants.AccInterface) != 0));
-			}
-			if (this.fields != null) {
-				Field[] allFields = new Field[this.fields.size()];
-				this.fields.toArray(allFields);
-				Arrays.sort(allFields);
-				for (int i = 0, max = allFields.length; i < max; i++) {
-					allFields[i].persistXML(document, type);
-				}
-			}
-			if (this.methods != null) {
-				Method[] allMethods = new Method[this.methods.size()];
-				this.methods.toArray(allMethods);
-				Arrays.sort(allMethods);
-				for (int i = 0, max = allMethods.length; i < max; i++) {
-					allMethods[i].persistXML(document, type);
-				}
-			}
 		}
 
 		public void persistXML(Document document, Element parent, String OSGiProfileName) {
