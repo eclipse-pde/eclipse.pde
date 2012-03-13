@@ -793,7 +793,8 @@ public class EEGenerator {
 			// initialize known packages
 			String osgiProfileName = this.OSGiProfile;
 			Set<String> knownPackages = initializePackages(osgiProfileName);
-			Set<Type> allTypes = new HashSet<Type>();
+			Map<String, Type> allVisibleTypes = new HashMap<String, Type>();
+			Map<String, Type> allTypes = new HashMap<String, Type>();
 			this.totalSize = 0;
 			for (int i = 0, max = allFiles.length; i < max; i++) {
 				File currentFile = allFiles[i];
@@ -822,7 +823,10 @@ public class EEGenerator {
 						if (this.isMatching(knownPackages, packageName)) {
 							Type type = Type.newType(this, classFileReader, this.JREdoc, this.JREURL, this.docRoot);
 							if (type != null) {
-								allTypes.add(type);
+								if (type.isProtected() || type.isPublic()) {
+									allVisibleTypes.put(type.getFullQualifiedName(), type);
+								}
+								allTypes.put(type.getFullQualifiedName(), type);
 							}
 						}
 					}
@@ -831,9 +835,33 @@ public class EEGenerator {
 				}
 			}
 			// list all results
-			Type[] types = new Type[allTypes.size()];
-			allTypes.toArray(types);
-			Arrays.sort(types);
+			List<Type> visibleTypes = new ArrayList<Type>();
+			visibleTypes.addAll(allVisibleTypes.values());
+			// check transitive closure to make sure all methods/fields from superclass are visible when resolving fields/methods
+			while (!visibleTypes.isEmpty()) {
+				Type type = visibleTypes.remove(0);
+				String superclassName = type.getSuperclassName();
+				while (superclassName != null) {
+					if (allVisibleTypes.get(superclassName) == null) {
+						// look for required type
+						Type currentSuperclass = allTypes.get(superclassName);
+						if (currentSuperclass == null) {
+							if (DEBUG) {
+								System.out.println("Missing type: " + superclassName); //$NON-NLS-1$
+							}
+							break;
+						} else {
+							allVisibleTypes.put(currentSuperclass.getFullQualifiedName(), currentSuperclass);
+							visibleTypes.add(currentSuperclass);
+							if (DEBUG) {
+								System.out.println("Reinject type: " + currentSuperclass.getFullQualifiedName()); //$NON-NLS-1$
+							}
+						}
+					}
+					Type superclass = allVisibleTypes.get(superclassName);
+					superclassName = superclass.getSuperclassName();
+				}
+			}
 			List<Type> isInDoc = new ArrayList<Type>();
 			ZipFile docZip = null;
 			if (this.JREdoc != null) {
@@ -844,8 +872,7 @@ public class EEGenerator {
 				}
 			}
 			try {
-				for (int i = 0; i < types.length; i++) {
-					Type type = types[i];
+				for (Type type : allVisibleTypes.values()) {
 					if (checkDocStatus(this, type, docZip, this.JREURL, this.docRoot)) {
 						isInDoc.add(type);
 					}
@@ -866,12 +893,11 @@ public class EEGenerator {
 				}
 				package1.addType(type);
 			}
-
+			this.data = typesPerPackage;
 			if (DEBUG) {
 				System.out.println("Time spent for gathering datas for " + pname + " : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
 
-			this.data = typesPerPackage;
 			if (this.blackList != null) {
 				// persist black list
 				this.persistBlackList();
@@ -1393,34 +1419,30 @@ public class EEGenerator {
 				String docZipFileName,
 				String docURL,
 				String docRoot) {
-			int accessFlags = reader.getAccessFlags();
 			int startingIndex = 0;
-			if (!isPrivate(accessFlags)) {
-				IInnerClassesAttribute innerClassesAttribute = reader.getInnerClassesAttribute();
-				if (innerClassesAttribute != null) {
-					// search the right entry
-					IInnerClassesAttributeEntry[] entries = innerClassesAttribute.getInnerClassAttributesEntries();
-					for (int i = 0, max = entries.length; i < max ; i++) {
-						IInnerClassesAttributeEntry entry = entries[i];
-						char[] innerClassName = entry.getInnerClassName();
-						if (innerClassName != null) {
-							if (CharOperation.equals(reader.getClassName(), innerClassName)) {
-								int accessFlags2 = entry.getAccessFlags();
-								if (entry.getOuterClassName() != null) {
-									if (!isStatic(accessFlags2)) {
-										startingIndex = 1;
-									}
+			IInnerClassesAttribute innerClassesAttribute = reader.getInnerClassesAttribute();
+			if (innerClassesAttribute != null) {
+				// search the right entry
+				IInnerClassesAttributeEntry[] entries = innerClassesAttribute.getInnerClassAttributesEntries();
+				for (int i = 0, max = entries.length; i < max ; i++) {
+					IInnerClassesAttributeEntry entry = entries[i];
+					char[] innerClassName = entry.getInnerClassName();
+					if (innerClassName != null) {
+						if (CharOperation.equals(reader.getClassName(), innerClassName)) {
+							int accessFlags2 = entry.getAccessFlags();
+							if (entry.getOuterClassName() != null) {
+								if (!isStatic(accessFlags2)) {
+									startingIndex = 1;
 								}
-								if (!isPublic(accessFlags2)) {
-									return null; 
-								}
+							}
+							if (isPrivate(accessFlags2)) {
+								return null; 
 							}
 						}
 					}
 				}
-				return new Type(info, startingIndex, reader, docZipFileName, docURL, docRoot);
 			}
-			return null;
+			return new Type(info, startingIndex, reader, docZipFileName, docURL, docRoot);
 		}
 
 		Set<Field> fields;
@@ -1586,6 +1608,10 @@ public class EEGenerator {
 		public String getFullQualifiedName() {
 			return String.valueOf(this.name);
 		}
+		public String getSuperclassName() {
+			if (this.superclassName == null) return null;
+			return String.valueOf(this.superclassName);
+		}
 		public Method getMethod(String selector, String signature) {
 			if (this.methods == null) return null;
 			Method methodToFind = new Method(0, selector.toCharArray(), signature.toCharArray(), null);
@@ -1611,6 +1637,14 @@ public class EEGenerator {
 			int result = 1;
 			result = prime * result + Arrays.hashCode(name);
 			return result;
+		}
+
+		public boolean isProtected() {
+			return isProtected(this.modifiers);
+		}
+
+		public boolean isPublic() {
+			return isPublic(this.modifiers);
 		}
 
 		public void persistXML(Document document, Element parent, String OSGiProfileName) {
