@@ -162,6 +162,7 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 				break;
 			case 1 :
 				handleAddRequired();
+				break;
 			case 2 :
 				handleDelete();
 				break;
