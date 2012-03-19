@@ -239,7 +239,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		initializeImages();
 		Composite container = createClientContainer(section, 2, toolkit);
 		TreePart treePart = getTreePart();
-		createViewerPartControl(container, SWT.MULTI, 2, toolkit);
+		createViewerPartControl(container, SWT.MULTI | SWT.BORDER, 2, toolkit);
 
 		// Temporarily removed for M6
 		// fix layout to place search button right to the filter text 
