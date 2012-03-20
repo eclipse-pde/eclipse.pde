@@ -65,11 +65,13 @@ import org.eclipse.ui.progress.WorkbenchJob;
 public class ExtensionsSection extends TreeSection implements IModelChangedListener, IPropertyChangeListener {
 	private static final int REFRESHJOB_DELAY_TIME = 1200; // milliseconds to wait
 	private static final int ACCELERATED_SCROLLING = 15; // lines to skip
-	private static final int BUTTON_MOVE_DOWN = 5;
-	private static final int BUTTON_MOVE_UP = 4;
-	private static final int BUTTON_EDIT = 3;
-	private static final int BUTTON_REMOVE = 2;
-	private static final int BUTTON_ADD = 1;
+
+	// All constants changed for removal of search button
+	private static final int BUTTON_MOVE_DOWN = 4;
+	private static final int BUTTON_MOVE_UP = 3;
+	private static final int BUTTON_EDIT = 2;
+	private static final int BUTTON_REMOVE = 1;
+	private static final int BUTTON_ADD = 0;
 //	private static final int BUTTON_SEARCH = 0;
 	private TreeViewer fExtensionTree;
 	private Image fExtensionImage;
