@@ -179,20 +179,23 @@ public class LauncherUtils {
 			else
 				handleSelectedPlugins(launch, timeStamp, projects);
 
+			// If the set of projects being launched has changed, offer to organize the manifests
 			if (!projects.isEmpty()) {
 				Status status = new Status(IStatus.ERROR, IPDEConstants.PLUGIN_ID, ORGANIZE_MANIFESTS, null, null);
 				IStatusHandler statusHandler = DebugPlugin.getDefault().getStatusHandler(status);
 				if (statusHandler != null)
 					statusHandler.handleStatus(status, new Object[] {projects, monitor, getLastRun()});
+
+				// Store the timestamp so we can avoid repeatedly organizing the same manifest files
+				ILaunchConfigurationWorkingCopy wc = null;
+				if (launch.isWorkingCopy())
+					wc = (ILaunchConfigurationWorkingCopy) launch;
+				else
+					wc = launch.getWorkingCopy();
+				wc.setAttribute(TIMESTAMP, Long.toString(System.currentTimeMillis()));
+				wc.doSave();
 			}
 
-			ILaunchConfigurationWorkingCopy wc = null;
-			if (launch.isWorkingCopy())
-				wc = (ILaunchConfigurationWorkingCopy) launch;
-			else
-				wc = launch.getWorkingCopy();
-			wc.setAttribute(TIMESTAMP, Long.toString(System.currentTimeMillis()));
-			wc.doSave();
 		} catch (CoreException e) {
 		}
 	}
@@ -276,7 +279,7 @@ public class LauncherUtils {
 			if (!WorkspaceModelManager.isPluginProject(projs[i]))
 				continue;
 			IPluginModelBase base = PluginRegistry.findModel(projs[i]);
-			if (base == null || base != null && deSelectedPlugins.containsKey(base))
+			if (base == null || deSelectedPlugins.containsKey(base))
 				continue;
 			String timestamp = getTimeStamp(projs[i]);
 			if (timestamp.compareTo(launcherTimeStamp) > 0 && shouldAdd(projs[i], launcherTimeStamp, timestamp))
