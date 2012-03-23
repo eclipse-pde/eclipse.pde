@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -141,7 +141,7 @@ public class ViewTemplate extends PDETemplateSection {
 			IPluginElement view = factory.createElement(perspectiveElement);
 			view.setName("view"); //$NON-NLS-1$
 			view.setAttribute("id", fullClassName); //$NON-NLS-1$
-			view.setAttribute("relative", "org.eclipse.ui.views.TaskList"); //$NON-NLS-1$ //$NON-NLS-2$
+			view.setAttribute("relative", "org.eclipse.ui.views.ProblemView"); //$NON-NLS-1$ //$NON-NLS-2$
 			view.setAttribute("relationship", "right"); //$NON-NLS-1$ //$NON-NLS-2$
 			view.setAttribute("ratio", "0.5"); //$NON-NLS-1$ //$NON-NLS-2$
 			perspectiveElement.add(view);
