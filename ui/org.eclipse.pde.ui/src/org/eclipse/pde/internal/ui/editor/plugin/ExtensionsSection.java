@@ -54,7 +54,6 @@ import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.internal.BidiUtil;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionFactory;
@@ -92,7 +91,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 	 * <code>label, name, class, id, commandId, property, activityId, attribute, value</code>
 	 * <br>
 	 * While adding elements to the array at the end is possible without concern, changing 
-	 * previous elements requires to refactor occurences with indexed access to the array.
+	 * previous elements requires to refactor occurrences with indexed access to the array.
 	 */
 	// TODO common label properties might be configured through preferences
 	public static final String[] COMMON_LABEL_ATTRIBUTES = {"label", //$NON-NLS-1$
@@ -250,8 +249,6 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 //		searchButton.setLayoutData(GridDataFactory.swtDefaults().align(SWT.BEGINNING, SWT.BEGINNING).grab(false, false).hint(SWT.DEFAULT, 19).create());
 //		searchButton.setToolTipText(PDEUIMessages.ExtensionsPage_searchWithExtensionsFilter);
 
-		Control addButton = treePart.getButton(BUTTON_ADD);
-		((GridData) addButton.getLayoutData()).verticalIndent = 16;
 		fExtensionTree = treePart.getTreeViewer();
 		fExtensionTree.setContentProvider(new ExtensionContentProvider());
 		fExtensionTree.setLabelProvider(new ExtensionLabelProvider());
@@ -264,6 +261,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		createSectionToolbar(section, toolkit);
 		// accelerated tree scrolling enabled
 		fFilteredTree.addMouseWheelListener(new AcceleratedTreeScrolling(fExtensionTree.getTree(), ACCELERATED_SCROLLING));
+		toolkit.paintBordersFor(fFilteredTree.getParent());
 		// Create the adapted listener for the filter entry field
 		fFilteredTree.createUIListenerEntryFilter(this);
 		final Text filterText = fFilteredTree.getFilterControl();
@@ -290,9 +288,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		// Cursor needs to be explicitly disposed
 		toolbar.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
-				if ((handCursor != null) && (handCursor.isDisposed() == false)) {
-					handCursor.dispose();
-				}
+				handCursor.dispose();
 			}
 		});
 		// Add action to filter tree with some of the selection's attributes
@@ -1032,8 +1028,8 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 				return baseName;
 			// Bug 183417 - Bidi3.3: Elements' labels in the extensions page in the fragment manifest characters order is incorrect
 			// add RTL zero length character just before the ( and the LTR character just after to ensure:
-			// 1. The leading parenthesis takes proper orientation when running in bidi configuration
-			// Assumption: baseName (taken from the schema definition), is only latin characters and is therefore always displayed LTR
+			// 1. The leading parenthesis takes proper orientation when running in BiDi configuration
+			// Assumption: baseName (taken from the schema definition), is only Latin characters and is therefore always displayed LTR
 			if (BidiUtil.isBidiPlatform())
 				return fullName + " \u200f(\u200e" + baseName + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 			return fullName + " (" + baseName + ')'; //$NON-NLS-1$
@@ -1050,7 +1046,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 	}
 
 	/**
-	 * Temporarily bypasses default {@link FormFilteredTree#getRefreshJobDelay()} for several actions to immediatly start tree 
+	 * Temporarily bypasses default {@link FormFilteredTree#getRefreshJobDelay()} for several actions to immediately start tree 
 	 * filtering. Only the next job to call <code>getRefreshJobDelay()</code> will be affected and reset this value.
 	 * 
 	 * @param bypassFilterDelay <code>true</code> bypasses the refresh job delay by overriding it with <code>0</code> 
@@ -1077,7 +1073,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		if (fFilteredTree.getFilterControl().isFocusControl() && !selection.isEmpty()) {
 			return true;
 		}
-		// TODO enable copy also when plugin model is not editable
+		// TODO enable copy also when plug-in model is not editable
 		return super.canCopy(selection);
 	}
 
@@ -1086,7 +1082,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		if (fFilteredTree.getFilterControl().isFocusControl()) {
 			return true;
 		}
-		// TODO enable paste also when plugin model is not editable
+		// TODO enable paste also when plug-in model is not editable
 		return super.canPaste(clipboard);
 	}
 
@@ -1167,7 +1163,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 	 * @param targetElementSet
 	 */
 	private boolean canPasteSourceElements(IPluginElement[] sourceElements, TreeSet targetElementSet) {
-		// Performance optimization
+		// Performance optimisation
 		// HashSet of schema elements is not comparable for the source
 		// objects (schema elements are transient)
 		// Create a new HashSet with element names for comparison		
@@ -1180,7 +1176,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		// as children into the target element
 		// Limitation:  Multiplicity checks will be compromised because we
 		// are pasting multiple elements as a single transaction.  The 
-		// mulitplicity check is computed on the current static state of the
+		// multiplicity check is computed on the current static state of the
 		// target object with the assumption one new element will be added.
 		// Obviously, adding more than one element can invalidate the check
 		// due to choice, sequence multiplicity constraints.  Even if source
@@ -1208,7 +1204,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		while (iterator.hasNext()) {
 			// Get the proposal element tag name
 			String targetTagName = ((ISchemaElement) iterator.next()).getName();
-			// Only a source element that is found ithin the set of element 
+			// Only a source element that is found within the set of element 
 			// proposals can be pasted
 			if (sourceTagName.equals(targetTagName)) {
 				canPaste = true;
@@ -1223,7 +1219,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		// is defined first.  Otherwise, paste will not work out of the box.
 		// Get the model
 		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
-		// Ensure the model is a bundle plugin model
+		// Ensure the model is a bundle plug-in model
 		if ((model instanceof IBundlePluginModelBase) == false) {
 			return null;
 		}
@@ -1265,7 +1261,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 					// Adjust all the source object transient field values to
 					// acceptable values
 					extension.reconnect((IDocumentElementNode) pluginBase, model);
-					// Add the extension to the plugin parent (plugin)
+					// Add the extension to the plug-in parent (plug-in)
 					pluginBase.add((IPluginExtension) extension);
 
 				} else if ((sourceObject instanceof IPluginElement) && (targetObject instanceof IPluginParent) && (targetObject instanceof IDocumentElementNode)) {
@@ -1274,7 +1270,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 					// Adjust all the source object transient field values to
 					// acceptable values
 					element.reconnect((IDocumentElementNode) targetObject, model);
-					// Add the element to the plugin parent (extension or
+					// Add the element to the plug-in parent (extension or
 					// element)
 					((IPluginParent) targetObject).add((IPluginElement) element);
 				}
@@ -1451,7 +1447,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 
 			protected long getRefreshJobDelay() {
 				// Prolonged job delay time is required because of the attribute search being more costly in nature.
-				// This can block input to the filter text severly. Thus it shouldn't happen when typing slowly.
+				// This can block input to the filter text severely. Thus it shouldn't happen when typing slowly.
 				// The delay of 1500ms is bypassed by some actions that use the filter text to initiate searches or clear the text.
 				long delay = (fBypassFilterDelay) ? 0 : REFRESHJOB_DELAY_TIME;
 				setBypassFilterDelay(false); // reset afterwards
@@ -1730,7 +1726,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 			// Something is seriously wrong, we have a schema
 			return false;
 		} else if ((schemaElement.getType() instanceof ISchemaComplexType) == false) {
-			// Something is seriously wrong, we are a plugin parent
+			// Something is seriously wrong, we are a plug-in parent
 			return false;
 		}
 		// We have a schema complex type.  Either the target object has 
@@ -1742,7 +1738,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		while (iterator.hasNext()) {
 			// Get the proposal element tag name
 			String targetTagName = ((ISchemaElement) iterator.next()).getName();
-			// Only a source element that is found ithin the set of element 
+			// Only a source element that is found within the set of element 
 			// proposals can be pasted
 			String sourceNodeTagName = ((IDocumentElementNode) sourcePluginObject).getXMLTagName();
 			if (sourceNodeTagName.equals(targetTagName)) {
@@ -1875,9 +1871,9 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		if (model == null) {
 			return;
 		}
-		// Get the plugin base
+		// Get the plug-in base
 		IPluginBase pluginBase = model.getPluginBase();
-		// Ensure the plugin base is a document node
+		// Ensure the plug-in base is a document node
 		if ((pluginBase instanceof IDocumentElementNode) == false) {
 			return;
 		} else if ((pluginBase instanceof PluginBaseNode) == false) {
