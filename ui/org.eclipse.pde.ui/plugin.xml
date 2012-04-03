@@ -1566,7 +1566,7 @@
          </action>
       </actionSet>
     </extension>
-       <extension
+    <extension
          point="org.eclipse.ui.actionSetPartAssociations">
       <actionSetPartAssociation
             targetID="org.eclipse.pde.ui.SearchActionSet">
@@ -1595,8 +1595,26 @@
                id="org.eclipse.pde.ui.schemaEditor">
          </part>
       </actionSetPartAssociation>
+      <actionSetPartAssociation
+            targetID="org.eclipse.ui.edit.text.actionSet.presentation">
+         <part
+               id="org.eclipse.pde.ui.manifestEditor">
+         </part>
+         <part
+               id="org.eclipse.pde.ui.featureEditor">
+         </part>
+         <part
+               id="org.eclipse.pde.ui.siteEditor">
+         </part>
+         <part
+               id="org.eclipse.pde.ui.schemaEditor">
+         </part>
+         <part
+               id="org.eclipse.pde.ui.buildEditor">
+         </part>
+      </actionSetPartAssociation>
    </extension>
-       <extension
+   <extension
              point="org.eclipse.pde.ui.launchShortcuts">
           <shortcut
                 id="org.eclipse.pde.ui.runtimeWorkbenchShortcut"
