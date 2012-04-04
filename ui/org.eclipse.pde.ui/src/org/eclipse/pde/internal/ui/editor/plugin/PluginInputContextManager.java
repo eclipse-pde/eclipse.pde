@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2012 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.ISharedExtensionsModel;
-import org.eclipse.pde.internal.core.IModelChangeProviderExtension;
-import org.eclipse.pde.internal.core.IModelChangedListenerFilter;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.bundle.*;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.ui.editor.FormOutlinePage;
@@ -43,6 +43,12 @@ public class PluginInputContextManager extends InputContextManager {
 		if (bmodel != null)
 			return bmodel.getExtensionsModel();
 		return findPluginModel();
+	}
+
+	protected void structureChanged(IFile file, boolean added) {
+		if (added && ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR.equalsIgnoreCase(file.getName()))
+			monitorFile(file);
+		super.structureChanged(file, added);
 	}
 
 	protected void fireContextChange(InputContext context, boolean added) {

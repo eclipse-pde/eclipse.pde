@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2008 IBM Corporation and others.
+ *  Copyright (c) 2003, 2012 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -239,7 +239,7 @@ public abstract class InputContextManager implements IResourceChangeListener {
 		});
 	}
 
-	private void structureChanged(IFile file, boolean added) {
+	protected void structureChanged(IFile file, boolean added) {
 		if (monitoredFiles == null)
 			return;
 		for (int i = 0; i < monitoredFiles.size(); i++) {
