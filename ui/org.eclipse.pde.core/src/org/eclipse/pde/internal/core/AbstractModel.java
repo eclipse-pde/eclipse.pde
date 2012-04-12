@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2012 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -12,24 +12,13 @@ package org.eclipse.pde.internal.core;
 
 import java.io.File;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import javax.xml.parsers.FactoryConfigurationError;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.PlatformObject;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.pde.core.IModel;
-import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.core.IModelChangedListener;
-import org.eclipse.pde.core.ModelChangedEvent;
+import java.util.*;
+import javax.xml.parsers.*;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.preferences.IScopeContext;
+import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.pde.core.*;
 import org.xml.sax.SAXException;
 
 public abstract class AbstractModel extends PlatformObject implements IModel, IModelChangeProviderExtension, Serializable {
@@ -45,6 +34,32 @@ public abstract class AbstractModel extends PlatformObject implements IModel, IM
 	private long fTimestamp;
 
 	private Exception fException;
+
+	protected static String getLineDelimiterPreference(IFile file) {
+		IScopeContext[] scopeContext;
+		if (file != null && file.getProject() != null) {
+			// project preference
+			scopeContext = new IScopeContext[] {new ProjectScope(file.getProject())};
+			String lineDelimiter = Platform.getPreferencesService().getString(Platform.PI_RUNTIME, Platform.PREF_LINE_SEPARATOR, null, scopeContext);
+			if (lineDelimiter != null)
+				return lineDelimiter;
+		}
+		// workspace preference
+		scopeContext = new IScopeContext[] {InstanceScope.INSTANCE};
+		return Platform.getPreferencesService().getString(Platform.PI_RUNTIME, Platform.PREF_LINE_SEPARATOR, null, scopeContext);
+	}
+
+	protected static String fixLineDelimiter(String string, IFile file) {
+		String lineDelimiter = getLineDelimiterPreference(file);
+		if (lineDelimiter == null)
+			return string;
+
+		String lineSeparator = System.getProperty("line.separator"); //$NON-NLS-1$
+		if (lineDelimiter.equals(lineSeparator))
+			return string;
+
+		return string.replaceAll(lineSeparator, lineDelimiter);
+	}
 
 	public AbstractModel() {
 		fListeners = Collections.synchronizedList(new ArrayList());

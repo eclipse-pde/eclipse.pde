@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -141,7 +141,7 @@ public class WorkspaceFeatureModel extends AbstractFeatureModel implements IEdit
 			return;
 		ByteArrayInputStream stream = null;
 		try {
-			String contents = getContents();
+			String contents = fixLineDelimiter(getContents(), file);
 			stream = new ByteArrayInputStream(contents.getBytes("UTF8")); //$NON-NLS-1$
 			if (file.exists()) {
 				file.setContents(stream, false, false, null);
