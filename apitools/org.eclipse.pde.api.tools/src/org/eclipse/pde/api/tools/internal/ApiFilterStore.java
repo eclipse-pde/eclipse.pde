@@ -153,7 +153,9 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 						return Status.OK_STATUS;
 					}
 					String lineDelimiter= getLineDelimiterPreference(file);
-					xml= xml.replaceAll(System.getProperty("line.separator"), lineDelimiter); //$NON-NLS-1$
+					String lineSeparator= System.getProperty("line.separator"); //$NON-NLS-1$
+					if (lineDelimiter != null && !lineDelimiter.equals(lineSeparator))
+						xml= xml.replaceAll(lineSeparator, lineDelimiter);
 					InputStream xstream = Util.getInputStreamFromString(xml);
 					if(xstream == null) {
 						return Status.CANCEL_STATUS;
