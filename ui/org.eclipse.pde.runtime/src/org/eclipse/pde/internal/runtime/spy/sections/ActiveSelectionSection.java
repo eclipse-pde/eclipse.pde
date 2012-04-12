@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,19 +10,15 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime.spy.sections;
 
-import org.eclipse.osgi.util.NLS;
-
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.runtime.PDERuntimeMessages;
 import org.eclipse.pde.internal.runtime.spy.SpyFormToolkit;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.forms.widgets.ExpandableComposite;
-import org.eclipse.ui.forms.widgets.FormText;
-import org.eclipse.ui.forms.widgets.ScrolledForm;
-import org.eclipse.ui.forms.widgets.Section;
-import org.eclipse.ui.forms.widgets.TableWrapData;
+import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 /**
@@ -37,7 +33,8 @@ public class ActiveSelectionSection implements ISpySection {
 
 		// analyze the selection
 		ISelection selection = HandlerUtil.getCurrentSelection(event);
-		if (selection != null) {
+		Shell shell = HandlerUtil.getActiveShell(event);
+		if (selection != null && window.getShell() == shell) {
 			Section section = toolkit.createSection(form.getBody(), ExpandableComposite.TITLE_BAR);
 			section.clientVerticalSpacing = 9;
 			section.setText(PDERuntimeMessages.SpyDialog_activeSelection_title);
