@@ -55,7 +55,6 @@ public class PDEUIMessages extends NLS {
 	public static String DependencyPropertiesDialog_exportGroupText;
 
 	public static String ExtensionsPage_toggleExpandState;
-	public static String ExtensionsPage_searchWithExtensionsFilter;
 	public static String ExternalizeStringsOperation_editNames_addComment;
 
 	public static String ExternalizeStringsOperation_editNames_insertProperty;
@@ -212,6 +211,8 @@ public class PDEUIMessages extends NLS {
 	public static String ExtensionElementBodyTextDetails_sectionDescElementSpecific;
 
 	public static String ExtensionPointsSection_sectionDescAllExtensionPoints;
+
+	public static String ExtensionsSection_Remove;
 
 	public static String ExtensionsSection_sectionDescExtensionsMaster;
 
@@ -1430,8 +1431,6 @@ public class PDEUIMessages extends NLS {
 	public static String Actions_open_label;
 	public static String Actions_delete_label;
 	public static String Actions_filter_relatedPluginElements;
-	public static String Actions_search_relatedPluginElements;
-	public static String Actions_search_targetplatform;
 	public static String Actions_synchronizeVersions_label;
 
 	public static String Menus_new_label;
@@ -1509,7 +1508,6 @@ public class PDEUIMessages extends NLS {
 	public static String ShowDescriptionAction_label;
 	public static String ShowDescriptionAction_title;
 	public static String ShowAllExtensionsAction_label;
-	public static String HideUnfilteredExtensionsAction_label;
 	public static String ShowSampleAction_installing;
 	public static String ShowSampleAction_title;
 	public static String ShowSampleAction_msgDesc;
@@ -2974,6 +2972,8 @@ public class PDEUIMessages extends NLS {
 	public static String FilteredSchemaAttributeSelectionDialog_message;
 	public static String FilteredSchemaAttributeSelectionDialog_searching;
 	public static String FilteredSchemaAttributeSelectionDialog_showOptionalAttributes;
+
+	public static String FilterRelatedExtensionsAction_tooltip;
 
 	public static String ProjectSelectionDialog_title;
 	public static String ProjectSelectionDialog_message;

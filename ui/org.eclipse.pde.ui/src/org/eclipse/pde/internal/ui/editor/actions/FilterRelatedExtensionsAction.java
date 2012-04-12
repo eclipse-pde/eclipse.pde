@@ -19,14 +19,9 @@ import org.eclipse.pde.internal.ui.editor.plugin.ExtensionsSection;
 import org.eclipse.pde.internal.ui.editor.plugin.FormFilteredTree;
 import org.eclipse.pde.internal.ui.util.ExtensionsFilterUtil;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.keys.IBindingService;
 
 /**
  * Set the search pattern text to all values found by attribute list {@link ExtensionsFilterUtil#RELATED_ATTRIBUTES}  
- * 
- * @author Sascha Becher
  */
 public class FilterRelatedExtensionsAction extends Action {
 
@@ -34,16 +29,13 @@ public class FilterRelatedExtensionsAction extends Action {
 	protected TreeViewer fExtensionTree;
 	protected FormFilteredTree fFilteredTree;
 
-	public FilterRelatedExtensionsAction(TreeViewer treeViewer, FormFilteredTree filteredTree, ExtensionsSection section, boolean inContextMenu) {
+	public FilterRelatedExtensionsAction(TreeViewer treeViewer, FormFilteredTree filteredTree, ExtensionsSection section) {
 		setImageDescriptor(PDEPluginImages.DESC_FILTER_RELATED);
 		setDisabledImageDescriptor(PDEPluginImages.DESC_FILTER_RELATED_DISABLED);
-		String filterBinding = ((IBindingService) PlatformUI.getWorkbench().getAdapter(IBindingService.class)).getBestActiveBindingFormattedFor(ActionFactory.FIND.getCommandId());
-		String title = PDEUIMessages.Actions_filter_relatedPluginElements + ((filterBinding != null) ? "\t" + filterBinding : ""); //$NON-NLS-1$ //$NON-NLS-2$
-		String toolTip = PDEUIMessages.Actions_filter_relatedPluginElements + ((filterBinding != null) ? " (" + filterBinding + ")" : ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		if (inContextMenu) {
-			setText(title);
-		}
-		setToolTipText(toolTip);
+		// Extensions section attaches this action to the global find keybinding
+//		String filterBinding = ((IBindingService) PlatformUI.getWorkbench().getAdapter(IBindingService.class)).getBestActiveBindingFormattedFor(ActionFactory.FIND.getCommandId());
+		setText(PDEUIMessages.Actions_filter_relatedPluginElements /*+ ((filterBinding != null) ? "\t" + filterBinding : "")*/);
+		setToolTipText(PDEUIMessages.FilterRelatedExtensionsAction_tooltip);
 		fSection = section;
 		fExtensionTree = treeViewer;
 		fFilteredTree = filteredTree;

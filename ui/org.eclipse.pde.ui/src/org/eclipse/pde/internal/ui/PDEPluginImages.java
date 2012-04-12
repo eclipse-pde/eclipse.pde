@@ -153,7 +153,6 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_INFO_ST_OBJ = create(PATH_OBJ, "info_st_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_CATEGORY_OBJ = create(PATH_OBJ, "category_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_PSEARCH_OBJ = create(PATH_OBJ, "psearch_obj.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_ESEARCH_OBJ = create(PATH_OBJ, "esearch_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_SITE_OBJ = create(PATH_OBJ, "site_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_JUNIT_MAIN_TAB = create(PATH_OBJ, "test.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_OUTPUT_FOLDER_OBJ = create(PATH_OBJ, "output_folder_attrib.gif"); //$NON-NLS-1$
@@ -245,7 +244,6 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_CLEAR = create(PATH_LCL, "clear.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_FILTER = create(PATH_LCL, "filter_ps.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_FILTER_RELATED = create(PATH_LCL, "filter_related.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_SEARCH_EXTENSIONS = create(PATH_LCL, "search_extensions.gif"); //$NON-NLS-1$
 
 	public static final ImageDescriptor DESC_ADD_ATT_DISABLED = create(PATH_LCL_DISABLED, "add_att.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_ALPHAB_SORT_CO_DISABLED = create(PATH_LCL_DISABLED, "alphab_sort_co.gif"); //$NON-NLS-1$
@@ -270,7 +268,6 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_DCLEAR = create(PATH_LCL_DISABLED, "clear.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_FILTER_DISABLED = create(PATH_LCL_DISABLED, "filter_ps.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_FILTER_RELATED_DISABLED = create(PATH_LCL_DISABLED, "filter_related.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_SEARCH_EXTENSIONS_DISABLED = create(PATH_LCL_DISABLED, "search_extensions.gif"); //$NON-NLS-1$
 
 	public static final ImageDescriptor DESC_RUN_EXC = create(PATH_OBJ, "run_exc.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_DEBUG_EXC = create(PATH_OBJ, "debug_exc.gif"); //$NON-NLS-1$

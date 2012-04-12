@@ -24,8 +24,6 @@ import org.eclipse.swt.widgets.TreeItem;
 
 /**
  * Expands and collapses selected tree nodes in the extension elements tree viewer upon their expand state.
- *  
- * @author Sascha Becher
  */
 public class ToggleExpandStateAction extends Action {
 

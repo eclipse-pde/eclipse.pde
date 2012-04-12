@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.IMessageProvider;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -71,7 +72,6 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 	private static final int BUTTON_EDIT = 2;
 	private static final int BUTTON_REMOVE = 1;
 	private static final int BUTTON_ADD = 0;
-//	private static final int BUTTON_SEARCH = 0;
 	private TreeViewer fExtensionTree;
 	private Image fExtensionImage;
 	private Image fGenericElementImage;
@@ -83,8 +83,6 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 	private CollapseAction fCollapseAction;
 	private ToggleExpandStateAction fExpandAction;
 	private FilterRelatedExtensionsAction fFilterRelatedAction;
-	private SearchExtensionsAction fSearchToolbarAction;
-	private SearchExtensionsAction fSearchAction;
 	private boolean fBypassFilterDelay = false;
 
 	/**
@@ -242,13 +240,6 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		TreePart treePart = getTreePart();
 		createViewerPartControl(container, SWT.MULTI | SWT.BORDER, 2, toolkit);
 
-		// Temporarily removed for M6
-		// fix layout to place search button right to the filter text 
-//		Control searchButton = treePart.getButton(BUTTON_SEARCH);
-//		((GridLayout) searchButton.getParent().getLayout()).marginHeight = 2;
-//		searchButton.setLayoutData(GridDataFactory.swtDefaults().align(SWT.BEGINNING, SWT.BEGINNING).grab(false, false).hint(SWT.DEFAULT, 19).create());
-//		searchButton.setToolTipText(PDEUIMessages.ExtensionsPage_searchWithExtensionsFilter);
-
 		fExtensionTree = treePart.getTreeViewer();
 		fExtensionTree.setContentProvider(new ExtensionContentProvider());
 		fExtensionTree.setLabelProvider(new ExtensionLabelProvider());
@@ -291,17 +282,6 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 				handCursor.dispose();
 			}
 		});
-		// Add action to filter tree with some of the selection's attributes
-		fFilterRelatedAction = new FilterRelatedExtensionsAction(fExtensionTree, fFilteredTree, this, false);
-		toolBarManager.add(fFilterRelatedAction);
-		// Add action to search workspace for related elements according to tree selection
-		fSearchToolbarAction = new SearchExtensionsAction(fFilteredTree, PDEUIMessages.Actions_search_relatedPluginElements, false);
-		toolBarManager.add(fSearchToolbarAction);
-		// Add action to search all workspace plugins with current filtering applied to the tree viewer
-		fSearchAction = new SearchExtensionsAction(fFilteredTree, PDEUIMessages.ExtensionsPage_searchWithExtensionsFilter, true);
-		// Add separator
-		Separator separator = new Separator();
-		toolBarManager.add(separator);
 		// Add sort action to the tool bar
 		fSortAction = new SortAction(fExtensionTree, PDEUIMessages.ExtensionsPage_sortAlpha, null, null, this) {
 			public void run() {
@@ -324,6 +304,9 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		fCollapseAction = new CollapseAction(fExtensionTree, PDEUIMessages.ExtensionsPage_collapseAll);
 		toolBarManager.add(fCollapseAction);
 
+		// Create filter action for context menu and global find keybinding
+		fFilterRelatedAction = new FilterRelatedExtensionsAction(fExtensionTree, fFilteredTree, this);
+
 		toolBarManager.update(true);
 
 		section.setTextClient(toolbar);
@@ -337,9 +320,6 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 
 	protected void buttonSelected(int index) {
 		switch (index) {
-//			case BUTTON_SEARCH :
-//				fSearchAction.run();
-//				break;
 			case BUTTON_ADD :
 				handleNew();
 				break;
@@ -437,39 +417,47 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 				manager.add(new Separator());
 			}
 		} else if (ssel.size() > 1) {
-			boolean removeEnabled = !fFilteredTree.isFiltered() || isRemoveEnabled(ssel);
-			// multiple
+			// Add delete action
 			Action delAction = new Action() {
+				public ImageDescriptor getImageDescriptor() {
+					return PDEPluginImages.DESC_DELETE;
+				}
+
+				public ImageDescriptor getDisabledImageDescriptor() {
+					return PDEPluginImages.DESC_REMOVE_ATT_DISABLED;
+				}
+
 				public void run() {
 					handleDelete();
 				}
 			};
-			delAction.setText(PDEUIMessages.Actions_delete_label);
+			delAction.setText(PDEUIMessages.ExtensionsSection_Remove);
 			manager.add(delAction);
 			manager.add(new Separator());
-			delAction.setEnabled(isEditable() && removeEnabled);
+			delAction.setEnabled(isEditable() && isRemoveEnabled(ssel));
 		}
 		if (ssel.size() > 0) {
 			if (ExtensionsFilterUtil.isFilterRelatedEnabled(ssel)) {
-				FilterRelatedExtensionsAction filterRelatedAction = new FilterRelatedExtensionsAction(fExtensionTree, fFilteredTree, this, true);
-				manager.add(filterRelatedAction);
-				SearchExtensionsAction searchRelatedAction = new SearchExtensionsAction(fFilteredTree, PDEUIMessages.Actions_search_relatedPluginElements, false);
-				manager.add(searchRelatedAction);
-				manager.add(new Separator());
+				manager.add(fFilterRelatedAction);
 			}
 		}
-		manager.add(new Separator());
-
 		if (fFilteredTree.isFiltered()) {
-			// Add action to reveal all extensions when the tree is in filter mode
-			ShowAllExtensionsAction fShowAllAction = new ShowAllExtensionsAction(getPage().getModel(), fFilteredTree, fPatternFilter);
-			if (manager.find(MENU_NEW_ID) != null) {
-				manager.insertAfter(MENU_NEW_ID, fShowAllAction);
-			} else {
-				manager.add(fShowAllAction);
-				manager.add(new Separator());
-			}
+			// Add action to clear the current filtering
+			manager.add(new Action() {
+				public String getText() {
+					return PDEUIMessages.ShowAllExtensionsAction_label;
+				}
+
+				public void run() {
+					Text filterText = fFilteredTree.getFilterControl();
+					setBypassFilterDelay(true);
+					filterText.setText(""); //$NON-NLS-1$
+				}
+
+			});
 		}
+
+		manager.add(new Separator());
 		if (ssel.size() < 2) { // only cut things when the selection is one
 			getPage().getPDEEditor().getContributor().addClipboardActions(manager);
 		}
@@ -505,7 +493,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		manager.add(menu);
 		manager.add(new Separator());
 		if (fullMenu) {
-			Action deleteAction = new Action(PDEUIMessages.Actions_delete_label) {
+			Action deleteAction = new Action(PDEUIMessages.ExtensionsSection_Remove) {
 				public void run() {
 					try {
 						IPluginObject parentsParent = parent.getParent();
@@ -518,6 +506,14 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 						}
 					} catch (CoreException e) {
 					}
+				}
+
+				public ImageDescriptor getImageDescriptor() {
+					return PDEPluginImages.DESC_DELETE;
+				}
+
+				public ImageDescriptor getDisabledImageDescriptor() {
+					return PDEPluginImages.DESC_REMOVE_ATT_DISABLED;
 				}
 			};
 			deleteAction.setEnabled(page.getModel().isEditable());
@@ -1310,21 +1306,15 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 	}
 
 	private void updateButtons(Object item) {
-		boolean filterRelatedEnabled = false;
-		if (fExtensionTree != null) {
-			filterRelatedEnabled = ExtensionsFilterUtil.isFilterRelatedEnabled((IStructuredSelection) fExtensionTree.getSelection());
-		}
 		if (fExpandAction != null) {
 			fExpandAction.setEnabled(ToggleExpandStateAction.isExpandable((IStructuredSelection) fExtensionTree.getSelection()));
 		}
 		if (fFilterRelatedAction != null) {
+			boolean filterRelatedEnabled = false;
+			if (fExtensionTree != null) {
+				filterRelatedEnabled = ExtensionsFilterUtil.isFilterRelatedEnabled((IStructuredSelection) fExtensionTree.getSelection());
+			}
 			fFilterRelatedAction.setEnabled(filterRelatedEnabled);
-		}
-		if (fSearchToolbarAction != null && fSearchAction != null) {
-//			Text filterControl = fFilteredTree.getFilterControl();
-//			boolean searchEnabled = filterControl != null && filterControl.getText().length() > 0;
-//			getTreePart().setButtonEnabled(BUTTON_SEARCH, searchEnabled);
-			fSearchToolbarAction.setEnabled(filterRelatedEnabled);
 		}
 
 		if (getPage().getModel().isEditable() == false)

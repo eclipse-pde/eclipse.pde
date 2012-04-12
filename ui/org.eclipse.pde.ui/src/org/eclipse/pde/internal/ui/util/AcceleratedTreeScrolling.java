@@ -18,8 +18,6 @@ import org.eclipse.swt.widgets.TreeItem;
 
 /**
  * Accelerated tree scrolling with the mouse wheel during which MOD1 (Ctrl) key modifier has been pressed
- *  
- * @author Sascha Becher
  */
 public class AcceleratedTreeScrolling implements MouseWheelListener {
 

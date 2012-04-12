@@ -16,8 +16,6 @@ import org.eclipse.search.ui.text.Match;
 /**
  * An extension to {@link Match} in order to present matching plugins which resulted 
  * in a search queried from the extensions page of the {@link ManifestEditor} 
- * 
- * @author Sascha Becher
  */
 public class AttributesMatch extends Match {
 
