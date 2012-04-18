@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -64,6 +64,7 @@ public abstract class BaseProject extends PlatformObject implements IProjectNatu
 				System.arraycopy(commands, 0, newCommands, 0, i);
 				System.arraycopy(commands, i + 1, newCommands, i, commands.length - i - 1);
 				description.setBuildSpec(newCommands);
+				getProject().setDescription(description, null);
 				return;
 			}
 		}
