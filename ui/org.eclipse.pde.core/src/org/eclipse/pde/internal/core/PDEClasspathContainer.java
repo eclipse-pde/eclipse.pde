@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2011 IBM Corporation and others.
+ *  Copyright (c) 2005, 2012 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -76,20 +76,28 @@ public class PDEClasspathContainer {
 			}
 		} else {
 			IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
-			for (int i = 0; i < libraries.length; i++) {
-				if (IPluginLibrary.RESOURCE.equals(libraries[i].getType()))
-					continue;
-				model = (IPluginModelBase) libraries[i].getModel();
-				String name = libraries[i].getName();
-				String expandedName = ClasspathUtilCore.expandLibraryName(name);
-				IPath path = ClasspathUtilCore.getPath(model, expandedName);
-				if (path == null && !model.isFragmentModel() && ClasspathUtilCore.containsVariables(name)) {
-					model = resolveLibraryInFragments(model, expandedName);
-					if (model != null && model.isEnabled())
-						path = ClasspathUtilCore.getPath(model, expandedName);
+			if (libraries.length == 0) {
+				// If there are no libraries, assume the root of the plug-in is the library '.'
+				IPath srcPath = ClasspathUtilCore.getSourceAnnotation(model, "."); //$NON-NLS-1$
+				if (srcPath == null)
+					srcPath = new Path(model.getInstallLocation());
+				addLibraryEntry(new Path(model.getInstallLocation()), srcPath, rules, getClasspathAttributes(model), entries);
+			} else {
+				for (int i = 0; i < libraries.length; i++) {
+					if (IPluginLibrary.RESOURCE.equals(libraries[i].getType()))
+						continue;
+					model = (IPluginModelBase) libraries[i].getModel();
+					String name = libraries[i].getName();
+					String expandedName = ClasspathUtilCore.expandLibraryName(name);
+					IPath path = ClasspathUtilCore.getPath(model, expandedName);
+					if (path == null && !model.isFragmentModel() && ClasspathUtilCore.containsVariables(name)) {
+						model = resolveLibraryInFragments(model, expandedName);
+						if (model != null && model.isEnabled())
+							path = ClasspathUtilCore.getPath(model, expandedName);
+					}
+					if (path != null)
+						addLibraryEntry(path, ClasspathUtilCore.getSourceAnnotation(model, expandedName), rules, getClasspathAttributes(model), entries);
 				}
-				if (path != null)
-					addLibraryEntry(path, ClasspathUtilCore.getSourceAnnotation(model, expandedName), rules, getClasspathAttributes(model), entries);
 			}
 		}
 	}

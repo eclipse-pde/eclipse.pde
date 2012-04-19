@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2012 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -12,24 +12,12 @@ package org.eclipse.pde.internal.core.plugin;
 
 import java.util.ArrayList;
 import java.util.Locale;
-
-import javax.xml.parsers.FactoryConfigurationError;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
+import javax.xml.parsers.*;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.osgi.service.resolver.BundleSpecification;
-import org.eclipse.osgi.service.resolver.VersionRange;
+import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.core.plugin.IMatchRules;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginImport;
-import org.eclipse.pde.core.plugin.IPluginLibrary;
-import org.eclipse.pde.internal.core.PDECoreMessages;
-import org.eclipse.pde.internal.core.PDEState;
-import org.eclipse.pde.internal.core.PDEStateHelper;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.*;
 import org.osgi.framework.Version;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -78,7 +66,12 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 		fireStructureChanged(iimports, IModelChangedEvent.INSERT);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.plugin.IPluginBase#getLibraries()
+	 */
 	public IPluginLibrary[] getLibraries() {
+		// Returns an empty array if no libraries are specified in the manifest of the plug-in.
+		// If no libraries are specified, the root of the bundle '.' is the default library location
 		return (IPluginLibrary[]) fLibraries.toArray(new IPluginLibrary[fLibraries.size()]);
 	}
 
