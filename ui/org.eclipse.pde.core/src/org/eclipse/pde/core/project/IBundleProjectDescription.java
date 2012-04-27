@@ -67,7 +67,7 @@ public interface IBundleProjectDescription {
 	 * Identifies bundles developed for Eclipse 3.8, value is <code>"3.8"</code>.
 	 * @since 3.8
 	 */
-	public static final String VERSION_3_8 = ICoreConstants.TARGET37;
+	public static final String VERSION_3_8 = ICoreConstants.TARGET38;
 
 	/**
 	 * Constant for the PDE Plug-in project nature, value is <code>"org.eclipse.pde.PluginNature"</code>.
