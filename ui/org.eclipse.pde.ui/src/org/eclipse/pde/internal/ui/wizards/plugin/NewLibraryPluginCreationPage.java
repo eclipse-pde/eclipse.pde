@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,8 +20,7 @@ import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizardPage;
-import org.eclipse.pde.internal.core.ICoreConstants;
-import org.eclipse.pde.internal.core.TargetPlatformHelper;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.util.*;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -133,8 +132,14 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 		});
 
 		fTargetCombo = new Combo(group, SWT.READ_ONLY | SWT.SINGLE);
-		fTargetCombo.setItems(new String[] {ICoreConstants.TARGET37, ICoreConstants.TARGET36, ICoreConstants.TARGET35, ICoreConstants.TARGET34, ICoreConstants.TARGET33, ICoreConstants.TARGET32, ICoreConstants.TARGET31, ICoreConstants.TARGET30});
-		fTargetCombo.setText(TargetPlatformHelper.getTargetVersionString());
+		fTargetCombo.setItems(new String[] {PDEUIMessages.NewProjectCreationPage_target_version_range_3_5, ICoreConstants.TARGET34, ICoreConstants.TARGET33, ICoreConstants.TARGET32, ICoreConstants.TARGET31});
+		fTargetCombo.setText(PDEUIMessages.NewProjectCreationPage_target_version_range_3_5);
+		if (PDECore.getDefault().areModelsInitialized()) {
+			String text = TargetPlatformHelper.getTargetVersionString();
+			if (fTargetCombo.indexOf(text) >= 0) {
+				fTargetCombo.setText(text);
+			}
+		}
 
 		fOSGIButton = createButton(group, SWT.RADIO, 1, 30);
 		fOSGIButton.setText(PDEUIMessages.NewProjectCreationPage_pPureOSGi);
@@ -149,7 +154,8 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		fJarredCheck.setLayoutData(gd);
-		fJarredCheck.setSelection(Double.parseDouble(fTargetCombo.getText()) >= 3.1);
+		// Defaults to checked for plug-ins 3.1 and greater
+		fJarredCheck.setSelection(true);
 		fUpdateRefsCheck = new Button(group, SWT.CHECK);
 		fUpdateRefsCheck.setText(PDEUIMessages.NewLibraryPluginCreationPage_UpdateReferences_button);
 		gd = new GridData();
@@ -283,14 +289,22 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 		fData.setSourceFolderName(null);
 		fData.setOutputFolderName(null);
 		fData.setLegacy(false);
-		fData.setTargetVersion(fTargetCombo.getText());
+
+		// No project structure changes since 3.5, mark as latest version (though using any constant 3.5 or greater is equivalent)
+		if (fTargetCombo.getText().equals(PDEUIMessages.NewProjectCreationPage_target_version_range_3_5)) {
+			fData.setTargetVersion(ICoreConstants.TARGET_VERSION_LATEST);
+		} else {
+			fData.setTargetVersion(fTargetCombo.getText());
+		}
+
+		// No longer support 3.0 non-osgi bundles in wizard
+		fData.setHasBundleStructure(true);
 
 		fData.setId(fIdText.getText().trim());
 		fData.setVersion(fVersionText.getText().trim());
 		fData.setName(fNameText.getText().trim());
 		fData.setProvider(fProviderText.getText().trim());
 		fData.setLibraryName(null);
-		fData.setHasBundleStructure(fOSGIButton.getSelection() || Double.parseDouble(fTargetCombo.getText()) >= 3.1);
 		fData.setOSGiFramework(fOSGIButton.getSelection() ? fOSGiCombo.getText() : null);
 		fData.setUnzipLibraries(fJarredCheck.isEnabled() && fJarredCheck.getSelection());
 		fData.setFindDependencies(fFindDependencies.getSelection());

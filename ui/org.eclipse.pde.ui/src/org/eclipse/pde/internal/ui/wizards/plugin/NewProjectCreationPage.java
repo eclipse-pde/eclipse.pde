@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -131,20 +131,19 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 		});
 
 		fEclipseCombo = new Combo(group, SWT.READ_ONLY | SWT.SINGLE);
-		fEclipseCombo.setItems(new String[] {ICoreConstants.TARGET37, ICoreConstants.TARGET36, ICoreConstants.TARGET35, ICoreConstants.TARGET34, ICoreConstants.TARGET33, ICoreConstants.TARGET32, ICoreConstants.TARGET31});
-		boolean comboInitialized = false;
+		fEclipseCombo.setItems(new String[] {PDEUIMessages.NewProjectCreationPage_target_version_range_3_5, ICoreConstants.TARGET34, ICoreConstants.TARGET33, ICoreConstants.TARGET32, ICoreConstants.TARGET31});
+
+		String text = null;
 		if (settings != null && !osgiProject) {
-			String text = settings.get(S_TARGET_NAME);
-			comboInitialized = (text != null && fEclipseCombo.indexOf(text) >= 0);
-			if (comboInitialized)
-				fEclipseCombo.setText(text);
+			text = settings.get(S_TARGET_NAME);
 		}
-		if (!comboInitialized) {
-			if (PDECore.getDefault().areModelsInitialized())
-				fEclipseCombo.setText(TargetPlatformHelper.getTargetVersionString());
-			else
-				fEclipseCombo.setText(ICoreConstants.TARGET37);
+		if (text == null && PDECore.getDefault().areModelsInitialized()) {
+			text = TargetPlatformHelper.getTargetVersionString();
 		}
+		if (text == null || fEclipseCombo.indexOf(text) < 0) {
+			text = PDEUIMessages.NewProjectCreationPage_target_version_range_3_5;
+		}
+		fEclipseCombo.setText(text);
 
 		fOSGIButton = createButton(group, SWT.RADIO, 1, 30);
 		fOSGIButton.setText(PDEUIMessages.NewProjectCreationPage_pPureOSGi);
@@ -152,16 +151,15 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 
 		fOSGiCombo = new Combo(group, SWT.READ_ONLY | SWT.SINGLE);
 		fOSGiCombo.setItems(new String[] {ICoreConstants.EQUINOX, PDEUIMessages.NewProjectCreationPage_standard});
-		comboInitialized = false;
-		if (settings != null && osgiProject) {
-			String text = settings.get(S_TARGET_NAME);
-			comboInitialized = (text != null && fOSGiCombo.indexOf(text) >= 0);
-			if (comboInitialized)
-				fOSGiCombo.setText(text);
-		}
-		if (!comboInitialized)
-			fOSGiCombo.setText(ICoreConstants.EQUINOX);
 
+		text = null;
+		if (settings != null && osgiProject) {
+			text = settings.get(S_TARGET_NAME);
+		}
+		if (text == null || fOSGiCombo.indexOf(text) < 0) {
+			text = ICoreConstants.EQUINOX;
+		}
+		fOSGiCombo.setText(text);
 	}
 
 	private void updateRuntimeDependency() {
@@ -206,8 +204,16 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 		fData.setSourceFolderName(fSourceText.getText().trim());
 		fData.setOutputFolderName(fOutputText.getText().trim());
 		fData.setLegacy(false);
-		fData.setTargetVersion(fEclipseCombo.getText());
-		fData.setHasBundleStructure(fOSGIButton.getSelection() || Double.parseDouble(fEclipseCombo.getText()) >= 3.1);
+
+		// No project structure changes since 3.5, mark as latest version (though using any constant 3.5 or greater is equivalent)
+		if (fEclipseCombo.getText().equals(PDEUIMessages.NewProjectCreationPage_target_version_range_3_5)) {
+			fData.setTargetVersion(ICoreConstants.TARGET_VERSION_LATEST);
+		} else {
+			fData.setTargetVersion(fEclipseCombo.getText());
+		}
+
+		// No longer support 3.0 non-osgi bundles in wizard
+		fData.setHasBundleStructure(true);
 		fData.setOSGiFramework(fOSGIButton.getSelection() ? fOSGiCombo.getText() : null);
 		fData.setWorkingSets(getSelectedWorkingSets());
 	}

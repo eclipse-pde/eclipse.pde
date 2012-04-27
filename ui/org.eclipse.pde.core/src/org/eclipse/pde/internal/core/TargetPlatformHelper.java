@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -307,10 +307,16 @@ public class TargetPlatformHelper {
 		return ids;
 	}
 
+	/**
+	 * Returns the version of Eclipse the target platform is pointing to or {@link ICoreConstants#TARGET_VERSION_LATEST}
+	 * if the target platform does not contain <code>org.eclipse.osgi</code>.
+	 * 
+	 * @return the target version of Eclipse or the latest version PDE knows about.
+	 */
 	public static String getTargetVersionString() {
 		IPluginModelBase model = PluginRegistry.findModel(IPDEBuildConstants.BUNDLE_OSGI);
 		if (model == null)
-			return ICoreConstants.TARGET37;
+			return ICoreConstants.TARGET_VERSION_LATEST;
 
 		String version = model.getPluginBase().getVersion();
 		if (VersionUtil.validateVersion(version).getSeverity() == IStatus.OK) {
@@ -331,10 +337,20 @@ public class TargetPlatformHelper {
 				return ICoreConstants.TARGET35;
 			if (major == 3 && minor == 6)
 				return ICoreConstants.TARGET36;
+			if (major == 3 && minor == 7)
+				return ICoreConstants.TARGET37;
+			if (major == 3 && minor == 8)
+				return ICoreConstants.TARGET38;
 		}
-		return ICoreConstants.TARGET37;
+		return ICoreConstants.TARGET_VERSION_LATEST;
 	}
 
+	/**
+	 * Returns the version of Eclipse the target platform is pointing to or {@link ICoreConstants#TARGET_VERSION_LATEST}
+	 * if the target platform does not contain <code>org.eclipse.osgi</code>.
+	 * 
+	 * @return the target version of Eclipse or the latest version PDE knows about.
+	 */
 	public static double getTargetVersion() {
 		return Double.parseDouble(getTargetVersionString());
 	}

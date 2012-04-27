@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ package org.eclipse.pde.internal.core;
 import java.util.Locale;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.pde.core.project.IBundleProjectDescription;
 import org.osgi.framework.Constants;
 
 public interface ICoreConstants {
@@ -103,15 +104,154 @@ public interface ICoreConstants {
 	/** Constant for the string <code>build.properties</code> */
 	public final static String BUILD_FILENAME_DESCRIPTOR = "build.properties"; //$NON-NLS-1$
 
+	/**
+	 * Target version of <code>3.0</code>
+	 * <p>
+	 * PDE constant for the version of Eclipse a file/project/bundle is targeting.  The version of
+	 * a target platform is determined by what version of Equinox (org.eclipse.osgi) is included in the
+	 * target.  The version is only relevant if the user is building an Eclipse plug-in. This constant
+	 * can be used to process PDE files that have changed structure between releases.
+	 * </p><p>
+	 * Anytime a new version constant is added, {@link ICoreConstants#TARGET_VERSION_LATEST} must be updated to
+	 * the newest version.  {@link TargetPlatformHelper#getTargetVersionString()} must be updated to return the 
+	 * new version.
+	 * </p>
+	 */
 	public final static String TARGET30 = "3.0"; //$NON-NLS-1$
+
+	/**
+	 * Target version of <code>3.1</code>
+	 * <p>
+	 * PDE constant for the version of Eclipse a file/project/bundle is targeting.  The version of
+	 * a target platform is determined by what version of Equinox (org.eclipse.osgi) is included in the
+	 * target.  The version is only relevant if the user is building an Eclipse plug-in. This constant
+	 * can be used to process PDE files that have changed structure between releases.
+	 * </p><p>
+	 * Anytime a new version constant is added, {@link ICoreConstants#TARGET_VERSION_LATEST} must be updated to
+	 * the newest version.  {@link TargetPlatformHelper#getTargetVersionString()} must be updated to return the 
+	 * new version.
+	 * </p>
+	 */
 	public final static String TARGET31 = "3.1"; //$NON-NLS-1$
+
+	/**
+	 * Target version of <code>3.2</code>
+	 * <p>
+	 * PDE constant for the version of Eclipse a file/project/bundle is targeting.  The version of
+	 * a target platform is determined by what version of Equinox (org.eclipse.osgi) is included in the
+	 * target.  The version is only relevant if the user is building an Eclipse plug-in. This constant
+	 * can be used to process PDE files that have changed structure between releases.
+	 * </p><p>
+	 * Anytime a new version constant is added, {@link ICoreConstants#TARGET_VERSION_LATEST} must be updated to
+	 * the newest version.  {@link TargetPlatformHelper#getTargetVersionString()} must be updated to return the 
+	 * new version.
+	 * </p>
+	 */
 	public final static String TARGET32 = "3.2"; //$NON-NLS-1$
+
+	/**
+	 * Target version of <code>3.3</code>
+	 * <p>
+	 * PDE constant for the version of Eclipse a file/project/bundle is targeting.  The version of
+	 * a target platform is determined by what version of Equinox (org.eclipse.osgi) is included in the
+	 * target.  The version is only relevant if the user is building an Eclipse plug-in. This constant
+	 * can be used to process PDE files that have changed structure between releases.
+	 * </p><p>
+	 * Anytime a new version constant is added, {@link ICoreConstants#TARGET_VERSION_LATEST} must be updated to
+	 * the newest version.  {@link TargetPlatformHelper#getTargetVersionString()} must be updated to return the 
+	 * new version.
+	 * </p>
+	 */
 	public final static String TARGET33 = "3.3"; //$NON-NLS-1$
+
+	/**
+	 * Target version of <code>3.4</code>
+	 * <p>
+	 * PDE constant for the version of Eclipse a file/project/bundle is targeting.  The version of
+	 * a target platform is determined by what version of Equinox (org.eclipse.osgi) is included in the
+	 * target.  The version is only relevant if the user is building an Eclipse plug-in. This constant
+	 * can be used to process PDE files that have changed structure between releases.
+	 * </p><p>
+	 * Anytime a new version constant is added, {@link ICoreConstants#TARGET_VERSION_LATEST} must be updated to
+	 * the newest version.  {@link TargetPlatformHelper#getTargetVersionString()} must be updated to return the 
+	 * new version.
+	 * </p>
+	 */
 	public final static String TARGET34 = "3.4"; //$NON-NLS-1$
+
+	/**
+	 * Target version of <code>3.5</code>
+	 * <p>
+	 * PDE constant for the version of Eclipse a file/project/bundle is targeting.  The version of
+	 * a target platform is determined by what version of Equinox (org.eclipse.osgi) is included in the
+	 * target.  The version is only relevant if the user is building an Eclipse plug-in. This constant
+	 * can be used to process PDE files that have changed structure between releases.
+	 * </p><p>
+	 * Anytime a new version constant is added, {@link ICoreConstants#TARGET_VERSION_LATEST} must be updated to
+	 * the newest version.  {@link TargetPlatformHelper#getTargetVersionString()} must be updated to return the 
+	 * new version.
+	 * </p>
+	 */
 	public final static String TARGET35 = "3.5"; //$NON-NLS-1$
+
+	/**
+	 * Target version of <code>3.6</code>
+	 * <p>
+	 * PDE constant for the version of Eclipse a file/project/bundle is targeting.  The version of
+	 * a target platform is determined by what version of Equinox (org.eclipse.osgi) is included in the
+	 * target.  The version is only relevant if the user is building an Eclipse plug-in. This constant
+	 * can be used to process PDE files that have changed structure between releases.
+	 * </p><p>
+	 * Anytime a new version constant is added, {@link ICoreConstants#TARGET_VERSION_LATEST} must be updated to
+	 * the newest version.  {@link TargetPlatformHelper#getTargetVersionString()} must be updated to return the 
+	 * new version.
+	 * </p>
+	 */
 	public final static String TARGET36 = "3.6"; //$NON-NLS-1$
+
+	/**
+	 * Target version of <code>3.7</code>
+	 * <p>
+	 * PDE constant for the version of Eclipse a file/project/bundle is targeting.  The version of
+	 * a target platform is determined by what version of Equinox (org.eclipse.osgi) is included in the
+	 * target.  The version is only relevant if the user is building an Eclipse plug-in. This constant
+	 * can be used to process PDE files that have changed structure between releases.
+	 * </p><p>
+	 * Anytime a new version constant is added, {@link ICoreConstants#TARGET_VERSION_LATEST} must be updated to
+	 * the newest version.  {@link TargetPlatformHelper#getTargetVersionString()} must be updated to return the 
+	 * new version.
+	 * </p>
+	 */
 	public final static String TARGET37 = "3.7"; //$NON-NLS-1$
+
+	/**
+	 * Target version of <code>3.8</code>
+	 * <p>
+	 * PDE constant for the version of Eclipse a file/project/bundle is targeting.  The version of
+	 * a target platform is determined by what version of Equinox (org.eclipse.osgi) is included in the
+	 * target.  The version is only relevant if the user is building an Eclipse plug-in. This constant
+	 * can be used to process PDE files that have changed structure between releases.
+	 * </p><p>
+	 * Anytime a new version constant is added, {@link ICoreConstants#TARGET_VERSION_LATEST} must be updated to
+	 * the newest version.  {@link TargetPlatformHelper#getTargetVersionString()} must be updated to return the 
+	 * new version.
+	 * </p>
+	 */
 	public final static String TARGET38 = "3.8"; //$NON-NLS-1$
+
+	/**
+	 * The highest version of of Eclipse that PDE recognizes as having a special file structure. The value of 
+	 * this constant may change between releases.
+	 * <p>
+	 * Currently the latest version is {@link #TARGET38}.  If a new version constant is added to PDE, this
+	 * constant must be updated to the latest version.  Also, {@link TargetPlatformHelper#getTargetVersionString()} 
+	 * must be updated to return the new version.
+	 * </p><p>
+	 * If the set of target versions available when creating a project changes, NewLibraryPluginCreationPage,
+	 * NewProjectCreationPage, and {@link IBundleProjectDescription} must all be updated.
+	 * </p>
+	 */
+	public final static String TARGET_VERSION_LATEST = TARGET38;
 
 	public final static String EQUINOX = "Equinox"; //$NON-NLS-1$
 
