@@ -23,8 +23,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.trace.internal.datamodel.*;
 import org.eclipse.ui.trace.internal.providers.*;
@@ -150,6 +149,8 @@ public class TracingPreferencePage extends PreferencePage implements IWorkbenchP
 		applyDialogFont(pageComposite);
 		// set focus on the enablement button
 		enableTracingButton.setFocus();
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(pageComposite, IHelpContextIds.TRACING_PREF_PAGE);
+
 		return pageComposite;
 	}
 
