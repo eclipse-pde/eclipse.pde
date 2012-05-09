@@ -888,8 +888,11 @@ public class TargetDefinition implements ITargetDefinition {
 				if (currentFeatures != null && currentFeatures.length > 0) {
 					for (int j = 0; j < currentFeatures.length; j++) {
 						TargetFeature feature = currentFeatures[j];
-						NameVersionDescriptor key = new NameVersionDescriptor(feature.getId(), feature.getVersion());
-						result.put(key, feature);
+						if (feature.getId() != null) {
+							// Don't allow features with null ids, Bug 377563
+							NameVersionDescriptor key = new NameVersionDescriptor(feature.getId(), feature.getVersion());
+							result.put(key, feature);
+						}
 					}
 				}
 			}

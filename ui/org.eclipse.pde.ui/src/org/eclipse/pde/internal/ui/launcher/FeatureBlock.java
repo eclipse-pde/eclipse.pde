@@ -1129,18 +1129,24 @@ public class FeatureBlock {
 		IFeatureModel[] workspaceModels = fmm.getWorkspaceModels();
 		for (int i = 0; i < workspaceModels.length; i++) {
 			String id = workspaceModels[i].getFeature().getId();
-			featureModels.put(id, new FeatureLaunchModel(workspaceModels[i], null));
+			if (id != null) {
+				//don't consider broken features: https://bugs.eclipse.org/bugs/show_bug.cgi?id=377563
+				featureModels.put(id, new FeatureLaunchModel(workspaceModels[i], null));
+			}
 		}
 
 		// If there is both a workspace and a target model with the same id, combine them into the same launch model
 		IFeatureModel[] externalModels = fmm.getExternalModels();
 		for (int i = 0; i < externalModels.length; i++) {
 			String id = externalModels[i].getFeature().getId();
-			if (featureModels.containsKey(id)) {
-				FeatureLaunchModel launchModel = (FeatureLaunchModel) featureModels.get(id);
-				launchModel.setTargetModel(externalModels[i]);
-			} else {
-				featureModels.put(id, new FeatureLaunchModel(null, externalModels[i]));
+			if (id != null) {
+				//don't consider broken features: https://bugs.eclipse.org/bugs/show_bug.cgi?id=377563
+				if (featureModels.containsKey(id)) {
+					FeatureLaunchModel launchModel = (FeatureLaunchModel) featureModels.get(id);
+					launchModel.setTargetModel(externalModels[i]);
+				} else {
+					featureModels.put(id, new FeatureLaunchModel(null, externalModels[i]));
+				}
 			}
 		}
 
