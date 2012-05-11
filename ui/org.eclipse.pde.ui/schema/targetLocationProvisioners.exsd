@@ -115,10 +115,19 @@ represent the provisioner.
 
    <annotation>
       <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         The wizard contributed by this extension point must implement &lt;code&gt;org.eclipse.pde.ui.target.ITargetLocationWizard&lt;/code&gt;.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
          <meta.section type="since"/>
       </appInfo>
       <documentation>
-         3.7 Juno
+         3.8
       </documentation>
    </annotation>
 
@@ -162,21 +171,12 @@ PDE supplies an internal location provisioner implementation to add plug-ins fro
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2011 IBM Corporation and others.
+         Copyright (c) 2011, 2012 IBM Corporation and others.
 &lt;br&gt;
 All rights reserved. This program and the accompanying materials are made 
 available under the terms of the Eclipse Public License v1.0 which 
 accompanies this distribution, and is available at 
 &lt;a href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;.
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="apiInfo"/>
-      </appInfo>
-      <documentation>
-         The wizard contributed by this extension point must implement &lt;code&gt;org.eclipse.pde.ui.target.ITargetLocationWizard&lt;/code&gt;.
       </documentation>
    </annotation>
 
