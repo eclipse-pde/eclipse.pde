@@ -260,7 +260,7 @@ public class ProductTests extends PDETestCase {
 		System.setErr(oldErr);
 		newErr.close();
 
-		assertEquals(new File(buildFolder.getLocation().toOSString(), "out.out").length(), 0);
+		assertEquals(0, new File(buildFolder.getLocation().toOSString(), "out.out").length());
 	}
 
 	public void testBug249410() throws Exception {

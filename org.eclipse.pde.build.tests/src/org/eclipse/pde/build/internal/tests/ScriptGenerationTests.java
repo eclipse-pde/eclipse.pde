@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2007, 2012 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -125,8 +125,14 @@ public class ScriptGenerationTests extends PDETestCase {
 		assertLogContainsLines(buildFolder.getFile("log.log"), lines);
 	}
 
-	// test platform.xml
-	public void testBug183924() throws Exception {
+	/**
+	 *  test platform.xml
+	 *  TODO This test is commented out because it requires a completely self-contained feature
+	 *  for the purpose of the test. In Eclipse 3.x it used the org.eclipse.rcp feature, but in Eclipse 4.x
+	 *  that feature now has included and required features. Perhaps the test can be updated to
+	 *  use multiple features instead of just one. See https://bugs.eclipse.org/bugs/show_bug.cgi?id=379182.
+	 */
+	public void _testBug183924() throws Exception {
 		IFolder buildFolder = newTest("183924");
 		IFolder configFolder = Utils.createFolder(buildFolder, "configuration/org.eclipse.update");
 
