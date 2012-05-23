@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2008 IBM Corporation and others.
+ *  Copyright (c) 2005, 2012 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -13,12 +13,9 @@ package org.eclipse.pde.internal.core.product;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.eclipse.pde.internal.core.iproduct.ILauncherInfo;
 import org.eclipse.pde.internal.core.iproduct.IProductModel;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.w3c.dom.*;
 
 public class LauncherInfo extends ProductObject implements ILauncherInfo {
 
@@ -104,6 +101,7 @@ public class LauncherInfo extends ProductObject implements ILauncherInfo {
 					fIcons.put(WIN32_32_LOW, child.getAttribute(WIN32_32_LOW));
 					fIcons.put(WIN32_48_HIGH, child.getAttribute(WIN32_48_HIGH));
 					fIcons.put(WIN32_48_LOW, child.getAttribute(WIN32_48_LOW));
+					fIcons.put(WIN32_256_HIGH, child.getAttribute(WIN32_256_HIGH));
 				}
 			}
 		}
@@ -149,6 +147,7 @@ public class LauncherInfo extends ProductObject implements ILauncherInfo {
 		writeIcon(indent + "   ", WIN32_32_LOW, writer); //$NON-NLS-1$
 		writeIcon(indent + "   ", WIN32_48_HIGH, writer); //$NON-NLS-1$
 		writeIcon(indent + "   ", WIN32_48_LOW, writer); //$NON-NLS-1$
+		writeIcon(indent + "   ", WIN32_256_HIGH, writer); //$NON-NLS-1$
 		writer.println("/>"); //$NON-NLS-1$
 		writer.println(indent + "</win>"); //$NON-NLS-1$
 	}

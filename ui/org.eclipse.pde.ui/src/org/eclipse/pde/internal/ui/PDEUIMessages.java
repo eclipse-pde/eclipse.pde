@@ -1000,6 +1000,7 @@ public class PDEUIMessages extends NLS {
 	public static String LauncherSection_32High;
 	public static String LauncherSection_48Low;
 	public static String LauncherSection_48High;
+	public static String LauncherSection_256High;
 	public static String LauncherSection_linuxLabel;
 	public static String LauncherSection_large;
 	public static String LauncherSection_medium;

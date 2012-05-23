@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2008 IBM Corporation and others.
+ *  Copyright (c) 2005, 2012 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -27,6 +27,7 @@ public interface ILauncherInfo extends IProductObject {
 	public static final String WIN32_32_HIGH = "winMediumHigh"; //$NON-NLS-1$
 	public static final String WIN32_48_LOW = "winLargeLow"; //$NON-NLS-1$
 	public static final String WIN32_48_HIGH = "winLargeHigh"; //$NON-NLS-1$
+	public static final String WIN32_256_HIGH = "winExtraLargeHigh"; //$NON-NLS-1$
 
 	public static final String P_USE_ICO = "useIco"; //$NON-NLS-1$
 	public static final String P_ICO_PATH = "icoFile"; //$NON-NLS-1$

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,10 +48,10 @@ public class LauncherSection extends PDESection {
 
 	private TextValidator fSingleWinIconValidator;
 
-	private static final String[] F_WIN_ICON_LABELS = new String[] {PDEUIMessages.LauncherSection_Low16, PDEUIMessages.LauncherSection_High16, PDEUIMessages.LauncherSection_32Low, PDEUIMessages.LauncherSection_32High, PDEUIMessages.LauncherSection_48Low, PDEUIMessages.LauncherSection_48High};
-	public static final int[] F_WIN_ICON_DEPTHS = new int[] {8, 32, 8, 32, 8, 32};
-	public static final int[][] F_WIN_ICON_DIMENSIONS = new int[][] { {16, 16}, {16, 16}, {32, 32}, {32, 32}, {48, 48}, {48, 48}};
-	private static final String[] F_WIN_ICON_IDS = new String[] {ILauncherInfo.WIN32_16_LOW, ILauncherInfo.WIN32_16_HIGH, ILauncherInfo.WIN32_32_LOW, ILauncherInfo.WIN32_32_HIGH, ILauncherInfo.WIN32_48_LOW, ILauncherInfo.WIN32_48_HIGH};
+	private static final String[] F_WIN_ICON_LABELS = new String[] {PDEUIMessages.LauncherSection_Low16, PDEUIMessages.LauncherSection_High16, PDEUIMessages.LauncherSection_32Low, PDEUIMessages.LauncherSection_32High, PDEUIMessages.LauncherSection_48Low, PDEUIMessages.LauncherSection_48High, PDEUIMessages.LauncherSection_256High};
+	public static final int[] F_WIN_ICON_DEPTHS = new int[] {8, 32, 8, 32, 8, 32, 32};
+	public static final int[][] F_WIN_ICON_DIMENSIONS = new int[][] { {16, 16}, {16, 16}, {32, 32}, {32, 32}, {48, 48}, {48, 48}, {256, 256}};
+	private static final String[] F_WIN_ICON_IDS = new String[] {ILauncherInfo.WIN32_16_LOW, ILauncherInfo.WIN32_16_HIGH, ILauncherInfo.WIN32_32_LOW, ILauncherInfo.WIN32_32_HIGH, ILauncherInfo.WIN32_48_LOW, ILauncherInfo.WIN32_48_HIGH, ILauncherInfo.WIN32_256_HIGH};
 
 	private FormEntry fNameEntry;
 	private ArrayList fIcons = new ArrayList();
@@ -356,7 +356,7 @@ public class LauncherSection extends PDESection {
 			if (id.equals(ILauncherInfo.P_ICO_PATH)) {
 				boolean enabled = isEditable() && useIco;
 				entry.setEditable(enabled);
-			} else if (id.equals(ILauncherInfo.WIN32_16_HIGH) || id.equals(ILauncherInfo.WIN32_16_LOW) || id.equals(ILauncherInfo.WIN32_32_HIGH) || id.equals(ILauncherInfo.WIN32_32_LOW) || id.equals(ILauncherInfo.WIN32_48_HIGH) || id.equals(ILauncherInfo.WIN32_48_LOW)) {
+			} else if (id.equals(ILauncherInfo.WIN32_16_HIGH) || id.equals(ILauncherInfo.WIN32_16_LOW) || id.equals(ILauncherInfo.WIN32_32_HIGH) || id.equals(ILauncherInfo.WIN32_32_LOW) || id.equals(ILauncherInfo.WIN32_48_HIGH) || id.equals(ILauncherInfo.WIN32_48_LOW) || id.equals(ILauncherInfo.WIN32_256_HIGH)) {
 				entry.setEditable(isEditable() && !useIco);
 			}
 		}
