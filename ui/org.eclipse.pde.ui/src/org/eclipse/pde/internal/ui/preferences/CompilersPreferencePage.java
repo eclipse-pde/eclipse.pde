@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,6 +52,14 @@ public class CompilersPreferencePage extends PreferencePage implements IWorkbenc
 		setTitle(PDEUIMessages.CompilersPreferencePage_title);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.PreferencePage#createControl(org.eclipse.swt.widgets.Composite)
+	 */
+	public void createControl(Composite composite) {
+		super.createControl(composite);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IHelpContextIds.COMPILERS_PREFERENCE_PAGE);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -97,7 +105,6 @@ public class CompilersPreferencePage extends PreferencePage implements IWorkbenc
 		// Initialize with data map in case applyData was called before createContents
 		applyData(fPageData);
 
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(comp, IHelpContextIds.COMPILERS_PREFERENCE_PAGE);
 		return comp;
 	}
 
