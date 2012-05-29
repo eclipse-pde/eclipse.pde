@@ -21,6 +21,6 @@
   </parent>
   <groupId>eclipse.pde.ui</groupId>
   <artifactId>org.eclipse.pde.junit.runtime</artifactId>
-  <version>3.4.100-SNAPSHOT</version>
+  <version>3.4.200-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
 </project>
