@@ -27,7 +27,6 @@
 
 
   <modules>
-    <module>org.eclipse.pde</module>
     <module>org.eclipse.pde-feature</module>
   </modules>
 
