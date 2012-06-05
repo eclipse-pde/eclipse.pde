@@ -740,16 +740,31 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		if (nextPages.isEmpty()) {
 			return null;
 		}
+
 		if (page instanceof IScmUrlImportWizardPage) {
 			int index = nextPages.indexOf(page);
-			if (index >= 0 && index < (nextPages.size() - 2)) {
-				return (IWizardPage) nextPages.get(index + 1);
+			if (index >= 0 && index < (nextPages.size() - 1)) {
+				IWizardPage nextPage = (IWizardPage) nextPages.get(index + 1);
+				return isPageEmpty(nextPage) ? null : nextPage;
 			}
 		}
+
 		if (page instanceof PluginImportWizardDetailedPage || page instanceof PluginImportWizardExpressPage) {
-			return (IWizardPage) nextPages.get(0);
+			Iterator iter = nextPages.iterator();
+			while (iter.hasNext()) {
+				IWizardPage nextPage = (IWizardPage) iter.next();
+				if (!isPageEmpty(nextPage))
+					return nextPage;
+			}
 		}
 		return null;
+	}
+
+	private boolean isPageEmpty(IWizardPage page) {
+		if (!(page instanceof IScmUrlImportWizardPage))
+			return false;
+		ScmUrlImportDescription[] selection = ((IScmUrlImportWizardPage) page).getSelection();
+		return selection == null || selection.length == 0;
 	}
 
 	/**
@@ -871,6 +886,11 @@ public class PluginImportWizardFirstPage extends WizardPage {
 				}
 			}
 		}
+
+		// First clear the selection for all pages
+		iterator = importIdToWizardPage.values().iterator();
+		while (iterator.hasNext())
+			((IScmUrlImportWizardPage) iterator.next()).setSelection(new ScmUrlImportDescription[0]);
 
 		iterator = importerToImportees.entrySet().iterator();
 		while (iterator.hasNext()) {
