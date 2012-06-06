@@ -41,7 +41,6 @@ public interface ITargetDefinition {
 	 * 
 	 * @param monitor progress monitor or <code>null</code>
 	 * @return resolution multi-status
-	 * @throws CoreException if unable to resolve
 	 */
 	public IStatus resolve(IProgressMonitor monitor);
 
@@ -151,7 +150,7 @@ public interface ITargetDefinition {
 	 * <code>null</code>.
 	 * 
 	 * @see #getBundles()
-	 * @see #setIncluded()
+	 * @see #setIncluded(NameVersionDescriptor[])
 	 * @return list of name version descriptors or <code>null</code>
 	 */
 	public NameVersionDescriptor[] getIncluded();
@@ -203,7 +202,7 @@ public interface ITargetDefinition {
 	 * Sets the operating system this target is configured for or <code>null</code> to
 	 * default to the running operating system.
 	 * 
-	 * @param operating system identifier - one of the operating system constants
+	 * @param os operating system identifier - one of the operating system constants
 	 * 	defined by {@link Constants} or <code>null</code> to default to the running
 	 * 	operating system
 	 */
@@ -223,7 +222,7 @@ public interface ITargetDefinition {
 	 * Sets the window system this target is configured for or <code>null</code> to 
 	 * default to the running window system.
 	 * 
-	 * @param window system identifier or <code>null</code> to default to the
+	 * @param ws window system identifier or <code>null</code> to default to the
 	 * 	running window system
 	 */
 	public void setWS(String ws);
@@ -242,7 +241,7 @@ public interface ITargetDefinition {
 	 * Sets the architecture this target is configured for, or <code>null</code> to default
 	 * to the running architecture.
 	 * 
-	 * @param architecture identifier or <code>null</code> to default to the
+	 * @param arch architecture identifier or <code>null</code> to default to the
 	 * 	running architecture.
 	 */
 	public void setArch(String arch);
@@ -258,7 +257,7 @@ public interface ITargetDefinition {
 	/**
 	 * Sets the locale this target is configured for or <code>null</code> for default.
 	 * 
-	 * @param locale identifier or <code>null</code> for default
+	 * @param nl locale identifier or <code>null</code> for default
 	 */
 	public void setNL(String nl);
 
@@ -305,8 +304,6 @@ public interface ITargetDefinition {
 
 	/**
 	 * Returns the implicit dependencies set on this target or <code>null</code> if none.
-	 * Note that this does not resolve the actual bundles used as implicit dependencies - see
-	 * {@link #resolveImplicitDependencies(IProgressMonitor)} for resolution.
 	 * 
 	 * @return implicit dependencies or <code>null</code>
 	 */

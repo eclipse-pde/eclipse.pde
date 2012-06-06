@@ -87,7 +87,7 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 	 * as the current target platform. When <code>null</code> is specified
 	 * the target platform is empty and all other settings are default.
 	 *<p>
-	 * Clients should use {@link #getLoadJob(ITargetDefinition)} instead to ensure
+	 * Clients should use {@link #load(ITargetDefinition, IJobChangeListener)} instead to ensure
 	 * any existing jobs are cancelled.
 	 * </p>
 	 * @param target target definition or <code>null</code> if none
