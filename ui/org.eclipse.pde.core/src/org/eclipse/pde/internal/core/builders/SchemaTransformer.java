@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -275,10 +275,13 @@ public class SchemaTransformer {
 					+ name + "</p>"); //$NON-NLS-1$
 			int maxWidth = calculateMaxAttributeWidth(element.getAttributes());
 			for (int i = 0; i < attributes.length; i++) {
+				fWriter.print("<p class=\"code SchemaDtdAttlist\">"); //$NON-NLS-1$
 				appendAttlist(attributes[i], maxWidth);
+				if (i + 1 == attributes.length) {
+					fWriter.print("&gt;"); //$NON-NLS-1$
+				}
+				fWriter.println("</p>"); //$NON-NLS-1$
 			}
-			fWriter.println("&gt;</p>"); //$NON-NLS-1$
-
 		}
 		fWriter.println("<p></p>"); //$NON-NLS-1$
 
@@ -327,8 +330,12 @@ public class SchemaTransformer {
 		return false;
 	}
 
+	/**
+	 * Writes out an attribute for an element's attribute list.  Note that this method does not add newlines.
+	 * @param att the schema attribute to print
+	 * @param maxWidth the length of the largest name in the list so items can be padded out.
+	 */
 	private void appendAttlist(ISchemaAttribute att, int maxWidth) {
-		fWriter.print("<p class=\"code SchemaDtdAttlist\">"); //$NON-NLS-1$
 		// add name
 		fWriter.print(att.getName());
 		// fill spaces to align data type
@@ -363,7 +370,6 @@ public class SchemaTransformer {
 			fWriter.print("\"" + att.getValue() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		} else if (!choices)
 			fWriter.print("#IMPLIED"); //$NON-NLS-1$
-		fWriter.print("</p>"); //$NON-NLS-1$
 	}
 
 	private void appendRestriction(ISchemaRestriction restriction) {
