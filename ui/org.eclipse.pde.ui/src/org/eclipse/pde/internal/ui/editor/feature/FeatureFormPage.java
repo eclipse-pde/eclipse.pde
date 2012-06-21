@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -185,8 +185,6 @@ public class FeatureFormPage extends PDEFormPage implements IHyperlinkListener {
 			getEditor().setActivePage(FeatureIncludesPage.PAGE_ID);
 		else if (href.equals("dependencies")) //$NON-NLS-1$
 			getEditor().setActivePage(FeatureDependenciesPage.PAGE_ID);
-		else if (href.equals("installHandler")) //$NON-NLS-1$
-			getEditor().setActivePage(FeatureAdvancedPage.PAGE_ID);
 		else if (href.equals("build")) //$NON-NLS-1$
 			getEditor().setActivePage(BuildPage.PAGE_ID);
 		else if (href.equals("synchronize")) { //$NON-NLS-1$ {

@@ -17,14 +17,12 @@ public class Messages extends NLS {
 	public static String AddBundleContainerSelectionPage_0;
 	public static String AddBundleContainerSelectionPage_1;
 	public static String AddBundleContainerSelectionPage_10;
-	public static String AddBundleContainerSelectionPage_11;
 	public static String AddBundleContainerSelectionPage_2;
 	public static String AddBundleContainerSelectionPage_3;
 	public static String AddBundleContainerSelectionPage_4;
 	public static String AddBundleContainerSelectionPage_5;
 	public static String AddBundleContainerSelectionPage_6;
 	public static String AddBundleContainerSelectionPage_7;
-	public static String AddBundleContainerSelectionPage_8;
 	public static String AddBundleContainerSelectionPage_9;
 	public static String AddDirectoryContainerPage_0;
 	public static String AddDirectoryContainerPage_1;

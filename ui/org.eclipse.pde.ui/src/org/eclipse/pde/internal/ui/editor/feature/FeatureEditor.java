@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -214,7 +214,6 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 			addPage(new FeatureReferencePage(this, PDEUIMessages.FeatureEditor_ReferencePage_title));
 			addPage(new FeatureIncludesPage(this, PDEUIMessages.FeatureEditor_IncludesPage_title));
 			addPage(new FeatureDependenciesPage(this, PDEUIMessages.FeatureEditor_DependenciesPage_title));
-			addPage(new FeatureAdvancedPage(this, PDEUIMessages.FeatureEditor_AdvancedPage_title));
 			if (fInputContextManager.hasContext(BuildInputContext.CONTEXT_ID))
 				addPage(new BuildPage(this));
 		} catch (PartInitException e) {
