@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -932,8 +932,9 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 					report(NLS.bind(PDECoreMessages.Builders_Manifest_non_ext_attribute, header.getName()), getLine(header, value), severity, PDEMarkerFactory.P_UNTRANSLATED_NODE, header.getName(), PDEMarkerFactory.CAT_NLS);
 				} else if (fModel instanceof AbstractNLModel) {
 					NLResourceHelper helper = ((AbstractNLModel) fModel).getNLResourceHelper();
-					if (helper == null || !helper.resourceExists(value))
-						report(NLS.bind(PDECoreMessages.Builders_Manifest_key_not_found, value.substring(1)), getLine(header, value), severity, PDEMarkerFactory.CAT_NLS);
+					if (helper == null || !helper.resourceExists(value)) {
+						report(NLS.bind(PDECoreMessages.Builders_Manifest_key_not_found, value.substring(1), PDEManager.getBundleLocalization(fModel).concat(".properties")), getLine(header, value), severity, PDEMarkerFactory.CAT_NLS); //$NON-NLS-1$
+					}
 				}
 			}
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -430,7 +430,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 		} else if (fModel instanceof AbstractNLModel) {
 			NLResourceHelper helper = ((AbstractNLModel) fModel).getNLResourceHelper();
 			if (helper == null || !helper.resourceExists(value)) {
-				report(NLS.bind(PDECoreMessages.Builders_Manifest_key_not_found, value.substring(1)), getLine(element, attr.getName()), severity, PDEMarkerFactory.CAT_NLS);
+				report(NLS.bind(PDECoreMessages.Builders_Manifest_key_not_found, value.substring(1), PDEManager.getBundleLocalization(fModel).concat(".properties")), getLine(element, attr.getName()), severity, PDEMarkerFactory.CAT_NLS); //$NON-NLS-1$
 			}
 		}
 	}
@@ -447,7 +447,7 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 		} else if (fModel instanceof AbstractNLModel) {
 			NLResourceHelper helper = ((AbstractNLModel) fModel).getNLResourceHelper();
 			if (helper == null || !helper.resourceExists(value)) {
-				report(NLS.bind(PDECoreMessages.Builders_Manifest_key_not_found, value.substring(1)), getLine(element), severity, PDEMarkerFactory.CAT_NLS);
+				report(NLS.bind(PDECoreMessages.Builders_Manifest_key_not_found, value.substring(1), PDEManager.getBundleLocalization(fModel).concat(".properties")), getLine(element), severity, PDEMarkerFactory.CAT_NLS); //$NON-NLS-1$
 			}
 		}
 	}
