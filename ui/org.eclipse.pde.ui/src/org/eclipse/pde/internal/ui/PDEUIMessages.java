@@ -93,8 +93,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String FeatureBlock_UseWorkspaceFeatures;
 
-	public static String FeatureBlock_version;
-
 	public static String FeatureBlock_workspaceBefore;
 
 	public static String FeatureBlock_WorkspaceResolutionLabel;
@@ -419,7 +417,6 @@ public class PDEUIMessages extends NLS {
 	public static String LibrarySection_addDialogButton;
 
 	public static String MainPreferencePage_addToJavaSearch;
-	public static String MainPreferencePage_exportingGroup;
 	public static String MainPreferencePage_junitWorkspace_asContainer;
 
 	public static String MainPreferencePage_junitWorkspace_asLocation;
@@ -447,7 +444,6 @@ public class PDEUIMessages extends NLS {
 	public static String MainPreferencePage_runtimeWorkspaceGroup;
 	public static String MainPreferencePage_showSourceBundles;
 	public static String MainPreferencePage_updateStale;
-	public static String MainPreferencePage_targetDefinitionsGroup;
 
 	public static String ManifestStructureCreator_errorMessage;
 
@@ -639,8 +635,6 @@ public class PDEUIMessages extends NLS {
 	public static String FeatureEditor_IncludesPage_heading;
 	public static String FeatureEditor_DependenciesPage_heading;
 	public static String FeatureEditor_DependenciesPage_title;
-	public static String FeatureEditor_AdvancedPage_title;
-	public static String FeatureEditor_AdvancedPage_heading;
 
 	public static String FeatureEditor_PortabilityChoicesDialog_title;
 	public static String FeatureEditor_PortabilityChoicesDialog_choices;
@@ -688,17 +682,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String FeatureEditor_IncludedFeaturePortabilitySection_title;
 	public static String FeatureEditor_IncludedFeaturePortabilitySection_desc;
-
-	public static String FeatureEditor_HandlerSection_title;
-	public static String FeatureEditor_HandlerSection_desc;
-	public static String FeatureEditor_HandlerSection_library;
-	public static String FeatureEditor_HandlerSection_handler;
-
-	public static String FeatureEditor_InstallSection_title;
-	public static String FeatureEditor_InstallSection_desc;
-	public static String FeatureEditor_InstallSection_colocation_desc;
-	public static String FeatureEditor_InstallSection_colocation;
-	public static String FeatureEditor_InstallSection_exclusive;
 
 	public static String FeatureEditor_InfoSection_desc;
 
@@ -2648,14 +2631,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String CompilersConfigurationTab_buildPropertiesErrors;
 
-	public static String CVSBundleImportPage_0;
-
-	public static String CVSBundleImportPage_1;
-
-	public static String CVSBundleImportPage_2;
-
-	public static String CVSBundleImportPage_3;
-
 	public static String PluginsView_description;
 
 	public static String LocationSection_0;
@@ -2805,8 +2780,6 @@ public class PDEUIMessages extends NLS {
 	public static String LicenseSection_url;
 	public static String LicenseSection_text;
 
-	public static String FeatureImportWizardPage_reload;
-
 	public static String TargetEditor_0;
 
 	public static String TargetEditor_1;
@@ -2820,8 +2793,6 @@ public class PDEUIMessages extends NLS {
 	public static String TargetEditor_5;
 
 	public static String TargetEditor_6;
-
-	public static String FeatureImportWizardPage_reloadLocation;
 
 	public static String FeatureImportWizardPage_importHasInvalid;
 

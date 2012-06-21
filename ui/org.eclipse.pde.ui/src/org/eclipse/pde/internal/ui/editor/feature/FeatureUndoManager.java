@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2012 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -32,8 +32,6 @@ public class FeatureUndoManager extends ModelUndoManager {
 			return FeatureReferencePage.PAGE_ID;
 		if (obj instanceof IFeatureImport)
 			return FeatureDependenciesPage.PAGE_ID;
-		if (obj instanceof IFeatureData || obj instanceof IFeatureChild)
-			return FeatureAdvancedPage.PAGE_ID;
 		return null;
 	}
 
@@ -73,8 +71,6 @@ public class FeatureUndoManager extends ModelUndoManager {
 
 				if (element instanceof IFeaturePlugin) {
 					feature.addPlugins(new IFeaturePlugin[] {(IFeaturePlugin) element});
-				} else if (element instanceof IFeatureData) {
-					feature.addData(new IFeatureData[] {(IFeatureData) element});
 				} else if (element instanceof IFeatureImport) {
 					feature.addImports(new IFeatureImport[] {(IFeatureImport) element});
 				} else if (element instanceof IFeatureChild) {
@@ -95,8 +91,6 @@ public class FeatureUndoManager extends ModelUndoManager {
 
 				if (element instanceof IFeaturePlugin) {
 					feature.removePlugins(new IFeaturePlugin[] {(IFeaturePlugin) element});
-				} else if (element instanceof IFeatureData) {
-					feature.removeData(new IFeatureData[] {(IFeatureData) element});
 				} else if (element instanceof IFeatureImport) {
 					feature.removeImports(new IFeatureImport[] {(IFeatureImport) element});
 				} else if (element instanceof IFeatureChild) {

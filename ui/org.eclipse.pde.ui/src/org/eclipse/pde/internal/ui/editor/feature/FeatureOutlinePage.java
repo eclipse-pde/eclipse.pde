@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2012 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -46,9 +46,6 @@ public class FeatureOutlinePage extends FormOutlinePage {
 				if (parent instanceof FeatureDependenciesPage) {
 					return getImports();
 				}
-				if (parent instanceof FeatureAdvancedPage) {
-					return getData();
-				}
 			}
 			return super.getChildren(parent);
 		}
@@ -82,9 +79,7 @@ public class FeatureOutlinePage extends FormOutlinePage {
 			return FeatureDependenciesPage.PAGE_ID;
 		if (item instanceof IFeatureInfo || item.equals(fDiscoveryUrls) || item instanceof IFeatureURLElement)
 			return InfoFormPage.PAGE_ID;
-		if (item instanceof IFeatureData)
-			return FeatureAdvancedPage.PAGE_ID;
-		else if (item instanceof IBuildEntry)
+		if (item instanceof IBuildEntry)
 			return BuildPage.PAGE_ID;
 		return super.getParentPageId(item);
 	}
@@ -118,12 +113,6 @@ public class FeatureOutlinePage extends FormOutlinePage {
 		IFeatureModel model = (IFeatureModel) fEditor.getAggregateModel();
 		IFeature feature = model.getFeature();
 		return feature.getIncludedFeatures();
-	}
-
-	private Object[] getData() {
-		IFeatureModel model = (IFeatureModel) fEditor.getAggregateModel();
-		IFeature feature = model.getFeature();
-		return feature.getData();
 	}
 
 	private Object[] getURLs() {
