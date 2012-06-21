@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -87,6 +87,13 @@ public class PDEManager {
 			urls.add(location);
 	}
 
+	/**
+	 * Returns the bundle localization file specified by the manifest header or the default location.  The
+	 * file may not exist.
+	 * 
+	 * @param model the plug-in to lookup the localization for
+	 * @return the bundle localization file location or the default location
+	 */
 	public static String getBundleLocalization(IPluginModelBase model) {
 		if (model instanceof IBundlePluginModelBase && model.getUnderlyingResource() != null)
 			return ((IBundlePluginModelBase) model).getBundleLocalization();
