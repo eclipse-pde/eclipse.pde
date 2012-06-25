@@ -793,6 +793,12 @@ public class EEGenerator {
 			// initialize known packages
 			String osgiProfileName = this.OSGiProfile;
 			Set<String> knownPackages = initializePackages(osgiProfileName);
+			// known packages should be part of the white list by default
+			if (this.whiteList != null && !this.whiteList.isEmpty()) {
+				this.whiteList.addAll(knownPackages);
+			} else {
+				this.whiteList = Collections.unmodifiableSet(knownPackages);
+			}
 			Map<String, Type> allVisibleTypes = new HashMap<String, Type>();
 			Map<String, Type> allTypes = new HashMap<String, Type>();
 			this.totalSize = 0;
@@ -924,7 +930,7 @@ public class EEGenerator {
 			return this.blackList.contains(typeName);
 		}
 		private boolean isOnWhiteList(String packageName) {
-			return packageName.startsWith("java.") || this.whiteList.contains(packageName); //$NON-NLS-1$
+			return packageName.startsWith("java.") || packageName.startsWith("javax.") || this.whiteList.contains(packageName); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		private boolean isOnWhiteList(Type type) {
 			return isOnWhiteList(type.getPackage());
