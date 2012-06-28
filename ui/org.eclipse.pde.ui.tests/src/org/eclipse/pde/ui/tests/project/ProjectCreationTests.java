@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 IBM Corporation and others.
+ * Copyright (c) 2010, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -747,8 +747,91 @@ public class ProjectCreationTests extends TestCase {
 		assertFalse("Wrong singleton", d2.isSingleton());
 		assertNull("Wrong export wizard", d2.getExportWizardId());
 		assertNull("Wrong launch shortctus", d2.getLaunchShortcuts());
-	}	
+	}
 	
+	/**
+	 * Modify a simple project to add/remove/clear some entries.
+	 * See bug 380444 where previous settings weren't being cleared
+	 * 
+	 * @throws CoreException
+	 */
+	public void testModifyRequiredBundles() throws CoreException {
+		IBundleProjectDescription description = newProject();
+		IProject project = description.getProject();
+		IBundleProjectService service = getBundleProjectService();
+		
+		IRequiredBundleDescription requireDesc = service.newRequiredBundle("requiredBundleOne", null, false, false);
+		IRequiredBundleDescription requireDesc2 = service.newRequiredBundle("requiredBundleTwo", new VersionRange("[1.0.0,2.0.0)"), false, false);
+		IRequiredBundleDescription requireDesc3 = service.newRequiredBundle("requiredBundleThree", null, true, false);
+		IRequiredBundleDescription requireDesc4 = service.newRequiredBundle("requiredBundleFour", null, false, true);
+		description.setRequiredBundles(new IRequiredBundleDescription[]{requireDesc, requireDesc2, requireDesc3, requireDesc4});
+		
+		IPackageExportDescription ex0 = service.newPackageExport("a.b.c", new Version("2.0.0"), true, null);
+		IPackageExportDescription ex1 = service.newPackageExport("a.b.c.interal", null, false, null);
+		IPackageExportDescription ex2 = service.newPackageExport("a.b.c.interal.x", null, false, new String[]{"x.y.z"});
+		IPackageExportDescription ex3 = service.newPackageExport("a.b.c.interal.y", new Version("1.2.3"), false, new String[]{"d.e.f", "g.h.i"});
+		description.setPackageExports(new IPackageExportDescription[]{ex0, ex1, ex2, ex3});
+		
+		IPackageImportDescription importDesc = service.newPackageImport("importPkgOne", null, false);		
+		IPackageImportDescription importDesc2 = service.newPackageImport("importPkgTwo", new VersionRange("[1.0.0,2.0.0)"), false);
+		IPackageImportDescription importDesc3 = service.newPackageImport("importPkgThree", null, true);
+		IPackageImportDescription importDesc4 = service.newPackageImport("importPkgFour", null, false);
+		description.setPackageImports(new IPackageImportDescription[]{importDesc, importDesc2, importDesc3, importDesc4});
+		
+		description.apply(null);
+		
+		// verify attributes
+		IBundleProjectDescription d2 = service.getDescription(project);
+		assertEquals("Wrong number of required bundles", 4, d2.getRequiredBundles().length);
+		assertEquals("Wrong number of package exports", 4, d2.getPackageExports().length);
+		assertEquals("Wrong number of package imports", 4, d2.getPackageImports().length);
+		
+		// add entries
+		IRequiredBundleDescription requireDesc5 = service.newRequiredBundle("requiredBundleFive", null, false, false);
+		IRequiredBundleDescription requireDesc6 = service.newRequiredBundle("requiredBundleSix", null, false, false);
+		description.setRequiredBundles(new IRequiredBundleDescription[]{requireDesc, requireDesc2, requireDesc3, requireDesc4, requireDesc5, requireDesc6});
+		
+		IPackageExportDescription ex4 = service.newPackageExport("a.b.c.interal.x2", null, false, new String[]{"x.y.z"});
+		IPackageExportDescription ex5 = service.newPackageExport("a.b.c.interal.y2", new Version("1.2.3"), false, new String[]{"d.e.f", "g.h.i"});
+		description.setPackageExports(new IPackageExportDescription[]{ex0, ex1, ex2, ex3, ex4, ex5});
+	
+		IPackageImportDescription importDesc5 = service.newPackageImport("importPkgFive", null, true);
+		IPackageImportDescription importDesc6 = service.newPackageImport("importPkgSix", null, false);
+		description.setPackageImports(new IPackageImportDescription[]{importDesc, importDesc2, importDesc3, importDesc4, importDesc5, importDesc6});
+		
+		description.apply(null);
+		
+		// verify attributes
+		IBundleProjectDescription d3 = service.getDescription(project);
+		assertEquals("Wrong number of required bundles after additions", 6, d3.getRequiredBundles().length);
+		assertEquals("Wrong number of package exports after addtions", 6, d3.getPackageExports().length);
+		assertEquals("Wrong number of package imports after additions", 6, d3.getPackageImports().length);
+		
+		// remove most entries
+		description.setRequiredBundles(new IRequiredBundleDescription[]{requireDesc2, requireDesc5});
+		description.setPackageExports(new IPackageExportDescription[]{ex1, ex4});
+		description.setPackageImports(new IPackageImportDescription[]{importDesc2, importDesc5});
+		description.apply(null);
+		
+		// verify attributes
+		IBundleProjectDescription d4 = service.getDescription(project);
+		assertEquals("Wrong number of required bundles after removals", 2, d4.getRequiredBundles().length);
+		assertEquals("Wrong number of package exports after removals", 2, d4.getPackageExports().length);
+		assertEquals("Wrong number of package imports after removals", 2, d4.getPackageImports().length);
+		
+		// clear entries
+		description.setRequiredBundles(null);
+		description.setPackageExports(null);
+		description.setPackageImports(null);
+		description.apply(null);
+		
+		// verify attributes
+		IBundleProjectDescription d5 = service.getDescription(project);
+		assertNull("Wrong number of required bundles after removals", d5.getRequiredBundles());
+		assertNull("Wrong number of package exports after removals", d5.getPackageExports());
+		assertNull("Wrong number of package imports after removals", d5.getPackageImports());
+	}
+		
 	/**
 	 * Convert a fragment into a bundle
 	 * 

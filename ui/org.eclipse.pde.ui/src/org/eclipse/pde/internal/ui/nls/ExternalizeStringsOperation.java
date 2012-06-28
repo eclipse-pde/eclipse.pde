@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,6 +37,7 @@ import org.eclipse.pde.internal.ui.util.ModelModification;
 import org.eclipse.pde.internal.ui.util.PDEModelUtility;
 import org.eclipse.text.edits.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.osgi.framework.Constants;
 
 public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
 
@@ -178,7 +179,7 @@ public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
 				if (model instanceof IBundlePluginModelBase) {
 					IBundlePluginModelBase bundleModel = (IBundlePluginModelBase) model;
 					IBundle bundle = bundleModel.getBundleModel().getBundle();
-					bundle.setLocalization(localiz);
+					bundle.setHeader(Constants.BUNDLE_LOCALIZATION, localiz);
 				}
 			}
 		}, mon);

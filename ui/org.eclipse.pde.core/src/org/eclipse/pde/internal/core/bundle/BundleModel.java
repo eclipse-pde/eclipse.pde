@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2010 IBM Corporation and others.
+ *  Copyright (c) 2000, 2012 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@ package org.eclipse.pde.internal.core.bundle;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Map;
 import java.util.Properties;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.HostSpecification;
@@ -20,8 +19,8 @@ import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.ModelChangedEvent;
 import org.eclipse.pde.internal.core.*;
-import org.eclipse.pde.internal.core.ibundle.*;
-import org.eclipse.pde.internal.core.text.bundle.BundleModelFactory;
+import org.eclipse.pde.internal.core.ibundle.IBundle;
+import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 
@@ -54,27 +53,15 @@ public abstract class BundleModel extends AbstractModel implements IBundleModel 
 
 	public void load(InputStream source, boolean outOfSync) {
 		try {
+			setLoaded(true); // Must be set before loading the manifest otherwise calls to getModel() cause a stack overflow
 			fBundle.load(ManifestElement.parseBundleManifest(source, null));
 			if (!outOfSync)
 				updateTimeStamp();
-			setLoaded(true);
-			// format headers
-			BundleModelFactory factory = new BundleModelFactory(this);
-			Map headers = fBundle.getHeaders();
-			Object[] keys = headers.keySet().toArray();
-			for (int i = 0; i < keys.length; i++) {
-				String key = (String) keys[i];
-				String value = (String) headers.get(key);
-				IManifestHeader header = factory.createHeader(key, value);
-				header.update();
-				String formatted = header.getValue();
-				if (formatted != null && formatted.trim().length() > 0) {
-					fBundle.setHeader(key, formatted);
-				}
-			}
+
 		} catch (BundleException e) {
+			PDECore.log(e);
 		} catch (IOException e) {
-		} finally {
+			PDECore.log(e);
 		}
 	}
 
@@ -114,9 +101,9 @@ public abstract class BundleModel extends AbstractModel implements IBundleModel 
 		if (desc.getHost() != null) {
 			properties.put(Constants.FRAGMENT_HOST, writeFragmentHost(desc.getHost()));
 		}
+		setLoaded(true); // Must set loaded before creating headers as calls to getModel() throw stack overflows
 		fBundle.load(properties);
 		updateTimeStamp();
-		setLoaded(true);
 	}
 
 	private String writeFragmentHost(HostSpecification host) {

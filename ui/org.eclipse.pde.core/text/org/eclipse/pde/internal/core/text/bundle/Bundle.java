@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2012 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -139,10 +139,6 @@ public class Bundle implements IBundle {
 	public String getLocalization() {
 		String localization = getHeader(Constants.BUNDLE_LOCALIZATION);
 		return localization != null ? localization : Constants.BUNDLE_LOCALIZATION_DEFAULT_BASENAME;
-	}
-
-	public void setLocalization(String localization) {
-		setHeader(Constants.BUNDLE_LOCALIZATION, localization);
 	}
 
 	public void renameHeader(String key, String newKey) {

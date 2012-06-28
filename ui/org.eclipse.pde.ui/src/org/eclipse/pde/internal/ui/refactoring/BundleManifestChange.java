@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -155,9 +155,9 @@ public class BundleManifestChange {
 
 	private static void renameLocalization(Bundle bundle, String oldText, String newText) {
 		if (newText.endsWith(".properties")) //$NON-NLS-1$
-			bundle.setLocalization(LocaleUtil.trimLocalization(newText));
+			bundle.setHeader(Constants.BUNDLE_LOCALIZATION, LocaleUtil.trimLocalization(newText));
 		else
-			bundle.setLocalization(null);
+			bundle.setHeader(Constants.BUNDLE_LOCALIZATION, null);
 	}
 
 	private static void resetHeaderValue(IManifestHeader header, boolean isPackage, String oldText, String newText) {
