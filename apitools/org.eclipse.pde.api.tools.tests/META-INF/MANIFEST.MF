@@ -42,3 +42,4 @@ Export-Package: org.eclipse.pde.api.tools.anttasks.tests,
  org.eclipse.pde.api.tools.util.tests;uses:="junit.framework"
 Bundle-Activator: org.eclipse.pde.api.tools.tests.ApiTestsPlugin
 Bundle-ActivationPolicy: lazy
+Eclipse-BundleShape: dir
