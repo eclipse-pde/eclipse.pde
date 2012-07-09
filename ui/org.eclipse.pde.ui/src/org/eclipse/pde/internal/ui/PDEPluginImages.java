@@ -200,7 +200,6 @@ public class PDEPluginImages {
 	public static final ImageDescriptor DESC_NEWFTRPRJ_TOOL = create(PATH_TOOL, "newftrprj_wiz.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_NEWPPRJ_TOOL = create(PATH_TOOL, "newpprj_wiz.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_NEWFRAGPRJ_TOOL = create(PATH_TOOL, "newfprj_wiz.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_WORKBENCH_LAUNCHER_WIZ = create(PATH_TOOL, "eclipse_launcher_wiz.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_NEWEXP_WIZ_TOOL = create(PATH_TOOL, "newexp_wiz.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_DEPLOYCS_TOOL = create(PATH_TOOL, "new_cheatsheet_wiz.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_VALIDATE_TOOL = create(PATH_TOOL, "validate.gif"); //$NON-NLS-1$

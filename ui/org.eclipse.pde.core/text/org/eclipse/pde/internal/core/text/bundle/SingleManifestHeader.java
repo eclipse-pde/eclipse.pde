@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2008 IBM Corporation and others.
+ *  Copyright (c) 2005, 2012 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -27,7 +27,7 @@ public class SingleManifestHeader extends ManifestHeader {
 	protected void processValue(String value) {
 		try {
 			ManifestElement[] elements = ManifestElement.parseHeader(getName(), value);
-			if (elements.length > 0)
+			if (elements != null && elements.length > 0)
 				fElement = new PDEManifestElement(this, elements[0]);
 		} catch (BundleException e) {
 		}

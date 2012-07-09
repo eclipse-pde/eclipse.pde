@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2011 IBM Corporation and others.
+ * Copyright (c) 2003, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -165,7 +165,7 @@ public class ClasspathHelper {
 	}
 
 	// creates a map whose key is a Path to the source directory/jar and the value is a Path output directory or jar.
-	private static Map getClasspathMap(IProject project, boolean checkExcluded, boolean onlyJarsIfLinked, boolean absolutePaths) throws JavaModelException {
+	private static Map getClasspathMap(IProject project, boolean checkExcluded, boolean absolutePaths) throws JavaModelException {
 		List excluded = getFoldersToExclude(project, checkExcluded);
 		IJavaProject jProject = JavaCore.create(project);
 		HashMap map = new HashMap();
@@ -190,8 +190,6 @@ public class ClasspathHelper {
 				// make the path either relative or absolute
 				if (file != null) {
 					boolean isLinked = file.isLinked(IResource.CHECK_ANCESTORS);
-					if (entries[i].getEntryKind() != IClasspathEntry.CPE_SOURCE && !isLinked && onlyJarsIfLinked)
-						continue;
 					output = (isLinked || absolutePaths) ? file.getLocation().makeAbsolute() : output.makeRelative();
 				} else
 					continue;
@@ -270,7 +268,7 @@ public class ClasspathHelper {
 		IPluginLibrary[] libraries = base.getLibraries();
 		try {
 			if (project.hasNature(JavaCore.NATURE_ID)) {
-				Map classpathMap = getClasspathMap(project, checkExcluded, !base.getId().equals(PDECore.getDefault().getModelManager().getSystemBundleId()), false);
+				Map classpathMap = getClasspathMap(project, checkExcluded, false);
 				IFile file = PDEProject.getBuildProperties(project);
 				IPath filePath = file.getLocation();
 				boolean searchBuild = filePath != null && filePath.toFile().exists();
@@ -340,7 +338,7 @@ public class ClasspathHelper {
 			if (frags[i].getUnderlyingResource() != null) {
 				try {
 					IProject project = frags[i].getUnderlyingResource().getProject();
-					Map classpathMap = getClasspathMap(project, checkExcluded, false, true);
+					Map classpathMap = getClasspathMap(project, checkExcluded, true);
 					IFile file = PDEProject.getBuildProperties(project);
 					IBuild build = null;
 					if (file.exists()) {

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: API Tools Tests
 Bundle-SymbolicName: org.eclipse.pde.api.tools.tests
-Bundle-Version: 1.0.200.qualifier
+Bundle-Version: 1.0.300.qualifier
 Bundle-Vendor: Eclipse.org
 Require-Bundle: org.eclipse.core.runtime,
  org.junit,
@@ -42,3 +42,4 @@ Export-Package: org.eclipse.pde.api.tools.anttasks.tests,
  org.eclipse.pde.api.tools.util.tests;uses:="junit.framework"
 Bundle-Activator: org.eclipse.pde.api.tools.tests.ApiTestsPlugin
 Bundle-ActivationPolicy: lazy
+Eclipse-BundleShape: dir
