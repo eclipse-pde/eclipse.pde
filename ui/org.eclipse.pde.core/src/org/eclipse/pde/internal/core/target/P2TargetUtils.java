@@ -773,7 +773,14 @@ public class P2TargetUtils {
 	private static String getProfileId(ITargetHandle handle) throws CoreException {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(PROFILE_ID_PREFIX);
-		buffer.append(handle.getMemento());
+		// Memento strings can be very long and exceed max filename lengths, trim down to 200 + prefix + hashcode
+		String memento = handle.getMemento();
+		if (memento.length() > 200) {
+			buffer.append(memento.substring(memento.length() - 200));
+			buffer.append(memento.hashCode());
+		} else {
+			buffer.append(memento);
+		}
 		return buffer.toString();
 	}
 
