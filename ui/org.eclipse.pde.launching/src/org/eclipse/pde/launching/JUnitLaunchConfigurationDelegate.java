@@ -47,6 +47,9 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 	 */
 	private String fWorkspaceLocation;
 
+	/**
+	 * Caches the configuration directory when a launch is started
+	 */
 	protected File fConfigDir = null;
 
 	// used to generate the dev classpath entries
@@ -393,6 +396,7 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 	 */
 	protected void preLaunchCheck(ILaunchConfiguration configuration, ILaunch launch, IProgressMonitor monitor) throws CoreException {
 		fWorkspaceLocation = null;
+		fConfigDir = null;
 		fModels = BundleLauncherHelper.getMergedBundleMap(configuration, false);
 		fAllBundles = new HashMap(fModels.size());
 		Iterator iter = fModels.keySet().iterator();
