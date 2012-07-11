@@ -38,10 +38,7 @@ public class QuickFixProcessor implements IQuickFixProcessor {
 			switch (id) {
 				case IProblem.ForbiddenReference :
 					handleAccessRestrictionProblem(context, locations[i], results);
-				case IProblem.ImportNotFound : // fall through
-				case IProblem.UndefinedName : // fall through
-				case IProblem.UndefinedType : // fall through
-				case IProblem.UnresolvedVariable :
+				case IProblem.ImportNotFound :
 					handleImportNotFound(context, locations[i], results);
 
 			}
@@ -59,16 +56,6 @@ public class QuickFixProcessor implements IQuickFixProcessor {
 			referencedElement = ((Type) node).resolveBinding();
 		} else if (node instanceof Name) {
 			referencedElement = ((Name) node).resolveBinding();
-		} else if (node instanceof MethodInvocation) {
-			IMethodBinding tempMethod = ((MethodInvocation) node).resolveMethodBinding();
-			if (tempMethod != null) {
-				referencedElement = tempMethod.getDeclaringClass();
-			}
-		} else if (node instanceof FieldAccess) {
-			IVariableBinding tempVariable = ((FieldAccess) node).resolveFieldBinding();
-			if (tempVariable != null) {
-				referencedElement = tempVariable.getDeclaringClass();
-			}
 		}
 		if (referencedElement != null) {
 			// get the project that contains the reference element
@@ -152,24 +139,7 @@ public class QuickFixProcessor implements IQuickFixProcessor {
 				}
 			}
 			if (!supplierImported) {
-				// add import-package, if possible
-				boolean proposeRequireBundle = false;
-
-				ImportPackageSpecification[] importPackages = bd.getImportPackages();
-				for (int i = 0; i < importPackages.length; i++) {
-					if (desc.getName().equals(importPackages[i].getName())) {
-						// already imported, try require-bundle
-						proposeRequireBundle = true;
-						break;
-					}
-				}
-
-				Object proposal = null;
-				if (proposeRequireBundle) {
-					proposal = JavaResolutionFactory.createRequireBundleProposal(currentProject, desc, JavaResolutionFactory.TYPE_JAVA_COMPLETION, 16);
-				} else {
-					proposal = JavaResolutionFactory.createImportPackageProposal(currentProject, desc, JavaResolutionFactory.TYPE_JAVA_COMPLETION, 16);
-				}
+				Object proposal = JavaResolutionFactory.createRequireBundleProposal(currentProject, desc, JavaResolutionFactory.TYPE_JAVA_COMPLETION, 16);
 				if (proposal != null)
 					results.add(proposal);
 			}
@@ -189,13 +159,8 @@ public class QuickFixProcessor implements IQuickFixProcessor {
 			if (node == null) {
 				if (selectedNode instanceof SimpleName) {
 					ITypeBinding typeBinding = ((SimpleName) selectedNode).resolveTypeBinding();
-					if (typeBinding != null) {
-						className = typeBinding.getBinaryName();
-						packageName = typeBinding.getPackage().getName();
-					}
-					if (className == null) { // fallback if the type cannot be resolved
-						className = ((SimpleName) selectedNode).getIdentifier();
-					}
+					className = typeBinding.getBinaryName();
+					packageName = typeBinding.getPackage().getName();
 				}
 			} else if (node instanceof ImportDeclaration) {
 				// Find import declaration which is the problem
@@ -207,7 +172,7 @@ public class QuickFixProcessor implements IQuickFixProcessor {
 				result.add(JavaResolutionFactory.createSearchRepositoriesProposal(packageName));
 			}
 
-			if (className != null) {
+			if (className != null && packageName != null) {
 				IProject project = cu.getJavaElement().getJavaProject().getProject();
 				// only try to find proposals on Plug-in Projects
 				if (!WorkspaceModelManager.isPluginProject(project))
@@ -226,7 +191,7 @@ public class QuickFixProcessor implements IQuickFixProcessor {
 	}
 
 	/*
-	 * Custom AbstractClassResolutionCollector which will only add one IJavaCompletionProposal for adding an Import-Package or Export-Package entry
+	 * Custom AbstractClassResolutionCollector which will only add one IJavaCompletionProposal for adding an Import-Package entry
 	 */
 	private AbstractClassResolutionCollector createCollector(final Collection result) {
 		return new AbstractClassResolutionCollector() {
@@ -241,16 +206,7 @@ public class QuickFixProcessor implements IQuickFixProcessor {
 				}
 			}
 
-			public Object addExportPackageResolutionModification(IPackageFragment aPackage) {
-				Object proposal = super.addExportPackageResolutionModification(aPackage);
-				if (proposal != null) {
-					result.add(proposal);
-					isDone = true;
-				}
-				return proposal;
-			}
-
-			// we want to finish after we add the first Import- or Export-Package Change
+			// we want to finish after we add the first Import-Package Change
 			public boolean isDone() {
 				return isDone;
 			}
@@ -273,10 +229,7 @@ public class QuickFixProcessor implements IQuickFixProcessor {
 	public boolean hasCorrections(ICompilationUnit unit, int problemId) {
 		switch (problemId) {
 			case IProblem.ForbiddenReference :
-			case IProblem.UndefinedName : // fall through
-			case IProblem.ImportNotFound : // fall through
-			case IProblem.UndefinedType :
-			case IProblem.UnresolvedVariable :
+			case IProblem.ImportNotFound :
 				IJavaElement parent = unit.getParent();
 				if (parent != null) {
 					IJavaProject project = parent.getJavaProject();
