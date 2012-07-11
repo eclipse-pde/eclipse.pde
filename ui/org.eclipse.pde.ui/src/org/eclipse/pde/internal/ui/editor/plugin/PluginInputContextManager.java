@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.editor.plugin;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.ISharedExtensionsModel;
 import org.eclipse.pde.internal.core.*;
@@ -46,8 +47,13 @@ public class PluginInputContextManager extends InputContextManager {
 	}
 
 	protected void structureChanged(IFile file, boolean added) {
-		if (added && ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR.equalsIgnoreCase(file.getName()))
-			monitorFile(file);
+		// If a plugin.xml file has been added to the project the editor should update
+		if (added && ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR.equalsIgnoreCase(file.getName())) {
+			IProject project = getCommonProject();
+			if (project == null || project.equals(file.getProject())) {
+				monitorFile(file);
+			}
+		}
 		super.structureChanged(file, added);
 	}
 
