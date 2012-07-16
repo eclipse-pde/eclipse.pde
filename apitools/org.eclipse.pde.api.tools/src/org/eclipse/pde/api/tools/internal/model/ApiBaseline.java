@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
+ * Copyright (c) 2007, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,9 +25,9 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
-import java.util.Map.Entry;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -53,6 +53,7 @@ import org.eclipse.osgi.service.resolver.ResolverError;
 import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.osgi.service.resolver.StateHelper;
 import org.eclipse.osgi.service.resolver.StateObjectFactory;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.AnyValue;
 import org.eclipse.pde.api.tools.internal.ApiBaselineManager;
 import org.eclipse.pde.api.tools.internal.CoreMessages;
@@ -420,11 +421,11 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 					}
 				} else {
 					// VM is not strictly compatible with any EE
-					error = new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, CoreMessages.ApiBaseline_3);
+					error = new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, NLS.bind(CoreMessages.ApiBaseline_3, bestFit));
 				}
 			} else {
 				// no VMs match any required EE
-				error = new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, CoreMessages.ApiBaseline_3);
+				error = new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, CoreMessages.ApiBaseline_6);
 			}
 			if (error == null) {
 				// build status for unbound required EE's
