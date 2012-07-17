@@ -38,12 +38,11 @@ public interface IBundle {
 	String getHeader(String key);
 
 	/**
-	 * Returns a {@link IManifestHeader} object for the given header key.  Will return an existing object if this model
-	 * has created it before.  Otherwise a new object will be created.  The returned object is not guaranteed to be
-	 * a specific implementation of IManifestHeader.
+	 * Returns a {@link IManifestHeader} object for the given header key or <code>null</code> if the header
+	 * does not exist.  Will return an existing object if this model has created it before.
 	 * 
 	 * @param key name of the header
-	 * @return the manifest header object this model has for the given key or a new object
+	 * @return the manifest header object this model has for the given key or <code>null</code>
 	 */
 	IManifestHeader getManifestHeader(String key);
 

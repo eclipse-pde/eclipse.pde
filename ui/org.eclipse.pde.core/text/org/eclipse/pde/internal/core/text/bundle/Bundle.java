@@ -27,11 +27,15 @@ public class Bundle implements IBundle {
 		fModel = model;
 	}
 
-	public void clearHeaders() {
-		fDocumentHeaders.clear();
-	}
-
+	/**
+	 * Loads the given map as the set of headers this model represents. Any previously set
+	 * headers will be cleared.  The provided map must be string header keys to string
+	 * values.
+	 * 
+	 * @param headers the headers to load in this model
+	 */
 	public void load(Map headers) {
+		fDocumentHeaders.clear();
 		Iterator iter = headers.keySet().iterator();
 		while (iter.hasNext()) {
 			String key = iter.next().toString();
@@ -104,15 +108,24 @@ public class Bundle implements IBundle {
 	 * @see org.eclipse.pde.internal.core.ibundle.IBundle#setHeader(java.lang.String, java.lang.String)
 	 */
 	public void setHeader(String key, String value) {
-		IManifestHeader header = (ManifestHeader) fDocumentHeaders.get(key);
-		String old = null;
-		if (header == null) {
-			header = getModel().getFactory().createHeader(key, value);
-			fDocumentHeaders.put(key, header);
-			fModel.fireModelObjectChanged(header, key, old, value);
+		if (value == null) {
+			// Do a remove
+			IManifestHeader header = (IManifestHeader) fDocumentHeaders.remove(key);
+			if (header != null) {
+				fModel.fireModelObjectChanged(header, key, header.getValue(), null);
+			}
 		} else {
-			old = header.getValue();
-			header.setValue(value);
+			// Edit an existing header value or create a new header object
+			IManifestHeader header = (ManifestHeader) fDocumentHeaders.get(key);
+			if (header == null) {
+				header = getModel().getFactory().createHeader(key, value);
+				fDocumentHeaders.put(key, header);
+				fModel.fireModelObjectChanged(header, key, null, value);
+			} else {
+				String old = header.getValue();
+				header.setValue(value);
+				fModel.fireModelObjectChanged(header, key, old, value);
+			}
 		}
 	}
 
@@ -124,6 +137,9 @@ public class Bundle implements IBundle {
 		return (header != null) ? header.getValue() : null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.ibundle.IBundle#getManifestHeader(java.lang.String)
+	 */
 	public IManifestHeader getManifestHeader(String key) {
 		return (ManifestHeader) fDocumentHeaders.get(key);
 	}
@@ -136,11 +152,17 @@ public class Bundle implements IBundle {
 		return fModel;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.ibundle.IBundle#getLocalization()
+	 */
 	public String getLocalization() {
 		String localization = getHeader(Constants.BUNDLE_LOCALIZATION);
 		return localization != null ? localization : Constants.BUNDLE_LOCALIZATION_DEFAULT_BASENAME;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.ibundle.IBundle#renameHeader(java.lang.String, java.lang.String)
+	 */
 	public void renameHeader(String key, String newKey) {
 		ManifestHeader header = (ManifestHeader) getManifestHeader(key);
 		if (header != null) {

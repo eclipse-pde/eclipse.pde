@@ -25,15 +25,24 @@ public class Bundle extends BundleObject implements IBundle {
 	 * @see org.eclipse.pde.internal.core.ibundle.IBundle#setHeader(java.lang.String, java.lang.String)
 	 */
 	public void setHeader(String key, String value) {
-		IManifestHeader header = (ManifestHeader) fDocumentHeaders.get(key);
-		String old = null;
-		if (header == null) {
-			header = getModel().getFactory().createHeader(key, value);
-			fDocumentHeaders.put(key, header);
-			getModel().fireModelObjectChanged(header, key, old, value);
+		if (value == null) {
+			// Do a remove
+			IManifestHeader header = (IManifestHeader) fDocumentHeaders.remove(key);
+			if (header != null) {
+				getModel().fireModelObjectChanged(header, key, header.getValue(), null);
+			}
 		} else {
-			old = header.getValue();
-			header.setValue(value);
+			// Edit an existing header value or create a new header object
+			IManifestHeader header = (ManifestHeader) fDocumentHeaders.get(key);
+			if (header == null) {
+				header = getModel().getFactory().createHeader(key, value);
+				fDocumentHeaders.put(key, header);
+				getModel().fireModelObjectChanged(header, key, null, value);
+			} else {
+				String old = header.getValue();
+				header.setValue(value);
+				getModel().fireModelObjectChanged(header, key, old, value);
+			}
 		}
 	}
 
@@ -46,11 +55,14 @@ public class Bundle extends BundleObject implements IBundle {
 	}
 
 	/**
-	 * Load a map of String key value pairs into the list of known manifest headers.
-	 * Empty value strings will create empty headers.  Null values will be ignored.
+	 * Load a map of String key value pairs into the list of known manifest headers.  Any 
+	 * headers previously loaded will be cleared. Empty value strings will create empty headers.
+	 * Null values will be ignored.
+	 * 
 	 * @param headers map<String, String> of manifest key and values
 	 */
 	public void load(Map headers) {
+		fDocumentHeaders.clear();
 		Iterator iter = headers.keySet().iterator();
 		while (iter.hasNext()) {
 			String key = iter.next().toString();
@@ -63,11 +75,17 @@ public class Bundle extends BundleObject implements IBundle {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.ibundle.IBundle#getLocalization()
+	 */
 	public String getLocalization() {
 		String localization = getHeader(Constants.BUNDLE_LOCALIZATION);
 		return localization != null ? localization : Constants.BUNDLE_LOCALIZATION_DEFAULT_BASENAME;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.ibundle.IBundle#renameHeader(java.lang.String, java.lang.String)
+	 */
 	public void renameHeader(String key, String newKey) {
 		ManifestHeader header = (ManifestHeader) getManifestHeader(key);
 		if (header != null) {
@@ -81,10 +99,7 @@ public class Bundle extends BundleObject implements IBundle {
 	 * @see org.eclipse.pde.internal.core.ibundle.IBundle#getManifestHeader(java.lang.String)
 	 */
 	public IManifestHeader getManifestHeader(String key) {
-		IManifestHeader header = getModel().getFactory().createHeader(key, getHeader(key));
-		header.update(); // Format the headers, unknown if this step is necessary for new header objects
-		fDocumentHeaders.put(key, header);
-		return header;
+		return (ManifestHeader) fDocumentHeaders.get(key);
 	}
 
 	/**
