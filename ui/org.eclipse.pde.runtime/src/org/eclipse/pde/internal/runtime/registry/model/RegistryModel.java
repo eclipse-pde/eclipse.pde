@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -270,10 +270,12 @@ public class RegistryModel {
 	public ServiceRegistration[] getServices(String[] classes) {
 		List result = new ArrayList();
 
-		for (Iterator i = services.values().iterator(); i.hasNext();) {
-			ServiceRegistration sr = (ServiceRegistration) i.next();
-			if (Arrays.equals(classes, sr.getName().getClasses()))
-				result.add(sr);
+		synchronized (services) {
+			for (Iterator i = services.values().iterator(); i.hasNext();) {
+				ServiceRegistration sr = (ServiceRegistration) i.next();
+				if (Arrays.equals(classes, sr.getName().getClasses()))
+					result.add(sr);
+			}
 		}
 
 		return (ServiceRegistration[]) result.toArray(new ServiceRegistration[result.size()]);
@@ -305,12 +307,14 @@ public class RegistryModel {
 	}
 
 	public Bundle getBundle(String symbolicName, String versionRange) {
-		for (Iterator i = bundles.values().iterator(); i.hasNext();) {
-			Bundle bundle = (Bundle) i.next();
+		synchronized (bundles) {
+			for (Iterator i = bundles.values().iterator(); i.hasNext();) {
+				Bundle bundle = (Bundle) i.next();
 
-			if (bundle.getSymbolicName().equals(symbolicName)) {
-				if (versionMatches(bundle.getVersion(), versionRange))
-					return bundle;
+				if (bundle.getSymbolicName().equals(symbolicName)) {
+					if (versionMatches(bundle.getVersion(), versionRange))
+						return bundle;
+				}
 			}
 		}
 
