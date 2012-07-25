@@ -319,15 +319,17 @@ public class BuildTimeSite /*extends Site*/implements IPDEBuildConstants, IXMLCo
 		return null;
 	}
 
-	private void resolveFeatureReferences() throws CoreException {
+	private void resolveFeatureReferences() {
 		FeatureReference[] features = getFeatureReferences();
 		for (int i = 0; i < features.length; i++) {
 			try {
 				//getting the feature for the first time will result in it being added to featureCache
 				features[i].getFeature();
 			} catch (CoreException e) {
+				// just log the exception, but do not re-throw it - let other features to be resolved 
 				String message = NLS.bind(Messages.exception_featureParse, features[i].getURL());
-				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, message, null));
+				IStatus status = new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_FEATURE_MISSING, message, e);
+				BundleHelper.getDefault().getLog().log(status);
 			}
 		}
 		featuresResolved = true;
