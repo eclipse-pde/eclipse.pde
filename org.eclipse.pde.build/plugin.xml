@@ -115,20 +115,6 @@
       </extraClasspathEntry>
    </extension>
    <extension
-         id="buildtimesite"
-         point="org.eclipse.update.core.siteTypes">
-      <site-factory
-            class="org.eclipse.pde.internal.build.site.BuildTimeSiteFactory">
-      </site-factory>
-   </extension>
-   <extension
-         id="BuildTimeFeatureFactory"
-         point="org.eclipse.update.core.featureTypes">
-      <feature-factory
-            class="org.eclipse.pde.internal.build.site.BuildTimeFeatureFactory">
-      </feature-factory>
-   </extension>
-   <extension
          id="Build"
          point="org.eclipse.core.runtime.applications">
       <application>
