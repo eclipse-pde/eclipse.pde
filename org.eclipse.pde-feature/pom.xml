@@ -21,7 +21,7 @@
   </parent>
   <groupId>eclipse.pde</groupId>
   <artifactId>org.eclipse.pde</artifactId>
-  <version>3.8.0-SNAPSHOT</version>
+  <version>3.9.0-SNAPSHOT</version>
   <packaging>eclipse-feature</packaging>
 
   <build>
