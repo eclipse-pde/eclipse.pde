@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 IBM Corporation and others.
+ * Copyright (c) 2011, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,7 +39,7 @@ public class TracingComponentColumnEditingSupport extends EditingSupport {
 		switch (this.columnIndex) {
 			case TracingConstants.VALUE_COLUMN_INDEX :
 				this.textEditor = new TextCellEditor((Composite) viewer.getControl(), SWT.NONE);
-				this.comboEditor = new ComboBoxCellEditor((Composite) viewer.getControl(), new String[] {String.valueOf(true), String.valueOf(false)}, SWT.READ_ONLY | SWT.SIMPLE);
+				this.comboEditor = new ComboBoxCellEditor((Composite) viewer.getControl(), new String[] {Messages.TracingComponentColumnEditingSupport_true, Messages.TracingComponentColumnEditingSupport_false}, SWT.READ_ONLY | SWT.SIMPLE);
 				break;
 			default :
 				// do nothing - no other columns provide editing support
