@@ -11,8 +11,10 @@
 package org.eclipse.ui.trace.internal.providers;
 
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.ui.trace.internal.Messages;
 import org.eclipse.ui.trace.internal.datamodel.*;
 import org.eclipse.ui.trace.internal.utils.TracingConstants;
+import org.eclipse.ui.trace.internal.utils.TracingUtils;
 
 /**
  * A label provider created specifically for the view filter. This label provider is not used to populate the labels on
@@ -61,9 +63,15 @@ public class TracingComponentLabelProvider extends LabelProvider {
 				// if the element does not have a boolean value then it is modifiable - the value is the option-path
 				// value.
 				if (element instanceof TracingComponentDebugOption) {
-//					if (!TracingUtils.isValueBoolean((TracingComponentDebugOption) element)) {
 					result = ((TracingComponentDebugOption) element).getOptionPathValue();
-//					}
+					// For boolean values we support NL'd strings
+					if (TracingUtils.isValueBoolean(result)) {
+						if (Boolean.TRUE.toString().equals(result)) {
+							result = Messages.TracingComponentColumnEditingSupport_true;
+						} else {
+							result = Messages.TracingComponentColumnEditingSupport_false;
+						}
+					}
 				} else if (element instanceof String) {
 					result = (String) element;
 				}

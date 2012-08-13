@@ -96,5 +96,9 @@ public class Messages extends NLS {
 	static {
 		NLS.initializeMessages(Messages.BUNDLE_NAME, Messages.class);
 	}
+	public static String TracingComponentColumnEditingSupport_false;
+
+	public static String TracingComponentColumnEditingSupport_true;
+
 	public static String TracingPreferencePage_applicationLaunchedInDebugModeWarning;
 }
