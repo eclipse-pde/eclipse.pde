@@ -20,7 +20,6 @@ public class CoreMessages extends NLS {
 	public static String ApiBaseline_0;
 	public static String ApiBaseline_1;
 	public static String ApiBaseline_2;
-	public static String ApiBaseline_3;
 	public static String ApiBaseline_4;
 	public static String ApiBaseline_5;
 	public static String ApiBaseline_6;

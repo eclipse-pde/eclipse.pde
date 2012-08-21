@@ -36,9 +36,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.IVMInstall;
-import org.eclipse.jdt.launching.IVMInstall2;
 import org.eclipse.jdt.launching.IVMInstallChangedListener;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.PropertyChangeEvent;
@@ -53,7 +51,6 @@ import org.eclipse.osgi.service.resolver.ResolverError;
 import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.osgi.service.resolver.StateHelper;
 import org.eclipse.osgi.service.resolver.StateObjectFactory;
-import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.AnyValue;
 import org.eclipse.pde.api.tools.internal.ApiBaselineManager;
 import org.eclipse.pde.api.tools.internal.CoreMessages;
@@ -391,37 +388,24 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 					}
 				}
 				if (systemEE == null) {
-					// a best fit, but not strictly compatible with any environment (e.g.
-					// a 1.7 VM for which there is no profile yet). This is a bit of a hack
-					// until an OSGi profile exists for 1.7.
-					if (bestFit instanceof IVMInstall2) {
-			            String javaVersion = ((IVMInstall2)bestFit).getJavaVersion();
-			            if (javaVersion != null) {
-			            	if (javaVersion.startsWith(JavaCore.VERSION_1_7)) {
-			            		// set EE to 1.6 when 1.7 is detected
-			            		systemEE = "JavaSE-1.6"; //$NON-NLS-1$
-			            	}
-			            }
-					}
+					//https://bugs.eclipse.org/bugs/show_bug.cgi?id=383261
+					//we don't need to compute anything here, in all cases if we fail to find a compatible EE, fall back to highest known.
+					//TODO this should be updated for each new EE that gets added
+					systemEE = "JavaSE-1.7"; //$NON-NLS-1$
 				}
-				if (systemEE != null) {
-					// only update if different from current or missing VM binding
-					if (!systemEE.equals(getExecutionEnvironment()) || fVMBinding == null) {
-						try {
-							File file = Util.createEEFile(bestFit, systemEE);
-							JavaRuntime.addVMInstallChangedListener(this);
-							fVMBinding = bestFit;
-							ExecutionEnvironmentDescription ee = new ExecutionEnvironmentDescription(file);
-							initialize(ee);
-						} catch (CoreException e) {
-							error = new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, CoreMessages.ApiBaseline_2, e);
-						} catch (IOException e) {
-							error = new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, CoreMessages.ApiBaseline_2, e);
-						}
+				// only update if different from current or missing VM binding
+				if (!systemEE.equals(getExecutionEnvironment()) || fVMBinding == null) {
+					try {
+						File file = Util.createEEFile(bestFit, systemEE);
+						JavaRuntime.addVMInstallChangedListener(this);
+						fVMBinding = bestFit;
+						ExecutionEnvironmentDescription ee = new ExecutionEnvironmentDescription(file);
+						initialize(ee);
+					} catch (CoreException e) {
+						error = new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, CoreMessages.ApiBaseline_2, e);
+					} catch (IOException e) {
+						error = new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, CoreMessages.ApiBaseline_2, e);
 					}
-				} else {
-					// VM is not strictly compatible with any EE
-					error = new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, NLS.bind(CoreMessages.ApiBaseline_3, bestFit));
 				}
 			} else {
 				// no VMs match any required EE
@@ -452,10 +436,10 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	}
 
 	/**
-	 * Returns true if the {@link IApiBaseline} has infos loaded (components) false otherwise.
-	 * This is a handle only method that will not load infos.
+	 * Returns true if the {@link IApiBaseline} has its information loaded (components) false otherwise.
+	 * This is a handle only method that will not load information from disk.
 	 * 
-	 * @return true if the {@link IApiBaseline} has infos loaded (components) false otherwise.
+	 * @return true if the {@link IApiBaseline} has its information loaded (components) false otherwise.
 	 */
 	public boolean peekInfos() {
 		return fComponentsById != null;
@@ -643,7 +627,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	}
 	
 	/**
-	 * Loads the infos from the *.profile file the first time the baseline is accessed
+	 * Loads the information from the *.profile file the first time the baseline is accessed
 	 */
 	private void loadBaselineInfos() {
 		if(fComponentsById != null) {
@@ -760,7 +744,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	}
 
 	/**
-	 * Clears all element infos from the cache for this baseline
+	 * Clears all element information from the cache for this baseline
 	 * @since 1.1
 	 */
 	void clearCachedElements() {
