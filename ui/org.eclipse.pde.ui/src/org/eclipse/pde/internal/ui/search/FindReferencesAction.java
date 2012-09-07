@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,15 +17,29 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.search.ui.ISearchQuery;
 import org.osgi.framework.Version;
 
+/**
+ * A find references action to find references to a given object. The object should 
+ * be an instance of {@link IPlugin}, {@link IPluginExtensionPoint}, {@link IPluginImport}, or
+ * {@link IPluginExtension}.  The pluginID will be used to qualify an extension point ID.  If
+ * <code>null</code> is passed, the extension point object will be queried for the plug-in id.
+ * If no id is found, the search scope will prefix the extension point ID with <code>*</code>
+ * 
+ **/
 public class FindReferencesAction extends BaseSearchAction {
 
 	private Object fSelectedObject;
 	private String fPluginID;
 
-	public FindReferencesAction(Object object) {
-		this(object, null);
-	}
-
+	/**
+	 * Creates a new find references action to find references to the given object. The object should 
+	 * be an instance of {@link IPlugin}, {@link IPluginExtensionPoint}, {@link IPluginImport}, or
+	 * {@link IPluginExtension}.  The pluginID will be used to qualify an extension point ID.  If
+	 * <code>null</code> is passed, the extension point object will be queried for the plug-in id.
+	 * If no id is found, the search scope will prefix the extension point ID with <code>*</code>
+	 * 
+	 * @param object the object to search for references to
+	 * @param pluginID plug-in id to prefix extension point id's with
+	 */
 	public FindReferencesAction(Object object, String pluginID) {
 		super(PDEUIMessages.SearchAction_references);
 		fSelectedObject = object;

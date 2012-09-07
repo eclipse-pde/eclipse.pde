@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2011 IBM Corporation and others.
+ *  Copyright (c) 2005, 2012 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -119,8 +119,10 @@ public class PluginSearchActionGroup extends ActionGroup {
 		} else if (object instanceof ImportObject) {
 			object = ((ImportObject) object).getImport();
 		}
-		if (object instanceof IPluginExtensionPoint || object instanceof IPluginImport || (object instanceof IPlugin) || (object instanceof IPluginExtension))
-			menu.add(new FindReferencesAction(object));
+		if (object instanceof IPluginExtensionPoint || object instanceof IPluginImport || (object instanceof IPlugin) || (object instanceof IPluginExtension)) {
+			String basePointID = fModel instanceof IPluginModelBase ? ((IPluginModelBase) fModel).getPluginBase().getId() : null;
+			menu.add(new FindReferencesAction(object, basePointID));
+		}
 	}
 
 	private void addDependencyExtentAction(Object object, IMenuManager menu) {
