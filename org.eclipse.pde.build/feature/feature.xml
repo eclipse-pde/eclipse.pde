@@ -4,7 +4,6 @@
       label="%featureName"
       version="3.0.0"
       provider-name="%providerName"
-      image="eclipse_update_120.jpg"
       primary="true"
       application="org.eclipse.ant.core.antRunner">
 
