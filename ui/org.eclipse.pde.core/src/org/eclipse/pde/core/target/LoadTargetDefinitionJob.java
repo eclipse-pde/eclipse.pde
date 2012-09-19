@@ -329,7 +329,7 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 		ITargetLocation[] containers = fTarget.getTargetLocations();
 		boolean profile = false;
 		if (containers != null && containers.length > 0) {
-			profile = containers[0] instanceof ProfileBundleContainer;
+			profile = containers[0] instanceof ProfileBundleContainer || containers[0] instanceof FeatureBundleContainer;
 		}
 		pref.setValue(ICoreConstants.TARGET_PLATFORM_REALIZATION, profile);
 	}
