@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -295,8 +295,18 @@ public class PluginContentPage extends ContentPage {
 	public void setVisible(boolean visible) {
 		if (visible) {
 			fMainPage.updateData();
-			fGenerateActivator.setSelection(!fData.isSimple());
+
+			boolean wasGenActivatorEnabled = fGenerateActivator.isEnabled();
 			fGenerateActivator.setEnabled(!fData.isSimple());
+			// if fGenerateActivator is disabled, set selection to false
+			if (!fGenerateActivator.isEnabled()) {
+				fGenerateActivator.setSelection(false);
+			}
+			// if the fGenerateActivator was disabled and is now enabled, then set the selection to true
+			else if (!wasGenActivatorEnabled) {
+				fGenerateActivator.setSelection(true);
+			}
+
 			fClassLabel.setEnabled(!fData.isSimple() && fGenerateActivator.getSelection());
 			fClassText.setEnabled(!fData.isSimple() && fGenerateActivator.getSelection());
 			boolean wasUIPluginEnabled = fUIPlugin.isEnabled();
@@ -368,7 +378,9 @@ public class PluginContentPage extends ContentPage {
 	 */
 	public void saveSettings(IDialogSettings settings) {
 		super.saveSettings(settings);
-		settings.put(S_GENERATE_ACTIVATOR, !fGenerateActivator.getSelection());
+		if (fGenerateActivator.isEnabled()) {
+			settings.put(S_GENERATE_ACTIVATOR, !fGenerateActivator.getSelection());
+		}
 		if (fUIPlugin.isEnabled()) {
 			settings.put(S_UI_PLUGIN, !fUIPlugin.getSelection());
 		}
