@@ -1356,6 +1356,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 				localmonitor.subTask(BuilderMessages.BaseApiAnalyzer_processing_deltas);
 				for (Iterator iterator = allDeltas.iterator(); iterator.hasNext();) {
 					processDelta((IDelta) iterator.next(), reference, component);
+					Util.updateMonitor(localmonitor);
 				}
 				Util.updateMonitor(localmonitor, 1);
 				if (!fPendingDeltaInfos.isEmpty()) {
@@ -1417,6 +1418,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 					localmonitor.subTask(BuilderMessages.BaseApiAnalyzer_processing_deltas);
 					for (Iterator iterator = allDeltas.iterator(); iterator.hasNext();) {
 						processDelta((IDelta) iterator.next(), reference, component);
+						Util.updateMonitor(localmonitor);
 					}
 					Util.updateMonitor(localmonitor, 1);
 					localmonitor.subTask(BuilderMessages.BaseApiAnalyzer_checking_since_tags);
