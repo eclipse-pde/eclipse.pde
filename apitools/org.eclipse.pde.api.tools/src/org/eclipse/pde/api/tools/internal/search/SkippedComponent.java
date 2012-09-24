@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -142,7 +142,7 @@ public class SkippedComponent implements IApiElement{
 	private String[] resolveRootErrors(ResolverError[] errors) {
 		TreeSet collector = new TreeSet(new Comparator() {
 			public int compare(Object o1, Object o2) {
-				return ((String)o1).compareTo(o2);
+				return ((String)o1).compareTo((String)o2);
 			}
 		});
 		ResolverError error = null;
