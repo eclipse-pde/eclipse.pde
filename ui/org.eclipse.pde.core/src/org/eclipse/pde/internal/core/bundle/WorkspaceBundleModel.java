@@ -160,7 +160,7 @@ public class WorkspaceBundleModel extends BundleModel implements IEditableModel 
 
 	public void save(PrintWriter writer) {
 		IBundle bundle = getBundle();
-		Map headers = ((Bundle) bundle).getHeaders();
+		Map<String, String> headers = ((Bundle) bundle).getHeaders();
 		boolean addManifestVersion = headers.get(MANIFEST_VERSION) == null;
 		if (addManifestVersion)
 			headers.put(MANIFEST_VERSION, "1.0"); //$NON-NLS-1$

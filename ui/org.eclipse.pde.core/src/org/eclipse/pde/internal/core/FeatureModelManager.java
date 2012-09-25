@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
+import org.eclipse.pde.internal.core.FeatureTable.Idver;
+
 import java.util.*;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.pde.core.*;
@@ -48,11 +50,11 @@ public class FeatureModelManager {
 	/**
 	 * List of IFeatureModelListener
 	 */
-	private ArrayList fListeners;
+	private ArrayList<IFeatureModelListener> fListeners;
 
 	public FeatureModelManager() {
 		fWorkspaceManager = new WorkspaceFeatureModelManager();
-		fListeners = new ArrayList();
+		fListeners = new ArrayList<IFeatureModelListener>();
 	}
 
 	public synchronized void shutdown() {
@@ -101,13 +103,13 @@ public class FeatureModelManager {
 	public IFeatureModel[] getModels() {
 		init();
 		IFeatureModel[] allModels = fActiveModels.getAll();
-		ArrayList valid = new ArrayList(allModels.length);
+		ArrayList<IFeatureModel> valid = new ArrayList<IFeatureModel>(allModels.length);
 		for (int i = 0; i < allModels.length; i++) {
 			if (allModels[i].isValid()) {
 				valid.add(allModels[i]);
 			}
 		}
-		return (IFeatureModel[]) valid.toArray(new IFeatureModel[valid.size()]);
+		return valid.toArray(new IFeatureModel[valid.size()]);
 	}
 
 	/**
@@ -191,13 +193,13 @@ public class FeatureModelManager {
 	public IFeatureModel[] findFeatureModels(String id) {
 		init();
 		IFeatureModel[] models = fActiveModels.get(id);
-		ArrayList valid = new ArrayList(models.length);
+		ArrayList<IFeatureModel> valid = new ArrayList<IFeatureModel>(models.length);
 		for (int i = 0; i < models.length; i++) {
 			if (models[i].isValid()) {
 				valid.add(models[i]);
 			}
 		}
-		return (IFeatureModel[]) valid.toArray(new IFeatureModel[valid.size()]);
+		return valid.toArray(new IFeatureModel[valid.size()]);
 	}
 
 	public IFeatureModel findFeatureModel(String id) {
@@ -235,7 +237,7 @@ public class FeatureModelManager {
 		 * Set of Idvers for which there might be necessary to move a model
 		 * between active models and inactive models
 		 */
-		Set affectedIdVers = null;
+		Set<Idver> affectedIdVers = null;
 		if ((e.getEventTypes() & IModelProviderEvent.MODELS_REMOVED) != 0) {
 			IModel[] removed = e.getRemovedModels();
 			for (int i = 0; i < removed.length; i++) {
@@ -246,7 +248,7 @@ public class FeatureModelManager {
 				if (idver != null) {
 					// may need to activate another model
 					if (affectedIdVers == null)
-						affectedIdVers = new HashSet();
+						affectedIdVers = new HashSet<Idver>();
 					affectedIdVers.add(idver);
 					delta.add(model, IFeatureModelDelta.REMOVED);
 				} else {
@@ -265,7 +267,7 @@ public class FeatureModelManager {
 					delta.add(model, IFeatureModelDelta.ADDED);
 					// may need to deactivate another model
 					if (affectedIdVers == null)
-						affectedIdVers = new HashSet();
+						affectedIdVers = new HashSet<Idver>();
 					affectedIdVers.add(idver);
 				} else {
 					if (!model.isValid()) {
@@ -288,7 +290,7 @@ public class FeatureModelManager {
 					FeatureTable.Idver idver = fInactiveModels.add(model);
 					// may need to activate this model
 					if (affectedIdVers == null)
-						affectedIdVers = new HashSet();
+						affectedIdVers = new HashSet<Idver>();
 					affectedIdVers.add(idver);
 				}
 			}
@@ -310,7 +312,7 @@ public class FeatureModelManager {
 					// version changed
 					FeatureTable.Idver idver = fActiveModels.add(model);
 					if (affectedIdVers == null)
-						affectedIdVers = new HashSet();
+						affectedIdVers = new HashSet<Idver>();
 					affectedIdVers.add(oldIdver);
 					affectedIdVers.add(idver);
 				}
@@ -346,10 +348,10 @@ public class FeatureModelManager {
 	 * @param delta
 	 * @param affectedIdVers
 	 */
-	private void adjustExternalVisibility(FeatureModelDelta delta, Set affectedIdVers) {
+	private void adjustExternalVisibility(FeatureModelDelta delta, Set<Idver> affectedIdVers) {
 		if (affectedIdVers != null) {
-			for (Iterator it = affectedIdVers.iterator(); it.hasNext();) {
-				FeatureTable.Idver idver = (FeatureTable.Idver) it.next();
+			for (Iterator<Idver> it = affectedIdVers.iterator(); it.hasNext();) {
+				FeatureTable.Idver idver = it.next();
 				IFeatureModel[] affectedModels = fActiveModels.get(idver);
 				if (affectedModels.length > 1) {
 					/*

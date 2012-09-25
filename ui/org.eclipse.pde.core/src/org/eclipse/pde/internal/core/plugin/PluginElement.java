@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.plugin;
 
+import org.eclipse.pde.core.plugin.IPluginAttribute;
+
 import java.io.PrintWriter;
 import java.util.*;
 import org.eclipse.core.runtime.CoreException;
@@ -30,7 +32,7 @@ public class PluginElement extends PluginParent implements IPluginElement {
 
 	protected String fText;
 
-	protected Hashtable fAttributes;
+	protected Hashtable<String, IPluginAttribute> fAttributes;
 
 	private IConfigurationElement fElement = null;
 
@@ -70,7 +72,7 @@ public class PluginElement extends PluginParent implements IPluginElement {
 			IPluginAttribute tatts[] = target.getAttributes();
 			for (int i = 0; i < tatts.length; i++) {
 				IPluginAttribute tatt = tatts[i];
-				IPluginAttribute att = (IPluginAttribute) getAttributeMap().get(tatt.getName());
+				IPluginAttribute att = getAttributeMap().get(tatt.getName());
 				if (att == null || att.equals(tatt) == false)
 					return false;
 			}
@@ -84,13 +86,13 @@ public class PluginElement extends PluginParent implements IPluginElement {
 	}
 
 	public IPluginAttribute getAttribute(String name) {
-		return (IPluginAttribute) getAttributeMap().get(name);
+		return getAttributeMap().get(name);
 	}
 
 	public IPluginAttribute[] getAttributes() {
-		Collection values = getAttributeMap().values();
+		Collection<IPluginAttribute> values = getAttributeMap().values();
 		IPluginAttribute[] result = new IPluginAttribute[values.size()];
-		return (IPluginAttribute[]) values.toArray(result);
+		return values.toArray(result);
 	}
 
 	public int getAttributeCount() {
@@ -132,7 +134,7 @@ public class PluginElement extends PluginParent implements IPluginElement {
 	void load(Node node) {
 		fName = node.getNodeName();
 		if (fAttributes == null)
-			fAttributes = new Hashtable();
+			fAttributes = new Hashtable<String, IPluginAttribute>();
 		NamedNodeMap attributes = node.getAttributes();
 		for (int i = 0; i < attributes.getLength(); i++) {
 			Node attribute = attributes.item(i);
@@ -143,7 +145,7 @@ public class PluginElement extends PluginParent implements IPluginElement {
 		}
 
 		if (fChildren == null)
-			fChildren = new ArrayList();
+			fChildren = new ArrayList<PluginElement>();
 		NodeList children = node.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
@@ -192,7 +194,7 @@ public class PluginElement extends PluginParent implements IPluginElement {
 	public void setElementInfo(ISchemaElement newElementInfo) {
 		fElementInfo = newElementInfo;
 		if (fElementInfo == null) {
-			for (Enumeration atts = getAttributeMap().elements(); atts.hasMoreElements();) {
+			for (Enumeration<IPluginAttribute> atts = getAttributeMap().elements(); atts.hasMoreElements();) {
 				PluginAttribute att = (PluginAttribute) atts.nextElement();
 				att.setAttributeInfo(null);
 			}
@@ -213,8 +215,8 @@ public class PluginElement extends PluginParent implements IPluginElement {
 		String newIndent = indent + ATTRIBUTE_SHIFT;
 		if (getAttributeMap().isEmpty() == false) {
 			writer.println();
-			for (Iterator iter = getAttributeMap().values().iterator(); iter.hasNext();) {
-				IPluginAttribute attribute = (IPluginAttribute) iter.next();
+			for (Iterator<IPluginAttribute> iter = getAttributeMap().values().iterator(); iter.hasNext();) {
+				IPluginAttribute attribute = iter.next();
 				attribute.write(newIndent, writer);
 				if (iter.hasNext())
 					writer.println();
@@ -233,9 +235,9 @@ public class PluginElement extends PluginParent implements IPluginElement {
 		writer.println(indent + "</" + getName() + ">"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
-	protected Hashtable getAttributeMap() {
+	protected Hashtable<String, IPluginAttribute> getAttributeMap() {
 		if (fAttributes == null) {
-			fAttributes = new Hashtable();
+			fAttributes = new Hashtable<String, IPluginAttribute>();
 			if (fElement != null) {
 				String[] names = fElement.getAttributeNames();
 				for (int i = 0; i < names.length; i++) {
@@ -265,9 +267,9 @@ public class PluginElement extends PluginParent implements IPluginElement {
 		return null;
 	}
 
-	protected ArrayList getChildrenList() {
+	protected ArrayList<PluginElement> getChildrenList() {
 		if (fChildren == null) {
-			fChildren = new ArrayList();
+			fChildren = new ArrayList<PluginElement>();
 			if (fElement != null) {
 				IConfigurationElement[] elements = fElement.getChildren();
 				for (int i = 0; i < elements.length; i++) {

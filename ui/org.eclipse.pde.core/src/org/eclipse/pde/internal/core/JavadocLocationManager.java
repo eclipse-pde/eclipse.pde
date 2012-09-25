@@ -25,7 +25,7 @@ public class JavadocLocationManager {
 
 	public static final String JAVADOC_ID = "org.eclipse.pde.core.javadoc"; //$NON-NLS-1$
 
-	private HashMap fLocations;
+	private HashMap<String, Set<String>> fLocations;
 
 	public String getJavadocLocation(IPluginModelBase model) {
 		try {
@@ -51,10 +51,10 @@ public class JavadocLocationManager {
 			HostSpecification host = desc.getHost();
 			String id = host == null ? desc.getSymbolicName() : host.getName();
 			if (id != null) {
-				Iterator iter = fLocations.keySet().iterator();
+				Iterator<String> iter = fLocations.keySet().iterator();
 				while (iter.hasNext()) {
 					String location = iter.next().toString();
-					Set set = (Set) fLocations.get(location);
+					Set<String> set = fLocations.get(location);
 					if (set.contains(id))
 						return location;
 				}
@@ -66,7 +66,7 @@ public class JavadocLocationManager {
 	private synchronized void initialize() {
 		if (fLocations != null)
 			return;
-		fLocations = new HashMap();
+		fLocations = new HashMap<String, Set<String>>();
 
 		IExtension[] extensions = PDECore.getDefault().getExtensionsRegistry().findExtensions(JAVADOC_ID, false);
 		for (int i = 0; i < extensions.length; i++) {
@@ -126,9 +126,9 @@ public class JavadocLocationManager {
 				String id = plugins[i].getAttribute("id"); //$NON-NLS-1$
 				if (id == null)
 					continue;
-				Set set = (Set) fLocations.get(path);
+				Set<String> set = fLocations.get(path);
 				if (set == null) {
-					set = new HashSet();
+					set = new HashSet<String>();
 					fLocations.put(path, set);
 				}
 				set.add(id);

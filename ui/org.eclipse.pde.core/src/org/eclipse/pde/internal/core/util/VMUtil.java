@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.util;
 
+import org.eclipse.jdt.launching.IVMInstall;
+
 import java.util.ArrayList;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.launching.*;
@@ -23,7 +25,7 @@ import org.eclipse.pde.internal.core.PDECoreMessages;
 public class VMUtil {
 
 	public static IVMInstall[] getAllVMInstances() {
-		ArrayList res = new ArrayList();
+		ArrayList<IVMInstall> res = new ArrayList<IVMInstall>();
 		IVMInstallType[] types = JavaRuntime.getVMInstallTypes();
 		for (int i = 0; i < types.length; i++) {
 			IVMInstall[] installs = types[i].getVMInstalls();
@@ -31,7 +33,7 @@ public class VMUtil {
 				res.add(installs[k]);
 			}
 		}
-		return (IVMInstall[]) res.toArray(new IVMInstall[res.size()]);
+		return res.toArray(new IVMInstall[res.size()]);
 	}
 
 	public static String[] getVMInstallNames() {

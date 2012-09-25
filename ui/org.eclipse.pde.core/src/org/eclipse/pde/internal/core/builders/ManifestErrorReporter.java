@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.builders;
 
+import org.w3c.dom.Node;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -137,14 +139,14 @@ public class ManifestErrorReporter extends XMLErrorReporter {
 
 	protected NodeList getChildrenByName(Element element, String name) {
 		class NodeListImpl implements NodeList {
-			ArrayList nodes = new ArrayList();
+			ArrayList<Node> nodes = new ArrayList<Node>();
 
 			public int getLength() {
 				return nodes.size();
 			}
 
 			public Node item(int index) {
-				return (Node) nodes.get(index);
+				return nodes.get(index);
 			}
 
 			protected void add(Node node) {

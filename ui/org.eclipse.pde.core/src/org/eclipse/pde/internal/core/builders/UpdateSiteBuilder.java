@@ -55,7 +55,7 @@ public class UpdateSiteBuilder extends IncrementalProjectBuilder {
 		}
 	}
 
-	protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {
+	protected IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
 
 		IResourceDelta delta = null;
 		if (kind != FULL_BUILD)

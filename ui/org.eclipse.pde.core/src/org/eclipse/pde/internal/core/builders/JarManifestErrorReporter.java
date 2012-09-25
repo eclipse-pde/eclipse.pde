@@ -27,7 +27,7 @@ public class JarManifestErrorReporter extends ErrorReporter {
 	/**
 	 * Map of IHeader by name
 	 */
-	protected Map fHeaders;
+	protected Map<String, JarManifestHeader> fHeaders;
 
 	protected IDocument fTextDocument;
 
@@ -108,7 +108,7 @@ public class JarManifestErrorReporter extends ErrorReporter {
 	 */
 	protected void parseManifest(IDocument document, IProgressMonitor monitor) {
 		try {
-			fHeaders = new HashMap();
+			fHeaders = new HashMap<String, JarManifestHeader>();
 			JarManifestHeader header = null;
 			int l = 0;
 			for (; l < document.getNumberOfLines(); l++) {
@@ -289,7 +289,7 @@ public class JarManifestErrorReporter extends ErrorReporter {
 	}
 
 	protected IHeader validateRequiredHeader(String name) {
-		IHeader header = (IHeader) fHeaders.get(name.toLowerCase());
+		IHeader header = fHeaders.get(name.toLowerCase());
 		if (header == null) {
 			report(NLS.bind(PDECoreMessages.BundleErrorReporter_headerMissing, name), 1, CompilerFlags.ERROR, PDEMarkerFactory.CAT_FATAL);
 		}
@@ -297,7 +297,7 @@ public class JarManifestErrorReporter extends ErrorReporter {
 	}
 
 	protected IHeader getHeader(String key) {
-		return (IHeader) fHeaders.get(key.toLowerCase());
+		return fHeaders.get(key.toLowerCase());
 	}
 
 	protected void checkCanceled(IProgressMonitor monitor) throws OperationCanceledException {

@@ -11,6 +11,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.builders;
 
+import org.eclipse.jface.text.Position;
+import org.w3c.dom.Element;
+
 import java.io.StringReader;
 import java.util.*;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -53,7 +56,7 @@ public class XMLErrorReporter extends DefaultHandler {
 
 	private IDocument fTextDocument;
 
-	private Stack fElementStack;
+	private Stack<Element> fElementStack;
 
 	private Element fRootElement;
 
@@ -61,7 +64,7 @@ public class XMLErrorReporter extends DefaultHandler {
 
 	private int fHighestOffset;
 
-	private HashMap fOffsetTable;
+	private HashMap<Element, ElementData> fOffsetTable;
 
 	private FindReplaceDocumentAdapter fFindReplaceAdapter;
 
@@ -76,8 +79,8 @@ public class XMLErrorReporter extends DefaultHandler {
 			fTextDocument = manager.getTextFileBuffer(file.getFullPath(), LocationKind.NORMALIZE).getDocument();
 			manager.disconnect(file.getFullPath(), LocationKind.NORMALIZE, null);
 			fFindReplaceAdapter = new FindReplaceDocumentAdapter(fTextDocument);
-			fOffsetTable = new HashMap();
-			fElementStack = new Stack();
+			fOffsetTable = new HashMap<Element, ElementData>();
+			fElementStack = new Stack<Element>();
 			removeFileMarkers();
 		} catch (CoreException e) {
 			PDECore.log(e);
@@ -224,7 +227,7 @@ public class XMLErrorReporter extends DefaultHandler {
 		if (fRootElement == null)
 			fRootElement = element;
 		else
-			((Element) fElementStack.peek()).appendChild(element);
+			fElementStack.peek().appendChild(element);
 		fElementStack.push(element);
 		try {
 			if (fTextDocument != null)
@@ -242,7 +245,7 @@ public class XMLErrorReporter extends DefaultHandler {
 
 	private void generateErrorElementHierarchy() {
 		while (!fElementStack.isEmpty()) {
-			ElementData data = (ElementData) fOffsetTable.get(fElementStack.pop());
+			ElementData data = fOffsetTable.get(fElementStack.pop());
 			if (data != null)
 				data.fErrorNode = true;
 		}
@@ -260,7 +263,7 @@ public class XMLErrorReporter extends DefaultHandler {
 		if (fRootElement == null)
 			fXMLDocument.appendChild(text);
 		else
-			((Element) fElementStack.peek()).appendChild(text);
+			fElementStack.peek().appendChild(text);
 	}
 
 	/* (non-Javadoc)
@@ -277,7 +280,7 @@ public class XMLErrorReporter extends DefaultHandler {
 			col = fTextDocument.getLineLength(line);
 		String text = fTextDocument.get(fHighestOffset + 1, fTextDocument.getLineOffset(line) - fHighestOffset - 1);
 
-		ArrayList commentPositions = new ArrayList();
+		ArrayList<Position> commentPositions = new ArrayList<Position>();
 		for (int idx = 0; idx < text.length();) {
 			idx = text.indexOf("<!--", idx); //$NON-NLS-1$
 			if (idx == -1)
@@ -297,7 +300,7 @@ public class XMLErrorReporter extends DefaultHandler {
 				break;
 			boolean valid = true;
 			for (int i = 0; i < commentPositions.size(); i++) {
-				Position pos = (Position) commentPositions.get(i);
+				Position pos = commentPositions.get(i);
 				if (pos.includes(idx)) {
 					valid = false;
 					break;
@@ -348,7 +351,7 @@ public class XMLErrorReporter extends DefaultHandler {
 	}
 
 	protected String getTextContent(Element element) {
-		ElementData data = (ElementData) fOffsetTable.get(element);
+		ElementData data = fOffsetTable.get(element);
 		try {
 			IRegion nameRegion = fFindReplaceAdapter.find(data.offset, "</" + element.getNodeName() + ">", true, true, false, false); //$NON-NLS-1$ //$NON-NLS-2$
 			int offset = data.offset + element.getNodeName().length() + 2;
@@ -360,7 +363,7 @@ public class XMLErrorReporter extends DefaultHandler {
 	}
 
 	protected int getLine(Element element) {
-		ElementData data = (ElementData) fOffsetTable.get(element);
+		ElementData data = fOffsetTable.get(element);
 		try {
 			return (data == null) ? 1 : fTextDocument.getLineOfOffset(data.offset) + 1;
 		} catch (Exception e) {
@@ -369,7 +372,7 @@ public class XMLErrorReporter extends DefaultHandler {
 	}
 
 	protected int getLine(Element element, String attName) {
-		ElementData data = (ElementData) fOffsetTable.get(element);
+		ElementData data = fOffsetTable.get(element);
 		try {
 			int offset = getAttributeOffset(attName, element.getAttribute(attName), data.offset);
 			if (offset != -1)

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.plugin;
 
+import org.w3c.dom.Element;
+
 import java.io.StringReader;
 import java.util.Stack;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -23,7 +25,7 @@ import org.xml.sax.helpers.DefaultHandler;
 public class PluginHandler extends DefaultHandler {
 	private Document fDocument;
 	private Element fRootElement;
-	private Stack fOpenElements = new Stack();
+	private Stack<Element> fOpenElements = new Stack<Element>();
 
 	private String fSchemaVersion;
 	private boolean fAbbreviated;
@@ -39,8 +41,8 @@ public class PluginHandler extends DefaultHandler {
 		fPop = true;
 
 		if (fAbbreviated && fOpenElements.size() == 2) {
-			Element parent = (Element) fOpenElements.peek();
-			if (parent.getNodeName().equals("extension") && !isInterestingExtension((Element) fOpenElements.peek())) { //$NON-NLS-1$
+			Element parent = fOpenElements.peek();
+			if (parent.getNodeName().equals("extension") && !isInterestingExtension(fOpenElements.peek())) { //$NON-NLS-1$
 				fPop = false;
 				return;
 			}
@@ -57,7 +59,7 @@ public class PluginHandler extends DefaultHandler {
 		if (fRootElement == null)
 			fRootElement = element;
 		else
-			((Element) fOpenElements.peek()).appendChild(element);
+			fOpenElements.peek().appendChild(element);
 
 		fOpenElements.push(element);
 	}
@@ -137,7 +139,7 @@ public class PluginHandler extends DefaultHandler {
 		if (fRootElement == null)
 			fDocument.appendChild(text);
 		else
-			((Element) fOpenElements.peek()).appendChild(text);
+			fOpenElements.peek().appendChild(text);
 	}
 
 	public Node getDocumentElement() {

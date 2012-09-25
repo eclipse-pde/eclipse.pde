@@ -98,11 +98,11 @@ public class PDETextHelper {
 		return result;
 	}
 
-	public static String translateWriteText(String text, HashMap substituteChars) {
+	public static String translateWriteText(String text, HashMap<?, ?> substituteChars) {
 		return translateWriteText(text, null, substituteChars);
 	}
 
-	public static String translateWriteText(String text, HashSet tagExceptions, HashMap substituteChars) {
+	public static String translateWriteText(String text, HashSet<?> tagExceptions, HashMap<?, ?> substituteChars) {
 		// Ensure not null
 		if (text == null) {
 			return ""; //$NON-NLS-1$
@@ -150,7 +150,7 @@ public class PDETextHelper {
 		return buffer.toString();
 	}
 
-	private static boolean processSubstituteChars(char currentChar, HashMap substituteChars, StringBuffer buffer) {
+	private static boolean processSubstituteChars(char currentChar, HashMap<?, ?> substituteChars, StringBuffer buffer) {
 		Character character = new Character(currentChar);
 		if (substituteChars.containsKey(character)) {
 			String value = (String) substituteChars.get(character);
@@ -164,7 +164,7 @@ public class PDETextHelper {
 		return false;
 	}
 
-	private static boolean processTagExceptions(char currentChar, HashMap substituteChars, HashSet tagExceptions, StringBuffer buffer, int scanLimit, String text, IntegerPointer index) {
+	private static boolean processTagExceptions(char currentChar, HashMap<?, ?> substituteChars, HashSet<?> tagExceptions, StringBuffer buffer, int scanLimit, String text, IntegerPointer index) {
 		// If the current character is an open angle bracket, then it may be
 		// part of a valid tag exception
 		if (currentChar == '<') {
@@ -201,7 +201,7 @@ public class PDETextHelper {
 		return false;
 	}
 
-	private static void processTagExceptionCharacters(HashMap substituteChars, StringBuffer buffer, String text) {
+	private static void processTagExceptionCharacters(HashMap<?, ?> substituteChars, StringBuffer buffer, String text) {
 		// Get the tag name
 		String tagName = getTagName(text);
 		// Determine if there is a trailing forward slash
@@ -263,7 +263,7 @@ public class PDETextHelper {
 		buffer.append('>');
 	}
 
-	private static boolean isValidTagException(HashSet tagExceptions, String buffer) {
+	private static boolean isValidTagException(HashSet<?> tagExceptions, String buffer) {
 		// Sample buffer format:
 		// NO '<'
 		// tagName att1="value" att2="value"
@@ -311,8 +311,8 @@ public class PDETextHelper {
 		return tagName.toString();
 	}
 
-	private static int determineMaxLength(HashSet set) {
-		Iterator iterator = set.iterator();
+	private static int determineMaxLength(HashSet<?> set) {
+		Iterator<?> iterator = set.iterator();
 		int maxLength = -1;
 		while (iterator.hasNext()) {
 			// Has to be a String

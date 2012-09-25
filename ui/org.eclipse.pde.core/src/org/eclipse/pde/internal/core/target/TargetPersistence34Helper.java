@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target;
 
+import org.eclipse.pde.core.target.ITargetLocation;
+import org.eclipse.pde.core.target.NameVersionDescriptor;
+
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.core.runtime.CoreException;
@@ -87,7 +90,7 @@ public class TargetPersistence34Helper {
 		}
 
 		AbstractBundleContainer oldStylePrimaryContainer = null;
-		List bundleContainers = new ArrayList();
+		List<ITargetLocation> bundleContainers = new ArrayList<ITargetLocation>();
 		NodeList list = root.getChildNodes();
 		for (int i = 0; i < list.getLength(); ++i) {
 			Node node = list.item(i);
@@ -167,7 +170,7 @@ public class TargetPersistence34Helper {
 					}
 				} else if (nodeName.equalsIgnoreCase(TargetDefinitionPersistenceHelper.IMPLICIT)) {
 					NodeList implicitEntries = element.getChildNodes();
-					List implicit = new ArrayList(implicitEntries.getLength());
+					List<NameVersionDescriptor> implicit = new ArrayList<NameVersionDescriptor>(implicitEntries.getLength());
 					for (int j = 0; j < implicitEntries.getLength(); ++j) {
 						Node entry = implicitEntries.item(j);
 						if (entry.getNodeType() == Node.ELEMENT_NODE) {
@@ -179,11 +182,11 @@ public class TargetPersistence34Helper {
 							}
 						}
 					}
-					definition.setImplicitDependencies((NameVersionDescriptor[]) implicit.toArray(new NameVersionDescriptor[implicit.size()]));
+					definition.setImplicitDependencies(implicit.toArray(new NameVersionDescriptor[implicit.size()]));
 				}
 			}
 		}
-		definition.setTargetLocations((ITargetLocation[]) bundleContainers.toArray(new ITargetLocation[bundleContainers.size()]));
+		definition.setTargetLocations(bundleContainers.toArray(new ITargetLocation[bundleContainers.size()]));
 	}
 
 	private static ITargetLocation deserializeBundleContainer(Element location) throws CoreException {
@@ -223,10 +226,10 @@ public class TargetPersistence34Helper {
 	 * @param useAll whether all bundles in the locations should be considered vs. only those specified
 	 * @return list of bundle containers
 	 */
-	private static List deserializeBundleContainersFromOldStyleElement(Element content, ITargetDefinition definition, AbstractBundleContainer primaryContainer, boolean useAll) throws CoreException {
-		List containers = new ArrayList();
+	private static List<ITargetLocation> deserializeBundleContainersFromOldStyleElement(Element content, ITargetDefinition definition, AbstractBundleContainer primaryContainer, boolean useAll) throws CoreException {
+		List<ITargetLocation> containers = new ArrayList<ITargetLocation>();
 		NodeList list = content.getChildNodes();
-		List included = new ArrayList(list.getLength());
+		List<NameVersionDescriptor> included = new ArrayList<NameVersionDescriptor>(list.getLength());
 		for (int i = 0; i < list.getLength(); ++i) {
 			Node node = list.item(i);
 			if (node.getNodeType() == Node.ELEMENT_NODE) {
@@ -281,7 +284,7 @@ public class TargetPersistence34Helper {
 		// restrictions are global to all containers
 		if (!useAll && included.size() > 0) {
 			if (included.size() > 0) {
-				definition.setIncluded((NameVersionDescriptor[]) included.toArray(new NameVersionDescriptor[included.size()]));
+				definition.setIncluded(included.toArray(new NameVersionDescriptor[included.size()]));
 			}
 		}
 		return containers;

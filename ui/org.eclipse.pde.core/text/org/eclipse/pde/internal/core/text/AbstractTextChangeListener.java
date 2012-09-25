@@ -17,7 +17,7 @@ import org.eclipse.jface.text.TextUtilities;
 
 public abstract class AbstractTextChangeListener implements IModelTextChangeListener {
 
-	protected HashMap fOperationTable = new HashMap();
+	protected HashMap<?, ?> fOperationTable = new HashMap<Object, Object>();
 	protected IDocument fDocument;
 	protected String fSep;
 

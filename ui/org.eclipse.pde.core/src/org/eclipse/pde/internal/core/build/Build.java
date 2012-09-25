@@ -20,7 +20,7 @@ import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
 
 public class Build extends BuildObject implements IBuild {
-	protected ArrayList fEntries = new ArrayList();
+	protected ArrayList<IBuildEntry> fEntries = new ArrayList<IBuildEntry>();
 
 	public void add(IBuildEntry entry) throws CoreException {
 		ensureModelEditable();
@@ -30,12 +30,12 @@ public class Build extends BuildObject implements IBuild {
 	}
 
 	public IBuildEntry[] getBuildEntries() {
-		return (IBuildEntry[]) fEntries.toArray(new IBuildEntry[fEntries.size()]);
+		return fEntries.toArray(new IBuildEntry[fEntries.size()]);
 	}
 
 	public IBuildEntry getEntry(String name) {
 		for (int i = 0; i < fEntries.size(); i++) {
-			IBuildEntry entry = (IBuildEntry) fEntries.get(i);
+			IBuildEntry entry = fEntries.get(i);
 			if (entry.getName().equals(name))
 				return entry;
 		}
@@ -60,7 +60,7 @@ public class Build extends BuildObject implements IBuild {
 
 	public void write(String indent, PrintWriter writer) {
 		for (int i = 0; i < fEntries.size(); i++) {
-			IBuildEntry entry = (IBuildEntry) fEntries.get(i);
+			IBuildEntry entry = fEntries.get(i);
 			entry.write("", writer); //$NON-NLS-1$
 		}
 	}

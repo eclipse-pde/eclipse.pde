@@ -26,7 +26,7 @@ public class PluginLibraryNode extends PluginObjectNode implements IPluginLibrar
 	 */
 	public String[] getContentFilters() {
 		IDocumentElementNode[] children = getChildNodes();
-		ArrayList result = new ArrayList();
+		ArrayList<String> result = new ArrayList<String>();
 		for (int i = 0; i < children.length; i++) {
 			PluginObjectNode node = (PluginObjectNode) children[i];
 			if (node.getName().equals(P_EXPORTED)) {
@@ -39,7 +39,7 @@ public class PluginLibraryNode extends PluginObjectNode implements IPluginLibrar
 				}
 			}
 		}
-		return (String[]) result.toArray(new String[result.size()]);
+		return result.toArray(new String[result.size()]);
 	}
 
 	/* (non-Javadoc)

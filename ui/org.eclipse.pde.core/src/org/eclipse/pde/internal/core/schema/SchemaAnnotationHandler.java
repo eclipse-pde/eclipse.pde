@@ -58,7 +58,7 @@ public class SchemaAnnotationHandler extends BaseSchemaHandler {
 	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 		super.startElement(uri, localName, qName, attributes);
 
-		if ((fElementList.size() >= 2) && ((((String) fElementList.get(1)).compareTo(APP_INFO_ELEM) == 0) || (((String) fElementList.get(1)).compareTo(APP_INFO_ELEM_OLD) == 0))) {
+		if ((fElementList.size() >= 2) && ((fElementList.get(1).compareTo(APP_INFO_ELEM) == 0) || (fElementList.get(1).compareTo(APP_INFO_ELEM_OLD) == 0))) {
 			fAppInfoElemFlag = true;
 			if (qName.compareTo(META_SCHEMA_ELEM) == 0) {
 				// Case:  <appInfo><meta.schema>
@@ -84,7 +84,7 @@ public class SchemaAnnotationHandler extends BaseSchemaHandler {
 	protected boolean onTarget() {
 		if (fElementList.size() >= DESC_NESTED_ELEM.length) {
 			for (int i = 0; i < DESC_NESTED_ELEM.length; i++) {
-				String currentElement = (String) fElementList.get(i);
+				String currentElement = fElementList.get(i);
 				if (currentElement.compareTo(DESC_NESTED_ELEM[i]) != 0) {
 					return false;
 				}

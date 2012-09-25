@@ -33,12 +33,12 @@ public class ModelEntry extends PlatformObject {
 	/**
 	 * The list of workspace models with the same entry ID
 	 */
-	protected ArrayList fWorkspaceEntries = new ArrayList(1);
+	protected ArrayList<IPluginModelBase> fWorkspaceEntries = new ArrayList<IPluginModelBase>(1);
 
 	/**
 	 * The list of external models with the same entry ID
 	 */
-	protected ArrayList fExternalEntries = new ArrayList(1);
+	protected ArrayList<IPluginModelBase> fExternalEntries = new ArrayList<IPluginModelBase>(1);
 
 	/**
 	 * Constructor
@@ -55,7 +55,7 @@ public class ModelEntry extends PlatformObject {
 	 * @return an array of workspace plug-ins that have the model entry ID
 	 */
 	public IPluginModelBase[] getWorkspaceModels() {
-		return (IPluginModelBase[]) fWorkspaceEntries.toArray(new IPluginModelBase[fWorkspaceEntries.size()]);
+		return fWorkspaceEntries.toArray(new IPluginModelBase[fWorkspaceEntries.size()]);
 	}
 
 	/**
@@ -66,7 +66,7 @@ public class ModelEntry extends PlatformObject {
 	 * @return an array of plug-ins in the target platform that have the model entry ID
 	 */
 	public IPluginModelBase[] getExternalModels() {
-		return (IPluginModelBase[]) fExternalEntries.toArray(new IPluginModelBase[fExternalEntries.size()]);
+		return fExternalEntries.toArray(new IPluginModelBase[fExternalEntries.size()]);
 	}
 
 	/**
@@ -143,13 +143,13 @@ public class ModelEntry extends PlatformObject {
 			return getWorkspaceModels();
 
 		if (fExternalEntries.size() > 0) {
-			ArrayList list = new ArrayList(fExternalEntries.size());
+			ArrayList<IPluginModelBase> list = new ArrayList<IPluginModelBase>(fExternalEntries.size());
 			for (int i = 0; i < fExternalEntries.size(); i++) {
-				IPluginModelBase model = (IPluginModelBase) fExternalEntries.get(i);
+				IPluginModelBase model = fExternalEntries.get(i);
 				if (model.isEnabled())
 					list.add(model);
 			}
-			return (IPluginModelBase[]) list.toArray(new IPluginModelBase[list.size()]);
+			return list.toArray(new IPluginModelBase[list.size()]);
 		}
 		return new IPluginModelBase[0];
 	}
@@ -177,12 +177,12 @@ public class ModelEntry extends PlatformObject {
 			return null;
 
 		for (int i = 0; i < fWorkspaceEntries.size(); i++) {
-			IPluginModelBase model = (IPluginModelBase) fWorkspaceEntries.get(i);
+			IPluginModelBase model = fWorkspaceEntries.get(i);
 			if (desc.equals(model.getBundleDescription()))
 				return model;
 		}
 		for (int i = 0; i < fExternalEntries.size(); i++) {
-			IPluginModelBase model = (IPluginModelBase) fExternalEntries.get(i);
+			IPluginModelBase model = fExternalEntries.get(i);
 			if (desc.equals(model.getBundleDescription()))
 				return model;
 		}

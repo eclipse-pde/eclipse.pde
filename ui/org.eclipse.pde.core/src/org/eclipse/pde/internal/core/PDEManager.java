@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+
 import java.net.URL;
 import java.util.ArrayList;
 import org.eclipse.core.resources.IProject;
@@ -23,7 +25,7 @@ import org.osgi.framework.Constants;
 public class PDEManager {
 
 	public static IFragmentModel[] findFragmentsFor(IPluginModelBase model) {
-		ArrayList result = new ArrayList();
+		ArrayList<IPluginModelBase> result = new ArrayList<IPluginModelBase>();
 		BundleDescription desc = getBundleDescription(model);
 		if (desc != null) {
 			BundleDescription[] fragments = desc.getFragments();
@@ -34,7 +36,7 @@ public class PDEManager {
 				}
 			}
 		}
-		return (IFragmentModel[]) result.toArray(new IFragmentModel[result.size()]);
+		return result.toArray(new IFragmentModel[result.size()]);
 	}
 
 	public static IPluginModel findHostFor(IFragmentModel fragment) {
@@ -66,7 +68,7 @@ public class PDEManager {
 	}
 
 	public static URL[] getNLLookupLocations(IPluginModelBase model) {
-		ArrayList urls = new ArrayList();
+		ArrayList<URL> urls = new ArrayList<URL>();
 		addNLLocation(model, urls);
 		if (model instanceof IPluginModel) {
 			IFragmentModel[] fragments = findFragmentsFor(model);
@@ -78,10 +80,10 @@ public class PDEManager {
 			if (host != null)
 				addNLLocation(host, urls);
 		}
-		return (URL[]) urls.toArray(new URL[urls.size()]);
+		return urls.toArray(new URL[urls.size()]);
 	}
 
-	private static void addNLLocation(IPluginModelBase model, ArrayList urls) {
+	private static void addNLLocation(IPluginModelBase model, ArrayList<URL> urls) {
 		URL location = model.getNLLookupLocation();
 		if (location != null)
 			urls.add(location);

@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import org.eclipse.pde.core.target.LoadTargetDefinitionJob;
-
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -25,6 +23,7 @@ import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.core.target.LoadTargetDefinitionJob;
 import org.eclipse.pde.internal.core.bundle.*;
 import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.internal.core.project.PDEProject;
@@ -34,8 +33,8 @@ public class PDEState extends MinimalState {
 
 	private PDEAuxiliaryState fAuxiliaryState;
 
-	private ArrayList fTargetModels = new ArrayList();
-	private ArrayList fWorkspaceModels = new ArrayList();
+	private ArrayList<IPluginModelBase> fTargetModels = new ArrayList<IPluginModelBase>();
+	private ArrayList<IPluginModelBase> fWorkspaceModels = new ArrayList<IPluginModelBase>();
 	private boolean fCombined;
 	private long fTargetTimestamp;
 	private boolean fNewState;
@@ -62,7 +61,7 @@ public class PDEState extends MinimalState {
 
 	private void copyModels(PDEState state) {
 		IPluginModelBase[] bases = state.getTargetModels();
-		fTargetModels = new ArrayList(bases.length);
+		fTargetModels = new ArrayList<IPluginModelBase>(bases.length);
 		for (int i = 0; i < bases.length; i++) {
 			BundleDescription oldBD = bases[i].getBundleDescription();
 			if (oldBD == null)
@@ -170,7 +169,7 @@ public class PDEState extends MinimalState {
 		fNewState = true;
 	}
 
-	protected void addAuxiliaryData(BundleDescription desc, Dictionary manifest, boolean hasBundleStructure) {
+	protected void addAuxiliaryData(BundleDescription desc, Dictionary<String, String> manifest, boolean hasBundleStructure) {
 		fAuxiliaryState.addAuxiliaryData(desc, manifest, hasBundleStructure);
 	}
 
@@ -198,7 +197,7 @@ public class PDEState extends MinimalState {
 	}
 
 	private IPluginModelBase[] createTargetModels(BundleDescription[] bundleDescriptions) {
-		HashMap models = new HashMap((4 / 3) * bundleDescriptions.length + 1);
+		HashMap<String, IPluginModelBase> models = new HashMap<String, IPluginModelBase>((4 / 3) * bundleDescriptions.length + 1);
 		for (int i = 0; i < bundleDescriptions.length; i++) {
 			BundleDescription desc = bundleDescriptions[i];
 			IPluginModelBase base = createExternalModel(desc);
@@ -207,7 +206,7 @@ public class PDEState extends MinimalState {
 		}
 		if (models.isEmpty())
 			return new IPluginModelBase[0];
-		return (IPluginModelBase[]) models.values().toArray(new IPluginModelBase[models.size()]);
+		return models.values().toArray(new IPluginModelBase[models.size()]);
 	}
 
 	private void readWorkspaceState(URL[] urls) {
@@ -268,16 +267,16 @@ public class PDEState extends MinimalState {
 	}
 
 	private long computeTimestamp(URL[] urls, long timestamp) {
-		List sorted = new ArrayList(urls.length);
+		List<URL> sorted = new ArrayList<URL>(urls.length);
 		for (int i = 0; i < urls.length; i++) {
 			sorted.add(urls[i]);
 		}
-		Collections.sort(sorted, new Comparator() {
+		Collections.sort(sorted, new Comparator<Object>() {
 			public int compare(Object o1, Object o2) {
 				return ((URL) o1).toExternalForm().compareTo(((URL) o2).toExternalForm());
 			}
 		});
-		URL[] sortedURLs = (URL[]) sorted.toArray(new URL[sorted.size()]);
+		URL[] sortedURLs = sorted.toArray(new URL[sorted.size()]);
 		for (int i = 0; i < sortedURLs.length; i++) {
 			File file = new File(sortedURLs[i].getFile());
 			if (file.exists()) {
@@ -356,11 +355,11 @@ public class PDEState extends MinimalState {
 	}
 
 	public IPluginModelBase[] getTargetModels() {
-		return (IPluginModelBase[]) fTargetModels.toArray(new IPluginModelBase[fTargetModels.size()]);
+		return fTargetModels.toArray(new IPluginModelBase[fTargetModels.size()]);
 	}
 
 	public IPluginModelBase[] getWorkspaceModels() {
-		return (IPluginModelBase[]) fWorkspaceModels.toArray(new IPluginModelBase[fWorkspaceModels.size()]);
+		return fWorkspaceModels.toArray(new IPluginModelBase[fWorkspaceModels.size()]);
 	}
 
 	/**
@@ -515,7 +514,7 @@ public class PDEState extends MinimalState {
 
 	public BundleDescription[] addAdditionalBundles(URL[] newBundleURLs) {
 		// add new Bundles to the State
-		ArrayList descriptions = new ArrayList(newBundleURLs.length);
+		ArrayList<BundleDescription> descriptions = new ArrayList<BundleDescription>(newBundleURLs.length);
 		for (int i = 0; i < newBundleURLs.length; i++) {
 			File file = new File(newBundleURLs[i].getFile());
 			try {
@@ -540,7 +539,7 @@ public class PDEState extends MinimalState {
 		// resolve state - same steps as when populating a new State
 		resolveState(false);
 
-		return (BundleDescription[]) descriptions.toArray(new BundleDescription[descriptions.size()]);
+		return descriptions.toArray(new BundleDescription[descriptions.size()]);
 	}
 
 	public File getTargetDirectory() {

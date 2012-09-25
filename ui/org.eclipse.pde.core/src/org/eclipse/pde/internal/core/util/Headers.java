@@ -11,11 +11,7 @@
 
 package org.eclipse.pde.internal.core.util;
 
-import java.util.Collection;
-import java.util.Dictionary;
-import java.util.Enumeration;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Headers classes. This class implements a Dictionary that has
@@ -28,7 +24,7 @@ import java.util.Set;
  * </ul>
  * @since 3.3
  */
-public class Headers extends Dictionary implements Map {
+public class Headers extends Dictionary<Object, Object> implements Map<Object, Object> {
 	private boolean readOnly = false;
 	private Object[] headers;
 	private Object[] values;
@@ -52,10 +48,10 @@ public class Headers extends Dictionary implements Map {
 	 * @exception IllegalArgumentException If a case-variant of the key is
 	 * in the dictionary parameter.
 	 */
-	public Headers(Dictionary values) {
+	public Headers(Dictionary<?, ?> values) {
 		this(values.size());
 		/* initialize the headers and values */
-		Enumeration keys = values.keys();
+		Enumeration<?> keys = values.keys();
 		while (keys.hasMoreElements()) {
 			Object key = keys.nextElement();
 			set(key, values.get(key));
@@ -65,14 +61,14 @@ public class Headers extends Dictionary implements Map {
 	/**
 	 * Case-preserved keys.
 	 */
-	public synchronized Enumeration keys() {
+	public synchronized Enumeration<Object> keys() {
 		return new ArrayEnumeration(headers, size);
 	}
 
 	/**
 	 * Values.
 	 */
-	public synchronized Enumeration elements() {
+	public synchronized Enumeration<Object> elements() {
 		return new ArrayEnumeration(values, size);
 	}
 
@@ -238,7 +234,7 @@ public class Headers extends Dictionary implements Map {
 		return (values.toString());
 	}
 
-	class ArrayEnumeration implements Enumeration {
+	class ArrayEnumeration implements Enumeration<Object> {
 		private Object[] array;
 		int cur = 0;
 
@@ -269,19 +265,19 @@ public class Headers extends Dictionary implements Map {
 		throw new UnsupportedOperationException();
 	}
 
-	public Set entrySet() {
+	public Set<java.util.Map.Entry<Object, Object>> entrySet() {
 		throw new UnsupportedOperationException();
 	}
 
-	public Set keySet() {
+	public Set<Object> keySet() {
 		throw new UnsupportedOperationException();
 	}
 
-	public void putAll(Map var0) {
+	public void putAll(Map<? extends Object, ? extends Object> t) {
 		throw new UnsupportedOperationException();
 	}
 
-	public Collection values() {
+	public Collection<Object> values() {
 		throw new UnsupportedOperationException();
 	}
 }

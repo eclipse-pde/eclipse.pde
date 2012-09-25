@@ -10,27 +10,14 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.plugin;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
+import java.io.*;
+import java.util.*;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.core.plugin.IExtensions;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginExtension;
-import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
-import org.eclipse.pde.core.plugin.IPluginObject;
-import org.eclipse.pde.core.plugin.ISharedPluginModel;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.w3c.dom.Node;
@@ -42,8 +29,8 @@ public abstract class AbstractExtensions extends PluginObject implements IExtens
 
 	protected String fSchemaVersion;
 
-	protected List fExtensions = null;
-	protected List fExtensionPoints = null;
+	protected List<IPluginExtension> fExtensions = null;
+	protected List<IPluginExtensionPoint> fExtensionPoints = null;
 	boolean fCache = false;
 
 	public AbstractExtensions(boolean readOnly) {
@@ -67,13 +54,13 @@ public abstract class AbstractExtensions extends PluginObject implements IExtens
 	}
 
 	public IPluginExtensionPoint[] getExtensionPoints() {
-		List extPoints = getExtensionPointsList();
-		return (IPluginExtensionPoint[]) extPoints.toArray(new IPluginExtensionPoint[extPoints.size()]);
+		List<IPluginExtensionPoint> extPoints = getExtensionPointsList();
+		return extPoints.toArray(new IPluginExtensionPoint[extPoints.size()]);
 	}
 
 	public IPluginExtension[] getExtensions() {
-		List extensions = getExtensionsList();
-		return (IPluginExtension[]) extensions.toArray(new IPluginExtension[extensions.size()]);
+		List<IPluginExtension> extensions = getExtensionsList();
+		return extensions.toArray(new IPluginExtension[extensions.size()]);
 	}
 
 	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
@@ -85,16 +72,20 @@ public abstract class AbstractExtensions extends PluginObject implements IExtens
 	}
 
 	public void load(IExtensions srcExtensions) {
-		addArrayToVector(getExtensionsList(), srcExtensions.getExtensions());
-		addArrayToVector(getExtensionPointsList(), srcExtensions.getExtensionPoints());
-	}
+		List<IPluginExtension> extensionsList = getExtensionsList();
+		IPluginExtension[] extensions = srcExtensions.getExtensions();
+		for (int i = 0; i < extensions.length; i++) {
+			if (extensions[i] != null) {
+				extensionsList.add(extensions[i]);
+			}
+		}
 
-	protected void addArrayToVector(List vector, Object[] array) {
-		for (int i = 0; i < array.length; i++) {
-			Object obj = array[i];
-			if (obj instanceof PluginObject)
-				((PluginObject) obj).setParent(this);
-			vector.add(obj);
+		List<IPluginExtensionPoint> extensionPointsList = getExtensionPointsList();
+		IPluginExtensionPoint[] extensionPoints = srcExtensions.getExtensionPoints();
+		for (int i = 0; i < extensionPoints.length; i++) {
+			if (extensionPoints[i] != null) {
+				extensionPointsList.add(extensionPoints[i]);
+			}
 		}
 	}
 
@@ -131,7 +122,7 @@ public abstract class AbstractExtensions extends PluginObject implements IExtens
 
 	public void swap(IPluginExtension e1, IPluginExtension e2) throws CoreException {
 		ensureModelEditable();
-		List extensions = getExtensionsList();
+		List<IPluginExtension> extensions = getExtensionsList();
 		int index1 = extensions.indexOf(e1);
 		int index2 = extensions.indexOf(e2);
 		if (index1 == -1 || index2 == -1)
@@ -152,18 +143,18 @@ public abstract class AbstractExtensions extends PluginObject implements IExtens
 
 	protected boolean hasRequiredAttributes() {
 		// validate extensions
-		List extensions = getExtensionsList();
+		List<IPluginExtension> extensions = getExtensionsList();
 		int size = extensions.size();
 		for (int i = 0; i < size; i++) {
-			IPluginExtension extension = (IPluginExtension) extensions.get(i);
+			IPluginExtension extension = extensions.get(i);
 			if (!extension.isValid())
 				return false;
 		}
 		// validate extension points
-		List extPoints = getExtensionPointsList();
+		List<IPluginExtensionPoint> extPoints = getExtensionPointsList();
 		size = extPoints.size();
 		for (int i = 0; i < size; i++) {
-			IPluginExtensionPoint expoint = (IPluginExtensionPoint) extPoints.get(i);
+			IPluginExtensionPoint expoint = extPoints.get(i);
 			if (!expoint.isValid())
 				return false;
 		}
@@ -200,31 +191,31 @@ public abstract class AbstractExtensions extends PluginObject implements IExtens
 		firePropertyChanged(IPluginBase.P_SCHEMA_VERSION, oldValue, schemaVersion);
 	}
 
-	protected List getExtensionsList() {
+	protected List<IPluginExtension> getExtensionsList() {
 		if (fExtensions == null) {
 			IPluginBase base = getPluginBase();
 			if (base != null) {
 				if (fCache)
-					fExtensions = new ArrayList(Arrays.asList(PDECore.getDefault().getExtensionsRegistry().findExtensionsForPlugin(base.getPluginModel())));
+					fExtensions = new ArrayList<IPluginExtension>(Arrays.asList(PDECore.getDefault().getExtensionsRegistry().findExtensionsForPlugin(base.getPluginModel())));
 				else
 					return Arrays.asList(PDECore.getDefault().getExtensionsRegistry().findExtensionsForPlugin(base.getPluginModel()));
 			} else {
-				return Collections.EMPTY_LIST;
+				return Collections.emptyList();
 			}
 		}
 		return fExtensions;
 	}
 
-	protected List getExtensionPointsList() {
+	protected List<IPluginExtensionPoint> getExtensionPointsList() {
 		if (fExtensionPoints == null) {
 			IPluginBase base = getPluginBase();
 			if (base != null) {
 				if (fCache)
-					fExtensionPoints = new ArrayList(Arrays.asList(PDECore.getDefault().getExtensionsRegistry().findExtensionPointsForPlugin(base.getPluginModel())));
+					fExtensionPoints = new ArrayList<IPluginExtensionPoint>(Arrays.asList(PDECore.getDefault().getExtensionsRegistry().findExtensionPointsForPlugin(base.getPluginModel())));
 				else
 					return Arrays.asList(PDECore.getDefault().getExtensionsRegistry().findExtensionPointsForPlugin(base.getPluginModel()));
 			} else {
-				return Collections.EMPTY_LIST;
+				return Collections.emptyList();
 			}
 		}
 		return fExtensionPoints;
@@ -236,9 +227,9 @@ public abstract class AbstractExtensions extends PluginObject implements IExtens
 	protected void processChild(Node child) {
 		String name = child.getNodeName();
 		if (fExtensions == null)
-			fExtensions = new ArrayList();
+			fExtensions = new ArrayList<IPluginExtension>();
 		if (fExtensionPoints == null)
-			fExtensionPoints = new ArrayList();
+			fExtensionPoints = new ArrayList<IPluginExtensionPoint>();
 
 		if (name.equals("extension")) { //$NON-NLS-1$
 			PluginExtension extension = new PluginExtension();

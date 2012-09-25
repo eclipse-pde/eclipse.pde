@@ -26,7 +26,7 @@ import org.w3c.dom.NodeList;
 
 public class SiteFeature extends VersionableObject implements ISiteFeature {
 	private static final long serialVersionUID = 1L;
-	private Vector fCategories = new Vector();
+	private Vector<ISiteCategory> fCategories = new Vector<ISiteCategory>();
 	private String fType;
 	private String fUrl;
 	private String fOS;
@@ -39,7 +39,7 @@ public class SiteFeature extends VersionableObject implements ISiteFeature {
 		if (fUrl == null)
 			return false;
 		for (int i = 0; i < fCategories.size(); i++) {
-			ISiteCategory category = (ISiteCategory) fCategories.get(i);
+			ISiteCategory category = fCategories.get(i);
 			if (!category.isValid())
 				return false;
 		}
@@ -76,7 +76,7 @@ public class SiteFeature extends VersionableObject implements ISiteFeature {
 	 * @see org.eclipse.pde.internal.core.isite.ISiteFeature#getCategories()
 	 */
 	public ISiteCategory[] getCategories() {
-		return (ISiteCategory[]) fCategories.toArray(new ISiteCategory[fCategories.size()]);
+		return fCategories.toArray(new ISiteCategory[fCategories.size()]);
 	}
 
 	/**
@@ -197,7 +197,7 @@ public class SiteFeature extends VersionableObject implements ISiteFeature {
 			writer.println(">"); //$NON-NLS-1$
 			String indent2 = indent + "   "; //$NON-NLS-1$
 			for (int i = 0; i < fCategories.size(); i++) {
-				ISiteCategory category = (ISiteCategory) fCategories.get(i);
+				ISiteCategory category = fCategories.get(i);
 				category.write(indent2, writer);
 			}
 			writer.println(indent + "</feature>"); //$NON-NLS-1$

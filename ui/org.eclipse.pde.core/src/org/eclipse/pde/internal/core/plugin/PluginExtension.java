@@ -69,7 +69,7 @@ public class PluginExtension extends PluginParent implements IPluginExtension {
 		fPoint = getNodeAttribute(node, "point"); //$NON-NLS-1$
 
 		if (fChildren == null)
-			fChildren = new ArrayList();
+			fChildren = new ArrayList<PluginElement>();
 		NodeList children = node.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
@@ -196,9 +196,9 @@ public class PluginExtension extends PluginParent implements IPluginExtension {
 		return fID;
 	}
 
-	protected ArrayList getChildrenList() {
+	protected ArrayList<PluginElement> getChildrenList() {
 		if (fChildren == null) {
-			fChildren = new ArrayList();
+			fChildren = new ArrayList<PluginElement>();
 			if (fExtension != null) {
 				if (fExtension != null) {
 					IConfigurationElement[] elements = fExtension.getConfigurationElements();

@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.core;
 import java.io.*;
 import java.net.URL;
 import java.util.*;
+import java.util.Map.Entry;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -75,7 +76,7 @@ public class ClasspathHelper {
 		return getDevEntries(checkExcluded);
 	}
 
-	public static String getDevEntriesProperties(String fileName, Map map) {
+	public static String getDevEntriesProperties(String fileName, Map<?, ?> map) {
 		File file = new File(fileName);
 		if (!file.exists()) {
 			File directory = file.getParentFile();
@@ -86,7 +87,7 @@ public class ClasspathHelper {
 		Properties properties = new Properties();
 		// account for cascading workspaces
 		TargetWeaver.weaveDevProperties(properties);
-		Iterator iter = map.values().iterator();
+		Iterator<?> iter = map.values().iterator();
 		while (iter.hasNext()) {
 			IPluginModelBase model = (IPluginModelBase) iter.next();
 			if (model.getUnderlyingResource() != null) {
@@ -124,7 +125,7 @@ public class ClasspathHelper {
 
 	private static String getDevEntries(boolean checkExcluded) {
 		IPluginModelBase[] models = PluginRegistry.getWorkspaceModels();
-		ArrayList list = new ArrayList();
+		ArrayList<IPath> list = new ArrayList<IPath>();
 		for (int i = 0; i < models.length; i++) {
 			String id = models[i].getPluginBase().getId();
 			if (id == null || id.trim().length() == 0)
@@ -134,7 +135,7 @@ public class ClasspathHelper {
 				list.add(paths[j]);
 			}
 		}
-		String entry = writeEntry((IPath[]) list.toArray(new IPath[list.size()]));
+		String entry = writeEntry(list.toArray(new IPath[list.size()]));
 		return entry.length() > 0 ? entry : "bin"; //$NON-NLS-1$
 	}
 
@@ -149,7 +150,7 @@ public class ClasspathHelper {
 	}
 
 	// TODO remove - no longer used after bug 217870
-	public static Dictionary getDevDictionary(IPluginModelBase model) {
+	public static Dictionary<String, String> getDevDictionary(IPluginModelBase model) {
 		if (model.getUnderlyingResource() == null)
 			return null;
 
@@ -158,17 +159,17 @@ public class ClasspathHelper {
 			return null;
 		IPath[] paths = getDevPaths(model, false, null);
 		String entry = writeEntry(paths);
-		Hashtable map = new Hashtable(2);
+		Hashtable<String, String> map = new Hashtable<String, String>(2);
 		map.put("@ignoredot@", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 		map.put(id, entry.length() > 0 ? entry : "bin"); //$NON-NLS-1$
 		return map;
 	}
 
 	// creates a map whose key is a Path to the source directory/jar and the value is a Path output directory or jar.
-	private static Map getClasspathMap(IProject project, boolean checkExcluded, boolean absolutePaths) throws JavaModelException {
-		List excluded = getFoldersToExclude(project, checkExcluded);
+	private static Map<IPath, ArrayList<IPath>> getClasspathMap(IProject project, boolean checkExcluded, boolean absolutePaths) throws JavaModelException {
+		List<Path> excluded = getFoldersToExclude(project, checkExcluded);
 		IJavaProject jProject = JavaCore.create(project);
-		HashMap map = new HashMap();
+		HashMap<IPath, ArrayList<IPath>> map = new HashMap<IPath, ArrayList<IPath>>();
 		IClasspathEntry[] entries = jProject.getRawClasspath();
 		for (int i = 0; i < entries.length; i++) {
 			// most of the paths we get will be project relative, so we need to make the paths relative
@@ -193,9 +194,9 @@ public class ClasspathHelper {
 					output = (isLinked || absolutePaths) ? file.getLocation().makeAbsolute() : output.makeRelative();
 				} else
 					continue;
-				ArrayList list = (ArrayList) map.get(source);
+				ArrayList<IPath> list = map.get(source);
 				if (list == null)
-					list = new ArrayList();
+					list = new ArrayList<IPath>();
 				list.add(output);
 				map.put(source, list);
 			}
@@ -204,17 +205,17 @@ public class ClasspathHelper {
 		// Add additional entries from contributed bundle classpath resolvers
 		IBundleClasspathResolver[] resolvers = PDECore.getDefault().getClasspathContainerResolverManager().getBundleClasspathResolvers(project);
 		for (int i = 0; i < resolvers.length; i++) {
-			Map resolved = resolvers[i].getAdditionalClasspathEntries(jProject);
-			Iterator resolvedIter = resolved.entrySet().iterator();
+			Map<IPath, Collection<IPath>> resolved = resolvers[i].getAdditionalClasspathEntries(jProject);
+			Iterator<Entry<IPath, Collection<IPath>>> resolvedIter = resolved.entrySet().iterator();
 			while (resolvedIter.hasNext()) {
-				Map.Entry resolvedEntry = (Map.Entry) resolvedIter.next();
-				IPath ceSource = (IPath) resolvedEntry.getKey();
-				ArrayList list = (ArrayList) map.get(ceSource);
+				Map.Entry<IPath, Collection<IPath>> resolvedEntry = resolvedIter.next();
+				IPath ceSource = resolvedEntry.getKey();
+				ArrayList<IPath> list = map.get(ceSource);
 				if (list == null) {
-					list = new ArrayList();
+					list = new ArrayList<IPath>();
 					map.put(ceSource, list);
 				}
-				list.addAll((Collection) resolvedEntry.getValue());
+				list.addAll(resolvedEntry.getValue());
 			}
 		}
 
@@ -222,17 +223,17 @@ public class ClasspathHelper {
 	}
 
 	// find the corresponding paths for a library name.  Searches for source folders first, but includes any libraries on the buildpath with the same name
-	private static IPath[] findLibrary(String libName, IProject project, Map classpathMap, IBuild build) {
-		ArrayList paths = new ArrayList();
+	private static IPath[] findLibrary(String libName, IProject project, Map<IPath, ArrayList<IPath>> classpathMap, IBuild build) {
+		ArrayList<IPath> paths = new ArrayList<IPath>();
 		IBuildEntry entry = (build != null) ? build.getEntry(IBuildEntry.JAR_PREFIX + libName) : null;
 		if (entry != null) {
 			String[] resources = entry.getTokens();
 			for (int j = 0; j < resources.length; j++) {
 				IResource res = project.findMember(resources[j]);
 				if (res != null) {
-					Collection list = (Collection) classpathMap.get(res.getFullPath());
+					ArrayList<IPath> list = classpathMap.get(res.getFullPath());
 					if (list != null) {
-						Iterator li = list.iterator();
+						Iterator<IPath> li = list.iterator();
 						while (li.hasNext())
 							paths.add(li.next());
 					}
@@ -252,23 +253,23 @@ public class ClasspathHelper {
 				path = new Path(libName);
 		}
 
-		Collection list = (Collection) classpathMap.get(path);
+		List<IPath> list = classpathMap.get(path);
 		if (list != null) {
-			Iterator li = list.iterator();
+			Iterator<IPath> li = list.iterator();
 			while (li.hasNext())
 				paths.add(li.next());
 		}
-		return (IPath[]) paths.toArray(new IPath[paths.size()]);
+		return paths.toArray(new IPath[paths.size()]);
 	}
 
-	private static IPath[] getDevPaths(IPluginModelBase model, boolean checkExcluded, Map pluginsMap) {
-		ArrayList result = new ArrayList();
+	private static IPath[] getDevPaths(IPluginModelBase model, boolean checkExcluded, Map<?, ?> pluginsMap) {
+		ArrayList<IPath> result = new ArrayList<IPath>();
 		IProject project = model.getUnderlyingResource().getProject();
 		IPluginBase base = model.getPluginBase();
 		IPluginLibrary[] libraries = base.getLibraries();
 		try {
 			if (project.hasNature(JavaCore.NATURE_ID)) {
-				Map classpathMap = getClasspathMap(project, checkExcluded, false);
+				Map<IPath, ArrayList<IPath>> classpathMap = getClasspathMap(project, checkExcluded, false);
 				IFile file = PDEProject.getBuildProperties(project);
 				IPath filePath = file.getLocation();
 				boolean searchBuild = filePath != null && filePath.toFile().exists();
@@ -287,13 +288,12 @@ public class ClasspathHelper {
 								// This likely indicates an error in the build.properties, but to be friendly we should add the output folders so running/debugging
 								// works (see bug 237025)
 								if (!classpathMap.isEmpty()) {
-									Iterator iterator = classpathMap.values().iterator();
-									List collect = new ArrayList();
+									Iterator<ArrayList<IPath>> iterator = classpathMap.values().iterator();
+									List<IPath> collect = new ArrayList<IPath>();
 									while (iterator.hasNext()) {
-										Collection list = (Collection) iterator.next();
-										collect.addAll(list);
+										collect.addAll(iterator.next());
 									}
-									paths = (IPath[]) collect.toArray(new IPath[collect.size()]);
+									paths = collect.toArray(new IPath[collect.size()]);
 								}
 							}
 							for (int j = 0; j < paths.length; j++)
@@ -312,24 +312,24 @@ public class ClasspathHelper {
 				}
 				if (!searchBuild) {
 					// if no build.properties, add all output folders
-					Iterator it = classpathMap.entrySet().iterator();
+					Iterator<Entry<IPath, ArrayList<IPath>>> it = classpathMap.entrySet().iterator();
 					while (it.hasNext()) {
-						Map.Entry entry = (Map.Entry) it.next();
-						ArrayList list = (ArrayList) entry.getValue();
-						ListIterator li = list.listIterator();
+						Map.Entry<IPath, ArrayList<IPath>> entry = it.next();
+						ArrayList<IPath> list = entry.getValue();
+						ListIterator<IPath> li = list.listIterator();
 						while (li.hasNext())
-							addPath(result, project, (IPath) li.next());
+							addPath(result, project, li.next());
 					}
 				}
 			}
 		} catch (JavaModelException e) {
 		} catch (CoreException e) {
 		}
-		return (IPath[]) result.toArray(new IPath[result.size()]);
+		return result.toArray(new IPath[result.size()]);
 	}
 
 	// looks for fragments for a plug-in.  Then searches the fragments for a specific library.  Will return paths which are absolute (required by runtime)
-	private static IPath[] findLibraryFromFragments(String libName, IPluginModelBase model, boolean checkExcluded, Map plugins) {
+	private static IPath[] findLibraryFromFragments(String libName, IPluginModelBase model, boolean checkExcluded, Map<?, ?> plugins) {
 		IFragmentModel[] frags = PDEManager.findFragmentsFor(model);
 		for (int i = 0; i < frags.length; i++) {
 			if (plugins != null && !plugins.containsKey(frags[i].getBundleDescription().getSymbolicName()))
@@ -338,7 +338,7 @@ public class ClasspathHelper {
 			if (frags[i].getUnderlyingResource() != null) {
 				try {
 					IProject project = frags[i].getUnderlyingResource().getProject();
-					Map classpathMap = getClasspathMap(project, checkExcluded, true);
+					Map<IPath, ArrayList<IPath>> classpathMap = getClasspathMap(project, checkExcluded, true);
 					IFile file = PDEProject.getBuildProperties(project);
 					IBuild build = null;
 					if (file.exists()) {
@@ -376,7 +376,7 @@ public class ClasspathHelper {
 		return paths;
 	}
 
-	private static void addPath(ArrayList result, IProject project, IPath path) {
+	private static void addPath(ArrayList<IPath> result, IProject project, IPath path) {
 		IPath resultPath = null;
 		if (path.isAbsolute())
 			resultPath = path;
@@ -398,8 +398,8 @@ public class ClasspathHelper {
 			result.add(resultPath);
 	}
 
-	private static List getFoldersToExclude(IProject project, boolean checkExcluded) {
-		ArrayList list = new ArrayList();
+	private static List<Path> getFoldersToExclude(IProject project, boolean checkExcluded) {
+		ArrayList<Path> list = new ArrayList<Path>();
 		if (checkExcluded) {
 			IEclipsePreferences pref = new ProjectScope(project).getNode(PDECore.PLUGIN_ID);
 			if (pref != null) {

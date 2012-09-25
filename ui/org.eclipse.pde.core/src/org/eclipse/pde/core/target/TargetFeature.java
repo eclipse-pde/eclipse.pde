@@ -96,7 +96,7 @@ public class TargetFeature {
 	 * @return a list of name version descriptors, possibly empty
 	 */
 	public NameVersionDescriptor[] getDependentFeatures() {
-		List result = new ArrayList();
+		List<NameVersionDescriptor> result = new ArrayList<NameVersionDescriptor>();
 		IFeature feature = featureModel.getFeature();
 		IFeatureImport[] featureImports = feature.getImports();
 		for (int i = 0; i < featureImports.length; i++) {
@@ -108,7 +108,7 @@ public class TargetFeature {
 		for (int i = 0; i < featureIncludes.length; i++) {
 			result.add(new NameVersionDescriptor(featureIncludes[i].getId(), null, NameVersionDescriptor.TYPE_FEATURE));
 		}
-		return (NameVersionDescriptor[]) result.toArray(new NameVersionDescriptor[result.size()]);
+		return result.toArray(new NameVersionDescriptor[result.size()]);
 	}
 
 	/**

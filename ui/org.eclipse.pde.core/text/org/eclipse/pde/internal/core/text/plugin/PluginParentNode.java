@@ -65,12 +65,12 @@ public class PluginParentNode extends PluginObjectNode implements IPluginParent 
 	 * @see org.eclipse.pde.core.plugin.IPluginParent#getChildren()
 	 */
 	public IPluginObject[] getChildren() {
-		ArrayList result = new ArrayList();
+		ArrayList<IDocumentElementNode> result = new ArrayList<IDocumentElementNode>();
 		IDocumentElementNode[] nodes = getChildNodes();
 		for (int i = 0; i < nodes.length; i++)
 			result.add(nodes[i]);
 
-		return (IPluginObject[]) result.toArray(new IPluginObject[result.size()]);
+		return result.toArray(new IPluginObject[result.size()]);
 	}
 
 	/* (non-Javadoc)

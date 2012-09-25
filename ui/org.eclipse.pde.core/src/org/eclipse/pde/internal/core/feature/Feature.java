@@ -28,10 +28,10 @@ public class Feature extends VersionableObject implements IFeature {
 	private String fProviderName;
 	private IFeatureURL fUrl;
 	private IFeatureInfo[] fInfos = new IFeatureInfo[3];
-	private Vector fData = new Vector();
-	private Vector fChildren = new Vector();
-	private Vector fPlugins = new Vector();
-	private Vector fImports = new Vector();
+	private Vector<IFeatureData> fData = new Vector<IFeatureData>();
+	private Vector<IFeatureChild> fChildren = new Vector<IFeatureChild>();
+	private Vector<IFeaturePlugin> fPlugins = new Vector<IFeaturePlugin>();
+	private Vector<IFeatureImport> fImports = new Vector<IFeatureImport>();
 	private String fOs;
 	private String fWs;
 	private String fNl;
@@ -257,12 +257,12 @@ public class Feature extends VersionableObject implements IFeature {
 
 	public void computeImports() throws CoreException {
 		// some existing imports may valid and can be preserved
-		Vector preservedImports = new Vector(fImports.size());
+		Vector<IFeatureImport> preservedImports = new Vector<IFeatureImport>(fImports.size());
 		// new imports
-		ArrayList newImports = new ArrayList();
+		ArrayList<IFeatureImport> newImports = new ArrayList<IFeatureImport>();
 		IPluginModelBase model = null;
 		for (int i = 0; i < fPlugins.size(); i++) {
-			IFeaturePlugin fp = (IFeaturePlugin) fPlugins.get(i);
+			IFeaturePlugin fp = fPlugins.get(i);
 			ModelEntry entry = PluginRegistry.findEntry(fp.getId());
 			if (entry == null)
 				continue;
@@ -293,22 +293,23 @@ public class Feature extends VersionableObject implements IFeature {
 		}
 		// preserve imports of features
 		for (int i = 0; i < fImports.size(); i++) {
-			IFeatureImport iimport = (IFeatureImport) fImports.get(i);
+			IFeatureImport iimport = fImports.get(i);
 			if (iimport.getType() == IFeatureImport.FEATURE)
 				preservedImports.add(iimport);
 		}
 		// removed = old - preserved
-		Vector removedImports = ((Vector) fImports.clone());
+		@SuppressWarnings("unchecked")
+		Vector<IFeatureImport> removedImports = ((Vector<IFeatureImport>) fImports.clone());
 		removedImports.removeAll(preservedImports);
 		// perform remove
 		fImports = preservedImports;
 		if (removedImports.size() > 0) {
-			fireStructureChanged((IFeatureImport[]) removedImports.toArray(new IFeatureImport[removedImports.size()]), IModelChangedEvent.REMOVE);
+			fireStructureChanged(removedImports.toArray(new IFeatureImport[removedImports.size()]), IModelChangedEvent.REMOVE);
 		}
 		// perform add
 		if (newImports.size() > 0) {
 			fImports.addAll(newImports);
-			fireStructureChanged((IFeatureImport[]) newImports.toArray(new IFeatureImport[newImports.size()]), IModelChangedEvent.INSERT);
+			fireStructureChanged(newImports.toArray(new IFeatureImport[newImports.size()]), IModelChangedEvent.INSERT);
 		}
 	}
 
@@ -323,7 +324,7 @@ public class Feature extends VersionableObject implements IFeature {
 	 * @param plugin
 	 * @throws CoreException
 	 */
-	private void addPluginImports(List preservedImports, List newImports, IPluginBase plugin) throws CoreException {
+	private void addPluginImports(List<IFeatureImport> preservedImports, List<IFeatureImport> newImports, IPluginBase plugin) throws CoreException {
 		IPluginImport[] pluginImports = plugin.getImports();
 		for (int i = 0; i < pluginImports.length; i++) {
 			IPluginImport pluginImport = pluginImports[i];
@@ -337,7 +338,7 @@ public class Feature extends VersionableObject implements IFeature {
 		}
 	}
 
-	private void addNewDependency(String id, String version, int match, List preservedImports, List newImports) throws CoreException {
+	private void addNewDependency(String id, String version, int match, List<IFeatureImport> preservedImports, List<IFeatureImport> newImports) throws CoreException {
 		if (findFeaturePlugin(id, version, match) != null) {
 			// don't add imports to local plug-ins
 			return;
@@ -373,9 +374,9 @@ public class Feature extends VersionableObject implements IFeature {
 	 * @param match
 	 * @return IFeatureImport or null
 	 */
-	private IFeatureImport findImport(List imports, String id, String version, int match) {
+	private IFeatureImport findImport(List<IFeatureImport> imports, String id, String version, int match) {
 		for (int i = 0; i < imports.size(); i++) {
-			IFeatureImport iimport = (IFeatureImport) imports.get(i);
+			IFeatureImport iimport = imports.get(i);
 			if (iimport.getId().equals(id)) {
 				if (version == null)
 					return iimport;
@@ -389,7 +390,7 @@ public class Feature extends VersionableObject implements IFeature {
 	private IFeaturePlugin findFeaturePlugin(String id, String version, int match) {
 
 		for (int i = 0; i < fPlugins.size(); i++) {
-			IFeaturePlugin fp = (IFeaturePlugin) fPlugins.get(i);
+			IFeaturePlugin fp = fPlugins.get(i);
 			String pid = fp.getId();
 			String pversion = fp.getVersion();
 			if (VersionUtil.compare(pid, pversion, id, version, match))
@@ -662,23 +663,23 @@ public class Feature extends VersionableObject implements IFeature {
 			return false;
 
 		for (int i = 0; i < fChildren.size(); i++) {
-			IFeatureChild child = (IFeatureChild) fChildren.elementAt(i);
+			IFeatureChild child = fChildren.elementAt(i);
 			if (child.getId() == null || child.getVersion() == null)
 				return false;
 		}
 		for (int i = 0; i < fPlugins.size(); i++) {
-			IFeaturePlugin plugin = (IFeaturePlugin) fPlugins.elementAt(i);
+			IFeaturePlugin plugin = fPlugins.elementAt(i);
 			if (plugin.getId() == null || plugin.getVersion() == null)
 				return false;
 
 		}
 		for (int i = 0; i < fData.size(); i++) {
-			IFeatureData entry = (IFeatureData) fData.elementAt(i);
+			IFeatureData entry = fData.elementAt(i);
 			if (entry.getId() == null)
 				return false;
 		}
 		for (int i = 0; i < fImports.size(); i++) {
-			IFeatureImport iimport = (IFeatureImport) fImports.elementAt(i);
+			IFeatureImport iimport = fImports.elementAt(i);
 			if (iimport.getId() == null)
 				return false;
 		}
@@ -739,7 +740,7 @@ public class Feature extends VersionableObject implements IFeature {
 			fUrl.write(indent2, writer);
 		}
 		for (int i = 0; i < fChildren.size(); i++) {
-			IFeatureChild child = (IFeatureChild) fChildren.elementAt(i);
+			IFeatureChild child = fChildren.elementAt(i);
 			writer.println();
 			child.write(indent2, writer);
 		}
@@ -747,18 +748,18 @@ public class Feature extends VersionableObject implements IFeature {
 			writer.println();
 			writer.println(indent2 + "<requires>"); //$NON-NLS-1$
 			for (int i = 0; i < fImports.size(); i++) {
-				IFeatureImport iimport = (IFeatureImport) fImports.get(i);
+				IFeatureImport iimport = fImports.get(i);
 				iimport.write(indenta, writer);
 			}
 			writer.println(indent2 + "</requires>"); //$NON-NLS-1$
 		}
 		for (int i = 0; i < fPlugins.size(); i++) {
-			IFeaturePlugin plugin = (IFeaturePlugin) fPlugins.elementAt(i);
+			IFeaturePlugin plugin = fPlugins.elementAt(i);
 			writer.println();
 			plugin.write(indent2, writer);
 		}
 		for (int i = 0; i < fData.size(); i++) {
-			IFeatureData entry = (IFeatureData) fData.elementAt(i);
+			IFeatureData entry = fData.elementAt(i);
 			writer.println();
 			entry.write(indent2, writer);
 		}

@@ -24,7 +24,7 @@ import org.w3c.dom.NodeList;
 public class FeatureURL extends FeatureObject implements IFeatureURL {
 	private static final long serialVersionUID = 1L;
 	private IFeatureURLElement fUpdate;
-	private Vector fDiscoveries = new Vector();
+	private Vector<IFeatureURLElement> fDiscoveries = new Vector<IFeatureURLElement>();
 
 	public void addDiscovery(IFeatureURLElement discovery) throws CoreException {
 		ensureModelEditable();
@@ -53,7 +53,7 @@ public class FeatureURL extends FeatureObject implements IFeatureURL {
 	}
 
 	public IFeatureURLElement[] getDiscoveries() {
-		return (IFeatureURLElement[]) fDiscoveries.toArray(new IFeatureURLElement[fDiscoveries.size()]);
+		return fDiscoveries.toArray(new IFeatureURLElement[fDiscoveries.size()]);
 	}
 
 	public IFeatureURLElement getUpdate() {
@@ -105,7 +105,7 @@ public class FeatureURL extends FeatureObject implements IFeatureURL {
 			fUpdate.write(indent2, writer);
 		}
 		for (int i = 0; i < fDiscoveries.size(); i++) {
-			IFeatureURLElement element = (IFeatureURLElement) fDiscoveries.elementAt(i);
+			IFeatureURLElement element = fDiscoveries.elementAt(i);
 			element.write(indent2, writer);
 		}
 		writer.println(indent + "</url>"); //$NON-NLS-1$

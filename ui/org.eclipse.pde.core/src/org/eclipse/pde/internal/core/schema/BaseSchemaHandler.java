@@ -25,14 +25,14 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class BaseSchemaHandler extends DefaultHandler {
 
-	protected LinkedList fElementList;
+	protected LinkedList<String> fElementList;
 
 	public BaseSchemaHandler() {
 		reset();
 	}
 
 	protected void reset() {
-		fElementList = new LinkedList();
+		fElementList = new LinkedList<String>();
 	}
 
 	public void startDocument() throws SAXException {

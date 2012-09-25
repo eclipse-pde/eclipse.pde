@@ -151,7 +151,7 @@ public class TargetBundle {
 		if (file == null || !file.exists()) {
 			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.TargetFeature_FileDoesNotExist, file)));
 		}
-		Map manifest = ManifestUtils.loadManifest(file);
+		Map<?, ?> manifest = ManifestUtils.loadManifest(file);
 		try {
 			fInfo = new BundleInfo(file.toURI());
 			// Attempt to retrieve additional bundle information from the manifest
@@ -189,7 +189,7 @@ public class TargetBundle {
 	 * @param manifest the bundle's manifest, can be <code>null</code> to skip searching of manifest entries
 	 * @return bundle for provided source or <code>null</code> if not a source bundle
 	 */
-	private BundleInfo getProvidedSource(File bundle, String symbolicName, Map manifest) {
+	private BundleInfo getProvidedSource(File bundle, String symbolicName, Map<?, ?> manifest) {
 		fSourcePath = null;
 		if (manifest != null) {
 			if (manifest.containsKey(ICoreConstants.ECLIPSE_SOURCE_BUNDLE)) {

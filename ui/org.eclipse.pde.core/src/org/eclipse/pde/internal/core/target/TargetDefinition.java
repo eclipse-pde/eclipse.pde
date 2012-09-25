@@ -66,7 +66,7 @@ public class TargetDefinition implements ITargetDefinition {
 	public static final int MODE_FEATURE = 1;
 
 	// cache of features found for a given location, maps a string path location to a array of IFeatureModels (IFeatureModel[])
-	private Map fFeaturesInLocation = new HashMap();
+	private Map<String, TargetFeature[]> fFeaturesInLocation = new HashMap<String, TargetFeature[]>();
 
 	// internal cache for features.  A target managed by features will contain a set of features as well as a set of plug-ins that don't belong to a feature
 	private TargetFeature[] fFeatures;
@@ -369,7 +369,7 @@ public class TargetDefinition implements ITargetDefinition {
 		if (isResolved()) {
 			ITargetLocation[] containers = getTargetLocations();
 			if (containers != null) {
-				List all = new ArrayList();
+				List<TargetBundle> all = new ArrayList<TargetBundle>();
 				for (int i = 0; i < containers.length; i++) {
 					ITargetLocation container = containers[i];
 					TargetBundle[] bundles = container.getBundles();
@@ -381,7 +381,7 @@ public class TargetDefinition implements ITargetDefinition {
 					}
 				}
 
-				TargetBundle[] allResolvedBundles = (TargetBundle[]) all.toArray(new TargetBundle[all.size()]);
+				TargetBundle[] allResolvedBundles = all.toArray(new TargetBundle[all.size()]);
 				if (allBundles) {
 					return allResolvedBundles;
 				}
@@ -405,9 +405,9 @@ public class TargetDefinition implements ITargetDefinition {
 		boolean containsFeatures = false;
 
 		// If there are any included features that are missing, add errors as resolved bundles (the same thing we would do for missing bundles)
-		List missingFeatures = new ArrayList();
+		List<NameVersionDescriptor> missingFeatures = new ArrayList<NameVersionDescriptor>();
 
-		List included = new ArrayList();
+		List<NameVersionDescriptor> included = new ArrayList<NameVersionDescriptor>();
 		// For feature filters, get the list of included bundles, for bundle filters just add them to the list
 		for (int i = 0; i < filter.length; i++) {
 			if (filter[i].getType() == NameVersionDescriptor.TYPE_PLUGIN) {
@@ -455,12 +455,12 @@ public class TargetDefinition implements ITargetDefinition {
 		}
 
 		// Return matching bundles, if we are organizing by feature, do not create invalid target bundles for missing bundle includes
-		List result = getMatchingBundles(bundles, (NameVersionDescriptor[]) included.toArray(new NameVersionDescriptor[included.size()]), !containsFeatures);
+		List<TargetBundle> result = getMatchingBundles(bundles, included.toArray(new NameVersionDescriptor[included.size()]), !containsFeatures);
 
 		// Add in missing features as resolved bundles with error statuses
 		if (containsFeatures && !missingFeatures.isEmpty()) {
-			for (Iterator iterator = missingFeatures.iterator(); iterator.hasNext();) {
-				NameVersionDescriptor missing = (NameVersionDescriptor) iterator.next();
+			for (Iterator<NameVersionDescriptor> iterator = missingFeatures.iterator(); iterator.hasNext();) {
+				NameVersionDescriptor missing = iterator.next();
 				BundleInfo info = new BundleInfo(missing.getId(), missing.getVersion(), null, BundleInfo.NO_LEVEL, false);
 				String message = NLS.bind(Messages.TargetDefinition_RequiredFeatureCouldNotBeFound, missing.getId());
 				Status status = new Status(IStatus.ERROR, PDECore.PLUGIN_ID, TargetBundle.STATUS_FEATURE_DOES_NOT_EXIST, message, null);
@@ -468,7 +468,7 @@ public class TargetDefinition implements ITargetDefinition {
 			}
 		}
 
-		return (TargetBundle[]) result.toArray(new TargetBundle[result.size()]);
+		return result.toArray(new TargetBundle[result.size()]);
 	}
 
 	/**
@@ -486,24 +486,24 @@ public class TargetDefinition implements ITargetDefinition {
 	 * 
 	 * @return list of IResolvedBundle bundles that match this container's restrictions
 	 */
-	static List getMatchingBundles(TargetBundle[] collection, NameVersionDescriptor[] included, boolean handleMissingBundles) {
+	static List<TargetBundle> getMatchingBundles(TargetBundle[] collection, NameVersionDescriptor[] included, boolean handleMissingBundles) {
 		if (included == null) {
-			ArrayList result = new ArrayList();
+			ArrayList<TargetBundle> result = new ArrayList<TargetBundle>();
 			result.addAll(Arrays.asList(collection));
 			return result;
 		}
 		// map bundles names to available versions
-		Map bundleMap = new HashMap(collection.length);
+		Map<String, List<TargetBundle>> bundleMap = new HashMap<String, List<TargetBundle>>(collection.length);
 		for (int i = 0; i < collection.length; i++) {
 			TargetBundle resolved = collection[i];
-			List list = (List) bundleMap.get(resolved.getBundleInfo().getSymbolicName());
+			List<TargetBundle> list = bundleMap.get(resolved.getBundleInfo().getSymbolicName());
 			if (list == null) {
-				list = new ArrayList(3);
+				list = new ArrayList<TargetBundle>(3);
 				bundleMap.put(resolved.getBundleInfo().getSymbolicName(), list);
 			}
 			list.add(resolved);
 		}
-		List resolved = new ArrayList();
+		List<TargetBundle> resolved = new ArrayList<TargetBundle>();
 
 		for (int i = 0; i < included.length; i++) {
 			BundleInfo info = new BundleInfo(included[i].getId(), included[i].getVersion(), null, BundleInfo.NO_LEVEL, false);
@@ -532,15 +532,15 @@ public class TargetDefinition implements ITargetDefinition {
 	 * @param handleMissingBundles whether to return an {@link InvalidTargetBundle} for a info that does not match with a map entry or <code>null</code>
 	 * @return resolved bundle or <code>null</code>
 	 */
-	private static TargetBundle resolveBundle(Map bundleMap, BundleInfo info, boolean handleMissingBundles) {
-		List list = (List) bundleMap.get(info.getSymbolicName());
+	private static TargetBundle resolveBundle(Map<String, List<TargetBundle>> bundleMap, BundleInfo info, boolean handleMissingBundles) {
+		List<TargetBundle> list = bundleMap.get(info.getSymbolicName());
 		if (list != null) {
 			String version = info.getVersion();
 			if (version == null || version.equals(BundleInfo.EMPTY_VERSION)) {
 				// select newest
 				if (list.size() > 1) {
 					// sort the list
-					Collections.sort(list, new Comparator() {
+					Collections.sort(list, new Comparator<Object>() {
 						public int compare(Object o1, Object o2) {
 							BundleInfo b1 = ((TargetBundle) o1).getBundleInfo();
 							BundleInfo b2 = ((TargetBundle) o2).getBundleInfo();
@@ -557,10 +557,10 @@ public class TargetDefinition implements ITargetDefinition {
 					});
 				}
 				// select the last one
-				TargetBundle rb = (TargetBundle) list.get(list.size() - 1);
+				TargetBundle rb = list.get(list.size() - 1);
 				return rb;
 			}
-			Iterator iterator = list.iterator();
+			Iterator<?> iterator = list.iterator();
 			while (iterator.hasNext()) {
 				TargetBundle bundle = (TargetBundle) iterator.next();
 				if (bundle.getBundleInfo().getVersion().equals(version)) {
@@ -854,14 +854,14 @@ public class TargetDefinition implements ITargetDefinition {
 
 		TargetFeature[] models = null;
 		if (fFeaturesInLocation != null) {
-			models = (TargetFeature[]) fFeaturesInLocation.get(path);
+			models = fFeaturesInLocation.get(path);
 		}
 
 		if (models != null) {
 			return models; /*(IFeatureModel[])models.toArray(new IFeatureModel[models.size()]);*/
 		}
 
-		models = ExternalFeatureModelManager.createFeatures(path, new ArrayList(), monitor);
+		models = ExternalFeatureModelManager.createFeatures(path, new ArrayList<Object>(), monitor);
 		fFeaturesInLocation.put(path, models);
 		return models;
 	}
@@ -881,7 +881,7 @@ public class TargetDefinition implements ITargetDefinition {
 		ITargetLocation[] containers = getTargetLocations();
 
 		// collect up all features from all containers and remove duplicates.
-		Map result = new HashMap();
+		Map<NameVersionDescriptor, TargetFeature> result = new HashMap<NameVersionDescriptor, TargetFeature>();
 		if (containers != null && containers.length > 0) {
 			for (int i = 0; i < containers.length; i++) {
 				TargetFeature[] currentFeatures = containers[i].getFeatures();
@@ -898,7 +898,7 @@ public class TargetDefinition implements ITargetDefinition {
 			}
 		}
 
-		fFeatures = (TargetFeature[]) result.values().toArray(new TargetFeature[result.size()]);
+		fFeatures = result.values().toArray(new TargetFeature[result.size()]);
 		return fFeatures;
 	}
 
@@ -918,7 +918,7 @@ public class TargetDefinition implements ITargetDefinition {
 		}
 
 		TargetBundle[] allBundles = getAllBundles();
-		Map remaining = new HashMap();
+		Map<String, TargetBundle> remaining = new HashMap<String, TargetBundle>();
 		for (int i = 0; i < allBundles.length; i++) {
 			remaining.put(allBundles[i].getBundleInfo().getSymbolicName(), allBundles[i]);
 		}
@@ -931,8 +931,8 @@ public class TargetDefinition implements ITargetDefinition {
 			}
 		}
 
-		Collection values = remaining.values();
-		fOtherBundles = (TargetBundle[]) values.toArray(new TargetBundle[values.size()]);
+		Collection<TargetBundle> values = remaining.values();
+		fOtherBundles = values.toArray(new TargetBundle[values.size()]);
 		return fOtherBundles;
 	}
 
@@ -946,7 +946,7 @@ public class TargetDefinition implements ITargetDefinition {
 	 * @see #getOtherBundles()
 	 * @return set of IFeatureModels and IResolvedBundles or <code>null</code>
 	 */
-	public Set getFeaturesAndBundles() {
+	public Set<Object> getFeaturesAndBundles() {
 		if (!isResolved()) {
 			return null;
 		}
@@ -957,13 +957,13 @@ public class TargetDefinition implements ITargetDefinition {
 		NameVersionDescriptor[] included = getIncluded();
 
 		if (included == null) {
-			Set result = new HashSet();
+			Set<Object> result = new HashSet<Object>();
 			result.addAll(Arrays.asList(allFeatures));
 			result.addAll(Arrays.asList(allExtraBundles));
 			return result;
 		}
 
-		Set result = new HashSet();
+		Set<Object> result = new HashSet<Object>();
 		for (int i = 0; i < included.length; i++) {
 			if (included[i].getType() == NameVersionDescriptor.TYPE_PLUGIN) {
 				for (int j = 0; j < allExtraBundles.length; j++) {

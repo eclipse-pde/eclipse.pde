@@ -30,7 +30,7 @@ public class BuildEntry implements IBuildEntry, IDocumentKey {
 	private int fOffset = -1;
 	private IBuildModel fModel;
 	private String fName;
-	private ArrayList fTokens = new ArrayList();
+	private ArrayList<Object> fTokens = new ArrayList<Object>();
 	private String fLineDelimiter;
 
 	public BuildEntry(String name, IBuildModel model) {
@@ -69,7 +69,7 @@ public class BuildEntry implements IBuildEntry, IDocumentKey {
 	 * @see org.eclipse.pde.core.build.IBuildEntry#getTokens()
 	 */
 	public String[] getTokens() {
-		return (String[]) fTokens.toArray(new String[fTokens.size()]);
+		return fTokens.toArray(new String[fTokens.size()]);
 	}
 
 	/* (non-Javadoc)

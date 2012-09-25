@@ -74,27 +74,27 @@ class FeatureTable {
 	/**
 	 * Map of IFeatureModel to Idver
 	 */
-	private Map fModel2idver;
+	private Map<IFeatureModel, Idver> fModel2idver;
 
 	/**
 	 * Map of Idver to ArrayList of IFeatureModel
 	 */
-	private Map fIdver2models;
+	private Map<Idver, ArrayList<IFeatureModel>> fIdver2models;
 
 	/**
 	 * Map of Id to ArrayList of Idver
 	 */
-	private Map fId2idvers;
+	private Map<String, ArrayList<Idver>> fId2idvers;
 
 	public FeatureTable() {
 
-		fModel2idver = new HashMap();
-		fIdver2models = new HashMap();
-		fId2idvers = new HashMap();
+		fModel2idver = new HashMap<IFeatureModel, Idver>();
+		fIdver2models = new HashMap<Idver, ArrayList<IFeatureModel>>();
+		fId2idvers = new HashMap<String, ArrayList<Idver>>();
 	}
 
 	public synchronized Idver get(IFeatureModel model) {
-		return (Idver) fModel2idver.get(model);
+		return fModel2idver.get(model);
 	}
 
 	public synchronized IFeatureModel[] get(String id, String version) {
@@ -106,27 +106,27 @@ class FeatureTable {
 	}
 
 	private IFeatureModel[] getImpl(Idver idver) {
-		ArrayList models = (ArrayList) fIdver2models.get(idver);
+		ArrayList<?> models = fIdver2models.get(idver);
 		if (models == null) {
 			return NO_MODELS;
 		}
-		return (IFeatureModel[]) models.toArray(new IFeatureModel[models.size()]);
+		return models.toArray(new IFeatureModel[models.size()]);
 	}
 
 	public synchronized IFeatureModel[] get(String id) {
-		ArrayList idvers = (ArrayList) fId2idvers.get(id);
+		ArrayList<Idver> idvers = fId2idvers.get(id);
 		if (idvers == null)
 			return NO_MODELS;
-		ArrayList allModels = new ArrayList();
+		ArrayList<IFeatureModel> allModels = new ArrayList<IFeatureModel>();
 		for (int i = 0; i < idvers.size(); i++) {
-			Idver idver = (Idver) idvers.get(i);
-			ArrayList models = (ArrayList) fIdver2models.get(idver);
+			Idver idver = idvers.get(i);
+			ArrayList<IFeatureModel> models = fIdver2models.get(idver);
 			if (models == null) {
 				continue;
 			}
 			allModels.addAll(models);
 		}
-		return (IFeatureModel[]) allModels.toArray(new IFeatureModel[allModels.size()]);
+		return allModels.toArray(new IFeatureModel[allModels.size()]);
 	}
 
 	public synchronized IFeatureModel[] getAll() {
@@ -134,7 +134,7 @@ class FeatureTable {
 	}
 
 	private IFeatureModel[] getAllImpl() {
-		return (IFeatureModel[]) fModel2idver.keySet().toArray(new IFeatureModel[fModel2idver.size()]);
+		return fModel2idver.keySet().toArray(new IFeatureModel[fModel2idver.size()]);
 	}
 
 	/**
@@ -147,11 +147,11 @@ class FeatureTable {
 	}
 
 	private Idver removeImpl(IFeatureModel model) {
-		Idver idver = (Idver) fModel2idver.remove(model);
+		Idver idver = fModel2idver.remove(model);
 		if (idver == null) {
 			return null;
 		}
-		ArrayList models = (ArrayList) fIdver2models.get(idver);
+		ArrayList<?> models = fIdver2models.get(idver);
 		for (int i = 0; i < models.size(); i++) {
 			if (models.get(i) == model) {
 				models.remove(i);
@@ -161,7 +161,7 @@ class FeatureTable {
 		if (models.size() <= 0) {
 			fIdver2models.remove(idver);
 
-			ArrayList idvers = (ArrayList) fId2idvers.get(idver.getId());
+			ArrayList<?> idvers = fId2idvers.get(idver.getId());
 			for (int i = 0; i < idvers.size(); i++) {
 				if (idvers.get(i).equals(idver)) {
 					idvers.remove(i);
@@ -190,16 +190,16 @@ class FeatureTable {
 
 		fModel2idver.put(model, idver);
 
-		ArrayList models = (ArrayList) fIdver2models.get(idver);
+		ArrayList<IFeatureModel> models = fIdver2models.get(idver);
 		if (models == null) {
-			models = new ArrayList(1);
+			models = new ArrayList<IFeatureModel>(1);
 			fIdver2models.put(idver, models);
 		}
 		models.add(model);
 
-		ArrayList idvers = (ArrayList) fId2idvers.get(id);
+		ArrayList<Idver> idvers = fId2idvers.get(id);
 		if (idvers == null) {
-			idvers = new ArrayList(1);
+			idvers = new ArrayList<Idver>(1);
 			fId2idvers.put(id, idvers);
 		}
 		idvers.add(idver);

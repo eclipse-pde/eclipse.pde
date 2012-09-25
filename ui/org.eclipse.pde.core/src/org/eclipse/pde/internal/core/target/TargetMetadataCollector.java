@@ -51,7 +51,7 @@ public class TargetMetadataCollector {
 			definition = handle.getTargetDefinition();
 		}
 
-		Set repos = new HashSet();
+		Set<URI> repos = new HashSet<URI>();
 
 		ITargetLocation[] containers = definition.getTargetLocations();
 		if (containers != null) {
@@ -76,6 +76,6 @@ public class TargetMetadataCollector {
 			}
 		}
 
-		return (URI[]) repos.toArray(new URI[repos.size()]);
+		return repos.toArray(new URI[repos.size()]);
 	}
 }

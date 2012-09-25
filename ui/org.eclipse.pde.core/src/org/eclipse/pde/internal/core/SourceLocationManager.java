@@ -29,7 +29,7 @@ public class SourceLocationManager implements ICoreConstants {
 	/**
 	 * List of source locations that have been discovered using extension points
 	 */
-	private List fExtensionLocations = null;
+	private List<SourceLocation> fExtensionLocations = null;
 
 	/**
 	 * Manages locations of individual source bundles
@@ -141,7 +141,7 @@ public class SourceLocationManager implements ICoreConstants {
 	 * @param plugin plugin to lookup source for
 	 * @return set of String paths that are source roots for the bundle, possibly empty
 	 */
-	public Set findAllSourceRootsInSourceLocation(IPluginBase plugin) {
+	public Set<?> findAllSourceRootsInSourceLocation(IPluginBase plugin) {
 		if (plugin.getId() == null || plugin.getVersion() == null) {
 			return Collections.EMPTY_SET;
 		}
@@ -157,7 +157,7 @@ public class SourceLocationManager implements ICoreConstants {
 	 * @param plugin plugin to lookup source for
 	 * @return set of String paths that are source roots for the plugin, possibly empty
 	 */
-	public Set findSourceRoots(IPluginBase plugin) {
+	public Set<?> findSourceRoots(IPluginBase plugin) {
 		if (plugin.getId() == null || plugin.getVersion() == null) {
 			return Collections.EMPTY_SET;
 		}
@@ -175,8 +175,8 @@ public class SourceLocationManager implements ICoreConstants {
 	/**
 	 * @return array of source locations that have been specified by the user
 	 */
-	public List getUserLocations() {
-		List userLocations = new ArrayList();
+	public List<SourceLocation> getUserLocations() {
+		List<SourceLocation> userLocations = new ArrayList<SourceLocation>();
 		String pref = PDECore.getDefault().getPreferencesManager().getString(P_SOURCE_LOCATIONS);
 		if (pref.length() > 0) {
 			parseSavedSourceLocations(pref, userLocations);
@@ -187,7 +187,7 @@ public class SourceLocationManager implements ICoreConstants {
 	/**
 	 * @return array of source locations that have been added via extension point
 	 */
-	public List getExtensionLocations() {
+	public List<SourceLocation> getExtensionLocations() {
 		if (fExtensionLocations == null) {
 			fExtensionLocations = processExtensions();
 		}
@@ -197,7 +197,7 @@ public class SourceLocationManager implements ICoreConstants {
 	/**
 	 * @return array of source locations defined by a bundle manifest entry
 	 */
-	public Collection getBundleManifestLocations() {
+	public Collection<?> getBundleManifestLocations() {
 		return getBundleManifestLocator().getSourceLocations();
 	}
 
@@ -251,9 +251,9 @@ public class SourceLocationManager implements ICoreConstants {
 	 * @return path to the source file or <code>null</code> if one could not be found or if the file does not exist
 	 */
 	private IPath searchUserSpecifiedLocations(IPath relativePath) {
-		List userLocations = getUserLocations();
-		for (Iterator iterator = userLocations.iterator(); iterator.hasNext();) {
-			SourceLocation currentLocation = (SourceLocation) iterator.next();
+		List<SourceLocation> userLocations = getUserLocations();
+		for (Iterator<SourceLocation> iterator = userLocations.iterator(); iterator.hasNext();) {
+			SourceLocation currentLocation = iterator.next();
 			IPath fullPath = currentLocation.getPath().append(relativePath);
 			File file = fullPath.toFile();
 			if (file.exists()) {
@@ -270,9 +270,9 @@ public class SourceLocationManager implements ICoreConstants {
 	 * @return path to the source file or <code>null</code> if one could not be found or if the file does not exist
 	 */
 	private IPath searchExtensionLocations(IPath relativePath) {
-		List extensionLocations = getExtensionLocations();
-		for (Iterator iterator = extensionLocations.iterator(); iterator.hasNext();) {
-			SourceLocation currentLocation = (SourceLocation) iterator.next();
+		List<SourceLocation> extensionLocations = getExtensionLocations();
+		for (Iterator<SourceLocation> iterator = extensionLocations.iterator(); iterator.hasNext();) {
+			SourceLocation currentLocation = iterator.next();
 			IPath fullPath = currentLocation.getPath().append(relativePath);
 			File file = fullPath.toFile();
 			if (file.exists()) {
@@ -302,7 +302,7 @@ public class SourceLocationManager implements ICoreConstants {
 	 * @param text text to parse
 	 * @param entries list to add source locations to
 	 */
-	private void parseSavedSourceLocations(String text, List entries) {
+	private void parseSavedSourceLocations(String text, List<SourceLocation> entries) {
 		text = text.replace(File.pathSeparatorChar, ';');
 		StringTokenizer stok = new StringTokenizer(text, ";"); //$NON-NLS-1$
 		while (stok.hasMoreTokens()) {
@@ -337,8 +337,8 @@ public class SourceLocationManager implements ICoreConstants {
 	/**
 	 * @return array of source locations that were added via extension point
 	 */
-	private static List processExtensions() {
-		ArrayList result = new ArrayList();
+	private static List<SourceLocation> processExtensions() {
+		ArrayList<SourceLocation> result = new ArrayList<SourceLocation>();
 		IExtension[] extensions = PDECore.getDefault().getExtensionsRegistry().findExtensions(PDECore.PLUGIN_ID + ".source", false); //$NON-NLS-1$
 		for (int i = 0; i < extensions.length; i++) {
 			IConfigurationElement[] children = extensions[i].getConfigurationElements();

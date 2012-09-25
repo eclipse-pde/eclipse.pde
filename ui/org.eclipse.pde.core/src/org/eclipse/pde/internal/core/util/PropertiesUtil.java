@@ -151,7 +151,7 @@ StringBuffer buf = new StringBuffer(value.length() * 2);
 		writer.println(PropertiesUtil.createEscapedValue(value));
 	}
 
-	public static void writeKeyValuePair(String indent, String name, Enumeration tokens, PrintWriter writer) {
+	public static void writeKeyValuePair(String indent, String name, Enumeration<?> tokens, PrintWriter writer) {
 		String writableName = createWritableName(name);
 		writer.print(writableName + " = "); //$NON-NLS-1$
 		if (!tokens.hasMoreElements()) {

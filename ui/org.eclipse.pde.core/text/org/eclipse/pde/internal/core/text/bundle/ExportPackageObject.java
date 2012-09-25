@@ -13,6 +13,7 @@
 package org.eclipse.pde.internal.core.text.bundle;
 
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.util.*;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.osgi.util.ManifestElement;
@@ -28,7 +29,7 @@ public class ExportPackageObject extends PackageObject {
 
 	private static final long serialVersionUID = 1L;
 
-	private TreeMap fFriends = new TreeMap();
+	private TreeMap<String, PackageFriend> fFriends = new TreeMap<String, PackageFriend>();
 
 	public ExportPackageObject(ManifestHeader header, ManifestElement element, String versionAttribute) {
 		super(header, element, versionAttribute);
@@ -70,7 +71,7 @@ public class ExportPackageObject extends PackageObject {
 			if (fFriends.size() == 0)
 				setDirective(ICoreConstants.INTERNAL_DIRECTIVE, "true"); //$NON-NLS-1$
 			else {
-				Iterator iter = fFriends.keySet().iterator();
+				Iterator<String> iter = fFriends.keySet().iterator();
 				while (iter.hasNext())
 					addDirective(ICoreConstants.FRIENDS_DIRECTIVE, iter.next().toString());
 			}
@@ -80,7 +81,7 @@ public class ExportPackageObject extends PackageObject {
 	}
 
 	public PackageFriend[] getFriends() {
-		return (PackageFriend[]) fFriends.values().toArray(new PackageFriend[fFriends.size()]);
+		return fFriends.values().toArray(new PackageFriend[fFriends.size()]);
 	}
 
 	public void addFriend(PackageFriend friend) {
@@ -101,7 +102,7 @@ public class ExportPackageObject extends PackageObject {
 			setDirective(ICoreConstants.INTERNAL_DIRECTIVE, "true"); //$NON-NLS-1$
 			hasInternalChanged = true;
 		} else {
-			Iterator iter = fFriends.keySet().iterator();
+			Iterator<String> iter = fFriends.keySet().iterator();
 			while (iter.hasNext())
 				addDirective(ICoreConstants.FRIENDS_DIRECTIVE, iter.next().toString());
 		}
@@ -123,7 +124,7 @@ public class ExportPackageObject extends PackageObject {
 		if (fFriends.size() != object.fFriends.size())
 			return false;
 
-		Iterator iter = fFriends.keySet().iterator();
+		Iterator<String> iter = fFriends.keySet().iterator();
 		while (iter.hasNext()) {
 			if (!object.fFriends.containsKey(iter.next()))
 				return false;
@@ -142,19 +143,19 @@ public class ExportPackageObject extends PackageObject {
 		return getDirective(Constants.USES_DIRECTIVE);
 	}
 
-	protected void appendValuesToBuffer(StringBuffer sb, TreeMap table) {
+	protected void appendValuesToBuffer(StringBuffer sb, TreeMap<String, Serializable> table) {
 
 		if (table == null) {
 			return;
 		}
 
-		Object usesValue = null;
+		Serializable usesValue = null;
 		// remove the Uses directive, we will make sure to put it at the end
 		if (table.containsKey(Constants.USES_DIRECTIVE)) {
 			usesValue = table.remove(Constants.USES_DIRECTIVE);
 		}
 
-		Object friendsValue = null;
+		Serializable friendsValue = null;
 		// remove the friends directive, ensure it's appropriately formatted
 		if (table.containsKey(ICoreConstants.FRIENDS_DIRECTIVE)) {
 			friendsValue = table.remove(ICoreConstants.FRIENDS_DIRECTIVE);
@@ -217,7 +218,7 @@ public class ExportPackageObject extends PackageObject {
 
 		} else if (usesValue instanceof List) {
 
-			List usesList = (List) usesValue;
+			List<?> usesList = (List<?>) usesValue;
 
 			if (usesList.size() > newLineLimit) {
 				newLine = true;
@@ -261,12 +262,12 @@ public class ExportPackageObject extends PackageObject {
 				}
 			}
 		} else {
-			List usesList = (List) usesValue;
+			List<?> usesList = (List<?>) usesValue;
 
 			// For each item in the collection, output each value (comma
 			// separated), potentially adding a new line between them
 
-			for (ListIterator iterator = usesList.listIterator(); true;) {
+			for (ListIterator<?> iterator = usesList.listIterator(); true;) {
 
 				sb.append(iterator.next());
 
@@ -312,11 +313,11 @@ public class ExportPackageObject extends PackageObject {
 	 */
 	private void reconnectFriends() {
 		// Get all the friends
-		Iterator keys = fFriends.keySet().iterator();
+		Iterator<String> keys = fFriends.keySet().iterator();
 		// Fill in appropriate transient field values for all friends
 		while (keys.hasNext()) {
-			String key = (String) keys.next();
-			PackageFriend friend = (PackageFriend) fFriends.get(key);
+			String key = keys.next();
+			PackageFriend friend = fFriends.get(key);
 			friend.reconnect(this);
 		}
 	}

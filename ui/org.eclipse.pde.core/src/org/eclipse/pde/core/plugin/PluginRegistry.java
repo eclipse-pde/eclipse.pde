@@ -293,13 +293,13 @@ public class PluginRegistry {
 	 */
 	public static IPluginModelBase[] findModels(String id, String version, int match, PluginFilter filter) {
 		IPluginModelBase[] models = PluginRegistry.getAllModels();
-		List results = new ArrayList();
+		List<IPluginModelBase> results = new ArrayList<IPluginModelBase>();
 		for (int i = 0; i < models.length; i++) {
 			IPluginModelBase model = models[i];
 			if ((filter == null || filter.accept(model)) && isMatch(model.getPluginBase(), id, version, match))
 				results.add(model);
 		}
-		return (IPluginModelBase[]) results.toArray(new IPluginModelBase[results.size()]);
+		return results.toArray(new IPluginModelBase[results.size()]);
 	}
 
 	/**
@@ -380,7 +380,7 @@ public class PluginRegistry {
 	 */
 	public static IPluginModelBase[] findModels(String id, VersionRange range, PluginFilter filter) {
 		IPluginModelBase[] models = PluginRegistry.getAllModels();
-		List results = new ArrayList();
+		List<IPluginModelBase> results = new ArrayList<IPluginModelBase>();
 		for (int i = 0; i < models.length; i++) {
 			IPluginModelBase model = models[i];
 			if ((filter == null || filter.accept(model)) && id.equals(model.getPluginBase().getId())) {
@@ -391,7 +391,7 @@ public class PluginRegistry {
 				}
 			}
 		}
-		return (IPluginModelBase[]) results.toArray(new IPluginModelBase[results.size()]);
+		return results.toArray(new IPluginModelBase[results.size()]);
 	}
 
 	/**

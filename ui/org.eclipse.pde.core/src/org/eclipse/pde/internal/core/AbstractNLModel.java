@@ -47,6 +47,7 @@ public abstract class AbstractNLModel extends AbstractModel {
 
 	protected abstract NLResourceHelper createNLResourceHelper();
 
+	@SuppressWarnings("rawtypes")
 	public Object getAdapter(Class adapter) {
 		if (adapter == IResource.class) {
 			IResource resource = getUnderlyingResource();

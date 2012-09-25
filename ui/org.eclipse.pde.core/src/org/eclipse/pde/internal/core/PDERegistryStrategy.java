@@ -26,7 +26,7 @@ public class PDERegistryStrategy extends RegistryStrategy {
 	/**
 	 * Tracker for the XML parser service
 	 */
-	private ServiceTracker xmlTracker = null;
+	private ServiceTracker<?, ?> xmlTracker = null;
 
 	private Object fKey = null;
 
@@ -164,7 +164,7 @@ public class PDERegistryStrategy extends RegistryStrategy {
 	 */
 	public SAXParserFactory getXMLParser() {
 		if (xmlTracker == null) {
-			xmlTracker = new ServiceTracker(PDECore.getDefault().getBundleContext(), SAXParserFactory.class.getName(), null);
+			xmlTracker = new ServiceTracker<Object, Object>(PDECore.getDefault().getBundleContext(), SAXParserFactory.class.getName(), null);
 			xmlTracker.open();
 		}
 		return (SAXParserFactory) xmlTracker.getService();

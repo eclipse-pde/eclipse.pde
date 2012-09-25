@@ -19,11 +19,11 @@ import java.util.TreeMap;
  * the value of a header if it matches (case insensitive) to the key.  
  *
  */
-public class HeaderMap extends TreeMap {
+public class HeaderMap<K, V> extends TreeMap<K, V> {
 
 	private static final long serialVersionUID = 1L;
 
-	private static class HeaderComparator implements Comparator {
+	private static class HeaderComparator implements Comparator<Object> {
 		public int compare(Object arg0, Object arg1) {
 			String header0 = (String) arg0;
 			String header1 = (String) arg1;

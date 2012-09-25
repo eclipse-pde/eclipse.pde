@@ -42,12 +42,12 @@ public class PluginJavaSearchUtil {
 	}
 
 	public static IPluginModelBase[] getPluginImports(String pluginImportID) {
-		HashSet set = new HashSet();
+		HashSet<IPluginModelBase> set = new HashSet<IPluginModelBase>();
 		collectAllPrerequisites(PluginRegistry.findModel(pluginImportID), set);
-		return (IPluginModelBase[]) set.toArray(new IPluginModelBase[set.size()]);
+		return set.toArray(new IPluginModelBase[set.size()]);
 	}
 
-	public static void collectAllPrerequisites(IPluginModelBase model, HashSet set) {
+	public static void collectAllPrerequisites(IPluginModelBase model, HashSet<IPluginModelBase> set) {
 		if (model == null || !set.add(model))
 			return;
 		IPluginImport[] imports = model.getPluginBase().getImports();
@@ -61,14 +61,14 @@ public class PluginJavaSearchUtil {
 	}
 
 	public static IPackageFragment[] collectPackageFragments(IPluginModelBase[] models, IJavaProject parentProject, boolean filterEmptyPackages) throws JavaModelException {
-		ArrayList result = new ArrayList();
+		ArrayList<IPackageFragment> result = new ArrayList<IPackageFragment>();
 		IPackageFragmentRoot[] roots = parentProject.getAllPackageFragmentRoots();
 
 		for (int i = 0; i < models.length; i++) {
 			IPluginModelBase model = models[i];
 			IResource resource = model.getUnderlyingResource();
 			if (resource == null) {
-				ArrayList libraryPaths = new ArrayList();
+				ArrayList<Path> libraryPaths = new ArrayList<Path>();
 				addLibraryPaths(model, libraryPaths);
 				for (int j = 0; j < roots.length; j++) {
 					if (libraryPaths.contains(roots[j].getPath())) {
@@ -85,10 +85,10 @@ public class PluginJavaSearchUtil {
 				}
 			}
 		}
-		return (IPackageFragment[]) result.toArray(new IPackageFragment[result.size()]);
+		return result.toArray(new IPackageFragment[result.size()]);
 	}
 
-	private static void extractPackageFragments(IPackageFragmentRoot root, ArrayList result, boolean filterEmpty) {
+	private static void extractPackageFragments(IPackageFragmentRoot root, ArrayList<IPackageFragment> result, boolean filterEmpty) {
 		try {
 			IJavaElement[] children = root.getChildren();
 			for (int i = 0; i < children.length; i++) {
@@ -100,7 +100,7 @@ public class PluginJavaSearchUtil {
 		}
 	}
 
-	private static void addLibraryPaths(IPluginModelBase model, ArrayList libraryPaths) {
+	private static void addLibraryPaths(IPluginModelBase model, ArrayList<Path> libraryPaths) {
 		IPluginBase plugin = model.getPluginBase();
 
 		IFragmentModel[] fragments = new IFragmentModel[0];
@@ -129,7 +129,7 @@ public class PluginJavaSearchUtil {
 		}
 	}
 
-	private static void findLibraryInFragments(IFragmentModel[] fragments, String libraryName, ArrayList libraryPaths) {
+	private static void findLibraryInFragments(IFragmentModel[] fragments, String libraryName, ArrayList<Path> libraryPaths) {
 		for (int i = 0; i < fragments.length; i++) {
 			String path = fragments[i].getInstallLocation() + IPath.SEPARATOR + libraryName;
 			if (new File(path).exists()) {
@@ -141,13 +141,13 @@ public class PluginJavaSearchUtil {
 
 	public static IJavaSearchScope createSeachScope(IJavaProject jProject) throws JavaModelException {
 		IPackageFragmentRoot[] roots = jProject.getPackageFragmentRoots();
-		ArrayList filteredRoots = new ArrayList();
+		ArrayList<IPackageFragmentRoot> filteredRoots = new ArrayList<IPackageFragmentRoot>();
 		for (int i = 0; i < roots.length; i++) {
 			if (roots[i].getResource() != null && roots[i].getResource().getProject().equals(jProject.getProject())) {
 				filteredRoots.add(roots[i]);
 			}
 		}
-		return SearchEngine.createJavaSearchScope((IJavaElement[]) filteredRoots.toArray(new IJavaElement[filteredRoots.size()]));
+		return SearchEngine.createJavaSearchScope(filteredRoots.toArray(new IJavaElement[filteredRoots.size()]));
 	}
 
 }

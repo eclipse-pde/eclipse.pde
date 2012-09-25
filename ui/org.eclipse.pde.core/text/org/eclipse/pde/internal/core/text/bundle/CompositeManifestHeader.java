@@ -25,9 +25,9 @@ public class CompositeManifestHeader extends ManifestHeader {
 
 	private boolean fSort;
 
-	protected ArrayList fManifestElements;
+	protected ArrayList<Object> fManifestElements;
 
-	protected Map fElementMap;
+	protected Map<String, PDEManifestElement> fElementMap;
 
 	public CompositeManifestHeader(String name, String value, IBundle bundle, String lineDelimiter) {
 		this(name, value, bundle, lineDelimiter, false);
@@ -110,11 +110,11 @@ public class CompositeManifestHeader extends ManifestHeader {
 		element.setHeader(this);
 		if (fSort) {
 			if (fElementMap == null)
-				fElementMap = new TreeMap();
+				fElementMap = new TreeMap<String, PDEManifestElement>();
 			fElementMap.put(element.getValue(), element);
 		} else {
 			if (fManifestElements == null)
-				fManifestElements = new ArrayList(1);
+				fManifestElements = new ArrayList<Object>(1);
 			fManifestElements.add(element);
 		}
 		if (update) {
@@ -148,10 +148,10 @@ public class CompositeManifestHeader extends ManifestHeader {
 
 	public PDEManifestElement[] getElements() {
 		if (fSort && fElementMap != null)
-			return (PDEManifestElement[]) fElementMap.values().toArray(new PDEManifestElement[fElementMap.size()]);
+			return fElementMap.values().toArray(new PDEManifestElement[fElementMap.size()]);
 
 		if (fManifestElements != null)
-			return (PDEManifestElement[]) fManifestElements.toArray(new PDEManifestElement[fManifestElements.size()]);
+			return fManifestElements.toArray(new PDEManifestElement[fManifestElements.size()]);
 
 		return NO_ELEMENTS;
 	}
@@ -176,9 +176,9 @@ public class CompositeManifestHeader extends ManifestHeader {
 		return false;
 	}
 
-	public Vector getElementNames() {
+	public Vector<String> getElementNames() {
 		PDEManifestElement[] elements = getElements();
-		Vector vector = new Vector(elements.length);
+		Vector<String> vector = new Vector<String>(elements.length);
 		for (int i = 0; i < elements.length; i++) {
 			vector.add(elements[i].getValue());
 		}
@@ -292,7 +292,7 @@ public class CompositeManifestHeader extends ManifestHeader {
 		// Add the element to the list
 		if (fManifestElements == null) {
 			// Initialize the element list if not defined 
-			fManifestElements = new ArrayList(1);
+			fManifestElements = new ArrayList<Object>(1);
 			// Add the element to the end of the list
 			fManifestElements.add(element);
 		} else {

@@ -20,7 +20,7 @@ import org.eclipse.pde.core.*;
 import org.eclipse.pde.internal.core.*;
 
 public abstract class AbstractEditingModel extends PlatformObject implements IEditingModel, IModelChangeProviderExtension {
-	private ArrayList fListeners = new ArrayList();
+	private ArrayList<IModelChangedListener> fListeners = new ArrayList<IModelChangedListener>();
 	protected boolean fReconciling;
 	protected boolean fInSync = true;
 	protected boolean fLoaded = false;
@@ -198,9 +198,10 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 	}
 
 	public void transferListenersTo(IModelChangeProviderExtension target, IModelChangedListenerFilter filter) {
-		List oldList = (List) fListeners.clone();
+		@SuppressWarnings("unchecked")
+		List<IModelChangedListener> oldList = (List<IModelChangedListener>) fListeners.clone();
 		for (int i = 0; i < oldList.size(); i++) {
-			IModelChangedListener listener = (IModelChangedListener) oldList.get(i);
+			IModelChangedListener listener = oldList.get(i);
 			if (filter == null || filter.accept(listener)) {
 				// add the listener to the target
 				target.addModelChangedListener(listener);
@@ -218,7 +219,7 @@ public abstract class AbstractEditingModel extends PlatformObject implements IEd
 			return;
 		setDirty(event.getChangeType() != IModelChangedEvent.WORLD_CHANGED);
 		for (int i = 0; i < fListeners.size(); i++) {
-			((IModelChangedListener) fListeners.get(i)).modelChanged(event);
+			fListeners.get(i).modelChanged(event);
 		}
 	}
 

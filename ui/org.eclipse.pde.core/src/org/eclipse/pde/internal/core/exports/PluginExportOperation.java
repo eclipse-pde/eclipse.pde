@@ -38,7 +38,7 @@ public class PluginExportOperation extends FeatureBasedExportOperation {
 		return super.getState(os, ws, arch);
 	}
 
-	protected boolean shouldAddPlugin(BundleDescription bundle, Dictionary environment) {
+	protected boolean shouldAddPlugin(BundleDescription bundle, Dictionary<String, String> environment) {
 		// if there is an environment conflict
 		boolean conflict = !super.shouldAddPlugin(bundle, environment);
 		if (conflict) {

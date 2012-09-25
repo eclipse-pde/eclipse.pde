@@ -12,6 +12,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target;
 
+import org.eclipse.equinox.frameworkadmin.BundleInfo;
+import org.eclipse.equinox.p2.metadata.IInstallableUnit;
+import org.eclipse.equinox.p2.metadata.Version;
+import org.eclipse.pde.core.target.*;
+
 import java.io.File;
 import java.io.StringWriter;
 import java.net.URI;
@@ -29,7 +34,6 @@ import org.eclipse.equinox.p2.query.*;
 import org.eclipse.equinox.p2.repository.artifact.IFileArtifactRepository;
 import org.eclipse.equinox.p2.touchpoint.eclipse.query.OSGiBundleQuery;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -210,14 +214,14 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		// that all IU containers will return the same thing for getFeatures.  In practice this is 
 		// ok because we remove duplicates in TargetDefinition#getAllFeatures.
 
-		Set features = new HashSet();
-		IQueryResult queryResult = fSynchronizer.getProfile().query(QueryUtil.createIUAnyQuery(), null);
+		Set<NameVersionDescriptor> features = new HashSet<NameVersionDescriptor>();
+		IQueryResult<IInstallableUnit> queryResult = fSynchronizer.getProfile().query(QueryUtil.createIUAnyQuery(), null);
 		if (queryResult.isEmpty()) {
 			return new TargetFeature[0];
 		}
 
-		for (Iterator i = queryResult.iterator(); i.hasNext();) {
-			IInstallableUnit unit = (IInstallableUnit) i.next();
+		for (Iterator<IInstallableUnit> i = queryResult.iterator(); i.hasNext();) {
+			IInstallableUnit unit = i.next();
 			String id = unit.getId();
 			// if the IU naming convention says it is a feature, then add it. 
 			// This is less than optimal but there is no clear way of identifying an IU as a feature.
@@ -235,14 +239,14 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		TargetFeature[] allFeatures = ((TargetDefinition) target).resolveFeatures(getLocation(false), new NullProgressMonitor());
 
 		// Build a final set of the models for the features in the profile.
-		List result = new ArrayList();
+		List<TargetFeature> result = new ArrayList<TargetFeature>();
 		for (int i = 0; i < allFeatures.length; i++) {
 			NameVersionDescriptor candidate = new NameVersionDescriptor(allFeatures[i].getId(), allFeatures[i].getVersion(), NameVersionDescriptor.TYPE_FEATURE);
 			if (features.contains(candidate)) {
 				result.add(allFeatures[i]);
 			}
 		}
-		fFeatures = (TargetFeature[]) result.toArray(new TargetFeature[result.size()]);
+		fFeatures = result.toArray(new TargetFeature[result.size()]);
 		return fFeatures;
 	}
 
@@ -262,15 +266,15 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 */
 	IInstallableUnit[] cacheIUs(ITargetDefinition target) throws CoreException {
 		IProfile profile = fSynchronizer.getProfile();
-		ArrayList result = new ArrayList();
+		ArrayList<IInstallableUnit> result = new ArrayList<IInstallableUnit>();
 		for (int i = 0; i < fIds.length; i++) {
-			IQuery query = QueryUtil.createIUQuery(fIds[i], fVersions[i]);
-			IQueryResult queryResult = profile.query(query, null);
+			IQuery<IInstallableUnit> query = QueryUtil.createIUQuery(fIds[i], fVersions[i]);
+			IQueryResult<IInstallableUnit> queryResult = profile.query(query, null);
 			if (queryResult.isEmpty())
 				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.IUBundleContainer_1, fIds[i])));
 			result.add(queryResult.iterator().next());
 		}
-		fUnits = (IInstallableUnit[]) result.toArray(new IInstallableUnit[result.size()]);
+		fUnits = result.toArray(new IInstallableUnit[result.size()]);
 		return fUnits;
 	}
 
@@ -285,8 +289,8 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		// We can always consider all platforms since the profile wouldn't contain it if it was not interesting
 		boolean onlyStrict = !fSynchronizer.getIncludeAllRequired();
 		IProfile metadata = fSynchronizer.getProfile();
-		PermissiveSlicer slicer = new PermissiveSlicer(metadata, new HashMap(), true, false, true, onlyStrict, false);
-		IQueryable slice = slicer.slice(fUnits, new NullProgressMonitor());
+		PermissiveSlicer slicer = new PermissiveSlicer(metadata, new HashMap<String, String>(), true, false, true, onlyStrict, false);
+		IQueryable<?> slice = slicer.slice(fUnits, new NullProgressMonitor());
 
 		if (slicer.getStatus().getSeverity() == IStatus.ERROR) {
 			// If the slicer has an error, report it instead of returning an empty set
@@ -304,7 +308,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 			return fBundles = null;
 		}
 
-		Map bundles = generateResolvedBundles(slice, metadata, artifacts);
+		Map<BundleInfo, TargetBundle> bundles = generateResolvedBundles(slice, metadata, artifacts);
 		if (bundles.isEmpty()) {
 			if (DEBUG_PROFILE) {
 				System.out.println("Profile does not contain any bundles or artifacts were missing"); //$NON-NLS-1$
@@ -317,7 +321,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 			return fBundles = null;
 		}
 
-		fBundles = (TargetBundle[]) bundles.values().toArray(new TargetBundle[bundles.size()]);
+		fBundles = bundles.values().toArray(new TargetBundle[bundles.size()]);
 		return fBundles;
 	}
 
@@ -342,17 +346,17 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 * @return whether this container was changed as part of this update and must be resolved 
 	 * @exception CoreException if unable to retrieve IU's
 	 */
-	public synchronized boolean update(Set/*<type>*/toUpdate, IProgressMonitor monitor) throws CoreException {
+	public synchronized boolean update(Set/*<type>*/<?> toUpdate, IProgressMonitor monitor) throws CoreException {
 		SubMonitor progress = SubMonitor.convert(monitor, 100);
-		IQueryable source = P2TargetUtils.getQueryableMetadata(fRepos, progress.newChild(30));
+		IQueryable<?> source = P2TargetUtils.getQueryableMetadata(fRepos, progress.newChild(30));
 		boolean updated = false;
 		SubMonitor loopProgress = progress.newChild(70).setWorkRemaining(fIds.length);
 		for (int i = 0; i < fIds.length; i++) {
 			if (!toUpdate.isEmpty() && !toUpdate.contains(fIds[i]))
 				continue;
-			IQuery query = QueryUtil.createLatestQuery(QueryUtil.createIUQuery(fIds[i]));
-			IQueryResult queryResult = source.query(query, loopProgress.newChild(1));
-			Iterator it = queryResult.iterator();
+			IQuery<?> query = QueryUtil.createLatestQuery(QueryUtil.createIUQuery(fIds[i]));
+			IQueryResult<?> queryResult = source.query(query, loopProgress.newChild(1));
+			Iterator<?> it = queryResult.iterator();
 			// bail if the feature is no longer available.
 			if (!it.hasNext())
 				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.IUBundleContainer_1, fIds[i])));
@@ -393,29 +397,29 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 * @return map of BundleInfo to IResolvedBundle
 	 * @throws CoreException
 	 */
-	private Map generateResolvedBundles(IQueryable source, IQueryable metadata, IFileArtifactRepository artifacts) throws CoreException {
+	private Map<BundleInfo, TargetBundle> generateResolvedBundles(IQueryable<?> source, IQueryable<IInstallableUnit> metadata, IFileArtifactRepository artifacts) throws CoreException {
 		OSGiBundleQuery query = new OSGiBundleQuery();
-		IQueryResult queryResult = source.query(query, null);
-		Map bundles = new LinkedHashMap();
-		for (Iterator i = queryResult.iterator(); i.hasNext();) {
+		IQueryResult<?> queryResult = source.query(query, null);
+		Map<BundleInfo, TargetBundle> bundles = new LinkedHashMap<BundleInfo, TargetBundle>();
+		for (Iterator<?> i = queryResult.iterator(); i.hasNext();) {
 			IInstallableUnit unit = (IInstallableUnit) i.next();
 			generateBundle(unit, artifacts, bundles);
 			if (getIncludeSource()) {
 				// bit of a hack using the bundle naming convention for finding source bundles
 				// but this matches what we do when adding source to the profile so...
-				IQuery sourceQuery = QueryUtil.createIUQuery(unit.getId() + ".source", unit.getVersion()); //$NON-NLS-1$
-				IQueryResult result = metadata.query(sourceQuery, null);
+				IQuery<IInstallableUnit> sourceQuery = QueryUtil.createIUQuery(unit.getId() + ".source", unit.getVersion()); //$NON-NLS-1$
+				IQueryResult<IInstallableUnit> result = metadata.query(sourceQuery, null);
 				if (!result.isEmpty()) {
-					generateBundle((IInstallableUnit) result.iterator().next(), artifacts, bundles);
+					generateBundle(result.iterator().next(), artifacts, bundles);
 				}
 			}
 		}
 		return bundles;
 	}
 
-	private void generateBundle(IInstallableUnit unit, IFileArtifactRepository repo, Map bundles) throws CoreException {
-		Collection artifacts = unit.getArtifacts();
-		for (Iterator iterator2 = artifacts.iterator(); iterator2.hasNext();) {
+	private void generateBundle(IInstallableUnit unit, IFileArtifactRepository repo, Map<BundleInfo, TargetBundle> bundles) throws CoreException {
+		Collection<?> artifacts = unit.getArtifacts();
+		for (Iterator<?> iterator2 = artifacts.iterator(); iterator2.hasNext();) {
 			File file = repo.getArtifactFile((IArtifactKey) iterator2.next());
 			if (file != null) {
 				TargetBundle bundle = new TargetBundle(file);
@@ -483,16 +487,16 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 * @param unit unit to remove from the list of root IUs
 	 */
 	public synchronized void removeInstallableUnit(IInstallableUnit unit) {
-		List newIds = new ArrayList(fIds.length);
-		List newVersions = new ArrayList(fIds.length);
+		List<String> newIds = new ArrayList<String>(fIds.length);
+		List<Version> newVersions = new ArrayList<Version>(fIds.length);
 		for (int i = 0; i < fIds.length; i++) {
 			if (!fIds[i].equals(unit.getId()) || !fVersions[i].equals(unit.getVersion())) {
 				newIds.add(fIds[i]);
 				newVersions.add(fVersions[i]);
 			}
 		}
-		fIds = (String[]) newIds.toArray(new String[newIds.size()]);
-		fVersions = (Version[]) newVersions.toArray(new Version[newVersions.size()]);
+		fIds = newIds.toArray(new String[newIds.size()]);
+		fVersions = newVersions.toArray(new Version[newVersions.size()]);
 
 		// Need to mark the container as unresolved
 		clearResolutionStatus();

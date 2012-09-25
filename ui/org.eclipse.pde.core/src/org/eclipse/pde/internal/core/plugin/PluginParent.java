@@ -21,7 +21,7 @@ import org.eclipse.pde.internal.core.PDECoreMessages;
 
 public abstract class PluginParent extends IdentifiablePluginObject implements IPluginParent {
 	private static final long serialVersionUID = 1L;
-	protected ArrayList fChildren = null;
+	protected ArrayList<IPluginObject> fChildren = null;
 
 	public PluginParent() {
 	}
@@ -64,7 +64,7 @@ public abstract class PluginParent extends IdentifiablePluginObject implements I
 			IPluginObject[] tchildren = target.getChildren();
 			for (int i = 0; i < tchildren.length; i++) {
 				IPluginObject tchild = tchildren[i];
-				IPluginObject child = (IPluginObject) getChildrenList().get(i);
+				IPluginObject child = getChildrenList().get(i);
 				if (child == null || child.equals(tchild) == false)
 					return false;
 			}
@@ -89,7 +89,7 @@ public abstract class PluginParent extends IdentifiablePluginObject implements I
 	}
 
 	public IPluginObject[] getChildren() {
-		return (IPluginObject[]) getChildrenList().toArray(new IPluginObject[getChildrenList().size()]);
+		return getChildrenList().toArray(new IPluginObject[getChildrenList().size()]);
 	}
 
 	public void remove(IPluginObject child) throws CoreException {
@@ -99,9 +99,9 @@ public abstract class PluginParent extends IdentifiablePluginObject implements I
 		fireStructureChanged(child, IModelChangedEvent.REMOVE);
 	}
 
-	protected ArrayList getChildrenList() {
+	protected ArrayList<IPluginObject> getChildrenList() {
 		if (fChildren == null)
-			fChildren = new ArrayList(1);
+			fChildren = new ArrayList<IPluginObject>(1);
 		return fChildren;
 	}
 

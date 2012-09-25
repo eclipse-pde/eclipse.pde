@@ -25,7 +25,7 @@ public class ExtensionPluginSearchScope extends PluginSearchScope {
 		fInput = input;
 	}
 
-	public ExtensionPluginSearchScope(int workspaceScope, int externalScope, HashSet selectedResources, PluginSearchInput input) {
+	public ExtensionPluginSearchScope(int workspaceScope, int externalScope, HashSet<?> selectedResources, PluginSearchInput input) {
 		super(workspaceScope, externalScope, selectedResources);
 		fInput = input;
 	}

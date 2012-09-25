@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
+import org.eclipse.jdt.core.IClasspathEntry;
+
 import java.util.*;
 import java.util.Map.Entry;
 import org.eclipse.core.resources.*;
@@ -30,7 +32,7 @@ import org.eclipse.team.core.RepositoryProvider;
 
 public class ClasspathComputer {
 
-	private static Map fSeverityTable = null;
+	private static Map<String, Integer> fSeverityTable = null;
 	private static final int SEVERITY_ERROR = 3;
 	private static final int SEVERITY_WARNING = 2;
 	private static final int SEVERITY_IGNORE = 1;
@@ -40,9 +42,9 @@ public class ClasspathComputer {
 		JavaCore.create(project).setRawClasspath(entries, null);
 	}
 
-	public static IClasspathEntry[] getClasspath(IProject project, IPluginModelBase model, Map sourceLibraryMap, boolean clear, boolean overrideCompliance) throws CoreException {
+	public static IClasspathEntry[] getClasspath(IProject project, IPluginModelBase model, Map<?, ?> sourceLibraryMap, boolean clear, boolean overrideCompliance) throws CoreException {
 		IJavaProject javaProject = JavaCore.create(project);
-		ArrayList result = new ArrayList();
+		ArrayList<IClasspathEntry> result = new ArrayList<IClasspathEntry>();
 		IBuild build = getBuild(project);
 
 		// add JRE and set compliance options
@@ -56,18 +58,18 @@ public class ClasspathComputer {
 		// add own libraries/source
 		addSourceAndLibraries(project, model, build, clear, sourceLibraryMap, result);
 
-		IClasspathEntry[] entries = (IClasspathEntry[]) result.toArray(new IClasspathEntry[result.size()]);
+		IClasspathEntry[] entries = result.toArray(new IClasspathEntry[result.size()]);
 		IJavaModelStatus validation = JavaConventions.validateClasspath(javaProject, entries, javaProject.getOutputLocation());
 		if (!validation.isOK()) {
 			PDECore.logErrorMessage(validation.getMessage());
 			throw new CoreException(validation);
 		}
-		return (IClasspathEntry[]) result.toArray(new IClasspathEntry[result.size()]);
+		return result.toArray(new IClasspathEntry[result.size()]);
 	}
 
-	private static void addSourceAndLibraries(IProject project, IPluginModelBase model, IBuild build, boolean clear, Map sourceLibraryMap, ArrayList result) throws CoreException {
+	private static void addSourceAndLibraries(IProject project, IPluginModelBase model, IBuild build, boolean clear, Map<?, ?> sourceLibraryMap, ArrayList<IClasspathEntry> result) throws CoreException {
 
-		HashSet paths = new HashSet();
+		HashSet<IPath> paths = new HashSet<IPath>();
 
 		// keep existing source folders
 		if (!clear) {
@@ -120,7 +122,7 @@ public class ClasspathComputer {
 		return attributes;
 	}
 
-	private static void addSourceFolder(IBuildEntry buildEntry, IProject project, HashSet paths, ArrayList result) throws CoreException {
+	private static void addSourceFolder(IBuildEntry buildEntry, IProject project, HashSet<IPath> paths, ArrayList<IClasspathEntry> result) throws CoreException {
 		String[] folders = buildEntry.getTokens();
 		for (int j = 0; j < folders.length; j++) {
 			String folder = folders[j];
@@ -150,7 +152,7 @@ public class ClasspathComputer {
 		return (buildModel != null) ? buildModel.getBuild() : null;
 	}
 
-	private static void addLibraryEntry(IProject project, IPluginLibrary library, IPath sourceAttachment, IClasspathAttribute[] attrs, ArrayList result) throws JavaModelException {
+	private static void addLibraryEntry(IProject project, IPluginLibrary library, IPath sourceAttachment, IClasspathAttribute[] attrs, ArrayList<IClasspathEntry> result) throws JavaModelException {
 		String name = ClasspathUtilCore.expandLibraryName(library.getName());
 		IResource jarFile = project.findMember(name);
 		if (jarFile == null)
@@ -173,7 +175,7 @@ public class ClasspathComputer {
 			result.add(entry);
 	}
 
-	private static void addJARdPlugin(IProject project, String filename, IPath sourceAttachment, IClasspathAttribute[] attrs, ArrayList result) {
+	private static void addJARdPlugin(IProject project, String filename, IPath sourceAttachment, IClasspathAttribute[] attrs, ArrayList<IClasspathEntry> result) {
 		String name = ClasspathUtilCore.expandLibraryName(filename);
 		IResource jarFile = project.findMember(name);
 		if (jarFile != null) {
@@ -221,9 +223,9 @@ public class ClasspathComputer {
 	 * @param overrideExisting whether to override a setting if already present
 	 */
 	public static void setComplianceOptions(IJavaProject project, String eeId, boolean overrideExisting) {
-		Map projectMap = project.getOptions(false);
+		Map<String, String> projectMap = project.getOptions(false);
 		IExecutionEnvironment ee = null;
-		Map options = null;
+		Map<?, ?> options = null;
 		if (eeId != null) {
 			ee = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment(eeId);
 			if (ee != null) {
@@ -242,9 +244,9 @@ public class ClasspathComputer {
 			}
 		} else {
 			String compliance = (String) options.get(JavaCore.COMPILER_COMPLIANCE);
-			Iterator iterator = options.entrySet().iterator();
+			Iterator<?> iterator = options.entrySet().iterator();
 			while (iterator.hasNext()) {
-				Entry entry = (Entry) iterator.next();
+				Entry<?, ?> entry = (Entry<?, ?>) iterator.next();
 				String option = (String) entry.getKey();
 				String value = (String) entry.getValue();
 				if (JavaCore.VERSION_1_3.equals(compliance) || JavaCore.VERSION_1_4.equals(compliance)) {
@@ -274,7 +276,7 @@ public class ClasspathComputer {
 	 * @param value value to put in the map or <code>null</code>
 	 * @param override whether existing map entries should be replaced with the value
 	 */
-	private static void setCompliance(Map map, String key, String value, boolean override) {
+	private static void setCompliance(Map<String, String> map, String key, String value, boolean override) {
 		if (value != null && (override || !map.containsKey(key))) {
 			map.put(key, value);
 		}
@@ -290,17 +292,17 @@ public class ClasspathComputer {
 	 * @param minimumValue the minimum value allowed or <code>null</code>
 	 * @param override whether an existing value in the map should be replaced
 	 */
-	private static void setMinimumCompliance(Map map, String key, String minimumValue, boolean override) {
+	private static void setMinimumCompliance(Map<String, String> map, String key, String minimumValue, boolean override) {
 		if (minimumValue != null && (override || !map.containsKey(key))) {
 			if (fSeverityTable == null) {
-				fSeverityTable = new HashMap(3);
+				fSeverityTable = new HashMap<String, Integer>(3);
 				fSeverityTable.put(JavaCore.IGNORE, new Integer(SEVERITY_IGNORE));
 				fSeverityTable.put(JavaCore.WARNING, new Integer(SEVERITY_WARNING));
 				fSeverityTable.put(JavaCore.ERROR, new Integer(SEVERITY_ERROR));
 			}
-			String currentValue = (String) map.get(key);
-			int current = currentValue != null && fSeverityTable.containsKey(currentValue) ? ((Integer) fSeverityTable.get(currentValue)).intValue() : 0;
-			int minimum = minimumValue != null && fSeverityTable.containsKey(minimumValue) ? ((Integer) fSeverityTable.get(minimumValue)).intValue() : 0;
+			String currentValue = map.get(key);
+			int current = currentValue != null && fSeverityTable.containsKey(currentValue) ? fSeverityTable.get(currentValue).intValue() : 0;
+			int minimum = minimumValue != null && fSeverityTable.containsKey(minimumValue) ? fSeverityTable.get(minimumValue).intValue() : 0;
 			if (current < minimum) {
 				map.put(key, minimumValue);
 			}

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
+import org.eclipse.pde.core.IModelChangedListener;
+
 import java.io.File;
 import java.io.Serializable;
 import java.util.*;
@@ -25,7 +27,7 @@ public abstract class AbstractModel extends PlatformObject implements IModel, IM
 
 	private static final long serialVersionUID = 1L;
 
-	private transient List fListeners;
+	private transient List<IModelChangedListener> fListeners;
 
 	private boolean fLoaded;
 
@@ -62,7 +64,7 @@ public abstract class AbstractModel extends PlatformObject implements IModel, IM
 	}
 
 	public AbstractModel() {
-		fListeners = Collections.synchronizedList(new ArrayList());
+		fListeners = Collections.synchronizedList(new ArrayList<IModelChangedListener>());
 	}
 
 	public void addModelChangedListener(IModelChangedListener listener) {
@@ -70,9 +72,9 @@ public abstract class AbstractModel extends PlatformObject implements IModel, IM
 	}
 
 	public void transferListenersTo(IModelChangeProviderExtension target, IModelChangedListenerFilter filter) {
-		ArrayList removed = new ArrayList();
+		ArrayList<IModelChangedListener> removed = new ArrayList<IModelChangedListener>();
 		for (int i = 0; i < fListeners.size(); i++) {
-			IModelChangedListener listener = (IModelChangedListener) fListeners.get(i);
+			IModelChangedListener listener = fListeners.get(i);
 			if (filter == null || filter.accept(listener)) {
 				target.addModelChangedListener(listener);
 				removed.add(listener);
@@ -86,7 +88,7 @@ public abstract class AbstractModel extends PlatformObject implements IModel, IM
 	}
 
 	public void fireModelChanged(IModelChangedEvent event) {
-		IModelChangedListener[] list = (IModelChangedListener[]) fListeners.toArray(new IModelChangedListener[fListeners.size()]);
+		IModelChangedListener[] list = fListeners.toArray(new IModelChangedListener[fListeners.size()]);
 		for (int i = 0; i < list.length; i++) {
 			IModelChangedListener listener = list[i];
 			listener.modelChanged(event);

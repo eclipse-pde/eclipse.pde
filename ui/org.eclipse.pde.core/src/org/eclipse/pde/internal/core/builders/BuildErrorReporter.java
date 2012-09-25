@@ -56,14 +56,14 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 	private static final String JavaSE_1_6 = "JavaSE-1.6"; //$NON-NLS-1$
 	private static final String JavaSE_1_7 = "JavaSE-1.7"; //$NON-NLS-1$
 
-	private class BuildProblem {
+	class BuildProblem {
 		String fEntryToken;
 		String fEntryName;
 		String fMessage;
 		String fCategory;
 		int fFixId;
 		int fSeverity;
-		HashMap attributes;
+		HashMap<String, String> attributes;
 		int fExtraBuntryEntryIndex;
 
 		BuildProblem(String name, String token, String message, int fixId, int severity, String category) {
@@ -97,13 +97,13 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 
 		public void addAttribute(String attributeName, String value) {
 			if (attributes == null)
-				attributes = new HashMap(1);
+				attributes = new HashMap<String, String>(1);
 			attributes.put(attributeName, value);
 		}
 
-		public void addAttributes(HashMap attributes) {
+		public void addAttributes(HashMap<String, String> attributes) {
 			if (attributes == null)
-				attributes = new HashMap(1);
+				attributes = new HashMap<String, String>(1);
 			attributes.putAll(attributes);
 		}
 	}
@@ -123,7 +123,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 
 	}
 
-	protected ArrayList fProblemList = new ArrayList();
+	protected ArrayList<BuildProblem> fProblemList = new ArrayList<BuildProblem>();
 	protected int fBuildSeverity;
 	protected int fClasspathSeverity;
 	protected int fJavaComplianceSeverity;
@@ -176,12 +176,12 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		IBuildEntry javacTarget = null;
 		IBuildEntry jreCompilationProfile = null;
 		IBuildEntry javaProjectWarnings = null;
-		ArrayList javacWarnings = new ArrayList();
-		ArrayList javacErrors = new ArrayList();
-		ArrayList sourceEntries = new ArrayList(1);
-		ArrayList sourceEntryKeys = new ArrayList(1);
-		ArrayList outputEntries = new ArrayList(1);
-		Map encodingEntries = new HashMap();
+		ArrayList<IBuildEntry> javacWarnings = new ArrayList<IBuildEntry>();
+		ArrayList<IBuildEntry> javacErrors = new ArrayList<IBuildEntry>();
+		ArrayList<IBuildEntry> sourceEntries = new ArrayList<IBuildEntry>(1);
+		ArrayList<String> sourceEntryKeys = new ArrayList<String>(1);
+		ArrayList<IBuildEntry> outputEntries = new ArrayList<IBuildEntry>(1);
+		Map<String, String> encodingEntries = new HashMap<String, String>();
 		IBuildEntry[] entries = build.getBuildEntries();
 		for (int i = 0; i < entries.length; i++) {
 			String name = entries[i].getName();
@@ -252,7 +252,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 				SourceEntryErrorReporter srcEntryErrReporter = new SourceEntryErrorReporter(fFile, build);
 				srcEntryErrReporter.initialize(sourceEntries, outputEntries, cpes, fProject);
 				srcEntryErrReporter.validate();
-				ArrayList problems = srcEntryErrReporter.getProblemList();
+				ArrayList<BuildProblem> problems = srcEntryErrReporter.getProblemList();
 				for (int i = 0; i < problems.size(); i++) {
 					if (!fProblemList.contains(problems.get(i))) {
 						fProblemList.add(problems.get(i));
@@ -275,10 +275,10 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 	 * @param sourceEntries list of IBuildEntry source entries
 	 * @return list of library names
 	 */
-	private List getSourceLibraries(List sourceEntries) {
-		List libraries = new ArrayList();
-		for (Iterator iterator = sourceEntries.iterator(); iterator.hasNext();) {
-			IBuildEntry sourceEntry = (IBuildEntry) iterator.next();
+	private List<String> getSourceLibraries(List<IBuildEntry> sourceEntries) {
+		List<String> libraries = new ArrayList<String>();
+		for (Iterator<IBuildEntry> iterator = sourceEntries.iterator(); iterator.hasNext();) {
+			IBuildEntry sourceEntry = iterator.next();
 			String libName = sourceEntry.getName().substring(PROPERTY_SOURCE_PREFIX.length());
 			libraries.add(libName);
 		}
@@ -296,7 +296,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 	 * @param javacErrorsEntries 
 	 * @param libraryNames list of library names (javacWarnings/javacErrors require an entry for each source library)
 	 */
-	private void validateExecutionEnvironment(IBuildEntry javacSourceEntry, IBuildEntry javacTargetEntry, IBuildEntry jreCompilationProfileEntry, ArrayList javacWarningsEntries, ArrayList javacErrorsEntries, List libraryNames) {
+	private void validateExecutionEnvironment(IBuildEntry javacSourceEntry, IBuildEntry javacTargetEntry, IBuildEntry jreCompilationProfileEntry, ArrayList<IBuildEntry> javacWarningsEntries, ArrayList<IBuildEntry> javacErrorsEntries, List<String> libraryNames) {
 		// if there is no source to compile, don't worry about compiler settings
 		IJavaProject project = JavaCore.create(fProject);
 		if (project.exists()) {
@@ -344,7 +344,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 					return; //The project compliance settings matches the BREE
 				}
 
-				Map defaultComplianceOptions = new HashMap();
+				Map<?, ?> defaultComplianceOptions = new HashMap<Object, Object>();
 				JavaCore.setComplianceOptions(projectComplianceLevel, defaultComplianceOptions);
 
 				//project compliance does not match the BREE
@@ -419,14 +419,14 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 	 * @param javacErrorsEntries list of build entries with the java compiler errors prefix javacErrors.
 	 * @param libraryNames list of String library names
 	 */
-	private void checkJavaComplianceSettings(String complianceLevel, ArrayList javacWarningsEntries, ArrayList javacErrorsEntries, List libraryNames) {
-		List complianceWarnSettings = new ArrayList(3);
-		List complianceErrorSettings = new ArrayList(3);
+	private void checkJavaComplianceSettings(String complianceLevel, ArrayList<IBuildEntry> javacWarningsEntries, ArrayList<IBuildEntry> javacErrorsEntries, List<String> libraryNames) {
+		List<String> complianceWarnSettings = new ArrayList<String>(3);
+		List<String> complianceErrorSettings = new ArrayList<String>(3);
 
 		IJavaProject project = JavaCore.create(fProject);
 		if (project.exists()) {
 
-			Map defaultComplianceOptions = new HashMap();
+			Map<?, ?> defaultComplianceOptions = new HashMap<Object, Object>();
 			JavaCore.setComplianceOptions(complianceLevel, defaultComplianceOptions);
 
 			//look for assertIdentifier and enumIdentifier entries in javacWarnings. If any is present let it be, if not warn.
@@ -452,11 +452,11 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 
 			// If a warnings entry is required, make sure there is one for each library with the correct content
 			if (complianceWarnSettings.size() > 0) {
-				for (Iterator iterator = libraryNames.iterator(); iterator.hasNext();) {
-					String libName = (String) iterator.next();
+				for (Iterator<String> iterator = libraryNames.iterator(); iterator.hasNext();) {
+					String libName = iterator.next();
 					IBuildEntry matchingEntry = null;
-					for (Iterator iterator2 = javacWarningsEntries.iterator(); iterator2.hasNext();) {
-						IBuildEntry candidate = (IBuildEntry) iterator2.next();
+					for (Iterator<IBuildEntry> iterator2 = javacWarningsEntries.iterator(); iterator2.hasNext();) {
+						IBuildEntry candidate = iterator2.next();
 						if (candidate.getName().equals(PROPERTY_JAVAC_WARNINGS_PREFIX + libName)) {
 							matchingEntry = candidate;
 							break;
@@ -464,16 +464,16 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 					}
 					if (matchingEntry == null) {
 						String missingTokens = ""; //$NON-NLS-1$
-						for (Iterator iterator2 = complianceWarnSettings.iterator(); iterator2.hasNext();) {
-							String currentIdentifier = (String) iterator2.next();
+						for (Iterator<String> iterator2 = complianceWarnSettings.iterator(); iterator2.hasNext();) {
+							String currentIdentifier = iterator2.next();
 							missingTokens = join(missingTokens, '-' + currentIdentifier);
 						}
 						String message = NLS.bind(PDECoreMessages.BuildErrorReporter_ProjectSpecificJavaComplianceMissingEntry, PROPERTY_JAVAC_WARNINGS_PREFIX + libName);
 						prepareError(PROPERTY_JAVAC_WARNINGS_PREFIX + libName, missingTokens, message, PDEMarkerFactory.B_JAVA_ADDDITION, fJavaComplianceSeverity, PDEMarkerFactory.CAT_EE);
 					} else {
 						String missingTokens = ""; //$NON-NLS-1$
-						for (Iterator iterator2 = complianceWarnSettings.iterator(); iterator2.hasNext();) {
-							String currentIdentifier = (String) iterator2.next();
+						for (Iterator<String> iterator2 = complianceWarnSettings.iterator(); iterator2.hasNext();) {
+							String currentIdentifier = iterator2.next();
 							if (!matchingEntry.contains(currentIdentifier) && !matchingEntry.contains('+' + currentIdentifier) && !matchingEntry.contains('-' + currentIdentifier)) {
 								join(missingTokens, '-' + currentIdentifier);
 							}
@@ -488,11 +488,11 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 
 			// If a warnings entry is required, make sure there is one for each library with the correct content
 			if (complianceErrorSettings.size() > 0) {
-				for (Iterator iterator = libraryNames.iterator(); iterator.hasNext();) {
-					String libName = (String) iterator.next();
+				for (Iterator<String> iterator = libraryNames.iterator(); iterator.hasNext();) {
+					String libName = iterator.next();
 					IBuildEntry matchingEntry = null;
-					for (Iterator iterator2 = javacErrorsEntries.iterator(); iterator2.hasNext();) {
-						IBuildEntry candidate = (IBuildEntry) iterator2.next();
+					for (Iterator<IBuildEntry> iterator2 = javacErrorsEntries.iterator(); iterator2.hasNext();) {
+						IBuildEntry candidate = iterator2.next();
 						if (candidate.getName().equals(PROPERTY_JAVAC_ERRORS_PREFIX + libName)) {
 							matchingEntry = candidate;
 							break;
@@ -500,16 +500,16 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 					}
 					if (matchingEntry == null) {
 						String missingTokens = ""; //$NON-NLS-1$
-						for (Iterator iterator2 = complianceErrorSettings.iterator(); iterator2.hasNext();) {
-							String currentIdentifier = (String) iterator2.next();
+						for (Iterator<String> iterator2 = complianceErrorSettings.iterator(); iterator2.hasNext();) {
+							String currentIdentifier = iterator2.next();
 							missingTokens = join(missingTokens, '-' + currentIdentifier);
 						}
 						String message = NLS.bind(PDECoreMessages.BuildErrorReporter_ProjectSpecificJavaComplianceMissingEntry, PROPERTY_JAVAC_ERRORS_PREFIX + libName);
 						prepareError(PROPERTY_JAVAC_ERRORS_PREFIX + libName, missingTokens, message, PDEMarkerFactory.B_JAVA_ADDDITION, fJavaComplianceSeverity, PDEMarkerFactory.CAT_EE);
 					} else {
 						String missingTokens = ""; //$NON-NLS-1$
-						for (Iterator iterator2 = complianceErrorSettings.iterator(); iterator2.hasNext();) {
-							String currentIdentifier = (String) iterator2.next();
+						for (Iterator<String> iterator2 = complianceErrorSettings.iterator(); iterator2.hasNext();) {
+							String currentIdentifier = iterator2.next();
 							if (!matchingEntry.contains(currentIdentifier) && !matchingEntry.contains('+' + currentIdentifier) && !matchingEntry.contains('-' + currentIdentifier)) {
 								missingTokens = join(missingTokens, '-' + currentIdentifier);
 							}
@@ -684,10 +684,10 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		}
 	}
 
-	private void validateMissingSourceInBinIncludes(IBuildEntry binIncludes, ArrayList sourceEntryKeys, IBuild build) {
+	private void validateMissingSourceInBinIncludes(IBuildEntry binIncludes, ArrayList<String> sourceEntryKeys, IBuild build) {
 		if (binIncludes == null)
 			return;
-		List pluginLibraryNames = new ArrayList(1);
+		List<String> pluginLibraryNames = new ArrayList<String>(1);
 		IPluginModelBase pluginModel = PluginRegistry.findModel(fProject);
 		if (pluginModel != null) {
 			IPluginLibrary[] pluginLibraries = pluginModel.getPluginBase().getLibraries();
@@ -699,7 +699,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 			pluginLibraryNames.add("."); //$NON-NLS-1$)
 		}
 		for (int i = 0; i < sourceEntryKeys.size(); i++) {
-			String key = (String) sourceEntryKeys.get(i);
+			String key = sourceEntryKeys.get(i);
 			if (!pluginLibraryNames.contains(key)) {
 				return; // do not report error for folders if the library itself does not exists on plug-in classpath
 			}
@@ -737,7 +737,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		}
 	}
 
-	private void validateMissingLibraries(ArrayList sourceEntryKeys, IClasspathEntry[] cpes) {
+	private void validateMissingLibraries(ArrayList<String> sourceEntryKeys, IClasspathEntry[] cpes) {
 		boolean srcFolderExists = false;
 		// no need to flag anything if the project contains no source folders.
 		for (int j = 0; j < cpes.length; j++) {
@@ -820,15 +820,15 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		return false;
 	}
 
-	private void validateSourceEntries(ArrayList sourceEntries, IBuildEntry srcExcludes, IClasspathEntry[] cpes) {
+	private void validateSourceEntries(ArrayList<IBuildEntry> sourceEntries, IBuildEntry srcExcludes, IClasspathEntry[] cpes) {
 		if (sourceEntries == null || sourceEntries.size() == 0)
 			return;
 		String[] unlisted = PDEBuilderHelper.getUnlistedClasspaths(sourceEntries, fProject, cpes);
-		List excludeList = new ArrayList(0);
+		List<String> excludeList = new ArrayList<String>(0);
 		if (srcExcludes != null && srcExcludes.getTokens().length > 0) {
 			excludeList = Arrays.asList(srcExcludes.getTokens());
 		}
-		String name = ((IBuildEntry) sourceEntries.get(0)).getName();
+		String name = sourceEntries.get(0).getName();
 		String message = PDECoreMessages.BuildErrorReporter_classpathEntryMissing1;
 		if (sourceEntries.size() > 1) {
 			name = DEF_SOURCE_ENTRY;
@@ -847,7 +847,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		if (includes == null)
 			return;
 
-		List sourceFolderList = new ArrayList(0);
+		List<IPath> sourceFolderList = new ArrayList<IPath>(0);
 		try {
 			IJavaProject javaProject = JavaCore.create(fProject);
 			if (javaProject.exists()) {
@@ -862,7 +862,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		} catch (JavaModelException e) { //do nothing
 		}
 
-		List reservedTokens = Arrays.asList(RESERVED_NAMES);
+		List<String> reservedTokens = Arrays.asList(RESERVED_NAMES);
 
 		String[] tokens = includes.getTokens();
 		for (int i = 0; i < tokens.length; i++) {
@@ -883,7 +883,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 
 	}
 
-	private void validateIncludes(IBuildEntry includes, ArrayList sourceIncludes, int severity) {
+	private void validateIncludes(IBuildEntry includes, ArrayList<String> sourceIncludes, int severity) {
 		if (includes == null)
 			return;
 		String[] tokens = includes.getTokens();
@@ -946,7 +946,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 		// Check if the project has compiler warnings set
 		IJavaProject project = JavaCore.create(fProject);
 		if (project.exists()) {
-			Map options = project.getOptions(false);
+			Map<?, ?> options = project.getOptions(false);
 			// If project specific options are turned on, all options will be stored.  Only need to check if at least one compiler option is set. Currently using the second option on the property page.
 			if (options.containsKey(JavaCore.COMPILER_PB_INDIRECT_STATIC_ACCESS)) {
 				if (useJavaProjectSettings != null) {
@@ -1048,7 +1048,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 			return;
 
 		for (int i = 0; i < fProblemList.size(); i++) {
-			BuildProblem bp = (BuildProblem) fProblemList.get(i);
+			BuildProblem bp = fProblemList.get(i);
 
 			int lineNum;
 			IBuildEntry buildEntry = bm.getBuild().getEntry(bp.fEntryName);
@@ -1062,8 +1062,8 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 			if (lineNum > 0) {
 				IMarker marker = report(bp.fMessage, lineNum, bp.fFixId, bp.fEntryName, bp.fEntryToken, bp.fSeverity, bp.fCategory);
 				if (marker != null && bp.attributes != null) {
-					for (Iterator iterator = bp.attributes.keySet().iterator(); iterator.hasNext();) {
-						String attribute = (String) iterator.next();
+					for (Iterator<String> iterator = bp.attributes.keySet().iterator(); iterator.hasNext();) {
+						String attribute = iterator.next();
 						try {
 							marker.setAttribute(attribute, bp.attributes.get(attribute));
 						} catch (CoreException e) {
@@ -1137,7 +1137,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 	protected BuildProblem prepareError(String name, String token, String message, int fixId, int severity, String category) {
 		BuildProblem bp = new BuildProblem(name, token, message, fixId, severity, category);
 		for (int i = 0; i < fProblemList.size(); i++) {
-			BuildProblem listed = (BuildProblem) fProblemList.get(i);
+			BuildProblem listed = fProblemList.get(i);
 			if (listed.equals(bp)) {
 				if (bp.attributes != null) {
 					listed.addAttributes(bp.attributes);

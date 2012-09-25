@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target;
 
+import org.eclipse.pde.core.target.TargetBundle;
+
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -127,7 +129,7 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 		if (source == null) {
 			source = new BundleInfo[0];
 		}
-		List/*<TargetBundle>*/all = new ArrayList/*<TargetBundle>*/();
+		List/*<TargetBundle>*/<TargetBundle>all = new ArrayList/*<TargetBundle>*/<TargetBundle>();
 		SubMonitor localMonitor = SubMonitor.convert(monitor, Messages.DirectoryBundleContainer_0, infos.length + source.length);
 		// Add executable bundles
 		for (int i = 0; i < infos.length; i++) {
@@ -156,7 +158,7 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 			localMonitor.worked(1);
 		}
 		localMonitor.done();
-		return (TargetBundle[]) all.toArray(new TargetBundle[all.size()]);
+		return all.toArray(new TargetBundle[all.size()]);
 	}
 
 	/* (non-Javadoc)
@@ -181,7 +183,7 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 	protected TargetBundle[] resolvePlatformXML(ITargetDefinition definition, String home, IProgressMonitor monitor) throws CoreException {
 		File[] files = PluginPathFinder.getPaths(home, false, false);
 		if (files.length > 0) {
-			List all = new ArrayList(files.length);
+			List<TargetBundle> all = new ArrayList<TargetBundle>(files.length);
 			SubMonitor localMonitor = SubMonitor.convert(monitor, Messages.DirectoryBundleContainer_0, files.length);
 			for (int i = 0; i < files.length; i++) {
 				if (localMonitor.isCanceled()) {
@@ -196,7 +198,7 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 			}
 			localMonitor.done();
 			if (!all.isEmpty()) {
-				return (TargetBundle[]) all.toArray(new TargetBundle[all.size()]);
+				return all.toArray(new TargetBundle[all.size()]);
 			}
 		}
 		return null;

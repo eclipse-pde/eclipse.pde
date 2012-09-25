@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.exports;
 
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
@@ -212,7 +214,7 @@ public class ProductExportOperation extends FeatureExportOperation {
 
 		if (fInfo.exportSource && fInfo.exportSourceBundle) {
 			properties.put(IBuildPropertiesConstants.PROPERTY_INDIVIDUAL_SOURCE, "true"); //$NON-NLS-1$
-			List workspacePlugins = Arrays.asList(PluginRegistry.getWorkspaceModels());
+			List<IPluginModelBase> workspacePlugins = Arrays.asList(PluginRegistry.getWorkspaceModels());
 			for (int i = 0; i < fInfo.items.length; i++) {
 				if (fInfo.items[i] instanceof IFeatureModel) {
 					IFeature feature = ((IFeatureModel) fInfo.items[i]).getFeature();
@@ -312,8 +314,8 @@ public class ProductExportOperation extends FeatureExportOperation {
 		buffer.append(file.getAbsolutePath());
 	}
 
-	protected HashMap createAntBuildProperties(String[][] configs) {
-		HashMap properties = super.createAntBuildProperties(configs);
+	protected HashMap<String, String> createAntBuildProperties(String[][] configs) {
+		HashMap<String, String> properties = super.createAntBuildProperties(configs);
 		properties.put(IXMLConstants.PROPERTY_LAUNCHER_NAME, getLauncherName());
 
 		ILauncherInfo info = fProduct.getLauncherInfo();
@@ -350,7 +352,7 @@ public class ProductExportOperation extends FeatureExportOperation {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.exports.FeatureExportOperation#setP2MetaDataProperties(java.util.Map)
 	 */
-	protected void setP2MetaDataProperties(Map map) {
+	protected void setP2MetaDataProperties(Map<String, String> map) {
 		if (fInfo.exportMetadata) {
 			if (PDECore.getDefault().getFeatureModelManager().getDeltaPackFeature() == null)
 				map.put(IXMLConstants.PROPERTY_LAUNCHER_PROVIDER, "org.eclipse.pde.container.feature"); //$NON-NLS-1$

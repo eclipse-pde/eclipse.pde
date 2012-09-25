@@ -28,7 +28,7 @@ public class PluginSearchScope {
 
 	private int workspaceScope;
 	private int externalScope;
-	private HashSet selectedResources;
+	private HashSet<?> selectedResources;
 
 	/**
 	 * Create a scope object with the provided arguments.
@@ -38,7 +38,7 @@ public class PluginSearchScope {
 	 * EXTERNAL_SCOPE_ALL
 	 * @param workingSets  goes with SCOPE_WORKING_SETS, otherwise null
 	 */
-	public PluginSearchScope(int workspaceScope, int externalScope, HashSet selectedResources) {
+	public PluginSearchScope(int workspaceScope, int externalScope, HashSet<?> selectedResources) {
 		this.workspaceScope = workspaceScope;
 		this.externalScope = externalScope;
 		this.selectedResources = selectedResources;
@@ -53,14 +53,14 @@ public class PluginSearchScope {
 		this(SCOPE_WORKSPACE, EXTERNAL_SCOPE_ENABLED, null);
 	}
 
-	protected final void addExternalModel(IPluginModelBase candidate, ArrayList result) {
+	protected final void addExternalModel(IPluginModelBase candidate, ArrayList<IPluginModelBase> result) {
 		if (externalScope == EXTERNAL_SCOPE_ALL)
 			result.add(candidate);
 		else if (externalScope == EXTERNAL_SCOPE_ENABLED && candidate.isEnabled())
 			result.add(candidate);
 	}
 
-	protected final void addWorkspaceModel(IPluginModelBase candidate, ArrayList result) {
+	protected final void addWorkspaceModel(IPluginModelBase candidate, ArrayList<IPluginModelBase> result) {
 		if (workspaceScope == SCOPE_WORKSPACE) {
 			result.add(candidate);
 		} else if (selectedResources.contains(candidate.getUnderlyingResource().getProject())) {
@@ -73,7 +73,7 @@ public class PluginSearchScope {
 	}
 
 	protected final IPluginModelBase[] addRelevantModels(IPluginModelBase[] models) {
-		ArrayList result = new ArrayList();
+		ArrayList<IPluginModelBase> result = new ArrayList<IPluginModelBase>();
 		for (int i = 0; i < models.length; i++) {
 			if (models[i].getUnderlyingResource() != null) {
 				addWorkspaceModel(models[i], result);
@@ -81,7 +81,7 @@ public class PluginSearchScope {
 				addExternalModel(models[i], result);
 			}
 		}
-		return (IPluginModelBase[]) result.toArray(new IPluginModelBase[result.size()]);
+		return result.toArray(new IPluginModelBase[result.size()]);
 	}
 
 }

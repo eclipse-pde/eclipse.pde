@@ -31,7 +31,7 @@ public interface ISchemaObjectReference {
 	 * Returns a real Java class of the referenced object.
 	 * @return Java class of the referenced object.
 	 */
-	public Class getReferencedObjectClass();
+	public Class<?> getReferencedObjectClass();
 
 	/**
 	 * Associates this reference with a schema object.

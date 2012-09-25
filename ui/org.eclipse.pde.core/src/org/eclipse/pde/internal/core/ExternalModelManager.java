@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
+import java.io.File;
+
 import org.eclipse.pde.core.target.NameVersionDescriptor;
 
 import java.io.*;
@@ -44,8 +46,8 @@ public class ExternalModelManager extends AbstractModelManager {
 				fModels[i].setEnabled(true);
 		} else if (!saved.equals(ICoreConstants.VALUE_SAVED_NONE)) {
 			String versionString = pref.getString(ICoreConstants.CHECKED_VERSION_PLUGINS);
-			Set versions = new HashSet();
-			Set versionIds = new HashSet();
+			Set<NameVersionDescriptor> versions = new HashSet<NameVersionDescriptor>();
+			Set<String> versionIds = new HashSet<String>();
 			if (versionString != null && versionString.trim().length() > 0) {
 				if (!versionString.equals(ICoreConstants.VALUE_SAVED_NONE)) {
 					// restore version information, if any
@@ -57,7 +59,7 @@ public class ExternalModelManager extends AbstractModelManager {
 					}
 				}
 			}
-			Vector result = new Vector();
+			Vector<String> result = new Vector<String>();
 			StringTokenizer stok = new StringTokenizer(saved);
 			while (stok.hasMoreTokens()) {
 				result.add(stok.nextToken());
@@ -106,7 +108,7 @@ public class ExternalModelManager extends AbstractModelManager {
 		if (!addPool && tokenizer.countTokens() == 0)
 			return base;
 
-		List extraLocations = new ArrayList(tokenizer.countTokens());
+		List<File> extraLocations = new ArrayList<File>(tokenizer.countTokens());
 		while (tokenizer.hasMoreTokens()) {
 			String location = tokenizer.nextToken();
 			if (P2TargetUtils.BUNDLE_POOL.isPrefixOf(new Path(location))) {
@@ -118,7 +120,7 @@ public class ExternalModelManager extends AbstractModelManager {
 				extraLocations.add(dir);
 			}
 		}
-		URL[] additional = PluginPathFinder.scanLocations((File[]) extraLocations.toArray(new File[extraLocations.size()]));
+		URL[] additional = PluginPathFinder.scanLocations(extraLocations.toArray(new File[extraLocations.size()]));
 		URL[] result = append(base, additional);
 
 		// add pooled bundles (only if part of the profile)
@@ -129,7 +131,7 @@ public class ExternalModelManager extends AbstractModelManager {
 					// none
 				} else {
 					tokenizer = new StringTokenizer(pooled, ","); //$NON-NLS-1$
-					List urls = new ArrayList(tokenizer.countTokens());
+					List<URL> urls = new ArrayList<URL>(tokenizer.countTokens());
 					while (tokenizer.hasMoreTokens()) {
 						String fileName = tokenizer.nextToken();
 						try {
@@ -138,7 +140,7 @@ public class ExternalModelManager extends AbstractModelManager {
 							PDECore.log(e);
 						}
 					}
-					additional = (URL[]) urls.toArray(new URL[urls.size()]);
+					additional = urls.toArray(new URL[urls.size()]);
 					result = append(result, additional);
 				}
 			}
@@ -222,7 +224,7 @@ class ExternalLibraryCache {
 
 		File fCacheDir = new File(getLibraryCacheDir(), getBundleLibsCacheDirName(desc));
 
-		List files = new ArrayList();
+		List<File> files = new ArrayList<File>();
 
 		for (int i = 0; i < libs.length; i++) {
 			String libName = libs[i].getName();
@@ -245,7 +247,7 @@ class ExternalLibraryCache {
 			}
 		}
 
-		return (File[]) files.toArray(new File[0]);
+		return files.toArray(new File[0]);
 	}
 
 	/**
@@ -261,7 +263,7 @@ class ExternalLibraryCache {
 			return;
 
 		// build a list with all potential directory names for quick check
-		Set bundleKeys = new HashSet();
+		Set<String> bundleKeys = new HashSet<String>();
 
 		for (int i = 0; i < targetModels.length; i++) {
 			if (targetModels[i].isEnabled()) {

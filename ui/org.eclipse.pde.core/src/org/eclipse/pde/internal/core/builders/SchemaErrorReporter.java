@@ -85,7 +85,7 @@ public class SchemaErrorReporter extends XMLErrorReporter {
 	}
 
 	public void validateContent(IProgressMonitor monitor) {
-		List elements = new ArrayList();
+		List<String> elements = new ArrayList<String>();
 		Element element = getDocumentRoot();
 		if (element != null) {
 			NodeList children = element.getChildNodes();
@@ -151,7 +151,7 @@ public class SchemaErrorReporter extends XMLErrorReporter {
 				StringTokenizer text = new StringTokenizer(textNode.getData(), "<>", true); //$NON-NLS-1$
 
 				int lineNumber = getLine(element);
-				Stack stack = new Stack();
+				Stack<StackEntry> stack = new Stack<StackEntry>();
 				boolean errorReported = false;
 				while (text.hasMoreTokens()) {
 					if (errorReported)
@@ -183,7 +183,7 @@ public class SchemaErrorReporter extends XMLErrorReporter {
 									tagName = tagName.substring(1).trim();
 									boolean found = false;
 									while (!stack.isEmpty()) {
-										StackEntry entry = (StackEntry) stack.peek();
+										StackEntry entry = stack.peek();
 										if (entry.tag.equalsIgnoreCase(tagName)) {
 											stack.pop();
 											found = true;
@@ -212,7 +212,7 @@ public class SchemaErrorReporter extends XMLErrorReporter {
 				}
 				if (!errorReported) {
 					if (!stack.isEmpty()) {
-						StackEntry entry = (StackEntry) stack.pop();
+						StackEntry entry = stack.pop();
 						if (!optionalEndTag(entry.tag))
 							report(NLS.bind(PDECoreMessages.Builders_Schema_noMatchingEndTag, entry.tag), entry.line, flag, PDEMarkerFactory.CAT_OTHER);
 					}

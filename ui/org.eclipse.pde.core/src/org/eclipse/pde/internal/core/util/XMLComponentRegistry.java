@@ -11,10 +11,7 @@
 
 package org.eclipse.pde.internal.core.util;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * SchemaDescriptionRegistry
@@ -49,18 +46,18 @@ public class XMLComponentRegistry {
 	 */
 	public static final int F_ATTRIBUTE_COMPONENT = 8;
 
-	private static ArrayList fConsumers = new ArrayList();
+	private static ArrayList<Object> fConsumers = new ArrayList<Object>();
 
-	private Map fSchemaComponentMap;
+	private Map<String, HashMap<String, String>> fSchemaComponentMap;
 
-	private Map fAttributeComponentMap;
+	private Map<String, HashMap<String, String>> fAttributeComponentMap;
 
-	private Map fElementComponentMap;
+	private Map<String, HashMap<String, String>> fElementComponentMap;
 
 	private XMLComponentRegistry() {
-		fSchemaComponentMap = Collections.synchronizedMap(new HashMap());
-		fAttributeComponentMap = Collections.synchronizedMap(new HashMap());
-		fElementComponentMap = Collections.synchronizedMap(new HashMap());
+		fSchemaComponentMap = Collections.synchronizedMap(new HashMap<String, HashMap<String, String>>());
+		fAttributeComponentMap = Collections.synchronizedMap(new HashMap<String, HashMap<String, String>>());
+		fElementComponentMap = Collections.synchronizedMap(new HashMap<String, HashMap<String, String>>());
 	}
 
 	public static XMLComponentRegistry Instance() {
@@ -90,8 +87,8 @@ public class XMLComponentRegistry {
 		putValue(F_NAME, key, value, mapType);
 	}
 
-	private Map getTargetMap(int mask) {
-		Map targetMap = null;
+	private Map<String, HashMap<String, String>> getTargetMap(int mask) {
+		Map<String, HashMap<String, String>> targetMap = null;
 		if (mask == F_SCHEMA_COMPONENT) {
 			targetMap = fSchemaComponentMap;
 		} else if (mask == F_ATTRIBUTE_COMPONENT) {
@@ -104,13 +101,13 @@ public class XMLComponentRegistry {
 
 	private void putValue(String valueKey, String key, String value, int mapType) {
 		if (key != null) {
-			Map targetMap = getTargetMap(mapType);
+			Map<String, HashMap<String, String>> targetMap = getTargetMap(mapType);
 			if (targetMap == null) {
 				return;
 			}
-			HashMap previousValue = (HashMap) targetMap.get(key);
+			HashMap<String, String> previousValue = targetMap.get(key);
 			if (previousValue == null) {
-				HashMap newValue = new HashMap();
+				HashMap<String, String> newValue = new HashMap<String, String>();
 				newValue.put(valueKey, value);
 				targetMap.put(key, newValue);
 			} else {
@@ -119,9 +116,9 @@ public class XMLComponentRegistry {
 		}
 	}
 
-	public void put(String key, HashMap value, int mapType) {
+	public void put(String key, HashMap<String, String> value, int mapType) {
 		if (key != null) {
-			Map targetMap = getTargetMap(mapType);
+			Map<String, HashMap<String, String>> targetMap = getTargetMap(mapType);
 			if (targetMap == null) {
 				return;
 			}
@@ -129,17 +126,17 @@ public class XMLComponentRegistry {
 		}
 	}
 
-	public HashMap get(String key, int mapType) {
-		Map targetMap = getTargetMap(mapType);
+	public HashMap<?, ?> get(String key, int mapType) {
+		Map<String, HashMap<String, String>> targetMap = getTargetMap(mapType);
 		if (targetMap == null) {
 			return null;
 		}
-		return (HashMap) targetMap.get(key);
+		return targetMap.get(key);
 	}
 
 	private String getValue(String valueKey, String key, int mapType) {
 		if (key != null) {
-			HashMap map = get(key, mapType);
+			HashMap<?, ?> map = get(key, mapType);
 			if (map != null) {
 				return (String) map.get(valueKey);
 			}

@@ -21,7 +21,7 @@ import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.core.util.PropertiesUtil;
 
 public class BuildEntry extends BuildObject implements IBuildEntry {
-	private Vector tokens = new Vector();
+	private Vector<String> tokens = new Vector<String>();
 	private String name;
 
 	public BuildEntry(String name) {
@@ -88,13 +88,13 @@ public class BuildEntry extends BuildObject implements IBuildEntry {
 	}
 
 	public void write(String indent, PrintWriter writer) {
-		Enumeration elements = tokens.elements();
+		Enumeration<String> elements = tokens.elements();
 		IPath rootPath = getRootPath();
 		if (rootPath != null) {
 			// translation required for source. and output. entries
-			Vector vector = new Vector();
+			Vector<String> vector = new Vector<String>();
 			while (elements.hasMoreElements()) {
-				String e = (String) elements.nextElement();
+				String e = elements.nextElement();
 				vector.add(toRelative(e, rootPath));
 			}
 			elements = vector.elements();

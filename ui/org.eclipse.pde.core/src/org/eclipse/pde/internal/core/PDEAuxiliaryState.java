@@ -63,13 +63,13 @@ public class PDEAuxiliaryState {
 	private static String ELEMENT_LIB = "library"; //$NON-NLS-1$
 	private static String ELEMENT_ROOT = "map"; //$NON-NLS-1$
 
-	protected Map fPluginInfos;
+	protected Map<String, PluginInfo> fPluginInfos;
 
 	/**
 	 * Constructor
 	 */
 	protected PDEAuxiliaryState() {
-		fPluginInfos = new HashMap();
+		fPluginInfos = new HashMap<String, PluginInfo>();
 	}
 
 	/**
@@ -78,7 +78,7 @@ public class PDEAuxiliaryState {
 	 * @param state state containing plugin infos to initialize this state with 
 	 */
 	protected PDEAuxiliaryState(PDEAuxiliaryState state) {
-		fPluginInfos = new HashMap(state.fPluginInfos);
+		fPluginInfos = new HashMap<String, PluginInfo>(state.fPluginInfos);
 	}
 
 	/**
@@ -121,64 +121,64 @@ public class PDEAuxiliaryState {
 			info.bundleSourceEntry = element.getAttribute(ATTR_BUNDLE_SOURCE);
 
 		NodeList libs = element.getChildNodes();
-		ArrayList list = new ArrayList(libs.getLength());
+		ArrayList<String> list = new ArrayList<String>(libs.getLength());
 		for (int i = 0; i < libs.getLength(); i++) {
 			if (libs.item(i).getNodeType() == Node.ELEMENT_NODE) {
 				Element lib = (Element) libs.item(i);
 				list.add(lib.getAttribute(ATTR_NAME));
 			}
 		}
-		info.libraries = (String[]) list.toArray(new String[list.size()]);
+		info.libraries = list.toArray(new String[list.size()]);
 		fPluginInfos.put(element.getAttribute(ATTR_BUNDLE_ID), info);
 	}
 
 	public String getClassName(long bundleID) {
-		PluginInfo info = (PluginInfo) fPluginInfos.get(Long.toString(bundleID));
+		PluginInfo info = fPluginInfos.get(Long.toString(bundleID));
 		return info == null ? null : info.className;
 	}
 
 	public boolean hasExtensibleAPI(long bundleID) {
-		PluginInfo info = (PluginInfo) fPluginInfos.get(Long.toString(bundleID));
+		PluginInfo info = fPluginInfos.get(Long.toString(bundleID));
 		return info == null ? false : info.hasExtensibleAPI;
 	}
 
 	public boolean isPatchFragment(long bundleID) {
-		PluginInfo info = (PluginInfo) fPluginInfos.get(Long.toString(bundleID));
+		PluginInfo info = fPluginInfos.get(Long.toString(bundleID));
 		return info == null ? false : info.isPatchFragment;
 	}
 
 	public boolean hasBundleStructure(long bundleID) {
-		PluginInfo info = (PluginInfo) fPluginInfos.get(Long.toString(bundleID));
+		PluginInfo info = fPluginInfos.get(Long.toString(bundleID));
 		return info == null ? false : info.hasBundleStructure;
 	}
 
 	public String getPluginName(long bundleID) {
-		PluginInfo info = (PluginInfo) fPluginInfos.get(Long.toString(bundleID));
+		PluginInfo info = fPluginInfos.get(Long.toString(bundleID));
 		return info == null ? null : info.name;
 	}
 
 	public String getProviderName(long bundleID) {
-		PluginInfo info = (PluginInfo) fPluginInfos.get(Long.toString(bundleID));
+		PluginInfo info = fPluginInfos.get(Long.toString(bundleID));
 		return info == null ? null : info.providerName;
 	}
 
 	public String[] getLibraryNames(long bundleID) {
-		PluginInfo info = (PluginInfo) fPluginInfos.get(Long.toString(bundleID));
+		PluginInfo info = fPluginInfos.get(Long.toString(bundleID));
 		return info == null ? new String[0] : info.libraries;
 	}
 
 	public String getBundleLocalization(long bundleID) {
-		PluginInfo info = (PluginInfo) fPluginInfos.get(Long.toString(bundleID));
+		PluginInfo info = fPluginInfos.get(Long.toString(bundleID));
 		return info == null ? null : info.localization;
 	}
 
 	public String getProject(long bundleID) {
-		PluginInfo info = (PluginInfo) fPluginInfos.get(Long.toString(bundleID));
+		PluginInfo info = fPluginInfos.get(Long.toString(bundleID));
 		return info == null ? null : info.project;
 	}
 
 	public String getBundleSourceEntry(long bundleID) {
-		PluginInfo info = (PluginInfo) fPluginInfos.get(Long.toString(bundleID));
+		PluginInfo info = fPluginInfos.get(Long.toString(bundleID));
 		return info == null ? null : info.bundleSourceEntry;
 	}
 
@@ -192,12 +192,12 @@ public class PDEAuxiliaryState {
 			Document doc = factory.newDocumentBuilder().newDocument();
 			Element root = doc.createElement(ELEMENT_ROOT);
 
-			Iterator iter = fPluginInfos.keySet().iterator();
+			Iterator<String> iter = fPluginInfos.keySet().iterator();
 			while (iter.hasNext()) {
 				String key = iter.next().toString();
 				Element element = doc.createElement(ELEMENT_BUNDLE);
 				element.setAttribute(ATTR_BUNDLE_ID, key);
-				PluginInfo info = (PluginInfo) fPluginInfos.get(key);
+				PluginInfo info = fPluginInfos.get(key);
 				if (info.className != null)
 					element.setAttribute(ATTR_CLASS, info.className);
 				if (info.providerName != null)
@@ -345,7 +345,7 @@ public class PDEAuxiliaryState {
 	 * @param manifest dictionary of headers in the bundle's manifest file
 	 * @param hasBundleStructure whether the plugin has bundle structure
 	 */
-	protected void addAuxiliaryData(BundleDescription desc, Dictionary manifest, boolean hasBundleStructure) {
+	protected void addAuxiliaryData(BundleDescription desc, Dictionary<?, ?> manifest, boolean hasBundleStructure) {
 		PluginInfo info = new PluginInfo();
 		info.name = (String) manifest.get(Constants.BUNDLE_NAME);
 		info.providerName = (String) manifest.get(Constants.BUNDLE_VENDOR);
@@ -366,7 +366,7 @@ public class PDEAuxiliaryState {
 	 * @param manifest dictionary containing manifest headers
 	 * @return string array of classpath entries
 	 */
-	protected String[] getClasspath(Dictionary manifest) {
+	protected String[] getClasspath(Dictionary<?, ?> manifest) {
 		String fullClasspath = (String) manifest.get(Constants.BUNDLE_CLASSPATH);
 		String[] result = new String[0];
 		try {

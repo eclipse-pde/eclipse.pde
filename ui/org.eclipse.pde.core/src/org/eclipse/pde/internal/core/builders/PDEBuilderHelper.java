@@ -22,7 +22,7 @@ import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
 
 public class PDEBuilderHelper {
 
-	public static String[] getUnlistedClasspaths(ArrayList sourceEntries, IProject project, IClasspathEntry[] cpes) {
+	public static String[] getUnlistedClasspaths(ArrayList<?> sourceEntries, IProject project, IClasspathEntry[] cpes) {
 		String[] unlisted = new String[cpes.length];
 		int index = 0;
 		for (int i = 0; i < cpes.length; i++) {
@@ -48,8 +48,8 @@ public class PDEBuilderHelper {
 		return unlisted;
 	}
 
-	public static ArrayList getSourceEntries(IBuild build) {
-		ArrayList sourceEntryKeys = new ArrayList();
+	public static ArrayList<String> getSourceEntries(IBuild build) {
+		ArrayList<String> sourceEntryKeys = new ArrayList<String>();
 		IBuildEntry[] entries = build.getBuildEntries();
 		for (int i = 0; i < entries.length; i++) {
 			String name = entries[i].getName();

@@ -47,12 +47,12 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 		if (ClasspathUtilCore.hasBundleStructure(model)) {
 			BundleDescription desc = model.getBundleDescription();
 			if (desc != null) {
-				ArrayList list = new ArrayList();
+				ArrayList<String> list = new ArrayList<String>();
 				ExportPackageDescription[] exports = desc.getExportPackages();
 				for (int i = 0; i < exports.length; i++) {
 					list.add(exports[i].getName());
 				}
-				return (String[]) list.toArray(new String[list.size()]);
+				return list.toArray(new String[list.size()]);
 			}
 		}
 		if (!isExported())
@@ -97,7 +97,7 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 		fName = getNodeAttribute(node, "name"); //$NON-NLS-1$
 		fType = getNodeAttribute(node, "type"); //$NON-NLS-1$
 		NodeList children = node.getChildNodes();
-		Vector exports = new Vector();
+		Vector<String> exports = new Vector<String>();
 		boolean all = false;
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
@@ -125,7 +125,7 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 
 	public void setContentFilters(String[] filters) throws CoreException {
 		ensureModelEditable();
-		ArrayList oldValue = createArrayList(fContentFilters);
+		ArrayList<String> oldValue = createArrayList(fContentFilters);
 		fContentFilters = filters;
 		firePropertyChanged(P_CONTENT_FILTERS, oldValue, createArrayList(filters));
 	}
@@ -149,9 +149,9 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 
 	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
 		if (name.equals(P_CONTENT_FILTERS)) {
-			ArrayList list = (ArrayList) newValue;
+			ArrayList<?> list = (ArrayList<?>) newValue;
 			if (list != null)
-				setContentFilters((String[]) list.toArray(new String[list.size()]));
+				setContentFilters(list.toArray(new String[list.size()]));
 			else
 				setContentFilters(null);
 			return;
@@ -167,10 +167,10 @@ public class PluginLibrary extends PluginObject implements IPluginLibrary {
 		super.restoreProperty(name, oldValue, newValue);
 	}
 
-	private ArrayList createArrayList(String[] array) {
+	private ArrayList<String> createArrayList(String[] array) {
 		if (array == null)
 			return null;
-		ArrayList list = new ArrayList();
+		ArrayList<String> list = new ArrayList<String>();
 		for (int i = 0; i < array.length; i++) {
 			list.add(array[i]);
 		}

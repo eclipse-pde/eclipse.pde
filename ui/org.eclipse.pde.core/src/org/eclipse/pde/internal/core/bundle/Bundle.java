@@ -19,7 +19,7 @@ import org.osgi.framework.Constants;
 
 public class Bundle extends BundleObject implements IBundle {
 	private static final long serialVersionUID = 1L;
-	private Map fDocumentHeaders = new HeaderMap();
+	private Map<String, IManifestHeader> fDocumentHeaders = new HeaderMap();
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.ibundle.IBundle#setHeader(java.lang.String, java.lang.String)
@@ -27,13 +27,13 @@ public class Bundle extends BundleObject implements IBundle {
 	public void setHeader(String key, String value) {
 		if (value == null) {
 			// Do a remove
-			IManifestHeader header = (IManifestHeader) fDocumentHeaders.remove(key);
+			IManifestHeader header = fDocumentHeaders.remove(key);
 			if (header != null) {
 				getModel().fireModelObjectChanged(header, key, header.getValue(), null);
 			}
 		} else {
 			// Edit an existing header value or create a new header object
-			IManifestHeader header = (ManifestHeader) fDocumentHeaders.get(key);
+			IManifestHeader header = fDocumentHeaders.get(key);
 			if (header == null) {
 				header = getModel().getFactory().createHeader(key, value);
 				fDocumentHeaders.put(key, header);
@@ -61,9 +61,9 @@ public class Bundle extends BundleObject implements IBundle {
 	 * 
 	 * @param headers map<String, String> of manifest key and values
 	 */
-	public void load(Map headers) {
+	public void load(Map<?, ?> headers) {
 		fDocumentHeaders.clear();
-		Iterator iter = headers.keySet().iterator();
+		Iterator<?> iter = headers.keySet().iterator();
 		while (iter.hasNext()) {
 			String key = iter.next().toString();
 			if (headers.get(key) != null) {
@@ -99,16 +99,16 @@ public class Bundle extends BundleObject implements IBundle {
 	 * @see org.eclipse.pde.internal.core.ibundle.IBundle#getManifestHeader(java.lang.String)
 	 */
 	public IManifestHeader getManifestHeader(String key) {
-		return (ManifestHeader) fDocumentHeaders.get(key);
+		return fDocumentHeaders.get(key);
 	}
 
 	/**
 	 * @return a map containing all key/value pairs of manifest headers as strings, values may be empty strings, but not <code>null</code>
 	 */
-	protected Map getHeaders() {
-		Map result = new HashMap(fDocumentHeaders.values().size());
-		for (Iterator iterator = fDocumentHeaders.values().iterator(); iterator.hasNext();) {
-			IManifestHeader currentHeader = (IManifestHeader) iterator.next();
+	protected Map<String, String> getHeaders() {
+		Map<String, String> result = new HashMap<String, String>(fDocumentHeaders.values().size());
+		for (Iterator<IManifestHeader> iterator = fDocumentHeaders.values().iterator(); iterator.hasNext();) {
+			IManifestHeader currentHeader = iterator.next();
 			if (currentHeader.getValue() != null) {
 				result.put(currentHeader.getKey(), currentHeader.getValue());
 			}

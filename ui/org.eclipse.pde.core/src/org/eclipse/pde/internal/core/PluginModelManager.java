@@ -36,8 +36,8 @@ public class PluginModelManager implements IModelProviderListener {
 	 */
 	class UpdateClasspathsJob extends Job {
 
-		private List fProjects = new ArrayList();
-		private List fContainers = new ArrayList();
+		private List<IJavaProject> fProjects = new ArrayList<IJavaProject>();
+		private List<IClasspathContainer> fContainers = new ArrayList<IClasspathContainer>();
 
 		/**
 		 * Constructs a new job.
@@ -56,8 +56,8 @@ public class PluginModelManager implements IModelProviderListener {
 					IJavaProject[] projects = null;
 					IClasspathContainer[] containers = null;
 					synchronized (fProjects) {
-						projects = (IJavaProject[]) fProjects.toArray(new IJavaProject[fProjects.size()]);
-						containers = (IClasspathContainer[]) fContainers.toArray(new IClasspathContainer[fContainers.size()]);
+						projects = fProjects.toArray(new IJavaProject[fProjects.size()]);
+						containers = fContainers.toArray(new IClasspathContainer[fContainers.size()]);
 						fProjects.clear();
 						fContainers.clear();
 					}
@@ -149,9 +149,9 @@ public class PluginModelManager implements IModelProviderListener {
 	private WorkspacePluginModelManager fWorkspaceManager; // keeps track of changes in the workspace
 	private PDEState fState; // keeps the combined view of the target and workspace
 
-	private Map fEntries; // a master table keyed by plugin ID and the value is a ModelEntry
-	private ArrayList fListeners; // a list of listeners interested in changes to the plug-in models
-	private ArrayList fStateListeners; // a list of listeners interested in changes to the PDE/resolver State
+	private Map<String, LocalModelEntry> fEntries; // a master table keyed by plugin ID and the value is a ModelEntry
+	private ArrayList<IPluginModelListener> fListeners; // a list of listeners interested in changes to the plug-in models
+	private ArrayList<IStateDeltaListener> fStateListeners; // a list of listeners interested in changes to the PDE/resolver State
 
 	/**
 	 * Initialize the workspace and external (target) model manager
@@ -220,7 +220,7 @@ public class PluginModelManager implements IModelProviderListener {
 			}
 		}
 
-		Set addedBSNs = new HashSet();
+		Set<String> addedBSNs = new HashSet<String>();
 		// Adds to the master table and the state newly created plug-ins in the workspace
 		// (ie. new plug-in project or a closed project that has just been re-opened).
 		// Also, if the target location changes, we add all plug-ins from the new target
@@ -271,7 +271,7 @@ public class PluginModelManager implements IModelProviderListener {
 						stateDelta = fState.resolveState(true);
 					} else {
 						// resolve based on added bundles, in case there are multiple versions of the added bundles
-						stateDelta = fState.resolveState((String[]) addedBSNs.toArray(new String[addedBSNs.size()]));
+						stateDelta = fState.resolveState(addedBSNs.toArray(new String[addedBSNs.size()]));
 					}
 				}
 			}
@@ -295,7 +295,7 @@ public class PluginModelManager implements IModelProviderListener {
 	 * @param event event that triggered this update
 	 */
 	private void updateAffectedEntries(StateDelta delta, IModelProviderEvent event) {
-		Map map = new HashMap();
+		Map<IJavaProject, RequiredPluginsClasspathContainer> map = new HashMap<IJavaProject, RequiredPluginsClasspathContainer>();
 		if (delta == null) {
 			// if the delta is null, then the entire target changed.
 			// Therefore, we should update the classpath for all workspace plug-ins.
@@ -350,12 +350,12 @@ public class PluginModelManager implements IModelProviderListener {
 
 		if (map.size() > 0) {
 			// update class path for all affected workspace plug-ins in one operation
-			Iterator iterator = map.entrySet().iterator();
+			Iterator<?> iterator = map.entrySet().iterator();
 			IJavaProject[] projects = new IJavaProject[map.size()];
 			IClasspathContainer[] containers = new IClasspathContainer[projects.length];
 			int index = 0;
 			while (iterator.hasNext()) {
-				Entry entry = (Entry) iterator.next();
+				Entry<?, ?> entry = (Entry<?, ?>) iterator.next();
 				projects[index] = (IJavaProject) entry.getKey();
 				containers[index] = (IClasspathContainer) entry.getValue();
 				index++;
@@ -384,7 +384,7 @@ public class PluginModelManager implements IModelProviderListener {
 	private void fireDelta(PluginModelDelta delta) {
 		if (fListeners != null) {
 			for (int i = 0; i < fListeners.size(); i++) {
-				((IPluginModelListener) fListeners.get(i)).modelsChanged(delta);
+				fListeners.get(i).modelsChanged(delta);
 			}
 		}
 	}
@@ -396,9 +396,9 @@ public class PluginModelManager implements IModelProviderListener {
 	 */
 	private void fireStateDelta(StateDelta delta) {
 		if (fStateListeners != null) {
-			ListIterator li = fStateListeners.listIterator();
+			ListIterator<IStateDeltaListener> li = fStateListeners.listIterator();
 			while (li.hasNext())
-				((IStateDeltaListener) li.next()).stateResolved(delta);
+				li.next().stateResolved(delta);
 		}
 	}
 
@@ -409,9 +409,9 @@ public class PluginModelManager implements IModelProviderListener {
 	 */
 	private void fireStateChanged(PDEState newState) {
 		if (fStateListeners != null) {
-			ListIterator li = fStateListeners.listIterator();
+			ListIterator<IStateDeltaListener> li = fStateListeners.listIterator();
 			while (li.hasNext())
-				((IStateDeltaListener) li.next()).stateChanged(newState.getState());
+				li.next().stateChanged(newState.getState());
 		}
 	}
 
@@ -422,7 +422,7 @@ public class PluginModelManager implements IModelProviderListener {
 	 */
 	public void addPluginModelListener(IPluginModelListener listener) {
 		if (fListeners == null)
-			fListeners = new ArrayList();
+			fListeners = new ArrayList<IPluginModelListener>();
 		if (!fListeners.contains(listener))
 			fListeners.add(listener);
 	}
@@ -434,7 +434,7 @@ public class PluginModelManager implements IModelProviderListener {
 	 */
 	public void addStateDeltaListener(IStateDeltaListener listener) {
 		if (fStateListeners == null)
-			fStateListeners = new ArrayList();
+			fStateListeners = new ArrayList<IStateDeltaListener>();
 		if (!fStateListeners.contains(listener))
 			fStateListeners.add(listener);
 	}
@@ -488,7 +488,7 @@ public class PluginModelManager implements IModelProviderListener {
 	 * and the table is not initialized yet, thread2 would wait. 
 	 * This way there are no partial reads.
 	 */
-	private Map getEntryTable() {
+	private Map<String, LocalModelEntry> getEntryTable() {
 		initializeTable();
 		return fEntries;
 	}
@@ -504,7 +504,7 @@ public class PluginModelManager implements IModelProviderListener {
 			return;
 
 		// Cannot assign to fEntries here - will create a race condition with isInitialized()
-		Map entries = Collections.synchronizedMap(new TreeMap());
+		Map<String, LocalModelEntry> entries = Collections.synchronizedMap(new TreeMap<String, LocalModelEntry>());
 
 		// Create a state that contains all bundles from the target and workspace
 		// If a workspace bundle has the same symbolic name as a target bundle,
@@ -648,13 +648,13 @@ public class PluginModelManager implements IModelProviderListener {
 	 * 
 	 * @return <code>true</code> if changes were made to the state; <code>false</code> otherwise
 	 */
-	private boolean addToTable(Map entries, IPluginModelBase[] models) {
+	private boolean addToTable(Map<String, LocalModelEntry> entries, IPluginModelBase[] models) {
 		boolean stateChanged = false;
 		for (int i = 0; i < models.length; i++) {
 			String id = models[i].getPluginBase().getId();
 			if (id == null)
 				continue;
-			LocalModelEntry entry = (LocalModelEntry) entries.get(id);
+			LocalModelEntry entry = entries.get(id);
 			// create a new entry for the given ID if none already exists
 			if (entry == null) {
 				entry = new LocalModelEntry(id);
@@ -682,13 +682,13 @@ public class PluginModelManager implements IModelProviderListener {
 		addWorkspaceBundleToState(fEntries, model);
 	}
 
-	private synchronized void addWorkspaceBundleToState(Map entries, IPluginModelBase model) {
+	private synchronized void addWorkspaceBundleToState(Map<String, LocalModelEntry> entries, IPluginModelBase model) {
 		String id = model.getPluginBase().getId();
 		if (id == null)
 			return;
 
 		// remove target models by the same ID from the state, if any
-		ModelEntry entry = (ModelEntry) entries.get(id);
+		ModelEntry entry = entries.get(id);
 		if (entry != null) {
 			IPluginModelBase[] models = entry.getExternalModels();
 			for (int i = 0; i < models.length; i++)
@@ -708,7 +708,7 @@ public class PluginModelManager implements IModelProviderListener {
 					|| isPatchFragment(entries, desc) || desc.getImportPackages().length > 0 || desc.getRequiredBundles().length > 0)) {
 				BundleDescription host = (BundleDescription) spec.getSupplier();
 				if (host != null) {
-					ModelEntry hostEntry = (ModelEntry) entries.get(host.getName());
+					ModelEntry hostEntry = entries.get(host.getName());
 					if (hostEntry != null) {
 						fState.addBundle(hostEntry.getModel(host), true);
 					}
@@ -718,8 +718,8 @@ public class PluginModelManager implements IModelProviderListener {
 	}
 
 	// Cannot directly call ClasspathUtilCore.isPatchFragment(BundleDescription) since it would cause a loop in our initialization.
-	private boolean isPatchFragment(Map entries, BundleDescription desc) {
-		ModelEntry entry = (ModelEntry) entries.get(desc.getSymbolicName());
+	private boolean isPatchFragment(Map<String, LocalModelEntry> entries, BundleDescription desc) {
+		ModelEntry entry = entries.get(desc.getSymbolicName());
 		if (entry != null) {
 			IPluginModelBase base = entry.getModel(desc);
 			if (base == null)
@@ -736,7 +736,7 @@ public class PluginModelManager implements IModelProviderListener {
 	 * @param model  the model being added
 	 */
 	private void handleAdd(String id, IPluginModelBase model, PluginModelDelta delta) {
-		LocalModelEntry entry = (LocalModelEntry) getEntryTable().get(id);
+		LocalModelEntry entry = getEntryTable().get(id);
 
 		// add model to the corresponding ModelEntry.  Create a new entry if necessary
 		if (entry == null) {
@@ -770,7 +770,7 @@ public class PluginModelManager implements IModelProviderListener {
 	 * @param model  the model to be removed
 	 */
 	private void handleRemove(String id, IPluginModelBase model, PluginModelDelta delta) {
-		LocalModelEntry entry = (LocalModelEntry) getEntryTable().get(id);
+		LocalModelEntry entry = getEntryTable().get(id);
 		if (entry != null) {
 			// remove model from the entry
 			entry.removeModel(model);
@@ -826,7 +826,7 @@ public class PluginModelManager implements IModelProviderListener {
 				// if the state of an inactive bundle changes (external model un/checked that has an 
 				// equivalent workspace bundle), then take no action.  We don't want to add the external
 				// model to the state when it is enabled if we have a workspace bundle already in the state.
-				ModelEntry entry = (ModelEntry) getEntryTable().get(oldID);
+				ModelEntry entry = getEntryTable().get(oldID);
 				IPluginModelBase[] activeModels = entry.getActiveModels();
 				boolean isActive = false;
 				for (int i = 0; i < activeModels.length; i++) {
@@ -951,17 +951,17 @@ public class PluginModelManager implements IModelProviderListener {
 	 */
 	public IPluginModelBase[] getActiveModels(boolean includeFragments) {
 		int size = getEntryTable().size();
-		ArrayList result = new ArrayList(size);
-		Iterator iter = getEntryTable().values().iterator();
+		ArrayList<IPluginModelBase> result = new ArrayList<IPluginModelBase>(size);
+		Iterator<LocalModelEntry> iter = getEntryTable().values().iterator();
 		while (iter.hasNext()) {
-			ModelEntry entry = (ModelEntry) iter.next();
+			ModelEntry entry = iter.next();
 			IPluginModelBase[] models = entry.getActiveModels();
 			for (int i = 0; i < models.length; i++) {
 				if (models[i] instanceof IPluginModel || includeFragments)
 					result.add(models[i]);
 			}
 		}
-		return (IPluginModelBase[]) result.toArray(new IPluginModelBase[result.size()]);
+		return result.toArray(new IPluginModelBase[result.size()]);
 	}
 
 	/**
@@ -1002,17 +1002,17 @@ public class PluginModelManager implements IModelProviderListener {
 	 */
 	public IPluginModelBase[] getAllModels(boolean includeFragments) {
 		int size = getEntryTable().size();
-		ArrayList result = new ArrayList(size);
-		Iterator iter = getEntryTable().values().iterator();
+		ArrayList<IPluginModelBase> result = new ArrayList<IPluginModelBase>(size);
+		Iterator<LocalModelEntry> iter = getEntryTable().values().iterator();
 		while (iter.hasNext()) {
-			ModelEntry entry = (ModelEntry) iter.next();
+			ModelEntry entry = iter.next();
 			IPluginModelBase[] models = entry.hasWorkspaceModels() ? entry.getWorkspaceModels() : entry.getExternalModels();
 			for (int i = 0; i < models.length; i++) {
 				if (models[i] instanceof IPluginModel || includeFragments)
 					result.add(models[i]);
 			}
 		}
-		return (IPluginModelBase[]) result.toArray(new IPluginModelBase[result.size()]);
+		return result.toArray(new IPluginModelBase[result.size()]);
 	}
 
 	/**

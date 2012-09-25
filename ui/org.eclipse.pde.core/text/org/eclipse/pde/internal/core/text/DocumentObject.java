@@ -246,7 +246,7 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 		return node;
 	}
 
-	public IDocumentElementNode removeChildNode(int index, Class clazz, boolean fireEvent) {
+	public IDocumentElementNode removeChildNode(int index, Class<?> clazz, boolean fireEvent) {
 		IDocumentElementNode node = removeChildNode(index, clazz);
 		// Fire event
 		if (fireEvent && shouldFireEvent()) {
@@ -255,7 +255,7 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 		return node;
 	}
 
-	public IDocumentElementNode removeChildNode(int index, Class clazz) {
+	public IDocumentElementNode removeChildNode(int index, Class<?> clazz) {
 		// Validate index
 		if ((index < 0) || (index >= getChildCount()) || (clazz.isInstance(getChildAt(index)) == false)) {
 			// 0 <= index < child element count
@@ -279,7 +279,7 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 	 * @param newNode
 	 * @param oldNode
 	 */
-	public void setChildNode(IDocumentElementNode newNode, Class clazz) {
+	public void setChildNode(IDocumentElementNode newNode, Class<?> clazz) {
 		// Determine whether to fire the event
 		boolean fireEvent = shouldFireEvent();
 		// Get the old node
@@ -321,10 +321,10 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 		removeChildNode(oldNode, fireEvent);
 	}
 
-	public IDocumentElementNode getChildNode(Class clazz) {
+	public IDocumentElementNode getChildNode(Class<?> clazz) {
 		// Linear search O(n)
-		ArrayList children = getChildNodesList();
-		Iterator iterator = children.iterator();
+		ArrayList<?> children = getChildNodesList();
+		Iterator<?> iterator = children.iterator();
 		while (iterator.hasNext()) {
 			IDocumentElementNode node = (IDocumentElementNode) iterator.next();
 			if (clazz.isInstance(node)) {
@@ -334,11 +334,11 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 		return null;
 	}
 
-	public int getChildNodeCount(Class clazz) {
+	public int getChildNodeCount(Class<?> clazz) {
 		// Linear search O(n)
 		int count = 0;
-		ArrayList children = getChildNodesList();
-		Iterator iterator = children.iterator();
+		ArrayList<?> children = getChildNodesList();
+		Iterator<?> iterator = children.iterator();
 		while (iterator.hasNext()) {
 			IDocumentElementNode node = (IDocumentElementNode) iterator.next();
 			if (clazz.isInstance(node)) {
@@ -348,18 +348,18 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 		return count;
 	}
 
-	public ArrayList getChildNodesList(Class clazz, boolean match) {
+	public ArrayList<IDocumentElementNode> getChildNodesList(Class<?> clazz, boolean match) {
 		return getChildNodesList(new Class[] {clazz}, match);
 	}
 
-	public ArrayList getChildNodesList(Class[] classes, boolean match) {
-		ArrayList filteredChildren = new ArrayList();
-		ArrayList children = getChildNodesList();
-		Iterator iterator = children.iterator();
+	public ArrayList<IDocumentElementNode> getChildNodesList(Class<?>[] classes, boolean match) {
+		ArrayList<IDocumentElementNode> filteredChildren = new ArrayList<IDocumentElementNode>();
+		ArrayList<?> children = getChildNodesList();
+		Iterator<?> iterator = children.iterator();
 		while (iterator.hasNext()) {
 			IDocumentElementNode node = (IDocumentElementNode) iterator.next();
 			for (int i = 0; i < classes.length; i++) {
-				Class clazz = classes[i];
+				Class<?> clazz = classes[i];
 				if (clazz.isInstance(node) == match) {
 					filteredChildren.add(node);
 					break;
@@ -369,7 +369,7 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 		return filteredChildren;
 	}
 
-	public IDocumentElementNode getNextSibling(IDocumentElementNode node, Class clazz) {
+	public IDocumentElementNode getNextSibling(IDocumentElementNode node, Class<?> clazz) {
 		int position = indexOf(node);
 		int lastIndex = getChildCount() - 1;
 		if ((position < 0) || (position >= lastIndex)) {
@@ -387,7 +387,7 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 		return null;
 	}
 
-	public IDocumentElementNode getPreviousSibling(IDocumentElementNode node, Class clazz) {
+	public IDocumentElementNode getPreviousSibling(IDocumentElementNode node, Class<?> clazz) {
 		int position = indexOf(node);
 		if ((position <= 0) || (position >= getChildCount())) {
 			// Either the item was not found or the item was found but it is 
@@ -404,9 +404,9 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 		return null;
 	}
 
-	public boolean hasChildNodes(Class clazz) {
-		ArrayList children = getChildNodesList();
-		Iterator iterator = children.iterator();
+	public boolean hasChildNodes(Class<?> clazz) {
+		ArrayList<?> children = getChildNodesList();
+		Iterator<?> iterator = children.iterator();
 		while (iterator.hasNext()) {
 			IDocumentElementNode node = (IDocumentElementNode) iterator.next();
 			if (clazz.isInstance(node)) {
@@ -416,7 +416,7 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 		return false;
 	}
 
-	public boolean isFirstChildNode(IDocumentElementNode node, Class clazz) {
+	public boolean isFirstChildNode(IDocumentElementNode node, Class<?> clazz) {
 		int position = indexOf(node);
 		// Check to see if node is found
 		if ((position < 0) || (position >= getChildCount())) {
@@ -439,7 +439,7 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 		return true;
 	}
 
-	public boolean isLastChildNode(IDocumentElementNode node, Class clazz) {
+	public boolean isLastChildNode(IDocumentElementNode node, Class<?> clazz) {
 		int position = indexOf(node);
 		int lastIndex = getChildCount() - 1;
 		// Check to see if node is found

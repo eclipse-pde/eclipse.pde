@@ -31,6 +31,7 @@ import org.eclipse.equinox.p2.planner.IProfileChangeRequest;
 import org.eclipse.equinox.p2.query.*;
 import org.eclipse.equinox.p2.repository.*;
 import org.eclipse.equinox.p2.repository.artifact.*;
+import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.target.*;
@@ -106,7 +107,7 @@ public class P2TargetUtils {
 	/**
 	 * Table mapping {@link ITargetDefinition} to synchronizer (P2TargetUtils) instance.
 	 */
-	private static Map synchronizers = new HashMap();
+	private static Map<ITargetDefinition, P2TargetUtils> synchronizers = new HashMap<ITargetDefinition, P2TargetUtils>();
 
 	/** 
 	 * The profile to be synchronized
@@ -159,8 +160,8 @@ public class P2TargetUtils {
 	 * Deletes any profiles associated with target definitions that no longer exist
 	 * and returns a list of profile identifiers that were deleted.
 	 */
-	public static List cleanOrphanedTargetDefinitionProfiles() throws CoreException {
-		List list = new ArrayList();
+	public static List<String> cleanOrphanedTargetDefinitionProfiles() throws CoreException {
+		List<String> list = new ArrayList<String>();
 		IProfileRegistry registry = getProfileRegistry();
 		ITargetPlatformService tps = (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
 		if (registry != null && tps != null) {
@@ -286,7 +287,7 @@ public class P2TargetUtils {
 	public static IProvisioningAgent getAgent() throws CoreException {
 		//Is there already an agent for this location?
 		String filter = "(locationURI=" + String.valueOf(AGENT_LOCATION) + ")"; //$NON-NLS-1$//$NON-NLS-2$
-		ServiceReference[] serviceReferences = null;
+		ServiceReference<?>[] serviceReferences = null;
 		BundleContext context = PDECore.getDefault().getBundleContext();
 		try {
 			serviceReferences = context.getServiceReferences(IProvisioningAgent.SERVICE_NAME, filter);
@@ -495,9 +496,9 @@ public class P2TargetUtils {
 		// check top level IU's. If any have been removed from the containers that are
 		// still in the profile, we need to recreate (rather than uninstall)
 		IUProfilePropertyQuery propertyQuery = new IUProfilePropertyQuery(PROP_INSTALLED_IU, Boolean.toString(true));
-		IQueryResult queryResult = fProfile.query(propertyQuery, null);
-		Iterator iterator = queryResult.iterator();
-		Set installedIUs = new HashSet();
+		IQueryResult<?> queryResult = fProfile.query(propertyQuery, null);
+		Iterator<?> iterator = queryResult.iterator();
+		Set<NameVersionDescriptor> installedIUs = new HashSet<NameVersionDescriptor>();
 		while (iterator.hasNext()) {
 			IInstallableUnit unit = (IInstallableUnit) iterator.next();
 			installedIUs.add(new NameVersionDescriptor(unit.getId(), unit.getVersion().toString()));
@@ -651,7 +652,7 @@ public class P2TargetUtils {
 	 * @return the discovered or created synchronizer
 	 */
 	static synchronized P2TargetUtils getSynchronizer(ITargetDefinition target) {
-		P2TargetUtils result = (P2TargetUtils) synchronizers.get(target);
+		P2TargetUtils result = synchronizers.get(target);
 		if (result != null)
 			return result;
 
@@ -669,7 +670,7 @@ public class P2TargetUtils {
 	 * @return the set of associated IUs
 	 * @throws CoreException if there is a problem discovering the IUs
 	 */
-	public static IQueryResult getIUs(ITargetDefinition target, IProgressMonitor monitor) throws CoreException {
+	public static IQueryResult<?> getIUs(ITargetDefinition target, IProgressMonitor monitor) throws CoreException {
 		P2TargetUtils synchronizer = getSynchronizer(target);
 		if (synchronizer == null)
 			return null;
@@ -730,7 +731,7 @@ public class P2TargetUtils {
 		if (registry == null) {
 			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.AbstractTargetHandle_0));
 		}
-		Map properties = new HashMap();
+		Map<String, String> properties = new HashMap<String, String>();
 		properties.put(IProfile.PROP_INSTALL_FOLDER, INSTALL_FOLDERS.append(Long.toString(LocalTargetHandle.nextTimeStamp())).toOSString());
 		properties.put(IProfile.PROP_CACHE, BUNDLE_POOL.toOSString());
 		properties.put(IProfile.PROP_INSTALL_FEATURES, Boolean.TRUE.toString());
@@ -846,7 +847,7 @@ public class P2TargetUtils {
 	 * @return the set of metadata repositories found
 	 * @throws CoreException if there is a problem getting the repositories
 	 */
-	static IQueryable getQueryableMetadata(URI[] repos, IProgressMonitor monitor) throws CoreException {
+	static IQueryable<IInstallableUnit> getQueryableMetadata(URI[] repos, IProgressMonitor monitor) throws CoreException {
 		IMetadataRepositoryManager manager = getRepoManager();
 		if (repos == null) {
 			repos = manager.getKnownRepositories(IRepositoryManager.REPOSITORIES_ALL);
@@ -855,7 +856,7 @@ public class P2TargetUtils {
 		IProgressMonitor loadMonitor = new SubProgressMonitor(monitor, 10);
 		int repoCount = repos.length;
 		loadMonitor.beginTask(null, repoCount * 10);
-		List result = new ArrayList(repoCount);
+		List<IMetadataRepository> result = new ArrayList<IMetadataRepository>(repoCount);
 		MultiStatus repoStatus = new MultiStatus(PDECore.PLUGIN_ID, 0, Messages.IUBundleContainer_ProblemsLoadingRepositories, null);
 		for (int i = 0; i < repoCount; ++i) {
 			try {
@@ -870,7 +871,7 @@ public class P2TargetUtils {
 			throw new CoreException(repoStatus);
 		}
 		if (result.size() == 1) {
-			return (IQueryable) result.get(0);
+			return result.get(0);
 		}
 		return QueryUtil.compoundQueryable(result);
 	}
@@ -964,7 +965,7 @@ public class P2TargetUtils {
 	 * @return the phase set to execute, includes the configuration phase if {@link #getIncludeConfigurePhase()} is <code>true<code>
 	 */
 	private IPhaseSet createPhaseSet() {
-		ArrayList phases = new ArrayList(4);
+		ArrayList<Phase> phases = new ArrayList<Phase>(4);
 		phases.add(new Collect(100));
 		phases.add(new Property(1));
 		phases.add(new Uninstall(50, true));
@@ -974,7 +975,7 @@ public class P2TargetUtils {
 			phases.add(new Configure(100));
 		}
 
-		return new PhaseSet((Phase[]) phases.toArray(new Phase[phases.size()]));
+		return new PhaseSet(phases.toArray(new Phase[phases.size()]));
 	}
 
 	/** 
@@ -989,8 +990,8 @@ public class P2TargetUtils {
 				request.remove(sourceIU);
 		}
 		// remove everything that is marked as roots.  The plan will have the new roots added in anyway.
-		IQuery query = new IUProfilePropertyQuery(PROP_INSTALLED_IU, Boolean.toString(true));
-		IQueryResult installedIUs = profile.query(query, null);
+		IQuery<IInstallableUnit> query = new IUProfilePropertyQuery(PROP_INSTALLED_IU, Boolean.toString(true));
+		IQueryResult<IInstallableUnit> installedIUs = profile.query(query, null);
 		request.removeAll(installedIUs.toSet());
 	}
 
@@ -1047,13 +1048,13 @@ public class P2TargetUtils {
 
 	// Create and return an IU that has optional and greedy requirements on all source bundles
 	// related to bundle IUs in the given queryable. 
-	private IInstallableUnit createSourceIU(IQueryable queryable, Version iuVersion) {
+	private IInstallableUnit createSourceIU(IQueryable<IInstallableUnit> queryable, Version iuVersion) {
 		// compute the set of source bundles we could possibly need for the bundles in the profile
 		IRequirement bundleRequirement = MetadataFactory.createRequirement("org.eclipse.equinox.p2.eclipse.type", "bundle", null, null, false, false, false); //$NON-NLS-1$ //$NON-NLS-2$
-		IQueryResult profileIUs = queryable.query(QueryUtil.createIUAnyQuery(), null);
-		ArrayList requirements = new ArrayList();
-		for (Iterator i = profileIUs.iterator(); i.hasNext();) {
-			IInstallableUnit profileIU = (IInstallableUnit) i.next();
+		IQueryResult<IInstallableUnit> profileIUs = queryable.query(QueryUtil.createIUAnyQuery(), null);
+		ArrayList<IRequirement> requirements = new ArrayList<IRequirement>();
+		for (Iterator<IInstallableUnit> i = profileIUs.iterator(); i.hasNext();) {
+			IInstallableUnit profileIU = i.next();
 			if (profileIU.satisfies(bundleRequirement)) {
 				String id = profileIU.getId() + ".source"; //$NON-NLS-1$
 				Version version = profileIU.getVersion();
@@ -1075,12 +1076,12 @@ public class P2TargetUtils {
 	}
 
 	// Lookup and return (if any) the source IU in the given queryable.
-	private IInstallableUnit getCurrentSourceIU(IQueryable queryable) {
-		IQuery query = QueryUtil.createIUQuery(SOURCE_IU_ID);
-		IQueryResult list = queryable.query(query, null);
+	private IInstallableUnit getCurrentSourceIU(IQueryable<IInstallableUnit> queryable) {
+		IQuery<IInstallableUnit> query = QueryUtil.createIUQuery(SOURCE_IU_ID);
+		IQueryResult<IInstallableUnit> list = queryable.query(query, null);
 		IInstallableUnit currentSourceIU = null;
 		if (!list.isEmpty())
-			currentSourceIU = (IInstallableUnit) list.iterator().next();
+			currentSourceIU = list.iterator().next();
 		return currentSourceIU;
 	}
 
@@ -1106,10 +1107,10 @@ public class P2TargetUtils {
 		if (repoCount == 0) {
 			return;
 		}
-		IQueryable allMetadata = getQueryableMetadata(repositories, subMonitor.newChild(10));
+		IQueryable<IInstallableUnit> allMetadata = getQueryableMetadata(repositories, subMonitor.newChild(10));
 
 		// do an initial slice to add everything the user requested
-		IQueryResult queryResult = slice(units, allMetadata, target, subMonitor.newChild(10));
+		IQueryResult<IInstallableUnit> queryResult = slice(units, allMetadata, target, subMonitor.newChild(10));
 		if (subMonitor.isCanceled() || queryResult == null || queryResult.isEmpty()) {
 			return;
 		}
@@ -1136,10 +1137,10 @@ public class P2TargetUtils {
 		IProvisioningPlan plan = engine.createPlan(fProfile, context);
 		setPlanProperties(plan, target, TargetDefinitionPersistenceHelper.MODE_SLICER);
 
-		Set newSet = queryResult.toSet();
-		Iterator itor = newSet.iterator();
+		Set<IInstallableUnit> newSet = queryResult.toSet();
+		Iterator<IInstallableUnit> itor = newSet.iterator();
 		while (itor.hasNext()) {
-			plan.addInstallableUnit((IInstallableUnit) itor.next());
+			plan.addInstallableUnit(itor.next());
 		}
 		for (int i = 0; i < units.length; i++) {
 			IInstallableUnit unit = units[i];
@@ -1147,9 +1148,9 @@ public class P2TargetUtils {
 		}
 
 		// remove all units that are in the current profile but not in the new slice
-		Set toRemove = fProfile.query(QueryUtil.ALL_UNITS, null).toSet();
+		Set<?> toRemove = fProfile.query(QueryUtil.ALL_UNITS, null).toSet();
 		toRemove.removeAll(newSet);
-		for (Iterator i = toRemove.iterator(); i.hasNext();) {
+		for (Iterator<?> i = toRemove.iterator(); i.hasNext();) {
 			plan.removeInstallableUnit((IInstallableUnit) i.next());
 		}
 
@@ -1177,14 +1178,14 @@ public class P2TargetUtils {
 	 * @return the result of the slice operation
 	 * @throws CoreException if a problem occurs during the slice operation that should stop this location from resolving
 	 */
-	private IQueryResult slice(IInstallableUnit[] units, IQueryable allMetadata, ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
+	private IQueryResult<IInstallableUnit> slice(IInstallableUnit[] units, IQueryable<IInstallableUnit> allMetadata, ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
 		SubMonitor subMonitor = SubMonitor.convert(monitor, 100);
 		// slice IUs and all prerequisites
 		PermissiveSlicer slicer = null;
 		if (getIncludeAllEnvironments()) {
-			slicer = new PermissiveSlicer(allMetadata, new HashMap(), true, false, true, true, false);
+			slicer = new PermissiveSlicer(allMetadata, new HashMap<String, String>(), true, false, true, true, false);
 		} else {
-			Map props = new HashMap();
+			Map<String, String> props = new HashMap<String, String>();
 			props.put("osgi.os", definition.getOS() != null ? definition.getOS() : Platform.getOS()); //$NON-NLS-1$
 			props.put("osgi.ws", definition.getWS() != null ? definition.getWS() : Platform.getWS()); //$NON-NLS-1$
 			props.put("osgi.arch", definition.getArch() != null ? definition.getArch() : Platform.getOSArch()); //$NON-NLS-1$
@@ -1192,7 +1193,7 @@ public class P2TargetUtils {
 			props.put(IProfile.PROP_INSTALL_FEATURES, Boolean.TRUE.toString());
 			slicer = new PermissiveSlicer(allMetadata, props, true, false, false, true, false);
 		}
-		IQueryable slice = slicer.slice(units, subMonitor.newChild(50));
+		IQueryable<IInstallableUnit> slice = slicer.slice(units, subMonitor.newChild(50));
 		IStatus sliceStatus = slicer.getStatus();
 		// If the slicer encounters an error, stop the operation
 		if (sliceStatus.getSeverity() == IStatus.ERROR) {
@@ -1200,7 +1201,7 @@ public class P2TargetUtils {
 		}
 
 		// Collect the IUs from the sliced
-		IQueryResult queryResult = null;
+		IQueryResult<IInstallableUnit> queryResult = null;
 		if (slice != null)
 			queryResult = slice.query(QueryUtil.createIUAnyQuery(), subMonitor.newChild(50));
 
@@ -1223,7 +1224,7 @@ public class P2TargetUtils {
 	 * @exception CoreException
 	 */
 	private URI[] getArtifactRepositories(ITargetDefinition target) throws CoreException {
-		Set result = new HashSet();
+		Set<URI> result = new HashSet<URI>();
 		ITargetLocation[] containers = target.getTargetLocations();
 		IArtifactRepositoryManager manager = getArtifactRepositoryManager();
 		for (int i = 0; i < containers.length; i++) {
@@ -1244,7 +1245,7 @@ public class P2TargetUtils {
 			findProfileRepos(result);
 			findWorkspaceRepos(result);
 		}
-		return (URI[]) result.toArray(new URI[result.size()]);
+		return result.toArray(new URI[result.size()]);
 	}
 
 	/**
@@ -1262,7 +1263,7 @@ public class P2TargetUtils {
 	 * 
 	 * @param additionalRepos the set to which additional repos are added.
 	 */
-	private void findWorkspaceRepos(Set additionalRepos) {
+	private void findWorkspaceRepos(Set<URI> additionalRepos) {
 		IPreferencesService prefs = getPreferences();
 		if (prefs == null)
 			return;
@@ -1285,7 +1286,7 @@ public class P2TargetUtils {
 	 * 
 	 * @param additionalRepos the set to which additional repos are added.
 	 */
-	private void findProfileRepos(Set additionalRepos) {
+	private void findProfileRepos(Set<URI> additionalRepos) {
 		try {
 			// NOTE: be sure to use the global p2 agent here as we are looking for SELF.
 			IProfileRegistry profileRegistry = (IProfileRegistry) getGlobalAgent().getService(IProfileRegistry.SERVICE_NAME);
@@ -1299,8 +1300,8 @@ public class P2TargetUtils {
 			URI dataArea = location.getDataArea("org.eclipse.equinox.p2.engine"); //$NON-NLS-1$
 			dataArea = URIUtil.append(dataArea, "profileRegistry/" + self.getProfileId() + ".profile"); //$NON-NLS-1$//$NON-NLS-2$
 			ProfileMetadataRepository profileRepo = new ProfileMetadataRepository(getGlobalAgent(), dataArea, null);
-			Collection repos = profileRepo.getReferences();
-			for (Iterator i = repos.iterator(); i.hasNext();) {
+			Collection<?> repos = profileRepo.getReferences();
+			for (Iterator<?> i = repos.iterator(); i.hasNext();) {
 				Object element = i.next();
 				if (element instanceof IRepositoryReference) {
 					IRepositoryReference reference = (IRepositoryReference) element;
@@ -1322,25 +1323,25 @@ public class P2TargetUtils {
 	 * @exception CoreException if unable to retrieve IU's
 	 */
 	private IInstallableUnit[] getRootIUs(ITargetDefinition definition) throws CoreException {
-		HashSet result = new HashSet();
+		HashSet<IInstallableUnit> result = new HashSet<IInstallableUnit>();
 		ITargetLocation[] containers = definition.getTargetLocations();
 		for (int i = 0; i < containers.length; i++) {
 			ITargetLocation container = containers[i];
 			if (container instanceof IUBundleContainer) {
 				IUBundleContainer iuContainer = (IUBundleContainer) container;
-				IQueryable repos = getQueryableMetadata(iuContainer.getRepositories(), new NullProgressMonitor());
+				IQueryable<IInstallableUnit> repos = getQueryableMetadata(iuContainer.getRepositories(), new NullProgressMonitor());
 				String[] ids = iuContainer.getIds();
 				Version[] versions = iuContainer.getVersions();
 				for (int j = 0; j < ids.length; j++) {
-					IQuery query = QueryUtil.createIUQuery(ids[j], versions[j]);
-					IQueryResult queryResult = repos.query(query, null);
+					IQuery<IInstallableUnit> query = QueryUtil.createIUQuery(ids[j], versions[j]);
+					IQueryResult<IInstallableUnit> queryResult = repos.query(query, null);
 					if (queryResult.isEmpty())
 						throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.IUBundleContainer_1, ids[j])));
 					result.add(queryResult.iterator().next());
 				}
 			}
 		}
-		return (IInstallableUnit[]) result.toArray(new IInstallableUnit[result.size()]);
+		return result.toArray(new IInstallableUnit[result.size()]);
 	}
 
 	/**
@@ -1351,7 +1352,7 @@ public class P2TargetUtils {
 	 * @exception CoreException
 	 */
 	private URI[] getMetadataRepositories(ITargetDefinition target) throws CoreException {
-		Set result = new HashSet();
+		Set<URI> result = new HashSet<URI>();
 		ITargetLocation[] containers = target.getTargetLocations();
 		IMetadataRepositoryManager manager = getRepoManager();
 		for (int i = 0; i < containers.length; i++) {
@@ -1364,7 +1365,7 @@ public class P2TargetUtils {
 				result.addAll(Arrays.asList(repos));
 			}
 		}
-		return (URI[]) result.toArray(new URI[result.size()]);
+		return result.toArray(new URI[result.size()]);
 	}
 
 	private static final String NATIVE_ARTIFACTS = "nativeArtifacts"; //$NON-NLS-1$
@@ -1372,7 +1373,7 @@ public class P2TargetUtils {
 	private static final String PARM_OPERAND = "operand"; //$NON-NLS-1$
 
 	protected static class CollectNativesAction extends ProvisioningAction {
-		public IStatus execute(Map parameters) {
+		public IStatus execute(Map<String, Object> parameters) {
 			InstallableUnitOperand operand = (InstallableUnitOperand) parameters.get(PARM_OPERAND);
 			IInstallableUnit installableUnit = operand.second();
 			if (installableUnit == null)
@@ -1380,14 +1381,15 @@ public class P2TargetUtils {
 
 			IArtifactRepositoryManager manager;
 			try {
-				Collection toDownload = installableUnit.getArtifacts();
+				Collection<?> toDownload = installableUnit.getArtifacts();
 				if (toDownload == null)
 					return Status.OK_STATUS;
 
-				List artifactRequests = (List) parameters.get(NATIVE_ARTIFACTS);
+				@SuppressWarnings("unchecked")
+				List<IArtifactRequest> artifactRequests = (List<IArtifactRequest>) parameters.get(NATIVE_ARTIFACTS);
 				IArtifactRepository destinationArtifactRepository = getBundlePool();
 				manager = getArtifactRepositoryManager();
-				for (Iterator i = toDownload.iterator(); i.hasNext();) {
+				for (Iterator<?> i = toDownload.iterator(); i.hasNext();) {
 					IArtifactKey keyToDownload = (IArtifactKey) i.next();
 					IArtifactRequest request = manager.createMirrorRequest(keyToDownload, destinationArtifactRepository, null, null);
 					artifactRequests.add(request);
@@ -1398,7 +1400,7 @@ public class P2TargetUtils {
 			return Status.OK_STATUS;
 		}
 
-		public IStatus undo(Map parameters) {
+		public IStatus undo(Map<String, Object> parameters) {
 			// nothing to do for now
 			return Status.OK_STATUS;
 		}
@@ -1409,27 +1411,30 @@ public class P2TargetUtils {
 			super(NATIVE_ARTIFACTS, weight);
 		}
 
-		protected List getActions(InstallableUnitOperand operand) {
+		protected List<ProvisioningAction> getActions(InstallableUnitOperand operand) {
 			IInstallableUnit unit = operand.second();
 			if (unit != null && unit.getTouchpointType().getId().equals(NATIVE_TYPE)) {
-				return Collections.singletonList(new CollectNativesAction());
+				ArrayList<ProvisioningAction> list = new ArrayList<ProvisioningAction>(1);
+				list.add(new CollectNativesAction());
+				return list;
 			}
 			return null;
 		}
 
-		protected IStatus initializePhase(IProgressMonitor monitor, IProfile profile, Map parameters) {
-			parameters.put(NATIVE_ARTIFACTS, new ArrayList());
+		protected IStatus initializePhase(IProgressMonitor monitor, IProfile profile, Map<String, Object> parameters) {
+			parameters.put(NATIVE_ARTIFACTS, new ArrayList<Object>());
 			parameters.put(PARM_PROFILE, profile);
 			return null;
 		}
 
-		protected IStatus completePhase(IProgressMonitor monitor, IProfile profile, Map parameters) {
-			List artifactRequests = (List) parameters.get(NATIVE_ARTIFACTS);
+		protected IStatus completePhase(IProgressMonitor monitor, IProfile profile, Map<String, Object> parameters) {
+			@SuppressWarnings("unchecked")
+			List<IArtifactRequest> artifactRequests = (List<IArtifactRequest>) parameters.get(NATIVE_ARTIFACTS);
 			ProvisioningContext context = (ProvisioningContext) parameters.get(PARM_CONTEXT);
 			IProvisioningAgent agent = (IProvisioningAgent) parameters.get(PARM_AGENT);
 			DownloadManager dm = new DownloadManager(context, agent);
-			for (Iterator i = artifactRequests.iterator(); i.hasNext();) {
-				dm.add((IArtifactRequest) i.next());
+			for (Iterator<IArtifactRequest> i = artifactRequests.iterator(); i.hasNext();) {
+				dm.add(i.next());
 			}
 			return dm.start(monitor);
 		}

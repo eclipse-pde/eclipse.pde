@@ -91,7 +91,7 @@ public abstract class FeatureBasedExportOperation extends FeatureExportOperation
 
 		if (fInfo.exportSource && fInfo.exportSourceBundle) {
 			prop.put("individualSourceBundles", "true"); //$NON-NLS-1$ //$NON-NLS-2$
-			Dictionary environment = new Hashtable(4);
+			Dictionary<String, String> environment = new Hashtable<String, String>(4);
 			environment.put("osgi.os", TargetPlatform.getOS()); //$NON-NLS-1$
 			environment.put("osgi.ws", TargetPlatform.getWS()); //$NON-NLS-1$
 			environment.put("osgi.arch", TargetPlatform.getOSArch()); //$NON-NLS-1$

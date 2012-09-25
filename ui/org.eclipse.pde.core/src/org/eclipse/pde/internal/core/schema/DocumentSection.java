@@ -15,7 +15,7 @@ import java.io.PrintWriter;
 import org.eclipse.pde.internal.core.ischema.IDocumentSection;
 import org.eclipse.pde.internal.core.ischema.ISchemaObject;
 
-public class DocumentSection extends SchemaObject implements IDocumentSection, Comparable {
+public class DocumentSection extends SchemaObject implements IDocumentSection, Comparable<Object> {
 
 	private static final long serialVersionUID = 1L;
 

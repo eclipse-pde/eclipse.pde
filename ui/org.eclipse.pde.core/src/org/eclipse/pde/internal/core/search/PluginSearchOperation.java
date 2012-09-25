@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.search;
 
+import org.eclipse.pde.core.IIdentifiable;
+
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -43,14 +45,14 @@ public class PluginSearchOperation {
 	}
 
 	private void visit(IPluginModelBase model) {
-		ArrayList matches = findMatch(model);
+		ArrayList<IIdentifiable> matches = findMatch(model);
 		for (int i = 0; i < matches.size(); i++) {
 			fCollector.accept(matches.get(i));
 		}
 	}
 
-	private ArrayList findMatch(IPluginModelBase model) {
-		ArrayList result = new ArrayList();
+	private ArrayList<IIdentifiable> findMatch(IPluginModelBase model) {
+		ArrayList<IIdentifiable> result = new ArrayList<IIdentifiable>();
 		int searchLimit = fInput.getSearchLimit();
 		switch (fInput.getSearchElement()) {
 			case PluginSearchInput.ELEMENT_PLUGIN :
@@ -72,20 +74,20 @@ public class PluginSearchOperation {
 		return result;
 	}
 
-	private void findFragmentDeclaration(IPluginModelBase model, ArrayList result) {
+	private void findFragmentDeclaration(IPluginModelBase model, ArrayList<IIdentifiable> result) {
 		IPluginBase pluginBase = model.getPluginBase();
 		if (pluginBase instanceof IFragment && fPattern.matcher(pluginBase.getId()).matches()) {
 			result.add(pluginBase);
 		}
 	}
 
-	private void findPluginDeclaration(IPluginModelBase model, ArrayList result) {
+	private void findPluginDeclaration(IPluginModelBase model, ArrayList<IIdentifiable> result) {
 		IPluginBase pluginBase = model.getPluginBase();
 		if (pluginBase instanceof IPlugin && fPattern.matcher(pluginBase.getId()).matches())
 			result.add(pluginBase);
 	}
 
-	private void findPluginReferences(IPluginModelBase model, ArrayList result) {
+	private void findPluginReferences(IPluginModelBase model, ArrayList<IIdentifiable> result) {
 		IPluginBase pluginBase = model.getPluginBase();
 		if (pluginBase instanceof IFragment) {
 			if (fPattern.matcher(((IFragment) pluginBase).getPluginId()).matches())
@@ -98,7 +100,7 @@ public class PluginSearchOperation {
 		}
 	}
 
-	private void findExtensionPointDeclarations(IPluginModelBase model, ArrayList result) {
+	private void findExtensionPointDeclarations(IPluginModelBase model, ArrayList<IIdentifiable> result) {
 		IPluginExtensionPoint[] extensionPoints = model.getPluginBase().getExtensionPoints();
 		for (int i = 0; i < extensionPoints.length; i++) {
 			if (fPattern.matcher(extensionPoints[i].getFullId()).matches())
@@ -106,7 +108,7 @@ public class PluginSearchOperation {
 		}
 	}
 
-	private void findExtensionPointReferences(IPluginModelBase model, ArrayList result) {
+	private void findExtensionPointReferences(IPluginModelBase model, ArrayList<IIdentifiable> result) {
 		IPluginExtension[] extensions = model.getPluginBase().getExtensions();
 		for (int i = 0; i < extensions.length; i++) {
 			if (fPattern.matcher(extensions[i].getPoint()).matches())

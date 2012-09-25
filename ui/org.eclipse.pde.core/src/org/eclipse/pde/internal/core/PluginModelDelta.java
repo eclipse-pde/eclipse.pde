@@ -19,9 +19,9 @@ public class PluginModelDelta {
 	public static final int REMOVED = 2;
 	public static final int CHANGED = 4;
 
-	private ArrayList added;
-	private ArrayList removed;
-	private ArrayList changed;
+	private ArrayList<ModelEntry> added;
+	private ArrayList<ModelEntry> removed;
+	private ArrayList<ModelEntry> changed;
 
 	private int kind = 0;
 
@@ -44,10 +44,10 @@ public class PluginModelDelta {
 		return getEntries(changed);
 	}
 
-	private ModelEntry[] getEntries(ArrayList list) {
+	private ModelEntry[] getEntries(ArrayList<ModelEntry> list) {
 		if (list == null)
 			return new ModelEntry[0];
-		return (ModelEntry[]) list.toArray(new ModelEntry[list.size()]);
+		return list.toArray(new ModelEntry[list.size()]);
 	}
 
 	void addEntry(ModelEntry entry, int type) {
@@ -65,9 +65,9 @@ public class PluginModelDelta {
 		kind |= type;
 	}
 
-	private ArrayList addEntry(ArrayList list, ModelEntry entry) {
+	private ArrayList<ModelEntry> addEntry(ArrayList<ModelEntry> list, ModelEntry entry) {
 		if (list == null)
-			list = new ArrayList();
+			list = new ArrayList<ModelEntry>();
 		list.add(entry);
 		return list;
 	}

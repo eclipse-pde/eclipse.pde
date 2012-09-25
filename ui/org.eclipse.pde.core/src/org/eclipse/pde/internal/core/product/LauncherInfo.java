@@ -21,7 +21,7 @@ public class LauncherInfo extends ProductObject implements ILauncherInfo {
 
 	private static final long serialVersionUID = 1L;
 	private boolean fUseIcoFile;
-	private Map fIcons = new HashMap();
+	private Map<String, String> fIcons = new HashMap<String, String>();
 	private String fLauncherName;
 
 	public LauncherInfo(IProductModel model) {
@@ -42,14 +42,14 @@ public class LauncherInfo extends ProductObject implements ILauncherInfo {
 	public void setIconPath(String iconId, String path) {
 		if (path == null)
 			path = ""; //$NON-NLS-1$
-		String old = (String) fIcons.get(iconId);
+		String old = fIcons.get(iconId);
 		fIcons.put(iconId, path);
 		if (isEditable())
 			firePropertyChanged(iconId, old, path);
 	}
 
 	public String getIconPath(String iconId) {
-		return (String) fIcons.get(iconId);
+		return fIcons.get(iconId);
 	}
 
 	public boolean usesWinIcoFile() {
@@ -137,7 +137,7 @@ public class LauncherInfo extends ProductObject implements ILauncherInfo {
 
 	private void writerWin(String indent, PrintWriter writer) {
 		writer.println(indent + "<win " + P_USE_ICO + "=\"" + Boolean.toString(fUseIcoFile) + "\">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		String path = (String) fIcons.get(P_ICO_PATH);
+		String path = fIcons.get(P_ICO_PATH);
 		if (path != null && path.length() > 0)
 			writer.println(indent + "   <ico path=\"" + getWritableString(path) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.print(indent + "   <bmp"); //$NON-NLS-1$
@@ -162,7 +162,7 @@ public class LauncherInfo extends ProductObject implements ILauncherInfo {
 	}
 
 	private void writeIcon(String indent, String iconId, PrintWriter writer) {
-		String icon = (String) fIcons.get(iconId);
+		String icon = fIcons.get(iconId);
 		if (icon != null && icon.length() > 0) {
 			writer.println();
 			writer.print(indent + "   " + iconId + "=\"" + getWritableString(icon) + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -171,13 +171,13 @@ public class LauncherInfo extends ProductObject implements ILauncherInfo {
 	}
 
 	private void writeMac(String indent, PrintWriter writer) {
-		String icon = (String) fIcons.get(MACOSX_ICON);
+		String icon = fIcons.get(MACOSX_ICON);
 		if (icon != null && icon.length() > 0)
 			writer.println(indent + "<macosx icon=\"" + getWritableString(icon) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ 
 	}
 
 	private void writeLinux(String indent, PrintWriter writer) {
-		String icon = (String) fIcons.get(LINUX_ICON);
+		String icon = fIcons.get(LINUX_ICON);
 		if (icon != null && icon.length() > 0)
 			writer.println(indent + "<linux icon=\"" + getWritableString(icon) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$ 
 	}

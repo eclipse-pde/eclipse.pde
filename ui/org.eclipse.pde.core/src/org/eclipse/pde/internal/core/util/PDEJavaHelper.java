@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.util;
 
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.jdt.core.IPackageFragment;
+import org.eclipse.jdt.core.IPackageFragmentRoot;
+
 import java.util.*;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -42,7 +46,7 @@ public class PDEJavaHelper {
 		try {
 			IType type = project.findType(fullyQualifiedName.replace('$', '.'));
 			if (type != null && type.exists()) {
-				HashMap map = PDEJavaHelper.getPackageFragmentsHash(project, Collections.EMPTY_LIST, false);
+				HashMap<String, IPackageFragment> map = PDEJavaHelper.getPackageFragmentsHash(project, Collections.EMPTY_LIST, false);
 				if (map.containsValue(type.getPackageFragment())) {
 					return false;
 				}
@@ -109,7 +113,7 @@ public class PDEJavaHelper {
 	}
 
 	public static IPackageFragmentRoot[] getNonJRERoots(IJavaProject project) {
-		ArrayList result = new ArrayList();
+		ArrayList<IPackageFragmentRoot> result = new ArrayList<IPackageFragmentRoot>();
 		try {
 			IPackageFragmentRoot[] roots = project.getAllPackageFragmentRoots();
 			for (int i = 0; i < roots.length; i++) {
@@ -119,7 +123,7 @@ public class PDEJavaHelper {
 			}
 		} catch (JavaModelException e) {
 		}
-		return (IPackageFragmentRoot[]) result.toArray(new IPackageFragmentRoot[result.size()]);
+		return result.toArray(new IPackageFragmentRoot[result.size()]);
 	}
 
 	public static boolean isJRELibrary(IPackageFragmentRoot root) {
@@ -224,7 +228,7 @@ public class PDEJavaHelper {
 
 	private static IPackageFragment searchWorkspaceForPackage(String packageName, IPluginModelBase base) {
 		IPluginLibrary[] libs = base.getPluginBase().getLibraries();
-		ArrayList libPaths = new ArrayList();
+		ArrayList<IPath> libPaths = new ArrayList<IPath>();
 		IPath path = new Path(base.getInstallLocation());
 		if (libs.length == 0) {
 			libPaths.add(path);
@@ -241,9 +245,9 @@ public class PDEJavaHelper {
 				if (!projects[i].hasNature(JavaCore.NATURE_ID) || !projects[i].isOpen())
 					continue;
 				IJavaProject jp = JavaCore.create(projects[i]);
-				ListIterator li = libPaths.listIterator();
+				ListIterator<IPath> li = libPaths.listIterator();
 				while (li.hasNext()) {
-					IPackageFragmentRoot root = jp.findPackageFragmentRoot((IPath) li.next());
+					IPackageFragmentRoot root = jp.findPackageFragmentRoot(li.next());
 					if (root != null) {
 						IPackageFragment frag = root.getPackageFragment(packageName);
 						if (frag.exists())
@@ -256,13 +260,13 @@ public class PDEJavaHelper {
 		return null;
 	}
 
-	public static IPackageFragment[] getPackageFragments(IJavaProject jProject, Collection existingPackages, boolean allowJava) {
-		HashMap map = getPackageFragmentsHash(jProject, existingPackages, allowJava);
-		return (IPackageFragment[]) map.values().toArray(new IPackageFragment[map.size()]);
+	public static IPackageFragment[] getPackageFragments(IJavaProject jProject, Collection<?> existingPackages, boolean allowJava) {
+		HashMap<String, IPackageFragment> map = getPackageFragmentsHash(jProject, existingPackages, allowJava);
+		return map.values().toArray(new IPackageFragment[map.size()]);
 	}
 
-	public static HashMap getPackageFragmentsHash(IJavaProject jProject, Collection existingPackages, boolean allowJava) {
-		HashMap map = new HashMap();
+	public static HashMap<String, IPackageFragment> getPackageFragmentsHash(IJavaProject jProject, Collection<?> existingPackages, boolean allowJava) {
+		HashMap<String, IPackageFragment> map = new HashMap<String, IPackageFragment>();
 		try {
 			IPackageFragmentRoot[] roots = getRoots(jProject);
 			for (int i = 0; i < roots.length; i++) {
@@ -284,7 +288,7 @@ public class PDEJavaHelper {
 	}
 
 	private static IPackageFragmentRoot[] getRoots(IJavaProject jProject) {
-		ArrayList result = new ArrayList();
+		ArrayList<IPackageFragmentRoot> result = new ArrayList<IPackageFragmentRoot>();
 		try {
 			IPackageFragmentRoot[] roots = jProject.getPackageFragmentRoots();
 			for (int i = 0; i < roots.length; i++) {
@@ -294,7 +298,7 @@ public class PDEJavaHelper {
 			}
 		} catch (JavaModelException e) {
 		}
-		return (IPackageFragmentRoot[]) result.toArray(new IPackageFragmentRoot[result.size()]);
+		return result.toArray(new IPackageFragmentRoot[result.size()]);
 	}
 
 	public static String getJavaSourceLevel(IProject project) {

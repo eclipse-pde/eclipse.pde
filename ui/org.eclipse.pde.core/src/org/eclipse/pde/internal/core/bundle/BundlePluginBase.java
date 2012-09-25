@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.bundle;
 
+import org.eclipse.pde.core.plugin.IPluginImport;
+import org.eclipse.pde.core.plugin.IPluginLibrary;
+
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -51,8 +54,8 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 
 	private static final long serialVersionUID = 1L;
 	protected IBundlePluginModelBase model;
-	private ArrayList libraries;
-	private ArrayList imports;
+	private ArrayList<IPluginLibrary> libraries;
+	private ArrayList<IPluginImport> imports;
 	private String fTarget;
 
 	public void reset() {
@@ -317,7 +320,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 		if (bundle == null)
 			return new IPluginLibrary[0];
 		if (libraries == null) {
-			libraries = new ArrayList();
+			libraries = new ArrayList<IPluginLibrary>();
 			String value = bundle.getHeader(Constants.BUNDLE_CLASSPATH);
 			if (value != null) {
 				try {
@@ -334,7 +337,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 				}
 			}
 		}
-		return (IPluginLibrary[]) libraries.toArray(new IPluginLibrary[libraries.size()]);
+		return libraries.toArray(new IPluginLibrary[libraries.size()]);
 	}
 
 	/*
@@ -344,7 +347,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 	 */
 	public IPluginImport[] getImports() {
 		if (imports == null) {
-			imports = new ArrayList();
+			imports = new ArrayList<IPluginImport>();
 			BundleDescription description = model.getBundleDescription();
 			if (description != null) {
 				BundleSpecification[] required = description.getRequiredBundles();
@@ -387,7 +390,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 				}
 			}
 		}
-		return (IPluginImport[]) imports.toArray(new IPluginImport[imports.size()]);
+		return imports.toArray(new IPluginImport[imports.size()]);
 	}
 
 	/*
@@ -839,7 +842,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 		}
 		// 1 <= index < size()
 		// Get the previous import
-		IPluginImport previousImport = (IPluginImport) imports.get(targetIndex - 1);
+		IPluginImport previousImport = imports.get(targetIndex - 1);
 
 		return previousImport;
 	}
@@ -868,7 +871,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 		}
 		// 0 <= index < last element < size()
 		// Get the next element
-		IPluginImport nextImport = (IPluginImport) imports.get(targetIndex + 1);
+		IPluginImport nextImport = imports.get(targetIndex + 1);
 
 		return nextImport;
 	}
@@ -991,7 +994,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 		}
 		// 0 <= index < last element < size()
 		// Get the next library
-		IPluginLibrary nextLibrary = (IPluginLibrary) libraries.get(targetIndex + 1);
+		IPluginLibrary nextLibrary = libraries.get(targetIndex + 1);
 
 		return nextLibrary;
 	}
@@ -1018,7 +1021,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 		}
 		// 1 <= index < size()
 		// Get the previous library
-		IPluginLibrary previousLibrary = (IPluginLibrary) libraries.get(targetIndex - 1);
+		IPluginLibrary previousLibrary = libraries.get(targetIndex - 1);
 
 		return previousLibrary;
 	}

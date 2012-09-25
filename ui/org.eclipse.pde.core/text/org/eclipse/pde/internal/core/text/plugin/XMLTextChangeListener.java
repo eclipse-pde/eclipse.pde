@@ -34,8 +34,8 @@ import org.eclipse.text.edits.TextEdit;
 
 public class XMLTextChangeListener extends AbstractTextChangeListener {
 
-	private ArrayList fOperationList = new ArrayList();
-	private HashMap fReadableNames = null;
+	private ArrayList<TextEdit> fOperationList = new ArrayList<TextEdit>();
+	private HashMap<TextEdit, String> fReadableNames = null;
 
 	public XMLTextChangeListener(IDocument document) {
 		this(document, false);
@@ -46,13 +46,13 @@ public class XMLTextChangeListener extends AbstractTextChangeListener {
 		// if we are not generating names, leave the HashMap null
 		// this way a null test on the map can be used to determine if names should be generated
 		if (generateReadableNames)
-			fReadableNames = new HashMap();
+			fReadableNames = new HashMap<TextEdit, String>();
 	}
 
 	public TextEdit[] getTextOperations() {
 		if (fOperationList.size() == 0)
 			return new TextEdit[0];
-		return (TextEdit[]) fOperationList.toArray(new TextEdit[fOperationList.size()]);
+		return fOperationList.toArray(new TextEdit[fOperationList.size()]);
 	}
 
 	protected static void insert(TextEdit parent, TextEdit edit) {
@@ -469,7 +469,7 @@ public class XMLTextChangeListener extends AbstractTextChangeListener {
 
 	public String getReadableName(TextEdit edit) {
 		if (fReadableNames != null && fReadableNames.containsKey(edit))
-			return (String) fReadableNames.get(edit);
+			return fReadableNames.get(edit);
 		return null;
 	}
 }

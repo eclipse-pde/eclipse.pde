@@ -30,7 +30,7 @@ import org.eclipse.pde.internal.core.util.PropertiesUtil;
 public class Build implements IBuild {
 
 	private BuildModel fModel;
-	private HashMap fEntries = new HashMap();
+	private HashMap<String, IBuildEntry> fEntries = new HashMap<String, IBuildEntry>();
 
 	public Build(BuildModel model) {
 		fModel = model;
@@ -48,14 +48,14 @@ public class Build implements IBuild {
 	 * @see org.eclipse.pde.core.build.IBuild#getBuildEntries()
 	 */
 	public IBuildEntry[] getBuildEntries() {
-		return (IBuildEntry[]) fEntries.values().toArray(new IBuildEntry[fEntries.size()]);
+		return fEntries.values().toArray(new IBuildEntry[fEntries.size()]);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.build.IBuild#getEntry(java.lang.String)
 	 */
 	public IBuildEntry getEntry(String name) {
-		return (IBuildEntry) fEntries.get(name);
+		return fEntries.get(name);
 	}
 
 	/* (non-Javadoc)
@@ -79,7 +79,7 @@ public class Build implements IBuild {
 		fEntries.clear();
 		Properties properties = new Properties();
 		properties.load(source);
-		Enumeration keys = properties.keys();
+		Enumeration<?> keys = properties.keys();
 		while (keys.hasMoreElements()) {
 			String name = keys.nextElement().toString();
 			BuildEntry entry = (BuildEntry) fModel.getFactory().createEntry(name);

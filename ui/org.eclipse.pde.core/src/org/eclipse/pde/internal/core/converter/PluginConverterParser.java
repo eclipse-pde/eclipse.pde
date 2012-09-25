@@ -26,7 +26,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * Internal class.
  */
 public class PluginConverterParser extends DefaultHandler implements IModel {
-	private static ServiceTracker xmlTracker = null;
+	private static ServiceTracker<?, ?> xmlTracker = null;
 
 	private PluginInfo manifestInfo = new PluginInfo();
 	private BundleContext context;
@@ -40,19 +40,19 @@ public class PluginConverterParser extends DefaultHandler implements IModel {
 		private String vendor;
 
 		// an ordered list of library path names.
-		private ArrayList libraryPaths;
+		private ArrayList<String> libraryPaths;
 		// TODO Should get rid of the libraries map and just have a
 		// list of library export statements instead.  Library paths must
 		// preserve order.
-		private Map libraries; //represent the libraries and their export statement
-		private ArrayList requires;
+		private Map<String, Vector<?>> libraries; //represent the libraries and their export statement
+		private ArrayList<Prerequisite> requires;
 		private boolean requiresExpanded = false; //indicates if the requires have been processed.
 		private boolean compatibilityFound = false; //set to true is the requirement list contain compatilibity 
 		private String pluginClass;
 		private String masterPluginId;
 		private String masterVersion;
 		private String masterMatch;
-		private Set filters;
+		private Set<?> filters;
 		private String pluginName;
 		private boolean singleton;
 		private boolean fragment;
@@ -67,23 +67,23 @@ public class PluginConverterParser extends DefaultHandler implements IModel {
 			return "plugin-id: " + pluginId + "  version: " + version + " libraries: " + libraries + " class:" + pluginClass + " master: " + masterPluginId + " master-version: " + masterVersion + " requires: " + requires + " singleton: " + singleton; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
 		}
 
-		public Map getLibraries() {
+		public Map<String, Vector<?>> getLibraries() {
 			if (libraries == null)
-				return new HashMap(0);
+				return new HashMap<String, Vector<?>>(0);
 			return libraries;
 		}
 
-		public ArrayList getRequires() {
+		public ArrayList<Prerequisite> getRequires() {
 			if (!TARGET21.equals(target) && schemaVersion == null && !requiresExpanded) {
 				requiresExpanded = true;
 				if (requires == null) {
-					requires = new ArrayList(1);
+					requires = new ArrayList<Prerequisite>(1);
 					requires.add(new Prerequisite(IPDEBuildConstants.BUNDLE_CORE_RUNTIME, TARGET21_STRING, false, false, IModel.PLUGIN_REQUIRES_MATCH_GREATER_OR_EQUAL));
 					requires.add(new Prerequisite(PluginConverter.PI_RUNTIME_COMPATIBILITY, null, false, false, null));
 				} else {
 					//Add elements on the requirement list of ui and help.
 					for (int i = 0; i < requires.size(); i++) {
-						Prerequisite analyzed = (Prerequisite) requires.get(i);
+						Prerequisite analyzed = requires.get(i);
 						if ("org.eclipse.ui".equals(analyzed.getName())) { //$NON-NLS-1$					
 							requires.add(i + 1, new Prerequisite("org.eclipse.ui.workbench.texteditor", null, true, analyzed.isExported(), null)); //$NON-NLS-1$ 
 							requires.add(i + 1, new Prerequisite("org.eclipse.jface.text", null, true, analyzed.isExported(), null)); //$NON-NLS-1$ 
@@ -107,7 +107,7 @@ public class PluginConverterParser extends DefaultHandler implements IModel {
 				}
 			}
 			if (requires == null)
-				return requires = new ArrayList(0);
+				return requires = new ArrayList<Prerequisite>(0);
 
 			return requires;
 		}
@@ -136,14 +136,14 @@ public class PluginConverterParser extends DefaultHandler implements IModel {
 			return version;
 		}
 
-		public Set getPackageFilters() {
+		public Set<?> getPackageFilters() {
 			return filters;
 		}
 
 		public String[] getLibrariesName() {
 			if (libraryPaths == null)
 				return new String[0];
-			return (String[]) libraryPaths.toArray(new String[libraryPaths.size()]);
+			return libraryPaths.toArray(new String[libraryPaths.size()]);
 		}
 
 		public String getPluginName() {
@@ -191,10 +191,10 @@ public class PluginConverterParser extends DefaultHandler implements IModel {
 	}
 
 	// Current State Information
-	Stack stateStack = new Stack();
+	Stack<Integer> stateStack = new Stack<Integer>();
 
 	// Current object stack (used to hold the current object we are populating in this plugin info
-	Stack objectStack = new Stack();
+	Stack<Object> objectStack = new Stack<Object>();
 	Locator locator = null;
 
 	// Valid States
@@ -237,7 +237,7 @@ public class PluginConverterParser extends DefaultHandler implements IModel {
 	}
 
 	public void endElement(String uri, String elementName, String qName) {
-		switch (((Integer) stateStack.peek()).intValue()) {
+		switch (stateStack.peek().intValue()) {
 			case IGNORED_ELEMENT_STATE :
 				stateStack.pop();
 				break;
@@ -273,10 +273,10 @@ public class PluginConverterParser extends DefaultHandler implements IModel {
 				if (elementName.equals(LIBRARY)) {
 					String curLibrary = (String) objectStack.pop();
 					if (!curLibrary.trim().equals("")) { //$NON-NLS-1$
-						Vector exportsVector = (Vector) objectStack.pop();
+						Vector<?> exportsVector = (Vector<?>) objectStack.pop();
 						if (manifestInfo.libraries == null) {
-							manifestInfo.libraries = new HashMap(3);
-							manifestInfo.libraryPaths = new ArrayList(3);
+							manifestInfo.libraries = new HashMap<String, Vector<?>>(3);
+							manifestInfo.libraryPaths = new ArrayList<String>(3);
 						}
 						manifestInfo.libraries.put(curLibrary, exportsVector);
 						manifestInfo.libraryPaths.add(curLibrary.replace('\\', '/'));
@@ -339,7 +339,8 @@ public class PluginConverterParser extends DefaultHandler implements IModel {
 			String maskValue = attributes.getValue("", LIBRARY_EXPORT_MASK); //$NON-NLS-1$
 			// pop off the library - already in currentLib
 			objectStack.pop();
-			Vector exportMask = (Vector) objectStack.peek();
+			@SuppressWarnings("unchecked")
+			Vector<String> exportMask = (Vector<String>) objectStack.peek();
 			// push library back on
 			objectStack.push(currentLib);
 			//Split the export upfront
@@ -378,7 +379,7 @@ public class PluginConverterParser extends DefaultHandler implements IModel {
 		if (elementName.equals(PLUGIN_REQUIRES)) {
 			stateStack.push(new Integer(PLUGIN_REQUIRES_STATE));
 			// Push a new vector to hold all the prerequisites
-			objectStack.push(new Vector());
+			objectStack.push(new Vector<Object>());
 			parseRequiresAttributes(attributes);
 			return;
 		}
@@ -452,7 +453,7 @@ public class PluginConverterParser extends DefaultHandler implements IModel {
 
 	public static SAXParserFactory acquireXMLParsing(BundleContext context) {
 		if (xmlTracker == null) {
-			xmlTracker = new ServiceTracker(context, "javax.xml.parsers.SAXParserFactory", null); //$NON-NLS-1$
+			xmlTracker = new ServiceTracker<Object, Object>(context, "javax.xml.parsers.SAXParserFactory", null); //$NON-NLS-1$
 			xmlTracker.open();
 		}
 		SAXParserFactory result = (SAXParserFactory) xmlTracker.getService();
@@ -493,7 +494,7 @@ public class PluginConverterParser extends DefaultHandler implements IModel {
 
 	public void parseLibraryAttributes(Attributes attributes) {
 		// Push a vector to hold the export mask
-		objectStack.push(new Vector());
+		objectStack.push(new Vector<Object>());
 		String current = attributes.getValue("", LIBRARY_NAME); //$NON-NLS-1$ 
 		objectStack.push(current);
 	}
@@ -566,7 +567,7 @@ public class PluginConverterParser extends DefaultHandler implements IModel {
 
 	public void parsePluginRequiresImport(Attributes attributes) {
 		if (manifestInfo.requires == null) {
-			manifestInfo.requires = new ArrayList();
+			manifestInfo.requires = new ArrayList<Prerequisite>();
 			// to avoid cycles
 			//			if (!manifestInfo.pluginId.equals(PluginConverterImpl.PI_RUNTIME))  //$NON-NLS-1$
 			//				manifestInfo.requires.add(new Prerequisite(PluginConverterImpl.PI_RUNTIME, null, false, false, null)); //$NON-NLS-1$
@@ -607,7 +608,7 @@ public class PluginConverterParser extends DefaultHandler implements IModel {
 	}
 
 	public void startElement(String uri, String elementName, String qName, Attributes attributes) {
-		switch (((Integer) stateStack.peek()).intValue()) {
+		switch (stateStack.peek().intValue()) {
 			case INITIAL_STATE :
 				handleInitialState(elementName, attributes);
 				break;

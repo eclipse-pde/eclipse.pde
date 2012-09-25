@@ -34,7 +34,7 @@ public class TargetPlatformHelper {
 	public static final String FILE_URL_PREFIX = "file:"; //$NON-NLS-1$
 	public static final String JAR_EXTENSION = ".jar"; //$NON-NLS-1$
 
-	private static Map fCachedLocations;
+	private static Map<String, String> fCachedLocations;
 
 	public static Properties getConfigIniProperties() {
 		File iniFile = new File(TargetPlatform.getLocation(), "configuration/config.ini"); //$NON-NLS-1$
@@ -152,12 +152,12 @@ public class TargetPlatformHelper {
 
 	private static synchronized String getSymbolicName(String path) {
 		if (fCachedLocations == null)
-			fCachedLocations = new HashMap();
+			fCachedLocations = new HashMap<String, String>();
 
 		File file = new File(path);
 		if (file.exists() && !fCachedLocations.containsKey(path)) {
 			try {
-				Dictionary dictionary = MinimalState.loadManifest(file);
+				Dictionary<?, ?> dictionary = MinimalState.loadManifest(file);
 				String value = (String) dictionary.get(Constants.BUNDLE_SYMBOLICNAME);
 				if (value != null) {
 					ManifestElement[] elements = ManifestElement.parseHeader(Constants.BUNDLE_SYMBOLICNAME, value);
@@ -169,14 +169,14 @@ public class TargetPlatformHelper {
 			} catch (BundleException e) {
 			}
 		}
-		return (String) fCachedLocations.get(path);
+		return fCachedLocations.get(path);
 	}
 
-	public static void checkPluginPropertiesConsistency(Map map, File configDir) {
+	public static void checkPluginPropertiesConsistency(Map<?, ?> map, File configDir) {
 		File runtimeDir = new File(configDir, IPDEBuildConstants.BUNDLE_CORE_RUNTIME);
 		if (runtimeDir.exists() && runtimeDir.isDirectory()) {
 			long timestamp = runtimeDir.lastModified();
-			Iterator iter = map.values().iterator();
+			Iterator<?> iter = map.values().iterator();
 			while (iter.hasNext()) {
 				if (hasChanged((IPluginModelBase) iter.next(), timestamp)) {
 					CoreUtility.deleteContent(runtimeDir);
@@ -204,8 +204,8 @@ public class TargetPlatformHelper {
 		return false;
 	}
 
-	public static Set getApplicationNameSet() {
-		TreeSet result = new TreeSet();
+	public static Set<String> getApplicationNameSet() {
+		TreeSet<String> result = new TreeSet<String>();
 		IExtension[] extensions = PDECore.getDefault().getExtensionsRegistry().findExtensions("org.eclipse.core.runtime.applications", true); //$NON-NLS-1$
 		for (int i = 0; i < extensions.length; i++) {
 			String id = extensions[i].getUniqueIdentifier();
@@ -223,12 +223,12 @@ public class TargetPlatformHelper {
 	}
 
 	public static String[] getApplicationNames() {
-		Set result = getApplicationNameSet();
-		return (String[]) result.toArray(new String[result.size()]);
+		Set<String> result = getApplicationNameSet();
+		return result.toArray(new String[result.size()]);
 	}
 
-	public static TreeSet getProductNameSet() {
-		TreeSet result = new TreeSet();
+	public static TreeSet<String> getProductNameSet() {
+		TreeSet<String> result = new TreeSet<String>();
 		IExtension[] extensions = PDECore.getDefault().getExtensionsRegistry().findExtensions("org.eclipse.core.runtime.products", true); //$NON-NLS-1$
 		for (int i = 0; i < extensions.length; i++) {
 			IConfigurationElement[] elements = extensions[i].getConfigurationElements();
@@ -244,12 +244,12 @@ public class TargetPlatformHelper {
 	}
 
 	public static String[] getProductNames() {
-		TreeSet result = getProductNameSet();
-		return (String[]) result.toArray(new String[result.size()]);
+		TreeSet<String> result = getProductNameSet();
+		return result.toArray(new String[result.size()]);
 	}
 
-	public static Dictionary getTargetEnvironment() {
-		Dictionary result = new Hashtable();
+	public static Dictionary<String, String> getTargetEnvironment() {
+		Dictionary<String, String> result = new Hashtable<String, String>();
 		result.put(ICoreConstants.OSGI_OS, TargetPlatform.getOS());
 		result.put(ICoreConstants.OSGI_WS, TargetPlatform.getWS());
 		result.put(ICoreConstants.OSGI_NL, TargetPlatform.getNL());
@@ -259,24 +259,26 @@ public class TargetPlatformHelper {
 		return result;
 	}
 
-	public static Dictionary getTargetEnvironment(MinimalState state) {
-		Dictionary result = getTargetEnvironment();
+	public static Dictionary<String, String> getTargetEnvironment(MinimalState state) {
+		Dictionary<String, String> result = getTargetEnvironment();
 		result.put(ICoreConstants.OSGI_SYSTEM_BUNDLE, state.getSystemBundle());
 		return result;
 	}
 
-	public static Dictionary[] getPlatformProperties(String[] profiles, MinimalState state) {
-		if (profiles == null || profiles.length == 0)
+	@SuppressWarnings("unchecked")
+	public static Dictionary<String, String>[] getPlatformProperties(String[] profiles, MinimalState state) {
+		if (profiles == null || profiles.length == 0) {
 			return new Dictionary[] {getTargetEnvironment(state)};
+		}
 
 		// add java profiles for those EE's that have a .profile file in the current system bundle
-		ArrayList result = new ArrayList(profiles.length);
+		ArrayList<Dictionary<String, String>> result = new ArrayList<Dictionary<String, String>>(profiles.length);
 		for (int i = 0; i < profiles.length; i++) {
 			IExecutionEnvironment environment = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment(profiles[i]);
 			if (environment != null) {
 				Properties profileProps = environment.getProfileProperties();
 				if (profileProps != null) {
-					Dictionary props = TargetPlatformHelper.getTargetEnvironment(state);
+					Dictionary<String, String> props = TargetPlatformHelper.getTargetEnvironment(state);
 					String systemPackages = profileProps.getProperty(Constants.FRAMEWORK_SYSTEMPACKAGES);
 					if (systemPackages != null)
 						props.put(Constants.FRAMEWORK_SYSTEMPACKAGES, systemPackages);
@@ -288,7 +290,7 @@ public class TargetPlatformHelper {
 			}
 		}
 		if (result.size() > 0)
-			return (Dictionary[]) result.toArray(new Dictionary[result.size()]);
+			return result.toArray(new Dictionary[result.size()]);
 		return new Dictionary[] {TargetPlatformHelper.getTargetEnvironment(state)};
 	}
 
@@ -421,8 +423,8 @@ public class TargetPlatformHelper {
 		return getPDEState().getState();
 	}
 
-	public static Map getPatchMap(PDEState state) {
-		HashMap properties = new HashMap();
+	public static Map<Long, String> getPatchMap(PDEState state) {
+		HashMap<Long, String> properties = new HashMap<Long, String>();
 		IPluginModelBase[] models = PluginRegistry.getActiveModels();
 		for (int i = 0; i < models.length; i++) {
 			BundleDescription desc = models[i].getBundleDescription();
@@ -438,8 +440,8 @@ public class TargetPlatformHelper {
 		return properties;
 	}
 
-	public static HashMap getBundleClasspaths(PDEState state) {
-		HashMap properties = new HashMap();
+	public static HashMap<Long, String[]> getBundleClasspaths(PDEState state) {
+		HashMap<Long, String[]> properties = new HashMap<Long, String[]>();
 		BundleDescription[] bundles = state.getState().getBundles();
 		for (int i = 0; i < bundles.length; i++) {
 			properties.put(new Long(bundles[i].getBundleId()), getValue(bundles[i], state));
@@ -470,18 +472,18 @@ public class TargetPlatformHelper {
 
 	public static String[] getFeaturePaths() {
 		IFeatureModel[] models = PDECore.getDefault().getFeatureModelManager().getModels();
-		ArrayList list = new ArrayList();
+		ArrayList<String> list = new ArrayList<String>();
 		for (int i = 0; i < models.length; i++) {
 			String location = models[i].getInstallLocation();
 			if (location != null)
 				list.add(location + IPath.SEPARATOR + ICoreConstants.FEATURE_FILENAME_DESCRIPTOR);
 		}
-		return (String[]) list.toArray(new String[list.size()]);
+		return list.toArray(new String[list.size()]);
 	}
 
 	public static boolean matchesCurrentEnvironment(IPluginModelBase model) {
 		BundleContext context = PDECore.getDefault().getBundleContext();
-		Dictionary environment = getTargetEnvironment();
+		Dictionary<String, String> environment = getTargetEnvironment();
 		BundleDescription bundle = model.getBundleDescription();
 		String filterSpec = bundle != null ? bundle.getPlatformFilter() : null;
 		try {

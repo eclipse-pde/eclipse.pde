@@ -21,18 +21,18 @@ import org.eclipse.text.edits.TextEdit;
 
 public abstract class AbstractKeyValueTextChangeListener extends AbstractTextChangeListener {
 
-	protected HashMap fReadableNames = null;
+	protected HashMap<TextEdit, String> fReadableNames = null;
 
 	public AbstractKeyValueTextChangeListener(IDocument document, boolean generateReadableNames) {
 		super(document);
 		if (generateReadableNames)
-			fReadableNames = new HashMap();
+			fReadableNames = new HashMap<TextEdit, String>();
 	}
 
 	public TextEdit[] getTextOperations() {
 		if (fOperationTable.size() == 0)
 			return new TextEdit[0];
-		return (TextEdit[]) fOperationTable.values().toArray(new TextEdit[fOperationTable.size()]);
+		return fOperationTable.values().toArray(new TextEdit[fOperationTable.size()]);
 	}
 
 	protected void insertKey(IDocumentKey key, String name) {
@@ -65,7 +65,7 @@ public abstract class AbstractKeyValueTextChangeListener extends AbstractTextCha
 
 	public String getReadableName(TextEdit edit) {
 		if (fReadableNames != null && fReadableNames.containsKey(edit))
-			return (String) fReadableNames.get(edit);
+			return fReadableNames.get(edit);
 		return null;
 	}
 }

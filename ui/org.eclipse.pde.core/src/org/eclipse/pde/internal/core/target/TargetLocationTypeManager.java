@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target;
 
+import org.eclipse.core.runtime.IConfigurationElement;
+
 import java.util.HashMap;
 import java.util.Map;
 import org.eclipse.core.runtime.*;
@@ -28,15 +30,15 @@ public class TargetLocationTypeManager {
 	private static final String ATTR_LOCFACTORY = "locationFactory"; //$NON-NLS-1$
 	private static final String TARGET_LOC_EXTPT = "targetLocations"; //$NON-NLS-1$
 
-	private Map fExtentionMap;
-	private Map fFactoryMap;
+	private Map<String, IConfigurationElement> fExtentionMap;
+	private Map<String, ITargetLocationFactory> fFactoryMap;
 
 	static TargetLocationTypeManager INSTANCE;
 
 	private TargetLocationTypeManager() {
 		//singleton
-		fExtentionMap = new HashMap(4);
-		fFactoryMap = new HashMap(4);
+		fExtentionMap = new HashMap<String, IConfigurationElement>(4);
+		fFactoryMap = new HashMap<String, ITargetLocationFactory>(4);
 		readExtentions();
 	}
 
@@ -58,9 +60,9 @@ public class TargetLocationTypeManager {
 	 * @return an instance of <code>ITargetLocationFactory</code> or <code>null</code>
 	 */
 	public ITargetLocationFactory getTargetLocationFactory(String type) {
-		ITargetLocationFactory factory = (ITargetLocationFactory) fFactoryMap.get(type);
+		ITargetLocationFactory factory = fFactoryMap.get(type);
 		if (factory == null) {
-			IConfigurationElement extension = (IConfigurationElement) fExtentionMap.get(type);
+			IConfigurationElement extension = fExtentionMap.get(type);
 			if (extension != null) {
 				factory = (ITargetLocationFactory) createExecutableExtension(extension);
 				if (factory != null) {

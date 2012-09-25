@@ -57,9 +57,9 @@ public class IULocationFactory implements ITargetLocationFactory {
 			String includeConfigurePhase = location.getAttribute(TargetDefinitionPersistenceHelper.ATTR_INCLUDE_CONFIGURE_PHASE);
 
 			NodeList list = location.getChildNodes();
-			List ids = new ArrayList();
-			List versions = new ArrayList();
-			List repos = new ArrayList();
+			List<String> ids = new ArrayList<String>();
+			List<String> versions = new ArrayList<String>();
+			List<URI> repos = new ArrayList<URI>();
 			for (int i = 0; i < list.getLength(); ++i) {
 				Node node = list.item(i);
 				if (node.getNodeType() == Node.ELEMENT_NODE) {
@@ -84,9 +84,9 @@ public class IULocationFactory implements ITargetLocationFactory {
 					}
 				}
 			}
-			String[] iuIDs = (String[]) ids.toArray(new String[ids.size()]);
-			String[] iuVer = (String[]) versions.toArray(new String[versions.size()]);
-			URI[] uris = (URI[]) repos.toArray(new URI[repos.size()]);
+			String[] iuIDs = ids.toArray(new String[ids.size()]);
+			String[] iuVer = versions.toArray(new String[versions.size()]);
+			URI[] uris = repos.toArray(new URI[repos.size()]);
 
 			int flags = IUBundleContainer.INCLUDE_REQUIRED;
 			if (includeMode != null && includeMode.trim().length() > 0) {

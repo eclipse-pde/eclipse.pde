@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target;
 
+import org.eclipse.pde.core.target.TargetBundle;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -72,7 +74,7 @@ public class DirectoryBundleContainer extends AbstractBundleContainer {
 			File site = getSite(dir);
 			File[] files = site.listFiles();
 			SubMonitor localMonitor = SubMonitor.convert(monitor, Messages.DirectoryBundleContainer_0, files.length);
-			List bundles = new ArrayList(files.length);
+			List<TargetBundle> bundles = new ArrayList<TargetBundle>(files.length);
 			for (int i = 0; i < files.length; i++) {
 				if (localMonitor.isCanceled()) {
 					return new TargetBundle[0];
@@ -88,7 +90,7 @@ public class DirectoryBundleContainer extends AbstractBundleContainer {
 				localMonitor.worked(1);
 			}
 			localMonitor.done();
-			return (TargetBundle[]) bundles.toArray(new TargetBundle[bundles.size()]);
+			return bundles.toArray(new TargetBundle[bundles.size()]);
 		}
 		throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.DirectoryBundleContainer_1, dir.toString())));
 	}

@@ -35,7 +35,7 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 	class ProjectFolder {
 		IPath fPath;
 		String fToken;
-		ArrayList fLibs = new ArrayList(1);
+		ArrayList<String> fLibs = new ArrayList<String>(1);
 		String dupeLibName = null;
 
 		public ProjectFolder(IPath path) {
@@ -64,7 +64,7 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 				fLibs.add(libName);
 		}
 
-		public ArrayList getLibs() {
+		public ArrayList<String> getLibs() {
 			return fLibs;
 		}
 
@@ -96,7 +96,7 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 
 	class OutputFolder extends ProjectFolder {
 
-		private ArrayList fSourceFolders = new ArrayList();
+		private ArrayList<SourceFolder> fSourceFolders = new ArrayList<SourceFolder>();
 		/**
 		 * True when there is no corresponding source - i.e. a class file folder or library
 		 */
@@ -132,7 +132,7 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 			return fIsLibrary;
 		}
 
-		public ArrayList getSourceFolders() {
+		public ArrayList<SourceFolder> getSourceFolders() {
 			return fSourceFolders;
 		}
 
@@ -226,8 +226,8 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 		String[] fLibs = null;
 
 		Visitor(SourceFolder folder) {
-			ArrayList list = folder.getLibs();
-			fLibs = (String[]) list.toArray(new String[list.size()]);
+			ArrayList<String> list = folder.getLibs();
+			fLibs = list.toArray(new String[list.size()]);
 		}
 
 		/* (non-Javadoc)
@@ -251,9 +251,9 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 				EncodingEntry entry = new EncodingEntry(resource, encoding);
 				for (int i = 0; i < fLibs.length; i++) {
 					String lib = fLibs[i];
-					List encodings = (List) fCustomEncodings.get(lib);
+					List<EncodingEntry> encodings = fCustomEncodings.get(lib);
 					if (encodings == null) {
-						encodings = new ArrayList();
+						encodings = new ArrayList<EncodingEntry>();
 						fCustomEncodings.put(lib, encodings);
 					}
 					encodings.add(entry);
@@ -264,22 +264,22 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 
 	}
 
-	private HashMap fSourceFolderMap = new HashMap(4);
-	private HashMap fOutputFolderMap = new HashMap(4);
+	private HashMap<IPath, SourceFolder> fSourceFolderMap = new HashMap<IPath, SourceFolder>(4);
+	private HashMap<IPath, OutputFolder> fOutputFolderMap = new HashMap<IPath, OutputFolder>(4);
 	private IBuild fBuild = null;
 
 	/**
 	 * Maps library name to default encoding for that library (or not present if there is no
 	 * explicit default encoding specified). 
 	 */
-	Map fDefaultLibraryEncodings = new HashMap();
+	Map<String, String> fDefaultLibraryEncodings = new HashMap<String, String>();
 
 	/**
 	 * Maps library name to custom {@link EncodingEntry}'s for this library.
 	 */
-	Map fCustomEncodings = new HashMap();
+	Map<String, List<EncodingEntry>> fCustomEncodings = new HashMap<String, List<EncodingEntry>>();
 
-	public void initialize(ArrayList sourceEntries, ArrayList outputEntries, IClasspathEntry[] cpes, IProject project) {
+	public void initialize(ArrayList<?> sourceEntries, ArrayList<?> outputEntries, IClasspathEntry[] cpes, IProject project) {
 
 		fProject = project;
 		IPath defaultOutputLocation = null;
@@ -289,7 +289,7 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 		} catch (JavaModelException e) {
 		}
 
-		List pluginLibraryNames = new ArrayList(1);
+		List<String> pluginLibraryNames = new ArrayList<String>(1);
 		IPluginModelBase pluginModel = PluginRegistry.findModel(fProject);
 		if (pluginModel != null) {
 			IPluginLibrary[] pluginLibraries = pluginModel.getPluginBase().getLibraries();
@@ -311,12 +311,12 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 					outputLocation = defaultOutputLocation;
 				IPath outputPath = getPath(outputLocation);
 
-				OutputFolder outputFolder = (OutputFolder) fOutputFolderMap.get(outputPath);
+				OutputFolder outputFolder = fOutputFolderMap.get(outputPath);
 				if (outputFolder == null) {
 					outputFolder = new OutputFolder(outputPath);
 				}
 
-				SourceFolder sourceFolder = (SourceFolder) fSourceFolderMap.get(sourcePath);
+				SourceFolder sourceFolder = fSourceFolderMap.get(sourcePath);
 				if (sourceFolder == null) {
 					sourceFolder = new SourceFolder(sourcePath, outputFolder);
 				}
@@ -338,7 +338,7 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 			}
 		}
 
-		for (Iterator iterator = sourceEntries.iterator(); iterator.hasNext();) {
+		for (Iterator<?> iterator = sourceEntries.iterator(); iterator.hasNext();) {
 			IBuildEntry sourceEntry = (IBuildEntry) iterator.next();
 			String libName = sourceEntry.getName().substring(PROPERTY_SOURCE_PREFIX.length());
 			if (!pluginLibraryNames.contains(libName)) {
@@ -347,7 +347,7 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 			String[] tokens = sourceEntry.getTokens();
 			for (int i = 0; i < tokens.length; i++) {
 				IPath path = new Path(tokens[i]).addTrailingSeparator();
-				SourceFolder sourceFolder = (SourceFolder) fSourceFolderMap.get(path);
+				SourceFolder sourceFolder = fSourceFolderMap.get(path);
 				if (sourceFolder == null) {
 					sourceFolder = new SourceFolder(path, null);
 					fSourceFolderMap.put(path, sourceFolder);
@@ -357,7 +357,7 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 			}
 		}
 
-		for (Iterator iterator = outputEntries.iterator(); iterator.hasNext();) {
+		for (Iterator<?> iterator = outputEntries.iterator(); iterator.hasNext();) {
 			IBuildEntry outputEntry = (IBuildEntry) iterator.next();
 			String libName = outputEntry.getName().substring(PROPERTY_OUTPUT_PREFIX.length());
 			if (!pluginLibraryNames.contains(libName)) {
@@ -370,7 +370,7 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 					// translate "." to root path
 					path = Path.ROOT;
 				}
-				OutputFolder outputFolder = (OutputFolder) fOutputFolderMap.get(path);
+				OutputFolder outputFolder = fOutputFolderMap.get(path);
 				if (outputFolder == null) {
 					outputFolder = new OutputFolder(path);
 					fOutputFolderMap.put(path, outputFolder);
@@ -400,17 +400,17 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 
 	public void validate() {
 
-		for (Iterator iterator = fOutputFolderMap.keySet().iterator(); iterator.hasNext();) {
-			IPath outputPath = (IPath) iterator.next();
-			OutputFolder outputFolder = (OutputFolder) fOutputFolderMap.get(outputPath);
-			ArrayList sourceFolders = outputFolder.getSourceFolders();
-			ArrayList outputFolderLibs = new ArrayList(outputFolder.getLibs());
+		for (Iterator<IPath> iterator = fOutputFolderMap.keySet().iterator(); iterator.hasNext();) {
+			IPath outputPath = iterator.next();
+			OutputFolder outputFolder = fOutputFolderMap.get(outputPath);
+			ArrayList<SourceFolder> sourceFolders = outputFolder.getSourceFolders();
+			ArrayList<String> outputFolderLibs = new ArrayList<String>(outputFolder.getLibs());
 
 			if (sourceFolders.size() == 0) {
 				if (!outputFolder.isLibrary()) {
 					// report error - invalid output folder				
-					for (Iterator libNameiterator = outputFolderLibs.iterator(); libNameiterator.hasNext();) {
-						String libName = (String) libNameiterator.next();
+					for (Iterator<String> libNameiterator = outputFolderLibs.iterator(); libNameiterator.hasNext();) {
+						String libName = libNameiterator.next();
 						IResource folderEntry = fProject.findMember(outputPath);
 						String message;
 						if (folderEntry == null || !folderEntry.exists() || !(folderEntry instanceof IContainer))
@@ -439,8 +439,8 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 				String srcFolderLibName = null;
 
 				for (int i = 0; i < sourceFolders.size(); i++) {
-					SourceFolder sourceFolder = (SourceFolder) sourceFolders.get(i);
-					ArrayList srcFolderLibs = sourceFolder.getLibs();
+					SourceFolder sourceFolder = sourceFolders.get(i);
+					ArrayList<String> srcFolderLibs = sourceFolder.getLibs();
 					outputFolderLibs.removeAll(srcFolderLibs);
 					switch (srcFolderLibs.size()) {
 						case 0 :
@@ -449,18 +449,18 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 							break;
 						case 1 :
 							if (srcFolderLibName == null) {
-								srcFolderLibName = (String) srcFolderLibs.get(0);
+								srcFolderLibName = srcFolderLibs.get(0);
 								break;
 							} else if (srcFolderLibName.equals(srcFolderLibs.get(0))) {
 								break;
 							}
 						default :
 							//error - targeted to diff libs
-							String erringSrcFolders = join((SourceFolder[]) sourceFolders.toArray(new SourceFolder[sourceFolders.size()]));
+							String erringSrcFolders = join(sourceFolders.toArray(new SourceFolder[sourceFolders.size()]));
 							for (int j = 0; j < sourceFolders.size(); j++) {
-								SourceFolder srcFolder = (SourceFolder) sourceFolders.get(j);
+								SourceFolder srcFolder = sourceFolders.get(j);
 								for (int k = 0; k < srcFolder.getLibs().size(); k++) {
-									String libName = (String) srcFolder.getLibs().get(k);
+									String libName = srcFolder.getLibs().get(k);
 									String message = NLS.bind(PDECoreMessages.SourceEntryErrorReporter_DifferentTargetLibrary, erringSrcFolders);
 									prepareError(PROPERTY_SOURCE_PREFIX + libName, srcFolder.getToken(), message, PDEMarkerFactory.NO_RESOLUTION, fSrcLibSeverity, PDEMarkerFactory.CAT_OTHER);
 								}
@@ -479,10 +479,9 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 			}
 		}
 
-		HashMap missingOutputEntryErrors = new HashMap(4);
 		class MissingOutputEntry {
-			private List fSrcFolders = new ArrayList(1);
-			private List fOutputFolders = new ArrayList(1);
+			private List<String> fSrcFolders = new ArrayList<String>(1);
+			private List<String> fOutputFolders = new ArrayList<String>(1);
 
 			public String getOutputList() {
 				return generateList(fOutputFolders);
@@ -492,11 +491,11 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 				return generateList(fSrcFolders);
 			}
 
-			private String generateList(List strings) {
+			private String generateList(List<String> strings) {
 				StringBuffer buffer = new StringBuffer();
-				Iterator iterator = strings.iterator();
+				Iterator<String> iterator = strings.iterator();
 				while (iterator.hasNext()) {
-					String next = (String) iterator.next();
+					String next = iterator.next();
 					buffer.append(next);
 					if (iterator.hasNext()) {
 						buffer.append(',');
@@ -519,10 +518,12 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 			}
 		}
 
-		List toValidate = new ArrayList(); // list of source folders to perform encoding validation on
-		for (Iterator iterator = fSourceFolderMap.keySet().iterator(); iterator.hasNext();) {
-			IPath sourcePath = (IPath) iterator.next();
-			SourceFolder sourceFolder = (SourceFolder) fSourceFolderMap.get(sourcePath);
+		HashMap<String, MissingOutputEntry> missingOutputEntryErrors = new HashMap<String, MissingOutputEntry>(4);
+
+		List<SourceFolder> toValidate = new ArrayList<SourceFolder>(); // list of source folders to perform encoding validation on
+		for (Iterator<IPath> iterator = fSourceFolderMap.keySet().iterator(); iterator.hasNext();) {
+			IPath sourcePath = iterator.next();
+			SourceFolder sourceFolder = fSourceFolderMap.get(sourcePath);
 			OutputFolder outputFolder = sourceFolder.getOutputLocation();
 
 			if (outputFolder == null) {
@@ -534,17 +535,17 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 				else
 					message = NLS.bind(PDECoreMessages.SourceEntryErrorReporter_InvalidSourceFolder, sourcePath.toString());
 
-				ArrayList srcLibs = sourceFolder.getLibs();
+				ArrayList<String> srcLibs = sourceFolder.getLibs();
 				for (int i = 0; i < srcLibs.size(); i++) {
-					String libName = (String) srcLibs.get(i);
+					String libName = srcLibs.get(i);
 					prepareError(PROPERTY_SOURCE_PREFIX + libName, sourceFolder.getToken(), message, PDEMarkerFactory.B_REMOVAL, fSrcLibSeverity, PDEMarkerFactory.CAT_OTHER);
 				}
 			} else {
 				if (outputFolder.getLibs().size() == 0 && sourceFolder.getLibs().size() == 1) {
 					//error - missing output folder
 
-					String libName = (String) sourceFolder.getLibs().get(0);
-					MissingOutputEntry errorEntry = (MissingOutputEntry) missingOutputEntryErrors.get(libName);
+					String libName = sourceFolder.getLibs().get(0);
+					MissingOutputEntry errorEntry = missingOutputEntryErrors.get(libName);
 					if (errorEntry == null)
 						errorEntry = new MissingOutputEntry();
 
@@ -563,9 +564,9 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 			}
 		}
 
-		for (Iterator iter = missingOutputEntryErrors.keySet().iterator(); iter.hasNext();) {
-			String libName = (String) iter.next();
-			MissingOutputEntry errorEntry = (MissingOutputEntry) missingOutputEntryErrors.get(libName);
+		for (Iterator<String> iter = missingOutputEntryErrors.keySet().iterator(); iter.hasNext();) {
+			String libName = iter.next();
+			MissingOutputEntry errorEntry = missingOutputEntryErrors.get(libName);
 			String message = NLS.bind(PDECoreMessages.SourceEntryErrorReporter_MissingOutputEntry, errorEntry.getSourceList(), PROPERTY_OUTPUT_PREFIX + libName);
 			prepareError(PROPERTY_OUTPUT_PREFIX + libName, errorEntry.getOutputList(), message, PDEMarkerFactory.B_ADDITION, fMissingOutputLibSeverity, PDEMarkerFactory.CAT_OTHER);
 		}
@@ -574,17 +575,17 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 
 		if (fEncodingSeverity == CompilerFlags.ERROR || fEncodingSeverity == CompilerFlags.WARNING) {
 			// build map of expected encodings
-			Iterator iterator = toValidate.iterator();
+			Iterator<SourceFolder> iterator = toValidate.iterator();
 			while (iterator.hasNext()) {
-				SourceFolder sourceFolder = (SourceFolder) iterator.next();
+				SourceFolder sourceFolder = iterator.next();
 				IPath sourcePath = sourceFolder.getPath();
 				IContainer container = fProject;
 				if (!sourcePath.isEmpty() && !sourcePath.isRoot()) {
 					container = container.getFolder(sourcePath);
 				}
 				try {
-					ArrayList list = sourceFolder.getLibs();
-					String[] libs = (String[]) list.toArray(new String[list.size()]);
+					ArrayList<String> list = sourceFolder.getLibs();
+					String[] libs = list.toArray(new String[list.size()]);
 					String encoding = getExplicitEncoding(container);
 					if (encoding != null) {
 						for (int i = 0; i < libs.length; i++) {
@@ -611,7 +612,7 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 						if (tokens.length == 1) {
 							// compare
 							String specified = tokens[0];
-							String expected = (String) fDefaultLibraryEncodings.remove(lib);
+							String expected = fDefaultLibraryEncodings.remove(lib);
 							if (expected != null) {
 								if (!specified.equals(expected)) {
 									prepareError(name, specified, NLS.bind(PDECoreMessages.SourceEntryErrorReporter_0, new String[] {expected, specified, lib}), PDEMarkerFactory.NO_RESOLUTION, fEncodingSeverity, PDEMarkerFactory.CAT_OTHER);
@@ -631,7 +632,7 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 					String lib = name.substring(PROPERTY_JAVAC_CUSTOM_ENCODINGS_PREFIX.length());
 					String[] tokens = entry.getTokens();
 					if (tokens.length > 0) {
-						List encodings = new ArrayList();
+						List<EncodingEntry> encodings = new ArrayList<EncodingEntry>();
 						for (int j = 0; j < tokens.length; j++) {
 							String special = tokens[j];
 							int index = special.indexOf('[');
@@ -653,21 +654,21 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 							}
 						}
 						// compare with workspace encodings
-						List workspace = (List) fCustomEncodings.remove(lib);
+						List<EncodingEntry> workspace = fCustomEncodings.remove(lib);
 						if (workspace == null) {
 							prepareError(name, null, NLS.bind(PDECoreMessages.SourceEntryErrorReporter_5, lib), PDEMarkerFactory.B_REMOVAL, fEncodingSeverity, PDEMarkerFactory.CAT_OTHER);
 						} else {
-							Map map = new HashMap();
-							Iterator iter = workspace.iterator();
+							Map<IResource, String> map = new HashMap<IResource, String>();
+							Iterator<EncodingEntry> iter = workspace.iterator();
 							while (iter.hasNext()) {
-								EncodingEntry ee = (EncodingEntry) iter.next();
+								EncodingEntry ee = iter.next();
 								map.put(ee.getResource(), ee.getEncoding());
 							}
 							iter = encodings.iterator();
 							while (iter.hasNext()) {
-								EncodingEntry ee = (EncodingEntry) iter.next();
+								EncodingEntry ee = iter.next();
 								String specified = ee.getEncoding();
-								String expected = (String) map.remove(ee.getResource());
+								String expected = map.remove(ee.getResource());
 								if (expected == null) {
 									prepareError(name, ee.getValue(), NLS.bind(PDECoreMessages.SourceEntryErrorReporter_6, new String[] {expected, ee.getResource().getProjectRelativePath().toString()}), PDEMarkerFactory.B_REMOVAL, fEncodingSeverity, PDEMarkerFactory.CAT_OTHER);
 								} else {
@@ -678,11 +679,11 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 							}
 							// anything left in the workspace map?
 							if (!map.isEmpty()) {
-								iter = map.entrySet().iterator();
-								while (iter.hasNext()) {
-									Entry en = (Entry) iter.next();
-									IResource res = (IResource) en.getKey();
-									String expected = (String) en.getValue();
+								Iterator<Entry<IResource, String>> iter2 = map.entrySet().iterator();
+								while (iter2.hasNext()) {
+									Entry<IResource, String> en = iter2.next();
+									IResource res = en.getKey();
+									String expected = en.getValue();
 									EncodingEntry missing = new EncodingEntry(res, expected);
 									String m = NLS.bind(PDECoreMessages.SourceEntryErrorReporter_8, new String[] {expected, res.getProjectRelativePath().toString()});
 									prepareError(name, missing.getValue(), m, PDEMarkerFactory.B_ADDITION, fEncodingSeverity, PDEMarkerFactory.CAT_OTHER);
@@ -695,23 +696,23 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 			}
 
 			// check for unspecified default encodings
-			Iterator iter = fDefaultLibraryEncodings.entrySet().iterator();
+			Iterator<Entry<String, String>> iter = fDefaultLibraryEncodings.entrySet().iterator();
 			while (iter.hasNext()) {
-				Entry entry = (Entry) iter.next();
-				String lib = (String) entry.getKey();
-				String expected = (String) entry.getValue();
+				Entry<String, String> entry = iter.next();
+				String lib = entry.getKey();
+				String expected = entry.getValue();
 				prepareError(PROPERTY_JAVAC_DEFAULT_ENCODING_PREFIX + lib, expected, NLS.bind(PDECoreMessages.SourceEntryErrorReporter_9, new String[] {expected, lib}), PDEMarkerFactory.B_ADDITION, fEncodingSeverity, PDEMarkerFactory.CAT_OTHER);
 			}
 
 			// check for unspecified custom encodings
-			iter = fCustomEncodings.entrySet().iterator();
-			while (iter.hasNext()) {
-				Entry entry = (Entry) iter.next();
-				String lib = (String) entry.getKey();
-				List encodings = (List) entry.getValue();
-				Iterator iterator2 = encodings.iterator();
+			Iterator<Entry<String, List<EncodingEntry>>> iter2 = fCustomEncodings.entrySet().iterator();
+			while (iter2.hasNext()) {
+				Entry<String, List<EncodingEntry>> entry = iter2.next();
+				String lib = entry.getKey();
+				List<EncodingEntry> encodings = entry.getValue();
+				Iterator<EncodingEntry> iterator2 = encodings.iterator();
 				while (iterator2.hasNext()) {
-					EncodingEntry encoding = (EncodingEntry) iterator2.next();
+					EncodingEntry encoding = iterator2.next();
 					String m = NLS.bind(PDECoreMessages.SourceEntryErrorReporter_10, new String[] {encoding.getEncoding(), encoding.getResource().getProjectRelativePath().toString()});
 					prepareError(PROPERTY_JAVAC_CUSTOM_ENCODINGS_PREFIX + lib, encoding.getValue(), m, PDEMarkerFactory.B_ADDITION, fEncodingSeverity, PDEMarkerFactory.CAT_OTHER);
 				}
@@ -759,7 +760,7 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 		return result.toString();
 	}
 
-	public ArrayList getProblemList() {
+	public ArrayList<BuildProblem> getProblemList() {
 		return fProblemList;
 	}
 }

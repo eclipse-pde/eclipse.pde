@@ -18,6 +18,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IModelProviderEvent;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.ISharedExtensionsModel;
@@ -33,8 +34,8 @@ import org.eclipse.pde.internal.core.schema.SchemaDescriptor;
 
 public class WorkspacePluginModelManager extends WorkspaceModelManager {
 
-	private ArrayList fExtensionListeners = new ArrayList();
-	private ArrayList fChangedExtensions = null;
+	private ArrayList<IExtensionDeltaListener> fExtensionListeners = new ArrayList<IExtensionDeltaListener>();
+	private ArrayList<ModelChange> fChangedExtensions = null;
 
 	/**
 	 * The workspace plug-in model manager is only interested
@@ -93,7 +94,7 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 
 		if (model != null) {
 			if (fModels == null)
-				fModels = new HashMap();
+				fModels = new HashMap<IProject, IPluginModelBase>();
 			fModels.put(project, model);
 			if (notify)
 				addChange(model, IModelProviderEvent.MODELS_ADDED);
@@ -345,7 +346,7 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 	 */
 	protected IPluginModelBase[] getPluginModels() {
 		initialize();
-		return (IPluginModelBase[]) fModels.values().toArray(new IPluginModelBase[fModels.size()]);
+		return fModels.values().toArray(new IPluginModelBase[fModels.size()]);
 	}
 
 	/**
@@ -403,7 +404,7 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 	 * @param models  the workspace plug-in models
 	 */
 	protected void initializeModels(IPluginModelBase[] models) {
-		fModels = Collections.synchronizedMap(new HashMap());
+		fModels = Collections.synchronizedMap(new HashMap<IProject, IPluginModelBase>());
 		for (int i = 0; i < models.length; i++) {
 			IProject project = models[i].getUnderlyingResource().getProject();
 			fModels.put(project, models[i]);
@@ -425,7 +426,7 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 	 * @return an array of URLs to workspace plug-ins
 	 */
 	protected URL[] getPluginPaths() {
-		ArrayList list = new ArrayList();
+		ArrayList<URL> list = new ArrayList<URL>();
 		IProject[] projects = PDECore.getWorkspace().getRoot().getProjects();
 		for (int i = 0; i < projects.length; i++) {
 			if (isPluginProject(projects[i])) {
@@ -438,7 +439,7 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 				}
 			}
 		}
-		return (URL[]) list.toArray(new URL[list.size()]);
+		return list.toArray(new URL[list.size()]);
 	}
 
 	void addExtensionDeltaListener(IExtensionDeltaListener listener) {
@@ -451,8 +452,8 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 	}
 
 	public void fireExtensionDeltaEvent(IExtensionDeltaEvent event) {
-		for (ListIterator li = fExtensionListeners.listIterator(); li.hasNext();) {
-			((IExtensionDeltaListener) li.next()).extensionsChanged(event);
+		for (ListIterator<IExtensionDeltaListener> li = fExtensionListeners.listIterator(); li.hasNext();) {
+			li.next().extensionsChanged(event);
 		}
 	}
 
@@ -463,9 +464,9 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 		fChangedExtensions = null;
 	}
 
-	protected void createAndFireEvent(String eventId, int type, Collection added, Collection removed, Collection changed) {
+	protected void createAndFireEvent(String eventId, int type, Collection<IModel> added, Collection<IModel> removed, Collection<IModel> changed) {
 		if (eventId.equals("org.eclipse.pde.internal.core.IExtensionDeltaEvent")) { //$NON-NLS-1$
-			IExtensionDeltaEvent event = new ExtensionDeltaEvent(type, (IPluginModelBase[]) added.toArray(new IPluginModelBase[added.size()]), (IPluginModelBase[]) removed.toArray(new IPluginModelBase[removed.size()]), (IPluginModelBase[]) changed.toArray(new IPluginModelBase[changed.size()]));
+			IExtensionDeltaEvent event = new ExtensionDeltaEvent(type, added.toArray(new IPluginModelBase[added.size()]), removed.toArray(new IPluginModelBase[removed.size()]), changed.toArray(new IPluginModelBase[changed.size()]));
 			fireExtensionDeltaEvent(event);
 		} else
 			super.createAndFireEvent(eventId, type, added, removed, changed);
@@ -473,7 +474,7 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 
 	protected void addExtensionChange(IPluginModelBase plugin, int type) {
 		if (fChangedExtensions == null)
-			fChangedExtensions = new ArrayList();
+			fChangedExtensions = new ArrayList<ModelChange>();
 		ModelChange change = new ModelChange(plugin, type);
 		fChangedExtensions.add(change);
 	}

@@ -18,7 +18,7 @@ public class DocumentTextNode extends DocumentXMLNode implements IDocumentTextNo
 
 	private static final long serialVersionUID = 1L;
 
-	protected static final HashMap SUBSTITUTE_CHARS = new HashMap(5);
+	protected static final HashMap<Character, String> SUBSTITUTE_CHARS = new HashMap<Character, String>(5);
 
 	static {
 		SUBSTITUTE_CHARS.put(new Character('&'), "&amp;"); //$NON-NLS-1$

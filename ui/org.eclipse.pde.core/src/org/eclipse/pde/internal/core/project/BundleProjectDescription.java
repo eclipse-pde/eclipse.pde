@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.project;
 
+import org.eclipse.pde.core.project.IBundleClasspathEntry;
+
 import java.io.IOException;
 import java.net.URI;
 import java.util.*;
@@ -63,8 +65,8 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	private IBundleProjectService fService;
 	private String[] fLaunchShortcuts;
 	private String fExportWizard;
-	private Map fHeaders = new HashMap();
-	private Map fReadHeaders = null;
+	private Map<String, String> fHeaders = new HashMap<String, String>();
+	private Map<?, ?> fReadHeaders = null;
 
 	/**
 	 * Constructs a bundle description for the specified project.
@@ -115,7 +117,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	 * @param key header name
 	 * @return header value or <code>null</code>
 	 */
-	private String getHeaderValue(Map headers, String key) throws CoreException {
+	private String getHeaderValue(Map<?, ?> headers, String key) throws CoreException {
 		ManifestElement[] elements = parseHeader(headers, key);
 		if (elements != null) {
 			if (elements.length > 0) {
@@ -133,7 +135,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	 * @return elements or <code>null</code> if none
 	 * @throws CoreException
 	 */
-	private ManifestElement[] parseHeader(Map headers, String key) throws CoreException {
+	private ManifestElement[] parseHeader(Map<?, ?> headers, String key) throws CoreException {
 		String value = (String) headers.get(key);
 		if (value != null) {
 			if (value.trim().length() > 0) {
@@ -174,7 +176,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 
 		IFile manifest = PDEProject.getManifest(project);
 		if (manifest.exists()) {
-			Map headers;
+			Map<?, ?> headers;
 			try {
 				headers = ManifestElement.parseBundleManifest(manifest.getContents(), null);
 				fReadHeaders = headers;
@@ -214,7 +216,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 			elements = parseHeader(headers, Constants.BUNDLE_CLASSPATH);
 			IBundleClasspathEntry[] classpath = null;
 			if (elements != null && elements.length > 0) {
-				List collect = new ArrayList();
+				List<IBundleClasspathEntry> collect = new ArrayList<IBundleClasspathEntry>();
 				for (int i = 0; i < elements.length; i++) {
 					String libName = elements[i].getValue();
 					IBundleClasspathEntry[] entries = getClasspathEntries(project, build, libName);
@@ -224,7 +226,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 						}
 					}
 				}
-				classpath = (IBundleClasspathEntry[]) collect.toArray(new IBundleClasspathEntry[collect.size()]);
+				classpath = collect.toArray(new IBundleClasspathEntry[collect.size()]);
 			} else if (elements == null) {
 				// default bundle classpath of '.'
 				classpath = getClasspathEntries(project, build, "."); //$NON-NLS-1$
@@ -311,7 +313,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 				if (entry != null) {
 					String[] tokens = entry.getTokens();
 					if (tokens != null && tokens.length > 0) {
-						List strings = new ArrayList();
+						List<String> strings = new ArrayList<String>();
 						for (int i = 0; i < tokens.length; i++) {
 							strings.add(tokens[i]);
 						}
@@ -332,7 +334,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 						if (!strings.isEmpty()) {
 							IPath[] paths = new IPath[strings.size()];
 							for (int i = 0; i < strings.size(); i++) {
-								paths[i] = new Path((String) strings.get(i));
+								paths[i] = new Path(strings.get(i));
 							}
 							setBinIncludes(paths);
 						}
@@ -846,7 +848,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	 */
 	public String getHeader(String header) {
 		if (fHeaders.containsKey(header)) { // might be null so check contains
-			return (String) fHeaders.get(header);
+			return fHeaders.get(header);
 		}
 		if (fReadHeaders != null) {
 			if (fReadHeaders.containsKey(header)) {
@@ -867,7 +869,7 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	 * 
 	 * @return a map of header names to header values, possible empty
 	 */
-	Map getExtraHeaders() {
+	Map<String, String> getExtraHeaders() {
 		return fHeaders;
 	}
 

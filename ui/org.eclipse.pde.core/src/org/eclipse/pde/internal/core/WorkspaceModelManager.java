@@ -16,6 +16,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IModelProviderEvent;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.team.core.RepositoryProvider;
 
@@ -70,14 +71,14 @@ public abstract class WorkspaceModelManager extends AbstractModelManager impleme
 		}
 	}
 
-	protected Map fModels = null;
-	private ArrayList fChangedModels;
+	protected Map<IProject, IPluginModelBase> fModels = null;
+	private ArrayList<ModelChange> fChangedModels;
 
 	protected synchronized void initialize() {
 		if (fModels != null)
 			return;
 
-		fModels = Collections.synchronizedMap(new HashMap());
+		fModels = Collections.synchronizedMap(new HashMap<IProject, IPluginModelBase>());
 		IProject[] projects = PDECore.getWorkspace().getRoot().getProjects();
 		for (int i = 0; i < projects.length; i++) {
 			if (isInterestingProject(projects[i]))
@@ -186,7 +187,7 @@ public abstract class WorkspaceModelManager extends AbstractModelManager impleme
 	protected void addChange(Object model, int eventType) {
 		if (model instanceof IModel) {
 			if (fChangedModels == null)
-				fChangedModels = new ArrayList();
+				fChangedModels = new ArrayList<ModelChange>();
 			ModelChange change = new ModelChange((IModel) model, eventType);
 			if (!fChangedModels.contains(change))
 				fChangedModels.add(change);
@@ -198,7 +199,7 @@ public abstract class WorkspaceModelManager extends AbstractModelManager impleme
 		fChangedModels = null;
 	}
 
-	protected void processModelChanges(String changeId, ArrayList changedModels) {
+	protected void processModelChanges(String changeId, ArrayList<ModelChange> changedModels) {
 		if (changedModels == null)
 			return;
 
@@ -206,11 +207,11 @@ public abstract class WorkspaceModelManager extends AbstractModelManager impleme
 			return;
 		}
 
-		ArrayList added = new ArrayList();
-		ArrayList removed = new ArrayList();
-		ArrayList changed = new ArrayList();
-		for (ListIterator li = changedModels.listIterator(); li.hasNext();) {
-			ModelChange change = (ModelChange) li.next();
+		ArrayList<IModel> added = new ArrayList<IModel>();
+		ArrayList<IModel> removed = new ArrayList<IModel>();
+		ArrayList<IModel> changed = new ArrayList<IModel>();
+		for (ListIterator<ModelChange> li = changedModels.listIterator(); li.hasNext();) {
+			ModelChange change = li.next();
 			switch (change.type) {
 				case IModelProviderEvent.MODELS_ADDED :
 					added.add(change.model);
@@ -257,9 +258,9 @@ public abstract class WorkspaceModelManager extends AbstractModelManager impleme
 		}
 	}
 
-	protected void createAndFireEvent(String eventId, int type, Collection added, Collection removed, Collection changed) {
+	protected void createAndFireEvent(String eventId, int type, Collection<IModel> added, Collection<IModel> removed, Collection<IModel> changed) {
 		if (eventId.equals("org.eclipse.pde.core.IModelProviderEvent")) { //$NON-NLS-1$
-			final ModelProviderEvent event = new ModelProviderEvent(this, type, (IModel[]) added.toArray(new IModel[added.size()]), (IModel[]) removed.toArray(new IModel[removed.size()]), (IModel[]) changed.toArray(new IModel[changed.size()]));
+			final ModelProviderEvent event = new ModelProviderEvent(this, type, added.toArray(new IModel[added.size()]), removed.toArray(new IModel[removed.size()]), changed.toArray(new IModel[changed.size()]));
 			fireModelProviderEvent(event);
 		}
 	}

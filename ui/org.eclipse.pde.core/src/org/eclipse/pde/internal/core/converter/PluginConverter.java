@@ -50,7 +50,7 @@ public class PluginConverter {
 	private BundleContext context;
 	private PluginInfo pluginInfo;
 	private File pluginManifestLocation;
-	private Dictionary generatedManifest;
+	private Dictionary<String, String> generatedManifest;
 	private byte manifestType;
 	private Version target;
 	static final Version TARGET31 = new Version(3, 1, 0);
@@ -81,7 +81,7 @@ public class PluginConverter {
 		// need to make sure these fields are cleared out for each conversion.
 		pluginInfo = null;
 		pluginManifestLocation = null;
-		generatedManifest = new Hashtable(10);
+		generatedManifest = new Hashtable<String, String>(10);
 		manifestType = MANIFEST_TYPE_UNKNOWN;
 		target = null;
 	}
@@ -168,7 +168,7 @@ public class PluginConverter {
 		}
 	}
 
-	public void writeManifest(File generationLocation, Map manifestToWrite, boolean compatibilityManifest) throws PluginConversionException {
+	public void writeManifest(File generationLocation, Map<?, ?> manifestToWrite, boolean compatibilityManifest) throws PluginConversionException {
 		long start = System.currentTimeMillis();
 		BufferedWriter out = null;
 		try {
@@ -197,9 +197,9 @@ public class PluginConverter {
 			System.out.println("Time to write out converted manifest to: " + generationLocation + ": " + (System.currentTimeMillis() - start) + "ms."); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
-	public void writeManifest(Map manifestToWrite, Writer out) throws IOException {
+	public void writeManifest(Map<?, ?> manifestToWrite, Writer out) throws IOException {
 		// replaces any eventual existing file
-		manifestToWrite = new Hashtable(manifestToWrite);
+		manifestToWrite = new Hashtable<Object, Object>(manifestToWrite);
 
 		writeEntry(out, MANIFEST_VERSION, (String) manifestToWrite.remove(MANIFEST_VERSION));
 		writeEntry(out, GENERATED_FROM, (String) manifestToWrite.remove(GENERATED_FROM)); //Need to do this first uptoDate check expect the generated-from tag to be in the first line
@@ -218,7 +218,7 @@ public class PluginConverter {
 		// always attempt to write the Provide-Package header if it exists (bug 109863)
 		writeEntry(out, ICoreConstants.PROVIDE_PACKAGE, (String) manifestToWrite.remove(ICoreConstants.PROVIDE_PACKAGE));
 		writeEntry(out, Constants.REQUIRE_BUNDLE, (String) manifestToWrite.remove(Constants.REQUIRE_BUNDLE));
-		Iterator keys = manifestToWrite.keySet().iterator();
+		Iterator<?> keys = manifestToWrite.keySet().iterator();
 		// TODO makes sure the update works from Dictionary
 		while (keys.hasNext()) {
 			String key = (String) keys.next();
@@ -236,8 +236,8 @@ public class PluginConverter {
 	}
 
 	private boolean requireRuntimeCompatibility() {
-		ArrayList requireList = pluginInfo.getRequires();
-		for (Iterator iter = requireList.iterator(); iter.hasNext();) {
+		ArrayList<?> requireList = pluginInfo.getRequires();
+		for (Iterator<?> iter = requireList.iterator(); iter.hasNext();) {
 			if (((PluginConverterParser.Prerequisite) iter.next()).getName().equalsIgnoreCase(PI_RUNTIME_COMPATIBILITY))
 				return true;
 		}
@@ -305,18 +305,18 @@ public class PluginConverter {
 	}
 
 	private void generateProvidePackage() {
-		Collection exports = getExports();
+		Collection<String> exports = getExports();
 		if (exports != null && exports.size() != 0) {
 			generatedManifest.put(TARGET31.compareTo(target) <= 0 ? Constants.EXPORT_PACKAGE : ICoreConstants.PROVIDE_PACKAGE, getStringFromCollection(exports, LIST_SEPARATOR));
 		}
 	}
 
 	private void generateRequireBundle() {
-		ArrayList requiredBundles = pluginInfo.getRequires();
+		ArrayList<?> requiredBundles = pluginInfo.getRequires();
 		if (requiredBundles.size() == 0)
 			return;
 		StringBuffer bundleRequire = new StringBuffer();
-		for (Iterator iter = requiredBundles.iterator(); iter.hasNext();) {
+		for (Iterator<?> iter = requiredBundles.iterator(); iter.hasNext();) {
 			PluginConverterParser.Prerequisite element = (PluginConverterParser.Prerequisite) iter.next();
 			StringBuffer modImport = new StringBuffer(element.getName());
 			String versionRange = getVersionRange(element.getVersion(), element.getMatch());
@@ -359,8 +359,8 @@ public class PluginConverter {
 		}
 	}
 
-	private Set getExports() {
-		Map libs = pluginInfo.getLibraries();
+	private Set<String> getExports() {
+		Map<?, ?> libs = pluginInfo.getLibraries();
 		if (libs == null)
 			return null;
 
@@ -372,7 +372,8 @@ public class PluginConverter {
 		return getExports(proj, libs);
 	}
 
-	public Set getExports(IProject proj, Map libs) {
+	@SuppressWarnings({"unchecked", "rawtypes"})
+	public Set<String> getExports(IProject proj, Map libs) {
 		IFile buildProperties = PDEProject.getBuildProperties(proj);
 		IBuild build = null;
 		if (buildProperties != null) {
@@ -383,14 +384,15 @@ public class PluginConverter {
 		return findPackages(proj, libs, build);
 	}
 
-	private Set findPackages(IProject proj, Map libs, IBuild build) {
-		TreeSet result = new TreeSet();
+	private Set<String> findPackages(IProject proj, Map<?, List<?>> libs, IBuild build) {
+		TreeSet<String> result = new TreeSet<String>();
 		IJavaProject jp = JavaCore.create(proj);
-		Iterator it = libs.entrySet().iterator();
+		Iterator<?> it = libs.entrySet().iterator();
 		while (it.hasNext()) {
+			@SuppressWarnings("rawtypes")
 			Map.Entry entry = (Map.Entry) it.next();
 			String libName = entry.getKey().toString();
-			List filter = (List) entry.getValue();
+			List<?> filter = (List<?>) entry.getValue();
 			IBuildEntry libEntry = build.getEntry(SOURCE_PREFIX + libName);
 			if (libEntry != null) {
 				String[] tokens = libEntry.getTokens();
@@ -412,12 +414,12 @@ public class PluginConverter {
 		return result;
 	}
 
-	private void addPackagesFromFragRoot(IPackageFragmentRoot root, Collection result, List filter) {
+	private void addPackagesFromFragRoot(IPackageFragmentRoot root, Collection<String> result, List<?> filter) {
 		if (root == null)
 			return;
 		try {
 			if (filter != null && !filter.contains("*")) { //$NON-NLS-1$
-				ListIterator li = filter.listIterator();
+				ListIterator<?> li = filter.listIterator();
 				while (li.hasNext()) {
 					String pkgName = li.next().toString();
 					if (pkgName.endsWith(".*")) //$NON-NLS-1$
@@ -548,10 +550,10 @@ public class PluginConverter {
 		return result.toString();
 	}
 
-	private String getStringFromCollection(Collection collection, String separator) {
+	private String getStringFromCollection(Collection<String> collection, String separator) {
 		StringBuffer result = new StringBuffer();
 		boolean first = true;
-		for (Iterator i = collection.iterator(); i.hasNext();) {
+		for (Iterator<String> i = collection.iterator(); i.hasNext();) {
 			if (first)
 				first = false;
 			else
@@ -561,7 +563,7 @@ public class PluginConverter {
 		return result.toString();
 	}
 
-	public synchronized Dictionary convertManifest(File pluginBaseLocation, boolean compatibility, String target, boolean analyseJars, Dictionary devProperties) throws PluginConversionException {
+	public synchronized Dictionary<String, String> convertManifest(File pluginBaseLocation, boolean compatibility, String target, boolean analyseJars, Dictionary<?, ?> devProperties) throws PluginConversionException {
 		long start = System.currentTimeMillis();
 		if (DEBUG)
 			System.out.println("Convert " + pluginBaseLocation); //$NON-NLS-1$
@@ -574,13 +576,13 @@ public class PluginConverter {
 		return generatedManifest;
 	}
 
-	public synchronized File convertManifest(File pluginBaseLocation, File bundleManifestLocation, boolean compatibilityManifest, String target, boolean analyseJars, Dictionary devProperties) throws PluginConversionException {
+	public synchronized File convertManifest(File pluginBaseLocation, File bundleManifestLocation, boolean compatibilityManifest, String target, boolean analyseJars, Dictionary<?, ?> devProperties) throws PluginConversionException {
 		if (bundleManifestLocation == null)
 			throw new PluginConversionException(PDECoreMessages.PluginConverter_BundleLocationIsNull);
 		convertManifest(pluginBaseLocation, compatibilityManifest, target, analyseJars, devProperties);
 		if (upToDate(bundleManifestLocation, pluginManifestLocation, manifestType))
 			return bundleManifestLocation;
-		writeManifest(bundleManifestLocation, (Map) generatedManifest, compatibilityManifest);
+		writeManifest(bundleManifestLocation, (Map<?, ?>) generatedManifest, compatibilityManifest);
 		return bundleManifestLocation;
 	}
 

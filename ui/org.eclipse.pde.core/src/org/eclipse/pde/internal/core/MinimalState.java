@@ -100,7 +100,7 @@ public class MinimalState {
 		return null;
 	}
 
-	public BundleDescription addBundle(Dictionary manifest, File bundleLocation, long bundleId) {
+	public BundleDescription addBundle(Dictionary<String, String> manifest, File bundleLocation, long bundleId) {
 		try {
 			BundleDescription descriptor = stateObjectFactory.createBundleDescription(fState, manifest, bundleLocation.getAbsolutePath(), bundleId == -1 ? getNextId() : bundleId);
 			// new bundle
@@ -118,7 +118,7 @@ public class MinimalState {
 	}
 
 	public BundleDescription addBundle(File bundleLocation, long bundleId) throws PluginConversionException, CoreException, IOException {
-		Dictionary manifest = loadManifest(bundleLocation);
+		Dictionary<String, String> manifest = loadManifest(bundleLocation);
 		// update for development mode
 		TargetWeaver.weaveManifest(manifest);
 		boolean hasBundleStructure = manifest != null && manifest.get(Constants.BUNDLE_SYMBOLICNAME) != null;
@@ -144,7 +144,7 @@ public class MinimalState {
 		return desc;
 	}
 
-	protected void addAuxiliaryData(BundleDescription desc, Dictionary manifest, boolean hasBundleStructure) {
+	protected void addAuxiliaryData(BundleDescription desc, Dictionary<String, String> manifest, boolean hasBundleStructure) {
 	}
 
 	protected void saveState(File dir) {
@@ -164,7 +164,7 @@ public class MinimalState {
 		}
 	}
 
-	public static Dictionary loadManifest(File bundleLocation) throws IOException {
+	public static Dictionary<String, String> loadManifest(File bundleLocation) throws IOException {
 		ZipFile jarFile = null;
 		InputStream manifestStream = null;
 		try {
@@ -185,7 +185,7 @@ public class MinimalState {
 		if (manifestStream == null)
 			return null;
 		try {
-			return (Dictionary) ManifestElement.parseBundleManifest(manifestStream, new Headers(10));
+			return (Dictionary<String, String>) ManifestElement.parseBundleManifest(manifestStream, new Headers(10));
 		} catch (BundleException e) {
 		} finally {
 			try {
@@ -211,14 +211,14 @@ public class MinimalState {
 		if (initializePlatformProperties()) {
 			return fState.resolve(false);
 		}
-		List bundles = new ArrayList();
+		List<BundleDescription> bundles = new ArrayList<BundleDescription>();
 		for (int i = 0; i < symbolicNames.length; i++) {
 			BundleDescription[] descriptions = fState.getBundles(symbolicNames[i]);
 			for (int j = 0; j < descriptions.length; j++) {
 				bundles.add(descriptions[j]);
 			}
 		}
-		return fState.resolve((BundleDescription[]) bundles.toArray(new BundleDescription[bundles.size()]));
+		return fState.resolve(bundles.toArray(new BundleDescription[bundles.size()]));
 	}
 
 	private synchronized StateDelta internalResolveState(boolean incremental) {
@@ -237,7 +237,7 @@ public class MinimalState {
 		return false;
 	}
 
-	private Dictionary[] getProfilePlatformProperties() {
+	private Dictionary<String, String>[] getProfilePlatformProperties() {
 		return TargetPlatformHelper.getPlatformProperties(fExecutionEnvironments, this);
 	}
 
@@ -271,7 +271,7 @@ public class MinimalState {
 
 	private PluginConverter acquirePluginConverter() {
 		if (fConverter == null) {
-			ServiceTracker tracker = new ServiceTracker(PDECore.getDefault().getBundleContext(), PluginConverter.class.getName(), null);
+			ServiceTracker<?, ?> tracker = new ServiceTracker<Object, Object>(PDECore.getDefault().getBundleContext(), PluginConverter.class.getName(), null);
 			tracker.open();
 			fConverter = (PluginConverter) tracker.getService();
 			tracker.close();

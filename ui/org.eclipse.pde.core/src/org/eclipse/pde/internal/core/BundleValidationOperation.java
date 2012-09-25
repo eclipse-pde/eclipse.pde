@@ -22,14 +22,14 @@ public class BundleValidationOperation implements IWorkspaceRunnable {
 	private static StateObjectFactory FACTORY;
 
 	private IPluginModelBase[] fModels;
-	private Dictionary[] fProperties;
+	private Dictionary<?, ?>[] fProperties;
 	private State fState;
 
 	public BundleValidationOperation(IPluginModelBase[] models) {
 		this(models, new Dictionary[] {TargetPlatformHelper.getTargetEnvironment()});
 	}
 
-	public BundleValidationOperation(IPluginModelBase[] models, Dictionary[] properties) {
+	public BundleValidationOperation(IPluginModelBase[] models, Dictionary<?, ?>[] properties) {
 		fModels = models;
 		fProperties = properties;
 	}
@@ -50,9 +50,9 @@ public class BundleValidationOperation implements IWorkspaceRunnable {
 		monitor.done();
 	}
 
-	public Map getResolverErrors() {
-		Set alreadyDuplicated = new HashSet();
-		Map map = new HashMap();
+	public Map<BundleDescription, Object[]> getResolverErrors() {
+		Set<String> alreadyDuplicated = new HashSet<String>();
+		Map<BundleDescription, Object[]> map = new HashMap<BundleDescription, Object[]>();
 		BundleDescription[] bundles = fState.getBundles();
 		for (int i = 0; i < bundles.length; i++) {
 			BundleDescription desc = bundles[i];

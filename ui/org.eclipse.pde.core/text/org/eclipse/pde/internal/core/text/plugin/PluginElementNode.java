@@ -48,7 +48,7 @@ public class PluginElementNode extends PluginParentNode implements IPluginElemen
 	 * @see org.eclipse.pde.core.plugin.IPluginElement#getAttributes()
 	 */
 	public IPluginAttribute[] getAttributes() {
-		return (IPluginAttribute[]) getNodeAttributesMap().values().toArray(new IPluginAttribute[getNodeAttributesMap().size()]);
+		return getNodeAttributesMap().values().toArray(new IPluginAttribute[getNodeAttributesMap().size()]);
 	}
 
 	/* (non-Javadoc)

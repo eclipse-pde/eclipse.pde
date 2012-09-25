@@ -109,10 +109,10 @@ public interface IDocumentElementNode extends Serializable, IDocumentRange, IDoc
 	public int getNodeAttributesCount();
 
 	// Not used by text edit operations
-	public TreeMap getNodeAttributesMap();
+	public TreeMap<?, ?> getNodeAttributesMap();
 
 	// Not used by text edit operations
-	public ArrayList getChildNodesList();
+	public ArrayList<?> getChildNodesList();
 
 	// Not used by text edit operations
 	public void reconnect(IDocumentElementNode parent, IModel model);

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
+import org.eclipse.jdt.core.IClasspathEntry;
+
 import java.io.*;
 import java.util.*;
 import org.eclipse.core.resources.*;
@@ -34,8 +36,8 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 	private static final String KEY = "searchablePlugins"; //$NON-NLS-1$
 
 	private Listener fElementListener;
-	private Set fPluginIdSet;
-	private ArrayList fListeners;
+	private Set<String> fPluginIdSet;
+	private ArrayList<IPluginModelListener> fListeners;
 
 	class Listener implements IElementChangedListener {
 		public void elementChanged(ElementChangedEvent e) {
@@ -81,7 +83,7 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 	}
 
 	private void initializeStates() {
-		fPluginIdSet = new TreeSet();
+		fPluginIdSet = new TreeSet<String>();
 		IWorkspaceRoot root = PDECore.getWorkspace().getRoot();
 		IProject project = root.getProject(PROXY_PROJECT_NAME);
 		try {
@@ -127,7 +129,7 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 	}
 
 	public IClasspathEntry[] computeContainerClasspathEntries() throws CoreException {
-		ArrayList result = new ArrayList();
+		ArrayList<IClasspathEntry> result = new ArrayList<IClasspathEntry>();
 
 		IPluginModelBase[] wModels = PluginRegistry.getWorkspaceModels();
 		for (int i = 0; i < wModels.length; i++) {
@@ -136,7 +138,7 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 				result.add(JavaCore.newProjectEntry(project.getFullPath()));
 			}
 		}
-		Iterator iter = fPluginIdSet.iterator();
+		Iterator<String> iter = fPluginIdSet.iterator();
 		while (iter.hasNext()) {
 			ModelEntry entry = PluginRegistry.findEntry(iter.next().toString());
 			if (entry != null) {
@@ -159,18 +161,18 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 
 		if (result.size() > 1) {
 			// sort
-			Map map = new TreeMap();
+			Map<String, IClasspathEntry> map = new TreeMap<String, IClasspathEntry>();
 			for (int i = 0; i < result.size(); i++) {
-				IClasspathEntry entry = (IClasspathEntry) result.get(i);
+				IClasspathEntry entry = result.get(i);
 				String key = entry.getPath().lastSegment().toString();
 				if (map.containsKey(key)) {
 					key += System.currentTimeMillis();
 				}
 				map.put(key, entry);
 			}
-			return (IClasspathEntry[]) map.values().toArray(new IClasspathEntry[map.size()]);
+			return map.values().toArray(new IClasspathEntry[map.size()]);
 		}
-		return (IClasspathEntry[]) result.toArray(new IClasspathEntry[result.size()]);
+		return result.toArray(new IClasspathEntry[result.size()]);
 	}
 
 	public Object createAdapterChild(FileAdapter parent, File file) {
@@ -269,8 +271,8 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 	public void removeAllFromJavaSearch() {
 		if (fPluginIdSet.size() > 0) {
 			PluginModelDelta delta = new PluginModelDelta();
-			for (Iterator iterator = fPluginIdSet.iterator(); iterator.hasNext();) {
-				String id = (String) iterator.next();
+			for (Iterator<String> iterator = fPluginIdSet.iterator(); iterator.hasNext();) {
+				String id = iterator.next();
 				ModelEntry entry = PluginRegistry.findEntry(id);
 				if (entry != null) {
 					delta.addEntry(entry, PluginModelDelta.CHANGED);
@@ -309,14 +311,14 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 	private void fireDelta(PluginModelDelta delta) {
 		if (fListeners != null) {
 			for (int i = 0; i < fListeners.size(); i++) {
-				((IPluginModelListener) fListeners.get(i)).modelsChanged(delta);
+				fListeners.get(i).modelsChanged(delta);
 			}
 		}
 	}
 
 	public void addPluginModelListener(IPluginModelListener listener) {
 		if (fListeners == null)
-			fListeners = new ArrayList();
+			fListeners = new ArrayList<IPluginModelListener>();
 		if (!fListeners.contains(listener))
 			fListeners.add(listener);
 	}
@@ -349,7 +351,7 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 			IFile file = project.getFile(PROXY_FILE_NAME);
 			Properties properties = new Properties();
 			StringBuffer buffer = new StringBuffer();
-			Iterator iter = fPluginIdSet.iterator();
+			Iterator<String> iter = fPluginIdSet.iterator();
 			while (iter.hasNext()) {
 				if (buffer.length() > 0)
 					buffer.append(","); //$NON-NLS-1$

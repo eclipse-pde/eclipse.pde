@@ -56,7 +56,7 @@ public interface IBundleClasspathResolver {
 	 * @param javaProject the java project to collect classpath entries for
 	 * @return additional entries to add to the bundle classpath. Map of IPath to Collection, possibly empty
 	 */
-	public Map/*<IPath, Collection<IPath>>*/getAdditionalClasspathEntries(IJavaProject javaProject);
+	public Map<IPath, Collection<IPath>> getAdditionalClasspathEntries(IJavaProject javaProject);
 
 	/**
 	 * Returns a possibly empty collection listing additional classpath entries for the source lookup path of a project in the workspace.
@@ -66,5 +66,5 @@ public interface IBundleClasspathResolver {
 	 * @param javaProject the java project to collect source entries for
 	 * @return additional entries for the source lookup path. Collection of IRuntimeClasspathEntry, possibly empty
 	 */
-	public Collection/*<IRuntimeClasspathEntry>*/getAdditionalSourceEntries(IJavaProject javaProject);
+	public Collection<IRuntimeClasspathEntry> getAdditionalSourceEntries(IJavaProject javaProject);
 }

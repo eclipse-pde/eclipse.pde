@@ -15,11 +15,11 @@ import java.util.ArrayList;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 
 public class FeatureModelDelta implements IFeatureModelDelta {
-	private ArrayList fAdded;
+	private ArrayList<IFeatureModel> fAdded;
 
-	private ArrayList fRemoved;
+	private ArrayList<IFeatureModel> fRemoved;
 
-	private ArrayList fChanged;
+	private ArrayList<IFeatureModel> fChanged;
 
 	private int kind = 0;
 
@@ -62,10 +62,10 @@ public class FeatureModelDelta implements IFeatureModelDelta {
 		return get(fChanged);
 	}
 
-	private IFeatureModel[] get(ArrayList list) {
+	private IFeatureModel[] get(ArrayList<IFeatureModel> list) {
 		if (list == null)
 			return new IFeatureModel[0];
-		return (IFeatureModel[]) list.toArray(new IFeatureModel[list.size()]);
+		return list.toArray(new IFeatureModel[list.size()]);
 	}
 
 	void add(IFeatureModel model, int type) {
@@ -83,9 +83,9 @@ public class FeatureModelDelta implements IFeatureModelDelta {
 		kind |= type;
 	}
 
-	private ArrayList add(ArrayList list, IFeatureModel model) {
+	private ArrayList<IFeatureModel> add(ArrayList<IFeatureModel> list, IFeatureModel model) {
 		if (list == null)
-			list = new ArrayList();
+			list = new ArrayList<IFeatureModel>();
 		list.add(model);
 		return list;
 	}

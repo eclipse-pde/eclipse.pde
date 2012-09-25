@@ -26,7 +26,7 @@ import org.eclipse.pde.internal.core.util.CoreUtility;
 
 public class SchemaRegistry {
 
-	private HashMap fRegistry = new HashMap();
+	private HashMap<String, ISchemaDescriptor> fRegistry = new HashMap<String, ISchemaDescriptor>();
 
 	public ISchema getSchema(String extPointID) {
 		IPluginExtensionPoint point = PDECore.getDefault().getExtensionsRegistry().findExtensionPoint(extPointID);
@@ -70,7 +70,7 @@ public class SchemaRegistry {
 	private ISchemaDescriptor getExistingDescriptor(String key, URL url) {
 		ISchemaDescriptor desc = null;
 		if (fRegistry.containsKey(key)) {
-			desc = (ISchemaDescriptor) fRegistry.get(key);
+			desc = fRegistry.get(key);
 			if (hasSchemaChanged(desc, url))
 				desc = null;
 		}

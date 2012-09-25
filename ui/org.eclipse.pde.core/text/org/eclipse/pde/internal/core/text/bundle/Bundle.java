@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.text.bundle;
 
+import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
+
 import java.util.Iterator;
 import java.util.Map;
 import org.eclipse.jface.text.*;
@@ -21,7 +23,7 @@ import org.osgi.framework.Constants;
 public class Bundle implements IBundle {
 
 	private BundleModel fModel;
-	private Map fDocumentHeaders = new HeaderMap();
+	private Map<String, IManifestHeader> fDocumentHeaders = new HeaderMap();
 
 	public Bundle(BundleModel model) {
 		fModel = model;
@@ -34,9 +36,9 @@ public class Bundle implements IBundle {
 	 * 
 	 * @param headers the headers to load in this model
 	 */
-	public void load(Map headers) {
+	public void load(Map<?, ?> headers) {
 		fDocumentHeaders.clear();
-		Iterator iter = headers.keySet().iterator();
+		Iterator<?> iter = headers.keySet().iterator();
 		while (iter.hasNext()) {
 			String key = iter.next().toString();
 			if (key.equals(Constants.BUNDLE_MANIFESTVERSION)) {
@@ -60,7 +62,7 @@ public class Bundle implements IBundle {
 	}
 
 	public void clearOffsets() {
-		Iterator iter = fDocumentHeaders.values().iterator();
+		Iterator<IManifestHeader> iter = fDocumentHeaders.values().iterator();
 		while (iter.hasNext()) {
 			ManifestHeader header = (ManifestHeader) iter.next();
 			header.setOffset(-1);
@@ -91,7 +93,7 @@ public class Bundle implements IBundle {
 				if (currentKey == null) {
 					int index = line.indexOf(':');
 					String name = (index != -1) ? line.substring(0, index) : line;
-					currentKey = (IDocumentKey) fDocumentHeaders.get(name);
+					currentKey = fDocumentHeaders.get(name);
 					if (currentKey != null) {
 						IRegion region = document.getLineInformation(i);
 						currentKey.setOffset(region.getOffset());
@@ -110,13 +112,13 @@ public class Bundle implements IBundle {
 	public void setHeader(String key, String value) {
 		if (value == null) {
 			// Do a remove
-			IManifestHeader header = (IManifestHeader) fDocumentHeaders.remove(key);
+			IManifestHeader header = fDocumentHeaders.remove(key);
 			if (header != null) {
 				fModel.fireModelObjectChanged(header, key, header.getValue(), null);
 			}
 		} else {
 			// Edit an existing header value or create a new header object
-			IManifestHeader header = (ManifestHeader) fDocumentHeaders.get(key);
+			IManifestHeader header = fDocumentHeaders.get(key);
 			if (header == null) {
 				header = getModel().getFactory().createHeader(key, value);
 				fDocumentHeaders.put(key, header);
@@ -141,10 +143,10 @@ public class Bundle implements IBundle {
 	 * @see org.eclipse.pde.internal.core.ibundle.IBundle#getManifestHeader(java.lang.String)
 	 */
 	public IManifestHeader getManifestHeader(String key) {
-		return (ManifestHeader) fDocumentHeaders.get(key);
+		return fDocumentHeaders.get(key);
 	}
 
-	public Map getHeaders() {
+	public Map<String, IManifestHeader> getHeaders() {
 		return fDocumentHeaders;
 	}
 

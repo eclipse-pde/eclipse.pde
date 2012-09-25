@@ -11,19 +11,15 @@
 package org.eclipse.pde.internal.core.schema;
 
 import java.io.PrintWriter;
+import java.util.List;
 import java.util.Vector;
-
-import org.eclipse.pde.internal.core.ischema.ISchema;
-import org.eclipse.pde.internal.core.ischema.ISchemaEnumeration;
-import org.eclipse.pde.internal.core.ischema.ISchemaObject;
-import org.eclipse.pde.internal.core.ischema.ISchemaRestriction;
-import org.eclipse.pde.internal.core.ischema.ISchemaSimpleType;
+import org.eclipse.pde.internal.core.ischema.*;
 
 public class ChoiceRestriction extends SchemaObject implements ISchemaRestriction {
 
 	private static final long serialVersionUID = 1L;
 	private ISchemaSimpleType baseType;
-	private Vector children;
+	private List<ISchemaEnumeration> children;
 	public static final String P_CHOICES = "choices"; //$NON-NLS-1$
 
 	public ChoiceRestriction(ISchema schema) {
@@ -33,7 +29,7 @@ public class ChoiceRestriction extends SchemaObject implements ISchemaRestrictio
 
 	public ChoiceRestriction(ChoiceRestriction source) {
 		this(source.getSchema());
-		children = new Vector();
+		children = new Vector<ISchemaEnumeration>();
 		Object[] choices = source.getChildren();
 		for (int i = 0; i < choices.length; i++) {
 			children.add(new SchemaEnumeration(this, ((ISchemaEnumeration) choices[i]).getName()));
@@ -51,9 +47,9 @@ public class ChoiceRestriction extends SchemaObject implements ISchemaRestrictio
 	public String[] getChoicesAsStrings() {
 		if (children == null)
 			return new String[0];
-		Vector result = new Vector();
+		Vector<String> result = new Vector<String>();
 		for (int i = 0; i < children.size(); i++) {
-			ISchemaEnumeration enumeration = (ISchemaEnumeration) children.get(i);
+			ISchemaEnumeration enumeration = children.get(i);
 			result.addElement(enumeration.getName());
 		}
 		String[] choices = new String[result.size()];
@@ -73,7 +69,7 @@ public class ChoiceRestriction extends SchemaObject implements ISchemaRestrictio
 		String svalue = value.toString();
 
 		for (int i = 0; i < children.size(); i++) {
-			ISchemaEnumeration enumeration = (ISchemaEnumeration) children.get(i);
+			ISchemaEnumeration enumeration = children.get(i);
 			if (enumeration.getName().equals(svalue))
 				return true;
 		}
@@ -84,8 +80,8 @@ public class ChoiceRestriction extends SchemaObject implements ISchemaRestrictio
 		this.baseType = baseType;
 	}
 
-	public void setChildren(Vector children) {
-		Vector oldValue = this.children;
+	public void setChildren(List<ISchemaEnumeration> children) {
+		List<ISchemaEnumeration> oldValue = this.children;
 		this.children = children;
 		if (getParent() != null)
 			getSchema().fireModelObjectChanged(this, P_CHOICES, oldValue, children);

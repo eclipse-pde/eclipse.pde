@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.project;
 
-import org.eclipse.pde.core.target.TargetBundle;
-
 import java.io.*;
 import java.util.*;
 import java.util.jar.JarFile;
@@ -25,6 +23,7 @@ import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.project.*;
+import org.eclipse.pde.core.target.TargetBundle;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.target.Messages;
 import org.eclipse.team.core.ScmUrlImportDescription;
@@ -181,7 +180,6 @@ public final class BundleProjectService implements IBundleProjectService {
 		return null;
 	}
 
-
 	/**
 	 * Creates and returns a map of bundle import descriptions for the given bundles.
 	 * The map is of {@link IBundleImporter} -> arrays of {@link BundleImportDescription}.
@@ -193,14 +191,14 @@ public final class BundleProjectService implements IBundleProjectService {
 	 * @return import instructions
 	 * @exception CoreException if unable to read manifest
 	 */
-	public Map getImportDescriptions(IPluginModelBase[] models) throws CoreException {
+	public Map<IBundleImporter, ?> getImportDescriptions(IPluginModelBase[] models) throws CoreException {
 		// build manifests
-		List manifests = new ArrayList();
-		List plugins = new ArrayList();
+		List<Map<?, ?>> manifests = new ArrayList<Map<?, ?>>();
+		List<IPluginModelBase> plugins = new ArrayList<IPluginModelBase>();
 		for (int i = 0; i < models.length; i++) {
 			String location = models[i].getInstallLocation();
 			if (location != null) {
-				Map manifest = loadManifest(new File(location));
+				Map<?, ?> manifest = loadManifest(new File(location));
 				if (manifest != null) {
 					manifests.add(manifest);
 					plugins.add(models[i]);
@@ -208,13 +206,14 @@ public final class BundleProjectService implements IBundleProjectService {
 			}
 		}
 		if (!manifests.isEmpty()) {
-			Map[] marray = (Map[]) manifests.toArray(new Map[manifests.size()]);
-			Map result = new HashMap();
+			@SuppressWarnings("rawtypes")
+			Map[] marray = manifests.toArray(new Map[manifests.size()]);
+			Map<IBundleImporter, Object> result = new HashMap<IBundleImporter, Object>();
 			IBundleImporter[] importers = Team.getBundleImporters();
 			for (int i = 0; i < importers.length; i++) {
 				IBundleImporter importer = importers[i];
 				ScmUrlImportDescription[] descriptions = importer.validateImport(marray);
-				List descriptioonList = new ArrayList();
+				List<ScmUrlImportDescription> descriptioonList = new ArrayList<ScmUrlImportDescription>();
 				for (int j = 0; j < descriptions.length; j++) {
 					ScmUrlImportDescription description = descriptions[j];
 					if (description != null) {
@@ -229,7 +228,7 @@ public final class BundleProjectService implements IBundleProjectService {
 			}
 			return result;
 		}
-		return new HashMap();
+		return new HashMap<IBundleImporter, Object>();
 	}
 
 	/**
@@ -241,7 +240,7 @@ public final class BundleProjectService implements IBundleProjectService {
 	 * @return bundle manifest dictionary or <code>null</code>
 	 * @throws CoreException if manifest has invalid syntax or is missing
 	 */
-	private Map loadManifest(File bundleLocation) throws CoreException {
+	private Map<?, ?> loadManifest(File bundleLocation) throws CoreException {
 		ZipFile jarFile = null;
 		InputStream manifestStream = null;
 		String extension = new Path(bundleLocation.getName()).getFileExtension();
@@ -261,7 +260,7 @@ public final class BundleProjectService implements IBundleProjectService {
 			if (manifestStream == null) {
 				return null;
 			}
-			return ManifestElement.parseBundleManifest(manifestStream, new Hashtable(10));
+			return ManifestElement.parseBundleManifest(manifestStream, new Hashtable<String, String>(10));
 		} catch (BundleException e) {
 			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, TargetBundle.STATUS_INVALID_MANIFEST, NLS.bind(Messages.DirectoryBundleContainer_3, bundleLocation.getAbsolutePath()), e));
 		} catch (IOException e) {

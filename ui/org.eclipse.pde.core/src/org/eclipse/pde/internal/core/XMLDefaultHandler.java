@@ -30,7 +30,7 @@ public class XMLDefaultHandler extends DefaultHandler {
 	private org.w3c.dom.Document fDocument;
 	private Element fRootElement;
 
-	protected Stack fElementStack = new Stack();
+	protected Stack<Element> fElementStack = new Stack<Element>();
 	protected boolean fAbbreviated;
 
 	public XMLDefaultHandler() {
@@ -51,7 +51,7 @@ public class XMLDefaultHandler extends DefaultHandler {
 		if (fRootElement == null)
 			fRootElement = element;
 		else
-			((Element) fElementStack.peek()).appendChild(element);
+			fElementStack.peek().appendChild(element);
 		fElementStack.push(element);
 	}
 
@@ -107,7 +107,7 @@ public class XMLDefaultHandler extends DefaultHandler {
 		if (fRootElement == null)
 			fDocument.appendChild(text);
 		else
-			((Element) fElementStack.peek()).appendChild(text);
+			fElementStack.peek().appendChild(text);
 	}
 
 	public Node getDocumentElement() {

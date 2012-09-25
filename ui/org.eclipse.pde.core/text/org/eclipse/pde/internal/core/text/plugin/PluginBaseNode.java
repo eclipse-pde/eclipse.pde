@@ -85,7 +85,7 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#getLibraries()
 	 */
 	public IPluginLibrary[] getLibraries() {
-		ArrayList result = new ArrayList();
+		ArrayList<IDocumentElementNode> result = new ArrayList<IDocumentElementNode>();
 		IDocumentElementNode requiresNode = getEnclosingElement("runtime", false); //$NON-NLS-1$
 		if (requiresNode != null) {
 			IDocumentElementNode[] children = requiresNode.getChildNodes();
@@ -95,7 +95,7 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 			}
 		}
 
-		return (IPluginLibrary[]) result.toArray(new IPluginLibrary[result.size()]);
+		return result.toArray(new IPluginLibrary[result.size()]);
 	}
 
 	private IDocumentElementNode getEnclosingElement(String elementName, boolean create) {
@@ -132,7 +132,7 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	 * @see org.eclipse.pde.core.plugin.IPluginBase#getImports()
 	 */
 	public IPluginImport[] getImports() {
-		ArrayList result = new ArrayList();
+		ArrayList<IDocumentElementNode> result = new ArrayList<IDocumentElementNode>();
 		IDocumentElementNode requiresNode = getEnclosingElement("requires", false); //$NON-NLS-1$
 		if (requiresNode != null) {
 			IDocumentElementNode[] children = requiresNode.getChildNodes();
@@ -142,7 +142,7 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 			}
 		}
 
-		return (IPluginImport[]) result.toArray(new IPluginImport[result.size()]);
+		return result.toArray(new IPluginImport[result.size()]);
 	}
 
 	/* (non-Javadoc)
@@ -272,26 +272,26 @@ public abstract class PluginBaseNode extends PluginObjectNode implements IPlugin
 	 * @see org.eclipse.pde.core.plugin.IExtensions#getExtensionPoints()
 	 */
 	public IPluginExtensionPoint[] getExtensionPoints() {
-		ArrayList result = new ArrayList();
+		ArrayList<IDocumentElementNode> result = new ArrayList<IDocumentElementNode>();
 		IDocumentElementNode[] children = getChildNodes();
 		for (int i = 0; i < children.length; i++) {
 			if (children[i] instanceof IPluginExtensionPoint)
 				result.add(children[i]);
 		}
-		return (IPluginExtensionPoint[]) result.toArray(new IPluginExtensionPoint[result.size()]);
+		return result.toArray(new IPluginExtensionPoint[result.size()]);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IExtensions#getExtensions()
 	 */
 	public IPluginExtension[] getExtensions() {
-		ArrayList result = new ArrayList();
+		ArrayList<IDocumentElementNode> result = new ArrayList<IDocumentElementNode>();
 		IDocumentElementNode[] children = getChildNodes();
 		for (int i = 0; i < children.length; i++) {
 			if (children[i] instanceof IPluginExtension)
 				result.add(children[i]);
 		}
-		return (IPluginExtension[]) result.toArray(new IPluginExtension[result.size()]);
+		return result.toArray(new IPluginExtension[result.size()]);
 	}
 
 	public int getIndexOf(IPluginExtension e) {

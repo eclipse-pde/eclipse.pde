@@ -186,14 +186,14 @@ public abstract class PluginObject extends PlatformObject implements IPluginObje
 		return super.toString();
 	}
 
-	public Vector addComments(Node node, Vector result) {
+	public Vector<String> addComments(Node node, Vector<String> result) {
 		for (Node prev = node.getPreviousSibling(); prev != null; prev = prev.getPreviousSibling()) {
 			if (prev.getNodeType() == Node.TEXT_NODE)
 				continue;
 			if (prev instanceof Comment) {
 				String comment = prev.getNodeValue();
 				if (result == null)
-					result = new Vector();
+					result = new Vector<String>();
 				result.add(0, comment);
 			} else
 				break;
@@ -201,7 +201,7 @@ public abstract class PluginObject extends PlatformObject implements IPluginObje
 		return result;
 	}
 
-	void writeComments(PrintWriter writer, Vector source) {
+	void writeComments(PrintWriter writer, Vector<?> source) {
 		if (source == null)
 			return;
 		for (int i = 0; i < source.size(); i++) {
@@ -226,6 +226,7 @@ public abstract class PluginObject extends PlatformObject implements IPluginObje
 		return fStartLine;
 	}
 
+	@SuppressWarnings("rawtypes")
 	public Object getAdapter(Class adapter) {
 		if (adapter.equals(IPluginModelBase.class)) {
 			return getPluginModel();

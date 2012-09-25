@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.core.text.plugin;
 
 import java.util.ArrayList;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.plugin.IFragment;
 import org.eclipse.pde.core.plugin.IMatchRules;
@@ -91,7 +90,7 @@ public class FragmentNode extends PluginBaseNode implements IFragment {
 	 * @see org.eclipse.pde.internal.ui.model.plugin.PluginBaseNode#getSpecificAttributes()
 	 */
 	protected String[] getSpecificAttributes() {
-		ArrayList result = new ArrayList();
+		ArrayList<String> result = new ArrayList<String>();
 
 		String pluginID = getPluginId();
 		if (pluginID != null && pluginID.trim().length() > 0)
@@ -105,6 +104,6 @@ public class FragmentNode extends PluginBaseNode implements IFragment {
 		if (match != null && match.trim().length() > 0)
 			result.add("   " + P_RULE + "=\"" + match + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
-		return (String[]) result.toArray(new String[result.size()]);
+		return result.toArray(new String[result.size()]);
 	}
 }

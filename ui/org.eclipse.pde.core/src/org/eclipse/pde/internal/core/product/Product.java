@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.product;
 
+import org.eclipse.pde.internal.core.iproduct.IProductObject;
+
 import java.io.PrintWriter;
 import java.util.*;
 import org.eclipse.pde.core.IModelChangedEvent;
@@ -28,10 +30,10 @@ public class Product extends ProductObject implements IProduct {
 	private String fVersion;
 	private IAboutInfo fAboutInfo;
 
-	private TreeMap fPlugins = new TreeMap();
-	private TreeMap fPluginConfigurations = new TreeMap();
-	private TreeMap fConfigurationProperties = new TreeMap();
-	private List fFeatures = new ArrayList();
+	private TreeMap<String, IProductObject> fPlugins = new TreeMap<String, IProductObject>();
+	private TreeMap<String, IProductObject> fPluginConfigurations = new TreeMap<String, IProductObject>();
+	private TreeMap<String, IProductObject> fConfigurationProperties = new TreeMap<String, IProductObject>();
+	private List<IProductObject> fFeatures = new ArrayList<IProductObject>();
 	private IConfigurationFileInfo fConfigIniInfo;
 	private IJREInfo fJVMInfo;
 	private boolean fUseFeatures;
@@ -216,7 +218,7 @@ public class Product extends ProductObject implements IProduct {
 
 		writer.println();
 		writer.println(indent + "   <plugins>"); //$NON-NLS-1$  
-		Iterator iter = fPlugins.values().iterator();
+		Iterator<IProductObject> iter = fPlugins.values().iterator();
 		while (iter.hasNext()) {
 			IProductPlugin plugin = (IProductPlugin) iter.next();
 			plugin.write(indent + "      ", writer); //$NON-NLS-1$
@@ -460,7 +462,7 @@ public class Product extends ProductObject implements IProduct {
 	 */
 	public void removePlugins(IProductPlugin[] plugins) {
 		boolean modified = false;
-		LinkedList removedConfigurations = new LinkedList();
+		LinkedList<Object> removedConfigurations = new LinkedList<Object>();
 		for (int i = 0; i < plugins.length; i++) {
 			final String id = plugins[i].getId();
 			if (fPlugins.remove(id) != null) {
@@ -474,7 +476,7 @@ public class Product extends ProductObject implements IProduct {
 			if (modified)
 				fireStructureChanged(plugins, IModelChangedEvent.REMOVE);
 			if (!removedConfigurations.isEmpty()) {
-				fireStructureChanged((IProductObject[]) removedConfigurations.toArray(new IProductObject[removedConfigurations.size()]), IModelChangedEvent.REMOVE);
+				fireStructureChanged(removedConfigurations.toArray(new IProductObject[removedConfigurations.size()]), IModelChangedEvent.REMOVE);
 			}
 		}
 	}
@@ -511,21 +513,21 @@ public class Product extends ProductObject implements IProduct {
 	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#getPlugins()
 	 */
 	public IProductPlugin[] getPlugins() {
-		return (IProductPlugin[]) fPlugins.values().toArray(new IProductPlugin[fPlugins.size()]);
+		return fPlugins.values().toArray(new IProductPlugin[fPlugins.size()]);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#getPluginConfigurations()
 	 */
 	public IPluginConfiguration[] getPluginConfigurations() {
-		return (IPluginConfiguration[]) fPluginConfigurations.values().toArray(new IPluginConfiguration[fPluginConfigurations.size()]);
+		return fPluginConfigurations.values().toArray(new IPluginConfiguration[fPluginConfigurations.size()]);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#getConfigurationProperties()
 	 */
 	public IConfigurationProperty[] getConfigurationProperties() {
-		return (IConfigurationProperty[]) fConfigurationProperties.values().toArray(new IConfigurationProperty[fConfigurationProperties.size()]);
+		return fConfigurationProperties.values().toArray(new IConfigurationProperty[fConfigurationProperties.size()]);
 	}
 
 	/* (non-Javadoc)
@@ -623,7 +625,7 @@ public class Product extends ProductObject implements IProduct {
 	}
 
 	public IProductFeature[] getFeatures() {
-		return (IProductFeature[]) fFeatures.toArray(new IProductFeature[fFeatures.size()]);
+		return fFeatures.toArray(new IProductFeature[fFeatures.size()]);
 	}
 
 	public IArgumentsInfo getLauncherArguments() {

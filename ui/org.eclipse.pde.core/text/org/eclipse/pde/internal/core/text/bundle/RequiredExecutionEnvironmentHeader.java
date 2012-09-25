@@ -44,7 +44,7 @@ public class RequiredExecutionEnvironmentHeader extends CompositeManifestHeader 
 	}
 
 	public void addExecutionEnvironments(Object[] envs) {
-		ArrayList list = new ArrayList(envs.length);
+		ArrayList<ExecutionEnvironment> list = new ArrayList<ExecutionEnvironment>(envs.length);
 		for (int i = 0; i < envs.length; i++) {
 			ExecutionEnvironment env = null;
 			if (envs[i] instanceof ExecutionEnvironment) {
@@ -57,7 +57,7 @@ public class RequiredExecutionEnvironmentHeader extends CompositeManifestHeader 
 		}
 
 		if (list.size() > 0)
-			addManifestElements((ExecutionEnvironment[]) list.toArray(new ExecutionEnvironment[list.size()]));
+			addManifestElements(list.toArray(new ExecutionEnvironment[list.size()]));
 	}
 
 	public void addExecutionEnvironments(ExecutionEnvironment[] envs) {

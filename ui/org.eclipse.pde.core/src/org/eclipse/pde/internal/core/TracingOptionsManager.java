@@ -38,7 +38,7 @@ public class TracingOptionsManager {
 		Properties modelOptions = getOptions(model);
 		if (modelOptions == null)
 			return;
-		for (Enumeration keys = modelOptions.keys(); keys.hasMoreElements();) {
+		for (Enumeration<?> keys = modelOptions.keys(); keys.hasMoreElements();) {
 			String key = keys.nextElement().toString();
 			String value = modelOptions.getProperty(key);
 			if (key != null && value != null)
@@ -46,11 +46,11 @@ public class TracingOptionsManager {
 		}
 	}
 
-	public Hashtable getTemplateTable(String pluginId) {
+	public Hashtable<String, ?> getTemplateTable(String pluginId) {
 		if (template == null)
 			createTemplate();
-		Hashtable defaults = new Hashtable();
-		for (Enumeration keys = template.keys(); keys.hasMoreElements();) {
+		Hashtable<String, ?> defaults = new Hashtable<String, Object>();
+		for (Enumeration<?> keys = template.keys(); keys.hasMoreElements();) {
 			String key = keys.nextElement().toString();
 			if (belongsTo(key, pluginId)) {
 				defaults.put(key, template.get(key));
@@ -65,12 +65,12 @@ public class TracingOptionsManager {
 		return pluginId.equalsIgnoreCase(firstSegment);
 	}
 
-	public Properties getTracingOptions(Map storedOptions) {
+	public Properties getTracingOptions(Map<?, ?> storedOptions) {
 		// Start with the fresh template from plugins
 		Properties defaults = getTracingTemplateCopy();
 		if (storedOptions != null) {
 			// Load stored values, but only for existing keys
-			Iterator iter = storedOptions.keySet().iterator();
+			Iterator<?> iter = storedOptions.keySet().iterator();
 			while (iter.hasNext()) {
 				String key = iter.next().toString();
 				if (defaults.containsKey(key)) {
@@ -140,9 +140,9 @@ public class TracingOptionsManager {
 		}
 	}
 
-	public void save(String filename, Map map, HashSet selected) {
+	public void save(String filename, Map<?, ?> map, HashSet<?> selected) {
 		Properties properties = getTracingOptions(map);
-		for (Enumeration keys = properties.keys(); keys.hasMoreElements();) {
+		for (Enumeration<?> keys = properties.keys(); keys.hasMoreElements();) {
 			String key = keys.nextElement().toString();
 			Path path = new Path(key);
 			if (path.segmentCount() < 1 || !selected.contains(path.segment(0).toString())) {
@@ -152,7 +152,7 @@ public class TracingOptionsManager {
 		save(filename, properties);
 	}
 
-	public void save(String filename, Map map) {
+	public void save(String filename, Map<?, ?> map) {
 		save(filename, getTracingOptions(map));
 	}
 

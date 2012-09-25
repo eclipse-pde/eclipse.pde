@@ -28,7 +28,7 @@ import org.eclipse.pde.internal.core.plugin.Plugin;
 
 public class ClasspathUtilCore {
 
-	public static void addLibraries(IPluginModelBase model, ArrayList result) {
+	public static void addLibraries(IPluginModelBase model, ArrayList<IClasspathEntry> result) {
 		if (new File(model.getInstallLocation()).isFile()) {
 			addJARdPlugin(model, result);
 		} else {
@@ -44,7 +44,7 @@ public class ClasspathUtilCore {
 		}
 	}
 
-	private static void addJARdPlugin(IPluginModelBase model, ArrayList result) {
+	private static void addJARdPlugin(IPluginModelBase model, ArrayList<IClasspathEntry> result) {
 
 		IPath sourcePath = getSourceAnnotation(model, "."); //$NON-NLS-1$
 		if (sourcePath == null)

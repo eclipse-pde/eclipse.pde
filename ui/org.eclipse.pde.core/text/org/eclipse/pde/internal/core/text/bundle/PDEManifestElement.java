@@ -11,12 +11,8 @@
 
 package org.eclipse.pde.internal.core.text.bundle;
 
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.TreeMap;
-
+import java.io.Serializable;
+import java.util.*;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.internal.core.bundle.BundleObject;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
@@ -27,8 +23,8 @@ public class PDEManifestElement extends BundleObject {
 	private static final long serialVersionUID = 1L;
 
 	protected String[] fValueComponents;
-	protected TreeMap fAttributes;
-	protected TreeMap fDirectives;
+	protected TreeMap<String, Serializable> fAttributes;
+	protected TreeMap<String, Serializable> fDirectives;
 
 	protected transient ManifestHeader fHeader;
 
@@ -60,7 +56,7 @@ public class PDEManifestElement extends BundleObject {
 		return getTableValue(fAttributes, key);
 	}
 
-	public Set getKeys() {
+	public Set<String> getKeys() {
 		return getTableKeys(fAttributes);
 	}
 
@@ -80,7 +76,7 @@ public class PDEManifestElement extends BundleObject {
 		return getTableValues(fDirectives, key);
 	}
 
-	public Set getDirectiveKeys() {
+	public Set<String> getDirectiveKeys() {
 		return getTableKeys(fDirectives);
 	}
 
@@ -92,7 +88,7 @@ public class PDEManifestElement extends BundleObject {
 		fDirectives = setTableValue(fDirectives, key, value);
 	}
 
-	private String getTableValue(TreeMap table, String key) {
+	private String getTableValue(TreeMap<String, Serializable> table, String key) {
 		if (table == null)
 			return null;
 		Object result = table.get(key);
@@ -101,12 +97,12 @@ public class PDEManifestElement extends BundleObject {
 		if (result instanceof String)
 			return (String) result;
 
-		ArrayList valueList = (ArrayList) result;
+		ArrayList<?> valueList = (ArrayList<?>) result;
 		//return the last value
 		return (String) valueList.get(valueList.size() - 1);
 	}
 
-	private String[] getTableValues(TreeMap table, String key) {
+	private String[] getTableValues(TreeMap<String, Serializable> table, String key) {
 		if (table == null)
 			return null;
 		Object result = table.get(key);
@@ -114,28 +110,29 @@ public class PDEManifestElement extends BundleObject {
 			return null;
 		if (result instanceof String)
 			return new String[] {(String) result};
-		ArrayList valueList = (ArrayList) result;
-		return (String[]) valueList.toArray(new String[valueList.size()]);
+		ArrayList<?> valueList = (ArrayList<?>) result;
+		return valueList.toArray(new String[valueList.size()]);
 	}
 
-	private Set getTableKeys(TreeMap table) {
+	private Set<String> getTableKeys(TreeMap<String, Serializable> table) {
 		if (table == null)
 			return null;
 		return table.keySet();
 	}
 
-	private TreeMap addTableValue(TreeMap table, String key, String value) {
+	@SuppressWarnings("unchecked")
+	private TreeMap<String, Serializable> addTableValue(TreeMap<String, Serializable> table, String key, String value) {
 		if (table == null) {
-			table = new TreeMap();
+			table = new TreeMap<String, Serializable>();
 		}
 		Object curValue = table.get(key);
 		if (curValue != null) {
-			ArrayList newList;
+			ArrayList<Object> newList;
 			// create a list to contain multiple values
 			if (curValue instanceof ArrayList) {
-				newList = (ArrayList) curValue;
+				newList = (ArrayList<Object>) curValue;
 			} else {
-				newList = new ArrayList(5);
+				newList = new ArrayList<Object>(5);
 				newList.add(curValue);
 			}
 			newList.add(value);
@@ -146,9 +143,9 @@ public class PDEManifestElement extends BundleObject {
 		return table;
 	}
 
-	private TreeMap setTableValue(TreeMap table, String key, String value) {
+	private TreeMap<String, Serializable> setTableValue(TreeMap<String, Serializable> table, String key, String value) {
 		if (table == null) {
-			table = new TreeMap();
+			table = new TreeMap<String, Serializable>();
 		}
 		if (value == null || value.trim().length() == 0)
 			table.remove(key);
@@ -173,7 +170,7 @@ public class PDEManifestElement extends BundleObject {
 
 	private void init(ManifestElement manifestElement) {
 		setValueComponents(manifestElement.getValueComponents());
-		Enumeration attKeys = manifestElement.getKeys();
+		Enumeration<?> attKeys = manifestElement.getKeys();
 		if (attKeys != null) {
 			while (attKeys.hasMoreElements()) {
 				String attKey = (String) attKeys.nextElement();
@@ -182,7 +179,7 @@ public class PDEManifestElement extends BundleObject {
 					addAttribute(attKey, values[i]);
 			}
 		}
-		Enumeration dirKeys = manifestElement.getDirectiveKeys();
+		Enumeration<?> dirKeys = manifestElement.getDirectiveKeys();
 		if (dirKeys != null) {
 			while (dirKeys.hasMoreElements()) {
 				String dirKey = (String) dirKeys.nextElement();
@@ -212,12 +209,12 @@ public class PDEManifestElement extends BundleObject {
 		return sb.toString();
 	}
 
-	protected void appendValuesToBuffer(StringBuffer sb, TreeMap table) {
+	protected void appendValuesToBuffer(StringBuffer sb, TreeMap<String, Serializable> table) {
 		if (table == null)
 			return;
-		Iterator dkeys = table.keySet().iterator();
+		Iterator<String> dkeys = table.keySet().iterator();
 		while (dkeys.hasNext()) {
-			String dkey = (String) dkeys.next();
+			String dkey = dkeys.next();
 			Object value = table.get(dkey);
 			if (value == null)
 				continue;
@@ -233,7 +230,7 @@ public class PDEManifestElement extends BundleObject {
 				if (wrap)
 					sb.append("\""); //$NON-NLS-1$
 			} else if (value instanceof ArrayList) {
-				ArrayList values = (ArrayList) value;
+				ArrayList<?> values = (ArrayList<?>) value;
 				boolean wrap = (values.size() > 1 || (values.size() == 1 && shouldWrap(values.get(0).toString())));
 				if (wrap)
 					sb.append("\""); //$NON-NLS-1$

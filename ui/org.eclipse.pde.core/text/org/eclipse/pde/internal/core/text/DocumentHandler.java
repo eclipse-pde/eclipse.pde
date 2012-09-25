@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.text;
 
+import org.eclipse.jface.text.Position;
+
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Stack;
@@ -20,7 +22,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 public abstract class DocumentHandler extends DefaultHandler {
 
-	protected Stack fDocumentNodeStack = new Stack();
+	protected Stack<IDocumentElementNode> fDocumentNodeStack = new Stack<IDocumentElementNode>();
 	protected int fHighestOffset = 0;
 	private Locator fLocator;
 	private IDocumentElementNode fLastError;
@@ -43,7 +45,7 @@ public abstract class DocumentHandler extends DefaultHandler {
 		if (fDocumentNodeStack.isEmpty()) {
 			return null;
 		}
-		return (IDocumentElementNode) fDocumentNodeStack.peek();
+		return fDocumentNodeStack.peek();
 	}
 
 	/* (non-Javadoc)
@@ -124,7 +126,7 @@ public abstract class DocumentHandler extends DefaultHandler {
 		}
 		String text = doc.get(fHighestOffset + 1, endOffset - fHighestOffset - 1);
 
-		ArrayList commentPositions = new ArrayList();
+		ArrayList<Position> commentPositions = new ArrayList<Position>();
 		for (int idx = 0; idx < text.length();) {
 			idx = text.indexOf("<!--", idx); //$NON-NLS-1$
 			if (idx == -1)
@@ -144,7 +146,7 @@ public abstract class DocumentHandler extends DefaultHandler {
 				break;
 			boolean valid = true;
 			for (int i = 0; i < commentPositions.size(); i++) {
-				Position pos = (Position) commentPositions.get(i);
+				Position pos = commentPositions.get(i);
 				if (pos.includes(idx)) {
 					valid = false;
 					break;
@@ -197,7 +199,7 @@ public abstract class DocumentHandler extends DefaultHandler {
 		if (fDocumentNodeStack.isEmpty())
 			return;
 
-		IDocumentElementNode node = (IDocumentElementNode) fDocumentNodeStack.pop();
+		IDocumentElementNode node = fDocumentNodeStack.pop();
 		try {
 			node.setLength(getElementLength(node, fLocator.getLineNumber() - 1, fLocator.getColumnNumber()));
 			setTextNodeOffset(node);
@@ -250,7 +252,7 @@ public abstract class DocumentHandler extends DefaultHandler {
 	 */
 	private void generateErrorElementHierarchy() {
 		while (!fDocumentNodeStack.isEmpty()) {
-			IDocumentElementNode node = (IDocumentElementNode) fDocumentNodeStack.pop();
+			IDocumentElementNode node = fDocumentNodeStack.pop();
 			node.setIsErrorNode(true);
 			removeOrphanAttributes(node);
 			removeOrphanElements(node);
@@ -293,7 +295,7 @@ public abstract class DocumentHandler extends DefaultHandler {
 		if (!fReconciling || fDocumentNodeStack.isEmpty())
 			return;
 
-		IDocumentElementNode parent = (IDocumentElementNode) fDocumentNodeStack.peek();
+		IDocumentElementNode parent = fDocumentNodeStack.peek();
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(ch, start, length);
 		getDocumentTextNode(buffer.toString(), parent);

@@ -26,8 +26,8 @@ public class PDESchemaHelper {
 	 * 		a schema identifier attribute (e.g., org.eclipse.ui.perspectives/perspective/@id)
 	 * @return A map with the ids as keys and respective {@link IConfigurationElement} as pairs
 	 */
-	public static Map getValidAttributes(ISchemaAttribute attribute) {
-		Map attributeMap = new HashMap();
+	public static Map<String, IConfigurationElement> getValidAttributes(ISchemaAttribute attribute) {
+		Map<String, IConfigurationElement> attributeMap = new HashMap<String, IConfigurationElement>();
 
 		// TODO support multiple 
 
@@ -66,13 +66,13 @@ public class PDESchemaHelper {
 	}
 
 	// TODO can we do this any faster?
-	private static void gatherAttributes(Map attributesInfo, String basedOn) {
+	private static void gatherAttributes(Map<String, IConfigurationElement> attributesInfo, String basedOn) {
 		if (basedOn == null) // check for null
 			return;
 		String[] path = basedOn.split("/"); //$NON-NLS-1$
 		IExtension[] extensions = PDECore.getDefault().getExtensionsRegistry().findExtensions(path[0], true);
 
-		List members = new ArrayList();
+		List<IConfigurationElement> members = new ArrayList<IConfigurationElement>();
 		for (int i = 0; i < extensions.length; i++) {
 			// handle the core style identifier case
 			if (path.length == 2) {
@@ -87,12 +87,12 @@ public class PDESchemaHelper {
 				}
 			}
 		}
-		List parents = members;
+		List<IConfigurationElement> parents = members;
 		for (int i = 2; i < path.length; i++) {
 			if (path[i].startsWith("@")) { //$NON-NLS-1$
 				String attName = path[i].substring(1);
-				for (Iterator iterator = parents.iterator(); iterator.hasNext();) {
-					IConfigurationElement element = (IConfigurationElement) iterator.next();
+				for (Iterator<IConfigurationElement> iterator = parents.iterator(); iterator.hasNext();) {
+					IConfigurationElement element = iterator.next();
 					String value = element.getAttribute(attName);
 					if (value != null) {
 						// see bug 248248 for why we have this contentTypes check
@@ -105,16 +105,16 @@ public class PDESchemaHelper {
 				}
 				return;
 			}
-			members = new ArrayList();
-			for (Iterator iterator = parents.iterator(); iterator.hasNext();) {
-				IConfigurationElement element = (IConfigurationElement) iterator.next();
+			members = new ArrayList<IConfigurationElement>();
+			for (Iterator<IConfigurationElement> iterator = parents.iterator(); iterator.hasNext();) {
+				IConfigurationElement element = iterator.next();
 				members.addAll(keepGoing(element, path[i]));
 			}
 			parents = members;
 		}
 	}
 
-	private static List keepGoing(IConfigurationElement element, String tag) {
+	private static List<IConfigurationElement> keepGoing(IConfigurationElement element, String tag) {
 		return Arrays.asList(element.getChildren(tag));
 	}
 

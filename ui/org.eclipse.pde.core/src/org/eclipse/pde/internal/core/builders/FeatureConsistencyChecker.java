@@ -56,7 +56,7 @@ public class FeatureConsistencyChecker extends IncrementalProjectBuilder {
 		}
 	}
 
-	protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {
+	protected IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
 		if (PDECore.getDefault().getBundle().getState() != Bundle.ACTIVE || monitor.isCanceled())
 			return new IProject[0];
 

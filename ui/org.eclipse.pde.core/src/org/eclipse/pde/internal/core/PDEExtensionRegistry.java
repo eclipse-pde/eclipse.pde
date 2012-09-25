@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IRegistryChangeListener;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+
 import java.io.File;
 import java.util.*;
 import org.eclipse.core.runtime.*;
@@ -29,7 +33,7 @@ public class PDEExtensionRegistry {
 	private PDERegistryStrategy fStrategy = null;
 
 	private IPluginModelBase[] fModels = null;
-	private ArrayList fListeners = new ArrayList();
+	private ArrayList<IRegistryChangeListener> fListeners = new ArrayList<IRegistryChangeListener>();
 
 	private static final String EXTENSION_DIR = ".extensions"; //$NON-NLS-1$
 
@@ -75,8 +79,8 @@ public class PDEExtensionRegistry {
 	protected synchronized IExtensionRegistry getRegistry() {
 		if (fRegistry == null) {
 			fRegistry = createRegistry();
-			for (ListIterator li = fListeners.listIterator(); li.hasNext();)
-				fRegistry.addRegistryChangeListener((IRegistryChangeListener) li.next());
+			for (ListIterator<IRegistryChangeListener> li = fListeners.listIterator(); li.hasNext();)
+				fRegistry.addRegistryChangeListener(li.next());
 		}
 		return fRegistry;
 	}
@@ -109,13 +113,13 @@ public class PDEExtensionRegistry {
 			return activeOnly ? PluginRegistry.getActiveModels() : PluginRegistry.getAllModels();
 		}
 		IExtension[] exts = point.getExtensions();
-		HashSet plugins = new HashSet();
+		HashSet<IPluginModelBase> plugins = new HashSet<IPluginModelBase>();
 		for (int i = 0; i < exts.length; i++) {
 			IPluginModelBase base = getPlugin(exts[i].getContributor(), false);
 			if (base != null && !plugins.contains(base) && (!activeOnly || base.isEnabled()))
 				plugins.add(base);
 		}
-		return (IPluginModelBase[]) plugins.toArray(new IPluginModelBase[plugins.size()]);
+		return plugins.toArray(new IPluginModelBase[plugins.size()]);
 	}
 
 	/*
@@ -169,14 +173,14 @@ public class PDEExtensionRegistry {
 		if (contributor == null)
 			return new IPluginExtension[0];
 		IExtension[] extensions = getRegistry().getExtensions(fStrategy.createContributor(base));
-		ArrayList list = new ArrayList();
+		ArrayList<PluginExtension> list = new ArrayList<PluginExtension>();
 		for (int i = 0; i < extensions.length; i++) {
 			PluginExtension extension = new PluginExtension(extensions[i]);
 			extension.setModel(getExtensionsModel(base));
 			extension.setParent(base.getExtensions());
 			list.add(extension);
 		}
-		return (IPluginExtension[]) list.toArray(new IPluginExtension[list.size()]);
+		return list.toArray(new IPluginExtension[list.size()]);
 	}
 
 	public IPluginExtensionPoint[] findExtensionPointsForPlugin(IPluginModelBase base) {
@@ -184,14 +188,14 @@ public class PDEExtensionRegistry {
 		if (contributor == null)
 			return new IPluginExtensionPoint[0];
 		IExtensionPoint[] extensions = getRegistry().getExtensionPoints(fStrategy.createContributor(base));
-		ArrayList list = new ArrayList();
+		ArrayList<PluginExtensionPoint> list = new ArrayList<PluginExtensionPoint>();
 		for (int i = 0; i < extensions.length; i++) {
 			PluginExtensionPoint point = new PluginExtensionPoint(extensions[i]);
 			point.setModel(getExtensionsModel(base));
 			point.setParent(base.getExtensions());
 			list.add(point);
 		}
-		return (IPluginExtensionPoint[]) list.toArray(new IPluginExtensionPoint[list.size()]);
+		return list.toArray(new IPluginExtensionPoint[list.size()]);
 	}
 
 	private ISharedPluginModel getExtensionsModel(IPluginModelBase base) {
@@ -201,7 +205,7 @@ public class PDEExtensionRegistry {
 	}
 
 	public IExtension[] findExtensions(String extensionPointId, boolean activeOnly) {
-		ArrayList list = new ArrayList();
+		ArrayList<IExtension> list = new ArrayList<IExtension>();
 		IExtensionPoint point = getExtensionPoint(extensionPointId);
 		if (point != null) {
 			IExtension[] extensions = point.getExtensions();
@@ -225,7 +229,7 @@ public class PDEExtensionRegistry {
 				}
 			}
 		}
-		return (IExtension[]) list.toArray(new IExtension[list.size()]);
+		return list.toArray(new IExtension[list.size()]);
 	}
 
 	// make sure we return the right IPluginModelBase when we have multiple versions of a plug-in Id

@@ -29,10 +29,10 @@ public class ElementOccurenceChecker {
 	 * <code>element</code>, that violate max occurence rules defined by 
 	 * <code>sElement</code>.
 	 */
-	public static HashSet findMaxOccurenceViolations(ISchemaElement sElement, Element element) {
+	public static HashSet<ElementOccurrenceResult> findMaxOccurenceViolations(ISchemaElement sElement, Element element) {
 		// Calculate the number of occurrences of each XML tag name
 		// in the node's direct children
-		HashMap tagNameMap = countXMLChildrenByTagName(element);
+		HashMap<String, Integer> tagNameMap = countXMLChildrenByTagName(element);
 		return processChildrenMax(sElement, tagNameMap, element);
 	}
 
@@ -43,10 +43,10 @@ public class ElementOccurenceChecker {
 	 * <code>element</code>, that violate min occurence rules defined by 
 	 * <code>sElement</code>.
 	 */
-	public static HashSet findMinOccurenceViolations(ISchemaElement sElement, Element element) {
+	public static HashSet<ElementOccurrenceResult> findMinOccurenceViolations(ISchemaElement sElement, Element element) {
 		// Calculate the number of occurrences of each XML tag name
 		// in the node's direct children
-		HashMap tagNameMap = countXMLChildrenByTagName(element);
+		HashMap<String, Integer> tagNameMap = countXMLChildrenByTagName(element);
 		return processChildrenMin(sElement, tagNameMap);
 	}
 
@@ -57,16 +57,16 @@ public class ElementOccurenceChecker {
 	 * Key is children's XML tag name
 	 * Value is number of occurrences found amongst siblings
 	 */
-	private static HashMap countXMLChildrenByTagName(Element element) {
+	private static HashMap<String, Integer> countXMLChildrenByTagName(Element element) {
 		NodeList children = element.getChildNodes();
-		HashMap tagNameMap = new HashMap();
+		HashMap<String, Integer> tagNameMap = new HashMap<String, Integer>();
 
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
 				String key = child.getNodeName();
 				if (tagNameMap.containsKey(key)) {
-					int value = ((Integer) tagNameMap.get(key)).intValue();
+					int value = tagNameMap.get(key).intValue();
 					value++;
 					tagNameMap.put(key, new Integer(value));
 				} else {
@@ -78,8 +78,8 @@ public class ElementOccurenceChecker {
 		return tagNameMap;
 	}
 
-	private static HashSet processChildrenMax(ISchemaElement sElement, HashMap tagNameMap, Element element) {
-		HashSet elementSet = new HashSet();
+	private static HashSet<ElementOccurrenceResult> processChildrenMax(ISchemaElement sElement, HashMap<String, Integer> tagNameMap, Element element) {
+		HashSet<ElementOccurrenceResult> elementSet = new HashSet<ElementOccurrenceResult>();
 		// Get this element's compositor
 		ISchemaCompositor compositor = ((ISchemaComplexType) sElement.getType()).getCompositor();
 		// Track multiplicity
@@ -89,8 +89,8 @@ public class ElementOccurenceChecker {
 		return elementSet;
 	}
 
-	private static HashSet processChildrenMin(ISchemaElement sElement, HashMap tagNameMap) {
-		HashSet elementSet = new HashSet();
+	private static HashSet<ElementOccurrenceResult> processChildrenMin(ISchemaElement sElement, HashMap<String, Integer> tagNameMap) {
+		HashSet<ElementOccurrenceResult> elementSet = new HashSet<ElementOccurrenceResult>();
 		// Get this element's compositor
 		ISchemaCompositor compositor = ((ISchemaComplexType) sElement.getType()).getCompositor();
 		// Track multiplicity
@@ -100,7 +100,7 @@ public class ElementOccurenceChecker {
 		return elementSet;
 	}
 
-	private static void processCompositorMin(ISchemaCompositor compositor, HashSet elementSet, HashMap siblings, int multiplicityTracker) {
+	private static void processCompositorMin(ISchemaCompositor compositor, HashSet<ElementOccurrenceResult> elementSet, HashMap<String, Integer> siblings, int multiplicityTracker) {
 		// Compositor can be null only in cases where we had a schema complex
 		// type but that complex type was complex because it had attributes
 		// rather than element children
@@ -115,7 +115,7 @@ public class ElementOccurenceChecker {
 		}
 	}
 
-	private static void processCompositorMax(ISchemaCompositor compositor, HashSet elementSet, HashMap siblings, int multiplicityTracker, Element element) {
+	private static void processCompositorMax(ISchemaCompositor compositor, HashSet<ElementOccurrenceResult> elementSet, HashMap<String, Integer> siblings, int multiplicityTracker, Element element) {
 		// Compositor can be null only in cases where we had a schema complex
 		// type but that complex type was complex because it had attributes
 		// rather than element children
@@ -130,7 +130,7 @@ public class ElementOccurenceChecker {
 		}
 	}
 
-	private static void processSequenceMin(ISchemaCompositor compositor, HashSet elementSet, HashMap siblings, int multiplicityTracker) {
+	private static void processSequenceMin(ISchemaCompositor compositor, HashSet<ElementOccurrenceResult> elementSet, HashMap<String, Integer> siblings, int multiplicityTracker) {
 		ISchemaObject[] schemaObject = compositor.getChildren();
 		// Unbounded min occurs are represented by the maximum integer value
 		if (multiplicityTracker < Integer.MAX_VALUE) {
@@ -143,7 +143,7 @@ public class ElementOccurenceChecker {
 		}
 	}
 
-	private static void processSequenceMax(ISchemaCompositor compositor, HashSet elementSet, HashMap siblings, int multiplicityTracker, Element element) {
+	private static void processSequenceMax(ISchemaCompositor compositor, HashSet<ElementOccurrenceResult> elementSet, HashMap<String, Integer> siblings, int multiplicityTracker, Element element) {
 		ISchemaObject[] schemaObject = compositor.getChildren();
 		// Unbounded max occurs are represented by the maximum integer value
 		if (multiplicityTracker < Integer.MAX_VALUE) {
@@ -156,7 +156,7 @@ public class ElementOccurenceChecker {
 		}
 	}
 
-	private static void processChoiceMin(ISchemaCompositor compositor, HashSet elementSet, HashMap siblings, int multiplicityTracker) {
+	private static void processChoiceMin(ISchemaCompositor compositor, HashSet<ElementOccurrenceResult> elementSet, HashMap<String, Integer> siblings, int multiplicityTracker) {
 		// Unbounded min occurs are represented by the maximum integer value
 		if (multiplicityTracker < Integer.MAX_VALUE) {
 			// Multiply the min occurs amount to the overall multiplicity
@@ -171,7 +171,7 @@ public class ElementOccurenceChecker {
 		}
 	}
 
-	private static void processChoiceMax(ISchemaCompositor compositor, HashSet elementSet, HashMap siblings, int multiplicityTracker, Element element) {
+	private static void processChoiceMax(ISchemaCompositor compositor, HashSet<ElementOccurrenceResult> elementSet, HashMap<String, Integer> siblings, int multiplicityTracker, Element element) {
 		// Unbounded max occurs are represented by the maximum integer value
 		if (multiplicityTracker < Integer.MAX_VALUE) {
 			// Multiply the max occurs amount to the overall multiplicity
@@ -186,7 +186,7 @@ public class ElementOccurenceChecker {
 		}
 	}
 
-	private static void adjustChoiceMaxSiblings(ISchemaCompositor compositor, HashMap siblings) {
+	private static void adjustChoiceMaxSiblings(ISchemaCompositor compositor, HashMap<String, Integer> siblings) {
 		if (isSimpleChoice(compositor)) {
 			// Supported
 			// Update all child element occurrences of the choice compositor
@@ -219,7 +219,7 @@ public class ElementOccurenceChecker {
 		return true;
 	}
 
-	private static void adjustChoiceMinSiblings(ISchemaCompositor compositor, HashMap siblings) {
+	private static void adjustChoiceMinSiblings(ISchemaCompositor compositor, HashMap<String, Integer> siblings) {
 
 		if (isSimpleChoice(compositor)) {
 			// Supported
@@ -240,7 +240,7 @@ public class ElementOccurenceChecker {
 		}
 	}
 
-	private static int countChoiceElementChildren(ISchemaCompositor compositor, HashMap siblings) {
+	private static int countChoiceElementChildren(ISchemaCompositor compositor, HashMap<String, Integer> siblings) {
 		ISchemaObject[] schemaObject = compositor.getChildren();
 		// Count the number of child element occurrences of the choice
 		// Compositor
@@ -249,7 +249,7 @@ public class ElementOccurenceChecker {
 			if (schemaObject[i] instanceof ISchemaElement) {
 				String name = schemaObject[i].getName();
 				if (siblings.containsKey(name)) {
-					int occurences = ((Integer) siblings.get(name)).intValue();
+					int occurences = siblings.get(name).intValue();
 					if (childElementCount < Integer.MAX_VALUE) {
 						childElementCount = childElementCount + occurences;
 					}
@@ -259,7 +259,7 @@ public class ElementOccurenceChecker {
 		return childElementCount;
 	}
 
-	private static void updateChoiceElementChildren(ISchemaCompositor compositor, HashMap siblings, int childElementCount) {
+	private static void updateChoiceElementChildren(ISchemaCompositor compositor, HashMap<String, Integer> siblings, int childElementCount) {
 		ISchemaObject[] schemaObject = compositor.getChildren();
 		for (int i = 0; i < compositor.getChildCount(); i++) {
 			if (schemaObject[i] instanceof ISchemaElement) {
@@ -271,7 +271,7 @@ public class ElementOccurenceChecker {
 		}
 	}
 
-	private static void processObjectMax(ISchemaObject schemaObject, HashSet elementSet, HashMap siblings, int multiplicityTracker, Element element) {
+	private static void processObjectMax(ISchemaObject schemaObject, HashSet<ElementOccurrenceResult> elementSet, HashMap<String, Integer> siblings, int multiplicityTracker, Element element) {
 		if (schemaObject instanceof ISchemaElement) {
 			ISchemaElement schemaElement = (ISchemaElement) schemaObject;
 			Element childElement = findChildElement(element, schemaElement.getName());
@@ -284,7 +284,7 @@ public class ElementOccurenceChecker {
 		}
 	}
 
-	private static void processObjectMin(ISchemaObject schemaObject, HashSet elementSet, HashMap siblings, int multiplicityTracker) {
+	private static void processObjectMin(ISchemaObject schemaObject, HashSet<ElementOccurrenceResult> elementSet, HashMap<String, Integer> siblings, int multiplicityTracker) {
 		if (schemaObject instanceof ISchemaElement) {
 			ISchemaElement schemaElement = (ISchemaElement) schemaObject;
 			processElementMin(schemaElement, elementSet, siblings, multiplicityTracker);
@@ -294,13 +294,13 @@ public class ElementOccurenceChecker {
 		}
 	}
 
-	private static void processElementMax(ISchemaElement schemaElement, HashSet elementSet, HashMap siblings, int multiplicityTracker, Element element) {
+	private static void processElementMax(ISchemaElement schemaElement, HashSet<ElementOccurrenceResult> elementSet, HashMap<String, Integer> siblings, int multiplicityTracker, Element element) {
 
 		int occurrences = 0;
 		String name = schemaElement.getName();
 		// Determine the number of occurrences found of this element
 		if (siblings.containsKey(name)) {
-			occurrences = ((Integer) siblings.get(schemaElement.getName())).intValue();
+			occurrences = siblings.get(schemaElement.getName()).intValue();
 		}
 		// Determine if the elements max occurrences is respected
 		if (multiplicityTracker < Integer.MAX_VALUE) {
@@ -319,13 +319,13 @@ public class ElementOccurenceChecker {
 		}
 	}
 
-	private static void processElementMin(ISchemaElement schemaElement, HashSet elementSet, HashMap siblings, int multiplicityTracker) {
+	private static void processElementMin(ISchemaElement schemaElement, HashSet<ElementOccurrenceResult> elementSet, HashMap<String, Integer> siblings, int multiplicityTracker) {
 
 		int occurrences = 0;
 		String name = schemaElement.getName();
 		// Determine the number of occurrences found of this element
 		if (siblings.containsKey(name)) {
-			occurrences = ((Integer) siblings.get(schemaElement.getName())).intValue();
+			occurrences = siblings.get(schemaElement.getName()).intValue();
 		}
 		// Determine if the elements min occurrences is respected
 		if (multiplicityTracker < Integer.MAX_VALUE) {

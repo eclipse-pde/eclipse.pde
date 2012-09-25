@@ -73,7 +73,7 @@ public class SchemaElementHandler extends BaseSchemaHandler {
 	protected boolean onTarget() {
 		if (fElementList.size() >= DESC_NESTED_ELEM.length) {
 			for (int i = 0; i < DESC_NESTED_ELEM.length; i++) {
-				String currentElement = (String) fElementList.get(i);
+				String currentElement = fElementList.get(i);
 				if (currentElement.compareTo(DESC_NESTED_ELEM[i]) != 0) {
 					return false;
 				}

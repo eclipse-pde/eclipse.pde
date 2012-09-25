@@ -25,8 +25,8 @@ public class PDEXMLHelper {
 	protected static SAXParserFactory fSAXFactory;
 	protected static PDEXMLHelper fPinstance;
 	protected static DocumentBuilderFactory fDOMFactory;
-	protected static List fSAXParserQueue;
-	protected static List fDOMParserQueue;
+	protected static List<SoftReference<SAXParser>> fSAXParserQueue;
+	protected static List<SoftReference<DocumentBuilder>> fDOMParserQueue;
 	protected static int fSAXPoolLimit;
 	protected static int fDOMPoolLimit;
 	protected static final int FMAXPOOLLIMIT = 1;
@@ -34,8 +34,8 @@ public class PDEXMLHelper {
 	protected PDEXMLHelper() throws FactoryConfigurationError {
 		fSAXFactory = SAXParserFactory.newInstance();
 		fDOMFactory = DocumentBuilderFactory.newInstance();
-		fSAXParserQueue = Collections.synchronizedList(new LinkedList());
-		fDOMParserQueue = Collections.synchronizedList(new LinkedList());
+		fSAXParserQueue = Collections.synchronizedList(new LinkedList<SoftReference<SAXParser>>());
+		fDOMParserQueue = Collections.synchronizedList(new LinkedList<SoftReference<DocumentBuilder>>());
 		fSAXPoolLimit = FMAXPOOLLIMIT;
 		fDOMPoolLimit = FMAXPOOLLIMIT;
 	}
@@ -46,7 +46,7 @@ public class PDEXMLHelper {
 		if (fSAXParserQueue.isEmpty()) {
 			parser = fSAXFactory.newSAXParser();
 		} else {
-			SoftReference reference = (SoftReference) fSAXParserQueue.remove(0);
+			SoftReference<?> reference = fSAXParserQueue.remove(0);
 			if (reference.get() != null) {
 				parser = (SAXParser) reference.get();
 			} else {
@@ -62,7 +62,7 @@ public class PDEXMLHelper {
 		if (fDOMParserQueue.isEmpty()) {
 			parser = fDOMFactory.newDocumentBuilder();
 		} else {
-			SoftReference reference = (SoftReference) fDOMParserQueue.remove(0);
+			SoftReference<?> reference = fDOMParserQueue.remove(0);
 			if (reference.get() != null) {
 				parser = (DocumentBuilder) reference.get();
 			} else {
@@ -81,14 +81,14 @@ public class PDEXMLHelper {
 
 	public synchronized void recycleSAXParser(SAXParser parser) {
 		if (fSAXParserQueue.size() < fSAXPoolLimit) {
-			SoftReference reference = new SoftReference(parser);
+			SoftReference<SAXParser> reference = new SoftReference<SAXParser>(parser);
 			fSAXParserQueue.add(reference);
 		}
 	}
 
 	public synchronized void recycleDOMParser(DocumentBuilder parser) {
 		if (fDOMParserQueue.size() < fDOMPoolLimit) {
-			SoftReference reference = new SoftReference(parser);
+			SoftReference<DocumentBuilder> reference = new SoftReference<DocumentBuilder>(parser);
 			fDOMParserQueue.add(reference);
 		}
 	}

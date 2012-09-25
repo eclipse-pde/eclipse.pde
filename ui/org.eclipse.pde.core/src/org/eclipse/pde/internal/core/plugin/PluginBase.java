@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.plugin;
 
+import org.eclipse.pde.core.plugin.IPluginImport;
+import org.eclipse.pde.core.plugin.IPluginLibrary;
+
 import java.util.ArrayList;
 import java.util.Locale;
 import javax.xml.parsers.*;
@@ -28,8 +31,8 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 
 	private static final Version maxVersion = new Version(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE);
 
-	private ArrayList fLibraries = new ArrayList();
-	private ArrayList fImports = new ArrayList();
+	private ArrayList<IPluginLibrary> fLibraries = new ArrayList<IPluginLibrary>();
+	private ArrayList<IPluginImport> fImports = new ArrayList<IPluginImport>();
 	private String fProviderName;
 	private String fId;
 	private String fVersion;
@@ -72,11 +75,11 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 	public IPluginLibrary[] getLibraries() {
 		// Returns an empty array if no libraries are specified in the manifest of the plug-in.
 		// If no libraries are specified, the root of the bundle '.' is the default library location
-		return (IPluginLibrary[]) fLibraries.toArray(new IPluginLibrary[fLibraries.size()]);
+		return fLibraries.toArray(new IPluginLibrary[fLibraries.size()]);
 	}
 
 	public IPluginImport[] getImports() {
-		return (IPluginImport[]) fImports.toArray(new IPluginImport[fImports.size()]);
+		return fImports.toArray(new IPluginImport[fImports.size()]);
 	}
 
 	public IPluginBase getPluginBase() {
@@ -246,8 +249,8 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 	}
 
 	public void reset() {
-		fLibraries = new ArrayList();
-		fImports = new ArrayList();
+		fLibraries = new ArrayList<IPluginLibrary>();
+		fImports = new ArrayList<IPluginImport>();
 		fProviderName = null;
 		fSchemaVersion = null;
 		fVersion = ""; //$NON-NLS-1$
@@ -325,13 +328,13 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 
 		// validate libraries
 		for (int i = 0; i < fLibraries.size(); i++) {
-			IPluginLibrary library = (IPluginLibrary) fLibraries.get(i);
+			IPluginLibrary library = fLibraries.get(i);
 			if (!library.isValid())
 				return false;
 		}
 		// validate imports
 		for (int i = 0; i < fImports.size(); i++) {
-			IPluginImport iimport = (IPluginImport) fImports.get(i);
+			IPluginImport iimport = fImports.get(i);
 			if (!iimport.isValid())
 				return false;
 		}

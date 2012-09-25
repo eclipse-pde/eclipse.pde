@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target;
 
+import org.eclipse.pde.core.target.ITargetLocation;
+import org.eclipse.pde.core.target.NameVersionDescriptor;
+
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
@@ -76,7 +79,7 @@ public class TargetPersistence38Helper {
 				String nodeName = element.getNodeName();
 				if (nodeName.equalsIgnoreCase(TargetDefinitionPersistenceHelper.LOCATIONS)) {
 					NodeList locations = element.getChildNodes();
-					List bundleContainers = new ArrayList();
+					List<ITargetLocation> bundleContainers = new ArrayList<ITargetLocation>();
 					for (int j = 0; j < locations.getLength(); ++j) {
 						Node locationNode = locations.item(j);
 						if (locationNode.getNodeType() == Node.ELEMENT_NODE) {
@@ -94,10 +97,10 @@ public class TargetPersistence38Helper {
 							}
 						}
 					}
-					definition.setTargetLocations((ITargetLocation[]) bundleContainers.toArray(new ITargetLocation[bundleContainers.size()]));
+					definition.setTargetLocations(bundleContainers.toArray(new ITargetLocation[bundleContainers.size()]));
 				} else if (nodeName.equalsIgnoreCase(TargetDefinitionPersistenceHelper.INCLUDE_BUNDLES) || nodeName.equalsIgnoreCase(TargetPersistence35Helper.OPTIONAL_BUNDLES)) {
 					NodeList children = element.getChildNodes();
-					List included = new ArrayList();
+					List<NameVersionDescriptor> included = new ArrayList<NameVersionDescriptor>();
 					for (int j = 0; j < children.getLength(); ++j) {
 						Node child = children.item(j);
 						if (child.getNodeType() == Node.ELEMENT_NODE) {
@@ -116,14 +119,14 @@ public class TargetPersistence38Helper {
 					// Don't overwrite includes with optional or vice versa
 					NameVersionDescriptor[] previousIncluded = definition.getIncluded();
 					if (previousIncluded == null || previousIncluded.length == 0) {
-						definition.setIncluded((NameVersionDescriptor[]) included.toArray(new NameVersionDescriptor[included.size()]));
+						definition.setIncluded(included.toArray(new NameVersionDescriptor[included.size()]));
 					} else {
-						List allIncluded = new ArrayList();
+						List<NameVersionDescriptor> allIncluded = new ArrayList<NameVersionDescriptor>();
 						for (int j = 0; j < previousIncluded.length; j++) {
 							allIncluded.add(previousIncluded[j]);
 						}
 						allIncluded.addAll(included);
-						definition.setIncluded((NameVersionDescriptor[]) allIncluded.toArray(new NameVersionDescriptor[included.size()]));
+						definition.setIncluded(allIncluded.toArray(new NameVersionDescriptor[included.size()]));
 					}
 				} else if (nodeName.equalsIgnoreCase(TargetDefinitionPersistenceHelper.ENVIRONMENT)) {
 					NodeList envEntries = element.getChildNodes();
@@ -164,7 +167,7 @@ public class TargetPersistence38Helper {
 					}
 				} else if (nodeName.equalsIgnoreCase(TargetDefinitionPersistenceHelper.IMPLICIT)) {
 					NodeList implicitEntries = element.getChildNodes();
-					List implicit = new ArrayList(implicitEntries.getLength());
+					List<NameVersionDescriptor> implicit = new ArrayList<NameVersionDescriptor>(implicitEntries.getLength());
 					for (int j = 0; j < implicitEntries.getLength(); ++j) {
 						Node entry = implicitEntries.item(j);
 						if (entry.getNodeType() == Node.ELEMENT_NODE) {
@@ -176,7 +179,7 @@ public class TargetPersistence38Helper {
 							}
 						}
 					}
-					definition.setImplicitDependencies((NameVersionDescriptor[]) implicit.toArray(new NameVersionDescriptor[implicit.size()]));
+					definition.setImplicitDependencies(implicit.toArray(new NameVersionDescriptor[implicit.size()]));
 				}
 			}
 		}

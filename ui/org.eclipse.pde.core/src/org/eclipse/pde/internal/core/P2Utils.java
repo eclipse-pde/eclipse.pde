@@ -206,13 +206,13 @@ public class P2Utils {
 	 * @param osgiBundleList a list of bundles coming from a template config.ini
 	 * @return URL location of the bundles.info or <code>null</code>
 	 */
-	public static URL writeBundlesTxt(Map bundles, int defaultStartLevel, boolean defaultAutoStart, File directory, String osgiBundleList) {
+	public static URL writeBundlesTxt(Map<?, ?> bundles, int defaultStartLevel, boolean defaultAutoStart, File directory, String osgiBundleList) {
 		if (bundles.size() == 0) {
 			return null;
 		}
 
 		// Parse the osgi bundle list for start levels
-		Map osgiStartLevels = new HashMap();
+		Map<String, String> osgiStartLevels = new HashMap<String, String>();
 		if (osgiBundleList != null) {
 			StringTokenizer tokenizer = new StringTokenizer(osgiBundleList, ","); //$NON-NLS-1$
 			while (tokenizer.hasMoreTokens()) {
@@ -232,9 +232,9 @@ public class P2Utils {
 			}
 		}
 
-		List bundleInfo = new ArrayList(bundles.size());
-		List sourceInfo = new ArrayList(bundles.size());
-		for (Iterator iterator = bundles.keySet().iterator(); iterator.hasNext();) {
+		List<BundleInfo> bundleInfo = new ArrayList<BundleInfo>(bundles.size());
+		List<BundleInfo> sourceInfo = new ArrayList<BundleInfo>(bundles.size());
+		for (Iterator<?> iterator = bundles.keySet().iterator(); iterator.hasNext();) {
 			IPluginModelBase currentModel = (IPluginModelBase) iterator.next();
 			IPluginBase base = currentModel.getPluginBase();
 
@@ -254,7 +254,7 @@ public class P2Utils {
 					String currentLevel = (String) bundles.get(currentModel);
 					// override the start level setting if something comes from the config.ini
 					if (osgiStartLevels.containsKey(base.getId())) {
-						currentLevel = (String) osgiStartLevels.get(base.getId());
+						currentLevel = osgiStartLevels.get(base.getId());
 					}
 					int index = currentLevel.indexOf(':');
 					String levelString = index > 0 ? currentLevel.substring(0, index) : "default"; //$NON-NLS-1$
@@ -287,8 +287,8 @@ public class P2Utils {
 		File bundlesTxt = new File(directory, SimpleConfiguratorManipulator.BUNDLES_INFO_PATH);
 		File srcBundlesTxt = new File(directory, SimpleConfiguratorManipulator.SOURCE_INFO_PATH);
 
-		BundleInfo[] infos = (BundleInfo[]) bundleInfo.toArray(new BundleInfo[bundleInfo.size()]);
-		BundleInfo[] sources = (BundleInfo[]) sourceInfo.toArray(new BundleInfo[sourceInfo.size()]);
+		BundleInfo[] infos = bundleInfo.toArray(new BundleInfo[bundleInfo.size()]);
+		BundleInfo[] sources = sourceInfo.toArray(new BundleInfo[sourceInfo.size()]);
 
 		SimpleConfiguratorManipulator manipulator = (SimpleConfiguratorManipulator) BundleHelper.getDefault().acquireService(SimpleConfiguratorManipulator.class.getName());
 		try {
@@ -348,7 +348,7 @@ public class P2Utils {
 	 * 
 	 * @throws CoreException if the profile cannot be generated
 	 */
-	public static void createProfile(String profileID, File p2DataArea, Collection bundles) throws CoreException {
+	public static void createProfile(String profileID, File p2DataArea, Collection<?> bundles) throws CoreException {
 		// Acquire the required p2 services, creating an agent in the target p2 metadata area
 		IProvisioningAgentProvider provider = (IProvisioningAgentProvider) PDECore.getDefault().acquireService(IProvisioningAgentProvider.SERVICE_NAME);
 		if (provider == null) {
@@ -375,7 +375,7 @@ public class P2Utils {
 
 		// Create the profile
 		IProfile profile = null;
-		Map props = new HashMap();
+		Map<String, String> props = new HashMap<String, String>();
 //		props.setProperty(IProfile.PROP_INSTALL_FOLDER, registryArea.getAbsolutePath());
 		props.put(IProfile.PROP_INSTALL_FEATURES, Boolean.TRUE.toString());
 		// Set up environment and nationalization properties so OS specific fragments are installed
@@ -385,8 +385,8 @@ public class P2Utils {
 		profile = registry.addProfile(profileID, props);
 
 		// Create metadata for the bundles
-		Collection ius = new ArrayList(bundles.size());
-		for (Iterator iterator = bundles.iterator(); iterator.hasNext();) {
+		Collection<IInstallableUnit> ius = new ArrayList<IInstallableUnit>(bundles.size());
+		for (Iterator<?> iterator = bundles.iterator(); iterator.hasNext();) {
 			IPluginModelBase model = (IPluginModelBase) iterator.next();
 			BundleDescription bundle = model.getBundleDescription();
 			ius.add(createBundleIU(bundle));
@@ -395,8 +395,8 @@ public class P2Utils {
 		// Add the metadata to the profile
 		ProvisioningContext context = new ProvisioningContext(agent);
 		IProvisioningPlan plan = engine.createPlan(profile, context);
-		for (Iterator iter = ius.iterator(); iter.hasNext();) {
-			IInstallableUnit iu = (IInstallableUnit) iter.next();
+		for (Iterator<IInstallableUnit> iter = ius.iterator(); iter.hasNext();) {
+			IInstallableUnit iu = iter.next();
 			plan.addInstallableUnit(iu);
 			plan.setInstallableUnitProfileProperty(iu, "org.eclipse.equinox.p2.internal.inclusion.rules", ProfileInclusionRules.createOptionalInclusionRule(iu)); //$NON-NLS-1$
 		}
@@ -445,7 +445,7 @@ public class P2Utils {
 
 		//Process the required bundles
 		BundleSpecification requiredBundles[] = bd.getRequiredBundles();
-		ArrayList reqsDeps = new ArrayList();
+		ArrayList<IRequirement> reqsDeps = new ArrayList<IRequirement>();
 		if (isFragment)
 			reqsDeps.add(MetadataFactory.createRequirement(CAPABILITY_NS_OSGI_BUNDLE, bd.getHost().getName(), fromOSGiVersionRange(bd.getHost().getVersionRange()), null, false, false));
 		for (int j = 0; j < requiredBundles.length; j++)
@@ -464,10 +464,10 @@ public class P2Utils {
 			boolean isOptional = importSpec.getDirective(Constants.RESOLUTION_DIRECTIVE).equals(ImportPackageSpecification.RESOLUTION_DYNAMIC) || importSpec.getDirective(Constants.RESOLUTION_DIRECTIVE).equals(ImportPackageSpecification.RESOLUTION_OPTIONAL);
 			reqsDeps.add(MetadataFactory.createRequirement(CAPABILITY_NS_JAVA_PACKAGE, importPackageName, versionRange, null, isOptional, false));
 		}
-		iu.setRequirements(((IRequirement[]) reqsDeps.toArray(new IRequirement[reqsDeps.size()])));
+		iu.setRequirements((reqsDeps.toArray(new IRequirement[reqsDeps.size()])));
 
 		// Create set of provided capabilities
-		ArrayList providedCapabilities = new ArrayList();
+		ArrayList<IProvidedCapability> providedCapabilities = new ArrayList<IProvidedCapability>();
 		providedCapabilities.add(MetadataFactory.createProvidedCapability(IInstallableUnit.NAMESPACE_IU_ID, bd.getSymbolicName(), fromOSGiVersion(bd.getVersion())));
 		providedCapabilities.add(MetadataFactory.createProvidedCapability(CAPABILITY_NS_OSGI_BUNDLE, bd.getSymbolicName(), fromOSGiVersion(bd.getVersion())));
 
@@ -482,7 +482,7 @@ public class P2Utils {
 		if (isFragment)
 			providedCapabilities.add(MetadataFactory.createProvidedCapability(CAPABILITY_NS_OSGI_FRAGMENT, bd.getHost().getName(), fromOSGiVersion(bd.getVersion())));
 
-		iu.setCapabilities((IProvidedCapability[]) providedCapabilities.toArray(new IProvidedCapability[providedCapabilities.size()]));
+		iu.setCapabilities(providedCapabilities.toArray(new IProvidedCapability[providedCapabilities.size()]));
 		return MetadataFactory.createInstallableUnit(iu);
 	}
 

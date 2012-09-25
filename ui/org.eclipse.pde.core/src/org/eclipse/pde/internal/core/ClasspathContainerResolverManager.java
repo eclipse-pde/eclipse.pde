@@ -37,7 +37,7 @@ public class ClasspathContainerResolverManager {
 	 * @return all classpath resolvers that support the nature, possibly empty
 	 */
 	public IBundleClasspathResolver[] getBundleClasspathResolvers(IProject project) {
-		List result = new ArrayList();
+		List<Object> result = new ArrayList<Object>();
 
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IConfigurationElement[] elements = registry.getConfigurationElementsFor(POINT_ID);
@@ -52,7 +52,7 @@ public class ClasspathContainerResolverManager {
 			}
 		}
 
-		return (IBundleClasspathResolver[]) result.toArray(new IBundleClasspathResolver[result.size()]);
+		return result.toArray(new IBundleClasspathResolver[result.size()]);
 	}
 
 }

@@ -101,10 +101,10 @@ public class TargetWeaver {
 	 * 
 	 * @param manifest manifest to update
 	 */
-	public static void weaveManifest(Dictionary manifest) {
+	public static void weaveManifest(Dictionary<String, String> manifest) {
 		if (manifest != null && fgIsDev) {
 			Properties properties = getDevProperties();
-			String id = (String) manifest.get(Constants.BUNDLE_SYMBOLICNAME);
+			String id = manifest.get(Constants.BUNDLE_SYMBOLICNAME);
 			if (id != null) {
 				int index = id.indexOf(';');
 				if (index != -1) {
@@ -128,10 +128,10 @@ public class TargetWeaver {
 		if (fgIsDev) {
 			Properties devProperties = getDevProperties();
 			if (devProperties != null) {
-				Set entries = devProperties.entrySet();
-				Iterator iterator = entries.iterator();
+				Set<?> entries = devProperties.entrySet();
+				Iterator<?> iterator = entries.iterator();
 				while (iterator.hasNext()) {
-					Entry entry = (Entry) iterator.next();
+					Entry<?, ?> entry = (Entry<?, ?>) iterator.next();
 					properties.setProperty((String) entry.getKey(), (String) entry.getValue());
 				}
 			}

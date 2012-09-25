@@ -35,7 +35,7 @@ public class DependencyManager {
 	 *  or <code>null</code> if none
 	 * @return a set of bundle IDs
 	 */
-	public static Set getSelfAndDependencies(IPluginModelBase model, String[] excludeFragments) {
+	public static Set<String> getSelfAndDependencies(IPluginModelBase model, String[] excludeFragments) {
 		return getDependencies(new Object[] {model}, getImplicitDependencies(), TargetPlatformHelper.getState(), false, true, toSet(excludeFragments));
 	}
 
@@ -49,7 +49,7 @@ public class DependencyManager {
 	 *  or <code>null</code> if none
 	 * @return a set of bundle IDs
 	 */
-	public static Set getSelfandDependencies(IPluginModelBase[] models, String[] excludeFragments) {
+	public static Set<String> getSelfandDependencies(IPluginModelBase[] models, String[] excludeFragments) {
 		return getDependencies(models, getImplicitDependencies(), TargetPlatformHelper.getState(), false, true, toSet(excludeFragments));
 	}
 
@@ -67,7 +67,7 @@ public class DependencyManager {
 	 *  or <code>null</code> if none
 	 * @return a set of bundle IDs
 	 */
-	public static Set getDependencies(Object[] selected, String[] implicit, State state, String[] excludeFragments) {
+	public static Set<String> getDependencies(Object[] selected, String[] implicit, State state, String[] excludeFragments) {
 		return getDependencies(selected, implicit, state, true, true, toSet(excludeFragments));
 	}
 
@@ -83,7 +83,7 @@ public class DependencyManager {
 	 *  or <code>null</code> if none
 	 * @return a set of bundle IDs
 	 */
-	public static Set getDependencies(Object[] selected, boolean includeOptional, String[] excludeFragments) {
+	public static Set<String> getDependencies(Object[] selected, boolean includeOptional, String[] excludeFragments) {
 		return getDependencies(selected, getImplicitDependencies(), TargetPlatformHelper.getState(), true, includeOptional, toSet(excludeFragments));
 	}
 
@@ -92,8 +92,8 @@ public class DependencyManager {
 	 * @param array array or <code>null</code>
 	 * @return set
 	 */
-	private static Set toSet(String[] array) {
-		Set set = new HashSet();
+	private static Set<String> toSet(String[] array) {
+		Set<String> set = new HashSet<String>();
 		if (array != null) {
 			for (int i = 0; i < array.length; i++) {
 				set.add(array[i]);
@@ -117,8 +117,8 @@ public class DependencyManager {
 	 * @param excludeFragments a collection of <b>fragment</b> bundle symbolic names to exclude from the dependency resolution
 	 * @return a set of bundle IDs
 	 */
-	private static Set getDependencies(Object[] selected, String[] implicit, State state, boolean removeSelf, boolean includeOptional, Set excludeFragments) {
-		Set set = new TreeSet();
+	private static Set<String> getDependencies(Object[] selected, String[] implicit, State state, boolean removeSelf, boolean includeOptional, Set<String> excludeFragments) {
+		Set<String> set = new TreeSet<String>();
 		for (int i = 0; i < selected.length; i++) {
 			if (!(selected[i] instanceof IPluginModelBase))
 				continue;
@@ -179,7 +179,7 @@ public class DependencyManager {
 	 * @param includeOptional if optional dependencies should be included
 	 * @param excludeFragments a collection of <b>fragment</b> bundle symbolic names to exclude from the dependency resolution
 	 */
-	private static void addBundleAndDependencies(BundleDescription desc, Set set, boolean includeOptional, Set excludeFragments) {
+	private static void addBundleAndDependencies(BundleDescription desc, Set<String> set, boolean includeOptional, Set<String> excludeFragments) {
 		if (desc != null && set.add(desc.getSymbolicName())) {
 			BundleSpecification[] required = desc.getRequiredBundles();
 			for (int i = 0; i < required.length; i++) {

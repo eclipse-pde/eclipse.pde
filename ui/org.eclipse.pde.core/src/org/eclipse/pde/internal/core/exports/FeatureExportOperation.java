@@ -50,7 +50,7 @@ public class FeatureExportOperation extends Job {
 	protected String fBuildTempMetadataLocation;
 	private String fDevProperties;
 	private static boolean fHasErrors;
-	protected HashMap fAntBuildProperties;
+	protected HashMap<String, String> fAntBuildProperties;
 	protected WorkspaceExportHelper fWorkspaceExportHelper;
 
 	protected State fStateCopy;
@@ -252,7 +252,7 @@ public class FeatureExportOperation extends Job {
 		try {
 			monitor.beginTask("", 6 + (configs.length * 4) + (publishingP2Metadata() ? 2 : 0)); //$NON-NLS-1$
 			monitor.setTaskName(PDECoreMessages.FeatureExportJob_taskName);
-			HashMap properties = createAntBuildProperties(configs);
+			HashMap<String, String> properties = createAntBuildProperties(configs);
 			BuildScriptGenerator generator = new BuildScriptGenerator();
 			setupGenerator(generator, featureID, version, configs, featureLocation);
 			generator.generate();
@@ -298,7 +298,7 @@ public class FeatureExportOperation extends Job {
 		return publishingP2Metadata();
 	}
 
-	private void setArchiveLocation(Map antProperties, String os, String ws, String arch) {
+	private void setArchiveLocation(Map<String, String> antProperties, String os, String ws, String arch) {
 		if (!fInfo.toDirectory) {
 			String filename = fInfo.zipFileName;
 			if (fInfo.targets != null && !groupedConfigurations()) {
@@ -393,7 +393,7 @@ public class FeatureExportOperation extends Job {
 	 * @throws InvocationTargetException
 	 * @throws CoreException
 	 */
-	protected void runScript(String location, String[] targets, Map properties, IProgressMonitor monitor) throws InvocationTargetException, CoreException {
+	protected void runScript(String location, String[] targets, Map<String, String> properties, IProgressMonitor monitor) throws InvocationTargetException, CoreException {
 		AntRunner runner = new AntRunner();
 		runner.addUserProperties(properties);
 		runner.setAntHome(location);
@@ -431,12 +431,12 @@ public class FeatureExportOperation extends Job {
 				+ ".xml"; //$NON-NLS-1$
 	}
 
-	protected HashMap createAntBuildProperties(String[][] configs) {
+	protected HashMap<String, String> createAntBuildProperties(String[][] configs) {
 		if (fAntBuildProperties == null) {
-			fAntBuildProperties = new HashMap(15);
+			fAntBuildProperties = new HashMap<String, String>(15);
 
-			List defaultProperties = AntCorePlugin.getPlugin().getPreferences().getProperties();
-			ListIterator li = defaultProperties.listIterator();
+			List<?> defaultProperties = AntCorePlugin.getPlugin().getPreferences().getProperties();
+			ListIterator<?> li = defaultProperties.listIterator();
 			while (li.hasNext()) {
 				Property prop = (Property) li.next();
 				fAntBuildProperties.put(prop.getName(), prop.getValue());
@@ -546,7 +546,7 @@ public class FeatureExportOperation extends Job {
 	* 
 	* @param map the map to add generator properties to
 	*/
-	protected void setP2MetaDataProperties(Map map) {
+	protected void setP2MetaDataProperties(Map<String, String> map) {
 		if (fInfo.useJarFormat && fInfo.exportMetadata) {
 			map.put(IXMLConstants.TARGET_P2_METADATA, IBuildPropertiesConstants.TRUE);
 			map.put(IBuildPropertiesConstants.PROPERTY_P2_FLAVOR, P2Utils.P2_FLAVOR_DEFAULT);
@@ -730,9 +730,10 @@ public class FeatureExportOperation extends Job {
 			copyState(main);
 		}
 
-		Dictionary[] dictionaries = fStateCopy.getPlatformProperties();
+		@SuppressWarnings("unchecked")
+		Dictionary<String, String>[] dictionaries = fStateCopy.getPlatformProperties();
 		for (int i = 0; i < dictionaries.length; i++) {
-			Dictionary properties = dictionaries[i];
+			Dictionary<String, String> properties = dictionaries[i];
 			properties.put("osgi.os", os); //$NON-NLS-1$
 			properties.put("osgi.ws", ws); //$NON-NLS-1$
 			properties.put("osgi.arch", arch); //$NON-NLS-1$			
@@ -787,7 +788,7 @@ public class FeatureExportOperation extends Job {
 	}
 
 	protected String[] getPaths() {
-		Map map = new HashMap(); // merge workspace and external features using workspace over external
+		Map<String, String> map = new HashMap<String, String>(); // merge workspace and external features using workspace over external
 		FeatureModelManager fmm = PDECore.getDefault().getFeatureModelManager();
 		IFeatureModel[] models = fmm.getExternalModels();
 		for (int i = 0; i < models.length; i++) {
@@ -802,7 +803,7 @@ public class FeatureExportOperation extends Job {
 		}
 		// add all workspace models
 		String[] paths = new String[map.size() + models.length];
-		paths = (String[]) map.values().toArray(paths);
+		paths = map.values().toArray(paths);
 		System.arraycopy(locations, 0, paths, map.size(), models.length);
 		return paths;
 	}
@@ -954,8 +955,8 @@ public class FeatureExportOperation extends Job {
 		}
 	}
 
-	private Dictionary getEnvironment(String[] config) {
-		Dictionary environment = new Hashtable(4);
+	private Dictionary<String, String> getEnvironment(String[] config) {
+		Dictionary<String, String> environment = new Hashtable<String, String>(4);
 		environment.put("osgi.os", config[0]); //$NON-NLS-1$
 		environment.put("osgi.ws", config[1]); //$NON-NLS-1$
 		environment.put("osgi.arch", config[2]); //$NON-NLS-1$
@@ -973,7 +974,7 @@ public class FeatureExportOperation extends Job {
 
 	private BundleDescription getMatchingLauncher(String[] configuration, BundleDescription[] fragments) {
 		//return the launcher fragment that matches the given configuration
-		Dictionary environment = getEnvironment(configuration);
+		Dictionary<String, String> environment = getEnvironment(configuration);
 		for (int i = 0; i < fragments.length; i++) {
 			if (!isNLFragment(fragments[i]) && shouldAddPlugin(fragments[i], environment))
 				return fragments[i];
@@ -1036,7 +1037,7 @@ public class FeatureExportOperation extends Job {
 				}
 			}
 
-			List workspacePlugins = Arrays.asList(PluginRegistry.getWorkspaceModels());
+			List<IPluginModelBase> workspacePlugins = Arrays.asList(PluginRegistry.getWorkspaceModels());
 
 			for (int i = 0; i < fInfo.items.length; i++) {
 				if (fInfo.items[i] instanceof IFeatureModel) {
@@ -1064,16 +1065,16 @@ public class FeatureExportOperation extends Job {
 					if (bundle == null)
 						continue;
 
-					List configs = new ArrayList();
+					List<String[]> configs = new ArrayList<String[]>();
 					if (configurations.length > 1)
 						configs.add(GENERIC_CONFIG);
 					configs.addAll(Arrays.asList(configurations));
 
 					//when doing multiplatform we need filters set on the plugin elements that need them
 					//so check the Bundle's platfrom filter against each config
-					for (Iterator iterator = configs.iterator(); iterator.hasNext();) {
-						String[] currentConfig = (String[]) iterator.next();
-						Dictionary environment = getEnvironment(currentConfig);
+					for (Iterator<String[]> iterator = configs.iterator(); iterator.hasNext();) {
+						String[] currentConfig = iterator.next();
+						Dictionary<String, String> environment = getEnvironment(currentConfig);
 						if (shouldAddPlugin(bundle, environment)) {
 							Element plugin = doc.createElement("plugin"); //$NON-NLS-1$
 							plugin.setAttribute("id", bundle.getSymbolicName()); //$NON-NLS-1$
@@ -1131,7 +1132,7 @@ public class FeatureExportOperation extends Job {
 		return fHasErrors;
 	}
 
-	protected boolean shouldAddPlugin(BundleDescription bundle, Dictionary environment) {
+	protected boolean shouldAddPlugin(BundleDescription bundle, Dictionary<String, String> environment) {
 		String filterSpec = bundle.getPlatformFilter();
 		try {
 			return (filterSpec == null || PDECore.getDefault().getBundleContext().createFilter(filterSpec).match(environment));
@@ -1153,7 +1154,7 @@ public class FeatureExportOperation extends Job {
 			monitor.beginTask("", 50); //$NON-NLS-1$
 			if (fInfo.useWorkspaceCompiledClasses) {
 				getWorkspaceExportHelper().buildBeforeExport(fInfo.items, new SubProgressMonitor(monitor, 45));
-				Set errors = getWorkspaceExportHelper().checkForErrors(fInfo.items);
+				Set<?> errors = getWorkspaceExportHelper().checkForErrors(fInfo.items);
 				if (!errors.isEmpty()) {
 					monitor.worked(5);
 					return new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(PDECoreMessages.FeatureExportOperation_workspaceBuildErrorsFoundDuringExport, errors.toString()));

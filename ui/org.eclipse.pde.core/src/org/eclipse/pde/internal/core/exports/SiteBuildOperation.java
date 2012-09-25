@@ -189,7 +189,7 @@ public class SiteBuildOperation extends FeatureBasedExportOperation {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.exports.FeatureExportOperation#setP2MetaDataProperties(java.util.Map)
 	 */
-	protected void setP2MetaDataProperties(Map map) {
+	protected void setP2MetaDataProperties(Map<String, String> map) {
 		if (fInfo.toDirectory) {
 			map.put(IXMLConstants.TARGET_P2_METADATA, IBuildPropertiesConstants.TRUE);
 			map.put(IBuildPropertiesConstants.PROPERTY_P2_FLAVOR, P2Utils.P2_FLAVOR_DEFAULT);

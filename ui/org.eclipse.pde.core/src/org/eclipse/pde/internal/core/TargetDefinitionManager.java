@@ -29,7 +29,7 @@ import org.osgi.framework.Bundle;
 
 public class TargetDefinitionManager implements IRegistryChangeListener {
 
-	Map fTargets;
+	Map<String, IConfigurationElement> fTargets;
 	private static String[] attributes;
 	{
 		attributes = new String[] {"id", "name"}; //$NON-NLS-1$ //$NON-NLS-2$
@@ -53,14 +53,14 @@ public class TargetDefinitionManager implements IRegistryChangeListener {
 	public IConfigurationElement[] getTargets() {
 		if (fTargets == null)
 			loadElements();
-		return (IConfigurationElement[]) fTargets.values().toArray(new IConfigurationElement[fTargets.size()]);
+		return fTargets.values().toArray(new IConfigurationElement[fTargets.size()]);
 	}
 
 	public IConfigurationElement[] getSortedTargets() {
 		if (fTargets == null)
 			loadElements();
-		IConfigurationElement[] result = (IConfigurationElement[]) fTargets.values().toArray(new IConfigurationElement[fTargets.size()]);
-		Arrays.sort(result, new Comparator() {
+		IConfigurationElement[] result = fTargets.values().toArray(new IConfigurationElement[fTargets.size()]);
+		Arrays.sort(result, new Comparator<Object>() {
 
 			public int compare(Object o1, Object o2) {
 				String value1 = getString((IConfigurationElement) o1);
@@ -82,11 +82,11 @@ public class TargetDefinitionManager implements IRegistryChangeListener {
 	public IConfigurationElement getTarget(String id) {
 		if (fTargets == null)
 			loadElements();
-		return (IConfigurationElement) fTargets.get(id);
+		return fTargets.get(id);
 	}
 
 	private void loadElements() {
-		fTargets = new HashMap();
+		fTargets = new HashMap<String, IConfigurationElement>();
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		registry.addRegistryChangeListener(this);
 		IConfigurationElement[] elements = registry.getConfigurationElementsFor("org.eclipse.pde.core.targets"); //$NON-NLS-1$

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.site;
 
+import org.eclipse.pde.internal.core.isite.ISiteObject;
+
 import java.io.PrintWriter;
 import java.util.Locale;
 import java.util.Vector;
@@ -23,9 +25,9 @@ import org.w3c.dom.NodeList;
 public class Site extends SiteObject implements ISite {
 	private static final long serialVersionUID = 1L;
 	final static String INDENT = "   "; //$NON-NLS-1$
-	private Vector features = new Vector();
-	private Vector archives = new Vector();
-	private Vector categoryDefs = new Vector();
+	private Vector<ISiteObject> features = new Vector<ISiteObject>();
+	private Vector<ISiteObject> archives = new Vector<ISiteObject>();
+	private Vector<ISiteObject> categoryDefs = new Vector<ISiteObject>();
 	private String type;
 	private String url;
 	private String mirrorsUrl;
@@ -217,21 +219,21 @@ public class Site extends SiteObject implements ISite {
 	 * @see org.eclipse.pde.internal.core.isite.ISite#getFeatures()
 	 */
 	public ISiteFeature[] getFeatures() {
-		return (ISiteFeature[]) features.toArray(new ISiteFeature[features.size()]);
+		return features.toArray(new ISiteFeature[features.size()]);
 	}
 
 	/**
 	 * @see org.eclipse.pde.internal.core.isite.ISite#getArchives()
 	 */
 	public ISiteArchive[] getArchives() {
-		return (ISiteArchive[]) archives.toArray(new ISiteArchive[archives.size()]);
+		return archives.toArray(new ISiteArchive[archives.size()]);
 	}
 
 	/**
 	 * @see org.eclipse.pde.internal.core.isite.ISite#getCategoryDefinitions()
 	 */
 	public ISiteCategoryDefinition[] getCategoryDefinitions() {
-		return (ISiteCategoryDefinition[]) categoryDefs.toArray(new ISiteCategoryDefinition[categoryDefs.size()]);
+		return categoryDefs.toArray(new ISiteCategoryDefinition[categoryDefs.size()]);
 	}
 
 	protected void reset() {
@@ -343,9 +345,9 @@ public class Site extends SiteObject implements ISite {
 		return true;
 	}
 
-	private void writeChildren(String indent, Vector children, PrintWriter writer) {
+	private void writeChildren(String indent, Vector<ISiteObject> children, PrintWriter writer) {
 		for (int i = 0; i < children.size(); i++) {
-			IWritable writable = (IWritable) children.get(i);
+			IWritable writable = children.get(i);
 			writable.write(indent, writer);
 		}
 	}

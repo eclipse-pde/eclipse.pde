@@ -26,7 +26,7 @@ import org.w3c.dom.*;
 
 public class FeatureErrorReporter extends ManifestErrorReporter {
 
-	static HashSet attrs = new HashSet();
+	static HashSet<String> attrs = new HashSet<String>();
 
 	static String[] attrNames = {"id", "version", "label", "provider-name", "image", "os", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 			"ws", "arch", "nl", "colocation-affinity", "primary", "exclusive", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$

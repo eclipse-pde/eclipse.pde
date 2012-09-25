@@ -36,8 +36,8 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 	private transient IDocumentElementNode fPreviousSibling;
 	private transient int fIndent;
 
-	private ArrayList fChildren;
-	private TreeMap fAttributes;
+	private ArrayList<IDocumentElementNode> fChildren;
+	private TreeMap<String, IDocumentAttributeNode> fAttributes;
 	private String fTag;
 	private IDocumentTextNode fTextNode;
 
@@ -57,8 +57,8 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		fPreviousSibling = null;
 		fIndent = 0;
 
-		fChildren = new ArrayList();
-		fAttributes = new TreeMap();
+		fChildren = new ArrayList<IDocumentElementNode>();
+		fAttributes = new TreeMap<String, IDocumentAttributeNode>();
 		fTag = null;
 		fTextNode = null;
 	}
@@ -66,7 +66,7 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentElementNode#getChildNodesList()
 	 */
-	public ArrayList getChildNodesList() {
+	public ArrayList<IDocumentElementNode> getChildNodesList() {
 		// Not used by text edit operations
 		return fChildren;
 	}
@@ -74,7 +74,7 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentElementNode#getNodeAttributesMap()
 	 */
-	public TreeMap getNodeAttributesMap() {
+	public TreeMap<String, IDocumentAttributeNode> getNodeAttributesMap() {
 		// Not used by text edit operations
 		return fAttributes;
 	}
@@ -217,7 +217,7 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 	 */
 	public IDocumentElementNode[] getChildNodes() {
 		// Used by text edit operations
-		return (IDocumentElementNode[]) fChildren.toArray(new IDocumentElementNode[fChildren.size()]);
+		return fChildren.toArray(new IDocumentElementNode[fChildren.size()]);
 	}
 
 	/* (non-Javadoc)
@@ -234,7 +234,7 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 	public IDocumentElementNode getChildAt(int index) {
 		// Used by text edit operations
 		if (index < fChildren.size())
-			return (IDocumentElementNode) fChildren.get(index);
+			return fChildren.get(index);
 		return null;
 	}
 
@@ -282,7 +282,7 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 			fChildren.remove(child);
 			if (index < fChildren.size()) {
 				IDocumentElementNode prevSibling = index == 0 ? null : (IDocumentElementNode) fChildren.get(index - 1);
-				((IDocumentElementNode) fChildren.get(index)).setPreviousSibling(prevSibling);
+				fChildren.get(index).setPreviousSibling(prevSibling);
 			}
 			return child;
 		}
@@ -298,7 +298,7 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 			return null;
 		}
 		// Get the child at the specified index
-		IDocumentElementNode child = (IDocumentElementNode) fChildren.get(index);
+		IDocumentElementNode child = fChildren.get(index);
 		// Remove the child
 		fChildren.remove(child);
 		// Determine the new previous sibling for the new element at the
@@ -306,9 +306,9 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		if (index < fChildren.size()) {
 			IDocumentElementNode previousSibling = null;
 			if (index != 0) {
-				previousSibling = (IDocumentElementNode) fChildren.get(index - 1);
+				previousSibling = fChildren.get(index - 1);
 			}
-			IDocumentElementNode newNode = (IDocumentElementNode) fChildren.get(index);
+			IDocumentElementNode newNode = fChildren.get(index);
 			newNode.setPreviousSibling(previousSibling);
 		}
 		return child;
@@ -375,7 +375,7 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 	 */
 	public String getXMLAttributeValue(String name) {
 		// Not used by text edit operations
-		IDocumentAttributeNode attribute = (IDocumentAttributeNode) fAttributes.get(name);
+		IDocumentAttributeNode attribute = fAttributes.get(name);
 		if (attribute == null) {
 			return null;
 		}
@@ -403,7 +403,7 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 	 */
 	public IDocumentAttributeNode getDocumentAttribute(String name) {
 		// Used by text edit operations
-		return (IDocumentAttributeNode) fAttributes.get(name);
+		return fAttributes.get(name);
 	}
 
 	/* (non-Javadoc)
@@ -427,11 +427,11 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 	 */
 	public IDocumentAttributeNode[] getNodeAttributes() {
 		// Used by text edit operations
-		ArrayList list = new ArrayList();
-		Iterator iter = fAttributes.values().iterator();
+		ArrayList<IDocumentAttributeNode> list = new ArrayList<IDocumentAttributeNode>();
+		Iterator<IDocumentAttributeNode> iter = fAttributes.values().iterator();
 		while (iter.hasNext())
 			list.add(iter.next());
-		return (IDocumentAttributeNode[]) list.toArray(new IDocumentAttributeNode[list.size()]);
+		return list.toArray(new IDocumentAttributeNode[list.size()]);
 	}
 
 	/* (non-Javadoc)
@@ -476,10 +476,10 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		child2.setPreviousSibling(index1 == 0 ? null : (IDocumentElementNode) fChildren.get(index1 - 1));
 
 		if (index1 < fChildren.size() - 1)
-			((IDocumentElementNode) fChildren.get(index1 + 1)).setPreviousSibling(child2);
+			fChildren.get(index1 + 1).setPreviousSibling(child2);
 
 		if (index2 < fChildren.size() - 1)
-			((IDocumentElementNode) fChildren.get(index2 + 1)).setPreviousSibling(child1);
+			fChildren.get(index2 + 1).setPreviousSibling(child1);
 	}
 
 	/* (non-Javadoc)
@@ -539,11 +539,11 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 	 */
 	private void reconnectAttributes() {
 		// Get all attributes
-		Iterator keys = fAttributes.keySet().iterator();
+		Iterator<String> keys = fAttributes.keySet().iterator();
 		// Fill in appropriate transient field values for all attributes
 		while (keys.hasNext()) {
-			String key = (String) keys.next();
-			IDocumentAttributeNode attribute = (IDocumentAttributeNode) fAttributes.get(key);
+			String key = keys.next();
+			IDocumentAttributeNode attribute = fAttributes.get(key);
 			attribute.reconnect(this);
 		}
 	}
@@ -555,7 +555,7 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 	private void reconnectChildren(IModel model) {
 		// Fill in appropriate transient field values
 		for (int i = 0; i < fChildren.size(); i++) {
-			IDocumentElementNode child = (IDocumentElementNode) fChildren.get(i);
+			IDocumentElementNode child = fChildren.get(i);
 			// Reconnect child
 			child.reconnect(this, model);
 		}
@@ -773,7 +773,7 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 			return false;
 		}
 		// Check to see if the attribute already exists
-		IDocumentAttributeNode attribute = (IDocumentAttributeNode) getNodeAttributesMap().get(name);
+		IDocumentAttributeNode attribute = getNodeAttributesMap().get(name);
 		try {
 			if (attribute == null) {
 				// Attribute does not exist

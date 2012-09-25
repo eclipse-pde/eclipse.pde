@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target;
 
+import org.eclipse.pde.core.target.NameVersionDescriptor;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -152,7 +154,7 @@ public class FeatureBundleContainer extends AbstractBundleContainer {
 			TargetBundle[] bundles = container.getBundles();
 			IFeature feature = model.getFeature();
 			IFeaturePlugin[] plugins = feature.getPlugins();
-			List matchInfos = new ArrayList(plugins.length);
+			List<NameVersionDescriptor> matchInfos = new ArrayList<NameVersionDescriptor>(plugins.length);
 			for (int i = 0; i < plugins.length; i++) {
 				if (monitor.isCanceled()) {
 					return new TargetBundle[0];
@@ -164,8 +166,8 @@ public class FeatureBundleContainer extends AbstractBundleContainer {
 				}
 			}
 
-			List result = TargetDefinition.getMatchingBundles(bundles, (NameVersionDescriptor[]) matchInfos.toArray(new NameVersionDescriptor[matchInfos.size()]), true);
-			return (TargetBundle[]) result.toArray(new TargetBundle[result.size()]);
+			List<?> result = TargetDefinition.getMatchingBundles(bundles, matchInfos.toArray(new NameVersionDescriptor[matchInfos.size()]), true);
+			return result.toArray(new TargetBundle[result.size()]);
 		} finally {
 			if (model != null) {
 				model.dispose();

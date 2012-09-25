@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
+import org.eclipse.core.resources.IProject;
+
 import java.util.HashMap;
 import org.eclipse.core.resources.*;
 import org.eclipse.pde.core.IModelProviderEvent;
@@ -29,7 +31,7 @@ public class WorkspaceFeatureModelManager extends WorkspaceModelManager {
 			WorkspaceFeatureModel model = new WorkspaceFeatureModel(featureXml);
 			loadModel(model, false);
 			if (fModels == null)
-				fModels = new HashMap();
+				fModels = new HashMap<IProject, WorkspaceFeatureModel>();
 			fModels.put(project, model);
 			if (notify)
 				addChange(model, IModelProviderEvent.MODELS_ADDED);
@@ -66,7 +68,7 @@ public class WorkspaceFeatureModelManager extends WorkspaceModelManager {
 
 	protected IFeatureModel[] getFeatureModels() {
 		initialize();
-		return (IFeatureModel[]) fModels.values().toArray(new IFeatureModel[fModels.size()]);
+		return fModels.values().toArray(new IFeatureModel[fModels.size()]);
 	}
 
 	protected IFeatureModel getFeatureModel(IProject project) {

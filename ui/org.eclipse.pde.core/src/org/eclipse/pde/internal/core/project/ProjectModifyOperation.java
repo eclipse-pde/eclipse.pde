@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.project;
 
+import org.eclipse.jdt.core.IClasspathEntry;
+
 import java.util.*;
 import java.util.Map.Entry;
 import org.eclipse.core.resources.*;
@@ -223,7 +225,7 @@ public class ProjectModifyOperation {
 				// add entries not already present
 				IClasspathEntry[] entries = getSourceFolderEntries(javaProject, description);
 				IClasspathEntry[] rawClasspath = javaProject.getRawClasspath();
-				List add = new ArrayList();
+				List<IClasspathEntry> add = new ArrayList<IClasspathEntry>();
 				for (int i = 0; i < entries.length; i++) {
 					IClasspathEntry entry = entries[i];
 					boolean present = false;
@@ -258,12 +260,12 @@ public class ProjectModifyOperation {
 					add.add(ClasspathComputer.createContainerEntry());
 				}
 				if (!add.isEmpty()) {
-					List all = new ArrayList();
+					List<IClasspathEntry> all = new ArrayList<IClasspathEntry>();
 					for (int i = 0; i < rawClasspath.length; i++) {
 						all.add(rawClasspath[i]);
 					}
 					all.addAll(add);
-					javaProject.setRawClasspath((IClasspathEntry[]) all.toArray(new IClasspathEntry[all.size()]), null);
+					javaProject.setRawClasspath(all.toArray(new IClasspathEntry[all.size()]), null);
 				}
 			} else {
 				IClasspathEntry[] entries = getClassPathEntries(javaProject, description);
@@ -351,7 +353,7 @@ public class ProjectModifyOperation {
 		if (folders == null || folders.length == 0) {
 			return new IClasspathEntry[0];
 		}
-		List entries = new ArrayList();
+		List<IClasspathEntry> entries = new ArrayList<IClasspathEntry>();
 		for (int i = 0; i < folders.length; i++) {
 			IBundleClasspathEntry folder = folders[i];
 			if (folder.getSourcePath() == null) {
@@ -375,7 +377,7 @@ public class ProjectModifyOperation {
 				entries.add(JavaCore.newSourceEntry(path, EXCLUDE_NONE, output));
 			}
 		}
-		return (IClasspathEntry[]) entries.toArray(new IClasspathEntry[entries.size()]);
+		return entries.toArray(new IClasspathEntry[entries.size()]);
 	}
 
 	/**
@@ -406,12 +408,12 @@ public class ProjectModifyOperation {
 		IProject project = description.getProject();
 		IProjectDescription projectDescription = project.getDescription();
 		String[] curr = projectDescription.getNatureIds();
-		Set before = new HashSet();
+		Set<String> before = new HashSet<String>();
 		for (int i = 0; i < curr.length; i++) {
 			before.add(curr[i]);
 		}
 		String[] natureIds = description.getNatureIds();
-		Set after = new HashSet();
+		Set<String> after = new HashSet<String>();
 		for (int i = 0; i < natureIds.length; i++) {
 			after.add(natureIds[i]);
 		}
@@ -665,10 +667,10 @@ public class ProjectModifyOperation {
 			}
 			// apply any other headers that have been specified
 			BundleProjectDescription bpd = (BundleProjectDescription) description;
-			Map extraHeaders = bpd.getExtraHeaders();
-			Iterator iterator = extraHeaders.entrySet().iterator();
+			Map<?, ?> extraHeaders = bpd.getExtraHeaders();
+			Iterator<?> iterator = extraHeaders.entrySet().iterator();
 			while (iterator.hasNext()) {
-				Entry entry = (Entry) iterator.next();
+				Entry<?, ?> entry = (Entry<?, ?>) iterator.next();
 				String name = (String) entry.getKey();
 				String value = (String) entry.getValue();
 				// translate empty header to a single space to ensure inclusion of empty headers
@@ -705,7 +707,7 @@ public class ProjectModifyOperation {
 		// collect unique entries
 		IBundleClasspathEntry[] libs = description.getBundleClasspath();
 		if (libs != null && libs.length > 0) {
-			Set names = new LinkedHashSet();
+			Set<String> names = new LinkedHashSet<String>();
 			for (int i = 0; i < libs.length; i++) {
 				IPath lib = libs[i].getLibrary();
 				String libName = "."; //$NON-NLS-1$
@@ -714,7 +716,7 @@ public class ProjectModifyOperation {
 				}
 				names.add(libName);
 			}
-			return (String[]) names.toArray(new String[names.size()]);
+			return names.toArray(new String[names.size()]);
 		}
 		return null;
 	}

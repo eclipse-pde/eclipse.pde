@@ -26,7 +26,7 @@ public class SchemaComplexType extends SchemaType implements ISchemaComplexType 
 	public static final String P_COMPOSITOR = "compositorProperty"; //$NON-NLS-1$
 	private boolean mixed;
 	private ISchemaCompositor compositor;
-	private Vector attributes = new Vector();
+	private Vector<ISchemaAttribute> attributes = new Vector<ISchemaAttribute>();
 
 	public SchemaComplexType(ISchema schema) {
 		this(schema, null);
@@ -77,7 +77,7 @@ public class SchemaComplexType extends SchemaType implements ISchemaComplexType 
 
 	public ISchemaAttribute getAttribute(String name) {
 		for (int i = 0; i < attributes.size(); i++) {
-			ISchemaAttribute attribute = (ISchemaAttribute) attributes.elementAt(i);
+			ISchemaAttribute attribute = attributes.elementAt(i);
 			if (attribute.getName().equals(name))
 				return attribute;
 		}
@@ -125,7 +125,7 @@ public class SchemaComplexType extends SchemaType implements ISchemaComplexType 
 			compositor.write(indent2, writer);
 		}
 		for (int i = 0; i < attributes.size(); i++) {
-			ISchemaAttribute attribute = (ISchemaAttribute) attributes.elementAt(i);
+			ISchemaAttribute attribute = attributes.elementAt(i);
 			attribute.write(indent2, writer);
 		}
 		writer.println(indent + "</complexType>"); //$NON-NLS-1$

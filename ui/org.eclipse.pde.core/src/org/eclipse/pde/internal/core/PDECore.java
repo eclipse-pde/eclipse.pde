@@ -145,12 +145,12 @@ public class PDECore extends Plugin {
 	/**
 	 * Target platform service.
 	 */
-	private ServiceRegistration fTargetPlatformService;
+	private ServiceRegistration<?> fTargetPlatformService;
 
 	/**
 	 * Bundle project service.
 	 */
-	private ServiceRegistration fBundleProjectService;
+	private ServiceRegistration<?> fBundleProjectService;
 
 	public PDECore() {
 		inst = this;
@@ -265,8 +265,8 @@ public class PDECore extends Plugin {
 		fFeatureRebuilder = new FeatureRebuilder();
 		fFeatureRebuilder.start();
 
-		fTargetPlatformService = context.registerService(ITargetPlatformService.class.getName(), TargetPlatformService.getDefault(), new Hashtable());
-		fBundleProjectService = context.registerService(IBundleProjectService.class.getName(), BundleProjectService.getDefault(), new Hashtable());
+		fTargetPlatformService = context.registerService(ITargetPlatformService.class.getName(), TargetPlatformService.getDefault(), new Hashtable<String, Object>());
+		fBundleProjectService = context.registerService(IBundleProjectService.class.getName(), BundleProjectService.getDefault(), new Hashtable<String, Object>());
 
 		// use save participant to clean orphaned profiles.
 		ResourcesPlugin.getWorkspace().addSaveParticipant(PLUGIN_ID, new ISaveParticipant() {
@@ -356,7 +356,7 @@ public class PDECore extends Plugin {
 	 * @return service object or <code>null</code> if none
 	 */
 	public Object acquireService(String serviceName) {
-		ServiceReference reference = fBundleContext.getServiceReference(serviceName);
+		ServiceReference<?> reference = fBundleContext.getServiceReference(serviceName);
 		if (reference == null)
 			return null;
 		Object service = fBundleContext.getService(reference);

@@ -45,7 +45,7 @@ public class FeatureExportTask extends BaseExportTask {
 	public void setFeatures(String features) {
 		StringTokenizer tok = new StringTokenizer(features, ","); //$NON-NLS-1$
 		FeatureModelManager manager = PDECore.getDefault().getFeatureModelManager();
-		ArrayList list = new ArrayList();
+		ArrayList<IFeatureModel> list = new ArrayList<IFeatureModel>();
 		while (tok.hasMoreTokens()) {
 			String id = tok.nextToken().trim();
 			IFeatureModel model = manager.findFeatureModel(id);
@@ -53,6 +53,6 @@ public class FeatureExportTask extends BaseExportTask {
 				list.add(model);
 		}
 
-		fFeatures = (IFeatureModel[]) list.toArray(new IFeatureModel[list.size()]);
+		fFeatures = list.toArray(new IFeatureModel[list.size()]);
 	}
 }

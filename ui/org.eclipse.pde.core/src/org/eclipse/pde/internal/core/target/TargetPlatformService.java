@@ -10,6 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target;
 
+import java.net.URI;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.pde.core.target.ITargetHandle;
+import org.eclipse.pde.core.target.NameVersionDescriptor;
+
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -39,16 +44,16 @@ public class TargetPlatformService implements ITargetPlatformService {
 	/**
 	 * External File Targets
 	 */
-	private static Map fExtTargetHandles;
+	private static Map<URI, ExternalFileTargetHandle> fExtTargetHandles;
 
 	/**
 	 * Collects target files in the workspace
 	 */
 	class ResourceProxyVisitor implements IResourceProxyVisitor {
 
-		private List fList;
+		private List<IResource> fList;
 
-		protected ResourceProxyVisitor(List list) {
+		protected ResourceProxyVisitor(List<IResource> list) {
 			fList = list;
 		}
 
@@ -123,9 +128,9 @@ public class TargetPlatformService implements ITargetPlatformService {
 	 */
 	public ITargetHandle getTarget(URI uri) {
 		if (fExtTargetHandles == null)
-			fExtTargetHandles = new HashMap(10);
+			fExtTargetHandles = new HashMap<URI, ExternalFileTargetHandle>(10);
 		if (fExtTargetHandles.containsKey(uri)) {
-			return (ITargetHandle) fExtTargetHandles.get(uri);
+			return fExtTargetHandles.get(uri);
 		}
 		ExternalFileTargetHandle externalTarget = new ExternalFileTargetHandle(uri);
 		fExtTargetHandles.put(uri, externalTarget);
@@ -136,14 +141,14 @@ public class TargetPlatformService implements ITargetPlatformService {
 	 * @see org.eclipse.pde.core.target.ITargetPlatformService#getTargets(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public ITargetHandle[] getTargets(IProgressMonitor monitor) {
-		List local = findLocalTargetDefinitions();
-		List ws = findWorkspaceTargetDefinitions();
+		List<ITargetHandle> local = findLocalTargetDefinitions();
+		List<WorkspaceFileTargetHandle> ws = findWorkspaceTargetDefinitions();
 		local.addAll(ws);
 		if (fExtTargetHandles != null) {
 			// If an external target is inaccessible then don't show it. But keep the reference in case it becomes accessible later
-			Collection externalTargets = fExtTargetHandles.values();
-			for (Iterator iterator = externalTargets.iterator(); iterator.hasNext();) {
-				ExternalFileTargetHandle target = (ExternalFileTargetHandle) iterator.next();
+			Collection<ExternalFileTargetHandle> externalTargets = fExtTargetHandles.values();
+			for (Iterator<ExternalFileTargetHandle> iterator = externalTargets.iterator(); iterator.hasNext();) {
+				ExternalFileTargetHandle target = iterator.next();
 				if (target.exists())
 					local.add(target);
 			}
@@ -163,7 +168,7 @@ public class TargetPlatformService implements ITargetPlatformService {
 				}
 			}
 		}
-		return (ITargetHandle[]) local.toArray(new ITargetHandle[local.size()]);
+		return local.toArray(new ITargetHandle[local.size()]);
 	}
 
 	/**
@@ -171,9 +176,9 @@ public class TargetPlatformService implements ITargetPlatformService {
 	 *
 	 * @return all local target definition handles
 	 */
-	private List findLocalTargetDefinitions() {
+	private List<ITargetHandle> findLocalTargetDefinitions() {
 		IPath containerPath = LocalTargetHandle.LOCAL_TARGET_CONTAINER_PATH;
-		List handles = new ArrayList(10);
+		List<ITargetHandle> handles = new ArrayList<ITargetHandle>(10);
 		final File directory = containerPath.toFile();
 		if (directory.isDirectory()) {
 			FilenameFilter filter = new FilenameFilter() {
@@ -198,17 +203,17 @@ public class TargetPlatformService implements ITargetPlatformService {
 	 * 
 	 * @return all target definition handles in the workspace
 	 */
-	private List findWorkspaceTargetDefinitions() {
-		List files = new ArrayList(10);
+	private List<WorkspaceFileTargetHandle> findWorkspaceTargetDefinitions() {
+		List<IResource> files = new ArrayList<IResource>(10);
 		ResourceProxyVisitor visitor = new ResourceProxyVisitor(files);
 		try {
 			ResourcesPlugin.getWorkspace().getRoot().accept(visitor, IResource.NONE);
 		} catch (CoreException e) {
 			PDECore.log(e);
-			return new ArrayList(0);
+			return new ArrayList<WorkspaceFileTargetHandle>(0);
 		}
-		Iterator iter = files.iterator();
-		List handles = new ArrayList(files.size());
+		Iterator<IResource> iter = files.iterator();
+		List<WorkspaceFileTargetHandle> handles = new ArrayList<WorkspaceFileTargetHandle>(files.size());
 		while (iter.hasNext()) {
 			IFile file = (IFile) iter.next();
 			handles.add(new WorkspaceFileTargetHandle(file));
@@ -447,8 +452,8 @@ public class TargetPlatformService implements ITargetPlatformService {
 		if (!value.equals(ICoreConstants.VALUE_SAVED_ALL)) {
 			// restrictions on container
 			IPluginModelBase[] models = PluginRegistry.getExternalModels();
-			ArrayList list = new ArrayList(models.length);
-			Set disabledIDs = new HashSet();
+			ArrayList<NameVersionDescriptor> list = new ArrayList<NameVersionDescriptor>(models.length);
+			Set<String> disabledIDs = new HashSet<String>();
 			for (int i = 0; i < models.length; i++) {
 				if (!models[i].isEnabled()) {
 					disabledIDs.add(models[i].getPluginBase().getId());
@@ -468,7 +473,7 @@ public class TargetPlatformService implements ITargetPlatformService {
 				}
 			}
 			if (list.size() > 0) {
-				target.setIncluded((NameVersionDescriptor[]) list.toArray(new NameVersionDescriptor[list.size()]));
+				target.setIncluded(list.toArray(new NameVersionDescriptor[list.size()]));
 			}
 		}
 
@@ -540,8 +545,8 @@ public class TargetPlatformService implements ITargetPlatformService {
 
 		// Get the current models from the target platform
 		IPluginModelBase[] models = PDECore.getDefault().getModelManager().getExternalModels();
-		Set allLocations = new HashSet(models.length);
-		Map stateLocations = new HashMap(models.length);
+		Set<String> allLocations = new HashSet<String>(models.length);
+		Map<String, IPluginModelBase> stateLocations = new HashMap<String, IPluginModelBase>(models.length);
 		for (int i = 0; i < models.length; i++) {
 			IPluginModelBase base = models[i];
 			allLocations.add(base.getInstallLocation());
@@ -551,7 +556,7 @@ public class TargetPlatformService implements ITargetPlatformService {
 		// Compare the platform bundles against the definition ones and collect any missing bundles
 		MultiStatus multi = new MultiStatus(PDECore.PLUGIN_ID, 0, "", null); //$NON-NLS-1$ 
 		TargetBundle[] bundles = target.getAllBundles();
-		Set alreadyConsidered = new HashSet(bundles.length);
+		Set<NameVersionDescriptor> alreadyConsidered = new HashSet<NameVersionDescriptor>(bundles.length);
 		for (int i = 0; i < bundles.length; i++) {
 			TargetBundle bundle = bundles[i];
 			BundleInfo info = bundle.getBundleInfo();
@@ -576,9 +581,9 @@ public class TargetPlatformService implements ITargetPlatformService {
 		}
 
 		// Anything left over is in the state and not the target (have been removed from the target)
-		Iterator iterator = stateLocations.values().iterator();
+		Iterator<IPluginModelBase> iterator = stateLocations.values().iterator();
 		while (iterator.hasNext()) {
-			IPluginModelBase model = (IPluginModelBase) iterator.next();
+			IPluginModelBase model = iterator.next();
 			IStatus status = new Status(IStatus.WARNING, PDECore.PLUGIN_ID, ITargetPlatformService.STATUS_MISSING_FROM_TARGET_DEFINITION, model.getPluginBase().getId(), null);
 			multi.add(status);
 		}

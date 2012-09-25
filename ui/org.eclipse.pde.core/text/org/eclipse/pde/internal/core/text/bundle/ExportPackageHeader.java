@@ -27,7 +27,7 @@ public class ExportPackageHeader extends BasePackageHeader {
 		return new ExportPackageObject(this, element, getVersionAttribute());
 	}
 
-	public Vector getPackageNames() {
+	public Vector<?> getPackageNames() {
 		return getElementNames();
 	}
 

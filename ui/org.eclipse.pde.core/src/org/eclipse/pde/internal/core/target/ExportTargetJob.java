@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target;
 
+import org.eclipse.pde.core.target.NameVersionDescriptor;
+
 import java.net.URI;
 import java.util.*;
 import org.eclipse.core.filesystem.*;
@@ -34,7 +36,7 @@ public class ExportTargetJob extends Job {
 	private IFileStore featureDir;
 	private IFileStore pluginDir;
 	private IFileSystem fileSystem;
-	private Map filter;
+	private Map<String, NameVersionDescriptor[]> filter;
 	private ITargetDefinition fTarget;
 
 	public ExportTargetJob(ITargetDefinition target, URI destination, boolean clearDestinationDirectory) {
@@ -74,10 +76,10 @@ public class ExportTargetJob extends Job {
 		NameVersionDescriptor[] included = target.getIncluded();
 		if (included == null)
 			return;
-		filter = new HashMap();
+		filter = new HashMap<String, NameVersionDescriptor[]>();
 		for (int i = 0; i < included.length; i++) {
 			NameVersionDescriptor inclusion = included[i];
-			NameVersionDescriptor[] versions = (NameVersionDescriptor[]) filter.get(inclusion.getId());
+			NameVersionDescriptor[] versions = filter.get(inclusion.getId());
 			if (versions == null)
 				filter.put(inclusion.getId(), new NameVersionDescriptor[] {inclusion});
 			else {
@@ -110,7 +112,7 @@ public class ExportTargetJob extends Job {
 		// currently PDE does not selectively include/exclude features
 		if (filter == null || descriptor.getType().equals(NameVersionDescriptor.TYPE_FEATURE))
 			return true;
-		NameVersionDescriptor[] versions = (NameVersionDescriptor[]) filter.get(descriptor.getId());
+		NameVersionDescriptor[] versions = filter.get(descriptor.getId());
 		if (versions == null)
 			return false;
 		for (int i = 0; i < versions.length; i++) {
@@ -156,7 +158,7 @@ public class ExportTargetJob extends Job {
 	}
 
 	private String getCapability(IInstallableUnit iu, String namespace) {
-		for (Iterator i = iu.getProvidedCapabilities().iterator(); i.hasNext();) {
+		for (Iterator<?> i = iu.getProvidedCapabilities().iterator(); i.hasNext();) {
 			IProvidedCapability capability = (IProvidedCapability) i.next();
 			if (capability.getNamespace().equals(namespace))
 				return capability.getName();
@@ -216,9 +218,9 @@ public class ExportTargetJob extends Job {
 		exporter.addDestination(createRepoDescriptor(destination, P2TargetUtils.getProfileId(target), RepositoryDescriptor.KIND_ARTIFACT));
 		exporter.addSource(createRepoDescriptor(P2TargetUtils.getBundlePool().getLocation(), null, RepositoryDescriptor.KIND_ARTIFACT));
 
-		IQueryResult ius = P2TargetUtils.getIUs(target, monitor);
-		ArrayList toExport = new ArrayList();
-		for (Iterator i = ius.iterator(); i.hasNext();) {
+		IQueryResult<?> ius = P2TargetUtils.getIUs(target, monitor);
+		ArrayList<IInstallableUnit> toExport = new ArrayList<IInstallableUnit>();
+		for (Iterator<?> i = ius.iterator(); i.hasNext();) {
 			IInstallableUnit iu = (IInstallableUnit) i.next();
 			if (shouldExport(iu))
 				toExport.add(iu);

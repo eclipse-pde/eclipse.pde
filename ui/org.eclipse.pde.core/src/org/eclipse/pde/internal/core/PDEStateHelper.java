@@ -29,11 +29,11 @@ public class PDEStateHelper {
 		if (root == null)
 			return new BundleDescription[0];
 		ExportPackageDescription[] packages = root.getResolvedImports();
-		ArrayList resolvedImports = new ArrayList(packages.length);
+		ArrayList<BundleDescription> resolvedImports = new ArrayList<BundleDescription>(packages.length);
 		for (int i = 0; i < packages.length; i++)
 			if (!root.getLocation().equals(packages[i].getExporter().getLocation()) && !resolvedImports.contains(packages[i].getExporter()))
 				resolvedImports.add(packages[i].getExporter());
-		return (BundleDescription[]) resolvedImports.toArray(new BundleDescription[resolvedImports.size()]);
+		return resolvedImports.toArray(new BundleDescription[resolvedImports.size()]);
 	}
 
 }

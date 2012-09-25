@@ -14,6 +14,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.builders;
 
+import org.eclipse.osgi.service.resolver.ExportPackageDescription;
+import org.eclipse.osgi.service.resolver.ImportPackageSpecification;
+
 import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -36,7 +39,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 
 	private boolean fOsgiR4;
 	private IPluginModelBase fModel;
-	private Set fProjectPackages;
+	private Set<String> fProjectPackages;
 
 	public BundleErrorReporter(IFile file) {
 		super(file);
@@ -679,16 +682,16 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			}
 		}
 
-		HashMap exported = getAvailableExportedPackages(desc.getContainingState());
+		HashMap<String, ExportPackageDescription> exported = getAvailableExportedPackages(desc.getContainingState());
 
 		ImportPackageSpecification[] imports = desc.getImportPackages();
 		if (desc.hasDynamicImports()) {
-			List staticImportsList = new ArrayList();
+			List<ImportPackageSpecification> staticImportsList = new ArrayList<ImportPackageSpecification>();
 			for (int i = 0; i < imports.length; ++i) {
 				if (!imports[i].getDirective(Constants.RESOLUTION_DIRECTIVE).equals(ImportPackageSpecification.RESOLUTION_DYNAMIC))
 					staticImportsList.add(imports[i]);
 			}
-			imports = (ImportPackageSpecification[]) staticImportsList.toArray(new ImportPackageSpecification[staticImportsList.size()]);
+			imports = staticImportsList.toArray(new ImportPackageSpecification[staticImportsList.size()]);
 		}
 
 		ManifestElement[] elements = header.getElements();
@@ -723,7 +726,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 				boolean optional = isOptional(elements[i]);
 				int severity = getRequireBundleSeverity(elements[i], optional);
 
-				ExportPackageDescription export = (ExportPackageDescription) exported.get(name);
+				ExportPackageDescription export = exported.get(name);
 				if (export != null) {
 					if (export.getSupplier().isResolved()) {
 						Version version = export.getVersion();
@@ -749,10 +752,10 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		}
 	}
 
-	private HashMap getAvailableExportedPackages(State state) {
+	private HashMap<String, ExportPackageDescription> getAvailableExportedPackages(State state) {
 		BundleDescription[] bundles = state.getBundles();
 
-		HashMap exported = new HashMap();
+		HashMap<String, ExportPackageDescription> exported = new HashMap<String, ExportPackageDescription>();
 		for (int i = 0; i < bundles.length; i++) {
 			ExportPackageDescription[] exports = bundles[i].getExportPackages();
 			for (int j = 0; j < exports.length; j++) {
@@ -825,9 +828,9 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		return false;
 	}
 
-	private Set getExportedPackages() {
+	private Set<String> getExportedPackages() {
 		if (fProjectPackages == null) {
-			fProjectPackages = new HashSet();
+			fProjectPackages = new HashSet<String>();
 			addProjectPackages(fProject);
 			BundleDescription desc = fModel.getBundleDescription();
 			if (desc != null) {
@@ -1106,7 +1109,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		int severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_UNKNOWN_ATTRIBUTE);
 		if (severity == CompilerFlags.IGNORE)
 			return true;
-		Enumeration keys = elements[0].getKeys();
+		Enumeration<?> keys = elements[0].getKeys();
 		if (keys != null && keys.hasMoreElements()) {
 			String key = (String) keys.nextElement();
 			if ("exceptions".equals(key)) { //$NON-NLS-1$

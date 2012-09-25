@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
+import org.eclipse.pde.internal.core.UpdateManagerHelper.LocalSite;
+
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -30,7 +32,7 @@ import org.eclipse.update.configurator.IPlatformConfiguration;
 public class UpdateManagerHelper {
 
 	private static class LocalSite {
-		private ArrayList fPlugins;
+		private ArrayList<IPluginModelBase> fPlugins;
 		private IPath fPath;
 
 		public LocalSite(IPath path) {
@@ -38,7 +40,7 @@ public class UpdateManagerHelper {
 				fPath = path.setDevice(path.getDevice().toUpperCase(Locale.ENGLISH));
 			else
 				fPath = path;
-			fPlugins = new ArrayList();
+			fPlugins = new ArrayList<IPluginModelBase>();
 		}
 
 		public IPath getPath() {
@@ -56,7 +58,7 @@ public class UpdateManagerHelper {
 		public String[] getRelativePluginList() {
 			String[] list = new String[fPlugins.size()];
 			for (int i = 0; i < fPlugins.size(); i++) {
-				IPluginModelBase model = (IPluginModelBase) fPlugins.get(i);
+				IPluginModelBase model = fPlugins.get(i);
 				IPath location = new Path(model.getInstallLocation());
 				// defect 37319
 				if (location.segmentCount() > 2)
@@ -73,7 +75,7 @@ public class UpdateManagerHelper {
 			IPlatformConfiguration platformConfiguration = ConfiguratorUtils.getPlatformConfiguration(null);
 
 			// Compute local sites
-			ArrayList sites = new ArrayList();
+			ArrayList<LocalSite> sites = new ArrayList<LocalSite>();
 			for (int i = 0; i < models.length; i++) {
 				IPath path = new Path(models[i].getInstallLocation()).removeLastSegments(2);
 				addToSite(path, models[i], sites);
@@ -95,11 +97,11 @@ public class UpdateManagerHelper {
 		}
 	}
 
-	private static void addToSite(IPath path, IPluginModelBase model, ArrayList sites) {
+	private static void addToSite(IPath path, IPluginModelBase model, ArrayList<LocalSite> sites) {
 		if (path.getDevice() != null)
 			path = path.setDevice(path.getDevice().toUpperCase(Locale.ENGLISH));
 		for (int i = 0; i < sites.size(); i++) {
-			LocalSite localSite = (LocalSite) sites.get(i);
+			LocalSite localSite = sites.get(i);
 			if (localSite.getPath().equals(path)) {
 				localSite.add(model);
 				return;
@@ -111,10 +113,10 @@ public class UpdateManagerHelper {
 		sites.add(localSite);
 	}
 
-	private static void createConfigurationEntries(IPlatformConfiguration config, ArrayList sites) throws CoreException, MalformedURLException {
+	private static void createConfigurationEntries(IPlatformConfiguration config, ArrayList<LocalSite> sites) throws CoreException, MalformedURLException {
 
 		for (int i = 0; i < sites.size(); i++) {
-			LocalSite localSite = (LocalSite) sites.get(i);
+			LocalSite localSite = sites.get(i);
 			String[] plugins = localSite.getRelativePluginList();
 
 			int policy = IPlatformConfiguration.ISitePolicy.USER_INCLUDE;

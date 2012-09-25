@@ -66,7 +66,7 @@ public abstract class BuildModel extends AbstractModel implements IBuildModel {
 		}
 		fBuild = new Build();
 		fBuild.setModel(this);
-		for (Enumeration names = properties.propertyNames(); names.hasMoreElements();) {
+		for (Enumeration<?> names = properties.propertyNames(); names.hasMoreElements();) {
 			String name = names.nextElement().toString();
 			fBuild.processEntry(name, (String) properties.get(name));
 		}

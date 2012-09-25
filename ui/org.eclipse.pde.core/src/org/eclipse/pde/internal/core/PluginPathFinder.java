@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
+import java.io.File;
+
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -66,7 +68,7 @@ public class PluginPathFinder {
 	 * @return array of ".../plugins" or ".../features" Files
 	 */
 	private static File[] getSites(String platformHome, boolean features) {
-		HashSet sites = new HashSet();
+		HashSet<File> sites = new HashSet<File>();
 		File file = new File(platformHome, features ? "features" : "plugins"); //$NON-NLS-1$ //$NON-NLS-2$
 		if (!features && !file.exists())
 			file = new File(platformHome);
@@ -91,7 +93,7 @@ public class PluginPathFinder {
 			}
 		}
 
-		return (File[]) sites.toArray(new File[sites.size()]);
+		return sites.toArray(new File[sites.size()]);
 	}
 
 	public static URL[] getPluginPaths(String platformHome) {
@@ -212,7 +214,7 @@ public class PluginPathFinder {
 	 * @return URLs for features or plugins on the site
 	 */
 	private static URL[] getExtensionPluginURLs(IPlatformConfiguration config, boolean features) {
-		ArrayList extensionPlugins = new ArrayList();
+		ArrayList<URL> extensionPlugins = new ArrayList<URL>();
 		IPlatformConfiguration.ISiteEntry[] sites = config.getConfiguredSites();
 		for (int i = 0; i < sites.length; i++) {
 			URL url = sites[i].getURL();
@@ -230,7 +232,7 @@ public class PluginPathFinder {
 				}
 			}
 		}
-		return (URL[]) extensionPlugins.toArray(new URL[extensionPlugins.size()]);
+		return extensionPlugins.toArray(new URL[extensionPlugins.size()]);
 	}
 
 	/**
@@ -239,7 +241,7 @@ public class PluginPathFinder {
 	 * @return URLs to plugins/features
 	 */
 	public static URL[] scanLocations(File[] sites) {
-		HashSet result = new HashSet();
+		HashSet<URL> result = new HashSet<URL>();
 		for (int i = 0; i < sites.length; i++) {
 			if (!sites[i].exists())
 				continue;
@@ -253,7 +255,7 @@ public class PluginPathFinder {
 				}
 			}
 		}
-		return (URL[]) result.toArray(new URL[result.size()]);
+		return result.toArray(new URL[result.size()]);
 	}
 
 	public static boolean isDevLaunchMode() {

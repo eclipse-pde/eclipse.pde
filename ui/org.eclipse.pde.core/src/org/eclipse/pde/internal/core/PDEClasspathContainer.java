@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.jdt.core.IAccessRule;
+import org.eclipse.jdt.core.IClasspathEntry;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,12 +40,12 @@ public class PDEClasspathContainer {
 		}
 	}
 
-	private static HashMap ACCESSIBLE_RULES = new HashMap();
-	private static HashMap DISCOURAGED_RULES = new HashMap();
+	private static HashMap<IPath, IAccessRule> ACCESSIBLE_RULES = new HashMap<IPath, IAccessRule>();
+	private static HashMap<IPath, IAccessRule> DISCOURAGED_RULES = new HashMap<IPath, IAccessRule>();
 
 	private static final IAccessRule EXCLUDE_ALL_RULE = JavaCore.newAccessRule(new Path("**/*"), IAccessRule.K_NON_ACCESSIBLE | IAccessRule.IGNORE_IF_BETTER); //$NON-NLS-1$
 
-	protected void addProjectEntry(IProject project, Rule[] rules, ArrayList entries) throws CoreException {
+	protected void addProjectEntry(IProject project, Rule[] rules, ArrayList<IClasspathEntry> entries) throws CoreException {
 		if (project.hasNature(JavaCore.NATURE_ID)) {
 			IClasspathEntry entry = null;
 			if (rules != null) {
@@ -56,12 +60,12 @@ public class PDEClasspathContainer {
 	}
 
 	public static IClasspathEntry[] getExternalEntries(IPluginModelBase model) {
-		ArrayList entries = new ArrayList();
+		ArrayList<IClasspathEntry> entries = new ArrayList<IClasspathEntry>();
 		addExternalPlugin(model, new Rule[0], entries);
-		return (IClasspathEntry[]) entries.toArray(new IClasspathEntry[entries.size()]);
+		return entries.toArray(new IClasspathEntry[entries.size()]);
 	}
 
-	protected static void addExternalPlugin(IPluginModelBase model, Rule[] rules, ArrayList entries) {
+	protected static void addExternalPlugin(IPluginModelBase model, Rule[] rules, ArrayList<IClasspathEntry> entries) {
 		if (new File(model.getInstallLocation()).isFile()) {
 			IPath srcPath = ClasspathUtilCore.getSourceAnnotation(model, "."); //$NON-NLS-1$
 			if (srcPath == null)
@@ -102,7 +106,7 @@ public class PDEClasspathContainer {
 		}
 	}
 
-	protected static void addLibraryEntry(IPath path, IPath srcPath, Rule[] rules, IClasspathAttribute[] attributes, ArrayList entries) {
+	protected static void addLibraryEntry(IPath path, IPath srcPath, Rule[] rules, IClasspathAttribute[] attributes, ArrayList<IClasspathEntry> entries) {
 		IClasspathEntry entry = null;
 		if (rules != null) {
 			entry = JavaCore.newLibraryEntry(path, srcPath, null, getAccessRules(rules), attributes, false);
@@ -125,7 +129,7 @@ public class PDEClasspathContainer {
 	}
 
 	private static synchronized IAccessRule getAccessibleRule(IPath path) {
-		IAccessRule rule = (IAccessRule) ACCESSIBLE_RULES.get(path);
+		IAccessRule rule = ACCESSIBLE_RULES.get(path);
 		if (rule == null) {
 			rule = JavaCore.newAccessRule(path, IAccessRule.K_ACCESSIBLE);
 			ACCESSIBLE_RULES.put(path, rule);
@@ -142,7 +146,7 @@ public class PDEClasspathContainer {
 	}
 
 	private static synchronized IAccessRule getDiscouragedRule(IPath path) {
-		IAccessRule rule = (IAccessRule) DISCOURAGED_RULES.get(path);
+		IAccessRule rule = DISCOURAGED_RULES.get(path);
 		if (rule == null) {
 			rule = JavaCore.newAccessRule(path, IAccessRule.K_DISCOURAGED);
 			DISCOURAGED_RULES.put(path, rule);

@@ -19,7 +19,7 @@ import java.util.HashMap;
  */
 public class PDEHTMLHelper {
 
-	public final static HashMap fgEntityLookup = new HashMap(6);
+	public final static HashMap<String, String> fgEntityLookup = new HashMap<String, String>(6);
 	static {
 		fgEntityLookup.put("lt", "<"); //$NON-NLS-1$ //$NON-NLS-2$
 		fgEntityLookup.put("gt", ">"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -54,7 +54,7 @@ public class PDEHTMLHelper {
 				// End of predefined character entity found
 				processingEntity = false;
 				// Resolve the entity
-				String entity = ((String) fgEntityLookup.get(entityBuffer.toString()));
+				String entity = (fgEntityLookup.get(entityBuffer.toString()));
 				if (entity == null) {
 					// If the entity is not found or supported, ignore it
 					continue;

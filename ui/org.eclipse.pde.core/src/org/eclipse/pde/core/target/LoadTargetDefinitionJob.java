@@ -282,7 +282,7 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 			}
 		}
 		monitor.worked(10);
-		List additional = getAdditionalLocs();
+		List<String> additional = getAdditionalLocs();
 		handleReload(path, additional, pref, new SubProgressMonitor(monitor, 85));
 
 		// update preferences (Note: some preferences updated in handleReload())
@@ -290,7 +290,7 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 		String mode = new Path(path).equals(new Path(TargetPlatform.getDefaultLocation())) ? ICoreConstants.VALUE_USE_THIS : ICoreConstants.VALUE_USE_OTHER;
 		pref.setValue(ICoreConstants.TARGET_MODE, mode);
 
-		ListIterator li = additional.listIterator();
+		ListIterator<String> li = additional.listIterator();
 		StringBuffer buffer = new StringBuffer();
 		while (li.hasNext())
 			buffer.append(li.next()).append(","); //$NON-NLS-1$
@@ -339,8 +339,8 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 	 * 
 	 * @return additional bundle locations
 	 */
-	private List getAdditionalLocs() throws CoreException {
-		ArrayList additional = new ArrayList();
+	private List<String> getAdditionalLocs() throws CoreException {
+		ArrayList<String> additional = new ArrayList<String>();
 		// secondary containers are considered additional
 		ITargetLocation[] containers = fTarget.getTargetLocations();
 		if (containers != null && containers.length > 1) {
@@ -351,13 +351,13 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 		return additional;
 	}
 
-	private void handleReload(String targetLocation, List additionalLocations, PDEPreferencesManager pref, IProgressMonitor monitor) throws CoreException {
+	private void handleReload(String targetLocation, List<String> additionalLocations, PDEPreferencesManager pref, IProgressMonitor monitor) throws CoreException {
 		SubMonitor subMon = SubMonitor.convert(monitor, Messages.LoadTargetOperation_reloadTaskName, 100);
 		try {
-			Set included = new HashSet();
-			Set duplicates = new HashSet();
-			List infos = new ArrayList();
-			Set includedIds = new HashSet();
+			Set<BundleInfo> included = new HashSet<BundleInfo>();
+			Set<NameVersionDescriptor> duplicates = new HashSet<NameVersionDescriptor>();
+			List<BundleInfo> infos = new ArrayList<BundleInfo>();
+			Set<String> includedIds = new HashSet<String>();
 
 			if (!fTarget.isResolved()) {
 				// Even if there are errors in the target, don't interrupt the user with an error dialog
@@ -386,7 +386,7 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 			}
 
 			// collect all bundles, ignoring duplicates (symbolic name & version)
-			List pooled = new ArrayList();
+			List<File> pooled = new ArrayList<File>();
 			boolean considerPool = false;
 			for (int i = 0; i < includedBundles.length; i++) {
 				if (includedBundles[i].getStatus().isOK()) {
@@ -408,7 +408,7 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 			}
 
 			// Compute missing (not included) bundles (preference need to know disabled/missing bundles)
-			List missing = new ArrayList();
+			List<BundleInfo> missing = new ArrayList<BundleInfo>();
 			NameVersionDescriptor[] restrictions = fTarget.getIncluded();
 			if (restrictions != null) {
 				for (int j = 0; j < allBundles.length; j++) {
@@ -421,10 +421,10 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 				}
 			}
 
-			List paths = new ArrayList(infos.size() + missing.size());
-			Iterator iterator = infos.iterator();
+			List<URL> paths = new ArrayList<URL>(infos.size() + missing.size());
+			Iterator<BundleInfo> iterator = infos.iterator();
 			while (iterator.hasNext()) {
-				BundleInfo info = (BundleInfo) iterator.next();
+				BundleInfo info = iterator.next();
 				try {
 					paths.add(new File(info.getLocation()).toURL());
 				} catch (MalformedURLException e) {
@@ -437,9 +437,9 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 			StringBuffer versions = new StringBuffer();
 			int count = 0;
 			iterator = missing.iterator();
-			Set missingDescriptions = new HashSet(missing.size());
+			Set<NameVersionDescriptor> missingDescriptions = new HashSet<NameVersionDescriptor>(missing.size());
 			while (iterator.hasNext()) {
-				BundleInfo bi = (BundleInfo) iterator.next();
+				BundleInfo bi = iterator.next();
 				NameVersionDescriptor desc = new NameVersionDescriptor(bi.getSymbolicName(), bi.getVersion());
 				missingDescriptions.add(desc);
 				try {
@@ -461,7 +461,7 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 				}
 			}
 
-			URL[] urls = (URL[]) paths.toArray(new URL[paths.size()]);
+			URL[] urls = paths.toArray(new URL[paths.size()]);
 			PDEState state = new PDEState(urls, true, new SubProgressMonitor(monitor, 45));
 			IPluginModelBase[] models = state.getTargetModels();
 			for (int i = 0; i < models.length; i++) {
@@ -500,9 +500,9 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 				}
 			} else {
 				StringBuffer buf = new StringBuffer();
-				Iterator iterator2 = pooled.iterator();
+				Iterator<File> iterator2 = pooled.iterator();
 				while (iterator2.hasNext()) {
-					File bundle = (File) iterator2.next();
+					File bundle = iterator2.next();
 					buf.append(bundle.getName()); // only store file name to make workspace portable
 					if (iterator2.hasNext()) {
 						buf.append(',');

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
+import java.util.List;
+
 import java.io.*;
 import java.net.URL;
 import java.util.*;
@@ -60,7 +62,7 @@ public class ExternalFeatureModelManager {
 		}
 	}
 
-	public static IFeatureModel[] createModels(String platformHome, ArrayList additionalLocations, IProgressMonitor monitor) {
+	public static IFeatureModel[] createModels(String platformHome, ArrayList<String> additionalLocations, IProgressMonitor monitor) {
 		if (platformHome != null && platformHome.length() > 0) {
 			URL[] featureURLs = PluginPathFinder.getFeaturePaths(platformHome);
 
@@ -90,7 +92,7 @@ public class ExternalFeatureModelManager {
 		if (monitor == null)
 			monitor = new NullProgressMonitor();
 		monitor.beginTask("", featurePaths.length); //$NON-NLS-1$
-		Map uniqueFeatures = new HashMap();
+		Map<?, IFeatureModel> uniqueFeatures = new HashMap<Object, IFeatureModel>();
 		for (int i = 0; i < featurePaths.length; i++) {
 			File manifest = new File(featurePaths[i].getFile(), ICoreConstants.FEATURE_FILENAME_DESCRIPTOR);
 			if (!manifest.exists() || !manifest.isFile()) {
@@ -108,8 +110,8 @@ public class ExternalFeatureModelManager {
 			}
 			monitor.worked(1);
 		}
-		Collection models = uniqueFeatures.values();
-		return (IFeatureModel[]) models.toArray(new IFeatureModel[models.size()]);
+		Collection<IFeatureModel> models = uniqueFeatures.values();
+		return models.toArray(new IFeatureModel[models.size()]);
 	}
 
 	private ListenerList fListeners = new ListenerList();
@@ -153,30 +155,30 @@ public class ExternalFeatureModelManager {
 				fModels = allModels;
 			} else {
 				// To allow multiple versions of features, create a map of feature ids to a list of models
-				Map modelMap = new HashMap();
+				Map<String, List<IFeatureModel>> modelMap = new HashMap<String, List<IFeatureModel>>();
 				for (int i = 0; i < allModels.length; i++) {
 					String id = allModels[i].getFeature().getId();
 					if (modelMap.containsKey(id)) {
-						List list = (List) modelMap.get(id);
+						List<IFeatureModel> list = modelMap.get(id);
 						list.add(allModels[i]);
 					} else {
-						List list = new ArrayList();
+						List<IFeatureModel> list = new ArrayList<IFeatureModel>();
 						list.add(allModels[i]);
 						modelMap.put(id, list);
 					}
 				}
 
 				// Loop through the filter list, finding an exact match in the available models or highest version match
-				Set filteredModels = new HashSet();
+				Set<IFeatureModel> filteredModels = new HashSet<IFeatureModel>();
 				String[] entries = externalFeaturesString.split(","); //$NON-NLS-1$
 				for (int i = 0; i < entries.length; i++) {
 					String[] parts = entries[i].split("@"); //$NON-NLS-1$
 					if (parts.length > 0) {
 						String id = parts[0];
-						List possibilities = (List) modelMap.get(id);
+						List<?> possibilities = modelMap.get(id);
 						if (possibilities != null) {
 							IFeatureModel candidate = null;
-							for (Iterator iterator = possibilities.iterator(); iterator.hasNext();) {
+							for (Iterator<?> iterator = possibilities.iterator(); iterator.hasNext();) {
 								IFeatureModel current = (IFeatureModel) iterator.next();
 								if (candidate == null) {
 									candidate = current;
@@ -196,7 +198,7 @@ public class ExternalFeatureModelManager {
 						}
 					}
 				}
-				fModels = (IFeatureModel[]) filteredModels.toArray(new IFeatureModel[filteredModels.size()]);
+				fModels = filteredModels.toArray(new IFeatureModel[filteredModels.size()]);
 			}
 			newModels = new IFeatureModel[fModels.length];
 			System.arraycopy(fModels, 0, newModels, 0, fModels.length);
@@ -205,8 +207,8 @@ public class ExternalFeatureModelManager {
 		notifyListeners(oldModels, newModels);
 	}
 
-	private ArrayList parseAdditionalLocations(String additionalLocations) {
-		ArrayList result = new ArrayList();
+	private ArrayList<String> parseAdditionalLocations(String additionalLocations) {
+		ArrayList<String> result = new ArrayList<String>();
 		StringTokenizer tokenizer = new StringTokenizer(additionalLocations, ","); //$NON-NLS-1$
 		while (tokenizer.hasMoreTokens()) {
 			result.add(tokenizer.nextToken().trim());
@@ -235,7 +237,7 @@ public class ExternalFeatureModelManager {
 		return fModels;
 	}
 
-	public static TargetFeature[] createFeatures(String platformHome, ArrayList additionalLocations, IProgressMonitor monitor) {
+	public static TargetFeature[] createFeatures(String platformHome, ArrayList<?> additionalLocations, IProgressMonitor monitor) {
 		if (platformHome != null && platformHome.length() > 0) {
 			URL[] featureURLs = PluginPathFinder.getFeaturePaths(platformHome);
 
@@ -265,7 +267,7 @@ public class ExternalFeatureModelManager {
 		if (monitor == null)
 			monitor = new NullProgressMonitor();
 		monitor.beginTask("", featurePaths.length); //$NON-NLS-1$
-		Map uniqueFeatures = new HashMap();
+		Map<?, TargetFeature> uniqueFeatures = new HashMap<Object, TargetFeature>();
 		for (int i = 0; i < featurePaths.length; i++) {
 			File manifest = new File(featurePaths[i].getFile(), ICoreConstants.FEATURE_FILENAME_DESCRIPTOR);
 			if (!manifest.exists() || !manifest.isFile()) {
@@ -280,7 +282,7 @@ public class ExternalFeatureModelManager {
 			}
 			monitor.worked(1);
 		}
-		Collection models = uniqueFeatures.values();
-		return (TargetFeature[]) models.toArray(new TargetFeature[models.size()]);
+		Collection<TargetFeature> models = uniqueFeatures.values();
+		return models.toArray(new TargetFeature[models.size()]);
 	}
 }

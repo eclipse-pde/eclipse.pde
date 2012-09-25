@@ -50,7 +50,7 @@ public class SchemaElementReference extends PlatformObject implements ISchemaEle
 
 	private int maxOccurs = 1;
 
-	private Vector comments;
+	private Vector<String> comments;
 
 	private int[] range;
 
@@ -138,7 +138,7 @@ public class SchemaElementReference extends PlatformObject implements ISchemaEle
 		return element;
 	}
 
-	public Class getReferencedObjectClass() {
+	public Class<ISchemaElement> getReferencedObjectClass() {
 		return ISchemaElement.class;
 	}
 
@@ -226,14 +226,14 @@ public class SchemaElementReference extends PlatformObject implements ISchemaEle
 		comments = addComments(node, comments);
 	}
 
-	public Vector addComments(Node node, Vector result) {
+	public Vector<String> addComments(Node node, Vector<String> result) {
 		for (Node prev = node.getPreviousSibling(); prev != null; prev = prev.getPreviousSibling()) {
 			if (prev.getNodeType() == Node.TEXT_NODE)
 				continue;
 			if (prev instanceof Comment) {
 				String comment = prev.getNodeValue();
 				if (result == null)
-					result = new Vector();
+					result = new Vector<String>();
 				result.add(comment);
 			} else
 				break;
@@ -245,11 +245,11 @@ public class SchemaElementReference extends PlatformObject implements ISchemaEle
 		writeComments(writer, comments);
 	}
 
-	void writeComments(PrintWriter writer, Vector source) {
+	void writeComments(PrintWriter writer, Vector<String> source) {
 		if (source == null)
 			return;
 		for (int i = 0; i < source.size(); i++) {
-			String comment = (String) source.elementAt(i);
+			String comment = source.elementAt(i);
 			writer.println("<!--" + comment + "-->"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
@@ -262,7 +262,7 @@ public class SchemaElementReference extends PlatformObject implements ISchemaEle
 		return range == null ? -1 : range[1];
 	}
 
-	void bindSourceLocation(Node node, Hashtable lineTable) {
+	void bindSourceLocation(Node node, Hashtable<?, ?> lineTable) {
 		if (lineTable == null)
 			return;
 		Integer[] data = (Integer[]) lineTable.get(node);

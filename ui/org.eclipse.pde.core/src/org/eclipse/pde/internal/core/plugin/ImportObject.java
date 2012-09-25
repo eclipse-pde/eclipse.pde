@@ -12,13 +12,9 @@ package org.eclipse.pde.internal.core.plugin;
 
 import java.io.PrintWriter;
 import java.io.Serializable;
-
 import org.eclipse.pde.core.ISourceObject;
 import org.eclipse.pde.core.IWritable;
-import org.eclipse.pde.core.plugin.IPlugin;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginImport;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.*;
 
 public class ImportObject extends PluginReference implements IWritable, Serializable, IWritableDelimiter {
 
@@ -59,6 +55,7 @@ public class ImportObject extends PluginReference implements IWritable, Serializ
 		iimport.write(indent, writer);
 	}
 
+	@SuppressWarnings("rawtypes")
 	public Object getAdapter(Class key) {
 		if (key.equals(ISourceObject.class)) {
 			if (iimport instanceof ISourceObject)
