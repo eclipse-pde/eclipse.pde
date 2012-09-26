@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 IBM Corporation and others.
+ * Copyright (c) 2007, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,6 @@ import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -94,7 +93,7 @@ public class BundleComponent extends Component {
 	/**
 	 * Dictionary parsed from MANIFEST.MF
 	 */
-	private Dictionary fManifest;
+	private Map fManifest;
 	
 	/**
 	 * Manifest headers that are maintained after {@link BundleDescription} creation.
@@ -184,10 +183,10 @@ public class BundleComponent extends Component {
 	 * @return manifest dictionary
 	 * @exception CoreException if something goes terribly wrong
 	 */
-	protected synchronized Dictionary getManifest() throws CoreException {
+	protected synchronized Map getManifest() throws CoreException {
 		if(fManifest == null) {
 			try {
-				fManifest = (Dictionary) loadManifest(new File(fLocation));
+				fManifest = loadManifest(new File(fLocation));
 			} catch (IOException e) {
 				abort("Unable to load manifest due to IO error", e); //$NON-NLS-1$
 			}
@@ -199,7 +198,7 @@ public class BundleComponent extends Component {
 	 * Reduce the manifest to only contain required headers after {@link BundleDescription} creation.
 	 */
 	protected synchronized void doManifestCompaction() {
-		Dictionary temp = fManifest;
+		Map temp = fManifest;
 		fManifest = new Hashtable(MANIFEST_HEADERS.length, 1);
 		for (int i = 0; i < MANIFEST_HEADERS.length; i++) {
 			String header = MANIFEST_HEADERS[i];
@@ -218,7 +217,7 @@ public class BundleComponent extends Component {
 	 * @throws IOException
 	 */
 	public boolean isValidBundle() throws CoreException {
-		Dictionary manifest = getManifest();
+		Map manifest = getManifest();
 		return manifest != null && (manifest.get(Constants.BUNDLE_NAME) != null && manifest.get(Constants.BUNDLE_VERSION) != null);
 	}
 	
@@ -244,7 +243,7 @@ public class BundleComponent extends Component {
 			return;
 		}
 		try {
-			Dictionary manifest = getManifest();
+			Map manifest = getManifest();
 			if (isWorkspaceBinary()) {
 				// must account for bundles in development mode - look for class files in output
 				// folders rather than jars
@@ -301,14 +300,15 @@ public class BundleComponent extends Component {
 	 * @return the {@link BundleDescription} or throws an exception
 	 * @throws BundleException
 	 */
-	protected BundleDescription getBundleDescription(Dictionary manifest, String location, long id) throws BundleException {
+	protected BundleDescription getBundleDescription(Map manifest, String location, long id) throws BundleException {
 		State state = getState();
 		BundleDescription bundle = lookupBundle(state, manifest);
 		if(bundle != null) {
 			return bundle;
 		}
 		StateObjectFactory factory = StateObjectFactory.defaultFactory;
-		bundle = factory.createBundleDescription(state, manifest, fLocation, id);
+		Hashtable dictionaryManifest = new Hashtable(manifest);
+		bundle = factory.createBundleDescription(state, dictionaryManifest, fLocation, id);
 		state.addBundle(bundle);
 		return bundle;
 	}
@@ -319,7 +319,7 @@ public class BundleComponent extends Component {
 	 * @return the bundle for the given manifest, <code>null</code> otherwise
 	 * @throws BundleException
 	 */
-	protected BundleDescription lookupBundle(State state, Dictionary manifest) throws BundleException {
+	protected BundleDescription lookupBundle(State state, Map manifest) throws BundleException {
 		Version version = null;
 		try {
 			//just in case the version is not a number
@@ -617,7 +617,7 @@ public class BundleComponent extends Component {
 	 * @return classpath entries as bundle relative paths
 	 * @throws BundleException
 	 */
-	protected String[] getClasspathEntries(Dictionary manifest) throws BundleException {
+	protected String[] getClasspathEntries(Map manifest) throws BundleException {
 		ManifestElement[] classpath = ManifestElement.parseHeader(Constants.BUNDLE_CLASSPATH, (String) manifest.get(Constants.BUNDLE_CLASSPATH));
 		String elements[] = null;
 		if (classpath == null) {

@@ -157,8 +157,8 @@ public class TargetPlatformHelper {
 		File file = new File(path);
 		if (file.exists() && !fCachedLocations.containsKey(path)) {
 			try {
-				Dictionary<String, String> dictionary = MinimalState.loadManifest(file);
-				String value = dictionary.get(Constants.BUNDLE_SYMBOLICNAME);
+				Map<String, String> manifest = MinimalState.loadManifest(file);
+				String value = manifest.get(Constants.BUNDLE_SYMBOLICNAME);
 				if (value != null) {
 					ManifestElement[] elements = ManifestElement.parseHeader(Constants.BUNDLE_SYMBOLICNAME, value);
 					String id = elements.length > 0 ? elements[0].getValue() : null;

@@ -12,32 +12,17 @@ package org.eclipse.pde.internal.core;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Dictionary;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.FactoryConfigurationError;
-import javax.xml.parsers.ParserConfigurationException;
-import org.xml.sax.helpers.DefaultHandler;
-
+import java.util.*;
+import javax.xml.parsers.*;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.ManifestElement;
-import org.eclipse.pde.core.plugin.IPlugin;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginLibrary;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.w3c.dom.*;
+import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * Stores additional information from the manifest files of plugins and stores
@@ -345,19 +330,19 @@ public class PDEAuxiliaryState {
 	 * @param manifest dictionary of headers in the bundle's manifest file
 	 * @param hasBundleStructure whether the plugin has bundle structure
 	 */
-	protected void addAuxiliaryData(BundleDescription desc, Dictionary<?, ?> manifest, boolean hasBundleStructure) {
+	protected void addAuxiliaryData(BundleDescription desc, Map<String, String> manifest, boolean hasBundleStructure) {
 		PluginInfo info = new PluginInfo();
-		info.name = (String) manifest.get(Constants.BUNDLE_NAME);
-		info.providerName = (String) manifest.get(Constants.BUNDLE_VENDOR);
+		info.name = manifest.get(Constants.BUNDLE_NAME);
+		info.providerName = manifest.get(Constants.BUNDLE_VENDOR);
 
-		String className = (String) manifest.get(ICoreConstants.PLUGIN_CLASS);
+		String className = manifest.get(ICoreConstants.PLUGIN_CLASS);
 		info.className = className != null ? className : (String) manifest.get(Constants.BUNDLE_ACTIVATOR);
 		info.libraries = getClasspath(manifest);
 		info.hasExtensibleAPI = "true".equals(manifest.get(ICoreConstants.EXTENSIBLE_API)); //$NON-NLS-1$ 
 		info.isPatchFragment = "true".equals(manifest.get(ICoreConstants.PATCH_FRAGMENT)); //$NON-NLS-1$
-		info.localization = (String) manifest.get(Constants.BUNDLE_LOCALIZATION);
+		info.localization = manifest.get(Constants.BUNDLE_LOCALIZATION);
 		info.hasBundleStructure = hasBundleStructure;
-		info.bundleSourceEntry = (String) manifest.get(ICoreConstants.ECLIPSE_SOURCE_BUNDLE);
+		info.bundleSourceEntry = manifest.get(ICoreConstants.ECLIPSE_SOURCE_BUNDLE);
 		fPluginInfos.put(Long.toString(desc.getBundleId()), info);
 	}
 
@@ -366,8 +351,8 @@ public class PDEAuxiliaryState {
 	 * @param manifest dictionary containing manifest headers
 	 * @return string array of classpath entries
 	 */
-	protected String[] getClasspath(Dictionary<?, ?> manifest) {
-		String fullClasspath = (String) manifest.get(Constants.BUNDLE_CLASSPATH);
+	protected String[] getClasspath(Map<String, String> manifest) {
+		String fullClasspath = manifest.get(Constants.BUNDLE_CLASSPATH);
 		String[] result = new String[0];
 		try {
 			if (fullClasspath != null) {

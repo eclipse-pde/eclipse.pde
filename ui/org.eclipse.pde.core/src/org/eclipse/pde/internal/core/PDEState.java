@@ -169,7 +169,7 @@ public class PDEState extends MinimalState {
 		fNewState = true;
 	}
 
-	protected void addAuxiliaryData(BundleDescription desc, Dictionary<String, String> manifest, boolean hasBundleStructure) {
+	protected void addAuxiliaryData(BundleDescription desc, Map<String, String> manifest, boolean hasBundleStructure) {
 		fAuxiliaryState.addAuxiliaryData(desc, manifest, hasBundleStructure);
 	}
 

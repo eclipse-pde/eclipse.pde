@@ -101,7 +101,7 @@ public class TargetWeaver {
 	 * 
 	 * @param manifest manifest to update
 	 */
-	public static void weaveManifest(Dictionary<String, String> manifest) {
+	public static void weaveManifest(Map<String, String> manifest) {
 		if (manifest != null && fgIsDev) {
 			Properties properties = getDevProperties();
 			String id = manifest.get(Constants.BUNDLE_SYMBOLICNAME);

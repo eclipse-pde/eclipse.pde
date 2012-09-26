@@ -99,9 +99,11 @@ public class MinimalState {
 		return null;
 	}
 
-	public BundleDescription addBundle(Dictionary<String, String> manifest, File bundleLocation, long bundleId) {
+	public BundleDescription addBundle(Map<String, String> manifest, File bundleLocation, long bundleId) {
 		try {
-			BundleDescription descriptor = stateObjectFactory.createBundleDescription(fState, manifest, bundleLocation.getAbsolutePath(), bundleId == -1 ? getNextId() : bundleId);
+			// OSGi requires a dictionary over any map
+			Hashtable<String, String> dictionaryManifest = new Hashtable<String, String>(manifest);
+			BundleDescription descriptor = stateObjectFactory.createBundleDescription(fState, dictionaryManifest, bundleLocation.getAbsolutePath(), bundleId == -1 ? getNextId() : bundleId);
 			// new bundle
 			if (bundleId == -1) {
 				fState.addBundle(descriptor);
@@ -117,7 +119,7 @@ public class MinimalState {
 	}
 
 	public BundleDescription addBundle(File bundleLocation, long bundleId) throws PluginConversionException, CoreException, IOException {
-		Dictionary<String, String> manifest = loadManifest(bundleLocation);
+		Map<String, String> manifest = loadManifest(bundleLocation);
 		// update for development mode
 		TargetWeaver.weaveManifest(manifest);
 		boolean hasBundleStructure = manifest != null && manifest.get(Constants.BUNDLE_SYMBOLICNAME) != null;
@@ -125,12 +127,18 @@ public class MinimalState {
 			if (!bundleLocation.isFile() && !new File(bundleLocation, ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR).exists() && !new File(bundleLocation, ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR).exists())
 				return null;
 			PluginConverter converter = acquirePluginConverter();
-			manifest = converter.convertManifest(bundleLocation, false, null, false, null);
-			if (manifest == null || manifest.get(Constants.BUNDLE_SYMBOLICNAME) == null)
+			manifest = new HashMap<String, String>();
+			Dictionary<String, String> converted = converter.convertManifest(bundleLocation, false, null, false, null);
+			Enumeration<String> keys = converted.keys();
+			while (keys.hasMoreElements()) {
+				String key = keys.nextElement();
+				manifest.put(key, converted.get(key));
+			}
+			if (manifest.get(Constants.BUNDLE_SYMBOLICNAME) == null)
 				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IStatus.ERROR, "Error parsing plug-in manifest file at " + bundleLocation.toString(), null)); //$NON-NLS-1$
 		}
 		BundleDescription desc = addBundle(manifest, bundleLocation, bundleId);
-		if (desc != null && "true".equals(manifest.get(ICoreConstants.ECLIPSE_SYSTEM_BUNDLE))) { //$NON-NLS-1$
+		if (desc != null && manifest != null && "true".equals(manifest.get(ICoreConstants.ECLIPSE_SYSTEM_BUNDLE))) { //$NON-NLS-1$
 			// if this is the system bundle then 
 			// indicate that the javaProfile has changed since the new system
 			// bundle may not contain profiles for all EE's in the list
@@ -143,7 +151,7 @@ public class MinimalState {
 		return desc;
 	}
 
-	protected void addAuxiliaryData(BundleDescription desc, Dictionary<String, String> manifest, boolean hasBundleStructure) {
+	protected void addAuxiliaryData(BundleDescription desc, Map<String, String> manifest, boolean hasBundleStructure) {
 	}
 
 	protected void saveState(File dir) {
@@ -163,8 +171,7 @@ public class MinimalState {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	public static Dictionary<String, String> loadManifest(File bundleLocation) throws IOException {
+	public static Map<String, String> loadManifest(File bundleLocation) throws IOException {
 		ZipFile jarFile = null;
 		InputStream manifestStream = null;
 		try {
@@ -185,7 +192,7 @@ public class MinimalState {
 		if (manifestStream == null)
 			return null;
 		try {
-			return (Dictionary<String, String>) ManifestElement.parseBundleManifest(manifestStream, null);
+			return ManifestElement.parseBundleManifest(manifestStream, null);
 		} catch (BundleException e) {
 		} finally {
 			try {
