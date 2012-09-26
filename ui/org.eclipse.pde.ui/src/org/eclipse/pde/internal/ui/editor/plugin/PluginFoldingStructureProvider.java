@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2008 IBM Corporation and others.
+ *  Copyright (c) 2006, 2012 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -12,11 +12,9 @@ package org.eclipse.pde.internal.ui.editor.plugin;
 
 import java.util.*;
 import org.eclipse.jface.text.*;
-import org.eclipse.pde.core.plugin.IExtensions;
-import org.eclipse.pde.core.plugin.IPluginExtension;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.text.IDocumentElementNode;
 import org.eclipse.pde.internal.core.text.IEditingModel;
-import org.eclipse.pde.internal.core.text.plugin.PluginModel;
 import org.eclipse.pde.internal.ui.editor.AbstractFoldingStructureProvider;
 import org.eclipse.pde.internal.ui.editor.PDESourcePage;
 
@@ -29,7 +27,7 @@ public class PluginFoldingStructureProvider extends AbstractFoldingStructureProv
 	}
 
 	public void addFoldingRegions(Set currentRegions, IEditingModel model) throws BadLocationException {
-		IExtensions extensions = ((PluginModel) model).getExtensions();
+		IExtensions extensions = ((IPluginModelBase) model).getExtensions();
 		IPluginExtension[] pluginExtensions = extensions.getExtensions();
 
 		addFoldingRegions(currentRegions, pluginExtensions, model.getDocument());
