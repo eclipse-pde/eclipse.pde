@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.text.bundle;
 
-import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
-
 import java.util.Iterator;
 import java.util.Map;
 import org.eclipse.jface.text.*;
@@ -23,7 +21,7 @@ import org.osgi.framework.Constants;
 public class Bundle implements IBundle {
 
 	private BundleModel fModel;
-	private Map<String, IManifestHeader> fDocumentHeaders = new HeaderMap();
+	private Map<String, IManifestHeader> fDocumentHeaders = new HeaderMap<String, IManifestHeader>();
 
 	public Bundle(BundleModel model) {
 		fModel = model;

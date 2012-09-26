@@ -23,7 +23,6 @@ import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
-import org.eclipse.pde.internal.core.util.Headers;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 import org.osgi.util.tracker.ServiceTracker;
@@ -164,6 +163,7 @@ public class MinimalState {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public static Dictionary<String, String> loadManifest(File bundleLocation) throws IOException {
 		ZipFile jarFile = null;
 		InputStream manifestStream = null;
@@ -185,7 +185,7 @@ public class MinimalState {
 		if (manifestStream == null)
 			return null;
 		try {
-			return (Dictionary<String, String>) ManifestElement.parseBundleManifest(manifestStream, new Headers(10));
+			return (Dictionary<String, String>) ManifestElement.parseBundleManifest(manifestStream, null);
 		} catch (BundleException e) {
 		} finally {
 			try {

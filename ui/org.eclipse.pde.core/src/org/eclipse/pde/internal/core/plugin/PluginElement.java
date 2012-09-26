@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.plugin;
 
-import org.eclipse.pde.core.plugin.IPluginAttribute;
-
 import java.io.PrintWriter;
 import java.util.*;
 import org.eclipse.core.runtime.CoreException;
@@ -50,7 +48,7 @@ public class PluginElement extends PluginParent implements IPluginElement {
 		IPluginAttribute[] atts = element.getAttributes();
 		for (int i = 0; i < atts.length; i++) {
 			PluginAttribute att = (PluginAttribute) atts[i];
-			getAttributeMap().put(att.getName(), att.clone());
+			getAttributeMap().put(att.getName(), (IPluginAttribute) att.clone());
 		}
 		fText = element.getText();
 		fElementInfo = (ISchemaElement) element.getElementInfo();
@@ -145,7 +143,7 @@ public class PluginElement extends PluginParent implements IPluginElement {
 		}
 
 		if (fChildren == null)
-			fChildren = new ArrayList<PluginElement>();
+			fChildren = new ArrayList<IPluginObject>();
 		NodeList children = node.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
@@ -267,9 +265,9 @@ public class PluginElement extends PluginParent implements IPluginElement {
 		return null;
 	}
 
-	protected ArrayList<PluginElement> getChildrenList() {
+	protected ArrayList<IPluginObject> getChildrenList() {
 		if (fChildren == null) {
-			fChildren = new ArrayList<PluginElement>();
+			fChildren = new ArrayList<IPluginObject>();
 			if (fElement != null) {
 				IConfigurationElement[] elements = fElement.getChildren();
 				for (int i = 0; i < elements.length; i++) {

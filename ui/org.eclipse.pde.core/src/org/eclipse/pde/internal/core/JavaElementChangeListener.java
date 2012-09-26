@@ -125,7 +125,7 @@ public class JavaElementChangeListener implements IElementChangedListener {
 
 	private void save() {
 		// start by cleaning up extraneous keys.
-		Enumeration<String> keys = fTable.keys();
+		Enumeration<Object> keys = fTable.keys();
 		while (keys.hasMoreElements()) {
 			String id = keys.nextElement().toString();
 			IPluginModelBase model = PluginRegistry.findModel(id);
@@ -177,7 +177,7 @@ public class JavaElementChangeListener implements IElementChangedListener {
 	}
 
 	public void synchronizeManifests(File cacheDirectory) {
-		Enumeration<String> keys = fTable.keys();
+		Enumeration<Object> keys = fTable.keys();
 		while (keys.hasMoreElements()) {
 			String id = keys.nextElement().toString();
 			IPluginModelBase model = PluginRegistry.findModel(id);

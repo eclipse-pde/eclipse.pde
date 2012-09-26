@@ -46,11 +46,11 @@ public class TracingOptionsManager {
 		}
 	}
 
-	public Hashtable<String, ?> getTemplateTable(String pluginId) {
+	public Hashtable<String, Object> getTemplateTable(String pluginId) {
 		if (template == null)
 			createTemplate();
-		Hashtable<String, ?> defaults = new Hashtable<String, Object>();
-		for (Enumeration<?> keys = template.keys(); keys.hasMoreElements();) {
+		Hashtable<String, Object> defaults = new Hashtable<String, Object>();
+		for (Enumeration<Object> keys = template.keys(); keys.hasMoreElements();) {
 			String key = keys.nextElement().toString();
 			if (belongsTo(key, pluginId)) {
 				defaults.put(key, template.get(key));

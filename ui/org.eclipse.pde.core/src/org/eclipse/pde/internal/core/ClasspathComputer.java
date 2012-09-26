@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import org.eclipse.jdt.core.IClasspathEntry;
-
 import java.util.*;
 import java.util.Map.Entry;
 import org.eclipse.core.resources.*;
@@ -223,6 +221,7 @@ public class ClasspathComputer {
 	 * @param overrideExisting whether to override a setting if already present
 	 */
 	public static void setComplianceOptions(IJavaProject project, String eeId, boolean overrideExisting) {
+		@SuppressWarnings("unchecked")
 		Map<String, String> projectMap = project.getOptions(false);
 		IExecutionEnvironment ee = null;
 		Map<?, ?> options = null;

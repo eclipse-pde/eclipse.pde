@@ -12,14 +12,9 @@ package org.eclipse.pde.internal.core.plugin;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
-
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
-import org.eclipse.pde.core.plugin.IPluginElement;
-import org.eclipse.pde.core.plugin.IPluginExtension;
-import org.eclipse.pde.core.plugin.IPluginObject;
+import org.eclipse.core.runtime.*;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.schema.SchemaRegistry;
@@ -69,7 +64,7 @@ public class PluginExtension extends PluginParent implements IPluginExtension {
 		fPoint = getNodeAttribute(node, "point"); //$NON-NLS-1$
 
 		if (fChildren == null)
-			fChildren = new ArrayList<PluginElement>();
+			fChildren = new ArrayList<IPluginObject>();
 		NodeList children = node.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
@@ -196,9 +191,9 @@ public class PluginExtension extends PluginParent implements IPluginExtension {
 		return fID;
 	}
 
-	protected ArrayList<PluginElement> getChildrenList() {
+	protected ArrayList<IPluginObject> getChildrenList() {
 		if (fChildren == null) {
-			fChildren = new ArrayList<PluginElement>();
+			fChildren = new ArrayList<IPluginObject>();
 			if (fExtension != null) {
 				if (fExtension != null) {
 					IConfigurationElement[] elements = fExtension.getConfigurationElements();

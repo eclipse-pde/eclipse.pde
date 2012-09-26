@@ -33,7 +33,7 @@ public class Schema extends PlatformObject implements ISchema {
 
 	private ArrayList<ISchemaElement> fElements = new ArrayList<ISchemaElement>();
 
-	private ArrayList<IDocumentSection> fDocSections = new ArrayList<IDocumentSection>();
+	private ArrayList<DocumentSection> fDocSections = new ArrayList<DocumentSection>();
 
 	private ArrayList<ISchemaInclude> fIncludes;
 
@@ -76,7 +76,7 @@ public class Schema extends PlatformObject implements ISchema {
 		fAbbreviated = abbreviated;
 	}
 
-	public void addDocumentSection(IDocumentSection docSection) {
+	public void addDocumentSection(DocumentSection docSection) {
 		fDocSections.add(docSection);
 		fireModelChanged(new ModelChangedEvent(this, IModelChangedEvent.INSERT, new Object[] {docSection}, null));
 
@@ -814,7 +814,7 @@ public class Schema extends PlatformObject implements ISchema {
 
 	private void reset() {
 		fElements = new ArrayList<ISchemaElement>();
-		fDocSections = new ArrayList<IDocumentSection>();
+		fDocSections = new ArrayList<DocumentSection>();
 		fIncludes = null;
 		fPointID = null;
 		fPluginID = null;

@@ -12,11 +12,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target;
 
-import org.eclipse.equinox.frameworkadmin.BundleInfo;
-import org.eclipse.equinox.p2.metadata.IInstallableUnit;
-import org.eclipse.equinox.p2.metadata.Version;
-import org.eclipse.pde.core.target.*;
-
 import java.io.File;
 import java.io.StringWriter;
 import java.net.URI;
@@ -27,6 +22,7 @@ import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.eclipse.core.runtime.*;
+import org.eclipse.equinox.frameworkadmin.BundleInfo;
 import org.eclipse.equinox.internal.p2.director.PermissiveSlicer;
 import org.eclipse.equinox.p2.engine.IProfile;
 import org.eclipse.equinox.p2.metadata.*;
@@ -34,6 +30,7 @@ import org.eclipse.equinox.p2.query.*;
 import org.eclipse.equinox.p2.repository.artifact.IFileArtifactRepository;
 import org.eclipse.equinox.p2.touchpoint.eclipse.query.OSGiBundleQuery;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -290,7 +287,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		boolean onlyStrict = !fSynchronizer.getIncludeAllRequired();
 		IProfile metadata = fSynchronizer.getProfile();
 		PermissiveSlicer slicer = new PermissiveSlicer(metadata, new HashMap<String, String>(), true, false, true, onlyStrict, false);
-		IQueryable<?> slice = slicer.slice(fUnits, new NullProgressMonitor());
+		IQueryable<IInstallableUnit> slice = slicer.slice(fUnits, new NullProgressMonitor());
 
 		if (slicer.getStatus().getSeverity() == IStatus.ERROR) {
 			// If the slicer has an error, report it instead of returning an empty set
@@ -346,21 +343,21 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 * @return whether this container was changed as part of this update and must be resolved 
 	 * @exception CoreException if unable to retrieve IU's
 	 */
-	public synchronized boolean update(Set/*<type>*/<?> toUpdate, IProgressMonitor monitor) throws CoreException {
+	public synchronized boolean update(Set<String> toUpdate, IProgressMonitor monitor) throws CoreException {
 		SubMonitor progress = SubMonitor.convert(monitor, 100);
-		IQueryable<?> source = P2TargetUtils.getQueryableMetadata(fRepos, progress.newChild(30));
+		IQueryable<IInstallableUnit> source = P2TargetUtils.getQueryableMetadata(fRepos, progress.newChild(30));
 		boolean updated = false;
 		SubMonitor loopProgress = progress.newChild(70).setWorkRemaining(fIds.length);
 		for (int i = 0; i < fIds.length; i++) {
 			if (!toUpdate.isEmpty() && !toUpdate.contains(fIds[i]))
 				continue;
-			IQuery<?> query = QueryUtil.createLatestQuery(QueryUtil.createIUQuery(fIds[i]));
-			IQueryResult<?> queryResult = source.query(query, loopProgress.newChild(1));
-			Iterator<?> it = queryResult.iterator();
+			IQuery<IInstallableUnit> query = QueryUtil.createLatestQuery(QueryUtil.createIUQuery(fIds[i]));
+			IQueryResult<IInstallableUnit> queryResult = source.query(query, loopProgress.newChild(1));
+			Iterator<IInstallableUnit> it = queryResult.iterator();
 			// bail if the feature is no longer available.
 			if (!it.hasNext())
 				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.IUBundleContainer_1, fIds[i])));
-			IInstallableUnit iu = (IInstallableUnit) it.next();
+			IInstallableUnit iu = it.next();
 			// if the version is different from the spec (up or down), record the change.
 			if (!iu.getVersion().equals(fVersions[i])) {
 				updated = true;
@@ -397,12 +394,12 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 * @return map of BundleInfo to IResolvedBundle
 	 * @throws CoreException
 	 */
-	private Map<BundleInfo, TargetBundle> generateResolvedBundles(IQueryable<?> source, IQueryable<IInstallableUnit> metadata, IFileArtifactRepository artifacts) throws CoreException {
+	private Map<BundleInfo, TargetBundle> generateResolvedBundles(IQueryable<IInstallableUnit> source, IQueryable<IInstallableUnit> metadata, IFileArtifactRepository artifacts) throws CoreException {
 		OSGiBundleQuery query = new OSGiBundleQuery();
-		IQueryResult<?> queryResult = source.query(query, null);
+		IQueryResult<IInstallableUnit> queryResult = source.query(query, null);
 		Map<BundleInfo, TargetBundle> bundles = new LinkedHashMap<BundleInfo, TargetBundle>();
-		for (Iterator<?> i = queryResult.iterator(); i.hasNext();) {
-			IInstallableUnit unit = (IInstallableUnit) i.next();
+		for (Iterator<IInstallableUnit> i = queryResult.iterator(); i.hasNext();) {
+			IInstallableUnit unit = i.next();
 			generateBundle(unit, artifacts, bundles);
 			if (getIncludeSource()) {
 				// bit of a hack using the bundle naming convention for finding source bundles
@@ -418,9 +415,9 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	}
 
 	private void generateBundle(IInstallableUnit unit, IFileArtifactRepository repo, Map<BundleInfo, TargetBundle> bundles) throws CoreException {
-		Collection<?> artifacts = unit.getArtifacts();
-		for (Iterator<?> iterator2 = artifacts.iterator(); iterator2.hasNext();) {
-			File file = repo.getArtifactFile((IArtifactKey) iterator2.next());
+		Collection<IArtifactKey> artifacts = unit.getArtifacts();
+		for (Iterator<IArtifactKey> iterator2 = artifacts.iterator(); iterator2.hasNext();) {
+			File file = repo.getArtifactFile(iterator2.next());
 			if (file != null) {
 				TargetBundle bundle = new TargetBundle(file);
 				if (bundle != null) {

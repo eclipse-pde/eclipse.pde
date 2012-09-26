@@ -125,7 +125,7 @@ public class ManifestUtils {
 					if (manifestEntry != null) {
 						stream = jarFile.getInputStream(manifestEntry);
 						if (stream != null) {
-							Map<String, String> map = ManifestElement.parseBundleManifest(stream, new HashMap<String, String>(10));
+							Map<String, String> map = ManifestElement.parseBundleManifest(stream, null);
 							// Symbolic name is the only required manifest entry, this is an ok bundle
 							if (map != null && map.containsKey(Constants.BUNDLE_SYMBOLICNAME)) {
 								return map;

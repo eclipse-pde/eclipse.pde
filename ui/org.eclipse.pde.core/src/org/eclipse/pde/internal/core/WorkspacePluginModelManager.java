@@ -94,7 +94,7 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 
 		if (model != null) {
 			if (fModels == null)
-				fModels = new HashMap<IProject, IPluginModelBase>();
+				fModels = new HashMap<IProject, IModel>();
 			fModels.put(project, model);
 			if (notify)
 				addChange(model, IModelProviderEvent.MODELS_ADDED);
@@ -404,7 +404,7 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 	 * @param models  the workspace plug-in models
 	 */
 	protected void initializeModels(IPluginModelBase[] models) {
-		fModels = Collections.synchronizedMap(new HashMap<IProject, IPluginModelBase>());
+		fModels = Collections.synchronizedMap(new HashMap<IProject, IModel>());
 		for (int i = 0; i < models.length; i++) {
 			IProject project = models[i].getUnderlyingResource().getProject();
 			fModels.put(project, models[i]);
