@@ -14,9 +14,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.builders;
 
-import org.eclipse.osgi.service.resolver.ExportPackageDescription;
-import org.eclipse.osgi.service.resolver.ImportPackageSpecification;
-
 import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -1212,7 +1209,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 
 		ManifestElement[] elements = header.getElements();
 
-		if (header != null && elements[0] != null && elements[0].getValue().equals(element.getValue())) {
+		if (elements[0] != null && elements[0].getValue().equals(element.getValue())) {
 			IMarker marker = report(NLS.bind(PDECoreMessages.BundleErrorReporter_unecessaryDependencyDueToFragmentHost, element.getValue()), getPackageLine(requireBundleHeader, element), CompilerFlags.WARNING, PDEMarkerFactory.M_UNECESSARY_DEP, PDEMarkerFactory.CAT_OTHER);
 			addMarkerAttribute(marker, "bundleId", element.getValue()); //$NON-NLS-1$
 		}

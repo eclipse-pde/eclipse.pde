@@ -167,9 +167,7 @@ public class PluginElement extends PluginParent implements IPluginElement {
 		ensureModelEditable();
 		PluginAttribute att = (PluginAttribute) getAttributeMap().remove(name);
 		String oldValue = att.getValue();
-		if (att != null) {
-			att.setInTheModel(false);
-		}
+		att.setInTheModel(false);
 		firePropertyChanged(P_ATTRIBUTE, oldValue, null);
 	}
 

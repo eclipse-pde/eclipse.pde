@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.exports;
 
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
@@ -339,7 +337,7 @@ public class ProductExportOperation extends FeatureExportOperation {
 				}
 
 			}
-			if (icons != null && icons.length() > 0)
+			if (icons.length() > 0)
 				properties.put(IXMLConstants.PROPERTY_LAUNCHER_ICONS, icons);
 		}
 

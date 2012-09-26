@@ -179,7 +179,7 @@ public class PluginObjectNode extends DocumentElementNode implements IPluginObje
 				attr.setModel(getModel());
 				getNodeAttributesMap().put(name, attr);
 			}
-			attr.setValue(value == null ? "" : value); //$NON-NLS-1$
+			attr.setValue(value);
 		} catch (CoreException e) {
 		}
 		if (fInTheModel)

@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target;
 
-import org.eclipse.pde.core.target.TargetBundle;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -81,9 +79,7 @@ public class DirectoryBundleContainer extends AbstractBundleContainer {
 				}
 				try {
 					TargetBundle rb = new TargetBundle(files[i]);
-					if (rb != null) {
-						bundles.add(rb);
-					}
+					bundles.add(rb);
 				} catch (CoreException e) {
 					// ignore files that are not valid bundles (users may have non-bundle files in their target directory)
 				}

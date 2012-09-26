@@ -547,7 +547,6 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 		} catch (IOException e) {
 			clone = null;
 		} catch (ClassNotFoundException e) {
-			clone = null;
 		}
 
 		return clone;

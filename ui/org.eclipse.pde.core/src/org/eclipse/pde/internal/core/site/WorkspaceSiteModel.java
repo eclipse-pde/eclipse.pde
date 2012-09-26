@@ -110,8 +110,7 @@ public class WorkspaceSiteModel extends AbstractSiteModel implements IEditableMo
 			} catch (CoreException e) {
 			} finally {
 				try {
-					if (stream != null)
-						stream.close();
+					stream.close();
 				} catch (IOException e) {
 				}
 			}

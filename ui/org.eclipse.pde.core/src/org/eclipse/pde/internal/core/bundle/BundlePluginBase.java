@@ -10,45 +10,20 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.bundle;
 
-import org.eclipse.pde.core.plugin.IPluginImport;
-import org.eclipse.pde.core.plugin.IPluginLibrary;
-
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.ArrayList;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.PlatformObject;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.BundleSpecification;
 import org.eclipse.osgi.util.ManifestElement;
-import org.eclipse.pde.core.IIdentifiable;
-import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.core.ModelChangedEvent;
+import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.ICoreConstants;
-import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.PDECoreMessages;
-import org.eclipse.pde.internal.core.PDEStateHelper;
-import org.eclipse.pde.internal.core.TargetPlatformHelper;
-import org.eclipse.pde.internal.core.ibundle.IBundle;
-import org.eclipse.pde.internal.core.ibundle.IBundleModel;
-import org.eclipse.pde.internal.core.ibundle.IBundlePluginBase;
-import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
-import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
-import org.eclipse.pde.internal.core.plugin.AbstractExtensions;
-import org.eclipse.pde.internal.core.plugin.PluginImport;
-import org.eclipse.pde.internal.core.plugin.PluginLibrary;
-import org.eclipse.pde.internal.core.text.bundle.BundleClasspathHeader;
-import org.eclipse.pde.internal.core.text.bundle.BundleNameHeader;
-import org.eclipse.pde.internal.core.text.bundle.BundleSymbolicNameHeader;
-import org.eclipse.pde.internal.core.text.bundle.BundleVendorHeader;
-import org.eclipse.pde.internal.core.text.bundle.BundleVersionHeader;
-import org.eclipse.pde.internal.core.text.bundle.RequireBundleHeader;
-import org.osgi.framework.BundleException;
-import org.osgi.framework.Constants;
-import org.osgi.framework.Version;
+import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.ibundle.*;
+import org.eclipse.pde.internal.core.plugin.*;
+import org.eclipse.pde.internal.core.text.bundle.*;
+import org.osgi.framework.*;
 
 public class BundlePluginBase extends PlatformObject implements IBundlePluginBase, Serializable {
 
@@ -598,7 +573,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 					version = "1"; //$NON-NLS-1$
 				String value = header.getValue();
 				String singletonValue = null;
-				if (version != null && Integer.parseInt(version) >= 2)
+				if (Integer.parseInt(version) >= 2)
 					singletonValue = Constants.SINGLETON_DIRECTIVE + ":=true"; //$NON-NLS-1$
 				else
 					singletonValue = Constants.SINGLETON_DIRECTIVE + "=true"; //$NON-NLS-1$

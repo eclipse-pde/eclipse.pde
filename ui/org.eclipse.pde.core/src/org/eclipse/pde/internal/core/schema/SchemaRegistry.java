@@ -47,7 +47,7 @@ public class SchemaRegistry {
 			fRegistry.put(extPointID, desc);
 		}
 
-		return (desc == null) ? null : desc.getSchema(true);
+		return desc.getSchema(true);
 	}
 
 	public ISchema getIncludedSchema(ISchemaDescriptor parent, String schemaLocation) {

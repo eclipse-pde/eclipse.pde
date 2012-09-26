@@ -314,12 +314,10 @@ public class CoreUtility {
 				}
 			}
 
-			if (in != null) {
-				try {
-					in.close();
-				} catch (IOException ee) {
-					PDECore.logException(ee);
-				}
+			try {
+				in.close();
+			} catch (IOException ee) {
+				PDECore.logException(ee);
 			}
 		}
 		return result == null ? null : new org.eclipse.jface.text.Document(result);

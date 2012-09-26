@@ -265,10 +265,8 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		monitor.subTask(message);
 
 		BundleErrorReporter reporter = new BundleErrorReporter(file);
-		if (reporter != null) {
-			reporter.validateContent(monitor);
-			monitor.subTask(PDECoreMessages.Builders_updating);
-		}
+		reporter.validateContent(monitor);
+		monitor.subTask(PDECoreMessages.Builders_updating);
 		monitor.done();
 	}
 

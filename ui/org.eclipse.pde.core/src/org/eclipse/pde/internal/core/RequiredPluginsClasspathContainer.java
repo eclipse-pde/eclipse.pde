@@ -10,10 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.util.ArrayList;
-import org.eclipse.jdt.core.IClasspathEntry;
-import org.eclipse.osgi.service.resolver.BaseDescription;
-import org.eclipse.osgi.service.resolver.BundleDescription;
 import java.io.File;
 import java.util.*;
 import org.eclipse.core.resources.*;
@@ -388,9 +384,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 							continue;
 						Map<BundleDescription, ArrayList<Rule>> rules = new HashMap<BundleDescription, ArrayList<Rule>>();
 						findExportedPackages(bundleDesc, desc, rules);
-						if (model != null) {
-							addDependency(bundleDesc, added, rules, entries, true);
-						}
+						addDependency(bundleDesc, added, rules, entries, true);
 					}
 				}
 			}

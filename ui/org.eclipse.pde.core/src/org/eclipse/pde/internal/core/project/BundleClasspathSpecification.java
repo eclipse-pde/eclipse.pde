@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -72,9 +72,6 @@ public class BundleClasspathSpecification implements IBundleClasspathEntry {
 	private boolean equalOrNull(Object o1, Object o2) {
 		if (o1 == null) {
 			return o2 == null;
-		}
-		if (o2 == null) {
-			return o1 == null;
 		}
 		return o1.equals(o2);
 	}

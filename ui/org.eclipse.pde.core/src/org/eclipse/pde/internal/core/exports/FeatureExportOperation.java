@@ -96,9 +96,7 @@ public class FeatureExportOperation extends Job {
 
 				stream = new BufferedInputStream(new FileInputStream(new File(fFeatureLocation + File.separator + ICoreConstants.FEATURE_FILENAME_DESCRIPTOR)));
 				model.load(stream, true);
-				if (stream != null) {
-					stream.close();
-				}
+				stream.close();
 				doExport(model, null, new SubProgressMonitor(monitor, 20));
 
 			} else {

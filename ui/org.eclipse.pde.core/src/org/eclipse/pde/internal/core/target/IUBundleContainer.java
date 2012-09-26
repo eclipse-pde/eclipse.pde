@@ -420,9 +420,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 			File file = repo.getArtifactFile(iterator2.next());
 			if (file != null) {
 				TargetBundle bundle = new TargetBundle(file);
-				if (bundle != null) {
-					bundles.put(bundle.getBundleInfo(), bundle);
-				}
+				bundles.put(bundle.getBundleInfo(), bundle);
 			}
 		}
 	}

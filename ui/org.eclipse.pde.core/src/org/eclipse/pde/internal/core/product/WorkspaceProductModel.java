@@ -54,8 +54,7 @@ public class WorkspaceProductModel extends ProductModel implements IWorkspaceMod
 					PDECore.logException(e);
 				} finally {
 					try {
-						if (stream != null)
-							stream.close();
+						stream.close();
 					} catch (IOException e) {
 						PDECore.logException(e);
 					}

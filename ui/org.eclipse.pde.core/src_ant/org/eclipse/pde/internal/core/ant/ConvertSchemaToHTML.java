@@ -163,6 +163,7 @@ public class ConvertSchemaToHTML extends Task {
 				model = new ExternalPluginModel();
 			else {
 				System.out.println(NLS.bind(PDECoreMessages.Builders_Convert_illegalValue, "manifest")); //$NON-NLS-1$ 
+				stream.close();
 				return null;
 			}
 

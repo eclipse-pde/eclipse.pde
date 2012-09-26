@@ -606,7 +606,7 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 					resourcePath = new Path(entry);
 				}
 			}
-			if (resourcePath != null && entry != null) {
+			if (entry != null) {
 				if (PDEProject.getBundleRoot(fProject).exists(resourcePath)) {
 					validateBinIncludes(binIncludes, entry);
 				}

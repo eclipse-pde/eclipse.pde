@@ -106,7 +106,7 @@ public class UpdateManagerHelper {
 		sites.add(localSite);
 	}
 
-	private static void createConfigurationEntries(IPlatformConfiguration config, ArrayList<LocalSite> sites) throws CoreException, MalformedURLException {
+	private static void createConfigurationEntries(IPlatformConfiguration config, ArrayList<LocalSite> sites) throws MalformedURLException {
 
 		for (int i = 0; i < sites.size(); i++) {
 			LocalSite localSite = sites.get(i);

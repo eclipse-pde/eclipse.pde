@@ -198,7 +198,6 @@ public class BundleManifestSourceLocationManager {
 						manifestElements = ManifestElement.parseHeader(ICoreConstants.ECLIPSE_SOURCE_BUNDLE, bundleSourceEntry);
 					} catch (BundleException e) {
 						PDECore.log(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.SourceLocationManager_problemProcessingBundleManifestSourceHeader, e));
-						manifestElements = null;
 					}
 					if (manifestElements != null) {
 						IPath path = new Path(externalModels[i].getInstallLocation());

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2011 Gunnar Wagenknecht and others.
+ * Copyright (c) 2011, 2012 Gunnar Wagenknecht and others.
  * All rights reserved.
  *
  * This program and the accompanying materials are made available under the terms of the
@@ -64,7 +64,7 @@ public class TargetPlatformProvisionTask extends Task {
 	private IStatus resolve(final ITargetDefinition targetDefinition) throws CoreException {
 		// resolve using Job to allow progress reporting when run inside IDE
 		final IStatus[] status = new IStatus[1];
-		Job resolveJob = new Job(NLS.bind("Resolving {0}", null != targetDefinition.getName() && targetDefinition.getName().length() > 0 ? targetDefinition.getName() : targetFile.getName())) {
+		Job resolveJob = new Job(NLS.bind(PDECoreMessages.TargetPlatformProvisionTask_Resolving_X_Job, null != targetDefinition.getName() && targetDefinition.getName().length() > 0 ? targetDefinition.getName() : targetFile.getName())) {
 			protected IStatus run(IProgressMonitor monitor) {
 				status[0] = targetDefinition.resolve(monitor);
 				return Status.OK_STATUS;
@@ -91,7 +91,7 @@ public class TargetPlatformProvisionTask extends Task {
 
 		final ITargetDefinition targetDefinition = TargetPlatformService.getDefault().getTarget(targetFile.toURI()).getTargetDefinition();
 
-		log("Resolving target definition...");
+		log(PDECoreMessages.TargetPlatformProvisionTask_Resolving_target_status);
 		IStatus status = resolve(targetDefinition);
 		if (status.matches(IStatus.ERROR | IStatus.CANCEL))
 			throw new CoreException(status);
@@ -99,7 +99,7 @@ public class TargetPlatformProvisionTask extends Task {
 			log(TaskHelper.statusToString(status, null).toString(), Project.MSG_WARN);
 		}
 
-		log("Exporting target definition...");
+		log(PDECoreMessages.TargetPlatformProvisionTask_Exporting_target_status);
 		export(targetDefinition);
 	}
 

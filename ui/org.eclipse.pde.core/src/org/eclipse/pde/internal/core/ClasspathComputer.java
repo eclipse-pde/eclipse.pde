@@ -97,7 +97,7 @@ public class ClasspathComputer {
 		}
 		if (libraries.length == 0) {
 			if (build != null) {
-				IBuildEntry buildEntry = build == null ? null : build.getEntry("source.."); //$NON-NLS-1$
+				IBuildEntry buildEntry = build.getEntry("source.."); //$NON-NLS-1$
 				if (buildEntry != null) {
 					addSourceFolder(buildEntry, project, paths, result);
 				}
@@ -301,7 +301,7 @@ public class ClasspathComputer {
 			}
 			String currentValue = map.get(key);
 			int current = currentValue != null && fSeverityTable.containsKey(currentValue) ? fSeverityTable.get(currentValue).intValue() : 0;
-			int minimum = minimumValue != null && fSeverityTable.containsKey(minimumValue) ? fSeverityTable.get(minimumValue).intValue() : 0;
+			int minimum = fSeverityTable.containsKey(minimumValue) ? fSeverityTable.get(minimumValue).intValue() : 0;
 			if (current < minimum) {
 				map.put(key, minimumValue);
 			}
