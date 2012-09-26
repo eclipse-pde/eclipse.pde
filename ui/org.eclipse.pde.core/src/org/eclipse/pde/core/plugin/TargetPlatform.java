@@ -158,7 +158,7 @@ public class TargetPlatform {
 	 */
 	public static String getDefaultProduct() {
 		Properties config = TargetPlatformHelper.getConfigIniProperties();
-		Set<?> set = TargetPlatformHelper.getProductNameSet();
+		Set<String> set = TargetPlatformHelper.getProductNameSet();
 		if (config != null) {
 			String product = (String) config.get(PRODUCT_PROPERTY);
 			if (product != null && set.contains(product))
@@ -183,7 +183,7 @@ public class TargetPlatform {
 	 */
 	public static String getDefaultApplication() {
 		Properties config = TargetPlatformHelper.getConfigIniProperties();
-		Set<?> set = TargetPlatformHelper.getApplicationNameSet();
+		Set<String> set = TargetPlatformHelper.getApplicationNameSet();
 		if (config != null) {
 			String application = (String) config.get(APPLICATION_PROPERTY);
 			if (application != null && set.contains(application))

@@ -151,18 +151,18 @@ public class TargetBundle {
 		if (file == null || !file.exists()) {
 			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.TargetFeature_FileDoesNotExist, file)));
 		}
-		Map<?, ?> manifest = ManifestUtils.loadManifest(file);
+		Map<String, String> manifest = ManifestUtils.loadManifest(file);
 		try {
 			fInfo = new BundleInfo(file.toURI());
 			// Attempt to retrieve additional bundle information from the manifest
-			String header = (String) manifest.get(Constants.BUNDLE_SYMBOLICNAME);
+			String header = manifest.get(Constants.BUNDLE_SYMBOLICNAME);
 			if (header != null) {
 				ManifestElement[] elements = ManifestElement.parseHeader(Constants.BUNDLE_SYMBOLICNAME, header);
 				if (elements != null) {
 					String name = elements[0].getValue();
 					if (name != null) {
 						fInfo.setSymbolicName(name);
-						header = (String) manifest.get(Constants.BUNDLE_VERSION);
+						header = manifest.get(Constants.BUNDLE_VERSION);
 						if (header != null) {
 							elements = ManifestElement.parseHeader(Constants.BUNDLE_VERSION, header);
 							if (elements != null) {
@@ -189,12 +189,12 @@ public class TargetBundle {
 	 * @param manifest the bundle's manifest, can be <code>null</code> to skip searching of manifest entries
 	 * @return bundle for provided source or <code>null</code> if not a source bundle
 	 */
-	private BundleInfo getProvidedSource(File bundle, String symbolicName, Map<?, ?> manifest) {
+	private BundleInfo getProvidedSource(File bundle, String symbolicName, Map<String, String> manifest) {
 		fSourcePath = null;
 		if (manifest != null) {
 			if (manifest.containsKey(ICoreConstants.ECLIPSE_SOURCE_BUNDLE)) {
 				try {
-					ManifestElement[] manifestElements = ManifestElement.parseHeader(ICoreConstants.ECLIPSE_SOURCE_BUNDLE, (String) manifest.get(ICoreConstants.ECLIPSE_SOURCE_BUNDLE));
+					ManifestElement[] manifestElements = ManifestElement.parseHeader(ICoreConstants.ECLIPSE_SOURCE_BUNDLE, manifest.get(ICoreConstants.ECLIPSE_SOURCE_BUNDLE));
 					if (manifestElements != null) {
 						for (int j = 0; j < manifestElements.length; j++) {
 							ManifestElement currentElement = manifestElements[j];
