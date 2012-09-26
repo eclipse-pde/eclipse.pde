@@ -16,7 +16,6 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.core.IModel;
 import org.eclipse.pde.core.IModelProviderEvent;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.team.core.RepositoryProvider;
 
@@ -71,14 +70,14 @@ public abstract class WorkspaceModelManager extends AbstractModelManager impleme
 		}
 	}
 
-	protected Map<IProject, IPluginModelBase> fModels = null;
+	protected Map<IProject, IModel> fModels = null;
 	private ArrayList<ModelChange> fChangedModels;
 
 	protected synchronized void initialize() {
 		if (fModels != null)
 			return;
 
-		fModels = Collections.synchronizedMap(new HashMap<IProject, IPluginModelBase>());
+		fModels = Collections.synchronizedMap(new HashMap<IProject, IModel>());
 		IProject[] projects = PDECore.getWorkspace().getRoot().getProjects();
 		for (int i = 0; i < projects.length; i++) {
 			if (isInterestingProject(projects[i]))

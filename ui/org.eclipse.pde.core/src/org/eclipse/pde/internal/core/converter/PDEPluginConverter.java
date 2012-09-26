@@ -27,7 +27,7 @@ public class PDEPluginConverter {
 		convertToOSGIFormat(project, target, dictionary, null, monitor);
 	}
 
-	public static void convertToOSGIFormat(IProject project, String target, Dictionary<?, ?> dictionary, HashMap<?, ?> newProps, IProgressMonitor monitor) throws CoreException {
+	public static void convertToOSGIFormat(IProject project, String target, Dictionary<?, ?> dictionary, Map<String, String> newProps, IProgressMonitor monitor) throws CoreException {
 		try {
 			File outputFile = new File(PDEProject.getManifest(project).getLocation().toOSString());
 			File inputFile = new File(project.getLocation().toOSString());
@@ -44,11 +44,11 @@ public class PDEPluginConverter {
 		}
 	}
 
-	private static Map<String, ?> getProperties(File file, HashMap<?, ?> newProps) {
+	private static Map<String, String> getProperties(File file, Map<String, String> newProps) {
 		try {
-			Map<String, ?> prop = ManifestElement.parseBundleManifest(new FileInputStream(file), null);
+			Map<String, String> prop = ManifestElement.parseBundleManifest(new FileInputStream(file), null);
 			if (newProps != null && newProps.size() > 0) {
-				Iterator<?> iter = newProps.keySet().iterator();
+				Iterator<String> iter = newProps.keySet().iterator();
 				while (iter.hasNext()) {
 					String key = iter.next().toString();
 					prop.put(key, newProps.get(key));
@@ -59,7 +59,7 @@ public class PDEPluginConverter {
 		} catch (BundleException e) {
 		} catch (IOException e) {
 		}
-		return new HashMap<String, Object>();
+		return Collections.emptyMap();
 	}
 
 }

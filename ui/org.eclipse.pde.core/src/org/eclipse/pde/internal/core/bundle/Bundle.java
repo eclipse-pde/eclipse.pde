@@ -19,7 +19,7 @@ import org.osgi.framework.Constants;
 
 public class Bundle extends BundleObject implements IBundle {
 	private static final long serialVersionUID = 1L;
-	private Map<String, IManifestHeader> fDocumentHeaders = new HeaderMap();
+	private Map<String, IManifestHeader> fDocumentHeaders = new HeaderMap<String, IManifestHeader>();
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.ibundle.IBundle#setHeader(java.lang.String, java.lang.String)

@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.util.List;
-
 import java.io.*;
 import java.net.URL;
 import java.util.*;
@@ -92,7 +90,7 @@ public class ExternalFeatureModelManager {
 		if (monitor == null)
 			monitor = new NullProgressMonitor();
 		monitor.beginTask("", featurePaths.length); //$NON-NLS-1$
-		Map<?, IFeatureModel> uniqueFeatures = new HashMap<Object, IFeatureModel>();
+		Map<String, IFeatureModel> uniqueFeatures = new HashMap<String, IFeatureModel>();
 		for (int i = 0; i < featurePaths.length; i++) {
 			File manifest = new File(featurePaths[i].getFile(), ICoreConstants.FEATURE_FILENAME_DESCRIPTOR);
 			if (!manifest.exists() || !manifest.isFile()) {
@@ -267,7 +265,7 @@ public class ExternalFeatureModelManager {
 		if (monitor == null)
 			monitor = new NullProgressMonitor();
 		monitor.beginTask("", featurePaths.length); //$NON-NLS-1$
-		Map<?, TargetFeature> uniqueFeatures = new HashMap<Object, TargetFeature>();
+		Map<String, TargetFeature> uniqueFeatures = new HashMap<String, TargetFeature>();
 		for (int i = 0; i < featurePaths.length; i++) {
 			File manifest = new File(featurePaths[i].getFile(), ICoreConstants.FEATURE_FILENAME_DESCRIPTOR);
 			if (!manifest.exists() || !manifest.isFile()) {

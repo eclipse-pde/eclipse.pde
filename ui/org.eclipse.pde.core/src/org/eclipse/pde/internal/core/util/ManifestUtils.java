@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.util;
 
-import org.eclipse.jdt.core.IPackageFragmentRoot;
-
 import java.io.*;
 import java.util.*;
 import java.util.jar.JarFile;
@@ -114,7 +112,7 @@ public class ManifestUtils {
 	 * @return bundle manifest dictionary
 	 * @throws CoreException if manifest has invalid syntax or is missing
 	 */
-	public static Map<Object, ?> loadManifest(File bundleLocation) throws CoreException {
+	public static Map<String, String> loadManifest(File bundleLocation) throws CoreException {
 		// Check if the file is a archive or a directory
 		try {
 			if (bundleLocation.isFile()) {
@@ -127,7 +125,7 @@ public class ManifestUtils {
 					if (manifestEntry != null) {
 						stream = jarFile.getInputStream(manifestEntry);
 						if (stream != null) {
-							Map<Object, ?> map = ManifestElement.parseBundleManifest(stream, new Hashtable<String, String>(10));
+							Map<String, String> map = ManifestElement.parseBundleManifest(stream, new HashMap<String, String>(10));
 							// Symbolic name is the only required manifest entry, this is an ok bundle
 							if (map != null && map.containsKey(Constants.BUNDLE_SYMBOLICNAME)) {
 								return map;
@@ -139,7 +137,7 @@ public class ManifestUtils {
 							pluginEntry = jarFile.getEntry(ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR);
 						}
 						if (pluginEntry != null) {
-							Map<Object, ?> map = loadPluginXML(bundleLocation);
+							Map<String, String> map = loadPluginXML(bundleLocation);
 							if (map != null && map.containsKey(Constants.BUNDLE_SYMBOLICNAME)) {
 								return map;
 							}
@@ -155,7 +153,7 @@ public class ManifestUtils {
 					InputStream stream = null;
 					try {
 						stream = new FileInputStream(file);
-						Map<Object, ?> map = ManifestElement.parseBundleManifest(stream, new Hashtable<String, String>(10));
+						Map<String, String> map = ManifestElement.parseBundleManifest(stream, new HashMap<String, String>(10));
 						if (map != null && map.containsKey(Constants.BUNDLE_SYMBOLICNAME)) {
 							return map;
 						}
@@ -169,7 +167,7 @@ public class ManifestUtils {
 				File pxml = new File(bundleLocation, ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR);
 				File fxml = new File(bundleLocation, ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR);
 				if (pxml.exists() || fxml.exists()) {
-					Map<Object, ?> map = loadPluginXML(bundleLocation);
+					Map<String, String> map = loadPluginXML(bundleLocation);
 					if (map != null && map.containsKey(Constants.BUNDLE_SYMBOLICNAME)) {
 						return map;
 					}
@@ -195,16 +193,16 @@ public class ManifestUtils {
 	 * @return bundle manifest dictionary or <code>null</code> if none
 	 * @throws CoreException if manifest has invalid syntax
 	 */
-	private static Map<Object, ?> loadPluginXML(File pluginLocation) throws CoreException {
+	private static Map<String, String> loadPluginXML(File pluginLocation) throws CoreException {
 		PluginConverter converter = (PluginConverter) PDECore.getDefault().acquireService(PluginConverter.class.getName());
 		if (converter != null) {
 			try {
-				Dictionary<?, ?> convert = converter.convertManifest(pluginLocation, false, null, false, null);
+				Dictionary<String, String> convert = converter.convertManifest(pluginLocation, false, null, false, null);
 				if (convert != null) {
-					Map<Object, ?> map = new HashMap<Object, Object>(convert.size(), 1.0f);
-					Enumeration<?> keys = convert.keys();
+					Map<String, String> map = new HashMap<String, String>(convert.size(), 1.0f);
+					Enumeration<String> keys = convert.keys();
 					while (keys.hasMoreElements()) {
-						Object key = keys.nextElement();
+						String key = keys.nextElement();
 						map.put(key, convert.get(key));
 					}
 					return map;

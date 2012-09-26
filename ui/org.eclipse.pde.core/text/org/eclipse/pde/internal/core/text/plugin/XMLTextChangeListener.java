@@ -12,25 +12,13 @@ package org.eclipse.pde.internal.core.text.plugin;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.PDECoreMessages;
-import org.eclipse.pde.internal.core.text.AbstractTextChangeListener;
-import org.eclipse.pde.internal.core.text.IDocumentAttributeNode;
-import org.eclipse.pde.internal.core.text.IDocumentElementNode;
-import org.eclipse.pde.internal.core.text.IDocumentTextNode;
+import org.eclipse.pde.internal.core.text.*;
 import org.eclipse.pde.internal.core.util.PDEXMLHelper;
-import org.eclipse.text.edits.DeleteEdit;
-import org.eclipse.text.edits.InsertEdit;
-import org.eclipse.text.edits.MoveSourceEdit;
-import org.eclipse.text.edits.MoveTargetEdit;
-import org.eclipse.text.edits.ReplaceEdit;
-import org.eclipse.text.edits.TextEdit;
+import org.eclipse.text.edits.*;
 
 public class XMLTextChangeListener extends AbstractTextChangeListener {
 
@@ -104,7 +92,7 @@ public class XMLTextChangeListener extends AbstractTextChangeListener {
 
 	protected void deleteNode(IDocumentElementNode node) {
 		// delete previous op on this node, if any
-		TextEdit old = (TextEdit) fOperationTable.get(node);
+		TextEdit old = fOperationTable.get(node);
 		if (old != null) {
 			Object op = fOperationTable.remove(node);
 			fOperationList.remove(op);
@@ -186,7 +174,7 @@ public class XMLTextChangeListener extends AbstractTextChangeListener {
 		IDocumentElementNode node2 = node1.equals(oldNode) ? newNode : oldNode;
 
 		if (node1.getOffset() < 0 && node2.getOffset() < 0) {
-			TextEdit op = (TextEdit) fOperationTable.get(node1);
+			TextEdit op = fOperationTable.get(node1);
 			if (op == null) {
 				// node 1 has no rule, so node 2 has no rule, therefore rewrite parent/ancestor
 				insertNode(node);

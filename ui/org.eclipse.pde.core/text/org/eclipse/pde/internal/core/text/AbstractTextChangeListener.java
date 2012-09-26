@@ -11,13 +11,13 @@
 package org.eclipse.pde.internal.core.text;
 
 import java.util.HashMap;
-
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.TextUtilities;
+import org.eclipse.text.edits.TextEdit;
 
 public abstract class AbstractTextChangeListener implements IModelTextChangeListener {
 
-	protected HashMap<?, ?> fOperationTable = new HashMap<Object, Object>();
+	protected HashMap<Object, TextEdit> fOperationTable = new HashMap<Object, TextEdit>();
 	protected IDocument fDocument;
 	protected String fSep;
 
