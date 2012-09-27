@@ -38,13 +38,13 @@ public class CalleesListContentProvider extends CalleesContentProvider implement
 	 */
 	public Object[] getElements(Object inputElement) {
 		if (inputElement instanceof IPluginModelBase) {
-			Map elements = new HashMap();
-			Set candidates = new HashSet();
+			Map<String, Object> elements = new HashMap<String, Object>();
+			Set<Object> candidates = new HashSet<Object>();
 			candidates.addAll(Arrays.asList(findCallees(((IPluginModelBase) inputElement))));
 
 			while (!candidates.isEmpty()) {
-				Set newCandidates = new HashSet();
-				for (Iterator it = candidates.iterator(); it.hasNext();) {
+				Set<Object> newCandidates = new HashSet<Object>();
+				for (Iterator<Object> it = candidates.iterator(); it.hasNext();) {
 					Object candidate = it.next();
 					BundleDescription desc = null;
 					it.remove();

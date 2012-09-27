@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
+import org.eclipse.pde.core.plugin.IPluginReference;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import org.eclipse.core.resources.*;
@@ -71,7 +73,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 	protected void adjustManifests(IProgressMonitor monitor, IProject project, IPluginBase bundle) throws CoreException {
 		// if libraries are exported, compute export package (173393)
 		IPluginLibrary[] libs = fModel.getPluginBase().getLibraries();
-		Set packages = new TreeSet();
+		Set<String> packages = new TreeSet<String>();
 		for (int i = 0; i < libs.length; i++) {
 			String[] filters = libs[i].getContentFilters();
 			// if a library is fully exported, then export all source packages (since we don't know which source folders go with which library)
@@ -332,8 +334,8 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		fResult = contentWizardResult;
 	}
 
-	private Set getImportPackagesSet() {
-		TreeSet set = new TreeSet();
+	private Set<String> getImportPackagesSet() {
+		TreeSet<String> set = new TreeSet<String>();
 		if (fGenerator != null) {
 			String[] packages = fGenerator.getImportPackages();
 			for (int i = 0; i < packages.length; i++) {
@@ -392,7 +394,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 	}
 
 	private IPluginReference[] getDependencies() {
-		ArrayList result = new ArrayList();
+		ArrayList<IPluginReference> result = new ArrayList<IPluginReference>();
 		if (fGenerator != null) {
 			IPluginReference[] refs = fGenerator.getDependencies();
 			for (int i = 0; i < refs.length; i++) {
@@ -494,9 +496,9 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 	 * @return a {@link String} representing the given packages, with the exported version set correctly.<br>
 	 * If there's only one package and version is not null, package is exported with that version number. 
 	 */
-	protected String getCommaValuesFromPackagesSet(Set values, String version) {
+	protected String getCommaValuesFromPackagesSet(Set<String> values, String version) {
 		StringBuffer buffer = new StringBuffer();
-		Iterator iter = values.iterator();
+		Iterator<String> iter = values.iterator();
 		while (iter.hasNext()) {
 			if (buffer.length() > 0) {
 				buffer.append(",\n "); //$NON-NLS-1$ // space required for multiline headers
@@ -511,7 +513,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		return buffer.toString();
 	}
 
-	private void addAllSourcePackages(IProject project, Set list) {
+	private void addAllSourcePackages(IProject project, Set<String> list) {
 		try {
 			IJavaProject javaProject = JavaCore.create(project);
 			IClasspathEntry[] classpath = javaProject.getRawClasspath();

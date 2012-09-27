@@ -11,8 +11,6 @@
 
 package org.eclipse.pde.internal.ui.editor.build;
 
-import org.eclipse.pde.internal.ui.dialogs.FolderSelectionDialog;
-
 import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -26,6 +24,7 @@ import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
 import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.dialogs.FolderSelectionDialog;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
@@ -114,7 +113,7 @@ public class RuntimeInfoSection extends PDESection implements IModelChangedListe
 				if (jarOrderEntry == null)
 					return libraries;
 
-				Vector libList = new Vector();
+				Vector<IBuildEntry> libList = new Vector<IBuildEntry>();
 				String[] tokens = jarOrderEntry.getTokens();
 				for (int i = 0; i < tokens.length; i++) {
 					IBuildEntry entry = build.getEntry(IBuildEntry.JAR_PREFIX + tokens[i]);
@@ -250,8 +249,8 @@ public class RuntimeInfoSection extends PDESection implements IModelChangedListe
 		}
 	}
 
-	private void setOutputEntryTokens(Set outputFolders, IBuildEntry outputEntry) {
-		Iterator iter = outputFolders.iterator();
+	private void setOutputEntryTokens(Set<String> outputFolders, IBuildEntry outputEntry) {
+		Iterator<String> iter = outputFolders.iterator();
 		try {
 			while (iter.hasNext()) {
 				String outputFolder = iter.next().toString();
@@ -266,7 +265,7 @@ public class RuntimeInfoSection extends PDESection implements IModelChangedListe
 	}
 
 	private IPackageFragmentRoot[] computeSourceFolders() {
-		ArrayList folders = new ArrayList();
+		ArrayList<IPackageFragmentRoot> folders = new ArrayList<IPackageFragmentRoot>();
 		IBuildModel buildModel = getBuildModel();
 		IProject project = buildModel.getUnderlyingResource().getProject();
 		try {
@@ -520,7 +519,7 @@ public class RuntimeInfoSection extends PDESection implements IModelChangedListe
 		IBuildEntry buildEntry = getLibrarySelection();
 		if (buildEntry == null)
 			return;
-		Set outputFolders = new HashSet();
+		Set<String> outputFolders = new HashSet<String>();
 		String[] jarFolders = buildEntry.getTokens();
 		IPackageFragmentRoot[] sourceFolders = computeSourceFolders();
 		for (int j = 0; j < jarFolders.length; j++) {

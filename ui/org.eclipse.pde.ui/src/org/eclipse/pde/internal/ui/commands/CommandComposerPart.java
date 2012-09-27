@@ -162,7 +162,7 @@ public class CommandComposerPart implements ISelectionChangedListener {
 		return fCommandDetails.getSerializedString();
 	}
 
-	protected HashMap getSelectedCommandsParameters() {
+	protected HashMap<?, ?> getSelectedCommandsParameters() {
 		return fCommandDetails.getParameters();
 	}
 

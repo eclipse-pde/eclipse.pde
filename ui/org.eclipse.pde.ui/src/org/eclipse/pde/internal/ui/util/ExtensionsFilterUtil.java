@@ -64,10 +64,10 @@ public class ExtensionsFilterUtil {
 	public static final String[] LOW_PRIORITY_ELEMENTS = new String[] {ELEMENT_PARAMETER, ELEMENT_CA_BINDING, ELEMENT_AR_BINDING, ELEMENT_VARIABLE, ELEMENT_HELP_TOC};
 	public static final String[] RESOURCE_ATTRIBUTES = new String[] {ATTRIBUTE_LABEL, ATTRIBUTE_NAME, ATTRIBUTE_TOOLTIP, ATTRIBUTE_MNEMONIC, ATTRIBUTE_DESCRIPTION};
 
-	public static final Map CUSTOM_RELATIONS;
+	public static final Map<String, String[]> CUSTOM_RELATIONS;
 
 	static {
-		CUSTOM_RELATIONS = new HashMap();
+		CUSTOM_RELATIONS = new HashMap<String, String[]>();
 		CUSTOM_RELATIONS.put(ELEMENT_COMMAND, new String[] {ATTRIBUTE_ID, ATTRIBUTE_DEFAULTHANDLER});
 		CUSTOM_RELATIONS.put(ELEMENT_INSTANCEOF, new String[] {ATTRIBUTE_VALUE});
 		CUSTOM_RELATIONS.put(ELEMENT_EQUALS, new String[] {ATTRIBUTE_VALUE});
@@ -83,7 +83,7 @@ public class ExtensionsFilterUtil {
 	private static String BOOLEAN_FALSE = "false"; //$NON-NLS-1$
 	private static String ADDITIONS = "additions"; //$NON-NLS-1$
 
-	public static boolean add(Set pattern, IPluginElement pluginElement, String attributeName) {
+	public static boolean add(Set<String> pattern, IPluginElement pluginElement, String attributeName) {
 		IPluginAttribute attribute = pluginElement.getAttribute(attributeName);
 		if (attribute != null) {
 			return add(pattern, attribute.getValue());
@@ -91,7 +91,7 @@ public class ExtensionsFilterUtil {
 		return false;
 	}
 
-	public static boolean add(Set pattern, String value) {
+	public static boolean add(Set<String> pattern, String value) {
 		if (value != null && value.length() > 0) {
 			String trimmed = value.trim();
 			if (!isBoolean(trimmed)) {
@@ -101,7 +101,7 @@ public class ExtensionsFilterUtil {
 		return false;
 	}
 
-	public static void addAll(Set pattern, IPluginElement pluginElement, String elementName) {
+	public static void addAll(Set<String> pattern, IPluginElement pluginElement, String elementName) {
 		Object attributes = CUSTOM_RELATIONS.get(elementName);
 		if (attributes != null) {
 			String[] attributesArray = (String[]) attributes;
@@ -137,13 +137,13 @@ public class ExtensionsFilterUtil {
 	 * @param selection selected items to filter for related plugin elements 
 	 */
 	public static String getFilterRelatedPattern(IStructuredSelection selection) {
-		Iterator it = selection.iterator();
-		Set filterPatterns = new HashSet();
+		Iterator<?> it = selection.iterator();
+		Set<String> filterPatterns = new HashSet<String>();
 		while (it.hasNext()) {
 			Object treeElement = it.next();
 			if (treeElement instanceof IPluginElement) {
 				IPluginElement pluginElement = (IPluginElement) treeElement;
-				Set customAttributes = getCustomRelations(pluginElement);
+				Set<String> customAttributes = getCustomRelations(pluginElement);
 				if (customAttributes.size() == 0) {
 					for (int i = 0; i < RELATED_ATTRIBUTES.length; i++) {
 						String property = RELATED_ATTRIBUTES[i];
@@ -181,7 +181,7 @@ public class ExtensionsFilterUtil {
 		}
 		StringBuffer patternBuffer = new StringBuffer();
 		int attributeCount = 0;
-		for (Iterator iterator = filterPatterns.iterator(); iterator.hasNext();) {
+		for (Iterator<String> iterator = filterPatterns.iterator(); iterator.hasNext();) {
 			attributeCount++;
 			Object pattern = iterator.next();
 			if (attributeCount < ExtensionsPatternFilter.ATTRIBUTE_LIMIT) {
@@ -199,8 +199,8 @@ public class ExtensionsFilterUtil {
 		return filterPattern;
 	}
 
-	public static Set getCustomRelations(IPluginElement pluginElement) {
-		Set customAttributes = new TreeSet();
+	public static Set<String> getCustomRelations(IPluginElement pluginElement) {
+		Set<String> customAttributes = new TreeSet<String>();
 		String elementName = (pluginElement != null) ? getElementPath(pluginElement) : null;
 		if (elementName == null) {
 			return customAttributes;
@@ -227,7 +227,7 @@ public class ExtensionsFilterUtil {
 		return customAttributes;
 	}
 
-	private static boolean addMatchingElements(Set customAttributes, IPluginElement pluginElement, String elementName, final String[] elements) {
+	private static boolean addMatchingElements(Set<String> customAttributes, IPluginElement pluginElement, String elementName, final String[] elements) {
 		boolean elementMatch = false;
 		if (elementName != null) {
 			for (int i = 0; i < elements.length; i++) {
@@ -240,7 +240,7 @@ public class ExtensionsFilterUtil {
 		return elementMatch;
 	}
 
-	private static Set handlePropertyTester(Set customAttributes, IPluginElement pluginElement) {
+	private static Set<String> handlePropertyTester(Set<String> customAttributes, IPluginElement pluginElement) {
 		String namespace = pluginElement.getAttribute(ATTRIBUTE_NAMESPACE).getValue();
 		String properties = pluginElement.getAttribute(ATTRIBUTE_PROPERTIES).getValue();
 		if (namespace.length() > 0) {
@@ -258,11 +258,11 @@ public class ExtensionsFilterUtil {
 		return customAttributes;
 	}
 
-	public static List handlePropertyTester(IPluginElement pluginElement) {
-		List propertyTestAttributes = new ArrayList();
+	public static List<String> handlePropertyTester(IPluginElement pluginElement) {
+		List<String> propertyTestAttributes = new ArrayList<String>();
 		if (isElementNameMatch(pluginElement, ELEMENT_PROPERTYTESTER)) {
-			Set attributes = handlePropertyTester(new HashSet(), pluginElement);
-			for (Iterator iterator = attributes.iterator(); iterator.hasNext();) {
+			Set<String> attributes = handlePropertyTester(new HashSet<String>(), pluginElement);
+			for (Iterator<String> iterator = attributes.iterator(); iterator.hasNext();) {
 				propertyTestAttributes.add(iterator.next());
 			}
 		}
@@ -303,8 +303,8 @@ public class ExtensionsFilterUtil {
 		// test for custom relations
 		String elementName = getElementPath(pluginElement);
 		if (elementName != null) {
-			Set keySet = CUSTOM_RELATIONS.keySet();
-			for (Iterator iterator = keySet.iterator(); iterator.hasNext();) {
+			Set<String> keySet = CUSTOM_RELATIONS.keySet();
+			for (Iterator<String> iterator = keySet.iterator(); iterator.hasNext();) {
 				String key = (String) iterator.next();
 				if (elementName.endsWith(key)) {
 					Object attributes = CUSTOM_RELATIONS.get(key);
@@ -326,7 +326,7 @@ public class ExtensionsFilterUtil {
 	public static boolean isFilterRelatedEnabled(IStructuredSelection structuredSelection) {
 		boolean createFilterRelatedAction = false;
 		if (structuredSelection != null && !structuredSelection.isEmpty()) {
-			Iterator it = structuredSelection.iterator();
+			Iterator<?> it = structuredSelection.iterator();
 			while (it.hasNext()) {
 				Object treeElement = it.next();
 				if (treeElement instanceof IPluginElement) {

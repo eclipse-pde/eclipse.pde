@@ -87,7 +87,7 @@ public class FeatureOutlinePage extends FormOutlinePage {
 	private Object[] getInfos() {
 		IFeatureModel model = (IFeatureModel) fEditor.getAggregateModel();
 		IFeature feature = model.getFeature();
-		Vector result = new Vector();
+		Vector<Object> result = new Vector<Object>();
 		for (int i = 0; i < 3; i++) {
 			IFeatureInfo info = feature.getFeatureInfo(i);
 			if (info != null)

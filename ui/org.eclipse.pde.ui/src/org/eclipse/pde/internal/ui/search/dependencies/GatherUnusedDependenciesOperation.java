@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.search.dependencies;
 
+import org.eclipse.pde.core.plugin.IPluginImport;
+import org.eclipse.pde.internal.core.text.bundle.ImportPackageObject;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import org.eclipse.core.resources.IProject;
@@ -40,7 +43,7 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 	}
 
 	private IPluginModelBase fModel;
-	private ArrayList fList;
+	private ArrayList<Object> fList;
 
 	public GatherUnusedDependenciesOperation(IPluginModelBase model) {
 		fModel = model;
@@ -49,7 +52,7 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 
 		ImportPackageObject[] packages = null;
-		Collection exportedPackages = null;
+		Collection<?> exportedPackages = null;
 		if (ClasspathUtilCore.hasBundleStructure(fModel)) {
 			IBundle bundle = ((IBundlePluginModelBase) fModel).getBundleModel().getBundle();
 			IManifestHeader header = bundle.getManifestHeader(Constants.IMPORT_PACKAGE);
@@ -73,8 +76,8 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 		int totalWork = imports.length * 3 + (packages != null ? packages.length : 0) + 1;
 		monitor.beginTask("", totalWork); //$NON-NLS-1$
 
-		HashMap usedPlugins = new HashMap();
-		fList = new ArrayList();
+		HashMap<String, IPluginImport> usedPlugins = new HashMap<String, IPluginImport>();
+		fList = new ArrayList<Object>();
 		for (int i = 0; i < imports.length; i++) {
 			if (monitor.isCanceled())
 				break;
@@ -85,7 +88,7 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 			updateMonitor(monitor, fList.size());
 		}
 
-		ArrayList usedPackages = new ArrayList();
+		ArrayList<ImportPackageObject> usedPackages = new ArrayList<ImportPackageObject>();
 		if (packages != null && !monitor.isCanceled()) {
 			for (int i = 0; i < packages.length; i++) {
 				if (monitor.isCanceled())
@@ -114,7 +117,7 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 		return !provideJavaClasses(models, monitor);
 	}
 
-	private boolean isUnused(ImportPackageObject pkg, Collection exportedPackages, SubProgressMonitor monitor) {
+	private boolean isUnused(ImportPackageObject pkg, Collection<?> exportedPackages, SubProgressMonitor monitor) {
 		if (exportedPackages != null && exportedPackages.contains(pkg.getValue())) {
 			monitor.done();
 			return false;
@@ -210,7 +213,7 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 		return false;
 	}
 
-	public ArrayList getList() {
+	public ArrayList<Object> getList() {
 		return fList;
 	}
 
@@ -230,8 +233,8 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 		}
 	}
 
-	private void minimizeDependencies(HashMap usedPlugins, ArrayList usedPackages, IProgressMonitor monitor) {
-		ListIterator li = usedPackages.listIterator();
+	private void minimizeDependencies(HashMap<String, IPluginImport> usedPlugins, ArrayList<ImportPackageObject> usedPackages, IProgressMonitor monitor) {
+		ListIterator<ImportPackageObject> li = usedPackages.listIterator();
 		while (li.hasNext()) {
 			ImportPackageObject ipo = (ImportPackageObject) li.next();
 			String bundle = ipo.getAttribute(Constants.BUNDLE_SYMBOLICNAME_ATTRIBUTE);
@@ -239,8 +242,8 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 				fList.add(ipo);
 		}
 
-		Iterator it = usedPlugins.keySet().iterator();
-		Stack plugins = new Stack();
+		Iterator<String> it = usedPlugins.keySet().iterator();
+		Stack<String> plugins = new Stack<String>();
 		while (it.hasNext())
 			plugins.push(it.next().toString());
 

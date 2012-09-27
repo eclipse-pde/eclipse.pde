@@ -10,6 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.commands;
 
+import org.eclipse.core.commands.IParameter;
+import org.eclipse.core.commands.Parameterization;
+import org.eclipse.pde.internal.ui.commands.CommandDetails.ObjectParameterControl;
+import org.eclipse.pde.internal.ui.commands.CommandDetails.TextParameterControl;
+import org.eclipse.pde.internal.ui.commands.CommandDetails.ValuesParameterControl;
+
 import java.util.*;
 import org.eclipse.core.commands.*;
 import org.eclipse.core.commands.common.CommandException;
@@ -35,10 +41,10 @@ import org.eclipse.ui.handlers.IHandlerService;
 
 public class CommandDetails {
 
-	private final HashMap fParameterToValue = new HashMap();
-	private final ArrayList fObjectParamList = new ArrayList();
-	private final ArrayList fValueParamList = new ArrayList();
-	private final ArrayList fTextParamList = new ArrayList();
+	private final HashMap<IParameter, String> fParameterToValue = new HashMap<IParameter, String>();
+	private final ArrayList<ObjectParameterControl> fObjectParamList = new ArrayList<ObjectParameterControl>();
+	private final ArrayList<ValuesParameterControl> fValueParamList = new ArrayList<ValuesParameterControl>();
+	private final ArrayList<TextParameterControl> fTextParamList = new ArrayList<TextParameterControl>();
 
 	private CommandComposerPart fCCP;
 	private FormToolkit fToolkit;
@@ -164,8 +170,8 @@ public class CommandDetails {
 
 	protected ParameterizedCommand buildParameterizedCommand() {
 
-		ArrayList list = new ArrayList();
-		for (Iterator i = fParameterToValue.keySet().iterator(); i.hasNext();) {
+		ArrayList<Parameterization> list = new ArrayList<Parameterization>();
+		for (Iterator<IParameter> i = fParameterToValue.keySet().iterator(); i.hasNext();) {
 			IParameter parameter = (IParameter) i.next();
 			String value = (String) fParameterToValue.get(parameter);
 			list.add(new Parameterization(parameter, value));
@@ -237,11 +243,11 @@ public class CommandDetails {
 
 	private class ValuesParameterControl extends SelectionAdapter implements ModifyListener {
 		private final IParameter fParameter;
-		private final Map fValues;
+		private final Map<?, ?> fValues;
 		private final Combo fValuesCombo;
 		private final Button fClearButton;
 
-		public ValuesParameterControl(IParameter parameter, Map values, Combo valuesCombo, Button clearButton) {
+		public ValuesParameterControl(IParameter parameter, Map<?, ?> values, Combo valuesCombo, Button clearButton) {
 			fParameter = parameter;
 			fValues = values;
 
@@ -250,7 +256,7 @@ public class CommandDetails {
 			if (fPreSel != null && fValues != null) {
 				Object obj = fPreSel.getParameterMap().get(parameter.getId());
 				if (obj != null) {
-					for (Iterator i = fValues.keySet().iterator(); i.hasNext();) {
+					for (Iterator<?> i = fValues.keySet().iterator(); i.hasNext();) {
 						Object next = i.next();
 						if (obj.equals(fValues.get(next))) {
 							fValuesCombo.setText(next.toString());
@@ -423,8 +429,8 @@ public class CommandDetails {
 					parameterValuesCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 					fToolkit.adapt(parameterValuesCombo, true, true);
 
-					Map values = parameterValues.getParameterValues();
-					for (Iterator keys = values.keySet().iterator(); keys.hasNext();)
+					Map<?, ?> values = parameterValues.getParameterValues();
+					for (Iterator<?> keys = values.keySet().iterator(); keys.hasNext();)
 						parameterValuesCombo.add((String) keys.next());
 
 					Button clearButton = fToolkit.createButton(paramLine, PDEUIMessages.CommandDetails_clear, SWT.PUSH);
@@ -544,7 +550,7 @@ public class CommandDetails {
 		return null;
 	}
 
-	public HashMap getParameters() {
+	public HashMap<IParameter, String> getParameters() {
 		if (fSelectedCommand != null)
 			return fParameterToValue;
 

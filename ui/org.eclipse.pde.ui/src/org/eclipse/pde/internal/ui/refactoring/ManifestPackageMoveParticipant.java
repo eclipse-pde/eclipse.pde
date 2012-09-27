@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.refactoring;
 
+import org.eclipse.jdt.core.IPackageFragment;
+
 import java.util.HashMap;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -28,7 +30,7 @@ public class ManifestPackageMoveParticipant extends PDEMoveParticipant {
 			IProject project = javaProject.getProject();
 			if (PDEProject.getManifest(project).exists()) {
 				fProject = javaProject.getProject();
-				fElements = new HashMap();
+				fElements = new HashMap<IPackageFragment, String>();
 				fElements.put(fragment, getNewName(getArguments().getDestination(), element));
 				return true;
 			}

@@ -115,7 +115,7 @@ public class ModelChange {
 		return fProperties;
 	}
 
-	public ArrayList getChangesInFile(IFile file) {
+	public ArrayList<?> getChangesInFile(IFile file) {
 		if (fXMLCoupling != null && file == fXMLCoupling.getFile())
 			return fXMLCoupling.getChanges();
 		if (fMFCoupling != null && file == fMFCoupling.getFile())

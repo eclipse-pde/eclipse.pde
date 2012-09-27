@@ -27,7 +27,7 @@ import org.eclipse.ui.PlatformUI;
 public class PluginImportFinishDialog extends TitleAreaDialog {
 
 	private TableViewer fPluginListViewer;
-	private List fPluginList;
+	private List<?> fPluginList;
 	private String fTitle;
 	private String fMessage;
 	private boolean fConfigured;
@@ -66,14 +66,14 @@ public class PluginImportFinishDialog extends TitleAreaDialog {
 		fConfigured = false;
 	}
 
-	public final void setInput(List pluginList) {
+	public final void setInput(List<?> pluginList) {
 		fPluginList = pluginList;
 	}
 
 	static private class PluginImportTableContentProvider extends DefaultTableProvider {
 
 		public Object[] getElements(Object inputElement) {
-			return ((List) inputElement).toArray();
+			return ((List<?>) inputElement).toArray();
 		}
 	}
 

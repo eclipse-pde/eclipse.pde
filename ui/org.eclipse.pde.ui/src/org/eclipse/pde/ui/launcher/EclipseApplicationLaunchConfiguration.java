@@ -41,10 +41,10 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 
 	// used to generate the dev classpath entries
 	// key is bundle ID, value is a model
-	private Map fAllBundles;
+	private Map<String, IPluginModelBase> fAllBundles;
 
 	// key is a model, value is startLevel:autoStart
-	private Map fModels;
+	private Map<?, ?> fModels;
 
 	/**
 	 * To avoid duplicating variable substitution (and duplicate prompts)
@@ -57,7 +57,7 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 	 * @see org.eclipse.pde.ui.launcher.AbstractPDELaunchConfiguration#getProgramArguments(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public String[] getProgramArguments(ILaunchConfiguration configuration) throws CoreException {
-		ArrayList programArgs = new ArrayList();
+		ArrayList<String> programArgs = new ArrayList<String>();
 
 		// If a product is specified, then add it to the program args
 		if (configuration.getAttribute(org.eclipse.pde.launching.IPDELauncherConstants.USE_PRODUCT, false)) {
@@ -256,8 +256,8 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 		fWorkspaceLocation = null;
 
 		fModels = BundleLauncherHelper.getMergedBundleMap(configuration, false);
-		fAllBundles = new HashMap(fModels.size());
-		Iterator iter = fModels.keySet().iterator();
+		fAllBundles = new HashMap<String, IPluginModelBase>(fModels.size());
+		Iterator<?> iter = fModels.keySet().iterator();
 		while (iter.hasNext()) {
 			IPluginModelBase model = (IPluginModelBase) iter.next();
 			fAllBundles.put(model.getPluginBase().getId(), model);

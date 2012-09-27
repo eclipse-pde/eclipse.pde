@@ -11,6 +11,8 @@
 
 package org.eclipse.pde.internal.ui.wizards.product;
 
+import org.eclipse.pde.core.plugin.IPluginElement;
+
 import java.util.ArrayList;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -147,7 +149,7 @@ public class RemoveSplashHandlerBindingAction extends Action implements ISplashH
 	}
 
 	private IPluginElement[] findProductBindingElements(IPluginExtension extension) {
-		ArrayList elements = new ArrayList();
+		ArrayList<IPluginElement> elements = new ArrayList<IPluginElement>();
 		// Check to see if the extension has any children
 		if (extension.getChildCount() == 0) {
 			// Extension has no children

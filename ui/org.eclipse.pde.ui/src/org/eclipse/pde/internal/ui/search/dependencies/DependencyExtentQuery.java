@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.search.dependencies;
 
+import org.eclipse.jdt.core.IPackageFragmentRoot;
+
 import java.util.ArrayList;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
@@ -72,7 +74,7 @@ public class DependencyExtentQuery implements ISearchQuery {
 	}
 
 	public IPackageFragmentRoot[] getDirectRoots() {
-		ArrayList result = new ArrayList();
+		ArrayList<IPackageFragmentRoot> result = new ArrayList<IPackageFragmentRoot>();
 		try {
 			IPackageFragmentRoot[] roots = JavaCore.create(fProject).getPackageFragmentRoots();
 			for (int i = 0; i < roots.length; i++) {

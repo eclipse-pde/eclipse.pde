@@ -55,7 +55,7 @@ public class AddSourceBuildEntryResolution extends BuildEntryMarkerResolution {
 		IProject project = build.getModel().getUnderlyingResource().getProject();
 		try {
 			if (project.hasNature(JavaCore.NATURE_ID)) {
-				ArrayList sourceEntries = new ArrayList();
+				ArrayList<IBuildEntry> sourceEntries = new ArrayList<IBuildEntry>();
 				IBuildEntry[] entries = build.getBuildEntries();
 				if (unlistedOnly)
 					for (int i = 0; i < entries.length; i++)

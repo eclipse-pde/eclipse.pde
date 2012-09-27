@@ -11,6 +11,8 @@
 
 package org.eclipse.pde.internal.ui.editor.contentassist;
 
+import org.eclipse.pde.internal.core.ischema.ISchemaElement;
+
 import java.util.HashMap;
 import java.util.TreeSet;
 import org.eclipse.pde.internal.core.ischema.*;
@@ -26,16 +28,16 @@ public class XMLElementProposalComputer {
 	 * given multiplicity constraints and existing children found under 
 	 * <code>node</code>.
 	 */
-	public static TreeSet computeElementProposal(ISchemaElement sElement, IDocumentElementNode node) {
+	public static TreeSet<ISchemaElement> computeElementProposal(ISchemaElement sElement, IDocumentElementNode node) {
 		// Calculate the number of occurrences of each XML tag name
 		// in the node's direct children
-		HashMap tagNameMap = countXMLChildrenByTagName(node);
+		HashMap<String, Integer> tagNameMap = countXMLChildrenByTagName(node);
 		return computeElementProposal(sElement, tagNameMap);
 	}
 
-	private static TreeSet computeElementProposal(ISchemaElement sElement, HashMap tagNameMap) {
+	private static TreeSet<ISchemaElement> computeElementProposal(ISchemaElement sElement, HashMap<String, Integer> tagNameMap) {
 
-		TreeSet elementSet = new TreeSet(new XMLElementProposalComparator());
+		TreeSet<ISchemaElement> elementSet = new TreeSet<ISchemaElement>(new XMLElementProposalComparator());
 		// Get this element's compositor
 		ISchemaCompositor compositor = ((ISchemaComplexType) sElement.getType()).getCompositor();
 		// Track multiplicity
@@ -52,9 +54,9 @@ public class XMLElementProposalComputer {
 	 * Key is children's XML tag name
 	 * Value is number of occurrences found amongst siblings
 	 */
-	private static HashMap countXMLChildrenByTagName(IDocumentElementNode node) {
+	private static HashMap<String, Integer> countXMLChildrenByTagName(IDocumentElementNode node) {
 		IDocumentElementNode[] children = node.getChildNodes();
-		HashMap tagNameMap = new HashMap();
+		HashMap<String, Integer> tagNameMap = new HashMap<String, Integer>();
 		for (int i = 0; i < children.length; i++) {
 			String key = children[i].getXMLTagName();
 			if (tagNameMap.containsKey(key)) {
@@ -74,7 +76,7 @@ public class XMLElementProposalComputer {
 	 * @param siblings
 	 * @param multiplicityTracker
 	 */
-	private static void computeCompositorChildProposal(ISchemaCompositor compositor, TreeSet elementSet, HashMap siblings, int multiplicityTracker) {
+	private static void computeCompositorChildProposal(ISchemaCompositor compositor, TreeSet<ISchemaElement> elementSet, HashMap<String, Integer> siblings, int multiplicityTracker) {
 		// Compositor can be null only in cases where we had a schema complex
 		// type but that complex type was complex because it had attributes
 		// rather than element children
@@ -95,7 +97,7 @@ public class XMLElementProposalComputer {
 	 * @param siblings
 	 * @param multiplicityTracker
 	 */
-	private static void computeCompositorSequenceProposal(ISchemaCompositor compositor, TreeSet elementSet, HashMap siblings, int multiplicityTracker) {
+	private static void computeCompositorSequenceProposal(ISchemaCompositor compositor, TreeSet<ISchemaElement> elementSet, HashMap<String, Integer> siblings, int multiplicityTracker) {
 
 		ISchemaObject[] schemaObject = compositor.getChildren();
 		// Unbounded max occurs are represented by the maximum integer value
@@ -115,7 +117,7 @@ public class XMLElementProposalComputer {
 	 * @param siblings
 	 * @param multiplicityTracker
 	 */
-	private static void computeCompositorChoiceProposal(ISchemaCompositor compositor, TreeSet elementSet, HashMap siblings, int multiplicityTracker) {
+	private static void computeCompositorChoiceProposal(ISchemaCompositor compositor, TreeSet<ISchemaElement> elementSet, HashMap<String, Integer> siblings, int multiplicityTracker) {
 
 		// Unbounded max occurs are represented by the maximum integer value
 		if (multiplicityTracker < Integer.MAX_VALUE) {
@@ -135,7 +137,7 @@ public class XMLElementProposalComputer {
 	 * @param compositor
 	 * @param siblings
 	 */
-	private static void adjustChoiceSiblings(ISchemaCompositor compositor, HashMap siblings) {
+	private static void adjustChoiceSiblings(ISchemaCompositor compositor, HashMap<String, Integer> siblings) {
 
 		ISchemaObject[] schemaObject = compositor.getChildren();
 		// Count the number of child element occurrences of the choice
@@ -171,7 +173,7 @@ public class XMLElementProposalComputer {
 	 * @param siblings
 	 * @param multiplicityTracker
 	 */
-	private static void computeObjectChildProposal(ISchemaObject schemaObject, TreeSet elementSet, HashMap siblings, int multiplicityTracker) {
+	private static void computeObjectChildProposal(ISchemaObject schemaObject, TreeSet<ISchemaElement> elementSet, HashMap<String, Integer> siblings, int multiplicityTracker) {
 		if (schemaObject instanceof ISchemaElement) {
 			ISchemaElement schemaElement = (ISchemaElement) schemaObject;
 			computeElementChildProposal(schemaElement, elementSet, siblings, multiplicityTracker);
@@ -187,7 +189,7 @@ public class XMLElementProposalComputer {
 	 * @param siblings
 	 * @param multiplicityTracker
 	 */
-	private static void computeElementChildProposal(ISchemaElement schemaElement, TreeSet elementSet, HashMap siblings, int multiplicityTracker) {
+	private static void computeElementChildProposal(ISchemaElement schemaElement, TreeSet<ISchemaElement> elementSet, HashMap<String, Integer> siblings, int multiplicityTracker) {
 
 		int occurrences = 0;
 		// Determine the number of occurrences found of this element

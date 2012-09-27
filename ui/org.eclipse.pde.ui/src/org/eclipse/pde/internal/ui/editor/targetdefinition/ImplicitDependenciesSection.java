@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.targetdefinition;
 
+import org.eclipse.pde.core.target.NameVersionDescriptor;
+
 import org.eclipse.pde.core.target.*;
 
 import java.util.*;
@@ -203,12 +205,12 @@ public class ImplicitDependenciesSection extends SectionPart {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(), IHelpContextIds.IMPLICIT_DEPENDENCIES_SELECTION_DIALOG);
 		if (dialog.open() == Window.OK) {
 			Object[] models = dialog.getResult();
-			ArrayList pluginsToAdd = new ArrayList();
+			ArrayList<NameVersionDescriptor> pluginsToAdd = new ArrayList<NameVersionDescriptor>();
 			for (int i = 0; i < models.length; i++) {
 				BundleInfo selected = ((BundleInfo) models[i]);
 				pluginsToAdd.add(new NameVersionDescriptor(selected.getSymbolicName(), null));
 			}
-			Set allDependencies = new HashSet();
+			Set<NameVersionDescriptor> allDependencies = new HashSet<NameVersionDescriptor>();
 			allDependencies.addAll(pluginsToAdd);
 			NameVersionDescriptor[] currentBundles = getTarget().getImplicitDependencies();
 			if (currentBundles != null) {
@@ -226,14 +228,14 @@ public class ImplicitDependenciesSection extends SectionPart {
 	 */
 	protected BundleInfo[] getValidBundles() throws CoreException {
 		NameVersionDescriptor[] current = getTarget().getImplicitDependencies();
-		Set currentBundles = new HashSet();
+		Set<String> currentBundles = new HashSet<String>();
 		if (current != null) {
 			for (int i = 0; i < current.length; i++) {
 				currentBundles.add(current[i].getId());
 			}
 		}
 
-		List targetBundles = new ArrayList();
+		List<BundleInfo> targetBundles = new ArrayList<BundleInfo>();
 		TargetBundle[] allTargetBundles = getTarget().getAllBundles();
 		if (allTargetBundles == null || allTargetBundles.length == 0) {
 			throw new CoreException(new Status(IStatus.WARNING, PDEPlugin.getPluginId(), PDEUIMessages.ImplicitDependenciesSection_0));
@@ -248,7 +250,7 @@ public class ImplicitDependenciesSection extends SectionPart {
 	}
 
 	private void handleRemove() {
-		LinkedList bundles = new LinkedList();
+		LinkedList<NameVersionDescriptor> bundles = new LinkedList<NameVersionDescriptor>();
 		bundles.addAll(Arrays.asList(getTarget().getImplicitDependencies()));
 		Object[] removeBundles = ((IStructuredSelection) fViewer.getSelection()).toArray();
 		if (removeBundles.length > 0) {

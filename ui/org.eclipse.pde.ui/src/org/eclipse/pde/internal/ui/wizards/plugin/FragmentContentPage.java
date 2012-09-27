@@ -189,7 +189,7 @@ public class FragmentContentPage extends ContentPage {
 
 		// Gather EEs 
 		IExecutionEnvironment[] exeEnvs = VMUtil.getExecutionEnvironments();
-		TreeSet availableEEs = new TreeSet();
+		TreeSet<String> availableEEs = new TreeSet<String>();
 		for (int i = 0; i < exeEnvs.length; i++) {
 			availableEEs.add(exeEnvs[i].getId());
 		}

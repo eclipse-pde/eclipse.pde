@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.ifeature.IFeatureImport;
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import org.eclipse.core.runtime.CoreException;
@@ -57,7 +61,7 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 		public Object[] getElements(Object parent) {
 			if (parent instanceof IFeature) {
 				IFeatureImport[] imports = ((IFeature) parent).getImports();
-				ArrayList displayable = new ArrayList();
+				ArrayList<IFeatureImport> displayable = new ArrayList<IFeatureImport>();
 				for (int i = 0; i < imports.length; i++) {
 					if (imports[i].isPatch())
 						continue;
@@ -163,7 +167,7 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 		BusyIndicator.showWhile(fPluginViewer.getTable().getDisplay(), new Runnable() {
 			public void run() {
 				IPluginModelBase[] allModels = PluginRegistry.getActiveModels();
-				ArrayList newModels = new ArrayList();
+				ArrayList<IPluginModelBase> newModels = new ArrayList<IPluginModelBase>();
 				for (int i = 0; i < allModels.length; i++) {
 					if (canAdd(allModels[i]))
 						newModels.add(allModels[i]);
@@ -209,7 +213,7 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 		BusyIndicator.showWhile(fPluginViewer.getTable().getDisplay(), new Runnable() {
 			public void run() {
 				IFeatureModel[] allModels = PDECore.getDefault().getFeatureModelManager().getModels();
-				ArrayList newModels = new ArrayList();
+				ArrayList<IFeatureModel> newModels = new ArrayList<IFeatureModel>();
 				for (int i = 0; i < allModels.length; i++) {
 					if (canAdd(allModels[i]))
 						newModels.add(allModels[i]);
@@ -279,7 +283,7 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 		try {
 			IFeatureImport[] deleted = new IFeatureImport[selection.size()];
 			int i = 0;
-			for (Iterator iter = selection.iterator(); iter.hasNext();) {
+			for (Iterator<?> iter = selection.iterator(); iter.hasNext();) {
 				IFeatureImport iimport = (IFeatureImport) iter.next();
 				deleted[i++] = iimport;
 			}

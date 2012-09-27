@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.ListenerList;
 
 public class TagManager {
 
-	private Hashtable fCommandToTags = new Hashtable();
+	private Hashtable<Command, String> fCommandToTags = new Hashtable<Command, String>();
 	private ListenerList fListeners = new ListenerList();
 
 	public void update(Command command, String tags) {
@@ -40,8 +40,8 @@ public class TagManager {
 	}
 
 	public String[] getTags() {
-		HashSet tagSet = new HashSet();
-		for (Iterator i = fCommandToTags.values().iterator(); i.hasNext();) {
+		HashSet<String> tagSet = new HashSet<String>();
+		for (Iterator<String> i = fCommandToTags.values().iterator(); i.hasNext();) {
 			String tags = (String) i.next();
 
 			String[] tagArray = tags.split(","); //$NON-NLS-1$
@@ -62,9 +62,9 @@ public class TagManager {
 	}
 
 	public Command[] getCommands(String tag) {
-		ArrayList list = new ArrayList();
+		ArrayList<Command> list = new ArrayList<Command>();
 
-		for (Iterator i = fCommandToTags.keySet().iterator(); i.hasNext();) {
+		for (Iterator<Command> i = fCommandToTags.keySet().iterator(); i.hasNext();) {
 			Command command = (Command) i.next();
 			String tags = (String) fCommandToTags.get(command);
 			if (hasTag(tags, tag)) {

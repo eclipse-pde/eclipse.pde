@@ -12,6 +12,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+
 import java.util.*;
 import java.util.List;
 import org.eclipse.core.resources.IProject;
@@ -86,8 +89,8 @@ public abstract class AbstractPluginBlock {
 
 	private boolean viewerEnabled = true;
 
-	private HashMap levelColumnCache = new HashMap();
-	private HashMap autoColumnCache = new HashMap();
+	private HashMap<Object, String> levelColumnCache = new HashMap<Object, String>();
+	private HashMap<Object, String> autoColumnCache = new HashMap<Object, String>();
 	private TreeEditor levelColumnEditor = null;
 	private TreeEditor autoColumnEditor = null;
 	private boolean fIsDisposed = false;
@@ -95,11 +98,11 @@ public abstract class AbstractPluginBlock {
 	private PluginStatusDialog fDialog;
 
 	class PluginModelNameBuffer {
-		private List nameList;
+		private List<String> nameList;
 
 		PluginModelNameBuffer() {
 			super();
-			nameList = new ArrayList();
+			nameList = new ArrayList<String>();
 		}
 
 		void add(IPluginModelBase model) {
@@ -119,7 +122,7 @@ public abstract class AbstractPluginBlock {
 		public String toString() {
 			Collections.sort(nameList);
 			StringBuffer result = new StringBuffer();
-			for (Iterator iterator = nameList.iterator(); iterator.hasNext();) {
+			for (Iterator<String> iterator = nameList.iterator(); iterator.hasNext();) {
 				String name = (String) iterator.next();
 				if (result.length() > 0)
 					result.append(',');
@@ -235,7 +238,7 @@ public abstract class AbstractPluginBlock {
 		}
 
 		public Object[] getElements(Object input) {
-			ArrayList list = new ArrayList();
+			ArrayList<NamedElement> list = new ArrayList<NamedElement>();
 			if (getWorkspaceModels().length > 0)
 				list.add(fWorkspacePlugins);
 			if (getExternalModels().length > 0)
@@ -268,7 +271,7 @@ public abstract class AbstractPluginBlock {
 				return fExternalModels;
 			}
 
-			ArrayList list = new ArrayList(models.length);
+			ArrayList<IPluginModelBase> list = new ArrayList<IPluginModelBase>(models.length);
 			for (int i = 0; i < models.length; i++) {
 				if (models[i].isEnabled()) {
 					list.add(models[i]);
@@ -287,7 +290,7 @@ public abstract class AbstractPluginBlock {
 	protected IPluginModelBase[] getWorkspaceModels() {
 		if (fWorkspaceModels == null) {
 			IPluginModelBase[] models = PluginRegistry.getWorkspaceModels();
-			ArrayList list = new ArrayList(models.length);
+			ArrayList<IPluginModelBase> list = new ArrayList<IPluginModelBase>(models.length);
 			for (int i = 0; i < models.length; i++) {
 				if (models[i].getBundleDescription() != null) {
 					list.add(models[i]);
@@ -737,7 +740,7 @@ public abstract class AbstractPluginBlock {
 	}
 
 	private String[] getPluginIDs(IWorkingSet[] workingSets) {
-		HashSet set = new HashSet();
+		HashSet<String> set = new HashSet<String>();
 		for (int i = 0; i < workingSets.length; i++) {
 			IAdaptable[] elements = workingSets[i].getElements();
 			for (int j = 0; j < elements.length; j++) {
@@ -767,8 +770,8 @@ public abstract class AbstractPluginBlock {
 	 * @throws CoreException
 	 */
 	public void initializeFrom(ILaunchConfiguration config, boolean enableTable) throws CoreException {
-		levelColumnCache = new HashMap();
-		autoColumnCache = new HashMap();
+		levelColumnCache = new HashMap<Object, String>();
+		autoColumnCache = new HashMap<Object, String>();
 		fPluginFilteredTree.resetFilter();
 		fIncludeOptionalButton.setSelection(config.getAttribute(IPDELauncherConstants.INCLUDE_OPTIONAL, true));
 		fAddWorkspaceButton.setSelection(config.getAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true));
@@ -789,15 +792,15 @@ public abstract class AbstractPluginBlock {
 	 */
 	protected void addRequiredPlugins() {
 		Object[] checked = fPluginTreeViewer.getCheckedElements();
-		ArrayList toCheck = new ArrayList(checked.length);
+		ArrayList<Object> toCheck = new ArrayList<Object>(checked.length);
 		for (int i = 0; i < checked.length; i++)
 			if (checked[i] instanceof IPluginModelBase)
 				toCheck.add(checked[i]);
 
 		// exclude "org.eclipse.ui.workbench.compatibility" - it is only needed for pre-3.0 bundles
-		Set additionalIds = DependencyManager.getDependencies(checked, fIncludeOptionalButton.getSelection(), new String[] {"org.eclipse.ui.workbench.compatibility"}); //$NON-NLS-1$
+		Set<?> additionalIds = DependencyManager.getDependencies(checked, fIncludeOptionalButton.getSelection(), new String[] {"org.eclipse.ui.workbench.compatibility"}); //$NON-NLS-1$
 
-		Iterator it = additionalIds.iterator();
+		Iterator<?> it = additionalIds.iterator();
 		while (it.hasNext()) {
 			String id = (String) it.next();
 			if (findPlugin(id) == null) {
@@ -917,7 +920,7 @@ public abstract class AbstractPluginBlock {
 	}
 
 	protected void handleRestoreDefaults() {
-		TreeSet wtable = new TreeSet();
+		TreeSet<String> wtable = new TreeSet<String>();
 		fNumWorkspaceChecked = 0;
 		fNumExternalChecked = 0;
 
@@ -982,7 +985,7 @@ public abstract class AbstractPluginBlock {
 				if (fOperation.getInput().size() > 0)
 					fDialog.refresh(fOperation.getInput());
 				else {
-					Map input = new HashMap(1);
+					Map<String, IStatus> input = new HashMap<String, IStatus>(1);
 					input.put(PDEUIMessages.AbstractLauncherToolbar_noProblems, Status.OK_STATUS);
 					fDialog.refresh(input);
 				}

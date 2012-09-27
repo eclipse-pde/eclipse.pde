@@ -12,6 +12,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.views.target;
 
+import org.eclipse.osgi.service.resolver.VersionConstraint;
+import org.eclipse.pde.internal.ui.views.target.StateViewPage.DependencyGroup;
+
 import java.util.ArrayList;
 import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaUI;
@@ -92,7 +95,7 @@ public class StateViewPage extends Page implements IStateDeltaListener, IPluginM
 				if (desc.isResolved()) {
 					Object[] required = getResolvedDependencies(desc.getRequiredBundles());
 					Object[] imported = getResolvedDependencies(desc.getImportPackages());
-					ArrayList list = new ArrayList(2);
+					ArrayList<DependencyGroup> list = new ArrayList<DependencyGroup>(2);
 					if (required.length > 0)
 						list.add(new DependencyGroup(required));
 					if (imported.length > 0)
@@ -121,7 +124,7 @@ public class StateViewPage extends Page implements IStateDeltaListener, IPluginM
 		}
 
 		private Object[] getResolvedDependencies(VersionConstraint[] constraints) {
-			ArrayList list = new ArrayList(constraints.length);
+			ArrayList<VersionConstraint> list = new ArrayList<VersionConstraint>(constraints.length);
 			for (int i = 0; i < constraints.length; i++)
 				if (constraints[i].isResolved())
 					list.add(constraints[i]);

@@ -262,7 +262,7 @@ public class ExecutionEnvironmentSection extends TableSection {
 	private void handleRemove() {
 		IStructuredSelection ssel = (IStructuredSelection) fEETable.getSelection();
 		if (ssel.size() > 0) {
-			Iterator iter = ssel.iterator();
+			Iterator<?> iter = ssel.iterator();
 			while (iter.hasNext()) {
 				Object object = iter.next();
 				if (object instanceof ExecutionEnvironment) {
@@ -325,7 +325,7 @@ public class ExecutionEnvironmentSection extends TableSection {
 		IExecutionEnvironment[] envs = JavaRuntime.getExecutionEnvironmentsManager().getExecutionEnvironments();
 		if (header == null)
 			return envs;
-		ArrayList list = new ArrayList();
+		ArrayList<?> list = new ArrayList<Object>();
 		for (int i = 0; i < envs.length; i++) {
 			if (!header.hasExecutionEnvironment(envs[i]))
 				list.add(envs[i]);

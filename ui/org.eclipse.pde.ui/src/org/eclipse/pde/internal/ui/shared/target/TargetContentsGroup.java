@@ -87,19 +87,19 @@ public class TargetContentsGroup {
 	/**
 	 * Maps file paths to a list of bundles that reside in that location, use {@link #getFileBundleMapping()} rather than accessing the field directly
 	 */
-	private Map fFileBundleMapping;
+	private Map<IPath, List<TargetBundle>> fFileBundleMapping;
 
 	/**
 	 * Set of TargetBundles that are being used to display error statuses for missing plug-ins/features, possibly <code>null</code>
 	 */
-	private Set fMissing;
+	private Set<TargetBundle> fMissing;
 
 	private static final NameVersionDescriptor OTHER_CATEGORY = new NameVersionDescriptor(Messages.TargetContentsGroup_OtherPluginsParent, null);
 
 	/**
 	 * Cached list of all bundles, used to quickly obtain bundle counts.
 	 */
-	private List fAllBundles = new ArrayList();
+	private List<TargetBundle> fAllBundles = new ArrayList<TargetBundle>();
 
 	private int fGrouping;
 	private static final int GROUP_BY_NONE = 0;
@@ -492,13 +492,13 @@ public class TargetContentsGroup {
 		fSelectRequiredButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				Object[] allChecked = fTree.getCheckedLeafElements();
-				Collection required = null;
+				Collection<Object> required = new ArrayList<Object>();
 				if (fFeaureModeButton.getSelection()) {
-					required = getRequiredFeatures(fTargetDefinition.getAllFeatures(), allChecked);
+					required.addAll(getRequiredFeatures(fTargetDefinition.getAllFeatures(), allChecked));
 				} else {
-					required = getRequiredPlugins(fAllBundles, allChecked);
+					required.addAll(getRequiredPlugins(fAllBundles, allChecked));
 				}
-				for (Iterator iterator = required.iterator(); iterator.hasNext();) {
+				for (Iterator<Object> iterator = required.iterator(); iterator.hasNext();) {
 					fTree.setChecked(iterator.next(), true);
 				}
 				saveIncludedBundleState();
@@ -646,7 +646,7 @@ public class TargetContentsGroup {
 	 * @return bundle manifest dictionary or <code>null</code> if none
 	 * @throws IOException if unable to parse
 	 */
-	protected Map loadManifest(File bundleLocation) throws IOException {
+	protected Map<?, ?> loadManifest(File bundleLocation) throws IOException {
 		ZipFile jarFile = null;
 		InputStream manifestStream = null;
 		String extension = new Path(bundleLocation.getName()).getFileExtension();
@@ -665,7 +665,7 @@ public class TargetContentsGroup {
 			if (manifestStream == null) {
 				return null;
 			}
-			return ManifestElement.parseBundleManifest(manifestStream, new Hashtable(10));
+			return ManifestElement.parseBundleManifest(manifestStream, new Hashtable<String, String>(10));
 		} catch (BundleException e) {
 			PDEPlugin.log(e);
 		} finally {
@@ -695,17 +695,17 @@ public class TargetContentsGroup {
 	 * @param checkedBundles list of bundles to get requirements for
 	 * @return list of resolved bundles from the collection to be checked
 	 */
-	private List/*<TargetBundle>*/getRequiredPlugins(final Collection/*<TargetBundle>*/allBundles, final Object[] checkedBundles) {
-		final Set dependencies = new HashSet();
+	private List<TargetBundle> getRequiredPlugins(final Collection<TargetBundle> allBundles, final Object[] checkedBundles) {
+		final Set<String> dependencies = new HashSet<String>();
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
 				try {
 					monitor.beginTask(Messages.TargetContentsGroup_5, 150);
 
 					// Get all the bundle locations
-					List allLocations = new ArrayList(allBundles.size());
-					for (Iterator iterator = allBundles.iterator(); iterator.hasNext();) {
-						TargetBundle current = (TargetBundle) iterator.next();
+					List<URL> allLocations = new ArrayList<URL>(allBundles.size());
+					for (Iterator<TargetBundle> iterator = allBundles.iterator(); iterator.hasNext();) {
+						TargetBundle current = iterator.next();
 						try {
 							// Some bundles, such as those with errors, may not have locations
 							URI location = current.getBundleInfo().getLocation();
@@ -724,14 +724,14 @@ public class TargetContentsGroup {
 					monitor.worked(20);
 
 					// Create a PDE State containing all of the target bundles					
-					PDEState state = new PDEState((URL[]) allLocations.toArray(new URL[allLocations.size()]), true, new SubProgressMonitor(monitor, 50));
+					PDEState state = new PDEState(allLocations.toArray(new URL[allLocations.size()]), true, new SubProgressMonitor(monitor, 50));
 					if (monitor.isCanceled()) {
 						return;
 					}
 
 					// Figure out which of the models have been checked
 					IPluginModelBase[] models = state.getTargetModels();
-					List checkedModels = new ArrayList(checkedBundles.length);
+					List<IPluginModelBase> checkedModels = new ArrayList<IPluginModelBase>(checkedBundles.length);
 					for (int i = 0; i < checkedBundles.length; i++) {
 						if (checkedBundles[i] instanceof TargetBundle) {
 							BundleInfo bundle = ((TargetBundle) checkedBundles[i]).getBundleInfo();
@@ -751,7 +751,7 @@ public class TargetContentsGroup {
 					// Get implicit dependencies as a list of strings
 					// This is wasteful since the dependency calculation puts them back into BundleInfos
 					NameVersionDescriptor[] implicitDependencies = fTargetDefinition.getImplicitDependencies();
-					List implicitIDs = new ArrayList();
+					List<String> implicitIDs = new ArrayList<String>();
 					if (implicitDependencies != null) {
 						for (int i = 0; i < implicitDependencies.length; i++) {
 							implicitIDs.add(implicitDependencies[i].getId());
@@ -761,7 +761,7 @@ public class TargetContentsGroup {
 
 					// Get all dependency bundles
 					// exclude "org.eclipse.ui.workbench.compatibility" - it is only needed for pre-3.0 bundles
-					dependencies.addAll(DependencyManager.getDependencies(checkedModels.toArray(), (String[]) implicitIDs.toArray(new String[implicitIDs.size()]), state.getState(), new String[] {"org.eclipse.ui.workbench.compatibility"})); //$NON-NLS-1$
+					dependencies.addAll(DependencyManager.getDependencies(checkedModels.toArray(), implicitIDs.toArray(new String[implicitIDs.size()]), state.getState(), new String[] {"org.eclipse.ui.workbench.compatibility"})); //$NON-NLS-1$
 					monitor.worked(50);
 
 				} finally {
@@ -774,16 +774,16 @@ public class TargetContentsGroup {
 			new ProgressMonitorDialog(fTree.getControl().getShell()).run(true, true, op);
 
 			// We want to check the dependents, the source of the dependents, and the source of the originally checked
-			Set checkedNames = new HashSet(checkedBundles.length);
+			Set<String> checkedNames = new HashSet<String>(checkedBundles.length);
 			for (int i = 0; i < checkedBundles.length; i++) {
 				if (checkedBundles[i] instanceof TargetBundle) {
 					checkedNames.add(((TargetBundle) checkedBundles[i]).getBundleInfo().getSymbolicName());
 				}
 			}
 
-			List toCheck = new ArrayList();
-			for (Iterator iterator = fAllBundles.iterator(); iterator.hasNext();) {
-				TargetBundle bundle = (TargetBundle) iterator.next();
+			List<TargetBundle> toCheck = new ArrayList<TargetBundle>();
+			for (Iterator<TargetBundle> iterator = fAllBundles.iterator(); iterator.hasNext();) {
+				TargetBundle bundle = iterator.next();
 				if (bundle.isSourceBundle()) {
 					String name = bundle.getSourceTarget().getSymbolicName();
 					if (name != null && (dependencies.contains(name) || checkedNames.contains(name))) {
@@ -799,7 +799,7 @@ public class TargetContentsGroup {
 		} catch (InterruptedException e) {
 		}
 
-		return new ArrayList(0);
+		return Collections.emptyList();
 	}
 
 	/**
@@ -810,8 +810,8 @@ public class TargetContentsGroup {
 	 * @param checkedFeatures list of features to get requirements for
 	 * @return set of features to be checked
 	 */
-	private Set getRequiredFeatures(final TargetFeature[] allFeatures, final Object[] checkedFeatures) {
-		Set required = new HashSet();
+	private Set<TargetFeature> getRequiredFeatures(final TargetFeature[] allFeatures, final Object[] checkedFeatures) {
+		Set<TargetFeature> required = new HashSet<TargetFeature>();
 		for (int j = 0; j < checkedFeatures.length; j++) {
 			if (checkedFeatures[j] instanceof TargetFeature) {
 				getFeatureDependencies((TargetFeature) checkedFeatures[j], allFeatures, required);
@@ -825,7 +825,7 @@ public class TargetContentsGroup {
 	 * @param model target feature to get requirements of
 	 * @param requiredFeatures collector for the required target features {@link TargetFeature}
 	 */
-	private void getFeatureDependencies(TargetFeature feature, TargetFeature[] allFeatures, Set/*<TargetFeature>*/requiredFeatures) {
+	private void getFeatureDependencies(TargetFeature feature, TargetFeature[] allFeatures, Set<TargetFeature> requiredFeatures) {
 		NameVersionDescriptor[] dependents = feature.getDependentFeatures();
 		for (int i = 0; i < dependents.length; i++) {
 			for (int j = 0; j < allFeatures.length; j++) {
@@ -907,7 +907,7 @@ public class TargetContentsGroup {
 		fSelectRequiredButton.setEnabled(fTargetDefinition != null && fTree.getCheckedLeafCount() > 0 && fTree.getCheckedLeafCount() != total);
 
 		if (fTargetDefinition != null) {
-			fCountLabel.setText(MessageFormat.format(Messages.TargetContentsGroup_9, new String[] {Integer.toString(fTree.getCheckedLeafCount()), Integer.toString(total)}));
+			fCountLabel.setText(MessageFormat.format(Messages.TargetContentsGroup_9, new Object[] {Integer.toString(fTree.getCheckedLeafCount()), Integer.toString(total)}));
 		} else {
 			fCountLabel.setText(""); //$NON-NLS-1$
 		}
@@ -969,7 +969,7 @@ public class TargetContentsGroup {
 	}
 
 	private void updateCheckState() {
-		List result = new ArrayList();
+		List<Object> result = new ArrayList<Object>();
 		// Checked error statuses
 		if (fMissing != null) {
 			result.addAll(fMissing);
@@ -1003,19 +1003,19 @@ public class TargetContentsGroup {
 	/**
 	 * @return a map connecting IPath to the resolved bundles in that path
 	 */
-	private Map getFileBundleMapping() {
+	private Map<IPath, List<TargetBundle>> getFileBundleMapping() {
 		if (fFileBundleMapping != null) {
 			return fFileBundleMapping;
 		}
 
 		// Map the bundles into their file locations
-		fFileBundleMapping = new HashMap();
-		for (Iterator iterator = fAllBundles.iterator(); iterator.hasNext();) {
-			TargetBundle currentBundle = (TargetBundle) iterator.next();
+		fFileBundleMapping = new HashMap<IPath, List<TargetBundle>>();
+		for (Iterator<TargetBundle> iterator = fAllBundles.iterator(); iterator.hasNext();) {
+			TargetBundle currentBundle = iterator.next();
 			IPath parentPath = getParentPath(currentBundle);
-			List bundles = (List) fFileBundleMapping.get(parentPath);
+			List<TargetBundle> bundles = fFileBundleMapping.get(parentPath);
 			if (bundles == null) {
-				bundles = new ArrayList();
+				bundles = new ArrayList<TargetBundle>();
 				bundles.add(currentBundle);
 				fFileBundleMapping.put(parentPath, bundles);
 			} else {
@@ -1035,7 +1035,7 @@ public class TargetContentsGroup {
 			ITargetLocation container = (ITargetLocation) parent;
 			result = container.getBundles();
 		} else if (fGrouping == GROUP_BY_FILE_LOC && parent instanceof IPath) {
-			List bundles = (List) getFileBundleMapping().get(parent);
+			List<TargetBundle> bundles = getFileBundleMapping().get(parent);
 			if (bundles != null && bundles.size() > 0) {
 				result = bundles.toArray();
 			}
@@ -1079,7 +1079,7 @@ public class TargetContentsGroup {
 	public void saveIncludedBundleState() {
 		if (fFeaureModeButton.getSelection()) {
 			// Create a list of checked bundle infos
-			List included = new ArrayList();
+			List<NameVersionDescriptor> included = new ArrayList<NameVersionDescriptor>();
 			int missingCount = 0;
 			Object[] checked = fTree.getCheckedLeafElements();
 			for (int i = 0; i < checked.length; i++) {
@@ -1105,21 +1105,21 @@ public class TargetContentsGroup {
 			} else if (included.size() == 0 || included.size() - missingCount == fTargetDefinition.getAllFeatures().length + fTargetDefinition.getOtherBundles().length) {
 				fTargetDefinition.setIncluded(null);
 			} else {
-				fTargetDefinition.setIncluded((NameVersionDescriptor[]) included.toArray(new NameVersionDescriptor[included.size()]));
+				fTargetDefinition.setIncluded(included.toArray(new NameVersionDescriptor[included.size()]));
 			}
 		} else {
 			// Figure out if there are multiple bundles sharing the same id
-			Set multi = new HashSet(); // BSNs of bundles with multiple versions available
-			Set all = new HashSet();
-			for (Iterator iterator = fAllBundles.iterator(); iterator.hasNext();) {
-				TargetBundle rb = (TargetBundle) iterator.next();
+			Set<String> multi = new HashSet<String>(); // BSNs of bundles with multiple versions available
+			Set<String> all = new HashSet<String>();
+			for (Iterator<TargetBundle> iterator = fAllBundles.iterator(); iterator.hasNext();) {
+				TargetBundle rb = iterator.next();
 				if (!all.add(rb.getBundleInfo().getSymbolicName())) {
 					multi.add(rb.getBundleInfo().getSymbolicName());
 				}
 			}
 
 			// Create a list of checked bundle infos
-			List included = new ArrayList();
+			List<NameVersionDescriptor> included = new ArrayList<NameVersionDescriptor>();
 			Object[] checked = fTree.getCheckedLeafElements();
 			for (int i = 0; i < checked.length; i++) {
 				if (checked[i] instanceof TargetBundle) {
@@ -1144,7 +1144,7 @@ public class TargetContentsGroup {
 			} else if (included.size() == fAllBundles.size() + fMissing.size()) {
 				fTargetDefinition.setIncluded(null);
 			} else {
-				fTargetDefinition.setIncluded((NameVersionDescriptor[]) included.toArray(new NameVersionDescriptor[included.size()]));
+				fTargetDefinition.setIncluded(included.toArray(new NameVersionDescriptor[included.size()]));
 			}
 		}
 	}
@@ -1177,11 +1177,11 @@ public class TargetContentsGroup {
 
 		public Object[] getElements(Object inputElement) {
 			if (inputElement instanceof ITargetDefinition) {
-				List result = new ArrayList();
+				List<Object> result = new ArrayList<Object>();
 
 				// Check if there are any errors for missing features/bundles to display
 				if (fMissing == null || fMissing.isEmpty()) {
-					fMissing = new HashSet(); // A set is used to remove copies of problem bundles
+					fMissing = new HashSet<TargetBundle>(); // A set is used to remove copies of problem bundles
 					TargetBundle[] bundles = fTargetDefinition.getBundles();
 					for (int i = 0; i < bundles.length; i++) {
 						if (!bundles[i].getStatus().isOK()) {

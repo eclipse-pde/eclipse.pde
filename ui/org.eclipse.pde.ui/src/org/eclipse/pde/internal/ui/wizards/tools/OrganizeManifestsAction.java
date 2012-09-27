@@ -55,8 +55,8 @@ public class OrganizeManifestsAction extends AbstractHandler {
 
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection ssel = (IStructuredSelection) selection;
-			Iterator it = ssel.iterator();
-			ArrayList projects = new ArrayList();
+			Iterator<?> it = ssel.iterator();
+			ArrayList<IProject> projects = new ArrayList<IProject>();
 			while (it.hasNext()) {
 				Object element = it.next();
 				IProject proj = null;

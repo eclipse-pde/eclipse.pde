@@ -49,7 +49,7 @@ public abstract class InputContext {
 	private IModelChangedListener fModelListener;
 	private IDocumentProvider fDocumentProvider;
 	private IElementStateListener fElementListener;
-	protected ArrayList fEditOperations = new ArrayList();
+	protected ArrayList<TextEdit> fEditOperations = new ArrayList<TextEdit>();
 
 	private boolean fValidated;
 	private boolean fPrimary;
@@ -193,7 +193,7 @@ public abstract class InputContext {
 		}
 	}
 
-	protected abstract void addTextEditOperation(ArrayList ops, IModelChangedEvent event);
+	protected abstract void addTextEditOperation(ArrayList<TextEdit> ops, IModelChangedEvent event);
 
 	public void flushEditorInput() {
 		if (fEditOperations.size() > 0) {
@@ -219,7 +219,7 @@ public abstract class InputContext {
 				if (isNewlineNeeded(doc))
 					insert(edit, new InsertEdit(doc.getLength(), TextUtilities.getDefaultLineDelimiter(doc)));
 				for (int i = 0; i < fEditOperations.size(); i++) {
-					insert(edit, (TextEdit) fEditOperations.get(i));
+					insert(edit, fEditOperations.get(i));
 				}
 				if (fModel instanceof IEditingModel)
 					((IEditingModel) fModel).setStale(true);

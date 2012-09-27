@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.shared.target;
 
+import org.eclipse.pde.internal.ui.shared.target.AddBundleContainerSelectionPage.AbstractBundleContainerNode;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -160,7 +162,7 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 	 * @param wizardSelectionViewer
 	 */
 	private void initViewerContents(TableViewer wizardSelectionViewer) {
-		List choices = new ArrayList();
+		List<AbstractBundleContainerNode> choices = new ArrayList<AbstractBundleContainerNode>();
 		choices.addAll(getStandardChoices());
 		choices.addAll(getTargetLocationProvisionerChoices()); // Extension point contributions
 		choices.addAll(getTargetProvisionerChoices()); // Deprecated extension point contributions
@@ -171,8 +173,8 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 	 * Returns the standard choices of bundle containers to create
 	 * @return list of wizard nodes
 	 */
-	private List getStandardChoices() {
-		List standardChoices = new ArrayList(4);
+	private List<AbstractBundleContainerNode> getStandardChoices() {
+		List<AbstractBundleContainerNode> standardChoices = new ArrayList<AbstractBundleContainerNode>(4);
 		// Directory Containers
 		standardChoices.add(new AbstractBundleContainerNode(Messages.AddBundleContainerSelectionPage_3, Messages.AddBundleContainerSelectionPage_4, PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER)) {
 			public IWizard createWizard() {
@@ -299,8 +301,8 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 	 * The extension point was deprecated in 3.5 but we need to retain some compatibility.
 	 * @return list of wizard nodes
 	 */
-	private List getTargetLocationProvisionerChoices() {
-		List list = new ArrayList();
+	private List<AbstractBundleContainerNode> getTargetLocationProvisionerChoices() {
+		List<AbstractBundleContainerNode> list = new ArrayList<AbstractBundleContainerNode>();
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IExtensionPoint point = registry.getExtensionPoint(PDEPlugin.getPluginId(), TARGET_LOCATION_PROVISIONER_POINT);
 		if (point == null)
@@ -336,8 +338,8 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 	 * The extension point was deprecated in 3.5 but we need to retain some compatibility.
 	 * @return list of wizard nodes
 	 */
-	private List getTargetProvisionerChoices() {
-		List list = new ArrayList();
+	private List<AbstractBundleContainerNode> getTargetProvisionerChoices() {
+		List<AbstractBundleContainerNode> list = new ArrayList<AbstractBundleContainerNode>();
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IExtensionPoint point = registry.getExtensionPoint(PDEPlugin.getPluginId(), TARGET_PROVISIONER_POINT);
 		if (point == null)

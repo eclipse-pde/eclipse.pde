@@ -50,11 +50,11 @@ public class OrganizeManifestsWizardPage extends UserInputWizardPage implements 
 	private Button[] fTopLevelButtons; // used for setting page complete state
 
 	private OrganizeManifestsProcessor fProcessor;
-	private Set fCustomProjects;
+	private Set<?> fCustomProjects;
 
 	private static String title = PDEUIMessages.OrganizeManifestsWizardPage_title;
 
-	protected OrganizeManifestsWizardPage(java.util.Set/*<IProject>*/customProjects) {
+	protected OrganizeManifestsWizardPage(java.util.Set<IProject> customProjects) {
 		super(title);
 		setTitle(title);
 		setDescription(PDEUIMessages.OrganizeManifestsWizardPage_description);
@@ -97,7 +97,7 @@ public class OrganizeManifestsWizardPage extends UserInputWizardPage implements 
 			message = NLS.bind(PDEUIMessages.OrganizeManifestsWizardPage_ProjectsUsingCustomBuildWarning, ((IProject) fCustomProjects.iterator().next()).getName());
 		} else {
 			StringBuffer buf = new StringBuffer();
-			for (Iterator iterator = fCustomProjects.iterator(); iterator.hasNext();) {
+			for (Iterator<?> iterator = fCustomProjects.iterator(); iterator.hasNext();) {
 				IProject project = (IProject) iterator.next();
 				buf.append(project.getName());
 				if (iterator.hasNext()) {

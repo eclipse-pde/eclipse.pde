@@ -42,7 +42,7 @@ public class MultiFixResolution extends WorkbenchMarkerResolution {
 	}
 
 	public IMarker[] findOtherMarkers(IMarker[] markers) {
-		ArrayList relatedMarkers = new ArrayList();
+		ArrayList<IMarker> relatedMarkers = new ArrayList<IMarker>();
 		try {
 			String markerCategory = (String) fMarker.getAttribute(PDEMarkerFactory.CAT_ID);
 			for (int i = 0; i < markers.length; i++) {

@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
+import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
+
 import java.util.ArrayList;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -185,7 +187,7 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 
 	private LazyStartHeader[] getLazyStartHeaders() {
 		IBundle bundle = getBundle();
-		ArrayList headers = new ArrayList(3);
+		ArrayList<IManifestHeader> headers = new ArrayList<IManifestHeader>(3);
 		if (bundle instanceof Bundle) {
 			String[] keys = new String[] {ICoreConstants.ECLIPSE_LAZYSTART, ICoreConstants.ECLIPSE_AUTOSTART, Constants.BUNDLE_ACTIVATIONPOLICY};
 			for (int i = 0; i < keys.length; i++) {

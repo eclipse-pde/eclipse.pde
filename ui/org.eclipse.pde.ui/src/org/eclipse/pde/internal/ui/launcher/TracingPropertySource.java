@@ -22,10 +22,9 @@ import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
 public class TracingPropertySource {
 	private IPluginModelBase fModel;
-	private Vector fDescriptors;
-	private Hashtable fTemplate;
-	private Hashtable fValues;
-	private Hashtable fDvalues;
+	private Vector<PropertyEditor> fDescriptors;
+	private Hashtable<?, ?> fTemplate;
+	private Hashtable<String, Object> fValues;
 	private static final String[] fBooleanChoices = {"false", "true"}; //$NON-NLS-1$ //$NON-NLS-2$
 	private Properties fMasterOptions;
 	private boolean fModified;
@@ -125,13 +124,12 @@ public class TracingPropertySource {
 		}
 	}
 
-	public TracingPropertySource(IPluginModelBase model, Properties masterOptions, Hashtable template, TracingBlock block) {
+	public TracingPropertySource(IPluginModelBase model, Properties masterOptions, Hashtable<?, ?> template, TracingBlock block) {
 		fModel = model;
 		fMasterOptions = masterOptions;
 		fTemplate = template;
 		fBlock = block;
-		fValues = new Hashtable();
-		fDvalues = new Hashtable();
+		fValues = new Hashtable<String, Object>();
 	}
 
 	public IPluginModelBase getModel() {
@@ -141,11 +139,11 @@ public class TracingPropertySource {
 	private Object[] getSortedKeys(int size) {
 		Object[] keyArray = new Object[size];
 		int i = 0;
-		for (Enumeration keys = fTemplate.keys(); keys.hasMoreElements();) {
+		for (Enumeration<?> keys = fTemplate.keys(); keys.hasMoreElements();) {
 			String key = (String) keys.nextElement();
 			keyArray[i++] = key;
 		}
-		Arrays.sort(keyArray, new Comparator() {
+		Arrays.sort(keyArray, new Comparator<Object>() {
 			public int compare(Object o1, Object o2) {
 				return compareKeys(o1, o2);
 			}
@@ -161,7 +159,7 @@ public class TracingPropertySource {
 	}
 
 	public void createContents(Composite parent, boolean enabled) {
-		fDescriptors = new Vector();
+		fDescriptors = new Vector<PropertyEditor>();
 		TableWrapLayout layout = new TableWrapLayout();
 		layout.numColumns = 2;
 		parent.setLayout(layout);
@@ -180,8 +178,6 @@ public class TracingPropertySource {
 				lvalue = value.toLowerCase(Locale.ENGLISH);
 			if (lvalue != null && (lvalue.equals("true") || lvalue.equals("false"))) { //$NON-NLS-1$ //$NON-NLS-2$
 				editor = new BooleanEditor(shortKey, shortKey);
-				Integer dvalue = new Integer(lvalue.equals("true") ? 1 : 0); //$NON-NLS-1$
-				fDvalues.put(shortKey, dvalue);
 				if (masterValue != null) {
 					Integer mvalue = new Integer(masterValue.equals("true") //$NON-NLS-1$
 					? 1
@@ -190,7 +186,6 @@ public class TracingPropertySource {
 				}
 			} else {
 				editor = new TextEditor(shortKey, shortKey);
-				fDvalues.put(shortKey, value != null ? value : ""); //$NON-NLS-1$
 				if (masterValue != null) {
 					fValues.put(shortKey, masterValue);
 				}
@@ -208,8 +203,8 @@ public class TracingPropertySource {
 	 */
 	public void save() {
 		String pid = fModel.getPluginBase().getId();
-		for (Enumeration keys = fValues.keys(); keys.hasMoreElements();) {
-			String shortKey = (String) keys.nextElement();
+		for (Enumeration<String> keys = fValues.keys(); keys.hasMoreElements();) {
+			String shortKey = keys.nextElement();
 			Object value = fValues.get(shortKey);
 			String svalue = value.toString();
 			if (value instanceof Integer)

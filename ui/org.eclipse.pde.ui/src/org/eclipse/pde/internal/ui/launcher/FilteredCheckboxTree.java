@@ -11,6 +11,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
+import org.eclipse.pde.internal.ui.launcher.FilteredCheckboxTree.FilterableCheckboxTreeViewer.FilteredCheckboxTreeItem;
+import org.eclipse.pde.internal.ui.launcher.FilteredCheckboxTree.PreRefreshNotifier;
+import org.eclipse.swt.widgets.TreeItem;
+
 import java.util.*;
 import java.util.List;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -127,9 +131,9 @@ class FilteredCheckboxTree extends FilteredTree {
 		class FilteredCheckboxTreeItem {
 			Object data; // Data element
 			String state; // Checked State
-			List children = new ArrayList();
+			List<FilteredCheckboxTreeItem> children = new ArrayList<FilteredCheckboxTreeItem>();
 
-			public FilteredCheckboxTreeItem(Object data, String state, Map itemCache, FilteredCheckboxTreeItem parent) {
+			public FilteredCheckboxTreeItem(Object data, String state, Map<Object, FilteredCheckboxTreeItem> itemCache, FilteredCheckboxTreeItem parent) {
 				this.data = data;
 				this.state = state;
 				itemCache.put(data, this);
@@ -140,12 +144,12 @@ class FilteredCheckboxTree extends FilteredTree {
 		}
 
 		/* A cache of all the nodes */
-		Map itemCache = new HashMap();
+		Map<Object, FilteredCheckboxTreeItem> itemCache = new HashMap<Object, FilteredCheckboxTreeItem>();
 		/* The preRefresh Listeners */
-		List refreshingListeners = new ArrayList();
+		List<PreRefreshNotifier> refreshingListeners = new ArrayList<PreRefreshNotifier>();
 
 		protected void unmapAllElements() {
-			itemCache = new HashMap();
+			itemCache = new HashMap<Object, FilteredCheckboxTreeItem>();
 			super.unmapAllElements();
 		}
 
@@ -199,10 +203,10 @@ class FilteredCheckboxTree extends FilteredTree {
 
 		public Object[] getCheckedChildren(Object element) {
 			FilteredCheckboxTreeItem item = (FilteredCheckboxTreeItem) itemCache.get(element);
-			List checkedChildren = new ArrayList();
+			List<Object> checkedChildren = new ArrayList<Object>();
 			if (item != null) {
-				List children = item.children;
-				Iterator iterator = children.iterator();
+				List<FilteredCheckboxTreeItem> children = item.children;
+				Iterator<FilteredCheckboxTreeItem> iterator = children.iterator();
 				while (iterator.hasNext()) {
 					FilteredCheckboxTreeItem child = (FilteredCheckboxTreeItem) iterator.next();
 					if (child.state == CHECKED) {
@@ -218,8 +222,8 @@ class FilteredCheckboxTree extends FilteredTree {
 		 * @see org.eclipse.jface.viewers.CheckboxTreeViewer#getCheckedElements()
 		 */
 		public Object[] getCheckedElements() {
-			Iterator iterator = itemCache.values().iterator();
-			List checkedElements = new LinkedList();
+			Iterator<FilteredCheckboxTreeItem> iterator = itemCache.values().iterator();
+			List<Object> checkedElements = new LinkedList<Object>();
 			while (iterator.hasNext()) {
 				FilteredCheckboxTreeItem item = (FilteredCheckboxTreeItem) iterator.next();
 				Widget testFindItem = getViewer().testFindItem(item.data);
@@ -253,15 +257,15 @@ class FilteredCheckboxTree extends FilteredTree {
 		 * @see org.eclipse.jface.viewers.CheckboxTreeViewer#setCheckedElements(java.lang.Object[])
 		 */
 		public void setCheckedElements(Object[] elements) {
-			Set s = new HashSet(itemCache.keySet());
-			s.removeAll(new HashSet(Arrays.asList(elements)));
+			Set<Object> s = new HashSet<Object>(itemCache.keySet());
+			s.removeAll(new HashSet<Object>(Arrays.asList(elements)));
 			for (int i = 0; i < elements.length; i++) {
 				FilteredCheckboxTreeItem item = (FilteredCheckboxTreeItem) itemCache.get(elements[i]);
 				if (item != null) {
 					item.state = CHECKED;
 				}
 			}
-			for (Iterator iterator = s.iterator(); iterator.hasNext();) {
+			for (Iterator<Object> iterator = s.iterator(); iterator.hasNext();) {
 				Object object = iterator.next();
 				FilteredCheckboxTreeItem item = (FilteredCheckboxTreeItem) itemCache.get(object);
 				if (item != null) {
@@ -319,8 +323,8 @@ class FilteredCheckboxTree extends FilteredTree {
 			super.preservingSelection(updateCode);
 
 			// Re-apply the checked state
-			ArrayList allTreeItems = getAllTreeItems(treeViewer.getTree().getItems());
-			for (Iterator iterator = allTreeItems.iterator(); iterator.hasNext();) {
+			ArrayList<TreeItem> allTreeItems = getAllTreeItems(treeViewer.getTree().getItems());
+			for (Iterator<TreeItem> iterator = allTreeItems.iterator(); iterator.hasNext();) {
 				TreeItem item = (TreeItem) iterator.next();
 				doApplyCheckedState(item, item.getData());
 			}
@@ -336,7 +340,7 @@ class FilteredCheckboxTree extends FilteredTree {
 			boolean filtered = (text.length() > 0 && !initial);
 
 			// Notify anybody who is listening for the refresh
-			for (Iterator iterator = refreshingListeners.iterator(); iterator.hasNext();) {
+			for (Iterator<PreRefreshNotifier> iterator = refreshingListeners.iterator(); iterator.hasNext();) {
 				PreRefreshNotifier notifier = (PreRefreshNotifier) iterator.next();
 				notifier.preRefresh(FilterableCheckboxTreeViewer.this, filtered);
 			}
@@ -375,8 +379,8 @@ class FilteredCheckboxTree extends FilteredTree {
 		/*
 		 * A helper method to get all the items in the tree
 		 */
-		private ArrayList getAllTreeItems(TreeItem[] roots) {
-			ArrayList list = new ArrayList();
+		private ArrayList<TreeItem> getAllTreeItems(TreeItem[] roots) {
+			ArrayList<TreeItem> list = new ArrayList<TreeItem>();
 			for (int i = 0; i < roots.length; i++) {
 				TreeItem item = roots[i];
 				list.add(item);

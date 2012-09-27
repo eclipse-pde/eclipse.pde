@@ -38,6 +38,7 @@ public class IdAttributeRow extends ButtonAttributeRow {
 			return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_GENERIC_XML_OBJ);
 		}
 
+		@SuppressWarnings("rawtypes")
 		public String getText(Object element) {
 			if (element instanceof Map.Entry) {
 				Map.Entry entry = (Map.Entry) element;
@@ -88,10 +89,11 @@ public class IdAttributeRow extends ButtonAttributeRow {
 		dialog.setTitle(PDEUIMessages.IdAttributeRow_title);
 		dialog.setMessage(PDEUIMessages.IdAttributeRow_message);
 		dialog.setEmptyListMessage(PDEUIMessages.IdAttributeRow_emptyMessage);
-		Map attributeMap = PDESchemaHelper.getValidAttributes(getAttribute());
+		Map<String, IConfigurationElement> attributeMap = PDESchemaHelper.getValidAttributes(getAttribute());
 		dialog.setElements(attributeMap.entrySet().toArray());
 		dialog.setFilter("*"); //$NON-NLS-1$
 		if (dialog.open() == Window.OK) {
+			@SuppressWarnings("rawtypes")
 			Map.Entry entry = (Map.Entry) dialog.getFirstResult();
 			text.setText(entry.getKey().toString());
 		}
@@ -101,10 +103,10 @@ public class IdAttributeRow extends ButtonAttributeRow {
 	 * @see org.eclipse.pde.internal.ui.editor.plugin.rows.ReferenceAttributeRow#openReference()
 	 */
 	protected void openReference() {
-		Map attributeMap = PDESchemaHelper.getValidAttributes(getAttribute());
+		Map<String, IConfigurationElement> attributeMap = PDESchemaHelper.getValidAttributes(getAttribute());
 		String id = text.getText();
 		// TODO this is hackish
-		IConfigurationElement element = (IConfigurationElement) attributeMap.get(id);
+		IConfigurationElement element = attributeMap.get(id);
 		if (element != null) {
 			String pluginId = element.getContributor().getName();
 			IPluginModelBase model = PluginRegistry.findModel(pluginId);

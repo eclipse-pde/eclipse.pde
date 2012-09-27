@@ -46,7 +46,7 @@ public class OrganizeManifestsWizard extends RefactoringWizard {
 		setDefaultPageTitle(getRefactoring().getName());
 
 		// Collect any custom build projects and warn the user
-		Set customProjects = getProjectsWithCustomBuild(((PDERefactor) getRefactoring()).getProcessor().getElements());
+		Set<IProject> customProjects = getProjectsWithCustomBuild(((PDERefactor) getRefactoring()).getProcessor().getElements());
 		fMainPage = new OrganizeManifestsWizardPage(customProjects);
 		addPage(fMainPage);
 	}
@@ -58,8 +58,8 @@ public class OrganizeManifestsWizard extends RefactoringWizard {
 	 * @param elements the elements the refactoring is applying to, usually IProjects
 	 * @return a list of IProjects that have the custom build property set, possibly empty
 	 */
-	private Set/*<IProject>*/getProjectsWithCustomBuild(Object[] elements) {
-		Set result = new HashSet();
+	private Set/*<IProject>*/<IProject> getProjectsWithCustomBuild(Object[] elements) {
+		Set<IProject> result = new HashSet<IProject>();
 		for (int i = 0; i < elements.length; i++) {
 			try {
 				if (elements[i] instanceof IResource) {

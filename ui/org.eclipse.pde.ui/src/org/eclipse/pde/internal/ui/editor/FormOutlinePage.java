@@ -133,7 +133,7 @@ public class FormOutlinePage extends PDEOutlinePage implements IModelChangedList
 	}
 
 	private Object[] getPages() {
-		ArrayList formPages = new ArrayList();
+		ArrayList<IFormPage> formPages = new ArrayList<IFormPage>();
 		IFormPage[] pages = fEditor.getPages();
 		for (int i = 0; i < pages.length; i++) {
 			if (pages[i].isEditor() == false)

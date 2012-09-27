@@ -34,12 +34,12 @@ public class RepositoryImportWizard extends Wizard {
 	/**
 	 * Map of import delegates to import descriptions as provided by the {@link BundleProjectService}
 	 */
-	private Map fImportMap;
+	private Map<?, ?> fImportMap;
 
 	/**
 	 * Map of importer identifier to associated wizard import page
 	 */
-	private Map fIdToPages = new HashMap();
+	private Map<String, IScmUrlImportWizardPage> fIdToPages = new HashMap<String, IScmUrlImportWizardPage>();
 
 	private static final String STORE_SECTION = "RepositoryImportWizard"; //$NON-NLS-1$
 
@@ -48,7 +48,7 @@ public class RepositoryImportWizard extends Wizard {
 	 * 
 	 * @param importMap
 	 */
-	public RepositoryImportWizard(Map importMap) {
+	public RepositoryImportWizard(Map<?, ?> importMap) {
 		IDialogSettings masterSettings = PDEPlugin.getDefault().getDialogSettings();
 		setDialogSettings(getSettingsSection(masterSettings));
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_PLUGIN_IMPORT_WIZ);
@@ -60,9 +60,9 @@ public class RepositoryImportWizard extends Wizard {
 	 * @see org.eclipse.jface.wizard.Wizard#addPages()
 	 */
 	public void addPages() {
-		Iterator iterator = fImportMap.entrySet().iterator();
+		Iterator<?> iterator = fImportMap.entrySet().iterator();
 		while (iterator.hasNext()) {
-			Entry entry = (Entry) iterator.next();
+			Entry<?, ?> entry = (Entry<?, ?>) iterator.next();
 			final IBundleImporter importer = (IBundleImporter) entry.getKey();
 			final String importerId = importer.getId();
 			ScmUrlImportDescription[] descriptions = (ScmUrlImportDescription[]) entry.getValue();
@@ -95,9 +95,9 @@ public class RepositoryImportWizard extends Wizard {
 	 */
 	public boolean performFinish() {
 		// collect the bundle descriptions from each page and import
-		List plugins = new ArrayList();
+		List<Object> plugins = new ArrayList<Object>();
 		IWizardPage[] pages = getPages();
-		Map importMap = new HashMap();
+		Map<Object, ScmUrlImportDescription[]> importMap = new HashMap<Object, ScmUrlImportDescription[]>();
 		for (int i = 0; i < pages.length; i++) {
 			IScmUrlImportWizardPage page = (IScmUrlImportWizardPage) pages[i];
 			if (page.finish()) {

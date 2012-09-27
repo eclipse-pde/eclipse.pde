@@ -40,7 +40,7 @@ public class ProductIntroWizardPage extends WizardPage implements IHyperlinkList
 
 	private Text fPluginText;
 	private Text fIntroIdText;
-	private TreeSet fIntroIds;
+	private TreeSet<String> fIntroIds;
 	private IProduct fProduct;
 
 	private ModifyListener fListener = new ModifyListener() {
@@ -182,9 +182,9 @@ public class ProductIntroWizardPage extends WizardPage implements IHyperlinkList
 		return id + "." + introId + numString; //$NON-NLS-1$
 	}
 
-	private TreeSet getCurrentIntroIds() {
+	private TreeSet<String> getCurrentIntroIds() {
 		String introId;
-		TreeSet result = new TreeSet();
+		TreeSet<String> result = new TreeSet<String>();
 		IExtension[] extensions = PDECore.getDefault().getExtensionsRegistry().findExtensions("org.eclipse.ui.intro", true); //$NON-NLS-1$
 		for (int i = 0; i < extensions.length; i++) {
 			IConfigurationElement[] children = extensions[i].getConfigurationElements();

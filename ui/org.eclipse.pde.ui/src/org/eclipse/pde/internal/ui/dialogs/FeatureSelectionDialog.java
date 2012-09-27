@@ -54,7 +54,7 @@ public class FeatureSelectionDialog extends FilteredItemsSelectionDialog {
 		}
 	}
 
-	private class FeatureSearchComparator implements Comparator {
+	private class FeatureSearchComparator implements Comparator<Object> {
 
 		public int compare(Object o1, Object o2) {
 			int id1 = getId(o1);
@@ -138,7 +138,7 @@ public class FeatureSelectionDialog extends FilteredItemsSelectionDialog {
 		return new FeatureSearchItemsFilter();
 	}
 
-	protected Comparator getItemsComparator() {
+	protected Comparator<?> getItemsComparator() {
 		return new FeatureSearchComparator();
 	}
 

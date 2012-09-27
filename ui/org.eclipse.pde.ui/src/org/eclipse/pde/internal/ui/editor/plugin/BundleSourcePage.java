@@ -105,9 +105,9 @@ public class BundleSourcePage extends KeyValueSourcePage {
 		public Object[] getElements(Object parent) {
 			if (parent instanceof BundleModel) {
 				BundleModel model = (BundleModel) parent;
-				Map manifest = ((Bundle) model.getBundle()).getHeaders();
-				ArrayList keys = new ArrayList();
-				for (Iterator elements = manifest.keySet().iterator(); elements.hasNext();) {
+				Map<?, ?> manifest = ((Bundle) model.getBundle()).getHeaders();
+				ArrayList<IDocumentKey> keys = new ArrayList<IDocumentKey>();
+				for (Iterator<?> elements = manifest.keySet().iterator(); elements.hasNext();) {
 					IDocumentKey key = (IDocumentKey) manifest.get(elements.next());
 					if (key.getOffset() > -1)
 						keys.add(key);
@@ -269,11 +269,11 @@ public class BundleSourcePage extends KeyValueSourcePage {
 	 */
 	public IDocumentRange getRangeElement(int offset, boolean searchChildren) {
 		IBundleModel model = (IBundleModel) getInputContext().getModel();
-		Map manifest = ((Bundle) model.getBundle()).getHeaders();
+		Map<?, ?> manifest = ((Bundle) model.getBundle()).getHeaders();
 		// Reset
 		resetTargetOutlineSelection();
 		// Search each manifest header
-		for (Iterator elements = manifest.values().iterator(); elements.hasNext();) {
+		for (Iterator<?> elements = manifest.values().iterator(); elements.hasNext();) {
 			IDocumentRange node = (IDocumentRange) elements.next();
 			// Check to see if the parent is within range
 			if (isWithinCurrentRange(offset, node)) {
@@ -581,6 +581,7 @@ public class BundleSourcePage extends KeyValueSourcePage {
 		return true;
 	}
 
+	@SuppressWarnings("rawtypes")
 	public Object getAdapter(Class adapter) {
 		if (IHyperlinkDetector.class.equals(adapter))
 			return new BundleHyperlinkDetector(this);

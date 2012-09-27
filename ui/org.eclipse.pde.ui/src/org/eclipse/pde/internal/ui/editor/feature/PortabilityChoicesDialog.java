@@ -93,7 +93,7 @@ public class PortabilityChoicesDialog extends TrayDialog {
 		choiceViewer.setInput(PDEPlugin.getDefault());
 
 		if (value != null) {
-			Vector selected = new Vector();
+			Vector<Choice> selected = new Vector<Choice>();
 			StringTokenizer stok = new StringTokenizer(value, ","); //$NON-NLS-1$
 			while (stok.hasMoreElements()) {
 				String tok = stok.nextToken();

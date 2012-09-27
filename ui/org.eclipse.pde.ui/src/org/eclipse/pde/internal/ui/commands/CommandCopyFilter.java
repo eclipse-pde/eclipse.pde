@@ -16,7 +16,7 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 public abstract class CommandCopyFilter {
 
-	private static final ArrayList fFilters = new ArrayList();
+	private static final ArrayList<CommandCopyFilter> fFilters = new ArrayList<CommandCopyFilter>();
 
 	private CommandCopyFilter() {
 		fFilters.add(this);
@@ -47,7 +47,7 @@ public abstract class CommandCopyFilter {
 	public static int indexOf(CommandCopyFilter filter) {
 
 		int index = 0;
-		for (Iterator i = fFilters.iterator(); i.hasNext();) {
+		for (Iterator<CommandCopyFilter> i = fFilters.iterator(); i.hasNext();) {
 			CommandCopyFilter f = (CommandCopyFilter) i.next();
 			if (f == filter)
 				return index;

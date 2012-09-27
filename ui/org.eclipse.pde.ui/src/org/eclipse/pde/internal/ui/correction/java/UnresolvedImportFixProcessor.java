@@ -31,7 +31,7 @@ public class UnresolvedImportFixProcessor extends ClasspathFixProcessor {
 
 	private class ClasspathFixCollector extends AbstractClassResolutionCollector {
 
-		private ArrayList fList = new ArrayList();
+		private ArrayList<Object> fList = new ArrayList<Object>();
 
 		/*
 		 * (non-Javadoc)

@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.launcher;
 
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+
 import java.io.File;
 import java.net.URL;
 import java.util.*;
@@ -39,17 +41,17 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 
 	// used to generate the dev classpath entries
 	// key is bundle ID, value is a model
-	protected Map fAllBundles;
+	protected Map<String, IPluginModelBase> fAllBundles;
 
 	// key is a model, value is startLevel:autoStart
-	private Map fModels;
+	private Map<IPluginModelBase, String> fModels;
 
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.pde.ui.launcher.AbstractPDELaunchConfiguration#getProgramArguments(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public String[] getProgramArguments(ILaunchConfiguration configuration) throws CoreException {
-		ArrayList programArgs = new ArrayList();
+		ArrayList<String> programArgs = new ArrayList<String>();
 
 		programArgs.add("-dev"); //$NON-NLS-1$
 		programArgs.add(ClasspathHelper.getDevEntriesProperties(getConfigDir(configuration).toString() + "/dev.properties", fAllBundles)); //$NON-NLS-1$
@@ -105,7 +107,7 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 
 	private String getBundles(boolean defaultAuto) {
 		StringBuffer buffer = new StringBuffer();
-		Iterator iter = fModels.keySet().iterator();
+		Iterator<IPluginModelBase> iter = fModels.keySet().iterator();
 		while (iter.hasNext()) {
 			IPluginModelBase model = (IPluginModelBase) iter.next();
 			String id = model.getPluginBase().getId();
@@ -157,8 +159,8 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 	 */
 	protected void preLaunchCheck(ILaunchConfiguration configuration, ILaunch launch, IProgressMonitor monitor) throws CoreException {
 		fModels = BundleLauncherHelper.getMergedBundleMap(configuration, true);
-		fAllBundles = new HashMap(fModels.size());
-		Iterator iter = fModels.keySet().iterator();
+		fAllBundles = new HashMap<String, IPluginModelBase>(fModels.size());
+		Iterator<IPluginModelBase> iter = fModels.keySet().iterator();
 		while (iter.hasNext()) {
 			IPluginModelBase model = (IPluginModelBase) iter.next();
 			fAllBundles.put(model.getPluginBase().getId(), model);

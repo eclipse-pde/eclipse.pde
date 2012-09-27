@@ -47,7 +47,7 @@ public class TracingBlock {
 	private Properties fMasterOptions = new Properties();
 	private Button fSelectAllButton;
 	private Button fDeselectAllButton;
-	private Hashtable fPropertySources = new Hashtable();
+	private Hashtable<IPluginModelBase, TracingPropertySource> fPropertySources = new Hashtable<IPluginModelBase, TracingPropertySource>();
 	private FormToolkit fToolkit;
 	private ScrolledPageBook fPageBook;
 
@@ -202,7 +202,7 @@ public class TracingBlock {
 		disposePropertySources();
 		try {
 			fTracingCheck.setSelection(config.getAttribute(IPDELauncherConstants.TRACING, false));
-			Map options = config.getAttribute(IPDELauncherConstants.TRACING_OPTIONS, (Map) null);
+			Map<?, ?> options = config.getAttribute(IPDELauncherConstants.TRACING_OPTIONS, (Map<?, ?>) null);
 			if (options == null)
 				options = PDECore.getDefault().getTracingOptionsManager().getTracingTemplateCopy();
 			else
@@ -216,7 +216,7 @@ public class TracingBlock {
 				fPluginViewer.setAllChecked(false);
 			} else {
 				StringTokenizer tokenizer = new StringTokenizer(checked, ","); //$NON-NLS-1$
-				ArrayList list = new ArrayList();
+				ArrayList<IPluginModelBase> list = new ArrayList<IPluginModelBase>();
 				while (tokenizer.hasMoreTokens()) {
 					String id = tokenizer.nextToken();
 					IPluginModelBase model = PluginRegistry.findModel(id);
@@ -244,7 +244,7 @@ public class TracingBlock {
 		config.setAttribute(IPDELauncherConstants.TRACING, tracingEnabled);
 		if (tracingEnabled) {
 			boolean changes = false;
-			for (Enumeration elements = fPropertySources.elements(); elements.hasMoreElements();) {
+			for (Enumeration<TracingPropertySource> elements = fPropertySources.elements(); elements.hasMoreElements();) {
 				TracingPropertySource source = (TracingPropertySource) elements.nextElement();
 				if (source.isModified()) {
 					changes = true;
@@ -316,7 +316,7 @@ public class TracingBlock {
 	private IPluginModelBase[] getTraceableModels() {
 		if (fTraceableModels == null) {
 			IPluginModelBase[] models = PluginRegistry.getActiveModels();
-			ArrayList result = new ArrayList();
+			ArrayList<IPluginModelBase> result = new ArrayList<IPluginModelBase>();
 			for (int i = 0; i < models.length; i++) {
 				if (TracingOptionsManager.isTraceable(models[i]))
 					result.add(models[i]);
@@ -363,7 +363,7 @@ public class TracingBlock {
 		TracingPropertySource source = (TracingPropertySource) fPropertySources.get(model);
 		if (source == null) {
 			String id = model.getPluginBase().getId();
-			Hashtable defaults = PDECore.getDefault().getTracingOptionsManager().getTemplateTable(id);
+			Hashtable<?, ?> defaults = PDECore.getDefault().getTracingOptionsManager().getTemplateTable(id);
 			source = new TracingPropertySource(model, fMasterOptions, defaults, this);
 			fPropertySources.put(model, source);
 		}
@@ -385,7 +385,7 @@ public class TracingBlock {
 	}
 
 	private void disposePropertySources() {
-		Enumeration elements = fPropertySources.elements();
+		Enumeration<TracingPropertySource> elements = fPropertySources.elements();
 		while (elements.hasMoreElements()) {
 			TracingPropertySource source = (TracingPropertySource) elements.nextElement();
 			fPageBook.removePage(source.getModel());

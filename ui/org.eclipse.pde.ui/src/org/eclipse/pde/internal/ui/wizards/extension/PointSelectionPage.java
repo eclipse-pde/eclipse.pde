@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.extension;
 
+import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
+
 import java.net.URL;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -62,7 +64,7 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 	private IPluginModelBase fModel;
 	private Button fFilterCheck;
 	private IPluginExtensionPoint fCurrentPoint;
-	private HashSet fAvailableImports;
+	private HashSet<?> fAvailableImports;
 	private IProject fProject;
 	private Label fTemplateLabel;
 	private ExtensionTreeSelectionPage fWizardsPage;
@@ -117,7 +119,7 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 			if (inputElement instanceof IPluginExtensionPoint) {
 				IPluginExtensionPoint point = (IPluginExtensionPoint) inputElement;
 				String pointID = IdUtil.getFullId(point, fModel);
-				ArrayList result = new ArrayList();
+				ArrayList<Object> result = new ArrayList<Object>();
 				if (fTemplateCollection.getWizards() != null) {
 					Object[] wizards = fTemplateCollection.getWizards().getChildren();
 					for (int i = 0; i < wizards.length; i++) {
@@ -136,7 +138,7 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 
 	class PointContentProvider extends DefaultContentProvider implements IStructuredContentProvider {
 		public Object[] getElements(Object parent) {
-			ArrayList extPoints = new ArrayList();
+			ArrayList<IPluginExtensionPoint> extPoints = new ArrayList<IPluginExtensionPoint>();
 			IPluginModelBase[] plugins = PluginRegistry.getActiveModels();
 			for (int i = 0; i < plugins.length; i++) {
 				IPluginExtensionPoint[] points = plugins[i].getPluginBase().getExtensionPoints();

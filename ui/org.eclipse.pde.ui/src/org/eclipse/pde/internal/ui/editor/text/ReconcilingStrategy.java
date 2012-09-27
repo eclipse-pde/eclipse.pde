@@ -20,7 +20,7 @@ import org.eclipse.pde.internal.core.text.IReconcilingParticipant;
 public class ReconcilingStrategy implements IReconcilingStrategy {
 
 	private IDocument fDocument;
-	private ArrayList fParticipants = new ArrayList();
+	private ArrayList<IReconcilingParticipant> fParticipants = new ArrayList<IReconcilingParticipant>();
 
 	public ReconcilingStrategy() {
 	}

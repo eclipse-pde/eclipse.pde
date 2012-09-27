@@ -132,7 +132,7 @@ public class AddToJavaSearchJob extends WorkspaceJob {
 
 				TargetBundle[] bundles = fTargetDefinition.getBundles();
 				fAdd = true;
-				List models = new ArrayList(bundles.length);
+				List<IPluginModelBase> models = new ArrayList<IPluginModelBase>(bundles.length);
 				for (int index = 0; index < bundles.length; index++) {
 					IPluginModelBase model = PluginRegistry.findModel(bundles[index].getBundleInfo().getSymbolicName());
 					if (model != null) {

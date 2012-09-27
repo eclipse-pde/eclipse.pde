@@ -128,6 +128,7 @@ public abstract class PDEProjectionSourcePage extends PDESourcePage implements I
 		}
 	}
 
+	@SuppressWarnings("rawtypes")
 	public Object getAdapter(Class key) {
 		if (fProjectionSupport != null) {
 			Object adapter = fProjectionSupport.getAdapter(getSourceViewer(), key);

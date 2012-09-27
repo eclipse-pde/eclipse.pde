@@ -24,12 +24,12 @@ import java.util.List;
  *
  */
 public class InternationalizeModelTable {
-	private List fModels;
-	private List fPreSelected; //Models preselected by the user
+	private List<Object> fModels;
+	private List<Object> fPreSelected; //Models preselected by the user
 
 	public InternationalizeModelTable() {
-		fModels = new ArrayList();
-		fPreSelected = new ArrayList();
+		fModels = new ArrayList<Object>();
+		fPreSelected = new ArrayList<Object>();
 	}
 
 	/**

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.shared.target;
 
+import org.eclipse.core.runtime.IStatus;
+
 import org.eclipse.pde.core.target.ITargetLocation;
 
 import java.io.*;
@@ -166,7 +168,7 @@ public class AddFeatureContainersPage extends EditDirectoryContainerPage {
 							location = featureDir;
 						}
 					}
-					List result = new ArrayList();
+					List<ExternalFeatureModel> result = new ArrayList<ExternalFeatureModel>();
 					MultiStatus errors = doLoadFeatures(result, location);
 					if (errors != null && errors.getChildren().length > 0) {
 						setErrorMessage(errors.getChildren()[0].getMessage());
@@ -217,7 +219,7 @@ public class AddFeatureContainersPage extends EditDirectoryContainerPage {
 	 */
 	public ITargetLocation[] getBundleContainers() throws CoreException {
 		Object[] elements = fFeatureTable.getCheckedElements();
-		List containers = new ArrayList(elements.length);
+		List<ITargetLocation> containers = new ArrayList<ITargetLocation>(elements.length);
 		for (int i = 0; i < elements.length; i++) {
 			if (elements[i] instanceof IFeatureModel) {
 				String version = null;
@@ -246,13 +248,13 @@ public class AddFeatureContainersPage extends EditDirectoryContainerPage {
 	 * @param path location to search for features
 	 * @return multi-status containing any problems that occurred
 	 */
-	private MultiStatus doLoadFeatures(List result, File path) {
+	private MultiStatus doLoadFeatures(List<ExternalFeatureModel> result, File path) {
 		if (path == null)
 			return null;
 		File[] dirs = path.listFiles();
 		if (dirs == null)
 			return null;
-		ArrayList resultStatus = new ArrayList();
+		ArrayList<IStatus> resultStatus = new ArrayList<IStatus>();
 		for (int i = 0; i < dirs.length; i++) {
 			File dir = dirs[i];
 			if (dir.isDirectory()) {
@@ -275,7 +277,7 @@ public class AddFeatureContainersPage extends EditDirectoryContainerPage {
 	 * @param result list to add the result to
 	 * @return status object if there is a problem or <code>null</code>
 	 */
-	private IStatus doLoadFeature(File dir, File manifest, List result) {
+	private IStatus doLoadFeature(File dir, File manifest, List<ExternalFeatureModel> result) {
 		ExternalFeatureModel model = new ExternalFeatureModel();
 		model.setInstallLocation(dir.getAbsolutePath());
 		IStatus status = null;

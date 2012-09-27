@@ -36,7 +36,7 @@ public class HistoryListDialog extends StatusDialog {
 		}
 	}
 
-	private List fHistoryList = new ArrayList();
+	private List<String> fHistoryList = new ArrayList<String>();
 
 	private IStatus fHistoryStatus;
 
@@ -182,7 +182,7 @@ public class HistoryListDialog extends StatusDialog {
 				StatusInfo status = new StatusInfo();
 				ISelection selection = fHistoryViewer.getSelection();
 				if (selection instanceof IStructuredSelection) {
-					List selected = ((IStructuredSelection) selection).toList();
+					List<?> selected = ((IStructuredSelection) selection).toList();
 					if (selected.size() != 1) {
 						status.setError(""); //$NON-NLS-1$
 						fResult = null;

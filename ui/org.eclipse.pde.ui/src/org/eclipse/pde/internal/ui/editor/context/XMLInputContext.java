@@ -21,8 +21,8 @@ import org.eclipse.text.edits.*;
 import org.eclipse.ui.IEditorInput;
 
 public abstract class XMLInputContext extends UTF8InputContext {
-	protected HashMap fOperationTable = new HashMap();
-	protected HashMap fMoveOperations = new HashMap();
+	protected HashMap<Object, TextEdit> fOperationTable = new HashMap<Object, TextEdit>();
+	protected HashMap<IDocumentElementNode, MoveSourceEdit> fMoveOperations = new HashMap<IDocumentElementNode, MoveSourceEdit>();
 
 	/**
 	 * @param editor
@@ -39,7 +39,7 @@ public abstract class XMLInputContext extends UTF8InputContext {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.context.InputContext#addTextEditOperation(java.util.ArrayList, org.eclipse.pde.core.IModelChangedEvent)
 	 */
-	protected void addTextEditOperation(ArrayList ops, IModelChangedEvent event) {
+	protected void addTextEditOperation(ArrayList<TextEdit> ops, IModelChangedEvent event) {
 		Object[] objects = event.getChangedObjects();
 		if (objects != null) {
 			for (int i = 0; i < objects.length; i++) {
@@ -73,14 +73,14 @@ public abstract class XMLInputContext extends UTF8InputContext {
 		}
 	}
 
-	private void removeNode(IDocumentElementNode node, ArrayList ops) {
+	private void removeNode(IDocumentElementNode node, ArrayList<TextEdit> ops) {
 		// delete previous op on this node, if any
-		TextEdit old = (TextEdit) fOperationTable.get(node);
+		TextEdit old = fOperationTable.get(node);
 		if (old != null) {
 			ops.remove(old);
 			fOperationTable.remove(node);
 		}
-		TextEdit oldMove = (TextEdit) fMoveOperations.get(node);
+		TextEdit oldMove = fMoveOperations.get(node);
 		if (oldMove != null) {
 			ops.remove(oldMove);
 			fMoveOperations.remove(node);
@@ -97,7 +97,7 @@ public abstract class XMLInputContext extends UTF8InputContext {
 		}
 	}
 
-	private void insertNode(IDocumentElementNode node, ArrayList ops) {
+	private void insertNode(IDocumentElementNode node, ArrayList<TextEdit> ops) {
 		TextEdit op = null;
 		node = getHighestNodeToBeWritten(node);
 		if (node.getParentNode() == null) {
@@ -119,7 +119,7 @@ public abstract class XMLInputContext extends UTF8InputContext {
 				}
 			}
 		}
-		TextEdit old = (TextEdit) fOperationTable.get(node);
+		TextEdit old = fOperationTable.get(node);
 		if (old != null)
 			ops.remove(old);
 		if (op != null) {
@@ -151,7 +151,7 @@ public abstract class XMLInputContext extends UTF8InputContext {
 		return new InsertEdit(offset + length + 1, sep + node.write(true));
 	}
 
-	private void modifyNode(IDocumentElementNode node, ArrayList ops, IModelChangedEvent event) {
+	private void modifyNode(IDocumentElementNode node, ArrayList<TextEdit> ops, IModelChangedEvent event) {
 		IDocumentElementNode oldNode = (IDocumentElementNode) event.getOldValue();
 		IDocumentElementNode newNode = (IDocumentElementNode) event.getNewValue();
 
@@ -159,13 +159,13 @@ public abstract class XMLInputContext extends UTF8InputContext {
 		IDocumentElementNode node2 = node1.equals(oldNode) ? newNode : oldNode;
 
 		if (node1.getOffset() < 0 && node2.getOffset() < 2) {
-			TextEdit op = (TextEdit) fOperationTable.get(node1);
+			TextEdit op = fOperationTable.get(node1);
 			if (op == null) {
 				// node 1 has no rule, so node 2 has no rule, therefore rewrite parent/ancestor
 				insertNode(node, ops);
 			} else {
 				// swap order of insert operations
-				TextEdit op2 = (TextEdit) fOperationTable.get(node2);
+				TextEdit op2 = fOperationTable.get(node2);
 				ops.set(ops.indexOf(op), op2);
 				ops.set(ops.indexOf(op2), op);
 			}
@@ -175,11 +175,11 @@ public abstract class XMLInputContext extends UTF8InputContext {
 			MoveSourceEdit source = new MoveSourceEdit(region.getOffset(), region.getLength());
 			region = getMoveRegion(node2);
 			source.setTargetEdit(new MoveTargetEdit(region.getOffset()));
-			MoveSourceEdit op = (MoveSourceEdit) fMoveOperations.get(node1);
+			MoveSourceEdit op = fMoveOperations.get(node1);
 			if (op != null) {
 				ops.set(ops.indexOf(op), source);
 			} else {
-				op = (MoveSourceEdit) fMoveOperations.get(node2);
+				op = fMoveOperations.get(node2);
 				if (op != null && op.getTargetEdit().getOffset() == source.getOffset()) {
 					fMoveOperations.remove(node2);
 					ops.remove(op);
@@ -212,11 +212,11 @@ public abstract class XMLInputContext extends UTF8InputContext {
 		return new Region(offset - i, length + i);
 	}
 
-	private void addAttributeOperation(IDocumentAttributeNode attr, ArrayList ops, IModelChangedEvent event) {
+	private void addAttributeOperation(IDocumentAttributeNode attr, ArrayList<TextEdit> ops, IModelChangedEvent event) {
 		int offset = attr.getValueOffset();
 		Object newValue = event.getNewValue();
 		Object changedObject = attr;
-		TextEdit oldOp = (TextEdit) fOperationTable.get(changedObject);
+		TextEdit oldOp = fOperationTable.get(changedObject);
 		TextEdit op = null;
 		if (offset > -1) {
 			// Attribute exists, replace the old value with the new value
@@ -255,7 +255,7 @@ public abstract class XMLInputContext extends UTF8InputContext {
 		fOperationTable.put(changedObject, op);
 	}
 
-	private void addElementContentOperation(IDocumentTextNode textNode, ArrayList ops) {
+	private void addElementContentOperation(IDocumentTextNode textNode, ArrayList<TextEdit> ops) {
 		TextEdit op = null;
 		Object changedObject = textNode;
 		if (textNode.getOffset() > -1) {
@@ -289,7 +289,7 @@ public abstract class XMLInputContext extends UTF8InputContext {
 				return;
 			}
 		}
-		TextEdit oldOp = (TextEdit) fOperationTable.get(changedObject);
+		TextEdit oldOp = fOperationTable.get(changedObject);
 		if (oldOp != null)
 			ops.remove(oldOp);
 		ops.add(op);
@@ -470,10 +470,10 @@ public abstract class XMLInputContext extends UTF8InputContext {
 		super.flushModel(doc);
 	}
 
-	protected abstract void reorderInsertEdits(ArrayList ops);
+	protected abstract void reorderInsertEdits(ArrayList<TextEdit> ops);
 
 	protected void removeUnnecessaryOperations() {
-		Iterator iter = fOperationTable.values().iterator();
+		Iterator<TextEdit> iter = fOperationTable.values().iterator();
 		while (iter.hasNext()) {
 			Object object = iter.next();
 			if (object instanceof IDocumentElementNode) {
@@ -505,7 +505,7 @@ public abstract class XMLInputContext extends UTF8InputContext {
 		return textNode.write();
 	}
 
-	protected HashMap getOperationTable() {
+	protected HashMap<Object, TextEdit> getOperationTable() {
 		return fOperationTable;
 	}
 

@@ -10,12 +10,14 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.templates;
 
+import org.eclipse.pde.internal.ui.wizards.templates.ControlStack.Entry;
+
 import java.util.Iterator;
 import java.util.Stack;
 import org.eclipse.pde.ui.templates.IVariableProvider;
 
 public class ControlStack {
-	private Stack stack;
+	private Stack<Entry> stack;
 	private PreprocessorParser parser;
 
 	class Entry {
@@ -23,7 +25,7 @@ public class ControlStack {
 	}
 
 	public ControlStack() {
-		stack = new Stack();
+		stack = new Stack<Entry>();
 		parser = new PreprocessorParser();
 	}
 
@@ -61,7 +63,7 @@ public class ControlStack {
 			return true;
 		// All control levels must evaluate to true to
 		// return result==true
-		for (Iterator iter = stack.iterator(); iter.hasNext();) {
+		for (Iterator<Entry> iter = stack.iterator(); iter.hasNext();) {
 			Entry entry = (Entry) iter.next();
 			if (!entry.value)
 				return false;

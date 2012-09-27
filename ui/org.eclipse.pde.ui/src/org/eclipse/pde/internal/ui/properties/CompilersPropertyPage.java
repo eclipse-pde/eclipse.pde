@@ -33,7 +33,7 @@ public class CompilersPropertyPage extends PropertyPage {
 	/**
 	 * The data map passed when showing the page
 	 */
-	private HashMap fPageData = null;
+	private HashMap<?, ?> fPageData = null;
 
 	/**
 	 * The control block 
@@ -76,7 +76,7 @@ public class CompilersPropertyPage extends PropertyPage {
 			fWorkspaceLink.setText(PDEUIMessages.CompilersPropertyPage_useworkspacesettings_change);
 			fWorkspaceLink.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
-					HashMap data = new HashMap();
+					HashMap<String, Boolean> data = new HashMap<String, Boolean>();
 					data.put(CompilersPreferencePage.NO_LINK, Boolean.TRUE);
 					SWTFactory.showPreferencePage(getShell(), "org.eclipse.pde.ui.CompilersPreferencePage", data); //$NON-NLS-1$
 				}
@@ -156,7 +156,7 @@ public class CompilersPropertyPage extends PropertyPage {
 	 */
 	public void applyData(Object data) {
 		if (data instanceof HashMap) {
-			fPageData = (HashMap) data;
+			fPageData = (HashMap<?, ?>) data;
 			if (fWorkspaceLink != null) {
 				fWorkspaceLink.setVisible(!Boolean.TRUE.equals(fPageData.get(CompilersPreferencePage.NO_LINK)));
 			}

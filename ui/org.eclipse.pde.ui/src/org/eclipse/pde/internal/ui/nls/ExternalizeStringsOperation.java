@@ -43,14 +43,14 @@ public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
 
 	private Object[] fChangeFiles;
 	private CompositeChange fParentChange;
-	private HashMap fCompositeChanges;
-	private HashMap fFileChanges;
+	private HashMap<String, CompositeChange> fCompositeChanges;
+	private HashMap<IFile, TextFileChange> fFileChanges;
 
 	public ExternalizeStringsOperation(Object[] changeFiles, CompositeChange parentChange) {
 		fChangeFiles = changeFiles;
 		fParentChange = parentChange;
-		fCompositeChanges = new HashMap();
-		fFileChanges = new HashMap();
+		fCompositeChanges = new HashMap<String, CompositeChange>();
+		fFileChanges = new HashMap<IFile, TextFileChange>();
 	}
 
 	protected void execute(IProgressMonitor monitor) throws CoreException, InvocationTargetException, InterruptedException {
@@ -148,7 +148,7 @@ public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
 		try {
 			TextFileChange uChange = getChangeForFile(uFile, parentChange);
 
-			Iterator iter = changeFile.getChanges().iterator();
+			Iterator<?> iter = changeFile.getChanges().iterator();
 
 			while (iter.hasNext()) {
 				ModelChangeElement changeElement = (ModelChangeElement) iter.next();

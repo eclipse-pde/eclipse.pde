@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.search;
 
+import org.eclipse.search.ui.text.Match;
+
 import java.io.File;
 import java.util.ArrayList;
 import org.eclipse.core.resources.IFile;
@@ -84,7 +86,7 @@ public class SearchResult extends AbstractTextSearchResult implements IEditorMat
 	 * @see org.eclipse.search.ui.text.IEditorMatchAdapter#computeContainedMatches(org.eclipse.search.ui.text.AbstractTextSearchResult, org.eclipse.ui.IEditorPart)
 	 */
 	public Match[] computeContainedMatches(AbstractTextSearchResult result, IEditorPart editor) {
-		ArrayList list = new ArrayList();
+		ArrayList<Match> list = new ArrayList<Match>();
 		Object[] objects = result.getElements();
 		for (int i = 0; i < objects.length; i++) {
 			if (objects[i] instanceof IPluginObject) {

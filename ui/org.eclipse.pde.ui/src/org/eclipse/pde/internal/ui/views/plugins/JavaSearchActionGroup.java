@@ -82,7 +82,7 @@ public class JavaSearchActionGroup extends ActionGroup {
 		int nhits = 0;
 		IPluginModelBase model = null;
 		SearchablePluginsManager manager = PDECore.getDefault().getSearchablePluginsManager();
-		for (Iterator iter = selection.iterator(); iter.hasNext();) {
+		for (Iterator<?> iter = selection.iterator(); iter.hasNext();) {
 			model = getModel(iter.next());
 			if (model == null)
 				return false;
@@ -110,9 +110,9 @@ public class JavaSearchActionGroup extends ActionGroup {
 		if (selection.size() == 0)
 			return;
 
-		ArrayList result = new ArrayList();
+		ArrayList<IPluginModelBase> result = new ArrayList<IPluginModelBase>();
 		SearchablePluginsManager manager = PDECore.getDefault().getSearchablePluginsManager();
-		for (Iterator iter = selection.iterator(); iter.hasNext();) {
+		for (Iterator<?> iter = selection.iterator(); iter.hasNext();) {
 			IPluginModelBase model = getModel(iter.next());
 			if (model != null && model.getUnderlyingResource() == null && manager.isInJavaSearch(model.getPluginBase().getId()) != add) {
 				result.add(model);

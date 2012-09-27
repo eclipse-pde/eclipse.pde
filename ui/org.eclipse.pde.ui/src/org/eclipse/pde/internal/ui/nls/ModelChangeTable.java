@@ -16,8 +16,8 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 
 public class ModelChangeTable {
 
-	private Hashtable fChangeTable = new Hashtable();
-	private ArrayList fPreSelected = new ArrayList();
+	private Hashtable<IPluginModelBase, ModelChange> fChangeTable = new Hashtable<IPluginModelBase, ModelChange>();
+	private ArrayList<ModelChange> fPreSelected = new ArrayList<ModelChange>();
 
 	public void addToChangeTable(IPluginModelBase model, IFile file, Object change, boolean selected) {
 		if (change == null)
@@ -34,7 +34,7 @@ public class ModelChangeTable {
 		modelChange.addChange(file, new ModelChangeElement(modelChange, change));
 	}
 
-	public Collection getAllModelChanges() {
+	public Collection<ModelChange> getAllModelChanges() {
 		return fChangeTable.values();
 	}
 

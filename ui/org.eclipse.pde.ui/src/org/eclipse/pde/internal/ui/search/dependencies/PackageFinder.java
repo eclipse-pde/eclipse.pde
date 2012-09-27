@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.search.dependencies;
 
+import org.eclipse.core.resources.IResource;
+import org.eclipse.jdt.core.IClassFile;
+
 import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
@@ -25,8 +28,8 @@ import org.osgi.framework.Constants;
 
 public class PackageFinder {
 
-	public static Set findPackagesInClassFiles(IClassFile[] files, IProgressMonitor monitor) {
-		Set packages = new HashSet();
+	public static Set<String> findPackagesInClassFiles(IClassFile[] files, IProgressMonitor monitor) {
+		Set<String> packages = new HashSet<String>();
 		monitor.beginTask(PDEUIMessages.PackageFinder_taskName, files.length);
 		for (int i = 0; i < files.length; i++) {
 			IClassFileReader reader = ToolFactory.createDefaultClassFileReader(files[i], IClassFileReader.ALL);
@@ -38,7 +41,7 @@ public class PackageFinder {
 		return packages;
 	}
 
-	static void computeReferencedTypes(IClassFileReader cfr, Set packages) {
+	static void computeReferencedTypes(IClassFileReader cfr, Set<String> packages) {
 
 		char[][] interfaces = cfr.getInterfaceNames();
 		if (interfaces != null) {
@@ -184,7 +187,7 @@ public class PackageFinder {
 	}
 
 	public static IClassFile[] getClassFiles(IProject project, IBundlePluginModelBase base) {
-		ArrayList classFiles = new ArrayList();
+		ArrayList<IClassFile> classFiles = new ArrayList<IClassFile>();
 		IBundle bundle = base.getBundleModel().getBundle();
 		String value = bundle.getHeader(Constants.BUNDLE_CLASSPATH);
 		if (value == null)
@@ -205,10 +208,10 @@ public class PackageFinder {
 		return (IClassFile[]) classFiles.toArray(new IClassFile[classFiles.size()]);
 	}
 
-	private static void addClassFilesFromResource(IResource res, List classFiles) {
+	private static void addClassFilesFromResource(IResource res, List<IClassFile> classFiles) {
 		if (res == null)
 			return;
-		Stack stack = new Stack();
+		Stack<IResource> stack = new Stack<IResource>();
 		if (res instanceof IContainer) {
 			stack.push(res);
 			while (!stack.isEmpty()) {

@@ -190,7 +190,7 @@ public class PluginClassCodeGenerator {
 	}
 
 	public IPluginReference[] getDependencies() {
-		ArrayList result = new ArrayList();
+		ArrayList<PluginReference> result = new ArrayList<PluginReference>();
 		if (fPluginData.isUIPlugin())
 			result.add(new PluginReference("org.eclipse.ui", null, 0)); //$NON-NLS-1$
 		if (!fPluginData.isLegacy() && fPluginData.getOSGiFramework() == null)

@@ -56,7 +56,7 @@ public class SelfHostingPropertyPage extends PropertyPage {
 
 	private String[] getOutputFolders() {
 		IProject project = (IProject) getElement().getAdapter(IProject.class);
-		ArrayList list = new ArrayList();
+		ArrayList<String> list = new ArrayList<String>();
 		try {
 			if (project.hasNature(JavaCore.NATURE_ID)) {
 				IJavaProject jProject = JavaCore.create(project);

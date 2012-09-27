@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.targetdefinition;
 
+import org.eclipse.ui.forms.IManagedForm;
+
 import org.eclipse.pde.core.target.*;
 
 import java.io.File;
@@ -53,7 +55,7 @@ import org.eclipse.ui.progress.UIJob;
  */
 public class TargetEditor extends FormEditor {
 
-	private List fManagedFormPages = new ArrayList(2);
+	private List<IManagedForm> fManagedFormPages = new ArrayList<IManagedForm>(2);
 	private InputHandler fInputHandler = new InputHandler();
 	private TargetChangedListener fTargetChangedListener;
 	private boolean fDirty;
@@ -208,7 +210,7 @@ public class TargetEditor extends FormEditor {
 	 */
 	public void doRevert() {
 		fInputHandler.reset();
-		for (Iterator iterator = fManagedFormPages.iterator(); iterator.hasNext();) {
+		for (Iterator<IManagedForm> iterator = fManagedFormPages.iterator(); iterator.hasNext();) {
 			IFormPart[] parts = ((IManagedForm) iterator.next()).getParts();
 			for (int i = 0; i < parts.length; i++) {
 				if (parts[i] instanceof AbstractFormPart) {

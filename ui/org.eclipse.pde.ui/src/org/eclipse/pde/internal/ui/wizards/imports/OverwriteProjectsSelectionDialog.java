@@ -124,7 +124,7 @@ public class OverwriteProjectsSelectionDialog extends SelectionStatusDialog {
 		}
 	}
 
-	private ArrayList fPluginProjectList;
+	private ArrayList<?> fPluginProjectList;
 	private FilteredCheckboxTree fFilteredTree;
 	private CachedCheckboxTreeViewer fCheckboxTreeViewer;
 
@@ -133,7 +133,7 @@ public class OverwriteProjectsSelectionDialog extends SelectionStatusDialog {
 	 * @param parent shell to create this dialog on top of
 	 * @param plugins list of IPluginModelBase objects that have conflicts
 	 */
-	public OverwriteProjectsSelectionDialog(Shell parent, ArrayList plugins) {
+	public OverwriteProjectsSelectionDialog(Shell parent, ArrayList<?> plugins) {
 		super(parent);
 		setTitle(PDEUIMessages.PluginImportOperation_OverwritePluginProjects);
 		Assert.isNotNull(plugins);
@@ -152,7 +152,7 @@ public class OverwriteProjectsSelectionDialog extends SelectionStatusDialog {
 	 * @see org.eclipse.ui.dialogs.SelectionStatusDialog#computeResult()
 	 */
 	protected void computeResult() {
-		java.util.List result = Arrays.asList(fCheckboxTreeViewer.getCheckedLeafElements());
+		java.util.List<Object> result = Arrays.asList(fCheckboxTreeViewer.getCheckedLeafElements());
 		setResult(result);
 	}
 

@@ -75,7 +75,7 @@ public class PDESelectAnnotationRulerAction extends SelectMarkerRulerAction {
 		if (model == null)
 			return;
 
-		Iterator iter = model.getAnnotationIterator();
+		Iterator<?> iter = model.getAnnotationIterator();
 		int layer = Integer.MIN_VALUE;
 
 		while (iter.hasNext()) {

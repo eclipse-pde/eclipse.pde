@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
+import org.eclipse.core.runtime.Path;
+
 import java.util.HashSet;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.plugin.IPluginLibrary;
@@ -29,7 +31,7 @@ public class NewRuntimeLibraryDialog extends SelectionStatusDialog {
 	private IPluginLibrary[] libraries;
 	private DuplicateStatusValidator validator;
 	private String libraryName;
-	private HashSet librarySet;
+	private HashSet<Path> librarySet;
 
 	class DuplicateStatusValidator {
 		public IStatus validate(String text) {
@@ -53,7 +55,7 @@ public class NewRuntimeLibraryDialog extends SelectionStatusDialog {
 		super(parent);
 		this.libraries = libraries;
 		this.validator = new DuplicateStatusValidator();
-		librarySet = new HashSet();
+		librarySet = new HashSet<Path>();
 		for (int i = 0; i < libraries.length; i++) {
 			librarySet.add(new Path(ClasspathUtilCore.expandLibraryName(libraries[i].getName())));
 		}

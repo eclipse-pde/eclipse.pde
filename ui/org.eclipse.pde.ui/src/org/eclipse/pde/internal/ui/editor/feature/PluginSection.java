@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+
 import org.eclipse.pde.internal.ui.dialogs.PluginSelectionDialog;
 
 import java.util.ArrayList;
@@ -165,7 +167,7 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 		BusyIndicator.showWhile(fPluginViewer.getTable().getDisplay(), new Runnable() {
 			public void run() {
 				IPluginModelBase[] allModels = PluginRegistry.getActiveModels();
-				ArrayList newModels = new ArrayList();
+				ArrayList<IPluginModelBase> newModels = new ArrayList<IPluginModelBase>();
 				for (int i = 0; i < allModels.length; i++) {
 					if (canAdd(allModels[i]))
 						newModels.add(allModels[i]);
@@ -233,7 +235,7 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 		try {
 			IFeaturePlugin[] removed = new IFeaturePlugin[ssel.size()];
 			int i = 0;
-			for (Iterator iter = ssel.iterator(); iter.hasNext();) {
+			for (Iterator<?> iter = ssel.iterator(); iter.hasNext();) {
 				IFeaturePlugin iobj = (IFeaturePlugin) iter.next();
 				removed[i++] = iobj;
 			}

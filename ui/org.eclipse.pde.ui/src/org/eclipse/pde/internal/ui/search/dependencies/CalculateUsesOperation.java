@@ -36,10 +36,10 @@ public class CalculateUsesOperation extends WorkspaceModifyOperation {
 
 	protected void execute(IProgressMonitor monitor) throws CoreException, InvocationTargetException, InterruptedException {
 		try {
-			Collection packages = getPublicExportedPackages();
+			Collection<String> packages = getPublicExportedPackages();
 			if (packages.isEmpty())
 				return;
-			Map pkgsAndUses = findPackageReferences(packages, monitor);
+			Map<String, HashSet<String>> pkgsAndUses = findPackageReferences(packages, monitor);
 			if (monitor.isCanceled()) {
 				return;
 			}
@@ -49,13 +49,13 @@ public class CalculateUsesOperation extends WorkspaceModifyOperation {
 		}
 	}
 
-	protected Collection getPublicExportedPackages() {
+	protected Collection<String> getPublicExportedPackages() {
 		IBundle bundle = fModel.getBundleModel().getBundle();
 		IManifestHeader header = bundle.getManifestHeader(Constants.EXPORT_PACKAGE);
 		if (header == null)
-			return Collections.EMPTY_SET;
+			return Collections.emptySet();
 
-		ArrayList list = new ArrayList();
+		ArrayList<String> list = new ArrayList<String>();
 		ExportPackageObject[] pkgs = ((ExportPackageHeader) header).getPackages();
 		for (int i = 0; i < pkgs.length; i++) {
 			// don't calculate uses directive on private packages
@@ -65,9 +65,9 @@ public class CalculateUsesOperation extends WorkspaceModifyOperation {
 		return list;
 	}
 
-	protected Map findPackageReferences(Collection packages, IProgressMonitor monitor) {
+	protected Map<String, HashSet<String>> findPackageReferences(Collection<String> packages, IProgressMonitor monitor) {
 		IJavaProject jp = JavaCore.create(fProject);
-		HashMap pkgsAndUses = new HashMap();
+		HashMap<String, HashSet<String>> pkgsAndUses = new HashMap<String, HashSet<String>>();
 		IPackageFragment[] frags = PDEJavaHelper.getPackageFragments(jp, Collections.EMPTY_SET, false);
 		monitor.beginTask("", frags.length * 2); //$NON-NLS-1$
 		for (int i = 0; i < frags.length; i++) {
@@ -76,7 +76,7 @@ public class CalculateUsesOperation extends WorkspaceModifyOperation {
 			}
 			monitor.subTask(NLS.bind(PDEUIMessages.CalculateUsesOperation_calculatingDirective, frags[i].getElementName()));
 			if (packages.contains(frags[i].getElementName())) {
-				HashSet pkgs = new HashSet();
+				HashSet<String> pkgs = new HashSet<String>();
 				pkgsAndUses.put(frags[i].getElementName(), pkgs);
 				try {
 					findReferences(frags[i].getCompilationUnits(), pkgs, new SubProgressMonitor(monitor, 1), false);
@@ -89,7 +89,7 @@ public class CalculateUsesOperation extends WorkspaceModifyOperation {
 		return pkgsAndUses;
 	}
 
-	protected void findReferences(ITypeRoot[] roots, Set pkgs, IProgressMonitor monitor, boolean binary) throws JavaModelException {
+	protected void findReferences(ITypeRoot[] roots, Set<String> pkgs, IProgressMonitor monitor, boolean binary) throws JavaModelException {
 		monitor.beginTask("", roots.length); //$NON-NLS-1$
 		for (int i = 0; i < roots.length; i++) {
 			findReferences(roots[i].findPrimaryType(), pkgs, binary);
@@ -97,7 +97,7 @@ public class CalculateUsesOperation extends WorkspaceModifyOperation {
 		}
 	}
 
-	protected void findReferences(IType type, Set pkgs, boolean binary) throws JavaModelException {
+	protected void findReferences(IType type, Set<String> pkgs, boolean binary) throws JavaModelException {
 		if (type == null)
 			return;
 		// ignore private classes
@@ -127,7 +127,7 @@ public class CalculateUsesOperation extends WorkspaceModifyOperation {
 		}
 	}
 
-	protected final void addPackage(String typeSignature, Set pkgs, IType type, boolean binary) throws JavaModelException {
+	protected final void addPackage(String typeSignature, Set<String> pkgs, IType type, boolean binary) throws JavaModelException {
 		if (typeSignature == null)
 			return;
 		if (binary)
@@ -156,18 +156,18 @@ public class CalculateUsesOperation extends WorkspaceModifyOperation {
 		}
 	}
 
-	protected final void addPackages(String[] typeSignatures, Set pkgs, IType type, boolean binary) throws JavaModelException {
+	protected final void addPackages(String[] typeSignatures, Set<String> pkgs, IType type, boolean binary) throws JavaModelException {
 		for (int i = 0; i < typeSignatures.length; i++)
 			addPackage(typeSignatures[i], pkgs, type, binary);
 	}
 
-	protected void handleSetUsesDirectives(Map pkgsAndUses) {
+	protected void handleSetUsesDirectives(Map<String, HashSet<String>> pkgsAndUses) {
 		if (pkgsAndUses.isEmpty())
 			return;
 		setUsesDirectives(pkgsAndUses);
 	}
 
-	protected void setUsesDirectives(Map pkgsAndUses) {
+	protected void setUsesDirectives(Map<String, HashSet<String>> pkgsAndUses) {
 		IBundle bundle = fModel.getBundleModel().getBundle();
 		IManifestHeader header = bundle.getManifestHeader(Constants.EXPORT_PACKAGE);
 		// header will not equal null b/c we would not get this far (ie. no exported packages so we would have returned earlier
@@ -180,11 +180,11 @@ public class CalculateUsesOperation extends WorkspaceModifyOperation {
 		}
 	}
 
-	protected String getDirectiveValue(String pkgName, Map pkgsAndUses) {
-		Set usesPkgs = (Set) pkgsAndUses.get(pkgName);
+	protected String getDirectiveValue(String pkgName, Map<String, HashSet<String>> pkgsAndUses) {
+		Set<String> usesPkgs = pkgsAndUses.get(pkgName);
 		usesPkgs.remove(pkgName);
 		StringBuffer buffer = null;
-		Iterator it = usesPkgs.iterator();
+		Iterator<?> it = usesPkgs.iterator();
 		while (it.hasNext()) {
 			String usedPkgName = (String) it.next();
 			if (usedPkgName.startsWith("java.")) { //$NON-NLS-1$

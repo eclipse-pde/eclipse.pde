@@ -59,7 +59,7 @@ public class NewLibraryPluginCreationUpdateRefPage extends WizardPage {
 		}
 	}
 
-	public NewLibraryPluginCreationUpdateRefPage(LibraryPluginFieldData data, Collection initialJarPaths, Collection selection) {
+	public NewLibraryPluginCreationUpdateRefPage(LibraryPluginFieldData data, Collection<?> initialJarPaths, Collection<?> selection) {
 		super("UpdateReferences"); //$NON-NLS-1$
 		setTitle(PDEUIMessages.UpdateBuildpathWizard_title);
 		setDescription(PDEUIMessages.UpdateBuildpathWizard_desc);
@@ -70,11 +70,11 @@ public class NewLibraryPluginCreationUpdateRefPage extends WizardPage {
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 	}
 
-	private void computeSelected(Collection initialSelection) {
+	private void computeSelected(Collection<?> initialSelection) {
 		if (initialSelection == null || initialSelection.size() == 0)
 			return;
-		Set selected = new HashSet();
-		Iterator iter = initialSelection.iterator();
+		Set<IPluginModelBase> selected = new HashSet<IPluginModelBase>();
+		Iterator<?> iter = initialSelection.iterator();
 		while (iter.hasNext()) {
 			Object obj = iter.next();
 			if (obj instanceof IProject) {
@@ -117,7 +117,7 @@ public class NewLibraryPluginCreationUpdateRefPage extends WizardPage {
 
 	private void computeUnmigrated() {
 		IPluginModelBase[] models = PluginRegistry.getWorkspaceModels();
-		ArrayList modelArray = new ArrayList();
+		ArrayList<IPluginModelBase> modelArray = new ArrayList<IPluginModelBase>();
 		try {
 			for (int i = 0; i < models.length; i++) {
 				if (models[i].getUnderlyingResource().getProject().hasNature(JavaCore.NATURE_ID))

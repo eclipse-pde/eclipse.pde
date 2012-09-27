@@ -147,8 +147,8 @@ public class ConvertProjectToPluginOperation extends WorkspaceModifyOperation {
 	private void loadClasspathEntries(IProject project, IProgressMonitor monitor) {
 		IJavaProject javaProject = JavaCore.create(project);
 		IClasspathEntry[] currentClassPath = new IClasspathEntry[0];
-		ArrayList sources = new ArrayList();
-		ArrayList libraries = new ArrayList();
+		ArrayList<String> sources = new ArrayList<String>();
+		ArrayList<String> libraries = new ArrayList<String>();
 		try {
 			currentClassPath = javaProject.getRawClasspath();
 		} catch (JavaModelException e) {

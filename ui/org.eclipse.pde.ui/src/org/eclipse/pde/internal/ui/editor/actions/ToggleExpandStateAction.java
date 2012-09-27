@@ -64,7 +64,7 @@ public class ToggleExpandStateAction extends Action {
 			expandChildrenElements(selection.toArray(), true);
 			fExtensionTree.setSelection(selection, false);
 		} else { // collapse sub tree
-			for (Iterator iterator = selection.iterator(); iterator.hasNext();) {
+			for (Iterator<?> iterator = selection.iterator(); iterator.hasNext();) {
 				fExtensionTree.setExpandedState(iterator.next(), false);
 			}
 		}
@@ -161,7 +161,7 @@ public class ToggleExpandStateAction extends Action {
 		boolean isExpandable = false;
 		if (selection != null) {
 			if (!selection.isEmpty()) {
-				for (Iterator iterator = selection.iterator(); iterator.hasNext();) {
+				for (Iterator<?> iterator = selection.iterator(); iterator.hasNext();) {
 					Object element = iterator.next();
 					if (element instanceof PluginParentNode) {
 						PluginParentNode node = (PluginParentNode) element;

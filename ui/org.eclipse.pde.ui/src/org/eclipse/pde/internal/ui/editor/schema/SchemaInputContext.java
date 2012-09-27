@@ -23,6 +23,7 @@ import org.eclipse.pde.internal.core.schema.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.context.XMLInputContext;
+import org.eclipse.text.edits.TextEdit;
 import org.eclipse.ui.*;
 import org.eclipse.ui.ide.FileStoreEditorInput;
 import org.eclipse.ui.texteditor.IDocumentProvider;
@@ -106,7 +107,7 @@ public class SchemaInputContext extends XMLInputContext {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.context.InputContext#addTextEditOperation(java.util.ArrayList, org.eclipse.pde.core.IModelChangedEvent)
 	 */
-	protected void addTextEditOperation(ArrayList ops, IModelChangedEvent event) {
+	protected void addTextEditOperation(ArrayList<TextEdit> ops, IModelChangedEvent event) {
 	}
 
 	protected void flushModel(IDocument doc) {
@@ -171,7 +172,7 @@ public class SchemaInputContext extends XMLInputContext {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.context.XMLInputContext#reorderInsertEdits(java.util.ArrayList)
 	 */
-	protected void reorderInsertEdits(ArrayList ops) {
+	protected void reorderInsertEdits(ArrayList<TextEdit> ops) {
 	}
 
 	protected String getPartitionName() {

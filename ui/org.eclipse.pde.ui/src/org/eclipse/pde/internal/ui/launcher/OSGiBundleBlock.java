@@ -72,8 +72,8 @@ public class OSGiBundleBlock extends AbstractPluginBlock {
 	// TODO deal with the discrepency between save/init states of the two blocks
 
 	private void initExternalPluginsState(ILaunchConfiguration configuration) throws CoreException {
-		Map map = BundleLauncherHelper.getTargetBundleMap(configuration, Collections.EMPTY_SET, IPDELauncherConstants.TARGET_BUNDLES);
-		Iterator iter = map.keySet().iterator();
+		Map<?, ?> map = BundleLauncherHelper.getTargetBundleMap(configuration, Collections.EMPTY_SET, IPDELauncherConstants.TARGET_BUNDLES);
+		Iterator<?> iter = map.keySet().iterator();
 		fPluginTreeViewer.setSubtreeChecked(fExternalPlugins, false);
 		while (iter.hasNext()) {
 			IPluginModelBase model = (IPluginModelBase) iter.next();
@@ -88,8 +88,8 @@ public class OSGiBundleBlock extends AbstractPluginBlock {
 	}
 
 	private void initWorkspacePluginsState(ILaunchConfiguration configuration) throws CoreException {
-		Map map = BundleLauncherHelper.getWorkspaceBundleMap(configuration);
-		Iterator iter = map.keySet().iterator();
+		Map<?, ?> map = BundleLauncherHelper.getWorkspaceBundleMap(configuration);
+		Iterator<?> iter = map.keySet().iterator();
 		fPluginTreeViewer.setSubtreeChecked(fWorkspacePlugins, false);
 		while (iter.hasNext()) {
 			IPluginModelBase model = (IPluginModelBase) iter.next();

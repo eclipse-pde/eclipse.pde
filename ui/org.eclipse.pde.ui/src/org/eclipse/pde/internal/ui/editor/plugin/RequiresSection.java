@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.plugin.ImportObject;
+
 import java.io.*;
 import java.util.*;
 import org.eclipse.core.runtime.*;
@@ -59,7 +62,7 @@ public class RequiresSection extends TableSection implements IModelChangedListen
 	private static final int PROPERTIES_INDEX = 4;
 
 	private TableViewer fImportViewer;
-	private Vector fImports;
+	private Vector<ImportObject> fImports;
 	private Action fOpenAction;
 	private Action fAddAction;
 	private Action fRemoveAction;
@@ -247,7 +250,7 @@ public class RequiresSection extends TableSection implements IModelChangedListen
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(java.lang.Object, java.lang.Object[])
 	 */
 	protected boolean canPaste(Object targetObject, Object[] sourceObjects) {
-		HashSet existingImportsSet = null;
+		HashSet<?> existingImportsSet = null;
 		// Only import objects that are not already existing imports can be
 		// pasted
 		for (int i = 0; i < sourceObjects.length; i++) {
@@ -365,7 +368,7 @@ public class RequiresSection extends TableSection implements IModelChangedListen
 			IPluginBase pluginBase = model.getPluginBase();
 			IPluginImport[] imports = new IPluginImport[ssel.size()];
 			int i = 0;
-			for (Iterator iter = ssel.iterator(); iter.hasNext(); i++)
+			for (Iterator<?> iter = ssel.iterator(); iter.hasNext(); i++)
 				imports[i] = ((ImportObject) iter.next()).getImport();
 
 			try {
@@ -458,8 +461,8 @@ public class RequiresSection extends TableSection implements IModelChangedListen
 
 	private IPluginModelBase[] getAvailablePlugins(IPluginModelBase model) {
 		IPluginModelBase[] plugins = PluginRegistry.getActiveModels(false);
-		HashSet existingImports = PluginSelectionDialog.getExistingImports(model, false);
-		ArrayList result = new ArrayList();
+		HashSet<?> existingImports = PluginSelectionDialog.getExistingImports(model, false);
+		ArrayList<IPluginModelBase> result = new ArrayList<IPluginModelBase>();
 		for (int i = 0; i < plugins.length; i++) {
 			if (!existingImports.contains(plugins[i].getPluginBase().getId())) {
 				result.add(plugins[i]);
@@ -471,7 +474,7 @@ public class RequiresSection extends TableSection implements IModelChangedListen
 		return (IPluginModelBase[]) result.toArray(new IPluginModelBase[result.size()]);
 	}
 
-	private void addSystemBundle(java.util.List list) {
+	private void addSystemBundle(java.util.List<IPluginModelBase> list) {
 		try {
 			ExternalPluginModel model = new ExternalPluginModel();
 
@@ -644,7 +647,7 @@ public class RequiresSection extends TableSection implements IModelChangedListen
 	}
 
 	private void createImportObjects() {
-		fImports = new Vector();
+		fImports = new Vector<ImportObject>();
 		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
 		IPluginImport[] iimports = model.getPluginBase().getImports();
 		for (int i = 0; i < iimports.length; i++) {

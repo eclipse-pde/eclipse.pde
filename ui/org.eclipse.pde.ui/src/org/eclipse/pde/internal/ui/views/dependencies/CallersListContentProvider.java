@@ -33,12 +33,12 @@ public class CallersListContentProvider extends CallersContentProvider implement
 			desc = (BundleDescription) inputElement;
 		}
 		if (desc != null) {
-			Set callers = new HashSet();
-			Set candidates = new HashSet();
+			Set<BundleDescription> callers = new HashSet<BundleDescription>();
+			Set<?> candidates = new HashSet<Object>();
 			candidates.addAll(findReferences(desc));
 			while (!candidates.isEmpty()) {
-				Set newCandidates = new HashSet();
-				for (Iterator it = candidates.iterator(); it.hasNext();) {
+				Set<?> newCandidates = new HashSet<Object>();
+				for (Iterator<?> it = candidates.iterator(); it.hasNext();) {
 					Object o = it.next();
 					it.remove();
 					BundleDescription caller = (BundleDescription) o;

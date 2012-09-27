@@ -14,7 +14,7 @@ import java.util.Vector;
 import org.eclipse.swt.graphics.Image;
 
 public class ElementList extends NamedElement {
-	private Vector children = new Vector();
+	private Vector<IPDEElement> children = new Vector<IPDEElement>();
 
 	public ElementList(String name) {
 		super(name);

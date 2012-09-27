@@ -46,19 +46,19 @@ public class NewLibraryPluginProjectWizard extends NewWizard implements IExecuta
 
 	private IProjectProvider fProjectProvider;
 
-	private Collection fInitialJarPaths;
+	private Collection<?> fInitialJarPaths;
 
-	private Collection fInitialSelection;
+	private Collection<?> fInitialSelection;
 
-	public NewLibraryPluginProjectWizard(Collection initialJarPaths, Collection initialSelection) {
+	public NewLibraryPluginProjectWizard(Collection<?> initialJarPaths, Collection<?> initialSelection) {
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_JAR_TO_PLUGIN_WIZ);
 		setDialogSettings(PDEPlugin.getDefault().getDialogSettings());
 		setWindowTitle(PDEUIMessages.NewLibraryPluginProjectWizard_title);
 		setNeedsProgressMonitor(true);
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 		fPluginData = new LibraryPluginFieldData();
-		fInitialJarPaths = initialJarPaths == null ? new ArrayList() : initialJarPaths;
-		fInitialSelection = initialSelection == null ? new ArrayList() : initialSelection;
+		fInitialJarPaths = initialJarPaths == null ? new ArrayList<Object>() : initialJarPaths;
+		fInitialSelection = initialSelection == null ? new ArrayList<Object>() : initialSelection;
 	}
 
 	public NewLibraryPluginProjectWizard() {

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor;
 
+import org.eclipse.core.runtime.IConfigurationElement;
+
 import java.util.*;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -142,18 +144,18 @@ public abstract class PDELauncherFormEditor extends MultiSourceEditor {
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IConfigurationElement[] elements = registry.getConfigurationElementsFor("org.eclipse.pde.ui.launchShortcuts"); //$NON-NLS-1$
 		// validate elements
-		ArrayList runList = new ArrayList();
-		ArrayList debugList = new ArrayList();
-		ArrayList profileList = new ArrayList();
+		ArrayList<IConfigurationElement> runList = new ArrayList<IConfigurationElement>();
+		ArrayList<IConfigurationElement> debugList = new ArrayList<IConfigurationElement>();
+		ArrayList<IConfigurationElement> profileList = new ArrayList<IConfigurationElement>();
 		// limit to specific shortcuts based on project settings (if specified)
 		IResource resource = (IResource) getEditorInput().getAdapter(IResource.class);
-		Set specificIds = null;
+		Set<String> specificIds = null;
 		if (resource != null) {
 			IProject project = resource.getProject();
 			if (project != null) {
 				String[] values = PDEProject.getLaunchShortcuts(project);
 				if (values != null) {
-					specificIds = new HashSet();
+					specificIds = new HashSet<String>();
 					for (int i = 0; i < values.length; i++) {
 						specificIds.add(values[i]);
 					}
@@ -186,7 +188,7 @@ public abstract class PDELauncherFormEditor extends MultiSourceEditor {
 		IConfigurationElement[] runElements = (IConfigurationElement[]) runList.toArray(new IConfigurationElement[runList.size()]);
 		IConfigurationElement[] debugElements = (IConfigurationElement[]) debugList.toArray(new IConfigurationElement[debugList.size()]);
 		IConfigurationElement[] profileElements = (IConfigurationElement[]) profileList.toArray(new IConfigurationElement[profileList.size()]);
-		Comparator comparator = new Comparator() {
+		Comparator<IConfigurationElement> comparator = new Comparator<Object>() {
 			public int compare(Object arg0, Object arg1) {
 				String label1 = ((IConfigurationElement) arg0).getAttribute("label"); //$NON-NLS-1$
 				String label2 = ((IConfigurationElement) arg1).getAttribute("label"); //$NON-NLS-1$

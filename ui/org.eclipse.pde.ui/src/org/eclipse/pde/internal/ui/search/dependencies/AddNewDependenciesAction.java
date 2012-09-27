@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.osgi.service.resolver.ExportPackageDescription;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.widgets.Display;
@@ -30,7 +31,7 @@ public class AddNewDependenciesAction extends Action {
 			super(project, base);
 		}
 
-		protected void handleNewDependencies(final Map additionalDeps, final boolean useRequireBundle, IProgressMonitor monitor) {
+		protected void handleNewDependencies(final Map<ExportPackageDescription, String> additionalDeps, final boolean useRequireBundle, IProgressMonitor monitor) {
 			if (!additionalDeps.isEmpty())
 				Display.getDefault().asyncExec(new Runnable() {
 					public void run() {

@@ -69,7 +69,7 @@ public class CalleesContentProvider extends DependenciesViewPageContentProvider 
 		// use map to store dependencies so if Import-Package is supplied by same BundleDescription as supplier of Require-Bundle, it only shows up once
 		// Also, have to use BundleSpecficiation instead of BundleDescroption to show re-exported icon on re-exported Required-Bundles
 		// Have to use ImportPackageSpecification to determine if an import is optional and should be filtered.
-		HashMap dependencies = new HashMap();
+		HashMap<Object, Object> dependencies = new HashMap<Object, Object>();
 		BundleSpecification[] requiredBundles = desc.getRequiredBundles();
 		for (int i = 0; i < requiredBundles.length; i++) {
 			BaseDescription bd = requiredBundles[i].getSupplier();

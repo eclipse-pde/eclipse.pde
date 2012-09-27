@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.preferences;
 
+import org.eclipse.pde.core.target.ITargetDefinition;
+
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.*;
@@ -180,17 +182,17 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 	/**
 	 * Initial collection of targets (handles are realized into definitions as working copies)
 	 */
-	private List fTargets = new ArrayList();
+	private List<ITargetDefinition> fTargets = new ArrayList<ITargetDefinition>();
 
 	/**
 	 * Removed definitions (to be removed on apply) 
 	 */
-	private List fRemoved = new ArrayList();
+	private List<ITargetDefinition> fRemoved = new ArrayList<ITargetDefinition>();
 
 	/**
 	 * Moved definitions (to be moved on apply)
 	 */
-	private Map fMoved = new HashMap(1);
+	private Map<Object, Object> fMoved = new HashMap<Object, Object>(1);
 
 	/**
 	 * The chosen active target (will be loaded on apply)
@@ -350,7 +352,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		if (service != null) {
 			try {
 				fPrevious = service.getWorkspaceTargetHandle();
-				Iterator iterator = fTargets.iterator();
+				Iterator<ITargetDefinition> iterator = fTargets.iterator();
 				while (iterator.hasNext()) {
 					ITargetDefinition target = (ITargetDefinition) iterator.next();
 					if (target.getHandle().equals(fPrevious)) {
@@ -519,11 +521,11 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 	private void handleRemove() {
 		IStructuredSelection selection = (IStructuredSelection) fTableViewer.getSelection();
 		if (!selection.isEmpty()) {
-			List selected = selection.toList();
+			List<?> selected = selection.toList();
 
 			// If we are going to remove a workspace file, prompt to ask the user first
 			boolean isWorkspace = false;
-			for (Iterator iterator = selected.iterator(); iterator.hasNext();) {
+			for (Iterator<?> iterator = selected.iterator(); iterator.hasNext();) {
 				ITargetDefinition currentTarget = (ITargetDefinition) iterator.next();
 				if (currentTarget.getHandle() instanceof WorkspaceFileTargetHandle) {
 					isWorkspace = true;
@@ -632,7 +634,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		ITargetPlatformService service = getTargetService();
 		if (service != null) {
 			ITargetDefinition deflt = service.newDefaultTarget();
-			Iterator iterator = fTargets.iterator();
+			Iterator<ITargetDefinition> iterator = fTargets.iterator();
 			ITargetDefinition reuse = null;
 			while (iterator.hasNext()) {
 				TargetDefinition existing = (TargetDefinition) iterator.next();
@@ -702,7 +704,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 
 		// Move the marked definitions to workspace
 		if (fMoved.size() > 0) {
-			Iterator iterator = fMoved.keySet().iterator();
+			Iterator<Object> iterator = fMoved.keySet().iterator();
 			while (iterator.hasNext()) {
 				try {
 					ITargetDefinition target = (ITargetDefinition) iterator.next();
@@ -729,7 +731,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		}
 
 		// Remove any definitions that have been removed
-		Iterator iterator = fRemoved.iterator();
+		Iterator<ITargetDefinition> iterator = fRemoved.iterator();
 		while (iterator.hasNext()) {
 			ITargetDefinition target = (ITargetDefinition) iterator.next();
 			try {

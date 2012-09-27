@@ -172,7 +172,7 @@ public class URLSection extends TableSection {
 		if (url == null) {
 			return;
 		}
-		for (Iterator iter = ssel.iterator(); iter.hasNext();) {
+		for (Iterator<?> iter = ssel.iterator(); iter.hasNext();) {
 			IFeatureURLElement urlElement = (IFeatureURLElement) iter.next();
 			// IFeature feature = urlElement.getFeature();
 			try {

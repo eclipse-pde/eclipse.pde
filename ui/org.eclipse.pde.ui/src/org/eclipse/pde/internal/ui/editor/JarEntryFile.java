@@ -64,6 +64,7 @@ public class JarEntryFile extends PlatformObject implements IStorage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
+	@SuppressWarnings("rawtypes")
 	public Object getAdapter(Class adapter) {
 		if (adapter.equals(ZipFile.class))
 			return fZipFile;

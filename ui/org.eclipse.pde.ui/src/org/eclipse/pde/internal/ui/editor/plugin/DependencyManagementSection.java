@@ -62,7 +62,7 @@ import org.osgi.service.prefs.BackingStoreException;
 public class DependencyManagementSection extends TableSection implements IModelChangedListener, IPluginModelListener, IPropertyChangeListener {
 
 	private TableViewer fAdditionalTable;
-	private Vector fAdditionalBundles;
+	private Vector<String> fAdditionalBundles;
 	private Action fNewAction;
 	private Action fRemoveAction;
 	private Action fOpenAction;
@@ -108,7 +108,7 @@ public class DependencyManagementSection extends TableSection implements IModelC
 			try {
 				if (entry != null) {
 					String[] tokens = entry.getTokens();
-					fAdditionalBundles = new Vector(tokens.length);
+					fAdditionalBundles = new Vector<String>(tokens.length);
 					for (int i = 0; i < tokens.length; i++) {
 						fAdditionalBundles.add(tokens[i].trim());
 					}
@@ -217,7 +217,7 @@ public class DependencyManagementSection extends TableSection implements IModelC
 		// Cursor needs to be explicitly disposed
 		toolbar.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
-				if ((handCursor != null) && (handCursor.isDisposed() == false)) {
+				if (handCursor.isDisposed() == false) {
 					handCursor.dispose();
 				}
 			}
@@ -405,7 +405,10 @@ public class DependencyManagementSection extends TableSection implements IModelC
 
 	private IPluginModelBase[] getAvailablePlugins() {
 		IPluginModelBase[] plugins = PluginRegistry.getActiveModels(false);
-		HashSet currentPlugins = new HashSet((fAdditionalBundles == null) ? new Vector(1) : fAdditionalBundles);
+		HashSet<String> currentPlugins = new HashSet<String>();
+		if (fAdditionalBundles != null) {
+			currentPlugins.addAll(fAdditionalBundles);
+		}
 		IProject currentProj = getPage().getPDEEditor().getCommonProject();
 		IPluginModelBase model = PluginRegistry.findModel(currentProj);
 		if (model != null) {
@@ -415,12 +418,12 @@ public class DependencyManagementSection extends TableSection implements IModelC
 			}
 		}
 
-		ArrayList result = new ArrayList();
+		ArrayList<IPluginModelBase> result = new ArrayList<IPluginModelBase>();
 		for (int i = 0; i < plugins.length; i++) {
 			if (!currentPlugins.contains(plugins[i].getPluginBase().getId()))
 				result.add(plugins[i]);
 		}
-		return (IPluginModelBase[]) result.toArray(new IPluginModelBase[result.size()]);
+		return result.toArray(new IPluginModelBase[result.size()]);
 	}
 
 	private void handleRemove() {
@@ -428,7 +431,7 @@ public class DependencyManagementSection extends TableSection implements IModelC
 
 		IBuild build = getBuildModel(false).getBuild();
 		IBuildEntry entry = build.getEntry(IBuildEntry.SECONDARY_DEPENDENCIES);
-		Iterator it = ssel.iterator();
+		Iterator<?> it = ssel.iterator();
 		try {
 			while (it.hasNext()) {
 				String pluginName = (String) it.next();
@@ -502,7 +505,7 @@ public class DependencyManagementSection extends TableSection implements IModelC
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(java.lang.Object, java.lang.Object[])
 	 */
 	protected boolean canPaste(Object targetObject, Object[] sourceObjects) {
-		HashSet secondaryDepSet = null;
+		HashSet<String> secondaryDepSet = null;
 		// Only String objects representing non-duplicate secondary 
 		// dependencies can be pasted
 		for (int i = 0; i < sourceObjects.length; i++) {
@@ -524,8 +527,8 @@ public class DependencyManagementSection extends TableSection implements IModelC
 		return true;
 	}
 
-	private HashSet createSecondaryDepSet() {
-		HashSet secondaryDepSet = new HashSet();
+	private HashSet<String> createSecondaryDepSet() {
+		HashSet<String> secondaryDepSet = new HashSet<String>();
 		// Get the build model
 		IBuildModel buildModel = getBuildModel(true);
 		// Ensure the build model is defined

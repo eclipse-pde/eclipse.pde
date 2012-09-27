@@ -46,10 +46,10 @@ public class EnvironmentSection extends SectionPart {
 	private ComboPart fNLCombo;
 	private ComboPart fArchCombo;
 
-	private TreeSet fNLChoices;
-	private TreeSet fOSChoices;
-	private TreeSet fWSChoices;
-	private TreeSet fArchChoices;
+	private TreeSet<String> fNLChoices;
+	private TreeSet<String> fOSChoices;
+	private TreeSet<String> fWSChoices;
+	private TreeSet<String> fArchChoices;
 	private boolean LOCALES_INITIALIZED = false;
 
 	private TargetEditor fEditor;
@@ -210,7 +210,7 @@ public class EnvironmentSection extends SectionPart {
 
 	private void initializeChoices() {
 		ITargetDefinition target = getTarget();
-		fOSChoices = new TreeSet();
+		fOSChoices = new TreeSet<String>();
 		String[] os = Platform.knownOSValues();
 		for (int i = 0; i < os.length; i++)
 			fOSChoices.add(os[i]);
@@ -219,7 +219,7 @@ public class EnvironmentSection extends SectionPart {
 		if (fileValue != null)
 			fOSChoices.add(fileValue);
 
-		fWSChoices = new TreeSet();
+		fWSChoices = new TreeSet<String>();
 		String[] ws = Platform.knownWSValues();
 		for (int i = 0; i < ws.length; i++)
 			fWSChoices.add(ws[i]);
@@ -228,7 +228,7 @@ public class EnvironmentSection extends SectionPart {
 		if (fileValue != null)
 			fWSChoices.add(fileValue);
 
-		fArchChoices = new TreeSet();
+		fArchChoices = new TreeSet<String>();
 		String[] arch = Platform.knownOSArchValues();
 		for (int i = 0; i < arch.length; i++)
 			fArchChoices.add(arch[i]);
@@ -237,7 +237,7 @@ public class EnvironmentSection extends SectionPart {
 		if (fileValue != null)
 			fArchChoices.add(fileValue);
 
-		fNLChoices = new TreeSet();
+		fNLChoices = new TreeSet<String>();
 		fNLChoices.add(""); //$NON-NLS-1$
 	}
 

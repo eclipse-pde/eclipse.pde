@@ -72,7 +72,7 @@ public class FormatOperation implements IRunnableWithProgress {
 	}
 
 	private static void formatBundle(Bundle bundle) {
-		Iterator headers = bundle.getHeaders().values().iterator();
+		Iterator<?> headers = bundle.getHeaders().values().iterator();
 		while (headers.hasNext())
 			((IManifestHeader) headers.next()).update(true);
 		BundleModel model = (BundleModel) bundle.getModel();

@@ -30,7 +30,7 @@ import org.eclipse.ui.PlatformUI;
 
 public class OptionTemplateWizardPage extends WizardPage {
 	private BaseOptionTemplateSection section;
-	private ArrayList options;
+	private ArrayList<?> options;
 	private String helpContextId;
 
 	/**
@@ -43,7 +43,7 @@ public class OptionTemplateWizardPage extends WizardPage {
 	 * @param helpContextId
 	 * 			  the help context id
 	 */
-	public OptionTemplateWizardPage(BaseOptionTemplateSection section, ArrayList options, String helpContextId) {
+	public OptionTemplateWizardPage(BaseOptionTemplateSection section, ArrayList<?> options, String helpContextId) {
 		super(""); //$NON-NLS-1$
 		this.section = section;
 		this.options = options;

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.views.plugins;
 
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+
 import java.util.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
@@ -83,8 +85,8 @@ public class ImportActionGroup extends ActionGroup {
 	}
 
 	static void handleImport(int importType, IStructuredSelection selection) {
-		ArrayList externalModels = new ArrayList();
-		for (Iterator iter = selection.iterator(); iter.hasNext();) {
+		ArrayList<IPluginModelBase> externalModels = new ArrayList<IPluginModelBase>();
+		for (Iterator<?> iter = selection.iterator(); iter.hasNext();) {
 			IPluginModelBase model = getModel(iter.next());
 			if (model != null && model.getUnderlyingResource() == null)
 				externalModels.add(model);
@@ -94,7 +96,7 @@ public class ImportActionGroup extends ActionGroup {
 			display = Display.getDefault();
 		IPluginModelBase[] models = (IPluginModelBase[]) externalModels.toArray(new IPluginModelBase[externalModels.size()]);
 		if (importType == PluginImportOperation.IMPORT_FROM_REPOSITORY) {
-			Map importMap = getImportDescriptions(display.getActiveShell(), models);
+			Map<?, ?> importMap = getImportDescriptions(display.getActiveShell(), models);
 			if (importMap != null) {
 				RepositoryImportWizard wizard = new RepositoryImportWizard(importMap);
 				WizardDialog dialog = new WizardDialog(display.getActiveShell(), wizard);
@@ -112,10 +114,10 @@ public class ImportActionGroup extends ActionGroup {
 	 * @param models candidate models
 	 * @return  map of importer to import descriptions
 	 */
-	private static Map getImportDescriptions(Shell shell, IPluginModelBase[] models) {
+	private static Map<?, ?> getImportDescriptions(Shell shell, IPluginModelBase[] models) {
 		BundleProjectService service = (BundleProjectService) BundleProjectService.getDefault();
 		try {
-			Map descriptions = service.getImportDescriptions(models); // all possible descriptions
+			Map<?, ?> descriptions = service.getImportDescriptions(models); // all possible descriptions
 			if (!descriptions.isEmpty()) {
 				return descriptions;
 			}
@@ -129,7 +131,7 @@ public class ImportActionGroup extends ActionGroup {
 	}
 
 	public static boolean canImport(IStructuredSelection selection) {
-		for (Iterator iter = selection.iterator(); iter.hasNext();) {
+		for (Iterator<?> iter = selection.iterator(); iter.hasNext();) {
 			IPluginModelBase model = getModel(iter.next());
 			if (model != null && model.getUnderlyingResource() == null)
 				return true;

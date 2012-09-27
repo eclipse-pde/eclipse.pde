@@ -26,7 +26,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.SelectionStatusDialog;
 
 public class RenameDialog extends SelectionStatusDialog {
-	private ArrayList oldNames;
+	private ArrayList<String> oldNames;
 	private String oldName;
 	private String newName;
 	private Text text;
@@ -65,7 +65,7 @@ public class RenameDialog extends SelectionStatusDialog {
 	}
 
 	public void initialize() {
-		oldNames = new ArrayList();
+		oldNames = new ArrayList<String>();
 		setStatusLineAboveButtons(true);
 	}
 

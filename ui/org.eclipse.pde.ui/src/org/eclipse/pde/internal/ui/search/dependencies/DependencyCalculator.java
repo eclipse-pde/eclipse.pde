@@ -20,7 +20,7 @@ import org.osgi.framework.Constants;
 public class DependencyCalculator {
 
 	boolean fIncludeOptional;
-	protected HashMap fDependencies;
+	protected HashMap<String, IPluginModelBase> fDependencies;
 
 	/*
 	 * Object[] can be IPluginModelBases, BundleDescriptions, or Strings (id's of bundles)
@@ -32,7 +32,7 @@ public class DependencyCalculator {
 
 	public void findDependencies(Object[] includedBundles) {
 		if (fDependencies == null)
-			fDependencies = new HashMap();
+			fDependencies = new HashMap<String, IPluginModelBase>();
 		for (int i = 0; i < includedBundles.length; i++) {
 			findObjectDependencies(includedBundles[i]);
 		}
@@ -40,7 +40,7 @@ public class DependencyCalculator {
 
 	public void findDependency(Object bundle) {
 		if (fDependencies == null)
-			fDependencies = new HashMap();
+			fDependencies = new HashMap<String, IPluginModelBase>();
 		findObjectDependencies(bundle);
 	}
 
@@ -58,8 +58,8 @@ public class DependencyCalculator {
 	/*
 	 * Returns a Set of Bundle Ids
 	 */
-	public Set getBundleIDs() {
-		Set temp = fDependencies.keySet();
+	public Set<String> getBundleIDs() {
+		Set<String> temp = fDependencies.keySet();
 		fDependencies = null;
 		return temp;
 	}

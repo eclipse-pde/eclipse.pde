@@ -58,6 +58,7 @@ public class PersistablePluginObject extends PlatformObject implements IPersista
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.PlatformObject#getAdapter(java.lang.Class)
 	 */
+	@SuppressWarnings("rawtypes")
 	public Object getAdapter(Class adapter) {
 		if (adapter.equals(IPersistableElement.class))
 			return this;

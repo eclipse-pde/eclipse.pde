@@ -67,16 +67,16 @@ public class PluginImportOperation extends WorkspaceJob {
 
 	private IPluginModelBase[] fModels;
 	private int fImportType;
-	private Hashtable fProjectClasspaths = new Hashtable();
+	private Hashtable<IProject, IClasspathEntry[]> fProjectClasspaths = new Hashtable<IProject, IClasspathEntry[]>();
 
 	/**
 	 * Maps project ids to a List of IWorkingSets, the map is filled when determining what projects to delete
 	 */
-	private Map fProjectWorkingSets = new HashMap();
+	private Map<String, List<IWorkingSet>> fProjectWorkingSets = new HashMap<String, List<IWorkingSet>>();
 	private boolean fForceAutobuild;
 
 	// used when importing from a repository
-	private Map fImportDescriptions;
+	private Map<IBundleImporter, ScmUrlImportDescription[]> fImportDescriptions;
 
 	/**
 	 * Used to find source locations when not found in default locations.
@@ -134,7 +134,7 @@ public class PluginImportOperation extends WorkspaceJob {
 		/**
 		 * The list of the projects that did not get imported.
 		 */
-		private List fNamesOfNotImportedProjects;
+		private List<String> fNamesOfNotImportedProjects;
 
 		/**
 		 * Creates a warning message dialog. The message area will contain the scrollable
@@ -145,7 +145,7 @@ public class PluginImportOperation extends WorkspaceJob {
 		 * @param namesOfNotImportedProjects
 		 * 				the list of the project names that did not get imported.
 		 */
-		public NotImportedProjectsWarningDialog(String warningMessage, List namesOfNotImportedProjects) {
+		public NotImportedProjectsWarningDialog(String warningMessage, List<String> namesOfNotImportedProjects) {
 			super(PlatformUI.getWorkbench().getModalDialogShellProvider().getShell(), PDEUIMessages.ImportWizard_title, null, warningMessage, MessageDialog.WARNING, new String[] {IDialogConstants.OK_LABEL}, 0);
 			fNamesOfNotImportedProjects = namesOfNotImportedProjects;
 		}
@@ -169,7 +169,7 @@ public class PluginImportOperation extends WorkspaceJob {
 			projectText.setLayoutData(gd);
 
 			StringBuffer projectListBuffer = new StringBuffer();
-			for (Iterator iterator = fNamesOfNotImportedProjects.iterator(); iterator.hasNext();) {
+			for (Iterator<String> iterator = fNamesOfNotImportedProjects.iterator(); iterator.hasNext();) {
 				String project = (String) iterator.next();
 				projectListBuffer.append(project).append('\n');
 			}
@@ -194,19 +194,19 @@ public class PluginImportOperation extends WorkspaceJob {
 			}
 
 			if (fImportType == IMPORT_FROM_REPOSITORY) {
-				final List namesOfNotImportedProjects = new ArrayList();
-				Iterator iterator = fImportDescriptions.entrySet().iterator();
+				final List<String> namesOfNotImportedProjects = new ArrayList<String>();
+				Iterator<Entry<IBundleImporter, ScmUrlImportDescription[]>> iterator = fImportDescriptions.entrySet().iterator();
 				while (iterator.hasNext()) {
-					Entry entry = (Entry) iterator.next();
-					IBundleImporter importer = (IBundleImporter) entry.getKey();
-					ScmUrlImportDescription[] descriptions = (ScmUrlImportDescription[]) entry.getValue();
+					Entry<IBundleImporter, ScmUrlImportDescription[]> entry = iterator.next();
+					IBundleImporter importer = entry.getKey();
+					ScmUrlImportDescription[] descriptions = entry.getValue();
 					if (descriptions.length == 0)
 						continue;
 					IProject[] importedProjects = importer.performImport(descriptions, new SubProgressMonitor(monitor, descriptions.length));
 					if (importedProjects != null && importedProjects.length == descriptions.length)
 						continue;
 
-					ArrayList namesOfImportedProjects = new ArrayList(importedProjects.length);
+					ArrayList<String> namesOfImportedProjects = new ArrayList<String>(importedProjects.length);
 					for (int i = 0; i < importedProjects.length; i++) {
 						namesOfImportedProjects.add(importedProjects[i].getName());
 					}
@@ -278,14 +278,14 @@ public class PluginImportOperation extends WorkspaceJob {
 		monitor.beginTask("", 5); //$NON-NLS-1$
 		try {
 			IPluginModelBase[] workspacePlugins = PluginRegistry.getWorkspaceModels();
-			HashMap workspacePluginMap = new HashMap();
+			HashMap<String, ArrayList<IPluginModelBase>> workspacePluginMap = new HashMap<String, ArrayList<IPluginModelBase>>();
 			for (int i = 0; i < workspacePlugins.length; i++) {
 				IPluginModelBase plugin = workspacePlugins[i];
 				if (plugin.getBundleDescription() != null) {
 					String symbolicName = plugin.getBundleDescription().getSymbolicName();
-					ArrayList pluginsWithSameSymbolicName = (ArrayList) workspacePluginMap.get(symbolicName);
+					ArrayList<IPluginModelBase> pluginsWithSameSymbolicName = (ArrayList<IPluginModelBase>) workspacePluginMap.get(symbolicName);
 					if (pluginsWithSameSymbolicName == null) {
-						pluginsWithSameSymbolicName = new ArrayList();
+						pluginsWithSameSymbolicName = new ArrayList<IPluginModelBase>();
 						workspacePluginMap.put(symbolicName, pluginsWithSameSymbolicName);
 					}
 					pluginsWithSameSymbolicName.add(plugin);
@@ -293,13 +293,13 @@ public class PluginImportOperation extends WorkspaceJob {
 			}
 			monitor.worked(1);
 
-			final ArrayList conflictingPlugins = new ArrayList();
+			final ArrayList<IPluginModelBase> conflictingPlugins = new ArrayList<IPluginModelBase>();
 			for (int i = 0; i < fModels.length; i++) {
 				if (fModels[i].getBundleDescription() == null) {
 					continue;
 				}
 				String symbolicName = fModels[i].getBundleDescription().getSymbolicName();
-				ArrayList plugins = (ArrayList) workspacePluginMap.get(symbolicName);
+				ArrayList<IPluginModelBase> plugins = workspacePluginMap.get(symbolicName);
 				if (plugins == null || plugins.size() == 0) {
 					continue;
 				}
@@ -309,7 +309,7 @@ public class PluginImportOperation extends WorkspaceJob {
 			}
 			monitor.worked(1);
 
-			final ArrayList overwriteProjectList = new ArrayList();
+			final ArrayList<Object> overwriteProjectList = new ArrayList<Object>();
 			if (conflictingPlugins.size() > 0) {
 
 				UIJob job = new UIJob(PDEUIMessages.PluginImportOperation_OverwritePluginProjects) {
@@ -347,9 +347,9 @@ public class PluginImportOperation extends WorkspaceJob {
 						if (resource instanceof IProject) {
 							// TODO For now just list everything in the map
 							String id = ((IProject) resource).getName();
-							List workingSets = (List) fProjectWorkingSets.get(id);
+							List<IWorkingSet> workingSets = (List<IWorkingSet>) fProjectWorkingSets.get(id);
 							if (workingSets == null) {
-								workingSets = new ArrayList();
+								workingSets = new ArrayList<IWorkingSet>();
 								fProjectWorkingSets.put(id, workingSets);
 							}
 							workingSets.add(sets[i]);
@@ -391,7 +391,7 @@ public class PluginImportOperation extends WorkspaceJob {
 	private void setClasspaths(IProgressMonitor monitor) throws JavaModelException {
 		try {
 			monitor.beginTask("", fProjectClasspaths.size()); //$NON-NLS-1$
-			Enumeration keys = fProjectClasspaths.keys();
+			Enumeration<IProject> keys = fProjectClasspaths.keys();
 			while (keys.hasMoreElements()) {
 				IProject project = (IProject) keys.nextElement();
 				IClasspathEntry[] classpath = (IClasspathEntry[]) fProjectClasspaths.get(project);
@@ -437,7 +437,7 @@ public class PluginImportOperation extends WorkspaceJob {
 			}
 
 			// Perform the import
-			Map sourceMap = null;
+			Map<String, IPath> sourceMap = null;
 			if (importType == IMPORT_BINARY || isExempt(model, importType) || (importType == IMPORT_WITH_SOURCE && !canFindSource(model))) {
 				sourceMap = importAsBinary(project, model, new SubProgressMonitor(monitor, 4));
 			} else if (importType == IMPORT_BINARY_WITH_LINKS) {
@@ -464,7 +464,7 @@ public class PluginImportOperation extends WorkspaceJob {
 	 * @return a mapping of libraries to source locations to use in the classpath
 	 * @throws CoreException if there is a problem completing the import
 	 */
-	private Map importAsBinary(IProject project, IPluginModelBase model, IProgressMonitor monitor) throws CoreException {
+	private Map<String, IPath> importAsBinary(IProject project, IPluginModelBase model, IProgressMonitor monitor) throws CoreException {
 		try {
 			monitor.beginTask("", 4); //$NON-NLS-1$
 
@@ -477,7 +477,7 @@ public class PluginImportOperation extends WorkspaceJob {
 			}
 
 			// Import source from known source locations
-			Map sourceMap = importSourceArchives(project, model, IMPORT_BINARY, new SubProgressMonitor(monitor, 1));
+			Map<String, IPath> sourceMap = importSourceArchives(project, model, IMPORT_BINARY, new SubProgressMonitor(monitor, 1));
 
 			// Import additional source files such as schema files for easy access, see bug 139161
 			importAdditionalSourceFiles(project, model, new SubProgressMonitor(monitor, 1));
@@ -505,7 +505,7 @@ public class PluginImportOperation extends WorkspaceJob {
 	 * @return mapping of library name to path to source library (relative to project)
 	 * @throws CoreException if there is a problem completing the import
 	 */
-	private Map importAsBinaryWithLinks(IProject project, IPluginModelBase model, IProgressMonitor monitor) throws CoreException {
+	private Map<String, IPath> importAsBinaryWithLinks(IProject project, IPluginModelBase model, IProgressMonitor monitor) throws CoreException {
 		try {
 			monitor.beginTask("", 3); //$NON-NLS-1$
 
@@ -520,7 +520,7 @@ public class PluginImportOperation extends WorkspaceJob {
 			}
 
 			// Link source from known source locations
-			Map sourceMap = importSourceArchives(project, model, IMPORT_BINARY_WITH_LINKS, new SubProgressMonitor(monitor, 1));
+			Map<String, IPath> sourceMap = importSourceArchives(project, model, IMPORT_BINARY_WITH_LINKS, new SubProgressMonitor(monitor, 1));
 
 			// Import additional source files such as schema files for easy access, see bug 139161
 			importAdditionalSourceFiles(project, model, new SubProgressMonitor(monitor, 1));
@@ -553,7 +553,7 @@ public class PluginImportOperation extends WorkspaceJob {
 
 			// Extract the source, track build entries and package locations
 			WorkspaceBuildModel buildModel = new WorkspaceBuildModel(PDEProject.getBuildProperties(project));
-			Map packageLocations = new HashMap(); // maps package path to a src folder 
+			Map<IPath, IPath> packageLocations = new HashMap<IPath, IPath>(); // maps package path to a src folder 
 			boolean sourceFound = extractSourceFolders(project, model, buildModel, packageLocations, new SubProgressMonitor(monitor, 1));
 			// If no source was found previously, check if there was a source folder (src) inside the binary plug-in
 			if (!sourceFound) {
@@ -570,13 +570,13 @@ public class PluginImportOperation extends WorkspaceJob {
 				try {
 					zip = new ZipFile(new File(model.getInstallLocation()));
 					ZipFileStructureProvider provider = new ZipFileStructureProvider(zip);
-					Map collected = new HashMap();
+					Map<IPath, List<Object>> collected = new HashMap<IPath, List<Object>>();
 					PluginImportHelper.collectBinaryFiles(provider, provider.getRoot(), packageLocations, collected);
-					for (Iterator iterator = collected.keySet().iterator(); iterator.hasNext();) {
-						IPath currentDestination = (IPath) iterator.next();
+					for (Iterator<IPath> iterator = collected.keySet().iterator(); iterator.hasNext();) {
+						IPath currentDestination = iterator.next();
 						IPath destination = project.getFullPath();
 						destination = destination.append(currentDestination);
-						PluginImportHelper.importContent(provider.getRoot(), destination, provider, (List) collected.get(currentDestination), new NullProgressMonitor());
+						PluginImportHelper.importContent(provider.getRoot(), destination, provider, collected.get(currentDestination), new NullProgressMonitor());
 					}
 				} finally {
 					if (zip != null) {
@@ -585,14 +585,14 @@ public class PluginImportOperation extends WorkspaceJob {
 				}
 				monitor.worked(1);
 			} else {
-				Map collected = new HashMap();
+				Map<IPath, List<Object>> collected = new HashMap<IPath, List<Object>>();
 				File srcFile = new File(model.getInstallLocation());
 				PluginImportHelper.collectBinaryFiles(FileSystemStructureProvider.INSTANCE, srcFile, packageLocations, collected);
-				for (Iterator iterator = collected.keySet().iterator(); iterator.hasNext();) {
-					IPath currentDestination = (IPath) iterator.next();
+				for (Iterator<IPath> iterator = collected.keySet().iterator(); iterator.hasNext();) {
+					IPath currentDestination = iterator.next();
 					IPath destination = project.getFullPath();
 					destination = destination.append(currentDestination);
-					PluginImportHelper.importContent(srcFile, destination, FileSystemStructureProvider.INSTANCE, (List) collected.get(currentDestination), new NullProgressMonitor());
+					PluginImportHelper.importContent(srcFile, destination, FileSystemStructureProvider.INSTANCE, collected.get(currentDestination), new NullProgressMonitor());
 				}
 				monitor.worked(1);
 			}
@@ -653,10 +653,10 @@ public class PluginImportOperation extends WorkspaceJob {
 				project.open(monitor);
 
 			// If we know that a previous project of the same name belonged to one or more working sets, add the new project to them
-			List workingSets = (List) fProjectWorkingSets.get(project.getName());
+			List<IWorkingSet> workingSets = fProjectWorkingSets.get(project.getName());
 			if (workingSets != null) {
-				for (Iterator iterator = workingSets.iterator(); iterator.hasNext();) {
-					IWorkingSet ws = (IWorkingSet) iterator.next();
+				for (Iterator<IWorkingSet> iterator = workingSets.iterator(); iterator.hasNext();) {
+					IWorkingSet ws = iterator.next();
 					IAdaptable newElement = project;
 					IAdaptable[] projectAdaptables = ws.adaptElements(new IAdaptable[] {project});
 					if (projectAdaptables.length > 0) {
@@ -742,8 +742,10 @@ public class PluginImportOperation extends WorkspaceJob {
 				provider = FileSystemStructureProvider.INSTANCE;
 				root = new File(model.getInstallLocation());
 			}
+			@SuppressWarnings("rawtypes")
 			List children = provider.getChildren(root);
-			for (Iterator iterator = children.iterator(); iterator.hasNext();) {
+			for (@SuppressWarnings("rawtypes")
+			Iterator iterator = children.iterator(); iterator.hasNext();) {
 				String label = provider.getLabel(iterator.next());
 				if (label.equals(DEFAULT_SOURCE_DIR)) {
 					return true;
@@ -865,12 +867,12 @@ public class PluginImportOperation extends WorkspaceJob {
 	 * @return mapping of library name to the source location
 	 * @throws CoreException if there are problems importing an archive
 	 */
-	private Map importSourceArchives(IProject project, IPluginModelBase model, int mode, IProgressMonitor monitor) throws CoreException {
+	private Map<String, IPath> importSourceArchives(IProject project, IPluginModelBase model, int mode, IProgressMonitor monitor) throws CoreException {
 		String[] libraries = getLibraryNames(model);
 		try {
 			monitor.beginTask(PDEUIMessages.ImportWizard_operation_importingSource, libraries.length);
 
-			Map sourceMap = new HashMap(libraries.length);
+			Map<String, IPath> sourceMap = new HashMap<String, IPath>(libraries.length);
 			SourceLocationManager manager = getSourceManager(model);
 			if (manager != null) {
 				for (int i = 0; i < libraries.length; i++) {
@@ -911,7 +913,7 @@ public class PluginImportOperation extends WorkspaceJob {
 	 * @return whether a source location was found
 	 * @throws CoreException if there is a problem extracting the source or creating a build entry
 	 */
-	private boolean extractSourceFolders(IProject project, IPluginModelBase model, WorkspaceBuildModel buildModel, Map packageLocations, IProgressMonitor monitor) throws CoreException {
+	private boolean extractSourceFolders(IProject project, IPluginModelBase model, WorkspaceBuildModel buildModel, Map<IPath, IPath> packageLocations, IProgressMonitor monitor) throws CoreException {
 		try {
 			String[] libraries = getLibraryNames(model);
 			monitor.beginTask(PDEUIMessages.ImportWizard_operation_importingSource, libraries.length);
@@ -922,20 +924,20 @@ public class PluginImportOperation extends WorkspaceJob {
 				// Check if we have new style individual source bundles
 				if (manager.hasBundleManifestLocation(model.getPluginBase())) {
 					File srcFile = manager.findSourcePlugin(model.getPluginBase());
-					Set sourceRoots = manager.findSourceRoots(model.getPluginBase());
+					Set<String> sourceRoots = manager.findSourceRoots(model.getPluginBase());
 					for (int i = 0; i < libraries.length; i++) {
 						if (libraries[i].equals(DEFAULT_LIBRARY_NAME)) {
 							// Need to pull out any java source that is not in another source root
 							IResource destination = project.getFolder(DEFAULT_SOURCE_DIR);
 							if (!destination.exists()) {
-								List excludeFolders = new ArrayList(sourceRoots.size());
-								for (Iterator iterator = sourceRoots.iterator(); iterator.hasNext();) {
-									String root = (String) iterator.next();
+								List<IPath> excludeFolders = new ArrayList<IPath>(sourceRoots.size());
+								for (Iterator<String> iterator = sourceRoots.iterator(); iterator.hasNext();) {
+									String root = iterator.next();
 									if (!root.equals(DEFAULT_LIBRARY_NAME)) {
 										excludeFolders.add(new Path(root));
 									}
 								}
-								Set collectedPackages = new HashSet();
+								Set<IPath> collectedPackages = new HashSet<IPath>();
 								PluginImportHelper.extractJavaSourceFromArchive(srcFile, excludeFolders, destination.getFullPath(), collectedPackages, new SubProgressMonitor(monitor, 1));
 								addBuildEntry(buildModel, "source." + DEFAULT_LIBRARY_NAME, DEFAULT_SOURCE_DIR + "/"); //$NON-NLS-1$ //$NON-NLS-2$
 								addPackageEntries(collectedPackages, new Path(DEFAULT_SOURCE_DIR), packageLocations);
@@ -944,7 +946,7 @@ public class PluginImportOperation extends WorkspaceJob {
 						} else if (sourceRoots.contains(getSourceDirName(libraries[i]))) {
 							IPath sourceDir = new Path(getSourceDirName(libraries[i]));
 							if (!project.getFolder(sourceDir).exists()) {
-								Set collectedPackages = new HashSet();
+								Set<IPath> collectedPackages = new HashSet<IPath>();
 								PluginImportHelper.extractFolderFromArchive(srcFile, sourceDir, project.getFullPath(), collectedPackages, new SubProgressMonitor(monitor, 1));
 								addBuildEntry(buildModel, "source." + libraries[i], sourceDir.toString()); //$NON-NLS-1$
 								addPackageEntries(collectedPackages, sourceDir, packageLocations);
@@ -964,7 +966,7 @@ public class PluginImportOperation extends WorkspaceJob {
 						IPath dstPath = new Path(getSourceDirName(libraries[i]));
 						IResource destination = project.getFolder(dstPath);
 						if (!destination.exists()) {
-							Set collectedPackages = new HashSet();
+							Set<IPath> collectedPackages = new HashSet<IPath>();
 							PluginImportHelper.extractArchive(new File(srcPath.toOSString()), destination.getFullPath(), collectedPackages, new SubProgressMonitor(monitor, 1));
 							addBuildEntry(buildModel, "source." + libraries[i], dstPath.toString()); //$NON-NLS-1$
 							addPackageEntries(collectedPackages, dstPath, packageLocations);
@@ -993,7 +995,7 @@ public class PluginImportOperation extends WorkspaceJob {
 	 * @throws ZipException
 	 * @throws IOException
 	 */
-	private boolean handleInternalSource(IPluginModelBase model, WorkspaceBuildModel buildModel, Map packageLocations) throws CoreException, ZipException, IOException {
+	private boolean handleInternalSource(IPluginModelBase model, WorkspaceBuildModel buildModel, Map<IPath, IPath> packageLocations) throws CoreException, ZipException, IOException {
 		IImportStructureProvider provider;
 		Object root;
 		IPath prefixPath;
@@ -1012,10 +1014,10 @@ public class PluginImportOperation extends WorkspaceJob {
 				prefixPath = new Path(rootFile.getPath()).append(defaultSourcePath);
 			}
 
-			ArrayList collected = new ArrayList();
+			ArrayList<Object> collected = new ArrayList<Object>();
 			PluginImportHelper.collectResourcesFromFolder(provider, root, defaultSourcePath, collected);
 			if (collected.size() > 0) {
-				Set packages = new HashSet();
+				Set<IPath> packages = new HashSet<IPath>();
 				PluginImportHelper.collectJavaPackages(provider, collected, prefixPath, packages);
 				addPackageEntries(packages, defaultSourcePath, packageLocations);
 				addBuildEntry(buildModel, "source." + DEFAULT_LIBRARY_NAME, DEFAULT_SOURCE_DIR + "/"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -1039,9 +1041,9 @@ public class PluginImportOperation extends WorkspaceJob {
 	 * @param destination the destination directory that the packages belong to
 	 * @param packageLocations the map to add the entries to
 	 */
-	private void addPackageEntries(Set packages, IPath destination, Map packageLocations) {
-		for (Iterator iterator = packages.iterator(); iterator.hasNext();) {
-			IPath currentPackage = (IPath) iterator.next();
+	private void addPackageEntries(Set<IPath> packages, IPath destination, Map<IPath, IPath> packageLocations) {
+		for (Iterator<IPath> iterator = packages.iterator(); iterator.hasNext();) {
+			IPath currentPackage = iterator.next();
 			packageLocations.put(currentPackage, destination);
 
 			// Add package fragment locations
@@ -1072,7 +1074,7 @@ public class PluginImportOperation extends WorkspaceJob {
 					try {
 						zip = new ZipFile(sourceLocation);
 						ZipFileStructureProvider provider = new ZipFileStructureProvider(zip);
-						ArrayList collected = new ArrayList();
+						ArrayList<Object> collected = new ArrayList<Object>();
 						PluginImportHelper.collectNonJavaNonBuildFiles(provider, provider.getRoot(), collected);
 						PluginImportHelper.importContent(provider.getRoot(), project.getFullPath(), provider, collected, monitor);
 					} catch (IOException e) {
@@ -1087,7 +1089,7 @@ public class PluginImportOperation extends WorkspaceJob {
 						}
 					}
 				} else {
-					ArrayList collected = new ArrayList();
+					ArrayList<Object> collected = new ArrayList<Object>();
 					PluginImportHelper.collectNonJavaNonBuildFiles(FileSystemStructureProvider.INSTANCE, sourceLocation, collected);
 					PluginImportHelper.importContent(sourceLocation, project.getFullPath(), FileSystemStructureProvider.INSTANCE, collected, monitor);
 				}
@@ -1109,7 +1111,7 @@ public class PluginImportOperation extends WorkspaceJob {
 			try {
 				zip = new ZipFile(new File(model.getInstallLocation()));
 				ZipFileStructureProvider provider = new ZipFileStructureProvider(zip);
-				ArrayList collected = new ArrayList();
+				ArrayList<Object> collected = new ArrayList<Object>();
 				PluginImportHelper.collectRequiredBundleFiles(provider, provider.getRoot(), collected);
 				PluginImportHelper.importContent(provider.getRoot(), project.getFullPath(), provider, collected, monitor);
 			} catch (IOException e) {
@@ -1124,7 +1126,7 @@ public class PluginImportOperation extends WorkspaceJob {
 				}
 			}
 		} else {
-			ArrayList collected = new ArrayList();
+			ArrayList<Object> collected = new ArrayList<Object>();
 			File file = new File(model.getInstallLocation());
 			PluginImportHelper.collectRequiredBundleFiles(FileSystemStructureProvider.INSTANCE, file, collected);
 			PluginImportHelper.importContent(file, project.getFullPath(), FileSystemStructureProvider.INSTANCE, collected, monitor);
@@ -1146,7 +1148,7 @@ public class PluginImportOperation extends WorkspaceJob {
 	private void configureBinIncludes(WorkspaceBuildModel buildModel, IPluginModelBase model, IProject project) throws CoreException {
 		IBuild build = buildModel.getBuild(true);
 		IBuildEntry entry = build.getEntry("bin.includes"); //$NON-NLS-1$
-		HashMap libraryDirs = getSourceDirectories(build);
+		HashMap<String, String> libraryDirs = getSourceDirectories(build);
 		if (entry == null) {
 			entry = buildModel.getFactory().createEntry("bin.includes"); //$NON-NLS-1$
 			File location = new File(model.getInstallLocation());
@@ -1178,8 +1180,8 @@ public class PluginImportOperation extends WorkspaceJob {
 		}
 	}
 
-	private HashMap getSourceDirectories(IBuild build) {
-		HashMap set = new HashMap();
+	private HashMap<String, String> getSourceDirectories(IBuild build) {
+		HashMap<String, String> set = new HashMap<String, String>();
 		IBuildEntry[] entries = build.getBuildEntries();
 		for (int i = 0; i < entries.length; i++) {
 			String name = entries[i].getName();
@@ -1253,7 +1255,7 @@ public class PluginImportOperation extends WorkspaceJob {
 			buildModel.load();
 			IBuild build = buildModel.getBuild();
 			if (build != null) {
-				IBuildEntry buildEntry = build == null ? null : build.getEntry("source.."); //$NON-NLS-1$
+				IBuildEntry buildEntry = build.getEntry("source.."); //$NON-NLS-1$
 				if (buildEntry != null) {
 					return true;
 				}
@@ -1285,13 +1287,13 @@ public class PluginImportOperation extends WorkspaceJob {
 	 */
 	private String[] getLibraryNames(IPluginModelBase model) {
 		IPluginLibrary[] libraries = model.getPluginBase().getLibraries();
-		ArrayList list = new ArrayList();
+		ArrayList<String> list = new ArrayList<String>();
 		for (int i = 0; i < libraries.length; i++) {
 			list.add(ClasspathUtilCore.expandLibraryName(libraries[i].getName()));
 		}
 		if (libraries.length == 0 && isJARd(model))
 			list.add(DEFAULT_LIBRARY_NAME);
-		return (String[]) list.toArray(new String[list.size()]);
+		return list.toArray(new String[list.size()]);
 	}
 
 	/**
@@ -1320,7 +1322,7 @@ public class PluginImportOperation extends WorkspaceJob {
 	 * 
 	 * @param descriptions map of {@link IBundleImporter} to arrays of {@link BundleImportDescription}.
 	 */
-	public void setImportDescriptions(Map descriptions) {
+	public void setImportDescriptions(Map<IBundleImporter, ScmUrlImportDescription[]> descriptions) {
 		fImportDescriptions = descriptions;
 	}
 

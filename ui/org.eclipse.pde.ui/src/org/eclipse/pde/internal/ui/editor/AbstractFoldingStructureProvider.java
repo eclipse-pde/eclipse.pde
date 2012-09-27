@@ -34,7 +34,7 @@ public abstract class AbstractFoldingStructureProvider implements IFoldingStruct
 		if (annotationModel == null)
 			return;
 
-		Set currentRegions = new HashSet();
+		Set<Position> currentRegions = new HashSet<Position>();
 		try {
 			addFoldingRegions(currentRegions, fModel);
 			updateFoldingRegions(annotationModel, currentRegions);
@@ -42,11 +42,11 @@ public abstract class AbstractFoldingStructureProvider implements IFoldingStruct
 		}
 	}
 
-	public void updateFoldingRegions(ProjectionAnnotationModel model, Set currentRegions) {
+	public void updateFoldingRegions(ProjectionAnnotationModel model, Set<?> currentRegions) {
 		Annotation[] deletions = computeDifferences(model, currentRegions);
 
-		Map additionsMap = new HashMap();
-		for (Iterator iter = currentRegions.iterator(); iter.hasNext();) {
+		Map<ProjectionAnnotation, Object> additionsMap = new HashMap<ProjectionAnnotation, Object>();
+		for (Iterator<?> iter = currentRegions.iterator(); iter.hasNext();) {
 			Object position = iter.next();
 			additionsMap.put(new ProjectionAnnotation(false), position);
 		}
@@ -56,9 +56,9 @@ public abstract class AbstractFoldingStructureProvider implements IFoldingStruct
 		}
 	}
 
-	private Annotation[] computeDifferences(ProjectionAnnotationModel model, Set additions) {
-		List deletions = new ArrayList();
-		for (Iterator iter = model.getAnnotationIterator(); iter.hasNext();) {
+	private Annotation[] computeDifferences(ProjectionAnnotationModel model, Set<?> additions) {
+		List<Object> deletions = new ArrayList<Object>();
+		for (Iterator<?> iter = model.getAnnotationIterator(); iter.hasNext();) {
 			Object annotation = iter.next();
 			if (annotation instanceof ProjectionAnnotation) {
 				Position position = model.getPosition((Annotation) annotation);
@@ -69,7 +69,7 @@ public abstract class AbstractFoldingStructureProvider implements IFoldingStruct
 				}
 			}
 		}
-		return (Annotation[]) deletions.toArray(new Annotation[deletions.size()]);
+		return deletions.toArray(new Annotation[deletions.size()]);
 	}
 
 	public void initialize() {

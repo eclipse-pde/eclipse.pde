@@ -71,8 +71,8 @@ public class NewPluginTemplateChoiceWizard extends AbstractNewPluginTemplateWiza
 	}
 
 	private void createCandidates() {
-		ArrayList candidates;
-		candidates = new ArrayList();
+		ArrayList<Object> candidates;
+		candidates = new ArrayList<Object>();
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IConfigurationElement[] elements = registry.getConfigurationElementsFor(PDEPlugin.getPluginId(), "templates"); //$NON-NLS-1$
 		for (int i = 0; i < elements.length; i++) {
@@ -82,7 +82,7 @@ public class NewPluginTemplateChoiceWizard extends AbstractNewPluginTemplateWiza
 		fCandidates = (ITemplateSection[]) candidates.toArray(new ITemplateSection[candidates.size()]);
 	}
 
-	private void addTemplate(IConfigurationElement config, ArrayList result) {
+	private void addTemplate(IConfigurationElement config, ArrayList<Object> result) {
 		if (config.getName().equalsIgnoreCase("template") == false) //$NON-NLS-1$
 			return;
 

@@ -30,7 +30,7 @@ public class FileRenameParticipant extends PDERenameParticipant {
 				IPath path = ((IFile) element).getProjectRelativePath().removeLastSegments(1);
 				String newName = path.append(getArguments().getNewName()).toString();
 				fProject = project;
-				fElements = new HashMap();
+				fElements = new HashMap<Object, String>();
 				fElements.put(element, newName);
 				return true;
 			}

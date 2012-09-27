@@ -46,7 +46,7 @@ public class CopyToClipboardAction extends Action {
 	private boolean canCopy(IStructuredSelection selection) {
 		if (selection.isEmpty())
 			return false;
-		for (Iterator iter = selection.iterator(); iter.hasNext();) {
+		for (Iterator<?> iter = selection.iterator(); iter.hasNext();) {
 			Object obj = iter.next();
 			if (!(obj instanceof FileAdapter))
 				return false;
@@ -57,8 +57,8 @@ public class CopyToClipboardAction extends Action {
 	public void run() {
 		if (selection.isEmpty())
 			return;
-		ArrayList files = new ArrayList();
-		for (Iterator iter = selection.iterator(); iter.hasNext();) {
+		ArrayList<Object> files = new ArrayList<Object>();
+		for (Iterator<?> iter = selection.iterator(); iter.hasNext();) {
 			Object obj = iter.next();
 			if (obj instanceof FileAdapter)
 				files.add(obj);
@@ -66,7 +66,7 @@ public class CopyToClipboardAction extends Action {
 		doCopy(files);
 	}
 
-	private void doCopy(ArrayList files) {
+	private void doCopy(ArrayList<Object> files) {
 		// Get the file names and a string representation
 		int len = files.size();
 		String[] fileNames = new String[len];

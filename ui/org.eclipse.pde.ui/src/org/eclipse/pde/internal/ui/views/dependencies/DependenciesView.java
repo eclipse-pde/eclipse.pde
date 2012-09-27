@@ -41,6 +41,7 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 		public void dispose() {/* dummy */
 		}
 
+		@SuppressWarnings("rawtypes")
 		public Object getAdapter(Class adapter) {
 			return null;
 		}
@@ -186,8 +187,8 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 
 	private static final DependencyLoop[] NO_LOOPS = new DependencyLoop[0];
 
-	private Map fPagesToParts;
-	private Map fPartsToPages;
+	private Map<IPageBookViewPage, IWorkbenchPart> fPagesToParts;
+	private Map<IWorkbenchPart, IPageBookViewPage> fPartsToPages;
 
 	private Object fInput;
 
@@ -200,7 +201,7 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 	private ShowLoopsAction fShowLoops;
 
 	// history of input elements (as Strings). No duplicates
-	private ArrayList fInputHistory;
+	private ArrayList<String> fInputHistory;
 
 	private DependencyLoop[] fLoops;
 
@@ -213,9 +214,9 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 	 */
 	public DependenciesView() {
 		super();
-		fPartsToPages = new HashMap(4);
-		fPagesToParts = new HashMap(4);
-		fInputHistory = new ArrayList();
+		fPartsToPages = new HashMap<IWorkbenchPart, IPageBookViewPage>(4);
+		fPagesToParts = new HashMap<IPageBookViewPage, IWorkbenchPart>(4);
+		fInputHistory = new ArrayList<String>();
 		fLoops = NO_LOOPS;
 	}
 

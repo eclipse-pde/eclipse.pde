@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+
 import java.util.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -347,7 +349,7 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 	private void handleAddRequired() {
 		FeatureModelManager manager = PDECore.getDefault().getFeatureModelManager();
 		IProductFeature[] currentFeatures = getProduct().getFeatures();
-		Set requiredFeatures = new HashSet();
+		Set<String> requiredFeatures = new HashSet<String>();
 		for (int i = 0; i < currentFeatures.length; i++) {
 			IFeatureModel model = manager.findFeatureModel(currentFeatures[i].getId(), currentFeatures[i].getVersion());
 			if (model != null) {
@@ -356,7 +358,7 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 			}
 		}
 
-		for (Iterator iterator = requiredFeatures.iterator(); iterator.hasNext();) {
+		for (Iterator<String> iterator = requiredFeatures.iterator(); iterator.hasNext();) {
 			String id = (String) iterator.next();
 			// Do not add features that already exist
 			if (!getProduct().containsFeature(id)) {
@@ -365,7 +367,7 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 		}
 	}
 
-	private void getFeatureDependencies(IFeatureModel model, Set requiredFeatures) {
+	private void getFeatureDependencies(IFeatureModel model, Set<String> requiredFeatures) {
 		FeatureModelManager manager = PDECore.getDefault().getFeatureModelManager();
 		IFeature feature = model.getFeature();
 		IFeatureImport[] featureImports = feature.getImports();
@@ -396,7 +398,7 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 	private IFeatureModel[] getAvailableChoices() {
 		IFeatureModel[] models = PDECore.getDefault().getFeatureModelManager().getModels();
 		IProduct product = getProduct();
-		ArrayList list = new ArrayList();
+		ArrayList<IFeatureModel> list = new ArrayList<IFeatureModel>();
 		for (int i = 0; i < models.length; i++) {
 			String id = models[i].getFeature().getId();
 			if (id != null && !product.containsFeature(id)) {

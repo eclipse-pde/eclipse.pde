@@ -36,9 +36,9 @@ public class AddNewBinaryDependenciesOperation extends AddNewDependenciesOperati
 		fClassFiles = classFiles;
 	}
 
-	protected void findSecondaryDependencies(String[] secDeps, Set ignorePkgs, Map additionalDeps, IBundle bundle, boolean useRequireBundle, IProgressMonitor monitor) {
+	protected void findSecondaryDependencies(String[] secDeps, Set<String> ignorePkgs, Map<ExportPackageDescription, String> additionalDeps, IBundle bundle, boolean useRequireBundle, IProgressMonitor monitor) {
 		monitor.beginTask(PDEUIMessages.AddNewDependenciesOperation_searchProject, 100);
-		Set projectPkgs = PackageFinder.findPackagesInClassFiles(fClassFiles, new SubProgressMonitor(monitor, 75));
+		Set<?> projectPkgs = PackageFinder.findPackagesInClassFiles(fClassFiles, new SubProgressMonitor(monitor, 75));
 		PluginModelManager manager = PDECore.getDefault().getModelManager();
 		IProgressMonitor searchMonitor = new SubProgressMonitor(monitor, 25);
 		searchMonitor.beginTask("", secDeps.length); //$NON-NLS-1$

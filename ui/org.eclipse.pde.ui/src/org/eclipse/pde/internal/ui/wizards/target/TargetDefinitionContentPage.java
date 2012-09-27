@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.target;
 
+import org.eclipse.pde.core.target.NameVersionDescriptor;
+
 import org.eclipse.pde.core.target.*;
 
 import java.lang.reflect.InvocationTargetException;
@@ -65,10 +67,10 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 	private Combo fNLCombo;
 
 	// Choices for each pull-down
-	private TreeSet fNLChoices;
-	private TreeSet fOSChoices;
-	private TreeSet fWSChoices;
-	private TreeSet fArchChoices;
+	private TreeSet<String> fNLChoices;
+	private TreeSet<String> fOSChoices;
+	private TreeSet<String> fWSChoices;
+	private TreeSet<String> fArchChoices;
 
 	// JRE section
 	private Button fDefaultJREButton;
@@ -76,7 +78,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 	private Button fExecEnvButton;
 	private Combo fNamedJREsCombo;
 	private Combo fExecEnvsCombo;
-	private TreeSet fExecEnvChoices;
+	private TreeSet<String> fExecEnvChoices;
 
 	// argument controls
 	private Text fProgramArgs;
@@ -399,7 +401,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 	* @param set
 	* @param preference
 	*/
-	private void addExtraChoices(Set set, String preference) {
+	private void addExtraChoices(Set<String> set, String preference) {
 		StringTokenizer tokenizer = new StringTokenizer(preference, ","); //$NON-NLS-1$
 		while (tokenizer.hasMoreTokens()) {
 			set.add(tokenizer.nextToken().trim());
@@ -412,7 +414,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 	private void initializeChoices() {
 		IEclipsePreferences node = new InstanceScope().getNode(PDECore.PLUGIN_ID);
 
-		fOSChoices = new TreeSet();
+		fOSChoices = new TreeSet<String>();
 		String[] os = Platform.knownOSValues();
 		for (int i = 0; i < os.length; i++) {
 			fOSChoices.add(os[i]);
@@ -422,7 +424,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 			addExtraChoices(fOSChoices, pref);
 		}
 
-		fWSChoices = new TreeSet();
+		fWSChoices = new TreeSet<String>();
 		String[] ws = Platform.knownWSValues();
 		for (int i = 0; i < ws.length; i++) {
 			fWSChoices.add(ws[i]);
@@ -432,7 +434,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 			addExtraChoices(fWSChoices, pref);
 		}
 
-		fArchChoices = new TreeSet();
+		fArchChoices = new TreeSet<String>();
 		String[] arch = Platform.knownOSArchValues();
 		for (int i = 0; i < arch.length; i++) {
 			fArchChoices.add(arch[i]);
@@ -442,7 +444,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 			addExtraChoices(fArchChoices, pref);
 		}
 
-		fNLChoices = new TreeSet();
+		fNLChoices = new TreeSet<String>();
 		String[] nl = LocaleUtil.getLocales();
 		for (int i = 0; i < nl.length; i++) {
 			fNLChoices.add(nl[i]);
@@ -504,7 +506,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 	 * Initializes the combo with possible execution environments
 	 */
 	protected void initializeJREValues() {
-		fExecEnvChoices = new TreeSet();
+		fExecEnvChoices = new TreeSet<String>();
 		IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
 		IExecutionEnvironment[] envs = manager.getExecutionEnvironments();
 		for (int i = 0; i < envs.length; i++)
@@ -710,12 +712,12 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		if (dialog.open() == Window.OK) {
 
 			Object[] models = dialog.getResult();
-			ArrayList pluginsToAdd = new ArrayList();
+			ArrayList<NameVersionDescriptor> pluginsToAdd = new ArrayList<NameVersionDescriptor>();
 			for (int i = 0; i < models.length; i++) {
 				BundleInfo desc = ((BundleInfo) models[i]);
 				pluginsToAdd.add(new NameVersionDescriptor(desc.getSymbolicName(), null));
 			}
-			Set allDependencies = new HashSet();
+			Set<NameVersionDescriptor> allDependencies = new HashSet<NameVersionDescriptor>();
 			allDependencies.addAll(pluginsToAdd);
 			NameVersionDescriptor[] currentBundles = getTargetDefinition().getImplicitDependencies();
 			if (currentBundles != null) {
@@ -733,7 +735,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 	 */
 	protected BundleInfo[] getValidBundles() throws CoreException {
 		NameVersionDescriptor[] current = getTargetDefinition().getImplicitDependencies();
-		Set currentBundles = new HashSet();
+		Set<String> currentBundles = new HashSet<String>();
 		if (current != null) {
 			for (int i = 0; i < current.length; i++) {
 				if (!currentBundles.contains(current[i].getId())) {
@@ -742,7 +744,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 			}
 		}
 
-		List targetBundles = new ArrayList();
+		List<BundleInfo> targetBundles = new ArrayList<BundleInfo>();
 		TargetBundle[] allTargetBundles = getTargetDefinition().getAllBundles();
 		if (allTargetBundles == null || allTargetBundles.length == 0) {
 			throw new CoreException(new Status(IStatus.WARNING, PDEPlugin.getPluginId(), PDEUIMessages.ImplicitDependenciesSection_0));
@@ -759,7 +761,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 	}
 
 	private void handleRemove() {
-		LinkedList bundles = new LinkedList();
+		LinkedList<NameVersionDescriptor> bundles = new LinkedList<NameVersionDescriptor>();
 		bundles.addAll(Arrays.asList(getTargetDefinition().getImplicitDependencies()));
 		Object[] removeBundles = ((IStructuredSelection) fElementViewer.getSelection()).toArray();
 		if (removeBundles.length > 0) {

@@ -44,7 +44,7 @@ public class UpdateClasspathAction extends AbstractHandler {
 		ISelection selection = HandlerUtil.getCurrentSelection(event);
 		if (selection instanceof IStructuredSelection) {
 			Object[] elems = ((IStructuredSelection) selection).toArray();
-			ArrayList models = new ArrayList(elems.length);
+			ArrayList<IPluginModelBase> models = new ArrayList<IPluginModelBase>(elems.length);
 			for (int i = 0; i < elems.length; i++) {
 				Object elem = elems[i];
 				IProject project = null;
@@ -84,7 +84,7 @@ public class UpdateClasspathAction extends AbstractHandler {
 
 	private IPluginModelBase[] getModelsToUpdate() {
 		IPluginModelBase[] models = PluginRegistry.getWorkspaceModels();
-		ArrayList modelArray = new ArrayList();
+		ArrayList<IPluginModelBase> modelArray = new ArrayList<IPluginModelBase>();
 		try {
 			for (int i = 0; i < models.length; i++) {
 				if (models[i].getUnderlyingResource().getProject().hasNature(JavaCore.NATURE_ID))

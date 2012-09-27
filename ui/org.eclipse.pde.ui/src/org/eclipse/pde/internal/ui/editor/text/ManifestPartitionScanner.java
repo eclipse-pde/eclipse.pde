@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.text;
 
+import org.eclipse.jface.text.rules.SingleLineRule;
+
 import java.util.ArrayList;
 import org.eclipse.jface.text.rules.*;
 
@@ -24,7 +26,7 @@ public class ManifestPartitionScanner extends RuleBasedPartitionScanner {
 	public ManifestPartitionScanner() {
 
 		Token value = new Token(MANIFEST_HEADER_VALUE);
-		ArrayList rules = new ArrayList();
+		ArrayList<SingleLineRule> rules = new ArrayList<SingleLineRule>();
 		rules.add(new SingleLineRule("=", null, value, '\\', true, true)); //$NON-NLS-1$
 		rules.add(new SingleLineRule(":", null, value, '\\', true, true)); //$NON-NLS-1$
 		rules.add(new SingleLineRule(" ", null, value, '\\', true, true)); //$NON-NLS-1$

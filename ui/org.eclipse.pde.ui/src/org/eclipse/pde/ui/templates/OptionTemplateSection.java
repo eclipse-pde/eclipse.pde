@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.templates;
 
+import org.eclipse.pde.ui.templates.OptionTemplateSection.TemplatePage;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -40,14 +42,14 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
  * @since 2.0
  */
 public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
-	private ArrayList pages = new ArrayList();
+	private ArrayList<TemplatePage> pages = new ArrayList<TemplatePage>();
 
 	private static class TemplatePage {
 		WizardPage page;
-		ArrayList options;
+		ArrayList<TemplateOption> options;
 
 		public TemplatePage() {
-			options = new ArrayList();
+			options = new ArrayList<TemplateOption>();
 		}
 	}
 
@@ -292,7 +294,7 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 		WizardPage page = null;
 		for (int i = 0; i < pages.size(); i++) {
 			TemplatePage tpage = (TemplatePage) pages.get(i);
-			ArrayList list = tpage.options;
+			ArrayList<TemplateOption> list = tpage.options;
 			if (list.contains(option)) {
 				page = tpage.page;
 				break;

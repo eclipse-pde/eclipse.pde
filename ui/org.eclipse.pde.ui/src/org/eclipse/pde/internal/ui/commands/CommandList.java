@@ -39,7 +39,7 @@ import org.eclipse.ui.forms.widgets.*;
 public class CommandList {
 
 	protected class CommandTreeLabelProvider extends LabelProvider {
-		private HashMap fImgMap = new HashMap();
+		private HashMap<Object, Image> fImgMap = new HashMap<Object, Image>();
 		private Image fDefaultImage;
 
 		public String getText(Object element) {
@@ -74,7 +74,7 @@ public class CommandList {
 		}
 
 		public void dispose() {
-			for (Iterator i = fImgMap.keySet().iterator(); i.hasNext();)
+			for (Iterator<Object> i = fImgMap.keySet().iterator(); i.hasNext();)
 				((Image) fImgMap.get(i.next())).dispose();
 			if (fDefaultImage != null)
 				fDefaultImage.dispose();

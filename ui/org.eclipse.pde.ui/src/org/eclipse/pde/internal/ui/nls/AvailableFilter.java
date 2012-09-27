@@ -19,10 +19,10 @@ import org.eclipse.pde.internal.core.util.PatternConstructor;
 public class AvailableFilter extends ViewerFilter {
 	public static final String WILDCARD = "*"; //$NON-NLS-1$
 	private Pattern fPattern;
-	private final Map selected;
+	private final Map<?, ?> selected;
 	private final ILabelProvider labelProvider;
 
-	public AvailableFilter(Map selected, ILabelProvider labelProvider) {
+	public AvailableFilter(Map<?, ?> selected, ILabelProvider labelProvider) {
 		setPattern(WILDCARD);
 		this.selected = selected;
 		this.labelProvider = labelProvider;

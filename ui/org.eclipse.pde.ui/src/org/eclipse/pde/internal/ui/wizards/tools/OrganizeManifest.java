@@ -89,7 +89,7 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 
 		IPackageFragmentRoot[] roots = ManifestUtils.findPackageFragmentRoots(bundleClasspathheader, project);
 		// Running list of packages in the project
-		Set packages = new HashSet();
+		Set<String> packages = new HashSet<String>();
 		for (int i = 0; i < roots.length; i++) {
 			try {
 				if (ManifestUtils.isImmediateRoot(roots[i])) {
@@ -144,7 +144,7 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 		if (header == null)
 			return;
 		ImportPackageObject[] importedPackages = header.getPackages();
-		Set availablePackages = getAvailableExportedPackages();
+		Set<String> availablePackages = getAvailableExportedPackages();
 		// get Preference
 		for (int i = 0; i < importedPackages.length; i++) {
 			String pkgName = importedPackages[i].getName();
@@ -158,10 +158,10 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 		}
 	}
 
-	private static final Set getAvailableExportedPackages() {
+	private static final Set<String> getAvailableExportedPackages() {
 		State state = TargetPlatformHelper.getState();
 		ExportPackageDescription[] packages = state.getExportedPackages();
-		Set set = new HashSet();
+		Set<String> set = new HashSet<String>();
 		for (int i = 0; i < packages.length; i++) {
 			set.add(packages[i].getName());
 		}
@@ -208,12 +208,12 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 
 				IBuild build = ((IBuildModel) model).getBuild();
 				IBuildEntry[] entries = build.getBuildEntries();
-				ArrayList allKeys = new ArrayList(entries.length);
+				ArrayList<String> allKeys = new ArrayList<String>(entries.length);
 				for (int i = 0; i < entries.length; i++)
 					if (!allKeys.contains(entries[i].getName()))
 						allKeys.add(entries[i].getName());
 
-				ArrayList usedkeys = new ArrayList();
+				ArrayList<String> usedkeys = new ArrayList<String>();
 				findTranslatedStrings(project, modelBase, bundle, usedkeys);
 
 				for (int i = 0; i < usedkeys.size(); i++)
@@ -251,7 +251,7 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 		}, null);
 	}
 
-	private static void findTranslatedStrings(IProject project, IPluginModelBase pluginModel, IBundle bundle, ArrayList list) {
+	private static void findTranslatedStrings(IProject project, IPluginModelBase pluginModel, IBundle bundle, ArrayList<String> list) {
 
 		findTranslatedXMLStrings(pluginModel, list);
 		findTranslatedMFStrings(bundle, list);
@@ -319,7 +319,7 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 		return null;
 	}
 
-	private static void findTranslatedXMLStrings(IPluginModelBase model, ArrayList list) {
+	private static void findTranslatedXMLStrings(IPluginModelBase model, ArrayList<String> list) {
 		if (model == null)
 			return;
 
@@ -335,7 +335,7 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 				inspectElementForTranslation((IDocumentElementNode) extensions[i], list);
 	}
 
-	private static void inspectElementForTranslation(IDocumentElementNode parent, ArrayList list) {
+	private static void inspectElementForTranslation(IDocumentElementNode parent, ArrayList<String> list) {
 		IDocumentTextNode text = parent.getTextNode();
 		String textValue = getTranslatedKey(text != null ? text.getText() : null);
 		if (textValue != null && !list.contains(textValue))
@@ -357,7 +357,7 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 				inspectElementForTranslation((IDocumentElementNode) children[i], list);
 	}
 
-	private static void findTranslatedMFStrings(IBundle bundle, ArrayList list) {
+	private static void findTranslatedMFStrings(IBundle bundle, ArrayList<String> list) {
 		if (bundle == null)
 			return;
 		for (int i = 0; i < ICoreConstants.TRANSLATABLE_HEADERS.length; i++) {

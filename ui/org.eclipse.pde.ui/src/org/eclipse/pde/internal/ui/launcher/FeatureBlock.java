@@ -10,6 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+import org.eclipse.pde.internal.ui.launcher.FeatureBlock.FeatureLaunchModel;
+import org.eclipse.pde.internal.ui.launcher.FeatureBlock.PluginLaunchModel;
+
 import java.util.*;
 import java.util.List;
 import org.eclipse.core.runtime.*;
@@ -213,8 +219,8 @@ public class FeatureBlock {
 		}
 
 		private void handleSelectFeatures() {
-			ArrayList featureModels = new ArrayList();
-			for (Iterator iterator = fFeatureModels.values().iterator(); iterator.hasNext();) {
+			ArrayList<IFeatureModel> featureModels = new ArrayList<IFeatureModel>();
+			for (Iterator<FeatureLaunchModel> iterator = fFeatureModels.values().iterator(); iterator.hasNext();) {
 				FeatureLaunchModel featureLaunchModel = (FeatureLaunchModel) iterator.next();
 				if (!fTree.getChecked(featureLaunchModel)) {
 					featureModels.add(featureLaunchModel.getModel(true));
@@ -257,7 +263,7 @@ public class FeatureBlock {
 			int index = fAdditionalPlugins.indexOf(selection.getFirstElement());
 			fAdditionalPlugins.removeAll(selection.toList());
 			fTree.remove(selection.toArray());
-			List input = (List) fTree.getInput();
+			List<?> input = (List<?>) fTree.getInput();
 			input.removeAll(selection.toList());
 			if (fAdditionalPlugins.size() == 0) {
 				fTree.remove(fAdditionalPluginsParentElement);
@@ -276,13 +282,13 @@ public class FeatureBlock {
 			if (dialog.open() == Window.OK) {
 
 				Object[] models = dialog.getResult();
-				ArrayList modelList = new ArrayList(models.length);
+				ArrayList<PluginLaunchModel> modelList = new ArrayList<PluginLaunchModel>(models.length);
 				for (int i = 0; i < models.length; i++) {
 					PluginLaunchModel pluginLaunchModel = new PluginLaunchModel((IPluginModelBase) models[i], IPDELauncherConstants.LOCATION_DEFAULT);
 					modelList.add(pluginLaunchModel);
 				}
 
-				List input = (List) fTree.getInput();
+				List<NamedElement> input = (List<NamedElement>) fTree.getInput();
 				if (!input.contains(fAdditionalPluginsParentElement)) {
 					input.add(fAdditionalPluginsParentElement);
 				}
@@ -291,7 +297,7 @@ public class FeatureBlock {
 				fTree.getControl().setRedraw(false);
 				fTree.removeFilter(fSelectedOnlyFilter);
 				fTree.refresh();
-				for (Iterator iterator = modelList.iterator(); iterator.hasNext();) {
+				for (Iterator<PluginLaunchModel> iterator = modelList.iterator(); iterator.hasNext();) {
 					fTree.setChecked(iterator.next(), true);
 				}
 				fTree.setSelection(new StructuredSelection(modelList.get(modelList.size() - 1)), true);
@@ -310,12 +316,12 @@ public class FeatureBlock {
 			if (fAdditionalPlugins.isEmpty()) {
 				return plugins;
 			}
-			Set additionalPlugins = new HashSet();
-			for (Iterator iterator = fAdditionalPlugins.iterator(); iterator.hasNext();) {
+			Set<IPluginModelBase> additionalPlugins = new HashSet<IPluginModelBase>();
+			for (Iterator<PluginLaunchModel> iterator = fAdditionalPlugins.iterator(); iterator.hasNext();) {
 				PluginLaunchModel model = (PluginLaunchModel) iterator.next();
 				additionalPlugins.add(model.getPluginModelBase());
 			}
-			List result = new ArrayList();
+			List<IPluginModelBase> result = new ArrayList<IPluginModelBase>();
 			for (int i = 0; i < plugins.length; i++) {
 				if (!additionalPlugins.contains(plugins[i])) {
 					result.add(plugins[i]);
@@ -354,7 +360,7 @@ public class FeatureBlock {
 				if (fOperation.getInput().size() > 0)
 					fDialog.refresh(fOperation.getInput());
 				else {
-					Map input = new HashMap(1);
+					Map<String, IStatus> input = new HashMap<String, IStatus>(1);
 					input.put(PDEUIMessages.AbstractLauncherToolbar_noProblems, Status.OK_STATUS);
 					fDialog.refresh(input);
 				}
@@ -374,7 +380,7 @@ public class FeatureBlock {
 		private void handleAddRequired() {
 			if (fTree.getCheckedElements() != null && fTree.getCheckedElements().length > 0) {
 				Object[] features = fTree.getCheckedElements();
-				Set requiredFeatureIDs = new HashSet();
+				Set<String> requiredFeatureIDs = new HashSet<String>();
 				for (int i = 0; i < features.length; i++) {
 					if (features[i] instanceof FeatureLaunchModel) {
 						requiredFeatureIDs.add(((FeatureLaunchModel) features[i]).getId());
@@ -384,7 +390,7 @@ public class FeatureBlock {
 
 				fTree.getControl().setRedraw(false);
 				fTree.removeFilter(fSelectedOnlyFilter);
-				for (Iterator iterator = requiredFeatureIDs.iterator(); iterator.hasNext();) {
+				for (Iterator<String> iterator = requiredFeatureIDs.iterator(); iterator.hasNext();) {
 					Object featureModel = fFeatureModels.get(iterator.next());
 					if (featureModel != null) {
 						fTree.setChecked(featureModel, true);
@@ -398,7 +404,7 @@ public class FeatureBlock {
 			}
 		}
 
-		private void getFeatureDependencies(IFeatureModel model, Set requiredFeatureIDs) {
+		private void getFeatureDependencies(IFeatureModel model, Set<String> requiredFeatureIDs) {
 			IFeature feature = model.getFeature();
 			IFeatureImport[] featureImports = feature.getImports();
 			for (int i = 0; i < featureImports.length; i++) {
@@ -413,7 +419,7 @@ public class FeatureBlock {
 			}
 		}
 
-		private void addFeature(Set requiredFeatureIDs, String id) {
+		private void addFeature(Set<String> requiredFeatureIDs, String id) {
 			if (!requiredFeatureIDs.contains(id)) {
 				FeatureLaunchModel model = (FeatureLaunchModel) fFeatureModels.get(id);
 				if (model != null) {
@@ -447,13 +453,13 @@ public class FeatureBlock {
 			fWorkspacePluginButton.setSelection(true);
 			fExternalPluginButton.setSelection(false);
 
-			List input = (List) fTree.getInput();
+			List<?> input = (List<?>) fTree.getInput();
 			input.removeAll(fAdditionalPlugins);
 			input.remove(fAdditionalPluginsParentElement);
 			fAdditionalPlugins.clear();
 
 			fRemovePluginButton.setEnabled(false);
-			for (Iterator iterator = fFeatureModels.values().iterator(); iterator.hasNext();) {
+			for (Iterator<FeatureLaunchModel> iterator = fFeatureModels.values().iterator(); iterator.hasNext();) {
 				FeatureLaunchModel model = (FeatureLaunchModel) iterator.next();
 				model.setPluginResolution(IPDELauncherConstants.LOCATION_DEFAULT);
 			}
@@ -558,7 +564,7 @@ public class FeatureBlock {
 
 		public Object[] getElements(Object input) {
 			if (input instanceof Collection) {
-				return ((Collection) input).toArray();
+				return ((Collection<?>) input).toArray();
 			}
 			if (input instanceof Object[]) {
 				return (Object[]) input;
@@ -772,8 +778,8 @@ public class FeatureBlock {
 	/**
 	 * Maps feature ID to the FeatureLaunchModel that represents the feature in the tree
 	 */
-	private Map fFeatureModels;
-	private List fAdditionalPlugins;
+	private Map<String, FeatureLaunchModel> fFeatureModels;
+	private List<PluginLaunchModel> fAdditionalPlugins;
 	private NamedElement fAdditionalPluginsParentElement;
 
 	public FeatureBlock(AbstractLauncherTab pluginsTab) {
@@ -912,7 +918,7 @@ public class FeatureBlock {
 			public void selectionChanged(SelectionChangedEvent event) {
 				IStructuredSelection selection = (IStructuredSelection) fTree.getSelection();
 				boolean allPlugins = true;
-				for (Iterator iterator = selection.iterator(); iterator.hasNext();) {
+				for (Iterator<?> iterator = selection.iterator(); iterator.hasNext();) {
 					Object element = iterator.next();
 					if (!(element instanceof PluginLaunchModel)) {
 						allPlugins = false;
@@ -927,8 +933,8 @@ public class FeatureBlock {
 					// Any changes here need to be reflected in the remove button handling
 					IStructuredSelection selection = (IStructuredSelection) fTree.getSelection();
 					int index = fAdditionalPlugins.indexOf(selection.getFirstElement());
-					List input = (List) fTree.getInput();
-					for (Iterator iterator = selection.iterator(); iterator.hasNext();) {
+					List<?> input = (List<?>) fTree.getInput();
+					for (Iterator<?> iterator = selection.iterator(); iterator.hasNext();) {
 						Object element = iterator.next();
 						if (element instanceof PluginLaunchModel) {
 							fAdditionalPlugins.remove(element);
@@ -1047,9 +1053,9 @@ public class FeatureBlock {
 	}
 
 	private void savePluginState(ILaunchConfigurationWorkingCopy config) {
-		Set featuresEntry = new HashSet(); // By using a set, debug will sort the attribute for us
-		Set pluginsEntry = new HashSet();
-		ArrayList checkPluginLaunchModels = new ArrayList();
+		Set<String> featuresEntry = new HashSet<String>(); // By using a set, debug will sort the attribute for us
+		Set<String> pluginsEntry = new HashSet<String>();
+		ArrayList<PluginLaunchModel> checkPluginLaunchModels = new ArrayList<PluginLaunchModel>();
 
 		Object[] models = fTree.getCheckedElements();
 
@@ -1069,7 +1075,7 @@ public class FeatureBlock {
 			}
 		}
 
-		for (Iterator iterator = fAdditionalPlugins.iterator(); iterator.hasNext();) {
+		for (Iterator<PluginLaunchModel> iterator = fAdditionalPlugins.iterator(); iterator.hasNext();) {
 			PluginLaunchModel uncheckedPluginLaunchModel = (PluginLaunchModel) iterator.next();
 			if (checkPluginLaunchModels.contains(uncheckedPluginLaunchModel))
 				continue;
@@ -1124,7 +1130,7 @@ public class FeatureBlock {
 	 */
 	protected void setInput(ILaunchConfiguration config, CheckboxTreeViewer tree) {
 		// Maps feature IDs to their models
-		Map featureModels = new HashMap();
+		Map<String, FeatureLaunchModel> featureModels = new HashMap<String, FeatureLaunchModel>();
 		FeatureModelManager fmm = PDECore.getDefault().getFeatureModelManager();
 		IFeatureModel[] workspaceModels = fmm.getWorkspaceModels();
 		for (int i = 0; i < workspaceModels.length; i++) {
@@ -1152,11 +1158,11 @@ public class FeatureBlock {
 
 		fFeatureModels = featureModels;
 		try {
-			fAdditionalPlugins = new ArrayList();
-			List checkedAdditionalPlugins = new ArrayList();
-			HashMap allAdditionalMap = BundleLauncherHelper.getAdditionalPlugins(config, false);
-			HashMap checkedAdditionalMap = BundleLauncherHelper.getAdditionalPlugins(config, true);
-			for (Iterator iterator = allAdditionalMap.keySet().iterator(); iterator.hasNext();) {
+			fAdditionalPlugins = new ArrayList<PluginLaunchModel>();
+			List<PluginLaunchModel> checkedAdditionalPlugins = new ArrayList<PluginLaunchModel>();
+			HashMap<?, ?> allAdditionalMap = BundleLauncherHelper.getAdditionalPlugins(config, false);
+			HashMap<?, ?> checkedAdditionalMap = BundleLauncherHelper.getAdditionalPlugins(config, true);
+			for (Iterator<?> iterator = allAdditionalMap.keySet().iterator(); iterator.hasNext();) {
 				IPluginModelBase model = (IPluginModelBase) iterator.next();
 				PluginLaunchModel launchModel = new PluginLaunchModel(model, (String) allAdditionalMap.get(model));
 				fAdditionalPlugins.add(launchModel);
@@ -1165,19 +1171,19 @@ public class FeatureBlock {
 				}
 			}
 
-			List models = new ArrayList(fFeatureModels.values());
+			List<Object> models = new ArrayList<Object>(fFeatureModels.values());
 			if (fAdditionalPlugins.size() > 0) {
 				models.add(fAdditionalPluginsParentElement);
 			}
 			tree.setInput(models);
 
 			// Loop through the saved config to determine location settings and selection
-			Set selected = config.getAttribute(IPDELauncherConstants.SELECTED_FEATURES, (Set) null);
+			Set<?> selected = config.getAttribute(IPDELauncherConstants.SELECTED_FEATURES, (Set<?>) null);
 			if (selected == null) {
 				tree.setCheckedElements(fFeatureModels.values().toArray());
 			} else {
-				ArrayList selectedFeatureList = new ArrayList();
-				for (Iterator iterator = selected.iterator(); iterator.hasNext();) {
+				ArrayList<FeatureLaunchModel> selectedFeatureList = new ArrayList<FeatureLaunchModel>();
+				for (Iterator<?> iterator = selected.iterator(); iterator.hasNext();) {
 					String currentSelected = (String) iterator.next();
 					String[] attributes = currentSelected.split(":"); //$NON-NLS-1$
 					if (attributes.length > 0) {
@@ -1191,7 +1197,7 @@ public class FeatureBlock {
 						}
 					}
 				}
-				List checkedElements = new ArrayList();
+				List<Object> checkedElements = new ArrayList<Object>();
 				checkedElements.addAll(selectedFeatureList);
 				checkedElements.addAll(checkedAdditionalPlugins);
 				tree.setCheckedElements(checkedElements.toArray());

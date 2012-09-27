@@ -22,7 +22,7 @@ import org.eclipse.pde.internal.core.project.PDEProject;
 public abstract class PDEMoveParticipant extends MoveParticipant implements ISharableParticipant {
 
 	protected IProject fProject;
-	protected HashMap fElements;
+	protected HashMap<Object, String> fElements;
 
 	public RefactoringStatus checkConditions(IProgressMonitor pm, CheckConditionsContext context) throws OperationCanceledException {
 		return new RefactoringStatus();
@@ -58,7 +58,7 @@ public abstract class PDEMoveParticipant extends MoveParticipant implements ISha
 
 	protected String[] getNewNames() {
 		String[] result = new String[fElements.size()];
-		Iterator iter = fElements.values().iterator();
+		Iterator<String> iter = fElements.values().iterator();
 		for (int i = 0; i < fElements.size(); i++)
 			result[i] = iter.next().toString();
 		return result;

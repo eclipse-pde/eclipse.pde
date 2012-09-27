@@ -78,8 +78,8 @@ public class ProductFromConfigOperation extends BaseProductCreationOperation {
 				workspaceId = IPDELauncherConstants.WORKSPACE_BUNDLES;
 				targetId = IPDELauncherConstants.TARGET_BUNDLES;
 			}
-			Set set = new HashSet();
-			Map map = BundleLauncherHelper.getWorkspaceBundleMap(fLaunchConfiguration, set, workspaceId);
+			Set<?> set = new HashSet<Object>();
+			Map<?, ?> map = BundleLauncherHelper.getWorkspaceBundleMap(fLaunchConfiguration, set, workspaceId);
 			map.putAll(BundleLauncherHelper.getTargetBundleMap(fLaunchConfiguration, set, targetId));
 
 			addPlugins(factory, product, map);
@@ -110,7 +110,7 @@ public class ProductFromConfigOperation extends BaseProductCreationOperation {
 					arguments.setVMArguments(vmargs, IArgumentsInfo.L_ARGS_ALL);
 				if (programArgs != null) {
 					String[] parsedArgs = DebugPlugin.parseArguments(programArgs);
-					List unwantedArgs = Arrays.asList(new String[] {'-' + IEnvironment.P_ARCH, '-' + IEnvironment.P_NL, '-' + IEnvironment.P_OS, '-' + IEnvironment.P_WS});
+					List<String> unwantedArgs = Arrays.asList(new String[] {'-' + IEnvironment.P_ARCH, '-' + IEnvironment.P_NL, '-' + IEnvironment.P_OS, '-' + IEnvironment.P_WS});
 					StringBuffer filteredArgs = new StringBuffer();
 					for (int i = 0; i < parsedArgs.length; i++) {
 						if (unwantedArgs.contains(parsedArgs[i].toLowerCase())) {

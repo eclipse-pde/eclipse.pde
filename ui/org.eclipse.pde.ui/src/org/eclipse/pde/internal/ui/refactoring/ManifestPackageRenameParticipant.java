@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.refactoring;
 
+import org.eclipse.jdt.core.IPackageFragment;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import org.eclipse.core.resources.IFile;
@@ -37,7 +39,7 @@ public class ManifestPackageRenameParticipant extends PDERenameParticipant {
 				IProject project = javaProject.getProject();
 				if (WorkspaceModelManager.isPluginProject(project)) {
 					fProject = javaProject.getProject();
-					fElements = new HashMap();
+					fElements = new HashMap<IPackageFragment, String>();
 					fElements.put(fragment, getArguments().getNewName());
 					return true;
 				}
@@ -73,7 +75,7 @@ public class ManifestPackageRenameParticipant extends PDERenameParticipant {
 
 	private boolean isAffected(BundleDescription desc, BundleDescription dependent) {
 		ImportPackageSpecification[] imports = dependent.getImportPackages();
-		Iterator iter = fElements.keySet().iterator();
+		Iterator<IPackageFragment> iter = fElements.keySet().iterator();
 		while (iter.hasNext()) {
 			String name = ((IJavaElement) iter.next()).getElementName();
 			for (int i = 0; i < imports.length; i++) {

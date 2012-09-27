@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.text;
 
+import org.eclipse.jface.text.contentassist.ICompletionProposal;
+
 import java.util.*;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.text.*;
@@ -37,7 +39,7 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 	private Image fRenameImage;
 	private Image fRemoveImage;
 
-	class PDECompletionProposal implements ICompletionProposal, ICompletionProposalExtension3, ICompletionProposalExtension4, Comparable {
+	class PDECompletionProposal implements ICompletionProposal, ICompletionProposalExtension3, ICompletionProposalExtension4, Comparable<Object> {
 
 		Position fPosition;
 		IMarkerResolution fResolution;
@@ -140,7 +142,7 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 	class PDEQuickAssistProcessor implements IQuickAssistProcessor {
 
 		ResolutionGenerator fGenerator = new ResolutionGenerator();
-		HashMap fResMap = new HashMap();
+		HashMap<IMarker, ?> fResMap = new HashMap<IMarker, Object>();
 
 		public String getErrorMessage() {
 			return null;
@@ -171,7 +173,7 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 			// grab the local resolutions first
 			IMarker marker = annotation.getMarker();
 			if (!fResMap.containsKey(marker)) {
-				ArrayList resolutions = new ArrayList(5);
+				ArrayList<IMarkerResolution> resolutions = new ArrayList<IMarkerResolution>(5);
 				IMarkerResolution[] localResolutions = fGenerator.getResolutions(marker);
 				resolutions.addAll(Arrays.asList(localResolutions));
 
@@ -198,8 +200,8 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 			IDocument doc = invocationContext.getSourceViewer().getDocument();
 
 			int offset = invocationContext.getOffset();
-			Iterator it = amodel.getAnnotationIterator();
-			TreeSet proposalSet = new TreeSet(new Comparator() {
+			Iterator<?> it = amodel.getAnnotationIterator();
+			TreeSet<ICompletionProposal> proposalSet = new TreeSet<ICompletionProposal>(new Comparator<Object>() {
 
 				public int compare(Object o1, Object o2) {
 					if (o1 instanceof ICompletionProposal && o2 instanceof ICompletionProposal) {

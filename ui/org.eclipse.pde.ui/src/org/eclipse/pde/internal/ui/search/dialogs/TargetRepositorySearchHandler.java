@@ -40,7 +40,7 @@ public class TargetRepositorySearchHandler extends AbstractHandler implements IH
 		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
 
 		// create the query for packages, features and bundles
-		IQuery query = QueryUtil.createMatchQuery("properties[$0] == true || providedCapabilities.exists(p | p.namespace == 'osgi.bundle')", new Object[] {MetadataFactory.InstallableUnitDescription.PROP_TYPE_GROUP}); //$NON-NLS-1$
+		IQuery<?> query = QueryUtil.createMatchQuery("properties[$0] == true || providedCapabilities.exists(p | p.namespace == 'osgi.bundle')", new Object[] {MetadataFactory.InstallableUnitDescription.PROP_TYPE_GROUP}); //$NON-NLS-1$
 		//IQuery query = QueryUtil.createIUAnyQuery();
 
 		FilteredIUSelectionDialog dialog = new FilteredIUSelectionDialog(window.getShell(), query);
@@ -51,7 +51,7 @@ public class TargetRepositorySearchHandler extends AbstractHandler implements IH
 		if (status == Window.OK) {
 			Object[] result = dialog.getResult();
 			if (result != null) {
-				Set set = new HashSet();
+				Set<Object> set = new HashSet<Object>();
 				for (int i = 0; i < result.length; i++) {
 					if (result[i] instanceof IUPackage)
 						set.add(((IUPackage) result[i]).getIU());

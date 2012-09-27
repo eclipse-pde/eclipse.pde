@@ -156,7 +156,7 @@ public class FeatureImportOperation implements IWorkspaceRunnable {
 		}
 	}
 
-	private void importContent(Object source, IPath destPath, IImportStructureProvider provider, List filesToImport, IProgressMonitor monitor) throws CoreException {
+	private void importContent(Object source, IPath destPath, IImportStructureProvider provider, List<?> filesToImport, IProgressMonitor monitor) throws CoreException {
 		IOverwriteQuery query = new IOverwriteQuery() {
 			public String queryOverwrite(String file) {
 				return ALL;

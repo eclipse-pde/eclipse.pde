@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.search;
 
+import org.eclipse.pde.core.plugin.IPluginObject;
+
 import java.util.*;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.pde.core.plugin.*;
@@ -39,9 +41,9 @@ public class ExtensionsPatternFilter extends PatternFilter {
 
 	protected String fSearchPattern;
 
-	protected Set fSearchPatterns = new HashSet();
-	protected final Set fMatchingLeafs = new HashSet();
-	protected final Set fFoundAnyElementsCache = new HashSet();
+	protected Set<String> fSearchPatterns = new HashSet<String>();
+	protected final Set<IPluginObject> fMatchingLeafs = new HashSet<IPluginObject>();
+	protected final Set<Object> fFoundAnyElementsCache = new HashSet<Object>();
 
 	/**
 	 * Check if the leaf element is a match with the filter text. The default behavior 
@@ -69,10 +71,10 @@ public class ExtensionsPatternFilter extends PatternFilter {
 	}
 
 	protected boolean doIsLeafMatch(IPluginElement pluginElement) {
-		List syntheticAttributes = ExtensionsFilterUtil.handlePropertyTester(pluginElement);
+		List<?> syntheticAttributes = ExtensionsFilterUtil.handlePropertyTester(pluginElement);
 		if (fSearchPatterns != null && fSearchPatterns.size() > 0) {
 			int attributeNumber = 0;
-			for (Iterator iterator = fSearchPatterns.iterator(); iterator.hasNext();) {
+			for (Iterator<String> iterator = fSearchPatterns.iterator(); iterator.hasNext();) {
 				String searchPattern = (String) iterator.next();
 				if (attributeNumber < fSearchPatterns.size() && attributeNumber < ATTRIBUTE_LIMIT) {
 					boolean quoted = isQuoted(searchPattern);
@@ -88,7 +90,7 @@ public class ExtensionsPatternFilter extends PatternFilter {
 							if (attributeElement != null && attributeElement.getValue() != null) {
 								String[] attributes = getAttributeSplit(attributeElement.getValue(), quoted);
 								if (attributes != null) {
-									List attributeList = new ArrayList(Arrays.asList(attributes));
+									List<String> attributeList = new ArrayList<String>(Arrays.asList(attributes));
 									attributeList.addAll(syntheticAttributes);
 									if (matchWithAttributes(pluginElement, searchPattern, attributeElement.getName(), attributeList, quoted)) {
 										return true;
@@ -122,7 +124,7 @@ public class ExtensionsPatternFilter extends PatternFilter {
 		return false;
 	}
 
-	protected boolean matchWithAttributes(IPluginElement pluginElement, String searchPattern, String attributeName, List attributeList, boolean quoted) {
+	protected boolean matchWithAttributes(IPluginElement pluginElement, String searchPattern, String attributeName, List<String> attributeList, boolean quoted) {
 		for (int k = 0; k < attributeList.size(); k++) {
 			String attributeValue = (String) attributeList.get(k);
 			if (attributeValue != null && attributeValue.length() > 0) {
@@ -218,7 +220,7 @@ public class ExtensionsPatternFilter extends PatternFilter {
 			}
 		}
 		if (fFoundAnyElementsCache.size() > 0) {
-			List found = new ArrayList();
+			List<Object> found = new ArrayList<Object>();
 			for (int i = 0; i < elements.length; i++) {
 				if (fFoundAnyElementsCache.contains(elements[i])) {
 					found.add(elements[i]);
@@ -338,7 +340,7 @@ public class ExtensionsPatternFilter extends PatternFilter {
 		return fMatchingLeafs.toArray();
 	}
 
-	public Set getMatchingLeafs() {
+	public Set<IPluginObject> getMatchingLeafs() {
 		return fMatchingLeafs;
 	}
 

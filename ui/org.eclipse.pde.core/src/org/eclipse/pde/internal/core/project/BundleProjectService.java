@@ -191,14 +191,14 @@ public final class BundleProjectService implements IBundleProjectService {
 	 * @return import instructions
 	 * @exception CoreException if unable to read manifest
 	 */
-	public Map<IBundleImporter, ?> getImportDescriptions(IPluginModelBase[] models) throws CoreException {
+	public Map<IBundleImporter, ScmUrlImportDescription[]> getImportDescriptions(IPluginModelBase[] models) throws CoreException {
 		// build manifests
-		List<Map<?, ?>> manifests = new ArrayList<Map<?, ?>>();
+		List<Map<String, String>> manifests = new ArrayList<Map<String, String>>();
 		List<IPluginModelBase> plugins = new ArrayList<IPluginModelBase>();
 		for (int i = 0; i < models.length; i++) {
 			String location = models[i].getInstallLocation();
 			if (location != null) {
-				Map<?, ?> manifest = loadManifest(new File(location));
+				Map<String, String> manifest = loadManifest(new File(location));
 				if (manifest != null) {
 					manifests.add(manifest);
 					plugins.add(models[i]);
@@ -208,7 +208,7 @@ public final class BundleProjectService implements IBundleProjectService {
 		if (!manifests.isEmpty()) {
 			@SuppressWarnings("rawtypes")
 			Map[] marray = manifests.toArray(new Map[manifests.size()]);
-			Map<IBundleImporter, Object> result = new HashMap<IBundleImporter, Object>();
+			Map<IBundleImporter, ScmUrlImportDescription[]> result = new HashMap<IBundleImporter, ScmUrlImportDescription[]>();
 			IBundleImporter[] importers = Team.getBundleImporters();
 			for (int i = 0; i < importers.length; i++) {
 				IBundleImporter importer = importers[i];
@@ -228,7 +228,7 @@ public final class BundleProjectService implements IBundleProjectService {
 			}
 			return result;
 		}
-		return new HashMap<IBundleImporter, Object>();
+		return Collections.emptyMap();
 	}
 
 	/**
@@ -240,7 +240,7 @@ public final class BundleProjectService implements IBundleProjectService {
 	 * @return bundle manifest dictionary or <code>null</code>
 	 * @throws CoreException if manifest has invalid syntax or is missing
 	 */
-	private Map<?, ?> loadManifest(File bundleLocation) throws CoreException {
+	private Map<String, String> loadManifest(File bundleLocation) throws CoreException {
 		ZipFile jarFile = null;
 		InputStream manifestStream = null;
 		String extension = new Path(bundleLocation.getName()).getFileExtension();

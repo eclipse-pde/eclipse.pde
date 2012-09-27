@@ -11,6 +11,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.tools;
 
+import java.util.jar.Manifest;
+import org.eclipse.core.resources.IProject;
+
 import java.io.File;
 import java.util.*;
 import java.util.jar.JarFile;
@@ -47,9 +50,9 @@ public class ConvertJarsAction implements IObjectActionDelegate {
 	 * @see IActionDelegate#run(IAction)
 	 */
 	public void run(IAction action) {
-		Map filesMap = new HashMap();
-		Set projectSelection = new HashSet();
-		Iterator i = selection.toList().iterator();
+		Map<Manifest, Object> filesMap = new HashMap<Manifest, Object>();
+		Set<IProject> projectSelection = new HashSet<IProject>();
+		Iterator<?> i = selection.toList().iterator();
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		while (i.hasNext()) {
 			IPackageFragmentRoot pfr = (IPackageFragmentRoot) i.next();
@@ -89,7 +92,7 @@ public class ConvertJarsAction implements IObjectActionDelegate {
 			selection = (IStructuredSelection) s;
 			if (selection.size() == 0)
 				return;
-			Iterator i = selection.iterator();
+			Iterator<?> i = selection.iterator();
 			while (i.hasNext()) {
 				Object obj = i.next();
 				if (obj instanceof IPackageFragmentRoot) {

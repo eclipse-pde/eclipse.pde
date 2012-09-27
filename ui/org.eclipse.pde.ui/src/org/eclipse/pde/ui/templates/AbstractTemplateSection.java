@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.templates;
 
+import java.util.zip.ZipEntry;
+
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -476,9 +478,9 @@ public abstract class AbstractTemplateSection implements ITemplateSection, IVari
 	private void generateFiles(ZipFile zipFile, IPath path, IContainer dst, boolean firstLevel, boolean binary, IProgressMonitor monitor) throws CoreException {
 		int pathLength = path.segmentCount();
 		// Immidiate children
-		Map childZipEntries = new HashMap(); // "dir/" or "dir/file.java"
+		Map<String, ZipEntry> childZipEntries = new HashMap<String, ZipEntry>(); // "dir/" or "dir/file.java"
 
-		for (Enumeration zipEntries = zipFile.entries(); zipEntries.hasMoreElements();) {
+		for (Enumeration<?> zipEntries = zipFile.entries(); zipEntries.hasMoreElements();) {
 			ZipEntry zipEntry = (ZipEntry) zipEntries.nextElement();
 			IPath entryPath = new Path(zipEntry.getName());
 			if (entryPath.segmentCount() <= pathLength) {
@@ -500,7 +502,7 @@ public abstract class AbstractTemplateSection implements ITemplateSection, IVari
 			}
 		}
 
-		for (Iterator it = childZipEntries.values().iterator(); it.hasNext();) {
+		for (Iterator<ZipEntry> it = childZipEntries.values().iterator(); it.hasNext();) {
 			ZipEntry zipEnry = (ZipEntry) it.next();
 			String name = new Path(zipEnry.getName()).lastSegment().toString();
 			if (zipEnry.isDirectory()) {

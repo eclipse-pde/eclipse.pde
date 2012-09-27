@@ -49,7 +49,7 @@ public class JavaEditorOpener {
 	private static void showWithMarker(IEditorPart editor, IFile file, int offset, int length) throws PartInitException {
 		try {
 			IMarker marker = file.createMarker(NewSearchUI.SEARCH_MARKER);
-			HashMap attributes = new HashMap(4);
+			HashMap<String, Integer> attributes = new HashMap<String, Integer>(4);
 			attributes.put(IMarker.CHAR_START, new Integer(offset));
 			attributes.put(IMarker.CHAR_END, new Integer(offset + length));
 			marker.setAttributes(attributes);

@@ -14,7 +14,7 @@ import java.util.HashMap;
 
 public class ExtensionPointMappings {
 
-	private static HashMap fMap = new HashMap();
+	private static HashMap<String, String> fMap = new HashMap<String, String>();
 
 	private static void initialize() {
 		fMap.put("org.eclipse.ui.markerImageProvider", "org.eclipse.ui.ide.markerImageProvider"); //$NON-NLS-1$ //$NON-NLS-2$

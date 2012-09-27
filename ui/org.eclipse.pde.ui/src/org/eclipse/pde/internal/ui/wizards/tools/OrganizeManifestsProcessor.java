@@ -47,16 +47,16 @@ public class OrganizeManifestsProcessor extends RefactoringProcessor implements 
 	protected boolean fUnusedKeys = false; // remove unused <bundle-localization>.properties keys
 	protected boolean fAddDependencies = false;
 
-	ArrayList fProjectList;
+	ArrayList<?> fProjectList;
 	private IProject fCurrentProject;
 
-	public OrganizeManifestsProcessor(ArrayList projects) {
+	public OrganizeManifestsProcessor(ArrayList<?> projects) {
 		fProjectList = projects;
 	}
 
 	public RefactoringStatus checkFinalConditions(IProgressMonitor pm, CheckConditionsContext context) throws CoreException, OperationCanceledException {
 		RefactoringStatus status = new RefactoringStatus();
-		for (Iterator i = fProjectList.iterator(); i.hasNext();) {
+		for (Iterator<?> i = fProjectList.iterator(); i.hasNext();) {
 			if (!(i.next() instanceof IProject))
 				status.addFatalError(PDEUIMessages.OrganizeManifestsProcessor_invalidParam);
 		}
@@ -71,7 +71,7 @@ public class OrganizeManifestsProcessor extends RefactoringProcessor implements 
 		CompositeChange change = new CompositeChange(""); //$NON-NLS-1$
 		change.markAsSynthetic();
 		pm.beginTask(PDEUIMessages.OrganizeManifestJob_taskName, fProjectList.size());
-		for (Iterator i = fProjectList.iterator(); i.hasNext() && !pm.isCanceled();) {
+		for (Iterator<?> i = fProjectList.iterator(); i.hasNext() && !pm.isCanceled();) {
 			CompositeChange projectChange = cleanProject((IProject) i.next(), new SubProgressMonitor(pm, 1));
 			if (projectChange.getChildren().length > 0)
 				change.add(projectChange);

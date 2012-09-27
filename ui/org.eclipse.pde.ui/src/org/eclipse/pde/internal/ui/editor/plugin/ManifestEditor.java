@@ -575,6 +575,7 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 		return new ManifestOutlinePage(this);
 	}
 
+	@SuppressWarnings("rawtypes")
 	public Object getAdapter(Class key) {
 		//No property sheet needed - block super
 		if (key.equals(IPropertySheetPage.class)) {

@@ -85,7 +85,7 @@ public class PDELabelUtility {
 		return buffer.toString();
 	}
 
-	private static void addNumberToBase(StringBuffer base, boolean bracketed, HashSet set) {
+	private static void addNumberToBase(StringBuffer base, boolean bracketed, HashSet<Integer> set) {
 		if (set.size() > 0) {
 			// Limit on the number of auto-generated item numbers to check for
 			int limit = 100;
@@ -115,7 +115,7 @@ public class PDELabelUtility {
 	 * @param set
 	 * @param title
 	 */
-	private static void compareTitleWithBase(String base, boolean bracketed, HashSet set, String title) {
+	private static void compareTitleWithBase(String base, boolean bracketed, HashSet<Integer> set, String title) {
 		// Check to see it the name starts with the prefix
 		if (title.toLowerCase().startsWith(base.toLowerCase())) {
 			// with brackets add on is: space, (, #, )
@@ -199,7 +199,7 @@ public class PDELabelUtility {
 	public static String generateName(String[] names, String base, boolean bracketed) {
 		StringBuffer result = new StringBuffer(base);
 		// Used to track auto-generated numbers used
-		HashSet set = new HashSet();
+		HashSet<Integer> set = new HashSet<Integer>();
 
 		// Linear search O(n).  
 		// Performance hit unnoticeable because number of items per cheatsheet

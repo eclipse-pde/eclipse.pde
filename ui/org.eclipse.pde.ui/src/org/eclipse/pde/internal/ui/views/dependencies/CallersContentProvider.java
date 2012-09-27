@@ -18,7 +18,7 @@ public class CallersContentProvider extends DependenciesViewPageContentProvider 
 		super(view);
 	}
 
-	protected Collection findReferences(BundleDescription desc) {
+	protected Collection<BundleDescription> findReferences(BundleDescription desc) {
 		if (desc != null) {
 			// don't return any callers for fragments (since no one can depend on a fragment
 			if (desc.getHost() == null) {

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.search.dependencies;
 
+import org.eclipse.search.ui.text.Match;
+
 import java.util.HashSet;
 import java.util.Set;
 import org.eclipse.jdt.core.*;
@@ -59,7 +61,7 @@ public class DependencyExtentSearchResult extends SearchResult implements IEdito
 		IEditorInput editorInput = editor.getEditorInput();
 		IJavaElement element = (IJavaElement) editorInput.getAdapter(IJavaElement.class);
 		if (element != null) {
-			Set matches = new HashSet();
+			Set<Match> matches = new HashSet<Match>();
 			collectMatches(matches, element);
 			return (Match[]) matches.toArray(new Match[matches.size()]);
 		}
@@ -67,7 +69,7 @@ public class DependencyExtentSearchResult extends SearchResult implements IEdito
 
 	}
 
-	private void collectMatches(Set matches, IJavaElement element) {
+	private void collectMatches(Set<Match> matches, IJavaElement element) {
 		Match[] m = getMatches(element);
 		if (m.length != 0) {
 			for (int i = 0; i < m.length; i++) {

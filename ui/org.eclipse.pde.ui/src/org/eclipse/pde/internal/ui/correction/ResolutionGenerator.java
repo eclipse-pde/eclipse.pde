@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.correction;
 
+import org.eclipse.ui.IMarkerResolution2;
+
 import java.util.ArrayList;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -117,7 +119,7 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 	}
 
 	private IMarkerResolution[] getBuildEntryAdditionResolutions(IMarker marker, String multiFixDescription) {
-		ArrayList resolutions = new ArrayList(2);
+		ArrayList<IMarkerResolution2> resolutions = new ArrayList<IMarkerResolution2>(2);
 		resolutions.add(new AddBuildEntryResolution(AbstractPDEMarkerResolution.CREATE_TYPE, marker));
 		for (int i = 0;; i++) {
 			try {

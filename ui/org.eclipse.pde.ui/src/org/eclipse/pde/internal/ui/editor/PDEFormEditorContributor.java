@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor;
 
+import org.eclipse.jface.action.Action;
+
 import java.util.Hashtable;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.ISelection;
@@ -41,7 +43,7 @@ public class PDEFormEditorContributor extends MultiPageEditorActionBarContributo
 
 	private ClipboardAction fPasteAction;
 
-	private Hashtable fGlobalActions = new Hashtable();
+	private Hashtable<String, Action> fGlobalActions = new Hashtable<String, Action>();
 
 	private ISharedImages fSharedImages;
 

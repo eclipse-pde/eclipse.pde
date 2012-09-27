@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
+import org.eclipse.pde.internal.core.iproduct.IProductPlugin;
+
 import java.util.*;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -356,7 +358,7 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 		if (plugins.length == 0)
 			return;
 
-		ArrayList list = new ArrayList(plugins.length);
+		ArrayList<BundleDescription> list = new ArrayList<BundleDescription>(plugins.length);
 		for (int i = 0; i < plugins.length; i++) {
 			list.add(TargetPlatformHelper.getState().getBundle(plugins[i].getId(), null));
 		}
@@ -372,13 +374,13 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 			}
 		}
 
-		Collection dependencies = calculator.getBundleIDs();
+		Collection<?> dependencies = calculator.getBundleIDs();
 
 		IProduct product = plugins[0].getProduct();
 		IProductModelFactory factory = product.getModel().getFactory();
 		IProductPlugin[] requiredPlugins = new IProductPlugin[dependencies.size()];
 		int i = 0;
-		Iterator iter = dependencies.iterator();
+		Iterator<?> iter = dependencies.iterator();
 		while (iter.hasNext()) {
 			String id = iter.next().toString();
 			IProductPlugin plugin = factory.createPlugin();
@@ -395,7 +397,7 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 			IWorkingSet[] workingSets = dialog.getSelection();
 			IProduct product = getProduct();
 			IProductModelFactory factory = product.getModel().getFactory();
-			ArrayList pluginList = new ArrayList();
+			ArrayList<IProductPlugin> pluginList = new ArrayList<IProductPlugin>();
 			for (int i = 0; i < workingSets.length; i++) {
 				IAdaptable[] elements = workingSets[i].getElements();
 				for (int j = 0; j < elements.length; j++) {
@@ -445,7 +447,7 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 	}
 
 	private BundleDescription[] getBundles() {
-		TreeMap map = new TreeMap();
+		TreeMap<String, BundleDescription> map = new TreeMap<String, BundleDescription>();
 		IProduct product = getProduct();
 		BundleDescription[] bundles = TargetPlatformHelper.getState().getBundles();
 		for (int i = 0; i < bundles.length; i++) {

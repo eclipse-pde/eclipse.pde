@@ -80,13 +80,13 @@ public class PluginInputContext extends XMLInputContext {
 		return fIsFragment;
 	}
 
-	protected void reorderInsertEdits(ArrayList ops) {
-		HashMap map = getOperationTable();
-		Iterator iter = map.keySet().iterator();
+	protected void reorderInsertEdits(ArrayList<TextEdit> ops) {
+		HashMap<Object, TextEdit> map = getOperationTable();
+		Iterator<?> iter = map.keySet().iterator();
 		TextEdit runtimeInsert = null;
 		TextEdit requiresInsert = null;
-		ArrayList extensionPointInserts = new ArrayList();
-		ArrayList extensionInserts = new ArrayList();
+		ArrayList<TextEdit> extensionPointInserts = new ArrayList<TextEdit>();
+		ArrayList<TextEdit> extensionInserts = new ArrayList<TextEdit>();
 
 		while (iter.hasNext()) {
 			Object object = iter.next();

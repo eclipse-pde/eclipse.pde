@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.commands;
 
+import java.util.ArrayList;
+
 import java.util.*;
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
@@ -24,8 +26,8 @@ public class CommandTreeContentProvider implements ITreeContentProvider {
 	protected final int F_CON_CONTENT = 1; // context grouped content
 
 	private ICommandService fComServ;
-	private TreeMap fCatMap; // mapping of commands to category
-	private TreeMap fConMap; // mapping of commands to context
+	private TreeMap<Category, ArrayList<Command>> fCatMap; // mapping of commands to category
+	private TreeMap<?, ?> fConMap; // mapping of commands to context
 	private Viewer fViewer;
 	private int fCurContent = F_CAT_CONTENT;
 
@@ -35,7 +37,7 @@ public class CommandTreeContentProvider implements ITreeContentProvider {
 	}
 
 	private void init() {
-		fCatMap = new TreeMap(new Comparator() {
+		fCatMap = new TreeMap<Category, ArrayList<Command>>(new Comparator<Object>() {
 			public int compare(Object arg0, Object arg1) {
 				String comA = CommandList.getText(arg0);
 				String comB = CommandList.getText(arg1);
@@ -44,7 +46,7 @@ public class CommandTreeContentProvider implements ITreeContentProvider {
 				return +1; // undefined ids should go last
 			}
 		});
-		fConMap = new TreeMap();
+		fConMap = new TreeMap<Object, Object>();
 		Command[] commands = fComServ.getDefinedCommands();
 		for (int i = 0; i < commands.length; i++) {
 			/*
@@ -56,9 +58,9 @@ public class CommandTreeContentProvider implements ITreeContentProvider {
 			// populate category map
 			try {
 				Category cat = commands[i].getCategory();
-				ArrayList list = (ArrayList) fCatMap.get(cat);
+				ArrayList<Command> list = (ArrayList<Command>) fCatMap.get(cat);
 				if (list == null)
-					fCatMap.put(cat, list = new ArrayList());
+					fCatMap.put(cat, list = new ArrayList<Command>());
 				list.add(commands[i]);
 			} catch (NotDefinedException e) {
 				continue;
@@ -86,7 +88,7 @@ public class CommandTreeContentProvider implements ITreeContentProvider {
 
 	public Object[] getChildren(Object parentElement) {
 		if (parentElement instanceof Category) {
-			ArrayList list = (ArrayList) fCatMap.get(parentElement);
+			ArrayList<?> list = (ArrayList<?>) fCatMap.get(parentElement);
 			if (list != null)
 				return list.toArray(new Command[list.size()]);
 		}
@@ -95,7 +97,7 @@ public class CommandTreeContentProvider implements ITreeContentProvider {
 
 	public boolean hasChildren(Object element) {
 		if (element instanceof Category) {
-			ArrayList list = (ArrayList) fCatMap.get(element);
+			ArrayList<?> list = (ArrayList<?>) fCatMap.get(element);
 			if (list != null)
 				return list.size() > 0;
 		}

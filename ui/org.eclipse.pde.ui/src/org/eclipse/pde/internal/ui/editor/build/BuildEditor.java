@@ -151,6 +151,7 @@ public class BuildEditor extends MultiSourceEditor {
 		return false;
 	}
 
+	@SuppressWarnings("rawtypes")
 	public Object getAdapter(Class key) {
 		//No property sheet needed - block super
 		if (key.equals(IPropertySheetPage.class)) {

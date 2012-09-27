@@ -293,7 +293,7 @@ public class TargetLocationsGroup {
 
 	private void handleEdit() {
 		IStructuredSelection selection = (IStructuredSelection) fTreeViewer.getSelection();
-		for (Iterator iterator = selection.iterator(); iterator.hasNext();) {
+		for (Iterator<?> iterator = selection.iterator(); iterator.hasNext();) {
 			Object currentSelection = iterator.next();
 			if (currentSelection instanceof ITargetLocation) {
 				ITargetLocation location = (ITargetLocation) currentSelection;
@@ -357,10 +357,10 @@ public class TargetLocationsGroup {
 		IStructuredSelection selection = (IStructuredSelection) fTreeViewer.getSelection();
 		ITargetLocation[] containers = fTarget.getTargetLocations();
 		if (!selection.isEmpty() && containers != null && containers.length > 0) {
-			List toRemove = new ArrayList();
+			List<Object> toRemove = new ArrayList<Object>();
 			boolean removedSite = false;
 			boolean removedContainer = false;
-			for (Iterator iterator = selection.iterator(); iterator.hasNext();) {
+			for (Iterator<?> iterator = selection.iterator(); iterator.hasNext();) {
 				Object currentSelection = iterator.next();
 				if (currentSelection instanceof ITargetLocation) {
 					if (currentSelection instanceof IUBundleContainer) {
@@ -375,11 +375,11 @@ public class TargetLocationsGroup {
 			}
 
 			if (removedContainer) {
-				Set newContainers = new HashSet();
+				Set<ITargetLocation> newContainers = new HashSet<ITargetLocation>();
 				newContainers.addAll(Arrays.asList(fTarget.getTargetLocations()));
 				newContainers.removeAll(toRemove);
 				if (newContainers.size() > 0) {
-					fTarget.setTargetLocations((ITargetLocation[]) newContainers.toArray(new ITargetLocation[newContainers.size()]));
+					fTarget.setTargetLocations(newContainers.toArray(new ITargetLocation[newContainers.size()]));
 				} else {
 					fTarget.setTargetLocations(null);
 				}
@@ -389,7 +389,7 @@ public class TargetLocationsGroup {
 				fTreeViewer.refresh(false);
 				updateButtons();
 			} else {
-				for (Iterator iterator = toRemove.iterator(); iterator.hasNext();) {
+				for (Iterator<Object> iterator = toRemove.iterator(); iterator.hasNext();) {
 					Object current = iterator.next();
 					if (current instanceof IUWrapper) {
 						((IUWrapper) current).getParent().removeInstallableUnit(((IUWrapper) current).getIU());
@@ -405,16 +405,16 @@ public class TargetLocationsGroup {
 	private void handleUpdate() {
 		// TODO Only IUWrapper children are added to the map for special update processing
 		IStructuredSelection selection = (IStructuredSelection) fTreeViewer.getSelection();
-		Map toUpdate = new HashMap();
-		for (Iterator iterator = selection.iterator(); iterator.hasNext();) {
+		Map<ITargetLocation, Set<Object>> toUpdate = new HashMap<ITargetLocation, Set<Object>>();
+		for (Iterator<?> iterator = selection.iterator(); iterator.hasNext();) {
 			Object currentSelection = iterator.next();
 			if (currentSelection instanceof ITargetLocation)
-				toUpdate.put(currentSelection, new HashSet(0));
+				toUpdate.put((ITargetLocation) currentSelection, new HashSet<Object>(0));
 			else if (currentSelection instanceof IUWrapper) {
 				IUWrapper wrapper = (IUWrapper) currentSelection;
-				Set iuSet = (Set) toUpdate.get(wrapper.getParent());
+				Set<Object> iuSet = toUpdate.get(wrapper.getParent());
 				if (iuSet == null) {
-					iuSet = new HashSet();
+					iuSet = new HashSet<Object>();
 					iuSet.add(wrapper.getIU().getId());
 					toUpdate.put(wrapper.getParent(), iuSet);
 				} else if (!iuSet.isEmpty())
@@ -468,7 +468,7 @@ public class TargetLocationsGroup {
 		boolean canRemove = false;
 		boolean canEdit = false;
 		boolean canUpdate = false;
-		for (Iterator iterator = selection.iterator(); iterator.hasNext();) {
+		for (Iterator<?> iterator = selection.iterator(); iterator.hasNext();) {
 
 			Object currentSelection = iterator.next();
 			if (currentSelection instanceof ITargetLocation) {
@@ -602,7 +602,7 @@ public class TargetLocationsGroup {
 		public Object[] getElements(Object inputElement) {
 			if (inputElement instanceof ITargetDefinition) {
 				boolean hasContainerStatus = false;
-				Collection result = new ArrayList();
+				Collection<Object> result = new ArrayList<Object>();
 				ITargetLocation[] containers = ((ITargetDefinition) inputElement).getTargetLocations();
 				if (containers != null) {
 					for (int i = 0; i < containers.length; i++) {

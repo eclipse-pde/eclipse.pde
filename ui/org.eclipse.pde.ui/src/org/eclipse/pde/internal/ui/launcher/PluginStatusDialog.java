@@ -57,13 +57,13 @@ public class PluginStatusDialog extends TrayDialog {
 		}
 
 		public Object[] getElements(Object inputElement) {
-			return ((Map) inputElement).keySet().toArray();
+			return ((Map<?, ?>) inputElement).keySet().toArray();
 		}
 
 	}
 
 	private boolean fShowCancelButton;
-	private Map fInput;
+	private Map<?, ?> fInput;
 	private TreeViewer treeViewer;
 
 	public PluginStatusDialog(Shell parentShell, int style) {
@@ -82,7 +82,7 @@ public class PluginStatusDialog extends TrayDialog {
 		fShowCancelButton = showCancel;
 	}
 
-	public void setInput(Map input) {
+	public void setInput(Map<?, ?> input) {
 		fInput = input;
 	}
 
@@ -147,7 +147,7 @@ public class PluginStatusDialog extends TrayDialog {
 		return getDialogSettings();
 	}
 
-	public void refresh(Map input) {
+	public void refresh(Map<?, ?> input) {
 		fInput = input;
 		treeViewer.setInput(input);
 		treeViewer.refresh();

@@ -30,7 +30,7 @@ import org.eclipse.ui.*;
 public class BuildInputContext extends InputContext {
 	public static final String CONTEXT_ID = "build-context"; //$NON-NLS-1$
 
-	private HashMap fOperationTable = new HashMap();
+	private HashMap<IDocumentKey, TextEdit> fOperationTable = new HashMap<IDocumentKey, TextEdit>();
 
 	public BuildInputContext(PDEFormEditor editor, IEditorInput input, boolean primary) {
 		super(editor, input, primary);
@@ -79,12 +79,12 @@ public class BuildInputContext extends InputContext {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.context.InputContext#addTextEditOperation(java.util.ArrayList, org.eclipse.pde.core.IModelChangedEvent)
 	 */
-	protected void addTextEditOperation(ArrayList ops, IModelChangedEvent event) {
+	protected void addTextEditOperation(ArrayList<TextEdit> ops, IModelChangedEvent event) {
 		Object[] objects = event.getChangedObjects();
 		for (int i = 0; i < objects.length; i++) {
 			Object object = objects[i];
 			IDocumentKey key = (IDocumentKey) object;
-			TextEdit op = (TextEdit) fOperationTable.get(key);
+			TextEdit op = fOperationTable.get(key);
 			if (op != null) {
 				fOperationTable.remove(key);
 				ops.remove(op);
@@ -104,14 +104,14 @@ public class BuildInputContext extends InputContext {
 		}
 	}
 
-	private void insertKey(IDocumentKey key, ArrayList ops) {
+	private void insertKey(IDocumentKey key, ArrayList<TextEdit> ops) {
 		IDocument doc = getDocumentProvider().getDocument(getInput());
 		InsertEdit op = new InsertEdit(PropertiesUtil.getInsertOffset(doc), key.write());
 		fOperationTable.put(key, op);
 		ops.add(op);
 	}
 
-	private void deleteKey(IDocumentKey key, ArrayList ops) {
+	private void deleteKey(IDocumentKey key, ArrayList<TextEdit> ops) {
 		if (key.getOffset() >= 0) {
 			TextEdit op = new DeleteEdit(key.getOffset(), key.getLength());
 			fOperationTable.put(key, op);
@@ -119,7 +119,7 @@ public class BuildInputContext extends InputContext {
 		}
 	}
 
-	private void modifyKey(IDocumentKey key, ArrayList ops) {
+	private void modifyKey(IDocumentKey key, ArrayList<TextEdit> ops) {
 		if (key.getOffset() == -1) {
 			insertKey(key, ops);
 		} else {

@@ -20,8 +20,8 @@ import org.eclipse.ui.part.*;
 
 public class TargetStateView extends PageBookView {
 
-	private Map fPagesToParts;
-	private Map fPartsToPages;
+	private Map<IPageBookViewPage, IWorkbenchPart> fPagesToParts;
+	private Map<IWorkbenchPart, IPageBookViewPage> fPartsToPages;
 	protected static final IWorkbenchPart PART_STATE = new DummyPart();
 
 	static class DummyPart implements IWorkbenchPart {
@@ -34,6 +34,7 @@ public class TargetStateView extends PageBookView {
 		public void dispose() {/* dummy */
 		}
 
+		@SuppressWarnings("rawtypes")
 		public Object getAdapter(Class adapter) {
 			return null;
 		}
@@ -62,8 +63,8 @@ public class TargetStateView extends PageBookView {
 	}
 
 	public TargetStateView() {
-		fPartsToPages = new HashMap(4);
-		fPagesToParts = new HashMap(4);
+		fPartsToPages = new HashMap<IWorkbenchPart, IPageBookViewPage>(4);
+		fPagesToParts = new HashMap<IPageBookViewPage, IWorkbenchPart>(4);
 	}
 
 	public void createPartControl(Composite parent) {

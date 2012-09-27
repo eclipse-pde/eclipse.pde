@@ -55,6 +55,7 @@ public class BuildClasspathSection extends TableSection implements IModelChanged
 	 */
 	class ElementSelectionValidator implements ISelectionStatusValidator {
 
+		@SuppressWarnings("rawtypes")
 		private Class[] fAcceptedTypes;
 		private boolean fAllowMultipleSelection;
 
@@ -63,7 +64,8 @@ public class BuildClasspathSection extends TableSection implements IModelChanged
 		 * @param allowMultipleSelection If set to <code>true</code>, the validator
 		 * allows multiple selection.
 		 */
-		public ElementSelectionValidator(Class[] acceptedTypes, boolean allowMultipleSelection) {
+		public ElementSelectionValidator(@SuppressWarnings("rawtypes")
+		Class[] acceptedTypes, boolean allowMultipleSelection) {
 			Assert.isNotNull(acceptedTypes);
 			fAcceptedTypes = acceptedTypes;
 			fAllowMultipleSelection = allowMultipleSelection;
@@ -255,6 +257,7 @@ public class BuildClasspathSection extends TableSection implements IModelChanged
 	}
 
 	private void initializeDialogSettings(ElementTreeSelectionDialog dialog) {
+		@SuppressWarnings("rawtypes")
 		Class[] acceptedClasses = new Class[] {IFile.class};
 		dialog.setValidator(new ElementSelectionValidator(acceptedClasses, true));
 		dialog.setTitle(PDEUIMessages.BuildEditor_ClasspathSection_jarsTitle);

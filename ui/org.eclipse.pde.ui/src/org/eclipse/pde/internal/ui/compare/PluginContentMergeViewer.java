@@ -33,7 +33,7 @@ import org.eclipse.swt.widgets.Composite;
 public class PluginContentMergeViewer extends TextMergeViewer {
 
 	private IColorManager fColorManager;
-	private ArrayList fPropertyChangedListeners;
+	private ArrayList<IPropertyChangeListener> fPropertyChangedListeners;
 
 	public PluginContentMergeViewer(Composite parent, CompareConfiguration config) {
 		super(parent, config);
@@ -63,7 +63,7 @@ public class PluginContentMergeViewer extends TextMergeViewer {
 			PDEPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(propertyChangedListener);
 
 			if (fPropertyChangedListeners == null)
-				fPropertyChangedListeners = new ArrayList(3);
+				fPropertyChangedListeners = new ArrayList<IPropertyChangeListener>(3);
 			fPropertyChangedListeners.add(propertyChangedListener);
 			((SourceViewer) textViewer).configure(configuration);
 			Font font = JFaceResources.getFont(PluginContentMergeViewer.class.getName());
@@ -89,7 +89,7 @@ public class PluginContentMergeViewer extends TextMergeViewer {
 		if (fColorManager != null)
 			fColorManager.dispose();
 		if (fPropertyChangedListeners != null) {
-			Iterator iter = fPropertyChangedListeners.iterator();
+			Iterator<IPropertyChangeListener> iter = fPropertyChangedListeners.iterator();
 			while (iter.hasNext())
 				PDEPlugin.getDefault().getPreferenceStore().removePropertyChangeListener((IPropertyChangeListener) iter.next());
 			fPropertyChangedListeners = null;

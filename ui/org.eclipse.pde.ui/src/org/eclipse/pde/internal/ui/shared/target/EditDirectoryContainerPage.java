@@ -217,7 +217,7 @@ public class EditDirectoryContainerPage extends WizardPage implements IEditBundl
 	 * @return a list of previous locations from settings plus the default location
 	 */
 	private String[] getLocationComboItems() {
-		List previousLocations = new ArrayList(4);
+		List<String> previousLocations = new ArrayList<String>(4);
 		IDialogSettings settings = getDialogSettings();
 		if (settings != null) {
 			String location = settings.get(SETTINGS_LOCATION_1);

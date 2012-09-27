@@ -36,7 +36,7 @@ public class PluginImportHelper {
 	 * @param monitor
 	 * @throws CoreException
 	 */
-	public static void importContent(Object source, IPath dstPath, IImportStructureProvider provider, List filesToImport, IProgressMonitor monitor) throws CoreException {
+	public static void importContent(Object source, IPath dstPath, IImportStructureProvider provider, List<Object> filesToImport, IProgressMonitor monitor) throws CoreException {
 		IOverwriteQuery query = new IOverwriteQuery() {
 			public String queryOverwrite(String file) {
 				return ALL;
@@ -65,7 +65,7 @@ public class PluginImportHelper {
 	 * @param monitor
 	 * @throws CoreException
 	 */
-	public static void extractArchive(File file, IPath dstPath, Set collectedPackages, IProgressMonitor monitor) throws CoreException {
+	public static void extractArchive(File file, IPath dstPath, Set<IPath> collectedPackages, IProgressMonitor monitor) throws CoreException {
 		ZipFile zipFile = null;
 		try {
 			zipFile = new ZipFile(file);
@@ -73,7 +73,7 @@ public class PluginImportHelper {
 
 			// If the caller wants to have package names collected, scan the zip file for package structures
 			if (collectedPackages != null) {
-				ArrayList collected = new ArrayList();
+				ArrayList<Object> collected = new ArrayList<Object>();
 				collectResources(provider, provider.getRoot(), collected);
 				collectJavaPackages(provider, collected, null, collectedPackages);
 			}
@@ -102,12 +102,12 @@ public class PluginImportHelper {
 	 * @throws CoreException if a problem occurs while extracting
 	 * @since 3.4
 	 */
-	public static void extractFolderFromArchive(File file, IPath folderPath, IPath dstPath, Set collectedPackages, IProgressMonitor monitor) throws CoreException {
+	public static void extractFolderFromArchive(File file, IPath folderPath, IPath dstPath, Set<IPath> collectedPackages, IProgressMonitor monitor) throws CoreException {
 		ZipFile zipFile = null;
 		try {
 			zipFile = new ZipFile(file);
 			ZipFileStructureProvider provider = new ZipFileStructureProvider(zipFile);
-			ArrayList collected = new ArrayList();
+			ArrayList<Object> collected = new ArrayList<Object>();
 			collectResourcesFromFolder(provider, provider.getRoot(), folderPath, collected);
 			if (collectedPackages != null) {
 				collectJavaPackages(provider, collected, folderPath, collectedPackages);
@@ -137,12 +137,12 @@ public class PluginImportHelper {
 	 * @param monitor progress monitor
 	 * @throws CoreException if there is a problem extracting source from the zip
 	 */
-	public static void extractJavaSourceFromArchive(File file, List excludeFolders, IPath dstPath, Set collectedPackages, IProgressMonitor monitor) throws CoreException {
+	public static void extractJavaSourceFromArchive(File file, List<IPath> excludeFolders, IPath dstPath, Set<IPath> collectedPackages, IProgressMonitor monitor) throws CoreException {
 		ZipFile zipFile = null;
 		try {
 			zipFile = new ZipFile(file);
 			ZipFileStructureProvider provider = new ZipFileStructureProvider(zipFile);
-			ArrayList collected = new ArrayList();
+			ArrayList<Object> collected = new ArrayList<Object>();
 			collectJavaSourceFromRoot(provider, excludeFolders, collected);
 			if (collectedPackages != null) {
 				collectJavaPackages(provider, collected, null, collectedPackages);
@@ -173,8 +173,8 @@ public class PluginImportHelper {
 	 * @param prefixPath a path that one or more of the files may have at the start of their path, the prefix is removed before adding to the package list, can be <code>null</code>
 	 * @param packageList a set that will be updated with the discovered packages
 	 */
-	public static void collectJavaPackages(IImportStructureProvider provider, List javaFiles, IPath prefixPath, Set packageList) {
-		for (Iterator iterator = javaFiles.iterator(); iterator.hasNext();) {
+	public static void collectJavaPackages(IImportStructureProvider provider, List<Object> javaFiles, IPath prefixPath, Set<IPath> packageList) {
+		for (Iterator<Object> iterator = javaFiles.iterator(); iterator.hasNext();) {
 			String stringPath = provider.getFullPath(iterator.next());
 			IPath path = new Path(stringPath);
 			path = path.removeLastSegments(1);
@@ -216,11 +216,12 @@ public class PluginImportHelper {
 	}
 
 	public static String[] getTopLevelResources(File file) {
-		ArrayList result = new ArrayList();
+		ArrayList<String> result = new ArrayList<String>();
 		ZipFile zipFile = null;
 		try {
 			zipFile = new ZipFile(file);
 			ZipFileStructureProvider provider = new ZipFileStructureProvider(zipFile);
+			@SuppressWarnings("rawtypes")
 			List children = provider.getChildren(provider.getRoot());
 			if (children != null && !children.isEmpty()) {
 				for (int i = 0; i < children.size(); i++) {
@@ -246,10 +247,11 @@ public class PluginImportHelper {
 				}
 			}
 		}
-		return (String[]) result.toArray(new String[result.size()]);
+		return result.toArray(new String[result.size()]);
 	}
 
-	public static void collectRequiredBundleFiles(IImportStructureProvider provider, Object element, ArrayList collected) {
+	public static void collectRequiredBundleFiles(IImportStructureProvider provider, Object element, ArrayList<Object> collected) {
+		@SuppressWarnings("rawtypes")
 		List children = provider.getChildren(element);
 		if (children != null && !children.isEmpty()) {
 			for (int i = 0; i < children.size(); i++) {
@@ -278,7 +280,8 @@ public class PluginImportHelper {
 	 * @param packageLocations pre-populated map of package names to a destination folder 
 	 * @param collected map to collect a file list (maps destination folder to a list of files
 	 */
-	public static void collectBinaryFiles(IImportStructureProvider provider, Object element, Map packageLocations, Map collected) {
+	public static void collectBinaryFiles(IImportStructureProvider provider, Object element, Map<IPath, IPath> packageLocations, Map<IPath, List<Object>> collected) {
+		@SuppressWarnings("rawtypes")
 		List children = provider.getChildren(element);
 		if (children != null && !children.isEmpty()) {
 			for (int i = 0; i < children.size(); i++) {
@@ -300,7 +303,7 @@ public class PluginImportHelper {
 
 					// Repeatedly remove the last segment and see if the path matches one of the known package locations
 					while (packagePath.segmentCount() > 0 && destination == null) {
-						destination = (IPath) packageLocations.get(packagePath);
+						destination = packageLocations.get(packagePath);
 						packagePath = packagePath.removeLastSegments(1);
 					}
 
@@ -310,19 +313,20 @@ public class PluginImportHelper {
 					}
 
 					// Add the file to the appropriate list in the map
-					Object fileList = collected.get(destination);
-					if (!(fileList instanceof List)) {
-						fileList = new ArrayList();
+					List<Object> fileList = collected.get(destination);
+					if (fileList == null) {
+						fileList = new ArrayList<Object>();
 						collected.put(destination, fileList);
 					}
-					((List) fileList).add(curr);
+					fileList.add(curr);
 				}
 
 			}
 		}
 	}
 
-	public static void collectNonJavaNonBuildFiles(IImportStructureProvider provider, Object element, ArrayList collected) {
+	public static void collectNonJavaNonBuildFiles(IImportStructureProvider provider, Object element, ArrayList<Object> collected) {
+		@SuppressWarnings("rawtypes")
 		List children = provider.getChildren(element);
 		if (children != null && !children.isEmpty()) {
 			for (int i = 0; i < children.size(); i++) {
@@ -349,7 +353,8 @@ public class PluginImportHelper {
 	 * @param element element within the structure to search
 	 * @param collected collection for gathering file list
 	 */
-	public static void collectResources(IImportStructureProvider provider, Object element, ArrayList collected) {
+	public static void collectResources(IImportStructureProvider provider, Object element, ArrayList<Object> collected) {
+		@SuppressWarnings("rawtypes")
 		List children = provider.getChildren(element);
 		if (children != null && !children.isEmpty()) {
 			for (int i = 0; i < children.size(); i++) {
@@ -372,7 +377,8 @@ public class PluginImportHelper {
 	 * @param collected list of files found
 	 * @since 3.4
 	 */
-	private static void collectResourcesFromFolder(ZipFileStructureProvider provider, Object element, IPath folderPath, ArrayList collected) {
+	private static void collectResourcesFromFolder(ZipFileStructureProvider provider, Object element, IPath folderPath, ArrayList<Object> collected) {
+		@SuppressWarnings("rawtypes")
 		List children = provider.getChildren(element);
 		if (children != null && !children.isEmpty()) {
 			for (int i = 0; i < children.size(); i++) {
@@ -399,7 +405,8 @@ public class PluginImportHelper {
 	 * @param collected list of files found
 	 * @since 3.5
 	 */
-	public static void collectResourcesFromFolder(IImportStructureProvider provider, Object element, IPath folderPath, ArrayList collected) {
+	public static void collectResourcesFromFolder(IImportStructureProvider provider, Object element, IPath folderPath, ArrayList<Object> collected) {
+		@SuppressWarnings("rawtypes")
 		List children = provider.getChildren(element);
 		if (children != null && !children.isEmpty()) {
 			for (int i = 0; i < children.size(); i++) {
@@ -424,17 +431,18 @@ public class PluginImportHelper {
 	 * @param collected list that source files will be added to
 	 * @since 3.4
 	 */
-	private static void collectJavaSourceFromRoot(ZipFileStructureProvider provider, List ignoreFolders, ArrayList collected) {
+	private static void collectJavaSourceFromRoot(ZipFileStructureProvider provider, List<IPath> ignoreFolders, ArrayList<Object> collected) {
+		@SuppressWarnings("rawtypes")
 		List children = provider.getChildren(provider.getRoot());
 		if (children != null && !children.isEmpty()) {
 			for (int i = 0; i < children.size(); i++) {
 				Object curr = children.get(i);
 				if (provider.isFolder(curr) && folderContainsFileExtension(provider, curr, ".java")) { //$NON-NLS-1$
 					// Check if we are in an ignored folder
-					List ignoreSubFolders = new ArrayList();
+					List<IPath> ignoreSubFolders = new ArrayList<IPath>();
 					boolean ignoreThisChild = false;
-					for (Iterator iterator = ignoreFolders.iterator(); iterator.hasNext();) {
-						IPath currentPath = (IPath) iterator.next();
+					for (Iterator<IPath> iterator = ignoreFolders.iterator(); iterator.hasNext();) {
+						IPath currentPath = iterator.next();
 						if (provider.getLabel(curr).equals(currentPath.segment(0))) {
 							if (currentPath.segmentCount() > 1) {
 								// There is a subfolder that should be ignored
@@ -466,17 +474,18 @@ public class PluginImportHelper {
 	 * @param collected list to update with new files found to import
 	 * @since 3.4
 	 */
-	private static void collectJavaSource(ZipFileStructureProvider provider, Object element, List ignoreFolders, ArrayList collected) {
+	private static void collectJavaSource(ZipFileStructureProvider provider, Object element, List<IPath> ignoreFolders, ArrayList<Object> collected) {
+		@SuppressWarnings("rawtypes")
 		List children = provider.getChildren(element);
 		if (children != null && !children.isEmpty()) {
 			for (int i = 0; i < children.size(); i++) {
 				Object curr = children.get(i);
 				if (provider.isFolder(curr)) {
 					// Check if we are in an ignored folder
-					List ignoreSubFolders = new ArrayList();
+					List<IPath> ignoreSubFolders = new ArrayList<IPath>();
 					boolean ignoreThisChild = false;
-					for (Iterator iterator = ignoreFolders.iterator(); iterator.hasNext();) {
-						IPath currentPath = (IPath) iterator.next();
+					for (Iterator<IPath> iterator = ignoreFolders.iterator(); iterator.hasNext();) {
+						IPath currentPath = iterator.next();
 						if (provider.getLabel(curr).equals(currentPath.segment(0))) {
 							if (currentPath.segmentCount() > 1) {
 								// There is a subfolder that should be ignored.  Remove segment referencing current folder.
@@ -500,6 +509,7 @@ public class PluginImportHelper {
 	}
 
 	private static boolean folderContainsFileExtension(IImportStructureProvider provider, Object element, String fileExtension) {
+		@SuppressWarnings("rawtypes")
 		List children = provider.getChildren(element);
 		if (children != null && !children.isEmpty()) {
 			for (int i = 0; i < children.size(); i++) {

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.preferences;
 
+import org.eclipse.jdt.core.IJavaProject;
+
 import java.util.*;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -41,7 +43,7 @@ public class CompilersPreferencePage extends PreferencePage implements IWorkbenc
 	/**
 	 * Since {@link #applyData(Object)} can be called before createContents, store the data
 	 */
-	private Map fPageData = null;
+	private Map<?, ?> fPageData = null;
 
 	/**
 	 *  
@@ -73,7 +75,7 @@ public class CompilersPreferencePage extends PreferencePage implements IWorkbenc
 		link.setText(PDEUIMessages.CompilersPreferencePage_configure_project_specific_settings);
 		link.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				HashSet set = new HashSet();
+				HashSet<IJavaProject> set = new HashSet<IJavaProject>();
 				try {
 					IJavaProject[] projects = JavaCore.create(ResourcesPlugin.getWorkspace().getRoot()).getJavaProjects();
 					IProject project = null;
@@ -92,7 +94,7 @@ public class CompilersPreferencePage extends PreferencePage implements IWorkbenc
 				}
 				ProjectSelectionDialog psd = new ProjectSelectionDialog(getShell(), set);
 				if (psd.open() == IDialogConstants.OK_ID) {
-					HashMap data = new HashMap();
+					HashMap<String, Boolean> data = new HashMap<String, Boolean>();
 					data.put(NO_LINK, Boolean.TRUE);
 					PreferencesUtil.createPropertyDialogOn(getShell(), ((IJavaProject) psd.getFirstResult()).getProject(), "org.eclipse.pde.internal.ui.properties.compilersPropertyPage", //$NON-NLS-1$
 							new String[] {"org.eclipse.pde.internal.ui.properties.compilersPropertyPage"}, data).open(); //$NON-NLS-1$
@@ -161,9 +163,9 @@ public class CompilersPreferencePage extends PreferencePage implements IWorkbenc
 	 */
 	public void applyData(Object data) {
 		if (data instanceof Map) {
-			fPageData = (Map) data;
+			fPageData = (Map<?, ?>) data;
 			if (link != null && fPageData.containsKey(NO_LINK)) {
-				link.setVisible(!Boolean.TRUE.equals(((Map) data).get(NO_LINK)));
+				link.setVisible(!Boolean.TRUE.equals(((Map<?, ?>) data).get(NO_LINK)));
 			}
 		}
 	}

@@ -36,7 +36,7 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 public class InternationalizeOperation implements IRunnableWithProgress {
 
 	private ISelection fSelection;
-	private ArrayList fSelectedModels;
+	private ArrayList<Object> fSelectedModels;
 	private InternationalizeModelTable fModelPluginTable;
 	private boolean fCanceled;
 
@@ -54,7 +54,7 @@ public class InternationalizeOperation implements IRunnableWithProgress {
 
 			Object[] elems = ((IStructuredSelection) fSelection).toArray();
 
-			fSelectedModels = new ArrayList(elems.length);
+			fSelectedModels = new ArrayList<Object>(elems.length);
 			for (int i = 0; i < elems.length; i++) {
 				//If a file was selected, get its parent project
 				if (elems[i] instanceof IFile)

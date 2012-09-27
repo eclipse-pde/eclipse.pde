@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.imports;
 
+import org.eclipse.pde.internal.core.SourceLocation;
+
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.core.runtime.Path;
@@ -38,7 +40,7 @@ public class AlternateSourceLocations extends SourceLocationManager {
 	 * sub-folders of source directories. This is the old-style source
 	 * plug-in.
 	 */
-	private List oldSourceRoots;
+	private List<SourceLocation> oldSourceRoots;
 
 	/**
 	 * Constructs alternate source locations on the given plug-ins.
@@ -70,9 +72,9 @@ public class AlternateSourceLocations extends SourceLocationManager {
 	 * @return collection of old-style source locations that have been contributed via
 	 * 	extension point
 	 */
-	public List getExtensionLocations() {
+	public List<SourceLocation> getExtensionLocations() {
 		if (oldSourceRoots == null) {
-			oldSourceRoots = new ArrayList();
+			oldSourceRoots = new ArrayList<SourceLocation>();
 			for (int i = 0; i < bundles.length; i++) {
 				String path = ((TargetBundle) bundles[i]).getSourcePath();
 				if (path != null) {

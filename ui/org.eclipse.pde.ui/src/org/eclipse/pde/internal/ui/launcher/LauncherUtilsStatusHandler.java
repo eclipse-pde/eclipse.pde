@@ -58,7 +58,7 @@ public class LauncherUtilsStatusHandler implements IStatusHandler {
 
 			case LauncherUtils.ORGANIZE_MANIFESTS :
 				Object[] args2 = (Object[]) source;
-				organizeManifests((ArrayList) args2[0], (IProgressMonitor) args2[1], (Properties) args2[2]);
+				organizeManifests((ArrayList<?>) args2[0], (IProgressMonitor) args2[1], (Properties) args2[2]);
 				break;
 
 			case LauncherUtils.SELECT_WORKSPACE_FIELD :
@@ -99,7 +99,7 @@ public class LauncherUtilsStatusHandler implements IStatusHandler {
 		generateErrorDialog(PDEUIMessages.LauncherUtils_workspaceLocked, message, launchConfig, mode);
 	}
 
-	private void organizeManifests(final ArrayList projects, final IProgressMonitor monitor, final Properties lastRun) {
+	private void organizeManifests(final ArrayList<?> projects, final IProgressMonitor monitor, final Properties lastRun) {
 		Display.getDefault().syncExec(new Runnable() {
 			public void run() {
 				OrganizeManifestsProcessor processor = new OrganizeManifestsProcessor(projects);
@@ -110,7 +110,7 @@ public class LauncherUtilsStatusHandler implements IStatusHandler {
 					// update table for each project with current time stamp
 					Properties table = lastRun;
 					String ts = Long.toString(System.currentTimeMillis());
-					Iterator it = projects.iterator();
+					Iterator<?> it = projects.iterator();
 					while (it.hasNext())
 						table.put(((IProject) it.next()).getName(), ts);
 				} catch (OperationCanceledException e) {

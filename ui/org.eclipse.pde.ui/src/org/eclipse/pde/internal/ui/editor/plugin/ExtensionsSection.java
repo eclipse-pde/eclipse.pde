@@ -12,6 +12,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
+import java.util.ArrayList;
+import org.eclipse.core.runtime.IConfigurationElement;
+
 import java.util.*;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
@@ -78,7 +81,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 	private FormFilteredTree fFilteredTree;
 	private ExtensionsPatternFilter fPatternFilter;
 	private SchemaRegistry fSchemaRegistry;
-	private Hashtable fEditorWizards;
+	private Hashtable<String, ArrayList<IConfigurationElement>> fEditorWizards;
 	private SortAction fSortAction;
 	private CollapseAction fCollapseAction;
 	private ToggleExpandStateAction fExpandAction;
@@ -163,7 +166,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 			String tagName = (parent == extension ? "extension" : parent.getName()); //$NON-NLS-1$
 			elementInfo = schema.findElement(tagName);
 		} else {
-			Stack stack = new Stack();
+			Stack<String> stack = new Stack<String>();
 			IPluginParent parentParent = parent;
 			while (parentParent != extension && parentParent != null) {
 				stack.push(parentParent.getName());
@@ -179,10 +182,10 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 			// We have a schema complex type.  Either the element has attributes
 			// or the element has children.
 			// Generate the list of element proposals
-			TreeSet elementSet = XMLElementProposalComputer.computeElementProposal(elementInfo, (IDocumentElementNode) parent);
+			TreeSet<?> elementSet = XMLElementProposalComputer.computeElementProposal(elementInfo, (IDocumentElementNode) parent);
 
 			// Create a corresponding menu entry for each element proposal
-			Iterator iterator = elementSet.iterator();
+			Iterator<?> iterator = elementSet.iterator();
 			while (iterator.hasNext()) {
 				Action action = new NewElementAction((ISchemaElement) iterator.next(), parent);
 				menu.add(action);
@@ -533,7 +536,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		IStructuredSelection sel = (IStructuredSelection) fExtensionTree.getSelection();
 		if (sel.isEmpty())
 			return;
-		for (Iterator iter = sel.iterator(); iter.hasNext();) {
+		for (Iterator<?> iter = sel.iterator(); iter.hasNext();) {
 			IPluginObject object = (IPluginObject) iter.next();
 			try {
 				IStructuredSelection newSelection = null;
@@ -659,7 +662,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 
 	private void handleEdit() {
 		final IStructuredSelection selection = (IStructuredSelection) fExtensionTree.getSelection();
-		ArrayList editorWizards = getEditorWizards(selection);
+		ArrayList<?> editorWizards = getEditorWizards(selection);
 		if (editorWizards == null)
 			return;
 		if (editorWizards.size() == 1) {
@@ -685,7 +688,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		updateButtons(fFilteredTree.getViewer().getSelection());
 	}
 
-	private ArrayList getEditorWizards(IStructuredSelection selection) {
+	private ArrayList<?> getEditorWizards(IStructuredSelection selection) {
 		if (selection.size() != 1)
 			return null;
 		Object obj = selection.getFirstElement();
@@ -706,11 +709,11 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 			return null;
 		if (fEditorWizards == null)
 			loadExtensionWizards();
-		return (ArrayList) fEditorWizards.get(pointId);
+		return (ArrayList<?>) fEditorWizards.get(pointId);
 	}
 
 	private void loadExtensionWizards() {
-		fEditorWizards = new Hashtable();
+		fEditorWizards = new Hashtable<String, ArrayList<IConfigurationElement>>();
 		IConfigurationElement[] elements = Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.pde.ui.newExtension"); //$NON-NLS-1$
 		for (int i = 0; i < elements.length; i++) {
 			IConfigurationElement element = elements[i];
@@ -718,9 +721,9 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 				String pointId = element.getAttribute("point"); //$NON-NLS-1$
 				if (pointId == null)
 					continue;
-				ArrayList list = (ArrayList) fEditorWizards.get(pointId);
+				ArrayList<IConfigurationElement> list = (ArrayList<IConfigurationElement>) fEditorWizards.get(pointId);
 				if (list == null) {
-					list = new ArrayList();
+					list = new ArrayList<IConfigurationElement>();
 					fEditorWizards.put(pointId, list);
 				}
 				list.add(element);
@@ -1143,7 +1146,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		// We have a schema complex type.  Either the target object has 
 		// attributes or the element has children.
 		// Generate the list of element proposals
-		TreeSet elementSet = XMLElementProposalComputer.computeElementProposal(schemaElement, (IDocumentElementNode) targetObject);
+		TreeSet<?> elementSet = XMLElementProposalComputer.computeElementProposal(schemaElement, (IDocumentElementNode) targetObject);
 		// Determine whether we can paste the source elements as children of
 		// the target object
 		if (sourceObjects.length > 1) {
@@ -1158,13 +1161,13 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 	 * @param sourceElements
 	 * @param targetElementSet
 	 */
-	private boolean canPasteSourceElements(IPluginElement[] sourceElements, TreeSet targetElementSet) {
+	private boolean canPasteSourceElements(IPluginElement[] sourceElements, TreeSet<?> targetElementSet) {
 		// Performance optimisation
 		// HashSet of schema elements is not comparable for the source
 		// objects (schema elements are transient)
 		// Create a new HashSet with element names for comparison		
-		HashSet targetElementNameSet = new HashSet();
-		Iterator iterator = targetElementSet.iterator();
+		HashSet<String> targetElementNameSet = new HashSet<String>();
+		Iterator<?> iterator = targetElementSet.iterator();
 		while (iterator.hasNext()) {
 			targetElementNameSet.add(((ISchemaElement) iterator.next()).getName());
 		}
@@ -1191,12 +1194,12 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 	 * @param sourceElement
 	 * @param targetElementSet
 	 */
-	private boolean canPasteSourceElement(IPluginElement sourceElement, TreeSet targetElementSet) {
+	private boolean canPasteSourceElement(IPluginElement sourceElement, TreeSet<?> targetElementSet) {
 		boolean canPaste = false;
 		// Get the source element tag name
 		String sourceTagName = sourceElement.getName();
 		// Iterate over set of valid element proposals
-		Iterator iterator = targetElementSet.iterator();
+		Iterator<?> iterator = targetElementSet.iterator();
 		while (iterator.hasNext()) {
 			// Get the proposal element tag name
 			String targetTagName = ((ISchemaElement) iterator.next()).getName();
@@ -1379,7 +1382,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 	 */
 	boolean isRemoveEnabled(IStructuredSelection selection) {
 		if (selection != null) {
-			for (Iterator iterator = selection.iterator(); iterator.hasNext();) {
+			for (Iterator<?> iterator = selection.iterator(); iterator.hasNext();) {
 				Object element = iterator.next();
 				if (element instanceof PluginExtensionNode) {
 					return ((PluginExtensionNode) element).getChildCount() == 0;
@@ -1722,9 +1725,9 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		// We have a schema complex type.  Either the target object has 
 		// attributes or the element has children.
 		// Generate the list of element proposals
-		TreeSet elementSet = XMLElementProposalComputer.computeElementProposal(schemaElement, targetPluginNode);
+		TreeSet<?> elementSet = XMLElementProposalComputer.computeElementProposal(schemaElement, targetPluginNode);
 		// Iterate over set of valid element proposals
-		Iterator iterator = elementSet.iterator();
+		Iterator<?> iterator = elementSet.iterator();
 		while (iterator.hasNext()) {
 			// Get the proposal element tag name
 			String targetTagName = ((ISchemaElement) iterator.next()).getName();

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.templates;
 
+import org.eclipse.jface.wizard.WizardPage;
+
 import java.util.ArrayList;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogPage;
@@ -30,7 +32,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 
 public class TemplateSelectionPage extends WizardPage {
 	private ITemplateSection[] fCandidates;
-	private ArrayList fVisiblePages;
+	private ArrayList<WizardPage> fVisiblePages;
 	private WizardCheckboxTablePart fTablePart;
 	private FormBrowser fDescriptionBrowser;
 
@@ -88,7 +90,7 @@ public class TemplateSelectionPage extends WizardPage {
 		fDescriptionBrowser = new FormBrowser(SWT.BORDER | SWT.V_SCROLL);
 		fDescriptionBrowser.setText(""); //$NON-NLS-1$
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
-		fVisiblePages = new ArrayList();
+		fVisiblePages = new ArrayList<WizardPage>();
 	}
 
 	public void dispose() {

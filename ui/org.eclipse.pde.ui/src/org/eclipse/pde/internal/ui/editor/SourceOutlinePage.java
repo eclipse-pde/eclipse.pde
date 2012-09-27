@@ -11,6 +11,8 @@
 
 package org.eclipse.pde.internal.ui.editor;
 
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+
 import java.util.ArrayList;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.viewers.*;
@@ -38,7 +40,7 @@ public class SourceOutlinePage extends PDEOutlinePage implements IReconcilingPar
 	 * org.eclipse.ui.views.contentoutline.ContentOutlinePage.selectionChangedListeners
 	 * from our parent
 	 */
-	private ArrayList fListenerList;
+	private ArrayList<ISelectionChangedListener> fListenerList;
 
 	public SourceOutlinePage(PDEFormEditor editor, IEditingModel model, IBaseLabelProvider lProvider, IContentProvider cProvider, ViewerComparator defaultComparator, ViewerComparator comparator) {
 		super(editor);
@@ -47,7 +49,7 @@ public class SourceOutlinePage extends PDEOutlinePage implements IReconcilingPar
 		fContentProvider = cProvider;
 		fDefaultComparator = defaultComparator;
 		fViewerComparator = comparator;
-		fListenerList = new ArrayList();
+		fListenerList = new ArrayList<ISelectionChangedListener>();
 	}
 
 	/**  

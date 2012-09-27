@@ -64,7 +64,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 	private TableViewer fLibraryTable;
 
 	class LibraryFilter extends JARFileFilter {
-		public LibraryFilter(HashSet set) {
+		public LibraryFilter(HashSet<IPath> set) {
 			super(set);
 		}
 
@@ -79,6 +79,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 
 	class LibrarySelectionValidator extends JarSelectionValidator {
 
+		@SuppressWarnings("rawtypes")
 		public LibrarySelectionValidator(Class[] acceptedTypes, boolean allowMultipleSelection) {
 			super(acceptedTypes, allowMultipleSelection);
 		}
@@ -392,7 +393,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 				if (entry == null) {
 					IProject project = ((IModel) getPage().getModel()).getUnderlyingResource().getProject();
 					IJavaProject jproject = JavaCore.create(project);
-					ArrayList tokens = new ArrayList();
+					ArrayList<String> tokens = new ArrayList<String>();
 					IClasspathEntry[] entries = jproject.getRawClasspath();
 					for (int i = 0; i < entries.length; i++)
 						if (entries[i].getEntryKind() == IClasspathEntry.CPE_SOURCE)
@@ -430,13 +431,14 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 			}
 		};
 
+		@SuppressWarnings("rawtypes")
 		Class[] acceptedClasses = new Class[] {IFile.class};
 		dialog.setValidator(new LibrarySelectionValidator(acceptedClasses, true));
 		dialog.setTitle(PDEUIMessages.BuildEditor_ClasspathSection_jarsTitle);
 		dialog.setMessage(PDEUIMessages.ClasspathSection_jarsMessage);
 		IPluginLibrary[] libraries = getModel().getPluginBase().getLibraries();
 		IProject project = ((IModel) getPage().getModel()).getUnderlyingResource().getProject();
-		HashSet set = new HashSet();
+		HashSet<IPath> set = new HashSet<IPath>();
 		for (int i = 0; i < libraries.length; i++) {
 			IPath bundlePath = new Path(ClasspathUtilCore.expandLibraryName(libraries[i].getName()));
 			IPath buildPath = PDEProject.getBundleRoot(project).getProjectRelativePath().append(bundlePath);
@@ -453,7 +455,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 			String[] bundlePaths = new String[elements.length];
 			String[] buildPaths = new String[elements.length];
 			IPluginModelBase model = getModel();
-			ArrayList list = new ArrayList();
+			ArrayList<IPluginLibrary> list = new ArrayList<IPluginLibrary>();
 			for (int i = 0; i < elements.length; i++) {
 				IResource elem = (IResource) elements[i];
 				IContainer bundleRoot = PDEProject.getBundleRoot(project);
@@ -534,7 +536,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 		IJavaProject jproject = JavaCore.create(project);
 		try {
 			IClasspathEntry[] entries = jproject.getRawClasspath();
-			ArrayList toBeAdded = new ArrayList();
+			ArrayList<IClasspathEntry> toBeAdded = new ArrayList<IClasspathEntry>();
 			int index = -1;
 			entryLoop: for (int i = 0; i < entries.length; i++) {
 				if (entries[i].getEntryKind() == IClasspathEntry.CPE_LIBRARY) {
@@ -634,7 +636,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(java.lang.Object, java.lang.Object[])
 	 */
 	protected boolean canPaste(Object targetObject, Object[] sourceObjects) {
-		HashSet librarySet = null;
+		HashSet<Path> librarySet = null;
 		// Only source objects that are plugin libraries that have not already
 		// been specified can be pasted
 		for (int i = 0; i < sourceObjects.length; i++) {
@@ -657,10 +659,10 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 		return true;
 	}
 
-	private HashSet createPluginLibrarySet() {
+	private HashSet<Path> createPluginLibrarySet() {
 		// Get the current libraries and add them to a set for easy searching
 		IPluginLibrary[] libraries = getModel().getPluginBase().getLibraries();
-		HashSet librarySet = new HashSet();
+		HashSet<Path> librarySet = new HashSet<Path>();
 		for (int i = 0; i < libraries.length; i++) {
 			librarySet.add(new Path(ClasspathUtilCore.expandLibraryName(libraries[i].getName())));
 		}

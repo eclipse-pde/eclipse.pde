@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor;
 
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+
 import java.util.ArrayList;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
@@ -28,7 +30,7 @@ import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 public class PDEMultiPageContentOutline extends Page implements IContentOutlinePage, ISelectionProvider, ISelectionChangedListener, ILaunchingPreferenceConstants {
 	private PageBook pagebook;
 	private ISelection selection;
-	private ArrayList listeners;
+	private ArrayList<ISelectionChangedListener> listeners;
 	private ISortableContentOutlinePage currentPage;
 	private ISortableContentOutlinePage emptyPage;
 	private IActionBars actionBars;
@@ -37,7 +39,7 @@ public class PDEMultiPageContentOutline extends Page implements IContentOutlineP
 
 	public PDEMultiPageContentOutline(PDEFormEditor editor) {
 		this.editor = editor;
-		listeners = new ArrayList();
+		listeners = new ArrayList<ISelectionChangedListener>();
 		sortingOn = PDEPlugin.getDefault().getPreferenceStore().getBoolean("PDEMultiPageContentOutline.SortingAction.isChecked"); //$NON-NLS-1$
 
 	}

@@ -81,7 +81,7 @@ public class BuildSiteAction implements IObjectActionDelegate {
 	}
 
 	private IFeatureModel[] getFeatureModels(ISiteFeature[] sFeatures) {
-		ArrayList list = new ArrayList();
+		ArrayList<IFeatureModel> list = new ArrayList<IFeatureModel>();
 		for (int i = 0; i < sFeatures.length; i++) {
 			ISiteFeature siteFeature = sFeatures[i];
 			IFeatureModel model = PDECore.getDefault().getFeatureModelManager().findFeatureModelRelaxed(siteFeature.getId(), siteFeature.getVersion());

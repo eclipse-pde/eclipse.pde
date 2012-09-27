@@ -32,7 +32,7 @@ public class FindReferenceOperation implements IWorkspaceRunnable {
 	}
 
 	public void run(IProgressMonitor monitor) throws CoreException {
-		ArrayList list = new ArrayList();
+		ArrayList<TextFileChange> list = new ArrayList<TextFileChange>();
 		if (fDesc != null) {
 			monitor.beginTask("", 3); //$NON-NLS-1$
 			findRequireBundleReferences(list, new SubProgressMonitor(monitor, 1));
@@ -47,7 +47,7 @@ public class FindReferenceOperation implements IWorkspaceRunnable {
 		return fChanges;
 	}
 
-	private void findRequireBundleReferences(ArrayList changes, IProgressMonitor monitor) throws CoreException {
+	private void findRequireBundleReferences(ArrayList<TextFileChange> changes, IProgressMonitor monitor) throws CoreException {
 		String oldId = fDesc.getSymbolicName();
 		BundleDescription[] dependents = fDesc.getDependents();
 		monitor.beginTask("", dependents.length); //$NON-NLS-1$
@@ -70,7 +70,7 @@ public class FindReferenceOperation implements IWorkspaceRunnable {
 		}
 	}
 
-	private void findFragmentReferences(ArrayList changes, IProgressMonitor monitor) throws CoreException {
+	private void findFragmentReferences(ArrayList<TextFileChange> changes, IProgressMonitor monitor) throws CoreException {
 		BundleDescription[] fragments = fDesc.getFragments();
 		monitor.beginTask("", fragments.length); //$NON-NLS-1$
 		String id = fDesc.getSymbolicName();
@@ -87,7 +87,7 @@ public class FindReferenceOperation implements IWorkspaceRunnable {
 		}
 	}
 
-	private void findXFriendReferences(ArrayList changes, IProgressMonitor monitor) throws CoreException {
+	private void findXFriendReferences(ArrayList<TextFileChange> changes, IProgressMonitor monitor) throws CoreException {
 		StateHelper helper = Platform.getPlatformAdmin().getStateHelper();
 		ExportPackageDescription[] pkgs = helper.getVisiblePackages(fDesc);
 		String id = fDesc.getSymbolicName();

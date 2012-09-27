@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+
 import java.util.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -35,7 +37,7 @@ public class ProductValidateAction extends Action {
 	}
 
 	public void run() {
-		HashMap map = new HashMap();
+		HashMap<String, IPluginModelBase> map = new HashMap<String, IPluginModelBase>();
 		if (fProduct.useFeatures()) {
 			IFeatureModel[] features = getUniqueFeatures();
 			for (int i = 0; i < features.length; i++) {
@@ -64,7 +66,7 @@ public class ProductValidateAction extends Action {
 		}
 	}
 
-	private void addFeaturePlugins(IFeature feature, HashMap map) {
+	private void addFeaturePlugins(IFeature feature, HashMap<String, IPluginModelBase> map) {
 		IFeaturePlugin[] plugins = feature.getPlugins();
 		for (int i = 0; i < plugins.length; i++) {
 			String id = plugins[i].getId();
@@ -77,7 +79,7 @@ public class ProductValidateAction extends Action {
 	}
 
 	private IFeatureModel[] getUniqueFeatures() {
-		ArrayList list = new ArrayList();
+		ArrayList<IFeatureModel> list = new ArrayList<IFeatureModel>();
 		IProductFeature[] features = fProduct.getFeatures();
 		for (int i = 0; i < features.length; i++) {
 			String id = features[i].getId();
@@ -87,7 +89,7 @@ public class ProductValidateAction extends Action {
 		return (IFeatureModel[]) list.toArray(new IFeatureModel[list.size()]);
 	}
 
-	private void addFeatureAndChildren(String id, String version, List list) {
+	private void addFeatureAndChildren(String id, String version, List<IFeatureModel> list) {
 		FeatureModelManager manager = PDECore.getDefault().getFeatureModelManager();
 		IFeatureModel model = manager.findFeatureModel(id, version);
 		if (model == null || list.contains(model))

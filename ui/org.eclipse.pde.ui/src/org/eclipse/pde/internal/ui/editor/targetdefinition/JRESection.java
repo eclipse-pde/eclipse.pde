@@ -44,7 +44,7 @@ public class JRESection extends SectionPart {
 	private Button fExecEnvButton;
 	private ComboPart fNamedJREsCombo;
 	private ComboPart fExecEnvsCombo;
-	private TreeSet fExecEnvChoices;
+	private TreeSet<String> fExecEnvChoices;
 	private boolean fBlockChanges;
 	private Button fConfigureJREButton;
 	private TargetEditor fEditor;
@@ -176,7 +176,7 @@ public class JRESection extends SectionPart {
 	 * Initializes the combo with possible execution enviroments
 	 */
 	protected void initializeValues() {
-		fExecEnvChoices = new TreeSet();
+		fExecEnvChoices = new TreeSet<String>();
 		IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
 		IExecutionEnvironment[] envs = manager.getExecutionEnvironments();
 		for (int i = 0; i < envs.length; i++)

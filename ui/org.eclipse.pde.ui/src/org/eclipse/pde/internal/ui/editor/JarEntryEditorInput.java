@@ -94,6 +94,7 @@ public class JarEntryEditorInput implements IStorageEditorInput {
 	/*
 	 * @see IAdaptable#getAdapter(Class)
 	 */
+	@SuppressWarnings("rawtypes")
 	public Object getAdapter(Class adapter) {
 		if (adapter.equals(File.class))
 			return fJarEntryFile.getAdapter(File.class);

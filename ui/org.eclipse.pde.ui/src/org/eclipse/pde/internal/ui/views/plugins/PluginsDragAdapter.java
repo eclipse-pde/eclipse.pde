@@ -73,8 +73,8 @@ public class PluginsDragAdapter extends DragSourceAdapter {
 
 	private FileAdapter[] getSelectedFiles() {
 		IStructuredSelection selection = (IStructuredSelection) selectionProvider.getSelection();
-		ArrayList files = new ArrayList();
-		for (Iterator iter = selection.iterator(); iter.hasNext();) {
+		ArrayList<Object> files = new ArrayList<Object>();
+		for (Iterator<?> iter = selection.iterator(); iter.hasNext();) {
 			Object obj = iter.next();
 			if (obj instanceof FileAdapter)
 				files.add(obj);

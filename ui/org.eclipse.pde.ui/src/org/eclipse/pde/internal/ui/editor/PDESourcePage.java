@@ -665,6 +665,7 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 	 * is not read-only. Returns <code>super.getAdapter(adapter)</code>
 	 * otherwise.
 	 */
+	@SuppressWarnings("rawtypes")
 	public Object getAdapter(Class adapter) {
 		if ((adapter == IShowInTargetList.class) && (fEditor != null) && (fEditor.getEditorInput() instanceof IFileEditorInput)) {
 			return getShowInTargetList();

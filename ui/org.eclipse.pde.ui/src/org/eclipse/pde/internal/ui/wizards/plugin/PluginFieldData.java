@@ -21,7 +21,7 @@ public class PluginFieldData extends AbstractFieldData implements IPluginFieldDa
 	private boolean fDoGenerateClass = true;
 	private boolean fRCPAppPlugin = false;
 	private boolean fSetupAPITooling = false;
-	private ArrayList templates = new ArrayList();
+	private ArrayList<ITemplateSection> templates = new ArrayList<ITemplateSection>();
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.IPluginFieldData#getClassname()

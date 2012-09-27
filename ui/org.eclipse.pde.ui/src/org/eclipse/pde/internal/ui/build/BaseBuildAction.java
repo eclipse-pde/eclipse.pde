@@ -146,7 +146,7 @@ public abstract class BaseBuildAction extends AbstractHandler {
 
 	public static void setDefaultValues(IFile generatedFile) {
 		try {
-			List configs = AntLaunchShortcut.findExistingLaunchConfigurations(generatedFile);
+			List<?> configs = AntLaunchShortcut.findExistingLaunchConfigurations(generatedFile);
 			ILaunchConfigurationWorkingCopy launchCopy;
 			if (configs.size() == 0) {
 				ILaunchConfiguration config = AntLaunchShortcut.createDefaultLaunchConfiguration(generatedFile);
@@ -157,7 +157,7 @@ public abstract class BaseBuildAction extends AbstractHandler {
 			if (launchCopy == null)
 				return;
 
-			Map properties = new HashMap();
+			Map<String, String> properties = new HashMap<String, String>();
 			properties = launchCopy.getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_PROPERTIES, properties);
 			properties.put(IXMLConstants.PROPERTY_BASE_WS, TargetPlatform.getWS());
 			properties.put(IXMLConstants.PROPERTY_BASE_OS, TargetPlatform.getOS());

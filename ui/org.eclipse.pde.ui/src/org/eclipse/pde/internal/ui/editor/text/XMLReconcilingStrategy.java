@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.text;
 
+import org.eclipse.jface.text.Position;
+import org.eclipse.ui.texteditor.spelling.SpellingAnnotation;
+
 import java.util.*;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.text.*;
@@ -33,7 +36,7 @@ public class XMLReconcilingStrategy extends SpellingReconcileStrategy {
 		private IAnnotationModel fAnnotationModel;
 
 		/** Annotations to add. */
-		private Map fAddAnnotations;
+		private Map<SpellingAnnotation, Position> fAddAnnotations;
 
 		/** Lock object for modifying the annotations. */
 		private Object fLockObject;
@@ -63,7 +66,7 @@ public class XMLReconcilingStrategy extends SpellingReconcileStrategy {
 		 * @see org.eclipse.ui.texteditor.spelling.ISpellingProblemCollector#beginCollecting()
 		 */
 		public void beginCollecting() {
-			fAddAnnotations = new HashMap();
+			fAddAnnotations = new HashMap<SpellingAnnotation, Position>();
 		}
 
 		/*
@@ -71,7 +74,7 @@ public class XMLReconcilingStrategy extends SpellingReconcileStrategy {
 		 */
 		public void endCollecting() {
 			synchronized (fLockObject) {
-				for (Iterator iter = fAddAnnotations.keySet().iterator(); iter.hasNext();) {
+				for (Iterator<SpellingAnnotation> iter = fAddAnnotations.keySet().iterator(); iter.hasNext();) {
 					Annotation annotation = (Annotation) iter.next();
 					fAnnotationModel.addAnnotation(annotation, (Position) fAddAnnotations.get(annotation));
 				}
@@ -100,7 +103,7 @@ public class XMLReconcilingStrategy extends SpellingReconcileStrategy {
 		IAnnotationModel model = getAnnotationModel();
 		if (model == null)
 			return;
-		Iterator iter = model.getAnnotationIterator();
+		Iterator<?> iter = model.getAnnotationIterator();
 
 		while (iter.hasNext()) {
 			Annotation annotation = (Annotation) iter.next();
@@ -117,7 +120,7 @@ public class XMLReconcilingStrategy extends SpellingReconcileStrategy {
 	/**
 	 * Deletes the spelling annotations marked for XML Tags
 	 */
-	private void deleteNonstringSpellingAnnotations(Iterator iter) {
+	private void deleteNonstringSpellingAnnotations(Iterator<SpellingAnnotation> iter) {
 		if (!(getDocument() instanceof IDocumentExtension3)) { //can not proceed otherwise
 			return;
 		}

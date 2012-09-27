@@ -433,7 +433,7 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#getItemsComparator()
 	 */
-	protected Comparator getItemsComparator() {
+	protected Comparator<?> getItemsComparator() {
 		return new PluginSearchComparator();
 	}
 
@@ -669,7 +669,7 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 		}
 	}
 
-	private class PluginSearchComparator implements Comparator {
+	private class PluginSearchComparator implements Comparator<Object> {
 
 		public int compare(Object o1, Object o2) {
 			int id1 = getId(o1);

@@ -937,14 +937,14 @@ public class TargetDefinition implements ITargetDefinition {
 	}
 
 	/**
-	 * Convenience method to return the set of IFeatureModels that are included in this
-	 * target as well as any other included plug-ins as IResolvedBundles (that are not part 
+	 * Convenience method to return the set of {@link TargetFeature}s that are included in this
+	 * target as well as any other included plug-ins as {@link TargetBundle}s (that are not part 
 	 * of the features). Also returns any bundles with error statuses.  Will return <code>null</code> 
 	 * if this target has not been resolved.
 	 * 
 	 * @see #getAllFeatures()
 	 * @see #getOtherBundles()
-	 * @return set of IFeatureModels and IResolvedBundles or <code>null</code>
+	 * @return set of {@link TargetFeature}s and {@link TargetBundle}s or <code>null</code>
 	 */
 	public Set<Object> getFeaturesAndBundles() {
 		if (!isResolved()) {

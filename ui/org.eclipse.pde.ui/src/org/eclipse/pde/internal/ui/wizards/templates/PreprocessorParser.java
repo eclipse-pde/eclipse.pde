@@ -39,7 +39,7 @@ public class PreprocessorParser {
 
 	private IVariableProvider provider;
 	private String line;
-	private Stack exprStack;
+	private Stack<RootEntry> exprStack;
 	private int loc;
 	private String tvalue;
 
@@ -135,15 +135,16 @@ public class PreprocessorParser {
 
 	public PreprocessorParser(IVariableProvider provider) {
 		this.provider = provider;
-		exprStack = new Stack();
+		exprStack = new Stack<RootEntry>();
 	}
 
 	public void setVariableProvider(IVariableProvider provider) {
 		this.provider = provider;
 	}
 
+	@SuppressWarnings("rawtypes")
 	public static void main(String[] args) {
-		final Hashtable vars = new Hashtable();
+		final Hashtable<String, Comparable> vars = new Hashtable<String, Comparable>();
 		vars.put("a", Boolean.FALSE); //$NON-NLS-1$
 		vars.put("b", "3"); //$NON-NLS-1$ //$NON-NLS-2$
 		vars.put("c", Boolean.TRUE); //$NON-NLS-1$
@@ -172,7 +173,7 @@ public class PreprocessorParser {
 	private boolean evaluate() {
 		boolean result = false;
 		if (exprStack.isEmpty() == false) {
-			RootEntry entry = (RootEntry) exprStack.peek();
+			RootEntry entry = exprStack.peek();
 			if (entry.root != null) {
 				Object value = entry.root.getValue();
 				if (value != null && value instanceof Boolean) {
@@ -257,7 +258,7 @@ public class PreprocessorParser {
 			RootEntry entry = new RootEntry();
 			exprStack.push(entry);
 		}
-		return (RootEntry) exprStack.peek();
+		return exprStack.peek();
 	}
 
 	private void replaceRoot(ExpressionNode newRoot) {

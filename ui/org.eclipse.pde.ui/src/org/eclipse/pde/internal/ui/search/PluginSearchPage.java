@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.search;
 
+import org.eclipse.pde.internal.ui.search.PluginSearchPage.QueryData;
+
 import java.util.*;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -51,7 +53,7 @@ public class PluginSearchPage extends DialogPage implements ISearchPage {
 
 	}
 
-	private static ArrayList previousQueries = new ArrayList();
+	private static ArrayList<QueryData> previousQueries = new ArrayList<QueryData>();
 
 	private Button caseSensitive;
 	private ISearchPageContainer container;
@@ -169,15 +171,15 @@ public class PluginSearchPage extends DialogPage implements ISearchPage {
 		return PluginSearchInput.ELEMENT_EXTENSION_POINT;
 	}
 
-	private HashSet getSelectedResources() {
-		HashSet result = new HashSet();
+	private HashSet<Object> getSelectedResources() {
+		HashSet<Object> result = new HashSet<Object>();
 		int scope = container.getSelectedScope();
 		if (scope == ISearchPageContainer.WORKSPACE_SCOPE)
 			return null;
 		if (scope == ISearchPageContainer.SELECTION_SCOPE || scope == ISearchPageContainer.SELECTED_PROJECTS_SCOPE) {
 			if (container.getSelection() instanceof IStructuredSelection) {
 				IStructuredSelection selection = (IStructuredSelection) container.getSelection();
-				Iterator iter = selection.iterator();
+				Iterator<?> iter = selection.iterator();
 				while (iter.hasNext()) {
 					Object item = iter.next();
 					if (item instanceof IResource)

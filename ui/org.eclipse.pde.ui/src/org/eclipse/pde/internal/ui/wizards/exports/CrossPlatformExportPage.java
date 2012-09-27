@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.exports;
 
+import org.eclipse.pde.internal.ui.wizards.exports.CrossPlatformExportPage.Configuration;
+
 import java.io.File;
 import java.util.*;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -107,12 +109,12 @@ public class CrossPlatformExportPage extends AbstractExportWizardPage {
 	private void initialize() {
 		String value = getDialogSettings().get(CROSS_PLATFORM);
 		if (value != null) {
-			HashSet set = new HashSet();
+			HashSet<String> set = new HashSet<String>();
 			StringTokenizer tok = new StringTokenizer(value, ","); //$NON-NLS-1$
 			while (tok.hasMoreTokens()) {
 				set.add(tok.nextToken());
 			}
-			ArrayList selected = new ArrayList();
+			ArrayList<Configuration> selected = new ArrayList<Configuration>();
 			TableItem[] items = fPlatformPart.getTableViewer().getTable().getItems();
 			for (int i = 0; i < items.length; i++) {
 				Configuration config = (Configuration) items[i].getData();
@@ -151,7 +153,7 @@ public class CrossPlatformExportPage extends AbstractExportWizardPage {
 	}
 
 	private Configuration[] getListElements() {
-		ArrayList list = new ArrayList();
+		ArrayList<Configuration> list = new ArrayList<Configuration>();
 		if (fModel != null) {
 			File bin = new File(fModel.getInstallLocation(), "bin"); //$NON-NLS-1$
 			if (bin.exists() && bin.isDirectory()) {
@@ -165,7 +167,7 @@ public class CrossPlatformExportPage extends AbstractExportWizardPage {
 		return (Configuration[]) list.toArray(new Configuration[list.size()]);
 	}
 
-	private void getWS(ArrayList list, File file) {
+	private void getWS(ArrayList<Configuration> list, File file) {
 		File[] children = file.listFiles();
 		for (int i = 0; i < children.length; i++) {
 			if (children[i].isDirectory())
@@ -173,7 +175,7 @@ public class CrossPlatformExportPage extends AbstractExportWizardPage {
 		}
 	}
 
-	private void getOS(ArrayList list, File file, String ws) {
+	private void getOS(ArrayList<Configuration> list, File file, String ws) {
 		File[] children = file.listFiles();
 		for (int i = 0; i < children.length; i++) {
 			if (children[i].isDirectory() && !"CVS".equalsIgnoreCase(children[i].getName())) { //$NON-NLS-1$

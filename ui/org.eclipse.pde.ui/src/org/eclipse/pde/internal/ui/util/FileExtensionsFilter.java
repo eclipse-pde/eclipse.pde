@@ -20,10 +20,10 @@ import org.eclipse.jface.viewers.ViewerFilter;
 
 public class FileExtensionsFilter extends ViewerFilter {
 
-	private HashSet fExtensions;
+	private HashSet<String> fExtensions;
 
 	public FileExtensionsFilter() {
-		fExtensions = new HashSet();
+		fExtensions = new HashSet<String>();
 	}
 
 	/* (non-Javadoc)

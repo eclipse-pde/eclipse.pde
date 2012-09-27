@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor;
 
+import org.eclipse.pde.core.IModelChangedEvent;
+
 import java.util.List;
 import java.util.Vector;
 import org.eclipse.jface.action.IAction;
@@ -20,7 +22,7 @@ import org.eclipse.ui.forms.editor.IFormPage;
 
 public abstract class ModelUndoManager implements IModelUndoManager, IModelChangedListener {
 	private boolean ignoreChanges;
-	private List operations;
+	private List<IModelChangedEvent> operations;
 	private int undoLevelLimit = 10;
 	private int cursor = -1;
 	private IAction undoAction;
@@ -29,7 +31,7 @@ public abstract class ModelUndoManager implements IModelUndoManager, IModelChang
 
 	public ModelUndoManager(PDEFormEditor editor) {
 		this.editor = editor;
-		operations = new Vector();
+		operations = new Vector<IModelChangedEvent>();
 	}
 
 	/*
@@ -49,7 +51,7 @@ public abstract class ModelUndoManager implements IModelUndoManager, IModelChang
 	}
 
 	private void initialize() {
-		operations = new Vector();
+		operations = new Vector<IModelChangedEvent>();
 		cursor = -1;
 		updateActions();
 	}

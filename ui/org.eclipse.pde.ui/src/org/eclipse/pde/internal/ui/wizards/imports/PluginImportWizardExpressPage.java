@@ -46,7 +46,7 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 	class PluginContentProvider extends DefaultContentProvider implements IStructuredContentProvider {
 		public Object[] getElements(Object parent) {
 			IProject[] projects = PDEPlugin.getWorkspace().getRoot().getProjects();
-			ArrayList result = new ArrayList();
+			ArrayList<IPluginModelBase> result = new ArrayList<IPluginModelBase>();
 			for (int i = 0; i < projects.length; i++) {
 				if (WorkspaceModelManager.isPluginProject(projects[i]) && !WorkspaceModelManager.isBinaryProject(projects[i])) {
 					IPluginModelBase model = PluginRegistry.findModel(projects[i]);
@@ -184,7 +184,7 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 
 	private void initialize() {
 		Object[] items = fInitialSelection.toArray();
-		ArrayList list = new ArrayList();
+		ArrayList<IPluginModelBase> list = new ArrayList<IPluginModelBase>();
 		for (int i = 0; i < items.length; i++) {
 			Object item = items[i];
 			if (item instanceof IJavaProject) {
@@ -205,7 +205,7 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 	private void computeModelsToImport() {
 		fImportListViewer.getTable().removeAll();
 
-		ArrayList result = new ArrayList();
+		ArrayList<IPluginModelBase> result = new ArrayList<IPluginModelBase>();
 		Object[] wModels = fTablePart.getSelection();
 		for (int i = 0; i < wModels.length; i++) {
 			IPluginModelBase model = (IPluginModelBase) wModels[i];
@@ -220,7 +220,7 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 		fImportListViewer.add(result.toArray());
 	}
 
-	private void removeSharedModels(ArrayList result) {
+	private void removeSharedModels(ArrayList<IPluginModelBase> result) {
 		IPluginModelBase[] smodels = (IPluginModelBase[]) result.toArray(new IPluginModelBase[result.size()]);
 		for (int i = 0; i < smodels.length; i++) {
 			String id = smodels[i].getPluginBase().getId();
@@ -237,7 +237,7 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 		}
 	}
 
-	private void addExtraPrerequisites(IPluginModelBase model, ArrayList result) {
+	private void addExtraPrerequisites(IPluginModelBase model, ArrayList<IPluginModelBase> result) {
 		try {
 			IBuildModel buildModel = PluginRegistry.createBuildModel(model);
 			if (buildModel == null)

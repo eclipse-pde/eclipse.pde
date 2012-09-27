@@ -26,7 +26,7 @@ public class PluginAdapter implements IWorkingSetElementAdapter {
 	 * @see org.eclipse.ui.IWorkingSetElementAdapter#adaptElements(org.eclipse.ui.IWorkingSet, org.eclipse.core.runtime.IAdaptable[])
 	 */
 	public IAdaptable[] adaptElements(IWorkingSet ws, IAdaptable[] elements) {
-		HashSet set = new HashSet();
+		HashSet<PersistablePluginObject> set = new HashSet<PersistablePluginObject>();
 		for (int i = 0; i < elements.length; i++) {
 			IResource res = (IResource) elements[i].getAdapter(IResource.class);
 			if (res == null)

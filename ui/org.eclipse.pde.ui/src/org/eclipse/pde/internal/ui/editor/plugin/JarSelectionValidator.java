@@ -21,6 +21,7 @@ import org.eclipse.ui.dialogs.ISelectionStatusValidator;
  */
 public class JarSelectionValidator implements ISelectionStatusValidator {
 
+	@SuppressWarnings("rawtypes")
 	private Class[] fAcceptedTypes;
 	private boolean fAllowMultipleSelection;
 
@@ -29,6 +30,7 @@ public class JarSelectionValidator implements ISelectionStatusValidator {
 	 * @param allowMultipleSelection If set to <code>true</code>, the validator
 	 * allows multiple selection.
 	 */
+	@SuppressWarnings("rawtypes")
 	public JarSelectionValidator(Class[] acceptedTypes, boolean allowMultipleSelection) {
 		Assert.isNotNull(acceptedTypes);
 		fAcceptedTypes = acceptedTypes;

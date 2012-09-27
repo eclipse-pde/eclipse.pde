@@ -16,7 +16,7 @@ import org.eclipse.core.resources.IFile;
 public class ModelChangeFile {
 	private IFile fFile;
 	private ModelChange fModel;
-	private ArrayList fChanges = new ArrayList();
+	private ArrayList<ModelChangeElement> fChanges = new ArrayList<ModelChangeElement>();
 	private int fNumChanges = 0;
 
 	public ModelChangeFile(IFile file, ModelChange model) {
@@ -41,7 +41,7 @@ public class ModelChangeFile {
 		return fNumChanges;
 	}
 
-	protected ArrayList getChanges() {
+	protected ArrayList<ModelChangeElement> getChanges() {
 		return fChanges;
 	}
 }

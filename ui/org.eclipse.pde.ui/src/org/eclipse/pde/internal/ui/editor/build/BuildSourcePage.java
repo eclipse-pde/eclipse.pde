@@ -131,6 +131,7 @@ public class BuildSourcePage extends KeyValueSourcePage {
 		return null;
 	}
 
+	@SuppressWarnings("rawtypes")
 	public Object getAdapter(Class adapter) {
 		if (IHyperlinkDetector.class.equals(adapter))
 			return new BuildHyperlinkDetector(this);

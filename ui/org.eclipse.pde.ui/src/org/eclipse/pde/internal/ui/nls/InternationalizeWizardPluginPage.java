@@ -11,6 +11,8 @@
 
 package org.eclipse.pde.internal.ui.nls;
 
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+
 import java.util.*;
 import java.util.List;
 import org.eclipse.core.runtime.*;
@@ -65,7 +67,7 @@ public class InternationalizeWizardPluginPage extends InternationalizationWizard
 
 	// Used to track the selection in a HashMap so as to filter
 	// selected items out of the available item list
-	private final Map fSelected = new HashMap();
+	private final Map<Object, ?> fSelected = new HashMap<Object, Object>();
 
 	// Used to block the selection listeners from updating button enablement
 	// when programatically removing items
@@ -270,7 +272,7 @@ public class InternationalizeWizardPluginPage extends InternationalizationWizard
 	}
 
 	private IFragmentModel[] findFragments(IPlugin plugin) {
-		ArrayList result = new ArrayList();
+		ArrayList<IPluginModelBase> result = new ArrayList<IPluginModelBase>();
 		for (int i = 0; i < fModels.length; i++) {
 			if (fModels[i] instanceof IFragmentModel) {
 				IFragment fragment = ((IFragmentModel) fModels[i]).getFragment();
@@ -282,7 +284,7 @@ public class InternationalizeWizardPluginPage extends InternationalizationWizard
 		return (IFragmentModel[]) result.toArray(new IFragmentModel[result.size()]);
 	}
 
-	protected void addPluginAndDependencies(IPluginModelBase model, ArrayList selected, boolean addFragments) {
+	protected void addPluginAndDependencies(IPluginModelBase model, ArrayList<IPluginModelBase> selected, boolean addFragments) {
 
 		boolean containsVariable = false;
 		if (!selected.contains(model)) {
@@ -301,7 +303,7 @@ public class InternationalizeWizardPluginPage extends InternationalizationWizard
 		}
 	}
 
-	protected void addDependencies(IPluginModelBase model, ArrayList selected, boolean addFragments) {
+	protected void addDependencies(IPluginModelBase model, ArrayList<IPluginModelBase> selected, boolean addFragments) {
 
 		IPluginImport[] required = model.getPluginBase().getImports();
 		if (required.length > 0) {
@@ -329,9 +331,9 @@ public class InternationalizeWizardPluginPage extends InternationalizationWizard
 		}
 	}
 
-	public List getModelsToInternationalize() {
+	public List<Object> getModelsToInternationalize() {
 		TableItem[] items = fSelectedViewer.getTable().getItems();
-		List result = new ArrayList();
+		List<Object> result = new ArrayList<Object>();
 		for (int i = 0; i < items.length; i++) {
 			result.add(items[i].getData());
 		}
@@ -537,7 +539,7 @@ public class InternationalizeWizardPluginPage extends InternationalizationWizard
 	private void handleAddAll() {
 		TableItem[] items = fAvailableViewer.getTable().getItems();
 
-		ArrayList data = new ArrayList();
+		ArrayList<Object> data = new ArrayList<Object>();
 		for (int i = 0; i < items.length; i++) {
 			data.add(items[i].getData());
 		}
@@ -595,7 +597,7 @@ public class InternationalizeWizardPluginPage extends InternationalizationWizard
 	private void handleRemoveAll() {
 		TableItem[] items = fSelectedViewer.getTable().getItems();
 
-		ArrayList data = new ArrayList();
+		ArrayList<Object> data = new ArrayList<Object>();
 		for (int i = 0; i < items.length; i++) {
 			data.add(items[i].getData());
 		}

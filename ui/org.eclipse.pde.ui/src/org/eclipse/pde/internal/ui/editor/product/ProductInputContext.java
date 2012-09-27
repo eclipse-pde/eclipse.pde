@@ -26,6 +26,7 @@ import org.eclipse.pde.internal.core.product.WorkspaceProductModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.context.UTF8InputContext;
+import org.eclipse.text.edits.TextEdit;
 import org.eclipse.ui.*;
 
 public class ProductInputContext extends UTF8InputContext {
@@ -76,7 +77,7 @@ public class ProductInputContext extends UTF8InputContext {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.context.InputContext#addTextEditOperation(java.util.ArrayList, org.eclipse.pde.core.IModelChangedEvent)
 	 */
-	protected void addTextEditOperation(ArrayList ops, IModelChangedEvent event) {
+	protected void addTextEditOperation(ArrayList<TextEdit> ops, IModelChangedEvent event) {
 	}
 
 	/* (non-Javadoc)

@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
+import org.eclipse.pde.internal.ui.editor.plugin.rows.ExtensionAttributeRow;
+
 import java.util.ArrayList;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -30,7 +32,7 @@ import org.eclipse.ui.forms.widgets.*;
 public class ExtensionElementDetails extends AbstractPluginElementDetails {
 	private IPluginElement input;
 	private ISchemaElement schemaElement;
-	private ArrayList rows;
+	private ArrayList<ExtensionAttributeRow> rows;
 	private Section section;
 
 	/**
@@ -40,7 +42,7 @@ public class ExtensionElementDetails extends AbstractPluginElementDetails {
 	public ExtensionElementDetails(PDESection masterSection, ISchemaElement schemaElement) {
 		super(masterSection);
 		this.schemaElement = schemaElement;
-		rows = new ArrayList();
+		rows = new ArrayList<ExtensionAttributeRow>();
 	}
 
 	public String getContextId() {

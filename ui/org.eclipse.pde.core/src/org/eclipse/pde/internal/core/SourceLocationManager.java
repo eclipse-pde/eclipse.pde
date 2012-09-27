@@ -141,9 +141,9 @@ public class SourceLocationManager implements ICoreConstants {
 	 * @param plugin plugin to lookup source for
 	 * @return set of String paths that are source roots for the bundle, possibly empty
 	 */
-	public Set<?> findAllSourceRootsInSourceLocation(IPluginBase plugin) {
+	public Set<String> findAllSourceRootsInSourceLocation(IPluginBase plugin) {
 		if (plugin.getId() == null || plugin.getVersion() == null) {
-			return Collections.EMPTY_SET;
+			return Collections.emptySet();
 		}
 		return getBundleManifestLocator().getAllSourceRoots(plugin.getId(), new Version(plugin.getVersion()));
 	}
@@ -157,9 +157,9 @@ public class SourceLocationManager implements ICoreConstants {
 	 * @param plugin plugin to lookup source for
 	 * @return set of String paths that are source roots for the plugin, possibly empty
 	 */
-	public Set<?> findSourceRoots(IPluginBase plugin) {
+	public Set<String> findSourceRoots(IPluginBase plugin) {
 		if (plugin.getId() == null || plugin.getVersion() == null) {
-			return Collections.EMPTY_SET;
+			return Collections.emptySet();
 		}
 		return getBundleManifestLocator().getSourceRoots(plugin.getId(), new Version(plugin.getVersion()));
 	}
@@ -197,7 +197,7 @@ public class SourceLocationManager implements ICoreConstants {
 	/**
 	 * @return array of source locations defined by a bundle manifest entry
 	 */
-	public Collection<?> getBundleManifestLocations() {
+	public Collection<SourceLocation> getBundleManifestLocations() {
 		return getBundleManifestLocator().getSourceLocations();
 	}
 

@@ -11,6 +11,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.preferences;
 
+import java.util.HashSet;
+import org.eclipse.pde.internal.ui.preferences.PDECompilersConfigurationBlock.Key;
+import org.eclipse.swt.widgets.Control;
+
 import com.ibm.icu.text.MessageFormat;
 import java.util.*;
 import java.util.List;
@@ -258,18 +262,18 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 	/**
 	 * Stored old fProject specific settings. 
 	 */
-	private IdentityHashMap fOldProjectSettings = null;
+	private IdentityHashMap<Key, String> fOldProjectSettings = null;
 
 	/**
 	 * Map of controls to the tab they appear on. Allows for optimizing which builders
 	 * are used if changes are made
 	 */
-	private HashMap fControlMap = new HashMap(3);
+	private HashMap<Integer, HashSet<Control>> fControlMap = new HashMap<Integer, HashSet<Control>>(3);
 
 	/**
 	 * Listing of all of the {@link ExpandableComposite}s in the block
 	 */
-	private ArrayList fExpComps = new ArrayList();
+	private ArrayList<ExpandableComposite> fExpComps = new ArrayList<ExpandableComposite>();
 
 	/**
 	 * Flag used to know if the page needs saving or not
@@ -284,7 +288,7 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 	/**
 	 * Set of builders to use when building if there are changes
 	 */
-	private HashSet fBuilders = new HashSet(4);
+	private HashSet<String> fBuilders = new HashSet<String>(4);
 
 	/**
 	 * The parent this block has been added to 
@@ -348,7 +352,7 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 		if (fProject == null || hasProjectSpecificSettings(fProject)) {
 			fOldProjectSettings = null;
 		} else {
-			fOldProjectSettings = new IdentityHashMap();
+			fOldProjectSettings = new IdentityHashMap<Key, String>();
 			for (int i = 0; i < fgAllKeys.length; i++) {
 				fOldProjectSettings.put(fgAllKeys[i], fgAllKeys[i].getStoredValue(fLookupOrder, false, fManager));
 			}
@@ -389,7 +393,7 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 				fOldProjectSettings = null;
 				updateControls();
 			} else {
-				fOldProjectSettings = new IdentityHashMap();
+				fOldProjectSettings = new IdentityHashMap<Key, String>();
 				String old = null;
 				for (int i = 0; i < fgAllKeys.length; i++) {
 					old = fgAllKeys[i].getStoredValue(fLookupOrder, false, fManager);
@@ -408,14 +412,14 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 	 * fControlMap
 	 */
 	private void updateControls() {
-		HashSet controls = null;
+		HashSet<?> controls = null;
 		Control control = null;
-		for (Iterator iter = fControlMap.keySet().iterator(); iter.hasNext();) {
-			controls = (HashSet) fControlMap.get(iter.next());
+		for (Iterator<Integer> iter = fControlMap.keySet().iterator(); iter.hasNext();) {
+			controls = (HashSet<?>) fControlMap.get(iter.next());
 			if (controls == null) {
 				continue;
 			}
-			for (Iterator iter2 = controls.iterator(); iter2.hasNext();) {
+			for (Iterator<?> iter2 = controls.iterator(); iter2.hasNext();) {
 				control = (Control) iter2.next();
 				if (control instanceof Combo) {
 					Combo combo = (Combo) control;
@@ -576,9 +580,9 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 		button.setSelection(Boolean.valueOf(data.key.getStoredValue(fLookupOrder, false, fManager)).booleanValue());
 		button.addSelectionListener(selectionlistener);
 		Integer mapkey = new Integer(tabkind);
-		HashSet controls = (HashSet) fControlMap.get(mapkey);
+		HashSet<Control> controls = (HashSet<Control>) fControlMap.get(mapkey);
 		if (controls == null) {
-			controls = new HashSet(8);
+			controls = new HashSet<Control>(8);
 			fControlMap.put(mapkey, controls);
 		}
 		controls.add(button);
@@ -620,9 +624,9 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 			index = Integer.parseInt(value);
 		combo.select(data.getSelection(SEVERITIES[index]));
 		Integer mapkey = new Integer(tabkind);
-		HashSet controls = (HashSet) fControlMap.get(mapkey);
+		HashSet<Control> controls = (HashSet<Control>) fControlMap.get(mapkey);
 		if (controls == null) {
-			controls = new HashSet(8);
+			controls = new HashSet<Control>(8);
 			fControlMap.put(mapkey, controls);
 		}
 		controls.add(combo);
@@ -646,9 +650,9 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 			text.setText(value);
 		text.addModifyListener(modifylistener);
 		Integer mapkey = new Integer(tabkind);
-		HashSet controls = (HashSet) fControlMap.get(mapkey);
+		HashSet<Control> controls = (HashSet<Control>) fControlMap.get(mapkey);
 		if (controls == null) {
-			controls = new HashSet(8);
+			controls = new HashSet<Control>(8);
 			fControlMap.put(mapkey, controls);
 		}
 		controls.add(text);
@@ -759,7 +763,7 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 	private void save() {
 		if (fDirty) {
 			try {
-				ArrayList changes = new ArrayList();
+				ArrayList<Key> changes = new ArrayList<Key>();
 				collectChanges(fLookupOrder[0], changes);
 				if (changes.size() > 0) {
 					if (fRebuildcount < 1) {
@@ -785,7 +789,7 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 	 * Collects the keys that have changed on the page into the specified list
 	 * @param changes the {@link List} to collect changed keys into
 	 */
-	private void collectChanges(IScopeContext context, List changes) {
+	private void collectChanges(IScopeContext context, List<Key> changes) {
 		Key key = null;
 		String origval = null, newval = null;
 		boolean complete = fOldProjectSettings == null && fProject != null;
@@ -858,11 +862,11 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 	 * @param control
 	 */
 	private void addBuilder(Control control) {
-		HashSet controls = null;
+		HashSet<?> controls = null;
 		Integer key = null;
-		for (Iterator iter = fControlMap.keySet().iterator(); iter.hasNext();) {
+		for (Iterator<Integer> iter = fControlMap.keySet().iterator(); iter.hasNext();) {
 			key = (Integer) iter.next();
-			controls = (HashSet) fControlMap.get(key);
+			controls = (HashSet<?>) fControlMap.get(key);
 			if (controls == null) {
 				continue;
 			}

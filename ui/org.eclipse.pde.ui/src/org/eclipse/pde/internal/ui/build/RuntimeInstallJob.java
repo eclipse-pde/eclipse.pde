@@ -11,6 +11,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.build;
 
+import org.eclipse.equinox.p2.metadata.IInstallableUnit;
+import org.eclipse.equinox.p2.metadata.IProvidedCapability;
+
 import java.io.File;
 import java.net.URI;
 import java.util.ArrayList;
@@ -99,7 +102,7 @@ public class RuntimeInstallJob extends Job {
 				return new Status(IStatus.ERROR, PDEPlugin.getPluginId(), PDEUIMessages.RuntimeInstallJob_ErrorCouldntOpenProfile);
 			}
 
-			List toInstall = new ArrayList();
+			List<IInstallableUnit> toInstall = new ArrayList<IInstallableUnit>();
 			for (int i = 0; i < fInfo.items.length; i++) {
 				if (monitor.isCanceled()) {
 					return Status.CANCEL_STATUS;
@@ -126,7 +129,7 @@ public class RuntimeInstallJob extends Job {
 
 				// Check if the right version exists in the new meta repo
 				Version newVersion = Version.parseVersion(version);
-				IQueryResult queryMatches = metaRepo.query(QueryUtil.createIUQuery(id, newVersion), monitor);
+				IQueryResult<?> queryMatches = metaRepo.query(QueryUtil.createIUQuery(id, newVersion), monitor);
 				if (queryMatches.isEmpty()) {
 					return new Status(IStatus.ERROR, PDEPlugin.getPluginId(), NLS.bind(PDEUIMessages.RuntimeInstallJob_ErrorCouldNotFindUnitInRepo, new String[] {id, version}));
 				}
@@ -191,7 +194,7 @@ public class RuntimeInstallJob extends Job {
 		iuPatchDescription.setVersion(patchVersion);
 		iuPatchDescription.setUpdateDescriptor(MetadataFactory.createUpdateDescriptor(iuPatchDescription.getId(), new VersionRange(Version.createOSGi(0, 0, 0), true, patchVersion, false), 0, null));
 
-		ArrayList list = new ArrayList(1);
+		ArrayList<IProvidedCapability> list = new ArrayList<IProvidedCapability>(1);
 		list.add(MetadataFactory.createProvidedCapability(IInstallableUnit.NAMESPACE_IU_ID, iuPatchDescription.getId(), iuPatchDescription.getVersion()));
 		iuPatchDescription.addProvidedCapabilities(list);
 
@@ -203,7 +206,7 @@ public class RuntimeInstallJob extends Job {
 
 		// Locate IU's that appoint the existing version of the IU that we are patching.
 		// Add lifecycle requirement on a changed bundle, if it gets updated, then we should uninstall the patch
-		IQueryResult queryMatches = profile.query(QueryUtil.createMatchQuery("requirements.exists(rc | $0 ~= rc)", new Object[] {existingIU}), monitor); //$NON-NLS-1$
+		IQueryResult<?> queryMatches = profile.query(QueryUtil.createMatchQuery("requirements.exists(rc | $0 ~= rc)", new Object[] {existingIU}), monitor); //$NON-NLS-1$
 		if (!queryMatches.isEmpty()) {
 			IInstallableUnit lifecycleUnit = (IInstallableUnit) queryMatches.iterator().next();
 			iuPatchDescription.setLifeCycle(MetadataFactory.createRequirement(IInstallableUnit.NAMESPACE_IU_ID, lifecycleUnit.getId(), new VersionRange(lifecycleUnit.getVersion(), true, lifecycleUnit.getVersion(), true), null, false, false, false));

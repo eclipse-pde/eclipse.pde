@@ -265,7 +265,7 @@ public class ExportPackageVisibilitySection extends TableSection implements IPar
 	}
 
 	private IPluginModelBase[] getModels() {
-		ArrayList list = new ArrayList();
+		ArrayList<IPluginModelBase> list = new ArrayList<IPluginModelBase>();
 		IPluginModelBase[] models = PluginRegistry.getActiveModels(true);
 		for (int i = 0; i < models.length; i++) {
 			String id = models[i].getPluginBase().getId();
@@ -313,7 +313,7 @@ public class ExportPackageVisibilitySection extends TableSection implements IPar
 	}
 
 	public void selectionChanged(IFormPart source, ISelection selection) {
-		List list = ((IStructuredSelection) selection).toList();
+		List<?> list = ((IStructuredSelection) selection).toList();
 		if (list.size() > 0) {
 			Object[] objects = list.toArray();
 			ExportPackageObject first = null;

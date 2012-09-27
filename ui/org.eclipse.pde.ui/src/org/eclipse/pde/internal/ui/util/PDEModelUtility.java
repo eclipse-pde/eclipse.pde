@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.util;
 
+import java.util.ArrayList;
+
 import java.util.*;
 import org.eclipse.core.filebuffers.*;
 import org.eclipse.core.resources.IFile;
@@ -61,7 +63,7 @@ public class PDEModelUtility {
 	private static final int F_Bi = 0; // the manifest.mf-related object will always be 1st
 	private static final int F_Xi = 1; // the xml-related object will always be 2nd
 
-	private static Hashtable fOpenPDEEditors = new Hashtable();
+	private static Hashtable<IProject, ArrayList<PDEFormEditor>> fOpenPDEEditors = new Hashtable<IProject, ArrayList<PDEFormEditor>>();
 
 	/**
 	 * PDE editors should call this during their creation.
@@ -76,11 +78,11 @@ public class PDEModelUtility {
 		if (project == null)
 			return;
 		if (fOpenPDEEditors.containsKey(project)) {
-			ArrayList list = (ArrayList) fOpenPDEEditors.get(project);
+			ArrayList<PDEFormEditor> list = (ArrayList<PDEFormEditor>) fOpenPDEEditors.get(project);
 			if (!list.contains(editor))
 				list.add(editor);
 		} else {
-			ArrayList list = new ArrayList();
+			ArrayList<PDEFormEditor> list = new ArrayList<PDEFormEditor>();
 			list.add(editor);
 			fOpenPDEEditors.put(project, list);
 		}
@@ -106,7 +108,7 @@ public class PDEModelUtility {
 			return;
 		if (!fOpenPDEEditors.containsKey(project))
 			return;
-		ArrayList list = (ArrayList) fOpenPDEEditors.get(project);
+		ArrayList<?> list = (ArrayList<?>) fOpenPDEEditors.get(project);
 		list.remove(editor);
 		if (list.size() == 0)
 			fOpenPDEEditors.remove(project);
@@ -140,7 +142,7 @@ public class PDEModelUtility {
 	}
 
 	private static PDEFormEditor getOpenEditor(IProject project, String editorId) {
-		ArrayList list = (ArrayList) fOpenPDEEditors.get(project);
+		ArrayList<?> list = (ArrayList<?>) fOpenPDEEditors.get(project);
 		if (list == null)
 			return null;
 		for (int i = 0; i < list.size(); i++) {
@@ -164,7 +166,7 @@ public class PDEModelUtility {
 		// Get the file's project
 		IProject project = file.getProject();
 		// Check for open editors housed in the specified project
-		ArrayList list = (ArrayList) fOpenPDEEditors.get(project);
+		ArrayList<?> list = (ArrayList<?>) fOpenPDEEditors.get(project);
 		// No open editors found
 		if (list == null) {
 			return null;
@@ -222,9 +224,9 @@ public class PDEModelUtility {
 	}
 
 	public static IEditingModel getOpenModel(IDocument doc) {
-		Iterator it = fOpenPDEEditors.values().iterator();
+		Iterator<ArrayList<PDEFormEditor>> it = fOpenPDEEditors.values().iterator();
 		while (it.hasNext()) {
-			ArrayList list = (ArrayList) it.next();
+			ArrayList<?> list = (ArrayList<?>) it.next();
 			for (int i = 0; i < list.size(); i++) {
 				PDEFormEditor e = (PDEFormEditor) list.get(i);
 				IPluginModelBase model = (IPluginModelBase) e.getAggregateModel();
@@ -294,7 +296,7 @@ public class PDEModelUtility {
 	}
 
 	private static TextFileChange[] generateModelEdits(final ModelModification modification, final IProgressMonitor monitor, boolean performEdits) {
-		ArrayList edits = new ArrayList();
+		ArrayList<TextFileChange> edits = new ArrayList<TextFileChange>();
 		// create own model, attach listeners and grab text edits
 		ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
 		IFile[] files;

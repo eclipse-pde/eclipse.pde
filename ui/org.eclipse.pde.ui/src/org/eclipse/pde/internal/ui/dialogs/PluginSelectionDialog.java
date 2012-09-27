@@ -59,7 +59,7 @@ public class PluginSelectionDialog extends FilteredItemsSelectionDialog {
 		}
 	}
 
-	private class PluginSearchComparator implements Comparator {
+	private class PluginSearchComparator implements Comparator<Object> {
 
 		public int compare(Object o1, Object o2) {
 			int id1 = getId(o1);
@@ -122,8 +122,8 @@ public class PluginSelectionDialog extends FilteredItemsSelectionDialog {
 		return PluginRegistry.getActiveModels(includeFragments);
 	}
 
-	public static HashSet getExistingImports(IPluginModelBase model, boolean includeImportPkg) {
-		HashSet existingImports = new HashSet();
+	public static HashSet<String> getExistingImports(IPluginModelBase model, boolean includeImportPkg) {
+		HashSet<String> existingImports = new HashSet<String>();
 		addSelfAndDirectImports(existingImports, model);
 		if (model instanceof IFragmentModel) {
 			IFragment fragment = ((IFragmentModel) model).getFragment();
@@ -138,7 +138,7 @@ public class PluginSelectionDialog extends FilteredItemsSelectionDialog {
 		return existingImports;
 	}
 
-	private static void addSelfAndDirectImports(HashSet set, IPluginModelBase model) {
+	private static void addSelfAndDirectImports(HashSet<String> set, IPluginModelBase model) {
 		set.add(model.getPluginBase().getId());
 		IPluginImport[] imports = model.getPluginBase().getImports();
 		for (int i = 0; i < imports.length; i++) {
@@ -149,7 +149,7 @@ public class PluginSelectionDialog extends FilteredItemsSelectionDialog {
 		}
 	}
 
-	private static void addReexportedImport(HashSet set, String id) {
+	private static void addReexportedImport(HashSet<String> set, String id) {
 		IPluginModelBase model = PluginRegistry.findModel(id);
 		if (model != null) {
 			IPluginImport[] imports = model.getPluginBase().getImports();
@@ -161,8 +161,8 @@ public class PluginSelectionDialog extends FilteredItemsSelectionDialog {
 		}
 	}
 
-	private static void addImportedPackages(IBundlePluginModelBase base, HashSet existingImports) {
-		HashMap map = getImportPackages(base);
+	private static void addImportedPackages(IBundlePluginModelBase base, HashSet<String> existingImports) {
+		HashMap<String, ImportPackageObject> map = getImportPackages(base);
 		if (map == null)
 			return;
 
@@ -188,13 +188,13 @@ public class PluginSelectionDialog extends FilteredItemsSelectionDialog {
 	}
 
 	// returns null instead of empty map so we know not to iterate through exported packages
-	private static HashMap getImportPackages(IBundlePluginModelBase base) {
+	private static HashMap<String, ImportPackageObject> getImportPackages(IBundlePluginModelBase base) {
 		IBundleModel bmodel = base.getBundleModel();
 		if (bmodel != null) {
 			ImportPackageHeader header = (ImportPackageHeader) bmodel.getBundle().getManifestHeader(Constants.IMPORT_PACKAGE);
 			if (header != null) {
 				// create a map of all the packages we import
-				HashMap map = new HashMap();
+				HashMap<String, ImportPackageObject> map = new HashMap<String, ImportPackageObject>();
 				ImportPackageObject[] packages = header.getPackages();
 				for (int i = 0; i < packages.length; i++)
 					map.put(packages[i].getName(), packages[i]);
@@ -238,7 +238,7 @@ public class PluginSelectionDialog extends FilteredItemsSelectionDialog {
 		return null;
 	}
 
-	protected Comparator getItemsComparator() {
+	protected Comparator<?> getItemsComparator() {
 		return new PluginSearchComparator();
 	}
 

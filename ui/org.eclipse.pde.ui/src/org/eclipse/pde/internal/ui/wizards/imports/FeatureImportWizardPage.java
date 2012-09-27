@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.imports;
 
+import org.eclipse.core.runtime.IStatus;
+
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -251,7 +253,7 @@ public class FeatureImportWizardPage extends WizardPage {
 			doOther = initialSettings.getBoolean(SETTINGS_DOOTHER);
 			binary = !initialSettings.getBoolean(SETTINGS_NOT_BINARY);
 
-			ArrayList items = new ArrayList();
+			ArrayList<String> items = new ArrayList<String>();
 			for (int i = 0; i < 6; i++) {
 				String curr = initialSettings.get(SETTINGS_DROPLOCATION + String.valueOf(i));
 				if (curr != null && !items.contains(curr))
@@ -447,7 +449,7 @@ public class FeatureImportWizardPage extends WizardPage {
 		IRunnableWithProgress runnable = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				monitor.beginTask(PDEUIMessages.FeatureImportWizard_messages_updating, IProgressMonitor.UNKNOWN);
-				ArrayList result = new ArrayList();
+				ArrayList<IFeatureModel> result = new ArrayList<IFeatureModel>();
 				if (useRuntimeLocation) {
 					IFeatureModel[] allModels = PDECore.getDefault().getFeatureModelManager().getModels();
 					for (int i = 0; i < allModels.length; i++)
@@ -479,13 +481,13 @@ public class FeatureImportWizardPage extends WizardPage {
 		return null;
 	}
 
-	private MultiStatus doLoadFeatures(ArrayList result, File path) {
+	private MultiStatus doLoadFeatures(ArrayList<IFeatureModel> result, File path) {
 		if (path == null)
 			return null;
 		File[] dirs = path.listFiles();
 		if (dirs == null)
 			return null;
-		ArrayList resultStatus = new ArrayList();
+		ArrayList<IStatus> resultStatus = new ArrayList<IStatus>();
 		for (int i = 0; i < dirs.length; i++) {
 			File dir = dirs[i];
 			if (dir.isDirectory()) {
@@ -500,7 +502,7 @@ public class FeatureImportWizardPage extends WizardPage {
 		return new MultiStatus(IPDEUIConstants.PLUGIN_ID, IStatus.OK, (IStatus[]) resultStatus.toArray(new IStatus[resultStatus.size()]), PDEUIMessages.FeatureImportWizard_DetailedPage_problemsLoading, null);
 	}
 
-	private IStatus doLoadFeature(File dir, File manifest, ArrayList result) {
+	private IStatus doLoadFeature(File dir, File manifest, ArrayList<IFeatureModel> result) {
 		ExternalFeatureModel model = new ExternalFeatureModel();
 		model.setInstallLocation(dir.getAbsolutePath());
 		IStatus status = null;

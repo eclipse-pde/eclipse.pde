@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.Display;
 public class ColorManager implements IColorManager, IPDEColorConstants {
 
 	private static ColorManager fColorManager;
-	private Map fColorTable = new HashMap(5);
+	private Map<String, Color> fColorTable = new HashMap<String, Color>(5);
 	private static int counter = 0;
 
 	public ColorManager() {
@@ -83,7 +83,7 @@ public class ColorManager implements IColorManager, IPDEColorConstants {
 	}
 
 	public void disposeColors(boolean resetSingleton) {
-		Iterator e = fColorTable.values().iterator();
+		Iterator<Color> e = fColorTable.values().iterator();
 		while (e.hasNext())
 			((Color) e.next()).dispose();
 		if (resetSingleton)

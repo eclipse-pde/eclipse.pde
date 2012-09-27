@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.samples;
 
+import org.eclipse.core.resources.IResource;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -137,7 +139,7 @@ public class SampleStandbyContent implements IStandbyContentPart {
 		String sid = sample.getAttribute("id"); //$NON-NLS-1$
 		if (sid == null)
 			return;
-		ArrayList items = new ArrayList();
+		ArrayList<IResource> items = new ArrayList<IResource>();
 		for (int i = 0; i < projects.length; i++) {
 			IProject project = projects[i];
 			if (!project.exists() || !project.isOpen())

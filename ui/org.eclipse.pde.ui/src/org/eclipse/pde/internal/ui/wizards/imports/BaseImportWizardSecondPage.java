@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.imports;
 
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+
 import java.util.ArrayList;
 import java.util.Set;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -168,7 +170,7 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 	}
 
 	private IFragmentModel[] findFragments(IPlugin plugin) {
-		ArrayList result = new ArrayList();
+		ArrayList<IPluginModelBase> result = new ArrayList<IPluginModelBase>();
 		for (int i = 0; i < fModels.length; i++) {
 			if (fModels[i] instanceof IFragmentModel) {
 				IFragment fragment = ((IFragmentModel) fModels[i]).getFragment();
@@ -180,7 +182,7 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 		return (IFragmentModel[]) result.toArray(new IFragmentModel[result.size()]);
 	}
 
-	protected void addPluginAndDependencies(IPluginModelBase model, ArrayList selected, boolean addFragments) {
+	protected void addPluginAndDependencies(IPluginModelBase model, ArrayList<IPluginModelBase> selected, boolean addFragments) {
 
 		boolean containsVariable = false;
 		if (!selected.contains(model)) {
@@ -199,7 +201,7 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 		}
 	}
 
-	protected void addDependencies(IPluginModelBase model, ArrayList selected, boolean addFragments) {
+	protected void addDependencies(IPluginModelBase model, ArrayList<IPluginModelBase> selected, boolean addFragments) {
 
 		IPluginImport[] required = model.getPluginBase().getImports();
 		if (required.length > 0) {
@@ -229,7 +231,7 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 
 	public IPluginModelBase[] getModelsToImport() {
 		TableItem[] items = fImportListViewer.getTable().getItems();
-		ArrayList result = new ArrayList();
+		ArrayList<Object> result = new ArrayList<Object>();
 		for (int i = 0; i < items.length; i++) {
 			result.add(items[i].getData());
 		}
@@ -269,7 +271,7 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 		if (page.getImportType() == PluginImportOperation.IMPORT_FROM_REPOSITORY) {
 			if (getMessageType() != ERROR && getMessageType() != WARNING) {
 				IPluginModelBase[] selected = getModelsToImport();
-				Set available = page.repositoryModels;
+				Set<?> available = page.repositoryModels;
 				for (int i = 0; i < selected.length; i++) {
 					if (!available.contains(selected[i])) {
 						setMessage(PDEUIMessages.BaseImportWizardSecondPage_0, WARNING);

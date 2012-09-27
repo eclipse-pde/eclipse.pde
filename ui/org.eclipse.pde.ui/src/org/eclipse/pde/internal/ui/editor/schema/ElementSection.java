@@ -324,7 +324,7 @@ public class ElementSection extends TreeSection {
 	private void handleDelete(IStructuredSelection selection) {
 		IStructuredSelection nextSelection = null;
 		Object selectionSource = null;
-		for (Iterator iter = selection.iterator(); iter.hasNext();) {
+		for (Iterator<?> iter = selection.iterator(); iter.hasNext();) {
 			Object thisObject = iter.next();
 			// Do the delete and generate a new selection in one of the following cases:
 			//   1. No selection has been generated
@@ -638,7 +638,7 @@ public class ElementSection extends TreeSection {
 		getTreePart().setButtonEnabled(3, canAddCompositor);
 
 		boolean canRemove = false;
-		for (Iterator iter = selection.iterator(); iter.hasNext();) {
+		for (Iterator<?> iter = selection.iterator(); iter.hasNext();) {
 			sobject = (ISchemaObject) iter.next();
 			if (sobject != null && !(sobject instanceof ISchemaRootElement) && !(sobject instanceof ISchemaAttribute && sobject.getParent() instanceof ISchemaRootElement)) {
 				canRemove = true;

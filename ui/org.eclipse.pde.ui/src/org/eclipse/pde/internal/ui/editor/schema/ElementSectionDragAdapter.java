@@ -52,7 +52,7 @@ public class ElementSectionDragAdapter extends DragSourceAdapter {
 
 	private String createTextualRepresentation(IStructuredSelection sel) {
 		StringBuffer buf = new StringBuffer();
-		for (Iterator iter = sel.iterator(); iter.hasNext();) {
+		for (Iterator<?> iter = sel.iterator(); iter.hasNext();) {
 			String name = iter.next().toString();
 			buf.append(name);
 			buf.append(" "); //$NON-NLS-1$
@@ -88,7 +88,7 @@ public class ElementSectionDragAdapter extends DragSourceAdapter {
 
 	private boolean canCopy(IStructuredSelection selection) {
 		Object prev = null;
-		for (Iterator iter = selection.iterator(); iter.hasNext();) {
+		for (Iterator<?> iter = selection.iterator(); iter.hasNext();) {
 			Object obj = iter.next();
 			if (!(obj instanceof ISchemaObject))
 				return false;
@@ -106,8 +106,8 @@ public class ElementSectionDragAdapter extends DragSourceAdapter {
 	}
 
 	private ISchemaObject[] createObjectRepresentation(IStructuredSelection selection) {
-		ArrayList objects = new ArrayList();
-		for (Iterator iter = selection.iterator(); iter.hasNext();) {
+		ArrayList<Object> objects = new ArrayList<Object>();
+		for (Iterator<?> iter = selection.iterator(); iter.hasNext();) {
 			Object obj = iter.next();
 			if (obj instanceof ISchemaObject)
 				objects.add(obj);

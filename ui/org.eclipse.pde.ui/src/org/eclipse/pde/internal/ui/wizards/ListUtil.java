@@ -24,7 +24,7 @@ import org.eclipse.swt.graphics.Image;
 
 public class ListUtil {
 
-	private static final Comparator stringComparator = new Comparator() {
+	private static final Comparator<?> stringComparator = new Comparator<Object>() {
 
 		public int compare(Object arg0, Object arg1) {
 			if (arg0 instanceof String && arg1 instanceof String)

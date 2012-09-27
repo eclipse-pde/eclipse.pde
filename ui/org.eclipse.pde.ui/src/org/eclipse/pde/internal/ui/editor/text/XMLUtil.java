@@ -89,7 +89,7 @@ public abstract class XMLUtil {
 
 		// if element is not "extension" & has multiple sub-schemas,
 		// Then search for the element in the same schema in which the parent element if found.
-		Stack stack = new Stack();
+		Stack<String> stack = new Stack<String>();
 		while (node != null) {
 			String tagName = node.getXMLTagName();
 			if ("extension".equals(tagName)) //$NON-NLS-1$
@@ -184,7 +184,7 @@ public abstract class XMLUtil {
 	 * @param elementInfo
 	 */
 	public static int getCounterValue(ISchemaElement elementInfo) {
-		Hashtable counters = PDEPlugin.getDefault().getDefaultNameCounters();
+		Hashtable<String, Integer> counters = PDEPlugin.getDefault().getDefaultNameCounters();
 		String counterKey = getCounterKey(elementInfo);
 		Integer counter = (Integer) counters.get(counterKey);
 		if (counter == null) {

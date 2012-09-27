@@ -23,7 +23,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 public class ComboViewerPart {
 	private Control fCombo;
 	private ComboViewer fComboViewer;
-	private List fObjects;
+	private List<Object> fObjects;
 
 	/**
 	 * The magic object used to deal with null content
@@ -42,7 +42,7 @@ public class ComboViewerPart {
 			fComboViewer = new ComboViewer((CCombo) fCombo);
 		}
 
-		fObjects = new ArrayList();
+		fObjects = new ArrayList<Object>();
 		fComboViewer.setLabelProvider(new LabelProvider());
 		fComboViewer.setContentProvider(ArrayContentProvider.getInstance());
 		fComboViewer.setInput(fObjects);
@@ -70,7 +70,7 @@ public class ComboViewerPart {
 		refresh();
 	}
 
-	public Collection getItems() {
+	public Collection<Object> getItems() {
 		return fObjects;
 	}
 
@@ -81,9 +81,9 @@ public class ComboViewerPart {
 		refresh();
 	}
 
-	public void setItems(Collection items) {
+	public void setItems(Collection<?> items) {
 		fObjects.clear();
-		Iterator it = items.iterator();
+		Iterator<?> it = items.iterator();
 		while (it.hasNext()) {
 			Object o = it.next();
 			fObjects.add((o == null) ? NULL_OBJECT : o);

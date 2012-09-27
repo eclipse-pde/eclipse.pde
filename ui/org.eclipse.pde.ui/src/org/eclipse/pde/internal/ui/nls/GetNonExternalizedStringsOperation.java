@@ -38,7 +38,7 @@ import org.eclipse.pde.internal.ui.util.PDEModelUtility;
 public class GetNonExternalizedStringsOperation implements IRunnableWithProgress {
 
 	private ISelection fSelection;
-	private ArrayList fSelectedModels;
+	private ArrayList<Object> fSelectedModels;
 	private ModelChangeTable fModelChangeTable;
 	private boolean fCanceled;
 
@@ -54,7 +54,7 @@ public class GetNonExternalizedStringsOperation implements IRunnableWithProgress
 
 		if (fSelection instanceof IStructuredSelection) {
 			Object[] elems = ((IStructuredSelection) fSelection).toArray();
-			fSelectedModels = new ArrayList(elems.length);
+			fSelectedModels = new ArrayList<Object>(elems.length);
 			for (int i = 0; i < elems.length; i++) {
 				if (elems[i] instanceof IFile)
 					elems[i] = ((IFile) elems[i]).getProject();
@@ -74,7 +74,7 @@ public class GetNonExternalizedStringsOperation implements IRunnableWithProgress
 			 */
 			if (fExternalizeSelectedPluginsOnly) {
 				monitor.beginTask(PDEUIMessages.GetNonExternalizedStringsOperation_taskMessage, fSelectedModels.size());
-				Iterator iterator = fSelectedModels.iterator();
+				Iterator<Object> iterator = fSelectedModels.iterator();
 				while (iterator.hasNext() && !fCanceled) {
 					IProject project = (IProject) iterator.next();
 					if (!WorkspaceModelManager.isBinaryProject(project))

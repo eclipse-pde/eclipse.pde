@@ -40,7 +40,7 @@ public class ArgumentsFromContainerSelectionDialog extends TrayDialog {
 	private Button fSelectAllButton;
 	private Button fDeselectAllButton;
 
-	private Map fAllArguments;
+	private Map<ITargetLocation, Object[]> fAllArguments;
 	private String[] fArguments;
 	private ITargetDefinition fTarget;
 
@@ -72,7 +72,7 @@ public class ArgumentsFromContainerSelectionDialog extends TrayDialog {
 		ITargetLocation[] containers = fTarget.getTargetLocations();
 		boolean foundArguments = false;
 		if (containers != null) {
-			fAllArguments = new HashMap(containers.length);
+			fAllArguments = new HashMap<ITargetLocation, Object[]>(containers.length);
 			for (int i = 0; i < containers.length; i++) {
 				String[] args = containers[i].getVMArguments();
 				if (args != null) {
@@ -118,7 +118,7 @@ public class ArgumentsFromContainerSelectionDialog extends TrayDialog {
 
 			public Object[] getElements(Object element) {
 				if (element instanceof Map) {
-					return ((Map) element).keySet().toArray();
+					return ((Map<?, ?>) element).keySet().toArray();
 				}
 				return new Object[0];
 			}
@@ -259,7 +259,7 @@ public class ArgumentsFromContainerSelectionDialog extends TrayDialog {
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
 	protected void okPressed() {
-		List arguments = new ArrayList();
+		List<String> arguments = new ArrayList<String>();
 		Object[] checked = fTree.getCheckedElements();
 		for (int i = 0; i < checked.length; i++) {
 			if (checked[i] instanceof String) {

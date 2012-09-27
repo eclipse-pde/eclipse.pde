@@ -122,7 +122,7 @@ public abstract class AbstractNewPluginTemplateWizard extends Wizard implements 
 	 * @see org.eclipse.pde.ui.IPluginContentWizard#getDependencies(java.lang.String)
 	 */
 	public IPluginReference[] getDependencies(String schemaVersion) {
-		ArrayList result = new ArrayList();
+		ArrayList<IPluginReference> result = new ArrayList<IPluginReference>();
 		ITemplateSection[] sections = getTemplateSections();
 		for (int i = 0; i < sections.length; i++) {
 			IPluginReference[] refs = sections[i].getDependencies(schemaVersion);
@@ -138,7 +138,7 @@ public abstract class AbstractNewPluginTemplateWizard extends Wizard implements 
 	 * @see org.eclipse.pde.ui.IPluginContentWizard#getNewFiles()
 	 */
 	public String[] getNewFiles() {
-		ArrayList result = new ArrayList();
+		ArrayList<String> result = new ArrayList<String>();
 		ITemplateSection[] sections = getTemplateSections();
 		for (int i = 0; i < sections.length; i++) {
 			String[] newFiles = sections[i].getNewFiles();

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.correction.java;
 
+import org.eclipse.osgi.service.resolver.ExportPackageDescription;
+
 import java.util.*;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -84,9 +86,9 @@ public class FindClassResolutionsOperation implements IRunnableWithProgress {
 		}
 
 		if (packageName != null && !isImportedPackage(packageName)) {
-			Set validPackages = getValidPackages(packageName);
-			Iterator validPackagesIter = validPackages.iterator();
-			Set visiblePkgs = null;
+			Set<ExportPackageDescription> validPackages = getValidPackages(packageName);
+			Iterator<ExportPackageDescription> validPackagesIter = validPackages.iterator();
+			Set<ExportPackageDescription> visiblePkgs = null;
 
 			while (validPackagesIter.hasNext() && !fCollector.isDone()) {
 				// since getting visible packages is not very efficient, only do it once and cache result
@@ -119,9 +121,9 @@ public class FindClassResolutionsOperation implements IRunnableWithProgress {
 		return true;
 	}
 
-	private static Set getValidPackages(String pkgName) {
+	private static Set<ExportPackageDescription> getValidPackages(String pkgName) {
 		ExportPackageDescription[] knownPackages = PDECore.getDefault().getModelManager().getState().getState().getExportedPackages();
-		Set validPackages = new HashSet();
+		Set<ExportPackageDescription> validPackages = new HashSet<ExportPackageDescription>();
 		for (int i = 0; i < knownPackages.length; i++) {
 			if (knownPackages[i].getName().equals(pkgName)) {
 				validPackages.add(knownPackages[i]);
@@ -137,14 +139,14 @@ public class FindClassResolutionsOperation implements IRunnableWithProgress {
 		return validPackages;
 	}
 
-	private Set getVisiblePackages() {
+	private Set<ExportPackageDescription> getVisiblePackages() {
 		IPluginModelBase base = PluginRegistry.findModel(fProject);
 		BundleDescription desc = base.getBundleDescription();
 
 		StateHelper helper = Platform.getPlatformAdmin().getStateHelper();
 		ExportPackageDescription[] visiblePkgs = helper.getVisiblePackages(desc);
 
-		HashSet set = new HashSet();
+		HashSet<ExportPackageDescription> set = new HashSet<ExportPackageDescription>();
 		for (int i = 0; i < visiblePkgs.length; i++) {
 			set.add(visiblePkgs[i]);
 		}

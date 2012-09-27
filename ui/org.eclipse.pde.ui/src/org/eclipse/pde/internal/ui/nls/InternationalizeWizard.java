@@ -104,7 +104,7 @@ public class InternationalizeWizard extends Wizard implements IImportWizard {
 	 * 
 	 * @return the list of plug-ins selected for internationalization
 	 */
-	private List getPluginModelsForInternationalization() {
+	private List<?> getPluginModelsForInternationalization() {
 		return page1.getModelsToInternationalize();
 	}
 
@@ -112,7 +112,7 @@ public class InternationalizeWizard extends Wizard implements IImportWizard {
 	 * 
 	 * @return the list of locales specified for internationalization
 	 */
-	private List getLocalesForInternationalization() {
+	private List<?> getLocalesForInternationalization() {
 		return page2.getLocalesForInternationalization();
 	}
 
@@ -162,10 +162,10 @@ public class InternationalizeWizard extends Wizard implements IImportWizard {
 	public void ensurePluginsAreExternalized() {
 		GetNonExternalizedStringsAction externalize = new GetNonExternalizedStringsAction();
 
-		List projects = new ArrayList();
-		List pluginModels = getPluginModelsForInternationalization();
+		List<IProject> projects = new ArrayList<IProject>();
+		List<?> pluginModels = getPluginModelsForInternationalization();
 
-		for (Iterator it = pluginModels.iterator(); it.hasNext();) {
+		for (Iterator<?> it = pluginModels.iterator(); it.hasNext();) {
 			IPluginModelBase pluginModel = (IPluginModelBase) it.next();
 			//Externalize only workspace plug-ins since external plug-ins are already externalized
 			if (!(pluginModel instanceof ExternalPluginModel)) {

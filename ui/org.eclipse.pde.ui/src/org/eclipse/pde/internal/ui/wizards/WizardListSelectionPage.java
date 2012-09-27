@@ -107,7 +107,7 @@ public abstract class WizardListSelectionPage extends BaseWizardSelectionPage im
 		setErrorMessage(null);
 		IStructuredSelection selection = (IStructuredSelection) event.getSelection();
 		WizardElement currentWizardSelection = null;
-		Iterator iter = selection.iterator();
+		Iterator<?> iter = selection.iterator();
 		if (iter.hasNext())
 			currentWizardSelection = (WizardElement) iter.next();
 		if (currentWizardSelection == null) {

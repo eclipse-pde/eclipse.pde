@@ -158,7 +158,7 @@ public class FilteredSchemaAttributeSelectionDialog extends FilteredItemsSelecti
 		}
 	}
 
-	private class SchemaComparator implements Comparator {
+	private class SchemaComparator implements Comparator<Object> {
 
 		public int compare(Object arg0, Object arg1) {
 			return 0;
@@ -229,7 +229,7 @@ public class FilteredSchemaAttributeSelectionDialog extends FilteredItemsSelecti
 		menuManager.add(optionalAttributesAction);
 	}
 
-	protected Comparator getItemsComparator() {
+	protected Comparator<?> getItemsComparator() {
 		return new SchemaComparator();
 	}
 

@@ -24,7 +24,7 @@ public class PackageSelectionDialog extends ElementListSelectionDialog {
 	 * @param parent
 	 * @param renderer
 	 */
-	public PackageSelectionDialog(Shell parent, ILabelProvider renderer, IJavaProject jProject, Vector existingPackages, boolean allowJava) {
+	public PackageSelectionDialog(Shell parent, ILabelProvider renderer, IJavaProject jProject, Vector<?> existingPackages, boolean allowJava) {
 		super(parent, renderer);
 		//setElements(jProject, existingPackages, allowJava);
 		setElements(PDEJavaHelper.getPackageFragments(jProject, existingPackages, allowJava));

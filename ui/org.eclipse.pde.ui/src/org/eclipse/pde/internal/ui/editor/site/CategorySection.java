@@ -11,6 +11,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.site;
 
+import org.eclipse.pde.core.IWritable;
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+import org.eclipse.pde.internal.core.isite.ISiteFeature;
+
 import java.util.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.*;
@@ -67,7 +71,7 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 	class CategoryContentProvider extends DefaultContentProvider implements ITreeContentProvider {
 		public Object[] getElements(Object inputElement) {
 			// model = (ISite) inputElement;
-			ArrayList result = new ArrayList();
+			ArrayList<IWritable> result = new ArrayList<IWritable>();
 			ISiteCategoryDefinition[] catDefs = fModel.getSite().getCategoryDefinitions();
 			for (int i = 0; i < catDefs.length; i++) {
 				result.add(catDefs[i]);
@@ -84,7 +88,7 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 			if (parent instanceof ISiteCategoryDefinition) {
 				ISiteCategoryDefinition catDef = (ISiteCategoryDefinition) parent;
 				ISiteFeature[] features = fModel.getSite().getFeatures();
-				HashSet result = new HashSet();
+				HashSet<SiteFeatureAdapter> result = new HashSet<SiteFeatureAdapter>();
 				for (int i = 0; i < features.length; i++) {
 					ISiteCategory[] cats = features[i].getCategories();
 					for (int j = 0; j < cats.length; j++) {
@@ -372,9 +376,9 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 
 	private boolean handleRemove() {
 		IStructuredSelection ssel = (IStructuredSelection) fCategoryViewer.getSelection();
-		Iterator iterator = ssel.iterator();
+		Iterator<?> iterator = ssel.iterator();
 		boolean success = true;
-		Set removedCategories = new HashSet();
+		Set<?> removedCategories = new HashSet<Object>();
 		while (iterator.hasNext()) {
 			Object object = iterator.next();
 			if (object == null)
@@ -598,8 +602,8 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 		if (cachedSelection == sel)
 			return cachedFeatures;
 		cachedSelection = sel;
-		ArrayList features = new ArrayList(sel.size());
-		Iterator iterator = sel.iterator();
+		ArrayList<ISiteFeature> features = new ArrayList<ISiteFeature>(sel.size());
+		Iterator<?> iterator = sel.iterator();
 		while (iterator.hasNext()) {
 			Object next = iterator.next();
 			if (next instanceof SiteFeatureAdapter) {
@@ -642,7 +646,7 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 		BusyIndicator.showWhile(control.getDisplay(), new Runnable() {
 			public void run() {
 				IFeatureModel[] allModels = PDECore.getDefault().getFeatureModelManager().getModels();
-				ArrayList newModels = new ArrayList();
+				ArrayList<IFeatureModel> newModels = new ArrayList<IFeatureModel>();
 				for (int i = 0; i < allModels.length; i++) {
 					if (canAdd(allModels[i]))
 						newModels.add(allModels[i]);

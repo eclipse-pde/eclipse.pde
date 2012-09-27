@@ -37,8 +37,8 @@ public class SharedLabelProvider extends LabelProvider implements ITableLabelPro
 	public static final int F_OPTIONAL = 512;
 	public static final int F_INTERNAL = 1024;
 	public static final int F_FRIEND = 2048;
-	Hashtable images = new Hashtable();
-	ArrayList consumers = new ArrayList();
+	Hashtable<Object, Image> images = new Hashtable<Object, Image>();
+	ArrayList<Object> consumers = new ArrayList<Object>();
 	private Image fBlankImage;
 
 	public SharedLabelProvider() {
@@ -59,7 +59,7 @@ public class SharedLabelProvider extends LabelProvider implements ITableLabelPro
 
 	public void dispose() {
 		if (consumers.size() == 0) {
-			for (Enumeration elements = images.elements(); elements.hasMoreElements();) {
+			for (Enumeration<Image> elements = images.elements(); elements.hasMoreElements();) {
 				((Image) elements.nextElement()).dispose();
 			}
 			images.clear();

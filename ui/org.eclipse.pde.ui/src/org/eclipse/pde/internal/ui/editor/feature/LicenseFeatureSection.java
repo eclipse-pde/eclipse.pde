@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+
 import java.util.ArrayList;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.resource.JFaceResources;
@@ -235,7 +237,7 @@ public class LicenseFeatureSection extends PDESection {
 		BusyIndicator.showWhile(fLicenseFeatureIDText.getDisplay(), new Runnable() {
 			public void run() {
 				IFeatureModel[] allModels = PDECore.getDefault().getFeatureModelManager().getModels();
-				ArrayList newModels = new ArrayList();
+				ArrayList<IFeatureModel> newModels = new ArrayList<IFeatureModel>();
 				for (int i = 0; i < allModels.length; i++) {
 					if (canAdd(allModels[i]))
 						newModels.add(allModels[i]);

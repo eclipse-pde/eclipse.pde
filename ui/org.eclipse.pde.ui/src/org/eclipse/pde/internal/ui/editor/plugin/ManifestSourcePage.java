@@ -93,7 +93,7 @@ public class ManifestSourcePage extends XMLSourcePage {
 		public Object[] getChildren(Object parent) {
 			PluginModelBase model = (PluginModelBase) getInputContext().getModel();
 
-			ArrayList result = new ArrayList();
+			ArrayList<Object> result = new ArrayList<Object>();
 			if (parent instanceof IPluginBase) {
 				IPluginBase pluginBase = (IPluginBase) parent;
 				if (pluginBase.getLibraries().length > 0)
@@ -239,6 +239,7 @@ public class ManifestSourcePage extends XMLSourcePage {
 		return true;
 	}
 
+	@SuppressWarnings("rawtypes")
 	public Object getAdapter(Class adapter) {
 		if (IHyperlinkDetector.class.equals(adapter))
 			return new ManifestHyperlinkDetector(this);

@@ -101,8 +101,8 @@ public class PluginBlock extends AbstractPluginBlock {
 	 * then we check the plugins that had been selected and saved in the config.
 	 */
 	protected void initWorkspacePluginsState(ILaunchConfiguration configuration) throws CoreException {
-		Map map = BundleLauncherHelper.getWorkspaceBundleMap(configuration, null, IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS);
-		Iterator iter = map.keySet().iterator();
+		Map<?, ?> map = BundleLauncherHelper.getWorkspaceBundleMap(configuration, null, IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS);
+		Iterator<?> iter = map.keySet().iterator();
 		fPluginTreeViewer.setSubtreeChecked(fWorkspacePlugins, false);
 		while (iter.hasNext()) {
 			IPluginModelBase model = (IPluginModelBase) iter.next();
@@ -118,8 +118,8 @@ public class PluginBlock extends AbstractPluginBlock {
 	}
 
 	protected void initExternalPluginsState(ILaunchConfiguration configuration) throws CoreException {
-		Map map = BundleLauncherHelper.getTargetBundleMap(configuration, Collections.EMPTY_SET, IPDELauncherConstants.SELECTED_TARGET_PLUGINS);
-		Iterator iter = map.keySet().iterator();
+		Map<?, ?> map = BundleLauncherHelper.getTargetBundleMap(configuration, Collections.EMPTY_SET, IPDELauncherConstants.SELECTED_TARGET_PLUGINS);
+		Iterator<?> iter = map.keySet().iterator();
 		fPluginTreeViewer.setSubtreeChecked(fExternalPlugins, false);
 		while (iter.hasNext()) {
 			IPluginModelBase model = (IPluginModelBase) iter.next();
@@ -148,7 +148,7 @@ public class PluginBlock extends AbstractPluginBlock {
 
 			// If this is the first time the table is enabled, default the checkstate to all workspace plug-ins
 			if (fInitDefaultCheckState) {
-				TreeSet checkedWorkspace = new TreeSet();
+				TreeSet<String> checkedWorkspace = new TreeSet<String>();
 				IPluginModelBase[] workspaceModels = getWorkspaceModels();
 				for (int i = 0; i < workspaceModels.length; i++) {
 					String id = workspaceModels[i].getPluginBase().getId();

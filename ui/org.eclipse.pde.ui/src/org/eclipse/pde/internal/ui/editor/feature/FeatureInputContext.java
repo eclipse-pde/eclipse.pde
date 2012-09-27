@@ -26,6 +26,7 @@ import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 import org.eclipse.pde.internal.ui.editor.context.XMLInputContext;
+import org.eclipse.text.edits.TextEdit;
 import org.eclipse.ui.*;
 
 /**
@@ -109,7 +110,7 @@ public class FeatureInputContext extends XMLInputContext {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.context.InputContext#addTextEditOperation(java.util.ArrayList, org.eclipse.pde.core.IModelChangedEvent)
 	 */
-	protected void addTextEditOperation(ArrayList ops, IModelChangedEvent event) {
+	protected void addTextEditOperation(ArrayList<TextEdit> ops, IModelChangedEvent event) {
 	}
 
 	protected void flushModel(IDocument doc) {
@@ -158,7 +159,7 @@ public class FeatureInputContext extends XMLInputContext {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.context.XMLInputContext#reorderInsertEdits(java.util.ArrayList)
 	 */
-	protected void reorderInsertEdits(ArrayList ops) {
+	protected void reorderInsertEdits(ArrayList<TextEdit> ops) {
 	}
 
 	protected String getPartitionName() {

@@ -26,9 +26,9 @@ public class MoveTargetDefinitionWizard extends BasicNewResourceWizard {
 
 	MoveTargetDefinitionPage fPage;
 	IPath fPath;
-	Collection fFilter;
+	Collection<?> fFilter;
 
-	public MoveTargetDefinitionWizard(Collection movedTargetDefinitions) {
+	public MoveTargetDefinitionWizard(Collection<?> movedTargetDefinitions) {
 		super();
 		fFilter = movedTargetDefinitions;
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_TARGET_WIZ);

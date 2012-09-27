@@ -16,6 +16,7 @@ import java.io.*;
 import java.util.*;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
@@ -485,7 +486,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 		IStructuredSelection selection = (IStructuredSelection) fTreeViewer.getSelection();
 		if (selection.isEmpty())
 			return false;
-		for (Iterator iter = selection.iterator(); iter.hasNext();) {
+		for (Iterator<?> iter = selection.iterator(); iter.hasNext();) {
 			Object obj = iter.next();
 			if (!(obj instanceof IPluginModelBase))
 				return false;
@@ -622,9 +623,9 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 		IPluginModelBase[] models = new IPluginModelBase[selection.size()];
 		System.arraycopy(selection.toArray(), 0, models, 0, selection.size());
 		// exclude "org.eclipse.ui.workbench.compatibility" - it is only needed for pre-3.0 bundles
-		Set set = DependencyManager.getSelfandDependencies(models, new String[] {"org.eclipse.ui.workbench.compatibility"}); //$NON-NLS-1$
+		Set<?> set = DependencyManager.getSelfandDependencies(models, new String[] {"org.eclipse.ui.workbench.compatibility"}); //$NON-NLS-1$
 		Object[] symbolicNames = set.toArray();
-		ArrayList result = new ArrayList(set.size());
+		ArrayList<IPluginModelBase> result = new ArrayList<IPluginModelBase>(set.size());
 		for (int i = 0; i < symbolicNames.length; i++) {
 			IPluginModelBase model = PluginRegistry.findModel(symbolicNames[i].toString());
 			if (model != null)
@@ -636,7 +637,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 	private void handleSelectInJavaSearch() {
 		PluginsContentProvider provider = (PluginsContentProvider) fTreeViewer.getContentProvider();
 		Object[] elements = provider.getElements(fTreeViewer.getInput());
-		ArrayList result = new ArrayList();
+		ArrayList<Object> result = new ArrayList<Object>();
 		for (int i = 0; i < elements.length; i++) {
 			Object element = elements[i];
 			if (element instanceof IPluginModelBase) {
@@ -856,6 +857,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 		return true;
 	}
 
+	@SuppressWarnings("rawtypes")
 	public Object getAdapter(Class adapter) {
 		if (isShowInApplicable()) {
 			if (adapter == IShowInSource.class && isShowInApplicable()) {
@@ -875,13 +877,13 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 	protected IShowInSource getShowInSource() {
 		return new IShowInSource() {
 			public ShowInContext getShowInContext() {
-				ArrayList resourceList = new ArrayList();
+				ArrayList<IResource> resourceList = new ArrayList<IResource>();
 				IStructuredSelection selection = (IStructuredSelection) fTreeViewer.getSelection();
 				IStructuredSelection resources;
 				if (selection.isEmpty()) {
 					resources = null;
 				} else {
-					for (Iterator iter = selection.iterator(); iter.hasNext();) {
+					for (Iterator<?> iter = selection.iterator(); iter.hasNext();) {
 						Object obj = iter.next();
 						if (obj instanceof IPluginModelBase) {
 							resourceList.add(((IPluginModelBase) obj).getUnderlyingResource());

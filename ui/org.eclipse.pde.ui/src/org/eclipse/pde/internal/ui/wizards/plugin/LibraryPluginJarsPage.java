@@ -39,13 +39,13 @@ public class LibraryPluginJarsPage extends WizardPage {
 	/**
 	 * List of IFile and File of workspace and external Jars.
 	 */
-	protected ArrayList fJarPaths = new ArrayList();
+	protected ArrayList<Object> fJarPaths = new ArrayList<Object>();
 
 	protected Button fRemove;
 
 	protected TableViewer fTableViewer;
 
-	public LibraryPluginJarsPage(String pageName, LibraryPluginFieldData data, Collection jarPaths) {
+	public LibraryPluginJarsPage(String pageName, LibraryPluginFieldData data, Collection<?> jarPaths) {
 		super(pageName);
 		fData = data;
 		setTitle(PDEUIMessages.LibraryPluginJarsPage_title);
@@ -203,7 +203,7 @@ public class LibraryPluginJarsPage extends WizardPage {
 	private void handleRemove() {
 		IStructuredSelection selection = (IStructuredSelection) fTableViewer.getSelection();
 		if (!selection.isEmpty()) {
-			for (Iterator it = selection.iterator(); it.hasNext();) {
+			for (Iterator<?> it = selection.iterator(); it.hasNext();) {
 				Object file = it.next();
 				fJarPaths.remove(file);
 				fTableViewer.remove(file);

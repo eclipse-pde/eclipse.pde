@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.preferences;
 
+import org.eclipse.jdt.core.IJavaProject;
+
 import java.util.HashSet;
 import java.util.Set;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -41,7 +43,7 @@ public class ProjectSelectionDialog extends SelectionStatusDialog {
 		public Object[] getChildren(Object element) {
 			if (element instanceof IJavaModel) {
 				IJavaModel model = (IJavaModel) element;
-				HashSet set = new HashSet();
+				HashSet<IJavaProject> set = new HashSet<IJavaProject>();
 				try {
 					IJavaProject[] projects = model.getJavaProjects();
 					for (int i = 0; i < projects.length; i++) {
@@ -62,7 +64,7 @@ public class ProjectSelectionDialog extends SelectionStatusDialog {
 
 	// the visual selection widget group
 	private TableViewer fTableViewer;
-	private Set fProjectsWithSpecifics;
+	private Set<?> fProjectsWithSpecifics;
 
 	// sizing constants
 	private final static int SIZING_SELECTION_WIDGET_HEIGHT = 250;
@@ -80,7 +82,7 @@ public class ProjectSelectionDialog extends SelectionStatusDialog {
 	 * @param parentShell
 	 * @param projectsWithSpecifics
 	 */
-	public ProjectSelectionDialog(Shell parentShell, Set projectsWithSpecifics) {
+	public ProjectSelectionDialog(Shell parentShell, Set<?> projectsWithSpecifics) {
 		super(parentShell);
 		setTitle(PDEUIMessages.ProjectSelectionDialog_title);
 		setMessage(PDEUIMessages.ProjectSelectionDialog_message);

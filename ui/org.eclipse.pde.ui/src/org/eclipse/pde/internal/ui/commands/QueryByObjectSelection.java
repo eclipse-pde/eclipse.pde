@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.commands;
 
+import org.eclipse.core.commands.Command;
+
 import java.util.ArrayList;
 import org.eclipse.core.commands.*;
 import org.eclipse.core.commands.common.CommandException;
@@ -118,7 +120,7 @@ public class QueryByObjectSelection extends QueryControl {
 		if (objectSelection == null)
 			return null;
 
-		ArrayList hitList = new ArrayList();
+		ArrayList<Command> hitList = new ArrayList<Command>();
 		Command[] commands = getCommandService().getDefinedCommands();
 		for (int i = 0; i < commands.length; i++) {
 			Command command = commands[i];

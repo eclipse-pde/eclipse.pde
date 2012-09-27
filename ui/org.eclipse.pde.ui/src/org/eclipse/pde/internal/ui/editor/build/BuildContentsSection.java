@@ -11,6 +11,8 @@
 
 package org.eclipse.pde.internal.ui.editor.build;
 
+import org.eclipse.core.resources.IResource;
+
 import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -74,7 +76,7 @@ public abstract class BuildContentsSection extends TableSection implements IMode
 				if (!(parent instanceof IFolder))
 					return new Object[0];
 				members = ((IFolder) parent).members();
-				ArrayList results = new ArrayList();
+				ArrayList<IResource> results = new ArrayList<IResource>();
 				for (int i = 0; i < members.length; i++) {
 					if ((members[i].getType() == IResource.FOLDER)) {
 						results.add(members[i]);
@@ -257,19 +259,19 @@ public abstract class BuildContentsSection extends TableSection implements IMode
 					public void run() {
 						if (fTreeViewer.getTree().isDisposed())
 							return;
-						Vector fileExt = new Vector();
+						Vector<String> fileExt = new Vector<String>();
 						String[] inclTokens, exclTokens = new String[0];
 						if (fBundleRoot == null || includes == null)
 							return;
 						inclTokens = includes.getTokens();
 						if (excludes != null)
 							exclTokens = excludes.getTokens();
-						Set temp = new TreeSet();
+						Set<String> temp = new TreeSet<String>();
 						for (int i = 0; i < inclTokens.length; i++)
 							temp.add(inclTokens[i]);
 						for (int i = 0; i < exclTokens.length; i++)
 							temp.add(exclTokens[i]);
-						Iterator iter = temp.iterator();
+						Iterator<String> iter = temp.iterator();
 						while (iter.hasNext()) {
 							String resource = iter.next().toString();
 							boolean isIncluded = includes.contains(resource);

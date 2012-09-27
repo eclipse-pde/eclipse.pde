@@ -16,7 +16,7 @@ import org.eclipse.pde.core.build.IBuildEntry;
 public class BuildUtil {
 
 	public static IBuildEntry[] getBuildLibraries(IBuildEntry[] entries) {
-		Vector temp = new Vector();
+		Vector<IBuildEntry> temp = new Vector<IBuildEntry>();
 		for (int i = 0; i < entries.length; i++) {
 			if (entries[i].getName().startsWith(IBuildEntry.JAR_PREFIX))
 				temp.add(entries[i]);

@@ -65,6 +65,7 @@ public class VirtualSchemaObject implements ISchemaObject {
 	public void setParent(ISchemaObject parent) {
 	}
 
+	@SuppressWarnings("rawtypes")
 	public Object getAdapter(Class adapter) {
 		return null;
 	}

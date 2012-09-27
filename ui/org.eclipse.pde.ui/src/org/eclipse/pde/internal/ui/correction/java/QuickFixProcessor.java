@@ -32,7 +32,7 @@ public class QuickFixProcessor implements IQuickFixProcessor {
 	 * @see org.eclipse.jdt.ui.text.java.IQuickFixProcessor#getCorrections(org.eclipse.jdt.ui.text.java.IInvocationContext, org.eclipse.jdt.ui.text.java.IProblemLocation[])
 	 */
 	public IJavaCompletionProposal[] getCorrections(IInvocationContext context, IProblemLocation[] locations) throws CoreException {
-		ArrayList results = new ArrayList();
+		ArrayList<Object> results = new ArrayList<Object>();
 		for (int i = 0; i < locations.length; i++) {
 			int id = locations[i].getProblemId();
 			switch (id) {
@@ -49,7 +49,7 @@ public class QuickFixProcessor implements IQuickFixProcessor {
 	/*
 	 * Adds IJavaCompletionProposals for a ForbiddenReference marker
 	 */
-	private void handleAccessRestrictionProblem(IInvocationContext context, IProblemLocation location, Collection results) {
+	private void handleAccessRestrictionProblem(IInvocationContext context, IProblemLocation location, Collection<Object> results) {
 		IBinding referencedElement = null;
 		ASTNode node = location.getCoveredNode(context.getASTRoot());
 		if (node instanceof Type) {
@@ -99,8 +99,8 @@ public class QuickFixProcessor implements IQuickFixProcessor {
 	/*
 	 * Adds IJavaCompletionProposals for a Require-Bundle if user is using an Import-Package from the bundle
 	 */
-	private void handleAccessRestrictionByImportPackage(IPackageFragment fragment, Collection results) {
-		HashSet set = new HashSet();
+	private void handleAccessRestrictionByImportPackage(IPackageFragment fragment, Collection<Object> results) {
+		HashSet<String> set = new HashSet<String>();
 		IProject project = fragment.getJavaProject().getProject();
 		String pkgName = fragment.getElementName();
 		IPluginModelBase base = PluginRegistry.findModel(project);
@@ -123,7 +123,7 @@ public class QuickFixProcessor implements IQuickFixProcessor {
 	/*
 	 * Adds IJavaCompletionProposal for a Require-Bundle if user is using an Import-Package from the (workspace) bundle
 	 */
-	private void handleAccessRestrictionByImportPackage(IProject currentProject, ExportPackageDescription desc, Collection results) {
+	private void handleAccessRestrictionByImportPackage(IProject currentProject, ExportPackageDescription desc, Collection<Object> results) {
 		BundleDescription supplier = desc.getSupplier();
 		String supplierId = supplier.getSymbolicName();
 		if (supplier != null) {
@@ -149,7 +149,7 @@ public class QuickFixProcessor implements IQuickFixProcessor {
 	/*
 	 * Adds IJavaCompletionProposals for a ImportNotFound problem
 	 */
-	private void handleImportNotFound(IInvocationContext context, IProblemLocation problemLocation, final Collection result) {
+	private void handleImportNotFound(IInvocationContext context, IProblemLocation problemLocation, final Collection<Object> result) {
 		CompilationUnit cu = context.getASTRoot();
 		ASTNode selectedNode = problemLocation.getCoveringNode(cu);
 		if (selectedNode != null) {
@@ -193,7 +193,7 @@ public class QuickFixProcessor implements IQuickFixProcessor {
 	/*
 	 * Custom AbstractClassResolutionCollector which will only add one IJavaCompletionProposal for adding an Import-Package entry
 	 */
-	private AbstractClassResolutionCollector createCollector(final Collection result) {
+	private AbstractClassResolutionCollector createCollector(final Collection<Object> result) {
 		return new AbstractClassResolutionCollector() {
 
 			boolean isDone = false;

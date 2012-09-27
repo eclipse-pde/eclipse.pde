@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.refactoring;
 
+import org.eclipse.pde.internal.core.text.bundle.PDEManifestElement;
+
 import java.util.ArrayList;
 import org.eclipse.core.filebuffers.*;
 import org.eclipse.core.resources.IFile;
@@ -64,7 +66,7 @@ public class BundleManifestChange {
 			BundleTextChangeListener listener = new BundleTextChangeListener(model.getDocument());
 			bundle.getModel().addModelChangedListener(listener);
 
-			ArrayList list = new ArrayList();
+			ArrayList<PDEManifestElement> list = new ArrayList<PDEManifestElement>();
 			for (int i = 0; i < elements.length; i++) {
 				if (elements[i] instanceof IJavaElement) {
 					String packageName = ((IJavaElement) elements[i]).getElementName();

@@ -122,7 +122,7 @@ public class SchemaStringAttributeDetails extends SchemaAttributeDetails {
 				if (text != null && text.length() > 0) {
 					ISchemaSimpleType type = getAttribute().getType();
 					ChoiceRestriction res = (ChoiceRestriction) type.getRestriction();
-					Vector vres = new Vector();
+					Vector<?> vres = new Vector<Object>();
 					if (res != null) {
 						Object[] currRes = res.getChildren();
 						for (int i = 0; i < currRes.length; i++) {
@@ -152,7 +152,7 @@ public class SchemaStringAttributeDetails extends SchemaAttributeDetails {
 				Object[] aselection = sselection.toArray();
 				ISchemaSimpleType type = getAttribute().getType();
 				ChoiceRestriction res = (ChoiceRestriction) type.getRestriction();
-				Vector vres = new Vector();
+				Vector<?> vres = new Vector<Object>();
 				if (res != null) {
 					Object[] currRes = res.getChildren();
 					for (int i = 0; i < currRes.length; i++) {

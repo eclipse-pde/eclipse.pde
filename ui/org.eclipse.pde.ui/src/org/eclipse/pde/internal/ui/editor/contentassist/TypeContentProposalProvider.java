@@ -25,11 +25,11 @@ public class TypeContentProposalProvider extends TypePackageCompletionProcessor 
 
 	private int fTypeScope;
 
-	private ArrayList fInitialContentProposals;
+	private ArrayList<Object> fInitialContentProposals;
 
 	private String fInitialContent;
 
-	private Comparator fComparator;
+	private Comparator<Object> fComparator;
 
 	public TypeContentProposalProvider(IProject project, int scope) {
 		fProject = project;
@@ -39,7 +39,7 @@ public class TypeContentProposalProvider extends TypePackageCompletionProcessor 
 		reset();
 	}
 
-	private static class TypeComparator implements Comparator {
+	private static class TypeComparator implements Comparator<Object> {
 
 		public TypeComparator() {
 			// NO-OP
@@ -60,14 +60,14 @@ public class TypeContentProposalProvider extends TypePackageCompletionProcessor 
 	 */
 	public IContentProposal[] getProposals(String contents, int position) {
 		// Generate a list of proposals based on the current contents
-		ArrayList currentContentProposals = null;
+		ArrayList<Object> currentContentProposals = null;
 		// Determine method to obtain proposals based on current field contents
 		if (position == 0) {
 			// If the document offset is at the 0 position (i.e. no input entered), 
 			// do not perform content assist.  The operation is too expensive 
 			// because all classes and interfaces (depending on the specified scope)
 			// will need to be resolved as proposals
-			currentContentProposals = null;
+//			currentContentProposals = null;
 		} else if ((fInitialContentProposals == null) || (contents.length() < fInitialContent.length()) || (endsWithDot(contents))) {
 			// Generate new proposals if the content assist session was just
 			// started
@@ -96,10 +96,10 @@ public class TypeContentProposalProvider extends TypePackageCompletionProcessor 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.contentassist.TypePackageCompletionProcessor#addProposalToCollection(java.util.Collection, int, int, java.lang.String, java.lang.String, org.eclipse.swt.graphics.Image)
 	 */
-	protected void addProposalToCollection(Collection collection, int startOffset, int length, String label, String content, Image image) {
+	protected void addProposalToCollection(Collection<Object> collection, int startOffset, int length, String label, String content, Image image) {
 		// Create content proposals for field assist
 		// start offset and length not required
-		IContentProposal proposal = new TypeContentProposal(label, content, null, image);
+		Object proposal = new TypeContentProposal(label, content, null, image);
 		// Add the proposal to the list of proposals
 		collection.add(proposal);
 	}
@@ -112,8 +112,8 @@ public class TypeContentProposalProvider extends TypePackageCompletionProcessor 
 		return false;
 	}
 
-	private ArrayList generateContentProposals(String currentContent) {
-		fInitialContentProposals = new ArrayList();
+	private ArrayList<Object> generateContentProposals(String currentContent) {
+		fInitialContentProposals = new ArrayList<Object>();
 		// Store the initial field contents to determine if we need to
 		// widen the scope later
 		fInitialContent = currentContent;
@@ -121,12 +121,12 @@ public class TypeContentProposalProvider extends TypePackageCompletionProcessor 
 		return fInitialContentProposals;
 	}
 
-	private IContentProposal[] convertResultsToSortedProposals(ArrayList list) {
+	private IContentProposal[] convertResultsToSortedProposals(ArrayList<Object> list) {
 		IContentProposal[] proposals = null;
 		if ((list != null) && (list.size() != 0)) {
 			// Convert the results array list into an array of completion
 			// proposals
-			proposals = (IContentProposal[]) list.toArray(new IContentProposal[list.size()]);
+			proposals = list.toArray(new IContentProposal[list.size()]);
 			// Sort the proposals alphabetically
 			Arrays.sort(proposals, fComparator);
 		} else {
@@ -135,11 +135,11 @@ public class TypeContentProposalProvider extends TypePackageCompletionProcessor 
 		return proposals;
 	}
 
-	private ArrayList filterContentProposals(String currentContent) {
+	private ArrayList<Object> filterContentProposals(String currentContent) {
 		String lowerCaseCurrentContent = currentContent.toLowerCase();
-		ListIterator iterator = fInitialContentProposals.listIterator();
+		ListIterator<Object> iterator = fInitialContentProposals.listIterator();
 		// Maintain a list of filtered search results
-		ArrayList filteredContentProposals = new ArrayList();
+		ArrayList<Object> filteredContentProposals = new ArrayList<Object>();
 		// Iterate over the initial search results
 		while (iterator.hasNext()) {
 			Object object = iterator.next();

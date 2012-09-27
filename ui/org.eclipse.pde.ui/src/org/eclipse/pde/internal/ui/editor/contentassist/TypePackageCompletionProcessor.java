@@ -28,7 +28,7 @@ public abstract class TypePackageCompletionProcessor implements IContentAssistPr
 
 	private String fErrorMessage;
 	private SearchEngine fSearchEngine;
-	private Comparator fComparator;
+	private Comparator<Object> fComparator;
 
 	abstract class ProposalGenerator {
 		abstract protected ICompletionProposal generateClassCompletion(String pName, String cName, boolean isClass);
@@ -64,11 +64,11 @@ public abstract class TypePackageCompletionProcessor implements IContentAssistPr
 		return fErrorMessage;
 	}
 
-	protected void generateTypePackageProposals(String currentContent, IProject project, Collection c, int startOffset, int typeScope) {
+	protected void generateTypePackageProposals(String currentContent, IProject project, Collection<Object> c, int startOffset, int typeScope) {
 		generateTypePackageProposals(currentContent, project, c, startOffset, typeScope, false);
 	}
 
-	protected void generateTypePackageProposals(String currentContent, IProject project, Collection c, int startOffset, int typeScope, boolean replaceEntireContents) {
+	protected void generateTypePackageProposals(String currentContent, IProject project, Collection<Object> c, int startOffset, int typeScope, boolean replaceEntireContents) {
 		currentContent = removeLeadingSpaces(currentContent);
 		if (c == null || currentContent.length() == 0)
 			return;
@@ -76,7 +76,7 @@ public abstract class TypePackageCompletionProcessor implements IContentAssistPr
 		generateProposals(currentContent, project, c, startOffset, length, typeScope);
 	}
 
-	private void generateProposals(String currentContent, IProject project, final Collection c, final int startOffset, final int length, final int typeScope) {
+	private void generateProposals(String currentContent, IProject project, final Collection<Object> c, final int startOffset, final int length, final int typeScope) {
 
 		class TypePackageCompletionRequestor extends CompletionRequestor {
 
@@ -146,7 +146,7 @@ public abstract class TypePackageCompletionProcessor implements IContentAssistPr
 		return null;
 	}
 
-	protected void generateTypeProposals(String currentContent, IProject project, final Collection c, final int startOffset, final int length, int typeScope) {
+	protected void generateTypeProposals(String currentContent, IProject project, final Collection<Object> c, final int startOffset, final int length, int typeScope) {
 		// Dynamically adjust the search scope depending on the current
 		// state of the project
 		IJavaSearchScope scope = PDEJavaHelper.getSearchScope(project);
@@ -199,22 +199,25 @@ public abstract class TypePackageCompletionProcessor implements IContentAssistPr
 		Arrays.sort(proposals, getComparator());
 	}
 
-	private Comparator getComparator() {
+	private Comparator<Object> getComparator() {
 		if (fComparator == null) {
-			fComparator = new Comparator() {
+			fComparator = new Comparator<Object>() {
 				/* (non-Javadoc)
 				 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 				 */
 				public int compare(Object arg0, Object arg1) {
-					ICompletionProposal p1 = (ICompletionProposal) arg0;
-					ICompletionProposal p2 = (ICompletionProposal) arg1;
-
-					return getSortKey(p1).compareToIgnoreCase(getSortKey(p2));
+					if (arg0 instanceof ICompletionProposal && arg1 instanceof ICompletionProposal) {
+						ICompletionProposal p1 = (ICompletionProposal) arg0;
+						ICompletionProposal p2 = (ICompletionProposal) arg1;
+						return getSortKey(p1).compareToIgnoreCase(getSortKey(p2));
+					}
+					return 0;
 				}
 
 				protected String getSortKey(ICompletionProposal p) {
 					return p.getDisplayString();
 				}
+
 			};
 		}
 		return fComparator;
@@ -237,7 +240,7 @@ public abstract class TypePackageCompletionProcessor implements IContentAssistPr
 	 * @param content
 	 * @param image
 	 */
-	protected void addProposalToCollection(final Collection c, final int startOffset, final int length, String label, String content, Image image) {
+	protected void addProposalToCollection(final Collection<Object> c, final int startOffset, final int length, String label, String content, Image image) {
 		TypeCompletionProposal proposal = new TypeCompletionProposal(content, image, label, startOffset, length);
 		c.add(proposal);
 	}

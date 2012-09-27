@@ -60,7 +60,7 @@ public abstract class AntGeneratingExportWizard extends BaseExportWizard {
 		// Check if we are going to overwrite an existing build.xml file
 		if (!MessageDialogWithToggle.ALWAYS.equals(PDEPlugin.getDefault().getPreferenceStore().getString(IPreferenceConstants.OVERWRITE_BUILD_FILES_ON_EXPORT))) {
 			Object[] objects = fPage.getSelectedItems();
-			List problemModels = new ArrayList();
+			List<Object> problemModels = new ArrayList<Object>();
 			for (int i = 0; i < objects.length; i++) {
 				Object object = objects[i];
 				String installLocation = null;
@@ -95,7 +95,7 @@ public abstract class AntGeneratingExportWizard extends BaseExportWizard {
 				StringBuffer buf = new StringBuffer();
 				PDELabelProvider labelProvider = new PDELabelProvider();
 				int maxCount = 10;
-				for (Iterator iterator = problemModels.iterator(); iterator.hasNext();) {
+				for (Iterator<Object> iterator = problemModels.iterator(); iterator.hasNext();) {
 					buf.append(labelProvider.getText(iterator.next()));
 					buf.append('\n');
 					maxCount--;

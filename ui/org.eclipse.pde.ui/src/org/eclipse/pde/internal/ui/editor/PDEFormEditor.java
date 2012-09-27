@@ -688,6 +688,7 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 		return getSite().getSelectionProvider().getSelection();
 	}
 
+	@SuppressWarnings("rawtypes")
 	public Object getAdapter(Class key) {
 		if (key.equals(IContentOutlinePage.class)) {
 			return getContentOutline();
@@ -755,7 +756,7 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 	}
 
 	/* package */IFormPage[] getPages() {
-		ArrayList formPages = new ArrayList();
+		ArrayList<Object> formPages = new ArrayList<Object>();
 		for (int i = 0; i < pages.size(); i++) {
 			Object page = pages.get(i);
 			if (page instanceof IFormPage)
@@ -797,7 +798,7 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 			objects = ssel.toArray();
 			StringWriter writer = new StringWriter();
 			PrintWriter pwriter = new PrintWriter(writer);
-			Class objClass = null;
+			Class<? extends Object> objClass = null;
 			for (int i = 0; i < objects.length; i++) {
 				Object obj = objects[i];
 				if (objClass == null)

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.samples;
 
+import org.eclipse.equinox.p2.metadata.IInstallableUnit;
+
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
@@ -161,7 +163,7 @@ public class ShowSampleAction extends Action implements IIntroAction {
 		return registry.getProfile(provUI.getProfileId());
 	}
 
-	IQuery getSampleFeatureQuery() {
+	IQuery<IInstallableUnit> getSampleFeatureQuery() {
 		return QueryUtil.createIUQuery(SAMPLE_FEATURE_ID, org.eclipse.equinox.p2.metadata.Version.parseVersion(SAMPLE_FEATURE_VERSION));
 	}
 
@@ -208,7 +210,7 @@ public class ShowSampleAction extends Action implements IIntroAction {
 	 * Returns a Collection<IInstallableUnit> of the installable units that contain the samples
 	 * to be installed.
 	 */
-	protected Collection findSampleIUs(URI location, SubMonitor monitor) throws ProvisionException {
+	protected Collection<IInstallableUnit> findSampleIUs(URI location, SubMonitor monitor) throws ProvisionException {
 		IMetadataRepository repository = provUI.loadMetadataRepository(location, false, monitor.newChild(5));
 		return repository.query(getSampleFeatureQuery(), monitor.newChild(5)).toUnmodifiableSet();
 	}
@@ -218,7 +220,7 @@ public class ShowSampleAction extends Action implements IIntroAction {
 	 */
 	InstallOperation createInstallOperation(SubMonitor monitor) throws URISyntaxException, ProvisionException {
 		URI repositoryLocation = new URI(UPDATE_SITE);
-		Collection sampleIUs = findSampleIUs(repositoryLocation, monitor);
+		Collection<IInstallableUnit> sampleIUs = findSampleIUs(repositoryLocation, monitor);
 		URI[] repos = new URI[] {repositoryLocation};
 		InstallOperation operation = provUI.getInstallOperation(sampleIUs, repos);
 		return operation;
@@ -229,7 +231,7 @@ public class ShowSampleAction extends Action implements IIntroAction {
 	 */
 	void applyConfiguration() throws CoreException {
 		BundleContext context = PDEPlugin.getDefault().getBundle().getBundleContext();
-		ServiceReference reference = context.getServiceReference(Configurator.class.getName());
+		ServiceReference<?> reference = context.getServiceReference(Configurator.class.getName());
 		Configurator configurator = (Configurator) context.getService(reference);
 		try {
 			configurator.applyConfiguration();

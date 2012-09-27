@@ -11,6 +11,8 @@
 
 package org.eclipse.pde.internal.ui.editor.contentassist;
 
+import org.eclipse.pde.internal.core.ischema.ISchemaObject;
+
 import java.util.HashSet;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -27,7 +29,7 @@ import org.eclipse.pde.internal.ui.editor.text.XMLUtil;
 public class XMLInsertionComputer {
 
 	public static void computeInsertion(ISchemaElement sElement, IPluginParent pElement) {
-		HashSet visited = new HashSet();
+		HashSet<String> visited = new HashSet<String>();
 		if ((sElement == null) || (pElement == null)) {
 			// If there is no corresponding schema information or plug-in 
 			// model, then there is nothing to augment
@@ -43,7 +45,7 @@ public class XMLInsertionComputer {
 		}
 	}
 
-	protected static void computeInsertionParent(ISchemaElement sElement, IPluginParent pElement, HashSet visited) throws CoreException {
+	protected static void computeInsertionParent(ISchemaElement sElement, IPluginParent pElement, HashSet<String> visited) throws CoreException {
 		// Determine if the edge case is applicable
 		if (isSingleZeroElementEdgeCase(sElement, pElement)) {
 			// Process the edge case
@@ -69,7 +71,7 @@ public class XMLInsertionComputer {
 	 * @param visited
 	 * @throws CoreException
 	 */
-	protected static void computeInsertionZeroElementEdgeCase(ISchemaElement sElement, IPluginParent pElement, HashSet visited) throws CoreException {
+	protected static void computeInsertionZeroElementEdgeCase(ISchemaElement sElement, IPluginParent pElement, HashSet<String> visited) throws CoreException {
 		// We can make a variety of assumptions because of the single zero
 		// element edge case check
 		// We know we have a schema complex type
@@ -121,7 +123,7 @@ public class XMLInsertionComputer {
 		return false;
 	}
 
-	protected static void computeInsertionType(ISchemaElement sElement, IPluginParent pElement, HashSet visited) throws CoreException {
+	protected static void computeInsertionType(ISchemaElement sElement, IPluginParent pElement, HashSet<String> visited) throws CoreException {
 
 		if ((sElement == null) || (pElement == null)) {
 			// If there is no corresponding schema information or plug-in 
@@ -152,7 +154,7 @@ public class XMLInsertionComputer {
 		}
 	}
 
-	protected static void computeInsertionObject(IPluginParent pElement, HashSet visited, ISchemaObject schemaObject) throws CoreException {
+	protected static void computeInsertionObject(IPluginParent pElement, HashSet<String> visited, ISchemaObject schemaObject) throws CoreException {
 		if (schemaObject instanceof ISchemaElement) {
 			ISchemaElement schemaElement = (ISchemaElement) schemaObject;
 			computeInsertionElement(pElement, visited, schemaElement);
@@ -186,12 +188,12 @@ public class XMLInsertionComputer {
 		}
 	}
 
-	protected static void computeInsertionElement(IPluginParent pElement, HashSet visited, ISchemaElement schemaElement) throws CoreException {
+	protected static void computeInsertionElement(IPluginParent pElement, HashSet<String> visited, ISchemaElement schemaElement) throws CoreException {
 		for (int j = 0; j < schemaElement.getMinOccurs(); j++) {
 			// Update Model
 			IPluginElement childElement = createElement(pElement, schemaElement);
 			// Track visited
-			HashSet newSet = (HashSet) visited.clone();
+			HashSet<String> newSet = (HashSet<String>) visited.clone();
 			if (newSet.add(schemaElement.getName())) {
 				computeInsertionType(schemaElement, childElement, newSet);
 			} else {
@@ -307,7 +309,7 @@ public class XMLInsertionComputer {
 		return defaultValue;
 	}
 
-	protected static void computeInsertionSequence(ISchemaCompositor compositor, IPluginParent pElement, HashSet visited) throws CoreException {
+	protected static void computeInsertionSequence(ISchemaCompositor compositor, IPluginParent pElement, HashSet<String> visited) throws CoreException {
 		if (compositor == null)
 			return;
 		// Process the compositor the minimum number of times
@@ -358,7 +360,7 @@ public class XMLInsertionComputer {
 		return false;
 	}
 
-	public static boolean hasOptionalChildren(ISchemaObject obj, boolean onChild, HashSet set) {
+	public static boolean hasOptionalChildren(ISchemaObject obj, boolean onChild, HashSet<ISchemaObject> set) {
 		if (obj == null || set.contains(obj))
 			return false;
 		set.add(obj);

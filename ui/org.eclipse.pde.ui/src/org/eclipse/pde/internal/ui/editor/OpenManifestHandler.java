@@ -14,6 +14,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor;
 
+import org.eclipse.core.resources.IProject;
+
 import java.util.HashSet;
 import java.util.Iterator;
 import org.eclipse.core.commands.*;
@@ -42,7 +44,7 @@ public class OpenManifestHandler extends AbstractHandler {
 	 * @see org.eclipse.core.commands.AbstractHandler#execute(org.eclipse.core.commands.ExecutionEvent)
 	 */
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		final HashSet projects = new HashSet();
+		final HashSet<IProject> projects = new HashSet<IProject>();
 		if (HandlerUtil.getActivePart(event) instanceof IEditorPart) {
 			IEditorInput input = ((IEditorPart) HandlerUtil.getActivePart(event)).getEditorInput();
 			IProject proj = getProject(input);
@@ -53,7 +55,7 @@ public class OpenManifestHandler extends AbstractHandler {
 		ISelection selection = HandlerUtil.getCurrentSelection(event);
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection ssel = (IStructuredSelection) selection;
-			Iterator it = ssel.iterator();
+			Iterator<?> it = ssel.iterator();
 			while (it.hasNext()) {
 				Object element = it.next();
 				IProject proj = null;
@@ -87,7 +89,7 @@ public class OpenManifestHandler extends AbstractHandler {
 		if (projects.size() > 0) {
 			BusyIndicator.showWhile(PDEPlugin.getActiveWorkbenchShell().getDisplay(), new Runnable() {
 				public void run() {
-					Iterator it = projects.iterator();
+					Iterator<IProject> it = projects.iterator();
 					while (it.hasNext()) {
 						IProject project = (IProject) it.next();
 						IFile file = PDEProject.getManifest(project);

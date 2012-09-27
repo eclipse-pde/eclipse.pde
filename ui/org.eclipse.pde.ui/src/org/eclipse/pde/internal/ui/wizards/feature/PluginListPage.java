@@ -141,7 +141,7 @@ public class PluginListPage extends BasePluginListPage {
 	}
 
 	private String[] getLaunchConfigurations() {
-		TreeSet launcherNames = new TreeSet(Collator.getInstance());
+		TreeSet<String> launcherNames = new TreeSet<String>(Collator.getInstance());
 		try {
 			ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
 			String[] types = new String[] {EclipseLaunchShortcut.CONFIGURATION_TYPE, IPDELauncherConstants.OSGI_CONFIGURATION_TYPE};

@@ -118,7 +118,7 @@ public class PluginImportWizard extends Wizard implements IImportWizard, IPageCh
 		ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
 		int count = 0;
 		ILaunch[] launches = launchManager.getLaunches();
-		HashSet imported = new HashSet((4 * modelsToImport.length) / 3 + 1);
+		HashSet<String> imported = new HashSet<String>((4 * modelsToImport.length) / 3 + 1);
 		for (int j = 0; j < modelsToImport.length; ++j) {
 			BundleDescription bd = modelsToImport[j].getBundleDescription();
 			if (bd != null) {
@@ -131,8 +131,8 @@ public class PluginImportWizard extends Wizard implements IImportWizard, IPageCh
 				if (configuration == null)
 					continue;
 				try {
-					Map workspaceBundleMap = BundleLauncherHelper.getWorkspaceBundleMap(configuration);
-					for (Iterator iter = workspaceBundleMap.keySet().iterator(); iter.hasNext();) {
+					Map<?, ?> workspaceBundleMap = BundleLauncherHelper.getWorkspaceBundleMap(configuration);
+					for (Iterator<?> iter = workspaceBundleMap.keySet().iterator(); iter.hasNext();) {
 						IPluginModelBase bm = (IPluginModelBase) iter.next();
 						BundleDescription description = bm.getBundleDescription();
 						if (description != null) {
@@ -168,7 +168,7 @@ public class PluginImportWizard extends Wizard implements IImportWizard, IPageCh
 	 *  from a repository, else <code>null</code>
 	 *  
 	 */
-	public static void doImportOperation(int importType, IPluginModelBase[] models, boolean forceAutobuild, boolean launchedConfiguration, SourceLocationManager alternateSource, Map importerToDescriptions) {
+	public static void doImportOperation(int importType, IPluginModelBase[] models, boolean forceAutobuild, boolean launchedConfiguration, SourceLocationManager alternateSource, Map<?, ?> importerToDescriptions) {
 		PluginImportOperation job = new PluginImportOperation(models, importType, forceAutobuild);
 		job.setImportDescriptions(importerToDescriptions);
 		job.setAlternateSource(alternateSource);

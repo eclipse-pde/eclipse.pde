@@ -11,6 +11,9 @@
 
 package org.eclipse.pde.internal.ui.nls;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.pde.internal.ui.nls.NLSFragmentGenerator.Filter;
+
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
@@ -72,8 +75,8 @@ public class NLSFragmentGenerator {
 
 	private final IWizardContainer container;
 	private final String template;
-	private final List plugins;
-	private final List locales;
+	private final List<?> plugins;
+	private final List<?> locales;
 	private final boolean overwriteWithoutAsking;
 	private IProgressMonitor monitor;
 
@@ -119,7 +122,7 @@ public class NLSFragmentGenerator {
 		}
 	};
 
-	public NLSFragmentGenerator(String template, List plugins, List locales, IWizardContainer container, boolean overwriteWithoutAsking) {
+	public NLSFragmentGenerator(String template, List<?> plugins, List<?> locales, IWizardContainer container, boolean overwriteWithoutAsking) {
 		this.plugins = plugins;
 		this.locales = locales;
 		this.container = container;
@@ -137,7 +140,7 @@ public class NLSFragmentGenerator {
 
 	public boolean generate() {
 		try {
-			final Map overwrites = promptForOverwrite(plugins, locales);
+			final Map<String, Object> overwrites = promptForOverwrite(plugins, locales);
 
 			container.run(false, false, new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
@@ -167,14 +170,14 @@ public class NLSFragmentGenerator {
 	 * @throws InvocationTargetException 
 	 * @throws InterruptedException 
 	 */
-	private void internationalizePlugins(List plugins, List locales, Map overwrites) throws CoreException, IOException, InvocationTargetException, InterruptedException {
+	private void internationalizePlugins(List<?> plugins, List<?> locales, Map<String, Object> overwrites) throws CoreException, IOException, InvocationTargetException, InterruptedException {
 
-		Set created = new HashSet();
+		Set<IProject> created = new HashSet<IProject>();
 
-		for (Iterator it = plugins.iterator(); it.hasNext();) {
+		for (Iterator<?> it = plugins.iterator(); it.hasNext();) {
 			IPluginModelBase plugin = (IPluginModelBase) it.next();
 
-			for (Iterator iter = locales.iterator(); iter.hasNext();) {
+			for (Iterator<?> iter = locales.iterator(); iter.hasNext();) {
 				Locale locale = (Locale) iter.next();
 
 				IProject project = getNLProject(plugin, locale);
@@ -198,15 +201,15 @@ public class NLSFragmentGenerator {
 
 	private Object OVERWRITE = new Object();
 
-	private Map promptForOverwrite(List plugins, List locales) {
-		Map overwrites = new HashMap();
+	private Map<String, Object> promptForOverwrite(List<?> plugins, List<?> locales) {
+		Map<String, Object> overwrites = new HashMap<String, Object>();
 
 		if (overwriteWithoutAsking)
 			return overwrites;
 
-		for (Iterator iter = plugins.iterator(); iter.hasNext();) {
+		for (Iterator<?> iter = plugins.iterator(); iter.hasNext();) {
 			IPluginModelBase plugin = (IPluginModelBase) iter.next();
-			for (Iterator it = locales.iterator(); it.hasNext();) {
+			for (Iterator<?> it = locales.iterator(); it.hasNext();) {
 				Locale locale = (Locale) it.next();
 				IProject project = getNLProject(plugin, locale);
 
@@ -332,7 +335,7 @@ public class NLSFragmentGenerator {
 			//Case 1a: External plug-in is a jar file
 			if (new File(installLocation).isFile()) {
 				ZipFile zf = new ZipFile(installLocation);
-				for (Enumeration e = zf.entries(); e.hasMoreElements();) {
+				for (Enumeration<?> e = zf.entries(); e.hasMoreElements();) {
 					worked();
 
 					ZipEntry zfe = (ZipEntry) e.nextElement();
@@ -461,7 +464,7 @@ public class NLSFragmentGenerator {
 	}
 
 	private static class Filters {
-		private final List filters = new LinkedList();
+		private final List<Filter> filters = new LinkedList<Filter>();
 		private final boolean default_;
 
 		public Filters(boolean default_) {
@@ -479,7 +482,7 @@ public class NLSFragmentGenerator {
 				object = path.toPortableString();
 			}
 
-			for (Iterator iter = filters.iterator(); iter.hasNext();) {
+			for (Iterator<Filter> iter = filters.iterator(); iter.hasNext();) {
 				Filter filter = (Filter) iter.next();
 				if (filter.matches(object)) {
 					return filter.inclusive();

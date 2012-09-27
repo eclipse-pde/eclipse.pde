@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
+import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.pde.internal.ui.editor.plugin.ImportPackageSection.ImportItemWrapper;
+
 import org.eclipse.pde.core.target.NameVersionDescriptor;
 
 import java.util.*;
@@ -425,7 +428,7 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 		if (dialog.open() == Window.OK) {
 			Object[] selected = dialog.getResult();
 			if (fHeader != null) {
-				Set names = new HashSet(); // set of String names, do not allow the same package to be added twice
+				Set<String> names = new HashSet<String>(); // set of String names, do not allow the same package to be added twice
 				for (int i = 0; i < selected.length; i++) {
 					ImportPackageObject impObject = null;
 					if (selected[i] instanceof ImportItemWrapper)
@@ -471,13 +474,13 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 	}
 
 	private void setElements(ConditionalListSelectionDialog dialog) {
-		Set forbidden = getForbiddenIds();
+		Set<String> forbidden = getForbiddenIds();
 		boolean allowJava = "true".equals(getBundle().getHeader(ICoreConstants.ECLIPSE_JREBUNDLE)); //$NON-NLS-1$
 
-		ArrayList elements = new ArrayList();
-		ArrayList conditional = new ArrayList();
+		ArrayList<ImportItemWrapper> elements = new ArrayList<ImportItemWrapper>();
+		ArrayList<ImportItemWrapper> conditional = new ArrayList<ImportItemWrapper>();
 		IPluginModelBase[] models = PluginRegistry.getActiveModels();
-		Set nameVersions = new HashSet(); // Set of NameVersionDescriptors, used to remove duplicate entries
+		Set<NameVersionDescriptor> nameVersions = new HashSet<NameVersionDescriptor>(); // Set of NameVersionDescriptors, used to remove duplicate entries
 
 		for (int i = 0; i < models.length; i++) {
 			BundleDescription desc = models[i].getBundleDescription();
@@ -719,7 +722,7 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 	}
 
 	private IPackageFragmentRoot[] getSourceRoots() throws JavaModelException {
-		ArrayList result = new ArrayList();
+		ArrayList<IPackageFragmentRoot> result = new ArrayList<IPackageFragmentRoot>();
 		IProject project = getPage().getPDEEditor().getCommonProject();
 		// would normally return array of size 0, but by returning null can optimize the search to run faster.
 		if (project == null) {
@@ -766,8 +769,8 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 		return (manifestVersion < 2) ? ICoreConstants.PACKAGE_SPECIFICATION_VERSION : Constants.VERSION_ATTRIBUTE;
 	}
 
-	private Set getForbiddenIds() {
-		HashSet set = new HashSet();
+	private Set<String> getForbiddenIds() {
+		HashSet<String> set = new HashSet<String>();
 		IPluginModelBase model = (IPluginModelBase) getPage().getPDEEditor().getAggregateModel();
 		String id = model.getPluginBase().getId();
 		if (id != null)
@@ -780,7 +783,7 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 		return set;
 	}
 
-	private void addDependency(State state, String bundleID, Set set) {
+	private void addDependency(State state, String bundleID, Set<String> set) {
 		if (bundleID == null || !set.add(bundleID))
 			return;
 

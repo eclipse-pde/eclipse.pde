@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
+import org.eclipse.jface.text.Position;
+
 import java.util.*;
 import org.eclipse.jface.text.*;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
@@ -22,13 +24,13 @@ import org.osgi.framework.Constants;
 
 public class BundleFoldingStructureProvider extends AbstractFoldingStructureProvider {
 
-	private Map fPositionToElement = new HashMap();
+	private Map<Position, IManifestHeader> fPositionToElement = new HashMap<Position, IManifestHeader>();
 
 	public BundleFoldingStructureProvider(PDESourcePage editor, IEditingModel model) {
 		super(editor, model);
 	}
 
-	public void addFoldingRegions(Set currentRegions, IEditingModel model) throws BadLocationException {
+	public void addFoldingRegions(Set<Position> currentRegions, IEditingModel model) throws BadLocationException {
 		IBundle bundle = ((BundleModel) model).getBundle();
 
 		IManifestHeader importPackageHeader = bundle.getManifestHeader(Constants.IMPORT_PACKAGE);
@@ -44,7 +46,7 @@ public class BundleFoldingStructureProvider extends AbstractFoldingStructureProv
 
 	}
 
-	private void addFoldingRegions(Set regions, IManifestHeader header, IDocument document) throws BadLocationException {
+	private void addFoldingRegions(Set<Position> regions, IManifestHeader header, IDocument document) throws BadLocationException {
 		if (header == null)
 			return;
 		int startLine = document.getLineOfOffset(header.getOffset());

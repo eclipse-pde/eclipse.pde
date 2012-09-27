@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
+import org.eclipse.pde.core.IWritable;
+
 import java.util.ArrayList;
 import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.*;
@@ -187,7 +189,7 @@ public class PluginConfigurationSection extends TableSection {
 
 	private void handleAdd() {
 		ElementListSelectionDialog dialog = new ElementListSelectionDialog(PDEPlugin.getActiveWorkbenchShell(), PDEPlugin.getDefault().getLabelProvider());
-		ArrayList plugins = new ArrayList();
+		ArrayList<IWritable> plugins = new ArrayList<IWritable>();
 
 		// TODO there must be a better way to do this!
 		if (getProduct().useFeatures()) {

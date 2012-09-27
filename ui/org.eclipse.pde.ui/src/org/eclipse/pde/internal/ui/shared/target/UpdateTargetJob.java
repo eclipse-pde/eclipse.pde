@@ -32,7 +32,7 @@ public class UpdateTargetJob extends Job {
 
 	public static final String JOB_FAMILY_ID = "UpdateTargetJob"; //$NON-NLS-1$
 
-	private Map toUpdate;
+	private Map<ITargetLocation, Set<Object>> toUpdate;
 	private ITargetDefinition fTarget;
 
 	/**
@@ -51,7 +51,7 @@ public class UpdateTargetJob extends Job {
 	 * that should be updated.  The sets may be empty, but not <code>null</code>
 	 * @param listener job change listener that will be added to the created job, can be <code>null</code>
 	 */
-	public static void update(ITargetDefinition target, Map toUpdate, IJobChangeListener listener) {
+	public static void update(ITargetDefinition target, Map<ITargetLocation, Set<Object>> toUpdate, IJobChangeListener listener) {
 		Job.getJobManager().cancel(JOB_FAMILY_ID);
 		Job job = new UpdateTargetJob(toUpdate, target);
 		job.setUser(true);
@@ -64,7 +64,7 @@ public class UpdateTargetJob extends Job {
 	/**
 	 * Use {@link #update(Map, IJobChangeListener)} instead
 	 */
-	private UpdateTargetJob(Map toUpdate, ITargetDefinition target) {
+	private UpdateTargetJob(Map<ITargetLocation, Set<Object>> toUpdate, ITargetDefinition target) {
 		super(Messages.UpdateTargetJob_UpdateJobName);
 		this.toUpdate = toUpdate;
 		fTarget = target;
@@ -77,10 +77,10 @@ public class UpdateTargetJob extends Job {
 		SubMonitor progress = SubMonitor.convert(monitor, Messages.UpdateTargetJob_UpdatingTarget, toUpdate.size() * 100);
 		MultiStatus errors = new MultiStatus(PDECore.PLUGIN_ID, 0, Messages.UpdateTargetJob_TargetUpdateFailedStatus, null);
 		boolean noChange = true;
-		for (Iterator iterator = toUpdate.entrySet().iterator(); iterator.hasNext();) {
-			Map.Entry entry = (Map.Entry) iterator.next();
-			ITargetLocation location = (ITargetLocation) entry.getKey();
-			Set children = (Set) entry.getValue();
+		for (Iterator<Map.Entry<ITargetLocation, Set<Object>>> iterator = toUpdate.entrySet().iterator(); iterator.hasNext();) {
+			Map.Entry<ITargetLocation, Set<Object>> entry = iterator.next();
+			ITargetLocation location = entry.getKey();
+			Set<Object> children = entry.getValue();
 
 			String path = null;
 			try {
@@ -93,7 +93,7 @@ public class UpdateTargetJob extends Job {
 			// TODO Custom code for IUBundleContainers with children selected
 			if (location instanceof IUBundleContainer && !children.isEmpty()) {
 				try {
-					boolean result = ((IUBundleContainer) location).update((Set) entry.getValue(), progress.newChild(100));
+					boolean result = ((IUBundleContainer) location).update(children, progress.newChild(100));
 					if (result) {
 						noChange = false;
 					}

@@ -137,8 +137,8 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 
 	private static void updateRequiredPlugins(IJavaProject javaProject, IProgressMonitor monitor, IPluginModelBase model) throws CoreException {
 		IClasspathEntry[] entries = javaProject.getRawClasspath();
-		List classpath = new ArrayList();
-		List requiredProjects = new ArrayList();
+		List<IClasspathEntry> classpath = new ArrayList<IClasspathEntry>();
+		List<IClasspathEntry> requiredProjects = new ArrayList<IClasspathEntry>();
 		for (int i = 0; i < entries.length; i++) {
 			if (isPluginProjectEntry(entries[i])) {
 				requiredProjects.add(entries[i]);
@@ -209,8 +209,8 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 	private IClasspathEntry[] getUpdatedClasspath(IClasspathEntry[] cp, IJavaProject currentProject) {
 		boolean exposed = false;
 		int refIndex = -1;
-		List result = new ArrayList();
-		Set manifests = new HashSet();
+		List<IClasspathEntry> result = new ArrayList<IClasspathEntry>();
+		Set<Manifest> manifests = new HashSet<Manifest>();
 		for (int i = 0; i < fData.getLibraryPaths().length; ++i) {
 			try {
 				manifests.add(new JarFile(fData.getLibraryPaths()[i]).getManifest());
@@ -419,13 +419,13 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 			value = "."; //$NON-NLS-1$
 		try {
 			ManifestElement[] elems = ManifestElement.parseHeader(Constants.BUNDLE_CLASSPATH, value);
-			HashMap map = new HashMap();
+			HashMap<String, ArrayList<String>> map = new HashMap<String, ArrayList<String>>();
 			for (int i = 0; i < elems.length; i++) {
-				ArrayList filter = new ArrayList();
+				ArrayList<String> filter = new ArrayList<String>();
 				filter.add("*"); //$NON-NLS-1$
 				map.put(elems[i].getValue(), filter);
 			}
-			Set packages = PluginConverter.getDefault().getExports(project, map);
+			Set<String> packages = PluginConverter.getDefault().getExports(project, map);
 			String pkgValue = getCommaValuesFromPackagesSet(packages, fData.getVersion());
 			bundle.setHeader(Constants.EXPORT_PACKAGE, pkgValue);
 		} catch (BundleException e) {
@@ -442,7 +442,7 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 			new AddNewBinaryDependenciesOperation(project, (IBundlePluginModelBase) model) {
 				// Need to override this function to include every bundle in the
 				// target platform as a possible dependency
-				protected String[] findSecondaryBundles(IBundle bundle, Set ignorePkgs) {
+				protected String[] findSecondaryBundles(IBundle bundle, Set<String> ignorePkgs) {
 					IPluginModelBase[] bases = PluginRegistry.getActiveModels();
 					String[] ids = new String[bases.length];
 					for (int i = 0; i < bases.length; i++) {
@@ -459,10 +459,10 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 				// build.properties does not contain entry for '.'.
 				// Therefore, the super.addProjectPackages will not find the
 				// project packages(it includes only things in bin.includes)
-				protected void addProjectPackages(IBundle bundle, Set ignorePkgs) {
+				protected void addProjectPackages(IBundle bundle, Set<String> ignorePkgs) {
 					if (!unzip)
 						super.addProjectPackages(bundle, ignorePkgs);
-					Stack stack = new Stack();
+					Stack<IResource> stack = new Stack<IResource>();
 					stack.push(fProject);
 					try {
 						while (!stack.isEmpty()) {

@@ -88,6 +88,7 @@ public abstract class PDESection extends SectionPart implements IModelChangedLis
 		super.refresh();
 	}
 
+	@SuppressWarnings("rawtypes")
 	public Object getAdapter(Class adapter) {
 		return null;
 	}

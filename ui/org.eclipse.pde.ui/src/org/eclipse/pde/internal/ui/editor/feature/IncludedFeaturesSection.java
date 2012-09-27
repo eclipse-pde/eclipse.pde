@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import org.eclipse.core.runtime.CoreException;
@@ -186,7 +188,7 @@ public class IncludedFeaturesSection extends TableSection implements IFeatureMod
 		BusyIndicator.showWhile(fIncludesViewer.getTable().getDisplay(), new Runnable() {
 			public void run() {
 				IFeatureModel[] allModels = PDECore.getDefault().getFeatureModelManager().getModels();
-				ArrayList newModels = new ArrayList();
+				ArrayList<IFeatureModel> newModels = new ArrayList<IFeatureModel>();
 				for (int i = 0; i < allModels.length; i++) {
 					if (canAdd(allModels[i]))
 						newModels.add(allModels[i]);
@@ -283,7 +285,7 @@ public class IncludedFeaturesSection extends TableSection implements IFeatureMod
 		try {
 			IFeatureChild[] removed = new IFeatureChild[ssel.size()];
 			int i = 0;
-			for (Iterator iter = ssel.iterator(); iter.hasNext();) {
+			for (Iterator<?> iter = ssel.iterator(); iter.hasNext();) {
 				IFeatureChild iobj = (IFeatureChild) iter.next();
 				removed[i++] = iobj;
 			}

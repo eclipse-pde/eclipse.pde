@@ -144,7 +144,7 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 			return new String[0];
 
 		IPluginExtension[] extensions = plugin.getExtensions();
-		ArrayList result = new ArrayList();
+		ArrayList<String> result = new ArrayList<String>();
 		for (int i = 0; i < extensions.length; i++) {
 			IPluginExtension extension = extensions[i];
 			if ("org.eclipse.core.runtime.applications".equals(extension.getPoint())) { //$NON-NLS-1$
@@ -291,8 +291,8 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 		StringBuffer wsplugins = new StringBuffer();
 		StringBuffer explugins = new StringBuffer();
 		// exclude "org.eclipse.ui.workbench.compatibility" - it is only needed for pre-3.0 bundles
-		Set plugins = DependencyManager.getSelfAndDependencies(fModel, new String[] {"org.eclipse.ui.workbench.compatibility"}); //$NON-NLS-1$
-		Iterator iter = plugins.iterator();
+		Set<?> plugins = DependencyManager.getSelfAndDependencies(fModel, new String[] {"org.eclipse.ui.workbench.compatibility"}); //$NON-NLS-1$
+		Iterator<?> iter = plugins.iterator();
 		while (iter.hasNext()) {
 			String id = iter.next().toString();
 			IPluginModelBase model = PluginRegistry.findModel(id);

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.launcher;
 
+import org.eclipse.debug.core.ILaunchConfiguration;
+
 import java.util.ArrayList;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.*;
@@ -79,7 +81,7 @@ public abstract class AbstractLaunchShortcut implements ILaunchShortcut {
 	 * @return an array of launch configurations
 	 */
 	private ILaunchConfiguration[] getLaunchConfigurations() {
-		ArrayList result = new ArrayList();
+		ArrayList<ILaunchConfiguration> result = new ArrayList<ILaunchConfiguration>();
 		try {
 			ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
 			ILaunchConfigurationType type = manager.getLaunchConfigurationType(getLaunchConfigurationTypeName());

@@ -13,6 +13,8 @@
 
 package org.eclipse.pde.internal.ui.editor.plugin;
 
+import org.eclipse.jdt.core.IPackageFragment;
+
 import java.util.*;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -166,7 +168,7 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(java.lang.Object, java.lang.Object[])
 	 */
 	protected boolean canPaste(Object targetObject, Object[] sourceObjects) {
-		HashMap currentPackageFragments = null;
+		HashMap<?, ?> currentPackageFragments = null;
 		// Only export package objects that represent existing package 
 		// fragments within the Java project that this plugin.xml is stored
 		// can be pasted
@@ -224,9 +226,9 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
 		return true;
 	}
 
-	private HashMap createCurrentExportPackageMap() {
+	private HashMap<?, ?> createCurrentExportPackageMap() {
 		// Dummy hash map created in order to return a defined but empty map
-		HashMap packageFragments = new HashMap(0);
+		HashMap<?, ?> packageFragments = new HashMap<Object, Object>(0);
 		// Get the model
 		IPluginModelBase model = getModel();
 		// Ensure model is defined
@@ -260,9 +262,9 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
 			return packageFragments;
 		}
 		// Get the current packages associated with the export package header
-		Vector currentExportPackages = null;
+		Vector<?> currentExportPackages = null;
 		if (fHeader == null) {
-			currentExportPackages = new Vector();
+			currentExportPackages = new Vector<Object>();
 		} else {
 			currentExportPackages = fHeader.getPackageNames();
 		}
@@ -436,12 +438,12 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
 			if (project.hasNature(JavaCore.NATURE_ID)) {
 				ILabelProvider labelProvider = new JavaElementLabelProvider();
 				final ConditionalListSelectionDialog dialog = new ConditionalListSelectionDialog(PDEPlugin.getActiveWorkbenchShell(), labelProvider, PDEUIMessages.ExportPackageSection_dialogButtonLabel);
-				final Collection pckgs = fHeader == null ? new Vector() : fHeader.getPackageNames();
+				final Collection<?> pckgs = fHeader == null ? new Vector<Object>() : fHeader.getPackageNames();
 				final boolean allowJava = "true".equals(getBundle().getHeader(ICoreConstants.ECLIPSE_JREBUNDLE)); //$NON-NLS-1$
 				Runnable runnable = new Runnable() {
 					public void run() {
-						ArrayList elements = new ArrayList();
-						ArrayList conditional = new ArrayList();
+						ArrayList<IPackageFragment> elements = new ArrayList<IPackageFragment>();
+						ArrayList<IPackageFragment> conditional = new ArrayList<IPackageFragment>();
 						IPackageFragment[] fragments = PDEJavaHelper.getPackageFragments(JavaCore.create(project), pckgs, allowJava);
 						for (int i = 0; i < fragments.length; i++) {
 							try {

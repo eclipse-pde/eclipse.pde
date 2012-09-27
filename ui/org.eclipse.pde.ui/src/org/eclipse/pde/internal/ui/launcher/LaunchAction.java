@@ -11,6 +11,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+import org.eclipse.pde.internal.core.iproduct.IPluginConfiguration;
+
 import java.io.File;
 import java.util.*;
 import org.eclipse.core.resources.IResource;
@@ -43,7 +47,7 @@ public class LaunchAction extends Action {
 	private IProduct fProduct;
 	private String fMode;
 	private String fPath;
-	private Map fPluginConfigurations;
+	private Map<String, IPluginConfiguration> fPluginConfigurations;
 
 	public LaunchAction(IProduct product, String path, String mode) {
 		fProduct = product;
@@ -51,7 +55,7 @@ public class LaunchAction extends Action {
 		fPath = path;
 		// initialize configurations... we should do this lazily
 		// TODO
-		fPluginConfigurations = new HashMap();
+		fPluginConfigurations = new HashMap<String, IPluginConfiguration>();
 		IPluginConfiguration[] configurations = fProduct.getPluginConfigurations();
 		for (int i = 0; i < configurations.length; i++) {
 			IPluginConfiguration config = configurations[i];
@@ -145,10 +149,10 @@ public class LaunchAction extends Action {
 	}
 
 	private String concatArgs(StringBuffer initialArgs, String userArgs) {
-		List initialArgsList = Arrays.asList(DebugPlugin.parseArguments(initialArgs.toString()));
+		List<String> initialArgsList = Arrays.asList(DebugPlugin.parseArguments(initialArgs.toString()));
 		if (userArgs != null && userArgs.length() > 0) {
-			List userArgsList = Arrays.asList(DebugPlugin.parseArguments(userArgs));
-			for (Iterator iterator = userArgsList.iterator(); iterator.hasNext();) {
+			List<String> userArgsList = Arrays.asList(DebugPlugin.parseArguments(userArgs));
+			for (Iterator<String> iterator = userArgsList.iterator(); iterator.hasNext();) {
 				Object userArg = iterator.next();
 				if (!initialArgsList.contains(userArg)) {
 					initialArgs.append(' ');
@@ -171,7 +175,7 @@ public class LaunchAction extends Action {
 	}
 
 	private IPluginModelBase[] getModels() {
-		HashMap map = new HashMap();
+		HashMap<String, IPluginModelBase> map = new HashMap<String, IPluginModelBase>();
 		if (fProduct.useFeatures()) {
 			IFeatureModel[] features = getUniqueFeatures();
 			for (int i = 0; i < features.length; i++) {
@@ -192,7 +196,7 @@ public class LaunchAction extends Action {
 	}
 
 	private IFeatureModel[] getUniqueFeatures() {
-		ArrayList list = new ArrayList();
+		ArrayList<IFeatureModel> list = new ArrayList<IFeatureModel>();
 		IProductFeature[] features = fProduct.getFeatures();
 		for (int i = 0; i < features.length; i++) {
 			String id = features[i].getId();
@@ -202,7 +206,7 @@ public class LaunchAction extends Action {
 		return (IFeatureModel[]) list.toArray(new IFeatureModel[list.size()]);
 	}
 
-	private void addFeatureAndChildren(String id, String version, List list) {
+	private void addFeatureAndChildren(String id, String version, List<IFeatureModel> list) {
 		FeatureModelManager manager = PDECore.getDefault().getFeatureModelManager();
 		IFeatureModel model = manager.findFeatureModel(id, version);
 		if (model == null || list.contains(model))
@@ -216,7 +220,7 @@ public class LaunchAction extends Action {
 		}
 	}
 
-	private void addFeaturePlugins(IFeature feature, HashMap map) {
+	private void addFeaturePlugins(IFeature feature, HashMap<String, IPluginModelBase> map) {
 		IFeaturePlugin[] plugins = feature.getPlugins();
 		for (int i = 0; i < plugins.length; i++) {
 			String id = plugins[i].getId();
@@ -300,7 +304,7 @@ public class LaunchAction extends Action {
 	}
 
 	private ILaunchConfiguration[] getLaunchConfigurations() throws CoreException {
-		ArrayList result = new ArrayList();
+		ArrayList<ILaunchConfiguration> result = new ArrayList<ILaunchConfiguration>();
 		ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
 		ILaunchConfigurationType type = manager.getLaunchConfigurationType(EclipseLaunchShortcut.CONFIGURATION_TYPE);
 		ILaunchConfiguration[] configs = manager.getLaunchConfigurations(type);

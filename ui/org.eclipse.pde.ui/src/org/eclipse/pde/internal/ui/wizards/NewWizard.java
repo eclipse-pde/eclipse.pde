@@ -20,7 +20,7 @@ import org.eclipse.ui.IWorkbench;
 public class NewWizard extends Wizard implements INewWizard, IDefaultValueConsumer {
 	private org.eclipse.ui.IWorkbench workbench;
 	private org.eclipse.jface.viewers.IStructuredSelection selection;
-	private Dictionary defaultValues;
+	private Dictionary<?, ?> defaultValues;
 
 	public NewWizard() {
 		super();
@@ -60,7 +60,7 @@ public class NewWizard extends Wizard implements INewWizard, IDefaultValueConsum
 	 * 
 	 * @see org.eclipse.pde.internal.ui.wizards.IDefaultValueConsumer#init(java.util.Dictionary)
 	 */
-	public final void init(Dictionary defaultValues) {
+	public final void init(Dictionary<?, ?> defaultValues) {
 		this.defaultValues = defaultValues;
 	}
 }

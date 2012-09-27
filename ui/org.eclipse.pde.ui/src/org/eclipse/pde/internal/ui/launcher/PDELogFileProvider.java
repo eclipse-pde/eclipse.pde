@@ -31,7 +31,7 @@ public class PDELogFileProvider implements ILogFileProvider {
 	 * @see ILogFileProvider#getLogSources()
 	 * @since 3.4 
 	 */
-	public Map getLogSources() {
+	public Map<String, String> getLogSources() {
 		ILaunchConfiguration[] configurations = null;
 		try {
 			configurations = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurations();
@@ -40,7 +40,7 @@ public class PDELogFileProvider implements ILogFileProvider {
 			return Collections.EMPTY_MAP;
 		}
 
-		Map sources = new HashMap();
+		Map<String, String> sources = new HashMap<String, String>();
 
 		for (int i = 0; i < configurations.length; i++) {
 			ILaunchConfiguration configuration = configurations[i];

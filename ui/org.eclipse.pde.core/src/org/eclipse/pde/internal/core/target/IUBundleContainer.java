@@ -343,7 +343,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 * @return whether this container was changed as part of this update and must be resolved 
 	 * @exception CoreException if unable to retrieve IU's
 	 */
-	public synchronized boolean update(Set<String> toUpdate, IProgressMonitor monitor) throws CoreException {
+	public synchronized boolean update(Set<Object> toUpdate, IProgressMonitor monitor) throws CoreException {
 		SubMonitor progress = SubMonitor.convert(monitor, 100);
 		IQueryable<IInstallableUnit> source = P2TargetUtils.getQueryableMetadata(fRepos, progress.newChild(30));
 		boolean updated = false;

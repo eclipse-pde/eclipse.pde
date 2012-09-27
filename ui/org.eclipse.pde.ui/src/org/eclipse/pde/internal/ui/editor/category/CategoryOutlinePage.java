@@ -9,6 +9,8 @@
 ******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.category;
 
+import org.eclipse.pde.core.IWritable;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -33,7 +35,7 @@ public class CategoryOutlinePage extends FormOutlinePage {
 			if (model.isValid()) {
 				ISite site = model.getSite();
 				if (page.getId().equals(FeaturesPage.PAGE_ID)) {
-					ArrayList result = new ArrayList();
+					ArrayList<IWritable> result = new ArrayList<IWritable>();
 					ISiteCategoryDefinition[] catDefs = site.getCategoryDefinitions();
 					for (int i = 0; i < catDefs.length; i++) {
 						result.add(catDefs[i]);
@@ -53,7 +55,7 @@ public class CategoryOutlinePage extends FormOutlinePage {
 			if (model.isValid()) {
 				ISite site = model.getSite();
 				ISiteFeature[] features = site.getFeatures();
-				HashSet result = new HashSet();
+				HashSet<SiteFeatureAdapter> result = new HashSet<SiteFeatureAdapter>();
 				for (int i = 0; i < features.length; i++) {
 					ISiteCategory[] cats = features[i].getCategories();
 					for (int j = 0; j < cats.length; j++) {

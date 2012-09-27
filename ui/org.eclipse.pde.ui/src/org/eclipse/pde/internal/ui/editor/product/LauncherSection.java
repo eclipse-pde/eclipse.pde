@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
+import org.eclipse.pde.internal.ui.editor.product.LauncherSection.IconEntry;
+
 import java.util.ArrayList;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.Path;
@@ -54,7 +56,7 @@ public class LauncherSection extends PDESection {
 	private static final String[] F_WIN_ICON_IDS = new String[] {ILauncherInfo.WIN32_16_LOW, ILauncherInfo.WIN32_16_HIGH, ILauncherInfo.WIN32_32_LOW, ILauncherInfo.WIN32_32_HIGH, ILauncherInfo.WIN32_48_LOW, ILauncherInfo.WIN32_48_HIGH, ILauncherInfo.WIN32_256_HIGH};
 
 	private FormEntry fNameEntry;
-	private ArrayList fIcons = new ArrayList();
+	private ArrayList<IconEntry> fIcons = new ArrayList<IconEntry>();
 	private Button fIcoButton;
 	private Button fBmpButton;
 	private CTabFolder fTabFolder;

@@ -99,9 +99,9 @@ public class PropertiesSection extends TableSection {
 		private Text fName;
 		private Text fValue;
 		private IConfigurationProperty fEdit;
-		private Set fExistingNames;
+		private Set<String> fExistingNames;
 
-		public PropertyDialog(Shell shell, IConfigurationProperty property, Set existingNames) {
+		public PropertyDialog(Shell shell, IConfigurationProperty property, Set<String> existingNames) {
 			super(shell);
 			fEdit = property;
 			fExistingNames = existingNames;
@@ -296,7 +296,7 @@ public class PropertiesSection extends TableSection {
 		IStructuredSelection ssel = (IStructuredSelection) fPropertiesTable.getSelection();
 		if (ssel.size() > 0 && ssel.getFirstElement() instanceof IConfigurationProperty) {
 			IConfigurationProperty propertyToEdit = (IConfigurationProperty) ssel.getFirstElement();
-			Set existing = getExistingNames();
+			Set<String> existing = getExistingNames();
 			existing.remove(propertyToEdit.getName());
 			PropertyDialog dialog = new PropertyDialog(PDEPlugin.getActiveWorkbenchShell(), propertyToEdit, existing);
 			if (dialog.open() == Window.OK) {
@@ -313,8 +313,8 @@ public class PropertiesSection extends TableSection {
 	/**
 	 * @return A list of property names currently in use by the product, possibly empty
 	 */
-	private Set getExistingNames() {
-		Set result = new HashSet();
+	private Set<String> getExistingNames() {
+		Set<String> result = new HashSet<String>();
 		IConfigurationProperty[] properties = getProduct().getConfigurationProperties();
 		for (int i = 0; i < properties.length; i++) {
 			result.add(properties[i].getName());

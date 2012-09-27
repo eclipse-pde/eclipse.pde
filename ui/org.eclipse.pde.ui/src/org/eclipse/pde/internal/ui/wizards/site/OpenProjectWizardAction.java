@@ -43,7 +43,7 @@ public class OpenProjectWizardAction extends Action implements ICheatSheetAction
 	 * @see org.eclipse.ui.cheatsheets.ICheatSheetAction#run(java.lang.String[], org.eclipse.ui.cheatsheets.ICheatSheetManager)
 	 */
 	public void run(String[] params, ICheatSheetManager manager) {
-		Hashtable defValues = new Hashtable();
+		Hashtable<String, String> defValues = new Hashtable<String, String>();
 		if (params.length > 0)
 			defValues.put(NewSiteProjectWizard.DEF_PROJECT_NAME, params[0]);
 		NewSiteProjectWizard wizard = new NewSiteProjectWizard();

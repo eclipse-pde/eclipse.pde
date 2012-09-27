@@ -92,7 +92,7 @@ public class JavaAttributeWizardPage extends NewClassWizardPage {
 		setTypeName(initialValues.className, true);
 		setSuperClass(initialValues.superClassName, true);
 		if (initialValues.interfaceName != null) {
-			ArrayList interfaces = new ArrayList();
+			ArrayList<String> interfaces = new ArrayList<String>();
 			interfaces.add(initialValues.interfaceName);
 			setSuperInterfaces(interfaces, true);
 		}

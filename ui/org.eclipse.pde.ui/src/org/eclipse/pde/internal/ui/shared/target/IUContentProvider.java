@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.shared.target;
 
+import org.eclipse.pde.internal.ui.shared.target.IUContentProvider.IUWrapper;
+
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.core.runtime.CoreException;
@@ -48,7 +50,7 @@ public class IUContentProvider extends DefaultTableProvider implements ITreeCont
 				}
 				IInstallableUnit[] units = location.getInstallableUnits();
 				// Wrap the units so that they remember their parent container
-				List wrappedUnits = new ArrayList(units.length);
+				List<IUWrapper> wrappedUnits = new ArrayList<IUWrapper>(units.length);
 				for (int i = 0; i < units.length; i++) {
 					wrappedUnits.add(new IUWrapper(units[i], location));
 				}
