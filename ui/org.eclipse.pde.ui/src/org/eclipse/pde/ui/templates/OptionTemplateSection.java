@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.templates;
 
-import org.eclipse.pde.ui.templates.OptionTemplateSection.TemplatePage;
-
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -124,7 +122,7 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 	public WizardPage getPage(int pageIndex) {
 		if (pageIndex < 0 || pageIndex >= pages.size())
 			return null;
-		TemplatePage tpage = (TemplatePage) pages.get(pageIndex);
+		TemplatePage tpage = pages.get(pageIndex);
 		return tpage.page;
 	}
 
@@ -146,7 +144,7 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 	public WizardPage createPage(int pageIndex) {
 		if (pageIndex < 0 || pageIndex >= pages.size())
 			return null;
-		TemplatePage tpage = (TemplatePage) pages.get(pageIndex);
+		TemplatePage tpage = pages.get(pageIndex);
 		tpage.page = new OptionTemplateWizardPage(this, tpage.options, null);
 		return tpage.page;
 	}
@@ -173,7 +171,7 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 	public WizardPage createPage(int pageIndex, String helpContextId) {
 		if (pageIndex < 0 || pageIndex >= pages.size())
 			return null;
-		TemplatePage tpage = (TemplatePage) pages.get(pageIndex);
+		TemplatePage tpage = pages.get(pageIndex);
 		tpage.page = new OptionTemplateWizardPage(this, tpage.options, helpContextId);
 		return tpage.page;
 	}
@@ -216,8 +214,8 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 	public TemplateOption[] getOptions(int pageIndex) {
 		if (pageIndex < 0 || pageIndex >= pages.size())
 			return new TemplateOption[0];
-		TemplatePage page = (TemplatePage) pages.get(pageIndex);
-		return (TemplateOption[]) page.options.toArray(new TemplateOption[page.options.size()]);
+		TemplatePage page = pages.get(pageIndex);
+		return page.options.toArray(new TemplateOption[page.options.size()]);
 	}
 
 	/**
@@ -230,7 +228,7 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 
 	public TemplateOption[] getOptions(WizardPage page) {
 		for (int i = 0; i < pages.size(); i++) {
-			TemplatePage tpage = (TemplatePage) pages.get(i);
+			TemplatePage tpage = pages.get(i);
 			if (tpage.page.equals(page))
 				return getOptions(i);
 		}
@@ -247,7 +245,7 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 	 */
 	public int getPageIndex(TemplateOption option) {
 		for (int i = 0; i < pages.size(); i++) {
-			TemplatePage tpage = (TemplatePage) pages.get(i);
+			TemplatePage tpage = pages.get(i);
 			if (tpage.options.contains(option))
 				return i;
 		}
@@ -293,7 +291,7 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 	protected void flagMissingRequiredOption(TemplateOption option) {
 		WizardPage page = null;
 		for (int i = 0; i < pages.size(); i++) {
-			TemplatePage tpage = (TemplatePage) pages.get(i);
+			TemplatePage tpage = pages.get(i);
 			ArrayList<TemplateOption> list = tpage.options;
 			if (list.contains(option)) {
 				page = tpage.page;
@@ -314,7 +312,7 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 	protected void resetPageState() {
 		if (pages.size() == 0)
 			return;
-		WizardPage firstPage = ((TemplatePage) pages.get(0)).page;
+		WizardPage firstPage = pages.get(0).page;
 		IWizardContainer container = firstPage.getWizard().getContainer();
 		WizardPage currentPage = (WizardPage) container.getCurrentPage();
 		currentPage.setErrorMessage(null);
@@ -324,7 +322,7 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 	protected void registerOption(TemplateOption option, Object value, int pageIndex) {
 		super.registerOption(option, value, pageIndex);
 		if (pageIndex >= 0 && pageIndex < pages.size()) {
-			TemplatePage tpage = (TemplatePage) pages.get(pageIndex);
+			TemplatePage tpage = pages.get(pageIndex);
 			tpage.options.add(option);
 		}
 	}

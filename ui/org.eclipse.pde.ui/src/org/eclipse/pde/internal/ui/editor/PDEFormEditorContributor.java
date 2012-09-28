@@ -201,7 +201,7 @@ public class PDEFormEditorContributor extends MultiPageEditorActionBarContributo
 	}
 
 	public IAction getGlobalAction(String id) {
-		return (IAction) fGlobalActions.get(id);
+		return fGlobalActions.get(id);
 	}
 
 	public IAction getSaveAction() {

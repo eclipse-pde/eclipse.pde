@@ -271,7 +271,7 @@ public class ArgumentsFromContainerSelectionDialog extends TrayDialog {
 				arguments.add(arg);
 			}
 		}
-		fArguments = (String[]) arguments.toArray(new String[arguments.size()]);
+		fArguments = arguments.toArray(new String[arguments.size()]);
 		super.okPressed();
 	}
 

@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor;
 
-import org.eclipse.core.runtime.IConfigurationElement;
-
 import java.util.*;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -185,10 +183,10 @@ public abstract class PDELauncherFormEditor extends MultiSourceEditor {
 		}
 
 		// sort elements based on criteria specified in bug 172703
-		IConfigurationElement[] runElements = (IConfigurationElement[]) runList.toArray(new IConfigurationElement[runList.size()]);
-		IConfigurationElement[] debugElements = (IConfigurationElement[]) debugList.toArray(new IConfigurationElement[debugList.size()]);
-		IConfigurationElement[] profileElements = (IConfigurationElement[]) profileList.toArray(new IConfigurationElement[profileList.size()]);
-		Comparator<IConfigurationElement> comparator = new Comparator<Object>() {
+		IConfigurationElement[] runElements = runList.toArray(new IConfigurationElement[runList.size()]);
+		IConfigurationElement[] debugElements = debugList.toArray(new IConfigurationElement[debugList.size()]);
+		IConfigurationElement[] profileElements = profileList.toArray(new IConfigurationElement[profileList.size()]);
+		Comparator<Object> comparator = new Comparator<Object>() {
 			public int compare(Object arg0, Object arg1) {
 				String label1 = ((IConfigurationElement) arg0).getAttribute("label"); //$NON-NLS-1$
 				String label2 = ((IConfigurationElement) arg1).getAttribute("label"); //$NON-NLS-1$

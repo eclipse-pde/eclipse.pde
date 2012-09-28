@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.refactoring;
 
-import org.eclipse.jdt.core.IType;
-
 import java.util.HashMap;
 import java.util.Iterator;
 import org.eclipse.core.resources.IProject;
@@ -28,7 +26,7 @@ public class ManifestTypeRenameParticipant extends PDERenameParticipant {
 			IProject project = javaProject.getProject();
 			if (WorkspaceModelManager.isPluginProject(project)) {
 				fProject = javaProject.getProject();
-				fElements = new HashMap<IType, String>();
+				fElements = new HashMap<Object, String>();
 				fElements.put(type, getArguments().getNewName());
 				return true;
 			}
@@ -38,7 +36,7 @@ public class ManifestTypeRenameParticipant extends PDERenameParticipant {
 
 	protected String[] getOldNames() {
 		String[] result = new String[fElements.size()];
-		Iterator<IType> iter = fElements.keySet().iterator();
+		Iterator<Object> iter = fElements.keySet().iterator();
 		for (int i = 0; i < fElements.size(); i++)
 			result[i] = ((IType) iter.next()).getFullyQualifiedName('$');
 		return result;
@@ -46,7 +44,7 @@ public class ManifestTypeRenameParticipant extends PDERenameParticipant {
 
 	protected String[] getNewNames() {
 		String[] result = new String[fElements.size()];
-		Iterator<IType> iter = fElements.keySet().iterator();
+		Iterator<Object> iter = fElements.keySet().iterator();
 		for (int i = 0; i < fElements.size(); i++) {
 			IType type = (IType) iter.next();
 			String oldName = type.getFullyQualifiedName('$');

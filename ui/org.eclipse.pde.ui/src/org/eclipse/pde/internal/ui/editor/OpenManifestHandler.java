@@ -91,7 +91,7 @@ public class OpenManifestHandler extends AbstractHandler {
 				public void run() {
 					Iterator<IProject> it = projects.iterator();
 					while (it.hasNext()) {
-						IProject project = (IProject) it.next();
+						IProject project = it.next();
 						IFile file = PDEProject.getManifest(project);
 						if (file == null || !file.exists())
 							file = PDEProject.getPluginXml(project);

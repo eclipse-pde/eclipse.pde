@@ -216,7 +216,7 @@ public class ImplicitDependenciesSection extends SectionPart {
 			if (currentBundles != null) {
 				allDependencies.addAll(Arrays.asList(currentBundles));
 			}
-			getTarget().setImplicitDependencies((NameVersionDescriptor[]) allDependencies.toArray(new NameVersionDescriptor[allDependencies.size()]));
+			getTarget().setImplicitDependencies(allDependencies.toArray(new NameVersionDescriptor[allDependencies.size()]));
 			markDirty();
 			refresh();
 		}
@@ -246,7 +246,7 @@ public class ImplicitDependenciesSection extends SectionPart {
 			}
 		}
 
-		return (BundleInfo[]) targetBundles.toArray(new BundleInfo[targetBundles.size()]);
+		return targetBundles.toArray(new BundleInfo[targetBundles.size()]);
 	}
 
 	private void handleRemove() {
@@ -259,7 +259,7 @@ public class ImplicitDependenciesSection extends SectionPart {
 					bundles.remove(removeBundles[i]);
 				}
 			}
-			getTarget().setImplicitDependencies((NameVersionDescriptor[]) bundles.toArray((new NameVersionDescriptor[bundles.size()])));
+			getTarget().setImplicitDependencies(bundles.toArray((new NameVersionDescriptor[bundles.size()])));
 			markDirty();
 			refresh();
 		}

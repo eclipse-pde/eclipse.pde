@@ -193,7 +193,7 @@ public class IncludedFeaturesSection extends TableSection implements IFeatureMod
 					if (canAdd(allModels[i]))
 						newModels.add(allModels[i]);
 				}
-				IFeatureModel[] candidateModels = (IFeatureModel[]) newModels.toArray(new IFeatureModel[newModels.size()]);
+				IFeatureModel[] candidateModels = newModels.toArray(new IFeatureModel[newModels.size()]);
 				FeatureSelectionDialog dialog = new FeatureSelectionDialog(fIncludesViewer.getTable().getShell(), candidateModels, true);
 				if (dialog.open() == Window.OK) {
 					Object[] models = dialog.getResult();

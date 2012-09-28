@@ -131,7 +131,7 @@ public class QueryByObjectSelection extends QueryControl {
 			}
 		}
 
-		return (Command[]) hitList.toArray(new Command[hitList.size()]);
+		return hitList.toArray(new Command[hitList.size()]);
 	}
 
 	protected void enable(boolean enable) {

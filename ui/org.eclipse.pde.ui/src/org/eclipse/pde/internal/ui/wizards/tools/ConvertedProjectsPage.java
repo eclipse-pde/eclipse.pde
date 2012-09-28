@@ -70,7 +70,7 @@ public class ConvertedProjectsPage extends WizardPage {
 		setTitle(PDEUIMessages.ConvertedProjectWizard_title);
 		setDescription(PDEUIMessages.ConvertedProjectWizard_desc);
 		this.fAllUnconvertedProjects = projects != null ? projects : new IProject[0];
-		this.fInitialSelection = (IProject[]) initialSelection.toArray(new IProject[initialSelection.size()]);
+		this.fInitialSelection = initialSelection.toArray(new IProject[initialSelection.size()]);
 	}
 
 	/* (non-Javadoc)

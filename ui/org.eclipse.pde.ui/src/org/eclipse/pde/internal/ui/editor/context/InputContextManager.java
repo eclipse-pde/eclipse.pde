@@ -184,7 +184,7 @@ public abstract class InputContextManager implements IResourceChangeListener {
 			if (context.isModelCorrect() == false)
 				result.add(context);
 		}
-		return (InputContext[]) result.toArray(new InputContext[result.size()]);
+		return result.toArray(new InputContext[result.size()]);
 	}
 
 	public boolean isDirty() {
@@ -245,7 +245,7 @@ public abstract class InputContextManager implements IResourceChangeListener {
 		if (monitoredFiles == null)
 			return;
 		for (int i = 0; i < monitoredFiles.size(); i++) {
-			IFile ifile = (IFile) monitoredFiles.get(i);
+			IFile ifile = monitoredFiles.get(i);
 			if (ifile.equals(file)) {
 				if (added) {
 					fireStructureChange(file, true);
@@ -274,7 +274,7 @@ public abstract class InputContextManager implements IResourceChangeListener {
 
 	protected void fireStructureChange(IFile file, boolean added) {
 		for (int i = 0; i < listeners.size(); i++) {
-			IInputContextListener listener = (IInputContextListener) listeners.get(i);
+			IInputContextListener listener = listeners.get(i);
 			if (added)
 				listener.monitoredFileAdded(file);
 			else
@@ -284,7 +284,7 @@ public abstract class InputContextManager implements IResourceChangeListener {
 
 	protected void fireContextChange(InputContext context, boolean added) {
 		for (int i = 0; i < listeners.size(); i++) {
-			IInputContextListener listener = (IInputContextListener) listeners.get(i);
+			IInputContextListener listener = listeners.get(i);
 			if (added)
 				listener.contextAdded(context);
 			else

@@ -195,7 +195,7 @@ public class PluginClassCodeGenerator {
 			result.add(new PluginReference("org.eclipse.ui", null, 0)); //$NON-NLS-1$
 		if (!fPluginData.isLegacy() && fPluginData.getOSGiFramework() == null)
 			result.add(new PluginReference(IPDEBuildConstants.BUNDLE_CORE_RUNTIME, null, 0));
-		return (IPluginReference[]) result.toArray(new IPluginReference[result.size()]);
+		return result.toArray(new IPluginReference[result.size()]);
 	}
 
 	public String[] getImportPackages() {

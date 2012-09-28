@@ -24,7 +24,7 @@ public class ModelChangeTable {
 			return;
 		ModelChange modelChange;
 		if (fChangeTable.containsKey(model))
-			modelChange = (ModelChange) fChangeTable.get(model);
+			modelChange = fChangeTable.get(model);
 		else {
 			modelChange = new ModelChange(model, selected);
 			fChangeTable.put(model, modelChange);
@@ -40,7 +40,7 @@ public class ModelChangeTable {
 
 	public ModelChange getModelChange(IPluginModelBase modelKey) {
 		if (fChangeTable.containsKey(modelKey))
-			return (ModelChange) fChangeTable.get(modelKey);
+			return fChangeTable.get(modelKey);
 		return null;
 	}
 

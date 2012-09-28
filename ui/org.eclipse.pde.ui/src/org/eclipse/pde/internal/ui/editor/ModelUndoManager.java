@@ -134,14 +134,14 @@ public abstract class ModelUndoManager implements IModelUndoManager, IModelChang
 	private IModelChangedEvent getCurrentOperation() {
 		if (cursor == -1 || cursor == operations.size())
 			return null;
-		return (IModelChangedEvent) operations.get(cursor);
+		return operations.get(cursor);
 	}
 
 	private IModelChangedEvent getNextOperation() {
 		int peekCursor = cursor + 1;
 		if (peekCursor >= operations.size())
 			return null;
-		return (IModelChangedEvent) operations.get(peekCursor);
+		return operations.get(peekCursor);
 	}
 
 	private void addOperation(IModelChangedEvent operation) {

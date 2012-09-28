@@ -144,6 +144,7 @@ public abstract class BaseBuildAction extends AbstractHandler {
 		project.refreshLocal(IResource.DEPTH_ONE, monitor);
 	}
 
+	@SuppressWarnings("unchecked")
 	public static void setDefaultValues(IFile generatedFile) {
 		try {
 			List<?> configs = AntLaunchShortcut.findExistingLaunchConfigurations(generatedFile);

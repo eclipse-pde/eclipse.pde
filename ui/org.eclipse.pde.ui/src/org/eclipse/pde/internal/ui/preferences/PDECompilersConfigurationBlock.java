@@ -12,7 +12,6 @@
 package org.eclipse.pde.internal.ui.preferences;
 
 import java.util.HashSet;
-import org.eclipse.pde.internal.ui.preferences.PDECompilersConfigurationBlock.Key;
 import org.eclipse.swt.widgets.Control;
 
 import com.ibm.icu.text.MessageFormat;
@@ -388,7 +387,7 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 		if (enable != disabled && fProject != null) {
 			if (enable) {
 				for (int i = 0; i < fgAllKeys.length; i++) {
-					fgAllKeys[i].setStoredValue(fLookupOrder[0], (String) fOldProjectSettings.get(fgAllKeys[i]), fManager);
+					fgAllKeys[i].setStoredValue(fLookupOrder[0], fOldProjectSettings.get(fgAllKeys[i]), fManager);
 				}
 				fOldProjectSettings = null;
 				updateControls();
@@ -415,7 +414,7 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 		HashSet<?> controls = null;
 		Control control = null;
 		for (Iterator<Integer> iter = fControlMap.keySet().iterator(); iter.hasNext();) {
-			controls = (HashSet<?>) fControlMap.get(iter.next());
+			controls = fControlMap.get(iter.next());
 			if (controls == null) {
 				continue;
 			}
@@ -580,7 +579,7 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 		button.setSelection(Boolean.valueOf(data.key.getStoredValue(fLookupOrder, false, fManager)).booleanValue());
 		button.addSelectionListener(selectionlistener);
 		Integer mapkey = new Integer(tabkind);
-		HashSet<Control> controls = (HashSet<Control>) fControlMap.get(mapkey);
+		HashSet<Control> controls = fControlMap.get(mapkey);
 		if (controls == null) {
 			controls = new HashSet<Control>(8);
 			fControlMap.put(mapkey, controls);
@@ -624,7 +623,7 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 			index = Integer.parseInt(value);
 		combo.select(data.getSelection(SEVERITIES[index]));
 		Integer mapkey = new Integer(tabkind);
-		HashSet<Control> controls = (HashSet<Control>) fControlMap.get(mapkey);
+		HashSet<Control> controls = fControlMap.get(mapkey);
 		if (controls == null) {
 			controls = new HashSet<Control>(8);
 			fControlMap.put(mapkey, controls);
@@ -650,7 +649,7 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 			text.setText(value);
 		text.addModifyListener(modifylistener);
 		Integer mapkey = new Integer(tabkind);
-		HashSet<Control> controls = (HashSet<Control>) fControlMap.get(mapkey);
+		HashSet<Control> controls = fControlMap.get(mapkey);
 		if (controls == null) {
 			controls = new HashSet<Control>(8);
 			fControlMap.put(mapkey, controls);
@@ -837,7 +836,7 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 	private void persistExpansionState() {
 		IDialogSettings settings = PDEPlugin.getDefault().getDialogSettings().addNewSection(SETTINGS);
 		for (int i = 0; i < fExpComps.size(); i++) {
-			settings.put(Integer.toString(i), ((ExpandableComposite) fExpComps.get(i)).isExpanded());
+			settings.put(Integer.toString(i), fExpComps.get(i).isExpanded());
 		}
 	}
 
@@ -849,10 +848,10 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 		IDialogSettings settings = PDEPlugin.getDefault().getDialogSettings().getSection(SETTINGS);
 		if (settings != null) {
 			for (int i = 0; i < fExpComps.size(); i++) {
-				((ExpandableComposite) fExpComps.get(i)).setExpanded(settings.getBoolean(Integer.toString(i)));
+				fExpComps.get(i).setExpanded(settings.getBoolean(Integer.toString(i)));
 			}
 		} else {
-			((ExpandableComposite) fExpComps.get(0)).setExpanded(true);
+			fExpComps.get(0).setExpanded(true);
 		}
 	}
 
@@ -865,8 +864,8 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 		HashSet<?> controls = null;
 		Integer key = null;
 		for (Iterator<Integer> iter = fControlMap.keySet().iterator(); iter.hasNext();) {
-			key = (Integer) iter.next();
-			controls = (HashSet<?>) fControlMap.get(key);
+			key = iter.next();
+			controls = fControlMap.get(key);
 			if (controls == null) {
 				continue;
 			}

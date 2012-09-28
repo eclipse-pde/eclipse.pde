@@ -42,7 +42,7 @@ public class TagManager {
 	public String[] getTags() {
 		HashSet<String> tagSet = new HashSet<String>();
 		for (Iterator<String> i = fCommandToTags.values().iterator(); i.hasNext();) {
-			String tags = (String) i.next();
+			String tags = i.next();
 
 			String[] tagArray = tags.split(","); //$NON-NLS-1$
 			for (int j = 0; j < tagArray.length; j++) {
@@ -51,11 +51,11 @@ public class TagManager {
 			}
 		}
 
-		return (String[]) tagSet.toArray(new String[tagSet.size()]);
+		return tagSet.toArray(new String[tagSet.size()]);
 	}
 
 	public String getTags(Command command) {
-		String tags = (String) fCommandToTags.get(command);
+		String tags = fCommandToTags.get(command);
 		if (tags == null)
 			return ""; //$NON-NLS-1$
 		return tags;
@@ -65,14 +65,14 @@ public class TagManager {
 		ArrayList<Command> list = new ArrayList<Command>();
 
 		for (Iterator<Command> i = fCommandToTags.keySet().iterator(); i.hasNext();) {
-			Command command = (Command) i.next();
-			String tags = (String) fCommandToTags.get(command);
+			Command command = i.next();
+			String tags = fCommandToTags.get(command);
 			if (hasTag(tags, tag)) {
 				list.add(command);
 			}
 		}
 
-		return (Command[]) list.toArray(new Command[list.size()]);
+		return list.toArray(new Command[list.size()]);
 	}
 
 	public interface Listener {

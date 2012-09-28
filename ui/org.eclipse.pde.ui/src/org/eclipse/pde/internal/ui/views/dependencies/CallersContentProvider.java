@@ -26,7 +26,7 @@ public class CallersContentProvider extends DependenciesViewPageContentProvider 
 				return Arrays.asList(dependents);
 			}
 		}
-		return Collections.EMPTY_LIST;
+		return Collections.emptyList();
 	}
 
 }

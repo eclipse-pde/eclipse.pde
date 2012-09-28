@@ -157,7 +157,7 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 			if (sb.length() > 0)
 				sb.append(","); //$NON-NLS-1$
 			for (int i = 0; i < requiredProjects.size(); i++) {
-				IClasspathEntry entry = (IClasspathEntry) requiredProjects.get(i);
+				IClasspathEntry entry = requiredProjects.get(i);
 				if (i > 0)
 					sb.append(","); //$NON-NLS-1$
 				sb.append(entry.getPath().segment(0));
@@ -170,7 +170,7 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 			manifest.write(content);
 			file.setContents(new ByteArrayInputStream(content.toByteArray()), true, false, monitor);
 			// now update .classpath
-			javaProject.setRawClasspath((IClasspathEntry[]) classpath.toArray(new IClasspathEntry[classpath.size()]), monitor);
+			javaProject.setRawClasspath(classpath.toArray(new IClasspathEntry[classpath.size()]), monitor);
 //			ClasspathComputer.setClasspath(javaProject.getProject(), model);
 		} catch (IOException e) {
 		} catch (CoreException e) {
@@ -255,7 +255,7 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 		}
 		if (refIndex >= 0) {
 			result.set(refIndex, JavaCore.newProjectEntry(currentProject.getPath(), exposed));
-			return (IClasspathEntry[]) result.toArray(new IClasspathEntry[result.size()]);
+			return result.toArray(new IClasspathEntry[result.size()]);
 		}
 		return null;
 	}

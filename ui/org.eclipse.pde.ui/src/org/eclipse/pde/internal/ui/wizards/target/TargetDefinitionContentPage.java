@@ -340,7 +340,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 
 		SWTFactory.createLabel(group, PDEUIMessages.Preferences_TargetEnvironmentPage_os, 1);
 
-		fOSCombo = SWTFactory.createCombo(group, SWT.SINGLE | SWT.BORDER, 1, (String[]) fOSChoices.toArray(new String[fOSChoices.size()]));
+		fOSCombo = SWTFactory.createCombo(group, SWT.SINGLE | SWT.BORDER, 1, fOSChoices.toArray(new String[fOSChoices.size()]));
 		fOSCombo.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				getTargetDefinition().setOS(getModelValue(fOSCombo.getText()));
@@ -349,7 +349,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 
 		SWTFactory.createLabel(group, PDEUIMessages.Preferences_TargetEnvironmentPage_ws, 1);
 
-		fWSCombo = SWTFactory.createCombo(group, SWT.SINGLE | SWT.BORDER, 1, (String[]) fWSChoices.toArray(new String[fWSChoices.size()]));
+		fWSCombo = SWTFactory.createCombo(group, SWT.SINGLE | SWT.BORDER, 1, fWSChoices.toArray(new String[fWSChoices.size()]));
 		fWSCombo.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				getTargetDefinition().setWS(getModelValue(fWSCombo.getText()));
@@ -358,7 +358,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 
 		SWTFactory.createLabel(group, PDEUIMessages.Preferences_TargetEnvironmentPage_arch, 1);
 
-		fArchCombo = SWTFactory.createCombo(group, SWT.SINGLE | SWT.BORDER, 1, (String[]) fArchChoices.toArray(new String[fArchChoices.size()]));
+		fArchCombo = SWTFactory.createCombo(group, SWT.SINGLE | SWT.BORDER, 1, fArchChoices.toArray(new String[fArchChoices.size()]));
 		fArchCombo.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				getTargetDefinition().setArch(getModelValue(fArchCombo.getText()));
@@ -367,7 +367,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 
 		SWTFactory.createLabel(group, PDEUIMessages.Preferences_TargetEnvironmentPage_nl, 1);
 
-		fNLCombo = SWTFactory.createCombo(group, SWT.SINGLE | SWT.BORDER, 1, (String[]) fNLChoices.toArray(new String[fNLChoices.size()]));
+		fNLCombo = SWTFactory.createCombo(group, SWT.SINGLE | SWT.BORDER, 1, fNLChoices.toArray(new String[fNLChoices.size()]));
 		fNLCombo.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				String value = fNLCombo.getText();
@@ -493,7 +493,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 			}
 		});
 
-		fExecEnvsCombo = SWTFactory.createCombo(group, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY, 1, (String[]) fExecEnvChoices.toArray(new String[fExecEnvChoices.size()]));
+		fExecEnvsCombo = SWTFactory.createCombo(group, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY, 1, fExecEnvChoices.toArray(new String[fExecEnvChoices.size()]));
 		fExecEnvsCombo.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				getTargetDefinition().setJREContainer(JavaRuntime.newJREContainerPath(VMUtil.getExecutionEnvironment(fExecEnvsCombo.getText())));
@@ -723,7 +723,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 			if (currentBundles != null) {
 				allDependencies.addAll(Arrays.asList(currentBundles));
 			}
-			getTargetDefinition().setImplicitDependencies((NameVersionDescriptor[]) allDependencies.toArray(new NameVersionDescriptor[allDependencies.size()]));
+			getTargetDefinition().setImplicitDependencies(allDependencies.toArray(new NameVersionDescriptor[allDependencies.size()]));
 			fElementViewer.refresh();
 			updateImpButtons();
 		}
@@ -757,7 +757,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 			}
 		}
 
-		return (BundleInfo[]) targetBundles.toArray(new BundleInfo[targetBundles.size()]);
+		return targetBundles.toArray(new BundleInfo[targetBundles.size()]);
 	}
 
 	private void handleRemove() {
@@ -770,7 +770,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 					bundles.remove(removeBundles[i]);
 				}
 			}
-			getTargetDefinition().setImplicitDependencies((NameVersionDescriptor[]) bundles.toArray((new NameVersionDescriptor[bundles.size()])));
+			getTargetDefinition().setImplicitDependencies(bundles.toArray((new NameVersionDescriptor[bundles.size()])));
 			fElementViewer.refresh();
 			updateImpButtons();
 		}

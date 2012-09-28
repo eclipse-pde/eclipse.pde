@@ -196,7 +196,7 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 					headers.add(header);
 			}
 		}
-		return (LazyStartHeader[]) headers.toArray(new LazyStartHeader[headers.size()]);
+		return headers.toArray(new LazyStartHeader[headers.size()]);
 	}
 
 	// get the LazyStartHeader the same way the runtime would resolve them

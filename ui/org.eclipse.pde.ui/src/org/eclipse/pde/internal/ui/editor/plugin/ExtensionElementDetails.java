@@ -179,7 +179,7 @@ public class ExtensionElementDetails extends AbstractPluginElementDetails {
 				String property = e.getChangedProperty();
 				if (property != null) {
 					for (int i = 0; i < rows.size(); i++) {
-						ExtensionAttributeRow row = (ExtensionAttributeRow) rows.get(i);
+						ExtensionAttributeRow row = rows.get(i);
 						ISchemaAttribute attribute = row.getAttribute();
 						if (attribute == null) {
 							continue;
@@ -203,7 +203,7 @@ public class ExtensionElementDetails extends AbstractPluginElementDetails {
 		if (schemaElement == null)
 			updateRows();
 		for (int i = 0; i < rows.size(); i++) {
-			ExtensionAttributeRow row = (ExtensionAttributeRow) rows.get(i);
+			ExtensionAttributeRow row = rows.get(i);
 			row.setInput(input);
 		}
 	}
@@ -241,7 +241,7 @@ public class ExtensionElementDetails extends AbstractPluginElementDetails {
 
 	private boolean hasAttribute(String attName) {
 		for (int i = 0; i < rows.size(); i++) {
-			ExtensionAttributeRow row = (ExtensionAttributeRow) rows.get(i);
+			ExtensionAttributeRow row = rows.get(i);
 			if (row.getName().equals(attName))
 				return true;
 		}
@@ -270,7 +270,7 @@ public class ExtensionElementDetails extends AbstractPluginElementDetails {
 	 */
 	public void commit(boolean onSave) {
 		for (int i = 0; i < rows.size(); i++) {
-			ExtensionAttributeRow row = (ExtensionAttributeRow) rows.get(i);
+			ExtensionAttributeRow row = rows.get(i);
 			row.commit();
 		}
 		super.commit(onSave);
@@ -283,7 +283,7 @@ public class ExtensionElementDetails extends AbstractPluginElementDetails {
 	 */
 	public void setFocus() {
 		if (rows.size() > 0)
-			((ExtensionAttributeRow) rows.get(0)).setFocus();
+			rows.get(0).setFocus();
 	}
 
 	/*
@@ -293,7 +293,7 @@ public class ExtensionElementDetails extends AbstractPluginElementDetails {
 	 */
 	public void dispose() {
 		for (int i = 0; i < rows.size(); i++) {
-			ExtensionAttributeRow row = (ExtensionAttributeRow) rows.get(i);
+			ExtensionAttributeRow row = rows.get(i);
 			row.dispose();
 		}
 		IPluginModelBase model = (IPluginModelBase) getPage().getModel();

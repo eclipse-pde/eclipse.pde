@@ -60,7 +60,7 @@ public class SharedLabelProvider extends LabelProvider implements ITableLabelPro
 	public void dispose() {
 		if (consumers.size() == 0) {
 			for (Enumeration<Image> elements = images.elements(); elements.hasMoreElements();) {
-				((Image) elements.nextElement()).dispose();
+				elements.nextElement().dispose();
 			}
 			images.clear();
 			if (fBlankImage != null) {
@@ -80,7 +80,7 @@ public class SharedLabelProvider extends LabelProvider implements ITableLabelPro
 		if (flags != 0) {
 			key = getKey(desc.hashCode(), flags);
 		}
-		Image image = (Image) images.get(key);
+		Image image = images.get(key);
 		if (image == null) {
 			image = createImage(desc, flags);
 			images.put(key, image);
@@ -92,7 +92,7 @@ public class SharedLabelProvider extends LabelProvider implements ITableLabelPro
 		if (flags == 0)
 			return image;
 		String key = getKey(image.hashCode(), flags);
-		Image resultImage = (Image) images.get(key);
+		Image resultImage = images.get(key);
 		if (resultImage == null) {
 			resultImage = createImage(image, flags);
 			images.put(key, resultImage);

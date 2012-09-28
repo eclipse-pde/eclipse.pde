@@ -40,7 +40,7 @@ public class PluginAdapter implements IWorkingSetElementAdapter {
 			String id = (desc != null) ? desc.getSymbolicName() : base.getPluginBase().getId();
 			set.add(new PersistablePluginObject(id));
 		}
-		return (IAdaptable[]) set.toArray(new IAdaptable[set.size()]);
+		return set.toArray(new IAdaptable[set.size()]);
 	}
 
 	/* (non-Javadoc)

@@ -104,7 +104,7 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 			if (!manifestPlugins.contains(secDeps[i]))
 				result.add(secDeps[i]);
 
-		return (String[]) result.toArray(new String[result.size()]);
+		return result.toArray(new String[result.size()]);
 	}
 
 	private String[] getSecondaryDependencies() {
@@ -198,7 +198,7 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 							stack.add(bd);
 					}
 			}
-			return (ExportPackageDescription[]) result.toArray(new ExportPackageDescription[result.size()]);
+			return result.toArray(new ExportPackageDescription[result.size()]);
 		}
 		return new ExportPackageDescription[0];
 	}
@@ -373,14 +373,14 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 			ImportPackageHeader header = (ImportPackageHeader) mheader;
 			String versionAttr = (BundlePluginBase.getBundleManifestVersion(bundle) < 2) ? ICoreConstants.PACKAGE_SPECIFICATION_VERSION : Constants.VERSION_ATTRIBUTE;
 			while (it.hasNext()) {
-				ImportPackageObject obj = new ImportPackageObject(header, (ExportPackageDescription) it.next(), versionAttr);
+				ImportPackageObject obj = new ImportPackageObject(header, it.next(), versionAttr);
 				header.addPackage(obj);
 			}
 		} else {
 			String currentValue = (mheader != null) ? mheader.getValue() : null;
 			StringBuffer buffer = (currentValue == null) ? new StringBuffer() : new StringBuffer(currentValue).append(", "); //$NON-NLS-1$
 			while (it.hasNext()) {
-				ExportPackageDescription desc = (ExportPackageDescription) it.next();
+				ExportPackageDescription desc = it.next();
 				String value = (desc.getVersion().equals(Version.emptyVersion)) ? desc.getName() : desc.getName() + "; version=\"" + desc.getVersion() + "\""; //$NON-NLS-1$ //$NON-NLS-2$
 				// use same separator as used when writing out Manifest
 				buffer.append(value).append(PluginConverter.LIST_SEPARATOR);
@@ -400,7 +400,7 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 		if (mheader instanceof RequireBundleHeader) {
 			RequireBundleHeader header = (RequireBundleHeader) mheader;
 			while (it.hasNext()) {
-				String pluginId = (String) it.next();
+				String pluginId = it.next();
 				if (!added.contains(pluginId))
 					try {
 						header.addBundle(pluginId);
@@ -413,7 +413,7 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 			String currentValue = (mheader != null) ? mheader.getValue() : null;
 			StringBuffer buffer = (currentValue == null) ? new StringBuffer() : new StringBuffer(currentValue).append(", "); //$NON-NLS-1$
 			while (it.hasNext()) {
-				String pluginId = (String) it.next();
+				String pluginId = it.next();
 				if (!added.contains(pluginId))
 					try {
 						buffer.append(pluginId).append(PluginConverter.LIST_SEPARATOR);
@@ -434,7 +434,7 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 		// must call getImports to initialize IPluginBase.  Otherwise the .add(plugin) will not trigger a modification event.
 		base.getImports();
 		while (it.hasNext()) {
-			String pluginId = (String) it.next();
+			String pluginId = it.next();
 			if (!added.contains(pluginId))
 				try {
 					PluginImport plugin = new PluginImport();

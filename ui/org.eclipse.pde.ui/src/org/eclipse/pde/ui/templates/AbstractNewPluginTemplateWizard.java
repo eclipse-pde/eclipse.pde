@@ -131,7 +131,7 @@ public abstract class AbstractNewPluginTemplateWizard extends Wizard implements 
 					result.add(refs[j]);
 			}
 		}
-		return (IPluginReference[]) result.toArray(new IPluginReference[result.size()]);
+		return result.toArray(new IPluginReference[result.size()]);
 	}
 
 	/* (non-Javadoc)
@@ -147,7 +147,7 @@ public abstract class AbstractNewPluginTemplateWizard extends Wizard implements 
 					result.add(newFiles[j]);
 			}
 		}
-		return (String[]) result.toArray(new String[result.size()]);
+		return result.toArray(new String[result.size()]);
 	}
 
 	/**

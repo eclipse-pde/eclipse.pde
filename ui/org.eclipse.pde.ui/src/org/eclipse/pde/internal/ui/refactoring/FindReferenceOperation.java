@@ -40,7 +40,7 @@ public class FindReferenceOperation implements IWorkspaceRunnable {
 			findXFriendReferences(list, new SubProgressMonitor(monitor, 1));
 		}
 		monitor.done();
-		fChanges = (Change[]) list.toArray(new Change[list.size()]);
+		fChanges = list.toArray(new Change[list.size()]);
 	}
 
 	public Change[] getChanges() {

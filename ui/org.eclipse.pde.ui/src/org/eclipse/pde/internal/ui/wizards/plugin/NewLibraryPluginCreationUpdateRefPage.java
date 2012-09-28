@@ -84,7 +84,7 @@ public class NewLibraryPluginCreationUpdateRefPage extends WizardPage {
 				}
 			}
 		}
-		fSelected = (IPluginModelBase[]) selected.toArray(new IPluginModelBase[selected.size()]);
+		fSelected = selected.toArray(new IPluginModelBase[selected.size()]);
 
 	}
 
@@ -126,7 +126,7 @@ public class NewLibraryPluginCreationUpdateRefPage extends WizardPage {
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
-		fUnmigrated = (IPluginModelBase[]) modelArray.toArray(new IPluginModelBase[modelArray.size()]);
+		fUnmigrated = modelArray.toArray(new IPluginModelBase[modelArray.size()]);
 	}
 
 	public void setEnable(boolean enabled) {

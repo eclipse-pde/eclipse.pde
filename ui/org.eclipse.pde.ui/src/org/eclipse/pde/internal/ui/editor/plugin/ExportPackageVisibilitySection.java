@@ -272,7 +272,7 @@ public class ExportPackageVisibilitySection extends TableSection implements IPar
 			if (!fSelectedObjects[0].hasFriend(id))
 				list.add(models[i]);
 		}
-		return (IPluginModelBase[]) list.toArray(new IPluginModelBase[list.size()]);
+		return list.toArray(new IPluginModelBase[list.size()]);
 	}
 
 	private void handleRemove() {
@@ -331,7 +331,7 @@ public class ExportPackageVisibilitySection extends TableSection implements IPar
 					return;
 				}
 			}
-			update((ExportPackageObject[]) list.toArray(new ExportPackageObject[list.size()]));
+			update(list.toArray(new ExportPackageObject[list.size()]));
 		} else {
 			update(null);
 		}

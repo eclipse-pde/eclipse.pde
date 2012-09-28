@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.shared.target;
 
-import org.eclipse.pde.internal.ui.shared.target.AddBundleContainerSelectionPage.AbstractBundleContainerNode;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;

@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.exports;
 
-import org.eclipse.pde.internal.ui.wizards.exports.CrossPlatformExportPage.Configuration;
-
 import java.io.File;
 import java.util.*;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -164,7 +162,7 @@ public class CrossPlatformExportPage extends AbstractExportWizardPage {
 				}
 			}
 		}
-		return (Configuration[]) list.toArray(new Configuration[list.size()]);
+		return list.toArray(new Configuration[list.size()]);
 	}
 
 	private void getWS(ArrayList<Configuration> list, File file) {

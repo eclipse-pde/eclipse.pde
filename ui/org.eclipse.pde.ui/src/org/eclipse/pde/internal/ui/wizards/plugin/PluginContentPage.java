@@ -152,7 +152,7 @@ public class PluginContentPage extends ContentPage {
 		availableEEs.add(NO_EXECUTION_ENVIRONMENT);
 
 		// Set data 
-		fEEChoice.setItems((String[]) availableEEs.toArray(new String[availableEEs.size() - 1]));
+		fEEChoice.setItems(availableEEs.toArray(new String[availableEEs.size() - 1]));
 		fEEChoice.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				validatePage();

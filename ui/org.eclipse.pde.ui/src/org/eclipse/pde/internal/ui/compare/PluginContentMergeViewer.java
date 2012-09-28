@@ -91,7 +91,7 @@ public class PluginContentMergeViewer extends TextMergeViewer {
 		if (fPropertyChangedListeners != null) {
 			Iterator<IPropertyChangeListener> iter = fPropertyChangedListeners.iterator();
 			while (iter.hasNext())
-				PDEPlugin.getDefault().getPreferenceStore().removePropertyChangeListener((IPropertyChangeListener) iter.next());
+				PDEPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(iter.next());
 			fPropertyChangedListeners = null;
 		}
 	}

@@ -158,10 +158,10 @@ public class PDEJavaHelperUI {
 	}
 
 	public static String getJavaDoc(String constant, IJavaProject jp, String className) {
-		HashMap<String, String> map = (HashMap<String, String>) fDocMap.get(className);
+		HashMap<String, String> map = fDocMap.get(className);
 		if (map == null)
 			fDocMap.put(className, map = new HashMap<String, String>());
-		String javaDoc = (String) map.get(constant);
+		String javaDoc = map.get(constant);
 
 		if (javaDoc == null) {
 			try {

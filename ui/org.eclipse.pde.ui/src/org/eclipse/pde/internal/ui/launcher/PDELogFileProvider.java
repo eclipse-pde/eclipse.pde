@@ -37,7 +37,7 @@ public class PDELogFileProvider implements ILogFileProvider {
 			configurations = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurations();
 		} catch (CoreException e) {
 			StatusManager.getManager().handle(e.getStatus());
-			return Collections.EMPTY_MAP;
+			return Collections.emptyMap();
 		}
 
 		Map<String, String> sources = new HashMap<String, String>();

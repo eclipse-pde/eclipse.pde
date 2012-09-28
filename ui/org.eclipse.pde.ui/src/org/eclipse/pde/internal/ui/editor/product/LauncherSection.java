@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
-import org.eclipse.pde.internal.ui.editor.product.LauncherSection.IconEntry;
-
 import java.util.ArrayList;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.Path;
@@ -340,7 +338,7 @@ public class LauncherSection extends PDESection {
 		// Turn off auto message update until after values are set
 		fSingleWinIconValidator.setRefresh(false);
 		for (int i = 0; i < fIcons.size(); i++) {
-			IconEntry entry = (IconEntry) fIcons.get(i);
+			IconEntry entry = fIcons.get(i);
 			entry.setValue(info.getIconPath(entry.getIconId()), true);
 		}
 		// Turn back on auto message update
@@ -353,7 +351,7 @@ public class LauncherSection extends PDESection {
 
 	private void updateWinEntries(boolean useIco) {
 		for (int i = 0; i < fIcons.size(); i++) {
-			IconEntry entry = (IconEntry) fIcons.get(i);
+			IconEntry entry = fIcons.get(i);
 			String id = entry.getIconId();
 			if (id.equals(ILauncherInfo.P_ICO_PATH)) {
 				boolean enabled = isEditable() && useIco;

@@ -10,12 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.commands;
 
-import org.eclipse.core.commands.IParameter;
-import org.eclipse.core.commands.Parameterization;
-import org.eclipse.pde.internal.ui.commands.CommandDetails.ObjectParameterControl;
-import org.eclipse.pde.internal.ui.commands.CommandDetails.TextParameterControl;
-import org.eclipse.pde.internal.ui.commands.CommandDetails.ValuesParameterControl;
-
 import java.util.*;
 import org.eclipse.core.commands.*;
 import org.eclipse.core.commands.common.CommandException;
@@ -172,11 +166,11 @@ public class CommandDetails {
 
 		ArrayList<Parameterization> list = new ArrayList<Parameterization>();
 		for (Iterator<IParameter> i = fParameterToValue.keySet().iterator(); i.hasNext();) {
-			IParameter parameter = (IParameter) i.next();
-			String value = (String) fParameterToValue.get(parameter);
+			IParameter parameter = i.next();
+			String value = fParameterToValue.get(parameter);
 			list.add(new Parameterization(parameter, value));
 		}
-		Parameterization[] parameterizations = (Parameterization[]) list.toArray(new Parameterization[list.size()]);
+		Parameterization[] parameterizations = list.toArray(new Parameterization[list.size()]);
 
 		ParameterizedCommand pCommand = new ParameterizedCommand(fSelectedCommand, parameterizations);
 		return pCommand;
@@ -392,11 +386,11 @@ public class CommandDetails {
 
 	protected void dispose() {
 		for (int i = 0; i < fObjectParamList.size(); i++)
-			((ObjectParameterControl) fObjectParamList.get(i)).dispose();
+			fObjectParamList.get(i).dispose();
 		for (int i = 0; i < fValueParamList.size(); i++)
-			((ValuesParameterControl) fValueParamList.get(i)).dispose();
+			fValueParamList.get(i).dispose();
 		for (int i = 0; i < fTextParamList.size(); i++)
-			((TextParameterControl) fTextParamList.get(i)).dispose();
+			fTextParamList.get(i).dispose();
 	}
 
 	private void populateParams(Command command, Object selectedObject) throws NotDefinedException {

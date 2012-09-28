@@ -31,7 +31,7 @@ public class ManifestPartitionScanner extends RuleBasedPartitionScanner {
 		rules.add(new SingleLineRule(":", null, value, '\\', true, true)); //$NON-NLS-1$
 		rules.add(new SingleLineRule(" ", null, value, '\\', true, true)); //$NON-NLS-1$
 		rules.add(new SingleLineRule("\t", null, value, '\\', true, true)); //$NON-NLS-1$
-		setPredicateRules((IPredicateRule[]) rules.toArray(new IPredicateRule[rules.size()]));
+		setPredicateRules(rules.toArray(new IPredicateRule[rules.size()]));
 	}
 
 }

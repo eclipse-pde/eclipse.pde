@@ -170,7 +170,7 @@ public class PluginImportOperation extends WorkspaceJob {
 
 			StringBuffer projectListBuffer = new StringBuffer();
 			for (Iterator<String> iterator = fNamesOfNotImportedProjects.iterator(); iterator.hasNext();) {
-				String project = (String) iterator.next();
+				String project = iterator.next();
 				projectListBuffer.append(project).append('\n');
 			}
 			projectText.setText(projectListBuffer.toString());
@@ -283,7 +283,7 @@ public class PluginImportOperation extends WorkspaceJob {
 				IPluginModelBase plugin = workspacePlugins[i];
 				if (plugin.getBundleDescription() != null) {
 					String symbolicName = plugin.getBundleDescription().getSymbolicName();
-					ArrayList<IPluginModelBase> pluginsWithSameSymbolicName = (ArrayList<IPluginModelBase>) workspacePluginMap.get(symbolicName);
+					ArrayList<IPluginModelBase> pluginsWithSameSymbolicName = workspacePluginMap.get(symbolicName);
 					if (pluginsWithSameSymbolicName == null) {
 						pluginsWithSameSymbolicName = new ArrayList<IPluginModelBase>();
 						workspacePluginMap.put(symbolicName, pluginsWithSameSymbolicName);
@@ -347,7 +347,7 @@ public class PluginImportOperation extends WorkspaceJob {
 						if (resource instanceof IProject) {
 							// TODO For now just list everything in the map
 							String id = ((IProject) resource).getName();
-							List<IWorkingSet> workingSets = (List<IWorkingSet>) fProjectWorkingSets.get(id);
+							List<IWorkingSet> workingSets = fProjectWorkingSets.get(id);
 							if (workingSets == null) {
 								workingSets = new ArrayList<IWorkingSet>();
 								fProjectWorkingSets.put(id, workingSets);
@@ -393,8 +393,8 @@ public class PluginImportOperation extends WorkspaceJob {
 			monitor.beginTask("", fProjectClasspaths.size()); //$NON-NLS-1$
 			Enumeration<IProject> keys = fProjectClasspaths.keys();
 			while (keys.hasMoreElements()) {
-				IProject project = (IProject) keys.nextElement();
-				IClasspathEntry[] classpath = (IClasspathEntry[]) fProjectClasspaths.get(project);
+				IProject project = keys.nextElement();
+				IClasspathEntry[] classpath = fProjectClasspaths.get(project);
 				monitor.subTask(project.getName());
 				JavaCore.create(project).setRawClasspath(classpath, new SubProgressMonitor(monitor, 1));
 			}

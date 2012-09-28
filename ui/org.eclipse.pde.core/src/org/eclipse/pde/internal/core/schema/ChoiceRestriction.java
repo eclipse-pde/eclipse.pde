@@ -40,8 +40,8 @@ public class ChoiceRestriction extends SchemaObject implements ISchemaRestrictio
 		return baseType;
 	}
 
-	public Object[] getChildren() {
-		return (children != null) ? children.toArray() : new Object[0];
+	public ISchemaEnumeration[] getChildren() {
+		return (children != null) ? children.toArray(new ISchemaEnumeration[children.size()]) : new ISchemaEnumeration[0];
 	}
 
 	public String[] getChoicesAsStrings() {

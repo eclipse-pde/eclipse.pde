@@ -66,7 +66,7 @@ public class RepositoryImportWizard extends Wizard {
 			final IBundleImporter importer = (IBundleImporter) entry.getKey();
 			final String importerId = importer.getId();
 			ScmUrlImportDescription[] descriptions = (ScmUrlImportDescription[]) entry.getValue();
-			IScmUrlImportWizardPage page = (IScmUrlImportWizardPage) fIdToPages.get(importerId);
+			IScmUrlImportWizardPage page = fIdToPages.get(importerId);
 			if (page == null) {
 				try {
 					page = TeamUI.getPages(importerId)[0];
@@ -97,7 +97,7 @@ public class RepositoryImportWizard extends Wizard {
 		// collect the bundle descriptions from each page and import
 		List<Object> plugins = new ArrayList<Object>();
 		IWizardPage[] pages = getPages();
-		Map<Object, ScmUrlImportDescription[]> importMap = new HashMap<Object, ScmUrlImportDescription[]>();
+		Map<IBundleImporter, ScmUrlImportDescription[]> importMap = new HashMap<IBundleImporter, ScmUrlImportDescription[]>();
 		for (int i = 0; i < pages.length; i++) {
 			IScmUrlImportWizardPage page = (IScmUrlImportWizardPage) pages[i];
 			if (page.finish()) {
@@ -106,8 +106,8 @@ public class RepositoryImportWizard extends Wizard {
 					for (int j = 0; j < descriptions.length; j++) {
 						if (j == 0) {
 							Object importer = descriptions[j].getProperty(BundleProjectService.BUNDLE_IMPORTER);
-							if (importer != null) {
-								importMap.put(importer, descriptions);
+							if (importer instanceof IBundleImporter) {
+								importMap.put((IBundleImporter) importer, descriptions);
 							}
 						}
 						Object plugin = descriptions[j].getProperty(BundleProjectService.PLUGIN);
@@ -121,7 +121,7 @@ public class RepositoryImportWizard extends Wizard {
 			}
 		}
 		if (!importMap.isEmpty()) {
-			PluginImportWizard.doImportOperation(PluginImportOperation.IMPORT_FROM_REPOSITORY, (IPluginModelBase[]) plugins.toArray(new IPluginModelBase[plugins.size()]), false, false, null, importMap);
+			PluginImportWizard.doImportOperation(PluginImportOperation.IMPORT_FROM_REPOSITORY, plugins.toArray(new IPluginModelBase[plugins.size()]), false, false, null, importMap);
 		}
 		return true;
 	}

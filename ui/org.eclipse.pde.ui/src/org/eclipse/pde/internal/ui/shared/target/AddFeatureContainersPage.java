@@ -238,7 +238,7 @@ public class AddFeatureContainersPage extends EditDirectoryContainerPage {
 		if (containers.size() == 0) {
 			return null;
 		}
-		return (ITargetLocation[]) containers.toArray(new ITargetLocation[containers.size()]);
+		return containers.toArray(new ITargetLocation[containers.size()]);
 	}
 
 	/**
@@ -266,7 +266,7 @@ public class AddFeatureContainersPage extends EditDirectoryContainerPage {
 				}
 			}
 		}
-		return new MultiStatus(IPDEUIConstants.PLUGIN_ID, IStatus.OK, (IStatus[]) resultStatus.toArray(new IStatus[resultStatus.size()]), Messages.FeatureImportWizard_DetailedPage_problemsLoading, null);
+		return new MultiStatus(IPDEUIConstants.PLUGIN_ID, IStatus.OK, resultStatus.toArray(new IStatus[resultStatus.size()]), Messages.FeatureImportWizard_DetailedPage_problemsLoading, null);
 	}
 
 	/**

@@ -12,8 +12,6 @@
 
 package org.eclipse.pde.internal.ui.editor.contentassist;
 
-import org.eclipse.pde.internal.core.text.IDocumentElementNode;
-
 import java.util.HashSet;
 import java.util.Stack;
 import org.eclipse.core.runtime.CoreException;
@@ -322,7 +320,7 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 
 				// traverse down new model to find new node, using stack as a guideline
 				while (!s.isEmpty()) {
-					node = (IDocumentElementNode) s.pop();
+					node = s.pop();
 					int nodeIndex = 0;
 					while ((node = node.getPreviousSibling()) != null)
 						nodeIndex += 1;
@@ -418,7 +416,7 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 					fSelOffset = ((PluginAttribute) att).getValueOffset();
 					fSelLen = ((PluginAttribute) att).getValueLength();
 				}
-			} else if (XMLInsertionComputer.hasOptionalChildren(schemaElement, false, new HashSet<Object>()) && value != null) {
+			} else if (XMLInsertionComputer.hasOptionalChildren(schemaElement, false, new HashSet<ISchemaObject>()) && value != null) {
 				int ind = value.indexOf('>');
 				if (ind > 0) {
 					fSelOffset = offset + ind + 1;

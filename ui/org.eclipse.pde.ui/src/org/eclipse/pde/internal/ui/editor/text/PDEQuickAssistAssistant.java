@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.text;
 
-import org.eclipse.jface.text.contentassist.ICompletionProposal;
-
 import java.util.*;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.text.*;
@@ -142,7 +140,7 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 	class PDEQuickAssistProcessor implements IQuickAssistProcessor {
 
 		ResolutionGenerator fGenerator = new ResolutionGenerator();
-		HashMap<IMarker, ?> fResMap = new HashMap<IMarker, Object>();
+		HashMap<IMarker, IMarkerResolution[]> fResMap = new HashMap<IMarker, IMarkerResolution[]>();
 
 		public String getErrorMessage() {
 			return null;
@@ -232,7 +230,7 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 				populateDataModelForAnnotation(annotation);
 				IMarker marker = annotation.getMarker();
 
-				IMarkerResolution[] mapping = (IMarkerResolution[]) fResMap.get(marker);
+				IMarkerResolution[] mapping = fResMap.get(marker);
 				if (mapping != null) {
 					Position pos = amodel.getPosition(annotation);
 					try {
@@ -255,7 +253,7 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 				}
 			}
 
-			return (ICompletionProposal[]) proposalSet.toArray(new ICompletionProposal[proposalSet.size()]);
+			return proposalSet.toArray(new ICompletionProposal[proposalSet.size()]);
 		}
 	}
 

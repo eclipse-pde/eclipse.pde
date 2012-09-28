@@ -154,7 +154,7 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 				}
 			}
 		}
-		return (String[]) result.toArray(new String[result.size()]);
+		return result.toArray(new String[result.size()]);
 	}
 
 	private String getProduct(String appName) {

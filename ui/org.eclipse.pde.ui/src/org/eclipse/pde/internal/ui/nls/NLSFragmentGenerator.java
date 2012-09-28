@@ -11,9 +11,6 @@
 
 package org.eclipse.pde.internal.ui.nls;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.pde.internal.ui.nls.NLSFragmentGenerator.Filter;
-
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
@@ -483,7 +480,7 @@ public class NLSFragmentGenerator {
 			}
 
 			for (Iterator<Filter> iter = filters.iterator(); iter.hasNext();) {
-				Filter filter = (Filter) iter.next();
+				Filter filter = iter.next();
 				if (filter.matches(object)) {
 					return filter.inclusive();
 				}

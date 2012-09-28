@@ -101,7 +101,7 @@ public class SearchResult extends AbstractTextSearchResult implements IEditorMat
 				}
 			}
 		}
-		return (Match[]) list.toArray(new Match[list.size()]);
+		return list.toArray(new Match[list.size()]);
 	}
 
 	/* (non-Javadoc)

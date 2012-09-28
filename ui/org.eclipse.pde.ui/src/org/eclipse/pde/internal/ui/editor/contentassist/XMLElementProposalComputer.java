@@ -60,7 +60,7 @@ public class XMLElementProposalComputer {
 		for (int i = 0; i < children.length; i++) {
 			String key = children[i].getXMLTagName();
 			if (tagNameMap.containsKey(key)) {
-				int value = ((Integer) tagNameMap.get(key)).intValue();
+				int value = tagNameMap.get(key).intValue();
 				value++;
 				tagNameMap.put(key, new Integer(value));
 			} else {
@@ -147,7 +147,7 @@ public class XMLElementProposalComputer {
 			if (schemaObject[i] instanceof ISchemaElement) {
 				String name = schemaObject[i].getName();
 				if (siblings.containsKey(name)) {
-					int occurences = ((Integer) siblings.get(name)).intValue();
+					int occurences = siblings.get(name).intValue();
 					childElementCount = childElementCount + occurences;
 				}
 			}
@@ -194,7 +194,7 @@ public class XMLElementProposalComputer {
 		int occurrences = 0;
 		// Determine the number of occurrences found of this element
 		if (siblings.containsKey(schemaElement.getName())) {
-			occurrences = ((Integer) siblings.get(schemaElement.getName())).intValue();
+			occurrences = siblings.get(schemaElement.getName()).intValue();
 		}
 		// Determine if the elements max occurrences is respected
 		if (multiplicityTracker < Integer.MAX_VALUE) {

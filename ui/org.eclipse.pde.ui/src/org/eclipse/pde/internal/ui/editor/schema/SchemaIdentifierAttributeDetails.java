@@ -133,9 +133,9 @@ public class SchemaIdentifierAttributeDetails extends SchemaAttributeDetails {
 				if (text != null && text.length() > 0) {
 					ISchemaSimpleType type = getAttribute().getType();
 					ChoiceRestriction res = (ChoiceRestriction) type.getRestriction();
-					Vector<Object> vres = new Vector<Object>();
+					java.util.List<ISchemaEnumeration> vres = new Vector<ISchemaEnumeration>();
 					if (res != null) {
-						Object[] currRes = res.getChildren();
+						ISchemaEnumeration[] currRes = res.getChildren();
 						for (int i = 0; i < currRes.length; i++) {
 							vres.add(currRes[i]);
 						}
@@ -163,9 +163,9 @@ public class SchemaIdentifierAttributeDetails extends SchemaAttributeDetails {
 				Object[] aselection = sselection.toArray();
 				ISchemaSimpleType type = getAttribute().getType();
 				ChoiceRestriction res = (ChoiceRestriction) type.getRestriction();
-				Vector<?> vres = new Vector<Object>();
+				java.util.List<ISchemaEnumeration> vres = new Vector<ISchemaEnumeration>();
 				if (res != null) {
-					Object[] currRes = res.getChildren();
+					ISchemaEnumeration[] currRes = res.getChildren();
 					for (int i = 0; i < currRes.length; i++) {
 						boolean stays = true;
 						for (int j = 0; j < aselection.length; j++) {

@@ -199,7 +199,7 @@ public class HistoryListDialog extends StatusDialog {
 	}
 
 	public String[] getRemaining() {
-		return (String[]) fHistoryList.toArray(new String[fHistoryList.size()]);
+		return fHistoryList.toArray(new String[fHistoryList.size()]);
 	}
 
 	public String getResult() {

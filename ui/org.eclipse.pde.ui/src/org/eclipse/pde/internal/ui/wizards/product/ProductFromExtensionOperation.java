@@ -65,7 +65,7 @@ public class ProductFromExtensionOperation extends BaseProductCreationOperation 
 			}
 		}
 		Set<?> ids = calculator.getBundleIDs();
-		return (String[]) ids.toArray(new String[ids.size()]);
+		return ids.toArray(new String[ids.size()]);
 	}
 
 }

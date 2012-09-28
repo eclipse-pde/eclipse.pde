@@ -409,7 +409,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 					result.add(refs[j]);
 			}
 		}
-		return (IPluginReference[]) result.toArray(new IPluginReference[result.size()]);
+		return result.toArray(new IPluginReference[result.size()]);
 	}
 
 	protected IClasspathEntry[] getInternalClassPathEntries(IJavaProject project, IFieldData data) {

@@ -81,6 +81,6 @@ public class PluginsDragAdapter extends DragSourceAdapter {
 			else
 				return new FileAdapter[0];
 		}
-		return (FileAdapter[]) files.toArray(new FileAdapter[files.size()]);
+		return files.toArray(new FileAdapter[files.size()]);
 	}
 }

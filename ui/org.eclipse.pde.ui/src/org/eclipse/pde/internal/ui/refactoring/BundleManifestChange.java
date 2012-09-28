@@ -84,7 +84,7 @@ public class BundleManifestChange {
 				change.setEdit(edit);
 				PDEModelUtility.setChangeTextType(change, file);
 				if (list.size() > 0)
-					change.setMovedElements((PDEManifestElement[]) list.toArray(new PDEManifestElement[list.size()]));
+					change.setMovedElements(list.toArray(new PDEManifestElement[list.size()]));
 				return change;
 			}
 		} catch (CoreException e) {

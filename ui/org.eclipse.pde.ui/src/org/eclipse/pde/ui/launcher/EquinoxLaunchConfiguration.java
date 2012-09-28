@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.launcher;
 
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-
 import java.io.File;
 import java.net.URL;
 import java.util.*;
@@ -64,7 +62,7 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 		for (int i = 0; i < args.length; i++) {
 			programArgs.add(args[i]);
 		}
-		return (String[]) programArgs.toArray(new String[programArgs.size()]);
+		return programArgs.toArray(new String[programArgs.size()]);
 	}
 
 	private void saveConfigurationFile(ILaunchConfiguration configuration) throws CoreException {
@@ -87,9 +85,9 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 				}
 			}
 			StringBuffer buffer = new StringBuffer();
-			IPluginModelBase model = (IPluginModelBase) fAllBundles.get(IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR);
+			IPluginModelBase model = fAllBundles.get(IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR);
 			buffer.append(LaunchConfigurationHelper.getBundleURL(model, true));
-			appendStartData(buffer, (String) fModels.get(model), autostart);
+			appendStartData(buffer, fModels.get(model), autostart);
 			bundles = buffer.toString();
 		} else {
 			bundles = getBundles(autostart);
@@ -109,7 +107,7 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 		StringBuffer buffer = new StringBuffer();
 		Iterator<IPluginModelBase> iter = fModels.keySet().iterator();
 		while (iter.hasNext()) {
-			IPluginModelBase model = (IPluginModelBase) iter.next();
+			IPluginModelBase model = iter.next();
 			String id = model.getPluginBase().getId();
 			if (!IPDEBuildConstants.BUNDLE_OSGI.equals(id)) {
 				if (buffer.length() > 0)
@@ -157,12 +155,13 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 	 * (non-Javadoc)
 	 * @see org.eclipse.pde.ui.launcher.AbstractPDELaunchConfiguration#preLaunchCheck(org.eclipse.debug.core.ILaunchConfiguration, org.eclipse.debug.core.ILaunch, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@SuppressWarnings("unchecked")
 	protected void preLaunchCheck(ILaunchConfiguration configuration, ILaunch launch, IProgressMonitor monitor) throws CoreException {
 		fModels = BundleLauncherHelper.getMergedBundleMap(configuration, true);
 		fAllBundles = new HashMap<String, IPluginModelBase>(fModels.size());
 		Iterator<IPluginModelBase> iter = fModels.keySet().iterator();
 		while (iter.hasNext()) {
-			IPluginModelBase model = (IPluginModelBase) iter.next();
+			IPluginModelBase model = iter.next();
 			fAllBundles.put(model.getPluginBase().getId(), model);
 		}
 

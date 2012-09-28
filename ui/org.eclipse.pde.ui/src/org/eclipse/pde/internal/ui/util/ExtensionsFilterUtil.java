@@ -305,7 +305,7 @@ public class ExtensionsFilterUtil {
 		if (elementName != null) {
 			Set<String> keySet = CUSTOM_RELATIONS.keySet();
 			for (Iterator<String> iterator = keySet.iterator(); iterator.hasNext();) {
-				String key = (String) iterator.next();
+				String key = iterator.next();
 				if (elementName.endsWith(key)) {
 					Object attributes = CUSTOM_RELATIONS.get(key);
 					if (attributes != null) {

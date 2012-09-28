@@ -762,7 +762,7 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 			if (page instanceof IFormPage)
 				formPages.add(page);
 		}
-		return (IFormPage[]) formPages.toArray(new IFormPage[formPages.size()]);
+		return formPages.toArray(new IFormPage[formPages.size()]);
 	}
 
 	protected void performGlobalAction(String id) {

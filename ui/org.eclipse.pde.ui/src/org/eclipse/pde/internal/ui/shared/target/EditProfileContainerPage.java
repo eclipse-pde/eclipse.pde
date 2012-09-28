@@ -179,7 +179,7 @@ public class EditProfileContainerPage extends EditDirectoryContainerPage {
 			}
 		}
 		previousConfigs.add("${eclipse_home}/configuration"); //$NON-NLS-1$
-		return (String[]) previousConfigs.toArray(new String[previousConfigs.size()]);
+		return previousConfigs.toArray(new String[previousConfigs.size()]);
 	}
 
 	/* (non-Javadoc)

@@ -11,8 +11,6 @@
 package org.eclipse.pde.internal.ui.editor.plugin;
 
 import org.eclipse.jdt.core.IPackageFragmentRoot;
-import org.eclipse.pde.internal.ui.editor.plugin.ImportPackageSection.ImportItemWrapper;
-
 import org.eclipse.pde.core.target.NameVersionDescriptor;
 
 import java.util.*;
@@ -733,7 +731,7 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 			if (roots[i].getKind() == IPackageFragmentRoot.K_SOURCE || (roots[i].isArchive() && !roots[i].isExternal()))
 				result.add(roots[i]);
 		}
-		return (IPackageFragmentRoot[]) result.toArray(new IPackageFragmentRoot[result.size()]);
+		return result.toArray(new IPackageFragmentRoot[result.size()]);
 	}
 
 	private BundleInputContext getBundleContext() {

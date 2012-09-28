@@ -172,7 +172,7 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 					if (canAdd(allModels[i]))
 						newModels.add(allModels[i]);
 				}
-				IPluginModelBase[] candidateModels = (IPluginModelBase[]) newModels.toArray(new IPluginModelBase[newModels.size()]);
+				IPluginModelBase[] candidateModels = newModels.toArray(new IPluginModelBase[newModels.size()]);
 				PluginSelectionDialog dialog = new PluginSelectionDialog(fPluginViewer.getTable().getShell(), candidateModels, true);
 				if (dialog.open() == Window.OK) {
 					Object[] models = dialog.getResult();
@@ -218,7 +218,7 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 					if (canAdd(allModels[i]))
 						newModels.add(allModels[i]);
 				}
-				IFeatureModel[] candidateModels = (IFeatureModel[]) newModels.toArray(new IFeatureModel[newModels.size()]);
+				IFeatureModel[] candidateModels = newModels.toArray(new IFeatureModel[newModels.size()]);
 				FeatureSelectionDialog dialog = new FeatureSelectionDialog(fPluginViewer.getTable().getShell(), candidateModels, true);
 				if (dialog.open() == Window.OK) {
 					Object[] models = dialog.getResult();

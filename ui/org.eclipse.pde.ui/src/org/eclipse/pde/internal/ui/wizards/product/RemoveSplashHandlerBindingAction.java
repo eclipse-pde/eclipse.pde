@@ -171,7 +171,7 @@ public class RemoveSplashHandlerBindingAction extends Action implements ISplashH
 			return null;
 		}
 		// Return product binding elements
-		return (IPluginElement[]) elements.toArray(new IPluginElement[elements.size()]);
+		return elements.toArray(new IPluginElement[elements.size()]);
 	}
 
 	private IPluginExtension findFirstExtension(String extensionPointID) {

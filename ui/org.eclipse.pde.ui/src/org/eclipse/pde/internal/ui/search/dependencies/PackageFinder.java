@@ -205,7 +205,7 @@ public class PackageFinder {
 				addClassFilesFromResource(res, classFiles);
 			}
 		}
-		return (IClassFile[]) classFiles.toArray(new IClassFile[classFiles.size()]);
+		return classFiles.toArray(new IClassFile[classFiles.size()]);
 	}
 
 	private static void addClassFilesFromResource(IResource res, List<IClassFile> classFiles) {

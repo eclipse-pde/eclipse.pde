@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.product;
 
-import org.eclipse.pde.internal.core.iproduct.IPluginConfiguration;
-
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import org.eclipse.core.resources.IFile;
@@ -158,10 +156,11 @@ public class BaseProductCreationOperation extends WorkspaceModifyOperation {
 		}
 	}
 
-	protected void addPlugins(IProductModelFactory factory, IProduct product, Map<?, ?> plugins) {
+	@SuppressWarnings("cast")
+	protected void addPlugins(IProductModelFactory factory, IProduct product, Map<IPluginModelBase, String> plugins) {
 		IProductPlugin[] pplugins = new IProductPlugin[plugins.size()];
 		List<IPluginConfiguration> configurations = new ArrayList<IPluginConfiguration>(3);
-		IPluginModelBase[] models = (IPluginModelBase[]) plugins.keySet().toArray(new IPluginModelBase[plugins.size()]);
+		IPluginModelBase[] models = plugins.keySet().toArray(new IPluginModelBase[plugins.size()]);
 		for (int i = 0; i < models.length; i++) {
 			IPluginModelBase model = models[i];
 
@@ -190,7 +189,7 @@ public class BaseProductCreationOperation extends WorkspaceModifyOperation {
 		product.addPlugins(pplugins);
 		int size = configurations.size();
 		if (size > 0)
-			product.addPluginConfigurations((IPluginConfiguration[]) configurations.toArray(new IPluginConfiguration[size]));
+			product.addPluginConfigurations(configurations.toArray(new IPluginConfiguration[size]));
 	}
 
 	protected void addPlugins(IProductModelFactory factory, IProduct product, String[] plugins) {

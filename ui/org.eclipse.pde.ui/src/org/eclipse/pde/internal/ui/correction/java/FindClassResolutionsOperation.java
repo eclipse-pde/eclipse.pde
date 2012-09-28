@@ -95,7 +95,7 @@ public class FindClassResolutionsOperation implements IRunnableWithProgress {
 				if (visiblePkgs == null) {
 					visiblePkgs = getVisiblePackages();
 				}
-				ExportPackageDescription currentPackage = (ExportPackageDescription) validPackagesIter.next();
+				ExportPackageDescription currentPackage = validPackagesIter.next();
 				// if package is already visible, skip over
 				if (visiblePkgs.contains(currentPackage)) {
 					continue;

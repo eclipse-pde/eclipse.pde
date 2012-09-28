@@ -63,7 +63,7 @@ public class DependencyExtentSearchResult extends SearchResult implements IEdito
 		if (element != null) {
 			Set<Match> matches = new HashSet<Match>();
 			collectMatches(matches, element);
-			return (Match[]) matches.toArray(new Match[matches.size()]);
+			return matches.toArray(new Match[matches.size()]);
 		}
 		return super.computeContainedMatches(result, editor);
 

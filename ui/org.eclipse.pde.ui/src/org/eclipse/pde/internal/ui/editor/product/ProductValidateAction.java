@@ -55,7 +55,7 @@ public class ProductValidateAction extends Action {
 			}
 		}
 		try {
-			IPluginModelBase[] models = (IPluginModelBase[]) map.values().toArray(new IPluginModelBase[map.size()]);
+			IPluginModelBase[] models = map.values().toArray(new IPluginModelBase[map.size()]);
 			LaunchValidationOperation operation = new ProductValidationOperation(models);
 			LaunchPluginValidator.runValidationOperation(operation, new NullProgressMonitor());
 			if (!operation.hasErrors()) {
@@ -86,7 +86,7 @@ public class ProductValidateAction extends Action {
 			String version = features[i].getVersion();
 			addFeatureAndChildren(id, version, list);
 		}
-		return (IFeatureModel[]) list.toArray(new IFeatureModel[list.size()]);
+		return list.toArray(new IFeatureModel[list.size()]);
 	}
 
 	private void addFeatureAndChildren(String id, String version, List<IFeatureModel> list) {

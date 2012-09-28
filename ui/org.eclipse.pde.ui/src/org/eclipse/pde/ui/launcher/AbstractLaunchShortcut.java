@@ -93,7 +93,7 @@ public abstract class AbstractLaunchShortcut implements ILaunchShortcut {
 			}
 		} catch (CoreException e) {
 		}
-		return (ILaunchConfiguration[]) result.toArray(new ILaunchConfiguration[result.size()]);
+		return result.toArray(new ILaunchConfiguration[result.size()]);
 	}
 
 	/**

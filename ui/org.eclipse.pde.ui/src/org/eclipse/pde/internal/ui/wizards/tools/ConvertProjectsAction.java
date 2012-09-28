@@ -109,6 +109,6 @@ public class ConvertProjectsAction implements IObjectActionDelegate {
 			if (projects[i].isOpen() && !PDE.hasPluginNature(projects[i]) && !PDE.hasFeatureNature(projects[i]) && !PDE.hasUpdateSiteNature(projects[i]) && projects[i].getName().indexOf('%') == -1 && projects[i].getLocation().toString().indexOf('%') == -1)
 				unconverted.add(projects[i]);
 		}
-		return (IProject[]) unconverted.toArray(new IProject[unconverted.size()]);
+		return unconverted.toArray(new IProject[unconverted.size()]);
 	}
 }

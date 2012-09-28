@@ -79,7 +79,7 @@ public class NewPluginTemplateChoiceWizard extends AbstractNewPluginTemplateWiza
 			IConfigurationElement element = elements[i];
 			addTemplate(element, candidates);
 		}
-		fCandidates = (ITemplateSection[]) candidates.toArray(new ITemplateSection[candidates.size()]);
+		fCandidates = candidates.toArray(new ITemplateSection[candidates.size()]);
 	}
 
 	private void addTemplate(IConfigurationElement config, ArrayList<Object> result) {

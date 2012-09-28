@@ -146,7 +146,7 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 		} catch (CoreException e) {
 		}
 
-		return (IMarkerResolution[]) resolutions.toArray(new IMarkerResolution[resolutions.size()]);
+		return resolutions.toArray(new IMarkerResolution[resolutions.size()]);
 	}
 
 	private IMarkerResolution[] getRemoveInternalDirectiveResolution(IMarker marker) {

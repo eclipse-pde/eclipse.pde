@@ -56,7 +56,7 @@ public class AnnotationHover implements IAnnotationHover {
 				}
 			}
 		}
-		return (String[]) messages.toArray(new String[messages.size()]);
+		return messages.toArray(new String[messages.size()]);
 	}
 
 	private boolean compareRulerLine(Position position, IDocument document, int line) {

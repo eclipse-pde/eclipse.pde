@@ -321,7 +321,7 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 	 * @see org.eclipse.ui.part.PageBookView#doCreatePage(org.eclipse.ui.IWorkbenchPart)
 	 */
 	protected PageRec doCreatePage(IWorkbenchPart part) {
-		IPageBookViewPage page = (IPageBookViewPage) fPartsToPages.get(part);
+		IPageBookViewPage page = fPartsToPages.get(part);
 		if (page == null && !fPartsToPages.containsKey(part)) {
 			page = createPage(part);
 		}
@@ -567,7 +567,7 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 
 	private void updateHistoryEntries() {
 		for (int i = fInputHistory.size() - 1; i >= 0; i--) {
-			String type = (String) fInputHistory.get(i);
+			String type = fInputHistory.get(i);
 			if (PluginRegistry.findModel(type) == null) {
 				fInputHistory.remove(i);
 			}
@@ -594,7 +594,7 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 		if (fInputHistory.size() > 0) {
 			updateHistoryEntries();
 		}
-		return (String[]) fInputHistory.toArray(new String[fInputHistory.size()]);
+		return fInputHistory.toArray(new String[fInputHistory.size()]);
 	}
 
 	/**

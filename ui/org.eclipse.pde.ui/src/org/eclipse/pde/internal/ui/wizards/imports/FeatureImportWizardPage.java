@@ -261,7 +261,7 @@ public class FeatureImportWizardPage extends WizardPage {
 			}
 			if (items.size() == 0)
 				items.add(""); //$NON-NLS-1$
-			dropItems = (String[]) items.toArray(new String[items.size()]);
+			dropItems = items.toArray(new String[items.size()]);
 		}
 		fDropLocation.setItems(dropItems);
 		fRuntimeLocationButton.setSelection(!doOther);
@@ -460,7 +460,7 @@ public class FeatureImportWizardPage extends WizardPage {
 					if (errors != null && errors.getChildren().length > 0)
 						PDEPlugin.log(errors);
 				}
-				fModels = (IFeatureModel[]) result.toArray(new IFeatureModel[result.size()]);
+				fModels = result.toArray(new IFeatureModel[result.size()]);
 				monitor.done();
 			}
 		};
@@ -499,7 +499,7 @@ public class FeatureImportWizardPage extends WizardPage {
 				}
 			}
 		}
-		return new MultiStatus(IPDEUIConstants.PLUGIN_ID, IStatus.OK, (IStatus[]) resultStatus.toArray(new IStatus[resultStatus.size()]), PDEUIMessages.FeatureImportWizard_DetailedPage_problemsLoading, null);
+		return new MultiStatus(IPDEUIConstants.PLUGIN_ID, IStatus.OK, resultStatus.toArray(new IStatus[resultStatus.size()]), PDEUIMessages.FeatureImportWizard_DetailedPage_problemsLoading, null);
 	}
 
 	private IStatus doLoadFeature(File dir, File manifest, ArrayList<IFeatureModel> result) {

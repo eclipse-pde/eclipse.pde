@@ -13,8 +13,6 @@
 package org.eclipse.pde.internal.ui.views.target;
 
 import org.eclipse.osgi.service.resolver.VersionConstraint;
-import org.eclipse.pde.internal.ui.views.target.StateViewPage.DependencyGroup;
-
 import java.util.ArrayList;
 import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaUI;

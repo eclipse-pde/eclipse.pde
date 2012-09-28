@@ -77,7 +77,7 @@ public class TargetStateView extends PageBookView {
 	}
 
 	protected PageRec doCreatePage(IWorkbenchPart part) {
-		IPageBookViewPage page = (IPageBookViewPage) fPartsToPages.get(part);
+		IPageBookViewPage page = fPartsToPages.get(part);
 		if (page == null && !fPartsToPages.containsKey(part)) {
 			page = createPage(part);
 		}

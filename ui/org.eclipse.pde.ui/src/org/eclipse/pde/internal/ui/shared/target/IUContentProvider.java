@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.shared.target;
 
-import org.eclipse.pde.internal.ui.shared.target.IUContentProvider.IUWrapper;
-
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.core.runtime.CoreException;

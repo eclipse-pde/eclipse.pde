@@ -236,7 +236,7 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 	private void minimizeDependencies(HashMap<String, IPluginImport> usedPlugins, ArrayList<ImportPackageObject> usedPackages, IProgressMonitor monitor) {
 		ListIterator<ImportPackageObject> li = usedPackages.listIterator();
 		while (li.hasNext()) {
-			ImportPackageObject ipo = (ImportPackageObject) li.next();
+			ImportPackageObject ipo = li.next();
 			String bundle = ipo.getAttribute(Constants.BUNDLE_SYMBOLICNAME_ATTRIBUTE);
 			if (usedPlugins.containsKey(bundle))
 				fList.add(ipo);
@@ -248,7 +248,7 @@ public class GatherUnusedDependenciesOperation implements IRunnableWithProgress 
 			plugins.push(it.next().toString());
 
 		while (!(plugins.isEmpty())) {
-			String pluginId = (String) plugins.pop();
+			String pluginId = plugins.pop();
 			IPluginModelBase base = PluginRegistry.findModel(pluginId);
 			if (base == null)
 				continue;

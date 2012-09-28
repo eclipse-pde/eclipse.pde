@@ -49,7 +49,7 @@ public class UnresolvedImportFixProcessor extends ClasspathFixProcessor {
 		 * Returns all the ClasspathFixProposals which were found
 		 */
 		public ClasspathFixProposal[] getProposals() {
-			return (ClasspathFixProposal[]) fList.toArray(new ClasspathFixProposal[fList.size()]);
+			return fList.toArray(new ClasspathFixProposal[fList.size()]);
 		}
 
 	}

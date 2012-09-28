@@ -221,7 +221,7 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 	}
 
 	private void removeSharedModels(ArrayList<IPluginModelBase> result) {
-		IPluginModelBase[] smodels = (IPluginModelBase[]) result.toArray(new IPluginModelBase[result.size()]);
+		IPluginModelBase[] smodels = result.toArray(new IPluginModelBase[result.size()]);
 		for (int i = 0; i < smodels.length; i++) {
 			String id = smodels[i].getPluginBase().getId();
 			IPluginModelBase model = PluginRegistry.findModel(id);

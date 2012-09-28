@@ -60,7 +60,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 	private ViewerFilter fRepositoryFilter;
 	// fSelected is used to track the selection in a hash set so we can efficiently
 	// filter selected items out of the available item list
-	private Set<?> fSelected;
+	private Set<Object> fSelected;
 	// this job is used to delay the full filter refresh for 200 milliseconds in case the user is still typing
 	private WorkbenchJob fFilterJob;
 	private Button fAddButton;
@@ -133,7 +133,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 			for (int i = 0; i < plugins.length; ++i) {
 				String name = plugins[i].getBundleDescription().getSymbolicName();
 				Version version = plugins[i].getBundleDescription().getVersion();
-				Version oldVersion = (Version) versions.get(name);
+				Version oldVersion = versions.get(name);
 				if (oldVersion == null || oldVersion.compareTo(version) < 0) {
 					versions.put(name, version);
 				}
@@ -142,7 +142,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
 			IPluginModelBase plugin = (IPluginModelBase) element;
-			Version hVersion = (Version) versions.get(plugin.getBundleDescription().getSymbolicName());
+			Version hVersion = versions.get(plugin.getBundleDescription().getSymbolicName());
 			if (hVersion == null)
 				return true;
 			return hVersion.equals(plugin.getBundleDescription().getVersion());
@@ -477,6 +477,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 			fRemoveButton.setEnabled(!theSelection.isEmpty());
 	}
 
+	@SuppressWarnings("unchecked")
 	private void handleAdd() {
 		IStructuredSelection ssel = (IStructuredSelection) fAvailableListViewer.getSelection();
 		if (ssel.size() > 0) {
@@ -491,7 +492,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 	private void handleAddAll() {
 		TableItem[] items = fAvailableListViewer.getTable().getItems();
 
-		ArrayList<?> data = new ArrayList<Object>();
+		ArrayList<Object> data = new ArrayList<Object>();
 		for (int i = 0; i < items.length; i++) {
 			data.add(items[i].getData());
 		}
@@ -513,6 +514,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private void handleRemove() {
 		IStructuredSelection ssel = (IStructuredSelection) fImportListViewer.getSelection();
 		if (ssel.size() > 0) {
@@ -524,13 +526,13 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		}
 	}
 
-	private void doAdd(List<?> items) {
+	private void doAdd(List<Object> items) {
 		fImportListViewer.add(items.toArray());
 		fAvailableListViewer.remove(items.toArray());
 		fSelected.addAll(items);
 	}
 
-	private void doRemove(List<?> items) {
+	private void doRemove(List<Object> items) {
 		fSelected.removeAll(items);
 		fImportListViewer.remove(items.toArray());
 		fAvailableListViewer.add(items.toArray());
@@ -539,7 +541,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 	private void handleRemoveAll() {
 		TableItem[] items = fImportListViewer.getTable().getItems();
 
-		ArrayList<?> data = new ArrayList<Object>();
+		ArrayList<Object> data = new ArrayList<Object>();
 		for (int i = 0; i < items.length; i++) {
 			data.add(items[i].getData());
 		}
@@ -549,7 +551,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		}
 	}
 
-	private void handleSetImportSelection(ArrayList<?> newSelectionList) {
+	private void handleSetImportSelection(ArrayList<Object> newSelectionList) {
 		if (newSelectionList.size() == 0) {
 			handleRemoveAll();
 			pageChanged();
@@ -562,7 +564,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		}
 
 		// remove items that were in the old selection, but are not in the new one
-		List<?> itemsToRemove = new ArrayList<Object>();
+		List<Object> itemsToRemove = new ArrayList<Object>();
 		for (int i = 0; i < oldSelection.length; i++) {
 			if (newSelectionList.contains(oldSelection[i])) {
 				newSelectionList.remove(oldSelection[i]);
@@ -582,7 +584,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		TableItem[] aItems = fAvailableListViewer.getTable().getItems();
 		TableItem[] iItems = fImportListViewer.getTable().getItems();
 
-		ArrayList<?> data = new ArrayList<Object>();
+		ArrayList<Object> data = new ArrayList<Object>();
 		for (int i = 0; i < iItems.length; i++) {
 			data.add(iItems[i].getData());
 		}
@@ -601,7 +603,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 	}
 
 	private void handleExistingProjects() {
-		ArrayList<?> result = new ArrayList<Object>();
+		ArrayList<Object> result = new ArrayList<Object>();
 		for (int i = 0; i < fModels.length; i++) {
 			String id = fModels[i].getPluginBase().getId();
 			IProject project = (IProject) PDEPlugin.getWorkspace().getRoot().findMember(id);
@@ -613,7 +615,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 	}
 
 	private void handleExistingUnshared() {
-		ArrayList<?> result = new ArrayList<Object>();
+		ArrayList<Object> result = new ArrayList<Object>();
 		for (int i = 0; i < fModels.length; i++) {
 			String id = fModels[i].getPluginBase().getId();
 			IProject project = (IProject) PDEPlugin.getWorkspace().getRoot().findMember(id);
@@ -635,11 +637,13 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 			}
 		}
 
-		ArrayList<?> result = new ArrayList<Object>();
+		ArrayList<IPluginModelBase> result = new ArrayList<IPluginModelBase>();
 		for (int i = 0; i < items.length; i++) {
 			addPluginAndDependencies((IPluginModelBase) items[i].getData(), result, fAddFragmentsButton.getSelection());
 		}
-		handleSetImportSelection(result);
+		ArrayList<Object> resultObject = new ArrayList<Object>(result.size());
+		resultObject.addAll(result);
+		handleSetImportSelection(resultObject);
 	}
 
 	public void dispose() {

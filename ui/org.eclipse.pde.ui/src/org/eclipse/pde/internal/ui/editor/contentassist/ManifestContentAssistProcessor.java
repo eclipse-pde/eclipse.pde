@@ -82,6 +82,9 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 		});
 	}
 
+	/**
+	 * Maps string header names to either a Set of Strings or an array of {@link ManifestElement}s.  See {@link #isHeader(IDocument, int, int)}
+	 */
 	Map<String, Object> fHeaders;
 
 	public ManifestContentAssistProcessor(PDESourcePage sourcePage) {
@@ -188,7 +191,7 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 				completions.add(proposal);
 			}
 		}
-		return (ICompletionProposal[]) completions.toArray(new ICompletionProposal[completions.size()]);
+		return completions.toArray(new ICompletionProposal[completions.size()]);
 	}
 
 	protected ICompletionProposal[] computeValue(IDocument doc, int startOffset, int offset) throws BadLocationException {
@@ -259,12 +262,14 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 		int semicolon = currentValue.lastIndexOf(';');
 		String value = comma != -1 ? currentValue.substring(comma + 1) : currentValue;
 		if (comma > semicolon || comma == semicolon) {
+			@SuppressWarnings("unchecked")
 			HashSet<String> set = (HashSet<String>) fHeaders.get(Constants.IMPORT_PACKAGE);
 			if (set == null)
 				set = parseHeaderForValues(currentValue, offset);
-			HashSet<?> importedBundles = (HashSet<?>) fHeaders.get(Constants.REQUIRE_BUNDLE);
+			@SuppressWarnings("unchecked")
+			HashSet<String> importedBundles = (HashSet<String>) fHeaders.get(Constants.REQUIRE_BUNDLE);
 			if (importedBundles == null)
-				importedBundles = new HashSet<Object>(0);
+				importedBundles = new HashSet<String>(0);
 			value = removeLeadingSpaces(value);
 			int length = value.length();
 			set.remove(value);
@@ -284,7 +289,7 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 					}
 				}
 			}
-			ICompletionProposal[] proposals = (ICompletionProposal[]) completions.toArray(new ICompletionProposal[completions.size()]);
+			ICompletionProposal[] proposals = completions.toArray(new ICompletionProposal[completions.size()]);
 			sortCompletions(proposals);
 			return proposals;
 		}
@@ -341,7 +346,7 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 						completions.put(pluginID, new TypeCompletionProposal(pluginID, getImage(F_TYPE_BUNDLE), pluginID, offset - length, length));
 				}
 			}
-			return (ICompletionProposal[]) completions.values().toArray(new ICompletionProposal[completions.size()]);
+			return completions.values().toArray(new ICompletionProposal[completions.size()]);
 		}
 		int equals = currentValue.lastIndexOf('=');
 		if (equals == -1 || index > equals)
@@ -358,6 +363,7 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 		int semicolon = currentValue.lastIndexOf(';');
 		String value = comma != -1 ? currentValue.substring(comma + 1) : currentValue;
 		if (comma > semicolon || comma == semicolon) {
+			@SuppressWarnings("unchecked")
 			HashSet<String> set = (HashSet<String>) fHeaders.get(Constants.REQUIRE_BUNDLE);
 			if (set == null)
 				set = parseHeaderForValues(currentValue, offset);
@@ -391,7 +397,7 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 				if (proposalValue.regionMatches(0, existingValue, 0, existingValue.length()))
 					proposals.add(new TypeCompletionProposal(proposalValue.substring(existingValue.length()), getImage(F_TYPE_VALUE), proposalValue, offset, 0));
 			}
-			return (ICompletionProposal[]) proposals.toArray(new ICompletionProposal[proposals.size()]);
+			return proposals.toArray(new ICompletionProposal[proposals.size()]);
 		} else if (existingValue.length() == 0)
 			return new ICompletionProposal[] {new TypeCompletionProposal("\"\"", getImage(F_TYPE_VALUE), "\"\"", offset, 0)}; //$NON-NLS-1$ //$NON-NLS-2$
 		return new ICompletionProposal[0];
@@ -438,7 +444,7 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 					completions.add(new TypeCompletionProposal(bundleId, getImage(type), bundleId, offset - length, length));
 			}
 		}
-		return (ICompletionProposal[]) completions.toArray(new ICompletionProposal[completions.size()]);
+		return completions.toArray(new ICompletionProposal[completions.size()]);
 	}
 
 	protected ICompletionProposal[] handleExportPackageCompletion(String currentValue, int offset) {
@@ -447,6 +453,7 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 		ArrayList<TypeCompletionProposal> list = new ArrayList<TypeCompletionProposal>();
 		if (!insideQuotes(currentValue) && comma > semicolon || comma == semicolon) {
 			String value = comma != -1 ? currentValue.substring(comma + 1) : currentValue;
+			@SuppressWarnings("unchecked")
 			HashSet<String> set = (HashSet<String>) fHeaders.get(Constants.EXPORT_PACKAGE);
 			if (set == null)
 				set = parseHeaderForValues(currentValue, offset);
@@ -481,15 +488,15 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 					return new ICompletionProposal[] {new TypeCompletionProposal("\"\"", getImage(F_TYPE_VALUE), "\"\"", offset, 0)}; //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
-		return (ICompletionProposal[]) list.toArray(new ICompletionProposal[list.size()]);
+		return list.toArray(new ICompletionProposal[list.size()]);
 	}
 
 	protected ICompletionProposal[] handleBundleActivatorCompletion(final String currentValue, final int offset) {
-		ArrayList<?> completions = new ArrayList<Object>();
+		ArrayList<Object> completions = new ArrayList<Object>();
 		IProject project = ((PDEFormEditor) fSourcePage.getEditor()).getCommonProject();
 		int startOffset = offset - currentValue.length();
 		generateTypePackageProposals(currentValue, project, completions, startOffset, IJavaSearchConstants.CLASS);
-		ICompletionProposal[] proposals = (ICompletionProposal[]) completions.toArray(new ICompletionProposal[completions.size()]);
+		ICompletionProposal[] proposals = completions.toArray(new ICompletionProposal[completions.size()]);
 		sortCompletions(proposals);
 		return proposals;
 	}
@@ -554,7 +561,7 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 				// find proposals
 				ArrayList<TypeCompletionProposal> proposals = new ArrayList<TypeCompletionProposal>();
 				addPackageCompletions(value, set, offset, proposals);
-				return (ICompletionProposal[]) proposals.toArray(new ICompletionProposal[proposals.size()]);
+				return proposals.toArray(new ICompletionProposal[proposals.size()]);
 			}
 		}
 		return new ICompletionProposal[0];
@@ -578,7 +585,7 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 		for (int i = 0; i < validValues.length; i++)
 			if (validValues[i].regionMatches(true, 0, currentValue, 0, length) && !set.contains(validValues[i]))
 				completions.add(new TypeCompletionProposal(validValues[i], getImage(F_TYPE_VALUE), validValues[i], offset - length, length));
-		return (ICompletionProposal[]) completions.toArray(new ICompletionProposal[completions.size()]);
+		return completions.toArray(new ICompletionProposal[completions.size()]);
 	}
 
 	protected ICompletionProposal[] handleRequiredExecEnv(String currentValue, int offset) {
@@ -587,14 +594,15 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 			currentValue = currentValue.substring(comma + 1);
 		currentValue = removeLeadingSpaces(currentValue);
 		ArrayList<TypeCompletionProposal> completions = new ArrayList<TypeCompletionProposal>();
-		HashSet<?> set = (HashSet<?>) fHeaders.get(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT);
+		@SuppressWarnings("unchecked")
+		HashSet<String> set = (HashSet<String>) fHeaders.get(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT);
 		if (set == null)
-			set = new HashSet<Object>(0);
+			set = new HashSet<String>(0);
 		int length = currentValue.length();
 		for (int i = 0; i < fExecEnvs.length; i++)
 			if (fExecEnvs[i].regionMatches(true, 0, currentValue, 0, length) && !set.contains(fExecEnvs[i]))
 				completions.add(new TypeCompletionProposal(fExecEnvs[i], getImage(F_TYPE_EXEC_ENV), fExecEnvs[i], offset - length, length));
-		return (ICompletionProposal[]) completions.toArray(new ICompletionProposal[completions.size()]);
+		return completions.toArray(new ICompletionProposal[completions.size()]);
 	}
 
 	protected ICompletionProposal[] handleTrueFalseValue(String currentValue, int offset) {
@@ -621,7 +629,7 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 		for (int i = 0; i < values.length; i++)
 			if (values[i].regionMatches(true, 0, currentValue, 0, length) && !currentValue.equals(values[i]))
 				completions.add(new TypeCompletionProposal(values[i], getImage(F_TYPE_VALUE), values[i], offset - length, length));
-		return (ICompletionProposal[]) completions.toArray(new ICompletionProposal[completions.size()]);
+		return completions.toArray(new ICompletionProposal[completions.size()]);
 	}
 
 	protected ICompletionProposal[] matchValueCompletion(String value, String[] attrs, int[] types, int offset) {
@@ -646,7 +654,7 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 				}
 				list.add(proposal);
 			}
-		return (ICompletionProposal[]) list.toArray(new ICompletionProposal[list.size()]);
+		return list.toArray(new ICompletionProposal[list.size()]);
 	}
 
 	protected ICompletionProposal[] handleAttrsAndDirectives(String value, ArrayList<Object> attrs, ArrayList<Object> types, int offset) {
@@ -670,7 +678,7 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 				types.remove(indexOfObject);
 			}
 		}
-		return matchValueCompletion(value, (String[]) attrs.toArray(new String[attrs.size()]), toIntArray(types), offset);
+		return matchValueCompletion(value, attrs.toArray(new String[attrs.size()]), toIntArray(types), offset);
 	}
 
 	/**

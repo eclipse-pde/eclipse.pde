@@ -69,7 +69,7 @@ public class UpdateClasspathAction extends AbstractHandler {
 				}
 			}
 
-			final IPluginModelBase[] modelArray = (IPluginModelBase[]) models.toArray(new IPluginModelBase[models.size()]);
+			final IPluginModelBase[] modelArray = models.toArray(new IPluginModelBase[models.size()]);
 
 			UpdateBuildpathWizard wizard = new UpdateBuildpathWizard(fUnupdated, modelArray);
 			final WizardDialog dialog = new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
@@ -93,7 +93,7 @@ public class UpdateClasspathAction extends AbstractHandler {
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
-		return (IPluginModelBase[]) modelArray.toArray(new IPluginModelBase[modelArray.size()]);
+		return modelArray.toArray(new IPluginModelBase[modelArray.size()]);
 	}
 
 }

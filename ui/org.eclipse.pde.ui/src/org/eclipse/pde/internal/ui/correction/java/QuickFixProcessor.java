@@ -43,7 +43,7 @@ public class QuickFixProcessor implements IQuickFixProcessor {
 
 			}
 		}
-		return (IJavaCompletionProposal[]) results.toArray(new IJavaCompletionProposal[results.size()]);
+		return results.toArray(new IJavaCompletionProposal[results.size()]);
 	}
 
 	/*

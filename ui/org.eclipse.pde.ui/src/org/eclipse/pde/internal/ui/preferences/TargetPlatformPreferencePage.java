@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.preferences;
 
-import org.eclipse.pde.core.target.ITargetDefinition;
-
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.*;
@@ -354,7 +352,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 				fPrevious = service.getWorkspaceTargetHandle();
 				Iterator<ITargetDefinition> iterator = fTargets.iterator();
 				while (iterator.hasNext()) {
-					ITargetDefinition target = (ITargetDefinition) iterator.next();
+					ITargetDefinition target = iterator.next();
 					if (target.getHandle().equals(fPrevious)) {
 						fActiveTarget = target;
 						fTableViewer.setCheckedElements(new Object[] {fActiveTarget});
@@ -521,12 +519,13 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 	private void handleRemove() {
 		IStructuredSelection selection = (IStructuredSelection) fTableViewer.getSelection();
 		if (!selection.isEmpty()) {
-			List<?> selected = selection.toList();
+			@SuppressWarnings("unchecked")
+			List<ITargetDefinition> selected = selection.toList();
 
 			// If we are going to remove a workspace file, prompt to ask the user first
 			boolean isWorkspace = false;
-			for (Iterator<?> iterator = selected.iterator(); iterator.hasNext();) {
-				ITargetDefinition currentTarget = (ITargetDefinition) iterator.next();
+			for (Iterator<ITargetDefinition> iterator = selected.iterator(); iterator.hasNext();) {
+				ITargetDefinition currentTarget = iterator.next();
 				if (currentTarget.getHandle() instanceof WorkspaceFileTargetHandle) {
 					isWorkspace = true;
 					break;
@@ -733,7 +732,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		// Remove any definitions that have been removed
 		Iterator<ITargetDefinition> iterator = fRemoved.iterator();
 		while (iterator.hasNext()) {
-			ITargetDefinition target = (ITargetDefinition) iterator.next();
+			ITargetDefinition target = iterator.next();
 			try {
 				service.deleteTarget(target.getHandle());
 			} catch (CoreException e) {
@@ -744,7 +743,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		// save others that are dirty
 		iterator = fTargets.iterator();
 		while (iterator.hasNext()) {
-			ITargetDefinition def = (ITargetDefinition) iterator.next();
+			ITargetDefinition def = iterator.next();
 			boolean save = true;
 			if (def.getHandle().exists()) {
 				try {

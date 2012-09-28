@@ -164,7 +164,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 				items.add(curr);
 			}
 		}
-		importDirectory.setItems((String[]) items.toArray(new String[items.size()]));
+		importDirectory.setItems(items.toArray(new String[items.size()]));
 		refreshTargetDropDown();
 
 		int source = FROM_ACTIVE_PLATFORM;
@@ -245,7 +245,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 			});
 			String[] names = new String[targetDefinitions.size()];
 			for (int i = 0; i < targetDefinitions.size(); i++) {
-				ITargetDefinition currentTarget = (ITargetDefinition) targetDefinitions.get(i);
+				ITargetDefinition currentTarget = targetDefinitions.get(i);
 				names[i] = currentTarget.getName();
 				if (names[i] == null || names[i].trim().length() == 0) {
 					names[i] = currentTarget.getHandle().toString();
@@ -298,7 +298,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 					int index = -1;
 					if (handle != null) {
 						for (int i = 0; i < targetDefinitions.size(); i++) {
-							ITargetHandle h = ((ITargetDefinition) targetDefinitions.get(i)).getHandle();
+							ITargetHandle h = targetDefinitions.get(i).getHandle();
 							if (h.equals(handle)) {
 								index = i;
 								break;
@@ -609,7 +609,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 						sourceBundles.add(bundle);
 					}
 				}
-				alternateSource = new AlternateSourceLocations(sourceModels.toArray(new IPluginModelBase[sourceModels.size()]), (TargetBundle[]) sourceBundles.toArray(new TargetBundle[sourceBundles.size()]));
+				alternateSource = new AlternateSourceLocations(sourceModels.toArray(new IPluginModelBase[sourceModels.size()]), sourceBundles.toArray(new TargetBundle[sourceBundles.size()]));
 				try {
 					buildImportDescriptions(pm, type);
 				} catch (CoreException e) {
@@ -777,7 +777,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		if (page instanceof IScmUrlImportWizardPage) {
 			int index = nextPages.indexOf(page);
 			if (index > 0) {
-				return (IWizardPage) nextPages.get(index - 1);
+				return nextPages.get(index - 1);
 			}
 		}
 		return null;
@@ -818,7 +818,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	private ITargetDefinition getTargetDefinition() {
 		int index = targetDefinitionCombo.getSelectionIndex();
 		if (index >= 0 && targetDefinitions.size() > 0) {
-			return (ITargetDefinition) targetDefinitions.get(targetDefinitionCombo.getSelectionIndex());
+			return targetDefinitions.get(targetDefinitionCombo.getSelectionIndex());
 		}
 		return null;
 	}

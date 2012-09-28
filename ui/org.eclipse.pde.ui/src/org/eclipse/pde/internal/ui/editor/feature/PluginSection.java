@@ -172,7 +172,7 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 					if (canAdd(allModels[i]))
 						newModels.add(allModels[i]);
 				}
-				IPluginModelBase[] candidateModels = (IPluginModelBase[]) newModels.toArray(new IPluginModelBase[newModels.size()]);
+				IPluginModelBase[] candidateModels = newModels.toArray(new IPluginModelBase[newModels.size()]);
 				PluginSelectionDialog dialog = new PluginSelectionDialog(fPluginViewer.getTable().getShell(), candidateModels, true);
 				if (dialog.open() == Window.OK) {
 					Object[] models = dialog.getResult();

@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.ifeature.IEnvironment;
 import org.eclipse.pde.internal.core.iproduct.*;
@@ -43,6 +44,7 @@ public class ProductFromConfigOperation extends BaseProductCreationOperation {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.wizards.product.BaseProductCreationOperation#initializeProduct(org.eclipse.pde.internal.core.iproduct.IProduct)
 	 */
+	@SuppressWarnings("unchecked")
 	protected void initializeProduct(IProduct product) {
 		if (fLaunchConfiguration == null)
 			return;
@@ -78,8 +80,8 @@ public class ProductFromConfigOperation extends BaseProductCreationOperation {
 				workspaceId = IPDELauncherConstants.WORKSPACE_BUNDLES;
 				targetId = IPDELauncherConstants.TARGET_BUNDLES;
 			}
-			Set<?> set = new HashSet<Object>();
-			Map<?, ?> map = BundleLauncherHelper.getWorkspaceBundleMap(fLaunchConfiguration, set, workspaceId);
+			Set<String> set = new HashSet<String>();
+			Map<IPluginModelBase, String> map = BundleLauncherHelper.getWorkspaceBundleMap(fLaunchConfiguration, set, workspaceId);
 			map.putAll(BundleLauncherHelper.getTargetBundleMap(fLaunchConfiguration, set, targetId));
 
 			addPlugins(factory, product, map);

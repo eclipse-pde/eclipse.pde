@@ -39,7 +39,7 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 	// Shared instance
 	private static PDEPlugin fInstance;
 
-	private Hashtable<?, ?> fCounters;
+	private Hashtable<String, Integer> fCounters;
 
 	// Provides Launch Configurations log files to Log View
 	private ILogFileProvider fLogFileProvider;
@@ -102,9 +102,9 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 		return fInstance;
 	}
 
-	public Hashtable<?, ?> getDefaultNameCounters() {
+	public Hashtable<String, Integer> getDefaultNameCounters() {
 		if (fCounters == null)
-			fCounters = new Hashtable<Object, Object>();
+			fCounters = new Hashtable<String, Integer>();
 		return fCounters;
 	}
 

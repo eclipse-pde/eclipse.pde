@@ -84,7 +84,7 @@ public class DependencyExtentQuery implements ISearchQuery {
 			}
 		} catch (JavaModelException e) {
 		}
-		return (IPackageFragmentRoot[]) result.toArray(new IPackageFragmentRoot[result.size()]);
+		return result.toArray(new IPackageFragmentRoot[result.size()]);
 	}
 
 }

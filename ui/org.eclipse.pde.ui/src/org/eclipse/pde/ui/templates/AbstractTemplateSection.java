@@ -503,7 +503,7 @@ public abstract class AbstractTemplateSection implements ITemplateSection, IVari
 		}
 
 		for (Iterator<ZipEntry> it = childZipEntries.values().iterator(); it.hasNext();) {
-			ZipEntry zipEnry = (ZipEntry) it.next();
+			ZipEntry zipEnry = it.next();
 			String name = new Path(zipEnry.getName()).lastSegment().toString();
 			if (zipEnry.isDirectory()) {
 				IContainer dstContainer = null;

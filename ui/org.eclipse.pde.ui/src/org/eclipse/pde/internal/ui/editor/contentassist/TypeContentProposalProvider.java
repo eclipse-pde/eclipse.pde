@@ -142,8 +142,7 @@ public class TypeContentProposalProvider extends TypePackageCompletionProcessor 
 		ArrayList<Object> filteredContentProposals = new ArrayList<Object>();
 		// Iterate over the initial search results
 		while (iterator.hasNext()) {
-			Object object = iterator.next();
-			IContentProposal proposal = (IContentProposal) object;
+			IContentProposal proposal = (IContentProposal) iterator.next();
 			String compareString = null;
 			if (lowerCaseCurrentContent.indexOf(F_DOT) == -1) {
 				// Use only the type name

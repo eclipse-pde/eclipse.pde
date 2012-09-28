@@ -213,7 +213,7 @@ public class SiteEditor extends MultiSourceEditor {
 			if (model != null)
 				list.add(model);
 		}
-		return (IFeatureModel[]) list.toArray(new IFeatureModel[list.size()]);
+		return list.toArray(new IFeatureModel[list.size()]);
 	}
 
 	private void ensureContentSaved() {

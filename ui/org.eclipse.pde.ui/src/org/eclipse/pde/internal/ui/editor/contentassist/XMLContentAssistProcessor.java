@@ -13,8 +13,6 @@
 
 package org.eclipse.pde.internal.ui.editor.contentassist;
 
-import org.eclipse.pde.internal.core.ischema.ISchemaObject;
-
 import java.util.*;
 import java.util.regex.Pattern;
 import org.eclipse.core.resources.IResource;
@@ -222,15 +220,15 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 				if (resource == null)
 					return null;
 				// Revisit: NEW CODE HERE
-				ArrayList<?> list = new ArrayList<Object>();
+				ArrayList<Object> list = new ArrayList<Object>();
 				ICompletionProposal[] proposals = null;
 
 				generateTypePackageProposals(attrValue, resource.getProject(), list, offset - attrValue.length(), IJavaSearchConstants.CLASS_AND_INTERFACE);
 
-				if ((list != null) && (list.size() != 0)) {
+				if (!list.isEmpty()) {
 					// Convert the results array list into an array of completion
 					// proposals
-					proposals = (ICompletionProposal[]) list.toArray(new ICompletionProposal[list.size()]);
+					proposals = list.toArray(new ICompletionProposal[list.size()]);
 					sortCompletions(proposals);
 					return proposals;
 				}
@@ -239,7 +237,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 				// provide proposals with all resources in current plugin?
 
 			} else if (sAttr.getKind() == IMetaAttribute.IDENTIFIER) {
-				String[] validAttributes = (String[]) PDESchemaHelper.getValidAttributes(sAttr).keySet().toArray(new String[0]);
+				String[] validAttributes = PDESchemaHelper.getValidAttributes(sAttr).keySet().toArray(new String[0]);
 				Arrays.sort(validAttributes);
 				ArrayList<VirtualSchemaObject> objs = new ArrayList<VirtualSchemaObject>(validAttributes.length);
 				for (int i = 0; i < validAttributes.length; i++)
@@ -335,7 +333,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 		Iterator<ISchemaObject> iterator = allExtensionPoints.iterator();
 		while (iterator.hasNext()) {
 			// Get the schema object
-			ISchemaObject schemaObject = (ISchemaObject) iterator.next();
+			ISchemaObject schemaObject = iterator.next();
 			// Ensure the schema object is defined
 			if (schemaObject == null) {
 				continue;
@@ -355,7 +353,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 			return null;
 		ArrayList<ISchemaObject> list = new ArrayList<ISchemaObject>();
 		for (int i = 0; i < validValues.size(); i++)
-			addToList(list, currValue, (ISchemaObject) validValues.get(i));
+			addToList(list, currValue, validValues.get(i));
 
 		return convertListToProposal(list, attr, offset);
 	}
@@ -630,7 +628,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 		if (proposals.length == 0)
 			return null;
 		for (int i = 0; i < proposals.length; i++)
-			proposals[i] = new XMLCompletionProposal(range, (ISchemaObject) list.get(i), offset, this);
+			proposals[i] = new XMLCompletionProposal(range, list.get(i), offset, this);
 		return proposals;
 	}
 
@@ -655,6 +653,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 	public void selectionChanged(ICompletionProposal proposal, boolean smartToggle) {
 	}
 
+	@SuppressWarnings("unchecked")
 	private ArrayList<ISchemaObject> getAllExtensionPoints(int vSchemaType) {
 		// Return the previous extension points if defined
 		if (fAllExtPoints != null) {

@@ -101,7 +101,7 @@ public class EnvironmentSection extends SectionPart {
 		fOSCombo = new ComboPart();
 		fOSCombo.createControl(left, toolkit, SWT.SINGLE | SWT.BORDER);
 		fOSCombo.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		fOSCombo.setItems((String[]) fOSChoices.toArray(new String[fOSChoices.size()]));
+		fOSCombo.setItems(fOSChoices.toArray(new String[fOSChoices.size()]));
 		fOSCombo.setVisibleItemCount(30);
 
 		label = toolkit.createLabel(left, PDEUIMessages.EnvironmentSection_windowingSystem);
@@ -110,7 +110,7 @@ public class EnvironmentSection extends SectionPart {
 		fWSCombo = new ComboPart();
 		fWSCombo.createControl(left, toolkit, SWT.SINGLE | SWT.BORDER);
 		fWSCombo.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		fWSCombo.setItems((String[]) fWSChoices.toArray(new String[fWSChoices.size()]));
+		fWSCombo.setItems(fWSChoices.toArray(new String[fWSChoices.size()]));
 		fWSCombo.setVisibleItemCount(30);
 
 		Composite right = toolkit.createComposite(client);
@@ -125,7 +125,7 @@ public class EnvironmentSection extends SectionPart {
 		fArchCombo = new ComboPart();
 		fArchCombo.createControl(right, toolkit, SWT.SINGLE | SWT.BORDER);
 		fArchCombo.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		fArchCombo.setItems((String[]) fArchChoices.toArray(new String[fArchChoices.size()]));
+		fArchCombo.setItems(fArchChoices.toArray(new String[fArchChoices.size()]));
 		fArchCombo.setVisibleItemCount(30);
 
 		label = toolkit.createLabel(right, PDEUIMessages.EnvironmentSection_locale);
@@ -134,7 +134,7 @@ public class EnvironmentSection extends SectionPart {
 		fNLCombo = new ComboPart();
 		fNLCombo.createControl(right, toolkit, SWT.SINGLE | SWT.BORDER | SWT.H_SCROLL);
 		fNLCombo.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		fNLCombo.setItems((String[]) fNLChoices.toArray(new String[fNLChoices.size()]));
+		fNLCombo.setItems(fNLChoices.toArray(new String[fNLChoices.size()]));
 		fNLCombo.setVisibleItemCount(30);
 
 		refresh();
@@ -181,7 +181,7 @@ public class EnvironmentSection extends SectionPart {
 				if (fNLCombo.getItemCount() < 3) {
 					String current = fNLCombo.getSelection();
 					if (!fNLCombo.getControl().isDisposed()) {
-						fNLCombo.setItems((String[]) fNLChoices.toArray(new String[fNLChoices.size()]));
+						fNLCombo.setItems(fNLChoices.toArray(new String[fNLChoices.size()]));
 						fNLCombo.setText(current);
 					}
 

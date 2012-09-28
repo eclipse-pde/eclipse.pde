@@ -150,7 +150,7 @@ public class IntroSection extends PDESection {
 				}
 			}
 		}
-		fAvailableIntroIds = (String[]) result.toArray(new String[result.size()]);
+		fAvailableIntroIds = result.toArray(new String[result.size()]);
 	}
 
 	private void handleNewIntro() {

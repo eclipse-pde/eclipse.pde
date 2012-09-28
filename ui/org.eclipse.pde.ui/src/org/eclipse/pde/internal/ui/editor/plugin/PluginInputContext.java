@@ -82,7 +82,7 @@ public class PluginInputContext extends XMLInputContext {
 
 	protected void reorderInsertEdits(ArrayList<TextEdit> ops) {
 		HashMap<Object, TextEdit> map = getOperationTable();
-		Iterator<?> iter = map.keySet().iterator();
+		Iterator<Object> iter = map.keySet().iterator();
 		TextEdit runtimeInsert = null;
 		TextEdit requiresInsert = null;
 		ArrayList<TextEdit> extensionPointInserts = new ArrayList<TextEdit>();
@@ -93,7 +93,7 @@ public class PluginInputContext extends XMLInputContext {
 			if (object instanceof IDocumentElementNode) {
 				IDocumentElementNode node = (IDocumentElementNode) object;
 				if (node.getParentNode() instanceof PluginBaseNode) {
-					TextEdit edit = (TextEdit) map.get(node);
+					TextEdit edit = map.get(node);
 					if (edit instanceof InsertEdit) {
 						if (node.getXMLTagName().equals("runtime")) { //$NON-NLS-1$
 							runtimeInsert = edit;
@@ -110,7 +110,7 @@ public class PluginInputContext extends XMLInputContext {
 		}
 
 		for (int i = 0; i < ops.size(); i++) {
-			TextEdit edit = (TextEdit) ops.get(i);
+			TextEdit edit = ops.get(i);
 			if (edit instanceof InsertEdit) {
 				if (extensionPointInserts.contains(edit)) {
 					ops.remove(edit);

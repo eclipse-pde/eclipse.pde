@@ -66,7 +66,7 @@ public class ContainerRenameParticipant extends PDERenameParticipant {
 		if (manifest.exists()) {
 			monitor.beginTask("", 4); //$NON-NLS-1$
 			try {
-				String newText = (String) fElements.get(fProject);
+				String newText = fElements.get(fProject);
 				CompositeChange result = new CompositeChange(PDEUIMessages.ContainerRenameParticipant_renameBundleId);
 				IBundle bundle = BundleManifestChange.getBundle(manifest, new SubProgressMonitor(monitor, 1));
 				if (bundle != null) {

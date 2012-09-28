@@ -120,7 +120,7 @@ public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
 
 	private CompositeChange getChangeForPlugin(String pluginName) {
 		if (fCompositeChanges.containsKey(pluginName))
-			return (CompositeChange) fCompositeChanges.get(pluginName);
+			return fCompositeChanges.get(pluginName);
 		CompositeChange result = new CompositeChange(NLS.bind(PDEUIMessages.ExternalizeStringsOperation_pluginChangeName, pluginName));
 		fCompositeChanges.put(pluginName, result);
 		fParentChange.add(result);
@@ -129,7 +129,7 @@ public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
 
 	private TextFileChange getChangeForFile(IFile file, CompositeChange parentChange) {
 		if (fFileChanges.containsKey(file))
-			return (TextFileChange) fFileChanges.get(file);
+			return fFileChanges.get(file);
 		MultiTextEdit edit = new MultiTextEdit();
 		TextFileChange change = new TextFileChange(file.getName(), file);
 		change.setEdit(edit);

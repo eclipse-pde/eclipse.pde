@@ -359,7 +359,7 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 		}
 
 		for (Iterator<String> iterator = requiredFeatures.iterator(); iterator.hasNext();) {
-			String id = (String) iterator.next();
+			String id = iterator.next();
 			// Do not add features that already exist
 			if (!getProduct().containsFeature(id)) {
 				addFeature(id, ""); //$NON-NLS-1$
@@ -405,7 +405,7 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 				list.add(models[i]);
 			}
 		}
-		return (IFeatureModel[]) list.toArray(new IFeatureModel[list.size()]);
+		return list.toArray(new IFeatureModel[list.size()]);
 	}
 
 	private IProduct getProduct() {

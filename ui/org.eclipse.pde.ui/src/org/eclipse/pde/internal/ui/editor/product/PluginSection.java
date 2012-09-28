@@ -410,7 +410,7 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 					}
 				}
 			}
-			product.addPlugins((IProductPlugin[]) pluginList.toArray(new IProductPlugin[pluginList.size()]));
+			product.addPlugins(pluginList.toArray(new IProductPlugin[pluginList.size()]));
 		}
 	}
 
@@ -456,7 +456,7 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 				map.put(id, bundles[i]);
 			}
 		}
-		return (BundleDescription[]) map.values().toArray(new BundleDescription[map.size()]);
+		return map.values().toArray(new BundleDescription[map.size()]);
 	}
 
 	private void addPlugin(String id, String version) {

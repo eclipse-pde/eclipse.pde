@@ -123,7 +123,7 @@ public abstract class AbstractPluginBlock {
 			Collections.sort(nameList);
 			StringBuffer result = new StringBuffer();
 			for (Iterator<String> iterator = nameList.iterator(); iterator.hasNext();) {
-				String name = (String) iterator.next();
+				String name = iterator.next();
 				if (result.length() > 0)
 					result.append(',');
 				result.append(name);
@@ -152,11 +152,11 @@ public abstract class AbstractPluginBlock {
 					return super.getColumnText(obj, index);
 				case 1 :
 					if (isChecked && levelColumnCache != null && levelColumnCache.containsKey(obj))
-						return (String) levelColumnCache.get(obj);
+						return levelColumnCache.get(obj);
 					return ""; //$NON-NLS-1$
 				case 2 :
 					if (isChecked && autoColumnCache != null && autoColumnCache.containsKey(obj))
-						return (String) autoColumnCache.get(obj);
+						return autoColumnCache.get(obj);
 					return ""; //$NON-NLS-1$
 				default :
 					return ""; //$NON-NLS-1$
@@ -277,7 +277,7 @@ public abstract class AbstractPluginBlock {
 					list.add(models[i]);
 				}
 			}
-			fExternalModels = (IPluginModelBase[]) list.toArray(new IPluginModelBase[list.size()]);
+			fExternalModels = list.toArray(new IPluginModelBase[list.size()]);
 		}
 		return fExternalModels;
 	}
@@ -296,7 +296,7 @@ public abstract class AbstractPluginBlock {
 					list.add(models[i]);
 				}
 			}
-			fWorkspaceModels = (IPluginModelBase[]) list.toArray(new IPluginModelBase[list.size()]);
+			fWorkspaceModels = list.toArray(new IPluginModelBase[list.size()]);
 		}
 		return fWorkspaceModels;
 	}
@@ -643,9 +643,9 @@ public abstract class AbstractPluginBlock {
 
 		Widget widget = fPluginTreeViewer.testFindItem(model);
 		if (fPluginTreeViewer.getChecked(model)) {
-			levelText = (String) levelColumnCache.get(model);
+			levelText = levelColumnCache.get(model);
 			levelText = levelText == null || levelText.length() == 0 ? "default" : levelText; //$NON-NLS-1$
-			autoText = (String) autoColumnCache.get(model);
+			autoText = autoColumnCache.get(model);
 			autoText = autoText == null || autoText.length() == 0 ? "default" : autoText; //$NON-NLS-1$
 
 			// Replace run levels and auto start values for certain important system bundles
@@ -758,7 +758,7 @@ public abstract class AbstractPluginBlock {
 				}
 			}
 		}
-		return (String[]) set.toArray(new String[set.size()]);
+		return set.toArray(new String[set.size()]);
 	}
 
 	/**

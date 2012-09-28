@@ -103,7 +103,7 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 			Properties prop = LaunchConfigurationHelper.createConfigIniFile(configuration, productID, fAllBundles, fModels, getConfigDir(configuration));
 			showSplash = prop.containsKey("osgi.splashPath") || prop.containsKey("splashLocation"); //$NON-NLS-1$ //$NON-NLS-2$
 			String brandingId = LaunchConfigurationHelper.getContributingPlugin(productID);
-			TargetPlatform.createPlatformConfiguration(getConfigDir(configuration), (IPluginModelBase[]) fAllBundles.values().toArray(new IPluginModelBase[fAllBundles.size()]), brandingId != null ? (IPluginModelBase) fAllBundles.get(brandingId) : null);
+			TargetPlatform.createPlatformConfiguration(getConfigDir(configuration), fAllBundles.values().toArray(new IPluginModelBase[fAllBundles.size()]), brandingId != null ? (IPluginModelBase) fAllBundles.get(brandingId) : null);
 			TargetPlatformHelper.checkPluginPropertiesConsistency(fAllBundles, getConfigDir(configuration));
 			programArgs.add("-configuration"); //$NON-NLS-1$
 			programArgs.add("file:" + new Path(getConfigDir(configuration).getPath()).addTrailingSeparator().toString()); //$NON-NLS-1$
@@ -114,7 +114,7 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 		}
 		// necessary for PDE to know how to load plugins when target platform = host platform
 		// see PluginPathFinder.getPluginPaths() and PluginPathFinder.isDevLaunchMode()
-		IPluginModelBase base = (IPluginModelBase) fAllBundles.get(PDECore.PLUGIN_ID);
+		IPluginModelBase base = fAllBundles.get(PDECore.PLUGIN_ID);
 		if (base != null && VersionUtil.compareMacroMinorMicro(base.getBundleDescription().getVersion(), new Version("3.3.1")) < 0) //$NON-NLS-1$
 			programArgs.add("-pdelaunch"); //$NON-NLS-1$
 
@@ -147,7 +147,7 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 				programArgs.add(1, computeShowsplashArgument());
 			}
 		}
-		return (String[]) programArgs.toArray(new String[programArgs.size()]);
+		return programArgs.toArray(new String[programArgs.size()]);
 	}
 
 	private void validateFeatures() throws CoreException {
@@ -287,7 +287,7 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 	 */
 	public String[] getVMArguments(ILaunchConfiguration configuration) throws CoreException {
 		String[] vmArgs = super.getVMArguments(configuration);
-		IPluginModelBase base = (IPluginModelBase) fAllBundles.get(PDECore.PLUGIN_ID);
+		IPluginModelBase base = fAllBundles.get(PDECore.PLUGIN_ID);
 		if (base != null && VersionUtil.compareMacroMinorMicro(base.getBundleDescription().getVersion(), new Version("3.3.1")) >= 0) { //$NON-NLS-1$
 			// necessary for PDE to know how to load plugins when target platform = host platform
 			// see PluginPathFinder.getPluginPaths() and PluginPathFinder.isDevLaunchMode()

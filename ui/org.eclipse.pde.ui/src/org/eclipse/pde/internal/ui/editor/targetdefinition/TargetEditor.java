@@ -211,7 +211,7 @@ public class TargetEditor extends FormEditor {
 	public void doRevert() {
 		fInputHandler.reset();
 		for (Iterator<IManagedForm> iterator = fManagedFormPages.iterator(); iterator.hasNext();) {
-			IFormPart[] parts = ((IManagedForm) iterator.next()).getParts();
+			IFormPart[] parts = iterator.next().getParts();
 			for (int i = 0; i < parts.length; i++) {
 				if (parts[i] instanceof AbstractFormPart) {
 					((AbstractFormPart) parts[i]).markStale();

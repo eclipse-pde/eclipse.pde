@@ -10,12 +10,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.correction;
 
-import org.eclipse.pde.internal.core.text.bundle.LazyStartHeader;
-
 import java.util.Map;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
+import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.text.bundle.*;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.osgi.framework.Constants;
@@ -54,7 +53,7 @@ public class UpdateActivationResolution extends AbstractManifestMarkerResolution
 				newHeader.setLength(header.getLength());
 				// remove old header from Bundle object.  Add new header to Bundle object
 				Bundle bundle = (Bundle) model.getBundle();
-				Map<String, LazyStartHeader> map = bundle.getHeaders();
+				Map<String, IManifestHeader> map = bundle.getHeaders();
 				map.remove(fHeader);
 				map.put(Constants.BUNDLE_ACTIVATIONPOLICY, newHeader);
 				// fire ModelChanged so that way the BundleTextChangeListener will make proper ReplaceTextEdits

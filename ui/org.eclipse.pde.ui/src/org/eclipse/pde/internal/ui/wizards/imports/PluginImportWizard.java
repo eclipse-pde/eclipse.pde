@@ -24,6 +24,8 @@ import org.eclipse.pde.internal.launching.launcher.BundleLauncherHelper;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.team.core.ScmUrlImportDescription;
+import org.eclipse.team.core.importing.provisional.IBundleImporter;
 import org.eclipse.team.ui.IScmUrlImportWizardPage;
 import org.eclipse.ui.IImportWizard;
 import org.eclipse.ui.IWorkbench;
@@ -168,7 +170,7 @@ public class PluginImportWizard extends Wizard implements IImportWizard, IPageCh
 	 *  from a repository, else <code>null</code>
 	 *  
 	 */
-	public static void doImportOperation(int importType, IPluginModelBase[] models, boolean forceAutobuild, boolean launchedConfiguration, SourceLocationManager alternateSource, Map<?, ?> importerToDescriptions) {
+	public static void doImportOperation(int importType, IPluginModelBase[] models, boolean forceAutobuild, boolean launchedConfiguration, SourceLocationManager alternateSource, Map<IBundleImporter, ScmUrlImportDescription[]> importerToDescriptions) {
 		PluginImportOperation job = new PluginImportOperation(models, importType, forceAutobuild);
 		job.setImportDescriptions(importerToDescriptions);
 		job.setAlternateSource(alternateSource);

@@ -154,7 +154,7 @@ public class PDEMultiPageContentOutline extends Page implements IContentOutlineP
 			return;
 		SelectionChangedEvent e = new SelectionChangedEvent(this, selection);
 		for (int i = 0; i < listeners.size(); i++) {
-			((ISelectionChangedListener) listeners.get(i)).selectionChanged(e);
+			listeners.get(i).selectionChanged(e);
 		}
 	}
 

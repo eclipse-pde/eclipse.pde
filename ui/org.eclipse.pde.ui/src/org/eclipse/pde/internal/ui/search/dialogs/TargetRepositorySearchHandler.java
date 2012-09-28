@@ -10,8 +10,6 @@
 ******************************************************************************/
 package org.eclipse.pde.internal.ui.search.dialogs;
 
-import org.eclipse.pde.core.target.*;
-
 import java.net.URI;
 import java.util.HashSet;
 import java.util.Set;
@@ -22,6 +20,7 @@ import org.eclipse.equinox.p2.metadata.MetadataFactory;
 import org.eclipse.equinox.p2.query.IQuery;
 import org.eclipse.equinox.p2.query.QueryUtil;
 import org.eclipse.jface.window.Window;
+import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.target.IUBundleContainer;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -40,7 +39,7 @@ public class TargetRepositorySearchHandler extends AbstractHandler implements IH
 		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
 
 		// create the query for packages, features and bundles
-		IQuery<?> query = QueryUtil.createMatchQuery("properties[$0] == true || providedCapabilities.exists(p | p.namespace == 'osgi.bundle')", new Object[] {MetadataFactory.InstallableUnitDescription.PROP_TYPE_GROUP}); //$NON-NLS-1$
+		IQuery<IInstallableUnit> query = QueryUtil.createMatchQuery("properties[$0] == true || providedCapabilities.exists(p | p.namespace == 'osgi.bundle')", new Object[] {MetadataFactory.InstallableUnitDescription.PROP_TYPE_GROUP}); //$NON-NLS-1$
 		//IQuery query = QueryUtil.createIUAnyQuery();
 
 		FilteredIUSelectionDialog dialog = new FilteredIUSelectionDialog(window.getShell(), query);
@@ -58,7 +57,7 @@ public class TargetRepositorySearchHandler extends AbstractHandler implements IH
 					else if (result[i] instanceof IInstallableUnit)
 						set.add(result[i]);
 				}
-				IInstallableUnit[] units = (IInstallableUnit[]) set.toArray(new IInstallableUnit[set.size()]);
+				IInstallableUnit[] units = set.toArray(new IInstallableUnit[set.size()]);
 				try {
 					installIntoActiveTarget(units, null);
 				} catch (CoreException e) {

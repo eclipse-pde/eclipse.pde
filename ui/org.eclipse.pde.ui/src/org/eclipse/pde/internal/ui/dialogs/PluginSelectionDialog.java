@@ -169,7 +169,7 @@ public class PluginSelectionDialog extends FilteredItemsSelectionDialog {
 		ExportPackageDescription exported[] = PDECore.getDefault().getModelManager().getState().getState().getExportedPackages();
 		for (int i = 0; i < exported.length; i++) {
 			// iterate through all the exported packages
-			ImportPackageObject ipo = (ImportPackageObject) map.get(exported[i].getName());
+			ImportPackageObject ipo = map.get(exported[i].getName());
 			// if we find an exported package that matches a pkg in the map, then the exported package matches a package on our import-package statement
 			if (ipo != null) {
 				// check version to make sure we only add bundles from valid packages

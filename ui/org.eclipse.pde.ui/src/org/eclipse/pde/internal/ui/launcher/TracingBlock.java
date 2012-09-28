@@ -245,7 +245,7 @@ public class TracingBlock {
 		if (tracingEnabled) {
 			boolean changes = false;
 			for (Enumeration<TracingPropertySource> elements = fPropertySources.elements(); elements.hasMoreElements();) {
-				TracingPropertySource source = (TracingPropertySource) elements.nextElement();
+				TracingPropertySource source = elements.nextElement();
 				if (source.isModified()) {
 					changes = true;
 					source.save();
@@ -321,7 +321,7 @@ public class TracingBlock {
 				if (TracingOptionsManager.isTraceable(models[i]))
 					result.add(models[i]);
 			}
-			fTraceableModels = (IPluginModelBase[]) result.toArray(new IPluginModelBase[result.size()]);
+			fTraceableModels = result.toArray(new IPluginModelBase[result.size()]);
 		}
 		return fTraceableModels;
 	}
@@ -360,7 +360,7 @@ public class TracingBlock {
 	private TracingPropertySource getPropertySource(IPluginModelBase model) {
 		if (model == null)
 			return null;
-		TracingPropertySource source = (TracingPropertySource) fPropertySources.get(model);
+		TracingPropertySource source = fPropertySources.get(model);
 		if (source == null) {
 			String id = model.getPluginBase().getId();
 			Hashtable<?, ?> defaults = PDECore.getDefault().getTracingOptionsManager().getTemplateTable(id);
@@ -387,7 +387,7 @@ public class TracingBlock {
 	private void disposePropertySources() {
 		Enumeration<TracingPropertySource> elements = fPropertySources.elements();
 		while (elements.hasMoreElements()) {
-			TracingPropertySource source = (TracingPropertySource) elements.nextElement();
+			TracingPropertySource source = elements.nextElement();
 			fPageBook.removePage(source.getModel());
 		}
 		fPropertySources.clear();

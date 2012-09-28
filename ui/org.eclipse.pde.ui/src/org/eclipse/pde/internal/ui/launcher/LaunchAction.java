@@ -120,7 +120,7 @@ public class LaunchAction extends Action {
 	}
 
 	private void appendBundle(StringBuffer buffer, IPluginModelBase model) {
-		IPluginConfiguration configuration = (IPluginConfiguration) fPluginConfigurations.get(model.getPluginBase().getId());
+		IPluginConfiguration configuration = fPluginConfigurations.get(model.getPluginBase().getId());
 		String sl = "default"; //$NON-NLS-1$
 		String autostart = "default"; //$NON-NLS-1$
 		if (configuration != null) {
@@ -192,7 +192,7 @@ public class LaunchAction extends Action {
 					map.put(id, model);
 			}
 		}
-		return (IPluginModelBase[]) map.values().toArray(new IPluginModelBase[map.size()]);
+		return map.values().toArray(new IPluginModelBase[map.size()]);
 	}
 
 	private IFeatureModel[] getUniqueFeatures() {
@@ -203,7 +203,7 @@ public class LaunchAction extends Action {
 			String version = features[i].getVersion();
 			addFeatureAndChildren(id, version, list);
 		}
-		return (IFeatureModel[]) list.toArray(new IFeatureModel[list.size()]);
+		return list.toArray(new IFeatureModel[list.size()]);
 	}
 
 	private void addFeatureAndChildren(String id, String version, List<IFeatureModel> list) {
@@ -316,7 +316,7 @@ public class LaunchAction extends Action {
 				}
 			}
 		}
-		return (ILaunchConfiguration[]) result.toArray(new ILaunchConfiguration[result.size()]);
+		return result.toArray(new ILaunchConfiguration[result.size()]);
 	}
 
 	protected ILaunchConfigurationType getWorkbenchLaunchConfigType() {

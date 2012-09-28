@@ -120,7 +120,7 @@ public class JavaSearchActionGroup extends ActionGroup {
 		}
 		if (result.size() == 0)
 			return;
-		final IPluginModelBase[] array = (IPluginModelBase[]) result.toArray(new IPluginModelBase[result.size()]);
+		final IPluginModelBase[] array = result.toArray(new IPluginModelBase[result.size()]);
 
 		IRunnableWithProgress op = new JavaSearchOperation(array, add);
 		try {

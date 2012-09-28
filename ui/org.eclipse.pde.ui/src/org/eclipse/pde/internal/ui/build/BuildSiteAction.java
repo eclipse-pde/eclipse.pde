@@ -88,7 +88,7 @@ public class BuildSiteAction implements IObjectActionDelegate {
 			if (model != null)
 				list.add(model);
 		}
-		return (IFeatureModel[]) list.toArray(new IFeatureModel[list.size()]);
+		return list.toArray(new IFeatureModel[list.size()]);
 	}
 
 	public void selectionChanged(IAction action, ISelection selection) {

@@ -165,7 +165,7 @@ public class ProductFileWizardPage extends PDEWizardNewFileCreationPage {
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
-		return (String[]) list.toArray(new String[list.size()]);
+		return list.toArray(new String[list.size()]);
 	}
 
 	public ILaunchConfiguration getSelectedLaunchConfiguration() {

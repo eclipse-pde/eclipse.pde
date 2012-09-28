@@ -234,7 +234,7 @@ public class EditDirectoryContainerPage extends WizardPage implements IEditBundl
 			}
 		}
 		previousLocations.add(getDefaultLocation());
-		return (String[]) previousLocations.toArray(new String[previousLocations.size()]);
+		return previousLocations.toArray(new String[previousLocations.size()]);
 	}
 
 	/**

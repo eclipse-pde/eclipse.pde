@@ -235,7 +235,7 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 
 					// allKeys must NOT have any duplicates
 					for (int j = 0; j < allKeys.size(); j++) {
-						String akey = '%' + (String) allKeys.get(j) + '%';
+						String akey = '%' + allKeys.get(j) + '%';
 						if (entry.indexOf(akey) != -1)
 							allKeys.remove(allKeys.get(j--));
 						if (allKeys.size() == 0)
@@ -244,7 +244,7 @@ public class OrganizeManifest implements IOrganizeManifestsSettings {
 				}
 
 				for (int i = 0; i < allKeys.size(); i++) {
-					IBuildEntry entry = build.getEntry((String) allKeys.get(i));
+					IBuildEntry entry = build.getEntry(allKeys.get(i));
 					build.remove(entry);
 				}
 			}

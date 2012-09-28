@@ -140,7 +140,7 @@ public class AddToJavaSearchJob extends WorkspaceJob {
 					}
 				}
 				subMon.worked(25);
-				fBundles = (IPluginModelBase[]) models.toArray(new IPluginModelBase[models.size()]);
+				fBundles = models.toArray(new IPluginModelBase[models.size()]);
 			}
 
 			if (subMon.isCanceled()) {

@@ -126,7 +126,7 @@ public class PluginWorkingSet extends WizardPage implements IWorkingSetPage {
 			if (id != null && id.length() > 0)
 				list.add(new PersistablePluginObject(id));
 		}
-		PersistablePluginObject[] objects = (PersistablePluginObject[]) list.toArray(new PersistablePluginObject[list.size()]);
+		PersistablePluginObject[] objects = list.toArray(new PersistablePluginObject[list.size()]);
 
 		String workingSetName = fWorkingSetName.getText().trim();
 		if (fWorkingSet == null) {

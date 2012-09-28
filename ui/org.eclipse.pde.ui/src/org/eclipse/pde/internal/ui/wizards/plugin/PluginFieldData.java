@@ -51,7 +51,7 @@ public class PluginFieldData extends AbstractFieldData implements IPluginFieldDa
 	}
 
 	public ITemplateSection[] getTemplateSections() {
-		return (ITemplateSection[]) templates.toArray(new ITemplateSection[templates.size()]);
+		return templates.toArray(new ITemplateSection[templates.size()]);
 	}
 
 	public void setDoGenerateClass(boolean doGenerate) {

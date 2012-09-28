@@ -78,7 +78,7 @@ public class PDEModelUtility {
 		if (project == null)
 			return;
 		if (fOpenPDEEditors.containsKey(project)) {
-			ArrayList<PDEFormEditor> list = (ArrayList<PDEFormEditor>) fOpenPDEEditors.get(project);
+			ArrayList<PDEFormEditor> list = fOpenPDEEditors.get(project);
 			if (!list.contains(editor))
 				list.add(editor);
 		} else {
@@ -108,7 +108,7 @@ public class PDEModelUtility {
 			return;
 		if (!fOpenPDEEditors.containsKey(project))
 			return;
-		ArrayList<?> list = (ArrayList<?>) fOpenPDEEditors.get(project);
+		ArrayList<?> list = fOpenPDEEditors.get(project);
 		list.remove(editor);
 		if (list.size() == 0)
 			fOpenPDEEditors.remove(project);
@@ -142,7 +142,7 @@ public class PDEModelUtility {
 	}
 
 	private static PDEFormEditor getOpenEditor(IProject project, String editorId) {
-		ArrayList<?> list = (ArrayList<?>) fOpenPDEEditors.get(project);
+		ArrayList<?> list = fOpenPDEEditors.get(project);
 		if (list == null)
 			return null;
 		for (int i = 0; i < list.size(); i++) {
@@ -166,7 +166,7 @@ public class PDEModelUtility {
 		// Get the file's project
 		IProject project = file.getProject();
 		// Check for open editors housed in the specified project
-		ArrayList<?> list = (ArrayList<?>) fOpenPDEEditors.get(project);
+		ArrayList<?> list = fOpenPDEEditors.get(project);
 		// No open editors found
 		if (list == null) {
 			return null;
@@ -226,7 +226,7 @@ public class PDEModelUtility {
 	public static IEditingModel getOpenModel(IDocument doc) {
 		Iterator<ArrayList<PDEFormEditor>> it = fOpenPDEEditors.values().iterator();
 		while (it.hasNext()) {
-			ArrayList<?> list = (ArrayList<?>) it.next();
+			ArrayList<?> list = it.next();
 			for (int i = 0; i < list.size(); i++) {
 				PDEFormEditor e = (PDEFormEditor) list.get(i);
 				IPluginModelBase model = (IPluginModelBase) e.getAggregateModel();
@@ -382,7 +382,7 @@ public class PDEModelUtility {
 				}
 			}
 		}
-		return (TextFileChange[]) edits.toArray(new TextFileChange[edits.size()]);
+		return edits.toArray(new TextFileChange[edits.size()]);
 	}
 
 	public static void setChangeTextType(TextFileChange change, IFile file) {

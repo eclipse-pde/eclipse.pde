@@ -76,7 +76,7 @@ public class AlternateSourceLocations extends SourceLocationManager {
 		if (oldSourceRoots == null) {
 			oldSourceRoots = new ArrayList<SourceLocation>();
 			for (int i = 0; i < bundles.length; i++) {
-				String path = ((TargetBundle) bundles[i]).getSourcePath();
+				String path = bundles[i].getSourcePath();
 				if (path != null) {
 					oldSourceRoots.add(new SourceLocation(new Path(models[i].getInstallLocation()).append(path)));
 				}

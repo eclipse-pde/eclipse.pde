@@ -58,7 +58,7 @@ public class CommandTreeContentProvider implements ITreeContentProvider {
 			// populate category map
 			try {
 				Category cat = commands[i].getCategory();
-				ArrayList<Command> list = (ArrayList<Command>) fCatMap.get(cat);
+				ArrayList<Command> list = fCatMap.get(cat);
 				if (list == null)
 					fCatMap.put(cat, list = new ArrayList<Command>());
 				list.add(commands[i]);
@@ -88,7 +88,7 @@ public class CommandTreeContentProvider implements ITreeContentProvider {
 
 	public Object[] getChildren(Object parentElement) {
 		if (parentElement instanceof Category) {
-			ArrayList<?> list = (ArrayList<?>) fCatMap.get(parentElement);
+			ArrayList<?> list = fCatMap.get(parentElement);
 			if (list != null)
 				return list.toArray(new Command[list.size()]);
 		}
@@ -97,7 +97,7 @@ public class CommandTreeContentProvider implements ITreeContentProvider {
 
 	public boolean hasChildren(Object element) {
 		if (element instanceof Category) {
-			ArrayList<?> list = (ArrayList<?>) fCatMap.get(element);
+			ArrayList<?> list = fCatMap.get(element);
 			if (list != null)
 				return list.size() > 0;
 		}

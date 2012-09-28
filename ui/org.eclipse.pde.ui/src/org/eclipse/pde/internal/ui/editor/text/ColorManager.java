@@ -85,7 +85,7 @@ public class ColorManager implements IColorManager, IPDEColorConstants {
 	public void disposeColors(boolean resetSingleton) {
 		Iterator<Color> e = fColorTable.values().iterator();
 		while (e.hasNext())
-			((Color) e.next()).dispose();
+			e.next().dispose();
 		if (resetSingleton)
 			fColorManager = null;
 
@@ -102,7 +102,7 @@ public class ColorManager implements IColorManager, IPDEColorConstants {
 	}
 
 	private void putColor(String property, RGB setting) {
-		Color oldColor = (Color) fColorTable.get(property);
+		Color oldColor = fColorTable.get(property);
 		if (oldColor != null) {
 			if (oldColor.getRGB().equals(setting))
 				return;
@@ -112,7 +112,7 @@ public class ColorManager implements IColorManager, IPDEColorConstants {
 	}
 
 	public Color getColor(String key) {
-		Color color = (Color) fColorTable.get(key);
+		Color color = fColorTable.get(key);
 		if (color == null)
 			color = Display.getCurrent().getSystemColor(SWT.COLOR_LIST_FOREGROUND);
 		return color;

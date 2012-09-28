@@ -281,7 +281,7 @@ public class InternationalizeWizardPluginPage extends InternationalizationWizard
 				}
 			}
 		}
-		return (IFragmentModel[]) result.toArray(new IFragmentModel[result.size()]);
+		return result.toArray(new IFragmentModel[result.size()]);
 	}
 
 	protected void addPluginAndDependencies(IPluginModelBase model, ArrayList<IPluginModelBase> selected, boolean addFragments) {

@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.templates;
 
-import org.eclipse.pde.internal.ui.wizards.templates.ControlStack.Entry;
-
 import java.util.Iterator;
 import java.util.Stack;
 import org.eclipse.pde.ui.templates.IVariableProvider;
@@ -46,7 +44,7 @@ public class ControlStack {
 			stack.push(entry);
 		} else if (line.startsWith("else")) { //$NON-NLS-1$
 			if (stack.isEmpty() == false) {
-				Entry entry = (Entry) stack.peek();
+				Entry entry = stack.peek();
 				entry.value = !entry.value;
 			}
 		} else if (line.startsWith("endif")) { //$NON-NLS-1$
@@ -64,7 +62,7 @@ public class ControlStack {
 		// All control levels must evaluate to true to
 		// return result==true
 		for (Iterator<Entry> iter = stack.iterator(); iter.hasNext();) {
-			Entry entry = (Entry) iter.next();
+			Entry entry = iter.next();
 			if (!entry.value)
 				return false;
 		}

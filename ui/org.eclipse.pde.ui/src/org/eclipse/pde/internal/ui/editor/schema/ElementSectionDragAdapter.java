@@ -114,7 +114,7 @@ public class ElementSectionDragAdapter extends DragSourceAdapter {
 			else
 				return new ISchemaObject[0];
 		}
-		return (ISchemaObject[]) objects.toArray(new ISchemaObject[objects.size()]);
+		return objects.toArray(new ISchemaObject[objects.size()]);
 	}
 
 	public Object[] getDragData() {

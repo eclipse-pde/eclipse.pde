@@ -179,7 +179,7 @@ public abstract class BaseOptionTemplateSection extends AbstractTemplateSection 
 	 *         </samp> if not found.
 	 */
 	public String getStringOption(String name) {
-		TemplateOption option = (TemplateOption) options.get(name);
+		TemplateOption option = options.get(name);
 		if (option != null) {
 			if (option instanceof StringOption) {
 				return ((StringOption) option).getText();
@@ -208,7 +208,7 @@ public abstract class BaseOptionTemplateSection extends AbstractTemplateSection 
 	 *         </samp> if not found.
 	 */
 	public boolean getBooleanOption(String key) {
-		TemplateOption option = (TemplateOption) options.get(key);
+		TemplateOption option = options.get(key);
 		if (option != null && option instanceof BooleanOption) {
 			return ((BooleanOption) option).isSelected();
 		}
@@ -227,7 +227,7 @@ public abstract class BaseOptionTemplateSection extends AbstractTemplateSection 
 	 *            the enable state that the option should have
 	 */
 	public void setOptionEnabled(String name, boolean enabled) {
-		TemplateOption option = (TemplateOption) options.get(name);
+		TemplateOption option = options.get(name);
 		if (option != null)
 			option.setEnabled(enabled);
 	}
@@ -242,7 +242,7 @@ public abstract class BaseOptionTemplateSection extends AbstractTemplateSection 
 	 *         <samp>null </samp> if not found or not applicable.
 	 */
 	public Object getValue(String name) {
-		TemplateOption option = (TemplateOption) options.get(name);
+		TemplateOption option = options.get(name);
 		if (option != null)
 			return option.getValue();
 		return super.getValue(name);
@@ -357,6 +357,6 @@ public abstract class BaseOptionTemplateSection extends AbstractTemplateSection 
 	}
 
 	private TemplateOption getOption(String key) {
-		return (TemplateOption) options.get(key);
+		return options.get(key);
 	}
 }

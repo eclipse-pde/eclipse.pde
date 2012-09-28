@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.search;
 
-import org.eclipse.pde.internal.ui.search.PluginSearchPage.QueryData;
-
 import java.util.*;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -233,7 +231,7 @@ public class PluginSearchPage extends DialogPage implements ISearchPage {
 			public void widgetSelected(SelectionEvent e) {
 				int index = previousQueries.size() - patternCombo.getSelectionIndex() - 1;
 				if (previousQueries.size() > index) {
-					QueryData data = (QueryData) previousQueries.get(index);
+					QueryData data = previousQueries.get(index);
 					resetPage(data);
 				}
 				container.setPerformActionEnabled(patternCombo.getText().length() > 0);
@@ -304,7 +302,7 @@ public class PluginSearchPage extends DialogPage implements ISearchPage {
 				firstTime = false;
 				String[] patterns = new String[previousQueries.size()];
 				for (int i = previousQueries.size() - 1, j = 0; i >= 0; i--, j++) {
-					patterns[j] = ((QueryData) previousQueries.get(i)).text;
+					patterns[j] = previousQueries.get(i).text;
 				}
 				patternCombo.setItems(patterns);
 				initSelections();

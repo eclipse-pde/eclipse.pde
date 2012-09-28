@@ -612,7 +612,7 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 				}
 			}
 		}
-		cachedFeatures = (ISiteFeature[]) features.toArray(new ISiteFeature[features.size()]);
+		cachedFeatures = features.toArray(new ISiteFeature[features.size()]);
 		return cachedFeatures;
 	}
 
@@ -651,7 +651,7 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 					if (canAdd(allModels[i]))
 						newModels.add(allModels[i]);
 				}
-				IFeatureModel[] candidateModels = (IFeatureModel[]) newModels.toArray(new IFeatureModel[newModels.size()]);
+				IFeatureModel[] candidateModels = newModels.toArray(new IFeatureModel[newModels.size()]);
 				FeatureSelectionDialog dialog = new FeatureSelectionDialog(fCategoryViewer.getTree().getShell(), candidateModels, true);
 				if (dialog.open() == Window.OK) {
 					Object[] models = dialog.getResult();

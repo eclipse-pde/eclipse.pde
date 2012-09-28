@@ -173,7 +173,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 				parentParent = (IPluginParent) parentParent.getParent();
 			}
 			while (!stack.isEmpty()) {
-				elementInfo = schema.findElement((String) stack.pop());
+				elementInfo = schema.findElement(stack.pop());
 				schema = elementInfo.getSchema();
 			}
 		}
@@ -709,7 +709,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 			return null;
 		if (fEditorWizards == null)
 			loadExtensionWizards();
-		return (ArrayList<?>) fEditorWizards.get(pointId);
+		return fEditorWizards.get(pointId);
 	}
 
 	private void loadExtensionWizards() {
@@ -721,7 +721,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 				String pointId = element.getAttribute("point"); //$NON-NLS-1$
 				if (pointId == null)
 					continue;
-				ArrayList<IConfigurationElement> list = (ArrayList<IConfigurationElement>) fEditorWizards.get(pointId);
+				ArrayList<IConfigurationElement> list = fEditorWizards.get(pointId);
 				if (list == null) {
 					list = new ArrayList<IConfigurationElement>();
 					fEditorWizards.put(pointId, list);

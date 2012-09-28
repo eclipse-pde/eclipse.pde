@@ -37,7 +37,7 @@ public class FilteredIUSelectionDialog extends FilteredItemsSelectionDialog {
 
 	private Button fShowLatestVersionOnlyButton;
 	private boolean fShowLatestVersionOnly = true;
-	private final IQuery<?> query;
+	private final IQuery<IInstallableUnit> query;
 	private final ILabelProvider fLabelProvider = new IUWrapperLabelProvider();
 
 //	private static final String S_PLUGINS = "showPlugins"; //$NON-NLS-1$
@@ -111,7 +111,7 @@ public class FilteredIUSelectionDialog extends FilteredItemsSelectionDialog {
 		}
 	}
 
-	public FilteredIUSelectionDialog(Shell shell, IQuery<?> query) {
+	public FilteredIUSelectionDialog(Shell shell, IQuery<IInstallableUnit> query) {
 		super(shell, true);
 		this.query = query;
 		setTitle(PDEUIMessages.FilteredIUSelectionDialog_title);
@@ -202,18 +202,18 @@ public class FilteredIUSelectionDialog extends FilteredItemsSelectionDialog {
 			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, Messages.IUBundleContainer_2));
 
 		//URI[] knownRepositories = metadataManager.getKnownRepositories(IRepositoryManager.REPOSITORIES_ALL);
-		IQuery<?> pipedQuery;
+		IQuery<IInstallableUnit> pipedQuery;
 		if (fShowLatestVersionOnly)
 			pipedQuery = QueryUtil.createPipeQuery(query, QueryUtil.createLatestIUQuery());
 		else
 			pipedQuery = query;
 
-		Iterator<?> iter = manager.query(pipedQuery, progressMonitor).iterator();
+		Iterator<IInstallableUnit> iter = manager.query(pipedQuery, progressMonitor).iterator();
 		while (iter.hasNext()) {
-			IInstallableUnit iu = (IInstallableUnit) iter.next();
-			Iterator<?> pcIter = iu.getProvidedCapabilities().iterator();
+			IInstallableUnit iu = iter.next();
+			Iterator<IProvidedCapability> pcIter = iu.getProvidedCapabilities().iterator();
 			while (pcIter.hasNext()) {
-				IProvidedCapability pc = (IProvidedCapability) pcIter.next();
+				IProvidedCapability pc = pcIter.next();
 				if (pc.getNamespace().equals("java.package")) { //$NON-NLS-1$
 					IUPackage pkg = new IUPackage(pc.getName(), pc.getVersion(), iu);
 					contentProvider.add(pkg, itemsFilter);
@@ -240,7 +240,7 @@ public class FilteredIUSelectionDialog extends FilteredItemsSelectionDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#getItemsComparator()
 	 */
-	protected Comparator<?> getItemsComparator() {
+	protected Comparator<Object> getItemsComparator() {
 		return new Comparator<Object>() {
 			public int compare(Object o1, Object o2) {
 				String id1 = null;

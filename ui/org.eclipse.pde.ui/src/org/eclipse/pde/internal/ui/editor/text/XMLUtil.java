@@ -99,7 +99,7 @@ public abstract class XMLUtil {
 		}
 		ISchemaElement element = null;
 		while (!stack.isEmpty()) {
-			element = schema.findElement((String) stack.pop());
+			element = schema.findElement(stack.pop());
 			if (element == null)
 				return null;
 			schema = element.getSchema();
@@ -186,7 +186,7 @@ public abstract class XMLUtil {
 	public static int getCounterValue(ISchemaElement elementInfo) {
 		Hashtable<String, Integer> counters = PDEPlugin.getDefault().getDefaultNameCounters();
 		String counterKey = getCounterKey(elementInfo);
-		Integer counter = (Integer) counters.get(counterKey);
+		Integer counter = counters.get(counterKey);
 		if (counter == null) {
 			counter = new Integer(1);
 		} else

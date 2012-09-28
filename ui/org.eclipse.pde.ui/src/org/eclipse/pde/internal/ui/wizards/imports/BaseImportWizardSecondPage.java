@@ -179,7 +179,7 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 				}
 			}
 		}
-		return (IFragmentModel[]) result.toArray(new IFragmentModel[result.size()]);
+		return result.toArray(new IFragmentModel[result.size()]);
 	}
 
 	protected void addPluginAndDependencies(IPluginModelBase model, ArrayList<IPluginModelBase> selected, boolean addFragments) {
@@ -235,7 +235,7 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 		for (int i = 0; i < items.length; i++) {
 			result.add(items[i].getData());
 		}
-		return (IPluginModelBase[]) result.toArray(new IPluginModelBase[result.size()]);
+		return result.toArray(new IPluginModelBase[result.size()]);
 	}
 
 	public void storeSettings() {

@@ -76,7 +76,7 @@ public class EditBundleContainerWizard extends Wizard {
 					}
 				}
 				newContainers.add(newContainer);
-				fTarget.setTargetLocations((ITargetLocation[]) newContainers.toArray(new ITargetLocation[newContainers.size()]));
+				fTarget.setTargetLocations(newContainers.toArray(new ITargetLocation[newContainers.size()]));
 			}
 
 			return true;

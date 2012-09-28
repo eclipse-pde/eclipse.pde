@@ -403,7 +403,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 
 					entry = bmodel.getFactory().createEntry(PROPERTY_SOURCE_PREFIX + newPath);
 					for (int i = 0; i < tokens.size(); i++)
-						entry.addToken((String) tokens.get(i));
+						entry.addToken(tokens.get(i));
 					build.add(entry);
 				} else
 					entry.setName(PROPERTY_SOURCE_PREFIX + newPath);
@@ -567,7 +567,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 			if (toBeAdded.size() == entries.length)
 				return;
 
-			IClasspathEntry[] updated = (IClasspathEntry[]) toBeAdded.toArray(new IClasspathEntry[toBeAdded.size()]);
+			IClasspathEntry[] updated = toBeAdded.toArray(new IClasspathEntry[toBeAdded.size()]);
 			jproject.setRawClasspath(updated, null);
 		} catch (JavaModelException e) {
 		}

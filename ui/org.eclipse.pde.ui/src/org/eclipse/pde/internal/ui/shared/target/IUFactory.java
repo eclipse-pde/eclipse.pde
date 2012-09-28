@@ -92,7 +92,7 @@ public class IUFactory implements IAdapterFactory, ITargetLocationEditor, ITarge
 		// This method has to run synchronously, so we do the update ourselves instead of using UpdateTargetJob
 		if (targetLocation instanceof IUBundleContainer) {
 			try {
-				boolean result = ((IUBundleContainer) targetLocation).update(new HashSet<String>(0), monitor);
+				boolean result = ((IUBundleContainer) targetLocation).update(new HashSet<Object>(0), monitor);
 				if (result) {
 					return Status.OK_STATUS;
 				}

@@ -226,6 +226,7 @@ public class ArchiveSection extends PDESection {
 			if (selection != null && selection instanceof IStructuredSelection) {
 				IStructuredSelection ssel = (IStructuredSelection) selection;
 				if (ssel.size() > 0) {
+					@SuppressWarnings("unchecked")
 					ISiteArchive[] array = (ISiteArchive[]) ssel.toList().toArray(new ISiteArchive[ssel.size()]);
 					ISite site = ((ISiteModel) getPage().getModel()).getSite();
 					site.removeArchives(array);

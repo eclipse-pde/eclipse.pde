@@ -51,7 +51,7 @@ public class CommandList {
 		}
 
 		public Image getImage(Object element) {
-			Image img = (Image) fImgMap.get(element);
+			Image img = fImgMap.get(element);
 			if (img != null)
 				return img;
 
@@ -75,7 +75,7 @@ public class CommandList {
 
 		public void dispose() {
 			for (Iterator<Object> i = fImgMap.keySet().iterator(); i.hasNext();)
-				((Image) fImgMap.get(i.next())).dispose();
+				fImgMap.get(i.next()).dispose();
 			if (fDefaultImage != null)
 				fDefaultImage.dispose();
 			super.dispose();

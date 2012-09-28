@@ -37,18 +37,18 @@ public abstract class CommandCopyFilter {
 	public abstract String getToolTipText();
 
 	public static CommandCopyFilter[] getFilters() {
-		return (CommandCopyFilter[]) fFilters.toArray(new CommandCopyFilter[fFilters.size()]);
+		return fFilters.toArray(new CommandCopyFilter[fFilters.size()]);
 	}
 
 	public static CommandCopyFilter getFilter(int index) {
-		return (CommandCopyFilter) fFilters.get(index);
+		return fFilters.get(index);
 	}
 
 	public static int indexOf(CommandCopyFilter filter) {
 
 		int index = 0;
 		for (Iterator<CommandCopyFilter> i = fFilters.iterator(); i.hasNext();) {
-			CommandCopyFilter f = (CommandCopyFilter) i.next();
+			CommandCopyFilter f = i.next();
 			if (f == filter)
 				return index;
 			index++;

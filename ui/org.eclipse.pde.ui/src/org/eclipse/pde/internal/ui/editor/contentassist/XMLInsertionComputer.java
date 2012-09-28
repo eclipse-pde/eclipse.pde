@@ -11,8 +11,6 @@
 
 package org.eclipse.pde.internal.ui.editor.contentassist;
 
-import org.eclipse.pde.internal.core.ischema.ISchemaObject;
-
 import java.util.HashSet;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -193,6 +191,7 @@ public class XMLInsertionComputer {
 			// Update Model
 			IPluginElement childElement = createElement(pElement, schemaElement);
 			// Track visited
+			@SuppressWarnings("unchecked")
 			HashSet<String> newSet = (HashSet<String>) visited.clone();
 			if (newSet.add(schemaElement.getName())) {
 				computeInsertionType(schemaElement, childElement, newSet);

@@ -53,7 +53,7 @@ public class MultiFixResolution extends WorkbenchMarkerResolution {
 		} catch (CoreException e) {
 		}
 		problemViewQuickFix = true;
-		return (IMarker[]) relatedMarkers.toArray(new IMarker[relatedMarkers.size()]);
+		return relatedMarkers.toArray(new IMarker[relatedMarkers.size()]);
 	}
 
 	public String getDescription() {

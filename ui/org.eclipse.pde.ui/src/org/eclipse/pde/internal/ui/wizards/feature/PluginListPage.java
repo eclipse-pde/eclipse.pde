@@ -155,7 +155,7 @@ public class PluginListPage extends BasePluginListPage {
 			}
 		} catch (CoreException e) {
 		}
-		return (String[]) launcherNames.toArray(new String[launcherNames.size()]);
+		return launcherNames.toArray(new String[launcherNames.size()]);
 	}
 
 	public ILaunchConfiguration getSelectedLaunchConfiguration() {

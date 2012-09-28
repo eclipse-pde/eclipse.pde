@@ -45,7 +45,7 @@ public class JUnitProgramBlock extends ProgramBlock {
 		for (int i = 0; i < appNames.length; i++) {
 			result.add(appNames[i]);
 		}
-		return (String[]) result.toArray(new String[result.size()]);
+		return result.toArray(new String[result.size()]);
 	}
 
 	/* (non-Javadoc)

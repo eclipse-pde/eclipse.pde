@@ -471,7 +471,7 @@ public class RequiresSection extends TableSection implements IModelChangedListen
 
 		if (!existingImports.contains("system.bundle")) //$NON-NLS-1$
 			addSystemBundle(result);
-		return (IPluginModelBase[]) result.toArray(new IPluginModelBase[result.size()]);
+		return result.toArray(new IPluginModelBase[result.size()]);
 	}
 
 	private void addSystemBundle(java.util.List<IPluginModelBase> list) {
@@ -639,7 +639,7 @@ public class RequiresSection extends TableSection implements IModelChangedListen
 		if (fImports == null)
 			return null;
 		for (int i = 0; i < fImports.size(); i++) {
-			ImportObject iobj = (ImportObject) fImports.get(i);
+			ImportObject iobj = fImports.get(i);
 			if (iobj.getImport().equals(iimport))
 				return iobj;
 		}

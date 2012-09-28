@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.search;
 
-import org.eclipse.pde.core.plugin.IPluginObject;
-
 import java.util.*;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.pde.core.plugin.*;
@@ -71,11 +69,11 @@ public class ExtensionsPatternFilter extends PatternFilter {
 	}
 
 	protected boolean doIsLeafMatch(IPluginElement pluginElement) {
-		List<?> syntheticAttributes = ExtensionsFilterUtil.handlePropertyTester(pluginElement);
+		List<String> syntheticAttributes = ExtensionsFilterUtil.handlePropertyTester(pluginElement);
 		if (fSearchPatterns != null && fSearchPatterns.size() > 0) {
 			int attributeNumber = 0;
 			for (Iterator<String> iterator = fSearchPatterns.iterator(); iterator.hasNext();) {
-				String searchPattern = (String) iterator.next();
+				String searchPattern = iterator.next();
 				if (attributeNumber < fSearchPatterns.size() && attributeNumber < ATTRIBUTE_LIMIT) {
 					boolean quoted = isQuoted(searchPattern);
 					if (searchPattern != null && searchPattern.length() > 0) {
@@ -126,7 +124,7 @@ public class ExtensionsPatternFilter extends PatternFilter {
 
 	protected boolean matchWithAttributes(IPluginElement pluginElement, String searchPattern, String attributeName, List<String> attributeList, boolean quoted) {
 		for (int k = 0; k < attributeList.size(); k++) {
-			String attributeValue = (String) attributeList.get(k);
+			String attributeValue = attributeList.get(k);
 			if (attributeValue != null && attributeValue.length() > 0) {
 				if (!attributeValue.startsWith("%") || quoted) { //$NON-NLS-1$
 					int delimiterPosition = attributeValue.indexOf('?'); // strip right of '?'

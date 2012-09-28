@@ -170,8 +170,8 @@ public class ConvertProjectToPluginOperation extends WorkspaceModifyOperation {
 					libraries.add("."); //$NON-NLS-1$
 			}
 		}
-		fSrcEntries = (String[]) sources.toArray(new String[sources.size()]);
-		fLibEntries = (String[]) libraries.toArray(new String[libraries.size()]);
+		fSrcEntries = sources.toArray(new String[sources.size()]);
+		fLibEntries = libraries.toArray(new String[libraries.size()]);
 
 		IClasspathEntry[] classPath = new IClasspathEntry[currentClassPath.length + 1];
 		System.arraycopy(currentClassPath, 0, classPath, 0, currentClassPath.length);

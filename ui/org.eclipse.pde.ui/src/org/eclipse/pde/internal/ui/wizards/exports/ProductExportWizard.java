@@ -100,7 +100,7 @@ public class ProductExportWizard extends BaseExportWizard {
 			if (model != null)
 				list.add(model);
 		}
-		return (IFeatureModel[]) list.toArray(new IFeatureModel[list.size()]);
+		return list.toArray(new IFeatureModel[list.size()]);
 	}
 
 	private BundleDescription[] getPluginModels() {
@@ -119,7 +119,7 @@ public class ProductExportWizard extends BaseExportWizard {
 			if (bundle != null)
 				list.add(bundle);
 		}
-		return (BundleDescription[]) list.toArray(new BundleDescription[list.size()]);
+		return list.toArray(new BundleDescription[list.size()]);
 	}
 
 	protected boolean performPreliminaryChecks() {

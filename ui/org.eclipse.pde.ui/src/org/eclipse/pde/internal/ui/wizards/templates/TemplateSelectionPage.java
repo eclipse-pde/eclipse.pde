@@ -187,7 +187,7 @@ public class TemplateSelectionPage extends WizardPage {
 			}
 		}
 		if (fVisiblePages.size() > 0)
-			return (IWizardPage) fVisiblePages.get(0);
+			return fVisiblePages.get(0);
 
 		return null;
 	}
@@ -197,7 +197,7 @@ public class TemplateSelectionPage extends WizardPage {
 			return page.getNextPage();
 		int index = fVisiblePages.indexOf(page);
 		if (index >= 0 && index < fVisiblePages.size() - 1)
-			return (IWizardPage) fVisiblePages.get(index + 1);
+			return fVisiblePages.get(index + 1);
 		return null;
 	}
 

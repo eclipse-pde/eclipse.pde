@@ -281,7 +281,7 @@ public class RuntimeInfoSection extends PDESection implements IModelChangedListe
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
 		}
-		return (IPackageFragmentRoot[]) folders.toArray(new IPackageFragmentRoot[folders.size()]);
+		return folders.toArray(new IPackageFragmentRoot[folders.size()]);
 	}
 
 	public void createClient(Section section, FormToolkit toolkit) {

@@ -94,7 +94,7 @@ public class ImportActionGroup extends ActionGroup {
 		Display display = Display.getCurrent();
 		if (display == null)
 			display = Display.getDefault();
-		IPluginModelBase[] models = (IPluginModelBase[]) externalModels.toArray(new IPluginModelBase[externalModels.size()]);
+		IPluginModelBase[] models = externalModels.toArray(new IPluginModelBase[externalModels.size()]);
 		if (importType == PluginImportOperation.IMPORT_FROM_REPOSITORY) {
 			Map<?, ?> importMap = getImportDescriptions(display.getActiveShell(), models);
 			if (importMap != null) {
