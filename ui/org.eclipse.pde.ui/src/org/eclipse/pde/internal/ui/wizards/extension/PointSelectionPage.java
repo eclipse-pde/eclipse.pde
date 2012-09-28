@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.extension;
 
-import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
-
 import java.net.URL;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -483,7 +481,7 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 		ISelection selection = event.getSelection();
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection ssel = (IStructuredSelection) selection;
-			if (ssel != null && !ssel.isEmpty()) {
+			if (!ssel.isEmpty()) {
 				Object element = ssel.getFirstElement();
 				if (element instanceof WizardElement)
 					handleTemplateSelection((WizardElement) element);

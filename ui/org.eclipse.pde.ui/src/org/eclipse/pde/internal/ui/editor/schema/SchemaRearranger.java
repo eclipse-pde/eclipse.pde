@@ -23,9 +23,13 @@ public class SchemaRearranger {
 	}
 
 	public void moveCompositor(ISchemaObject newParent, ISchemaCompositor compositor) {
-		ISchemaObject oldParent = compositor.getParent();
-		if (!(newParent != null && compositor != null && !newParent.equals(oldParent) && !newParent.equals(compositor)))
+		if (newParent == null || compositor == null || newParent.equals(compositor)) {
 			return;
+		}
+		ISchemaObject oldParent = compositor.getParent();
+		if (newParent.equals(oldParent)) {
+			return;
+		}
 		if (newParent instanceof SchemaElement) {
 			SchemaElement element = (SchemaElement) newParent;
 			SchemaComplexType type = null;
@@ -55,9 +59,13 @@ public class SchemaRearranger {
 	}
 
 	public void moveReference(SchemaElementReference reference, ISchemaCompositor compositor, ISchemaObject sibling) {
-		ISchemaCompositor oldCompositor = reference.getCompositor();
-		if (!(compositor != null && reference != null && oldCompositor != null))
+		if (compositor == null || reference == null) {
 			return;
+		}
+		ISchemaCompositor oldCompositor = reference.getCompositor();
+		if (oldCompositor == null) {
+			return;
+		}
 		if (compositor instanceof SchemaCompositor) {
 			if (compositor.equals(oldCompositor)) {
 				((SchemaCompositor) compositor).moveChildToSibling(reference, sibling);
@@ -80,9 +88,13 @@ public class SchemaRearranger {
 	}
 
 	public void moveAttribute(ISchemaElement newParent, ISchemaAttribute attribute, ISchemaAttribute sibling) {
-		ISchemaObject oldParent = attribute.getParent();
-		if (!(attribute != null && newParent != null && oldParent != null))
+		if (attribute == null || newParent == null) {
 			return;
+		}
+		ISchemaObject oldParent = attribute.getParent();
+		if (oldParent == null) {
+			return;
+		}
 		SchemaComplexType type = null;
 		if (newParent.getType() instanceof SchemaComplexType) {
 			type = (SchemaComplexType) newParent.getType();

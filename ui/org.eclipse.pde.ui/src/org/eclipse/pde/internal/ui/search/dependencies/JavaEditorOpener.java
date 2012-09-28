@@ -46,7 +46,7 @@ public class JavaEditorOpener {
 		return editor;
 	}
 
-	private static void showWithMarker(IEditorPart editor, IFile file, int offset, int length) throws PartInitException {
+	private static void showWithMarker(IEditorPart editor, IFile file, int offset, int length) {
 		try {
 			IMarker marker = file.createMarker(NewSearchUI.SEARCH_MARKER);
 			HashMap<String, Integer> attributes = new HashMap<String, Integer>(4);

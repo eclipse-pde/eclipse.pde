@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
-import org.eclipse.pde.core.plugin.IPluginReference;
-
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import org.eclipse.core.resources.*;
@@ -132,6 +130,7 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		}
 	}
 
+	@SuppressWarnings("unused")
 	protected void createContents(IProgressMonitor monitor, IProject project) throws CoreException, JavaModelException, InvocationTargetException, InterruptedException {
 	}
 

@@ -80,7 +80,7 @@ public class ExtensionAttributePointDectector implements MouseListener, KeyListe
 		Region selectionRegion = new Region(selectionPoint.x, selectionPoint.y - selectionPoint.x);
 		// Determine whether the region selected is the point attribute of
 		// and extension
-		if ((selectionRegion == null) || (fSourcePage == null)) {
+		if (fSourcePage == null) {
 			return;
 		}
 		// Retrieve the document range corresponding to the selection region

@@ -43,7 +43,7 @@ public class RenamePluginProcessor extends RefactoringProcessor {
 			IProject newProject = ResourcesPlugin.getWorkspace().getRoot().getProject(newName);
 			// if destination exists and it is not the same project we are currently trying to rename, show error message
 			if (newProject.exists() && !(res.getProject().equals(newProject)))
-				status.addFatalError(MessageFormat.format(PDEUIMessages.RenameProjectChange_destinationExists, new String[] {newName}));
+				status.addFatalError(MessageFormat.format(PDEUIMessages.RenameProjectChange_destinationExists, new Object[] {newName}));
 		}
 		return status;
 	}
@@ -93,7 +93,7 @@ public class RenamePluginProcessor extends RefactoringProcessor {
 	}
 
 	public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
-		CompositeChange change = new CompositeChange(MessageFormat.format(PDEUIMessages.RenamePluginProcessor_changeTitle, new String[] {fInfo.getCurrentValue(), fInfo.getNewValue()}));
+		CompositeChange change = new CompositeChange(MessageFormat.format(PDEUIMessages.RenamePluginProcessor_changeTitle, new Object[] {fInfo.getCurrentValue(), fInfo.getNewValue()}));
 		pm.beginTask("", getTotalWork()); //$NON-NLS-1$
 		// update manifest with new Id
 		CreateHeaderChangeOperation op = new CreateHeaderChangeOperation(fInfo.getBase(), Constants.BUNDLE_SYMBOLICNAME, fInfo.getCurrentValue(), fInfo.getNewValue());
@@ -124,7 +124,7 @@ public class RenamePluginProcessor extends RefactoringProcessor {
 		// if project's name is already the same as the destination, then we don't have to do anything to rename project
 		if (project.getName().equals(newName))
 			return null;
-		descriptor.setDescription(MessageFormat.format(PDEUIMessages.RenamePluginProcessor_renameProjectDesc, new String[] {project.getName(), newName}));
+		descriptor.setDescription(MessageFormat.format(PDEUIMessages.RenamePluginProcessor_renameProjectDesc, new Object[] {project.getName(), newName}));
 		descriptor.setComment(""); //$NON-NLS-1$
 		descriptor.setFlags(RefactoringDescriptor.STRUCTURAL_CHANGE | RefactoringDescriptor.MULTI_CHANGE | RefactoringDescriptor.BREAKING_CHANGE);
 		descriptor.setResourcePath(project.getFullPath());

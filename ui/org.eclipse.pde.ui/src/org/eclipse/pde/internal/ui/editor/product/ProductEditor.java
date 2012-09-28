@@ -78,17 +78,15 @@ public class ProductEditor extends PDELauncherFormEditor {
 	 */
 	protected void createSystemFileContexts(InputContextManager manager, FileStoreEditorInput input) {
 		File file = new File(input.getURI());
-		if (file != null) {
-			String name = file.getName();
-			if (name.endsWith(".product")) { //$NON-NLS-1$
-				IFileStore store;
-				try {
-					store = EFS.getStore(file.toURI());
-					IEditorInput in = new FileStoreEditorInput(store);
-					manager.putContext(in, new ProductInputContext(this, in, true));
-				} catch (CoreException e) {
-					PDEPlugin.logException(e);
-				}
+		String name = file.getName();
+		if (name.endsWith(".product")) { //$NON-NLS-1$
+			IFileStore store;
+			try {
+				store = EFS.getStore(file.toURI());
+				IEditorInput in = new FileStoreEditorInput(store);
+				manager.putContext(in, new ProductInputContext(this, in, true));
+			} catch (CoreException e) {
+				PDEPlugin.logException(e);
 			}
 		}
 	}

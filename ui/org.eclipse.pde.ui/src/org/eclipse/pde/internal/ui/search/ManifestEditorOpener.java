@@ -21,7 +21,6 @@ import org.eclipse.pde.internal.ui.editor.plugin.*;
 import org.eclipse.search.ui.text.Match;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.IFormPage;
@@ -30,7 +29,7 @@ import org.osgi.framework.Constants;
 // TODO this needs a rewrite
 public class ManifestEditorOpener {
 
-	public static IEditorPart open(Match match, boolean activate) throws PartInitException {
+	public static IEditorPart open(Match match, boolean activate) {
 		IEditorPart editorPart = null;
 		editorPart = ManifestEditor.open(match.getElement(), true);
 		if (editorPart != null && editorPart instanceof ManifestEditor) {

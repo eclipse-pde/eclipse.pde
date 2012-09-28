@@ -480,7 +480,7 @@ public class ExternalizeStringsWizardPage extends UserInputWizardPage {
 		String error = null;
 		String oldKey = (fPreErrorKey != null) ? fPreErrorKey : element.getKey();
 		if (key.equals(fPreErrorKey)) {
-			error = null;
+//			error = null;
 		} else if (key.trim().length() < 1) {
 			error = getErrorMessage(PDEUIMessages.ExternalizeStringsWizardPage_keyEmptyError, oldKey);
 		} else if (key.charAt(0) == '#' || key.charAt(0) == '!' || key.charAt(0) == '%') {

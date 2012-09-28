@@ -125,8 +125,8 @@ public class QuickFixProcessor implements IQuickFixProcessor {
 	 */
 	private void handleAccessRestrictionByImportPackage(IProject currentProject, ExportPackageDescription desc, Collection<Object> results) {
 		BundleDescription supplier = desc.getSupplier();
-		String supplierId = supplier.getSymbolicName();
 		if (supplier != null) {
+			String supplierId = supplier.getSymbolicName();
 			IPluginModelBase base = PluginRegistry.findModel(currentProject);
 			BundleDescription bd = base.getBundleDescription();
 			BundleSpecification[] imports = bd.getRequiredBundles();

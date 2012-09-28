@@ -44,7 +44,7 @@ public class RenameExtensionPointProcessor extends RefactoringProcessor {
 	}
 
 	public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
-		CompositeChange change = new CompositeChange(MessageFormat.format(PDEUIMessages.RenameExtensionPointProcessor_changeTitle, new String[] {fInfo.getCurrentValue(), fInfo.getNewValue()}));
+		CompositeChange change = new CompositeChange(MessageFormat.format(PDEUIMessages.RenameExtensionPointProcessor_changeTitle, new Object[] {fInfo.getCurrentValue(), fInfo.getNewValue()}));
 		pm.beginTask("", 2); //$NON-NLS-1$
 		changeExtensionPoint(change, new SubProgressMonitor(pm, 1));
 		if (fInfo.isUpdateReferences())

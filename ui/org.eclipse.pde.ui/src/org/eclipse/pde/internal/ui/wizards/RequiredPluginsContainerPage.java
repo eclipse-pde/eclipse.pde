@@ -177,8 +177,7 @@ public class RequiredPluginsContainerPage extends WizardPage implements IClasspa
 			IPluginModelBase model = PluginRegistry.findModel(javaProject.getProject());
 			if (model != null) {
 				IClasspathContainer container = new RequiredPluginsClasspathContainer(model);
-				if (container != null)
-					realEntries = container.getClasspathEntries();
+				realEntries = container.getClasspathEntries();
 			}
 		} else {
 			try {

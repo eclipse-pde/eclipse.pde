@@ -10,10 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.shared.target;
 
-import org.eclipse.core.runtime.IStatus;
-
-import org.eclipse.pde.core.target.ITargetLocation;
-
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +17,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.core.target.ITargetLocation;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.feature.ExternalFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
@@ -157,7 +154,7 @@ public class AddFeatureContainersPage extends EditDirectoryContainerPage {
 				File location = new File(locationString);
 
 				// check if the directory exists
-				if (location == null || !location.isDirectory()) {
+				if (!location.isDirectory()) {
 					fFeatureTable.setInput(new String[] {Messages.AddFeatureContainerPage_4});
 					setErrorMessage(Messages.AddDirectoryContainerPage_6);
 				} else {

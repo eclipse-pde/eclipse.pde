@@ -84,9 +84,8 @@ public class PDESelectAnnotationRulerAction extends SelectMarkerRulerAction {
 				continue;
 
 			int annotationLayer = annotationAccess.getLayer(annotation);
-			if (annotationAccess != null)
-				if (annotationLayer < layer)
-					continue;
+			if (annotationLayer < layer)
+				continue;
 
 			Position position = model.getPosition(annotation);
 			if (!includesRulerLine(position, document))

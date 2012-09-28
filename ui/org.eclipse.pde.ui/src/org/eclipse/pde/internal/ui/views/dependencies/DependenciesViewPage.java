@@ -168,13 +168,13 @@ public abstract class DependenciesViewPage extends Page {
 					input = ((IPluginBase) input).getModel();
 				if (input instanceof IPluginModelBase) {
 					IPluginModelBase base = (IPluginModelBase) input;
-					IResource res = (base == null) ? null : base.getUnderlyingResource();
+					IResource res = base.getUnderlyingResource();
 					if (res != null)
 						manager.add(new DependencyExtentAction(res.getProject(), id));
 				}
 			}
 		}
-		// Unused Dependencies Action, only for worskpace plug-ins
+		// Unused Dependencies Action, only for workspace plug-ins
 		ISharedPluginModel model = null;
 		if (selectionElement instanceof BundleSpecification) {
 			model = PluginRegistry.findModel(((BundleSpecification) selectionElement).getName());

@@ -160,7 +160,7 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 	private String getProduct(String appName) {
 		if (appName == null)
 			return TargetPlatform.getDefaultProduct();
-		if (fModel != null && appName != null) {
+		if (fModel != null) {
 			IPluginExtension[] extensions = fModel.getPluginBase().getExtensions();
 			for (int i = 0; i < extensions.length; i++) {
 				IPluginExtension ext = extensions[i];

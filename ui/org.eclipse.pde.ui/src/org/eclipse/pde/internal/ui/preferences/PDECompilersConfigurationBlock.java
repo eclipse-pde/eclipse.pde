@@ -11,9 +11,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.preferences;
 
-import java.util.HashSet;
-import org.eclipse.swt.widgets.Control;
-
 import com.ibm.icu.text.MessageFormat;
 import java.util.*;
 import java.util.List;
@@ -770,7 +767,7 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 						fManager.applyChanges();
 						String message = PDEUIMessages.PDECompilersConfigurationBlock_settings_changed_all;
 						if (fProject != null) {
-							message = MessageFormat.format(PDEUIMessages.PDECompilersConfigurationBlock_setting_changed_project, new String[] {fProject.getName()});
+							message = MessageFormat.format(PDEUIMessages.PDECompilersConfigurationBlock_setting_changed_project, new Object[] {fProject.getName()});
 						}
 						if (MessageDialog.openQuestion(fParent.getShell(), PDEUIMessages.PDECompilersConfigurationBlock_settings_changed, message)) {
 							doFullBuild();

@@ -70,7 +70,7 @@ public class RuntimeInfoSection extends PDESection implements IModelChangedListe
 			Object item = selection.getFirstElement();
 			if (item instanceof IBuildEntry) {
 				update((IBuildEntry) item);
-			} else if (selection == null || selection.isEmpty())
+			} else if (selection.isEmpty())
 				update(null);
 			updateDirectionalButtons();
 		}

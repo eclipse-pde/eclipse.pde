@@ -11,10 +11,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
 
-import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
-import org.eclipse.pde.internal.core.iproduct.IPluginConfiguration;
-
 import java.io.File;
 import java.util.*;
 import org.eclipse.core.resources.IResource;
@@ -238,7 +234,7 @@ public class LaunchAction extends Action {
 			String path = info.getPath(os);
 			if (path == null) // if we can't find an os path, let's try the normal one
 				path = info.getPath(null);
-			if (info != null && path != null) {
+			if (path != null) {
 				String expandedPath = getExpandedPath(path);
 				if (expandedPath != null) {
 					File file = new File(expandedPath);

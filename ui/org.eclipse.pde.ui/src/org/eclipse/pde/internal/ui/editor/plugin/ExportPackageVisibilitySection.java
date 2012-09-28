@@ -60,9 +60,9 @@ public class ExportPackageVisibilitySection extends TableSection implements IPar
 	class TableContentProvider extends DefaultContentProvider implements IStructuredContentProvider {
 		public Object[] getElements(Object parent) {
 			ExportPackageObject object = (ExportPackageObject) parent;
-			if (!object.isInternal())
+			if (object == null || !object.isInternal())
 				return new Object[0];
-			return (object != null) ? object.getFriends() : new Object[0];
+			return object.getFriends();
 		}
 	}
 

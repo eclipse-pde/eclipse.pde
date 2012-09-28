@@ -66,7 +66,7 @@ public class FeatureInputContext extends XMLInputContext {
 		return null;
 	}
 
-	private IBaseModel createResourceModel(IFileEditorInput input) throws CoreException {
+	private IBaseModel createResourceModel(IFileEditorInput input) {
 		IFile file = input.getFile();
 		WorkspaceFeatureModel model = new WorkspaceFeatureModel(file);
 		model.load();

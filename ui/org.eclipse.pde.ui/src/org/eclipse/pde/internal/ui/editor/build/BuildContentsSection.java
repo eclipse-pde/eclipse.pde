@@ -11,8 +11,6 @@
 
 package org.eclipse.pde.internal.ui.editor.build;
 
-import org.eclipse.core.resources.IResource;
-
 import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -349,7 +347,7 @@ public abstract class BuildContentsSection extends TableSection implements IMode
 			resPath = resPath.removeLastSegments(1);
 			if (includes.contains(resPath.toString() + IPath.SEPARATOR))
 				return false;
-			else if (excludes != null && excludes.contains(resPath.toString() + IPath.SEPARATOR))
+			else if (excludes.contains(resPath.toString() + IPath.SEPARATOR))
 				return true;
 		}
 		return !excludes.contains(resourceName);

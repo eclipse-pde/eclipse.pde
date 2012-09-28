@@ -793,7 +793,7 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 		String textVersion = null;
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection ssel = (IStructuredSelection) selection;
-			if (ssel == null || ssel.size() == 0)
+			if (ssel.size() == 0)
 				return;
 			objects = ssel.toArray();
 			StringWriter writer = new StringWriter();

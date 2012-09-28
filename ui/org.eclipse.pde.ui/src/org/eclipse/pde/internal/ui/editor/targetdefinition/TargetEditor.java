@@ -10,10 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.targetdefinition;
 
-import org.eclipse.ui.forms.IManagedForm;
-
-import org.eclipse.pde.core.target.*;
-
 import java.io.File;
 import java.util.*;
 import java.util.List;
@@ -27,6 +23,7 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.target.WorkspaceFileTargetHandle;
 import org.eclipse.pde.internal.ui.*;
@@ -122,16 +119,14 @@ public class TargetEditor extends FormEditor {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IFile file = workspace.getRoot().getFile(path);
 
-		if (target != null) {
-			if (workspace.validateEdit(new IFile[] {file}, getSite().getShell()).isOK()) {
-				try {
-					WorkspaceFileTargetHandle newFileTarget = new WorkspaceFileTargetHandle(file);
-					newFileTarget.save(target);
-					setInput(new FileEditorInput(file));
-				} catch (CoreException e) {
-					PDEPlugin.log(e);
-					showError(PDEUIMessages.TargetEditor_3, e);
-				}
+		if (workspace.validateEdit(new IFile[] {file}, getSite().getShell()).isOK()) {
+			try {
+				WorkspaceFileTargetHandle newFileTarget = new WorkspaceFileTargetHandle(file);
+				newFileTarget.save(target);
+				setInput(new FileEditorInput(file));
+			} catch (CoreException e) {
+				PDEPlugin.log(e);
+				showError(PDEUIMessages.TargetEditor_3, e);
 			}
 		}
 	}

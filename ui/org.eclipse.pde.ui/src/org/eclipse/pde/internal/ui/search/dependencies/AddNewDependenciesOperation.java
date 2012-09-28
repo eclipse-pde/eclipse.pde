@@ -10,10 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.search.dependencies;
 
-import org.eclipse.osgi.service.resolver.BaseDescription;
-import org.eclipse.osgi.service.resolver.ExportPackageDescription;
-import org.eclipse.pde.core.plugin.IPluginBase;
-
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
@@ -121,8 +117,7 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 		IFile buildProps = PDEProject.getBuildProperties(fProject);
 		if (buildProps != null) {
 			WorkspaceBuildModel model = new WorkspaceBuildModel(buildProps);
-			if (model != null)
-				return model.getBuild();
+			return model.getBuild();
 		}
 		return null;
 	}

@@ -61,12 +61,10 @@ public class PluginsContentProvider extends DefaultContentProvider implements IT
 		}
 		if (parentElement instanceof IPluginModelBase) {
 			IPluginModelBase model = (IPluginModelBase) parentElement;
-			if (model != null) {
-				File file = new File(model.getInstallLocation());
-				if (!file.isFile()) {
-					FileAdapter adapter = new ModelFileAdapter(model, file, PDECore.getDefault().getSearchablePluginsManager());
-					return adapter.getChildren();
-				}
+			File file = new File(model.getInstallLocation());
+			if (!file.isFile()) {
+				FileAdapter adapter = new ModelFileAdapter(model, file, PDECore.getDefault().getSearchablePluginsManager());
+				return adapter.getChildren();
 			}
 		}
 

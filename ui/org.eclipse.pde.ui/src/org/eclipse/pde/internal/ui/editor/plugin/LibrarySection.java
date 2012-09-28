@@ -407,7 +407,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 					build.add(entry);
 				} else
 					entry.setName(PROPERTY_SOURCE_PREFIX + newPath);
-			} else if (entry != null && newPath == null)
+			} else if (entry != null)
 				build.remove(entry);
 		} catch (JavaModelException e) {
 		}

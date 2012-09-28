@@ -73,7 +73,7 @@ public class FeatureOptionsTab extends ExportOptionsTab {
 		protected IStatus validateItem(Object item) {
 			if (item instanceof IResource) {
 				IResource resource = (IResource) item;
-				if (resource != null && resource instanceof IFile) {
+				if (resource instanceof IFile) {
 					try {
 						IFile file = (IFile) resource;
 						IContentDescription description = file.getContentDescription();
