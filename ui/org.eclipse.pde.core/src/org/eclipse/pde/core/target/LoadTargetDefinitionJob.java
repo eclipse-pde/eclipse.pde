@@ -283,7 +283,6 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 		}
 		monitor.worked(10);
 		List<String> additional = getAdditionalLocs();
-		handleReload(path, additional, pref, new SubProgressMonitor(monitor, 85));
 
 		// update preferences (Note: some preferences updated in handleReload())
 		pref.setValue(ICoreConstants.PLATFORM_PATH, path);
@@ -307,6 +306,8 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 			else
 				break;
 		}
+
+		handleReload(path, additional, pref, new SubProgressMonitor(monitor, 85));
 		monitor.done();
 	}
 
