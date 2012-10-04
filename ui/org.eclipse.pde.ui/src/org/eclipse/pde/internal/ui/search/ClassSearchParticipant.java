@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -110,7 +110,7 @@ public class ClassSearchParticipant implements IQueryParticipant {
 		return false;
 	}
 
-	private void searchProject(IProject project, IProgressMonitor monitor) throws CoreException {
+	private void searchProject(IProject project, IProgressMonitor monitor) {
 		ModelModification mod = new ModelModification(project) {
 			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
 				if (model instanceof IBundlePluginModelBase) {
@@ -218,11 +218,7 @@ public class ClassSearchParticipant implements IQueryParticipant {
 						if (matcher.matches()) {
 							String group = matcher.group(0);
 							int[] offlen;
-							try {
-								offlen = getOffsetOfElement(bundle, header, group);
-							} catch (CoreException e) {
-								offlen = new int[] {header.getOffset(), header.getLength()};
-							}
+							offlen = getOffsetOfElement(bundle, header, group);
 							fSearchRequestor.reportMatch(new Match(bundle.getModel().getUnderlyingResource(), Match.UNIT_CHARACTER, offlen[0], offlen[1]));
 							break; // only one package will be listed per header
 						}
@@ -237,7 +233,7 @@ public class ClassSearchParticipant implements IQueryParticipant {
 		return fSearchPattern.matcher(value.subSequence(0, value.length()));
 	}
 
-	private int[] getOffsetOfElement(IBundle bundle, IManifestHeader header, String value) throws CoreException {
+	private int[] getOffsetOfElement(IBundle bundle, IManifestHeader header, String value) {
 		int[] offlen = new int[] {0, 0};
 		IBundleModel model = bundle.getModel();
 		if (model instanceof IEditingModel) {
