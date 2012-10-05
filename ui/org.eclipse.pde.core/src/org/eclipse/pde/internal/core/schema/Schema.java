@@ -31,11 +31,11 @@ public class Schema extends PlatformObject implements ISchema {
 
 	private ListenerList fListeners = new ListenerList();
 
-	private ArrayList<ISchemaElement> fElements = new ArrayList<ISchemaElement>();
+	private Vector<ISchemaElement> fElements = new Vector<ISchemaElement>();
 
-	private ArrayList<DocumentSection> fDocSections = new ArrayList<DocumentSection>();
+	private Vector<DocumentSection> fDocSections = new Vector<DocumentSection>();
 
-	private ArrayList<ISchemaInclude> fIncludes;
+	private Vector<ISchemaInclude> fIncludes;
 
 	private String fPointID;
 
@@ -100,7 +100,7 @@ public class Schema extends PlatformObject implements ISchema {
 
 	public void addInclude(ISchemaInclude include) {
 		if (fIncludes == null)
-			fIncludes = new ArrayList<ISchemaInclude>();
+			fIncludes = new Vector<ISchemaInclude>();
 		fIncludes.add(include);
 		fireModelChanged(new ModelChangedEvent(this, IModelChangedEvent.INSERT, new Object[] {include}, null));
 	}
@@ -246,13 +246,14 @@ public class Schema extends PlatformObject implements ISchema {
 		return names;
 	}
 
+	@SuppressWarnings("unchecked")
 	public ISchemaElement[] getResolvedElements() {
 		if (fIncludes == null)
 			return getElements();
 		if (!isLoaded())
 			load();
-		@SuppressWarnings("unchecked")
-		ArrayList<ISchemaElement> result = (ArrayList<ISchemaElement>) fElements.clone();
+		@SuppressWarnings("rawtypes")
+		Vector result = (Vector) fElements.clone();
 		for (int i = 0; i < fIncludes.size(); i++) {
 			ISchemaInclude include = fIncludes.get(i);
 			ISchema schema = include.getIncludedSchema();
@@ -262,7 +263,7 @@ public class Schema extends PlatformObject implements ISchema {
 			for (int j = 0; j < ielements.length; j++)
 				result.add(ielements[j]);
 		}
-		return result.toArray(new ISchemaElement[result.size()]);
+		return (ISchemaElement[]) result.toArray(new ISchemaElement[result.size()]);
 	}
 
 	public ISchemaInclude[] getIncludes() {
@@ -464,7 +465,7 @@ public class Schema extends PlatformObject implements ISchema {
 			return new SchemaSimpleType(attribute.getSchema(), "string"); //$NON-NLS-1$
 		}
 		SchemaSimpleType type = new SchemaSimpleType(attribute.getSchema(), baseName);
-		List<ISchemaEnumeration> items = new ArrayList<ISchemaEnumeration>();
+		Vector<ISchemaEnumeration> items = new Vector<ISchemaEnumeration>();
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
@@ -753,7 +754,7 @@ public class Schema extends PlatformObject implements ISchema {
 		String location = getAttribute(node, "schemaLocation"); //$NON-NLS-1$
 		SchemaInclude include = new SchemaInclude(this, location, fAbbreviated);
 		if (fIncludes == null)
-			fIncludes = new ArrayList<ISchemaInclude>();
+			fIncludes = new Vector<ISchemaInclude>();
 		fIncludes.add(include);
 	}
 
@@ -813,8 +814,8 @@ public class Schema extends PlatformObject implements ISchema {
 	}
 
 	private void reset() {
-		fElements = new ArrayList<ISchemaElement>();
-		fDocSections = new ArrayList<DocumentSection>();
+		fElements = new Vector<ISchemaElement>();
+		fDocSections = new Vector<DocumentSection>();
 		fIncludes = null;
 		fPointID = null;
 		fPluginID = null;
