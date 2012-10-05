@@ -396,6 +396,38 @@ public class PDEUIMessages extends NLS {
 
 	public static String FormatManifestOperation_task;
 
+	public static String ImageBrowserView_FilterAllImages;
+
+	public static String ImageBrowserView_FilterDisabled;
+
+	public static String ImageBrowserView_FilterIcons;
+
+	public static String ImageBrowserView_FilterWizards;
+
+	public static String ImageBrowserView_Height;
+
+	public static String ImageBrowserView_ImageInfo;
+
+	public static String ImageBrowserView_MaxImages;
+
+	public static String ImageBrowserView_Path;
+
+	public static String ImageBrowserView_Pixels;
+
+	public static String ImageBrowserView_Plugin;
+
+	public static String ImageBrowserView_Reference;
+
+	public static String ImageBrowserView_ScanningForImagesJob;
+
+	public static String ImageBrowserView_Show;
+
+	public static String ImageBrowserView_ShowMore;
+
+	public static String ImageBrowserView_Source;
+
+	public static String ImageBrowserView_Width;
+
 	public static String ImportActionGroup_binaryWithLinkedContent;
 
 	public static String ImportActionGroup_cannot_import;
@@ -1825,6 +1857,12 @@ public class PDEUIMessages extends NLS {
 	public static String SampleOperation_creating;
 	public static String SampleStandbyContent_content;
 	public static String SampleStandbyContent_desc;
+	public static String SaveToWorkspace_ConfirmOverwrite;
+
+	public static String SaveToWorkspace_ConfirmOverwriteText;
+
+	public static String SaveToWorkspace_SaveImageToWorkspace;
+
 	public static String ReviewPage_title;
 	public static String ReviewPage_desc;
 	public static String ReviewPage_descContent;
@@ -2754,6 +2792,12 @@ public class PDEUIMessages extends NLS {
 	public static String TargetPlatformPreferencePage2_8;
 
 	public static String TargetPlatformPreferencePage2_9;
+
+	public static String TargetPlatformRepository_CouldNotFindTargetPlatformService;
+
+	public static String TargetPlatformRepository_RunningPlatform;
+
+	public static String TargetPlatformRepository_TargetPlatformLabel;
 
 	public static String ManifestEditorContributor_externStringsActionName;
 

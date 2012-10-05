@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2008, 2009 IBM Corporation and others.
+ *  Copyright (c) 2008, 2012 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -262,7 +262,22 @@ public class SWTFactory {
 	 * @return a new scrolled composite
 	 */
 	public static SharedScrolledComposite createScrolledComposite(Composite parent, int columns, int hspan, int marginwidth, int marginheight) {
-		SharedScrolledComposite comp = new SharedScrolledComposite(parent, SWT.V_SCROLL | SWT.H_SCROLL) {};
+		return createScrolledComposite(parent, SWT.V_SCROLL | SWT.H_SCROLL, columns, hspan, marginwidth, marginheight);
+	}
+
+	/**
+	 * Creates a scrolled composite 
+	 * 
+	 * @param parent the parent to add to
+	 * @param style the style bits for the composite
+	 * @param columns the number of columns for the composite
+	 * @param hspan the horizontal span to take up in the parent
+	 * @param marginwidth the width of the margins
+	 * @param marginheight the height of the margins
+	 * @return a new scrolled composite
+	 */
+	public static SharedScrolledComposite createScrolledComposite(Composite parent, int style, int columns, int hspan, int marginwidth, int marginheight) {
+		SharedScrolledComposite comp = new SharedScrolledComposite(parent, style) {};
 		GridLayout layout = new GridLayout(columns, false);
 		layout.marginHeight = marginheight;
 		layout.marginWidth = marginwidth;

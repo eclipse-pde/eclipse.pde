@@ -496,6 +496,14 @@
             name="%views.tpstate.name"
             restorable="true">
       </view>
+       <view
+            category="org.eclipse.pde.ui"
+            class="org.eclipse.pde.internal.ui.views.imagebrowser.ImageBrowserView"
+            icon="$nl$/icons/obj16/psearch_obj.gif"
+            id="org.eclipse.pde.ui.ImageBrowserView"
+            name="%view.imagebrowser.name"
+            restorable="true">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
@@ -612,6 +620,11 @@
             description="%command.openDependencies.description"
             id="org.eclipse.pde.ui.openDependencies"
             name="%command.openDependencies.name">
+      </command>
+      <command
+            description="%command.saveImageToWorkspace.description"
+            id="org.eclipse.pde.ui.imagebrowser.saveToWorkspace"
+            name="%command.saveImageToWorkspace.name">
       </command>
    </extension>
    <extension
@@ -1730,6 +1743,18 @@
                 class="org.eclipse.pde.internal.ui.views.dependencies.OpenDependenciesAction"
                 commandId="org.eclipse.pde.ui.openDependencies">
           </handler>
+          <handler
+                class="org.eclipse.pde.internal.ui.views.imagebrowser.SaveToWorkspace"
+                commandId="org.eclipse.pde.ui.imagebrowser.saveToWorkspace">
+             <enabledWhen>
+                <with
+                      variable="org.eclipse.pde.ui.imagebrowser.activeImage">
+                   <test
+                         property="org.eclipse.pde.ui.imagebrowser.exists">
+                   </test>
+                </with>
+             </enabledWhen>
+          </handler>
        </extension>
        <extension
              point="org.eclipse.ui.menus">
@@ -1922,6 +1947,17 @@
                          definitionId="org.eclipse.pde.ui.pluginFile">
                    </reference>
                 </visibleWhen>
+             </command>
+          </menuContribution>
+          <menuContribution
+                allPopups="false"
+                locationURI="toolbar:org.eclipse.pde.ui.ImageBrowserView">
+             <command
+                   commandId="org.eclipse.pde.ui.imagebrowser.saveToWorkspace"
+                   disabledIcon="platform:/plugin/org.eclipse.ui/icons/full/dtool16/save_edit.gif"
+                   icon="platform:/plugin/org.eclipse.ui/icons/full/etool16/save_edit.gif"
+                   label="%command.saveImageToWorkspace.label"
+                   style="push">
              </command>
           </menuContribution>
           <!--
@@ -2169,4 +2205,24 @@
          </description>
       </locationProvider>
    </extension>
+    <extension
+         point="org.eclipse.ui.services">
+      <sourceProvider
+            provider="org.eclipse.pde.internal.ui.views.imagebrowser.ActiveImageSourceProvider">
+         <variable
+               name="org.eclipse.pde.ui.ImageBrowserView.activeImage"
+               priorityLevel="workbench">
+         </variable>
+      </sourceProvider>
+   </extension>
+    <extension
+          point="org.eclipse.core.expressions.propertyTesters">
+       <propertyTester
+             class="org.eclipse.pde.internal.ui.views.imagebrowser.ActiveImagePropertyTester"
+             id="org.eclipse.pde.ui.imagebrowser.activeImagePropertyTester"
+             namespace="org.eclipse.pde.ui.imagebrowser"
+             properties="exists"
+             type="org.eclipse.pde.internal.ui.views.imagebrowser.ImageElement">
+       </propertyTester>
+    </extension>
 </plugin>

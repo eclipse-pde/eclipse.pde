@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %name
 Bundle-SymbolicName: org.eclipse.pde.ui; singleton:=true
-Bundle-Version: 3.7.100.qualifier
+Bundle-Version: 3.8.0.qualifier
 Bundle-Activator: org.eclipse.pde.internal.ui.PDEPlugin
 Bundle-Vendor: %provider-name
 Bundle-Localization: plugin
@@ -46,6 +46,9 @@ Export-Package:
  org.eclipse.pde.internal.ui.shared.target;x-internal:=true,
  org.eclipse.pde.internal.ui.util;x-friends:="org.eclipse.pde.api.tools.ui",
  org.eclipse.pde.internal.ui.views.dependencies;x-internal:=true,
+ org.eclipse.pde.internal.ui.views.imagebrowser;x-internal:=true,
+ org.eclipse.pde.internal.ui.views.imagebrowser.filter;x-internal:=true,
+ org.eclipse.pde.internal.ui.views.imagebrowser.repositories;x-internal:=true,
  org.eclipse.pde.internal.ui.views.plugins;x-internal:=true,
  org.eclipse.pde.internal.ui.views.target;x-internal:=true,
  org.eclipse.pde.internal.ui.wizards;x-internal:=true,
