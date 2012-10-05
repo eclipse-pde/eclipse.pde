@@ -252,7 +252,7 @@ public class Schema extends PlatformObject implements ISchema {
 		if (!isLoaded())
 			load();
 		@SuppressWarnings("unchecked")
-		Vector<ISchemaElement> result = (Vector<ISchemaElement>) fElements.clone();
+		ArrayList<ISchemaElement> result = (ArrayList<ISchemaElement>) fElements.clone();
 		for (int i = 0; i < fIncludes.size(); i++) {
 			ISchemaInclude include = fIncludes.get(i);
 			ISchema schema = include.getIncludedSchema();
