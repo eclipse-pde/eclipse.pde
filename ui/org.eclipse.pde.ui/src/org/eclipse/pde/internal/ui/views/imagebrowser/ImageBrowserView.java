@@ -327,36 +327,38 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 
 		public synchronized void run() {
 
-			for (final ImageElement element : mElements) {
-				if (!mLastPlugin.equals(element.getPlugin())) {
-					// new plug-in detected
-					mLastPlugin = element.getPlugin();
-					new Label(imageComposite, SWT.NONE).setText(mLastPlugin);
+			if (!mElements.isEmpty()) {
+				for (final ImageElement element : mElements) {
+					if (!mLastPlugin.equals(element.getPlugin())) {
+						// new plug-in detected
+						mLastPlugin = element.getPlugin();
+						new Label(imageComposite, SWT.NONE).setText(mLastPlugin);
 
-					if (mPluginImageContainer != null)
-						mPluginImageContainer.layout();
+						if (mPluginImageContainer != null)
+							mPluginImageContainer.layout();
 
-					mPluginImageContainer = new Composite(imageComposite, SWT.NONE);
-					mPluginImageContainer.setLayout(mRowLayout);
-					mPluginImageContainer.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-					mPluginImageContainer.setBackground(mPluginImageContainer.getParent().getBackground());
+						mPluginImageContainer = new Composite(imageComposite, SWT.NONE);
+						mPluginImageContainer.setLayout(mRowLayout);
+						mPluginImageContainer.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+						mPluginImageContainer.setBackground(mPluginImageContainer.getParent().getBackground());
+					}
+
+					final Label label = new Label(mPluginImageContainer, SWT.NONE);
+					Image image = new Image(getViewSite().getShell().getDisplay(), element.getImageData());
+					displayedImages.add(image);
+					label.setImage(image);
+					label.setData(element);
+					label.addMouseListener(this);
 				}
 
-				final Label label = new Label(mPluginImageContainer, SWT.NONE);
-				Image image = new Image(getViewSite().getShell().getDisplay(), element.getImageData());
-				displayedImages.add(image);
-				label.setImage(image);
-				label.setData(element);
-				label.addMouseListener(this);
+				mElements.clear();
+
+				mPluginImageContainer.layout();
+				imageComposite.layout();
+
+				Rectangle r = scrolledComposite.getClientArea();
+				scrolledComposite.setMinSize(imageComposite.computeSize(r.width, SWT.DEFAULT));
 			}
-
-			mElements.clear();
-
-			mPluginImageContainer.layout();
-			imageComposite.layout();
-
-			Rectangle r = scrolledComposite.getClientArea();
-			scrolledComposite.setMinSize(imageComposite.computeSize(r.width, SWT.DEFAULT));
 		}
 
 		public void mouseDoubleClick(final MouseEvent e) {
