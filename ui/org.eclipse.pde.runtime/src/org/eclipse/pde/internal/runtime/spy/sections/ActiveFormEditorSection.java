@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Code 9 Corporation and others.
+ * Copyright (c) 2008, 2012 Code 9 Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Code 9 Corporation - initial API and implementation
  *     Ketan Padegaonkar <KetanPadegaonkar@gmail.com> - bug 241912
+ *     Tomasz Zarna <tomasz.zarna@tasktop.com> - bug 299298
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime.spy.sections;
 
@@ -36,6 +37,8 @@ public class ActiveFormEditorSection implements ISpySection {
 			return;
 
 		IFormPage activePage = multiEditor.getActivePageInstance();
+		if (activePage == null)
+			return;
 
 		Section section = toolkit.createSection(form.getBody(), ExpandableComposite.TITLE_BAR);
 		section.setText(PDERuntimeMessages.ActiveFormEditorSection_Active_Form_Page);
