@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -76,7 +76,7 @@ public abstract class TypePackageCompletionProcessor implements IContentAssistPr
 		generateProposals(currentContent, project, c, startOffset, length, typeScope);
 	}
 
-	private void generateProposals(String currentContent, IProject project, final Collection<Object> c, final int startOffset, final int length, final int typeScope) {
+	private void generateProposals(String currentContent, final IProject project, final Collection<Object> c, final int startOffset, final int length, final int typeScope) {
 
 		class TypePackageCompletionRequestor extends CompletionRequestor {
 
@@ -105,8 +105,11 @@ public abstract class TypePackageCompletionProcessor implements IContentAssistPr
 						pName = completion.substring(0, period);
 					}
 					Image image = isInterface ? PDEPluginImages.get(PDEPluginImages.OBJ_DESC_GENERATE_INTERFACE) : PDEPluginImages.get(PDEPluginImages.OBJ_DESC_GENERATE_CLASS);
-					addProposalToCollection(c, startOffset, length, cName + " - " + pName, //$NON-NLS-1$
-							completion, image);
+					String label = cName;
+					if (pName != null)
+						label = label + " - " + pName; //$NON-NLS-1$
+					String typeName = String.valueOf(Signature.toCharArray(Signature.getTypeErasure(proposal.getSignature())));
+					addProposalToCollection(c, startOffset, length, label, completion, image, project, typeName);
 				}
 			}
 
@@ -146,7 +149,7 @@ public abstract class TypePackageCompletionProcessor implements IContentAssistPr
 		return null;
 	}
 
-	protected void generateTypeProposals(String currentContent, IProject project, final Collection<Object> c, final int startOffset, final int length, int typeScope) {
+	protected void generateTypeProposals(String currentContent, final IProject project, final Collection<Object> c, final int startOffset, final int length, int typeScope) {
 		// Dynamically adjust the search scope depending on the current
 		// state of the project
 		IJavaSearchScope scope = PDEJavaHelper.getSearchScope(project);
@@ -181,10 +184,14 @@ public abstract class TypePackageCompletionProcessor implements IContentAssistPr
 					// Accept search results from the JDT SearchEngine
 					String cName = new String(simpleTypeName);
 					String pName = new String(packageName);
-					String label = cName + " - " + pName; //$NON-NLS-1$
-					String content = pName + "." + cName; //$NON-NLS-1$
+					String label = cName;
+					String replaceString = cName;
+					if (pName.length() > 0) {
+						label = label + " - " + pName; //$NON-NLS-1$
+						replaceString = pName + "." + replaceString; //$NON-NLS-1$
+					}
 					Image image = (Flags.isInterface(modifiers)) ? PDEPluginImages.get(PDEPluginImages.OBJ_DESC_GENERATE_INTERFACE) : PDEPluginImages.get(PDEPluginImages.OBJ_DESC_GENERATE_CLASS);
-					addProposalToCollection(c, startOffset, length, label, content, image);
+					addProposalToCollection(c, startOffset, length, label, replaceString, image, project, replaceString);
 				}
 			};
 			// Note:  Do not use the search() method, its performance is
@@ -232,17 +239,12 @@ public abstract class TypePackageCompletionProcessor implements IContentAssistPr
 		return (i == valueArray.length) ? "" : new String(valueArray, i, valueArray.length - i); //$NON-NLS-1$
 	}
 
-	/**
-	 * @param c
-	 * @param startOffset
-	 * @param length
-	 * @param label
-	 * @param content
-	 * @param image
-	 */
 	protected void addProposalToCollection(final Collection<Object> c, final int startOffset, final int length, String label, String content, Image image) {
-		TypeCompletionProposal proposal = new TypeCompletionProposal(content, image, label, startOffset, length);
-		c.add(proposal);
+		c.add(new TypeCompletionProposal(content, image, label, startOffset, length));
+	}
+
+	protected void addProposalToCollection(final Collection<Object> c, final int startOffset, final int length, String label, String content, Image image, IProject project, String typeName) {
+		c.add(new TypeCompletionProposal(content, image, label, startOffset, length, project, typeName));
 	}
 
 }
