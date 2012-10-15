@@ -25,6 +25,9 @@
   <version>3.8.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
+  <properties>
+    <tycho.scmUrl>scm:git:git://git.eclipse.org/gitroot/pde/eclipse.pde.git</tycho.scmUrl>
+  </properties>
 
   <modules>
     <module>org.eclipse.pde-feature</module>
