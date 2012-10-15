@@ -90,12 +90,13 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 	 * @see org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createPartControl(final Composite parent) {
-		Composite composite = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH);
+		final Composite composite = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH);
 
 		Composite topComp = new Composite(composite, SWT.NONE);
 		RowLayout layout = new RowLayout();
 		topComp.setLayout(layout);
 		topComp.setFont(parent.getFont());
+		topComp.setBackground(composite.getBackground());
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		topComp.setLayoutData(gd);
 
@@ -167,7 +168,6 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 		nextButton.setEnabled(false);
 
 		scrolledComposite = SWTFactory.createScrolledComposite(composite, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER, 1, 1, 0, 0);
-//		scrolledComposite.setBackground(composite.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
 		scrolledComposite.addControlListener(new ControlAdapter() {
 			public void controlResized(final ControlEvent e) {
 				Rectangle r = scrolledComposite.getClientArea();
@@ -177,7 +177,7 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 		imageComposite = SWTFactory.createComposite(scrolledComposite, 1, 1, GridData.FILL_BOTH, 0, 0);
 		scrolledComposite.setContent(imageComposite);
 
-		Group infoGroup = SWTFactory.createGroup(composite, PDEUIMessages.ImageBrowserView_ImageInfo, 4, 1, GridData.FILL_HORIZONTAL);
+		Composite infoGroup = SWTFactory.createComposite(composite, 4, 1, GridData.FILL_HORIZONTAL);
 
 		SWTFactory.createLabel(infoGroup, PDEUIMessages.ImageBrowserView_Path, 1);
 		lblPath = new Label(infoGroup, SWT.NONE);
@@ -205,8 +205,14 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.part.WorkbenchPart#setFocus()
+	 */
 	public void setFocus() {
-		sourceCombo.getCombo().setFocus();
+		// Pressing enter when navigating the images calls this method, stealing focus
+		if (sourceCombo.getSelection().isEmpty()) {
+			sourceCombo.getCombo().setFocus();
+		}
 	}
 
 	public void notifyImage(final ImageData imageData, final String plugin, final String path) {
@@ -307,7 +313,7 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 		}
 	}
 
-	private class UpdateUI implements Runnable, MouseListener {
+	private class UpdateUI implements Runnable, SelectionListener {
 
 		Collection<ImageElement> mElements = new LinkedList<ImageElement>();
 		String mLastPlugin = ""; //$NON-NLS-1$
@@ -316,6 +322,8 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 
 		public UpdateUI() {
 			mRowLayout.wrap = true;
+			mRowLayout.marginWidth = 0;
+			mRowLayout.marginHeight = 0;
 		}
 
 		public synchronized void addImage(final ImageElement element) {
@@ -343,12 +351,13 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 						mPluginImageContainer.setBackground(mPluginImageContainer.getParent().getBackground());
 					}
 
-					final Label label = new Label(mPluginImageContainer, SWT.NONE);
+					Button button = new Button(mPluginImageContainer, SWT.FLAT);
 					Image image = new Image(getViewSite().getShell().getDisplay(), element.getImageData());
 					displayedImages.add(image);
-					label.setImage(image);
-					label.setData(element);
-					label.addMouseListener(this);
+					button.setImage(image);
+					button.setToolTipText(element.getPath());
+					button.setData(element);
+					button.addSelectionListener(this);
 				}
 
 				mElements.clear();
@@ -361,30 +370,80 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 			}
 		}
 
-		public void mouseDoubleClick(final MouseEvent e) {
+		public void widgetDefaultSelected(SelectionEvent e) {
+			widgetSelected(e);
+
 		}
 
-		public void mouseDown(final MouseEvent e) {
-			if (e.button == 1) {
-				final Object data = e.widget.getData();
-				if (data instanceof ImageElement) {
-					lblPath.setText(((ImageElement) data).getPath());
-					lblPlugin.setText(((ImageElement) data).getFullPlugin());
-					txtReference.setText("platform:/plugin/" + ((ImageElement) data).getPlugin() + "/" + ((ImageElement) data).getPath()); //$NON-NLS-1$ //$NON-NLS-2$
+		public void widgetSelected(final SelectionEvent e) {
+			final Object data = e.widget.getData();
+			if (data instanceof ImageElement) {
 
-					lblWidth.setText(NLS.bind(PDEUIMessages.ImageBrowserView_Pixels, Integer.toString(((ImageElement) data).getImageData().width)));
-					lblHeight.setText(NLS.bind(PDEUIMessages.ImageBrowserView_Pixels, Integer.toString(((ImageElement) data).getImageData().height)));
+				// Example of how we could use a popup dialog instead
+//				org.eclipse.core.runtime.Path path = new org.eclipse.core.runtime.Path(((ImageElement) data).getPath());
+//
+//				new PopupDialog(getSite().getShell(), PopupDialog.HOVER_SHELLSTYLE, true, false, false, false, false, path.lastSegment(), "") {
+//					protected Control createInfoTextArea(Composite parent) {
+//
+//						Composite infoGroup = SWTFactory.createComposite(parent, 4, 1, GridData.FILL_HORIZONTAL, 0, 0);
+//
+//						SWTFactory.createLabel(infoGroup, PDEUIMessages.ImageBrowserView_Path, 1);
+//						lblPath = new Label(infoGroup, SWT.NONE);
+//						lblPath.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+//
+//						SWTFactory.createLabel(infoGroup, PDEUIMessages.ImageBrowserView_Width, 1);
+//						lblWidth = new Label(infoGroup, SWT.NONE);
+//						final GridData gd_lblWidth = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+//						gd_lblWidth.widthHint = 50;
+//						lblWidth.setLayoutData(gd_lblWidth);
+//
+//						SWTFactory.createLabel(infoGroup, PDEUIMessages.ImageBrowserView_Plugin, 1);
+//						lblPlugin = new Label(infoGroup, SWT.NONE);
+//						lblPlugin.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+//
+//						SWTFactory.createLabel(infoGroup, PDEUIMessages.ImageBrowserView_Height, 1);
+//						lblHeight = new Label(infoGroup, SWT.NONE);
+//						final GridData gd_lblHeight = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+//						gd_lblHeight.widthHint = 50;
+//						lblHeight.setLayoutData(gd_lblHeight);
+//
+//						SWTFactory.createLabel(infoGroup, PDEUIMessages.ImageBrowserView_Reference, 1);
+//						txtReference = new Text(infoGroup, SWT.BORDER | SWT.READ_ONLY);
+//						txtReference.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 3, 1));
+//
+//						lblPath.setText(((ImageElement) data).getPath());
+//						lblPlugin.setText(((ImageElement) data).getFullPlugin());
+//						txtReference.setText("platform:/plugin/" + ((ImageElement) data).getPlugin() + "/" + ((ImageElement) data).getPath()); //$NON-NLS-1$ //$NON-NLS-2$
+//
+//						lblWidth.setText(NLS.bind(PDEUIMessages.ImageBrowserView_Pixels, Integer.toString(((ImageElement) data).getImageData().width)));
+//						lblHeight.setText(NLS.bind(PDEUIMessages.ImageBrowserView_Pixels, Integer.toString(((ImageElement) data).getImageData().height)));
+//
+//						return infoGroup;
+//					}
+//				}.open();
+//
+//				StringBuffer text = new StringBuffer();
+//				text.append(NLS.bind("Image Path: {0}", path.toString())).append('\n');
+//				text.append(NLS.bind("Plug-in Provider: {0}", ((ImageElement) data).getFullPlugin())).append('\n');
+//				text.append(NLS.bind("Reference URL: {0}", "platform:/plugin/" + ((ImageElement) data).getPlugin() + "/" + ((ImageElement) data).getPath())).append('\n'); //$NON-NLS-1$ //$NON-NLS-2$
+//				text.append(NLS.bind("Width: {0}   Height: {1}", Integer.toString(((ImageElement) data).getImageData().width), Integer.toString(((ImageElement) data).getImageData().height)));
+//
+//				PopupDialog popup = new PopupDialog(getSite().getShell(), SWT.NONE, false, false, false, false, false, path.lastSegment(), text.toString());
+//				popup.open();
 
-					// update source provider
-					ISourceProviderService service = (ISourceProviderService) PlatformUI.getWorkbench().getService(ISourceProviderService.class);
-					ISourceProvider provider = service.getSourceProvider(ActiveImageSourceProvider.ACTIVE_IMAGE);
-					if (provider instanceof ActiveImageSourceProvider)
-						((ActiveImageSourceProvider) provider).setImageData(((ImageElement) data));
-				}
+				lblPath.setText(((ImageElement) data).getPath());
+				lblPlugin.setText(((ImageElement) data).getFullPlugin());
+				txtReference.setText("platform:/plugin/" + ((ImageElement) data).getPlugin() + "/" + ((ImageElement) data).getPath()); //$NON-NLS-1$ //$NON-NLS-2$
+
+				lblWidth.setText(NLS.bind(PDEUIMessages.ImageBrowserView_Pixels, Integer.toString(((ImageElement) data).getImageData().width)));
+				lblHeight.setText(NLS.bind(PDEUIMessages.ImageBrowserView_Pixels, Integer.toString(((ImageElement) data).getImageData().height)));
+
+				// update source provider
+				ISourceProviderService service = (ISourceProviderService) PlatformUI.getWorkbench().getService(ISourceProviderService.class);
+				ISourceProvider provider = service.getSourceProvider(ActiveImageSourceProvider.ACTIVE_IMAGE);
+				if (provider instanceof ActiveImageSourceProvider)
+					((ActiveImageSourceProvider) provider).setImageData(((ImageElement) data));
 			}
-		}
-
-		public void mouseUp(final MouseEvent e) {
 		}
 
 		public synchronized void reset() {
