@@ -11,19 +11,21 @@
 
 package org.eclipse.pde.internal.ui.views.imagebrowser.repositories;
 
-import org.eclipse.pde.internal.ui.PDEUIMessages;
-
 import java.io.File;
 import java.net.URI;
-import org.eclipse.core.runtime.*;
+import java.util.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.views.imagebrowser.IImageTarget;
 import org.eclipse.ui.PlatformUI;
 
 public class TargetPlatformRepository extends AbstractRepository {
 
+	private List<TargetBundle> fBundles = null;
 	private boolean fUseCurrent;
 
 	/**
@@ -31,42 +33,67 @@ public class TargetPlatformRepository extends AbstractRepository {
 	 * the current target platform set on the preference page.  If <code>false</code>
 	 * a default target definition (the running application) will be used.
 	 * 
+	 * @param target whom to notify upon found images
 	 * @param useCurrent whether to use the current target platform or the default target (running application)
 	 */
-	public TargetPlatformRepository(boolean useCurrent) {
+	public TargetPlatformRepository(IImageTarget target, boolean useCurrent) {
+		super(target);
+
 		fUseCurrent = useCurrent;
 	}
 
-	public IStatus searchImages(final IImageTarget target, final IProgressMonitor monitor) {
+	protected boolean populateCache(final IProgressMonitor monitor) {
+		if (fBundles == null)
+			initialize(monitor);
+
+		if (!fBundles.isEmpty()) {
+			TargetBundle bundle = fBundles.remove(fBundles.size() - 1);
+			URI location = bundle.getBundleInfo().getLocation();
+			File file = new File(location);
+			if (isJar(file)) {
+				searchJarFile(file, monitor);
+
+			} else if (file.isDirectory()) {
+				searchDirectory(file, monitor);
+			}
+
+			return true;
+		}
+
+		return false;
+	}
+
+	private void initialize(final IProgressMonitor monitor) {
+
 		try {
 
 			ITargetPlatformService service = (ITargetPlatformService) PlatformUI.getWorkbench().getService(ITargetPlatformService.class);
 			if (service != null) {
-				ITargetDefinition definition = null;
+				ITargetDefinition fDefinition = null;
 				if (fUseCurrent) {
 					ITargetHandle workspaceTargetHandle = service.getWorkspaceTargetHandle();
 					if (workspaceTargetHandle != null) {
-						definition = workspaceTargetHandle.getTargetDefinition();
+						fDefinition = workspaceTargetHandle.getTargetDefinition();
 					}
 				} else {
-					definition = service.newDefaultTarget();
+					fDefinition = service.newDefaultTarget();
 				}
 
-				if (definition != null) {
+				if (fDefinition != null) {
 
-					if (!definition.isResolved())
-						definition.resolve(monitor);
+					if (!fDefinition.isResolved())
+						fDefinition.resolve(monitor);
 
-					TargetBundle[] allBundles = definition.getAllBundles();
+					TargetBundle[] allBundles = fDefinition.getAllBundles();
+
+					// populate bundles to visit
 					if (allBundles != null) {
-						for (TargetBundle bundle : allBundles) {
-							URI location = bundle.getBundleInfo().getLocation();
-							File file = new File(location);
-							if (isJar(file))
-								searchJarFile(file, target, monitor);
-						}
+						fBundles = new ArrayList<TargetBundle>(Arrays.asList(allBundles));
+					} else {
+						fBundles = Collections.emptyList();
 					}
 				}
+
 			} else {
 				PDEPlugin.logErrorMessage(PDEUIMessages.TargetPlatformRepository_CouldNotFindTargetPlatformService);
 			}
@@ -74,8 +101,6 @@ public class TargetPlatformRepository extends AbstractRepository {
 		} catch (CoreException e) {
 			PDEPlugin.log(e);
 		}
-
-		return Status.OK_STATUS;
 	}
 
 	public String toString() {

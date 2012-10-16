@@ -13,9 +13,6 @@ package org.eclipse.pde.internal.ui.views.imagebrowser;
 
 import java.util.*;
 import java.util.List;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -26,7 +23,8 @@ import org.eclipse.pde.internal.ui.views.imagebrowser.repositories.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.ISourceProvider;
@@ -40,11 +38,9 @@ import org.eclipse.ui.services.ISourceProviderService;
  */
 public class ImageBrowserView extends ViewPart implements IImageTarget {
 
-	private ScanJob mScanJob = null;
 	private final UpdateUI mUIJob = new UpdateUI();
 
 	private final List<IFilter<ImageElement>> mFilters = new ArrayList<IFilter<ImageElement>>();
-	private final ElementsFilter mVisitedElementsFilter;
 	private final IFilter<ImageElement> disabledIcons;
 	private final IFilter<ImageElement> enabledIcons;
 	private final IFilter<ImageElement> wizard;
@@ -82,8 +78,6 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 		wizard = new AndFilter<ImageElement>(new IFilter[] {wizardSize, wizardName});
 
 		mFilters.add(enabledIcons);
-		mVisitedElementsFilter = new ElementsFilter();
-		mFilters.add(new NotFilter<ImageElement>(mVisitedElementsFilter));
 	}
 
 	/* (non-Javadoc)
@@ -107,15 +101,14 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 		sourceCombo.setContentProvider(new ArrayContentProvider());
 		sourceCombo.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
-				mVisitedElementsFilter.clear();
 				scanImages();
 			}
 		});
 
 		ArrayList<Object> sourceComboInput = new ArrayList<Object>();
-		sourceComboInput.add(new TargetPlatformRepository(true));
-		sourceComboInput.add(new TargetPlatformRepository(false));
-		sourceComboInput.add(new WorkspaceRepository());
+		sourceComboInput.add(new TargetPlatformRepository(this, true));
+		sourceComboInput.add(new TargetPlatformRepository(this, false));
+		sourceComboInput.add(new WorkspaceRepository(this));
 		sourceCombo.setInput(sourceComboInput);
 
 		SWTFactory.createHorizontalSpacer(sourceComp, 3);
@@ -140,8 +133,6 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 					case 3 :
 					default :
 				}
-				mFilters.add(new NotFilter<ImageElement>(mVisitedElementsFilter));
-				mVisitedElementsFilter.clear();
 				scanImages();
 			}
 		});
@@ -160,8 +151,6 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 		nextButton = SWTFactory.createPushButton(pageComp, PDEUIMessages.ImageBrowserView_ShowMore, null);
 		nextButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(final SelectionEvent e) {
-				Collection<ImageElement> elements = getImageElements(scrolledComposite);
-				mVisitedElementsFilter.addAll(elements);
 				scanImages();
 			}
 		});
@@ -215,19 +204,16 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 		}
 	}
 
-	public void notifyImage(final ImageData imageData, final String plugin, final String path) {
-		final ImageElement element = new ImageElement(imageData, plugin, path);
-
+	public void notifyImage(final ImageElement element) {
 		for (final IFilter<ImageElement> filter : mFilters) {
 			if (!filter.accept(element))
 				return;
 		}
 
-		if (mImageCounter-- > 0)
-			mUIJob.addImage(element);
+		mUIJob.addImage(element);
+		mImageCounter--;
 
-		else {
-			mScanJob.cancel();
+		if (mImageCounter <= 0) {
 			Display.getDefault().asyncExec(new Runnable() {
 
 				public void run() {
@@ -237,10 +223,12 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 		}
 	}
 
+	public boolean needsMore() {
+		return mImageCounter > 0;
+	}
+
 	private void scanImages() {
 		nextButton.setEnabled(false);
-		if (mScanJob != null)
-			mScanJob.cancel();
 
 		// reset UI components
 		mUIJob.reset();
@@ -250,15 +238,13 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 		lblHeight.setText(""); //$NON-NLS-1$
 		txtReference.setText(""); //$NON-NLS-1$
 
-		// dispose old images
-		for (Image image : displayedImages) {
-			image.dispose();
-		}
-		displayedImages.clear();
-
+		// first dispose controls
 		for (final Control control : imageComposite.getChildren()) {
 			control.dispose();
 		}
+
+		// then dispose images used in controls
+		disposeImages();
 
 		// initialize scan job
 		if (!sourceCombo.getSelection().isEmpty()) {
@@ -266,8 +252,7 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 			mImageCounter = spinMaxImages.getSelection();
 
 			final AbstractRepository repository = (AbstractRepository) ((IStructuredSelection) sourceCombo.getSelection()).getFirstElement();
-			mScanJob = new ScanJob(repository);
-			mScanJob.schedule();
+			repository.schedule();
 		}
 	}
 
@@ -276,41 +261,14 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 	 */
 	@Override
 	public void dispose() {
+		disposeImages();
+	}
+
+	private void disposeImages() {
 		for (Image image : displayedImages) {
 			image.dispose();
 		}
 		displayedImages.clear();
-	}
-
-	private static Collection<ImageElement> getImageElements(final Composite parent) {
-		HashSet<ImageElement> result = new HashSet<ImageElement>();
-
-		for (final Control control : parent.getChildren()) {
-			if (control instanceof Composite)
-				result.addAll(getImageElements((Composite) control));
-
-			else {
-				Object data = control.getData();
-				if (data instanceof ImageElement)
-					result.add((ImageElement) data);
-			}
-		}
-
-		return result;
-	}
-
-	private class ScanJob extends Job {
-
-		private final AbstractRepository mImageRepository;
-
-		public ScanJob(final AbstractRepository imageRepository) {
-			super(PDEUIMessages.ImageBrowserView_ScanningForImagesJob);
-			mImageRepository = imageRepository;
-		}
-
-		protected IStatus run(final IProgressMonitor monitor) {
-			return mImageRepository.searchImages(ImageBrowserView.this, monitor);
-		}
 	}
 
 	private class UpdateUI implements Runnable, SelectionListener {

@@ -11,9 +11,19 @@
 
 package org.eclipse.pde.internal.ui.views.imagebrowser;
 
-import org.eclipse.swt.graphics.ImageData;
-
 public interface IImageTarget {
 
-	void notifyImage(ImageData imageData, String plugin, String path);
+	/**
+	 * Notifies the target that an image was found.
+	 * 
+	 * @param element detected image data
+	 */
+	void notifyImage(ImageElement element);
+
+	/**
+	 * Query the target whether additional images are needed
+	 * 
+	 * @return <code>true</code> when more images should be fetched
+	 */
+	boolean needsMore();
 }

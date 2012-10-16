@@ -11,19 +11,31 @@
 
 package org.eclipse.pde.internal.ui.views.imagebrowser.repositories;
 
-import java.io.*;
+import java.io.IOException;
 import java.util.*;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.views.imagebrowser.IImageTarget;
+import org.eclipse.pde.internal.ui.views.imagebrowser.ImageElement;
 
 public class WorkspaceRepository extends AbstractRepository {
 
-	public WorkspaceRepository() {
+	private List<IProject> fProjects = null;
+
+	public WorkspaceRepository(IImageTarget target) {
+		super(target);
 	}
 
-	public IStatus searchImages(final IImageTarget target, final IProgressMonitor monitor) {
-		for (IProject project : ResourcesPlugin.getWorkspace().getRoot().getProjects()) {
+	@Override
+	protected boolean populateCache(IProgressMonitor monitor) {
+		if (fProjects == null)
+			initialize(monitor);
+
+		if (!fProjects.isEmpty()) {
+			IProject project = fProjects.get(fProjects.size() - 1);
+
 			// look for a manifest
 			IFile manifest = project.getFile("META-INF/MANIFEST.MF"); //$NON-NLS-1$
 			if (manifest.exists()) {
@@ -40,12 +52,12 @@ public class WorkspaceRepository extends AbstractRepository {
 
 						for (IResource resource : next.members()) {
 							if (monitor.isCanceled())
-								return Status.OK_STATUS;
+								return true;
 
 							if (resource instanceof IFile) {
 								try {
-									if (isImageName(resource.getName()))
-										target.notifyImage(createImageData((IFile) resource), pluginName, resource.getProjectRelativePath().toPortableString());
+									if (isImageName(resource.getName().toLowerCase()))
+										addImageElement(new ImageElement(createImageData((IFile) resource), pluginName, resource.getProjectRelativePath().toPortableString()));
 
 								} catch (Exception e) {
 									// could not create image for location
@@ -56,24 +68,23 @@ public class WorkspaceRepository extends AbstractRepository {
 
 					} while ((!locations.isEmpty()) && (!monitor.isCanceled()));
 				} catch (CoreException e) {
+					PDEPlugin.log(e);
 				} catch (IOException e) {
+					PDEPlugin.log(e);
 				}
 			}
+			return true;
 		}
 
-		return Status.OK_STATUS;
+		return false;
 	}
 
-	private String getPluginName(final InputStream manifest) throws IOException {
-		Properties properties = new Properties();
-		BufferedInputStream stream = new BufferedInputStream(manifest);
-		properties.load(stream);
-		stream.close();
-		String property = properties.getProperty("Bundle-SymbolicName"); //$NON-NLS-1$
-		if (property.contains(";")) //$NON-NLS-1$
-			return property.substring(0, property.indexOf(';')).trim();
-
-		return property.trim();
+	private void initialize(IProgressMonitor monitor) {
+		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+		if (projects != null)
+			fProjects = new ArrayList<IProject>(Arrays.asList(projects));
+		else
+			fProjects = Collections.emptyList();
 	}
 
 	public String toString() {

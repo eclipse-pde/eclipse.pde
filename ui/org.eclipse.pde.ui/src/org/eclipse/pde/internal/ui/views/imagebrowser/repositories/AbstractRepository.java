@@ -12,24 +12,67 @@
 package org.eclipse.pde.internal.ui.views.imagebrowser.repositories;
 
 import java.io.*;
-import java.util.Enumeration;
+import java.util.*;
 import java.util.zip.*;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.views.imagebrowser.IImageTarget;
+import org.eclipse.pde.internal.ui.views.imagebrowser.ImageElement;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.ImageData;
 
-public abstract class AbstractRepository {
+public abstract class AbstractRepository extends Job {
+
+	private List<ImageElement> mElementsCache = new LinkedList<ImageElement>();
+
+	private int mCacheIndex = 0;
+
+	private IImageTarget mTarget;
+
+	public AbstractRepository(IImageTarget target) {
+		super(PDEUIMessages.AbstractRepository_ScanForUI);
+
+		mTarget = target;
+	}
 
 	private static final String[] KNOWN_EXTENSIONS = new String[] {".gif", ".png"}; //$NON-NLS-1$ //$NON-NLS-2$
 
-	public abstract IStatus searchImages(IImageTarget target, IProgressMonitor monitor);
+	@Override
+	protected synchronized IStatus run(IProgressMonitor monitor) {
+		while ((mTarget.needsMore()) && (!monitor.isCanceled())) {
+			if (mElementsCache.size() <= mCacheIndex) {
+				// need more images in cache
 
-	protected ImageData createImageData(final File file) throws FileNotFoundException {
-		return new ImageData(new BufferedInputStream(new FileInputStream(file)));
+				if (!populateCache(monitor)) {
+					// could not populate cache, giving up
+					return Status.OK_STATUS;
+				}
+			} else {
+				// return 1 image from cache
+				mTarget.notifyImage(mElementsCache.get(mCacheIndex++));
+			}
+		}
+
+		return Status.OK_STATUS;
 	}
+
+	public synchronized void setCacheIndex(int index) {
+		mCacheIndex = Math.min(index, mElementsCache.size());
+	}
+
+	public synchronized int getCacheIndex() {
+		return mCacheIndex;
+	}
+
+	public synchronized void clearCache() {
+		mElementsCache = null;
+		mCacheIndex = 0;
+	}
+
+	protected abstract boolean populateCache(IProgressMonitor monitor);
 
 	protected ImageData createImageData(final IFile file) throws CoreException {
 		return new ImageData(new BufferedInputStream(file.getContents()));
@@ -55,7 +98,7 @@ public abstract class AbstractRepository {
 		return file.getName().toLowerCase().endsWith(".jar"); //$NON-NLS-1$
 	}
 
-	protected void searchJarFile(final File jarFile, final IImageTarget target, final IProgressMonitor monitor) {
+	protected void searchJarFile(final File jarFile, final IProgressMonitor monitor) {
 		try {
 			ZipFile zipFile = new ZipFile(jarFile);
 			Enumeration<? extends ZipEntry> entries = zipFile.entries();
@@ -64,7 +107,7 @@ public abstract class AbstractRepository {
 				if (isImageName(entry.getName().toLowerCase())) {
 					try {
 						ImageData imageData = new ImageData(zipFile.getInputStream(entry));
-						target.notifyImage(imageData, jarFile.getName(), entry.getName());
+						addImageElement(new ImageElement(imageData, jarFile.getName(), entry.getName()));
 					} catch (IOException e) {
 						PDEPlugin.log(e);
 					} catch (SWTException e) {
@@ -78,5 +121,61 @@ public abstract class AbstractRepository {
 		} catch (IOException e) {
 			PDEPlugin.log(e);
 		}
+	}
+
+	protected void searchDirectory(File directory, final IProgressMonitor monitor) {
+		File manifest = new File(directory, "META-INF/MANIFEST.MF"); //$NON-NLS-1$
+		if (manifest.exists()) {
+			try {
+				String pluginName = getPluginName(new FileInputStream(manifest));
+				int directoryPathLength = directory.getAbsolutePath().length();
+
+				Collection<File> locations = new HashSet<File>();
+				locations.add(directory);
+				do {
+					File next = locations.iterator().next();
+					locations.remove(next);
+
+					for (File resource : next.listFiles()) {
+						if (monitor.isCanceled())
+							return;
+
+						if (resource.isDirectory()) {
+							locations.add(resource);
+
+						} else {
+							try {
+								if (isImage(resource)) {
+									addImageElement(new ImageElement(createImageData((IFile) resource), pluginName, resource.getAbsolutePath().substring(directoryPathLength)));
+								}
+
+							} catch (Exception e) {
+								// could not create image for location
+							}
+						}
+					}
+
+				} while ((!locations.isEmpty()) && (!monitor.isCanceled()));
+			} catch (IOException e) {
+				// could not read manifest
+				PDEPlugin.log(e);
+			}
+		}
+	}
+
+	protected String getPluginName(final InputStream manifest) throws IOException {
+		Properties properties = new Properties();
+		BufferedInputStream stream = new BufferedInputStream(manifest);
+		properties.load(stream);
+		stream.close();
+		String property = properties.getProperty("Bundle-SymbolicName"); //$NON-NLS-1$
+		if (property.contains(";")) //$NON-NLS-1$
+			return property.substring(0, property.indexOf(';')).trim();
+
+		return property.trim();
+	}
+
+	protected void addImageElement(ImageElement element) {
+		mElementsCache.add(element);
 	}
 }

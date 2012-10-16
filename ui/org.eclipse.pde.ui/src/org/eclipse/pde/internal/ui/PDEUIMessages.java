@@ -2212,6 +2212,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String AbstractPluginBlock_counter;
 
+	public static String AbstractRepository_ScanForUI;
+
 	public static String EquinoxPluginBlock_levelColumn;
 
 	public static String EquinoxPluginBlock_autoColumn;
