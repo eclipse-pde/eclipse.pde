@@ -597,9 +597,11 @@ public class PluginImportOperation extends WorkspaceJob {
 				monitor.worked(1);
 			}
 
-			// Create the build.properties file
-			configureBinIncludes(buildModel, model, project);
-			buildModel.save();
+			// If the source bundle had a pre-configured build.properties file, do not overwrite with the generated file (Bug 391801)
+			if (!PDEProject.getBuildProperties(project).exists()) {
+				configureBinIncludes(buildModel, model, project);
+				buildModel.save();
+			}
 			monitor.worked(1);
 
 		} catch (ZipException e) {
