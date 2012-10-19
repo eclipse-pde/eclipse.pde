@@ -307,16 +307,7 @@ public class PluginVersionPart {
 		return true;
 	}
 
-	private String extractSingleVersionFromText() {
-		if (!fRangeAllowed)
-			return getMinVersion();
-		if (getMinVersion().length() == 0)
-			return getMaxVersion();
-		return getMinVersion();
-	}
-
 	public String getVersion() {
-		String version;
 		if (fIsRanged) {
 			// if versions are equal they must be inclusive for a range to be valid
 			// blindly set for the user
@@ -326,15 +317,18 @@ public class PluginVersionPart {
 			boolean maxI = getMaxInclusive();
 			if (minV.equals(maxV))
 				minI = maxI = true;
-			version = new VersionRange(new Version(minV), minI, new Version(maxV), maxI).toString();
-		} else {
-			String singleversion = extractSingleVersionFromText();
-			if (singleversion == null || singleversion.length() == 0)
-				version = ""; //$NON-NLS-1$
-			else
-				version = new Version(singleversion).toString();
+			return new VersionRange(new Version(minV), minI, new Version(maxV), maxI).toString();
 		}
-		return version;
+		if (!fRangeAllowed) {
+			return new Version(getMinVersion()).toString();
+		}
+		if (getMinVersion().length() == 0 && getMaxVersion().length() > 0) {
+			return new VersionRange(null, getMinInclusive(), new Version(getMaxVersion()), getMaxInclusive()).toString();
+		}
+		if (getMinVersion().length() > 0) {
+			return new Version(getMinVersion()).toString();
+		}
+		return ""; //$NON-NLS-1$
 	}
 
 	public void addListeners(ModifyListener minListener, ModifyListener maxListener) {
