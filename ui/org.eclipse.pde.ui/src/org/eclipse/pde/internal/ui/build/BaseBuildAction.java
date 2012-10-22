@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2011 IBM Corporation and others.
+ * Copyright (c) 2003, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,6 +36,7 @@ import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDEPreferencesManager;
 import org.eclipse.pde.internal.core.exports.BuildUtilities;
 import org.eclipse.pde.internal.core.natures.PDE;
+import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.ui.PlatformUI;
@@ -49,13 +50,24 @@ public abstract class BaseBuildAction extends AbstractHandler {
 		ISelection selection = HandlerUtil.getCurrentSelection(event);
 		if (selection instanceof IStructuredSelection) {
 			Object obj = ((IStructuredSelection) selection).getFirstElement();
-			if (obj != null && obj instanceof IFile) {
-				this.fManifestFile = (IFile) obj;
+			if (obj instanceof IJavaProject) {
+				IProject project = ((IJavaProject) obj).getProject();
+				if (project.exists()) {
+					this.fManifestFile = PDEProject.getManifest(project);
+				}
+			}
+			if (obj instanceof IResource) {
+				IProject project = ((IResource) obj).getProject();
+				if (project.exists()) {
+					this.fManifestFile = PDEProject.getManifest(project);
+				}
 			}
 		}
 
-		if (fManifestFile == null || !fManifestFile.exists())
+		if (fManifestFile == null || !fManifestFile.exists()) {
+			PDEPlugin.log(PDEUIMessages.BaseBuildAction_NoValidManifest);
 			return null;
+		}
 
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {

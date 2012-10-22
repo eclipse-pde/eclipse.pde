@@ -95,7 +95,7 @@ public class TargetPlatformRepository extends AbstractRepository {
 				}
 
 			} else {
-				PDEPlugin.logErrorMessage(PDEUIMessages.TargetPlatformRepository_CouldNotFindTargetPlatformService);
+				PDEPlugin.log(PDEUIMessages.TargetPlatformRepository_CouldNotFindTargetPlatformService);
 			}
 
 		} catch (CoreException e) {

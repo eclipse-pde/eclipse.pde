@@ -2200,6 +2200,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String BaseBlock_directoryErrorMessage;
 
+	public static String BaseBuildAction_NoValidManifest;
+
 	public static String ConfigurationTemplateBlock_name;
 
 	public static String WorkspaceDataBlock_name;

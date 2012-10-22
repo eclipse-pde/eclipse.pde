@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -124,12 +124,20 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 		return workbenchWin != null ? workbenchWin.getActivePage() : null;
 	}
 
+	/**
+	 * Logs the given status object in the error log
+	 * @param status status to add to the error log
+	 */
 	public static void log(IStatus status) {
 		ResourcesPlugin.getPlugin().getLog().log(status);
 	}
 
-	public static void logErrorMessage(String message) {
-		log(new Status(IStatus.ERROR, getPluginId(), IStatus.ERROR, message, null));
+	/**
+	 * Logs a new error status with the given message in the error log
+	 * @param message message to add to the error log
+	 */
+	public static void log(String message) {
+		log(new Status(IStatus.ERROR, getPluginId(), message));
 	}
 
 	public static void logException(Throwable e, final String title, String message) {
