@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2000, 2012 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -1084,7 +1084,10 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			script.printProperty(IXMLConstants.PROPERTY_JAVAC_TARGET, "1.2"); //$NON-NLS-1$  
 		if (bootClasspath == null) {
 			script.println("<condition property=\"dir_bootclasspath\" value=\"${java.home}/../Classes\">");//$NON-NLS-1$  
-			script.println("\t<os family=\"mac\"/>");//$NON-NLS-1$  
+			script.println("\t<and>"); //$NON-NLS-1$
+			script.println("\t\t<os family=\"mac\"/>");//$NON-NLS-1$
+			script.println("\t\t<available file=\"${java.home}/../Classes\" type=\"dir\"/>"); //$NON-NLS-1$
+			script.println("\t</and>"); //$NON-NLS-1$
 			script.println("</condition>");//$NON-NLS-1$  
 			script.println("<property name=\"dir_bootclasspath\" value=\"${java.home}/lib\"/>");//$NON-NLS-1$  
 			script.println("<path id=\"path_bootclasspath\">");//$NON-NLS-1$  
