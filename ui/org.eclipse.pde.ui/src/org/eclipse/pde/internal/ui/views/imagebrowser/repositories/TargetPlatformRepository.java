@@ -46,7 +46,7 @@ public class TargetPlatformRepository extends AbstractRepository {
 		if (fBundles == null)
 			initialize(monitor);
 
-		if (!fBundles.isEmpty()) {
+		if ((fBundles != null) && (!fBundles.isEmpty())) {
 			TargetBundle bundle = fBundles.remove(fBundles.size() - 1);
 			URI location = bundle.getBundleInfo().getLocation();
 			File file = new File(location);

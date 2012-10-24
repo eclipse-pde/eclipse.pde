@@ -17,6 +17,7 @@ import java.util.zip.*;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.views.imagebrowser.IImageTarget;
@@ -27,8 +28,6 @@ import org.eclipse.swt.graphics.ImageData;
 public abstract class AbstractRepository extends Job {
 
 	private List<ImageElement> mElementsCache = new LinkedList<ImageElement>();
-
-	private int mCacheIndex = 0;
 
 	private IImageTarget mTarget;
 
@@ -43,7 +42,7 @@ public abstract class AbstractRepository extends Job {
 	@Override
 	protected synchronized IStatus run(IProgressMonitor monitor) {
 		while ((mTarget.needsMore()) && (!monitor.isCanceled())) {
-			if (mElementsCache.size() <= mCacheIndex) {
+			if (mElementsCache.isEmpty()) {
 				// need more images in cache
 
 				if (!populateCache(monitor)) {
@@ -52,24 +51,15 @@ public abstract class AbstractRepository extends Job {
 				}
 			} else {
 				// return 1 image from cache
-				mTarget.notifyImage(mElementsCache.get(mCacheIndex++));
+				mTarget.notifyImage(mElementsCache.remove(0));
 			}
 		}
 
 		return Status.OK_STATUS;
 	}
 
-	public synchronized void setCacheIndex(int index) {
-		mCacheIndex = Math.min(index, mElementsCache.size());
-	}
-
-	public synchronized int getCacheIndex() {
-		return mCacheIndex;
-	}
-
 	public synchronized void clearCache() {
-		mElementsCache = null;
-		mCacheIndex = 0;
+		mElementsCache.clear();
 	}
 
 	protected abstract boolean populateCache(IProgressMonitor monitor);
@@ -99,20 +89,30 @@ public abstract class AbstractRepository extends Job {
 	}
 
 	protected void searchJarFile(final File jarFile, final IProgressMonitor monitor) {
+		ZipFile zipFile = null;
 		try {
-			ZipFile zipFile = new ZipFile(jarFile);
+			zipFile = new ZipFile(jarFile);
 			Enumeration<? extends ZipEntry> entries = zipFile.entries();
 			while ((entries.hasMoreElements()) && (!monitor.isCanceled())) {
 				ZipEntry entry = entries.nextElement();
 				if (isImageName(entry.getName().toLowerCase())) {
+					InputStream inputStream = null;
 					try {
-						ImageData imageData = new ImageData(zipFile.getInputStream(entry));
+						inputStream = zipFile.getInputStream(entry);
+						ImageData imageData = new ImageData(inputStream);
 						addImageElement(new ImageElement(imageData, jarFile.getName(), entry.getName()));
 					} catch (IOException e) {
 						PDEPlugin.log(e);
 					} catch (SWTException e) {
-						// could not create image
-						PDEPlugin.log(e);
+						// invalid image format
+						PDEPlugin.log(new Status(IStatus.ERROR, PDEPlugin.getPluginId(), NLS.bind(PDEUIMessages.AbstractRepository_ErrorLoadingImageFromJar, jarFile.getAbsolutePath(), entry.getName()), e));
+					} finally {
+						if (inputStream != null) {
+							try {
+								inputStream.close();
+							} catch (Exception e) {
+							}
+						}
 					}
 				}
 			}
@@ -120,6 +120,13 @@ public abstract class AbstractRepository extends Job {
 			PDEPlugin.log(e);
 		} catch (IOException e) {
 			PDEPlugin.log(e);
+		} finally {
+			if (zipFile != null) {
+				try {
+					zipFile.close();
+				} catch (IOException e) {
+				}
+			}
 		}
 	}
 

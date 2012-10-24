@@ -23,8 +23,7 @@ import org.eclipse.pde.internal.ui.views.imagebrowser.repositories.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.ISourceProvider;
@@ -84,7 +83,7 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 	 * @see org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createPartControl(final Composite parent) {
-		final Composite composite = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH);
+		final Composite composite = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH, 0, 0);
 
 		Composite topComp = new Composite(composite, SWT.NONE);
 		RowLayout layout = new RowLayout();
@@ -156,7 +155,13 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 		});
 		nextButton.setEnabled(false);
 
-		scrolledComposite = SWTFactory.createScrolledComposite(composite, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER, 1, 1, 0, 0);
+		scrolledComposite = new ScrolledComposite(composite, SWT.BORDER | SWT.V_SCROLL);
+		scrolledComposite.setBackground(scrolledComposite.getParent().getBackground());
+		scrolledComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		scrolledComposite.setExpandHorizontal(true);
+		scrolledComposite.setExpandVertical(true);
+		// TODO Check composite margins
+
 		scrolledComposite.addControlListener(new ControlAdapter() {
 			public void controlResized(final ControlEvent e) {
 				Rectangle r = scrolledComposite.getClientArea();
@@ -164,9 +169,13 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 			}
 		});
 		imageComposite = SWTFactory.createComposite(scrolledComposite, 1, 1, GridData.FILL_BOTH, 0, 0);
+		((GridLayout) imageComposite.getLayout()).verticalSpacing = 0;
+		imageComposite.setBackground(imageComposite.getParent().getBackground());
 		scrolledComposite.setContent(imageComposite);
+		scrolledComposite.setMinSize(imageComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 
-		Composite infoGroup = SWTFactory.createComposite(composite, 4, 1, GridData.FILL_HORIZONTAL);
+		Composite infoGroup = SWTFactory.createComposite(composite, 4, 1, GridData.FILL_HORIZONTAL, 0, 0);
+		((GridLayout) infoGroup.getLayout()).verticalSpacing = 0;
 
 		SWTFactory.createLabel(infoGroup, PDEUIMessages.ImageBrowserView_Path, 1);
 		lblPath = new Label(infoGroup, SWT.NONE);
@@ -190,8 +199,8 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 
 		SWTFactory.createLabel(infoGroup, PDEUIMessages.ImageBrowserView_Reference, 1);
 		txtReference = new Text(infoGroup, SWT.BORDER | SWT.READ_ONLY);
+		txtReference.setBackground(txtReference.getParent().getBackground());
 		txtReference.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 3, 1));
-
 	}
 
 	/* (non-Javadoc)
@@ -271,7 +280,7 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 		displayedImages.clear();
 	}
 
-	private class UpdateUI implements Runnable, SelectionListener {
+	private class UpdateUI extends FocusAdapter implements Runnable {
 
 		Collection<ImageElement> mElements = new LinkedList<ImageElement>();
 		String mLastPlugin = ""; //$NON-NLS-1$
@@ -298,7 +307,9 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 					if (!mLastPlugin.equals(element.getPlugin())) {
 						// new plug-in detected
 						mLastPlugin = element.getPlugin();
-						new Label(imageComposite, SWT.NONE).setText(mLastPlugin);
+						Label label = new Label(imageComposite, SWT.NONE);
+						label.setText(mLastPlugin);
+						label.setBackground(label.getParent().getBackground());
 
 						if (mPluginImageContainer != null)
 							mPluginImageContainer.layout();
@@ -315,7 +326,12 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 					button.setImage(image);
 					button.setToolTipText(element.getPath());
 					button.setData(element);
-					button.addSelectionListener(this);
+					button.addFocusListener(this);
+					button.addListener(SWT.Activate, new Listener() {
+						public void handleEvent(Event e) {
+
+						}
+					});
 				}
 
 				mElements.clear();
@@ -328,12 +344,26 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 			}
 		}
 
-		public void widgetDefaultSelected(SelectionEvent e) {
-			widgetSelected(e);
+		public void focusGained(FocusEvent e) {
+			// Scroll the focused control into view
+			Control child = (Control) e.widget;
+			Rectangle bounds = child.getBounds();
+			// Because we store the buttons in an additional composite, need to adjust bounds
+			Rectangle pluginBounds = child.getParent().getBounds();
+			bounds.x += pluginBounds.x;
+			bounds.y += pluginBounds.y;
+			Rectangle area = scrolledComposite.getClientArea();
+			Point origin = scrolledComposite.getOrigin();
+			if (origin.x > bounds.x)
+				origin.x = Math.max(0, bounds.x);
+			if (origin.y > bounds.y)
+				origin.y = Math.max(0, bounds.y);
+			if (origin.x + area.width < bounds.x + bounds.width)
+				origin.x = Math.max(0, bounds.x + bounds.width - area.width);
+			if (origin.y + area.height < bounds.y + bounds.height)
+				origin.y = Math.max(0, bounds.y + bounds.height - area.height);
+			scrolledComposite.setOrigin(origin);
 
-		}
-
-		public void widgetSelected(final SelectionEvent e) {
 			final Object data = e.widget.getData();
 			if (data instanceof ImageElement) {
 
