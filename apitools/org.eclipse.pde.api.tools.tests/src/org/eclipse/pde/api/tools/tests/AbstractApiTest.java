@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 IBM Corporation and others.
+ * Copyright (c) 2007, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,11 +30,17 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.ltk.core.refactoring.CreateChangeOperation;
 import org.eclipse.ltk.core.refactoring.PerformChangeOperation;
 import org.eclipse.ltk.core.refactoring.Refactoring;
+import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.tests.util.ProjectUtils;
 import org.eclipse.pde.api.tools.util.tests.ResourceEventWaiter;
+import org.eclipse.pde.core.plugin.ModelEntry;
+import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.internal.core.IPluginModelListener;
+import org.eclipse.pde.internal.core.PluginModelDelta;
+import org.eclipse.pde.internal.core.PluginModelManager;
 import org.eclipse.pde.internal.core.natures.PDE;
 
 /**
@@ -124,13 +130,33 @@ public class AbstractApiTest extends TestCase {
 	 * @param packages an optional list of packages to add to the project when it is created
 	 * @throws Exception
 	 */
-	protected void createProject(String name, String[] packages) throws Exception {
+	protected void createProject(final String name, String[] packages) throws Exception {
 		if(name == null) {
 			return;
 		}
+		
+		// TODO This error message added to track Bug 368458
+		IPluginModelListener listener = new IPluginModelListener() {
+			public void modelsChanged(PluginModelDelta delta) {
+				ModelEntry[] entries = delta.getAddedEntries();
+				for (int i = 0; i < entries.length; i++) {
+					BundleDescription bundle = entries[i].getModel().getBundleDescription();
+					if (bundle != null && name.equals(bundle.getSymbolicName())){
+						System.out.println("AbstractApiTest: Project " + name + " has been added to the PDE models. Time: " + System.currentTimeMillis());
+					}
+				}
+			}
+		};
+		PluginModelManager.getInstance().addPluginModelListener(listener);
+		
         // create project and import source
         IJavaProject jproject = ProjectUtils.createPluginProject(name, new String[] {PDE.PLUGIN_NATURE, ApiPlugin.NATURE_ID});
         assertNotNull("The java project must have been created", jproject);
+        
+     // TODO This error message added to track Bug 368458
+        System.out.println("AbstractApiTest: Project " + name + " has been created in the workspace. Time: " + System.currentTimeMillis());
+        
+        
         IPackageFragmentRoot root = jproject.getPackageFragmentRoot(jproject.getProject().getFolder(ProjectUtils.SRC_FOLDER));
         assertTrue("the src root must have been created", root.exists());
         if(packages != null) {
@@ -140,8 +166,16 @@ public class AbstractApiTest extends TestCase {
 	    		assertNotNull("the package fragment "+packages[i]+" cannot be null", fragment);
 			}
         }
-         
+        
+        PluginRegistry.getWorkspaceModels();
+        
         IApiBaseline baseline = getWorkspaceBaseline();
+        
+        // TODO This error message added to track Bug 368458
+        System.out.println("AbstractApiTest: Retrieving the workspace baseline: " + Boolean.toString(baseline != null) + ". Time: " + System.currentTimeMillis());
+        PluginModelManager.getInstance().removePluginModelListener(listener);
+        System.out.println();
+        
         assertNotNull("the workspace baseline cannot be null", baseline);
         IApiComponent component = baseline.getApiComponent(name);
         assertNotNull("the test project api component must exist in the workspace baseline", component);
