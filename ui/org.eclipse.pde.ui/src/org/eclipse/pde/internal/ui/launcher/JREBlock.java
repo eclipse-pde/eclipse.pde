@@ -188,7 +188,11 @@ public class JREBlock {
 		if (jrePath == null) {
 			vmInstallName = config.getAttribute(IPDELauncherConstants.VMINSTALL, (String) null);
 			if (vmInstallName == null) {
-				vmInstallName = VMHelper.getDefaultVMInstallName(config);
+				// Try to get a default EE based on the selected plug-ins in the config
+				eeId = VMHelper.getDefaultEEName(config);
+				if (eeId == null) {
+					vmInstallName = VMHelper.getDefaultVMInstallName(config);
+				}
 			}
 		} else {
 			eeId = JavaRuntime.getExecutionEnvironmentId(jrePath);
