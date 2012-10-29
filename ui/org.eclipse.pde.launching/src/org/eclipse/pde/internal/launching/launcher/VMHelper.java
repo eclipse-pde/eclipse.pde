@@ -48,44 +48,48 @@ public class VMHelper {
 			if (validEEs.isEmpty()) {
 				break; // No valid EEs left, short circuit
 			}
+			if (plugins[i].isFragmentModel()) {
+				continue; // The default EE shouldn't depend on fragments
+			}
 			BundleDescription desc = plugins[i].getBundleDescription();
 			if (desc != null) {
 
 				// List of all the BREEs that a valid environment must match
 				String[] bundleEnvs = desc.getExecutionEnvironments();
+				if (bundleEnvs.length > 0) {
 
-				// Iterate through all remaining valid EEs, removing any that don't match
-				for (Iterator iterator = validEEs.iterator(); iterator.hasNext();) {
-					IExecutionEnvironment currentEE = (IExecutionEnvironment) iterator.next();
-					// To be valid, an EE must match all BREEs
-					boolean allBREEValid = true;
-					for (int j = 0; j < bundleEnvs.length; j++) {
-						boolean currentBundleEnvValid = false;
-						if (bundleEnvs[j].equals(currentEE.getId())) {
-							currentBundleEnvValid = true;
-							continue; // No need to check subEnvironments at all
-						}
-						IExecutionEnvironment[] currentSubEE = currentEE.getSubEnvironments();
-						for (int k = 0; k < currentSubEE.length; k++) {
-							if (bundleEnvs[j].equals(currentSubEE[k].getId())) {
-								currentBundleEnvValid = true;
-								break; // No need to check other subEnvironments
+					// Iterate through all remaining valid EEs, removing any that don't match
+					for (Iterator iterator = validEEs.iterator(); iterator.hasNext();) {
+						IExecutionEnvironment currentEE = (IExecutionEnvironment) iterator.next();
+						boolean isValid = false;
+						// To be valid, an EE must match at least one BREE
+						for (int j = 0; j < bundleEnvs.length; j++) {
+							if (isValid) {
+								break; // sub environment was valid
+							}
+							if (bundleEnvs[j].equals(currentEE.getId())) {
+								isValid = true;
+								break; // No need to check subEnvironments at all
+							}
+							IExecutionEnvironment[] currentSubEE = currentEE.getSubEnvironments();
+							for (int k = 0; k < currentSubEE.length; k++) {
+								if (bundleEnvs[j].equals(currentSubEE[k].getId())) {
+									isValid = true;
+									break; // No need to check other subEnvironments
+								}
 							}
 						}
-						if (!currentBundleEnvValid) {
-							allBREEValid = false;
-							break; // No need to check other BREEs
+						// The current EE doesn't support this bundle, remove it
+						if (!isValid) {
+							iterator.remove();
 						}
-					}
-					// The current EE doesn't support this bundle, remove it
-					if (!allBREEValid) {
-						iterator.remove();
 					}
 				}
 			}
 		}
 
-		// TODO Check if some valid EEs are a subset of another and select smallest
+		// JavaRuntime appears to return the EEs from smallest to largest, so taking the first valid EE is a good selection
+		// To improve this we could check if any valid EE has another valid EE as a subEnvironment
 		if (!validEEs.isEmpty()) {
 			return ((IExecutionEnvironment) validEEs.iterator().next()).getId();
 		}
@@ -157,8 +161,9 @@ public class VMHelper {
 		String eeId = VMHelper.getDefaultEEName(configuration);
 		if (eeId != null) {
 			IExecutionEnvironment ee = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment(eeId);
+			String vmName = VMUtil.getVMInstallName(ee);
 			if (ee != null) {
-				IVMInstall vm = ee.getDefaultVM();
+				IVMInstall vm = getVMInstall(vmName);
 				if (vm != null) {
 					return vm;
 				}

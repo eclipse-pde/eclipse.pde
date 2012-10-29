@@ -204,17 +204,8 @@ public class JREBlock {
 		fEeButton.setSelection(eeId != null);
 
 		setJRECombo();
-		if (vmInstallName == null) {
-			vmInstallName = JavaRuntime.getVMInstallName(jrePath);
-			if (vmInstallName == null) {
-				vmInstallName = VMHelper.getDefaultVMInstallName(config);
-			}
-		}
-		fJreCombo.setText(vmInstallName);
-		if (fJreCombo.getSelectionIndex() == -1)
-			fJreCombo.setText(VMUtil.getDefaultVMInstallName());
-
 		setEECombo();
+		setJREComboSelection(vmInstallName);
 		setEEComboSelection(eeId);
 
 		updateJREEnablement();
@@ -232,6 +223,15 @@ public class JREBlock {
 		}
 		if (fEeCombo.getItemCount() > 0 && fEeCombo.getSelectionIndex() == -1)
 			fEeCombo.select(0);
+	}
+
+	private void setJREComboSelection(String vmInstallName) {
+		if (vmInstallName != null) {
+			fJreCombo.setText(vmInstallName);
+		}
+		if (fJreCombo.getSelectionIndex() == -1) {
+			fJreCombo.setText(VMUtil.getDefaultVMInstallName());
+		}
 	}
 
 	private void updateJREEnablement() {
@@ -258,18 +258,9 @@ public class JREBlock {
 		if (fJreButton.getSelection()) {
 			if (fJreCombo.getSelectionIndex() != -1) {
 				String jreName = fJreCombo.getText();
-
-				String defaultVM = null;
-				try {
-					defaultVM = VMHelper.getDefaultVMInstallName(config);
-				} catch (CoreException e) {
-				}
-				// Only set the jrePath if name is different from the default
-				if (defaultVM == null || !jreName.equals(defaultVM)) {
-					IVMInstall install = VMHelper.getVMInstall(jreName);
-					// remove the name to make portable
-					jrePath = JavaRuntime.newJREContainerPath(install);
-				}
+				IVMInstall install = VMHelper.getVMInstall(jreName);
+				// remove the name to make portable
+				jrePath = JavaRuntime.newJREContainerPath(install);
 			}
 		} else {
 			if (fEeCombo.getSelectionIndex() != -1) {
