@@ -11,8 +11,7 @@
 package org.eclipse.pde.internal.core;
 
 import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.*;
 import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.spi.RegistryContributor;
@@ -65,7 +64,7 @@ public class SourceLocationManager implements ICoreConstants {
 
 	/**
 	 * Searches source locations providing source for the given plugin and then searches
-	 * that location for the file specified by the filePath argument.  A URL to this location
+	 * that location for the file specified by the filePath argument.  An unencoded URL to this location
 	 * will be returned or <code>null</code> if the file could not be found.  Note that the
 	 * URL may specify a file that is inside of a jar file.
 	 * 
@@ -83,8 +82,13 @@ public class SourceLocationManager implements ICoreConstants {
 			result = searchBundleManifestLocations(pluginBase);
 			if (result != null) {
 				try {
-					return new URL("jar:" + result.toFile().toURI().toURL() + "!/" + filePath.toString()); //$NON-NLS-1$ //$NON-NLS-2$
+					// We use URIs to create the combined jar/path url, but URIs encode special characters
+					URI encodedUri = URIUtil.toURI(result.toFile().toURL());
+					URI jarUri = URIUtil.toJarURI(encodedUri, filePath);
+					return new URL(URIUtil.toUnencodedString(jarUri));
 				} catch (MalformedURLException e) {
+					PDECore.log(e);
+				} catch (URISyntaxException e) {
 					PDECore.log(e);
 				}
 			}

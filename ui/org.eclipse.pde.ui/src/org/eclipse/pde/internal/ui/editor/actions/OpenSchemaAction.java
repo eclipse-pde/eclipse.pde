@@ -14,7 +14,7 @@ package org.eclipse.pde.internal.ui.editor.actions;
 import java.io.File;
 import java.net.*;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.util.NLS;
@@ -30,7 +30,7 @@ import org.eclipse.pde.internal.ui.editor.schema.SchemaEditor;
 
 /**
  * OpenSchemaAction
- *
+ * 
  */
 public class OpenSchemaAction extends Action {
 
@@ -172,89 +172,94 @@ public class OpenSchemaAction extends Action {
 			displayErrorDialog();
 			return;
 		}
-		// Retrieve the schema URL
+
+		// Get unencoded schema url
 		URL schemaURL = fSchema.getURL();
-		// Ensure the URL is defined
 		if (schemaURL == null) {
 			displayErrorDialog();
 			return;
 		}
-		// Get the raw URL, determine if it is stored in a JAR, and handle 
-		// accordingly
-		String rawURL = schemaURL.toString();
-		String path = null;
-		try {
-			path = schemaURL.toURI().getPath();
-		} catch (URISyntaxException e) {
-		}
-		if (path != null) {
-			if (rawURL.startsWith("jar")) { //$NON-NLS-1$
-				// Call to getPath removes the 'jar:' qualifier
-				openSchemaJar(path);
-			} else {
-				openSchemaFile(path);
-			}
-		} else {
-			displayErrorDialog();
-		}
 
+		// Check if we are dealing with a jarred bundle
+		if (schemaURL.getProtocol().startsWith("jar")) { //$NON-NLS-1$
+			openSchemaJar(schemaURL);
+		} else {
+			openSchemaFile(schemaURL);
+		}
 	}
 
 	/**
 	 * @param path
 	 */
-	private void openSchemaFile(String path) {
-		// Open the schema in a new editor
+	private void openSchemaFile(URL url) {
 		try {
-			// see if schema URL is actually in workspace.  If so, open it as we would if users opened file directly
+			// Convert url to an encoded URI, then try to get a local file out of it
+			URI uri = URIUtil.toURI(url);
+			File schemaFile = URIUtil.toFile(uri);
+			if (schemaFile == null || !schemaFile.exists()) {
+				displayErrorDialog();
+				return;
+			}
+
+			// See if the file is actually in the workspace so we can open the editable version
+			IPath schemaPath = new Path(schemaFile.getPath());
 			IWorkspaceRoot root = PDEPlugin.getWorkspace().getRoot();
 			IPath workspacePath = root.getLocation();
-			String workspaceLoc = workspacePath.toFile().toURL().getPath();
-			if (path.startsWith(workspaceLoc)) {
-				String relativeLocation = path.substring(workspaceLoc.length());
-				IResource res = root.findMember(relativeLocation);
+			if (workspacePath.isPrefixOf(schemaPath)) {
+				schemaPath = schemaPath.removeFirstSegments(workspacePath.segmentCount());
+				IResource res = root.findMember(schemaPath);
 				if (res != null && res instanceof IFile && res.getProject().isOpen()) {
 					SchemaEditor.openSchema((IFile) res);
 					return;
 				}
 			}
-		} catch (MalformedURLException e) {
-		}
-		if (!SchemaEditor.openSchema(new File(path)))
+
+			// Not in the workspace, open as absolute path
+			SchemaEditor.openSchema(schemaFile);
+
+		} catch (URISyntaxException e) {
+			PDEPlugin.log(e);
 			displayErrorDialog();
+		}
 	}
 
 	/**
 	 * @param path
 	 */
-	private void openSchemaJar(String path) {
-		// Remove the 'file:' qualifier
-		if (path.startsWith("file:") == false) { //$NON-NLS-1$
+	private void openSchemaJar(URL url) {
+		try {
+			// The url is unencoded, so we can treat it like a path, splitting it based on the jar suffix '!'
+			String stringUrl = url.getPath();
+			int jarSuffix = stringUrl.indexOf('!');
+			if ((jarSuffix <= 0) || ((jarSuffix + 1) >= stringUrl.length())) {
+				displayErrorDialog();
+				return;
+			}
+
+			String fileUrl = stringUrl.substring(0, jarSuffix);
+			URI uri = URIUtil.toURI(new URL(fileUrl));
+			File jarFile = URIUtil.toFile(uri);
+			if (jarFile == null || !jarFile.exists()) {
+				displayErrorDialog();
+				return;
+			}
+
+			String schemaEntryName = stringUrl.substring(jarSuffix + 1);
+			if (schemaEntryName.startsWith("/")) { //$NON-NLS-1$
+				schemaEntryName = schemaEntryName.substring(1);
+			}
+
+			// Open the schema in a new editor
+			if (!SchemaEditor.openSchema(jarFile, schemaEntryName)) {
+				displayErrorDialog();
+			}
+		} catch (URISyntaxException e) {
+			PDEPlugin.log(e);
 			displayErrorDialog();
-			return;
-		}
-		path = path.substring(5);
-		// An exclaimation point separates the jar filename from the
-		// schema file entry in the jar file
-		// Get the index of the '!'
-		int exclPointIndex = path.indexOf('!');
-		// Ensure there is an '!' and that the schema file entry is defined
-		// and the jar file name is defined
-		if ((exclPointIndex <= 0) || ((exclPointIndex + 1) >= path.length())) {
+		} catch (MalformedURLException e) {
+			PDEPlugin.log(e);
 			displayErrorDialog();
-			return;
 		}
-		// Extract the jar file name - not including '!'
-		String jarFileName = path.substring(0, exclPointIndex);
-		// Extract the schema entry name - not including the '!' 
-		String schemaEntryName = path.substring(exclPointIndex + 1);
-		// If the schema entry starts with a '/', remove it
-		if (schemaEntryName.startsWith("/")) { //$NON-NLS-1$
-			schemaEntryName = schemaEntryName.substring(1);
-		}
-		// Open the schema in a new editor
-		if (!SchemaEditor.openSchema(new File(jarFileName), schemaEntryName))
-			displayErrorDialog();
 	}
 
 }

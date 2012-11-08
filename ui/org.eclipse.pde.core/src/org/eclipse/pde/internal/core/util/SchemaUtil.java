@@ -16,6 +16,7 @@ import java.io.InputStream;
 import java.net.*;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
+import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.pde.internal.core.PDECore;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -38,18 +39,28 @@ public class SchemaUtil {
 	 * 
 	 * @param url URL to open connection to
 	 * @return the url connection
-	 * @throws MalformedURLException if the url is null
+	 * @throws MalformedURLException if the url is null or malformed
 	 * @throws IOException if there is a problem accessing the resource specified by the url
 	 */
 	public static URLConnection getURLConnection(URL url) throws MalformedURLException, IOException {
 		if (url == null) {
 			throw new MalformedURLException("URL specified is null"); //$NON-NLS-1$
 		}
-		URLConnection connection = url.openConnection();
-		if (connection instanceof JarURLConnection) {
-			connection.setUseCaches(false);
+		// Encode the url to handle special characters by making it a URI
+		URI uri;
+		try {
+			uri = URIUtil.toURI(url);
+			URL encodedUrl = URIUtil.toURL(uri);
+
+			URLConnection connection = encodedUrl.openConnection();
+			if (connection instanceof JarURLConnection) {
+				connection.setUseCaches(false);
+			}
+			return connection;
+
+		} catch (URISyntaxException e) {
+			throw new MalformedURLException("Unable to encode schema url: " + url); //$NON-NLS-1$
 		}
-		return connection;
 	}
 
 	public static void parseURL(URL url, DefaultHandler handler) {
