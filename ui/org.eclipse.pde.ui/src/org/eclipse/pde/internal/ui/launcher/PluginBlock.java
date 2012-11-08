@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -146,13 +146,14 @@ public class PluginBlock extends AbstractPluginBlock {
 			PluginModelNameBuffer wBuffer = new PluginModelNameBuffer();
 			PluginModelNameBuffer tBuffer = new PluginModelNameBuffer();
 
-			// If this is the first time the table is enabled, default the checkstate to all workspace plug-ins
 			if (fInitDefaultCheckState) {
+				// If this is the first time the table is enabled, default the checkstate to all workspace plug-ins
 				TreeSet<String> checkedWorkspace = new TreeSet<String>();
 				IPluginModelBase[] workspaceModels = getWorkspaceModels();
 				for (int i = 0; i < workspaceModels.length; i++) {
 					String id = workspaceModels[i].getPluginBase().getId();
 					if (id != null) {
+						wBuffer.add(workspaceModels[i]);
 						checkedWorkspace.add(id);
 					}
 				}
@@ -160,16 +161,14 @@ public class PluginBlock extends AbstractPluginBlock {
 				IPluginModelBase[] externalModels = getExternalModels();
 				for (int i = 0; i < externalModels.length; i++) {
 					IPluginModelBase model = externalModels[i];
-					boolean masked = checkedWorkspace.contains(model.getPluginBase().getId());
-					if (masked) {
-						wBuffer.add(model);
-					} else if (model.isEnabled()) {
+					// If there is a workspace bundle with the same id, don't check the external version
+					if (!checkedWorkspace.contains(model.getPluginBase().getId()) && model.isEnabled()) {
 						tBuffer.add(model);
 					}
 				}
 				fInitDefaultCheckState = false;
-				// If we have checked elements, save them to the config
 			} else {
+				// If we have checked elements, save them to the config
 				Object[] selected = fPluginTreeViewer.getCheckedElements();
 				for (int i = 0; i < selected.length; i++) {
 					if (selected[i] instanceof IPluginModelBase) {
