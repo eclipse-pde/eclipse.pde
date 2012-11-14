@@ -965,15 +965,17 @@ public class ScriptGenerationTests extends PDETestCase {
 		//custom profile contributed, without profile.list, in a folder
 		IFolder custom = Utils.createFolder(buildFolder, "plugins/custom");
 		Utils.generateBundle(custom, "custom");
+
 		StringBuffer buffer = new StringBuffer("osgi.java.profile.name=MyCustomProfile\n");
 		buffer.append("org.osgi.framework.system.packages=org.my.package\n");
 		buffer.append("org.osgi.framework.bootdelegation = org.my.package\n");
-		buffer.append("org.osgi.framework.executionenvironment=MyCustomProfile,OSGi/Minimum-1.2\n");
+		// A minimum EE of 1.5 is needed for the OSGi state to resolve (bug 392789)
+		buffer.append("org.osgi.framework.executionenvironment=MyCustomProfile,OSGi/Minimum-1.0,OSGi/Minimum-1.1,OSGi/Minimum-1.2,JRE-1.1,J2SE-1.2,J2SE-1.3,J2SE-1.4, J2SE-1.5\n");
+		buffer.append("org.osgi.framework.system.capabilities=osgi.ee; osgi.ee=\"OSGi/Minimum\"; version:List<Version>=\"1.0, 1.1, 1.2\", osgi.ee; osgi.ee=\"JRE\"; version:List<Version>=\"1.0, 1.1\", osgi.ee; osgi.ee=\"JavaSE\"; version:List<Version>=\"1.0, 1.1, 1.2, 1.3, 1.4, 1.5\"\n");
 		Utils.writeBuffer(custom.getFile("my.profile"), buffer);
 
 		IFolder a = Utils.createFolder(buildFolder, "plugins/a");
 		Attributes additionalAttributes = new Attributes();
-		additionalAttributes = new Attributes();
 		additionalAttributes.put(new Attributes.Name("Import-Package"), "org.my.package");
 		Utils.generateBundleManifest(a, "a", "1.0.0", additionalAttributes);
 
@@ -995,7 +997,11 @@ public class ScriptGenerationTests extends PDETestCase {
 		StringBuffer buffer = new StringBuffer("osgi.java.profile.name=MyCustomProfile\n");
 		buffer.append("org.osgi.framework.system.packages=org.my.package\n");
 		buffer.append("org.osgi.framework.bootdelegation = org.my.package\n");
-		buffer.append("org.osgi.framework.executionenvironment=MyCustomProfile,OSGi/Minimum-1.2\n");
+		// A minimum EE of 1.5 is needed for the OSGi state to resolve (bug 392789)
+		buffer.append("org.osgi.framework.executionenvironment=MyCustomProfile,OSGi/Minimum-1.0,OSGi/Minimum-1.1,OSGi/Minimum-1.2,JRE-1.1,J2SE-1.2,J2SE-1.3,J2SE-1.4, J2SE-1.5\n");
+		buffer.append("org.osgi.framework.system.capabilities=osgi.ee; osgi.ee=\"OSGi/Minimum\"; version:List<Version>=\"1.0, 1.1, 1.2\", osgi.ee; osgi.ee=\"JRE\"; version:List<Version>=\"1.0, 1.1\", osgi.ee; osgi.ee=\"JavaSE\"; version:List<Version>=\"1.0, 1.1, 1.2, 1.3, 1.4, 1.5\"\n");
+		Utils.writeBuffer(custom.getFile("my.profile"), buffer);
+
 		Utils.writeBuffer(custom.getFile("profiles/my.profile"), buffer);
 		Utils.writeBuffer(custom.getFile("profile.list"), new StringBuffer("java.profiles=profiles/my.profile\n"));
 
