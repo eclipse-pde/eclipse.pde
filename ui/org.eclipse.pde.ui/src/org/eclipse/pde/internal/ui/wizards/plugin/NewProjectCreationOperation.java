@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -67,7 +67,11 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		fContentWizard = contentWizard;
 	}
 
-	// function used to modify Manifest just before it is written out (after all project artifacts have been created.
+	/**
+	 * Function used to modify Manifest just before it is written out (after all project artifacts have been created.
+	 * 
+	 * @throws CoreException  
+	 */
 	protected void adjustManifests(IProgressMonitor monitor, IProject project, IPluginBase bundle) throws CoreException {
 		// if libraries are exported, compute export package (173393)
 		IPluginLibrary[] libs = fModel.getPluginBase().getLibraries();
@@ -130,7 +134,12 @@ public class NewProjectCreationOperation extends WorkspaceModifyOperation {
 		}
 	}
 
-	@SuppressWarnings("unused")
+	/**
+	 * @throws CoreException  
+	 * @throws JavaModelException 
+	 * @throws InvocationTargetException 
+	 * @throws InterruptedException 
+	 */
 	protected void createContents(IProgressMonitor monitor, IProject project) throws CoreException, JavaModelException, InvocationTargetException, InterruptedException {
 	}
 
