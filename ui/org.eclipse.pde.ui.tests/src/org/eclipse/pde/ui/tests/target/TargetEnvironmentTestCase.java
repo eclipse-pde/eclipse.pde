@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
-import java.util.*;
+import java.util.Dictionary;
+import java.util.Properties;
 import junit.framework.*;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -78,7 +79,6 @@ public class TargetEnvironmentTestCase extends TestCase {
 		Dictionary[] platformProps = TargetPlatformHelper.getState().getPlatformProperties();
 
 		String[] profiles = TargetPlatformHelper.getKnownExecutionEnvironments();
-		ArrayList eeProps = new ArrayList(profiles.length);
 		for (int i = 0; i < profiles.length; i++) {
 			IExecutionEnvironment environment = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment(profiles[i]);
 			if (environment != null) {
