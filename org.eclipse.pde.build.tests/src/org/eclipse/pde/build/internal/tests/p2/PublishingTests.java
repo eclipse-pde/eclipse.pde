@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2008, 2012 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -448,14 +448,16 @@ public class PublishingTests extends P2TestCase {
 		entries.add("launcher");
 		assertZipContents(buildFolder.getFolder("buildRepo/binary"), executable + "_root.motif.aix.ppc_" + version, entries);
 
+		// Linux zips contain launcher and about.html (libCairo no longer packaged in the delta pack (bug 354978))
+		//		entries.add("libcairo-swt.so");
+		//		entries.add("about_files/about_cairo.html");
+		//		entries.add("about_files/mpl-v11.txt");
+		//		entries.add("about_files/pixman-licenses.txt");
+		//		entries.add("about_files/");
 		entries.add("about.html");
-		entries.add("libcairo-swt.so");
-		entries.add("about_files/about_cairo.html");
-		entries.add("about_files/mpl-v11.txt");
-		entries.add("about_files/pixman-licenses.txt");
-		entries.add("about_files/");
 		assertZipContents(buildFolder.getFolder("buildRepo/binary"), executable + "_root.gtk.linux.x86_" + version, entries);
 
+		// Mac zips contain app structure
 		entries.add("Eclipse.app/");
 		entries.add("Eclipse.app/Contents/");
 		entries.add("Eclipse.app/Contents/Info.plist");
@@ -464,12 +466,15 @@ public class PublishingTests extends P2TestCase {
 		entries.add("Eclipse.app/Contents/MacOS/launcher");
 		assertZipContents(buildFolder.getFolder("buildRepo/binary"), executable + "_root.carbon.macosx.ppc_" + version, entries);
 
+		// Windows zips just contain the launcher
+
 		IMetadataRepository repository = loadMetadataRepository("file:" + buildFolder.getFolder("buildRepo").getLocation().toOSString());
 		assertNotNull(repository);
 
 		IInstallableUnit iu = getIU(repository, "org.eclipse.equinox.executable_root.gtk.linux.ppc");
 		assertEquals(iu.getVersion().toString(), version);
-		assertTouchpoint(iu, "install", "chmod(targetDir:${installFolder}, targetFile:libcairo-swt.so, permissions:755);");
+		// LibCairo no longer installed using a touchpoint (Bug 354978)
+		//		assertTouchpoint(iu, "install", "chmod(targetDir:${installFolder}, targetFile:libcairo-swt.so, permissions:755);");
 	}
 
 	public void testPublishBundle_APITooling() throws Exception {
