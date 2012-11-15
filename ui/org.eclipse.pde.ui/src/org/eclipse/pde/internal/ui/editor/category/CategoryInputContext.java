@@ -1,11 +1,12 @@
 /******************************************************************************* 
-* Copyright (c) 2009 EclipseSource and others. All rights reserved. This
+* Copyright (c) 2009, 2012 EclipseSource and others. All rights reserved. This
 * program and the accompanying materials are made available under the terms of
 * the Eclipse Public License v1.0 which accompanies this distribution, and is
 * available at http://www.eclipse.org/legal/epl-v10.html
 *
 * Contributors:
 *   EclipseSource - initial API and implementation
+*   IBM Corporation - Ongoing maintenance
 ******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.category;
 
@@ -18,6 +19,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.core.*;
+import org.eclipse.pde.internal.core.AbstractModel;
 import org.eclipse.pde.internal.core.isite.ISiteModel;
 import org.eclipse.pde.internal.core.site.ExternalSiteModel;
 import org.eclipse.pde.internal.core.site.WorkspaceSiteModel;
@@ -117,7 +119,9 @@ public class CategoryInputContext extends XMLInputContext {
 			editableModel.save(writer);
 			writer.flush();
 			swriter.close();
-			doc.set(swriter.toString());
+			String content = swriter.toString();
+			content = AbstractModel.fixLineDelimiter(content, (IFile) ((IModel) getModel()).getUnderlyingResource());
+			doc.set(content);
 		} catch (IOException e) {
 			PDEPlugin.logException(e);
 		}

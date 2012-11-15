@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.core.*;
+import org.eclipse.pde.internal.core.AbstractModel;
 import org.eclipse.pde.internal.core.feature.ExternalFeatureModel;
 import org.eclipse.pde.internal.core.feature.WorkspaceFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
@@ -128,7 +129,9 @@ public class FeatureInputContext extends XMLInputContext {
 			editableModel.save(writer);
 			writer.flush();
 			swriter.close();
-			doc.set(swriter.toString());
+			String content = swriter.toString();
+			content = AbstractModel.fixLineDelimiter(content, (IFile) ((IModel) getModel()).getUnderlyingResource());
+			doc.set(content);
 		} catch (IOException e) {
 			PDEPlugin.logException(e);
 		}

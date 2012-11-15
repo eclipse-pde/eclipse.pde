@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import org.eclipse.pde.core.IModelChangedListener;
-
 import java.io.File;
 import java.io.Serializable;
 import java.util.*;
@@ -51,7 +49,16 @@ public abstract class AbstractModel extends PlatformObject implements IModel, IM
 		return Platform.getPreferencesService().getString(Platform.PI_RUNTIME, Platform.PREF_LINE_SEPARATOR, null, scopeContext);
 	}
 
-	protected static String fixLineDelimiter(String string, IFile file) {
+	/**
+	 * Replaces all line delimiters to the same characters based on preference settings.  If no project
+	 * or workspace preference has been set then the string will not be modified.  If the
+	 * delimiter matches the current system setting, the string will not be modified.
+	 *  
+	 * @param string the string to replace line delimiters in
+	 * @param file the file to lookup specific project preference settings for, can be <code>null</code> to use workspace settings
+	 * @return the provided string with line delimiters replaced
+	 */
+	public static String fixLineDelimiter(String string, IFile file) {
 		String lineDelimiter = getLineDelimiterPreference(file);
 		if (lineDelimiter == null)
 			return string;

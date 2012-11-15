@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2012 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -9,8 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.extension;
-
-import org.eclipse.pde.internal.ui.dialogs.PluginSelectionDialog;
 
 import java.io.*;
 import org.eclipse.core.resources.*;
@@ -24,6 +22,7 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.internal.core.AbstractModel;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ischema.IDocumentSection;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
@@ -31,6 +30,7 @@ import org.eclipse.pde.internal.core.schema.*;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.core.util.IdUtil;
 import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.dialogs.PluginSelectionDialog;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -193,7 +193,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IHelpContextIds.NEW_SCHEMA);
 	}
 
-	private InputStream createSchemaStream(String pluginId, String pointId, String name, boolean shared) {
+	private InputStream createSchemaStream(String pluginId, String pointId, String name, boolean shared, IFile schemaFile) {
 		if (name.length() == 0)
 			name = pointId;
 		EditableSchema schema = new EditableSchema(pluginId, pointId, name, false);
@@ -241,7 +241,9 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 			PDEPlugin.logException(e);
 		}
 		try {
-			return new ByteArrayInputStream(swriter.toString().getBytes("UTF8")); //$NON-NLS-1$
+			String content = swriter.toString();
+			content = AbstractModel.fixLineDelimiter(content, schemaFile);
+			return new ByteArrayInputStream(content.getBytes("UTF8")); //$NON-NLS-1$
 		} catch (UnsupportedEncodingException e) {
 			return new ByteArrayInputStream(new byte[0]);
 		}
@@ -258,9 +260,9 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 			IFolder folder = fContainer.getProject().getFolder(newSchemaPath);
 			CoreUtility.createFolder(folder);
 		}
-		InputStream source = createSchemaStream(pluginId, id, name, shared);
 		IPath filePath = fContainer.getFullPath().append(schema);
 		schemaFile = workspace.getRoot().getFile(filePath);
+		InputStream source = createSchemaStream(pluginId, id, name, shared, schemaFile);
 		if (!schemaFile.exists()) {
 			// create for the first time
 			schemaFile.create(source, true, monitor);
