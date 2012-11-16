@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2008, 2012 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -62,7 +62,6 @@ public class P2Tests extends P2TestCase {
 		runProductBuild(buildFolder);
 
 		String p2Config = ws + '.' + os + '.' + arch;
-		String launcherConfig = os.equals("macosx") ? ws + '.' + os : p2Config;
 		IMetadataRepository repository = loadMetadataRepository(repoLocation);
 		assertNotNull(repository);
 
@@ -94,7 +93,7 @@ public class P2Tests extends P2TestCase {
 		iu = getIU(repository, "toolingorg.eclipse.equinox.launcher");
 		assertTouchpoint(iu, "configure", "addProgramArg(programArg:-startup);addProgramArg(programArg:@artifact);");
 		ius.add(iu);
-		iu = getIU(repository, "toolingorg.eclipse.equinox.launcher." + launcherConfig);
+		iu = getIU(repository, "toolingorg.eclipse.equinox.launcher." + p2Config);
 		assertTouchpoint(iu, "configure", "addProgramArg(programArg:--launcher.library);addProgramArg(programArg:@artifact);");
 		ius.add(iu);
 
