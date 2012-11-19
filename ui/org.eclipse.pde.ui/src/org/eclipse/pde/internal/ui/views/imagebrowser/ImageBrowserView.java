@@ -7,6 +7,7 @@
  * 
  *  Contributors:
  *     Christian Pontesegger - initial API and implementation
+ *     IBM Corporation - ongoing enhancements
  *******************************************************************************/
 
 package org.eclipse.pde.internal.ui.views.imagebrowser;
@@ -15,8 +16,7 @@ import java.util.*;
 import java.util.List;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.pde.internal.ui.SWTFactory;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.views.imagebrowser.filter.*;
 import org.eclipse.pde.internal.ui.views.imagebrowser.filter.IFilter;
 import org.eclipse.pde.internal.ui.views.imagebrowser.repositories.*;
@@ -84,6 +84,7 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 	 */
 	public void createPartControl(final Composite parent) {
 		final Composite composite = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH, 0, 0);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IHelpContextIds.IMAGE_BROWSER_VIEW);
 
 		Composite topComp = new Composite(composite, SWT.NONE);
 		RowLayout layout = new RowLayout();
@@ -160,7 +161,6 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 		scrolledComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		scrolledComposite.setExpandHorizontal(true);
 		scrolledComposite.setExpandVertical(true);
-		// TODO Check composite margins
 
 		scrolledComposite.addControlListener(new ControlAdapter() {
 			public void controlResized(final ControlEvent e) {
