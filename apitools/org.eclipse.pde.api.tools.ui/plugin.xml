@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.2"?>
 <!--
-    Copyright (c) 2009, 2011 IBM Corporation and others.
+    Copyright (c) 2009, 2012 IBM Corporation and others.
     All rights reserved. This program and the accompanying materials
     are made available under the terms of the Eclipse Public License v1.0
     which accompanies this distribution, and is available at
@@ -497,6 +497,7 @@
       <launchConfigurationTabGroup
             class="org.eclipse.pde.api.tools.ui.internal.use.ApiUseTabGroup"
             description="%LaunchConfigurationTabGroup.name"
+            helpContextId="org.eclipse.pde.api.tools.ui.launcher_api_use_report"
             id="org.eclipse.pde.api.tools.usescan.tabgroup"
             type="org.eclipse.pde.api.tools.usescan">
       </launchConfigurationTabGroup>
