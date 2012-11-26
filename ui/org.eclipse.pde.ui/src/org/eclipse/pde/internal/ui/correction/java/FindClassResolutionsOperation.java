@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.correction.java;
 
-import org.eclipse.osgi.service.resolver.ExportPackageDescription;
-
 import java.util.*;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jdt.core.*;
+import org.eclipse.jdt.core.search.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -27,7 +27,6 @@ import org.eclipse.pde.internal.core.PDECore;
  * When it is run, it will pass any ExportPackageDescriptions which provide the package to the AbstractClassResolutionCollector.
  * The AbstractClassResolutionCollector is responsible for creating the appropriate resolutions.
  *
- * @since 3.4
  */
 public class FindClassResolutionsOperation implements IRunnableWithProgress {
 
@@ -39,7 +38,6 @@ public class FindClassResolutionsOperation implements IRunnableWithProgress {
 	 * This class is meant to be sub-classed for use with FindClassResolutionsOperation.  The subclass is responsible for creating 
 	 * corresponding proposals with the help of JavaResolutionFactory.
 	 * 
-	 * @since 3.4
 	 * @see JavaResolutionFactory
 	 */
 	public static abstract class AbstractClassResolutionCollector {
@@ -50,13 +48,36 @@ public class FindClassResolutionsOperation implements IRunnableWithProgress {
 		 */
 		abstract public void addResolutionModification(IProject project, ExportPackageDescription desc);
 
+		/**
+		 * Adds an export package proposal. Subclasses should implement the actual adding to the collection.
+		 */
+		public Object addExportPackageResolutionModification(IPackageFragment aPackage) {
+			if (aPackage.exists()) {
+				return JavaResolutionFactory.createExportPackageProposal(aPackage.getResource().getProject(), aPackage, JavaResolutionFactory.TYPE_JAVA_COMPLETION, 100);
+			}
+			return null;
+		}
+
+		/**
+		 * Adds a require bundle proposal. Subclasses should implement the actual adding to the collection.
+		 */
+		public Object addRequireBundleModification(IProject project, ExportPackageDescription desc, int relevance) {
+			return JavaResolutionFactory.createRequireBundleProposal(project, desc, JavaResolutionFactory.TYPE_JAVA_COMPLETION, relevance);
+		}
+
+		/**
+		 * Adds a search repositories proposal. Subclasses should implement the actual adding to the collection.
+		 */
+		public Object addSearchRepositoriesModification(String packageName) {
+			return JavaResolutionFactory.createSearchRepositoriesProposal(packageName);
+		}
+
 		/*
 		 * Optimization for case where users is only interested in Import-Package and therefore can quit after first dependency is found
 		 */
 		public boolean isDone() {
 			return false;
 		}
-
 	}
 
 	/**
@@ -85,12 +106,22 @@ public class FindClassResolutionsOperation implements IRunnableWithProgress {
 			typeName = null;
 		}
 
-		if (packageName != null && !isImportedPackage(packageName)) {
-			Set<ExportPackageDescription> validPackages = getValidPackages(packageName);
+		Set<IPackageFragment> packagesToExport = new HashSet<IPackageFragment>();
+		Collection<ExportPackageDescription> validPackages = getValidPackages(typeName, packageName, packagesToExport, monitor);
+		if (validPackages != null) {
+
+			if (validPackages.isEmpty()) {
+				for (Iterator<IPackageFragment> it = packagesToExport.iterator(); it.hasNext();) {
+					IPackageFragment packageFragment = it.next();
+					fCollector.addExportPackageResolutionModification(packageFragment);
+				}
+				return;
+			}
+
 			Iterator<ExportPackageDescription> validPackagesIter = validPackages.iterator();
 			Set<ExportPackageDescription> visiblePkgs = null;
-
-			while (validPackagesIter.hasNext() && !fCollector.isDone()) {
+			boolean allowMultipleFixes = packageName == null;
+			while (validPackagesIter.hasNext() && (allowMultipleFixes || !fCollector.isDone())) {
 				// since getting visible packages is not very efficient, only do it once and cache result
 				if (visiblePkgs == null) {
 					visiblePkgs = getVisiblePackages();
@@ -103,40 +134,156 @@ public class FindClassResolutionsOperation implements IRunnableWithProgress {
 				// if currentPackage will resolve class and is valid, pass it to collector
 				fCollector.addResolutionModification(fProject, currentPackage);
 			}
+
+			// additionally add require bundle proposals
+			for (validPackagesIter = validPackages.iterator(); validPackagesIter.hasNext();) {
+				ExportPackageDescription currentPackage = validPackagesIter.next();
+				fCollector.addRequireBundleModification(fProject, currentPackage, 16);
+			}
 		}
 	}
 
-	private boolean isImportedPackage(String packageName) {
-		IPluginModelBase model = PluginRegistry.findModel(fProject.getProject());
+	private Collection<ExportPackageDescription> getValidPackages(String typeName, String packageName, Set<IPackageFragment> packagesToExport, IProgressMonitor monitor) {
+		SubMonitor subMonitor = SubMonitor.convert(monitor, 3);
+
+		Collection<ExportPackageDescription> validPackages = null;
+		ImportPackageSpecification[] importPkgs = null;
+		IPluginModelBase model = PluginRegistry.findModel(fProject);
 		if (model != null && model.getBundleDescription() != null) {
-			ImportPackageSpecification[] importPkgs = model.getBundleDescription().getImportPackages();
-			for (int i = 0; i < importPkgs.length; i++) {
-				if (importPkgs[i].getName().equals(packageName)) {
-					return true;
+			importPkgs = model.getBundleDescription().getImportPackages();
+		}
+		subMonitor.worked(1);
+
+		if (importPkgs != null) {
+			if (packageName != null) {
+				if (!isImportedPackage(packageName, importPkgs)) {
+					validPackages = getValidPackages(packageName);
+				}
+				subMonitor.worked(1);
+			} else {
+				// find possible types in the global packages
+				validPackages = findValidPackagesContainingSimpleType(typeName, importPkgs, packagesToExport, subMonitor.newChild(1));
+			}
+		}
+		return validPackages;
+	}
+
+	/**
+	 * Finds all exported packages containing the simple type aTypeName. The packages
+	 * will be filtered from the given packages which are already imported, and all 
+	 * system packages.
+	 * 
+	 * If no exported package is left, packagesToExport will be filled with those
+	 * packages that would have been returned, if they were exported.  
+	 * @param aTypeName the simple type to search for
+	 * @param importPkgs the packages which are already imported
+	 * @param packagesToExport return parameter that will be filled with packages to export
+	 * 		 if no valid package to import was found
+	 * @param monitor
+	 * @return the set of packages to import
+	 */
+	private Collection<ExportPackageDescription> findValidPackagesContainingSimpleType(String aTypeName, ImportPackageSpecification[] importPkgs, Set<IPackageFragment> packagesToExport, IProgressMonitor monitor) {
+		SubMonitor subMonitor = SubMonitor.convert(monitor);
+
+		IPluginModelBase[] activeModels = PluginRegistry.getActiveModels();
+		Set<IJavaProject> javaProjects = new HashSet<IJavaProject>(activeModels.length * 2);
+
+		for (int i = 0; i < activeModels.length; i++) {
+			IResource resource = activeModels[i].getUnderlyingResource();
+			if (resource != null && resource.isAccessible()) {
+				IJavaProject javaProject = JavaCore.create(resource.getProject());
+				if (javaProject.exists()) {
+					javaProjects.add(javaProject);
 				}
 			}
-			return false;
 		}
-		// if no BundleDescription, we return true so we don't create any proposals.  This is the safe way out if no BundleDescription is available.
-		return true;
+		final IJavaProject currentJavaProject = JavaCore.create(fProject);
+		javaProjects.remove(currentJavaProject); // no need to search in current project itself
+
+		try {
+			IJavaSearchScope searchScope = SearchEngine.createJavaSearchScope(javaProjects.toArray(new IJavaElement[javaProjects.size()]));
+
+			final Map<String, IPackageFragment> packages = new HashMap<String, IPackageFragment>();
+			SearchRequestor requestor = new SearchRequestor() {
+
+				public void acceptSearchMatch(SearchMatch aMatch) throws CoreException {
+					Object element = aMatch.getElement();
+					if (element instanceof IType) {
+						IType type = (IType) element;
+						if (!currentJavaProject.equals(type.getJavaProject())) {
+							IPackageFragment packageFragment = type.getPackageFragment();
+							if (packageFragment.exists()) {
+								packages.put(packageFragment.getElementName(), packageFragment);
+							}
+						}
+					}
+				}
+			};
+
+			SearchPattern typePattern = SearchPattern.createPattern(aTypeName, IJavaSearchConstants.TYPE, IJavaSearchConstants.DECLARATIONS, SearchPattern.R_EXACT_MATCH | SearchPattern.R_CASE_SENSITIVE);
+			new SearchEngine().search(typePattern, new SearchParticipant[] {SearchEngine.getDefaultSearchParticipant()}, searchScope, requestor, subMonitor.newChild(1));
+
+			if (!packages.isEmpty()) {
+				// transform to ExportPackageDescriptions
+				Map<String, ExportPackageDescription> exportDescriptions = new HashMap<String, ExportPackageDescription>(packages.size());
+
+				// remove system packages if they happen to be included. Adding a system package won't resolve anything, since package package already comes from JRE
+				ExportPackageDescription[] systemPackages = PDECore.getDefault().getModelManager().getState().getState().getSystemPackages();
+				for (int i = 0; i < systemPackages.length; i++) {
+					packages.remove(systemPackages[i].getName());
+				}
+				// also remove packages that are already imported
+				for (int i = 0; i < importPkgs.length; i++) {
+					packages.remove(importPkgs[i].getName());
+				}
+
+				// finally create the list of ExportPackageDescriptions
+				ExportPackageDescription[] knownPackages = PDECore.getDefault().getModelManager().getState().getState().getExportedPackages();
+				for (int i = 0; i < knownPackages.length; i++) {
+					if (packages.containsKey(knownPackages[i].getName())) {
+						exportDescriptions.put(knownPackages[i].getName(), knownPackages[i]);
+					}
+				}
+				if (exportDescriptions.isEmpty()) {
+					// no packages to import found, maybe there are packages to export
+					packagesToExport.addAll(packages.values());
+				}
+
+				return exportDescriptions.values();
+			}
+
+			return Collections.emptySet();
+		} catch (CoreException ex) {
+			// ignore, return an empty set
+			return Collections.emptySet();
+		}
 	}
 
-	private static Set<ExportPackageDescription> getValidPackages(String pkgName) {
+	private boolean isImportedPackage(String packageName, ImportPackageSpecification[] importPkgs) {
+		for (int i = 0; i < importPkgs.length; i++) {
+			if (importPkgs[i].getName().equals(packageName)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private static Collection<ExportPackageDescription> getValidPackages(String pkgName) {
 		ExportPackageDescription[] knownPackages = PDECore.getDefault().getModelManager().getState().getState().getExportedPackages();
-		Set<ExportPackageDescription> validPackages = new HashSet<ExportPackageDescription>();
+		Map<String, ExportPackageDescription> validPackages = new HashMap<String, ExportPackageDescription>();
 		for (int i = 0; i < knownPackages.length; i++) {
 			if (knownPackages[i].getName().equals(pkgName)) {
-				validPackages.add(knownPackages[i]);
+				validPackages.put(knownPackages[i].getName(), knownPackages[i]);
 			}
 		}
 		// remove system packages if they happen to be included. Adding a system package won't resolve anything, since package package already comes from JRE
 		if (!validPackages.isEmpty()) {
 			knownPackages = PDECore.getDefault().getModelManager().getState().getState().getSystemPackages();
 			for (int i = 0; i < knownPackages.length; i++) {
-				validPackages.remove(knownPackages[i]);
+				validPackages.remove(knownPackages[i].getName());
 			}
 		}
-		return validPackages;
+		return validPackages.values();
 	}
 
 	private Set<ExportPackageDescription> getVisiblePackages() {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 IBM Corporation and others.
+ * Copyright (c) 2007, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,13 +33,21 @@ public class QuickFixProcessor implements IQuickFixProcessor {
 	 */
 	public IJavaCompletionProposal[] getCorrections(IInvocationContext context, IProblemLocation[] locations) throws CoreException {
 		ArrayList<Object> results = new ArrayList<Object>();
+
+		AbstractClassResolutionCollector collector = createCollector(results);
+
 		for (int i = 0; i < locations.length; i++) {
 			int id = locations[i].getProblemId();
 			switch (id) {
 				case IProblem.ForbiddenReference :
-					handleAccessRestrictionProblem(context, locations[i], results);
-				case IProblem.ImportNotFound :
-					handleImportNotFound(context, locations[i], results);
+					handleAccessRestrictionProblem(context, locations[i], collector);
+				case IProblem.ImportNotFound : // fall through
+				case IProblem.UndefinedName : // fall through
+				case IProblem.UndefinedType : // fall through
+				case IProblem.UnresolvedVariable : // fall through
+				case IProblem.MissingTypeInMethod : // fall through
+				case IProblem.MissingTypeInConstructor :
+					handleImportNotFound(context, locations[i], collector);
 
 			}
 		}
@@ -49,13 +57,23 @@ public class QuickFixProcessor implements IQuickFixProcessor {
 	/*
 	 * Adds IJavaCompletionProposals for a ForbiddenReference marker
 	 */
-	private void handleAccessRestrictionProblem(IInvocationContext context, IProblemLocation location, Collection<Object> results) {
+	private void handleAccessRestrictionProblem(IInvocationContext context, IProblemLocation location, AbstractClassResolutionCollector collector) {
 		IBinding referencedElement = null;
 		ASTNode node = location.getCoveredNode(context.getASTRoot());
 		if (node instanceof Type) {
 			referencedElement = ((Type) node).resolveBinding();
 		} else if (node instanceof Name) {
 			referencedElement = ((Name) node).resolveBinding();
+		} else if (node instanceof MethodInvocation) {
+			IMethodBinding tempMethod = ((MethodInvocation) node).resolveMethodBinding();
+			if (tempMethod != null) {
+				referencedElement = tempMethod.getDeclaringClass();
+			}
+		} else if (node instanceof FieldAccess) {
+			IVariableBinding tempVariable = ((FieldAccess) node).resolveFieldBinding();
+			if (tempVariable != null) {
+				referencedElement = tempVariable.getDeclaringClass();
+			}
 		}
 		if (referencedElement != null) {
 			// get the project that contains the reference element
@@ -78,19 +96,17 @@ public class QuickFixProcessor implements IQuickFixProcessor {
 							if (exportPackages[i].getName().equals(referencedPackage.getElementName())) {
 								packageExported = true;
 								// check to see if access restriction is caused by Import-Package
-								handleAccessRestrictionByImportPackage(context.getCompilationUnit().getJavaProject().getProject(), exportPackages[i], results);
+								handleAccessRestrictionByImportPackage(context.getCompilationUnit().getJavaProject().getProject(), exportPackages[i], collector);
 								break;
 							}
 						}
 						// if the package is not exported, add the quickfix
 						if (!packageExported) {
-							Object proposal = JavaResolutionFactory.createExportPackageProposal(referencedJavaProject.getProject(), referencedPackage, JavaResolutionFactory.TYPE_JAVA_COMPLETION, 100);
-							if (proposal != null)
-								results.add(proposal);
+							collector.addExportPackageResolutionModification(referencedPackage);
 						}
 					}
 				} else {
-					handleAccessRestrictionByImportPackage(referencedPackage, results);
+					handleAccessRestrictionByImportPackage(referencedPackage, collector);
 				}
 			}
 		}
@@ -99,31 +115,35 @@ public class QuickFixProcessor implements IQuickFixProcessor {
 	/*
 	 * Adds IJavaCompletionProposals for a Require-Bundle if user is using an Import-Package from the bundle
 	 */
-	private void handleAccessRestrictionByImportPackage(IPackageFragment fragment, Collection<Object> results) {
+	private void handleAccessRestrictionByImportPackage(IPackageFragment fragment, AbstractClassResolutionCollector collector) {
 		HashSet<String> set = new HashSet<String>();
 		IProject project = fragment.getJavaProject().getProject();
 		String pkgName = fragment.getElementName();
 		IPluginModelBase base = PluginRegistry.findModel(project);
 		ExportPackageDescription[] descs = base.getBundleDescription().getResolvedImports();
+		ExportPackageDescription foundExportPackage = null;
 		for (int i = 0; i < descs.length; i++) {
 			BundleDescription exporter = descs[i].getExporter();
 			if (set.add(exporter.getSymbolicName())) {
 				ExportPackageDescription[] exportedPkgs = exporter.getExportPackages();
 				for (int j = 0; j < exportedPkgs.length; j++) {
 					if (exportedPkgs[j].getName().equals(pkgName)) {
-						Object proposal = JavaResolutionFactory.createRequireBundleProposal(project, exportedPkgs[j], JavaResolutionFactory.TYPE_JAVA_COMPLETION, 16);
-						if (proposal != null)
-							results.add(proposal);
+						foundExportPackage = exportedPkgs[j]; // any one is fine, so simply remember the last one
+						collector.addRequireBundleModification(project, exportedPkgs[j], 16);
+						break;
 					}
 				}
 			}
+		}
+		if (foundExportPackage != null) {
+			collector.addResolutionModification(project, foundExportPackage);
 		}
 	}
 
 	/*
 	 * Adds IJavaCompletionProposal for a Require-Bundle if user is using an Import-Package from the (workspace) bundle
 	 */
-	private void handleAccessRestrictionByImportPackage(IProject currentProject, ExportPackageDescription desc, Collection<Object> results) {
+	private void handleAccessRestrictionByImportPackage(IProject currentProject, ExportPackageDescription desc, AbstractClassResolutionCollector collector) {
 		BundleDescription supplier = desc.getSupplier();
 		if (supplier != null) {
 			String supplierId = supplier.getSymbolicName();
@@ -139,9 +159,22 @@ public class QuickFixProcessor implements IQuickFixProcessor {
 				}
 			}
 			if (!supplierImported) {
-				Object proposal = JavaResolutionFactory.createRequireBundleProposal(currentProject, desc, JavaResolutionFactory.TYPE_JAVA_COMPLETION, 16);
-				if (proposal != null)
-					results.add(proposal);
+				// add import-package, if possible
+				boolean proposeImportPackage = true;
+
+				ImportPackageSpecification[] importPackages = bd.getImportPackages();
+				for (int i = 0; i < importPackages.length; i++) {
+					if (desc.getName().equals(importPackages[i].getName())) {
+						// already imported, try require-bundle
+						proposeImportPackage = false;
+						break;
+					}
+				}
+
+				if (proposeImportPackage) {
+					collector.addResolutionModification(currentProject, desc); // relevance should actually be 16...
+				}
+				collector.addRequireBundleModification(currentProject, desc, 16);
 			}
 		}
 	}
@@ -149,7 +182,7 @@ public class QuickFixProcessor implements IQuickFixProcessor {
 	/*
 	 * Adds IJavaCompletionProposals for a ImportNotFound problem
 	 */
-	private void handleImportNotFound(IInvocationContext context, IProblemLocation problemLocation, final Collection<Object> result) {
+	private void handleImportNotFound(IInvocationContext context, IProblemLocation problemLocation, final AbstractClassResolutionCollector collector) {
 		CompilationUnit cu = context.getASTRoot();
 		ASTNode selectedNode = problemLocation.getCoveringNode(cu);
 		if (selectedNode != null) {
@@ -157,29 +190,33 @@ public class QuickFixProcessor implements IQuickFixProcessor {
 			String className = null;
 			String packageName = null;
 			if (node == null) {
-				if (selectedNode instanceof SimpleName) {
-					ITypeBinding typeBinding = ((SimpleName) selectedNode).resolveTypeBinding();
-					className = typeBinding.getBinaryName();
-					packageName = typeBinding.getPackage().getName();
+				if (selectedNode instanceof Name) {
+					ITypeBinding typeBinding = ((Name) selectedNode).resolveTypeBinding();
+					if (typeBinding != null) {
+						className = typeBinding.getBinaryName();
+						packageName = typeBinding.getPackage().getName();
+					}
+					if (className == null && selectedNode instanceof SimpleName) { // fallback if the type cannot be resolved
+						className = ((SimpleName) selectedNode).getIdentifier();
+					}
 				}
 			} else if (node instanceof ImportDeclaration) {
-				// Find import declaration which is the problem
-				className = ((ImportDeclaration) node).getName().getFullyQualifiedName();
-
+				// Find the full package name, strip off the class name or on demand qualifier '.*';
+				packageName = ((ImportDeclaration) node).getName().getFullyQualifiedName();
+				if (!((ImportDeclaration) node).isOnDemand()) {
+					int lastPeriod = packageName.lastIndexOf('.'); // if there is no period assume we are importing a single name package
+					packageName = packageName.substring(0, lastPeriod >= 0 ? lastPeriod : packageName.length());
+				}
 				// always add the search repositories proposal
-				int lastPeriod = className.lastIndexOf('.'); // if there is no period assume we are importing a single name package
-				packageName = className.substring(0, lastPeriod >= 0 ? lastPeriod : className.length());
-				result.add(JavaResolutionFactory.createSearchRepositoriesProposal(packageName));
+				collector.addSearchRepositoriesModification(packageName);
 			}
 
-			if (className != null && packageName != null) {
+			if (className != null) {
 				IProject project = cu.getJavaElement().getJavaProject().getProject();
 				// only try to find proposals on Plug-in Projects
 				if (!WorkspaceModelManager.isPluginProject(project))
 					return;
 
-				// create a collector that will create IJavaCompletionProposals and load them into 'result'
-				AbstractClassResolutionCollector collector = createCollector(result);
 				IRunnableWithProgress findOperation = new FindClassResolutionsOperation(project, className, collector);
 				try {
 					findOperation.run(new NullProgressMonitor());
@@ -191,22 +228,57 @@ public class QuickFixProcessor implements IQuickFixProcessor {
 	}
 
 	/*
-	 * Custom AbstractClassResolutionCollector which will only add one IJavaCompletionProposal for adding an Import-Package entry
+	 * Custom AbstractClassResolutionCollector which will only add one IJavaCompletionProposal for adding an Import-Package or Export-Package entry
 	 */
 	private AbstractClassResolutionCollector createCollector(final Collection<Object> result) {
 		return new AbstractClassResolutionCollector() {
 
+			// the list of package names for which an import package resolution has been created
+			private Set<String> addedImportPackageResolutions = new HashSet<String>();
+
 			boolean isDone = false;
 
 			public void addResolutionModification(IProject project, ExportPackageDescription desc) {
+				// guard against multiple import package resolutions for the same package
+				if (addedImportPackageResolutions.contains(desc.getName())) {
+					return;
+				}
+
 				Object proposal = JavaResolutionFactory.createImportPackageProposal(project, desc, JavaResolutionFactory.TYPE_JAVA_COMPLETION, 17);
 				if (proposal != null) {
+					addedImportPackageResolutions.add(desc.getName());
 					result.add(proposal);
 					isDone = true;
 				}
 			}
 
-			// we want to finish after we add the first Import-Package Change
+			public Object addExportPackageResolutionModification(IPackageFragment aPackage) {
+				Object proposal = super.addExportPackageResolutionModification(aPackage);
+				if (proposal != null) {
+					result.add(proposal);
+				}
+				return proposal;
+			}
+
+			@Override
+			public Object addRequireBundleModification(IProject project, ExportPackageDescription desc, int relevance) {
+				Object proposal = super.addRequireBundleModification(project, desc, relevance);
+				if (proposal != null) {
+					result.add(proposal);
+				}
+				return proposal;
+			}
+
+			@Override
+			public Object addSearchRepositoriesModification(String packageName) {
+				Object proposal = super.addSearchRepositoriesModification(packageName);
+				if (proposal != null) {
+					result.add(proposal);
+				}
+				return proposal;
+			}
+
+			// we want to finish after we add the first Import- or Export-Package Change
 			public boolean isDone() {
 				return isDone;
 			}
@@ -229,7 +301,12 @@ public class QuickFixProcessor implements IQuickFixProcessor {
 	public boolean hasCorrections(ICompilationUnit unit, int problemId) {
 		switch (problemId) {
 			case IProblem.ForbiddenReference :
-			case IProblem.ImportNotFound :
+			case IProblem.UndefinedName : // fall through
+			case IProblem.ImportNotFound : // fall through
+			case IProblem.UndefinedType : // fall through
+			case IProblem.UnresolvedVariable : // fall through
+			case IProblem.MissingTypeInMethod : // fall through
+			case IProblem.MissingTypeInConstructor :
 				IJavaElement parent = unit.getParent();
 				if (parent != null) {
 					IJavaProject project = parent.getJavaProject();
