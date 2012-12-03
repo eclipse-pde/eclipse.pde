@@ -320,7 +320,10 @@ public class PluginVersionPart {
 			return new VersionRange(new Version(minV), minI, new Version(maxV), maxI).toString();
 		}
 		if (!fRangeAllowed) {
-			return new Version(getMinVersion()).toString();
+			if (getMinVersion().length() > 0) {
+				return new Version(getMinVersion()).toString();
+			}
+			return ""; //$NON-NLS-1$
 		}
 		if (getMinVersion().length() == 0 && getMaxVersion().length() > 0) {
 			return new VersionRange(null, getMinInclusive(), new Version(getMaxVersion()), getMaxInclusive()).toString();
