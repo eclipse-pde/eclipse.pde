@@ -12,7 +12,7 @@ package org.eclipse.ui.trace.internal;
 
 public interface IHelpContextIds {
 
-	public static final String PREFIX = "org.eclipse.ui."; //$NON-NLS-1$ //$NON-NLS-2$
+	public static final String PREFIX = "org.eclipse.ui."; //$NON-NLS-1$
 	public static final String TRACING_PREF_PAGE = PREFIX + "tracing_preference_page"; //$NON-NLS-1$
 
 }
