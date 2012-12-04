@@ -11,14 +11,13 @@
 package org.eclipse.ui.trace.internal;
 
 import java.io.File;
-import java.util.Hashtable;
-import java.util.Map;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.osgi.service.debug.DebugOptions;
+import java.util.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.service.runnable.StartupMonitor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.trace.internal.utils.*;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceRegistration;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -54,20 +53,20 @@ public class TracingUIActivator extends AbstractUIPlugin {
 			// Set option so we know debug mode is set, not preferences
 			DebugOptionsHandler.setLaunchInDebugMode(true);
 
-		} else if (PreferenceHandler.isTracingEnabled()) {
-			// User has previously enabled tracing options
-			DebugOptionsHandler.setDebugEnabled(true);
-			DebugOptionsHandler.getDebugOptions().setFile(new File(PreferenceHandler.getFilePath()));
-			System.setProperty(TracingConstants.PROP_TRACE_SIZE_MAX, String.valueOf(PreferenceHandler.getMaxFileSize()));
-			System.setProperty(TracingConstants.PROP_TRACE_FILE_MAX, String.valueOf(PreferenceHandler.getMaxFileCount()));
-
-			Map<String, String> prefs = PreferenceHandler.getPreferenceProperties();
-			DebugOptionsHandler.getDebugOptions().setOptions(prefs);
+		} else {
+			// bug 395632: see if the instance location is defined.  if not then defer accessing
+			// the preferences until it is defined by being notified via the org.eclipse.osgi.service.runnable.StartupMonitor
+			// service
+			if (!Platform.getInstanceLocation().isSet()) {
+				// register a startup monitor to notify us when the application is running
+				final TracingStartupMonitor startupMonitor = new TracingStartupMonitor();
+				final Dictionary<String, ?> properties = new Hashtable<String, Object>(1);
+				ServiceRegistration<StartupMonitor> registration = context.registerService(StartupMonitor.class, startupMonitor, properties);
+				startupMonitor.setRegistration(registration);
+			} else {
+				this.initPreferences();
+			}
 		}
-
-		final Hashtable<String, String> props = new Hashtable<String, String>(4);
-		props.put(DebugOptions.LISTENER_SYMBOLICNAME, TracingConstants.BUNDLE_ID);
-
 	}
 
 	@Override
@@ -88,6 +87,23 @@ public class TracingUIActivator extends AbstractUIPlugin {
 		if (ex != null) {
 			final IStatus errorStatus = new Status(IStatus.ERROR, TracingConstants.BUNDLE_ID, ex.getMessage(), ex);
 			this.getLog().log(errorStatus);
+		}
+	}
+
+	/**
+	 * Initialize the tracing preferences if tracing is enabled.
+	 */
+	protected final void initPreferences() {
+
+		if (PreferenceHandler.isTracingEnabled()) {
+			// User has previously enabled tracing options
+			DebugOptionsHandler.setDebugEnabled(true);
+			DebugOptionsHandler.getDebugOptions().setFile(new File(PreferenceHandler.getFilePath()));
+			System.setProperty(TracingConstants.PROP_TRACE_SIZE_MAX, String.valueOf(PreferenceHandler.getMaxFileSize()));
+			System.setProperty(TracingConstants.PROP_TRACE_FILE_MAX, String.valueOf(PreferenceHandler.getMaxFileCount()));
+
+			Map<String, String> prefs = PreferenceHandler.getPreferenceProperties();
+			DebugOptionsHandler.getDebugOptions().setOptions(prefs);
 		}
 	}
 
