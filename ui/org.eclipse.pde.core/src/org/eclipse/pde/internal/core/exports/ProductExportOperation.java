@@ -187,25 +187,32 @@ public class ProductExportOperation extends FeatureExportOperation {
 		}
 
 		IJREInfo jreInfo = fProduct.getJREInfo();
-		for (int i = 0; i < configurations.length; i++) {
-			String[] config = configurations[i];
-			File vm = jreInfo != null ? jreInfo.getJVMLocation(config[0]) : null;
+		if (jreInfo != null) {
+			for (int i = 0; i < configurations.length; i++) {
+				String[] config = configurations[i];
 
-			if (vm != null) {
-
-				if (config[0].equals("macosx") && vm.getPath().startsWith(MAC_JAVA_FRAMEWORK)) { //$NON-NLS-1$
+				// Only include the JRE if product config says to do so
+				if (!jreInfo.includeJREWithProduct(config[0])) {
 					continue;
 				}
 
-				String rootPrefix = IBuildPropertiesConstants.ROOT_PREFIX + config[0] + "." + config[1] + //$NON-NLS-1$
-						"." + config[2]; //$NON-NLS-1$
-				properties.put(rootPrefix + ".folder.jre", "absolute:" + vm.getAbsolutePath()); //$NON-NLS-1$ //$NON-NLS-2$
-				String perms = (String) properties.get(rootPrefix + ".permissions.755"); //$NON-NLS-1$
-				if (perms != null) {
-					StringBuffer buffer = new StringBuffer(perms);
-					buffer.append(","); //$NON-NLS-1$
-					buffer.append("jre/bin/java"); //$NON-NLS-1$
-					properties.put(rootPrefix + ".permissions.755", buffer.toString()); //$NON-NLS-1$
+				File vm = jreInfo.getJVMLocation(config[0]);
+				if (vm != null) {
+
+					if (config[0].equals("macosx") && vm.getPath().startsWith(MAC_JAVA_FRAMEWORK)) { //$NON-NLS-1$
+						continue;
+					}
+
+					String rootPrefix = IBuildPropertiesConstants.ROOT_PREFIX + config[0] + "." + config[1] + //$NON-NLS-1$
+							"." + config[2]; //$NON-NLS-1$
+					properties.put(rootPrefix + ".folder.jre", "absolute:" + vm.getAbsolutePath()); //$NON-NLS-1$ //$NON-NLS-2$
+					String perms = (String) properties.get(rootPrefix + ".permissions.755"); //$NON-NLS-1$
+					if (perms != null) {
+						StringBuffer buffer = new StringBuffer(perms);
+						buffer.append(","); //$NON-NLS-1$
+						buffer.append("jre/bin/java"); //$NON-NLS-1$
+						properties.put(rootPrefix + ".permissions.755", buffer.toString()); //$NON-NLS-1$
+					}
 				}
 			}
 		}
