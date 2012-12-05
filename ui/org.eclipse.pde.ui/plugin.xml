@@ -1910,6 +1910,7 @@
              </command>
              <command
                    commandId="org.eclipse.pde.ui.createAntBuildFile"
+                   icon="platform:/plugin/org.eclipse.ant.ui/icons/full/obj16/ant.gif"
                    label="%command.createAntBuild.label"
                    style="push">
                 <visibleWhen
