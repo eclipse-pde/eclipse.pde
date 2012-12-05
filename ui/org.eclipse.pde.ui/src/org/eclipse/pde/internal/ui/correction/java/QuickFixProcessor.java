@@ -188,13 +188,11 @@ public class QuickFixProcessor implements IQuickFixProcessor {
 		if (selectedNode != null) {
 			ASTNode node = getParent(selectedNode);
 			String className = null;
-			String packageName = null;
 			if (node == null) {
 				if (selectedNode instanceof Name) {
 					ITypeBinding typeBinding = ((Name) selectedNode).resolveTypeBinding();
 					if (typeBinding != null) {
 						className = typeBinding.getBinaryName();
-						packageName = typeBinding.getPackage().getName();
 					}
 					if (className == null && selectedNode instanceof SimpleName) { // fallback if the type cannot be resolved
 						className = ((SimpleName) selectedNode).getIdentifier();
@@ -202,7 +200,7 @@ public class QuickFixProcessor implements IQuickFixProcessor {
 				}
 			} else if (node instanceof ImportDeclaration) {
 				// Find the full package name, strip off the class name or on demand qualifier '.*';
-				packageName = ((ImportDeclaration) node).getName().getFullyQualifiedName();
+				String packageName = ((ImportDeclaration) node).getName().getFullyQualifiedName();
 				if (!((ImportDeclaration) node).isOnDemand()) {
 					int lastPeriod = packageName.lastIndexOf('.'); // if there is no period assume we are importing a single name package
 					packageName = packageName.substring(0, lastPeriod >= 0 ? lastPeriod : packageName.length());
