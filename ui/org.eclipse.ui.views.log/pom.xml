@@ -21,6 +21,6 @@
   </parent>
   <groupId>eclipse.pde.ui</groupId>
   <artifactId>org.eclipse.ui.views.log</artifactId>
-  <version>1.0.300-SNAPSHOT</version>
+  <version>1.0.400-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
 </project>
