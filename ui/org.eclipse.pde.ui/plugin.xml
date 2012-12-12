@@ -715,7 +715,7 @@
          point="org.eclipse.debug.ui.launchConfigurationTabGroups">
       <launchConfigurationTabGroup
             class="org.eclipse.pde.ui.launcher.EclipseLauncherTabGroup"
-            helpContextId="org.eclipse.pde.ui.launcher_eclipse_application"
+            helpContextId="org.eclipse.pde.doc.user.launcher_eclipse_application"
             id="org.eclipse.pde.ui.launcher.WorkbenchLauncherTabGroup"
             type="org.eclipse.pde.ui.RuntimeWorkbench">
          <launchMode
@@ -730,7 +730,7 @@
       </launchConfigurationTabGroup>
       <launchConfigurationTabGroup
             class="org.eclipse.pde.ui.launcher.OSGiLauncherTabGroup"
-            helpContextId="org.eclipse.pde.ui.launcher_osgi_framework"
+            helpContextId="org.eclipse.pde.doc.user.launcher_osgi_framework"
             id="org.eclipse.pde.ui.launcher.EquinoxLauncherTabGroup"
             type="org.eclipse.pde.ui.EquinoxLauncher">
          <launchMode
@@ -745,7 +745,7 @@
       </launchConfigurationTabGroup>
       <launchConfigurationTabGroup
             class="org.eclipse.pde.ui.launcher.JUnitTabGroup"
-            helpContextId="org.eclipse.pde.ui.launcher_junit_plugin"
+            helpContextId="org.eclipse.pde.doc.user.launcher_junit_plugin"
             id="org.eclipse.pde.ui.launcher.JUnitTabGroup"
             type="org.eclipse.pde.ui.JunitLaunchConfig">
          <launchMode
