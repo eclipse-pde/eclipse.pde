@@ -438,7 +438,7 @@ public class PluginImportOperation extends WorkspaceJob {
 
 			// Perform the import
 			Map<String, IPath> sourceMap = null;
-			if (importType == IMPORT_BINARY || isExempt(model, importType) || (importType == IMPORT_WITH_SOURCE && !canFindSource(model))) {
+			if (importType == IMPORT_BINARY || (importType == IMPORT_WITH_SOURCE && !canFindSource(model))) {
 				sourceMap = importAsBinary(project, model, new SubProgressMonitor(monitor, 4));
 			} else if (importType == IMPORT_BINARY_WITH_LINKS) {
 				sourceMap = importAsBinaryWithLinks(project, model, new SubProgressMonitor(monitor, 4));
@@ -814,28 +814,6 @@ public class PluginImportOperation extends WorkspaceJob {
 		}
 
 		return null;
-	}
-
-	/**
-	 * Returns true if the given plugin must be imported as
-	 * binary instead of the setting defined by fImportType
-	 * @param model
-	 * @return true is the plugin must be imported as binary, false otherwise
-	 */
-	private boolean isExempt(IPluginModelBase model, int importType) {
-		String id = model.getPluginBase().getId();
-		if (importType == IMPORT_WITH_SOURCE) {
-			if ("org.apache.ant".equals(id) //$NON-NLS-1$
-					|| "org.eclipse.osgi.util".equals(id) //$NON-NLS-1$
-					|| "org.eclipse.osgi.services".equals(id) //$NON-NLS-1$
-					|| "org.eclipse.core.runtime.compatibility.registry".equals(id)) { //$NON-NLS-1$
-				return true;
-			}
-		}
-
-		if ("org.eclipse.swt".equals(id) && !isJARd(model)) //$NON-NLS-1$
-			return true;
-		return false;
 	}
 
 	/**
