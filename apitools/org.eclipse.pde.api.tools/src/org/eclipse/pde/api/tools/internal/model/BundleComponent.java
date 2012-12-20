@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.jar.JarFile;
-import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -55,6 +54,7 @@ import org.eclipse.pde.api.tools.internal.ApiDescription;
 import org.eclipse.pde.api.tools.internal.ApiDescriptionProcessor;
 import org.eclipse.pde.api.tools.internal.BundleVersionRange;
 import org.eclipse.pde.api.tools.internal.CompositeApiDescription;
+import org.eclipse.pde.api.tools.internal.FilterStore;
 import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 import org.eclipse.pde.api.tools.internal.RequiredComponentDescription;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
@@ -529,8 +529,7 @@ public class BundleComponent extends Component {
 	 * @see org.eclipse.pde.api.tools.internal.AbstractApiComponent#createApiFilterStore()
 	 */
 	protected IApiFilterStore createApiFilterStore() throws CoreException {
-		//always return a new empty store since we do not support filtering from bundles
-		return null;
+		return new FilterStore(this);
 	}
 	
 	/**
@@ -814,41 +813,8 @@ public class BundleComponent extends Component {
 		}
 		return null;
 	}
-	
-	/**
-	 * Reads and returns this bunlde's manifest in a Manifest object.
-	 * The bundle may be in a jar or in a directory at the specified location.
-	 * 
-	 * @param bundleLocation root location of the bundle
-	 * @return manifest or <code>null</code> if not present
-	 * @throws IOException if unable to parse
-	 */
-	protected Manifest readManifest(File bundleLocation) throws IOException {
-		ZipFile jarFile = null;
-		InputStream manifestStream = null;
-		try {
-			String extension = new Path(bundleLocation.getName()).getFileExtension();
-			if (extension != null && extension.equals("jar") && bundleLocation.isFile()) { //$NON-NLS-1$
-				jarFile = new ZipFile(bundleLocation, ZipFile.OPEN_READ);
-				ZipEntry manifestEntry = jarFile.getEntry(JarFile.MANIFEST_NAME);
-				if (manifestEntry != null) {
-					manifestStream = jarFile.getInputStream(manifestEntry);
-				}
-			} else {
-				File file = new File(bundleLocation, JarFile.MANIFEST_NAME);
-				if (file.exists())
-					manifestStream = new FileInputStream(file);
-			}
-			if (manifestStream == null) {
-				return null;
-			}
-			return new Manifest(manifestStream);
-		} finally {
-			closingZipFileAndStream(manifestStream, jarFile);
-		}
-	}
 
-	void closingZipFileAndStream(InputStream stream, ZipFile jarFile) {
+	public void closingZipFileAndStream(InputStream stream, ZipFile jarFile) {
 		try {
 			if (stream != null) {
 				stream.close();

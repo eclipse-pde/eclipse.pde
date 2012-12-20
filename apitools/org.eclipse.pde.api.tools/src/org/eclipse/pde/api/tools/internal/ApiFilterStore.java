@@ -23,18 +23,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-
-import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
-import org.eclipse.pde.api.tools.internal.problems.ApiProblemFilter;
-import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
-import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
-import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
-import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemFilter;
-import org.eclipse.pde.api.tools.internal.util.Util;
-
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.resources.ProjectScope;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -47,47 +46,21 @@ import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.IResourceChangeListener;
-import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.IncrementalProjectBuilder;
-import org.eclipse.core.resources.ProjectScope;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.resources.WorkspaceJob;
-
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.pde.api.tools.internal.problems.ApiProblemFilter;
+import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
+import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
+import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemFilter;
+import org.eclipse.pde.api.tools.internal.util.Util;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * Base implementation of a filter store for API components
  * 
  * @since 1.0.0
  */
-public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener {
-	
-	/**
-	 * Constant representing the name of the .settings folder
-	 */
-	private static final String SETTINGS_FOLDER = ".settings"; //$NON-NLS-1$
-	public static final String GLOBAL = "!global!"; //$NON-NLS-1$
-	public static final int CURRENT_STORE_VERSION = 2;
-
-	/**
-	 * Represents no filters
-	 */
-	private static IApiProblemFilter[] NO_FILTERS = new IApiProblemFilter[0];
-	
-	/**
-	 * The mapping of filters for this store.
-	 * <pre>
-	 * HashMap<IResource, HashSet<IApiProblemFilter>>
-	 * </pre>
-	 */
-	private HashMap fFilterMap = null;
+public class ApiFilterStore extends FilterStore implements IResourceChangeListener {
 	
 	/**
 	 * Map used to collect unused {@link IApiProblemFilter}s
@@ -154,8 +127,9 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 					}
 					String lineDelimiter= getLineDelimiterPreference(file);
 					String lineSeparator= System.getProperty("line.separator"); //$NON-NLS-1$
-					if (lineDelimiter != null && !lineDelimiter.equals(lineSeparator))
+					if (lineDelimiter != null && !lineDelimiter.equals(lineSeparator)) {
 						xml= xml.replaceAll(lineSeparator, lineDelimiter);
+					}
 					InputStream xstream = Util.getInputStreamFromString(xml);
 					if(xstream == null) {
 						return Status.CANCEL_STATUS;
@@ -255,7 +229,8 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 			return;
 		}
 		initializeApiFilters();
-		internalAddFilters(problems, null, true);
+		internalAddFilters(problems, null);
+		persistApiFilters();
 	}
 
 	/* (non-Javadoc)
@@ -265,7 +240,7 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 		initializeApiFilters();
 		Map pTypeNames = (Map) fFilterMap.get(resource);
 		if(pTypeNames == null) {
-			return NO_FILTERS;
+			return FilterStore.NO_FILTERS;
 		}
 		List allFilters = new ArrayList();
 		for (Iterator iterator = pTypeNames.values().iterator(); iterator.hasNext(); ) {
@@ -525,11 +500,10 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 		return Util.serializeDocument(document);
 	}
 
-	/**
-	 * Initializes the backing filter map for this store from the .api_filters file. Does nothing if the filter store has already been
-	 * initialized.
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.FilterStore#initializeApiFilters()
 	 */
-	private synchronized void initializeApiFilters() {
+	protected synchronized void initializeApiFilters() {
 		if(fFilterMap != null) {
 			return;
 		}
@@ -545,13 +519,12 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 			}
 			return;
 		}
-		String xml = null;
 		InputStream contents = null;
 		try {
 			IFile filterFile = (IFile)file;
 			if (filterFile.exists()) {
 				contents = filterFile.getContents();
-				xml = new String(Util.getInputStreamAsCharArray(contents, -1, IApiCoreConstants.UTF_8));
+				readFilterFile(contents);
 			}
 		}
 		catch(CoreException e) {
@@ -569,101 +542,15 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 				}
 			}
 		}
-		if(xml == null) {
-			return;
-		}
-		Element root = null;
-		try {
-			root = Util.parseDocument(xml);
-		}
-		catch(CoreException ce) {
-			ApiPlugin.log(ce);
-		}
-		if (root == null) {
-			return;
-		}
-		if (!root.getNodeName().equals(IApiXmlConstants.ELEMENT_COMPONENT)) {
-			return;
-		}
-		String component = root.getAttribute(IApiXmlConstants.ATTR_ID);
-		if(component.length() == 0) {
-			return;
-		}
-		String versionValue = root.getAttribute(IApiXmlConstants.ATTR_VERSION);
-		int currentVersion = Integer.parseInt(IApiXmlConstants.API_FILTER_STORE_CURRENT_VERSION);
-		int version = 0;
-		if(versionValue.length() != 0) {
-			try {
-				version = Integer.parseInt(versionValue);
-			} catch (NumberFormatException e) {
-				// ignore
-			}
-		}
-		if (version != currentVersion) {
-			// we discard all filters since there is no way to retrieve the type name
-			fNeedsSaving = true;
-			persistApiFilters();
-			return;
-		}
-		NodeList resources = root.getElementsByTagName(IApiXmlConstants.ELEMENT_RESOURCE);
-		ArrayList newfilters = new ArrayList();
-		ArrayList comments = new ArrayList();
-		for(int i = 0; i < resources.getLength(); i++) {
-			Element element = (Element) resources.item(i);
-			String path = element.getAttribute(IApiXmlConstants.ATTR_PATH);
-			if(path.length() == 0) {
-				continue;
-			}
-			String typeName = element.getAttribute(IApiXmlConstants.ATTR_TYPE);
-			if (typeName.length() == 0) {
-				typeName = null;
-			}
-			IProject project = (IProject) ResourcesPlugin.getWorkspace().getRoot().findMember(component);
-			if(project == null) {
-				continue;
-			}
-			IResource resource = project.findMember(new Path(path));
-			if(resource == null) {
-				continue;
-			}
-			NodeList filters = element.getElementsByTagName(IApiXmlConstants.ELEMENT_FILTER);
-			for(int j = 0; j < filters.getLength(); j++) {
-				element = (Element) filters.item(j);
-				int id = loadIntegerAttribute(element, IApiXmlConstants.ATTR_ID);
-				if(id <= 0) {
-					continue;
-				}
-				String[] messageargs = null;
-				NodeList elements = element.getElementsByTagName(IApiXmlConstants.ELEMENT_PROBLEM_MESSAGE_ARGUMENTS);
-				if (elements.getLength() != 1) continue;
-				Element messageArguments = (Element) elements.item(0);
-				NodeList arguments = messageArguments.getElementsByTagName(IApiXmlConstants.ELEMENT_PROBLEM_MESSAGE_ARGUMENT);
-				int length = arguments.getLength();
-				messageargs = new String[length];
-				for (int k = 0; k < length; k++) {
-					Element messageArgument = (Element) arguments.item(k);
-					messageargs[k] = messageArgument.getAttribute(IApiXmlConstants.ATTR_VALUE);
-				}
-				String comment = element.getAttribute(IApiXmlConstants.ATTR_COMMENT);
-				comments.add((comment.length() < 1 ? null : comment));
-				newfilters.add(ApiProblemFactory.newApiProblem(resource.getProjectRelativePath().toPortableString(),
-						typeName,
-						messageargs, null, null, -1, -1, -1, id));
-			}
-		}
-		internalAddFilters((IApiProblem[]) newfilters.toArray(new IApiProblem[newfilters.size()]), 
-				(String[]) comments.toArray(new String[comments.size()]), 
-				false);
-		newfilters.clear();
+		//need to reset the flag during initialization if we are not going to persist
+		//the filters, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=309635
+		fNeedsSaving = false;
 	}
 	
-	/**
-	 * Internal use method that allows auto-persisting of the filter file to be turned on or off
-	 * @param problems the problems to add the the store
-	 * @param comments the comments associated with each problem
-	 * @param persist if the filters should be auto-persisted after they are added
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.FilterStore#internalAddFilters(org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem[], java.lang.String[])
 	 */
-	private synchronized void internalAddFilters(IApiProblem[] problems, String[] comments, boolean persist) {
+	protected synchronized void internalAddFilters(IApiProblem[] problems, String[] comments) {
 		Set filters = null;
 		for(int i = 0; i < problems.length; i++) {
 			IApiProblem problem = problems[i];
@@ -695,14 +582,6 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 			}
 			fNeedsSaving |= filters.add(filter);
 		}
-		if(persist) {
-			persistApiFilters();
-		}
-		else {
-			//need to reset the flag during initialization if we are not going to persist
-			//the filters, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=309635
-			fNeedsSaving = false;
-		}
 	}
 	
 	/**
@@ -715,32 +594,14 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 	}
 	
 	/**
-	 * Loads the specified integer attribute from the given xml element
-	 * @param element
-	 * @param name
-	 * @return
-	 */
-	private static int loadIntegerAttribute(Element element, String name) {
-		String value = element.getAttribute(name);
-		if(value.length() == 0) {
-			return -1;
-		}
-		try {
-			int number = Integer.parseInt(value);
-			return number;
-		}
-		catch(NumberFormatException nfe) {}
-		return -1;
-	}
-	/**
 	 * @return the {@link IPath} to the filters file
 	 */
 	IPath getFilterFilePath(boolean includeproject) {
 		if(includeproject) {
 			IPath path = fProject.getPath();
-			return path.append(SETTINGS_FOLDER).append(IApiCoreConstants.API_FILTERS_XML_NAME);
+			return path.append(FilterStore.SETTINGS_FOLDER).append(IApiCoreConstants.API_FILTERS_XML_NAME);
 		}
-		return new Path(SETTINGS_FOLDER).append(IApiCoreConstants.API_FILTERS_XML_NAME);
+		return new Path(FilterStore.SETTINGS_FOLDER).append(IApiCoreConstants.API_FILTERS_XML_NAME);
 	}
 
 	static String getLineDelimiterPreference(IFile file) {
@@ -841,11 +702,11 @@ public class ApiFilterStore implements IApiFilterStore, IResourceChangeListener 
 			}
 			int size = unused.size();
 			if (size == 0) {
-				return NO_FILTERS;
+				return FilterStore.NO_FILTERS;
 			}
 			return (IApiProblemFilter[]) unused.toArray(new IApiProblemFilter[size]);
 		}
-		return NO_FILTERS;
+		return FilterStore.NO_FILTERS;
 	}
 	
 	/**

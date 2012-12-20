@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.osgi.service.resolver.ResolverError;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
+import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
@@ -97,6 +98,10 @@ public final class ApiUseTask extends CommonUtilsTask {
 	 * </pre>
 	 */
 	private String[] archivePatterns = null;
+	/**
+	 * Absolute file paths to the filter files to use
+	 */
+	private String[] filterPaths = null;
 	
 	/**
 	 * List of elements excluded from the scope
@@ -238,6 +243,14 @@ public final class ApiUseTask extends CommonUtilsTask {
 	}
 	
 	/**
+	 * Sets the paths of the filter files to use
+	 * @param paths
+	 */
+	public void setFilterPaths(String paths) {
+		filterPaths = parsePatterns(paths);
+	}
+	
+	/**
 	 * @see org.eclipse.pde.api.tools.internal.tasks.UseTask#assertParameters()
 	 */
 	protected void assertParameters() throws BuildException {
@@ -298,6 +311,7 @@ public final class ApiUseTask extends CommonUtilsTask {
 					(IApiElement[]) scope.toArray(new IApiElement[scope.size()]), 
 					getSearchFlags());
 			requestor.setJarPatterns(archivePatterns);
+			requestor.setGlobalFilterStore(getFilterStore(ids));
 			// override API descriptions as required
 			if (apiPatterns != null || internalPatterns != null) {
 				// modify API descriptions
@@ -458,6 +472,18 @@ public final class ApiUseTask extends CommonUtilsTask {
 		}
 		this.baselinedir = installdir;
 		return baseline;
+	}
+	
+	/**
+	 * Create a global filter store from a group of filter files
+	 * 
+	 * @return the new {@link IApiFilterStore} or <code>null</code>
+	 */
+	protected IApiFilterStore getFilterStore(Set ids) {
+		if(filterPaths != null && !ids.isEmpty()) {
+			//TODO we need to create the filter store
+		}
+		return null;
 	}
 	
 	/**

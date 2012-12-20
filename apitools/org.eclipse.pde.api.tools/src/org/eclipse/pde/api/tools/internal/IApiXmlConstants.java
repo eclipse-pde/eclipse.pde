@@ -25,7 +25,7 @@ public interface IApiXmlConstants {
 	/**
 	 * Constant representing the current version for API filter store files
 	 */
-	public static final String API_FILTER_STORE_CURRENT_VERSION = Integer.toString(ApiFilterStore.CURRENT_STORE_VERSION);
+	public static final String API_FILTER_STORE_CURRENT_VERSION = Integer.toString(FilterStore.CURRENT_STORE_VERSION);
 	/**
 	 * Constant representing the current version for API profile files
 	 */

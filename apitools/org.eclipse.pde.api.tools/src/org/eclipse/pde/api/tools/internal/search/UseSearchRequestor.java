@@ -19,6 +19,7 @@ import org.eclipse.pde.api.tools.internal.builder.Reference;
 import org.eclipse.pde.api.tools.internal.builder.ReferenceAnalyzer;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
+import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.builder.IApiProblemDetector;
 import org.eclipse.pde.api.tools.internal.provisional.builder.IReference;
@@ -29,6 +30,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiMember;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiScope;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer;
+import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor;
 
 /**
@@ -46,6 +48,18 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 	 */
 	private Set fComponentIds = null;
 
+	/**
+	 * The current {@link IApiFilterStore} from the current {@link IApiComponent} context we are visiting
+	 */
+	private IApiFilterStore currentStore = null;
+	
+	/**
+	 * An {@link IApiFilterStore} that was set from an external source
+	 * 
+	 * @see #setGlobalFilterStore
+	 */
+	private IApiFilterStore globalStore = null;
+	
 	/**
 	 * The mask to use while searching
 	 */
@@ -94,12 +108,14 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 				if(includesIllegalUse()) {
 					fAnalyzer.buildProblemDetectors(component, ProblemDetectorBuilder.K_USE, null);
 				}
+				currentStore = component.getFilterStore();
 				return true;
 			}
 		}
 		catch(CoreException ce) {
 			//do nothing, return false
 		}
+		currentStore = null;
 		return false;
 	}
 	
@@ -195,7 +211,19 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 				Reference ref = (Reference) reference;
 				ref.setFlags(IReference.F_ILLEGAL);
 				try {
-					ref.addProblems(((AbstractProblemDetector)detectors[i]).createProblem(reference));
+					IApiProblem pb = ((AbstractProblemDetector)detectors[i]).createProblem(reference);
+					if(!isFiltered(pb)) {
+						ref.addProblems(pb);
+					} else {
+						
+						
+						// TODO CWindatt - Remove tracing
+						System.out.println("332772 - Problem filtered");
+						
+						
+						
+						
+					}
 				} catch (CoreException e) {
 					ApiPlugin.log(e);
 				}
@@ -203,6 +231,16 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 			}
 		}
 		return false;
+	}
+	
+	/**
+	 * Returns if the given problem is filtered
+	 * @param problem
+	 * @return <code>true</code> is filtered, false otherwise
+	 */
+	boolean isFiltered(IApiProblem problem) throws CoreException {
+		return (currentStore != null && currentStore.isFiltered(problem)) || 
+				(globalStore != null && globalStore.isFiltered(problem));
 	}
 	
 	/* (non-Javadoc)
@@ -259,5 +297,13 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 	 */
 	public void setJarPatterns(String[] patterns) {
 		jarPatterns = patterns;
+	}
+	
+	/**
+	 * Allows a global {@link IApiFilterStore} to be used to filter all references found during the scan
+	 * @param store the store to set or <code>null</code> to remove the store
+	 */
+	public void setGlobalFilterStore(IApiFilterStore store) {
+		globalStore = store;
 	}
 }
