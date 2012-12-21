@@ -78,7 +78,6 @@ public class FilterStore implements IApiFilterStore {
 	 */
 	public FilterStore(BundleComponent component) {
 		fComponent = component;
-		initializeApiFilters();
 	}
 	
 	/* (non-Javadoc)
@@ -147,11 +146,17 @@ public class FilterStore implements IApiFilterStore {
 					jarFile = new ZipFile(loc, ZipFile.OPEN_READ);
 					ZipEntry filterfile = jarFile.getEntry(IApiCoreConstants.API_FILTERS_XML_NAME);
 					if (filterfile != null) {
+						if(ApiPlugin.DEBUG_FILTER_STORE) {
+							System.out.println("found api filter file: [" + fComponent.getName() + "] inside jar file " + loc); //$NON-NLS-1$ //$NON-NLS-2$
+						}
 						filterstream = jarFile.getInputStream(filterfile);
 					}
 				} else {
 					File file = new File(loc, SETTINGS_FOLDER+File.separator+IApiCoreConstants.API_FILTERS_XML_NAME);
 					if (file.exists()) {
+						if(ApiPlugin.DEBUG_FILTER_STORE) {
+							System.out.println("found api filter file: [" + fComponent.getName() + "] at " + file); //$NON-NLS-1$ //$NON-NLS-2$
+						}
 						filterstream = new FileInputStream(file);
 					}
 				}
@@ -172,6 +177,7 @@ public class FilterStore implements IApiFilterStore {
 	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore#isFiltered(org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem)
 	 */
 	public boolean isFiltered(IApiProblem problem) {
+		initializeApiFilters();
 		if (fFilterMap == null || fFilterMap.isEmpty()) {
 			return false;
 		}
@@ -186,6 +192,9 @@ public class FilterStore implements IApiFilterStore {
 		for (Iterator iterator = filters.iterator(); iterator.hasNext();) {
 			IApiProblemFilter filter = (IApiProblemFilter) iterator.next();
 			if (problemsMatch(filter.getUnderlyingProblem(), problem)) {
+				if(ApiPlugin.DEBUG_FILTER_STORE) {
+					System.out.println("filter used: [" + filter.toString() + "]");  //$NON-NLS-1$//$NON-NLS-2$
+				}
 				return true;
 			}
 		}
@@ -201,18 +210,12 @@ public class FilterStore implements IApiFilterStore {
 	 */
 	protected boolean problemsMatch(IApiProblem filterProblem, IApiProblem problem) {
 		if (problem.getId() == filterProblem.getId()) {
-			// check arguments
-//			String problemPath = problem.getResourcePath();
-//			String filterProblemPath = filterProblem.getResourcePath();
-//			if (problemPath == null) {
-//				if (filterProblemPath != null) {
-//					return false;
-//				}
-//			} else if (filterProblemPath == null) {
-//				return false;
-//			} else if (!new Path(problemPath).equals(new Path(filterProblemPath))) {
-//				return false;
-//			}
+			// Two problems are different if their paths are different, but if one is missing a path they may still be equal
+			String problemPath = problem.getResourcePath();
+			String filterProblemPath = filterProblem.getResourcePath();
+			if (problemPath != null && filterProblemPath != null && !(new Path(problemPath).equals(new Path(filterProblemPath)))) {
+				return false;
+			}
 			String problemTypeName = problem.getTypeName();
 			String filterProblemTypeName = filterProblem.getTypeName();
 			if (problemTypeName == null) {
@@ -353,19 +356,24 @@ public class FilterStore implements IApiFilterStore {
 				}
 				String[] messageargs = null;
 				NodeList elements = element.getElementsByTagName(IApiXmlConstants.ELEMENT_PROBLEM_MESSAGE_ARGUMENTS);
-				if (elements.getLength() != 1) continue;
-				Element messageArguments = (Element) elements.item(0);
-				NodeList arguments = messageArguments.getElementsByTagName(IApiXmlConstants.ELEMENT_PROBLEM_MESSAGE_ARGUMENT);
-				int length = arguments.getLength();
-				messageargs = new String[length];
+				if (elements.getLength() == 1){
+					Element messageArguments = (Element) elements.item(0);
+					NodeList arguments = messageArguments.getElementsByTagName(IApiXmlConstants.ELEMENT_PROBLEM_MESSAGE_ARGUMENT);
+					int length = arguments.getLength();
+					messageargs = new String[length];
+					for (int k = 0; k < length; k++) {
+						Element messageArgument = (Element) arguments.item(k);
+						messageargs[k] = messageArgument.getAttribute(IApiXmlConstants.ATTR_VALUE);
+					}
+				}
+				
 				String comment = element.getAttribute(IApiXmlConstants.ATTR_COMMENT);
 				comments.add((comment.length() < 1 ? null : comment));
-				for (int k = 0; k < length; k++) {
-					Element messageArgument = (Element) arguments.item(k);
-					messageargs[k] = messageArgument.getAttribute(IApiXmlConstants.ATTR_VALUE);
-				}
 				newfilters.add(ApiProblemFactory.newApiProblem(path, typeName, messageargs, null, null, -1, -1, -1, id));
 			}
+		}
+		if(ApiPlugin.DEBUG_FILTER_STORE) {
+			System.out.println(newfilters.size() + " filters found and added for: [" + component + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		internalAddFilters(
 				(IApiProblem[]) newfilters.toArray(new IApiProblem[newfilters.size()]),
