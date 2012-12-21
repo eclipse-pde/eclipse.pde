@@ -215,14 +215,7 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 					if(!isFiltered(pb)) {
 						ref.addProblems(pb);
 					} else {
-						
-						
-						// TODO CWindatt - Remove tracing
-						System.out.println("332772 - Problem filtered");
-						
-						
-						
-						
+						return false;
 					}
 				} catch (CoreException e) {
 					ApiPlugin.log(e);
