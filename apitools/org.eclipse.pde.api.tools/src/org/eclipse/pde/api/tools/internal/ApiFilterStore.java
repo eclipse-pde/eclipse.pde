@@ -56,7 +56,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
- * Base implementation of a filter store for API components
+ * Implementation of {@link org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore} 
+ * for workspace projects.  Filters can be added or removed and the
+ * changes persisted to the api_filters xml file.
  * 
  * @since 1.0.0
  */
@@ -70,7 +72,7 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 	/**
 	 * The backing {@link IJavaProject}
 	 */
-	IJavaProject fProject = null;
+	private IJavaProject fProject = null;
 	
 	boolean fNeedsSaving = false;
 	boolean fTriggeredChange = false;
@@ -276,7 +278,7 @@ public class ApiFilterStore extends FilterStore implements IResourceChangeListen
 		IApiProblemFilter filter = null;
 		for(int i = 0, max = filters.length; i < max; i++) {
 			filter = filters[i];
-			if(filter.getUnderlyingProblem().equals(problem)) {
+			if(problemsMatch(filter.getUnderlyingProblem(), problem)) {
 				if(ApiPlugin.DEBUG_FILTER_STORE) {
 					System.out.println("recording filter used: ["+filter.toString()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
 				}

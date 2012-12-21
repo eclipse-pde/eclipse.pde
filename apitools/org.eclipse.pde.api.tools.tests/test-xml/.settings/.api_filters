@@ -10,7 +10,7 @@
 	  	Test the kind for RestrictionModifiers#NO_IMPLEMENT
 	  -->
 	  <resource path="src/x/y/z/C4.java">
-	  	<filter severity="2" id="33686528" message="Test the kind for RestrictionModifiers#NO_IMPLEMENT"/>
+	  	<filter severity="2" id="574619656" message="Test the kind for RestrictionModifiers#NO_IMPLEMENT"/>
 	  </resource>
 	  
 	  <!--
@@ -18,8 +18,8 @@
 	  	Test the kind for IDelta#CHANGED with flags IDelta#VARARGS_TO_ARRAY
 	  -->
 	  <resource path="src/x/C1.java">
-	  	<filter severity="1" id="17040145" message="Test the kind for IDelta#REMOVED with flags IDelta#FIELD"/>
-	  	<filter severity="0" id="17039927" message="Test the kind for IDelta#CHANGED with flags IDelta#VARARGS_TO_ARRAY"/>
+	  	<filter severity="1" id="338755678" message="Test the kind for IDelta#REMOVED with flags IDelta#FIELD"/>
+	  	<filter severity="0" id="337866837" message="Test the kind for IDelta#CHANGED with flags IDelta#VARARGS_TO_ARRAY"/>
 	  </resource>
 	   
 	  <!--
@@ -27,8 +27,8 @@
 	  	Test the kind for IApiMarkerConstants#MARKER_ATTR_MINOR_VERSION_CHANGE
 	  -->
 	  <resource path="src/x/y/C3.java">
-	  	<filter severity="2" id="67567872" message="Test the kind for IApiMarkerConstants#MARKER_ATTR_MAJOR_VERSION_CHANGE"/>
-	  	<filter severity="2" id="67568128" message="Test the kind for IApiMarkerConstants#MARKER_ATTR_MINOR_VERSION_CHANGE"/>
+	  	<filter severity="2" id="923795461" message="Test the kind for IApiMarkerConstants#MARKER_ATTR_MAJOR_VERSION_CHANGE"/>
+	  	<filter severity="2" id="924844039" message="Test the kind for IApiMarkerConstants#MARKER_ATTR_MINOR_VERSION_CHANGE"/>
 	  </resource>
 	  
 	  <!--
@@ -37,8 +37,8 @@
 	  	Test the kind for IApiMarkerConstants#MARKER_ATTR_SINCE_TAG_INVALID
 	  -->
 	  <resource path="META-INF/MANIFEST.MF">
-	  	<filter severity="1" id="134677248" message="Test the kind for IApiMarkerConstants#MARKER_ATTR_SINCE_TAG_MISSING"/>
-	  	<filter severity="1" id="134676992" message="Test the kind for IApiMarkerConstants#MARKER_ATTR_SINCE_TAG_MALFORMED"/>
-	  	<filter severity="1" id="134676736" message="Test the kind for IApiMarkerConstants#MARKER_ATTR_SINCE_TAG_INVALID"/>
+	  	<filter severity="1" id="1194328068" message="Test the kind for IApiMarkerConstants#MARKER_ATTR_SINCE_TAG_MISSING"/>
+	  	<filter severity="1" id="1193279491" message="Test the kind for IApiMarkerConstants#MARKER_ATTR_SINCE_TAG_MALFORMED"/>
+	  	<filter severity="1" id="1192230914" message="Test the kind for IApiMarkerConstants#MARKER_ATTR_SINCE_TAG_INVALID"/>
 	  </resource>
   </component>

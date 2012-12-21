@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 IBM Corporation and others.
+ * Copyright (c) 2008, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,8 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
+import org.eclipse.pde.api.tools.internal.ApiFilterStore;
+import org.eclipse.pde.api.tools.internal.FilterStore;
 import org.eclipse.pde.api.tools.internal.model.ApiModelFactory;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
@@ -51,13 +53,24 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 	@Override
 	protected void setUp() throws Exception {
 		createProject(TESTING_PLUGIN_PROJECT_NAME, null);
-		File dest = SRC_LOC.toFile();
-		assertTrue("the filter source dir must exist", dest.exists());
-		assertTrue("the filter source dir must be a directory", dest.isDirectory());
+		File projectSrc = SRC_LOC.toFile();
+		assertTrue("the filter source dir must exist", projectSrc.exists());
+		assertTrue("the filter source dir must be a directory", projectSrc.isDirectory());
 		IJavaProject project = getTestingJavaProject(TESTING_PLUGIN_PROJECT_NAME);
 		IPackageFragmentRoot srcroot = project.findPackageFragmentRoot(project.getProject().getFullPath().append("src"));
 		assertNotNull("the default src root must exist", srcroot);
-		FileUtils.importFileFromDirectory(dest, srcroot.getPath(), new NullProgressMonitor());
+		FileUtils.importFileFromDirectory(projectSrc, srcroot.getPath(), new NullProgressMonitor());
+		
+		// Import the test .api_filters file
+		File xmlsrc = XML_LOC.append(".api_filters").toFile();
+		assertTrue("the filter xml dir must exist", xmlsrc.exists());
+		assertTrue("the filter xml dir must be a file", !xmlsrc.isDirectory());
+		assertNotNull("no project", project);
+		IProject project2 = project.getProject();
+		IPath settings = project2.getFullPath().append(".settings");
+		FileUtils.importFileFromDirectory(xmlsrc, settings, new NullProgressMonitor());
+		IResource filters = project2.findMember("/.settings/.api_filters", true);
+		assertNotNull("the .api_filters file must exist in the testing project", filters);
 	}
 	
 	/* (non-Javadoc)
@@ -67,33 +80,13 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 	protected void tearDown() throws Exception {
 		deleteProject(TESTING_PLUGIN_PROJECT_NAME);
 	}
-	/**
-	 * Tests that the .api_settings file is copied over to the testing project properly
-	 */
-	public void testCopyFilterFile() {
-		try {
-    		File dest = XML_LOC.append(".api_filters").toFile();
-    		assertTrue("the filter xml dir must exist", dest.exists());
-    		assertTrue("the filter xml dir must be a file", !dest.isDirectory());
-    		IJavaProject project = getTestingJavaProject(TESTING_PLUGIN_PROJECT_NAME);
-    		assertNotNull("no project", project);
-			IProject project2 = project.getProject();
-    		IPath settings = project2.getFullPath().append(".settings");
-    		FileUtils.importFileFromDirectory(dest, settings, new NullProgressMonitor());
-    		IResource filters = project2.findMember("/.settings/.api_filters", true);
-    		assertNotNull("the .api_filters file must exist in the testing project", filters);
-    	}
-    	catch (Exception e) {
-    		fail(e.getMessage());
-		}
-	}
 	
 	/**
 	 * Runs a series of assertions against the loaded {@link IApiFilterStore} 
 	 * @param store the store to check
 	 */
 	private void assertFilterStore(IApiFilterStore store, int count) {
-		assertNotNull("the filter store for the testing project cannot be null");
+		assertNotNull("the filter store for the testing project cannot be null", store);
 		IResource[] resources = store.getResources();
 		assertEquals("there should be "+count+" resources with filters", count, resources.length);
 		IJavaProject jproject = getTestingJavaProject(TESTING_PLUGIN_PROJECT_NAME);
@@ -142,9 +135,8 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 	
 	/**
 	 * Tests that a filter store can be correctly annotated from a persisted version
-	 * disabled for now. See https://bugs.eclipse.org/bugs/show_bug.cgi?id=221877
 	 */
-	public void _testAnnotateStoreFromLocalFile() {
+	public void testAnnotateStoreFromLocalFile() {
 		IApiComponent component = getProjectApiComponent(TESTING_PLUGIN_PROJECT_NAME);
 		assertNotNull("the testing project api component must exist", component);
 		try {
@@ -257,7 +249,8 @@ public class ApiFilterStoreTests extends AbstractApiTest {
 			profile.addApiComponents(new IApiComponent[] { component });
 			assertNotNull("the new component cannot be null", component);
 			IApiFilterStore store = component.getFilterStore();
-			assertNull("the new filter store must be null", store);
+			assertFalse("the new filter store must not be an instance of ApiFilterStore", store instanceof ApiFilterStore);
+			assertTrue("the new filter store must be an instance of FilterStore", store instanceof FilterStore);
 		}
 		catch(Exception e) {
 			fail(e.getMessage());
