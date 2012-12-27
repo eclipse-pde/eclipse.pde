@@ -16,14 +16,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.eclipse.pde.api.tools.internal.FilterStore;
 import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
-import org.eclipse.pde.api.tools.internal.problems.ApiProblemFilter;
-import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
-import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemFilter;
 
 /**
  * This filter store is only used to filter problem using existing filters.
@@ -79,26 +74,4 @@ public class AntFilterStore extends FilterStore {
 		}
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.FilterStore#internalAddFilters(org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem[], java.lang.String[])
-	 */
-	protected void internalAddFilters(IApiProblem[] problems, String[] comments) {
-		if(problems == null) {
-			return;
-		}
-		for(int i = 0; i < problems.length; i++) {
-			IApiProblem problem = problems[i];
-			IApiProblemFilter filter = new ApiProblemFilter(fComponentId, problem, comments[i]);
-			String typeName = problem.getTypeName();
-			if (typeName == null) {
-				typeName = GLOBAL;
-			}
-			Set filters = (Set) fFilterMap.get(typeName);
-			if(filters == null) {
-				filters = new HashSet();
-				fFilterMap.put(typeName, filters);
-			}
-			filters.add(filter);
-		}
-	}
 }

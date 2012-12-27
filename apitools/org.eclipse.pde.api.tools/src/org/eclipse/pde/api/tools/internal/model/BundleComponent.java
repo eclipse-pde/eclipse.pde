@@ -983,6 +983,11 @@ public class BundleComponent extends Component {
 		return String.valueOf(buffer);
 	}
 	
+	public String getName() {
+		init();
+		return super.getName();
+	}
+	
 	/**
 	 * Returns this component's bundle description.
 	 * 

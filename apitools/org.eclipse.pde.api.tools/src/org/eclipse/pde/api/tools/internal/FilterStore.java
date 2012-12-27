@@ -86,8 +86,14 @@ public class FilterStore implements IApiFilterStore {
 	public void addFilters(IApiProblemFilter[] filters) {
 		if(filters != null && filters.length > 0) {
 			initializeApiFilters();
+			// This store does not use resources so all filters are stored in the global set
+			Set globalFilters = (Set)fFilterMap.get(GLOBAL);
+			if (globalFilters == null){
+				globalFilters = new HashSet();
+				fFilterMap.put(GLOBAL, globalFilters);
+			}
 			for (int i = 0; i < filters.length; i++) {
-				fFilterMap.put(filters[i].getComponentId(), filters[i]);
+				globalFilters.add(filters[i]);
 			}
 		}
 	}
@@ -123,10 +129,14 @@ public class FilterStore implements IApiFilterStore {
 		if(filters != null && filters.length > 0) {
 			initializeApiFilters();
 			boolean removed = true;
-			for(int i = 0; i < filters.length; i++) {
-				removed &= (fFilterMap.remove(filters[i].getComponentId()) != null);
+			// This filter store does not support resources so all filters are stored under GLOBAL
+			Set globalFilters = (Set)fFilterMap.get(GLOBAL);
+			if (globalFilters != null && globalFilters.size() > 0){
+				for(int i = 0; i < filters.length; i++) {
+					removed &= globalFilters.remove(filters[i]);
+				}
+				return removed;
 			}
-			return removed;
 		}
 		return false;
 	}
@@ -181,15 +191,11 @@ public class FilterStore implements IApiFilterStore {
 		if (fFilterMap == null || fFilterMap.isEmpty()) {
 			return false;
 		}
-		String typeName = problem.getTypeName();
-		if (typeName == null || typeName.length() == 0) {
-			typeName = GLOBAL;
-		}
-		Set filters = (Set) fFilterMap.get(typeName);
-		if (filters == null) {
+		Set globalFilters = (Set) fFilterMap.get(GLOBAL);
+		if (globalFilters == null) {
 			return false;
 		}
-		for (Iterator iterator = filters.iterator(); iterator.hasNext();) {
+		for (Iterator iterator = globalFilters.iterator(); iterator.hasNext();) {
 			IApiProblemFilter filter = (IApiProblemFilter) iterator.next();
 			if (problemsMatch(filter.getUnderlyingProblem(), problem)) {
 				if(ApiPlugin.DEBUG_FILTER_STORE) {
@@ -387,22 +393,21 @@ public class FilterStore implements IApiFilterStore {
 	 * @param persist if the filters should be auto-persisted after they are added
 	 */
 	protected void internalAddFilters(IApiProblem[] problems, String[] comments) {
-		if(problems == null) {
+		if(problems == null || problems.length == 0) {
 			return;
 		}
+		// This filter store doesn't handle resources so all filters are added to GLOBAL
+		Set globalFilters = (Set) fFilterMap.get(GLOBAL);
+		if(globalFilters == null) {
+			globalFilters = new HashSet();
+			fFilterMap.put(GLOBAL, globalFilters);
+		}
+		
 		for(int i = 0; i < problems.length; i++) {
 			IApiProblem problem = problems[i];
-			IApiProblemFilter filter = new ApiProblemFilter(fComponent.getSymbolicName(), problem, comments[i]);
-			String typeName = problem.getTypeName();
-			if (typeName == null) {
-				typeName = GLOBAL;
-			}
-			Set filters = (Set) fFilterMap.get(typeName);
-			if(filters == null) {
-				filters = new HashSet();
-				fFilterMap.put(typeName, filters);
-			}
-			filters.add(filter);
+			String comment = comments != null ? comments[i] : null;
+			IApiProblemFilter filter = new ApiProblemFilter(fComponent.getSymbolicName(), problem, comment);
+			globalFilters.add(filter);
 		}
 	}
 	
