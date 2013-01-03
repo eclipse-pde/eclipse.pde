@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -178,15 +178,21 @@ public class BundleComponent extends Component {
 	}
 	
 	/**
-	 * Returns this bundle's manifest as a dictionary.
+	 * Returns this bundle's manifest as a dictionary or <code>null</code> if
+	 * no manifest was found.
 	 * 
-	 * @return manifest dictionary
+	 * @return manifest dictionary or <code>null</code>
 	 * @exception CoreException if something goes terribly wrong
 	 */
 	protected synchronized Map getManifest() throws CoreException {
 		if(fManifest == null) {
 			try {
 				fManifest = loadManifest(new File(fLocation));
+				if (isWorkspaceBinary()) {
+					// must account for bundles in development mode - look for class files in output
+					// folders rather than jars
+					TargetWeaver.weaveManifest(fManifest);
+				}
 			} catch (IOException e) {
 				abort("Unable to load manifest due to IO error", e); //$NON-NLS-1$
 			}
@@ -244,19 +250,15 @@ public class BundleComponent extends Component {
 		}
 		try {
 			Map manifest = getManifest();
-			if (isWorkspaceBinary()) {
-				// must account for bundles in development mode - look for class files in output
-				// folders rather than jars
-				TargetWeaver.weaveManifest(manifest);
-			}
-			fBundleDescription = getBundleDescription(manifest, fLocation, fBundleId);
-			if(fBundleDescription == null) {
+			if (manifest == null){
 				ApiPlugin.log(new Status(
 						IStatus.ERROR, 
 						ApiPlugin.PLUGIN_ID, 
-						"Unable to resolve the BundleDescription for the component from: " + fLocation,  //$NON-NLS-1$
+						"Unable to find a manifest for the component from: " + fLocation,  //$NON-NLS-1$
 						null));
+				return;
 			}
+			fBundleDescription = getBundleDescription(manifest, fLocation, fBundleId);
 			fSymbolicName = fBundleDescription.getSymbolicName();
 			fVersion = fBundleDescription.getVersion();
 			setName((String)manifest.get(Constants.BUNDLE_NAME));
@@ -566,28 +568,31 @@ public class BundleComponent extends Component {
 			BundleComponent other = null;
 			while (iterator.hasNext()) {
 				BundleComponent component = (BundleComponent) iterator.next();
-				String[] paths = getClasspathEntries(component.getManifest());
-				for (int i = 0; i < paths.length; i++) {
-					String path = paths[i];
-					// don't re-process the same entry twice (except default entries ".")
-					if (!(".".equals(path))) { //$NON-NLS-1$
-						if (entryNames.contains(path)) {
-							continue;
-						}
-					}
-					IApiTypeContainer container = component.createApiTypeContainer(path);
-					if (container == null) {
-						for(Iterator iter = all.iterator(); iter.hasNext();) {
-							other = (BundleComponent) iter.next();
-							if (other != component) {
-								container = other.createApiTypeContainer(path);
+				Map manifest = component.getManifest();
+				if (manifest != null){
+					String[] paths = getClasspathEntries(manifest);
+					for (int i = 0; i < paths.length; i++) {
+						String path = paths[i];
+						// don't re-process the same entry twice (except default entries ".")
+						if (!(".".equals(path))) { //$NON-NLS-1$
+							if (entryNames.contains(path)) {
+								continue;
 							}
 						}
-					}
-					if (container != null) {
-						containers.add(container);
-						if (!(".".equals(path))) { //$NON-NLS-1$
-							entryNames.add(path);
+						IApiTypeContainer container = component.createApiTypeContainer(path);
+						if (container == null) {
+							for(Iterator iter = all.iterator(); iter.hasNext();) {
+								other = (BundleComponent) iter.next();
+								if (other != component) {
+									container = other.createApiTypeContainer(path);
+								}
+							}
+						}
+						if (container != null) {
+							containers.add(container);
+							if (!(".".equals(path))) { //$NON-NLS-1$
+								entryNames.add(path);
+							}
 						}
 					}
 				}
@@ -1047,13 +1052,13 @@ public class BundleComponent extends Component {
 	 * @see IApiComponent#isSourceComponent()
 	 */
 	public synchronized boolean isSourceComponent() throws CoreException {
-		getManifest();
-		if (fManifest == null) {
+		Map manifest = getManifest();
+		if (manifest == null) {
 			baselineDisposed(getBaseline());
 		}
 		ManifestElement[] sourceBundle = null;
 		try {
-			sourceBundle = ManifestElement.parseHeader(IApiCoreConstants.ECLIPSE_SOURCE_BUNDLE, (String) fManifest.get(IApiCoreConstants.ECLIPSE_SOURCE_BUNDLE));
+			sourceBundle = ManifestElement.parseHeader(IApiCoreConstants.ECLIPSE_SOURCE_BUNDLE, (String) manifest.get(IApiCoreConstants.ECLIPSE_SOURCE_BUNDLE));
 		} catch (BundleException e) {
 			// ignore
 		}

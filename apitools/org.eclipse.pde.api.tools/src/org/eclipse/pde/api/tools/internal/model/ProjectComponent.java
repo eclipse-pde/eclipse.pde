@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@ package org.eclipse.pde.api.tools.internal.model;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -104,22 +103,33 @@ public class ProjectComponent extends BundleComponent {
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(path.lastSegment());
 		this.fProject = JavaCore.create(project);
 		this.fModel = model;
-		setName(fModel.getResourceString(super.getName()));
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.BundleApiComponent#isBinaryBundle()
+	 * @see org.eclipse.pde.api.tools.internal.model.ApiElement#setName(java.lang.String)
+	 */
+	protected void setName(String newname) {
+		// Override to use the translated name from the plug-in model
+		super.setName(fModel.getResourceString(newname));
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.model.BundleComponent#isBinary()
 	 */
 	protected boolean isBinary() {
 		return false;
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.model.BundleApiComponent#getBundleDescription(java.util.Dictionary, java.lang.String, long)
+	 * @see org.eclipse.pde.api.tools.internal.model.BundleComponent#getBundleDescription(java.util.Map, java.lang.String, long)
 	 */
-	protected BundleDescription getBundleDescription(Dictionary manifest, String location, long id) throws BundleException {
+	protected BundleDescription getBundleDescription(Map manifest, String location, long id) throws BundleException {
 		try {
-			return getModel().getBundleDescription();
+			BundleDescription result = getModel().getBundleDescription();
+			if (result == null){
+				throw new BundleException("Cannot find manifest for bundle at " + location); //$NON-NLS-1$
+			}
+			return result;
 		}
 		catch(CoreException ce) {
 			throw new BundleException(ce.getMessage());
@@ -142,14 +152,14 @@ public class ProjectComponent extends BundleComponent {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.BundleApiComponent#isApiEnabled()
+	 * @see org.eclipse.pde.api.tools.internal.model.BundleComponent#isApiEnabled()
 	 */
 	protected boolean isApiEnabled() {
 		return Util.isApiProject(fProject);
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.descriptors.AbstractApiComponent#dispose()
+	 * @see org.eclipse.pde.api.tools.internal.model.BundleComponent#dispose()
 	 */
 	public void dispose() {
 		try {
@@ -175,7 +185,7 @@ public class ProjectComponent extends BundleComponent {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.BundleApiComponent#createLocalApiDescription()
+	 * @see org.eclipse.pde.api.tools.internal.model.BundleComponent#createLocalApiDescription()
 	 */
 	protected IApiDescription createLocalApiDescription() throws CoreException {
 		long time = System.currentTimeMillis();
@@ -190,7 +200,7 @@ public class ProjectComponent extends BundleComponent {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.BundleApiComponent#createApiFilterStore()
+	 * @see org.eclipse.pde.api.tools.internal.model.BundleComponent#createApiFilterStore()
 	 */
 	protected IApiFilterStore createApiFilterStore() throws CoreException {
 		long time = System.currentTimeMillis();
@@ -202,7 +212,7 @@ public class ProjectComponent extends BundleComponent {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.descriptors.BundleApiComponent#createClassFileContainers()
+	 * @see org.eclipse.pde.api.tools.internal.model.BundleComponent#createApiTypeContainers()
 	 */
 	protected synchronized List createApiTypeContainers() throws CoreException {
 		// first populate build.properties cache so we can create class file containers
@@ -322,8 +332,9 @@ public class ProjectComponent extends BundleComponent {
 			}
 		}
 	}
+
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.BundleApiComponent#createClassFileContainer(java.lang.String)
+	 * @see org.eclipse.pde.api.tools.internal.model.BundleComponent#createApiTypeContainer(java.lang.String)
 	 */
 	protected IApiTypeContainer createApiTypeContainer(String path) throws IOException, CoreException {
 		if (this.fPathToOutputContainers == null) {
