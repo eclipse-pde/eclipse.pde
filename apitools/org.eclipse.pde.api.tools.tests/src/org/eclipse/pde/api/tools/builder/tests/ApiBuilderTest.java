@@ -187,11 +187,11 @@ public abstract class ApiBuilderTest extends BuilderTests {
 				condition = condition || jdtMarkers[i].getAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING) == IMarker.SEVERITY_ERROR;
 				if (condition) {
 					cause = (String)jdtMarkers[i].getAttribute(IMarker.MESSAGE);
-					System.err.println("Unexpected JDT Marker");
+					System.err.println("Unexpected JDT Marker in "+jdtMarkers[i].getResource().getFullPath());
 					System.err.println(cause);
 				}
 			}
-			assertFalse("Should not be a JDT error:" + cause, condition);
+			assertFalse("Should not be a JDT error: " + cause, condition);
 		}
 	}
 	
