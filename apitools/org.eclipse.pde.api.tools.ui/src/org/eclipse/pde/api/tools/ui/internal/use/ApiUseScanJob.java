@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -125,6 +125,8 @@ public class ApiUseScanJob extends Job {
 				requestor.setJarPatterns(sjars);
 				List api = this.configuration.getAttribute(ApiUseLaunchDelegate.API_PATTERNS_LIST, (List)null);
 				String[] sapi = getStrings(api);
+				String filterRoot = this.configuration.getAttribute(ApiUseLaunchDelegate.FILTER_ROOT, (String)null);
+				requestor.setFilterRoot(filterRoot);
 				List internal = this.configuration.getAttribute(ApiUseLaunchDelegate.INTERNAL_PATTERNS_LIST, (List)null);
 				String[] sinternal = getStrings(internal);
 				if (sapi != null || sinternal != null) {
@@ -458,14 +460,16 @@ public class ApiUseScanJob extends Job {
 	void scrubReportLocation(File file, IProgressMonitor monitor) {
 		if(file.exists() && file.isDirectory()) {
 			File[] files = file.listFiles();
-			for (int i = 0; i < files.length; i++) {
-				monitor.subTask(NLS.bind(Messages.ApiUseScanJob_deleteing_file, files[i].getPath()));
-				Util.updateMonitor(monitor, 0);
-				if(files[i].isDirectory()) {
-					scrubReportLocation(files[i], monitor);
-				}
-				else {
-					files[i].delete();
+			if (files != null){
+				for (int i = 0; i < files.length; i++) {
+					monitor.subTask(NLS.bind(Messages.ApiUseScanJob_deleteing_file, files[i].getPath()));
+					Util.updateMonitor(monitor, 0);
+					if(files[i].isDirectory()) {
+						scrubReportLocation(files[i], monitor);
+					}
+					else {
+						files[i].delete();
+					}
 				}
 			}
 			file.delete();

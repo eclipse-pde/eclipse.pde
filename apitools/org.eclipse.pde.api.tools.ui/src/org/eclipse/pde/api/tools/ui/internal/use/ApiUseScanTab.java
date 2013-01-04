@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -101,9 +101,11 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 		 searchScope = null,
 		 targetScope = null,
 		 reportlocation = null,
-		 description = null;
+		 description = null,
+		 filterRoot = null;
 	Group searchForGroup = null,
-		  searchInGroup = null;
+		  searchInGroup = null,
+		  filterGroup = null;
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
@@ -237,6 +239,17 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 		this.searchScope = SWTFactory.createText(searchInGroup, SWT.SINGLE | SWT.FLAT | SWT.BORDER, 1, GridData.FILL_HORIZONTAL);
 		this.searchScope.addModifyListener(modifyadapter);
 		
+		filterGroup = SWTFactory.createGroup(comp, Messages.ApiUseScanTab_filters, 3, 2, GridData.FILL_HORIZONTAL);
+		SWTFactory.createLabel(filterGroup, Messages.ApiUseScanTab_additionalFilters, 1);
+		this.filterRoot = SWTFactory.createText(filterGroup, SWT.SINGLE | SWT.FLAT | SWT.BORDER, 1, GridData.FILL_HORIZONTAL);
+		this.filterRoot.addModifyListener(modifyadapter);
+		Button filterBrowse = SWTFactory.createPushButton(filterGroup, Messages.ApiUseScanTab_Browse, null);
+		filterBrowse.addSelectionListener(new SelectionAdapter(){
+			public void widgetSelected(SelectionEvent e) {
+				handleFolderBrowse(ApiUseScanTab.this.filterRoot, Messages.ApiUseScanTab_FilterBrowseTitle);
+			}
+		});
+		
 		reportGroup = SWTFactory.createGroup(comp, Messages.ApiUseScanTab_reporting, 2, 2, GridData.FILL_HORIZONTAL);
 		
 		Composite reportTypeComp = SWTFactory.createComposite(reportGroup, 2, 2, GridData.BEGINNING, 0, 0);
@@ -323,6 +336,7 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 				this.description.setEnabled(true);
 				setGroupEnablement(this.searchForGroup, true);
 				setGroupEnablement(this.searchInGroup, true);
+				setGroupEnablement(this.filterGroup, true);
 				break;
 			}
 			case ApiUseLaunchDelegate.KIND_TARGET_DEFINITION: {
@@ -337,6 +351,7 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 				this.description.setEnabled(true);
 				setGroupEnablement(this.searchForGroup, true);
 				setGroupEnablement(this.searchInGroup, true);
+				setGroupEnablement(this.filterGroup, true);
 				break;
 			}
 			case ApiUseLaunchDelegate.KIND_INSTALL_PATH: {
@@ -351,6 +366,7 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 				this.description.setEnabled(true);
 				setGroupEnablement(this.searchForGroup, true);
 				setGroupEnablement(this.searchInGroup, true);
+				setGroupEnablement(this.filterGroup, true);
 				break;
 			}
 			case ApiUseLaunchDelegate.KIND_HTML_ONLY: {
@@ -366,6 +382,7 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 				this.description.setEnabled(false);
 				setGroupEnablement(this.searchForGroup, false);
 				setGroupEnablement(this.searchInGroup, false);
+				setGroupEnablement(this.filterGroup, false);
 				break;
 			}
 		}
@@ -522,6 +539,7 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 			this.considerapi.setSelection(isSpecified(ApiUseLaunchDelegate.MOD_API_REFERENCES, configuration));
 			this.considerinternal.setSelection(isSpecified(ApiUseLaunchDelegate.MOD_INTERNAL_REFERENCES, configuration));
 			this.consideruse.setSelection(isSpecified(ApiUseLaunchDelegate.MOD_ILLEGAL_USE, configuration));
+			this.filterRoot.setText(configuration.getAttribute(ApiUseLaunchDelegate.FILTER_ROOT, IApiToolsConstants.EMPTY_STRING));
 			
 			int reportType = configuration.getAttribute(ApiUseLaunchDelegate.REPORT_TYPE, ApiUseLaunchDelegate.REPORT_KIND_PRODUCER);
 			if (reportType == ApiUseLaunchDelegate.REPORT_KIND_CONSUMER){
@@ -649,6 +667,14 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 		modifiers = consider(this.consideruse, ApiUseLaunchDelegate.MOD_ILLEGAL_USE, modifiers);
 		modifiers = consider(this.createhtml, ApiUseLaunchDelegate.CREATE_HTML, modifiers);
 		configuration.setAttribute(ApiUseLaunchDelegate.SEARCH_MODIFIERS, modifiers);
+		String filterRoot = this.filterRoot.getText().trim();
+		if (filterRoot.length() > 0){
+			IPath path = new Path(filterRoot);
+			configuration.setAttribute(ApiUseLaunchDelegate.FILTER_ROOT, path.toPortableString());
+		} else {
+			configuration.removeAttribute(ApiUseLaunchDelegate.FILTER_ROOT);
+		}
+		
 		IPath path = new Path(this.reportlocation.getText().trim());
 		configuration.setAttribute(ApiUseLaunchDelegate.REPORT_PATH, path.toPortableString());
 		configuration.setAttribute(ApiUseLaunchDelegate.SEARCH_SCOPE, this.searchScope.getText().trim());

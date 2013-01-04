@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,6 +31,7 @@ import org.apache.tools.ant.BuildException;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.api.tools.internal.AntFilterStore;
 import org.eclipse.pde.api.tools.internal.IApiXmlConstants;
 import org.eclipse.pde.api.tools.internal.builder.BaseApiAnalyzer;
 import org.eclipse.pde.api.tools.internal.builder.BuildContext;
@@ -508,7 +509,7 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 	}
 	private IApiFilterStore getFilterStore(String name) {
 		if (this.filters == null) return null;
-		return new AntFilterStore(this.debug, this.filters, name);
+		return new AntFilterStore(this.filters, name);
 	}
 	/**
 	 * Returns an element that contains all the api problem nodes.

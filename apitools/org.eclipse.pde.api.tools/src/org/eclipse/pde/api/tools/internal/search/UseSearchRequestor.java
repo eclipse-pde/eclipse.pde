@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.pde.api.tools.internal.search;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.api.tools.internal.AntFilterStore;
 import org.eclipse.pde.api.tools.internal.builder.AbstractProblemDetector;
 import org.eclipse.pde.api.tools.internal.builder.ProblemDetectorBuilder;
 import org.eclipse.pde.api.tools.internal.builder.Reference;
@@ -39,6 +40,13 @@ import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor
  * composed of the dependent (visible) {@link IApiComponent}s for the given 
  * {@link IApiElement}
  * 
+ * <p>
+ * The references are filtered based on api filter stores.  The filters may
+ * come from a .api_filters found in the component or a separate filter location
+ * set in the ant task via {@link #setFilterRoot(String)}.  If filter files are
+ * found in both locations, the filters at both will be applied.  
+ * </p>
+ * 
  * @since 1.0.0
  */
 public class UseSearchRequestor implements IApiSearchRequestor {
@@ -49,16 +57,34 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 	private Set fComponentIds = null;
 
 	/**
-	 * The current {@link IApiFilterStore} from the current {@link IApiComponent} context we are visiting
+	 * The current {@link IApiFilterStore} from the current {@link IApiComponent} context we are visiting.
 	 */
 	private IApiFilterStore currentStore = null;
 	
 	/**
-	 * An {@link IApiFilterStore} that was set from an external source
-	 * 
-	 * @see #setGlobalFilterStore
+	 * The current {@link IApiFilterStore} for the current {@link IApiComponent} context that we
+	 * are visiting.  The filter store will be created by finding each component's filter file in the
+	 * root filter location {@link #antFilterRoot}.
 	 */
-	private IApiFilterStore globalStore = null;
+	private IApiFilterStore antStore = null;
+	
+	/**
+	 * The root directory of the .api_filters files that should be used to filter references.
+	 * 
+	 * The .api_filters files specify specific problems to ignore during api analysis. During the use scan, the 
+	 * problem filters will be used to filter the use scan results.
+	 *
+	 * The root is specified using an absolute path.
+	 * The root needs to contain the following structure: 
+	 * <pre>
+	 * root
+	 *  |
+	 *  +-- component name (i.e. org.eclipse.jface)
+	 *         |
+	 *         +--- .api_filters
+	 * </pre>
+	 */
+	private String antFilterRoot = null;
 	
 	/**
 	 * The mask to use while searching
@@ -109,6 +135,7 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 					fAnalyzer.buildProblemDetectors(component, ProblemDetectorBuilder.K_USE, null);
 				}
 				currentStore = component.getFilterStore();
+				antStore = antFilterRoot != null ? new AntFilterStore(antFilterRoot, component.getSymbolicName()): null; 
 				return true;
 			}
 		}
@@ -136,8 +163,11 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 				IApiType type = (IApiType) member;
 				return !(type.isMemberType() || type.isLocal());
 			}
+			default: {
+				return true;
+			}
 		}
-		return true;
+		
 	}
 	
 	/**
@@ -233,7 +263,7 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 	 */
 	boolean isFiltered(IApiProblem problem) throws CoreException {
 		return (currentStore != null && currentStore.isFiltered(problem)) || 
-				(globalStore != null && globalStore.isFiltered(problem));
+				(antStore != null && antStore.isFiltered(problem));
 	}
 	
 	/* (non-Javadoc)
@@ -293,10 +323,24 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 	}
 	
 	/**
-	 * Allows a global {@link IApiFilterStore} to be used to filter all references found during the scan
-	 * @param store the store to set or <code>null</code> to remove the store
+	 * Sets the root directory of the .api_filters files that should be used to filter references.
+	 * 
+	 * The .api_filters files specify specific problems to ignore during api analysis. During the use scan, the 
+	 * problem filters will be used to filter the use scan results.  If .api_filter files are found inside the component
+	 * those filters will be applied in addition to any found at this filter root.
+	 *
+	 * The root is specified using an absolute path.
+	 * The root needs to contain the following structure: 
+	 * <pre>
+	 * root
+	 *  |
+	 *  +-- component name (i.e. org.eclipse.jface)
+	 *         |
+	 *         +--- .api_filters
+	 * </pre>
+	 * @param filterRoot the absolute string path to the root of the filters
 	 */
-	public void setGlobalFilterStore(IApiFilterStore store) {
-		globalStore = store;
+	public void setFilterRoot(String filterRoot) {
+		antFilterRoot = filterRoot;
 	}
 }

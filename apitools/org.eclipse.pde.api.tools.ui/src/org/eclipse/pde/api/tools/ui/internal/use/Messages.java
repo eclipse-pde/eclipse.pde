@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,6 +49,7 @@ public class Messages extends NLS {
 	public static String ApiUseScanJob_target_api_unspecified;
 	public static String ApiUseScanJob_target_unspecified;
 	public static String ApiUseScanJob_unspecified_install_path;
+	public static String ApiUseScanTab_additionalFilters;
 	public static String ApiUseScanTab_analuze;
 	public static String ApiUseScanTab_api_baseline;
 	public static String ApiUseScanTab_api_references;
@@ -56,12 +57,15 @@ public class Messages extends NLS {
 	public static String ApiUseScanTab_baselines;
 	public static String ApiUseScanTab_brows_e_;
 	public static String ApiUseScanTab_browse;
+	public static String ApiUseScanTab_Browse;
 	public static String ApiUseScanTab_bundles_matching;
 	public static String ApiUseScanTab_clean_html_report_dir;
 	public static String ApiUseScanTab_clean_report_dir;
 	public static String ApiUseScanTab_create_html_report;
 	public static String ApiUseScanTab_description;
 	public static String ApiUseScanTab_enter_report_location;
+	public static String ApiUseScanTab_FilterBrowseTitle;
+	public static String ApiUseScanTab_filters;
 	public static String ApiUseScanTab_generate_html_only;
 	public static String ApiUseScanTab_illegal_api_use;
 	public static String ApiUseScanTab_install_location;

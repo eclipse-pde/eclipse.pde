@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -88,6 +88,11 @@ public class ApiUseLaunchDelegate extends LaunchConfigurationDelegate {
 	public static final String DESCRIPTION = ApiUIPlugin.PLUGIN_ID + ".DESCRIPTION"; //$NON-NLS-1$
 	
 	/**
+	 * Launch configuration attribute for a directory path pointing to a collection of api filters
+	 */
+	public static final String FILTER_ROOT = ApiUIPlugin.PLUGIN_ID + ".FILTER_ROOT"; //$NON-NLS-1$
+	
+	/**
 	 * Search modifiers
 	 */
 	public static final int MOD_API_REFERENCES			= 1;
@@ -97,7 +102,7 @@ public class ApiUseLaunchDelegate extends LaunchConfigurationDelegate {
 	public static final int CLEAN_HTML					= 1 << 3;
 	public static final int CREATE_HTML					= 1 << 4;
 	public static final int DISPLAY_REPORT				= 1 << 5;
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate#launch(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String, org.eclipse.debug.core.ILaunch, org.eclipse.core.runtime.IProgressMonitor)
 	 */

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,7 +25,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.osgi.service.resolver.ResolverError;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
-import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
@@ -98,10 +97,6 @@ public final class ApiUseTask extends CommonUtilsTask {
 	 * </pre>
 	 */
 	private String[] archivePatterns = null;
-	/**
-	 * Absolute file paths to the filter files to use
-	 */
-	private String[] filterPaths = null;
 	
 	/**
 	 * List of elements excluded from the scope
@@ -112,6 +107,11 @@ public final class ApiUseTask extends CommonUtilsTask {
 	 * List of elements explicitly limiting the scope
 	 */
 	private FilteredElements includedElements = null;
+	
+	/**
+	 * Root directory of api_filters files to apply
+	 */
+	private String filters = null;
 	
 	/**
 	 * Set the location of the current product you want to search.
@@ -243,14 +243,6 @@ public final class ApiUseTask extends CommonUtilsTask {
 	}
 	
 	/**
-	 * Sets the paths of the filter files to use
-	 * @param paths
-	 */
-	public void setFilterPaths(String paths) {
-		filterPaths = parsePatterns(paths);
-	}
-	
-	/**
 	 * @see org.eclipse.pde.api.tools.internal.tasks.UseTask#assertParameters()
 	 */
 	protected void assertParameters() throws BuildException {
@@ -311,7 +303,7 @@ public final class ApiUseTask extends CommonUtilsTask {
 					(IApiElement[]) scope.toArray(new IApiElement[scope.size()]), 
 					getSearchFlags());
 			requestor.setJarPatterns(archivePatterns);
-			requestor.setGlobalFilterStore(getFilterStore(ids));
+			requestor.setFilterRoot(filters);
 			// override API descriptions as required
 			if (apiPatterns != null || internalPatterns != null) {
 				// modify API descriptions
@@ -475,18 +467,6 @@ public final class ApiUseTask extends CommonUtilsTask {
 	}
 	
 	/**
-	 * Create a global filter store from a group of filter files
-	 * 
-	 * @return the new {@link IApiFilterStore} or <code>null</code>
-	 */
-	protected IApiFilterStore getFilterStore(Set ids) {
-		if(filterPaths != null && !ids.isEmpty()) {
-			//TODO we need to create the filter store
-		}
-		return null;
-	}
-	
-	/**
 	 * Cleans the report location specified by the parameter {@link CommonUtilsTask#reportLocation}
 	 */
 	protected void cleanReportLocation() {
@@ -518,14 +498,19 @@ public final class ApiUseTask extends CommonUtilsTask {
 			System.out.println("Searching for internal references : " + this.considerinternal); //$NON-NLS-1$
 			System.out.println("Searching for illegal API use : "+ this.considerillegaluse); //$NON-NLS-1$
 			if (this.excludeListLocation != null) {
-				System.out.println("exclude list location : " + this.excludeListLocation); //$NON-NLS-1$
+				System.out.println("Exclude list location : " + this.excludeListLocation); //$NON-NLS-1$
 			} else {
 				System.out.println("No exclude list location"); //$NON-NLS-1$
 			}
 			if (this.includeListLocation != null) {
-				System.out.println("include list location : " + this.includeListLocation); //$NON-NLS-1$
+				System.out.println("Include list location : " + this.includeListLocation); //$NON-NLS-1$
 			} else {
 				System.out.println("No include list location"); //$NON-NLS-1$
+			}
+			if (this.filters != null) {
+				System.out.println("API Filter location : " + this.filters); //$NON-NLS-1$
+			} else {
+				System.out.println("No API filter location"); //$NON-NLS-1$
 			}
 			if(this.scopepattern == null) {
 				System.out.println("No scope pattern defined - searching all bundles"); //$NON-NLS-1$
@@ -597,5 +582,30 @@ public final class ApiUseTask extends CommonUtilsTask {
 	 */
 	public void setIncludeList(String includeListLocation) {
 		this.includeListLocation = includeListLocation;
+	}
+	
+	/**
+	 * Set the root directory of API filters to use during the use scan.
+	 *
+	 * The argument is the root directory of the .api_filters files that should be used to filter references.
+	 * 
+	 * The .api_filters files specify specific problems to ignore during api analysis. During the use scan, the 
+	 * problem filters will be used to filter the use scan results.  If a .api_filters file is found inside 
+	 * the component both sets of filters will be applied.
+	 *
+	 * The root is specified using an absolute path.
+	 * The root needs to contain the following structure: 
+	 * <pre>
+	 * root
+	 *  |
+	 *  +-- component name (i.e. org.eclipse.jface)
+	 *         |
+	 *         +--- .api_filters
+	 * </pre>
+	 *
+	 * @param filters the root of the .api_filters files
+	 */
+	public void setFilters(String filters) {
+		this.filters = filters; 
 	}
 }
