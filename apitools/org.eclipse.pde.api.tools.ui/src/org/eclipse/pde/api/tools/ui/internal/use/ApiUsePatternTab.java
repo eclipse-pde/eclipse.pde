@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -150,7 +150,7 @@ public class ApiUsePatternTab extends AbstractLaunchConfigurationTab {
 	 */
 	public void createControl(Composite parent) {
 		Composite comp = SWTFactory.createComposite(parent, 2, 1, GridData.FILL_BOTH);
-		SWTFactory.createLabel(comp, Messages.ApiUsePatternTab_patterns, 2);
+		SWTFactory.createWrapLabel(comp, Messages.ApiUsePatternTab_patterns, 2, 100);
 		Composite tcomp = SWTFactory.createComposite(comp, 1, 1, GridData.FILL_BOTH, 0, 0);
 		GridData gd = (GridData) tcomp.getLayoutData();
 		gd.grabExcessHorizontalSpace = true;
