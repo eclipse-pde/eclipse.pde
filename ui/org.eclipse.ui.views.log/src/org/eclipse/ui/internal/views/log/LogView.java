@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,7 @@ import java.util.List;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.*;
@@ -1538,15 +1539,6 @@ public class LogView extends ViewPart implements ILogListener {
 	}
 
 	/**
-	 * Returns the plugin preferences used to maintain
-	 * state of log view
-	 * @return the plugin preferences
-	 */
-	private Preferences getLogPreferences() {
-		return (new InstanceScope()).getNode(Activator.PLUGIN_ID);
-	}
-
-	/**
 	 * Loads any saved {@link IDialogSettings} into the backing view memento
 	 */
 	private void readSettings() {
@@ -1567,15 +1559,16 @@ public class LogView extends ViewPart implements ILogListener {
 			}
 		}
 
-		Preferences p = getLogPreferences(); // never returns null
-		fMemento.putInteger(P_COLUMN_1, getColumnWidthPreference(p, P_COLUMN_1, 300));
-		fMemento.putInteger(P_COLUMN_2, getColumnWidthPreference(p, P_COLUMN_2, 150));
-		fMemento.putInteger(P_COLUMN_3, getColumnWidthPreference(p, P_COLUMN_3, 150));
-		fMemento.putBoolean(P_ACTIVATE, p.getBoolean(P_ACTIVATE, true));
-		fMemento.putInteger(P_ORDER_VALUE, p.getInt(P_ORDER_VALUE, DESCENDING));
-		fMemento.putInteger(P_ORDER_TYPE, p.getInt(P_ORDER_TYPE, LogView.DATE));
-		fMemento.putBoolean(P_SHOW_FILTER_TEXT, p.getBoolean(P_SHOW_FILTER_TEXT, true));
-		fMemento.putInteger(P_GROUP_BY, p.getInt(P_GROUP_BY, LogView.GROUP_BY_NONE));
+		Preferences instancePrefs = InstanceScope.INSTANCE.getNode(Activator.PLUGIN_ID);
+		Preferences defaultPrefs = DefaultScope.INSTANCE.getNode(Activator.PLUGIN_ID);
+		fMemento.putInteger(P_COLUMN_1, getColumnWidthPreference(instancePrefs, defaultPrefs, P_COLUMN_1, 300));
+		fMemento.putInteger(P_COLUMN_2, getColumnWidthPreference(instancePrefs, defaultPrefs, P_COLUMN_2, 150));
+		fMemento.putInteger(P_COLUMN_3, getColumnWidthPreference(instancePrefs, defaultPrefs, P_COLUMN_3, 150));
+		fMemento.putBoolean(P_ACTIVATE, instancePrefs.getBoolean(P_ACTIVATE, defaultPrefs.getBoolean(P_ACTIVATE, true)));
+		fMemento.putInteger(P_ORDER_VALUE, instancePrefs.getInt(P_ORDER_VALUE, defaultPrefs.getInt(P_ORDER_VALUE, DESCENDING)));
+		fMemento.putInteger(P_ORDER_TYPE, instancePrefs.getInt(P_ORDER_TYPE, defaultPrefs.getInt(P_ORDER_TYPE, LogView.DATE)));
+		fMemento.putBoolean(P_SHOW_FILTER_TEXT, instancePrefs.getBoolean(P_SHOW_FILTER_TEXT, defaultPrefs.getBoolean(P_SHOW_FILTER_TEXT, true)));
+		fMemento.putInteger(P_GROUP_BY, instancePrefs.getInt(P_GROUP_BY, defaultPrefs.getInt(P_GROUP_BY, LogView.GROUP_BY_NONE)));
 	}
 
 	/**
@@ -1585,15 +1578,16 @@ public class LogView extends ViewPart implements ILogListener {
 	 * <li>There is no preference for the given key</li>
 	 * <li>The returned preference value is too small, making the columns invisible by width.</li>
 	 * </ul>
-	 * @param preferences
+	 * @param instancePrefs
+	 * @param defaultPrefs
 	 * @param key
 	 * @param defaultwidth
 	 * @return the stored width for the a column described by the given key or the default width
 	 * 
 	 * @since 3.6
 	 */
-	int getColumnWidthPreference(Preferences preferences, String key, int defaultwidth) {
-		int width = preferences.getInt(key, defaultwidth);
+	int getColumnWidthPreference(Preferences instancePrefs, Preferences defaultPrefs, String key, int defaultwidth) {
+		int width = instancePrefs.getInt(key, defaultPrefs.getInt(key, defaultwidth));
 		return width < 1 ? defaultwidth : width;
 	}
 
@@ -1616,17 +1610,17 @@ public class LogView extends ViewPart implements ILogListener {
 	}
 
 	private void writeViewSettings() {
-		Preferences preferences = getLogPreferences();
-		preferences.putInt(P_COLUMN_1, fMemento.getInteger(P_COLUMN_1).intValue());
-		preferences.putInt(P_COLUMN_2, fMemento.getInteger(P_COLUMN_2).intValue());
-		preferences.putInt(P_COLUMN_3, fMemento.getInteger(P_COLUMN_3).intValue());
-		preferences.putBoolean(P_ACTIVATE, fMemento.getBoolean(P_ACTIVATE).booleanValue());
-		preferences.putInt(P_ORDER_VALUE, fMemento.getInteger(P_ORDER_VALUE).intValue());
-		preferences.putInt(P_ORDER_TYPE, fMemento.getInteger(P_ORDER_TYPE).intValue());
-		preferences.putBoolean(P_SHOW_FILTER_TEXT, fMemento.getBoolean(P_SHOW_FILTER_TEXT).booleanValue());
-		preferences.putInt(P_GROUP_BY, fMemento.getInteger(P_GROUP_BY).intValue());
+		Preferences instancePrefs = (InstanceScope.INSTANCE).getNode(Activator.PLUGIN_ID);
+		instancePrefs.putInt(P_COLUMN_1, fMemento.getInteger(P_COLUMN_1).intValue());
+		instancePrefs.putInt(P_COLUMN_2, fMemento.getInteger(P_COLUMN_2).intValue());
+		instancePrefs.putInt(P_COLUMN_3, fMemento.getInteger(P_COLUMN_3).intValue());
+		instancePrefs.putBoolean(P_ACTIVATE, fMemento.getBoolean(P_ACTIVATE).booleanValue());
+		instancePrefs.putInt(P_ORDER_VALUE, fMemento.getInteger(P_ORDER_VALUE).intValue());
+		instancePrefs.putInt(P_ORDER_TYPE, fMemento.getInteger(P_ORDER_TYPE).intValue());
+		instancePrefs.putBoolean(P_SHOW_FILTER_TEXT, fMemento.getBoolean(P_SHOW_FILTER_TEXT).booleanValue());
+		instancePrefs.putInt(P_GROUP_BY, fMemento.getInteger(P_GROUP_BY).intValue());
 		try {
-			preferences.flush();
+			instancePrefs.flush();
 		} catch (BackingStoreException e) {
 			// empty
 		}
