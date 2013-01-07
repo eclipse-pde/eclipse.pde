@@ -1,0 +1,119 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.pde.core" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appinfo>
+         <meta.schema plugin="org.eclipse.pde.core" id="pluginClasspathContributors" name="Plug-in Classpath Contributors"/>
+      </appinfo>
+      <documentation>
+         This extension point provides a mechanism to contribute additional classpath entries to a plug-in project when the PDE classpath is computered.  Each plug-in classpath contributor is consulted for additional entries when the initial classpath is calculated as well as whenever a new bundle dependency is added to the project.
+
+The additional classpath entries are only stored as long as the project classpath is.  The additional entries will not be considered during plug-in or feature export.
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <annotation>
+         <appinfo>
+            <meta.element />
+         </appinfo>
+      </annotation>
+      <complexType>
+         <sequence minOccurs="1" maxOccurs="unbounded">
+            <element ref="contributor"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="contributor">
+      <complexType>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The class that implements the plug-in classpath contributor.  The class must implement &lt;code&gt;IClasspathContributor&lt;/code&gt;
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.pde.core.IClasspathContributor"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="since"/>
+      </appinfo>
+      <documentation>
+         3.9
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="examples"/>
+      </appinfo>
+      <documentation>
+         The following is an example of the classpath contributor
+
+&lt;p&gt;
+&lt;pre&gt;
+  &lt;extension
+    point=&quot;org.eclipse.pde.core.pluginClasspathContributors&quot;&gt;
+    &lt;contribtor
+      class=&quot;at.bestsolution.efxclipse.tooling.pde.core.JavaFXClassPathExtender&quot;&gt;
+    &lt;/contribtor&gt;
+  &lt;/extension&gt;
+&lt;/pre&gt;
+&lt;/p&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="apiinfo"/>
+      </appinfo>
+      <documentation>
+         Each contributor must provide a class that implements &lt;code&gt;org.eclipse.pde.core.IClasspathContributor&lt;/code&gt;
+      </documentation>
+   </annotation>
+
+
+   <annotation>
+      <appinfo>
+         <meta.section type="copyright"/>
+      </appinfo>
+      <documentation>
+         Copyright (c) 2013 BestSolution.at and others.&amp;lt;br&amp;gt;
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Eclipse Public License v1.0
+which accompanies this distribution, and is available at
+&amp;lt;a href=&amp;quot;http://www.eclipse.org/legal/epl-v10.html&amp;quot;&amp;gt;http://www.eclipse.org/legal/epl-v10.html&amp;lt;/a&amp;gt;
+      </documentation>
+   </annotation>
+
+</schema>

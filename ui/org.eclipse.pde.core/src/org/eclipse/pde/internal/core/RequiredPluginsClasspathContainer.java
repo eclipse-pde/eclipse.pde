@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.osgi.service.resolver.*;
+import org.eclipse.pde.core.IClasspathContributor;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -31,6 +32,12 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 	private static boolean DEBUG = false;
 
 	private IClasspathEntry[] fEntries = null;
+
+	/**
+	 * Cached list of {@link IClasspathContributor} from plug-in extensions
+	 * @see #getClasspathContributors()
+	 */
+	private List<IClasspathContributor> fClasspathContributors = null;
 
 	static {
 		DEBUG = PDECore.getDefault().isDebugging() && "true".equals(Platform.getDebugOption("org.eclipse.pde.core/classpath")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -106,6 +113,15 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 
 			Map<BundleDescription, ArrayList<Rule>> map = retrieveVisiblePackagesFromState(desc);
 
+			// Add any library entries contributed via classpath contributor extension (Bug 363733)
+			for (IClasspathContributor cc : getClasspathContributors()) {
+				List<IClasspathEntry> classpathEntries = cc.getInitialEntries(desc);
+				if (classpathEntries == null || classpathEntries.isEmpty()) {
+					continue;
+				}
+				entries.addAll(classpathEntries);
+			}
+
 			HashSet<BundleDescription> added = new HashSet<BundleDescription>();
 
 			// to avoid cycles, e.g. when a bundle imports a package it exports
@@ -157,6 +173,27 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 		} catch (CoreException e) {
 		}
 		return entries.toArray(new IClasspathEntry[entries.size()]);
+	}
+
+	/**
+	 * Return the list of {@link IClasspathContributor}s provided by the 
+	 * <code>org.eclipse.pde.core.pluginClasspathContributors</code> extension point.
+	 * @return list of classpath contributors from the extension point
+	 */
+	private List<IClasspathContributor> getClasspathContributors() {
+		if (fClasspathContributors == null) {
+			fClasspathContributors = new ArrayList<IClasspathContributor>();
+			IExtensionRegistry registry = Platform.getExtensionRegistry();
+			IConfigurationElement[] elements = registry.getConfigurationElementsFor("org.eclipse.pde.core.pluginClasspathContributors"); //$NON-NLS-1$
+			for (int i = 0; i < elements.length; i++) {
+				try {
+					fClasspathContributors.add((IClasspathContributor) elements[i].createExecutableExtension("class")); //$NON-NLS-1$
+				} catch (CoreException e) {
+					PDECore.log(e.getStatus());
+				}
+			}
+		}
+		return fClasspathContributors;
 	}
 
 	private Map<BundleDescription, ArrayList<Rule>> retrieveVisiblePackagesFromState(BundleDescription desc) {
@@ -248,8 +285,23 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 		IPluginModelBase model = PluginRegistry.findModel(desc);
 		if (model == null || !model.isEnabled())
 			return false;
+
 		IResource resource = model.getUnderlyingResource();
 		Rule[] rules = useInclusions ? getInclusions(map, model) : null;
+
+		BundleDescription hostBundle = fModel.getBundleDescription();
+		if (desc == null)
+			return false;
+
+		// Add any library entries contributed via classpath contributor extension (Bug 363733)
+		for (IClasspathContributor cc : getClasspathContributors()) {
+			List<IClasspathEntry> classpathEntries = cc.getEntriesForDependency(hostBundle, desc);
+			if (classpathEntries == null || classpathEntries.isEmpty()) {
+				continue;
+			}
+			entries.addAll(classpathEntries);
+		}
+
 		if (resource != null) {
 			addProjectEntry(resource.getProject(), rules, entries);
 		} else {
