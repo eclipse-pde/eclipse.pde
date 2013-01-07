@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.pde.core" id="bundleClasspathResolvers" name="Bundle Classpath Resolver"/>
       </appInfo>
       <documentation>
-         This extension point allows clients to add bundle classpath entries and source lookup path entries locations and source lookup path.
+         This extension point allows clients to add additional bundle classpath entries and source lookup path entries to a plug-in project classpath
       </documentation>
    </annotation>
 
