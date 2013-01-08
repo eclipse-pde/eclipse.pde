@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 IBM Corporation and others.
+ * Copyright (c) 2006, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -190,7 +190,10 @@ public class PDETemplateMessages extends NLS {
 	public static String BuilderTemplate_defaultBuilderName;
 	public static String BuilderTemplate_defaultNatureName;
 	public static String BuilderTemplate_markerName;
-	public static String BuilderTemplate_generateAction;
+	public static String BuilderTemplate_generateCommand;
+	public static String BuilderTemplate_enableLabel;
+	public static String BuilderTemplate_disableLabel;
+	public static String BuilderTemplate_commandName;
 
 	public static String DecoratorTemplate_title;
 	public static String DecoratorTemplate_desc;

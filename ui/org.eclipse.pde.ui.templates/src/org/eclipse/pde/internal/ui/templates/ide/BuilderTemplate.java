@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,24 +12,14 @@ package org.eclipse.pde.internal.ui.templates.ide;
 
 import java.io.File;
 import java.util.ArrayList;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginElement;
-import org.eclipse.pde.core.plugin.IPluginExtension;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.IPluginModelFactory;
-import org.eclipse.pde.core.plugin.IPluginReference;
-import org.eclipse.pde.internal.ui.templates.IHelpContextIds;
-import org.eclipse.pde.internal.ui.templates.PDETemplateMessages;
-import org.eclipse.pde.internal.ui.templates.PDETemplateSection;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.ui.templates.*;
 import org.eclipse.pde.ui.IFieldData;
-import org.eclipse.pde.ui.templates.AbstractTemplateSection;
-import org.eclipse.pde.ui.templates.BooleanOption;
-import org.eclipse.pde.ui.templates.PluginReference;
+import org.eclipse.pde.ui.templates.*;
 
 public class BuilderTemplate extends PDETemplateSection {
 
@@ -59,7 +49,7 @@ public class BuilderTemplate extends PDETemplateSection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.ui.templates.OptionTemplateSection#getSectionId()
 	 */
 	public String getSectionId() {
@@ -84,7 +74,7 @@ public class BuilderTemplate extends PDETemplateSection {
 		addOption(KEY_NATURE_ID, PDETemplateMessages.BuilderTemplate_natureId, "sampleNature", 0); //$NON-NLS-1$
 		addOption(KEY_NATURE_NAME, PDETemplateMessages.BuilderTemplate_natureName, PDETemplateMessages.BuilderTemplate_defaultNatureName, 0);
 
-		actionOption = (BooleanOption) addOption(KEY_GEN_ACTION, PDETemplateMessages.BuilderTemplate_generateAction, true, 0);
+		actionOption = (BooleanOption) addOption(KEY_GEN_ACTION, PDETemplateMessages.BuilderTemplate_generateCommand, true, 0);
 	}
 
 	public void addPages(Wizard wizard) {
@@ -115,7 +105,7 @@ public class BuilderTemplate extends PDETemplateSection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.ui.templates.ITemplateSection#getUsedExtensionPoint()
 	 */
 	public String getUsedExtensionPoint() {
@@ -171,55 +161,153 @@ public class BuilderTemplate extends PDETemplateSection {
 
 		// Popup Action
 		if (actionOption.isSelected()) {
-			IPluginExtension extension3 = createExtension("org.eclipse.ui.popupMenus", true); //$NON-NLS-1$
-			IPluginElement objectContribution = factory.createElement(extension3);
-			objectContribution.setName("objectContribution"); //$NON-NLS-1$
-			objectContribution.setAttribute("objectClass", //$NON-NLS-1$
-					"org.eclipse.core.resources.IProject"); //$NON-NLS-1$
-			objectContribution.setAttribute("adaptable", "true"); //$NON-NLS-1$ //$NON-NLS-2$
-			objectContribution.setAttribute("nameFilter", "*"); //$NON-NLS-1$ //$NON-NLS-2$
-			objectContribution.setAttribute("id", model.getPluginBase().getId() //$NON-NLS-1$
-					+ ".contribution1"); //$NON-NLS-1$
-			extension3.add(objectContribution);
+			IPluginExtension extension3 = createExtension("org.eclipse.ui.commands", true); //$NON-NLS-1$
 
-			IPluginElement action = factory.createElement(objectContribution);
-			action.setName("action"); //$NON-NLS-1$
-			action.setAttribute("label", PDETemplateMessages.BuilderTemplate_actionLabel); //$NON-NLS-1$
-			action.setAttribute("class", getStringOption(KEY_PACKAGE_NAME) //$NON-NLS-1$
-					+ ".ToggleNatureAction"); //$NON-NLS-1$
-			action.setAttribute("menubarPath", "additions"); //$NON-NLS-1$ //$NON-NLS-2$
-			action.setAttribute("enablesFor", "+"); //$NON-NLS-1$ //$NON-NLS-2$
-			action.setAttribute("id", model.getPluginBase().getId() //$NON-NLS-1$
-					+ ".addRemoveNatureAction"); //$NON-NLS-1$
-			objectContribution.add(action);
+			IPluginElement category = factory.createElement(extension3);
+			category.setName("category"); //$NON-NLS-1$
+			category.setAttribute("id", model.getPluginBase().getId() //$NON-NLS-1$
+					+ "." + getStringOption(KEY_NATURE_ID) + ".category"); //$NON-NLS-1$ //$NON-NLS-2$
+			category.setAttribute("name", getStringOption(KEY_NATURE_NAME) + " commands"); //$NON-NLS-1$ //$NON-NLS-2$
+			extension3.add(category);
+
+			IPluginElement command = factory.createElement(extension3);
+			command.setName("command"); //$NON-NLS-1$
+			command.setAttribute("categoryId", model.getPluginBase().getId() //$NON-NLS-1$
+					+ "." + getStringOption(KEY_NATURE_ID) + ".category"); //$NON-NLS-1$ //$NON-NLS-2$
+			command.setAttribute("defaultHandler", getStringOption(KEY_PACKAGE_NAME) //$NON-NLS-1$
+					+ ".AddRemove" + getStringOption(KEY_NATURE_CLASS_NAME) + "Handler"); //$NON-NLS-1$ //$NON-NLS-2$
+			command.setAttribute("id", model.getPluginBase().getId() //$NON-NLS-1$
+					+ ".addRemove" + getStringOption(KEY_NATURE_CLASS_NAME)); //$NON-NLS-1$
+			command.setAttribute("name", PDETemplateMessages.BuilderTemplate_commandName + getStringOption(KEY_NATURE_NAME)); //$NON-NLS-1$
+			extension3.add(command);
 
 			if (!extension3.isInTheModel())
 				plugin.add(extension3);
+
+			IPluginExtension extension4 = createExtension("org.eclipse.ui.menus", true); //$NON-NLS-1$
+			IPluginElement menuContribution = factory.createElement(extension4);
+			menuContribution.setName("menuContribution"); //$NON-NLS-1$
+			menuContribution.setAttribute("locationURI", //$NON-NLS-1$
+					"popup:org.eclipse.ui.projectConfigure?after=additions"); //$NON-NLS-1$
+			extension4.add(menuContribution);
+
+			IPluginElement disableCommand = factory.createElement(menuContribution);
+			disableCommand.setName("command"); //$NON-NLS-1$
+			disableCommand.setAttribute("label", PDETemplateMessages.BuilderTemplate_disableLabel); //$NON-NLS-1$
+			disableCommand.setAttribute("commandId", model.getPluginBase().getId() //$NON-NLS-1$
+					+ ".addRemove" + getStringOption(KEY_NATURE_CLASS_NAME)); //$NON-NLS-1$
+			disableCommand.setAttribute("style", "push"); //$NON-NLS-1$ //$NON-NLS-2$
+			menuContribution.add(disableCommand);
+
+			IPluginElement visibleWhen = factory.createElement(disableCommand);
+			visibleWhen.setName("visibleWhen"); //$NON-NLS-1$
+			visibleWhen.setAttribute("checkEnabled", "false"); //$NON-NLS-1$ //$NON-NLS-2$
+			disableCommand.add(visibleWhen);
+
+			IPluginElement with = factory.createElement(visibleWhen);
+			with.setName("with"); //$NON-NLS-1$
+			with.setAttribute("variable", "selection"); //$NON-NLS-1$ //$NON-NLS-2$
+			visibleWhen.add(with);
+
+			IPluginElement count = factory.createElement(with);
+			count.setName("count"); //$NON-NLS-1$
+			count.setAttribute("value", "1"); //$NON-NLS-1$ //$NON-NLS-2$
+			with.add(count);
+
+			IPluginElement iterate = factory.createElement(with);
+			iterate.setName("iterate"); //$NON-NLS-1$
+			with.add(iterate);
+
+			IPluginElement and = factory.createElement(iterate);
+			and.setName("and"); //$NON-NLS-1$
+			iterate.add(and);
+
+			IPluginElement instanceof1 = factory.createElement(and);
+			instanceof1.setName("instanceof"); //$NON-NLS-1$
+			instanceof1.setAttribute("value", "org.eclipse.core.resources.IProject"); //$NON-NLS-1$ //$NON-NLS-2$
+			and.add(instanceof1);
+
+			IPluginElement test = factory.createElement(and);
+			test.setName("test"); //$NON-NLS-1$
+			test.setAttribute("property", "org.eclipse.core.resources.projectNature"); //$NON-NLS-1$ //$NON-NLS-2$
+			test.setAttribute("value", model.getPluginBase().getId() //$NON-NLS-1$
+					+ "." + getStringOption(KEY_NATURE_ID)); //$NON-NLS-1$
+			and.add(test);
+
+			IPluginElement enableCommand = factory.createElement(menuContribution);
+			enableCommand.setName("command"); //$NON-NLS-1$
+			enableCommand.setAttribute("label", PDETemplateMessages.BuilderTemplate_enableLabel); //$NON-NLS-1$
+			enableCommand.setAttribute("commandId", model.getPluginBase().getId() //$NON-NLS-1$
+					+ ".addRemove" + getStringOption(KEY_NATURE_CLASS_NAME)); //$NON-NLS-1$
+			enableCommand.setAttribute("style", "push"); //$NON-NLS-1$ //$NON-NLS-2$
+			menuContribution.add(enableCommand);
+
+			IPluginElement visibleWhen2 = factory.createElement(enableCommand);
+			visibleWhen2.setName("visibleWhen"); //$NON-NLS-1$
+			visibleWhen2.setAttribute("checkEnabled", "false"); //$NON-NLS-1$ //$NON-NLS-2$
+			enableCommand.add(visibleWhen2);
+
+			IPluginElement with2 = factory.createElement(visibleWhen2);
+			with2.setName("with"); //$NON-NLS-1$
+			with2.setAttribute("variable", "selection"); //$NON-NLS-1$ //$NON-NLS-2$
+			visibleWhen2.add(with2);
+
+			IPluginElement count2 = factory.createElement(with2);
+			count2.setName("count"); //$NON-NLS-1$
+			count2.setAttribute("value", "1"); //$NON-NLS-1$ //$NON-NLS-2$
+			with2.add(count2);
+
+			IPluginElement iterate2 = factory.createElement(with2);
+			iterate2.setName("iterate"); //$NON-NLS-1$
+			with2.add(iterate2);
+
+			IPluginElement and2 = factory.createElement(iterate2);
+			and2.setName("and"); //$NON-NLS-1$
+			iterate2.add(and2);
+
+			IPluginElement instanceof2 = factory.createElement(and2);
+			instanceof2.setName("instanceof"); //$NON-NLS-1$
+			instanceof2.setAttribute("value", "org.eclipse.core.resources.IProject"); //$NON-NLS-1$ //$NON-NLS-2$
+			and2.add(instanceof2);
+
+			IPluginElement not = factory.createElement(and2);
+			not.setName("not"); //$NON-NLS-1$
+			and2.add(not);
+
+			IPluginElement test2 = factory.createElement(not);
+			test2.setName("test"); //$NON-NLS-1$
+			test2.setAttribute("property", "org.eclipse.core.resources.projectNature"); //$NON-NLS-1$ //$NON-NLS-2$
+			test2.setAttribute("value", model.getPluginBase().getId() //$NON-NLS-1$
+					+ "." + getStringOption(KEY_NATURE_ID)); //$NON-NLS-1$
+			not.add(test2);
+
+			if (!extension4.isInTheModel())
+				plugin.add(extension4);
 		}
 
 		// Marker
-		IPluginExtension extension4 = createExtension("org.eclipse.core.resources.markers", false); //$NON-NLS-1$
-		extension4.setId("xmlProblem"); //$NON-NLS-1$
-		extension4.setName(PDETemplateMessages.BuilderTemplate_markerName);
+		IPluginExtension extension8 = createExtension("org.eclipse.core.resources.markers", false); //$NON-NLS-1$
+		extension8.setId("xmlProblem"); //$NON-NLS-1$
+		extension8.setName(PDETemplateMessages.BuilderTemplate_markerName);
 
-		IPluginElement superElement = factory.createElement(extension4);
+		IPluginElement superElement = factory.createElement(extension8);
 		superElement.setName("super"); //$NON-NLS-1$
 		superElement.setAttribute("type", //$NON-NLS-1$
 				"org.eclipse.core.resources.problemmarker"); //$NON-NLS-1$
-		extension4.add(superElement);
+		extension8.add(superElement);
 
-		IPluginElement persistent = factory.createElement(extension4);
+		IPluginElement persistent = factory.createElement(extension8);
 		persistent.setName("persistent"); //$NON-NLS-1$
 		persistent.setAttribute("value", "true"); //$NON-NLS-1$ //$NON-NLS-2$
-		extension4.add(persistent);
+		extension8.add(persistent);
 
-		if (!extension4.isInTheModel())
-			plugin.add(extension4);
+		if (!extension8.isInTheModel())
+			plugin.add(extension8);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#getDependencies(java.lang.String)
 	 */
 	public IPluginReference[] getDependencies(String schemaVersion) {
@@ -236,7 +324,7 @@ public class BuilderTemplate extends PDETemplateSection {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.pde.internal.ui.wizards.templates.PDETemplateSection#formatPackageName(java.lang.String)
 	 */
 	protected String getFormattedPackageName(String id) {
@@ -251,8 +339,11 @@ public class BuilderTemplate extends PDETemplateSection {
 	 */
 	protected boolean isOkToCreateFile(File sourceFile) {
 		String fileName = sourceFile.getName();
-		if (fileName.equals("ToggleNatureAction.java")) { //$NON-NLS-1$
+		if (fileName.equals("AddRemove$natureClassName$Handler.java")) { //$NON-NLS-1$
 			return actionOption.isSelected();
+		}
+		if (fileName.equals("ToggleNatureAction.java")) { //$NON-NLS-1$
+			return false;
 		}
 		return true;
 	}
