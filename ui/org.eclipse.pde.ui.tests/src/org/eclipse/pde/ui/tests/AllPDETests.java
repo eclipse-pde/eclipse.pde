@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.pde.ui.tests;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.pde.ui.tests.build.properties.AllValidatorTests;
+import org.eclipse.pde.ui.tests.classpathcontributor.ClasspathContributorTest;
 import org.eclipse.pde.ui.tests.classpathresolver.ClasspathResolverTest;
 import org.eclipse.pde.ui.tests.ee.ExportBundleTests;
 import org.eclipse.pde.ui.tests.imports.AllImportTests;
@@ -48,6 +49,7 @@ public class AllPDETests {
 		suite.addTest(BundleRootTests.suite());
 		suite.addTest(PluginRegistryTests.suite());
 		suite.addTest(ClasspathResolverTest.suite());
+		suite.addTest(ClasspathContributorTest.suite());
 		return suite;
 	}
 

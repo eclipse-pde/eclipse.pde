@@ -5,3 +5,4 @@ Bundle-SymbolicName: classpathresolver
 Bundle-Version: 1.0.0.qualifier
 Bundle-ClassPath: library.jar,
  .
+Require-Bundle: org.eclipse.pde.core;bundle-version="3.9.0"

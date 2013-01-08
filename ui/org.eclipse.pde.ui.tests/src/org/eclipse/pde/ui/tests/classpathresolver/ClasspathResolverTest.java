@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 Sonatype, Inc.
+ * Copyright (c) 2011, 2013 Sonatype, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *      Sonatype, Inc. - initial API and implementation
+ *      IBM Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.classpathresolver;
 
@@ -44,6 +45,11 @@ public class ClasspathResolverTest extends TestCase {
 	private IWorkspace workspace = ResourcesPlugin.getWorkspace();
 
 	private IProject project;
+	
+	/**
+	 * The project name and bundle symbolic name of the test project
+	 */
+	public static final String bundleName = "classpathresolver";
 
 	protected void setUp() throws Exception {
 		project = importProject(workspace);
@@ -80,7 +86,7 @@ public class ClasspathResolverTest extends TestCase {
 			is.close();
 		}
 
-		assertEquals(project.getFolder("cpe").getLocation().toPortableString(), properties.get("classpathresolver"));
+		assertEquals(project.getFolder("cpe").getLocation().toPortableString(), properties.get(bundleName));
 	}
 
 	/**
@@ -91,7 +97,7 @@ public class ClasspathResolverTest extends TestCase {
 		PDESourceLookupDirector d = new PDESourceLookupDirector();
 		_PDESourceLookupQuery q = new _PDESourceLookupQuery(d, project);
 
-		ISourceContainer[] containers = q.getSourceContainers(project.getLocation().toOSString(), "classpathresolver");
+		ISourceContainer[] containers = q.getSourceContainers(project.getLocation().toOSString(), bundleName);
 
 		assertEquals(2, containers.length);
 		assertEquals(JavaCore.create(project), ((JavaProjectSourceContainer) containers[0]).getJavaProject());
@@ -107,20 +113,19 @@ public class ClasspathResolverTest extends TestCase {
 	 * @throws CoreException
 	 */
 	IProject importProject(IWorkspace workspace) throws IOException, CoreException {
-		String prjName = "classpathresolver";
 		File rootFile = workspace.getRoot().getLocation().toFile();
 
-		URL srcURL = MacroPlugin.getBundleContext().getBundle().getEntry("tests/projects/classpathresolver");
+		URL srcURL = MacroPlugin.getBundleContext().getBundle().getEntry("tests/projects/" + bundleName);
 		File srcBasedir = new File(FileLocator.toFileURL(srcURL).getFile());
 		
-		File dstBasedir = new File(rootFile, prjName);
+		File dstBasedir = new File(rootFile, bundleName);
 		copyFile(srcBasedir, dstBasedir, ".project");
 		copyFile(srcBasedir, dstBasedir, ".classpath");
 		copyFile(srcBasedir, dstBasedir, "build.properties");
 		copyFile(srcBasedir, dstBasedir, "META-INF/MANIFEST.MF");
 		copyFile(srcBasedir, dstBasedir, "cpe/some.properties");
-		IProject project = workspace.getRoot().getProject(prjName);
-		IProjectDescription description = workspace.newProjectDescription(prjName);
+		IProject project = workspace.getRoot().getProject(bundleName);
+		IProjectDescription description = workspace.newProjectDescription(bundleName);
 		project.create(description, monitor);
 		project.open(monitor);
 		return project;
