@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,22 +32,6 @@ public class ApiToolingApiuseAntTaskTests extends AntRunnerTestCase {
 		return "apitooling.apiuse/";
 	}
 	
-	public void test1() throws Exception {		
-		IFolder reportFolder = runTaskAndVerify("test1");
-		InputSource is = new InputSource(reportFolder.getFile("not_searched.xml").getContents());
-		DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-		Document doc = db.parse(is);
-
-		NodeList elems = doc.getElementsByTagName("component");
-		for (int index = 0; index < elems.getLength(); ++index) {
-			String value = elems.item(index).getAttributes().getNamedItem("id").getNodeValue();
-			boolean pass = false;
-			if (value.startsWith("org.eclipse.osgi"))
-				pass = true;
-			assertTrue(value + " should have been filtered out.", pass);
-		}
-	}
-
 	private IFolder runTaskAndVerify(String resourceName) throws Exception,
 			CoreException, ParserConfigurationException, SAXException,
 			IOException {
@@ -67,6 +51,22 @@ public class ApiToolingApiuseAntTaskTests extends AntRunnerTestCase {
 		assertTrue("not_searched.xml must exist", reportFolder.getFile("not_searched.xml").exists());
 		return reportFolder;
 
+	}
+	
+	public void test1() throws Exception {		
+		IFolder reportFolder = runTaskAndVerify("test1");
+		InputSource is = new InputSource(reportFolder.getFile("not_searched.xml").getContents());
+		DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+		Document doc = db.parse(is);
+
+		NodeList elems = doc.getElementsByTagName("component");
+		for (int index = 0; index < elems.getLength(); ++index) {
+			String value = elems.item(index).getAttributes().getNamedItem("id").getNodeValue();
+			boolean pass = false;
+			if (value.startsWith("org.eclipse.osgi"))
+				pass = true;
+			assertTrue(value + " should have been filtered out.", pass);
+		}
 	}
 	
 	public void test2() throws Exception {		
@@ -98,6 +98,39 @@ public class ApiToolingApiuseAntTaskTests extends AntRunnerTestCase {
 				boolean validDir = dirs[i].getName().startsWith("org.example");
 				assertTrue(dirs[i].getName() + " should have been filtered out", validDir);
 			}
+		}
+	}
+	
+	/**
+	 * Tests that a use scan will find illegal use problems that can be filtered
+	 * @throws Exception
+	 */
+	public void testIllegalUse() throws Exception {		
+		IFolder reportFolder = runTaskAndVerify("testIllegalUse");
+		IResource[] members = reportFolder.members();
+		for (int index = 0; index < members.length; index++) {
+			if (!members[index].getLocation().toFile().isDirectory())
+				continue;
+			boolean valid = members[index].getName().startsWith("org.eclipse.osgi");
+			assertTrue(members[index].getName() + " should have been filtered out", valid);
+			File[] dirs = members[index].getLocation().toFile().listFiles();
+			for (int i = 0; i < dirs.length; i++) {
+				boolean validDir = dirs[i].getName().startsWith("org.example.test.illegaluse");
+				assertTrue(dirs[i].getName() + " should have been filtered out", validDir);
+			}
+		}
+	}
+	
+	/**
+	 * Tests that a use scan will find illegal use problems that can be filtered
+	 * @throws Exception
+	 */
+	public void testIllegalUseFiltered() throws Exception {		
+		IFolder reportFolder = runTaskAndVerify("testIllegalUseFiltered");
+		IResource[] members = reportFolder.members();
+		for (int index = 0; index < members.length; index++) {
+			if (members[index].getLocation().toFile().isDirectory())
+				fail(members[index].getName() + " should have been filtered using a .api_filters file");
 		}
 	}
 }

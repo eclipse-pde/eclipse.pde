@@ -353,6 +353,9 @@ public class FilterStore implements IApiFilterStore {
 				typeName = null;
 			}
 			String path = element.getAttribute(IApiXmlConstants.ATTR_PATH);
+			if (path.trim().length() == 0){
+				path = null;  // it is valid to have a filter without a path
+			}
 			NodeList filters = element.getElementsByTagName(IApiXmlConstants.ELEMENT_FILTER);
 			for(int j = 0; j < filters.getLength(); j++) {
 				element = (Element) filters.item(j);

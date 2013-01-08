@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <component id="org.example.test.illegaluse" version="2">
+	  <resource type="org.example.test.illegaluse.HasIllegalUse">
+	  	<filter id="574619656">
+            <message_arguments>
+                <message_argument value="org.eclipse.osgi.framework.console.CommandInterpreter"/>
+                <message_argument value="org.example.test.illegaluse.HasIllegalUse"/>
+            </message_arguments>
+        </filter>
+	  </resource>
+  </component>
+  

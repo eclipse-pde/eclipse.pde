@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (c) IBM Corporation and others 2009, 2012 This page is made available under license. For full details see the LEGAL in the documentation book 		that contains this page.
+
+	All Platform Debug contexts, those for org.eclipse.debug.ui, are located in this file
+	All contexts are grouped by their relation, with all relations grouped alphabetically.
+	
+	General build file for running the API Ant tasks from the command line.
+	
+	The tasks that can be run and their task names can be found in the api-tasks.properties file.
+	The supported tasks are:
+	- 'apiuse' from org.eclipse.pde.api.tools.internal.tasks.ApiUseTask
+	- 'apiuse_reportconversion' from org.eclipse.pde.api.tools.internal.tasks.ApiUseReportConversionTask
+	- 'apifreeze' from org.eclipse.pde.api.tools.internal.tasks.APIFreezeTask
+	- 'apifreeze_reportcoversion' from org.eclipse.pde.api.tools.internal.tasks.APIFreezeReportConversionTask
+	- 'apianalysis from org.eclipse.pde.api.tools.internal.tasks.APIToolsAnalysisTask
+	- 'apianalysis_reportconversion' from org.eclipse.pde.api.tools.internal.tasks.AnalysisReportConversionTask
+	- 'apimigration' from org.eclipse.pde.api.tools.internal.tasks.ApiMigrationTask
+	- 'apimigration_reportconversion' org.eclipse.pde.api.tools.internal.tasks.ApiMigrationReportConversionTask
+	- 'apigeneration' from org.eclipse.pde.api.tools.internal.tasks.ApiFileGenerationTask
+	- 'comparetask' from org.eclipse.pde.api.tools.internal.tasks.CompareTask
+	- 'apiconsumeruse_reportconversion' org.eclipse.pde.api.tools.internal.tasks.ApiConsumerUseReportConversionTask
+	- 'apiusescanproblems' org.eclipse.pde.api.tools.internal.tasks.MissingRefProblemsTask
+	- 'apiusescanproblem_reportconversion' org.eclipse.pde.api.tools.internal.tasks.MissingRefProblemsReportConversionTask
+-->
+<project name="apitask" basedir="." default="run">
+
+	<!--
+	  The base install directory of a bare bones Eclipse SDK install, used to load dependent jars on the taskdef classpath
+	-->
+	<property name="eclipse.install.dir" value="C:\Users\windattc\Documents\Eclipse\Eclipse\plugins"/>
+	<!--
+	  The directory to extract the apitooling-ant.jar jar file to, so it could be loaded on the taskdef classpath.
+	  
+	  The apitooling-ant.jar file is located in the org.eclipse.pde.api.tools.jar file found in your base Eclipse
+	  install specified above (in the eclipse.install.dir property)
+	-->
+	<property name="eclipse.lib.dir" value="C:\Users\windattc\Documents\Git\eclipse.pde.ui\apitools\org.eclipse.pde.api.tools\lib\"/>
+	<!--
+	  Ant properties file that defines the API tools ant task names
+	-->
+	<property name="task.props" value="api-tasks.properties"/>
+	
+	<!--
+	  Initializes the API use task definition
+	-->
+	<target name="init">
+		<!--
+		  We need to include all the dependencies for the api tooling jar and bundle on the classpath.
+		  We do it here to avoid changes to the system-wide ant classpath variable. 
+		  
+		  This taskdef greedily inlcudes all jars from the eclipse install, in case there are unknown dependencies.
+		-->
+		<taskdef file="${task.props}">
+			<classpath>
+				<fileset dir="${eclipse.install.dir}">
+					<include name="*.jar"/>
+				</fileset>
+				<fileset dir="${eclipse.lib.dir}">
+					<include name="*.jar"/>
+				</fileset>
+			</classpath>
+		</taskdef>
+	</target>
+
+	<!--
+	  Main task
+	-->
+	<target name="run" depends="init">
+	    	<apiuse />
+			<apiuse_reportconversion/>
+    </target>
+</project>
+
