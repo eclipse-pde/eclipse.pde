@@ -14,7 +14,6 @@ import java.util.*;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.IClasspathContributor;
@@ -27,17 +26,17 @@ import org.eclipse.pde.ui.tests.classpathresolver.ClasspathResolverTest;
  */
 public class TestClasspathContributor implements IClasspathContributor {
 	
-	public static List<IClasspathEntry> entries;
-	public static List<IClasspathEntry> entries2;
+	public static List entries;
+	public static List entries2;
 	static {
 		IPath testPath = ResourcesPlugin.getWorkspace().getRoot().getFullPath().append(new Path("TestPath"));
-		entries = new ArrayList<IClasspathEntry>();
+		entries = new ArrayList();
 		entries.add(JavaCore.newContainerEntry(testPath));
 		entries.add(JavaCore.newLibraryEntry(testPath, null, null));
 		entries.add(JavaCore.newProjectEntry(testPath));
 		entries.add(JavaCore.newSourceEntry(testPath));
 		IPath testPath2 = ResourcesPlugin.getWorkspace().getRoot().getFullPath().append(new Path("TestPath2"));
-		entries2 = new ArrayList<IClasspathEntry>();
+		entries2 = new ArrayList();
 		entries2.add(JavaCore.newContainerEntry(testPath2));
 		entries2.add(JavaCore.newLibraryEntry(testPath2, null, null));
 		entries2.add(JavaCore.newProjectEntry(testPath2));
@@ -47,7 +46,7 @@ public class TestClasspathContributor implements IClasspathContributor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IClasspathContributor#getInitialEntries(org.eclipse.osgi.service.resolver.BundleDescription)
 	 */
-	public List<IClasspathEntry> getInitialEntries(BundleDescription project) {
+	public List getInitialEntries(BundleDescription project) {
 		if (project.getSymbolicName().equals(ClasspathResolverTest.bundleName)){
 			return entries;
 		}
@@ -57,7 +56,7 @@ public class TestClasspathContributor implements IClasspathContributor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IClasspathContributor#getEntriesForDependency(org.eclipse.osgi.service.resolver.BundleDescription, org.eclipse.osgi.service.resolver.BundleDescription)
 	 */
-	public List<IClasspathEntry> getEntriesForDependency(BundleDescription project, BundleDescription addedDependency) {
+	public List getEntriesForDependency(BundleDescription project, BundleDescription addedDependency) {
 		if (project.getSymbolicName().equals(ClasspathResolverTest.bundleName) && addedDependency.getSymbolicName().equals("org.eclipse.pde.core")){
 			return entries2;
 		}

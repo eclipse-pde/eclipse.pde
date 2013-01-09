@@ -55,7 +55,7 @@ public class ClasspathContributorTest extends TestCase {
 	}
 	
 	public void testAdditionalClasspathEntries() throws Exception {
-		List<IClasspathEntry> expected = new ArrayList<IClasspathEntry>(TestClasspathContributor.entries);
+		List expected = new ArrayList(TestClasspathContributor.entries);
 		expected.addAll(TestClasspathContributor.entries2);
 		IJavaProject jProject = JavaCore.create(project);
 		IClasspathContainer container = JavaCore.getClasspathContainer(PDECore.REQUIRED_PLUGINS_CONTAINER_PATH, jProject);
