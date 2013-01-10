@@ -63,7 +63,7 @@ public class ClasspathContributorTest extends TestCase {
 		IClasspathEntry[] classpath = container.getClasspathEntries();
 		for (int i = 0; i < classpath.length; i++) {
 			// Ignore the PDE Core bundle dependency
-			if (!classpath[i].getPath().toPortableString().contains("org.eclipse.pde.core")){
+			if (classpath[i].getPath().toPortableString().indexOf("org.eclipse.pde.core") == -1){
 				assertTrue("Unexpected classpath entry found: " + classpath[i], expected.remove(classpath[i]));
 			}
 		}

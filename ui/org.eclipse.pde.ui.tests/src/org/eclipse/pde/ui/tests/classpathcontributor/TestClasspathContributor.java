@@ -50,7 +50,7 @@ public class TestClasspathContributor implements IClasspathContributor {
 		if (project.getSymbolicName().equals(ClasspathResolverTest.bundleName)){
 			return entries;
 		}
-		return Collections.emptyList();
+		return Collections.EMPTY_LIST;
 	}
 
 	/* (non-Javadoc)
@@ -60,7 +60,7 @@ public class TestClasspathContributor implements IClasspathContributor {
 		if (project.getSymbolicName().equals(ClasspathResolverTest.bundleName) && addedDependency.getSymbolicName().equals("org.eclipse.pde.core")){
 			return entries2;
 		}
-		return Collections.emptyList();
+		return Collections.EMPTY_LIST;
 	}
 
 }
