@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,17 +54,23 @@ public interface ISite extends ISiteObject {
 
 	void addFeatures(ISiteFeature[] features) throws CoreException;
 
+	void addBundles(ISiteBundle[] added) throws CoreException;
+
 	void addArchives(ISiteArchive[] archives) throws CoreException;
 
 	void addCategoryDefinitions(ISiteCategoryDefinition[] defs) throws CoreException;
 
 	void removeFeatures(ISiteFeature[] features) throws CoreException;
 
+	void removeBundles(ISiteBundle[] bundles) throws CoreException;
+
 	void removeArchives(ISiteArchive[] archives) throws CoreException;
 
 	void removeCategoryDefinitions(ISiteCategoryDefinition[] defs) throws CoreException;
 
 	ISiteFeature[] getFeatures();
+
+	ISiteBundle[] getBundles();
 
 	ISiteArchive[] getArchives();
 

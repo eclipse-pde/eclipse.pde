@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Red Hat Inc. - Support for <bundle...> in category.xml
  *******************************************************************************/
 package org.eclipse.pde.internal.core.isite;
 
@@ -30,11 +31,25 @@ public interface ISiteModelFactory {
 	ISiteFeature createFeature();
 
 	/**
+	 * Creates a new bundle model object.
+	 *
+	 * @return new instance of the bundle data object
+	 */
+	ISiteBundle createBundle();
+
+	/**
 	 * Creates a new feature child object.
 	 *
 	 * @return new instance of the feature child object
 	 */
 	ISiteCategory createCategory(ISiteFeature feature);
+
+	/**
+	 * Creates a new feature child object.
+	 *
+	 * @return new instance of the feature child object
+	 */
+	ISiteCategory createCategory(ISiteBundle feature);
 
 	/**
 	 * Creates a new import model object.
@@ -56,4 +71,5 @@ public interface ISiteModelFactory {
 	 * @return a new feature install handler.
 	 */
 	ISiteArchive createArchive();
+
 }

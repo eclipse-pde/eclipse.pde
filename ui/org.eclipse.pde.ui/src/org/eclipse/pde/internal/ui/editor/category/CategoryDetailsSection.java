@@ -1,5 +1,5 @@
 /******************************************************************************* 
-* Copyright (c) 2009 EclipseSource and others. All rights reserved. This
+* Copyright (c) 2013 EclipseSource and others. All rights reserved. This
 * program and the accompanying materials are made available under the terms of
 * the Eclipse Public License v1.0 which accompanies this distribution, and is
 * available at http://www.eclipse.org/legal/epl-v10.html
@@ -70,7 +70,7 @@ public class CategoryDetailsSection extends PDESection implements IFormPart, IPa
 		if (property.equals(PROPERTY_NAME)) {
 			String oldName = fCurrentCategoryDefinition.getName();
 			fCurrentCategoryDefinition.setName(value);
-			bringFeatures(oldName);
+			updateBundlesAndFeatures(oldName);
 		} else if (property.equals(PROPERTY_TYPE))
 			fCurrentCategoryDefinition.setLabel(value);
 		else if (property.equals(PROPERTY_DESC)) {
@@ -213,10 +213,22 @@ public class CategoryDetailsSection extends PDESection implements IFormPart, IPa
 		markStale();
 	}
 
-	private void bringFeatures(String oldCategory) {
+	private void updateBundlesAndFeatures(String oldCategory) {
 		ISiteFeature[] siteFeatures = fCurrentCategoryDefinition.getModel().getSite().getFeatures();
 		for (int i = 0; i < siteFeatures.length; i++) {
 			ISiteCategory[] categories = siteFeatures[i].getCategories();
+			for (int c = 0; c < categories.length; c++) {
+				if (oldCategory.equals(categories[c].getName())) {
+					try {
+						categories[c].setName(fCurrentCategoryDefinition.getName());
+					} catch (CoreException ce) {
+					}
+				}
+			}
+		}
+		ISiteBundle[] siteBundles = fCurrentCategoryDefinition.getModel().getSite().getBundles();
+		for (int i = 0; i < siteBundles.length; i++) {
+			ISiteCategory[] categories = siteBundles[i].getCategories();
 			for (int c = 0; c < categories.length; c++) {
 				if (oldCategory.equals(categories[c].getName())) {
 					try {

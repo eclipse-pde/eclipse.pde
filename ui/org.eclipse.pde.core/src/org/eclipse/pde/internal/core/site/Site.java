@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,10 +7,9 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Red Hat Inc. - Support for <bundle...> tag
  *******************************************************************************/
 package org.eclipse.pde.internal.core.site;
-
-import org.eclipse.pde.internal.core.isite.ISiteObject;
 
 import java.io.PrintWriter;
 import java.util.Locale;
@@ -26,6 +25,7 @@ public class Site extends SiteObject implements ISite {
 	private static final long serialVersionUID = 1L;
 	final static String INDENT = "   "; //$NON-NLS-1$
 	private Vector<ISiteObject> features = new Vector<ISiteObject>();
+	private Vector<ISiteObject> bundles = new Vector<ISiteObject>();
 	private Vector<ISiteObject> archives = new Vector<ISiteObject>();
 	private Vector<ISiteObject> categoryDefs = new Vector<ISiteObject>();
 	private String type;
@@ -151,6 +151,19 @@ public class Site extends SiteObject implements ISite {
 	}
 
 	/**
+	 * @see org.eclipse.pde.internal.core.isite.ISite#addBundles(org.eclipse.pde.internal.core.isite.ISiteBundle)
+	 */
+	public void addBundles(ISiteBundle[] newBundles) throws CoreException {
+		ensureModelEditable();
+		for (int i = 0; i < newBundles.length; i++) {
+			ISiteBundle bundle = newBundles[i];
+			((SiteBundle) bundle).setInTheModel(true);
+			bundles.add(bundle);
+		}
+		fireStructureChanged(newBundles, IModelChangedEvent.INSERT);
+	}
+
+	/**
 	 * @see org.eclipse.pde.internal.core.isite.ISite#addArchives(org.eclipse.pde.internal.core.isite.ISiteArchive)
 	 */
 	public void addArchives(ISiteArchive[] archs) throws CoreException {
@@ -190,6 +203,19 @@ public class Site extends SiteObject implements ISite {
 	}
 
 	/**
+	 * @see org.eclipse.pde.internal.core.isite.ISite#removeBundles(org.eclipse.pde.internal.core.isite.ISiteBundle)
+	 */
+	public void removeBundles(ISiteBundle[] newBundles) throws CoreException {
+		ensureModelEditable();
+		for (int i = 0; i < newBundles.length; i++) {
+			ISiteBundle bundle = newBundles[i];
+			((SiteBundle) bundle).setInTheModel(false);
+			bundles.remove(bundle);
+		}
+		fireStructureChanged(newBundles, IModelChangedEvent.REMOVE);
+	}
+
+	/**
 	 * @see org.eclipse.pde.internal.core.isite.ISite#removeArchives(org.eclipse.pde.internal.core.isite.ISiteArchive)
 	 */
 	public void removeArchives(ISiteArchive[] archs) throws CoreException {
@@ -223,6 +249,13 @@ public class Site extends SiteObject implements ISite {
 	}
 
 	/**
+	 * @see org.eclipse.pde.internal.core.isite.ISite#getBundles()
+	 */
+	public ISiteBundle[] getBundles() {
+		return bundles.toArray(new ISiteBundle[bundles.size()]);
+	}
+
+	/**
 	 * @see org.eclipse.pde.internal.core.isite.ISite#getArchives()
 	 */
 	public ISiteArchive[] getArchives() {
@@ -240,6 +273,7 @@ public class Site extends SiteObject implements ISite {
 		archives.clear();
 		categoryDefs.clear();
 		features.clear();
+		bundles.clear();
 		description = null;
 		type = null;
 		url = null;
@@ -270,6 +304,11 @@ public class Site extends SiteObject implements ISite {
 			((SiteFeature) feature).parse(child);
 			((SiteFeature) feature).setInTheModel(true);
 			features.add(feature);
+		} else if (tag.equals("bundle")) { //$NON-NLS-1$
+			ISiteBundle bundle = getModel().getFactory().createBundle();
+			((SiteBundle) bundle).parse(child);
+			((SiteBundle) bundle).setInTheModel(true);
+			bundles.add(bundle);
 		} else if (tag.equals("archive")) { //$NON-NLS-1$
 			ISiteArchive archive = getModel().getFactory().createArchive();
 			((SiteArchive) archive).parse(child);
@@ -321,6 +360,7 @@ public class Site extends SiteObject implements ISite {
 			description.write(indent2, writer);
 		}
 		writeChildren(indent2, features, writer);
+		writeChildren(indent2, bundles, writer);
 		writeChildren(indent2, archives, writer);
 		writeChildren(indent2, categoryDefs, writer);
 		writer.println(indent + "</site>"); //$NON-NLS-1$
@@ -330,6 +370,11 @@ public class Site extends SiteObject implements ISite {
 		for (int i = 0; i < features.size(); i++) {
 			ISiteFeature feature = (ISiteFeature) features.get(i);
 			if (!feature.isValid())
+				return false;
+		}
+		for (int i = 0; i < bundles.size(); i++) {
+			ISiteBundle bundle = (ISiteBundle) bundles.get(i);
+			if (!bundle.isValid())
 				return false;
 		}
 		for (int i = 0; i < archives.size(); i++) {

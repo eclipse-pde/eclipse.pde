@@ -1756,6 +1756,7 @@ public class PDEUIMessages extends NLS {
 	public static String CategorySection_new;
 	public static String CategorySection_desc;
 	public static String CategorySection_add;
+	public static String CategorySection_addBundle;
 	public static String CategorySection_remove;
 	public static String CategorySection_environment;
 	public static String CategorySection_buildAll;

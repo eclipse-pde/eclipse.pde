@@ -1,11 +1,12 @@
 /******************************************************************************* 
- * Copyright (c) 2009 EclipseSource and others. All rights reserved. This
+ * Copyright (c) 2009, 2013 EclipseSource and others. All rights reserved. This
  * program and the accompanying materials are made available under the terms of
  * the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
  *   EclipseSource - initial API and implementation
+ *   IBM Corporation - ongoing enhancements
  ******************************************************************************/
 
 package org.eclipse.pde.internal.ui.editor.category;
@@ -80,14 +81,14 @@ public class CategoryEditor extends PDEFormEditor {
 
 	protected void addEditorPages() {
 		try {
-			addPage(new FeaturesPage(this));
+			addPage(new IUsPage(this));
 		} catch (PartInitException e) {
 			PDEPlugin.logException(e);
 		}
 	}
 
 	protected String computeInitialPageId() {
-		return FeaturesPage.PAGE_ID;
+		return IUsPage.PAGE_ID;
 	}
 
 	protected ISortableContentOutlinePage createContentOutline() {

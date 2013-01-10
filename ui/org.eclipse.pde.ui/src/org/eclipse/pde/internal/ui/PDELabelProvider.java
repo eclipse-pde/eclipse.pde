@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -309,6 +309,11 @@ public class PDELabelProvider extends SharedLabelProvider {
 		if (model != null)
 			return getObjectText(model);
 		return preventNull(obj.getURL());
+	}
+
+	public String getObjectText(ISiteBundle obj) {
+		IPluginModelBase modelBase = PluginRegistry.findModel(obj.getId(), obj.getVersion(), IMatchRules.COMPATIBLE, null);
+		return getObjectText(modelBase.getPluginBase());
 	}
 
 	public String getObjectText(ISiteArchive obj) {
@@ -829,4 +834,5 @@ public class PDELabelProvider extends SharedLabelProvider {
 		}
 		return versionRange;
 	}
+
 }

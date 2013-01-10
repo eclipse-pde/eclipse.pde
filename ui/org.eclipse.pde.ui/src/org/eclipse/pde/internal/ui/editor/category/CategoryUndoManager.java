@@ -1,11 +1,12 @@
 /******************************************************************************* 
-* Copyright (c) 2009 EclipseSource and others. All rights reserved. This
+* Copyright (c) 2009, 2013 EclipseSource and others. All rights reserved. This
 * program and the accompanying materials are made available under the terms of
 * the Eclipse Public License v1.0 which accompanies this distribution, and is
 * available at http://www.eclipse.org/legal/epl-v10.html
 *
 * Contributors:
 *   EclipseSource - initial API and implementation
+*   IBM Corporation - ongoing enhancements
 ******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.category;
 
@@ -24,8 +25,8 @@ public class CategoryUndoManager extends ModelUndoManager {
 	}
 
 	protected String getPageId(Object obj) {
-		if (obj instanceof ISiteFeature || obj instanceof ISiteCategory || obj instanceof ISiteCategoryDefinition) {
-			return FeaturesPage.PAGE_ID;
+		if (obj instanceof ISiteFeature || obj instanceof ISiteBundle || obj instanceof ISiteCategory || obj instanceof ISiteCategoryDefinition) {
+			return IUsPage.PAGE_ID;
 		}
 		// site elements and attributes are on different pages, stay on the
 		// current page
@@ -72,14 +73,20 @@ public class CategoryUndoManager extends ModelUndoManager {
 
 				if (element instanceof ISiteFeature) {
 					site.addFeatures(new ISiteFeature[] {(ISiteFeature) element});
+				} else if (element instanceof ISiteBundle) {
+					site.addBundles(new ISiteBundle[] {(ISiteBundle) element});
 				} else if (element instanceof ISiteArchive) {
 					site.addArchives(new ISiteArchive[] {(ISiteArchive) element});
 				} else if (element instanceof ISiteCategoryDefinition) {
 					site.addCategoryDefinitions(new ISiteCategoryDefinition[] {(ISiteCategoryDefinition) element});
 				} else if (element instanceof ISiteCategory) {
 					ISiteCategory category = (ISiteCategory) element;
-					ISiteFeature feature = (ISiteFeature) category.getParent();
-					feature.addCategories(new ISiteCategory[] {category});
+					ISiteObject siteObject = category.getParent();
+					if (siteObject instanceof ISiteFeature) {
+						((ISiteFeature) siteObject).addCategories(new ISiteCategory[] {category});
+					} else if (siteObject instanceof ISiteBundle) {
+						((ISiteBundle) siteObject).addCategories(new ISiteCategory[] {category});
+					}
 				}
 			}
 		} catch (CoreException e) {
@@ -97,14 +104,21 @@ public class CategoryUndoManager extends ModelUndoManager {
 
 				if (element instanceof ISiteFeature) {
 					site.removeFeatures(new ISiteFeature[] {(ISiteFeature) element});
+				} else if (element instanceof ISiteBundle) {
+					site.removeBundles(new ISiteBundle[] {(ISiteBundle) element});
 				} else if (element instanceof ISiteArchive) {
 					site.removeArchives(new ISiteArchive[] {(ISiteArchive) element});
 				} else if (element instanceof ISiteCategoryDefinition) {
 					site.removeCategoryDefinitions(new ISiteCategoryDefinition[] {(ISiteCategoryDefinition) element});
 				} else if (element instanceof ISiteCategory) {
 					ISiteCategory category = (ISiteCategory) element;
-					ISiteFeature feature = (ISiteFeature) category.getParent();
-					feature.removeCategories(new ISiteCategory[] {category});
+					ISiteObject siteObject = category.getParent();
+					if (siteObject instanceof ISiteFeature) {
+						((ISiteFeature) siteObject).removeCategories(new ISiteCategory[] {category});
+					} else if (siteObject instanceof ISiteBundle) {
+						((ISiteBundle) siteObject).removeCategories(new ISiteCategory[] {category});
+					}
+
 				}
 			}
 		} catch (CoreException e) {

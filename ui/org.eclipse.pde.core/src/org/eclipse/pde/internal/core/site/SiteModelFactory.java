@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -10,15 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.site;
 
-import org.eclipse.pde.internal.core.isite.ISite;
-import org.eclipse.pde.internal.core.isite.ISiteArchive;
-import org.eclipse.pde.internal.core.isite.ISiteCategory;
-import org.eclipse.pde.internal.core.isite.ISiteCategoryDefinition;
-import org.eclipse.pde.internal.core.isite.ISiteDescription;
-import org.eclipse.pde.internal.core.isite.ISiteFeature;
-import org.eclipse.pde.internal.core.isite.ISiteModel;
-import org.eclipse.pde.internal.core.isite.ISiteModelFactory;
-import org.eclipse.pde.internal.core.isite.ISiteObject;
+import org.eclipse.pde.internal.core.isite.*;
 
 public class SiteModelFactory implements ISiteModelFactory {
 	private ISiteModel model;
@@ -48,12 +40,32 @@ public class SiteModelFactory implements ISiteModelFactory {
 	}
 
 	/**
+	 * @see org.eclipse.pde.internal.core.isite.ISiteModelFactory#createBundle()
+	 */
+	public ISiteBundle createBundle() {
+		SiteBundle bundle = new SiteBundle();
+		bundle.model = model;
+		bundle.parent = model.getSite();
+		return bundle;
+	}
+
+	/**
 	 * @see org.eclipse.pde.internal.core.isite.ISiteModelFactory#createCategory()
 	 */
 	public ISiteCategory createCategory(ISiteFeature feature) {
 		SiteCategory category = new SiteCategory();
 		category.model = model;
 		category.parent = feature;
+		return category;
+	}
+
+	/**
+	 * @see org.eclipse.pde.internal.core.isite.ISiteModelFactory#createCategory()
+	 */
+	public ISiteCategory createCategory(ISiteBundle bundle) {
+		SiteCategory category = new SiteCategory();
+		category.model = model;
+		category.parent = bundle;
 		return category;
 	}
 

@@ -1,16 +1,14 @@
 /******************************************************************************* 
-* Copyright (c) 2009 EclipseSource and others. All rights reserved. This
+* Copyright (c) 2009, 2013 EclipseSource and others. All rights reserved. This
 * program and the accompanying materials are made available under the terms of
 * the Eclipse Public License v1.0 which accompanies this distribution, and is
 * available at http://www.eclipse.org/legal/epl-v10.html
 *
 * Contributors:
 *   EclipseSource - initial API and implementation
+*   IBM Corporation - ongoing enhancements
 ******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.category;
-
-import org.eclipse.pde.core.IWritable;
-import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 
 import java.util.*;
 import org.eclipse.core.runtime.CoreException;
@@ -20,14 +18,18 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.core.IWritable;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.core.isite.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.dialogs.FeatureSelectionDialog;
+import org.eclipse.pde.internal.ui.dialogs.PluginSelectionDialog;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.feature.FeatureEditor;
+import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.TreePart;
 import org.eclipse.swt.SWT;
@@ -45,6 +47,7 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 
 	private static final int BUTTON_ADD_CATEGORY = 0;
 	private static final int BUTTON_ADD_FEATURE = 1;
+	private static final int BUTTON_ADD_BUNDLE = 2;
 	private static int fCounter;
 	private ISiteModel fModel;
 	private TreePart fCategoryTreePart;
@@ -64,6 +67,11 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 				if (features[i].getCategories().length == 0)
 					result.add(new SiteFeatureAdapter(null, features[i]));
 			}
+			ISiteBundle[] bundles = fModel.getSite().getBundles();
+			for (int i = 0; i < bundles.length; i++) {
+				if (bundles[i].getCategories().length == 0)
+					result.add(new SiteBundleAdapter(null, bundles[i]));
+			}
 			return result.toArray();
 		}
 
@@ -71,12 +79,21 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 			if (parent instanceof ISiteCategoryDefinition) {
 				ISiteCategoryDefinition catDef = (ISiteCategoryDefinition) parent;
 				ISiteFeature[] features = fModel.getSite().getFeatures();
-				HashSet<SiteFeatureAdapter> result = new HashSet<SiteFeatureAdapter>();
+				HashSet<IWritable> result = new HashSet<IWritable>();
 				for (int i = 0; i < features.length; i++) {
 					ISiteCategory[] cats = features[i].getCategories();
 					for (int j = 0; j < cats.length; j++) {
 						if (cats[j].getDefinition() != null && cats[j].getDefinition().equals(catDef)) {
 							result.add(new SiteFeatureAdapter(cats[j].getName(), features[i]));
+						}
+					}
+				}
+				ISiteBundle[] bundles = fModel.getSite().getBundles();
+				for (int i = 0; i < bundles.length; i++) {
+					ISiteCategory[] cats = bundles[i].getCategories();
+					for (int j = 0; j < cats.length; j++) {
+						if (cats[j].getDefinition() != null && cats[j].getDefinition().equals(catDef)) {
+							result.add(new SiteBundleAdapter(cats[j].getName(), bundles[i]));
 						}
 					}
 				}
@@ -101,13 +118,22 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 						}
 					}
 				}
+				ISiteBundle[] bundles = fModel.getSite().getBundles();
+				for (int i = 0; i < bundles.length; i++) {
+					ISiteCategory[] cats = bundles[i].getCategories();
+					for (int j = 0; j < cats.length; j++) {
+						if (cats[j].getDefinition() != null && cats[j].getDefinition().equals(catDef)) {
+							return true;
+						}
+					}
+				}
 			}
 			return false;
 		}
 	}
 
 	public CategorySection(PDEFormPage formPage, Composite parent) {
-		super(formPage, parent, Section.DESCRIPTION, new String[] {PDEUIMessages.CategoryDefinitionCategorySection_new, PDEUIMessages.CategorySection_add});
+		super(formPage, parent, Section.DESCRIPTION, new String[] {PDEUIMessages.CategoryDefinitionCategorySection_new, PDEUIMessages.CategorySection_add, PDEUIMessages.CategorySection_addBundle});
 		getSection().setText(PDEUIMessages.CategoryDefinitionCategorySection_title);
 		getSection().setDescription(PDEUIMessages.CategoryDefinitionCategorySection_desc);
 	}
@@ -211,6 +237,14 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 						}
 						return true;
 					}
+					if (objects.length > 0 && objects[0] instanceof SiteBundleAdapter) {
+						if (op == DND.DROP_COPY && target != null) {
+							copyBundle((SiteBundleAdapter) objects[0], target);
+						} else {
+							moveBundle((SiteBundleAdapter) objects[0], target);
+						}
+						return true;
+					}
 					return false;
 				}
 
@@ -224,7 +258,7 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 		fCategoryViewer.addDragSupport(DND.DROP_MOVE | DND.DROP_COPY, transfers, new DragSourceListener() {
 			public void dragStart(DragSourceEvent event) {
 				IStructuredSelection ssel = (IStructuredSelection) fCategoryViewer.getSelection();
-				if (ssel == null || ssel.isEmpty() || !(ssel.getFirstElement() instanceof SiteFeatureAdapter)) {
+				if (ssel == null || ssel.isEmpty() || !(ssel.getFirstElement() instanceof SiteFeatureAdapter || ssel.getFirstElement() instanceof SiteBundleAdapter)) {
 					event.doit = false;
 				}
 			}
@@ -240,6 +274,7 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 
 		fCategoryTreePart.setButtonEnabled(BUTTON_ADD_CATEGORY, isEditable());
 		fCategoryTreePart.setButtonEnabled(BUTTON_ADD_FEATURE, isEditable());
+		fCategoryTreePart.setButtonEnabled(BUTTON_ADD_BUNDLE, isEditable());
 
 		// fCategoryViewer.expandAll();
 		toolkit.paintBordersFor(container);
@@ -270,6 +305,16 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 		}
 	}
 
+	private void copyBundle(SiteBundleAdapter adapter, Object target) {
+		ISiteBundle bundle = findRealBundle(adapter);
+		if (bundle == null) {
+			return;
+		}
+		if (target != null && target instanceof ISiteCategoryDefinition) {
+			addCategory(bundle, ((ISiteCategoryDefinition) target).getName());
+		}
+	}
+
 	private void addCategory(ISiteFeature aFeature, String catName) {
 		try {
 			if (aFeature == null)
@@ -287,6 +332,23 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 		}
 	}
 
+	private void addCategory(ISiteBundle aBundle, String catName) {
+		try {
+			if (aBundle == null)
+				return;
+			ISiteCategory[] cats = aBundle.getCategories();
+			for (int j = 0; j < cats.length; j++) {
+				if (cats[j].getName().equals(catName))
+					return;
+			}
+			ISiteCategory cat = fModel.getFactory().createCategory(aBundle);
+			cat.setName(catName);
+			expandCategory(catName);
+			aBundle.addCategories(new ISiteCategory[] {cat});
+		} catch (CoreException e) {
+		}
+	}
+
 	private void moveFeature(SiteFeatureAdapter adapter, Object target) {
 		ISiteFeature feature = findRealFeature(adapter);
 		if (feature == null) {
@@ -300,6 +362,19 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 		}
 	}
 
+	private void moveBundle(SiteBundleAdapter adapter, Object target) {
+		ISiteBundle bundle = findRealBundle(adapter);
+		if (bundle == null) {
+			return;
+		}
+		if (adapter.category != null) {
+			removeCategory(bundle, adapter.category);
+		}
+		if (target != null && target instanceof ISiteCategoryDefinition) {
+			addCategory(bundle, ((ISiteCategoryDefinition) target).getName());
+		}
+	}
+
 	protected void buttonSelected(int index) {
 		switch (index) {
 			case BUTTON_ADD_CATEGORY :
@@ -307,6 +382,9 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 				break;
 			case BUTTON_ADD_FEATURE :
 				handleNewFeature();
+				break;
+			case BUTTON_ADD_BUNDLE :
+				handleNewBundle();
 				break;
 		}
 	}
@@ -317,6 +395,8 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 		if (selected instanceof SiteFeatureAdapter) {
 			IFeature feature = findFeature(((SiteFeatureAdapter) selected).feature);
 			FeatureEditor.openFeatureEditor(feature);
+		} else if (selected instanceof SiteBundleAdapter) {
+			ManifestEditor.openPluginEditor(((SiteBundleAdapter) selected).bundle.getId());
 		}
 	}
 
@@ -354,13 +434,22 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 				if (!handleRemoveCategoryDefinition((ISiteCategoryDefinition) object)) {
 					success = false;
 				}
-			} else {
-				//check if some of features was not removed during category removal
+			} else if (object instanceof SiteFeatureAdapter) {
+				// No need to remove the feature if its category is already removed
 				SiteFeatureAdapter fa = (SiteFeatureAdapter) object;
 				if (removedCategories.contains(fa.category))
 					continue;
 
 				if (!handleRemoveSiteFeatureAdapter(fa)) {
+					success = false;
+				}
+			} else if (object instanceof SiteBundleAdapter) {
+				// No need to remove the bundle if its category is already removed
+				SiteBundleAdapter ba = (SiteBundleAdapter) object;
+				if (removedCategories.contains(ba.category))
+					continue;
+
+				if (!handleRemoveSiteBundleAdapter(ba)) {
 					success = false;
 				}
 			}
@@ -372,14 +461,28 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 		try {
 			Object[] children = ((CategoryContentProvider) fCategoryViewer.getContentProvider()).getChildren(catDef);
 			for (int i = 0; i < children.length; i++) {
-				SiteFeatureAdapter adapter = (SiteFeatureAdapter) children[i];
-				ISiteCategory[] cats = adapter.feature.getCategories();
-				for (int j = 0; j < cats.length; j++) {
-					if (adapter.category.equals(cats[j].getName()))
-						adapter.feature.removeCategories(new ISiteCategory[] {cats[j]});
-				}
-				if (adapter.feature.getCategories().length == 0) {
-					fModel.getSite().removeFeatures(new ISiteFeature[] {adapter.feature});
+				if (children[i] instanceof SiteFeatureAdapter) {
+					SiteFeatureAdapter adapter = (SiteFeatureAdapter) children[i];
+					ISiteCategory[] cats = adapter.feature.getCategories();
+					for (int j = 0; j < cats.length; j++) {
+						if (adapter.category.equals(cats[j].getName()))
+							adapter.feature.removeCategories(new ISiteCategory[] {cats[j]});
+					}
+					if (adapter.feature.getCategories().length == 0) {
+						fModel.getSite().removeFeatures(new ISiteFeature[] {adapter.feature});
+					}
+				} else if (children[i] instanceof SiteBundleAdapter) {
+					SiteBundleAdapter adapter = (SiteBundleAdapter) children[i];
+					ISiteCategory[] cats = adapter.bundle.getCategories();
+					for (int j = 0; j < cats.length; j++) {
+						if (adapter.category.equals(cats[j].getName()))
+							adapter.bundle.removeCategories(new ISiteCategory[] {cats[j]});
+					}
+					if (adapter.bundle.getCategories().length == 0) {
+						fModel.getSite().removeBundles(new ISiteBundle[] {adapter.bundle});
+					}
+				} else {
+					return false;
 				}
 			}
 			fModel.getSite().removeCategoryDefinitions(new ISiteCategoryDefinition[] {catDef});
@@ -405,6 +508,22 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 		return false;
 	}
 
+	private boolean handleRemoveSiteBundleAdapter(SiteBundleAdapter adapter) {
+		try {
+			ISiteBundle bundle = adapter.bundle;
+			if (adapter.category == null) {
+				fModel.getSite().removeBundles(new ISiteBundle[] {bundle});
+			} else {
+				removeCategory(bundle, adapter.category);
+				if (bundle.getCategories().length == 0)
+					fModel.getSite().removeBundles(new ISiteBundle[] {bundle});
+			}
+			return true;
+		} catch (CoreException e) {
+		}
+		return false;
+	}
+
 	private void removeCategory(ISiteFeature aFeature, String catName) {
 		try {
 			if (aFeature == null)
@@ -418,12 +537,36 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 		}
 	}
 
+	private void removeCategory(ISiteBundle aBundle, String catName) {
+		try {
+			if (aBundle == null)
+				return;
+			ISiteCategory[] cats = aBundle.getCategories();
+			for (int i = 0; i < cats.length; i++) {
+				if (catName.equals(cats[i].getName()))
+					aBundle.removeCategories(new ISiteCategory[] {cats[i]});
+			}
+		} catch (CoreException e) {
+		}
+	}
+
 	private ISiteFeature findRealFeature(SiteFeatureAdapter adapter) {
 		ISiteFeature featureCopy = adapter.feature;
 		ISiteFeature[] features = fModel.getSite().getFeatures();
 		for (int i = 0; i < features.length; i++) {
 			if (features[i].getId().equals(featureCopy.getId()) && features[i].getVersion().equals(featureCopy.getVersion())) {
 				return features[i];
+			}
+		}
+		return null;
+	}
+
+	private ISiteBundle findRealBundle(SiteBundleAdapter adapter) {
+		ISiteBundle featureCopy = adapter.bundle;
+		ISiteBundle[] bundles = fModel.getSite().getBundles();
+		for (int i = 0; i < bundles.length; i++) {
+			if (bundles[i].getId().equals(featureCopy.getId()) && bundles[i].getVersion().equals(featureCopy.getVersion())) {
+				return bundles[i];
 			}
 		}
 		return null;
@@ -494,6 +637,8 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 			for (int i = 0; i < objects.length; i++) {
 				if (objects[i] instanceof SiteFeatureAdapter) {
 					copyFeature((SiteFeatureAdapter) objects[i], target);
+				} else if (objects[i] instanceof SiteBundleAdapter) {
+					copyBundle((SiteBundleAdapter) objects[i], target);
 				} else if (objects[i] instanceof ISiteCategoryDefinition) {
 					fModel.getSite().addCategoryDefinitions(new ISiteCategoryDefinition[] {(ISiteCategoryDefinition) objects[i]});
 				}
@@ -511,8 +656,12 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 	protected boolean canPaste(Object target, Object[] objects) {
 		if (target == null || target instanceof ISiteCategoryDefinition) {
 			for (int i = 0; i < objects.length; i++) {
-				if (objects[i] instanceof SiteFeatureAdapter)
+				if (objects[i] instanceof SiteFeatureAdapter) {
 					return true;
+				}
+				if (objects[i] instanceof SiteBundleAdapter) {
+					return true;
+				}
 				if (objects[i] instanceof ISiteCategoryDefinition) {
 					String name = ((ISiteCategoryDefinition) objects[i]).getName();
 					ISiteCategoryDefinition[] defs = fModel.getSite().getCategoryDefinitions();
@@ -537,7 +686,7 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 	 * @param siteFeature
 	 * @return IFeature or null
 	 */
-	public static IFeature findFeature(ISiteFeature siteFeature) {
+	private IFeature findFeature(ISiteFeature siteFeature) {
 		IFeatureModel model = PDECore.getDefault().getFeatureModelManager().findFeatureModelRelaxed(siteFeature.getId(), siteFeature.getVersion());
 		if (model != null)
 			return model.getFeature();
@@ -568,6 +717,30 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 		});
 	}
 
+	private void handleNewBundle() {
+		final Control control = fCategoryViewer.getControl();
+		BusyIndicator.showWhile(control.getDisplay(), new Runnable() {
+			public void run() {
+				IPluginModelBase[] allModels = PluginRegistry.getAllModels();
+				ArrayList newModels = new ArrayList();
+				for (int i = 0; i < allModels.length; i++) {
+					if (canAdd(allModels[i]))
+						newModels.add(allModels[i]);
+				}
+				IPluginModelBase[] candidateModels = (IPluginModelBase[]) newModels.toArray(new IPluginModelBase[newModels.size()]);
+				PluginSelectionDialog dialog = new PluginSelectionDialog(fCategoryViewer.getTree().getShell(), candidateModels, true);
+				if (dialog.open() == Window.OK) {
+					Object[] models = dialog.getResult();
+					try {
+						doAddBundles(models);
+					} catch (CoreException e) {
+						PDEPlugin.log(e);
+					}
+				}
+			}
+		});
+	}
+
 	private boolean canAdd(IFeatureModel candidate) {
 		ISiteFeature[] features = fModel.getSite().getFeatures();
 		IFeature cfeature = candidate.getFeature();
@@ -575,6 +748,18 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 		for (int i = 0; i < features.length; i++) {
 			ISiteFeature bfeature = features[i];
 			if (bfeature.getId().equals(cfeature.getId()) && bfeature.getVersion().equals(cfeature.getVersion()))
+				return false;
+		}
+		return true;
+	}
+
+	private boolean canAdd(IPluginModelBase candidate) {
+		ISiteBundle[] currentBundles = fModel.getSite().getBundles();
+		IPluginBase candidateBundle = candidate.getPluginBase();
+
+		for (int i = 0; i < currentBundles.length; i++) {
+			ISiteBundle currentBundle = currentBundles[i];
+			if (currentBundle.getId().equals(candidateBundle.getId()) && currentBundle.getVersion().equals(candidateBundle.getVersion()))
 				return false;
 		}
 		return true;
@@ -595,6 +780,13 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 		sfeature.setNL(feature.getNL());
 		sfeature.setIsPatch(isFeaturePatch(feature));
 		return sfeature;
+	}
+
+	private ISiteBundle createSiteBundle(ISiteModel model, IPluginModelBase candidate) throws CoreException {
+		ISiteBundle newBundle = model.getFactory().createBundle();
+		newBundle.setId(candidate.getPluginBase().getId());
+		newBundle.setVersion(candidate.getPluginBase().getVersion());
+		return newBundle;
 	}
 
 	private static String formatVersion(String version) {
@@ -636,6 +828,8 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 				categoryName = ((ISiteCategoryDefinition) element).getName();
 			} else if (element instanceof SiteFeatureAdapter) {
 				categoryName = ((SiteFeatureAdapter) element).category;
+			} else if (element instanceof SiteBundleAdapter) {
+				categoryName = ((SiteBundleAdapter) element).category;
 			}
 		}
 		//
@@ -657,6 +851,49 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 				expandCategory(categoryName);
 			}
 			fCategoryViewer.setSelection(new StructuredSelection(new SiteFeatureAdapter(categoryName, added[added.length - 1])), true);
+		}
+	}
+
+	/**
+	 * 
+	 * @param candidates
+	 *            Array of IPluginModelBase
+	 * @param monitor
+	 * @throws CoreException
+	 */
+	public void doAddBundles(Object[] candidates) throws CoreException {
+		// Category to add features to
+		String categoryName = null;
+		ISelection selection = fCategoryViewer.getSelection();
+		if (!selection.isEmpty() && selection instanceof IStructuredSelection) {
+			Object element = ((IStructuredSelection) selection).getFirstElement();
+			if (element instanceof ISiteCategoryDefinition) {
+				categoryName = ((ISiteCategoryDefinition) element).getName();
+			} else if (element instanceof SiteFeatureAdapter) {
+				categoryName = ((SiteFeatureAdapter) element).category;
+			} else if (element instanceof SiteBundleAdapter) {
+				categoryName = ((SiteBundleAdapter) element).category;
+			}
+		}
+		//
+		ISiteBundle[] added = new ISiteBundle[candidates.length];
+		for (int i = 0; i < candidates.length; i++) {
+			IPluginModelBase candidate = (IPluginModelBase) candidates[i];
+			ISiteBundle child = createSiteBundle(fModel, candidate);
+			if (categoryName != null) {
+				addCategory(child, categoryName);
+			}
+			added[i] = child;
+		}
+
+		// Update model
+		fModel.getSite().addBundles(added);
+		// Select last added feature
+		if (added.length > 0) {
+			if (categoryName != null) {
+				expandCategory(categoryName);
+			}
+			fCategoryViewer.setSelection(new StructuredSelection(new SiteBundleAdapter(categoryName, added[added.length - 1])), true);
 		}
 	}
 
