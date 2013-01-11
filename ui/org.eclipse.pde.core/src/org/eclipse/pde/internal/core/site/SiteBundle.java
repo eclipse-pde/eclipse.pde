@@ -22,11 +22,11 @@ import org.w3c.dom.NodeList;
 
 public class SiteBundle extends VersionableObject implements ISiteBundle {
 	private static final long serialVersionUID = 1L;
-	private Vector fCategories = new Vector();
+	private Vector<ISiteCategory> fCategories = new Vector<ISiteCategory>();
 
 	public boolean isValid() {
 		for (int i = 0; i < fCategories.size(); i++) {
-			ISiteCategory category = (ISiteCategory) fCategories.get(i);
+			ISiteCategory category = fCategories.get(i);
 			if (!category.isValid())
 				return false;
 		}
@@ -63,7 +63,7 @@ public class SiteBundle extends VersionableObject implements ISiteBundle {
 	 * @see org.eclipse.pde.internal.core.isite.ISiteFeature#getCategories()
 	 */
 	public ISiteCategory[] getCategories() {
-		return (ISiteCategory[]) fCategories.toArray(new ISiteCategory[fCategories.size()]);
+		return fCategories.toArray(new ISiteCategory[fCategories.size()]);
 	}
 
 	protected void parse(Node node) {
@@ -101,7 +101,7 @@ public class SiteBundle extends VersionableObject implements ISiteBundle {
 			writer.println(">"); //$NON-NLS-1$
 			String indent2 = indent + "   "; //$NON-NLS-1$
 			for (int i = 0; i < fCategories.size(); i++) {
-				ISiteCategory category = (ISiteCategory) fCategories.get(i);
+				ISiteCategory category = fCategories.get(i);
 				category.write(indent2, writer);
 			}
 			writer.println(indent + "</bundle>"); //$NON-NLS-1$

@@ -722,12 +722,12 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 		BusyIndicator.showWhile(control.getDisplay(), new Runnable() {
 			public void run() {
 				IPluginModelBase[] allModels = PluginRegistry.getAllModels();
-				ArrayList newModels = new ArrayList();
+				ArrayList<IPluginModelBase> newModels = new ArrayList<IPluginModelBase>();
 				for (int i = 0; i < allModels.length; i++) {
 					if (canAdd(allModels[i]))
 						newModels.add(allModels[i]);
 				}
-				IPluginModelBase[] candidateModels = (IPluginModelBase[]) newModels.toArray(new IPluginModelBase[newModels.size()]);
+				IPluginModelBase[] candidateModels = newModels.toArray(new IPluginModelBase[newModels.size()]);
 				PluginSelectionDialog dialog = new PluginSelectionDialog(fCategoryViewer.getTree().getShell(), candidateModels, true);
 				if (dialog.open() == Window.OK) {
 					Object[] models = dialog.getResult();
