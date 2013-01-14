@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2009 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -9,8 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor;
-
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 
 import java.util.ArrayList;
 import org.eclipse.jface.action.*;
@@ -62,8 +60,14 @@ public class PDEMultiPageContentOutline extends Page implements IContentOutlineP
 			emptyPage.dispose();
 			emptyPage = null;
 		}
+		if (currentPage != null) {
+			currentPage.removeSelectionChangedListener(this);
+			currentPage = null;
+		}
+
 		pagebook = null;
 		listeners = null;
+		editor = null;
 	}
 
 	public boolean isDisposed() {
