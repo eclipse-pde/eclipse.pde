@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,8 +13,7 @@ package org.eclipse.pde.internal.core;
 
 import java.util.*;
 import java.util.Map.Entry;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.*;
@@ -362,9 +361,13 @@ public class PluginModelManager implements IModelProviderListener {
 			}
 			int types = event.getEventTypes();
 			if (types == IModelProviderEvent.MODELS_CHANGED) {
-				// when a model (manifest) is changed schedule a job to avoid blocking
-				// the UI thread (@see bug 276135)
+				// We may be in the UI thread, so the classpath is updated in a job to avoid blocking (bug 376135)
 				fUpdateJob.add(projects, containers);
+				if (Boolean.getBoolean(PDECore.SYSTEM_PROPERTY_LOCK_WORKSPACE_FOR_CLASSPATH)) {
+					// The job is given a workspace lock so other jobs can't run on a stale classpath (bug 354993)
+					// This is default behaviour for 4.3, but must be activated with a system property in 3.8.2
+					fUpdateJob.setRule(ResourcesPlugin.getWorkspace().getRoot());
+				}
 				fUpdateJob.schedule();
 			} else {
 				// else update synchronously

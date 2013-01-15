@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,6 +32,16 @@ import org.osgi.framework.*;
 
 public class PDECore extends Plugin {
 	public static final String PLUGIN_ID = "org.eclipse.pde.core"; //$NON-NLS-1$
+
+	/**
+	 * When this system property is set to "true" the classpath update job started in {@link PluginModelManager}
+	 * will wait for a workspace lock.  This can avoid having other jobs act on a stale classpath.
+	 * This system property is only required for Juno SR2 4.2.2/3.8.2 as locking the workspace will
+	 * be the default behaviour in Kepler 4.3.  
+	 * 
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=354993
+	 */
+	public static final String SYSTEM_PROPERTY_LOCK_WORKSPACE_FOR_CLASSPATH = "pde.lockWorkspaceForClasspath"; //$NON-NLS-1$
 
 	public static final IPath REQUIRED_PLUGINS_CONTAINER_PATH = new Path(PLUGIN_ID + ".requiredPlugins"); //$NON-NLS-1$
 	public static final IPath JAVA_SEARCH_CONTAINER_PATH = new Path(PLUGIN_ID + ".externalJavaSearch"); //$NON-NLS-1$
