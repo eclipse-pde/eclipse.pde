@@ -123,6 +123,11 @@ public class $builderClassName$ extends IncrementalProjectBuilder {
 		return null;
 	}
 
+	protected void clean(IProgressMonitor monitor) throws CoreException {
+		// delete markers set and files created
+		getProject().deleteMarkers(MARKER_TYPE, true, IResource.DEPTH_INFINITE);
+	}
+
 	void checkXML(IResource resource) {
 		if (resource instanceof IFile && resource.getName().endsWith(".xml")) {
 			IFile file = (IFile) resource;
