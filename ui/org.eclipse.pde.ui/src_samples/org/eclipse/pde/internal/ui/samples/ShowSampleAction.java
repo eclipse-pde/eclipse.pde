@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2010 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -14,18 +14,17 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Collection;
-import java.util.Properties;
+import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.provisional.configurator.Configurator;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
 import org.eclipse.equinox.p2.core.ProvisionException;
 import org.eclipse.equinox.p2.engine.IProfile;
 import org.eclipse.equinox.p2.engine.IProfileRegistry;
+import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.p2.operations.InstallOperation;
 import org.eclipse.equinox.p2.operations.ProvisioningJob;
-import org.eclipse.equinox.p2.query.IQuery;
-import org.eclipse.equinox.p2.query.QueryUtil;
+import org.eclipse.equinox.p2.query.*;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
 import org.eclipse.equinox.p2.ui.ProvisioningUI;
 import org.eclipse.jface.action.Action;
@@ -33,6 +32,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
@@ -44,8 +44,7 @@ import org.osgi.framework.ServiceReference;
 
 public class ShowSampleAction extends Action implements IIntroAction {
 	private static final String SAMPLE_FEATURE_ID = "org.eclipse.sdk.samples"; //$NON-NLS-1$
-	private static final String SAMPLE_FEATURE_VERSION = "3.3.0"; //$NON-NLS-1$
-	private static final String UPDATE_SITE = "http://dev.eclipse.org/viewcvs/index.cgi/%7Echeckout%7E/pde-ui-home/samples/"; //$NON-NLS-1$
+	private static final String UPDATE_SITE = "http://www.eclipse.org/pde/samples/site.xml"; //$NON-NLS-1$
 	private String sampleId;
 
 	private ProvisioningUI provUI;
@@ -162,7 +161,7 @@ public class ShowSampleAction extends Action implements IIntroAction {
 	}
 
 	IQuery getSampleFeatureQuery() {
-		return QueryUtil.createIUQuery(SAMPLE_FEATURE_ID, org.eclipse.equinox.p2.metadata.Version.parseVersion(SAMPLE_FEATURE_VERSION));
+		return QueryUtil.createIUQuery(SAMPLE_FEATURE_ID);
 	}
 
 	/**
@@ -210,7 +209,20 @@ public class ShowSampleAction extends Action implements IIntroAction {
 	 */
 	protected Collection findSampleIUs(URI location, SubMonitor monitor) throws ProvisionException {
 		IMetadataRepository repository = provUI.loadMetadataRepository(location, false, monitor.newChild(5));
-		return repository.query(getSampleFeatureQuery(), monitor.newChild(5)).toUnmodifiableSet();
+		IQueryResult allSamples = repository.query(getSampleFeatureQuery(), monitor.newChild(5));
+		if (allSamples.isEmpty()) {
+			throw new ProvisionException(NLS.bind(PDEUIMessages.ShowSampleAction_NoSamplesFound, location.toString()));
+		}
+		IInstallableUnit toInstall = null;
+		for (Iterator iterator = allSamples.iterator(); iterator.hasNext();) {
+			IInstallableUnit current = (IInstallableUnit) iterator.next();
+			if (toInstall == null || toInstall.getVersion().compareTo(current.getVersion()) < 0) {
+				toInstall = current;
+			}
+		}
+		Collection result = new ArrayList(1);
+		result.add(toInstall);
+		return result;
 	}
 
 	/**
