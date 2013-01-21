@@ -1,12 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     IBM Corporation - initial API and implementation
+ * Copyright (c) 2007, 2013 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors: IBM Corporation - initial API and implementation
  *******************************************************************************/
 
 package org.eclipse.pde.build.internal.tests;
@@ -128,7 +126,9 @@ public class SourceTests extends PDETestCase {
 		properties.put("osgi.os", os);
 		properties.put("osgi.ws", ws);
 		properties.put("osgi.arch", arch);
-		assertTrue(FrameworkUtil.createFilter(filter).match(properties));
+		// In 1.6 VMs properties is not casted correctly to dictionary causing a compilation error (Bug 390267)
+		Dictionary dictionary = properties;
+		assertTrue(FrameworkUtil.createFilter(filter).match(dictionary));
 	}
 
 	// test that '<' and '>' are properly escaped in generated source feature
