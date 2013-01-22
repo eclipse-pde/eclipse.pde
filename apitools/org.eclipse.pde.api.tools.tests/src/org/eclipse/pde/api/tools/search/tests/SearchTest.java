@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -137,7 +137,7 @@ public abstract class SearchTest extends TestCase {
 	 * @param filename
 	 * @return the listing of excluded items
 	 */
-	protected HashSet<String> getExcludeSet(IApiBaseline baseline, String filename) {
+	protected HashSet<String> getExcludeSet(IApiBaseline baseline, String filename) throws CoreException {
 		if(filename == null) {
 			return null;
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -160,8 +160,12 @@ public abstract class CommonUtilsTask extends Task {
 	 * @param excludeListLocation
 	 * @return the set of project names to be excluded
 	 */
-	protected static FilteredElements initializeFilteredElements(String filterListLocation, IApiBaseline baseline, boolean debug) {
-		return Util.initializeRegexFilterList(filterListLocation, baseline, debug);
+	protected static FilteredElements initializeFilteredElements(String filterListLocation, IApiBaseline baseline, boolean debug) throws BuildException {
+		try {
+			return Util.initializeRegexFilterList(filterListLocation, baseline, debug);
+		} catch (CoreException e) {
+			throw new BuildException(e);
+		}
 	}
 
 	/**

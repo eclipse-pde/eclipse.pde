@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -102,7 +102,7 @@ import org.eclipse.jdt.launching.LibraryLocation;
 import org.eclipse.jdt.launching.environments.ExecutionEnvironmentDescription;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.api.tools.internal.ApiFilterStore;
+import org.eclipse.pde.api.tools.internal.FilterStore;
 import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 import org.eclipse.pde.api.tools.internal.builder.BuildState;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
@@ -2110,6 +2110,8 @@ public final class Util {
 					default:
 						return arguments[0];
 				}
+			default:
+				break;
 		}
 		return EMPTY_STRING;
 	}
@@ -2148,7 +2150,7 @@ public final class Util {
 		return MANIFEST_PROJECT_RELATIVE_PATH.equals(path);
 	}
 	public static void touchCorrespondingResource(IProject project, IResource resource, String typeName) {
-		if (typeName != null && typeName != ApiFilterStore.GLOBAL) {
+		if (typeName != null && typeName != FilterStore.GLOBAL) {
 			if (Util.isManifest(resource.getProjectRelativePath())) {
 				try {
 					IJavaProject javaProject = JavaCore.create(project);
@@ -2262,52 +2264,53 @@ public final class Util {
 	 * @param location
 	 * @param baseline
 	 * @return the list of bundles to be excluded
+	 * @throws CoreException if the location does not describe a includes file or an IOException occurs
 	 */
-	public static FilteredElements initializeRegexFilterList(String location, IApiBaseline baseline, boolean debug) {
+	public static FilteredElements initializeRegexFilterList(String location, IApiBaseline baseline, boolean debug) throws CoreException {
 		FilteredElements excludedElements = new FilteredElements();
 		if (location != null) {
 			File file = new File(location);
-			if (file.exists()) {
-				InputStream stream = null;
-				char[] contents = null;
-				try {
-					stream = new BufferedInputStream(new FileInputStream(file));
-					contents = getInputStreamAsCharArray(stream, -1, ISO_8859_1);
-				} 
-				catch (FileNotFoundException e) {} 
-				catch (IOException e) {} 
-				finally {
-					if (stream != null) {
-						try {
-							stream.close();
-						} catch (IOException e) {}
-					}
-				}
-				if (contents != null) {
-					LineNumberReader reader = new LineNumberReader(new StringReader(new String(contents)));
-					String line = null;
+			InputStream stream = null;
+			char[] contents = null;
+			try {
+				stream = new BufferedInputStream(new FileInputStream(file));
+				contents = getInputStreamAsCharArray(stream, -1, ISO_8859_1);
+			} catch (FileNotFoundException e) {
+				abort(NLS.bind(UtilMessages.Util_couldNotFindFilterFile,location), e);
+			} catch (IOException e) {
+				abort(NLS.bind(UtilMessages.Util_problemWithFilterFile,location), e);
+			} 
+			finally {
+				if (stream != null) {
 					try {
-						while ((line = reader.readLine()) != null) {
-							line = line.trim();
-							if (line.startsWith("#") || line.length() == 0) { //$NON-NLS-1$
-								continue; 
-							}
-							if(line.startsWith(REGULAR_EXPRESSION_START)) {
-								if(baseline != null) {
-									Util.collectRegexIds(line, excludedElements, baseline.getApiComponents(), debug);
-								}
-							} else {
-								excludedElements.addExactMatch(line);
-							}
+						stream.close();
+					} catch (IOException e) {}
+				}
+			}
+			if (contents != null) {
+				LineNumberReader reader = new LineNumberReader(new StringReader(new String(contents)));
+				String line = null;
+				try {
+					while ((line = reader.readLine()) != null) {
+						line = line.trim();
+						if (line.startsWith("#") || line.length() == 0) { //$NON-NLS-1$
+							continue; 
 						}
-					} 
-					catch (IOException e) {} 
-					catch (Exception e) {} 
-					finally {
-						try {
-							reader.close();
-						} catch (IOException e) {}
+						if(line.startsWith(REGULAR_EXPRESSION_START)) {
+							if(baseline != null) {
+								Util.collectRegexIds(line, excludedElements, baseline.getApiComponents(), debug);
+							}
+						} else {
+							excludedElements.addExactMatch(line);
+						}
 					}
+				} catch (IOException e) {
+					abort(NLS.bind(UtilMessages.Util_problemWithFilterFile,location), e);
+				} 
+				finally {
+					try {
+						reader.close();
+					} catch (IOException e) {}
 				}
 			}
 		}
@@ -2320,7 +2323,7 @@ public final class Util {
 	 * @param list
 	 * @param components
 	 */
-	public static void collectRegexIds(String line, FilteredElements excludedElements, IApiComponent[] components, boolean debug) throws Exception {
+	public static void collectRegexIds(String line, FilteredElements excludedElements, IApiComponent[] components, boolean debug) throws CoreException {
 		if (line.startsWith(REGULAR_EXPRESSION_START)) {
 			String componentname = line;
 			// regular expression
@@ -2347,9 +2350,9 @@ public final class Util {
 					}
 				}
 			} catch (PatternSyntaxException e) {
-				throw new Exception(NLS.bind(
+				abort(NLS.bind(
 						UtilMessages.comparison_invalidRegularExpression,
-						componentname));
+						componentname),e);
 			}
 		}
 	}

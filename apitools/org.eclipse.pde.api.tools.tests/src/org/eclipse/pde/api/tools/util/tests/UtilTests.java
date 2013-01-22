@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,6 +50,7 @@ import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 public class UtilTests extends TestCase {
 
 	private static final IPath SRC_LOC = TestSuiteHelper.getPluginDirectoryPath().append("test_source");
+	static final IPath SRC_LOC_SEARCH = TestSuiteHelper.getPluginDirectoryPath().append("test-search");
 	
 	/**
 	 * Tests that passing in <code>null</code> to the getAllFiles(..) method
@@ -662,6 +663,22 @@ public class UtilTests extends TestCase {
 			Util.parseDocument(s);
 		} catch(CoreException ce) {
 			assertTrue("Should not happen", false);
+		}
+	}
+	
+	/**
+	 * Tests that the utility method for reading in include/exclude regex tests throws an exception
+	 * when the file doesn't exist.
+	 * 
+	 * The regex parsing is tested more extensively in {@link org.eclipse.pde.api.tools.search.tests.SearchEngineTests}
+	 */
+	public void testInitializeRegexFilterList(){
+		File bogus = new File(SRC_LOC.toFile(), "DOES_NOT_EXIST");
+		try {
+			Util.initializeRegexFilterList(bogus.getAbsolutePath(), null, false);
+			fail("Util.initializeRegexFilterList should throw Core Exception for missing file");
+		} catch (CoreException e){
+			// Must hit here
 		}
 	}
 }
