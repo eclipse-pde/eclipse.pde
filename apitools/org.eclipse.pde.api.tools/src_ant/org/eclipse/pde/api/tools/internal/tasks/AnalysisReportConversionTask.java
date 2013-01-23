@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -86,6 +87,9 @@ public class AnalysisReportConversionTask extends Task {
 		boolean debug;
 		Report report;
 
+		String currentSkippedBundle;
+		List currentSkippedBundleProblems = new ArrayList();
+
 		public ConverterDefaultHandler(boolean debug) {
 			this.debug = debug;
 		}
@@ -116,37 +120,63 @@ public class AnalysisReportConversionTask extends Task {
 				}
 				this.report.addProblem(this.category, new Problem(message, severity));
 			} else if (IApiXmlConstants.ELEMENT_BUNDLE.equals(name)) {
-				String bundleName = attributes.getValue(IApiXmlConstants.ATTR_NAME);
+				currentSkippedBundle = attributes.getValue(IApiXmlConstants.ATTR_NAME);
+				currentSkippedBundleProblems.clear();
 				if (this.debug) {
-					System.out.println("bundle name : " + bundleName); //$NON-NLS-1$
+					System.out.println("Skipped bundle name : " + currentSkippedBundle); //$NON-NLS-1$
 				}
-				this.report.addNonApiBundles(bundleName);
-			} else if (this.debug) {
-				if (!IApiXmlConstants.ELEMENT_PROBLEM_MESSAGE_ARGUMENTS.equals(name)
-						&& !IApiXmlConstants.ELEMENT_PROBLEM_MESSAGE_ARGUMENT.equals(name)
-						&& !IApiXmlConstants.ELEMENT_API_PROBLEMS.equals(name)
-						&& !IApiXmlConstants.ELEMENT_PROBLEM_EXTRA_ARGUMENT.equals(name)
-						&& !IApiXmlConstants.ELEMENT_PROBLEM_EXTRA_ARGUMENTS.equals(name)) {
-					System.out.println("unknown element : " + String.valueOf(name)); //$NON-NLS-1$
+			} else if (IApiXmlConstants.ELEMENT_RESOLVER_ERROR.equals(name)){
+				String error = attributes.getValue(IApiXmlConstants.ATTR_MESSAGE);
+				currentSkippedBundleProblems.add(error);
+				if (this.debug) {
+					System.out.println("Bundle skipped because : " + error); //$NON-NLS-1$
 				}
 			}
+			if (!IApiXmlConstants.ELEMENT_PROBLEM_MESSAGE_ARGUMENTS.equals(name)
+					&& !IApiXmlConstants.ELEMENT_PROBLEM_MESSAGE_ARGUMENT.equals(name)
+					&& !IApiXmlConstants.ELEMENT_API_PROBLEMS.equals(name)
+					&& !IApiXmlConstants.ELEMENT_PROBLEM_EXTRA_ARGUMENT.equals(name)
+					&& !IApiXmlConstants.ELEMENT_PROBLEM_EXTRA_ARGUMENTS.equals(name)) {
+				System.out.println("unknown element : " + String.valueOf(name)); //$NON-NLS-1$
+			}
 		}
+		
+		public void endElement(String uri, String localName, String qName)
+				throws SAXException {
+			if (IApiXmlConstants.ELEMENT_BUNDLE.equals(qName)) {
+				String[] errors = null;
+				if (!currentSkippedBundleProblems.isEmpty()){
+					errors = (String[])currentSkippedBundleProblems.toArray(new String[currentSkippedBundleProblems.size()]);
+				}
+				this.report.addSkippedBundle(currentSkippedBundle, errors);
+				currentSkippedBundle = null;
+				currentSkippedBundleProblems.clear();
+			}
+		}
+		
 	}
 	static private final class Report {
 		String componentID;
 		String link;
-		List nonApiBundles;
+		Map skippedBundles;
 		Map problemsPerCategories;
 
 		Report(String componentID) {
 			this.componentID = componentID;
 		}
 
-		public void addNonApiBundles(String bundleName) {
-			if (this.nonApiBundles == null) {
-				this.nonApiBundles = new ArrayList();
+		/**
+		 * Adds an entry for a skipped bundle, if null is provided as the problems
+		 * it is assumed that the bundle was skipped because it isn't an API bundle.
+		 * 
+		 * @param bundleName name of the bundle
+		 * @param problems one or more problem messages prevent this bundle from being analyzed, can be <code>null</code> if bundle wasn't API tools enabled
+		 */
+		public void addSkippedBundle(String bundleName, String[] problems) {
+			if (this.skippedBundles == null) {
+				this.skippedBundles = new HashMap();
 			}
-			this.nonApiBundles.add(bundleName);
+			this.skippedBundles.put(bundleName, problems);
 		}
 		
 		public void addProblem(String category, Problem problem) {
@@ -161,13 +191,14 @@ public class AnalysisReportConversionTask extends Task {
 			problemsList.add(problem);
 		}
 
-		public String[] getNonApiBundles() {
-			if (this.nonApiBundles == null || this.nonApiBundles.size() == 0) {
-				return NO_NON_API_BUNDLES;
+		/**
+		 * @return map of string bundle name to String[] problem messages or <code>null</code> if bundle was skipped because it isn't API Tools enabled
+		 */
+		public Map getSkippedBundles() {
+			if (this.skippedBundles == null || this.skippedBundles.size() == 0) {
+				return new HashMap(0);
 			}
-			String[] nonApiBundlesNames = new String[this.nonApiBundles.size()];
-			this.nonApiBundles.toArray(nonApiBundlesNames);
-			return nonApiBundlesNames;
+			return skippedBundles;
 		}
 		
 		public Problem[] getProblems(String category) {
@@ -223,7 +254,6 @@ public class AnalysisReportConversionTask extends Task {
 		}
 	}
 	static final Problem[] NO_PROBLEMS = new Problem[0];
-	static final String[] NO_NON_API_BUNDLES = new String[0];
 	boolean debug;
 
 	private String htmlReportsLocation;
@@ -322,14 +352,28 @@ public class AnalysisReportConversionTask extends Task {
 	}
 	private void dumpNonApiBundles(PrintWriter writer, Report report) {
 		writer.println(Messages.fullReportTask_bundlesheader);
-		String[] nonApiBundleNames = report.getNonApiBundles();
-		for (int i = 0; i < nonApiBundleNames.length; i++) {
-			String bundleName = nonApiBundleNames[i];
-			if ((i % 2) == 0) {
-				writer.println(MessageFormat.format(Messages.fullReportTask_bundlesentry_even, new String[] { bundleName }));
-			} else { 
-				writer.println(MessageFormat.format(Messages.fullReportTask_bundlesentry_odd, new String[] { bundleName }));
+		Map nonApiBundleNames = report.getSkippedBundles();
+		int count = 0;
+		for (Iterator iterator = nonApiBundleNames.keySet().iterator(); iterator.hasNext();) {
+			StringBuffer result = new StringBuffer();
+			String bundleName = (String) iterator.next();
+			result.append(bundleName);
+			String[] bundleErrors = (String[]) nonApiBundleNames.get(bundleName);
+			if (bundleErrors == null){
+				result.append(Messages.AnalysisReportConversionTask_BundleErrorNewline);
+				result.append(Messages.AnalysisReportConversionTask_NotSetupForAPIAnalysis);
+			} else {
+				for (int i = 0; i < bundleErrors.length; i++) {
+					result.append(Messages.AnalysisReportConversionTask_BundleErrorNewline);
+					result.append(bundleErrors[i]);
+				}
 			}
+			if ((count % 2) == 0) {
+				writer.println(MessageFormat.format(Messages.fullReportTask_bundlesentry_even, new String[] { result.toString() }));
+			} else { 
+				writer.println(MessageFormat.format(Messages.fullReportTask_bundlesentry_odd, new String[] { result.toString() }));
+			}
+			count++;
 		}
 		writer.println(Messages.fullReportTask_bundlesfooter);
 	}

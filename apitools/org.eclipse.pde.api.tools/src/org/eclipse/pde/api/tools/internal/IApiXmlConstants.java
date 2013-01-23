@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -445,4 +445,9 @@ public interface IApiXmlConstants {
 	 * Value is: <code>internal</code>
 	 */
 	public static final String ATTR_COUNT_INTERNAL = "internal"; //$NON-NLS-1$
+	/**
+	 * XML element describing a resolver error found in a bundle
+	 * Value is: <code>resolver_error</code>
+	 */
+	public static final String ELEMENT_RESOLVER_ERROR = "resolver_error"; //$NON-NLS-1$
 }

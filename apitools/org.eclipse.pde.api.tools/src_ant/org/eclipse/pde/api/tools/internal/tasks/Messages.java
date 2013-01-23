@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -97,6 +97,10 @@ public class Messages extends NLS {
 	public static String UseTask_no_scan_both_types_not_searched_for;
 	
 	public static String AddedElement;
+
+	public static String AnalysisReportConversionTask_BundleErrorNewline;
+
+	public static String AnalysisReportConversionTask_NotSetupForAPIAnalysis;
 	public static String RemovedElement;
 	public static String ChangedElement;
 

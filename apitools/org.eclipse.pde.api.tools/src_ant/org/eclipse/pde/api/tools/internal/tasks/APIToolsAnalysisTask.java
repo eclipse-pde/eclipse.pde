@@ -30,6 +30,7 @@ import java.util.Set;
 import org.apache.tools.ant.BuildException;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.osgi.service.resolver.ResolverError;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.AntFilterStore;
 import org.eclipse.pde.api.tools.internal.IApiXmlConstants;
@@ -203,7 +204,7 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 	private Summary createProblemSummary(String componentID, IApiProblem[] apiProblems) {
 		return new Summary(componentID, apiProblems);
 	}
-	private void dumpReport(Summary[] summaries, List bundlesNames) {
+	private void dumpReport(Summary[] summaries, List nonAPIBundleNames, Map bundlesWithErrors) {
 		ProblemCounter counter = new ProblemCounter();
 		for (int i = 0, max = summaries.length; i < max; i++) {
 			Summary summary = summaries[i];
@@ -254,7 +255,9 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 				saveReport(componentID, contents, "report.xml"); //$NON-NLS-1$
 			}
 		}
-		if (bundlesNames != null && bundlesNames.size() != 0) {
+		
+		// Write out a list of components skipped because they aren't API Tools enabled or because they had resolver errors
+		if ((nonAPIBundleNames != null && nonAPIBundleNames.size() != 0) || (bundlesWithErrors != null && !bundlesWithErrors.isEmpty())) {
 			String contents = null;
 			try {
 				Document document = Util.newDocument();
@@ -262,15 +265,37 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 				report.setAttribute(IApiXmlConstants.ATTR_VERSION, IApiXmlConstants.API_REPORT_CURRENT_VERSION);
 				document.appendChild(report);
 				
-				for (Iterator iterator = bundlesNames.iterator(); iterator.hasNext();) {
-					String bundleName = (String) iterator.next();
-					if (this.excludedElements == null || !this.excludedElements.containsPartialMatch(bundleName)
-							&& (this.includedElements == null || this.includedElements.isEmpty() || this.includedElements.containsPartialMatch(bundleName))) {
-						Element bundle = document.createElement(IApiXmlConstants.ELEMENT_BUNDLE);
-						bundle.setAttribute(IApiXmlConstants.ATTR_NAME, bundleName);
-						report.appendChild(bundle);
+				if (nonAPIBundleNames != null){
+					for (Iterator iterator = nonAPIBundleNames.iterator(); iterator.hasNext();) {
+						String bundleName = (String) iterator.next();
+						if (this.excludedElements == null || !this.excludedElements.containsPartialMatch(bundleName)
+								&& (this.includedElements == null || this.includedElements.isEmpty() || this.includedElements.containsPartialMatch(bundleName))) {
+							Element bundle = document.createElement(IApiXmlConstants.ELEMENT_BUNDLE);
+							bundle.setAttribute(IApiXmlConstants.ATTR_NAME, bundleName);
+							report.appendChild(bundle);
+						}
 					}
 				}
+				
+				if (bundlesWithErrors != null){
+					for (Iterator iterator = bundlesWithErrors.keySet().iterator(); iterator.hasNext();) {
+						String bundleName = (String) iterator.next();
+						if (this.excludedElements == null || !this.excludedElements.containsPartialMatch(bundleName)
+								&& (this.includedElements == null || this.includedElements.isEmpty() || this.includedElements.containsPartialMatch(bundleName))) {
+							Element bundle = document.createElement(IApiXmlConstants.ELEMENT_BUNDLE);
+							bundle.setAttribute(IApiXmlConstants.ATTR_NAME, bundleName);
+							ResolverError[] errors = (ResolverError[])bundlesWithErrors.get(bundleName);
+							for (int i = 0; i < errors.length; i++) {
+								Element error = document.createElement(IApiXmlConstants.ELEMENT_RESOLVER_ERROR);
+								error.setAttribute(IApiXmlConstants.ATTR_MESSAGE, errors[i].toString());
+								bundle.appendChild(error);
+							}
+							report.appendChild(bundle);
+						}
+					}
+				}
+					
+					
 				contents = Util.serializeDocument(document);
 			} catch (DOMException e) {
 				throw new BuildException(e);
@@ -278,9 +303,10 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 				throw new BuildException(e);
 			}
 			if (contents != null) {
-				saveReport("allNonApiBundles", contents, "report.xml"); //$NON-NLS-1$ //$NON-NLS-2$
+				saveReport("Skipped Bundles", contents, "report.xml"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
+		
 		// Write out problem count file
 		String contents = null;
 		try {
@@ -391,6 +417,7 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 		Map allProblems = new HashMap();
 		List allNonApiBundles = new ArrayList();
 		List allApiBundles = new ArrayList();
+		Map bundlesWithErrors = new HashMap();
 		try {
 			IApiComponent[] apiComponents = currentBaseline.getApiComponents();
 			int length = apiComponents.length;
@@ -406,6 +433,18 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 					allNonApiBundles.add(name);
 					continue;
 				}
+				
+				// If the component has resolver errors the results may not be accurate
+				try {
+					if (apiComponent.getErrors().length > 0){
+						bundlesWithErrors.put(name, apiComponent.getErrors());
+						continue;
+					}
+				} catch (CoreException e){
+					ApiPlugin.log(e.getStatus());
+					throw new BuildException(e);
+				}
+				
 				allApiBundles.add(name);
 				BaseApiAnalyzer analyzer = new BaseApiAnalyzer();
 				try {
@@ -438,6 +477,21 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 				for (Iterator iterator = allNonApiBundles.iterator(); iterator.hasNext(); ) {
 					System.out.println(iterator.next());
 				}
+				System.out.println("=============================================================================="); //$NON-NLS-1$
+				System.out.println("Total number of api tools components in current baseline that have errors :" + bundlesWithErrors.size()); //$NON-NLS-1$
+				System.out.println("Details:"); //$NON-NLS-1$
+				List names = new ArrayList();
+				names.addAll(bundlesWithErrors.keySet());
+				Collections.sort(names);
+				for (Iterator iterator = names.iterator(); iterator.hasNext(); ) {
+					String name = (String)iterator.next();
+					System.out.println(name);
+					ResolverError[] errors = (ResolverError[])bundlesWithErrors.get(name);
+					for (int i = 0; i < errors.length; i++) {
+						System.out.println(errors[i]);
+					}
+				}
+				System.out.println("=============================================================================="); //$NON-NLS-1$
 			}
 			IApiComponent[] baselineApiComponents = referenceBaseline.getApiComponents();
 			for (int i = 0, max = baselineApiComponents.length; i < max; i++) {
@@ -483,7 +537,7 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 		Summary[] summaries = createAllSummaries(allProblems);
 
 		try {
-			dumpReport(summaries, allNonApiBundles);
+			dumpReport(summaries, allNonApiBundles, bundlesWithErrors);
 		} catch(RuntimeException e) {
 			ApiPlugin.log(e);
 			throw e;
