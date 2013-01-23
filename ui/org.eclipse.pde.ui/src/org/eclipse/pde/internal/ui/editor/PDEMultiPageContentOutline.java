@@ -34,6 +34,7 @@ public class PDEMultiPageContentOutline extends Page implements IContentOutlineP
 	private IActionBars actionBars;
 	private boolean sortingOn;
 	private PDEFormEditor editor;
+	private ToggleLinkWithEditorAction fToggleLinkWithEditorAction;
 
 	public PDEMultiPageContentOutline(PDEFormEditor editor) {
 		this.editor = editor;
@@ -68,6 +69,12 @@ public class PDEMultiPageContentOutline extends Page implements IContentOutlineP
 		pagebook = null;
 		listeners = null;
 		editor = null;
+
+		// Workaround for leak in Platform
+		if (fToggleLinkWithEditorAction != null) {
+			fToggleLinkWithEditorAction.fEditor = null;
+			fToggleLinkWithEditorAction = null;
+		}
 	}
 
 	public boolean isDisposed() {
@@ -166,7 +173,8 @@ public class PDEMultiPageContentOutline extends Page implements IContentOutlineP
 
 		IToolBarManager toolBarManager = actionBars.getToolBarManager();
 		if (toolBarManager != null) {
-			toolBarManager.add(new ToggleLinkWithEditorAction(editor));
+			fToggleLinkWithEditorAction = new ToggleLinkWithEditorAction(editor);
+			toolBarManager.add(fToggleLinkWithEditorAction);
 			toolBarManager.add(new SortingAction());
 		}
 	}
