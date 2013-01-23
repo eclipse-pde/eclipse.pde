@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 IBM Corporation and others.
+ * Copyright (c) 2011, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,8 +7,18 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     SAP - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.ui.trace.internal;
+
+import static org.eclipse.jface.viewers.ColumnViewerEditor.KEYBOARD_ACTIVATION;
+import static org.eclipse.jface.viewers.ColumnViewerEditor.TABBING_HORIZONTAL;
+import static org.eclipse.jface.viewers.ColumnViewerEditor.TABBING_MOVE_TO_ROW_NEIGHBOR;
+import static org.eclipse.jface.viewers.ColumnViewerEditor.TABBING_VERTICAL;
+import static org.eclipse.jface.viewers.ColumnViewerEditorActivationEvent.KEY_PRESSED;
+import static org.eclipse.jface.viewers.ColumnViewerEditorActivationEvent.MOUSE_CLICK_SELECTION;
+import static org.eclipse.jface.viewers.ColumnViewerEditorActivationEvent.PROGRAMMATIC;
+import static org.eclipse.jface.viewers.ColumnViewerEditorActivationEvent.TRAVERSAL;
 
 import java.io.File;
 import java.util.*;
@@ -16,6 +26,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.layout.*;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -30,9 +41,18 @@ import org.eclipse.ui.trace.internal.providers.*;
 import org.eclipse.ui.trace.internal.utils.*;
 
 /**
- * The 'Product Tracing' workspace preference page.
+ * The 'Tracing' workspace preference page.
  */
 public class TracingPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
+
+	/**
+	 * The key to activate the value cell editor.
+	 * Cannot use the usual enter (CR) key to activate it since this would close the page.  Fix is to use
+	 * the space key as replacement.
+	 * On Linux, however, space is used as default key on ComboBoxes, leading to the editor being deactivated.
+	 * We use F2 instead.
+	 */
+	private static final int VALUE_EDITOR_ACTIVATION_KEY = Util.isLinux() ? SWT.F2 : SWT.SPACE;
 
 	/** A list of {@link TracingComponent} objects to display in the UI */
 	private Map<String, TracingComponent> displayableTracingComponents = null;
@@ -233,6 +253,19 @@ public class TracingPreferencePage extends PreferencePage implements IWorkbenchP
 		valueColumn.setLabelProvider(new TracingComponentColumnLabelProvider(TracingConstants.VALUE_COLUMN_INDEX));
 		valueColumn.setEditingSupport(new TracingComponentColumnEditingSupport(getViewer(), TracingConstants.VALUE_COLUMN_INDEX));
 		treeViewerCompositeLayout.setColumnData(getViewerTree().getColumn(1), new ColumnWeightData(25));
+
+		// install focus cell and cell editor activation for keyboard access (Bug 385100)
+		TreeViewerFocusCellManager focusCellManager = new TreeViewerFocusCellManager(getViewer(), new FocusCellOwnerDrawHighlighter(getViewer()));
+		ColumnViewerEditorActivationStrategy actSupport = new ColumnViewerEditorActivationStrategy(getViewer()) {
+			protected boolean isEditorActivationEvent(ColumnViewerEditorActivationEvent event) {
+				return (event.eventType == KEY_PRESSED && event.keyCode == VALUE_EDITOR_ACTIVATION_KEY) //
+						|| event.eventType == TRAVERSAL //
+						|| event.eventType == MOUSE_CLICK_SELECTION //
+						|| event.eventType == PROGRAMMATIC;
+			}
+		};
+		TreeViewerEditor.create(getViewer(), focusCellManager, actSupport, //
+				TABBING_HORIZONTAL | TABBING_MOVE_TO_ROW_NEIGHBOR | TABBING_VERTICAL | KEYBOARD_ACTIVATION);
 	}
 
 	/**

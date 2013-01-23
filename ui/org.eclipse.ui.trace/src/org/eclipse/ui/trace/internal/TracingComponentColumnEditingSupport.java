@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 IBM Corporation and others.
+ * Copyright (c) 2011, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     SAP - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.ui.trace.internal;
 
@@ -40,6 +41,7 @@ public class TracingComponentColumnEditingSupport extends EditingSupport {
 			case TracingConstants.VALUE_COLUMN_INDEX :
 				this.textEditor = new TextCellEditor((Composite) viewer.getControl(), SWT.NONE);
 				this.comboEditor = new ComboBoxCellEditor((Composite) viewer.getControl(), new String[] {Messages.TracingComponentColumnEditingSupport_true, Messages.TracingComponentColumnEditingSupport_false}, SWT.READ_ONLY | SWT.SIMPLE);
+				this.comboEditor.setActivationStyle(ComboBoxCellEditor.DROP_DOWN_ON_KEY_ACTIVATION | ComboBoxCellEditor.DROP_DOWN_ON_MOUSE_ACTIVATION);
 				break;
 			default :
 				// do nothing - no other columns provide editing support
@@ -138,6 +140,6 @@ public class TracingComponentColumnEditingSupport extends EditingSupport {
 	 * The {@link CellEditor} for the value column
 	 */
 	private CellEditor textEditor;
-	private CellEditor comboEditor;
+	private ComboBoxCellEditor comboEditor;
 
 }
