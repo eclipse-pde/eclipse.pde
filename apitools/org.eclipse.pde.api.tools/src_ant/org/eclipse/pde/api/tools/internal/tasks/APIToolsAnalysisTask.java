@@ -397,7 +397,7 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 		if (this.excludeListLocation != null) {
 			this.excludedElements = CommonUtilsTask.initializeFilteredElements(this.excludeListLocation, currentBaseline, this.debug);
 			if (this.debug) {
-				System.out.println("===================================================================================="); //$NON-NLS-1$
+				System.out.println("=============================================================================="); //$NON-NLS-1$
 				System.out.println("Excluded elements list:"); //$NON-NLS-1$
 				System.out.println(this.excludedElements);
 			}
@@ -405,7 +405,7 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 		if (this.includeListLocation != null) {
 			this.includedElements = CommonUtilsTask.initializeFilteredElements(this.includeListLocation, currentBaseline, this.debug);
 			if (this.debug) {
-				System.out.println("===================================================================================="); //$NON-NLS-1$
+				System.out.println("=============================================================================="); //$NON-NLS-1$
 				System.out.println("Included elements list:"); //$NON-NLS-1$
 				System.out.println(this.includedElements);
 			}
@@ -464,20 +464,21 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 			}
 			if (debug) {
 				System.out.println("Total number of components in current baseline :" + length); //$NON-NLS-1$
+				System.out.println("=========================="); //$NON-NLS-1$
 				System.out.println("Total number of api tools components in current baseline :" + allApiBundles.size()); //$NON-NLS-1$
 				System.out.println("Details:"); //$NON-NLS-1$
 				Collections.sort(allApiBundles);
 				for (Iterator iterator = allApiBundles.iterator(); iterator.hasNext(); ) {
 					System.out.println(iterator.next());
 				}
-				System.out.println("=============================================================================="); //$NON-NLS-1$
+				System.out.println("=========================="); //$NON-NLS-1$
 				System.out.println("Total number of non-api tools components in current baseline :" + allNonApiBundles.size()); //$NON-NLS-1$
 				System.out.println("Details:"); //$NON-NLS-1$
 				Collections.sort(allNonApiBundles);
 				for (Iterator iterator = allNonApiBundles.iterator(); iterator.hasNext(); ) {
 					System.out.println(iterator.next());
 				}
-				System.out.println("=============================================================================="); //$NON-NLS-1$
+				System.out.println("=========================="); //$NON-NLS-1$
 				System.out.println("Total number of api tools components in current baseline that have errors :" + bundlesWithErrors.size()); //$NON-NLS-1$
 				System.out.println("Details:"); //$NON-NLS-1$
 				List names = new ArrayList();
@@ -491,7 +492,7 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 						System.out.println(errors[i]);
 					}
 				}
-				System.out.println("=============================================================================="); //$NON-NLS-1$
+				System.out.println("=========================="); //$NON-NLS-1$
 			}
 			IApiComponent[] baselineApiComponents = referenceBaseline.getApiComponents();
 			for (int i = 0, max = baselineApiComponents.length; i < max; i++) {

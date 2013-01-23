@@ -123,22 +123,22 @@ public class AnalysisReportConversionTask extends Task {
 				currentSkippedBundle = attributes.getValue(IApiXmlConstants.ATTR_NAME);
 				currentSkippedBundleProblems.clear();
 				if (this.debug) {
-					System.out.println("Skipped bundle name : " + currentSkippedBundle); //$NON-NLS-1$
+					System.out.println("skipped bundle name : " + currentSkippedBundle); //$NON-NLS-1$
 				}
 			} else if (IApiXmlConstants.ELEMENT_RESOLVER_ERROR.equals(name)){
 				String error = attributes.getValue(IApiXmlConstants.ATTR_MESSAGE);
 				currentSkippedBundleProblems.add(error);
 				if (this.debug) {
-					System.out.println("Bundle skipped because : " + error); //$NON-NLS-1$
+					System.out.println("skipped bundle problem : " + error); //$NON-NLS-1$
 				}
-			}
-			if (!IApiXmlConstants.ELEMENT_PROBLEM_MESSAGE_ARGUMENTS.equals(name)
+			} else if (!IApiXmlConstants.ELEMENT_PROBLEM_MESSAGE_ARGUMENTS.equals(name)
 					&& !IApiXmlConstants.ELEMENT_PROBLEM_MESSAGE_ARGUMENT.equals(name)
 					&& !IApiXmlConstants.ELEMENT_API_PROBLEMS.equals(name)
 					&& !IApiXmlConstants.ELEMENT_PROBLEM_EXTRA_ARGUMENT.equals(name)
 					&& !IApiXmlConstants.ELEMENT_PROBLEM_EXTRA_ARGUMENTS.equals(name)) {
 				System.out.println("unknown element : " + String.valueOf(name)); //$NON-NLS-1$
 			}
+			
 		}
 		
 		public void endElement(String uri, String localName, String qName)
