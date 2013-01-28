@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -69,9 +69,12 @@ public class FilteredElements {
 	}
 	
 	public String toString() {
+		final String lineSeparator = System.getProperty("line.separator"); //$NON-NLS-1$
 		StringBuffer buffer = new StringBuffer();
-		printSet(buffer, this.exactMatches, "exact matches"); //$NON-NLS-1$
-		printSet(buffer, this.partialMatches, "partial matches"); //$NON-NLS-1$
+		buffer.append("==============================================================================").append(lineSeparator); //$NON-NLS-1$
+		printSet(buffer, this.exactMatches, "Exact matches:"); //$NON-NLS-1$
+		printSet(buffer, this.partialMatches, "Partial matches:"); //$NON-NLS-1$
+		buffer.append("==============================================================================").append(lineSeparator); //$NON-NLS-1$
 		return String.valueOf(buffer);
 	}
 	
@@ -79,8 +82,6 @@ public class FilteredElements {
 		final String lineSeparator = System.getProperty("line.separator"); //$NON-NLS-1$
 		buffer
 			.append(title)
-			.append(lineSeparator)
-			.append("================================================================") //$NON-NLS-1$
 			.append(lineSeparator);
 		if (set != null) {
 			final int max = set.size();
@@ -92,9 +93,6 @@ public class FilteredElements {
 			}
 			buffer.append(lineSeparator);
 		}
-		buffer
-			.append("================================================================") //$NON-NLS-1$
-			.append(lineSeparator);
 	}
 	
 	public boolean isEmpty(){

@@ -60,6 +60,7 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 		List apiBundleVersionProblems = new ArrayList();
 		List apiCompatibilityProblems = new ArrayList();
 		List apiUsageProblems = new ArrayList();
+		List otherProblems = new ArrayList();
 		String componentID;
 
 		public Summary(String componentID, IApiProblem[] apiProblems) {
@@ -75,77 +76,66 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 						break;
 					case IApiProblem.CATEGORY_VERSION :
 						apiBundleVersionProblems.add(problem);
+						break;
+					default:
+						otherProblems.add(problem);
+						break;
 				}
 			}
 		}
-		private void dumpProblems(String title, List problemsList,
-				PrintWriter printWriter) {
-			printWriter.println(title);
-			if (problemsList.size() != 0) {
-				for (Iterator iterator = problemsList.iterator(); iterator.hasNext(); ) {
-					IApiProblem problem = (IApiProblem) iterator.next();
-					printWriter.println(problem.getMessage());
-				}
-			} else {
-				printWriter.println("None"); //$NON-NLS-1$
-			}
+		public String toString() {
+			return getDetails();
 		}
 		public String getDetails() {
 			StringWriter writer = new StringWriter();
 			PrintWriter printWriter = new PrintWriter(writer);
 
 			printWriter.println("=================================================================================="); //$NON-NLS-1$
-			printWriter.println("Details for " + this.componentID + ":"); //$NON-NLS-1$//$NON-NLS-2$
-			printWriter.println("=================================================================================="); //$NON-NLS-1$
-			dumpProblems("Usage", apiUsageProblems, printWriter); //$NON-NLS-1$
-			dumpProblems("Compatibility", apiCompatibilityProblems, printWriter); //$NON-NLS-1$
-			dumpProblems("Bundle versions", apiBundleVersionProblems, printWriter); //$NON-NLS-1$
-			printWriter.println("=================================================================================="); //$NON-NLS-1$
-			printWriter.flush();
-			printWriter.close();
-			return String.valueOf(writer.getBuffer());
-		}
-		public String getTitle() {
-			StringWriter writer = new StringWriter();
-			PrintWriter printWriter = new PrintWriter(writer);
 			printTitle(printWriter);
-
+			printWriter.println("=================================================================================="); //$NON-NLS-1$
+			dumpProblems("Usage:", apiUsageProblems, printWriter); //$NON-NLS-1$
+			dumpProblems("Compatibility:", apiCompatibilityProblems, printWriter); //$NON-NLS-1$
+			dumpProblems("Bundle Versions:", apiBundleVersionProblems, printWriter); //$NON-NLS-1$
+			dumpProblems("Other Problems:", otherProblems, printWriter); //$NON-NLS-1$
+			printWriter.println("=================================================================================="); //$NON-NLS-1$
 			printWriter.flush();
 			printWriter.close();
 			return String.valueOf(writer.getBuffer());
 		}
 		private void printTitle(PrintWriter printWriter) {
-			printWriter.print("Results for " + this.componentID + " : "); //$NON-NLS-1$ //$NON-NLS-2$
-			printWriter.print('(');
-			printWriter.print("total: "); //$NON-NLS-1$
+			printWriter.print(this.componentID + " : "); //$NON-NLS-1$
+			printWriter.print("Total: "); //$NON-NLS-1$
 			printWriter.print(
 					  apiUsageProblems.size()
 					+ apiBundleVersionProblems.size()
-					+ apiCompatibilityProblems.size());
-			printWriter.print(',');
-			printWriter.print("usage: "); //$NON-NLS-1$
+					+ apiCompatibilityProblems.size()
+					+ otherProblems.size());
+			printWriter.print(" (Usage: "); //$NON-NLS-1$
 			printWriter.print(apiUsageProblems.size());
-			printWriter.print(',');
-			printWriter.print("compatibility: "); //$NON-NLS-1$
+			printWriter.print(", Compatibility: "); //$NON-NLS-1$
 			printWriter.print(apiCompatibilityProblems.size());
-			printWriter.print(',');
-			printWriter.print("bundle version: "); //$NON-NLS-1$
+			printWriter.print(", Bundle version: "); //$NON-NLS-1$
 			printWriter.print(apiBundleVersionProblems.size());
-			printWriter.println(')');
+			printWriter.print(", Other: "); //$NON-NLS-1$
+			printWriter.print(otherProblems.size());
+			printWriter.print(')');
+			printWriter.println();
 		}
-		public String toString() {
-			StringWriter writer = new StringWriter();
-			PrintWriter printWriter = new PrintWriter(writer);
-			printTitle(printWriter);
-
-			dumpProblems("Usage", apiUsageProblems, printWriter); //$NON-NLS-1$
-			dumpProblems("Compatibility", apiCompatibilityProblems, printWriter); //$NON-NLS-1$
-			dumpProblems("Bundle versions", apiBundleVersionProblems, printWriter); //$NON-NLS-1$
-
-			printWriter.flush();
-			printWriter.close();
-			return String.valueOf(writer.getBuffer());
+		private void dumpProblems(String title, List problemsList,
+				PrintWriter printWriter) {
+			if (problemsList.isEmpty()){
+				return;
+			}
+			printWriter.println(title);
+			for (Iterator iterator = problemsList.iterator(); iterator.hasNext(); ) {
+				IApiProblem problem = (IApiProblem) iterator.next();
+				printWriter.println(problem.getMessage());
+			}
 		}
+		
+		
+		
+		
 	}
 	/**
 	 * Stores integer counts for types of problems reported
@@ -196,9 +186,6 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 			Map.Entry entry = (Map.Entry) iterator.next();
 			summaries[i++] = createProblemSummary((String) entry.getKey(), (IApiProblem[]) entry.getValue());
 		}
-		if (this.debug) {
-			dumpSummaries(summaries);
-		}
 		return summaries;
 	}
 	private Summary createProblemSummary(String componentID, IApiProblem[] apiProblems) {
@@ -210,16 +197,16 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 			Summary summary = summaries[i];
 			String contents = null;
 			String componentID = summary.componentID;
-			if (this.excludedElements != null
-					&& (this.excludedElements.containsExactMatch(componentID)
-						|| this.excludedElements.containsPartialMatch(componentID))) {
+			
+			// Filtering should be done during analysis to save time, but filter results anyways
+			if (isFiltered(componentID)){
 				continue;
 			}
-			if (this.includedElements != null && !this.includedElements.isEmpty()
-					&& !(this.includedElements.containsExactMatch(componentID)
-						|| this.includedElements.containsPartialMatch(componentID))) {
-				continue;
+			
+			if (this.debug) {
+				System.out.println(summary.getDetails());
 			}
+			
 			try {
 				Document document = Util.newDocument();
 				Element report = document.createElement(IApiXmlConstants.ELEMENT_API_TOOL_REPORT);
@@ -268,8 +255,7 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 				if (nonAPIBundleNames != null){
 					for (Iterator iterator = nonAPIBundleNames.iterator(); iterator.hasNext();) {
 						String bundleName = (String) iterator.next();
-						if (this.excludedElements == null || !this.excludedElements.containsPartialMatch(bundleName)
-								&& (this.includedElements == null || this.includedElements.isEmpty() || this.includedElements.containsPartialMatch(bundleName))) {
+						if (!isFiltered(bundleName)){
 							Element bundle = document.createElement(IApiXmlConstants.ELEMENT_BUNDLE);
 							bundle.setAttribute(IApiXmlConstants.ATTR_NAME, bundleName);
 							report.appendChild(bundle);
@@ -280,8 +266,7 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 				if (bundlesWithErrors != null){
 					for (Iterator iterator = bundlesWithErrors.keySet().iterator(); iterator.hasNext();) {
 						String bundleName = (String) iterator.next();
-						if (this.excludedElements == null || !this.excludedElements.containsPartialMatch(bundleName)
-								&& (this.includedElements == null || this.includedElements.isEmpty() || this.includedElements.containsPartialMatch(bundleName))) {
+						if (!isFiltered(bundleName)){
 							Element bundle = document.createElement(IApiXmlConstants.ELEMENT_BUNDLE);
 							bundle.setAttribute(IApiXmlConstants.ATTR_NAME, bundleName);
 							ResolverError[] errors = (ResolverError[])bundlesWithErrors.get(bundleName);
@@ -324,14 +309,6 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 		}
 		if (contents != null) {
 			saveReport(null, contents, "counts.xml"); //$NON-NLS-1$
-		}
-	}
-	private void dumpSummaries(Summary[] summaries) {
-		for (int i = 0, max = summaries.length; i < max; i++) {
-			System.out.println(summaries[i].getTitle());
-		}
-		for (int i = 0, max = summaries.length; i < max; i++) {
-			System.out.println(summaries[i].getDetails());
 		}
 	}
 	/**
@@ -426,6 +403,10 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 				IApiComponent apiComponent = apiComponents[i];
 				String name = apiComponent.getSymbolicName();
 				visitedApiComponentNames.add(name);
+				
+				if (isFiltered(name)){
+					continue;
+				}
 				if (apiComponent.isSystemComponent()) {
 					continue;
 				}
@@ -455,6 +436,8 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 					problems = removeDuplicates(problems);
 					if (problems.length != 0) {
 						allProblems.put(name, problems);
+					} else if (this.debug){
+						System.out.println(name + " has no problems"); //$NON-NLS-1$
 					}
 				} catch(RuntimeException e) {
 					ApiPlugin.log(e);
@@ -464,6 +447,7 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 				}
 			}
 			if (debug) {
+				System.out.println("=========================="); //$NON-NLS-1$
 				System.out.println("Total number of components in current baseline :" + length); //$NON-NLS-1$
 				System.out.println("=========================="); //$NON-NLS-1$
 				System.out.println("Total number of api tools components in current baseline :" + allApiBundles.size()); //$NON-NLS-1$
@@ -495,32 +479,37 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 				}
 				System.out.println("=========================="); //$NON-NLS-1$
 			}
+			
+			// Check if any components have been removed from the baseline
 			IApiComponent[] baselineApiComponents = referenceBaseline.getApiComponents();
 			for (int i = 0, max = baselineApiComponents.length; i < max; i++) {
 				IApiComponent apiComponent = baselineApiComponents[i];
 				String id = apiComponent.getSymbolicName();
 				if (!visitedApiComponentNames.remove(id)) {
-					//remove component in the current baseline
-					IApiProblem problem = ApiProblemFactory.newApiProblem(id,
-							null,
-							new String[] { id },
-							new String[] {
-								IApiMarkerConstants.MARKER_ATTR_HANDLE_ID,
-								IApiMarkerConstants.API_MARKER_ATTR_ID
-							},
-							new Object[] {
-								id,
-								new Integer(IApiMarkerConstants.COMPATIBILITY_MARKER_ID),
-							},
-							0,
-							-1,
-							-1,
-							IApiProblem.CATEGORY_COMPATIBILITY,
-							IDelta.API_BASELINE_ELEMENT_TYPE,
-							IDelta.REMOVED,
-							IDelta.API_COMPONENT);
-					allProblems.put(id, new IApiProblem[] { problem });
+					// A component has been removed.  Apply any include/exclude filters
+					if (!isFiltered(id)){
+						IApiProblem problem = ApiProblemFactory.newApiProblem(id,
+								null,
+								new String[] { id },
+								new String[] {
+									IApiMarkerConstants.MARKER_ATTR_HANDLE_ID,
+									IApiMarkerConstants.API_MARKER_ATTR_ID
+								},
+								new Object[] {
+									id,
+									new Integer(IApiMarkerConstants.COMPATIBILITY_MARKER_ID),
+								},
+								0,
+								-1,
+								-1,
+								IApiProblem.CATEGORY_COMPATIBILITY,
+								IDelta.API_BASELINE_ELEMENT_TYPE,
+								IDelta.REMOVED,
+								IDelta.API_COMPONENT);
+						allProblems.put(id, new IApiProblem[] { problem });
+					}
 				}
+					
 			}
 		} finally {
 			if (this.debug) {
@@ -536,8 +525,8 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 				System.out.println("Cleanup : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
-		Summary[] summaries = createAllSummaries(allProblems);
 
+		Summary[] summaries = createAllSummaries(allProblems);
 		try {
 			dumpReport(summaries, allNonApiBundles, bundlesWithErrors);
 		} catch(RuntimeException e) {
@@ -545,6 +534,31 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 			throw e;
 		}
 	}
+	
+	/**
+	 * Returns <code>true</code if the given component should be filtered from 
+	 * results of this task.  This may be because the name is a match or partial
+	 * match to the exlude list or the name is not a match to the include list.
+	 * If no include or exclude list is provided, no filtering is done and 
+	 * <code>false</code> is returned.
+	 * 
+	 * @param componentID name of the api component (symbolic name of a bundle)
+	 * @return whether the given component should be filtered out of results 
+	 */
+	private boolean isFiltered(String componentID){
+		if (this.excludedElements != null
+				&& (this.excludedElements.containsExactMatch(componentID)
+					|| this.excludedElements.containsPartialMatch(componentID))) {
+			return true;
+		}
+		if (this.includedElements != null && !this.includedElements.isEmpty()
+				&& !(this.includedElements.containsExactMatch(componentID)
+					|| this.includedElements.containsPartialMatch(componentID))) {
+			return true;
+		}
+		return false;
+	}
+	
 	private IApiProblem[] removeDuplicates(IApiProblem[] problems) {
 		int length = problems.length;
 		if (length <= 1) return problems;

@@ -215,13 +215,14 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 								}
 						));
 				}
+				// TODO Remove this check?
 				if (buffer != null) {
 					// API component has errors that should be reported
 					createApiComponentResolutionProblem(component, String.valueOf(buffer));
 					if (baseline == null) {
 						checkDefaultBaselineSet();
 					}
-					return;
+//					return;
 				}
 			}
 			IBuildContext bcontext = context;

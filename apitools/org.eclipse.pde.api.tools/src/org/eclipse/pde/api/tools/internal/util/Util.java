@@ -2337,9 +2337,6 @@ public final class Util {
 				String componentid = null;
 				for (int j = 0, max2 = components.length; j < max2; j++) {
 					componentid = components[j].getSymbolicName();
-					if (debug) {
-						System.out.println("component id : " + componentid); //$NON-NLS-1$
-					}
 					if (pattern.matcher(componentid).matches()) {
 						if (debug) {
 							System.out.println(componentid + " matched the pattern " + componentname); //$NON-NLS-1$
