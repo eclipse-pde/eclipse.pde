@@ -436,8 +436,9 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 				
 				// If the component has resolver errors the results may not be accurate
 				try {
-					if (apiComponent.getErrors().length > 0){
-						bundlesWithErrors.put(name, apiComponent.getErrors());
+					ResolverError[] errors = apiComponent.getErrors();
+					if (errors != null && errors.length > 0){
+						bundlesWithErrors.put(name, errors);
 						continue;
 					}
 				} catch (CoreException e){
