@@ -63,7 +63,7 @@ public class ApiToolingApiuseAntTaskTests extends AntRunnerTestCase {
 		for (int index = 0; index < elems.getLength(); ++index) {
 			String value = elems.item(index).getAttributes().getNamedItem("id").getNodeValue();
 			boolean pass = false;
-			if (value.startsWith("org.eclipse.osgi"))
+			if (value.startsWith("org.eclipse.osgi") || value.contains("illegaluse"))
 				pass = true;
 			assertTrue(value + " should have been filtered out.", pass);
 		}
