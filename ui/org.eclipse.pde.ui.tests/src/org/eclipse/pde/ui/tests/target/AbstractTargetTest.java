@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
-import org.eclipse.pde.core.target.*;
-
 import java.io.*;
 import java.net.URL;
 import java.util.*;
@@ -21,6 +19,7 @@ import junit.framework.TestCase;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.frameworkadmin.BundleInfo;
 import org.eclipse.pde.core.plugin.TargetPlatform;
+import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.internal.ui.tests.macro.MacroPlugin;
 import org.osgi.framework.ServiceReference;
 
@@ -71,7 +70,7 @@ public abstract class AbstractTargetTest extends TestCase {
 	 */
 	protected IPath extractLinkedPlugins() throws Exception {
 		IPath stateLocation = MacroPlugin.getDefault().getStateLocation();
-		IPath location = stateLocation.append("linked/eclipse/plugins");
+		IPath location = stateLocation.append("abcde/linked/eclipse/plugins");
 		if (location.toFile().exists()) {
 			// recursively delete
 			File dir = location.toFile();
@@ -90,7 +89,7 @@ public abstract class AbstractTargetTest extends TestCase {
 	protected IPath extractClassicPlugins() throws Exception {
 		// extract the 3.0.2 skeleton
 		IPath stateLocation = MacroPlugin.getDefault().getStateLocation();
-		IPath location = stateLocation.append("eclipse");
+		IPath location = stateLocation.append("classic/eclipse");
 		if (location.toFile().exists()) {
 			return location.append("plugins");
 		}
