@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,6 +49,8 @@ public class GeneratorApplication extends AbstractPublisherApplication {
 				if (product != null) {
 					actions.add(new RootFileParentAction(product, flavor));
 					actions.add(new EquinoxLauncherCUAction(flavor, info.getConfigurations()));
+					// We depend on the product action to remove entries that have no version advice (Bug 398066)
+					// Entries may have no version advice if they are for a different environment (no delta pack)
 					actions.add(new ProductAction(source, product, flavor, null));
 				} else if (rootId != null) {
 					info.addAdvice(new RootIUResultFilterAdvice(null));
