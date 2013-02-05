@@ -60,7 +60,6 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 		List apiBundleVersionProblems = new ArrayList();
 		List apiCompatibilityProblems = new ArrayList();
 		List apiUsageProblems = new ArrayList();
-		List otherProblems = new ArrayList();
 		String componentID;
 
 		public Summary(String componentID, IApiProblem[] apiProblems) {
@@ -78,7 +77,6 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 						apiBundleVersionProblems.add(problem);
 						break;
 					default:
-						otherProblems.add(problem);
 						break;
 				}
 			}
@@ -96,7 +94,6 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 			dumpProblems("Usage:", apiUsageProblems, printWriter); //$NON-NLS-1$
 			dumpProblems("Compatibility:", apiCompatibilityProblems, printWriter); //$NON-NLS-1$
 			dumpProblems("Bundle Versions:", apiBundleVersionProblems, printWriter); //$NON-NLS-1$
-			dumpProblems("Other Problems:", otherProblems, printWriter); //$NON-NLS-1$
 			printWriter.println("=================================================================================="); //$NON-NLS-1$
 			printWriter.flush();
 			printWriter.close();
@@ -108,16 +105,13 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 			printWriter.print(
 					  apiUsageProblems.size()
 					+ apiBundleVersionProblems.size()
-					+ apiCompatibilityProblems.size()
-					+ otherProblems.size());
+					+ apiCompatibilityProblems.size());
 			printWriter.print(" (Usage: "); //$NON-NLS-1$
 			printWriter.print(apiUsageProblems.size());
 			printWriter.print(", Compatibility: "); //$NON-NLS-1$
 			printWriter.print(apiCompatibilityProblems.size());
 			printWriter.print(", Bundle version: "); //$NON-NLS-1$
 			printWriter.print(apiBundleVersionProblems.size());
-			printWriter.print(", Other: "); //$NON-NLS-1$
-			printWriter.print(otherProblems.size());
 			printWriter.print(')');
 			printWriter.println();
 		}
@@ -132,11 +126,8 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 				printWriter.println(problem.getMessage());
 			}
 		}
-		
-		
-		
-		
 	}
+	
 	/**
 	 * Stores integer counts for types of problems reported
 	 */
@@ -156,6 +147,7 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 	}
 	public static final String BUNDLE_VERSION = "bundleVersion"; //$NON-NLS-1$
 	public static final String COMPATIBILITY = "compatibility"; //$NON-NLS-1$
+	public static final String COMPONENT_RESOLUTION = "componentResolution"; //$NON-NLS-1$
 	
 	private static final Summary[] NO_SUMMARIES = new Summary[0];
 	public static final String USAGE = "usage"; //$NON-NLS-1$
@@ -231,6 +223,19 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 				category.setAttribute(IApiXmlConstants.ATTR_VALUE, BUNDLE_VERSION);
 				insertAPIProblems(category, document, summary.apiBundleVersionProblems, counter);
 				report.appendChild(category);
+				
+				if (bundlesWithErrors != null && bundlesWithErrors.containsKey(componentID)){
+					category = document.createElement(IApiXmlConstants.ATTR_CATEGORY);
+					category.setAttribute(IApiXmlConstants.ATTR_KEY, Integer.toString(IApiProblem.CATEGORY_API_COMPONENT_RESOLUTION));
+					category.setAttribute(IApiXmlConstants.ATTR_VALUE, COMPONENT_RESOLUTION);
+					ResolverError[] errors = (ResolverError[])bundlesWithErrors.get(componentID);
+					for (int j = 0; j < errors.length; j++) {
+						Element error = document.createElement(IApiXmlConstants.ELEMENT_RESOLVER_ERROR);
+						error.setAttribute(IApiXmlConstants.ATTR_MESSAGE, errors[j].toString());
+						category.appendChild(error);
+					}
+					report.appendChild(category);
+				}
 
 				contents = Util.serializeDocument(document);
 			} catch (DOMException e) {
@@ -243,8 +248,8 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 			}
 		}
 		
-		// Write out a list of components skipped because they aren't API Tools enabled or because they had resolver errors
-		if ((nonAPIBundleNames != null && nonAPIBundleNames.size() != 0) || (bundlesWithErrors != null && !bundlesWithErrors.isEmpty())) {
+		// Write out a list of components skipped because they aren't API Tools enabled
+		if (nonAPIBundleNames != null && nonAPIBundleNames.size() != 0) {
 			String contents = null;
 			try {
 				Document document = Util.newDocument();
@@ -252,35 +257,14 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 				report.setAttribute(IApiXmlConstants.ATTR_VERSION, IApiXmlConstants.API_REPORT_CURRENT_VERSION);
 				document.appendChild(report);
 				
-				if (nonAPIBundleNames != null){
-					for (Iterator iterator = nonAPIBundleNames.iterator(); iterator.hasNext();) {
-						String bundleName = (String) iterator.next();
-						if (!isFiltered(bundleName)){
-							Element bundle = document.createElement(IApiXmlConstants.ELEMENT_BUNDLE);
-							bundle.setAttribute(IApiXmlConstants.ATTR_NAME, bundleName);
-							report.appendChild(bundle);
-						}
+				for (Iterator iterator = nonAPIBundleNames.iterator(); iterator.hasNext();) {
+					String bundleName = (String) iterator.next();
+					if (!isFiltered(bundleName)){
+						Element bundle = document.createElement(IApiXmlConstants.ELEMENT_BUNDLE);
+						bundle.setAttribute(IApiXmlConstants.ATTR_NAME, bundleName);
+						report.appendChild(bundle);
 					}
 				}
-				
-				if (bundlesWithErrors != null){
-					for (Iterator iterator = bundlesWithErrors.keySet().iterator(); iterator.hasNext();) {
-						String bundleName = (String) iterator.next();
-						if (!isFiltered(bundleName)){
-							Element bundle = document.createElement(IApiXmlConstants.ELEMENT_BUNDLE);
-							bundle.setAttribute(IApiXmlConstants.ATTR_NAME, bundleName);
-							ResolverError[] errors = (ResolverError[])bundlesWithErrors.get(bundleName);
-							for (int i = 0; i < errors.length; i++) {
-								Element error = document.createElement(IApiXmlConstants.ELEMENT_RESOLVER_ERROR);
-								error.setAttribute(IApiXmlConstants.ATTR_MESSAGE, errors[i].toString());
-								bundle.appendChild(error);
-							}
-							report.appendChild(bundle);
-						}
-					}
-				}
-					
-					
 				contents = Util.serializeDocument(document);
 			} catch (DOMException e) {
 				throw new BuildException(e);
@@ -415,12 +399,11 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 					continue;
 				}
 				
-				// If the component has resolver errors the results may not be accurate
+				// If the component has resolver errors the results may not be accurate, store problems in other category
 				try {
-					ResolverError[] errors = apiComponent.getErrors();
-					if (errors != null && errors.length > 0){
-						bundlesWithErrors.put(name, errors);
-						continue;
+					ResolverError[] resolverErrors = apiComponent.getErrors();
+					if (resolverErrors != null && resolverErrors.length > 0){
+						bundlesWithErrors.put(name, apiComponent.getErrors());
 					}
 				} catch (CoreException e){
 					ApiPlugin.log(e.getStatus());
@@ -464,7 +447,7 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 					System.out.println(iterator.next());
 				}
 				System.out.println("=========================="); //$NON-NLS-1$
-				System.out.println("Total number of api tools components in current baseline that have errors :" + bundlesWithErrors.size()); //$NON-NLS-1$
+				System.out.println("Total number of components with resolver errors :" + bundlesWithErrors.size()); //$NON-NLS-1$
 				System.out.println("Details:"); //$NON-NLS-1$
 				List names = new ArrayList();
 				names.addAll(bundlesWithErrors.keySet());

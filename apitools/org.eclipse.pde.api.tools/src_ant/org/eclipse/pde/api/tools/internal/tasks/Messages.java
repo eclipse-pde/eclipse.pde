@@ -55,6 +55,9 @@ public class Messages extends NLS {
 	public static String fullReportTask_indexfooter;
 	public static String fullReportTask_indexsummary_even;
 	public static String fullReportTask_indexsummary_odd;
+	public static String fullReportTask_resolutionsummary_even;
+	public static String fullReportTask_resolutionsummary_odd;
+	public static String fullReportTask_resolutiondetails;
 	
 	public static String missing_xml_files_location;
 	public static String invalid_directory_name;
@@ -98,9 +101,7 @@ public class Messages extends NLS {
 	
 	public static String AddedElement;
 
-	public static String AnalysisReportConversionTask_BundleErrorNewline;
-
-	public static String AnalysisReportConversionTask_NotSetupForAPIAnalysis;
+	public static String AnalysisReportConversionTask_component_resolution_header;
 	public static String RemovedElement;
 	public static String ChangedElement;
 

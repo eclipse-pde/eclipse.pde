@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -87,9 +86,6 @@ public class AnalysisReportConversionTask extends Task {
 		boolean debug;
 		Report report;
 
-		String currentSkippedBundle;
-		List currentSkippedBundleProblems = new ArrayList();
-
 		public ConverterDefaultHandler(boolean debug) {
 			this.debug = debug;
 		}
@@ -119,64 +115,44 @@ public class AnalysisReportConversionTask extends Task {
 					System.out.println("problem severity : " + severity); //$NON-NLS-1$
 				}
 				this.report.addProblem(this.category, new Problem(message, severity));
+			} else if (IApiXmlConstants.ELEMENT_RESOLVER_ERROR.equals(name)) {
+				String message = attributes.getValue(IApiXmlConstants.ATTR_MESSAGE);
+				if (this.debug) {
+					System.out.println("Resolver error : " + message); //$NON-NLS-1$
+				}
+				this.report.addProblem(this.category, new Problem(message, ApiPlugin.SEVERITY_WARNING));
 			} else if (IApiXmlConstants.ELEMENT_BUNDLE.equals(name)) {
-				currentSkippedBundle = attributes.getValue(IApiXmlConstants.ATTR_NAME);
-				currentSkippedBundleProblems.clear();
+				String bundleName = attributes.getValue(IApiXmlConstants.ATTR_NAME);
 				if (this.debug) {
-					System.out.println("skipped bundle name : " + currentSkippedBundle); //$NON-NLS-1$
+					System.out.println("bundle name : " + bundleName); //$NON-NLS-1$
 				}
-			} else if (IApiXmlConstants.ELEMENT_RESOLVER_ERROR.equals(name)){
-				String error = attributes.getValue(IApiXmlConstants.ATTR_MESSAGE);
-				currentSkippedBundleProblems.add(error);
-				if (this.debug) {
-					System.out.println("skipped bundle problem : " + error); //$NON-NLS-1$
+				this.report.addNonApiBundles(bundleName);
+			} else if (this.debug) {
+				if (!IApiXmlConstants.ELEMENT_PROBLEM_MESSAGE_ARGUMENTS.equals(name)
+						&& !IApiXmlConstants.ELEMENT_PROBLEM_MESSAGE_ARGUMENT.equals(name)
+						&& !IApiXmlConstants.ELEMENT_API_PROBLEMS.equals(name)
+						&& !IApiXmlConstants.ELEMENT_PROBLEM_EXTRA_ARGUMENT.equals(name)
+						&& !IApiXmlConstants.ELEMENT_PROBLEM_EXTRA_ARGUMENTS.equals(name)) {
+					System.out.println("unknown element : " + String.valueOf(name)); //$NON-NLS-1$
 				}
-			} else if (!IApiXmlConstants.ELEMENT_PROBLEM_MESSAGE_ARGUMENTS.equals(name)
-					&& !IApiXmlConstants.ELEMENT_PROBLEM_MESSAGE_ARGUMENT.equals(name)
-					&& !IApiXmlConstants.ELEMENT_API_PROBLEMS.equals(name)
-					&& !IApiXmlConstants.ELEMENT_PROBLEM_EXTRA_ARGUMENT.equals(name)
-					&& !IApiXmlConstants.ELEMENT_PROBLEM_EXTRA_ARGUMENTS.equals(name)) {
-				System.out.println("unknown element : " + String.valueOf(name)); //$NON-NLS-1$
-			}
-			
-		}
-		
-		public void endElement(String uri, String localName, String qName)
-				throws SAXException {
-			if (IApiXmlConstants.ELEMENT_BUNDLE.equals(qName)) {
-				String[] errors = null;
-				if (!currentSkippedBundleProblems.isEmpty()){
-					errors = (String[])currentSkippedBundleProblems.toArray(new String[currentSkippedBundleProblems.size()]);
-				}
-				this.report.addSkippedBundle(currentSkippedBundle, errors);
-				currentSkippedBundle = null;
-				currentSkippedBundleProblems.clear();
 			}
 		}
-		
 	}
 	static private final class Report {
 		String componentID;
 		String link;
-		Map skippedBundles;
+		List nonApiBundles;
 		Map problemsPerCategories;
 
 		Report(String componentID) {
 			this.componentID = componentID;
 		}
 
-		/**
-		 * Adds an entry for a skipped bundle, if null is provided as the problems
-		 * it is assumed that the bundle was skipped because it isn't an API bundle.
-		 * 
-		 * @param bundleName name of the bundle
-		 * @param problems one or more problem messages prevent this bundle from being analyzed, can be <code>null</code> if bundle wasn't API tools enabled
-		 */
-		public void addSkippedBundle(String bundleName, String[] problems) {
-			if (this.skippedBundles == null) {
-				this.skippedBundles = new HashMap();
+		public void addNonApiBundles(String bundleName) {
+			if (this.nonApiBundles == null) {
+				this.nonApiBundles = new ArrayList();
 			}
-			this.skippedBundles.put(bundleName, problems);
+			this.nonApiBundles.add(bundleName);
 		}
 		
 		public void addProblem(String category, Problem problem) {
@@ -191,14 +167,13 @@ public class AnalysisReportConversionTask extends Task {
 			problemsList.add(problem);
 		}
 
-		/**
-		 * @return map of string bundle name to String[] problem messages or <code>null</code> if bundle was skipped because it isn't API Tools enabled
-		 */
-		public Map getSkippedBundles() {
-			if (this.skippedBundles == null || this.skippedBundles.size() == 0) {
-				return new HashMap(0);
+		public String[] getNonApiBundles() {
+			if (this.nonApiBundles == null || this.nonApiBundles.size() == 0) {
+				return NO_NON_API_BUNDLES;
 			}
-			return skippedBundles;
+			String[] nonApiBundlesNames = new String[this.nonApiBundles.size()];
+			this.nonApiBundles.toArray(nonApiBundlesNames);
+			return nonApiBundlesNames;
 		}
 		
 		public Problem[] getProblems(String category) {
@@ -230,6 +205,7 @@ public class AnalysisReportConversionTask extends Task {
 		int apiUsageNumber;
 		int bundleVersionNumber;
 		int compatibilityNumber;
+		int componentResolutionNumber;
 		String componentID;
 		String link;
 		
@@ -238,22 +214,25 @@ public class AnalysisReportConversionTask extends Task {
 			this.apiUsageNumber = report.getProblemSize(APIToolsAnalysisTask.USAGE);
 			this.bundleVersionNumber = report.getProblemSize(APIToolsAnalysisTask.BUNDLE_VERSION);
 			this.compatibilityNumber = report.getProblemSize(APIToolsAnalysisTask.COMPATIBILITY);
+			this.componentResolutionNumber = report.getProblemSize(APIToolsAnalysisTask.COMPONENT_RESOLUTION);
 			this.componentID = report.componentID;
 			this.link = report.link;
 		}
 		
 		public String toString() {
-			return MessageFormat.format("{0} : compatibility {1}, api usage {2}, bundle version {3}, link {4}", //$NON-NLS-1$
+			return MessageFormat.format("{0} : compatibility {1}, api usage {2}, bundle version {3}, resolution {4}, link {5}", //$NON-NLS-1$
 					new String[] {
 						this.componentID,
 						Integer.toString(this.compatibilityNumber),
 						Integer.toString(this.apiUsageNumber),
 						Integer.toString(this.bundleVersionNumber),
+						Integer.toString(this.componentResolutionNumber),
 						this.link
 					});
 		}
 	}
 	static final Problem[] NO_PROBLEMS = new Problem[0];
+	static final String[] NO_NON_API_BUNDLES = new String[0];
 	boolean debug;
 
 	private String htmlReportsLocation;
@@ -271,6 +250,7 @@ public class AnalysisReportConversionTask extends Task {
 				new String[] {
 						report.componentID
 				}));
+		
 		// dump the summary
 		writer.println(
 			MessageFormat.format(
@@ -279,7 +259,17 @@ public class AnalysisReportConversionTask extends Task {
 					Integer.toString(report.getProblemSize(APIToolsAnalysisTask.COMPATIBILITY)),
 					Integer.toString(report.getProblemSize(APIToolsAnalysisTask.USAGE)),
 					Integer.toString(report.getProblemSize(APIToolsAnalysisTask.BUNDLE_VERSION)),
-				}));
+				})); 
+		
+		if (report.getProblemSize(APIToolsAnalysisTask.COMPONENT_RESOLUTION) > 0){
+			writer.println(
+					MessageFormat.format(
+						Messages.fullReportTask_resolutiondetails,
+						new String[] {
+							report.componentID,
+							Integer.toString(report.getProblemSize(APIToolsAnalysisTask.COMPONENT_RESOLUTION))
+						}));
+		}
 	}
 	private void dumpIndexEntry(int i, PrintWriter writer, Summary summary) {
 		if (debug) {
@@ -308,7 +298,27 @@ public class AnalysisReportConversionTask extends Task {
 						summary.link,
 					}));
 		}
+		if (summary.componentResolutionNumber > 0){
+			if ((i % 2) == 0) {
+				writer.println(
+					MessageFormat.format(
+						Messages.fullReportTask_resolutionsummary_even,
+						new String[] {
+							summary.componentID,
+							Integer.toString(summary.componentResolutionNumber)
+						}));
+			} else {
+				writer.println(
+					MessageFormat.format(
+						Messages.fullReportTask_resolutionsummary_odd,
+						new String[] {
+							summary.componentID,
+							Integer.toString(summary.componentResolutionNumber)
+						}));
+			}
+		}
 	}
+	
 	private void dumpIndexFile(File reportsRoot, Summary[] summaries, Summary allNonApiBundleSummary) {
 		File htmlFile = new File(this.htmlReportsLocation, "index.html"); //$NON-NLS-1$
 		PrintWriter writer = null;
@@ -352,32 +362,18 @@ public class AnalysisReportConversionTask extends Task {
 	}
 	private void dumpNonApiBundles(PrintWriter writer, Report report) {
 		writer.println(Messages.fullReportTask_bundlesheader);
-		Map nonApiBundleNames = report.getSkippedBundles();
-		int count = 0;
-		for (Iterator iterator = nonApiBundleNames.keySet().iterator(); iterator.hasNext();) {
-			StringBuffer result = new StringBuffer();
-			String bundleName = (String) iterator.next();
-			result.append(bundleName);
-			String[] bundleErrors = (String[]) nonApiBundleNames.get(bundleName);
-			if (bundleErrors == null){
-				result.append(Messages.AnalysisReportConversionTask_BundleErrorNewline);
-				result.append(Messages.AnalysisReportConversionTask_NotSetupForAPIAnalysis);
-			} else {
-				for (int i = 0; i < bundleErrors.length; i++) {
-					result.append(Messages.AnalysisReportConversionTask_BundleErrorNewline);
-					result.append(bundleErrors[i]);
-				}
-			}
-			if ((count % 2) == 0) {
-				writer.println(MessageFormat.format(Messages.fullReportTask_bundlesentry_even, new String[] { result.toString() }));
+		String[] nonApiBundleNames = report.getNonApiBundles();
+		for (int i = 0; i < nonApiBundleNames.length; i++) {
+			String bundleName = nonApiBundleNames[i];
+			if ((i % 2) == 0) {
+				writer.println(MessageFormat.format(Messages.fullReportTask_bundlesentry_even, new String[] { bundleName }));
 			} else { 
-				writer.println(MessageFormat.format(Messages.fullReportTask_bundlesentry_odd, new String[] { result.toString() }));
+				writer.println(MessageFormat.format(Messages.fullReportTask_bundlesentry_odd, new String[] { bundleName }));
 			}
-			count++;
 		}
 		writer.println(Messages.fullReportTask_bundlesfooter);
 	}
-	private void dumpProblems(PrintWriter writer, String categoryName, Problem[] problems) {
+	private void dumpProblems(PrintWriter writer, String categoryName, Problem[] problems, boolean printEmptyCategory) {
 		if (problems != null && problems.length != 0) {
 			writer.println(
 					MessageFormat.format(
@@ -392,6 +388,9 @@ public class AnalysisReportConversionTask extends Task {
 							break;
 						case ApiPlugin.SEVERITY_WARNING :
 							writer.println(MessageFormat.format(Messages.fullReportTask_problementry_even_warning, new String[] { problem.getHtmlMessage() }));
+							break;
+						default:
+							break;
 					}
 				} else { 
 					switch(problem.severity) {
@@ -400,11 +399,14 @@ public class AnalysisReportConversionTask extends Task {
 							break;
 						case ApiPlugin.SEVERITY_WARNING :
 							writer.println(MessageFormat.format(Messages.fullReportTask_problementry_odd_warning, new String[] { problem.getHtmlMessage() }));
+							break;
+						default:
+							break;
 					}
 				}
 			}
 			writer.println(Messages.fullReportTask_categoryfooter);
-		} else {
+		} else if (printEmptyCategory) {
 			writer.println(
 					MessageFormat.format(
 						Messages.fullReportTask_category_no_elements,
@@ -432,12 +434,10 @@ public class AnalysisReportConversionTask extends Task {
 				dumpNonApiBundles(writer, report);
 			} else {
 				dumpHeader(writer, report);
-				// generate compatibility category
-				dumpProblems(writer, Messages.fullReportTask_compatibility_header, report.getProblems(APIToolsAnalysisTask.COMPATIBILITY));
-				writer.println(Messages.fullReportTask_categoryseparator);
-				dumpProblems(writer, Messages.fullReportTask_api_usage_header, report.getProblems(APIToolsAnalysisTask.USAGE));
-				writer.println(Messages.fullReportTask_categoryseparator);
-				dumpProblems(writer, Messages.fullReportTask_bundle_version_header, report.getProblems(APIToolsAnalysisTask.BUNDLE_VERSION));
+				dumpProblems(writer, Messages.AnalysisReportConversionTask_component_resolution_header, report.getProblems(APIToolsAnalysisTask.COMPONENT_RESOLUTION), false);
+				dumpProblems(writer, Messages.fullReportTask_compatibility_header, report.getProblems(APIToolsAnalysisTask.COMPATIBILITY), true);
+				dumpProblems(writer, Messages.fullReportTask_api_usage_header, report.getProblems(APIToolsAnalysisTask.USAGE), true);
+				dumpProblems(writer, Messages.fullReportTask_bundle_version_header, report.getProblems(APIToolsAnalysisTask.BUNDLE_VERSION), true);
 				dumpFooter(writer);
 			}
 			writer.flush();
