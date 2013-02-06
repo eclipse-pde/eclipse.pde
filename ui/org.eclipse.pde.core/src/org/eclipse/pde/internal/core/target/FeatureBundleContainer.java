@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,8 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target;
-
-import org.eclipse.pde.core.target.NameVersionDescriptor;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -212,14 +210,25 @@ public class FeatureBundleContainer extends AbstractBundleContainer {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer#isContentEqual(org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer)
+	 * @see org.eclipse.pde.internal.core.target.AbstractBundleContainer#equals(java.lang.Object)
 	 */
-	public boolean isContentEqual(AbstractBundleContainer container) {
-		if (container instanceof FeatureBundleContainer) {
-			FeatureBundleContainer fbc = (FeatureBundleContainer) container;
+	public boolean equals(Object o) {
+		if (o instanceof FeatureBundleContainer) {
+			FeatureBundleContainer fbc = (FeatureBundleContainer) o;
 			return fHome.equals(fbc.fHome) && fId.equals(fbc.fId) && isNullOrEqual(fVersion, fVersion);
 		}
 		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.AbstractBundleContainer#hashCode()
+	 */
+	public int hashCode() {
+		int hash = fHome.hashCode() + fId.hashCode();
+		if (fVersion != null) {
+			hash += fVersion.hashCode();
+		}
+		return hash;
 	}
 
 	private boolean isNullOrEqual(Object o1, Object o2) {

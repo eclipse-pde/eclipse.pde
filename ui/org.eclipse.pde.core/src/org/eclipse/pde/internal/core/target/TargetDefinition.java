@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -797,9 +797,7 @@ public class TargetDefinition implements ITargetDefinition {
 		}
 		if (c1.length == c2.length) {
 			for (int i = 0; i < c2.length; i++) {
-				AbstractBundleContainer ac1 = (AbstractBundleContainer) c1[i];
-				AbstractBundleContainer ac2 = (AbstractBundleContainer) c2[i];
-				if (!ac1.isContentEqual(ac2)) {
+				if (!c1[i].equals(c2[i])) {
 					return false;
 				}
 			}

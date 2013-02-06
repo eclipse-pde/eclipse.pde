@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -112,14 +112,21 @@ public class DirectoryBundleContainer extends AbstractBundleContainer {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer#isContentEqual(org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer)
+	 * @see org.eclipse.pde.internal.core.target.AbstractBundleContainer#equals(java.lang.Object)
 	 */
-	public boolean isContentEqual(AbstractBundleContainer container) {
-		if (container instanceof DirectoryBundleContainer) {
-			DirectoryBundleContainer dbc = (DirectoryBundleContainer) container;
+	public boolean equals(Object o) {
+		if (o instanceof DirectoryBundleContainer) {
+			DirectoryBundleContainer dbc = (DirectoryBundleContainer) o;
 			return fPath.equals(dbc.fPath);
 		}
 		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.AbstractBundleContainer#hashCode()
+	 */
+	public int hashCode() {
+		return fPath.hashCode();
 	}
 
 	/* (non-Javadoc)

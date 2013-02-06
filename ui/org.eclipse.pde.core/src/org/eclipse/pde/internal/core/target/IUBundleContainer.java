@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -426,11 +426,11 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer#isContentEqual(org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer)
+	 * @see org.eclipse.pde.internal.core.target.AbstractBundleContainer#equals(java.lang.Object)
 	 */
-	public boolean isContentEqual(AbstractBundleContainer container) {
-		if (container instanceof IUBundleContainer) {
-			IUBundleContainer iuContainer = (IUBundleContainer) container;
+	public boolean equals(Object o) {
+		if (o instanceof IUBundleContainer) {
+			IUBundleContainer iuContainer = (IUBundleContainer) o;
 			boolean result = true;
 			result &= iuContainer.getIncludeAllRequired() == getIncludeAllRequired();
 			result &= iuContainer.getIncludeAllEnvironments() == getIncludeAllEnvironments();
@@ -439,6 +439,28 @@ public class IUBundleContainer extends AbstractBundleContainer {
 			return result && isEqualOrNull(fIds, iuContainer.fIds) && isEqualOrNull(fVersions, iuContainer.fVersions) && isEqualOrNull(fRepos, iuContainer.fRepos);
 		}
 		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.AbstractBundleContainer#hashCode()
+	 */
+	public int hashCode() {
+		boolean result = true;
+		result &= getIncludeAllRequired();
+		result &= getIncludeAllEnvironments();
+		result &= getIncludeSource();
+		result &= getIncludeConfigurePhase();
+		int hash = Boolean.valueOf(result).hashCode();
+		if (fIds != null) {
+			hash += fIds.hashCode();
+		}
+		if (fVersions != null) {
+			hash += fVersions.hashCode();
+		}
+		if (fRepos != null) {
+			hash += fRepos.hashCode();
+		}
+		return hash;
 	}
 
 	/**

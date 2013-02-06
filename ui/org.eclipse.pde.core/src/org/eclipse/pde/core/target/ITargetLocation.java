@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 IBM Corporation and others.
+ * Copyright (c) 2011, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,10 @@ import org.eclipse.core.runtime.*;
  * Clients are allowed to provide their own implementations. For the target definition
  * to be persisted correctly, clients must provide a factory through the 
  * <code>org.eclipse.pde.core.targetLocations</code> extension point.
+ * </p><p>
+ * It is recommended that implementors override {@link #equals(Object)} to return 
+ * <code>true</code> if the content of two containers are equal.  This allows PDE 
+ * to determine if two different target definitions have equivalent content.
  * </p><p>
  * To display an implementation in the PDE UI, clients may do the following:
  * </p><p>

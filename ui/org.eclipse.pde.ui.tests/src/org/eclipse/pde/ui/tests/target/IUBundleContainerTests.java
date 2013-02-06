@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -175,7 +175,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 	public void testContentEqualNonNull() throws Exception {
 		IUBundleContainer c1 = createContainer(new String[]{"bundle.a1", "bundle.a2"});
 		IUBundleContainer c2 = createContainer(new String[]{"bundle.a1", "bundle.a2"});
-		assertTrue("Contents should be equivalent", c1.isContentEqual(c2));
+		assertTrue("Contents should be equivalent", c1.equals(c2));
 	}
 	
 	/**
@@ -186,7 +186,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 	public void testContentNotEqualNonNull() throws Exception {
 		IUBundleContainer c1 = createContainer(new String[]{"bundle.a1", "bundle.a2"});
 		IUBundleContainer c2 = createContainer(new String[]{"bundle.b1", "bundle.b2"});
-		assertFalse("Contents should not be equivalent", c1.isContentEqual(c2));
+		assertFalse("Contents should not be equivalent", c1.equals(c2));
 	}	
 	
 	/**
@@ -198,7 +198,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 		ITargetPlatformService service = getTargetService();
 		IUBundleContainer c3 = (IUBundleContainer) service.newIULocation(new String[]{"bundle.a1", "bundle.a2"}, new String[]{"1.0.0", "1.0.0"}, null, 0);
 		IUBundleContainer c4 = (IUBundleContainer) service.newIULocation(new String[]{"bundle.a1", "bundle.a2"}, new String[]{"1.0.0", "1.0.0"}, null, 0);
-		assertTrue("Contents should be equivalent", c3.isContentEqual(c4));
+		assertTrue("Contents should be equivalent", c3.equals(c4));
 	}
 	
 	/**
@@ -210,7 +210,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 		ITargetPlatformService service = getTargetService();
 		IUBundleContainer c3 = (IUBundleContainer) service.newIULocation(new String[]{"bundle.a1", "bundle.a2"}, new String[]{"1.0.0", "1.0.0"}, null, 1);
 		IUBundleContainer c4 = (IUBundleContainer) service.newIULocation(new String[]{"bundle.b1", "bundle.b2"}, new String[]{"1.0.0", "1.0.0"}, null, 0);
-		assertFalse("Contents should not be equivalent", c3.isContentEqual(c4));
+		assertFalse("Contents should not be equivalent", c3.equals(c4));
 	}	
 	
 	/**
@@ -525,7 +525,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 		ITargetLocation[] locations = definition.getTargetLocations();
 		assertEquals(1, locations.length);
 		assertTrue(locations[0] instanceof IUBundleContainer);
-		assertTrue(((IUBundleContainer)locations[0]).isContentEqual(location));
+		assertTrue(((IUBundleContainer)locations[0]).equals(location));
 	}
 	
 	private void assertIncludeAllPlatform(String xml, boolean expectedValue) {

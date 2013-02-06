@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -195,7 +195,7 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 	 * @param container container to append
 	 * @param resolved whether to resolve the location
 	 */
-	private void appendLocation(StyledString styledString, AbstractBundleContainer container, boolean resolved) {
+	private void appendLocation(StyledString styledString, ITargetLocation container, boolean resolved) {
 		try {
 			String location = container.getLocation(resolved);
 			styledString.append(" - ", StyledString.DECORATIONS_STYLER); //$NON-NLS-1$

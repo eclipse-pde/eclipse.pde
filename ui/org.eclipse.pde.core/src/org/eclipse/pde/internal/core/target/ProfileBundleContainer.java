@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,8 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target;
-
-import org.eclipse.pde.core.target.TargetBundle;
 
 import java.io.*;
 import java.net.*;
@@ -129,7 +127,7 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 		if (source == null) {
 			source = new BundleInfo[0];
 		}
-		List/*<TargetBundle>*/<TargetBundle>all = new ArrayList/*<TargetBundle>*/<TargetBundle>();
+		List<TargetBundle> all = new ArrayList<TargetBundle>();
 		SubMonitor localMonitor = SubMonitor.convert(monitor, Messages.DirectoryBundleContainer_0, infos.length + source.length);
 		// Add executable bundles
 		for (int i = 0; i < infos.length; i++) {
@@ -244,14 +242,25 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer#isContentEqual(org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer)
+	 * @see org.eclipse.pde.internal.core.target.AbstractBundleContainer#equals(java.lang.Object)
 	 */
-	public boolean isContentEqual(AbstractBundleContainer container) {
-		if (container instanceof ProfileBundleContainer) {
-			ProfileBundleContainer pbc = (ProfileBundleContainer) container;
+	public boolean equals(Object o) {
+		if (o instanceof ProfileBundleContainer) {
+			ProfileBundleContainer pbc = (ProfileBundleContainer) o;
 			return fHome.equals(pbc.fHome) && isNullOrEqual(pbc.fConfiguration, fConfiguration);
 		}
 		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.AbstractBundleContainer#hashCode()
+	 */
+	public int hashCode() {
+		int hash = fHome.hashCode();
+		if (fConfiguration != null) {
+			hash += fConfiguration.hashCode();
+		}
+		return hash;
 	}
 
 	/**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -174,13 +174,19 @@ public abstract class AbstractBundleContainer extends PlatformObject implements 
 	 */
 	public abstract String getLocation(boolean resolve) throws CoreException;
 
-	/**
-	 * Returns whether this container has equivalent bundle content to the given container
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
 	 * 
-	 * @param container bundle container
-	 * @return whether content is equivalent
+	 * Abstract to force extenders to implement equals as equivalent content, see javadoc on ITargetLocation
 	 */
-	public abstract boolean isContentEqual(AbstractBundleContainer container);
+	public abstract boolean equals(Object o);
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 * 
+	 * Abstract to force extenders to implement hashCode because they are required to implement equals(Object o)
+	 */
+	abstract public int hashCode();
 
 	/**
 	 * Sets the resolution status to null.  This container will be considered unresolved.

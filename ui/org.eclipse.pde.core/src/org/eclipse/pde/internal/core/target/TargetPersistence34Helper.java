@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 IBM Corporation and others.
+ * Copyright (c) 2010, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,9 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target;
-
-import org.eclipse.pde.core.target.ITargetLocation;
-import org.eclipse.pde.core.target.NameVersionDescriptor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -89,7 +86,7 @@ public class TargetPersistence34Helper {
 			definition.setName(name);
 		}
 
-		AbstractBundleContainer oldStylePrimaryContainer = null;
+		ITargetLocation oldStylePrimaryContainer = null;
 		List<ITargetLocation> bundleContainers = new ArrayList<ITargetLocation>();
 		NodeList list = root.getChildNodes();
 		for (int i = 0; i < list.getLength(); ++i) {
@@ -99,7 +96,7 @@ public class TargetPersistence34Helper {
 				String nodeName = element.getNodeName();
 				if (nodeName.equalsIgnoreCase(TargetDefinitionPersistenceHelper.LOCATION)) {
 					// This is the 'home' location in old style target platforms
-					oldStylePrimaryContainer = (AbstractBundleContainer) deserializeBundleContainer(element);
+					oldStylePrimaryContainer = deserializeBundleContainer(element);
 				} else if (nodeName.equalsIgnoreCase(TargetDefinitionPersistenceHelper.CONTENT)) {
 					// Additional locations and other bundle content settings were stored under this tag in old style target platforms
 					// Only included if the content has useAllPlugins='true' otherwise we create bundle containers for the restrictions
@@ -226,7 +223,7 @@ public class TargetPersistence34Helper {
 	 * @param useAll whether all bundles in the locations should be considered vs. only those specified
 	 * @return list of bundle containers
 	 */
-	private static List<ITargetLocation> deserializeBundleContainersFromOldStyleElement(Element content, ITargetDefinition definition, AbstractBundleContainer primaryContainer, boolean useAll) throws CoreException {
+	private static List<ITargetLocation> deserializeBundleContainersFromOldStyleElement(Element content, ITargetDefinition definition, ITargetLocation primaryContainer, boolean useAll) throws CoreException {
 		List<ITargetLocation> containers = new ArrayList<ITargetLocation>();
 		NodeList list = content.getChildNodes();
 		List<NameVersionDescriptor> included = new ArrayList<NameVersionDescriptor>(list.getLength());

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,11 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
-
-import org.eclipse.pde.core.target.*;
-
-import org.eclipse.pde.internal.core.target.IUBundleContainer;
-
 
 import java.io.*;
 import java.net.*;
@@ -26,6 +21,7 @@ import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.pde.core.plugin.TargetPlatform;
+import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.internal.core.target.*;
 import org.eclipse.pde.internal.ui.tests.macro.MacroPlugin;
 import org.osgi.framework.ServiceReference;
@@ -66,7 +62,7 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 	 * @throws CoreException 
 	 */
 	protected String getResolvedLocation(ITargetLocation container) throws CoreException {
-		return ((AbstractBundleContainer)container).getLocation(true);
+		return container.getLocation(true);
 	}
 	
 	/**
@@ -604,12 +600,12 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 		ITargetDefinition target = readOldTarget("eclipse-serverside");
 		ITargetLocation[] containers = target.getTargetLocations();
 		assertEquals(6, containers.length);
-		validateTypeAndLocation((AbstractBundleContainer) containers[0], ProfileBundleContainer.class, "${resource_loc:/target-platforms/eclipse-equinox-SDK-3.5M5/eclipse}");
-		validateTypeAndLocation((AbstractBundleContainer) containers[1], DirectoryBundleContainer.class, "${resource_loc:/target-platforms/eclipse-3.5M5-delta-pack/eclipse}");
-		validateTypeAndLocation((AbstractBundleContainer) containers[2], DirectoryBundleContainer.class, "${resource_loc:/target-platforms/eclipse-pde-headless-3.5M5}");
-		validateTypeAndLocation((AbstractBundleContainer) containers[3], DirectoryBundleContainer.class, "${resource_loc:/target-platforms/eclipse-test-framework-3.5M5/eclipse}");
-		validateTypeAndLocation((AbstractBundleContainer) containers[4], DirectoryBundleContainer.class, "${resource_loc:/target-platforms/eclipse-core-plugins-3.5M5}");
-		validateTypeAndLocation((AbstractBundleContainer) containers[5], DirectoryBundleContainer.class, "${resource_loc:/target-platforms/3rdparty-bundles}");
+		validateTypeAndLocation(containers[0], ProfileBundleContainer.class, "${resource_loc:/target-platforms/eclipse-equinox-SDK-3.5M5/eclipse}");
+		validateTypeAndLocation(containers[1], DirectoryBundleContainer.class, "${resource_loc:/target-platforms/eclipse-3.5M5-delta-pack/eclipse}");
+		validateTypeAndLocation(containers[2], DirectoryBundleContainer.class, "${resource_loc:/target-platforms/eclipse-pde-headless-3.5M5}");
+		validateTypeAndLocation(containers[3], DirectoryBundleContainer.class, "${resource_loc:/target-platforms/eclipse-test-framework-3.5M5/eclipse}");
+		validateTypeAndLocation(containers[4], DirectoryBundleContainer.class, "${resource_loc:/target-platforms/eclipse-core-plugins-3.5M5}");
+		validateTypeAndLocation(containers[5], DirectoryBundleContainer.class, "${resource_loc:/target-platforms/3rdparty-bundles}");
 	}	
 	
 	/**
@@ -620,7 +616,7 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 	 * @param rawLocation its unresolved location
 	 * @throws CoreException if something goes wrong
 	 */
-	protected void validateTypeAndLocation(AbstractBundleContainer container, Class clazz, String rawLocation) throws CoreException {
+	protected void validateTypeAndLocation(ITargetLocation container, Class clazz, String rawLocation) throws CoreException {
 		assertTrue(clazz.isInstance(container));
 		assertEquals(rawLocation, container.getLocation(false));
 	}
