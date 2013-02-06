@@ -174,20 +174,6 @@ public abstract class AbstractBundleContainer extends PlatformObject implements 
 	 */
 	public abstract String getLocation(boolean resolve) throws CoreException;
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 * 
-	 * Abstract to force extenders to implement equals as equivalent content, see javadoc on ITargetLocation
-	 */
-	public abstract boolean equals(Object o);
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 * 
-	 * Abstract to force extenders to implement hashCode because they are required to implement equals(Object o)
-	 */
-	abstract public int hashCode();
-
 	/**
 	 * Sets the resolution status to null.  This container will be considered unresolved.
 	 */
