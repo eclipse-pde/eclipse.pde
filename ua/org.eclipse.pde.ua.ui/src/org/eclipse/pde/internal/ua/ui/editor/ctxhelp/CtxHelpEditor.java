@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,6 +30,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.core.IModel;
+import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.ua.core.ctxhelp.text.CtxHelpMarkerManager;
 import org.eclipse.pde.internal.ua.core.ctxhelp.text.CtxHelpModel;
 import org.eclipse.pde.internal.ua.core.ctxhelp.text.CtxHelpObject;
@@ -315,7 +316,7 @@ public class CtxHelpEditor extends MultiSourceEditor {
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#contributeToToolbar(org.eclipse.jface.action.IToolBarManager)
 	 */
 	public void contributeToToolbar(IToolBarManager manager) {
-		if (getAggregateModel().isEditable()) {
+		if (WorkspaceModelManager.isPluginProject(getCommonProject()) && getAggregateModel().isEditable()) {
 			manager.add(new ControlContribution("Register") { //$NON-NLS-1$
 						protected Control createControl(Composite parent) {
 							ImageHyperlink fImageHyperlinkRegisterTOC = new ImageHyperlink(parent, SWT.NONE);
