@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,6 +30,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.core.IModel;
+import org.eclipse.pde.internal.core.WorkspaceModelManager;
 import org.eclipse.pde.internal.ua.core.toc.text.TocMarkerManager;
 import org.eclipse.pde.internal.ua.core.toc.text.TocModel;
 import org.eclipse.pde.internal.ua.core.toc.text.TocObject;
@@ -93,7 +94,8 @@ public class TocEditor extends MultiSourceEditor {
 
 	private boolean inUiThread() {
 		// get our workbench display
-		Display display = getSite().getWorkbenchWindow().getWorkbench().getDisplay();
+		Display display = getSite().getWorkbenchWindow().getWorkbench()
+				.getDisplay();
 
 		// return true if we're in the UI thread
 		if (display != null && !display.isDisposed()) {
@@ -137,21 +139,29 @@ public class TocEditor extends MultiSourceEditor {
 				if (selection.isEmpty()) {
 					resources = null;
 				} else {
-					IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+					IWorkspaceRoot root = ResourcesPlugin.getWorkspace()
+							.getRoot();
 
 					for (Iterator iter = selection.iterator(); iter.hasNext();) {
 						Object obj = iter.next();
-						if (obj instanceof TocObject && ((TocObject) obj).getPath() != null) {
-							Path resourcePath = new Path(((TocObject) obj).getPath());
+						if (obj instanceof TocObject
+								&& ((TocObject) obj).getPath() != null) {
+							Path resourcePath = new Path(
+									((TocObject) obj).getPath());
 
 							if (!resourcePath.isEmpty()) {
 								TocModel model = (TocModel) getAggregateModel();
-								IResource underlyingResource = model.getUnderlyingResource();
+								IResource underlyingResource = model
+										.getUnderlyingResource();
 								if (underlyingResource != null) {
-									IProject project = underlyingResource.getProject();
+									IProject project = underlyingResource
+											.getProject();
 									if (project != null) {
-										IPath pluginPath = project.getFullPath();
-										IResource resource = root.findMember(pluginPath.append(resourcePath));
+										IPath pluginPath = project
+												.getFullPath();
+										IResource resource = root
+												.findMember(pluginPath
+														.append(resourcePath));
 										if (resource != null) {
 											resourceList.add(resource);
 										}
@@ -177,7 +187,8 @@ public class TocEditor extends MultiSourceEditor {
 	private IShowInTargetList getShowInTargetList() {
 		return new IShowInTargetList() {
 			public String[] getShowInTargetIds() {
-				return new String[] {JavaUI.ID_PACKAGES, IPageLayout.ID_RES_NAV};
+				return new String[] { JavaUI.ID_PACKAGES,
+						IPageLayout.ID_RES_NAV };
 			}
 		};
 	}
@@ -245,7 +256,8 @@ public class TocEditor extends MultiSourceEditor {
 	 * (org.eclipse.pde.internal.ui.editor.context.InputContextManager,
 	 * org.eclipse.ui.IFileEditorInput)
 	 */
-	protected void createResourceContexts(InputContextManager contexts, IFileEditorInput input) {
+	protected void createResourceContexts(InputContextManager contexts,
+			IFileEditorInput input) {
 		contexts.putContext(input, new TocInputContext(this, input, true));
 		contexts.monitorFile(input.getFile());
 	}
@@ -258,7 +270,8 @@ public class TocEditor extends MultiSourceEditor {
 	 * (org.eclipse.pde.internal.ui.editor.context.InputContextManager,
 	 * org.eclipse.ui.IStorageEditorInput)
 	 */
-	protected void createStorageContexts(InputContextManager contexts, IStorageEditorInput input) {
+	protected void createStorageContexts(InputContextManager contexts,
+			IStorageEditorInput input) {
 		contexts.putContext(input, new TocInputContext(this, input, true));
 	}
 
@@ -270,7 +283,8 @@ public class TocEditor extends MultiSourceEditor {
 	 * (org.eclipse.pde.internal.ui.editor.context.InputContextManager,
 	 * org.eclipse.pde.internal.ui.editor.SystemFileEditorInput)
 	 */
-	protected void createSystemFileContexts(InputContextManager contexts, FileStoreEditorInput input) {
+	protected void createSystemFileContexts(InputContextManager contexts,
+			FileStoreEditorInput input) {
 		try {
 			IFileStore store = EFS.getStore(input.getURI());
 			IEditorInput in = new FileStoreEditorInput(store);
@@ -355,7 +369,8 @@ public class TocEditor extends MultiSourceEditor {
 			IStructuredSelection sel = (IStructuredSelection) selection;
 			for (Iterator iter = sel.iterator(); iter.hasNext();) {
 				Object obj = iter.next();
-				if (obj instanceof TocObject && ((TocObject) obj).canBeRemoved()) {
+				if (obj instanceof TocObject
+						&& ((TocObject) obj).canBeRemoved()) {
 					return canCopy(selection);
 				}
 			}
@@ -372,14 +387,17 @@ public class TocEditor extends MultiSourceEditor {
 	 * (org.eclipse.pde.internal.ui.editor.PDEFormEditor, java.lang.String,
 	 * java.lang.String, java.lang.String)
 	 */
-	protected PDESourcePage createSourcePage(PDEFormEditor editor, String title, String name, String contextId) {
+	protected PDESourcePage createSourcePage(PDEFormEditor editor,
+			String title, String name, String contextId) {
 		return new TocSourcePage(editor, title, name);
 	}
 
 	public void contributeToToolbar(IToolBarManager manager) {
 		// Add the register cheat sheet link to the form title area
-		if (getAggregateModel().isEditable())
+		if (WorkspaceModelManager.isPluginProject(getCommonProject())
+				&& getAggregateModel().isEditable()) {
 			manager.add(createUIControlConRegisterCS());
+		}
 	}
 
 	private ControlContribution createUIControlConRegisterCS() {
@@ -401,26 +419,28 @@ public class TocEditor extends MultiSourceEditor {
 		fImageHyperlinkRegisterTOC = new ImageHyperlink(parent, SWT.NONE);
 		fImageHyperlinkRegisterTOC.setText(TocMessages.TocEditor_link);
 		fImageHyperlinkRegisterTOC.setUnderlined(true);
-		fImageHyperlinkRegisterTOC.setForeground(getToolkit().getHyperlinkGroup().getForeground());
+		fImageHyperlinkRegisterTOC.setForeground(getToolkit()
+				.getHyperlinkGroup().getForeground());
 	}
 
 	/**
 	 * 
 	 */
 	private void createUIListenerImageHyperlinkRegisterToc() {
-		fImageHyperlinkRegisterTOC.addHyperlinkListener(new IHyperlinkListener() {
-			public void linkActivated(HyperlinkEvent e) {
-				handleLinkActivatedRegisterTOC();
-			}
+		fImageHyperlinkRegisterTOC
+				.addHyperlinkListener(new IHyperlinkListener() {
+					public void linkActivated(HyperlinkEvent e) {
+						handleLinkActivatedRegisterTOC();
+					}
 
-			public void linkEntered(HyperlinkEvent e) {
-				handleLinkEnteredRegisterTOC(e.getLabel());
-			}
+					public void linkEntered(HyperlinkEvent e) {
+						handleLinkEnteredRegisterTOC(e.getLabel());
+					}
 
-			public void linkExited(HyperlinkEvent e) {
-				handleLinkExitedRegisterTOC();
-			}
-		});
+					public void linkExited(HyperlinkEvent e) {
+						handleLinkExitedRegisterTOC();
+					}
+				});
 	}
 
 	/**
@@ -428,9 +448,11 @@ public class TocEditor extends MultiSourceEditor {
 	 */
 	private void handleLinkEnteredRegisterTOC(String message) {
 		// Update colour
-		fImageHyperlinkRegisterTOC.setForeground(getToolkit().getHyperlinkGroup().getActiveForeground());
+		fImageHyperlinkRegisterTOC.setForeground(getToolkit()
+				.getHyperlinkGroup().getActiveForeground());
 		// Update IDE status line
-		getEditorSite().getActionBars().getStatusLineManager().setMessage(message);
+		getEditorSite().getActionBars().getStatusLineManager()
+				.setMessage(message);
 	}
 
 	/**
@@ -438,7 +460,8 @@ public class TocEditor extends MultiSourceEditor {
 	 */
 	private void handleLinkExitedRegisterTOC() {
 		// Update colour
-		fImageHyperlinkRegisterTOC.setForeground(getToolkit().getHyperlinkGroup().getForeground());
+		fImageHyperlinkRegisterTOC.setForeground(getToolkit()
+				.getHyperlinkGroup().getForeground());
 		// Update IDE status line
 		getEditorSite().getActionBars().getStatusLineManager().setMessage(null);
 	}
@@ -447,11 +470,13 @@ public class TocEditor extends MultiSourceEditor {
 	 * 
 	 */
 	private void handleLinkActivatedRegisterTOC() {
-		RegisterTocWizard wizard = new RegisterTocWizard((IModel) getAggregateModel());
+		RegisterTocWizard wizard = new RegisterTocWizard(
+				(IModel) getAggregateModel());
 		// Initialize the wizard
 		wizard.init(PlatformUI.getWorkbench(), null);
 		// Create the dialog for the wizard
-		WizardDialog dialog = new WizardDialog(PDEUserAssistanceUIPlugin.getActiveWorkbenchShell(), wizard);
+		WizardDialog dialog = new WizardDialog(
+				PDEUserAssistanceUIPlugin.getActiveWorkbenchShell(), wizard);
 		dialog.create();
 		dialog.getShell().setSize(400, 250);
 		// Check the result
@@ -472,7 +497,8 @@ public class TocEditor extends MultiSourceEditor {
 		TocModel model = (TocModel) getAggregateModel();
 		model.setMarkerRefreshNeeded(true);
 		super.doSave(monitor);
-		model.reconciled(model.getDocument()); // model recon occurs async so we can proceed to save
+		model.reconciled(model.getDocument()); // model recon occurs async so we
+												// can proceed to save
 
 	}
 
