@@ -31,7 +31,8 @@ public class PluginModelManager implements IModelProviderListener {
 
 	/**
 	 * Job to update class path containers asynchronously. Avoids blocking the UI thread
-	 * while saving the manifest editor.
+	 * while saving the manifest editor. The job is given a workspace lock so other jobs can't
+	 * run on a stale classpath.
 	 */
 	class UpdateClasspathsJob extends Job {
 
@@ -43,6 +44,8 @@ public class PluginModelManager implements IModelProviderListener {
 		 */
 		public UpdateClasspathsJob() {
 			super(PDECoreMessages.PluginModelManager_1);
+			// The job is given a workspace lock so other jobs can't run on a stale classpath (bug 354993)
+			setRule(ResourcesPlugin.getWorkspace().getRoot());
 		}
 
 		/* (non-Javadoc)
@@ -362,9 +365,7 @@ public class PluginModelManager implements IModelProviderListener {
 			int types = event.getEventTypes();
 			if (types == IModelProviderEvent.MODELS_CHANGED) {
 				// We may be in the UI thread, so the classpath is updated in a job to avoid blocking (bug 376135)
-				// The job is given a workspace lock so other jobs can't run on a stale classpath (bug 354993)
 				fUpdateJob.add(projects, containers);
-				fUpdateJob.setRule(ResourcesPlugin.getWorkspace().getRoot());
 				fUpdateJob.schedule();
 			} else {
 				// else update synchronously
