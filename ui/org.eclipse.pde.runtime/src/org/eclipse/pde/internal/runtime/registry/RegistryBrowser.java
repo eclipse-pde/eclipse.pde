@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.runtime.*;
 import org.eclipse.pde.internal.runtime.registry.model.*;
+import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.dnd.*;
@@ -217,6 +218,7 @@ public class RegistryBrowser extends ViewPart {
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		makeActions();
 		createTreeViewer(composite);
+		hookDoubleClickAction();
 		fClipboard = new Clipboard(fTreeViewer.getTree().getDisplay());
 		fillToolBar();
 	}
@@ -281,6 +283,19 @@ public class RegistryBrowser extends ViewPart {
 		popupMenuManager.addMenuListener(listener);
 		Menu menu = popupMenuManager.createContextMenu(tree);
 		tree.setMenu(menu);
+	}
+
+	private void hookDoubleClickAction() {
+		fTreeViewer.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent event) {
+				IStructuredSelection selection = (IStructuredSelection) fTreeViewer.getSelection();
+				if (selection.size() == 1) {
+					Object obj = selection.getFirstElement();
+					if (obj instanceof Bundle)
+						ManifestEditor.openPluginEditor(((Bundle) obj).getSymbolicName());
+				}
+			}
+		});
 	}
 
 	private void fillToolBar() {
