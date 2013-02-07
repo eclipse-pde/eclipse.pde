@@ -144,15 +144,6 @@ public class PluginRegistryTests extends TestCase {
 		assertEquals("org.eclipse.pde.core", models[0].getPluginBase().getId());
 	}
 	
-	public void testMutliMatches() {
-		// Expected Junit versions are 3.8.x and 4.8.x
-		IPluginModelBase[] models = PluginRegistry.findModels("org.junit", new VersionRange("[3.8.2,5.0.0)"), null);
-		assertNotNull(models);
-		assertEquals(2, models.length);
-		assertEquals("org.junit", models[0].getPluginBase().getId());
-		assertEquals("org.junit", models[1].getPluginBase().getId());
-	}
-	
 	public void testWorkspaceOverTarget() throws CoreException {
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject("org.junit");
 		try {
