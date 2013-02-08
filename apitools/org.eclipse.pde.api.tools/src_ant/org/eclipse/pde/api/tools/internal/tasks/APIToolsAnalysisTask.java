@@ -413,6 +413,7 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 				allApiBundles.add(name);
 				BaseApiAnalyzer analyzer = new BaseApiAnalyzer();
 				try {
+					analyzer.setContinueOnResolverError(true);
 					analyzer.analyzeComponent(null, getFilterStore(name), this.properties, referenceBaseline, apiComponent, new BuildContext(), new NullProgressMonitor());
 					IApiProblem[] problems = analyzer.getProblems();
 					// remove duplicates
