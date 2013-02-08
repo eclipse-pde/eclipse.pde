@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2008, 2013 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -331,7 +331,7 @@ public class P2Tests extends P2TestCase {
 		IFolder repo = Utils.createFolder(buildFolder, "repo");
 
 		IFile productFile = buildFolder.getFile("rcp.product");
-		Utils.generateProduct(productFile, "rcp.product", "1.0.0", new String[] {"org.junit4", "org.eclipse.pde.build"}, false);
+		Utils.generateProduct(productFile, "rcp.product", "1.0.0", new String[] {"org.junit", "org.eclipse.pde.build"}, false);
 
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("product", productFile.getLocation().toOSString());
@@ -351,7 +351,7 @@ public class P2Tests extends P2TestCase {
 		File plugins = repo.getFolder("plugins").getLocation().toFile();
 		File[] bundles = plugins.listFiles(new FilenameFilter() {
 			public boolean accept(File dir, String name) {
-				return name.startsWith("org.junit4_") || name.startsWith("org.eclipse.pde.build");
+				return name.startsWith("org.junit_") || name.startsWith("org.eclipse.pde.build");
 			}
 		});
 		assertTrue(bundles.length == 2);
