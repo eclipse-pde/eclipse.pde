@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.*;
  * to be persisted correctly, clients must provide a factory through the 
  * <code>org.eclipse.pde.core.targetLocations</code> extension point.
  * </p><p>
- * It is recommended that implementors override {@link #equals(Object)} to return 
+ * It is recommended that implementors override {@link Object#equals(Object)} to return 
  * <code>true</code> if the content of two containers are equal.  This allows PDE 
  * to determine if two different target definitions have equivalent content.
  * </p><p>
