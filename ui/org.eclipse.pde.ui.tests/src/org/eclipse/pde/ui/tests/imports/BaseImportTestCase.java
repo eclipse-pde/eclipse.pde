@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.imports;
 
-import org.osgi.framework.Version;
-
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -20,6 +18,7 @@ import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.wizards.imports.PluginImportOperation;
 import org.eclipse.pde.ui.tests.PDETestCase;
+import org.osgi.framework.Version;
 
 public abstract class BaseImportTestCase extends PDETestCase {
 	
@@ -40,7 +39,7 @@ public abstract class BaseImportTestCase extends PDETestCase {
 
 	public void testImportNotJavaJARd() {
 		doSingleImport("org.eclipse.jdt.doc.user", false);
-		doSingleImport("org.eclipse.pde.source", false);
+		doSingleImport("org.eclipse.pde.ui.source", false);
 	}
 	
 	public void testImportJUnit4() {
