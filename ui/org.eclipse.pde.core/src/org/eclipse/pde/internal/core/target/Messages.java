@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -73,6 +73,7 @@ public class Messages extends NLS {
 	public static String TargetDefinition_RequiredFeatureCouldNotBeFound;
 	public static String TargetDefinitionPersistenceHelper_0;
 	public static String TargetDefinitionPersistenceHelper_1;
+	public static String TargetDefinitionPersistenceHelper_2;
 	public static String TargetDefinitionPersistenceHelper_WrongRootElementInXML;
 	public static String TargetFeature_FileDoesNotExist;
 	public static String TargetPersistence38Helper_NoTargetLocationExtension;

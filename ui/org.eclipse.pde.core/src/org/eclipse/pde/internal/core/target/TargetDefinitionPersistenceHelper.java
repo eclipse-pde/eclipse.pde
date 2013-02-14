@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.core.target;
 
 import java.io.*;
+import java.text.MessageFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.xml.parsers.*;
@@ -240,7 +241,9 @@ public class TargetDefinitionPersistenceHelper {
 		}
 
 		// Select the correct helper class to use
+		// Note: If file structure is updated, make sure to update both default cases
 		if (version == null || version.length() == 0) {
+			// No version, default to latest
 			TargetPersistence38Helper.initFromDoc(definition, root);
 		} else if (version.equals(ICoreConstants.TARGET38)) {
 			TargetPersistence38Helper.initFromDoc(definition, root);
@@ -250,6 +253,10 @@ public class TargetDefinitionPersistenceHelper {
 			TargetPersistence35Helper.initFromDoc(definition, root);
 		} else if (version.compareTo(ICoreConstants.TARGET34) <= 0) {
 			TargetPersistence34Helper.initFromDoc(definition, root);
+		} else {
+			// Version doesn't match any known file structure, default to latest 
+			PDECore.log(new Status(IStatus.WARNING, PDECore.PLUGIN_ID, MessageFormat.format(Messages.TargetDefinitionPersistenceHelper_2, version)));
+			TargetPersistence38Helper.initFromDoc(definition, root);
 		}
 	}
 
