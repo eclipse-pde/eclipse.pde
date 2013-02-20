@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -108,5 +108,15 @@ public class DeltaXmlVisitor extends DeltaVisitor {
 	 */
 	public String getXML() throws CoreException {
 		return Util.serializeDocument(fDoc);
+	}
+	
+	/**
+	 * Return the xml dom document this visitor generates.  Use {@link #getXML()} to
+	 * get the serialized xml string.
+	 * 
+	 * @return xml dom document
+	 */
+	public Document getDocument() {
+		return fDoc;
 	}
 }

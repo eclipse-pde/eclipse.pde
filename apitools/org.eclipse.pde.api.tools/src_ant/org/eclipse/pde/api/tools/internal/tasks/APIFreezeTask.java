@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,11 +16,15 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import org.apache.tools.ant.BuildException;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.osgi.service.resolver.ResolverError;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.api.tools.internal.IApiXmlConstants;
 import org.eclipse.pde.api.tools.internal.model.StubApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.VisibilityModifiers;
@@ -31,6 +35,10 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiScope;
 import org.eclipse.pde.api.tools.internal.util.FilteredElements;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * Ant task to run the API freeze check during Eclipse build.
@@ -42,7 +50,20 @@ public class APIFreezeTask extends CommonUtilsTask {
 	private String eeFileLocation;
 	private String excludeListLocation;
 	private String includeListLocation;
-
+	
+	/**
+	 * When <code>true</code>, components containing resolver errors will still be included
+	 * in the comparison.  A list of bundles with resolver errors will be
+	 * included in the output xml.  Set to <code>true</code> by default.
+	 */
+	private boolean continueOnResolverError = true;
+	/**
+	 * If {@link #continueOnResolverError} is <code>true</code> this map will
+	 * store the resolver errors of components. Maps String component IDs to
+	 * an array of ResolverErrors.
+	 */
+	private Map/*<String, ResolverError[]>*/ resolverErrors = new HashMap();
+	
 	public void execute() throws BuildException {
 		if (this.referenceBaselineLocation == null
 				|| this.currentBaselineLocation == null
@@ -136,7 +157,7 @@ public class APIFreezeTask extends CommonUtilsTask {
 			time = System.currentTimeMillis();
 		}
 		try {
-			delta = ApiComparator.compare(getScope(currentBaseline), referenceBaseline, VisibilityModifiers.API, true, null);
+			delta = ApiComparator.compare(getScope(currentBaseline), referenceBaseline, VisibilityModifiers.API, true, continueOnResolverError, null);
 		} catch (CoreException e) {
 			// ignore
 		} finally {
@@ -165,7 +186,15 @@ public class APIFreezeTask extends CommonUtilsTask {
 				writer = new BufferedWriter(new FileWriter(outputFile));
 				FilterListDeltaVisitor visitor = new FilterListDeltaVisitor(excludedElements, includedElements, FilterListDeltaVisitor.CHECK_OTHER);
 				delta.accept(visitor);
-				writer.write(visitor.getXML());
+				
+				Document doc = visitor.getDocument();
+				if (continueOnResolverError){
+					// Store any components that had resolver errors in the xml to add warnings in the html
+					addResolverErrors(doc);
+				}
+				
+				String serializedXml = org.eclipse.pde.api.tools.internal.util.Util.serializeDocument(doc);
+				writer.write(serializedXml);
 				writer.flush();
 				if (this.debug) {
 					String potentialExcludeList = visitor.getPotentialExcludeList();
@@ -190,8 +219,13 @@ public class APIFreezeTask extends CommonUtilsTask {
 			if (this.debug) {
 				System.out.println("Report generation : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
+		} else {
+			if (this.debug) {
+				System.out.println("API freeze task complete.  No problems to report : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
+			}
 		}
 	}
+
 	private IApiScope getScope(IApiBaseline currentBaseline) {
 		IApiComponent[] apiComponents = currentBaseline.getApiComponents();
 		ApiScope scope = new ApiScope();
@@ -201,12 +235,18 @@ public class APIFreezeTask extends CommonUtilsTask {
 				ResolverError[] errors = apiComponent.getErrors();
 				if (errors != null) {
 					if (this.debug) {
-						System.out.println("Errors for component : " + apiComponent.getSymbolicName()); //$NON-NLS-1$
+						System.out.println("Resolver errors found for component : " + apiComponent.getSymbolicName()); //$NON-NLS-1$
 						for (int j = 0, max2 = errors.length; j < max2; j++) {
 							System.out.println(errors[j]);
 						}
 					}
-					continue;
+					// If a component has a resolver error we either skip the component or
+					// add it to the list component's with errors
+					if (continueOnResolverError){
+						resolverErrors.put(apiComponent.getSymbolicName(), errors);
+					} else {
+						continue;
+					}
 				}
 				scope.addElement(apiComponent);
 			} catch (CoreException e) {
@@ -215,6 +255,7 @@ public class APIFreezeTask extends CommonUtilsTask {
 		}
 		return scope;
 	}
+	
 	/**
 	 * Set the debug value.
 	 * <p>The possible values are: <code>true</code>, <code>false</code></p>
@@ -225,6 +266,7 @@ public class APIFreezeTask extends CommonUtilsTask {
 	public void setDebug(String debugValue) {
 		this.debug = Boolean.toString(true).equals(debugValue); 
 	}
+	
 	/**
 	 * Set the execution environment file to use.
 	 * <p>By default, an execution environment file corresponding to a JavaSE-1.6 execution environment
@@ -236,6 +278,7 @@ public class APIFreezeTask extends CommonUtilsTask {
 	public void setEEFile(String eeFileLocation) {
 		this.eeFileLocation = eeFileLocation;
 	}
+	
 	/**
 	 * Set the exclude list location.
 	 * 
@@ -312,5 +355,48 @@ public class APIFreezeTask extends CommonUtilsTask {
 	 */
 	public void setReport(String reportLocation) {
 		this.reportLocation = reportLocation;
+	}
+	
+	/**
+	 * Modifies the given doc to add a new element under the root element that
+	 * lists all the components that had resolver errors which could affect the
+	 * results of the comparison.
+	 * 
+	 * @param document xml document to modify
+	 */
+	private void addResolverErrors(Document document) {
+		if (resolverErrors != null && !resolverErrors.isEmpty()){
+			Element errorElement = document.createElement(IApiXmlConstants.ELEMENT_RESOLVER_ERRORS);
+			
+			// Create xml elements for each component with resolver errors
+			for (Iterator iterator = resolverErrors.entrySet().iterator(); iterator.hasNext();) {
+				Map.Entry entry = (Map.Entry)iterator.next();
+				String componentID = (String)entry.getKey();
+				
+				// Use the same format as output from analysis task
+				Element report = document.createElement(IApiXmlConstants.ELEMENT_API_TOOL_REPORT);
+				report.setAttribute(IApiXmlConstants.ATTR_VERSION, IApiXmlConstants.API_REPORT_CURRENT_VERSION);
+				report.setAttribute(IApiXmlConstants.ATTR_COMPONENT_ID, componentID);
+				errorElement.appendChild(report);
+				 
+				ResolverError[] errors = (ResolverError[])entry.getValue();
+				for (int j = 0; j < errors.length; j++) {
+					Element error = document.createElement(IApiXmlConstants.ELEMENT_RESOLVER_ERROR);
+					error.setAttribute(IApiXmlConstants.ATTR_MESSAGE, errors[j].toString());
+					report.appendChild(error);
+				}
+			}
+
+			// Append the resolver errors element to the root node
+			NodeList rootNodes = document.getChildNodes();
+			for (int i = 0; i < rootNodes.getLength(); ++i) {
+				Node node = rootNodes.item(i);
+				if (node.getNodeType() == Node.ELEMENT_NODE) {
+					// Should only have one root element node
+					node.appendChild(errorElement);
+					break;
+				}
+			}
+		}
 	}
 }

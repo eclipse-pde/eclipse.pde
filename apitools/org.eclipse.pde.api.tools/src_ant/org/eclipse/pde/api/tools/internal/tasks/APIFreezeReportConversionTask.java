@@ -55,14 +55,23 @@ public class APIFreezeReportConversionTask extends Task {
 		private Map map;
 		private String typename;
 		private int elementType;
+		/**
+		 * String component id to ArrayList of String resolver error messages
+		 */
+		private Map resolverErrors;
+		private boolean isResolverSection;
 
 		public ConverterDefaultHandler(boolean debug) {
 			this.map = new HashMap();
+			this.resolverErrors = new HashMap();
 			this.debug = debug;
 		}
+		
 		public void endElement(String uri, String localName, String name)
 			throws SAXException {
-			if (IApiXmlConstants.DELTA_ELEMENT_NAME.equals(name)) {
+			if (IApiXmlConstants.ELEMENT_RESOLVER_ERRORS.equals(name)) {
+				isResolverSection = false;
+			} else if (IApiXmlConstants.DELTA_ELEMENT_NAME.equals(name)) {
 				Entry entry = new Entry(
 						this.flags,
 						this.elementType,
@@ -89,6 +98,13 @@ public class APIFreezeReportConversionTask extends Task {
 		public Map getEntries() {
 			return this.map;
 		}
+		
+		/**
+		 * @return String component id to List of String resolver error messages
+		 */
+		public Map getResolverErrors() {
+			return resolverErrors;
+		}
 		/*
 		 * Only used in debug mode
 		 */
@@ -98,7 +114,23 @@ public class APIFreezeReportConversionTask extends Task {
 
 		public void startElement(String uri, String localName,
 				String name, Attributes attributes) throws SAXException {
-			if (IApiXmlConstants.DELTA_ELEMENT_NAME.equals(name)) {
+			if (isResolverSection) {
+				// Fill in the map with resolver errors
+				if (IApiXmlConstants.ELEMENT_API_TOOL_REPORT.equals(name)) {
+					componentID = attributes.getValue((IApiXmlConstants.ATTR_COMPONENT_ID));
+				} else if (IApiXmlConstants.ELEMENT_RESOLVER_ERROR.equals(name)) {
+					List errors = (List)resolverErrors.get(componentID);
+					if (errors == null){
+						errors = new ArrayList();
+						resolverErrors.put(componentID, errors);
+					}
+					String message = attributes.getValue(IApiXmlConstants.ATTR_MESSAGE);
+					errors.add(message);
+					if (this.debug) {
+						System.out.println("Resolver error : " + componentID + " : " + message); //$NON-NLS-1$ //$NON-NLS-2$
+					}
+				}
+			} else if (IApiXmlConstants.DELTA_ELEMENT_NAME.equals(name)) {
 				if (this.debug) {
 					System.out.println("name : " + name); //$NON-NLS-1$
 					/*<delta
@@ -144,6 +176,11 @@ public class APIFreezeReportConversionTask extends Task {
 				}
 			} else if (IApiXmlConstants.ELEMENT_DELTA_MESSAGE_ARGUMENT.equals(name)) {
 				this.argumentsList.add(attributes.getValue(IApiXmlConstants.ATTR_VALUE));
+			} else if (IApiXmlConstants.ELEMENT_RESOLVER_ERRORS.equals(name)) {
+				isResolverSection = true;
+				if (this.debug) {
+					System.out.println("Reading resolver error section"); //$NON-NLS-1$
+				}
 			}
 		}
 	}
@@ -294,7 +331,7 @@ public class APIFreezeReportConversionTask extends Task {
 	private void dumpEndEntryForComponent(StringBuffer buffer, String componentID) {
 		buffer.append(NLS.bind(Messages.deltaReportTask_endComponentEntry, componentID));
 	}
-	private void dumpEntries(Map entries, StringBuffer buffer) {
+	private void dumpEntries(Map entries, Map resolverErrors, StringBuffer buffer) {
 		dumpHeader(buffer);
 		Set entrySet = entries.entrySet();
 		List allEntries = new ArrayList();
@@ -311,8 +348,14 @@ public class APIFreezeReportConversionTask extends Task {
 		for (Iterator iterator = allEntries.iterator(); iterator.hasNext(); ) {
 			Map.Entry mapEntry = (Map.Entry) iterator.next();
 			String key = (String) mapEntry.getKey();
-			Object value = mapEntry.getValue();
+			// TODO The component id used in the xml contains the version "foo(1.1.2)", for now just remove based on brackets
+			int index = key.indexOf('(');
+			String componentName = index >= 0 ? key.substring(0, index): key;
 			dumpEntryForComponent(buffer, key);
+			if (resolverErrors.containsKey(componentName)){
+				dumpResolverErrorSummary(buffer, componentName, (List)resolverErrors.get(componentName));
+			}
+			Object value = mapEntry.getValue();
 			if (value instanceof List) {
 				List values = (List) value;
 				Collections.sort(values, new Comparator() {
@@ -351,6 +394,9 @@ public class APIFreezeReportConversionTask extends Task {
 				}
 			}
 			dumpEndEntryForComponent(buffer, key);
+			if (resolverErrors.containsKey(componentName)){
+				dumpResolverErrorTable(buffer, componentName, (List)resolverErrors.get(componentName));
+			}
 		}
 		dumpFooter(buffer);
 	}
@@ -359,6 +405,22 @@ public class APIFreezeReportConversionTask extends Task {
 	}
 	private void dumpEntryForComponent(StringBuffer buffer, String componentID) {
 		buffer.append(NLS.bind(Messages.deltaReportTask_componentEntry, componentID));
+	}
+	private void dumpResolverErrorSummary(StringBuffer buffer, String componentID, List resolverErrors){
+		int size = resolverErrors.size();
+		if (size == 1){
+			buffer.append(NLS.bind(Messages.APIFreezeReportConversionTask_resolverErrorWarningSingle, new String[]{componentID, String.valueOf(size)}));
+		} else if (size > 1){
+			buffer.append(NLS.bind(Messages.APIFreezeReportConversionTask_resolverErrorWarningMultiple, new String[]{componentID, String.valueOf(size)}));
+		}
+	}
+	private void dumpResolverErrorTable(StringBuffer buffer, String componentID, List resolverErrors){
+		buffer.append(NLS.bind(Messages.APIFreezeReportConversionTask_resolverErrorTableStart, componentID));
+		for (Iterator iterator = resolverErrors.iterator(); iterator.hasNext();) {
+			String message = (String) iterator.next();
+			buffer.append(NLS.bind(Messages.APIFreezeReportConversionTask_resolverErrorTableEntry, message));
+		}
+		buffer.append(Messages.APIFreezeReportConversionTask_resolverErrorTableEnd);
 	}
 
 	private void dumpFooter(StringBuffer buffer) {
@@ -439,7 +501,7 @@ public class APIFreezeReportConversionTask extends Task {
 			ConverterDefaultHandler defaultHandler = new ConverterDefaultHandler(this.debug);
 			parser.parse(file, defaultHandler);
 			StringBuffer buffer = new StringBuffer();
-			dumpEntries(defaultHandler.getEntries(), buffer);
+			dumpEntries(defaultHandler.getEntries(), defaultHandler.getResolverErrors(), buffer);
 			writeOutput(buffer);
 		} catch (SAXException e) {
 			// ignore

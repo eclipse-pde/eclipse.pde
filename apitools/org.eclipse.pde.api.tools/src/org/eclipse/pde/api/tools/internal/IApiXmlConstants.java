@@ -450,4 +450,9 @@ public interface IApiXmlConstants {
 	 * Value is: <code>resolver_error</code>
 	 */
 	public static final String ELEMENT_RESOLVER_ERROR = "resolver_error"; //$NON-NLS-1$
+	/**
+	 * XML element containing a list of components with resolver errors
+	 * Value is: <code>resolver_errors</code>
+	 */
+	public static final String ELEMENT_RESOLVER_ERRORS = "resolver_errors"; //$NON-NLS-1$
 }

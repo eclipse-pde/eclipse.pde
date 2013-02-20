@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -636,7 +636,7 @@ public class ApiComparator {
 	/**
 	 * Returns a delta that corresponds to the comparison of the two given API baselines. 
 	 * Nested API components with the same versions are not compared.
-	 * <p>Equivalent to: compare(baseline, baseline2, visibilityModifiers, false);</p>
+	 * <p>Equivalent to: compare(baseline, baseline2, visibilityModifiers, false, false, monitor);</p>
 	 * 
 	 * @param scope the given scope for the comparison
 	 * @param baseline the given API baseline to compare with
@@ -654,15 +654,44 @@ public class ApiComparator {
 			final int visibilityModifiers,
 			final boolean force,
 			final IProgressMonitor monitor) throws CoreException {
+		return compare(scope, baseline, visibilityModifiers, force, false, monitor);
+	}
+	
+	/**
+	 * Returns a delta that corresponds to the comparison of the two given API baselines. 
+	 * Nested API components with the same versions are not compared.
+	 * <p>Equivalent to: compare(baseline, baseline2, visibilityModifiers, false);</p>
+	 * 
+	 * @param scope the given scope for the comparison
+	 * @param baseline the given API baseline to compare with
+	 * @param visibilityModifiers the given visibility that triggers what visibility should be used for the comparison
+	 * @param force a flag to force the comparison of nested API components with the same versions
+	 * @param continueOnResolverError if <code>true</code> the comparison will continue even if a component in the scope has a resolver error 
+	 * @param monitor the given progress monitor to report progress
+	 *
+	 * @return a delta, an empty delta if no difference is found or null if the delta detection failed. If set to continue on resolver error a delta, possibly empty, will always be returned
+	 * @throws IllegalArgumentException if one of the two baselines is null
+	 *         CoreException if one of the element in the scope cannot be visited
+	 */
+	public static IDelta compare(
+			final IApiScope scope,
+			final IApiBaseline baseline,
+			final int visibilityModifiers,
+			final boolean force,
+			final boolean continueOnResolverError,
+			final IProgressMonitor monitor) throws CoreException {
+		
 		if (scope == null || baseline == null) {
 			throw new IllegalArgumentException("None of the scope or the baseline must be null"); //$NON-NLS-1$
 		}
 		SubMonitor localmonitor = SubMonitor.convert(monitor, 2);
 		try {
 			final Set deltas = new HashSet();
-			final CompareApiScopeVisitor visitor = new CompareApiScopeVisitor(deltas, baseline, force, visibilityModifiers, localmonitor.newChild(1));
+			final CompareApiScopeVisitor visitor = new CompareApiScopeVisitor(deltas, baseline, force, visibilityModifiers, continueOnResolverError, localmonitor.newChild(1));
 			scope.accept(visitor);
-			if (visitor.containsError()) {
+			
+			// If set to continue on error, return whatever deltas were collected
+			if (!continueOnResolverError && visitor.containsError()) {
 				return null;
 			}
 			if (deltas.isEmpty()) {

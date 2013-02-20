@@ -261,7 +261,15 @@ public class AnalysisReportConversionTask extends Task {
 					Integer.toString(report.getProblemSize(APIToolsAnalysisTask.BUNDLE_VERSION)),
 				})); 
 		
-		if (report.getProblemSize(APIToolsAnalysisTask.COMPONENT_RESOLUTION) > 0){
+		if (report.getProblemSize(APIToolsAnalysisTask.COMPONENT_RESOLUTION) == 1){
+			writer.println(
+					MessageFormat.format(
+						Messages.fullReportTask_resolutiondetailsSingle,
+						new String[] {
+							report.componentID,
+							Integer.toString(report.getProblemSize(APIToolsAnalysisTask.COMPONENT_RESOLUTION))
+						}));
+		} else if (report.getProblemSize(APIToolsAnalysisTask.COMPONENT_RESOLUTION) > 1){
 			writer.println(
 					MessageFormat.format(
 						Messages.fullReportTask_resolutiondetails,

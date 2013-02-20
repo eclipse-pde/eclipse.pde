@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,6 +33,7 @@ public class CompareApiScopeVisitor extends ApiScopeVisitor {
 	IApiBaseline referenceBaseline;
 	int visibilityModifiers;
 	boolean force;
+	boolean continueOnResolverError = false;
 	boolean containsErrors = false;
 	IProgressMonitor monitor;
 
@@ -41,11 +42,13 @@ public class CompareApiScopeVisitor extends ApiScopeVisitor {
 			final IApiBaseline baseline,
 			final boolean force,
 			final int visibilityModifiers,
+			final boolean continueOnResolverError,
 			final IProgressMonitor monitor) {
 		this.deltas = deltas;
 		this.referenceBaseline = baseline;
 		this.visibilityModifiers = visibilityModifiers;
 		this.force = force;
+		this.continueOnResolverError = continueOnResolverError;
 		this.monitor = monitor;
 	}
 	
@@ -94,13 +97,17 @@ public class CompareApiScopeVisitor extends ApiScopeVisitor {
 			Util.updateMonitor(this.monitor);
 			if (component.getErrors() != null) {
 				this.containsErrors = true;
-				return false;
+				if (!continueOnResolverError){
+					return false;
+				}
 			}
 			IApiComponent referenceComponent = this.referenceBaseline.getApiComponent(component.getSymbolicName());
 			// referenceComponent can be null if this is an added component
 			if (referenceComponent != null && referenceComponent.getErrors() != null) {
 				this.containsErrors = true;
-				return false;
+				if (!continueOnResolverError){
+					return false;
+				}
 			}
 			if (component.isSourceComponent() || component.isSystemComponent()) {
 				return false;
@@ -145,13 +152,17 @@ public class CompareApiScopeVisitor extends ApiScopeVisitor {
 		}
 		if (apiComponent.getErrors() != null) {
 			this.containsErrors = true;
-			return;
+			if (!continueOnResolverError){
+				return;
+			}
 		}
 		IApiComponent referenceComponent = this.referenceBaseline.getApiComponent(apiComponent.getSymbolicName());
 		if (referenceComponent == null) return;
 		if (referenceComponent.getErrors() != null) {
 			this.containsErrors = true;
-			return;
+			if (!continueOnResolverError){
+				return;
+			}
 		}
 		IApiBaseline baseline = referenceComponent.getBaseline();
 		IDelta delta = ApiComparator.compare(
