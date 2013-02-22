@@ -590,7 +590,7 @@ public class SourceTests extends PDETestCase {
 		IFolder buildFolder = newTest("290828");
 		IFolder sdk = Utils.createFolder(buildFolder, "features/sdk");
 
-		Utils.generateFeature(buildFolder, "f", null, new String[] {"org.eclipse.cvs"});
+		Utils.generateFeature(buildFolder, "f", null, new String[] {"org.eclipse.team.core"});
 		Utils.generateFeature(buildFolder, "sdk", new String[] {"f", "f.source"}, null);
 
 		Properties properties = new Properties();
