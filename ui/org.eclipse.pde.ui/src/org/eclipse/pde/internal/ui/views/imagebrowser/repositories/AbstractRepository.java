@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2012 Christian Pontesegger and others.
+ *  Copyright (c) 2012, 2013 Christian Pontesegger and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -70,14 +70,14 @@ public abstract class AbstractRepository extends Job {
 
 	protected boolean isImage(final File resource) {
 		if (resource.isFile())
-			return isImageName(resource.getName().toLowerCase());
+			return isImageName(resource.getName());
 
 		return false;
 	}
 
 	protected boolean isImageName(final String fileName) {
 		for (String extension : KNOWN_EXTENSIONS) {
-			if (fileName.endsWith(extension))
+			if (fileName.regionMatches(true, fileName.length() - extension.length(), extension, 0, extension.length()))
 				return true;
 		}
 
@@ -95,7 +95,7 @@ public abstract class AbstractRepository extends Job {
 			Enumeration<? extends ZipEntry> entries = zipFile.entries();
 			while ((entries.hasMoreElements()) && (!monitor.isCanceled())) {
 				ZipEntry entry = entries.nextElement();
-				if (isImageName(entry.getName().toLowerCase())) {
+				if (isImageName(entry.getName())) {
 					InputStream inputStream = null;
 					try {
 						inputStream = zipFile.getInputStream(entry);

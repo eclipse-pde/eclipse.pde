@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2012 Christian Pontesegger and others.
+ *  Copyright (c) 2012, 2013 Christian Pontesegger and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -14,8 +14,7 @@ package org.eclipse.pde.internal.ui.views.imagebrowser.repositories;
 import java.io.IOException;
 import java.util.*;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.views.imagebrowser.IImageTarget;
 import org.eclipse.pde.internal.ui.views.imagebrowser.ImageElement;
@@ -29,44 +28,54 @@ public class WorkspaceRepository extends AbstractRepository {
 	}
 
 	@Override
-	protected boolean populateCache(IProgressMonitor monitor) {
+	protected boolean populateCache(final IProgressMonitor monitor) {
 		if (fProjects == null)
 			initialize(monitor);
 
 		if (!fProjects.isEmpty()) {
-			IProject project = fProjects.get(fProjects.size() - 1);
+
+			final IProject project = fProjects.remove(0);
 
 			// look for a manifest
 			IFile manifest = project.getFile("META-INF/MANIFEST.MF"); //$NON-NLS-1$
+
 			if (manifest.exists()) {
 				try {
 					// extract plugin name
-					String pluginName = getPluginName(manifest.getContents());
+					final String pluginName = getPluginName(manifest.getContents());
 
 					// parse all folders
-					Collection<IContainer> locations = new HashSet<IContainer>();
-					locations.add(project);
-					do {
-						IContainer next = locations.iterator().next();
-						locations.remove(next);
+					project.accept(new IResourceProxyVisitor() {
 
-						for (IResource resource : next.members()) {
-							if (monitor.isCanceled())
-								return true;
+						public boolean visit(IResourceProxy proxy) throws CoreException {
 
-							if (resource instanceof IFile) {
-								try {
-									if (isImageName(resource.getName().toLowerCase()))
-										addImageElement(new ImageElement(createImageData((IFile) resource), pluginName, resource.getProjectRelativePath().toPortableString()));
+							switch (proxy.getType()) {
+								case IResource.PROJECT :
+									// fall through
+								case IResource.FOLDER :
+									// parse subfolders
+									return true;
 
-								} catch (Exception e) {
-									// could not create image for location
-								}
-							} else if (resource instanceof IContainer)
-								locations.add((IContainer) resource);
+								case IResource.FILE :
+									// look for image files
+									if (isImageName(proxy.getName())) {
+										try {
+											IFile resource = (IFile) proxy.requestResource();
+											addImageElement(new ImageElement(createImageData(resource), pluginName, resource.getProjectRelativePath().toPortableString()));
+										} catch (Exception e) {
+											// could not create image for location
+										}
+
+										if (monitor.isCanceled())
+											throw new OperationCanceledException();
+									}
+
+									break;
+							}
+
+							return false;
 						}
-
-					} while ((!locations.isEmpty()) && (!monitor.isCanceled()));
+					}, IResource.DEPTH_INFINITE, IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS | IContainer.INCLUDE_HIDDEN);
 				} catch (CoreException e) {
 					PDEPlugin.log(e);
 				} catch (IOException e) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2012 Christian Pontesegger and others.
+ *  Copyright (c) 2012, 2013 Christian Pontesegger and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -10,8 +10,6 @@
  *******************************************************************************/
 
 package org.eclipse.pde.internal.ui.views.imagebrowser;
-
-import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -24,6 +22,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.ui.PDEPlugin;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageLoader;
@@ -64,25 +63,23 @@ public class SaveToWorkspace extends AbstractHandler implements IHandler {
 					}
 
 					int imageType = getImageType(result);
-					if (imageType != SWT.NONE) {
-						try {
-							ByteArrayOutputStream out = new ByteArrayOutputStream();
+					try {
+						ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-							ImageLoader imageLoader = new ImageLoader();
-							imageLoader.data = new ImageData[] {((ImageElement) data).getImageData()};
-							imageLoader.save(out, imageType);
+						ImageLoader imageLoader = new ImageLoader();
+						imageLoader.data = new ImageData[] {((ImageElement) data).getImageData()};
+						imageLoader.save(out, imageType);
 
-							ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
-							if (exists)
-								file.setContents(in, true, false, null);
-							else
-								file.create(in, true, null);
+						ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
+						if (exists)
+							file.setContents(in, true, false, null);
+						else
+							file.create(in, true, null);
 
-							file.getParent().refreshLocal(IResource.DEPTH_ZERO, null);
+						file.getParent().refreshLocal(IResource.DEPTH_ZERO, null);
 
-						} catch (CoreException e) {
-							PDEPlugin.log(e);
-						}
+					} catch (CoreException e) {
+						PDEPlugin.log(e);
 					}
 				}
 			}
@@ -91,21 +88,20 @@ public class SaveToWorkspace extends AbstractHandler implements IHandler {
 	}
 
 	private int getImageType(final IPath path) {
-		String filename = path.lastSegment();
-		String extension = filename.substring(filename.lastIndexOf('.') + 1).toLowerCase();
-		if ("gif".equals(extension)) //$NON-NLS-1$
+		String extension = path.getFileExtension();
+		if ("gif".equalsIgnoreCase(extension)) //$NON-NLS-1$
 			return SWT.IMAGE_GIF;
 
-		else if ("bmp".equals(extension)) //$NON-NLS-1$
+		else if ("bmp".equalsIgnoreCase(extension)) //$NON-NLS-1$
 			return SWT.IMAGE_BMP;
 
-		else if ("png".equals(extension)) //$NON-NLS-1$
+		else if ("png".equalsIgnoreCase(extension)) //$NON-NLS-1$
 			return SWT.IMAGE_PNG;
 
-		else if ("ico".equals(extension)) //$NON-NLS-1$
+		else if ("ico".equalsIgnoreCase(extension)) //$NON-NLS-1$
 			return SWT.IMAGE_ICO;
 
-		return SWT.NONE;
+		return SWT.IMAGE_PNG;
 	}
 
 }
