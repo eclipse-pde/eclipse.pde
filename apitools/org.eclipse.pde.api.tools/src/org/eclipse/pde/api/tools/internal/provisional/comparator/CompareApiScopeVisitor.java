@@ -95,6 +95,9 @@ public class CompareApiScopeVisitor extends ApiScopeVisitor {
 	public boolean visit(IApiComponent component) throws CoreException {
 		try {
 			Util.updateMonitor(this.monitor);
+			if (component.isSourceComponent() || component.isSystemComponent()) {
+				return false;
+			}
 			if (component.getErrors() != null) {
 				this.containsErrors = true;
 				if (!continueOnResolverError){
@@ -109,9 +112,7 @@ public class CompareApiScopeVisitor extends ApiScopeVisitor {
 					return false;
 				}
 			}
-			if (component.isSourceComponent() || component.isSystemComponent()) {
-				return false;
-			}
+			
 			Util.updateMonitor(this.monitor);
 			final Delta globalDelta = new Delta();
 			globalDelta.add(ApiComparator.compare(referenceComponent, component, this.visibilityModifiers, null));

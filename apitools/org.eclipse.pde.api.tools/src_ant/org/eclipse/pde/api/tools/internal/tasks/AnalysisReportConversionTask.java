@@ -527,10 +527,12 @@ public class AnalysisReportConversionTask extends Task {
 						summariesList.add(new Summary(report));
 					}
 				}
-				// dump index file
-				Summary[] summaries = new Summary[summariesList.size()];
-				summariesList.toArray(summaries);
-				dumpIndexFile(reportsRoot, summaries, nonApiBundleSummary);
+				// dump index file if there is at least one summary or non api tools bundles (ignore count.xml)
+				if (!summariesList.isEmpty() || nonApiBundleSummary != null){
+					Summary[] summaries = new Summary[summariesList.size()];
+					summariesList.toArray(summaries);
+					dumpIndexFile(reportsRoot, summaries, nonApiBundleSummary);
+				}
 			}
 		} catch (SAXException e) {
 			// ignore

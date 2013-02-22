@@ -156,6 +156,13 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 	private FilteredElements includedElements;
 	private String filters;
 	private Properties properties;
+	
+	/**
+	 * When <code>true</code>, components containing resolver errors will still be included
+	 * in the analysis.  A list of bundles with resolver errors will be
+	 * included in the output xml.  Set to <code>true</code> by default.
+	 */
+	private boolean processUnresolvedBundles = true;
 
 	private Summary[] createAllSummaries(Map allProblems) {
 		Set entrySet = allProblems.entrySet();
@@ -404,6 +411,10 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 					ResolverError[] resolverErrors = apiComponent.getErrors();
 					if (resolverErrors != null && resolverErrors.length > 0){
 						bundlesWithErrors.put(name, apiComponent.getErrors());
+						if (!processUnresolvedBundles){
+							// If the user has turned off the setting, do not process bundles with resolver errors
+							continue;
+						}
 					}
 				} catch (CoreException e){
 					ApiPlugin.log(e.getStatus());
@@ -837,4 +848,17 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 	public void setReport(String reportLocation) {
 		this.reportLocation = reportLocation;
 	}
+	
+	/**
+	 * Set whether to continue analyzing an api component (bundle) even if it has resolver errors such
+	 * as missing dependencies.  The results of the analysis may not be accurate. A list of the 
+	 * resolver errors found for each bundle will be included in the xml output and incorporated into 
+	 * the html output of the report conversion task.  Defaults to <code>true</code>
+	 * 
+	 * @param processUnresolvedBundles whether to continue processing a bundle that has resolver errors
+	 */
+	public void setProcessUnresolvedBundles(boolean processUnresolvedBundles) {
+		this.processUnresolvedBundles = processUnresolvedBundles;
+	}
+	
 }

@@ -56,7 +56,7 @@ public class APIFreezeTask extends CommonUtilsTask {
 	 * in the comparison.  A list of bundles with resolver errors will be
 	 * included in the output xml.  Set to <code>true</code> by default.
 	 */
-	private boolean continueOnResolverError = true;
+	private boolean processUnresolvedBundles = true;
 	/**
 	 * If {@link #continueOnResolverError} is <code>true</code> this map will
 	 * store the resolver errors of components. Maps String component IDs to
@@ -157,7 +157,7 @@ public class APIFreezeTask extends CommonUtilsTask {
 			time = System.currentTimeMillis();
 		}
 		try {
-			delta = ApiComparator.compare(getScope(currentBaseline), referenceBaseline, VisibilityModifiers.API, true, continueOnResolverError, null);
+			delta = ApiComparator.compare(getScope(currentBaseline), referenceBaseline, VisibilityModifiers.API, true, processUnresolvedBundles, null);
 		} catch (CoreException e) {
 			// ignore
 		} finally {
@@ -188,7 +188,7 @@ public class APIFreezeTask extends CommonUtilsTask {
 				delta.accept(visitor);
 				
 				Document doc = visitor.getDocument();
-				if (continueOnResolverError){
+				if (processUnresolvedBundles){
 					// Store any components that had resolver errors in the xml to add warnings in the html
 					addResolverErrors(doc);
 				}
@@ -242,7 +242,7 @@ public class APIFreezeTask extends CommonUtilsTask {
 					}
 					// If a component has a resolver error we either skip the component or
 					// add it to the list component's with errors
-					if (continueOnResolverError){
+					if (processUnresolvedBundles){
 						resolverErrors.put(apiComponent.getSymbolicName(), errors);
 					} else {
 						continue;
@@ -355,6 +355,18 @@ public class APIFreezeTask extends CommonUtilsTask {
 	 */
 	public void setReport(String reportLocation) {
 		this.reportLocation = reportLocation;
+	}
+	
+	/**
+	 * Set whether to continue comparing an api component (bundle) even if it has resolver errors such
+	 * as missing dependencies.  The results of the comparison may not be accurate. A list of the 
+	 * bundles with resolver errors is included in the xml output and is incorporated into the html
+	 * output of the report conversion task.  Defaults to <code>true</code>
+	 * 
+	 * @param processUnresolvedBundles whether to continue processing a bundle that has resolver errors
+	 */
+	public void setProcessUnresolvedBundles(boolean processUnresolvedBundles) {
+		this.processUnresolvedBundles = processUnresolvedBundles;
 	}
 	
 	/**
