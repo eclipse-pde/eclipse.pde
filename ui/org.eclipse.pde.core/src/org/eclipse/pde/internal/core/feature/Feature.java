@@ -803,4 +803,9 @@ public class Feature extends VersionableObject implements IFeature {
 		fireStructureChanged(feature1, IModelChangedEvent.CHANGE);
 	}
 
+	@Override
+	public String toString() {
+		return getId() + " (" + getVersion() + ")"; //$NON-NLS-1$//$NON-NLS-2$
+	}
+
 }
