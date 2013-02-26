@@ -255,7 +255,8 @@ public class TargetDefinitionPersistenceHelper {
 			TargetPersistence34Helper.initFromDoc(definition, root);
 		} else {
 			// Version doesn't match any known file structure, default to latest 
-			PDECore.log(new Status(IStatus.WARNING, PDECore.PLUGIN_ID, MessageFormat.format(Messages.TargetDefinitionPersistenceHelper_2, version)));
+			String name = root.getAttribute(TargetDefinitionPersistenceHelper.ATTR_NAME);
+			PDECore.log(new Status(IStatus.WARNING, PDECore.PLUGIN_ID, MessageFormat.format(Messages.TargetDefinitionPersistenceHelper_2, new Object[] {version, name})));
 			TargetPersistence38Helper.initFromDoc(definition, root);
 		}
 	}
