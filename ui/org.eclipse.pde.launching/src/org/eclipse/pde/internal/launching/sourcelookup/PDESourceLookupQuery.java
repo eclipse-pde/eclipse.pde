@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 IBM Corporation and others.
+ * Copyright (c) 2006, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,6 +27,10 @@ import org.eclipse.pde.internal.core.TargetPlatformHelper;
 public class PDESourceLookupQuery implements ISafeRunnable {
 
 	protected static String OSGI_CLASSLOADER = "org.eclipse.osgi.internal.baseadaptor.DefaultClassLoader"; //$NON-NLS-1$
+	/**
+	 * Support for refactored bundle class loaders (bug 402005)
+	 */
+	protected static String OSGI_CLASSLOADER2 = "org.eclipse.osgi.internal.loader.ModuleClassLoader"; //$NON-NLS-1$
 	private static String LEGACY_ECLIPSE_CLASSLOADER = "org.eclipse.core.runtime.adaptor.EclipseClassLoader"; //$NON-NLS-1$
 	private static String MAIN_CLASS = "org.eclipse.core.launcher.Main"; //$NON-NLS-1$
 	private static String MAIN_PLUGIN = "org.eclipse.platform"; //$NON-NLS-1$
@@ -80,6 +84,8 @@ public class PDESourceLookupQuery implements ISafeRunnable {
 					} else {
 						fResult = findSourceElement(classLoaderObject, sourcePath);
 					}
+				} else if (OSGI_CLASSLOADER2.equals(type.getName())) {
+					fResult = findSourceElement(classLoaderObject, sourcePath);
 				} else if (LEGACY_ECLIPSE_CLASSLOADER.equals(type.getName())) {
 					fResult = findSourceElement_legacy(classLoaderObject, sourcePath);
 				} else if (MAIN_CLASS.equals(declaringTypeName)) {
@@ -133,28 +139,25 @@ public class PDESourceLookupQuery implements ISafeRunnable {
 	protected Object findSourceElement(IJavaObject object, String typeName) throws CoreException {
 		IJavaObject manager = getObject(object, "manager", false); //$NON-NLS-1$
 		if (manager != null) {
-			IJavaObject data = getObject(manager, "data", false); //$NON-NLS-1$
-			if (data != null) {
-				// search manager's class path for location
-				Object result = searchClasspathEntries(manager, typeName);
-				if (result != null) {
-					return result;
-				}
-				// then check its fragments
-				IJavaObject frgArray = getObject(manager, "fragments", false); //$NON-NLS-1$
-				if (frgArray instanceof IJavaArray) {
-					IJavaArray fragments = (IJavaArray) frgArray;
-					for (int i = 0; i < fragments.getLength(); i++) {
-						IJavaObject fragment = (IJavaObject) fragments.getValue(i);
-						if (!fragment.isNull()) {
-							// search fragment class path
-							result = searchClasspathEntries(fragment, typeName);
-							if (result != null) {
-								return result;
-							}
+			// search manager's class path for location
+			Object result = searchClasspathEntries(manager, typeName);
+			if (result != null) {
+				return result;
+			}
+			// then check its fragments
+			IJavaObject frgArray = getObject(manager, "fragments", false); //$NON-NLS-1$
+			if (frgArray instanceof IJavaArray) {
+				IJavaArray fragments = (IJavaArray) frgArray;
+				for (int i = 0; i < fragments.getLength(); i++) {
+					IJavaObject fragment = (IJavaObject) fragments.getValue(i);
+					if (!fragment.isNull()) {
+						// search fragment class path
+						result = searchClasspathEntries(fragment, typeName);
+						if (result != null) {
+							return result;
 						}
-
 					}
+
 				}
 			}
 		}
