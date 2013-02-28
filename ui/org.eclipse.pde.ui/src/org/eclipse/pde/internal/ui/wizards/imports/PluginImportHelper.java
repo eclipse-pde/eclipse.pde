@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -325,6 +325,17 @@ public class PluginImportHelper {
 		}
 	}
 
+	/**
+	 * Searches the content from the provider for non java files that should be imported from a 
+	 * source bundle.  Source folders containing java files are ignores.  The META-INF folder is
+	 * ignored.  The OSGI-INF folder is ignored to skip source bundle localization.
+	 * 
+	 * Note: It would be more accurate to skip localization by reading the localization header of the bundle
+	 * 
+	 * @param provider import provider to search
+	 * @param element root element to search in the provider
+	 * @param collected list of children that should be imported
+	 */
 	public static void collectNonJavaNonBuildFiles(IImportStructureProvider provider, Object element, ArrayList<Object> collected) {
 		@SuppressWarnings("rawtypes")
 		List children = provider.getChildren(element);
@@ -336,6 +347,9 @@ public class PluginImportHelper {
 					if (folderContainsFileExtension(provider, curr, ".java")) //$NON-NLS-1$
 						continue;
 					if (provider.getFullPath(curr).equals("META-INF/")) { //$NON-NLS-1$
+						continue;
+					}
+					if (provider.getFullPath(curr).equals("OSGI-INF/")) { //$NON-NLS-1$
 						continue;
 					}
 					collected.add(curr);
