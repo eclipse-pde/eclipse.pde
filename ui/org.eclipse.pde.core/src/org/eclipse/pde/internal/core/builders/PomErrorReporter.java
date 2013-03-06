@@ -16,6 +16,8 @@ import javax.xml.parsers.SAXParserFactory;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -77,8 +79,8 @@ public class PomErrorReporter extends ErrorReporter {
 
 	}
 
-	private void reportMarker(String message, int lineNumber, String correctedVersion) {
-		IMarker marker = report(message, lineNumber, pomVersionSeverity, PDEMarkerFactory.POM_MISMATCH_VERSION, PDEMarkerFactory.CAT_OTHER);
+	private void reportMarker(String message, int lineNumber, int charStart, int charEnd, String correctedVersion) {
+		IMarker marker = report(message, lineNumber, charStart, charEnd, pomVersionSeverity, PDEMarkerFactory.POM_MISMATCH_VERSION, PDEMarkerFactory.CAT_OTHER);
 		if (marker != null) {
 			try {
 				marker.setAttribute(PDEMarkerFactory.POM_CORRECT_VERSION, correctedVersion);
@@ -140,7 +142,17 @@ public class PomErrorReporter extends ErrorReporter {
 						if (index >= 0) {
 							correctedVersion = correctedVersion.concat(SNAPSHOT_SUFFIX);
 						}
-						reportMarker(NLS.bind(PDECoreMessages.PomErrorReporter_pomVersionMismatch, pomVersion2.toString(), bundleVersion2.toString()), locator.getLineNumber(), correctedVersion);
+
+						try {
+							// Need to create a document to calculate the markers charstart and charend
+							IDocument doc = createDocument(fFile);
+							int offset = doc.getLineOffset(locator.getLineNumber() - 1); // locator lines start at 1
+							int charEnd = offset + locator.getColumnNumber() - 1; // returns column at end of character string, columns start at 1
+							int charStart = charEnd - length;
+							reportMarker(NLS.bind(PDECoreMessages.PomErrorReporter_pomVersionMismatch, pomVersion2.toString(), bundleVersion2.toString()), locator.getLineNumber(), charStart, charEnd, correctedVersion);
+						} catch (BadLocationException e) {
+							PDECore.log(e);
+						}
 					}
 				} catch (IllegalArgumentException e) {
 					// Do nothing, user has a bad version
