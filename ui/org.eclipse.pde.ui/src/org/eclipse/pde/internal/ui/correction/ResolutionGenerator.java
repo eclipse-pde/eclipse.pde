@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.correction;
 
-import org.eclipse.ui.IMarkerResolution2;
-
 import java.util.ArrayList;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -23,8 +21,7 @@ import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.core.builders.PDEMarkerFactory;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.ui.IMarkerResolution;
-import org.eclipse.ui.IMarkerResolutionGenerator2;
+import org.eclipse.ui.*;
 import org.osgi.framework.Constants;
 
 public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
@@ -114,6 +111,13 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 				return new IMarkerResolution[] {new NoLineTerminationResolution(AbstractPDEMarkerResolution.REMOVE_TYPE)};
 			case PDEMarkerFactory.M_R4_SYNTAX_IN_R3_BUNDLE :
 				return new IMarkerResolution[] {new AddBundleManifestVersionResolution()};
+			case PDEMarkerFactory.POM_MISMATCH_VERSION :
+				try {
+					String correctedVersion = (String) marker.getAttribute(PDEMarkerFactory.POM_CORRECT_VERSION);
+					return new IMarkerResolution[] {new PomVersionMarkerResolution(correctedVersion)};
+				} catch (CoreException e) {
+					return NO_RESOLUTIONS;
+				}
 		}
 		return NO_RESOLUTIONS;
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -103,6 +103,9 @@ public interface ICoreConstants {
 
 	/** Constant for the string <code>build.properties</code> */
 	public final static String BUILD_FILENAME_DESCRIPTOR = "build.properties"; //$NON-NLS-1$
+
+	/** Constant for the string <code>build.properties</code> */
+	public final static String POM_FILENAME_DESCRIPTOR = "pom.xml"; //$NON-NLS-1$
 
 	/**
 	 * Target version of <code>3.0</code>
@@ -351,6 +354,7 @@ public interface ICoreConstants {
 	public static IPath FEATURE_PATH = new Path(FEATURE_FILENAME_DESCRIPTOR);
 	public static IPath BUILD_PROPERTIES_PATH = new Path(BUILD_FILENAME_DESCRIPTOR);
 	public static IPath OSGI_INF_PATH = new Path(OSGI_INF_FOLDER_NAME);
+	public static IPath POM_PATH = new Path(POM_FILENAME_DESCRIPTOR);
 
 	// Extension point identifiers
 	public static final String EXTENSION_POINT_SOURCE = PDECore.PLUGIN_ID + ".source"; //$NON-NLS-1$

@@ -123,6 +123,8 @@ public class PDEUIMessages extends NLS {
 	public static String PDECompilersConfigurationBlock_usage;
 	public static String PDECompilersConfigurationBlock_build;
 
+	public static String PDECompilersConfigurationBlock_compilers_p_mismatched_pom_version;
+
 	public static String PDEWizardNewFileCreationPage_errorMsgStartsWithDot;
 
 	public static String CommandComposerPart_formTitle;
@@ -2685,6 +2687,8 @@ public class PDEUIMessages extends NLS {
 	public static String PointSelectionPage_newDepFound;
 
 	public static String PointSelectionPage_newDepMessage;
+
+	public static String PomVersionMarkerResolution_pomVersionResolutionLabel;
 
 	public static String OrganizeManifestsWizard_title;
 

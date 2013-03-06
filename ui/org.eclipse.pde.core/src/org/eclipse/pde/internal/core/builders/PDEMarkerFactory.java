@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -65,12 +65,19 @@ public class PDEMarkerFactory {
 	public static final int P_UNKNOWN_CLASS = 0x3003;
 	public static final int P_USELESS_FILE = 0x3004;
 
+	// pom.xml fixes
+	public static final int POM_MISMATCH_VERSION = 0x4001;
+
 	// marker attribute keys
 	public static final String BK_BUILD_ENTRY = "buildEntry.key"; //$NON-NLS-1$
 	public static final String BK_BUILD_TOKEN = "buildEntry.tokenValue"; //$NON-NLS-1$
 	public static final String MPK_LOCATION_PATH = "xmlTree.locationPath"; //$NON-NLS-1$
 	public static final String ATTR_CAN_ADD = "deprecatedAutostart.canAdd"; //$NON-NLS-1$
 	public static final String ATTR_HEADER = "deprecatedAutostart.header"; //$NON-NLS-1$
+	/**
+	 * String attribute for the correct version that should be in the POM file
+	 */
+	public static final String POM_CORRECT_VERSION = "pom.CorrectVersion"; //$NON-NLS-1$
 	/**
 	 * Boolean attribute for marker added when no newline is found at the end of a manifest. Value is
 	 * <code>true</code> if there is character content on the last line that should be

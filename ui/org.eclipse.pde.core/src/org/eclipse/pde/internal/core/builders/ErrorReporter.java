@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2011 IBM Corporation and others.
+ *  Copyright (c) 2005, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -51,6 +51,19 @@ public abstract class ErrorReporter {
 			PDECore.logException(e);
 		}
 		return null;
+	}
+
+	protected IMarker addMarker(String message, int lineNumber, int charStart, int charEnd, int severity, int problemID, String category) {
+		IMarker marker = addMarker(message, lineNumber, severity, problemID, category);
+		if (marker != null) {
+			try {
+				marker.setAttribute(IMarker.CHAR_START, charStart);
+				marker.setAttribute(IMarker.CHAR_END, charEnd);
+			} catch (CoreException e) {
+				PDECore.logException(e);
+			}
+		}
+		return marker;
 	}
 
 	protected IDocument createDocument(IFile file) {
@@ -119,6 +132,14 @@ public abstract class ErrorReporter {
 		if (severity != CompilerFlags.IGNORE) {
 			return report(message, line, severity, problemID, category);
 		}
+		return null;
+	}
+
+	public IMarker report(String message, int line, int charStart, int charEnd, int severity, int problemID, String category) {
+		if (severity == CompilerFlags.ERROR)
+			return addMarker(message, line, charStart, charEnd, IMarker.SEVERITY_ERROR, problemID, category);
+		else if (severity == CompilerFlags.WARNING)
+			return addMarker(message, line, charStart, charEnd, IMarker.SEVERITY_WARNING, problemID, category);
 		return null;
 	}
 

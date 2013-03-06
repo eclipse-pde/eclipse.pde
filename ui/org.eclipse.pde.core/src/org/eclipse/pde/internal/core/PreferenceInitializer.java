@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -79,6 +79,8 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		prefs.putInt(CompilerFlags.P_MISSING_VERSION_EXP_PKG, CompilerFlags.IGNORE);
 		prefs.putInt(CompilerFlags.P_MISSING_VERSION_IMP_PKG, CompilerFlags.IGNORE);
 		prefs.putInt(CompilerFlags.P_MISSING_VERSION_REQ_BUNDLE, CompilerFlags.IGNORE);
+
+		prefs.putInt(CompilerFlags.P_MATCHING_POM_VERSION, CompilerFlags.IGNORE);
 
 		prefs.putBoolean(CompilerFlags.S_CREATE_DOCS, false);
 		prefs.put(CompilerFlags.S_DOC_FOLDER, "doc"); //$NON-NLS-1$

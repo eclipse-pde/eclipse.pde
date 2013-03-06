@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -153,6 +153,17 @@ public class PDEProject {
 	 */
 	public static IFile getBuildProperties(IProject project) {
 		return getBundleRelativeFile(project, ICoreConstants.BUILD_PROPERTIES_PATH);
+	}
+
+	/**
+	 * Returns the resource in the specified project corresponding to its
+	 * <code>pom.xml</code>file.
+	 * 
+	 * @param project project
+	 * @return <code>pom.xml</code> file that may or may not exist
+	 */
+	public static IFile getPom(IProject project) {
+		return getBundleRelativeFile(project, ICoreConstants.POM_PATH);
 	}
 
 	/**

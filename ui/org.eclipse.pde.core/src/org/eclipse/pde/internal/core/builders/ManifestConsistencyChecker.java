@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,6 +27,9 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 	private int EXTENSIONS = 0x2;
 	private int BUILD = 0x4;
 	private int STRUCTURE = 0x8;
+	private int POM = 0x10;
+
+	private int ALL_TYPES = MANIFEST | EXTENSIONS | BUILD | STRUCTURE | POM;
 
 	private static boolean DEBUG = false;
 	private static IProject[] EMPTY_LIST = new IProject[0];
@@ -79,10 +82,10 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		int type = 0;
 
 		public boolean visit(IResourceDelta delta) throws CoreException {
-			if (delta != null && type != (MANIFEST | EXTENSIONS | BUILD | STRUCTURE)) {
+			if (delta != null && type != ALL_TYPES) {
 				int kind = delta.getKind();
 				if (kind == IResourceDelta.ADDED || kind == IResourceDelta.REMOVED) {
-					type = MANIFEST | EXTENSIONS | BUILD | STRUCTURE;
+					type = ALL_TYPES;
 					if (DEBUG) {
 						System.out.print("Needs to rebuild project [" + getProject().getName() + "]: "); //$NON-NLS-1$ //$NON-NLS-2$
 						System.out.print(delta.getResource().getProjectRelativePath().toString());
@@ -107,7 +110,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 							System.out.println(" - changed"); //$NON-NLS-1$
 						}
 					} else if (file.equals(PDEProject.getManifest(project))) {
-						type |= MANIFEST | EXTENSIONS | BUILD;
+						type |= MANIFEST | EXTENSIONS | BUILD | POM;
 						if (DEBUG) {
 							System.out.print("Needs to rebuild project [" + getProject().getName() + "]: "); //$NON-NLS-1$ //$NON-NLS-2$
 							System.out.print(delta.getResource().getProjectRelativePath().toString());
@@ -127,10 +130,17 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 							System.out.print(delta.getResource().getProjectRelativePath().toString());
 							System.out.println(" - changed"); //$NON-NLS-1$
 						}
+					} else if (file.equals(PDEProject.getPom(project))) {
+						type |= POM;
+						if (DEBUG) {
+							System.out.print("Needs to check pom.xml in project [" + getProject().getName() + "]: "); //$NON-NLS-1$ //$NON-NLS-2$
+							System.out.print(delta.getResource().getProjectRelativePath().toString());
+							System.out.println(" - changed"); //$NON-NLS-1$
+						}
 					}
 				}
 			}
-			return type != (MANIFEST | EXTENSIONS | BUILD | STRUCTURE);
+			return type != ALL_TYPES;
 		}
 
 		public int getType() {
@@ -168,7 +178,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 			if (DEBUG) {
 				System.out.println("Project [" + getProject().getName() + "] - full build"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
-			return MANIFEST | EXTENSIONS | BUILD | STRUCTURE;
+			return ALL_TYPES;
 		}
 
 		// the project has been "touched" by PluginRebuilder to indicate
@@ -230,6 +240,9 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		if ((type & BUILD) != 0) {
 			validateBuildProperties(new SubProgressMonitor(monitor, 1));
 		}
+		if ((type & POM) != 0) {
+			validatePom(new SubProgressMonitor(monitor, 1));
+		}
 	}
 
 	private int getWorkAmount(int type) {
@@ -237,6 +250,8 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		if ((type & MANIFEST | EXTENSIONS) != 0)
 			++work;
 		if ((type & BUILD) != 0)
+			++work;
+		if ((type & POM) != 0)
 			++work;
 		return work;
 	}
@@ -311,6 +326,18 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		if (file.exists()) {
 			monitor.subTask(PDECoreMessages.ManifestConsistencyChecker_buildPropertiesSubtask);
 			BuildErrorReporter ber = new BuildErrorReporter(file);
+			ber.validateContent(monitor);
+		}
+	}
+
+	private void validatePom(IProgressMonitor monitor) {
+		if (monitor.isCanceled())
+			return;
+		IProject project = getProject();
+		IFile file = PDEProject.getPom(project);
+		if (file.exists()) {
+			monitor.subTask(PDECoreMessages.ManifestConsistencyChecker_verifyingPomVersions);
+			PomErrorReporter ber = new PomErrorReporter(file);
 			ber.validateContent(monitor);
 		}
 	}

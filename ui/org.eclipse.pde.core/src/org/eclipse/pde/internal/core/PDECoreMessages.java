@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -237,6 +237,8 @@ public class PDECoreMessages extends NLS {
 
 	public static String ManifestConsistencyChecker_buildPropertiesSubtask;
 
+	public static String ManifestConsistencyChecker_verifyingPomVersions;
+
 	public static String BuildErrorReporter_missingEntry;
 	public static String BuildErrorReporter_missingFolder;
 	public static String BuildErrorReporter_emptyEntry;
@@ -305,6 +307,10 @@ public class PDECoreMessages extends NLS {
 	public static String PluginModelManager_1;
 
 	public static String PluginParser_EclipseConverterMissingAttribute;
+
+	public static String PomErrorReporter_pomVersionMismatch;
+
+	public static String PomErrorReporter_problemParsingPom;
 
 	public static String XMLTextChangeListener_editNames_addAttribute;
 	public static String XMLTextChangeListener_editNames_addContent;
