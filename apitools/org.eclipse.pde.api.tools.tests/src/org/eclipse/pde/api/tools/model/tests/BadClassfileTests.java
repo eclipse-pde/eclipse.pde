@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,12 +17,14 @@ import junit.framework.TestCase;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.osgi.service.resolver.ResolverError;
 import org.eclipse.pde.api.tools.internal.ApiDescription;
 import org.eclipse.pde.api.tools.internal.CompilationUnit;
 import org.eclipse.pde.api.tools.internal.builder.Reference;
-import org.eclipse.pde.api.tools.internal.model.Component;
 import org.eclipse.pde.api.tools.internal.model.ApiBaseline;
+import org.eclipse.pde.api.tools.internal.model.Component;
 import org.eclipse.pde.api.tools.internal.model.DirectoryApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
 import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
@@ -160,7 +162,10 @@ public class BadClassfileTests extends TestCase {
 			scanner.scan(unit, new ApiDescription("test"), this.container, null, null);
 		}
 		catch(CoreException ce) {
-			assertTrue("the message should be about nobytecodes#method() not resolving", ce.getMessage().equals("Unable to resolve method signature: nobytecodes#void method()"));
+			assertTrue("The tag scanner should return a multi status exception", ce.getStatus() instanceof MultiStatus);
+			IStatus[] children = ((MultiStatus)ce.getStatus()).getChildren();
+			assertEquals("There should only be one problem", 1, children.length);
+			assertTrue("the message should be about nobytecodes#method() not resolving", children[0].getMessage().equals("Unable to resolve method signature: nobytecodes#void method()"));
 		}
 	}
 }

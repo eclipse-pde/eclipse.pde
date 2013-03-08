@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ import java.util.Map;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jdt.core.Flags;
@@ -97,7 +98,7 @@ public class TagScanner {
 		/**
 		 * List of exceptions encountered, or <code>null</code>
 		 */
-		private CoreException fException;
+		private MultiStatus fProblems;
 		
 		/**
 		 * Constructor
@@ -214,7 +215,10 @@ public class TagScanner {
 					try {
 						ldesc = resolveMethod((IMethodDescriptor)ldesc);
 					} catch (CoreException e) {
-						fException = e;
+						if (fProblems == null){
+							fProblems = new MultiStatus(ApiPlugin.PLUGIN_ID, 0, "Problems encountered while scanning tags", null);
+						}
+						fProblems.add(e.getStatus());
 					}
 				}
 				fDescription.setRestrictions(ldesc, restrictions);
@@ -304,21 +308,13 @@ public class TagScanner {
 		}
 		
 		/**
-		 * Returns whether to continue processing children.
+		 * Returns a status describing all problems during processing.  The status may be a multi
+		 * status.  If no problems were encountered an OK status will be returned.
 		 * 
-		 * @return whether to continue processing children.
+		 * @return a status describing all problems during processing or an OK status if none
 		 */
-		private boolean isContinue() {
-			return fException == null;
-		}
-		
-		/**
-		 * Returns an exception that aborted processing, or <code>null</code> if none.
-		 * 
-		 * @return an exception that aborted processing, or <code>null</code> if none
-		 */
-		CoreException getException() {
-			return fException;
+		IStatus getStatus() {
+			return fProblems != null ? fProblems : Status.OK_STATUS;
 		}
 		
 		/* (non-Javadoc)
@@ -329,7 +325,7 @@ public class TagScanner {
 				return false;
 			}
 			enterType(node.getName());
-			return isContinue();
+			return true;
 		}
 		/* (non-Javadoc)
 		 * @see org.eclipse.jdt.core.dom.ASTVisitor#endVisit(org.eclipse.jdt.core.dom.TypeDeclaration)
@@ -355,7 +351,7 @@ public class TagScanner {
 				return false;
 			}
 			enterType(node.getName());
-			return isContinue();
+			return true;
 		}
 		/* (non-Javadoc)
 		 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.EnumDeclaration)
@@ -365,7 +361,7 @@ public class TagScanner {
 				return false;
 			}
 			enterType(node.getName());
-			return isContinue();
+			return true;
 		}
 		/* (non-Javadoc)
 		 * @see org.eclipse.jdt.core.dom.ASTVisitor#endVisit(org.eclipse.jdt.core.dom.EnumDeclaration)
@@ -390,7 +386,7 @@ public class TagScanner {
 			if(isPrivate(node.getModifiers())) {
 				return false;
 			}
-			return isContinue();
+			return true;
 		}
 		/* (non-Javadoc)
 		 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.FieldDeclaration)
@@ -399,7 +395,7 @@ public class TagScanner {
 			if(isPrivate(node.getModifiers())) {
 				return false;
 			}
-			return isContinue();
+			return true;
 		}
 		private boolean isPrivate(int flags) {
 			return Flags.isPrivate(flags);
@@ -480,7 +476,7 @@ public class TagScanner {
 	 * 	not provided (<code>null</code>), method signatures will be unresolved.
 	 * @param monitor
 	 * 
-	 * @throws CoreException
+	 * @throws CoreException if problems were encountered while scanning tags, the description may still be modified
 	 */
 	public void scan(ICompilationUnit unit, IApiDescription description, IApiTypeContainer container, IProgressMonitor monitor) throws CoreException {
 		scan(new CompilationUnit(unit), description, container, unit.getJavaProject().getOptions(true), monitor);
@@ -499,7 +495,7 @@ public class TagScanner {
 	 *  or <code>null</code> if default options should be used 
 	 *  @param monitor
 	 * 
-	 * @throws CoreException 
+	 * @throws CoreException if problems were encountered while scanning tags, the description may still be modified
 	 */
 	public void scan(CompilationUnit source, IApiDescription description, IApiTypeContainer container, Map options, IProgressMonitor monitor) throws CoreException {
 		SubMonitor localmonitor = SubMonitor.convert(monitor, 2);
@@ -536,8 +532,8 @@ public class TagScanner {
 		org.eclipse.jdt.core.dom.CompilationUnit cunit = (org.eclipse.jdt.core.dom.CompilationUnit) parser.createAST(localmonitor.newChild(1));
 		Visitor visitor = new Visitor(description, container);
 		cunit.accept(visitor);
-		if (visitor.getException() != null) {
-			throw visitor.getException();
+		if (!visitor.getStatus().isOK()) {
+			throw new CoreException(visitor.getStatus());
 		}
 	}	
 }
