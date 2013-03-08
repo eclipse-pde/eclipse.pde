@@ -310,8 +310,6 @@ public class PDECoreMessages extends NLS {
 
 	public static String PomErrorReporter_pomVersionMismatch;
 
-	public static String PomErrorReporter_problemParsingPom;
-
 	public static String XMLTextChangeListener_editNames_addAttribute;
 	public static String XMLTextChangeListener_editNames_addContent;
 	public static String XMLTextChangeListener_editNames_insertNode;

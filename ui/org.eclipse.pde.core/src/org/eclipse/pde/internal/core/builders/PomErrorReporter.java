@@ -66,7 +66,7 @@ public class PomErrorReporter extends ErrorReporter {
 					PomVersionHandler handler = new PomVersionHandler(fFile, bundleVersion);
 					parser.parse(fFile.getContents(), handler);
 				} catch (Exception e1) {
-					PDECore.log(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.PomErrorReporter_problemParsingPom, e1));
+					// Ignored, if there is a problem with the pom file don't create a marker
 				}
 
 			}
