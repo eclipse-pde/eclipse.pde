@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,11 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
-import org.eclipse.pde.core.target.*;
-
-import java.io.FileWriter;
-
 import java.io.File;
+import java.io.FileWriter;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.runtime.*;
@@ -22,6 +19,7 @@ import org.eclipse.equinox.frameworkadmin.BundleInfo;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.pde.core.plugin.TargetPlatform;
+import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.target.IUBundleContainer;
 import org.eclipse.pde.internal.core.target.TargetPlatformService;
@@ -403,72 +401,80 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 		
 		// Create the link file
 		File linkLocation = new File(location.toFile().getParentFile(),"links");
-		linkLocation.mkdirs();
 		File linkFile = new File(linkLocation, "test.link");
-		linkFile.createNewFile();
-		FileWriter writer = new FileWriter(linkFile);
-		writer.write("path=" + extraPlugins.removeLastSegments(1).toPortableString());
-		writer.flush();
-		writer.close();
-		
-		ITargetDefinition definition = getNewTarget();
-		String home = location.removeLastSegments(1).toOSString();
-		ITargetLocation container = getTargetService().newProfileLocation(home, null);
-		definition.setTargetLocations(new ITargetLocation[]{container});
-		definition.resolve(null);
-		TargetBundle[] bundles = definition.getAllBundles();
-		
-		int source = 0;
-		int frag = 0;
-		int bin = 0;
-		
-		for (int i = 0; i < bundles.length; i++) {
-			TargetBundle bundle = bundles[i];
-			if (bundle.isFragment()) {
-				frag++;
-				if (bundle.isSourceBundle()) {
-					source++; // fragment && source
-				} 
-			} else if (bundle.isSourceBundle()) {
-				source++;
-			} else {
-				bin++;
+		try {
+			linkLocation.mkdirs();
+			linkFile.createNewFile();
+			FileWriter writer = new FileWriter(linkFile);
+			writer.write("path=" + extraPlugins.removeLastSegments(1).toPortableString());
+			writer.flush();
+			writer.close();
+			
+			ITargetDefinition definition = getNewTarget();
+			String home = location.removeLastSegments(1).toOSString();
+			ITargetLocation container = getTargetService().newProfileLocation(home, null);
+			ITargetLocation container2 = getTargetService().newProfileLocation(linkLocation.getAbsolutePath(), null);
+			definition.setTargetLocations(new ITargetLocation[]{container, container2});
+			definition.resolve(null);
+			TargetBundle[] bundles = definition.getAllBundles();
+			
+			int source = 0;
+			int frag = 0;
+			int bin = 0;
+			
+			for (int i = 0; i < bundles.length; i++) {
+				TargetBundle bundle = bundles[i];
+				if (bundle.isFragment()) {
+					frag++;
+					if (bundle.isSourceBundle()) {
+						source++; // fragment && source
+					} 
+				} else if (bundle.isSourceBundle()) {
+					source++;
+				} else {
+					bin++;
+				}
 			}
-		}
-		// there should be 80 plug-ins and 4 source plug-ins (win 32) + 10 extra links plug-ins (5 of which are source)
-		assertEquals("Wrong number of bundles", 94, bundles.length);
-		assertEquals("Wrong number of binary bundles", 80, bin);
-		assertEquals("Wrong number of source bundles", 9, source);
-		assertEquals("Wrong number of fragments", 6, frag);
-		
-		// Check that the directory container doesn't find any linked plugins
-		definition = getNewTarget();
-		container = getTargetService().newDirectoryLocation(home);
-		definition.setTargetLocations(new ITargetLocation[]{container});
-		definition.resolve(null);
-		bundles = definition.getAllBundles();
-		
-		source = 0;
-		frag = 0;
-		bin = 0;
-		
-		for (int i = 0; i < bundles.length; i++) {
-			TargetBundle bundle = bundles[i];
-			if (bundle.isFragment()) {
-				frag++;
-				if (bundle.isSourceBundle()) {
-					source++; // fragment && source
-				} 
-			} else if (bundle.isSourceBundle()) {
-				source++;
-			} else {
-				bin++;
+			// there should be 80 plug-ins and 4 source plug-ins (win 32) + 10 extra links plug-ins (5 of which are source)
+			assertEquals("Wrong number of bundles", 94, bundles.length);
+			assertEquals("Wrong number of binary bundles", 80, bin);
+			assertEquals("Wrong number of source bundles", 9, source);
+			assertEquals("Wrong number of fragments", 6, frag);
+			
+			// Check that the directory container doesn't find any linked plugins
+			definition = getNewTarget();
+			container = getTargetService().newDirectoryLocation(home);
+			definition.setTargetLocations(new ITargetLocation[]{container});
+			definition.resolve(null);
+			bundles = definition.getAllBundles();
+			
+			source = 0;
+			frag = 0;
+			bin = 0;
+			
+			for (int i = 0; i < bundles.length; i++) {
+				TargetBundle bundle = bundles[i];
+				if (bundle.isFragment()) {
+					frag++;
+					if (bundle.isSourceBundle()) {
+						source++; // fragment && source
+					} 
+				} else if (bundle.isSourceBundle()) {
+					source++;
+				} else {
+					bin++;
+				}
 			}
+			// there should be 80 plug-ins and 4 source plug-ins (win 32)
+			assertEquals("Wrong number of bundles", 84, bundles.length);
+			assertEquals("Wrong number of source bundles", 4, source);
+			assertEquals("Wrong number of fragments", 6, frag);
+			
+		} finally {
+			// Important to delete the link files as they can affect other tests (Bug 381428)
+			linkFile.delete();
+			linkLocation.delete();
 		}
-		// there should be 80 plug-ins and 4 source plug-ins (win 32)
-		assertEquals("Wrong number of bundles", 84, bundles.length);
-		assertEquals("Wrong number of source bundles", 4, source);
-		assertEquals("Wrong number of fragments", 6, frag);
 		
 	}
 	/**
