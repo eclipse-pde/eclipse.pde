@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2007, 2013 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -35,44 +35,45 @@ import org.osgi.framework.Version;
  */
 public class ProductTests extends PDETestCase {
 
-	public void testBug192127() throws Exception {
-		IFolder buildFolder = newTest("192127");
-		IFolder containerFeature = Utils.createFolder(buildFolder, "features/org.eclipse.pde.build.container.feature");
-
-		File delta = Utils.findDeltaPack();
-		assertNotNull(delta);
-
-		// Exporting from the UI gives the container feature some /Eclipse.App root files
-		Utils.generateFeature(buildFolder, "org.eclipse.pde.build.container.feature", null, null, "/rcp/rcp.product", true, true, null);
-		Properties featureProperties = new Properties();
-		featureProperties.put("root", "/temp/");
-		Utils.storeBuildProperties(containerFeature, featureProperties);
-
-		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
-		properties.put("product", "/rcp/rcp.product");
-		properties.put("configs", "macosx,cocoa,x86");
-		if (!delta.equals(new File((String) properties.get("baseLocation"))))
-			properties.put("pluginPath", delta.getAbsolutePath());
-		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"), new Path("/scripts/productBuild/allElements.xml"), null);
-		properties.put("allElementsFile", FileLocator.toFileURL(resource).getPath());
-		Utils.storeBuildProperties(buildFolder, properties);
-
-		runBuild(buildFolder);
-
-		Set entries = new HashSet();
-		entries.add("eclipse/.eclipseproduct");
-		entries.add("eclipse/configuration/config.ini");
-		entries.add("eclipse/rcp.app/Contents/Info.plist");
-		entries.add("eclipse/rcp.app/Contents/MacOS/rcp");
-		entries.add("eclipse/rcp.app/Contents/MacOS/rcp.ini");
-
-		entries.add("eclipse/Eclipse.app/");
-
-		//bug 206788 names the archive .zip
-		assertZipContents(buildFolder, "I.TestBuild/eclipse-macosx.cocoa.x86.zip", entries, false);
-		assertTrue(entries.contains("eclipse/Eclipse.app/"));
-		assertTrue(entries.size() == 1);
-	}
+	// This test currently disabled due to CBI delta pack issues (Bug 401572)
+	//	public void testBug192127() throws Exception {
+	//		IFolder buildFolder = newTest("192127");
+	//		IFolder containerFeature = Utils.createFolder(buildFolder, "features/org.eclipse.pde.build.container.feature");
+	//
+	//		File delta = Utils.findDeltaPack();
+	//		assertNotNull(delta);
+	//
+	//		// Exporting from the UI gives the container feature some /Eclipse.App root files
+	//		Utils.generateFeature(buildFolder, "org.eclipse.pde.build.container.feature", null, null, "/rcp/rcp.product", true, true, null);
+	//		Properties featureProperties = new Properties();
+	//		featureProperties.put("root", "/temp/");
+	//		Utils.storeBuildProperties(containerFeature, featureProperties);
+	//
+	//		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
+	//		properties.put("product", "/rcp/rcp.product");
+	//		properties.put("configs", "macosx,cocoa,x86");
+	//		if (!delta.equals(new File((String) properties.get("baseLocation"))))
+	//			properties.put("pluginPath", delta.getAbsolutePath());
+	//		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"), new Path("/scripts/productBuild/allElements.xml"), null);
+	//		properties.put("allElementsFile", FileLocator.toFileURL(resource).getPath());
+	//		Utils.storeBuildProperties(buildFolder, properties);
+	//
+	//		runBuild(buildFolder);
+	//
+	//		Set entries = new HashSet();
+	//		entries.add("eclipse/.eclipseproduct");
+	//		entries.add("eclipse/configuration/config.ini");
+	//		entries.add("eclipse/rcp.app/Contents/Info.plist");
+	//		entries.add("eclipse/rcp.app/Contents/MacOS/rcp");
+	//		entries.add("eclipse/rcp.app/Contents/MacOS/rcp.ini");
+	//
+	//		entries.add("eclipse/Eclipse.app/");
+	//
+	//		//bug 206788 names the archive .zip
+	//		assertZipContents(buildFolder, "I.TestBuild/eclipse-macosx.cocoa.x86.zip", entries, false);
+	//		assertTrue(entries.contains("eclipse/Eclipse.app/"));
+	//		assertTrue(entries.size() == 1);
+	//	}
 
 	public void test218878() throws Exception {
 		//platform specific config.ini files
@@ -108,28 +109,29 @@ public class ProductTests extends PDETestCase {
 		assertEquals("linux", props.getProperty("os"));
 	}
 
-	public void test234032() throws Exception {
-		IFolder buildFolder = newTest("234032");
-
-		File delta = Utils.findDeltaPack();
-		assertNotNull(delta);
-
-		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
-		properties.put("product", "test.product");
-		properties.put("configs", "macosx,cocoa,x86");
-		properties.put("archivesFormat", "macosx,cocoa,x86-folder");
-		if (!delta.equals(new File((String) properties.get("baseLocation"))))
-			properties.put("pluginPath", delta.getAbsolutePath());
-		Utils.storeBuildProperties(buildFolder, properties);
-
-		runProductBuild(buildFolder);
-
-		IFile iniFile = buildFolder.getFile("tmp/eclipse/test.app/Contents/MacOS/test.ini");
-		assertLogContainsLine(iniFile, "-Dfoo=bar");
-		//bug 313940
-		assertLogContainsLine(iniFile, "-Dschemes1=archive zip jar");
-		assertLogContainsLine(iniFile, "-Dschemes2=archive zip jar");
-	}
+	// This test currently disabled due to CBI delta pack issues (Bug 401572)
+	//	public void test234032() throws Exception {
+	//		IFolder buildFolder = newTest("234032");
+	//
+	//		File delta = Utils.findDeltaPack();
+	//		assertNotNull(delta);
+	//
+	//		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
+	//		properties.put("product", "test.product");
+	//		properties.put("configs", "macosx,cocoa,x86");
+	//		properties.put("archivesFormat", "macosx,cocoa,x86-folder");
+	//		if (!delta.equals(new File((String) properties.get("baseLocation"))))
+	//			properties.put("pluginPath", delta.getAbsolutePath());
+	//		Utils.storeBuildProperties(buildFolder, properties);
+	//
+	//		runProductBuild(buildFolder);
+	//
+	//		IFile iniFile = buildFolder.getFile("tmp/eclipse/test.app/Contents/MacOS/test.ini");
+	//		assertLogContainsLine(iniFile, "-Dfoo=bar");
+	//		//bug 313940
+	//		assertLogContainsLine(iniFile, "-Dschemes1=archive zip jar");
+	//		assertLogContainsLine(iniFile, "-Dschemes2=archive zip jar");
+	//	}
 
 	public void test237922() throws Exception {
 		IFolder buildFolder = newTest("237922");
@@ -534,48 +536,49 @@ public class ProductTests extends PDETestCase {
 
 	}
 
-	public void testBug269540() throws Exception {
-		IFolder buildFolder = newTest("269540");
-
-		File delta = Utils.findDeltaPack();
-		assertNotNull(delta);
-
-		IFolder a = Utils.createFolder(buildFolder, "plugins/A");
-		Utils.generateBundle(a, "A");
-		Attributes manifestAdditions = new Attributes();
-		manifestAdditions.put(new Attributes.Name("Eclipse-PlatformFilter"), "(& (osgi.ws=win32) (osgi.os=win32) (osgi.arch=x86))");
-		Utils.generateBundleManifest(a, "A", "1.0.0", manifestAdditions);
-		Utils.generatePluginBuildProperties(a, null);
-		Utils.writeBuffer(a.getFile("src/a.java"), new StringBuffer("class A {}"));
-
-		StringBuffer buffer = new StringBuffer();
-		buffer.append("<launcher name=\"rcp\">                    \n");
-		buffer.append("   <win useIco=\"true\">                   \n");
-		buffer.append("      <ico path=\"/A/mail.ico\"/>          \n");
-		buffer.append("   </win>                                  \n");
-		buffer.append("</launcher>                                \n");
-		IFile product = buildFolder.getFile("foo.product");
-		Utils.generateProduct(product, "rcp", "1.0.0", null, "rcp", new String[] {"A"}, false, buffer);
-
-		//steal the icons from test 237922
-		URL ico = FileLocator.find(Platform.getBundle(Activator.PLUGIN_ID), new Path("/resources/237922/rcp/icons/mail.ico"), null);
-		IFile icoFile = a.getFile("mail.ico");
-		icoFile.create(ico.openStream(), IResource.FORCE, null);
-
-		Properties buildProperties = BuildConfiguration.getBuilderProperties(buildFolder);
-		buildProperties.put("product", product.getLocation().toOSString());
-		buildProperties.put("filteredDependencies", "true");
-		buildProperties.put("pluginPath", delta.getAbsolutePath());
-		buildProperties.put("configs", "win32, win32, x86");
-		//buildProperties.put("archivesFormat", "win32,win32,x86 - folder");
-
-		Utils.storeBuildProperties(buildFolder, buildProperties);
-
-		runProductBuild(buildFolder);
-
-		Set entries = new HashSet();
-		entries.add("eclipse/plugins/A_1.0.0.jar");
-		entries.add("eclipse/rcp.exe");
-		assertZipContents(buildFolder, "I.TestBuild/eclipse-win32.win32.x86.zip", entries);
-	}
+	// This test currently disabled due to CBI delta pack issues (Bug 401572)
+	//	public void testBug269540() throws Exception {
+	//		IFolder buildFolder = newTest("269540");
+	//
+	//		File delta = Utils.findDeltaPack();
+	//		assertNotNull(delta);
+	//
+	//		IFolder a = Utils.createFolder(buildFolder, "plugins/A");
+	//		Utils.generateBundle(a, "A");
+	//		Attributes manifestAdditions = new Attributes();
+	//		manifestAdditions.put(new Attributes.Name("Eclipse-PlatformFilter"), "(& (osgi.ws=win32) (osgi.os=win32) (osgi.arch=x86))");
+	//		Utils.generateBundleManifest(a, "A", "1.0.0", manifestAdditions);
+	//		Utils.generatePluginBuildProperties(a, null);
+	//		Utils.writeBuffer(a.getFile("src/a.java"), new StringBuffer("class A {}"));
+	//
+	//		StringBuffer buffer = new StringBuffer();
+	//		buffer.append("<launcher name=\"rcp\">                    \n");
+	//		buffer.append("   <win useIco=\"true\">                   \n");
+	//		buffer.append("      <ico path=\"/A/mail.ico\"/>          \n");
+	//		buffer.append("   </win>                                  \n");
+	//		buffer.append("</launcher>                                \n");
+	//		IFile product = buildFolder.getFile("foo.product");
+	//		Utils.generateProduct(product, "rcp", "1.0.0", null, "rcp", new String[] {"A"}, false, buffer);
+	//
+	//		//steal the icons from test 237922
+	//		URL ico = FileLocator.find(Platform.getBundle(Activator.PLUGIN_ID), new Path("/resources/237922/rcp/icons/mail.ico"), null);
+	//		IFile icoFile = a.getFile("mail.ico");
+	//		icoFile.create(ico.openStream(), IResource.FORCE, null);
+	//
+	//		Properties buildProperties = BuildConfiguration.getBuilderProperties(buildFolder);
+	//		buildProperties.put("product", product.getLocation().toOSString());
+	//		buildProperties.put("filteredDependencies", "true");
+	//		buildProperties.put("pluginPath", delta.getAbsolutePath());
+	//		buildProperties.put("configs", "win32, win32, x86");
+	//		//buildProperties.put("archivesFormat", "win32,win32,x86 - folder");
+	//
+	//		Utils.storeBuildProperties(buildFolder, buildProperties);
+	//
+	//		runProductBuild(buildFolder);
+	//
+	//		Set entries = new HashSet();
+	//		entries.add("eclipse/plugins/A_1.0.0.jar");
+	//		entries.add("eclipse/rcp.exe");
+	//		assertZipContents(buildFolder, "I.TestBuild/eclipse-win32.win32.x86.zip", entries);
+	//	}
 }
