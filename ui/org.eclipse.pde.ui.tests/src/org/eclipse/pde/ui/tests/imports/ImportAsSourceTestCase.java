@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,13 +12,9 @@ package org.eclipse.pde.ui.tests.imports;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jdt.core.IClasspathEntry;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.*;
 import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.pde.internal.ui.wizards.imports.PluginImportOperation;
 
@@ -56,5 +52,17 @@ public class ImportAsSourceTestCase extends BaseImportTestCase {
 				return true;
 		}
 		return false;
+	}
+	
+	// TODO Test currently disabled for bug 403098
+	public void testImportLinksMultiple() {
+		System.out.println("org.eclipse.pde.ui.tests.imports.ImportAsSourceTestCase.testImportLinksMultiple()");
+		System.out.println("This test is currently disabled (Bug 403098)");
+	}
+	
+	// TODO Test currently disabled for bug 403098
+	public void testImportFlat() {
+		System.out.println("org.eclipse.pde.ui.tests.imports.ImportAsSourceTestCase.testImportFlat()");
+		System.out.println("This test is currently disabled (Bug 403098)");
 	}
 }
