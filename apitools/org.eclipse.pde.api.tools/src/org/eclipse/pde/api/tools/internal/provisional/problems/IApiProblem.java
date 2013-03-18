@@ -403,12 +403,22 @@ public interface IApiProblem {
 	/**
 	 * Flags to indicate an indirect reference
 	 * <br>
-	 * Value is: <code>10</code>
+	 * Value is: <code>12</code>
 	 * 
 	 * @see #getFlags()
 	 * @see #CATEGORY_USAGE
 	 */
-	public static final int INDIRECT_REFERENCE = 10;
+	public static final int INDIRECT_REFERENCE = 12;
+	
+	/**
+	 * Flags to indicate an indirect reference from a local type
+	 * <br>
+	 * Value is: <code>13</code>
+	 * 
+	 * @see #getFlags()
+	 * @see #CATEGORY_USAGE
+	 */
+	public static final int INDIRECT_LOCAL_REFERENCE = 13;
 
 	/**
 	 * Constant representing the value of a default API profile {@link IApiProblem} kind.

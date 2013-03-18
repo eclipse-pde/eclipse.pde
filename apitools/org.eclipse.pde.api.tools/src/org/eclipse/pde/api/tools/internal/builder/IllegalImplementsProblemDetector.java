@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -116,33 +116,35 @@ public class IllegalImplementsProblemDetector extends AbstractIllegalTypeReferen
 	 * @see org.eclipse.pde.api.tools.internal.search.AbstractIllegalTypeReference#getMessageArgs(org.eclipse.pde.api.tools.internal.provisional.model.IReference)
 	 */
 	protected String[] getMessageArgs(IReference reference) throws CoreException {
-		if(isIllegalType(reference)) {
-			return super.getMessageArgs(reference);
-		}
-		if(fRestrictedInterfaces.size() > 0) {
+		String[] args = super.getMessageArgs(reference);
+		if(!isIllegalType(reference) && fRestrictedInterfaces.size() > 0) {
 			IApiType type = (IApiType) reference.getResolvedReference();
 			IApiType inter = (IApiType) fRestrictedInterfaces.get(type.getName());
 			if(inter != null) {
-				return new String[] {getSimpleTypeName(type), inter.getSimpleName(), getSimpleTypeName(reference.getMember())};
+				String[] newargs = new String[args.length+1];
+				System.arraycopy(args, 0, newargs, 0, args.length);
+				newargs[args.length] = getSimpleTypeName(inter);
+				return newargs;
 			}
 		}
-		return super.getMessageArgs(reference);
+		return args;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.search.AbstractIllegalTypeReference#getMessageArgs(org.eclipse.pde.api.tools.internal.provisional.model.IReference)
 	 */
 	protected String[] getQualifiedMessageArgs(IReference reference) throws CoreException {
-		if(isIllegalType(reference)) {
-			return super.getQualifiedMessageArgs(reference);
-		}
-		if(fRestrictedInterfaces.size() > 0) {
+		String[] args = super.getQualifiedMessageArgs(reference);
+		if(!isIllegalType(reference) && fRestrictedInterfaces.size() > 0) {
 			IApiType type = (IApiType) reference.getResolvedReference();
 			IApiType inter = (IApiType) fRestrictedInterfaces.get(type.getName());
 			if(inter != null) {
-				return new String[] {getQualifiedTypeName(type), inter.getName(), getQualifiedTypeName(reference.getMember())};
+				String[] newargs = new String[args.length+1];
+				System.arraycopy(args, 0, newargs, 0, args.length);
+				newargs[args.length] = inter.getName();
+				return newargs;
 			}
 		}
-		return super.getQualifiedMessageArgs(reference);
+		return args;
 	}
 	
 	/* (non-Javadoc)
@@ -151,6 +153,10 @@ public class IllegalImplementsProblemDetector extends AbstractIllegalTypeReferen
 	protected int getProblemFlags(IReference reference) {
 		if(isIllegalType(reference)) {
 			return super.getProblemFlags(reference);
+		}
+		IApiType type = (IApiType) reference.getMember();
+		if(type.isLocal()) {
+			return IApiProblem.INDIRECT_LOCAL_REFERENCE;
 		}
 		return IApiProblem.INDIRECT_REFERENCE;
 	}
@@ -217,7 +223,8 @@ public class IllegalImplementsProblemDetector extends AbstractIllegalTypeReferen
 			if(!comp.equals(originalcomponent)) {
 				annot = comp.getApiDescription().resolveAnnotations(Factory.typeDescriptor(inters[i].getName()));
 				if(annot != null && RestrictionModifiers.isImplementRestriction(annot.getRestrictions())) {
-					return fRestrictedInterfaces.put(entryinterface, inters[i]) == null;
+					fRestrictedInterfaces.put(entryinterface, inters[i]);
+					return true;
 				}
 			}
 			return findRestrictedSuperinterfaces(originalcomponent, entryinterface, inters[i]);

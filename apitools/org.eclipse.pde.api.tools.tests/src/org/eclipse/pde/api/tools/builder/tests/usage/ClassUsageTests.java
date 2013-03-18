@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -159,7 +159,7 @@ public class ClassUsageTests extends UsageTest {
 		});
 		String typename = "testC3";
 		setExpectedMessageArgs(new String[][] {
-				{"IExtInterface1", "INoImpl1", typename},
+				{"IExtInterface1", typename, "INoImpl1"},
 		});
 		deployUsageTest(typename, inc);
 	}
@@ -218,10 +218,10 @@ public class ClassUsageTests extends UsageTest {
 		});
 		String typename = "testC5";
 		setExpectedMessageArgs(new String[][] {
-				{"IExtInterface1", "INoImpl1", typename},
-				{"IExtInterface2", "INoImpl1", typename},
-				{"IExtInterface3", "INoImpl1", typename},
-				{"IExtInterface4", "INoImpl4", typename}
+				{"IExtInterface1", typename, "INoImpl1"},
+				{"IExtInterface2", typename, "INoImpl1"},
+				{"IExtInterface3", typename, "INoImpl1"},
+				{"IExtInterface4", typename, "INoImpl4"}
 		});
 		deployUsageTest(typename, inc);
 	}
@@ -317,6 +317,82 @@ public class ClassUsageTests extends UsageTest {
 		setExpectedMessageArgs(new String[][] {
 				{"INoImpl1", typename}
 		});
+		deployUsageTest(typename, inc);
+	}
+	
+	/**
+	 * Tests that the correct markers are created and placed for classes with inner types 
+	 * that illegally implement interfaces
+	 * 
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=403258
+	 * @throws Exception
+	 */
+	public void _testLocalClassIllegalImplements1I() throws Exception {
+		x19(true);
+	}
+	
+	/**
+	 * Tests that the correct markers are created and placed for local types 
+	 * that illegally implement interfaces
+	 * 
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=403258
+	 * @throws Exception
+	 */
+	public void _testLocalClassIllegalImplements1F() throws Exception {
+		x19(false);
+	}
+	
+	private void x19(boolean inc) {
+		setExpectedProblemIds(new int[] {
+				getProblemId(IApiProblem.ILLEGAL_IMPLEMENT, IApiProblem.LOCAL_TYPE),
+				getProblemId(IApiProblem.ILLEGAL_IMPLEMENT, IApiProblem.INDIRECT_LOCAL_REFERENCE),
+				getProblemId(IApiProblem.ILLEGAL_IMPLEMENT, IApiProblem.LOCAL_TYPE),
+				getProblemId(IApiProblem.ILLEGAL_IMPLEMENT, IApiProblem.INDIRECT_LOCAL_REFERENCE)
+		});
+		String typename = "testc11";
+		setExpectedMessageArgs(new String[][] {
+				{"local1", "x.y.z.testc11.method1()", "INoImpl2"},
+				{"local2", "x.y.z.testc11.method1()", "INoImpl2", "INoImpl5"},
+				{"local3", "x.y.z.outer.inner2.method2()", "INoImpl3"},
+				{"local4", "x.y.z.outer.inner2.method2()", "INoImpl2", "INoImpl6"}
+		});
+		deployUsageTest(typename, inc);
+	}
+	
+	/**
+	 * Tests that the correct markers are created and placed for local types 
+	 * that illegally implement interfaces, where there are more than one local type in the
+	 * compilation unit indirectly implementing the same interface via the same proxy interface
+	 * 
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=403258
+	 * @throws Exception
+	 */
+	public void _testLocalClassIllegaImplements2I() throws Exception {
+		x20(true);
+	}
+	
+	/**
+	 * Tests that the correct markers are created and placed for local types 
+	 * that illegally implement interfaces, where there are more than one local type in the
+	 * compilation unit indirectly implementing the same interface via the same proxy interface
+	 * 
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=403258
+	 * @throws Exception
+	 */
+	public void _testLocalClassIllegalImplements2F() throws Exception {
+		x20(false);
+	}
+	
+	private void x20(boolean inc) {
+		setExpectedProblemIds(new int[] {
+				getProblemId(IApiProblem.ILLEGAL_IMPLEMENT, IApiProblem.INDIRECT_LOCAL_REFERENCE),
+				getProblemId(IApiProblem.ILLEGAL_IMPLEMENT, IApiProblem.INDIRECT_LOCAL_REFERENCE)
+		});
+		setExpectedMessageArgs(new String[][] {
+				{"local2", "x.y.z.testc12.method1()", "INoImpl2", "INoImpl5"},
+				{"local4", "x.y.z.outerc12.inner2.method2()", "INoImpl2", "INoImpl5"}
+		});
+		String typename = "testc12";
 		deployUsageTest(typename, inc);
 	}
 	
@@ -601,4 +677,5 @@ public class ClassUsageTests extends UsageTest {
 		});
 		deployUsageTest(typename, inc);
 	}
+	
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -459,6 +459,8 @@ public class ApiProblemFactory {
 						switch(flags) {
 							case IApiProblem.NO_FLAGS: return 8;
 							case IApiProblem.INDIRECT_REFERENCE: return 24;
+							case IApiProblem.LOCAL_TYPE: return 18;
+							case IApiProblem.INDIRECT_LOCAL_REFERENCE: return 37;
 						}
 						break;
 					}
