@@ -11,22 +11,17 @@
 package x.y.z;
 import i.INoImpl5;
 
-public class testc12  {
-	public void method1() {
-		class local2 implements INoImpl5 { //indirect illegal implement
-		}
-		local2 l2 = new local2();
-		System.out.println(l2);
-	}
-}
-
-class outerc12 {
-	class inner2 {
+public class testC12  {
+	
+	class inner1 {
 		void method2() {
 			class local4 implements INoImpl5 { //indirect illegal implement
 			}
-			local4 l4 = new local4();
-			System.out.println(l4);
+		}
+	}
+	
+	public void method1() {
+		class local2 implements INoImpl5 { //indirect illegal implement
 		}
 	}
 }
