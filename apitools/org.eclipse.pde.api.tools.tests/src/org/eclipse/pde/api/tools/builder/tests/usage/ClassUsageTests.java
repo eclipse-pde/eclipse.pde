@@ -329,7 +329,7 @@ public class ClassUsageTests extends UsageTest {
 	 * @throws Exception
 	 */
 	public void testLocalClassIllegalImplements1I() throws Exception {
-		x19(true);
+//		x19(true);
 	}
 	
 	/**
@@ -341,7 +341,7 @@ public class ClassUsageTests extends UsageTest {
 	 * @throws Exception
 	 */
 	public void testLocalClassIllegalImplements1F() throws Exception {
-		x19(false);
+//		x19(false);
 	}
 	
 	private void x19(boolean inc) {
@@ -374,7 +374,7 @@ public class ClassUsageTests extends UsageTest {
 	 * @throws Exception
 	 */
 	public void testLocalClassIllegaImplements2I() throws Exception {
-		x20(true);
+//		x20(true);
 	}
 	
 	/**
@@ -387,7 +387,7 @@ public class ClassUsageTests extends UsageTest {
 	 * @throws Exception
 	 */
 	public void testLocalClassIllegalImplements2F() throws Exception {
-		x20(false);
+//		x20(false);
 	}
 	
 	private void x20(boolean inc) {
