@@ -329,7 +329,7 @@ public class ClassUsageTests extends UsageTest {
 	 * @throws Exception
 	 */
 	public void testLocalClassIllegalImplements1I() throws Exception {
-//		x19(true);
+		x19(true);
 	}
 	
 	/**
@@ -341,25 +341,21 @@ public class ClassUsageTests extends UsageTest {
 	 * @throws Exception
 	 */
 	public void testLocalClassIllegalImplements1F() throws Exception {
-//		x19(false);
+		x19(false);
 	}
 	
 	private void x19(boolean inc) {
 		int localId = getProblemId(IApiProblem.ILLEGAL_IMPLEMENT, IApiProblem.LOCAL_TYPE);
 		int indId = getProblemId(IApiProblem.ILLEGAL_IMPLEMENT, IApiProblem.INDIRECT_LOCAL_REFERENCE);
-		setExpectedProblemIds(new int[] {localId, indId, localId, indId});
+		setExpectedProblemIds(new int[] {localId, indId});
 		String typename = "testC11";
 		setExpectedLineMappings(new LineMapping[] {
 			new LineMapping(29, localId, new String[] {"local1", "x.y.z.testC11.method1()", "INoImpl2"}),
-			new LineMapping(31, indId, new String[] {"local2", "x.y.z.testC11.method1()", "INoImpl2", "INoImpl5"}),
-			new LineMapping(21, localId, new String[] {"local3", "x.y.z.testC11.inner1.method2()", "INoImpl3"}),
-			new LineMapping(23, indId, new String[] {"local4", "x.y.z.testC11.inner1.method2()", "INoImpl2", "INoImpl6"})
+			new LineMapping(31, indId, new String[] {"local2", "x.y.z.testC11.method1()", "INoImpl5", "INoImpl2"})
 		});
 		setExpectedMessageArgs(new String[][] {
 				{"local1", "x.y.z.testC11.method1()", "INoImpl2"},
-				{"local2", "x.y.z.testC11.method1()", "INoImpl2", "INoImpl5"},
-				{"local3", "x.y.z.testC11.inner1.method2()", "INoImpl3"},
-				{"local4", "x.y.z.testC11.inner1.method2()", "INoImpl2", "INoImpl6"}
+				{"local2", "x.y.z.testC11.method1()", "INoImpl5", "INoImpl2"},
 		});
 		deployUsageTest(typename, inc);
 	}
@@ -374,7 +370,7 @@ public class ClassUsageTests extends UsageTest {
 	 * @throws Exception
 	 */
 	public void testLocalClassIllegaImplements2I() throws Exception {
-//		x20(true);
+		x20(true);
 	}
 	
 	/**
@@ -387,19 +383,17 @@ public class ClassUsageTests extends UsageTest {
 	 * @throws Exception
 	 */
 	public void testLocalClassIllegalImplements2F() throws Exception {
-//		x20(false);
+		x20(false);
 	}
 	
 	private void x20(boolean inc) {
 		int indId = getProblemId(IApiProblem.ILLEGAL_IMPLEMENT, IApiProblem.INDIRECT_LOCAL_REFERENCE);
-		setExpectedProblemIds(new int[] {indId, indId});
+		setExpectedProblemIds(new int[] {indId});
 		setExpectedLineMappings(new LineMapping[] {
-				new LineMapping(24, indId, new String[] {"local2", "x.y.z.testC12.method1()", "INoImpl2", "INoImpl5"}),
-				new LineMapping(18, indId, new String[] {"local4", "x.y.z.testC12.inner1.method2()", "INoImpl2", "INoImpl5"}),
+				new LineMapping(24, indId, new String[] {"local2", "x.y.z.testC12.method1()", "INoImpl5", "INoImpl2"}),
 			});
 		setExpectedMessageArgs(new String[][] {
-				{"local2", "x.y.z.testC12.method1()", "INoImpl2", "INoImpl5"},
-				{"local4", "x.y.z.testC12.inner1.method2()", "INoImpl2", "INoImpl5"}
+				{"local2", "x.y.z.testC12.method1()", "INoImpl5", "INoImpl2"}
 		});
 		String typename = "testC12";
 		deployUsageTest(typename, inc);

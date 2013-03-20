@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -519,6 +519,91 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 		setExpectedMessageArgs(new String[][] {
 				{"inner", "x.y.z.testA9.m1()", CLASS_NAME}	
 		});
+		deployUsageTest(typename, inc);
+	}
+	
+	/**
+	 * Tests that the correct markers are created and placed for classes with inner types 
+	 * that illegally implement interfaces
+	 * 
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=403258
+	 * @since 1.0.300
+	 * @throws Exception
+	 */
+	public void testLocalClassIllegalImplements1I() throws Exception {
+		x18(true);
+	}
+	
+	/**
+	 * Tests that the correct markers are created and placed for local types 
+	 * that illegally implement interfaces
+	 * 
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=403258
+	 * @since 1.0.300
+	 * @throws Exception
+	 */
+	public void testLocalClassIllegalImplements1F() throws Exception {
+		x18(false);
+	}
+	
+	private void x18(boolean inc) {
+		int localId = getProblemId(IApiProblem.ILLEGAL_IMPLEMENT, IApiProblem.LOCAL_TYPE);
+		int indId = getProblemId(IApiProblem.ILLEGAL_IMPLEMENT, IApiProblem.INDIRECT_LOCAL_REFERENCE);
+		setExpectedProblemIds(new int[] {localId, indId, localId, indId});
+		String typename = "testC11";
+		setExpectedLineMappings(new LineMapping[] {
+			new LineMapping(29, localId, new String[] {"local1", "x.y.z.testC11.method1()", "INoImpl2"}),
+			new LineMapping(31, indId, new String[] {"local2", "x.y.z.testC11.method1()", "INoImpl5", "INoImpl2"}),
+			new LineMapping(21, localId, new String[] {"local3", "x.y.z.testC11.inner1.method2()", "INoImpl3"}),
+			new LineMapping(23, indId, new String[] {"local4", "x.y.z.testC11.inner1.method2()", "INoImpl6", "INoImpl2"})
+		});
+		setExpectedMessageArgs(new String[][] {
+				{"local1", "x.y.z.testC11.method1()", "INoImpl2"},
+				{"local2", "x.y.z.testC11.method1()", "INoImpl5", "INoImpl2"},
+				{"local3", "x.y.z.testC11.inner1.method2()", "INoImpl3"},
+				{"local4", "x.y.z.testC11.inner1.method2()", "INoImpl6", "INoImpl2"}
+		});
+		deployUsageTest(typename, inc);
+	}
+	
+	/**
+	 * Tests that the correct markers are created and placed for local types 
+	 * that illegally implement interfaces, where there are more than one local type in the
+	 * compilation unit indirectly implementing the same interface via the same proxy interface
+	 * 
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=403258
+	 * @since 1.0.300
+	 * @throws Exception
+	 */
+	public void testLocalClassIllegaImplements2I() throws Exception {
+		x19(true);
+	}
+	
+	/**
+	 * Tests that the correct markers are created and placed for local types 
+	 * that illegally implement interfaces, where there are more than one local type in the
+	 * compilation unit indirectly implementing the same interface via the same proxy interface
+	 * 
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=403258
+	 * @since 1.0.300
+	 * @throws Exception
+	 */
+	public void testLocalClassIllegalImplements2F() throws Exception {
+		x19(false);
+	}
+	
+	private void x19(boolean inc) {
+		int indId = getProblemId(IApiProblem.ILLEGAL_IMPLEMENT, IApiProblem.INDIRECT_LOCAL_REFERENCE);
+		setExpectedProblemIds(new int[] {indId, indId});
+		setExpectedLineMappings(new LineMapping[] {
+				new LineMapping(24, indId, new String[] {"local2", "x.y.z.testC12.method1()", "INoImpl5", "INoImpl2"}),
+				new LineMapping(18, indId, new String[] {"local4", "x.y.z.testC12.inner1.method2()", "INoImpl5", "INoImpl2"}),
+			});
+		setExpectedMessageArgs(new String[][] {
+				{"local2", "x.y.z.testC12.method1()", "INoImpl5", "INoImpl2"},
+				{"local4", "x.y.z.testC12.inner1.method2()", "INoImpl5", "INoImpl2"}
+		});
+		String typename = "testC12";
 		deployUsageTest(typename, inc);
 	}
 }
