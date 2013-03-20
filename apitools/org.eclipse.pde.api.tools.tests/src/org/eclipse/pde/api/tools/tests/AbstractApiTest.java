@@ -131,7 +131,7 @@ public class AbstractApiTest extends TestCase {
 		}
 		
 		// TODO Instead of failing here, we let the test continue and just have a println() (Bug 368458)
-		ApiPlugin.DEBUG_WORKSPACE_DELTA_PROCESSOR = true;
+		//ApiPlugin.DEBUG_WORKSPACE_DELTA_PROCESSOR = true;
 		
         // create project and import source
         IJavaProject jproject = ProjectUtils.createPluginProject(name, new String[] {PDE.PLUGIN_NATURE, ApiPlugin.NATURE_ID});

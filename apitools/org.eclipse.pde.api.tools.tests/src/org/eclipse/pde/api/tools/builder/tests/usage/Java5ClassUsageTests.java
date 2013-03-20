@@ -606,4 +606,44 @@ public class Java5ClassUsageTests extends ClassUsageTests {
 		String typename = "testC12";
 		deployUsageTest(typename, inc);
 	}
+	
+	/**
+	 * Tests that the correct markers are created and placed for anonymous types 
+	 * that illegally implement interfaces
+	 * 
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=403258
+	 * @since 1.0.300
+	 * @throws Exception
+	 */
+	public void testAnonymousClassIllegaImplements1I() throws Exception {
+		x20(true);
+	}
+	
+	/**
+	 * Tests that the correct markers are created and placed for local types 
+	 * that illegally implement interfaces, where there are more than one local type in the
+	 * compilation unit indirectly implementing the same interface via the same proxy interface
+	 * 
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=403258
+	 * @since 1.0.300
+	 * @throws Exception
+	 */
+	public void testAnonymousClassIllegalImplements1F() throws Exception {
+		x20(false);
+	}
+	
+	private void x20(boolean inc) {
+		int indId = getProblemId(IApiProblem.ILLEGAL_IMPLEMENT, IApiProblem.ANONYMOUS_TYPE);
+		setExpectedProblemIds(new int[] {indId, indId});
+		setExpectedLineMappings(new LineMapping[] {
+				new LineMapping(25, indId, new String[] {"x.y.z.testC13.testC13()", "INoImpl2"}),
+				new LineMapping(19, indId, new String[] {"x.y.z.testC13.inner.method()", "INoImpl2"})
+			});
+		setExpectedMessageArgs(new String[][] {
+				{"x.y.z.testC13.testC13()", "INoImpl2"},
+				{"x.y.z.testC13.inner.method()", "INoImpl2"}
+		});
+		String typename = "testC13";
+		deployUsageTest(typename, inc);
+	}
 }

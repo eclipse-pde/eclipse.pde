@@ -400,6 +400,44 @@ public class ClassUsageTests extends UsageTest {
 	}
 	
 	/**
+	 * Tests that the correct markers are created and placed for anonymous types 
+	 * that illegally implement interfaces
+	 * 
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=403258
+	 * @since 1.0.300
+	 * @throws Exception
+	 */
+	public void testAnonymousClassIllegaImplements1I() throws Exception {
+		x21(true);
+	}
+	
+	/**
+	 * Tests that the correct markers are created and placed for local types 
+	 * that illegally implement interfaces, where there are more than one local type in the
+	 * compilation unit indirectly implementing the same interface via the same proxy interface
+	 * 
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=403258
+	 * @since 1.0.300
+	 * @throws Exception
+	 */
+	public void testAnonymousClassIllegalImplements1F() throws Exception {
+		x21(false);
+	}
+	
+	private void x21(boolean inc) {
+		int indId = getProblemId(IApiProblem.ILLEGAL_IMPLEMENT, IApiProblem.ANONYMOUS_TYPE);
+		setExpectedProblemIds(new int[] {indId});
+		setExpectedLineMappings(new LineMapping[] {
+				new LineMapping(25, indId, new String[] {"x.y.z.testC13.testC13()", "INoImpl2"})
+			});
+		setExpectedMessageArgs(new String[][] {
+				{"x.y.z.testC13.testC13()", "INoImpl2"}
+		});
+		String typename = "testC13";
+		deployUsageTest(typename, inc);
+	}
+	
+	/**
 	 * Tests an anonymous type defined in the return statement of a method illegally extending a
 	 * restricted type using a full build.
 	 * 
