@@ -461,6 +461,7 @@ public class ApiProblemFactory {
 							case IApiProblem.INDIRECT_REFERENCE: return 24;
 							case IApiProblem.LOCAL_TYPE: return 18;
 							case IApiProblem.INDIRECT_LOCAL_REFERENCE: return 37;
+							case IApiProblem.ANONYMOUS_TYPE: return 27;
 						}
 						break;
 					}
