@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,10 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-
-import java.net.URL;
+import java.net.*;
 import java.util.ArrayList;
+import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.HostSpecification;
@@ -84,9 +83,12 @@ public class PDEManager {
 	}
 
 	private static void addNLLocation(IPluginModelBase model, ArrayList<URL> urls) {
-		URL location = model.getNLLookupLocation();
-		if (location != null)
-			urls.add(location);
+		// We should use model.getNLLookupLocation(), but it doesn't return an encoded url (Bug 403512)
+		try {
+			URI encodedURI = URIUtil.toURI(model.getInstallLocation(), true);
+			urls.add(encodedURI.toURL());
+		} catch (MalformedURLException e) {
+		}
 	}
 
 	/**
