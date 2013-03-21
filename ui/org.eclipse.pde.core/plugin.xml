@@ -168,8 +168,8 @@
          point="org.eclipse.core.resources.markers">
       <super type="org.eclipse.core.resources.problemmarker"/>
       <super type="org.eclipse.core.resources.textmarker"/>
-      <attribute name="id"/>
-      <attribute name="PDECategoryId"/>
+      <attribute name="problemId"/>
+      <attribute name="categoryId"/>
       <persistent value="true"/>
    </extension>
    

@@ -33,7 +33,7 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 	 * @see org.eclipse.ui.IMarkerResolutionGenerator#getResolutions(org.eclipse.core.resources.IMarker)
 	 */
 	public IMarkerResolution[] getResolutions(IMarker marker) {
-		int problemID = marker.getAttribute("id", PDEMarkerFactory.NO_RESOLUTION); //$NON-NLS-1$
+		int problemID = getProblemId(marker);
 		switch (problemID) {
 			case PDEMarkerFactory.M_DEPRECATED_AUTOSTART :
 				// if targetVersion <= 3.3, we can add Eclipse-LazyStart header even if previous header's value was false.  We can't do this for 3.4+ since Bundle-AcativationPolicy does not have a "false" value.
@@ -122,6 +122,21 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 		return NO_RESOLUTIONS;
 	}
 
+	/**
+	 * Checks for the <<code>problemID</code> attribute first, failing
+	 * that returns the <code>id</code> attribute.
+	 * 
+	 * @param marker
+	 * @return the problem id to consider when computing resolutions
+	 */
+	int getProblemId(IMarker marker) {
+		int problemID = marker.getAttribute(PDEMarkerFactory.PROBLEM_ID, PDEMarkerFactory.NO_RESOLUTION);
+		if (problemID != PDEMarkerFactory.NO_RESOLUTION) {
+			return problemID;
+		}
+		return marker.getAttribute("id", PDEMarkerFactory.NO_RESOLUTION); //$NON-NLS-1$
+	}
+
 	private IMarkerResolution[] getBuildEntryAdditionResolutions(IMarker marker, String multiFixDescription) {
 		ArrayList<IMarkerResolution2> resolutions = new ArrayList<IMarkerResolution2>(2);
 		resolutions.add(new AddBuildEntryResolution(AbstractPDEMarkerResolution.CREATE_TYPE, marker));
@@ -139,10 +154,10 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 		}
 		try {
 			String markerCategory = (String) marker.getAttribute(PDEMarkerFactory.CAT_ID);
-			int problemID = marker.getAttribute("id", PDEMarkerFactory.NO_RESOLUTION); //$NON-NLS-1$
+			int problemID = getProblemId(marker);
 			IMarker[] relatedMarkers = marker.getResource().findMarkers(marker.getType(), true, IResource.DEPTH_INFINITE);
 			for (int i = 0; i < relatedMarkers.length; i++) {
-				if (markerCategory.equals(relatedMarkers[i].getAttribute(PDEMarkerFactory.CAT_ID)) && relatedMarkers[i].getAttribute("id", PDEMarkerFactory.NO_RESOLUTION) == problemID && !marker.equals(relatedMarkers[i])) { //$NON-NLS-1$
+				if (markerCategory.equals(relatedMarkers[i].getAttribute(PDEMarkerFactory.CAT_ID)) && getProblemId(relatedMarkers[i]) == problemID && !marker.equals(relatedMarkers[i])) {
 					resolutions.add(new MultiFixResolution(marker, multiFixDescription));
 					break;
 				}
@@ -206,7 +221,6 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 	 * @see org.eclipse.ui.IMarkerResolutionGenerator2#hasResolutions(org.eclipse.core.resources.IMarker)
 	 */
 	public boolean hasResolutions(IMarker marker) {
-		return marker.getAttribute("id", PDEMarkerFactory.NO_RESOLUTION) > 0; //$NON-NLS-1$
+		return getProblemId(marker) > 0;
 	}
-
 }

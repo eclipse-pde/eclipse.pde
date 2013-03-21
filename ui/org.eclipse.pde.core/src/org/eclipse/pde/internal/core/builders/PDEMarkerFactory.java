@@ -19,7 +19,22 @@ import org.eclipse.core.runtime.CoreException;
 
 public class PDEMarkerFactory {
 
+	/**
+	 * This is the marker type given to all markers created with this factory
+	 */
 	public static final String MARKER_ID = "org.eclipse.pde.core.problem"; //$NON-NLS-1$
+
+	/**
+	 * Marker attribute storing the pde problem id, value should match a constant specified in this factory
+	 * Previously this was stored as 'id', but that conflicted with the marker's id (Bug 403121)
+	 */
+	public static final String PROBLEM_ID = "problemId"; //$NON-NLS-1$
+
+	/**
+	 * Marker attributed storing the pde problem category, value should match one of the CAT_... constants
+	 * specified in this factory.  Used to find similar problems.
+	 */
+	public static final String CAT_ID = "categoryId"; //$NON-NLS-1$
 
 	public static final int NO_RESOLUTION = -1;
 
@@ -68,7 +83,7 @@ public class PDEMarkerFactory {
 	// pom.xml fixes
 	public static final int POM_MISMATCH_VERSION = 0x4001;
 
-	// marker attribute keys
+	// custom marker attributes
 	public static final String BK_BUILD_ENTRY = "buildEntry.key"; //$NON-NLS-1$
 	public static final String BK_BUILD_TOKEN = "buildEntry.tokenValue"; //$NON-NLS-1$
 	public static final String MPK_LOCATION_PATH = "xmlTree.locationPath"; //$NON-NLS-1$
@@ -91,11 +106,10 @@ public class PDEMarkerFactory {
 	public static final String CAT_DEPRECATION = "deprecation"; //$NON-NLS-1$
 	public static final String CAT_EE = "ee"; //$NON-NLS-1$
 	public static final String CAT_OTHER = ""; //$NON-NLS-1$
-	public static final String CAT_ID = "categoryId"; //$NON-NLS-1$
 
 	public IMarker createMarker(IFile file, int id, String category) throws CoreException {
 		IMarker marker = file.createMarker(MARKER_ID);
-		marker.setAttribute("id", id); //$NON-NLS-1$
+		marker.setAttribute(PROBLEM_ID, id);
 		marker.setAttribute(CAT_ID, category);
 		return marker;
 	}
