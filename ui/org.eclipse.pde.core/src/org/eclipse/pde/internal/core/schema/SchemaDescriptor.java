@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2008 IBM Corporation and others.
+ *  Copyright (c) 2005, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -11,9 +11,8 @@
 package org.eclipse.pde.internal.core.schema;
 
 import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
-
+import java.net.*;
+import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaDescriptor;
@@ -44,7 +43,9 @@ public class SchemaDescriptor implements ISchemaDescriptor {
 	public SchemaDescriptor(File file) {
 		try {
 			if (file.exists()) {
-				fSchemaURL = file.toURL();
+				// Encode the url in case the file path has special characters (Bug 403512)
+				URI encodedURI = URIUtil.toURI(file.toString());
+				fSchemaURL = encodedURI.toURL();
 				fLastModified = file.lastModified();
 			}
 		} catch (MalformedURLException e) {
