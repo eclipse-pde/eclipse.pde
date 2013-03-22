@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.pde.core.plugin;
 
 import java.net.URL;
+import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.core.IModelChangeProvider;
 import org.eclipse.pde.core.build.IBuildModel;
@@ -108,10 +109,19 @@ public interface IPluginModelBase extends ISharedExtensionsModel, IModelChangePr
 	IPluginModelFactory getPluginFactory();
 
 	/**
-	 * Returns the location where property file containing
-	 * translations of names in this model can be found.
+	 * Returns an unencoded URL for the plug-in install location.
+	 * The location described where to look for the translation
+	 * property files.
 	 * 
-	 * @return the location of the property file with translations
+	 * @return the URL location of the plug-in where translation 
+	 * property files can be found
+	 * 
+	 * @deprecated The URL returned is not encoded.  If the file
+	 * path contains special characters such as <code>#</code>
+	 * this URL cannot be used for opening streams. Instead use
+	 * {@link #getInstallLocation()} and create the URL using
+	 * an encoding tool such as {@link URIUtil}. Deprecated in
+	 * 4.3.
 	 */
 	URL getNLLookupLocation();
 
