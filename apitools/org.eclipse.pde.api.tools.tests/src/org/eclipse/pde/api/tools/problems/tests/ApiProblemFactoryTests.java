@@ -12,6 +12,7 @@ package org.eclipse.pde.api.tools.problems.tests;
 
 import org.eclipse.pde.api.tools.internal.builder.BuilderMessages;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
+import org.eclipse.pde.api.tools.internal.problems.ApiProblemFilter;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
@@ -30,6 +31,54 @@ public class ApiProblemFactoryTests extends AbstractApiTest {
 		String unknownMessage = BuilderMessages.ApiProblemFactory_problem_message_not_found;
 		fDefaultMessage = unknownMessage.substring(0, unknownMessage.lastIndexOf('{'));
 	}
+	
+	/**
+	 * Tests that the hashcodes from an {@link IApiProblem} and an {@link IApiProblemFilter} handle
+	 * are the same.
+	 * 
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=404173
+	 * @throws Exception
+	 * @since 1.0.400
+	 */
+	public void testGethashcode1() throws Exception {
+		IApiProblem problem = ApiProblemFactory.newApiUsageProblem("", "x.y.z.myclazz", 
+				new String[] {"foo"}, null, null, -1, -1, -1, IElementDescriptor.TYPE, IApiProblem.ILLEGAL_EXTEND);
+		ApiProblemFilter filter  = (ApiProblemFilter) ApiProblemFactory.newProblemFilter("mycomp", problem, "test comment");
+		assertTrue("The hashcodes must be identical", problem.hashCode() == ApiProblemFactory.getProblemHashcode(filter.getHandle()));
+	}
+	
+	/**
+	 * Tests that the hashcodes from an {@link IApiProblem} and an {@link IApiProblemFilter} handle
+	 * are the same.
+	 * 
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=404173
+	 * @throws Exception
+	 * @since 1.0.400
+	 */
+	public void testGethashcode2() throws Exception {
+		IApiProblem problem = ApiProblemFactory.newApiUsageProblem("", null, 
+				new String[] {"foo"}, null, null, -1, -1, -1, IElementDescriptor.TYPE, IApiProblem.ILLEGAL_EXTEND);
+		ApiProblemFilter filter  = (ApiProblemFilter) ApiProblemFactory.newProblemFilter("mycomp", problem, "test comment");
+		assertTrue("The hashcodes must be identical", problem.hashCode() == ApiProblemFactory.getProblemHashcode(filter.getHandle()));
+	}
+	
+	/**
+	 * Tests that the hashcodes from an {@link IApiProblem} and an {@link IApiProblemFilter} handle
+	 * are the same.
+	 * <br><br>
+	 * This test is expected to not be equal since you could never have a class named <code>null</code>
+	 * 
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=404173
+	 * @throws Exception
+	 * @since 1.0.400
+	 */
+	public void testGethashcode3() throws Exception {
+		IApiProblem problem = ApiProblemFactory.newApiUsageProblem("", "null", 
+				new String[] {"foo"}, null, null, -1, -1, -1, IElementDescriptor.TYPE, IApiProblem.ILLEGAL_EXTEND);
+		ApiProblemFilter filter  = (ApiProblemFilter) ApiProblemFactory.newProblemFilter("mycomp", problem, "test comment");
+		assertTrue("The hashcodes must be identical", problem.hashCode() != ApiProblemFactory.getProblemHashcode(filter.getHandle()));
+	}
+	
 	/**
 	 * Tests that creating an {@link IApiProblem} does not fail
 	 */

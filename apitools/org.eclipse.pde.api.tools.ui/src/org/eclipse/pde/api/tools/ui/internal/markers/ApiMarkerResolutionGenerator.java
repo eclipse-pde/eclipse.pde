@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,9 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.api.tools.ui.internal.markers;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -122,7 +119,7 @@ public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator2
 				if(resource == null) {
 					resource = project.getFile(path);
 				}
-				int hashcode = computeProblemHashcode(filterhandle);
+				int hashcode = ApiProblemFactory.getProblemHashcode(filterhandle);
 				IApiProblemFilter[] filters = store.getFilters(resource);
 				for (int i = 0; i < filters.length; i++) {
 					if(filters[i].getUnderlyingProblem().hashCode() == hashcode) {
@@ -133,100 +130,6 @@ public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator2
 		}
 		catch(CoreException ce) {}
 		return null;
-	}
-	
-	/**
-	 * Computes the hash code of the {@link IApiProblem} from the api filter handle
-	 * @param filterhandle
-	 * @return the hash code of the {@link IApiProblem} that the given filter handle is for
-	 */
-	private static int computeProblemHashcode(String filterhandle) {
-		if(filterhandle == null) {
-			return -1;
-		}
-		String[] args = filterhandle.split(ApiProblemFilter.HANDLE_DELIMITER);
-		int hashcode = 0;
-		try {
-			//the problem id
-			hashcode += Integer.parseInt(args[0]);
-			//the resource path
-			hashcode += args[1].hashCode();
-			//the type name
-			hashcode += args[2].hashCode();
-			//the message arguments
-			String[] margs = splitHandle(args[3], ApiProblemFilter.HANDLE_ARGUMENTS_DELIMITER);
-			hashcode += argumentsHashcode(margs);
-		}
-		catch(Exception e) {}
-		return hashcode;
-	}
-	
-	private static String[] splitHandle(String messageArguments, String delimiter) {
-		List matches = null;
-		char[] argumentsChars = messageArguments.toCharArray();
-		char[] delimiterChars = delimiter.toCharArray();
-		int delimiterLength = delimiterChars.length;
-		int start = 0;
-		int argumentsCharsLength = argumentsChars.length;
-		int balance = 0;
-		for (int i = 0; i < argumentsCharsLength;) {
-			char c = argumentsChars[i];
-			switch(c) {
-			case '(' :
-				balance++;
-				break;
-			case ')' :
-				balance--;
-			}
-			if (c == delimiterChars[0] && balance == 0) {
-				// see if this is a matching delimiter start only if not within parenthesis (balance == 0)
-				if (i + delimiterLength < argumentsCharsLength) {
-					boolean match = true;
-					loop: for (int j = 1; j < delimiterLength; j++) {
-						if (argumentsChars[i + j] != delimiterChars[j]) {
-							match = false;
-							break loop;
-						}
-					}
-					if (match) {
-						// record the matching substring and proceed
-						if (matches == null) {
-							matches = new ArrayList();
-						}
-						matches.add(messageArguments.substring(start, i));
-						start = i + delimiterLength;
-						i += delimiterLength;
-					} else {
-						i++;
-					}
-				} else {
-					i++;
-				}
-			} else {
-				i++;
-			}
-		}
-		if (matches == null) {
-			return new String[] { messageArguments };
-		} else {
-			matches.add(messageArguments.substring(start, argumentsCharsLength));
-		}
-		return (String[]) matches.toArray(new String[matches.size()]);
-	}
-	/**
-	 * Returns the deep hash code of the complete listing of message arguments
-	 * @param arguments
-	 * @return the hash code of the message arguments
-	 */
-	private static int argumentsHashcode(String[] arguments) {
-		if(arguments == null) {
-			return 0;
-		}
-		int hashcode = 0;
-		for(int i = 0; i < arguments.length; i++) {
-			hashcode += arguments[i].hashCode();
-		}
-		return hashcode;
 	}
 	
 	/* (non-Javadoc)

@@ -11,8 +11,10 @@
 package org.eclipse.pde.api.tools.internal.problems;
 
 import java.text.ChoiceFormat;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
@@ -53,6 +55,110 @@ public class ApiProblemFactory {
 	 */
 	public static IApiProblemFilter newProblemFilter(String componentid, IApiProblem problem, String comment) {
 		return new ApiProblemFilter(componentid, problem, comment);
+	}
+	
+	/**
+	 * Computes an {@link IApiProblem} hashcode from the given filter handle. If the handle is <code>null</code>
+	 * this method returns <code>-1</code>.
+	 * 
+	 * @param filterhandle the problem handle
+	 * @return a new hashcode for the {@link IApiProblem} described in the filter or <code>-1</code>
+	 * @see ApiProblem#hashCode()
+	 * @see ApiProblemFilter#getHandle()
+	 * @since 1.0.500
+	 */
+	public static int getProblemHashcode(String filterhandle) {
+		if(filterhandle != null) {
+			String[] args = filterhandle.split(ApiProblemFilter.HANDLE_DELIMITER);
+			int hashcode = 0;
+			try {
+				//the problem id
+				hashcode += Integer.parseInt(args[0]);
+				//the resource path
+				hashcode += args[1].hashCode();
+				//the type name, do not add to the hashcode if the type name is null
+				//https://bugs.eclipse.org/bugs/show_bug.cgi?id=404173
+				if(args[2] != null && !args[2].equalsIgnoreCase("null")) { //$NON-NLS-1$
+					hashcode += args[2].hashCode();
+				}
+				//the message arguments
+				String[] margs = splitHandle(args[3], ApiProblemFilter.HANDLE_ARGUMENTS_DELIMITER);
+				hashcode += argumentsHashcode(margs);
+			}
+			catch(Exception e) {} finally {
+			}
+			return hashcode;
+		}
+		return -1;
+	}
+	
+	/**
+	 * Returns the deep hash code of the complete listing of message arguments
+	 * @param arguments
+	 * @return the hash code of the message arguments
+	 */
+	private static int argumentsHashcode(String[] arguments) {
+		if(arguments == null) {
+			return 0;
+		}
+		int hashcode = 0;
+		for(int i = 0; i < arguments.length; i++) {
+			hashcode += arguments[i].hashCode();
+		}
+		return hashcode;
+	}
+	
+	private static String[] splitHandle(String messageArguments, String delimiter) {
+		List matches = null;
+		char[] argumentsChars = messageArguments.toCharArray();
+		char[] delimiterChars = delimiter.toCharArray();
+		int delimiterLength = delimiterChars.length;
+		int start = 0;
+		int argumentsCharsLength = argumentsChars.length;
+		int balance = 0;
+		for (int i = 0; i < argumentsCharsLength;) {
+			char c = argumentsChars[i];
+			switch(c) {
+			case '(' :
+				balance++;
+				break;
+			case ')' :
+				balance--;
+			}
+			if (c == delimiterChars[0] && balance == 0) {
+				// see if this is a matching delimiter start only if not within parenthesis (balance == 0)
+				if (i + delimiterLength < argumentsCharsLength) {
+					boolean match = true;
+					loop: for (int j = 1; j < delimiterLength; j++) {
+						if (argumentsChars[i + j] != delimiterChars[j]) {
+							match = false;
+							break loop;
+						}
+					}
+					if (match) {
+						// record the matching substring and proceed
+						if (matches == null) {
+							matches = new ArrayList();
+						}
+						matches.add(messageArguments.substring(start, i));
+						start = i + delimiterLength;
+						i += delimiterLength;
+					} else {
+						i++;
+					}
+				} else {
+					i++;
+				}
+			} else {
+				i++;
+			}
+		}
+		if (matches == null) {
+			return new String[] { messageArguments };
+		} else {
+			matches.add(messageArguments.substring(start, argumentsCharsLength));
+		}
+		return (String[]) matches.toArray(new String[matches.size()]);
 	}
 	
 	/**
