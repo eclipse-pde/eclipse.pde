@@ -26,107 +26,108 @@ import org.eclipse.equinox.p2.query.IQueryResult;
 import org.eclipse.equinox.p2.query.QueryUtil;
 import org.eclipse.equinox.p2.repository.artifact.*;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
+import org.eclipse.equinox.spi.p2.publisher.PublisherHelper;
 import org.eclipse.pde.build.internal.tests.Utils;
 import org.eclipse.pde.build.tests.BuildConfiguration;
+import org.eclipse.pde.internal.build.site.QualifierReplacer;
 
 public class P2Tests extends P2TestCase {
 
-	// This test currently disabled due to CBI delta pack issues (Bug 401572)
-	//	public void testP2SimpleProduct() throws Exception {
-	//		IFolder buildFolder = newTest("p2.SimpleProduct");
-	//		IFolder repo = Utils.createFolder(buildFolder, "repo");
-	//
-	//		File delta = Utils.findDeltaPack();
-	//		assertNotNull(delta);
-	//
-	//		String os = Platform.getOS();
-	//		String ws = Platform.getWS();
-	//		String arch = Platform.getOSArch();
-	//
-	//		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
-	//		properties.put("product", "/test/test.product");
-	//		properties.put("configs", os + ',' + ws + ',' + arch);
-	//		if (!delta.equals(new File((String) properties.get("baseLocation"))))
-	//			properties.put("pluginPath", delta.getAbsolutePath());
-	//
-	//		String repoLocation = "file:" + repo.getLocation().toOSString();
-	//		properties.put("generate.p2.metadata", "true");
-	//		properties.put("p2.metadata.repo", repoLocation);
-	//		properties.put("p2.artifact.repo", repoLocation);
-	//		properties.put("p2.flavor", "tooling");
-	//		properties.put("p2.publish.artifacts", "true");
-	//
-	//		Utils.storeBuildProperties(buildFolder, properties);
-	//
-	//		runProductBuild(buildFolder);
-	//
-	//		String p2Config = ws + '.' + os + '.' + arch;
-	//		IMetadataRepository repository = loadMetadataRepository(repoLocation);
-	//		assertNotNull(repository);
-	//
-	//		//some basic existance
-	//		ArrayList ius = new ArrayList();
-	//		ius.add(getIU(repository, "test"));
-	//		ius.add(getIU(repository, "org.eclipse.equinox.launcher"));
-	//		ius.add(getIU(repository, OSGI));
-	//		ius.add(getIU(repository, CORE_RUNTIME));
-	//
-	//		//check some start level info
-	//		IInstallableUnit iu = getIU(repository, "tooling" + p2Config + CORE_RUNTIME);
-	//		assertTouchpoint(iu, "configure", "markStarted(started: true);");
-	//		ius.add(iu);
-	//
-	//		iu = getIU(repository, "tooling" + p2Config + EQUINOX_COMMON);
-	//		assertTouchpoint(iu, "configure", "setStartLevel(startLevel:2);markStarted(started: true);");
-	//		ius.add(iu);
-	//
-	//		//product settings
-	//		getIU(repository, "toolingtest.product.ini." + p2Config);
-	//
-	//		iu = getIU(repository, "toolingtest.product.config." + p2Config);
-	//		assertTouchpoint(iu, "configure", "setProgramProperty(propName:eclipse.application,propValue:test.application);");
-	//		assertTouchpoint(iu, "configure", "setProgramProperty(propName:eclipse.product,propValue:test.product);");
-	//		assertProvides(iu, "toolingtest.product", "test.product.config");
-	//
-	//		//some launcher stuff
-	//		iu = getIU(repository, "toolingorg.eclipse.equinox.launcher");
-	//		assertTouchpoint(iu, "configure", "addProgramArg(programArg:-startup);addProgramArg(programArg:@artifact);");
-	//		ius.add(iu);
-	//		iu = getIU(repository, "toolingorg.eclipse.equinox.launcher." + p2Config);
-	//		assertTouchpoint(iu, "configure", "addProgramArg(programArg:--launcher.library);addProgramArg(programArg:@artifact);");
-	//		ius.add(iu);
-	//
-	//		iu = getIU(repository, "test.product.rootfiles." + p2Config);
-	//		assertProvides(iu, "toolingtest.product", "test.product.rootfiles");
-	//		//		assertRequires(iu, "org.eclipse.equinox.p2.iu", "org.eclipse.equinox.launcher." + launcherConfig);
-	//
-	//		//And the main product IU
-	//		iu = getIU(repository, "test.product");
-	//		//		assertRequires(iu, "toolingtest.product", "test.product.launcher");
-	//		//		assertRequires(iu, "toolingtest.product", "test.product.ini");
-	//		//		assertRequires(iu, "toolingtest.product", "test.product.config");
-	//		//		assertRequires(iu, ius, true);
-	//
-	//		iu = getIU(repository, "toolingtest.product.rootfiles." + p2Config);
-	//		assertTouchpoint(iu, "configure", "setLauncherName(name:test");
-	//
-	//		IFolder installFolder = buildFolder.getFolder("install");
-	//		properties.put("p2.director.installPath", installFolder.getLocation().toOSString());
-	//		properties.put("p2.repo", "file:" + buildFolder.getFolder("repo").getLocation().toOSString());
-	//		properties.put("p2.director.iu", "test.product");
-	//		properties.put("os", os);
-	//		properties.put("ws", ws);
-	//		properties.put("arch", arch);
-	//		properties.put("equinoxLauncherJar", FileLocator.getBundleFile(Platform.getBundle("org.eclipse.equinox.launcher")).getAbsolutePath());
-	//		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"), new Path("/scripts/genericTargets.xml"), null);
-	//		String buildXMLPath = FileLocator.toFileURL(resource).getPath();
-	//		runAntScript(buildXMLPath, new String[] {"runDirector"}, buildFolder.getLocation().toOSString(), properties);
-	//
-	//		IFile iniFile = os.equals("macosx") ? installFolder.getFile("test.app/Contents/MacOS/test.ini") : installFolder.getFile("test.ini");
-	//		assertLogContainsLine(iniFile, "-startup");
-	//		assertLogContainsLine(iniFile, "--launcher.library");
-	//		assertLogContainsLine(iniFile, "-foo");
-	//	}
+	public void testP2SimpleProduct() throws Exception {
+		IFolder buildFolder = newTest("p2.SimpleProduct");
+		IFolder repo = Utils.createFolder(buildFolder, "repo");
+
+		File delta = Utils.findDeltaPack();
+		assertNotNull(delta);
+
+		String os = Platform.getOS();
+		String ws = Platform.getWS();
+		String arch = Platform.getOSArch();
+
+		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		properties.put("product", "/test/test.product");
+		properties.put("configs", os + ',' + ws + ',' + arch);
+		if (!delta.equals(new File((String) properties.get("baseLocation"))))
+			properties.put("pluginPath", delta.getAbsolutePath());
+
+		String repoLocation = "file:" + repo.getLocation().toOSString();
+		properties.put("generate.p2.metadata", "true");
+		properties.put("p2.metadata.repo", repoLocation);
+		properties.put("p2.artifact.repo", repoLocation);
+		properties.put("p2.flavor", "tooling");
+		properties.put("p2.publish.artifacts", "true");
+
+		Utils.storeBuildProperties(buildFolder, properties);
+
+		runProductBuild(buildFolder);
+
+		String p2Config = ws + '.' + os + '.' + arch;
+		IMetadataRepository repository = loadMetadataRepository(repoLocation);
+		assertNotNull(repository);
+
+		//some basic existance
+		ArrayList ius = new ArrayList();
+		ius.add(getIU(repository, "test"));
+		ius.add(getIU(repository, "org.eclipse.equinox.launcher"));
+		ius.add(getIU(repository, OSGI));
+		ius.add(getIU(repository, CORE_RUNTIME));
+
+		//check some start level info
+		IInstallableUnit iu = getIU(repository, "tooling" + p2Config + CORE_RUNTIME);
+		assertTouchpoint(iu, "configure", "markStarted(started: true);");
+		ius.add(iu);
+
+		iu = getIU(repository, "tooling" + p2Config + EQUINOX_COMMON);
+		assertTouchpoint(iu, "configure", "setStartLevel(startLevel:2);markStarted(started: true);");
+		ius.add(iu);
+
+		//product settings
+		getIU(repository, "toolingtest.product.ini." + p2Config);
+
+		iu = getIU(repository, "toolingtest.product.config." + p2Config);
+		assertTouchpoint(iu, "configure", "setProgramProperty(propName:eclipse.application,propValue:test.application);");
+		assertTouchpoint(iu, "configure", "setProgramProperty(propName:eclipse.product,propValue:test.product);");
+		assertProvides(iu, "toolingtest.product", "test.product.config");
+
+		//some launcher stuff
+		iu = getIU(repository, "toolingorg.eclipse.equinox.launcher");
+		assertTouchpoint(iu, "configure", "addProgramArg(programArg:-startup);addProgramArg(programArg:@artifact);");
+		ius.add(iu);
+		iu = getIU(repository, "toolingorg.eclipse.equinox.launcher." + p2Config);
+		assertTouchpoint(iu, "configure", "addProgramArg(programArg:--launcher.library);addProgramArg(programArg:@artifact);");
+		ius.add(iu);
+
+		iu = getIU(repository, "test.product.rootfiles." + p2Config);
+		assertProvides(iu, "toolingtest.product", "test.product.rootfiles");
+		//		assertRequires(iu, "org.eclipse.equinox.p2.iu", "org.eclipse.equinox.launcher." + launcherConfig);
+
+		//And the main product IU
+		iu = getIU(repository, "test.product");
+		//		assertRequires(iu, "toolingtest.product", "test.product.launcher");
+		//		assertRequires(iu, "toolingtest.product", "test.product.ini");
+		//		assertRequires(iu, "toolingtest.product", "test.product.config");
+		//		assertRequires(iu, ius, true);
+
+		iu = getIU(repository, "toolingtest.product.rootfiles." + p2Config);
+		assertTouchpoint(iu, "configure", "setLauncherName(name:test");
+
+		IFolder installFolder = buildFolder.getFolder("install");
+		properties.put("p2.director.installPath", installFolder.getLocation().toOSString());
+		properties.put("p2.repo", "file:" + buildFolder.getFolder("repo").getLocation().toOSString());
+		properties.put("p2.director.iu", "test.product");
+		properties.put("os", os);
+		properties.put("ws", ws);
+		properties.put("arch", arch);
+		properties.put("equinoxLauncherJar", FileLocator.getBundleFile(Platform.getBundle("org.eclipse.equinox.launcher")).getAbsolutePath());
+		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"), new Path("/scripts/genericTargets.xml"), null);
+		String buildXMLPath = FileLocator.toFileURL(resource).getPath();
+		runAntScript(buildXMLPath, new String[] {"runDirector"}, buildFolder.getLocation().toOSString(), properties);
+
+		IFile iniFile = os.equals("macosx") ? installFolder.getFile("test.app/Contents/MacOS/test.ini") : installFolder.getFile("test.ini");
+		assertLogContainsLine(iniFile, "-startup");
+		assertLogContainsLine(iniFile, "--launcher.library");
+		assertLogContainsLine(iniFile, "-foo");
+	}
 
 	public void testBug237096() throws Exception {
 		IFolder buildFolder = newTest("237096");
@@ -171,69 +172,68 @@ public class P2Tests extends P2TestCase {
 		assertRequires(rootIU, ius, true);
 	}
 
-	// This test currently disabled due to CBI delta pack issues (Bug 401572)
-	//	public void testBug242346() throws Exception {
-	//		IFolder buildFolder = newTest("242346");
-	//		IFile productFile = buildFolder.getFile("rcp.product");
-	//		IFolder repo = Utils.createFolder(buildFolder, "repo");
-	//
-	//		Utils.generateProduct(productFile, "rcp.product", "1.0.0.qualifier", new String[] {OSGI, SIMPLE_CONFIGURATOR}, false);
-	//
-	//		File delta = Utils.findDeltaPack();
-	//		assertNotNull(delta);
-	//
-	//		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
-	//		String repoLocation = "file:" + repo.getLocation().toOSString();
-	//		properties.put("product", productFile.getLocation().toOSString());
-	//		properties.put("configs", "win32,win32,x86");
-	//		properties.put("generate.p2.metadata", "true");
-	//		properties.put("p2.metadata.repo", repoLocation);
-	//		properties.put("p2.artifact.repo", repoLocation);
-	//		properties.put("p2.flavor", "tooling");
-	//		properties.put("p2.publish.artifacts", "true");
-	//		//		properties.put("p2.product.qualifier", "v1234"); //bug 246060 //commented out for bug 297064
-	//		Utils.storeBuildProperties(buildFolder, properties);
-	//		if (!delta.equals(new File((String) properties.get("baseLocation"))))
-	//			properties.put("pluginPath", delta.getAbsolutePath());
-	//		Utils.storeBuildProperties(buildFolder, properties);
-	//
-	//		runProductBuild(buildFolder);
-	//
-	//		IMetadataRepository repository = loadMetadataRepository(repoLocation);
-	//		assertNotNull(repository);
-	//
-	//		IInstallableUnit iu = getIU(repository, "toolingrcp.product.config.win32.win32.x86");
-	//		ArrayList requiredIUs = new ArrayList();
-	//		IInstallableUnit rootFileCU = getIU(repository, "toolingrcp.product.rootfiles.win32.win32.x86");
-	//		requiredIUs.add(rootFileCU);
-	//		requiredIUs.add(getIU(repository, "rcp.product.rootfiles.win32.win32.x86"));
-	//
-	//		assertTouchpoint(rootFileCU, "configure", "setLauncherName");
-	//		iu = getIU(repository, "toolingrcp.product.rootfiles");
-	//		assertRequires(iu, requiredIUs, true);
-	//		requiredIUs.clear();
-	//		requiredIUs.add(iu);
-	//
-	//		iu = getIU(repository, "rcp.product");
-	//		assertRequires(iu, requiredIUs, true);
-	//		//check up to the date on the timestamp, don't worry about hours/mins
-	//		assertTrue(PublisherHelper.toOSGiVersion(iu.getVersion()).getQualifier().startsWith(QualifierReplacer.getDateQualifier().substring(0, 8)));
-	//
-	//		IFolder installFolder = buildFolder.getFolder("install");
-	//		properties.put("p2.director.installPath", installFolder.getLocation().toOSString());
-	//		properties.put("p2.repo", "file:" + buildFolder.getFolder("repo").getLocation().toOSString());
-	//		properties.put("p2.director.iu", "rcp.product");
-	//		properties.put("os", "win32");
-	//		properties.put("ws", "win32");
-	//		properties.put("arch", "x86");
-	//		properties.put("equinoxLauncherJar", FileLocator.getBundleFile(Platform.getBundle("org.eclipse.equinox.launcher")).getAbsolutePath());
-	//		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"), new Path("/scripts/genericTargets.xml"), null);
-	//		String buildXMLPath = FileLocator.toFileURL(resource).getPath();
-	//		runAntScript(buildXMLPath, new String[] {"runDirector"}, buildFolder.getLocation().toOSString(), properties);
-	//
-	//		assertResourceFile(installFolder, "eclipse.exe");
-	//		assertLogContainsLine(installFolder.getFile("configuration/config.ini"), "org.eclipse.equinox.simpleconfigurator.configUrl=file\\:org.eclipse.equinox.simpleconfigurator");
-	//	}
+	public void testBug242346() throws Exception {
+		IFolder buildFolder = newTest("242346");
+		IFile productFile = buildFolder.getFile("rcp.product");
+		IFolder repo = Utils.createFolder(buildFolder, "repo");
+
+		Utils.generateProduct(productFile, "rcp.product", "1.0.0.qualifier", new String[] {OSGI, SIMPLE_CONFIGURATOR}, false);
+
+		File delta = Utils.findDeltaPack();
+		assertNotNull(delta);
+
+		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		String repoLocation = "file:" + repo.getLocation().toOSString();
+		properties.put("product", productFile.getLocation().toOSString());
+		properties.put("configs", "win32,win32,x86");
+		properties.put("generate.p2.metadata", "true");
+		properties.put("p2.metadata.repo", repoLocation);
+		properties.put("p2.artifact.repo", repoLocation);
+		properties.put("p2.flavor", "tooling");
+		properties.put("p2.publish.artifacts", "true");
+		//		properties.put("p2.product.qualifier", "v1234"); //bug 246060 //commented out for bug 297064
+		Utils.storeBuildProperties(buildFolder, properties);
+		if (!delta.equals(new File((String) properties.get("baseLocation"))))
+			properties.put("pluginPath", delta.getAbsolutePath());
+		Utils.storeBuildProperties(buildFolder, properties);
+
+		runProductBuild(buildFolder);
+
+		IMetadataRepository repository = loadMetadataRepository(repoLocation);
+		assertNotNull(repository);
+
+		IInstallableUnit iu = getIU(repository, "toolingrcp.product.config.win32.win32.x86");
+		ArrayList requiredIUs = new ArrayList();
+		IInstallableUnit rootFileCU = getIU(repository, "toolingrcp.product.rootfiles.win32.win32.x86");
+		requiredIUs.add(rootFileCU);
+		requiredIUs.add(getIU(repository, "rcp.product.rootfiles.win32.win32.x86"));
+
+		assertTouchpoint(rootFileCU, "configure", "setLauncherName");
+		iu = getIU(repository, "toolingrcp.product.rootfiles");
+		assertRequires(iu, requiredIUs, true);
+		requiredIUs.clear();
+		requiredIUs.add(iu);
+
+		iu = getIU(repository, "rcp.product");
+		assertRequires(iu, requiredIUs, true);
+		//check up to the date on the timestamp, don't worry about hours/mins
+		assertTrue(PublisherHelper.toOSGiVersion(iu.getVersion()).getQualifier().startsWith(QualifierReplacer.getDateQualifier().substring(0, 8)));
+
+		IFolder installFolder = buildFolder.getFolder("install");
+		properties.put("p2.director.installPath", installFolder.getLocation().toOSString());
+		properties.put("p2.repo", "file:" + buildFolder.getFolder("repo").getLocation().toOSString());
+		properties.put("p2.director.iu", "rcp.product");
+		properties.put("os", "win32");
+		properties.put("ws", "win32");
+		properties.put("arch", "x86");
+		properties.put("equinoxLauncherJar", FileLocator.getBundleFile(Platform.getBundle("org.eclipse.equinox.launcher")).getAbsolutePath());
+		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"), new Path("/scripts/genericTargets.xml"), null);
+		String buildXMLPath = FileLocator.toFileURL(resource).getPath();
+		runAntScript(buildXMLPath, new String[] {"runDirector"}, buildFolder.getLocation().toOSString(), properties);
+
+		assertResourceFile(installFolder, "eclipse.exe");
+		assertLogContainsLine(installFolder.getFile("configuration/config.ini"), "org.eclipse.equinox.simpleconfigurator.configUrl=file\\:org.eclipse.equinox.simpleconfigurator");
+	}
 
 	public void testBug222962_305837() throws Exception {
 		IFolder buildFolder = newTest("222962");
@@ -927,87 +927,86 @@ public class P2Tests extends P2TestCase {
 		assertResourceFile(installFolder, "plugins/A_1.0.0.jar");
 	}
 
-	// This test currently disabled due to CBI delta pack issues (Bug 401572)
-	//	public void testMetadataGenerator_BootStrap() throws Exception {
-	//		IFolder testFolder = newTest("metadataGenerator_Bootstrap");
-	//
-	//		File delta = Utils.findDeltaPack();
-	//		assertNotNull(delta);
-	//
-	//		IFile productFile = testFolder.getFile("Bootstrap.product");
-	//
-	//		//Step one, build old fashioned product
-	//		IFolder buildFolder = Utils.createFolder(testFolder, "build");
-	//		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
-	//		properties.put("configs", "win32,win32,x86");
-	//		properties.put("archivesFormat", "win32,win32,x86-folder");
-	//		if (!delta.equals(new File((String) properties.get("baseLocation"))))
-	//			properties.put("pluginPath", delta.getAbsolutePath());
-	//		properties.put("product", productFile.getLocation().toOSString());
-	//		Utils.storeBuildProperties(buildFolder, properties);
-	//
-	//		runProductBuild(buildFolder);
-	//
-	//		IFolder repoFolder = testFolder.getFolder("repository");
-	//		IFolder installFolder = testFolder.getFolder("install");
-	//
-	//		//step two, invoke the metadata generator on the product
-	//		StringBuffer scriptBuffer = new StringBuffer();
-	//		scriptBuffer.append("<project name=\"project\" default=\"go\">																\n");
-	//		scriptBuffer.append("   <target name=\"go\">																				\n");
-	//		scriptBuffer.append("		<last id=\"launcher\">																			\n");
-	//		scriptBuffer.append("			<sort>																						\n");
-	//		scriptBuffer.append("				<fileset dir=\"${eclipse.home}/plugins\" includes=\"org.eclipse.equinox.launcher_*\" />	\n");
-	//		scriptBuffer.append("			</sort>																						\n");
-	//		scriptBuffer.append("		</last>																							\n");
-	//		scriptBuffer.append("      <property name=\"launcher\" refid=\"launcher\" />												\n");
-	//		scriptBuffer.append("      <condition property=\"p2.director.devMode\" value=\"-dev &quot;${osgi.dev}&quot;\" else=\"\">	\n");
-	//		scriptBuffer.append("         <isset property=\"osgi.dev\" />																\n");
-	//		scriptBuffer.append("      </condition>																						\n");
-	//		scriptBuffer.append("      <java dir=\"${basedir}\" jar=\"${launcher}\" fork=\"true\">										\n");
-	//		scriptBuffer.append("         <arg line=\"-application org.eclipse.equinox.p2.publisher.EclipseGenerator\" />				\n");
-	//		scriptBuffer.append("         <arg line=\"${p2.director.devMode}\" />														\n");
-	//		scriptBuffer.append("         <sysproperty key=\"osgi.configuration.area\" value=\"${osgi.configuration.area}\" />			\n");
-	//		scriptBuffer.append("         <arg line=\"-metadataRepositoryName BootStrapRepo\" />										\n");
-	//		scriptBuffer.append("         <arg value=\"-metadataRepository\" />															\n");
-	//		scriptBuffer.append("         <arg value=\"" + URIUtil.toUnencodedString(repoFolder.getLocationURI()) + "\" />				\n");
-	//		scriptBuffer.append("         <arg value=\"-artifactRepository\" />															\n");
-	//		scriptBuffer.append("         <arg value=\"" + URIUtil.toUnencodedString(repoFolder.getLocationURI()) + "\" />				\n");
-	//		scriptBuffer.append("         <arg value=\"-source\" />																		\n");
-	//		scriptBuffer.append("         <arg value=\"" + buildFolder.getFolder("tmp/eclipse").getLocation().toOSString() + "\" />		\n");
-	//		scriptBuffer.append("         <arg line=\"-root bootstrap -rootVersion 1.2.0.12345\" />										\n");
-	//		scriptBuffer.append("         <arg line=\"-flavor tooling -publishArtifacts -append\" />									\n");
-	//		//scriptBuffer.append(" <jvmarg line=\"-Xdebug -Xnoagent -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000\" /> 	\n");
-	//		scriptBuffer.append("      </java>																							\n");
-	//
-	//		//step three call the director
-	//		scriptBuffer.append("      <java dir=\"${basedir}\" jar=\"${launcher}\" fork=\"true\">				\n");
-	//		scriptBuffer.append("         <arg line=\"${p2.director.devMode}\" />														\n");
-	//		scriptBuffer.append("         <sysproperty key=\"osgi.configuration.area\" value=\"${osgi.configuration.area}\" />			\n");
-	//		scriptBuffer.append("         <arg line=\"-application org.eclipse.equinox.p2.director\" />									\n");
-	//		scriptBuffer.append("         <arg value=\"-metadataRepository\" />															\n");
-	//		scriptBuffer.append("         <arg value=\"" + URIUtil.toUnencodedString(repoFolder.getLocationURI()) + "\" />				\n");
-	//		scriptBuffer.append("         <arg value=\"-artifactRepository\" />															\n");
-	//		scriptBuffer.append("         <arg value=\"" + URIUtil.toUnencodedString(repoFolder.getLocationURI()) + "\" />				\n");
-	//		scriptBuffer.append("         <arg line=\"-installIU bootstrap/1.2.0.12345 -profile bootProfile\" />						\n");
-	//		scriptBuffer.append("         <arg line=\"-profileProperties org.eclipse.update.install.features=true\" />					\n");
-	//		scriptBuffer.append("         <arg line=\"-p2.os win32 -p2.ws win32 -p2.arch x86\" />										\n");
-	//		scriptBuffer.append("         <arg value=\"-destination\" />																\n");
-	//		scriptBuffer.append("         <arg value=\"" + installFolder.getLocation().toOSString() + "\" />							\n");
-	//		//scriptBuffer.append(" <jvmarg value=\"-Declipse.p2.data.area=" + installFolder.getLocation().toOSString() + "/p2\" />		\n");
-	//		//scriptBuffer.append(" <jvmarg line=\"-Xdebug -Xnoagent -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000\" /> 	\n");
-	//		scriptBuffer.append("      </java>																							\n");
-	//		scriptBuffer.append("   </target>																							\n");
-	//		scriptBuffer.append("</project>																								\n");
-	//		IFile script = buildFolder.getFile("build.xml");
-	//		Utils.writeBuffer(script, scriptBuffer);
-	//
-	//		runAntScript(script.getLocation().toOSString(), new String[] {"go"}, testFolder.getLocation().toOSString(), null);
-	//
-	//		IMetadataRepository metaRepo = loadMetadataRepository(repoFolder.getLocationURI());
-	//		assertEquals(metaRepo.getName(), "BootStrapRepo");
-	//		IInstallableUnit iu = getIU(metaRepo, "bootstrap");
-	//		assertEquals(iu.getVersion().toString(), "1.2.0.12345");
-	//		assertResourceFile(installFolder, "eclipse.exe");
-	//	}
+	public void testMetadataGenerator_BootStrap() throws Exception {
+		IFolder testFolder = newTest("metadataGenerator_Bootstrap");
+
+		File delta = Utils.findDeltaPack();
+		assertNotNull(delta);
+
+		IFile productFile = testFolder.getFile("Bootstrap.product");
+
+		//Step one, build old fashioned product
+		IFolder buildFolder = Utils.createFolder(testFolder, "build");
+		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		properties.put("configs", "win32,win32,x86");
+		properties.put("archivesFormat", "win32,win32,x86-folder");
+		if (!delta.equals(new File((String) properties.get("baseLocation"))))
+			properties.put("pluginPath", delta.getAbsolutePath());
+		properties.put("product", productFile.getLocation().toOSString());
+		Utils.storeBuildProperties(buildFolder, properties);
+
+		runProductBuild(buildFolder);
+
+		IFolder repoFolder = testFolder.getFolder("repository");
+		IFolder installFolder = testFolder.getFolder("install");
+
+		//step two, invoke the metadata generator on the product
+		StringBuffer scriptBuffer = new StringBuffer();
+		scriptBuffer.append("<project name=\"project\" default=\"go\">																\n");
+		scriptBuffer.append("   <target name=\"go\">																				\n");
+		scriptBuffer.append("		<last id=\"launcher\">																			\n");
+		scriptBuffer.append("			<sort>																						\n");
+		scriptBuffer.append("				<fileset dir=\"${eclipse.home}/plugins\" includes=\"org.eclipse.equinox.launcher_*\" />	\n");
+		scriptBuffer.append("			</sort>																						\n");
+		scriptBuffer.append("		</last>																							\n");
+		scriptBuffer.append("      <property name=\"launcher\" refid=\"launcher\" />												\n");
+		scriptBuffer.append("      <condition property=\"p2.director.devMode\" value=\"-dev &quot;${osgi.dev}&quot;\" else=\"\">	\n");
+		scriptBuffer.append("         <isset property=\"osgi.dev\" />																\n");
+		scriptBuffer.append("      </condition>																						\n");
+		scriptBuffer.append("      <java dir=\"${basedir}\" jar=\"${launcher}\" fork=\"true\">										\n");
+		scriptBuffer.append("         <arg line=\"-application org.eclipse.equinox.p2.publisher.EclipseGenerator\" />				\n");
+		scriptBuffer.append("         <arg line=\"${p2.director.devMode}\" />														\n");
+		scriptBuffer.append("         <sysproperty key=\"osgi.configuration.area\" value=\"${osgi.configuration.area}\" />			\n");
+		scriptBuffer.append("         <arg line=\"-metadataRepositoryName BootStrapRepo\" />										\n");
+		scriptBuffer.append("         <arg value=\"-metadataRepository\" />															\n");
+		scriptBuffer.append("         <arg value=\"" + URIUtil.toUnencodedString(repoFolder.getLocationURI()) + "\" />				\n");
+		scriptBuffer.append("         <arg value=\"-artifactRepository\" />															\n");
+		scriptBuffer.append("         <arg value=\"" + URIUtil.toUnencodedString(repoFolder.getLocationURI()) + "\" />				\n");
+		scriptBuffer.append("         <arg value=\"-source\" />																		\n");
+		scriptBuffer.append("         <arg value=\"" + buildFolder.getFolder("tmp/eclipse").getLocation().toOSString() + "\" />		\n");
+		scriptBuffer.append("         <arg line=\"-root bootstrap -rootVersion 1.2.0.12345\" />										\n");
+		scriptBuffer.append("         <arg line=\"-flavor tooling -publishArtifacts -append\" />									\n");
+		//scriptBuffer.append(" <jvmarg line=\"-Xdebug -Xnoagent -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000\" /> 	\n");
+		scriptBuffer.append("      </java>																							\n");
+
+		//step three call the director
+		scriptBuffer.append("      <java dir=\"${basedir}\" jar=\"${launcher}\" fork=\"true\">				\n");
+		scriptBuffer.append("         <arg line=\"${p2.director.devMode}\" />														\n");
+		scriptBuffer.append("         <sysproperty key=\"osgi.configuration.area\" value=\"${osgi.configuration.area}\" />			\n");
+		scriptBuffer.append("         <arg line=\"-application org.eclipse.equinox.p2.director\" />									\n");
+		scriptBuffer.append("         <arg value=\"-metadataRepository\" />															\n");
+		scriptBuffer.append("         <arg value=\"" + URIUtil.toUnencodedString(repoFolder.getLocationURI()) + "\" />				\n");
+		scriptBuffer.append("         <arg value=\"-artifactRepository\" />															\n");
+		scriptBuffer.append("         <arg value=\"" + URIUtil.toUnencodedString(repoFolder.getLocationURI()) + "\" />				\n");
+		scriptBuffer.append("         <arg line=\"-installIU bootstrap/1.2.0.12345 -profile bootProfile\" />						\n");
+		scriptBuffer.append("         <arg line=\"-profileProperties org.eclipse.update.install.features=true\" />					\n");
+		scriptBuffer.append("         <arg line=\"-p2.os win32 -p2.ws win32 -p2.arch x86\" />										\n");
+		scriptBuffer.append("         <arg value=\"-destination\" />																\n");
+		scriptBuffer.append("         <arg value=\"" + installFolder.getLocation().toOSString() + "\" />							\n");
+		//scriptBuffer.append(" <jvmarg value=\"-Declipse.p2.data.area=" + installFolder.getLocation().toOSString() + "/p2\" />		\n");
+		//scriptBuffer.append(" <jvmarg line=\"-Xdebug -Xnoagent -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000\" /> 	\n");
+		scriptBuffer.append("      </java>																							\n");
+		scriptBuffer.append("   </target>																							\n");
+		scriptBuffer.append("</project>																								\n");
+		IFile script = buildFolder.getFile("build.xml");
+		Utils.writeBuffer(script, scriptBuffer);
+
+		runAntScript(script.getLocation().toOSString(), new String[] {"go"}, testFolder.getLocation().toOSString(), null);
+
+		IMetadataRepository metaRepo = loadMetadataRepository(repoFolder.getLocationURI());
+		assertEquals(metaRepo.getName(), "BootStrapRepo");
+		IInstallableUnit iu = getIU(metaRepo, "bootstrap");
+		assertEquals(iu.getVersion().toString(), "1.2.0.12345");
+		assertResourceFile(installFolder, "eclipse.exe");
+	}
 }

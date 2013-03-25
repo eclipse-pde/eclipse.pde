@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2008, 2012 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -22,18 +22,17 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.p2.core.helpers.FileUtils;
 import org.eclipse.equinox.internal.p2.metadata.IRequiredCapability;
-import org.eclipse.equinox.p2.metadata.IInstallableUnit;
-import org.eclipse.equinox.p2.metadata.VersionRange;
+import org.eclipse.equinox.p2.metadata.*;
 import org.eclipse.equinox.p2.query.IQueryResult;
 import org.eclipse.equinox.p2.query.QueryUtil;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
 import org.eclipse.equinox.spi.p2.publisher.PublisherHelper;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.build.internal.tests.Utils;
+import org.eclipse.pde.build.tests.Activator;
 import org.eclipse.pde.build.tests.BuildConfiguration;
 import org.eclipse.pde.internal.build.P2InfUtils;
-import org.eclipse.pde.internal.build.site.BuildTimeFeature;
-import org.eclipse.pde.internal.build.site.BuildTimeFeatureFactory;
+import org.eclipse.pde.internal.build.site.*;
 import org.osgi.framework.Constants;
 
 public class PublishingTests extends P2TestCase {
@@ -425,59 +424,58 @@ public class PublishingTests extends P2TestCase {
 		assertProvides(iu, "test", "my.provides");
 	}
 
-	// This test currently disabled due to CBI delta pack issues (Bug 401572)
-	//	public void testPublishFeature_ExecutableFeature() throws Exception {
-	//		IFolder buildFolder = newTest("PublishFeature_Executable");
-	//		File delta = Utils.findDeltaPack();
-	//		assertNotNull(delta);
-	//
-	//		File originalExecutable = findExecutableFeature(delta);
-	//
-	//		Properties properties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", EQUINOX_EXECUTABLE);
-	//		properties.put("launcherName", "eclipse");
-	//		properties.put("p2.gathering", "true");
-	//		if (!delta.equals(new File((String) properties.get("baseLocation"))))
-	//			properties.put("pluginPath", delta.getAbsolutePath());
-	//		generateScripts(buildFolder, properties);
-	//
-	//		String buildXMLPath = new File(originalExecutable, "build.xml").getAbsolutePath();
-	//		runAntScript(buildXMLPath, new String[] {"publish.bin.parts"}, buildFolder.getLocation().toOSString(), properties);
-	//
-	//		String executable = EQUINOX_EXECUTABLE;
-	//		String fileName = originalExecutable.getName();
-	//		String version = fileName.substring(fileName.indexOf('_') + 1);
-	//		Set entries = new HashSet();
-	//		entries.add("launcher");
-	//		assertZipContents(buildFolder.getFolder("buildRepo/binary"), executable + "_root.motif.aix.ppc_" + version, entries);
-	//
-	//		// Linux zips contain launcher and about.html (libCairo no longer packaged in the delta pack (bug 354978))
-	//		//		entries.add("libcairo-swt.so");
-	//		//		entries.add("about_files/about_cairo.html");
-	//		//		entries.add("about_files/mpl-v11.txt");
-	//		//		entries.add("about_files/pixman-licenses.txt");
-	//		//		entries.add("about_files/");
-	//		entries.add("about.html");
-	//		assertZipContents(buildFolder.getFolder("buildRepo/binary"), executable + "_root.gtk.linux.x86_" + version, entries);
-	//
-	//		// Mac zips contain app structure
-	//		entries.add("Eclipse.app/");
-	//		entries.add("Eclipse.app/Contents/");
-	//		entries.add("Eclipse.app/Contents/Info.plist");
-	//		entries.add("Eclipse.app/Contents/MacOS/");
-	//		entries.add("Eclipse.app/Contents/MacOS/eclipse.ini");
-	//		entries.add("Eclipse.app/Contents/MacOS/launcher");
-	//		assertZipContents(buildFolder.getFolder("buildRepo/binary"), executable + "_root.carbon.macosx.ppc_" + version, entries);
-	//
-	//		// Windows zips just contain the launcher
-	//
-	//		IMetadataRepository repository = loadMetadataRepository("file:" + buildFolder.getFolder("buildRepo").getLocation().toOSString());
-	//		assertNotNull(repository);
-	//
-	//		IInstallableUnit iu = getIU(repository, "org.eclipse.equinox.executable_root.gtk.linux.ppc");
-	//		assertEquals(iu.getVersion().toString(), version);
-	//		// LibCairo no longer installed using a touchpoint (Bug 354978)
-	//		//		assertTouchpoint(iu, "install", "chmod(targetDir:${installFolder}, targetFile:libcairo-swt.so, permissions:755);");
-	//	}
+	public void testPublishFeature_ExecutableFeature() throws Exception {
+		IFolder buildFolder = newTest("PublishFeature_Executable");
+		File delta = Utils.findDeltaPack();
+		assertNotNull(delta);
+
+		File originalExecutable = findExecutableFeature(delta);
+
+		Properties properties = BuildConfiguration.getScriptGenerationProperties(buildFolder, "feature", EQUINOX_EXECUTABLE);
+		properties.put("launcherName", "eclipse");
+		properties.put("p2.gathering", "true");
+		if (!delta.equals(new File((String) properties.get("baseLocation"))))
+			properties.put("pluginPath", delta.getAbsolutePath());
+		generateScripts(buildFolder, properties);
+
+		String buildXMLPath = new File(originalExecutable, "build.xml").getAbsolutePath();
+		runAntScript(buildXMLPath, new String[] {"publish.bin.parts"}, buildFolder.getLocation().toOSString(), properties);
+
+		String executable = EQUINOX_EXECUTABLE;
+		String fileName = originalExecutable.getName();
+		String version = fileName.substring(fileName.indexOf('_') + 1);
+		Set entries = new HashSet();
+		entries.add("launcher");
+		assertZipContents(buildFolder.getFolder("buildRepo/binary"), executable + "_root.motif.aix.ppc_" + version, entries);
+
+		// Linux zips contain launcher and about.html (libCairo no longer packaged in the delta pack (bug 354978))
+		//		entries.add("libcairo-swt.so");
+		//		entries.add("about_files/about_cairo.html");
+		//		entries.add("about_files/mpl-v11.txt");
+		//		entries.add("about_files/pixman-licenses.txt");
+		//		entries.add("about_files/");
+		entries.add("about.html");
+		assertZipContents(buildFolder.getFolder("buildRepo/binary"), executable + "_root.gtk.linux.x86_" + version, entries);
+
+		// Mac zips contain app structure
+		entries.add("Eclipse.app/");
+		entries.add("Eclipse.app/Contents/");
+		entries.add("Eclipse.app/Contents/Info.plist");
+		entries.add("Eclipse.app/Contents/MacOS/");
+		entries.add("Eclipse.app/Contents/MacOS/eclipse.ini");
+		entries.add("Eclipse.app/Contents/MacOS/launcher");
+		assertZipContents(buildFolder.getFolder("buildRepo/binary"), executable + "_root.carbon.macosx.ppc_" + version, entries);
+
+		// Windows zips just contain the launcher
+
+		IMetadataRepository repository = loadMetadataRepository("file:" + buildFolder.getFolder("buildRepo").getLocation().toOSString());
+		assertNotNull(repository);
+
+		IInstallableUnit iu = getIU(repository, "org.eclipse.equinox.executable_root.gtk.linux.ppc");
+		assertEquals(iu.getVersion().toString(), version);
+		// LibCairo no longer installed using a touchpoint (Bug 354978)
+		//		assertTouchpoint(iu, "install", "chmod(targetDir:${installFolder}, targetFile:libcairo-swt.so, permissions:755);");
+	}
 
 	public void testPublishBundle_APITooling() throws Exception {
 		IFolder buildFolder = newTest("PublishBundle_APITooling");
@@ -607,88 +605,87 @@ public class PublishingTests extends P2TestCase {
 		assertZipContents(buildFolder, "buildRepo/plugins/bundle.source_1.0.0.jar", entries);
 	}
 
-	// This test currently disabled due to CBI delta pack issues (Bug 401572)
-	//	public void testPublish_Brand_1() throws Exception {
-	//		IFolder buildFolder = newTest("brand_1");
-	//		IFolder rcp = Utils.createFolder(buildFolder, "rcp");
-	//
-	//		File delta = Utils.findDeltaPack();
-	//		assertNotNull(delta);
-	//
-	//		File executable = findExecutableFeature(delta);
-	//		String executableVersion = executable.getName().substring(executable.getName().indexOf('_') + 1);
-	//
-	//		IFile product = rcp.getFile("rcp.product");
-	//		StringBuffer branding = new StringBuffer();
-	//		branding.append("<launcher name=\"branded\">           \n");
-	//		branding.append("   <macosx icon=\"mail.icns\" />      \n");
-	//		branding.append("   <win useIco=\"true\">              \n");
-	//		branding.append("      <ico path=\"mail.ico\" />       \n");
-	//		branding.append("      <bmp/>                          \n");
-	//		branding.append("   </win>                             \n");
-	//		branding.append("</launcher>                           \n");
-	//
-	//		//bug 273115 - no version
-	//		Utils.generateProduct(product, "org.example.rcp", null, null, new String[] {OSGI}, false, branding);
-	//
-	//		//steal the icons from test 237922
-	//		URL ico = FileLocator.find(Platform.getBundle(Activator.PLUGIN_ID), new Path("/resources/237922/rcp/icons/mail.ico"), null);
-	//		IFile icoFile = rcp.getFile("mail.ico");
-	//		icoFile.create(ico.openStream(), IResource.FORCE, null);
-	//
-	//		//cheat and spoof a icns file for mac
-	//		Utils.copy(icoFile.getLocation().toFile(), new File(rcp.getLocation().toFile(), "mail.icns"));
-	//
-	//		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
-	//		properties.put("product", product.getLocation().toOSString());
-	//		if (!delta.equals(new File((String) properties.get("baseLocation"))))
-	//			properties.put("pluginPath", delta.getAbsolutePath());
-	//		//bug 274527 - cocoa.x86_64
-	//		properties.put("configs", "win32,win32,x86 & macosx, cocoa, x86_64");
-	//		properties.put("p2.gathering", "true");
-	//		Utils.storeBuildProperties(buildFolder, properties);
-	//
-	//		runProductBuild(buildFolder);
-	//
-	//		Set entries = new HashSet();
-	//		entries.add("branded.app/Contents/Info.plist");
-	//		entries.add("branded.app/Contents/MacOS/branded.ini");
-	//		entries.add("branded.app/Contents/MacOS/branded");
-	//		entries.add("branded.app/Contents/Resources/mail.icns");
-	//		assertZipContents(buildFolder.getFolder("buildRepo/binary"), "org.example.rcp_root.cocoa.macosx.x86_64_" + executableVersion, entries);
-	//
-	//		entries.clear();
-	//		entries.add("branded.exe");
-	//		assertZipContents(buildFolder.getFolder("buildRepo/binary"), "org.example.rcp_root.win32.win32.x86_" + executableVersion, entries);
-	//
-	//		IMetadataRepository repository = loadMetadataRepository("file:" + buildFolder.getFolder("buildRepo").getLocation().toOSString());
-	//		assertNotNull(repository);
-	//
-	//		IInstallableUnit iu = getIU(repository, "org.example.rcp");
-	//		assertEquals(iu.getId(), "org.example.rcp");
-	//		assertEquals(iu.getVersion().toString(), "0.0.0");
-	//		assertRequires(iu, "org.eclipse.equinox.p2.iu", OSGI);
-	//
-	//		//bug 218377
-	//		iu = getIU(repository, "org.example.rcp_root.cocoa.macosx.x86_64");
-	//		assertTouchpoint(iu, "install", "targetFile:branded.app/Contents/MacOS/branded");
-	//
-	//		assertResourceFile(buildFolder, "I.TestBuild/eclipse-win32.win32.x86.zip");
-	//
-	//		iu = getIU(repository, "org.eclipse.equinox.launcher.cocoa.macosx.x86_64");
-	//		entries.clear();
-	//		entries.add("eclipse/plugins/org.eclipse.equinox.launcher.cocoa.macosx.x86_64_" + iu.getVersion() + "/");
-	//		assertZipContents(buildFolder, "I.TestBuild/eclipse-macosx.cocoa.x86_64.zip", entries);
-	//
-	//		//bug 295282, bug 282652
-	//		IFile iniFile = buildFolder.getFile("branded.ini");
-	//		Utils.extractFromZip(buildFolder, "I.TestBuild/eclipse-macosx.cocoa.x86_64.zip", "eclipse/branded.app/Contents/MacOS/branded.ini", iniFile);
-	//		assertLogContainsLine(iniFile, "../../../plugins/org.eclipse.equinox.launcher");
-	//
-	//		IFile wrongFile = buildFolder.getFile("wrong.ini");
-	//		Utils.extractFromZip(buildFolder, "I.TestBuild/eclipse-macosx.cocoa.x86_64.zip", "eclipse/Branded.app/Contents/MacOS/branded.ini", wrongFile);
-	//		assertFalse(wrongFile.exists());
-	//	}
+	public void testPublish_Brand_1() throws Exception {
+		IFolder buildFolder = newTest("brand_1");
+		IFolder rcp = Utils.createFolder(buildFolder, "rcp");
+
+		File delta = Utils.findDeltaPack();
+		assertNotNull(delta);
+
+		File executable = findExecutableFeature(delta);
+		String executableVersion = executable.getName().substring(executable.getName().indexOf('_') + 1);
+
+		IFile product = rcp.getFile("rcp.product");
+		StringBuffer branding = new StringBuffer();
+		branding.append("<launcher name=\"branded\">           \n");
+		branding.append("   <macosx icon=\"mail.icns\" />      \n");
+		branding.append("   <win useIco=\"true\">              \n");
+		branding.append("      <ico path=\"mail.ico\" />       \n");
+		branding.append("      <bmp/>                          \n");
+		branding.append("   </win>                             \n");
+		branding.append("</launcher>                           \n");
+
+		//bug 273115 - no version
+		Utils.generateProduct(product, "org.example.rcp", null, null, new String[] {OSGI}, false, branding);
+
+		//steal the icons from test 237922
+		URL ico = FileLocator.find(Platform.getBundle(Activator.PLUGIN_ID), new Path("/resources/237922/rcp/icons/mail.ico"), null);
+		IFile icoFile = rcp.getFile("mail.ico");
+		icoFile.create(ico.openStream(), IResource.FORCE, null);
+
+		//cheat and spoof a icns file for mac
+		Utils.copy(icoFile.getLocation().toFile(), new File(rcp.getLocation().toFile(), "mail.icns"));
+
+		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		properties.put("product", product.getLocation().toOSString());
+		if (!delta.equals(new File((String) properties.get("baseLocation"))))
+			properties.put("pluginPath", delta.getAbsolutePath());
+		//bug 274527 - cocoa.x86_64
+		properties.put("configs", "win32,win32,x86 & macosx, cocoa, x86_64");
+		properties.put("p2.gathering", "true");
+		Utils.storeBuildProperties(buildFolder, properties);
+
+		runProductBuild(buildFolder);
+
+		Set entries = new HashSet();
+		entries.add("branded.app/Contents/Info.plist");
+		entries.add("branded.app/Contents/MacOS/branded.ini");
+		entries.add("branded.app/Contents/MacOS/branded");
+		entries.add("branded.app/Contents/Resources/mail.icns");
+		assertZipContents(buildFolder.getFolder("buildRepo/binary"), "org.example.rcp_root.cocoa.macosx.x86_64_" + executableVersion, entries);
+
+		entries.clear();
+		entries.add("branded.exe");
+		assertZipContents(buildFolder.getFolder("buildRepo/binary"), "org.example.rcp_root.win32.win32.x86_" + executableVersion, entries);
+
+		IMetadataRepository repository = loadMetadataRepository("file:" + buildFolder.getFolder("buildRepo").getLocation().toOSString());
+		assertNotNull(repository);
+
+		IInstallableUnit iu = getIU(repository, "org.example.rcp");
+		assertEquals(iu.getId(), "org.example.rcp");
+		assertEquals(iu.getVersion().toString(), "0.0.0");
+		assertRequires(iu, "org.eclipse.equinox.p2.iu", OSGI);
+
+		//bug 218377
+		iu = getIU(repository, "org.example.rcp_root.cocoa.macosx.x86_64");
+		assertTouchpoint(iu, "install", "targetFile:branded.app/Contents/MacOS/branded");
+
+		assertResourceFile(buildFolder, "I.TestBuild/eclipse-win32.win32.x86.zip");
+
+		iu = getIU(repository, "org.eclipse.equinox.launcher.cocoa.macosx.x86_64");
+		entries.clear();
+		entries.add("eclipse/plugins/org.eclipse.equinox.launcher.cocoa.macosx.x86_64_" + iu.getVersion() + "/");
+		assertZipContents(buildFolder, "I.TestBuild/eclipse-macosx.cocoa.x86_64.zip", entries);
+
+		//bug 295282, bug 282652
+		IFile iniFile = buildFolder.getFile("branded.ini");
+		Utils.extractFromZip(buildFolder, "I.TestBuild/eclipse-macosx.cocoa.x86_64.zip", "eclipse/branded.app/Contents/MacOS/branded.ini", iniFile);
+		assertLogContainsLine(iniFile, "../../../plugins/org.eclipse.equinox.launcher");
+
+		IFile wrongFile = buildFolder.getFile("wrong.ini");
+		Utils.extractFromZip(buildFolder, "I.TestBuild/eclipse-macosx.cocoa.x86_64.zip", "eclipse/Branded.app/Contents/MacOS/branded.ini", wrongFile);
+		assertFalse(wrongFile.exists());
+	}
 
 	public void testAssemblePackage() throws Exception {
 		IFolder buildFolder = newTest("publishAssemblePackage");
@@ -772,106 +769,105 @@ public class PublishingTests extends P2TestCase {
 		getIU(repo, "new_category_1");
 	}
 
-	// This test currently disabled due to CBI delta pack issues (Bug 401572)
-	//	public void testPublishAndRunSimpleProduct() throws Exception {
-	//		IFolder buildFolder = newTest("PublishAndRunSimpleProduct");
-	//
-	//		File delta = Utils.findDeltaPack();
-	//		assertNotNull(delta);
-	//
-	//		//headless rcp hello world
-	//		IFolder headless = Utils.createFolder(buildFolder, "plugins/headless");
-	//		StringBuffer buffer = new StringBuffer();
-	//		buffer.append("package headless;													\n");
-	//		buffer.append("import org.eclipse.equinox.app.IApplication;								\n");
-	//		buffer.append("import org.eclipse.equinox.app.IApplicationContext;						\n");
-	//		buffer.append("public class Application implements IApplication {						\n");
-	//		buffer.append("   public Object start(IApplicationContext context) throws Exception {	\n");
-	//		buffer.append("      System.out.println(\"Hello RCP World!\");							\n");
-	//		buffer.append("      return IApplication.EXIT_OK;										\n");
-	//		buffer.append("   }																		\n");
-	//		buffer.append("   public void stop() {													\n");
-	//		buffer.append("   }																		\n");
-	//		buffer.append("}																		\n");
-	//		Utils.writeBuffer(headless.getFile("src/headless/Application.java"), buffer);
-	//
-	//		buffer = new StringBuffer();
-	//		buffer.append("<plugin>																			\n");
-	//		buffer.append("   <extension id=\"application\" point=\"org.eclipse.core.runtime.applications\">\n");
-	//		buffer.append("      <application>																\n");
-	//		buffer.append("         <run class=\"headless.Application\"/>									\n");
-	//		buffer.append("      </application>																\n");
-	//		buffer.append("   </extension>																	\n");
-	//		buffer.append("   <extension id=\"product\" point=\"org.eclipse.core.runtime.products\">		\n");
-	//		buffer.append("      <product application=\"headless.application\" name=\"Headless Name\"/>		\n");
-	//		buffer.append("   </extension>		                                                            \n");
-	//		buffer.append("</plugin>																		\n");
-	//		Utils.writeBuffer(headless.getFile("plugin.xml"), buffer);
-	//
-	//		Attributes additionalAttributes = new Attributes();
-	//		additionalAttributes = new Attributes();
-	//		additionalAttributes.put(new Attributes.Name("Require-Bundle"), "org.eclipse.core.runtime");
-	//		additionalAttributes.put(new Attributes.Name("Bundle-ActivationPolicy"), "lazy");
-	//		Utils.generateBundleManifest(headless, "headless;singleton:=true", "1.0.0", additionalAttributes);
-	//		Properties properties = new Properties();
-	//		properties.put("bin.includes", "META-INF/, ., plugin.xml");
-	//		Utils.generatePluginBuildProperties(headless, properties);
-	//
-	//		IFile productFile = buildFolder.getFile("headless.product");
-	//		String[] bundles = new String[] {"headless", "org.eclipse.core.contenttype", "org.eclipse.core.jobs", "org.eclipse.core.runtime", EQUINOX_APP, EQUINOX_COMMON, EQUINOX_PREFERENCES, EQUINOX_REGISTRY, OSGI};
-	//		Utils.generateProduct(productFile, "headless.product", "1.0.0.qualifier", "headless.application", "headless", bundles, false, null);
-	//		Properties p2Inf = new Properties(); // bug 268223
-	//		p2Inf.put("instructions.configure", "addRepository(type:0,location:file${#58}//foo/bar);");
-	//		Utils.storeProperties(buildFolder.getFile("p2.inf"), p2Inf);
-	//
-	//		properties = BuildConfiguration.getBuilderProperties(buildFolder);
-	//		String config = Platform.getOS() + ',' + Platform.getWS() + ',' + Platform.getOSArch();
-	//		if (!delta.equals(new File((String) properties.get("baseLocation"))))
-	//			properties.put("pluginPath", delta.getAbsolutePath());
-	//		properties.put("product", productFile.getLocation().toOSString());
-	//		properties.put("configs", config);
-	//		properties.put("archivesFormat", config + "-folder");
-	//		properties.put("filteredDependencyCheck", "true");
-	//		properties.put("p2.gathering", "true");
-	//		properties.put("p2.metadata.repo", "file:" + buildFolder.getFolder("finalRepo").getLocation().toOSString());
-	//		properties.put("p2.artifact.repo", "file:" + buildFolder.getFolder("finalRepo").getLocation().toOSString());
-	//		Utils.storeBuildProperties(buildFolder, properties);
-	//
-	//		runProductBuild(buildFolder);
-	//
-	//		IFile configFile = buildFolder.getFile("/tmp/eclipse/configuration/config.ini");
-	//		assertLogContainsLine(configFile, "eclipse.application=headless.application");
-	//		assertLogContainsLine(configFile, "eclipse.product=headless.product");
-	//
-	//		if (Platform.getOS().equals("macosx")) {
-	//			IFile iniFile = buildFolder.getFile("/tmp/eclipse/headless.app/Contents/MacOS/headless.ini");
-	//			assertLogContainsLines(iniFile, new String[] {"-startup", "plugins/org.eclipse.equinox.launcher_"});
-	//			assertLogContainsLines(iniFile, new String[] {"--launcher.library", "plugins/org.eclipse.equinox.launcher."});
-	//		} else {
-	//			IFile iniFile = buildFolder.getFile("/tmp/eclipse/headless.ini");
-	//			assertLogContainsLines(iniFile, new String[] {"-startup", "plugins/org.eclipse.equinox.launcher_"});
-	//			assertLogContainsLines(iniFile, new String[] {"--launcher.library", "plugins/org.eclipse.equinox.launcher."});
-	//		}
-	//
-	//		IFolder binaryFolder = buildFolder.getFolder("/tmp/eclipse/binary");
-	//		assertFalse(binaryFolder.exists());
-	//
-	//		IMetadataRepository finalRepo = loadMetadataRepository("file:" + buildFolder.getFolder("finalRepo").getLocation().toOSString());
-	//		getIU(finalRepo, "a.jre.javase");
-	//		IInstallableUnit productIu = getIU(finalRepo, "headless.product");
-	//		assertFalse(productIu.getVersion().toString().equals("1.0.0.qualifier")); //bug 246060, should be a timestamp
-	//		//check up to the date on the timestamp, don't worry about hours/mins
-	//		assertTrue(PublisherHelper.toOSGiVersion(productIu.getVersion()).getQualifier().startsWith(QualifierReplacer.getDateQualifier().substring(0, 8)));
-	//		assertTouchpoint(productIu, "configure", "addRepository(type:0,location:file${#58}//foo/bar);");
-	//
-	//		IInstallableUnit iu = getIU(finalRepo, "toolingorg.eclipse.equinox.common");
-	//		assertEquals(iu.getVersion(), productIu.getVersion());
-	//
-	//		iu = getIU(finalRepo, "toolingheadless.product_root." + Platform.getWS() + '.' + Platform.getOS() + '.' + Platform.getOSArch());
-	//		assertTouchpoint(iu, "configure", "setLauncherName(name:headless");
-	//		assertEquals(iu.getVersion(), productIu.getVersion());
-	//
-	//	}
+	public void testPublishAndRunSimpleProduct() throws Exception {
+		IFolder buildFolder = newTest("PublishAndRunSimpleProduct");
+
+		File delta = Utils.findDeltaPack();
+		assertNotNull(delta);
+
+		//headless rcp hello world
+		IFolder headless = Utils.createFolder(buildFolder, "plugins/headless");
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("package headless;													\n");
+		buffer.append("import org.eclipse.equinox.app.IApplication;								\n");
+		buffer.append("import org.eclipse.equinox.app.IApplicationContext;						\n");
+		buffer.append("public class Application implements IApplication {						\n");
+		buffer.append("   public Object start(IApplicationContext context) throws Exception {	\n");
+		buffer.append("      System.out.println(\"Hello RCP World!\");							\n");
+		buffer.append("      return IApplication.EXIT_OK;										\n");
+		buffer.append("   }																		\n");
+		buffer.append("   public void stop() {													\n");
+		buffer.append("   }																		\n");
+		buffer.append("}																		\n");
+		Utils.writeBuffer(headless.getFile("src/headless/Application.java"), buffer);
+
+		buffer = new StringBuffer();
+		buffer.append("<plugin>																			\n");
+		buffer.append("   <extension id=\"application\" point=\"org.eclipse.core.runtime.applications\">\n");
+		buffer.append("      <application>																\n");
+		buffer.append("         <run class=\"headless.Application\"/>									\n");
+		buffer.append("      </application>																\n");
+		buffer.append("   </extension>																	\n");
+		buffer.append("   <extension id=\"product\" point=\"org.eclipse.core.runtime.products\">		\n");
+		buffer.append("      <product application=\"headless.application\" name=\"Headless Name\"/>		\n");
+		buffer.append("   </extension>		                                                            \n");
+		buffer.append("</plugin>																		\n");
+		Utils.writeBuffer(headless.getFile("plugin.xml"), buffer);
+
+		Attributes additionalAttributes = new Attributes();
+		additionalAttributes = new Attributes();
+		additionalAttributes.put(new Attributes.Name("Require-Bundle"), "org.eclipse.core.runtime");
+		additionalAttributes.put(new Attributes.Name("Bundle-ActivationPolicy"), "lazy");
+		Utils.generateBundleManifest(headless, "headless;singleton:=true", "1.0.0", additionalAttributes);
+		Properties properties = new Properties();
+		properties.put("bin.includes", "META-INF/, ., plugin.xml");
+		Utils.generatePluginBuildProperties(headless, properties);
+
+		IFile productFile = buildFolder.getFile("headless.product");
+		String[] bundles = new String[] {"headless", "org.eclipse.core.contenttype", "org.eclipse.core.jobs", "org.eclipse.core.runtime", EQUINOX_APP, EQUINOX_COMMON, EQUINOX_PREFERENCES, EQUINOX_REGISTRY, OSGI};
+		Utils.generateProduct(productFile, "headless.product", "1.0.0.qualifier", "headless.application", "headless", bundles, false, null);
+		Properties p2Inf = new Properties(); // bug 268223
+		p2Inf.put("instructions.configure", "addRepository(type:0,location:file${#58}//foo/bar);");
+		Utils.storeProperties(buildFolder.getFile("p2.inf"), p2Inf);
+
+		properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		String config = Platform.getOS() + ',' + Platform.getWS() + ',' + Platform.getOSArch();
+		if (!delta.equals(new File((String) properties.get("baseLocation"))))
+			properties.put("pluginPath", delta.getAbsolutePath());
+		properties.put("product", productFile.getLocation().toOSString());
+		properties.put("configs", config);
+		properties.put("archivesFormat", config + "-folder");
+		properties.put("filteredDependencyCheck", "true");
+		properties.put("p2.gathering", "true");
+		properties.put("p2.metadata.repo", "file:" + buildFolder.getFolder("finalRepo").getLocation().toOSString());
+		properties.put("p2.artifact.repo", "file:" + buildFolder.getFolder("finalRepo").getLocation().toOSString());
+		Utils.storeBuildProperties(buildFolder, properties);
+
+		runProductBuild(buildFolder);
+
+		IFile configFile = buildFolder.getFile("/tmp/eclipse/configuration/config.ini");
+		assertLogContainsLine(configFile, "eclipse.application=headless.application");
+		assertLogContainsLine(configFile, "eclipse.product=headless.product");
+
+		if (Platform.getOS().equals("macosx")) {
+			IFile iniFile = buildFolder.getFile("/tmp/eclipse/headless.app/Contents/MacOS/headless.ini");
+			assertLogContainsLines(iniFile, new String[] {"-startup", "plugins/org.eclipse.equinox.launcher_"});
+			assertLogContainsLines(iniFile, new String[] {"--launcher.library", "plugins/org.eclipse.equinox.launcher."});
+		} else {
+			IFile iniFile = buildFolder.getFile("/tmp/eclipse/headless.ini");
+			assertLogContainsLines(iniFile, new String[] {"-startup", "plugins/org.eclipse.equinox.launcher_"});
+			assertLogContainsLines(iniFile, new String[] {"--launcher.library", "plugins/org.eclipse.equinox.launcher."});
+		}
+
+		IFolder binaryFolder = buildFolder.getFolder("/tmp/eclipse/binary");
+		assertFalse(binaryFolder.exists());
+
+		IMetadataRepository finalRepo = loadMetadataRepository("file:" + buildFolder.getFolder("finalRepo").getLocation().toOSString());
+		getIU(finalRepo, "a.jre.javase");
+		IInstallableUnit productIu = getIU(finalRepo, "headless.product");
+		assertFalse(productIu.getVersion().toString().equals("1.0.0.qualifier")); //bug 246060, should be a timestamp
+		//check up to the date on the timestamp, don't worry about hours/mins
+		assertTrue(PublisherHelper.toOSGiVersion(productIu.getVersion()).getQualifier().startsWith(QualifierReplacer.getDateQualifier().substring(0, 8)));
+		assertTouchpoint(productIu, "configure", "addRepository(type:0,location:file${#58}//foo/bar);");
+
+		IInstallableUnit iu = getIU(finalRepo, "toolingorg.eclipse.equinox.common");
+		assertEquals(iu.getVersion(), productIu.getVersion());
+
+		iu = getIU(finalRepo, "toolingheadless.product_root." + Platform.getWS() + '.' + Platform.getOS() + '.' + Platform.getOSArch());
+		assertTouchpoint(iu, "configure", "setLauncherName(name:headless");
+		assertEquals(iu.getVersion(), productIu.getVersion());
+
+	}
 
 	public void testBug265726() throws Exception {
 		IFolder buildFolder = newTest("265726");
@@ -1428,62 +1424,61 @@ public class PublishingTests extends P2TestCase {
 		removeMetadataRepository(repoURI);
 	}
 
-	// This test currently disabled due to CBI delta pack issues (Bug 401572)
-	//	public void testPublish_FeatureBasedProduct() throws Exception {
-	//		IFolder buildFolder = newTest("featureBasedProduct");
-	//		IFolder finalRepo = Utils.createFolder(buildFolder, "final");
-	//
-	//		File delta = Utils.findDeltaPack();
-	//		assertNotNull(delta);
-	//
-	//		Utils.generateFeature(buildFolder, "f", null, new String[] {OSGI, EQUINOX_COMMON});
-	//		Utils.writeBuffer(buildFolder.getFile("features/f/important.txt"), new StringBuffer("boo-urns"));
-	//		Properties properties = new Properties();
-	//		properties.put("bin.includes", "feature.xml");
-	//		properties.put("root.folder.sub", "file:important.txt"); //bug 272392
-	//		Utils.storeBuildProperties(buildFolder.getFolder("features/f"), properties);
-	//
-	//		IFile productFile = buildFolder.getFile("rcp.product");
-	//		Utils.generateProduct(productFile, "rcp.product", "1.0.0", new String[] {"f"}, true);
-	//
-	//		properties = BuildConfiguration.getBuilderProperties(buildFolder);
-	//		if (!delta.equals(new File((String) properties.get("baseLocation"))))
-	//			properties.put("pluginPath", delta.getAbsolutePath());
-	//		properties.put("configs", "win32,win32,x86");
-	//		properties.put("product", productFile.getLocation().toOSString());
-	//		properties.put("filteredDependencyCheck", "true");
-	//		properties.put("p2.gathering", "true");
-	//		properties.put("skipMirroring", "true");
-	//		properties.put("p2.build.repo", "file:" + buildFolder.getFolder("buildRepo").getLocation().toOSString());
-	//		Utils.storeBuildProperties(buildFolder, properties);
-	//
-	//		//bug 269523
-	//		StringBuffer customBuffer = new StringBuffer();
-	//		customBuffer.append("<project name=\"custom\" default=\"noDefault\">										\n");
-	//		customBuffer.append("   <import file=\"${eclipse.pdebuild.templates}/headless-build/customTargets.xml\"/>	\n");
-	//		customBuffer.append("   <target name=\"postBuild\">															\n");
-	//		customBuffer.append("      <p2.mirror destination=\"" + finalRepo.getLocation().toOSString() + "\"			\n");
-	//		customBuffer.append("                 source=\"${p2.build.repo}\" >											\n");
-	//		customBuffer.append("          <slicingOptions platformFilter=\"win32,win32,x86\" 							\n");
-	//		customBuffer.append("                          followStrict=\"true\" /> 									\n");
-	//		customBuffer.append("          <iu id=\"rcp.product\" version=\"1.0.0\" />									\n");
-	//		customBuffer.append("      </p2.mirror>																		\n");
-	//		customBuffer.append("   </target>																			\n");
-	//		customBuffer.append("</project>																				\n");
-	//		Utils.writeBuffer(buildFolder.getFile("customTargets.xml"), customBuffer);
-	//
-	//		runProductBuild(buildFolder);
-	//
-	//		assertResourceFile(finalRepo, "binary/f_root_1.0.0");
-	//		assertResourceFile(finalRepo, "binary/rcp.product_root.win32.win32.x86_1.0.0");
-	//		assertResourceFile(finalRepo, "features/f_1.0.0.jar");
-	//
-	//		HashSet entries = new HashSet();
-	//		entries.add("eclipse/eclipse.exe");
-	//		entries.add("eclipse/features/f_1.0.0/feature.xml");
-	//		entries.add("eclipse/sub/important.txt");
-	//		assertZipContents(buildFolder, "I.TestBuild/eclipse-win32.win32.x86.zip", entries);
-	//	}
+	public void testPublish_FeatureBasedProduct() throws Exception {
+		IFolder buildFolder = newTest("featureBasedProduct");
+		IFolder finalRepo = Utils.createFolder(buildFolder, "final");
+
+		File delta = Utils.findDeltaPack();
+		assertNotNull(delta);
+
+		Utils.generateFeature(buildFolder, "f", null, new String[] {OSGI, EQUINOX_COMMON});
+		Utils.writeBuffer(buildFolder.getFile("features/f/important.txt"), new StringBuffer("boo-urns"));
+		Properties properties = new Properties();
+		properties.put("bin.includes", "feature.xml");
+		properties.put("root.folder.sub", "file:important.txt"); //bug 272392
+		Utils.storeBuildProperties(buildFolder.getFolder("features/f"), properties);
+
+		IFile productFile = buildFolder.getFile("rcp.product");
+		Utils.generateProduct(productFile, "rcp.product", "1.0.0", new String[] {"f"}, true);
+
+		properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		if (!delta.equals(new File((String) properties.get("baseLocation"))))
+			properties.put("pluginPath", delta.getAbsolutePath());
+		properties.put("configs", "win32,win32,x86");
+		properties.put("product", productFile.getLocation().toOSString());
+		properties.put("filteredDependencyCheck", "true");
+		properties.put("p2.gathering", "true");
+		properties.put("skipMirroring", "true");
+		properties.put("p2.build.repo", "file:" + buildFolder.getFolder("buildRepo").getLocation().toOSString());
+		Utils.storeBuildProperties(buildFolder, properties);
+
+		//bug 269523
+		StringBuffer customBuffer = new StringBuffer();
+		customBuffer.append("<project name=\"custom\" default=\"noDefault\">										\n");
+		customBuffer.append("   <import file=\"${eclipse.pdebuild.templates}/headless-build/customTargets.xml\"/>	\n");
+		customBuffer.append("   <target name=\"postBuild\">															\n");
+		customBuffer.append("      <p2.mirror destination=\"" + finalRepo.getLocation().toOSString() + "\"			\n");
+		customBuffer.append("                 source=\"${p2.build.repo}\" >											\n");
+		customBuffer.append("          <slicingOptions platformFilter=\"win32,win32,x86\" 							\n");
+		customBuffer.append("                          followStrict=\"true\" /> 									\n");
+		customBuffer.append("          <iu id=\"rcp.product\" version=\"1.0.0\" />									\n");
+		customBuffer.append("      </p2.mirror>																		\n");
+		customBuffer.append("   </target>																			\n");
+		customBuffer.append("</project>																				\n");
+		Utils.writeBuffer(buildFolder.getFile("customTargets.xml"), customBuffer);
+
+		runProductBuild(buildFolder);
+
+		assertResourceFile(finalRepo, "binary/f_root_1.0.0");
+		assertResourceFile(finalRepo, "binary/rcp.product_root.win32.win32.x86_1.0.0");
+		assertResourceFile(finalRepo, "features/f_1.0.0.jar");
+
+		HashSet entries = new HashSet();
+		entries.add("eclipse/eclipse.exe");
+		entries.add("eclipse/features/f_1.0.0/feature.xml");
+		entries.add("eclipse/sub/important.txt");
+		assertZipContents(buildFolder, "I.TestBuild/eclipse-win32.win32.x86.zip", entries);
+	}
 
 	public void testDirectorLogging() throws Exception {
 		IFolder buildFolder = newTest("directorLogging");
@@ -1575,79 +1570,78 @@ public class PublishingTests extends P2TestCase {
 		assertProvides(iu, P2InfUtils.NAMESPACE_IU, "testid0");
 	}
 
-	// This test currently disabled due to CBI delta pack issues (Bug 401572)
-	//	public void testBug268498() throws Exception {
-	//		IFolder buildFolder = newTest("268498");
-	//		IFolder rcp = Utils.createFolder(buildFolder, "rcp");
-	//
-	//		File delta = Utils.findDeltaPack();
-	//		assertNotNull(delta);
-	//
-	//		IFile product = rcp.getFile("rcp.product");
-	//		StringBuffer extra = new StringBuffer();
-	//		extra.append("<launcherArgs> 																				\n");
-	//		extra.append("   <programArgsMac>-vm myVm -showsplash org.eclipse.platform</programArgsMac>							\n");
-	//		extra.append("   <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>	\n");
-	//		extra.append(" </launcherArgs>																				\n");
-	//		extra.append(" <configurations>																				\n");
-	//		extra.append("    <plugin id=\"" + EQUINOX_COMMON + "\" autoStart=\"true\" startLevel=\"2\" />			\n");
-	//		extra.append(" </configurations>																			\n");
-	//		Utils.generateProduct(product, "org.example.rcp", "1.0.0", null, new String[] {OSGI, EQUINOX_COMMON}, false, extra);
-	//
-	//		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
-	//		properties.put("product", product.getLocation().toOSString());
-	//		if (!delta.equals(new File((String) properties.get("baseLocation"))))
-	//			properties.put("pluginPath", delta.getAbsolutePath());
-	//		properties.put("configs", "macosx, cocoa, x86");
-	//		properties.put("p2.gathering", "true");
-	//		Utils.storeBuildProperties(buildFolder, properties);
-	//
-	//		runProductBuild(buildFolder);
-	//
-	//		IFile ini = buildFolder.getFile("eclipse.ini");
-	//		boolean lowerCase = true;
-	//		if (!Utils.extractFromZip(buildFolder, "I.TestBuild/eclipse-macosx.cocoa.x86.zip", "eclipse/eclipse.app/Contents/MacOS/eclipse.ini", ini)) {
-	//			lowerCase = false;
-	//			Utils.extractFromZip(buildFolder, "I.TestBuild/eclipse-macosx.cocoa.x86.zip", "eclipse/Eclipse.app/Contents/MacOS/eclipse.ini", ini);
-	//		}
-	//
-	//		IFile zip = buildFolder.getFile("I.TestBuild/eclipse-macosx.cocoa.x86.zip");
-	//		String exeString = (lowerCase ? "eclipse/eclipse.app/" : "eclipse/Eclipse.app/") + "Contents/MacOS/eclipse";
-	//		assertZipPermissions(zip, exeString, "-rwxr-xr-x");
-	//
-	//		assertLogContainsLines(ini, new String[] {"-vm", "myVm"});
-	//		boolean duplicate = false;
-	//		try {
-	//			assertLogContainsLines(ini, new String[] {"-XstartOnFirstThread", "-XstartOnFirstThread"});
-	//			duplicate = true;
-	//		} catch (Error e) {
-	//			//expected
-	//		}
-	//		assertFalse(duplicate);
-	//
-	//		try {
-	//			assertLogContainsLines(ini, new String[] {"-showSplash", "org.eclipse.platform", "-showSplash", "org.eclipse.platform"});
-	//			duplicate = true;
-	//		} catch (Error e) {
-	//			//expected
-	//		}
-	//		assertFalse(duplicate);
-	//
-	//		IMetadataRepository repo = loadMetadataRepository(buildFolder.getFolder("buildRepo").getLocationURI());
-	//		IInstallableUnit iu = getIU(repo, "toolingcocoa.macosx.x86org.eclipse.equinox.common");
-	//		assertEquals(iu.getVersion().toString(), "1.0.0");
-	//
-	//		IInstallableUnit common = getIU(repo, EQUINOX_COMMON);
-	//		Collection/*<IRequirement>*/required = iu.getRequirements();
-	//		assertEquals(required.size(), 2);
-	//		Iterator it = required.iterator();
-	//		IRequiredCapability req0 = (IRequiredCapability) it.next();
-	//		IRequiredCapability req1 = (IRequiredCapability) it.next();
-	//		if (req0.getName().equals(EQUINOX_COMMON))
-	//			assertEquals(req0.getRange(), new VersionRange(common.getVersion(), true, Version.MAX_VERSION, true));
-	//		else
-	//			assertEquals(req1.getRange(), new VersionRange(common.getVersion(), true, Version.MAX_VERSION, true));
-	//	}
+	public void testBug268498() throws Exception {
+		IFolder buildFolder = newTest("268498");
+		IFolder rcp = Utils.createFolder(buildFolder, "rcp");
+
+		File delta = Utils.findDeltaPack();
+		assertNotNull(delta);
+
+		IFile product = rcp.getFile("rcp.product");
+		StringBuffer extra = new StringBuffer();
+		extra.append("<launcherArgs> 																				\n");
+		extra.append("   <programArgsMac>-vm myVm -showsplash org.eclipse.platform</programArgsMac>							\n");
+		extra.append("   <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>	\n");
+		extra.append(" </launcherArgs>																				\n");
+		extra.append(" <configurations>																				\n");
+		extra.append("    <plugin id=\"" + EQUINOX_COMMON + "\" autoStart=\"true\" startLevel=\"2\" />			\n");
+		extra.append(" </configurations>																			\n");
+		Utils.generateProduct(product, "org.example.rcp", "1.0.0", null, new String[] {OSGI, EQUINOX_COMMON}, false, extra);
+
+		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		properties.put("product", product.getLocation().toOSString());
+		if (!delta.equals(new File((String) properties.get("baseLocation"))))
+			properties.put("pluginPath", delta.getAbsolutePath());
+		properties.put("configs", "macosx, cocoa, x86");
+		properties.put("p2.gathering", "true");
+		Utils.storeBuildProperties(buildFolder, properties);
+
+		runProductBuild(buildFolder);
+
+		IFile ini = buildFolder.getFile("eclipse.ini");
+		boolean lowerCase = true;
+		if (!Utils.extractFromZip(buildFolder, "I.TestBuild/eclipse-macosx.cocoa.x86.zip", "eclipse/eclipse.app/Contents/MacOS/eclipse.ini", ini)) {
+			lowerCase = false;
+			Utils.extractFromZip(buildFolder, "I.TestBuild/eclipse-macosx.cocoa.x86.zip", "eclipse/Eclipse.app/Contents/MacOS/eclipse.ini", ini);
+		}
+
+		IFile zip = buildFolder.getFile("I.TestBuild/eclipse-macosx.cocoa.x86.zip");
+		String exeString = (lowerCase ? "eclipse/eclipse.app/" : "eclipse/Eclipse.app/") + "Contents/MacOS/eclipse";
+		assertZipPermissions(zip, exeString, "-rwxr-xr-x");
+
+		assertLogContainsLines(ini, new String[] {"-vm", "myVm"});
+		boolean duplicate = false;
+		try {
+			assertLogContainsLines(ini, new String[] {"-XstartOnFirstThread", "-XstartOnFirstThread"});
+			duplicate = true;
+		} catch (Error e) {
+			//expected
+		}
+		assertFalse(duplicate);
+
+		try {
+			assertLogContainsLines(ini, new String[] {"-showSplash", "org.eclipse.platform", "-showSplash", "org.eclipse.platform"});
+			duplicate = true;
+		} catch (Error e) {
+			//expected
+		}
+		assertFalse(duplicate);
+
+		IMetadataRepository repo = loadMetadataRepository(buildFolder.getFolder("buildRepo").getLocationURI());
+		IInstallableUnit iu = getIU(repo, "toolingcocoa.macosx.x86org.eclipse.equinox.common");
+		assertEquals(iu.getVersion().toString(), "1.0.0");
+
+		IInstallableUnit common = getIU(repo, EQUINOX_COMMON);
+		Collection/*<IRequirement>*/required = iu.getRequirements();
+		assertEquals(required.size(), 2);
+		Iterator it = required.iterator();
+		IRequiredCapability req0 = (IRequiredCapability) it.next();
+		IRequiredCapability req1 = (IRequiredCapability) it.next();
+		if (req0.getName().equals(EQUINOX_COMMON))
+			assertEquals(req0.getRange(), new VersionRange(common.getVersion(), true, Version.MAX_VERSION, true));
+		else
+			assertEquals(req1.getRange(), new VersionRange(common.getVersion(), true, Version.MAX_VERSION, true));
+	}
 
 	public void testPublish_P2InfConfigProperty() throws Exception {
 		IFolder buildFolder = newTest("infConfig");
