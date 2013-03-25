@@ -154,6 +154,9 @@ public class TagScanner {
 						}
 						break;
 					}
+					default: {
+						break;
+					}
 				}
 			}
 			return false;
@@ -216,7 +219,7 @@ public class TagScanner {
 						ldesc = resolveMethod((IMethodDescriptor)ldesc);
 					} catch (CoreException e) {
 						if (fProblems == null){
-							fProblems = new MultiStatus(ApiPlugin.PLUGIN_ID, 0, "Problems encountered while scanning tags", null);
+							fProblems = new MultiStatus(ApiPlugin.PLUGIN_ID, 0, ScannerMessages.TagScanner_0, null);
 						}
 						fProblems.add(e.getStatus());
 					}
@@ -242,18 +245,18 @@ public class TagScanner {
 						tag = (TagElement) iterator.next();
 						String tagname = tag.getTagName();
 						if(type.isInterface() && 
-								("@noextend".equals(tagname) || //$NON-NLS-1$
-								"@noimplement".equals(tagname))) { //$NON-NLS-1$
+								(JavadocTagManager.TAG_NOEXTEND.equals(tagname) || 
+								JavadocTagManager.TAG_NOIMPLEMENT.equals(tagname))) { 
 							pruned.add(tag);
 						}
 						else {
-							if("@noextend".equals(tagname)) { //$NON-NLS-1$
+							if(JavadocTagManager.TAG_NOEXTEND.equals(tagname)) {
 								if(!Flags.isFinal(flags)) {
 									pruned.add(tag);
 									continue;
 								}
 							}
-							if("@noinstantiate".equals(tagname)) { //$NON-NLS-1$
+							if(JavadocTagManager.TAG_NOINSTANTIATE.equals(tagname)) {
 								if(!Flags.isAbstract(flags)) {
 									pruned.add(tag);
 									continue;
@@ -268,11 +271,11 @@ public class TagScanner {
 					int flags = method.getModifiers();
 					for (Iterator iterator = tags.iterator(); iterator.hasNext();) {
 						tag = (TagElement) iterator.next();
-						if("@noreference".equals(tag.getTagName())) { //$NON-NLS-1$
+						if(JavadocTagManager.TAG_NOREFERENCE.equals(tag.getTagName())) { 
 							pruned.add(tag);
 							continue;
 						}
-						if("@nooverride".equals(tag.getTagName())) { //$NON-NLS-1$
+						if(JavadocTagManager.TAG_NOOVERRIDE.equals(tag.getTagName())) { 
 							ASTNode parent = method.getParent();
 							int pflags = 0;
 							if(parent instanceof BodyDeclaration) {
@@ -296,11 +299,14 @@ public class TagScanner {
 						if(isfinal || (isfinal && Flags.isStatic(field.getModifiers()))) {
 							break;
 						}
-						if("@noreference".equals(tag.getTagName())) { //$NON-NLS-1$
+						if(JavadocTagManager.TAG_NOREFERENCE.equals(tag.getTagName())) {
 							pruned.add(tag);
 							break;
 						}
 					}
+					break;
+				}
+				default: {
 					break;
 				}
 			}
@@ -321,7 +327,7 @@ public class TagScanner {
 		 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.TypeDeclaration)
 		 */
 		public boolean visit(TypeDeclaration node) {
-			if(isPrivate(node.getModifiers())) {
+			if(isApiVisible(node.getModifiers())) {
 				return false;
 			}
 			enterType(node.getName());
@@ -331,7 +337,7 @@ public class TagScanner {
 		 * @see org.eclipse.jdt.core.dom.ASTVisitor#endVisit(org.eclipse.jdt.core.dom.TypeDeclaration)
 		 */
 		public void endVisit(TypeDeclaration node) {
-			if(!isPrivate(node.getModifiers())) {
+			if(!isApiVisible(node.getModifiers())) {
 				exitType();
 			}
 		}
@@ -339,7 +345,7 @@ public class TagScanner {
 		 * @see org.eclipse.jdt.core.dom.ASTVisitor#endVisit(org.eclipse.jdt.core.dom.AnnotationTypeDeclaration)
 		 */
 		public void endVisit(AnnotationTypeDeclaration node) {
-			if(!isPrivate(node.getModifiers())) {
+			if(!isApiVisible(node.getModifiers())) {
 				exitType();
 			}
 		}
@@ -347,7 +353,7 @@ public class TagScanner {
 		 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.AnnotationTypeDeclaration)
 		 */
 		public boolean visit(AnnotationTypeDeclaration node) {
-			if(isPrivate(node.getModifiers())) {
+			if(isApiVisible(node.getModifiers())) {
 				return false;
 			}
 			enterType(node.getName());
@@ -357,7 +363,7 @@ public class TagScanner {
 		 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.EnumDeclaration)
 		 */
 		public boolean visit(EnumDeclaration node) {
-			if(isPrivate(node.getModifiers())) {
+			if(isApiVisible(node.getModifiers())) {
 				return false;
 			}
 			enterType(node.getName());
@@ -367,7 +373,7 @@ public class TagScanner {
 		 * @see org.eclipse.jdt.core.dom.ASTVisitor#endVisit(org.eclipse.jdt.core.dom.EnumDeclaration)
 		 */
 		public void endVisit(EnumDeclaration node) {
-			if(!isPrivate(node.getModifiers())) {
+			if(!isApiVisible(node.getModifiers())) {
 				exitType();
 			}
 		}
@@ -383,7 +389,7 @@ public class TagScanner {
 		 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.MethodDeclaration)
 		 */
 		public boolean visit(MethodDeclaration node) {
-			if(isPrivate(node.getModifiers())) {
+			if(isApiVisible(node.getModifiers())) {
 				return false;
 			}
 			return true;
@@ -392,13 +398,13 @@ public class TagScanner {
 		 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.FieldDeclaration)
 		 */
 		public boolean visit(FieldDeclaration node) {
-			if(isPrivate(node.getModifiers())) {
+			if(isApiVisible(node.getModifiers())) {
 				return false;
 			}
 			return true;
 		}
-		private boolean isPrivate(int flags) {
-			return Flags.isPrivate(flags);
+		private boolean isApiVisible(int flags) {
+			return Flags.isPrivate(flags) || Flags.isPackageDefault(flags);
 		}
 		/**
 		 * Returns a method descriptor with a resolved signature for the given method

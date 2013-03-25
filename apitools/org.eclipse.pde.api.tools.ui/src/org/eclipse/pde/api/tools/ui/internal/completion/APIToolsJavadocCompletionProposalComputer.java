@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,6 +44,7 @@ import org.eclipse.jdt.ui.text.java.JavaContentAssistInvocationContext;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.pde.api.tools.internal.JavadocTagManager;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiJavadocTag;
 import org.eclipse.pde.api.tools.internal.util.Util;
@@ -134,7 +135,8 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 				switch(elementtype) {
 					case IJavaElement.METHOD: {
 						IMethod method = (IMethod) element;
-						if(Flags.isPrivate(method.getFlags())) {
+						int flags = method.getFlags();
+						if(Flags.isPrivate(flags) || Flags.isPackageDefault(flags)) {
 							return Collections.EMPTY_LIST;
 						}
 						member = IApiJavadocTag.MEMBER_METHOD;
@@ -146,7 +148,7 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 					case IJavaElement.FIELD: {
 						IField field  = (IField) element;
 						int flags = field.getFlags();
-						if(Flags.isFinal(flags) || field.isEnumConstant() || Flags.isPrivate(flags)) {
+						if(Flags.isFinal(flags) || field.isEnumConstant() || Flags.isPrivate(flags) || Flags.isPackageDefault(flags)) {
 							return Collections.EMPTY_LIST;
 						}
 						member = IApiJavadocTag.MEMBER_FIELD;
@@ -201,21 +203,21 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 				int flags = type.getFlags();
 				String tagname = tag.getTagName();
 				if(Flags.isAbstract(flags)) {
-					return !tagname.equals("@noinstantiate");  //$NON-NLS-1$
+					return !tagname.equals(JavadocTagManager.TAG_NOINSTANTIATE);
 				}
 				if(Flags.isFinal(flags)) {
-					return !tagname.equals("@noextend");  //$NON-NLS-1$
+					return !tagname.equals(JavadocTagManager.TAG_NOEXTEND);
 				}
 				break;
 			}
 			case IJavaElement.METHOD: {
 				IMethod method = (IMethod) element;
 				if(Flags.isFinal(method.getFlags()) || Flags.isStatic(method.getFlags())) {
-					return !tag.getTagName().equals("@nooverride"); //$NON-NLS-1$
+					return !tag.getTagName().equals(JavadocTagManager.TAG_NOOVERRIDE);
 				}
 				IType type = method.getDeclaringType();
 				if(type != null && Flags.isFinal(type.getFlags())) {
-					return !tag.getTagName().equals("@nooverride"); //$NON-NLS-1$
+					return !tag.getTagName().equals(JavadocTagManager.TAG_NOOVERRIDE);
 				}
 			}
 		}

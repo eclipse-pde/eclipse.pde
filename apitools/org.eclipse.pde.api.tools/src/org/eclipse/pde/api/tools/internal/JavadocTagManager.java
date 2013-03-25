@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,7 +27,43 @@ import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
  * @since 1.0.0
  */
 public final class JavadocTagManager {
-
+	
+	/**
+	 * Constant for the <code>noinsantiate</code> tag
+	 * <br><br>
+	 * Value is: <code>@noinstantiate</code>
+	 * @since 1.0.500
+	 */
+	public static final String TAG_NOINSTANTIATE = "@noinstantiate"; //$NON-NLS-1$
+	/**
+	 * Constant for the <code>noextend</code> tag
+	 * <br><br>
+	 * Value is: <code>@noextend</code>
+	 * @since 1.0.500
+	 */
+	public static final String TAG_NOEXTEND = "@noextend"; //$NON-NLS-1$
+	/**
+	 * Constant for the <code>noimplement</code> tag
+	 * <br><br>
+	 * Value is: <code>@noimplement</code>
+	 * @since 1.0.500
+	 */
+	public static final String TAG_NOIMPLEMENT = "@noimplement"; //$NON-NLS-1$
+	/**
+	 * Constant for the <code>nooverride</code> tag
+	 * <br><br>
+	 * Value is: <code>@nooverride</code>
+	 * @since 1.0.500
+	 */
+	public static final String TAG_NOOVERRIDE = "@nooverride"; //$NON-NLS-1$
+	/**
+	 * Constant for the <code>noreference</code> tag
+	 * <br><br>
+	 * Value is: <code>@noreference</code>
+	 * @since 1.0.500
+	 */
+	public static final String TAG_NOREFERENCE = "@noreference"; //$NON-NLS-1$
+	
 	/**
 	 * Cache for the contributed javadoc tags. 
 	 * Cache form:

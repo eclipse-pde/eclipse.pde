@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -99,15 +99,26 @@ public class TagValidator extends ASTVisitor {
 				String context = BuilderMessages.TagValidator_an_interface;
 				if(!type.isInterface()) {
 					context = BuilderMessages.TagValidator_a_class;
-					if(Flags.isAbstract(type.getModifiers())) {
+					int flags = type.getModifiers();
+					if(Flags.isPrivate(flags)) {
+						context = BuilderMessages.TagValidator_0;
+						invalidtags.add(JavadocTagManager.TAG_NOINSTANTIATE);
+						invalidtags.add(JavadocTagManager.TAG_NOEXTEND);
+					}
+					else if(Flags.isPackageDefault(flags)) {
+						context = BuilderMessages.TagValidator_1;
+						invalidtags.add(JavadocTagManager.TAG_NOINSTANTIATE);
+						invalidtags.add(JavadocTagManager.TAG_NOEXTEND);
+					}
+					else if(Flags.isAbstract(flags)) {
 						context = BuilderMessages.TagValidator_an_abstract_class;
-						invalidtags.add("@noinstantiate"); //$NON-NLS-1$
+						invalidtags.add(JavadocTagManager.TAG_NOINSTANTIATE);
 					}
-					if(Flags.isFinal(type.getModifiers())) {
-						context = BuilderMessages.TagValidator_a_final_class;
-						invalidtags.add("@noextend"); //$NON-NLS-1$
+					else if(Flags.isFinal(flags)) {
+							context = BuilderMessages.TagValidator_a_final_class;
+							invalidtags.add(JavadocTagManager.TAG_NOEXTEND);
+						}
 					}
-				}
 				if(invalidtags.size() > 0) {
 					ArrayList vtags = new ArrayList(validtags.length);
 					for(int i = 0; i < validtags.length; i++) {
@@ -144,6 +155,7 @@ public class TagValidator extends ASTVisitor {
 				String context = null;
 				int mods = method.getModifiers();
 				boolean isprivate = Flags.isPrivate(mods);
+				boolean ispackage = Flags.isPackageDefault(mods);
 				boolean isconstructor = method.isConstructor();
 				boolean isfinal = Flags.isFinal(mods);
 				boolean isstatic = Flags.isStatic(mods);
@@ -162,8 +174,14 @@ public class TagValidator extends ASTVisitor {
 						if(isprivate) {
 							context = isconstructor ? BuilderMessages.TagValidator_private_constructor : BuilderMessages.TagValidator_private_method;
 						}
+						else if(ispackage) {
+							context = isconstructor ? BuilderMessages.TagValidator_2 : BuilderMessages.TagValidator_3;
+						}
 						else if(isstatic && isfinal) {
 							context = BuilderMessages.TagValidator_a_static_final_method;
+						}
+						else if(isstatic && ispackage) {
+							context = BuilderMessages.TagValidator_4;
 						}
 						else if (isfinal) {
 							context = BuilderMessages.TagValidator_a_final_method;
@@ -181,13 +199,13 @@ public class TagValidator extends ASTVisitor {
 					}
 				}
 				IApiJavadocTag[] validtags = NO_TAGS;
-				if(!isprivate) {
+				if(!isprivate && !ispackage) {
 					validtags = jtm.getTagsForType(pkind, isconstructor ? IApiJavadocTag.MEMBER_CONSTRUCTOR : IApiJavadocTag.MEMBER_METHOD);
 				}
 				if(isfinal || isstatic || pfinal) {
 					ArrayList ttags = new ArrayList(validtags.length);
 					for(int i = 0; i < validtags.length; i++) {
-						if(!validtags[i].getTagName().equals("@nooverride")) { //$NON-NLS-1$
+						if(!validtags[i].getTagName().equals(JavadocTagManager.TAG_NOOVERRIDE)) {
 							ttags.add(validtags[i]);
 						}
 					}
@@ -206,8 +224,10 @@ public class TagValidator extends ASTVisitor {
 				FieldDeclaration field = (FieldDeclaration) node;
 				int pkind = getParentKind(node);
 				String context = null;
-				boolean isfinal = Flags.isFinal(field.getModifiers());
-				boolean isprivate = Flags.isPrivate(field.getModifiers());
+				int flags = field.getModifiers();
+				boolean isfinal = Flags.isFinal(flags);
+				boolean isprivate = Flags.isPrivate(flags);
+				boolean ispackage = Flags.isPackageDefault(flags);
 				switch(pkind) {
 					case IApiJavadocTag.TYPE_ANNOTATION: {
 						context = BuilderMessages.TagValidator_annotation_field;
@@ -224,6 +244,9 @@ public class TagValidator extends ASTVisitor {
 						if(isprivate) {
 							context = BuilderMessages.TagValidator_private_field;
 						}
+						else if(ispackage) {
+							context = BuilderMessages.TagValidator_5;
+						}
 						else {
 							context = isfinal ? BuilderMessages.TagValidator_a_final_field : BuilderMessages.TagValidator_a_field;
 						}
@@ -231,12 +254,14 @@ public class TagValidator extends ASTVisitor {
 					}
 				}
 				IApiJavadocTag[] validtags = NO_TAGS;
-				if(!isprivate && !isfinal) {
+				if(!isprivate && !isfinal && !ispackage) {
 					validtags = jtm.getTagsForType(pkind, IApiJavadocTag.MEMBER_FIELD);
 				}
 				processTags(getTypeName(field), tags, validtags, IElementDescriptor.FIELD, context);
 				break;
 			}
+		default:
+			break;
 		}
 	}
 	

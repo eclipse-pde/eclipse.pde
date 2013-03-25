@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@ public class ScannerMessages extends NLS {
 	public static String ComponentXMLScanner_1;
 	public static String ComponentXMLScanner_2;
 	public static String ComponentXMLScanner_3;
+	public static String TagScanner_0;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, ScannerMessages.class);
