@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.pde.api.tools.builder.tests.tags;
 import junit.framework.Test;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.pde.api.tools.internal.JavadocTagManager;
 import org.eclipse.pde.api.tools.internal.builder.BuilderMessages;
 
 /**
@@ -284,4 +285,29 @@ public class InvalidClassConstructorTagTests extends InvalidMethodTagTests {
 		});
 		deployTagTest("test24.java", inc, true);
 	}
+	
+	public void testInvalidConstructorMethodTag1I() {
+		x11(true);
+	}
+	
+	public void testInvalidConstructorMethodTag1F() {
+		x11(false);
+	}
+	
+	/**
+	 * Tests the unsupported @nooverride Javadoc tag on constructors in a class
+	 * is detected properly
+	 * 
+	 * @since 1.0.400
+	 */
+	private void x11(boolean inc) {
+		setExpectedProblemIds(getDefaultProblemSet(4));
+		setExpectedMessageArgs(new String[][] {
+				{JavadocTagManager.TAG_NOOVERRIDE, BuilderMessages.TagValidator_private_constructor},
+				{JavadocTagManager.TAG_NOOVERRIDE, BuilderMessages.TagValidator_2},
+				{JavadocTagManager.TAG_NOREFERENCE, BuilderMessages.TagValidator_private_constructor},
+				{JavadocTagManager.TAG_NOREFERENCE, BuilderMessages.TagValidator_2}
+		});
+		deployTagTest("test25.java", inc, true);
+	}	
 }

@@ -133,6 +133,14 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 				int member = IApiJavadocTag.MEMBER_NONE;
 				int elementtype = element.getElementType();
 				switch(elementtype) {
+					case IJavaElement.TYPE: {
+						IType itype = (IType) element;
+						int flags = itype.getFlags();
+						if(Flags.isPrivate(flags) || Flags.isPackageDefault(flags)) {
+							return Collections.EMPTY_LIST;
+						}
+						break;
+					}
 					case IJavaElement.METHOD: {
 						IMethod method = (IMethod) element;
 						int flags = method.getFlags();
