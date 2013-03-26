@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2008, 2013 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -445,8 +445,6 @@ public class PublishingTests extends P2TestCase {
 		String fileName = originalExecutable.getName();
 		String version = fileName.substring(fileName.indexOf('_') + 1);
 		Set entries = new HashSet();
-		entries.add("launcher");
-		assertZipContents(buildFolder.getFolder("buildRepo/binary"), executable + "_root.motif.aix.ppc_" + version, entries);
 
 		// Linux zips contain launcher and about.html (libCairo no longer packaged in the delta pack (bug 354978))
 		//		entries.add("libcairo-swt.so");
@@ -454,6 +452,7 @@ public class PublishingTests extends P2TestCase {
 		//		entries.add("about_files/mpl-v11.txt");
 		//		entries.add("about_files/pixman-licenses.txt");
 		//		entries.add("about_files/");
+		entries.add("launcher");
 		entries.add("about.html");
 		assertZipContents(buildFolder.getFolder("buildRepo/binary"), executable + "_root.gtk.linux.x86_" + version, entries);
 
@@ -464,7 +463,7 @@ public class PublishingTests extends P2TestCase {
 		entries.add("Eclipse.app/Contents/MacOS/");
 		entries.add("Eclipse.app/Contents/MacOS/eclipse.ini");
 		entries.add("Eclipse.app/Contents/MacOS/launcher");
-		assertZipContents(buildFolder.getFolder("buildRepo/binary"), executable + "_root.carbon.macosx.ppc_" + version, entries);
+		assertZipContents(buildFolder.getFolder("buildRepo/binary"), executable + "_root.cocoa.macosx.x86_" + version, entries);
 
 		// Windows zips just contain the launcher
 
