@@ -92,10 +92,8 @@ public class InvalidDuplicateTagsTests extends TagTest {
 	
 	private void x1(boolean inc) {
 		setProblemId(IElementDescriptor.TYPE, IApiProblem.DUPLICATE_TAG_USE);
-		setExpectedProblemIds(getDefaultProblemSet(4));
+		setExpectedProblemIds(getDefaultProblemSet(2));
 		setExpectedMessageArgs(new String[][] {
-				{"@noextend"},
-				{"@noinstantiate"},
 				{"@noextend"},
 				{"@noinstantiate"}
 		});

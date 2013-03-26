@@ -25,4 +25,8 @@ public class test10 {
 	 * @nooverride
 	 */
 	private static char[] f3 = {};
+	/**
+	 * @nooverride
+	 */
+	long f4 = 0L;
 }

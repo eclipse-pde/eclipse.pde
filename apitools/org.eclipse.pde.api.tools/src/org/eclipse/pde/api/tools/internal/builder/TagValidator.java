@@ -101,12 +101,12 @@ public class TagValidator extends ASTVisitor {
 					context = BuilderMessages.TagValidator_a_class;
 					int flags = type.getModifiers();
 					if(Flags.isPrivate(flags)) {
-						context = BuilderMessages.TagValidator_0;
+						context = BuilderMessages.TagValidator_a_private_class;
 						invalidtags.add(JavadocTagManager.TAG_NOINSTANTIATE);
 						invalidtags.add(JavadocTagManager.TAG_NOEXTEND);
 					}
 					else if(Flags.isPackageDefault(flags)) {
-						context = BuilderMessages.TagValidator_1;
+						context = BuilderMessages.TagValidator_a_package_default_class;
 						invalidtags.add(JavadocTagManager.TAG_NOINSTANTIATE);
 						invalidtags.add(JavadocTagManager.TAG_NOEXTEND);
 					}
@@ -174,14 +174,14 @@ public class TagValidator extends ASTVisitor {
 						if(isprivate) {
 							context = isconstructor ? BuilderMessages.TagValidator_private_constructor : BuilderMessages.TagValidator_private_method;
 						}
-						else if(ispackage) {
-							context = isconstructor ? BuilderMessages.TagValidator_2 : BuilderMessages.TagValidator_3;
+						else if(!isstatic && ispackage) {
+							context = isconstructor ? BuilderMessages.TagValidator_a_package_default_constructor : BuilderMessages.TagValidator_a_package_default_method;
 						}
 						else if(isstatic && isfinal) {
 							context = BuilderMessages.TagValidator_a_static_final_method;
 						}
 						else if(isstatic && ispackage) {
-							context = BuilderMessages.TagValidator_4;
+							context = BuilderMessages.TagValidator_a_static_package_default_method;
 						}
 						else if (isfinal) {
 							context = BuilderMessages.TagValidator_a_final_method;
@@ -245,7 +245,7 @@ public class TagValidator extends ASTVisitor {
 							context = BuilderMessages.TagValidator_private_field;
 						}
 						else if(ispackage) {
-							context = BuilderMessages.TagValidator_5;
+							context = BuilderMessages.TagValidator_a_package_default_field;
 						}
 						else {
 							context = isfinal ? BuilderMessages.TagValidator_a_final_field : BuilderMessages.TagValidator_a_field;

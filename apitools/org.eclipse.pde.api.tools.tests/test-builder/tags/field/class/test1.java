@@ -26,6 +26,11 @@ public class test1 {
 	 * @noreference
 	 */
 	private final char[] f3 = {};
+	/**
+	 * @noreference
+	 */
+	final long f4 = 0L;
+	
 	static class inner {
 		/**
 		 * @noreference
@@ -39,6 +44,10 @@ public class test1 {
 		 * @noreference
 		 */
 		private final char[] f3 = {};
+		/**
+		 * @noreference
+		 */
+		final long f4 = 0L;
 		class inner2 {
 			/**
 			 * @noreference
@@ -52,6 +61,10 @@ public class test1 {
 			 * @noreference
 			 */
 			private final char[] f3 = {};
+			/**
+			 * @noreference
+			 */
+			final long f4 = 0L;
 		}
 	}
 }
@@ -69,4 +82,8 @@ class outer {
 	 * @noreference
 	 */
 	private final char[] f3 = {};
+	/**
+	 * @noreference
+	 */
+	final long f4 = 0L;
 }

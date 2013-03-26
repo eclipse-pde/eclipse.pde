@@ -26,6 +26,10 @@ public class test9 {
 	 * @nooverride
 	 */
 	private char[] f3 = {};
+	/**
+	 * @nooverride
+	 */
+	long f4 = 0L;
 	static class inner {
 		/**
 		 * @nooverride
@@ -39,6 +43,10 @@ public class test9 {
 		 * @nooverride
 		 */
 		private static char[] f3 = {};
+		/**
+		 * @nooverride
+		 */
+		long f4 = 0L;
 		class inner2 {
 			/**
 			 * @nooverride
@@ -52,6 +60,10 @@ public class test9 {
 			 * @nooverride
 			 */
 			private char[] f3 = {};
+			/**
+			 * @nooverride
+			 */
+			long f4 = 0L;
 		}
 	}
 }
@@ -69,4 +81,8 @@ class outer {
 	 * @nooverride
 	 */
 	private static char[] f3 = {};
+	/**
+	 * @nooverride
+	 */
+	long f4 = 0L;
 }

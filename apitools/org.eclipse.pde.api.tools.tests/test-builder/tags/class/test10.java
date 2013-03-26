@@ -8,14 +8,13 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
+
 package a.b.c;
 
 /**
- * Tests valid tags on nested inner types
- * @noextend This class is not intended to be subclassed by clients.
- * @noinstantiate This class is not intended to be instantiated by clients.
+ * Tests invalid tags on a default scope member type
  */
-public class test4 {
+public class test10 {
 
 	/**
 	 * @noextend This class is not intended to be subclassed by clients.
@@ -25,24 +24,11 @@ public class test4 {
 		
 	}
 	
-	class inner2 {
-		/**
-		 * @noextend This class is not intended to be subclassed by clients.
-		 * @noinstantiate This class is not intended to be instantiated by clients.
-		 */
-		class inner3 {
-			
-		}
-	}
-}
-
-class outer {
-	
 	/**
 	 * @noextend This class is not intended to be subclassed by clients.
 	 * @noinstantiate This class is not intended to be instantiated by clients.
 	 */
-	class inner {
+	private class inner2 {
 		
 	}
 }

@@ -15,7 +15,7 @@ package a.b.c;
  */
 public class TestField9 {
 
-	Object field = null;
+	public Object field = null;
 	
 	/**
 	 * @noreference

@@ -17,11 +17,4 @@ import i.InterfaceUsageInterface;
  */
 public interface testI1 extends InterfaceUsageInterface {
 
-	interface inner extends InterfaceUsageInterface.Iinner {
-		
-	}
-}
-
-interface Iouter extends InterfaceUsageInterface.Iinner {
-	
 }

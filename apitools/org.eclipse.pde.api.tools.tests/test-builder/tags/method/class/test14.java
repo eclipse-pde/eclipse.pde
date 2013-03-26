@@ -11,7 +11,7 @@
 package a.b.c;
 
 /**
- * 
+ * Test supported @nooverride tag on protected class methods in the default package
  */
 public final class test14 {
 	

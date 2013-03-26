@@ -26,6 +26,10 @@ public class test11 {
 	 * @noinstantiate
 	 */
 	private char[] f3 = {};
+	/**
+	 * @noinstantiate
+	 */
+	long f4 = 0L;
 	static class inner {
 		/**
 		 * @noinstantiate
@@ -39,6 +43,10 @@ public class test11 {
 		 * @noinstantiate
 		 */
 		private static char[] f3 = {};
+		/**
+		 * @noinstantiate
+		 */
+		long f4 = 0L;
 		class inner2 {
 			/**
 			 * @noinstantiate
@@ -52,6 +60,10 @@ public class test11 {
 			 * @noinstantiate
 			 */
 			private char[] f3 = {};
+			/**
+			 * @noinstantiate
+			 */
+			long f4 = 0L;
 		}
 	}
 }
@@ -69,4 +81,8 @@ class outer {
 	 * @noinstantiate
 	 */
 	private static char[] f3 = {};
+	/**
+	 * @noinstantiate
+	 */
+	long f4 = 0L;
 }

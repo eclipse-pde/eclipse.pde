@@ -75,9 +75,9 @@ public class InvalidClassTagTests extends TagTest {
 		setExpectedProblemIds(getDefaultProblemSet(4));
 		setExpectedMessageArgs(new String[][] {
 				{"@noreference", BuilderMessages.TagValidator_a_class},
-				{"@noreference", BuilderMessages.TagValidator_a_class},
-				{"@noreference", BuilderMessages.TagValidator_a_class},
-				{"@noreference", BuilderMessages.TagValidator_a_class}
+				{"@noreference", BuilderMessages.TagValidator_a_package_default_class},
+				{"@noreference", BuilderMessages.TagValidator_a_private_class},
+				{"@noreference", BuilderMessages.TagValidator_a_package_default_class}
 		});
 		deployTagTest("test1.java", inc, false);
 	}
@@ -118,9 +118,9 @@ public class InvalidClassTagTests extends TagTest {
 		setExpectedProblemIds(getDefaultProblemSet(4));
 		setExpectedMessageArgs(new String[][] {
 				{"@noimplement", BuilderMessages.TagValidator_a_class},
-				{"@noimplement", BuilderMessages.TagValidator_a_class},
-				{"@noimplement", BuilderMessages.TagValidator_a_class},
-				{"@noimplement", BuilderMessages.TagValidator_a_class}
+				{"@noimplement", BuilderMessages.TagValidator_a_package_default_class},
+				{"@noimplement", BuilderMessages.TagValidator_a_private_class},
+				{"@noimplement", BuilderMessages.TagValidator_a_package_default_class}
 		});
 		deployTagTest("test3.java", inc, false);
 	}
@@ -161,9 +161,9 @@ public class InvalidClassTagTests extends TagTest {
 		setExpectedProblemIds(getDefaultProblemSet(4));
 		setExpectedMessageArgs(new String[][] {
 				{"@nooverride", BuilderMessages.TagValidator_a_class},
-				{"@nooverride", BuilderMessages.TagValidator_a_class},
-				{"@nooverride", BuilderMessages.TagValidator_a_class},
-				{"@nooverride", BuilderMessages.TagValidator_a_class}
+				{"@nooverride", BuilderMessages.TagValidator_a_package_default_class},
+				{"@nooverride", BuilderMessages.TagValidator_a_private_class},
+				{"@nooverride", BuilderMessages.TagValidator_a_package_default_class}
 		});
 		deployTagTest("test5.java", inc, false);
 	}
@@ -203,9 +203,9 @@ public class InvalidClassTagTests extends TagTest {
 	private void x7(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		setExpectedMessageArgs(new String[][] {
-				{"@noextend", BuilderMessages.TagValidator_a_final_class},
-				{"@noextend", BuilderMessages.TagValidator_a_final_class},
-				{"@noextend", BuilderMessages.TagValidator_a_final_class}
+				{"@noextend", BuilderMessages.TagValidator_a_package_default_class},
+				{"@noextend", BuilderMessages.TagValidator_a_package_default_class},
+				{"@noextend", BuilderMessages.TagValidator_a_private_class}
 		});
 		deployTagTest("test7.java", inc, false);
 	}
@@ -227,4 +227,92 @@ public class InvalidClassTagTests extends TagTest {
 		});
 		deployTagTest("test8.java", inc, false);
 	}
+	
+	/**
+	 * Tests that @noextend and @noinstantiate are invalid tags on an outer class in the 
+	 * the testing package a.b.c using an incremental build
+	 */
+	public void testInvalidClassTag9I() {
+		x9(true);
+	}
+
+	/**
+	 * Tests that @noextend and @noinstantiate are invalid tags on an outer class in the 
+	 * the testing package a.b.c using a full build
+	 */
+	public void testInvalidClassTag9F() {
+		x9(false);
+	}
+	
+	private void x9(boolean inc) {
+		setExpectedProblemIds(getDefaultProblemSet(2));
+		setExpectedMessageArgs(new String[][] {
+				{"@noextend", BuilderMessages.TagValidator_a_package_default_class},
+				{"@noinstantiate", BuilderMessages.TagValidator_a_package_default_class}
+		});
+		deployTagTest("test9.java", inc, false);
+	}
+	
+	/**
+	 * Tests that @noextend and @noinstantiate are invalid tags on an inner class in the 
+	 * the testing package a.b.c using an incremental build
+	 */
+	public void testInvalidClassTag10I() {
+		x10(true);
+	}
+
+	/**
+	 * Tests that @noextend and @noinstantiate are invalid tags on an inner class in the 
+	 * the testing package a.b.c using a full build
+	 */
+	public void testInvalidClassTag10F() {
+		x10(false);
+	}
+	
+	private void x10(boolean inc) {
+		setExpectedProblemIds(getDefaultProblemSet(4));
+		setExpectedMessageArgs(new String[][] {
+				{"@noextend", BuilderMessages.TagValidator_a_package_default_class},
+				{"@noinstantiate", BuilderMessages.TagValidator_a_package_default_class},
+				{"@noextend", BuilderMessages.TagValidator_a_private_class},
+				{"@noinstantiate", BuilderMessages.TagValidator_a_private_class}
+		});
+		deployTagTest("test10.java", inc, false);
+	}
+	
+	/**
+	 * Tests that @noextend and @noinstantiate are invalid tags on a variety of inner / outer / top-level classes in the 
+	 * the testing package a.b.c using an incremental build
+	 */
+	public void testInvalidClassTag11I() {
+		x11(true);
+	}
+
+	/**
+	 * Tests that @noextend and @noinstantiate are invalid tags on a variety of inner / outer / top-level classes in the 
+	 * the testing package a.b.c using a full build
+	 */
+	public void testInvalidClassTag11F() {
+		x11(false);
+	}
+	
+	private void x11(boolean inc) {
+		setExpectedProblemIds(getDefaultProblemSet(12));
+		setExpectedMessageArgs(new String[][] {
+				{"@noextend", BuilderMessages.TagValidator_a_package_default_class},
+				{"@noinstantiate", BuilderMessages.TagValidator_a_package_default_class},
+				{"@noextend", BuilderMessages.TagValidator_a_private_class},
+				{"@noinstantiate", BuilderMessages.TagValidator_a_private_class},
+				{"@noextend", BuilderMessages.TagValidator_a_package_default_class},
+				{"@noinstantiate", BuilderMessages.TagValidator_a_package_default_class},
+				{"@noextend", BuilderMessages.TagValidator_a_private_class},
+				{"@noinstantiate", BuilderMessages.TagValidator_a_private_class},
+				{"@noextend", BuilderMessages.TagValidator_a_package_default_class},
+				{"@noinstantiate", BuilderMessages.TagValidator_a_package_default_class},
+				{"@noextend", BuilderMessages.TagValidator_a_private_class},
+				{"@noinstantiate", BuilderMessages.TagValidator_a_private_class}
+		});
+		deployTagTest("test11.java", inc, false);
+	}
+	
 }

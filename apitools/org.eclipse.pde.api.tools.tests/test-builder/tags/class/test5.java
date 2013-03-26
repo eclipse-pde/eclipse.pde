@@ -27,7 +27,7 @@ public class test5 {
 		/**
 		 * @nooverride
 		 */
-		class Inner2NoRef4 {
+		private class Inner2NoRef4 {
 			
 		}
 	}

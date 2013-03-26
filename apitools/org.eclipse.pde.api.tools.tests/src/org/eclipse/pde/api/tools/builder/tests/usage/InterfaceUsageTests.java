@@ -25,7 +25,6 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 public class InterfaceUsageTests extends UsageTest {
 
 	protected static final String INTERFACE_NAME = "InterfaceUsageInterface";
-	protected static final String INNER_I_NAME = "Iinner";
 	
 	/**
 	 * Constructor
@@ -103,12 +102,10 @@ public class InterfaceUsageTests extends UsageTest {
 	private void x2(boolean inc) {
 		setExpectedProblemIds(new int[] {
 				getProblemId(IApiProblem.ILLEGAL_IMPLEMENT, IApiProblem.NO_FLAGS),
-				getProblemId(IApiProblem.ILLEGAL_IMPLEMENT, IApiProblem.NO_FLAGS),
 				getProblemId(IApiProblem.ILLEGAL_IMPLEMENT, IApiProblem.NO_FLAGS)
 		});
 		String typename = "testI2";
 		setExpectedMessageArgs(new String[][] {
-				{INNER_I_NAME, INNER_NAME1},
 				{INTERFACE_NAME, OUTER_NAME},
 				{INTERFACE_NAME, typename}
 		});
@@ -134,14 +131,10 @@ public class InterfaceUsageTests extends UsageTest {
 	private void x3(boolean inc) {
 		setExpectedProblemIds(new int[] {
 				getProblemId(IApiProblem.ILLEGAL_EXTEND, IApiProblem.INDIRECT_REFERENCE),
-				getProblemId(IApiProblem.ILLEGAL_EXTEND, IApiProblem.INDIRECT_REFERENCE),
-				getProblemId(IApiProblem.ILLEGAL_EXTEND, IApiProblem.INDIRECT_REFERENCE)
 		});
 		String typename = "testI3";
 		setExpectedMessageArgs(new String[][] {
-				{INNER_I_NAME, INNER_NAME1},
 				{"InterfaceUsageInterface2", typename},
-				{INNER_I_NAME, OUTER_INAME}
 		});
 	}
 }

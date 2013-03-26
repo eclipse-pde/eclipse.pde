@@ -25,4 +25,8 @@ public class test8 {
 	 * @noimplement
 	 */
 	private static char[] f3 = {};
+	/**
+	 * @noimplement
+	 */
+	long f4 = 0L;
 }

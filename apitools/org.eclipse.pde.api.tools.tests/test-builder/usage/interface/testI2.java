@@ -17,9 +17,6 @@ import i.InterfaceUsageInterface;
  */
 public class testI2 implements InterfaceUsageInterface {
 
-	public static class inner implements InterfaceUsageInterface.Iinner {
-		
-	}
 }
 
 class outer implements InterfaceUsageInterface {

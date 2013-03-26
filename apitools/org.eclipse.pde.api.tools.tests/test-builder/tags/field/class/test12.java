@@ -25,4 +25,8 @@ public class test12 {
 	 * @noinstantiate
 	 */
 	private static char[] f3 = {};
+	/**
+	 * @noinstantiate
+	 */
+	long f4 = 0L;
 }

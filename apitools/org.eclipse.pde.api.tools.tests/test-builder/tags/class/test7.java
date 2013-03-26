@@ -26,7 +26,7 @@ public class test7 {
 		/**
 		 * @noextend
 		 */
-		final class inner3 {
+		private final class inner3 {
 			
 		}
 	}

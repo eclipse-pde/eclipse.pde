@@ -304,9 +304,9 @@ public class InvalidClassConstructorTagTests extends InvalidMethodTagTests {
 		setExpectedProblemIds(getDefaultProblemSet(4));
 		setExpectedMessageArgs(new String[][] {
 				{JavadocTagManager.TAG_NOOVERRIDE, BuilderMessages.TagValidator_private_constructor},
-				{JavadocTagManager.TAG_NOOVERRIDE, BuilderMessages.TagValidator_2},
+				{JavadocTagManager.TAG_NOOVERRIDE, BuilderMessages.TagValidator_a_package_default_constructor},
 				{JavadocTagManager.TAG_NOREFERENCE, BuilderMessages.TagValidator_private_constructor},
-				{JavadocTagManager.TAG_NOREFERENCE, BuilderMessages.TagValidator_2}
+				{JavadocTagManager.TAG_NOREFERENCE, BuilderMessages.TagValidator_a_package_default_constructor}
 		});
 		deployTagTest("test25.java", inc, true);
 	}	

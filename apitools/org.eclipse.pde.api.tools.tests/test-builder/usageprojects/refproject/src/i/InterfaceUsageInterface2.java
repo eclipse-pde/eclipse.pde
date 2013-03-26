@@ -15,10 +15,4 @@ package i;
  */
 public interface InterfaceUsageInterface2 {
 
-	/**
-	 * @noextend
-	 */
-	interface Iinner {
-		
-	}
 }

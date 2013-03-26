@@ -48,12 +48,14 @@ public class BuilderMessages extends NLS {
 	public static String ReferenceAnalyzer_checking_api_used_by;
 	public static String ReferenceExtractor_failed_to_lookup_method;
 	public static String ReferenceExtractor_failed_to_lookup_field;
-	public static String TagValidator_0;
-	public static String TagValidator_1;
-	public static String TagValidator_2;
-	public static String TagValidator_3;
-	public static String TagValidator_4;
-	public static String TagValidator_5;
+	
+	public static String TagValidator_a_private_class;
+	public static String TagValidator_a_package_default_class;
+	public static String TagValidator_a_package_default_constructor;
+	public static String TagValidator_a_package_default_method;
+	public static String TagValidator_a_static_package_default_method;
+	public static String TagValidator_a_package_default_field;
+	
 	public static String TagValidator_a_class;
 	public static String TagValidator_a_constructor;
 	public static String TagValidator_a_field;

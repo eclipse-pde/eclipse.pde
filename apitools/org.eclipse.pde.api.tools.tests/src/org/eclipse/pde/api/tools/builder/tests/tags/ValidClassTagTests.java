@@ -63,65 +63,7 @@ public class ValidClassTagTests extends InvalidClassTagTests {
 		deployTagTest("test1.java", inc, false);
 	}
 	
-	/**
-	 * Tests that @noextend and @noinstantiate are valid tags on an outer class in the 
-	 * the testing package a.b.c using an incremental build
-	 */
-	public void testValidClassTag2I() {
-		x2(true);
-	}
-
-	/**
-	 * Tests that @noextend and @noinstantiate are valid tags on an outer class in the 
-	 * the testing package a.b.c using a full build
-	 */
-	public void testValidClassTag2F() {
-		x2(false);
-	}
 	
-	private void x2(boolean inc) {
-		deployTagTest("test2.java", inc, false);
-	}
-	
-	/**
-	 * Tests that @noextend and @noinstantiate are valid tags on an inner class in the 
-	 * the testing package a.b.c using an incremental build
-	 */
-	public void testValidClassTag3I() {
-		x3(true);
-	}
-
-	/**
-	 * Tests that @noextend and @noinstantiate are valid tags on an inner class in the 
-	 * the testing package a.b.c using a full build
-	 */
-	public void testValidClassTag3F() {
-		x3(false);
-	}
-	
-	private void x3(boolean inc) {
-		deployTagTest("test3.java", inc, false);
-	}
-	
-	/**
-	 * Tests that @noextend and @noinstantiate are valid tags on a variety of inner / outer / top-level classes in the 
-	 * the testing package a.b.c using an incremental build
-	 */
-	public void testValidClassTag4I() {
-		x4(true);
-	}
-
-	/**
-	 * Tests that @noextend and @noinstantiate are valid tags on a variety of inner / outer / top-level classes in the 
-	 * the testing package a.b.c using a full build
-	 */
-	public void testValidClassTag4F() {
-		x4(false);
-	}
-	
-	private void x4(boolean inc) {
-		deployTagTest("test4.java", inc, false);
-	}
 	
 	/**
 	 * Tests that @noextend and @noinstantiate are valid tags on an inner class in the 

@@ -25,4 +25,8 @@ public class test4 {
 	 * @noreference
 	 */
 	private static final char[] f3 = {};
+	/**
+	 * @noreference
+	 */
+	static final long f4 = 0L;
 }

@@ -8,11 +8,20 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package i;
+
+package a.b.c;
 
 /**
- * @noimplement This interface is not intended to be implemented by clients.
+ * Tests invalid tags on a default scope outer type
  */
-public interface InterfaceUsageInterface {
+public class test9 {
 
+}
+
+/**
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ */
+class outer {
+	
 }

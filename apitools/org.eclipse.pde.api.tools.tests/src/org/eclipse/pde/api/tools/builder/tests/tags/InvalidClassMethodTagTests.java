@@ -352,7 +352,7 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 		setExpectedProblemIds(getDefaultProblemIdSet(3));
 		setExpectedMessageArgs(new String[][] {
 				{"@nooverride", BuilderMessages.TagValidator_a_static_method},
-				{"@nooverride", BuilderMessages.TagValidator_a_static_method},
+				{"@nooverride", BuilderMessages.TagValidator_a_static_package_default_method},
 				{"@nooverride", BuilderMessages.TagValidator_a_static_final_method},
 		});
 		deployTagTest("test13.java", inc, false);
@@ -378,5 +378,88 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 				{"@nooverride", BuilderMessages.TagValidator_a_method_in_a_final_class},
 		});
 		deployTagTest("test14.java", inc, false);
+	}
+	
+	public void testInvalidClassMethodTag26I() {
+		x26(true);
+	}
+	
+	public void testInvalidClassMethodTag26F() {
+		x26(false);
+	}
+	
+	/**
+	 * Tests the unsupported @nooverride Javadoc tag on package default methods in a variety of inner /outer classes
+	 */
+	private void x26(boolean inc) {
+		setExpectedProblemIds(getDefaultProblemIdSet(4));
+		setExpectedMessageArgs(new String[][] {
+				{"@nooverride", BuilderMessages.TagValidator_a_package_default_method},
+				{"@nooverride", BuilderMessages.TagValidator_a_package_default_method},
+				{"@nooverride", BuilderMessages.TagValidator_a_package_default_method},
+				{"@nooverride", BuilderMessages.TagValidator_a_package_default_method},
+		});
+		deployTagTest("test26.java", inc, false);
+	}
+	
+	public void testInvalidClassMethodTag27I() {
+		x27(true);
+	}
+
+	public void testInvalidClassMethodTag27F() {
+		x27(false);
+	}
+	
+	/**
+	 * Tests the unsupported @nooverride Javadoc tag on package default methods in a class in the default package
+	 */
+	private void x27(boolean inc) {
+		setExpectedProblemIds(getDefaultProblemIdSet(1));
+		setExpectedMessageArgs(new String[][] {
+				{"@nooverride", BuilderMessages.TagValidator_a_package_default_method},
+		});
+		deployTagTest("test27.java", inc, false);
+	}
+	
+	public void testInvalidClassMethodTag28I() {
+		x28(true);
+	}
+
+	public void testInvalidClassMethodTag28F() {
+		x28(false);
+	}
+	
+	/**
+	 * Tests the unsupported @noreference Javadoc tag on package default methods in a variety of inner /outer classes
+	 */
+	private void x28(boolean inc) {
+		setExpectedProblemIds(getDefaultProblemIdSet(4));
+		setExpectedMessageArgs(new String[][] {
+				{"@noreference", BuilderMessages.TagValidator_a_package_default_method},
+				{"@noreference", BuilderMessages.TagValidator_a_package_default_method},
+				{"@noreference", BuilderMessages.TagValidator_a_package_default_method},
+				{"@noreference", BuilderMessages.TagValidator_a_package_default_method},
+		});
+		deployTagTest("test28.java", inc, false);
+	}
+
+	public void testInvalidClassMethodTag29I() {
+		x29(true);
+	}
+	
+	
+	public void testInvalidClassMethodTag29F() {
+		x29(false);
+	}
+	
+	/**
+	 * Tests the unsupported @noreference Javadoc tag on package default methods in a class in the default package
+	 */
+	private void x29(boolean inc) {
+		setExpectedProblemIds(getDefaultProblemIdSet(1));
+		setExpectedMessageArgs(new String[][] {
+				{"@noreference", BuilderMessages.TagValidator_a_package_default_method},
+		});
+		deployTagTest("test29.java", inc, true);
 	}
 }

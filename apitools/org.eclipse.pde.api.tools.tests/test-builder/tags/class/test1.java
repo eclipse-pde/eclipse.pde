@@ -27,7 +27,7 @@ public class test1 {
 		/**
 		 * @noreference
 		 */
-		class inner3 {
+		private class inner3 {
 			
 		}
 	}

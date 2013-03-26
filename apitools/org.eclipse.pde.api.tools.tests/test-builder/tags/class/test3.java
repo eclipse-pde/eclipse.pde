@@ -27,7 +27,7 @@ public class test3 {
 		/**
 		 * @noimplement
 		 */
-		class Inner2NoRef4 {
+		private class Inner2NoRef4 {
 			
 		}
 	}
