@@ -25,7 +25,7 @@ public class TestClass2 {
 	 * @noinstantiate
 	 * @since
 	 */
-	static class InnerTestClass2 {
+	public static class InnerTestClass2 {
 		public void foo() {
 			
 		}

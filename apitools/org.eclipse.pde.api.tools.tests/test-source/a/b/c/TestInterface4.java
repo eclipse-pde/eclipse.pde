@@ -20,12 +20,12 @@ public interface TestInterface4 {
 	 * @noimplement
 	 * @since
 	 */
-	interface Inner1 {
+	public interface Inner1 {
 		
 	}
 	
 	/**
-	 * 
+	 * @noimplement
 	 * @since
 	 */
 	interface Inner2 {

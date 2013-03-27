@@ -20,12 +20,12 @@ public class TestClass7 {
 	 * 
 	 * @since
 	 */
-	static class InnerTestClass7 {
+	public static class InnerTestClass7 {
 		/**
 		 * @noextend
 		 * @since
 		 */
-		class Inner2TestClass7 {
+		public class Inner2TestClass7 {
 			
 		}
 	}
@@ -40,7 +40,7 @@ class TestClass7a {
 	 * @noextend
 	 * @since
 	 */
-	class InnerTestClass7a {
+	public class InnerTestClass7a {
 		
 	}
 }
@@ -54,7 +54,7 @@ class TestClass7b {
 	 * @noextend
 	 * @since
 	 */
-	static class InnerTestClass7b {
+	public static class InnerTestClass7b {
 		
 	}
 }

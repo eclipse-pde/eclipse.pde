@@ -24,7 +24,7 @@ public class TestClass3 {
 	 * @noextend
 	 * @since
 	 */
-	class InnerTestClass3 {
+	protected class InnerTestClass3 {
 		
 		/**
 		 * @deprecated

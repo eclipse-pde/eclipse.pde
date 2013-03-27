@@ -19,6 +19,6 @@ public class TestField1 {
 	/**
 	 * @noreference
 	 */
-	Object field = null;
+	public Object field = null;
 	
 }

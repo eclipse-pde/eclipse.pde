@@ -20,7 +20,7 @@ public interface TestInterface3 {
 	 * @noimplement
 	 * @since
 	 */
-	interface Inner1 {
+	public interface Inner1 {
 		
 	}
 }

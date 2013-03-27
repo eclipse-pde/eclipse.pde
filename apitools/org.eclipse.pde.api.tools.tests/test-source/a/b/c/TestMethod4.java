@@ -16,7 +16,7 @@ package a.b.c;
  */
 public class TestMethod4 {
 
-	static class Inner1 {
+	public static class Inner1 {
 		/**
 		 * @noreference
 		 */
@@ -30,7 +30,7 @@ public class TestMethod4 {
 		 */
 		public static void three() {}
 		
-		static class Inner3 {
+		public static class Inner3 {
 			/**
 			 * @noreference
 			 */

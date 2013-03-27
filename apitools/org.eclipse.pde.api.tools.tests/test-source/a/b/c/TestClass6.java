@@ -20,7 +20,7 @@ public class TestClass6 {
 	 * @noextend
 	 * @since
 	 */
-	static class InnerTestClass6a {
+	public static class InnerTestClass6a {
 		
 	}
 	
@@ -28,7 +28,7 @@ public class TestClass6 {
 	 * @noinstantiate
 	 * @since
 	 */
-	class InnerTestClass6b {
+	public class InnerTestClass6b {
 		
 	}
 	
@@ -36,7 +36,7 @@ public class TestClass6 {
 	 * 
 	 * @since
 	 */
-	class InnerTestClass6c {
+	public class InnerTestClass6c {
 		
 	}
 }

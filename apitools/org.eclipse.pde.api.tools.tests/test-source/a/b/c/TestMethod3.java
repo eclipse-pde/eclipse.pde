@@ -16,7 +16,7 @@ package a.b.c;
  */
 public class TestMethod3 {
 
-	static class Inner {
+	public static class Inner {
 		/**
 		 * @noreference
 		 */

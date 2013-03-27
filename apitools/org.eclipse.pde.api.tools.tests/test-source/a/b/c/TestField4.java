@@ -15,23 +15,23 @@ package a.b.c;
  * @since
  */
 public class TestField4 {
-	static class Inner1 {
+	public static class Inner1 {
 		/**
 		 * @noreference
 		 */
-		Object field = null;
+		public Object field = null;
 		
-		class Inner3 {
+		protected class Inner3 {
 			/**
 			 * @noreference
 			 */
-			Object field = null;
+			protected Object field = null;
 			
-			class Inner {
+			public class Inner {
 				/**
 				 * @noreference
 				 */
-				int number = -1;
+				protected int number = -1;
 			}
 		}
 	}

@@ -12,7 +12,6 @@ package a.b.c;
 
 
 /**
- * 
  * @since
  */
 public class TestClass5 {

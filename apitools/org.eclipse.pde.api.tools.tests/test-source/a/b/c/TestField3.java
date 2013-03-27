@@ -16,15 +16,15 @@ package a.b.c;
  */
 public class TestField3 {
 
-	static class Inner {
+	public static class Inner {
 		
 		/**
 		 * @noreference
 		 */
-		Object field = null;
+		public Object field = null;
 		/**
 		 * @noreference
 		 */
-		static int number = -1;
+		public static int number = -1;
 	}
 }
