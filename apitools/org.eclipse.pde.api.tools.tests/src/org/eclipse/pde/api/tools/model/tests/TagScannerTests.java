@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -234,13 +234,15 @@ public class TagScannerTests extends TestCase {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestClass3.java", manifest);
 		IApiAnnotations description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestClass3"));
-		assertNotNull("the description for TestClass3 should exist", description);
-		assertTrue("There should be no restrictions on TestClass3", description.getRestrictions() == RestrictionModifiers.NO_RESTRICTIONS);
-		assertTrue("TestClass3 should have API visibility", description.getVisibility() == VisibilityModifiers.API);
-		description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestClass3$InnerTestClass3"));
-		assertNotNull("the description for TestClass3$InnerTestClass3 should exist", description);
-		assertTrue("There should be no subclass on TestClass3$InnerTestClass3", description.getRestrictions() == RestrictionModifiers.NO_EXTEND);
-		assertTrue("TestClass3$InnerTestClass3 should have API visibility", description.getVisibility() == VisibilityModifiers.API);
+		assertNull("the description for TestClass3 should not exist", description);
+		
+		// Prior to bug 402393 annotations were supported on package default restricted classes
+//		assertTrue("There should be no restrictions on TestClass3", description.getRestrictions() == RestrictionModifiers.NO_RESTRICTIONS);
+//		assertTrue("TestClass3 should have API visibility", description.getVisibility() == VisibilityModifiers.API);
+//		description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestClass3$InnerTestClass3"));
+//		assertNotNull("the description for TestClass3$InnerTestClass3 should exist", description);
+//		assertTrue("There should be no subclass on TestClass3$InnerTestClass3", description.getRestrictions() == RestrictionModifiers.NO_EXTEND);
+//		assertTrue("TestClass3$InnerTestClass3 should have API visibility", description.getVisibility() == VisibilityModifiers.API);
 	}
 	
 	/**
