@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.pde.ua.core;singleton:=true
-Bundle-Version: 1.0.200.qualifier
+Bundle-Version: 1.0.300.qualifier
 Bundle-Activator: org.eclipse.pde.internal.ua.core.Activator
 Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.3.0,4.0.0)",
  org.eclipse.pde.core;bundle-version="[3.3.0,4.0.0)",
@@ -14,8 +14,8 @@ Bundle-Localization: plugin
 Bundle-Vendor: %providerName
 Export-Package: org.eclipse.pde.internal.ua.core;x-internal:=true,
  org.eclipse.pde.internal.ua.core.cheatsheet.comp;x-friends:="org.eclipse.pde.ua.ui",
- org.eclipse.pde.internal.ua.core.cheatsheet.simple;x-friends:="org.eclipse.pde.ua.ui",
- org.eclipse.pde.internal.ua.core.cheatsheet.simple.text;x-friends:="org.eclipse.pde.ua.ui",
+ org.eclipse.pde.internal.ua.core.cheatsheet.simple;x-friends:="org.eclipse.pde.ua.ui,org.eclipse.pde.ua.tests",
+ org.eclipse.pde.internal.ua.core.cheatsheet.simple.text;x-friends:="org.eclipse.pde.ua.ui,org.eclipse.pde.ua.tests",
  org.eclipse.pde.internal.ua.core.ctxhelp;x-friends:="org.eclipse.pde.ua.ui",
  org.eclipse.pde.internal.ua.core.ctxhelp.text;x-friends:="org.eclipse.pde.ua.ui",
  org.eclipse.pde.internal.ua.core.icheatsheet;x-friends:="org.eclipse.pde.ua.ui",
