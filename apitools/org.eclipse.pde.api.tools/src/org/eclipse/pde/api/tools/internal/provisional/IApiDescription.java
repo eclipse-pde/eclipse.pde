@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -113,9 +113,9 @@ public interface IApiDescription {
 	/**
 	 * Returns annotations for the specified element when referenced from the specified component. 
 	 * <p>
-	 * The parent package annotation will be returned if the requested {@link IElementDescriptor} 
-	 * does not exist in the API description. 
-	 * If no inherited annotations can be derived <code>null</code> is returned.
+	 * If the given element does not appear in the description and none of its enclosing elements appear in the
+	 * description, <code>null</code> is returned. Otherwise the annotations of the first 
+	 * restricted enclosing member are returned.
 	 * </p>
 	 * <p>
 	 * If there is no component specific API for the specified element, the general

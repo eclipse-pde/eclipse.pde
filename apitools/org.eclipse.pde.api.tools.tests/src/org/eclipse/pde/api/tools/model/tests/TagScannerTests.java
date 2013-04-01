@@ -237,12 +237,8 @@ public class TagScannerTests extends TestCase {
 		assertNull("the description for TestClass3 should not exist", description);
 		
 		// Prior to bug 402393 annotations were supported on package default restricted classes
-//		assertTrue("There should be no restrictions on TestClass3", description.getRestrictions() == RestrictionModifiers.NO_RESTRICTIONS);
-//		assertTrue("TestClass3 should have API visibility", description.getVisibility() == VisibilityModifiers.API);
-//		description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestClass3$InnerTestClass3"));
-//		assertNotNull("the description for TestClass3$InnerTestClass3 should exist", description);
-//		assertTrue("There should be no subclass on TestClass3$InnerTestClass3", description.getRestrictions() == RestrictionModifiers.NO_EXTEND);
-//		assertTrue("TestClass3$InnerTestClass3 should have API visibility", description.getVisibility() == VisibilityModifiers.API);
+		description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestClass3$InnerTestClass3"));
+		assertNull("the description for TestClass3$InnerTestClass3 should not exist", description);
 	}
 	
 	/**
@@ -257,20 +253,12 @@ public class TagScannerTests extends TestCase {
 		assertNull("the description for TestClass4 should not exist", description);
 		
 		// Prior to bug 402393 annotations were supported on package default restricted classes
-//		assertTrue("There should be no restrictions on TestClass4", description.getRestrictions() == RestrictionModifiers.NO_RESTRICTIONS);
-//		assertTrue("TestClass4 should have API visibility", description.getVisibility() == VisibilityModifiers.API);
-//		description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestClass4$InnerTestClass4"));
-//		assertNotNull("the description for TestClass4$InnerTestClass4 should exist", description);
-//		assertTrue("There should be no restrictions on TestClass4$InnerTestClass4", description.getRestrictions() == RestrictionModifiers.NO_RESTRICTIONS);
-//		assertTrue("TestClass4$InnerTestClass4 should have API visibility", description.getVisibility() == VisibilityModifiers.API);
-//		description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestClass4$InnerTestClass4$Inner2TestClass4"));
-//		assertNotNull("the description for TestClass4$InnerTestClass4$Inner2TestClass4 should exist", description);
-//		assertTrue("There should be no restrictions on TestClass4$InnerTestClass4$Inner2TestClass4", description.getRestrictions() == RestrictionModifiers.NO_RESTRICTIONS);
-//		assertTrue("TestClass4$InnerTestClass4$Inner2TestClass4 should have API visibility", description.getVisibility() == VisibilityModifiers.API);
-//		description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestClass4$InnerTestClass4$Inner2TestClass4$Inner3TestClass4"));
-//		assertNotNull("the description for TestClass4$InnerTestClass4$Inner2TestClass4$Inner3TestClass4 should exist", description);
-//		assertTrue("There should be no extend, no instantiate on TestClass4$InnerTestClass4$Inner2TestClass4$Inner3TestClass4", description.getRestrictions() == (RestrictionModifiers.NO_EXTEND | RestrictionModifiers.NO_INSTANTIATE));
-//		assertTrue("TestClass4$InnerTestClass4$Inner2TestClass4$Inner3TestClass4 should have API visibility", description.getVisibility() == VisibilityModifiers.API);
+		description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestClass4$InnerTestClass4"));
+		assertNull("the description for TestClass4$InnerTestClass4 should not exist", description);
+		description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestClass4$InnerTestClass4$Inner2TestClass4"));
+		assertNull("the description for TestClass4$InnerTestClass4$Inner2TestClass4 should not exist", description);
+		description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestClass4$InnerTestClass4$Inner2TestClass4$Inner3TestClass4"));
+		assertNull("the description for TestClass4$InnerTestClass4$Inner2TestClass4$Inner3TestClass4 should not exist", description);
 	}
 	
 	/**
@@ -284,16 +272,10 @@ public class TagScannerTests extends TestCase {
 		assertNull("the description for TestClass5 should not exist", description);
 		
 		// Prior to bug 402393 annotations were supported on package default restricted classes
-//		assertTrue("There should be no restrictions on TestClass5", description.getRestrictions() == RestrictionModifiers.NO_RESTRICTIONS);
-//		assertTrue("TestClass5 should have API visibility", description.getVisibility() == VisibilityModifiers.API);
-//		description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestClass5a"));
-//		assertNotNull("the description for TestClass5a should exist", description);
-//		assertTrue("There should be no subclass on TestClass5a", description.getRestrictions() == RestrictionModifiers.NO_EXTEND);
-//		assertTrue("TestClass5a should have API visibility", description.getVisibility() == VisibilityModifiers.API);
-//		description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestClass5b"));
-//		assertNotNull("the description for TestClass5b should exist", description);
-//		assertTrue("There should be no reference on TestClass5b", description.getRestrictions() == RestrictionModifiers.NO_EXTEND);
-//		assertTrue("TestClass5b should have API visibility", description.getVisibility() == VisibilityModifiers.API);
+		description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestClass5a"));
+		assertNull("the description for TestClass5a should not exist", description);
+		description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestClass5b"));
+		assertNull("the description for TestClass5b should not exist", description);
 	}
 	
 	/**
@@ -347,18 +329,19 @@ public class TagScannerTests extends TestCase {
 		assertTrue("There should be no restrictions on TestClass7a", description.getRestrictions() == RestrictionModifiers.NO_RESTRICTIONS);
 		assertTrue("TestClass7a should have API visibility", description.getVisibility() == VisibilityModifiers.API);
 		description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestClass7a$InnerTestClass7a"));
-		// TODO Bug 402393 - The description returned is for the parent element
-//		assertNull("the description for TestClass7a$InnerTestClass7a should not exist", description);
-//		assertTrue("There should be no reference on TestClass7a$InnerTestClass7a", description.getRestrictions() == RestrictionModifiers.NO_EXTEND);
-//		assertTrue("TestClass7a$InnerTestClass7a should have API visibility", description.getVisibility() == VisibilityModifiers.API);
-//		description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestClass7b"));
-//		assertNotNull("the description for TestClass7b should exist", description);
-//		assertTrue("There should be no reference on TestClass7b", description.getRestrictions() == RestrictionModifiers.NO_EXTEND);
-//		assertTrue("TestClass7b should have API visibility", description.getVisibility() == VisibilityModifiers.API);
-//		description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestClass7b$InnerTestClass7b"));
-//		assertNotNull("the description for TestClass7b$InnerTestClass7b should exist", description);
-//		assertTrue("There should be no extend on TestClass7b$InnerTestClass7b", description.getRestrictions() == RestrictionModifiers.NO_EXTEND);
-//		assertTrue("TestClass7b$InnerTestClass7b should have API visibility", description.getVisibility() == VisibilityModifiers.API);
+		//Bug 402393 - The description returned is for the parent element
+		//and is expected because the parent has a restricted sub-type
+		assertNotNull("the description for TestClass7a$InnerTestClass7a should exist", description);
+		assertTrue("There should be no restrictions on TestClass7a$InnerTestClass7a", description.getRestrictions() == RestrictionModifiers.NO_RESTRICTIONS);
+		assertTrue("TestClass7a$InnerTestClass7a should have API visibility", description.getVisibility() == VisibilityModifiers.API);
+		description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestClass7b"));
+		assertNotNull("the description for TestClass7b should exist", description);
+		assertTrue("There should be no restrictions on TestClass7b", description.getRestrictions() == RestrictionModifiers.NO_RESTRICTIONS);
+		assertTrue("TestClass7b should have API visibility", description.getVisibility() == VisibilityModifiers.API);
+		description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestClass7b$InnerTestClass7b"));
+		assertNotNull("the description for TestClass7b$InnerTestClass7b should exist", description);
+		assertTrue("There should be no restrictions on TestClass7b$InnerTestClass7b", description.getRestrictions() == RestrictionModifiers.NO_RESTRICTIONS);
+		assertTrue("TestClass7b$InnerTestClass7b should have API visibility", description.getVisibility() == VisibilityModifiers.API);
 	}
 	
 	/**
@@ -385,16 +368,10 @@ public class TagScannerTests extends TestCase {
 		assertNull("the description for TestInterface2 should not exist", description);
 		
 		// Prior to bug 402393 annotations were supported on package default restricted classes
-//		assertTrue("There should be no restrictions on TestInterface2", description.getRestrictions() == RestrictionModifiers.NO_RESTRICTIONS);
-//		assertTrue("TestInterface2 should have API visibility", description.getVisibility() == VisibilityModifiers.API);
-//		description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestInterface2a"));
-//		assertNotNull("the description for TestInterface2a should exist", description);
-//		assertTrue("There should be no implement on TestInterface2a", description.getRestrictions() == RestrictionModifiers.NO_IMPLEMENT);
-//		assertTrue("TestInterface2a should have API visibility", description.getVisibility() == VisibilityModifiers.API);
-//		description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestInterface2b"));
-//		assertNotNull("the description for TestInterface2b should exist", description);
-//		assertTrue("There should be no restrictions on TestInterface2b", description.getRestrictions() == RestrictionModifiers.NO_RESTRICTIONS);
-//		assertTrue("TestInterface2b should have API visibility", description.getVisibility() == VisibilityModifiers.API);
+		description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestInterface2a"));
+		assertNull("the description for TestInterface2a should not exist", description);
+		description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestInterface2b"));
+		assertNull("the description for TestInterface2b should not exist", description);
 	}
 	
 	/**
@@ -430,8 +407,11 @@ public class TagScannerTests extends TestCase {
 		assertTrue("There should be no implement on TestInterface4$Inner1", description.getRestrictions() == RestrictionModifiers.NO_IMPLEMENT);
 		assertTrue("TestInterface3$Inner1 should have API visibility", description.getVisibility() == VisibilityModifiers.API);
 		description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestInterface4$Inner2"));
-		// TODO Bug 402393 - The description returned is for the parent element
-//		assertNull("the description for TestInterface4$Inner2 should not exist", description);
+		
+		//Bug 402393 - The description returned is for the parent element
+		//and is expected because the root type has a restricted sub-type
+		assertNotNull("the description for TestInterface4$Inner2 should exist", description);
+		assertTrue("The root type should be unrestricted", description.getRestrictions() == RestrictionModifiers.NO_RESTRICTIONS);
 	}
 	
 	/**
@@ -483,12 +463,8 @@ public class TagScannerTests extends TestCase {
 		assertNull("the description for field 'field' in TestField2$Inner should not exist", description);
 		
 		// Prior to bug 402393 annotations were supported on package default restricted classes
-//		assertTrue("there shouldbe API visibility on field 'field'", description.getVisibility() == VisibilityModifiers.API);
-//		assertTrue("There should be no reference on field 'field'", description.getRestrictions() == RestrictionModifiers.NO_REFERENCE);
-//		description = manifest.resolveAnnotations(Factory.fieldDescriptor("a.b.c.TestField2$Inner", "number"));
-//		assertNotNull("the description for field 'number' in TestField2$Inner should exist", description);
-//		assertTrue("there shouldbe API visibility on field 'number'", description.getVisibility() == VisibilityModifiers.API);
-//		assertTrue("There should be no reference on field 'number'", description.getRestrictions() == RestrictionModifiers.NO_REFERENCE);
+		description = manifest.resolveAnnotations(Factory.fieldDescriptor("a.b.c.TestField2$Inner", "number"));
+		assertNull("the description for field 'number' in TestField2$Inner should not exist", description);
 	}
 	
 	/**
@@ -529,9 +505,9 @@ public class TagScannerTests extends TestCase {
 		assertTrue("There should be no reference on field 'number' in TestField4$Inner1$Inner3$Inner", description.getRestrictions() == RestrictionModifiers.NO_REFERENCE);
 		description = manifest.resolveAnnotations(Factory.fieldDescriptor("a.b.c.TestField4$Inner2", "field"));
 		assertNotNull("the description for field 'field' in TestField4$Inner2 should exist", description);
+		
 		// TODO Bug 402393 - The description returned is for the parent element
-//		assertTrue("there should be API visibility on field 'field' in TestField4$Inner2", description.getVisibility() == VisibilityModifiers.API);
-//		assertTrue("There should be no reference on field 'field' in TestField4$Inner2", description.getRestrictions() == RestrictionModifiers.NO_REFERENCE);
+		assertTrue("there should be API visibility on field 'field' in TestField4$Inner2", description.getVisibility() == VisibilityModifiers.API);
 	}
 	
 	/**
@@ -543,9 +519,6 @@ public class TagScannerTests extends TestCase {
 		doScan("a/b/c/TestField5.java", manifest);
 		IApiAnnotations description = manifest.resolveAnnotations(Factory.fieldDescriptor("a.b.c.TestField5Outer", "field"));
 		assertNull("the description for field 'field' in a.b.c.TestField5 should not exist", description);
-		// Prior to bug 402393 annotations were supported on package default restricted classes
-//		assertTrue("there shouldbe API visibility on field 'field' in a.b.c.TestField5Outer", description.getVisibility() == VisibilityModifiers.API);
-//		assertTrue("There should be no reference on field 'field' in a.b.c.TestField5Outer", description.getRestrictions() == RestrictionModifiers.NO_REFERENCE);
 	}
 	
 	/**
@@ -784,13 +757,8 @@ public class TagScannerTests extends TestCase {
 		assertNull("There should be no description for method 'void one()", description);
 		
 		// Prior to bug 402393 annotations were supported on package default restricted classes
-//		assertTrue("There should exist a description for method 'void one()'", description != null);
-//		assertTrue("There should be API visibility for method 'void one()'", description.getVisibility() == VisibilityModifiers.API);
-//		assertTrue("There should be a no reference restriction on method 'void one()'", description.getRestrictions() == RestrictionModifiers.NO_REFERENCE);
-//		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod2$Inner", "two", "()V"));
-//		assertTrue("There should exist a description for method 'void two()'", description != null);
-//		assertTrue("There should be API visibility for method 'void two()'", description.getVisibility() == VisibilityModifiers.API);
-//		assertTrue("There should be a no override restriction on method 'void two()'", description.getRestrictions() == RestrictionModifiers.NO_OVERRIDE);
+		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod2$Inner", "two", "()V"));
+		assertNull("There should not exist a description for method 'void two()'", description);
 	}
 	
 	/**
@@ -846,25 +814,19 @@ public class TagScannerTests extends TestCase {
 		assertTrue("There should be API visibility for method 'void three()'", description.getVisibility() == VisibilityModifiers.API);
 		assertTrue("There should be a no extend restriction on method 'void three()'", description.getRestrictions() == RestrictionModifiers.NO_REFERENCE);
 		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod4$Inner2", "one", "()V"));
-		// TODO Bug 402393 - The description returned is for the parent element
-//		assertNull("There should not exist a description for method one() in class Inner2", description);
-		
-		// Prior to bug 402393 annotations were supported on package default restricted classes
-//		assertTrue("There should exist a description for method 'void one()'", description != null);
-//		assertTrue("There should be API visibility for method 'void one()'", description.getVisibility() == VisibilityModifiers.API);
-//		assertTrue("There should be a no reference restriction on method 'void one()'", description.getRestrictions() == RestrictionModifiers.NO_REFERENCE);
-//		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod4$Inner2", "two", "()V"));
-//		assertTrue("There should exist a description for method 'void two()'", description != null);
-//		assertTrue("There should be API visibility for method 'void two()'", description.getVisibility() == VisibilityModifiers.API);
-//		assertTrue("There should be a no override restriction on method 'void two()'", description.getRestrictions() == RestrictionModifiers.NO_OVERRIDE);
-//		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod4$Inner2$Inner4", "one", "()V"));
-//		assertTrue("There should exist a description for method 'void one()'", description != null);
-//		assertTrue("There should be API visibility for method 'void one()'", description.getVisibility() == VisibilityModifiers.API);
-//		assertTrue("There should be a no reference restriction on method 'void one()'", description.getRestrictions() == RestrictionModifiers.NO_REFERENCE);
-//		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod4$Inner2$Inner4", "two", "()V"));
-//		assertTrue("There should exist a description for method 'void two()'", description != null);
-//		assertTrue("There should be API visibility for method 'void two()'", description.getVisibility() == VisibilityModifiers.API);
-//		assertTrue("There should be a no override restriction on method 'void two()'", description.getRestrictions() == RestrictionModifiers.NO_OVERRIDE);
+		//Bug 402393 - The description returned is for the parent element
+		//and is expected because the parent element has a restricted sub-element
+		assertNotNull("There should not exist a description for method one() in class Inner2", description);
+		assertTrue("Inner2#one() must be unrestricted", description.getRestrictions() == RestrictionModifiers.NO_RESTRICTIONS);
+		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod4$Inner2", "two", "()V"));
+		assertNotNull("There should exist a description for method 'void two()'", description);
+		assertTrue("Inner2#two() must be unrestricted", description.getRestrictions() == RestrictionModifiers.NO_RESTRICTIONS);
+		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod4$Inner2$Inner4", "one", "()V"));
+		assertNotNull("There should exist a description for method 'void one()'", description);
+		assertTrue("Inner2$Inner4#one() must be unrestricted", description.getRestrictions() == RestrictionModifiers.NO_RESTRICTIONS);
+		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod4$Inner2$Inner4", "two", "()V"));
+		assertNotNull("There should exist a description for method 'void two()'", description);
+		assertTrue("Inner2$Inner4#two() must be unrestricted", description.getRestrictions() == RestrictionModifiers.NO_RESTRICTIONS);
 	}
 	
 	/**
@@ -878,17 +840,10 @@ public class TagScannerTests extends TestCase {
 		assertNull("The description for method 'void one()' should not exist", description);
 		
 		// Prior to bug 402393 annotations were supported on package default restricted classes
-//		assertTrue("There should exist a description for method 'void one()'", description != null);
-//		assertTrue("There should be API visibility for method 'void one()'", description.getVisibility() == VisibilityModifiers.API);
-//		assertTrue("There should be a no reference restriction on method 'void one()'", description.getRestrictions() == RestrictionModifiers.NO_REFERENCE);
-//		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod5Outer", "two", "()V"));
-//		assertTrue("There should exist a description for method 'void two()'", description != null);
-//		assertTrue("There should be API visibility for method 'void two()'", description.getVisibility() == VisibilityModifiers.API);
-//		assertTrue("There should be a no override restriction on method 'void two()'", description.getRestrictions() == RestrictionModifiers.NO_OVERRIDE);
-//		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod5Outer", "three", "()V"));
-//		assertTrue("There should exist a description for method 'void three()'", description != null);
-//		assertTrue("There should be API visibility for method 'void three()'", description.getVisibility() == VisibilityModifiers.API);
-//		assertTrue("There should be a no extend restriction on method 'void three()'", description.getRestrictions() == RestrictionModifiers.NO_REFERENCE);
+		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod5Outer", "two", "()V"));
+		assertNull("There should not exist a description for method 'void two()'", description);
+		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod5Outer", "three", "()V"));
+		assertNull("There should not exist a description for method 'void three()'", description);
 	}
 	
 	/**
