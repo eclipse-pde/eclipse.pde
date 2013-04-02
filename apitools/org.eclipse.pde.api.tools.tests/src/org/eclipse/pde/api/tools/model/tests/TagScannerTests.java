@@ -505,8 +505,6 @@ public class TagScannerTests extends TestCase {
 		assertTrue("There should be no reference on field 'number' in TestField4$Inner1$Inner3$Inner", description.getRestrictions() == RestrictionModifiers.NO_REFERENCE);
 		description = manifest.resolveAnnotations(Factory.fieldDescriptor("a.b.c.TestField4$Inner2", "field"));
 		assertNotNull("the description for field 'field' in TestField4$Inner2 should exist", description);
-		
-		// TODO Bug 402393 - The description returned is for the parent element
 		assertTrue("there should be API visibility on field 'field' in TestField4$Inner2", description.getVisibility() == VisibilityModifiers.API);
 	}
 	
