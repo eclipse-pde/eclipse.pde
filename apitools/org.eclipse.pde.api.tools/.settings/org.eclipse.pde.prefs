@@ -1,4 +1,3 @@
-#Wed Jun 02 08:55:19 EDT 2010
 compilers.f.unresolved-features=1
 compilers.f.unresolved-plugins=1
 compilers.incompatible-environment=0
@@ -14,6 +13,7 @@ compilers.p.build.src.includes=1
 compilers.p.deprecated=1
 compilers.p.discouraged-class=1
 compilers.p.internal=1
+compilers.p.matching-pom-version=0
 compilers.p.missing-bundle-classpath-entries=2
 compilers.p.missing-packages=0
 compilers.p.missing-version-export-package=2
