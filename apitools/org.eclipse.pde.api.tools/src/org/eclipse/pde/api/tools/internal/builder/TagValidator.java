@@ -167,6 +167,13 @@ public class TagValidator extends ASTVisitor {
 						context = BuilderMessages.TagValidator_a_final_class;
 						invalidtags.add(JavadocTagManager.TAG_NOEXTEND);
 					}
+				} else {
+					int flags = type.getModifiers();
+					if(Flags.isPackageDefault(flags)) {
+						context = BuilderMessages.TagValidator_a_package_default_interface;
+						invalidtags.add(JavadocTagManager.TAG_NOIMPLEMENT);
+						invalidtags.add(JavadocTagManager.TAG_NOEXTEND);
+					}
 				}
 				if(invalidtags.size() > 0) {
 					ArrayList vtags = new ArrayList(validtags.length);

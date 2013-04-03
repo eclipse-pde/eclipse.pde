@@ -19,7 +19,7 @@ public interface test4 {
 	/**
 	 * @noimplement
 	 */
-	interface inner {
+	public interface inner {
 		
 	}
 	
@@ -27,22 +27,12 @@ public interface test4 {
 		/**
 		 * @noimplement
 		 */
-		interface inner2 {
+		public interface inner2 {
 			
 		}
 	}
 	
 	interface inner2 {
-		
-	}
-}
-
-/**
- * @noimplement
- */
-interface outer {
-	
-	interface inner {
 		
 	}
 }

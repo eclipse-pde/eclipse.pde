@@ -55,6 +55,7 @@ public class BuilderMessages extends NLS {
 	public static String TagValidator_a_package_default_method;
 	public static String TagValidator_a_static_package_default_method;
 	public static String TagValidator_a_package_default_field;
+	public static String TagValidator_a_package_default_interface;
 	
 	public static String TagValidator_a_class;
 	public static String TagValidator_a_class_that_is_not_visible;

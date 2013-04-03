@@ -59,22 +59,6 @@ public class ValidInterfaceTagTests extends InvalidInterfaceTagTests {
 		deployTagTest("test1.java", inc, false);
 	}
 	
-	public void testValidInterfaceTag2I() {
-		x2(true);
-	}
-
-	public void testValidInterfaceTag2F() {
-		x2(false);
-	}
-	
-	/**
-	 * Tests that @noimplement is a valid tag on an interface in the 
-	 * the testing package a.b.c 
-	 */
-	private void x2(boolean inc) {
-		deployTagTest("test2.java", inc, false);
-	}
-	
 	public void testValidInterfaceTag3I() {
 		x3(true);
 	}

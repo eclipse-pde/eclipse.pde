@@ -18,7 +18,7 @@ public interface test3 {
 	/**
 	 * @noimplement
 	 */
-	interface inner {
+	public interface inner {
 		
 	}
 }

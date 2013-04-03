@@ -19,7 +19,7 @@ public interface test7 {
 	/**
 	 * @noextend
 	 */
-	interface inner {
+	public interface inner {
 		
 	}
 	
@@ -27,22 +27,12 @@ public interface test7 {
 		/**
 		 * @noextend
 		 */
-		interface inner2 {
+		public interface inner2 {
 			
 		}
 	}
 	
 	interface inner2 {
-		
-	}
-}
-
-/**
- * @noextend
- */
-interface outer {
-	
-	interface inner {
 		
 	}
 }
