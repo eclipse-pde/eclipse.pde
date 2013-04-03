@@ -73,26 +73,6 @@ public class ValidEnumFieldTagTests extends ValidFieldTagTests {
 	
 	/**
 	 * Tests that @noreference is valid for non-final, non-static-final fields
-	 * in an outer enum using an incremental build
-	 */
-	public void testValidEnumFieldTag2I() {
-		x2(true);
-	}
-	
-	/**
-	 * Tests that @noreference is valid for non-final, non-static-final fields
-	 * in an outer enum using a full build
-	 */
-	public void testValidEnumFieldTag2F() {
-		x2(false);
-	}
-	
-	private void x2(boolean inc) {
-		deployTagTest("test2.java", inc, false);
-	}
-	
-	/**
-	 * Tests that @noreference is valid for non-final, non-static-final fields
 	 * in an inner enum using an incremental build
 	 */
 	public void testValidEnumFieldTag4I() {

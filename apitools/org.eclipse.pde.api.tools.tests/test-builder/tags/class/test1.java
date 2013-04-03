@@ -23,16 +23,14 @@ public class test1 {
 		
 	}
 	
-	class inner2 {
-		/**
-		 * @noreference
-		 */
-		private class inner3 {
-			
-		}
+	/**
+	 * @noreference
+	 */
+	private class inner2 {
+		
 	}
 	
-	class inner4 {
+	class inner3 {
 		
 	}
 }

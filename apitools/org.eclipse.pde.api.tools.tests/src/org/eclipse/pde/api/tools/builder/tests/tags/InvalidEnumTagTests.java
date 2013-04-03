@@ -270,4 +270,24 @@ public class InvalidEnumTagTests extends TagTest {
 		});
 		deployTagTest("test10.java", inc, true);
 	}
+	
+	public void testInvalidEnumTag11I() {
+		x11(true);
+	}
+	
+	public void testInvalidEnumTag11F() {
+		x11(false);
+	}
+	
+	/**
+	 * Tests all tags are invalid when parent enum is private or package default
+	 */
+	private void x11(boolean inc) {
+		setExpectedProblemIds(getDefaultProblemSet(2));
+		setExpectedMessageArgs(new String[][] {
+				{"@noreference", BuilderMessages.TagValidator_an_enum_constant},
+				{"@noreference", BuilderMessages.TagValidator_an_enum},
+		});
+		deployTagTest("test11.java", inc, true);
+	}
 }

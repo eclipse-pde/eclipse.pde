@@ -62,6 +62,13 @@ public class TagValidator extends ASTVisitor {
 	private static final IApiJavadocTag[] NO_TAGS = new IApiJavadocTag[0];
 	
 	/**
+	 * Temporarily stores a node (type, enum, annotation) that is restricted 
+	 * (private or package default).  Any tags in children of this node are
+	 * invalid.
+	 */
+	private AbstractTypeDeclaration fRestrictedNode;
+	
+	/**
 	 * Constructor
 	 * @param parent
 	 */
@@ -80,7 +87,47 @@ public class TagValidator extends ASTVisitor {
 		}
 		return false;
 	}
-
+	
+	
+	public boolean visit(AnnotationTypeDeclaration node) {
+		if (fRestrictedNode == null && (Flags.isPrivate(node.getModifiers()) || Flags.isPackageDefault(node.getModifiers()))){
+			fRestrictedNode = node;
+		}
+		return true;
+	}
+	
+	public void endVisit(AnnotationTypeDeclaration node) {
+		if (fRestrictedNode != null && fRestrictedNode.equals(node)){
+			fRestrictedNode = null;
+		}
+	}
+	
+	public boolean visit(TypeDeclaration node) {
+		if (fRestrictedNode == null && (Flags.isPrivate(node.getModifiers()) || Flags.isPackageDefault(node.getModifiers()))){
+			fRestrictedNode = node;
+		}
+		return true;
+	}
+	
+	public void endVisit(TypeDeclaration node) {
+		if (fRestrictedNode != null && fRestrictedNode.equals(node)){
+			fRestrictedNode = null;
+		}
+	}
+	
+	public boolean visit(EnumDeclaration node) {
+		if (fRestrictedNode == null && (Flags.isPrivate(node.getModifiers()) || Flags.isPackageDefault(node.getModifiers()))){
+			fRestrictedNode = node;
+		}
+		return true;
+	}
+	
+	public void endVisit(EnumDeclaration node){
+		if (fRestrictedNode != null && fRestrictedNode.equals(node)){
+			fRestrictedNode = null;
+		}
+	}
+	
 	/**
 	 * Validates the set of tags for the given parent node and the given listing of {@link TagElement}s
 	 * @param node
@@ -90,11 +137,13 @@ public class TagValidator extends ASTVisitor {
 		if(tags.size() == 0) {
 			return;
 		}
+		
+		IApiJavadocTag[] validtags = NO_TAGS;
 		JavadocTagManager jtm = ApiPlugin.getJavadocTagManager();
 		switch(node.getNodeType()) {
 			case ASTNode.TYPE_DECLARATION: {
 				TypeDeclaration type = (TypeDeclaration) node;
-				IApiJavadocTag[] validtags = jtm.getTagsForType(type.isInterface() ? IApiJavadocTag.TYPE_INTERFACE : IApiJavadocTag.TYPE_CLASS, IApiJavadocTag.MEMBER_NONE);
+				validtags = jtm.getTagsForType(type.isInterface() ? IApiJavadocTag.TYPE_INTERFACE : IApiJavadocTag.TYPE_CLASS, IApiJavadocTag.MEMBER_NONE);
 				HashSet invalidtags = new HashSet(validtags.length);
 				String context = BuilderMessages.TagValidator_an_interface;
 				if(!type.isInterface()) {
@@ -115,10 +164,10 @@ public class TagValidator extends ASTVisitor {
 						invalidtags.add(JavadocTagManager.TAG_NOINSTANTIATE);
 					}
 					else if(Flags.isFinal(flags)) {
-							context = BuilderMessages.TagValidator_a_final_class;
-							invalidtags.add(JavadocTagManager.TAG_NOEXTEND);
-						}
+						context = BuilderMessages.TagValidator_a_final_class;
+						invalidtags.add(JavadocTagManager.TAG_NOEXTEND);
 					}
+				}
 				if(invalidtags.size() > 0) {
 					ArrayList vtags = new ArrayList(validtags.length);
 					for(int i = 0; i < validtags.length; i++) {
@@ -134,18 +183,18 @@ public class TagValidator extends ASTVisitor {
 			}
 			case ASTNode.ENUM_DECLARATION: {
 				EnumDeclaration enumm = (EnumDeclaration) node;
-				IApiJavadocTag[] validtags = jtm.getTagsForType(IApiJavadocTag.TYPE_ENUM, IApiJavadocTag.MEMBER_NONE);
+				validtags = jtm.getTagsForType(IApiJavadocTag.TYPE_ENUM, IApiJavadocTag.MEMBER_NONE);
 				processTags(getTypeName(enumm), tags, validtags, IElementDescriptor.TYPE, BuilderMessages.TagValidator_an_enum);
 				break;
 			}
 			case ASTNode.ENUM_CONSTANT_DECLARATION: {
 				EnumConstantDeclaration decl = (EnumConstantDeclaration) node;
-				processTags(getTypeName(decl), tags, new IApiJavadocTag[0], IElementDescriptor.FIELD, BuilderMessages.TagValidator_an_enum_constant);
+				processTags(getTypeName(decl), tags, validtags, IElementDescriptor.FIELD, BuilderMessages.TagValidator_an_enum_constant);
 				break;
 			}
 			case ASTNode.ANNOTATION_TYPE_DECLARATION: {
 				AnnotationTypeDeclaration annot = (AnnotationTypeDeclaration) node;
-				IApiJavadocTag[] validtags = jtm.getTagsForType(IApiJavadocTag.TYPE_ANNOTATION, IApiJavadocTag.MEMBER_NONE);
+				validtags = jtm.getTagsForType(IApiJavadocTag.TYPE_ANNOTATION, IApiJavadocTag.MEMBER_NONE);
 				processTags(getTypeName(annot), tags, validtags, IElementDescriptor.TYPE, BuilderMessages.TagValidator_an_annotation);
 				break;
 			}
@@ -198,7 +247,6 @@ public class TagValidator extends ASTVisitor {
 						break;
 					}
 				}
-				IApiJavadocTag[] validtags = NO_TAGS;
 				if(!isprivate && !ispackage) {
 					validtags = jtm.getTagsForType(pkind, isconstructor ? IApiJavadocTag.MEMBER_CONSTRUCTOR : IApiJavadocTag.MEMBER_METHOD);
 				}
@@ -216,7 +264,7 @@ public class TagValidator extends ASTVisitor {
 			}
 			case ASTNode.ANNOTATION_TYPE_MEMBER_DECLARATION: {
 				AnnotationTypeMemberDeclaration decl = (AnnotationTypeMemberDeclaration) node;
-				IApiJavadocTag[] validtags = jtm.getTagsForType(IApiJavadocTag.TYPE_ANNOTATION, IApiJavadocTag.MEMBER_METHOD);
+				validtags = jtm.getTagsForType(IApiJavadocTag.TYPE_ANNOTATION, IApiJavadocTag.MEMBER_METHOD);
 				processTags(getTypeName(decl), tags, validtags, IElementDescriptor.METHOD, BuilderMessages.TagValidator_an_annotation_method);
 				break;
 			}
@@ -253,13 +301,70 @@ public class TagValidator extends ASTVisitor {
 						break;
 					}
 				}
-				IApiJavadocTag[] validtags = NO_TAGS;
+				
 				if(!isprivate && !isfinal && !ispackage) {
 					validtags = jtm.getTagsForType(pkind, IApiJavadocTag.MEMBER_FIELD);
 				}
 				processTags(getTypeName(field), tags, validtags, IElementDescriptor.FIELD, context);
 				break;
 			}
+		default:
+			break;
+		}
+		
+		// If a parent type is private or package default this element will not be included in the api description so no tags are valid
+		if (fRestrictedNode != null && fRestrictedNode != node){
+			validateTagsWithRestrictedParent(node, tags, validtags);
+		}
+	}
+		
+	/**
+	 * Creates problems for any tags on a node that has a parent type that is restricted
+	 * (private or package default).  Only adds problems to tags if they are not already
+	 * marked as invalid.
+	 * 
+	 * @param node the node to process 
+	 * @param tags a list of tags on the node
+	 * @param validTags list of tags that are valid for the node
+	 */
+	private void validateTagsWithRestrictedParent(ASTNode node, List tags, IApiJavadocTag[] validTags){
+		switch(node.getNodeType()) {
+		case ASTNode.TYPE_DECLARATION: {
+			TypeDeclaration type = (TypeDeclaration) node;
+			String context = type.isInterface() ? BuilderMessages.TagValidator_an_interface_that_is_not_visible : BuilderMessages.TagValidator_a_class_that_is_not_visible;
+			processRestrictedParentTags(getTypeName(type), tags, IElementDescriptor.TYPE, context, validTags);
+			break;
+		}
+		case ASTNode.ENUM_DECLARATION: {
+			EnumDeclaration enumm = (EnumDeclaration) node;
+			processRestrictedParentTags(getTypeName(enumm), tags, IElementDescriptor.TYPE, BuilderMessages.TagValidator_an_enum_that_is_not_visible, validTags);
+			break;
+		}
+		case ASTNode.ENUM_CONSTANT_DECLARATION: {
+			EnumConstantDeclaration decl = (EnumConstantDeclaration) node;
+			processRestrictedParentTags(getTypeName(decl), tags, IElementDescriptor.FIELD, BuilderMessages.TagValidator_an_enum_constant_that_is_not_visible, validTags);
+			break;
+		}
+		case ASTNode.ANNOTATION_TYPE_DECLARATION: {
+			AnnotationTypeDeclaration annot = (AnnotationTypeDeclaration) node;
+			processRestrictedParentTags(getTypeName(annot), tags, IElementDescriptor.TYPE, BuilderMessages.TagValidator_an_annotation_that_is_not_visible, validTags);
+			break;
+		}
+		case ASTNode.METHOD_DECLARATION: {
+			MethodDeclaration method = (MethodDeclaration) node;
+			processRestrictedParentTags(getTypeName(method), tags, IElementDescriptor.METHOD, BuilderMessages.TagValidator_a_method_that_is_not_visible, validTags);
+			break;
+		}
+		case ASTNode.ANNOTATION_TYPE_MEMBER_DECLARATION: {
+			AnnotationTypeMemberDeclaration decl = (AnnotationTypeMemberDeclaration) node;
+			processRestrictedParentTags(getTypeName(decl), tags, IElementDescriptor.METHOD, BuilderMessages.TagValidator_an_annotation_method_that_is_not_visible, validTags);
+			break;
+		}
+		case ASTNode.FIELD_DECLARATION: {
+			FieldDeclaration field = (FieldDeclaration) node;
+			processRestrictedParentTags(getTypeName(field), tags, IElementDescriptor.FIELD, BuilderMessages.TagValidator_a_field_that_is_not_visible, validTags);
+			break;
+		}
 		default:
 			break;
 		}
@@ -339,7 +444,7 @@ public class TagValidator extends ASTVisitor {
 			invalidtags.add(alltags[i].getTagName());
 		}
 		for(int i = 0; i < validtags.length; i++) {
-			invalidtags.remove(validtags[i]);
+			invalidtags.remove(validtags[i].getTagName());
 		}
 		if(invalidtags.size() == 0) {
 			return;
@@ -355,6 +460,43 @@ public class TagValidator extends ASTVisitor {
 			}
 			if(tagnames.contains(tag.getTagName()) && !tagz.add(tagname)) {
 				processTagProblem(typeName, tag, element, IApiProblem.DUPLICATE_TAG_USE, IApiMarkerConstants.DUPLICATE_TAG_MARKER_ID, null);
+			}
+		}
+	}
+	
+	/**
+	 * Creates problem markers for existing tags that are inside of a private or package default node.
+	 * Will only create markers if the tag would otherwise be valid (duplicates and tags not in the given
+	 * valid tag list are ignored).
+	 * @param typeName the name of the type these tags belong to
+	 * @param tags the list of tags to process
+	 * @param element the element type
+	 * @param context context string to append to the problem message
+	 * @param validTags list of tags that would be valid for this element to avoid creating multiple markers on a tag
+	 */
+	private void processRestrictedParentTags(String typeName, List tags, int element, String context, IApiJavadocTag[] validTags) {
+		if (validTags.length == 0){
+			return;
+		}
+		HashSet validtags = new HashSet(validTags.length);
+		for(int i = 0; i < validTags.length; i++) {
+			validtags.add(validTags[i].getTagName());
+		}
+		
+		HashSet duplicates = new HashSet();
+		for (Iterator iterator = tags.iterator(); iterator.hasNext();) {
+			String tag = ((TagElement) iterator.next()).getTagName();
+			if (duplicates.contains(tag)){
+				validtags.remove(tag);
+			}
+			duplicates.add(tag);
+		}
+		
+		TagElement tag = null;
+		for(Iterator iter = tags.iterator(); iter.hasNext();) {
+			tag = (TagElement) iter.next();
+			if(validtags.contains(tag.getTagName())) {
+				processTagProblem(typeName, tag, element, IApiProblem.UNSUPPORTED_TAG_USE, IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, context);
 			}
 		}
 	}

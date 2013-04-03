@@ -14,7 +14,7 @@ package a.b.c;
  * Test supported @noreference tag on static final fields in a class
  */
 public class test7 {
-	static class inner {
+	public static class inner {
 		/**
 		 * @noreference
 		 */
@@ -27,11 +27,4 @@ public class test7 {
 		class inner2 {
 		}
 	}
-}
-
-class outer {
-	/**
-	 * @noreference
-	 */
-	public static Object f1 = null;
 }

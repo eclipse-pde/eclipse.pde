@@ -16,7 +16,7 @@ package a.b.c;
  */
 public enum test4 {
 	A;
-	enum inner {
+	public enum inner {
 		A;
 		/**
 		 * @noreference
@@ -33,7 +33,7 @@ public enum test4 {
 		public final char m2() {
 			return 's';
 		}
-		enum inner2 {
+		public enum inner2 {
 			A;
 			/**
 			 * @noreference
@@ -51,24 +51,5 @@ public enum test4 {
 				return 's';
 			}
 		}
-	}
-}
-
-enum outer {
-	A;
-	/**
-	 * @noreference
-	 * @return
-	 */
-	public int m1() {
-		return 0;
-	}
-	
-	/**
-	 * @noreference
-	 * @return
-	 */
-	public final char m2() {
-		return 's';
 	}
 }

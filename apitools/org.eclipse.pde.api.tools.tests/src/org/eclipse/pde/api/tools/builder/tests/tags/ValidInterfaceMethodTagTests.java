@@ -58,36 +58,6 @@ public class ValidInterfaceMethodTagTests extends ValidMethodTagTests {
 		deployTagTest("test1.java", inc, false);
 	}
 
-	public void testValidInterfaceMethodTag2I() {
-		x2(true);
-	}
-	
-	public void testValidInterfaceMethodTag2F() {
-		x2(false);
-	}
-	
-	/**
-	 * Tests the supported @noreference tag on outer interface methods
-	 */
-	private void x2(boolean inc) {
-		deployTagTest("test2.java", inc, false);
-	}
-
-	public void testValidInterfaceMethodTag3I() {
-		x3(true);
-	}
-
-	public void testValidInterfaceMethodTag3F() {
-		x3(false);
-	}
-
-	/**
-	 * Tests the supported @noreference tag on inner interface methods
-	 */
-	private void x3(boolean inc) {
-		deployTagTest("test3.java", inc, false);
-	}
-	
 	public void testValidInterfaceMethodTag4I() {
 		x4(true);
 	}

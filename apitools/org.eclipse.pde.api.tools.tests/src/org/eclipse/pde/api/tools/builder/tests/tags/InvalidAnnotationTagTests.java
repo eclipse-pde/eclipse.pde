@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -299,6 +299,34 @@ public class InvalidAnnotationTagTests extends TagTest {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		setExpectedMessageArgs("@noimplement", BuilderMessages.TagValidator_an_annotation, 1);
 		String typename = "test12.java"; 
+		deployTagTest(typename, inc, true);
+	}
+	
+	public void testInvalidAnnotationTag13I() {
+		x13(true);
+	}
+	
+	public void testInvalidAnnotationTag13F() {
+		x13(false);
+	}
+	
+	/**
+	 * Tests all tags are invalid when parent annotation is private or package default
+	 */
+	private void x13(boolean inc) {
+		setExpectedProblemIds(getDefaultProblemSet(9));
+		setExpectedMessageArgs(new String[][] {
+				{"@noextend", BuilderMessages.TagValidator_a_class_that_is_not_visible},
+				{"@noinstantiate", BuilderMessages.TagValidator_a_class_that_is_not_visible},
+				{"@noreference", BuilderMessages.TagValidator_a_class},
+				{"@noextend", BuilderMessages.TagValidator_an_interface_that_is_not_visible},
+				{"@noimplement", BuilderMessages.TagValidator_an_interface_that_is_not_visible},
+				{"@noreference", BuilderMessages.TagValidator_an_interface},
+				{"@noreference", BuilderMessages.TagValidator_annotation_field},	
+				{"@noreference", BuilderMessages.TagValidator_an_annotation},
+				{"@noreference", BuilderMessages.TagValidator_an_enum},
+		});
+		String typename = "test13.java"; 
 		deployTagTest(typename, inc, true);
 	}
 }

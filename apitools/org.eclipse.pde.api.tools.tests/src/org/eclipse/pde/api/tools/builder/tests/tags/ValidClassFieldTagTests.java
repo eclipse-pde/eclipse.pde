@@ -84,46 +84,6 @@ public class ValidClassFieldTagTests extends ValidFieldTagTests {
 	}
 	
 	/**
-	 * Tests a valid @noreference tag on three fields in an outer class
-	 * using an incremental build
-	 */
-	public void testValidClassFieldTag3I() {
-		x3(true);
-	}
-	
-	/**
-	 * Tests a valid @noreference tag on three fields in an outer class
-	 * using a full build
-	 */
-	public void testValidClassFieldTag3F() {
-		x3(false);
-	}
-	
-	private void x3(boolean inc) {
-		deployTagTest("test3.java", inc, false);
-	}
-	
-	/**
-	 * Tests a valid @noreference tag on three static fields in an outer class
-	 * using an incremental build
-	 */
-	public void testValidClassFieldTag4I() {
-		x4(true);
-	}
-	
-	/**
-	 * Tests a valid @noreference tag on three static fields in an outer class
-	 * using a full build
-	 */
-	public void testValidClassFieldTag4F() {
-		x4(false);
-	}
-	
-	private void x4(boolean inc) {
-		deployTagTest("test4.java", inc, false);
-	}
-	
-	/**
 	 * Tests a valid @noreference tag on three fields in an inner class
 	 * using an incremental build
 	 */

@@ -14,7 +14,7 @@ package a.b.c;
  * Test supported @noreference tag on class methods
  */
 public class test8 {
-	class inner {
+	protected class inner {
 		/**
 		 * Constructor
 		 * @noreference This constructor is not intended to be referenced by clients.

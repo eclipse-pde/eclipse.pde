@@ -23,13 +23,11 @@ public class test5 {
 		
 	}
 	
-	class InnerNoRef4_1 {
-		/**
-		 * @nooverride
-		 */
-		private class Inner2NoRef4 {
-			
-		}
+	/**
+	 * @nooverride
+	 */
+	private class Inner2NoRef4 {
+		
 	}
 	
 	class InnerNoRef4_2 {

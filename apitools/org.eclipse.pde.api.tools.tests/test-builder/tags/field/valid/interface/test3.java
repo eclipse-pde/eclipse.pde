@@ -14,7 +14,7 @@ package a.b.c;
  * Test supported @noreference tag on a field in an inner interface
  */
 public interface test3 {
-	interface inner {
+	public interface inner {
 		/**
 		 * @noreference
 		 */

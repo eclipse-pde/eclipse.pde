@@ -15,7 +15,7 @@ package a.b.c;
  */
 public class test5 {
 	
-	class inner {
+	public class inner {
 		/**
 		 * @noreference
 		 */

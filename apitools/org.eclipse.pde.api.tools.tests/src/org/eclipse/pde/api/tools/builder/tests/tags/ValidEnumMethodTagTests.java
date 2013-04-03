@@ -72,26 +72,6 @@ public class ValidEnumMethodTagTests extends ValidMethodTagTests {
 	}
 	
 	/**
-	 * Tests the supported @noreference tag on outer enum methods
-	 * using an incremental build
-	 */
-	public void testValidEnumMethodTag2I() {
-		x2(true);
-	}
-	
-	/**
-	 * Tests the supported @noreference tag on outer enum methods
-	 * using a full build
-	 */
-	public void testValidEnumMethodTag2F() {
-		x2(false);
-	}
-	
-	private void x2(boolean inc) {
-		deployTagTest("test2.java", inc, false);
-	}
-	
-	/**
 	 * Tests the supported @noreference tag on inner enum methods
 	 * using an incremental build
 	 */

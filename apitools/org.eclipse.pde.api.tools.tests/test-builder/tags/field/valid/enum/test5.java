@@ -33,7 +33,7 @@ public enum test5 {
 	 */
 	protected static char g = 'd';
 	
-	enum inner {
+	public enum inner {
 		A,
 		B;
 		
@@ -50,22 +50,4 @@ public enum test5 {
 		 */
 		protected static char g = 'd';
 	}
-}
-
-enum outer {
-	A,
-	B;
-	
-	/**
-	 * @noreference This enum field is not intended to be referenced by clients.
-	 */
-	public Object f1 = null;
-	/**
-	 * @noreference This enum field is not intended to be referenced by clients.
-	 */
-	protected int f2 = 0;
-	/**
-	 * @noreference This enum field is not intended to be referenced by clients.
-	 */
-	protected static char g = 'd';
 }

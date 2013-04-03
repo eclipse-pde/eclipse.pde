@@ -15,8 +15,8 @@ package a.b.c;
  */
 public enum test3 {
 	A;
-}
-	enum inner {
+
+	public enum inner {
 		A;
 		/**
 		 * @noreference
@@ -25,7 +25,7 @@ public enum test3 {
 		public int m1() {
 			return 0;
 		}
-		
+
 		/**
 		 * @noreference
 		 * @return
@@ -33,4 +33,5 @@ public enum test3 {
 		public final char m2() {
 			return 's';
 		}
+	}
 }

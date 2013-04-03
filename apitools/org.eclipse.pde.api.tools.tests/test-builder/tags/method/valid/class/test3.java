@@ -15,7 +15,7 @@ package a.b.c;
  */
 public class test3 {
 	
-	static class inner {
+	public static class inner {
 		/**
 		 * @noreference This method is not intended to be referenced by clients.
 		 * @nooverride This method is not intended to be re-implemented or extended by clients.

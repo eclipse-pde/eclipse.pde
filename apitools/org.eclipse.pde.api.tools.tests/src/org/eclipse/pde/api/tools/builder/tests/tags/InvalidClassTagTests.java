@@ -315,4 +315,38 @@ public class InvalidClassTagTests extends TagTest {
 		deployTagTest("test11.java", inc, false);
 	}
 	
+	/**
+	 * Tests all tags are invalid when parent class is private or package default (incremental build)
+	 */
+	public void testInvalidClassTag12I() {
+		x12(true);
+	}
+
+	/**
+	 * Tests all tags are invalid when parent class is private or package default (full build)
+	 */
+	public void testInvalidClassTag12F() {
+		x12(false);
+	}
+	
+	private void x12(boolean inc) {
+		setExpectedProblemIds(getDefaultProblemSet(13));
+		setExpectedMessageArgs(new String[][] {
+				{"@noextend", BuilderMessages.TagValidator_a_class_that_is_not_visible},
+				{"@noinstantiate", BuilderMessages.TagValidator_a_class_that_is_not_visible},
+				{"@noreference", BuilderMessages.TagValidator_a_class},
+				{"@noextend", BuilderMessages.TagValidator_an_interface_that_is_not_visible},
+				{"@noimplement", BuilderMessages.TagValidator_an_interface_that_is_not_visible},
+				{"@noreference", BuilderMessages.TagValidator_an_interface},
+				{"@noreference", BuilderMessages.TagValidator_a_field_that_is_not_visible},
+				{"@noextend", BuilderMessages.TagValidator_a_field},	
+				{"@noreference", BuilderMessages.TagValidator_an_annotation},
+				{"@noreference", BuilderMessages.TagValidator_an_enum},
+				{"@nooverride", BuilderMessages.TagValidator_a_method_that_is_not_visible},
+				{"@noreference", BuilderMessages.TagValidator_a_method_that_is_not_visible},
+				{"@noextend", BuilderMessages.TagValidator_a_method},
+		});
+		deployTagTest("test12.java", inc, false);
+	}
+	
 }

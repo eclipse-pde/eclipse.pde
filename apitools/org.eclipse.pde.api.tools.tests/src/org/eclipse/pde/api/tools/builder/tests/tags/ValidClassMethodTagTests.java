@@ -64,26 +64,6 @@ public class ValidClassMethodTagTests extends ValidMethodTagTests {
 	}
 	
 	/**
-	 * Tests valid javadoc tags on methods in an outer class 
-	 * using an incremental build
-	 */
-	public void testValidClassMethodTag2I() {
-		x2(true);
-	}
-	
-	/**
-	 * Tests valid javadoc tags on methods in an outer class 
-	 * using a full build
-	 */
-	public void testValidClassMethodTag2F() {
-		x2(false);
-	}
-	
-	private void x2(boolean inc) {
-		deployTagTest("test2.java", inc, false);
-	}
-	
-	/**
 	 * Tests valid javadoc tags on methods in an inner class 
 	 * using an incremental build
 	 */
@@ -161,26 +141,6 @@ public class ValidClassMethodTagTests extends ValidMethodTagTests {
 	
 	private void x6(boolean inc) {
 		deployTagTest("test6.java", inc, false);
-	}
-	
-	/**
-	 * Tests valid javadoc tags on constructors in an outer class 
-	 * using an incremental build
-	 */
-	public void testValidClassMethodTag7I() {
-		x7(true);
-	}
-	
-	/**
-	 * Tests valid javadoc tags on constructors in an outer class 
-	 * using a full build
-	 */
-	public void testValidClassMethodTag7F() {
-		x7(false);
-	}
-	
-	private void x7(boolean inc) {
-		deployTagTest("test7.java", inc, false);
 	}
 	
 	/**

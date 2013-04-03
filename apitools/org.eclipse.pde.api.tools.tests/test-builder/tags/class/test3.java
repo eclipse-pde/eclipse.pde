@@ -23,13 +23,11 @@ public class test3 {
 		
 	}
 	
-	class InnerNoRef4_1 {
-		/**
-		 * @noimplement
-		 */
-		private class Inner2NoRef4 {
-			
-		}
+	/**
+	 * @noimplement
+	 */
+	private class Inner2NoRef4 {
+		
 	}
 	
 	class InnerNoRef4_2 {

@@ -17,7 +17,7 @@ package a.b.c;
  */
 public enum test4 {
 	;
-	enum inner {
+	public enum inner {
 		A,
 		B;
 		

@@ -64,26 +64,6 @@ public class ValidInterfaceFieldTagTests extends ValidFieldTagTests {
 	}
 	
 	/**
-	 * Tests the valid use of an @noreference tag on a field in an outer interface
-	 * using an incremental build
-	 */
-	public void testValidInterfaceFieldTag2I() {
-		x2(true);
-	}
-	
-	/**
-	 * Tests the valid use of an @noreference tag on a field in an outer interface
-	 * using a full build
-	 */
-	public void testValidInterfaceFieldTag2F() {
-		x2(false);
-	}
-	
-	private void x2(boolean inc) {
-		deployTagTest("test2.java", inc, false);
-	}
-	
-	/**
 	 * Tests the valid use of an @noreference tag on a field in an inner interface
 	 * using an incremental build
 	 */

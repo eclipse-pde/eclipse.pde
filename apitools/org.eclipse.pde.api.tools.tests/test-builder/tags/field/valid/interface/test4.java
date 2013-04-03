@@ -14,23 +14,16 @@ package a.b.c;
  * Test supported @noreference tag on fields in an outer interface
  */
 public interface test4 {
-	interface inner {
+	public interface inner {
 		/**
 		 * @noreference
 		 */
 		public int f2 = 0;
-		interface inner2 {
+		public interface inner2 {
 			/**
 			 * @noreference
 			 */
 			public char[] f3 = {};
 		}
 	}
-}
-
-interface outer {
-	/**
-	 * @noreference
-	 */
-	public static Object f1 = null;
 }

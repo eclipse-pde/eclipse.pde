@@ -16,7 +16,7 @@ package a.b.c;
  */
 public class test9 {
 	
-	static class inner {
+	protected static class inner {
 		/**
 		 * Constructor
 		 * @noreference This constructor is not intended to be referenced by clients.
@@ -32,7 +32,7 @@ public class test9 {
 		protected inner(int i) {
 			
 		}
-		static class inner2 {
+		protected static class inner2 {
 			/**
 			 * Constructor
 			 * @noreference This constructor is not intended to be referenced by clients.
@@ -49,23 +49,5 @@ public class test9 {
 				
 			}
 		}
-	}
-}
-
-class outer {
-	/**
-	 * Constructor
-	 * @noreference This constructor is not intended to be referenced by clients.
-	 */
-	public outer() {
-		
-	}
-	
-	/**
-	 * Constructor
-	 * @noreference This constructor is not intended to be referenced by clients.
-	 */
-	protected outer(int i) {
-		
 	}
 }

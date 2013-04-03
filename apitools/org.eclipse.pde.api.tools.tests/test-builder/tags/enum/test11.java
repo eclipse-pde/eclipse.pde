@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,30 +8,26 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package a.b.c;
 
 /**
- * Test supported @noreference tag on outer enum methods
+ * Tests all tags are invalid when parent enum is private or package default
  */
-public enum test2 {
-	
-}
+public enum test11 {
 
-enum outer {
-	A;
-	/**
-	 * @noreference
-	 * @return
-	 */
-	public int m1() {
-		return 0;
+	ENUM;
+	enum inner1 {
+
+		/**
+		 * @noreference
+		 */
+		ENUM;
+		/**
+		 * @noreference
+		 */
+		public enum inner2 {
+
+		}
+
 	}
-	
-	/**
-	 * @noreference
-	 * @return
-	 */
-	public final char m2() {
-		return 's';
-	}
+
 }
