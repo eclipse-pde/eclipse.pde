@@ -1134,7 +1134,10 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 				// member types are processed while processing the compilation unit
 				ICompilationUnit cunit = type.getCompilationUnit();
 				if(cunit != null) {
-					processType(cunit);
+					if(cunit.findPrimaryType().equals(type)){
+						// outer types are not member types but are processed with the compilation unit
+						processType(cunit);
+					}
 				}
 			}
 		} 
