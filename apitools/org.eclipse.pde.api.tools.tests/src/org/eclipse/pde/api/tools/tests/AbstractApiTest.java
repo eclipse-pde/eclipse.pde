@@ -130,9 +130,6 @@ public class AbstractApiTest extends TestCase {
 			return;
 		}
 		
-		// TODO Instead of failing here, we let the test continue and just have a println() (Bug 368458)
-		//ApiPlugin.DEBUG_WORKSPACE_DELTA_PROCESSOR = true;
-		
         // create project and import source
         IJavaProject jproject = ProjectUtils.createPluginProject(name, new String[] {PDE.PLUGIN_NATURE, ApiPlugin.NATURE_ID});
         assertNotNull("The java project must have been created", jproject);
@@ -152,13 +149,9 @@ public class AbstractApiTest extends TestCase {
         IApiBaseline baseline = getWorkspaceBaseline();
         assertNotNull("the workspace baseline cannot be null", baseline);
         
-        IApiComponent component = baseline.getApiComponent(name);
-        // TODO Instead of failing here, we let the test continue and just have a println() (Bug 368458)
+        // This assertion caused intermittant failures, skipping it hasn't caused any problems in the tests (Bug 368458)
+//        IApiComponent component = baseline.getApiComponent(name);
 //        assertNotNull("the test project api component must exist in the workspace baseline", component);
-        if (component == null){
-        	System.out.println("BUG 368458 - The component did not exist in the baseline");
-        }
-        ApiPlugin.DEBUG_WORKSPACE_DELTA_PROCESSOR = false;
 		
 	}
 	
