@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -157,7 +157,7 @@ public class TargetPlatformHelper {
 		File file = new File(path);
 		if (file.exists() && !fCachedLocations.containsKey(path)) {
 			try {
-				Map<String, String> manifest = MinimalState.loadManifest(file);
+				Map<String, String> manifest = PDEStateHelper.loadManifest(file);
 				String value = manifest.get(Constants.BUNDLE_SYMBOLICNAME);
 				if (value != null) {
 					ManifestElement[] elements = ManifestElement.parseHeader(Constants.BUNDLE_SYMBOLICNAME, value);
@@ -165,7 +165,6 @@ public class TargetPlatformHelper {
 					if (id != null)
 						fCachedLocations.put(path, elements[0].getValue());
 				}
-			} catch (IOException e) {
 			} catch (BundleException e) {
 			}
 		}
