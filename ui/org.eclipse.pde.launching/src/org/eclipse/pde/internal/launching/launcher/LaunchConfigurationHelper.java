@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -161,7 +161,7 @@ public class LaunchConfigurationHelper {
 			boolean usedefault = configuration.getAttribute(IPDELauncherConstants.USE_DEFAULT, true);
 			boolean useFeatures = configuration.getAttribute(IPDELauncherConstants.USEFEATURES, false);
 			if (usedefault || useFeatures) {
-				bundlesTxt = P2Utils.writeBundlesTxt(bundlesWithStartLevels, 4, false, configurationDirectory, osgiBundles);
+				bundlesTxt = P2Utils.writeBundlesTxt(bundlesWithStartLevels, start, autostart, configurationDirectory, osgiBundles);
 			} else {
 				bundlesTxt = P2Utils.writeBundlesTxt(bundlesWithStartLevels, start, autostart, configurationDirectory, null);
 			}
