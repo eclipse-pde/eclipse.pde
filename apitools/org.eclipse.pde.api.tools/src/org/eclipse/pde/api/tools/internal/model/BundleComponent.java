@@ -27,7 +27,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -40,6 +39,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.osgi.service.pluginconversion.PluginConversionException;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.BundleSpecification;
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
@@ -73,6 +73,7 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.util.FileManager;
 import org.eclipse.pde.api.tools.internal.util.SourceDefaultHandler;
 import org.eclipse.pde.api.tools.internal.util.Util;
+import org.eclipse.pde.internal.core.PDEStateHelper;
 import org.eclipse.pde.internal.core.TargetWeaver;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
@@ -186,16 +187,20 @@ public class BundleComponent extends Component {
 	 */
 	protected synchronized Map getManifest() throws CoreException {
 		if(fManifest == null) {
-			try {
-				fManifest = loadManifest(new File(fLocation));
+				fManifest = PDEStateHelper.loadManifest(new File(fLocation));
 				if (isWorkspaceBinary()) {
 					// must account for bundles in development mode - look for class files in output
 					// folders rather than jars
 					TargetWeaver.weaveManifest(fManifest);
 				}
-			} catch (IOException e) {
-				abort("Unable to load manifest due to IO error", e); //$NON-NLS-1$
-			}
+				if (fManifest == null || fManifest.get(Constants.BUNDLE_NAME) == null){
+					// Check if we have an old style (pre-osgi) bundle (this only works if OSGi is running.
+					try {
+						fManifest = PDEStateHelper.loadOldStyleManifest(new File(fLocation));
+					} catch (PluginConversionException e) {
+						// Ignore because isValidBundle will still return false
+					}
+				}
 		}
 		return fManifest;
 	}
@@ -783,42 +788,6 @@ public class BundleComponent extends Component {
 		return file;
 	}
 	
-	/**
-	 * Parses a bunlde's manifest into a dictionary. The bundle may be in a jar
-	 * or in a directory at the specified location.
-	 * 
-	 * @param bundleLocation root location of the bundle
-	 * @return bundle manifest dictionary or <code>null</code> if none
-	 * @throws IOException if unable to parse
-	 */
-	protected Map loadManifest(File bundleLocation) throws IOException {
-		ZipFile jarFile = null;
-		InputStream manifestStream = null;
-		String extension = new Path(bundleLocation.getName()).getFileExtension();
-		try {
-			if (extension != null && extension.equals("jar") && bundleLocation.isFile()) { //$NON-NLS-1$
-				jarFile = new ZipFile(bundleLocation, ZipFile.OPEN_READ);
-				ZipEntry manifestEntry = jarFile.getEntry(JarFile.MANIFEST_NAME);
-				if (manifestEntry != null) {
-					manifestStream = jarFile.getInputStream(manifestEntry);
-				}
-			} else {
-				File file = new File(bundleLocation, JarFile.MANIFEST_NAME);
-				if (file.exists())
-					manifestStream = new FileInputStream(file);
-			}
-			if (manifestStream == null) {
-				return null;
-			}
-			return ManifestElement.parseBundleManifest(manifestStream, new Hashtable(10));
-		} catch (BundleException e) {
-			ApiPlugin.log(e);
-		} finally {
-			closingZipFileAndStream(manifestStream, jarFile);
-		}
-		return null;
-	}
-
 	public void closingZipFileAndStream(InputStream stream, ZipFile jarFile) {
 		try {
 			if (stream != null) {

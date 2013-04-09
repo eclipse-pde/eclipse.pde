@@ -63,7 +63,7 @@ public class ApiToolingApiuseAntTaskTests extends AntRunnerTestCase {
 		for (int index = 0; index < elems.getLength(); ++index) {
 			String value = elems.item(index).getAttributes().getNamedItem("id").getNodeValue();
 			boolean pass = false;
-			if (value.startsWith("org.eclipse.osgi") || value.contains("illegaluse"))
+			if (value.startsWith("org.eclipse.osgi") || value.contains("illegaluse") || value.contains("oldstyle"))
 				pass = true;
 			assertTrue(value + " should have been filtered out.", pass);
 		}
@@ -72,33 +72,41 @@ public class ApiToolingApiuseAntTaskTests extends AntRunnerTestCase {
 	public void test2() throws Exception {		
 		IFolder reportFolder = runTaskAndVerify("test2");
 		IResource[] members = reportFolder.members();
+		boolean valid = false;
+		boolean validDir = false;
 		for (int index = 0; index < members.length; index++) {
 			if (!members[index].getLocation().toFile().isDirectory())
 				continue;
-			boolean valid = members[index].getName().startsWith("org.example");
+			valid = members[index].getName().startsWith("org.example");
 			assertTrue(members[index].getName() + " should have been filtered out", valid);
 			File[] dirs = members[index].getLocation().toFile().listFiles();
 			for (int i = 0; i < dirs.length; i++) {
-				boolean validDir = dirs[i].getName().startsWith("org.example");
+				validDir = dirs[i].getName().startsWith("org.example");
 				assertTrue(dirs[i].getName() + " should have been filtered out", validDir);
 			}
 		}
+		assertTrue("None of the example plug-ins were scanned", valid);
+		assertTrue("None of the example plug-ins were scanned", validDir);
 	}
 	
 	public void test3() throws Exception {	
 		IFolder reportFolder = runTaskAndVerify("test3");
 		IResource[] members = reportFolder.members();
+		boolean valid = false;
+		boolean validDir = false;
 		for (int index = 0; index < members.length; index++) {
 			if (!members[index].getLocation().toFile().isDirectory())
 				continue;
-			boolean valid = members[index].getName().startsWith("org.example");
+			valid = members[index].getName().startsWith("org.example");
 			assertTrue(members[index].getName() + " should have been filtered out", valid);
 			File[] dirs = members[index].getLocation().toFile().listFiles();
 			for (int i = 0; i < dirs.length; i++) {
-				boolean validDir = dirs[i].getName().startsWith("org.example");
+				validDir = dirs[i].getName().startsWith("org.example");
 				assertTrue(dirs[i].getName() + " should have been filtered out", validDir);
 			}
 		}
+		assertTrue("None of the example plug-ins were scanned", valid);
+		assertTrue("None of the example plug-ins were scanned", validDir);
 	}
 	
 	/**
@@ -108,17 +116,22 @@ public class ApiToolingApiuseAntTaskTests extends AntRunnerTestCase {
 	public void testIllegalUse() throws Exception {		
 		IFolder reportFolder = runTaskAndVerify("testIllegalUse");
 		IResource[] members = reportFolder.members();
+		boolean valid = false;
+		boolean validDir = false;
 		for (int index = 0; index < members.length; index++) {
 			if (!members[index].getLocation().toFile().isDirectory())
 				continue;
-			boolean valid = members[index].getName().startsWith("org.eclipse.osgi");
+			valid = members[index].getName().startsWith("org.eclipse.osgi");
 			assertTrue(members[index].getName() + " should have been filtered out", valid);
 			File[] dirs = members[index].getLocation().toFile().listFiles();
 			for (int i = 0; i < dirs.length; i++) {
-				boolean validDir = dirs[i].getName().startsWith("org.example.test.illegaluse");
+				validDir = dirs[i].getName().startsWith("org.example.test.illegaluse");
 				assertTrue(dirs[i].getName() + " should have been filtered out", validDir);
 			}
 		}
+		// This test is not working properly, see Bug 405302
+//		assertTrue("The illegal use plug-in was not scanned", valid);
+//		assertTrue("The illegal use plug-in was not scanned", validDir);
 	}
 	
 	/**
@@ -132,5 +145,30 @@ public class ApiToolingApiuseAntTaskTests extends AntRunnerTestCase {
 			if (members[index].getLocation().toFile().isDirectory())
 				fail(members[index].getName() + " should have been filtered using a .api_filters file");
 		}
+	}
+	
+	/**
+	 * Tests that a use scan will find problems when a required bundle is an old style (pre-OSGi) plug-in.
+	 * Old style plug-ins are only supported when running in the same JRE as an OSGi runtime.
+	 * @throws Exception
+	 */
+	public void testOldStylePlugin() throws Exception {		
+		IFolder reportFolder = runTaskAndVerify("testOldStylePlugin");
+		IResource[] members = reportFolder.members();
+		boolean valid = false;
+		boolean validDir = false;
+		for (int index = 0; index < members.length; index++) {
+			if (!members[index].getLocation().toFile().isDirectory())
+				continue;
+			valid = members[index].getName().startsWith("org.eclipse.osgi");
+			assertTrue(members[index].getName() + " should have been filtered out", valid);
+			File[] dirs = members[index].getLocation().toFile().listFiles();
+			for (int i = 0; i < dirs.length; i++) {
+				validDir = dirs[i].getName().startsWith("org.example.test.oldstyle.usage");
+				assertTrue(dirs[i].getName() + " should have been filtered out", validDir);
+			}
+		}
+		assertTrue("The old style plug-in was not scanned", valid);
+		assertTrue("The old style plug-in was not scanned", validDir);
 	}
 }

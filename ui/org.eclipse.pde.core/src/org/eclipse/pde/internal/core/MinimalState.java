@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,27 +13,19 @@ package org.eclipse.pde.internal.core;
 
 import java.io.*;
 import java.util.*;
-import java.util.jar.JarFile;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.pluginconversion.PluginConversionException;
-import org.eclipse.osgi.service.pluginconversion.PluginConverter;
 import org.eclipse.osgi.service.resolver.*;
-import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
-import org.osgi.util.tracker.ServiceTracker;
 
 public class MinimalState {
 
 	protected State fState;
 
 	protected long fId;
-
-	private PluginConverter fConverter = null;
 
 	private boolean fEEListChanged = false; // indicates that the EE has changed
 	// this could be due to the system bundle changing location
@@ -82,7 +74,6 @@ public class MinimalState {
 			model.setBundleDescription(newDesc);
 			if (newDesc == null && update)
 				fState.removeBundle(desc);
-		} catch (IOException e) {
 		} catch (PluginConversionException e) {
 		} catch (CoreException e) {
 			PDECore.log(e);
@@ -92,7 +83,6 @@ public class MinimalState {
 	public BundleDescription addBundle(IPluginModelBase model, long bundleId) {
 		try {
 			return addBundle(new File(model.getInstallLocation()), -1);
-		} catch (IOException e) {
 		} catch (PluginConversionException e) {
 		} catch (CoreException e) {
 		}
@@ -118,23 +108,14 @@ public class MinimalState {
 		return null;
 	}
 
-	public BundleDescription addBundle(File bundleLocation, long bundleId) throws PluginConversionException, CoreException, IOException {
-		Map<String, String> manifest = loadManifest(bundleLocation);
+	public BundleDescription addBundle(File bundleLocation, long bundleId) throws PluginConversionException, CoreException {
+		Map<String, String> manifest = PDEStateHelper.loadManifest(bundleLocation);
 		// update for development mode
 		TargetWeaver.weaveManifest(manifest);
 		boolean hasBundleStructure = manifest != null && manifest.get(Constants.BUNDLE_SYMBOLICNAME) != null;
 		if (!hasBundleStructure) {
-			if (!bundleLocation.isFile() && !new File(bundleLocation, ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR).exists() && !new File(bundleLocation, ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR).exists())
-				return null;
-			PluginConverter converter = acquirePluginConverter();
-			manifest = new HashMap<String, String>();
-			Dictionary<String, String> converted = converter.convertManifest(bundleLocation, false, null, false, null);
-			Enumeration<String> keys = converted.keys();
-			while (keys.hasMoreElements()) {
-				String key = keys.nextElement();
-				manifest.put(key, converted.get(key));
-			}
-			if (manifest.get(Constants.BUNDLE_SYMBOLICNAME) == null)
+			manifest = PDEStateHelper.loadOldStyleManifest(bundleLocation);
+			if (manifest == null || manifest.get(Constants.BUNDLE_SYMBOLICNAME) == null)
 				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IStatus.ERROR, "Error parsing plug-in manifest file at " + bundleLocation.toString(), null)); //$NON-NLS-1$
 		}
 		BundleDescription desc = addBundle(manifest, bundleLocation, bundleId);
@@ -169,39 +150,6 @@ public class MinimalState {
 			PDECore.log(e);
 		} finally {
 		}
-	}
-
-	public static Map<String, String> loadManifest(File bundleLocation) throws IOException {
-		ZipFile jarFile = null;
-		InputStream manifestStream = null;
-		try {
-			String extension = new Path(bundleLocation.getName()).getFileExtension();
-			if (extension != null && bundleLocation.isFile()) {
-				jarFile = new ZipFile(bundleLocation, ZipFile.OPEN_READ);
-				ZipEntry manifestEntry = jarFile.getEntry(JarFile.MANIFEST_NAME);
-				if (manifestEntry != null) {
-					manifestStream = jarFile.getInputStream(manifestEntry);
-				}
-			} else {
-				File file = new File(bundleLocation, JarFile.MANIFEST_NAME);
-				if (file.exists())
-					manifestStream = new FileInputStream(file);
-			}
-		} catch (IOException e) {
-		}
-		if (manifestStream == null)
-			return null;
-		try {
-			return ManifestElement.parseBundleManifest(manifestStream, null);
-		} catch (BundleException e) {
-		} finally {
-			try {
-				if (jarFile != null)
-					jarFile.close();
-			} catch (IOException e2) {
-			}
-		}
-		return null;
 	}
 
 	public StateDelta resolveState(boolean incremental) {
@@ -274,17 +222,6 @@ public class MinimalState {
 	public void addBundleDescription(BundleDescription toAdd) {
 		if (toAdd != null)
 			fState.addBundle(toAdd);
-	}
-
-	private PluginConverter acquirePluginConverter() {
-		if (fConverter == null) {
-			ServiceTracker<?, ?> tracker = new ServiceTracker<Object, Object>(PDECore.getDefault().getBundleContext(), PluginConverter.class.getName(), null);
-			tracker.open();
-			fConverter = (PluginConverter) tracker.getService();
-			tracker.close();
-			tracker = null;
-		}
-		return fConverter;
 	}
 
 	public long getNextId() {
