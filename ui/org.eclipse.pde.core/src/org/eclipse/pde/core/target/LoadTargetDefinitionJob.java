@@ -408,15 +408,19 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 				}
 			}
 
-			// Compute missing (not included) bundles (preference need to know disabled/missing bundles)
+			// Compute missing (not included) bundles (preference stores the disabled/missing bundles, instead of the included bundles)
 			List<BundleInfo> missing = new ArrayList<BundleInfo>();
 			NameVersionDescriptor[] restrictions = fTarget.getIncluded();
 			if (restrictions != null) {
 				for (int j = 0; j < allBundles.length; j++) {
 					TargetBundle bi = allBundles[j];
 					if (bi.getStatus().isOK()) {
-						if (!included.contains(bi.getBundleInfo())) {
-							missing.add(bi.getBundleInfo());
+						BundleInfo bundleInfo = bi.getBundleInfo();
+						NameVersionDescriptor desc = new NameVersionDescriptor(bundleInfo.getSymbolicName(), bundleInfo.getVersion());
+						// Check if the bundle is part of the included bundles or is an exact duplicate
+						if (!duplicates.contains(desc) && !included.contains(bundleInfo)) {
+							missing.add(bundleInfo);
+							duplicates.add(desc);
 						}
 					}
 				}
