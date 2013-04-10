@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -242,8 +242,8 @@ public class InvalidEnumMethodTagTests extends InvalidMethodTagTests {
 	private void x9(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(2));
 		setExpectedMessageArgs(new String[][] {
-				{"@nooverride", BuilderMessages.TagValidator_private_enum_method},
-				{"@nooverride", BuilderMessages.TagValidator_private_enum_method}
+				{"@nooverride", BuilderMessages.TagValidator_an_enum_method},
+				{"@nooverride", BuilderMessages.TagValidator_an_enum_method}
 		});
 		deployTagTest("test9.java", inc, true);
 	}

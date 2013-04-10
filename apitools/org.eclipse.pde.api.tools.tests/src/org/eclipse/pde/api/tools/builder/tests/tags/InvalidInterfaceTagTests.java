@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -73,9 +73,9 @@ public class InvalidInterfaceTagTests extends TagTest {
 		setExpectedProblemIds(getDefaultProblemSet(4));
 		setExpectedMessageArgs(new String[][] {
 				{"@noreference", BuilderMessages.TagValidator_an_interface},
-				{"@noreference", BuilderMessages.TagValidator_a_package_default_interface},
-				{"@noreference", BuilderMessages.TagValidator_a_package_default_interface},
-				{"@noreference", BuilderMessages.TagValidator_a_package_default_interface}
+				{"@noreference", BuilderMessages.TagValidator_an_interface},
+				{"@noreference", BuilderMessages.TagValidator_an_interface},
+				{"@noreference", BuilderMessages.TagValidator_an_interface}
 		});
 		deployTagTest("test1.java", inc, false);
 	}
@@ -114,9 +114,9 @@ public class InvalidInterfaceTagTests extends TagTest {
 		setExpectedProblemIds(getDefaultProblemSet(4));
 		setExpectedMessageArgs(new String[][] {
 				{"@nooverride", BuilderMessages.TagValidator_an_interface},
-				{"@nooverride", BuilderMessages.TagValidator_a_package_default_interface},
-				{"@nooverride", BuilderMessages.TagValidator_a_package_default_interface},
-				{"@nooverride", BuilderMessages.TagValidator_a_package_default_interface}
+				{"@nooverride", BuilderMessages.TagValidator_an_interface},
+				{"@nooverride", BuilderMessages.TagValidator_an_interface},
+				{"@nooverride", BuilderMessages.TagValidator_an_interface}
 		});
 		deployTagTest("test3.java", inc, false);
 	}
@@ -155,9 +155,9 @@ public class InvalidInterfaceTagTests extends TagTest {
 		setExpectedProblemIds(getDefaultProblemSet(4));
 		setExpectedMessageArgs(new String[][] {
 				{"@noinstantiate", BuilderMessages.TagValidator_an_interface},
-				{"@noinstantiate", BuilderMessages.TagValidator_a_package_default_interface},
-				{"@noinstantiate", BuilderMessages.TagValidator_a_package_default_interface},
-				{"@noinstantiate", BuilderMessages.TagValidator_a_package_default_interface}
+				{"@noinstantiate", BuilderMessages.TagValidator_an_interface},
+				{"@noinstantiate", BuilderMessages.TagValidator_an_interface},
+				{"@noinstantiate", BuilderMessages.TagValidator_an_interface}
 		});
 		deployTagTest("test5.java", inc, false);
 	}

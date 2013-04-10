@@ -136,7 +136,7 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 					case IJavaElement.TYPE: {
 						IType itype = (IType) element;
 						int flags = itype.getFlags();
-						if(Flags.isPrivate(flags) || Flags.isPackageDefault(flags)) {
+						if(Flags.isPrivate(flags) || Flags.isPackageDefault(flags) || hasNonVisibleParent(element)) {
 							return Collections.EMPTY_LIST;
 						}
 						break;
@@ -144,7 +144,7 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 					case IJavaElement.METHOD: {
 						IMethod method = (IMethod) element;
 						int flags = method.getFlags();
-						if(Flags.isPrivate(flags) || Flags.isPackageDefault(flags)) {
+						if(Flags.isPrivate(flags) || Flags.isPackageDefault(flags) || hasNonVisibleParent(element)) {
 							return Collections.EMPTY_LIST;
 						}
 						member = IApiJavadocTag.MEMBER_METHOD;
@@ -156,7 +156,7 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 					case IJavaElement.FIELD: {
 						IField field  = (IField) element;
 						int flags = field.getFlags();
-						if(Flags.isFinal(flags) || field.isEnumConstant() || Flags.isPrivate(flags) || Flags.isPackageDefault(flags)) {
+						if(Flags.isFinal(flags) || field.isEnumConstant() || Flags.isPrivate(flags) || Flags.isPackageDefault(flags) || hasNonVisibleParent(element)) {
 							return Collections.EMPTY_LIST;
 						}
 						member = IApiJavadocTag.MEMBER_FIELD;
@@ -193,6 +193,31 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 			}
 		}
 		return Collections.EMPTY_LIST;
+	}
+	
+	/**
+	 * Returns if the given element has a non-visible parent in its parent hierarchy
+	 * 
+	 * @param element
+	 * @return <code>true</code> if a parent type is non-visible, <code>false</code> otherwise
+	 * @throws JavaModelException
+	 * @since 1.0.400
+	 */
+	boolean hasNonVisibleParent(IJavaElement element) throws JavaModelException {
+		if(element == null) {
+			return false;
+		}
+		switch(element.getElementType()) {
+			case IJavaElement.TYPE: {
+				IType type = (IType) element;
+				int flags = type.getFlags();
+				if(Flags.isPrivate(flags) || Flags.isPackageDefault(flags)) {
+					return true;
+				}
+				break;
+			}
+		}
+		return hasNonVisibleParent(element.getParent());
 	}
 	
 	/**

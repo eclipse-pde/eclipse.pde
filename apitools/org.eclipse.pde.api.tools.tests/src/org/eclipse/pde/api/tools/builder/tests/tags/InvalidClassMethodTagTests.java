@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,20 +60,20 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 		setExpectedProblemIds(getDefaultProblemIdSet(16));
 		setExpectedMessageArgs(new String[][] {
 				{"@noimplement", BuilderMessages.TagValidator_a_method},
-				{"@noimplement", BuilderMessages.TagValidator_a_final_method},
-				{"@noimplement", BuilderMessages.TagValidator_a_static_method},
 				{"@noimplement", BuilderMessages.TagValidator_a_method},
 				{"@noimplement", BuilderMessages.TagValidator_a_method},
-				{"@noimplement", BuilderMessages.TagValidator_a_final_method},
-				{"@noimplement", BuilderMessages.TagValidator_a_static_method},
 				{"@noimplement", BuilderMessages.TagValidator_a_method},
 				{"@noimplement", BuilderMessages.TagValidator_a_method},
-				{"@noimplement", BuilderMessages.TagValidator_a_final_method},
-				{"@noimplement", BuilderMessages.TagValidator_a_static_method},
 				{"@noimplement", BuilderMessages.TagValidator_a_method},
 				{"@noimplement", BuilderMessages.TagValidator_a_method},
-				{"@noimplement", BuilderMessages.TagValidator_a_final_method},
-				{"@noimplement", BuilderMessages.TagValidator_a_static_method},
+				{"@noimplement", BuilderMessages.TagValidator_a_method},
+				{"@noimplement", BuilderMessages.TagValidator_a_method},
+				{"@noimplement", BuilderMessages.TagValidator_a_method},
+				{"@noimplement", BuilderMessages.TagValidator_a_method},
+				{"@noimplement", BuilderMessages.TagValidator_a_method},
+				{"@noimplement", BuilderMessages.TagValidator_a_method},
+				{"@noimplement", BuilderMessages.TagValidator_a_method},
+				{"@noimplement", BuilderMessages.TagValidator_a_method},
 				{"@noimplement", BuilderMessages.TagValidator_a_method},
 		});
 		deployTagTest("test1.java", inc, false);
@@ -94,8 +94,8 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 		setExpectedProblemIds(getDefaultProblemIdSet(4));
 		setExpectedMessageArgs(new String[][] {
 				{"@noimplement", BuilderMessages.TagValidator_a_method},
-				{"@noimplement", BuilderMessages.TagValidator_a_final_method},
-				{"@noimplement", BuilderMessages.TagValidator_a_static_method},
+				{"@noimplement", BuilderMessages.TagValidator_a_method},
+				{"@noimplement", BuilderMessages.TagValidator_a_method},
 				{"@noimplement", BuilderMessages.TagValidator_a_method},
 		});
 		deployTagTest("test2.java", inc, true);
@@ -116,20 +116,20 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 		setExpectedProblemIds(getDefaultProblemIdSet(16));
 		setExpectedMessageArgs(new String[][] {
 				{"@noextend", BuilderMessages.TagValidator_a_method},
-				{"@noextend", BuilderMessages.TagValidator_a_final_method},
-				{"@noextend", BuilderMessages.TagValidator_a_static_method},
 				{"@noextend", BuilderMessages.TagValidator_a_method},
 				{"@noextend", BuilderMessages.TagValidator_a_method},
-				{"@noextend", BuilderMessages.TagValidator_a_final_method},
-				{"@noextend", BuilderMessages.TagValidator_a_static_method},
 				{"@noextend", BuilderMessages.TagValidator_a_method},
 				{"@noextend", BuilderMessages.TagValidator_a_method},
-				{"@noextend", BuilderMessages.TagValidator_a_final_method},
-				{"@noextend", BuilderMessages.TagValidator_a_static_method},
 				{"@noextend", BuilderMessages.TagValidator_a_method},
 				{"@noextend", BuilderMessages.TagValidator_a_method},
-				{"@noextend", BuilderMessages.TagValidator_a_final_method},
-				{"@noextend", BuilderMessages.TagValidator_a_static_method},
+				{"@noextend", BuilderMessages.TagValidator_a_method},
+				{"@noextend", BuilderMessages.TagValidator_a_method},
+				{"@noextend", BuilderMessages.TagValidator_a_method},
+				{"@noextend", BuilderMessages.TagValidator_a_method},
+				{"@noextend", BuilderMessages.TagValidator_a_method},
+				{"@noextend", BuilderMessages.TagValidator_a_method},
+				{"@noextend", BuilderMessages.TagValidator_a_method},
+				{"@noextend", BuilderMessages.TagValidator_a_method},
 				{"@noextend", BuilderMessages.TagValidator_a_method},
 		});
 		deployTagTest("test3.java", inc, false);
@@ -150,8 +150,8 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 		setExpectedProblemIds(getDefaultProblemIdSet(4));
 		setExpectedMessageArgs(new String[][] {
 				{"@noextend", BuilderMessages.TagValidator_a_method},
-				{"@noextend", BuilderMessages.TagValidator_a_final_method},
-				{"@noextend", BuilderMessages.TagValidator_a_static_method},
+				{"@noextend", BuilderMessages.TagValidator_a_method},
+				{"@noextend", BuilderMessages.TagValidator_a_method},
 				{"@noextend", BuilderMessages.TagValidator_a_method},
 		});
 		deployTagTest("test4.java", inc, true);
@@ -172,20 +172,20 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 		setExpectedProblemIds(getDefaultProblemIdSet(16));
 		setExpectedMessageArgs(new String[][] {
 				{"@noinstantiate", BuilderMessages.TagValidator_a_method},
-				{"@noinstantiate", BuilderMessages.TagValidator_a_final_method},
-				{"@noinstantiate", BuilderMessages.TagValidator_a_static_method},
 				{"@noinstantiate", BuilderMessages.TagValidator_a_method},
 				{"@noinstantiate", BuilderMessages.TagValidator_a_method},
-				{"@noinstantiate", BuilderMessages.TagValidator_a_final_method},
-				{"@noinstantiate", BuilderMessages.TagValidator_a_static_method},
 				{"@noinstantiate", BuilderMessages.TagValidator_a_method},
 				{"@noinstantiate", BuilderMessages.TagValidator_a_method},
-				{"@noinstantiate", BuilderMessages.TagValidator_a_final_method},
-				{"@noinstantiate", BuilderMessages.TagValidator_a_static_method},
 				{"@noinstantiate", BuilderMessages.TagValidator_a_method},
 				{"@noinstantiate", BuilderMessages.TagValidator_a_method},
-				{"@noinstantiate", BuilderMessages.TagValidator_a_final_method},
-				{"@noinstantiate", BuilderMessages.TagValidator_a_static_method},
+				{"@noinstantiate", BuilderMessages.TagValidator_a_method},
+				{"@noinstantiate", BuilderMessages.TagValidator_a_method},
+				{"@noinstantiate", BuilderMessages.TagValidator_a_method},
+				{"@noinstantiate", BuilderMessages.TagValidator_a_method},
+				{"@noinstantiate", BuilderMessages.TagValidator_a_method},
+				{"@noinstantiate", BuilderMessages.TagValidator_a_method},
+				{"@noinstantiate", BuilderMessages.TagValidator_a_method},
+				{"@noinstantiate", BuilderMessages.TagValidator_a_method},
 				{"@noinstantiate", BuilderMessages.TagValidator_a_method},
 		});
 		deployTagTest("test5.java", inc, false);
@@ -206,8 +206,8 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 		setExpectedProblemIds(getDefaultProblemIdSet(4));
 		setExpectedMessageArgs(new String[][] {
 				{"@noinstantiate", BuilderMessages.TagValidator_a_method},
-				{"@noinstantiate", BuilderMessages.TagValidator_a_final_method},
-				{"@noinstantiate", BuilderMessages.TagValidator_a_static_method},
+				{"@noinstantiate", BuilderMessages.TagValidator_a_method},
+				{"@noinstantiate", BuilderMessages.TagValidator_a_method},
 				{"@noinstantiate", BuilderMessages.TagValidator_a_method},
 		});
 		deployTagTest("test6.java", inc, true);
@@ -349,9 +349,8 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	 * Tests the unsupported @nooverride tag on a static method
 	 */
 	private void x13(boolean inc) {
-		setExpectedProblemIds(getDefaultProblemIdSet(3));
+		setExpectedProblemIds(getDefaultProblemIdSet(2));
 		setExpectedMessageArgs(new String[][] {
-				{"@nooverride", BuilderMessages.TagValidator_a_static_method},
 				{"@nooverride", BuilderMessages.TagValidator_a_static_package_default_method},
 				{"@nooverride", BuilderMessages.TagValidator_a_static_final_method},
 		});

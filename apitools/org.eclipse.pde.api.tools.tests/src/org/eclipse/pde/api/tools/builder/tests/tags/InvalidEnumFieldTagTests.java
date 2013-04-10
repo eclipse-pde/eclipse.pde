@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -64,16 +64,14 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 * Tests an invalid @noreference tag on three final fields in an enum
 	 */
 	private void x1(boolean inc) {
-		setExpectedProblemIds(getDefaultProblemSet(12));
+		setExpectedProblemIds(getDefaultProblemSet(10));
 		setExpectedMessageArgs(new String[][] {
-				{"@noreference", BuilderMessages.TagValidator_enum_field},
-				{"@noreference", BuilderMessages.TagValidator_enum_field},
-				{"@noreference", BuilderMessages.TagValidator_enum_field},
-				{"@noreference", BuilderMessages.TagValidator_enum_field},
-				{"@noreference", BuilderMessages.TagValidator_enum_field},
-				{"@noreference", BuilderMessages.TagValidator_enum_field},
-				{"@noreference", BuilderMessages.TagValidator_enum_field},
-				{"@noreference", BuilderMessages.TagValidator_enum_field},
+				{"@noreference", BuilderMessages.TagValidator_not_visible_enum_field},
+				{"@noreference", BuilderMessages.TagValidator_not_visible_enum_field},
+				{"@noreference", BuilderMessages.TagValidator_not_visible_enum_field},
+				{"@noreference", BuilderMessages.TagValidator_not_visible_enum_field},
+				{"@noreference", BuilderMessages.TagValidator_not_visible_enum_field},
+				{"@noreference", BuilderMessages.TagValidator_not_visible_enum_field},
 				{"@noreference", BuilderMessages.TagValidator_private_enum_field},
 				{"@noreference", BuilderMessages.TagValidator_private_enum_field},
 				{"@noreference", BuilderMessages.TagValidator_private_enum_field},
@@ -94,10 +92,8 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 * Tests a valid @noreference tag on three final fields in an enum in the default package
 	 */
 	private void x2(boolean inc) {
-		setExpectedProblemIds(getDefaultProblemSet(3));
+		setExpectedProblemIds(getDefaultProblemSet(1));
 		setExpectedMessageArgs(new String[][] {
-				{"@noreference", BuilderMessages.TagValidator_enum_field},
-				{"@noreference", BuilderMessages.TagValidator_enum_field},
 				{"@noreference", BuilderMessages.TagValidator_private_enum_field}
 		});
 		deployTagTest("test2.java", inc, true);
@@ -115,16 +111,14 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 * Tests a invalid @noreference tag on static final fields in inner /outer enums
 	 */
 	private void x3(boolean inc) {
-		setExpectedProblemIds(getDefaultProblemSet(12));
+		setExpectedProblemIds(getDefaultProblemSet(10));
 		setExpectedMessageArgs(new String[][] {
-				{"@noreference", BuilderMessages.TagValidator_enum_field},
-				{"@noreference", BuilderMessages.TagValidator_enum_field},
-				{"@noreference", BuilderMessages.TagValidator_enum_field},
-				{"@noreference", BuilderMessages.TagValidator_enum_field},
-				{"@noreference", BuilderMessages.TagValidator_enum_field},
-				{"@noreference", BuilderMessages.TagValidator_enum_field},
-				{"@noreference", BuilderMessages.TagValidator_enum_field},
-				{"@noreference", BuilderMessages.TagValidator_enum_field},
+				{"@noreference", BuilderMessages.TagValidator_not_visible_enum_field},
+				{"@noreference", BuilderMessages.TagValidator_not_visible_enum_field},
+				{"@noreference", BuilderMessages.TagValidator_not_visible_enum_field},
+				{"@noreference", BuilderMessages.TagValidator_not_visible_enum_field},
+				{"@noreference", BuilderMessages.TagValidator_not_visible_enum_field},
+				{"@noreference", BuilderMessages.TagValidator_not_visible_enum_field},
 				{"@noreference", BuilderMessages.TagValidator_private_enum_field},
 				{"@noreference", BuilderMessages.TagValidator_private_enum_field},
 				{"@noreference", BuilderMessages.TagValidator_private_enum_field},
@@ -145,10 +139,8 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 	 * Tests a valid @noreference tag on three static final fields in an enum in the default package
 	 */
 	private void x4(boolean inc) {
-		setExpectedProblemIds(getDefaultProblemSet(3));
+		setExpectedProblemIds(getDefaultProblemSet(1));
 		setExpectedMessageArgs(new String[][] {
-				{"@noreference", BuilderMessages.TagValidator_enum_field},
-				{"@noreference", BuilderMessages.TagValidator_enum_field},
 				{"@noreference", BuilderMessages.TagValidator_private_enum_field}
 		});
 		deployTagTest("test4.java", inc, true);
@@ -176,10 +168,10 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 				{"@noextend", BuilderMessages.TagValidator_enum_field},
 				{"@noextend", BuilderMessages.TagValidator_enum_field},
 				{"@noextend", BuilderMessages.TagValidator_enum_field},
-				{"@noextend", BuilderMessages.TagValidator_private_enum_field},
-				{"@noextend", BuilderMessages.TagValidator_private_enum_field},
-				{"@noextend", BuilderMessages.TagValidator_private_enum_field},
-				{"@noextend", BuilderMessages.TagValidator_private_enum_field}
+				{"@noextend", BuilderMessages.TagValidator_enum_field},
+				{"@noextend", BuilderMessages.TagValidator_enum_field},
+				{"@noextend", BuilderMessages.TagValidator_enum_field},
+				{"@noextend", BuilderMessages.TagValidator_enum_field}
 		});
 		deployTagTest("test5.java", inc, false);
 	}
@@ -200,7 +192,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 		setExpectedMessageArgs(new String[][] {
 				{"@noextend", BuilderMessages.TagValidator_enum_field},
 				{"@noextend", BuilderMessages.TagValidator_enum_field},
-				{"@noextend", BuilderMessages.TagValidator_private_enum_field}
+				{"@noextend", BuilderMessages.TagValidator_enum_field}
 		});
 		deployTagTest("test6.java", inc, true);
 	}
@@ -227,10 +219,10 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 				{"@noimplement", BuilderMessages.TagValidator_enum_field},
 				{"@noimplement", BuilderMessages.TagValidator_enum_field},
 				{"@noimplement", BuilderMessages.TagValidator_enum_field},
-				{"@noimplement", BuilderMessages.TagValidator_private_enum_field},
-				{"@noimplement", BuilderMessages.TagValidator_private_enum_field},
-				{"@noimplement", BuilderMessages.TagValidator_private_enum_field},
-				{"@noimplement", BuilderMessages.TagValidator_private_enum_field}
+				{"@noimplement", BuilderMessages.TagValidator_enum_field},
+				{"@noimplement", BuilderMessages.TagValidator_enum_field},
+				{"@noimplement", BuilderMessages.TagValidator_enum_field},
+				{"@noimplement", BuilderMessages.TagValidator_enum_field}
 		});
 		deployTagTest("test7.java", inc, false);
 	}
@@ -251,7 +243,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 		setExpectedMessageArgs(new String[][] {
 				{"@noimplement", BuilderMessages.TagValidator_enum_field},
 				{"@noimplement", BuilderMessages.TagValidator_enum_field},
-				{"@noimplement", BuilderMessages.TagValidator_private_enum_field}
+				{"@noimplement", BuilderMessages.TagValidator_enum_field}
 		});
 		deployTagTest("test8.java", inc, true);
 	}
@@ -278,10 +270,10 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 				{"@nooverride", BuilderMessages.TagValidator_enum_field},
 				{"@nooverride", BuilderMessages.TagValidator_enum_field},
 				{"@nooverride", BuilderMessages.TagValidator_enum_field},
-				{"@nooverride", BuilderMessages.TagValidator_private_enum_field},
-				{"@nooverride", BuilderMessages.TagValidator_private_enum_field},
-				{"@nooverride", BuilderMessages.TagValidator_private_enum_field},
-				{"@nooverride", BuilderMessages.TagValidator_private_enum_field}
+				{"@nooverride", BuilderMessages.TagValidator_enum_field},
+				{"@nooverride", BuilderMessages.TagValidator_enum_field},
+				{"@nooverride", BuilderMessages.TagValidator_enum_field},
+				{"@nooverride", BuilderMessages.TagValidator_enum_field}
 		});
 		deployTagTest("test9.java", inc, false);
 	}
@@ -302,7 +294,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 		setExpectedMessageArgs(new String[][] {
 				{"@nooverride", BuilderMessages.TagValidator_enum_field},
 				{"@nooverride", BuilderMessages.TagValidator_enum_field},
-				{"@nooverride", BuilderMessages.TagValidator_private_enum_field}
+				{"@nooverride", BuilderMessages.TagValidator_enum_field}
 		});
 		deployTagTest("test10.java", inc, true);
 	}
@@ -329,10 +321,10 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 				{"@noinstantiate", BuilderMessages.TagValidator_enum_field},
 				{"@noinstantiate", BuilderMessages.TagValidator_enum_field},
 				{"@noinstantiate", BuilderMessages.TagValidator_enum_field},
-				{"@noinstantiate", BuilderMessages.TagValidator_private_enum_field},
-				{"@noinstantiate", BuilderMessages.TagValidator_private_enum_field},
-				{"@noinstantiate", BuilderMessages.TagValidator_private_enum_field},
-				{"@noinstantiate", BuilderMessages.TagValidator_private_enum_field}
+				{"@noinstantiate", BuilderMessages.TagValidator_enum_field},
+				{"@noinstantiate", BuilderMessages.TagValidator_enum_field},
+				{"@noinstantiate", BuilderMessages.TagValidator_enum_field},
+				{"@noinstantiate", BuilderMessages.TagValidator_enum_field}
 		});
 		deployTagTest("test11.java", inc, false);
 	}
@@ -353,7 +345,7 @@ public class InvalidEnumFieldTagTests extends InvalidFieldTagTests {
 		setExpectedMessageArgs(new String[][] {
 				{"@noinstantiate", BuilderMessages.TagValidator_enum_field},
 				{"@noinstantiate", BuilderMessages.TagValidator_enum_field},
-				{"@noinstantiate", BuilderMessages.TagValidator_private_enum_field}
+				{"@noinstantiate", BuilderMessages.TagValidator_enum_field}
 		});
 		deployTagTest("test12.java", inc, true);
 	}

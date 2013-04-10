@@ -303,8 +303,8 @@ public class InvalidClassConstructorTagTests extends InvalidMethodTagTests {
 	private void x11(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(4));
 		setExpectedMessageArgs(new String[][] {
-				{JavadocTagManager.TAG_NOOVERRIDE, BuilderMessages.TagValidator_private_constructor},
-				{JavadocTagManager.TAG_NOOVERRIDE, BuilderMessages.TagValidator_a_package_default_constructor},
+				{JavadocTagManager.TAG_NOOVERRIDE, BuilderMessages.TagValidator_a_constructor},
+				{JavadocTagManager.TAG_NOOVERRIDE, BuilderMessages.TagValidator_a_constructor},
 				{JavadocTagManager.TAG_NOREFERENCE, BuilderMessages.TagValidator_private_constructor},
 				{JavadocTagManager.TAG_NOREFERENCE, BuilderMessages.TagValidator_a_package_default_constructor}
 		});

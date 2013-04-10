@@ -11,10 +11,12 @@
 package org.eclipse.pde.api.tools.internal.builder;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.Stack;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.Flags;
@@ -24,9 +26,7 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.AnnotationTypeDeclaration;
-import org.eclipse.jdt.core.dom.AnnotationTypeMemberDeclaration;
 import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.EnumConstantDeclaration;
 import org.eclipse.jdt.core.dom.EnumDeclaration;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.Javadoc;
@@ -52,21 +52,28 @@ import org.eclipse.pde.api.tools.internal.util.Util;
  */
 public class TagValidator extends ASTVisitor {
 
+	class Item {
+		String typename;
+		int flags;
+		boolean allints = false;
+		boolean visible = false;
+		Item(String name, int flags, boolean ints, boolean vis) {
+			typename = name;
+			this.flags = flags;
+			allints = ints;
+			visible = vis;
+		}
+	}
+	
 	/**
 	 * backing collection of tag problems, if any
 	 */
 	private ArrayList fTagProblems = null;
 	
 	private ICompilationUnit fCompilationUnit = null;
-	
-	private static final IApiJavadocTag[] NO_TAGS = new IApiJavadocTag[0];
-	
-	/**
-	 * Temporarily stores a node (type, enum, annotation) that is restricted 
-	 * (private or package default).  Any tags in children of this node are
-	 * invalid.
-	 */
-	private AbstractTypeDeclaration fRestrictedNode;
+	boolean allinterfaces = true;
+	boolean isvisible = true;
+	Stack fStack/*<Item>*/ = new Stack();
 	
 	/**
 	 * Constructor
@@ -90,42 +97,62 @@ public class TagValidator extends ASTVisitor {
 	
 	
 	public boolean visit(AnnotationTypeDeclaration node) {
-		if (fRestrictedNode == null && (Flags.isPrivate(node.getModifiers()) || Flags.isPackageDefault(node.getModifiers()))){
-			fRestrictedNode = node;
-		}
+		int flags = node.getModifiers();
+		isvisible = !Flags.isPrivate(flags) && !Flags.isPackageDefault(flags);
+		fStack.push(new Item(node.getName().getFullyQualifiedName(), node.getModifiers(), allinterfaces, isvisible));
 		return true;
 	}
 	
 	public void endVisit(AnnotationTypeDeclaration node) {
-		if (fRestrictedNode != null && fRestrictedNode.equals(node)){
-			fRestrictedNode = null;
-		}
+		fStack.pop();
 	}
 	
 	public boolean visit(TypeDeclaration node) {
-		if (fRestrictedNode == null && (Flags.isPrivate(node.getModifiers()) || Flags.isPackageDefault(node.getModifiers()))){
-			fRestrictedNode = node;
+		int flags = node.getModifiers();
+		if(node.isInterface() && node.isMemberTypeDeclaration()) {
+			if(Flags.isPublic(flags)) {
+				allinterfaces = true;
+			}
+			if(isvisible) {
+				TypeDeclaration parent = (TypeDeclaration) node.getParent();
+				if(parent.isInterface() && Flags.isPublic(parent.getModifiers())) {
+					isvisible = true;
+				}
+				else if(!allinterfaces){
+					isvisible &= !Flags.isPrivate(flags) && !Flags.isPackageDefault(flags);
+				}
+			}
 		}
+		else {
+			allinterfaces &= node.isInterface();
+			isvisible &= !Flags.isPrivate(flags) && !Flags.isPackageDefault(flags);
+		}
+		fStack.push(new Item(node.getName().getFullyQualifiedName(), node.getModifiers(), allinterfaces, isvisible));
 		return true;
 	}
 	
 	public void endVisit(TypeDeclaration node) {
-		if (fRestrictedNode != null && fRestrictedNode.equals(node)){
-			fRestrictedNode = null;
+		fStack.pop();
+		if(!fStack.empty()) {
+			Item i = (Item) fStack.peek();
+			allinterfaces = i.allints;
+			isvisible = i.visible;
 		}
 	}
 	
 	public boolean visit(EnumDeclaration node) {
-		if (fRestrictedNode == null && (Flags.isPrivate(node.getModifiers()) || Flags.isPackageDefault(node.getModifiers()))){
-			fRestrictedNode = node;
-		}
+		int flags = node.getModifiers();
+		isvisible = !Flags.isPrivate(flags) && !Flags.isPackageDefault(flags);
+		fStack.push(new Item(node.getName().getFullyQualifiedName(), node.getModifiers(), allinterfaces, isvisible));
 		return true;
 	}
 	
 	public void endVisit(EnumDeclaration node){
-		if (fRestrictedNode != null && fRestrictedNode.equals(node)){
-			fRestrictedNode = null;
-		}
+		fStack.pop();
+	}
+	
+	public void endVisit(CompilationUnit node) {
+		fStack.clear();
 	}
 	
 	/**
@@ -137,244 +164,505 @@ public class TagValidator extends ASTVisitor {
 		if(tags.size() == 0) {
 			return;
 		}
-		
-		IApiJavadocTag[] validtags = NO_TAGS;
-		JavadocTagManager jtm = ApiPlugin.getJavadocTagManager();
 		switch(node.getNodeType()) {
 			case ASTNode.TYPE_DECLARATION: {
 				TypeDeclaration type = (TypeDeclaration) node;
-				validtags = jtm.getTagsForType(type.isInterface() ? IApiJavadocTag.TYPE_INTERFACE : IApiJavadocTag.TYPE_CLASS, IApiJavadocTag.MEMBER_NONE);
-				HashSet invalidtags = new HashSet(validtags.length);
-				String context = BuilderMessages.TagValidator_an_interface;
-				if(!type.isInterface()) {
-					context = BuilderMessages.TagValidator_a_class;
-					int flags = type.getModifiers();
-					if(Flags.isPrivate(flags)) {
-						context = BuilderMessages.TagValidator_a_private_class;
-						invalidtags.add(JavadocTagManager.TAG_NOINSTANTIATE);
-						invalidtags.add(JavadocTagManager.TAG_NOEXTEND);
-					}
-					else if(Flags.isPackageDefault(flags)) {
-						context = BuilderMessages.TagValidator_a_package_default_class;
-						invalidtags.add(JavadocTagManager.TAG_NOINSTANTIATE);
-						invalidtags.add(JavadocTagManager.TAG_NOEXTEND);
-					}
-					else if(Flags.isAbstract(flags)) {
-						context = BuilderMessages.TagValidator_an_abstract_class;
-						invalidtags.add(JavadocTagManager.TAG_NOINSTANTIATE);
-					}
-					else if(Flags.isFinal(flags)) {
-						context = BuilderMessages.TagValidator_a_final_class;
-						invalidtags.add(JavadocTagManager.TAG_NOEXTEND);
-					}
-				} else {
-					int flags = type.getModifiers();
-					if(Flags.isPackageDefault(flags)) {
-						context = BuilderMessages.TagValidator_a_package_default_interface;
-						invalidtags.add(JavadocTagManager.TAG_NOIMPLEMENT);
-						invalidtags.add(JavadocTagManager.TAG_NOEXTEND);
-					}
-				}
-				if(invalidtags.size() > 0) {
-					ArrayList vtags = new ArrayList(validtags.length);
-					for(int i = 0; i < validtags.length; i++) {
-						if(invalidtags.contains(validtags[i].getTagName())) {
-							continue;
-						}
-						vtags.add(validtags[i]);
-					}
-					validtags = (IApiJavadocTag[]) vtags.toArray(new IApiJavadocTag[vtags.size()]);
-				}
-				processTags(getTypeName(type), tags, validtags, IElementDescriptor.TYPE, context);
+				processTypeNode(type, tags);
 				break;
 			}
 			case ASTNode.ENUM_DECLARATION: {
-				EnumDeclaration enumm = (EnumDeclaration) node;
-				validtags = jtm.getTagsForType(IApiJavadocTag.TYPE_ENUM, IApiJavadocTag.MEMBER_NONE);
-				processTags(getTypeName(enumm), tags, validtags, IElementDescriptor.TYPE, BuilderMessages.TagValidator_an_enum);
+				String typename = getTypeName(node);
+				for (Iterator i = tags.iterator(); i.hasNext();) {
+					TagElement tag = (TagElement) i.next();
+					if(JavadocTagManager.ALL_TAGS.contains(tag.getTagName())) {
+						processTagProblem(typename, 
+								tag, 
+								IElementDescriptor.TYPE, 
+								IApiProblem.UNSUPPORTED_TAG_USE, 
+								IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
+								BuilderMessages.TagValidator_an_enum);
+					}
+				}
 				break;
 			}
 			case ASTNode.ENUM_CONSTANT_DECLARATION: {
-				EnumConstantDeclaration decl = (EnumConstantDeclaration) node;
-				processTags(getTypeName(decl), tags, validtags, IElementDescriptor.FIELD, BuilderMessages.TagValidator_an_enum_constant);
+				String typename = getTypeName(node);
+				for (Iterator i = tags.iterator(); i.hasNext();) {
+					TagElement tag = (TagElement) i.next();
+					if(JavadocTagManager.ALL_TAGS.contains(tag.getTagName())) {
+						processTagProblem(typename, 
+								tag, 
+								IElementDescriptor.FIELD, 
+								IApiProblem.UNSUPPORTED_TAG_USE, 
+								IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
+								BuilderMessages.TagValidator_an_enum_constant);
+					}
+				}
 				break;
 			}
 			case ASTNode.ANNOTATION_TYPE_DECLARATION: {
-				AnnotationTypeDeclaration annot = (AnnotationTypeDeclaration) node;
-				validtags = jtm.getTagsForType(IApiJavadocTag.TYPE_ANNOTATION, IApiJavadocTag.MEMBER_NONE);
-				processTags(getTypeName(annot), tags, validtags, IElementDescriptor.TYPE, BuilderMessages.TagValidator_an_annotation);
+				String typename = getTypeName(node);
+				for (Iterator i = tags.iterator(); i.hasNext();) {
+					TagElement tag = (TagElement) i.next();
+					if(JavadocTagManager.ALL_TAGS.contains(tag.getTagName())) {
+						processTagProblem(typename, 
+								tag, 
+								IElementDescriptor.TYPE, 
+								IApiProblem.UNSUPPORTED_TAG_USE, 
+								IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
+								BuilderMessages.TagValidator_an_annotation);
+					}
+				}
 				break;
 			}
 			case ASTNode.METHOD_DECLARATION: {
 				MethodDeclaration method = (MethodDeclaration) node;
-				int pkind = getParentKind(node);
-				String context = null;
-				int mods = method.getModifiers();
-				boolean isprivate = Flags.isPrivate(mods);
-				boolean ispackage = Flags.isPackageDefault(mods);
-				boolean isconstructor = method.isConstructor();
-				boolean isfinal = Flags.isFinal(mods);
-				boolean isstatic = Flags.isStatic(mods);
-				boolean pfinal = false;
-				switch(pkind) {
-					case IApiJavadocTag.TYPE_ENUM: {
-						context = isprivate ? BuilderMessages.TagValidator_private_enum_method : BuilderMessages.TagValidator_an_enum_method;
-						break;
-					}
-					case IApiJavadocTag.TYPE_INTERFACE: {
-						context = BuilderMessages.TagValidator_an_interface_method;
-						break;
-					}
-					default: {
-						pfinal = Flags.isFinal(getParentModifiers(method));
-						if(isprivate) {
-							context = isconstructor ? BuilderMessages.TagValidator_private_constructor : BuilderMessages.TagValidator_private_method;
-						}
-						else if(!isstatic && ispackage) {
-							context = isconstructor ? BuilderMessages.TagValidator_a_package_default_constructor : BuilderMessages.TagValidator_a_package_default_method;
-						}
-						else if(isstatic && isfinal) {
-							context = BuilderMessages.TagValidator_a_static_final_method;
-						}
-						else if(isstatic && ispackage) {
-							context = BuilderMessages.TagValidator_a_static_package_default_method;
-						}
-						else if (isfinal) {
-							context = BuilderMessages.TagValidator_a_final_method;
-						}
-						else if(isstatic) {
-							context = BuilderMessages.TagValidator_a_static_method;
-						}
-						else if(pfinal) {
-							context = BuilderMessages.TagValidator_a_method_in_a_final_class;
-						}
-						else {
-							context = isconstructor ? BuilderMessages.TagValidator_a_constructor : BuilderMessages.TagValidator_a_method;
-						}
-						break;
-					}
-				}
-				if(!isprivate && !ispackage) {
-					validtags = jtm.getTagsForType(pkind, isconstructor ? IApiJavadocTag.MEMBER_CONSTRUCTOR : IApiJavadocTag.MEMBER_METHOD);
-				}
-				if(isfinal || isstatic || pfinal) {
-					ArrayList ttags = new ArrayList(validtags.length);
-					for(int i = 0; i < validtags.length; i++) {
-						if(!validtags[i].getTagName().equals(JavadocTagManager.TAG_NOOVERRIDE)) {
-							ttags.add(validtags[i]);
-						}
-					}
-					validtags = (IApiJavadocTag[]) ttags.toArray(new IApiJavadocTag[ttags.size()]);
-				}
-				processTags(getTypeName(method), tags, validtags, IElementDescriptor.METHOD, context);
+				processMethodNode(method, tags);
 				break;
 			}
 			case ASTNode.ANNOTATION_TYPE_MEMBER_DECLARATION: {
-				AnnotationTypeMemberDeclaration decl = (AnnotationTypeMemberDeclaration) node;
-				validtags = jtm.getTagsForType(IApiJavadocTag.TYPE_ANNOTATION, IApiJavadocTag.MEMBER_METHOD);
-				processTags(getTypeName(decl), tags, validtags, IElementDescriptor.METHOD, BuilderMessages.TagValidator_an_annotation_method);
+				String typename = getTypeName(node);
+				for (Iterator i = tags.iterator(); i.hasNext();) {
+					TagElement tag = (TagElement) i.next();
+					if(JavadocTagManager.ALL_TAGS.contains(tag.getTagName())) {
+						processTagProblem(typename, 
+								tag, 
+								IElementDescriptor.METHOD, 
+								IApiProblem.UNSUPPORTED_TAG_USE, 
+								IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
+								BuilderMessages.TagValidator_an_annotation_method);
+					}
+				}
 				break;
 			}
 			case ASTNode.FIELD_DECLARATION: {
 				FieldDeclaration field = (FieldDeclaration) node;
-				int pkind = getParentKind(node);
-				String context = null;
-				int flags = field.getModifiers();
-				boolean isfinal = Flags.isFinal(flags);
-				boolean isprivate = Flags.isPrivate(flags);
-				boolean ispackage = Flags.isPackageDefault(flags);
-				switch(pkind) {
-					case IApiJavadocTag.TYPE_ANNOTATION: {
-						context = BuilderMessages.TagValidator_annotation_field;
-						if(isfinal) {
-							context = BuilderMessages.TagValidator_a_final_annotation_field;
-						}
-						break;
-					}
-					case IApiJavadocTag.TYPE_ENUM: {
-						context = isprivate ? BuilderMessages.TagValidator_private_enum_field : BuilderMessages.TagValidator_enum_field;
-						break;
-					}
-					default: {
-						if(isprivate) {
-							context = BuilderMessages.TagValidator_private_field;
-						}
-						else if(ispackage) {
-							context = BuilderMessages.TagValidator_a_package_default_field;
-						}
-						else {
-							context = isfinal ? BuilderMessages.TagValidator_a_final_field : BuilderMessages.TagValidator_a_field;
-						}
-						break;
-					}
-				}
-				
-				if(!isprivate && !isfinal && !ispackage) {
-					validtags = jtm.getTagsForType(pkind, IApiJavadocTag.MEMBER_FIELD);
-				}
-				processTags(getTypeName(field), tags, validtags, IElementDescriptor.FIELD, context);
+				processFieldNode(field, tags);
 				break;
 			}
 		default:
 			break;
 		}
-		
-		// If a parent type is private or package default this element will not be included in the api description so no tags are valid
-		if (fRestrictedNode != null && fRestrictedNode != node){
-			validateTagsWithRestrictedParent(node, tags, validtags);
-		}
 	}
 		
 	/**
-	 * Creates problems for any tags on a node that has a parent type that is restricted
-	 * (private or package default).  Only adds problems to tags if they are not already
-	 * marked as invalid.
+	 * Process the tags for the given {@link TypeDeclaration} node
 	 * 
-	 * @param node the node to process 
-	 * @param tags a list of tags on the node
-	 * @param validTags list of tags that are valid for the node
+	 * @param type
+	 * @param tags
+	 * @since 1.0.400
 	 */
-	private void validateTagsWithRestrictedParent(ASTNode node, List tags, IApiJavadocTag[] validTags){
-		switch(node.getNodeType()) {
-		case ASTNode.TYPE_DECLARATION: {
-			TypeDeclaration type = (TypeDeclaration) node;
-			String context = type.isInterface() ? BuilderMessages.TagValidator_an_interface_that_is_not_visible : BuilderMessages.TagValidator_a_class_that_is_not_visible;
-			processRestrictedParentTags(getTypeName(type), tags, IElementDescriptor.TYPE, context, validTags);
-			break;
+	void processTypeNode(TypeDeclaration type, List tags) {
+		HashSet processed = new HashSet();
+		String typename = getTypeName(type);
+		for (Iterator i = tags.iterator(); i.hasNext();) {
+			TagElement tag = (TagElement) i.next();
+			if(!JavadocTagManager.ALL_TAGS.contains(tag.getTagName())) {
+				continue;
+			}
+			if(processed.contains(tag.getTagName())) {
+				processTagProblem(typename, 
+						tag, 
+						IElementDescriptor.METHOD, 
+						IApiProblem.DUPLICATE_TAG_USE, 
+						IApiMarkerConstants.DUPLICATE_TAG_MARKER_ID, 
+						null);
+			}
+			else {
+				Set supportedtags = getSupportedTagNames(type.isInterface() ? IApiJavadocTag.TYPE_INTERFACE : IApiJavadocTag.TYPE_CLASS, IApiJavadocTag.MEMBER_NONE);
+				Item item = (Item) fStack.peek();
+				boolean visible = item.allints && item.visible;
+				if(!type.isInterface()) {
+					int flags = type.getModifiers();
+					if(!supportedtags.contains(tag.getTagName())) {
+						processTagProblem(typename, 
+								tag, 
+								IElementDescriptor.TYPE, 
+								IApiProblem.UNSUPPORTED_TAG_USE, 
+								IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
+								BuilderMessages.TagValidator_a_class);
+					}
+					else if(Flags.isPrivate(flags)) {
+						processTagProblem(typename, 
+								tag, 
+								IElementDescriptor.TYPE, 
+								IApiProblem.UNSUPPORTED_TAG_USE, 
+								IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
+								BuilderMessages.TagValidator_a_private_class);
+					}
+					else if(Flags.isPackageDefault(flags)) {
+						processTagProblem(typename, 
+								tag, 
+								IElementDescriptor.TYPE, 
+								IApiProblem.UNSUPPORTED_TAG_USE, 
+								IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
+								BuilderMessages.TagValidator_a_package_default_class);
+					}
+					else if(Flags.isAbstract(flags) && JavadocTagManager.TAG_NOINSTANTIATE.equals(tag.getTagName())) {
+						processTagProblem(typename, 
+								tag, 
+								IElementDescriptor.TYPE, 
+								IApiProblem.UNSUPPORTED_TAG_USE, 
+								IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
+								BuilderMessages.TagValidator_an_abstract_class);
+					}
+					else if(Flags.isFinal(flags) && JavadocTagManager.TAG_NOEXTEND.equals(tag.getTagName())) {
+						processTagProblem(typename, 
+								tag, 
+								IElementDescriptor.TYPE, 
+								IApiProblem.UNSUPPORTED_TAG_USE, 
+								IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
+								BuilderMessages.TagValidator_a_final_class);
+					}
+					else if(!item.visible) {
+						processTagProblem(typename, 
+								tag, 
+								IElementDescriptor.TYPE, 
+								IApiProblem.UNSUPPORTED_TAG_USE, 
+								IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
+								BuilderMessages.TagValidator_a_class_that_is_not_visible);
+					}
+				} else {
+					if(!supportedtags.contains(tag.getTagName())) {
+						processTagProblem(typename, 
+								tag, 
+								IElementDescriptor.TYPE, 
+								IApiProblem.UNSUPPORTED_TAG_USE, 
+								IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
+								BuilderMessages.TagValidator_an_interface);
+					}
+					else if(!visible) {
+						processTagProblem(typename, 
+								tag, 
+								IElementDescriptor.TYPE, 
+								IApiProblem.UNSUPPORTED_TAG_USE, 
+								IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
+								BuilderMessages.TagValidator_an_interface_that_is_not_visible);
+					}
+				}
+			}
+			processed.add(tag.getTagName());
 		}
-		case ASTNode.ENUM_DECLARATION: {
-			EnumDeclaration enumm = (EnumDeclaration) node;
-			processRestrictedParentTags(getTypeName(enumm), tags, IElementDescriptor.TYPE, BuilderMessages.TagValidator_an_enum_that_is_not_visible, validTags);
-			break;
+	}
+	
+	/**
+	 * Processes all of the tags for the given {@link FieldDeclaration}
+	 * @param field
+	 * @param tags
+	 * @since 1.0.400
+	 */
+	void processFieldNode(FieldDeclaration field, List tags) {
+		HashSet processed = new HashSet();
+		String typename = getTypeName(field);
+		for (Iterator i = tags.iterator(); i.hasNext();) {
+			TagElement tag = (TagElement) i.next();
+			if(!JavadocTagManager.ALL_TAGS.contains(tag.getTagName())) {
+				continue;
+			}
+			if(processed.contains(tag.getTagName())) {
+				processTagProblem(typename, 
+						tag, 
+						IElementDescriptor.METHOD, 
+						IApiProblem.DUPLICATE_TAG_USE, 
+						IApiMarkerConstants.DUPLICATE_TAG_MARKER_ID, 
+						null);
+			}
+			else {
+				int pkind = getParentKind(field);
+				int flags = field.getModifiers();
+				boolean isprivate = Flags.isPrivate(flags);
+				boolean ispackage = Flags.isPackageDefault(flags);
+				Set supportedtags = getSupportedTagNames(pkind, IApiJavadocTag.MEMBER_FIELD);
+				Item item = (Item) fStack.peek();
+				switch(pkind) {
+					case IApiJavadocTag.TYPE_ANNOTATION: {
+						processTagProblem(typename, 
+								tag, 
+								IElementDescriptor.FIELD, 
+								IApiProblem.UNSUPPORTED_TAG_USE, 
+								IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
+								BuilderMessages.TagValidator_annotation_field);
+						break;
+					}
+					case IApiJavadocTag.TYPE_ENUM: {
+						if(!supportedtags.contains(tag.getTagName())) {
+							processTagProblem(typename, 
+									tag, 
+									IElementDescriptor.FIELD, 
+									IApiProblem.UNSUPPORTED_TAG_USE, 
+									IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
+									BuilderMessages.TagValidator_enum_field);
+						}
+						else if(isprivate) {
+							processTagProblem(typename, 
+									tag, 
+									IElementDescriptor.FIELD, 
+									IApiProblem.UNSUPPORTED_TAG_USE, 
+									IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
+									BuilderMessages.TagValidator_private_enum_field);
+						}
+						else if(!item.visible) {
+							processTagProblem(typename, 
+									tag, 
+									IElementDescriptor.FIELD, 
+									IApiProblem.UNSUPPORTED_TAG_USE, 
+									IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
+									BuilderMessages.TagValidator_not_visible_enum_field);
+						}
+						break;
+					}
+					case IApiJavadocTag.TYPE_INTERFACE: {
+						if(!supportedtags.contains(tag.getTagName())) {
+							processTagProblem(typename, 
+									tag, 
+									IElementDescriptor.FIELD, 
+									IApiProblem.UNSUPPORTED_TAG_USE, 
+									IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
+									BuilderMessages.TagValidator_an_interface_field);
+						}
+						else if(!(item.visible && item.allints)) {
+							processTagProblem(typename, 
+									tag, 
+									IElementDescriptor.FIELD, 
+									IApiProblem.UNSUPPORTED_TAG_USE, 
+									IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
+									BuilderMessages.TagValidator_not_visible_interface_field);
+						}
+						break;
+					}
+					case IApiJavadocTag.TYPE_CLASS: {
+						if(!supportedtags.contains(tag.getTagName())) {
+							processTagProblem(typename, 
+									tag, 
+									IElementDescriptor.FIELD, 
+									IApiProblem.UNSUPPORTED_TAG_USE, 
+									IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
+									BuilderMessages.TagValidator_a_field);
+						}
+						else if(isprivate) {
+							processTagProblem(typename, 
+									tag, 
+									IElementDescriptor.FIELD, 
+									IApiProblem.UNSUPPORTED_TAG_USE, 
+									IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
+									BuilderMessages.TagValidator_private_field);
+						}
+						else if(ispackage) {
+							processTagProblem(typename, 
+									tag, 
+									IElementDescriptor.FIELD, 
+									IApiProblem.UNSUPPORTED_TAG_USE, 
+									IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
+									BuilderMessages.TagValidator_a_package_default_field);
+						}
+						else if(!item.visible) {
+							processTagProblem(typename, 
+									tag, 
+									IElementDescriptor.FIELD, 
+									IApiProblem.UNSUPPORTED_TAG_USE,
+									IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
+									BuilderMessages.TagValidator_a_field_that_is_not_visible);
+						}
+						break;
+					}
+					default: {
+						break;
+					}
+				}
+			}
+			processed.add(tag.getTagName());
 		}
-		case ASTNode.ENUM_CONSTANT_DECLARATION: {
-			EnumConstantDeclaration decl = (EnumConstantDeclaration) node;
-			processRestrictedParentTags(getTypeName(decl), tags, IElementDescriptor.FIELD, BuilderMessages.TagValidator_an_enum_constant_that_is_not_visible, validTags);
-			break;
+	}
+	
+	/**
+	 * Processes all of the tags for the given {@link MethodDeclaration}
+	 * @param method
+	 * @param tags
+	 * @since 1.0.400
+	 */
+	void processMethodNode(MethodDeclaration method, List tags) {
+		int pkind = getParentKind(method);
+		int mods = method.getModifiers();
+		boolean isconstructor = method.isConstructor();
+		boolean isstatic = Flags.isStatic(mods);
+		Item item = (Item) fStack.peek();
+		String typename = getTypeName(method);
+		Set supportedtags = getSupportedTagNames(pkind, isconstructor ? IApiJavadocTag.MEMBER_CONSTRUCTOR : IApiJavadocTag.MEMBER_METHOD);
+		HashSet processed = new HashSet();
+		for (Iterator i = tags.iterator(); i.hasNext();) {
+			TagElement tag = (TagElement) i.next();
+			if(!JavadocTagManager.ALL_TAGS.contains(tag.getTagName())) {
+				continue;
+			}
+			if(processed.contains(tag.getTagName())) {
+				processTagProblem(typename, 
+						tag, 
+						IElementDescriptor.METHOD, 
+						IApiProblem.DUPLICATE_TAG_USE, 
+						IApiMarkerConstants.DUPLICATE_TAG_MARKER_ID, 
+						null);
+			}
+			else {
+				switch(pkind) {
+				case IApiJavadocTag.TYPE_ENUM: {
+					if(!supportedtags.contains(tag.getTagName())) {
+						processTagProblem(typename, 
+								tag, 
+								IElementDescriptor.METHOD, 
+								IApiProblem.UNSUPPORTED_TAG_USE, 
+								IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
+								BuilderMessages.TagValidator_an_enum_method);
+					}
+					else if(Flags.isPrivate(mods)) {
+						processTagProblem(typename, 
+								tag, 
+								IElementDescriptor.METHOD, 
+								IApiProblem.UNSUPPORTED_TAG_USE, 
+								IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
+								BuilderMessages.TagValidator_private_enum_method);
+					}
+					else if(Flags.isPackageDefault(mods)) {
+						processTagProblem(typename, 
+								tag, 
+								IElementDescriptor.METHOD, 
+								IApiProblem.UNSUPPORTED_TAG_USE, 
+								IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
+								BuilderMessages.TagValidator_a_package_default_enum);
+					}
+					else if(!item.visible) {
+						processTagProblem(typename, 
+								tag, 
+								IElementDescriptor.METHOD, 
+								IApiProblem.UNSUPPORTED_TAG_USE, 
+								IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
+								BuilderMessages.TagValidator_not_visible_enum_method);
+					}
+					break;
+				}
+				case IApiJavadocTag.TYPE_INTERFACE: {
+					if(!supportedtags.contains(tag.getTagName())) {
+						processTagProblem(typename, 
+								tag, 
+								IElementDescriptor.METHOD, 
+								IApiProblem.UNSUPPORTED_TAG_USE, 
+								IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
+								BuilderMessages.TagValidator_an_interface_method);
+					}
+					else if(!(item.allints && item.visible)) {
+						processTagProblem(typename, 
+								tag, 
+								IElementDescriptor.METHOD, 
+								IApiProblem.UNSUPPORTED_TAG_USE, 
+								IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
+								BuilderMessages.TagValidator_not_visible_interface_method);
+					}
+					break;
+				}
+				case IApiJavadocTag.TYPE_CLASS: {
+					if(!supportedtags.contains(tag.getTagName())) {
+						processTagProblem(typename, 
+								tag, 
+								IElementDescriptor.METHOD, 
+								IApiProblem.UNSUPPORTED_TAG_USE, 
+								IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
+								isconstructor ? BuilderMessages.TagValidator_a_constructor : BuilderMessages.TagValidator_a_method);
+					}
+					else if(Flags.isPrivate(mods)) {
+						processTagProblem(typename, 
+								tag, 
+								IElementDescriptor.METHOD, 
+								IApiProblem.UNSUPPORTED_TAG_USE, 
+								IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
+								isconstructor ? BuilderMessages.TagValidator_private_constructor : BuilderMessages.TagValidator_private_method);
+					}
+					else if(isstatic) {
+						if(Flags.isFinal(mods) && JavadocTagManager.TAG_NOOVERRIDE.equals(tag.getTagName())) {
+							processTagProblem(typename, 
+									tag, 
+									IElementDescriptor.METHOD, 
+									IApiProblem.UNSUPPORTED_TAG_USE, 
+									IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
+									isconstructor ? BuilderMessages.TagValidator_static_final_constructor : BuilderMessages.TagValidator_a_static_final_method);
+						}
+						else if(Flags.isPackageDefault(mods)) {
+							processTagProblem(typename, 
+									tag, 
+									IElementDescriptor.METHOD, 
+									IApiProblem.UNSUPPORTED_TAG_USE, 
+									IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
+									isconstructor ? BuilderMessages.TagValidator_static_package_constructor : BuilderMessages.TagValidator_a_static_package_default_method);
+						}
+					}
+					else if(Flags.isPackageDefault(mods)) {
+						processTagProblem(typename, 
+								tag, 
+								IElementDescriptor.METHOD, 
+								IApiProblem.UNSUPPORTED_TAG_USE, 
+								IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
+								isconstructor ? BuilderMessages.TagValidator_a_package_default_constructor : BuilderMessages.TagValidator_a_package_default_method);
+					}
+					else if(JavadocTagManager.TAG_NOOVERRIDE.equals(tag.getTagName())) {
+						if (Flags.isFinal(mods)) {
+							processTagProblem(typename, 
+									tag, 
+									IElementDescriptor.METHOD, 
+									IApiProblem.UNSUPPORTED_TAG_USE, 
+									IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
+									isconstructor ? BuilderMessages.TagValidator_final_constructor : BuilderMessages.TagValidator_a_final_method);
+						}
+						else if(Flags.isFinal(getParentModifiers(method))) {
+							processTagProblem(typename, 
+									tag, 
+									IElementDescriptor.METHOD, 
+									IApiProblem.UNSUPPORTED_TAG_USE, 
+									IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
+									isconstructor ? BuilderMessages.TagValidator_constructor_in_final_class : BuilderMessages.TagValidator_a_method_in_a_final_class);
+						}
+						else if(!item.visible) {
+							processTagProblem(typename, 
+									tag, 
+									IElementDescriptor.METHOD, 
+									IApiProblem.UNSUPPORTED_TAG_USE, 
+									IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
+									isconstructor ? BuilderMessages.TagValidator_not_visible_constructor : BuilderMessages.TagValidator_a_method_that_is_not_visible);
+						}
+					}
+					else if(!item.visible) {
+						processTagProblem(typename, 
+								tag, 
+								IElementDescriptor.METHOD, 
+								IApiProblem.UNSUPPORTED_TAG_USE, 
+								IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
+								isconstructor ? BuilderMessages.TagValidator_not_visible_constructor : BuilderMessages.TagValidator_a_method_that_is_not_visible);
+					}
+					break;
+				}
+				default: {
+					break;
+				}
+			}
+			}
+			processed.add(tag.getTagName());
 		}
-		case ASTNode.ANNOTATION_TYPE_DECLARATION: {
-			AnnotationTypeDeclaration annot = (AnnotationTypeDeclaration) node;
-			processRestrictedParentTags(getTypeName(annot), tags, IElementDescriptor.TYPE, BuilderMessages.TagValidator_an_annotation_that_is_not_visible, validTags);
-			break;
+	}
+	
+	/**
+	 * Returns the complete listing of supported tags for the given type and member
+	 * @param type
+	 * @param member
+	 * @return the list of supported tag names or the {@link Collections#EMPTY_SET}, never <code>null</code>
+	 * @since 1.0.400
+	 */
+	Set getSupportedTagNames(int type, int member) {
+		IApiJavadocTag[] tags = ApiPlugin.getJavadocTagManager().getTagsForType(type, member);
+		if(tags.length > 0) {
+			HashSet valid = new HashSet(tags.length, 1);
+			for (int i = 0; i < tags.length; i++) {
+				valid.add(tags[i].getTagName());
+			}
+			return valid;
 		}
-		case ASTNode.METHOD_DECLARATION: {
-			MethodDeclaration method = (MethodDeclaration) node;
-			processRestrictedParentTags(getTypeName(method), tags, IElementDescriptor.METHOD, BuilderMessages.TagValidator_a_method_that_is_not_visible, validTags);
-			break;
-		}
-		case ASTNode.ANNOTATION_TYPE_MEMBER_DECLARATION: {
-			AnnotationTypeMemberDeclaration decl = (AnnotationTypeMemberDeclaration) node;
-			processRestrictedParentTags(getTypeName(decl), tags, IElementDescriptor.METHOD, BuilderMessages.TagValidator_an_annotation_method_that_is_not_visible, validTags);
-			break;
-		}
-		case ASTNode.FIELD_DECLARATION: {
-			FieldDeclaration field = (FieldDeclaration) node;
-			processRestrictedParentTags(getTypeName(field), tags, IElementDescriptor.FIELD, BuilderMessages.TagValidator_a_field_that_is_not_visible, validTags);
-			break;
-		}
-		default:
-			break;
-		}
+		return Collections.EMPTY_SET;
 	}
 	
 	/**
@@ -435,79 +723,6 @@ public class TagValidator extends ASTVisitor {
 		return getTypeName(node.getParent(), buffer);
 	}
 
-	/**
-	 * Processes the listing of valid tags against the listing of existing tags on the node, and
-	 * creates errors if disallowed tags are found.
-	 * @param tags
-	 * @param validtags
-	 * @param element
-	 * @param context
-	 */
-	private void processTags(String typeName, List tags, IApiJavadocTag[] validtags, int element, String context) {
-		IApiJavadocTag[] alltags = ApiPlugin.getJavadocTagManager().getAllTags();
-		Set tagnames = ApiPlugin.getJavadocTagManager().getAllTagNames();
-		HashSet invalidtags = new HashSet(alltags.length);
-		for(int i = 0; i < alltags.length; i++) {
-			invalidtags.add(alltags[i].getTagName());
-		}
-		for(int i = 0; i < validtags.length; i++) {
-			invalidtags.remove(validtags[i].getTagName());
-		}
-		if(invalidtags.size() == 0) {
-			return;
-		}
-		TagElement tag = null;
-		HashSet tagz = new HashSet(tags.size());
-		String tagname = null;
-		for(Iterator iter = tags.iterator(); iter.hasNext();) {
-			tag = (TagElement) iter.next();
-			tagname = tag.getTagName();
-			if(invalidtags.contains(tag.getTagName())) {
-				processTagProblem(typeName, tag, element, IApiProblem.UNSUPPORTED_TAG_USE, IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, context);
-			}
-			if(tagnames.contains(tag.getTagName()) && !tagz.add(tagname)) {
-				processTagProblem(typeName, tag, element, IApiProblem.DUPLICATE_TAG_USE, IApiMarkerConstants.DUPLICATE_TAG_MARKER_ID, null);
-			}
-		}
-	}
-	
-	/**
-	 * Creates problem markers for existing tags that are inside of a private or package default node.
-	 * Will only create markers if the tag would otherwise be valid (duplicates and tags not in the given
-	 * valid tag list are ignored).
-	 * @param typeName the name of the type these tags belong to
-	 * @param tags the list of tags to process
-	 * @param element the element type
-	 * @param context context string to append to the problem message
-	 * @param validTags list of tags that would be valid for this element to avoid creating multiple markers on a tag
-	 */
-	private void processRestrictedParentTags(String typeName, List tags, int element, String context, IApiJavadocTag[] validTags) {
-		if (validTags.length == 0){
-			return;
-		}
-		HashSet validtags = new HashSet(validTags.length);
-		for(int i = 0; i < validTags.length; i++) {
-			validtags.add(validTags[i].getTagName());
-		}
-		
-		HashSet duplicates = new HashSet();
-		for (Iterator iterator = tags.iterator(); iterator.hasNext();) {
-			String tag = ((TagElement) iterator.next()).getTagName();
-			if (duplicates.contains(tag)){
-				validtags.remove(tag);
-			}
-			duplicates.add(tag);
-		}
-		
-		TagElement tag = null;
-		for(Iterator iter = tags.iterator(); iter.hasNext();) {
-			tag = (TagElement) iter.next();
-			if(validtags.contains(tag.getTagName())) {
-				processTagProblem(typeName, tag, element, IApiProblem.UNSUPPORTED_TAG_USE, IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, context);
-			}
-		}
-	}
-	
 	/**
 	 * Creates a new {@link IApiProblem} for the given tag and adds it to the cache
 	 * @param tag

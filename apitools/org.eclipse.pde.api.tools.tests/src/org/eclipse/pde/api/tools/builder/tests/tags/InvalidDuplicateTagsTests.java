@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -140,9 +140,8 @@ public class InvalidDuplicateTagsTests extends TagTest {
 	
 	private void x3(boolean inc) {
 		setProblemId(IElementDescriptor.FIELD, IApiProblem.DUPLICATE_TAG_USE);
-		setExpectedProblemIds(getDefaultProblemSet(3));
+		setExpectedProblemIds(getDefaultProblemSet(2));
 		setExpectedMessageArgs(new String[][] {
-				{"@noreference"},
 				{"@noreference"},
 				{"@noreference"}
 		});
@@ -165,9 +164,8 @@ public class InvalidDuplicateTagsTests extends TagTest {
 	
 	private void x4(boolean inc) {
 		setProblemId(IElementDescriptor.FIELD, IApiProblem.DUPLICATE_TAG_USE);
-		setExpectedProblemIds(getDefaultProblemSet(3));
+		setExpectedProblemIds(getDefaultProblemSet(2));
 		setExpectedMessageArgs(new String[][] {
-				{"@noreference"},
 				{"@noreference"},
 				{"@noreference"}	
 		});
@@ -190,9 +188,8 @@ public class InvalidDuplicateTagsTests extends TagTest {
 	
 	private void x5(boolean inc) {
 		setProblemId(IElementDescriptor.FIELD, IApiProblem.DUPLICATE_TAG_USE);
-		setExpectedProblemIds(getDefaultProblemSet(4));
+		setExpectedProblemIds(getDefaultProblemSet(3));
 		setExpectedMessageArgs(new String[][] {
-				{"@noreference"},
 				{"@noreference"},
 				{"@noreference"},
 				{"@noreference"}
@@ -203,7 +200,7 @@ public class InvalidDuplicateTagsTests extends TagTest {
 	/**
 	 * Tests that a class method with duplicate tags is properly detected using an incremental build
 	 */
-	public void testClassMethoddWithDuplicateTagsI() {
+	public void testClassMethodWithDuplicateTagsI() {
 		x6(true);
 	}
 	
@@ -216,12 +213,10 @@ public class InvalidDuplicateTagsTests extends TagTest {
 	
 	private void x6(boolean inc) {
 		setProblemId(IElementDescriptor.METHOD, IApiProblem.DUPLICATE_TAG_USE);
-		setExpectedProblemIds(getDefaultProblemSet(6));
+		setExpectedProblemIds(getDefaultProblemSet(4));
 		setExpectedMessageArgs(new String[][] {
 				{"@noreference"},
 				{"@noreference"},
-				{"@noreference"},
-				{"@nooverride"},
 				{"@nooverride"},
 				{"@nooverride"}
 		});
@@ -231,7 +226,7 @@ public class InvalidDuplicateTagsTests extends TagTest {
 	/**
 	 * Tests that an interface method with duplicate tags is properly detected using an incremental build
 	 */
-	public void testInterfaceMethoddWithDuplicateTagsI() {
+	public void testInterfaceMethodWithDuplicateTagsI() {
 		x7(true);
 	}
 	
@@ -244,10 +239,8 @@ public class InvalidDuplicateTagsTests extends TagTest {
 	
 	private void x7(boolean inc) {
 		setProblemId(IElementDescriptor.METHOD, IApiProblem.DUPLICATE_TAG_USE);
-		setExpectedProblemIds(getDefaultProblemSet(6));
+		setExpectedProblemIds(getDefaultProblemSet(4));
 		setExpectedMessageArgs(new String[][] {
-				{"@noreference"},
-				{"@noreference"},
 				{"@noreference"},
 				{"@noreference"},
 				{"@noreference"},
@@ -272,10 +265,8 @@ public class InvalidDuplicateTagsTests extends TagTest {
 	
 	private void x8(boolean inc) {
 		setProblemId(IElementDescriptor.METHOD, IApiProblem.DUPLICATE_TAG_USE);
-		setExpectedProblemIds(getDefaultProblemSet(6));
+		setExpectedProblemIds(getDefaultProblemSet(4));
 		setExpectedMessageArgs(new String[][] {
-				{"@noreference"},
-				{"@noreference"},
 				{"@noreference"},
 				{"@noreference"},
 				{"@noreference"},

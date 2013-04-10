@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -58,9 +58,9 @@ public class InvalidInterfaceFieldTagTests extends InvalidFieldTagTests {
 	private void x1(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		setExpectedMessageArgs(new String[][] {
-				{"@noextend", BuilderMessages.TagValidator_a_field},
-				{"@noextend", BuilderMessages.TagValidator_a_field},
-				{"@noextend", BuilderMessages.TagValidator_a_field}
+				{"@noextend", BuilderMessages.TagValidator_an_interface_field},
+				{"@noextend", BuilderMessages.TagValidator_an_interface_field},
+				{"@noextend", BuilderMessages.TagValidator_an_interface_field}
 		});
 		deployTagTest("test1.java", inc, false);
 	}
@@ -79,7 +79,7 @@ public class InvalidInterfaceFieldTagTests extends InvalidFieldTagTests {
 	private void x2(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		setExpectedMessageArgs(new String[][] {
-				{"@noextend", BuilderMessages.TagValidator_a_field}
+				{"@noextend", BuilderMessages.TagValidator_an_interface_field}
 		});
 		deployTagTest("test2.java", inc, true);
 	}
@@ -98,9 +98,9 @@ public class InvalidInterfaceFieldTagTests extends InvalidFieldTagTests {
 	private void x3(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		setExpectedMessageArgs(new String[][] {
-				{"@noinstantiate", BuilderMessages.TagValidator_a_field},
-				{"@noinstantiate", BuilderMessages.TagValidator_a_field},
-				{"@noinstantiate", BuilderMessages.TagValidator_a_field}
+				{"@noinstantiate", BuilderMessages.TagValidator_an_interface_field},
+				{"@noinstantiate", BuilderMessages.TagValidator_an_interface_field},
+				{"@noinstantiate", BuilderMessages.TagValidator_an_interface_field}
 		});
 		deployTagTest("test3.java", inc, false);
 	}
@@ -119,7 +119,7 @@ public class InvalidInterfaceFieldTagTests extends InvalidFieldTagTests {
 	private void x4(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		setExpectedMessageArgs(new String[][] {
-				{"@noinstantiate", BuilderMessages.TagValidator_a_field}
+				{"@noinstantiate", BuilderMessages.TagValidator_an_interface_field}
 		});
 		deployTagTest("test4.java", inc, true);
 	}
@@ -138,9 +138,9 @@ public class InvalidInterfaceFieldTagTests extends InvalidFieldTagTests {
 	private void x5(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		setExpectedMessageArgs(new String[][] {
-				{"@noimplement", BuilderMessages.TagValidator_a_field},
-				{"@noimplement", BuilderMessages.TagValidator_a_field},
-				{"@noimplement", BuilderMessages.TagValidator_a_field}
+				{"@noimplement", BuilderMessages.TagValidator_an_interface_field},
+				{"@noimplement", BuilderMessages.TagValidator_an_interface_field},
+				{"@noimplement", BuilderMessages.TagValidator_an_interface_field}
 		});
 		deployTagTest("test5.java", inc, false);
 	}
@@ -159,7 +159,7 @@ public class InvalidInterfaceFieldTagTests extends InvalidFieldTagTests {
 	private void x6(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		setExpectedMessageArgs(new String[][] {
-				{"@noimplement", BuilderMessages.TagValidator_a_field}
+				{"@noimplement", BuilderMessages.TagValidator_an_interface_field}
 		});
 		deployTagTest("test6.java", inc, true);
 	}
@@ -178,9 +178,9 @@ public class InvalidInterfaceFieldTagTests extends InvalidFieldTagTests {
 	private void x7(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(3));
 		setExpectedMessageArgs(new String[][] {
-				{"@nooverride", BuilderMessages.TagValidator_a_field},
-				{"@nooverride", BuilderMessages.TagValidator_a_field},
-				{"@nooverride", BuilderMessages.TagValidator_a_field}
+				{"@nooverride", BuilderMessages.TagValidator_an_interface_field},
+				{"@nooverride", BuilderMessages.TagValidator_an_interface_field},
+				{"@nooverride", BuilderMessages.TagValidator_an_interface_field}
 		});
 		deployTagTest("test7.java", inc, false);
 	}
@@ -199,7 +199,7 @@ public class InvalidInterfaceFieldTagTests extends InvalidFieldTagTests {
 	private void x8(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		setExpectedMessageArgs(new String[][] {
-				{"@nooverride", BuilderMessages.TagValidator_a_field}
+				{"@nooverride", BuilderMessages.TagValidator_an_interface_field}
 		});
 		deployTagTest("test8.java", inc, true);
 	}
@@ -213,14 +213,12 @@ public class InvalidInterfaceFieldTagTests extends InvalidFieldTagTests {
 	}
 	
 	/**
-	 * Tests the unsupported @noreference tag on a variety of final inner / outer interface fields
+	 * Tests the supported @noreference tag on a variety of final inner / outer interface fields
 	 */
 	private void x9(boolean inc) {
-		setExpectedProblemIds(getDefaultProblemSet(3));
+		setExpectedProblemIds(getDefaultProblemSet(1));
 		setExpectedMessageArgs(new String[][] {
-				{"@noreference", BuilderMessages.TagValidator_a_final_field},
-				{"@noreference", BuilderMessages.TagValidator_a_final_field},
-				{"@noreference", BuilderMessages.TagValidator_a_final_field}
+				{"@noreference", BuilderMessages.TagValidator_not_visible_interface_field}
 		});
 		deployTagTest("test9.java", inc, false);
 	}
@@ -234,13 +232,9 @@ public class InvalidInterfaceFieldTagTests extends InvalidFieldTagTests {
 	}
 	
 	/**
-	 * Tests the unsupported @noreference tag on a final interface field in the default package
+	 * Tests the supported @noreference tag on a final interface field in the default package
 	 */
 	private void x10(boolean inc) {
-		setExpectedProblemIds(getDefaultProblemSet(1));
-		setExpectedMessageArgs(new String[][] {
-				{"@noreference", BuilderMessages.TagValidator_a_final_field}
-		});
 		deployTagTest("test10.java", inc, true);
 	}
 
@@ -253,14 +247,12 @@ public class InvalidInterfaceFieldTagTests extends InvalidFieldTagTests {
 	}
 	
 	/**
-	 * Tests the unsupported @noreference tag on a variety of static final inner / outer interface fields
+	 * Tests the supported @noreference tag on a variety of static final inner / outer interface fields
 	 */
 	private void x11(boolean inc) {
-		setExpectedProblemIds(getDefaultProblemSet(3));
+		setExpectedProblemIds(getDefaultProblemSet(1));
 		setExpectedMessageArgs(new String[][] {
-				{"@noreference", BuilderMessages.TagValidator_a_final_field},
-				{"@noreference", BuilderMessages.TagValidator_a_final_field},
-				{"@noreference", BuilderMessages.TagValidator_a_final_field}
+				{"@noreference", BuilderMessages.TagValidator_not_visible_interface_field}
 		});
 		deployTagTest("test11.java", inc, false);
 	}
@@ -274,13 +266,9 @@ public class InvalidInterfaceFieldTagTests extends InvalidFieldTagTests {
 	}
 	
 	/**
-	 * Tests the unsupported @noreference tag on a static final interface field in the default package
+	 * Tests the supported @noreference tag on a static final interface field in the default package
 	 */
 	private void x12(boolean inc) {
-		setExpectedProblemIds(getDefaultProblemSet(1));
-		setExpectedMessageArgs(new String[][] {
-				{"@noreference", BuilderMessages.TagValidator_a_final_field}
-		});
 		deployTagTest("test12.java", inc, true);
 	}
 }

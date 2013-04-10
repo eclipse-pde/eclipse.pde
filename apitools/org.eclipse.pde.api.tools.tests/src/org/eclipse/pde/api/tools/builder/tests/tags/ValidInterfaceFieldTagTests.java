@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -101,5 +101,25 @@ public class ValidInterfaceFieldTagTests extends ValidFieldTagTests {
 	
 	private void x4(boolean inc) {
 		deployTagTest("test4.java", inc, false);
+	}
+	
+	/**
+	 * Tests the valid use of an @noreference tag on fields in interfaces
+	 * using an incremental build
+	 */
+	public void testValidInterfaceFieldTag5I() {
+		x5(true);
+	}
+	
+	/**
+	 * Tests the valid use of an @noreference tag on fields in interfaces
+	 * using a full build
+	 */
+	public void testValidInterfaceFieldTag5F() {
+		x5(false);
+	}
+	
+	private void x5(boolean inc) {
+		deployTagTest("test5.java", inc, false);
 	}
 }

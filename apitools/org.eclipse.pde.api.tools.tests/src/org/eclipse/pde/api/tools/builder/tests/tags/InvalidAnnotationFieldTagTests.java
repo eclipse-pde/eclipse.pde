@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -243,7 +243,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 */
 	private void x10(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(3));
-		setExpectedMessageArgs("@noreference", BuilderMessages.TagValidator_a_final_annotation_field, 3);
+		setExpectedMessageArgs("@noreference", BuilderMessages.TagValidator_annotation_field, 3);
 		String typename = "test10.java"; 
 		deployTagTest(typename, inc, false);
 	}
@@ -261,7 +261,7 @@ public class InvalidAnnotationFieldTagTests extends InvalidFieldTagTests {
 	 */
 	private void x11(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(1));
-		setExpectedMessageArgs("@noreference", BuilderMessages.TagValidator_a_final_annotation_field, 1);
+		setExpectedMessageArgs("@noreference", BuilderMessages.TagValidator_annotation_field, 1);
 		String typename = "test11.java"; 
 		deployTagTest(typename, inc, true);
 	}

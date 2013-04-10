@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -75,9 +75,9 @@ public class InvalidClassTagTests extends TagTest {
 		setExpectedProblemIds(getDefaultProblemSet(4));
 		setExpectedMessageArgs(new String[][] {
 				{"@noreference", BuilderMessages.TagValidator_a_class},
-				{"@noreference", BuilderMessages.TagValidator_a_package_default_class},
-				{"@noreference", BuilderMessages.TagValidator_a_private_class},
-				{"@noreference", BuilderMessages.TagValidator_a_package_default_class}
+				{"@noreference", BuilderMessages.TagValidator_a_class},
+				{"@noreference", BuilderMessages.TagValidator_a_class},
+				{"@noreference", BuilderMessages.TagValidator_a_class}
 		});
 		deployTagTest("test1.java", inc, false);
 	}
@@ -118,9 +118,9 @@ public class InvalidClassTagTests extends TagTest {
 		setExpectedProblemIds(getDefaultProblemSet(4));
 		setExpectedMessageArgs(new String[][] {
 				{"@noimplement", BuilderMessages.TagValidator_a_class},
-				{"@noimplement", BuilderMessages.TagValidator_a_package_default_class},
-				{"@noimplement", BuilderMessages.TagValidator_a_private_class},
-				{"@noimplement", BuilderMessages.TagValidator_a_package_default_class}
+				{"@noimplement", BuilderMessages.TagValidator_a_class},
+				{"@noimplement", BuilderMessages.TagValidator_a_class},
+				{"@noimplement", BuilderMessages.TagValidator_a_class}
 		});
 		deployTagTest("test3.java", inc, false);
 	}
@@ -161,9 +161,9 @@ public class InvalidClassTagTests extends TagTest {
 		setExpectedProblemIds(getDefaultProblemSet(4));
 		setExpectedMessageArgs(new String[][] {
 				{"@nooverride", BuilderMessages.TagValidator_a_class},
-				{"@nooverride", BuilderMessages.TagValidator_a_package_default_class},
-				{"@nooverride", BuilderMessages.TagValidator_a_private_class},
-				{"@nooverride", BuilderMessages.TagValidator_a_package_default_class}
+				{"@nooverride", BuilderMessages.TagValidator_a_class},
+				{"@nooverride", BuilderMessages.TagValidator_a_class},
+				{"@nooverride", BuilderMessages.TagValidator_a_class}
 		});
 		deployTagTest("test5.java", inc, false);
 	}
@@ -333,18 +333,18 @@ public class InvalidClassTagTests extends TagTest {
 		setExpectedProblemIds(getDefaultProblemSet(13));
 		setExpectedMessageArgs(new String[][] {
 				{"@noextend", BuilderMessages.TagValidator_a_class_that_is_not_visible},
-				{"@noinstantiate", BuilderMessages.TagValidator_a_class_that_is_not_visible},
-				{"@noreference", BuilderMessages.TagValidator_a_class},
 				{"@noextend", BuilderMessages.TagValidator_an_interface_that_is_not_visible},
+				{"@noextend", BuilderMessages.TagValidator_a_method},
+				{"@noextend", BuilderMessages.TagValidator_a_field},
 				{"@noimplement", BuilderMessages.TagValidator_an_interface_that_is_not_visible},
 				{"@noreference", BuilderMessages.TagValidator_an_interface},
 				{"@noreference", BuilderMessages.TagValidator_a_field_that_is_not_visible},
-				{"@noextend", BuilderMessages.TagValidator_a_field},	
+				{"@noreference", BuilderMessages.TagValidator_a_class},	
 				{"@noreference", BuilderMessages.TagValidator_an_annotation},
 				{"@noreference", BuilderMessages.TagValidator_an_enum},
-				{"@nooverride", BuilderMessages.TagValidator_a_method_that_is_not_visible},
 				{"@noreference", BuilderMessages.TagValidator_a_method_that_is_not_visible},
-				{"@noextend", BuilderMessages.TagValidator_a_method},
+				{"@nooverride", BuilderMessages.TagValidator_a_method_that_is_not_visible},
+				{"@noinstantiate", BuilderMessages.TagValidator_a_class_that_is_not_visible}				
 		});
 		deployTagTest("test12.java", inc, false);
 	}

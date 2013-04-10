@@ -12,6 +12,7 @@ package org.eclipse.pde.api.tools.internal;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -63,6 +64,18 @@ public final class JavadocTagManager {
 	 * @since 1.0.500
 	 */
 	public static final String TAG_NOREFERENCE = "@noreference"; //$NON-NLS-1$
+	
+	public static final Set ALL_TAGS/*<String>*/;
+	
+	static {
+		HashSet tags = new HashSet(5, 1);
+		tags.add(TAG_NOEXTEND);
+		tags.add(TAG_NOIMPLEMENT);
+		tags.add(TAG_NOINSTANTIATE);
+		tags.add(TAG_NOOVERRIDE);
+		tags.add(TAG_NOREFERENCE);
+		ALL_TAGS = Collections.unmodifiableSet(tags);
+	}
 	
 	/**
 	 * Cache for the contributed javadoc tags. 

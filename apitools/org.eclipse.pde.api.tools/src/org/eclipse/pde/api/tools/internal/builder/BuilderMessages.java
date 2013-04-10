@@ -52,47 +52,48 @@ public class BuilderMessages extends NLS {
 	public static String TagValidator_a_private_class;
 	public static String TagValidator_a_package_default_class;
 	public static String TagValidator_a_package_default_constructor;
+	public static String TagValidator_a_package_default_enum;
 	public static String TagValidator_a_package_default_method;
 	public static String TagValidator_a_static_package_default_method;
 	public static String TagValidator_a_package_default_field;
-	public static String TagValidator_a_package_default_interface;
 	
 	public static String TagValidator_a_class;
 	public static String TagValidator_a_class_that_is_not_visible;
 	public static String TagValidator_a_constructor;
 	public static String TagValidator_a_field;
 	public static String TagValidator_a_field_that_is_not_visible;
-	public static String TagValidator_a_final_annotation_field;
 	public static String TagValidator_a_final_class;
-	public static String TagValidator_a_final_field;
 	public static String TagValidator_a_final_method;
 	public static String TagValidator_a_method;
 	public static String TagValidator_a_method_in_a_final_class;
 	public static String TagValidator_a_method_that_is_not_visible;
 	public static String TagValidator_a_static_final_method;
-	public static String TagValidator_a_static_method;
 	public static String TagValidator_an_abstract_class;
 	public static String TagValidator_an_annotation;
 	public static String TagValidator_an_annotation_method;
-	public static String TagValidator_an_annotation_method_that_is_not_visible;
-	public static String TagValidator_an_annotation_that_is_not_visible;
 	public static String TagValidator_an_enum;
 	public static String TagValidator_an_enum_constant;
-	public static String TagValidator_an_enum_constant_that_is_not_visible;
 	public static String TagValidator_an_enum_method;
-	public static String TagValidator_an_enum_that_is_not_visible;
 	public static String TagValidator_an_interface;
+	public static String TagValidator_an_interface_field;
 	public static String TagValidator_an_interface_method;
 	public static String TagValidator_an_interface_that_is_not_visible;
 	public static String TagValidator_annotation_field;
+	public static String TagValidator_constructor_in_final_class;
 	public static String TagValidator_enum_field;
-
+	public static String TagValidator_final_constructor;
+	public static String TagValidator_not_visible_constructor;
+	public static String TagValidator_not_visible_enum_field;
+	public static String TagValidator_not_visible_enum_method;
+	public static String TagValidator_not_visible_interface_field;
+	public static String TagValidator_not_visible_interface_method;
 	public static String TagValidator_private_constructor;
 	public static String TagValidator_private_enum_field;
 	public static String TagValidator_private_enum_method;
 	public static String TagValidator_private_field;
 	public static String TagValidator_private_method;
-	
+	public static String TagValidator_static_final_constructor;
+	public static String TagValidator_static_package_constructor;
 	public static String IncrementalBuilder_builder_for_project;
 
 	static {
