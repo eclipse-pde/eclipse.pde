@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -78,13 +78,13 @@ public class InvalidEnumTagTests extends TagTest {
 	 * Tests having an @noreference tag on a variety of inner / outer / top-level enums in package a.b.c
 	 */
 	private void x1(boolean inc) {
-		setExpectedProblemIds(getDefaultProblemSet(4));
+		/*setExpectedProblemIds(getDefaultProblemSet(4));
 		setExpectedMessageArgs(new String[][] {
 				{"@noreference", BuilderMessages.TagValidator_an_enum},
 				{"@noreference", BuilderMessages.TagValidator_an_enum},
 				{"@noreference", BuilderMessages.TagValidator_an_enum},
 				{"@noreference", BuilderMessages.TagValidator_an_enum}
-		});
+		});*/
 		deployTagTest("test1.java", inc, false);
 	}
 	
@@ -100,10 +100,10 @@ public class InvalidEnumTagTests extends TagTest {
 	 * Tests having an @noreference tag on an enum in the default package
 	 */
 	private void x2(boolean inc) {
-		setExpectedProblemIds(getDefaultProblemSet(1));
+		/*setExpectedProblemIds(getDefaultProblemSet(1));
 		setExpectedMessageArgs(new String[][] {
 				{"@noreference", BuilderMessages.TagValidator_an_enum}
-		});
+		});*/
 		deployTagTest("test2.java", inc, true);
 	}
 	
@@ -283,10 +283,10 @@ public class InvalidEnumTagTests extends TagTest {
 	 * Tests all tags are invalid when parent enum is private or package default
 	 */
 	private void x11(boolean inc) {
-		setExpectedProblemIds(getDefaultProblemSet(2));
+		setExpectedProblemIds(getDefaultProblemSet(1));
 		setExpectedMessageArgs(new String[][] {
-				{"@noreference", BuilderMessages.TagValidator_an_enum_constant},
-				{"@noreference", BuilderMessages.TagValidator_an_enum},
+				{"@noreference", BuilderMessages.TagValidator_an_enum_constant}
+				/*{"@noreference", BuilderMessages.TagValidator_an_enum},*/
 		});
 		deployTagTest("test11.java", inc, true);
 	}

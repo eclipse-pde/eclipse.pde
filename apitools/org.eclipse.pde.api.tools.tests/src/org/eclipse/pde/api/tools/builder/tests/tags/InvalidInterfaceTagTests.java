@@ -70,12 +70,9 @@ public class InvalidInterfaceTagTests extends TagTest {
 	 * Tests having an @noreference tag on a variety of inner / outer / top-level interfaces in package a.b.c
 	 */
 	private void x1(boolean inc) {
-		setExpectedProblemIds(getDefaultProblemSet(4));
+		setExpectedProblemIds(getDefaultProblemSet(1));
 		setExpectedMessageArgs(new String[][] {
-				{"@noreference", BuilderMessages.TagValidator_an_interface},
-				{"@noreference", BuilderMessages.TagValidator_an_interface},
-				{"@noreference", BuilderMessages.TagValidator_an_interface},
-				{"@noreference", BuilderMessages.TagValidator_an_interface}
+				{"@noreference", BuilderMessages.TagValidator_an_interface_that_is_not_visible},
 		});
 		deployTagTest("test1.java", inc, false);
 	}
@@ -92,10 +89,10 @@ public class InvalidInterfaceTagTests extends TagTest {
 	 * Tests having an @noreference tag on an interface in the default package
 	 */
 	private void x2(boolean inc) {
-		setExpectedProblemIds(getDefaultProblemSet(1));
+		/*setExpectedProblemIds(getDefaultProblemSet(1));
 		setExpectedMessageArgs(new String[][] {
 				{"@noreference", BuilderMessages.TagValidator_an_interface}	
-		});
+		});*/
 		deployTagTest("test2.java", inc, true);
 	}
 

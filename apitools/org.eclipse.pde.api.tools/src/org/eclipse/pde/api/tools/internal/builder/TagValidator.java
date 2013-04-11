@@ -171,9 +171,14 @@ public class TagValidator extends ASTVisitor {
 			}
 			case ASTNode.ENUM_DECLARATION: {
 				Item item = (Item) fStack.peek();
+				Set supported = getSupportedTagNames(IApiJavadocTag.TYPE_ENUM, IApiJavadocTag.MEMBER_NONE);
 				for (Iterator i = tags.iterator(); i.hasNext();) {
 					TagElement tag = (TagElement) i.next();
-					if(JavadocTagManager.ALL_TAGS.contains(tag.getTagName())) {
+					String tagname = tag.getTagName();
+					if(tagname == null || !JavadocTagManager.ALL_TAGS.contains(tagname)) {
+						continue;
+					}
+					if(!supported.contains(tagname)) {
 						processTagProblem(item.typename, 
 								tag, 
 								IElementDescriptor.TYPE, 
@@ -188,22 +193,29 @@ public class TagValidator extends ASTVisitor {
 				Item item = (Item) fStack.peek();
 				for (Iterator i = tags.iterator(); i.hasNext();) {
 					TagElement tag = (TagElement) i.next();
-					if(JavadocTagManager.ALL_TAGS.contains(tag.getTagName())) {
-						processTagProblem(item.typename, 
-								tag, 
-								IElementDescriptor.FIELD, 
-								IApiProblem.UNSUPPORTED_TAG_USE, 
-								IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
-								BuilderMessages.TagValidator_an_enum_constant);
+					String tagname = tag.getTagName();
+					if(tagname == null || !JavadocTagManager.ALL_TAGS.contains(tagname)) {
+						continue;
 					}
+					processTagProblem(item.typename, 
+							tag, 
+							IElementDescriptor.FIELD, 
+							IApiProblem.UNSUPPORTED_TAG_USE, 
+							IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
+							BuilderMessages.TagValidator_an_enum_constant);
 				}
 				break;
 			}
 			case ASTNode.ANNOTATION_TYPE_DECLARATION: {
 				Item item = (Item) fStack.peek();
+				Set supported = getSupportedTagNames(IApiJavadocTag.TYPE_ENUM, IApiJavadocTag.MEMBER_NONE);
 				for (Iterator i = tags.iterator(); i.hasNext();) {
 					TagElement tag = (TagElement) i.next();
-					if(JavadocTagManager.ALL_TAGS.contains(tag.getTagName())) {
+					String tagname = tag.getTagName();
+					if(tagname == null || !JavadocTagManager.ALL_TAGS.contains(tagname)) {
+						continue;
+					}
+					if(!supported.contains(tagname)) {
 						processTagProblem(item.typename, 
 								tag, 
 								IElementDescriptor.TYPE, 
@@ -223,14 +235,16 @@ public class TagValidator extends ASTVisitor {
 				Item item = (Item) fStack.peek();
 				for (Iterator i = tags.iterator(); i.hasNext();) {
 					TagElement tag = (TagElement) i.next();
-					if(JavadocTagManager.ALL_TAGS.contains(tag.getTagName())) {
-						processTagProblem(item.typename, 
-								tag, 
-								IElementDescriptor.METHOD, 
-								IApiProblem.UNSUPPORTED_TAG_USE, 
-								IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
-								BuilderMessages.TagValidator_an_annotation_method);
+					String tagname = tag.getTagName();
+					if(tagname == null || !JavadocTagManager.ALL_TAGS.contains(tagname)) {
+						continue;
 					}
+					processTagProblem(item.typename, 
+							tag, 
+							IElementDescriptor.METHOD, 
+							IApiProblem.UNSUPPORTED_TAG_USE, 
+							IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
+							BuilderMessages.TagValidator_an_annotation_method);
 				}
 				break;
 			}
@@ -256,10 +270,11 @@ public class TagValidator extends ASTVisitor {
 		Item item = (Item) fStack.peek();
 		for (Iterator i = tags.iterator(); i.hasNext();) {
 			TagElement tag = (TagElement) i.next();
-			if(!JavadocTagManager.ALL_TAGS.contains(tag.getTagName())) {
+			String tagname = tag.getTagName();
+			if(tagname == null || !JavadocTagManager.ALL_TAGS.contains(tagname)) {
 				continue;
 			}
-			if(processed.contains(tag.getTagName())) {
+			if(processed.contains(tagname)) {
 				processTagProblem(item.typename, 
 						tag, 
 						IElementDescriptor.METHOD, 
@@ -272,7 +287,7 @@ public class TagValidator extends ASTVisitor {
 				boolean visible = item.allints && item.visible;
 				if(!type.isInterface()) {
 					int flags = type.getModifiers();
-					if(!supportedtags.contains(tag.getTagName())) {
+					if(!supportedtags.contains(tagname)) {
 						processTagProblem(item.typename, 
 								tag, 
 								IElementDescriptor.TYPE, 
@@ -296,7 +311,7 @@ public class TagValidator extends ASTVisitor {
 								IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
 								BuilderMessages.TagValidator_a_package_default_class);
 					}
-					else if(Flags.isAbstract(flags) && JavadocTagManager.TAG_NOINSTANTIATE.equals(tag.getTagName())) {
+					else if(Flags.isAbstract(flags) && JavadocTagManager.TAG_NOINSTANTIATE.equals(tagname)) {
 						processTagProblem(item.typename, 
 								tag, 
 								IElementDescriptor.TYPE, 
@@ -304,7 +319,7 @@ public class TagValidator extends ASTVisitor {
 								IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
 								BuilderMessages.TagValidator_an_abstract_class);
 					}
-					else if(Flags.isFinal(flags) && JavadocTagManager.TAG_NOEXTEND.equals(tag.getTagName())) {
+					else if(Flags.isFinal(flags) && JavadocTagManager.TAG_NOEXTEND.equals(tagname)) {
 						processTagProblem(item.typename, 
 								tag, 
 								IElementDescriptor.TYPE, 
@@ -321,7 +336,7 @@ public class TagValidator extends ASTVisitor {
 								BuilderMessages.TagValidator_a_class_that_is_not_visible);
 					}
 				} else {
-					if(!supportedtags.contains(tag.getTagName())) {
+					if(!supportedtags.contains(tagname)) {
 						processTagProblem(item.typename, 
 								tag, 
 								IElementDescriptor.TYPE, 
@@ -339,7 +354,7 @@ public class TagValidator extends ASTVisitor {
 					}
 				}
 			}
-			processed.add(tag.getTagName());
+			processed.add(tagname);
 		}
 	}
 	
@@ -354,10 +369,11 @@ public class TagValidator extends ASTVisitor {
 		Item item = (Item) fStack.peek();
 		for (Iterator i = tags.iterator(); i.hasNext();) {
 			TagElement tag = (TagElement) i.next();
-			if(!JavadocTagManager.ALL_TAGS.contains(tag.getTagName())) {
+			String tagname = tag.getTagName();
+			if(tagname == null || !JavadocTagManager.ALL_TAGS.contains(tagname)) {
 				continue;
 			}
-			if(processed.contains(tag.getTagName())) {
+			if(processed.contains(tagname)) {
 				processTagProblem(item.typename, 
 						tag, 
 						IElementDescriptor.METHOD, 
@@ -382,7 +398,7 @@ public class TagValidator extends ASTVisitor {
 						break;
 					}
 					case IApiJavadocTag.TYPE_ENUM: {
-						if(!supportedtags.contains(tag.getTagName())) {
+						if(!supportedtags.contains(tagname)) {
 							processTagProblem(item.typename, 
 									tag, 
 									IElementDescriptor.FIELD, 
@@ -409,7 +425,7 @@ public class TagValidator extends ASTVisitor {
 						break;
 					}
 					case IApiJavadocTag.TYPE_INTERFACE: {
-						if(!supportedtags.contains(tag.getTagName())) {
+						if(!supportedtags.contains(tagname)) {
 							processTagProblem(item.typename, 
 									tag, 
 									IElementDescriptor.FIELD, 
@@ -428,7 +444,7 @@ public class TagValidator extends ASTVisitor {
 						break;
 					}
 					case IApiJavadocTag.TYPE_CLASS: {
-						if(!supportedtags.contains(tag.getTagName())) {
+						if(!supportedtags.contains(tagname)) {
 							processTagProblem(item.typename, 
 									tag, 
 									IElementDescriptor.FIELD, 
@@ -467,7 +483,7 @@ public class TagValidator extends ASTVisitor {
 					}
 				}
 			}
-			processed.add(tag.getTagName());
+			processed.add(tagname);
 		}
 	}
 	
@@ -487,10 +503,11 @@ public class TagValidator extends ASTVisitor {
 		HashSet processed = new HashSet();
 		for (Iterator i = tags.iterator(); i.hasNext();) {
 			TagElement tag = (TagElement) i.next();
-			if(!JavadocTagManager.ALL_TAGS.contains(tag.getTagName())) {
+			String tagname = tag.getTagName();
+			if(tagname == null || !JavadocTagManager.ALL_TAGS.contains(tagname)) {
 				continue;
 			}
-			if(processed.contains(tag.getTagName())) {
+			if(processed.contains(tagname)) {
 				processTagProblem(item.typename, 
 						tag, 
 						IElementDescriptor.METHOD, 
@@ -501,7 +518,7 @@ public class TagValidator extends ASTVisitor {
 			else {
 				switch(pkind) {
 				case IApiJavadocTag.TYPE_ENUM: {
-					if(!supportedtags.contains(tag.getTagName())) {
+					if(!supportedtags.contains(tagname)) {
 						processTagProblem(item.typename, 
 								tag, 
 								IElementDescriptor.METHOD, 
@@ -536,7 +553,7 @@ public class TagValidator extends ASTVisitor {
 					break;
 				}
 				case IApiJavadocTag.TYPE_INTERFACE: {
-					if(!supportedtags.contains(tag.getTagName())) {
+					if(!supportedtags.contains(tagname)) {
 						processTagProblem(item.typename, 
 								tag, 
 								IElementDescriptor.METHOD, 
@@ -555,7 +572,7 @@ public class TagValidator extends ASTVisitor {
 					break;
 				}
 				case IApiJavadocTag.TYPE_CLASS: {
-					if(!supportedtags.contains(tag.getTagName())) {
+					if(!supportedtags.contains(tagname)) {
 						processTagProblem(item.typename, 
 								tag, 
 								IElementDescriptor.METHOD, 
@@ -572,7 +589,7 @@ public class TagValidator extends ASTVisitor {
 								isconstructor ? BuilderMessages.TagValidator_private_constructor : BuilderMessages.TagValidator_private_method);
 					}
 					else if(isstatic) {
-						if(Flags.isFinal(mods) && JavadocTagManager.TAG_NOOVERRIDE.equals(tag.getTagName())) {
+						if(Flags.isFinal(mods) && JavadocTagManager.TAG_NOOVERRIDE.equals(tagname)) {
 							processTagProblem(item.typename, 
 									tag, 
 									IElementDescriptor.METHOD, 
@@ -597,7 +614,7 @@ public class TagValidator extends ASTVisitor {
 								IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
 								isconstructor ? BuilderMessages.TagValidator_a_package_default_constructor : BuilderMessages.TagValidator_a_package_default_method);
 					}
-					else if(JavadocTagManager.TAG_NOOVERRIDE.equals(tag.getTagName())) {
+					else if(JavadocTagManager.TAG_NOOVERRIDE.equals(tagname)) {
 						if (Flags.isFinal(mods)) {
 							processTagProblem(item.typename, 
 									tag, 
@@ -638,7 +655,7 @@ public class TagValidator extends ASTVisitor {
 				}
 			}
 			}
-			processed.add(tag.getTagName());
+			processed.add(tagname);
 		}
 	}
 	

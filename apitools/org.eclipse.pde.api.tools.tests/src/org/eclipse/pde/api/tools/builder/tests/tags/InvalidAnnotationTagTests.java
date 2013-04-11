@@ -75,8 +75,8 @@ public class InvalidAnnotationTagTests extends TagTest {
 	 * Tests having an @noreference tag on a variety of annotations in package a.b.c
 	 */
 	private void x1(boolean inc) {
-		setExpectedProblemIds(getDefaultProblemSet(4));
-		setExpectedMessageArgs("@noreference", BuilderMessages.TagValidator_an_annotation, 4);
+		/*setExpectedProblemIds(getDefaultProblemSet(4));
+		setExpectedMessageArgs("@noreference", BuilderMessages.TagValidator_an_annotation, 4);*/
 		String typename = "test1.java"; 
 		deployTagTest(typename, inc, false);
 	}
@@ -94,8 +94,8 @@ public class InvalidAnnotationTagTests extends TagTest {
 	 * Tests having an @noreference tag on an annotation in the default package
 	 */
 	private void x2(boolean inc) {
-		setExpectedProblemIds(getDefaultProblemSet(1));
-		setExpectedMessageArgs("@noreference", BuilderMessages.TagValidator_an_annotation, 1);
+		/*setExpectedProblemIds(getDefaultProblemSet(1));
+		setExpectedMessageArgs("@noreference", BuilderMessages.TagValidator_an_annotation, 1);*/
 		String typename = "test2.java"; 
 		deployTagTest(typename, inc, true);
 	}
@@ -184,22 +184,22 @@ public class InvalidAnnotationTagTests extends TagTest {
 	 * Tests having a variety of invalid tags on a variety of inner / outer / top-level annotations in package a.b.c
 	 */
 	private void x7(boolean inc) {
-		setExpectedProblemIds(getDefaultProblemSet(16));
+		setExpectedProblemIds(getDefaultProblemSet(12));
 		setExpectedMessageArgs(new String[][] {
 				{"@noinstantiate", BuilderMessages.TagValidator_an_annotation},
-				{"@noreference", BuilderMessages.TagValidator_an_annotation},
+				/*{"@noreference", BuilderMessages.TagValidator_an_annotation},*/
 				{"@noextend", BuilderMessages.TagValidator_an_annotation},
 				{"@nooverride", BuilderMessages.TagValidator_an_annotation},
 				{"@noinstantiate", BuilderMessages.TagValidator_an_annotation},
-				{"@noreference", BuilderMessages.TagValidator_an_annotation},
+				/*{"@noreference", BuilderMessages.TagValidator_an_annotation},*/
 				{"@noextend", BuilderMessages.TagValidator_an_annotation},
 				{"@nooverride", BuilderMessages.TagValidator_an_annotation},
 				{"@noinstantiate", BuilderMessages.TagValidator_an_annotation},
-				{"@noreference", BuilderMessages.TagValidator_an_annotation},
+				/*{"@noreference", BuilderMessages.TagValidator_an_annotation},*/
 				{"@noextend", BuilderMessages.TagValidator_an_annotation},
 				{"@nooverride", BuilderMessages.TagValidator_an_annotation},
 				{"@noinstantiate", BuilderMessages.TagValidator_an_annotation},
-				{"@noreference", BuilderMessages.TagValidator_an_annotation},
+				/*{"@noreference", BuilderMessages.TagValidator_an_annotation},*/
 				{"@noextend", BuilderMessages.TagValidator_an_annotation},
 				{"@nooverride", BuilderMessages.TagValidator_an_annotation},
 		});
@@ -219,10 +219,10 @@ public class InvalidAnnotationTagTests extends TagTest {
 	 * Tests having more than one invalid tag on an annotation in the default package
 	 */
 	private void x8(boolean inc) {
-		setExpectedProblemIds(getDefaultProblemSet(4));
+		setExpectedProblemIds(getDefaultProblemSet(3));
 		setExpectedMessageArgs(new String[][] {
 				{"@noinstantiate", BuilderMessages.TagValidator_an_annotation},
-				{"@noreference", BuilderMessages.TagValidator_an_annotation},
+				/*{"@noreference", BuilderMessages.TagValidator_an_annotation},*/
 				{"@noextend", BuilderMessages.TagValidator_an_annotation},
 				{"@nooverride", BuilderMessages.TagValidator_an_annotation},
 		});
@@ -314,17 +314,17 @@ public class InvalidAnnotationTagTests extends TagTest {
 	 * Tests all tags are invalid when parent annotation is private or package default
 	 */
 	private void x13(boolean inc) {
-		setExpectedProblemIds(getDefaultProblemSet(9));
+		setExpectedProblemIds(getDefaultProblemSet(7));
 		setExpectedMessageArgs(new String[][] {
 				{"@noextend", BuilderMessages.TagValidator_a_class_that_is_not_visible},
 				{"@noinstantiate", BuilderMessages.TagValidator_a_class_that_is_not_visible},
-				{"@noreference", BuilderMessages.TagValidator_a_class},
+				{"@noreference", BuilderMessages.TagValidator_a_class_that_is_not_visible},
 				{"@noextend", BuilderMessages.TagValidator_an_interface_that_is_not_visible},
 				{"@noimplement", BuilderMessages.TagValidator_an_interface_that_is_not_visible},
-				{"@noreference", BuilderMessages.TagValidator_an_interface},
-				{"@noreference", BuilderMessages.TagValidator_annotation_field},	
-				{"@noreference", BuilderMessages.TagValidator_an_annotation},
-				{"@noreference", BuilderMessages.TagValidator_an_enum},
+				{"@noreference", BuilderMessages.TagValidator_an_interface_that_is_not_visible},
+				{"@noreference", BuilderMessages.TagValidator_annotation_field}	
+				/*{"@noreference", BuilderMessages.TagValidator_an_annotation},
+				{"@noreference", BuilderMessages.TagValidator_an_enum},*/
 		});
 		String typename = "test13.java"; 
 		deployTagTest(typename, inc, true);

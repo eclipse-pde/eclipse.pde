@@ -72,12 +72,11 @@ public class InvalidClassTagTests extends TagTest {
 	 * using a full build
 	 */
 	private void x1(boolean inc) {
-		setExpectedProblemIds(getDefaultProblemSet(4));
+		setExpectedProblemIds(getDefaultProblemSet(3));
 		setExpectedMessageArgs(new String[][] {
-				{"@noreference", BuilderMessages.TagValidator_a_class},
-				{"@noreference", BuilderMessages.TagValidator_a_class},
-				{"@noreference", BuilderMessages.TagValidator_a_class},
-				{"@noreference", BuilderMessages.TagValidator_a_class}
+				{"@noreference", BuilderMessages.TagValidator_a_private_class},
+				{"@noreference", BuilderMessages.TagValidator_a_package_default_class},
+				{"@noreference", BuilderMessages.TagValidator_a_package_default_class}
 		});
 		deployTagTest("test1.java", inc, false);
 	}
@@ -95,10 +94,10 @@ public class InvalidClassTagTests extends TagTest {
 	 * using an incremental build
 	 */
 	private void x2(boolean inc) {
-		setExpectedProblemIds(getDefaultProblemSet(1));
+		/*setExpectedProblemIds(getDefaultProblemSet(1));
 		setExpectedMessageArgs(new String[][] {
 				{"@noreference", BuilderMessages.TagValidator_a_class}
-		});
+		});*/
 		deployTagTest("test2.java", inc, true);
 	}
 
@@ -330,18 +329,16 @@ public class InvalidClassTagTests extends TagTest {
 	}
 	
 	private void x12(boolean inc) {
-		setExpectedProblemIds(getDefaultProblemSet(13));
+		setExpectedProblemIds(getDefaultProblemSet(11));
 		setExpectedMessageArgs(new String[][] {
 				{"@noextend", BuilderMessages.TagValidator_a_class_that_is_not_visible},
 				{"@noextend", BuilderMessages.TagValidator_an_interface_that_is_not_visible},
 				{"@noextend", BuilderMessages.TagValidator_a_method},
 				{"@noextend", BuilderMessages.TagValidator_a_field},
 				{"@noimplement", BuilderMessages.TagValidator_an_interface_that_is_not_visible},
-				{"@noreference", BuilderMessages.TagValidator_an_interface},
+				{"@noreference", BuilderMessages.TagValidator_an_interface_that_is_not_visible},
 				{"@noreference", BuilderMessages.TagValidator_a_field_that_is_not_visible},
-				{"@noreference", BuilderMessages.TagValidator_a_class},	
-				{"@noreference", BuilderMessages.TagValidator_an_annotation},
-				{"@noreference", BuilderMessages.TagValidator_an_enum},
+				{"@noreference", BuilderMessages.TagValidator_a_class_that_is_not_visible},	
 				{"@noreference", BuilderMessages.TagValidator_a_method_that_is_not_visible},
 				{"@nooverride", BuilderMessages.TagValidator_a_method_that_is_not_visible},
 				{"@noinstantiate", BuilderMessages.TagValidator_a_class_that_is_not_visible}				
