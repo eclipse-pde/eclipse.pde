@@ -244,6 +244,11 @@ public class TagScanner {
 					for (Iterator iterator = tags.iterator(); iterator.hasNext();) {
 						tag = (TagElement) iterator.next();
 						String tagname = tag.getTagName();
+						if(JavadocTagManager.TAG_NOREFERENCE.equals(tagname)) { 
+							//noreference trumps all others, just continue
+							pruned.add(tag);
+							continue;
+						}
 						if(type.isInterface() && 
 								(JavadocTagManager.TAG_NOEXTEND.equals(tagname) || 
 								JavadocTagManager.TAG_NOIMPLEMENT.equals(tagname))) { 
@@ -262,6 +267,28 @@ public class TagScanner {
 									continue;
 								}
 							}
+						}
+					}
+					break;
+				}
+				case ASTNode.ANNOTATION_TYPE_DECLARATION: {
+					for (Iterator iterator = tags.iterator(); iterator.hasNext();) {
+						tag = (TagElement) iterator.next();
+						String tagname = tag.getTagName();
+						if(JavadocTagManager.TAG_NOREFERENCE.equals(tagname)) { 
+							pruned.add(tag);
+							continue;
+						}
+					}
+					break;
+				}
+				case ASTNode.ENUM_DECLARATION: {
+					for (Iterator iterator = tags.iterator(); iterator.hasNext();) {
+						tag = (TagElement) iterator.next();
+						String tagname = tag.getTagName();
+						if(JavadocTagManager.TAG_NOREFERENCE.equals(tagname)) { 
+							pruned.add(tag);
+							continue;
 						}
 					}
 					break;

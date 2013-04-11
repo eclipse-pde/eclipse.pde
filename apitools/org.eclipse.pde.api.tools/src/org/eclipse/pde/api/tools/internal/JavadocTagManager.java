@@ -148,26 +148,38 @@ public final class JavadocTagManager {
 					"noreference", //$NON-NLS-1$
 					RestrictionModifiers.NO_REFERENCE);
 			newtag.setApplicableTo(IApiJavadocTag.TYPE_CLASS, 
+					IApiJavadocTag.MEMBER_NONE, 
+					"This class is not intended to be referenced by clients");
+			newtag.setApplicableTo(IApiJavadocTag.TYPE_CLASS, 
 					IApiJavadocTag.MEMBER_METHOD, 
-					"This method is not intended to be referenced by clients."); //$NON-NLS-1$
+					"This method is not intended to be referenced by clients.");
 			newtag.setApplicableTo(IApiJavadocTag.TYPE_INTERFACE, 
 					IApiJavadocTag.MEMBER_METHOD, 
-					"This method is not intended to be referenced by clients."); //$NON-NLS-1$
+					"This method is not intended to be referenced by clients.");
+			newtag.setApplicableTo(IApiJavadocTag.TYPE_INTERFACE, 
+					IApiJavadocTag.MEMBER_NONE, 
+					"This interface is not intended to be referenced by clients");
 			newtag.setApplicableTo(IApiJavadocTag.TYPE_CLASS, 
 					IApiJavadocTag.MEMBER_FIELD, 
-					"This field is not intended to be referenced by clients."); //$NON-NLS-1$
+					"This field is not intended to be referenced by clients.");
 			newtag.setApplicableTo(IApiJavadocTag.TYPE_INTERFACE, 
 					IApiJavadocTag.MEMBER_FIELD, 
-					"This field is not intended to be referenced by clients."); //$NON-NLS-1$
+					"This field is not intended to be referenced by clients.");
 			newtag.setApplicableTo(IApiJavadocTag.TYPE_CLASS, 
 					IApiJavadocTag.MEMBER_CONSTRUCTOR, 
-					"This constructor is not intended to be referenced by clients."); //$NON-NLS-1$
+					"This constructor is not intended to be referenced by clients.");
+			newtag.setApplicableTo(IApiJavadocTag.TYPE_ENUM, 
+					IApiJavadocTag.MEMBER_NONE, 
+					"This enum is not intended to be referenced by clients.");
 			newtag.setApplicableTo(IApiJavadocTag.TYPE_ENUM, 
 					IApiJavadocTag.MEMBER_FIELD, 
-					"This enum field is not intended to be referenced by clients."); //$NON-NLS-1$
+					"This enum field is not intended to be referenced by clients.");
 			newtag.setApplicableTo(IApiJavadocTag.TYPE_ENUM, 
 					IApiJavadocTag.MEMBER_METHOD, 
-					"This enum method is not intended to be referenced by clients."); //$NON-NLS-1$
+					"This enum method is not intended to be referenced by clients.");
+			newtag.setApplicableTo(IApiJavadocTag.TYPE_ANNOTATION, 
+					IApiJavadocTag.MEMBER_NONE, 
+					"This annotation is not intended to be referenced by clients.");
 			tagcache.put(newtag.getTagId(), newtag);
 			list.add(newtag);
 			tags = (IApiJavadocTag[]) list.toArray(new IApiJavadocTag[list.size()]);
