@@ -774,15 +774,15 @@ public class PDELabelProvider extends SharedLabelProvider {
 
 	/*
 	 * BIDI support (bug 183417)
-	 * Any time we display a bracketed version, we should preface it with /u200f (zero width arabic character).
-	 * Then inside the bracket, we should include /u200e (zero width latin character).  Since the leading separator
-	 * will be resolved based on its surrounding text, when it is surrounded by a arabic character and a latin character
-	 * the bracket will take the proper shape based on the underlying embedded direction.  The latin character must
-	 * come after the bracket since versions are represented with latin numbers.  This ensure proper number format.
+	 * Any time we display a bracketed version, we should preface it with /u200f (zero width Arabic character).
+	 * Then inside the bracket, we should include /u200e (zero width Latin character).  Since the leading separator
+	 * will be resolved based on its surrounding text, when it is surrounded by a Arabic character and a Latin character
+	 * the bracket will take the proper shape based on the underlying embedded direction.  The Latin character must
+	 * come after the bracket since versions are represented with Latin numbers.  This ensure proper number format.
 	 */
 
 	/*
-	 * returns true if instance has either arabic of hebrew locale (text displayed RTL)
+	 * returns true if instance has either Arabic of Hebrew locale (text displayed RTL)
 	 */
 	private static boolean isRTL() {
 		Locale locale = Locale.getDefault();
@@ -799,17 +799,17 @@ public class PDELabelProvider extends SharedLabelProvider {
 		if (isBasicVersion) {
 			if (BidiUtil.isBidiPlatform())
 				// The versionRange is a single version.  Since parenthesis is neutral, it direction is determined by leading and following character.
-				// Since leading character is arabic and following character is latin, the parenthesis will take default (proper) direction.  
-				// Must have the following character be the latin character to ensure version is formatted as latin (LTR)
+				// Since leading character is Arabic and following character is Latin, the parenthesis will take default (proper) direction.  
+				// Must have the following character be the Latin character to ensure version is formatted as Latin (LTR)
 				return "\u200f(\u200e" + versionRange + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 			return "(" + versionRange + ')'; //$NON-NLS-1$
 		} else if (isRTL() && BidiUtil.isBidiPlatform()) {
 			// when running RTL and formatting a versionRange, we need to break up the String to make sure it is properly formatted.
-			// A version should always be formatted LTR (start with \u202d, ends with \u202c) since it is composed of latin characaters.  
-			// With specifying this format, if the qualifier has a latin character, it will not be formatted correctly.
+			// A version should always be formatted LTR (start with \u202d, ends with \u202c) since it is composed of Latin characters.  
+			// With specifying this format, if the qualifier has a Latin character, it will not be formatted correctly.
 			int index = versionRange.indexOf(',');
 			if (index > 0) {
-				// begin with zero length arabic character so version appears on left (correct) side of id.  
+				// begin with zero length Arabic character so version appears on left (correct) side of id.  
 				// Then add RTL strong encoding so parentheses and comma have RTL formatting. 
 				StringBuffer buffer = new StringBuffer("\u200f\u202e"); //$NON-NLS-1$
 				// begin with leading separator (either parenthesis or bracket)
@@ -819,7 +819,7 @@ public class PDELabelProvider extends SharedLabelProvider {
 				// min version
 				buffer.append(versionRange.substring(1, index));
 				// end LTR encoding, add ',' (which will be RTL due to first RTL strong encoding), and start LTR encoding for max version
-				// We require a space between the two numbers otherwise it is considered 1 number in arabic (comma is digit grouping system).
+				// We require a space between the two numbers otherwise it is considered 1 number in Arabic (comma is digit grouping system).
 				buffer.append("\u202c, \u202d"); //$NON-NLS-1$
 				// max version
 				buffer.append(versionRange.substring(index + 1, versionRange.length() - 1));
