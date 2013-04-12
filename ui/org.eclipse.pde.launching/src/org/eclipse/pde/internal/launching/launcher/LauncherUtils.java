@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2012 IBM Corporation and others.
+ * Copyright (c) 2003, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,13 +48,24 @@ public class LauncherUtils {
 	 */
 	private static String fLastLaunchMode;
 
-	public static boolean clearWorkspace(ILaunchConfiguration configuration, String workspace, IProgressMonitor monitor) throws CoreException {
+	/**
+	 * Checks if the workspace being launched is already in use or needs to be cleared
+	 * before launching. The provided workspace should already have any variables replaced.
+	 * This method will not check if no workspace is being used (<code>-data &#64;none</code>
+	 * added as a program argument). The caller should check for this possibility.
+	 * 
+	 * @param configuration launch configuration used to lookup workspace clear settings
+	 * @param workspace the absolute workspace location to be checked with all variables replaced or the empty string for no workspace
+	 * @param monitor progress monitor
+	 * @return whether to continue launching
+	 * @throws CoreException
+	 */
+	public static boolean checkWorkspace(ILaunchConfiguration configuration, String workspace, IProgressMonitor monitor) throws CoreException {
 
 		// If the workspace is not defined, there is no workspace to clear
-		// What will happen is that the workspace chooser dialog will be 
-		// brought up because no -data parameter will be specified on the 
-		// launch
-		if (workspace.length() == 0) {
+		// Unless the user has added the -data program arugment themselves,
+		// the workspace chooser dialog will be brought up.  
+		if (workspace == null || workspace.length() == 0) {
 			if (monitor != null) {
 				monitor.done();
 			}

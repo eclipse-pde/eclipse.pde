@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,9 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.launching.launcher;
-
-import org.eclipse.pde.core.target.ITargetHandle;
-import org.eclipse.pde.core.target.ITargetPlatformService;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,6 +25,8 @@ import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.launching.ExecutionArguments;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.core.target.ITargetHandle;
+import org.eclipse.pde.core.target.ITargetPlatformService;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.launching.ILaunchingPreferenceConstants;
@@ -38,14 +37,24 @@ import org.osgi.framework.Bundle;
 public class LaunchArgumentsHelper {
 
 	/**
-	 * Returns the location that will be used as the workspace when launching.  Will
-	 * replace variables, so this method should only be called
-	 * when variable substitution (may prompt the user) is appropriate.
+	 * Returns the location that will be used as the workspace when launching or
+	 * an empty string if the user has specified the <code>-data &#64none</code>
+	 * argument for no workspace.  Will replace variables, so this method should 
+	 * only be called when variable substitution (may prompt the user) is appropriate.
+	 * 
 	 * @param configuration the launch configuration to get the workspace value for
-	 * @return workspace location path as a string
+	 * @return workspace location path as a string or an empty if no workspace will be used
 	 * @throws CoreException if there is a problem with the configuration
 	 */
 	public static String getWorkspaceLocation(ILaunchConfiguration configuration) throws CoreException {
+		// Check if -data @none is specified
+		String[] userArgs = getUserProgramArgumentArray(configuration);
+		for (int i = 0; i < userArgs.length; i++) {
+			if (userArgs[i].equals("-data") && (i + 1) < userArgs.length && userArgs[i + 1].equals("@none")) { //$NON-NLS-1$
+				return ""; //$NON-NLS-1$
+			}
+		}
+
 		String location = configuration.getAttribute(IPDELauncherConstants.LOCATION, (String) null);
 		if (location == null) {
 			// backward compatibility
@@ -190,7 +199,7 @@ public class LaunchArgumentsHelper {
 		return map;
 	}
 
-	public static String getTracingFileArgument(ILaunchConfiguration config, String optionsFileName) throws CoreException {
+	public static String getTracingFileArgument(ILaunchConfiguration config, String optionsFileName) {
 		try {
 			TracingOptionsManager mng = PDECore.getDefault().getTracingOptionsManager();
 			Map options = config.getAttribute(IPDELauncherConstants.TRACING_OPTIONS, (Map) null);
