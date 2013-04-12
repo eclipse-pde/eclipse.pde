@@ -933,7 +933,8 @@ public class TagScannerTests extends TestCase {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/InvalidTagScanInterface.java", manifest);
 		IApiAnnotations description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.InvalidTagScanInterface"));
-		assertNull("there should be no annotations for interface InvalidTagScanInterface", description);
+		assertNotNull("there should be noreference restrictions for interface InvalidTagScanInterface", description);
+		assertTrue("The restrictions for InvalidTagScanInterface should be noreference", (description.getRestrictions() & RestrictionModifiers.NO_REFERENCE) > 0);
 	}
 	
 	/**
@@ -944,7 +945,8 @@ public class TagScannerTests extends TestCase {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/InvalidTagScanClass1.java", manifest);
 		IApiAnnotations description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.InvalidTagScanClass1"));
-		assertNull("there should be no annotations for class InvalidTagScanClass1", description);
+		assertNotNull("there should be noreference annotations for class InvalidTagScanClass1", description);
+		assertTrue("The restrictions for InvalidTagScanClass1 should be noreference", (description.getRestrictions() & RestrictionModifiers.NO_REFERENCE) > 0);
 	}
 	
 	/**
@@ -955,7 +957,8 @@ public class TagScannerTests extends TestCase {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/InvalidTagScanClass2.java", manifest);
 		IApiAnnotations description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.InvalidTagScanClass2"));
-		assertNull("there should be no annotations for class InvalidTagScanClass2", description);
+		assertNotNull("there should be noreference annotations for class InvalidTagScanClass2", description);
+		assertTrue("The restrictions for InvalidTagScanClass2 should be noreference", (description.getRestrictions() & RestrictionModifiers.NO_REFERENCE) > 0);
 	}
 	
 	/**
@@ -966,7 +969,8 @@ public class TagScannerTests extends TestCase {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/InvalidTagScanClass3.java", manifest);
 		IApiAnnotations description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.InvalidTagScanClass3"));
-		assertNull("there should be no annotations for class InvalidTagScanClass3", description);
+		assertNotNull("there should be noreference annotations for class InvalidTagScanClass3", description);
+		assertTrue("The restrictions for InvalidTagScanClass3 should be noreference", (description.getRestrictions() & RestrictionModifiers.NO_REFERENCE) > 0);
 	}
 	
 	/**

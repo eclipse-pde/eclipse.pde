@@ -32,6 +32,7 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.AnnotationTypeDeclaration;
+import org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
 import org.eclipse.jdt.core.dom.EnumDeclaration;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.Javadoc;
@@ -155,9 +156,7 @@ public class TagScanner {
 						continue;
 					}
 					if(JavadocTagManager.TAG_NOREFERENCE.equals(tagname)) { 
-						//noreference trumps all others, just set and return
-						fDescription.setRestrictions(fType, RestrictionModifiers.NO_REFERENCE);
-						return false;
+						restrictions |= RestrictionModifiers.NO_REFERENCE;
 					}
 					if(node.isInterface()) {
 						if(JavadocTagManager.TAG_NOEXTEND.equals(tagname)) {
@@ -224,9 +223,7 @@ public class TagScanner {
 						continue;
 					}
 					if(JavadocTagManager.TAG_NOREFERENCE.equals(tagname)) { 
-						//noreference trumps all others, just set and return
 						fDescription.setRestrictions(fType, RestrictionModifiers.NO_REFERENCE);
-						return false;
 					}
 				}
 			}
@@ -250,9 +247,7 @@ public class TagScanner {
 						continue;
 					}
 					if(JavadocTagManager.TAG_NOREFERENCE.equals(tagname)) { 
-						//noreference trumps all others, just set and return
 						fDescription.setRestrictions(fType, RestrictionModifiers.NO_REFERENCE);
-						return false;
 					}
 				}
 			}
@@ -307,19 +302,21 @@ public class TagScanner {
 							continue;
 						}
 						if(JavadocTagManager.TAG_NOREFERENCE.equals(tagname)) { 
-							//noreference trumps all others, just set and return
 							restrictions |= RestrictionModifiers.NO_REFERENCE;
-							//fDescription.setRestrictions(descriptor, RestrictionModifiers.NO_REFERENCE);
-							//TODO do we want to prune? return false;
 						}
 						if(JavadocTagManager.TAG_NOOVERRIDE.equals(tagname)) {
+							if(Flags.isFinal(node.getModifiers()) || Flags.isStatic(node.getModifiers())) {
+								continue;
+							}
 							ASTNode parent = node.getParent();
 							if(parent instanceof TypeDeclaration) {
 								TypeDeclaration type = (TypeDeclaration) parent;
 								if(!Flags.isFinal(type.getModifiers())) {
 									restrictions |= RestrictionModifiers.NO_OVERRIDE;
-									//fDescription.setRestrictions(descriptor, RestrictionModifiers.NO_OVERRIDE);
 								}
+							}
+							else if(parent instanceof AnonymousClassDeclaration) {
+								restrictions |= RestrictionModifiers.NO_OVERRIDE;
 							}
 						}
 					}
@@ -350,12 +347,10 @@ public class TagScanner {
 						continue;
 					}
 					if(!Flags.isFinal(flags) && JavadocTagManager.TAG_NOREFERENCE.equals(tagname)) { 
-						//noreference trumps all others, just set and return
 						for(Iterator iter = fields.iterator(); iter.hasNext();) {
 							fragment = (VariableDeclarationFragment) iter.next();
 							fDescription.setRestrictions(fType.getField(fragment.getName().getFullyQualifiedName()), RestrictionModifiers.NO_REFERENCE);
 						}
-						return false;
 					}
 				}
 			}

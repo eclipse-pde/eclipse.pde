@@ -588,16 +588,8 @@ public class TagValidator extends ASTVisitor {
 								IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
 								isconstructor ? BuilderMessages.TagValidator_private_constructor : BuilderMessages.TagValidator_private_method);
 					}
-					else if(isstatic) {
-						if(Flags.isFinal(mods) && JavadocTagManager.TAG_NOOVERRIDE.equals(tagname)) {
-							processTagProblem(item.typename, 
-									tag, 
-									IElementDescriptor.METHOD, 
-									IApiProblem.UNSUPPORTED_TAG_USE, 
-									IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
-									isconstructor ? BuilderMessages.TagValidator_static_final_constructor : BuilderMessages.TagValidator_a_static_final_method);
-						}
-						else if(Flags.isPackageDefault(mods)) {
+					else if(Flags.isPackageDefault(mods)) {
+						if(isstatic) {
 							processTagProblem(item.typename, 
 									tag, 
 									IElementDescriptor.METHOD, 
@@ -605,23 +597,41 @@ public class TagValidator extends ASTVisitor {
 									IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
 									isconstructor ? BuilderMessages.TagValidator_static_package_constructor : BuilderMessages.TagValidator_a_static_package_default_method);
 						}
-					}
-					else if(Flags.isPackageDefault(mods)) {
-						processTagProblem(item.typename, 
-								tag, 
-								IElementDescriptor.METHOD, 
-								IApiProblem.UNSUPPORTED_TAG_USE, 
-								IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
-								isconstructor ? BuilderMessages.TagValidator_a_package_default_constructor : BuilderMessages.TagValidator_a_package_default_method);
-					}
-					else if(JavadocTagManager.TAG_NOOVERRIDE.equals(tagname)) {
-						if (Flags.isFinal(mods)) {
+						else {
 							processTagProblem(item.typename, 
 									tag, 
 									IElementDescriptor.METHOD, 
 									IApiProblem.UNSUPPORTED_TAG_USE, 
 									IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
-									isconstructor ? BuilderMessages.TagValidator_final_constructor : BuilderMessages.TagValidator_a_final_method);
+									isconstructor ? BuilderMessages.TagValidator_a_package_default_constructor : BuilderMessages.TagValidator_a_package_default_method);
+						}
+					}
+					else if(JavadocTagManager.TAG_NOOVERRIDE.equals(tagname)) {
+						if (Flags.isFinal(mods)) {
+							if(isstatic) {
+								processTagProblem(item.typename, 
+										tag, 
+										IElementDescriptor.METHOD, 
+										IApiProblem.UNSUPPORTED_TAG_USE, 
+										IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
+										isconstructor ? BuilderMessages.TagValidator_static_final_constructor : BuilderMessages.TagValidator_a_static_final_method);
+							}
+							else {
+								processTagProblem(item.typename, 
+										tag, 
+										IElementDescriptor.METHOD, 
+										IApiProblem.UNSUPPORTED_TAG_USE, 
+										IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
+										isconstructor ? BuilderMessages.TagValidator_final_constructor : BuilderMessages.TagValidator_a_final_method);
+							}
+						}
+						else if(isstatic) {
+							processTagProblem(item.typename, 
+									tag, 
+									IElementDescriptor.METHOD, 
+									IApiProblem.UNSUPPORTED_TAG_USE, 
+									IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
+									isconstructor ? BuilderMessages.TagValidator_a_static_constructor : BuilderMessages.TagValidator_a_static_method);
 						}
 						else if(Flags.isFinal(getParentModifiers(method))) {
 							processTagProblem(item.typename, 

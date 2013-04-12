@@ -349,10 +349,11 @@ public class InvalidClassMethodTagTests extends InvalidMethodTagTests {
 	 * Tests the unsupported @nooverride tag on a static method
 	 */
 	private void x13(boolean inc) {
-		setExpectedProblemIds(getDefaultProblemIdSet(2));
+		setExpectedProblemIds(getDefaultProblemIdSet(3));
 		setExpectedMessageArgs(new String[][] {
 				{"@nooverride", BuilderMessages.TagValidator_a_static_package_default_method},
 				{"@nooverride", BuilderMessages.TagValidator_a_static_final_method},
+				{"@nooverride", BuilderMessages.TagValidator_a_static_method}
 		});
 		deployTagTest("test13.java", inc, false);
 	}
