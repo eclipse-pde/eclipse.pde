@@ -136,7 +136,7 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 					case IJavaElement.TYPE: {
 						IType itype = (IType) element;
 						int flags = itype.getFlags();
-						if(Flags.isPrivate(flags) || Flags.isPackageDefault(flags) || hasNonVisibleParent(element)) {
+						if(hasNonVisibleParent(element, itype.isInterface())) {
 							return Collections.EMPTY_LIST;
 						}
 						break;
@@ -144,7 +144,9 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 					case IJavaElement.METHOD: {
 						IMethod method = (IMethod) element;
 						int flags = method.getFlags();
-						if(Flags.isPrivate(flags) || Flags.isPackageDefault(flags) || hasNonVisibleParent(element)) {
+						if(Flags.isPrivate(flags) || 
+								Flags.isPackageDefault(flags) || 
+								hasNonVisibleParent(element, method.getDeclaringType().isInterface())) {
 							return Collections.EMPTY_LIST;
 						}
 						member = IApiJavadocTag.MEMBER_METHOD;
@@ -156,7 +158,11 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 					case IJavaElement.FIELD: {
 						IField field  = (IField) element;
 						int flags = field.getFlags();
-						if(Flags.isFinal(flags) || field.isEnumConstant() || Flags.isPrivate(flags) || Flags.isPackageDefault(flags) || hasNonVisibleParent(element)) {
+						if(Flags.isFinal(flags) || 
+								field.isEnumConstant() || 
+								Flags.isPrivate(flags) || 
+								Flags.isPackageDefault(flags) || 
+								hasNonVisibleParent(element, field.getDeclaringType().isInterface())) {
 							return Collections.EMPTY_LIST;
 						}
 						member = IApiJavadocTag.MEMBER_FIELD;
@@ -203,21 +209,42 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 	 * @throws JavaModelException
 	 * @since 1.0.400
 	 */
-	boolean hasNonVisibleParent(IJavaElement element) throws JavaModelException {
+	boolean hasNonVisibleParent(IJavaElement element, boolean isinterface) throws JavaModelException {
 		if(element == null) {
 			return false;
 		}
+		boolean isinter = isinterface;
 		switch(element.getElementType()) {
 			case IJavaElement.TYPE: {
 				IType type = (IType) element;
 				int flags = type.getFlags();
+				IType ptype = type.getDeclaringType();
+				if(type.isInterface()) {
+					if(ptype == null) {
+						return false;
+					}
+					isinter &= true;
+					if(Flags.isPublic(flags) || isinter) {
+						return hasNonVisibleParent(ptype, isinter);
+					}
+					if(ptype.isClass()) {
+						if(Flags.isPrivate(flags) || Flags.isPackageDefault(flags)) {
+							return true;
+						}
+					}
+				}
+				if(ptype != null) {
+					if(!Flags.isStatic(flags) && ! Flags.isPublic(flags)) {
+						return true;
+					}
+				}
 				if(Flags.isPrivate(flags) || Flags.isPackageDefault(flags)) {
 					return true;
 				}
 				break;
 			}
 		}
-		return hasNonVisibleParent(element.getParent());
+		return hasNonVisibleParent(element.getParent(), isinter);
 	}
 	
 	/**
