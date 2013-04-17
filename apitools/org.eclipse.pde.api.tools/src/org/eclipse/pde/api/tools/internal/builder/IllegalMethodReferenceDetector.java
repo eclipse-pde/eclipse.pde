@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,12 +10,16 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.builder;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
 import org.eclipse.pde.api.tools.internal.provisional.builder.IReference;
+import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiMethod;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
@@ -28,6 +32,29 @@ import org.eclipse.pde.api.tools.internal.util.Signatures;
  */
 public class IllegalMethodReferenceDetector extends AbstractIllegalMethodReference {
 
+	private Set/*<String, IMethodDescriptor>*/ fIllegalTypes = new HashSet();
+	
+	/**
+	 * Adds an {@link IReferenceTypeDescriptor} that is reference-restricted
+	 * 
+	 * @param type the {@link IReferenceTypeDescriptor} that is restricted
+	 * 
+	 * @since 1.0.400
+	 */
+	void addIllegalType(IReferenceTypeDescriptor type) {
+		fIllegalTypes.add(type.getQualifiedName());
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.builder.AbstractIllegalMethodReference#considerReference(org.eclipse.pde.api.tools.internal.provisional.builder.IReference)
+	 */
+	public boolean considerReference(IReference reference) {
+		if(super.considerReference(reference) || isEnclosedBy(reference.getReferencedTypeName(), fIllegalTypes)) {
+			retainReference(reference);
+		}
+		return false;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiProblemDetector#getReferenceKinds()
 	 */

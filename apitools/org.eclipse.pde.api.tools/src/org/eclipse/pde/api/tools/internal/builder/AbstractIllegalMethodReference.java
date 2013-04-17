@@ -55,7 +55,9 @@ public abstract class AbstractIllegalMethodReference extends AbstractProblemDete
 	 * @see org.eclipse.pde.api.tools.internal.builder.AbstractProblemDetector#considerReference(org.eclipse.pde.api.tools.internal.provisional.builder.IReference)
 	 */
 	public boolean considerReference(IReference reference) {
-		if (super.considerReference(reference) && fIllegalMethods.containsKey(new MethodKey(reference.getReferencedTypeName(), reference.getReferencedMemberName(), reference.getReferencedSignature(), true))) {
+		MethodKey key = new MethodKey(reference.getReferencedTypeName(), reference.getReferencedMemberName(), reference.getReferencedSignature(), true);
+		if (super.considerReference(reference) && 
+				fIllegalMethods.containsKey(key)) {
 			retainReference(reference);
 			return true;
 		}

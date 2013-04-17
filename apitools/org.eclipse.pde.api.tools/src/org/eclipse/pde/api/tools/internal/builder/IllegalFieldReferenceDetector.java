@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,9 @@
 package org.eclipse.pde.api.tools.internal.builder;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IType;
@@ -22,6 +24,7 @@ import org.eclipse.pde.api.tools.internal.model.MethodKey;
 import org.eclipse.pde.api.tools.internal.provisional.builder.IReference;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IFieldDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiField;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
@@ -38,7 +41,9 @@ public class IllegalFieldReferenceDetector extends AbstractProblemDetector {
 	 * Map of {@link org.eclipse.pde.api.tools.internal.model.MethodKey} to
 	 * {@link org.eclipse.pde.api.tools.internal.provisional.descriptors.IFieldDescriptor} 
 	 */
-	private Map fIllegalFields = new HashMap();
+	private Map/*<MethodKey, IFieldDescriptor>*/ fIllegalFields = new HashMap();
+	
+	private Set /*<String, IReferenceTypeDescriptior>*/ fIllegalTypes = new HashSet();
 	
 	/**
 	 * Map of {@link org.eclipse.pde.api.tools.internal.provisional.descriptors.IFieldDescriptor}
@@ -47,7 +52,7 @@ public class IllegalFieldReferenceDetector extends AbstractProblemDetector {
 	private Map fFieldComponents = new HashMap();
 	
 	/**
-	 * Adds the given type as not to be extended.
+	 * Adds the given field as not to be referenced
 	 * 
 	 * @param field a field that is marked no reference
 	 * @param componentId the component the type is located in
@@ -57,11 +62,23 @@ public class IllegalFieldReferenceDetector extends AbstractProblemDetector {
 		fFieldComponents.put(field, componentId);
 	}	
 	
+	/**
+	 * Adds an {@link IReferenceTypeDescriptor} that is reference-restricted
+	 * 
+	 * @param type the {@link IReferenceTypeDescriptor} that is restricted
+	 * 
+	 * @since 1.0.400
+	 */
+	void addIllegalType(IReferenceTypeDescriptor type) {
+		fIllegalTypes.add(type.getQualifiedName());
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiProblemDetector#considerReference(org.eclipse.pde.api.tools.internal.provisional.model.IReference)
 	 */
 	public boolean considerReference(IReference reference) {
-		if (super.considerReference(reference) && fIllegalFields.containsKey(new MethodKey(reference.getReferencedTypeName(), reference.getReferencedMemberName(), reference.getReferencedSignature(), true))) {
+		MethodKey key = new MethodKey(reference.getReferencedTypeName(), reference.getReferencedMemberName(), reference.getReferencedSignature(), true);
+		if ((super.considerReference(reference) && fIllegalFields.containsKey(key)) || isEnclosedBy(reference.getReferencedTypeName(), fIllegalTypes)) {
 			retainReference(reference);
 			return true;
 		}

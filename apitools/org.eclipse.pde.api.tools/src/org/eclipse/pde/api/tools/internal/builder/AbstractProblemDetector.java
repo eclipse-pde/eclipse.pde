@@ -13,6 +13,7 @@ package org.eclipse.pde.api.tools.internal.builder;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -446,6 +447,7 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 		}
 		return true;
 	}
+	
 	protected boolean isReferenceFromComponent(IReference reference,
 			Object componentId) {
 		if (componentId != null) {
@@ -671,6 +673,25 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 			return new Position(offset + first, methodname.length());
 		}
 		return null;
+	}
+	
+	/**
+	 * Returns if the signature is enclosed by the one of the elements of the 
+	 * given set of type names.
+	 * 
+	 * @param signature the signature of the element 
+	 * @param typenames the Set of {@link String}s of type names
+	 * @return <code>true</code> if the given set contains a type name that encloses the 
+	 * given signature, <code>false</code> otherwise
+	 * 
+	 * @since 1.0.400
+	 */
+	boolean isEnclosedBy(String signature, Set typenames) {
+		if(signature == null || typenames == null) {
+			return false;
+		}
+		//TODO
+		return false;
 	}
 	
 	/**

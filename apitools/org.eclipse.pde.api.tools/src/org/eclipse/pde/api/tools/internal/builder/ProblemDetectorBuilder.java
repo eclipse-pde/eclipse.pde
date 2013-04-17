@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -91,6 +91,13 @@ public class ProblemDetectorBuilder extends ApiDescriptionVisitor {
 	private int fKindMask = 0;
 	
 	/**
+	 * Stack containing all of the types tagged &#64;noreference
+	 * 
+	 * @since 1.0.400
+	 */
+	Set/*<IReferenceType>*/ fRestrictedTypes = new HashSet();
+	
+	/**
 	 * Build problem detectors for a component.
 	 * 
 	 * @param component
@@ -114,30 +121,54 @@ public class ProblemDetectorBuilder extends ApiDescriptionVisitor {
 				}
 				break;
 			}
-			default: {
+			case IElementDescriptor.TYPE: {
 				if((fKindMask & K_USE) > 0) {
-					if (!RestrictionModifiers.isUnrestricted(mask)) {
-						if(RestrictionModifiers.isOverrideRestriction(mask) && fIllegalOverride != null) {
-							fIllegalOverride.addIllegalMethod((IMethodDescriptor) element, fComponent.getSymbolicName());
+					IReferenceTypeDescriptor type = (IReferenceTypeDescriptor) element;
+					if (RestrictionModifiers.isExtendRestriction(mask) && fIllegalExtends != null) {
+						fIllegalExtends.addIllegalType(type, fComponent.getSymbolicName());
+					}
+					if (RestrictionModifiers.isImplementRestriction(mask) && fIllegalImplements != null) {
+						fIllegalImplements.addIllegalType(type, fComponent.getSymbolicName());
+					}
+					if (RestrictionModifiers.isInstantiateRestriction(mask) && fIllegalInstantiate != null) {
+						fIllegalInstantiate.addIllegalType(type, fComponent.getSymbolicName());
+					}
+					if(RestrictionModifiers.isReferenceRestriction(mask)) {
+						fRestrictedTypes.add(element);
+						if(fIllegalFieldRef != null) {
+							fIllegalFieldRef.addIllegalType(type);
 						}
-						if (RestrictionModifiers.isExtendRestriction(mask) && fIllegalExtends != null) {
-							fIllegalExtends.addIllegalType((IReferenceTypeDescriptor) element, fComponent.getSymbolicName());
-						}
-						if (RestrictionModifiers.isImplementRestriction(mask) && fIllegalImplements != null) {
-							fIllegalImplements.addIllegalType((IReferenceTypeDescriptor) element, fComponent.getSymbolicName());
-						}
-						if (RestrictionModifiers.isInstantiateRestriction(mask) && fIllegalInstantiate != null) {
-							fIllegalInstantiate.addIllegalType((IReferenceTypeDescriptor) element, fComponent.getSymbolicName());
-						}
-						if (RestrictionModifiers.isReferenceRestriction(mask)) {
-							if (element.getElementType() == IElementDescriptor.METHOD && fIllegalMethodRef != null) {
-								fIllegalMethodRef.addIllegalMethod((IMethodDescriptor) element, fComponent.getSymbolicName());
-							} else if (element.getElementType() == IElementDescriptor.FIELD && fIllegalFieldRef != null) {
-								fIllegalFieldRef.addIllegalField((IFieldDescriptor) element, fComponent.getSymbolicName());
-							}
+						if(fIllegalMethodRef != null) {
+							fIllegalMethodRef.addIllegalType(type);
 						}
 					}
 				}
+				break;
+			}
+			case IElementDescriptor.METHOD: {
+				if((fKindMask & K_USE) > 0) {
+					IMethodDescriptor method = (IMethodDescriptor) element;
+					if(RestrictionModifiers.isOverrideRestriction(mask) && fIllegalOverride != null) {
+						fIllegalOverride.addIllegalMethod(method, fComponent.getSymbolicName());
+					}
+					if(fIllegalMethodRef != null) {
+						if (RestrictionModifiers.isReferenceRestriction(mask)) {
+							fIllegalMethodRef.addIllegalMethod(method, fComponent.getSymbolicName());
+						}
+					}
+				}
+				break;
+			}
+			case IElementDescriptor.FIELD: {
+				if((fKindMask & K_USE) > 0 && fIllegalFieldRef != null) {
+					if (RestrictionModifiers.isReferenceRestriction(mask)) {
+						fIllegalFieldRef.addIllegalField((IFieldDescriptor) element, fComponent.getSymbolicName());
+					}
+				}
+				break;
+			}
+			default: {
+				break;
 			}
 		}
 		return true;
