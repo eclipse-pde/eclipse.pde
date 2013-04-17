@@ -62,20 +62,20 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.keys.IBindingService;
 
 /**
- * TocTreeSection - The section that displays the TOC
- * tree structure and any buttons used to manipulate it.
- * This is the main section that the user will interact
- * with the TOC through.
+ * TocTreeSection - The section that displays the TOC tree structure and any
+ * buttons used to manipulate it. This is the main section that the user will
+ * interact with the TOC through.
  */
 public class TocTreeSection extends TreeSection {
 	private TocModel fModel;
 	private TreeViewer fTocTree;
 	private FormFilteredTree fFilteredTree;
 
-	/* The indices for each button attached to the Tree Viewer.
-	 * This type of UI form does not permit direct access to each particular
-	 * button. However, using these indices, one can perform any typical SWT
-	 * operation on any button.
+	/*
+	 * The indices for each button attached to the Tree Viewer. This type of UI
+	 * form does not permit direct access to each particular button. However,
+	 * using these indices, one can perform any typical SWT operation on any
+	 * button.
 	 */
 	private static final int F_BUTTON_ADD_TOPIC = 0;
 	private static final int F_BUTTON_ADD_LINK = 3;
@@ -121,26 +121,36 @@ public class TocTreeSection extends TreeSection {
 	// The adapter that will listen for drag events in the tree
 	private TocDragAdapter fDragAdapter;
 
-	/* If items are dragged and dropped within this tree, then
-	 * this flag inhibits reselection on the removal (drag) action,
-	 * thus ensuring that the selected objects are the ones that were
-	 * dropped.
+	/*
+	 * If items are dragged and dropped within this tree, then this flag
+	 * inhibits reselection on the removal (drag) action, thus ensuring that the
+	 * selected objects are the ones that were dropped.
 	 */
 	private boolean fDragFromHere;
 
 	/**
 	 * Constructs a new TOC tree section.
 	 * 
-	 * @param formPage The page that will hold this new tree section
-	 * @param parent The parent composite in the page that will contain the section widgets
+	 * @param formPage
+	 *            The page that will hold this new tree section
+	 * @param parent
+	 *            The parent composite in the page that will contain the section
+	 *            widgets
 	 */
 	public TocTreeSection(PDEFormPage formPage, Composite parent) {
 
-		/* Create a new section with a description area, and some buttons.
-		 * The null entries in the String array will become blank space 
-		 * separators between the buttons.
+		/*
+		 * Create a new section with a description area, and some buttons. The
+		 * null entries in the String array will become blank space separators
+		 * between the buttons.
 		 */
-		super(formPage, parent, Section.DESCRIPTION, new String[] {TocMessages.TocTreeSection_addTopic, null, null, TocMessages.TocTreeSection_addLink, TocMessages.TocTreeSection_addAnchor, TocMessages.TocTreeSection_remove, TocMessages.TocTreeSection_up, TocMessages.TocTreeSection_down});
+		super(formPage, parent, Section.DESCRIPTION,
+				new String[] { TocMessages.TocTreeSection_addTopic, null, null,
+						TocMessages.TocTreeSection_addLink,
+						TocMessages.TocTreeSection_addAnchor,
+						TocMessages.TocTreeSection_remove,
+						TocMessages.TocTreeSection_up,
+						TocMessages.TocTreeSection_down });
 
 		// Initialize all the actions
 		fAddTopicAction = new TocAddTopicAction();
@@ -150,8 +160,12 @@ public class TocTreeSection extends TreeSection {
 		fOpenLinkAction = new TocOpenLinkAction();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.pde.internal.ui.editor.PDESection#createClient(org.eclipse
+	 * .ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
 	 */
 	protected void createClient(Section section, FormToolkit toolkit) {
 		// Get the model
@@ -174,17 +188,20 @@ public class TocTreeSection extends TreeSection {
 	}
 
 	/**
-	 * Adds a link (with hand cursor) for tree 'Collapse All' action,
-	 * which collapses the TOC tree down to the second level
+	 * Adds a link (with hand cursor) for tree 'Collapse All' action, which
+	 * collapses the TOC tree down to the second level
 	 * 
-	 * @param section The section that the toolbar will belong to
-	 * @param toolkit The toolkit that will be used to make the toolbar
+	 * @param section
+	 *            The section that the toolbar will belong to
+	 * @param toolkit
+	 *            The toolkit that will be used to make the toolbar
 	 */
 	private void createSectionToolbar(Section section, FormToolkit toolkit) {
 		ToolBarManager toolBarManager = new ToolBarManager(SWT.FLAT);
 		ToolBar toolbar = toolBarManager.createControl(section);
 
-		final Cursor handCursor = new Cursor(Display.getCurrent(), SWT.CURSOR_HAND);
+		final Cursor handCursor = new Cursor(Display.getCurrent(),
+				SWT.CURSOR_HAND);
 		toolbar.setCursor(handCursor);
 		// Cursor needs to be explicitly disposed
 		toolbar.addDisposeListener(new DisposeListener() {
@@ -196,7 +213,8 @@ public class TocTreeSection extends TreeSection {
 		});
 
 		// Add collapse action to the tool bar
-		fCollapseAction = new CollapseAction(fTocTree, TocMessages.TocTreeSection_collapseAll, 1, fModel.getToc());
+		fCollapseAction = new CollapseAction(fTocTree,
+				TocMessages.TocTreeSection_collapseAll, 1, fModel.getToc());
 		toolBarManager.add(fCollapseAction);
 
 		toolBarManager.update(true);
@@ -206,8 +224,10 @@ public class TocTreeSection extends TreeSection {
 	/**
 	 * Create the tree widget that will contain the TOC
 	 * 
-	 * @param container The container of the tree widget
-	 * @param toolkit The toolkit used to create the tree
+	 * @param container
+	 *            The container of the tree widget
+	 * @param toolkit
+	 *            The toolkit used to create the tree
 	 */
 	private void createTree(Composite container, FormToolkit toolkit) {
 		TreePart treePart = getTreePart();
@@ -215,7 +235,8 @@ public class TocTreeSection extends TreeSection {
 
 		fTocTree = treePart.getTreeViewer();
 		fTocTree.setContentProvider(new TocContentProvider());
-		fTocTree.setLabelProvider(PDEUserAssistanceUIPlugin.getDefault().getLabelProvider());
+		fTocTree.setLabelProvider(PDEUserAssistanceUIPlugin.getDefault()
+				.getLabelProvider());
 
 		PDEUserAssistanceUIPlugin.getDefault().getLabelProvider().connect(this);
 
@@ -232,16 +253,21 @@ public class TocTreeSection extends TreeSection {
 			ops |= DND.DROP_MOVE;
 		}
 
-		//Content dragged from the tree viewer can be treated as model objects (TocObjects)
-		//or as text (XML representation of the TocObjects)
-		Transfer[] dragTransfers = new Transfer[] {ModelDataTransfer.getInstance(), TextTransfer.getInstance()};
+		// Content dragged from the tree viewer can be treated as model objects
+		// (TocObjects)
+		// or as text (XML representation of the TocObjects)
+		Transfer[] dragTransfers = new Transfer[] {
+				ModelDataTransfer.getInstance(), TextTransfer.getInstance() };
 		fDragAdapter = new TocDragAdapter(this);
 		fTocTree.addDragSupport(ops, dragTransfers, fDragAdapter);
 
-		if (isEditable()) { //Model objects and files can be dropped onto the viewer
-			//TODO: Consider allowing drops/pastes of pure XML text
-			Transfer[] dropTransfers = new Transfer[] {ModelDataTransfer.getInstance(), FileTransfer.getInstance()};
-			fTocTree.addDropSupport(ops | DND.DROP_DEFAULT, dropTransfers, new TocDropAdapter(fTocTree, this));
+		if (isEditable()) { // Model objects and files can be dropped onto the
+							// viewer
+			// TODO: Consider allowing drops/pastes of pure XML text
+			Transfer[] dropTransfers = new Transfer[] {
+					ModelDataTransfer.getInstance(), FileTransfer.getInstance() };
+			fTocTree.addDropSupport(ops | DND.DROP_DEFAULT, dropTransfers,
+					new TocDropAdapter(fTocTree, this));
 		}
 	}
 
@@ -277,17 +303,20 @@ public class TocTreeSection extends TreeSection {
 		// Set to false because initial node selected is the root TOC node
 		getTreePart().setButtonEnabled(F_BUTTON_DOWN, false);
 
-		//Initially, the root TOC element is selected
+		// Initially, the root TOC element is selected
 		fTocTree.setSelection(new StructuredSelection(toc), true);
 		fTocTree.expandToLevel(2);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.forms.AbstractFormPart#setFormInput(java.lang.Object)
 	 */
 	public boolean setFormInput(Object object) {
 		// This method allows the outline view to select items in the tree
-		// (Invoked by org.eclipse.ui.forms.editor.IFormPage.selectReveal(Object object))
+		// (Invoked by org.eclipse.ui.forms.editor.IFormPage.selectReveal(Object
+		// object))
 
 		if (object instanceof TocObject) { // Select the item in the tree
 			fTocTree.setSelection(new StructuredSelection(object), true);
@@ -310,7 +339,8 @@ public class TocTreeSection extends TreeSection {
 	}
 
 	/**
-	 * @param selection the new selection for the tree section
+	 * @param selection
+	 *            the new selection for the tree section
 	 */
 	public void setSelection(ISelection selection) {
 		fTocTree.setSelection(selection);
@@ -323,8 +353,12 @@ public class TocTreeSection extends TreeSection {
 		fTocTree.setSelection(fTocTree.getSelection());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.TreeSection#selectionChanged(org.eclipse.jface.viewers.IStructuredSelection)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.pde.internal.ui.editor.TreeSection#selectionChanged(org.eclipse
+	 * .jface.viewers.IStructuredSelection)
 	 */
 	protected void selectionChanged(IStructuredSelection selection) {
 		getPage().getPDEEditor().setSelection(selection);
@@ -345,13 +379,15 @@ public class TocTreeSection extends TreeSection {
 		// 'Remove' is enabled if any object in the selection is removable
 		boolean canRemove = false;
 
-		IStructuredSelection sel = (IStructuredSelection) fTocTree.getSelection();
-		//TODO: Implement multi-select move actions from the root TOC element
+		IStructuredSelection sel = (IStructuredSelection) fTocTree
+				.getSelection();
+		// TODO: Implement multi-select move actions from the root TOC element
 
 		// 'Up' is disabled if any object in the selection can't be moved up.
 		boolean canMoveUp = sel.size() == 1;
 
-		// 'Down' is disabled if any object in the selection can't be moved down.
+		// 'Down' is disabled if any object in the selection can't be moved
+		// down.
 		boolean canMoveDown = sel.size() == 1;
 
 		for (Iterator iter = sel.iterator(); iter.hasNext();) {
@@ -363,18 +399,21 @@ public class TocTreeSection extends TreeSection {
 				}
 
 				TocObject parent = tocObject.getParent();
-				if (sel.size() == 1 && (tocObject.getType() == ITocConstants.TYPE_TOC || parent.getType() == ITocConstants.TYPE_TOPIC || parent.getType() == ITocConstants.TYPE_TOC)) {
-				/* Semantic rule: 
-				 * As long as the selection is a child of a 
-				 * TOC root or a topic, or the selection itself
-				 * is a TOC root, then a new object can be added
-				 * either to the selection or to the parent
-				 */
+				if (sel.size() == 1
+						&& (tocObject.getType() == ITocConstants.TYPE_TOC
+								|| parent.getType() == ITocConstants.TYPE_TOPIC || parent
+								.getType() == ITocConstants.TYPE_TOC)) {
+					/*
+					 * Semantic rule: As long as the selection is a child of a
+					 * TOC root or a topic, or the selection itself is a TOC
+					 * root, then a new object can be added either to the
+					 * selection or to the parent
+					 */
 					canAddObject = true;
 				}
 
-				//Semantic rule:
-				//You cannot rearrange the TOC root itself
+				// Semantic rule:
+				// You cannot rearrange the TOC root itself
 				if (tocObject.getType() == ITocConstants.TYPE_TOC) {
 					canMoveUp = false;
 					canMoveDown = false;
@@ -409,8 +448,12 @@ public class TocTreeSection extends TreeSection {
 		getTreePart().setButtonEnabled(F_BUTTON_DOWN, canMoveDown);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#fillContextMenu(org.eclipse.jface.action.IMenuManager)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.pde.internal.ui.editor.StructuredViewerSection#fillContextMenu
+	 * (org.eclipse.jface.action.IMenuManager)
 	 */
 	protected void fillContextMenu(IMenuManager manager) {
 		// Get the current selection
@@ -423,7 +466,8 @@ public class TocTreeSection extends TreeSection {
 			boolean emptyMenu = true;
 
 			if (tocObject.canBeParent()) { // Create the "New" sub-menu
-				MenuManager submenu = new MenuManager(TocMessages.TocTreeSection_New);
+				MenuManager submenu = new MenuManager(
+						TocMessages.TocTreeSection_New);
 				// Populate the "New" sub-menu
 				fillContextMenuAddActions(submenu, tocObject);
 				// Add the "New" sub-menu to the main context menu
@@ -443,10 +487,12 @@ public class TocTreeSection extends TreeSection {
 		}
 
 		// Add clipboard actions
-		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(manager);
+		getPage().getPDEEditor().getContributor()
+				.contextMenuAboutToShow(manager);
 		manager.add(new Separator());
 
-		if (tocObject != null) { // Add the Remove action and Show In action if an object is selected
+		if (tocObject != null) { // Add the Remove action and Show In action if
+									// an object is selected
 			fillContextMenuRemoveAction(manager, tocObject);
 			manager.add(new Separator());
 
@@ -459,9 +505,11 @@ public class TocTreeSection extends TreeSection {
 		String showInLabel = TocMessages.TocTreeSection_showIn;
 
 		// Add a label for the keybinding for Show In action, if one exists
-		IBindingService bindingService = (IBindingService) PlatformUI.getWorkbench().getAdapter(IBindingService.class);
+		IBindingService bindingService = (IBindingService) PlatformUI
+				.getWorkbench().getAdapter(IBindingService.class);
 		if (bindingService != null) {
-			String keyBinding = bindingService.getBestActiveBindingFormattedFor("org.eclipse.ui.navigate.showInQuickMenu"); //$NON-NLS-1$
+			String keyBinding = bindingService
+					.getBestActiveBindingFormattedFor("org.eclipse.ui.navigate.showInQuickMenu"); //$NON-NLS-1$
 			if (keyBinding != null) {
 				showInLabel += '\t' + keyBinding;
 			}
@@ -469,7 +517,8 @@ public class TocTreeSection extends TreeSection {
 
 		// Add the "Show In" action and its contributions
 		IMenuManager showInMenu = new MenuManager(showInLabel);
-		showInMenu.add(ContributionItemFactory.VIEWS_SHOW_IN.create(getPage().getSite().getWorkbenchWindow()));
+		showInMenu.add(ContributionItemFactory.VIEWS_SHOW_IN.create(getPage()
+				.getSite().getWorkbenchWindow()));
 
 		manager.add(showInMenu);
 	}
@@ -477,12 +526,17 @@ public class TocTreeSection extends TreeSection {
 	/**
 	 * Add the addition actions (Topic, Link, Anchor) to the specified submenu
 	 * 
-	 * @param submenu The submenu to add the addition actions to
-	 * @param tocObject The object that the additions would occur relative to
+	 * @param submenu
+	 *            The submenu to add the addition actions to
+	 * @param tocObject
+	 *            The object that the additions would occur relative to
 	 */
-	private void fillContextMenuAddActions(MenuManager submenu, TocObject tocObject) {
+	private void fillContextMenuAddActions(MenuManager submenu,
+			TocObject tocObject) {
 
-		if (tocObject != null && tocObject.canBeParent()) { // Add the 'Add Topic' action to the sub-menu
+		if (tocObject != null && tocObject.canBeParent()) { // Add the 'Add
+															// Topic' action to
+															// the sub-menu
 			fAddTopicAction.setParentObject(tocObject);
 			fAddTopicAction.setEnabled(fModel.isEditable());
 			submenu.add(fAddTopicAction);
@@ -502,28 +556,40 @@ public class TocTreeSection extends TreeSection {
 	/**
 	 * Add the remove action to the context menu.
 	 * 
-	 * @param manager The context menu to add the remove action to
-	 * @param tocObject The object that would be targetted for removal
+	 * @param manager
+	 *            The context menu to add the remove action to
+	 * @param tocObject
+	 *            The object that would be targetted for removal
 	 */
-	private void fillContextMenuRemoveAction(IMenuManager manager, TocObject tocObject) {
+	private void fillContextMenuRemoveAction(IMenuManager manager,
+			TocObject tocObject) {
 		// Add to the main context menu
 
 		// Delete task object action
 		fRemoveObjectAction.setToRemove(tocObject);
 		manager.add(fRemoveObjectAction);
 
-		fRemoveObjectAction.setEnabled(tocObject.canBeRemoved() && fModel.isEditable());
+		fRemoveObjectAction.setEnabled(tocObject.canBeRemoved()
+				&& fModel.isEditable());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(java.lang.Object, java.lang.Object[])
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(java
+	 * .lang.Object, java.lang.Object[])
 	 */
 	protected boolean canPaste(Object targetObject, Object[] sourceObjects) {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESection#doGlobalAction(java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.pde.internal.ui.editor.PDESection#doGlobalAction(java.lang
+	 * .String)
 	 */
 	public boolean doGlobalAction(String actionId) {
 		boolean cutAction = actionId.equals(ActionFactory.CUT.getId());
@@ -541,21 +607,30 @@ public class TocTreeSection extends TreeSection {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste(java.lang.Object, java.lang.Object[])
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste(java
+	 * .lang.Object, java.lang.Object[])
 	 */
 	protected void doPaste(Object targetObject, Object[] sourceObjects) {
 		performDrop(targetObject, sourceObjects, ViewerDropAdapter.LOCATION_ON);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.TreeSection#handleDoubleClick(org.eclipse.jface.viewers.IStructuredSelection)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.pde.internal.ui.editor.TreeSection#handleDoubleClick(org.
+	 * eclipse.jface.viewers.IStructuredSelection)
 	 */
 	protected void handleDoubleClick(IStructuredSelection selection) {
 		Object selected = selection.getFirstElement();
 		if (selected instanceof TocObject) {
 			if (((TocObject) selected).hasXMLChildren()) {
-				fTocTree.setExpandedState(selected, !fTocTree.getExpandedState(selected));
+				fTocTree.setExpandedState(selected,
+						!fTocTree.getExpandedState(selected));
 			} else {
 				open((TocObject) selected);
 			}
@@ -565,13 +640,17 @@ public class TocTreeSection extends TreeSection {
 	/**
 	 * Opens a document with the specified path
 	 * 
-	 * @param path a path to a resource, relative to this TOC's root project
+	 * @param path
+	 *            a path to a resource, relative to this TOC's root project
 	 */
 	private void open(TocObject obj) {
 		String path = obj.getPath();
 		Path resourcePath = path != null ? new Path(path) : null;
 		if (!isEditable() || resourcePath == null || resourcePath.isEmpty()) {
-			MessageDialog.openWarning(PDEUserAssistanceUIPlugin.getActiveWorkbenchShell(), TocMessages.TocTreeSection_openFile, TocMessages.TocTreeSection_openFileMessage);
+			MessageDialog.openWarning(
+					PDEUserAssistanceUIPlugin.getActiveWorkbenchShell(),
+					TocMessages.TocTreeSection_openFile,
+					TocMessages.TocTreeSection_openFileMessage);
 			return;
 		}
 
@@ -579,7 +658,10 @@ public class TocTreeSection extends TreeSection {
 		if (resource != null && resource instanceof IFile) {
 			openResource(resource, obj.getType() == ITocConstants.TYPE_LINK);
 		} else {
-			MessageDialog.openWarning(PDEUserAssistanceUIPlugin.getActiveWorkbenchShell(), TocMessages.TocTreeSection_openFile, TocMessages.TocTreeSection_openFileMessage2);
+			MessageDialog.openWarning(
+					PDEUserAssistanceUIPlugin.getActiveWorkbenchShell(),
+					TocMessages.TocTreeSection_openFile,
+					TocMessages.TocTreeSection_openFileMessage2);
 		}
 	}
 
@@ -638,10 +720,12 @@ public class TocTreeSection extends TreeSection {
 		}
 
 		// Select the project in the wizard
-		wizard.init(PlatformUI.getWorkbench(), new StructuredSelection(selectedFolder));
+		wizard.init(PlatformUI.getWorkbench(), new StructuredSelection(
+				selectedFolder));
 
 		// Create the dialog for the wizard
-		WizardDialog dialog = new WizardDialog(PDEUserAssistanceUIPlugin.getActiveWorkbenchShell(), wizard);
+		WizardDialog dialog = new WizardDialog(
+				PDEUserAssistanceUIPlugin.getActiveWorkbenchShell(), wizard);
 		dialog.create();
 		// Get the wizard page
 		IWizardPage wizardPage;
@@ -674,8 +758,9 @@ public class TocTreeSection extends TreeSection {
 
 		if (isFileValidInContext(tocFile, path)) {
 			try {
-				IDE.openEditor(PDEUserAssistanceUIPlugin.getActivePage(), (IFile) resource, true);
-			} catch (PartInitException e) { //suppress exception
+				IDE.openEditor(PDEUserAssistanceUIPlugin.getActivePage(),
+						(IFile) resource, true);
+			} catch (PartInitException e) { // suppress exception
 			}
 		}
 	}
@@ -697,7 +782,9 @@ public class TocTreeSection extends TreeSection {
 			message = TocMessages.TocTreeSection_errorMessage2;
 		}
 
-		MessageDialog.openWarning(PDEUserAssistanceUIPlugin.getActiveWorkbenchShell(), TocMessages.TocTreeSection_openFile, message);
+		MessageDialog.openWarning(
+				PDEUserAssistanceUIPlugin.getActiveWorkbenchShell(),
+				TocMessages.TocTreeSection_openFile, message);
 
 		return false;
 	}
@@ -705,31 +792,53 @@ public class TocTreeSection extends TreeSection {
 	/**
 	 * Perform a drop of the specified objects on the target in the widget
 	 * 
-	 * @param currentTarget The object that the drop will occur near/on
-	 * @param dropped The dropped objects
-	 * @param location The location of the drop relative to the target
+	 * @param currentTarget
+	 *            The object that the drop will occur near/on
+	 * @param dropped
+	 *            The dropped objects
+	 * @param location
+	 *            The location of the drop relative to the target
 	 * 
 	 * @return true iff the drop was successful
 	 */
-	public boolean performDrop(Object currentTarget, Object dropped, int location) {
+	public boolean performDrop(Object currentTarget, Object dropped,
+			int location) {
 		if (dropped instanceof Object[]) {
 			TocObject tocTarget = (TocObject) currentTarget;
 			// Determine the object that the dropped objects will be the
 			// children of
 			TocTopic targetParent = determineParent(tocTarget, location);
 
-			if (location == TocDropAdapter.LOCATION_JUST_AFTER && targetParent == tocTarget && !tocTarget.getChildren().isEmpty() && fTocTree.getExpandedState(tocTarget)) { // If the drop occurs just after a parentable object
+			if (location == TocDropAdapter.LOCATION_JUST_AFTER
+					&& targetParent == tocTarget
+					&& !tocTarget.getChildren().isEmpty()
+					&& fTocTree.getExpandedState(tocTarget)) { // If the drop
+																// occurs just
+																// after a
+																// parentable
+																// object
 				// and it is expanded, then insert the dropped items
 				// as the first children of the parent
 				location = ViewerDropAdapter.LOCATION_BEFORE;
 				tocTarget = (TocObject) tocTarget.getChildren().get(0);
 			}
 
-			if (targetParent != null) { // Get the TocObject versions of the dropped objects
-				ArrayList objectsToAdd = getObjectsToAdd((Object[]) dropped, targetParent);
+			if (targetParent != null) { // Get the TocObject versions of the
+										// dropped objects
+				ArrayList objectsToAdd = getObjectsToAdd((Object[]) dropped,
+						targetParent);
 
 				if (objectsToAdd != null && !objectsToAdd.isEmpty()) {
-					if (fDragAdapter.getDraggedElements() != null && fDragAdapter.getDraggedElements().size() == 1 && currentTarget == fDragAdapter.getDraggedElements().get(0)) { // Last-minute check: ignore drops of an object onto/near itself
+					if (fDragAdapter.getDraggedElements() != null
+							&& fDragAdapter.getDraggedElements().size() == 1
+							&& currentTarget == fDragAdapter
+									.getDraggedElements().get(0)) { // Last-minute
+																	// check:
+																	// ignore
+																	// drops of
+																	// an object
+																	// onto/near
+																	// itself
 						// to avoid unnecessarily dirtying the page
 						return false;
 					}
@@ -737,7 +846,8 @@ public class TocTreeSection extends TreeSection {
 					boolean insertBefore = (location == ViewerDropAdapter.LOCATION_BEFORE);
 
 					// Add the objects
-					handleMultiAddAction(objectsToAdd, tocTarget, insertBefore, targetParent);
+					handleMultiAddAction(objectsToAdd, tocTarget, insertBefore,
+							targetParent);
 					return true;
 				}
 			}
@@ -747,46 +857,68 @@ public class TocTreeSection extends TreeSection {
 	}
 
 	/**
-	 * Determine the parent object that a drop will occur under,
-	 * based on the relative location of the drop and the ability
-	 * of the target to be a parent
+	 * Determine the parent object that a drop will occur under, based on the
+	 * relative location of the drop and the ability of the target to be a
+	 * parent
 	 * 
-	 * @param dropTarget The target that the drop occurs near/on
-	 * @param dropLocation The location of the drop relative to the target
+	 * @param dropTarget
+	 *            The target that the drop occurs near/on
+	 * @param dropLocation
+	 *            The location of the drop relative to the target
 	 * @return parent
 	 */
 	private TocTopic determineParent(TocObject dropTarget, int dropLocation) {
-		//We must determine what object will be the parent of the
-		//dropped objects. This is done by looking at the drop location
-		//and drop target type
+		// We must determine what object will be the parent of the
+		// dropped objects. This is done by looking at the drop location
+		// and drop target type
 
-		if (dropTarget == null || dropTarget.getType() == ITocConstants.TYPE_TOC) { //Since the TOC root has no parent, it must be the target parent
+		if (dropTarget == null
+				|| dropTarget.getType() == ITocConstants.TYPE_TOC) { // Since
+																		// the
+																		// TOC
+																		// root
+																		// has
+																		// no
+																		// parent,
+																		// it
+																		// must
+																		// be
+																		// the
+																		// target
+																		// parent
 			return fModel.getToc();
-		} else if (!dropTarget.canBeParent()) { //If the object is a leaf, it cannot be the parent
-			//of the new objects,
-			//so the target parent must be its parent
+		} else if (!dropTarget.canBeParent()) { // If the object is a leaf, it
+												// cannot be the parent
+			// of the new objects,
+			// so the target parent must be its parent
 			return (TocTopic) dropTarget.getParent();
-		} else { //In all other cases, it depends on the location of the drop
-			//relative to the drop target
+		} else { // In all other cases, it depends on the location of the drop
+			// relative to the drop target
 			switch (dropLocation) {
-				case TocDropAdapter.LOCATION_JUST_AFTER : { //if the drop occurred after an expanded node
-					//and all of its children,
-					//make the drop target's parent the target parent object
-					if (!fTocTree.getExpandedState(dropTarget)) {
-						return (TocTopic) dropTarget.getParent();
-					}
-					//otherwise, the target parent is the drop target,
-					//since the drop occurred between it and its first child
-				}
-				case ViewerDropAdapter.LOCATION_ON : { //the drop location is directly on the drop target
-					//set the parent object to be the drop target
-					return (TocTopic) dropTarget;
-				}
-				case ViewerDropAdapter.LOCATION_BEFORE :
-				case ViewerDropAdapter.LOCATION_AFTER : { //if the drop is before or after the drop target,
-					//make the drop target's parent the target parent object
+			case TocDropAdapter.LOCATION_JUST_AFTER: { // if the drop occurred
+														// after an expanded
+														// node
+				// and all of its children,
+				// make the drop target's parent the target parent object
+				if (!fTocTree.getExpandedState(dropTarget)) {
 					return (TocTopic) dropTarget.getParent();
 				}
+				// otherwise, the target parent is the drop target,
+				// since the drop occurred between it and its first child
+			}
+			case ViewerDropAdapter.LOCATION_ON: { // the drop location is
+													// directly on the drop
+													// target
+				// set the parent object to be the drop target
+				return (TocTopic) dropTarget;
+			}
+			case ViewerDropAdapter.LOCATION_BEFORE:
+			case ViewerDropAdapter.LOCATION_AFTER: { // if the drop is before or
+														// after the drop
+														// target,
+				// make the drop target's parent the target parent object
+				return (TocTopic) dropTarget.getParent();
+			}
 			}
 		}
 
@@ -796,17 +928,24 @@ public class TocTreeSection extends TreeSection {
 	/**
 	 * Get the TocObject representations of a group of dropped objects.
 	 * 
-	 * @param droppings The objects that are dropped; can be file path Strings or
-	 * deserialized TocObjects
+	 * @param droppings
+	 *            The objects that are dropped; can be file path Strings or
+	 *            deserialized TocObjects
 	 * 
-	 * @param targetParent The designated parent of the dropped objects
+	 * @param targetParent
+	 *            The designated parent of the dropped objects
 	 * 
-	 * @return a list of the (reconnected) TocObject representations of the dropped objects
+	 * @return a list of the (reconnected) TocObject representations of the
+	 *         dropped objects
 	 */
 	private ArrayList getObjectsToAdd(Object[] droppings, TocTopic targetParent) {
 		ArrayList tocObjects = new ArrayList(droppings.length);
 
-		if (fDragAdapter.getDraggedElements() != null) { // If there are items in the drag adapter, then the current drag must be from
+		if (fDragAdapter.getDraggedElements() != null) { // If there are items
+															// in the drag
+															// adapter, then the
+															// current drag must
+															// be from
 			// this section
 			fDragFromHere = fDragAdapter.getDraggedElements().size() == droppings.length;
 		}
@@ -825,10 +964,12 @@ public class TocTreeSection extends TreeSection {
 				// If the path is to a valid TOC file
 				// and it isn't the file in this model
 				// then make a link
-				if (HelpEditorUtil.isTOCFile(path) && !HelpEditorUtil.isCurrentResource(path, fModel)) {
+				if (HelpEditorUtil.isTOCFile(path)
+						&& !HelpEditorUtil.isCurrentResource(path, fModel)) {
 					tocObjects.add(makeNewTocLink(targetParent, file));
 				}
-				// If the path is to a file with an HTML page extension, make a topic
+				// If the path is to a file with an HTML page extension, make a
+				// topic
 				else if (HelpEditorUtil.hasValidPageExtension(path)) {
 					TocTopic topic = makeNewTocTopic(targetParent, file);
 					String title = generateTitle(targetParent, path);
@@ -841,15 +982,16 @@ public class TocTreeSection extends TreeSection {
 				if (fDragFromHere) {
 					TocObject draggedObj = (TocObject) dragged.get(i);
 
-					//Nesting an object inside itself or its children
-					//is so stupid and ridiculous that I get a headache
-					//just thinking about it. Thus, this drag is not going to complete.
+					// Nesting an object inside itself or its children
+					// is so stupid and ridiculous that I get a headache
+					// just thinking about it. Thus, this drag is not going to
+					// complete.
 					if (targetParent.descendsFrom(draggedObj)) {
 						return null;
 					}
 				}
 
-				//Reconnect this TocObject, since it was deserialized
+				// Reconnect this TocObject, since it was deserialized
 				((TocObject) droppings[i]).reconnect(targetParent, fModel);
 				tocObjects.add(droppings[i]);
 			}
@@ -859,12 +1001,14 @@ public class TocTreeSection extends TreeSection {
 	}
 
 	/**
-	 * Generate the title of a Topic created via dragging in an HTML page.
-	 * Use the title of the HTML page, or generate a name based on the target
-	 * parent if no title exists.
+	 * Generate the title of a Topic created via dragging in an HTML page. Use
+	 * the title of the HTML page, or generate a name based on the target parent
+	 * if no title exists.
 	 * 
-	 * @param targetParent The designated parent of this topic
-	 * @param path The path to the HTML file
+	 * @param targetParent
+	 *            The designated parent of this topic
+	 * @param path
+	 *            The path to the HTML file
 	 * 
 	 * @return The generated name of the Topic.
 	 */
@@ -872,7 +1016,8 @@ public class TocTreeSection extends TreeSection {
 		String title = TocHTMLTitleUtil.findTitle(path.toFile());
 		if (title == null) {
 			int numChildren = targetParent.getChildren().size();
-			TocObject[] children = (TocObject[]) targetParent.getChildren().toArray(new TocObject[numChildren]);
+			TocObject[] children = (TocObject[]) targetParent.getChildren()
+					.toArray(new TocObject[numChildren]);
 
 			String[] tocObjectNames = new String[children.length];
 
@@ -880,16 +1025,19 @@ public class TocTreeSection extends TreeSection {
 				tocObjectNames[j] = children[j].getName();
 			}
 
-			title = PDELabelUtility.generateName(tocObjectNames, TocMessages.TocTreeSection_topic);
+			title = PDELabelUtility.generateName(tocObjectNames,
+					TocMessages.TocTreeSection_topic);
 		}
 		return title;
 	}
 
 	/**
 	 * Create a new Topic node using the model's factory.
-	 *  
-	 * @param parent The designated parent for the new topic
-	 * @param path The file that this Topic will link to
+	 * 
+	 * @param parent
+	 *            The designated parent for the new topic
+	 * @param path
+	 *            The file that this Topic will link to
 	 * 
 	 * @return the newly created topic
 	 */
@@ -899,9 +1047,11 @@ public class TocTreeSection extends TreeSection {
 
 	/**
 	 * Create a new Link node using the model's factory.
-	 *  
-	 * @param parent The designated parent for the new link
-	 * @param path The file that this link will be associated with
+	 * 
+	 * @param parent
+	 *            The designated parent for the new link
+	 * @param path
+	 *            The file that this link will be associated with
 	 * 
 	 * @return the newly created link
 	 */
@@ -909,41 +1059,46 @@ public class TocTreeSection extends TreeSection {
 		return fModel.getFactory().createTocLink(file);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#buttonSelected(int)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.pde.internal.ui.editor.StructuredViewerSection#buttonSelected
+	 * (int)
 	 */
 	protected void buttonSelected(int index) {
 		switch (index) {
-			case F_BUTTON_ADD_TOPIC :
-				handleAddAction(fAddTopicAction);
-				break;
-			case F_BUTTON_ADD_LINK :
-				handleAddAction(fAddLinkAction);
-				break;
-			case F_BUTTON_ADD_ANCHOR :
-				handleAddAction(fAddAnchorAction);
-				break;
-			case F_BUTTON_REMOVE :
-				handleDeleteAction();
-				break;
-			case F_BUTTON_UP :
-				handleMoveAction(F_UP_FLAG);
-				break;
-			case F_BUTTON_DOWN :
-				handleMoveAction(F_DOWN_FLAG);
-				break;
+		case F_BUTTON_ADD_TOPIC:
+			handleAddAction(fAddTopicAction);
+			break;
+		case F_BUTTON_ADD_LINK:
+			handleAddAction(fAddLinkAction);
+			break;
+		case F_BUTTON_ADD_ANCHOR:
+			handleAddAction(fAddAnchorAction);
+			break;
+		case F_BUTTON_REMOVE:
+			handleDeleteAction();
+			break;
+		case F_BUTTON_UP:
+			handleMoveAction(F_UP_FLAG);
+			break;
+		case F_BUTTON_DOWN:
+			handleMoveAction(F_DOWN_FLAG);
+			break;
 		}
 	}
 
 	/**
-	 * Handle the addition of an object by preparing and running the
-	 * specified action.
+	 * Handle the addition of an object by preparing and running the specified
+	 * action.
 	 * 
-	 * @param action The action to run for the addition
+	 * @param action
+	 *            The action to run for the addition
 	 */
 	private void handleAddAction(TocAddObjectAction action) {
-		//Currently, all additions in the TOC editor are semantically similar
-		//Thus, all addition operations can follow the same procedure
+		// Currently, all additions in the TOC editor are semantically similar
+		// Thus, all addition operations can follow the same procedure
 
 		ISelection sel = fTocTree.getSelection();
 		Object object = ((IStructuredSelection) sel).getFirstElement();
@@ -969,22 +1124,39 @@ public class TocTreeSection extends TreeSection {
 	/**
 	 * Handle the addition of multiple initialized objects to the TOC.
 	 * 
-	 * @param objectsToAdd The objects to be added
-	 * @param tocTarget The target to add these objects relative to
-	 * @param insertBefore Whether or not the insertion occurs before the target
-	 * @param targetParent The parent object of the newly added objects
+	 * @param objectsToAdd
+	 *            The objects to be added
+	 * @param tocTarget
+	 *            The target to add these objects relative to
+	 * @param insertBefore
+	 *            Whether or not the insertion occurs before the target
+	 * @param targetParent
+	 *            The parent object of the newly added objects
 	 */
-	private void handleMultiAddAction(List objectsToAdd, TocObject tocTarget, boolean insertBefore, TocObject targetParent) {
-		TocObject[] tocObjects = (TocObject[]) objectsToAdd.toArray(new TocObject[objectsToAdd.size()]);
+	private void handleMultiAddAction(List objectsToAdd, TocObject tocTarget,
+			boolean insertBefore, TocObject targetParent) {
+		TocObject[] tocObjects = (TocObject[]) objectsToAdd
+				.toArray(new TocObject[objectsToAdd.size()]);
 		if (tocObjects == null)
 			return;
 
 		for (int i = 0; i < tocObjects.length; ++i) {
 			if (tocObjects[i] != null) {
 				if (targetParent != null && targetParent.canBeParent()) {
-					if (tocTarget != null && tocTarget != targetParent) { // Add the object as a direct sibling of the target
-						((TocTopic) targetParent).addChild(tocObjects[i], tocTarget, insertBefore);
-					} else { // Add the object as the last child of the target parent
+					if (tocTarget != null && tocTarget != targetParent) { // Add
+																			// the
+																			// object
+																			// as
+																			// a
+																			// direct
+																			// sibling
+																			// of
+																			// the
+																			// target
+						((TocTopic) targetParent).addChild(tocObjects[i],
+								tocTarget, insertBefore);
+					} else { // Add the object as the last child of the target
+								// parent
 						((TocTopic) targetParent).addChild(tocObjects[i]);
 					}
 				}
@@ -996,7 +1168,8 @@ public class TocTreeSection extends TreeSection {
 	 * Remove the selected objects from the TOC tree
 	 */
 	private void handleDeleteAction() {
-		ArrayList objects = new ArrayList(((IStructuredSelection) fTocTree.getSelection()).toList());
+		ArrayList objects = new ArrayList(
+				((IStructuredSelection) fTocTree.getSelection()).toList());
 		boolean beep = false;
 
 		// Iterate through the list of selected objects, removing ones
@@ -1013,7 +1186,7 @@ public class TocTreeSection extends TreeSection {
 			}
 		}
 
-		if (beep) { // If any object cannot be removed, beep to notify the user			
+		if (beep) { // If any object cannot be removed, beep to notify the user
 			Display.getCurrent().beep();
 		}
 
@@ -1024,11 +1197,13 @@ public class TocTreeSection extends TreeSection {
 	/**
 	 * Remove the items listed from the TOC.
 	 * 
-	 * @param itemsToRemove The list of items to remove from the TOC 
+	 * @param itemsToRemove
+	 *            The list of items to remove from the TOC
 	 */
 	public void handleRemove(List itemsToRemove) {
 		if (!itemsToRemove.isEmpty()) { // Target the objects for removal
-			fRemoveObjectAction.setToRemove((TocObject[]) itemsToRemove.toArray(new TocObject[itemsToRemove.size()]));
+			fRemoveObjectAction.setToRemove((TocObject[]) itemsToRemove
+					.toArray(new TocObject[itemsToRemove.size()]));
 
 			// Run the removal action
 			fRemoveObjectAction.run();
@@ -1038,22 +1213,26 @@ public class TocTreeSection extends TreeSection {
 	/**
 	 * Handle the dragging of objects out of this TOC.
 	 * 
-	 * @param itemsDragged The items dragged out of the TOC
+	 * @param itemsDragged
+	 *            The items dragged out of the TOC
 	 */
 	public void handleDrag(List itemsDragged) {
 		handleRemove(itemsDragged);
 
-		// The drag is finished, so there is no intra-editor DND operation occuring now
+		// The drag is finished, so there is no intra-editor DND operation
+		// occuring now
 		fDragFromHere = false;
 	}
 
 	/**
 	 * Move an object within the TOC.
 	 * 
-	 * @param positionFlag The direction that the object will move
+	 * @param positionFlag
+	 *            The direction that the object will move
 	 */
 	private void handleMoveAction(int positionFlag) {
-		IStructuredSelection sel = (IStructuredSelection) fTocTree.getSelection();
+		IStructuredSelection sel = (IStructuredSelection) fTocTree
+				.getSelection();
 
 		for (Iterator iter = sel.iterator(); iter.hasNext();) {
 			Object object = iter.next();
@@ -1071,8 +1250,12 @@ public class TocTreeSection extends TreeSection {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESection#modelChanged(org.eclipse.pde.core.IModelChangedEvent)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.pde.internal.ui.editor.PDESection#modelChanged(org.eclipse
+	 * .pde.core.IModelChangedEvent)
 	 */
 	public void modelChanged(IModelChangedEvent event) {
 		// No need to call super, world changed event handled here
@@ -1082,7 +1265,9 @@ public class TocTreeSection extends TreeSection {
 			handleModelInsertType(event);
 		} else if (event.getChangeType() == IModelChangedEvent.REMOVE) {
 			handleModelRemoveType(event);
-		} else if ((event.getChangeType() == IModelChangedEvent.CHANGE) && (event.getChangedProperty().equals(IDocumentElementNode.F_PROPERTY_CHANGE_TYPE_SWAP))) {
+		} else if ((event.getChangeType() == IModelChangedEvent.CHANGE)
+				&& (event.getChangedProperty()
+						.equals(IDocumentElementNode.F_PROPERTY_CHANGE_TYPE_SWAP))) {
 			handleModelChangeTypeSwap(event);
 		} else if (event.getChangeType() == IModelChangedEvent.CHANGE) {
 			handleModelChangeType(event);
@@ -1106,7 +1291,8 @@ public class TocTreeSection extends TreeSection {
 	/**
 	 * The model is stale, refresh the UI
 	 * 
-	 * @param event The world-change event
+	 * @param event
+	 *            The world-change event
 	 */
 	private void handleModelEventWorldChanged(IModelChangedEvent event) {
 		markStale();
@@ -1114,7 +1300,9 @@ public class TocTreeSection extends TreeSection {
 
 	/**
 	 * Handle insertions in the model
-	 * @param event the insertion event
+	 * 
+	 * @param event
+	 *            the insertion event
 	 */
 	private void handleModelInsertType(IModelChangedEvent event) {
 		// Insert event
@@ -1123,7 +1311,8 @@ public class TocTreeSection extends TreeSection {
 		if (object != null) {
 			if (object.getType() != ITocConstants.TYPE_TOC) {
 				// Refresh the parent element in the tree viewer
-				// TODO: Can we get away with an update instead of a refresh here?
+				// TODO: Can we get away with an update instead of a refresh
+				// here?
 				fTocTree.refresh(object.getParent());
 				// Select the new object in the tree
 				fTocTree.setSelection(new StructuredSelection(object), true);
@@ -1134,7 +1323,8 @@ public class TocTreeSection extends TreeSection {
 	/**
 	 * Handle removals in the model
 	 * 
-	 * @param event the removal event
+	 * @param event
+	 *            the removal event
 	 */
 	private void handleModelRemoveType(IModelChangedEvent event) {
 		// Remove event
@@ -1150,7 +1340,8 @@ public class TocTreeSection extends TreeSection {
 	/**
 	 * An object was removed, update the UI to respond to the removal
 	 * 
-	 * @param object The object that was removed
+	 * @param object
+	 *            The object that was removed
 	 */
 	private void handleTaskObjectRemove(TocObject object) {
 		// Remove the item
@@ -1173,7 +1364,9 @@ public class TocTreeSection extends TreeSection {
 
 	/**
 	 * Handle an update to a TocObject's properties
-	 * @param event the update event
+	 * 
+	 * @param event
+	 *            the update event
 	 */
 	private void handleModelChangeType(IModelChangedEvent event) {
 		// Get the changed object
@@ -1185,17 +1378,27 @@ public class TocTreeSection extends TreeSection {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.forms.AbstractFormPart#refresh()
+	 */
 	public void refresh() {
 		TocModel model = (TocModel) getPage().getModel();
+		ISelection selection = fTocTree.getSelection();
 		fTocTree.setInput(model);
 		fTocTree.expandToLevel(2);
-		fTocTree.setSelection(new StructuredSelection(model.getToc()), true);
+		fTocTree.setSelection(selection, true);
 		getManagedForm().fireSelectionChanged(this, fTocTree.getSelection());
 		super.refresh();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.TreeSection#createTreeViewer(org.eclipse.swt.widgets.Composite, int)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.pde.internal.ui.editor.TreeSection#createTreeViewer(org.eclipse
+	 * .swt.widgets.Composite, int)
 	 */
 	protected TreeViewer createTreeViewer(Composite parent, int style) {
 		fFilteredTree = new FormFilteredTree(parent, style, new PatternFilter());
@@ -1203,11 +1406,14 @@ public class TocTreeSection extends TreeSection {
 		return fFilteredTree.getViewer();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
 	 */
 	public void dispose() {
-		PDEUserAssistanceUIPlugin.getDefault().getLabelProvider().disconnect(this);
+		PDEUserAssistanceUIPlugin.getDefault().getLabelProvider()
+				.disconnect(this);
 		super.dispose();
 	}
 }
