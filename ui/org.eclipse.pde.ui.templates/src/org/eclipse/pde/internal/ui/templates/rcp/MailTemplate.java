@@ -14,14 +14,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginElement;
-import org.eclipse.pde.core.plugin.IPluginExtension;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.IPluginReference;
-import org.eclipse.pde.internal.ui.templates.IHelpContextIds;
-import org.eclipse.pde.internal.ui.templates.PDETemplateMessages;
-import org.eclipse.pde.internal.ui.templates.PDETemplateSection;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.ui.templates.*;
 import org.eclipse.pde.ui.IFieldData;
 import org.eclipse.pde.ui.templates.PluginReference;
 
@@ -187,21 +181,21 @@ public class MailTemplate extends PDETemplateSection {
 			element = model.getPluginFactory().createElement(extension);
 			element.setName("keyBinding"); //$NON-NLS-1$
 			element.setAttribute("commandId", id + ".open"); //$NON-NLS-1$ //$NON-NLS-2$
-			element.setAttribute("keySequence", "CTRL+2"); //$NON-NLS-1$ //$NON-NLS-2$
+			element.setAttribute("keySequence", "CTRL+O"); //$NON-NLS-1$ //$NON-NLS-2$
 			element.setAttribute("keyConfigurationId", "org.eclipse.ui.defaultAcceleratorConfiguration"); //$NON-NLS-1$ //$NON-NLS-2$
 			extension.add(element);
 
 			element = model.getPluginFactory().createElement(extension);
 			element.setName("keyBinding"); //$NON-NLS-1$
 			element.setAttribute("commandId", id + ".openMessage"); //$NON-NLS-1$ //$NON-NLS-2$
-			element.setAttribute("keySequence", "CTRL+3"); //$NON-NLS-1$ //$NON-NLS-2$
+			element.setAttribute("keySequence", "CTRL+M"); //$NON-NLS-1$ //$NON-NLS-2$
 			element.setAttribute("keyConfigurationId", "org.eclipse.ui.defaultAcceleratorConfiguration"); //$NON-NLS-1$ //$NON-NLS-2$
 			extension.add(element);
 
 			element = model.getPluginFactory().createElement(extension);
 			element.setName("keyBinding"); //$NON-NLS-1$
 			element.setAttribute("commandId", "org.eclipse.ui.file.exit"); //$NON-NLS-1$ //$NON-NLS-2$
-			element.setAttribute("keySequence", "CTRL+Q"); //$NON-NLS-1$ //$NON-NLS-2$
+			element.setAttribute("keySequence", "CTRL+SHIFT+Q"); //$NON-NLS-1$ //$NON-NLS-2$
 			element.setAttribute("keyConfigurationId", "org.eclipse.ui.defaultAcceleratorConfiguration"); //$NON-NLS-1$ //$NON-NLS-2$
 			extension.add(element);
 		}
@@ -218,21 +212,21 @@ public class MailTemplate extends PDETemplateSection {
 		IPluginElement element = model.getPluginFactory().createElement(extension);
 		element.setName("key"); //$NON-NLS-1$
 		element.setAttribute("commandId", id + ".open"); //$NON-NLS-1$ //$NON-NLS-2$
-		element.setAttribute("sequence", "CTRL+2"); //$NON-NLS-1$ //$NON-NLS-2$
+		element.setAttribute("sequence", "CTRL+O"); //$NON-NLS-1$ //$NON-NLS-2$
 		element.setAttribute("schemeId", "org.eclipse.ui.defaultAcceleratorConfiguration"); //$NON-NLS-1$ //$NON-NLS-2$
 		extension.add(element);
 
 		element = model.getPluginFactory().createElement(extension);
 		element.setName("key"); //$NON-NLS-1$
 		element.setAttribute("commandId", id + ".openMessage"); //$NON-NLS-1$ //$NON-NLS-2$
-		element.setAttribute("sequence", "CTRL+3"); //$NON-NLS-1$ //$NON-NLS-2$
+		element.setAttribute("sequence", "CTRL+M"); //$NON-NLS-1$ //$NON-NLS-2$
 		element.setAttribute("schemeId", "org.eclipse.ui.defaultAcceleratorConfiguration"); //$NON-NLS-1$ //$NON-NLS-2$
 		extension.add(element);
 
 		element = model.getPluginFactory().createElement(extension);
 		element.setName("key"); //$NON-NLS-1$
 		element.setAttribute("commandId", "org.eclipse.ui.file.exit"); //$NON-NLS-1$ //$NON-NLS-2$
-		element.setAttribute("sequence", "CTRL+X"); //$NON-NLS-1$ //$NON-NLS-2$
+		element.setAttribute("sequence", "CTRL+SHIFT+Q"); //$NON-NLS-1$ //$NON-NLS-2$
 		element.setAttribute("schemeId", "org.eclipse.ui.defaultAcceleratorConfiguration"); //$NON-NLS-1$ //$NON-NLS-2$
 		extension.add(element);
 
