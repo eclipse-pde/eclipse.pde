@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -181,14 +181,14 @@ public class MailTemplate extends PDETemplateSection {
 			element = model.getPluginFactory().createElement(extension);
 			element.setName("keyBinding"); //$NON-NLS-1$
 			element.setAttribute("commandId", id + ".open"); //$NON-NLS-1$ //$NON-NLS-2$
-			element.setAttribute("keySequence", "CTRL+O"); //$NON-NLS-1$ //$NON-NLS-2$
+			element.setAttribute("keySequence", "CTRL+SHIFT+O"); //$NON-NLS-1$ //$NON-NLS-2$
 			element.setAttribute("keyConfigurationId", "org.eclipse.ui.defaultAcceleratorConfiguration"); //$NON-NLS-1$ //$NON-NLS-2$
 			extension.add(element);
 
 			element = model.getPluginFactory().createElement(extension);
 			element.setName("keyBinding"); //$NON-NLS-1$
 			element.setAttribute("commandId", id + ".openMessage"); //$NON-NLS-1$ //$NON-NLS-2$
-			element.setAttribute("keySequence", "CTRL+M"); //$NON-NLS-1$ //$NON-NLS-2$
+			element.setAttribute("keySequence", "CTRL+SHIFT+M"); //$NON-NLS-1$ //$NON-NLS-2$
 			element.setAttribute("keyConfigurationId", "org.eclipse.ui.defaultAcceleratorConfiguration"); //$NON-NLS-1$ //$NON-NLS-2$
 			extension.add(element);
 
@@ -212,14 +212,14 @@ public class MailTemplate extends PDETemplateSection {
 		IPluginElement element = model.getPluginFactory().createElement(extension);
 		element.setName("key"); //$NON-NLS-1$
 		element.setAttribute("commandId", id + ".open"); //$NON-NLS-1$ //$NON-NLS-2$
-		element.setAttribute("sequence", "CTRL+O"); //$NON-NLS-1$ //$NON-NLS-2$
+		element.setAttribute("sequence", "CTRL+SHIFT+O"); //$NON-NLS-1$ //$NON-NLS-2$
 		element.setAttribute("schemeId", "org.eclipse.ui.defaultAcceleratorConfiguration"); //$NON-NLS-1$ //$NON-NLS-2$
 		extension.add(element);
 
 		element = model.getPluginFactory().createElement(extension);
 		element.setName("key"); //$NON-NLS-1$
 		element.setAttribute("commandId", id + ".openMessage"); //$NON-NLS-1$ //$NON-NLS-2$
-		element.setAttribute("sequence", "CTRL+M"); //$NON-NLS-1$ //$NON-NLS-2$
+		element.setAttribute("sequence", "CTRL+SHIFT+M"); //$NON-NLS-1$ //$NON-NLS-2$
 		element.setAttribute("schemeId", "org.eclipse.ui.defaultAcceleratorConfiguration"); //$NON-NLS-1$ //$NON-NLS-2$
 		extension.add(element);
 
