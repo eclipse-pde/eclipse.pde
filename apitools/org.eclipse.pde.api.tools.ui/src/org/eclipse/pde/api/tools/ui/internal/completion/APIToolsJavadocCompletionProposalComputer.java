@@ -66,7 +66,7 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 	private String fErrorMessage = null;
 	private Image fImageHandle = null;
 	private ASTParser fParser = null;
-	HashMap/*<String, Integer>*/ fExistingTags = null;
+	HashMap/*<String, Boolean>*/ fExistingTags = null;
 	
 	/**
 	 * Collects all of the existing API Tools Javadoc tags form a given Javadoc node
@@ -255,7 +255,7 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 	private boolean acceptTag(IApiJavadocTag tag, IJavaElement element) throws JavaModelException {
 		if(fExistingTags != null) {
 			Boolean fragments = (Boolean) fExistingTags.get(tag.getTagName());
-			//if the fag has a fragment don't overwrite / propose again
+			//if the tag has a fragment don't overwrite / propose again
 			if(fragments != null && Boolean.FALSE.equals(fragments)) {
 				return false;
 			}
