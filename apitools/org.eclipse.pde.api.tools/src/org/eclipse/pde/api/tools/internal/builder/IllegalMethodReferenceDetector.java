@@ -10,8 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.builder;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IType;
@@ -32,27 +33,50 @@ import org.eclipse.pde.api.tools.internal.util.Signatures;
  */
 public class IllegalMethodReferenceDetector extends AbstractIllegalMethodReference {
 
-	private Set/*<String, IMethodDescriptor>*/ fIllegalTypes = new HashSet();
+	private Map/*<String, String>*/ fIllegalTypes = new HashMap();
 	
 	/**
 	 * Adds an {@link IReferenceTypeDescriptor} that is reference-restricted
 	 * 
-	 * @param type the {@link IReferenceTypeDescriptor} that is restricted
-	 * 
+	 * @param type the qualified name of the {@link IReferenceTypeDescriptor} that is restricted
+	 * @param componentid the id of the component that the type is from
 	 * @since 1.0.400
 	 */
-	void addIllegalType(IReferenceTypeDescriptor type) {
-		fIllegalTypes.add(type.getQualifiedName());
+	void addIllegalType(IReferenceTypeDescriptor type, String componentid) {
+		fIllegalTypes.put(type.getQualifiedName(), componentid);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.builder.AbstractIllegalMethodReference#considerReference(org.eclipse.pde.api.tools.internal.provisional.builder.IReference)
 	 */
 	public boolean considerReference(IReference reference) {
-		if(super.considerReference(reference) || isEnclosedBy(reference.getReferencedTypeName(), fIllegalTypes)) {
+		if(super.considerReference(reference)) {
+			return true;
+		}
+		if(isEnclosedBy(reference.getReferencedTypeName(), fIllegalTypes.keySet())) {
 			retainReference(reference);
+			return true;
 		}
 		return false;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.builder.AbstractIllegalMethodReference#isProblem(org.eclipse.pde.api.tools.internal.provisional.builder.IReference)
+	 */
+	protected boolean isProblem(IReference reference) {
+		if(super.isProblem(reference)) {
+			return true;
+		}
+		//check the restricted types listing
+		StringTokenizer tokenizer = new StringTokenizer(reference.getReferencedTypeName(), "$"); //$NON-NLS-1$
+		String compid = null;
+		while(tokenizer.hasMoreTokens()) {
+			compid = (String) fIllegalTypes.get(tokenizer.nextToken());
+			if(compid != null) {
+				break;
+			}
+		}
+		return isReferenceFromComponent(reference, compid);
 	}
 	
 	/* (non-Javadoc)

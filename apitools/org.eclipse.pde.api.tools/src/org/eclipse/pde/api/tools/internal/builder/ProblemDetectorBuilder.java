@@ -136,10 +136,10 @@ public class ProblemDetectorBuilder extends ApiDescriptionVisitor {
 					if(RestrictionModifiers.isReferenceRestriction(mask)) {
 						fRestrictedTypes.add(element);
 						if(fIllegalFieldRef != null) {
-							fIllegalFieldRef.addIllegalType(type);
+							fIllegalFieldRef.addIllegalType(type, fComponent.getSymbolicName());
 						}
 						if(fIllegalMethodRef != null) {
-							fIllegalMethodRef.addIllegalType(type);
+							fIllegalMethodRef.addIllegalType(type, fComponent.getSymbolicName());
 						}
 					}
 				}

@@ -719,4 +719,130 @@ public class ClassUsageTests extends UsageTest {
 		deployUsageTest(typename, inc);
 	}
 	
+	/**
+	 * Tests that references to a type and its members are flagged when only the type is tagged
+	 * as &#64;reference
+	 * 
+	 * @throws Exception
+	 * @since 1.0.300
+	 * 
+	 */
+	public void testIllegalReferenceClass1I() throws Exception {
+		x22(true);
+	}
+	
+	/**
+	 * Tests that references to a type and its members are flagged when only the type is tagged
+	 * as &#64;reference
+	 * 
+	 * @throws Exception
+	 * @since 1.0.300
+	 * 
+	 */
+	public void testIllegalReferenceClass1F() throws Exception {
+		x22(false);
+	}
+	
+	private void x22(boolean inc) {
+		setExpectedProblemIds(new int[] {
+				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD),
+				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD),
+				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.CONSTRUCTOR_METHOD),
+				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.CONSTRUCTOR_METHOD),
+				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.FIELD),
+				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.FIELD)
+		});
+		setExpectedMessageArgs(new String[][] {
+				{"NoRefClass", "testC14", "noRefClassMethod()"},
+				{"NoRefClass", "Inner", "noRefClassMethod()"},
+				{"NoRefClass()", "testC14"},
+				{"NoRefClass()", "Inner"},
+				{"NoRefClass", "testC14", "fNoRefClassField"},
+				{"NoRefClass", "Inner", "fNoRefClassField"},
+		});
+		String typename = "testC14";
+		deployUsageTest(typename, inc);
+	}
+	
+	/**
+	 *  Tests that references to a type and its members are flagged when only the type is tagged
+	 * as &#64;reference - within local / anonymous types
+	 * 
+	 * @throws Exception
+	 * @since 1.0.300
+	 * 
+	 */
+	public void testIllegalReferenceClass2I() throws Exception {
+		x23(true);
+	}
+	
+	/**
+	 *  Tests that references to a type and its members are flagged when only the type is tagged
+	 * as &#64;reference - within local / anonymous types
+	 * 
+	 * @throws Exception
+	 * @since 1.0.300
+	 * 
+	 */
+	public void testIllegalReferenceClass2F() throws Exception {
+		x23(false);
+	}
+	
+	private void x23(boolean inc) {
+		setExpectedProblemIds(new int[] {
+				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD),
+				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD),
+				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.CONSTRUCTOR_METHOD),
+				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.FIELD),
+				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.FIELD)
+		});
+		setExpectedMessageArgs(new String[][] {
+				{"NoRefClass", "testC15", "noRefClassMethod()"},
+				{"NoRefClass", "testC15", "noRefClassMethod()"},
+				{"NoRefClass()", "testC15"},
+				{"NoRefClass", "testC15", "fNoRefClassField"},
+				{"NoRefClass", "testC15", "fNoRefClassField"},
+		});
+		String typename = "testC15";
+		deployUsageTest(typename, inc);
+	}
+	
+	/**
+	 *  Tests that references to a type and its members are flagged when only the type is tagged
+	 * as &#64;reference - from member restricted types
+	 * 
+	 * @throws Exception
+	 * @since 1.0.300
+	 * 
+	 */
+	public void testIllegalReferenceClass3F() throws Exception {
+		x24(false);
+	}
+	
+	/**
+	 *  Tests that references to a type and its members are flagged when only the type is tagged
+	 * as &#64;reference - from member restricted types
+	 * 
+	 * @throws Exception
+	 * @since 1.0.300
+	 * 
+	 */
+	public void testIllegalReferenceClass3I() throws Exception {
+		x24(false);
+	}
+	
+	private void x24(boolean inc) {
+		setExpectedProblemIds(new int[] {
+				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD),
+				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.CONSTRUCTOR_METHOD),
+				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.FIELD),
+		});
+		setExpectedMessageArgs(new String[][] {
+				{"Inner", "testC16", "noRefMemberClassMethod()"},
+				{"Inner()", "testC16"},
+				{"Inner", "testC16", "fNoRefMemberClassField"},
+		});
+		String typename = "testC16";
+		deployUsageTest(typename, inc);
+	}
 }

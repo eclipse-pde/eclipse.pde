@@ -11,9 +11,8 @@
 package org.eclipse.pde.api.tools.internal.builder;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
+import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IType;
@@ -43,7 +42,7 @@ public class IllegalFieldReferenceDetector extends AbstractProblemDetector {
 	 */
 	private Map/*<MethodKey, IFieldDescriptor>*/ fIllegalFields = new HashMap();
 	
-	private Set /*<String, IReferenceTypeDescriptior>*/ fIllegalTypes = new HashSet();
+	private Map /*<String, String>*/ fIllegalTypes = new HashMap();
 	
 	/**
 	 * Map of {@link org.eclipse.pde.api.tools.internal.provisional.descriptors.IFieldDescriptor}
@@ -66,11 +65,12 @@ public class IllegalFieldReferenceDetector extends AbstractProblemDetector {
 	 * Adds an {@link IReferenceTypeDescriptor} that is reference-restricted
 	 * 
 	 * @param type the {@link IReferenceTypeDescriptor} that is restricted
+	 * @param componentid the id of the API the reference type comes from
 	 * 
 	 * @since 1.0.400
 	 */
-	void addIllegalType(IReferenceTypeDescriptor type) {
-		fIllegalTypes.add(type.getQualifiedName());
+	void addIllegalType(IReferenceTypeDescriptor type, String componentid) {
+		fIllegalTypes.put(type.getQualifiedName(), componentid);
 	}
 	
 	/* (non-Javadoc)
@@ -78,7 +78,7 @@ public class IllegalFieldReferenceDetector extends AbstractProblemDetector {
 	 */
 	public boolean considerReference(IReference reference) {
 		MethodKey key = new MethodKey(reference.getReferencedTypeName(), reference.getReferencedMemberName(), reference.getReferencedSignature(), true);
-		if ((super.considerReference(reference) && fIllegalFields.containsKey(key)) || isEnclosedBy(reference.getReferencedTypeName(), fIllegalTypes)) {
+		if ((super.considerReference(reference) && fIllegalFields.containsKey(key)) || isEnclosedBy(reference.getReferencedTypeName(), fIllegalTypes.keySet())) {
 			retainReference(reference);
 			return true;
 		}
@@ -160,7 +160,18 @@ public class IllegalFieldReferenceDetector extends AbstractProblemDetector {
 		if(!super.isProblem(reference)) {
 			return false;
 		}
-		Object componentId = fFieldComponents.get(reference.getResolvedReference().getHandle());
+		String componentId = (String) fFieldComponents.get(reference.getResolvedReference().getHandle());
+		if(componentId != null) {
+			return isReferenceFromComponent(reference, componentId);
+		}
+		//try to find the enclosing type that might be restricted
+		StringTokenizer tokenizer = new StringTokenizer(reference.getReferencedTypeName(), "$"); //$NON-NLS-1$
+		while(tokenizer.hasMoreTokens()) {
+			componentId = (String) fIllegalTypes.get(tokenizer.nextToken());
+			if(componentId != null) {
+				break;
+			}
+		}
 		return isReferenceFromComponent(reference, componentId);
 	}
 }

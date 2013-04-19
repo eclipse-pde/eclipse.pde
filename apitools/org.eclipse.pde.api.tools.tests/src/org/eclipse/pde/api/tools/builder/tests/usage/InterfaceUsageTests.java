@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -136,5 +136,72 @@ public class InterfaceUsageTests extends UsageTest {
 		setExpectedMessageArgs(new String[][] {
 				{"InterfaceUsageInterface2", typename},
 		});
+	}
+	
+	
+	/**
+	 * Tests that an interface tagged with &#64;noreference properly
+	 * flags usage of its members as no reference
+	 * 
+	 * @throws Exception
+	 * @since 1.0.300
+	 */
+	public void testNoRefInterface1I() throws Exception {
+		x4(true);
+	}
+	
+	/**
+	 * Tests that an interface tagged with &#64;noreference properly
+	 * flags usage of its members as no reference
+	 * 
+	 * @throws Exception
+	 * @since 1.0.300
+	 */
+	public void testNoRefInterface1F() throws Exception {
+		x4(false);
+	}
+
+	private void x4(boolean inc) {
+		String typename = "testI4";
+		setExpectedProblemIds(new int[] {
+				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD)
+		});
+		setExpectedMessageArgs(new String[][] {
+				{"NoRefInterface", typename, "noRefInterfaceMethod()"}
+		});
+		deployUsageTest(typename, inc);
+	}
+	
+	/**
+	 * Tests that an interface tagged with &#64;noreference properly
+	 * flags usage of its member interfaces as no reference
+	 * 
+	 * @throws Exception
+	 * @since 1.0.300
+	 */
+	public void testNoRefInterface2I() throws Exception {
+		x5(true);
+	}
+
+	/**
+	 * Tests that an interface tagged with &#64;noreference properly
+	 * flags usage of its member interfaces as no reference
+	 * 
+	 * @throws Exception
+	 * @since 1.0.300
+	 */
+	public void testNoRefInterface2F() throws Exception {
+		x5(false);
+	}
+	
+	private void x5(boolean inc) {
+		String typename = "testI5";
+		setExpectedProblemIds(new int[] {
+				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD)
+		});
+		setExpectedMessageArgs(new String[][] {
+				{"Inner", typename, "noRefInterfaceMethod()"}
+		});
+		deployUsageTest(typename, inc);
 	}
 }

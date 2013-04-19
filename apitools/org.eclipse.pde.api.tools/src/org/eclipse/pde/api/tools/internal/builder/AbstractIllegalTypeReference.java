@@ -151,7 +151,7 @@ public abstract class AbstractIllegalTypeReference extends AbstractProblemDetect
 			return false;
 		}
 		IApiMember type = reference.getResolvedReference();
-		Object componentId = fIllegalTypes.get(type.getName());
+		String componentId = (String) fIllegalTypes.get(type.getName());
 		return isReferenceFromComponent(reference, componentId);
 	}
 	

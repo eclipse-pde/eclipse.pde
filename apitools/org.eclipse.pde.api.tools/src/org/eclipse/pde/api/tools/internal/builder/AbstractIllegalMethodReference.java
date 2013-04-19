@@ -56,8 +56,7 @@ public abstract class AbstractIllegalMethodReference extends AbstractProblemDete
 	 */
 	public boolean considerReference(IReference reference) {
 		MethodKey key = new MethodKey(reference.getReferencedTypeName(), reference.getReferencedMemberName(), reference.getReferencedSignature(), true);
-		if (super.considerReference(reference) && 
-				fIllegalMethods.containsKey(key)) {
+		if (super.considerReference(reference) && fIllegalMethods.containsKey(key)) {
 			retainReference(reference);
 			return true;
 		}

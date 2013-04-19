@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,10 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.builder;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.StringTokenizer;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -393,6 +395,9 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	 */
 	public List createProblems() {
 		List references = getRetainedReferences();
+		if(references.isEmpty()) {
+			return Collections.EMPTY_LIST;
+		}
 		List problems = new LinkedList();
 		Iterator iterator = references.iterator();
 		while (iterator.hasNext()) {
@@ -448,8 +453,7 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 		return true;
 	}
 	
-	protected boolean isReferenceFromComponent(IReference reference,
-			Object componentId) {
+	protected boolean isReferenceFromComponent(IReference reference, String componentId) {
 		if (componentId != null) {
 			final IApiComponent apiComponent = reference.getResolvedReference().getApiComponent();
 			// API component is either component id itself or one of its fragment
@@ -690,7 +694,15 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 		if(signature == null || typenames == null) {
 			return false;
 		}
-		//TODO
+		if(typenames.contains(signature)) {
+			return true;
+		}
+		StringTokenizer tokenizer = new StringTokenizer(signature, "$"); //$NON-NLS-1$
+		while(tokenizer.hasMoreTokens()) {
+			if(typenames.contains(tokenizer.nextToken())) {
+				return true;
+			}
+		}
 		return false;
 	}
 	
