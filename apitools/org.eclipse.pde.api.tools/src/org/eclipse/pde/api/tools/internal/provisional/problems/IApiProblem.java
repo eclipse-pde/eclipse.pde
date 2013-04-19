@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -475,6 +475,26 @@ public interface IApiProblem {
 	 * @see #CATEGORY_API_USE_SCAN_PROBLEM
 	 */
 	public static final int API_USE_SCAN_FIELD_PROBLEM = 3;
+	/**
+	 * Constant indicating a use scan reference cannot be resolved
+	 * <br>
+	 * Value is: <code>1</code>
+	 * 
+	 * @see #getFlags()
+	 * @see #CATEGORY_API_USE_SCAN_PROBLEM
+	 * @since 1.0.400
+	 */
+	public static final int API_USE_SCAN_UNRESOLVED = 1;
+	/**
+	 * Constant indicating a use scan reference has been deleted
+	 * <br>
+	 * Value is: <code>2</code>
+	 * 
+	 * @see #getFlags()
+	 * @see #CATEGORY_API_USE_SCAN_PROBLEM
+	 * @since 1.0.400
+	 */
+	public static final int API_USE_SCAN_DELETED = 2;
 	/**
 	 * Returns the severity of the problem. See the severity constants defined in
 	 * {@link org.eclipse.pde.api.tools.internal.provisional.ApiPlugin} class.

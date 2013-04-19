@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,7 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
- * A description of an api problem
+ * A description of an API problem
  * 
  * @since 1.0.0
  */
@@ -25,7 +25,6 @@ public class ApiProblem implements IApiProblem {
 
 	/**
 	 * Human readable message for the problem
-	 * TODO should not be passed in  by user, should be derived (lazily loaded)
 	 */
 	private String fMessage = null;
 	/**
@@ -360,8 +359,10 @@ public class ApiProblem implements IApiProblem {
 			case IElementDescriptor.RESOURCE: {
 				return "RESOURCE"; //$NON-NLS-1$
 			}
+			default: {
+				return Util.UNKNOWN_ELEMENT_KIND;
+			}
 		}
-		return Util.UNKNOWN_ELEMENT_KIND;
 	}
 
 	/**
@@ -375,8 +376,8 @@ public class ApiProblem implements IApiProblem {
 			case IApiProblem.SINCE_TAG_INVALID: return "INVALID_SINCE_TAGS"; //$NON-NLS-1$
 			case IApiProblem.SINCE_TAG_MALFORMED: return "MALFORMED_SINCE_TAGS"; //$NON-NLS-1$
 			case IApiProblem.SINCE_TAG_MISSING: return "MISSING_SINCE_TAGS"; //$NON-NLS-1$
+			default: return Util.UNKNOWN_KIND;
 		}
-		return Util.UNKNOWN_KIND;
 	}
 
 	/**
@@ -396,8 +397,8 @@ public class ApiProblem implements IApiProblem {
 			case IApiProblem.UNSUPPORTED_TAG_USE: return "UNSUPPORTED_TAG_USE"; //$NON-NLS-1$
 			case IApiProblem.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES: return "INVALID_REFERENCE_IN_SYSTEM_LIBRARIES"; //$NON-NLS-1$
 			case IApiProblem.UNUSED_PROBLEM_FILTERS: return "UNUSED_PROBLEM_FILTERS"; //$NON-NLS-1$
+			default: return Util.UNKNOWN_KIND;
 		}
-		return Util.UNKNOWN_KIND;
 	}
 
 	/**
@@ -413,8 +414,8 @@ public class ApiProblem implements IApiProblem {
 			case IApiProblem.MINOR_VERSION_CHANGE_NO_NEW_API: return "MINOR_VERSION_CHANGE_NO_NEW_API"; //$NON-NLS-1$
 			case IApiProblem.REEXPORTED_MAJOR_VERSION_CHANGE: return "REEXPORTED_MAJOR_VERSION_CHANGE"; //$NON-NLS-1$
 			case IApiProblem.REEXPORTED_MINOR_VERSION_CHANGE: return "REEXPORTED_MINOR_VERSION_CHANGE"; //$NON-NLS-1$
+			default: return Util.UNKNOWN_KIND;
 		}
-		return Util.UNKNOWN_KIND;
 	}
 
 	/**
@@ -424,11 +425,10 @@ public class ApiProblem implements IApiProblem {
 	 */
 	public static String getApiComponentResolutionProblemKindName(int kind) {
 		switch(kind) {
-			case IApiProblem.API_COMPONENT_RESOLUTION: {
-				return "API_COMPONENT_RESOLUTION"; //$NON-NLS-1$
-			}
+			case IApiProblem.API_COMPONENT_RESOLUTION: return "API_COMPONENT_RESOLUTION"; //$NON-NLS-1$
+			default: return Util.UNKNOWN_KIND;
 		}
-		return Util.UNKNOWN_KIND;
+		
 	}
 
 	/**
@@ -439,8 +439,9 @@ public class ApiProblem implements IApiProblem {
 	public static String getApiBaselineProblemKindName(int kind) {
 		switch(kind) {
 			case IApiProblem.API_BASELINE_MISSING: return "API_BASELINE_MISSING"; //$NON-NLS-1$
+			default: return Util.UNKNOWN_KIND;
 		}
-		return Util.UNKNOWN_KIND;
+		
 	}
 
 	/**
@@ -452,9 +453,10 @@ public class ApiProblem implements IApiProblem {
 		switch(kind) {
 			case IApiProblem.API_USE_SCAN_TYPE_PROBLEM: return "API_USE_SCAN_TYPE_PROBLEM"; //$NON-NLS-1$
 			case IApiProblem.API_USE_SCAN_METHOD_PROBLEM: return "API_USE_SCAN_METHOD_PROBLEM"; //$NON-NLS-1$
-			case IApiProblem.API_USE_SCAN_FIELD_PROBLEM: return "API_USE_SCAN_FIELD_PROBLEM"; //$NON-NLS-1$			
+			case IApiProblem.API_USE_SCAN_FIELD_PROBLEM: return "API_USE_SCAN_FIELD_PROBLEM"; //$NON-NLS-1$		
+			default: return Util.UNKNOWN_KIND;
 		}
-		return Util.UNKNOWN_KIND;
+		
 	}
 	
 	/**
@@ -466,29 +468,15 @@ public class ApiProblem implements IApiProblem {
 	 */
 	public static String getProblemKind(int category, int kind) {
 		switch(category) {
-			case IApiProblem.CATEGORY_COMPATIBILITY: {
-				return Util.getDeltaKindName(kind);
-			}
-			case IApiProblem.CATEGORY_SINCETAGS: {
-				return ApiProblem.getTagsProblemKindName(kind);
-			}
-			case IApiProblem.CATEGORY_USAGE: {
-				return ApiProblem.getUsageProblemKindName(kind);
-			}
-			case IApiProblem.CATEGORY_VERSION: {
-				return ApiProblem.getVersionProblemKindName(kind);
-			}
-			case IApiProblem.CATEGORY_API_BASELINE: {
-				return ApiProblem.getApiBaselineProblemKindName(kind);
-			}
-			case IApiProblem.CATEGORY_API_COMPONENT_RESOLUTION: {
-				return ApiProblem.getApiComponentResolutionProblemKindName(kind);
-			}
-			case IApiProblem.CATEGORY_API_USE_SCAN_PROBLEM: {
-				return ApiProblem.getApiUseScanProblemKindName(kind);
-			}
+			case IApiProblem.CATEGORY_COMPATIBILITY: return Util.getDeltaKindName(kind);
+			case IApiProblem.CATEGORY_SINCETAGS: return ApiProblem.getTagsProblemKindName(kind);
+			case IApiProblem.CATEGORY_USAGE:  return ApiProblem.getUsageProblemKindName(kind);
+			case IApiProblem.CATEGORY_VERSION:  return ApiProblem.getVersionProblemKindName(kind);
+			case IApiProblem.CATEGORY_API_BASELINE: return ApiProblem.getApiBaselineProblemKindName(kind);
+			case IApiProblem.CATEGORY_API_COMPONENT_RESOLUTION: return ApiProblem.getApiComponentResolutionProblemKindName(kind);
+			case IApiProblem.CATEGORY_API_USE_SCAN_PROBLEM: return ApiProblem.getApiUseScanProblemKindName(kind);
+			default: return Util.UNKNOWN_KIND;
 		}
-		return Util.UNKNOWN_KIND;
 	}
 
 	/**
@@ -499,61 +487,36 @@ public class ApiProblem implements IApiProblem {
 	 */
 	public static String getProblemFlagsName(int category, int flags) {
 		switch(category) {
-			case IApiProblem.CATEGORY_COMPATIBILITY:  {
-				return Util.getDeltaFlagsName(flags);
-			}
+			case IApiProblem.CATEGORY_COMPATIBILITY: return Util.getDeltaFlagsName(flags);
 			case IApiProblem.CATEGORY_SINCETAGS:
 			case IApiProblem.CATEGORY_USAGE:
 			case IApiProblem.CATEGORY_VERSION:
 			case IApiProblem.CATEGORY_API_BASELINE:
 			case IApiProblem.CATEGORY_API_COMPONENT_RESOLUTION: {
 				switch(flags) {
-					case IApiProblem.LEAK_EXTENDS: {
-						return "LEAK_EXTENDS"; //$NON-NLS-1$
-					}
-					case IApiProblem.LEAK_FIELD: {
-						return "LEAK_FIELD"; //$NON-NLS-1$
-					}
-					case IApiProblem.LEAK_IMPLEMENTS: {
-						return "LEAK_IMPLEMENTS"; //$NON-NLS-1$
-					}
-					case IApiProblem.LEAK_METHOD_PARAMETER: {
-						return "LEAK_METHOD_PARAMETER"; //$NON-NLS-1$
-					}
-					case IApiProblem.LEAK_CONSTRUCTOR_PARAMETER: {
-						return "LEAK_CONSTRUCTOR_PARAMETER"; //$NON-NLS-1$
-					}
-					case IApiProblem.LEAK_RETURN_TYPE: {
-						return "LEAK_RETURN_TYPE"; //$NON-NLS-1$
-					}
-					case IApiProblem.CONSTRUCTOR_METHOD: {
-						return "CONSTRUCTOR_METHOD"; //$NON-NLS-1$
-					}
-					case IApiProblem.NO_FLAGS: {
-						return "NO_FLAGS"; //$NON-NLS-1$
-					}
-					case IApiProblem.INDIRECT_REFERENCE: {
-						return "INDIRECT_REFERENCE"; //$NON-NLS-1$
-					}
-					case IApiProblem.METHOD: {
-						return "METHOD"; //$NON-NLS-1$
-					}
-					case IApiProblem.FIELD: {
-						return "FIELD"; //$NON-NLS-1$
-					}
+					case IApiProblem.LEAK_EXTENDS: return "LEAK_EXTENDS"; //$NON-NLS-1$
+					case IApiProblem.LEAK_FIELD: return "LEAK_FIELD"; //$NON-NLS-1$
+					case IApiProblem.LEAK_IMPLEMENTS: return "LEAK_IMPLEMENTS"; //$NON-NLS-1$
+					case IApiProblem.LEAK_METHOD_PARAMETER: return "LEAK_METHOD_PARAMETER"; //$NON-NLS-1$
+					case IApiProblem.LEAK_CONSTRUCTOR_PARAMETER: return "LEAK_CONSTRUCTOR_PARAMETER"; //$NON-NLS-1$
+					case IApiProblem.LEAK_RETURN_TYPE: return "LEAK_RETURN_TYPE"; //$NON-NLS-1$
+					case IApiProblem.CONSTRUCTOR_METHOD: return "CONSTRUCTOR_METHOD"; //$NON-NLS-1$
+					case IApiProblem.NO_FLAGS: return "NO_FLAGS"; //$NON-NLS-1$
+					case IApiProblem.INDIRECT_REFERENCE: return "INDIRECT_REFERENCE"; //$NON-NLS-1$
+					case IApiProblem.METHOD: return "METHOD"; //$NON-NLS-1$
+					case IApiProblem.FIELD: return "FIELD"; //$NON-NLS-1$
+					default: return Util.UNKNOWN_FLAGS;
 				}
 			}
-			break;
 			case IApiProblem.CATEGORY_API_USE_SCAN_PROBLEM: {
 				switch(flags) {
-					case 0:
-						return "DELETED"; //$NON-NLS-1$
-					case 1:
-						return "UNRESOLVED"; //$NON-NLS-1$
+					case IApiProblem.API_USE_SCAN_DELETED: return "DELETED"; //$NON-NLS-1$
+					case IApiProblem.API_USE_SCAN_UNRESOLVED: return "UNRESOLVED"; //$NON-NLS-1$
+					default: return Util.UNKNOWN_FLAGS;
 				}
 			}
+			default: return Util.UNKNOWN_FLAGS;
 		}
-		return Util.UNKNOWN_FLAGS;
 	}
 
 	/**
@@ -575,35 +538,29 @@ public class ApiProblem implements IApiProblem {
 			case IApiProblem.CATEGORY_API_COMPONENT_RESOLUTION: {
 				return ApiProblem.getDescriptorKind(kind);
 			}
-			case IApiProblem.CATEGORY_API_USE_SCAN_PROBLEM:
-				return Util.getApiElementType(kind);				
+			case IApiProblem.CATEGORY_API_USE_SCAN_PROBLEM: {
+				return Util.getApiElementType(kind);	
+			}
+			default: return Util.UNKNOWN_KIND;
 		}
-		return Util.UNKNOWN_KIND;
+		
 	}
 
 	/**
-	 * Returns a string representation of the category of an api problem
+	 * Returns a string representation of the category of an API problem
 	 * @param category
-	 * @return the string of the api problem category
+	 * @return the string of the API problem category
 	 */
 	public static String getProblemCategory(int category) {
 		switch(category) {
-			case IApiProblem.CATEGORY_COMPATIBILITY :
-				return "COMPATIBILITY"; //$NON-NLS-1$
-			case IApiProblem.CATEGORY_SINCETAGS :
-				return "SINCETAGS"; //$NON-NLS-1$
-			case IApiProblem.CATEGORY_USAGE :
-				return "USAGE"; //$NON-NLS-1$
-			case IApiProblem.CATEGORY_VERSION :
-				return "VERSION"; //$NON-NLS-1$
-			case IApiProblem.CATEGORY_API_BASELINE :
-				return "API_BASELINE"; //$NON-NLS-1$
-			case IApiProblem.CATEGORY_API_COMPONENT_RESOLUTION :
-				return "API_COMPONENT_RESOLUTION"; //$NON-NLS-1$
-			case IApiProblem.CATEGORY_API_USE_SCAN_PROBLEM :
-				return "API USE SCAN PROBLEM"; //$NON-NLS-1$
-			default :
-				return "UNKNOWN_CATEGORY"; //$NON-NLS-1$
+			case IApiProblem.CATEGORY_COMPATIBILITY: return "COMPATIBILITY"; //$NON-NLS-1$
+			case IApiProblem.CATEGORY_SINCETAGS: return "SINCETAGS"; //$NON-NLS-1$
+			case IApiProblem.CATEGORY_USAGE: return "USAGE"; //$NON-NLS-1$
+			case IApiProblem.CATEGORY_VERSION: return "VERSION"; //$NON-NLS-1$
+			case IApiProblem.CATEGORY_API_BASELINE: return "API_BASELINE"; //$NON-NLS-1$
+			case IApiProblem.CATEGORY_API_COMPONENT_RESOLUTION: return "API_COMPONENT_RESOLUTION"; //$NON-NLS-1$
+			case IApiProblem.CATEGORY_API_USE_SCAN_PROBLEM: return "API USE SCAN PROBLEM"; //$NON-NLS-1$
+			default: return "UNKNOWN_CATEGORY"; //$NON-NLS-1$
 		}
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -362,6 +362,9 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 											full = (filters.getFlags() & (IResourceDelta.REPLACED | IResourceDelta.CONTENT)) > 0;
 											break;
 										}
+										default: {
+											break;
+										}
 									}
 									if(full) {
 										break;
@@ -386,7 +389,11 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 							}
 						}
 					}
-				}	
+					break;
+				}
+				default: {
+					break;
+				}
 			}
 			Util.updateMonitor(localMonitor, 0);
 		
@@ -490,6 +497,9 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 					IFile file = (IFile) subdelta.getResource();
 					return file.getProject().equals(currentproject) && compareBuildProperties(buildstate);
 				}
+				break;
+			}
+			default: {
 				break;
 			}
 		}
@@ -787,8 +797,10 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			case IApiProblem.CATEGORY_API_USE_SCAN_PROBLEM : {
 				return IApiMarkerConstants.API_USESCAN_PROBLEM_MARKER;
 			}
+			default: {
+				return null;
+			}
 		}
-		return null;
 	}
 
 	/**
@@ -1078,6 +1090,10 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 						if(entrypath != null) {
 							blocations.add(entrypath);
 						}
+						break;
+					}
+					default: {
+						break;
 					}
 				}
 				if (p != null && !projects.contains(p)) {
