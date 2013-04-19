@@ -12,7 +12,7 @@ package org.eclipse.pde.api.tools.ui.internal.completion;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -66,7 +66,7 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 	private String fErrorMessage = null;
 	private Image fImageHandle = null;
 	private ASTParser fParser = null;
-	HashSet fExistingTags = null;
+	HashMap/*<String, Integer>*/ fExistingTags = null;
 	
 	/**
 	 * Collects all of the existing API Tools Javadoc tags form a given Javadoc node
@@ -79,7 +79,7 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 			Set tagnames = ApiPlugin.getJavadocTagManager().getAllTagNames();
 			List tags = node.tags();
 			if(fExistingTags == null) {
-				fExistingTags = new HashSet(tags.size());
+				fExistingTags = new HashMap(tags.size());
 			}
 			TagElement tag = null;
 			String name = null;
@@ -90,8 +90,8 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 					continue;
 				}
 				if(tagnames.contains(name)) {
-					//only add existing api tools tags
-					fExistingTags.add(name);
+					//only add existing API tools tags
+					fExistingTags.put(name, Boolean.valueOf(tag.fragments().isEmpty()));
 				}
 			}
 			return false;
@@ -135,7 +135,6 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 				switch(elementtype) {
 					case IJavaElement.TYPE: {
 						IType itype = (IType) element;
-						int flags = itype.getFlags();
 						if(hasNonVisibleParent(element, itype.isInterface())) {
 							return Collections.EMPTY_LIST;
 						}
@@ -254,8 +253,12 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 	 * @return true if the tag should be included in completion proposals, false otherwise
 	 */
 	private boolean acceptTag(IApiJavadocTag tag, IJavaElement element) throws JavaModelException {
-		if(fExistingTags != null && fExistingTags.contains(tag.getTagName())) {
-			return false;
+		if(fExistingTags != null) {
+			Boolean fragments = (Boolean) fExistingTags.get(tag.getTagName());
+			//if the fag has a fragment don't overwrite / propose again
+			if(fragments != null && Boolean.FALSE.equals(fragments)) {
+				return false;
+			}
 		}
 		switch(element.getElementType()) {
 			case IJavaElement.TYPE: {
