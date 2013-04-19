@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 EclipseSource Corporation and others.
+ * Copyright (c) 2009, 2013 EclipseSource Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,17 +56,27 @@ public class NonUIThreadTestApplication implements IApplication {
 		return ((IPlatformRunnable) app).run(args);
 	}
 
+	/**
+	 * the non-UI thread test application also supports launching headless applications;
+	 * this may mean that no UI bundle will be available; thus, in order to not
+	 * introduce any dependency on UI code we first attempt to get the harness via service.
+	 * If that doesn't work, we use reflection to call the workbench code, but don't fail
+	 * if Platform UI is not available.
+	 * 
+	 * @throws Exception
+	 */
 	private void installPlatformUITestHarness() throws Exception {
-		// the non-UI thread test application also supports launching headless applications;
-		// this may mean that no UI bundle will be available; thus, in order to not
-		// introduce any dependency on UI code we use reflection but don't fail when Platform UI
-		// is not available
-		try {
-			Class platformUIClass = Class.forName("org.eclipse.ui.PlatformUI", true, getClass().getClassLoader()); //$NON-NLS-1$
-			Object testableObject = platformUIClass.getMethod("getTestableObject", null).invoke(null, null); //$NON-NLS-1$
+		Object testableObject = PDEJUnitRuntimePlugin.getDefault().getTestableObject();
+		if (testableObject == null) {
+			try {
+				Class platformUIClass = Class.forName("org.eclipse.ui.PlatformUI", true, getClass().getClassLoader()); //$NON-NLS-1$
+				testableObject = platformUIClass.getMethod("getTestableObject", null).invoke(null, null); //$NON-NLS-1$
+			} catch (ClassNotFoundException e) {
+				// PlatformUI is not available
+			}
+		}
+		if (testableObject != null) {
 			fTestHarness = new PlatformUITestHarness(testableObject, true);
-		} catch (ClassNotFoundException e) {
-			// PlatformUI is not available
 		}
 	}
 
