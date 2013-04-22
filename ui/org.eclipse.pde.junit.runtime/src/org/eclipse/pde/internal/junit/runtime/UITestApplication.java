@@ -13,7 +13,6 @@ package org.eclipse.pde.internal.junit.runtime;
 
 import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.testing.TestableObject;
 
 /**
  * A Workbench that runs a test suite specified in the
@@ -36,7 +35,7 @@ public class UITestApplication extends NonUIThreadTestApplication {
 	 */
 	protected Object runApp(Object app, IApplicationContext context, String[] args) throws Exception {
 		// Get the testable object from the service
-		TestableObject testableObject = PDEJUnitRuntimePlugin.getDefault().getTestableObject();
+		Object testableObject = PDEJUnitRuntimePlugin.getDefault().getTestableObject();
 		// If the service doesn't return a testable object ask PlatformUI directly
 		// Unlike in NonUIThreadTestApplication if the platform dependency is not available we will fail here
 		if (testableObject == null) {

@@ -10,18 +10,45 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.junit.runtime;
 
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.testing.TestableObject;
+import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.util.tracker.ServiceTracker;
 
 /**
- * The plug-in activator for the PDE JUnit Runtime plug-in
+ * The plug-in activator for the PDE JUnit Runtime plug-in.
+ * <p>
+ * The PDE JUnit runtime allows JUnit tests to be run with an OSGi runtime.
+ * It supports the following use cases:
+ * <pre>
+ * 1) Headless tests (no UI, no workbench)
+ * 	  Runs NonUIThreadTestApplication with no testable object
+ * 
+ * 2) e4 UI tests (e4 UI, no workbench)
+ *    Runs NonUIThreadTestApplication with a testable object from e4 service
+ *    
+ * 3) UI tests run in the non UI thread (UI, workbench)
+ *    Runs NonUIThreadTestApplication with a testable object from e4 service or PlatformUI
+ *    
+ * 4) UI tests run in the UI thread (UI, workbench)
+ *    Runs UITestApplication with a testable object from e4 service or PlatformUI
+ *  
+ * 5) Headless tests with no application (no UI, no workbench, no application)
+ *    Runs directly with no application
+ *       
+ * 6) Legacy UI test application (deprecated)
+ *    Runs LegacyUITestApplication with an IPlatformRunnable
+ * </pre>
  * @since 4.3
  */
-public class PDEJUnitRuntimePlugin extends AbstractUIPlugin {
+public class PDEJUnitRuntimePlugin implements BundleActivator {
+
+	/**
+	 * The testable object is accessed via service and a string name to avoid depending on UI code.  The 
+	 */
+	private static final String TESTABLE_OBJECT_SERVICE_NAME = "org.eclipse.ui.testing.TestableObject"; //$NON-NLS-1$
 
 	/**
 	 *  Default instance of the receiver
@@ -50,19 +77,20 @@ public class PDEJUnitRuntimePlugin extends AbstractUIPlugin {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
+	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
 	 */
 	public void start(BundleContext context) throws Exception {
-		super.start(context);
 		bundleContext = context;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
+	 */
 	public void stop(BundleContext context) throws Exception {
 		if (testableTracker != null) {
 			testableTracker.close();
 			testableTracker = null;
 		}
-		super.stop(context);
 	}
 
 	/**
@@ -75,17 +103,16 @@ public class PDEJUnitRuntimePlugin extends AbstractUIPlugin {
 	 * over {@link Workbench#getWorkbenchTestable()} to avoid the 
 	 * tests having a dependency on the Workbench.
 	 * </p> 
-	 * @see PlatformUI#getTestableObject()
 	 * @return TestableObject provided via service or <code>null</code>
 	 */
-	public TestableObject getTestableObject() {
+	public Object getTestableObject() {
 		if (bundleContext == null)
 			return null;
 		if (testableTracker == null) {
-			testableTracker = new ServiceTracker(bundleContext, TestableObject.class.getName(), null);
+			testableTracker = new ServiceTracker(bundleContext, TESTABLE_OBJECT_SERVICE_NAME, null);
 			testableTracker.open();
 		}
-		return (TestableObject) testableTracker.getService();
+		return testableTracker.getService();
 	}
 
 }
