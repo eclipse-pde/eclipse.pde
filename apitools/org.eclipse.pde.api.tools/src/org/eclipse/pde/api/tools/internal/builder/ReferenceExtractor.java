@@ -391,7 +391,6 @@ public class ReferenceExtractor extends ClassAdapter {
 								catch(Exception e) {
 									// do nothing, but prevent bogus strings from causing problems in ASM
 									//https://bugs.eclipse.org/bugs/show_bug.cgi?id=399898
-									System.out.println(e.getLocalizedMessage());
 								}
 							}
 						}
