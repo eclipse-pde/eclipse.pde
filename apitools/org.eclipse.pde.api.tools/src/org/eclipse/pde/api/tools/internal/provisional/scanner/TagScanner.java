@@ -21,7 +21,6 @@ import java.util.Map;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jdt.core.Flags;
@@ -92,11 +91,6 @@ public class TagScanner {
 		private IApiTypeContainer fContainer = null;
 		
 		/**
-		 * List of exceptions encountered, or <code>null</code>
-		 */
-		private MultiStatus fProblems;
-		
-		/**
 		 * Constructor
 		 * @param description API description to annotate
 		 * @param container class file container or <code>null</code>, used
@@ -125,16 +119,6 @@ public class TagScanner {
 		 */
 		private void exitType() {
 			fType = fType.getEnclosingType();
-		}
-		
-		/**
-		 * Returns a status describing all problems during processing.  The status may be a multi
-		 * status.  If no problems were encountered an OK status will be returned.
-		 * 
-		 * @return a status describing all problems during processing or an OK status if none
-		 */
-		IStatus getStatus() {
-			return fProblems != null ? fProblems : Status.OK_STATUS;
 		}
 		
 		/* (non-Javadoc)
@@ -288,10 +272,9 @@ public class TagScanner {
 					try {
 						descriptor = resolveMethod(descriptor);
 					} catch (CoreException e) {
-						if (fProblems == null){
-							fProblems = new MultiStatus(ApiPlugin.PLUGIN_ID, 0, ScannerMessages.TagScanner_0, null);
+						if (ApiPlugin.DEBUG_TAG_SCANNER) {
+							System.err.println(e.getLocalizedMessage());
 						}
-						fProblems.add(e.getStatus());
 					}
 					List tags = doc.tags();
 					int restrictions = RestrictionModifiers.NO_RESTRICTIONS;
@@ -498,8 +481,5 @@ public class TagScanner {
 		org.eclipse.jdt.core.dom.CompilationUnit cunit = (org.eclipse.jdt.core.dom.CompilationUnit) parser.createAST(localmonitor.newChild(1));
 		Visitor visitor = new Visitor(description, container);
 		cunit.accept(visitor);
-		if (!visitor.getStatus().isOK()) {
-			throw new CoreException(visitor.getStatus());
-		}
 	}	
 }

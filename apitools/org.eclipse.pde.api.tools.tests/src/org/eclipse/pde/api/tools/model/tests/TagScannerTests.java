@@ -189,9 +189,9 @@ public class TagScannerTests extends TestCase {
 		try { 
 			TagScanner.newScanner().scan(getCompilationUnit("a/b/c/TestMethod10.java"), manifest, container, null, null);
 		} catch (CoreException e) {
-			return;
+			fail("Should not be a core exception for missing class file");
 		}
-		fail("Should have been a core exception for missing class file");
+		return;
 	}	
 	
 	/**
