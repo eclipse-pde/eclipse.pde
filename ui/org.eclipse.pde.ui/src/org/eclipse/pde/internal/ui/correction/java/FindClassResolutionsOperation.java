@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,7 +53,10 @@ public class FindClassResolutionsOperation implements IRunnableWithProgress {
 		 */
 		public Object addExportPackageResolutionModification(IPackageFragment aPackage) {
 			if (aPackage.exists()) {
-				return JavaResolutionFactory.createExportPackageProposal(aPackage.getResource().getProject(), aPackage, JavaResolutionFactory.TYPE_JAVA_COMPLETION, 100);
+				IResource packageResource = aPackage.getResource();
+				if (packageResource != null) {
+					return JavaResolutionFactory.createExportPackageProposal(packageResource.getProject(), aPackage, JavaResolutionFactory.TYPE_JAVA_COMPLETION, 100);
+				}
 			}
 			return null;
 		}
@@ -136,9 +139,15 @@ public class FindClassResolutionsOperation implements IRunnableWithProgress {
 			}
 
 			// additionally add require bundle proposals
+			Set<String> bundleNames = getCurrentBundleNames();
 			for (validPackagesIter = validPackages.iterator(); validPackagesIter.hasNext();) {
 				ExportPackageDescription currentPackage = validPackagesIter.next();
-				fCollector.addRequireBundleModification(fProject, currentPackage, 16);
+				BundleDescription desc = currentPackage.getExporter();
+				// Ignore already required bundles and duplicate proposals (currently we do not consider version constraints)
+				if (desc != null && !bundleNames.contains(desc.getName())) {
+					fCollector.addRequireBundleModification(fProject, currentPackage, 16);
+					bundleNames.add(desc.getName());
+				}
 			}
 		}
 	}
@@ -210,10 +219,13 @@ public class FindClassResolutionsOperation implements IRunnableWithProgress {
 					Object element = aMatch.getElement();
 					if (element instanceof IType) {
 						IType type = (IType) element;
-						if (!currentJavaProject.equals(type.getJavaProject())) {
-							IPackageFragment packageFragment = type.getPackageFragment();
-							if (packageFragment.exists()) {
-								packages.put(packageFragment.getElementName(), packageFragment);
+						// Only try to import types we can access (Bug 406232)
+						if (Flags.isPublic(type.getFlags())) {
+							if (!currentJavaProject.equals(type.getJavaProject())) {
+								IPackageFragment packageFragment = type.getPackageFragment();
+								if (packageFragment.exists()) {
+									packages.put(packageFragment.getElementName(), packageFragment);
+								}
 							}
 						}
 					}
@@ -288,16 +300,39 @@ public class FindClassResolutionsOperation implements IRunnableWithProgress {
 
 	private Set<ExportPackageDescription> getVisiblePackages() {
 		IPluginModelBase base = PluginRegistry.findModel(fProject);
-		BundleDescription desc = base.getBundleDescription();
+		if (base != null) {
+			BundleDescription desc = base.getBundleDescription();
 
-		StateHelper helper = Platform.getPlatformAdmin().getStateHelper();
-		ExportPackageDescription[] visiblePkgs = helper.getVisiblePackages(desc);
+			StateHelper helper = Platform.getPlatformAdmin().getStateHelper();
+			ExportPackageDescription[] visiblePkgs = helper.getVisiblePackages(desc);
 
-		HashSet<ExportPackageDescription> set = new HashSet<ExportPackageDescription>();
-		for (int i = 0; i < visiblePkgs.length; i++) {
-			set.add(visiblePkgs[i]);
+			HashSet<ExportPackageDescription> set = new HashSet<ExportPackageDescription>();
+			for (int i = 0; i < visiblePkgs.length; i++) {
+				set.add(visiblePkgs[i]);
+			}
+			return set;
 		}
-		return set;
+		return Collections.emptySet();
+	}
+
+	/**
+	 * Returns the set of String bundle names that are in the project's list of required
+	 * bundles.
+	 * 
+	 * @return set of required bundle names, possibly empty
+	 */
+	private Set<String> getCurrentBundleNames() {
+		IPluginModelBase base = PluginRegistry.findModel(fProject);
+		if (base != null) {
+			Set<String> bundleNames = new HashSet<String>();
+			BundleSpecification[] reqBundles = base.getBundleDescription().getRequiredBundles();
+			for (int i = 0; i < reqBundles.length; i++) {
+				bundleNames.add(reqBundles[i].getName());
+			}
+			return bundleNames;
+		}
+		return Collections.emptySet();
+
 	}
 
 }
