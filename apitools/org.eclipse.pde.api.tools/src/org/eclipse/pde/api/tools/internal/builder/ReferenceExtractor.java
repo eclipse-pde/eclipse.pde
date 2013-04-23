@@ -263,11 +263,17 @@ public class ReferenceExtractor extends ClassAdapter {
 		 * @see org.objectweb.asm.MethodAdapter#visitVarInsn(int, int)
 		 */
 		public void visitVarInsn(int opcode, int var) {
+			this.stringLiteral = null;
 			switch(opcode) {
-				case Opcodes.ASTORE :
+				case Opcodes.ASTORE : {
 					if (this.lastLineNumber != -1) {
 						this.localVariableMarker = new LocalLineNumberMarker(this.lastLineNumber, var);
 					}
+					break;
+				}
+				default: {
+					break;
+				}
 			}
 		}
 		
@@ -277,18 +283,25 @@ public class ReferenceExtractor extends ClassAdapter {
 		public void visitFieldInsn(int opcode, String owner, String name, String desc) {
 			int refType = -1;
 			switch (opcode) {
-			case Opcodes.PUTSTATIC:
-				refType = IReference.REF_PUTSTATIC;
-				break;
-			case Opcodes.PUTFIELD:
-				refType = IReference.REF_PUTFIELD;
-				break;
-			case Opcodes.GETSTATIC:
-				refType = IReference.REF_GETSTATIC;
-				break;
-			case Opcodes.GETFIELD:
-				refType = IReference.REF_GETFIELD;
-				break;
+				case Opcodes.PUTSTATIC: {
+					refType = IReference.REF_PUTSTATIC;
+					break;
+				}
+				case Opcodes.PUTFIELD: {
+					refType = IReference.REF_PUTFIELD;
+					break;
+				}
+				case Opcodes.GETSTATIC: {
+					refType = IReference.REF_GETSTATIC;
+					break;
+				}
+				case Opcodes.GETFIELD: {
+					refType = IReference.REF_GETFIELD;
+					break;
+				}
+				default: {
+					break;
+				}
 			}
 			if (refType != -1) {
 				Reference reference = ReferenceExtractor.this.addFieldReference(Type.getObjectType(owner), name, refType);
@@ -368,10 +381,17 @@ public class ReferenceExtractor extends ClassAdapter {
 					if (name.equals("forName")) { //$NON-NLS-1$
 						if (ReferenceExtractor.this.processName(owner).equals("java.lang.Class")) { //$NON-NLS-1$
 							if (this.stringLiteral != null) {
-								Type classLiteral = Type.getObjectType(this.stringLiteral);
-								Reference reference = ReferenceExtractor.this.addTypeReference(classLiteral, IReference.REF_CONSTANTPOOL);
-								if (reference != null) {
-									this.linePositionTracker.addLocation(reference);
+								try {
+									Type classLiteral = Type.getObjectType(this.stringLiteral);
+									Reference reference = ReferenceExtractor.this.addTypeReference(classLiteral, IReference.REF_CONSTANTPOOL);
+									if (reference != null) {
+										this.linePositionTracker.addLocation(reference);
+									}
+								}
+								catch(Exception e) {
+									// do nothing, but prevent bogus strings from causing problems in ASM
+									//https://bugs.eclipse.org/bugs/show_bug.cgi?id=399898
+									System.out.println(e.getLocalizedMessage());
 								}
 							}
 						}
@@ -384,6 +404,9 @@ public class ReferenceExtractor extends ClassAdapter {
 				}
 				case Opcodes.INVOKEINTERFACE: {
 					kind = IReference.REF_INTERFACEMETHOD;
+					break;
+				}
+				default: {
 					break;
 				}
 			}
@@ -482,6 +505,10 @@ public class ReferenceExtractor extends ClassAdapter {
 							this.linePositionTracker.addLocation((Reference) iterator.next());
 						}
 					}
+					break;
+				}
+				default: {
+					break;
 				}
 			}
 			if(kind != -1) {
