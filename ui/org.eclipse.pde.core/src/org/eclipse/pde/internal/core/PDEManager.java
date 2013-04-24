@@ -84,10 +84,12 @@ public class PDEManager {
 
 	private static void addNLLocation(IPluginModelBase model, ArrayList<URL> urls) {
 		// We should use model.getNLLookupLocation(), but it doesn't return an encoded url (Bug 403512)
-		try {
-			URI encodedURI = URIUtil.toURI(model.getInstallLocation(), true);
-			urls.add(encodedURI.toURL());
-		} catch (MalformedURLException e) {
+		if (model.getInstallLocation() != null) {
+			try {
+				URI encodedURI = URIUtil.toURI(model.getInstallLocation(), true);
+				urls.add(encodedURI.toURL());
+			} catch (MalformedURLException e) {
+			}
 		}
 	}
 
