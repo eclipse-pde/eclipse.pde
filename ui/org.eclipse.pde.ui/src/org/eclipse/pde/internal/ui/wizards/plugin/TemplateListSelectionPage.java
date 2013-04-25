@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -61,7 +61,7 @@ public class TemplateListSelectionPage extends WizardListSelectionPage implement
 			if (simple)
 				return !javaFlag;
 			//filter out ui wizards for non-ui plug-ins
-			if (uiFlag && generate && !ui)
+			if (uiFlag && !ui)
 				return false;
 			//filter out wizards that require an activator when the user specifies not to generate a class
 			if (activatorFlag && !generate)
