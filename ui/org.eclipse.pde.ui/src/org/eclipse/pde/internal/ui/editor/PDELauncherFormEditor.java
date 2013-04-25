@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,7 +26,19 @@ import org.eclipse.pde.internal.ui.editor.actions.ActionMenu;
 
 public abstract class PDELauncherFormEditor extends MultiSourceEditor {
 
-	Action[][] fActions = null;
+	protected static final int RUN_LAUNCHER_INDEX = 0;
+	protected static final int DEBUG_LAUNCHER_INDEX = 1;
+	protected static final int PROFILE_LAUNCHER_INDEX = 2;
+
+	/**
+	 * Stores the toolbar contributions that contain all the actions.  Entries may
+	 * be null if the toolbar hasn't been created or if there are no actions for that
+	 * index.  Uses {@link #RUN_LAUNCHER_INDEX}, {@link #DEBUG_LAUNCHER_INDEX} and
+	 * {@link #PROFILE_LAUNCHER_INDEX}.
+	 */
+	ActionMenu[] fToolbarActions = new ActionMenu[3];
+
+	LauncherAction[][] fActions = null;
 
 	protected abstract ILauncherFormPageHelper getLauncherHelper();
 
@@ -35,49 +47,58 @@ public abstract class PDELauncherFormEditor extends MultiSourceEditor {
 		// this should never be null (no point in using this class if you don't provide an ILauncherFormPageHelper)
 		// but we'll guard against it anyway
 		if (getLauncherHelper() != null) {
-
-			Action[][] actions = getActions();
+			List<String> recentLaunches = PDEEditorLaunchManager.getDefault().getRecentLaunches();
+			LauncherAction[][] actions = getActions();
 			if (actions[RUN_LAUNCHER_INDEX].length > 0) {
-				Action runAction = new ActionMenu(actions[RUN_LAUNCHER_INDEX]);
-				manager.add(runAction);
+				fToolbarActions[RUN_LAUNCHER_INDEX] = new ActionMenu(actions[RUN_LAUNCHER_INDEX]);
+				fToolbarActions[RUN_LAUNCHER_INDEX].updateActionOrder(recentLaunches);
+				manager.add(fToolbarActions[RUN_LAUNCHER_INDEX]);
 			}
 
 			if (actions[DEBUG_LAUNCHER_INDEX].length > 0) {
-				Action runAction = new ActionMenu(actions[DEBUG_LAUNCHER_INDEX]);
-				manager.add(runAction);
+				fToolbarActions[DEBUG_LAUNCHER_INDEX] = new ActionMenu(actions[DEBUG_LAUNCHER_INDEX]);
+				fToolbarActions[DEBUG_LAUNCHER_INDEX].updateActionOrder(recentLaunches);
+				manager.add(fToolbarActions[DEBUG_LAUNCHER_INDEX]);
 			}
 
 			if (actions[PROFILE_LAUNCHER_INDEX].length > 0) {
-				Action runAction = new ActionMenu(actions[PROFILE_LAUNCHER_INDEX]);
-				manager.add(runAction);
+				fToolbarActions[PROFILE_LAUNCHER_INDEX] = new ActionMenu(actions[PROFILE_LAUNCHER_INDEX]);
+				fToolbarActions[PROFILE_LAUNCHER_INDEX].updateActionOrder(recentLaunches);
+				manager.add(fToolbarActions[PROFILE_LAUNCHER_INDEX]);
 			}
 		}
 	}
 
-	private Action[][] getActions() {
+	private LauncherAction[][] getActions() {
 		if (fActions == null) {
-			fActions = new Action[3][];
+			fActions = new LauncherAction[3][];
 			IConfigurationElement[][] elements = getLaunchers(getLauncherHelper().isOSGi());
-			fActions[RUN_LAUNCHER_INDEX] = getLauncherActions(elements[RUN_LAUNCHER_INDEX]);
-			fActions[DEBUG_LAUNCHER_INDEX] = getLauncherActions(elements[DEBUG_LAUNCHER_INDEX]);
-			fActions[PROFILE_LAUNCHER_INDEX] = getLauncherActions(elements[PROFILE_LAUNCHER_INDEX]);
+			fActions[RUN_LAUNCHER_INDEX] = getLauncherActions(elements[RUN_LAUNCHER_INDEX], RUN_LAUNCHER_INDEX);
+			fActions[DEBUG_LAUNCHER_INDEX] = getLauncherActions(elements[DEBUG_LAUNCHER_INDEX], DEBUG_LAUNCHER_INDEX);
+			fActions[PROFILE_LAUNCHER_INDEX] = getLauncherActions(elements[PROFILE_LAUNCHER_INDEX], PROFILE_LAUNCHER_INDEX);
 		}
 		return fActions;
 	}
 
-	private Action[] getLauncherActions(IConfigurationElement[] elements) {
-		Action[] result = new Action[elements.length];
+	private LauncherAction[] getLauncherActions(IConfigurationElement[] elements, final int toolbarIndex) {
+		LauncherAction[] result = new LauncherAction[elements.length];
 		for (int i = 0; i < elements.length; i++) {
-			String label = elements[i].getAttribute("label"); //$NON-NLS-1$
-			final String thisLaunchShortcut = getLaunchString(elements[i]);
-			Action thisAction = new Action(label) {
+			LauncherAction thisAction = new LauncherAction(elements[i]) {
 				public void run() {
 					doSave(null);
-					launch(thisLaunchShortcut, getPreLaunchRunnable(), getLauncherHelper().getLaunchObject());
+					String id = getConfigurationElement().getAttribute("id"); //$NON-NLS-1$
+					String mode = getConfigurationElement().getAttribute("mode"); //$NON-NLS-1$
+					launch(id, mode, getPreLaunchRunnable(), getLauncherHelper().getLaunchObject());
+					// Have all toolbar items update their order
+					PDEEditorLaunchManager.getDefault().setRecentLaunch(getConfigurationElement().getAttribute("id")); //$NON-NLS-1$
+					List<String> updatedActionOrder = PDEEditorLaunchManager.getDefault().getRecentLaunches();
+					for (int j = 0; j < fToolbarActions.length; j++) {
+						if (fToolbarActions[j] != null) {
+							fToolbarActions[j].updateActionOrder(updatedActionOrder);
+						}
+					}
 				}
 			};
-			thisAction.setToolTipText(label);
-			thisAction.setImageDescriptor(getImageDescriptor(elements[i]));
 			result[i] = thisAction;
 		}
 		return result;
@@ -91,52 +112,20 @@ public abstract class PDELauncherFormEditor extends MultiSourceEditor {
 		};
 	}
 
-	public String getLaunchString(IConfigurationElement e) {
-		StringBuffer sb = new StringBuffer("launchShortcut."); //$NON-NLS-1$
-		sb.append(e.getAttribute("mode")); //$NON-NLS-1$
-		sb.append("."); //$NON-NLS-1$
-		sb.append(e.getAttribute("id")); //$NON-NLS-1$
-		return sb.toString();
-	}
-
-	private ImageDescriptor getImageDescriptor(IConfigurationElement element) {
-		String mode = element.getAttribute("mode"); //$NON-NLS-1$
-		if (mode == null)
-			return null;
-		else if (mode.equals(ILaunchManager.RUN_MODE))
-			return PDEPluginImages.DESC_RUN_EXC;
-		else if (mode.equals(ILaunchManager.DEBUG_MODE))
-			return PDEPluginImages.DESC_DEBUG_EXC;
-		else if (mode.equals(ILaunchManager.PROFILE_MODE))
-			return PDEPluginImages.DESC_PROFILE_EXC;
-		return null;
-	}
-
-	public void launch(String launchShortcut, Runnable preLaunch, Object launchObject) {
-		if (launchShortcut.startsWith("launchShortcut.")) { //$NON-NLS-1$
-			launchShortcut = launchShortcut.substring(15);
-			int index = launchShortcut.indexOf('.');
-			if (index < 0)
-				return; // error.  Format of launchShortcut should be launchShortcut.<mode>.<launchShortcutId>
-			String mode = launchShortcut.substring(0, index);
-			String id = launchShortcut.substring(index + 1);
-			IExtensionRegistry registry = Platform.getExtensionRegistry();
-			IConfigurationElement[] elements = registry.getConfigurationElementsFor("org.eclipse.debug.ui.launchShortcuts"); //$NON-NLS-1$
-			for (int i = 0; i < elements.length; i++) {
-				if (id.equals(elements[i].getAttribute("id"))) //$NON-NLS-1$
-					try {
-						ILaunchShortcut shortcut = (ILaunchShortcut) elements[i].createExecutableExtension("class"); //$NON-NLS-1$
-						preLaunch.run();
-						shortcut.launch(new StructuredSelection(launchObject), mode);
-					} catch (CoreException e1) {
-					}
+	public void launch(String launcherID, String mode, Runnable preLaunch, Object launchObject) {
+		IExtensionRegistry registry = Platform.getExtensionRegistry();
+		IConfigurationElement[] elements = registry.getConfigurationElementsFor("org.eclipse.debug.ui.launchShortcuts"); //$NON-NLS-1$
+		for (int i = 0; i < elements.length; i++) {
+			if (launcherID.equals(elements[i].getAttribute("id"))) { //$NON-NLS-1$
+				try {
+					ILaunchShortcut shortcut = (ILaunchShortcut) elements[i].createExecutableExtension("class"); //$NON-NLS-1$
+					preLaunch.run();
+					shortcut.launch(new StructuredSelection(launchObject), mode);
+				} catch (CoreException e1) {
+				}
 			}
 		}
 	}
-
-	protected static final int RUN_LAUNCHER_INDEX = 0;
-	protected static final int DEBUG_LAUNCHER_INDEX = 1;
-	protected static final int PROFILE_LAUNCHER_INDEX = 2;
 
 	protected IConfigurationElement[][] getLaunchers(boolean osgi) {
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
@@ -186,16 +175,38 @@ public abstract class PDELauncherFormEditor extends MultiSourceEditor {
 		IConfigurationElement[] runElements = runList.toArray(new IConfigurationElement[runList.size()]);
 		IConfigurationElement[] debugElements = debugList.toArray(new IConfigurationElement[debugList.size()]);
 		IConfigurationElement[] profileElements = profileList.toArray(new IConfigurationElement[profileList.size()]);
-		Comparator<Object> comparator = new Comparator<Object>() {
-			public int compare(Object arg0, Object arg1) {
-				String label1 = ((IConfigurationElement) arg0).getAttribute("label"); //$NON-NLS-1$
-				String label2 = ((IConfigurationElement) arg1).getAttribute("label"); //$NON-NLS-1$
-				return label1.compareTo(label2);
-			}
-		};
-		Arrays.sort(runElements, comparator);
-		Arrays.sort(debugElements, comparator);
-		Arrays.sort(profileElements, comparator);
 		return new IConfigurationElement[][] {runElements, debugElements, profileElements};
+	}
+
+	/**
+	 * Represents an action that will launch a PDE launch shortcut extension
+	 */
+	public static abstract class LauncherAction extends Action {
+		private IConfigurationElement configElement;
+
+		public LauncherAction(IConfigurationElement configurationElement) {
+			super();
+			configElement = configurationElement;
+			String label = configElement.getAttribute("label"); //$NON-NLS-1$
+			setText(label);
+			setToolTipText(label);
+			setImageDescriptor(getImageDescriptor(configurationElement.getAttribute("mode"))); //$NON-NLS-1$
+		}
+
+		public IConfigurationElement getConfigurationElement() {
+			return configElement;
+		}
+
+		private ImageDescriptor getImageDescriptor(String mode) {
+			if (mode == null)
+				return null;
+			else if (mode.equals(ILaunchManager.RUN_MODE))
+				return PDEPluginImages.DESC_RUN_EXC;
+			else if (mode.equals(ILaunchManager.DEBUG_MODE))
+				return PDEPluginImages.DESC_DEBUG_EXC;
+			else if (mode.equals(ILaunchManager.PROFILE_MODE))
+				return PDEPluginImages.DESC_PROFILE_EXC;
+			return null;
+		}
 	}
 }

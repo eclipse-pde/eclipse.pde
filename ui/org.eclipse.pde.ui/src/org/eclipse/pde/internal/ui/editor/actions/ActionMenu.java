@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2008 IBM Corporation and others.
+ *  Copyright (c) 2007, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -10,30 +10,41 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.actions;
 
+import java.util.*;
 import org.eclipse.jface.action.*;
+import org.eclipse.pde.internal.ui.editor.PDELauncherFormEditor.LauncherAction;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 
 public class ActionMenu extends Action implements IMenuCreator {
 
-	Action[] fActions;
+	List<LauncherAction> fActions;
 	Menu fMenu;
 
-	public ActionMenu(Action[] actions) {
-		fActions = actions;
-		if (fActions.length > 0) {
-			setToolTipText(fActions[0].getToolTipText());
-			setImageDescriptor(fActions[0].getImageDescriptor());
-			if (fActions.length > 1)
+	public ActionMenu(LauncherAction[] actions) {
+		fActions = new LinkedList<LauncherAction>();
+		for (int i = 0; i < actions.length; i++) {
+			fActions.add(actions[i]);
+		}
+		if (!fActions.isEmpty()) {
+			setToolTipText(fActions.get(0).getToolTipText());
+			setImageDescriptor(fActions.get(0).getImageDescriptor());
+			if (fActions.size() > 1)
 				setMenuCreator(this);
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.Action#run()
+	 */
 	public void run() {
-		if (fActions.length > 0)
-			fActions[0].run();
+		if (!fActions.isEmpty())
+			fActions.get(0).run();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.IMenuCreator#dispose()
+	 */
 	public void dispose() {
 		if (fMenu != null) {
 			fMenu.dispose();
@@ -41,23 +52,64 @@ public class ActionMenu extends Action implements IMenuCreator {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets.Control)
+	 */
 	public Menu getMenu(Control parent) {
 		if (fMenu != null)
 			fMenu.dispose();
 		fMenu = new Menu(parent);
-
-		for (int i = 0; i < fActions.length; i++) {
-			addActionToMenu(fMenu, fActions[i]);
+		for (Iterator<LauncherAction> iterator = fActions.iterator(); iterator.hasNext();) {
+			ActionContributionItem item = new ActionContributionItem(iterator.next());
+			item.fill(fMenu, -1);
 		}
 		return fMenu;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets.Menu)
+	 */
 	public Menu getMenu(Menu parent) {
 		return null;
 	}
 
-	protected void addActionToMenu(Menu parent, Action action) {
-		ActionContributionItem item = new ActionContributionItem(action);
-		item.fill(parent, -1);
+	/**
+	 * Reorders the actions in the menu based on the most recently launched
+	 * 
+	 * @param orderedLauncherIds list of string launcher ids to order the actions by
+	 */
+	public void updateActionOrder(final List<String> orderedLauncherIds) {
+		if (!fActions.isEmpty()) {
+			Collections.sort(fActions, new Comparator<LauncherAction>() {
+				public int compare(LauncherAction o1, LauncherAction o2) {
+					// Entries in the recent launcher list go first
+					String id1 = o1.getConfigurationElement().getAttribute("id"); //$NON-NLS-1$
+					String id2 = o2.getConfigurationElement().getAttribute("id"); //$NON-NLS-1$
+					int index1 = orderedLauncherIds.indexOf(id1);
+					int index2 = orderedLauncherIds.indexOf(id2);
+					if (index1 == -1 && index2 == -1) {
+						return 0;
+//						if (id1.contains("pde"))
+//						org.eclipse.pde.ui.runtimeWorkbenchShortcut
+//						
+//						String label1 = o1.getConfigurationElement().getAttribute("label"); //$NON-NLS-1$
+//						String label2 = o2.getConfigurationElement().getAttribute("label"); //$NON-NLS-1$
+//						return label1.compareTo(label2);
+					}
+					if (index1 == -1) {
+						return 1;
+					}
+					if (index2 == -1) {
+						return -1;
+					}
+					if (index1 <= index2) {
+						return -1;
+					}
+					return 1;
+				}
+			});
+			setToolTipText(fActions.get(0).getToolTipText());
+			setImageDescriptor(fActions.get(0).getImageDescriptor());
+		}
 	}
 }

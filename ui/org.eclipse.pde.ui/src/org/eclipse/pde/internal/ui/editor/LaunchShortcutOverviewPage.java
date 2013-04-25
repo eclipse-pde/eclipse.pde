@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2008 IBM Corporation and others.
+ *  Copyright (c) 2007, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -52,8 +52,15 @@ public abstract class LaunchShortcutOverviewPage extends PDEFormPage implements 
 	 * @see org.eclipse.ui.forms.events.HyperlinkListener#linkActivated(org.eclipse.ui.forms.events.HyperlinkEvent)
 	 */
 	public void linkActivated(HyperlinkEvent e) {
+		// target href takes the form of launchShortcut.<mode>.<id>
 		String href = (String) e.getHref();
-		getPDELauncherEditor().launch(href, getPDELauncherEditor().getPreLaunchRunnable(), getPDELauncherEditor().getLauncherHelper().getLaunchObject());
+		int modeStart = href.indexOf('.');
+		if (modeStart != -1) {
+			int modeEnd = href.indexOf('.', modeStart + 1);
+			if (modeEnd != -1) {
+				getPDELauncherEditor().launch(href.substring(modeEnd + 1), href.substring(modeStart + 1, modeEnd), getPDELauncherEditor().getPreLaunchRunnable(), getPDELauncherEditor().getLauncherHelper().getLaunchObject());
+			}
+		}
 	}
 
 	// returns the indent for each launcher
