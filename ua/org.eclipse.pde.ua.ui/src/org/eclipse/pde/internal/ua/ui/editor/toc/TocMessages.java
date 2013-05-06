@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,11 +14,10 @@ import org.eclipse.osgi.util.NLS;
 
 public class TocMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.pde.internal.ua.ui.editor.toc.messages"; //$NON-NLS-1$
-	
+
 	public static String TocEditor_link;
 	public static String TocFileValidator_errorMessage1;
 	public static String TocFileValidator_errorMessage2;
-	public static String TocPage_errorMessage;
 	public static String TocPage_errorMessage2;
 	public static String TocPage_title;
 	public static String TocSourcePage_title;

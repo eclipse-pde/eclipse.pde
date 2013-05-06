@@ -266,8 +266,6 @@ public class PDECoreMessages extends NLS {
 
 	public static String BuildErrorReporter_CompilercomplianceLevel;
 
-	public static String BuildErrorReporter_DisallowIdentifiers;
-
 	public static String BuildErrorReporter_GeneratedClassFilesCompatibility;
 
 	public static String BuildErrorReporter_ProjectSpecificJavaComplianceDifferentToken;

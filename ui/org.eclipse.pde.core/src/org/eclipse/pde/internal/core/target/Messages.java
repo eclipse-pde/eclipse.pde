@@ -28,7 +28,6 @@ public class Messages extends NLS {
 	public static String FeatureBundleContainer_1;
 	public static String FeatureBundleContainer_2;
 	public static String FeatureBundleContainer_4;
-	public static String FeatureBundleContainer_5;
 	public static String IUBundleContainer_0;
 	public static String IUBundleContainer_1;
 	public static String IUBundleContainer_10;
@@ -41,10 +40,7 @@ public class Messages extends NLS {
 	public static String IUBundleContainer_7;
 	public static String IUBundleContainer_8;
 	public static String IUBundleContainer_9;
-	public static String IUBundleContainer_LoadingFromProfileJob;
-	public static String IUBundleContainer_NoBundlePool;
 	public static String IUBundleContainer_ProblemsLoadingRepositories;
-	public static String IUBundleContainer_ProvisioningSourceBundles;
 	public static String LoadTargetDefinitionJob_0;
 	public static String LoadTargetDefinitionJob_1;
 	public static String LoadTargetOperation_argsTaskName;

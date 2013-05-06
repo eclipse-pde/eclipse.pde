@@ -408,8 +408,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String ImageBrowserView_Height;
 
-	public static String ImageBrowserView_ImageInfo;
-
 	public static String ImageBrowserView_MaxImages;
 
 	public static String ImageBrowserView_Path;
@@ -419,8 +417,6 @@ public class PDEUIMessages extends NLS {
 	public static String ImageBrowserView_Plugin;
 
 	public static String ImageBrowserView_Reference;
-
-	public static String ImageBrowserView_ScanningForImagesJob;
 
 	public static String ImageBrowserView_Show;
 
@@ -747,15 +743,6 @@ public class PDEUIMessages extends NLS {
 	public static String SiteEditor_PluginDetailsSection_installSize;
 	public static String SiteEditor_PluginDetailsSection_unpack;
 
-	public static String FeatureEditor_DataSection_title;
-	public static String FeatureEditor_DataSection_desc;
-	public static String FeatureEditor_DataSection_new;
-
-	public static String SiteEditor_DataDetailsSection_title;
-	public static String SiteEditor_DataDetailsSection_desc;
-	public static String SiteEditor_DataDetailsSection_downloadSize;
-	public static String SiteEditor_DataDetailsSection_installSize;
-
 	public static String FeatureEditor_DataDetailsSection_title;
 	public static String FeatureEditor_DataDetailsSection_desc;
 
@@ -1023,10 +1010,6 @@ public class PDEUIMessages extends NLS {
 	public static String LauncherSection_medium;
 	public static String LauncherSection_small;
 	public static String LauncherSection_macLabel;
-	public static String OpenLogDialog_title;
-	public static String OpenLogDialog_message;
-	public static String OpenLogDialog_cannotDisplay;
-
 	public static String OSGiBundlesTab_frameworkLabel;
 
 	// Preferences ####################################

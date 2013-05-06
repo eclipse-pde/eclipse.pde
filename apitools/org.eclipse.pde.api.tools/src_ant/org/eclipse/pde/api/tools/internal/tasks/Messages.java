@@ -48,7 +48,6 @@ public class Messages extends NLS {
 	public static String fullReportTask_problementry_even_warning;
 	public static String fullReportTask_problementry_odd_error;
 	public static String fullReportTask_problementry_odd_warning;
-	public static String fullReportTask_categoryseparator;
 	public static String fullReportTask_category_no_elements;
 	
 	public static String fullReportTask_indexheader;

@@ -186,7 +186,6 @@ public class PDETemplateMessages extends NLS {
 	public static String BuilderTemplate_natureId;
 	public static String BuilderTemplate_natureName;
 	public static String BuilderTemplate_packageLabel;
-	public static String BuilderTemplate_actionLabel;
 	public static String BuilderTemplate_defaultBuilderName;
 	public static String BuilderTemplate_defaultNatureName;
 	public static String BuilderTemplate_markerName;
