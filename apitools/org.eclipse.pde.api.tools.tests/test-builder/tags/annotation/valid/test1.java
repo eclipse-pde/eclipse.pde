@@ -11,11 +11,38 @@
 package a.b.c;
 
 /**
- * Test valid tags on a class
- * @noextend This class is not intended to be subclassed by clients.
- * @noinstantiate This class is not intended to be instantiated by clients.
- * @noreference This class is not intended to be referenced by clients
+ * Tests valid @noreference tags on nested inner annotations
+ * @noreference
  */
-public class test1 {
+public @interface test1 {
 
+	/**
+	 * @noreference
+	 */
+	@interface inner {
+		
+	}
+	
+	@interface inner1 {
+		/**
+		 * @noreference
+		 */
+		@interface inner2 {
+			
+		}
+	}
+	
+	@interface inner2 {
+		
+	}
+}
+
+@interface outer {
+	
+	/**
+	 * @noreference
+	 */
+	@interface inner {
+		
+	}
 }

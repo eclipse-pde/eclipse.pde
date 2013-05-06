@@ -88,25 +88,6 @@ public class InvalidEnumTagTests extends TagTest {
 		deployTagTest("test1.java", inc, false);
 	}
 	
-	public void testInvalidEnumTag2I() {
-		x2(true);
-	}
-	
-	public void testInvalidEnumTag2F() {
-		x2(false);
-	}
-	
-	/**
-	 * Tests having an @noreference tag on an enum in the default package
-	 */
-	private void x2(boolean inc) {
-		/*setExpectedProblemIds(getDefaultProblemSet(1));
-		setExpectedMessageArgs(new String[][] {
-				{"@noreference", BuilderMessages.TagValidator_an_enum}
-		});*/
-		deployTagTest("test2.java", inc, true);
-	}
-	
 	public void testInvalidEnumTag3I() {
 		x3(true);
 	}

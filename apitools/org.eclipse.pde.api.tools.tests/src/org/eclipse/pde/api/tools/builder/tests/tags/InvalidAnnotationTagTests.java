@@ -62,44 +62,6 @@ public class InvalidAnnotationTagTests extends TagTest {
 		return CompilerOptions.VERSION_1_5;
 	}
 	
-	
-	public void testInvalidAnnotationTag1I() {
-		x1(true);
-	}
-	
-	public void testInvalidAnnotationTag1F() {
-		x1(false);
-	}
-	
-	/**
-	 * Tests having an @noreference tag on a variety of annotations in package a.b.c
-	 */
-	private void x1(boolean inc) {
-		/*setExpectedProblemIds(getDefaultProblemSet(4));
-		setExpectedMessageArgs("@noreference", BuilderMessages.TagValidator_an_annotation, 4);*/
-		String typename = "test1.java"; 
-		deployTagTest(typename, inc, false);
-	}
-	
-	
-	public void testInvalidAnnotationTag2I() {
-		x2(true);
-	}
-
-	public void testInvalidAnnotationTag2F() {
-		x2(false);
-	}
-	
-	/**
-	 * Tests having an @noreference tag on an annotation in the default package
-	 */
-	private void x2(boolean inc) {
-		/*setExpectedProblemIds(getDefaultProblemSet(1));
-		setExpectedMessageArgs("@noreference", BuilderMessages.TagValidator_an_annotation, 1);*/
-		String typename = "test2.java"; 
-		deployTagTest(typename, inc, true);
-	}
-	
 	public void testInvalidAnnotationTag3I() {
 		x3(true);
 	}

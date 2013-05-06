@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,12 +8,31 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
+package a.b.c;
 
 /**
- * Test unsupported @noreference tag on an annotation in the default package
+ * Test supported @noreference tag on an interface
  * @noreference
  */
-public @interface test2 {
+public interface test6 {
 
+	/**
+	 * @noreference
+	 */
+	public interface inner {
+		
+	}
+	
+	public interface inner1 {
+		/**
+		 * @noreference
+		 */
+		public interface inner2 {
+			
+		}
+	}
+	
+	interface inner2 {
+		
+	}
 }
