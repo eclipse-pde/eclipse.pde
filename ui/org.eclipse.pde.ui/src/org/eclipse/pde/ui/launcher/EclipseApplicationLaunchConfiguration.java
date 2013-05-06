@@ -234,7 +234,7 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 		SubMonitor subMon = SubMonitor.convert(monitor, 50);
 
 		// Clear workspace and prompt, if necessary
-		if (!LauncherUtils.checkWorkspace(configuration, fWorkspaceLocation, subMon.newChild(25)))
+		if (!LauncherUtils.clearWorkspace(configuration, fWorkspaceLocation, subMon.newChild(25)))
 			throw new CoreException(Status.CANCEL_STATUS);
 
 		subMon.setWorkRemaining(25);

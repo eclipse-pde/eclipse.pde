@@ -470,7 +470,7 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 		SubMonitor subMon = SubMonitor.convert(monitor, 50);
 
 		// Clear workspace and prompt, if necessary
-		if (!LauncherUtils.checkWorkspace(configuration, fWorkspaceLocation, subMon.newChild(25))) {
+		if (!LauncherUtils.clearWorkspace(configuration, fWorkspaceLocation, subMon.newChild(25))) {
 			throw new CoreException(Status.CANCEL_STATUS);
 		}
 

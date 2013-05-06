@@ -60,7 +60,7 @@ public class LauncherUtils {
 	 * @return whether to continue launching
 	 * @throws CoreException
 	 */
-	public static boolean checkWorkspace(ILaunchConfiguration configuration, String workspace, IProgressMonitor monitor) throws CoreException {
+	public static boolean clearWorkspace(ILaunchConfiguration configuration, String workspace, IProgressMonitor monitor) throws CoreException {
 
 		// If the workspace is not defined, there is no workspace to clear
 		// Unless the user has added the -data program arugment themselves,
