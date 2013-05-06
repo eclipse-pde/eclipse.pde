@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.internal.compiler.classfmt.ClassFileConstants;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.model.StubArchiveApiTypeContainer.ArchiveApiTypeRoot;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
@@ -199,7 +202,14 @@ public class TypeStructureBuilder extends ClassAdapter {
 			ClassReader classReader = new ClassReader(bytes);
 			classReader.accept(visitor, ClassReader.SKIP_CODE | ClassReader.SKIP_FRAMES);
 		} catch (ArrayIndexOutOfBoundsException e) {
-			ApiPlugin.log(e);
+			if(ApiPlugin.DEBUG_BUILDER) {
+				IStatus status = new Status(IStatus.ERROR, 
+						ApiPlugin.PLUGIN_ID, 
+						NLS.bind(Messages.TypeStructureBuilder_badClassFileEncountered, file.getTypeName()), 
+						e);
+				ApiPlugin.log(status);
+			}
+			return null;
 		}
 		return visitor.fType;
 	}
