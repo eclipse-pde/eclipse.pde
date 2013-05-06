@@ -50,7 +50,7 @@ public class LaunchArgumentsHelper {
 		// Check if -data @none is specified
 		String[] userArgs = getUserProgramArgumentArray(configuration);
 		for (int i = 0; i < userArgs.length; i++) {
-			if (userArgs[i].equals("-data") && (i + 1) < userArgs.length && userArgs[i + 1].equals("@none")) { //$NON-NLS-1$
+			if (userArgs[i].equals("-data") && (i + 1) < userArgs.length && userArgs[i + 1].equals("@none")) { //$NON-NLS-1$ //$NON-NLS-2$
 				return ""; //$NON-NLS-1$
 			}
 		}
