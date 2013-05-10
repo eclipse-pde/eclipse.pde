@@ -2168,6 +2168,10 @@ public class PDEUIMessages extends NLS {
 
 	public static String OverviewPage_fExtensionContent;
 
+	public static String OverviewPage_ManifestWarning;
+	public static String OverviewPage_WarnAboutMissingManifest;
+	public static String OverviewPage_WarnAboutMissingManifestFragment;
+
 	public static String OverwriteProjectsSelectionDialog_0;
 
 	public static String BaseBlock_dirSelection;

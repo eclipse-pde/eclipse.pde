@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2011 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -12,9 +12,8 @@ package org.eclipse.pde.internal.ui.editor.plugin;
 
 import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
@@ -38,6 +37,7 @@ import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.progress.IProgressService;
+import org.eclipse.ui.progress.UIJob;
 import org.osgi.service.prefs.BackingStoreException;
 
 public class OverviewPage extends LaunchShortcutOverviewPage {
@@ -70,6 +70,23 @@ public class OverviewPage extends LaunchShortcutOverviewPage {
 		form.setText(PDEUIMessages.ManifestEditor_OverviewPage_title);
 		fillBody(managedForm, toolkit);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.MANIFEST_PLUGIN_OVERVIEW);
+
+		// Add warning about missing manifest (Bug 407755)
+		if (!isBundle() && isEditable()) {
+			// We have to use a job so that the form header has been created
+			UIJob messageJob = new UIJob(PDEUIMessages.OverviewPage_ManifestWarning) {
+				@Override
+				public IStatus runInUIThread(IProgressMonitor monitor) {
+					IManagedForm form = getManagedForm();
+					if (form != null) {
+						form.getMessageManager().addMessage(PDEUIMessages.OverviewPage_ManifestWarning, isFragment() ? PDEUIMessages.OverviewPage_WarnAboutMissingManifestFragment : PDEUIMessages.OverviewPage_WarnAboutMissingManifest, null, IMessageProvider.WARNING);
+					}
+					return Status.OK_STATUS;
+				}
+			};
+			messageJob.setSystem(true);
+			messageJob.schedule();
+		}
 	}
 
 	private void fillBody(IManagedForm managedForm, FormToolkit toolkit) {
@@ -111,10 +128,7 @@ public class OverviewPage extends LaunchShortcutOverviewPage {
 
 		Composite container = createStaticSectionClient(toolkit, section);
 
-		FormText text = createClient(container, isFragment() ? PDEUIMessages.OverviewPage_fContent : PDEUIMessages.OverviewPage_content, toolkit);
 		PDELabelProvider lp = PDEPlugin.getDefault().getLabelProvider();
-		text.setImage("page", lp.get(PDEPluginImages.DESC_PAGE_OBJ, SharedLabelProvider.F_EDIT)); //$NON-NLS-1$
-
 		if (!isBundle() && isEditable()) {
 			String content;
 			if (isFragment()) {
@@ -122,8 +136,13 @@ public class OverviewPage extends LaunchShortcutOverviewPage {
 			} else {
 				content = PDEUIMessages.OverviewPage_osgi;
 			}
-			text = createClient(container, content, toolkit);
+			FormText warningText = createClient(container, content, toolkit);
+			warningText.setImage("warning", lp.get(PDEPluginImages.DESC_WARNING_ST_OBJ, 0)); //$NON-NLS-1$
 		}
+
+		FormText text = createClient(container, isFragment() ? PDEUIMessages.OverviewPage_fContent : PDEUIMessages.OverviewPage_content, toolkit);
+		text.setImage("page", lp.get(PDEPluginImages.DESC_PAGE_OBJ, SharedLabelProvider.F_EDIT)); //$NON-NLS-1$
+
 		section.setClient(container);
 	}
 
