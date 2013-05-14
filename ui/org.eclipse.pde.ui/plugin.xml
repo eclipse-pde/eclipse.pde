@@ -763,6 +763,7 @@
          point="org.eclipse.debug.ui.launchShortcuts">
       <shortcut
             class="org.eclipse.pde.ui.launcher.JUnitWorkbenchLaunchShortcut"
+            helpContextId="org.eclipse.pde.doc.user.launcher_junit_plugin"
             icon="$nl$/icons/obj16/julaunchpgn.gif"
             id="org.eclipse.pde.ui.junitWorkbenchShortcut"
             label="%launcher.junit.name"
@@ -794,11 +795,12 @@
          </description>
       </shortcut>
       <shortcut
-            label="%launcher.shortcut.label"
-            icon="$nl$/icons/etool16/eclipse_launcher.gif"
-            modes="run, debug"
             class="org.eclipse.pde.ui.launcher.EclipseLaunchShortcut"
-            id="org.eclipse.pde.ui.runtimeWorkbenchShortcut">
+            helpContextId="org.eclipse.pde.doc.user.launcher_eclipse_application"
+            icon="$nl$/icons/etool16/eclipse_launcher.gif"
+            id="org.eclipse.pde.ui.runtimeWorkbenchShortcut"
+            label="%launcher.shortcut.label"
+            modes="run, debug">
          <contextualLaunch>
             <enablement>
                <with variable="selection">
@@ -831,11 +833,12 @@
          </description>
       </shortcut>
       <shortcut
-            label="%shortcut.label.0"
-            icon="$nl$/icons/obj16/bundle_obj.gif"
-            modes="run, debug"
             class="org.eclipse.pde.ui.launcher.OSGiLaunchShortcut"
-            id="org.eclipse.pde.ui.EquinoxLaunchShortcut">
+            helpContextId="org.eclipse.pde.doc.user.launcher_osgi_framework"
+            icon="$nl$/icons/obj16/bundle_obj.gif"
+            id="org.eclipse.pde.ui.EquinoxLaunchShortcut"
+            label="%shortcut.label.0"
+            modes="run, debug">
          <contextualLaunch>
             <enablement>
                <with variable="selection">
