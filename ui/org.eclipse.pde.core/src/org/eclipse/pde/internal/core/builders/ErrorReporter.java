@@ -53,19 +53,6 @@ public abstract class ErrorReporter {
 		return null;
 	}
 
-	protected IMarker addMarker(String message, int lineNumber, int charStart, int charEnd, int severity, int problemID, String category) {
-		IMarker marker = addMarker(message, lineNumber, severity, problemID, category);
-		if (marker != null) {
-			try {
-				marker.setAttribute(IMarker.CHAR_START, charStart);
-				marker.setAttribute(IMarker.CHAR_END, charEnd);
-			} catch (CoreException e) {
-				PDECore.logException(e);
-			}
-		}
-		return marker;
-	}
-
 	protected IDocument createDocument(IFile file) {
 		if (!file.exists()) {
 			return null;
@@ -132,14 +119,6 @@ public abstract class ErrorReporter {
 		if (severity != CompilerFlags.IGNORE) {
 			return report(message, line, severity, problemID, category);
 		}
-		return null;
-	}
-
-	public IMarker report(String message, int line, int charStart, int charEnd, int severity, int problemID, String category) {
-		if (severity == CompilerFlags.ERROR)
-			return addMarker(message, line, charStart, charEnd, IMarker.SEVERITY_ERROR, problemID, category);
-		else if (severity == CompilerFlags.WARNING)
-			return addMarker(message, line, charStart, charEnd, IMarker.SEVERITY_WARNING, problemID, category);
 		return null;
 	}
 

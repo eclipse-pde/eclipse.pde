@@ -157,17 +157,6 @@ public class PDEProject {
 
 	/**
 	 * Returns the resource in the specified project corresponding to its
-	 * <code>pom.xml</code>file.
-	 * 
-	 * @param project project
-	 * @return <code>pom.xml</code> file that may or may not exist
-	 */
-	public static IFile getPom(IProject project) {
-		return getBundleRelativeFile(project, ICoreConstants.POM_PATH);
-	}
-
-	/**
-	 * Returns the resource in the specified project corresponding to its
 	 * <code>plugin.xml</code>file.
 	 * 
 	 * @param project project

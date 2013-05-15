@@ -237,8 +237,6 @@ public class PDECoreMessages extends NLS {
 
 	public static String ManifestConsistencyChecker_buildPropertiesSubtask;
 
-	public static String ManifestConsistencyChecker_verifyingPomVersions;
-
 	public static String BuildErrorReporter_missingEntry;
 	public static String BuildErrorReporter_missingFolder;
 	public static String BuildErrorReporter_emptyEntry;
@@ -305,8 +303,6 @@ public class PDECoreMessages extends NLS {
 	public static String PluginModelManager_1;
 
 	public static String PluginParser_EclipseConverterMissingAttribute;
-
-	public static String PomErrorReporter_pomVersionMismatch;
 
 	public static String XMLTextChangeListener_editNames_addAttribute;
 	public static String XMLTextChangeListener_editNames_addContent;

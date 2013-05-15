@@ -66,10 +66,10 @@ public class CompilerFlags {
 	public static final String P_MISSING_EXPORT_PKGS = "compilers.p.missing-packages"; //$NON-NLS-1$
 	public static final String P_DEPRECATED = "compilers.p.deprecated"; //$NON-NLS-1$
 	public static final String P_INTERNAL = "compilers.p.internal"; //$NON-NLS-1$
+
 	public static final String P_MISSING_VERSION_EXP_PKG = "compilers.p.missing-version-export-package"; //$NON-NLS-1$
 	public static final String P_MISSING_VERSION_IMP_PKG = "compilers.p.missing-version-import-package"; //$NON-NLS-1$
 	public static final String P_MISSING_VERSION_REQ_BUNDLE = "compilers.p.missing-version-require-bundle"; //$NON-NLS-1$
-	public static final String P_MATCHING_POM_VERSION = "compilers.p.matching-pom-version"; //$NON-NLS-1$
 
 	/**
 	 * schema preferences 
