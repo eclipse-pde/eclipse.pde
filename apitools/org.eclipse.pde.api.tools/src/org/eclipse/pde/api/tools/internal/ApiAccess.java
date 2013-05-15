@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -86,6 +86,8 @@ public class ApiAccess implements IApiAccess {
 		switch(access) {
 			case IApiAccess.NORMAL: return "NORMAL"; //$NON-NLS-1$
 			case IApiAccess.FRIEND: return "FRIEND"; //$NON-NLS-1$
+			default:
+				break;
 		}
 		return "<UNKNOWN ACCESS LEVEL>"; //$NON-NLS-1$
 	}
