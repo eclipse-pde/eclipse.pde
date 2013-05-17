@@ -107,7 +107,7 @@ public class LaunchConfigurationHelper {
 		Properties properties = null;
 		// if we are to generate a config.ini, start with the values in the target platform's config.ini - bug 141918
 		if (configuration.getAttribute(IPDELauncherConstants.CONFIG_GENERATE_DEFAULT, true)) {
-			String appID = configuration.getAttribute(IPDELauncherConstants.APPLICATION, TargetPlatform.getDefaultApplication());
+			String appID = configuration.getAttribute(IPDELauncherConstants.APPLICATION, (String) null);
 			properties = TargetPlatformHelper.getConfigIniProperties();
 			// if target's config.ini does not exist, lets try to fill in default values
 			if (properties == null)
