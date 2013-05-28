@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2011 IBM Corporation and others.
+ * Copyright (c) 2003, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,12 @@ public abstract class BaseExportTask extends Task {
 	protected boolean fToDirectory;
 	protected boolean fUseJarFormat;
 	protected boolean fExportSource;
+	/**
+	 * Whether to create a source bundle if creating source.  By default the UI 
+	 * and this task should create a source bundle if {@link #fExportSource} is 
+	 * <code>true</code>
+	 */
+	protected boolean fExportSourceBundle = true;
 	protected String fQualifier;
 	protected boolean fAllowBinaryCycles;
 	protected boolean fUseWorkspaceCompiledClasses;
@@ -62,8 +68,28 @@ public abstract class BaseExportTask extends Task {
 		fUseJarFormat = new Boolean(useJarFormat).booleanValue();
 	}
 
+	/**
+	 * Whether to include source when exporting the bundle.  By default the source will
+	 * be exported as a separate source bundle, but source can be embedded in the binary
+	 * output by setting <code>exportSourceBundle=false</code> in the task.
+	 * 
+	 * @see #setExportSourceBundle(String)
+	 * @param doExportSource whether to include source in the export
+	 */
 	public void setExportSource(String doExportSource) {
 		fExportSource = new Boolean(doExportSource).booleanValue();
+	}
+
+	/**
+	 * Whether a separate source bundle should be created when exporting source.  This
+	 * is <code>true</code> by default.  If <code>false</code> the source will be embedded
+	 * inside the binary output.
+	 * 
+	 * @see #setExportSource(String)
+	 * @param doExportSourceBundle whether to create a source bundle when exporting source
+	 */
+	public void setExportSourceBundle(String doExportSourceBundle) {
+		fExportSourceBundle = new Boolean(doExportSourceBundle).booleanValue();
 	}
 
 	public void setDestination(String destination) {

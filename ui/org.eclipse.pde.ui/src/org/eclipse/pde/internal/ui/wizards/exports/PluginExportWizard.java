@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,6 +41,7 @@ public class PluginExportWizard extends AntGeneratingExportWizard {
 	}
 
 	protected void scheduleExportJob() {
+		// NOTE: Any changes to the content here must also be copied to generateAntTask() and PluginExportTask
 		final FeatureExportInfo info = new FeatureExportInfo();
 		info.toDirectory = fPage.doExportToDirectory();
 		info.useJarFormat = fPage.useJARFormat();
@@ -110,6 +111,9 @@ public class PluginExportWizard extends AntGeneratingExportWizard {
 			export.setAttribute("exportType", getExportOperation()); //$NON-NLS-1$
 			export.setAttribute("useJARFormat", Boolean.toString(fPage.useJARFormat())); //$NON-NLS-1$
 			export.setAttribute("exportSource", Boolean.toString(fPage.doExportSource())); //$NON-NLS-1$
+			if (fPage.doExportSource()) {
+				export.setAttribute("exportSourceBundle", Boolean.toString(fPage.doExportSourceBundles())); //$NON-NLS-1$
+			}
 			String qualifier = fPage.getQualifier();
 			if (qualifier != null)
 				export.setAttribute("qualifier", qualifier); //$NON-NLS-1$
