@@ -258,7 +258,16 @@ public class TagScanner {
 		 */
 		public boolean visit(MethodDeclaration node) {
 			if(isNotVisible(node.getModifiers())) {
-				return false;
+				ASTNode parent = node.getParent();
+				if(parent instanceof TypeDeclaration) {
+					TypeDeclaration type = (TypeDeclaration) parent;
+					if(!type.isInterface()) {
+						return false;
+					}
+				}
+				else {
+					return false;
+				}
 			}
 			Javadoc doc = node.getJavadoc();
 			if(doc != null) {
@@ -339,7 +348,7 @@ public class TagScanner {
 			}
 			return true;
 		}
-		
+	
 		/**
 		 * Determine if the flags contain private or package default flags
 		 * @param flags
