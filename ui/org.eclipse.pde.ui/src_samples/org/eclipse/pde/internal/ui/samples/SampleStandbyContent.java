@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -9,8 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.samples;
-
-import org.eclipse.core.resources.IResource;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -187,7 +185,7 @@ public class SampleStandbyContent implements IStandbyContentPart {
 				if (path == null)
 					continue;
 				IResource res = project.findMember(path);
-				if (res.exists())
+				if (res != null && res.exists())
 					return res;
 			}
 		}
@@ -258,8 +256,8 @@ public class SampleStandbyContent implements IStandbyContentPart {
 			descText.setText("", false, false); //$NON-NLS-1$
 		}
 		form.reflow(true);
-	} 
-	
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
