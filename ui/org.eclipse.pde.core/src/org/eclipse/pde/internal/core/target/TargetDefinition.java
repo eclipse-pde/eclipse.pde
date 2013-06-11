@@ -268,6 +268,9 @@ public class TargetDefinition implements ITargetDefinition {
 			if (status.isOK()) {
 				return Status.OK_STATUS;
 			}
+			if (subMonitor.isCanceled()) {
+				return Status.CANCEL_STATUS;
+			}
 			return status;
 		} finally {
 			subMonitor.done();
