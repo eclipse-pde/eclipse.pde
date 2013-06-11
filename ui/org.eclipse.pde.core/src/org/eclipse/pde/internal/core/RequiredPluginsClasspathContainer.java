@@ -37,7 +37,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 	 * Cached list of {@link IClasspathContributor} from plug-in extensions
 	 * @see #getClasspathContributors()
 	 */
-	private List<IClasspathContributor> fClasspathContributors = null;
+	private static List<IClasspathContributor> fClasspathContributors = null;
 
 	static {
 		DEBUG = PDECore.getDefault().isDebugging() && "true".equals(Platform.getDebugOption("org.eclipse.pde.core/classpath")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -180,7 +180,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 	 * <code>org.eclipse.pde.core.pluginClasspathContributors</code> extension point.
 	 * @return list of classpath contributors from the extension point
 	 */
-	private List<IClasspathContributor> getClasspathContributors() {
+	synchronized private static List<IClasspathContributor> getClasspathContributors() {
 		if (fClasspathContributors == null) {
 			fClasspathContributors = new ArrayList<IClasspathContributor>();
 			IExtensionRegistry registry = Platform.getExtensionRegistry();
