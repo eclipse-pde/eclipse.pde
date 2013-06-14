@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2012 IBM Corporation and others.
+ *  Copyright (c) 2005, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -9,8 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.core.builders;
-
-import org.w3c.dom.Node;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -118,13 +116,17 @@ public class ManifestErrorReporter extends XMLErrorReporter {
 	}
 
 	/**
-	 * @param element
-	 * @param attr
-	 * @return false if failed
+	 * Checks whether the given attribute value is a valid bundle ID.  If it is not valid, a marker
+	 * is created on the element and <code>false</code> is returned. If valid, <code>true</code> is
+	 * returned.
+	 * 
+	 * @param element element to add the marker to if invalid
+	 * @param attr the attribute to check the value of
+	 * @return whether the given attribute value is a valid bundle ID.
 	 */
 	protected boolean validatePluginID(Element element, Attr attr) {
 		if (!IdUtil.isValidCompositeID3_0(attr.getValue())) {
-			String message = NLS.bind(PDECoreMessages.Builders_Manifest_compositeID, attr.getValue(), attr.getName());
+			String message = NLS.bind(PDECoreMessages.Builders_Manifest_pluginID, attr.getValue(), attr.getName());
 			report(message, getLine(element, attr.getName()), CompilerFlags.WARNING, PDEMarkerFactory.CAT_OTHER);
 			return false;
 		}

@@ -148,6 +148,7 @@ public class PDECoreMessages extends NLS {
 	public static String Builders_Manifest_attribute;
 	public static String Builders_Manifest_att_value;
 	public static String Builders_Manifest_compositeID;
+	public static String Builders_Manifest_pluginID;
 	public static String Builders_Manifest_simpleID;
 	public static String Builders_Manifest_non_ext_attribute;
 	public static String Builders_Manifest_non_ext_element;

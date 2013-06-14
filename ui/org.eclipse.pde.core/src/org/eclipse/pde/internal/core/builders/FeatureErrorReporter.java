@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ import org.eclipse.pde.internal.core.ibundle.IBundlePluginModel;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.util.CoreUtility;
+import org.eclipse.pde.internal.core.util.IdUtil;
 import org.w3c.dom.*;
 
 public class FeatureErrorReporter extends ManifestErrorReporter {
@@ -85,9 +86,6 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 		}
 	}
 
-	/**
-	 * @param element
-	 */
 	private void validatePlugins(Element parent) {
 		NodeList list = getChildrenByName(parent, "plugin"); //$NON-NLS-1$
 		for (int i = 0; i < list.getLength(); i++) {
@@ -102,7 +100,7 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 				Attr attr = (Attr) attributes.item(j);
 				String name = attr.getName();
 				if (name.equals("id")) { //$NON-NLS-1$
-					validatePluginID(plugin, attr, isFragment);
+					validatePluginExists(plugin, attr, isFragment);
 				} else if (name.equals("version")) { //$NON-NLS-1$
 					validateVersionAttribute(plugin, attr);
 					validateVersion(plugin, attr);
@@ -139,9 +137,9 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 			} else if (plugin != null && feature != null) {
 				reportExclusiveAttributes(element, "plugin", "feature", CompilerFlags.ERROR); //$NON-NLS-1$//$NON-NLS-2$
 			} else if (plugin != null) {
-				validatePluginID(element, plugin, false);
+				validatePluginExists(element, plugin, false);
 			} else if (feature != null) {
-				validateFeatureID(element, feature);
+				validateFeatureExists(element, feature);
 			}
 			NamedNodeMap attributes = element.getAttributes();
 			for (int j = 0; j < attributes.getLength(); j++) {
@@ -182,7 +180,7 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 					&& assertAttributeDefined(include, "version", //$NON-NLS-1$
 							CompilerFlags.ERROR)) {
 
-				validateFeatureID(include, include.getAttributeNode("id")); //$NON-NLS-1$
+				validateFeatureExists(include, include.getAttributeNode("id")); //$NON-NLS-1$
 			}
 			NamedNodeMap attributes = include.getAttributes();
 			for (int j = 0; j < attributes.getLength(); j++) {
@@ -350,7 +348,7 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 			if (!attrs.contains(name)) {
 				reportUnknownAttribute(element, name, CompilerFlags.ERROR);
 			} else if (name.equals("id")) { //$NON-NLS-1$
-				validatePluginID(element, (Attr) attributes.item(i));
+				validateFeatureID(element, (Attr) attributes.item(i));
 			} else if (name.equals("primary") || name.equals("exclusive")) { //$NON-NLS-1$ //$NON-NLS-2$
 				validateBoolean(element, (Attr) attributes.item(i));
 			} else if (name.equals("version")) { //$NON-NLS-1$
@@ -359,16 +357,31 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 			if (name.equals("primary")) { //$NON-NLS-1$ 
 				reportDeprecatedAttribute(element, (Attr) attributes.item(i));
 			} else if (name.equals("plugin")) { //$NON-NLS-1$ 
-				validatePluginID(element, (Attr) attributes.item(i), false);
+				validatePluginExists(element, (Attr) attributes.item(i), false);
 			}
 		}
 	}
 
-	private void validatePluginID(Element element, Attr attr, boolean isFragment) {
-		String id = attr.getValue();
-		if (!validatePluginID(element, attr)) {
-			return;
+	/**
+	 * Checks whether the given attribute value is a valid feature ID.  If it is not valid, a marker
+	 * is created on the element and <code>false</code> is returned. If valid, <code>true</code> is
+	 * returned.  Also see {@link #validatePluginID(Element, Attr)}
+	 * 
+	 * @param element element to add the marker to if invalid
+	 * @param attr the attribute to check the value of
+	 * @return whether the given attribute value is a valid feature ID.
+	 */
+	protected boolean validateFeatureID(Element element, Attr attr) {
+		if (!IdUtil.isValidCompositeID(attr.getValue())) {
+			String message = NLS.bind(PDECoreMessages.Builders_Manifest_compositeID, attr.getValue(), attr.getName());
+			report(message, getLine(element, attr.getName()), CompilerFlags.WARNING, PDEMarkerFactory.CAT_OTHER);
+			return false;
 		}
+		return true;
+	}
+
+	private void validatePluginExists(Element element, Attr attr, boolean isFragment) {
+		String id = attr.getValue();
 		int severity = CompilerFlags.getFlag(fProject, CompilerFlags.F_UNRESOLVED_PLUGINS);
 		if (severity != CompilerFlags.IGNORE) {
 			IPluginModelBase model = PluginRegistry.findModel(id);
@@ -378,7 +391,7 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 		}
 	}
 
-	private void validateFeatureID(Element element, Attr attr) {
+	private void validateFeatureExists(Element element, Attr attr) {
 		int severity = CompilerFlags.getFlag(fProject, CompilerFlags.F_UNRESOLVED_FEATURES);
 		if (severity != CompilerFlags.IGNORE) {
 			IFeatureModel[] models = PDECore.getDefault().getFeatureModelManager().findFeatureModels(attr.getValue());
