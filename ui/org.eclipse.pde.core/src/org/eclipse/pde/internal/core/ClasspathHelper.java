@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2012 IBM Corporation and others.
+ * Copyright (c) 2003, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.jdt.core.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IBundleClasspathResolver;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
@@ -191,7 +192,17 @@ public class ClasspathHelper {
 				// make the path either relative or absolute
 				if (file != null) {
 					boolean isLinked = file.isLinked(IResource.CHECK_ANCESTORS);
-					output = (isLinked || absolutePaths) ? file.getLocation().makeAbsolute() : output.makeRelative();
+					if (isLinked || absolutePaths) {
+						IPath location = file.getLocation();
+						if (location != null) {
+							output = location.makeAbsolute();
+						} else {
+							PDECore.log(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(PDECoreMessages.ClasspathHelper_BadFileLocation, file.getFullPath())));
+							continue;
+						}
+					} else {
+						output = output.makeRelative();
+					}
 				} else
 					continue;
 				ArrayList<IPath> list = map.get(source);

@@ -272,6 +272,8 @@ public class PDECoreMessages extends NLS {
 
 	public static String BuildErrorReporter_SourceCompatibility;
 
+	public static String ClasspathHelper_BadFileLocation;
+
 	public static String ExportWizard_badDirectory;
 
 	public static String FeatureExportJob_taskName;
