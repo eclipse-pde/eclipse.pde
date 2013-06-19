@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -10,9 +10,6 @@
  *     Fabio Mancinelli <fm@fabiomancinelli.org> - bug 201306
  *******************************************************************************/
 package org.eclipse.pde.internal.core.builders;
-
-import org.eclipse.jface.text.Position;
-import org.w3c.dom.Element;
 
 import java.io.StringReader;
 import java.util.*;
@@ -350,13 +347,26 @@ public class XMLErrorReporter extends DefaultHandler {
 		return buf.toString();
 	}
 
+	/**
+	 * Returns the text content of the xml element or <code>null</code> if there
+	 * is a problem determining the content.  If the element has any children
+	 * nodes, <code>null</code> will be returned.
+	 * 
+	 * @param element the xml element to parse
+	 * @return the text content of the xml node or <code>null</code>
+	 */
 	protected String getTextContent(Element element) {
 		ElementData data = fOffsetTable.get(element);
 		try {
-			IRegion nameRegion = fFindReplaceAdapter.find(data.offset, "</" + element.getNodeName() + ">", true, true, false, false); //$NON-NLS-1$ //$NON-NLS-2$
-			int offset = data.offset + element.getNodeName().length() + 2;
-			if (nameRegion != null)
-				return fTextDocument.get(offset, nameRegion.getOffset() - offset).trim();
+			if (element.hasChildNodes()) {
+				return null;
+			}
+			IRegion openElement = fFindReplaceAdapter.find(data.offset, ">", true, true, false, false); //$NON-NLS-1$
+			IRegion closeElement = fFindReplaceAdapter.find(data.offset, "</" + element.getNodeName() + ">", true, true, false, false); //$NON-NLS-1$ //$NON-NLS-2$
+			if (openElement != null && closeElement != null) {
+				int endOfOpenElement = openElement.getOffset() + openElement.getLength();
+				return fTextDocument.get(endOfOpenElement, closeElement.getOffset() - endOfOpenElement).trim();
+			}
 		} catch (BadLocationException e) {
 		}
 		return null;
