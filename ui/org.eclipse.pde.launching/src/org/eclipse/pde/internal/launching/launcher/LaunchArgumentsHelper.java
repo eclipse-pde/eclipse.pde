@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.launching.launcher;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
 import java.util.*;
 import org.eclipse.core.resources.IProject;
@@ -239,15 +238,48 @@ public class LaunchArgumentsHelper {
 		return (String[]) entries.toArray(new String[entries.size()]);
 	}
 
+	/**
+	 * Returns the path to the equinox launcher jar.  If the launcher is available
+	 * in the workspace, the packageName will be used to determine the expected output
+	 * location.
+	 * 
+	 * @param packageName name of the launcher package, typically {@link IPDEBuildConstants#BUNDLE_EQUINOX_LAUNCHER}
+	 * @return the path to the equinox launcher jar or <code>null</code> 
+	 * @throws CoreException
+	 */
 	private static String getEquinoxStartupPath(String packageName) throws CoreException {
+		// See if PDE has the launcher in the workspace or target
 		IPluginModelBase model = PluginRegistry.findModel(IPDEBuildConstants.BUNDLE_EQUINOX_LAUNCHER);
 		if (model != null) {
 			IResource resource = model.getUnderlyingResource();
-			// found in the target
-			if (resource == null)
-				return model.getInstallLocation();
+			if (resource == null) {
+				// Found in the target
+				String installLocation = model.getInstallLocation();
+				if (installLocation == null) {
+					return null;
+				}
 
-			// find it in the workspace
+				File bundleFile = new File(installLocation);
+				if (!bundleFile.isDirectory()) {
+					// The launcher bundle is usually jarred, just return the bundle root
+					return installLocation;
+				}
+
+				// Unjarred bundle, search for the built jar at the root of the folder
+				File[] files = bundleFile.listFiles(new FilenameFilter() {
+					public boolean accept(File dir, String name) {
+						return name.indexOf(IPDEBuildConstants.BUNDLE_EQUINOX_LAUNCHER) >= 0;
+					}
+				});
+				for (int i = 0; i < files.length; i++) {
+					if (files[i].isFile()) {
+						return files[i].getPath();
+					}
+				}
+				return null;
+			}
+
+			// Found in the workspace
 			IProject project = resource.getProject();
 			if (project.hasNature(JavaCore.NATURE_ID)) {
 				IJavaProject jProject = JavaCore.create(project);
@@ -277,6 +309,8 @@ public class LaunchArgumentsHelper {
 				}
 			}
 		}
+
+		// No PDE model, see if the launcher bundle is installed
 		Bundle bundle = Platform.getBundle(IPDEBuildConstants.BUNDLE_EQUINOX_LAUNCHER);
 		if (bundle != null) {
 			try {
