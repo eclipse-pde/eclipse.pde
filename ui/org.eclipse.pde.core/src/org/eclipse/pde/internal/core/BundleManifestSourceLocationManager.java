@@ -104,7 +104,7 @@ public class BundleManifestSourceLocationManager {
 						try {
 							version = new Version(versionEntry);
 						} catch (IllegalArgumentException e) {
-							PDECore.log(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.SourceLocationManager_problemProcessingBundleManifestSourceHeader, e));
+							PDECore.log(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(PDECoreMessages.SourceLocationManager_problemProcessingBundleManifestSourceHeader, pluginName, pluginVersion), e));
 						}
 						if (pluginVersion.equals(version)) {
 							addSourceRoots(currentElement.getDirective("roots"), pluginSourceRoots); //$NON-NLS-1$
@@ -157,7 +157,7 @@ public class BundleManifestSourceLocationManager {
 					try {
 						return ManifestElement.parseHeader(ICoreConstants.ECLIPSE_SOURCE_BUNDLE, bundleSourceEntry);
 					} catch (BundleException e) {
-						PDECore.log(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.SourceLocationManager_problemProcessingBundleManifestSourceHeader, e));
+						PDECore.log(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(PDECoreMessages.SourceLocationManager_problemProcessingBundleManifestSourceHeader, pluginName, pluginVersion), e));
 					}
 				}
 			}
@@ -197,7 +197,7 @@ public class BundleManifestSourceLocationManager {
 					try {
 						manifestElements = ManifestElement.parseHeader(ICoreConstants.ECLIPSE_SOURCE_BUNDLE, bundleSourceEntry);
 					} catch (BundleException e) {
-						PDECore.log(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.SourceLocationManager_problemProcessingBundleManifestSourceHeader, e));
+						PDECore.log(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(PDECoreMessages.SourceLocationManager_problemProcessingBundleManifestSourceHeader, currentPlugin.getId(), currentPlugin.getVersion()), e));
 					}
 					if (manifestElements != null) {
 						IPath path = new Path(externalModels[i].getInstallLocation());
