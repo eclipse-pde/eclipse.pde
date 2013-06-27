@@ -41,15 +41,19 @@ public class View extends ViewPart {
 		// setup bold font
 		Font boldFont = JFaceResources.getFontRegistry().getBold(JFaceResources.DEFAULT_FONT);    
 		
-		Label l = new Label(banner, SWT.WRAP);
+		Label l = new Label(banner, SWT.NONE);
 		l.setText("Subject:");
 		l.setFont(boldFont);
-		l = new Label(banner, SWT.WRAP);
-		l.setText("This is a message about the cool Eclipse RCP!");
+		l.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
 		
 		l = new Label(banner, SWT.WRAP);
+		l.setText("This is a message about the cool Eclipse RCP!");
+		l.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, true, false));
+		
+		l = new Label(banner, SWT.NONE);
 		l.setText("From:");
 		l.setFont(boldFont);
+		l.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
     
 		final Link link = new Link(banner, SWT.NONE);
 		link.setText("<a>nicole@mail.org</a>");
@@ -58,12 +62,17 @@ public class View extends ViewPart {
 				MessageDialog.openInformation(getSite().getShell(), "Not Implemented", "Imagine the address book or a new message being created now.");
 			}    
 		});
+		link.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, true, false));
     
-		l = new Label(banner, SWT.WRAP);
+		l = new Label(banner, SWT.NONE);
 		l.setText("Date:");
 		l.setFont(boldFont);
+		l.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
+		
 		l = new Label(banner, SWT.WRAP);
 		l.setText("10:34 am");
+		l.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, true, false));
+		
 		// message contents
 		messageText = new Text(top, SWT.MULTI | SWT.WRAP);
 		messageText.setText("This RCP Application was generated from the PDE Plug-in Project wizard. This sample shows how to:\n"+
