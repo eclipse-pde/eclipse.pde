@@ -199,7 +199,7 @@ public class AssembleTests extends PDETestCase {
 		IFolder buildFolder = newTest("315710");
 
 		Utils.generateFeature(buildFolder, "F1", null, new String[] {"org.eclipse.swt;unpack=\"false\""});
-		Utils.generateFeature(buildFolder, "F2", null, new String[] {"org.eclipse.osgi;unpack=\"false\""});
+		Utils.generateFeature(buildFolder, "F2", null, new String[] {"org.eclipse.platform;unpack=\"false\""});
 		Utils.writeBuffer(buildFolder.getFile("features/F1/notice.html"), new StringBuffer("be nice to clowns\n"));
 		Utils.writeBuffer(buildFolder.getFile("features/F1/build.properties"), new StringBuffer("bin.includes=feature.xml\nroot=file:notice.html\n"));
 		Utils.writeBuffer(buildFolder.getFile("features/F2/build.properties"), new StringBuffer("bin.includes=feature.xml\n"));

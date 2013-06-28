@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2007, 2013 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -23,8 +23,7 @@ import org.eclipse.ant.core.AntRunner;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.p2.core.helpers.FileUtils;
-import org.eclipse.osgi.internal.provisional.verifier.CertificateVerifier;
-import org.eclipse.osgi.internal.provisional.verifier.CertificateVerifierFactory;
+import org.eclipse.osgi.signedcontent.*;
 import org.eclipse.pde.build.internal.tests.ant.AntUtils;
 import org.eclipse.pde.internal.build.AbstractScriptGenerator;
 import org.eclipse.pde.internal.build.Utils;
@@ -332,21 +331,22 @@ public abstract class PDETestCase extends TestCase {
 
 	public static void assertJarVerifies(File jarFile, boolean throwIfNotSigned) throws Exception {
 		BundleContext context = Activator.getDefault().getContext();
-
-		ServiceReference certRef = context.getServiceReference(CertificateVerifierFactory.class.getName());
+		ServiceReference certRef = context.getServiceReference(SignedContentFactory.class.getName());
 		if (certRef == null)
-			throw new IllegalStateException();
-		CertificateVerifierFactory certFactory = (CertificateVerifierFactory) context.getService(certRef);
+			throw new IllegalStateException("The SignedContentFactory service is not available");
+		SignedContentFactory certFactory = (SignedContentFactory) context.getService(certRef);
 		try {
-			CertificateVerifier verifier = certFactory.getVerifier(jarFile);
-			if (verifier.isSigned())
-				verifier.checkContent();
-			else if (throwIfNotSigned)
+			SignedContent content = certFactory.getSignedContent(jarFile);
+			if (content.isSigned()) {
+				SignedContentEntry[] entries = content.getSignedEntries();
+				for (int i = 0; i < entries.length; i++) {
+					entries[i].verify();
+				}
+			} else if (throwIfNotSigned)
 				throw new AssertionFailedException(jarFile.toString() + " is not signed.");
 		} finally {
 			context.ungetService(certRef);
 		}
-
 	}
 
 	public void assertZipPermissions(IFile zip, String file, String permissions) throws Exception {
