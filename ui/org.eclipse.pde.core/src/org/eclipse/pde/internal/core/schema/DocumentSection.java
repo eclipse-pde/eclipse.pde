@@ -62,19 +62,26 @@ public class DocumentSection extends SchemaObject implements IDocumentSection, C
 				return 0;
 			else if (otherIndex == -1)
 				return -1;
+			else if (thisIndex == -1)
+				return 1;
 			else
 				return thisIndex - otherIndex;
 		}
-		return -1;
+		return 0;
 	}
 
 	private int getIndex(String sectionId) {
 		if (sectionId == null)
 			return -1;
 		for (int i = 0; i < DOC_SECTIONS.length; i++) {
-			if (DOC_SECTIONS[i].equals(sectionId))
+			if (DOC_SECTIONS[i].equalsIgnoreCase(sectionId))
 				return i;
 		}
 		return -1;
+	}
+
+	@Override
+	public String toString() {
+		return sectionId;
 	}
 }
