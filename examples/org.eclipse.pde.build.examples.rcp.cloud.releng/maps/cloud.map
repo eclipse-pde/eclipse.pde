@@ -1,0 +1,1 @@
+plugin@org.eclipse.equinox.p2.examples.rcp.cloud=HEAD,:pserver:anonymous@dev.eclipse.org:/cvsroot/rt,,org.eclipse.equinox/p2/examples/org.eclipse.equinox.p2.examples.rcp.cloud

@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-SymbolicName: adt.plugin; singleton:=true
+Bundle-ManifestVersion: 2
+Bundle-Name: Plugin
+Bundle-Version: 1.0.0.qualifier
+Require-Bundle: org.eclipse.platform,org.eclipse.equinox.app
+
+

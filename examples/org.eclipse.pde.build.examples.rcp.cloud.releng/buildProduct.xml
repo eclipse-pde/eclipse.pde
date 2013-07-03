@@ -1,0 +1,92 @@
+<project default="main">
+
+	<property name="Eclipse.Repo-3.5M6" value="http://download.eclipse.org/eclipse/updates/3.5milestones/I20090313-0100" />
+	<property name="RCP.Repo-3.5M6" value="http://download.eclipse.org/eclipse/downloads/drops/S-3.5M6-200903130100/org.eclipse.rcp-p2repo-3.5M6.zip" />
+	<property name="Equinox.Repo-3.5M6" value="http://download.eclipse.org/equinox/drops/S-3.5M6-200903130100/eclipse-equinox-3.5M6.zip" />
+	<property name="Executable-3.5M6" value="http://download.eclipse.org/eclipse/updates/3.5milestones/I20090313-0100/features/org.eclipse.equinox.executable_3.3.200.v20090306-1900-7M-FhJFHQfz-5DbTcLIwDaa.jar" />
+
+	<!-- properties to run locally without net access 
+	<property name="Eclipse.Repo-3.5M6" value="file:C:/EclipseCon/p2/resources/3.5M6" />
+	<property name="RCP.Repo-3.5M6" value="file:C:/EclipseCon/p2/resources/org.eclipse.rcp-p2repo-3.5M6.zip" />
+	<property name="Equinox.Repo-3.5M6" value="file:C:/EclipseCon/p2/resources/eclipse-equinox-3.5M6.zip" />
+	<property name="Executable-3.5M6" value="file:C:/EclipseCon/p2/resources/org.eclipse.equinox.executable_3.3.200.v20090306-1900-7M-FhJFHQfz-5DbTcLIwDaa.jar" />
+	<property name="skipFetch" value="true"/>
+	-->
+		
+	<target name="createP2Repo" unless="haveP2UI">
+		<property name="p2Repo" value="${repoZips}/p2UI"/>
+		<!-- mirror p2.user.ui and some other required bundles locally -->
+		<p2.mirror source="${Eclipse.Repo-3.5M6}" destination="${p2Repo}">
+			<slicingOptions followStrict="true" />
+			<iu id="org.eclipse.equinox.p2.user.ui.feature.group" />
+			<iu id="org.eclipse.ecf"/>
+			<iu id="org.eclipse.ecf.filetransfer"/>
+			<iu id="org.eclipse.ecf.identity"/>
+			<iu id="org.eclipse.ecf.provider.filetransfer"/>
+			<iu id="org.eclipse.ecf.provider.filetransfer.httpclient"/>
+			<iu id="org.eclipse.ecf.provider.filetransfer.httpclient.ssl" />
+			<iu id="org.eclipse.ecf.provider.filetransfer.ssl"/>
+			<iu id="org.eclipse.ecf.ssl" />
+			<iu id="org.apache.commons.codec"/>
+			<iu id="org.apache.commons.httpclient"/>
+			<iu id="org.apache.ant"/>
+			<iu id="org.eclipse.core.runtime.compatibility.registry"/>
+		</p2.mirror>
+	</target>
+	
+	<target name="downloadRCPRepo" unless="haveRCPRepo">
+		<get src="${RCP.Repo-3.5M6}"
+			 dest="${repoZips}/org.eclipse.rcp-p2repo-3.5M6.zip" />
+		<get src="${Equinox.Repo-3.5M6}"
+			 dest="${repoZips}/eclipse-equinox-3.5M6.zip"/>
+	</target>
+
+	<target name="setupExecutables" unless="haveExecutables">
+		<mkdir dir="${buildDirectory}/features"/>
+		<get src="${Executable-3.5M6}"
+			 dest="${buildDirectory}/features/org.eclipse.equinox.executable.jar"/>
+		<unzip src="${buildDirectory}/features/org.eclipse.equinox.executable.jar"
+			  dest="${buildDirectory}/features/org.eclipse.equinox.executable" />
+		<delete file="${buildDirectory}/features/org.eclipse.equinox.executable.jar" />
+	</target>
+	
+	<target name="main">
+		<tstamp/>
+
+		<property name="base" value="${basedir}/base"/>
+		<property name="repoZips" value="${base}/zippedRepos" />
+		<property name="builder" value="${basedir}" />
+		<property name="buildDirectory" value="${basedir}/buildDirectory"/>
+		<property name="baseLocation" value=""/>
+		<!--work around bug and add the transformedRepoLocation -->
+		<property name="pluginPath" value="${path.separator}${base}/transformedRepos" />
+		
+		<mkdir dir="${repoZips}"/>
+		
+		<!-- extract the p2 + ecf bundles from the main 3.5 Repository -->
+		<available property="haveP2UI" file="${base}/zippedRepos/p2UI"/>
+		<antcall target="createP2Repo"/>
+		
+		<!-- download the rcp & equinox repo zips -->
+		<available property="haveRCPRepo" file="${base}/zippedRepos/org.eclipse.rcp-p2repo-3.5M6.zip"/>
+		<antcall target="downloadRCPRepo" />
+		
+		<!-- we didn't get the deltapack, so grab the executable feature and unzip it -->
+		<available property="haveExecutables" file="${buildDirectory}/features/org.eclipse.equinox.executable"/>
+		<antcall target="setupExecutables" />
+		
+		<!-- setup map files for build -->
+		<mkdir dir="${buildDirectory}"/>
+		<copy file="${basedir}/maps/cloud.map" tofile="${buildDirectory}/directory.txt" />
+		
+		<!--fetch the cloud project early to get the .product file -->
+		<ant antfile="${eclipse.pdebuild.scripts}/genericTargets.xml" target="fetchElement">
+			<property name="type" value="plugin"/>
+			<property name="id" value="org.eclipse.equinox.p2.examples.rcp.cloud" />
+		</ant>
+
+		<!-- call PDE Build! -->
+		<ant antfile="${eclipse.pdebuild.scripts}/productBuild/productBuild.xml" />
+	</target>
+	
+</project>
