@@ -12,6 +12,8 @@ package org.eclipse.pde.internal.core.target;
 
 import java.io.*;
 import java.text.MessageFormat;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.xml.parsers.*;
@@ -124,6 +126,15 @@ public class TargetDefinitionPersistenceHelper {
 
 		NameVersionDescriptor[] included = definition.getIncluded();
 		if (included != null) {
+			Arrays.sort(included, new Comparator<NameVersionDescriptor>() {
+				public int compare(NameVersionDescriptor o1, NameVersionDescriptor o2) {
+					int compareType = o1.getType().compareTo(o2.getType());
+					if (compareType != 0) {
+						return compareType;
+					}
+					return o1.getId().compareTo(o2.getId());
+				}
+			});
 			Element includedElement = doc.createElement(INCLUDE_BUNDLES);
 			serializeBundles(doc, includedElement, included);
 			rootElement.appendChild(includedElement);
