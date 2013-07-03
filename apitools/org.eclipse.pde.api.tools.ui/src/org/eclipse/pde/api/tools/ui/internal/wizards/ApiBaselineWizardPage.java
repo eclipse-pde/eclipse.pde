@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -489,6 +489,10 @@ public class ApiBaselineWizardPage extends WizardPage {
 			IStatus status = fProfile.getExecutionEnvironmentStatus();
 			if (status.getSeverity() == IStatus.ERROR) {
 				setErrorMessage(status.getMessage());
+				return false;
+			}
+			if (!fProfile.getLocation().equals(locationcombo.getText())){
+				setErrorMessage(WizardMessages.ApiProfileWizardPage_location_needs_reset);
 				return false;
 			}
 		}
