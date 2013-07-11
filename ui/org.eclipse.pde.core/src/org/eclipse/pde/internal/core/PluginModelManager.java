@@ -504,6 +504,8 @@ public class PluginModelManager implements IModelProviderListener {
 		if (fEntries != null)
 			return;
 
+		long startTime = System.currentTimeMillis();
+
 		// Cannot assign to fEntries here - will create a race condition with isInitialized()
 		Map<String, LocalModelEntry> entries = Collections.synchronizedMap(new TreeMap<String, LocalModelEntry>());
 
@@ -574,6 +576,11 @@ public class PluginModelManager implements IModelProviderListener {
 					}
 				}
 			}
+		}
+
+		if (PDECore.DEBUG_MODEL) {
+			long time = System.currentTimeMillis() - startTime;
+			System.out.println("PDE plug-in model initialization complete: " + time + " ms"); //$NON-NLS-1$//$NON-NLS-2$
 		}
 	}
 

@@ -35,8 +35,6 @@ public class MinimalState {
 
 	private boolean fNoProfile;
 
-	protected static boolean DEBUG = false;
-
 	protected static StateObjectFactory stateObjectFactory;
 
 	protected static String DIR;
@@ -44,7 +42,6 @@ public class MinimalState {
 	protected String fSystemBundle = IPDEBuildConstants.BUNDLE_OSGI;
 
 	static {
-		DEBUG = PDECore.getDefault().isDebugging() && "true".equals(Platform.getDebugOption("org.eclipse.pde.core/cache")); //$NON-NLS-1$ //$NON-NLS-2$
 		DIR = PDECore.getDefault().getStateLocation().toOSString();
 		stateObjectFactory = Platform.getPlatformAdmin().getFactory();
 	}
@@ -247,7 +244,7 @@ public class MinimalState {
 			if (!all[i].isResolved()) {
 				VersionConstraint[] unsatisfiedConstraints = helper.getUnsatisfiedConstraints(all[i]);
 				if (unsatisfiedConstraints.length == 0) {
-					if (DEBUG) {
+					if (PDECore.DEBUG_CACHE) {
 						BundleDescription activeBundle = findActiveBundle(all[i].getSymbolicName());
 						String message = "Plug-in located at \"" + all[i].getLocation() + "\" was disabled because plug-in located at \"" + activeBundle.getLocation() + "\" was selected."; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 						System.out.print(message);

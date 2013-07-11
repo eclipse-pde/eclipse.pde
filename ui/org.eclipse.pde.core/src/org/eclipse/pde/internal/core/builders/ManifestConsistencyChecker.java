@@ -28,12 +28,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 	private int BUILD = 0x4;
 	private int STRUCTURE = 0x8;
 
-	private static boolean DEBUG = false;
 	private static IProject[] EMPTY_LIST = new IProject[0];
-
-	static {
-		DEBUG = PDECore.getDefault().isDebugging() && "true".equals(Platform.getDebugOption("org.eclipse.pde.core/validation")); //$NON-NLS-1$ //$NON-NLS-2$
-	}
 
 	private SelfVisitor fSelfVisitor = new SelfVisitor();
 
@@ -83,7 +78,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 				int kind = delta.getKind();
 				if (kind == IResourceDelta.ADDED || kind == IResourceDelta.REMOVED) {
 					type = MANIFEST | EXTENSIONS | BUILD | STRUCTURE;
-					if (DEBUG) {
+					if (PDECore.DEBUG_VALIDATION) {
 						System.out.print("Needs to rebuild project [" + getProject().getName() + "]: "); //$NON-NLS-1$ //$NON-NLS-2$
 						System.out.print(delta.getResource().getProjectRelativePath().toString());
 						System.out.print(" - "); //$NON-NLS-1$
@@ -101,28 +96,28 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 					String name = resource.getName();
 					if (isLocalizationFile(resource)) {
 						type |= MANIFEST | EXTENSIONS;
-						if (DEBUG) {
+						if (PDECore.DEBUG_VALIDATION) {
 							System.out.print("Needs to rebuild manifest and extensions in project [" + getProject().getName() + "]: "); //$NON-NLS-1$ //$NON-NLS-2$
 							System.out.print(delta.getResource().getProjectRelativePath().toString());
 							System.out.println(" - changed"); //$NON-NLS-1$
 						}
 					} else if (file.equals(PDEProject.getManifest(project))) {
 						type |= MANIFEST | EXTENSIONS | BUILD;
-						if (DEBUG) {
+						if (PDECore.DEBUG_VALIDATION) {
 							System.out.print("Needs to rebuild project [" + getProject().getName() + "]: "); //$NON-NLS-1$ //$NON-NLS-2$
 							System.out.print(delta.getResource().getProjectRelativePath().toString());
 							System.out.println(" - changed"); //$NON-NLS-1$
 						}
 					} else if (name.endsWith(".exsd") || file.equals(PDEProject.getPluginXml(project)) || file.equals(PDEProject.getFragmentXml(project))) { //$NON-NLS-1$
 						type |= EXTENSIONS;
-						if (DEBUG) {
+						if (PDECore.DEBUG_VALIDATION) {
 							System.out.print("Needs to rebuild extensions in project [" + getProject().getName() + "]: "); //$NON-NLS-1$ //$NON-NLS-2$
 							System.out.print(delta.getResource().getProjectRelativePath().toString());
 							System.out.println(" - changed"); //$NON-NLS-1$
 						}
 					} else if (file.equals(PDEProject.getBuildProperties(project))) {
 						type |= BUILD;
-						if (DEBUG) {
+						if (PDECore.DEBUG_VALIDATION) {
 							System.out.print("Needs to rebuild build.properties in project [" + getProject().getName() + "]: "); //$NON-NLS-1$ //$NON-NLS-2$
 							System.out.print(delta.getResource().getProjectRelativePath().toString());
 							System.out.println(" - changed"); //$NON-NLS-1$
@@ -165,7 +160,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 
 		// always do a build of the project if a full build or an unspecified change has occurred
 		if (delta == null) {
-			if (DEBUG) {
+			if (PDECore.DEBUG_VALIDATION) {
 				System.out.println("Project [" + getProject().getName() + "] - full build"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			return MANIFEST | EXTENSIONS | BUILD | STRUCTURE;
@@ -176,7 +171,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 		// has changed and a StateDelta was fired
 		if (Boolean.TRUE.equals(project.getSessionProperty(PDECore.TOUCH_PROJECT))) {
 			project.setSessionProperty(PDECore.TOUCH_PROJECT, null);
-			if (DEBUG) {
+			if (PDECore.DEBUG_VALIDATION) {
 				System.out.println("Dependencies Changed: Project [" + getProject().getName() + "] - full build"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			return MANIFEST | EXTENSIONS | BUILD;
@@ -200,7 +195,7 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 			delta.accept(fClassFileVisitor);
 			if (fClassFileVisitor.hasChanged()) {
 				type |= MANIFEST | EXTENSIONS | BUILD;
-				if (DEBUG) {
+				if (PDECore.DEBUG_VALIDATION) {
 					System.out.println("Class files changed due to dependency changes: Project [" + getProject().getName() + "] - rebuild manifest and properties files"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}

@@ -111,24 +111,24 @@ public class PDEState extends MinimalState {
 		if (resolve && workspace.length > 0 && !fNewState && !"true".equals(System.getProperty("pde.nocache"))) //$NON-NLS-1$ //$NON-NLS-2$
 			readWorkspaceState(workspace);
 
-		if (DEBUG)
+		if (PDECore.DEBUG_CACHE)
 			System.out.println("Time to create state: " + (System.currentTimeMillis() - start) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	private void readTargetState(URL[] urls, IProgressMonitor monitor) {
 		fTargetTimestamp = computeTimestamp(urls);
-		if (DEBUG) {
+		if (PDECore.DEBUG_CACHE) {
 			System.out.println("Timestamp of " + urls.length + " target URLS: " + fTargetTimestamp); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		File dir = new File(DIR, Long.toString(fTargetTimestamp) + ".target"); //$NON-NLS-1$
 		if ((fState = readStateCache(dir)) == null || !fAuxiliaryState.readPluginInfoCache(dir)) {
-			if (DEBUG) {
+			if (PDECore.DEBUG_CACHE) {
 				System.out.println("Creating new state, persisted state did not exist"); //$NON-NLS-1$
 			}
 			createNewTargetState(true, urls, monitor);
 			resolveState(false);
 		} else {
-			if (DEBUG) {
+			if (PDECore.DEBUG_CACHE) {
 				System.out.println("Restored previously persisted state"); //$NON-NLS-1$
 			}
 			// get the system bundle from the State
@@ -369,7 +369,7 @@ public class PDEState extends MinimalState {
 			try {
 				urls[i] = new File(models[i].getInstallLocation()).toURL();
 			} catch (MalformedURLException e) {
-				if (DEBUG) {
+				if (PDECore.DEBUG_CACHE) {
 					System.out.println("FAILED to save external state due to MalformedURLException"); //$NON-NLS-1$
 				}
 				return;
@@ -383,7 +383,7 @@ public class PDEState extends MinimalState {
 		if (!osgiStateExists || !auxStateExists) {
 			if (!dir.exists())
 				dir.mkdirs();
-			if (DEBUG) {
+			if (PDECore.DEBUG_CACHE) {
 				System.out.println("Saving external state of " + urls.length + " bundles to: " + dir.getAbsolutePath()); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			State state = stateObjectFactory.createState(false);
@@ -394,7 +394,7 @@ public class PDEState extends MinimalState {
 			}
 			fAuxiliaryState.savePluginInfo(dir);
 			saveState(state, dir);
-		} else if (DEBUG) {
+		} else if (PDECore.DEBUG_CACHE) {
 			System.out.println("External state unchanged, save skipped."); //$NON-NLS-1$
 		}
 	}
@@ -409,7 +409,7 @@ public class PDEState extends MinimalState {
 		if (!"true".equals(System.getProperty("pde.nocache")) && shouldSaveState(models)) { //$NON-NLS-1$ //$NON-NLS-2$
 			timestamp = computeTimestamp(models);
 			File dir = new File(DIR, Long.toString(timestamp) + ".workspace"); //$NON-NLS-1$
-			if (DEBUG) {
+			if (PDECore.DEBUG_CACHE) {
 				System.out.println("Saving workspace state to: " + dir.getAbsolutePath()); //$NON-NLS-1$
 			}
 			State state = stateObjectFactory.createState(false);

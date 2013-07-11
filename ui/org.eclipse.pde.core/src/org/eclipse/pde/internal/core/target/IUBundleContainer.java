@@ -115,12 +115,6 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 */
 	private ITargetDefinition fTarget;
 
-	private static final boolean DEBUG_PROFILE;
-
-	static {
-		DEBUG_PROFILE = PDECore.getDefault().isDebugging() && "true".equals(Platform.getDebugOption("org.eclipse.pde.core/target/profile")); //$NON-NLS-1$ //$NON-NLS-2$
-	}
-
 	/**
 	 * Constructs a installable unit bundle container for the specified units.
 	 * 
@@ -299,7 +293,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		try {
 			artifacts = P2TargetUtils.getBundlePool();
 		} catch (CoreException e) {
-			if (DEBUG_PROFILE) {
+			if (PDECore.DEBUG_TARGET_PROFILE) {
 				System.out.println("Bundle pool repository could not be loaded"); //$NON-NLS-1$
 			}
 			return fBundles = null;
@@ -307,7 +301,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 
 		Map<BundleInfo, TargetBundle> bundles = generateResolvedBundles(slice, metadata, artifacts);
 		if (bundles.isEmpty()) {
-			if (DEBUG_PROFILE) {
+			if (PDECore.DEBUG_TARGET_PROFILE) {
 				System.out.println("Profile does not contain any bundles or artifacts were missing"); //$NON-NLS-1$
 			}
 			if (slicer.getStatus().getSeverity() == IStatus.WARNING) {

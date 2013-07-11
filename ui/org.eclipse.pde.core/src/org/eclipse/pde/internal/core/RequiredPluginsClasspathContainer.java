@@ -29,8 +29,6 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 	private IPluginModelBase fModel;
 	private IBuild fBuild;
 
-	private static boolean DEBUG = false;
-
 	private IClasspathEntry[] fEntries = null;
 
 	/**
@@ -38,10 +36,6 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 	 * @see #getClasspathContributors()
 	 */
 	private static List<IClasspathContributor> fClasspathContributors = null;
-
-	static {
-		DEBUG = PDECore.getDefault().isDebugging() && "true".equals(Platform.getDebugOption("org.eclipse.pde.core/classpath")); //$NON-NLS-1$ //$NON-NLS-2$
-	}
 
 	/**
 	 * Constructor for RequiredPluginsClasspathContainer.
@@ -85,7 +79,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 	 */
 	public IClasspathEntry[] getClasspathEntries() {
 		if (fModel == null) {
-			if (DEBUG) {
+			if (PDECore.DEBUG_CLASSPATH) {
 				System.out.println("********Returned an empty container"); //$NON-NLS-1$
 				System.out.println();
 			}
@@ -94,7 +88,7 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 		if (fEntries == null) {
 			fEntries = computePluginEntries();
 		}
-		if (DEBUG) {
+		if (PDECore.DEBUG_CLASSPATH) {
 			System.out.println("Dependencies for plugin '" + fModel.getPluginBase().getId() + "':"); //$NON-NLS-1$ //$NON-NLS-2$
 			for (int i = 0; i < fEntries.length; i++) {
 				System.out.println(fEntries[i]);

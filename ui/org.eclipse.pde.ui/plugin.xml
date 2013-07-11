@@ -2232,4 +2232,15 @@
              type="org.eclipse.pde.internal.ui.views.imagebrowser.ImageElement">
        </propertyTester>
     </extension>
+    <extension
+          point="org.eclipse.ui.trace.traceComponents">
+       <component
+             id="org.eclipse.pde.traceComponent"
+             label="%traceComponent.label">
+          <bundle
+                consumed="true"
+                name="org.eclipse.pde.core">
+          </bundle>
+       </component>
+    </extension>
 </plugin>

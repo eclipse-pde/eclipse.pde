@@ -1,6 +1,11 @@
-# prints the time taken to read/write registry cache.
 org.eclipse.pde.core/debug=true
+# prints the time taken to read/write registry cache.
 org.eclipse.pde.core/cache=false
+# trace for the classpath container and classpath computer
 org.eclipse.pde.core/classpath=false
-org.eclipse.pde.core/validation=false
+# prints the time taken to create the PDE plug-in models
+org.eclipse.pde.core/model=false
+# trace for creating targets using a p2 profile
 org.eclipse.pde.core/target/profile=false
+# trace when validating plugin.xml contents
+org.eclipse.pde.core/validation=false

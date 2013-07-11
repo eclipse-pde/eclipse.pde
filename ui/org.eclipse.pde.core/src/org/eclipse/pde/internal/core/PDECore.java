@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,8 @@ import java.util.Hashtable;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.osgi.service.debug.DebugOptions;
+import org.eclipse.osgi.service.debug.DebugOptionsListener;
 import org.eclipse.pde.core.IBundleClasspathResolver;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.project.IBundleProjectService;
@@ -30,7 +32,7 @@ import org.eclipse.pde.internal.core.target.TargetPlatformService;
 import org.eclipse.update.configurator.ConfiguratorUtils;
 import org.osgi.framework.*;
 
-public class PDECore extends Plugin {
+public class PDECore extends Plugin implements DebugOptionsListener {
 	public static final String PLUGIN_ID = "org.eclipse.pde.core"; //$NON-NLS-1$
 
 	public static final IPath REQUIRED_PLUGINS_CONTAINER_PATH = new Path(PLUGIN_ID + ".requiredPlugins"); //$NON-NLS-1$
@@ -44,6 +46,19 @@ public class PDECore extends Plugin {
 	public static final QualifiedName TOUCH_PROJECT = new QualifiedName(PLUGIN_ID, "TOUCH_PROJECT"); //$NON-NLS-1$
 
 	public static final QualifiedName SCHEMA_PREVIEW_FILE = new QualifiedName(PLUGIN_ID, "SCHEMA_PREVIEW_FILE"); //$NON-NLS-1$
+
+	private static boolean DEBUG = false;
+	public static boolean DEBUG_CACHE = false;
+	public static boolean DEBUG_CLASSPATH = false;
+	public static boolean DEBUG_MODEL = false;
+	public static boolean DEBUG_TARGET_PROFILE = false;
+	public static boolean DEBUG_VALIDATION = false;
+	private static final String DEBUG_FLAG = PLUGIN_ID + "/debug"; //$NON-NLS-1$
+	private static final String CACHE_DEBUG = PLUGIN_ID + "/cache"; //$NON-NLS-1$
+	private static final String CLASSPATH_DEBUG = PLUGIN_ID + "/classpath"; //$NON-NLS-1$
+	private static final String MODEL_DEBUG = PLUGIN_ID + "/model"; //$NON-NLS-1$
+	private static final String TARGET_PROFILE_DEBUG = PLUGIN_ID + "/target/profile"; //$NON-NLS-1$
+	private static final String VALIDATION_DEBUG = PLUGIN_ID + "/validation"; //$NON-NLS-1$
 
 	// Shared instance
 	private static PDECore inst;
@@ -268,6 +283,11 @@ public class PDECore extends Plugin {
 		fTargetPlatformService = context.registerService(ITargetPlatformService.class.getName(), TargetPlatformService.getDefault(), new Hashtable<String, Object>());
 		fBundleProjectService = context.registerService(IBundleProjectService.class.getName(), BundleProjectService.getDefault(), new Hashtable<String, Object>());
 
+		// Register the debug options listener service (tracing)
+		Hashtable<String, String> props = new Hashtable<String, String>(2);
+		props.put(org.eclipse.osgi.service.debug.DebugOptions.LISTENER_SYMBOLICNAME, PDECore.PLUGIN_ID);
+		context.registerService(DebugOptionsListener.class.getName(), this, props);
+
 		// use save participant to clean orphaned profiles.
 		ResourcesPlugin.getWorkspace().addSaveParticipant(PLUGIN_ID, new ISaveParticipant() {
 			public void saving(ISaveContext saveContext) throws CoreException {
@@ -364,5 +384,17 @@ public class PDECore extends Plugin {
 			fBundleContext.ungetService(reference);
 		}
 		return service;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.osgi.service.debug.DebugOptionsListener#optionsChanged(org.eclipse.osgi.service.debug.DebugOptions)
+	 */
+	public void optionsChanged(DebugOptions options) {
+		DEBUG = options.getBooleanOption(DEBUG_FLAG, false);
+		DEBUG_CACHE = DEBUG && options.getBooleanOption(CACHE_DEBUG, false);
+		DEBUG_CLASSPATH = DEBUG && options.getBooleanOption(CLASSPATH_DEBUG, false);
+		DEBUG_MODEL = DEBUG && options.getBooleanOption(MODEL_DEBUG, false);
+		DEBUG_TARGET_PROFILE = DEBUG && options.getBooleanOption(TARGET_PROFILE_DEBUG, false);
+		DEBUG_VALIDATION = DEBUG && options.getBooleanOption(VALIDATION_DEBUG, false);
 	}
 }
