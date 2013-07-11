@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -353,8 +353,11 @@ public class TracingBlock {
 			settings = PDEPlugin.getDefault().getDialogSettings().addNewSection(TRACING_SETTINGS);
 		}
 		IPluginModelBase model = getSelectedModel();
-		String id = (model == null) ? null : model.getPluginBase().getId();
-		settings.put(SETTINGS_SELECTED_PLUGIN, id);
+		if (model != null && fPluginViewer.getChecked(model)) {
+			settings.put(SETTINGS_SELECTED_PLUGIN, model.getPluginBase().getId());
+		} else {
+			settings.put(SETTINGS_SELECTED_PLUGIN, (String) null);
+		}
 	}
 
 	private TracingPropertySource getPropertySource(IPluginModelBase model) {
