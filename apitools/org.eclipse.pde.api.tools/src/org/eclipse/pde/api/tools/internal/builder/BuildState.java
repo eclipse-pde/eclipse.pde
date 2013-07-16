@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -540,7 +540,7 @@ public class BuildState {
 					return read(in);
 				} finally {
 					if (ApiPlugin.DEBUG_BUILDER) {
-						System.out.println("Saved state thinks last build failed for " + project.getName()); //$NON-NLS-1$
+						System.out.println("ApiAnalysisBuilder: Saved state thinks last build failed for " + project.getName()); //$NON-NLS-1$
 					}
 					in.close();
 				}
@@ -550,9 +550,9 @@ public class BuildState {
 			}
 		} else if (ApiPlugin.DEBUG_BUILDER) {
 			if (file == null) {
-				System.out.println("Project does not exist: " + project); //$NON-NLS-1$
+				System.out.println("ApiAnalysisBuilder: Project does not exist: " + project); //$NON-NLS-1$
 			} else {
-				System.out.println("Build state file " + file.getPath() + " does not exist"); //$NON-NLS-1$ //$NON-NLS-2$
+				System.out.println("ApiAnalysisBuilder: Build state file " + file.getPath() + " does not exist"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 		return null;
@@ -604,7 +604,7 @@ public class BuildState {
 	 */
 	static void saveBuiltState(IProject project, BuildState state) throws CoreException {
 		if (ApiPlugin.DEBUG_BUILDER) {
-			System.out.println("Saving build state for project: "+project.getName()); //$NON-NLS-1$
+			System.out.println("ApiAnalysisBuilder: Saving build state for project: "+project.getName()); //$NON-NLS-1$
 		}
 		File file = BuildState.getSerializationFile(project);
 		if (file == null) return;
