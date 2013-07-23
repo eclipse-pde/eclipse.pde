@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2007, 2013 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -491,20 +491,26 @@ public class ScriptGenerationTests extends PDETestCase {
 		generateScripts(buildFolder, props);
 	}
 
-	// also tests that 196754 works without a manifest
-	public void testBug196159_196754() throws Exception {
-		IFolder buildFolder = newTest("196159");
-
-		Utils.generateFeature(buildFolder, "featureA", null, new String[] {"Plugin21;unpack=\"false\""});
-
-		Utils.storeBuildProperties(buildFolder, BuildConfiguration.getBuilderProperties(buildFolder));
-		Utils.generateAllElements(buildFolder, "featureA");
-
-		runBuild(buildFolder);
-
-		IFile javaCompilerArgs = buildFolder.getFile("plugins/Plugin21/javaCompiler.Plugin21.jar.args");
-		assertFalse(javaCompilerArgs.exists());
-	}
+	/*
+	 * Test disabled and resources removed 23 July 2013 as Equinox framework no longer supports pre-osgi plug-ins (Bug 411907)
+	 * 
+	 * Tests that 196754 works without a manifest (pre-osgi plug-in)
+	 * Bug 196754: Unpacked fragments have their manifest entries reordered during feature export
+	 * @throws Exception
+	 */
+	//	public void testBug196159_196754() throws Exception {
+	//		IFolder buildFolder = newTest("196159");
+	//
+	//		Utils.generateFeature(buildFolder, "featureA", null, new String[] {"Plugin21;unpack=\"false\""});
+	//
+	//		Utils.storeBuildProperties(buildFolder, BuildConfiguration.getBuilderProperties(buildFolder));
+	//		Utils.generateAllElements(buildFolder, "featureA");
+	//
+	//		runBuild(buildFolder);
+	//
+	//		IFile javaCompilerArgs = buildFolder.getFile("plugins/Plugin21/javaCompiler.Plugin21.jar.args");
+	//		assertFalse(javaCompilerArgs.exists());
+	//	}
 
 	public void testBug210464() throws Exception {
 		IFolder buildFolder = newTest("210464 space");
