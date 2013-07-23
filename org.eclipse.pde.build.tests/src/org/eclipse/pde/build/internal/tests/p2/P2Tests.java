@@ -556,8 +556,8 @@ public class P2Tests extends P2TestCase {
 			if (key.getClassifier().equals("osgi.bundle") && key.getId().equals("org.eclipse.cvs")) {
 				assertEquals(descriptors.length, 1);
 				continue;
-			} else
-				assertEquals(descriptors.length, 2);
+			}
+			assertEquals(descriptors.length, 2);
 
 			if (PACKED_FORMAT.equals(descriptors[0].getProperty(IArtifactDescriptor.FORMAT))) {
 				assertMD5(repoFolder, descriptors[1]);
@@ -927,86 +927,88 @@ public class P2Tests extends P2TestCase {
 		assertResourceFile(installFolder, "plugins/A_1.0.0.jar");
 	}
 
-	public void testMetadataGenerator_BootStrap() throws Exception {
-		IFolder testFolder = newTest("metadataGenerator_Bootstrap");
-
-		File delta = Utils.findDeltaPack();
-		assertNotNull(delta);
-
-		IFile productFile = testFolder.getFile("Bootstrap.product");
-
-		//Step one, build old fashioned product
-		IFolder buildFolder = Utils.createFolder(testFolder, "build");
-		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
-		properties.put("configs", "win32,win32,x86");
-		properties.put("archivesFormat", "win32,win32,x86-folder");
-		if (!delta.equals(new File((String) properties.get("baseLocation"))))
-			properties.put("pluginPath", delta.getAbsolutePath());
-		properties.put("product", productFile.getLocation().toOSString());
-		Utils.storeBuildProperties(buildFolder, properties);
-
-		runProductBuild(buildFolder);
-
-		IFolder repoFolder = testFolder.getFolder("repository");
-		IFolder installFolder = testFolder.getFolder("install");
-
-		//step two, invoke the metadata generator on the product
-		StringBuffer scriptBuffer = new StringBuffer();
-		scriptBuffer.append("<project name=\"project\" default=\"go\">																\n");
-		scriptBuffer.append("   <target name=\"go\">																				\n");
-		scriptBuffer.append("		<last id=\"launcher\">																			\n");
-		scriptBuffer.append("			<sort>																						\n");
-		scriptBuffer.append("				<fileset dir=\"${eclipse.home}/plugins\" includes=\"org.eclipse.equinox.launcher_*\" />	\n");
-		scriptBuffer.append("			</sort>																						\n");
-		scriptBuffer.append("		</last>																							\n");
-		scriptBuffer.append("      <property name=\"launcher\" refid=\"launcher\" />												\n");
-		scriptBuffer.append("      <condition property=\"p2.director.devMode\" value=\"-dev &quot;${osgi.dev}&quot;\" else=\"\">	\n");
-		scriptBuffer.append("         <isset property=\"osgi.dev\" />																\n");
-		scriptBuffer.append("      </condition>																						\n");
-		scriptBuffer.append("      <java dir=\"${basedir}\" jar=\"${launcher}\" fork=\"true\">										\n");
-		scriptBuffer.append("         <arg line=\"-application org.eclipse.equinox.p2.publisher.EclipseGenerator\" />				\n");
-		scriptBuffer.append("         <arg line=\"${p2.director.devMode}\" />														\n");
-		scriptBuffer.append("         <sysproperty key=\"osgi.configuration.area\" value=\"${osgi.configuration.area}\" />			\n");
-		scriptBuffer.append("         <arg line=\"-metadataRepositoryName BootStrapRepo\" />										\n");
-		scriptBuffer.append("         <arg value=\"-metadataRepository\" />															\n");
-		scriptBuffer.append("         <arg value=\"" + URIUtil.toUnencodedString(repoFolder.getLocationURI()) + "\" />				\n");
-		scriptBuffer.append("         <arg value=\"-artifactRepository\" />															\n");
-		scriptBuffer.append("         <arg value=\"" + URIUtil.toUnencodedString(repoFolder.getLocationURI()) + "\" />				\n");
-		scriptBuffer.append("         <arg value=\"-source\" />																		\n");
-		scriptBuffer.append("         <arg value=\"" + buildFolder.getFolder("tmp/eclipse").getLocation().toOSString() + "\" />		\n");
-		scriptBuffer.append("         <arg line=\"-root bootstrap -rootVersion 1.2.0.12345\" />										\n");
-		scriptBuffer.append("         <arg line=\"-flavor tooling -publishArtifacts -append\" />									\n");
-		//scriptBuffer.append(" <jvmarg line=\"-Xdebug -Xnoagent -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000\" /> 	\n");
-		scriptBuffer.append("      </java>																							\n");
-
-		//step three call the director
-		scriptBuffer.append("      <java dir=\"${basedir}\" jar=\"${launcher}\" fork=\"true\">				\n");
-		scriptBuffer.append("         <arg line=\"${p2.director.devMode}\" />														\n");
-		scriptBuffer.append("         <sysproperty key=\"osgi.configuration.area\" value=\"${osgi.configuration.area}\" />			\n");
-		scriptBuffer.append("         <arg line=\"-application org.eclipse.equinox.p2.director\" />									\n");
-		scriptBuffer.append("         <arg value=\"-metadataRepository\" />															\n");
-		scriptBuffer.append("         <arg value=\"" + URIUtil.toUnencodedString(repoFolder.getLocationURI()) + "\" />				\n");
-		scriptBuffer.append("         <arg value=\"-artifactRepository\" />															\n");
-		scriptBuffer.append("         <arg value=\"" + URIUtil.toUnencodedString(repoFolder.getLocationURI()) + "\" />				\n");
-		scriptBuffer.append("         <arg line=\"-installIU bootstrap/1.2.0.12345 -profile bootProfile\" />						\n");
-		scriptBuffer.append("         <arg line=\"-profileProperties org.eclipse.update.install.features=true\" />					\n");
-		scriptBuffer.append("         <arg line=\"-p2.os win32 -p2.ws win32 -p2.arch x86\" />										\n");
-		scriptBuffer.append("         <arg value=\"-destination\" />																\n");
-		scriptBuffer.append("         <arg value=\"" + installFolder.getLocation().toOSString() + "\" />							\n");
-		//scriptBuffer.append(" <jvmarg value=\"-Declipse.p2.data.area=" + installFolder.getLocation().toOSString() + "/p2\" />		\n");
-		//scriptBuffer.append(" <jvmarg line=\"-Xdebug -Xnoagent -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000\" /> 	\n");
-		scriptBuffer.append("      </java>																							\n");
-		scriptBuffer.append("   </target>																							\n");
-		scriptBuffer.append("</project>																								\n");
-		IFile script = buildFolder.getFile("build.xml");
-		Utils.writeBuffer(script, scriptBuffer);
-
-		runAntScript(script.getLocation().toOSString(), new String[] {"go"}, testFolder.getLocation().toOSString(), null);
-
-		IMetadataRepository metaRepo = loadMetadataRepository(repoFolder.getLocationURI());
-		assertEquals(metaRepo.getName(), "BootStrapRepo");
-		IInstallableUnit iu = getIU(metaRepo, "bootstrap");
-		assertEquals(iu.getVersion().toString(), "1.2.0.12345");
-		assertResourceFile(installFolder, "eclipse.exe");
-	}
+	// Test disabled and resources deleted 23 July 2013 as the Plugin Converter is no longer available in the SDK (Bug 411907)
+	// It isn't clear where the plugin converter is required, but the build log indicates it was unavailable at three different points
+	//	public void testMetadataGenerator_BootStrap() throws Exception {
+	//		IFolder testFolder = newTest("metadataGenerator_Bootstrap");
+	//
+	//		File delta = Utils.findDeltaPack();
+	//		assertNotNull(delta);
+	//
+	//		IFile productFile = testFolder.getFile("Bootstrap.product");
+	//
+	//		//Step one, build old fashioned product
+	//		IFolder buildFolder = Utils.createFolder(testFolder, "build");
+	//		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
+	//		properties.put("configs", "win32,win32,x86");
+	//		properties.put("archivesFormat", "win32,win32,x86-folder");
+	//		if (!delta.equals(new File((String) properties.get("baseLocation"))))
+	//			properties.put("pluginPath", delta.getAbsolutePath());
+	//		properties.put("product", productFile.getLocation().toOSString());
+	//		Utils.storeBuildProperties(buildFolder, properties);
+	//
+	//		runProductBuild(buildFolder);
+	//
+	//		IFolder repoFolder = testFolder.getFolder("repository");
+	//		IFolder installFolder = testFolder.getFolder("install");
+	//
+	//		//step two, invoke the metadata generator on the product
+	//		StringBuffer scriptBuffer = new StringBuffer();
+	//		scriptBuffer.append("<project name=\"project\" default=\"go\">																\n");
+	//		scriptBuffer.append("   <target name=\"go\">																				\n");
+	//		scriptBuffer.append("		<last id=\"launcher\">																			\n");
+	//		scriptBuffer.append("			<sort>																						\n");
+	//		scriptBuffer.append("				<fileset dir=\"${eclipse.home}/plugins\" includes=\"org.eclipse.equinox.launcher_*\" />	\n");
+	//		scriptBuffer.append("			</sort>																						\n");
+	//		scriptBuffer.append("		</last>																							\n");
+	//		scriptBuffer.append("      <property name=\"launcher\" refid=\"launcher\" />												\n");
+	//		scriptBuffer.append("      <condition property=\"p2.director.devMode\" value=\"-dev &quot;${osgi.dev}&quot;\" else=\"\">	\n");
+	//		scriptBuffer.append("         <isset property=\"osgi.dev\" />																\n");
+	//		scriptBuffer.append("      </condition>																						\n");
+	//		scriptBuffer.append("      <java dir=\"${basedir}\" jar=\"${launcher}\" fork=\"true\">										\n");
+	//		scriptBuffer.append("         <arg line=\"-application org.eclipse.equinox.p2.publisher.EclipseGenerator\" />				\n");
+	//		scriptBuffer.append("         <arg line=\"${p2.director.devMode}\" />														\n");
+	//		scriptBuffer.append("         <sysproperty key=\"osgi.configuration.area\" value=\"${osgi.configuration.area}\" />			\n");
+	//		scriptBuffer.append("         <arg line=\"-metadataRepositoryName BootStrapRepo\" />										\n");
+	//		scriptBuffer.append("         <arg value=\"-metadataRepository\" />															\n");
+	//		scriptBuffer.append("         <arg value=\"" + URIUtil.toUnencodedString(repoFolder.getLocationURI()) + "\" />				\n");
+	//		scriptBuffer.append("         <arg value=\"-artifactRepository\" />															\n");
+	//		scriptBuffer.append("         <arg value=\"" + URIUtil.toUnencodedString(repoFolder.getLocationURI()) + "\" />				\n");
+	//		scriptBuffer.append("         <arg value=\"-source\" />																		\n");
+	//		scriptBuffer.append("         <arg value=\"" + buildFolder.getFolder("tmp/eclipse").getLocation().toOSString() + "\" />		\n");
+	//		scriptBuffer.append("         <arg line=\"-root bootstrap -rootVersion 1.2.0.12345\" />										\n");
+	//		scriptBuffer.append("         <arg line=\"-flavor tooling -publishArtifacts -append\" />									\n");
+	//		//scriptBuffer.append(" <jvmarg line=\"-Xdebug -Xnoagent -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000\" /> 	\n");
+	//		scriptBuffer.append("      </java>																							\n");
+	//
+	//		//step three call the director
+	//		scriptBuffer.append("      <java dir=\"${basedir}\" jar=\"${launcher}\" fork=\"true\">				\n");
+	//		scriptBuffer.append("         <arg line=\"${p2.director.devMode}\" />														\n");
+	//		scriptBuffer.append("         <sysproperty key=\"osgi.configuration.area\" value=\"${osgi.configuration.area}\" />			\n");
+	//		scriptBuffer.append("         <arg line=\"-application org.eclipse.equinox.p2.director\" />									\n");
+	//		scriptBuffer.append("         <arg value=\"-metadataRepository\" />															\n");
+	//		scriptBuffer.append("         <arg value=\"" + URIUtil.toUnencodedString(repoFolder.getLocationURI()) + "\" />				\n");
+	//		scriptBuffer.append("         <arg value=\"-artifactRepository\" />															\n");
+	//		scriptBuffer.append("         <arg value=\"" + URIUtil.toUnencodedString(repoFolder.getLocationURI()) + "\" />				\n");
+	//		scriptBuffer.append("         <arg line=\"-installIU bootstrap/1.2.0.12345 -profile bootProfile\" />						\n");
+	//		scriptBuffer.append("         <arg line=\"-profileProperties org.eclipse.update.install.features=true\" />					\n");
+	//		scriptBuffer.append("         <arg line=\"-p2.os win32 -p2.ws win32 -p2.arch x86\" />										\n");
+	//		scriptBuffer.append("         <arg value=\"-destination\" />																\n");
+	//		scriptBuffer.append("         <arg value=\"" + installFolder.getLocation().toOSString() + "\" />							\n");
+	//		//scriptBuffer.append(" <jvmarg value=\"-Declipse.p2.data.area=" + installFolder.getLocation().toOSString() + "/p2\" />		\n");
+	//		//scriptBuffer.append(" <jvmarg line=\"-Xdebug -Xnoagent -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000\" /> 	\n");
+	//		scriptBuffer.append("      </java>																							\n");
+	//		scriptBuffer.append("   </target>																							\n");
+	//		scriptBuffer.append("</project>																								\n");
+	//		IFile script = buildFolder.getFile("build.xml");
+	//		Utils.writeBuffer(script, scriptBuffer);
+	//
+	//		runAntScript(script.getLocation().toOSString(), new String[] {"go"}, testFolder.getLocation().toOSString(), null);
+	//
+	//		IMetadataRepository metaRepo = loadMetadataRepository(repoFolder.getLocationURI());
+	//		assertEquals(metaRepo.getName(), "BootStrapRepo");
+	//		IInstallableUnit iu = getIU(metaRepo, "bootstrap");
+	//		assertEquals(iu.getVersion().toString(), "1.2.0.12345");
+	//		assertResourceFile(installFolder, "eclipse.exe");
+	//	}
 }
