@@ -30,6 +30,7 @@ public class GatherFeatureTask extends AbstractPublisherTask {
 	private String targetFolder = null;
 	private String licenseDirectory = null;
 
+	@Override
 	public void execute() throws BuildException {
 		GatheringComputer computer = createFeatureComputer();
 
@@ -146,17 +147,17 @@ public class GatherFeatureTask extends AbstractPublisherTask {
 	protected FeatureRootAdvice createRootAdvice() {
 		FeatureRootAdvice advice = new FeatureRootAdvice();
 
-		Map configMap = Utils.processRootProperties(getBuildProperties(), true);
-		for (Iterator iterator = configMap.keySet().iterator(); iterator.hasNext();) {
-			String config = (String) iterator.next();
-			Map rootMap = (Map) configMap.get(config);
+		Map<String, Map> configMap = Utils.processRootProperties(getBuildProperties(), true);
+		for (Iterator<String> iterator = configMap.keySet().iterator(); iterator.hasNext();) {
+			String config = iterator.next();
+			Map rootMap = configMap.get(config);
 			if (config.equals(Utils.ROOT_COMMON))
 				config = ""; //$NON-NLS-1$
 			else
 				config = reorderConfig(config);
 			GatheringComputer computer = new GatheringComputer();
-			Map configFileSets = new HashMap();
-			ArrayList permissionsKeys = new ArrayList();
+			Map<FileSet, String> configFileSets = new HashMap<FileSet, String>();
+			ArrayList<String> permissionsKeys = new ArrayList<String>();
 			for (Iterator rootEntries = rootMap.keySet().iterator(); rootEntries.hasNext();) {
 				String key = (String) rootEntries.next();
 				if (key.startsWith(Utils.ROOT_PERMISSIONS)) {
@@ -215,8 +216,8 @@ public class GatherFeatureTask extends AbstractPublisherTask {
 				advice.addRootfiles(config, computer);
 
 			//do permissions, out of the configFileSets, select the files to change permissions on.
-			for (Iterator p = permissionsKeys.iterator(); p.hasNext();) {
-				String permissionKey = (String) p.next();
+			for (Iterator<String> p = permissionsKeys.iterator(); p.hasNext();) {
+				String permissionKey = p.next();
 				String permissionString = (String) rootMap.get(permissionKey);
 				String[] names = Utils.getArrayFromString(permissionString);
 
@@ -228,9 +229,9 @@ public class GatherFeatureTask extends AbstractPublisherTask {
 					nameSelector.setName(names[i]);
 					orSelector.addFilename(nameSelector);
 				}
-				for (Iterator s = configFileSets.keySet().iterator(); s.hasNext();) {
-					FileSet fileset = (FileSet) s.next();
-					String finalFolder = (String) configFileSets.get(fileset);
+				for (Iterator<FileSet> s = configFileSets.keySet().iterator(); s.hasNext();) {
+					FileSet fileset = s.next();
+					String finalFolder = configFileSets.get(fileset);
 					String[] found = selectFiles(orSelector, finalFolder, fileset.getDirectoryScanner().getIncludedFiles());
 					if (found.length > 0)
 						advice.addPermissions(config, permissionKey.substring(Utils.ROOT_PERMISSIONS.length()), found);
@@ -248,7 +249,7 @@ public class GatherFeatureTask extends AbstractPublisherTask {
 	 */
 	private String[] selectFiles(OrSelector selector, String folder, String[] files) {
 		String prefix = (folder.length() > 0) ? folder + '/' : ""; //$NON-NLS-1$
-		ArrayList result = new ArrayList();
+		ArrayList<String> result = new ArrayList<String>();
 
 		for (int i = 0; i < files.length; i++) {
 			String finalLocation = prefix + files[i];
@@ -258,7 +259,7 @@ public class GatherFeatureTask extends AbstractPublisherTask {
 			if (selector.isSelected(null, finalLocation, null))
 				result.add(finalLocation.replace('\\', '/')); //we work with '/'
 		}
-		return (String[]) result.toArray(new String[result.size()]);
+		return result.toArray(new String[result.size()]);
 	}
 
 	public void setBuildResultFolder(String buildResultFolder) {

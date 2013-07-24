@@ -24,7 +24,7 @@ public class IncrementalGenerator {
 	private static String MODE_INCREMENTAL = "incremental"; //$NON-NLS-1$
 	private String mode = null;
 	static private PublisherResult result = null;
-	static private ArrayList configs = null;
+	static private ArrayList<String> configs = null;
 	static private ArrayList advice = null;
 
 	public void setMode(String mode) {
@@ -38,7 +38,7 @@ public class IncrementalGenerator {
 		} else if ("final".equals(mode) && result != null) { //$NON-NLS-1$
 			generator.setIncrementalResult(result);
 			if (configs != null)
-				provider.setConfigurations((String[]) configs.toArray(new String[configs.size()]));
+				provider.setConfigurations(configs.toArray(new String[configs.size()]));
 			if (advice != null) {
 				for (Iterator iterator = advice.iterator(); iterator.hasNext();) {
 					provider.addAdvice((IPublisherAdvice) iterator.next());
@@ -62,7 +62,7 @@ public class IncrementalGenerator {
 		if (result == null)
 			result = new PublisherResult();
 		if (configs == null)
-			configs = new ArrayList();
+			configs = new ArrayList<String>();
 		if (advice == null)
 			advice = new ArrayList();
 	}

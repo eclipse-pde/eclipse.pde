@@ -52,7 +52,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	private static Properties immutableAntProperties = null;
 	protected static boolean embeddedSource = false;
 	protected static boolean forceUpdateJarFormat = false;
-	private static List configInfos;
+	private static List<Config> configInfos;
 	protected static String workingDirectory;
 	protected static boolean buildingOSGi = true;
 	protected URI[] contextMetadata = null;
@@ -72,19 +72,19 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	 * Indicate whether the content of the pdestate should only contain the plugins that are in the transitive closure of the features being built
 	 */
 	protected boolean filterState = false;
-	protected List featuresForFilterRoots = new ArrayList();
-	protected List pluginsForFilterRoots = new ArrayList();
+	protected List<String> featuresForFilterRoots = new ArrayList<String>();
+	protected List<String> pluginsForFilterRoots = new ArrayList<String>();
 	protected boolean filterP2Base = false;
 
 	protected boolean reportResolutionErrors;
 
 	static {
 		// By default, a generic configuration is set
-		configInfos = new ArrayList(1);
+		configInfos = new ArrayList<Config>(1);
 		configInfos.add(Config.genericConfig());
 	}
 
-	public static List getConfigInfos() {
+	public static List<Config> getConfigInfos() {
 		return configInfos;
 	}
 
@@ -135,7 +135,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	public static void setConfigInfo(String spec) throws CoreException {
 		configInfos.clear();
 		String[] configs = Utils.getArrayFromStringWithBlank(spec, "&"); //$NON-NLS-1$
-		configInfos = new ArrayList(configs.length);
+		configInfos = new ArrayList<Config>(configs.length);
 		String[] os = new String[configs.length];
 		String[] ws = new String[configs.length];
 		String[] archs = new String[configs.length];
@@ -183,10 +183,12 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 			//nothing to do;
 		}
 
+		@Override
 		public synchronized Object setProperty(String key, String value) {
 			throw new UnsupportedOperationException();
 		}
 
+		@Override
 		public synchronized Object put(Object key, Object value) {
 			throw new UnsupportedOperationException();
 		}
@@ -338,9 +340,9 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 
 		File baseProfile = result.getSiteContentProvider().getBaseProfile();
 		if (baseProfile != null) {
-			List repos = getAssociatedRepositories(baseProfile);
+			List<URI> repos = getAssociatedRepositories(baseProfile);
 			if (repos.size() > 0) {
-				addContextRepos((URI[]) repos.toArray(new URI[repos.size()]));
+				addContextRepos(repos.toArray(new URI[repos.size()]));
 			}
 		}
 
@@ -395,11 +397,11 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 		pdeUIState.setState(state);
 	}
 
-	public void setStateExtraData(HashMap classpath, Map patchData) {
+	public void setStateExtraData(HashMap<Long, String[]> classpath, Map patchData) {
 		setStateExtraData(classpath, patchData, null);
 	}
 
-	public void setStateExtraData(HashMap classpath, Map patchData, Map outputFolders) {
+	public void setStateExtraData(HashMap<Long, String[]> classpath, Map patchData, Map outputFolders) {
 		ensurePDEUIStateNotNull();
 		pdeUIState.setExtraData(classpath, patchData, outputFolders);
 	}
@@ -563,7 +565,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	}
 
 	public void setContextMetadataRepositories(URI[] uris) {
-		Set uriSet = new HashSet();
+		Set<URI> uriSet = new HashSet<URI>();
 		uriSet.addAll(Arrays.asList(uris));
 
 		for (int i = 0; i < uris.length; i++) {
@@ -572,37 +574,37 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 			uriSet.addAll(getAssociatedRepositories(uriFile));
 		}
 
-		addContextRepos((URI[]) uriSet.toArray(new URI[uriSet.size()]));
+		addContextRepos(uriSet.toArray(new URI[uriSet.size()]));
 	}
 
 	protected void addContextRepos(URI[] repos) {
-		List metadata = filterRepos(repos, METADATA_REPO_FILTER);
-		List artifacts = filterRepos(repos, ARTIFACT_REPO_FILTER);
+		List<URI> metadata = filterRepos(repos, METADATA_REPO_FILTER);
+		List<URI> artifacts = filterRepos(repos, ARTIFACT_REPO_FILTER);
 
 		if (contextMetadata != null) {
-			Set uriSet = new HashSet();
+			Set<URI> uriSet = new HashSet<URI>();
 			uriSet.addAll(Arrays.asList(contextMetadata));
 			uriSet.addAll(metadata);
-			contextMetadata = (URI[]) uriSet.toArray(new URI[uriSet.size()]);
+			contextMetadata = uriSet.toArray(new URI[uriSet.size()]);
 		} else {
-			contextMetadata = (URI[]) metadata.toArray(new URI[metadata.size()]);
+			contextMetadata = metadata.toArray(new URI[metadata.size()]);
 		}
 
 		if (contextArtifacts != null) {
-			Set uriSet = new HashSet();
+			Set<URI> uriSet = new HashSet<URI>();
 			uriSet.addAll(Arrays.asList(contextArtifacts));
 			uriSet.addAll(artifacts);
-			contextArtifacts = (URI[]) uriSet.toArray(new URI[uriSet.size()]);
+			contextArtifacts = uriSet.toArray(new URI[uriSet.size()]);
 		} else {
-			contextArtifacts = (URI[]) artifacts.toArray(new URI[artifacts.size()]);
+			contextArtifacts = artifacts.toArray(new URI[artifacts.size()]);
 		}
 	}
 
 	//return only the metadata repos, and also the ones we aren't sure about
-	private List filterRepos(URI[] contexts, FilenameFilter repoFilter) {
+	private List<URI> filterRepos(URI[] contexts, FilenameFilter repoFilter) {
 		if (contexts == null)
 			return null;
-		ArrayList result = new ArrayList();
+		ArrayList<URI> result = new ArrayList<URI>();
 		for (int i = 0; i < contexts.length; i++) {
 			File repo = URIUtil.toFile(contexts[i]);
 			if (repo == null) {
@@ -617,15 +619,15 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 		return result;
 	}
 
-	private List getAssociatedRepositories(File profileFile) {
+	private List<URI> getAssociatedRepositories(File profileFile) {
 		if (profileFile == null || !profileFile.exists() || !profileFile.getName().endsWith(".profile")) //$NON-NLS-1$
-			return Collections.EMPTY_LIST;
+			return Collections.emptyList();
 
-		ArrayList result = new ArrayList();
+		ArrayList<URI> result = new ArrayList<URI>();
 		URI profileURI = profileFile.toURI();
 		result.add(profileURI);
 
-		Map profileInfo = extractProfileInformation(profileFile);
+		Map<String, Object> profileInfo = extractProfileInformation(profileFile);
 		if (profileInfo == null)
 			return result;
 
@@ -695,7 +697,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	private static String PROFILE_DATA_AREA = "dataArea"; //$NON-NLS-1$
 	private static String PROFILE_REGISTRY = "registry"; //$NON-NLS-1$
 
-	private static Map extractProfileInformation(File target) {
+	private static Map<String, Object> extractProfileInformation(File target) {
 		if (target == null || !target.exists())
 			return null;
 
@@ -707,7 +709,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 		if (path.segmentCount() < 4)
 			return null;
 
-		Map results = new HashMap();
+		Map<String, Object> results = new HashMap<String, Object>();
 		results.put(PROFILE_TIMESTAMP, new Long(-1));
 
 		String profileId = null;
@@ -806,8 +808,8 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 			version = oldVersion.getMajor() + "." + oldVersion.getMinor() + "." + oldVersion.getMicro() + "." + Utils.getPropertyFormat(PROPERTY_P2_PRODUCT_QUALIFIER); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 
-		List productEntries = product.getProductEntries();
-		String mappings = Utils.getEntryVersionMappings((FeatureEntry[]) productEntries.toArray(new FeatureEntry[productEntries.size()]), site, assemblyInfo);
+		List<FeatureEntry> productEntries = product.getProductEntries();
+		String mappings = Utils.getEntryVersionMappings(productEntries.toArray(new FeatureEntry[productEntries.size()]), site, assemblyInfo);
 
 		script.println("<eclipse.idReplacer productFilePath=\"" + AntScript.getEscaped(productFilePath) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		script.println("                    selfVersion=\"" + version + "\" "); //$NON-NLS-1$ //$NON-NLS-2$

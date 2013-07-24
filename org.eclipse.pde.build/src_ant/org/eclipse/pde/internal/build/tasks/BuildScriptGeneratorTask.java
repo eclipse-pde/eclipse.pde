@@ -321,7 +321,7 @@ public class BuildScriptGeneratorTask extends Task {
 
 	public void setContextRepository(String contexts) {
 		String[] locations = Utils.getArrayFromString(contexts, ","); //$NON-NLS-1$
-		ArrayList uris = new ArrayList();
+		ArrayList<URI> uris = new ArrayList<URI>();
 		for (int i = 0; i < locations.length; i++) {
 			String context = locations[i];
 			if (context == null || context.startsWith("${") || context.length() == 0) //$NON-NLS-1$
@@ -336,7 +336,7 @@ public class BuildScriptGeneratorTask extends Task {
 			}
 		}
 		if (uris.size() > 0)
-			generator.setContextMetadataRepositories((URI[]) uris.toArray(new URI[uris.size()]));
+			generator.setContextMetadataRepositories(uris.toArray(new URI[uris.size()]));
 	}
 
 	public void setSourceBundleFeatureId(String value) {

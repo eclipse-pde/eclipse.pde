@@ -33,7 +33,7 @@ public class CompileErrorTask extends Task {
 
 		Union union = new Union(problemFiles);
 		String[] prereqFiles = union.list();
-		List problems = new ArrayList();
+		List<String> problems = new ArrayList<String>();
 		BufferedReader reader = null;
 		for (int i = 0; i < prereqFiles.length; i++) {
 			File file = new File(prereqFiles[i]);
@@ -58,9 +58,9 @@ public class CompileErrorTask extends Task {
 				try {
 					writer = new FileWriter(log, true);
 					writer.write(bundle + ": the following prerequisites contain compile errors" + NEW_LINE); //$NON-NLS-1$
-					for (Iterator iterator = problems.iterator(); iterator.hasNext();) {
+					for (Iterator<String> iterator = problems.iterator(); iterator.hasNext();) {
 						writer.write("\t"); //$NON-NLS-1$
-						writer.write((String) iterator.next());
+						writer.write(iterator.next());
 						writer.write(NEW_LINE);
 					}
 				} catch (IOException e) {

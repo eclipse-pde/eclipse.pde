@@ -50,7 +50,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 	protected boolean fetchChildren = true;
 
 	protected Properties fetchTags = null;
-	protected Map fetchOverrides = null;
+	protected Map<String, Properties> fetchOverrides = null;
 
 	// The element (an entry of the map file) for which we create the script 
 	protected String element;
@@ -63,7 +63,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 	// The content of the build.properties file associated with the feature
 	protected Properties featureProperties;
 	// Variables to control is a mkdir to a specific folder was already.
-	protected List mkdirLocations = new ArrayList(5);
+	protected List<String> mkdirLocations = new ArrayList<String>(5);
 	// A property table containing the association between the plugins and the version from the map  
 	protected Properties repositoryPluginTags = new Properties();
 	protected Properties repositoryFeatureTags = new Properties();
@@ -111,6 +111,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 	/**
 	 * @see AbstractScriptGenerator#generate()
 	 */
+	@Override
 	public void generate() throws CoreException {
 		initializeFactories();
 		mapInfos = processMapFileEntry(element, elementVersion);
@@ -324,7 +325,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 		if (fetchOverrides != null && fetchOverrides.containsKey(repoIdentifier)) {
 			Properties overrides = new Properties();
 			overrides.putAll(fetchTags);
-			overrides.putAll((Map) fetchOverrides.get(repoIdentifier));
+			overrides.putAll(fetchOverrides.get(repoIdentifier));
 			return overrides;
 		}
 		return fetchTags;
@@ -339,7 +340,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 			if (featureProperties.containsKey(GENERATION_SOURCE_FEATURE_PREFIX + featureId)) {
 				String[] extraElementsToFetch = Utils.getArrayFromString(featureProperties.getProperty(GENERATION_SOURCE_FEATURE_PREFIX + featureId), ","); //$NON-NLS-1$
 				for (int j = 1; j < extraElementsToFetch.length; j++) {
-					Map infos = Utils.parseExtraBundlesString(extraElementsToFetch[j], false);
+					Map<String, Comparable> infos = Utils.parseExtraBundlesString(extraElementsToFetch[j], false);
 					generateFetchEntry((String) infos.get(Utils.EXTRA_ID), (Version) infos.get(Utils.EXTRA_VERSION), false);
 				}
 				continue;
@@ -438,7 +439,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 			if (featureProperties.containsKey(GENERATION_SOURCE_PLUGIN_PREFIX + elementId)) {
 				String[] extraElementsToFetch = Utils.getArrayFromString(featureProperties.getProperty(GENERATION_SOURCE_PLUGIN_PREFIX + elementId), ","); //$NON-NLS-1$
 				for (int j = 1; j < extraElementsToFetch.length; j++) {
-					Map infos = Utils.parseExtraBundlesString(extraElementsToFetch[j], false);
+					Map<String, Comparable> infos = Utils.parseExtraBundlesString(extraElementsToFetch[j], false);
 					generateFetchEntry((String) infos.get(Utils.EXTRA_ID), (Version) infos.get(Utils.EXTRA_VERSION), false);
 				}
 				continue;
@@ -715,6 +716,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 			return -1;
 		}
 
+		@Override
 		public boolean equals(Object o) {
 			if (o instanceof MapFileEntry) {
 				MapFileEntry entry = (MapFileEntry) o;
@@ -723,6 +725,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 			return false;
 		}
 
+		@Override
 		public int hashCode() {
 			return id.hashCode() + v.hashCode();
 		}
@@ -785,7 +788,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 		fetchTags = value;
 	}
 
-	public void setFetchOverrides(Map value) {
+	public void setFetchOverrides(Map<String, Properties> value) {
 		fetchOverrides = value;
 	}
 
@@ -801,7 +804,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 	 * @param value a string CVS tag
 	 */
 	public void setFetchTagAsString(String value) {
-		fetchOverrides = new HashMap();
+		fetchOverrides = new HashMap<String, Properties>();
 		fetchTags = new Properties();
 
 		String[] entries = Utils.getArrayFromString(value);
@@ -821,7 +824,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 
 				Properties overrides = null;
 				if (fetchOverrides.containsKey(repoKey)) {
-					overrides = (Properties) fetchOverrides.get(repoKey);
+					overrides = fetchOverrides.get(repoKey);
 				} else {
 					overrides = new Properties();
 					fetchOverrides.put(repoKey, overrides);

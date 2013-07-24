@@ -15,9 +15,9 @@ import java.util.SortedSet;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 
 public class FilteringState extends PDEState {
-	SortedSet allPlugins;
+	SortedSet<ReachablePlugin> allPlugins;
 
-	public void setFilter(SortedSet filter) {
+	public void setFilter(SortedSet<ReachablePlugin> filter) {
 		allPlugins = filter;
 	}
 
@@ -26,9 +26,9 @@ public class FilteringState extends PDEState {
 			return super.addBundleDescription(toAdd);
 		}
 
-		SortedSet includedMatches = allPlugins.subSet(new ReachablePlugin(toAdd.getSymbolicName(), ReachablePlugin.WIDEST_RANGE), new ReachablePlugin(toAdd.getSymbolicName(), ReachablePlugin.NARROWEST_RANGE));
-		for (Iterator iterator = includedMatches.iterator(); iterator.hasNext();) {
-			ReachablePlugin constraint = (ReachablePlugin) iterator.next();
+		SortedSet<ReachablePlugin> includedMatches = allPlugins.subSet(new ReachablePlugin(toAdd.getSymbolicName(), ReachablePlugin.WIDEST_RANGE), new ReachablePlugin(toAdd.getSymbolicName(), ReachablePlugin.NARROWEST_RANGE));
+		for (Iterator<ReachablePlugin> iterator = includedMatches.iterator(); iterator.hasNext();) {
+			ReachablePlugin constraint = iterator.next();
 			if (constraint.getRange().isIncluded(toAdd.getVersion()))
 				return super.addBundleDescription(toAdd);
 		}

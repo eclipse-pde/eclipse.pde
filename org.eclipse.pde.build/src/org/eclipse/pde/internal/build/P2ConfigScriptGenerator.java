@@ -44,6 +44,7 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 		this.featureId = feature;
 	}
 
+	@Override
 	public void generate() {
 		initializeCollections();
 
@@ -68,8 +69,8 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 	}
 
 	protected void initializeCollections() {
-		Collection p = new LinkedHashSet();
-		Collection f = new LinkedHashSet();
+		Collection<Object> p = new LinkedHashSet<Object>();
+		Collection<Object> f = new LinkedHashSet<Object>();
 		Collection r = new LinkedHashSet();
 		for (Iterator iterator = getConfigInfos().iterator(); iterator.hasNext();) {
 			Config config = (Config) iterator.next();
@@ -78,11 +79,12 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 			r.addAll(assemblyInformation.getRootFileProviders(config));
 		}
 
-		this.plugins = (BundleDescription[]) p.toArray(new BundleDescription[p.size()]);
-		this.features = (BuildTimeFeature[]) f.toArray(new BuildTimeFeature[f.size()]);
+		this.plugins = p.toArray(new BundleDescription[p.size()]);
+		this.features = f.toArray(new BuildTimeFeature[f.size()]);
 		this.rootFileProviders = r;
 	}
 
+	@Override
 	protected void generatePrologue() {
 		script.printProjectDeclaration("Publish p2 metadata", TARGET_MAIN, null); //$NON-NLS-1$
 		ProductFile product = getProductFile();
@@ -113,6 +115,7 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 		generateCustomGatherMacro();
 	}
 
+	@Override
 	protected void generateMainEnd() {
 		script.printTargetEnd();
 		script.println();
@@ -122,6 +125,7 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 		script.printAntCallTask(TARGET_P2_METADATA, true, null);
 	}
 
+	@Override
 	protected void generateGatherCalls() {
 		super.generateGatherCalls();
 
@@ -130,6 +134,7 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 		script.println();
 	}
 
+	@Override
 	protected void generateBrandingCalls() {
 		ProductFile product = getProductFile();
 		if (product != null) {
@@ -298,9 +303,9 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 
 	protected void generateSynchContext() {
 		ProductFile product = getProductFile();
-		ArrayList binaryFeatures = null;
+		ArrayList<BuildTimeFeature> binaryFeatures = null;
 		if (product == null) {
-			binaryFeatures = new ArrayList();
+			binaryFeatures = new ArrayList<BuildTimeFeature>();
 			for (int i = 0; i < features.length; i++) {
 				BuildTimeFeature feature = features[i];
 				if (feature.isBinary())
@@ -409,6 +414,7 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 		script.printProjectEnd();
 	}
 
+	@Override
 	protected void generateCustomGatherMacro() {
 		List attributes = new ArrayList(5);
 		attributes.add("dir"); //$NON-NLS-1$
@@ -431,10 +437,11 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 		script.println();
 	}
 
+	@Override
 	protected void generateGatherBinPartsTarget() {
 		BuildTimeFeature oldExecutableFeature = null;
-		ArrayList binaryFeatures = new ArrayList();
-		ArrayList binaryBundles = new ArrayList();
+		ArrayList<FileSet> binaryFeatures = new ArrayList<FileSet>();
+		ArrayList<FileSet> binaryBundles = new ArrayList<FileSet>();
 		script.printTargetDeclaration(TARGET_GATHER_BIN_PARTS, null, null, null, null);
 		for (int i = 0; i < plugins.length; i++) {
 			BundleDescription plugin = plugins[i];
@@ -445,7 +452,7 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 				printCustomGatherCall(ModelBuildScriptGenerator.getNormalizedName(plugin), Utils.makeRelative(pluginLocation, new Path(workingDirectory)).toOSString(), PROPERTY_DESTINATION_TEMP_FOLDER, Utils.getPropertyFormat(PROPERTY_ECLIPSE_PLUGINS), null);
 		}
 
-		Set featureSet = BuildDirector.p2Gathering ? new HashSet() : null;
+		Set<BuildTimeFeature> featureSet = BuildDirector.p2Gathering ? new HashSet() : null;
 		for (int i = 0; i < features.length; i++) {
 			BuildTimeFeature feature = features[i];
 			IPath featureLocation = new Path(feature.getRootLocation());
@@ -475,7 +482,7 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 
 		String repo = Utils.getPropertyFormat(PROPERTY_P2_BUILD_REPO);
 		URI[] context = getContextMetadata();
-		script.printP2PublishFeaturesAndBundles(repo, repo, (FileSet[]) binaryBundles.toArray(new FileSet[binaryBundles.size()]), (FileSet[]) binaryFeatures.toArray(new FileSet[binaryFeatures.size()]), Utils.getPropertyFormat(PROPERTY_P2_CATEGORY_SITE), Utils.getPropertyFormat(PROPERTY_P2_CATEGORY_PREFIX), Utils.getPropertyFormat(PROPERTY_P2_CATEGORY_DEFINITION), Utils.getPropertyFormat(PROPERTY_P2_CATEGORY_VERSION), context);
+		script.printP2PublishFeaturesAndBundles(repo, repo, binaryBundles.toArray(new FileSet[binaryBundles.size()]), binaryFeatures.toArray(new FileSet[binaryFeatures.size()]), Utils.getPropertyFormat(PROPERTY_P2_CATEGORY_SITE), Utils.getPropertyFormat(PROPERTY_P2_CATEGORY_PREFIX), Utils.getPropertyFormat(PROPERTY_P2_CATEGORY_DEFINITION), Utils.getPropertyFormat(PROPERTY_P2_CATEGORY_VERSION), context);
 
 		script.printTargetEnd();
 		script.println();

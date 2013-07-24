@@ -57,7 +57,7 @@ public class BuildTimeSiteFactory /*extends BaseSiteFactory*/implements IPDEBuil
 		site = createSiteMapModel();
 
 		// Here we find the features in the URLs
-		Collection featureXMLs = findFeatureXMLs();
+		Collection<File> featureXMLs = findFeatureXMLs();
 
 		// If an installed base is provided we need to look at it
 		String installedBaseURL = null;
@@ -69,7 +69,7 @@ public class BuildTimeSiteFactory /*extends BaseSiteFactory*/implements IPDEBuil
 			}
 
 			installedBaseURL = installedBaseLocation;
-			Collection installedFeatures = Utils.findFiles(new File(installedBaseLocation), DEFAULT_FEATURE_LOCATION, Constants.FEATURE_FILENAME_DESCRIPTOR);
+			Collection<File> installedFeatures = Utils.findFiles(new File(installedBaseLocation), DEFAULT_FEATURE_LOCATION, Constants.FEATURE_FILENAME_DESCRIPTOR);
 			if (installedFeatures != null)
 				featureXMLs.addAll(installedFeatures);
 
@@ -86,8 +86,8 @@ public class BuildTimeSiteFactory /*extends BaseSiteFactory*/implements IPDEBuil
 		URL featureURL;
 		FeatureReference featureRef;
 
-		for (Iterator iter = featureXMLs.iterator(); iter.hasNext();) {
-			File featureXML = (File) iter.next();
+		for (Iterator<File> iter = featureXMLs.iterator(); iter.hasNext();) {
+			File featureXML = iter.next();
 			if (featureXML.exists()) {
 				// Here we could not use toURL() on currentFeatureDir, because the URL has a slash after the colons (file:/c:/foo) whereas the plugins don't
 				// have it (file:d:/eclipse/plugins) and this causes problems later to compare URLs... and compute relative paths
@@ -155,9 +155,9 @@ public class BuildTimeSiteFactory /*extends BaseSiteFactory*/implements IPDEBuil
 	 * which point to their locations. Only look in directories which are direct descendants
 	 * of the /features directory. (do not do an infinite depth look-up)
 	 */
-	private Collection findFeatureXMLs() {
-		Collection features = new ArrayList();
-		Collection foundFeatures = null;
+	private Collection<File> findFeatureXMLs() {
+		Collection<File> features = new ArrayList<File>();
+		Collection<File> foundFeatures = null;
 		for (int i = 0; i < sitePaths.length; i++) {
 			File file = new File(sitePaths[i], Constants.FEATURE_FILENAME_DESCRIPTOR);
 			if (file.exists()) {

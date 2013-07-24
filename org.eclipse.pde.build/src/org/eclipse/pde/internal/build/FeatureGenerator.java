@@ -39,6 +39,7 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 			this.version = version;
 		}
 
+		@Override
 		public boolean equals(Object obj) {
 			if (obj instanceof Entry) {
 				Entry objEntry = (Entry) obj;
@@ -50,6 +51,7 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 			return id.equals(obj);
 		}
 
+		@Override
 		public int hashCode() {
 			return id.hashCode() + version.hashCode() + getAttributes().hashCode();
 		}
@@ -79,6 +81,7 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 			return version;
 		}
 
+		@Override
 		public String toString() {
 			return id + '_' + version;
 		}
@@ -101,10 +104,10 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 	private Properties antProperties;
 	private Properties buildProperties;
 
-	private static Set createSet(String[] contents) {
+	private static Set<Entry> createSet(String[] contents) {
 		if (contents == null)
-			return new LinkedHashSet(0);
-		Set result = new LinkedHashSet(contents.length);
+			return new LinkedHashSet<Entry>(0);
+		Set<Entry> result = new LinkedHashSet<Entry>(contents.length);
 		for (int i = 0; i < contents.length; i++)
 			if (contents[i] != null) {
 				StringTokenizer tokenizer = new StringTokenizer(contents[i], ";"); //$NON-NLS-1$
@@ -127,18 +130,19 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.build.AbstractScriptGenerator#generate()
 	 */
+	@Override
 	public void generate() throws CoreException {
 		AbstractScriptGenerator.setStaticAntProperties(antProperties);
 		try {
 			initialize();
 
-			Set plugins = null;
-			Set features = null;
-			Set fragments = null;
+			Set<Entry> plugins = null;
+			Set<Entry> features = null;
+			Set<Entry> fragments = null;
 			if (shouldNestInclusions()) {
 				features = createSet(new String[] {generateNestedRequirements()});
-				fragments = new LinkedHashSet();
-				plugins = new LinkedHashSet();
+				fragments = new LinkedHashSet<Entry>();
+				plugins = new LinkedHashSet<Entry>();
 			} else {
 				plugins = createSet(pluginList);
 				features = createSet(featureList);
@@ -284,7 +288,7 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 	 * Based on the version of OSGi that we have in our state, add the appropriate plug-ins/fragments/features
 	 * for the launcher.
 	 */
-	private void addLauncher(PDEState state, Set plugins, Set fragments, Set features) {
+	private void addLauncher(PDEState state, Set<Entry> plugins, Set<Entry> fragments, Set<Entry> features) {
 		BundleDescription bundle = state.getResolvedBundle(BUNDLE_OSGI);
 		if (bundle == null)
 			return;
@@ -340,7 +344,7 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 	 * @throws CoreException
 	 * @throws FileNotFoundException
 	 */
-	protected void createFeature(String feature, Set plugins, Set fragments, Set features) throws CoreException, FileNotFoundException {
+	protected void createFeature(String feature, Set<Entry> plugins, Set<Entry> fragments, Set<Entry> features) throws CoreException, FileNotFoundException {
 		String location = IPDEBuildConstants.DEFAULT_FEATURE_LOCATION + '/' + feature;
 		File directory = new File(getWorkingDirectory(), location);
 		if (!directory.exists())
@@ -379,7 +383,7 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 			//we do the generic config first as a special case
 			configs.remove(Config.genericConfig());
 			Iterator configIterator = configs.iterator();
-			Iterator listIter = plugins.iterator();
+			Iterator<Entry> listIter = plugins.iterator();
 			if (!listIter.hasNext()) {
 				// no plugins, do fragments
 				fragment = true;
@@ -390,7 +394,7 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 				environment.put("osgi.ws", currentConfig.getWs()); //$NON-NLS-1$
 				environment.put("osgi.arch", currentConfig.getArch()); //$NON-NLS-1$
 				for (; listIter.hasNext();) {
-					Entry entry = (Entry) listIter.next();
+					Entry entry = listIter.next();
 					String name = entry.getId();
 					String bundleVersion = entry.getVersion();
 					boolean guessedUnpack = true;
@@ -402,7 +406,7 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 							Filter filter = helper.getFilter(bundle);
 							if (filter == null || filter.match(environment)) {
 								writeBundle = true;
-								guessedUnpack = Utils.guessUnpack(bundle, (String[]) state.getExtraData().get(new Long(bundle.getBundleId())));
+								guessedUnpack = Utils.guessUnpack(bundle, state.getExtraData().get(new Long(bundle.getBundleId())));
 								if (currentConfig.equals(Config.genericConfig())) {
 									listIter.remove();
 								}
@@ -466,8 +470,8 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 				}
 			}
 
-			for (Iterator iter = features.iterator(); iter.hasNext();) {
-				Entry entry = (Entry) iter.next();
+			for (Iterator<Entry> iter = features.iterator(); iter.hasNext();) {
+				Entry entry = iter.next();
 				String name = entry.getId();
 				String featureVersion = entry.getVersion();
 				if (verify) {

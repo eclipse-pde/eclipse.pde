@@ -41,8 +41,8 @@ public class BuildTimeSiteContentProvider implements IPDEBuildConstants {
 		return installedBaseURL;
 	}
 
-	public Collection getPluginPaths() {
-		Collection pluginsToCompile = findPluginXML(Utils.asFile(urls));
+	public Collection<File> getPluginPaths() {
+		Collection<File> pluginsToCompile = findPluginXML(Utils.asFile(urls));
 		if (installedBaseURL != null) {
 			pluginsToCompile.addAll(Arrays.asList(PluginPathFinder.getPluginPaths(installedBaseURL, filterP2Base)));
 		}
@@ -54,8 +54,8 @@ public class BuildTimeSiteContentProvider implements IPDEBuildConstants {
 	}
 
 	//For every entry, return all the children of this entry is it is named plugins, otherwise return the entry itself  
-	private Collection findPluginXML(File[] location) {
-		Collection collectedElements = new ArrayList(10);
+	private Collection<File> findPluginXML(File[] location) {
+		Collection<File> collectedElements = new ArrayList<File>(10);
 		for (int i = 0; i < location.length; i++) {
 			File f = new File(location[i], DEFAULT_PLUGIN_LOCATION);
 			if (f.exists()) {

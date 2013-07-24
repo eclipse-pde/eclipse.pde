@@ -63,7 +63,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 
 	protected String product;
 	//Map configuration with the expected output format: key: Config, value: string
-	private HashMap archivesFormat;
+	private HashMap<Config, String> archivesFormat;
 
 	private String archivesFormatAsString;
 
@@ -103,14 +103,15 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 	 * 
 	 * @throws CoreException
 	 */
+	@Override
 	public void generate() throws CoreException {
 		if (archivesFormatAsString != null) {
 			realSetArchivesFormat(archivesFormatAsString);
 			archivesFormatAsString = null;
 		}
 
-		List plugins = new ArrayList(5);
-		List features = new ArrayList(5);
+		List<String> plugins = new ArrayList<String>(5);
+		List<String> features = new ArrayList<String>(5);
 		try {
 			AbstractScriptGenerator.setStaticAntProperties(antProperties);
 
@@ -153,15 +154,15 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 	 * @param models
 	 * @throws CoreException
 	 */
-	protected void generateModels(List models) throws CoreException {
+	protected void generateModels(List<String> models) throws CoreException {
 		ModelBuildScriptGenerator generator = null;
 		try {
-			for (Iterator iterator = models.iterator(); iterator.hasNext();) {
+			for (Iterator<String> iterator = models.iterator(); iterator.hasNext();) {
 				generator = new ModelBuildScriptGenerator();
 				generator.setReportResolutionErrors(reportResolutionErrors);
 				generator.setIgnoreMissingPropertiesFile(ignoreMissingPropertiesFile);
 				//Filtering is not required here, since we are only generating the build for a plugin or a fragment
-				String[] modelInfo = getNameAndVersion((String) iterator.next());
+				String[] modelInfo = getNameAndVersion(iterator.next());
 				generator.setBuildSiteFactory(siteFactory);
 				generator.setModelId(modelInfo[0], modelInfo[1]);
 				generator.setFeatureGenerator(new BuildDirector());
@@ -289,7 +290,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 	 * @param generator the build director to use when generating the source bundles
 	 */
 	private void generateSourceBundles(BuildDirector generator) throws CoreException {
-		Set allBundles = "all".equalsIgnoreCase(sourceBundleMode) ? generator.getAssemblyData().getAllPlugins() : generator.getAssemblyData().getAllCompiledPlugins(); //$NON-NLS-1$
+		Set<? extends Object> allBundles = "all".equalsIgnoreCase(sourceBundleMode) ? generator.getAssemblyData().getAllPlugins() : generator.getAssemblyData().getAllCompiledPlugins(); //$NON-NLS-1$
 
 		BuildTimeFeature feature = getSite(false).findFeature(sourceBundleTemplateFeature, null, false);
 		if (feature == null)
@@ -298,7 +299,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 		if (sourceBundleFeatureId == null)
 			sourceBundleFeatureId = sourceBundleTemplateFeature + ".source"; //$NON-NLS-1$
 
-		for (Iterator iterator = allBundles.iterator(); iterator.hasNext();) {
+		for (Iterator<? extends Object> iterator = allBundles.iterator(); iterator.hasNext();) {
 			BundleDescription bundle = (BundleDescription) iterator.next();
 			if (!Utils.isSourceBundle(bundle))
 				feature.addEntry(new FeatureEntry(bundle.getSymbolicName(), bundle.getVersion().toString(), true));
@@ -318,8 +319,8 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 		if (assemblageInformation == null)
 			return;
 		List configs = getConfigInfos();
-		Set features = new HashSet();
-		Set plugins = new HashSet();
+		Set<Object> features = new HashSet<Object>();
+		Set<Object> plugins = new HashSet<Object>();
 		Properties versions = new Properties();
 
 		//For each configuration, save the version of all the features in a file 
@@ -329,12 +330,12 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 			String configString = config.toStringReplacingAny("_", ANY_STRING); //$NON-NLS-1$
 
 			//Features
-			Collection list = assemblageInformation.getFeatures(config);
+			Collection<Object> list = assemblageInformation.getFeatures(config);
 			versions.clear();
 			features.addAll(list);
 			String featureFile = DEFAULT_FEATURE_VERSION_FILENAME_PREFIX + '.' + configString + PROPERTIES_FILE_SUFFIX;
 			readVersions(versions, featureFile);
-			for (Iterator i = list.iterator(); i.hasNext();) {
+			for (Iterator<Object> i = list.iterator(); i.hasNext();) {
 				Feature feature = (Feature) i.next();
 				recordVersion(feature.getId(), new Version(feature.getVersion()), versions);
 			}
@@ -346,7 +347,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 			plugins.addAll(list);
 			String pluginFile = DEFAULT_PLUGIN_VERSION_FILENAME_PREFIX + '.' + configString + PROPERTIES_FILE_SUFFIX;
 			readVersions(versions, pluginFile);
-			for (Iterator i = list.iterator(); i.hasNext();) {
+			for (Iterator<Object> i = list.iterator(); i.hasNext();) {
 				BundleDescription bundle = (BundleDescription) i.next();
 				recordVersion(bundle.getSymbolicName(), bundle.getVersion(), versions);
 			}
@@ -357,7 +358,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 		versions.clear();
 		String featureFile = DEFAULT_FEATURE_VERSION_FILENAME_PREFIX + PROPERTIES_FILE_SUFFIX;
 		readVersions(versions, featureFile);
-		for (Iterator i = features.iterator(); i.hasNext();) {
+		for (Iterator<Object> i = features.iterator(); i.hasNext();) {
 			Feature feature = (Feature) i.next();
 			recordVersion(feature.getId(), new Version(feature.getVersion()), versions);
 		}
@@ -367,7 +368,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 		versions.clear();
 		String pluginVersion = DEFAULT_PLUGIN_VERSION_FILENAME_PREFIX + PROPERTIES_FILE_SUFFIX;
 		readVersions(versions, pluginVersion);
-		for (Iterator i = plugins.iterator(); i.hasNext();) {
+		for (Iterator<Object> i = plugins.iterator(); i.hasNext();) {
 			BundleDescription bundle = (BundleDescription) i.next();
 			recordVersion(bundle.getSymbolicName(), bundle.getVersion(), versions);
 		}
@@ -592,6 +593,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 			super(size);
 		}
 
+		@Override
 		public Object get(Object arg0) {
 			Object result = super.get(arg0);
 			if (result == null)
@@ -632,7 +634,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 		}
 	}
 
-	protected HashMap getArchivesFormat() {
+	protected HashMap<Config, String> getArchivesFormat() {
 		if (archivesFormat == null) {
 			try {
 				//If not set, pass in the empty property to trigger the default value to be loaded
@@ -680,6 +682,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 		this.eeSources = eeSources;
 	}
 
+	@Override
 	public String[] getEESources() {
 		return eeSources;
 	}

@@ -11,6 +11,8 @@
  **********************************************************************/
 package org.eclipse.pde.internal.build;
 
+import org.eclipse.core.runtime.IConfigurationElement;
+
 import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.build.IFetchFactory;
@@ -22,12 +24,12 @@ import org.eclipse.pde.build.IFetchFactory;
 public class FetchTaskFactoriesRegistry implements IPDEBuildConstants {
 
 	// Map of registered factories. key: factoryId, value: configuration element or corresponding instance
-	private final Map factories;
-	private final Map cache;
+	private final Map<String, IConfigurationElement> factories;
+	private final Map<String, IFetchFactory> cache;
 
 	public FetchTaskFactoriesRegistry() {
-		factories = new HashMap();
-		cache = new HashMap();
+		factories = new HashMap<String, IConfigurationElement>();
+		cache = new HashMap<String, IFetchFactory>();
 		initializeRegistry();
 	}
 
@@ -63,7 +65,7 @@ public class FetchTaskFactoriesRegistry implements IPDEBuildConstants {
 	 * @return the factory instance (maybe <code>null</code>)
 	 */
 	public IFetchFactory newFactory(String id) {
-		IConfigurationElement extension = (IConfigurationElement) factories.get(id);
+		IConfigurationElement extension = factories.get(id);
 		if (null != extension) {
 			try {
 				IFetchFactory factory = (IFetchFactory) extension.createExecutableExtension(ATTR_CLASS);
@@ -80,7 +82,7 @@ public class FetchTaskFactoriesRegistry implements IPDEBuildConstants {
 	 * 
 	 * @return a collection of registered factory ids
 	 */
-	public Collection getFactoryIds() {
+	public Collection<String> getFactoryIds() {
 		return factories.keySet();
 	}
 

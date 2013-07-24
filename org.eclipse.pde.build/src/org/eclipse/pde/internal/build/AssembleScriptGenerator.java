@@ -20,7 +20,7 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 	protected String directory; // representing the directory where to generate the file
 	protected AssemblyInformation assemblageInformation;
 	protected String featureId;
-	protected HashMap archivesFormat;
+	protected HashMap<Config, String> archivesFormat;
 	protected boolean groupConfigs = false;
 	protected boolean versionsList = false;
 	protected String productLocation = null;
@@ -171,7 +171,7 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 	protected void basicGenerateAssembleConfigFileTargetCall(Config aConfig, Collection binaryPlugins, Collection binaryFeatures, Collection allFeatures, Collection rootFiles) throws CoreException {
 		// generate the script for a configuration
 		configScriptGenerator.initialize(directory, featureId, aConfig, binaryPlugins, binaryFeatures, allFeatures, rootFiles);
-		configScriptGenerator.setArchiveFormat((String) archivesFormat.get(aConfig));
+		configScriptGenerator.setArchiveFormat(archivesFormat.get(aConfig));
 		configScriptGenerator.setBuildSiteFactory(siteFactory);
 		configScriptGenerator.setGroupConfigs(groupConfigs);
 		configScriptGenerator.setProductQualifier(productQualifier);
@@ -262,7 +262,7 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 		configScriptGenerator.setGenerateJnlp(value);
 	}
 
-	public void setArchivesFormat(HashMap outputFormat) {
+	public void setArchivesFormat(HashMap<Config, String> outputFormat) {
 		archivesFormat = outputFormat;
 	}
 

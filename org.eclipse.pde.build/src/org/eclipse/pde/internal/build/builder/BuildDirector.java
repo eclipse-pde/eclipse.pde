@@ -80,7 +80,7 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 		this.assemblyData = assemblageInformation;
 	}
 
-	private final Map extractedLocations = new HashMap();
+	private final Map<String, String> extractedLocations = new HashMap<String, String>();
 
 	public String getExtractedRoot(ClasspathElement element) {
 		if (element.getSubPath() == null)
@@ -88,7 +88,7 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 
 		String absolute = element.getAbsolutePath();
 		if (extractedLocations.containsKey(absolute)) {
-			return (String) extractedLocations.get(absolute);
+			return extractedLocations.get(absolute);
 		}
 
 		//Use the jar name, append a suffix if that name is already taken
@@ -110,8 +110,8 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 	 * @return List of BundleDescription
 	 * @throws CoreException
 	 */
-	protected Set computeElements(BuildTimeFeature feature) throws CoreException {
-		Set computedElements = new LinkedHashSet(5);
+	protected Set<BundleDescription> computeElements(BuildTimeFeature feature) throws CoreException {
+		Set<BundleDescription> computedElements = new LinkedHashSet<BundleDescription>(5);
 		Properties featureProperties = getBuildProperties(feature);
 		FeatureEntry[] pluginList = feature.getPluginEntries();
 		for (int i = 0; i < pluginList.length; i++) {
@@ -159,15 +159,17 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 		return individual || AbstractScriptGenerator.getPropertyAsBoolean(PROPERTY_INDIVIDUAL_SOURCE);
 	}
 
+	// As properties can only contain strings, it isn't clear how this code worked, leaving as is but surpressing the warnings
+	@SuppressWarnings({"rawtypes", "unchecked"})
 	private void associateModelAndEntry(BundleDescription model, FeatureEntry entry) {
 		Properties bundleProperties = ((Properties) model.getUserObject());
 		if (bundleProperties == null) {
 			bundleProperties = new Properties();
 			model.setUserObject(bundleProperties);
 		}
-		Set entries = (Set) bundleProperties.get(PLUGIN_ENTRY);
+		Set<FeatureEntry> entries = (Set) bundleProperties.get(PLUGIN_ENTRY);
 		if (entries == null) {
-			entries = new HashSet();
+			entries = new HashSet<FeatureEntry>();
 			bundleProperties.put(PLUGIN_ENTRY, entries);
 		}
 		entries.add(entry);
@@ -202,6 +204,7 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 		analysePlugins = generate;
 	}
 
+	@Override
 	public void generate() throws CoreException {
 		if (workingDirectory == null) {
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_BUILDDIRECTORY_LOCATION_MISSING, Messages.error_missingInstallLocation, null));
@@ -276,7 +279,7 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 	 * @throws CoreException
 	 */
 	private void generateChildrenScripts(BuildTimeFeature feature) throws CoreException {
-		Set plugins = computeElements(feature);
+		Set<BundleDescription> plugins = computeElements(feature);
 		String suffix = generateFeatureVersionSuffix(feature);
 		if (suffix != null) {
 			Version versionId = new Version(feature.getVersion());
@@ -504,15 +507,15 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 	 * @param models
 	 * @throws CoreException
 	 */
-	private void generateModels(List models) throws CoreException {
+	private void generateModels(List<BundleDescription> models) throws CoreException {
 		if (scriptGeneration == false)
 			return;
 		if (binaryFeature == false || models.isEmpty())
 			return;
 
-		Set generatedScripts = new HashSet(models.size());
-		for (Iterator iterator = models.iterator(); iterator.hasNext();) {
-			BundleDescription model = (BundleDescription) iterator.next();
+		Set<BundleDescription> generatedScripts = new HashSet<BundleDescription>(models.size());
+		for (Iterator<BundleDescription> iterator = models.iterator(); iterator.hasNext();) {
+			BundleDescription model = iterator.next();
 			if (generatedScripts.contains(model))
 				continue;
 			generatedScripts.add(model);
@@ -569,6 +572,7 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 	 * @return Properties the feature's build.properties
 	 * @see Feature
 	 */
+	@Override
 	protected Properties getBuildProperties() {
 		throw new UnsupportedOperationException();
 	}

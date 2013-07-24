@@ -44,7 +44,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 
 	private BuildDirector director;
 	private String[] extraEntries;
-	private Map excludedEntries;
+	private Map<String, List<Version>> excludedEntries;
 
 	public void setSourceFeatureId(String id) {
 		sourceFeatureId = id;
@@ -178,7 +178,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 		FeatureEntry entry;
 
 		for (int i = 1; i < extraEntries.length; i++) {
-			Map items = Utils.parseExtraBundlesString(extraEntries[i], true);
+			Map<String, Comparable> items = Utils.parseExtraBundlesString(extraEntries[i], true);
 			String id = (String) items.get(Utils.EXTRA_ID);
 			Version version = (Version) items.get(Utils.EXTRA_VERSION);
 
@@ -202,12 +202,12 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 				sourceFeature.addEntry(entry);
 			} else if (extraEntries[i].startsWith("exclude@")) { //$NON-NLS-1$
 				if (excludedEntries == null)
-					excludedEntries = new HashMap();
+					excludedEntries = new HashMap<String, List<Version>>();
 
 				if (excludedEntries.containsKey(id)) {
-					((List) excludedEntries.get(id)).add(version);
+					excludedEntries.get(id).add(version);
 				} else {
-					List versionList = new ArrayList();
+					List<Version> versionList = new ArrayList<Version>();
 					versionList.add(version);
 					excludedEntries.put(id, versionList);
 				}
@@ -216,13 +216,13 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 	}
 
 	private void generateSourceFragments(BuildTimeFeature sourceFeature, FeatureEntry sourcePlugin) throws CoreException {
-		Map fragments = director.sourceToGather.getElementEntries();
+		Map<String, Set> fragments = director.sourceToGather.getElementEntries();
 		for (Iterator iter = AbstractScriptGenerator.getConfigInfos().iterator(); iter.hasNext();) {
 			Config configInfo = (Config) iter.next();
 			if (configInfo.equals(Config.genericConfig()))
 				continue;
 			String sourceFragmentId = sourceFeature.getId() + "." + configInfo.toString("."); //$NON-NLS-1$ //$NON-NLS-2$
-			Set fragmentEntries = (Set) fragments.get(sourceFragmentId);
+			Set fragmentEntries = fragments.get(sourceFragmentId);
 			if (fragmentEntries == null || fragmentEntries.size() == 0)
 				continue;
 			FeatureEntry sourceFragment = new FeatureEntry(sourceFragmentId, sourceFeature.getVersion(), true);
@@ -588,7 +588,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 		}
 
 		if (excludedEntries != null && excludedEntries.containsKey(bundle.getSymbolicName())) {
-			List excludedVersions = (List) excludedEntries.get(bundle.getSymbolicName());
+			List excludedVersions = excludedEntries.get(bundle.getSymbolicName());
 			for (Iterator iterator = excludedVersions.iterator(); iterator.hasNext();) {
 				Version version = (Version) iterator.next();
 				if (Utils.matchVersions(bundle.getVersion().toString(), version.toString()))

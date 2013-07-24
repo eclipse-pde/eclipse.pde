@@ -86,8 +86,8 @@ public abstract class AbstractPublisherTask extends Task {
 	protected PublisherInfo publisherInfo = null;
 	private Properties buildProperties = null;
 	protected String overrides = null;
-	protected List contextMetadataRepositories = new ArrayList();
-	protected List contextArtifactRepositories = new ArrayList();
+	protected List<URI> contextMetadataRepositories = new ArrayList<URI>();
+	protected List<URI> contextArtifactRepositories = new ArrayList<URI>();
 
 	protected Properties getBuildProperties() {
 		if (buildProperties != null)
@@ -113,14 +113,14 @@ public abstract class AbstractPublisherTask extends Task {
 		}
 
 		buildProperties = new Properties();
-		for (Iterator iterator = properties.keySet().iterator(); iterator.hasNext();) {
+		for (Iterator<Object> iterator = properties.keySet().iterator(); iterator.hasNext();) {
 			String key = (String) iterator.next();
 			String value = properties.getProperty(key);
 			buildProperties.put(key, getProject().replaceProperties(value));
 		}
 
 		if (overrideProperties != null) {
-			for (Iterator iterator = overrideProperties.keySet().iterator(); iterator.hasNext();) {
+			for (Iterator<Object> iterator = overrideProperties.keySet().iterator(); iterator.hasNext();) {
 				String key = (String) iterator.next();
 				String value = overrideProperties.getProperty(key);
 				buildProperties.put(key, getProject().replaceProperties(value));
@@ -137,8 +137,8 @@ public abstract class AbstractPublisherTask extends Task {
 		application.setAppend(append);
 		application.setCompress(compress);
 
-		URI[] metadata = (URI[]) contextMetadataRepositories.toArray(new URI[contextMetadataRepositories.size()]);
-		URI[] artifacts = (URI[]) contextArtifactRepositories.toArray(new URI[contextArtifactRepositories.size()]);
+		URI[] metadata = contextMetadataRepositories.toArray(new URI[contextMetadataRepositories.size()]);
+		URI[] artifacts = contextArtifactRepositories.toArray(new URI[contextArtifactRepositories.size()]);
 		application.setContextRepositories(metadata, artifacts);
 
 		return application;

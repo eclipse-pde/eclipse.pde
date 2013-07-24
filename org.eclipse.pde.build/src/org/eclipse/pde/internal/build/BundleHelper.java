@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.build;
 
+import org.osgi.framework.Filter;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -74,6 +76,7 @@ public class BundleHelper {
 		return FileLocator.openStream(bundle, file, localized);
 	}
 
+	@Override
 	public String toString() {
 		return bundle.getSymbolicName();
 	}
@@ -136,7 +139,7 @@ public class BundleHelper {
 		NativeCodeSpecification nativeCodeSpec = bundleDescription.getNativeCodeSpecification();
 		if (nativeCodeSpec != null) {
 			NativeCodeDescription[] possibleSuppliers = nativeCodeSpec.getPossibleSuppliers();
-			ArrayList supplierFilters = new ArrayList(possibleSuppliers.length);
+			ArrayList<Filter> supplierFilters = new ArrayList<Filter>(possibleSuppliers.length);
 			for (int i = 0; i < possibleSuppliers.length; i++) {
 				if (possibleSuppliers[i].getFilter() != null)
 					supplierFilters.add(possibleSuppliers[i].getFilter());
@@ -145,8 +148,8 @@ public class BundleHelper {
 				nativeFilter = supplierFilters.get(0).toString();
 			else if (supplierFilters.size() > 1) {
 				StringBuffer buffer = new StringBuffer("(|"); //$NON-NLS-1$
-				for (Iterator iterator = supplierFilters.iterator(); iterator.hasNext();) {
-					Filter filter = (Filter) iterator.next();
+				for (Iterator<Filter> iterator = supplierFilters.iterator(); iterator.hasNext();) {
+					Filter filter = iterator.next();
 					buffer.append(filter.toString());
 				}
 				buffer.append(")"); //$NON-NLS-1$
@@ -178,11 +181,11 @@ public class BundleHelper {
 		}
 	}
 
-	public static String[] getClasspath(Dictionary manifest) {
+	public static String[] getClasspath(Dictionary<String, String> manifest) {
 		return org.eclipse.pde.internal.publishing.Utils.getBundleClasspath(manifest);
 	}
 
-	public static String getManifestHeader(Dictionary manifest, String header) {
+	public static String getManifestHeader(Dictionary<String, String> manifest, String header) {
 		return org.eclipse.pde.internal.publishing.Utils.getBundleManifestHeader(manifest, header);
 	}
 }

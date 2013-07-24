@@ -11,23 +11,23 @@
 
 package org.eclipse.pde.internal.build;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.osgi.service.resolver.State;
 
 public class PDEUIStateWrapper {
 	private State state;
-	private HashMap classpath;
+	private HashMap<Long, String[]> classpath;
 	// Map of source entries to their output folders
-	private Map outputFolders;
-	private Map patchData;
+	private Map<String, Map<String, Set<IPath>>> outputFolders;
+	private Map<Long, String> patchData;
 	private long nextId;
 
 	public void setState(State s) {
 		state = s;
 	}
 
-	public void setExtraData(HashMap classpath, Map patch, Map outputFolders) {
+	public void setExtraData(HashMap<Long, String[]> classpath, Map<Long, String> patch, Map<String, Map<String, Set<IPath>>> outputFolders) {
 		this.classpath = classpath;
 		this.patchData = patch;
 		this.outputFolders = outputFolders;
@@ -37,15 +37,15 @@ public class PDEUIStateWrapper {
 		return state;
 	}
 
-	public HashMap getClasspaths() {
+	public HashMap<Long, String[]> getClasspaths() {
 		return classpath;
 	}
 
-	public Map getOutputFolders() {
+	public Map<String, Map<String, Set<IPath>>> getOutputFolders() {
 		return outputFolders;
 	}
 
-	public Map getPatchData() {
+	public Map<Long, String> getPatchData() {
 		return patchData;
 	}
 

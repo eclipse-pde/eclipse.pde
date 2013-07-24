@@ -13,6 +13,8 @@
 
 package org.eclipse.pde.internal.build.tasks;
 
+import java.io.File;
+
 import java.io.*;
 import java.util.*;
 import java.util.zip.ZipEntry;
@@ -151,7 +153,7 @@ public class JNLPGenerator extends DefaultHandler {
 		String appendix = ".properties"; //$NON-NLS-1$
 		String[] potentials = createNLSPotentials();
 
-		Map validEntries = new HashMap();
+		Map<String, File> validEntries = new HashMap<String, File>();
 		File[] files = root.listFiles();
 		for (int i = 0; i < files.length; i++) {
 			String filename = files[i].getName();
@@ -162,7 +164,7 @@ public class JNLPGenerator extends DefaultHandler {
 		InputStream stream = null;
 		if (validEntries.size() > 0) {
 			for (int i = 0; i < potentials.length; i++) {
-				File file = (File) validEntries.get(potentials[i]);
+				File file = validEntries.get(potentials[i]);
 				if (file != null) {
 					try {
 						stream = new BufferedInputStream(new FileInputStream(file));
@@ -173,7 +175,7 @@ public class JNLPGenerator extends DefaultHandler {
 				}
 			}
 			if (stream == null) {
-				File file = (File) validEntries.values().iterator().next();
+				File file = validEntries.values().iterator().next();
 				try {
 					stream = new BufferedInputStream(new FileInputStream(file));
 				} catch (IOException e) {
@@ -194,7 +196,7 @@ public class JNLPGenerator extends DefaultHandler {
 		String appendix = ".properties"; //$NON-NLS-1$
 		String[] potentials = createNLSPotentials();
 
-		Map validEntries = new HashMap();
+		Map<String, ZipEntry> validEntries = new HashMap<String, ZipEntry>();
 		for (Enumeration enumeration = featureArchive.entries(); enumeration.hasMoreElements();) {
 			ZipEntry entry = (ZipEntry) enumeration.nextElement();
 			String entryName = entry.getName();
@@ -205,7 +207,7 @@ public class JNLPGenerator extends DefaultHandler {
 		InputStream stream = null;
 		if (validEntries.size() > 0) {
 			for (int i = 0; i < potentials.length; i++) {
-				ZipEntry entry = (ZipEntry) validEntries.get(potentials[i]);
+				ZipEntry entry = validEntries.get(potentials[i]);
 				if (entry != null) {
 					try {
 						stream = featureArchive.getInputStream(entry);
@@ -216,7 +218,7 @@ public class JNLPGenerator extends DefaultHandler {
 				}
 			}
 			if (stream == null) {
-				ZipEntry entry = (ZipEntry) validEntries.values().iterator().next();
+				ZipEntry entry = validEntries.values().iterator().next();
 				try {
 					stream = featureArchive.getInputStream(entry);
 				} catch (IOException e) {
@@ -507,7 +509,7 @@ public class JNLPGenerator extends DefaultHandler {
 		}
 		StringTokenizer tokens = new StringTokenizer(spec, "&"); //$NON-NLS-1$
 		int configNbr = tokens.countTokens();
-		ArrayList configInfos = new ArrayList(configNbr);
+		ArrayList<Config> configInfos = new ArrayList<Config>(configNbr);
 		while (tokens.hasMoreElements()) {
 			String aConfig = tokens.nextToken();
 			StringTokenizer configTokens = new StringTokenizer(aConfig, ","); //$NON-NLS-1$
@@ -520,6 +522,6 @@ public class JNLPGenerator extends DefaultHandler {
 		}
 		if (configInfos.size() == 0)
 			configInfos.add(Config.genericConfig());
-		configs = (Config[]) configInfos.toArray(new Config[configInfos.size()]);
+		configs = configInfos.toArray(new Config[configInfos.size()]);
 	}
 }

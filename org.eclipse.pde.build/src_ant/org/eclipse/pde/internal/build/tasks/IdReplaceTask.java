@@ -42,11 +42,11 @@ public class IdReplaceTask extends Task {
 	//Map of the plugin ids and version (key) and their version number (value)
 	//  the key is id:version  and the value is the actual version of the element
 	// the keys are such that a regular lookup will always return the appropriate value if available
-	private Map pluginIds = new HashMap(10);
+	private Map<String, String> pluginIds = new HashMap<String, String>(10);
 	//Map of the feature ids and version (key) and their version number (value)
 	//  the key is id:version  and the value is the actual version of the element
 	// the keys are such that a regular lookup will always return the appropriate value if available    
-	private Map featureIds = new HashMap(4);
+	private Map<String, String> featureIds = new HashMap<String, String>(4);
 	//The new version number for this feature
 	private String selfVersion;
 
@@ -84,7 +84,7 @@ public class IdReplaceTask extends Task {
 	 * For example: org.eclipse.pde.build,2.1.0,org.eclipse.core.resources,1.2.0
 	 */
 	public void setPluginIds(String values) {
-		pluginIds = new HashMap(10);
+		pluginIds = new HashMap<String, String>(10);
 		for (StringTokenizer tokens = new StringTokenizer(values, COMMA); tokens.hasMoreTokens();) {
 			String token = tokens.nextToken().trim();
 			String id = EMPTY;
@@ -106,7 +106,7 @@ public class IdReplaceTask extends Task {
 	 * @param values
 	 */
 	public void setFeatureIds(String values) {
-		featureIds = new HashMap(10);
+		featureIds = new HashMap<String, String>(10);
 		for (StringTokenizer tokens = new StringTokenizer(values, COMMA); tokens.hasMoreTokens();) {
 			String token = tokens.nextToken().trim();
 			String id = EMPTY;
@@ -280,9 +280,9 @@ public class IdReplaceTask extends Task {
 			Version v = new Version(version);
 			String lookupKey = elementId + ':' + v.getMajor() + '.' + v.getMinor() + '.' + v.getMicro();
 			if (isPlugin) {
-				replacementVersion = (String) pluginIds.get(lookupKey);
+				replacementVersion = pluginIds.get(lookupKey);
 			} else {
-				replacementVersion = (String) featureIds.get(lookupKey);
+				replacementVersion = featureIds.get(lookupKey);
 			}
 			int change = 0;
 			if (replacementVersion == null) {

@@ -24,7 +24,7 @@ public class PDEProperties implements IAntPropertyValueProvider {
 	static private final String HOME = PREFIX + ".home"; //$NON-NLS-1$
 	static private final String SCRIPTS = PREFIX + ".scripts"; //$NON-NLS-1$
 	static private final String TEMPLATES = PREFIX + ".templates"; //$NON-NLS-1$
-	static private final Map cache = new HashMap();
+	static private final Map<String, String> cache = new HashMap<String, String>();
 
 	public String getAntPropertyValue(String antPropertyName) {
 		String searchedEntry = null;
@@ -41,7 +41,7 @@ public class PDEProperties implements IAntPropertyValueProvider {
 			return null; //TODO Throw an exception or log an error
 
 		try {
-			String result = (String) cache.get(searchedEntry);
+			String result = cache.get(searchedEntry);
 			if (result == null) {
 				URL foundEntry = Platform.getBundle(IPDEBuildConstants.PI_PDEBUILD).getEntry(searchedEntry);
 				if (foundEntry == null) {

@@ -63,16 +63,19 @@ public class BrandP2Task extends Repo2RunnableTask {
 
 	public BrandP2Task() {
 		application = new Repo2Runnable() {
+			@Override
 			protected PhaseSet getPhaseSet() {
 				return new PhaseSet(new Phase[] {new Collect(100), new Install(100)}) { /* nothing to override */};
 			}
 
+			@Override
 			protected PhaseSet getNativePhase() {
 				return null;
 			}
 		};
 	}
 
+	@Override
 	public void execute() {
 		if (launcherName == null || launcherName.startsWith(ANT_PREFIX) || config == null)
 			return; //TODO error/warning
@@ -170,6 +173,7 @@ public class BrandP2Task extends Repo2RunnableTask {
 		return launcherProvider + "_root." + getConfigString(); //$NON-NLS-1$
 	}
 
+	@Override
 	protected List prepareIUs() {
 		String iuName = getProviderIUName();
 		IUDescription task = (IUDescription) super.createIu();
@@ -226,9 +230,9 @@ public class BrandP2Task extends Repo2RunnableTask {
 			newIUDescription.setFilter(originalIU.getFilter());
 		}
 
-		List data = brandTouchpointData(originalIU.getTouchpointData(), false);
+		List<ITouchpointData> data = brandTouchpointData(originalIU.getTouchpointData(), false);
 		for (int i = 0; i < data.size(); i++) {
-			newIUDescription.addTouchpointData((ITouchpointData) data.get(i));
+			newIUDescription.addTouchpointData(data.get(i));
 		}
 
 		IArtifactKey key = artifactRepo.createArtifactKey(PublisherHelper.BINARY_ARTIFACT_CLASSIFIER, newIUDescription.getId(), newIUDescription.getVersion());
@@ -260,9 +264,9 @@ public class BrandP2Task extends Repo2RunnableTask {
 		newLDAPFilter.append(")"); //$NON-NLS-1$
 		newIUDescription.setFilter(InstallableUnit.parseFilter(newLDAPFilter.toString()));
 
-		List data = brandTouchpointData(originalIU.getTouchpointData(), true);
+		List<ITouchpointData> data = brandTouchpointData(originalIU.getTouchpointData(), true);
 		for (int i = 0; i < data.size(); i++) {
-			newIUDescription.addTouchpointData((ITouchpointData) data.get(i));
+			newIUDescription.addTouchpointData(data.get(i));
 		}
 
 		//The same artifact is used for the two shapes of MacOS
@@ -310,8 +314,8 @@ public class BrandP2Task extends Repo2RunnableTask {
 	private static final String INSTALL = "install"; //$NON-NLS-1$
 	private static final String CONFIGURE = "configure"; //$NON-NLS-1$
 
-	private List/*<ITouchpointData>*/brandTouchpointData(Collection/*<ITouchpointData>*/data, boolean macosxBundled) {
-		ArrayList results = new ArrayList(data.size() + 1);
+	private List<ITouchpointData> brandTouchpointData(Collection<ITouchpointData> data, boolean macosxBundled) {
+		ArrayList<ITouchpointData> results = new ArrayList<ITouchpointData>(data.size() + 1);
 		results.addAll(data);
 
 		boolean haveChmod = false;
@@ -328,7 +332,7 @@ public class BrandP2Task extends Repo2RunnableTask {
 			brandedLauncher = launcherName;
 
 		for (int i = 0; i < results.size(); i++) {
-			ITouchpointData td = (ITouchpointData) results.get(i);
+			ITouchpointData td = results.get(i);
 			Map instructions = new HashMap(td.getInstructions());
 
 			String[] phases = new String[] {INSTALL, CONFIGURE};
@@ -341,8 +345,8 @@ public class BrandP2Task extends Repo2RunnableTask {
 				String[] actions = Utils.getArrayFromString(instruction.getBody(), ";"); //$NON-NLS-1$
 				for (int j = 0; j < actions.length; j++) {
 					if (actions[j].startsWith(CHMOD)) {
-						Map map = parseAction(actions[j]);
-						String targetFile = (String) map.get(TARGET_FILE);
+						Map<String, String> map = parseAction(actions[j]);
+						String targetFile = map.get(TARGET_FILE);
 						targetFile = targetFile.replace('\\', '/');
 						if (targetFile.equals(brandedLauncher)) {
 							haveChmod = true;
@@ -361,8 +365,8 @@ public class BrandP2Task extends Repo2RunnableTask {
 						}
 					} else if (actions[j].startsWith(LN) && config.getOs().equals("macosx")) { //$NON-NLS-1$
 						//for now only checking links on mac
-						Map map = parseAction(actions[j]);
-						String linkTarget = (String) map.get(LINK_TARGET);
+						Map<String, String> map = parseAction(actions[j]);
+						String linkTarget = map.get(LINK_TARGET);
 						if (linkTarget.endsWith(".app/Contents/MacOS/launcher") || linkTarget.endsWith(".app/Contents/MacOS/eclipse")) { //$NON-NLS-1$ //$NON-NLS-2$
 							map.put(LINK_TARGET, brandedLauncher);
 							map.put(LINK_NAME, launcherName);
@@ -386,7 +390,7 @@ public class BrandP2Task extends Repo2RunnableTask {
 			if (macosxBundled) {
 				body = "unzip(source:@artifact, target:${installFolder}, path:" + launcherName + ".app);"; //$NON-NLS-1$ //$NON-NLS-2$
 				body += " chmod(targetDir:${installFolder}/Contents/MacOS/, targetFile:" + launcherName + ", permissions:755);"; //$NON-NLS-1$ //$NON-NLS-2$
-			} else { 
+			} else {
 				body = "chmod(targetDir:${installFolder}, targetFile:" + brandedLauncher + ", permissions:755)"; //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			TouchpointInstruction newInstruction = new TouchpointInstruction(body, null);
@@ -407,11 +411,11 @@ public class BrandP2Task extends Repo2RunnableTask {
 		return buffer.toString();
 	}
 
-	private String toString(Map map) {
+	private String toString(Map<String, String> map) {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append('(');
-		for (Iterator iterator = map.keySet().iterator(); iterator.hasNext();) {
-			String key = (String) iterator.next();
+		for (Iterator<String> iterator = map.keySet().iterator(); iterator.hasNext();) {
+			String key = iterator.next();
 			buffer.append(key);
 			buffer.append(':');
 			buffer.append(map.get(key));
@@ -422,8 +426,8 @@ public class BrandP2Task extends Repo2RunnableTask {
 		return buffer.toString();
 	}
 
-	private Map parseAction(String action) {
-		Map result = new HashMap();
+	private Map<String, String> parseAction(String action) {
+		Map<String, String> result = new HashMap<String, String>();
 		int open = action.indexOf('(');
 		int close = action.lastIndexOf(')');
 		String parameterString = action.substring(open + 1, close);

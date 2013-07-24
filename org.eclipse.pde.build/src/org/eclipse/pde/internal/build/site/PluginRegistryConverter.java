@@ -23,6 +23,7 @@ import org.osgi.framework.Version;
 /** 
  * @deprecated
  */
+@Deprecated
 public class PluginRegistryConverter extends PDEState {
 	private PluginRegistryModel registry;
 
@@ -30,7 +31,7 @@ public class PluginRegistryConverter extends PDEState {
 		URL[] validURLs = new URL[files.length];
 		int validURL = 0;
 		for (int i = 0; i < files.length; i++) {
-			if (!files[i].toExternalForm().endsWith("feature.xml") && !files[i].toExternalForm().endsWith("MANIFEST.MF"))  //$NON-NLS-1$//$NON-NLS-2$
+			if (!files[i].toExternalForm().endsWith("feature.xml") && !files[i].toExternalForm().endsWith("MANIFEST.MF")) //$NON-NLS-1$//$NON-NLS-2$
 				validURLs[validURL++] = files[i];
 		}
 		if (files.length == validURL)
@@ -62,7 +63,7 @@ public class PluginRegistryConverter extends PDEState {
 		for (int i = 0; i < plugins.length; i++) {
 			BundleDescription bd = state.getFactory().createBundleDescription(getNextId(), plugins[i].getPluginId(), Version.parseVersion(plugins[i].getVersion()), plugins[i].getLocation(), createBundleSpecification(plugins[i].getRequires()), (HostSpecification) null, null, null, null, true);
 			String libs = createClasspath(plugins[i].getRuntime());
-			Properties manifest = new Properties();
+			Map<String, String> manifest = new HashMap<String, String>();
 			if (libs != null)
 				manifest.put(Constants.BUNDLE_CLASSPATH, libs);
 			loadPropertyFileIn(manifest, new File(fragments[i].getLocation()));
@@ -74,7 +75,7 @@ public class PluginRegistryConverter extends PDEState {
 			HostSpecification host = state.getFactory().createHostSpecification(fragments[i].getPluginId(), new VersionRange(fragments[i].getPluginVersion()));
 			BundleDescription bd = state.getFactory().createBundleDescription(getNextId(), fragments[i].getId(), Version.parseVersion(fragments[i].getVersion()), fragments[i].getLocation(), createBundleSpecification(fragments[i].getRequires()), host, null, null, null, true);
 			String libs = createClasspath(fragments[i].getRuntime());
-			Properties manifest = new Properties();
+			Map<String, String> manifest = new HashMap<String, String>();
 			if (libs != null)
 				manifest.put(Constants.BUNDLE_CLASSPATH, libs);
 			loadPropertyFileIn(manifest, new File(fragments[i].getLocation()));
@@ -104,15 +105,16 @@ public class PluginRegistryConverter extends PDEState {
 		return result;
 	}
 
-	public void addBundles(Collection bundles) {
+	@Override
+	public void addBundles(Collection<File> bundles) {
 		try {
 			getPluginRegistry(Utils.asURL(bundles));
 		} catch (CoreException e) {
 			IStatus status = new Status(IStatus.ERROR, IPDEBuildConstants.PI_PDEBUILD, EXCEPTION_STATE_PROBLEM, Messages.exception_registryResolution, e);
 			BundleHelper.getDefault().getLog().log(status);
 		}
-		for (Iterator iter = bundles.iterator(); iter.hasNext();) {
-			File bundle = (File) iter.next();
+		for (Iterator<File> iter = bundles.iterator(); iter.hasNext();) {
+			File bundle = iter.next();
 			addBundle(bundle);
 		}
 	}

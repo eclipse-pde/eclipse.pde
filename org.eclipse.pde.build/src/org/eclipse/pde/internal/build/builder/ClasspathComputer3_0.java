@@ -44,6 +44,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 			this.accessRules = accessRules;
 		}
 
+		@Override
 		public String toString() {
 			return path;
 		}
@@ -93,6 +94,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		 * ClasspathElement objects are equal if they have the same path.
 		 * Access rules are not considered.
 		 */
+		@Override
 		public boolean equals(Object obj) {
 			if (obj instanceof ClasspathElement) {
 				ClasspathElement element = (ClasspathElement) obj;
@@ -105,6 +107,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 			return false;
 		}
 
+		@Override
 		public int hashCode() {
 			int result = path.hashCode();
 			return 13 * result + ((subPath == null) ? 0 : subPath.hashCode());
@@ -122,10 +125,10 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 	private static final String EXCLUDE_ALL_RULE = "?**/*"; //$NON-NLS-1$
 
 	private final ModelBuildScriptGenerator generator;
-	private Map visiblePackages = null;
-	private Map pathElements = null;
+	private Map<String, String> visiblePackages = null;
+	private Map<String, ClasspathElement> pathElements = null;
 	private boolean allowBinaryCycles = false;
-	private Set requiredIds = null;
+	private Set<Long> requiredIds = null;
 	protected String modelLocation = null;
 
 	public ClasspathComputer3_0(ModelBuildScriptGenerator modelGenerator) {
@@ -141,14 +144,14 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 	 * @return String the classpath
 	 * @throws CoreException
 	 */
-	public List getClasspath(BundleDescription model, ModelBuildScriptGenerator.CompiledEntry jar) throws CoreException {
-		List classpath = new ArrayList(20);
-		List pluginChain = new ArrayList(10); //The list of plugins added to detect cycle
+	public List<Object> getClasspath(BundleDescription model, ModelBuildScriptGenerator.CompiledEntry jar) throws CoreException {
+		List<Object> classpath = new ArrayList<Object>(20);
+		List<BundleDescription> pluginChain = new ArrayList<BundleDescription>(10); //The list of plugins added to detect cycle
 		modelLocation = generator.getLocation(model);
-		Set addedPlugins = new HashSet(10); //The set of all the plugins already added to the classpath (this allows for optimization)
-		pathElements = new HashMap();
+		Set<BundleDescription> addedPlugins = new HashSet<BundleDescription>(10); //The set of all the plugins already added to the classpath (this allows for optimization)
+		pathElements = new HashMap<String, ClasspathElement>();
 		visiblePackages = getVisiblePackages(model);
-		requiredIds = new HashSet();
+		requiredIds = new HashSet<Long>();
 		allowBinaryCycles = AbstractScriptGenerator.getPropertyAsBoolean(IBuildPropertiesConstants.PROPERTY_ALLOW_BINARY_CYCLES);
 
 		//PREREQUISITE
@@ -171,15 +174,15 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 			model.setUserObject(bundleProperties);
 		}
 		StringBuffer buffer = new StringBuffer();
-		for (Iterator iterator = requiredIds.iterator(); iterator.hasNext();) {
+		for (Iterator<Long> iterator = requiredIds.iterator(); iterator.hasNext();) {
 			buffer.append(iterator.next().toString());
 			buffer.append(':');
 		}
 		bundleProperties.setProperty(PROPERTY_REQUIRED_BUNDLE_IDS, buffer.toString());
 	}
 
-	private Map getVisiblePackages(BundleDescription model) {
-		Map packages = new HashMap(20);
+	private Map<String, String> getVisiblePackages(BundleDescription model) {
+		Map<String, String> packages = new HashMap<String, String>(20);
 		StateHelper helper = Platform.getPlatformAdmin().getStateHelper();
 		addVisiblePackagesFromState(helper, model, packages);
 		if (model.getHost() != null)
@@ -187,7 +190,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		return packages;
 	}
 
-	private void addVisiblePackagesFromState(StateHelper helper, BundleDescription model, Map packages) {
+	private void addVisiblePackagesFromState(StateHelper helper, BundleDescription model, Map<String, String> packages) {
 		ExportPackageDescription[] exports = helper.getVisiblePackages(model);
 		for (int i = 0; i < exports.length; i++) {
 			BundleDescription exporter = exports[i].getExporter();
@@ -199,7 +202,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 			String rule = (discouraged ? '~' : '+') + pattern;
 
 			String packagesKey = exporter.getSymbolicName() + "_" + exporter.getVersion(); //$NON-NLS-1$
-			String rules = (String) packages.get(packagesKey);
+			String rules = packages.get(packagesKey);
 			if (rules != null) {
 				if (rules.indexOf(rule) == -1)
 					rules = rules + File.pathSeparator + rule;
@@ -218,9 +221,9 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 	 * @param location
 	 * @throws CoreException
 	 */
-	private void addPlugin(BundleDescription plugin, List classpath, String location) throws CoreException {
+	private void addPlugin(BundleDescription plugin, List<Object> classpath, String location) throws CoreException {
 		boolean allFragments = true;
-		String patchInfo = (String) generator.getSite(false).getRegistry().getPatchData().get(new Long(plugin.getBundleId()));
+		String patchInfo = generator.getSite(false).getRegistry().getPatchData().get(new Long(plugin.getBundleId()));
 		if (patchInfo != null && plugin != generator.getModel()) {
 			addFragmentsLibraries(plugin, classpath, location, false, false);
 			allFragments = false;
@@ -239,7 +242,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 	 * @param baseLocation
 	 * @throws CoreException
 	 */
-	private void addRuntimeLibraries(BundleDescription model, List classpath, String baseLocation) throws CoreException {
+	private void addRuntimeLibraries(BundleDescription model, List<Object> classpath, String baseLocation) throws CoreException {
 		String[] libraries = getClasspathEntries(model);
 		String root = generator.getLocation(model);
 		IPath base = Utils.makeRelative(new Path(root), new Path(baseLocation));
@@ -259,7 +262,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 	 * @param baseLocation
 	 * @throws CoreException
 	 */
-	private void addFragmentsLibraries(BundleDescription plugin, List classpath, String baseLocation, boolean afterPlugin, boolean all) throws CoreException {
+	private void addFragmentsLibraries(BundleDescription plugin, List<Object> classpath, String baseLocation, boolean afterPlugin, boolean all) throws CoreException {
 		// if plugin is not a plugin, it's a fragment and there is no fragment for a fragment. So we return.
 		BundleDescription[] fragments = plugin.getFragments();
 		if (fragments == null)
@@ -301,7 +304,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 	 * @param baseLocation
 	 * @throws CoreException
 	 */
-	private void addPluginLibrariesToFragmentLocations(BundleDescription plugin, BundleDescription fragment, List classpath, String baseLocation) throws CoreException {
+	private void addPluginLibrariesToFragmentLocations(BundleDescription plugin, BundleDescription fragment, List<Object> classpath, String baseLocation) throws CoreException {
 		//TODO This methods causes the addition of a lot of useless entries. See bug #35544
 		//If we reintroduce the test below, we reintroduce the problem 35544	
 		//	if (fragment.getRuntime() != null)
@@ -342,7 +345,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 	// pluginId the plugin we are adding to the classpath
 	// basePath : the relative path between the plugin from which we are adding the classpath and the plugin that is requiring this entry 
 	// classpath : The classpath in which we want to add this path 
-	private void addPathAndCheck(BundleDescription model, IPath basePath, String libraryName, Properties modelProperties, List classpath) {
+	private void addPathAndCheck(BundleDescription model, IPath basePath, String libraryName, Properties modelProperties, List<Object> classpath) {
 		String pluginKey = model != null ? model.getSymbolicName() + "_" + model.getVersion() : null; //$NON-NLS-1$
 		String rules = ""; //$NON-NLS-1$
 		//only add access rules to libraries that are not part of the current bundle
@@ -355,7 +358,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 				packageKey = host.getSymbolicName() + "_" + host.getVersion(); //$NON-NLS-1$
 			}
 			if (visiblePackages.containsKey(packageKey)) {
-				rules = "[" + (String) visiblePackages.get(packageKey) + File.pathSeparator + EXCLUDE_ALL_RULE + "]"; //$NON-NLS-1$ //$NON-NLS-2$
+				rules = "[" + visiblePackages.get(packageKey) + File.pathSeparator + EXCLUDE_ALL_RULE + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 			} else {
 				rules = "[" + EXCLUDE_ALL_RULE + "]"; //$NON-NLS-1$//$NON-NLS-2$
 			}
@@ -388,12 +391,12 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		}
 	}
 
-	private void addClasspathElementWithRule(List classpath, String path, String subPath, String rules) {
+	private void addClasspathElementWithRule(List<Object> classpath, String path, String subPath, String rules) {
 		path = normalize(path);
 		subPath = normalize(subPath);
 
 		String elementsKey = subPath != null ? path + '/' + subPath : path;
-		ClasspathElement existing = (ClasspathElement) pathElements.get(elementsKey);
+		ClasspathElement existing = pathElements.get(elementsKey);
 		if (existing != null) {
 			existing.addRules(rules);
 		} else {
@@ -403,7 +406,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 		}
 	}
 
-	private void addSelf(BundleDescription model, ModelBuildScriptGenerator.CompiledEntry jar, List classpath, String location, List pluginChain, Set addedPlugins) throws CoreException {
+	private void addSelf(BundleDescription model, ModelBuildScriptGenerator.CompiledEntry jar, List<Object> classpath, String location, List<BundleDescription> pluginChain, Set<BundleDescription> addedPlugins) throws CoreException {
 		// If model is a fragment, we need to add in the classpath the plugin to which it is related
 		HostSpecification host = model.getHost();
 		if (host != null) {
@@ -488,7 +491,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 	 * @return String the relative path 
 	 * @throws CoreException
 	 */
-	private String[] computeExtraPath(String url, List classpath, String location) throws CoreException {
+	private String[] computeExtraPath(String url, List<Object> classpath, String location) throws CoreException {
 		String relativePath = null;
 
 		String[] urlfragments = Utils.getArrayFromString(url, "/"); //$NON-NLS-1$
@@ -545,14 +548,14 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 	}
 
 	//Add the prerequisite of a given plugin (target)
-	private void addPrerequisites(BundleDescription target, List classpath, String baseLocation, List pluginChain, Set addedPlugins) throws CoreException {
+	private void addPrerequisites(BundleDescription target, List<Object> classpath, String baseLocation, List<BundleDescription> pluginChain, Set<BundleDescription> addedPlugins) throws CoreException {
 		if (pluginChain.contains(target)) {
 			if (allowBinaryCycles && isAllowableCycle(target, pluginChain)) {
 				return;
 			}
 			// else exception
 			String cycleString = ""; //$NON-NLS-1$
-			for (Iterator iter = pluginChain.iterator(); iter.hasNext();)
+			for (Iterator<BundleDescription> iter = pluginChain.iterator(); iter.hasNext();)
 				cycleString += iter.next().toString() + ", "; //$NON-NLS-1$
 			cycleString += target.toString();
 			String message = NLS.bind(Messages.error_pluginCycle, cycleString);
@@ -573,11 +576,11 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 	}
 
 	/* We can allow a cycle if it only contains 1 bundle that needs to be built and the rest are  binary. */
-	private boolean isAllowableCycle(BundleDescription target, List pluginChain) {
+	private boolean isAllowableCycle(BundleDescription target, List<BundleDescription> pluginChain) {
 		boolean haveNonBinary = false;
 		boolean inCycle = false;
-		for (Iterator iterator = pluginChain.iterator(); iterator.hasNext();) {
-			BundleDescription bundle = (BundleDescription) iterator.next();
+		for (Iterator<BundleDescription> iterator = pluginChain.iterator(); iterator.hasNext();) {
+			BundleDescription bundle = iterator.next();
 			if (bundle == target) {
 				inCycle = true;
 				haveNonBinary = !Utils.isBinary(bundle);
@@ -603,7 +606,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 	 * @param addedPlugins
 	 * @throws CoreException
 	 */
-	private void addPluginAndPrerequisites(BundleDescription target, List classpath, String baseLocation, List pluginChain, Set addedPlugins) throws CoreException {
+	private void addPluginAndPrerequisites(BundleDescription target, List<Object> classpath, String baseLocation, List<BundleDescription> pluginChain, Set<BundleDescription> addedPlugins) throws CoreException {
 		if (matchFilter(target) == false)
 			return;
 
@@ -662,7 +665,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 	 * @param baseLocation
 	 * @param classpath
 	 */
-	private void addDevEntries(BundleDescription model, String baseLocation, List classpath, String[] jarSpecificEntries, Properties modelProperties) {
+	private void addDevEntries(BundleDescription model, String baseLocation, List<Object> classpath, String[] jarSpecificEntries, Properties modelProperties) {
 		if (generator.devEntries == null && (jarSpecificEntries == null || jarSpecificEntries.length == 0))
 			return;
 

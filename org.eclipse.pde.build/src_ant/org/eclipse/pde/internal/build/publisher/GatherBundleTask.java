@@ -41,6 +41,7 @@ public class GatherBundleTask extends AbstractPublisherTask {
 			this.library = value;
 		}
 
+		@Override
 		public synchronized void setIncludes(String includes) {
 			super.setIncludes(includes);
 		}
@@ -50,8 +51,9 @@ public class GatherBundleTask extends AbstractPublisherTask {
 	private String targetFolder = null;
 	private String gatheredSource = null;
 	private String unpack = null;
-	private final Map sourceMap = new HashMap();
+	private final Map<String, Set<OutputFileSet>> sourceMap = new HashMap<String, Set<OutputFileSet>>();
 
+	@Override
 	public void execute() throws BuildException {
 		GatheringComputer computer = createComputer();
 
@@ -137,8 +139,8 @@ public class GatherBundleTask extends AbstractPublisherTask {
 				fileExclude.setName(splitExcludes[i]);
 			}
 
-			List includedFiles = Arrays.asList(fileSet.getDirectoryScanner().getIncludedFiles());
-			LinkedHashSet set = new LinkedHashSet(includedFiles);
+			List<String> includedFiles = Arrays.asList(fileSet.getDirectoryScanner().getIncludedFiles());
+			LinkedHashSet<String> set = new LinkedHashSet<String>(includedFiles);
 
 			// Manifest must go first, and must have been specifically excluded earlier from the buildResultFolder to not get added.
 			if (new File(buildResultFolder, JarFile.MANIFEST_NAME).exists())
@@ -158,7 +160,7 @@ public class GatherBundleTask extends AbstractPublisherTask {
 				computer.addFile(buildResultFolder, API_DESCRIPTION);
 
 			//everything else
-			computer.addFiles(baseDirectory, (String[]) set.toArray(new String[set.size()]));
+			computer.addFiles(baseDirectory, set.toArray(new String[set.size()]));
 		}
 
 		boolean dotIncluded = false;
@@ -176,7 +178,7 @@ public class GatherBundleTask extends AbstractPublisherTask {
 				}
 
 				if (sourceMap.containsKey(name) && entries[i].getType() == CompiledEntry.FOLDER) {
-					Set folders = (Set) sourceMap.get(name);
+					Set folders = sourceMap.get(name);
 					processOutputFolders(folders, name, computer);
 				} else {
 					NameEntry fileInclude = fileSet.createInclude();
@@ -192,7 +194,7 @@ public class GatherBundleTask extends AbstractPublisherTask {
 		if (dotIncluded) {
 			//special handling for '.'
 			if (sourceMap.containsKey(ModelBuildScriptGenerator.DOT)) {
-				Set folders = (Set) sourceMap.get(ModelBuildScriptGenerator.DOT);
+				Set folders = sourceMap.get(ModelBuildScriptGenerator.DOT);
 				processOutputFolders(folders, ModelBuildScriptGenerator.DOT, computer);
 			} else {
 				fileSet = new FileSet();
@@ -270,10 +272,10 @@ public class GatherBundleTask extends AbstractPublisherTask {
 	public void addConfiguredOutputFolder(OutputFileSet output) {
 		String key = output.getLibrary();
 		if (sourceMap.containsKey(key)) {
-			Set set = (Set) sourceMap.get(key);
+			Set<OutputFileSet> set = sourceMap.get(key);
 			set.add(output);
 		} else {
-			Set set = new HashSet();
+			Set<OutputFileSet> set = new HashSet<OutputFileSet>();
 			set.add(output);
 			sourceMap.put(key, set);
 		}

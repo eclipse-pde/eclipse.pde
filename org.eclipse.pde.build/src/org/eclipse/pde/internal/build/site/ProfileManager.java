@@ -28,7 +28,7 @@ public class ProfileManager {
 	public static final String PROFILE_JAVAC_SOURCE = "org.eclipse.jdt.core.compiler.source"; //$NON-NLS-1$
 	public static final String PROFILE_JAVAC_TARGET = "org.eclipse.jdt.core.compiler.codegen.targetPlatform"; //$NON-NLS-1$
 
-	private final HashMap profileMap = new HashMap();
+	private final HashMap<String, Properties> profileMap = new HashMap();
 	private String[] profileSources = null;
 
 	public ProfileManager() {
@@ -46,7 +46,7 @@ public class ProfileManager {
 	}
 
 	public Properties getProfileProperties(String profileName) {
-		return (Properties) profileMap.get(profileName);
+		return profileMap.get(profileName);
 	}
 
 	public void copyEEProfileProperties(Dictionary source, Properties target) {
@@ -66,7 +66,7 @@ public class ProfileManager {
 	 */
 	public String getJavacSource(String environment) {
 		if (profileMap.containsKey(environment)) {
-			Properties properties = (Properties) profileMap.get(environment);
+			Properties properties = profileMap.get(environment);
 			return properties.getProperty(PROFILE_JAVAC_SOURCE);
 		}
 		return null;
@@ -79,7 +79,7 @@ public class ProfileManager {
 	 */
 	public String getJavacTarget(String environment) {
 		if (profileMap.containsKey(environment)) {
-			Properties properties = (Properties) profileMap.get(environment);
+			Properties properties = profileMap.get(environment);
 			return properties.getProperty(PROFILE_JAVAC_TARGET);
 		}
 		return null;
@@ -264,7 +264,7 @@ public class ProfileManager {
 				try {
 					props.load(is);
 					if (props.containsKey(PROFILE_NAME))
-						profileMap.put(props.get(PROFILE_NAME), props);
+						profileMap.put((String) props.get(PROFILE_NAME), props);
 				} catch (IOException e) {
 					//boo
 				} finally {

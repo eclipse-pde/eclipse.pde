@@ -166,13 +166,13 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 	public static String[] getArrayFromString(String list, String separator) {
 		if (list == null || list.trim().equals("")) //$NON-NLS-1$
 			return new String[0];
-		List result = new ArrayList();
+		List<String> result = new ArrayList<String>();
 		for (StringTokenizer tokens = new StringTokenizer(list, separator); tokens.hasMoreTokens();) {
 			String token = tokens.nextToken().trim();
 			if (!token.equals("")) //$NON-NLS-1$
 				result.add(token);
 		}
-		return (String[]) result.toArray(new String[result.size()]);
+		return result.toArray(new String[result.size()]);
 	}
 
 	/**
@@ -233,14 +233,14 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 		}
 	}
 
-	public static URL[] asURL(Collection target) throws CoreException {
+	public static URL[] asURL(Collection<File> target) throws CoreException {
 		if (target == null)
 			return null;
 		try {
 			URL[] result = new URL[target.size()];
 			int i = 0;
-			for (Iterator iter = target.iterator(); iter.hasNext();) {
-				result[i++] = ((File) iter.next()).toURL();
+			for (Iterator<File> iter = target.iterator(); iter.hasNext();) {
+				result[i++] = iter.next().toURL();
 			}
 			return result;
 		} catch (MalformedURLException e) {
@@ -429,28 +429,28 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 			plugins = feature.getRawPluginEntries();
 		else
 			plugins = feature.getPluginEntries();
-		List foundEntries = new ArrayList(5);
+		List<FeatureEntry> foundEntries = new ArrayList<FeatureEntry>(5);
 
 		for (int i = 0; i < plugins.length; i++) {
 			if (plugins[i].getId().equals(pluginId))
 				foundEntries.add(plugins[i]);
 		}
-		return (FeatureEntry[]) foundEntries.toArray(new FeatureEntry[foundEntries.size()]);
+		return foundEntries.toArray(new FeatureEntry[foundEntries.size()]);
 
 	}
 
 	// Return a collection of File, the result can be null
-	public static Collection findFiles(File from, String foldername, final String filename) {
+	public static Collection<File> findFiles(File from, String foldername, final String filename) {
 		// if from is a file which name match filename, then simply return the
 		// file
 		File root = from;
 		if (root.isFile() && root.getName().equals(filename)) {
-			Collection coll = new ArrayList(1);
+			Collection<File> coll = new ArrayList<File>(1);
 			coll.add(root);
 			return coll;
 		}
 
-		Collection collectedElements = new ArrayList(10);
+		Collection<File> collectedElements = new ArrayList<File>(10);
 
 		File[] featureDirectoryContent = new File(from, foldername).listFiles();
 		if (featureDirectoryContent == null)
@@ -528,13 +528,13 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 		return copiedFiles;
 	}
 
-	public static List extractPlugins(List initialList, Set toExtract) {
+	public static List<BundleDescription> extractPlugins(List<BundleDescription> initialList, Set<BundleDescription> toExtract) {
 		//TODO This algorithm needs to be  improved
 		if (initialList.size() == toExtract.size())
 			return initialList;
-		List result = new ArrayList(toExtract.size());
-		for (Iterator iter = initialList.iterator(); iter.hasNext();) {
-			Object element = iter.next();
+		List<BundleDescription> result = new ArrayList<BundleDescription>(toExtract.size());
+		for (Iterator<BundleDescription> iter = initialList.iterator(); iter.hasNext();) {
+			BundleDescription element = iter.next();
 			if (toExtract.contains(element)) {
 				result.add(element);
 				if (result.size() == toExtract.size())
@@ -576,8 +576,8 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 	 * @param mergeCommon - whether or not to merge the common properties into each config
 	 * @return Map
 	 */
-	static public Map processRootProperties(Properties properties, boolean mergeCommon) {
-		Map map = new HashMap();
+	static public Map<String, Map> processRootProperties(Properties properties, boolean mergeCommon) {
+		Map<String, Map> map = new HashMap<String, Map>();
 		Map common = new HashMap();
 		for (Enumeration keys = properties.keys(); keys.hasMoreElements();) {
 			String entry = (String) keys.nextElement();
@@ -602,7 +602,7 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 			}
 
 			if (config != null) {
-				Map submap = (config.length() == 0) ? common : (Map) map.get(config);
+				Map submap = (config.length() == 0) ? common : map.get(config);
 				if (submap == null) {
 					submap = new HashMap();
 					map.put(config, submap);
@@ -618,9 +618,9 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 
 		//merge the common properties into each of the configs
 		if (common.size() > 0 && mergeCommon) {
-			for (Iterator iterator = map.keySet().iterator(); iterator.hasNext();) {
-				String key = (String) iterator.next();
-				Map submap = (Map) map.get(key);
+			for (Iterator<String> iterator = map.keySet().iterator(); iterator.hasNext();) {
+				String key = iterator.next();
+				Map submap = map.get(key);
 				for (Iterator commonKeys = common.keySet().iterator(); commonKeys.hasNext();) {
 					String commonKey = (String) commonKeys.next();
 					if (submap.containsKey(commonKey)) {
@@ -785,7 +785,7 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 		}
 		for (int i = 0; i < elements.length; i++) {
 			String key = elements[i].getValue();
-			HashMap subMap = new HashMap(2);
+			HashMap<String, String> subMap = new HashMap<String, String>(2);
 			map.put(key, subMap);
 			for (Enumeration e = elements[i].getDirectiveKeys(); e != null && e.hasMoreElements();) {
 				String directive = (String) e.nextElement();
@@ -807,8 +807,8 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 	public static final String EXTRA_WS = "ws"; //$NON-NLS-1$
 	public static final String EXTRA_ARCH = "arch"; //$NON-NLS-1$
 
-	public static Map parseExtraBundlesString(String input, boolean onlyId) {
-		Map results = new HashMap();
+	public static Map<String, Comparable> parseExtraBundlesString(String input, boolean onlyId) {
+		Map<String, Comparable> results = new HashMap<String, Comparable>();
 		StringTokenizer tokenizer = null;
 		if (onlyId)
 			if (input.startsWith("plugin@")) //$NON-NLS-1$

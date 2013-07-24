@@ -45,7 +45,7 @@ public class RootFileParentAction extends AbstractPublisherAction {
 		final String idPrefix = baseId + ".rootfiles"; //$NON-NLS-1$
 		final String flavorPrefix = flavor + baseId + ".rootfiles"; //$NON-NLS-1$
 
-		HashSet collector = new HashSet();
+		HashSet<IInstallableUnit> collector = new HashSet<IInstallableUnit>();
 		Iterator iter = results.getIUs(null, IPublisherResult.NON_ROOT).iterator();
 		while (iter.hasNext()) {
 			IInstallableUnit iu = (IInstallableUnit) iter.next();

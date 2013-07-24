@@ -86,8 +86,8 @@ public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerat
 	 * @param element
 	 * @return List
 	 */
-	public List selectConfigs(IPlatformEntry element) {
-		List result = new ArrayList(getConfigInfos());
+	public List<Config> selectConfigs(IPlatformEntry element) {
+		List<Config> result = new ArrayList<Config>(getConfigInfos());
 
 		if (((element.getOS() == null || element.getOS().equals(Config.ANY)) && includePlatformIndependent == false) && ((element.getWS() == null || element.getWS().equals(Config.ANY)) && includePlatformIndependent == false) && ((element.getArch() == null || element.getArch().equals(Config.ANY)) && includePlatformIndependent == false)) {
 			result.clear();
@@ -95,22 +95,22 @@ public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerat
 		}
 
 		if (element.getOS() != null && !element.getOS().equals(Config.ANY)) {
-			for (Iterator iter = result.iterator(); iter.hasNext();) {
-				Config config = (Config) iter.next();
+			for (Iterator<Config> iter = result.iterator(); iter.hasNext();) {
+				Config config = iter.next();
 				if (!isMatching(element.getOS(), config.getOs()))
 					iter.remove();
 			}
 		}
 		if (element.getWS() != null && !element.getWS().equals(Config.ANY)) {
-			for (Iterator iter = result.iterator(); iter.hasNext();) {
-				Config config = (Config) iter.next();
+			for (Iterator<Config> iter = result.iterator(); iter.hasNext();) {
+				Config config = iter.next();
 				if (!isMatching(element.getWS(), config.getWs()))
 					iter.remove();
 			}
 		}
 		if (element.getArch() != null && !element.getArch().equals(Config.ANY)) {
-			for (Iterator iter = result.iterator(); iter.hasNext();) {
-				Config config = (Config) iter.next();
+			for (Iterator<Config> iter = result.iterator(); iter.hasNext();) {
+				Config config = iter.next();
 				if (!isMatching(element.getArch(), config.getArch()))
 					iter.remove();
 			}

@@ -79,6 +79,7 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 
 	}
 
+	@Override
 	public void generate() throws CoreException {
 		if (feature.isBinary())
 			return;
@@ -288,8 +289,8 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 
 	private void generatePublishBinPartsTarget() throws CoreException {
 		Properties properties = getBuildProperties();
-		Map root = Utils.processRootProperties(properties, true);
-		Map common = (Map) root.get(Utils.ROOT_COMMON);
+		Map<String, Map> root = Utils.processRootProperties(properties, true);
+		Map common = root.get(Utils.ROOT_COMMON);
 		for (Iterator iter = getConfigInfos().iterator(); iter.hasNext();) {
 			Config aConfig = (Config) iter.next();
 			String configKey = aConfig.toString("."); //$NON-NLS-1$
@@ -497,8 +498,8 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 	private void generateCopyRootFiles(Config aConfig) throws CoreException {
 		Properties properties = getBuildProperties();
 		String configKey = aConfig.toString("."); //$NON-NLS-1$
-		Map root = Utils.processRootProperties(properties, true);
-		Map foldersToCopy = root.containsKey(configKey) ? (Map) root.get(configKey) : (Map) root.get(Utils.ROOT_COMMON);
+		Map<String, Map> root = Utils.processRootProperties(properties, true);
+		Map foldersToCopy = root.containsKey(configKey) ? root.get(configKey) : root.get(Utils.ROOT_COMMON);
 		if (foldersToCopy == null || foldersToCopy.isEmpty())
 			return;
 
@@ -632,13 +633,13 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 	 * @throws CoreException
 	 */
 	protected void generateAllPluginsTarget() throws CoreException {
-		Set plugins = computeElements();
-		List sortedPlugins = Utils.extractPlugins(getSite(false).getRegistry().getSortedBundles(), plugins);
+		Set<BundleDescription> plugins = computeElements();
+		List<BundleDescription> sortedPlugins = Utils.extractPlugins(getSite(false).getRegistry().getSortedBundles(), plugins);
 		script.println();
 		script.printTargetDeclaration(TARGET_ALL_PLUGINS, TARGET_INIT, null, null, null);
-		Set writtenCalls = new HashSet(sortedPlugins.size());
-		for (Iterator iter = sortedPlugins.iterator(); iter.hasNext();) {
-			BundleDescription current = (BundleDescription) iter.next();
+		Set<BundleDescription> writtenCalls = new HashSet<BundleDescription>(sortedPlugins.size());
+		for (Iterator<BundleDescription> iter = sortedPlugins.iterator(); iter.hasNext();) {
+			BundleDescription current = iter.next();
 			//If it is not a compiled element, then we don't generate a call
 			Properties bundleProperties = (Properties) current.getUserObject();
 			if (bundleProperties == null || bundleProperties.get(IS_COMPILED) == null || bundleProperties.get(IS_COMPILED) == Boolean.FALSE)
@@ -668,8 +669,8 @@ public class FeatureBuildScriptGenerator extends AbstractScriptGenerator {
 		script.printTargetEnd();
 	}
 
-	protected Set computeElements() throws CoreException {
-		Set computedElements = new LinkedHashSet(5);
+	protected Set<BundleDescription> computeElements() throws CoreException {
+		Set<BundleDescription> computedElements = new LinkedHashSet<BundleDescription>(5);
 		FeatureEntry[] pluginList = feature.getPluginEntries();
 		for (int i = 0; i < pluginList.length; i++) {
 			FeatureEntry entry = pluginList[i];

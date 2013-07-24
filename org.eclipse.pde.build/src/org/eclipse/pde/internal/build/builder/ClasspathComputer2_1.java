@@ -38,10 +38,10 @@ public class ClasspathComputer2_1 implements IClasspathComputer, IPDEBuildConsta
 	 * @return String the classpath
 	 * @throws CoreException
 	 */
-	public List getClasspath(BundleDescription model, ModelBuildScriptGenerator.CompiledEntry jar) throws CoreException {
-		List classpath = new ArrayList(20);
-		List pluginChain = new ArrayList(10);
-		Set addedPlugins = new HashSet(20);
+	public List<Object> getClasspath(BundleDescription model, ModelBuildScriptGenerator.CompiledEntry jar) throws CoreException {
+		List<Object> classpath = new ArrayList<Object>(20);
+		List<BundleDescription> pluginChain = new ArrayList<BundleDescription>(10);
+		Set<BundleDescription> addedPlugins = new HashSet<BundleDescription>(20);
 		String location = generator.getLocation(model);
 
 		//PARENT
@@ -64,7 +64,7 @@ public class ClasspathComputer2_1 implements IClasspathComputer, IPDEBuildConsta
 	 * @param location
 	 * @throws CoreException
 	 */
-	private void addPlugin(BundleDescription plugin, List classpath, String location) throws CoreException {
+	private void addPlugin(BundleDescription plugin, List<Object> classpath, String location) throws CoreException {
 		addRuntimeLibraries(plugin, classpath, location);
 		addFragmentsLibraries(plugin, classpath, location);
 	}
@@ -76,7 +76,7 @@ public class ClasspathComputer2_1 implements IClasspathComputer, IPDEBuildConsta
 	 * @param baseLocation
 	 * @throws CoreException
 	 */
-	private void addRuntimeLibraries(BundleDescription model, List classpath, String baseLocation) throws CoreException {
+	private void addRuntimeLibraries(BundleDescription model, List<Object> classpath, String baseLocation) throws CoreException {
 		String[] libraries = getClasspathEntries(model);
 		String root = generator.getLocation(model);
 		IPath base = Utils.makeRelative(new Path(root), new Path(baseLocation));
@@ -108,7 +108,7 @@ public class ClasspathComputer2_1 implements IClasspathComputer, IPDEBuildConsta
 	 * @param baseLocation
 	 * @throws CoreException
 	 */
-	private void addFragmentsLibraries(BundleDescription plugin, List classpath, String baseLocation) throws CoreException {
+	private void addFragmentsLibraries(BundleDescription plugin, List<Object> classpath, String baseLocation) throws CoreException {
 		// if plugin is not a plugin, it's a fragment and there is no fragment for a fragment. So we return.
 		BundleDescription[] fragments = plugin.getFragments();
 		if (fragments == null)
@@ -133,7 +133,7 @@ public class ClasspathComputer2_1 implements IClasspathComputer, IPDEBuildConsta
 	 * @param baseLocation
 	 * @throws CoreException
 	 */
-	private void addPluginLibrariesToFragmentLocations(BundleDescription plugin, BundleDescription fragment, List classpath, String baseLocation) throws CoreException {
+	private void addPluginLibrariesToFragmentLocations(BundleDescription plugin, BundleDescription fragment, List<Object> classpath, String baseLocation) throws CoreException {
 		//TODO This methods causes the addition of a lot of useless entries. See bug #35544
 		//If we reintroduce the test below, we reintroduce the problem 35544	
 		//	if (fragment.getRuntime() != null)
@@ -160,7 +160,7 @@ public class ClasspathComputer2_1 implements IClasspathComputer, IPDEBuildConsta
 	// Add a path into the classpath for a given model
 	// path : The path to add
 	// classpath : The classpath in which we want to add this path 
-	private void addPathAndCheck(BundleDescription model, IPath basePath, String libraryName, Properties modelProperties, List classpath) {
+	private void addPathAndCheck(BundleDescription model, IPath basePath, String libraryName, Properties modelProperties, List<Object> classpath) {
 		String pluginKey = model != null ? model.getSymbolicName() + "_" + model.getVersion() : null; //$NON-NLS-1$
 		String path = basePath.append(libraryName).toString();
 		path = ModelBuildScriptGenerator.replaceVariables(path, pluginKey == null ? false : generator.getCompiledElements().contains(pluginKey));
@@ -172,7 +172,7 @@ public class ClasspathComputer2_1 implements IClasspathComputer, IPDEBuildConsta
 			classpath.add(path);
 	}
 
-	private void addSelf(BundleDescription model, ModelBuildScriptGenerator.CompiledEntry jar, List classpath, String location, List pluginChain, Set addedPlugins) throws CoreException {
+	private void addSelf(BundleDescription model, ModelBuildScriptGenerator.CompiledEntry jar, List<Object> classpath, String location, List<BundleDescription> pluginChain, Set<BundleDescription> addedPlugins) throws CoreException {
 		// If model is a fragment, we need to add in the classpath the plugin to which it is related
 		HostSpecification host = model.getHost();
 		if (host != null) {
@@ -299,13 +299,13 @@ public class ClasspathComputer2_1 implements IClasspathComputer, IPDEBuildConsta
 	}
 
 	//Add the prerequisite of a given plugin (target)
-	private void addPrerequisites(BundleDescription target, List classpath, String baseLocation, List pluginChain, Set addedPlugins) throws CoreException {
+	private void addPrerequisites(BundleDescription target, List<Object> classpath, String baseLocation, List<BundleDescription> pluginChain, Set<BundleDescription> addedPlugins) throws CoreException {
 
 		if (pluginChain.contains(target)) {
 			if (target == getPlugin(PI_RUNTIME, null))
 				return;
 			String cycleString = ""; //$NON-NLS-1$
-			for (Iterator iter = pluginChain.iterator(); iter.hasNext();)
+			for (Iterator<BundleDescription> iter = pluginChain.iterator(); iter.hasNext();)
 				cycleString += iter.next().toString() + ", "; //$NON-NLS-1$
 			cycleString += target.toString();
 			String message = NLS.bind(Messages.error_pluginCycle, cycleString);
@@ -347,7 +347,7 @@ public class ClasspathComputer2_1 implements IClasspathComputer, IPDEBuildConsta
 	 * @param addedPlugins 
 	 * @throws CoreException
 	 */
-	private void addPluginAndPrerequisites(BundleDescription target, List classpath, String baseLocation, List pluginChain, Set addedPlugins) throws CoreException {
+	private void addPluginAndPrerequisites(BundleDescription target, List<Object> classpath, String baseLocation, List<BundleDescription> pluginChain, Set<BundleDescription> addedPlugins) throws CoreException {
 		addPlugin(target, classpath, baseLocation);
 		addPrerequisites(target, classpath, baseLocation, pluginChain, addedPlugins);
 	}
@@ -358,7 +358,7 @@ public class ClasspathComputer2_1 implements IClasspathComputer, IPDEBuildConsta
 	 * @param baseLocation
 	 * @param classpath
 	 */
-	private void addDevEntries(BundleDescription model, String baseLocation, List classpath, String[] jarSpecificEntries) {
+	private void addDevEntries(BundleDescription model, String baseLocation, List<Object> classpath, String[] jarSpecificEntries) {
 		if (generator.devEntries == null && (jarSpecificEntries == null || jarSpecificEntries.length == 0))
 			return;
 

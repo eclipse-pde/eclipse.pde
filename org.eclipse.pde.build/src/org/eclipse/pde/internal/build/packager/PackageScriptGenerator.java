@@ -56,7 +56,7 @@ public class PackageScriptGenerator extends AssembleScriptGenerator {
 	protected void basicGenerateAssembleConfigFileTargetCall(Config aConfig, Collection binaryPlugins, Collection binaryFeatures, Collection allFeatures, Collection rootFiles) throws CoreException {
 		configScriptGenerator.initialize(directory, featureId, aConfig, binaryPlugins, binaryFeatures, allFeatures, rootFiles);
 		((PackageConfigScriptGenerator) configScriptGenerator).setPackagingPropertiesLocation(packagingPropertiesLocation);
-		configScriptGenerator.setArchiveFormat((String) archivesFormat.get(aConfig));
+		configScriptGenerator.setArchiveFormat(archivesFormat.get(aConfig));
 		configScriptGenerator.setGroupConfigs(groupConfigs || BuildDirector.p2Gathering);
 		setForceUpdateJar(forceUpdateJarFormat);
 		configScriptGenerator.setBuildSiteFactory(siteFactory);

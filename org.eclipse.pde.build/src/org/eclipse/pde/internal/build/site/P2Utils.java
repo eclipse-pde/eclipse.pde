@@ -44,7 +44,7 @@ public class P2Utils {
 		File bundlesTxt = new File(root, "configuration/" + SimpleConfiguratorManipulator.BUNDLES_INFO_PATH); //$NON-NLS-1$
 		File sourceTxt = new File(root, "configuration/" + SimpleConfiguratorManipulator.SOURCE_INFO_PATH); //$NON-NLS-1$
 
-		List infos = new ArrayList();
+		List<BundleInfo> infos = new ArrayList<BundleInfo>();
 		try {
 			//streams are closed for us
 			if (bundlesTxt.exists())
@@ -64,7 +64,7 @@ public class P2Utils {
 			bundles = new URL[infos.size()];
 			for (int i = 0; i < bundles.length; i++) {
 				try {
-					bundles[i] = new File(((BundleInfo) infos.get(i)).getLocation()).toURL();
+					bundles[i] = new File(infos.get(i).getLocation()).toURL();
 				} catch (MalformedURLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -89,9 +89,9 @@ public class P2Utils {
 	 * @param directory directory to create the bundles.info and source.info files in
 	 * @return URL location of the bundles.info or <code>null</code>
 	 */
-	public static File writeBundlesTxt(Collection bundles, File directory, ProductFile productFile, boolean refactoredRuntime) {
-		List bundleInfos = new ArrayList(bundles.size());
-		List sourceInfos = new ArrayList(bundles.size());
+	public static File writeBundlesTxt(Collection<Object> bundles, File directory, ProductFile productFile, boolean refactoredRuntime) {
+		List<BundleInfo> bundleInfos = new ArrayList<BundleInfo>(bundles.size());
+		List<BundleInfo> sourceInfos = new ArrayList<BundleInfo>(bundles.size());
 		ShapeAdvisor advisor = new ShapeAdvisor();
 
 		int defaultStartLevel = 4;
@@ -104,9 +104,9 @@ public class P2Utils {
 			}
 		}
 
-		Map userInfos = productFile != null ? productFile.getConfigurationInfo() : null;
+		Map<String, BundleInfo> userInfos = productFile != null ? productFile.getConfigurationInfo() : null;
 
-		for (Iterator iterator = bundles.iterator(); iterator.hasNext();) {
+		for (Iterator<Object> iterator = bundles.iterator(); iterator.hasNext();) {
 			BundleDescription desc = (BundleDescription) iterator.next();
 			if (desc != null) {
 				String modelName = desc.getSymbolicName();
@@ -123,7 +123,7 @@ public class P2Utils {
 				info.setVersion(desc.getVersion().toString());
 				if (userInfos != null && userInfos.size() > 0) {
 					if (userInfos.containsKey(modelName)) {
-						BundleInfo userInfo = (BundleInfo) userInfos.get(modelName);
+						BundleInfo userInfo = userInfos.get(modelName);
 						int start = userInfo.getStartLevel();
 						if (start <= 0)
 							start = defaultStartLevel;
@@ -168,8 +168,8 @@ public class P2Utils {
 		File srcBundlesTxt = new File(directory, SimpleConfiguratorManipulator.SOURCE_INFO_PATH);
 		File base = directory.getParentFile();
 
-		BundleInfo[] infos = (BundleInfo[]) bundleInfos.toArray(new BundleInfo[bundleInfos.size()]);
-		BundleInfo[] sources = (BundleInfo[]) sourceInfos.toArray(new BundleInfo[sourceInfos.size()]);
+		BundleInfo[] infos = bundleInfos.toArray(new BundleInfo[bundleInfos.size()]);
+		BundleInfo[] sources = sourceInfos.toArray(new BundleInfo[sourceInfos.size()]);
 
 		SimpleConfiguratorManipulator manipulator = (SimpleConfiguratorManipulator) BundleHelper.getDefault().acquireService(SimpleConfiguratorManipulator.class.getName());
 		try {

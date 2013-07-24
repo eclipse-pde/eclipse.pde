@@ -50,18 +50,18 @@ public class BuildTimeFeature extends Feature {
 	private String rootLocation = null;
 
 	public FeatureEntry[] getRawIncludedFeatureReferences() {
-		ArrayList included = new ArrayList();
+		ArrayList<FeatureEntry> included = new ArrayList<FeatureEntry>();
 		FeatureEntry[] entries = getEntries();
 		for (int i = 0; i < entries.length; i++) {
 			if (entries[i].isRequires() || entries[i].isPlugin())
 				continue;
 			included.add(entries[i]);
 		}
-		return (FeatureEntry[]) included.toArray(new FeatureEntry[included.size()]);
+		return included.toArray(new FeatureEntry[included.size()]);
 	}
 
 	public FeatureEntry[] getIncludedFeatureReferences() {
-		ArrayList included = new ArrayList();
+		ArrayList<FeatureEntry> included = new ArrayList<FeatureEntry>();
 		FeatureEntry[] entries = getEntries();
 		for (int i = 0; i < entries.length; i++) {
 			if (entries[i].isRequires() || entries[i].isPlugin())
@@ -72,11 +72,11 @@ public class BuildTimeFeature extends Feature {
 			}
 		}
 
-		return (FeatureEntry[]) included.toArray(new FeatureEntry[included.size()]);
+		return included.toArray(new FeatureEntry[included.size()]);
 	}
 
 	public FeatureEntry[] getPluginEntries() {
-		ArrayList plugins = new ArrayList();
+		ArrayList<FeatureEntry> plugins = new ArrayList<FeatureEntry>();
 		FeatureEntry[] entries = getEntries();
 		for (int i = 0; i < entries.length; i++) {
 			if (entries[i].isRequires() || !entries[i].isPlugin())
@@ -85,29 +85,29 @@ public class BuildTimeFeature extends Feature {
 				plugins.add(entries[i]);
 			}
 		}
-		return (FeatureEntry[]) plugins.toArray(new FeatureEntry[plugins.size()]);
+		return plugins.toArray(new FeatureEntry[plugins.size()]);
 	}
 
 	public FeatureEntry[] getRawPluginEntries() {
-		ArrayList plugins = new ArrayList();
+		ArrayList<FeatureEntry> plugins = new ArrayList<FeatureEntry>();
 		FeatureEntry[] entries = getEntries();
 		for (int i = 0; i < entries.length; i++) {
 			if (entries[i].isRequires() || !entries[i].isPlugin())
 				continue;
 			plugins.add(entries[i]);
 		}
-		return (FeatureEntry[]) plugins.toArray(new FeatureEntry[plugins.size()]);
+		return plugins.toArray(new FeatureEntry[plugins.size()]);
 	}
 
 	public FeatureEntry[] getImports() {
-		ArrayList imports = new ArrayList();
+		ArrayList<FeatureEntry> imports = new ArrayList<FeatureEntry>();
 		FeatureEntry[] entries = getEntries();
 		for (int i = 0; i < entries.length; i++) {
 			if (!entries[i].isRequires())
 				continue;
 			imports.add(entries[i]);
 		}
-		return (FeatureEntry[]) imports.toArray(new FeatureEntry[imports.size()]);
+		return imports.toArray(new FeatureEntry[imports.size()]);
 	}
 
 	public boolean isBinary() {

@@ -8,6 +8,8 @@
  ******************************************************************************/
 package org.eclipse.pde.internal.build;
 
+import java.util.Set;
+
 import java.util.*;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 
@@ -16,22 +18,22 @@ public class SourceFeatureInformation implements IPDEBuildConstants {
 	// Value : the list of plugins that needs to get copied into the given source bundle
 	// This list will be used to build the content of the fragment that contains 
 	// config specific code
-	private Map sourceFeatureInformation = new HashMap(8);
+	private Map<String, Set> sourceFeatureInformation = new HashMap<String, Set>(8);
 
 	public SourceFeatureInformation() {
 		//empty
 	}
 
 	public void addElementEntry(String bundle, BundleDescription plugin) {
-		Set entry = (Set) sourceFeatureInformation.get(bundle);
+		Set<BundleDescription> entry = sourceFeatureInformation.get(bundle);
 		if (entry == null) {
-			entry = new HashSet();
+			entry = new HashSet<BundleDescription>();
 			sourceFeatureInformation.put(bundle, entry);
 		}
 		entry.add(plugin);
 	}
 
-	public Map getElementEntries() {
+	public Map<String, Set> getElementEntries() {
 		return sourceFeatureInformation;
 	}
 }

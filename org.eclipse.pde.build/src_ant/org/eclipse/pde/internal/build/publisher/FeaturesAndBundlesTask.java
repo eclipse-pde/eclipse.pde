@@ -24,8 +24,8 @@ import org.eclipse.equinox.p2.publisher.eclipse.BundlesAction;
 import org.eclipse.equinox.p2.publisher.eclipse.FeaturesAction;
 
 public class FeaturesAndBundlesTask extends AbstractPublisherTask {
-	private final ArrayList features = new ArrayList();
-	private final ArrayList bundles = new ArrayList();
+	private final ArrayList<FileSet> features = new ArrayList<FileSet>();
+	private final ArrayList<FileSet> bundles = new ArrayList<FileSet>();
 	private URI siteXML = null;
 	private URI categoryXML = null;
 	private String siteQualifier = ""; //$NON-NLS-1$
@@ -61,10 +61,10 @@ public class FeaturesAndBundlesTask extends AbstractPublisherTask {
 		}
 	}
 
-	private File[] getLocations(List collection) {
-		ArrayList results = new ArrayList();
-		for (Iterator iterator = collection.iterator(); iterator.hasNext();) {
-			FileSet set = (FileSet) iterator.next();
+	private File[] getLocations(List<FileSet> collection) {
+		ArrayList<File> results = new ArrayList<File>();
+		for (Iterator<FileSet> iterator = collection.iterator(); iterator.hasNext();) {
+			FileSet set = iterator.next();
 
 			DirectoryScanner scanner = set.getDirectoryScanner(getProject());
 			String[][] elements = new String[][] {scanner.getIncludedDirectories(), scanner.getIncludedFiles()};
@@ -74,7 +74,7 @@ public class FeaturesAndBundlesTask extends AbstractPublisherTask {
 				}
 			}
 		}
-		return (File[]) results.toArray(new File[results.size()]);
+		return results.toArray(new File[results.size()]);
 	}
 
 	public FileSet createFeatures() {

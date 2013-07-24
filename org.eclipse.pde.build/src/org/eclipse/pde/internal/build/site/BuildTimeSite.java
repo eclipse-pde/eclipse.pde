@@ -33,7 +33,7 @@ import org.osgi.framework.Version;
 public class BuildTimeSite /*extends Site*/implements IPDEBuildConstants, IXMLConstants {
 	private final BuildTimeFeatureFactory factory = new BuildTimeFeatureFactory();
 	private final Map /*of BuildTimeFeature*/featureCache = new HashMap();
-	private List /*of FeatureReference*/featureReferences;
+	private List /*of FeatureReference*/<FeatureReference> featureReferences;
 	private BuildTimeSiteContentProvider contentProvider;
 	private boolean featuresResolved = false;
 
@@ -48,11 +48,11 @@ public class BuildTimeSite /*extends Site*/implements IPDEBuildConstants, IXMLCo
 	private List rootPluginsForFiler;
 	private boolean filter = false;
 
-	private final Comparator featureComparator = new Comparator() {
+	private final Comparator<Feature> featureComparator = new Comparator<Feature>() {
 		// Sort highest to lowest version, they are assumed to have the same id
-		public int compare(Object arg0, Object arg1) {
-			Version v0 = new Version(((Feature) arg0).getVersion());
-			Version v1 = new Version(((Feature) arg1).getVersion());
+		public int compare(Feature arg0, Feature arg1) {
+			Version v0 = new Version(arg0.getVersion());
+			Version v1 = new Version(arg1.getVersion());
 			return -1 * v0.compareTo(v1);
 		}
 	};
@@ -87,21 +87,22 @@ public class BuildTimeSite /*extends Site*/implements IPDEBuildConstants, IXMLCo
 	 * @deprecated
 	 * @return PDEState
 	 */
+	@Deprecated
 	private PDEState createConverter() {
 		return new PluginRegistryConverter();
 	}
 
-	private Dictionary getUIPlatformProperties() {
-		Dictionary result = new Hashtable();
+	private Properties getUIPlatformProperties() {
+		Properties result = new Properties();
 		result.put(IPDEBuildConstants.PROPERTY_RESOLVE_OPTIONAL, IBuildPropertiesConstants.TRUE);
 		result.put(IPDEBuildConstants.PROPERTY_RESOLVER_MODE, IPDEBuildConstants.VALUE_DEVELOPMENT);
 		return result;
 	}
 
-	private Collection removeDuplicates(Collection bundles) {
-		Set result = new LinkedHashSet(bundles.size() / 2);
-		for (Iterator iterator = bundles.iterator(); iterator.hasNext();) {
-			File bundle = (File) iterator.next();
+	private Collection<File> removeDuplicates(Collection<File> bundles) {
+		Set<File> result = new LinkedHashSet<File>(bundles.size() / 2);
+		for (Iterator<File> iterator = bundles.iterator(); iterator.hasNext();) {
+			File bundle = iterator.next();
 			try {
 				bundle = bundle.getCanonicalFile();
 			} catch (IOException e) {
@@ -141,7 +142,7 @@ public class BuildTimeSite /*extends Site*/implements IPDEBuildConstants, IXMLCo
 				state = createConverter();
 			}
 
-			Collection bundles = removeDuplicates(provider.getPluginPaths());
+			Collection<File> bundles = removeDuplicates(provider.getPluginPaths());
 			state.addBundles(bundles);
 			state.setEESources(eeSources);
 
@@ -358,15 +359,15 @@ public class BuildTimeSite /*extends Site*/implements IPDEBuildConstants, IXMLCo
 
 	public void addFeatureReferenceModel(FeatureReference featureReference) {
 		if (this.featureReferences == null)
-			this.featureReferences = new ArrayList();
+			this.featureReferences = new ArrayList<FeatureReference>();
 
 		this.featureReferences.add(featureReference);
 		featuresResolved = false;
 	}
 
-	private SortedSet findAllReferencedPlugins() throws CoreException {
-		ArrayList rootFeatures = new ArrayList();
-		SortedSet allPlugins = new TreeSet();
+	private SortedSet<ReachablePlugin> findAllReferencedPlugins() throws CoreException {
+		ArrayList<BuildTimeFeature> rootFeatures = new ArrayList<BuildTimeFeature>();
+		SortedSet<ReachablePlugin> allPlugins = new TreeSet<ReachablePlugin>();
 		for (Iterator iter = rootFeaturesForFilter.iterator(); iter.hasNext();) {
 			BuildTimeFeature correspondingFeature = findFeature((String) iter.next(), (String) null, true);
 			if (correspondingFeature == null)
@@ -380,7 +381,7 @@ public class BuildTimeSite /*extends Site*/implements IPDEBuildConstants, IXMLCo
 		while (it < rootFeatures.size()) {
 			BuildTimeFeature toAnalyse = null;
 			try {
-				toAnalyse = (BuildTimeFeature) rootFeatures.get(it++);
+				toAnalyse = rootFeatures.get(it++);
 			} catch (RuntimeException e) {
 				e.printStackTrace();
 			}
@@ -398,7 +399,7 @@ public class BuildTimeSite /*extends Site*/implements IPDEBuildConstants, IXMLCo
 						//generate property may add extra plugins or features
 						String[] extraEntries = Utils.getArrayFromString(props.getProperty(IBuildPropertiesConstants.GENERATION_SOURCE_FEATURE_PREFIX + featureId));
 						for (int j = 1; j < extraEntries.length; j++) {
-							Map items = Utils.parseExtraBundlesString(extraEntries[j], true);
+							Map<String, Comparable> items = Utils.parseExtraBundlesString(extraEntries[j], true);
 							String id = (String) items.get(Utils.EXTRA_ID);
 							Version version = (Version) items.get(Utils.EXTRA_VERSION);
 							if (extraEntries[j].startsWith("feature@")) { //$NON-NLS-1$
@@ -454,7 +455,7 @@ public class BuildTimeSite /*extends Site*/implements IPDEBuildConstants, IXMLCo
 	public FeatureReference[] getRawFeatureReferences() {
 		if (featureReferences == null || featureReferences.size() == 0)
 			return new FeatureReference[0];
-		return (FeatureReference[]) featureReferences.toArray(new FeatureReference[featureReferences.size()]);
+		return featureReferences.toArray(new FeatureReference[featureReferences.size()]);
 	}
 
 	public void addPluginEntry(FeatureEntry pluginEntry) {
@@ -471,10 +472,10 @@ public class BuildTimeSite /*extends Site*/implements IPDEBuildConstants, IXMLCo
 		featureCache.put(url, feature);
 
 		if (featureCache.containsKey(feature.getId())) {
-			Set set = (Set) featureCache.get(feature.getId());
+			Set<BuildTimeFeature> set = (Set<BuildTimeFeature>) featureCache.get(feature.getId());
 			set.add(feature);
 		} else {
-			TreeSet set = new TreeSet(featureComparator);
+			TreeSet<BuildTimeFeature> set = new TreeSet<BuildTimeFeature>(featureComparator);
 			set.add(feature);
 			featureCache.put(feature.getId(), set);
 		}

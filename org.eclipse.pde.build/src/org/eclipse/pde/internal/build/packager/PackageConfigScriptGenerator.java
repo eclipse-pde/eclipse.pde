@@ -75,8 +75,8 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 			//nothing
 		}
 
-		ArrayList p2Features = BuildDirector.p2Gathering ? new ArrayList() : null;
-		ArrayList p2Bundles = BuildDirector.p2Gathering ? new ArrayList() : null;
+		ArrayList<FileSet> p2Features = BuildDirector.p2Gathering ? new ArrayList() : null;
+		ArrayList<FileSet> p2Bundles = BuildDirector.p2Gathering ? new ArrayList() : null;
 		for (int i = 0; i < plugins.length; i++) {
 			Path pluginLocation = new Path(plugins[i].getLocation());
 			String location = pluginLocation.toOSString();
@@ -113,7 +113,7 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 
 		if (BuildDirector.p2Gathering) {
 			String repo = "file:" + getWorkingDirectory() + "/buildRepo"; //$NON-NLS-1$ //$NON-NLS-2$
-			script.printP2PublishFeaturesAndBundles(repo, repo, (FileSet[]) p2Bundles.toArray(new FileSet[p2Bundles.size()]), (FileSet[]) p2Features.toArray(new FileSet[p2Features.size()]), Utils.getPropertyFormat(PROPERTY_P2_CATEGORY_SITE), Utils.getPropertyFormat(PROPERTY_P2_CATEGORY_PREFIX), Utils.getPropertyFormat(PROPERTY_P2_CATEGORY_DEFINITION), Utils.getPropertyFormat(PROPERTY_P2_CATEGORY_VERSION), contextMetadata);
+			script.printP2PublishFeaturesAndBundles(repo, repo, p2Bundles.toArray(new FileSet[p2Bundles.size()]), p2Features.toArray(new FileSet[p2Features.size()]), Utils.getPropertyFormat(PROPERTY_P2_CATEGORY_SITE), Utils.getPropertyFormat(PROPERTY_P2_CATEGORY_PREFIX), Utils.getPropertyFormat(PROPERTY_P2_CATEGORY_DEFINITION), Utils.getPropertyFormat(PROPERTY_P2_CATEGORY_VERSION), contextMetadata);
 		}
 
 		if (packagingProperties.size() != 0) {

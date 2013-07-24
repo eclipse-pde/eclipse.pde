@@ -30,6 +30,7 @@ public class CompilationScriptGenerator extends AbstractScriptGenerator {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.build.AbstractScriptGenerator#generate()
 	 */
+	@Override
 	public void generate() throws CoreException {
 		openScript(getWorkingDirectory(), getScriptName());
 		try {
@@ -87,18 +88,18 @@ public class CompilationScriptGenerator extends AbstractScriptGenerator {
 	}
 
 	private void generatePlugins() throws CoreException {
-		Set plugins = assemblyData.getAllCompiledPlugins();
-		List sortedPlugins = Utils.extractPlugins(getSite(false).getRegistry().getSortedBundles(), plugins);
+		Set<BundleDescription> plugins = assemblyData.getAllCompiledPlugins();
+		List<BundleDescription> sortedPlugins = Utils.extractPlugins(getSite(false).getRegistry().getSortedBundles(), plugins);
 		IPath basePath = new Path(workingDirectory);
 
-		Set bucket = null;
+		Set<Long> bucket = null;
 		if (parallel) {
-			bucket = new HashSet();
+			bucket = new HashSet<Long>();
 			script.printParallel(threadCount, threadsPerProcessor);
 		}
 
-		for (Iterator iterator = sortedPlugins.iterator(); iterator.hasNext();) {
-			BundleDescription bundle = (BundleDescription) iterator.next();
+		for (Iterator<BundleDescription> iterator = sortedPlugins.iterator(); iterator.hasNext();) {
+			BundleDescription bundle = iterator.next();
 			// Individual source bundles have empty build.jars targets, skip them
 			if (Utils.isSourceBundle(bundle))
 				continue;
@@ -120,7 +121,7 @@ public class CompilationScriptGenerator extends AbstractScriptGenerator {
 			script.printEndParallel();
 	}
 
-	private boolean requiredInBucket(BundleDescription bundle, Set bucket) {
+	private boolean requiredInBucket(BundleDescription bundle, Set<Long> bucket) {
 		Properties properties = (Properties) bundle.getUserObject();
 		if (properties != null) {
 			String required = properties.getProperty(PROPERTY_REQUIRED_BUNDLE_IDS);

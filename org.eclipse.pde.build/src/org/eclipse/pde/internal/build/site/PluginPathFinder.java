@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.build.site;
 
+import java.io.File;
+
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -68,7 +70,7 @@ public class PluginPathFinder {
 	 * @return array of ".../plugins" or ".../features" Files
 	 */
 	private static File[] getSites(String platformHome, boolean features) {
-		ArrayList sites = new ArrayList();
+		ArrayList<File> sites = new ArrayList<File>();
 
 		File file = new File(platformHome, features ? IPDEBuildConstants.DEFAULT_FEATURE_LOCATION : IPDEBuildConstants.DEFAULT_PLUGIN_LOCATION);
 		if (!features && !file.exists())
@@ -85,7 +87,7 @@ public class PluginPathFinder {
 				}
 			}
 		}
-		return (File[]) sites.toArray(new File[sites.size()]);
+		return sites.toArray(new File[sites.size()]);
 	}
 
 	private static List getDropins(String platformHome, boolean features) {
@@ -93,7 +95,7 @@ public class PluginPathFinder {
 		if (!dropins.exists())
 			return Collections.EMPTY_LIST;
 
-		ArrayList sites = new ArrayList();
+		ArrayList<File> sites = new ArrayList<File>();
 		ArrayList results = new ArrayList();
 
 		File[] contents = dropins.listFiles();
@@ -133,7 +135,7 @@ public class PluginPathFinder {
 			}
 		}
 
-		results.addAll(scanLocations((File[]) sites.toArray(new File[sites.size()])));
+		results.addAll(scanLocations(sites.toArray(new File[sites.size()])));
 		return results;
 	}
 

@@ -676,7 +676,7 @@ public class AntScript implements IAntScript {
 	 * @param id    - id for this structure
 	 * @param paths - list of paths. Paths are printed using path.toString()
 	 */
-	public void printPathStructure(String tag, String id, List paths) {
+	public void printPathStructure(String tag, String id, List<Object> paths) {
 		printTab();
 		print("<" + getEscaped(tag)); //$NON-NLS-1$
 		if (id != null)
@@ -686,7 +686,7 @@ public class AntScript implements IAntScript {
 
 		if (paths != null) {
 			indent++;
-			for (Iterator iter = paths.iterator(); iter.hasNext();) {
+			for (Iterator<Object> iter = paths.iterator(); iter.hasNext();) {
 				Object path = iter.next();
 				printTab();
 				print("<pathelement"); //$NON-NLS-1$

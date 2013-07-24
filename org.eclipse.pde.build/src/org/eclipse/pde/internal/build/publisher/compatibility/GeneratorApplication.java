@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.build.publisher.compatibility;
 
+import org.eclipse.equinox.p2.publisher.IPublisherAction;
+
 import java.io.File;
 import java.net.URI;
 import java.util.ArrayList;
@@ -43,7 +45,7 @@ public class GeneratorApplication extends AbstractPublisherApplication {
 
 		File sourceFile = source != null ? new File(source) : null;
 
-		List actions = new ArrayList();
+		List<IPublisherAction> actions = new ArrayList<IPublisherAction>();
 		switch (operation) {
 			case 0 :
 				if (product != null) {
@@ -81,7 +83,7 @@ public class GeneratorApplication extends AbstractPublisherApplication {
 		if (versionAdvice != null)
 			info.addAdvice(createVersionAdvice());
 
-		return (IPublisherAction[]) actions.toArray(new IPublisherAction[actions.size()]);
+		return actions.toArray(new IPublisherAction[actions.size()]);
 	}
 
 	protected IVersionAdvice createVersionAdvice() {

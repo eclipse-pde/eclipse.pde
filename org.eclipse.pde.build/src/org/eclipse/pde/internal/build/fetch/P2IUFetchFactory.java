@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.build.fetch;
 
+import org.eclipse.pde.internal.build.ant.FileSet;
+
+import java.util.ArrayList;
 import java.io.File;
 import java.util.*;
 import java.util.Map.Entry;
@@ -75,7 +78,7 @@ public class P2IUFetchFactory implements IFetchFactory {
 	private static final String TASK_REPO2RUNNABLE = "p2.repo2runnable"; //$NON-NLS-1$
 	private static final String TARGET_GET_IUS_FROM_REPO = "FetchIUsFromRepo"; //$NON-NLS-1$
 
-	private final Map iusToFetchBySource = new LinkedHashMap(2);
+	private final Map<String, ArrayList> iusToFetchBySource = new LinkedHashMap<String, ArrayList>(2);
 
 	/*
 	 * Helper method to throw an exception with the given message.
@@ -150,12 +153,12 @@ public class P2IUFetchFactory implements IFetchFactory {
 		String sourceRepository = (String) entryInfos.get(KEY_REPOSITORY);
 
 		if (!iusToFetchBySource.containsKey(sourceRepository)) {
-			iusToFetchBySource.put(sourceRepository, new ArrayList());
+			iusToFetchBySource.put(sourceRepository, new ArrayList<FileSet>());
 		}
 
 		IUFetchInfo iuFetchInfo = new IUFetchInfo((String) entryInfos.get(KEY_ID), (String) entryInfos.get(KEY_VERSION));
 
-		List iusToFetch = (List) iusToFetchBySource.get(sourceRepository);
+		List<IUFetchInfo> iusToFetch = iusToFetchBySource.get(sourceRepository);
 		if (!iusToFetch.contains(iuFetchInfo))
 			iusToFetch.add(iuFetchInfo);
 
