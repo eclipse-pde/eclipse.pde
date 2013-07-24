@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project default="main">
 
 	<property name="Eclipse.Repo-3.5M6" value="http://download.eclipse.org/eclipse/updates/3.5milestones/I20090313-0100" />
