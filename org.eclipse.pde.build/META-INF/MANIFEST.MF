@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.pde.build;singleton:=true
-Bundle-Version: 3.8.100.qualifier
+Bundle-Version: 3.9.0.qualifier
 Bundle-ClassPath: pdebuild.jar
 Bundle-Activator: org.eclipse.pde.internal.build.BuildActivator
 Bundle-Vendor: %providerName
@@ -47,4 +47,4 @@ Import-Package: com.ibm.icu.util,
  org.eclipse.equinox.simpleconfigurator.manipulator;version="[2.0.0,3.0.0)"
 Bundle-ActivationPolicy: lazy
 Eclipse-BundleShape: dir
-Bundle-RequiredExecutionEnvironment: J2SE-1.4
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
