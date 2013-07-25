@@ -44,6 +44,7 @@ public class ReachablePlugin implements Comparable<Object> {
 		return range;
 	}
 
+	@Override
 	public int compareTo(Object o) {
 		if (o instanceof ReachablePlugin) {
 			ReachablePlugin toCompare = (ReachablePlugin) o;

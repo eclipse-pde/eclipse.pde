@@ -92,6 +92,7 @@ public class ProfileManager {
 
 	protected String[] sortProfiles(String[] profiles) {
 		Arrays.sort(profiles, new Comparator<String>() {
+			@Override
 			public int compare(String profile1, String profile2) {
 				// need to make sure JavaSE, J2SE profiles are sorted ahead of all other profiles
 				String p1 = profile1;
@@ -192,6 +193,7 @@ public class ProfileManager {
 			return Utils.getArrayEnumerator(profiles);
 		} else if (container instanceof File) {
 			File[] files = ((File) container).listFiles(new FilenameFilter() {
+				@Override
 				public boolean accept(File dir, String name) {
 					return name.endsWith(PROFILE_EXTENSION);
 				}

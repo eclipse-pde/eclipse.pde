@@ -66,6 +66,7 @@ public class CVSFetchTaskFactory implements IFetchFactory {
 			printCVSPassTask((String) entryInfos.get(KEY_CVSROOT), password, cvsPassFileLocation, script);
 	}
 
+	@Override
 	public void generateRetrieveElementCall(Map<String, Object> entryInfos, IPath destination, IAntScript script) {
 		String type = (String) entryInfos.get(KEY_ELEMENT_TYPE);
 		String element = (String) entryInfos.get(KEY_ELEMENT_NAME);
@@ -125,6 +126,7 @@ public class CVSFetchTaskFactory implements IFetchFactory {
 		script.printAntCallTask(TARGET_GET_FROM_CVS, true, params);
 	}
 
+	@Override
 	public void generateRetrieveFilesCall(final Map<String, Object> entryInfos, IPath destination, final String[] files, IAntScript script) {
 		generateAuthentificationAntTask(entryInfos, script);
 		String path = (String) entryInfos.get(KEY_PATH);
@@ -144,6 +146,7 @@ public class CVSFetchTaskFactory implements IFetchFactory {
 		}
 	}
 
+	@Override
 	public void addTargets(IAntScript script) {
 		script.printTargetDeclaration(TARGET_GET_FROM_CVS, null, null, "${fileToCheck}", null); //$NON-NLS-1$
 		printCVSTask("export -d " + Utils.getPropertyFormat(PROP_ELEMENTNAME), Utils.getPropertyFormat(PROP_CVSROOT), Utils.getPropertyFormat(PROP_DESTINATIONFOLDER), Utils.getPropertyFormat(PROP_MODULE), Utils.getPropertyFormat(PROP_TAG), Utils.getPropertyFormat(PROP_QUIET), Utils.getPropertyFormat(PROP_REALLYQUIET), null, "CVS - " + Utils.getPropertyFormat(PROP_MODULE), script); //$NON-NLS-1$ //$NON-NLS-2$
@@ -164,6 +167,7 @@ public class CVSFetchTaskFactory implements IFetchFactory {
 		entryInfos.put(KEY_PATH, (arguments.length > 3 && !arguments[3].equals("")) ? arguments[3] : null); //$NON-NLS-1$ 
 	}
 
+	@Override
 	public void parseMapFileEntry(String repoSpecificentry, Properties overrideTags, Map<String, Object> entryInfos) throws CoreException {
 		String[] arguments = Utils.getArrayFromStringWithBlank(repoSpecificentry, SEPARATOR);
 		if (arguments.length < 2) {

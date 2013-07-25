@@ -144,6 +144,7 @@ public class ClasspathComputer3_0 implements IClasspathComputer, IPDEBuildConsta
 	 * @return String the classpath
 	 * @throws CoreException
 	 */
+	@Override
 	public List<Object> getClasspath(BundleDescription model, ModelBuildScriptGenerator.CompiledEntry jar) throws CoreException {
 		List<Object> classpath = new ArrayList<Object>(20);
 		List<BundleDescription> pluginChain = new ArrayList<BundleDescription>(10); //The list of plugins added to detect cycle

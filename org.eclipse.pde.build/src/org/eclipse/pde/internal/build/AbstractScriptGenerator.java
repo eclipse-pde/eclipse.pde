@@ -37,6 +37,7 @@ import org.osgi.framework.Version;
  */
 public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuildConstants, IBuildPropertiesConstants {
 	private static final FilenameFilter METADATA_REPO_FILTER = new FilenameFilter() {
+		@Override
 		public boolean accept(File dir, String name) {
 			return name.startsWith("content.") || name.startsWith("compositeContent.") || //$NON-NLS-1$ //$NON-NLS-2$
 					name.endsWith(".profile") || name.endsWith(".profile.gz"); //$NON-NLS-1$//$NON-NLS-2$
@@ -44,6 +45,7 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 	};
 
 	private static final FilenameFilter ARTIFACT_REPO_FILTER = new FilenameFilter() {
+		@Override
 		public boolean accept(File dir, String name) {
 			return name.startsWith("artifacts.") || name.startsWith("compositeArtifacts."); //$NON-NLS-1$ //$NON-NLS-2$
 		}

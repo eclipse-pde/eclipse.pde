@@ -50,6 +50,7 @@ public class COPYFetchTasksFactory implements IFetchFactory, IPDEBuildConstants 
 	private static final String KEY_PATH = "path"; //$NON-NLS-1$
 	private static final String KEY_ROOT = "root"; //$NON-NLS-1$
 
+	@Override
 	public void generateRetrieveElementCall(Map<String, Object> entryInfos, IPath destination, IAntScript script) {
 		String element = (String) entryInfos.get(KEY_ELEMENT_NAME);
 
@@ -66,6 +67,7 @@ public class COPYFetchTasksFactory implements IFetchFactory, IPDEBuildConstants 
 		printCopyTask(null, destination.toString(), new String[] {sourcePath.toString()}, false, true, script);
 	}
 
+	@Override
 	public void generateRetrieveFilesCall(final Map<String, Object> entryInfos, IPath destination, final String[] files, IAntScript script) {
 		String root = (String) entryInfos.get(KEY_ROOT);
 		String path = (String) entryInfos.get(KEY_PATH);
@@ -82,10 +84,12 @@ public class COPYFetchTasksFactory implements IFetchFactory, IPDEBuildConstants 
 		}
 	}
 
+	@Override
 	public void addTargets(IAntScript script) {
 		// no additional targets
 	}
 
+	@Override
 	public void parseMapFileEntry(String repoSpecificentry, Properties overrideTags, Map<String, Object> entryInfos) throws CoreException {
 		String[] arguments = Utils.getArrayFromStringWithBlank(repoSpecificentry, SEPARATOR);
 		if (arguments.length < 1) {

@@ -41,10 +41,12 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 			System.arraycopy(array, 0, this.array, 0, this.array.length);
 		}
 
+		@Override
 		public boolean hasMoreElements() {
 			return cur < array.length;
 		}
 
+		@Override
 		public Object nextElement() {
 			return array[cur++];
 		}
@@ -460,6 +462,7 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 		for (int i = 0; i < featureDirectoryContent.length; i++) {
 			if (featureDirectoryContent[i].isDirectory()) {
 				File[] featureFiles = featureDirectoryContent[i].listFiles(new FilenameFilter() {
+					@Override
 					public boolean accept(File dir, String name) {
 						return name.equals(filename);
 					}

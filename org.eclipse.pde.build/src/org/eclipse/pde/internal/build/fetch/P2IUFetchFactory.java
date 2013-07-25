@@ -89,6 +89,7 @@ public class P2IUFetchFactory implements IFetchFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.build.IFetchFactory#addTargets(org.eclipse.pde.build.IAntScript)
 	 */
+	@Override
 	public void addTargets(IAntScript script) {
 		// single target to fetch all IUs from different repos
 		//
@@ -141,6 +142,7 @@ public class P2IUFetchFactory implements IFetchFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.build.IFetchFactory#generateRetrieveElementCall(java.util.Map, org.eclipse.core.runtime.IPath, org.eclipse.pde.build.IAntScript)
 	 */
+	@Override
 	public void generateRetrieveElementCall(Map<String, Object> entryInfos, IPath destination, IAntScript script) {
 		// generate at most one fetch call
 		if (iusToFetchBySource.isEmpty()) {
@@ -166,6 +168,7 @@ public class P2IUFetchFactory implements IFetchFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.build.IFetchFactory#generateRetrieveFilesCall(java.util.Map, org.eclipse.core.runtime.IPath, java.lang.String[], org.eclipse.pde.build.IAntScript)
 	 */
+	@Override
 	public void generateRetrieveFilesCall(Map<String, Object> entryInfos, IPath destination, String[] files, IAntScript script) {
 		Map<String, String> args = new HashMap<String, String>();
 		args.put(ATTRIBUTE_SOURCE, (String) entryInfos.get(KEY_REPOSITORY));
@@ -205,6 +208,7 @@ public class P2IUFetchFactory implements IFetchFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.build.IFetchFactory#parseMapFileEntry(java.lang.String, java.util.Properties, java.util.Map)
 	 */
+	@Override
 	public void parseMapFileEntry(String rawEntry, Properties overrideTags, Map<String, Object> entryInfos) throws CoreException {
 		String[] arguments = Utils.getArrayFromStringWithBlank(rawEntry, SEPARATOR);
 

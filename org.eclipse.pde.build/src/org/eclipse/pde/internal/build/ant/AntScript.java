@@ -65,6 +65,7 @@ public class AntScript implements IAntScript {
 	 * 	called target
 	 * @param params table of parameters for the call
 	 */
+	@Override
 	public void printAntCallTask(String target, boolean inheritAll, Map<String, String> params) {
 		printTab();
 		output.print("<antcall"); //$NON-NLS-1$
@@ -455,6 +456,7 @@ public class AntScript implements IAntScript {
 	 * 
 	 * @param comment the comment to write out
 	 */
+	@Override
 	public void printComment(String comment) {
 		printTab();
 		output.print("<!-- "); //$NON-NLS-1$
@@ -472,6 +474,7 @@ public class AntScript implements IAntScript {
 	 * @param mandatory <code>true</code> if the attribute should be printed even
 	 *   if it is <code>null</code>
 	 */
+	@Override
 	public void printAttribute(String name, String value, boolean mandatory) {
 		if (mandatory && value == null)
 			value = ""; //$NON-NLS-1$
@@ -660,6 +663,7 @@ public class AntScript implements IAntScript {
 		printEchoTask(file, message, null);
 	}
 
+	@Override
 	public void printEchoTask(String file, String message, String level) {
 		printTab();
 		output.print("<echo"); //$NON-NLS-1$
@@ -777,6 +781,7 @@ public class AntScript implements IAntScript {
 	 * 
 	 * @param tag the name of the element
 	 */
+	@Override
 	public void printStartTag(String tag) {
 		printTab();
 		output.print("<"); //$NON-NLS-1$
@@ -789,6 +794,7 @@ public class AntScript implements IAntScript {
 	 * 
 	 * @param tag the name of the element
 	 */
+	@Override
 	public void printStartTag(String tag, Map<String, String> arguments) {
 		printTab();
 		output.print("<"); //$NON-NLS-1$
@@ -801,10 +807,12 @@ public class AntScript implements IAntScript {
 		output.println(">"); //$NON-NLS-1$
 	}
 
+	@Override
 	public void incrementIdent() {
 		indent++;
 	}
 
+	@Override
 	public void decrementIdent() {
 		indent--;
 	}
@@ -815,6 +823,7 @@ public class AntScript implements IAntScript {
 	 * @param tag the name of the element
 	 * @param arguments the arguments
 	 */
+	@Override
 	public void printElement(String tag, Map<String, String> arguments) {
 		printTab();
 		output.print("<"); //$NON-NLS-1$
@@ -834,6 +843,7 @@ public class AntScript implements IAntScript {
 	 * 
 	 * @param tag the name of the element
 	 */
+	@Override
 	public void printEndTag(String tag) {
 		printTab();
 		output.print("</"); //$NON-NLS-1$
@@ -854,6 +864,7 @@ public class AntScript implements IAntScript {
 	 * 
 	 * @param message the string to print
 	 */
+	@Override
 	public void println(String message) {
 		printTab();
 		output.println(message);
@@ -864,6 +875,7 @@ public class AntScript implements IAntScript {
 	 * 
 	 * @param message
 	 */
+	@Override
 	public void print(String message) {
 		output.print(message);
 	}
@@ -871,6 +883,7 @@ public class AntScript implements IAntScript {
 	/**
 	 * Print a carriage-return to the Ant script.
 	 */
+	@Override
 	public void println() {
 		output.println();
 	}
@@ -893,6 +906,7 @@ public class AntScript implements IAntScript {
 	 * @param unlessClause the name of the property that this target cannot have
 	 * @param description a user-readable description of this target
 	 */
+	@Override
 	public void printTargetDeclaration(String name, String depends, String ifClause, String unlessClause, String description) {
 		printTab();
 		output.print("<target"); //$NON-NLS-1$
@@ -909,6 +923,7 @@ public class AntScript implements IAntScript {
 	 * Print a closing <code>target</code> tag to the script. Indent the specified
 	 * number of tabs.
 	 */
+	@Override
 	public void printTargetEnd() {
 		indent--;
 		printEndTag("target"); //$NON-NLS-1$
@@ -1035,6 +1050,7 @@ public class AntScript implements IAntScript {
 		printEndTag("condition"); //$NON-NLS-1$
 	}
 
+	@Override
 	public void printMacroDef(String macroName, List<String> attributes) {
 		println("<macrodef name=\"" + macroName + "\">"); //$NON-NLS-1$ //$NON-NLS-2$
 		indent++;
@@ -1047,6 +1063,7 @@ public class AntScript implements IAntScript {
 		indent++;
 	}
 
+	@Override
 	public void printEndMacroDef() {
 		indent--;
 		println("</sequential>"); //$NON-NLS-1$
@@ -1054,6 +1071,7 @@ public class AntScript implements IAntScript {
 		println("</macrodef>"); //$NON-NLS-1$
 	}
 
+	@Override
 	public void printTabs() {
 		printTab();
 	}

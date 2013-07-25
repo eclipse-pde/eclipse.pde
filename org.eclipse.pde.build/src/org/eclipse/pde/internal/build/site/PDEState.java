@@ -561,6 +561,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 	private BundleDescription[] sortByVersion(BundleDescription[] bundles) {
 		if (bundles.length > 1) {
 			Arrays.sort(bundles, new Comparator<BundleDescription>() {
+				@Override
 				public int compare(BundleDescription o1, BundleDescription o2) {
 					return o1.getVersion().compareTo(o2.getVersion());
 				}

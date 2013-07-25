@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,6 +30,7 @@ public class SimpleBuildLogger implements BuildLogger, IPDEBuildConstants {
 	 * Overwrite the DefaultLogger implementation to log
 	 * an exception only if one occured. 
 	 */
+	@Override
 	public void buildFinished(BuildEvent event) {
 		Throwable exception = event.getException();
 		
@@ -39,42 +40,52 @@ public class SimpleBuildLogger implements BuildLogger, IPDEBuildConstants {
 		}
 	}
 
+	@Override
 	public void setEmacsMode(boolean emacsMode) {
 		// Do nothing	
 	}
 
+	@Override
 	public void setErrorPrintStream(PrintStream err) {
 		// Do nothing	
 	}
 
+	@Override
 	public void setMessageOutputLevel(int level) {
 		// Do nothing	
 	}
 
+	@Override
 	public void setOutputPrintStream(PrintStream output) {
 		// Do nothing	
 	}
 
+	@Override
 	public void buildStarted(BuildEvent event) {
 		// Do nothing	
 	}
 
+	@Override
 	public void messageLogged(BuildEvent event) {
 		// Do nothing	
 	}
 
+	@Override
 	public void targetFinished(BuildEvent event) {
 		// Do nothing	
 	}
 
+	@Override
 	public void targetStarted(BuildEvent event) {
 		// Do nothing	
 	}
 
+	@Override
 	public void taskFinished(BuildEvent event) {
 		// Do nothing	
 	}
 
+	@Override
 	public void taskStarted(BuildEvent event) {
 		// Do nothing	
 	}

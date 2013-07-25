@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,6 +41,7 @@ public class Config {
 		return ws;
 	}
 
+	@Override
 	public boolean equals(Object config) {
 		if (this == config)
 			return true;
@@ -61,10 +62,12 @@ public class Config {
 		return true;
 	}
 
+	@Override
 	public int hashCode() {
 		return os.hashCode() + ws.hashCode() + arch.hashCode();
 	}
 
+	@Override
 	public String toString() {
 		return toString("_"); //$NON-NLS-1$
 	}

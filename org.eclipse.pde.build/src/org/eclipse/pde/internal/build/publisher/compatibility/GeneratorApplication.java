@@ -41,6 +41,7 @@ public class GeneratorApplication extends AbstractPublisherApplication {
 	private String versionAdvice;
 	private String rootId;
 
+	@Override
 	protected IPublisherAction[] createActions() {
 
 		File sourceFile = source != null ? new File(source) : null;
@@ -113,6 +114,7 @@ public class GeneratorApplication extends AbstractPublisherApplication {
 		return version;
 	}
 
+	@Override
 	protected Publisher createPublisher(PublisherInfo publisherInfo) {
 		if (result != null)
 			return new Publisher(publisherInfo, result);
@@ -127,6 +129,7 @@ public class GeneratorApplication extends AbstractPublisherApplication {
 		super.artifactRepoName = name;
 	}
 
+	@Override
 	public void setCompress(boolean value) {
 		super.compress = value;
 	}

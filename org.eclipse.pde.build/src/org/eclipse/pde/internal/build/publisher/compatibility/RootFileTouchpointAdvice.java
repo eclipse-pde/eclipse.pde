@@ -30,6 +30,7 @@ public class RootFileTouchpointAdvice extends RootFilesAdvice implements ITouchp
 		this.product = product;
 	}
 
+	@Override
 	public ITouchpointData getTouchpointData(ITouchpointData existingData) {
 		String[] config = AbstractPublisherAction.parseConfigSpec(getConfigSpec());
 		String os = config[1];

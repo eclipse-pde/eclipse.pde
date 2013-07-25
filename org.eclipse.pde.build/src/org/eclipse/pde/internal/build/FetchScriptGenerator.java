@@ -706,6 +706,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 			this.v = v;
 		}
 
+		@Override
 		public int compareTo(Object o) {
 			if (o instanceof MapFileEntry) {
 				MapFileEntry entry = (MapFileEntry) o;

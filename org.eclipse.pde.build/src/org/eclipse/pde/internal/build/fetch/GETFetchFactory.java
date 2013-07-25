@@ -60,6 +60,7 @@ public class GETFetchFactory implements IFetchFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.build.IFetchFactory#addTargets(org.eclipse.pde.build.IAntScript)
 	 */
+	@Override
 	public void addTargets(IAntScript script) {
 		//
 	}
@@ -67,6 +68,7 @@ public class GETFetchFactory implements IFetchFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.build.IFetchFactory#generateRetrieveElementCall(java.util.Map, org.eclipse.core.runtime.IPath, org.eclipse.pde.build.IAntScript)
 	 */
+	@Override
 	public void generateRetrieveElementCall(Map<String, Object> entryInfos, IPath destination, IAntScript script) {
 		printGetTask(destination, script, entryInfos);
 	}
@@ -74,6 +76,7 @@ public class GETFetchFactory implements IFetchFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.build.IFetchFactory#generateRetrieveFilesCall(java.util.Map, org.eclipse.core.runtime.IPath, java.lang.String[], org.eclipse.pde.build.IAntScript)
 	 */
+	@Override
 	public void generateRetrieveFilesCall(Map<String, Object> entryInfos, IPath destination, String[] files, IAntScript script) {
 		//
 	}
@@ -81,6 +84,7 @@ public class GETFetchFactory implements IFetchFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.build.IFetchFactory#parseMapFileEntry(java.lang.String, java.util.Properties, java.util.Map)
 	 */
+	@Override
 	public void parseMapFileEntry(String rawEntry, Properties overrideTags, Map<String, Object> entryInfos) throws CoreException {
 		String url = rawEntry;
 		if (rawEntry.indexOf(',') != -1) {

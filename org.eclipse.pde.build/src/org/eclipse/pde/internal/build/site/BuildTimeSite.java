@@ -51,6 +51,7 @@ public class BuildTimeSite /*extends Site*/implements IPDEBuildConstants, IXMLCo
 
 	private final Comparator<Feature> featureComparator = new Comparator<Feature>() {
 		// Sort highest to lowest version, they are assumed to have the same id
+		@Override
 		public int compare(Feature arg0, Feature arg1) {
 			Version v0 = new Version(arg0.getVersion());
 			Version v1 = new Version(arg1.getVersion());

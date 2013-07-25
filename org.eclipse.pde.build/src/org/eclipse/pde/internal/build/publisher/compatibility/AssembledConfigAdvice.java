@@ -34,10 +34,12 @@ public class AssembledConfigAdvice implements IConfigAdvice, IExecutableAdvice {
 		initializeData(configRoot);
 	}
 
+	@Override
 	public BundleInfo[] getBundles() {
 		return configData.getBundles();
 	}
 
+	@Override
 	public Map<String, String> getProperties() {
 		Properties configProps = configData.getProperties();
 		Map<String, String> props = new HashMap<String, String>(configProps.size() + 1);
@@ -48,6 +50,7 @@ public class AssembledConfigAdvice implements IConfigAdvice, IExecutableAdvice {
 		return props;
 	}
 
+	@Override
 	public boolean isApplicable(String spec, boolean includeDefault, String id, Version version) {
 		return configSpec.equals(spec);
 	}
@@ -74,14 +77,17 @@ public class AssembledConfigAdvice implements IConfigAdvice, IExecutableAdvice {
 		launcherData = loader.getLauncherData();
 	}
 
+	@Override
 	public String getExecutableName() {
 		return (launcherName != null) ? launcherName : "eclipse"; //$NON-NLS-1$
 	}
 
+	@Override
 	public String[] getProgramArguments() {
 		return (launcherData != null) ? launcherData.getProgramArgs() : new String[0];
 	}
 
+	@Override
 	public String[] getVMArguments() {
 		return (launcherData != null) ? launcherData.getJvmArgs() : new String[0];
 	}
