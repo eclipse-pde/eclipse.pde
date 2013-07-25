@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 IBM Corporation and others.
+ * Copyright (c) 2006, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,6 +28,7 @@ public class FeatureGeneratorTask extends Task {
 	private final FeatureGenerator generator = new FeatureGenerator();
 	private final Properties antProperties = new Properties();
 
+	@Override
 	public void execute() throws BuildException {
 		try {
 			BundleHelper.getDefault().setLog(this);
@@ -41,6 +42,7 @@ public class FeatureGeneratorTask extends Task {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private void initializeAntProperties(Properties properties) {
 		String value = getProject().getProperty(IBuildPropertiesConstants.RESOLVER_DEV_MODE);
 		if (Boolean.valueOf(value).booleanValue())

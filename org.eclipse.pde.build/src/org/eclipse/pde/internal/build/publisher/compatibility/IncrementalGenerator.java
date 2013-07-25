@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,7 +25,7 @@ public class IncrementalGenerator {
 	private String mode = null;
 	static private PublisherResult result = null;
 	static private ArrayList<String> configs = null;
-	static private ArrayList advice = null;
+	static private ArrayList<IPublisherAdvice> advice = null;
 
 	public void setMode(String mode) {
 		this.mode = mode;
@@ -40,8 +40,8 @@ public class IncrementalGenerator {
 			if (configs != null)
 				provider.setConfigurations(configs.toArray(new String[configs.size()]));
 			if (advice != null) {
-				for (Iterator iterator = advice.iterator(); iterator.hasNext();) {
-					provider.addAdvice((IPublisherAdvice) iterator.next());
+				for (Iterator<IPublisherAdvice> iterator = advice.iterator(); iterator.hasNext();) {
+					provider.addAdvice(iterator.next());
 				}
 			}
 		}
@@ -64,7 +64,7 @@ public class IncrementalGenerator {
 		if (configs == null)
 			configs = new ArrayList<String>();
 		if (advice == null)
-			advice = new ArrayList();
+			advice = new ArrayList<IPublisherAdvice>();
 	}
 
 }

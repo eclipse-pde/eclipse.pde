@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2000, 2013 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -37,8 +37,8 @@ public class BuildTimeSiteFactory /*extends BaseSiteFactory*/implements IPDEBuil
 	private PDEUIStateWrapper pdeUIState;
 
 	//Support for filtering the state
-	private List rootFeaturesForFilter;
-	private List rootPluginsForFilter;
+	private List<String> rootFeaturesForFilter;
+	private List<String> rootPluginsForFilter;
 	private boolean filterState;
 	private boolean filterP2Base = false;
 
@@ -189,7 +189,7 @@ public class BuildTimeSiteFactory /*extends BaseSiteFactory*/implements IPDEBuil
 		this.filterState = b;
 	}
 
-	public void setFilterRoots(List featuresForFilterRoots, List pluginsForFilterRoots) {
+	public void setFilterRoots(List<String> featuresForFilterRoots, List<String> pluginsForFilterRoots) {
 		this.rootFeaturesForFilter = featuresForFilterRoots;
 		this.rootPluginsForFilter = pluginsForFilterRoots;
 	}

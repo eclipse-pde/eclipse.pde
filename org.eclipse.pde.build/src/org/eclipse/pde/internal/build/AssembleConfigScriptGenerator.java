@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,7 +39,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	protected BuildTimeFeature[] allFeatures; //the set of all the features that have been considered
 	protected BundleDescription[] plugins;
 	protected String filename;
-	protected Collection rootFileProviders;
+	protected Collection<BuildTimeFeature> rootFileProviders;
 	protected String rootFolder = null;
 	protected ArrayList<String> addedByPermissions = new ArrayList<String>(); //contains the list of files and folders that have been added to an archive by permission management
 
@@ -65,11 +65,11 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		super();
 	}
 
-	public void initialize(String directoryName, String feature, Config configurationInformation, Collection elementList, Collection featureList, Collection allFeaturesList, Collection rootProviders) throws CoreException {
+	public void initialize(String directoryName, String feature, Config configurationInformation, Collection<BundleDescription> elementList, Collection<BuildTimeFeature> featureList, Collection<BuildTimeFeature> allFeaturesList, Collection<BuildTimeFeature> rootProviders) throws CoreException {
 		this.directory = directoryName;
 		this.featureId = feature;
 		this.configInfo = configurationInformation;
-		this.rootFileProviders = rootProviders != null ? rootProviders : new ArrayList(0);
+		this.rootFileProviders = rootProviders != null ? rootProviders : new ArrayList<BuildTimeFeature>(0);
 		this.rootFolder = Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + configInfo.toStringReplacingAny(".", ANY_STRING) + '/' + Utils.getPropertyFormat(PROPERTY_COLLECTING_FOLDER); //$NON-NLS-1$
 		this.features = new BuildTimeFeature[featureList.size()];
 		featureList.toArray(this.features);
@@ -78,7 +78,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		allFeaturesList.toArray(this.allFeatures);
 
 		this.plugins = new BundleDescription[elementList.size()];
-		this.plugins = (BundleDescription[]) elementList.toArray(this.plugins);
+		this.plugins = elementList.toArray(this.plugins);
 
 		openScript(directoryName, getTargetName() + ".xml"); //$NON-NLS-1$
 		shapeAdvisor = new ShapeAdvisor();
@@ -218,8 +218,8 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 				script.println("/>"); //$NON-NLS-1$
 			}
 
-			for (Iterator iterator = rootFileProviders.iterator(); iterator.hasNext();) {
-				BuildTimeFeature rootProvider = (BuildTimeFeature) iterator.next();
+			for (Iterator<BuildTimeFeature> iterator = rootFileProviders.iterator(); iterator.hasNext();) {
+				BuildTimeFeature rootProvider = iterator.next();
 				if (!(havePDEUIState() && rootProvider.getId().equals("org.eclipse.pde.container.feature"))) { //$NON-NLS-1$
 					script.printTab();
 					script.print("\t<iu"); //$NON-NLS-1$
@@ -395,12 +395,9 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		if (rootFileProviders.size() == 0 || BuildDirector.p2Gathering)
 			return;
 
-		for (Iterator iter = rootFileProviders.iterator(); iter.hasNext();) {
-			Object object = iter.next();
-			if (object instanceof BuildTimeFeature) {
-				Properties featureProperties = getFeatureBuildProperties((BuildTimeFeature) object);
-				Utils.generatePermissions(featureProperties, configInfo, PROPERTY_ECLIPSE_BASE, script);
-			}
+		for (Iterator<BuildTimeFeature> iter = rootFileProviders.iterator(); iter.hasNext();) {
+			Properties featureProperties = getFeatureBuildProperties(iter.next());
+			Utils.generatePermissions(featureProperties, configInfo, PROPERTY_ECLIPSE_BASE, script);
 		}
 
 		if (Platform.getOS().equals("win32")) { //$NON-NLS-1$
@@ -647,8 +644,8 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		}
 
 		//This will generate gather.bin.parts call to features that provides files for the root
-		for (Iterator iter = rootFileProviders.iterator(); iter.hasNext();) {
-			BuildTimeFeature feature = (BuildTimeFeature) iter.next();
+		for (Iterator<BuildTimeFeature> iter = rootFileProviders.iterator(); iter.hasNext();) {
+			BuildTimeFeature feature = iter.next();
 			if (featureSet.contains(feature))
 				continue;
 			String placeToGather = feature.getRootLocation();
@@ -735,7 +732,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 	}
 
 	protected void printCustomAssemblyAntCall(String customTarget, Map<String, String> properties) {
-		Map<String, String> params = (properties != null) ? new HashMap<String, String>(properties) : new HashMap(1);
+		Map<String, String> params = (properties != null) ? new HashMap<String, String>(properties) : new HashMap<String, String>(1);
 		params.put(PROPERTY_CUSTOM_TARGET, customTarget);
 		script.printAntCallTask(TARGET_CUSTOM_ASSEMBLY, true, params);
 	}
@@ -957,9 +954,9 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 
 			if (rootFileProviders.size() > 0) {
 				if (groupConfigs) {
-					List allConfigs = getConfigInfos();
-					for (Iterator iter = allConfigs.iterator(); iter.hasNext();) {
-						Config elt = (Config) iter.next();
+					List<Config> allConfigs = getConfigInfos();
+					for (Iterator<Config> iter = allConfigs.iterator(); iter.hasNext();) {
+						Config elt = iter.next();
 						fileSets.add(new ZipFileSet(Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE) + '/' + elt.toStringReplacingAny(".", ANY_STRING), false, null, "**/**", null, null, null, elt.toStringReplacingAny(".", ANY_STRING), null, null)); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 					}
 				} else {
@@ -976,8 +973,8 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		}
 	}
 
-	protected Collection getArchiveRootFileProviders() {
-		return rootFileProviders != null ? rootFileProviders : Collections.EMPTY_LIST;
+	protected Collection<BuildTimeFeature> getArchiveRootFileProviders() {
+		return rootFileProviders != null ? rootFileProviders : new ArrayList<BuildTimeFeature>(0);
 	}
 
 	protected FileSet[] generatePermissions(String root, boolean zip) {
@@ -986,10 +983,10 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 		String commonPermissions = ROOT_PREFIX + PERMISSIONS + '.';
 		ArrayList<ZipFileSet> fileSets = new ArrayList<ZipFileSet>();
 
-		for (Iterator iter = getArchiveRootFileProviders().iterator(); iter.hasNext();) {
-			Properties featureProperties = getFeatureBuildProperties((BuildTimeFeature) iter.next());
-			for (Iterator iter2 = featureProperties.entrySet().iterator(); iter2.hasNext();) {
-				Map.Entry permission = (Map.Entry) iter2.next();
+		for (Iterator<BuildTimeFeature> iter = getArchiveRootFileProviders().iterator(); iter.hasNext();) {
+			Properties featureProperties = getFeatureBuildProperties(iter.next());
+			for (Iterator<Map.Entry<Object, Object>> iter2 = featureProperties.entrySet().iterator(); iter2.hasNext();) {
+				Map.Entry<Object, Object> permission = iter2.next();
 				String instruction = (String) permission.getKey();
 				String parameters = (String) permission.getValue();
 				String[] values = Utils.getArrayFromString(parameters);

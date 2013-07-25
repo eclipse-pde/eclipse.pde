@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2000, 2013 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -11,6 +11,7 @@ package org.eclipse.pde.internal.build.builder;
 
 import java.io.*;
 import java.util.*;
+import java.util.Map.Entry;
 import java.util.jar.JarFile;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.p2.publisher.eclipse.FeatureEntry;
@@ -347,10 +348,10 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		}
 
 		File previousSrcRoot = Utils.getOldSourceLocation(model);
-		Set pluginsToGatherSourceFrom = featureGenerator.sourceToGather.getElementEntries().get(model.getSymbolicName());
+		Set<BundleDescription> pluginsToGatherSourceFrom = featureGenerator.sourceToGather.getElementEntries().get(model.getSymbolicName());
 		if (pluginsToGatherSourceFrom != null) {
-			for (Iterator iter = pluginsToGatherSourceFrom.iterator(); iter.hasNext();) {
-				BundleDescription plugin = (BundleDescription) iter.next();
+			for (Iterator<BundleDescription> iter = pluginsToGatherSourceFrom.iterator(); iter.hasNext();) {
+				BundleDescription plugin = iter.next();
 				// We are not trying to gather the source from ourself since we are generated and we know we don't have source...
 				if (plugin.getSymbolicName().equals(model.getSymbolicName()))
 					continue;
@@ -370,7 +371,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 					// The two steps are required, because some plug-ins (xerces, junit, ...) don't build their source: the source already comes zipped
 					IPath location = Utils.makeRelative(new Path(getLocation(plugin)), new Path(getLocation(model)));
 					script.printAntTask(DEFAULT_BUILD_SCRIPT_FILENAME, location.toOSString(), TARGET_BUILD_SOURCES, null, null, null);
-					HashMap params = new HashMap(1);
+					Map<String, String> params = new HashMap<String, String>(1);
 					params.put(PROPERTY_DESTINATION_TEMP_FOLDER, Utils.getPropertyFormat(PROPERTY_BASEDIR) + "/src"); //$NON-NLS-1$
 					script.printAntTask(DEFAULT_BUILD_SCRIPT_FILENAME, location.toOSString(), TARGET_GATHER_SOURCES, null, null, params);
 				}
@@ -390,9 +391,9 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		CompiledEntry[] availableJars = extractEntriesToCompile(properties);
 		script.printTargetDeclaration(TARGET_CLEAN, TARGET_INIT, null, null, NLS.bind(Messages.build_plugin_clean, model.getSymbolicName()));
 
-		Map params = null;
+		Map<String, String> params = null;
 		if (customBuildCallbacks != null) {
-			params = new HashMap(3);
+			params = new HashMap<String, String>(3);
 			params.put(PROPERTY_PLUGIN_DESTINATION, PLUGIN_DESTINATION);
 			params.put(PROPERTY_TEMP_FOLDER, Utils.getPropertyFormat(PROPERTY_TEMP_FOLDER));
 			params.put(PROPERTY_BUILD_RESULT_FOLDER, Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER));
@@ -432,9 +433,9 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.printTargetDeclaration(TARGET_GATHER_LOGS, TARGET_INIT, PROPERTY_DESTINATION_TEMP_FOLDER, null, null);
 		IPath baseDestination = new Path(Utils.getPropertyFormat(PROPERTY_DESTINATION_TEMP_FOLDER));
 		baseDestination = baseDestination.append(fullName);
-		Map params = null;
+		Map<String, String> params = null;
 		if (customBuildCallbacks != null) {
-			params = new HashMap(1);
+			params = new HashMap<String, String>(1);
 			params.put(PROPERTY_DESTINATION_TEMP_FOLDER, baseDestination.toString());
 			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_PRE + TARGET_GATHER_LOGS, customCallbacksBuildpath, customCallbacksFailOnError, customCallbacksInheritAll, params, null);
 		}
@@ -484,9 +485,9 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 		IPath baseDestination = new Path(Utils.getPropertyFormat(PROPERTY_DESTINATION_TEMP_FOLDER));
 		baseDestination = baseDestination.append(fullName);
-		Map params = null;
+		Map<String, String> params = null;
 		if (customBuildCallbacks != null) {
-			params = new HashMap(1);
+			params = new HashMap<String, String>(1);
 			params.put(PROPERTY_TARGET_FOLDER, baseDestination.toString());
 			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_PRE + TARGET_GATHER_SOURCES, customCallbacksBuildpath, customCallbacksFailOnError, customCallbacksInheritAll, params, null);
 		}
@@ -503,7 +504,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			script.printCopyTask(getSRCLocation(jar), destination.toString(), null, false, false);
 		}
 
-		Properties copyParams = new Properties();
+		Map<String, String> copyParams = new HashMap<String, String>();
 		copyParams.put(PROPERTY_SOURCE_DESTINATION_FOLDER, baseDestination.toString());
 		script.printAntCallTask(TARGET_COPY_SRC_INCLUDES, true, copyParams);
 
@@ -519,14 +520,14 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 		IPath baseDestination = new Path(Utils.getPropertyFormat(PROPERTY_DESTINATION_TEMP_FOLDER));
 
-		Map params = null;
+		Map<String, String> params = null;
 		if (customBuildCallbacks != null) {
-			params = new HashMap(1);
+			params = new HashMap<String, String>(1);
 			params.put(PROPERTY_TARGET_FOLDER, baseDestination.toString());
 			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_PRE + TARGET_GATHER_SOURCES, customCallbacksBuildpath, customCallbacksFailOnError, customCallbacksInheritAll, params, null);
 		}
 
-		Properties copyParams = new Properties();
+		Map<String, String> copyParams = new HashMap<String, String>();
 		copyParams.put(PROPERTY_SOURCE_DESTINATION_FOLDER, baseDestination.toString());
 
 		Properties properties = getBuildProperties();
@@ -622,7 +623,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			}
 		}
 
-		Map params = new HashMap();
+		Map<String, String> params = new HashMap<String, String>();
 		params.put(PROPERTY_PROJECT_NAME, Utils.getPropertyFormat(PROPERTY_BUNDLE_ID) + "_" + Utils.getPropertyFormat(PROPERTY_BUNDLE_VERSION)); //$NON-NLS-1$
 		params.put(PROPERTY_PROJECT_LOCATION, Utils.getPropertyFormat(PROPERTY_BASEDIR));
 		params.put(PROPERTY_BINARY_FOLDERS, binaryFolders.toString());
@@ -658,9 +659,9 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		String root = destination.toString();
 		script.printMkdirTask(root);
 
-		Map params = null;
+		Map<String, String> params = null;
 		if (customBuildCallbacks != null) {
-			params = new HashMap(3);
+			params = new HashMap<String, String>(3);
 			params.put(PROPERTY_TARGET_FOLDER, root);
 			params.put(PROPERTY_BUILD_RESULT_FOLDER, Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER));
 			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_PRE + TARGET_GATHER_BIN_PARTS, customCallbacksBuildpath, customCallbacksFailOnError, customCallbacksInheritAll, params, null);
@@ -682,7 +683,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 					for (Iterator<BundleDescription> iter = pluginsToGatherSourceFrom.iterator(); iter.hasNext();) {
 						BundleDescription plugin = iter.next();
 						IPath location = Utils.makeRelative(new Path(getLocation(plugin)), new Path(getLocation(model)));
-						HashMap taskParams = new HashMap(1);
+						Map<String, String> taskParams = new HashMap<String, String>(1);
 						taskParams.put(PROPERTY_DESTINATION_TEMP_FOLDER, Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER) + "/sources"); //$NON-NLS-1$
 						script.printAntTask(DEFAULT_BUILD_SCRIPT_FILENAME, location.toOSString(), TARGET_GATHER_INDIVIDUAL_SOURCES, null, null, taskParams);
 					}
@@ -717,12 +718,12 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 				//reuse workspace compiled classes
 				script.println(">"); //$NON-NLS-1$
 
-				for (Iterator iterator = workspaceOutputFolders.keySet().iterator(); iterator.hasNext();) {
-					String key = (String) iterator.next();
-					Set paths = workspaceOutputFolders.get(key);
+				for (Iterator<String> iterator = workspaceOutputFolders.keySet().iterator(); iterator.hasNext();) {
+					String key = iterator.next();
+					Set<IPath> paths = workspaceOutputFolders.get(key);
 
-					for (Iterator pathIterator = paths.iterator(); pathIterator.hasNext();) {
-						IPath path = (IPath) pathIterator.next();
+					for (Iterator<IPath> pathIterator = paths.iterator(); pathIterator.hasNext();) {
+						IPath path = pathIterator.next();
 						script.printTabs();
 						script.print("   <outputFolder "); //$NON-NLS-1$ 
 						script.printAttribute("library", key, true); //$NON-NLS-1$
@@ -764,9 +765,9 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		String root = destination.toString();
 		script.printMkdirTask(root);
 
-		Map params = null;
+		Map<String, String> params = null;
 		if (customBuildCallbacks != null) {
-			params = new HashMap(3);
+			params = new HashMap<String, String>(3);
 			params.put(PROPERTY_TARGET_FOLDER, root);
 			params.put(PROPERTY_BUILD_RESULT_FOLDER, Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER));
 			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_PRE + TARGET_GATHER_BIN_PARTS, customCallbacksBuildpath, customCallbacksFailOnError, customCallbacksInheritAll, params, null);
@@ -823,7 +824,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 				for (Iterator<BundleDescription> iter = pluginsToGatherSourceFrom.iterator(); iter.hasNext();) {
 					BundleDescription plugin = iter.next();
 					IPath location = Utils.makeRelative(new Path(getLocation(plugin)), new Path(getLocation(model)));
-					HashMap taskParams = new HashMap(1);
+					Map<String, String> taskParams = new HashMap<String, String>(1);
 					taskParams.put(PROPERTY_DESTINATION_TEMP_FOLDER, root);
 					script.printAntTask(DEFAULT_BUILD_SCRIPT_FILENAME, location.toOSString(), TARGET_GATHER_INDIVIDUAL_SOURCES, null, null, taskParams);
 				}
@@ -864,7 +865,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		if (qualifier == null && sourceReference == null)
 			return;
 
-		Map arguments = new HashMap();
+		Map<String, String> arguments = new HashMap<String, String>();
 		arguments.put("path", AntScript.getEscaped(location)); //$NON-NLS-1$
 		if (qualifier != null)
 			arguments.put("version", model.getVersion().toString()); //$NON-NLS-1$
@@ -905,8 +906,8 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 	private void generatePermissionProperties(String directory) throws CoreException {
 		getPermissionProperties();
-		for (Iterator iter = permissionProperties.entrySet().iterator(); iter.hasNext();) {
-			Map.Entry permission = (Map.Entry) iter.next();
+		for (Iterator<Entry<Object, Object>> iter = permissionProperties.entrySet().iterator(); iter.hasNext();) {
+			Map.Entry<Object, Object> permission = iter.next();
 			String instruction = (String) permission.getKey();
 			String parameters = (String) permission.getValue();
 			int index;
@@ -930,7 +931,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 	private void generateLinkInstruction(String dir, String files) {
 		String[] links = Utils.getArrayFromString(files, ","); //$NON-NLS-1$
-		List arguments = new ArrayList(2);
+		List<String> arguments = new ArrayList<String>(2);
 		for (int i = 0; i < links.length; i += 2) {
 			arguments.add(links[i]);
 			arguments.add(links[i + 1]);
@@ -956,7 +957,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.printMkdirTask(Utils.getPropertyFormat(PROPERTY_TEMP_FOLDER));
 		script.printAntCallTask(TARGET_BUILD_JARS, true, null);
 		script.printAntCallTask(TARGET_BUILD_SOURCES, true, null);
-		Map params = new HashMap(1);
+		Map<String, String> params = new HashMap<String, String>(1);
 		params.put(PROPERTY_DESTINATION_TEMP_FOLDER, Utils.getPropertyFormat(PROPERTY_TEMP_FOLDER) + '/');
 		script.printAntCallTask(TARGET_GATHER_BIN_PARTS, true, params);
 		script.printAntCallTask(TARGET_GATHER_SOURCES, true, params);
@@ -976,7 +977,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.printDeleteTask(Utils.getPropertyFormat(PROPERTY_TEMP_FOLDER), null, null);
 		script.printMkdirTask(Utils.getPropertyFormat(PROPERTY_TEMP_FOLDER));
 		script.printAntCallTask(TARGET_BUILD_JARS, true, null);
-		Map params = new HashMap(1);
+		Map<String, String> params = new HashMap<String, String>(1);
 		params.put(PROPERTY_DESTINATION_TEMP_FOLDER, Utils.getPropertyFormat(PROPERTY_TEMP_FOLDER) + '/');
 		script.printAntCallTask(TARGET_GATHER_BIN_PARTS, true, params);
 		script.printJarTask(pluginUpdateJarDestination, Utils.getPropertyFormat(PROPERTY_TEMP_FOLDER) + '/' + fullName, null, "merge"); //$NON-NLS-1$
@@ -1201,8 +1202,8 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	private void generateBuildZipsTarget() throws CoreException {
 		StringBuffer zips = new StringBuffer();
 		Properties props = getBuildProperties();
-		for (Iterator iterator = props.entrySet().iterator(); iterator.hasNext();) {
-			Map.Entry entry = (Map.Entry) iterator.next();
+		for (Iterator<Entry<Object, Object>> iterator = props.entrySet().iterator(); iterator.hasNext();) {
+			Map.Entry<Object, Object> entry = iterator.next();
 			String key = (String) entry.getKey();
 			if (key.startsWith(PROPERTY_SOURCE_PREFIX) && key.endsWith(PROPERTY_ZIP_SUFFIX)) {
 				String zipName = key.substring(PROPERTY_SOURCE_PREFIX.length());
@@ -1269,9 +1270,9 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.printTargetDeclaration(TARGET_BUILD_JARS, TARGET_INIT, null, null, NLS.bind(Messages.build_plugin_buildJars, pluginModel.getSymbolicName()));
 		script.printDeleteTask(null, Utils.getPropertyFormat(PROPERTY_COMPILE_PROBLEM_MARKER), TRUE, null);
 
-		Map params = null;
+		Map<String, String> params = null;
 		if (customBuildCallbacks != null) {
-			params = new HashMap(1);
+			params = new HashMap<String, String>(1);
 			params.put(PROPERTY_BUILD_RESULT_FOLDER, Utils.getPropertyFormat(PROPERTY_BUILD_RESULT_FOLDER));
 			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_PRE + TARGET_BUILD_JARS, customCallbacksBuildpath, customCallbacksFailOnError, customCallbacksInheritAll, params, null);
 		}
@@ -1308,7 +1309,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.printTargetDeclaration(TARGET_CHECK_COMPILATION_RESULTS, null, PROPERTY_COMPILATION_ERROR, null, null);
 		script.printEchoTask(Utils.getPropertyFormat(PROPERTY_COMPILE_PROBLEM_MARKER), getNormalizedName(pluginModel) + "${line.separator}" + PROPERTY_COMPILATION_ERROR + "=" + Utils.getPropertyFormat(PROPERTY_COMPILATION_ERROR)); //$NON-NLS-1$ //$NON-NLS-2$
 
-		Map<String, Object> arguments = new HashMap<String, Object>();
+		Map<String, String> arguments = new HashMap<String, String>();
 		arguments.put("bundle", getNormalizedName(pluginModel)); //$NON-NLS-1$
 		arguments.put("log", Utils.getPropertyFormat(PROPERTY_PREREQ_COMPILE_LOG)); //$NON-NLS-1$
 		script.printStartTag("eclipse.logCompileError", arguments); //$NON-NLS-1$
@@ -1523,15 +1524,15 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		script.printPathStructure("path", name + PROPERTY_CLASSPATH, extractedPath); //$NON-NLS-1$
 
 		String[] sources = entry.getSource();
-		Map params = null, references = null;
+		Map<String, String> params = null, references = null;
 		if (customBuildCallbacks != null) {
-			params = new HashMap(2);
+			params = new HashMap<String, String>(2);
 			params.put(PROPERTY_TARGET_FOLDER, destdir);
 			for (int i = 1; i <= sources.length; i++) {
 				params.put(PROPERTY_SOURCE_FOLDER + i, sources[i - 1]);
 			}
 
-			references = new HashMap(1);
+			references = new HashMap<String, String>(1);
 			references.put(name + PROPERTY_CLASSPATH, null);
 			script.printSubantTask(Utils.getPropertyFormat(PROPERTY_CUSTOM_BUILD_CALLBACKS), PROPERTY_PRE + name, customCallbacksBuildpath, customCallbacksFailOnError, customCallbacksInheritAll, params, references);
 		}
@@ -1543,12 +1544,12 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			// unless the class files are in a nested jar, or we are using custom callbacks, then we need to gather everything as before
 			boolean isFolder = (entry.getType() == CompiledEntry.FOLDER);
 			if (!BuildDirector.p2Gathering || !isFolder || customBuildCallbacks != null) {
-				Set paths = workspaceOutputFolders.get(outputKey);
+				Set<IPath> paths = workspaceOutputFolders.get(outputKey);
 				workspaceFiles = new FileSet[paths.size()];
 
 				int i = 0;
-				for (Iterator iterator = paths.iterator(); iterator.hasNext();) {
-					IPath path = (IPath) iterator.next();
+				for (Iterator<IPath> iterator = paths.iterator(); iterator.hasNext();) {
+					IPath path = iterator.next();
 					workspaceFiles[i++] = new FileSet(Utils.getPropertyFormat(PROPERTY_BASEDIR) + "/" + path.toOSString(), null, null, null, "**/package.htm*", null, null); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 
@@ -1688,8 +1689,8 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 	public static CompiledEntry[] extractEntriesToCompile(Properties properties, BundleDescription model) throws CoreException {
 		List<CompiledEntry> result = new ArrayList<CompiledEntry>(5);
 		int prefixLength = PROPERTY_SOURCE_PREFIX.length();
-		for (Iterator iterator = properties.entrySet().iterator(); iterator.hasNext();) {
-			Map.Entry entry = (Map.Entry) iterator.next();
+		for (Iterator<Entry<Object, Object>> iterator = properties.entrySet().iterator(); iterator.hasNext();) {
+			Map.Entry<Object, Object> entry = iterator.next();
 			String key = (String) entry.getKey();
 			if (!(key.startsWith(PROPERTY_SOURCE_PREFIX)))
 				continue;
@@ -1933,7 +1934,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		this.associatedEntry = associatedEntry;
 	}
 
-	protected void setWorkspaceOutputFolders(Map folders) {
+	protected void setWorkspaceOutputFolders(Map<String, Set<IPath>> folders) {
 		this.workspaceOutputFolders = folders;
 	}
 

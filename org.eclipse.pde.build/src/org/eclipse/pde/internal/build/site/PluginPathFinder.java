@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,8 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.build.site;
-
-import java.io.File;
 
 import java.io.*;
 import java.net.MalformedURLException;
@@ -90,13 +88,13 @@ public class PluginPathFinder {
 		return sites.toArray(new File[sites.size()]);
 	}
 
-	private static List getDropins(String platformHome, boolean features) {
+	private static List<File> getDropins(String platformHome, boolean features) {
 		File dropins = new File(platformHome, DROPINS);
 		if (!dropins.exists())
-			return Collections.EMPTY_LIST;
+			return Collections.emptyList();
 
 		ArrayList<File> sites = new ArrayList<File>();
-		ArrayList results = new ArrayList();
+		ArrayList<File> results = new ArrayList<File>();
 
 		File[] contents = dropins.listFiles();
 		for (int i = 0; i < contents.length; i++) {
@@ -178,22 +176,22 @@ public class PluginPathFinder {
 			}
 		}
 
-		List list = scanLocations(getSites(platformHome, features));
+		List<File> list = scanLocations(getSites(platformHome, features));
 		list.addAll(getDropins(platformHome, features));
 		return Utils.asFile(list);
 	}
 
 	private static File[] getConfiguredSitesPaths(String platformHome, IPlatformConfiguration configuration, boolean features) {
-		List installPlugins = scanLocations(new File[] {new File(platformHome, features ? IPDEBuildConstants.DEFAULT_FEATURE_LOCATION : IPDEBuildConstants.DEFAULT_PLUGIN_LOCATION)});
-		List extensionPlugins = getExtensionPlugins(configuration, features);
-		List dropinsPlugins = getDropins(platformHome, features);
+		List<File> installPlugins = scanLocations(new File[] {new File(platformHome, features ? IPDEBuildConstants.DEFAULT_FEATURE_LOCATION : IPDEBuildConstants.DEFAULT_PLUGIN_LOCATION)});
+		List<File> extensionPlugins = getExtensionPlugins(configuration, features);
+		List<File> dropinsPlugins = getDropins(platformHome, features);
 
-		Set all = new LinkedHashSet();
+		Set<File> all = new LinkedHashSet<File>();
 		all.addAll(installPlugins);
 		all.addAll(extensionPlugins);
 		all.addAll(dropinsPlugins);
 
-		return (File[]) all.toArray(new File[all.size()]);
+		return all.toArray(new File[all.size()]);
 	}
 
 	/**
@@ -202,8 +200,8 @@ public class PluginPathFinder {
 	 * @param features true for features false for plugins
 	 * @return List of Files for features or plugins on the site
 	 */
-	private static List getExtensionPlugins(IPlatformConfiguration config, boolean features) {
-		ArrayList extensionPlugins = new ArrayList();
+	private static List<File> getExtensionPlugins(IPlatformConfiguration config, boolean features) {
+		ArrayList<File> extensionPlugins = new ArrayList<File>();
 		IPlatformConfiguration.ISiteEntry[] sites = config.getConfiguredSites();
 		for (int i = 0; i < sites.length; i++) {
 			URL url = sites[i].getURL();
@@ -226,8 +224,8 @@ public class PluginPathFinder {
 	 * @param sites
 	 * @return URLs to plugins/features
 	 */
-	private static List scanLocations(File[] sites) {
-		ArrayList result = new ArrayList();
+	private static List<File> scanLocations(File[] sites) {
+		ArrayList<File> result = new ArrayList<File>();
 		for (int i = 0; i < sites.length; i++) {
 			if (sites[i] == null || !sites[i].exists())
 				continue;

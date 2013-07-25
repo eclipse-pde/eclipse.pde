@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,8 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.build;
-
-import org.osgi.framework.Filter;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -54,7 +52,7 @@ public class BundleHelper {
 		return FileLocator.find(bundle, path, null);
 	}
 
-	public final URL find(IPath path, Map override) {
+	public final URL find(IPath path, Map<String, String> override) {
 		return FileLocator.find(bundle, path, override);
 	}
 
@@ -88,7 +86,7 @@ public class BundleHelper {
 	public IProvisioningAgent getProvisioningAgent(URI location) {
 		//Is there already an agent for this location?
 		String filter = "(locationURI=" + String.valueOf(location) + ")"; //$NON-NLS-1$//$NON-NLS-2$
-		ServiceReference[] serviceReferences = null;
+		ServiceReference<?>[] serviceReferences = null;
 		try {
 			serviceReferences = context.getServiceReferences(IProvisioningAgent.SERVICE_NAME, filter);
 			if (serviceReferences != null) {
@@ -110,7 +108,7 @@ public class BundleHelper {
 	}
 
 	public Object acquireService(String serviceName) {
-		ServiceReference reference = context.getServiceReference(serviceName);
+		ServiceReference<?> reference = context.getServiceReference(serviceName);
 		if (reference == null)
 			return null;
 		return context.getService(reference);

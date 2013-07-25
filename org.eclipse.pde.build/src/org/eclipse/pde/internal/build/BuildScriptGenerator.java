@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@ package org.eclipse.pde.internal.build;
 import java.io.*;
 import java.util.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.equinox.p2.publisher.eclipse.Feature;
 import org.eclipse.equinox.p2.publisher.eclipse.FeatureEntry;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.NLS;
@@ -135,7 +134,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 	/**
 	 * Separate elements by kind.
 	 */
-	protected void sortElements(List features, List plugins) {
+	protected void sortElements(List<String> features, List<String> plugins) {
 		if (elements == null)
 			return;
 		for (int i = 0; i < elements.length; i++) {
@@ -208,7 +207,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 		return result;
 	}
 
-	protected void generateFeatures(List features) throws CoreException {
+	protected void generateFeatures(List<String> features) throws CoreException {
 		AssemblyInformation assemblageInformation = null;
 		BuildDirector generator = null;
 
@@ -248,8 +247,8 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 		if (generator != null) {
 			try {
 				String[] featureInfo = null;
-				for (Iterator i = features.iterator(); i.hasNext();) {
-					featureInfo = getNameAndVersion((String) i.next());
+				for (Iterator<String> i = features.iterator(); i.hasNext();) {
+					featureInfo = getNameAndVersion(i.next());
 					BuildTimeFeature feature = getSite(false).findFeature(featureInfo[0], featureInfo[1], true);
 					generator.generate(feature);
 				}
@@ -318,37 +317,37 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 	protected void generateVersionsLists(AssemblyInformation assemblageInformation) throws CoreException {
 		if (assemblageInformation == null)
 			return;
-		List configs = getConfigInfos();
-		Set<Object> features = new HashSet<Object>();
-		Set<Object> plugins = new HashSet<Object>();
+		List<Config> configs = getConfigInfos();
+		Set<BuildTimeFeature> features = new HashSet<BuildTimeFeature>();
+		Set<BundleDescription> plugins = new HashSet<BundleDescription>();
 		Properties versions = new Properties();
 
 		//For each configuration, save the version of all the features in a file 
 		//and save the version of all the plug-ins in another file
-		for (Iterator iter = configs.iterator(); iter.hasNext();) {
-			Config config = (Config) iter.next();
+		for (Iterator<Config> iter = configs.iterator(); iter.hasNext();) {
+			Config config = iter.next();
 			String configString = config.toStringReplacingAny("_", ANY_STRING); //$NON-NLS-1$
 
 			//Features
-			Collection<Object> list = assemblageInformation.getFeatures(config);
+			Collection<BuildTimeFeature> featureList = assemblageInformation.getFeatures(config);
 			versions.clear();
-			features.addAll(list);
+			features.addAll(featureList);
 			String featureFile = DEFAULT_FEATURE_VERSION_FILENAME_PREFIX + '.' + configString + PROPERTIES_FILE_SUFFIX;
 			readVersions(versions, featureFile);
-			for (Iterator<Object> i = list.iterator(); i.hasNext();) {
-				Feature feature = (Feature) i.next();
+			for (Iterator<BuildTimeFeature> i = featureList.iterator(); i.hasNext();) {
+				BuildTimeFeature feature = i.next();
 				recordVersion(feature.getId(), new Version(feature.getVersion()), versions);
 			}
 			saveVersions(versions, featureFile);
 
 			//Plugins
-			list = assemblageInformation.getPlugins(config);
+			Collection<BundleDescription> bundleList = assemblageInformation.getPlugins(config);
 			versions.clear();
-			plugins.addAll(list);
+			plugins.addAll(bundleList);
 			String pluginFile = DEFAULT_PLUGIN_VERSION_FILENAME_PREFIX + '.' + configString + PROPERTIES_FILE_SUFFIX;
 			readVersions(versions, pluginFile);
-			for (Iterator<Object> i = list.iterator(); i.hasNext();) {
-				BundleDescription bundle = (BundleDescription) i.next();
+			for (Iterator<BundleDescription> i = bundleList.iterator(); i.hasNext();) {
+				BundleDescription bundle = i.next();
 				recordVersion(bundle.getSymbolicName(), bundle.getVersion(), versions);
 			}
 			saveVersions(versions, pluginFile);
@@ -358,8 +357,8 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 		versions.clear();
 		String featureFile = DEFAULT_FEATURE_VERSION_FILENAME_PREFIX + PROPERTIES_FILE_SUFFIX;
 		readVersions(versions, featureFile);
-		for (Iterator<Object> i = features.iterator(); i.hasNext();) {
-			Feature feature = (Feature) i.next();
+		for (Iterator<BuildTimeFeature> i = features.iterator(); i.hasNext();) {
+			BuildTimeFeature feature = i.next();
 			recordVersion(feature.getId(), new Version(feature.getVersion()), versions);
 		}
 		saveVersions(versions, featureFile);
@@ -368,8 +367,8 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 		versions.clear();
 		String pluginVersion = DEFAULT_PLUGIN_VERSION_FILENAME_PREFIX + PROPERTIES_FILE_SUFFIX;
 		readVersions(versions, pluginVersion);
-		for (Iterator<Object> i = plugins.iterator(); i.hasNext();) {
-			BundleDescription bundle = (BundleDescription) i.next();
+		for (Iterator<BundleDescription> i = plugins.iterator(); i.hasNext();) {
+			BundleDescription bundle = i.next();
 			recordVersion(bundle.getSymbolicName(), bundle.getVersion(), versions);
 		}
 		saveVersions(versions, pluginVersion);
@@ -586,7 +585,7 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 		generateFeatureVersionSuffix = value;
 	}
 
-	private static class ArchiveTable extends HashMap {
+	private static class ArchiveTable extends HashMap<Config, String> {
 		private static final long serialVersionUID = -3063402400461435816L;
 
 		public ArchiveTable(int size) {
@@ -594,8 +593,8 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 		}
 
 		@Override
-		public Object get(Object arg0) {
-			Object result = super.get(arg0);
+		public String get(Object key) {
+			String result = super.get(key);
 			if (result == null)
 				result = IXMLConstants.FORMAT_ANTZIP;
 			return result;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,10 +14,12 @@ import java.io.*;
 import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.p2.publisher.eclipse.ProductFile;
+import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.build.*;
 import org.eclipse.pde.internal.build.ant.AntScript;
 import org.eclipse.pde.internal.build.builder.BuildDirector;
+import org.eclipse.pde.internal.build.site.BuildTimeFeature;
 
 public class PackageScriptGenerator extends AssembleScriptGenerator {
 	private String packagingPropertiesLocation;
@@ -27,14 +29,17 @@ public class PackageScriptGenerator extends AssembleScriptGenerator {
 		super(directory, assemblageInformation, featureId);
 	}
 
+	@Override
 	protected void printProjectDeclaration() {
 		script.printProjectDeclaration("Package all config of " + featureId, TARGET_MAIN, null); //$NON-NLS-1$
 	}
 
+	@Override
 	protected AssembleConfigScriptGenerator getConfigScriptGenerator() {
 		return new PackageConfigScriptGenerator();
 	}
 
+	@Override
 	protected String getScriptName() {
 		if (backwardCompatibleName)
 			return "package" + '.' + DEFAULT_ASSEMBLE_ALL; //$NON-NLS-1$
@@ -45,15 +50,18 @@ public class PackageScriptGenerator extends AssembleScriptGenerator {
 		packagingPropertiesLocation = propertyFile;
 	}
 
-	protected Collection[] getConfigInfos(Config aConfig) {
-		return new Collection[] {assemblageInformation.getBinaryPlugins(aConfig), assemblageInformation.getBinaryFeatures(aConfig), assemblageInformation.getFeatures(aConfig), BuildDirector.p2Gathering ? assemblageInformation.getRootFileProviders(aConfig) : new HashSet(0)};
+	@Override
+	protected Collection<?>[] getConfigInfos(Config aConfig) {
+		return new Collection<?>[] {assemblageInformation.getBinaryPlugins(aConfig), assemblageInformation.getBinaryFeatures(aConfig), assemblageInformation.getFeatures(aConfig), BuildDirector.p2Gathering ? assemblageInformation.getRootFileProviders(aConfig) : new HashSet<BuildTimeFeature>(0)};
 	}
 
+	@Override
 	protected void generateP2ConfigFileTargetCall() {
 		//empty
 	}
 
-	protected void basicGenerateAssembleConfigFileTargetCall(Config aConfig, Collection binaryPlugins, Collection binaryFeatures, Collection allFeatures, Collection rootFiles) throws CoreException {
+	@Override
+	protected void basicGenerateAssembleConfigFileTargetCall(Config aConfig, Collection<BundleDescription> binaryPlugins, Collection<BuildTimeFeature> binaryFeatures, Collection<BuildTimeFeature> allFeatures, Collection<BuildTimeFeature> rootFiles) throws CoreException {
 		configScriptGenerator.initialize(directory, featureId, aConfig, binaryPlugins, binaryFeatures, allFeatures, rootFiles);
 		((PackageConfigScriptGenerator) configScriptGenerator).setPackagingPropertiesLocation(packagingPropertiesLocation);
 		configScriptGenerator.setArchiveFormat(archivesFormat.get(aConfig));
@@ -77,6 +85,7 @@ public class PackageScriptGenerator extends AssembleScriptGenerator {
 		backwardCompatibleName = value;
 	}
 
+	@Override
 	protected void printDefaultAssembleCondition() {
 		if (backwardCompatibleName)
 			script.printConditionIsSet("defaultAssemble.@{config}", "defaultAssemble", "defaultAssemblyEnabled", "assemble@{dot}@{config}.xml"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
@@ -84,6 +93,7 @@ public class PackageScriptGenerator extends AssembleScriptGenerator {
 			script.printConditionIsSet("defaultAssemble.@{config}", "defaultAssemble", "defaultAssemblyEnabled", "assemble.@{element}@{dot}@{config}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	}
 
+	@Override
 	protected void generateMetadataTarget() {
 		if (configScriptGenerator.haveP2Bundles()) {
 			script.printTargetDeclaration(TARGET_P2_METADATA, null, TARGET_P2_METADATA, null, null);

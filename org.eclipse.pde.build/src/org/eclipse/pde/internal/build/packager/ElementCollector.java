@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2011 IBM Corporation and others.
+ *  Copyright (c) 2005, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -24,6 +24,7 @@ public class ElementCollector extends BuildDirector {
 		super(assemblageInformation);
 	}
 
+	@Override
 	protected void generateIncludedFeatureBuildFile(BuildTimeFeature feature) throws CoreException {
 		FeatureEntry[] referencedFeatures = feature.getIncludedFeatureReferences();
 		for (int i = 0; i < referencedFeatures.length; i++) {
@@ -41,13 +42,14 @@ public class ElementCollector extends BuildDirector {
 		}
 	}
 
+	@Override
 	protected void collectElementToAssemble(BuildTimeFeature featureToCollect) {
 		if (assemblyData == null)
 			return;
-		List correctConfigs = selectConfigs(featureToCollect);
+		List<Config> correctConfigs = selectConfigs(featureToCollect);
 		// Here, we could sort if the feature is a common one or not by comparing the size of correctConfigs
-		for (Iterator iter = correctConfigs.iterator(); iter.hasNext();) {
-			Config config = (Config) iter.next();
+		for (Iterator<Config> iter = correctConfigs.iterator(); iter.hasNext();) {
+			Config config = iter.next();
 			assemblyData.addFeature(config, featureToCollect);
 		}
 	}

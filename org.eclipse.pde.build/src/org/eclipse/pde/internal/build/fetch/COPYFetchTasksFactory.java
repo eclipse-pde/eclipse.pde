@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2004, 2007 Eclipse Foundation and others.
+ * Copyright (c) 2004, 2013 Eclipse Foundation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,7 +50,7 @@ public class COPYFetchTasksFactory implements IFetchFactory, IPDEBuildConstants 
 	private static final String KEY_PATH = "path"; //$NON-NLS-1$
 	private static final String KEY_ROOT = "root"; //$NON-NLS-1$
 
-	public void generateRetrieveElementCall(Map entryInfos, IPath destination, IAntScript script) {
+	public void generateRetrieveElementCall(Map<String, Object> entryInfos, IPath destination, IAntScript script) {
 		String element = (String) entryInfos.get(KEY_ELEMENT_NAME);
 
 		// we directly copy the disc content into the destination
@@ -66,7 +66,7 @@ public class COPYFetchTasksFactory implements IFetchFactory, IPDEBuildConstants 
 		printCopyTask(null, destination.toString(), new String[] {sourcePath.toString()}, false, true, script);
 	}
 
-	public void generateRetrieveFilesCall(final Map entryInfos, IPath destination, final String[] files, IAntScript script) {
+	public void generateRetrieveFilesCall(final Map<String, Object> entryInfos, IPath destination, final String[] files, IAntScript script) {
 		String root = (String) entryInfos.get(KEY_ROOT);
 		String path = (String) entryInfos.get(KEY_PATH);
 
@@ -86,7 +86,7 @@ public class COPYFetchTasksFactory implements IFetchFactory, IPDEBuildConstants 
 		// no additional targets
 	}
 
-	public void parseMapFileEntry(String repoSpecificentry, Properties overrideTags, Map entryInfos) throws CoreException {
+	public void parseMapFileEntry(String repoSpecificentry, Properties overrideTags, Map<String, Object> entryInfos) throws CoreException {
 		String[] arguments = Utils.getArrayFromStringWithBlank(repoSpecificentry, SEPARATOR);
 		if (arguments.length < 1) {
 			String message = NLS.bind(Messages.error_incorrectDirectoryEntry, entryInfos.get(KEY_ELEMENT_NAME));

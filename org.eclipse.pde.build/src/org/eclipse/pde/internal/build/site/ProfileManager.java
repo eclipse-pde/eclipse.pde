@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2008, 2013 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -28,7 +28,7 @@ public class ProfileManager {
 	public static final String PROFILE_JAVAC_SOURCE = "org.eclipse.jdt.core.compiler.source"; //$NON-NLS-1$
 	public static final String PROFILE_JAVAC_TARGET = "org.eclipse.jdt.core.compiler.codegen.targetPlatform"; //$NON-NLS-1$
 
-	private final HashMap<String, Properties> profileMap = new HashMap();
+	private final HashMap<String, Properties> profileMap = new HashMap<String, Properties>();
 	private String[] profileSources = null;
 
 	public ProfileManager() {
@@ -49,7 +49,7 @@ public class ProfileManager {
 		return profileMap.get(profileName);
 	}
 
-	public void copyEEProfileProperties(Dictionary source, Properties target) {
+	public void copyEEProfileProperties(Dictionary<String, Object> source, Properties target) {
 		String[] profiles = getJavaProfiles();
 		for (int i = 0; i < profiles.length; i++) {
 			Object value = source.get(profiles[i]);
@@ -86,16 +86,16 @@ public class ProfileManager {
 	}
 
 	public String[] getJavaProfiles() {
-		Set keys = profileMap.keySet();
-		return sortProfiles((String[]) keys.toArray(new String[keys.size()]));
+		Set<String> keys = profileMap.keySet();
+		return sortProfiles(keys.toArray(new String[keys.size()]));
 	}
 
 	protected String[] sortProfiles(String[] profiles) {
-		Arrays.sort(profiles, new Comparator() {
-			public int compare(Object profile1, Object profile2) {
+		Arrays.sort(profiles, new Comparator<String>() {
+			public int compare(String profile1, String profile2) {
 				// need to make sure JavaSE, J2SE profiles are sorted ahead of all other profiles
-				String p1 = (String) profile1;
-				String p2 = (String) profile2;
+				String p1 = profile1;
+				String p2 = profile2;
 				if (p1.startsWith("JavaSE") && !p2.startsWith("JavaSE")) //$NON-NLS-1$ //$NON-NLS-2$
 					return -1;
 				if (!p1.startsWith("JavaSE") && p2.startsWith("JavaSE")) //$NON-NLS-1$ //$NON-NLS-2$
@@ -186,6 +186,7 @@ public class ProfileManager {
 	 *   A ZipFile container returns all ZipEntries from the jar
 	 *   All other containers return the *.profile entries from the root  
 	 */
+	@SuppressWarnings("rawtypes")
 	private Enumeration getProfilesEnum(Object container, String[] profiles) {
 		if (profiles != null) {
 			return Utils.getArrayEnumerator(profiles);
@@ -252,7 +253,7 @@ public class ProfileManager {
 		String[] profiles = getJavaProfiles(is);
 		Utils.close(is);
 
-		Enumeration entries = getProfilesEnum(container, profiles);
+		Enumeration<?> entries = getProfilesEnum(container, profiles);
 		while (entries != null && entries.hasMoreElements()) {
 			Object item = entries.nextElement();
 			if (!isProfileEntry(item))

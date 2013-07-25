@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -89,7 +89,7 @@ public class P2Utils {
 	 * @param directory directory to create the bundles.info and source.info files in
 	 * @return URL location of the bundles.info or <code>null</code>
 	 */
-	public static File writeBundlesTxt(Collection<Object> bundles, File directory, ProductFile productFile, boolean refactoredRuntime) {
+	public static File writeBundlesTxt(Collection<BundleDescription> bundles, File directory, ProductFile productFile, boolean refactoredRuntime) {
 		List<BundleInfo> bundleInfos = new ArrayList<BundleInfo>(bundles.size());
 		List<BundleInfo> sourceInfos = new ArrayList<BundleInfo>(bundles.size());
 		ShapeAdvisor advisor = new ShapeAdvisor();
@@ -106,8 +106,8 @@ public class P2Utils {
 
 		Map<String, BundleInfo> userInfos = productFile != null ? productFile.getConfigurationInfo() : null;
 
-		for (Iterator<Object> iterator = bundles.iterator(); iterator.hasNext();) {
-			BundleDescription desc = (BundleDescription) iterator.next();
+		for (Iterator<BundleDescription> iterator = bundles.iterator(); iterator.hasNext();) {
+			BundleDescription desc = iterator.next();
 			if (desc != null) {
 				String modelName = desc.getSymbolicName();
 

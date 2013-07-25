@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2007 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -46,18 +46,18 @@ public class XMLWriter extends PrintWriter {
 			super.print('\t');
 	}
 
-	public void printTag(String name, Map parameters) {
+	public void printTag(String name, Map<String, String> parameters) {
 		printTag(name, parameters, true, true, false);
 	}
 
-	public void printTag(String name, Map parameters, boolean shouldTab, boolean newLine, boolean close) {
+	public void printTag(String name, Map<String, String> parameters, boolean shouldTab, boolean newLine, boolean close) {
 		StringBuffer sb = new StringBuffer();
 		sb.append("<"); //$NON-NLS-1$
 		sb.append(name);
 		if (parameters != null)
-			for (Enumeration enumeration = Collections.enumeration(parameters.keySet()); enumeration.hasMoreElements();) {
+			for (Enumeration<String> enumeration = Collections.enumeration(parameters.keySet()); enumeration.hasMoreElements();) {
 				sb.append(" "); //$NON-NLS-1$
-				String key = (String) enumeration.nextElement();
+				String key = enumeration.nextElement();
 				if (parameters.get(key) != null) {
 					sb.append(key);
 					sb.append("=\""); //$NON-NLS-1$
@@ -67,7 +67,7 @@ public class XMLWriter extends PrintWriter {
 			}
 		if (close)
 			sb.append("/>"); //$NON-NLS-1$
-		else 
+		else
 			sb.append(">"); //$NON-NLS-1$
 		if (shouldTab)
 			printTabulation();
@@ -77,11 +77,11 @@ public class XMLWriter extends PrintWriter {
 			print(sb.toString());
 	}
 
-	public void startTag(String name, Map parameters) {
+	public void startTag(String name, Map<String, String> parameters) {
 		startTag(name, parameters, true);
 	}
 
-	public void startTag(String name, Map parameters, boolean newLine) {
+	public void startTag(String name, Map<String, String> parameters, boolean newLine) {
 		printTag(name, parameters, true, newLine, false);
 		tab++;
 	}
@@ -115,7 +115,7 @@ public class XMLWriter extends PrintWriter {
 				return String.valueOf(c);
 		}
 	}
-	
+
 	public void printlnEscaped(String s) {
 		if (s != null)
 			println(getEscaped(s));

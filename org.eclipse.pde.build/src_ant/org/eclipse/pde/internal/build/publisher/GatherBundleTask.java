@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008,2009 IBM Corporation and others. All rights reserved. This
+ * Copyright (c) 2008, 2013 IBM Corporation and others. All rights reserved. This
  * program and the accompanying materials are made available under the terms of
  * the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -178,7 +178,7 @@ public class GatherBundleTask extends AbstractPublisherTask {
 				}
 
 				if (sourceMap.containsKey(name) && entries[i].getType() == CompiledEntry.FOLDER) {
-					Set folders = sourceMap.get(name);
+					Set<OutputFileSet> folders = sourceMap.get(name);
 					processOutputFolders(folders, name, computer);
 				} else {
 					NameEntry fileInclude = fileSet.createInclude();
@@ -194,7 +194,7 @@ public class GatherBundleTask extends AbstractPublisherTask {
 		if (dotIncluded) {
 			//special handling for '.'
 			if (sourceMap.containsKey(ModelBuildScriptGenerator.DOT)) {
-				Set folders = sourceMap.get(ModelBuildScriptGenerator.DOT);
+				Set<OutputFileSet> folders = sourceMap.get(ModelBuildScriptGenerator.DOT);
 				processOutputFolders(folders, ModelBuildScriptGenerator.DOT, computer);
 			} else {
 				fileSet = new FileSet();
@@ -229,10 +229,10 @@ public class GatherBundleTask extends AbstractPublisherTask {
 		return computer;
 	}
 
-	private void processOutputFolders(Set folders, String key, GatheringComputer computer) {
+	private void processOutputFolders(Set<OutputFileSet> folders, String key, GatheringComputer computer) {
 		boolean dot = key.equals(ModelBuildScriptGenerator.DOT);
-		for (Iterator iterator = folders.iterator(); iterator.hasNext();) {
-			OutputFileSet outputFiles = (OutputFileSet) iterator.next();
+		for (Iterator<OutputFileSet> iterator = folders.iterator(); iterator.hasNext();) {
+			OutputFileSet outputFiles = iterator.next();
 			File baseDir = outputFiles.getDir();
 			String[] includes = outputFiles.mergeIncludes(getProject());
 			//handling more than one include here would involve correlating the includes files

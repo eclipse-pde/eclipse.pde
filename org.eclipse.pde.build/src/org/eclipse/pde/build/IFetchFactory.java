@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2004, 2010 Eclipse Foundation and others.
+ * Copyright (c) 2004, 2013 Eclipse Foundation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -96,7 +96,7 @@ public interface IFetchFactory {
 	 * refer to the name of the element being fetched and its type.
 	 * @throws CoreException if the rawEntry is incorrect.
 	 */
-	public void parseMapFileEntry(String rawEntry, Properties overrideTags, Map entryInfos) throws CoreException;
+	public void parseMapFileEntry(String rawEntry, Properties overrideTags, Map<String, Object> entryInfos) throws CoreException;
 
 	/**
 	 * Generates a segment of ant script whose execution will fetch the element (bundle, plug-in, fragment, feature) indicated in the entryInfos arguments.
@@ -107,7 +107,7 @@ public interface IFetchFactory {
 	 * to be in <code>destination/plugin.xml</code>. 
 	 * @param script the script in which to generate the segments of ant script. It is not authorized to generate target declaration during this call.  
 	 */
-	public void generateRetrieveElementCall(Map entryInfos, IPath destination, IAntScript script);
+	public void generateRetrieveElementCall(Map<String, Object> entryInfos, IPath destination, IAntScript script);
 
 	/**
 	 * Generates a segment of ant script whose execution will fetch the specified file from the given element.
@@ -119,7 +119,7 @@ public interface IFetchFactory {
 	 * @param files the files to obtained for the specified element.
 	 * @param script the script in which to generate the segments of ant script. It is not authorized to generate target declaration during this call.  
 	 */
-	public void generateRetrieveFilesCall(Map entryInfos, IPath destination, String[] files, IAntScript script);
+	public void generateRetrieveFilesCall(Map<String, Object> entryInfos, IPath destination, String[] files, IAntScript script);
 
 	/**
 	 * This methods give opportunities to the factory to generate target declaration or other Ant top level constructs in the script.

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,8 +12,8 @@ package org.eclipse.pde.internal.build.tasks;
 
 import java.io.*;
 import java.util.*;
-import java.util.jar.Attributes;
-import java.util.jar.Manifest;
+import java.util.Map.Entry;
+import java.util.jar.*;
 import java.util.jar.Attributes.Name;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
@@ -46,6 +46,7 @@ public class ManifestModifier extends Task {
 		}
 	}
 
+	@Override
 	public void execute() {
 		loadManifest();
 
@@ -74,10 +75,10 @@ public class ManifestModifier extends Task {
 	}
 
 	private void applyChanges() {
-		for (Iterator iter = newValues.entrySet().iterator(); iter.hasNext();) {
-			Map.Entry entry = (Map.Entry) iter.next();
-			String key = (String) entry.getKey();
-			String value = (String) entry.getValue();
+		for (Iterator<Entry<String, String>> iter = newValues.entrySet().iterator(); iter.hasNext();) {
+			Map.Entry<String, String> entry = iter.next();
+			String key = entry.getKey();
+			String value = entry.getValue();
 			if (value == null) {
 				removeAttribute(key);
 			} else {

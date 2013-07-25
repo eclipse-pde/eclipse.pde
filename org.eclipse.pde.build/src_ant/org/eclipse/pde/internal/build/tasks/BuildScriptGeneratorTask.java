@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -87,6 +87,7 @@ public class BuildScriptGeneratorTask extends Task {
 		antProperties.put(IBuildPropertiesConstants.PROPERTY_GENERATED_VERSION_LENGTH, generatedLength);
 	}
 
+	@Override
 	public void execute() throws BuildException {
 		try {
 			run();
@@ -133,6 +134,7 @@ public class BuildScriptGeneratorTask extends Task {
 			properties.put(IBuildPropertiesConstants.PROPERTY_ANT_VERSION, value);
 	}
 
+	@SuppressWarnings("unchecked")
 	private void setEEProfileProperties(Properties antProperties) {
 		ProfileManager manager = new ProfileManager(generator.getEESources(), true);
 		manager.copyEEProfileProperties(getProject().getProperties(), antProperties);
@@ -152,6 +154,7 @@ public class BuildScriptGeneratorTask extends Task {
 	 * @param installLocation the location where the build will occur.
 	 * @deprecated see {@link #setBuildDirectory(String)}
 	 */
+	@Deprecated
 	public void setInstall(String installLocation) {
 		generator.setWorkingDirectory(installLocation);
 	}

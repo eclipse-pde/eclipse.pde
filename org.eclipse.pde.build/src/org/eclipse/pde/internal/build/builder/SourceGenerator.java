@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -120,9 +120,9 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 			return;
 		}
 		// Here we fan the plugins into the source fragment where they should go
-		List correctConfigs = director.selectConfigs(pluginEntry);
-		for (Iterator iter = correctConfigs.iterator(); iter.hasNext();) {
-			Config configInfo = (Config) iter.next();
+		List<Config> correctConfigs = director.selectConfigs(pluginEntry);
+		for (Iterator<Config> iter = correctConfigs.iterator(); iter.hasNext();) {
+			Config configInfo = iter.next();
 			director.sourceToGather.addElementEntry(sourceId + "." + configInfo.toString("."), model); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
@@ -178,7 +178,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 		FeatureEntry entry;
 
 		for (int i = 1; i < extraEntries.length; i++) {
-			Map<String, Comparable> items = Utils.parseExtraBundlesString(extraEntries[i], true);
+			Map<String, Object> items = Utils.parseExtraBundlesString(extraEntries[i], true);
 			String id = (String) items.get(Utils.EXTRA_ID);
 			Version version = (Version) items.get(Utils.EXTRA_VERSION);
 
@@ -216,13 +216,13 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 	}
 
 	private void generateSourceFragments(BuildTimeFeature sourceFeature, FeatureEntry sourcePlugin) throws CoreException {
-		Map<String, Set> fragments = director.sourceToGather.getElementEntries();
-		for (Iterator iter = AbstractScriptGenerator.getConfigInfos().iterator(); iter.hasNext();) {
-			Config configInfo = (Config) iter.next();
+		Map<String, Set<BundleDescription>> fragments = director.sourceToGather.getElementEntries();
+		for (Iterator<Config> iter = AbstractScriptGenerator.getConfigInfos().iterator(); iter.hasNext();) {
+			Config configInfo = iter.next();
 			if (configInfo.equals(Config.genericConfig()))
 				continue;
 			String sourceFragmentId = sourceFeature.getId() + "." + configInfo.toString("."); //$NON-NLS-1$ //$NON-NLS-2$
-			Set fragmentEntries = fragments.get(sourceFragmentId);
+			Set<BundleDescription> fragmentEntries = fragments.get(sourceFragmentId);
 			if (fragmentEntries == null || fragmentEntries.size() == 0)
 				continue;
 			FeatureEntry sourceFragment = new FeatureEntry(sourceFragmentId, sourceFeature.getVersion(), true);
@@ -320,7 +320,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 			String message = NLS.bind(Messages.exception_writingFile, templatePluginURL.toExternalForm());
 			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_READING_FILE, message, e1));
 		}
-		Collection copiedFiles = Utils.copyFiles(featureRootLocation + '/' + "sourceTemplatePlugin", sourcePluginDir.getAbsolutePath()); //$NON-NLS-1$
+		Collection<String> copiedFiles = Utils.copyFiles(featureRootLocation + '/' + "sourceTemplatePlugin", sourcePluginDir.getAbsolutePath()); //$NON-NLS-1$
 		if (copiedFiles.contains(Constants.PLUGIN_FILENAME_DESCRIPTOR)) {
 			replaceXMLAttribute(sourcePluginDirURL.append(Constants.PLUGIN_FILENAME_DESCRIPTOR).toOSString(), PLUGIN_START_TAG, VERSION, result.getVersion());
 		}
@@ -390,7 +390,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 			buffer.replace(beginId, beginId + REPLACED_PLATFORM_FILTER.length(), "(& (osgi.ws=" + fragment.getWS() + ") (osgi.os=" + fragment.getOS() + ") (osgi.arch=" + fragment.getArch() + "))"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 
 			Utils.transferStreams(new ByteArrayInputStream(buffer.toString().getBytes()), new FileOutputStream(sourceFragmentDirURL.append(Constants.BUNDLE_FILENAME_DESCRIPTOR).toOSString()));
-			Collection copiedFiles = Utils.copyFiles(featureRootLocation + '/' + "sourceTemplateFragment", sourceFragmentDir.getAbsolutePath()); //$NON-NLS-1$
+			Collection<String> copiedFiles = Utils.copyFiles(featureRootLocation + '/' + "sourceTemplateFragment", sourceFragmentDir.getAbsolutePath()); //$NON-NLS-1$
 			if (copiedFiles.contains(Constants.BUNDLE_FILENAME_DESCRIPTOR)) {
 				//make sure the manifest.mf has the versions we want
 				replaceManifestValue(sourceFragmentDirURL.append(Constants.BUNDLE_FILENAME_DESCRIPTOR).toOSString(), org.osgi.framework.Constants.BUNDLE_VERSION, fragment.getVersion());
@@ -452,7 +452,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 			beginId = Utils.scan(buffer, beginId, REPLACED_PLUGIN_VERSION);
 			buffer.replace(beginId, beginId + REPLACED_PLUGIN_VERSION.length(), plugin.getVersion());
 			Utils.transferStreams(new ByteArrayInputStream(buffer.toString().getBytes()), new FileOutputStream(sourceFragmentDirURL.append(Constants.FRAGMENT_FILENAME_DESCRIPTOR).toOSString()));
-			Collection copiedFiles = Utils.copyFiles(featureRootLocation + '/' + "sourceTemplateFragment", sourceFragmentDir.getAbsolutePath()); //$NON-NLS-1$
+			Collection<String> copiedFiles = Utils.copyFiles(featureRootLocation + '/' + "sourceTemplateFragment", sourceFragmentDir.getAbsolutePath()); //$NON-NLS-1$
 			if (copiedFiles.contains(Constants.FRAGMENT_FILENAME_DESCRIPTOR)) {
 				replaceXMLAttribute(sourceFragmentDirURL.append(Constants.FRAGMENT_FILENAME_DESCRIPTOR).toOSString(), FRAGMENT_START_TAG, VERSION, fragment.getVersion());
 				replaceXMLAttribute(sourceFragmentDirURL.append(Constants.FRAGMENT_FILENAME_DESCRIPTOR).toOSString(), FRAGMENT_START_TAG, PLUGIN_VERSION, plugin.getVersion());
@@ -499,7 +499,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 			String message = NLS.bind(Messages.error_creatingFeature, sourceFeature.getId());
 			throw new CoreException(new Status(IStatus.OK, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, e));
 		}
-		Collection copiedFiles = Utils.copyFiles(featureRootLocation + '/' + "sourceTemplateFeature", sourceFeatureDir); //$NON-NLS-1$
+		Collection<String> copiedFiles = Utils.copyFiles(featureRootLocation + '/' + "sourceTemplateFeature", sourceFeatureDir); //$NON-NLS-1$
 		if (copiedFiles.contains(Constants.FEATURE_FILENAME_DESCRIPTOR)) {
 			//we overwrote our feature.xml with a template, replace the version
 			replaceXMLAttribute(sourceFeatureDir + '/' + Constants.FEATURE_FILENAME_DESCRIPTOR, FEATURE_START_TAG, VERSION, sourceFeature.getVersion());
@@ -588,9 +588,9 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 		}
 
 		if (excludedEntries != null && excludedEntries.containsKey(bundle.getSymbolicName())) {
-			List excludedVersions = excludedEntries.get(bundle.getSymbolicName());
-			for (Iterator iterator = excludedVersions.iterator(); iterator.hasNext();) {
-				Version version = (Version) iterator.next();
+			List<Version> excludedVersions = excludedEntries.get(bundle.getSymbolicName());
+			for (Iterator<Version> iterator = excludedVersions.iterator(); iterator.hasNext();) {
+				Version version = iterator.next();
 				if (Utils.matchVersions(bundle.getVersion().toString(), version.toString()))
 					return null;
 			}
@@ -611,8 +611,8 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 			if (sourceBundle != null) {
 				if (Utils.isSourceBundle(sourceBundle)) {
 					//it is a source bundle, check that it is for bundle
-					Map headerMap = Utils.parseSourceBundleEntry(sourceBundle);
-					Map entryMap = (Map) headerMap.get(bundle.getSymbolicName());
+					Map<String, Map<String, String>> headerMap = Utils.parseSourceBundleEntry(sourceBundle);
+					Map<String, String> entryMap = headerMap.get(bundle.getSymbolicName());
 					if (entryMap != null && bundle.getVersion().toString().equals(entryMap.get(VERSION))) {
 						sourceEntry.setUnpack(new File(sourceBundle.getLocation()).isDirectory());
 
@@ -848,7 +848,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 	}
 
 	private void generateSourceFiles(IPath sourcePluginDirURL, FeatureEntry sourceEntry, String templateDir, String extraFiles, BundleDescription originalBundle) throws CoreException {
-		Collection copiedFiles = Utils.copyFiles(featureRootLocation + '/' + templateDir, sourcePluginDirURL.toFile().getAbsolutePath());
+		Collection<String> copiedFiles = Utils.copyFiles(featureRootLocation + '/' + templateDir, sourcePluginDirURL.toFile().getAbsolutePath());
 		if (copiedFiles.contains(Constants.BUNDLE_FILENAME_DESCRIPTOR)) {
 			//make sure the manifest.mf has the version we want
 			replaceManifestValue(sourcePluginDirURL.append(Constants.BUNDLE_FILENAME_DESCRIPTOR).toOSString(), org.osgi.framework.Constants.BUNDLE_VERSION, sourceEntry.getVersion());

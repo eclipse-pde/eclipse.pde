@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2008 IBM Corporation and others.
+ *  Copyright (c) 2005, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -12,8 +12,6 @@
  *******************************************************************************/
 
 package org.eclipse.pde.internal.build.tasks;
-
-import java.io.File;
 
 import java.io.*;
 import java.util.*;
@@ -197,8 +195,8 @@ public class JNLPGenerator extends DefaultHandler {
 		String[] potentials = createNLSPotentials();
 
 		Map<String, ZipEntry> validEntries = new HashMap<String, ZipEntry>();
-		for (Enumeration enumeration = featureArchive.entries(); enumeration.hasMoreElements();) {
-			ZipEntry entry = (ZipEntry) enumeration.nextElement();
+		for (Enumeration<? extends ZipEntry> enumeration = featureArchive.entries(); enumeration.hasMoreElements();) {
+			ZipEntry entry = enumeration.nextElement();
 			String entryName = entry.getName();
 			if (entryName.endsWith(appendix)) {
 				validEntries.put(entryName, entry);
@@ -249,6 +247,7 @@ public class JNLPGenerator extends DefaultHandler {
 		return potentials;
 	}
 
+	@Override
 	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 		try {
 			if ("feature".equals(localName)) { //$NON-NLS-1$

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2008, 2011 IBM Corporation and others.
+ *  Copyright (c) 2008, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -82,11 +82,13 @@ public class ShapeAdvisor implements IPDEBuildConstants {
 	private boolean getUnpackClause(BundleDescription bundle) {
 		Properties properties = (Properties) bundle.getUserObject();
 		if (properties != null) {
+			@SuppressWarnings("rawtypes")
 			Set entries = (Set) properties.get(PLUGIN_ENTRY);
 			if (entries != null && entries.size() > 0) {
 				Boolean result = null;
 				boolean contradiction = false;
-				for (Iterator iterator = entries.iterator(); iterator.hasNext();) {
+				for (@SuppressWarnings("rawtypes")
+				Iterator iterator = entries.iterator(); iterator.hasNext();) {
 					FeatureEntry entry = (FeatureEntry) iterator.next();
 					if (entry.unpackSet()) {
 						if (result == null)

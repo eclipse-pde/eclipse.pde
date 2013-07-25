@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -59,27 +59,27 @@ public class CVSFetchTaskFactory implements IFetchFactory {
 	private static final String PROP_FILETOCHECK = "fileToCheck"; //$NON-NLS-1$
 	private static final String PROP_ELEMENTNAME = "elementName"; //$NON-NLS-1$
 
-	private void generateAuthentificationAntTask(Map entryInfos, IAntScript script) {
+	private void generateAuthentificationAntTask(Map<String, Object> entryInfos, IAntScript script) {
 		String password = (String) entryInfos.get(KEY_PASSWORD);
 		String cvsPassFileLocation = (String) entryInfos.get(KEY_CVSPASSFILE);
 		if (password != null)
 			printCVSPassTask((String) entryInfos.get(KEY_CVSROOT), password, cvsPassFileLocation, script);
 	}
 
-	public void generateRetrieveElementCall(Map entryInfos, IPath destination, IAntScript script) {
+	public void generateRetrieveElementCall(Map<String, Object> entryInfos, IPath destination, IAntScript script) {
 		String type = (String) entryInfos.get(KEY_ELEMENT_TYPE);
 		String element = (String) entryInfos.get(KEY_ELEMENT_NAME);
 		boolean prebuilt = Boolean.valueOf((String) entryInfos.get(KEY_PREBUILT)).booleanValue();
 
-		Map params = new HashMap(5);
+		Map<String, String> params = new HashMap<String, String>(5);
 		// we directly export the CVS content into the destination. if we have a pre-built JAR then
 		// we want to put it right in the /plugins directory and not a sub-directory so strip off 2 segments
 		// to leave us with the build directory (/plugins will be added by the "element" attribute)
 		int remove = prebuilt ? 2 : 1;
 		String suggestedPath = destination.lastSegment();
 		params.put(PROP_DESTINATIONFOLDER, destination.removeLastSegments(remove).toString());
-		params.put(PROP_TAG, entryInfos.get(IFetchFactory.KEY_ELEMENT_TAG));
-		params.put(PROP_CVSROOT, entryInfos.get(KEY_CVSROOT));
+		params.put(PROP_TAG, (String) entryInfos.get(IFetchFactory.KEY_ELEMENT_TAG));
+		params.put(PROP_CVSROOT, (String) entryInfos.get(KEY_CVSROOT));
 		params.put(PROP_QUIET, "${cvs.quiet}"); //$NON-NLS-1$
 		params.put(PROP_REALLYQUIET, "${cvs.reallyquiet}"); //$NON-NLS-1$
 		// the call to CVS requires us to pass a destination directory for the files that we are
@@ -125,7 +125,7 @@ public class CVSFetchTaskFactory implements IFetchFactory {
 		script.printAntCallTask(TARGET_GET_FROM_CVS, true, params);
 	}
 
-	public void generateRetrieveFilesCall(final Map entryInfos, IPath destination, final String[] files, IAntScript script) {
+	public void generateRetrieveFilesCall(final Map<String, Object> entryInfos, IPath destination, final String[] files, IAntScript script) {
 		generateAuthentificationAntTask(entryInfos, script);
 		String path = (String) entryInfos.get(KEY_PATH);
 		for (int i = 0; i < files.length; i++) {
@@ -155,7 +155,7 @@ public class CVSFetchTaskFactory implements IFetchFactory {
 	 * Map file arguments:
 	 * <code>&lt;TAG&gt;,&lt;CVSROOT&gt;[,&lt;PASSWORD&gt;[,&lt;PATH&gt;[,&lt;CVSPASSFILE&gt;]]]</code>
 	 */
-	private void legacyParseMapFileEntry(String[] arguments, Properties overrideTags, Map entryInfos) {
+	private void legacyParseMapFileEntry(String[] arguments, Properties overrideTags, Map<String, Object> entryInfos) {
 		String overrideTag = overrideTags != null ? overrideTags.getProperty(OVERRIDE_TAG) : null;
 		entryInfos.put(KEY_CVSPASSFILE, (arguments.length > 4 && !arguments[4].equals("")) ? arguments[4] : null); //$NON-NLS-1$
 		entryInfos.put(IFetchFactory.KEY_ELEMENT_TAG, (overrideTag != null && overrideTag.trim().length() != 0 ? overrideTag : arguments[0]));
@@ -164,7 +164,7 @@ public class CVSFetchTaskFactory implements IFetchFactory {
 		entryInfos.put(KEY_PATH, (arguments.length > 3 && !arguments[3].equals("")) ? arguments[3] : null); //$NON-NLS-1$ 
 	}
 
-	public void parseMapFileEntry(String repoSpecificentry, Properties overrideTags, Map entryInfos) throws CoreException {
+	public void parseMapFileEntry(String repoSpecificentry, Properties overrideTags, Map<String, Object> entryInfos) throws CoreException {
 		String[] arguments = Utils.getArrayFromStringWithBlank(repoSpecificentry, SEPARATOR);
 		if (arguments.length < 2) {
 			String message = NLS.bind(Messages.error_incorrectDirectoryEntry, entryInfos.get(KEY_ELEMENT_NAME));
@@ -172,7 +172,7 @@ public class CVSFetchTaskFactory implements IFetchFactory {
 		}
 
 		// build up the table of arguments in the map file entry
-		Map table = new HashMap();
+		Map<String, String> table = new HashMap<String, String>();
 		for (int i = 0; i < arguments.length; i++) {
 			String arg = arguments[i];
 			// if we have at least one arg without an equals sign, then
@@ -201,7 +201,7 @@ public class CVSFetchTaskFactory implements IFetchFactory {
 		addProjectReference(entryInfos);
 	}
 
-	private void addProjectReference(Map entryInfos) {
+	private void addProjectReference(Map<String, Object> entryInfos) {
 		String repoLocation = (String) entryInfos.get(KEY_CVSROOT);
 		String module = (String) entryInfos.get(KEY_PATH);
 		String projectName = (String) entryInfos.get(KEY_ELEMENT_NAME);

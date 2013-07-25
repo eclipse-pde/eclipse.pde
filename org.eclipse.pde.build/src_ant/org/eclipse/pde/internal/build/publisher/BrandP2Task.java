@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 IBM Corporation and others. All rights reserved. This
+ * Copyright (c) 2009, 2013 IBM Corporation and others. All rights reserved. This
  * program and the accompanying materials are made available under the terms of
  * the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -59,7 +59,7 @@ public class BrandP2Task extends Repo2RunnableTask {
 	private URI artifactURI = null;
 	private boolean removeMetadataRepo = true;
 	private boolean removeArtifactRepo = true;
-	private List ius = null;
+	private List<IInstallableUnit> ius = null;
 
 	public BrandP2Task() {
 		application = new Repo2Runnable() {
@@ -102,9 +102,9 @@ public class BrandP2Task extends Repo2RunnableTask {
 			super.execute();
 			if (ius.size() == 1) {
 				callBrandingIron();
-				publishBrandedIU(metadataRepo, artifactRepo, (IInstallableUnit) ius.get(0));
-				if ("macosx".equals(config.getOs())) {
-					publishBundledMacOS(metadataRepo, artifactRepo, (IInstallableUnit) ius.get(0));
+				publishBrandedIU(metadataRepo, artifactRepo, ius.get(0));
+				if ("macosx".equals(config.getOs())) { //$NON-NLS-1$
+					publishBundledMacOS(metadataRepo, artifactRepo, ius.get(0));
 				}
 				FileUtils.deleteAll(new File(getRootFolder()));
 			}
@@ -174,7 +174,7 @@ public class BrandP2Task extends Repo2RunnableTask {
 	}
 
 	@Override
-	protected List prepareIUs() {
+	protected List<IInstallableUnit> prepareIUs() {
 		String iuName = getProviderIUName();
 		IUDescription task = (IUDescription) super.createIu();
 		task.setId(iuName);
@@ -296,7 +296,7 @@ public class BrandP2Task extends Repo2RunnableTask {
 			new File(root, "artifacts.xml").delete(); //$NON-NLS-1$
 			new File(root, "content.jar").delete(); //$NON-NLS-1$
 			new File(root, "artifacts.jar").delete(); //$NON-NLS-1$
-			FileUtils.zip(output, root, Collections.EMPTY_SET, FileUtils.createRootPathComputer(root));
+			FileUtils.zip(output, root, Collections.<File> emptySet(), FileUtils.createRootPathComputer(root));
 		} catch (ProvisionException e) {
 			throw new BuildException(e.getMessage(), e);
 		} catch (IOException e) {
@@ -333,7 +333,7 @@ public class BrandP2Task extends Repo2RunnableTask {
 
 		for (int i = 0; i < results.size(); i++) {
 			ITouchpointData td = results.get(i);
-			Map instructions = new HashMap(td.getInstructions());
+			Map<String, ITouchpointInstruction> instructions = new HashMap<String, ITouchpointInstruction>(td.getInstructions());
 
 			String[] phases = new String[] {INSTALL, CONFIGURE};
 			for (int phase = 0; phase < phases.length; phase++) {
@@ -394,7 +394,7 @@ public class BrandP2Task extends Repo2RunnableTask {
 				body = "chmod(targetDir:${installFolder}, targetFile:" + brandedLauncher + ", permissions:755)"; //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			TouchpointInstruction newInstruction = new TouchpointInstruction(body, null);
-			Map instructions = new HashMap();
+			Map<String, ITouchpointInstruction> instructions = new HashMap<String, ITouchpointInstruction>();
 			instructions.put(INSTALL, newInstruction);
 			results.add(new TouchpointData(instructions));
 		}

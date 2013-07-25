@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -147,10 +147,10 @@ public class GatherFeatureTask extends AbstractPublisherTask {
 	protected FeatureRootAdvice createRootAdvice() {
 		FeatureRootAdvice advice = new FeatureRootAdvice();
 
-		Map<String, Map> configMap = Utils.processRootProperties(getBuildProperties(), true);
+		Map<String, Map<String, String>> configMap = Utils.processRootProperties(getBuildProperties(), true);
 		for (Iterator<String> iterator = configMap.keySet().iterator(); iterator.hasNext();) {
 			String config = iterator.next();
-			Map rootMap = configMap.get(config);
+			Map<String, String> rootMap = configMap.get(config);
 			if (config.equals(Utils.ROOT_COMMON))
 				config = ""; //$NON-NLS-1$
 			else
@@ -158,17 +158,17 @@ public class GatherFeatureTask extends AbstractPublisherTask {
 			GatheringComputer computer = new GatheringComputer();
 			Map<FileSet, String> configFileSets = new HashMap<FileSet, String>();
 			ArrayList<String> permissionsKeys = new ArrayList<String>();
-			for (Iterator rootEntries = rootMap.keySet().iterator(); rootEntries.hasNext();) {
-				String key = (String) rootEntries.next();
+			for (Iterator<String> rootEntries = rootMap.keySet().iterator(); rootEntries.hasNext();) {
+				String key = rootEntries.next();
 				if (key.startsWith(Utils.ROOT_PERMISSIONS)) {
 					permissionsKeys.add(key);
 					continue;
 				} else if (key.equals(Utils.ROOT_LINK)) {
-					advice.addLinks(config, (String) rootMap.get(key));
+					advice.addLinks(config, rootMap.get(key));
 					continue;
 				} else {
 					//files!
-					String fileList = (String) rootMap.get(key);
+					String fileList = rootMap.get(key);
 					String[] files = Utils.getArrayFromString(fileList, ","); //$NON-NLS-1$
 					for (int i = 0; i < files.length; i++) {
 						String file = files[i];
@@ -218,7 +218,7 @@ public class GatherFeatureTask extends AbstractPublisherTask {
 			//do permissions, out of the configFileSets, select the files to change permissions on.
 			for (Iterator<String> p = permissionsKeys.iterator(); p.hasNext();) {
 				String permissionKey = p.next();
-				String permissionString = (String) rootMap.get(permissionKey);
+				String permissionString = rootMap.get(permissionKey);
 				String[] names = Utils.getArrayFromString(permissionString);
 
 				OrSelector orSelector = new OrSelector();

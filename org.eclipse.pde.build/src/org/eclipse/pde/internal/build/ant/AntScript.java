@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.build.ant;
 import java.io.*;
 import java.net.URI;
 import java.util.*;
+import java.util.Map.Entry;
 import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.pde.build.IAntScript;
 
@@ -64,7 +65,7 @@ public class AntScript implements IAntScript {
 	 * 	called target
 	 * @param params table of parameters for the call
 	 */
-	public void printAntCallTask(String target, boolean inheritAll, Map params) {
+	public void printAntCallTask(String target, boolean inheritAll, Map<String, String> params) {
 		printTab();
 		output.print("<antcall"); //$NON-NLS-1$
 		printAttribute("target", target, true); //$NON-NLS-1$
@@ -75,10 +76,10 @@ public class AntScript implements IAntScript {
 		else {
 			output.println(">"); //$NON-NLS-1$
 			indent++;
-			Set entries = params.entrySet();
-			for (Iterator iter = entries.iterator(); iter.hasNext();) {
-				Map.Entry entry = (Map.Entry) iter.next();
-				printParam((String) entry.getKey(), (String) entry.getValue());
+			Set<Map.Entry<String, String>> entries = params.entrySet();
+			for (Iterator<Map.Entry<String, String>> iter = entries.iterator(); iter.hasNext();) {
+				Entry<String, String> entry = iter.next();
+				printParam(entry.getKey(), entry.getValue());
 			}
 			indent--;
 			printTab();
@@ -252,7 +253,7 @@ public class AntScript implements IAntScript {
 	 * 	to the ant target
 	 * @param properties the table of properties
 	 */
-	public void printAntTask(String antfile, String dir, String target, String outputParam, String inheritAll, Map properties) {
+	public void printAntTask(String antfile, String dir, String target, String outputParam, String inheritAll, Map<String, String> properties) {
 		printAntTask(antfile, dir, target, outputParam, inheritAll, properties, null);
 	}
 
@@ -269,7 +270,7 @@ public class AntScript implements IAntScript {
 	 * @param properties the table of properties
 	 * @param references the table of references
 	 */
-	public void printAntTask(String antfile, String dir, String target, String outputParam, String inheritAll, Map properties, Map references) {
+	public void printAntTask(String antfile, String dir, String target, String outputParam, String inheritAll, Map<String, String> properties, Map<String, String> references) {
 		printTab();
 		output.print("<ant"); //$NON-NLS-1$
 		printAttribute("antfile", antfile, false); //$NON-NLS-1$
@@ -283,20 +284,20 @@ public class AntScript implements IAntScript {
 			output.println(">"); //$NON-NLS-1$
 			indent++;
 			if (properties != null) {
-				Set entries = properties.entrySet();
-				for (Iterator iter = entries.iterator(); iter.hasNext();) {
-					Map.Entry entry = (Map.Entry) iter.next();
-					printProperty((String) entry.getKey(), (String) entry.getValue());
+				Set<Map.Entry<String, String>> entries = properties.entrySet();
+				for (Iterator<Entry<String, String>> iter = entries.iterator(); iter.hasNext();) {
+					Map.Entry<String, String> entry = iter.next();
+					printProperty(entry.getKey(), entry.getValue());
 				}
 			}
 			if (references != null) {
-				Set entries = references.entrySet();
-				for (Iterator iter = entries.iterator(); iter.hasNext();) {
-					Map.Entry entry = (Map.Entry) iter.next();
+				Set<Map.Entry<String, String>> entries = references.entrySet();
+				for (Iterator<Entry<String, String>> iter = entries.iterator(); iter.hasNext();) {
+					Map.Entry<String, String> entry = iter.next();
 					printTab();
-					print("<reference refid=\"" + (String) entry.getKey() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+					print("<reference refid=\"" + entry.getKey() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 					if (entry.getValue() != null) {
-						print(" torefid=\"" + (String) entry.getValue() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+						print(" torefid=\"" + entry.getValue() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 					print("/>"); //$NON-NLS-1$
 					println();
@@ -308,7 +309,7 @@ public class AntScript implements IAntScript {
 		}
 	}
 
-	public void printSubantTask(String antfile, String target, String buildpath, String failOnError, String inheritAll, Map properties, Map references) {
+	public void printSubantTask(String antfile, String target, String buildpath, String failOnError, String inheritAll, Map<String, String> properties, Map<String, String> references) {
 		printTab();
 		output.print("<subant"); //$NON-NLS-1$
 		printAttribute("antfile", antfile, false); //$NON-NLS-1$
@@ -322,20 +323,20 @@ public class AntScript implements IAntScript {
 			output.println(">"); //$NON-NLS-1$
 			indent++;
 			if (properties != null) {
-				Set entries = properties.entrySet();
-				for (Iterator iter = entries.iterator(); iter.hasNext();) {
-					Map.Entry entry = (Map.Entry) iter.next();
-					printProperty((String) entry.getKey(), (String) entry.getValue());
+				Set<Map.Entry<String, String>> entries = properties.entrySet();
+				for (Iterator<Entry<String, String>> iter = entries.iterator(); iter.hasNext();) {
+					Map.Entry<String, String> entry = iter.next();
+					printProperty(entry.getKey(), entry.getValue());
 				}
 			}
 			if (references != null) {
-				Set entries = references.entrySet();
-				for (Iterator iter = entries.iterator(); iter.hasNext();) {
-					Map.Entry entry = (Map.Entry) iter.next();
+				Set<Map.Entry<String, String>> entries = references.entrySet();
+				for (Iterator<Entry<String, String>> iter = entries.iterator(); iter.hasNext();) {
+					Map.Entry<String, String> entry = iter.next();
 					printTab();
-					print("<reference refid=\"" + (String) entry.getKey() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+					print("<reference refid=\"" + entry.getKey() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 					if (entry.getValue() != null) {
-						print(" torefid=\"" + (String) entry.getValue() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+						print(" torefid=\"" + entry.getValue() + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 					print("/>"); //$NON-NLS-1$
 					println();
@@ -583,7 +584,7 @@ public class AntScript implements IAntScript {
 	 * @param dir the working directory for the executable
 	 * @param lineArgs the arguments for the executable
 	 */
-	public void printExecTask(String executable, String dir, List lineArgs, String os) {
+	public void printExecTask(String executable, String dir, List<String> lineArgs, String os) {
 		printExecTask(executable, dir, lineArgs, os, false);
 	}
 
@@ -595,7 +596,7 @@ public class AntScript implements IAntScript {
 	 * @param os
 	 * @param useValue Use value arguments if there is no space in the arg
 	 */
-	public void printExecTask(String executable, String dir, List lineArgs, String os, boolean useValue) {
+	public void printExecTask(String executable, String dir, List<String> lineArgs, String os, boolean useValue) {
 		printTab();
 		output.print("<exec"); //$NON-NLS-1$
 		printAttribute("executable", executable, true); //$NON-NLS-1$
@@ -607,7 +608,7 @@ public class AntScript implements IAntScript {
 			output.println(">"); //$NON-NLS-1$
 			indent++;
 			for (int i = 0; i < lineArgs.size(); i++) {
-				String arg = (String) lineArgs.get(i);
+				String arg = lineArgs.get(i);
 				printArg(arg, useValue && arg.indexOf(' ') == -1);
 			}
 			indent--;
@@ -788,14 +789,14 @@ public class AntScript implements IAntScript {
 	 * 
 	 * @param tag the name of the element
 	 */
-	public void printStartTag(String tag, Map arguments) {
+	public void printStartTag(String tag, Map<String, String> arguments) {
 		printTab();
 		output.print("<"); //$NON-NLS-1$
 		output.print(tag);
-		Set entries = arguments.entrySet();
-		for (Iterator iter = entries.iterator(); iter.hasNext();) {
-			Map.Entry entry = (Map.Entry) iter.next();
-			printAttribute((String) entry.getKey(), (String) entry.getValue(), true);
+		Set<Map.Entry<String, String>> entries = arguments.entrySet();
+		for (Iterator<Entry<String, String>> iter = entries.iterator(); iter.hasNext();) {
+			Map.Entry<String, String> entry = iter.next();
+			printAttribute(entry.getKey(), entry.getValue(), true);
 		}
 		output.println(">"); //$NON-NLS-1$
 	}
@@ -814,15 +815,15 @@ public class AntScript implements IAntScript {
 	 * @param tag the name of the element
 	 * @param arguments the arguments
 	 */
-	public void printElement(String tag, Map arguments) {
+	public void printElement(String tag, Map<String, String> arguments) {
 		printTab();
 		output.print("<"); //$NON-NLS-1$
 		output.print(tag);
 		if (null != arguments) {
-			Set entries = arguments.entrySet();
-			for (Iterator iter = entries.iterator(); iter.hasNext();) {
-				Map.Entry entry = (Map.Entry) iter.next();
-				printAttribute((String) entry.getKey(), (String) entry.getValue(), true);
+			Set<Map.Entry<String, String>> entries = arguments.entrySet();
+			for (Iterator<Entry<String, String>> iter = entries.iterator(); iter.hasNext();) {
+				Map.Entry<String, String> entry = iter.next();
+				printAttribute(entry.getKey(), entry.getValue(), true);
 			}
 		}
 		output.println("/>"); //$NON-NLS-1$
@@ -1034,12 +1035,12 @@ public class AntScript implements IAntScript {
 		printEndTag("condition"); //$NON-NLS-1$
 	}
 
-	public void printMacroDef(String macroName, List attributes) {
+	public void printMacroDef(String macroName, List<String> attributes) {
 		println("<macrodef name=\"" + macroName + "\">"); //$NON-NLS-1$ //$NON-NLS-2$
 		indent++;
 		if (null != attributes)
-			for (Iterator iterator = attributes.iterator(); iterator.hasNext();) {
-				String attribute = (String) iterator.next();
+			for (Iterator<String> iterator = attributes.iterator(); iterator.hasNext();) {
+				String attribute = iterator.next();
 				println("<attribute name=\"" + attribute + "\" />"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		println("<sequential>"); //$NON-NLS-1$

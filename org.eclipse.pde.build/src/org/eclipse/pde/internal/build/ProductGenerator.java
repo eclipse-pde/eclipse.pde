@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 IBM Corporation and others.
+ * Copyright (c) 2006, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,6 +54,7 @@ public class ProductGenerator extends AbstractScriptGenerator {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.build.AbstractScriptGenerator#generate()
 	 */
+	@Override
 	public void generate() throws CoreException {
 		initialize();
 
@@ -61,8 +62,8 @@ public class ProductGenerator extends AbstractScriptGenerator {
 			return;
 
 		String location = null, fileList = null;
-		for (Iterator iter = getConfigInfos().iterator(); iter.hasNext();) {
-			Config config = (Config) iter.next();
+		for (Iterator<Config> iter = getConfigInfos().iterator(); iter.hasNext();) {
+			Config config = iter.next();
 			location = DEFAULT_PRODUCT_ROOT_FILES_DIR + '/' + config.toStringReplacingAny(".", ANY_STRING); //$NON-NLS-1$
 
 			String rootLocation = root + location;
@@ -259,9 +260,9 @@ public class ProductGenerator extends AbstractScriptGenerator {
 				brandedRange = new VersionRange(new Version(brandedVersion), true, new Version(brandedVersion), true).toString();
 			}
 
-			List configs = getConfigInfos();
+			List<Config> configs = getConfigInfos();
 			for (int i = 0; i < configs.size(); i++) {
-				Config config = (Config) configs.get(i);
+				Config config = configs.get(i);
 				if (config.equals(Config.genericConfig()))
 					continue;
 				String fragmentName = BUNDLE_EQUINOX_LAUNCHER + '.' + config.getWs() + '.' + config.getOs();
@@ -307,7 +308,7 @@ public class ProductGenerator extends AbstractScriptGenerator {
 		Properties properties = AbstractScriptGenerator.readProperties(new Path(rootFeature.getRootLocation()).toOSString(), PROPERTIES_FILE, IStatus.OK);
 		String[] extraEntries = Utils.getArrayFromString(properties.getProperty(PRODUCT_PREFIX + productFile.getId()));
 		for (int i = 0; i < extraEntries.length; i++) {
-			Map<String, Comparable> entry = Utils.parseExtraBundlesString(extraEntries[i], true);
+			Map<String, Object> entry = Utils.parseExtraBundlesString(extraEntries[i], true);
 			String id = (String) entry.get(Utils.EXTRA_ID);
 			Version version = (Version) entry.get(Utils.EXTRA_VERSION);
 
@@ -360,17 +361,17 @@ public class ProductGenerator extends AbstractScriptGenerator {
 		return (byte) (result | CONFIG_STYLE_ORIGINAL);
 	}
 
-	private List<Object> getBundlesFromProductFile(Config config) {
+	private List<BundleDescription> getBundlesFromProductFile(Config config) {
 		BundleHelper helper = BundleHelper.getDefault();
-		Dictionary environment = new Hashtable(3);
+		Dictionary<String, String> environment = new Hashtable<String, String>(3);
 		environment.put("osgi.os", config.getOs()); //$NON-NLS-1$
 		environment.put("osgi.ws", config.getWs()); //$NON-NLS-1$
 		environment.put("osgi.arch", config.getArch()); //$NON-NLS-1$
 
-		List pluginList = productFile.getProductEntries();
-		List<Object> results = new ArrayList<Object>(pluginList.size());
-		for (Iterator iter = pluginList.iterator(); iter.hasNext();) {
-			FeatureEntry entry = (FeatureEntry) iter.next();
+		List<FeatureEntry> pluginList = productFile.getProductEntries();
+		List<BundleDescription> results = new ArrayList<BundleDescription>(pluginList.size());
+		for (Iterator<FeatureEntry> iter = pluginList.iterator(); iter.hasNext();) {
+			FeatureEntry entry = iter.next();
 			if (!entry.isPlugin())
 				continue;
 
@@ -390,7 +391,7 @@ public class ProductGenerator extends AbstractScriptGenerator {
 		buffer.append(START_LEVEL_1);
 		buffer.append("\n"); //$NON-NLS-1$
 
-		Collection<Object> plugins = null;
+		Collection<BundleDescription> plugins = null;
 		if (productFile.useFeatures())
 			plugins = assembly.getPlugins(config);
 		else
@@ -419,12 +420,12 @@ public class ProductGenerator extends AbstractScriptGenerator {
 	}
 
 	private void printUpdateBundles(StringBuffer buffer, int style) {
-		Map infos = productFile.getConfigurationInfo();
+		Map<String, BundleInfo> infos = productFile.getConfigurationInfo();
 		buffer.append("osgi.bundles="); //$NON-NLS-1$
 		if (infos.size() > 0) {
 			//user specified
-			for (Iterator iterator = infos.values().iterator(); iterator.hasNext();) {
-				BundleInfo info = (BundleInfo) iterator.next();
+			for (Iterator<BundleInfo> iterator = infos.values().iterator(); iterator.hasNext();) {
+				BundleInfo info = iterator.next();
 				printBundleInfo(buffer, info);
 				if (iterator.hasNext())
 					buffer.append(',');
@@ -467,21 +468,21 @@ public class ProductGenerator extends AbstractScriptGenerator {
 		buffer.append("osgi.bundles="); //$NON-NLS-1$
 
 		//When the plugins are all listed.
-		Dictionary environment = new Hashtable(3);
+		Dictionary<String, String> environment = new Hashtable<String, String>(3);
 		environment.put("osgi.os", config.getOs()); //$NON-NLS-1$
 		environment.put("osgi.ws", config.getWs()); //$NON-NLS-1$
 		environment.put("osgi.arch", config.getArch()); //$NON-NLS-1$
 
-		Collection<Object> bundles = null;
+		Collection<BundleDescription> bundles = null;
 		if (productFile.useFeatures())
 			bundles = assembly.getPlugins(config);
 		else
 			bundles = getBundlesFromProductFile(config);
 		BundleHelper helper = BundleHelper.getDefault();
-		Map infos = productFile.getConfigurationInfo();
+		Map<String, BundleInfo> infos = productFile.getConfigurationInfo();
 		boolean first = true;
-		for (Iterator<Object> iter = bundles.iterator(); iter.hasNext();) {
-			BundleDescription bundle = (BundleDescription) iter.next();
+		for (Iterator<BundleDescription> iter = bundles.iterator(); iter.hasNext();) {
+			BundleDescription bundle = iter.next();
 			String id = bundle.getSymbolicName();
 			if (BUNDLE_OSGI.equals(id) || BUNDLE_EQUINOX_LAUNCHER.equals(id))
 				continue;
@@ -493,7 +494,7 @@ public class ProductGenerator extends AbstractScriptGenerator {
 					buffer.append(",\\" + newline + "  "); //$NON-NLS-1$ //$NON-NLS-2$
 				if (infos.size() > 0) {
 					if (infos.containsKey(id))
-						printBundleInfo(buffer, (BundleInfo) infos.get(id));
+						printBundleInfo(buffer, infos.get(id));
 					else
 						buffer.append(bundle.getSymbolicName());
 				} else {
@@ -541,7 +542,7 @@ public class ProductGenerator extends AbstractScriptGenerator {
 		if (!properties.containsKey("osgi.bundles.defaultStartLevel")) //$NON-NLS-1$
 			properties.put("osgi.bundles.defaultStartLevel", "4"); //$NON-NLS-1$ //$NON-NLS-2$
 
-		for (Iterator iterator = properties.keySet().iterator(); iterator.hasNext();) {
+		for (Iterator<Object> iterator = properties.keySet().iterator(); iterator.hasNext();) {
 			String key = (String) iterator.next();
 			buffer.append(key);
 			buffer.append('=');
@@ -636,7 +637,7 @@ public class ProductGenerator extends AbstractScriptGenerator {
 		StringBuffer buffer = new StringBuffer("platform:/base/plugins/"); //$NON-NLS-1$
 		buffer.append(plugin);
 
-		Dictionary environment = new Hashtable(4);
+		Dictionary<String, String> environment = new Hashtable<String, String>(4);
 		environment.put("osgi.os", config.getOs()); //$NON-NLS-1$
 		environment.put("osgi.ws", config.getWs()); //$NON-NLS-1$
 		environment.put("osgi.arch", config.getArch()); //$NON-NLS-1$

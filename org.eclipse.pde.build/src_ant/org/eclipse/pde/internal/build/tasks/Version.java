@@ -1,6 +1,6 @@
 /*
  * 
- * Copyright (c) OSGi Alliance (2004, 2006). All Rights Reserved.
+ * Copyright (c) OSGi Alliance (2004, 2013). All Rights Reserved.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,7 +40,7 @@ import java.util.StringTokenizer;
  * @since 1.3
  */
 
-public class Version implements Comparable {
+public class Version implements Comparable<Version> {
 	private final int major;
 	private final int minor;
 	private final int micro;
@@ -252,6 +252,7 @@ public class Version implements Comparable {
 	 * 
 	 * @return The string representation of this version identifier.
 	 */
+	@Override
 	public String toString() {
 		String base = major + SEPARATOR + minor + SEPARATOR + micro;
 		if (qualifier.length() == 0) {
@@ -265,6 +266,7 @@ public class Version implements Comparable {
 	 * 
 	 * @return An integer which is a hash code value for this object.
 	 */
+	@Override
 	public int hashCode() {
 		return (major << 24) + (minor << 16) + (micro << 8) + qualifier.hashCode();
 	}
@@ -282,6 +284,7 @@ public class Version implements Comparable {
 	 *         <code>Version</code> and is equal to this object;
 	 *         <code>false</code> otherwise.
 	 */
+	@Override
 	public boolean equals(Object object) {
 		if (object == this) { // quicktest
 			return true;
@@ -320,12 +323,12 @@ public class Version implements Comparable {
 	 * @throws ClassCastException If the specified object is not a
 	 *         <code>Version</code>.
 	 */
-	public int compareTo(Object object) {
+	public int compareTo(Version object) {
 		if (object == this) { // quicktest
 			return 0;
 		}
 
-		Version other = (Version) object;
+		Version other = object;
 
 		int result = major - other.major;
 		if (result != 0) {

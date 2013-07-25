@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eclipse.pde.internal.build;
 
 import java.io.*;
 import java.util.*;
+import java.util.Map.Entry;
 import org.eclipse.ant.core.AntRunner;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.p2.publisher.eclipse.FeatureEntry;
@@ -40,7 +41,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 	// Points to the map files containing references to repository
 	protected Properties directoryFile;
 	protected String directoryLocation;
-	protected SortedMap directory;
+	protected SortedMap<MapFileEntry, Object> directory;
 
 	protected String fetchCache;
 
@@ -59,7 +60,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 	// The feature object representing the element
 	protected BuildTimeFeature feature;
 	//The map infos (of the element) processed
-	protected Map mapInfos;
+	protected Map<String, Object> mapInfos;
 	// The content of the build.properties file associated with the feature
 	protected Properties featureProperties;
 	// Variables to control is a mkdir to a specific folder was already.
@@ -72,7 +73,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 	//The registry of the task factories
 	private FetchTaskFactoriesRegistry fetchTaskFactories;
 	//Set of all the used factories while generating the fetch script for the top level element
-	private final Set encounteredTypeOfRepo = new HashSet();
+	private final Set<IFetchFactory> encounteredTypeOfRepo = new HashSet<IFetchFactory>();
 
 	public static final String FEATURE_ONLY = "featureOnly"; //$NON-NLS-1$
 	public static final String FEATURE_AND_PLUGINS = "featureAndPlugins"; //$NON-NLS-1$
@@ -257,8 +258,8 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 	 * @return Map
 	 * @throws CoreException
 	 */
-	private Map processMapFileEntry(String entry, Version version) throws CoreException {
-		Map entryInfos = new HashMap(5);
+	private Map<String, Object> processMapFileEntry(String entry, Version version) throws CoreException {
+		Map<String, Object> entryInfos = new HashMap<String, Object>(5);
 
 		// extract type and element from entry
 		int index = entry.indexOf('@');
@@ -340,7 +341,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 			if (featureProperties.containsKey(GENERATION_SOURCE_FEATURE_PREFIX + featureId)) {
 				String[] extraElementsToFetch = Utils.getArrayFromString(featureProperties.getProperty(GENERATION_SOURCE_FEATURE_PREFIX + featureId), ","); //$NON-NLS-1$
 				for (int j = 1; j < extraElementsToFetch.length; j++) {
-					Map<String, Comparable> infos = Utils.parseExtraBundlesString(extraElementsToFetch[j], false);
+					Map<String, Object> infos = Utils.parseExtraBundlesString(extraElementsToFetch[j], false);
 					generateFetchEntry((String) infos.get(Utils.EXTRA_ID), (Version) infos.get(Utils.EXTRA_VERSION), false);
 				}
 				continue;
@@ -358,7 +359,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 	}
 
 	protected boolean generateFetchEntry(String entry, Version version, boolean manifestFileOnly) throws CoreException {
-		Map mapFileEntry = mapInfos;
+		Map<String, Object> mapFileEntry = mapInfos;
 		if (!entry.equals(element)) {
 			mapFileEntry = processMapFileEntry(entry, version);
 			if (mapFileEntry == null)
@@ -439,7 +440,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 			if (featureProperties.containsKey(GENERATION_SOURCE_PLUGIN_PREFIX + elementId)) {
 				String[] extraElementsToFetch = Utils.getArrayFromString(featureProperties.getProperty(GENERATION_SOURCE_PLUGIN_PREFIX + elementId), ","); //$NON-NLS-1$
 				for (int j = 1; j < extraElementsToFetch.length; j++) {
-					Map<String, Comparable> infos = Utils.parseExtraBundlesString(extraElementsToFetch[j], false);
+					Map<String, Object> infos = Utils.parseExtraBundlesString(extraElementsToFetch[j], false);
 					generateFetchEntry((String) infos.get(Utils.EXTRA_ID), (Version) infos.get(Utils.EXTRA_VERSION), false);
 				}
 				continue;
@@ -475,7 +476,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 	 * @param elementInfos the element information
 	 * @throws CoreException
 	 */
-	protected void retrieveFeature(String elementName, String elementType, Map elementInfos) throws CoreException {
+	protected void retrieveFeature(String elementName, String elementType, Map<String, Object> elementInfos) throws CoreException {
 		// Generate a temporary Ant script which retrieves the feature.xml for this
 		// feature from CVS
 		File root = new File(workingDirectory);
@@ -529,7 +530,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 		// Run the Ant script to go to and retrieve the feature.xml. Call the Update
 		// code to construct the feature object to return.
 		try {
-			Map retrieveProp = new HashMap();
+			Map<String, String> retrieveProp = new HashMap<String, String>();
 			retrieveProp.put("fetch.failonerror", "true"); //$NON-NLS-1$//$NON-NLS-2$
 			retrieveProp.put("buildDirectory", getWorkingDirectory()); //$NON-NLS-1$
 			if (fetchCache != null)
@@ -656,20 +657,20 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 		//Here we start dealing with the case #3.
 		initializeSortedDirectory();
 		//Among all the plug-ins, find all the ones for the given elementName
-		SortedMap candidates = directory.subMap(new MapFileEntry(elementName, Version.emptyVersion), new MapFileEntry(elementName, versionMax));
+		SortedMap<MapFileEntry, Object> candidates = directory.subMap(new MapFileEntry(elementName, Version.emptyVersion), new MapFileEntry(elementName, versionMax));
 		if (candidates.size() == 0)
 			return null;
 
-		Map.Entry bestMatch = null;
-		for (Iterator iterator = candidates.entrySet().iterator(); iterator.hasNext();) {
-			Map.Entry entry = (Map.Entry) iterator.next();
-			MapFileEntry aCandidate = (MapFileEntry) entry.getKey();
+		Map.Entry<MapFileEntry, Object> bestMatch = null;
+		for (Iterator<Entry<MapFileEntry, Object>> iterator = candidates.entrySet().iterator(); iterator.hasNext();) {
+			Map.Entry<MapFileEntry, Object> entry = iterator.next();
+			MapFileEntry aCandidate = entry.getKey();
 			//Find the exact match
 			if (aCandidate.v.equals(version))
 				return new Object[] {(String) entry.getValue(), version};
 
 			if (bestMatch != null) {
-				if (((MapFileEntry) bestMatch.getKey()).v.compareTo(((MapFileEntry) entry.getKey()).v) < 1) {
+				if (bestMatch.getKey().v.compareTo(entry.getKey().v) < 1) {
 					bestMatch = entry;
 				}
 			} else {
@@ -678,7 +679,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 		}
 		if (!Version.emptyVersion.equals(version)) //The request was for a particular version number and it has not been found
 			return null;
-		return new Object[] {(String) bestMatch.getValue(), ((MapFileEntry) bestMatch.getKey()).v};
+		return new Object[] {(String) bestMatch.getValue(), bestMatch.getKey().v};
 	}
 
 	private static final Version versionMax = new Version(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE);
@@ -686,9 +687,9 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 	private void initializeSortedDirectory() {
 		if (directory != null)
 			return;
-		directory = new TreeMap();
-		for (Iterator iter = directoryFile.entrySet().iterator(); iter.hasNext();) {
-			Map.Entry entry = (Map.Entry) iter.next();
+		directory = new TreeMap<MapFileEntry, Object>();
+		for (Iterator<Entry<Object, Object>> iter = directoryFile.entrySet().iterator(); iter.hasNext();) {
+			Map.Entry<Object, Object> entry = iter.next();
 			String[] entryInfo = Utils.getArrayFromString((String) entry.getKey());
 			if (entryInfo.length == 0)
 				continue;
@@ -696,7 +697,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 		}
 	}
 
-	public static class MapFileEntry implements Comparable {
+	public static class MapFileEntry implements Comparable<Object> {
 		String id;
 		Version v;
 
@@ -754,8 +755,8 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 	 * Generates additional targets submitted by the fetch task factory.
 	 */
 	private void generateAdditionalTargets() {
-		for (Iterator iter = encounteredTypeOfRepo.iterator(); iter.hasNext();) {
-			((IFetchFactory) iter.next()).addTargets(script);
+		for (Iterator<IFetchFactory> iter = encounteredTypeOfRepo.iterator(); iter.hasNext();) {
+			iter.next().addTargets(script);
 		}
 	}
 
@@ -861,7 +862,7 @@ public class FetchScriptGenerator extends AbstractScriptGenerator {
 		this.scriptRunner = runner;
 	}
 
-	private void setDirectory(SortedMap dir) {
+	private void setDirectory(SortedMap<MapFileEntry, Object> dir) {
 		directory = dir;
 	}
 

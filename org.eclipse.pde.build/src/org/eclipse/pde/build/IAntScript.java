@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 IBM Corporation and others.
+ * Copyright (c) 2006, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,7 +56,7 @@ public interface IAntScript {
 	 * @param inheritAll If true, pass all properties to the new Ant project.
 	 * @param params Specifies as key / value pairs, the properties to set before running the specified target. This value can be <code>null</code>
 	 */
-	public void printAntCallTask(String target, boolean inheritAll, Map params);
+	public void printAntCallTask(String target, boolean inheritAll, Map<String, String> params);
 
 	/**
 	 * Print an XML attribute. <code>name=value</code>.
@@ -79,7 +79,7 @@ public interface IAntScript {
 	 * @param attributes
 	 * @since 3.6
 	 */
-	public void printStartTag(String tag, Map attributes);
+	public void printStartTag(String tag, Map<String, String> attributes);
 
 	/**
 	 * Print tagName as an xml end tag (<code>&lt;/tagName&gt;<code>).
@@ -93,7 +93,7 @@ public interface IAntScript {
 	 * @param attributes
 	 * @since 3.6
 	 */
-	public void printElement(String tag, Map attributes);
+	public void printElement(String tag, Map<String, String> attributes);
 
 	/**
 	 * Print as many tabs as current nesting level requires
@@ -142,7 +142,7 @@ public interface IAntScript {
 	 * @param attributes
 	 * @since 3.6
 	 */
-	public void printMacroDef(String macroName, List attributes);
+	public void printMacroDef(String macroName, List<String> attributes);
 
 	/**
 	 * Print the end of the macro

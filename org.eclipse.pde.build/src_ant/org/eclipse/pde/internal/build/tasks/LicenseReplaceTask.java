@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2011 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -264,13 +264,13 @@ public class LicenseReplaceTask extends Task {
 			return -1;
 		}
 
-		private int scanNoComment(StringBuffer bug, int start, String target, boolean wholeWord) {
+		private int scanNoComment(StringBuffer bug, int start, String thisTarget, boolean wholeWord) {
 			int startComment = scan(buffer, start, COMMENT_START_TAG);
 			int endComment = startComment > -1 ? scan(buffer, startComment, COMMENT_END_TAG) : -1;
-			int startTarget = scan(buffer, start, target, wholeWord);
+			int startTarget = scan(buffer, start, thisTarget, wholeWord);
 
 			while (startComment != -1 && startTarget > startComment && startTarget < endComment) {
-				startTarget = scan(buffer, endComment, target, wholeWord);
+				startTarget = scan(buffer, endComment, thisTarget, wholeWord);
 				startComment = scan(buffer, endComment, COMMENT_START_TAG);
 				endComment = startComment > -1 ? scan(buffer, startComment, COMMENT_END_TAG) : -1;
 			}
@@ -294,6 +294,7 @@ public class LicenseReplaceTask extends Task {
 		licensePath = path;
 	}
 
+	@Override
 	public void execute() {
 		Feature payloadFeature = new Feature(filePath);
 		Feature licenseFeature = new Feature(licensePath);
@@ -329,7 +330,7 @@ public class LicenseReplaceTask extends Task {
 					featureProperties.load(fis);
 					fis.close();
 
-					Enumeration licenseKeys = licenseProperties.keys();
+					Enumeration<Object> licenseKeys = licenseProperties.keys();
 					while (licenseKeys.hasMoreElements()) {
 						String licenseKey = (String) licenseKeys.nextElement();
 						if (featureProperties.containsKey(licenseKey)) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -67,21 +67,21 @@ public class GETFetchFactory implements IFetchFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.build.IFetchFactory#generateRetrieveElementCall(java.util.Map, org.eclipse.core.runtime.IPath, org.eclipse.pde.build.IAntScript)
 	 */
-	public void generateRetrieveElementCall(Map entryInfos, IPath destination, IAntScript script) {
+	public void generateRetrieveElementCall(Map<String, Object> entryInfos, IPath destination, IAntScript script) {
 		printGetTask(destination, script, entryInfos);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.build.IFetchFactory#generateRetrieveFilesCall(java.util.Map, org.eclipse.core.runtime.IPath, java.lang.String[], org.eclipse.pde.build.IAntScript)
 	 */
-	public void generateRetrieveFilesCall(Map entryInfos, IPath destination, String[] files, IAntScript script) {
+	public void generateRetrieveFilesCall(Map<String, Object> entryInfos, IPath destination, String[] files, IAntScript script) {
 		//
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.build.IFetchFactory#parseMapFileEntry(java.lang.String, java.util.Properties, java.util.Map)
 	 */
-	public void parseMapFileEntry(String rawEntry, Properties overrideTags, Map entryInfos) throws CoreException {
+	public void parseMapFileEntry(String rawEntry, Properties overrideTags, Map<String, Object> entryInfos) throws CoreException {
 		String url = rawEntry;
 		if (rawEntry.indexOf(',') != -1) {
 			StringTokenizer tokenizer = new StringTokenizer(rawEntry, SEPARATOR);
@@ -112,7 +112,7 @@ public class GETFetchFactory implements IFetchFactory {
 	/*
 	 * Print out the Ant GET task to the Ant script.
 	 */
-	private void printGetTask(IPath destination, IAntScript script, Map entryInfos) {
+	private void printGetTask(IPath destination, IAntScript script, Map<String, Object> entryInfos) {
 		String src = (String) entryInfos.get(ATTRIBUTE_SRC);
 		int index = src.lastIndexOf('/');
 		String filename = index == -1 ? src : src.substring(index);

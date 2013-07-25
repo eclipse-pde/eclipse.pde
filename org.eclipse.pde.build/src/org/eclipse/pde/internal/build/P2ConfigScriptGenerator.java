@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -71,9 +71,9 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 	protected void initializeCollections() {
 		Collection<Object> p = new LinkedHashSet<Object>();
 		Collection<Object> f = new LinkedHashSet<Object>();
-		Collection r = new LinkedHashSet();
-		for (Iterator iterator = getConfigInfos().iterator(); iterator.hasNext();) {
-			Config config = (Config) iterator.next();
+		Collection<BuildTimeFeature> r = new LinkedHashSet<BuildTimeFeature>();
+		for (Iterator<Config> iterator = getConfigInfos().iterator(); iterator.hasNext();) {
+			Config config = iterator.next();
 			p.addAll(assemblyInformation.getPlugins(config));
 			f.addAll(assemblyInformation.getFeatures(config));
 			r.addAll(assemblyInformation.getRootFileProviders(config));
@@ -138,9 +138,9 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 	protected void generateBrandingCalls() {
 		ProductFile product = getProductFile();
 		if (product != null) {
-			List configs = getConfigInfos();
-			for (Iterator iterator = configs.iterator(); iterator.hasNext();) {
-				Config config = (Config) iterator.next();
+			List<Config> configs = getConfigInfos();
+			for (Iterator<Config> iterator = configs.iterator(); iterator.hasNext();) {
+				Config config = iterator.next();
 				if (Config.genericConfig().equals(config))
 					continue;
 				script.printTab();
@@ -249,8 +249,8 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 				script.println("/>"); //$NON-NLS-1$
 			}
 
-			for (Iterator iterator = getConfigInfos().iterator(); iterator.hasNext();) {
-				Config config = (Config) iterator.next();
+			for (Iterator<Config> iterator = getConfigInfos().iterator(); iterator.hasNext();) {
+				Config config = iterator.next();
 				if (Config.genericConfig().equals(config))
 					continue;
 
@@ -284,8 +284,8 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 	protected void generateCopyConfigs(ProductFile product, String productDir) {
 		if (!product.haveCustomConfig())
 			return;
-		for (Iterator iterator = getConfigInfos().iterator(); iterator.hasNext();) {
-			Config config = (Config) iterator.next();
+		for (Iterator<Config> iterator = getConfigInfos().iterator(); iterator.hasNext();) {
+			Config config = iterator.next();
 			String entry = product.getConfigIniPath(config.getOs());
 			if (entry == null)
 				continue;
@@ -316,7 +316,7 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 		if (product == null && (binaryFeatures == null || binaryFeatures.size() == 0))
 			return;
 
-		Map args = new HashMap();
+		Map<String, String> args = new HashMap<String, String>();
 		// note that if the raw attribute (p2.mirror.raw) has not been set in the build.properties, then the default was set in #generatePrologue()
 		args.put("raw", Utils.getPropertyFormat(PROPERTY_P2_MIRROR_RAW)); //$NON-NLS-1$
 		script.printStartTag("p2.mirror", args); //$NON-NLS-1$
@@ -416,7 +416,7 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 
 	@Override
 	protected void generateCustomGatherMacro() {
-		List attributes = new ArrayList(5);
+		List<String> attributes = new ArrayList<String>(5);
 		attributes.add("dir"); //$NON-NLS-1$
 		attributes.add("propertyName"); //$NON-NLS-1$
 		attributes.add("propertyValue"); //$NON-NLS-1$
@@ -424,7 +424,7 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 		attributes.add(PROPERTY_PROJECT_NAME);
 		script.printMacroDef(PROPERTY_CUSTOM_GATHER, attributes);
 
-		Map params = new HashMap();
+		Map<String, String> params = new HashMap<String, String>();
 		params.put("@{propertyName}", "@{propertyValue}"); //$NON-NLS-1$//$NON-NLS-2$
 		script.printAntTask(DEFAULT_BUILD_SCRIPT_FILENAME, "@{dir}", TARGET_PUBLISH_BIN_PARTS, null, null, params); //$NON-NLS-1$
 
@@ -452,7 +452,7 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 				printCustomGatherCall(ModelBuildScriptGenerator.getNormalizedName(plugin), Utils.makeRelative(pluginLocation, new Path(workingDirectory)).toOSString(), PROPERTY_DESTINATION_TEMP_FOLDER, Utils.getPropertyFormat(PROPERTY_ECLIPSE_PLUGINS), null);
 		}
 
-		Set<BuildTimeFeature> featureSet = BuildDirector.p2Gathering ? new HashSet() : null;
+		Set<BuildTimeFeature> featureSet = BuildDirector.p2Gathering ? new HashSet<BuildTimeFeature>() : null;
 		for (int i = 0; i < features.length; i++) {
 			BuildTimeFeature feature = features[i];
 			IPath featureLocation = new Path(feature.getRootLocation());
@@ -466,8 +466,8 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 		}
 
 		//This will generate gather.bin.parts call to features that provides files for the root
-		for (Iterator iter = rootFileProviders.iterator(); iter.hasNext();) {
-			BuildTimeFeature feature = (BuildTimeFeature) iter.next();
+		for (Iterator<BuildTimeFeature> iter = rootFileProviders.iterator(); iter.hasNext();) {
+			BuildTimeFeature feature = iter.next();
 			if (featureSet.contains(feature))
 				continue;
 			if (isOldExecutableFeature(feature)) {
@@ -531,7 +531,7 @@ public class P2ConfigScriptGenerator extends AssembleConfigScriptGenerator {
 		script.printAttribute("overrides", overridesFile.getAbsolutePath(), true); //$NON-NLS-1$
 		script.println("/>"); //$NON-NLS-1$
 
-		Map params = new HashMap();
+		Map<String, String> params = new HashMap<String, String>();
 		params.put(PROPERTY_PROJECT_LOCATION, "${basedir}/" + Utils.makeRelative(featureLocation, new Path(workingDirectory)).toOSString()); //$NON-NLS-1$
 		params.put(PROPERTY_FEATURE_BASE, Utils.getPropertyFormat(PROPERTY_ECLIPSE_BASE));
 		params.put(PROPERTY_PROJECT_NAME, featureFullName);

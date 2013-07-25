@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 IBM Corporation and others.
+ * Copyright (c) 2006, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,7 +28,7 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 	private static class Entry {
 		private final String id;
 		private String version = "0.0.0"; //$NON-NLS-1$
-		private Map attributes;
+		private Map<String, String> attributes;
 
 		public Entry(String id) {
 			this.id = id;
@@ -56,10 +56,10 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 			return id.hashCode() + version.hashCode() + getAttributes().hashCode();
 		}
 
-		public Map getAttributes() {
+		public Map<String, String> getAttributes() {
 			if (attributes != null)
 				return attributes;
-			return Collections.EMPTY_MAP;
+			return Collections.emptyMap();
 		}
 
 		public void addAttribute(String key, String value) {
@@ -69,7 +69,7 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 				return;
 			}
 			if (attributes == null)
-				attributes = new LinkedHashMap();
+				attributes = new LinkedHashMap<String, String>();
 			attributes.put(key, value);
 		}
 
@@ -150,9 +150,9 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 			}
 
 			if (product != null) {
-				List entries = product.getProductEntries();
-				for (Iterator iterator = entries.iterator(); iterator.hasNext();) {
-					FeatureEntry featureEntry = (FeatureEntry) iterator.next();
+				List<FeatureEntry> entries = product.getProductEntries();
+				for (Iterator<FeatureEntry> iterator = entries.iterator(); iterator.hasNext();) {
+					FeatureEntry featureEntry = iterator.next();
 					Entry newEntry = new Entry(featureEntry.getId(), featureEntry.getVersion());
 					if (featureEntry.unpackSet())
 						newEntry.addAttribute(Utils.EXTRA_UNPACK, String.valueOf(featureEntry.isUnpack()));
@@ -313,11 +313,11 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 			} else {
 				// We don't have the executable feature, at least try and get the launcher jar and fragments 
 				plugins.add(new Entry(BUNDLE_EQUINOX_LAUNCHER));
-				List configs = getConfigInfos();
+				List<Config> configs = getConfigInfos();
 				// only include the fragments for the platforms we are attempting to build, since the others
 				// probably aren't around
-				for (Iterator iterator = configs.iterator(); iterator.hasNext();) {
-					Config config = (Config) iterator.next();
+				for (Iterator<Config> iterator = configs.iterator(); iterator.hasNext();) {
+					Config config = iterator.next();
 					String fragment = BUNDLE_EQUINOX_LAUNCHER + '.' + config.getWs() + '.' + config.getOs();
 					//macosx doesn't have the arch on its fragment 
 					if (config.getOs().compareToIgnoreCase("macosx") != 0 || config.getArch().equals("x86_64")) //$NON-NLS-1$ //$NON-NLS-2$
@@ -369,8 +369,8 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 			return;
 		}
 		try {
-			Map parameters = new LinkedHashMap();
-			Dictionary environment = new Hashtable(3);
+			Map<String, String> parameters = new LinkedHashMap<String, String>();
+			Dictionary<String, String> environment = new Hashtable<String, String>(3);
 
 			parameters.put(ID, feature);
 			parameters.put(VERSION, version != null ? version : "1.0.0"); //$NON-NLS-1$ 
@@ -379,17 +379,17 @@ public class FeatureGenerator extends AbstractScriptGenerator {
 			writer.startTag(FEATURE, parameters, true);
 
 			boolean fragment = false;
-			List configs = getConfigInfos();
+			List<Config> configs = getConfigInfos();
 			//we do the generic config first as a special case
 			configs.remove(Config.genericConfig());
-			Iterator configIterator = configs.iterator();
+			Iterator<Config> configIterator = configs.iterator();
 			Iterator<Entry> listIter = plugins.iterator();
 			if (!listIter.hasNext()) {
 				// no plugins, do fragments
 				fragment = true;
 				listIter = fragments.iterator();
 			}
-			for (Config currentConfig = Config.genericConfig(); currentConfig != null; currentConfig = (Config) configIterator.next()) {
+			for (Config currentConfig = Config.genericConfig(); currentConfig != null; currentConfig = configIterator.next()) {
 				environment.put("osgi.os", currentConfig.getOs()); //$NON-NLS-1$
 				environment.put("osgi.ws", currentConfig.getWs()); //$NON-NLS-1$
 				environment.put("osgi.arch", currentConfig.getArch()); //$NON-NLS-1$

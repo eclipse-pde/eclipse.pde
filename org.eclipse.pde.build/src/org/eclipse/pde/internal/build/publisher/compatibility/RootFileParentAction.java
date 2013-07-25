@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,15 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.build.publisher.compatibility;
 
-import org.eclipse.equinox.p2.metadata.MetadataFactory;
-import org.eclipse.equinox.p2.metadata.MetadataFactory.InstallableUnitDescription;
-
 import java.util.HashSet;
 import java.util.Iterator;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.p2.publisher.eclipse.ProductFile;
-import org.eclipse.equinox.p2.metadata.IInstallableUnit;
-import org.eclipse.equinox.p2.metadata.Version;
+import org.eclipse.equinox.p2.metadata.*;
+import org.eclipse.equinox.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.equinox.p2.publisher.*;
 import org.eclipse.equinox.p2.publisher.actions.RootFilesAction;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
@@ -41,14 +38,15 @@ public class RootFileParentAction extends AbstractPublisherAction {
 		this.version = getVersion(rootVersion);
 	}
 
+	@Override
 	public IStatus perform(IPublisherInfo publisherInfo, IPublisherResult results, IProgressMonitor monitor) {
 		final String idPrefix = baseId + ".rootfiles"; //$NON-NLS-1$
 		final String flavorPrefix = flavor + baseId + ".rootfiles"; //$NON-NLS-1$
 
 		HashSet<IInstallableUnit> collector = new HashSet<IInstallableUnit>();
-		Iterator iter = results.getIUs(null, IPublisherResult.NON_ROOT).iterator();
+		Iterator<IInstallableUnit> iter = results.getIUs(null, IPublisherResult.NON_ROOT).iterator();
 		while (iter.hasNext()) {
-			IInstallableUnit iu = (IInstallableUnit) iter.next();
+			IInstallableUnit iu = iter.next();
 			String id = iu.getId();
 			if (id.startsWith(idPrefix) || id.startsWith(flavorPrefix))
 				collector.add(iu);

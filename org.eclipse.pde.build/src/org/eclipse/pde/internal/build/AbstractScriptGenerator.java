@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -397,11 +397,11 @@ public abstract class AbstractScriptGenerator implements IXMLConstants, IPDEBuil
 		pdeUIState.setState(state);
 	}
 
-	public void setStateExtraData(HashMap<Long, String[]> classpath, Map patchData) {
+	public void setStateExtraData(HashMap<Long, String[]> classpath, Map<Long, String> patchData) {
 		setStateExtraData(classpath, patchData, null);
 	}
 
-	public void setStateExtraData(HashMap<Long, String[]> classpath, Map patchData, Map outputFolders) {
+	public void setStateExtraData(HashMap<Long, String[]> classpath, Map<Long, String> patchData, Map<String, Map<String, Set<IPath>>> outputFolders) {
 		ensurePDEUIStateNotNull();
 		pdeUIState.setExtraData(classpath, patchData, outputFolders);
 	}

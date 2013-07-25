@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,9 +38,9 @@ public class AssembledConfigAdvice implements IConfigAdvice, IExecutableAdvice {
 		return configData.getBundles();
 	}
 
-	public Map getProperties() {
+	public Map<String, String> getProperties() {
 		Properties configProps = configData.getProperties();
-		Map props = new HashMap(configProps.size() + 1);
+		Map<String, String> props = new HashMap<String, String>(configProps.size() + 1);
 		CollectionUtils.putAll(configProps, props);
 		int startLevel = configData.getInitialBundleStartLevel();
 		if (startLevel != BundleInfo.NO_LEVEL)

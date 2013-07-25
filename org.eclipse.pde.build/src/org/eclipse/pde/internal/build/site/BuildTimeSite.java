@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,8 +32,9 @@ import org.osgi.framework.Version;
  */
 public class BuildTimeSite /*extends Site*/implements IPDEBuildConstants, IXMLConstants {
 	private final BuildTimeFeatureFactory factory = new BuildTimeFeatureFactory();
-	private final Map /*of BuildTimeFeature*/featureCache = new HashMap();
-	private List /*of FeatureReference*/<FeatureReference> featureReferences;
+	private final Map<String, Set<BuildTimeFeature>> featureCache = new HashMap<String, Set<BuildTimeFeature>>();
+	private final Map<URL, BuildTimeFeature> featureURLCache = new HashMap<URL, BuildTimeFeature>();
+	private List<FeatureReference> featureReferences;
 	private BuildTimeSiteContentProvider contentProvider;
 	private boolean featuresResolved = false;
 
@@ -44,8 +45,8 @@ public class BuildTimeSite /*extends Site*/implements IPDEBuildConstants, IXMLCo
 	private String[] eeSources;
 
 	//Support for filtering what is added to the state
-	private List rootFeaturesForFilter;
-	private List rootPluginsForFiler;
+	private List<String> rootFeaturesForFilter;
+	private List<String> rootPluginsForFiler;
 	private boolean filter = false;
 
 	private final Comparator<Feature> featureComparator = new Comparator<Feature>() {
@@ -224,12 +225,12 @@ public class BuildTimeSite /*extends Site*/implements IPDEBuildConstants, IXMLCo
 	}
 
 	//Return whether the resolution error is caused because we are not building for the proper configurations.
-	static public boolean isConfigError(BundleDescription bundle, ResolverError[] errors, List configs) {
-		Dictionary environment = new Hashtable(3);
+	static public boolean isConfigError(BundleDescription bundle, ResolverError[] errors, List<Config> configs) {
+		Dictionary<String, String> environment = new Hashtable<String, String>(3);
 		Filter bundleFilter = BundleHelper.getDefault().getFilter(bundle);
 		if (bundleFilter != null && hasPlatformFilterError(errors) != null) {
-			for (Iterator iter = configs.iterator(); iter.hasNext();) {
-				Config aConfig = (Config) iter.next();
+			for (Iterator<Config> iter = configs.iterator(); iter.hasNext();) {
+				Config aConfig = iter.next();
 				environment.put("osgi.os", aConfig.getOs()); //$NON-NLS-1$
 				environment.put("osgi.ws", aConfig.getWs()); //$NON-NLS-1$
 				environment.put("osgi.arch", aConfig.getArch()); //$NON-NLS-1$
@@ -298,9 +299,9 @@ public class BuildTimeSite /*extends Site*/implements IPDEBuildConstants, IXMLCo
 
 		if (featureCache.containsKey(featureId)) {
 			//Set is ordered highest version to lowest, return the first that matches the range
-			Set featureSet = (Set) featureCache.get(featureId);
-			for (Iterator iterator = featureSet.iterator(); iterator.hasNext();) {
-				BuildTimeFeature feature = (BuildTimeFeature) iterator.next();
+			Set<BuildTimeFeature> featureSet = featureCache.get(featureId);
+			for (Iterator<BuildTimeFeature> iterator = featureSet.iterator(); iterator.hasNext();) {
+				BuildTimeFeature feature = iterator.next();
 				Version featureVersion = new Version(feature.getVersion());
 				if (range.isIncluded(featureVersion)) {
 					return feature;
@@ -368,14 +369,14 @@ public class BuildTimeSite /*extends Site*/implements IPDEBuildConstants, IXMLCo
 	private SortedSet<ReachablePlugin> findAllReferencedPlugins() throws CoreException {
 		ArrayList<BuildTimeFeature> rootFeatures = new ArrayList<BuildTimeFeature>();
 		SortedSet<ReachablePlugin> allPlugins = new TreeSet<ReachablePlugin>();
-		for (Iterator iter = rootFeaturesForFilter.iterator(); iter.hasNext();) {
-			BuildTimeFeature correspondingFeature = findFeature((String) iter.next(), (String) null, true);
+		for (Iterator<String> iter = rootFeaturesForFilter.iterator(); iter.hasNext();) {
+			BuildTimeFeature correspondingFeature = findFeature(iter.next(), (String) null, true);
 			if (correspondingFeature == null)
 				return null;
 			rootFeatures.add(correspondingFeature);
 		}
-		for (Iterator iter = rootPluginsForFiler.iterator(); iter.hasNext();) {
-			allPlugins.add(new ReachablePlugin((String) iter.next(), ReachablePlugin.WIDEST_RANGE));
+		for (Iterator<String> iter = rootPluginsForFiler.iterator(); iter.hasNext();) {
+			allPlugins.add(new ReachablePlugin(iter.next(), ReachablePlugin.WIDEST_RANGE));
 		}
 		int it = 0;
 		while (it < rootFeatures.size()) {
@@ -399,7 +400,7 @@ public class BuildTimeSite /*extends Site*/implements IPDEBuildConstants, IXMLCo
 						//generate property may add extra plugins or features
 						String[] extraEntries = Utils.getArrayFromString(props.getProperty(IBuildPropertiesConstants.GENERATION_SOURCE_FEATURE_PREFIX + featureId));
 						for (int j = 1; j < extraEntries.length; j++) {
-							Map<String, Comparable> items = Utils.parseExtraBundlesString(extraEntries[j], true);
+							Map<String, Object> items = Utils.parseExtraBundlesString(extraEntries[j], true);
 							String id = (String) items.get(Utils.EXTRA_ID);
 							Version version = (Version) items.get(Utils.EXTRA_VERSION);
 							if (extraEntries[j].startsWith("feature@")) { //$NON-NLS-1$
@@ -439,11 +440,11 @@ public class BuildTimeSite /*extends Site*/implements IPDEBuildConstants, IXMLCo
 		this.filter = filter;
 	}
 
-	public void setRootFeaturesForFilter(List rootFeaturesForFilter) {
+	public void setRootFeaturesForFilter(List<String> rootFeaturesForFilter) {
 		this.rootFeaturesForFilter = rootFeaturesForFilter;
 	}
 
-	public void setRootPluginsForFiler(List rootPluginsForFiler) {
+	public void setRootPluginsForFiler(List<String> rootPluginsForFiler) {
 		this.rootPluginsForFiler = rootPluginsForFiler;
 	}
 
@@ -463,16 +464,16 @@ public class BuildTimeSite /*extends Site*/implements IPDEBuildConstants, IXMLCo
 	}
 
 	public Feature createFeature(URL url) throws CoreException {
-		BuildTimeFeature feature = (BuildTimeFeature) featureCache.get(url);
+		BuildTimeFeature feature = featureURLCache.get(url);
 		if (feature != null)
 			return feature;
 
 		feature = factory.createFeature(url, this);
 		feature.setFeatureContentProvider(getSiteContentProvider());
-		featureCache.put(url, feature);
+		featureURLCache.put(url, feature);
 
 		if (featureCache.containsKey(feature.getId())) {
-			Set<BuildTimeFeature> set = (Set<BuildTimeFeature>) featureCache.get(feature.getId());
+			Set<BuildTimeFeature> set = featureCache.get(feature.getId());
 			set.add(feature);
 		} else {
 			TreeSet<BuildTimeFeature> set = new TreeSet<BuildTimeFeature>(featureComparator);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,14 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.build.publisher.compatibility;
 
-import org.eclipse.equinox.p2.metadata.MetadataFactory;
-
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.equinox.internal.p2.publisher.eclipse.ProductFile;
-import org.eclipse.equinox.p2.metadata.ITouchpointData;
+import org.eclipse.equinox.p2.metadata.*;
 import org.eclipse.equinox.p2.publisher.AbstractPublisherAction;
 import org.eclipse.equinox.p2.publisher.actions.ITouchpointAdvice;
 import org.eclipse.equinox.p2.publisher.actions.RootFilesAdvice;
@@ -63,7 +61,7 @@ public class RootFileTouchpointAdvice extends RootFilesAdvice implements ITouchp
 				configInstruction += "chmod(targetDir:${installFolder}, targetFile:" + launcherFile.getName() + ", permissions:755);"; //$NON-NLS-1$ //$NON-NLS-2$				
 			}
 
-			Map newInstructions = new HashMap();
+			Map<String, ITouchpointInstruction> newInstructions = new HashMap<String, ITouchpointInstruction>();
 			newInstructions.put("configure", MetadataFactory.createTouchpointInstruction(configInstruction, "org.eclipse.equinox.p2.touchpoint.eclipse.setLauncherName")); //$NON-NLS-1$ //$NON-NLS-2$ 
 			return MetadataFactory.mergeTouchpointData(existingData, newInstructions);
 		}

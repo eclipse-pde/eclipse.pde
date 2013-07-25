@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.build.fetch;
 
-import org.eclipse.pde.internal.build.ant.FileSet;
-
-import java.util.ArrayList;
 import java.io.File;
 import java.util.*;
 import java.util.Map.Entry;
@@ -37,6 +34,7 @@ public class P2IUFetchFactory implements IFetchFactory {
 			this.version = version;
 		}
 
+		@Override
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
@@ -45,6 +43,7 @@ public class P2IUFetchFactory implements IFetchFactory {
 			return result;
 		}
 
+		@Override
 		public boolean equals(Object obj) {
 			if (this == obj)
 				return true;
@@ -78,7 +77,7 @@ public class P2IUFetchFactory implements IFetchFactory {
 	private static final String TASK_REPO2RUNNABLE = "p2.repo2runnable"; //$NON-NLS-1$
 	private static final String TARGET_GET_IUS_FROM_REPO = "FetchIUsFromRepo"; //$NON-NLS-1$
 
-	private final Map<String, ArrayList> iusToFetchBySource = new LinkedHashMap<String, ArrayList>(2);
+	private final Map<String, ArrayList<IUFetchInfo>> iusToFetchBySource = new LinkedHashMap<String, ArrayList<IUFetchInfo>>(2);
 
 	/*
 	 * Helper method to throw an exception with the given message.
@@ -105,11 +104,11 @@ public class P2IUFetchFactory implements IFetchFactory {
 		script.println();
 		script.printTargetDeclaration(TARGET_GET_IUS_FROM_REPO, null, null, null, null);
 
-		Map args = new LinkedHashMap(2);
-		for (Iterator stream = iusToFetchBySource.entrySet().iterator(); stream.hasNext();) {
-			Entry entry = (Entry) stream.next();
-			String sourceRepository = (String) entry.getKey();
-			List iusToFetch = (List) entry.getValue();
+		Map<String, String> args = new LinkedHashMap<String, String>(2);
+		for (Iterator<Entry<String, ArrayList<IUFetchInfo>>> stream = iusToFetchBySource.entrySet().iterator(); stream.hasNext();) {
+			Entry<String, ArrayList<IUFetchInfo>> entry = stream.next();
+			String sourceRepository = entry.getKey();
+			ArrayList<IUFetchInfo> iusToFetch = entry.getValue();
 
 			script.printEchoTask(null, NLS.bind(Messages.fetching_p2Repo, new String[] {sourceRepository, Utils.getPropertyFormat(IBuildPropertiesConstants.PROPERTY_TRANSFORMED_REPO)}), "info"); //$NON-NLS-1$
 			args.clear();
@@ -118,8 +117,8 @@ public class P2IUFetchFactory implements IFetchFactory {
 			script.printStartTag(TASK_REPO2RUNNABLE, args);
 			script.incrementIdent();
 
-			for (Iterator stream2 = iusToFetch.iterator(); stream2.hasNext();) {
-				IUFetchInfo iuFetchInfo = (IUFetchInfo) stream2.next();
+			for (Iterator<IUFetchInfo> stream2 = iusToFetch.iterator(); stream2.hasNext();) {
+				IUFetchInfo iuFetchInfo = stream2.next();
 				args.clear();
 				args.put(ATTRIBUTE_ID, iuFetchInfo.id);
 				args.put(ATTRIBUTE_VERSION, iuFetchInfo.version);
@@ -142,7 +141,7 @@ public class P2IUFetchFactory implements IFetchFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.build.IFetchFactory#generateRetrieveElementCall(java.util.Map, org.eclipse.core.runtime.IPath, org.eclipse.pde.build.IAntScript)
 	 */
-	public void generateRetrieveElementCall(Map entryInfos, IPath destination, IAntScript script) {
+	public void generateRetrieveElementCall(Map<String, Object> entryInfos, IPath destination, IAntScript script) {
 		// generate at most one fetch call
 		if (iusToFetchBySource.isEmpty()) {
 			// <antcall target="FetchIUsFromRepo" />
@@ -153,7 +152,7 @@ public class P2IUFetchFactory implements IFetchFactory {
 		String sourceRepository = (String) entryInfos.get(KEY_REPOSITORY);
 
 		if (!iusToFetchBySource.containsKey(sourceRepository)) {
-			iusToFetchBySource.put(sourceRepository, new ArrayList<FileSet>());
+			iusToFetchBySource.put(sourceRepository, new ArrayList<IUFetchInfo>());
 		}
 
 		IUFetchInfo iuFetchInfo = new IUFetchInfo((String) entryInfos.get(KEY_ID), (String) entryInfos.get(KEY_VERSION));
@@ -167,15 +166,15 @@ public class P2IUFetchFactory implements IFetchFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.build.IFetchFactory#generateRetrieveFilesCall(java.util.Map, org.eclipse.core.runtime.IPath, java.lang.String[], org.eclipse.pde.build.IAntScript)
 	 */
-	public void generateRetrieveFilesCall(Map entryInfos, IPath destination, String[] files, IAntScript script) {
-		Map args = new HashMap();
-		args.put(ATTRIBUTE_SOURCE, entryInfos.get(KEY_REPOSITORY));
+	public void generateRetrieveFilesCall(Map<String, Object> entryInfos, IPath destination, String[] files, IAntScript script) {
+		Map<String, String> args = new HashMap<String, String>();
+		args.put(ATTRIBUTE_SOURCE, (String) entryInfos.get(KEY_REPOSITORY));
 		args.put(ATTRIBUTE_DESTINATION, destination.toOSString());
 		script.printStartTag(TASK_REPO2RUNNABLE, args);
 		script.incrementIdent();
 		args.clear();
-		args.put(ATTRIBUTE_ID, entryInfos.get(KEY_ID));
-		args.put(ATTRIBUTE_VERSION, entryInfos.get(KEY_VERSION));
+		args.put(ATTRIBUTE_ID, (String) entryInfos.get(KEY_ID));
+		args.put(ATTRIBUTE_VERSION, (String) entryInfos.get(KEY_VERSION));
 		script.printElement(TASK_IU, args);
 		script.decrementIdent();
 		script.printEndTag(TASK_REPO2RUNNABLE);
@@ -206,11 +205,11 @@ public class P2IUFetchFactory implements IFetchFactory {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.build.IFetchFactory#parseMapFileEntry(java.lang.String, java.util.Properties, java.util.Map)
 	 */
-	public void parseMapFileEntry(String rawEntry, Properties overrideTags, Map entryInfos) throws CoreException {
+	public void parseMapFileEntry(String rawEntry, Properties overrideTags, Map<String, Object> entryInfos) throws CoreException {
 		String[] arguments = Utils.getArrayFromStringWithBlank(rawEntry, SEPARATOR);
 
 		// build up the table of arguments in the map file entry
-		Map table = new HashMap();
+		Map<String, String> table = new HashMap<String, String>();
 		for (int i = 0; i < arguments.length; i++) {
 			String arg = arguments[i];
 			// if we have at least one arg without an equals sign then we are malformed and should bail

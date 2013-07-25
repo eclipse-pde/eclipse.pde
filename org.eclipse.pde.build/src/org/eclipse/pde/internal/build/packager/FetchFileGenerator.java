@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
+import java.util.Map.Entry;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.build.*;
@@ -22,7 +23,7 @@ public class FetchFileGenerator extends AbstractScriptGenerator {
 	private static final String ENTRY_SEPARATOR = "%"; //$NON-NLS-1$
 	private static final String FILTER_SEPARATOR = "&"; //$NON-NLS-1$
 	private static final String DATA_SEPARATOR = "|"; //$NON-NLS-1$
-	
+
 	// Unknown component name
 	private static final String UNKNOWN = "*"; //$NON-NLS-1$ 	
 
@@ -42,6 +43,7 @@ public class FetchFileGenerator extends AbstractScriptGenerator {
 		System.out.println("Map location: " + mapLocation); //$NON-NLS-1$
 	}
 
+	@Override
 	public void generate() throws CoreException {
 		collectedFiles = ""; //$NON-NLS-1$
 		displayDebugInfo();
@@ -95,7 +97,7 @@ public class FetchFileGenerator extends AbstractScriptGenerator {
 		Properties selectedFiles = new Properties();
 		selectedFiles.put("toUnzip", collectedFiles); //$NON-NLS-1$
 		try {
-			OutputStream stream = new BufferedOutputStream(new FileOutputStream(workingDirectory + '/' + DEFAULT_PACKAGER_DIRECTORY_FILENAME_DESCRIPTOR)); 
+			OutputStream stream = new BufferedOutputStream(new FileOutputStream(workingDirectory + '/' + DEFAULT_PACKAGER_DIRECTORY_FILENAME_DESCRIPTOR));
 			try {
 				selectedFiles.store(stream, null);
 			} finally {
@@ -119,8 +121,8 @@ public class FetchFileGenerator extends AbstractScriptGenerator {
 
 		mapContent = readProperties(mapLocation, "", IStatus.ERROR); //$NON-NLS-1$
 
-		for (Iterator iter = mapContent.entrySet().iterator(); iter.hasNext();) {
-			Map.Entry mapEntry = (Map.Entry) iter.next();
+		for (Iterator<Entry<Object, Object>> iter = mapContent.entrySet().iterator(); iter.hasNext();) {
+			Map.Entry<Object, Object> mapEntry = iter.next();
 			String fileName = (String) mapEntry.getKey();
 			String[] fileDescription = Utils.getArrayFromStringWithBlank((String) mapEntry.getValue(), DATA_SEPARATOR);
 
@@ -140,7 +142,7 @@ public class FetchFileGenerator extends AbstractScriptGenerator {
 
 			if (filterByConfig(fileDescription[CONFIGS]) && filterByFilter(fileDescription[FILTERS]) && filterByComponentName(fileDescription.length > 4 ? fileDescription[COMPONENT] : UNKNOWN)) {
 				generateFetchFileFor(fileName, fileDescription[URL], userInfos);
-				collectedFiles += fileName + DATA_SEPARATOR + (fileDescription[DIRECTORY].equals("") ? "." : fileDescription[DIRECTORY]) + DATA_SEPARATOR + fileDescription[CONFIGS] +  ENTRY_SEPARATOR; //$NON-NLS-1$ //$NON-NLS-2$				
+				collectedFiles += fileName + DATA_SEPARATOR + (fileDescription[DIRECTORY].equals("") ? "." : fileDescription[DIRECTORY]) + DATA_SEPARATOR + fileDescription[CONFIGS] + ENTRY_SEPARATOR; //$NON-NLS-1$ //$NON-NLS-2$				
 			} else {
 				if (BundleHelper.getDefault().isDebugging()) {
 					IStatus status = new Status(IStatus.INFO, PI_PDEBUILD, WARNING_ELEMENT_NOT_FETCHED, NLS.bind(Messages.error_fetchingFailed, fileDescription[DIRECTORY]), null);
@@ -176,7 +178,7 @@ public class FetchFileGenerator extends AbstractScriptGenerator {
 			return true;
 
 		for (int i = 0; i < entryConfigs.length; i++) {
-			Iterator iter = getConfigInfos().iterator();
+			Iterator<Config> iter = getConfigInfos().iterator();
 			Config aConfig = new Config(entryConfigs[i]);
 			while (iter.hasNext()) {
 				if (aConfig.equals(iter.next()) || aConfig.equals(Config.genericConfig())) {
@@ -187,17 +189,17 @@ public class FetchFileGenerator extends AbstractScriptGenerator {
 		return false;
 	}
 
-	boolean containsGenericConfig(List configs) {
+	boolean containsGenericConfig(List<Config> configs) {
 		if (configs == null)
 			return false;
-		Iterator iter = configs.iterator();
+		Iterator<Config> iter = configs.iterator();
 		while (iter.hasNext()) {
 			if (Config.genericConfig().equals(iter.next()))
 				return true;
 		}
 		return false;
 	}
-	
+
 	//Return true if the componentName is listed in the component filter, or if no filter is specified
 	private boolean filterByComponentName(String componentName) {
 		if (componentName.equals(UNKNOWN) || componentFilter == null)

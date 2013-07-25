@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,7 +24,7 @@ import org.eclipse.pde.internal.build.site.BuildTimeSite;
 public class FeatureWriter extends XMLWriter implements IPDEBuildConstants {
 	protected Feature feature;
 	private final BuildTimeSite site;
-	private final Map parameters = new LinkedHashMap(10);
+	private final Map<String, String> parameters = new LinkedHashMap<String, String>(10);
 
 	public FeatureWriter(OutputStream out, Feature feature, BuildTimeSite site) throws IOException {
 		super(out);
@@ -230,9 +230,9 @@ public class FeatureWriter extends XMLWriter implements IPDEBuildConstants {
 				String message = NLS.bind(Messages.exception_missingPlugin, entries[i].getId() + "_" + entries[i].getVersion()); //$NON-NLS-1$
 				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_PLUGIN_MISSING, message, null));
 			}
-			parameters.put(VERSION, effectivePlugin.getVersion());
+			parameters.put(VERSION, effectivePlugin.getVersion().toString());
 			if (entries[i].isFragment())
-				parameters.put(FRAGMENT, new Boolean(entries[i].isFragment()));
+				parameters.put(FRAGMENT, String.valueOf(entries[i].isFragment()));
 			parameters.put("os", entries[i].getOS()); //$NON-NLS-1$
 			parameters.put("arch", entries[i].getArch()); //$NON-NLS-1$
 			parameters.put("ws", entries[i].getWS()); //$NON-NLS-1$

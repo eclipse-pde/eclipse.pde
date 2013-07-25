@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,32 +18,34 @@ import org.eclipse.pde.internal.build.site.BuildTimeSiteFactory;
 public class PackagerGenerator extends BuildScriptGenerator {
 	private String featureList = null;
 	private String propertyFile;
-	private boolean groupConfigs;
-	
+	private boolean groupConfigs2;
+
 	public PackagerGenerator() {
 		generateBuildScript = false;
 		children = true;
-		groupConfigs = false;
+		groupConfigs2 = false;
 	}
-	
+
 	public void setFeatureList(String features) {
 		featureList = features;
 	}
-	
-	protected void sortElements(List features, List plugins) {
-			String[] allFeatures = Utils.getArrayFromString(featureList);
-			for (int i = 0; i < allFeatures.length; i++) {
-				features.add(allFeatures[i]);
-			}
+
+	@Override
+	protected void sortElements(List<String> features, List<String> plugins) {
+		String[] allFeatures = Utils.getArrayFromString(featureList);
+		for (int i = 0; i < allFeatures.length; i++) {
+			features.add(allFeatures[i]);
+		}
 	}
-	
+
+	@Override
 	protected void generatePackageScripts(AssemblyInformation assemblageInformation, String[] featureInfo, BuildTimeSiteFactory factory) throws CoreException {
 		PackageScriptGenerator assembler = null;
-		if (groupConfigs)
+		if (groupConfigs2)
 			assembler = new DeltaPackScriptGenerator(workingDirectory, assemblageInformation, featureInfo[0]);
-		else 
+		else
 			assembler = new PackageScriptGenerator(workingDirectory, assemblageInformation, featureInfo[0]);
-		
+
 		assembler.setSignJars(signJars);
 		assembler.setGenerateJnlp(generateJnlp);
 		assembler.setArchivesFormat(getArchivesFormat());
@@ -55,12 +57,12 @@ public class PackagerGenerator extends BuildScriptGenerator {
 		assembler.setVersionsList(generateVersionsList);
 		assembler.generate();
 	}
-	
+
 	public void setPropertyFile(String propertyFile) {
 		this.propertyFile = propertyFile;
 	}
-	
+
 	public void groupConfigs(boolean value) {
-		groupConfigs = value;
+		groupConfigs2 = value;
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,16 +24,22 @@ import org.eclipse.pde.internal.build.site.BuildTimeFeature;
 public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator {
 
 	private Properties packagingProperties;
-	private Collection archiveRootProviders = Collections.EMPTY_LIST;
+	private Collection<BuildTimeFeature> archiveRootProviders = Collections.emptyList();
 
-	public void initialize(String directoryName, String feature, Config configurationInformation, Collection elementList, Collection featureList, Collection allFeaturesList, Collection rootProviders) throws CoreException {
+	@Override
+	public void initialize(String directoryName, String feature, Config configurationInformation, Collection<BundleDescription> elementList, Collection<BuildTimeFeature> featureList, Collection<BuildTimeFeature> allFeaturesList, Collection<BuildTimeFeature> rootProviders) throws CoreException {
 		/* package scripts require the root file providers for creating the file archive, but don't want them for other rootfile
 		 * stuff done by the assembly scripts, so keep them separate here */
-		super.initialize(directoryName, feature, configurationInformation, elementList, featureList, allFeaturesList, new ArrayList(0));
-		archiveRootProviders = rootProviders != null ? rootProviders : Collections.EMPTY_LIST;
+		super.initialize(directoryName, feature, configurationInformation, elementList, featureList, allFeaturesList, new ArrayList<BuildTimeFeature>(0));
+		if (rootProviders != null) {
+			archiveRootProviders = rootProviders;
+		} else {
+			archiveRootProviders = Collections.emptyList();
+		}
 	}
 
-	protected Collection getArchiveRootFileProviders() {
+	@Override
+	protected Collection<BuildTimeFeature> getArchiveRootFileProviders() {
 		if (archiveRootProviders.size() > 0)
 			return archiveRootProviders;
 		return super.getArchiveRootFileProviders();
@@ -61,6 +67,7 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 		return feature.getId() + "_" + feature.getVersion(); //$NON-NLS-1$
 	}
 
+	@Override
 	protected void generateGatherBinPartsTarget() { //TODO Here we should try to use cp because otherwise we will loose the permissions
 		script.printTargetDeclaration(TARGET_GATHER_BIN_PARTS, null, null, null, null);
 		String excludedFiles = null;
@@ -75,8 +82,8 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 			//nothing
 		}
 
-		ArrayList<FileSet> p2Features = BuildDirector.p2Gathering ? new ArrayList() : null;
-		ArrayList<FileSet> p2Bundles = BuildDirector.p2Gathering ? new ArrayList() : null;
+		ArrayList<FileSet> p2Features = BuildDirector.p2Gathering ? new ArrayList<FileSet>() : null;
+		ArrayList<FileSet> p2Bundles = BuildDirector.p2Gathering ? new ArrayList<FileSet>() : null;
 		for (int i = 0; i < plugins.length; i++) {
 			Path pluginLocation = new Path(plugins[i].getLocation());
 			String location = pluginLocation.toOSString();
@@ -139,6 +146,7 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 		script.println();
 	}
 
+	@Override
 	public String getTargetName() {
 		String config = getTargetConfig();
 		return "package" + '.' + getTargetElement() + (config.length() > 0 ? "." : "") + config; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -172,11 +180,14 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 		if (packagingProperties.size() > 0) {
 			//This is need so that the call in assemble config script generator gather the root files 
 			if (rootFileProviders == null)
-				rootFileProviders = new ArrayList(1);
-			rootFileProviders.add("elt"); //$NON-NLS-1$
+				rootFileProviders = new ArrayList<BuildTimeFeature>(1);
+			// TODO Unclear why "elt" was added as a root provider, instead we will add an empty feature
+			//	rootFileProviders.add("elt"); //$NON-NLS-1$
+			rootFileProviders.add(new BuildTimeFeature());
 		}
 	}
 
+	@Override
 	protected void generateGatherSourceTarget() {
 		//In the packager, we do not gather source
 		script.printTargetDeclaration(TARGET_GATHER_SOURCES, null, null, null, null);
@@ -184,6 +195,7 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 		script.println();
 	}
 
+	@Override
 	protected FileSet[] generatePermissions(String root, boolean zip) {
 		if (packagingProperties != null && packagingProperties.size() > 0) {
 			//In the packager there is nothing to do since, the features we are packaging are pre-built and do not have a build.properties
@@ -192,26 +204,32 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 		return super.generatePermissions(root, zip);
 	}
 
+	@Override
 	protected void generateGZipTarget(boolean assembling) {
 		super.generateGZipTarget(false);
 	}
 
+	@Override
 	public void generateTarGZTasks(boolean assembling) {
 		super.generateTarGZTasks(false);
 	}
 
+	@Override
 	protected void generateDirectorTarget(boolean assembling) {
 		super.generateDirectorTarget(false);
 	}
 
+	@Override
 	protected void generateMirrorTask(boolean assembling) {
 		super.generateMirrorTask(false);
 	}
 
+	@Override
 	protected void generateCleanupAssembly(boolean assembling) {
 		super.generateCleanupAssembly(false);
 	}
 
+	@Override
 	protected void generateArchivingTarget(boolean assembling) {
 		super.generateArchivingTarget(false);
 	}
@@ -230,6 +248,7 @@ public class PackageConfigScriptGenerator extends AssembleConfigScriptGenerator 
 		return shapeAdvisor.getFinalShape(feature);
 	}
 
+	@Override
 	protected void printP2GenerationModeCondition() {
 		// "final" if we are overriding, else "incremental"
 		script.printConditionIsSet(PROPERTY_P2_GENERATION_MODE, "final", PROPERTY_P2_FINAL_MODE_OVERRIDE, "incremental"); //$NON-NLS-1$//$NON-NLS-2$

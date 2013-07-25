@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -523,13 +523,15 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 			//Get the corresponding plug-in entries (from a feature object) associated with the model
 			//and generate the script if one the configuration is being built. The generated scripts
 			//are configuration agnostic so we only generate once.
+			@SuppressWarnings("rawtypes")
 			Set matchingEntries = (Set) ((Properties) model.getUserObject()).get(PLUGIN_ENTRY);
 			if (matchingEntries == null || matchingEntries.isEmpty())
 				return;
 
+			@SuppressWarnings("rawtypes")
 			Iterator entryIter = matchingEntries.iterator();
 			FeatureEntry correspondingEntry = (FeatureEntry) entryIter.next();
-			List list = selectConfigs(correspondingEntry);
+			List<Config> list = selectConfigs(correspondingEntry);
 			if (list.size() == 0)
 				continue;
 
@@ -612,11 +614,11 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 	private void basicCollectElementToAssemble(BuildTimeFeature featureToCollect) {
 		if (assemblyData == null)
 			return;
-		List correctConfigs = selectConfigs(featureToCollect);
+		List<Config> correctConfigs = selectConfigs(featureToCollect);
 		// Here, we could sort if the feature is a common one or not by
 		// comparing the size of correctConfigs
-		for (Iterator iter = correctConfigs.iterator(); iter.hasNext();) {
-			Config config = (Config) iter.next();
+		for (Iterator<Config> iter = correctConfigs.iterator(); iter.hasNext();) {
+			Config config = iter.next();
 			assemblyData.addFeature(config, featureToCollect);
 		}
 	}
@@ -692,12 +694,12 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 	protected void collectElementToAssemble(FeatureEntry entryToCollect) throws CoreException {
 		if (assemblyData == null)
 			return;
-		List correctConfigs = selectConfigs(entryToCollect);
+		List<Config> correctConfigs = selectConfigs(entryToCollect);
 		String versionRequested = entryToCollect.getVersion();
 		BundleDescription effectivePlugin = null;
 		effectivePlugin = getSite(false).getRegistry().getResolvedBundle(entryToCollect.getId(), versionRequested);
-		for (Iterator iter = correctConfigs.iterator(); iter.hasNext();) {
-			assemblyData.addPlugin((Config) iter.next(), effectivePlugin);
+		for (Iterator<Config> iter = correctConfigs.iterator(); iter.hasNext();) {
+			assemblyData.addPlugin(iter.next(), effectivePlugin);
 		}
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2011 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -40,6 +40,7 @@ public class BuildManifestTask extends Task implements IPDEBuildConstants, IXMLC
 	/**
 	 * @see org.apache.tools.ant.Task#execute()
 	 */
+	@Override
 	public void execute() throws BuildException {
 		try {
 			if (this.elements == null) {
@@ -49,7 +50,7 @@ public class BuildManifestTask extends Task implements IPDEBuildConstants, IXMLC
 			readDirectory();
 			PrintWriter output = new PrintWriter(new BufferedOutputStream(new FileOutputStream(destination)));
 			try {
-				List entries = new ArrayList(20);
+				List<String> entries = new ArrayList<String>(20);
 				for (int i = 0; i < elements.length; i++)
 					collectEntries(entries, elements[i]);
 				generatePrologue(output);
@@ -126,10 +127,10 @@ public class BuildManifestTask extends Task implements IPDEBuildConstants, IXMLC
 	 * @param output
 	 * @param entries
 	 */
-	protected void generateEntries(PrintWriter output, List entries) {
+	protected void generateEntries(PrintWriter output, List<String> entries) {
 		Collections.sort(entries);
-		for (Iterator iterator = entries.iterator(); iterator.hasNext();) {
-			String entry = (String) iterator.next();
+		for (Iterator<String> iterator = entries.iterator(); iterator.hasNext();) {
+			String entry = iterator.next();
 			output.println(entry);
 		}
 	}
@@ -137,7 +138,7 @@ public class BuildManifestTask extends Task implements IPDEBuildConstants, IXMLC
 	/**
 	 * Collects all the elements that are part of this build.
 	 */
-	protected void collectEntries(List entries, String entry) throws CoreException {
+	protected void collectEntries(List<String> entries, String entry) throws CoreException {
 		String cvsInfo = directory.getProperty(entry);
 		if (cvsInfo == null) {
 			String message = NLS.bind(TaskMessages.error_missingDirectoryEntry, entry);
@@ -167,7 +168,7 @@ public class BuildManifestTask extends Task implements IPDEBuildConstants, IXMLC
 	 * @param feature
 	 * @throws CoreException
 	 */
-	protected void collectChildrenEntries(List entries, BuildTimeFeature feature) throws CoreException {
+	protected void collectChildrenEntries(List<String> entries, BuildTimeFeature feature) throws CoreException {
 		FeatureEntry[] pluginEntries = feature.getPluginEntries();
 		for (int i = 0; i < pluginEntries.length; i++) {
 			String elementId = pluginEntries[i].getId();

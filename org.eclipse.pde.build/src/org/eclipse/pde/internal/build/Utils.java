@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
+import java.util.Map.Entry;
 import java.util.zip.ZipFile;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.p2.publisher.eclipse.FeatureEntry;
@@ -31,7 +32,7 @@ import org.osgi.framework.Version;
  * General utility class.
  */
 public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstants, IXMLConstants {
-	static class ArrayEnumeration implements Enumeration {
+	static class ArrayEnumeration implements Enumeration<Object> {
 		private final Object[] array;
 		int cur = 0;
 
@@ -185,7 +186,7 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 	public static String[] getArrayFromStringWithBlank(String list, String separator) {
 		if (list == null || list.trim().length() == 0)
 			return new String[0];
-		List result = new ArrayList();
+		List<String> result = new ArrayList<String>();
 		boolean previousWasSeparator = true;
 		for (StringTokenizer tokens = new StringTokenizer(list, separator, true); tokens.hasMoreTokens();) {
 			String token = tokens.nextToken().trim();
@@ -198,7 +199,7 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 				previousWasSeparator = false;
 			}
 		}
-		return (String[]) result.toArray(new String[result.size()]);
+		return result.toArray(new String[result.size()]);
 	}
 
 	/**
@@ -268,16 +269,16 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 		return result;
 	}
 
-	public static File[] asFile(Collection collection) {
+	public static File[] asFile(Collection<?> collection) {
 		if (collection.size() == 0)
 			return new File[0];
 		Object first = collection.iterator().next();
 		if (first instanceof String)
-			return asFile((String[]) collection.toArray(new String[collection.size()]));
+			return asFile(collection.toArray(new String[collection.size()]));
 		else if (first instanceof URL)
-			return asFile((URL[]) collection.toArray(new URL[collection.size()]));
+			return asFile(collection.toArray(new URL[collection.size()]));
 		else if (first instanceof File)
-			return (File[]) collection.toArray(new File[collection.size()]);
+			return collection.toArray(new File[collection.size()]);
 		throw new IllegalArgumentException();
 	}
 
@@ -291,10 +292,10 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 	 *            the separator to use
 	 * @return String
 	 */
-	public static String getStringFromCollection(Collection collection, String separator) {
+	public static String getStringFromCollection(Collection<?> collection, String separator) {
 		StringBuffer result = new StringBuffer();
 		boolean first = true;
-		for (Iterator i = collection.iterator(); i.hasNext();) {
+		for (Iterator<?> i = collection.iterator(); i.hasNext();) {
 			if (first)
 				first = false;
 			else
@@ -478,9 +479,9 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 		return false;
 	}
 
-	public static Collection copyFiles(String fromDir, String toDir) throws CoreException {
+	public static Collection<String> copyFiles(String fromDir, String toDir) throws CoreException {
 		File templateLocation = new File(fromDir);
-		Collection copiedFiles = new ArrayList();
+		Collection<String> copiedFiles = new ArrayList<String>();
 		if (templateLocation.exists()) {
 			File[] files = templateLocation.listFiles();
 			if (files != null) {
@@ -489,9 +490,9 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 						File subDir = new File(toDir, files[i].getName());
 						if (!subDir.exists())
 							subDir.mkdirs();
-						Collection subFiles = copyFiles(fromDir + '/' + files[i].getName(), toDir + '/' + files[i].getName());
-						for (Iterator iter = subFiles.iterator(); iter.hasNext();) {
-							String sub = (String) iter.next();
+						Collection<String> subFiles = copyFiles(fromDir + '/' + files[i].getName(), toDir + '/' + files[i].getName());
+						for (Iterator<String> iter = subFiles.iterator(); iter.hasNext();) {
+							String sub = iter.next();
 							copiedFiles.add(files[i].getName() + '/' + sub);
 						}
 						continue;
@@ -511,6 +512,11 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 					try {
 						outputStream = new FileOutputStream(fileToCopy);
 					} catch (FileNotFoundException e) {
+						try {
+							inputStream.close();
+						} catch (IOException e1) {
+							// Ignored
+						}
 						String message = NLS.bind(Messages.exception_missingFile, fileToCopy);
 						throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_READING_FILE, message, e));
 					}
@@ -576,10 +582,10 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 	 * @param mergeCommon - whether or not to merge the common properties into each config
 	 * @return Map
 	 */
-	static public Map<String, Map> processRootProperties(Properties properties, boolean mergeCommon) {
-		Map<String, Map> map = new HashMap<String, Map>();
-		Map common = new HashMap();
-		for (Enumeration keys = properties.keys(); keys.hasMoreElements();) {
+	static public Map<String, Map<String, String>> processRootProperties(Properties properties, boolean mergeCommon) {
+		Map<String, Map<String, String>> map = new HashMap<String, Map<String, String>>();
+		Map<String, String> common = new HashMap<String, String>();
+		for (Enumeration<Object> keys = properties.keys(); keys.hasMoreElements();) {
 			String entry = (String) keys.nextElement();
 			String config = null;
 			String entryKey = null;
@@ -602,16 +608,16 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 			}
 
 			if (config != null) {
-				Map submap = (config.length() == 0) ? common : map.get(config);
+				Map<String, String> submap = (config.length() == 0) ? common : map.get(config);
 				if (submap == null) {
-					submap = new HashMap();
+					submap = new HashMap<String, String>();
 					map.put(config, submap);
 				}
 				if (submap.containsKey(entryKey)) {
-					String existing = (String) submap.get(entryKey);
+					String existing = submap.get(entryKey);
 					submap.put(entryKey, existing + "," + properties.getProperty(entry)); //$NON-NLS-1$
 				} else {
-					submap.put(entryKey, properties.get(entry));
+					submap.put(entryKey, (String) properties.get(entry));
 				}
 			}
 		}
@@ -620,11 +626,11 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 		if (common.size() > 0 && mergeCommon) {
 			for (Iterator<String> iterator = map.keySet().iterator(); iterator.hasNext();) {
 				String key = iterator.next();
-				Map submap = map.get(key);
-				for (Iterator commonKeys = common.keySet().iterator(); commonKeys.hasNext();) {
-					String commonKey = (String) commonKeys.next();
+				Map<String, String> submap = map.get(key);
+				for (Iterator<String> commonKeys = common.keySet().iterator(); commonKeys.hasNext();) {
+					String commonKey = commonKeys.next();
 					if (submap.containsKey(commonKey)) {
-						String existing = (String) submap.get(commonKey);
+						String existing = submap.get(commonKey);
 						submap.put(commonKey, existing + "," + common.get(commonKey)); //$NON-NLS-1$
 					} else {
 						submap.put(commonKey, common.get(commonKey));
@@ -648,8 +654,8 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 		String prefixLinks = ROOT_PREFIX + configInfix + '.' + LINK;
 		String commonPermissions = ROOT_PREFIX + PERMISSIONS + '.';
 		String commonLinks = ROOT_PREFIX + LINK;
-		for (Iterator iter = featureProperties.entrySet().iterator(); iter.hasNext();) {
-			Map.Entry permission = (Map.Entry) iter.next();
+		for (Iterator<Entry<Object, Object>> iter = featureProperties.entrySet().iterator(); iter.hasNext();) {
+			Map.Entry<Object, Object> permission = iter.next();
 			String instruction = (String) permission.getKey();
 			String parameters = removeEndingSlashes((String) permission.getValue());
 			if (instruction.startsWith(prefixPermissions)) {
@@ -689,7 +695,7 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 
 	private static void generateLinkInstruction(AntScript script, String dir, String files) {
 		String[] links = Utils.getArrayFromString(files, ","); //$NON-NLS-1$
-		List arguments = new ArrayList(2);
+		List<String> arguments = new ArrayList<String>(2);
 		for (int i = 0; i < links.length; i += 2) {
 			arguments.add("-sf"); //$NON-NLS-1$
 			arguments.add(links[i]);
@@ -771,28 +777,28 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 		return null;
 	}
 
-	public static Map parseSourceBundleEntry(BundleDescription bundle) {
+	public static Map<String, Map<String, String>> parseSourceBundleEntry(BundleDescription bundle) {
 		String header = getSourceBundleHeader(bundle);
 		if (header.length() == 0)
-			return Collections.EMPTY_MAP;
+			return Collections.emptyMap();
 
-		HashMap map = new HashMap();
+		HashMap<String, Map<String, String>> map = new HashMap<String, Map<String, String>>();
 		ManifestElement[] elements;
 		try {
 			elements = ManifestElement.parseHeader(ECLIPSE_SOURCE_BUNDLE, header);
 		} catch (BundleException e1) {
-			return Collections.EMPTY_MAP;
+			return Collections.emptyMap();
 		}
 		for (int i = 0; i < elements.length; i++) {
 			String key = elements[i].getValue();
 			HashMap<String, String> subMap = new HashMap<String, String>(2);
 			map.put(key, subMap);
-			for (Enumeration e = elements[i].getDirectiveKeys(); e != null && e.hasMoreElements();) {
-				String directive = (String) e.nextElement();
+			for (Enumeration<String> e = elements[i].getDirectiveKeys(); e != null && e.hasMoreElements();) {
+				String directive = e.nextElement();
 				subMap.put(directive, elements[i].getDirective(directive));
 			}
-			for (Enumeration e = elements[i].getKeys(); e != null && e.hasMoreElements();) {
-				String attribute = (String) e.nextElement();
+			for (Enumeration<String> e = elements[i].getKeys(); e != null && e.hasMoreElements();) {
+				String attribute = e.nextElement();
 				subMap.put(attribute, elements[i].getAttribute(attribute));
 			}
 		}
@@ -807,8 +813,8 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 	public static final String EXTRA_WS = "ws"; //$NON-NLS-1$
 	public static final String EXTRA_ARCH = "arch"; //$NON-NLS-1$
 
-	public static Map<String, Comparable> parseExtraBundlesString(String input, boolean onlyId) {
-		Map<String, Comparable> results = new HashMap<String, Comparable>();
+	public static Map<String, Object> parseExtraBundlesString(String input, boolean onlyId) {
+		Map<String, Object> results = new HashMap<String, Object>();
 		StringTokenizer tokenizer = null;
 		if (onlyId)
 			if (input.startsWith("plugin@")) //$NON-NLS-1$
@@ -969,7 +975,7 @@ public final class Utils implements IPDEBuildConstants, IBuildPropertiesConstant
 		transferStreams(new ByteArrayInputStream(buffer.toString().getBytes()), new FileOutputStream(buildFile));
 	}
 
-	public static Enumeration getArrayEnumerator(Object[] array) {
+	public static Enumeration<Object> getArrayEnumerator(Object[] array) {
 		return new ArrayEnumeration(array);
 	}
 

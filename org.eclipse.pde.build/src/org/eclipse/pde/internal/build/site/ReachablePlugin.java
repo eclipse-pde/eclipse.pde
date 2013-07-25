@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2011 IBM Corporation and others.
+ *  Copyright (c) 2007, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -19,7 +19,7 @@ import org.osgi.framework.Version;
  * ReachablePlugin's are sorted first by id, then by the width of the version range.
  * With equal range width, R1 < R2 if R1.range.getMinimum() < R2.range.getMaximum()
  */
-public class ReachablePlugin implements Comparable {
+public class ReachablePlugin implements Comparable<Object> {
 	public static final VersionRange WIDEST_RANGE = VersionRange.emptyRange;
 	public static final VersionRange NARROWEST_RANGE = new VersionRange(Version.emptyVersion, true, Version.emptyVersion, false);
 
@@ -96,6 +96,7 @@ public class ReachablePlugin implements Comparable {
 		return new Version(major, minor, micro);
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof ReachablePlugin) {
 			ReachablePlugin toCompare = (ReachablePlugin) obj;
@@ -110,10 +111,12 @@ public class ReachablePlugin implements Comparable {
 		return false;
 	}
 
+	@Override
 	public int hashCode() {
 		return id.hashCode() + range.hashCode() * 17;
 	}
 
+	@Override
 	public String toString() {
 		return id + ' ' + range.toString();
 	}

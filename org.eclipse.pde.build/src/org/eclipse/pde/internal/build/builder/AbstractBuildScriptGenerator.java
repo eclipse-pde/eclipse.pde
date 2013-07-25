@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,7 +29,7 @@ public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerat
 
 	/** The content of the build.properties file associated to the element for which the script is generated */
 	protected Properties buildProperties;
-	private Set compiledElements; //The elements we are compiling
+	private Set<String> compiledElements; //The elements we are compiling
 
 	private boolean includePlatformIndependent = true;
 
@@ -128,9 +128,9 @@ public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerat
 		return false;
 	}
 
-	public Set getCompiledElements() {
+	public Set<String> getCompiledElements() {
 		if (compiledElements == null)
-			compiledElements = new HashSet();
+			compiledElements = new HashSet<String>();
 		return compiledElements;
 	}
 
@@ -138,7 +138,7 @@ public abstract class AbstractBuildScriptGenerator extends AbstractScriptGenerat
 	 * Sets the compiledElements.
 	 * @param compiledElements The compiledElements to set
 	 */
-	public void setCompiledElements(Set compiledElements) {
+	public void setCompiledElements(Set<String> compiledElements) {
 		this.compiledElements = compiledElements;
 	}
 

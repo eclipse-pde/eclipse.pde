@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,9 @@ import java.io.File;
 import java.util.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.equinox.internal.p2.publisher.eclipse.ProductFile;
+import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.pde.internal.build.builder.BuildDirector;
+import org.eclipse.pde.internal.build.site.BuildTimeFeature;
 
 public class AssembleScriptGenerator extends AbstractScriptGenerator {
 	protected String directory; // representing the directory where to generate the file
@@ -46,6 +48,7 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 		return new AssembleConfigScriptGenerator();
 	}
 
+	@Override
 	public void generate() throws CoreException {
 		//make sure the script generator is initialized with the site before we try doing anything with it.
 		configScriptGenerator.setBuildSiteFactory(siteFactory);
@@ -82,7 +85,7 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 	}
 
 	protected void printAssembleMacroDef() {
-		List attributes = new ArrayList(2);
+		List<String> attributes = new ArrayList<String>(4);
 		attributes.add("config"); //$NON-NLS-1$
 		attributes.add("element"); //$NON-NLS-1$
 		attributes.add("dot"); //$NON-NLS-1$
@@ -90,7 +93,7 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 		script.printMacroDef("assemble", attributes); //$NON-NLS-1$
 		printDefaultAssembleCondition();
 		script.printConditionIsSet("customOrDefault.@{config}", "assemble.@{element}@{dot}@{config}", "assemble.@{element}@{dot}@{config}", "${defaultAssemble.@{config}}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-		Properties properties = new Properties();
+		Map<String, String> properties = new HashMap<String, String>();
 		properties.put("assembleScriptName", "@{scriptPrefix}.@{element}@{dot}@{config}.xml"); //$NON-NLS-1$ //$NON-NLS-2$
 		properties.put("element", "@{element}"); //$NON-NLS-1$//$NON-NLS-2$
 		properties.put("config", "@{config}"); //$NON-NLS-1$//$NON-NLS-2$
@@ -98,6 +101,7 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 		script.printEndMacroDef();
 	}
 
+	@SuppressWarnings("unchecked")
 	protected void generateMainTarget() throws CoreException {
 		script.printTargetDeclaration(TARGET_MAIN, null, null, null, null);
 
@@ -108,12 +112,13 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 		}
 
 		if (shouldGroupConfigs()) {
-			Collection allPlugins = new LinkedHashSet();
-			Collection allFeatures = new LinkedHashSet();
-			Collection features = new LinkedHashSet();
-			Collection rootFiles = new LinkedHashSet();
-			for (Iterator allConfigs = getConfigInfos().iterator(); allConfigs.hasNext();) {
-				Collection[] configInfo = getConfigInfos((Config) allConfigs.next());
+			Collection<BundleDescription> allPlugins = new LinkedHashSet<BundleDescription>();
+			Collection<BuildTimeFeature> allFeatures = new LinkedHashSet<BuildTimeFeature>();
+			Collection<BuildTimeFeature> features = new LinkedHashSet<BuildTimeFeature>();
+			Collection<BuildTimeFeature> rootFiles = new LinkedHashSet<BuildTimeFeature>();
+			for (Iterator<Config> allConfigs = getConfigInfos().iterator(); allConfigs.hasNext();) {
+				@SuppressWarnings("rawtypes")
+				Collection[] configInfo = getConfigInfos(allConfigs.next());
 				allPlugins.addAll(configInfo[0]);
 				allFeatures.addAll(configInfo[1]);
 				features.addAll(configInfo[2]);
@@ -121,8 +126,9 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 			}
 			basicGenerateAssembleConfigFileTargetCall(new Config("group", "group", "group"), allPlugins, allFeatures, features, rootFiles); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		} else {
-			for (Iterator allConfigs = getConfigInfos().iterator(); allConfigs.hasNext();) {
-				Config current = (Config) allConfigs.next();
+			for (Iterator<Config> allConfigs = getConfigInfos().iterator(); allConfigs.hasNext();) {
+				Config current = allConfigs.next();
+				@SuppressWarnings("rawtypes")
 				Collection[] configInfo = getConfigInfos(current);
 				basicGenerateAssembleConfigFileTargetCall(current, configInfo[0], configInfo[1], configInfo[2], configInfo[3]);
 			}
@@ -143,6 +149,14 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 		return true;
 	}
 
+	/**
+	 * Returns an array of collections containing the plug-ins, compiled features, all features 
+	 * and root file providers known to this generator for the given config.
+	 * 
+	 * @param aConfig the config to lookup information on
+	 * @return array of collections with configuration information
+	 */
+	@SuppressWarnings("rawtypes")
 	protected Collection[] getConfigInfos(Config aConfig) {
 		return new Collection[] {assemblageInformation.getCompiledPlugins(aConfig), assemblageInformation.getCompiledFeatures(aConfig), assemblageInformation.getFeatures(aConfig), assemblageInformation.getRootFileProviders(aConfig)};
 	}
@@ -168,7 +182,7 @@ public class AssembleScriptGenerator extends AbstractScriptGenerator {
 		script.println("/>"); //$NON-NLS-1$
 	}
 
-	protected void basicGenerateAssembleConfigFileTargetCall(Config aConfig, Collection binaryPlugins, Collection binaryFeatures, Collection allFeatures, Collection rootFiles) throws CoreException {
+	protected void basicGenerateAssembleConfigFileTargetCall(Config aConfig, Collection<BundleDescription> binaryPlugins, Collection<BuildTimeFeature> binaryFeatures, Collection<BuildTimeFeature> allFeatures, Collection<BuildTimeFeature> rootFiles) throws CoreException {
 		// generate the script for a configuration
 		configScriptGenerator.initialize(directory, featureId, aConfig, binaryPlugins, binaryFeatures, allFeatures, rootFiles);
 		configScriptGenerator.setArchiveFormat(archivesFormat.get(aConfig));
