@@ -38,7 +38,7 @@ public class JavaAttributeWizardPage extends NewClassWizardPage {
 		String superClassName;
 		IType interfaceType;
 		String interfaceName;
-		String className;
+		String initialClassName;
 		String classArgs;
 		String packageName;
 		IPackageFragmentRoot packageFragmentRoot;
@@ -49,7 +49,7 @@ public class JavaAttributeWizardPage extends NewClassWizardPage {
 			this.superClassName = ""; //$NON-NLS-1$
 			this.interfaceName = null;
 			this.interfaceType = null;
-			this.className = null;
+			this.initialClassName = null;
 			this.classArgs = null;
 			this.packageName = null;
 			this.packageFragment = null;
@@ -72,7 +72,7 @@ public class JavaAttributeWizardPage extends NewClassWizardPage {
 			PDEPlugin.logException(e);
 		}
 		initialValues = new InitialClassProperties();
-		initialValues.className = className;
+		initialValues.initialClassName = className;
 	}
 
 	public Object getValue() {
@@ -89,7 +89,7 @@ public class JavaAttributeWizardPage extends NewClassWizardPage {
 		setPackageFragment(initialValues.packageFragment, true);
 		setEnclosingType(null, true);
 		setEnclosingTypeSelection(false, true);
-		setTypeName(initialValues.className, true);
+		setTypeName(initialValues.initialClassName, true);
 		setSuperClass(initialValues.superClassName, true);
 		if (initialValues.interfaceName != null) {
 			ArrayList<String> interfaces = new ArrayList<String>();
@@ -128,15 +128,15 @@ public class JavaAttributeWizardPage extends NewClassWizardPage {
 				className = className.substring(0, loc);
 			}
 			if (loc > 0)
-				initialValues.className = className.substring(0, loc);
+				initialValues.initialClassName = className.substring(0, loc);
 			else if (loc == 0)
-				initialValues.className = ""; //$NON-NLS-1$
+				initialValues.initialClassName = ""; //$NON-NLS-1$
 		}
 
 		loc = className.lastIndexOf('.');
 		if (loc != -1) {
 			initialValues.packageName = className.substring(0, loc);
-			initialValues.className = className.substring(loc + 1);
+			initialValues.initialClassName = className.substring(loc + 1);
 		}
 		if (javaProject == null)
 			return;

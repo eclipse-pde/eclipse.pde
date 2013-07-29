@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2012 IBM Corporation and others.
+ *  Copyright (c) 2005, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -45,10 +45,20 @@ public abstract class PDEMoveParticipant extends MoveParticipant implements ISha
 
 	protected abstract boolean isInterestingForExtensions();
 
+	/**
+	 * @param result
+	 * @param file
+	 * @param pm
+	 * @throws CoreException
+	 */
 	protected void addChange(CompositeChange result, IFile file, IProgressMonitor pm) throws CoreException {
 	}
 
-	// add main change (whether to Manifest or build.properties)
+	/**
+	 * @param result
+	 * @param pm
+	 * @throws CoreException
+	 */
 	protected void addChange(CompositeChange result, IProgressMonitor pm) throws CoreException {
 	}
 

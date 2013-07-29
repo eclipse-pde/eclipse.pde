@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -89,14 +89,14 @@ public class ParserWrapperTestCase extends TestCase {
 	public class ParserThread extends Thread {
 
 		protected final int FITERATIONS = 100;
-		protected File fXMLFile;
+		protected File fParserXMLFile;
 		protected boolean fError;
 		protected int fParserType;
 
 		public ParserThread(int parserType, File file) {
 			fError = false;
 			fParserType = parserType;
-			fXMLFile = file;
+			fParserXMLFile = file;
 		}
 
 		public void run() {
@@ -116,7 +116,7 @@ public class ParserWrapperTestCase extends TestCase {
 				try {
 					XMLDefaultHandler handler = new XMLDefaultHandler();
 					SAXParserWrapper parser = new SAXParserWrapper();
-					parser.parse(fXMLFile, handler);
+					parser.parse(fParserXMLFile, handler);
 					parser.dispose();
 				} catch (ParserConfigurationException e) {
 					e.printStackTrace();
@@ -146,7 +146,7 @@ public class ParserWrapperTestCase extends TestCase {
 
 				try {
 					DOMParserWrapper parser = new DOMParserWrapper();
-					parser.parse(fXMLFile);
+					parser.parse(fParserXMLFile);
 					parser.dispose();
 				} catch (ParserConfigurationException e) {
 					e.printStackTrace();

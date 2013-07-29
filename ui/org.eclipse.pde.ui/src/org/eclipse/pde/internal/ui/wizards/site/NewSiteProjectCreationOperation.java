@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2008 IBM Corporation and others.
+ *  Copyright (c) 2005, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -71,6 +71,10 @@ public class NewSiteProjectCreationOperation extends WorkspaceModifyOperation {
 
 	}
 
+	/**
+	 * @return
+	 * @throws CoreException
+	 */
 	private IFile createSiteManifest() throws CoreException {
 		IFile file = fProject.getFile("site.xml"); //$NON-NLS-1$
 		if (file.exists())

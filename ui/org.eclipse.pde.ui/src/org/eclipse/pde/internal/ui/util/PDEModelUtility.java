@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,8 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.util;
-
-import java.util.ArrayList;
 
 import java.util.*;
 import org.eclipse.core.filebuffers.*;
@@ -495,6 +493,13 @@ public class PDEModelUtility {
 		return model;
 	}
 
+	/**
+	 * @param files
+	 * @param docs
+	 * @param generateEditNames
+	 * @return the {@link IBaseModel} for the new model
+	 * @throws CoreException
+	 */
 	private static IBaseModel prepareBundlePluginModel(IFile[] files, IDocument[] docs, boolean generateEditNames) throws CoreException {
 		AbstractEditingModel[] models = new AbstractEditingModel[docs.length];
 

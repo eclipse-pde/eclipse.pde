@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,6 @@
  *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 219852, 250334
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.refactoring;
-
-import org.eclipse.pde.internal.core.text.bundle.PDEManifestElement;
 
 import java.util.ArrayList;
 import org.eclipse.core.filebuffers.*;
@@ -222,6 +220,14 @@ public class BundleManifestChange {
 		return (manifestVersion < 2) ? ICoreConstants.PROVIDE_PACKAGE : Constants.EXPORT_PACKAGE;
 	}
 
+	/**
+	 * @param file
+	 * @param monitor
+	 * @return the bundle for the given {@link IFile}
+	 * @throws CoreException
+	 * @throws MalformedTreeException
+	 * @throws BadLocationException
+	 */
 	public static Bundle getBundle(IFile file, IProgressMonitor monitor) throws CoreException, MalformedTreeException, BadLocationException {
 		ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
 		manager.connect(file.getFullPath(), LocationKind.NORMALIZE, monitor);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -115,6 +115,11 @@ public class GetNonExternalizedStringsOperation implements IRunnableWithProgress
 		monitor.done();
 	}
 
+	/**
+	 * @param model
+	 * @param monitor
+	 * @throws CoreException
+	 */
 	private void inspectManifest(IBundlePluginModelBase model, IProgressMonitor monitor) throws CoreException {
 		IFile manifestFile = (IFile) model.getBundleModel().getUnderlyingResource();
 		IBundle bundle = model.getBundleModel().getBundle();
@@ -125,6 +130,11 @@ public class GetNonExternalizedStringsOperation implements IRunnableWithProgress
 		}
 	}
 
+	/**
+	 * @param model
+	 * @param monitor
+	 * @throws CoreException
+	 */
 	private void inspectXML(IPluginModelBase model, IProgressMonitor monitor) throws CoreException {
 		IFile file;
 		if (model instanceof IBundlePluginModelBase) {
