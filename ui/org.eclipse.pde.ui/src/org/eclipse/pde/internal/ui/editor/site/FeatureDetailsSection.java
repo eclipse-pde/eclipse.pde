@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -33,7 +33,7 @@ import org.eclipse.ui.forms.IPartSelectionListener;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
-public class FeatureDetailsSection extends PDESection implements IFormPart, IPartSelectionListener {
+public class FeatureDetailsSection extends PDESection implements IPartSelectionListener {
 
 	private static final String PROPERTY_TYPE = "type"; //$NON-NLS-1$
 
@@ -71,11 +71,13 @@ public class FeatureDetailsSection extends PDESection implements IFormPart, IPar
 			fCurrentSiteFeature.setType(value);
 	}
 
+	@Override
 	public void cancelEdit() {
 		fUrlText.cancelEdit();
 		super.cancelEdit();
 	}
 
+	@Override
 	public boolean canPaste(Clipboard clipboard) {
 		TransferData[] types = clipboard.getAvailableTypes();
 		Transfer[] transfers = new Transfer[] {TextTransfer.getInstance(), RTFTransfer.getInstance()};
@@ -98,6 +100,7 @@ public class FeatureDetailsSection extends PDESection implements IFormPart, IPar
 		fPatchCheckBox.setSelection(false);
 	}
 
+	@Override
 	public void commit(boolean onSave) {
 		try {
 			applyIsPatch(fPatchCheckBox.getSelection());
@@ -108,6 +111,7 @@ public class FeatureDetailsSection extends PDESection implements IFormPart, IPar
 		super.commit(onSave);
 	}
 
+	@Override
 	public void createClient(Section section, FormToolkit toolkit) {
 
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
@@ -120,6 +124,7 @@ public class FeatureDetailsSection extends PDESection implements IFormPart, IPar
 
 		fUrlText = new FormEntry(container, toolkit, PDEUIMessages.FeatureDetailsSection_url, null, false);
 		fUrlText.setFormEntryListener(new FormEntryAdapter(this) {
+			@Override
 			public void textValueChanged(FormEntry text) {
 				try {
 					if (text.getValue().length() <= 0) {
@@ -149,6 +154,7 @@ public class FeatureDetailsSection extends PDESection implements IFormPart, IPar
 	private void createPatchButton(FormToolkit toolkit, Composite container) {
 		fPatchCheckBox = toolkit.createButton(container, PDEUIMessages.FeatureDetailsSection_patch, SWT.CHECK);
 		fPatchCheckBox.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				try {
 					applyIsPatch(fPatchCheckBox.getSelection());
@@ -163,6 +169,7 @@ public class FeatureDetailsSection extends PDESection implements IFormPart, IPar
 		fPatchCheckBox.setEnabled(isEditable());
 	}
 
+	@Override
 	public void dispose() {
 		ISiteModel model = (ISiteModel) getPage().getModel();
 		if (model != null)
@@ -175,10 +182,12 @@ public class FeatureDetailsSection extends PDESection implements IFormPart, IPar
 		gd.widthHint = 30;
 	}
 
+	@Override
 	public void modelChanged(IModelChangedEvent e) {
 		markStale();
 	}
 
+	@Override
 	public void refresh() {
 		if (fCurrentSiteFeature == null) {
 			clearFields();
@@ -204,6 +213,7 @@ public class FeatureDetailsSection extends PDESection implements IFormPart, IPar
 		refresh();
 	}
 
+	@Override
 	public void setFocus() {
 		if (fUrlText != null)
 			fUrlText.getText().setFocus();

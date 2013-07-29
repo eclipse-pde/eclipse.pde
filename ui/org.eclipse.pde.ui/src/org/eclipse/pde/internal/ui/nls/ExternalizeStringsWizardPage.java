@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2012 IBM Corporation and others.
+ *  Copyright (c) 2005, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -59,7 +59,7 @@ public class ExternalizeStringsWizardPage extends UserInputWizardPage {
 		TABLE_COLUMNS[KEY] = PDEUIMessages.ExternalizeStringsWizardPage_subKey;
 	}
 
-	private class ModelChangeContentProvider implements ITreeContentProvider, IContentProvider {
+	private class ModelChangeContentProvider implements ITreeContentProvider {
 
 		public Object[] getElements(Object parent) {
 			return fModelChangeTable.getAllModelChanges().toArray();
@@ -154,6 +154,7 @@ public class ExternalizeStringsWizardPage extends UserInputWizardPage {
 		setDescription(PDEUIMessages.ExternalizeStringsWizardPage_pageDescription);
 		fModelChangeTable = changeTable;
 		fErrorElementFilter = new ViewerFilter() {
+			@Override
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
 				if (!(element instanceof ModelChangeElement))
 					return false;
@@ -188,6 +189,7 @@ public class ExternalizeStringsWizardPage extends UserInputWizardPage {
 		fManifestSetupParticipant = new ManifestDocumentSetupParticipant();
 	}
 
+	@Override
 	public void dispose() {
 		fColorManager.dispose();
 		super.dispose();
@@ -253,6 +255,7 @@ public class ExternalizeStringsWizardPage extends UserInputWizardPage {
 		fSelectAll.setText(PDEUIMessages.ExternalizeStringsWizardPage_selectAllButton);
 		fSelectAll.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fSelectAll.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fInputViewer.setCheckedElements(fModelChangeTable.getAllModelChanges().toArray());
 				setPageComplete(hasCheckedElements());
@@ -262,6 +265,7 @@ public class ExternalizeStringsWizardPage extends UserInputWizardPage {
 		fDeselectAll.setText(PDEUIMessages.ExternalizeStringsWizardPage_deselectAllButton);
 		fDeselectAll.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fDeselectAll.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fInputViewer.setCheckedElements(new Object[0]);
 				setPageComplete(hasCheckedElements());
@@ -538,6 +542,7 @@ public class ExternalizeStringsWizardPage extends UserInputWizardPage {
 			fDeselectAll.setEnabled(enabled);
 	}
 
+	@Override
 	public void setPageComplete(boolean complete) {
 		super.setPageComplete(complete);
 		// if the page is ready to be completed set the selection on the processor so it knows

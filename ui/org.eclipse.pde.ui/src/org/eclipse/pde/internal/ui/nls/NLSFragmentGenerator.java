@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -332,28 +332,32 @@ public class NLSFragmentGenerator {
 			//Case 1a: External plug-in is a jar file
 			if (new File(installLocation).isFile()) {
 				ZipFile zf = new ZipFile(installLocation);
-				for (Enumeration<?> e = zf.entries(); e.hasMoreElements();) {
-					worked();
+				try {
+					for (Enumeration<?> e = zf.entries(); e.hasMoreElements();) {
+						worked();
 
-					ZipEntry zfe = (ZipEntry) e.nextElement();
-					String name = zfe.getName();
+						ZipEntry zfe = (ZipEntry) e.nextElement();
+						String name = zfe.getName();
 
-					String[] segments = name.split(SLASH);
-					IPath path = Path.fromPortableString(join(SLASH, segments, 0, segments.length - 1));
-					String resourceName = segments[segments.length - 1];
-					String localizedResourceName = localeSpecificName(resourceName, locale);
-					if (propertiesFilter.include(name)) {
+						String[] segments = name.split(SLASH);
+						IPath path = Path.fromPortableString(join(SLASH, segments, 0, segments.length - 1));
+						String resourceName = segments[segments.length - 1];
+						String localizedResourceName = localeSpecificName(resourceName, locale);
+						if (propertiesFilter.include(name)) {
 
-						createParents(fragmentProject, path);
-						IFile file = fragmentProject.getFile(path.append(localizedResourceName));
-						InputStream is = zf.getInputStream(zfe);
-						file.create(is, false, getProgressMonitor());
-					} else if (resourceFilter.include(name)) {
-						IPath target = localeResourceFolder.getFullPath().append(path).append(resourceName);
-						createParents(fragmentProject, target.removeLastSegments(1).removeFirstSegments(1));
-						IFile file = fragmentProject.getFile(target.removeFirstSegments(1));
-						file.create(zf.getInputStream(zfe), false, getProgressMonitor());
+							createParents(fragmentProject, path);
+							IFile file = fragmentProject.getFile(path.append(localizedResourceName));
+							InputStream is = zf.getInputStream(zfe);
+							file.create(is, false, getProgressMonitor());
+						} else if (resourceFilter.include(name)) {
+							IPath target = localeResourceFolder.getFullPath().append(path).append(resourceName);
+							createParents(fragmentProject, target.removeLastSegments(1).removeFirstSegments(1));
+							IFile file = fragmentProject.getFile(target.removeFirstSegments(1));
+							file.create(zf.getInputStream(zfe), false, getProgressMonitor());
+						}
 					}
+				} finally {
+					zf.close();
 				}
 			}
 			//Case 1b: External plug-in has a folder structure

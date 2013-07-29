@@ -6,6 +6,7 @@
 *
 * Contributors:
 *   EclipseSource - initial API and implementation
+*   IBM Corporation - bug fixing
 ******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.category;
 
@@ -28,7 +29,7 @@ import org.eclipse.ui.forms.IPartSelectionListener;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
-public class CategoryDetailsSection extends PDESection implements IFormPart, IPartSelectionListener {
+public class CategoryDetailsSection extends PDESection implements IPartSelectionListener {
 
 	private static final String PROPERTY_DESC = "desc"; //$NON-NLS-1$
 	private static final String PROPERTY_NAME = "url"; //$NON-NLS-1$
@@ -89,6 +90,7 @@ public class CategoryDetailsSection extends PDESection implements IFormPart, IPa
 		}
 	}
 
+	@Override
 	public void cancelEdit() {
 		fNameText.cancelEdit();
 		fLabelText.cancelEdit();
@@ -96,6 +98,7 @@ public class CategoryDetailsSection extends PDESection implements IFormPart, IPa
 		super.cancelEdit();
 	}
 
+	@Override
 	public boolean canPaste(Clipboard clipboard) {
 		TransferData[] types = clipboard.getAvailableTypes();
 		Transfer[] transfers = new Transfer[] {TextTransfer.getInstance(), RTFTransfer.getInstance()};
@@ -123,6 +126,7 @@ public class CategoryDetailsSection extends PDESection implements IFormPart, IPa
 		fDescriptionText.setValue(null, true);
 	}
 
+	@Override
 	public void commit(boolean onSave) {
 		fNameText.commit();
 		fLabelText.commit();
@@ -131,6 +135,7 @@ public class CategoryDetailsSection extends PDESection implements IFormPart, IPa
 		super.commit(onSave);
 	}
 
+	@Override
 	public void createClient(Section section, FormToolkit toolkit) {
 
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
@@ -143,6 +148,7 @@ public class CategoryDetailsSection extends PDESection implements IFormPart, IPa
 
 		fNameText = new FormEntry(container, toolkit, PDEUIMessages.CategoryDetails_name, null, false);
 		fNameText.setFormEntryListener(new FormEntryAdapter(this) {
+			@Override
 			public void textValueChanged(FormEntry text) {
 				try {
 					if (text.getValue().length() <= 0 || alreadyExists(text.getValue())) {
@@ -162,6 +168,7 @@ public class CategoryDetailsSection extends PDESection implements IFormPart, IPa
 
 		fLabelText = new FormEntry(container, toolkit, PDEUIMessages.CategoryDetails_label, null, false);
 		fLabelText.setFormEntryListener(new FormEntryAdapter(this) {
+			@Override
 			public void textValueChanged(FormEntry text) {
 				try {
 					applyValue(PROPERTY_TYPE, text.getValue());
@@ -179,6 +186,7 @@ public class CategoryDetailsSection extends PDESection implements IFormPart, IPa
 		fDescriptionText.getLabel().setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 
 		fDescriptionText.setFormEntryListener(new FormEntryAdapter(this) {
+			@Override
 			public void textValueChanged(FormEntry text) {
 				try {
 					applyValue(PROPERTY_DESC, text.getValue());
@@ -197,6 +205,7 @@ public class CategoryDetailsSection extends PDESection implements IFormPart, IPa
 			model.addModelChangedListener(this);
 	}
 
+	@Override
 	public void dispose() {
 		ISiteModel model = (ISiteModel) getPage().getModel();
 		if (model != null)
@@ -209,6 +218,7 @@ public class CategoryDetailsSection extends PDESection implements IFormPart, IPa
 		gd.widthHint = 30;
 	}
 
+	@Override
 	public void modelChanged(IModelChangedEvent e) {
 		markStale();
 	}
@@ -240,6 +250,7 @@ public class CategoryDetailsSection extends PDESection implements IFormPart, IPa
 		}
 	}
 
+	@Override
 	public void refresh() {
 		if (fCurrentCategoryDefinition == null) {
 			clearFields();
@@ -265,6 +276,7 @@ public class CategoryDetailsSection extends PDESection implements IFormPart, IPa
 		refresh();
 	}
 
+	@Override
 	public void setFocus() {
 		if (fNameText != null)
 			fNameText.getText().setFocus();

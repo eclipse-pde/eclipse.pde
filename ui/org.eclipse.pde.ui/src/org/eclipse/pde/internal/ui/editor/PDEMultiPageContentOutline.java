@@ -25,7 +25,7 @@ import org.eclipse.ui.part.Page;
 import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
-public class PDEMultiPageContentOutline extends Page implements IContentOutlinePage, ISelectionProvider, ISelectionChangedListener, ILaunchingPreferenceConstants {
+public class PDEMultiPageContentOutline extends Page implements IContentOutlinePage, ISelectionChangedListener, ILaunchingPreferenceConstants {
 	private PageBook pagebook;
 	private ISelection selection;
 	private ArrayList<ISelectionChangedListener> listeners;
@@ -50,10 +50,12 @@ public class PDEMultiPageContentOutline extends Page implements IContentOutlineP
 		listeners.add(listener);
 	}
 
+	@Override
 	public void createControl(Composite parent) {
 		pagebook = new PageBook(parent, SWT.NONE);
 	}
 
+	@Override
 	public void dispose() {
 		if (pagebook != null && !pagebook.isDisposed())
 			pagebook.dispose();
@@ -81,6 +83,7 @@ public class PDEMultiPageContentOutline extends Page implements IContentOutlineP
 		return listeners == null;
 	}
 
+	@Override
 	public Control getControl() {
 		return pagebook;
 	}
@@ -93,6 +96,7 @@ public class PDEMultiPageContentOutline extends Page implements IContentOutlineP
 		return selection;
 	}
 
+	@Override
 	public void makeContributions(IMenuManager menuManager, IToolBarManager toolBarManager, IStatusLineManager statusLineManager) {
 	}
 
@@ -107,6 +111,7 @@ public class PDEMultiPageContentOutline extends Page implements IContentOutlineP
 		setSelection(event.getSelection());
 	}
 
+	@Override
 	public void setActionBars(IActionBars actionBars) {
 		this.actionBars = actionBars;
 		registerToolbarActions(actionBars);
@@ -119,6 +124,7 @@ public class PDEMultiPageContentOutline extends Page implements IContentOutlineP
 		return actionBars;
 	}
 
+	@Override
 	public void setFocus() {
 		if (currentPage != null)
 			currentPage.setFocus();
@@ -192,6 +198,7 @@ public class PDEMultiPageContentOutline extends Page implements IContentOutlineP
 			setChecked(sortingOn);
 		}
 
+		@Override
 		public void run() {
 			setChecked(isChecked());
 			valueChanged(isChecked());

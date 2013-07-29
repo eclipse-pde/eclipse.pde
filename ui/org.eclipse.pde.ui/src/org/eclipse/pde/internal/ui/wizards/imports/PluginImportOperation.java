@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -153,6 +153,7 @@ public class PluginImportOperation extends WorkspaceJob {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.dialogs.MessageDialog#createCustomArea(org.eclipse.swt.widgets.Composite)
 		 */
+		@Override
 		protected Control createCustomArea(Composite parent) {
 			Composite composite = new Composite(parent, SWT.NONE);
 			GridLayout layout = new GridLayout();
@@ -182,6 +183,7 @@ public class PluginImportOperation extends WorkspaceJob {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.WorkspaceJob#runInWorkspace(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
 		try {
 
@@ -220,6 +222,7 @@ public class PluginImportOperation extends WorkspaceJob {
 				if (namesOfNotImportedProjects.size() > 0) {
 					UIJob job = new UIJob(PDEUIMessages.PluginImportOperation_WarningDialogJob) {
 
+						@Override
 						public IStatus runInUIThread(IProgressMonitor monitor) {
 							String dialogMessage = namesOfNotImportedProjects.size() == 1 ? PDEUIMessages.PluginImportOperation_WarningDialogMessageSingular : PDEUIMessages.PluginImportOperation_WarningDialogMessagePlural;
 							NotImportedProjectsWarningDialog dialog = new NotImportedProjectsWarningDialog(dialogMessage, namesOfNotImportedProjects);
@@ -314,6 +317,7 @@ public class PluginImportOperation extends WorkspaceJob {
 
 				UIJob job = new UIJob(PDEUIMessages.PluginImportOperation_OverwritePluginProjects) {
 
+					@Override
 					public IStatus runInUIThread(IProgressMonitor monitor) {
 						OverwriteProjectsSelectionDialog dialog = new OverwriteProjectsSelectionDialog(getDisplay().getActiveShell(), conflictingPlugins);
 						dialog.setBlockOnOpen(true);
@@ -744,10 +748,8 @@ public class PluginImportOperation extends WorkspaceJob {
 				provider = FileSystemStructureProvider.INSTANCE;
 				root = new File(model.getInstallLocation());
 			}
-			@SuppressWarnings("rawtypes")
-			List children = provider.getChildren(root);
-			for (@SuppressWarnings("rawtypes")
-			Iterator iterator = children.iterator(); iterator.hasNext();) {
+			List<?> children = provider.getChildren(root);
+			for (Iterator<?> iterator = children.iterator(); iterator.hasNext();) {
 				String label = provider.getLabel(iterator.next());
 				if (label.equals(DEFAULT_SOURCE_DIR)) {
 					return true;
@@ -821,10 +823,12 @@ public class PluginImportOperation extends WorkspaceJob {
 	 */
 	private void runBuildJob() {
 		Job buildJob = new Job(PDEUIMessages.CompilersConfigurationBlock_building) {
+			@Override
 			public boolean belongsTo(Object family) {
 				return ResourcesPlugin.FAMILY_AUTO_BUILD == family;
 			}
 
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					PDEPlugin.getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, monitor);

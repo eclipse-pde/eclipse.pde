@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -54,10 +54,12 @@ public class PreprocessorParser {
 			this.value = value;
 		}
 
+		@Override
 		public Object getValue() {
 			return value;
 		}
 
+		@Override
 		public String toString() {
 			if (value != null)
 				return "leaf[" + value.toString() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
@@ -76,6 +78,7 @@ public class PreprocessorParser {
 			this.right = right;
 		}
 
+		@Override
 		public Object getValue() {
 			boolean result = false;
 			Object leftValue = left != null ? left.getValue() : Boolean.FALSE;
@@ -118,6 +121,7 @@ public class PreprocessorParser {
 			return result ? Boolean.TRUE : Boolean.FALSE;
 		}
 
+		@Override
 		public String toString() {
 			String lstring = left != null ? left.toString() : "*"; //$NON-NLS-1$
 			String rstring = right != null ? right.toString() : "*"; //$NON-NLS-1$
@@ -142,9 +146,8 @@ public class PreprocessorParser {
 		this.provider = provider;
 	}
 
-	@SuppressWarnings("rawtypes")
 	public static void main(String[] args) {
-		final Hashtable<String, Comparable> vars = new Hashtable<String, Comparable>();
+		final Hashtable<String, Comparable<? extends Object>> vars = new Hashtable<String, Comparable<? extends Object>>();
 		vars.put("a", Boolean.FALSE); //$NON-NLS-1$
 		vars.put("b", "3"); //$NON-NLS-1$ //$NON-NLS-2$
 		vars.put("c", Boolean.TRUE); //$NON-NLS-1$

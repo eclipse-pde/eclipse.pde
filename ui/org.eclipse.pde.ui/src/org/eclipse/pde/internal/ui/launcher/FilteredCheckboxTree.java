@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,6 @@
  *     Ian Bull <irbull@cs.uvic.ca> - bug 207064
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
-
-import org.eclipse.swt.widgets.TreeItem;
 
 import java.util.*;
 import java.util.List;
@@ -55,6 +53,7 @@ class FilteredCheckboxTree extends FilteredTree {
 	 * (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.FilteredTree#doCreateTreeViewer(org.eclipse.swt.widgets.Composite, int)
 	 */
+	@Override
 	protected TreeViewer doCreateTreeViewer(Composite parent, int style) {
 		return new FilterableCheckboxTreeViewer(parent, style);
 	}
@@ -63,6 +62,7 @@ class FilteredCheckboxTree extends FilteredTree {
 	 * (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.FilteredTree#doCreateRefreshJob()
 	 */
+	@Override
 	protected WorkbenchJob doCreateRefreshJob() {
 		// Since refresh job is private, we have to get a handle to it
 		// when it is created, and store it locally.  
@@ -146,6 +146,7 @@ class FilteredCheckboxTree extends FilteredTree {
 		/* The preRefresh Listeners */
 		List<PreRefreshNotifier> refreshingListeners = new ArrayList<PreRefreshNotifier>();
 
+		@Override
 		protected void unmapAllElements() {
 			itemCache = new HashMap<Object, FilteredCheckboxTreeItem>();
 			super.unmapAllElements();
@@ -180,9 +181,9 @@ class FilteredCheckboxTree extends FilteredTree {
 		 * (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.CheckboxTreeViewer#getChecked(java.lang.Object)
 		 */
+		@Override
 		public boolean getChecked(Object element) {
 			Widget testFindItem = getViewer().testFindItem(element);
-			testFindItem = null;
 			if (testFindItem == null) {
 				if (itemCache.containsKey(element)) {
 					FilteredCheckboxTreeItem item = itemCache.get(element);
@@ -219,6 +220,7 @@ class FilteredCheckboxTree extends FilteredTree {
 		 * (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.CheckboxTreeViewer#getCheckedElements()
 		 */
+		@Override
 		public Object[] getCheckedElements() {
 			Iterator<FilteredCheckboxTreeItem> iterator = itemCache.values().iterator();
 			List<Object> checkedElements = new LinkedList<Object>();
@@ -242,6 +244,7 @@ class FilteredCheckboxTree extends FilteredTree {
 		 * (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.CheckboxTreeViewer#setChecked(java.lang.Object, boolean)
 		 */
+		@Override
 		public boolean setChecked(Object element, boolean state) {
 			if (itemCache.containsKey(element)) {
 				FilteredCheckboxTreeItem item = itemCache.get(element);
@@ -254,6 +257,7 @@ class FilteredCheckboxTree extends FilteredTree {
 		 * (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.CheckboxTreeViewer#setCheckedElements(java.lang.Object[])
 		 */
+		@Override
 		public void setCheckedElements(Object[] elements) {
 			Set<Object> s = new HashSet<Object>(itemCache.keySet());
 			s.removeAll(new HashSet<Object>(Arrays.asList(elements)));
@@ -277,6 +281,7 @@ class FilteredCheckboxTree extends FilteredTree {
 		 * (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.CheckboxTreeViewer#setSubtreeChecked(java.lang.Object, boolean)
 		 */
+		@Override
 		public boolean setSubtreeChecked(Object element, boolean state) {
 			String newState = state ? CHECKED : NONE;
 			TreeItem item = (TreeItem) testFindItem(element);
@@ -317,6 +322,7 @@ class FilteredCheckboxTree extends FilteredTree {
 		 * (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.CheckboxTreeViewer#preservingSelection(java.lang.Runnable)
 		 */
+		@Override
 		protected void preservingSelection(Runnable updateCode) {
 			super.preservingSelection(updateCode);
 
@@ -332,6 +338,7 @@ class FilteredCheckboxTree extends FilteredTree {
 		 * (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.AbstractTreeViewer#internalRefresh(java.lang.Object, boolean)
 		 */
+		@Override
 		protected void internalRefresh(Object element, boolean updateLabels) {
 			String text = FilteredCheckboxTree.this.getFilterString();
 			boolean initial = initialText != null && initialText.equals(text);
@@ -436,6 +443,7 @@ class FilteredCheckboxTree extends FilteredTree {
 
 	} // end of FilterableCheckboxTreeViewer
 
+	@Override
 	public void setEnabled(boolean enabled) {
 		if ((filterText.getStyle() & SWT.ICON_CANCEL) == 0) { // filter uses FilteredTree new look, not native 
 			int filterColor = enabled ? SWT.COLOR_LIST_BACKGROUND : SWT.COLOR_WIDGET_BACKGROUND;

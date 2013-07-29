@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2010 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -14,14 +14,13 @@ package org.eclipse.pde.internal.ui.editor.build;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.core.IModelChangedListener;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.widgets.Composite;
 
-public class BinSection extends BuildContentsSection implements IModelChangedListener {
+public class BinSection extends BuildContentsSection {
 
 	public BinSection(BuildPage page, Composite parent) {
 		super(page, parent);
@@ -29,6 +28,7 @@ public class BinSection extends BuildContentsSection implements IModelChangedLis
 		getSection().setDescription(PDEUIMessages.BuildEditor_BinSection_desc);
 	}
 
+	@Override
 	protected void initializeCheckState() {
 		super.initializeCheckState();
 		IBuild build = fBuildModel.getBuild();
@@ -41,6 +41,7 @@ public class BinSection extends BuildContentsSection implements IModelChangedLis
 		super.initializeCheckState(binIncl, binExcl);
 	}
 
+	@Override
 	protected void deleteFolderChildrenFromEntries(IFolder folder) {
 		IBuild build = fBuildModel.getBuild();
 		IBuildEntry binIncl = build.getEntry(IBuildPropertiesConstants.PROPERTY_BIN_INCLUDES);
@@ -51,6 +52,7 @@ public class BinSection extends BuildContentsSection implements IModelChangedLis
 		removeChildren(binExcl, parentFolder);
 	}
 
+	@Override
 	protected void handleBuildCheckStateChange(boolean wasTopParentChecked) {
 		IResource resource = fParentResource;
 		String resourceName = fParentResource.getProjectRelativePath().makeRelativeTo(fBundleRoot.getProjectRelativePath()).toPortableString();
@@ -69,6 +71,7 @@ public class BinSection extends BuildContentsSection implements IModelChangedLis
 		fParentResource = fOriginalResource = null;
 	}
 
+	@Override
 	public void modelChanged(IModelChangedEvent event) {
 		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
 			markStale();

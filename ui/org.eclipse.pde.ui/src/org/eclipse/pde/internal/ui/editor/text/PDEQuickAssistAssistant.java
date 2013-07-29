@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -111,12 +111,18 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 		/* (non-Javadoc)
 		 * @see java.lang.Object#equals(java.lang.Object)
 		 */
+		@Override
 		public boolean equals(Object obj) {
 			if (!(obj instanceof PDECompletionProposal)) {
 				return false;
 			}
 			PDECompletionProposal proposal = (PDECompletionProposal) obj;
 			return proposal.fPosition.equals(fPosition) && proposal.fResolution.equals(fResolution);
+		}
+
+		@Override
+		public int hashCode() {
+			return fPosition.hashCode() + fResolution.hashCode();
 		}
 
 		/* (non-Javadoc)
@@ -263,6 +269,7 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 		fRemoveImage = PDEPluginImages.DESC_DELETE.createImage();
 		fRenameImage = PDEPluginImages.DESC_REFRESH.createImage();
 		setInformationControlCreator(new AbstractReusableInformationControlCreator() {
+			@Override
 			public IInformationControl doCreateInformationControl(Shell parent) {
 				return new DefaultInformationControl(parent, (IInformationPresenter) null);
 			}

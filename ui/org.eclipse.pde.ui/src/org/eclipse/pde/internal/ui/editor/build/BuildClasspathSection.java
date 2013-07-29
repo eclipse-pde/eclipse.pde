@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -16,7 +16,6 @@ import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.core.IModelChangedListener;
 import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
@@ -43,7 +42,7 @@ import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.views.navigator.ResourceComparator;
 
-public class BuildClasspathSection extends TableSection implements IModelChangedListener {
+public class BuildClasspathSection extends TableSection {
 
 	private TableViewer fTableViewer;
 	private boolean fEnabled = true;
@@ -55,8 +54,7 @@ public class BuildClasspathSection extends TableSection implements IModelChanged
 	 */
 	class ElementSelectionValidator implements ISelectionStatusValidator {
 
-		@SuppressWarnings("rawtypes")
-		private Class[] fAcceptedTypes;
+		private Class<?>[] fAcceptedTypes;
 		private boolean fAllowMultipleSelection;
 
 		/**
@@ -64,8 +62,7 @@ public class BuildClasspathSection extends TableSection implements IModelChanged
 		 * @param allowMultipleSelection If set to <code>true</code>, the validator
 		 * allows multiple selection.
 		 */
-		public ElementSelectionValidator(@SuppressWarnings("rawtypes")
-		Class[] acceptedTypes, boolean allowMultipleSelection) {
+		public ElementSelectionValidator(Class<?>[] acceptedTypes, boolean allowMultipleSelection) {
 			Assert.isNotNull(acceptedTypes);
 			fAcceptedTypes = acceptedTypes;
 			fAllowMultipleSelection = allowMultipleSelection;
@@ -156,6 +153,7 @@ public class BuildClasspathSection extends TableSection implements IModelChanged
 		getSection().setExpanded(entry != null && entry.getTokens().length > 0);
 	}
 
+	@Override
 	public void createClient(Section section, FormToolkit toolkit) {
 		Composite container = createClientContainer(section, 2, toolkit);
 		createViewerPartControl(container, SWT.FULL_SELECTION, 2, toolkit);
@@ -177,11 +175,13 @@ public class BuildClasspathSection extends TableSection implements IModelChanged
 		section.setClient(container);
 	}
 
+	@Override
 	protected void fillContextMenu(IMenuManager manager) {
 		ISelection selection = fTableViewer.getSelection();
 
 		// add NEW action
 		Action action = new Action(PDEUIMessages.BuildEditor_ClasspathSection_add) {
+			@Override
 			public void run() {
 				handleNew();
 			}
@@ -193,6 +193,7 @@ public class BuildClasspathSection extends TableSection implements IModelChanged
 
 		// add DELETE action
 		action = new Action(PDEUIMessages.BuildEditor_ClasspathSection_remove) {
+			@Override
 			public void run() {
 				handleDelete();
 			}
@@ -203,6 +204,7 @@ public class BuildClasspathSection extends TableSection implements IModelChanged
 		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(manager, false);
 	}
 
+	@Override
 	public void dispose() {
 		IBuildModel model = getBuildModel();
 		if (model != null)
@@ -210,10 +212,12 @@ public class BuildClasspathSection extends TableSection implements IModelChanged
 		super.dispose();
 	}
 
+	@Override
 	public void refresh() {
 		fTableViewer.refresh();
 	}
 
+	@Override
 	public boolean doGlobalAction(String actionId) {
 		if (actionId.equals(ActionFactory.DELETE.getId())) {
 			if (fEnabled) {
@@ -231,6 +235,7 @@ public class BuildClasspathSection extends TableSection implements IModelChanged
 		tablePart.setButtonEnabled(0, enable);
 	}
 
+	@Override
 	protected void selectionChanged(IStructuredSelection selection) {
 		getPage().getPDEEditor().setSelection(selection);
 		getTablePart().setButtonEnabled(1, selection != null && selection.size() > 0 && fEnabled);
@@ -257,13 +262,13 @@ public class BuildClasspathSection extends TableSection implements IModelChanged
 	}
 
 	private void initializeDialogSettings(ElementTreeSelectionDialog dialog) {
-		@SuppressWarnings("rawtypes")
-		Class[] acceptedClasses = new Class[] {IFile.class};
+		Class<?>[] acceptedClasses = new Class[] {IFile.class};
 		dialog.setValidator(new ElementSelectionValidator(acceptedClasses, true));
 		dialog.setTitle(PDEUIMessages.BuildEditor_ClasspathSection_jarsTitle);
 		dialog.setMessage(PDEUIMessages.BuildEditor_ClasspathSection_jarsDesc);
 		dialog.addFilter(new JARFileFilter());
 		dialog.addFilter(new ViewerFilter() {
+			@Override
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
 				if (element instanceof IProject) {
 					try {
@@ -330,6 +335,7 @@ public class BuildClasspathSection extends TableSection implements IModelChanged
 		return null;
 	}
 
+	@Override
 	protected void buttonSelected(int index) {
 		switch (index) {
 			case 0 :
@@ -343,6 +349,7 @@ public class BuildClasspathSection extends TableSection implements IModelChanged
 		}
 	}
 
+	@Override
 	public void modelChanged(IModelChangedEvent event) {
 		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED)
 			markStale();

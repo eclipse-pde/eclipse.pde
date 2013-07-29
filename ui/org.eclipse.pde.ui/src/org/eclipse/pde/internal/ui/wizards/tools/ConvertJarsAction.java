@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,12 +11,11 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.tools;
 
-import java.util.jar.Manifest;
-import org.eclipse.core.resources.IProject;
-
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
 import java.util.jar.JarFile;
+import java.util.jar.Manifest;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.*;
@@ -56,25 +55,34 @@ public class ConvertJarsAction implements IObjectActionDelegate {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		while (i.hasNext()) {
 			IPackageFragmentRoot pfr = (IPackageFragmentRoot) i.next();
+			JarFile file = null;
 			try {
 				projectSelection.add(pfr.getJavaProject().getProject());
 				IClasspathEntry rawClasspathEntry = pfr.getRawClasspathEntry();
 				IPath path = rawClasspathEntry.getPath();
 				IFile iFile = root.getFile(path);
 				if (iFile.exists()) {
-					JarFile jFile = new JarFile(iFile.getLocation().toString());
-					if (!filesMap.containsKey(jFile.getManifest())) {
-						filesMap.put(jFile.getManifest(), iFile);
+					file = new JarFile(iFile.getLocation().toString());
+					if (!filesMap.containsKey(file.getManifest())) {
+						filesMap.put(file.getManifest(), iFile);
 					}
 				} else {
 					String pathStr = path.toString();
-					JarFile file = new JarFile(pathStr);
+					file = new JarFile(pathStr);
 					if (!filesMap.containsKey(file.getManifest())) {
 						filesMap.put(file.getManifest(), new File(file.getName()));
 					}
 				}
 			} catch (Exception e) {
 				PDEPlugin.logException(e);
+			} finally {
+				if (file != null) {
+					try {
+						file.close();
+					} catch (IOException e) {
+						PDEPlugin.logException(e);
+					}
+				}
 			}
 		}
 		NewLibraryPluginProjectWizard wizard = new NewLibraryPluginProjectWizard(filesMap.values(), projectSelection);

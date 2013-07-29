@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -41,6 +41,7 @@ public class PluginSearchPage extends DialogPage implements ISearchPage {
 		public int workspaceScope;
 		public IWorkingSet[] workingSets;
 
+		@Override
 		public boolean equals(Object obj) {
 			if (obj instanceof QueryData) {
 				if (((QueryData) obj).text.equals(text))
@@ -49,6 +50,10 @@ public class PluginSearchPage extends DialogPage implements ISearchPage {
 			return false;
 		}
 
+		@Override
+		public int hashCode() {
+			return text.hashCode();
+		}
 	}
 
 	private static ArrayList<QueryData> previousQueries = new ArrayList<QueryData>();
@@ -215,6 +220,7 @@ public class PluginSearchPage extends DialogPage implements ISearchPage {
 
 	private void hookListeners() {
 		searchForButtons[1].addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				boolean selected = searchForButtons[1].getSelection();
 				if (selected) {
@@ -228,6 +234,7 @@ public class PluginSearchPage extends DialogPage implements ISearchPage {
 		});
 
 		patternCombo.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				int index = previousQueries.size() - patternCombo.getSelectionIndex() - 1;
 				if (previousQueries.size() > index) {
@@ -296,6 +303,7 @@ public class PluginSearchPage extends DialogPage implements ISearchPage {
 		this.container = container;
 	}
 
+	@Override
 	public void setVisible(boolean visible) {
 		if (visible && patternCombo != null) {
 			if (firstTime) {

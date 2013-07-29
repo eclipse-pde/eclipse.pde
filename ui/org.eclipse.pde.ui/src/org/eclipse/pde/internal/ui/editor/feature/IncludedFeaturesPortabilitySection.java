@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -30,7 +30,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.widgets.*;
 
-public class IncludedFeaturesPortabilitySection extends PDESection implements IFormPart, IPartSelectionListener {
+public class IncludedFeaturesPortabilitySection extends PDESection implements IPartSelectionListener {
 	public static Choice[] getArchChoices() {
 		return getKnownChoices(Platform.knownOSArchValues());
 	}
@@ -95,6 +95,7 @@ public class IncludedFeaturesPortabilitySection extends PDESection implements IF
 			fCurrentInput.setArch(value);
 	}
 
+	@Override
 	public void cancelEdit() {
 		fOsText.cancelEdit();
 		fWsText.cancelEdit();
@@ -103,6 +104,7 @@ public class IncludedFeaturesPortabilitySection extends PDESection implements IF
 		super.cancelEdit();
 	}
 
+	@Override
 	public boolean canPaste(Clipboard clipboard) {
 		TransferData[] types = clipboard.getAvailableTypes();
 		Transfer[] transfers = new Transfer[] {TextTransfer.getInstance(), RTFTransfer.getInstance()};
@@ -133,6 +135,7 @@ public class IncludedFeaturesPortabilitySection extends PDESection implements IF
 		fArchText.setValue(null, true);
 	}
 
+	@Override
 	public void commit(boolean onSave) {
 		fOsText.commit();
 		fWsText.commit();
@@ -141,6 +144,7 @@ public class IncludedFeaturesPortabilitySection extends PDESection implements IF
 		super.commit(onSave);
 	}
 
+	@Override
 	public void createClient(Section section, FormToolkit toolkit) {
 
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
@@ -156,6 +160,7 @@ public class IncludedFeaturesPortabilitySection extends PDESection implements IF
 		fOsText = new FormEntry(container, toolkit, PDEUIMessages.SiteEditor_PortabilitySection_os, editLabel, false);
 		fOsText.setFormEntryListener(new FormEntryAdapter(this) {
 
+			@Override
 			public void browseButtonSelected(FormEntry entry) {
 				BusyIndicator.showWhile(fOsText.getText().getDisplay(), new Runnable() {
 					public void run() {
@@ -165,6 +170,7 @@ public class IncludedFeaturesPortabilitySection extends PDESection implements IF
 				});
 			}
 
+			@Override
 			public void textValueChanged(FormEntry text) {
 				try {
 					applyValue(IEnvironment.P_OS, text.getValue());
@@ -179,6 +185,7 @@ public class IncludedFeaturesPortabilitySection extends PDESection implements IF
 		fWsText = new FormEntry(container, toolkit, PDEUIMessages.SiteEditor_PortabilitySection_ws, editLabel, false);
 		fWsText.setFormEntryListener(new FormEntryAdapter(this) {
 
+			@Override
 			public void browseButtonSelected(FormEntry entry) {
 				BusyIndicator.showWhile(fWsText.getText().getDisplay(), new Runnable() {
 					public void run() {
@@ -188,6 +195,7 @@ public class IncludedFeaturesPortabilitySection extends PDESection implements IF
 				});
 			}
 
+			@Override
 			public void textValueChanged(FormEntry text) {
 				try {
 					applyValue(IEnvironment.P_WS, text.getValue());
@@ -203,6 +211,7 @@ public class IncludedFeaturesPortabilitySection extends PDESection implements IF
 
 		fNlText.setFormEntryListener(new FormEntryAdapter(this) {
 
+			@Override
 			public void browseButtonSelected(FormEntry entry) {
 				BusyIndicator.showWhile(fNlText.getText().getDisplay(), new Runnable() {
 					public void run() {
@@ -212,6 +221,7 @@ public class IncludedFeaturesPortabilitySection extends PDESection implements IF
 				});
 			}
 
+			@Override
 			public void textValueChanged(FormEntry text) {
 				try {
 					applyValue(IEnvironment.P_NL, text.getValue());
@@ -226,6 +236,7 @@ public class IncludedFeaturesPortabilitySection extends PDESection implements IF
 		fArchText = new FormEntry(container, toolkit, PDEUIMessages.SiteEditor_PortabilitySection_arch, editLabel, false);
 		fArchText.setFormEntryListener(new FormEntryAdapter(this) {
 
+			@Override
 			public void browseButtonSelected(FormEntry entry) {
 				BusyIndicator.showWhile(fArchText.getText().getDisplay(), new Runnable() {
 					public void run() {
@@ -235,6 +246,7 @@ public class IncludedFeaturesPortabilitySection extends PDESection implements IF
 				});
 			}
 
+			@Override
 			public void textValueChanged(FormEntry text) {
 				try {
 					applyValue(IEnvironment.P_ARCH, text.getValue());
@@ -251,6 +263,7 @@ public class IncludedFeaturesPortabilitySection extends PDESection implements IF
 		section.setClient(container);
 	}
 
+	@Override
 	public void dispose() {
 		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		if (model != null)
@@ -263,6 +276,7 @@ public class IncludedFeaturesPortabilitySection extends PDESection implements IF
 	 * 
 	 * @see org.eclipse.ui.forms.AbstractFormPart#initialize(org.eclipse.ui.forms.IManagedForm)
 	 */
+	@Override
 	public void initialize(IManagedForm form) {
 		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		if (model != null)
@@ -275,6 +289,7 @@ public class IncludedFeaturesPortabilitySection extends PDESection implements IF
 		gd.widthHint = 30;
 	}
 
+	@Override
 	public void modelChanged(IModelChangedEvent e) {
 		markStale();
 	}
@@ -298,6 +313,7 @@ public class IncludedFeaturesPortabilitySection extends PDESection implements IF
 		}
 	}
 
+	@Override
 	public void refresh() {
 		if (fCurrentInput == null) {
 			clearFields();
@@ -329,6 +345,7 @@ public class IncludedFeaturesPortabilitySection extends PDESection implements IF
 		refresh();
 	}
 
+	@Override
 	public void setFocus() {
 		if (fOsText != null)
 			fOsText.getText().setFocus();

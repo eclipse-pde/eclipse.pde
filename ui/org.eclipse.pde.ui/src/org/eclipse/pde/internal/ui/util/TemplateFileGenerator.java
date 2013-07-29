@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2012 IBM Corporation and others.
+ *  Copyright (c) 2007, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -425,12 +425,13 @@ public class TemplateFileGenerator implements IVariableProvider {
 	 * Returns the folder with Java files in the target project. The default
 	 * implementation looks for source folders in the classpath of the target
 	 * folders and picks the first one encountered. Subclasses may override this
-	 * behaviour.
+	 * behavior.
 	 * 
 	 * @param monitor
 	 *            progress monitor to use
 	 * @return source folder that will be used to generate Java files or
 	 *         <samp>null </samp> if none found.
+	 * @throws CoreException
 	 */
 
 	protected IFolder getSourceFolder(IProgressMonitor monitor) throws CoreException {

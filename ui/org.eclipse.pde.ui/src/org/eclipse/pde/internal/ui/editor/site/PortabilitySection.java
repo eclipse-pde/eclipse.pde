@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -35,7 +35,7 @@ import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
-public class PortabilitySection extends PDESection implements IFormPart, IPartSelectionListener {
+public class PortabilitySection extends PDESection implements IPartSelectionListener {
 	public static Choice[] getArchChoices() {
 		return getKnownChoices(Platform.knownOSArchValues());
 	}
@@ -100,6 +100,7 @@ public class PortabilitySection extends PDESection implements IFormPart, IPartSe
 			fCurrentSiteFeature.setArch(value);
 	}
 
+	@Override
 	public void cancelEdit() {
 		fOsText.cancelEdit();
 		fWsText.cancelEdit();
@@ -108,6 +109,7 @@ public class PortabilitySection extends PDESection implements IFormPart, IPartSe
 		super.cancelEdit();
 	}
 
+	@Override
 	public boolean canPaste(Clipboard clipboard) {
 		TransferData[] types = clipboard.getAvailableTypes();
 		Transfer[] transfers = new Transfer[] {TextTransfer.getInstance(), RTFTransfer.getInstance()};
@@ -137,6 +139,7 @@ public class PortabilitySection extends PDESection implements IFormPart, IPartSe
 		fArchText.setValue(null, true);
 	}
 
+	@Override
 	public void commit(boolean onSave) {
 		fOsText.commit();
 		fWsText.commit();
@@ -146,6 +149,7 @@ public class PortabilitySection extends PDESection implements IFormPart, IPartSe
 		super.commit(onSave);
 	}
 
+	@Override
 	public void createClient(Section section, FormToolkit toolkit) {
 
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
@@ -161,6 +165,7 @@ public class PortabilitySection extends PDESection implements IFormPart, IPartSe
 		fOsText = new FormEntry(container, toolkit, PDEUIMessages.SiteEditor_PortabilitySection_os, editLabel, false);
 		fOsText.setFormEntryListener(new FormEntryAdapter(this) {
 
+			@Override
 			public void browseButtonSelected(FormEntry entry) {
 				BusyIndicator.showWhile(fOsText.getText().getDisplay(), new Runnable() {
 					public void run() {
@@ -170,6 +175,7 @@ public class PortabilitySection extends PDESection implements IFormPart, IPartSe
 				});
 			}
 
+			@Override
 			public void textValueChanged(FormEntry text) {
 				try {
 					applyValue(IEnvironment.P_OS, text.getValue());
@@ -184,6 +190,7 @@ public class PortabilitySection extends PDESection implements IFormPart, IPartSe
 		fWsText = new FormEntry(container, toolkit, PDEUIMessages.SiteEditor_PortabilitySection_ws, editLabel, false);
 		fWsText.setFormEntryListener(new FormEntryAdapter(this) {
 
+			@Override
 			public void browseButtonSelected(FormEntry entry) {
 				BusyIndicator.showWhile(fWsText.getText().getDisplay(), new Runnable() {
 					public void run() {
@@ -193,6 +200,7 @@ public class PortabilitySection extends PDESection implements IFormPart, IPartSe
 				});
 			}
 
+			@Override
 			public void textValueChanged(FormEntry text) {
 				try {
 					applyValue(IEnvironment.P_WS, text.getValue());
@@ -208,6 +216,7 @@ public class PortabilitySection extends PDESection implements IFormPart, IPartSe
 
 		fNlText.setFormEntryListener(new FormEntryAdapter(this) {
 
+			@Override
 			public void browseButtonSelected(FormEntry entry) {
 				BusyIndicator.showWhile(fNlText.getText().getDisplay(), new Runnable() {
 					public void run() {
@@ -217,6 +226,7 @@ public class PortabilitySection extends PDESection implements IFormPart, IPartSe
 				});
 			}
 
+			@Override
 			public void textValueChanged(FormEntry text) {
 				try {
 					applyValue(IEnvironment.P_NL, text.getValue());
@@ -231,6 +241,7 @@ public class PortabilitySection extends PDESection implements IFormPart, IPartSe
 		fArchText = new FormEntry(container, toolkit, PDEUIMessages.SiteEditor_PortabilitySection_arch, editLabel, false);
 		fArchText.setFormEntryListener(new FormEntryAdapter(this) {
 
+			@Override
 			public void browseButtonSelected(FormEntry entry) {
 				BusyIndicator.showWhile(fArchText.getText().getDisplay(), new Runnable() {
 					public void run() {
@@ -240,6 +251,7 @@ public class PortabilitySection extends PDESection implements IFormPart, IPartSe
 				});
 			}
 
+			@Override
 			public void textValueChanged(FormEntry text) {
 				try {
 					applyValue(IEnvironment.P_ARCH, text.getValue());
@@ -256,6 +268,7 @@ public class PortabilitySection extends PDESection implements IFormPart, IPartSe
 		section.setClient(container);
 	}
 
+	@Override
 	public void dispose() {
 		ISiteModel model = (ISiteModel) getPage().getModel();
 		if (model != null)
@@ -268,6 +281,7 @@ public class PortabilitySection extends PDESection implements IFormPart, IPartSe
 	 * 
 	 * @see org.eclipse.ui.forms.AbstractFormPart#initialize(org.eclipse.ui.forms.IManagedForm)
 	 */
+	@Override
 	public void initialize(IManagedForm form) {
 		ISiteModel model = (ISiteModel) getPage().getModel();
 		if (model != null)
@@ -280,6 +294,7 @@ public class PortabilitySection extends PDESection implements IFormPart, IPartSe
 		gd.widthHint = 30;
 	}
 
+	@Override
 	public void modelChanged(IModelChangedEvent e) {
 		markStale();
 	}
@@ -303,6 +318,7 @@ public class PortabilitySection extends PDESection implements IFormPart, IPartSe
 		}
 	}
 
+	@Override
 	public void refresh() {
 		if (fCurrentSiteFeature == null) {
 			clearFields();
@@ -329,6 +345,7 @@ public class PortabilitySection extends PDESection implements IFormPart, IPartSe
 		refresh();
 	}
 
+	@Override
 	public void setFocus() {
 		if (fOsText != null)
 			fOsText.getText().setFocus();

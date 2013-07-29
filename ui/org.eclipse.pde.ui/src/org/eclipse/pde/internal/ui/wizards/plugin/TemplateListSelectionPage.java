@@ -13,7 +13,6 @@
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.IWizardNode;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
@@ -30,12 +29,13 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
 
-public class TemplateListSelectionPage extends WizardListSelectionPage implements ISelectionChangedListener, IExecutableExtension {
+public class TemplateListSelectionPage extends WizardListSelectionPage {
 	private ContentPage fContentPage;
 	private Button fUseTemplate;
 	private String fInitialTemplateId;
 
 	class WizardFilter extends ViewerFilter {
+		@Override
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
 			PluginFieldData data = (PluginFieldData) fContentPage.getData();
 			boolean simple = data.isSimple();
@@ -91,11 +91,13 @@ public class TemplateListSelectionPage extends WizardListSelectionPage implement
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.wizards.WizardListSelectionPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.NEW_PROJECT_CODE_GEN_PAGE);
 	}
 
+	@Override
 	public void createAbove(Composite container, int span) {
 		fUseTemplate = new Button(container, SWT.CHECK);
 		fUseTemplate.setText(PDEUIMessages.WizardListSelectionPage_label);
@@ -103,6 +105,7 @@ public class TemplateListSelectionPage extends WizardListSelectionPage implement
 		gd.horizontalSpan = span;
 		fUseTemplate.setLayoutData(gd);
 		fUseTemplate.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				wizardSelectionViewer.getControl().setEnabled(fUseTemplate.getSelection());
 				if (!fUseTemplate.getSelection())
@@ -114,6 +117,7 @@ public class TemplateListSelectionPage extends WizardListSelectionPage implement
 		fUseTemplate.setSelection(true);
 	}
 
+	@Override
 	protected void initializeViewer() {
 		wizardSelectionViewer.addFilter(new WizardFilter());
 		if (getInitialTemplateId() != null)
@@ -133,8 +137,10 @@ public class TemplateListSelectionPage extends WizardListSelectionPage implement
 		}
 	}
 
+	@Override
 	protected IWizardNode createWizardNode(WizardElement element) {
 		return new WizardNode(this, element) {
+			@Override
 			public IBasePluginWizard createWizard() throws CoreException {
 				IPluginContentWizard wizard = (IPluginContentWizard) wizardElement.createExecutableExtension();
 				wizard.init(fContentPage.getData());
@@ -143,12 +149,14 @@ public class TemplateListSelectionPage extends WizardListSelectionPage implement
 		};
 	}
 
+	@Override
 	public IPluginContentWizard getSelectedWizard() {
 		if (fUseTemplate.getSelection())
 			return super.getSelectedWizard();
 		return null;
 	}
 
+	@Override
 	public boolean isPageComplete() {
 		PluginFieldData data = (PluginFieldData) fContentPage.getData();
 		boolean rcp = data.isRCPApplicationPlugin();
@@ -159,6 +167,7 @@ public class TemplateListSelectionPage extends WizardListSelectionPage implement
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.WizardSelectionPage#canFlipToNextPage()
 	 */
+	@Override
 	public boolean canFlipToNextPage() {
 		IStructuredSelection ssel = (IStructuredSelection) wizardSelectionViewer.getSelection();
 		return fUseTemplate.getSelection() && ssel != null && !ssel.isEmpty();
@@ -178,6 +187,7 @@ public class TemplateListSelectionPage extends WizardListSelectionPage implement
 		fInitialTemplateId = initialTemplateId;
 	}
 
+	@Override
 	public void setVisible(boolean visible) {
 		if (visible) {
 			fContentPage.updateData();

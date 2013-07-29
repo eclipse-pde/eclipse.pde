@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2012 IBM Corporation and others.
+ *  Copyright (c) 2005, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -13,8 +13,6 @@
 
 package org.eclipse.pde.internal.ui.editor.plugin;
 
-import org.eclipse.jdt.core.IPackageFragment;
-
 import java.util.*;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -27,7 +25,8 @@ import org.eclipse.jdt.ui.actions.ShowInPackageViewAction;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
-import org.eclipse.pde.core.*;
+import org.eclipse.pde.core.IBaseModel;
+import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
@@ -53,7 +52,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.osgi.framework.Constants;
 
-public class ExportPackageSection extends TableSection implements IModelChangedListener {
+public class ExportPackageSection extends TableSection {
 
 	private static final int ADD_INDEX = 0;
 	private static final int REMOVE_INDEX = 1;
@@ -93,6 +92,7 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section,
 	 *      org.eclipse.ui.forms.widgets.FormToolkit)
 	 */
+	@Override
 	protected void createClient(Section section, FormToolkit toolkit) {
 		section.setText(PDEUIMessages.ExportPackageSection_title);
 		if (isFragment())
@@ -107,6 +107,7 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
 		fPackageViewer.setContentProvider(new ExportPackageContentProvider());
 		fPackageViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 		fPackageViewer.setComparator(new ViewerComparator() {
+			@Override
 			public int compare(Viewer viewer, Object e1, Object e2) {
 				String s1 = e1.toString();
 				String s2 = e2.toString();
@@ -134,6 +135,7 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
 		updateButtons();
 	}
 
+	@Override
 	public boolean doGlobalAction(String actionId) {
 
 		if (!isEditable()) {
@@ -157,6 +159,7 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
 		return false;
 	}
 
+	@Override
 	public void dispose() {
 		IBundleModel model = getBundleModel();
 		if (model != null)
@@ -167,6 +170,7 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(java.lang.Object, java.lang.Object[])
 	 */
+	@Override
 	protected boolean canPaste(Object targetObject, Object[] sourceObjects) {
 		HashMap<?, ?> currentPackageFragments = null;
 		// Only export package objects that represent existing package 
@@ -287,6 +291,7 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste()
 	 */
+	@Override
 	protected void doPaste(Object targetObject, Object[] sourceObjects) {
 		// Get the model
 		IBundleModel model = getBundleModel();
@@ -321,6 +326,7 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
 		}
 	}
 
+	@Override
 	protected void selectionChanged(IStructuredSelection sel) {
 		getPage().getPDEEditor().setSelection(sel);
 		updateButtons();
@@ -357,6 +363,7 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
 		return true;
 	}
 
+	@Override
 	protected void handleDoubleClick(IStructuredSelection selection) {
 		handleGoToPackage(selection);
 	}
@@ -387,6 +394,7 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
 			}
 	}
 
+	@Override
 	protected void buttonSelected(int index) {
 		switch (index) {
 			case ADD_INDEX :
@@ -497,6 +505,7 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
 		return buffer.toString();
 	}
 
+	@Override
 	public void modelChanged(IModelChangedEvent event) {
 		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
 			fHeader = null;
@@ -541,6 +550,7 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
 		}
 	}
 
+	@Override
 	public void refresh() {
 		fPackageViewer.refresh();
 		super.refresh();
@@ -548,17 +558,20 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
 
 	private void makeActions() {
 		fAddAction = new Action(PDEUIMessages.RequiresSection_add) {
+			@Override
 			public void run() {
 				handleAdd();
 			}
 		};
 		fAddAction.setEnabled(isEditable());
 		fGoToAction = new Action(PDEUIMessages.ImportPackageSection_goToPackage) {
+			@Override
 			public void run() {
 				handleGoToPackage(fPackageViewer.getSelection());
 			}
 		};
 		fRemoveAction = new Action(PDEUIMessages.RequiresSection_delete) {
+			@Override
 			public void run() {
 				handleRemove();
 			}
@@ -566,12 +579,14 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
 		fRemoveAction.setEnabled(isEditable());
 
 		fPropertiesAction = new Action(PDEUIMessages.ExportPackageSection_propertyAction) {
+			@Override
 			public void run() {
 				handleOpenProperties();
 			}
 		};
 	}
 
+	@Override
 	protected void fillContextMenu(IMenuManager manager) {
 		ISelection selection = fPackageViewer.getSelection();
 		manager.add(fAddAction);
@@ -584,6 +599,7 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
 		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(manager);
 		if (singleSelection)
 			manager.add(new Action(PDEUIMessages.ExportPackageSection_findReferences) {
+				@Override
 				public void run() {
 					doSearch(fPackageViewer.getSelection());
 				}
@@ -640,6 +656,7 @@ public class ExportPackageSection extends TableSection implements IModelChangedL
 		return (manifestVersion < 2) ? ICoreConstants.PROVIDE_PACKAGE : Constants.EXPORT_PACKAGE;
 	}
 
+	@Override
 	protected boolean createCount() {
 		return true;
 	}

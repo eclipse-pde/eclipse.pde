@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2010 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -13,14 +13,13 @@ package org.eclipse.pde.internal.ui.editor.build;
 
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.pde.core.IModelChangedListener;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.swt.widgets.Composite;
 
-public class SrcSection extends BuildContentsSection implements IModelChangedListener {
+public class SrcSection extends BuildContentsSection {
 
 	public SrcSection(BuildPage page, Composite parent) {
 		super(page, parent);
@@ -29,6 +28,7 @@ public class SrcSection extends BuildContentsSection implements IModelChangedLis
 
 	}
 
+	@Override
 	protected void initializeCheckState() {
 
 		super.initializeCheckState();
@@ -42,6 +42,7 @@ public class SrcSection extends BuildContentsSection implements IModelChangedLis
 		super.initializeCheckState(srcIncl, srcExcl);
 	}
 
+	@Override
 	protected void deleteFolderChildrenFromEntries(IFolder folder) {
 		IBuild build = fBuildModel.getBuild();
 		IBuildEntry srcIncl = build.getEntry(IBuildPropertiesConstants.PROPERTY_SRC_INCLUDES);
@@ -52,6 +53,7 @@ public class SrcSection extends BuildContentsSection implements IModelChangedLis
 		removeChildren(srcExcl, parentFolder);
 	}
 
+	@Override
 	protected void handleBuildCheckStateChange(boolean wasTopParentChecked) {
 		IResource resource = fParentResource;
 		String resourceName = fParentResource.getProjectRelativePath().makeRelativeTo(fBundleRoot.getProjectRelativePath()).toPortableString();

@@ -21,7 +21,7 @@ import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.wizards.datatransfer.*;
 
 /**
- * Helper class for the plugin import operation.  Contains methods to assist in the copying and extracting
+ * Helper class for the plug-in import operation.  Contains methods to assist in the copying and extracting
  * of jar a folder files.
  */
 public class PluginImportHelper {
@@ -221,8 +221,7 @@ public class PluginImportHelper {
 		try {
 			zipFile = new ZipFile(file);
 			ZipFileStructureProvider provider = new ZipFileStructureProvider(zipFile);
-			@SuppressWarnings("rawtypes")
-			List children = provider.getChildren(provider.getRoot());
+			List<?> children = provider.getChildren(provider.getRoot());
 			if (children != null && !children.isEmpty()) {
 				for (int i = 0; i < children.size(); i++) {
 					Object curr = children.get(i);
@@ -251,8 +250,7 @@ public class PluginImportHelper {
 	}
 
 	public static void collectRequiredBundleFiles(IImportStructureProvider provider, Object element, ArrayList<Object> collected) {
-		@SuppressWarnings("rawtypes")
-		List children = provider.getChildren(element);
+		List<?> children = provider.getChildren(element);
 		if (children != null && !children.isEmpty()) {
 			for (int i = 0; i < children.size(); i++) {
 				Object curr = children.get(i);
@@ -281,8 +279,7 @@ public class PluginImportHelper {
 	 * @param collected map to collect a file list (maps destination folder to a list of files
 	 */
 	public static void collectBinaryFiles(IImportStructureProvider provider, Object element, Map<IPath, IPath> packageLocations, Map<IPath, List<Object>> collected) {
-		@SuppressWarnings("rawtypes")
-		List children = provider.getChildren(element);
+		List<?> children = provider.getChildren(element);
 		if (children != null && !children.isEmpty()) {
 			for (int i = 0; i < children.size(); i++) {
 				Object curr = children.get(i);
@@ -337,8 +334,7 @@ public class PluginImportHelper {
 	 * @param collected list of children that should be imported
 	 */
 	public static void collectNonJavaNonBuildFiles(IImportStructureProvider provider, Object element, ArrayList<Object> collected) {
-		@SuppressWarnings("rawtypes")
-		List children = provider.getChildren(element);
+		List<?> children = provider.getChildren(element);
 		if (children != null && !children.isEmpty()) {
 			for (int i = 0; i < children.size(); i++) {
 				Object curr = children.get(i);
@@ -368,8 +364,7 @@ public class PluginImportHelper {
 	 * @param collected collection for gathering file list
 	 */
 	public static void collectResources(IImportStructureProvider provider, Object element, ArrayList<Object> collected) {
-		@SuppressWarnings("rawtypes")
-		List children = provider.getChildren(element);
+		List<?> children = provider.getChildren(element);
 		if (children != null && !children.isEmpty()) {
 			for (int i = 0; i < children.size(); i++) {
 				Object curr = children.get(i);
@@ -392,8 +387,7 @@ public class PluginImportHelper {
 	 * @since 3.4
 	 */
 	private static void collectResourcesFromFolder(ZipFileStructureProvider provider, Object element, IPath folderPath, ArrayList<Object> collected) {
-		@SuppressWarnings("rawtypes")
-		List children = provider.getChildren(element);
+		List<?> children = provider.getChildren(element);
 		if (children != null && !children.isEmpty()) {
 			for (int i = 0; i < children.size(); i++) {
 				Object curr = children.get(i);
@@ -420,8 +414,7 @@ public class PluginImportHelper {
 	 * @since 3.5
 	 */
 	public static void collectResourcesFromFolder(IImportStructureProvider provider, Object element, IPath folderPath, ArrayList<Object> collected) {
-		@SuppressWarnings("rawtypes")
-		List children = provider.getChildren(element);
+		List<?> children = provider.getChildren(element);
 		if (children != null && !children.isEmpty()) {
 			for (int i = 0; i < children.size(); i++) {
 				Object curr = children.get(i);
@@ -446,8 +439,7 @@ public class PluginImportHelper {
 	 * @since 3.4
 	 */
 	private static void collectJavaSourceFromRoot(ZipFileStructureProvider provider, List<IPath> ignoreFolders, ArrayList<Object> collected) {
-		@SuppressWarnings("rawtypes")
-		List children = provider.getChildren(provider.getRoot());
+		List<?> children = provider.getChildren(provider.getRoot());
 		if (children != null && !children.isEmpty()) {
 			for (int i = 0; i < children.size(); i++) {
 				Object curr = children.get(i);
@@ -489,8 +481,7 @@ public class PluginImportHelper {
 	 * @since 3.4
 	 */
 	private static void collectJavaSource(ZipFileStructureProvider provider, Object element, List<IPath> ignoreFolders, ArrayList<Object> collected) {
-		@SuppressWarnings("rawtypes")
-		List children = provider.getChildren(element);
+		List<?> children = provider.getChildren(element);
 		if (children != null && !children.isEmpty()) {
 			for (int i = 0; i < children.size(); i++) {
 				Object curr = children.get(i);
@@ -523,8 +514,7 @@ public class PluginImportHelper {
 	}
 
 	private static boolean folderContainsFileExtension(IImportStructureProvider provider, Object element, String fileExtension) {
-		@SuppressWarnings("rawtypes")
-		List children = provider.getChildren(element);
+		List<?> children = provider.getChildren(element);
 		if (children != null && !children.isEmpty()) {
 			for (int i = 0; i < children.size(); i++) {
 				Object curr = children.get(i);

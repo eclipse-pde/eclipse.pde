@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2012 IBM Corporation and others.
+ *  Copyright (c) 2005, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -9,9 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
-
-import org.eclipse.jdt.core.IPackageFragmentRoot;
-import org.eclipse.pde.core.target.NameVersionDescriptor;
 
 import java.util.*;
 import org.eclipse.core.resources.IProject;
@@ -29,6 +26,7 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.core.target.NameVersionDescriptor;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
 import org.eclipse.pde.internal.core.ibundle.*;
@@ -58,7 +56,7 @@ import org.eclipse.ui.progress.UIJob;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Version;
 
-public class ImportPackageSection extends TableSection implements IModelChangedListener {
+public class ImportPackageSection extends TableSection {
 
 	private static final int ADD_INDEX = 0;
 	private static final int REMOVE_INDEX = 1;
@@ -73,16 +71,23 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 			fUnderlying = underlying;
 		}
 
+		@Override
 		public String toString() {
 			return getName();
 		}
 
+		@Override
 		public boolean equals(Object obj) {
 			if (obj instanceof ImportItemWrapper) {
 				ImportItemWrapper item = (ImportItemWrapper) obj;
 				return getName().equals(item.getName());
 			}
 			return false;
+		}
+
+		@Override
+		public int hashCode() {
+			return getName().hashCode();
 		}
 
 		public String getName() {
@@ -126,10 +131,12 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 	}
 
 	class ImportPackageDialogLabelProvider extends LabelProvider {
+		@Override
 		public Image getImage(Object element) {
 			return JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_PACKAGE);
 		}
 
+		@Override
 		public String getText(Object element) {
 			StringBuffer buffer = new StringBuffer();
 			ImportItemWrapper p = (ImportItemWrapper) element;
@@ -170,6 +177,7 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section,
 	 *      org.eclipse.ui.forms.widgets.FormToolkit)
 	 */
+	@Override
 	protected void createClient(Section section, FormToolkit toolkit) {
 		section.setText(PDEUIMessages.ImportPackageSection_required);
 		if (isFragment())
@@ -184,6 +192,7 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 		fPackageViewer.setContentProvider(new ImportPackageContentProvider());
 		fPackageViewer.setLabelProvider(new PDELabelProvider() {
 
+			@Override
 			public Image getObjectImage(PackageObject obj) {
 				if (!(obj instanceof ImportPackageObject))
 					return super.getObjectImage(obj);
@@ -196,6 +205,7 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 
 		});
 		fPackageViewer.setComparator(new ViewerComparator() {
+			@Override
 			public int compare(Viewer viewer, Object e1, Object e2) {
 				String s1 = e1.toString();
 				String s2 = e2.toString();
@@ -218,6 +228,7 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 		updateButtons();
 	}
 
+	@Override
 	public boolean doGlobalAction(String actionId) {
 
 		if (!isEditable()) {
@@ -244,6 +255,7 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(java.lang.Object, java.lang.Object[])
 	 */
+	@Override
 	protected boolean canPaste(Object targetObject, Object[] sourceObjects) {
 		// Only non-duplicate import packages can be pasted 
 		for (int i = 0; i < sourceObjects.length; i++) {
@@ -272,6 +284,7 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 		return true;
 	}
 
+	@Override
 	public void dispose() {
 		IBundleModel model = getBundleModel();
 		if (model != null)
@@ -282,6 +295,7 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste(java.lang.Object, java.lang.Object[])
 	 */
+	@Override
 	protected void doPaste(Object targetObject, Object[] sourceObjects) {
 		// Get the model
 		IBundleModel model = getBundleModel();
@@ -320,6 +334,7 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 		return Constants.IMPORT_PACKAGE;
 	}
 
+	@Override
 	protected void selectionChanged(IStructuredSelection sel) {
 		getPage().getPDEEditor().setSelection(sel);
 		updateButtons();
@@ -334,10 +349,12 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 		tablePart.setButtonEnabled(PROPERTIES_INDEX, shouldEnableProperties(selected));
 	}
 
+	@Override
 	protected void handleDoubleClick(IStructuredSelection selection) {
 		handleGoToPackage(selection);
 	}
 
+	@Override
 	protected void buttonSelected(int index) {
 		switch (index) {
 			case ADD_INDEX :
@@ -587,6 +604,7 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 		return true;
 	}
 
+	@Override
 	public void modelChanged(final IModelChangedEvent event) {
 		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
 			fHeader = null;
@@ -596,6 +614,7 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 
 		// Model change may have come from a non UI thread such as the auto add dependencies operation. See bug 333533 
 		UIJob job = new UIJob("Update package imports") { //$NON-NLS-1$
+			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				if (Constants.IMPORT_PACKAGE.equals(event.getChangedProperty())) {
 					refresh();
@@ -640,6 +659,7 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 		job.schedule();
 	}
 
+	@Override
 	public void refresh() {
 		fPackageViewer.refresh();
 		super.refresh();
@@ -647,17 +667,20 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 
 	private void makeActions() {
 		fAddAction = new Action(PDEUIMessages.RequiresSection_add) {
+			@Override
 			public void run() {
 				handleAdd();
 			}
 		};
 		fAddAction.setEnabled(isEditable());
 		fGoToAction = new Action(PDEUIMessages.ImportPackageSection_goToPackage) {
+			@Override
 			public void run() {
 				handleGoToPackage(fPackageViewer.getSelection());
 			}
 		};
 		fRemoveAction = new Action(PDEUIMessages.RequiresSection_delete) {
+			@Override
 			public void run() {
 				handleRemove();
 			}
@@ -665,12 +688,14 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 		fRemoveAction.setEnabled(isEditable());
 
 		fPropertiesAction = new Action(PDEUIMessages.ImportPackageSection_propertyAction) {
+			@Override
 			public void run() {
 				handleOpenProperties();
 			}
 		};
 	}
 
+	@Override
 	protected void fillContextMenu(IMenuManager manager) {
 		final ISelection selection = fPackageViewer.getSelection();
 		manager.add(fAddAction);
@@ -686,6 +711,7 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 			manager.add(new Separator());
 			if (singleSelection) {
 				manager.add(new Action(PDEUIMessages.DependencyExtentSearchResultPage_referencesInPlugin) {
+					@Override
 					public void run() {
 						doReferenceSearch(selection);
 					}
@@ -802,6 +828,7 @@ public class ImportPackageSection extends TableSection implements IModelChangedL
 		}
 	}
 
+	@Override
 	protected boolean createCount() {
 		return true;
 	}

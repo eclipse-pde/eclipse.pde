@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,7 +23,8 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
-import org.eclipse.pde.core.*;
+import org.eclipse.pde.core.IBaseModel;
+import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
@@ -59,7 +60,7 @@ import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.part.FileEditorInput;
 import org.osgi.service.prefs.BackingStoreException;
 
-public class DependencyManagementSection extends TableSection implements IModelChangedListener, IPluginModelListener, IPropertyChangeListener {
+public class DependencyManagementSection extends TableSection implements IPluginModelListener, IPropertyChangeListener {
 
 	private TableViewer fAdditionalTable;
 	private Vector<String> fAdditionalBundles;
@@ -122,11 +123,13 @@ public class DependencyManagementSection extends TableSection implements IModelC
 		}
 	}
 
-	class SecondaryTableLabelProvider extends SharedLabelProvider implements ITableLabelProvider {
+	class SecondaryTableLabelProvider extends SharedLabelProvider {
+		@Override
 		public String getColumnText(Object obj, int index) {
 			return obj.toString();
 		}
 
+		@Override
 		public Image getColumnImage(Object obj, int index) {
 			String pluginID = obj.toString();
 			IPluginModelBase model = PluginRegistry.findModel(pluginID);
@@ -151,6 +154,7 @@ public class DependencyManagementSection extends TableSection implements IModelC
 		}
 	}
 
+	@Override
 	protected void createClient(Section section, FormToolkit toolkit) {
 		FormText text = toolkit.createFormText(section, true);
 		text.setText(PDEUIMessages.SecondaryBundlesSection_desc, false, false);
@@ -173,6 +177,7 @@ public class DependencyManagementSection extends TableSection implements IModelC
 		resolveText.setText(PDEUIMessages.SecondaryBundlesSection_resolve, true, true);
 		resolveText.setLayoutData(gd);
 		resolveText.addHyperlinkListener(new HyperlinkAdapter() {
+			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				doAddDependencies();
 			}
@@ -189,6 +194,7 @@ public class DependencyManagementSection extends TableSection implements IModelC
 		gd.horizontalIndent = 20;
 		fRequireBundleButton.setLayoutData(gd);
 		fRequireBundleButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				savePreferences();
 			}
@@ -283,6 +289,7 @@ public class DependencyManagementSection extends TableSection implements IModelC
 		}
 	}
 
+	@Override
 	protected void fillContextMenu(IMenuManager manager) {
 		ISelection selection = fAdditionalTable.getSelection();
 		manager.add(fNewAction);
@@ -296,6 +303,7 @@ public class DependencyManagementSection extends TableSection implements IModelC
 		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(manager);
 	}
 
+	@Override
 	public void refresh() {
 		fAdditionalBundles = null;
 		if (!fAdditionalTable.getControl().isDisposed())
@@ -303,6 +311,7 @@ public class DependencyManagementSection extends TableSection implements IModelC
 		super.refresh();
 	}
 
+	@Override
 	protected void buttonSelected(int index) {
 		switch (index) {
 			case ADD_INDEX :
@@ -320,6 +329,7 @@ public class DependencyManagementSection extends TableSection implements IModelC
 		}
 	}
 
+	@Override
 	protected void handleDoubleClick(IStructuredSelection sel) {
 		handleOpen(sel);
 	}
@@ -358,18 +368,21 @@ public class DependencyManagementSection extends TableSection implements IModelC
 
 	private void makeActions() {
 		fNewAction = new Action(ADD) {
+			@Override
 			public void run() {
 				handleNew();
 			}
 		};
 
 		fOpenAction = new Action(OPEN) {
+			@Override
 			public void run() {
 				handleOpen(fAdditionalTable.getSelection());
 			}
 		};
 
 		fRemoveAction = new Action(REMOVE) {
+			@Override
 			public void run() {
 				handleRemove();
 			}
@@ -449,6 +462,7 @@ public class DependencyManagementSection extends TableSection implements IModelC
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.TableSection#selectionChanged(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
+	@Override
 	protected void selectionChanged(IStructuredSelection sel) {
 		// Update global selection
 		getPage().getPDEEditor().setSelection(sel);
@@ -463,6 +477,7 @@ public class DependencyManagementSection extends TableSection implements IModelC
 		updateUpDownButtons();
 	}
 
+	@Override
 	public void modelChanged(IModelChangedEvent event) {
 		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
 			markStale();
@@ -477,6 +492,7 @@ public class DependencyManagementSection extends TableSection implements IModelC
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#doGlobalAction(java.lang.String)
 	 */
+	@Override
 	public boolean doGlobalAction(String actionId) {
 
 		if (!isEditable()) {
@@ -504,6 +520,7 @@ public class DependencyManagementSection extends TableSection implements IModelC
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(java.lang.Object, java.lang.Object[])
 	 */
+	@Override
 	protected boolean canPaste(Object targetObject, Object[] sourceObjects) {
 		HashSet<String> secondaryDepSet = null;
 		// Only String objects representing non-duplicate secondary 
@@ -559,6 +576,7 @@ public class DependencyManagementSection extends TableSection implements IModelC
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste(java.lang.Object, java.lang.Object[])
 	 */
+	@Override
 	protected void doPaste(Object targetObject, Object[] sourceObjects) {
 		// Get the build model
 		IBuildModel buildModel = getBuildModel(true);
@@ -599,6 +617,7 @@ public class DependencyManagementSection extends TableSection implements IModelC
 		}
 	}
 
+	@Override
 	public void dispose() {
 		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
 		if (model != null)
@@ -663,6 +682,7 @@ public class DependencyManagementSection extends TableSection implements IModelC
 		}
 	}
 
+	@Override
 	protected boolean createCount() {
 		return true;
 	}
@@ -670,6 +690,7 @@ public class DependencyManagementSection extends TableSection implements IModelC
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#isDragAndDropEnabled()
 	 */
+	@Override
 	protected boolean isDragAndDropEnabled() {
 		return true;
 	}
@@ -677,6 +698,7 @@ public class DependencyManagementSection extends TableSection implements IModelC
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canDragMove(java.lang.Object[])
 	 */
+	@Override
 	public boolean canDragMove(Object[] sourceObjects) {
 		if (validateDragMoveSanity(sourceObjects) == false) {
 			return false;
@@ -704,6 +726,7 @@ public class DependencyManagementSection extends TableSection implements IModelC
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canDropMove(java.lang.Object, java.lang.Object[], int)
 	 */
+	@Override
 	public boolean canDropMove(Object targetObject, Object[] sourceObjects, int targetLocation) {
 		// Sanity check
 		if (validateDropMoveSanity(targetObject, sourceObjects) == false) {
@@ -780,6 +803,7 @@ public class DependencyManagementSection extends TableSection implements IModelC
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doDropMove(java.lang.Object, java.lang.Object[], int)
 	 */
+	@Override
 	public void doDropMove(Object targetObject, Object[] sourceObjects, int targetLocation) {
 		// Sanity check
 		if (validateDropMoveSanity(targetObject, sourceObjects) == false) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,9 +11,6 @@
  *     Sascha Becher <s.becher@qualitype.com> - bug 360894
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
-
-import java.util.ArrayList;
-import org.eclipse.core.runtime.IConfigurationElement;
 
 import java.util.*;
 import org.eclipse.core.resources.IProject;
@@ -31,7 +28,6 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.core.IModelChangedListener;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
@@ -65,7 +61,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.progress.WorkbenchJob;
 
-public class ExtensionsSection extends TreeSection implements IModelChangedListener, IPropertyChangeListener {
+public class ExtensionsSection extends TreeSection implements IPropertyChangeListener {
 	private static final int REFRESHJOB_DELAY_TIME = 1200; // milliseconds to wait
 	private static final int ACCELERATED_SCROLLING = 15; // lines to skip
 
@@ -137,10 +133,12 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 	}
 
 	class ExtensionLabelProvider extends LabelProvider implements IFontProvider {
+		@Override
 		public String getText(Object obj) {
 			return resolveObjectName(obj);
 		}
 
+		@Override
 		public Image getImage(Object obj) {
 			return resolveObjectImage(obj);
 		}
@@ -237,6 +235,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		return null;
 	}
 
+	@Override
 	public void createClient(Section section, FormToolkit toolkit) {
 		initializeImages();
 		Composite container = createClientContainer(section, 2, toolkit);
@@ -287,6 +286,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		});
 		// Add sort action to the tool bar
 		fSortAction = new SortAction(fExtensionTree, PDEUIMessages.ExtensionsPage_sortAlpha, null, null, this) {
+			@Override
 			public void run() {
 				Object[] expanded = fFilteredTree.getViewer().getVisibleExpandedElements();
 				try {
@@ -315,12 +315,14 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		section.setTextClient(toolbar);
 	}
 
+	@Override
 	protected void selectionChanged(IStructuredSelection selection) {
 		getPage().getPDEEditor().setSelection(selection);
 		updateButtons(selection);
 		getTreePart().getButton(BUTTON_EDIT).setVisible(isSelectionEditable(selection));
 	}
 
+	@Override
 	protected void buttonSelected(int index) {
 		switch (index) {
 			case BUTTON_ADD :
@@ -344,6 +346,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
 	 */
+	@Override
 	public void dispose() {
 		// Explicitly call the dispose method on the extensions tree
 		if (fFilteredTree != null) {
@@ -359,6 +362,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#doGlobalAction(java.lang.String)
 	 */
+	@Override
 	public boolean doGlobalAction(String actionId) {
 		if (actionId.equals(ActionFactory.FIND.getId()) && fFilterRelatedAction != null) {
 			fFilterRelatedAction.run();
@@ -391,6 +395,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		return false;
 	}
 
+	@Override
 	public boolean setFormInput(Object object) {
 		if (object instanceof IPluginExtension || object instanceof IPluginElement) {
 			fExtensionTree.setSelection(new StructuredSelection(object), true);
@@ -399,6 +404,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		return false;
 	}
 
+	@Override
 	protected void fillContextMenu(IMenuManager manager) {
 		ISelection selection = fExtensionTree.getSelection();
 		final IStructuredSelection ssel = (IStructuredSelection) selection;
@@ -422,14 +428,17 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		} else if (ssel.size() > 1) {
 			// Add delete action
 			Action delAction = new Action() {
+				@Override
 				public ImageDescriptor getImageDescriptor() {
 					return PDEPluginImages.DESC_DELETE;
 				}
 
+				@Override
 				public ImageDescriptor getDisabledImageDescriptor() {
 					return PDEPluginImages.DESC_REMOVE_ATT_DISABLED;
 				}
 
+				@Override
 				public void run() {
 					handleDelete();
 				}
@@ -447,10 +456,12 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		if (fFilteredTree.isFiltered()) {
 			// Add action to clear the current filtering
 			manager.add(new Action() {
+				@Override
 				public String getText() {
 					return PDEUIMessages.ShowAllExtensionsAction_label;
 				}
 
+				@Override
 				public void run() {
 					Text filterText = fFilteredTree.getFilterControl();
 					setBypassFilterDelay(true);
@@ -497,6 +508,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		manager.add(new Separator());
 		if (fullMenu) {
 			Action deleteAction = new Action(PDEUIMessages.ExtensionsSection_Remove) {
+				@Override
 				public void run() {
 					try {
 						IPluginObject parentsParent = parent.getParent();
@@ -511,10 +523,12 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 					}
 				}
 
+				@Override
 				public ImageDescriptor getImageDescriptor() {
 					return PDEPluginImages.DESC_DELETE;
 				}
 
+				@Override
 				public ImageDescriptor getDisabledImageDescriptor() {
 					return PDEPluginImages.DESC_REMOVE_ATT_DISABLED;
 				}
@@ -629,6 +643,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 			public void run() {
 				((ManifestEditor) getPage().getEditor()).ensurePluginContextPresence();
 				NewExtensionWizard wizard = new NewExtensionWizard(project, (IPluginModelBase) getPage().getModel(), (ManifestEditor) getPage().getPDEEditor()) {
+					@Override
 					public boolean performFinish() {
 						return super.performFinish();
 					}
@@ -770,6 +785,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		fGenericElementImage = provider.get(PDEPluginImages.DESC_GENERIC_XML_OBJ);
 	}
 
+	@Override
 	public void refresh() {
 		// The model changed but the editor is still open, we should try to retain expansion, selection will be retained on its own
 		Object[] expanded = fExtensionTree.getExpandedElements();
@@ -832,6 +848,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		}
 	}
 
+	@Override
 	public void modelChanged(IModelChangedEvent event) {
 		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
 			markStale();
@@ -1039,6 +1056,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		return new String();
 	}
 
+	@Override
 	public void setFocus() {
 		if (fExtensionTree != null)
 			fExtensionTree.getTree().setFocus();
@@ -1067,6 +1085,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		return output.toString();
 	}
 
+	@Override
 	public boolean canCopy(ISelection selection) {
 		// Partial fix for Bug 360079, enables Ctrl+C in filter text if plugin model is editable
 		if (fFilteredTree.getFilterControl().isFocusControl() && !selection.isEmpty()) {
@@ -1076,6 +1095,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 		return super.canCopy(selection);
 	}
 
+	@Override
 	public boolean canPaste(Clipboard clipboard) {
 		// Partial fix for Bug 360079, enables Ctrl+V in filter text if plugin model is editable
 		if (fFilteredTree.getFilterControl().isFocusControl()) {
@@ -1088,6 +1108,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(java.lang.Object, java.lang.Object[])
 	 */
+	@Override
 	protected boolean canPaste(Object targetObject, Object[] sourceObjects) {
 		// Note: Multi-select in is enabled and this function can support 
 		// multiple source object but it needs to be investigated
@@ -1234,6 +1255,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste(java.lang.Object, java.lang.Object[])
 	 */
+	@Override
 	protected void doPaste(Object targetObject, Object[] sourceObjects) {
 		// By default, fragment.xml does not exist until the first extension
 		// or extension point is created.  
@@ -1395,20 +1417,24 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.TreeSection#createTreeViewer(org.eclipse.swt.widgets.Composite, int)
 	 */
+	@Override
 	protected TreeViewer createTreeViewer(Composite parent, int style) {
 		fPatternFilter = new ExtensionsPatternFilter();
 		fFilteredTree = new FormFilteredTree(parent, style, fPatternFilter) {
+			@Override
 			protected WorkbenchJob doCreateRefreshJob() {
 				final WorkbenchJob job = super.doCreateRefreshJob();
 				job.addJobChangeListener(new JobChangeAdapter() {
 					private ISelection selection;
 					private boolean aboutToRunPassed = false;
 
+					@Override
 					public void scheduled(IJobChangeEvent event) {
 						((ExtensionsPatternFilter) fFilteredTree.getPatternFilter()).clearMatchingLeafs();
 						selection = fExtensionTree.getSelection();
 					}
 
+					@Override
 					public void aboutToRun(IJobChangeEvent event) {
 						aboutToRunPassed = true;
 					}
@@ -1416,6 +1442,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 					/* 
 					 * Restores selection after tree refresh and expands tree up to matching leafs only
 					 */
+					@Override
 					public void done(IJobChangeEvent event) {
 						if (aboutToRunPassed) { // restoring is only required if the job actually ran
 							try {
@@ -1438,6 +1465,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 				return job;
 			}
 
+			@Override
 			protected long getRefreshJobDelay() {
 				// Prolonged job delay time is required because of the attribute search being more costly in nature.
 				// This can block input to the filter text severely. Thus it shouldn't happen when typing slowly.
@@ -1447,12 +1475,14 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 				return delay;
 			}
 
+			@Override
 			protected void clearText() {
 				// bugfix: additional notification with textChanged() would cause a needless 2nd refresh job run
 				// which in turn would have a longer delay time than the 1st run.
 				setFilterText(""); //$NON-NLS-1$
 			}
 
+			@Override
 			protected void textChanged() {
 				String filterText = getFilterString();
 				if (filterText != null && filterText.length() == 0) {
@@ -1481,6 +1511,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#isDragAndDropEnabled()
 	 */
+	@Override
 	protected boolean isDragAndDropEnabled() {
 		return true;
 	}
@@ -1488,6 +1519,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canDragMove(java.lang.Object[])
 	 */
+	@Override
 	public boolean canDragMove(Object[] sourceObjects) {
 		// Validate source objects
 		if (validateDragMoveSanity(sourceObjects) == false) {
@@ -1556,6 +1588,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canDropMove(java.lang.Object, java.lang.Object[], int)
 	 */
+	@Override
 	public boolean canDropMove(Object targetObject, Object[] sourceObjects, int targetLocation) {
 		// Sanity check
 		if (validateDropMoveSanity(targetObject, sourceObjects) == false) {
@@ -1771,6 +1804,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doDragRemove(java.lang.Object[])
 	 */
+	@Override
 	public void doDragRemove(Object[] sourceObjects) {
 		// Validate source objects
 		if (validateDragMoveSanity(sourceObjects) == false) {
@@ -1810,6 +1844,7 @@ public class ExtensionsSection extends TreeSection implements IModelChangedListe
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doDropMove(java.lang.Object, java.lang.Object[], int)
 	 */
+	@Override
 	public void doDropMove(Object targetObject, Object[] sourceObjects, int targetLocation) {
 		// Sanity check
 		if (validateDropMoveSanity(targetObject, sourceObjects) == false) {

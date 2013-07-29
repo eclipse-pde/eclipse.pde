@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -20,7 +20,7 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 
-public abstract class WizardTreeSelectionPage extends BaseWizardSelectionPage implements ISelectionChangedListener {
+public abstract class WizardTreeSelectionPage extends BaseWizardSelectionPage {
 	private TreeViewer categoryTreeViewer;
 	private String baseCategory;
 	protected TableViewer wizardSelectionViewer;
@@ -155,6 +155,7 @@ public abstract class WizardTreeSelectionPage extends BaseWizardSelectionPage im
 			handleWizardSelection(selectionEvent);
 	}
 
+	@Override
 	public void setSelectedNode(IWizardNode node) {
 		super.setSelectedNode(node);
 	}

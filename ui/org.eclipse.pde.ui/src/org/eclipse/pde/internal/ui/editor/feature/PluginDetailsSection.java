@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -30,7 +30,7 @@ import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
-public class PluginDetailsSection extends PDESection implements IFormPart, IPartSelectionListener {
+public class PluginDetailsSection extends PDESection implements IPartSelectionListener {
 	protected IFeaturePlugin fInput;
 
 	private FormEntry fNameText;
@@ -56,6 +56,7 @@ public class PluginDetailsSection extends PDESection implements IFormPart, IPart
 		createClient(getSection(), page.getManagedForm().getToolkit());
 	}
 
+	@Override
 	public void cancelEdit() {
 		fVersionText.cancelEdit();
 		fdownloadSizeText.cancelEdit();
@@ -63,6 +64,7 @@ public class PluginDetailsSection extends PDESection implements IFormPart, IPart
 		super.cancelEdit();
 	}
 
+	@Override
 	public void commit(boolean onSave) {
 		fVersionText.commit();
 		fdownloadSizeText.commit();
@@ -70,6 +72,7 @@ public class PluginDetailsSection extends PDESection implements IFormPart, IPart
 		super.commit(onSave);
 	}
 
+	@Override
 	public void createClient(Section section, FormToolkit toolkit) {
 
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
@@ -87,6 +90,7 @@ public class PluginDetailsSection extends PDESection implements IFormPart, IPart
 
 		fVersionText = new FormEntry(container, toolkit, PDEUIMessages.FeatureEditor_SpecSection_version, null, false);
 		fVersionText.setFormEntryListener(new FormEntryAdapter(this) {
+			@Override
 			public void textValueChanged(FormEntry text) {
 				if (fInput != null)
 					try {
@@ -102,6 +106,7 @@ public class PluginDetailsSection extends PDESection implements IFormPart, IPart
 		fdownloadSizeText = new FormEntry(container, toolkit, PDEUIMessages.SiteEditor_PluginDetailsSection_downloadSize, null, false);
 		fdownloadSizeText.setFormEntryListener(new FormEntryAdapter(this) {
 
+			@Override
 			public void textValueChanged(FormEntry text) {
 				if (fInput != null)
 					try {
@@ -117,6 +122,7 @@ public class PluginDetailsSection extends PDESection implements IFormPart, IPart
 		fInstallSizeText = new FormEntry(container, toolkit, PDEUIMessages.SiteEditor_PluginDetailsSection_installSize, null, false);
 		fInstallSizeText.setFormEntryListener(new FormEntryAdapter(this) {
 
+			@Override
 			public void textValueChanged(FormEntry text) {
 				if (fInput != null)
 					try {
@@ -134,6 +140,7 @@ public class PluginDetailsSection extends PDESection implements IFormPart, IPart
 		gd.horizontalSpan = 2;
 		fUnpackButton.setLayoutData(gd);
 		fUnpackButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				try {
 					if (!fBlockNotification)
@@ -148,6 +155,7 @@ public class PluginDetailsSection extends PDESection implements IFormPart, IPart
 		section.setClient(container);
 	}
 
+	@Override
 	public void dispose() {
 		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		if (model != null)
@@ -160,6 +168,7 @@ public class PluginDetailsSection extends PDESection implements IFormPart, IPart
 	 * 
 	 * @see org.eclipse.ui.forms.AbstractFormPart#initialize(org.eclipse.ui.forms.IManagedForm)
 	 */
+	@Override
 	public void initialize(IManagedForm form) {
 		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		if (model != null)
@@ -172,10 +181,12 @@ public class PluginDetailsSection extends PDESection implements IFormPart, IPart
 		gd.widthHint = 30;
 	}
 
+	@Override
 	public void modelChanged(IModelChangedEvent e) {
 		markStale();
 	}
 
+	@Override
 	public void refresh() {
 		update();
 		super.refresh();
@@ -196,6 +207,7 @@ public class PluginDetailsSection extends PDESection implements IFormPart, IPart
 		update();
 	}
 
+	@Override
 	public void setFocus() {
 		if (fdownloadSizeText != null)
 			fdownloadSizeText.getText().setFocus();
@@ -227,6 +239,7 @@ public class PluginDetailsSection extends PDESection implements IFormPart, IPart
 		fUnpackButton.setEnabled(editable);
 	}
 
+	@Override
 	public boolean isEditable() {
 		return getPage().getPDEEditor().getAggregateModel().isEditable();
 	}

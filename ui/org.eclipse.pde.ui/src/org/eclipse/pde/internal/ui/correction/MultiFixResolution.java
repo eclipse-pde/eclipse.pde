@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2009, 2012 IBM Corporation and others.
+ *  Copyright (c) 2009, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -41,6 +41,7 @@ public class MultiFixResolution extends WorkbenchMarkerResolution {
 		problemViewQuickFix = false;
 	}
 
+	@Override
 	public IMarker[] findOtherMarkers(IMarker[] markers) {
 		ArrayList<IMarker> relatedMarkers = new ArrayList<IMarker>();
 		try {
@@ -99,6 +100,7 @@ public class MultiFixResolution extends WorkbenchMarkerResolution {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object obj) {
 		if (!(obj instanceof MultiFixResolution))
 			return false;
@@ -113,4 +115,14 @@ public class MultiFixResolution extends WorkbenchMarkerResolution {
 		return false;
 	}
 
+	@Override
+	public int hashCode() {
+		try {
+			String category = (String) fMarker.getAttribute(PDEMarkerFactory.CAT_ID);
+			return category.hashCode();
+		} catch (CoreException e) {
+			//fall-through and use Object.hashCode
+		}
+		return super.hashCode();
+	}
 }

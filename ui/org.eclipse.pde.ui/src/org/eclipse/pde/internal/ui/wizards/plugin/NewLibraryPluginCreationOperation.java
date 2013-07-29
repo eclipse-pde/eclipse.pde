@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -92,6 +92,7 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 		removeExportRoot(bundle);
 	}
 
+	@Override
 	protected void adjustManifests(IProgressMonitor monitor, IProject project, IPluginBase base) throws CoreException {
 		super.adjustManifests(monitor, project, base);
 		int units = fData.doFindDependencies() ? 4 : 2;
@@ -232,8 +233,9 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 					if (path == null) {
 						path = cpe.getPath().toString();
 					}
+					JarFile jarFile = null;
 					try {
-						JarFile jarFile = new JarFile(path);
+						jarFile = new JarFile(path);
 						if (manifests.contains(jarFile.getManifest())) {
 							if (refIndex < 0) {
 								// allocate slot
@@ -246,6 +248,14 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 						}
 					} catch (IOException e) {
 						PDEPlugin.log(e);
+					} finally {
+						if (jarFile != null) {
+							try {
+								jarFile.close();
+							} catch (IOException e) {
+								PDEPlugin.log(e);
+							}
+						}
 					}
 					break;
 				default :
@@ -260,6 +270,7 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 		return null;
 	}
 
+	@Override
 	protected void createContents(IProgressMonitor monitor, IProject project) throws CoreException, JavaModelException, InvocationTargetException, InterruptedException {
 		// copy jars
 		String[] paths = fData.getLibraryPaths();
@@ -286,6 +297,7 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 		}
 	}
 
+	@Override
 	protected void fillBinIncludes(IProject project, IBuildEntry binEntry) throws CoreException {
 		if (fData.hasBundleStructure())
 			binEntry.addToken(ICoreConstants.MANIFEST_FOLDER_NAME);
@@ -320,6 +332,7 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 		}
 	}
 
+	@Override
 	protected IClasspathEntry[] getInternalClassPathEntries(IJavaProject project, IFieldData data) {
 		String[] libraryPaths;
 		if (fData.isUnzipLibraries()) {
@@ -337,6 +350,7 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 		return entries;
 	}
 
+	@Override
 	protected int getNumberOfWorkUnits() {
 		int numUnits = super.getNumberOfWorkUnits();
 		numUnits += fData.getLibraryPaths().length;
@@ -380,6 +394,7 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 		}
 	}
 
+	@Override
 	protected void setPluginLibraries(WorkspacePluginModelBase model) throws CoreException {
 		IPluginBase pluginBase = model.getPluginBase();
 		if (fData.isUnzipLibraries()) {
@@ -399,6 +414,7 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 		}
 	}
 
+	@Override
 	protected void createSourceOutputBuildEntries(WorkspaceBuildModel model, IBuildModelFactory factory) throws CoreException {
 		if (fData.isUnzipLibraries()) {
 			// SOURCE.<LIBRARY_NAME>
@@ -442,6 +458,7 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 			new AddNewBinaryDependenciesOperation(project, (IBundlePluginModelBase) model) {
 				// Need to override this function to include every bundle in the
 				// target platform as a possible dependency
+				@Override
 				protected String[] findSecondaryBundles(IBundle bundle, Set<String> ignorePkgs) {
 					IPluginModelBase[] bases = PluginRegistry.getActiveModels();
 					String[] ids = new String[bases.length];
@@ -459,6 +476,7 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 				// build.properties does not contain entry for '.'.
 				// Therefore, the super.addProjectPackages will not find the
 				// project packages(it includes only things in bin.includes)
+				@Override
 				protected void addProjectPackages(IBundle bundle, Set<String> ignorePkgs) {
 					if (!unzip)
 						super.addProjectPackages(bundle, ignorePkgs);

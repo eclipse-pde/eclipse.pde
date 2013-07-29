@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,7 +23,7 @@ import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.ui.progress.DeferredTreeContentManager;
 import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
 
-public class PluginsContentProvider extends DefaultContentProvider implements ITreeContentProvider, IStructuredContentProvider {
+public class PluginsContentProvider extends DefaultContentProvider implements ITreeContentProvider {
 
 	private PluginsView fView;
 	private StandardJavaElementContentProvider fJavaProvider;
@@ -37,6 +37,7 @@ public class PluginsContentProvider extends DefaultContentProvider implements IT
 		fJavaProvider = new StandardJavaElementContentProvider();
 	}
 
+	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		if (newInput == null) {
 			if (fManager != null)
@@ -131,6 +132,7 @@ public class PluginsContentProvider extends DefaultContentProvider implements IT
 	protected IJobChangeListener getCompletionJobListener() {
 		return new JobChangeAdapter() {
 
+			@Override
 			public void done(IJobChangeEvent event) {
 				if (event.getResult().isOK())
 					fView.updateContentDescription();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -28,6 +28,7 @@ public class JarEntryEditorInput implements IStorageEditorInput {
 
 	/*
 	 */
+	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
@@ -35,6 +36,11 @@ public class JarEntryEditorInput implements IStorageEditorInput {
 			return false;
 		JarEntryEditorInput other = (JarEntryEditorInput) obj;
 		return fJarEntryFile.equals(other.fJarEntryFile);
+	}
+
+	@Override
+	public int hashCode() {
+		return fJarEntryFile.hashCode();
 	}
 
 	/*

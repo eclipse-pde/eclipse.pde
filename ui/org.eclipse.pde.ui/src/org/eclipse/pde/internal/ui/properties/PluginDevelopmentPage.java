@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2009 IBM Corporation and others.
+ *  Copyright (c) 2005, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -20,7 +20,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyPage;
 import org.osgi.service.prefs.BackingStoreException;
@@ -29,7 +28,7 @@ import org.osgi.service.prefs.Preferences;
 /**
  * Top level PDE property page for projects.
  */
-public class PluginDevelopmentPage extends PropertyPage implements IWorkbenchPropertyPage {
+public class PluginDevelopmentPage extends PropertyPage {
 
 	private Button fExtensionButton;
 	private Button fEquinoxButton;
@@ -41,6 +40,7 @@ public class PluginDevelopmentPage extends PropertyPage implements IWorkbenchPro
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createContents(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout());
@@ -82,6 +82,7 @@ public class PluginDevelopmentPage extends PropertyPage implements IWorkbenchPro
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.PLUGIN_DEVELOPMENT_PROPERTY_PAGE);
@@ -90,6 +91,7 @@ public class PluginDevelopmentPage extends PropertyPage implements IWorkbenchPro
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
 	 */
+	@Override
 	public boolean performOk() {
 		Preferences pref = getPreferences((IProject) getElement().getAdapter(IProject.class));
 		if (pref != null) {

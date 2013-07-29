@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2012 IBM Corporation and others.
+ *  Copyright (c) 2005, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -9,8 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.search.dependencies;
-
-import org.eclipse.search.ui.text.Match;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -24,7 +22,7 @@ import org.eclipse.search.ui.text.*;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 
-public class DependencyExtentSearchResult extends SearchResult implements IEditorMatchAdapter {
+public class DependencyExtentSearchResult extends SearchResult {
 
 	/**
 	 * @param query
@@ -36,6 +34,7 @@ public class DependencyExtentSearchResult extends SearchResult implements IEdito
 	/* (non-Javadoc)
 	 * @see org.eclipse.search.ui.text.AbstractTextSearchResult#getEditorMatchAdapter()
 	 */
+	@Override
 	public IEditorMatchAdapter getEditorMatchAdapter() {
 		return this;
 	}
@@ -43,6 +42,7 @@ public class DependencyExtentSearchResult extends SearchResult implements IEdito
 	/* (non-Javadoc)
 	 * @see org.eclipse.search.ui.text.AbstractTextSearchResult#getFileMatchAdapter()
 	 */
+	@Override
 	public IFileMatchAdapter getFileMatchAdapter() {
 		return null;
 	}
@@ -50,6 +50,7 @@ public class DependencyExtentSearchResult extends SearchResult implements IEdito
 	/* (non-Javadoc)
 	 * @see org.eclipse.search.ui.text.IEditorMatchAdapter#isShownInEditor(org.eclipse.search.ui.text.Match, org.eclipse.ui.IEditorPart)
 	 */
+	@Override
 	public boolean isShownInEditor(Match match, IEditorPart editor) {
 		return true;
 	}
@@ -57,6 +58,7 @@ public class DependencyExtentSearchResult extends SearchResult implements IEdito
 	/* (non-Javadoc)
 	 * @see org.eclipse.search.ui.text.IEditorMatchAdapter#computeContainedMatches(org.eclipse.search.ui.text.AbstractTextSearchResult, org.eclipse.ui.IEditorPart)
 	 */
+	@Override
 	public Match[] computeContainedMatches(AbstractTextSearchResult result, IEditorPart editor) {
 		IEditorInput editorInput = editor.getEditorInput();
 		IJavaElement element = (IJavaElement) editorInput.getAdapter(IJavaElement.class);
@@ -92,6 +94,7 @@ public class DependencyExtentSearchResult extends SearchResult implements IEdito
 	/* (non-Javadoc)
 	 * @see org.eclipse.search.ui.ISearchResult#getLabel()
 	 */
+	@Override
 	public String getLabel() {
 		int count = getMatchCount();
 		return fQuery.getLabel() + " - " + count + " " + (count == 1 ? PDEUIMessages.DependencyExtentSearchResult_dependency : PDEUIMessages.DependencyExtentSearchResult_dependencies); //$NON-NLS-1$ //$NON-NLS-2$  
@@ -100,6 +103,7 @@ public class DependencyExtentSearchResult extends SearchResult implements IEdito
 	/* (non-Javadoc)
 	 * @see org.eclipse.search.ui.ISearchResult#getTooltip()
 	 */
+	@Override
 	public String getTooltip() {
 		return null;
 	}
@@ -107,6 +111,7 @@ public class DependencyExtentSearchResult extends SearchResult implements IEdito
 	/* (non-Javadoc)
 	 * @see org.eclipse.search.ui.ISearchResult#getImageDescriptor()
 	 */
+	@Override
 	public ImageDescriptor getImageDescriptor() {
 		return PDEPluginImages.DESC_PSEARCH_OBJ;
 	}
@@ -114,6 +119,7 @@ public class DependencyExtentSearchResult extends SearchResult implements IEdito
 	/* (non-Javadoc)
 	 * @see org.eclipse.search.ui.ISearchResult#getQuery()
 	 */
+	@Override
 	public ISearchQuery getQuery() {
 		return fQuery;
 	}

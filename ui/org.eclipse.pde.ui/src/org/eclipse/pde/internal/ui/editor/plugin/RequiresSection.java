@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,8 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
-import org.eclipse.pde.core.*;
+import org.eclipse.pde.core.IModel;
+import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
@@ -50,7 +51,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.progress.UIJob;
 
-public class RequiresSection extends TableSection implements IModelChangedListener, IPluginModelListener, IPropertyChangeListener {
+public class RequiresSection extends TableSection implements IPluginModelListener, IPropertyChangeListener {
 
 	private static final int ADD_INDEX = 0;
 	private static final int REMOVE_INDEX = 1;
@@ -88,6 +89,7 @@ public class RequiresSection extends TableSection implements IModelChangedListen
 		resetImportInsertIndex();
 	}
 
+	@Override
 	public void createClient(Section section, FormToolkit toolkit) {
 		Composite container = createClientContainer(section, 2, toolkit);
 		createViewerPartControl(container, SWT.MULTI, 2, toolkit);
@@ -132,6 +134,7 @@ public class RequiresSection extends TableSection implements IModelChangedListen
 		section.setTextClient(toolbar);
 	}
 
+	@Override
 	protected void selectionChanged(IStructuredSelection sel) {
 		getPage().getPDEEditor().setSelection(sel);
 		updateButtons();
@@ -165,10 +168,12 @@ public class RequiresSection extends TableSection implements IModelChangedListen
 		tablePart.setButtonEnabled(DOWN_INDEX, canMove && hasSelection && isEditable() && table.getSelectionIndex() < table.getItemCount() - 1);
 	}
 
+	@Override
 	protected void handleDoubleClick(IStructuredSelection sel) {
 		handleOpen(sel);
 	}
 
+	@Override
 	protected void buttonSelected(int index) {
 		switch (index) {
 			case ADD_INDEX :
@@ -209,6 +214,7 @@ public class RequiresSection extends TableSection implements IModelChangedListen
 		}
 	}
 
+	@Override
 	public void dispose() {
 		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
 		if (model != null)
@@ -220,6 +226,7 @@ public class RequiresSection extends TableSection implements IModelChangedListen
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#doGlobalAction(java.lang.String)
 	 */
+	@Override
 	public boolean doGlobalAction(String actionId) {
 
 		if (!isEditable()) {
@@ -246,6 +253,7 @@ public class RequiresSection extends TableSection implements IModelChangedListen
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(java.lang.Object, java.lang.Object[])
 	 */
+	@Override
 	protected boolean canPaste(Object targetObject, Object[] sourceObjects) {
 		HashSet<?> existingImportsSet = null;
 		// Only import objects that are not already existing imports can be
@@ -272,6 +280,7 @@ public class RequiresSection extends TableSection implements IModelChangedListen
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste(java.lang.Object, java.lang.Object[])
 	 */
+	@Override
 	protected void doPaste(Object targetObject, Object[] sourceObjects) {
 		// Get the model
 		IPluginModelBase model = getModel();
@@ -303,6 +312,7 @@ public class RequiresSection extends TableSection implements IModelChangedListen
 		return (IPluginModelBase) getPage().getModel();
 	}
 
+	@Override
 	public boolean setFormInput(Object object) {
 		if (object instanceof IPluginImport) {
 			ImportObject iobj = new ImportObject((IPluginImport) object);
@@ -312,6 +322,7 @@ public class RequiresSection extends TableSection implements IModelChangedListen
 		return false;
 	}
 
+	@Override
 	protected void fillContextMenu(IMenuManager manager) {
 		ISelection selection = fImportViewer.getSelection();
 		manager.add(fAddAction);
@@ -339,6 +350,7 @@ public class RequiresSection extends TableSection implements IModelChangedListen
 		manager.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
 
+	@Override
 	protected void registerPopupMenu(MenuManager popupMenuManager) {
 		IEditorSite site = (IEditorSite) getPage().getSite();
 		site.registerContextMenu(site.getId() + ".requires", popupMenuManager, fViewerPart.getViewer(), false); //$NON-NLS-1$
@@ -506,22 +518,26 @@ public class RequiresSection extends TableSection implements IModelChangedListen
 
 	private void makeActions() {
 		fAddAction = new Action(PDEUIMessages.RequiresSection_add) {
+			@Override
 			public void run() {
 				handleAdd();
 			}
 		};
 		fOpenAction = new Action(PDEUIMessages.RequiresSection_open) {
+			@Override
 			public void run() {
 				handleOpen(fImportViewer.getSelection());
 			}
 		};
 		fRemoveAction = new Action(PDEUIMessages.RequiresSection_delete) {
+			@Override
 			public void run() {
 				handleRemove();
 			}
 		};
 		if (isBundle()) {
 			fPropertiesAction = new Action(PDEUIMessages.RequiresSection_properties) {
+				@Override
 				public void run() {
 					handleOpenProperties();
 				}
@@ -529,12 +545,14 @@ public class RequiresSection extends TableSection implements IModelChangedListen
 		}
 	}
 
+	@Override
 	public void refresh() {
 		fImports = null;
 		fImportViewer.refresh();
 		super.refresh();
 	}
 
+	@Override
 	public void modelChanged(final IModelChangedEvent event) {
 		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
 			markStale();
@@ -543,6 +561,7 @@ public class RequiresSection extends TableSection implements IModelChangedListen
 
 		// Model change may have come from a non UI thread such as the auto add dependencies operation. See bug 333533 
 		UIJob job = new UIJob("Update required bundles") { //$NON-NLS-1$
+			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 
 				if (event.getChangedProperty() == IPluginBase.P_IMPORT_ORDER) {
@@ -653,6 +672,7 @@ public class RequiresSection extends TableSection implements IModelChangedListen
 		}
 	}
 
+	@Override
 	public void setFocus() {
 		if (fImportViewer != null)
 			fImportViewer.getTable().setFocus();
@@ -662,6 +682,7 @@ public class RequiresSection extends TableSection implements IModelChangedListen
 		return getPage().getPDEEditor().getContextManager().findContext(BundleInputContext.CONTEXT_ID) != null;
 	}
 
+	@Override
 	protected boolean createCount() {
 		return true;
 	}
@@ -675,6 +696,7 @@ public class RequiresSection extends TableSection implements IModelChangedListen
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#isDragAndDropEnabled()
 	 */
+	@Override
 	protected boolean isDragAndDropEnabled() {
 		return true;
 	}
@@ -682,6 +704,7 @@ public class RequiresSection extends TableSection implements IModelChangedListen
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canDragMove(java.lang.Object[])
 	 */
+	@Override
 	public boolean canDragMove(Object[] sourceObjects) {
 		if (validateDragMoveSanity(sourceObjects) == false) {
 			return false;
@@ -744,6 +767,7 @@ public class RequiresSection extends TableSection implements IModelChangedListen
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canDropMove(java.lang.Object, java.lang.Object[], int)
 	 */
+	@Override
 	public boolean canDropMove(Object targetObject, Object[] sourceObjects, int targetLocation) {
 		// Sanity check
 		if (validateDropMoveSanity(targetObject, sourceObjects) == false) {
@@ -787,6 +811,7 @@ public class RequiresSection extends TableSection implements IModelChangedListen
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doDropMove(java.lang.Object, java.lang.Object[], int)
 	 */
+	@Override
 	public void doDropMove(Object targetObject, Object[] sourceObjects, int targetLocation) {
 		// Sanity check
 		if (validateDropMoveSanity(targetObject, sourceObjects) == false) {

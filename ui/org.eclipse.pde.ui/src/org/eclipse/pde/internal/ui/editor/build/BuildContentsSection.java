@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -17,7 +17,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.core.IModelChangedListener;
 import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.internal.build.IBuildPropertiesConstants;
 import org.eclipse.pde.internal.core.project.PDEProject;
@@ -33,7 +32,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
-public abstract class BuildContentsSection extends TableSection implements IModelChangedListener, IResourceChangeListener, IResourceDeltaVisitor {
+public abstract class BuildContentsSection extends TableSection implements IResourceChangeListener, IResourceDeltaVisitor {
 
 	protected CheckboxTreeViewer fTreeViewer;
 	private boolean fDoRefresh = false;
@@ -107,6 +106,7 @@ public abstract class BuildContentsSection extends TableSection implements IMode
 		}
 	}
 
+	@Override
 	protected void createViewerPartControl(Composite parent, int style, int span, FormToolkit toolkit) {
 		MenuManager popupMenuManager = new MenuManager();
 		IMenuListener listener = new IMenuListener() {
@@ -124,6 +124,7 @@ public abstract class BuildContentsSection extends TableSection implements IMode
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#fillContextMenu(org.eclipse.jface.action.IMenuManager)
 	 */
+	@Override
 	protected void fillContextMenu(IMenuManager manager) {
 		manager.add(getPage().getPDEEditor().getContributor().getRevertAction());
 		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(manager, false);
@@ -139,6 +140,7 @@ public abstract class BuildContentsSection extends TableSection implements IMode
 		PDEPlugin.getWorkspace().addResourceChangeListener(this);
 	}
 
+	@Override
 	public void createClient(final Section section, FormToolkit toolkit) {
 		Composite container = createClientContainer(section, 2, toolkit);
 		fBuildModel = getBuildModel();
@@ -421,6 +423,7 @@ public abstract class BuildContentsSection extends TableSection implements IMode
 		fBuildModel.addModelChangedListener(this);
 	}
 
+	@Override
 	public void dispose() {
 		fBuildModel.removeModelChangedListener(this);
 		PDEPlugin.getWorkspace().removeResourceChangeListener(this);
@@ -444,10 +447,12 @@ public abstract class BuildContentsSection extends TableSection implements IMode
 		return fTreeViewer;
 	}
 
+	@Override
 	protected ISelection getViewerSelection() {
 		return getTreeViewer().getSelection();
 	}
 
+	@Override
 	public void refresh() {
 		initializeCheckState();
 		super.refresh();
@@ -523,11 +528,13 @@ public abstract class BuildContentsSection extends TableSection implements IMode
 	 * 
 	 * @see org.eclipse.pde.internal.ui.editor.TableSection#selectionChanged(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
+	@Override
 	protected void selectionChanged(IStructuredSelection selection) {
 		getPage().getPDEEditor().setSelection(selection);
 
 	}
 
+	@Override
 	public void modelChanged(IModelChangedEvent event) {
 
 		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {

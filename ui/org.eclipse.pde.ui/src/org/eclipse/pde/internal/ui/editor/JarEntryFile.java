@@ -65,6 +65,7 @@ public class JarEntryFile extends PlatformObject implements IStorage {
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
 	@SuppressWarnings("rawtypes")
+	@Override
 	public Object getAdapter(Class adapter) {
 		if (adapter.equals(ZipFile.class))
 			return fZipFile;
@@ -73,14 +74,20 @@ public class JarEntryFile extends PlatformObject implements IStorage {
 		return super.getAdapter(adapter);
 	}
 
+	@Override
 	public String toString() {
 		return "JarEntryFile[" + fZipFile.getName() + "::" + fEntryName + "]"; //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-1$
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (!(obj instanceof JarEntryFile))
 			return false;
 		return toString().equals(obj.toString());
 	}
 
+	@Override
+	public int hashCode() {
+		return toString().hashCode();
+	}
 }

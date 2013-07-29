@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2008 IBM Corporation and others.
+ *  Copyright (c) 2005, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -13,10 +13,9 @@ package org.eclipse.pde.internal.ui.correction;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.text.bundle.*;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
-import org.eclipse.ui.IMarkerResolution;
 import org.osgi.framework.Constants;
 
-public class RemoveExportPackageResolution extends AbstractManifestMarkerResolution implements IMarkerResolution {
+public class RemoveExportPackageResolution extends AbstractManifestMarkerResolution {
 
 	String fPackage;
 
@@ -25,6 +24,7 @@ public class RemoveExportPackageResolution extends AbstractManifestMarkerResolut
 		fPackage = pkgName;
 	}
 
+	@Override
 	protected void createChange(BundleModel model) {
 		Bundle bundle = (Bundle) model.getBundle();
 		ExportPackageHeader header = (ExportPackageHeader) bundle.getManifestHeader(Constants.EXPORT_PACKAGE);
@@ -36,6 +36,7 @@ public class RemoveExportPackageResolution extends AbstractManifestMarkerResolut
 		return NLS.bind(PDEUIMessages.RemoveExportPkgs_label, fPackage);
 	}
 
+	@Override
 	public String getDescription() {
 		return NLS.bind(PDEUIMessages.RemoveExportPkgs_description, fPackage);
 	}

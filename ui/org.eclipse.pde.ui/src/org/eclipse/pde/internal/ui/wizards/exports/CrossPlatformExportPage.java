@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,16 +35,23 @@ public class CrossPlatformExportPage extends AbstractExportWizardPage {
 		String ws;
 		String arch;
 
+		@Override
 		public String toString() {
 			return os + " (" + ws + "/" + arch + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 
+		@Override
 		public boolean equals(Object obj) {
 			if (obj instanceof Configuration) {
 				Configuration config = (Configuration) obj;
 				return os.equals(config.os) && ws.equals(config.ws) && arch.equals(config.arch);
 			}
 			return super.equals(obj);
+		}
+
+		@Override
+		public int hashCode() {
+			return os.hashCode() + ws.hashCode() + arch.hashCode();
 		}
 
 	}
@@ -60,11 +67,13 @@ public class CrossPlatformExportPage extends AbstractExportWizardPage {
 			super(label, buttonLabels);
 		}
 
+		@Override
 		public void updateCounter(int count) {
 			super.updateCounter(count);
 			pageChanged();
 		}
 
+		@Override
 		protected void buttonSelected(Button button, int index) {
 			switch (index) {
 				case 0 :
@@ -139,6 +148,7 @@ public class CrossPlatformExportPage extends AbstractExportWizardPage {
 		pageChanged();
 	}
 
+	@Override
 	public void saveSettings(IDialogSettings settings) {
 		Object[] objects = fPlatformPart.getSelection();
 		StringBuffer buffer = new StringBuffer();
@@ -186,6 +196,7 @@ public class CrossPlatformExportPage extends AbstractExportWizardPage {
 		}
 	}
 
+	@Override
 	protected void pageChanged() {
 		setPageComplete(fPlatformPart.getSelectionCount() > 0);
 	}

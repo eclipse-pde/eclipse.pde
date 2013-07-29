@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.editor.plugin.rows;
 
 import java.util.Map;
+import java.util.Map.Entry;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -34,14 +35,15 @@ public class IdAttributeRow extends ButtonAttributeRow {
 
 	private class IdAttributeLabelProvider extends LabelProvider {
 
+		@Override
 		public Image getImage(Object element) {
 			return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_GENERIC_XML_OBJ);
 		}
 
-		@SuppressWarnings("rawtypes")
+		@Override
 		public String getText(Object element) {
 			if (element instanceof Map.Entry) {
-				Map.Entry entry = (Map.Entry) element;
+				Map.Entry<?, ?> entry = (Entry<?, ?>) element;
 				String text = (String) entry.getKey();
 				if (entry.getValue() instanceof IConfigurationElement) {
 					IConfigurationElement value = (IConfigurationElement) entry.getValue();
@@ -76,6 +78,7 @@ public class IdAttributeRow extends ButtonAttributeRow {
 		super(part, att);
 	}
 
+	@Override
 	protected boolean isReferenceModel() {
 		return !part.getPage().getModel().isEditable();
 	}
@@ -83,6 +86,7 @@ public class IdAttributeRow extends ButtonAttributeRow {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.plugin.rows.ButtonAttributeRow#browse()
 	 */
+	@Override
 	protected void browse() {
 		ElementListSelectionDialog dialog = new ElementListSelectionDialog(PDEPlugin.getActiveWorkbenchShell(), new IdAttributeLabelProvider());
 
@@ -93,8 +97,7 @@ public class IdAttributeRow extends ButtonAttributeRow {
 		dialog.setElements(attributeMap.entrySet().toArray());
 		dialog.setFilter("*"); //$NON-NLS-1$
 		if (dialog.open() == Window.OK) {
-			@SuppressWarnings("rawtypes")
-			Map.Entry entry = (Map.Entry) dialog.getFirstResult();
+			Map.Entry<?, ?> entry = (Entry<?, ?>) dialog.getFirstResult();
 			text.setText(entry.getKey().toString());
 		}
 	}
@@ -102,6 +105,7 @@ public class IdAttributeRow extends ButtonAttributeRow {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.plugin.rows.ReferenceAttributeRow#openReference()
 	 */
+	@Override
 	protected void openReference() {
 		Map<String, IConfigurationElement> attributeMap = PDESchemaHelper.getValidAttributes(getAttribute());
 		String id = text.getText();

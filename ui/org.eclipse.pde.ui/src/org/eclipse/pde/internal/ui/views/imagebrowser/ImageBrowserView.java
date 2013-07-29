@@ -58,7 +58,7 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 
 	private List<Image> displayedImages = new ArrayList<Image>();
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({"unchecked"})
 	public ImageBrowserView() {
 		// create default filters
 		final IFilter<ImageElement> iconSize = new SizeFilter(16, SizeFilter.TYPE_EXACT, 16, SizeFilter.TYPE_EXACT);
@@ -82,6 +82,7 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createPartControl(final Composite parent) {
 		final Composite composite = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH, 0, 0);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IHelpContextIds.IMAGE_BROWSER_VIEW);
@@ -150,6 +151,7 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 
 		nextButton = SWTFactory.createPushButton(pageComp, PDEUIMessages.ImageBrowserView_ShowMore, null);
 		nextButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(final SelectionEvent e) {
 				scanImages();
 			}
@@ -163,6 +165,7 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 		scrolledComposite.setExpandVertical(true);
 
 		scrolledComposite.addControlListener(new ControlAdapter() {
+			@Override
 			public void controlResized(final ControlEvent e) {
 				Rectangle r = scrolledComposite.getClientArea();
 				scrolledComposite.setMinSize(imageComposite.computeSize(r.width, SWT.DEFAULT));
@@ -206,6 +209,7 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.WorkbenchPart#setFocus()
 	 */
+	@Override
 	public void setFocus() {
 		// Pressing enter when navigating the images calls this method, stealing focus
 		if (sourceCombo.getSelection().isEmpty()) {
@@ -339,6 +343,7 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 			}
 		}
 
+		@Override
 		public void focusGained(FocusEvent e) {
 			// Scroll the focused control into view
 			Control child = (Control) e.widget;

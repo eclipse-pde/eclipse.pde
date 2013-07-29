@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -45,7 +45,7 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
-public class RuntimeInfoSection extends PDESection implements IModelChangedListener, IBuildPropertiesConstants {
+public class RuntimeInfoSection extends PDESection implements IBuildPropertiesConstants {
 
 	private static final int F_NEW_INDEX = 0;
 	private static final int F_UP_UNDEX = 2;
@@ -65,6 +65,7 @@ public class RuntimeInfoSection extends PDESection implements IModelChangedListe
 			super(buttonLabels);
 		}
 
+		@Override
 		public void selectionChanged(IStructuredSelection selection) {
 			getPage().getPDEEditor().setSelection(selection);
 			Object item = selection.getFirstElement();
@@ -75,6 +76,7 @@ public class RuntimeInfoSection extends PDESection implements IModelChangedListe
 			updateDirectionalButtons();
 		}
 
+		@Override
 		public void handleDoubleClick(IStructuredSelection selection) {
 			Object element = selection.getFirstElement();
 			if (getLibrarySelection() == element)
@@ -83,6 +85,7 @@ public class RuntimeInfoSection extends PDESection implements IModelChangedListe
 				handleRenameFolder((String) element);
 		}
 
+		@Override
 		public void buttonSelected(Button button, int index) {
 			if (getViewer() == fLibraryPart.getViewer()) {
 				switch (index) {
@@ -144,6 +147,7 @@ public class RuntimeInfoSection extends PDESection implements IModelChangedListe
 	}
 
 	class JarsNewContentProvider extends WorkbenchContentProvider {
+		@Override
 		public boolean hasChildren(Object element) {
 			Object[] children = getChildren(element);
 			for (int i = 0; i < children.length; i++)
@@ -284,6 +288,7 @@ public class RuntimeInfoSection extends PDESection implements IModelChangedListe
 		return folders.toArray(new IPackageFragmentRoot[folders.size()]);
 	}
 
+	@Override
 	public void createClient(Section section, FormToolkit toolkit) {
 		Composite container = toolkit.createComposite(section);
 		container.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 2));
@@ -326,6 +331,7 @@ public class RuntimeInfoSection extends PDESection implements IModelChangedListe
 		Composite container = createContainer(parent, toolkit);
 
 		fFolderPart = new PartAdapter(new String[] {PDEUIMessages.BuildEditor_RuntimeInfoSection_addFolder}) {
+			@Override
 			public void selectionChanged(IStructuredSelection selection) {
 				// folder selection ignored
 			}
@@ -360,6 +366,7 @@ public class RuntimeInfoSection extends PDESection implements IModelChangedListe
 		ISelection libSelection = fLibraryViewer.getSelection();
 		if (libSelection != null && !libSelection.isEmpty()) {
 			Action newAction = new Action(PDEUIMessages.BuildEditor_RuntimeInfoSection_popupFolder) {
+				@Override
 				public void run() {
 					handleNewFolder();
 				}
@@ -371,6 +378,7 @@ public class RuntimeInfoSection extends PDESection implements IModelChangedListe
 		manager.add(new Separator());
 
 		Action replace = new Action(PDEUIMessages.RuntimeInfoSection_replace) {
+			@Override
 			public void run() {
 				handleRenameFolder(((IStructuredSelection) selection).getFirstElement().toString());
 			}
@@ -379,6 +387,7 @@ public class RuntimeInfoSection extends PDESection implements IModelChangedListe
 		manager.add(replace);
 
 		Action deleteAction = new Action(PDEUIMessages.Actions_delete_label) {
+			@Override
 			public void run() {
 				handleDeleteFolder();
 			}
@@ -393,6 +402,7 @@ public class RuntimeInfoSection extends PDESection implements IModelChangedListe
 	protected void fillLibraryContextMenu(IMenuManager manager) {
 		ISelection selection = fLibraryViewer.getSelection();
 		Action newAction = new Action(PDEUIMessages.BuildEditor_RuntimeInfoSection_popupAdd) {
+			@Override
 			public void run() {
 				handleNew();
 			}
@@ -402,6 +412,7 @@ public class RuntimeInfoSection extends PDESection implements IModelChangedListe
 
 		manager.add(new Separator());
 		IAction renameAction = new Action(PDEUIMessages.EditableTablePart_renameAction) {
+			@Override
 			public void run() {
 				doRename();
 			}
@@ -410,6 +421,7 @@ public class RuntimeInfoSection extends PDESection implements IModelChangedListe
 		manager.add(renameAction);
 
 		Action deleteAction = new Action(PDEUIMessages.Actions_delete_label) {
+			@Override
 			public void run() {
 				handleDelete();
 			}
@@ -473,6 +485,7 @@ public class RuntimeInfoSection extends PDESection implements IModelChangedListe
 		fFolderPart.setButtonEnabled(F_NEW_INDEX, enable && !fLibraryViewer.getSelection().isEmpty());
 	}
 
+	@Override
 	public boolean doGlobalAction(String actionId) {
 		if (actionId.equals(ActionFactory.DELETE.getId())) {
 			if (fEnabled && fLibraryViewer.getControl().isFocusControl())
@@ -505,6 +518,7 @@ public class RuntimeInfoSection extends PDESection implements IModelChangedListe
 		}
 	}
 
+	@Override
 	public void dispose() {
 		IBuildModel buildModel = getBuildModel();
 		if (buildModel != null)
@@ -770,6 +784,7 @@ public class RuntimeInfoSection extends PDESection implements IModelChangedListe
 
 		dialog.setInput(project.getWorkspace());
 		dialog.addFilter(new ViewerFilter() {
+			@Override
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
 				if (element instanceof IProject)
 					return ((IProject) element).equals(project);
@@ -865,6 +880,7 @@ public class RuntimeInfoSection extends PDESection implements IModelChangedListe
 		}
 	}
 
+	@Override
 	public void modelChanged(IModelChangedEvent event) {
 		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED)
 			markStale();

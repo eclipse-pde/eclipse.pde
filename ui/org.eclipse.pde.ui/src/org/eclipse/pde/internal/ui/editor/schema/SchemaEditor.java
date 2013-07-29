@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2011 IBM Corporation and others.
+ * Copyright (c) 2003, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,7 +30,6 @@ import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.context.InputContext;
 import org.eclipse.pde.internal.ui.editor.context.InputContextManager;
 import org.eclipse.pde.internal.ui.search.ShowDescriptionAction;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.*;
 import org.eclipse.ui.ide.FileStoreEditorInput;
 import org.eclipse.ui.part.FileEditorInput;
@@ -41,6 +40,7 @@ public class SchemaEditor extends MultiSourceEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getEditorID()
 	 */
+	@Override
 	protected String getEditorID() {
 		return IPDEUIConstants.SCHEMA_EDITOR_ID;
 	}
@@ -48,6 +48,7 @@ public class SchemaEditor extends MultiSourceEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#isSaveAsAllowed()
 	 */
+	@Override
 	public boolean isSaveAsAllowed() {
 		return true;
 	}
@@ -55,10 +56,12 @@ public class SchemaEditor extends MultiSourceEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getContextIDForSaveAs()
 	 */
+	@Override
 	public String getContextIDForSaveAs() {
 		return SchemaInputContext.CONTEXT_ID;
 	}
 
+	@Override
 	protected void createResourceContexts(InputContextManager manager, IFileEditorInput input) {
 		IFile file = input.getFile();
 		IFileEditorInput in = new FileEditorInput(file);
@@ -66,6 +69,7 @@ public class SchemaEditor extends MultiSourceEditor {
 		manager.monitorFile(file);
 	}
 
+	@Override
 	protected InputContextManager createInputContextManager() {
 		SchemaInputContextManager contextManager = new SchemaInputContextManager(this);
 		//contextManager.setUndoManager(new SchemaUndoManager(this));
@@ -91,6 +95,7 @@ public class SchemaEditor extends MultiSourceEditor {
 		return true;
 	}
 
+	@Override
 	public void editorContextAdded(InputContext context) {
 		addSourcePage(context.getId());
 	}
@@ -99,10 +104,12 @@ public class SchemaEditor extends MultiSourceEditor {
 		close(false);
 	}
 
+	@Override
 	protected void createSystemFileContexts(InputContextManager manager, FileStoreEditorInput input) {
 		manager.putContext(input, new SchemaInputContext(this, input, true));
 	}
 
+	@Override
 	protected void createStorageContexts(InputContextManager manager, IStorageEditorInput input) {
 		manager.putContext(input, new SchemaInputContext(this, input, true));
 	}
@@ -116,6 +123,7 @@ public class SchemaEditor extends MultiSourceEditor {
 		fPreviewAction.run();
 	}
 
+	@Override
 	protected void addEditorPages() {
 		try {
 			addPage(new SchemaOverviewPage(this));
@@ -126,6 +134,7 @@ public class SchemaEditor extends MultiSourceEditor {
 		addSourcePage(SchemaInputContext.CONTEXT_ID);
 	}
 
+	@Override
 	protected String computeInitialPageId() {
 		String firstPageId = super.computeInitialPageId();
 		if (firstPageId == null) {
@@ -137,10 +146,12 @@ public class SchemaEditor extends MultiSourceEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.MultiSourceEditor#createXMLSourcePage(org.eclipse.pde.internal.ui.neweditor.PDEFormEditor, java.lang.String, java.lang.String)
 	 */
+	@Override
 	protected PDESourcePage createSourcePage(PDEFormEditor editor, String title, String name, String contextId) {
 		return new SchemaSourcePage(editor, title, name);
 	}
 
+	@Override
 	protected ISortableContentOutlinePage createContentOutline() {
 		return new SchemaFormOutlinePage(this);
 	}
@@ -148,6 +159,7 @@ public class SchemaEditor extends MultiSourceEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getInputContext(java.lang.Object)
 	 */
+	@Override
 	protected InputContext getInputContext(Object object) {
 		InputContext context = null;
 		if (object instanceof ISchemaObject) {
@@ -164,7 +176,6 @@ public class SchemaEditor extends MultiSourceEditor {
 			} catch (PartInitException e) {
 			}
 		}
-		Display.getDefault().beep();
 		return false;
 	}
 
@@ -176,14 +187,12 @@ public class SchemaEditor extends MultiSourceEditor {
 			IFile file = project.getFile(path.removeFirstSegments(1));
 			return openSchema(file);
 		}
-		Display.getDefault().beep();
 		return false;
 	}
 
 	public static boolean openSchema(File file) {
 		// Ensure the file exists
 		if ((file == null) || (file.exists() == false)) {
-			Display.getDefault().beep();
 			return false;
 		}
 		// Create the editor input
@@ -203,12 +212,11 @@ public class SchemaEditor extends MultiSourceEditor {
 			// Open the schema editor using the editor input
 			part = PDEPlugin.getActivePage().openEditor(input, IPDEUIConstants.SCHEMA_EDITOR_ID);
 		} catch (PartInitException e) {
-			Display.getDefault().beep();
+			PDEPlugin.log(e);
 			return false;
 		}
 		// Ensure the schema editor was opened properly
 		if (part == null) {
-			Display.getDefault().beep();
 			return false;
 		}
 		return true;
@@ -217,29 +225,34 @@ public class SchemaEditor extends MultiSourceEditor {
 	public static boolean openSchema(File jarFile, String schemaJarFileEntry) {
 		// Ensure the file exists
 		if ((jarFile == null) || (jarFile.exists() == false)) {
-			Display.getDefault().beep();
 			return false;
 		}
 		// Open the jar archive
-		ZipFile zipFile;
+		ZipFile zipFile = null;
 		try {
 			zipFile = new ZipFile(jarFile);
+			// Ensure the schema file exists in the jar archive
+			if ((schemaJarFileEntry == null) || zipFile.getEntry(schemaJarFileEntry) == null) {
+				return false;
+			}
+			// Create the editor input
+			IStorage storage = new JarEntryFile(zipFile, schemaJarFileEntry);
+			IEditorInput input = new JarEntryEditorInput(storage);
+			return openEditor(input);
 		} catch (ZipException e) {
-			Display.getDefault().beep();
-			return false;
+			PDEPlugin.log(e);
 		} catch (IOException e) {
-			Display.getDefault().beep();
-			return false;
+			PDEPlugin.log(e);
+		} finally {
+			if (zipFile != null) {
+				try {
+					zipFile.close();
+				} catch (IOException e) {
+					PDEPlugin.log(e);
+				}
+			}
 		}
-		// Ensure the schema file exists in the jar archive
-		if ((schemaJarFileEntry == null) || zipFile.getEntry(schemaJarFileEntry) == null) {
-			Display.getDefault().beep();
-			return false;
-		}
-		// Create the editor input
-		IStorage storage = new JarEntryFile(zipFile, schemaJarFileEntry);
-		IEditorInput input = new JarEntryEditorInput(storage);
-		return openEditor(input);
+		return false;
 	}
 
 	public static void openToElement(IPath path, ISchemaElement element) {
@@ -252,6 +265,7 @@ public class SchemaEditor extends MultiSourceEditor {
 		}
 	}
 
+	@Override
 	public boolean canCut(ISelection selection) {
 		if (selection instanceof IStructuredSelection) {
 			Object selected = ((IStructuredSelection) selection).getFirstElement();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 IBM Corporation and others.
+ * Copyright (c) 2006, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,11 +18,11 @@ import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.internal.ui.text.java.AbstractJavaCompletionProposal;
 import org.eclipse.jdt.internal.ui.text.java.ProposalInfo;
 import org.eclipse.jface.text.*;
-import org.eclipse.jface.text.contentassist.*;
+import org.eclipse.jface.text.contentassist.ICompletionProposalExtension4;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 
-public class TypeCompletionProposal extends AbstractJavaCompletionProposal implements ICompletionProposal, ICompletionProposalExtension3, ICompletionProposalExtension4, ICompletionProposalExtension5 {
+public class TypeCompletionProposal extends AbstractJavaCompletionProposal implements ICompletionProposalExtension4 {
 
 	private static final class PDETypeProposalInfo extends ProposalInfo {
 		private IJavaProject fJavaProject;
@@ -71,6 +71,7 @@ public class TypeCompletionProposal extends AbstractJavaCompletionProposal imple
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#apply(org.eclipse.jface.text.IDocument)
 	 */
+	@Override
 	public void apply(ITextViewer viewer, char trigger, int stateMask, int offset) {
 		IDocument document = viewer.getDocument();
 		if (getReplacementLength() == -1) {
@@ -87,6 +88,7 @@ public class TypeCompletionProposal extends AbstractJavaCompletionProposal imple
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#getSelection(org.eclipse.jface.text.IDocument)
 	 */
+	@Override
 	public Point getSelection(IDocument document) {
 		if (getReplacementString().equals("\"\"")) //$NON-NLS-1$
 			return new Point(getReplacementOffset() + 1, 0);
@@ -96,6 +98,7 @@ public class TypeCompletionProposal extends AbstractJavaCompletionProposal imple
 	/*
 	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension5#getAdditionalProposalInfo(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public Object getAdditionalProposalInfo(IProgressMonitor monitor) {
 		if (fAdditionalInfo != null)
 			return fAdditionalInfo;
@@ -120,6 +123,7 @@ public class TypeCompletionProposal extends AbstractJavaCompletionProposal imple
 	 * @return the additional proposal info, or <code>null</code> if none
 	 *         exists
 	 */
+	@Override
 	protected final ProposalInfo getProposalInfo() {
 		if (!fProposalInfoComputed) {
 			setProposalInfo(computeProposalInfo());

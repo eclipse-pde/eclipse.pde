@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,12 +18,12 @@ import org.eclipse.pde.core.plugin.IPluginReference;
 /**
  * Implementation of the IPluginReference
  * <p>
- * This class may be instantiated. This class is not intended to be subclassed by clients.
+ * This class may be instantiated. This class is not intended to be sub-classed by clients.
  * </p>
  * @see IPluginReference
  * @since 3.4
  * 
- * @noextend This class is not intended to be subclassed by clients.
+ * @noextend This class is not intended to be sub-classed by clients.
  */
 public class PluginReference implements IPluginReference {
 
@@ -51,18 +51,23 @@ public class PluginReference implements IPluginReference {
 	/*
 	 * @see IPluginReference#equals(Object) 
 	 */
+	@Override
 	public boolean equals(Object object) {
 		if (object instanceof IPluginReference) {
 			IPluginReference source = (IPluginReference) object;
 			if (id == null)
 				return false;
-			if (id.equals(source.getId()) == false)
-				return false;
-			if (version == null && source.getVersion() == null)
-				return true;
-			return version.equals(source.getVersion());
+			return id.equals(source.getId()) && ((version == null && source.getVersion() == null) || version.equals(source.getVersion()));
 		}
 		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		if (id != null) {
+			return id.hashCode() + (version == null ? 0 : version.hashCode());
+		}
+		return super.hashCode();
 	}
 
 	/*

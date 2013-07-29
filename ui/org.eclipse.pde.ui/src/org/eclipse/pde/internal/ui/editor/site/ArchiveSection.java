@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -48,6 +48,7 @@ public class ArchiveSection extends PDESection {
 	private Button fRemoveButton;
 
 	class FolderProvider extends WorkbenchContentProvider {
+		@Override
 		public boolean hasChildren(Object element) {
 			Object[] children = getChildren(element);
 			for (int i = 0; i < children.length; i++) {
@@ -99,6 +100,7 @@ public class ArchiveSection extends PDESection {
 	 * @see org.eclipse.update.ui.forms.internal.FormSection#createClient(org.eclipse.swt.widgets.Composite,
 	 *      org.eclipse.update.ui.forms.internal.FormWidgetFactory)
 	 */
+	@Override
 	public void createClient(Section section, FormToolkit toolkit) {
 		fModel = (ISiteModel) getPage().getModel();
 		fModel.addModelChangedListener(this);
@@ -122,6 +124,7 @@ public class ArchiveSection extends PDESection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
 	 */
+	@Override
 	public void dispose() {
 		fModel.removeModelChangedListener(this);
 		super.dispose();
@@ -136,6 +139,7 @@ public class ArchiveSection extends PDESection {
 		fAddButton = toolkit.createButton(container, PDEUIMessages.SiteEditor_add, SWT.PUSH);
 		fAddButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fAddButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				showDialog(null);
 			}
@@ -144,6 +148,7 @@ public class ArchiveSection extends PDESection {
 		fEditButton = toolkit.createButton(container, PDEUIMessages.SiteEditor_edit, SWT.PUSH);
 		fEditButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fEditButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				IStructuredSelection ssel = (IStructuredSelection) fViewer.getSelection();
 				if (ssel != null && ssel.size() == 1)
@@ -153,6 +158,7 @@ public class ArchiveSection extends PDESection {
 		fRemoveButton = toolkit.createButton(container, PDEUIMessages.SiteEditor_remove, SWT.PUSH);
 		fRemoveButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fRemoveButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleDelete();
 			}
@@ -220,13 +226,13 @@ public class ArchiveSection extends PDESection {
 		});
 	}
 
+	@SuppressWarnings("unchecked")
 	private void handleDelete() {
 		try {
 			ISelection selection = fViewer.getSelection();
 			if (selection != null && selection instanceof IStructuredSelection) {
 				IStructuredSelection ssel = (IStructuredSelection) selection;
 				if (ssel.size() > 0) {
-					@SuppressWarnings("unchecked")
 					ISiteArchive[] array = (ISiteArchive[]) ssel.toList().toArray(new ISiteArchive[ssel.size()]);
 					ISite site = ((ISiteModel) getPage().getModel()).getSite();
 					site.removeArchives(array);
@@ -241,6 +247,7 @@ public class ArchiveSection extends PDESection {
 	 * 
 	 * @see org.eclipse.update.ui.forms.internal.FormSection#doGlobalAction(java.lang.String)
 	 */
+	@Override
 	public boolean doGlobalAction(String actionId) {
 		if (actionId.equals(ActionFactory.DELETE.getId())) {
 			BusyIndicator.showWhile(fTable.getDisplay(), new Runnable() {
@@ -253,6 +260,7 @@ public class ArchiveSection extends PDESection {
 		return false;
 	}
 
+	@Override
 	public void refresh() {
 		fViewer.refresh();
 		super.refresh();
@@ -262,6 +270,7 @@ public class ArchiveSection extends PDESection {
 		refresh();
 	}
 
+	@Override
 	public void modelChanged(IModelChangedEvent e) {
 		markStale();
 	}
@@ -271,6 +280,7 @@ public class ArchiveSection extends PDESection {
 		IMenuListener listener = new IMenuListener() {
 			public void menuAboutToShow(IMenuManager mng) {
 				Action removeAction = new Action(PDEUIMessages.SiteEditor_remove) {
+					@Override
 					public void run() {
 						doGlobalAction(ActionFactory.DELETE.getId());
 					}
@@ -290,6 +300,7 @@ public class ArchiveSection extends PDESection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#setFormInput(java.lang.Object)
 	 */
+	@Override
 	public boolean setFormInput(Object input) {
 		if (input instanceof ISiteArchive) {
 			fViewer.setSelection(new StructuredSelection(input), true);

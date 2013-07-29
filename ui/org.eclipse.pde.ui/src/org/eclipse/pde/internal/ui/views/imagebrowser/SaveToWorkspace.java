@@ -7,6 +7,7 @@
  * 
  *  Contributors:
  *     Christian Pontesegger - initial API and implementation
+ *     IBM Corporation - bug fixing
  *******************************************************************************/
 
 package org.eclipse.pde.internal.ui.views.imagebrowser;
@@ -36,14 +37,13 @@ import org.eclipse.ui.services.ISourceProviderService;
  * Handler for the image browser view's save to workspace command.
  *
  */
-public class SaveToWorkspace extends AbstractHandler implements IHandler {
+public class SaveToWorkspace extends AbstractHandler {
 
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
 		ISourceProviderService service = (ISourceProviderService) PlatformUI.getWorkbench().getService(ISourceProviderService.class);
 		ISourceProvider provider = service.getSourceProvider(ActiveImageSourceProvider.ACTIVE_IMAGE);
 		if (provider != null) {
-			@SuppressWarnings("rawtypes")
-			Map currentState = provider.getCurrentState();
+			Map<?, ?> currentState = provider.getCurrentState();
 
 			Object data = currentState.get(ActiveImageSourceProvider.ACTIVE_IMAGE);
 			if (data instanceof ImageElement) {

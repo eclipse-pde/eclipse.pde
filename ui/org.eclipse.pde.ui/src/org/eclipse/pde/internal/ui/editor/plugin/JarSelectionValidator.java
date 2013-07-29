@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2012 IBM Corporation and others.
+ *  Copyright (c) 2003, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -21,8 +21,7 @@ import org.eclipse.ui.dialogs.ISelectionStatusValidator;
  */
 public class JarSelectionValidator implements ISelectionStatusValidator {
 
-	@SuppressWarnings("rawtypes")
-	private Class[] fAcceptedTypes;
+	private Class<?>[] fAcceptedTypes;
 	private boolean fAllowMultipleSelection;
 
 	/**
@@ -30,8 +29,7 @@ public class JarSelectionValidator implements ISelectionStatusValidator {
 	 * @param allowMultipleSelection If set to <code>true</code>, the validator
 	 * allows multiple selection.
 	 */
-	@SuppressWarnings("rawtypes")
-	public JarSelectionValidator(Class[] acceptedTypes, boolean allowMultipleSelection) {
+	public JarSelectionValidator(Class<?>[] acceptedTypes, boolean allowMultipleSelection) {
 		Assert.isNotNull(acceptedTypes);
 		fAcceptedTypes = acceptedTypes;
 		fAllowMultipleSelection = allowMultipleSelection;

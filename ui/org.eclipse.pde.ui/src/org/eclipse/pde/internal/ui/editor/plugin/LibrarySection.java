@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -49,7 +49,7 @@ import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.views.navigator.ResourceComparator;
 
-public class LibrarySection extends TableSection implements IModelChangedListener, IBuildPropertiesConstants {
+public class LibrarySection extends TableSection implements IBuildPropertiesConstants {
 
 	private static final int NEW_INDEX = 0;
 	private static final int ADD_INDEX = 1;
@@ -68,6 +68,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 			super(set);
 		}
 
+		@Override
 		public boolean select(Viewer viewer, Object parent, Object element) {
 			if (element instanceof IFolder)
 				return isPathValid(((IFolder) element).getProjectRelativePath());
@@ -79,11 +80,11 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 
 	class LibrarySelectionValidator extends JarSelectionValidator {
 
-		@SuppressWarnings("rawtypes")
-		public LibrarySelectionValidator(Class[] acceptedTypes, boolean allowMultipleSelection) {
+		public LibrarySelectionValidator(Class<?>[] acceptedTypes, boolean allowMultipleSelection) {
 			super(acceptedTypes, allowMultipleSelection);
 		}
 
+		@Override
 		public boolean isValid(Object element) {
 			return (element instanceof IFolder) ? true : super.isValid(element);
 		}
@@ -116,6 +117,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 		return (BundleInputContext) manager.findContext(BundleInputContext.CONTEXT_ID);
 	}
 
+	@Override
 	public void createClient(Section section, FormToolkit toolkit) {
 		section.setText(PDEUIMessages.ManifestEditor_LibrarySection_title);
 		section.setDescription(getSectionDescription());
@@ -160,6 +162,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 
 	private void makeActions() {
 		fNewAction = new Action(PDEUIMessages.ManifestEditor_LibrarySection_newLibrary) {
+			@Override
 			public void run() {
 				handleNew();
 			}
@@ -167,6 +170,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 		fNewAction.setEnabled(isEditable());
 
 		fRenameAction = new Action(PDEUIMessages.EditableTablePart_renameAction) {
+			@Override
 			public void run() {
 				getRenameAction().run();
 			}
@@ -174,6 +178,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 		fRenameAction.setEnabled(isEditable());
 
 		fRemoveAction = new Action(PDEUIMessages.NewManifestEditor_LibrarySection_remove) {
+			@Override
 			public void run() {
 				handleRemove();
 			}
@@ -181,12 +186,14 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 		fRemoveAction.setEnabled(isEditable());
 	}
 
+	@Override
 	protected void selectionChanged(IStructuredSelection selection) {
 		getPage().getPDEEditor().setSelection(selection);
 		if (getPage().getModel().isEditable())
 			updateButtons();
 	}
 
+	@Override
 	protected void buttonSelected(int index) {
 		switch (index) {
 			case NEW_INDEX :
@@ -207,6 +214,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 		}
 	}
 
+	@Override
 	public void dispose() {
 		IPluginModelBase model = getModel();
 		if (model != null)
@@ -217,6 +225,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#doGlobalAction(java.lang.String)
 	 */
+	@Override
 	public boolean doGlobalAction(String actionId) {
 
 		if (!isEditable()) {
@@ -240,6 +249,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 		return false;
 	}
 
+	@Override
 	public boolean setFormInput(Object object) {
 		if (object instanceof IPluginLibrary) {
 			fLibraryTable.setSelection(new StructuredSelection(object), true);
@@ -248,6 +258,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 		return false;
 	}
 
+	@Override
 	protected void fillContextMenu(IMenuManager manager) {
 		manager.add(fNewAction);
 		if (!fLibraryTable.getSelection().isEmpty()) {
@@ -416,12 +427,14 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 	private void handleAdd() {
 		final boolean[] updateClasspath = new boolean[] {true};
 		ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(getPage().getSite().getShell(), new WorkbenchLabelProvider(), new WorkbenchContentProvider()) {
+			@Override
 			protected Control createDialogArea(Composite parent) {
 				Composite comp = (Composite) super.createDialogArea(parent);
 				final Button button = new Button(comp, SWT.CHECK);
 				button.setText(PDEUIMessages.LibrarySection_addDialogButton);
 				button.setSelection(updateClasspath[0]);
 				button.addSelectionListener(new SelectionAdapter() {
+					@Override
 					public void widgetSelected(SelectionEvent e) {
 						updateClasspath[0] = button.getSelection();
 					}
@@ -431,8 +444,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 			}
 		};
 
-		@SuppressWarnings("rawtypes")
-		Class[] acceptedClasses = new Class[] {IFile.class};
+		Class<?>[] acceptedClasses = new Class[] {IFile.class};
 		dialog.setValidator(new LibrarySelectionValidator(acceptedClasses, true));
 		dialog.setTitle(PDEUIMessages.BuildEditor_ClasspathSection_jarsTitle);
 		dialog.setMessage(PDEUIMessages.ClasspathSection_jarsMessage);
@@ -573,6 +585,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 		}
 	}
 
+	@Override
 	public void refresh() {
 		if (fLibraryTable.getControl().isDisposed())
 			return;
@@ -581,6 +594,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 		super.refresh();
 	}
 
+	@Override
 	public void modelChanged(IModelChangedEvent event) {
 		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
 			markStale();
@@ -602,6 +616,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 		}
 	}
 
+	@Override
 	public void setFocus() {
 		fLibraryTable.getTable().setFocus();
 	}
@@ -609,6 +624,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste(java.lang.Object, java.lang.Object[])
 	 */
+	@Override
 	protected void doPaste(Object targetObject, Object[] sourceObjects) {
 		// Get the model
 		IPluginModelBase model = getModel();
@@ -635,6 +651,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(java.lang.Object, java.lang.Object[])
 	 */
+	@Override
 	protected boolean canPaste(Object targetObject, Object[] sourceObjects) {
 		HashSet<Path> librarySet = null;
 		// Only source objects that are plugin libraries that have not already
@@ -669,6 +686,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 		return librarySet;
 	}
 
+	@Override
 	protected void entryModified(Object entry, String value) {
 		try {
 			IPluginModelBase model = getModel();
@@ -694,6 +712,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#isDragAndDropEnabled()
 	 */
+	@Override
 	protected boolean isDragAndDropEnabled() {
 		return true;
 	}
@@ -701,6 +720,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canDragMove(java.lang.Object[])
 	 */
+	@Override
 	public boolean canDragMove(Object[] sourceObjects) {
 		if (validateDragMoveSanity(sourceObjects) == false) {
 			return false;
@@ -729,6 +749,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canDropMove(java.lang.Object, java.lang.Object[], int)
 	 */
+	@Override
 	public boolean canDropMove(Object targetObject, Object[] sourceObjects, int targetLocation) {
 		// Sanity check
 		if (validateDropMoveSanity(targetObject, sourceObjects) == false) {
@@ -802,6 +823,7 @@ public class LibrarySection extends TableSection implements IModelChangedListene
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doDropMove(java.lang.Object, java.lang.Object[], int)
 	 */
+	@Override
 	public void doDropMove(Object targetObject, Object[] sourceObjects, int targetLocation) {
 		// Sanity check
 		if (validateDropMoveSanity(targetObject, sourceObjects) == false) {

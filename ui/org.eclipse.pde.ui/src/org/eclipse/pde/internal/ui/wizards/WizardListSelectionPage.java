@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -25,7 +25,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 
-public abstract class WizardListSelectionPage extends BaseWizardSelectionPage implements ISelectionChangedListener, IExecutableExtension {
+public abstract class WizardListSelectionPage extends BaseWizardSelectionPage implements IExecutableExtension {
 	protected TableViewer wizardSelectionViewer;
 	protected ElementList wizardElements;
 	private WizardSelectedAction doubleClickAction = new WizardSelectedAction();
@@ -35,6 +35,7 @@ public abstract class WizardListSelectionPage extends BaseWizardSelectionPage im
 			super("wizardSelection"); //$NON-NLS-1$
 		}
 
+		@Override
 		public void run() {
 			selectionChanged(new SelectionChangedEvent(wizardSelectionViewer, wizardSelectionViewer.getSelection()));
 			advanceToNextPage();
@@ -164,6 +165,7 @@ public abstract class WizardListSelectionPage extends BaseWizardSelectionPage im
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.WizardSelectionPage#canFlipToNextPage()
 	 */
+	@Override
 	public boolean canFlipToNextPage() {
 		IStructuredSelection ssel = (IStructuredSelection) wizardSelectionViewer.getSelection();
 		return ssel != null && !ssel.isEmpty();
