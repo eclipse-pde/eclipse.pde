@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2012 Christian Pontesegger and others.
+ *  Copyright (c) 2012, 2013 Christian Pontesegger and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,13 +7,14 @@
  * 
  *  Contributors:
  *     Christian Pontesegger - initial API and implementation
+ *     IBM Corporation - bugs fixing
  *******************************************************************************/
 
 package org.eclipse.pde.internal.ui.views.imagebrowser.filter;
 
 import org.eclipse.pde.internal.ui.views.imagebrowser.ImageElement;
 
-public class SizeFilter implements IFilter<ImageElement> {
+public class SizeFilter implements IFilter {
 
 	public static final int TYPE_EXACT = 0;
 	public static final int TYPE_BIGGER_EQUALS = 1;
@@ -34,27 +35,27 @@ public class SizeFilter implements IFilter<ImageElement> {
 		boolean accept = true;
 
 		switch (mWidthType) {
-		case TYPE_EXACT:
-			accept &= (element.getImageData().width == mWidth);
-			break;
-		case TYPE_BIGGER_EQUALS:
-			accept &= (element.getImageData().width >= mWidth);
-			break;
-		case TYPE_SMALLER_EQUALS:
-			accept &= (element.getImageData().width <= mWidth);
-			break;
+			case TYPE_EXACT :
+				accept &= (element.getImageData().width == mWidth);
+				break;
+			case TYPE_BIGGER_EQUALS :
+				accept &= (element.getImageData().width >= mWidth);
+				break;
+			case TYPE_SMALLER_EQUALS :
+				accept &= (element.getImageData().width <= mWidth);
+				break;
 		}
 
 		switch (mHeightType) {
-		case TYPE_EXACT:
-			accept &= (element.getImageData().height == mHeight);
-			break;
-		case TYPE_BIGGER_EQUALS:
-			accept &= (element.getImageData().height >= mHeight);
-			break;
-		case TYPE_SMALLER_EQUALS:
-			accept &= (element.getImageData().height <= mHeight);
-			break;
+			case TYPE_EXACT :
+				accept &= (element.getImageData().height == mHeight);
+				break;
+			case TYPE_BIGGER_EQUALS :
+				accept &= (element.getImageData().height >= mHeight);
+				break;
+			case TYPE_SMALLER_EQUALS :
+				accept &= (element.getImageData().height <= mHeight);
+				break;
 		}
 
 		return accept;

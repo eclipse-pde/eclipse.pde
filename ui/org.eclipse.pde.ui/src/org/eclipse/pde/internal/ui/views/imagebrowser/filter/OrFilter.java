@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2012 Christian Pontesegger and others.
+ *  Copyright (c) 2012, 2013 Christian Pontesegger and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,20 +7,23 @@
  * 
  *  Contributors:
  *     Christian Pontesegger - initial API and implementation
+ *     IBM Corporation - bugs fixing
  *******************************************************************************/
 
 package org.eclipse.pde.internal.ui.views.imagebrowser.filter;
 
-public class OrFilter<T> implements IFilter<T> {
+import org.eclipse.pde.internal.ui.views.imagebrowser.ImageElement;
 
-	private final IFilter<T>[] mFilter;
+public class OrFilter implements IFilter {
 
-	public OrFilter(final IFilter<T>[] filter) {
+	private final IFilter[] mFilter;
+
+	public OrFilter(final IFilter[] filter) {
 		mFilter = filter;
 	}
 
-	public boolean accept(final T element) {
-		for (IFilter<T> filter : mFilter) {
+	public boolean accept(final ImageElement element) {
+		for (IFilter filter : mFilter) {
 			if (filter.accept(element))
 				return true;
 		}

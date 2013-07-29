@@ -39,10 +39,10 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 
 	private final UpdateUI mUIJob = new UpdateUI();
 
-	private final List<IFilter<ImageElement>> mFilters = new ArrayList<IFilter<ImageElement>>();
-	private final IFilter<ImageElement> disabledIcons;
-	private final IFilter<ImageElement> enabledIcons;
-	private final IFilter<ImageElement> wizard;
+	private final List<IFilter> mFilters = new ArrayList<IFilter>();
+	private final IFilter disabledIcons;
+	private final IFilter enabledIcons;
+	private final IFilter wizard;
 
 	private ScrolledComposite scrolledComposite;
 	private Composite imageComposite;
@@ -58,23 +58,22 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 
 	private List<Image> displayedImages = new ArrayList<Image>();
 
-	@SuppressWarnings({"unchecked"})
 	public ImageBrowserView() {
 		// create default filters
-		final IFilter<ImageElement> iconSize = new SizeFilter(16, SizeFilter.TYPE_EXACT, 16, SizeFilter.TYPE_EXACT);
-		final IFilter<ImageElement> disabled1 = new PatternFilter(".*/obj16/\\w+dis(_obj)?\\W.+"); //$NON-NLS-1$
-		final IFilter<ImageElement> disabled2 = new PatternFilter(".*/d(?!ialogs)(?!ecorations)(?!nd)(?!evguide)\\w+/.+"); //$NON-NLS-1$
-		final IFilter<ImageElement> disabled = new OrFilter<ImageElement>(new IFilter[] {disabled1, disabled2});
-		disabledIcons = new AndFilter<ImageElement>(new IFilter[] {iconSize, disabled});
+		final IFilter iconSize = new SizeFilter(16, SizeFilter.TYPE_EXACT, 16, SizeFilter.TYPE_EXACT);
+		final IFilter disabled1 = new PatternFilter(".*/obj16/\\w+dis(_obj)?\\W.+"); //$NON-NLS-1$
+		final IFilter disabled2 = new PatternFilter(".*/d(?!ialogs)(?!ecorations)(?!nd)(?!evguide)\\w+/.+"); //$NON-NLS-1$
+		final IFilter disabled = new OrFilter(new IFilter[] {disabled1, disabled2});
+		disabledIcons = new AndFilter(new IFilter[] {iconSize, disabled});
 
-		final IFilter<ImageElement> enabled = new NotFilter<ImageElement>(disabled);
-		enabledIcons = new AndFilter<ImageElement>(new IFilter[] {iconSize, enabled});
+		final IFilter enabled = new NotFilter(disabled);
+		enabledIcons = new AndFilter(new IFilter[] {iconSize, enabled});
 
-		final IFilter<ImageElement> wizardSize = new SizeFilter(75, SizeFilter.TYPE_EXACT, 66, SizeFilter.TYPE_EXACT);
-		final IFilter<ImageElement> wizard1 = new PatternFilter(".*/wizban/.+"); //$NON-NLS-1$
-		final IFilter<ImageElement> wizard2 = new PatternFilter(".+_wiz\\.\\w+"); //$NON-NLS-1$
-		final IFilter<ImageElement> wizardName = new OrFilter<ImageElement>(new IFilter[] {wizard1, wizard2});
-		wizard = new AndFilter<ImageElement>(new IFilter[] {wizardSize, wizardName});
+		final IFilter wizardSize = new SizeFilter(75, SizeFilter.TYPE_EXACT, 66, SizeFilter.TYPE_EXACT);
+		final IFilter wizard1 = new PatternFilter(".*/wizban/.+"); //$NON-NLS-1$
+		final IFilter wizard2 = new PatternFilter(".+_wiz\\.\\w+"); //$NON-NLS-1$
+		final IFilter wizardName = new OrFilter(new IFilter[] {wizard1, wizard2});
+		wizard = new AndFilter(new IFilter[] {wizardSize, wizardName});
 
 		mFilters.add(enabledIcons);
 	}
@@ -218,7 +217,7 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 	}
 
 	public void notifyImage(final ImageElement element) {
-		for (final IFilter<ImageElement> filter : mFilters) {
+		for (final IFilter filter : mFilters) {
 			if (!filter.accept(element))
 				return;
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2012 Christian Pontesegger and others.
+ *  Copyright (c) 2012, 2013 Christian Pontesegger and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,16 +7,15 @@
  * 
  *  Contributors:
  *     Christian Pontesegger - initial API and implementation
+ *     IBM Corporation - bugs fixing
  *******************************************************************************/
 
 package org.eclipse.pde.internal.ui.views.imagebrowser.filter;
 
 import java.util.regex.Pattern;
-
 import org.eclipse.pde.internal.ui.views.imagebrowser.ImageElement;
 
-
-public class PatternFilter implements IFilter<ImageElement> {
+public class PatternFilter implements IFilter {
 
 	private final Pattern mPattern;
 
@@ -28,6 +27,7 @@ public class PatternFilter implements IFilter<ImageElement> {
 		return mPattern.matcher(element.getPlugin() + "/" + element.getPath()).matches(); //$NON-NLS-1$
 	}
 
+	@Override
 	public String toString() {
 		return "match " + mPattern.pattern(); //$NON-NLS-1$
 	}
