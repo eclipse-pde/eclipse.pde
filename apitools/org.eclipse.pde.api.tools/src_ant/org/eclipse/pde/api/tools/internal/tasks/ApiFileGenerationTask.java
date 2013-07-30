@@ -281,8 +281,9 @@ public class ApiFileGenerationTask extends Task {
 		}
 		File apiDescriptionFile = new File(targetProjectFolder, IApiCoreConstants.API_DESCRIPTION_XML_NAME);
 		if (apiDescriptionFile.exists()) {
-			System.out.println("API description file already exists: " + apiDescriptionFile.toString()); //$NON-NLS-1$
-			return;
+			//get rid of the existing one
+			//see https://bugs.eclipse.org/bugs/show_bug.cgi?id=414053
+			apiDescriptionFile.delete();
 		}
 		File[] allFiles = null;
 		Map manifestMap = null;
