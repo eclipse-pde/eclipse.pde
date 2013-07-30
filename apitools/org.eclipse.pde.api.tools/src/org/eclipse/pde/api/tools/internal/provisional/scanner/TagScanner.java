@@ -461,7 +461,7 @@ public class TagScanner {
 		InputStream inputStream = null;
 		try {
 			inputStream = source.getInputStream();
-			parser.setSource(Util.getInputStreamAsCharArray(inputStream, -1, System.getProperty("file.encoding"))); //$NON-NLS-1$
+			parser.setSource(Util.getInputStreamAsCharArray(inputStream, -1, source.getEncoding()));
 		} catch (FileNotFoundException e) {
 			throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID,
 					MessageFormat.format("Compilation unit source not found: {0}", new String[]{source.getName()}), e)); //$NON-NLS-1$
