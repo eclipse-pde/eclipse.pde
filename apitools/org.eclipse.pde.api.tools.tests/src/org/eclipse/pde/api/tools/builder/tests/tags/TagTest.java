@@ -99,7 +99,7 @@ public abstract class TagTest extends ApiBuilderTest {
 
 		/* tests */
 		for (int i = 0, length = classes.length; i < length; i++) {
-			Class clazz = classes[i];
+			Class<?> clazz = classes[i];
 			Method suiteMethod;
 			try {
 				suiteMethod = clazz.getDeclaredMethod("suite", new Class[0]);
