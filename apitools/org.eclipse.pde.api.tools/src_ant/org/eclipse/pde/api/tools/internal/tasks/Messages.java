@@ -102,6 +102,10 @@ public class Messages extends NLS {
 	public static String AddedElement;
 
 	public static String AnalysisReportConversionTask_component_resolution_header;
+	public static String APIDeprecationReportConversionTask_KindDeprecated;
+
+	public static String APIDeprecationReportConversionTask_KindUndeprecated;
+
 	public static String APIFreezeReportConversionTask_resolverErrorTableEnd;
 
 	public static String APIFreezeReportConversionTask_resolverErrorTableEntry;

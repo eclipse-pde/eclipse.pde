@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 IBM Corporation and others.
+ * Copyright (c) 2010, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,7 +60,7 @@ public class APIDeprecationReportConversionTask extends Task {
 			this.debug = debug;
 		}
 		public void endElement(String uri, String localName, String name)
-			throws SAXException {
+				throws SAXException {
 			if (IApiXmlConstants.DELTA_ELEMENT_NAME.equals(name)) {
 				Entry entry = new Entry(
 						this.flags,
@@ -167,57 +167,62 @@ public class APIDeprecationReportConversionTask extends Task {
 			this.kind = kind;
 			this.elementType = elementType;
 		}
-		
+
 		public String getDisplayString() {
 			StringBuffer buffer = new StringBuffer();
 			if(this.typeName != null && this.typeName.length() != 0) {
 				buffer.append(this.typeName);
-				switch(this.flags) {
-					case IDelta.DEPRECATION :
-						switch(this.elementType) {
-							case IDelta.ANNOTATION_ELEMENT_TYPE :
-							case IDelta.INTERFACE_ELEMENT_TYPE :
-							case IDelta.ENUM_ELEMENT_TYPE :
-							case IDelta.CLASS_ELEMENT_TYPE :
-								buffer.append('.');
-								buffer.append(this.key);
-								break;
-							case IDelta.CONSTRUCTOR_ELEMENT_TYPE :
-								int indexOf = key.indexOf('(');
-								if (indexOf == -1) {
-									return null;
-								}
-								int index = indexOf;
-								String selector = key.substring(0, index);
-								String descriptor = key.substring(index, key.length());
-								buffer.append('#');
-								buffer.append(Signature.toString(descriptor, selector, null, false, false));
-								break;
-							case IDelta.METHOD_ELEMENT_TYPE :
-								indexOf = key.indexOf('(');
-								if (indexOf == -1) {
-									return null;
-								}
-								index = indexOf;
-								selector = key.substring(0, index);
-								descriptor = key.substring(index, key.length());
-								buffer.append('#');
-								buffer.append(Signature.toString(descriptor, selector, null, false, true));
-								break;
-							case IDelta.FIELD_ELEMENT_TYPE :
-								buffer.append('#');
-								buffer.append(this.key);
+				if (this.flags == IDelta.DEPRECATION) {
+					switch(this.elementType) {
+					case IDelta.ANNOTATION_ELEMENT_TYPE :
+					case IDelta.INTERFACE_ELEMENT_TYPE :
+					case IDelta.ENUM_ELEMENT_TYPE :
+					case IDelta.CLASS_ELEMENT_TYPE :
+						// If the root type is deprecated, don't repeat the typename
+						if (!this.typeName.equals(this.key)){
+							buffer.append('.');
+							buffer.append(this.key);
 						}
+						break;
+					case IDelta.CONSTRUCTOR_ELEMENT_TYPE :
+						int indexOf = key.indexOf('(');
+						if (indexOf == -1) {
+							return null;
+						}
+						int index = indexOf;
+						String selector = key.substring(0, index);
+						String descriptor = key.substring(index, key.length());
+						buffer.append('#');
+						buffer.append(Signature.toString(descriptor, selector, null, false, false));
+						break;
+					case IDelta.METHOD_ELEMENT_TYPE :
+						indexOf = key.indexOf('(');
+						if (indexOf == -1) {
+							return null;
+						}
+						index = indexOf;
+						selector = key.substring(0, index);
+						descriptor = key.substring(index, key.length());
+						buffer.append('#');
+						buffer.append(Signature.toString(descriptor, selector, null, false, true));
+						break;
+					case IDelta.FIELD_ELEMENT_TYPE :
+						buffer.append('#');
+						buffer.append(this.key);
+						break;
+					default :
+						break;
+					}
 				}
 			}
-			
+
 			return CommonUtilsTask.convertToHtml(String.valueOf(buffer));
 		}
 		public String getDisplayKind() {
 			if (ADDED.equals(this.kind)) {
-				return Messages.AddedElement;
+				return Messages.APIDeprecationReportConversionTask_KindDeprecated;
 			} else if (REMOVED.equals(this.kind)) {
-				return Messages.RemovedElement;
+				return Messages.APIDeprecationReportConversionTask_KindUndeprecated;
 			}
 			return Messages.ChangedElement;
 		}
