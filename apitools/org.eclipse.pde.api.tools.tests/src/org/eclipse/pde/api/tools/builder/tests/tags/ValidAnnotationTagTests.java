@@ -83,4 +83,20 @@ public class ValidAnnotationTagTests extends InvalidAnnotationTagTests {
 		deployTagTest(typename, inc, true);
 	}
 	
+	public void testInvalidAnnotationTag3I() {
+		x3(true);
+	}
+
+	public void testInvalidAnnotationTag3F() {
+		x3(false);
+	}
+	
+	/**
+	 * Tests having a bunch tags on member annotation elements
+	 */
+	private void x3(boolean inc) {
+		String typename = "test2.java"; 
+		deployTagTest(typename, inc, true);
+	}
+	
 }

@@ -113,12 +113,29 @@ public class TagValidator extends ASTVisitor {
 				allinterfaces = true;
 			}
 			if(isvisible) {
-				TypeDeclaration parent = (TypeDeclaration) node.getParent();
-				if(parent.isInterface() && Flags.isPublic(parent.getModifiers())) {
-					isvisible = true;
-				}
-				else if(!allinterfaces){
-					isvisible &= !Flags.isPrivate(flags) && !Flags.isPackageDefault(flags);
+				switch(node.getParent().getNodeType()) {
+					case ASTNode.ANNOTATION_TYPE_DECLARATION: {
+						AbstractTypeDeclaration parent = (AbstractTypeDeclaration) node.getParent();
+						if(Flags.isPublic(parent.getModifiers())) {
+							isvisible = true;
+						}
+						else if(!allinterfaces) {
+							isvisible &= !Flags.isPrivate(flags) && !Flags.isPackageDefault(flags);
+						}
+						break;
+					}
+					case ASTNode.TYPE_DECLARATION: {
+						TypeDeclaration parent = (TypeDeclaration) node.getParent();
+						if(parent.isInterface() && Flags.isPublic(parent.getModifiers())) {
+							isvisible = true;
+						}
+						else if(!allinterfaces){
+							isvisible &= !Flags.isPrivate(flags) && !Flags.isPackageDefault(flags);
+						}
+						break;
+					}
+					default:
+						break;
 				}
 			}
 		}
