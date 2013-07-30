@@ -143,9 +143,10 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 					case IJavaElement.METHOD: {
 						IMethod method = (IMethod) element;
 						int flags = method.getFlags();
+						boolean inter = method.getDeclaringType().isInterface();
 						if(Flags.isPrivate(flags) || 
-								Flags.isPackageDefault(flags) || 
-								hasNonVisibleParent(element, method.getDeclaringType().isInterface())) {
+								(Flags.isPackageDefault(flags) && !inter) || 
+								hasNonVisibleParent(element, inter)) {
 							return Collections.EMPTY_LIST;
 						}
 						member = IApiJavadocTag.MEMBER_METHOD;
@@ -157,11 +158,12 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 					case IJavaElement.FIELD: {
 						IField field  = (IField) element;
 						int flags = field.getFlags();
+						boolean inter = field.getDeclaringType().isInterface();
 						if(Flags.isFinal(flags) || 
 								field.isEnumConstant() || 
 								Flags.isPrivate(flags) || 
-								Flags.isPackageDefault(flags) || 
-								hasNonVisibleParent(element, field.getDeclaringType().isInterface())) {
+								(Flags.isPackageDefault(flags) && !inter) || 
+								hasNonVisibleParent(element, inter)) {
 							return Collections.EMPTY_LIST;
 						}
 						member = IApiJavadocTag.MEMBER_FIELD;
