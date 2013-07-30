@@ -304,7 +304,7 @@ public class InvalidAnnotationTagTests extends TagTest {
 	 * Tests for an invalid @noreference tag on a field in a visible member annotation
 	 */
 	private void x14(boolean inc) {
-		setExpectedProblemIds(getDefaultProblemSet(7));
+		setExpectedProblemIds(getDefaultProblemSet(1));
 		setExpectedMessageArgs(new String[][] {
 				{"@noreference", BuilderMessages.TagValidator_annotation_field}	
 		});
