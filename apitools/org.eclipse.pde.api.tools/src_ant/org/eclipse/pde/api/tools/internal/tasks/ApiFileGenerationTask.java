@@ -110,6 +110,11 @@ public class ApiFileGenerationTask extends Task {
 	String manifests;
 	String sourceLocations;
 	boolean allowNonApiProject = false;
+	/**
+	 * The encoding to read the source files with
+	 * @since 1.0.600
+	 */
+	String encoding;
 	Set apiPackages = new HashSet(0);
 
 	/**
@@ -165,7 +170,15 @@ public class ApiFileGenerationTask extends Task {
 	public void setAllowNonApiProject(String allow) {
 		this.allowNonApiProject = Boolean.valueOf(allow).booleanValue();
 	}
-	
+	/**
+	 * Sets the encoding the task should use when reading text streams
+	 * 
+	 * @param encoding
+	 * @since 1.0.600
+	 */
+	public void setEncoding(String encoding) {
+		this.encoding = encoding;
+	}
 	/**
 	 * Set the debug value.
 	 * <p>The possible values are: <code>true</code>, <code>false</code></p>
@@ -179,7 +192,7 @@ public class ApiFileGenerationTask extends Task {
 	/**
 	 * Set the extra manifest files' locations.
 	 * 
-	 * <p>This is a list of extra MANIFEST.MF files' locations that can be set to provide more api
+	 * <p>This is a list of extra MANIFEST.MF files' locations that can be set to provide more API
 	 * packages to scan. They are separated by the platform path separator. Each entry must exist.</p>
 	 * <p>If the path is not absolute, it will be resolved relative to the current working directory.</p>
 	 * <p>Jar files can be specified instead of MANIFEST.MF file. If a jar file is specified, its MANIFEST.MF file
@@ -202,6 +215,7 @@ public class ApiFileGenerationTask extends Task {
 	public void setExtraSourceLocations(String sourceLocations) {
 		this.sourceLocations = sourceLocations;
 	}
+	
 	/**
 	 * Execute the ant task
 	 */
@@ -227,6 +241,7 @@ public class ApiFileGenerationTask extends Task {
 		}
 		if (this.debug) {
 			System.out.println("Project name : " + this.projectName); //$NON-NLS-1$
+			System.out.println("Encoding: " + this.encoding); //$NON-NLS-1$
 			System.out.println("Project location : " + this.projectLocation); //$NON-NLS-1$
 			System.out.println("Binary locations : " + this.binaryLocations); //$NON-NLS-1$
 			System.out.println("Target folder : " + this.targetFolder); //$NON-NLS-1$
@@ -246,7 +261,7 @@ public class ApiFileGenerationTask extends Task {
 			throw new BuildException(
 					NLS.bind(Messages.api_generation_projectLocationNotADirectory, this.projectLocation));
 		}
-		// check if the project contains the api tools nature
+		// check if the project contains the API tools nature
 		File dotProjectFile = new File(root, ".project"); //$NON-NLS-1$
 		
 		if(!this.allowNonApiProject && !isAPIToolsNature(dotProjectFile)) {
@@ -398,7 +413,7 @@ public class ApiFileGenerationTask extends Task {
 			options.put(JavaCore.COMPILER_COMPLIANCE, resolveCompliance(manifestMap));
 			CompilationUnit unit = null;
 			for (int i = 0, max = allFiles.length; i < max; i++) {
-				unit = new CompilationUnit(allFiles[i].getAbsolutePath());
+				unit = new CompilationUnit(allFiles[i].getAbsolutePath(), this.encoding);
 				if (this.debug) {
 					System.out.println("Unit name[" + i + "] : " + unit.getName()); //$NON-NLS-1$ //$NON-NLS-2$
 				}
@@ -445,9 +460,9 @@ public class ApiFileGenerationTask extends Task {
 	}
 	
 	/**
-	 * Collects the names of the packages that are API for the bundle the api description is being created for
+	 * Collects the names of the packages that are API for the bundle the API description is being created for
 	 * @param manifestmap
-	 * @return the names of the packages that are API for the bundle the api description is being created for
+	 * @return the names of the packages that are API for the bundle the API description is being created for
 	 * @throws BundleException if parsing the manifest map to get API package names fail for some reason
 	 */
 	private Set/*<String>*/ collectApiPackageNames(Map manifestmap) throws BundleException {

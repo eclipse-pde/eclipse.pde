@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.api.tools.internal.ApiDescription;
 import org.eclipse.pde.api.tools.internal.CompilationUnit;
+import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 import org.eclipse.pde.api.tools.internal.model.ArchiveApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.model.DirectoryApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
@@ -74,7 +75,7 @@ public class TagScannerTests extends TestCase {
 	 */
 	private CompilationUnit getCompilationUnit(String name) {
 		Path path = (Path)SRC_LOC.append(name);
-		return new CompilationUnit(path.toOSString());
+		return new CompilationUnit(path.toOSString(), IApiCoreConstants.UTF_8);
 	}
 	
 	/**

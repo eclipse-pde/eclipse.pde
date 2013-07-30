@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.osgi.service.resolver.ResolverError;
 import org.eclipse.pde.api.tools.internal.ApiDescription;
 import org.eclipse.pde.api.tools.internal.CompilationUnit;
+import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 import org.eclipse.pde.api.tools.internal.builder.Reference;
 import org.eclipse.pde.api.tools.internal.model.ApiBaseline;
 import org.eclipse.pde.api.tools.internal.model.Component;
@@ -156,7 +157,7 @@ public class BadClassfileTests extends TestCase {
 	 */
 	public void testTagScanner() throws Exception {
 		writePreamble("testTagScanner()");
-		CompilationUnit unit = new CompilationUnit(TestSuiteHelper.getPluginDirectoryPath().append("test-classes").append("bad").append("nobytecodes.java").toOSString());
+		CompilationUnit unit = new CompilationUnit(TestSuiteHelper.getPluginDirectoryPath().append("test-classes").append("bad").append("nobytecodes.java").toOSString(), IApiCoreConstants.UTF_8);
 		TagScanner scanner = TagScanner.newScanner();
 		try {
 			scanner.scan(unit, new ApiDescription("test"), this.container, null, null);
