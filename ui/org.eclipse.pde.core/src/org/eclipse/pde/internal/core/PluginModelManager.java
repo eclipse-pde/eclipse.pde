@@ -51,6 +51,7 @@ public class PluginModelManager implements IModelProviderListener {
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 		 */
+		@Override
 		protected IStatus run(IProgressMonitor monitor) {
 			try {
 				boolean more = false;
@@ -503,6 +504,14 @@ public class PluginModelManager implements IModelProviderListener {
 	private synchronized void initializeTable() {
 		if (fEntries != null)
 			return;
+
+		// Check if PlatformAdmin service is available (Bug 413450)
+		PlatformAdmin pAdmin = Platform.getPlatformAdmin();
+		if (pAdmin == null) {
+			PDECore.logErrorMessage(PDECoreMessages.PluginModelManager_PlatformAdminMissingErrorMessage);
+			fEntries = Collections.emptyMap();
+			return;
+		}
 
 		long startTime = System.currentTimeMillis();
 

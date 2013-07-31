@@ -305,6 +305,8 @@ public class PDECoreMessages extends NLS {
 	public static String PluginModelManager_0;
 	public static String PluginModelManager_1;
 
+	public static String PluginModelManager_PlatformAdminMissingErrorMessage;
+
 	public static String PluginParser_EclipseConverterMissingAttribute;
 
 	public static String XMLTextChangeListener_editNames_addAttribute;
