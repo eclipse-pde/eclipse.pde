@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.core.site;
 
 import java.io.PrintWriter;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.core.isite.ISiteCategoryDefinition;
 import org.eclipse.pde.internal.core.isite.ISiteDescription;
@@ -24,18 +23,21 @@ public class SiteCategoryDefinition extends SiteObject implements ISiteCategoryD
 	private String name;
 	private ISiteDescription description;
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.isite.ISiteCategoryDefinition#getName()
 	 */
 	public String getName() {
 		return name;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.isite.ISiteObject#isValid()
+	 */
 	public boolean isValid() {
 		return name != null && getLabel() != null;
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.isite.ISiteCategoryDefinition#setName(java.lang.String)
 	 */
 	public void setName(String name) throws CoreException {
@@ -45,14 +47,14 @@ public class SiteCategoryDefinition extends SiteObject implements ISiteCategoryD
 		firePropertyChanged(P_NAME, oldValue, name);
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.isite.ISiteCategoryDefinition#getDescription()
 	 */
 	public ISiteDescription getDescription() {
 		return description;
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.isite.ISiteCategoryDefinition#setDescription(org.eclipse.pde.internal.core.isite.ISiteDescription)
 	 */
 	public void setDescription(ISiteDescription description) throws CoreException {
@@ -62,12 +64,20 @@ public class SiteCategoryDefinition extends SiteObject implements ISiteCategoryD
 		firePropertyChanged(P_DESCRIPTION, oldValue, description);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.site.SiteObject#reset()
+	 */
+	@Override
 	protected void reset() {
 		super.reset();
 		name = null;
 		description = null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.site.SiteObject#parse(org.w3c.dom.Node)
+	 */
+	@Override
 	protected void parse(Node node) {
 		super.parse(node);
 		name = getNodeAttribute(node, "name"); //$NON-NLS-1$
@@ -83,6 +93,10 @@ public class SiteCategoryDefinition extends SiteObject implements ISiteCategoryD
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.site.SiteObject#restoreProperty(java.lang.String, java.lang.Object, java.lang.Object)
+	 */
+	@Override
 	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
 		if (name.equals(P_NAME)) {
 			setName(newValue != null ? newValue.toString() : null);
@@ -92,6 +106,10 @@ public class SiteCategoryDefinition extends SiteObject implements ISiteCategoryD
 			super.restoreProperty(name, oldValue, newValue);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.site.SiteObject#write(java.lang.String, java.io.PrintWriter)
+	 */
+	@Override
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent);
 		writer.print("<category-def"); //$NON-NLS-1$

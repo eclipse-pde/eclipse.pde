@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -123,7 +123,7 @@ public class SourceLocationManager implements ICoreConstants {
 
 	/**
 	 * Returns whether the given path describes a source location with a source bundle manifest entry.
-	 * @param location the path to test
+	 * @param plugin the plug-in to test
 	 * @return whether the given path is a bundle manifest location
 	 */
 	public boolean hasBundleManifestLocation(IPluginBase plugin) {
@@ -228,7 +228,7 @@ public class SourceLocationManager implements ICoreConstants {
 	 * the given source file path.  The result will typically be of the form 
 	 * PluginID_PluginVersion/src.zip.
 	 * @param pluginBase the plugin that source is being looked up for
-	 * @param sourcePath the path to append that specifies the source file location
+	 * @param sourceFilePath the path to append that specifies the source file location
 	 * @return relative path describing where to find the source file
 	 */
 	private IPath getRelativePath(IPluginBase pluginBase, IPath sourceFilePath) {

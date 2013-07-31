@@ -17,7 +17,7 @@
      <extension-point id="targets" name="%expoint.target.name" schema="schema/targets.exsd"/>
      <extension-point id="targetLocations" name="%expoint.targetlocation.name" schema="schema/targetLocations.exsd"/>
      <extension-point id="bundleClasspathResolvers" name="%expoint.bundleClasspathResolvers.name" schema="schema/bundleClasspathResolvers.exsd"/>
-     <extension-point id="pluginClasspathContributors" name="pluginClasspathContributors" schema="schema/pluginClasspathContributors.exsd"/>
+     <extension-point id="pluginClasspathContributors" name="%exPoint.pluginClasspathContributors.name" schema="schema/pluginClasspathContributors.exsd"/>
 
    <extension
          point="org.eclipse.jdt.core.classpathVariableInitializer">

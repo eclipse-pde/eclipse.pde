@@ -24,6 +24,7 @@ public class SiteBundle extends VersionableObject implements ISiteBundle {
 	private static final long serialVersionUID = 1L;
 	private Vector<ISiteCategory> fCategories = new Vector<ISiteCategory>();
 
+	@Override
 	public boolean isValid() {
 		for (int i = 0; i < fCategories.size(); i++) {
 			ISiteCategory category = fCategories.get(i);
@@ -33,8 +34,8 @@ public class SiteBundle extends VersionableObject implements ISiteBundle {
 		return true;
 	}
 
-	/**
-	 * @see org.eclipse.pde.internal.core.isite.ISiteFeature#addCategories(org.eclipse.pde.internal.core.isite.ISiteCategory)
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.isite.ISiteBundle#addCategories(org.eclipse.pde.internal.core.isite.ISiteCategory[])
 	 */
 	public void addCategories(ISiteCategory[] newCategories) throws CoreException {
 		ensureModelEditable();
@@ -46,8 +47,8 @@ public class SiteBundle extends VersionableObject implements ISiteBundle {
 		fireStructureChanged(newCategories, IModelChangedEvent.INSERT);
 	}
 
-	/**
-	 * @see org.eclipse.pde.internal.core.isite.ISiteFeature#removeCategories(org.eclipse.pde.internal.core.isite.ISiteCategory)
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.isite.ISiteBundle#removeCategories(org.eclipse.pde.internal.core.isite.ISiteCategory[])
 	 */
 	public void removeCategories(ISiteCategory[] newCategories) throws CoreException {
 		ensureModelEditable();
@@ -66,6 +67,7 @@ public class SiteBundle extends VersionableObject implements ISiteBundle {
 		return fCategories.toArray(new ISiteCategory[fCategories.size()]);
 	}
 
+	@Override
 	protected void parse(Node node) {
 		super.parse(node);
 		NodeList children = node.getChildNodes();
@@ -80,6 +82,7 @@ public class SiteBundle extends VersionableObject implements ISiteBundle {
 		}
 	}
 
+	@Override
 	protected void reset() {
 		super.reset();
 		fCategories.clear();
@@ -88,6 +91,7 @@ public class SiteBundle extends VersionableObject implements ISiteBundle {
 	/**
 	 * @see org.eclipse.pde.core.IWritable#write(java.lang.String, java.io.PrintWriter)
 	 */
+	@Override
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent);
 		writer.print("<bundle"); //$NON-NLS-1$

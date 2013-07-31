@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,14 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target;
 
-import org.eclipse.pde.core.target.ITargetDefinition;
-import org.eclipse.pde.core.target.ITargetHandle;
-
 import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.core.target.ITargetDefinition;
+import org.eclipse.pde.core.target.ITargetHandle;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 
@@ -68,7 +67,7 @@ public class LocalTargetHandle extends AbstractTargetHandle {
 	 * 
 	 * @param uri URI
 	 * @return handle to a target in local metadata
-	 * @exception if unable to restore
+	 * @exception CoreException if unable to restore
 	 */
 	static ITargetHandle restoreHandle(URI uri) throws CoreException {
 		String part = uri.getSchemeSpecificPart();
@@ -105,6 +104,7 @@ public class LocalTargetHandle extends AbstractTargetHandle {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.target.impl.AbstractTargetHandle#getInputStream()
 	 */
+	@Override
 	protected InputStream getInputStream() throws CoreException {
 		try {
 			return new BufferedInputStream(new FileInputStream(getFile()));
@@ -148,6 +148,7 @@ public class LocalTargetHandle extends AbstractTargetHandle {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof LocalTargetHandle) {
 			LocalTargetHandle handle = (LocalTargetHandle) obj;
@@ -159,6 +160,7 @@ public class LocalTargetHandle extends AbstractTargetHandle {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		return (int) fTimeStamp;
 	}
@@ -166,6 +168,7 @@ public class LocalTargetHandle extends AbstractTargetHandle {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.target.impl.AbstractTargetHandle#delete()
 	 */
+	@Override
 	void delete() throws CoreException {
 		File file = getFile();
 		if (file.exists()) {
@@ -198,6 +201,7 @@ public class LocalTargetHandle extends AbstractTargetHandle {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.target.impl.AbstractTargetHandle#save(org.eclipse.pde.core.target.ITargetDefinition)
 	 */
+	@Override
 	void save(ITargetDefinition definition) throws CoreException {
 		OutputStream stream = getOutputStream();
 		((TargetDefinition) definition).write(stream);
@@ -211,6 +215,7 @@ public class LocalTargetHandle extends AbstractTargetHandle {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		return getFile().getName();
 	}

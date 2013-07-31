@@ -62,7 +62,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	/**
 	 * Whether this container should download and include environment (platform) specific units for all
 	 * available platforms (vs only the current target definition's environment settings).  Only supported 
-	 * by the slicer so {@link fIncludeAllRequired} must be turned off for this setting to be used.
+	 * by the slicer so {@link #INCLUDE_REQUIRED} must be turned off for this setting to be used.
 	 */
 	public static final int INCLUDE_ALL_ENVIRONMENTS = 1 << 1;
 
@@ -163,6 +163,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer#getLocation(boolean)
 	 */
+	@Override
 	public String getLocation(boolean resolve) throws CoreException {
 		return P2TargetUtils.BUNDLE_POOL.toOSString();
 	}
@@ -170,6 +171,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer#getType()
 	 */
+	@Override
 	public String getType() {
 		return TYPE;
 	}
@@ -177,6 +179,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.target.AbstractBundleContainer#resolveFeatures(org.eclipse.pde.core.target.ITargetDefinition, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	protected TargetFeature[] resolveFeatures(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
 		fTarget = definition;
 		fSynchronizer.synchronize(definition, monitor);
@@ -244,6 +247,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer#resolveBundles(org.eclipse.pde.core.target.ITargetDefinition, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	protected TargetBundle[] resolveBundles(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
 		fTarget = definition;
 		fSynchronizer.synchronize(definition, monitor);
@@ -368,6 +372,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		return updated;
 	}
 
+	@Override
 	protected void clearResolutionStatus() {
 		super.clearResolutionStatus();
 		fSynchronizer.markDirty();
@@ -422,6 +427,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.target.AbstractBundleContainer#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object o) {
 		if (o instanceof IUBundleContainer) {
 			IUBundleContainer iuContainer = (IUBundleContainer) o;
@@ -438,6 +444,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.target.AbstractBundleContainer#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		boolean result = true;
 		result &= getIncludeAllRequired();
@@ -625,6 +632,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 * Associate this container with the given target.  The include settings for this container
 	 * override the settings for all other IU containers in the target.  Last one wins.
 	 */
+	@Override
 	protected void associateWithTarget(ITargetDefinition target) {
 		super.associateWithTarget(target);
 		fSynchronizer = getSynchronizer(target);
@@ -639,6 +647,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.target.AbstractBundleContainer#serialize()
 	 */
+	@Override
 	public String serialize() {
 		Element containerElement;
 		Document document;

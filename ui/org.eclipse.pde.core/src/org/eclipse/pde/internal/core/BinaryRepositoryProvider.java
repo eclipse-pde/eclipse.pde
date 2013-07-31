@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -84,9 +84,10 @@ public class BinaryRepositoryProvider extends RepositoryProvider {
 	}
 
 	class BinaryFileModificationValidator extends FileModificationValidator {
-		/**
-		 * @see org.eclipse.core.resources.IFileModificationValidator#validateEdit(org.eclipse.core.resources.IFile, java.lang.Object)
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.resources.team.FileModificationValidator#validateEdit(org.eclipse.core.resources.IFile[], org.eclipse.core.resources.team.FileModificationValidationContext)
 		 */
+		@Override
 		public IStatus validateEdit(IFile[] files, FileModificationValidationContext context) {
 			for (int i = 0; i < files.length; i++) {
 				if (isBinaryResource(files[i], false)) {
@@ -96,9 +97,10 @@ public class BinaryRepositoryProvider extends RepositoryProvider {
 			return createOKStatus();
 		}
 
-		/**
-		 * @see org.eclipse.core.resources.IFileModificationValidator#validateSave(org.eclipse.core.resources.IFile)
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.resources.team.FileModificationValidator#validateSave(org.eclipse.core.resources.IFile)
 		 */
+		@Override
 		public IStatus validateSave(IFile file) {
 			if (isBinaryResource(file, false)) {
 				return createProblemStatus();
@@ -115,6 +117,7 @@ public class BinaryRepositoryProvider extends RepositoryProvider {
 	/**
 	 * @see org.eclipse.team.core.RepositoryProvider#configureProject()
 	 */
+	@Override
 	public void configureProject() throws CoreException {
 		IProject project = getProject();
 		project.setPersistentProperty(PDECore.EXTERNAL_PROJECT_PROPERTY, EXTERNAL_PROJECT_VALUE);
@@ -131,6 +134,7 @@ public class BinaryRepositoryProvider extends RepositoryProvider {
 	/**
 	 * @see org.eclipse.team.core.RepositoryProvider#getFileModificationValidator2()
 	 */
+	@Override
 	public FileModificationValidator getFileModificationValidator2() {
 		return fileModificationValidator;
 	}
@@ -138,6 +142,7 @@ public class BinaryRepositoryProvider extends RepositoryProvider {
 	/**
 	 * @see org.eclipse.team.core.RepositoryProvider#getID()
 	 */
+	@Override
 	public String getID() {
 		return PDECore.BINARY_REPOSITORY_PROVIDER;
 	}
@@ -145,6 +150,7 @@ public class BinaryRepositoryProvider extends RepositoryProvider {
 	/**
 	 * @see org.eclipse.team.core.RepositoryProvider#getMoveDeleteHook()
 	 */
+	@Override
 	public IMoveDeleteHook getMoveDeleteHook() {
 		return moveDeleteHook;
 	}
@@ -180,6 +186,7 @@ public class BinaryRepositoryProvider extends RepositoryProvider {
 	}
 
 	// we need to remove this but our tests will fail if we do, see bug 252003
+	@Override
 	public boolean canHandleLinkedResources() {
 		return true;
 	}

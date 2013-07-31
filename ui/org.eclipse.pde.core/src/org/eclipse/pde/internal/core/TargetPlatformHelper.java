@@ -101,6 +101,8 @@ public class TargetPlatformHelper {
 	 * @param osgiBundles list of bundles to strip path information from (commma separated)
 	 * @return list of bundles with path information stripped
 	 */
+	@SuppressWarnings("null")
+	// String.subString() does not return null
 	public static String stripPathInformation(String osgiBundles) {
 		StringBuffer result = new StringBuffer();
 		StringTokenizer tokenizer = new StringTokenizer(osgiBundles, ","); //$NON-NLS-1$

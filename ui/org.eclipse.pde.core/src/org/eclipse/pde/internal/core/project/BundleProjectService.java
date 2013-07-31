@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 IBM Corporation and others.
+ * Copyright (c) 2011, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,12 +41,12 @@ import org.osgi.framework.Version;
 public final class BundleProjectService implements IBundleProjectService {
 
 	/**
-	 * Property key used in {@link BundleImportDescription}s.
+	 * Property key used in {@link ScmUrlImportDescription}s.
 	 */
 	public static final String BUNDLE_IMPORTER = "BUNDLE_IMPORTER"; //$NON-NLS-1$
 
 	/**
-	 * Property key used in {@link BundleImportDescription}s.
+	 * Property key used in {@link ScmUrlImportDescription}s.
 	 */
 	public static final String PLUGIN = "PLUGIN"; //$NON-NLS-1$
 
@@ -182,7 +182,7 @@ public final class BundleProjectService implements IBundleProjectService {
 
 	/**
 	 * Creates and returns a map of bundle import descriptions for the given bundles.
-	 * The map is of {@link IBundleImporter} -> arrays of {@link BundleImportDescription}.
+	 * The map is of {@link IBundleImporter} -> arrays of {@link ScmUrlImportDescription}.
 	 * Adds 'BUNDLE_IMPORTER' property to each description that maps to the importer that
 	 * created each description.
 	 * Adds 'PLUGIN' property that maps to the original plug-in model.

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 EclipseSource Inc. and others.
+ * Copyright (c) 2010, 2013 EclipseSource Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     EclipseSource Inc. - initial API and implementation
+ *     IBM Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target;
 
@@ -127,7 +128,7 @@ public class P2TargetUtils {
 	/**
 	 * Whether this container should download and include environment (platform) specific units for all
 	 * available platforms (vs only the current target definition's environment settings).  Only supported 
-	 * by the slicer so {@link fIncludeAllRequired} must be turned off for this setting to be used.
+	 * by the slicer so {@link IUBundleContainer#INCLUDE_REQUIRED} must be turned off for this setting to be used.
 	 * <p>
 	 * <code>false</code> by default
 	 * </p>
@@ -790,7 +791,6 @@ public class P2TargetUtils {
 	 * per target definition.
 	 * 
 	 * @return definition the target to lookup
-	 * @throws CoreException in unable to generate identifier
 	 */
 	public static String getProfileId(ITargetDefinition definition) {
 		try {
@@ -1208,7 +1208,7 @@ public class P2TargetUtils {
 		// If the slicer encounters a non-error status, only report it if the slice returned no IU results
 		// It would be better to inform the user, but we do not want to stop the location from resolving (bug 350772)
 		if (!sliceStatus.isOK()) {
-			if (!queryResult.iterator().hasNext()) {
+			if (queryResult != null && !queryResult.iterator().hasNext()) {
 				throw new CoreException(sliceStatus);
 			}
 		}
@@ -1318,7 +1318,7 @@ public class P2TargetUtils {
 	/**
 	 * Returns the IU's for the given target related to the given containers
 	 * 
-	 * @param containers the bundle containers to filter with
+	 * @param definition the definition to filter with
 	 * @return the discovered IUs
 	 * @exception CoreException if unable to retrieve IU's
 	 */
@@ -1373,6 +1373,7 @@ public class P2TargetUtils {
 	private static final String PARM_OPERAND = "operand"; //$NON-NLS-1$
 
 	protected static class CollectNativesAction extends ProvisioningAction {
+		@Override
 		public IStatus execute(Map<String, Object> parameters) {
 			InstallableUnitOperand operand = (InstallableUnitOperand) parameters.get(PARM_OPERAND);
 			IInstallableUnit installableUnit = operand.second();
@@ -1400,6 +1401,7 @@ public class P2TargetUtils {
 			return Status.OK_STATUS;
 		}
 
+		@Override
 		public IStatus undo(Map<String, Object> parameters) {
 			// nothing to do for now
 			return Status.OK_STATUS;
@@ -1411,6 +1413,7 @@ public class P2TargetUtils {
 			super(NATIVE_ARTIFACTS, weight);
 		}
 
+		@Override
 		protected List<ProvisioningAction> getActions(InstallableUnitOperand operand) {
 			IInstallableUnit unit = operand.second();
 			if (unit != null && unit.getTouchpointType().getId().equals(NATIVE_TYPE)) {
@@ -1421,12 +1424,14 @@ public class P2TargetUtils {
 			return null;
 		}
 
+		@Override
 		protected IStatus initializePhase(IProgressMonitor monitor, IProfile profile, Map<String, Object> parameters) {
 			parameters.put(NATIVE_ARTIFACTS, new ArrayList<Object>());
 			parameters.put(PARM_PROFILE, profile);
 			return null;
 		}
 
+		@Override
 		protected IStatus completePhase(IProgressMonitor monitor, IProfile profile, Map<String, Object> parameters) {
 			@SuppressWarnings("unchecked")
 			List<IArtifactRequest> artifactRequests = (List<IArtifactRequest>) parameters.get(NATIVE_ARTIFACTS);

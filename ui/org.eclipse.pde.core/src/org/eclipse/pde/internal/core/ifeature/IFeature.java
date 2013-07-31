@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -68,7 +68,7 @@ public interface IFeature extends IFeatureObject, IVersionable, IEnvironment {
 	 * This method may throw a CoreException if
 	 * the model is not editable.
 	 *
-	 * @param reference a plug-in reference to add
+	 * @param plugins a plug-in reference to add
 	 */
 	public void addPlugins(IFeaturePlugin[] plugins) throws CoreException;
 
@@ -104,7 +104,7 @@ public interface IFeature extends IFeatureObject, IVersionable, IEnvironment {
 	 * This method may throw a CoreException if
 	 * the model is not editable.
 	 *
-	 * @param reference a required plug-in reference to add
+	 * @param imports a required plug-in reference to add
 	 */
 	public void addImports(IFeatureImport[] imports) throws CoreException;
 
@@ -182,7 +182,7 @@ public interface IFeature extends IFeatureObject, IVersionable, IEnvironment {
 	 * method may throw a CoreException if the model
 	 * is not editable.
 	 *
-	 * @param plugin a plug-in reference to remove 
+	 * @param plugins a plug-in reference to remove 
 	 */
 	public void removePlugins(IFeaturePlugin[] plugins) throws CoreException;
 
@@ -200,7 +200,7 @@ public interface IFeature extends IFeatureObject, IVersionable, IEnvironment {
 	 * This method may throw a CoreException if
 	 * the model is not editable.
 	 *
-	 * @param iimport a required plug-in reference to add
+	 * @param imports a required plug-in reference to add
 	 */
 	public void removeImports(IFeatureImport[] imports) throws CoreException;
 
@@ -208,7 +208,7 @@ public interface IFeature extends IFeatureObject, IVersionable, IEnvironment {
 	 * Sets the provider name of this feature. This method
 	 * may throw a CoreException if the model is not editable.
 	 *
-	 * @param the new provider name
+	 * @param providerName the new provider name
 	 */
 	public void setProviderName(String providerName) throws CoreException;
 
@@ -216,7 +216,7 @@ public interface IFeature extends IFeatureObject, IVersionable, IEnvironment {
 	 * Sets the image name of this feature. This method
 	 * may throw a CoreException if the model is not editable.
 	 *
-	 * @param the new image name
+	 * @param imageName the new image name
 	 */
 	public void setImageName(String imageName) throws CoreException;
 

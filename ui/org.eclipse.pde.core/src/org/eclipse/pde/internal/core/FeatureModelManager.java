@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -10,11 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import org.eclipse.pde.internal.core.FeatureTable.Idver;
-
 import java.util.*;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.pde.core.*;
+import org.eclipse.pde.internal.core.FeatureTable.Idver;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.util.VersionUtil;
 import org.osgi.framework.Version;
@@ -187,7 +186,6 @@ public class FeatureModelManager {
 	 * Finds active models with a given id
 	 * 
 	 * @param id
-	 * @param version
 	 * @return IFeature model[]
 	 */
 	public IFeatureModel[] findFeatureModels(String id) {

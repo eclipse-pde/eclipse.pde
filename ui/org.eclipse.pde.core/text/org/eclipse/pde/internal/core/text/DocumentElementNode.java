@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -533,10 +533,6 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		reconnectChildren(model);
 	}
 
-	/**
-	 * @param model
-	 * @param schema
-	 */
 	private void reconnectAttributes() {
 		// Get all attributes
 		Iterator<String> keys = fAttributes.keySet().iterator();
@@ -550,7 +546,6 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 
 	/**
 	 * @param model
-	 * @param schema
 	 */
 	private void reconnectChildren(IModel model) {
 		// Fill in appropriate transient field values
@@ -583,9 +578,6 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 		fParent = parent;
 	}
 
-	/**
-	 * @param parent
-	 */
 	private void reconnectPreviousSibling() {
 		// Transient field:  Previous Sibling
 		linkNodeWithSiblings(this);
@@ -593,7 +585,7 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 
 	/**
 	 * PRE: Node must have a set parent
-	 * @param node
+	 * @param targetNode
 	 */
 	private void linkNodeWithSiblings(IDocumentElementNode targetNode) {
 		// Get the node's parent
@@ -829,6 +821,7 @@ public abstract class DocumentElementNode extends DocumentXMLNode implements IDo
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.DocumentXMLNode#write()
 	 */
+	@Override
 	public String write() {
 		return write(false);
 	}

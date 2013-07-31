@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2012 IBM Corporation and others.
+ *  Copyright (c) 2003, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -145,7 +145,10 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 	 * @param header header to update
 	 */
 	private void removeLibrary(IPluginLibrary library, IManifestHeader header) {
-		String value = header == null ? null : header.getValue();
+		if (header == null) {
+			return;
+		}
+		String value = header.getValue();
 		String name = library.getName();
 		int index = value.indexOf(name);
 		if (index >= 0) {

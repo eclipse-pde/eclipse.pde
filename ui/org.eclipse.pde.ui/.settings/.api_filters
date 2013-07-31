@@ -9,4 +9,46 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/pde/internal/ui/wizards/imports/PluginImportWizardFirstPage.java" type="org.eclipse.pde.internal.ui.wizards.imports.PluginImportWizardFirstPage">
+        <filter comment="Required to use experimental Platform Team code to support import from source repository" id="640712815">
+            <message_arguments>
+                <message_argument value="Team"/>
+                <message_argument value="PluginImportWizardFirstPage"/>
+                <message_argument value="getBundleImporters()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Required to use experimental Platform Team code to support import from source repository" id="640712815">
+            <message_arguments>
+                <message_argument value="TeamUI"/>
+                <message_argument value="PluginImportWizardFirstPage"/>
+                <message_argument value="getPages(String)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/pde/ui/launcher/ConfigurationTab.java" type="org.eclipse.pde.ui.launcher.ConfigurationTab">
+        <filter comment="Code was moved to pde.launching, but we can't make breaking API changes" id="574668824">
+            <message_arguments>
+                <message_argument value="IPDELauncherConstants"/>
+                <message_argument value="ConfigurationTab"/>
+                <message_argument value="IPDELauncherConstants"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/pde/ui/launcher/IPDELauncherConstants.java" type="org.eclipse.pde.ui.launcher.IPDELauncherConstants">
+        <filter comment="Code was moved to pde.launching, but we can't make breaking API changes" id="571473929">
+            <message_arguments>
+                <message_argument value="IPDELauncherConstants"/>
+                <message_argument value="IPDELauncherConstants"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/pde/ui/launcher/MainTab.java" type="org.eclipse.pde.ui.launcher.MainTab">
+        <filter comment="Code was moved to pde.launching, but we can't make breaking API changes" id="574668824">
+            <message_arguments>
+                <message_argument value="IPDELauncherConstants"/>
+                <message_argument value="MainTab"/>
+                <message_argument value="IPDELauncherConstants"/>
+            </message_arguments>
+        </filter>
+    </resource>
 </component>

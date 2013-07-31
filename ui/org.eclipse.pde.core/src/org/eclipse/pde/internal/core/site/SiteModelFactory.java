@@ -19,7 +19,7 @@ public class SiteModelFactory implements ISiteModelFactory {
 		this.model = model;
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.isite.ISiteModelFactory#createSite()
 	 */
 	public ISite createSite() {
@@ -29,9 +29,6 @@ public class SiteModelFactory implements ISiteModelFactory {
 		return site;
 	}
 
-	/**
-	 * @see org.eclipse.pde.internal.core.isite.ISiteModelFactory#createFeature()
-	 */
 	public ISiteFeature createFeature() {
 		SiteFeature feature = new SiteFeature();
 		feature.model = model;
@@ -39,9 +36,6 @@ public class SiteModelFactory implements ISiteModelFactory {
 		return feature;
 	}
 
-	/**
-	 * @see org.eclipse.pde.internal.core.isite.ISiteModelFactory#createBundle()
-	 */
 	public ISiteBundle createBundle() {
 		SiteBundle bundle = new SiteBundle();
 		bundle.model = model;
@@ -49,9 +43,6 @@ public class SiteModelFactory implements ISiteModelFactory {
 		return bundle;
 	}
 
-	/**
-	 * @see org.eclipse.pde.internal.core.isite.ISiteModelFactory#createCategory()
-	 */
 	public ISiteCategory createCategory(ISiteFeature feature) {
 		SiteCategory category = new SiteCategory();
 		category.model = model;
@@ -59,9 +50,6 @@ public class SiteModelFactory implements ISiteModelFactory {
 		return category;
 	}
 
-	/**
-	 * @see org.eclipse.pde.internal.core.isite.ISiteModelFactory#createCategory()
-	 */
 	public ISiteCategory createCategory(ISiteBundle bundle) {
 		SiteCategory category = new SiteCategory();
 		category.model = model;
@@ -69,9 +57,6 @@ public class SiteModelFactory implements ISiteModelFactory {
 		return category;
 	}
 
-	/**
-	 * @see org.eclipse.pde.internal.core.isite.ISiteModelFactory#createCategoryDefinition()
-	 */
 	public ISiteCategoryDefinition createCategoryDefinition() {
 		SiteCategoryDefinition def = new SiteCategoryDefinition();
 		def.model = model;
@@ -79,8 +64,8 @@ public class SiteModelFactory implements ISiteModelFactory {
 		return def;
 	}
 
-	/**
-	 * @see org.eclipse.pde.internal.core.isite.ISiteModelFactory#createDescription()
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.isite.ISiteModelFactory#createDescription(org.eclipse.pde.internal.core.isite.ISiteObject)
 	 */
 	public ISiteDescription createDescription(ISiteObject parent) {
 		SiteDescription desc = new SiteDescription();

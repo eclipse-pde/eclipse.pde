@@ -826,7 +826,7 @@ public class PluginModelManager implements IModelProviderListener {
 			// treat it as a regular model removal
 			handleRemove(oldID, model, delta);
 			model.setBundleDescription(null);
-		} else if (oldID.equals(newID)) {
+		} else if (oldID != null && oldID.equals(newID)) {
 			// if the workspace bundle's MANIFEST.MF was touched or
 			// if the a target plug-in has now become enabled/checked, update the model
 			// in the state

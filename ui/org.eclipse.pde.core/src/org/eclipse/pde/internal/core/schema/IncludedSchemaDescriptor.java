@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@ package org.eclipse.pde.internal.core.schema;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
-
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -75,14 +74,11 @@ public class IncludedSchemaDescriptor implements ISchemaDescriptor {
 		return url;
 	}
 
-	/**
-	 * @see org.eclipse.pde.internal.core.schema.AbstractSchemaDescriptor#isEnabled()
-	 */
 	public boolean isEnabled() {
 		return true;
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.ischema.ISchemaDescriptor#getPointId()
 	 */
 	public String getPointId() {
@@ -93,7 +89,7 @@ public class IncludedSchemaDescriptor implements ISchemaDescriptor {
 		return null;
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.ischema.ISchemaDescriptor#getSchemaURL()
 	 */
 	public URL getSchemaURL() {

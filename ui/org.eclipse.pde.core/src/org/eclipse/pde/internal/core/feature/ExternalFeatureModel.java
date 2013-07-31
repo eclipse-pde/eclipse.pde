@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@ package org.eclipse.pde.internal.core.feature;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.internal.core.NLResourceHelper;
 
@@ -21,25 +20,28 @@ public class ExternalFeatureModel extends AbstractFeatureModel {
 	private static final long serialVersionUID = 1L;
 	private String location;
 
-	/**
-	 * @see AbstractModel#updateTimeStamp()
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.AbstractModel#updateTimeStamp()
 	 */
 	protected void updateTimeStamp() {
 	}
 
-	/**
-	 * @see IModel#isInSync()
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.IModel#isInSync()
 	 */
 	public boolean isInSync() {
 		return true;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.feature.AbstractFeatureModel#isEditable()
+	 */
 	public boolean isEditable() {
 		return false;
 	}
 
-	/**
-	 * @see IModel#load()
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.IModel#load()
 	 */
 	public void load() throws CoreException {
 	}
@@ -48,10 +50,16 @@ public class ExternalFeatureModel extends AbstractFeatureModel {
 		this.location = location;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.feature.AbstractFeatureModel#getInstallLocation()
+	 */
 	public String getInstallLocation() {
 		return location;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.AbstractNLModel#createNLResourceHelper()
+	 */
 	protected NLResourceHelper createNLResourceHelper() {
 		if (location != null) {
 			URL url = getNLLookupLocation();

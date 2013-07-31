@@ -213,6 +213,8 @@ public class PDEState extends MinimalState {
 		fCombined = localState != null && fAuxiliaryState.readPluginInfoCache(dir);
 		if (fCombined) {
 			long targetCount = fId;
+			// localState can't be null based on fCombined
+			@SuppressWarnings("null")
 			BundleDescription[] bundles = localState.getBundles();
 			for (int i = 0; i < bundles.length; i++) {
 				BundleDescription desc = bundles[i];

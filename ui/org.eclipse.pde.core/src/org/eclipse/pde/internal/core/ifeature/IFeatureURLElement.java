@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.pde.internal.core.ifeature;
 
 import java.net.URL;
-
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -78,7 +77,7 @@ public interface IFeatureURLElement extends IFeatureObject {
 
 	/**
 	 * Sets the type of the site with the specified URL.
-	 * @param UPDATE_SITE or WEB_SITE
+	 * @param siteType UPDATE_SITE or WEB_SITE
 	 */
 	public void setSiteType(int siteType) throws CoreException;
 }

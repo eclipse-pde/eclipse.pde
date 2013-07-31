@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.pde.ui.tests" version="2">
+    <resource path="src/org/eclipse/pde/ui/tests/project/BundleImporterTests.java" type="org.eclipse.pde.ui.tests.project.BundleImporterTests">
+        <filter comment="Use of experimental Platform Team code necessary for import from source repository" id="640712815">
+            <message_arguments>
+                <message_argument value="Team"/>
+                <message_argument value="BundleImporterTests"/>
+                <message_argument value="getBundleImporters()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

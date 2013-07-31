@@ -13,7 +13,7 @@ package org.eclipse.pde.internal.ui.build;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import org.eclipse.ant.internal.ui.launchConfigurations.AntLaunchShortcut;
-import org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants;
+import org.eclipse.ant.launching.IAntLaunchConstants;
 import org.eclipse.core.commands.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
@@ -167,7 +167,7 @@ public abstract class BaseBuildAction extends AbstractHandler {
 				return;
 
 			Map<String, String> properties = new HashMap<String, String>();
-			properties = launchCopy.getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_PROPERTIES, properties);
+			properties = launchCopy.getAttribute(IAntLaunchConstants.ATTR_ANT_PROPERTIES, properties);
 			properties.put(IXMLConstants.PROPERTY_BASE_WS, TargetPlatform.getWS());
 			properties.put(IXMLConstants.PROPERTY_BASE_OS, TargetPlatform.getOS());
 			properties.put(IXMLConstants.PROPERTY_BASE_ARCH, TargetPlatform.getOSArch());
@@ -190,12 +190,10 @@ public abstract class BaseBuildAction extends AbstractHandler {
 			}
 			properties.put(IXMLConstants.PROPERTY_BOOTCLASSPATH, BuildUtilities.getBootClasspath());
 
-			launchCopy.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_PROPERTIES, properties);
-			launchCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_NAME, (String) null);
-			launchCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, (String) null);
+			launchCopy.setAttribute(IAntLaunchConstants.ATTR_ANT_PROPERTIES, properties);
 			launchCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, (String) null);
 			launchCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, (String) null);
-			launchCopy.setAttribute(IAntLaunchConfigurationConstants.ATTR_DEFAULT_VM_INSTALL, (String) null);
+			launchCopy.setAttribute(IAntLaunchConstants.ATTR_DEFAULT_VM_INSTALL, (String) null);
 			launchCopy.doSave();
 		} catch (CoreException e) {
 		}

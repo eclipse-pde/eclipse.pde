@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,7 +40,7 @@ public interface IJREInfo extends IProductObject {
 	 * Sets the JRE container path to associate with the given target OS.  The 
 	 * JRE container path may be set to <code>null</code> to remove the association.
 	 * @param os the string describing the target os, must be one of the Platform.OS constants 
-	 * @param JREContainerPath path representing the JRE container path, can be <code>null</code>
+	 * @param jreContainerPath path representing the JRE container path, can be <code>null</code>
 	 */
 	public void setJREContainerPath(String os, IPath jreContainerPath);
 

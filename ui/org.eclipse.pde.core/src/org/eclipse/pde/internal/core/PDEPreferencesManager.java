@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,7 +41,7 @@ public final class PDEPreferencesManager {
 	 * 
 	 * @param listener the preference change listener to register
 	 * @see #removePreferenceChangeListener(IEclipsePreferences.IPreferenceChangeListener)
-	 * @see IEclipsePreferences.IPreferenceChangeListener
+	 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener
 	 */
 	public void addPreferenceChangeListener(IPreferenceChangeListener listener) {
 		fInstanceScopePrefs.addPreferenceChangeListener(listener);
@@ -185,7 +185,7 @@ public final class PDEPreferencesManager {
 	 * 
 	 * @param listener the preference change listener to remove
 	 * @see #addPreferenceChangeListener(IEclipsePreferences.IPreferenceChangeListener)
-	 * @see IEclipsePreferences.IPreferenceChangeListener
+	 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener
 	 */
 	public void removePreferenceChangeListener(IPreferenceChangeListener listener) {
 		fInstanceScopePrefs.removePreferenceChangeListener(listener);

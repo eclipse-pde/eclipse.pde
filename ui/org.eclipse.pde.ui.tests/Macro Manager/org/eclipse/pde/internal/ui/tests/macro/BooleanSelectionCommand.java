@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -13,19 +13,12 @@ package org.eclipse.pde.internal.ui.tests.macro;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Hashtable;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.swt.widgets.ToolItem;
-import org.eclipse.swt.widgets.Widget;
+import org.eclipse.swt.widgets.*;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -140,7 +133,7 @@ public class BooleanSelectionCommand extends MacroCommand {
 		return true;
 	}
 
-	private void doClick(Widget widget) throws CoreException {
+	private void doClick(Widget widget) {
 		Event e = new Event();
 		e.type = SWT.Selection;
 		e.widget = widget;
@@ -155,7 +148,7 @@ public class BooleanSelectionCommand extends MacroCommand {
 		return e;
 	}
 
-	private void doSelect(Widget widget) throws CoreException {
+	private void doSelect(Widget widget) {
 		if (widget instanceof Button)
 			((Button) widget).setSelection(selection.booleanValue());
 		else if (widget instanceof ToolItem)

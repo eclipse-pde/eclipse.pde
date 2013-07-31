@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2012 IBM Corporation and others.
+ *  Copyright (c) 2007, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -100,6 +100,7 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.IDocumentObject#getLineDelimiter()
 	 */
+	@Override
 	protected String getLineDelimiter() {
 		if (fModel instanceof IEditingModel) {
 			IDocument document = ((IEditingModel) fModel).getDocument();
@@ -111,6 +112,7 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#reconnect(org.eclipse.pde.core.plugin.ISharedPluginModel, org.eclipse.pde.internal.core.ischema.ISchema, org.eclipse.pde.internal.core.text.IDocumentElementNode)
 	 */
+	@Override
 	public void reconnect(IDocumentElementNode parent, IModel model) {
 		super.reconnect(parent, model);
 		// Transient field:  In The Model
@@ -168,6 +170,7 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#addChildNode(org.eclipse.pde.internal.core.text.IDocumentElementNode)
 	 */
+	@Override
 	public void addChildNode(IDocumentElementNode child) {
 		if (child instanceof IDocumentObject) {
 			((IDocumentObject) child).setInTheModel(true);
@@ -178,6 +181,7 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#addChildNode(org.eclipse.pde.internal.core.text.IDocumentElementNode, int)
 	 */
+	@Override
 	public void addChildNode(IDocumentElementNode child, int position) {
 		// Ensure the position is valid
 		// 0 <= position <= number of children
@@ -218,6 +222,7 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#removeChildNode(org.eclipse.pde.internal.core.text.IDocumentElementNode)
 	 */
+	@Override
 	public IDocumentElementNode removeChildNode(IDocumentElementNode child) {
 		IDocumentElementNode node = super.removeChildNode(child);
 		if ((node != null) && (node instanceof IDocumentObject)) {
@@ -229,6 +234,7 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#removeChildNode(int)
 	 */
+	@Override
 	public IDocumentElementNode removeChildNode(int index) {
 		IDocumentElementNode node = super.removeChildNode(index);
 		if ((node != null) && (node instanceof IDocumentObject)) {
@@ -277,7 +283,7 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 
 	/**
 	 * @param newNode
-	 * @param oldNode
+	 * @param clazz
 	 */
 	public void setChildNode(IDocumentElementNode newNode, Class<?> clazz) {
 		// Determine whether to fire the event
@@ -569,6 +575,7 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 		return setXMLAttribute(name, newValue);
 	}
 
+	@Override
 	public boolean setXMLAttribute(String name, String newValue) {
 		String oldValue = getXMLAttributeValue(name);
 		boolean changed = super.setXMLAttribute(name, newValue);
@@ -582,6 +589,7 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#setXMLContent(java.lang.String)
 	 */
+	@Override
 	public boolean setXMLContent(String text) {
 		String oldText = null;
 		// Get old text node
@@ -609,6 +617,7 @@ public abstract class DocumentObject extends DocumentElementNode implements IDoc
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.text.plugin.PluginDocumentNode#getFileEncoding()
 	 */
+	@Override
 	protected String getFileEncoding() {
 		if ((fModel != null) && (fModel instanceof IEditingModel)) {
 			return ((IEditingModel) fModel).getCharset();

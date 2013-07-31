@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -389,7 +389,7 @@ public class SourceEntryErrorReporter extends BuildErrorReporter {
 		} else if (entry instanceof IPath) {
 			path = (IPath) entry;
 		}
-		if (path.matchingFirstSegments(fProject.getFullPath()) > 0) {
+		if (path != null && path.matchingFirstSegments(fProject.getFullPath()) > 0) {
 			path = path.removeFirstSegments(1);
 		}
 		if (path != null) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2012 IBM Corporation and others.
+ * Copyright (c) 2003, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,6 +47,7 @@ import org.osgi.framework.Version;
 /**
  * The first page of the import plug-ins wizard
  */
+@SuppressWarnings("restriction")
 public class PluginImportWizardFirstPage extends WizardPage {
 
 	private static final String SETTINGS_IMPORTTYPE = "importType"; //$NON-NLS-1$
@@ -274,6 +275,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 
 		importActiveTargetButton = SWTFactory.createRadioButton(composite, PDEUIMessages.ImportWizard_FirstPage_target, 1);
 		importActiveTargetButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateSourceGroup(getImportOrigin());
 				validateDropLocation();
@@ -285,6 +287,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		openTargetPrefsLink.setText(PDEUIMessages.ImportWizard_FirstPage_goToTarget);
 		openTargetPrefsLink.setLayoutData(new GridData(SWT.END, SWT.BEGINNING, true, false));
 		openTargetPrefsLink.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				ITargetDefinition selected = getTargetDefinition();
 				ITargetHandle handle = null;
@@ -318,6 +321,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 
 		importTargetDefinitionButton = SWTFactory.createRadioButton(composite, PDEUIMessages.PluginImportWizardFirstPage_0, 1);
 		importTargetDefinitionButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateSourceGroup(getImportOrigin());
 				validateDropLocation();
@@ -325,6 +329,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		});
 		targetDefinitionCombo = SWTFactory.createCombo(composite, SWT.DROP_DOWN | SWT.READ_ONLY, 2, GridData.FILL_HORIZONTAL, null);
 		targetDefinitionCombo.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				validateDropLocation();
 			}
@@ -332,6 +337,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 
 		importDirectoryButton = SWTFactory.createRadioButton(composite, PDEUIMessages.ImportWizard_FirstPage_otherFolder, 1);
 		importDirectoryButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateSourceGroup(getImportOrigin());
 				validateDropLocation();
@@ -347,6 +353,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 
 		browseButton = SWTFactory.createPushButton(composite, PDEUIMessages.ImportWizard_FirstPage_browse, null, GridData.HORIZONTAL_ALIGN_FILL);
 		browseButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				IPath chosen = chooseDropLocation();
 				if (chosen != null)
@@ -478,6 +485,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.DialogPage#dispose()
 	 */
+	@Override
 	public void dispose() {
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 	}
@@ -826,6 +834,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.WizardPage#isCurrentPage()
 	 */
+	@Override
 	public boolean isCurrentPage() {
 		return super.isCurrentPage();
 	}

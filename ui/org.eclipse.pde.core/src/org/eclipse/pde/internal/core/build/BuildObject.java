@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -10,9 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.build;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.build.IBuildModel;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDECoreMessages;
@@ -49,6 +47,14 @@ public class BuildObject implements IBuildObject {
 		throw new CoreException(status);
 	}
 
+	/**
+	 * If the property defined by name is valid, changes its value to newValue
+	 * 
+	 * @param name name of the property to modify
+	 * @param oldValue the previous value
+	 * @param newValue the new value
+	 * @throws CoreException if the build model is read only
+	 */
 	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
 	}
 }

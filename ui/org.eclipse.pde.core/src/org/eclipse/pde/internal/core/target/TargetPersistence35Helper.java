@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 IBM Corporation and others.
+ * Copyright (c) 2010, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,8 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target;
-
-import org.eclipse.pde.core.target.NameVersionDescriptor;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -169,9 +167,8 @@ public class TargetPersistence35Helper {
 	 * to the appropriate set (in 3.5 each container had included/optional, in 3.6 only the target has included/optional).  The
 	 * sets may be null to indicate that no container has specified inclusion restrictions yet.
 	 * 
+	 * @param definition the target definition to deserialize
 	 * @param location document element representing a bundle container
-	 * @param included set to contain included bundles, possibly <code>null</code>
-	 * @param optional set to contain optional bundles, possible <code>null</code>
 	 * @throws CoreException
 	 */
 	private static void deserializeBundleContainer(ITargetDefinition definition, Element location) throws CoreException {

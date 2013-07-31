@@ -35,7 +35,7 @@ public class Site extends SiteObject implements ISite {
 	private String associateSitesUrl;
 	private ISiteDescription description;
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.isite.ISite#setType(java.lang.String)
 	 */
 	public void setType(String type) throws CoreException {
@@ -45,15 +45,15 @@ public class Site extends SiteObject implements ISite {
 		firePropertyChanged(P_TYPE, oldValue, type);
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.isite.ISite#getType()
 	 */
 	public String getType() {
 		return type;
 	}
 
-	/**
-	 * @see org.eclipse.pde.internal.core.isite.ISite#setURL(java.net.URL)
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.isite.ISite#setURL(java.lang.String)
 	 */
 	public void setURL(String url) throws CoreException {
 		ensureModelEditable();
@@ -62,15 +62,15 @@ public class Site extends SiteObject implements ISite {
 		firePropertyChanged(P_URL, oldValue, url);
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.isite.ISite#getURL()
 	 */
 	public String getURL() {
 		return url;
 	}
 
-	/**
-	 * @see org.eclipse.pde.internal.core.isite.ISite#setDigestURL(String)
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.isite.ISite#setDigestURL(java.lang.String)
 	 */
 	public void setDigestURL(String url) throws CoreException {
 		ensureModelEditable();
@@ -79,15 +79,15 @@ public class Site extends SiteObject implements ISite {
 		firePropertyChanged(P_DIGEST_URL, oldValue, url);
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.isite.ISite#getDigestURL()
 	 */
 	public String getDigestURL() {
 		return digestUrl;
 	}
 
-	/**
-	 * @see org.eclipse.pde.internal.core.isite.ISite#setAssociateSitesURL(String)
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.isite.ISite#setAssociateSitesURL(java.lang.String)
 	 */
 	public void setAssociateSitesURL(String url) throws CoreException {
 		ensureModelEditable();
@@ -96,15 +96,15 @@ public class Site extends SiteObject implements ISite {
 		firePropertyChanged(P_ASSOCIATE_SITES_URL, oldValue, url);
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.isite.ISite#getAssociateSitesURL()
 	 */
 	public String getAssociateSitesURL() {
 		return associateSitesUrl;
 	}
 
-	/**
-	 * @see org.eclipse.pde.internal.core.isite.ISite#setMirrorsURL(String)
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.isite.ISite#setMirrorsURL(java.lang.String)
 	 */
 	public void setMirrorsURL(String url) throws CoreException {
 		ensureModelEditable();
@@ -113,21 +113,21 @@ public class Site extends SiteObject implements ISite {
 		firePropertyChanged(P_MIRRORS_URL, oldValue, url);
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.isite.ISite#getMirrorsURL()
 	 */
 	public String getMirrorsURL() {
 		return mirrorsUrl;
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.isite.ISite#getDescription()
 	 */
 	public ISiteDescription getDescription() {
 		return description;
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.isite.ISite#setDescription(org.eclipse.pde.internal.core.isite.ISiteDescription)
 	 */
 	public void setDescription(ISiteDescription description) throws CoreException {
@@ -137,8 +137,8 @@ public class Site extends SiteObject implements ISite {
 		firePropertyChanged(P_DESCRIPTION, oldValue, description);
 	}
 
-	/**
-	 * @see org.eclipse.pde.internal.core.isite.ISite#addFeatures(org.eclipse.pde.internal.core.isite.ISiteFeature)
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.isite.ISite#addFeatures(org.eclipse.pde.internal.core.isite.ISiteFeature[])
 	 */
 	public void addFeatures(ISiteFeature[] newFeatures) throws CoreException {
 		ensureModelEditable();
@@ -150,8 +150,8 @@ public class Site extends SiteObject implements ISite {
 		fireStructureChanged(newFeatures, IModelChangedEvent.INSERT);
 	}
 
-	/**
-	 * @see org.eclipse.pde.internal.core.isite.ISite#addBundles(org.eclipse.pde.internal.core.isite.ISiteBundle)
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.isite.ISite#addBundles(org.eclipse.pde.internal.core.isite.ISiteBundle[])
 	 */
 	public void addBundles(ISiteBundle[] newBundles) throws CoreException {
 		ensureModelEditable();
@@ -163,8 +163,8 @@ public class Site extends SiteObject implements ISite {
 		fireStructureChanged(newBundles, IModelChangedEvent.INSERT);
 	}
 
-	/**
-	 * @see org.eclipse.pde.internal.core.isite.ISite#addArchives(org.eclipse.pde.internal.core.isite.ISiteArchive)
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.isite.ISite#addArchives(org.eclipse.pde.internal.core.isite.ISiteArchive[])
 	 */
 	public void addArchives(ISiteArchive[] archs) throws CoreException {
 		ensureModelEditable();
@@ -176,8 +176,8 @@ public class Site extends SiteObject implements ISite {
 		fireStructureChanged(archs, IModelChangedEvent.INSERT);
 	}
 
-	/**
-	 * @see org.eclipse.pde.internal.core.isite.ISite#addCategoryDefinitions(org.eclipse.pde.internal.core.isite.ISiteCategoryDefinition)
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.isite.ISite#addCategoryDefinitions(org.eclipse.pde.internal.core.isite.ISiteCategoryDefinition[])
 	 */
 	public void addCategoryDefinitions(ISiteCategoryDefinition[] defs) throws CoreException {
 		ensureModelEditable();
@@ -189,8 +189,8 @@ public class Site extends SiteObject implements ISite {
 		fireStructureChanged(defs, IModelChangedEvent.INSERT);
 	}
 
-	/**
-	 * @see org.eclipse.pde.internal.core.isite.ISite#removeFeatures(org.eclipse.pde.internal.core.isite.ISiteFeature)
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.isite.ISite#removeFeatures(org.eclipse.pde.internal.core.isite.ISiteFeature[])
 	 */
 	public void removeFeatures(ISiteFeature[] newFeatures) throws CoreException {
 		ensureModelEditable();
@@ -202,8 +202,8 @@ public class Site extends SiteObject implements ISite {
 		fireStructureChanged(newFeatures, IModelChangedEvent.REMOVE);
 	}
 
-	/**
-	 * @see org.eclipse.pde.internal.core.isite.ISite#removeBundles(org.eclipse.pde.internal.core.isite.ISiteBundle)
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.isite.ISite#removeBundles(org.eclipse.pde.internal.core.isite.ISiteBundle[])
 	 */
 	public void removeBundles(ISiteBundle[] newBundles) throws CoreException {
 		ensureModelEditable();
@@ -215,8 +215,8 @@ public class Site extends SiteObject implements ISite {
 		fireStructureChanged(newBundles, IModelChangedEvent.REMOVE);
 	}
 
-	/**
-	 * @see org.eclipse.pde.internal.core.isite.ISite#removeArchives(org.eclipse.pde.internal.core.isite.ISiteArchive)
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.isite.ISite#removeArchives(org.eclipse.pde.internal.core.isite.ISiteArchive[])
 	 */
 	public void removeArchives(ISiteArchive[] archs) throws CoreException {
 		ensureModelEditable();
@@ -228,8 +228,8 @@ public class Site extends SiteObject implements ISite {
 		fireStructureChanged(archs, IModelChangedEvent.REMOVE);
 	}
 
-	/**
-	 * @see org.eclipse.pde.internal.core.isite.ISite#removeCategoryDefinitions(org.eclipse.pde.internal.core.isite.ISiteCategoryDefinition)
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.isite.ISite#removeCategoryDefinitions(org.eclipse.pde.internal.core.isite.ISiteCategoryDefinition[])
 	 */
 	public void removeCategoryDefinitions(ISiteCategoryDefinition[] defs) throws CoreException {
 		ensureModelEditable();
@@ -241,34 +241,38 @@ public class Site extends SiteObject implements ISite {
 		fireStructureChanged(defs, IModelChangedEvent.REMOVE);
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.isite.ISite#getFeatures()
 	 */
 	public ISiteFeature[] getFeatures() {
 		return features.toArray(new ISiteFeature[features.size()]);
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.isite.ISite#getBundles()
 	 */
 	public ISiteBundle[] getBundles() {
 		return bundles.toArray(new ISiteBundle[bundles.size()]);
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.isite.ISite#getArchives()
 	 */
 	public ISiteArchive[] getArchives() {
 		return archives.toArray(new ISiteArchive[archives.size()]);
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.isite.ISite#getCategoryDefinitions()
 	 */
 	public ISiteCategoryDefinition[] getCategoryDefinitions() {
 		return categoryDefs.toArray(new ISiteCategoryDefinition[categoryDefs.size()]);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.site.SiteObject#reset()
+	 */
+	@Override
 	protected void reset() {
 		archives.clear();
 		categoryDefs.clear();
@@ -282,6 +286,10 @@ public class Site extends SiteObject implements ISite {
 		associateSitesUrl = null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.site.SiteObject#parse(org.w3c.dom.Node)
+	 */
+	@Override
 	protected void parse(Node node) {
 		type = getNodeAttribute(node, P_TYPE);
 		url = getNodeAttribute(node, P_URL);
@@ -328,6 +336,7 @@ public class Site extends SiteObject implements ISite {
 		}
 	}
 
+	@Override
 	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
 		if (name.equals(P_TYPE)) {
 			setType(newValue != null ? newValue.toString() : null);
@@ -345,6 +354,7 @@ public class Site extends SiteObject implements ISite {
 			super.restoreProperty(name, oldValue, newValue);
 	}
 
+	@Override
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent + "<site"); //$NON-NLS-1$
 		String indent2 = indent + INDENT;

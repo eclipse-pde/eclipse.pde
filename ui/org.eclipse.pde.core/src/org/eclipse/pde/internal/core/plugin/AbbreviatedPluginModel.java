@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2008 IBM Corporation and others.
+ *  Copyright (c) 2006, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@
 package org.eclipse.pde.internal.core.plugin;
 
 import java.io.InputStream;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 
@@ -31,7 +30,7 @@ public class AbbreviatedPluginModel extends WorkspacePluginModel {
 
 	/**
 	 * @param file
-	 * @param abbreviated
+	 * @param extensionPointIDs
 	 */
 	public AbbreviatedPluginModel(IFile file, String[] extensionPointIDs) {
 		super(file, true);
@@ -52,6 +51,7 @@ public class AbbreviatedPluginModel extends WorkspacePluginModel {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.plugin.AbstractPluginModelBase#load(java.io.InputStream, boolean)
 	 */
+	@Override
 	public void load(InputStream stream, boolean outOfSync) throws CoreException {
 		load(stream, outOfSync, new AbbreviatedPluginHandler(fExtensionPointIDs));
 	}

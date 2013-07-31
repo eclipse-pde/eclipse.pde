@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2012 IBM Corporation and others.
+ *  Copyright (c) 2006, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -60,6 +60,7 @@ public class SiteBuildOperation extends FeatureBasedExportOperation {
 		return info;
 	}
 
+	@Override
 	protected IStatus run(IProgressMonitor monitor) {
 		fBuildTime = System.currentTimeMillis();
 		IStatus status = super.run(monitor);
@@ -123,8 +124,6 @@ public class SiteBuildOperation extends FeatureBasedExportOperation {
 	 * Finds the highest version from feature jars. ID and version components
 	 * are constant. Qualifier varies
 	 * 
-	 * @param builtJars
-	 *            candidate jars in format id_version.jar
 	 * @param id
 	 * @param major
 	 * @param minor
@@ -174,6 +173,7 @@ public class SiteBuildOperation extends FeatureBasedExportOperation {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.exports.FeatureBasedExportOperation#createPostProcessingFiles()
 	 */
+	@Override
 	protected void createPostProcessingFiles() {
 		createPostProcessingFile(new File(fFeatureLocation, FEATURE_POST_PROCESSING));
 		createPostProcessingFile(new File(fFeatureLocation, PLUGIN_POST_PROCESSING));
@@ -182,6 +182,7 @@ public class SiteBuildOperation extends FeatureBasedExportOperation {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.exports.FeatureExportOperation#publishingP2Metadata()
 	 */
+	@Override
 	protected boolean publishingP2Metadata() {
 		return true;
 	}
@@ -189,6 +190,7 @@ public class SiteBuildOperation extends FeatureBasedExportOperation {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.exports.FeatureExportOperation#setP2MetaDataProperties(java.util.Map)
 	 */
+	@Override
 	protected void setP2MetaDataProperties(Map<String, String> map) {
 		if (fInfo.toDirectory) {
 			map.put(IXMLConstants.TARGET_P2_METADATA, IBuildPropertiesConstants.TRUE);

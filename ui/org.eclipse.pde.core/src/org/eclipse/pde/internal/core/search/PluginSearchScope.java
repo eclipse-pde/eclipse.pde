@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@ package org.eclipse.pde.internal.core.search;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 
@@ -36,7 +35,7 @@ public class PluginSearchScope {
 	 * SCOPE_WORKING_SETS
 	 * @param externalScope  one of EXTERNAL_SCOPE_NONE, EXTERNAL_SCOPE_ENABLED,
 	 * EXTERNAL_SCOPE_ALL
-	 * @param workingSets  goes with SCOPE_WORKING_SETS, otherwise null
+	 * @param selectedResources  goes with SCOPE_WORKING_SETS, otherwise null
 	 */
 	public PluginSearchScope(int workspaceScope, int externalScope, HashSet<?> selectedResources) {
 		this.workspaceScope = workspaceScope;

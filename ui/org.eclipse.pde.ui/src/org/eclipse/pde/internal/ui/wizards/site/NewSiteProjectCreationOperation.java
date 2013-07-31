@@ -44,6 +44,7 @@ public class NewSiteProjectCreationOperation extends WorkspaceModifyOperation {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.actions.WorkspaceModifyOperation#execute(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	protected void execute(IProgressMonitor monitor) throws CoreException, InvocationTargetException, InterruptedException {
 		int numUnits = fWebLocation == null ? 3 : 4;
 
@@ -72,7 +73,7 @@ public class NewSiteProjectCreationOperation extends WorkspaceModifyOperation {
 	}
 
 	/**
-	 * @return
+	 * @return location of the created site.xml
 	 * @throws CoreException
 	 */
 	private IFile createSiteManifest() throws CoreException {

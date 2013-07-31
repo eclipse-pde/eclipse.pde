@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,11 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target;
-
-import java.net.URI;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.pde.core.target.ITargetHandle;
-import org.eclipse.pde.core.target.NameVersionDescriptor;
 
 import java.io.*;
 import java.net.*;
@@ -311,7 +306,7 @@ public class TargetPlatformService implements ITargetPlatformService {
 	 * preference settings (target platform settings). It is not part of the service API since
 	 * the preference settings should eventually be removed.
 	 * 
-	 * @param definition target definition
+	 * @param target target definition
 	 * @throws CoreException
 	 */
 	public void loadTargetDefinitionFromPreferences(ITargetDefinition target) throws CoreException {

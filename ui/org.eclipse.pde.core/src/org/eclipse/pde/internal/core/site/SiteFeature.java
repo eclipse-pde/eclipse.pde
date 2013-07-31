@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -12,10 +12,7 @@ package org.eclipse.pde.internal.core.site;
 
 import java.io.PrintWriter;
 import java.util.Vector;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.core.IModelChangedEvent;
@@ -35,6 +32,10 @@ public class SiteFeature extends VersionableObject implements ISiteFeature {
 	private String fNL;
 	private boolean fIsPatch;
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.site.IdentifiableObject#isValid()
+	 */
+	@Override
 	public boolean isValid() {
 		if (fUrl == null)
 			return false;
@@ -46,8 +47,8 @@ public class SiteFeature extends VersionableObject implements ISiteFeature {
 		return true;
 	}
 
-	/**
-	 * @see org.eclipse.pde.internal.core.isite.ISiteFeature#addCategories(org.eclipse.pde.internal.core.isite.ISiteCategory)
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.isite.ISiteFeature#addCategories(org.eclipse.pde.internal.core.isite.ISiteCategory[])
 	 */
 	public void addCategories(ISiteCategory[] newCategories) throws CoreException {
 		ensureModelEditable();
@@ -59,8 +60,8 @@ public class SiteFeature extends VersionableObject implements ISiteFeature {
 		fireStructureChanged(newCategories, IModelChangedEvent.INSERT);
 	}
 
-	/**
-	 * @see org.eclipse.pde.internal.core.isite.ISiteFeature#removeCategories(org.eclipse.pde.internal.core.isite.ISiteCategory)
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.isite.ISiteFeature#removeCategories(org.eclipse.pde.internal.core.isite.ISiteCategory[])
 	 */
 	public void removeCategories(ISiteCategory[] newCategories) throws CoreException {
 		ensureModelEditable();
@@ -72,28 +73,28 @@ public class SiteFeature extends VersionableObject implements ISiteFeature {
 		fireStructureChanged(newCategories, IModelChangedEvent.REMOVE);
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.isite.ISiteFeature#getCategories()
 	 */
 	public ISiteCategory[] getCategories() {
 		return fCategories.toArray(new ISiteCategory[fCategories.size()]);
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.isite.ISiteFeature#getType()
 	 */
 	public String getType() {
 		return fType;
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.isite.ISiteFeature#getURL()
 	 */
 	public String getURL() {
 		return fUrl;
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.isite.ISiteFeature#setType(java.lang.String)
 	 */
 	public void setType(String type) throws CoreException {
@@ -103,8 +104,8 @@ public class SiteFeature extends VersionableObject implements ISiteFeature {
 		firePropertyChanged(P_TYPE, oldValue, fType);
 	}
 
-	/**
-	 * @see org.eclipse.pde.internal.core.isite.ISiteFeature#setURL(java.net.URL)
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.isite.ISiteFeature#setURL(java.lang.String)
 	 */
 	public void setURL(String url) throws CoreException {
 		ensureModelEditable();
@@ -113,6 +114,10 @@ public class SiteFeature extends VersionableObject implements ISiteFeature {
 		firePropertyChanged(P_TYPE, oldValue, url);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.site.VersionableObject#parse(org.w3c.dom.Node)
+	 */
+	@Override
 	protected void parse(Node node) {
 		super.parse(node);
 		fType = getNodeAttribute(node, "type"); //$NON-NLS-1$
@@ -135,6 +140,10 @@ public class SiteFeature extends VersionableObject implements ISiteFeature {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.site.VersionableObject#reset()
+	 */
+	@Override
 	protected void reset() {
 		super.reset();
 		fType = null;
@@ -147,6 +156,10 @@ public class SiteFeature extends VersionableObject implements ISiteFeature {
 		fCategories.clear();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.site.VersionableObject#restoreProperty(java.lang.String, java.lang.Object, java.lang.Object)
+	 */
+	@Override
 	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
 		if (name.equals(P_TYPE)) {
 			setType(newValue != null ? newValue.toString() : null);
@@ -167,9 +180,10 @@ public class SiteFeature extends VersionableObject implements ISiteFeature {
 		}
 	}
 
-	/**
-	 * @see org.eclipse.pde.core.IWritable#write(java.lang.String, java.io.PrintWriter)
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.site.SiteObject#write(java.lang.String, java.io.PrintWriter)
 	 */
+	@Override
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent);
 		writer.print("<feature"); //$NON-NLS-1$
@@ -205,6 +219,9 @@ public class SiteFeature extends VersionableObject implements ISiteFeature {
 			writer.println("/>"); //$NON-NLS-1$
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.isite.ISiteFeature#getArchiveFile()
+	 */
 	public IFile getArchiveFile() {
 		if (fUrl == null)
 			return null;

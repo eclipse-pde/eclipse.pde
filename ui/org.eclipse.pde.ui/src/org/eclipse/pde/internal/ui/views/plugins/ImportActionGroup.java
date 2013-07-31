@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,8 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.views.plugins;
-
-import org.eclipse.pde.core.plugin.IPluginModelBase;
 
 import java.util.*;
 import org.eclipse.core.runtime.CoreException;
@@ -35,6 +33,7 @@ import org.eclipse.team.core.importing.provisional.IBundleImporter;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionGroup;
 
+@SuppressWarnings("restriction")
 public class ImportActionGroup extends ActionGroup {
 
 	class ImportAction extends Action {
@@ -60,11 +59,13 @@ public class ImportActionGroup extends ActionGroup {
 			}
 		}
 
+		@Override
 		public void run() {
 			handleImport(fImportType, fSel);
 		}
 	}
 
+	@Override
 	public void fillContextMenu(IMenuManager menu) {
 		ActionContext context = getContext();
 		ISelection selection = context.getSelection();
@@ -114,10 +115,10 @@ public class ImportActionGroup extends ActionGroup {
 	 * @param models candidate models
 	 * @return  map of importer to import descriptions
 	 */
-	private static Map<?, ?> getImportDescriptions(Shell shell, IPluginModelBase[] models) {
+	private static Map<IBundleImporter, ScmUrlImportDescription[]> getImportDescriptions(Shell shell, IPluginModelBase[] models) {
 		BundleProjectService service = (BundleProjectService) BundleProjectService.getDefault();
 		try {
-			Map<?, ?> descriptions = service.getImportDescriptions(models); // all possible descriptions
+			Map<IBundleImporter, ScmUrlImportDescription[]> descriptions = service.getImportDescriptions(models); // all possible descriptions
 			if (!descriptions.isEmpty()) {
 				return descriptions;
 			}

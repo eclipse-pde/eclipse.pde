@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 IBM Corporation and others.
+ * Copyright (c) 2006, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,6 +41,7 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 	 * The workspace plug-in model manager is only interested
 	 * in changes to plug-in projects.
 	 */
+	@Override
 	protected boolean isInterestingProject(IProject project) {
 		return isPluginProject(project);
 	}
@@ -56,6 +57,7 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 	 * file.
 	 * </p>
 	 */
+	@Override
 	protected void createModel(IProject project, boolean notify) {
 		IPluginModelBase model = null;
 		IFile manifest = PDEProject.getManifest(project);
@@ -104,6 +106,7 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 	/**
 	 * Reacts to changes in files of interest to PDE
 	 */
+	@Override
 	protected void handleFileDelta(IResourceDelta delta) {
 		IFile file = (IFile) delta.getResource();
 		IProject project = file.getProject();
@@ -136,7 +139,7 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 	}
 
 	/**
-	 * @param file
+	 * @param schemaFile
 	 * @param delta
 	 */
 	private void handleEclipseSchemaDelta(IFile schemaFile, IResourceDelta delta) {
@@ -310,6 +313,7 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 	 * Removes the model associated with the given project from the table,
 	 * if the given project is a plug-in project
 	 */
+	@Override
 	protected Object removeModel(IProject project) {
 		Object model = super.removeModel(project);
 		if (model != null && PDEProject.getOptionsFile(project).exists())
@@ -353,6 +357,7 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 	 * Adds listeners to the workspace and to the java model
 	 * to be notified of PRE_CLOSE events and POST_CHANGE events.
 	 */
+	@Override
 	protected void addListeners() {
 		IWorkspace workspace = PDECore.getWorkspace();
 		workspace.addResourceChangeListener(this, IResourceChangeEvent.PRE_CLOSE);
@@ -365,6 +370,7 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 	 * Removes listeners that the model manager attached on others, 
 	 * as well as listeners attached on the model manager
 	 */
+	@Override
 	protected void removeListeners() {
 		PDECore.getWorkspace().removeResourceChangeListener(this);
 		JavaCore.removePreProcessingResourceChangedListener(this);
@@ -382,6 +388,7 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 	 * <code>false</code> otherwise.
 	 * 
 	 */
+	@Override
 	protected boolean isInterestingFolder(IFolder folder) {
 		IContainer root = PDEProject.getBundleRoot(folder.getProject());
 		if (folder.getProjectRelativePath().isPrefixOf(root.getProjectRelativePath())) {
@@ -457,6 +464,7 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 		}
 	}
 
+	@Override
 	protected void processModelChanges() {
 		// process model changes first so model manager is accurate when we process extension events - bug 209155
 		super.processModelChanges();
@@ -464,6 +472,7 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 		fChangedExtensions = null;
 	}
 
+	@Override
 	protected void createAndFireEvent(String eventId, int type, Collection<IModel> added, Collection<IModel> removed, Collection<IModel> changed) {
 		if (eventId.equals("org.eclipse.pde.internal.core.IExtensionDeltaEvent")) { //$NON-NLS-1$
 			IExtensionDeltaEvent event = new ExtensionDeltaEvent(type, added.toArray(new IPluginModelBase[added.size()]), removed.toArray(new IPluginModelBase[removed.size()]), changed.toArray(new IPluginModelBase[changed.size()]));

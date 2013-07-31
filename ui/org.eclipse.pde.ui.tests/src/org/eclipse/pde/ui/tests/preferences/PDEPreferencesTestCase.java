@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@ import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.builders.CompilerFlags;
 import org.eclipse.pde.internal.core.natures.PDE;
+import org.eclipse.pde.internal.launching.ILaunchingPreferenceConstants;
 import org.eclipse.pde.internal.ui.*;
 
 
@@ -30,12 +31,12 @@ import org.eclipse.pde.internal.ui.*;
  */
 public class PDEPreferencesTestCase extends TestCase {
 
-	private static final String PLUGIN_ID = "org.eclipse.pde.core"; 
-	
+	private static final String PLUGIN_ID = "org.eclipse.pde.core";
+
 	public PDEPreferencesTestCase(){
 		initPreferences();
 	}
-	
+
 	private static void initPreferences(){
 		PDEPreferencesManager preferences = new PDEPreferencesManager(PLUGIN_ID);
 		preferences.setValue("stringKey", "stringValue");
@@ -50,31 +51,31 @@ public class PDEPreferencesTestCase extends TestCase {
 	public static Test suite() {
 		return new TestSuite(PDEPreferencesTestCase.class);
 	}
-	
+
 	public void testInstanceScopePDEPreferences(){
 		PDEPreferencesManager preferences = new PDEPreferencesManager(PLUGIN_ID);
 		assertEquals(preferences.getString("stringKey"), "stringValue");
 		assertEquals(preferences.getBoolean("booleanKey"), true);
 		assertEquals(preferences.getInt("intKey"), 0);
 	}
-	
+
 	public void testDefaultPDEPreferences(){
 		PDEPreferencesManager preferences = new PDEPreferencesManager(PLUGIN_ID);
 		assertEquals(preferences.getDefaultString("stringKey"), "defaultValue");
 		assertEquals(preferences.getDefaultBoolean("booleanKey"), false);
 		assertEquals(preferences.getDefaultInt("intKey"), -1);
 	}
-	
+
 	public void testPreferenceChangeListener1(){
 		IEclipsePreferences preferences = InstanceScope.INSTANCE.getNode(PLUGIN_ID);
 		final String key = "stringKey";
 		String originalValue = preferences.get(key, key);
 
 		IPreferenceChangeListener listener = new IPreferenceChangeListener(){
-		
+
 			public void preferenceChange(PreferenceChangeEvent event) {
 				assertEquals(event.getKey(), key);
-				assertEquals(event.getNewValue(), "stringValue");				
+				assertEquals(event.getNewValue(), "stringValue");
 			}
 		};
 		preferences.addPreferenceChangeListener(listener);
@@ -85,20 +86,20 @@ public class PDEPreferencesTestCase extends TestCase {
 		if (originalValue != key)
 			preferences.put(key, originalValue);
 	}
-	
+
 	public void testPreferenceChangeListner2(){
 		IEclipsePreferences preferences = InstanceScope.INSTANCE.getNode(PLUGIN_ID);
 		final String key = "stringKey";
 		String originalValue = preferences.get(key, key);
 
 		preferences.put(key, "oldStringValue");
-		
+
 		IPreferenceChangeListener listener = new IPreferenceChangeListener(){
-		
+
 			public void preferenceChange(PreferenceChangeEvent event) {
 				assertEquals(event.getKey(), key);
 				assertEquals(event.getOldValue(), "oldStringValue");
-				assertEquals(event.getNewValue(), "newStringValue");			
+				assertEquals(event.getNewValue(), "newStringValue");
 			}
 		};
 		preferences.put(key, "newStringValue");
@@ -108,7 +109,7 @@ public class PDEPreferencesTestCase extends TestCase {
 		if (originalValue != key)
 			preferences.put(key, originalValue);
 	}
-	
+
 	public void testPDECoreDefaultPreferences(){
 		PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
 		assertEquals(preferences.getDefaultString(ICoreConstants.TARGET_MODE), ICoreConstants.VALUE_USE_THIS);
@@ -116,7 +117,7 @@ public class PDEPreferencesTestCase extends TestCase {
 		assertEquals(preferences.getDefaultString(ICoreConstants.OS), Platform.getOS());
 		assertEquals(preferences.getDefaultBoolean(ICoreConstants.TARGET_PLATFORM_REALIZATION), TargetPlatform.getDefaultLocation().equals(TargetPlatform.getLocation()));
 	}
-	
+
 	public void testCompilerPreferences(){
 		// Testing the compiler preferences set by PDECore in org.eclipse.pde
 		PDEPreferencesManager preferences = new PDEPreferencesManager(PDE.PLUGIN_ID);
@@ -124,21 +125,21 @@ public class PDEPreferencesTestCase extends TestCase {
 		assertEquals(preferences.getDefaultInt(CompilerFlags.P_DEPRECATED), CompilerFlags.WARNING);
 		assertEquals(preferences.getDefaultInt(CompilerFlags.P_MISSING_VERSION_EXP_PKG), CompilerFlags.IGNORE);
 	}
-	
+
 	public void testPreferencesCompatability(){
-		Preferences preferences = PDECore.getDefault().getPluginPreferences();		
+		Preferences preferences = PDECore.getDefault().getPluginPreferences();
 		PDEPreferencesManager preferencesManager = PDECore.getDefault().getPreferencesManager();
 		assertEquals(preferences.getString(ICoreConstants.TARGET_MODE), preferencesManager.getString(ICoreConstants.TARGET_MODE));
 		assertEquals(preferences.getString(ICoreConstants.CHECKED_PLUGINS), preferencesManager.getString(ICoreConstants.CHECKED_PLUGINS));
-		assertEquals(preferences.getBoolean(ICoreConstants.TARGET_PLATFORM_REALIZATION), preferencesManager.getBoolean(ICoreConstants.TARGET_PLATFORM_REALIZATION));		
+		assertEquals(preferences.getBoolean(ICoreConstants.TARGET_PLATFORM_REALIZATION), preferencesManager.getBoolean(ICoreConstants.TARGET_PLATFORM_REALIZATION));
 	}
-	
+
 	public void testCompatibilityWithPreferenceStore(){
 		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
 		PDEPreferencesManager preferencesManager = new PDEPreferencesManager(IPDEUIConstants.PLUGIN_ID);
 		assertEquals(store.getString(IPreferenceConstants.PROP_SHOW_OBJECTS),preferencesManager.getString(IPreferenceConstants.PROP_SHOW_OBJECTS));
 		assertEquals(store.getBoolean(IPreferenceConstants.EDITOR_FOLDING_ENABLED),preferencesManager.getBoolean(IPreferenceConstants.EDITOR_FOLDING_ENABLED));
-		assertEquals(store.getBoolean(IPreferenceConstants.PROP_AUTO_MANAGE),preferencesManager.getBoolean(IPreferenceConstants.PROP_AUTO_MANAGE));
+		assertEquals(store.getBoolean(ILaunchingPreferenceConstants.PROP_AUTO_MANAGE), preferencesManager.getBoolean(ILaunchingPreferenceConstants.PROP_AUTO_MANAGE));
 	}
-	
+
 }

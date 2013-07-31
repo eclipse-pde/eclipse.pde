@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2008 IBM Corporation and others.
+ *  Copyright (c) 2005, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -12,10 +12,7 @@ package org.eclipse.pde.internal.core.builders;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.w3c.dom.Attr;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.NodeList;
+import org.w3c.dom.*;
 
 public class UpdateSiteErrorReporter extends ManifestErrorReporter {
 
@@ -152,7 +149,7 @@ public class UpdateSiteErrorReporter extends ManifestErrorReporter {
 	}
 
 	/**
-	 * @param root
+	 * @param parent
 	 */
 	private void validateDescription(Element parent) {
 		NodeList list = getChildrenByName(parent, "description"); //$NON-NLS-1$
