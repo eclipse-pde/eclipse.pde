@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,6 +28,10 @@ public interface IPreferenceConstants extends ILaunchingPreferenceConstants {
 	public static final String OVERWRITE_BUILD_FILES_ON_EXPORT = "Preferences.MainPage.overwriteBuildFilesOnExport"; //$NON-NLS-1$
 	public static final String PROP_PROMPT_REMOVE_TARGET = "Preferences.MainPage.promptRemoveTarget"; //$NON-NLS-1$
 	public static final String ADD_TO_JAVA_SEARCH = "Preferences.MainPage.addToJavaSearch"; //$NON-NLS-1$
+	/**
+	 * Boolean preference whether to display the active target platform in the main window status bar
+	 */
+	public static final String SHOW_TARGET_STATUS = "Preferences.MainPage.showTargetStatus"; //$NON-NLS-1$
 
 	// Editor Outline
 	public static final String PROP_OUTLINE_SORTING = "PDEMultiPageContentOutline.SortingAction.isChecked"; //$NON-NLS-1$

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 EclipseSource Corporation and others.
+ * Copyright (c) 2009, 2013 EclipseSource Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,6 +49,12 @@ import org.osgi.framework.Version;
  */
 public class TargetPlatformPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
+	/**
+	 * The ID of this preference page used to contribute via extension.<br>
+	 * Value is: "org.eclipse.pde.ui.TargetPlatformPreferencePage"
+	 */
+	public static final String PAGE_ID = "org.eclipse.pde.ui.TargetPlatformPreferencePage"; //$NON-NLS-1$
+
 	private static final String ORG_ECLIPSE_OSGI = "org.eclipse.osgi"; //$NON-NLS-1$
 
 	private class TargetLabelProvider extends StyledCellLabelProvider {
@@ -85,9 +91,11 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.StyledCellLabelProvider#update(org.eclipse.jface.viewers.ViewerCell)
 		 */
+		@Override
 		public void update(ViewerCell cell) {
 			final Object element = cell.getElement();
 			Styler style = new Styler() {
+				@Override
 				public void applyStyles(TextStyle textStyle) {
 					if (element.equals(fActiveTarget)) {
 						textStyle.font = getBoldFont();
@@ -148,6 +156,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.StyledCellLabelProvider#dispose()
 		 */
+		@Override
 		public void dispose() {
 			PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 			if (fTextFont != null) {
@@ -215,6 +224,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public Control createContents(Composite parent) {
 		Composite container = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH, 0, 0);
 		createTargetProfilesGroup(container);
@@ -261,6 +271,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 			}
 		});
 		fTableViewer.getTable().addKeyListener(new KeyAdapter() {
+			@Override
 			public void keyPressed(KeyEvent e) {
 				if (e.character == SWT.DEL) {
 					handleRemove();
@@ -284,6 +295,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		}
 
 		fTableViewer.setComparator(new ViewerComparator() {
+			@Override
 			public int compare(Viewer viewer, Object e1, Object e2) {
 				String name1 = ((TargetDefinition) e1).getName();
 				String name2 = ((TargetDefinition) e2).getName();
@@ -301,6 +313,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 
 		fReloadButton = SWTFactory.createPushButton(buttonComposite, PDEUIMessages.TargetPlatformPreferencePage2_16, null);
 		fReloadButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleReload();
 			}
@@ -310,6 +323,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 
 		fAddButton = SWTFactory.createPushButton(buttonComposite, PDEUIMessages.TargetPlatformPreferencePage2_3, null);
 		fAddButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleAdd();
 			}
@@ -317,6 +331,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 
 		fEditButton = SWTFactory.createPushButton(buttonComposite, PDEUIMessages.TargetPlatformPreferencePage2_5, null);
 		fEditButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleEdit();
 			}
@@ -324,6 +339,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 
 		fRemoveButton = SWTFactory.createPushButton(buttonComposite, PDEUIMessages.TargetPlatformPreferencePage2_7, null);
 		fRemoveButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleRemove();
 			}
@@ -331,6 +347,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 
 		fMoveButton = SWTFactory.createPushButton(buttonComposite, PDEUIMessages.TargetPlatformPreferencePage2_13, null);
 		fMoveButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleMove();
 			}
@@ -409,6 +426,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		if (!selection.isEmpty()) {
 			isOutOfSynch = false;
 			ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell()) {
+				@Override
 				protected void configureShell(Shell shell) {
 					super.configureShell(shell);
 					shell.setText(PDEUIMessages.TargetPlatformPreferencePage2_12);
@@ -628,6 +646,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
+	@Override
 	public void performDefaults() {
 		// add a default target platform and select it (or just select it if present)
 		ITargetPlatformService service = getTargetService();
@@ -659,6 +678,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
 	 */
+	@Override
 	public boolean performOk() {
 		ITargetPlatformService service = getTargetService();
 		if (service == null) {
@@ -772,6 +792,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 
 			// Warn about forward compatibility, synchronize java search
 			IJobChangeListener listener = new JobChangeAdapter() {
+				@Override
 				public void done(IJobChangeEvent event) {
 					if (event.getResult().getSeverity() == IStatus.OK) {
 						if (fActiveTarget != null) {
@@ -828,6 +849,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 
 	private void runGC() {
 		Job job = new Job(PDEUIMessages.TargetPlatformPreferencePage2_26) {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				monitor.beginTask(PDEUIMessages.TargetPlatformPreferencePage2_27, IProgressMonitor.UNKNOWN);
 				P2TargetUtils.garbageCollect();

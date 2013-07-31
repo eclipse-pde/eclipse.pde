@@ -61,7 +61,7 @@ public final class PDEPreferencesManager {
 	 * @param key <code>key</code> whose associated value is to be returned as a
 	 *        <code>boolean</code>.
 	 * @return the <code>boolean</code> value associated with <code>key</code>, or
-	 *         <code>null</code> if the associated value does not exist in either scope or cannot
+	 *         <code>false</code> if the associated value does not exist in either scope or cannot
 	 *         be interpreted as a <code>boolean</code>.
 	 * @see #setValue(String, boolean)
 	 * @see #setValueOrRemove(String, boolean)

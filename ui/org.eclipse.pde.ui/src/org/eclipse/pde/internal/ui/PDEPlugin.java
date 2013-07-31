@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.pde.internal.core.PDEPreferencesManager;
 import org.eclipse.pde.internal.ui.launcher.PDELogFileProvider;
+import org.eclipse.pde.internal.ui.shared.target.TargetStatus;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -31,6 +32,7 @@ import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.internal.views.log.ILogFileProvider;
 import org.eclipse.ui.internal.views.log.LogFilesManager;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.osgi.framework.BundleContext;
 
@@ -190,15 +192,27 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.Plugin#start(org.osgi.framework.BundleContext)
 	 */
+	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		fLogFileProvider = new PDELogFileProvider();
 		LogFilesManager.addLogFileProvider(fLogFileProvider);
+
+		UIJob job = new UIJob("Refresh Target Status") {
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+				TargetStatus.refreshTargetStatus();
+				return Status.OK_STATUS;
+			}
+		};
+		job.setSystem(true);
+		job.schedule();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
 	 */
+	@Override
 	public void stop(BundleContext context) throws Exception {
 		if (fFormColors != null) {
 			fFormColors.dispose();

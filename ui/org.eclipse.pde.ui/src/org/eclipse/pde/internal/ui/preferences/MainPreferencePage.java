@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,19 +11,21 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.preferences;
 
-import org.eclipse.pde.core.target.ITargetHandle;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.pde.core.target.ITargetHandle;
 import org.eclipse.pde.internal.core.PDEPreferencesManager;
 import org.eclipse.pde.internal.core.target.TargetPlatformService;
 import org.eclipse.pde.internal.launching.ILaunchingPreferenceConstants;
 import org.eclipse.pde.internal.launching.PDELaunchingPlugin;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.launcher.BaseBlock;
+import org.eclipse.pde.internal.ui.shared.target.TargetStatus;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -66,10 +68,12 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 			createButtons(buttons, new String[] {PDEUIMessages.MainPreferencePage_runtimeWorkspace_workspace, PDEUIMessages.MainPreferencePage_runtimeWorkspace_fileSystem, PDEUIMessages.MainPreferencePage_runtimeWorkspace_variables});
 		}
 
+		@Override
 		protected String getName() {
 			return PDEUIMessages.WorkspaceDataBlock_name;
 		}
 
+		@Override
 		protected boolean isFile() {
 			return false;
 		}
@@ -102,10 +106,12 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 			createButtons(buttons, new String[] {PDEUIMessages.MainPreferencePage_junitWorkspace_workspace, PDEUIMessages.MainPreferencePage_junitWorkspace_fileSystem, PDEUIMessages.MainPreferencePage_junitWorkspace_variables});
 		}
 
+		@Override
 		protected String getName() {
 			return PDEUIMessages.DefaultJUnitWorkspaceBlock_name;
 		}
 
+		@Override
 		protected boolean isFile() {
 			return false;
 		}
@@ -120,6 +126,7 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 	private Button fShowSourceBundles;
 	private Button fPromptOnRemove;
 	private Button fAddToJavaSearch;
+	private Button fShowTargetStatus;
 
 	private Text fRuntimeWorkspaceLocation;
 	private Button fRuntimeWorkspaceLocationRadio;
@@ -137,6 +144,7 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createContents(Composite parent) {
 		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
 		PDEPreferencesManager launchingStore = PDELaunchingPlugin.getDefault().getPreferenceManager();
@@ -160,6 +168,7 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 		fPromptOnRemove.setSelection(!MessageDialogWithToggle.ALWAYS.equals(store.getString(IPreferenceConstants.PROP_PROMPT_REMOVE_TARGET)));
 		fPromptOnRemove.addSelectionListener(new SelectionAdapter() {
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				PDEPlugin.getDefault().getPreferenceStore().setValue(IPreferenceConstants.PROP_PROMPT_REMOVE_TARGET, fPromptOnRemove.getSelection() ? MessageDialogWithToggle.PROMPT : MessageDialogWithToggle.ALWAYS);
 
@@ -170,6 +179,10 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 		fAddToJavaSearch = new Button(optionComp, SWT.CHECK);
 		fAddToJavaSearch.setText(PDEUIMessages.MainPreferencePage_addToJavaSearch);
 		fAddToJavaSearch.setSelection(store.getBoolean(IPreferenceConstants.ADD_TO_JAVA_SEARCH));
+
+		fShowTargetStatus = new Button(optionComp, SWT.CHECK);
+		fShowTargetStatus.setText(PDEUIMessages.MainPreferencePage_ShowTargetStatus);
+		fShowTargetStatus.setSelection(store.getBoolean(IPreferenceConstants.SHOW_TARGET_STATUS));
 
 		Group group = SWTFactory.createGroup(composite, PDEUIMessages.Preferences_MainPage_showObjects, 2, 1, GridData.FILL_HORIZONTAL);
 		fUseID = new Button(group, SWT.RADIO);
@@ -201,12 +214,14 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 		return composite;
 	}
 
+	@Override
 	public void createControl(Composite composite) {
 		super.createControl(composite);
 		Dialog.applyDialogFont(getControl());
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.MAIN_PREFERENCE_PAGE);
 	}
 
+	@Override
 	public boolean performOk() {
 		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
 		if (fUseID.getSelection()) {
@@ -234,6 +249,12 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 			}
 		}
 
+		boolean showTarget = fShowTargetStatus.getSelection();
+		if (store.getBoolean(IPreferenceConstants.SHOW_TARGET_STATUS) != showTarget) {
+			store.setValue(IPreferenceConstants.SHOW_TARGET_STATUS, showTarget);
+			TargetStatus.refreshTargetStatus();
+		}
+
 		PDEPlugin.getDefault().getPreferenceManager().savePluginPreferences();
 
 		PDEPreferencesManager launchingStore = PDELaunchingPlugin.getDefault().getPreferenceManager();
@@ -251,6 +272,7 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 		return super.performOk();
 	}
 
+	@Override
 	protected void performDefaults() {
 		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
 		if (store.getDefaultString(IPreferenceConstants.PROP_SHOW_OBJECTS).equals(IPreferenceConstants.VALUE_USE_IDS)) {
@@ -266,6 +288,7 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 		fPromptOnRemove.setSelection(true);
 
 		fAddToJavaSearch.setSelection(store.getDefaultBoolean(IPreferenceConstants.ADD_TO_JAVA_SEARCH));
+		fShowTargetStatus.setSelection(store.getDefaultBoolean(IPreferenceConstants.SHOW_TARGET_STATUS));
 
 		PDEPreferencesManager launchingStore = PDELaunchingPlugin.getDefault().getPreferenceManager();
 		boolean runtimeLocationIsContainer = launchingStore.getDefaultBoolean(ILaunchingPreferenceConstants.PROP_RUNTIME_WORKSPACE_LOCATION_IS_CONTAINER);
@@ -282,6 +305,7 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.DialogPage#setVisible(boolean)
 	 */
+	@Override
 	public void setVisible(boolean visible) {
 		fPromptOnRemove.setSelection(!MessageDialogWithToggle.ALWAYS.equals(PDEPlugin.getDefault().getPreferenceManager().getString(IPreferenceConstants.PROP_PROMPT_REMOVE_TARGET)));
 		super.setVisible(visible);
