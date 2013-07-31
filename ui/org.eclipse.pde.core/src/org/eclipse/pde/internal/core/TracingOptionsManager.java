@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -65,7 +65,7 @@ public class TracingOptionsManager {
 		return pluginId.equalsIgnoreCase(firstSegment);
 	}
 
-	public Properties getTracingOptions(Map<?, ?> storedOptions) {
+	public Properties getTracingOptions(Map<String, String> storedOptions) {
 		// Start with the fresh template from plugins
 		Properties defaults = getTracingTemplateCopy();
 		if (storedOptions != null) {
@@ -74,7 +74,7 @@ public class TracingOptionsManager {
 			while (iter.hasNext()) {
 				String key = iter.next().toString();
 				if (defaults.containsKey(key)) {
-					defaults.setProperty(key, (String) storedOptions.get(key));
+					defaults.setProperty(key, storedOptions.get(key));
 				}
 			}
 		}
@@ -140,7 +140,7 @@ public class TracingOptionsManager {
 		}
 	}
 
-	public void save(String filename, Map<?, ?> map, HashSet<?> selected) {
+	public void save(String filename, Map<String, String> map, HashSet<?> selected) {
 		Properties properties = getTracingOptions(map);
 		for (Enumeration<?> keys = properties.keys(); keys.hasMoreElements();) {
 			String key = keys.nextElement().toString();
@@ -152,7 +152,7 @@ public class TracingOptionsManager {
 		save(filename, properties);
 	}
 
-	public void save(String filename, Map<?, ?> map) {
+	public void save(String filename, Map<String, String> map) {
 		save(filename, getTracingOptions(map));
 	}
 

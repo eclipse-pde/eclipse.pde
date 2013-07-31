@@ -123,6 +123,7 @@ public class FeatureBlock {
 			return ""; //$NON-NLS-1$
 		}
 
+		@Override
 		public void update(ViewerCell cell) {
 			switch (cell.getColumnIndex()) {
 				case COLUMN_FEATURE_NAME :
@@ -185,6 +186,7 @@ public class FeatureBlock {
 
 	class ButtonSelectionListener extends SelectionAdapter {
 
+		@Override
 		public void widgetSelected(SelectionEvent e) {
 			Object source = e.getSource();
 			if (source == fValidateButton) {
@@ -329,6 +331,7 @@ public class FeatureBlock {
 			if (fOperation == null)
 				// Unlike PluginBlock, we don't want to validate the application/product requirements because we will grab them automatically at launch time
 				fOperation = new LaunchValidationOperation(fLaunchConfig) {
+					@Override
 					protected IPluginModelBase[] getModels() throws CoreException {
 						// The feature block is used in both the OSGi config and Eclipse configs, use the tab id to determine which we are using
 						boolean isOSGiTab = fTab.getId().equals(IPDELauncherConstants.TAB_BUNDLES_ID);
@@ -605,6 +608,7 @@ public class FeatureBlock {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ViewerComparator#compare(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 		 */
+		@Override
 		public int compare(Viewer viewer, Object e1, Object e2) {
 			if (e1 == fAdditionalPluginsParentElement) {
 				return 1;
@@ -712,6 +716,7 @@ public class FeatureBlock {
 		/* (non-Javadoc)
 		 * @see java.lang.Object#toString()
 		 */
+		@Override
 		public String toString() {
 			if (fWorkspaceModel != null) {
 				return fWorkspaceModel.getFeature().getId() + " " + fPluginResolution; //$NON-NLS-1$
@@ -786,6 +791,7 @@ public class FeatureBlock {
 	public void createControl(Composite parent, int span, int indent) {
 		fListener = new ButtonSelectionListener();
 		fSelectedOnlyFilter = new ViewerFilter() {
+			@Override
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
 				return fTree.getChecked(element);
 			}
@@ -827,6 +833,7 @@ public class FeatureBlock {
 
 	private void createCheckBoxTree(Composite parent) {
 		PatternFilter filter = new PatternFilter() {
+			@Override
 			public boolean isElementVisible(Viewer viewer, Object element) {
 				if (element instanceof FeatureLaunchModel) {
 					return super.isElementVisible(viewer, ((FeatureLaunchModel) element).getId());
@@ -841,10 +848,12 @@ public class FeatureBlock {
 			/* (non-Javadoc)
 			 * @see org.eclipse.pde.internal.ui.shared.FilteredCheckboxTree#doCreateRefreshJob()
 			 */
+			@Override
 			protected WorkbenchJob doCreateRefreshJob() {
 				// If we are only showing selected items, we need to redo the filter after text filtering is applied.  The only selected filter uses the tree's check state, which hasn't been restored correctly at filter time. 
 				WorkbenchJob job = super.doCreateRefreshJob();
 				job.addJobChangeListener(new JobChangeAdapter() {
+					@Override
 					public void done(IJobChangeEvent event) {
 						if (event.getResult().isOK()) {
 							getDisplay().asyncExec(new Runnable() {
@@ -923,6 +932,7 @@ public class FeatureBlock {
 			}
 		});
 		fTree.getTree().addKeyListener(new KeyAdapter() {
+			@Override
 			public void keyReleased(KeyEvent e) {
 				if (e.keyCode == SWT.DEL) {
 					// Any changes here need to be reflected in the remove button handling
@@ -1173,8 +1183,7 @@ public class FeatureBlock {
 			tree.setInput(models);
 
 			// Loop through the saved config to determine location settings and selection
-			@SuppressWarnings("unchecked")
-			Set<Object> selected = config.getAttribute(IPDELauncherConstants.SELECTED_FEATURES, (Set<Object>) null);
+			Set<String> selected = config.getAttribute(IPDELauncherConstants.SELECTED_FEATURES, (Set<String>) null);
 			if (selected == null) {
 				tree.setCheckedElements(fFeatureModels.values().toArray());
 			} else {

@@ -13,6 +13,7 @@
 package org.eclipse.pde.internal.ui.launcher;
 
 import java.util.*;
+import java.util.Map.Entry;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -70,6 +71,7 @@ public class TracingBlock {
 		fTracingCheck.setText(PDEUIMessages.TracingLauncherTab_tracing);
 		fTracingCheck.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fTracingCheck.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				masterCheckChanged(true);
 				fTab.updateLaunchConfigurationDialog();
@@ -155,6 +157,7 @@ public class TracingBlock {
 		fSelectAllButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
 		SWTUtil.setButtonDimensionHint(fSelectAllButton);
 		fSelectAllButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fPluginViewer.setAllChecked(true);
 				pluginSelected(getSelectedModel(), true);
@@ -167,6 +170,7 @@ public class TracingBlock {
 		fDeselectAllButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
 		SWTUtil.setButtonDimensionHint(fDeselectAllButton);
 		fDeselectAllButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fPluginViewer.setAllChecked(false);
 				pluginSelected(getSelectedModel(), false);
@@ -202,12 +206,12 @@ public class TracingBlock {
 		disposePropertySources();
 		try {
 			fTracingCheck.setSelection(config.getAttribute(IPDELauncherConstants.TRACING, false));
-			Map<?, ?> options = config.getAttribute(IPDELauncherConstants.TRACING_OPTIONS, (Map<?, ?>) null);
-			if (options == null)
-				options = PDECore.getDefault().getTracingOptionsManager().getTracingTemplateCopy();
-			else
-				options = PDECore.getDefault().getTracingOptionsManager().getTracingOptions(options);
-			fMasterOptions.putAll(options);
+			Map<String, String> options = config.getAttribute(IPDELauncherConstants.TRACING_OPTIONS, (Map<String, String>) null);
+			if (options == null) {
+				fMasterOptions.putAll(PDECore.getDefault().getTracingOptionsManager().getTracingTemplateCopy());
+			} else {
+				fMasterOptions.putAll(PDECore.getDefault().getTracingOptionsManager().getTracingOptions(options));
+			}
 			masterCheckChanged(false);
 			String checked = config.getAttribute(IPDELauncherConstants.TRACING_CHECKED, (String) null);
 			if (checked == null) {
@@ -251,8 +255,13 @@ public class TracingBlock {
 					source.save();
 				}
 			}
-			if (changes)
-				config.setAttribute(IPDELauncherConstants.TRACING_OPTIONS, fMasterOptions);
+			if (changes) {
+				HashMap<String, String> atts = new HashMap<String, String>(fMasterOptions.size());
+				for (Entry<Object, Object> entry : fMasterOptions.entrySet()) {
+					atts.put((String) entry.getKey(), (String) entry.getValue());
+				}
+				config.setAttribute(IPDELauncherConstants.TRACING_OPTIONS, atts);
+			}
 		}
 
 		Object[] checked = fPluginViewer.getCheckedElements();
@@ -405,6 +414,7 @@ public class TracingBlock {
 			fEnabled = enabled;
 		}
 
+		@Override
 		public boolean equals(Object object) {
 			if (object instanceof PageBookKey) {
 				return fEnabled == ((PageBookKey) object).fEnabled && fModel.equals(((PageBookKey) object).fModel);
@@ -412,6 +422,7 @@ public class TracingBlock {
 			return false;
 		}
 
+		@Override
 		public int hashCode() {
 			return fModel.hashCode() + (fEnabled ? 1 : 0);
 		}
