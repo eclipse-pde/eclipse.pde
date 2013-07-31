@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.project;
 
+import org.eclipse.pde.ui.tests.PDETestsPlugin;
+
 import java.io.*;
 import java.net.URL;
 import java.nio.ByteBuffer;
@@ -33,7 +35,6 @@ import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.core.text.bundle.BundleModelFactory;
-import org.eclipse.pde.internal.ui.tests.macro.MacroPlugin;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Version;
 
@@ -969,7 +970,7 @@ public class ProjectCreationTests extends TestCase {
 			}
 			parent = parent.getParent();
 		}
-		URL zipURL = MacroPlugin.getBundleContext().getBundle().getEntry("tests/A.jar");
+		URL zipURL = PDETestsPlugin.getBundleContext().getBundle().getEntry("tests/A.jar");
 		File ioFile = new File(FileLocator.toFileURL(zipURL).getFile());
 		FileInputStream stream = new FileInputStream(ioFile);
 		file.create(stream, false, null);

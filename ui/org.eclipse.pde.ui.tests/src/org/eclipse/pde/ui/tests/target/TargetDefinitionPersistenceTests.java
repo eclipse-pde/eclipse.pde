@@ -23,7 +23,7 @@ import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.internal.core.target.*;
-import org.eclipse.pde.internal.ui.tests.macro.MacroPlugin;
+import org.eclipse.pde.ui.tests.PDETestsPlugin;
 import org.osgi.framework.ServiceReference;
 
 /**
@@ -47,11 +47,11 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 	 * @return target platform service
 	 */
 	protected ITargetPlatformService getTargetService() {
-		ServiceReference reference = MacroPlugin.getBundleContext().getServiceReference(ITargetPlatformService.class.getName());
+		ServiceReference reference = PDETestsPlugin.getBundleContext().getServiceReference(ITargetPlatformService.class.getName());
 		assertNotNull("Missing target platform service", reference);
 		if (reference == null)
 			return null;
-		return (ITargetPlatformService) MacroPlugin.getBundleContext().getService(reference);
+		return (ITargetPlatformService) PDETestsPlugin.getBundleContext().getService(reference);
 	}
 	
 	/**
@@ -272,7 +272,7 @@ public class TargetDefinitionPersistenceTests extends TestCase {
 	 * @throws Exception
 	 */
 	protected ITargetDefinition readOldTarget(String name) throws Exception {
-		URL url = MacroPlugin.getBundleContext().getBundle().getEntry("/tests/targets/target-files/" + name + ".trgt");
+		URL url = PDETestsPlugin.getBundleContext().getBundle().getEntry("/tests/targets/target-files/" + name + ".trgt");
 		File file = new File(FileLocator.toFileURL(url).getFile());
 		ITargetDefinition target = getTargetService().newTarget();
 		FileInputStream stream = new FileInputStream(file);

@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.classpathresolver;
 
+import org.eclipse.pde.ui.tests.PDETestsPlugin;
+
 import java.io.*;
 import java.net.URL;
 import java.util.Properties;
@@ -25,7 +27,6 @@ import org.eclipse.pde.core.IBundleClasspathResolver;
 import org.eclipse.pde.internal.core.ClasspathHelper;
 import org.eclipse.pde.internal.launching.sourcelookup.PDESourceLookupDirector;
 import org.eclipse.pde.internal.launching.sourcelookup.PDESourceLookupQuery;
-import org.eclipse.pde.internal.ui.tests.macro.MacroPlugin;
 
 /**
  * Tests {@link IBundleClasspathResolver} API to extend how the classpath and source lookup path
@@ -115,7 +116,7 @@ public class ClasspathResolverTest extends TestCase {
 	IProject importProject(IWorkspace workspace) throws IOException, CoreException {
 		File rootFile = workspace.getRoot().getLocation().toFile();
 
-		URL srcURL = MacroPlugin.getBundleContext().getBundle().getEntry("tests/projects/" + bundleName);
+		URL srcURL = PDETestsPlugin.getBundleContext().getBundle().getEntry("tests/projects/" + bundleName);
 		File srcBasedir = new File(FileLocator.toFileURL(srcURL).getFile());
 		
 		File dstBasedir = new File(rootFile, bundleName);

@@ -29,7 +29,7 @@ import org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager;
 import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.target.*;
-import org.eclipse.pde.internal.ui.tests.macro.MacroPlugin;
+import org.eclipse.pde.ui.tests.PDETestsPlugin;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
@@ -66,7 +66,7 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 	 * @throws Exception
 	 */
 	protected URI getURI(String relativePath) throws Exception {
-		URL url = MacroPlugin.getBundleContext().getBundle().getEntry(relativePath);
+		URL url = PDETestsPlugin.getBundleContext().getBundle().getEntry(relativePath);
 		Path path = new Path(new File(FileLocator.toFileURL(url).getFile()).getAbsolutePath());
 		return URIUtil.toURI(path);
 	}

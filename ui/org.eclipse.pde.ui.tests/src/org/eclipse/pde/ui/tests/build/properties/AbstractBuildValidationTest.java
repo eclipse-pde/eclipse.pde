@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.build.properties;
 
+import org.eclipse.pde.ui.tests.PDETestsPlugin;
+
 import java.io.*;
 import java.net.URL;
 import java.util.Enumeration;
@@ -28,7 +30,6 @@ import org.eclipse.pde.internal.core.builders.PDEMarkerFactory;
 import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.correction.ResolutionGenerator;
-import org.eclipse.pde.internal.ui.tests.macro.MacroPlugin;
 import org.eclipse.pde.ui.tests.target.LocalTargetDefinitionTests;
 import org.eclipse.ui.IMarkerResolution;
 import org.osgi.service.prefs.BackingStoreException;
@@ -50,12 +51,12 @@ public abstract class AbstractBuildValidationTest extends TestCase {
 	 * @see junit.framework.TestCase#setUp()
 	 */
 	protected void setUp() throws Exception {
-		URL location = MacroPlugin.getBundleContext().getBundle().getEntry("/tests/build.properties/build.properties.tests.zip");
+		URL location = PDETestsPlugin.getBundleContext().getBundle().getEntry("/tests/build.properties/build.properties.tests.zip");
 		File projectFile = new File(FileLocator.toFileURL(location).getFile());
 		assertTrue("Could not find test zip file at " + projectFile, projectFile.isFile());
-		doUnZip(MacroPlugin.getDefault().getStateLocation().removeLastSegments(2), "/tests/build.properties/build.properties.tests.zip");
+		doUnZip(PDETestsPlugin.getDefault().getStateLocation().removeLastSegments(2), "/tests/build.properties/build.properties.tests.zip");
 		
-		projectFile = MacroPlugin.getDefault().getStateLocation().removeLastSegments(3).toFile();		
+		projectFile = PDETestsPlugin.getDefault().getStateLocation().removeLastSegments(3).toFile();		
 		File[] projects = projectFile.listFiles(new FileFilter() {
 
 			public boolean accept(File pathname) {
@@ -212,7 +213,7 @@ public abstract class AbstractBuildValidationTest extends TestCase {
 	 * @throws IOException
 	 */
 	protected IPath doUnZip(IPath location, String archivePath) throws IOException {
-		URL zipURL = MacroPlugin.getBundleContext().getBundle().getEntry(archivePath);
+		URL zipURL = PDETestsPlugin.getBundleContext().getBundle().getEntry(archivePath);
 		Path zipPath = new Path(new File(FileLocator.toFileURL(zipURL).getFile()).getAbsolutePath());
 		ZipFile zipFile = new ZipFile(zipPath.toFile());
 		Enumeration entries = zipFile.entries();

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.ee;
 
+import org.eclipse.pde.ui.tests.PDETestsPlugin;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.resources.IProject;
@@ -23,7 +25,6 @@ import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.exports.FeatureExportInfo;
 import org.eclipse.pde.internal.core.exports.PluginExportOperation;
-import org.eclipse.pde.internal.ui.tests.macro.MacroPlugin;
 import org.eclipse.pde.ui.tests.PDETestCase;
 import org.eclipse.pde.ui.tests.util.ProjectUtils;
 
@@ -32,7 +33,7 @@ import org.eclipse.pde.ui.tests.util.ProjectUtils;
  */
 public class ExportBundleTests extends PDETestCase {
 	
-	private static final IPath EXPORT_PATH = MacroPlugin.getDefault().getStateLocation().append(".export");
+	private static final IPath EXPORT_PATH = PDETestsPlugin.getDefault().getStateLocation().append(".export");
 	
 	public static Test suite() {
 		return new TestSuite(ExportBundleTests.class);

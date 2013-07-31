@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.performance.parts;
 
+import org.eclipse.pde.ui.tests.PDETestsPlugin;
+
 import java.io.File;
 import java.net.URL;
 import junit.framework.Test;
@@ -19,7 +21,6 @@ import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.tests.macro.MacroPlugin;
 import org.eclipse.test.performance.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.ide.FileStoreEditorInput;
@@ -81,7 +82,7 @@ public class OpenManifestEditorPerfTest extends PerformanceTestCase {
 	 * @throws Exception
 	 */
 	private Bundle getBundle() throws Exception {
-		MacroPlugin plugin = MacroPlugin.getDefault();
+		PDETestsPlugin plugin = PDETestsPlugin.getDefault();
 		if (plugin == null) {
 			throw new Exception("ERROR:  Macro plug-in uninitialized"); //$NON-NLS-1$
 		}

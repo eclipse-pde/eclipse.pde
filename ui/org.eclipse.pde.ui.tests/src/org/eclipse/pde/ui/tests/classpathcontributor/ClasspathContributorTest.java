@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.classpathcontributor;
 
+import org.eclipse.pde.ui.tests.PDETestsPlugin;
+
 import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
@@ -20,7 +22,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
 import org.eclipse.pde.core.IClasspathContributor;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.ui.tests.macro.MacroPlugin;
 import org.eclipse.pde.ui.tests.classpathresolver.ClasspathResolverTest;
 
 /**
@@ -81,7 +82,7 @@ public class ClasspathContributorTest extends TestCase {
 	IProject importProject(IWorkspace workspace) throws IOException, CoreException {
 		File rootFile = workspace.getRoot().getLocation().toFile();
 
-		URL srcURL = MacroPlugin.getBundleContext().getBundle ().getEntry("tests/projects/" + ClasspathResolverTest.bundleName);
+		URL srcURL = PDETestsPlugin.getBundleContext().getBundle ().getEntry("tests/projects/" + ClasspathResolverTest.bundleName);
 		File srcBasedir = new File(FileLocator.toFileURL(srcURL).getFile());
 		
 		File dstBasedir = new File(rootFile, ClasspathResolverTest.bundleName);

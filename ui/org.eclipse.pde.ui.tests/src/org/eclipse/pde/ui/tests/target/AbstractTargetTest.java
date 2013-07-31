@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.frameworkadmin.BundleInfo;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.core.target.*;
-import org.eclipse.pde.internal.ui.tests.macro.MacroPlugin;
+import org.eclipse.pde.ui.tests.PDETestsPlugin;
 import org.osgi.framework.ServiceReference;
 
 /**
@@ -35,11 +35,11 @@ public abstract class AbstractTargetTest extends TestCase {
 	 * @return target platform service
 	 */
 	protected ITargetPlatformService getTargetService() {
-		ServiceReference reference = MacroPlugin.getBundleContext().getServiceReference(ITargetPlatformService.class.getName());
+		ServiceReference reference = PDETestsPlugin.getBundleContext().getServiceReference(ITargetPlatformService.class.getName());
 		assertNotNull("Missing target platform service", reference);
 		if (reference == null)
 			return null;
-		return (ITargetPlatformService) MacroPlugin.getBundleContext().getService(reference);
+		return (ITargetPlatformService) PDETestsPlugin.getBundleContext().getService(reference);
 	}
 	
 	/**
@@ -50,7 +50,7 @@ public abstract class AbstractTargetTest extends TestCase {
 	 * @throws Exception
 	 */
 	protected IPath extractAbcdePlugins() throws Exception {
-		IPath stateLocation = MacroPlugin.getDefault().getStateLocation();
+		IPath stateLocation = PDETestsPlugin.getDefault().getStateLocation();
 		IPath location = stateLocation.append("abcde-plugins");
 		if (location.toFile().exists()) {
 			// recursively delete
@@ -69,7 +69,7 @@ public abstract class AbstractTargetTest extends TestCase {
 	 * @throws Exception 
 	 */
 	protected IPath extractLinkedPlugins() throws Exception {
-		IPath stateLocation = MacroPlugin.getDefault().getStateLocation();
+		IPath stateLocation = PDETestsPlugin.getDefault().getStateLocation();
 		IPath location = stateLocation.append("abcde/linked/eclipse/plugins");
 		if (location.toFile().exists()) {
 			// recursively delete
@@ -88,7 +88,7 @@ public abstract class AbstractTargetTest extends TestCase {
 	 */
 	protected IPath extractClassicPlugins() throws Exception {
 		// extract the 3.0.2 skeleton
-		IPath stateLocation = MacroPlugin.getDefault().getStateLocation();
+		IPath stateLocation = PDETestsPlugin.getDefault().getStateLocation();
 		IPath location = stateLocation.append("classic/eclipse");
 		if (location.toFile().exists()) {
 			return location.append("plugins");
@@ -105,7 +105,7 @@ public abstract class AbstractTargetTest extends TestCase {
 	 * @throws Exception
 	 */
 	protected IPath extractModifiedFeatures() throws Exception {
-		IPath stateLocation = MacroPlugin.getDefault().getStateLocation();
+		IPath stateLocation = PDETestsPlugin.getDefault().getStateLocation();
 		IPath location = stateLocation.append("modified-jdt-features");
 		if (location.toFile().exists()) {
 			return location;
@@ -130,7 +130,7 @@ public abstract class AbstractTargetTest extends TestCase {
 	 * @throws Exception
 	 */
 	protected IPath extractMultiVersionPlugins() throws Exception {
-		IPath stateLocation = MacroPlugin.getDefault().getStateLocation();
+		IPath stateLocation = PDETestsPlugin.getDefault().getStateLocation();
 		IPath location = stateLocation.append("multi-versions");
 		if (location.toFile().exists()) {
 			return location;
@@ -148,7 +148,7 @@ public abstract class AbstractTargetTest extends TestCase {
 	 */
 	protected IPath extractClassicNonBundleManifestPlugins() throws Exception {
 		// extract the 3.0.2 skeleton
-		IPath stateLocation = MacroPlugin.getDefault().getStateLocation();
+		IPath stateLocation = PDETestsPlugin.getDefault().getStateLocation();
 		IPath location = stateLocation.append("eclipse-nbm");
 		if (location.toFile().exists()) {
 			return location.append("plugins");
@@ -165,7 +165,7 @@ public abstract class AbstractTargetTest extends TestCase {
 	 * @throws IOException
 	 */
 	private IPath doUnZip(IPath location, String archivePath) throws IOException {
-		URL zipURL = MacroPlugin.getBundleContext().getBundle().getEntry(archivePath);
+		URL zipURL = PDETestsPlugin.getBundleContext().getBundle().getEntry(archivePath);
 		Path zipPath = new Path(new File(FileLocator.toFileURL(zipURL).getFile()).getAbsolutePath());
 		ZipFile zipFile = new ZipFile(zipPath.toFile());
 		Enumeration entries = zipFile.entries();

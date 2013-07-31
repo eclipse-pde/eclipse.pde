@@ -20,7 +20,7 @@ import junit.framework.*;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.pde.internal.core.XMLDefaultHandler;
 import org.eclipse.pde.internal.core.util.SAXParserWrapper;
-import org.eclipse.pde.internal.ui.tests.macro.MacroPlugin;
+import org.eclipse.pde.ui.tests.PDETestsPlugin;
 import org.eclipse.pde.ui.tests.util.DOMParserWrapper;
 import org.osgi.framework.Bundle;
 import org.xml.sax.SAXException;
@@ -39,7 +39,7 @@ public class ParserWrapperTestCase extends TestCase {
 
 	protected void setUp() throws Exception {
 		super.setUp();
-		MacroPlugin plugin = MacroPlugin.getDefault();
+		PDETestsPlugin plugin = PDETestsPlugin.getDefault();
 		if (plugin == null)
 			throw new Exception("ERROR:  Macro plug-in uninitialized"); //$NON-NLS-1$
 		Bundle bundle = plugin.getBundle();

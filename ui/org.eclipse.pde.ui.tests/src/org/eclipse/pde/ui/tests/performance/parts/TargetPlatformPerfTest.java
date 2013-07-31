@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.performance.parts;
 
+import org.eclipse.pde.ui.tests.PDETestsPlugin;
+
 import java.io.*;
 import java.net.URL;
 import java.util.*;
@@ -26,7 +28,6 @@ import org.eclipse.pde.core.project.IBundleProjectDescription;
 import org.eclipse.pde.core.project.IBundleProjectService;
 import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.ui.tests.macro.MacroPlugin;
 import org.eclipse.pde.ui.tests.target.LocalTargetDefinitionTests;
 import org.eclipse.pde.ui.tests.util.TestBundleCreator;
 import org.eclipse.test.performance.Dimension;
@@ -229,7 +230,7 @@ public class TargetPlatformPerfTest extends PerformanceTestCase {
 	}
 
 	private IPath extractTargetPerfTestPlugins() throws Exception {
-		IPath stateLocation = MacroPlugin.getDefault().getStateLocation();
+		IPath stateLocation = PDETestsPlugin.getDefault().getStateLocation();
 		IPath location = stateLocation.append("targetPerfTestPlugins");
 		if (!location.toFile().exists()) {
 			return doUnZip(location, TEST_PLUGIN_LOCATION);
@@ -245,7 +246,7 @@ public class TargetPlatformPerfTest extends PerformanceTestCase {
 	 * @throws IOException
 	 */
 	private IPath doUnZip(IPath location, String archivePath) throws IOException {
-		URL zipURL = MacroPlugin.getBundleContext().getBundle().getEntry(archivePath);
+		URL zipURL = PDETestsPlugin.getBundleContext().getBundle().getEntry(archivePath);
 		Path zipPath = new Path(new File(FileLocator.toFileURL(zipURL).getFile()).getAbsolutePath());
 		ZipFile zipFile = new ZipFile(zipPath.toFile());
 		Enumeration entries = zipFile.entries();

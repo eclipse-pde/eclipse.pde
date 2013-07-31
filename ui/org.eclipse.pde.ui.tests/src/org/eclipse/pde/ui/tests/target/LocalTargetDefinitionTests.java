@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.target;
 
-import org.eclipse.pde.core.target.*;
-
 import java.io.*;
 import java.net.URL;
 import java.util.*;
@@ -20,11 +18,12 @@ import junit.framework.TestSuite;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.frameworkadmin.BundleInfo;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.target.TargetDefinition;
 import org.eclipse.pde.internal.core.target.TargetDefinitionPersistenceHelper;
 import org.eclipse.pde.internal.launching.launcher.LaunchArgumentsHelper;
-import org.eclipse.pde.internal.ui.tests.macro.MacroPlugin;
+import org.eclipse.pde.ui.tests.PDETestsPlugin;
 import org.osgi.framework.ServiceReference;
 
 /**
@@ -48,11 +47,11 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	 * @return target platform service
 	 */
 	protected ITargetPlatformService getTargetService() {
-		ServiceReference reference = MacroPlugin.getBundleContext().getServiceReference(ITargetPlatformService.class.getName());
+		ServiceReference reference = PDETestsPlugin.getBundleContext().getServiceReference(ITargetPlatformService.class.getName());
 		assertNotNull("Missing target platform service", reference);
 		if (reference == null)
 			return null;
-		return (ITargetPlatformService) MacroPlugin.getBundleContext().getService(reference);
+		return (ITargetPlatformService) PDETestsPlugin.getBundleContext().getService(reference);
 	}
 	
 	/**
@@ -779,7 +778,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	 * @throws Exception
 	 */
 	protected ITargetDefinition readOldTarget(String name) throws Exception {
-		URL url = MacroPlugin.getBundleContext().getBundle().getEntry("/tests/targets/target-files/" + name + ".target");
+		URL url = PDETestsPlugin.getBundleContext().getBundle().getEntry("/tests/targets/target-files/" + name + ".target");
 		File file = new File(FileLocator.toFileURL(url).getFile());
 		ITargetDefinition target = getNewTarget();
 		FileInputStream stream = new FileInputStream(file);
