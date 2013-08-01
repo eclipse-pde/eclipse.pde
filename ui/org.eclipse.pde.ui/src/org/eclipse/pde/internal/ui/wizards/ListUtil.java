@@ -11,7 +11,8 @@
 package org.eclipse.pde.internal.ui.wizards;
 
 import java.util.Comparator;
-import org.eclipse.jface.util.*;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
@@ -24,14 +25,10 @@ import org.eclipse.swt.graphics.Image;
 
 public class ListUtil {
 
-	private static final Comparator<?> stringComparator = new Comparator<Object>() {
+	private static final Comparator<String> stringComparator = new Comparator<String>() {
 
-		@SuppressWarnings("unchecked")
-		public int compare(Object arg0, Object arg1) {
-			if (arg0 instanceof String && arg1 instanceof String)
-				return ((String) arg0).compareToIgnoreCase((String) arg1);
-			// if not two Strings like we expect, then use default comparator
-			return Policy.getComparator().compare(arg0, arg1);
+		public int compare(String arg0, String arg1) {
+			return arg0.compareToIgnoreCase(arg1);
 		}
 
 	};
@@ -48,6 +45,7 @@ public class ListUtil {
 	}
 
 	static class FeatureComparator extends NameComparator {
+		@Override
 		public int compare(Viewer viewer, Object e1, Object e2) {
 			if (e1 instanceof IFeatureModel && e2 instanceof IFeatureModel) {
 				IFeature feature1 = ((IFeatureModel) e1).getFeature();
@@ -79,6 +77,7 @@ public class ListUtil {
 
 		private static boolean cachedIsFullNameModelEnabled = PDEPlugin.isFullNameModeEnabled();
 
+		@Override
 		@SuppressWarnings("unchecked")
 		public int compare(Viewer viewer, Object e1, Object e2) {
 			int result = 0;
