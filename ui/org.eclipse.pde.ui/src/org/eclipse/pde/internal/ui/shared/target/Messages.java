@@ -126,6 +126,7 @@ public class Messages extends NLS {
 	public static String TargetContentsGroup_resolveCancelled;
 	public static String TargetLocationsGroup_1;
 	public static String TargetLocationsGroup_TargetUpdateErrorDialog;
+	public static String TargetStatus_NoActiveTargetPlatformStatus;
 	public static String TargetStatus_TargetStatusDefaultString;
 	public static String UpdateTargetJob_TargetUpdateFailedStatus;
 	public static String UpdateTargetJob_TargetUpdateSuccessStatus;

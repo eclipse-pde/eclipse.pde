@@ -32,7 +32,6 @@ import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.internal.views.log.ILogFileProvider;
 import org.eclipse.ui.internal.views.log.LogFilesManager;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.osgi.framework.BundleContext;
 
@@ -198,15 +197,7 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 		fLogFileProvider = new PDELogFileProvider();
 		LogFilesManager.addLogFileProvider(fLogFileProvider);
 
-		UIJob job = new UIJob("Refresh Target Status") {
-			@Override
-			public IStatus runInUIThread(IProgressMonitor monitor) {
-				TargetStatus.refreshTargetStatus();
-				return Status.OK_STATUS;
-			}
-		};
-		job.setSystem(true);
-		job.schedule();
+		TargetStatus.initializeTargetStatus();
 	}
 
 	/* (non-Javadoc)

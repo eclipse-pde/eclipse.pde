@@ -87,6 +87,8 @@ public class TargetStatus {
 					if (name != null && name.length() > 0) {
 						result = name;
 					}
+				} else {
+					result = Messages.TargetStatus_NoActiveTargetPlatformStatus;
 				}
 			} catch (CoreException e) {
 				PDEPlugin.log(e);
@@ -125,8 +127,49 @@ public class TargetStatus {
 	}
 
 	/**
+	 * Adds the target status contribution to the status line manager if the value of
+	 * preference {@link IPreferenceConstants#SHOW_TARGET_STATUS} is true.  Will not remove
+	 * an existing status contribution if the preference is false, to remove use
+	 * {@link #refreshTargetStatus()}.
+	 * <p>
+	 * Does not have to be called from a UI thread.
+	 * </p>
+	 */
+	public static void initializeTargetStatus() {
+		PDEPreferencesManager prefs = PDEPlugin.getDefault().getPreferenceManager();
+		boolean showStatus = prefs.getBoolean(IPreferenceConstants.SHOW_TARGET_STATUS);
+
+		if (showStatus) {
+			UIJob updateStatus = new UIJob("") { //$NON-NLS-1$
+				@Override
+				public IStatus runInUIThread(IProgressMonitor monitor) {
+					IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
+					for (int i = 0; i < windows.length; i++) {
+						IWorkbenchWindow window = windows[i];
+						// We are not in a view or editor so this is the only practical way of getting the status line manager at this time
+						if (window instanceof WorkbenchWindow) {
+							IStatusLineManager slManager = ((WorkbenchWindow) window).getStatusLineManager();
+							if (slManager != null) {
+								slManager.appendToGroup(StatusLineManager.BEGIN_GROUP, getContributionItem());
+								slManager.update(false);
+								break;
+							}
+						}
+					}
+					return Status.OK_STATUS;
+				}
+			};
+			updateStatus.setSystem(true);
+			updateStatus.schedule();
+		}
+	}
+
+	/**
 	 * Adds or removes the target status contribution from the status line manager depending on the
 	 * value of preference {@link IPreferenceConstants#SHOW_TARGET_STATUS}.
+	 * <p>
+	 * Must be called from the UI Thread.
+	 * </p>
 	 */
 	public static void refreshTargetStatus() {
 		PDEPreferencesManager prefs = PDEPlugin.getDefault().getPreferenceManager();
@@ -144,7 +187,7 @@ public class TargetStatus {
 					} else {
 						manager.remove(TARGET_STATUS_ID);
 					}
-					manager.update(true);
+					manager.update(false);
 					break;
 				}
 			}
