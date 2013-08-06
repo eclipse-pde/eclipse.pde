@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,6 +48,7 @@ public class JREBlock {
 	private Text fBootstrap;
 
 	class Listener extends SelectionAdapter implements ModifyListener {
+		@Override
 		public void widgetSelected(SelectionEvent e) {
 			Object source = e.getSource();
 			// When a radio button selection changes, we get two events.  One for the deselection of the old button and another for the selection 
@@ -93,11 +94,15 @@ public class JREBlock {
 		fEePrefButton = new Button(parent, SWT.PUSH);
 		fEePrefButton.setText(PDEUIMessages.BasicLauncherTab_environments);
 		fEePrefButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				String currentEE = parseEESelection(fEeCombo.getText());
 				if (SWTFactory.showPreferencePage(fTab.getControl().getShell(), "org.eclipse.jdt.debug.ui.jreProfiles", null) == Window.OK) { //$NON-NLS-1$
-					setEECombo();
-					setEEComboSelection(currentEE);
+					// The launch dialog may have been closed while the preference page was open
+					if (!fTab.getControl().isDisposed()) {
+						setEECombo();
+						setEEComboSelection(currentEE);
+					}
 				}
 			}
 		});
@@ -114,18 +119,22 @@ public class JREBlock {
 		fJrePrefButton = new Button(parent, SWT.PUSH);
 		fJrePrefButton.setText(PDEUIMessages.BasicLauncherTab_installedJREs);
 		fJrePrefButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				String currentVM = fJreCombo.getText();
 				String currentEE = parseEESelection(fEeCombo.getText());
 				boolean useDefault = VMUtil.getDefaultVMInstallName().equals(currentVM);
 				if (SWTFactory.showPreferencePage(fTab.getControl().getShell(), "org.eclipse.jdt.debug.ui.preferences.VMPreferencePage", null) == Window.OK) { //$NON-NLS-1$
-					setJRECombo();
-					if (useDefault || fJreCombo.indexOf(currentVM) == -1)
-						fJreCombo.setText(VMUtil.getDefaultVMInstallName());
-					else
-						fJreCombo.setText(currentVM);
-					setEECombo();
-					setEEComboSelection(currentEE);
+					// The launch dialog may have been closed while the preference page was open
+					if (!fTab.getControl().isDisposed()) {
+						setJRECombo();
+						if (useDefault || fJreCombo.indexOf(currentVM) == -1)
+							fJreCombo.setText(VMUtil.getDefaultVMInstallName());
+						else
+							fJreCombo.setText(currentVM);
+						setEECombo();
+						setEEComboSelection(currentEE);
+					}
 				}
 			}
 		});
