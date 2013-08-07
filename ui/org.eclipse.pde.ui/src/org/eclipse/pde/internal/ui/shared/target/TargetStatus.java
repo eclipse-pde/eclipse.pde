@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui.shared.target;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.*;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
@@ -146,7 +147,7 @@ public class TargetStatus {
 		boolean showStatus = prefs.getBoolean(IPreferenceConstants.SHOW_TARGET_STATUS);
 
 		if (showStatus) {
-			UIJob updateStatus = new UIJob("") { //$NON-NLS-1$
+			UIJob updateStatus = new UIJob("Refresh PDE Target Status") { //$NON-NLS-1$
 				@Override
 				public IStatus runInUIThread(IProgressMonitor monitor) {
 					IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
@@ -162,6 +163,7 @@ public class TargetStatus {
 				}
 			};
 			updateStatus.setSystem(true);
+			updateStatus.setPriority(Job.DECORATE);
 			updateStatus.schedule();
 		}
 	}
