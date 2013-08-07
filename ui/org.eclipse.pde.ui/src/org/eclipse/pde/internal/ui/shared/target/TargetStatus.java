@@ -25,7 +25,6 @@ import org.eclipse.pde.internal.ui.preferences.TargetPlatformPreferencePage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
-import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.texteditor.StatusLineContributionItem;
 
@@ -126,6 +125,13 @@ public class TargetStatus {
 		return targetStatus;
 	}
 
+	@SuppressWarnings("restriction")
+	// see https://bugs.eclipse.org/378395
+	private static IStatusLineManager getStatusLineManager(IWorkbenchWindow window) {
+		// We are not in a view or editor so this is the only practical way of getting the status line manager at this time -  see https://bugs.eclipse.org/378395
+		return (window instanceof org.eclipse.ui.internal.WorkbenchWindow) ? ((org.eclipse.ui.internal.WorkbenchWindow) window).getStatusLineManager() : null;
+	}
+
 	/**
 	 * Adds the target status contribution to the status line manager if the value of
 	 * preference {@link IPreferenceConstants#SHOW_TARGET_STATUS} is true.  Will not remove
@@ -145,15 +151,11 @@ public class TargetStatus {
 				public IStatus runInUIThread(IProgressMonitor monitor) {
 					IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
 					for (int i = 0; i < windows.length; i++) {
-						IWorkbenchWindow window = windows[i];
-						// We are not in a view or editor so this is the only practical way of getting the status line manager at this time
-						if (window instanceof WorkbenchWindow) {
-							IStatusLineManager slManager = ((WorkbenchWindow) window).getStatusLineManager();
-							if (slManager != null) {
-								slManager.appendToGroup(StatusLineManager.BEGIN_GROUP, getContributionItem());
-								slManager.update(false);
-								break;
-							}
+						IStatusLineManager slManager = getStatusLineManager(windows[i]);
+						if (slManager != null) {
+							slManager.appendToGroup(StatusLineManager.BEGIN_GROUP, getContributionItem());
+							slManager.update(false);
+							break;
 						}
 					}
 					return Status.OK_STATUS;
@@ -177,19 +179,15 @@ public class TargetStatus {
 
 		IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
 		for (int i = 0; i < windows.length; i++) {
-			IWorkbenchWindow window = windows[i];
-			// We are not in a view or editor so this is the only practical way of getting the status line manager at this time
-			if (window instanceof WorkbenchWindow) {
-				IStatusLineManager manager = ((WorkbenchWindow) window).getStatusLineManager();
-				if (manager != null) {
-					if (showStatus) {
-						manager.appendToGroup(StatusLineManager.BEGIN_GROUP, getContributionItem());
-					} else {
-						manager.remove(TARGET_STATUS_ID);
-					}
-					manager.update(false);
-					break;
+			IStatusLineManager manager = getStatusLineManager(windows[i]);
+			if (manager != null) {
+				if (showStatus) {
+					manager.appendToGroup(StatusLineManager.BEGIN_GROUP, getContributionItem());
+				} else {
+					manager.remove(TARGET_STATUS_ID);
 				}
+				manager.update(false);
+				break;
 			}
 		}
 	}
