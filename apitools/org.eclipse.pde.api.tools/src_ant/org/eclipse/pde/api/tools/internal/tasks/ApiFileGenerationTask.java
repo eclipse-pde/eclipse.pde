@@ -283,6 +283,9 @@ public class ApiFileGenerationTask extends Task {
 		if (apiDescriptionFile.exists()) {
 			//get rid of the existing one
 			//see https://bugs.eclipse.org/bugs/show_bug.cgi?id=414053
+			if (this.debug) {
+				System.out.println("Existing api description file deleted"); //$NON-NLS-1$
+			}
 			apiDescriptionFile.delete();
 		}
 		File[] allFiles = null;
