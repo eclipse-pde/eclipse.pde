@@ -231,9 +231,14 @@ public class TracingBlock {
 				}
 				fPluginViewer.setCheckedElements(list.toArray());
 				IPluginModelBase model = getLastSelectedPlugin();
+				if (model == null && !list.isEmpty()) {
+					model = list.get(0);
+				}
 				if (model != null) {
 					fPluginViewer.setSelection(new StructuredSelection(model), true);
-					pluginSelected(model, list.contains(model));
+					if (fTracingCheck.getSelection()) {
+						pluginSelected(model, list.contains(model));
+					}
 				} else {
 					pluginSelected(null, false);
 				}
