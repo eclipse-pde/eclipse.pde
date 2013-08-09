@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@vogella.com> - Fix for bug 376057 - Wildcard suport 
  *     for adding features in product configuration editor 
+ *     Red Hat, Inc - 322352 
  *******************************************************************************/
 
 package org.eclipse.pde.internal.ui.dialogs;
@@ -16,8 +17,9 @@ package org.eclipse.pde.internal.ui.dialogs;
 import java.util.Comparator;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.pde.internal.core.ifeature.IFeature;
-import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
@@ -27,23 +29,68 @@ public class FeatureSelectionDialog extends FilteredItemsSelectionDialog {
 
 	private static final String DIALOG_SETTINGS = "org.eclipse.pde.ui.dialogs.FeatureSelectionDialog"; //$NON-NLS-1$
 	private IFeatureModel[] fModels;
+	private FeatureSearchItemsFilter filter;
+
+	private final class FeatureDetailsLabelProvider extends LabelProvider {
+		@Override
+		public String getText(Object element) {
+			if (element instanceof IFeatureModel) {
+				IFeatureModel featureModel = (IFeatureModel) element;
+				if (filter.matchesFeatureId(featureModel)) {
+					return NLS.bind(PDEUIMessages.FeatureSelectionDialog_IdMatched, featureModel.getFeature().getId());
+				}
+				String pluginMatch = filter.matchesPluginId((IFeatureModel) element);
+				if (pluginMatch != null) {
+					return NLS.bind(PDEUIMessages.FeatureSelectionDialog_PluginMatched, pluginMatch);
+				}
+			}
+			return super.getText(element);
+		}
+	}
 
 	private class FeatureSearchItemsFilter extends ItemsFilter {
 
+		@Override
 		public boolean isConsistentItem(Object item) {
 			return true;
 		}
 
+		@Override
 		public boolean matchItem(Object item) {
-			String id = null;
 			if (item instanceof IFeatureModel) {
 				IFeatureModel model = (IFeatureModel) item;
-				id = model.getFeature().getId();
+				if (matchesFeatureId(model))
+					return true;
+				return matchesPluginId(model) != null;
 			}
-
-			return (matches(id));
+			return false;
 		}
 
+		/**
+		 * 
+		 * @param model
+		 * @return id of matched plugin or null if no match
+		 */
+		public String matchesPluginId(IFeatureModel model) {
+			IFeaturePlugin[] plugins = model.getFeature().getPlugins();
+			for (int i = 0; i < plugins.length; i++) {
+				if (matches(plugins[i].getId())) {
+					return plugins[i].getId();
+				}
+			}
+			return null;
+		}
+
+		public boolean matchesFeatureId(IFeatureModel model) {
+			String id;
+			id = model.getFeature().getId();
+			if (matches(id)) {
+				return true;
+			}
+			return false;
+		}
+
+		@Override
 		protected boolean matches(String text) {
 			String pattern = patternMatcher.getPattern();
 			if (pattern.indexOf("*") != 0 & pattern.indexOf("?") != 0 & pattern.indexOf(".") != 0) {//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -95,6 +142,7 @@ public class FeatureSelectionDialog extends FilteredItemsSelectionDialog {
 		super(parent, multiSelect);
 		setTitle(PDEUIMessages.FeatureSelectionDialog_title);
 		setMessage(PDEUIMessages.FeatureSelectionDialog_message);
+		setDetailsLabelProvider(new FeatureDetailsLabelProvider());
 		this.fModels = models;
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 		setListLabelProvider(PDEPlugin.getDefault().getLabelProvider());
@@ -103,20 +151,24 @@ public class FeatureSelectionDialog extends FilteredItemsSelectionDialog {
 	/*
 	 * @see org.eclipse.jface.window.Window#configureShell(Shell)
 	 */
+	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(newShell, IHelpContextIds.FEATURE_SELECTION);
 	}
 
+	@Override
 	public boolean close() {
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 		return super.close();
 	}
 
+	@Override
 	protected Control createExtendedContentArea(Composite parent) {
 		return null;
 	}
 
+	@Override
 	protected IDialogSettings getDialogSettings() {
 		IDialogSettings settings = PDEPlugin.getDefault().getDialogSettings().getSection(DIALOG_SETTINGS);
 
@@ -130,18 +182,23 @@ public class FeatureSelectionDialog extends FilteredItemsSelectionDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#validateItem(java.lang.Object)
 	 */
+	@Override
 	protected IStatus validateItem(Object item) {
 		return new Status(IStatus.OK, IPDEUIConstants.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
 	}
 
+	@Override
 	protected ItemsFilter createFilter() {
-		return new FeatureSearchItemsFilter();
+		filter = new FeatureSearchItemsFilter();
+		return filter;
 	}
 
+	@Override
 	protected Comparator<?> getItemsComparator() {
 		return new FeatureSearchComparator();
 	}
 
+	@Override
 	protected void fillContentProvider(AbstractContentProvider contentProvider, ItemsFilter itemsFilter, IProgressMonitor progressMonitor) throws CoreException {
 		for (int i = 0; i < fModels.length; i++) {
 			contentProvider.add(fModels[i], itemsFilter);
@@ -151,6 +208,7 @@ public class FeatureSelectionDialog extends FilteredItemsSelectionDialog {
 
 	}
 
+	@Override
 	public String getElementName(Object item) {
 		if (item instanceof IFeatureModel) {
 			IFeatureModel model = (IFeatureModel) item;

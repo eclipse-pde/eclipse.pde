@@ -1186,8 +1186,12 @@ public class PDEUIMessages extends NLS {
 	public static String NewFeaturePatch_SpecPage_name;
 	public static String NewFeaturePatch_SpecPage_provider;
 	public static String NewFeaturePatch_SpecPage_notFound;
+	public static String FeatureSelectionDialog_IdMatched;
+
 	public static String FeatureSelectionDialog_title;
 	public static String FeatureSelectionDialog_message;
+
+	public static String FeatureSelectionDialog_PluginMatched;
 
 	public static String VersionSyncWizard_wtitle;
 	public static String VersionSyncWizard_title;
