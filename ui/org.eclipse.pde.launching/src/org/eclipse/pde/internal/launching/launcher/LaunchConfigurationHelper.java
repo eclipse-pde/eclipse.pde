@@ -33,6 +33,7 @@ import org.eclipse.pde.launching.IPDELauncherConstants;
 public class LaunchConfigurationHelper {
 
 	private static final String PROP_OSGI_FRAMEWORK = "osgi.framework"; //$NON-NLS-1$
+	private static final String PROP_OSGI_EXTENSIONS = "osgi.framework.extensions"; //$NON-NLS-1$
 	private static final String PROP_OSGI_BUNDLES = "osgi.bundles"; //$NON-NLS-1$
 	private static final String PROP_P2_DATA_AREA = "eclipse.p2.data.area"; //$NON-NLS-1$
 	private static final String PROP_PRODUCT = "eclipse.product"; //$NON-NLS-1$
@@ -396,30 +397,50 @@ public class LaunchConfigurationHelper {
 				properties.setProperty(PROP_OSGI_FRAMEWORK, url);
 		}
 
+		// Fix relative locations in framework extensions (Bug 413986)
+		String extensions = properties.getProperty(PROP_OSGI_EXTENSIONS);
+		if (extensions != null) {
+			StringBuffer buffer = new StringBuffer();
+			String[] extensionsArray = extensions.split(","); //$NON-NLS-1$
+			for (int i = 0; i < extensionsArray.length; i++) {
+				String bundle = TargetPlatformHelper.stripPathInformation(extensionsArray[i]);
+				String url = getBundleURL(bundle, map, true);
+				if (url != null) {
+					if (buffer.length() > 0) {
+						buffer.append(',');
+					}
+					buffer.append(url);
+				}
+			}
+			if (buffer.length() > 0) {
+				properties.setProperty(PROP_OSGI_EXTENSIONS, buffer.toString());
+			}
+		}
+
 		String bundles = properties.getProperty(PROP_OSGI_BUNDLES);
 		if (bundles != null) {
 			StringBuffer buffer = new StringBuffer();
 			StringTokenizer tokenizer = new StringTokenizer(bundles, ","); //$NON-NLS-1$
 			while (tokenizer.hasMoreTokens()) {
 				String token = tokenizer.nextToken().trim();
-				String url = getBundleURL(token, map, false);
+				String url = getBundleURL(token, map, true);
 				int i = -1;
 				if (url == null) {
 					i = token.indexOf('@');
 					if (i != -1) {
-						url = getBundleURL(token.substring(0, i), map, false);
+						url = getBundleURL(token.substring(0, i), map, true);
 					}
 					if (url == null) {
 						i = token.indexOf(':');
 						if (i != -1)
-							url = getBundleURL(token.substring(0, i), map, false);
+							url = getBundleURL(token.substring(0, i), map, true);
 					}
 				}
 				if (url != null) {
 					if (buffer.length() > 0) {
-						buffer.append(","); //$NON-NLS-1$
+						buffer.append(',');
 					}
-					buffer.append("reference:" + url); //$NON-NLS-1$
+					buffer.append(url);
 					if (i != -1) {
 						String slinfo = token.substring(i + 1);
 						buffer.append(getStartData(slinfo, defaultAuto));
