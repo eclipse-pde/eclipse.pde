@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2010 IBM Corporation and others.
+ *  Copyright (c) 2006, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -15,7 +15,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.pde.core.plugin.IMatchRules;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.osgi.framework.Version;
 
 public class VersionUtil {
@@ -25,7 +24,7 @@ public class VersionUtil {
 			if (versionString != null)
 				new Version(versionString.trim());
 		} catch (IllegalArgumentException e) {
-			return new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IStatus.ERROR, PDECoreMessages.BundleErrorReporter_InvalidFormatInBundleVersion, e);
+			return new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IStatus.ERROR, UtilMessages.BundleErrorReporter_InvalidFormatInBundleVersion, e);
 		}
 		return Status.OK_STATUS;
 	}
@@ -34,7 +33,7 @@ public class VersionUtil {
 		try {
 			new VersionRange(versionRangeString);
 		} catch (IllegalArgumentException e) {
-			return new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IStatus.ERROR, PDECoreMessages.BundleErrorReporter_invalidVersionRangeFormat, e);
+			return new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IStatus.ERROR, UtilMessages.BundleErrorReporter_invalidVersionRangeFormat, e);
 		}
 		return Status.OK_STATUS;
 	}

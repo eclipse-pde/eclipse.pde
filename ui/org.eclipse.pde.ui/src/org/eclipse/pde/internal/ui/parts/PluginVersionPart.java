@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2012 IBM Corporation and others.
+ *  Copyright (c) 2005, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -15,7 +15,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.PDECoreMessages;
+import org.eclipse.pde.internal.core.util.UtilMessages;
 import org.eclipse.pde.internal.core.util.VersionUtil;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -35,6 +35,7 @@ public class PluginVersionPart {
 			super(buttonLabels);
 		}
 
+		@Override
 		protected void selectionChanged(IStructuredSelection selection) {
 			if (selection.size() < 1) {
 				setButtonEnabled(0, false);
@@ -43,6 +44,7 @@ public class PluginVersionPart {
 			}
 		}
 
+		@Override
 		protected void handleDoubleClick(IStructuredSelection selection) {
 			if (selection.size() == 1) {
 				IPluginModelBase entry = (IPluginModelBase) selection.getFirstElement();
@@ -51,6 +53,7 @@ public class PluginVersionPart {
 			}
 		}
 
+		@Override
 		protected void buttonSelected(Button button, int index) {
 			IStructuredSelection selection = (IStructuredSelection) getTableViewer().getSelection();
 			if (selection.size() == 1) {
@@ -219,7 +222,7 @@ public class PluginVersionPart {
 				errorMessage = PDEUIMessages.DependencyPropertiesDialog_invalidFormat;
 			} else {
 				// For everything else:  Field assist, wizards
-				errorMessage = PDECoreMessages.BundleErrorReporter_InvalidFormatInBundleVersion;
+				errorMessage = UtilMessages.BundleErrorReporter_InvalidFormatInBundleVersion;
 			}
 			return new Status(IStatus.ERROR, "org.eclipse.pde.ui", //$NON-NLS-1$
 					IStatus.ERROR, PDELabelUtility.qualifyMessage(PDELabelUtility.getFieldLabel(textWidget), errorMessage), null);
@@ -240,7 +243,7 @@ public class PluginVersionPart {
 			errorMessage = PDEUIMessages.DependencyPropertiesDialog_invalidFormat;
 		} else {
 			// For everything else:  Field assist, wizards
-			errorMessage = PDECoreMessages.BundleErrorReporter_InvalidFormatInBundleVersion;
+			errorMessage = UtilMessages.BundleErrorReporter_InvalidFormatInBundleVersion;
 		}
 
 		Version v1;

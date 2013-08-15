@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.util;
 
-import org.eclipse.jdt.launching.IVMInstall;
-
 import java.util.ArrayList;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.launching.*;
@@ -20,7 +18,6 @@ import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.PDECoreMessages;
 
 public class VMUtil {
 
@@ -89,7 +86,7 @@ public class VMUtil {
 		IPath containerPath = JavaRuntime.newJREContainerPath(ee);
 		IVMInstall vmi = JavaRuntime.getVMInstall(containerPath);
 		if (vmi == null)
-			throw new CoreException(createErrorStatus(NLS.bind(PDECoreMessages.VMHelper_noJreForExecEnv, ee.getId())));
+			throw new CoreException(createErrorStatus(NLS.bind(UtilMessages.VMHelper_noJreForExecEnv, ee.getId())));
 		return vmi.getName();
 	}
 

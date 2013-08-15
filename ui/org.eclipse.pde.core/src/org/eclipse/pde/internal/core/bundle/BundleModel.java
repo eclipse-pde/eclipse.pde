@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -122,5 +122,17 @@ public abstract class BundleModel extends AbstractModel implements IBundleModel 
 	public void reload(InputStream source, boolean outOfSync) {
 		load(source, outOfSync);
 		fireModelChanged(new ModelChangedEvent(this, IModelChangedEvent.WORLD_CHANGED, new Object[0], null));
+	}
+
+	@Override
+	public String toString() {
+		if (fBundle != null) {
+			StringBuffer buf = new StringBuffer();
+			buf.append(fBundle.getHeader(Constants.BUNDLE_SYMBOLICNAME));
+			buf.append(" ("); //$NON-NLS-1$
+			buf.append(fBundle.getHeader(Constants.BUNDLE_VERSION));
+			buf.append(')');
+		}
+		return "Unknown bundle model"; //$NON-NLS-1$
 	}
 }

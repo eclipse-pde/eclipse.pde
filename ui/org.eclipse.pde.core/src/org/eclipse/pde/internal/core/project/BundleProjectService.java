@@ -262,9 +262,9 @@ public final class BundleProjectService implements IBundleProjectService {
 			}
 			return ManifestElement.parseBundleManifest(manifestStream, new Hashtable<String, String>(10));
 		} catch (BundleException e) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, TargetBundle.STATUS_INVALID_MANIFEST, NLS.bind(Messages.DirectoryBundleContainer_3, bundleLocation.getAbsolutePath()), e));
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, TargetBundle.STATUS_INVALID_MANIFEST, NLS.bind(Messages.TargetBundle_ErrorReadingManifest, bundleLocation.getAbsolutePath()), e));
 		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, TargetBundle.STATUS_INVALID_MANIFEST, NLS.bind(Messages.DirectoryBundleContainer_3, bundleLocation.getAbsolutePath()), e));
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, TargetBundle.STATUS_INVALID_MANIFEST, NLS.bind(Messages.TargetBundle_ErrorReadingManifest, bundleLocation.getAbsolutePath()), e));
 		} finally {
 			closeZipFileAndStream(manifestStream, jarFile);
 		}

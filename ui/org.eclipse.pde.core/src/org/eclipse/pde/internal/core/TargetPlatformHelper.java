@@ -19,12 +19,10 @@ import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.State;
-import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
-import org.eclipse.pde.internal.core.util.CoreUtility;
-import org.eclipse.pde.internal.core.util.VersionUtil;
+import org.eclipse.pde.internal.core.util.*;
 import org.osgi.framework.*;
 
 public class TargetPlatformHelper {
@@ -156,21 +154,25 @@ public class TargetPlatformHelper {
 		if (fCachedLocations == null)
 			fCachedLocations = new HashMap<String, String>();
 
+		if (fCachedLocations.containsKey(path)) {
+			return fCachedLocations.get(path);
+		}
+
+		// TODO There needs to be a better option than loading the entire manifest every time we need a name
 		File file = new File(path);
-		if (file.exists() && !fCachedLocations.containsKey(path)) {
+		if (file.exists()) {
 			try {
-				Map<String, String> manifest = PDEStateHelper.loadManifest(file);
-				String value = manifest.get(Constants.BUNDLE_SYMBOLICNAME);
-				if (value != null) {
-					ManifestElement[] elements = ManifestElement.parseHeader(Constants.BUNDLE_SYMBOLICNAME, value);
-					String id = elements.length > 0 ? elements[0].getValue() : null;
-					if (id != null)
-						fCachedLocations.put(path, elements[0].getValue());
+				Map<String, String> manifest = ManifestUtils.loadManifest(file);
+				String name = manifest.get(Constants.BUNDLE_SYMBOLICNAME);
+				if (name != null) {
+					fCachedLocations.put(path, name);
+					return name;
 				}
-			} catch (BundleException e) {
+			} catch (CoreException e) {
+				// Should have already been reported when creating the target platform
 			}
 		}
-		return fCachedLocations.get(path);
+		return null;
 	}
 
 	public static void checkPluginPropertiesConsistency(Map<?, ?> map, File configDir) {

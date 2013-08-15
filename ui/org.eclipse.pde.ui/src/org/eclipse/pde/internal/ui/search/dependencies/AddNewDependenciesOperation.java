@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,12 +28,12 @@ import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
-import org.eclipse.pde.internal.core.converter.PluginConverter;
 import org.eclipse.pde.internal.core.ibundle.*;
 import org.eclipse.pde.internal.core.plugin.PluginImport;
 import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.core.search.PluginJavaSearchUtil;
 import org.eclipse.pde.internal.core.text.bundle.*;
+import org.eclipse.pde.internal.core.util.ManifestUtils;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.osgi.framework.*;
@@ -47,6 +47,7 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 	protected static class ReferenceFinder extends SearchRequestor {
 		private boolean found = false;
 
+		@Override
 		public void acceptSearchMatch(SearchMatch match) throws CoreException {
 			found = true;
 		}
@@ -61,6 +62,7 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 		fBase = base;
 	}
 
+	@Override
 	protected void execute(IProgressMonitor monitor) throws CoreException, InvocationTargetException, InterruptedException {
 		monitor.beginTask(PDEUIMessages.AddNewDependenciesOperation_mainTask, 100);
 		final IBundle bundle = fBase.getBundleModel().getBundle();
@@ -378,10 +380,10 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 				ExportPackageDescription desc = it.next();
 				String value = (desc.getVersion().equals(Version.emptyVersion)) ? desc.getName() : desc.getName() + "; version=\"" + desc.getVersion() + "\""; //$NON-NLS-1$ //$NON-NLS-2$
 				// use same separator as used when writing out Manifest
-				buffer.append(value).append(PluginConverter.LIST_SEPARATOR);
+				buffer.append(value).append(ManifestUtils.MANIFEST_LIST_SEPARATOR);
 			}
 			if (buffer.length() > 0)
-				buffer.setLength(buffer.length() - PluginConverter.LIST_SEPARATOR.length());
+				buffer.setLength(buffer.length() - ManifestUtils.MANIFEST_LIST_SEPARATOR.length());
 			bundle.setHeader(Constants.IMPORT_PACKAGE, buffer.toString());
 		}
 	}
@@ -411,14 +413,14 @@ public class AddNewDependenciesOperation extends WorkspaceModifyOperation {
 				String pluginId = it.next();
 				if (!added.contains(pluginId))
 					try {
-						buffer.append(pluginId).append(PluginConverter.LIST_SEPARATOR);
+						buffer.append(pluginId).append(ManifestUtils.MANIFEST_LIST_SEPARATOR);
 						added.add(pluginId);
 						entry.removeToken(pluginId);
 					} catch (CoreException e) {
 					}
 			}
 			if (buffer.length() > 0)
-				buffer.setLength(buffer.length() - PluginConverter.LIST_SEPARATOR.length());
+				buffer.setLength(buffer.length() - ManifestUtils.MANIFEST_LIST_SEPARATOR.length());
 			bundle.setHeader(Constants.REQUIRE_BUNDLE, buffer.toString());
 		}
 	}

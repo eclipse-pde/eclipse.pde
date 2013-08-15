@@ -42,6 +42,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		super(file);
 	}
 
+	@Override
 	public void validateContent(IProgressMonitor monitor) {
 		super.validateContent(monitor);
 		if (fHeaders == null || getErrorCount() > 0)
@@ -249,7 +250,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 			if (elems.length > 0) {
 				if (!VersionUtil.validateVersionRange(elems[0].getAttribute(Constants.BUNDLE_VERSION_ATTRIBUTE)).isOK()) {
 					int line = getLine(header, header.getValue());
-					report(PDECoreMessages.BundleErrorReporter_InvalidFormatInBundleVersion, line, CompilerFlags.ERROR, PDEMarkerFactory.CAT_FATAL);
+					report(UtilMessages.BundleErrorReporter_InvalidFormatInBundleVersion, line, CompilerFlags.ERROR, PDEMarkerFactory.CAT_FATAL);
 				}
 			}
 			return;
@@ -602,7 +603,7 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		}
 
 		if (versionRange != null && !VersionUtil.validateVersionRange(versionRange).isOK()) {
-			report(NLS.bind(PDECoreMessages.BundleErrorReporter_InvalidFormatInBundleVersion, element.getValue()), getPackageLine(header, element), CompilerFlags.ERROR, PDEMarkerFactory.CAT_FATAL);
+			report(NLS.bind(UtilMessages.BundleErrorReporter_InvalidFormatInBundleVersion, element.getValue()), getPackageLine(header, element), CompilerFlags.ERROR, PDEMarkerFactory.CAT_FATAL);
 		}
 	}
 

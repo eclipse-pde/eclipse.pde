@@ -21,6 +21,7 @@ import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.internal.build.site.PluginPathFinder;
 import org.eclipse.pde.internal.core.P2Utils;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.util.ManifestUtils;
 
 /**
  * A bundle container representing an installed profile.
@@ -71,6 +72,7 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer#getLocation(boolean)
 	 */
+	@Override
 	public String getLocation(boolean resolve) throws CoreException {
 		if (resolve) {
 			return resolveHomeLocation().toOSString();
@@ -81,6 +83,7 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer#getType()
 	 */
+	@Override
 	public String getType() {
 		return TYPE;
 	}
@@ -97,6 +100,7 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer#resolveBundles(org.eclipse.pde.core.target.ITargetDefinition, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	protected TargetBundle[] resolveBundles(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
 		String home = resolveHomeLocation().toOSString();
 		if (!new File(home).isDirectory()) {
@@ -162,6 +166,7 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.target.AbstractBundleContainer#resolveFeatures(org.eclipse.pde.core.target.ITargetDefinition, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	protected TargetFeature[] resolveFeatures(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
 		if (definition instanceof TargetDefinition) {
 			return ((TargetDefinition) definition).resolveFeatures(getLocation(false), monitor);
@@ -190,7 +195,11 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 				try {
 					all.add(new TargetBundle(files[i]));
 				} catch (CoreException e) {
-					// ignore files that are not valid bundles (users may have non-bundle files in their target directory)
+					// If an old style conversion fails because the service is not available, log the error.
+					// Otherwise, ignore non-bundle files
+					if (e.getStatus().getCode() == ManifestUtils.STATUS_CODE_PLUGIN_CONVERTER_UNAVAILABLE) {
+						PDECore.log(e);
+					}
 				}
 				localMonitor.worked(1);
 			}
@@ -244,6 +253,7 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.target.AbstractBundleContainer#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object o) {
 		if (o instanceof ProfileBundleContainer) {
 			ProfileBundleContainer pbc = (ProfileBundleContainer) o;
@@ -255,6 +265,7 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.target.AbstractBundleContainer#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		int hash = fHome.hashCode();
 		if (fConfiguration != null) {
@@ -381,6 +392,7 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		return new StringBuffer().append("Installation ").append(fHome).append(' ').append(fConfiguration == null ? "Default Configuration" : fConfiguration).toString(); //$NON-NLS-1$ //$NON-NLS-2$
 	}

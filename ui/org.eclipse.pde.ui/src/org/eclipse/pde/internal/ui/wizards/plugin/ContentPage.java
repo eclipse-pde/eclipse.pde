@@ -15,9 +15,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.pde.internal.core.PDECoreMessages;
-import org.eclipse.pde.internal.core.util.IdUtil;
-import org.eclipse.pde.internal.core.util.VersionUtil;
+import org.eclipse.pde.internal.core.util.*;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.util.PDELabelUtility;
 import org.eclipse.pde.internal.ui.wizards.BundleProviderHistoryUtil;
@@ -126,7 +124,7 @@ public abstract class ContentPage extends WizardPage {
 		if (text.getText().trim().length() == 0) {
 			return PDELabelUtility.qualifyMessage(PDELabelUtility.getFieldLabel(text), PDEUIMessages.ControlValidationUtility_errorMsgValueMustBeSpecified);
 		} else if (!isVersionValid(text.getText().trim())) {
-			return PDELabelUtility.qualifyMessage(PDELabelUtility.getFieldLabel(text), PDECoreMessages.BundleErrorReporter_InvalidFormatInBundleVersion);
+			return PDELabelUtility.qualifyMessage(PDELabelUtility.getFieldLabel(text), UtilMessages.BundleErrorReporter_InvalidFormatInBundleVersion);
 		}
 		return null;
 	}
@@ -146,6 +144,7 @@ public abstract class ContentPage extends WizardPage {
 		return VersionUtil.validateVersion(version).getSeverity() == IStatus.OK;
 	}
 
+	@Override
 	public IWizardPage getNextPage() {
 		updateData();
 		return super.getNextPage();
@@ -156,6 +155,7 @@ public abstract class ContentPage extends WizardPage {
 	 * 
 	 * @see org.eclipse.jface.dialogs.IDialogPage#setVisible(boolean)
 	 */
+	@Override
 	public void setVisible(boolean visible) {
 		if (visible) {
 			String id = computeId();

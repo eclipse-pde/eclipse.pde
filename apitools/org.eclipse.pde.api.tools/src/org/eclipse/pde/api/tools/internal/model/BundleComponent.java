@@ -39,7 +39,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.osgi.service.pluginconversion.PluginConversionException;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.BundleSpecification;
 import org.eclipse.osgi.service.resolver.ExportPackageDescription;
@@ -73,8 +72,8 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.util.FileManager;
 import org.eclipse.pde.api.tools.internal.util.SourceDefaultHandler;
 import org.eclipse.pde.api.tools.internal.util.Util;
-import org.eclipse.pde.internal.core.PDEStateHelper;
 import org.eclipse.pde.internal.core.TargetWeaver;
+import org.eclipse.pde.internal.core.util.ManifestUtils;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Version;
@@ -187,20 +186,22 @@ public class BundleComponent extends Component {
 	 */
 	protected synchronized Map getManifest() throws CoreException {
 		if(fManifest == null) {
-				fManifest = PDEStateHelper.loadManifest(new File(fLocation));
-				if (isWorkspaceBinary()) {
-					// must account for bundles in development mode - look for class files in output
-					// folders rather than jars
-					TargetWeaver.weaveManifest(fManifest);
+			try {
+				fManifest = ManifestUtils.loadManifest(new File(fLocation));
+			} catch (CoreException e){
+				// If we encounter an old style bundle, but can't convert because the service is unavailable, inform the user, but don't quit
+				if (e.getStatus().getCode() == ManifestUtils.STATUS_CODE_PLUGIN_CONVERTER_UNAVAILABLE){
+					System.err.println(e.getMessage());
+					return null;
+				} else {
+					throw e;
 				}
-				if (fManifest == null || fManifest.get(Constants.BUNDLE_NAME) == null){
-					// Check if we have an old style (pre-osgi) bundle (this only works if OSGi is running.
-					try {
-						fManifest = PDEStateHelper.loadOldStyleManifest(new File(fLocation));
-					} catch (PluginConversionException e) {
-						// Ignore because isValidBundle will still return false
-					}
-				}
+			}
+			if (isWorkspaceBinary()) {
+				// must account for bundles in development mode - look for class files in output
+				// folders rather than jars
+				TargetWeaver.weaveManifest(fManifest);
+			}
 		}
 		return fManifest;
 	}

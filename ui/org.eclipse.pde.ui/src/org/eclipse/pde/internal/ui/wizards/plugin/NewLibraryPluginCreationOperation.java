@@ -25,13 +25,12 @@ import org.eclipse.jdt.core.*;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.core.build.IBuildEntry;
-import org.eclipse.pde.core.build.IBuildModelFactory;
+import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.build.Build;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
-import org.eclipse.pde.internal.core.converter.PluginConverter;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.natures.PDE;
@@ -49,6 +48,8 @@ import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
 
 public class NewLibraryPluginCreationOperation extends NewProjectCreationOperation {
+
+	private static final String SOURCE_PREFIX = "source."; //$NON-NLS-1$
 
 	private LibraryPluginFieldData fData;
 
@@ -441,10 +442,81 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 				filter.add("*"); //$NON-NLS-1$
 				map.put(elems[i].getValue(), filter);
 			}
-			Set<String> packages = PluginConverter.getDefault().getExports(project, map);
+			Set<String> packages = getExports(project, map);
 			String pkgValue = getCommaValuesFromPackagesSet(packages, fData.getVersion());
 			bundle.setHeader(Constants.EXPORT_PACKAGE, pkgValue);
 		} catch (BundleException e) {
+		}
+	}
+
+	@SuppressWarnings({"unchecked", "rawtypes"})
+	public Set<String> getExports(IProject proj, Map libs) {
+		IFile buildProperties = PDEProject.getBuildProperties(proj);
+		IBuild build = null;
+		if (buildProperties != null) {
+			WorkspaceBuildModel buildModel = new WorkspaceBuildModel(buildProperties);
+			build = buildModel.getBuild();
+		} else
+			build = new Build();
+		return findPackages(proj, libs, build);
+	}
+
+	private Set<String> findPackages(IProject proj, Map<?, List<?>> libs, IBuild build) {
+		TreeSet<String> result = new TreeSet<String>();
+		IJavaProject jp = JavaCore.create(proj);
+		Iterator<?> it = libs.entrySet().iterator();
+		while (it.hasNext()) {
+			@SuppressWarnings("rawtypes")
+			Map.Entry entry = (Map.Entry) it.next();
+			String libName = entry.getKey().toString();
+			List<?> filter = (List<?>) entry.getValue();
+			IBuildEntry libEntry = build.getEntry(SOURCE_PREFIX + libName);
+			if (libEntry != null) {
+				String[] tokens = libEntry.getTokens();
+				for (int i = 0; i < tokens.length; i++) {
+					IResource folder = null;
+					if (tokens[i].equals(".")) //$NON-NLS-1$
+						folder = proj;
+					else
+						folder = proj.getFolder(tokens[i]);
+					if (folder != null)
+						addPackagesFromFragRoot(jp.getPackageFragmentRoot(folder), result, filter);
+				}
+			} else {
+				IResource res = proj.findMember(libName);
+				if (res != null)
+					addPackagesFromFragRoot(jp.getPackageFragmentRoot(res), result, filter);
+			}
+		}
+		return result;
+	}
+
+	private void addPackagesFromFragRoot(IPackageFragmentRoot root, Collection<String> result, List<?> filter) {
+		if (root == null)
+			return;
+		try {
+			if (filter != null && !filter.contains("*")) { //$NON-NLS-1$
+				ListIterator<?> li = filter.listIterator();
+				while (li.hasNext()) {
+					String pkgName = li.next().toString();
+					if (pkgName.endsWith(".*")) //$NON-NLS-1$
+						pkgName = pkgName.substring(0, pkgName.length() - 2);
+
+					IPackageFragment frag = root.getPackageFragment(pkgName);
+					if (frag != null)
+						result.add(pkgName);
+				}
+				return;
+			}
+			IJavaElement[] children = root.getChildren();
+			for (int j = 0; j < children.length; j++) {
+				IPackageFragment fragment = (IPackageFragment) children[j];
+				String name = fragment.getElementName();
+				if (fragment.hasChildren() && !result.contains(name)) {
+					result.add(name);
+				}
+			}
+		} catch (JavaModelException e) {
 		}
 	}
 

@@ -14,12 +14,11 @@ package org.eclipse.pde.internal.core;
 import java.io.*;
 import java.util.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.osgi.service.pluginconversion.PluginConversionException;
 import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
+import org.eclipse.pde.internal.core.util.ManifestUtils;
 import org.osgi.framework.BundleException;
-import org.osgi.framework.Constants;
 
 public class MinimalState {
 
@@ -71,19 +70,9 @@ public class MinimalState {
 			model.setBundleDescription(newDesc);
 			if (newDesc == null && update)
 				fState.removeBundle(desc);
-		} catch (PluginConversionException e) {
 		} catch (CoreException e) {
 			PDECore.log(e);
 		}
-	}
-
-	public BundleDescription addBundle(IPluginModelBase model, long bundleId) {
-		try {
-			return addBundle(new File(model.getInstallLocation()), -1);
-		} catch (PluginConversionException e) {
-		} catch (CoreException e) {
-		}
-		return null;
 	}
 
 	public BundleDescription addBundle(Map<String, String> manifest, File bundleLocation, long bundleId) {
@@ -105,16 +94,11 @@ public class MinimalState {
 		return null;
 	}
 
-	public BundleDescription addBundle(File bundleLocation, long bundleId) throws PluginConversionException, CoreException {
-		Map<String, String> manifest = PDEStateHelper.loadManifest(bundleLocation);
+	public BundleDescription addBundle(File bundleLocation, long bundleId) throws CoreException {
+		Map<String, String> manifest = ManifestUtils.loadManifest(bundleLocation);
 		// update for development mode
 		TargetWeaver.weaveManifest(manifest);
-		boolean hasBundleStructure = manifest != null && manifest.get(Constants.BUNDLE_SYMBOLICNAME) != null;
-		if (!hasBundleStructure) {
-			manifest = PDEStateHelper.loadOldStyleManifest(bundleLocation);
-			if (manifest == null || manifest.get(Constants.BUNDLE_SYMBOLICNAME) == null)
-				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, IStatus.ERROR, "Error parsing plug-in manifest file at " + bundleLocation.toString(), null)); //$NON-NLS-1$
-		}
+
 		BundleDescription desc = addBundle(manifest, bundleLocation, bundleId);
 		if (desc != null && manifest != null && "true".equals(manifest.get(ICoreConstants.ECLIPSE_SYSTEM_BUNDLE))) { //$NON-NLS-1$
 			// if this is the system bundle then 
@@ -124,7 +108,7 @@ public class MinimalState {
 			fSystemBundle = desc.getSymbolicName();
 		}
 		if (desc != null) {
-			addAuxiliaryData(desc, manifest, hasBundleStructure);
+			addAuxiliaryData(desc, manifest, true);
 		}
 		return desc;
 	}

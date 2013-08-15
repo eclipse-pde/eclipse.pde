@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,12 +19,15 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.core.IEditableModel;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.converter.PluginConverter;
 import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IBundleModelFactory;
 import org.eclipse.pde.internal.core.text.bundle.BundleModelFactory;
 import org.eclipse.pde.internal.core.util.CoreUtility;
+import org.eclipse.pde.internal.core.util.ManifestUtils;
 
+/**
+ * Represents a bundle in a project in the workspace.
+ */
 public class WorkspaceBundleModel extends BundleModel implements IEditableModel {
 	private static final long serialVersionUID = 1L;
 
@@ -36,12 +39,11 @@ public class WorkspaceBundleModel extends BundleModel implements IEditableModel 
 
 	private IBundleModelFactory fFactory;
 
-	private static final String MANIFEST_VERSION = "Manifest-Version"; //$NON-NLS-1$
-
 	public WorkspaceBundleModel(IFile file) {
 		fUnderlyingResource = file;
 	}
 
+	@Override
 	public void fireModelChanged(IModelChangedEvent event) {
 		setDirty(event.getChangeType() != IModelChangedEvent.WORLD_CHANGED);
 		super.fireModelChanged(event);
@@ -60,10 +62,12 @@ public class WorkspaceBundleModel extends BundleModel implements IEditableModel 
 		return swriter.toString();
 	}
 
+	@Override
 	public IResource getUnderlyingResource() {
 		return fUnderlyingResource;
 	}
 
+	@Override
 	public String getInstallLocation() {
 		// Ensure we have an underlying resource
 		if (fUnderlyingResource == null) {
@@ -83,6 +87,7 @@ public class WorkspaceBundleModel extends BundleModel implements IEditableModel 
 		return fEditable;
 	}
 
+	@Override
 	public void load() {
 		if (fUnderlyingResource == null)
 			return;
@@ -115,6 +120,7 @@ public class WorkspaceBundleModel extends BundleModel implements IEditableModel 
 		return isInSync(fUnderlyingResource.getLocation().toFile());
 	}
 
+	@Override
 	protected void updateTimeStamp() {
 		// If we have no underlying resource, it probably got deleted from right
 		// underneath us; thus, there is nothing to update the time stamp for
@@ -158,19 +164,16 @@ public class WorkspaceBundleModel extends BundleModel implements IEditableModel 
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.IEditable#save(java.io.PrintWriter)
+	 */
 	public void save(PrintWriter writer) {
 		IBundle bundle = getBundle();
 		Map<String, String> headers = ((Bundle) bundle).getHeaders();
-		boolean addManifestVersion = headers.get(MANIFEST_VERSION) == null;
-		if (addManifestVersion)
-			headers.put(MANIFEST_VERSION, "1.0"); //$NON-NLS-1$
 		try {
-			PluginConverter.getDefault().writeManifest(headers, writer);
+			ManifestUtils.writeManifest(headers, writer);
 		} catch (IOException e) {
 			PDECore.logException(e);
-		} finally {
-			if (addManifestVersion)
-				headers.remove(MANIFEST_VERSION);
 		}
 		fDirty = false;
 	}

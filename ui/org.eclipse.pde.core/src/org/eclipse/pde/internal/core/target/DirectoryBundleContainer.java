@@ -18,6 +18,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.util.ManifestUtils;
 
 /**
  * A directory of bundles.
@@ -49,6 +50,7 @@ public class DirectoryBundleContainer extends AbstractBundleContainer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer#getLocation(boolean)
 	 */
+	@Override
 	public String getLocation(boolean resolve) throws CoreException {
 		if (resolve) {
 			return getDirectory().toString();
@@ -59,6 +61,7 @@ public class DirectoryBundleContainer extends AbstractBundleContainer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer#getType()
 	 */
+	@Override
 	public String getType() {
 		return TYPE;
 	}
@@ -66,6 +69,7 @@ public class DirectoryBundleContainer extends AbstractBundleContainer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.target.impl.AbstractBundleContainer#resolveBundles(org.eclipse.pde.core.target.ITargetDefinition, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	protected TargetBundle[] resolveBundles(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
 		File dir = getDirectory();
 		if (dir.isDirectory()) {
@@ -81,7 +85,11 @@ public class DirectoryBundleContainer extends AbstractBundleContainer {
 					TargetBundle rb = new TargetBundle(files[i]);
 					bundles.add(rb);
 				} catch (CoreException e) {
-					// ignore files that are not valid bundles (users may have non-bundle files in their target directory)
+					// If an old style conversion fails because the service is not available, log the error.
+					// Otherwise, ignore non-bundle files
+					if (e.getStatus().getCode() == ManifestUtils.STATUS_CODE_PLUGIN_CONVERTER_UNAVAILABLE) {
+						PDECore.log(e);
+					}
 				}
 				localMonitor.worked(1);
 			}
@@ -94,6 +102,7 @@ public class DirectoryBundleContainer extends AbstractBundleContainer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.target.AbstractBundleContainer#resolveFeatures(org.eclipse.pde.core.target.ITargetDefinition, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	protected TargetFeature[] resolveFeatures(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
 		if (definition instanceof TargetDefinition) {
 			return ((TargetDefinition) definition).resolveFeatures(getLocation(false), monitor);
@@ -114,6 +123,7 @@ public class DirectoryBundleContainer extends AbstractBundleContainer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.target.AbstractBundleContainer#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object o) {
 		if (o instanceof DirectoryBundleContainer) {
 			DirectoryBundleContainer dbc = (DirectoryBundleContainer) o;
@@ -125,6 +135,7 @@ public class DirectoryBundleContainer extends AbstractBundleContainer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.target.AbstractBundleContainer#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		return fPath.hashCode();
 	}
@@ -132,6 +143,7 @@ public class DirectoryBundleContainer extends AbstractBundleContainer {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		return new StringBuffer().append("Directory ").append(fPath).toString(); //$NON-NLS-1$
 	}

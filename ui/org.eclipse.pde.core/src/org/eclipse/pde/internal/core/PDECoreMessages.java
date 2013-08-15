@@ -195,12 +195,9 @@ public class PDECoreMessages extends NLS {
 	public static String BundleErrorReporter_ClasspathNotEmpty;
 	public static String BundleErrorReporter_fragmentActivator;
 	public static String BundleErrorReporter_NoExist;
-	public static String BundleErrorReporter_InvalidFormatInBundleVersion;
 	public static String BundleErrorReporter_NotExistInProject;
 	public static String BundleErrorReporter_BundleRangeInvalidInBundleVersion;
 	public static String BundleErrorReporter_R4SyntaxInR3Bundle;
-
-	public static String BundleErrorReporter_invalidVersionRangeFormat;
 	public static String BundleErrorReporter_NotExistPDE;
 	public static String BundleErrorReporter_HostNotExistPDE;
 	public static String BundleErrorReporter_HostNeeded;
@@ -345,8 +342,6 @@ public class PDECoreMessages extends NLS {
 	public static String SourceLocationManager_problemProcessingBundleManifestSourceHeader;
 
 	public static String UpdateSiteBuilder_0;
-
-	public static String VMHelper_noJreForExecEnv;
 
 	// Target Export ########################################
 	public static String ExportTargetDefinition_task;

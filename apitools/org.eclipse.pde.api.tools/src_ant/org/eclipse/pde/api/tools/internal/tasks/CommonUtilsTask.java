@@ -54,12 +54,13 @@ public abstract class CommonUtilsTask extends Task {
 	
 	/**
 	 * Creates a baseline with the given name and EE file location in the given directory.  The installLocation
-	 * will be searched for bundles to add as API components.
+	 * will be searched for bundles to add as API components. If an error occurs creating the baseline, the
+	 * exception stack trace will be printed and an empty baseline will be returned. 
 	 * 
 	 * @param baselineName Name to use for the new baseline
 	 * @param installLocation Location of an installation or directory of bundles to add as API components
 	 * @param eeFileLocation execution environment location or <code>null</code> to have the EE determined from API components
-	 * @return a new {@link IApiBaseline}
+	 * @return a new {@link IApiBaseline} or <code>null</code> if an error occurred
 	 */
 	protected IApiBaseline createBaseline(String baselineName, String installLocation, String eeFileLocation) {
 		try {
@@ -79,7 +80,7 @@ public abstract class CommonUtilsTask extends Task {
 			return baseline;
 		} catch (CoreException e) {
 			e.printStackTrace();
-			return null;
+			return ApiModelFactory.newApiBaseline(baselineName);
 		}
 	}
 	

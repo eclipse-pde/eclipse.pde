@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.plugin;
 
-import org.eclipse.pde.core.plugin.IPluginImport;
-import org.eclipse.pde.core.plugin.IPluginLibrary;
-
 import java.util.ArrayList;
 import java.util.Locale;
 import javax.xml.parsers.*;
@@ -20,7 +17,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.PDECoreMessages;
+import org.eclipse.pde.internal.core.PDEState;
+import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
 import org.osgi.framework.Version;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -82,6 +81,7 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 		return fImports.toArray(new IPluginImport[fImports.size()]);
 	}
 
+	@Override
 	public IPluginBase getPluginBase() {
 		return this;
 	}
@@ -109,6 +109,7 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 		loadImports(bundleDesc);
 	}
 
+	@Override
 	public void restoreProperty(String name, Object oldValue, Object newValue) throws CoreException {
 		if (name.equals(P_ID)) {
 			setId(newValue != null ? newValue.toString() : null);
@@ -184,7 +185,7 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 			fImports.add(importElement);
 			importElement.load(required[i]);
 		}
-		BundleDescription[] imported = PDEStateHelper.getImportedBundles(description);
+		BundleDescription[] imported = getImportedBundles(description);
 		for (int i = 0; i < imported.length; i++) {
 			PluginImport importElement = new PluginImport();
 			importElement.setModel(getModel());
@@ -193,6 +194,26 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 			fImports.add(importElement);
 			importElement.load(imported[i]);
 		}
+	}
+
+	/**
+	 * Returns the bundles that export packages imported by the given bundle
+	 * via the Import-Package header.  Provided as a static utility method so
+	 * it can be reused in {@link BundlePluginBase}
+	 * 
+	 * @param root the given bundle
+	 * 
+	 * @return an array of bundles that export packages being imported by the given bundle
+	 */
+	public static BundleDescription[] getImportedBundles(BundleDescription root) {
+		if (root == null)
+			return new BundleDescription[0];
+		ExportPackageDescription[] packages = root.getResolvedImports();
+		ArrayList<BundleDescription> resolvedImports = new ArrayList<BundleDescription>(packages.length);
+		for (int i = 0; i < packages.length; i++)
+			if (!root.getLocation().equals(packages[i].getExporter().getLocation()) && !resolvedImports.contains(packages[i].getExporter()))
+				resolvedImports.add(packages[i].getExporter());
+		return resolvedImports.toArray(new BundleDescription[resolvedImports.size()]);
 	}
 
 	void loadImports(Node node) {
@@ -210,6 +231,7 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 		}
 	}
 
+	@Override
 	protected void processChild(Node child) {
 		String name = child.getNodeName().toLowerCase(Locale.ENGLISH);
 		if (name.equals("runtime")) { //$NON-NLS-1$
@@ -248,6 +270,7 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 		fireStructureChanged(iimports, IModelChangedEvent.REMOVE);
 	}
 
+	@Override
 	public void reset() {
 		fLibraries = new ArrayList<IPluginLibrary>();
 		fImports = new ArrayList<IPluginImport>();
@@ -314,10 +337,12 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 		firePropertyChanged(this, P_IMPORT_ORDER, import1, import2);
 	}
 
+	@Override
 	public boolean isValid() {
 		return hasRequiredAttributes();
 	}
 
+	@Override
 	protected boolean hasRequiredAttributes() {
 		if (fName == null)
 			return false;
@@ -349,8 +374,8 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 		if (versionRange == null || versionRange.getMinimum() == null)
 			return IMatchRules.NONE;
 
-		Version minimum = versionRange.getMinimum();
-		Version maximum = versionRange.getMaximum() == null ? maxVersion : versionRange.getMaximum();
+		Version minimum = versionRange.getLeft();
+		Version maximum = versionRange.getRight() == null ? maxVersion : versionRange.getRight();
 
 		if (maximum.compareTo(maxVersion) >= 0)
 			return IMatchRules.GREATER_OR_EQUAL;

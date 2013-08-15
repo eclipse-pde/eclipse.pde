@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -175,7 +175,7 @@ public class TargetBundle {
 			}
 			fIsFragment = manifest.containsKey(Constants.FRAGMENT_HOST);
 		} catch (BundleException e) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, STATUS_INVALID_MANIFEST, NLS.bind(Messages.DirectoryBundleContainer_3, file.getAbsolutePath()), e));
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, STATUS_INVALID_MANIFEST, NLS.bind(Messages.TargetBundle_ErrorReadingManifest, file.getAbsolutePath()), e));
 		}
 	}
 
@@ -259,6 +259,7 @@ public class TargetBundle {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		StringBuffer result = new StringBuffer().append(getBundleInfo().toString());
 		IStatus status = getStatus();

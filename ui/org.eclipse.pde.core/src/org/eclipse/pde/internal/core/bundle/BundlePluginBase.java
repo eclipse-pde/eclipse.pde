@@ -337,7 +337,7 @@ public class BundlePluginBase extends PlatformObject implements IBundlePluginBas
 					imports.add(importElement);
 					importElement.load(required[i]);
 				}
-				BundleDescription[] imported = PDEStateHelper.getImportedBundles(description);
+				BundleDescription[] imported = PluginBase.getImportedBundles(description);
 				for (int i = 0; i < imported.length; i++) {
 					PluginImport importElement = new PluginImport();
 					importElement.setModel(getModel());

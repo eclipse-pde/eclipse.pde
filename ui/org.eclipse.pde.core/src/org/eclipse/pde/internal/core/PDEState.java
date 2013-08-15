@@ -18,7 +18,6 @@ import java.util.*;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
-import org.eclipse.osgi.service.pluginconversion.PluginConversionException;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -157,8 +156,8 @@ public class PDEState extends MinimalState {
 					return;
 				monitor.subTask(file.getName());
 				addBundle(file, -1);
-			} catch (PluginConversionException e) {
 			} catch (CoreException e) {
+				PDECore.log(e);
 			} finally {
 				monitor.worked(1);
 			}
@@ -166,6 +165,7 @@ public class PDEState extends MinimalState {
 		fNewState = true;
 	}
 
+	@Override
 	protected void addAuxiliaryData(BundleDescription desc, Map<String, String> manifest, boolean hasBundleStructure) {
 		fAuxiliaryState.addAuxiliaryData(desc, manifest, hasBundleStructure);
 	}
@@ -520,8 +520,8 @@ public class PDEState extends MinimalState {
 				BundleDescription desc = addBundle(file, -1);
 				if (desc != null)
 					descriptions.add(desc);
-			} catch (PluginConversionException e) {
 			} catch (CoreException e) {
+				PDECore.log(e);
 			}
 		}
 		// compute Timestamp and save all new information
