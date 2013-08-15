@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 IBM Corporation and others.
+ * Copyright (c) 2010, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,8 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.project;
-
-import org.eclipse.pde.ui.tests.PDETestsPlugin;
 
 import java.io.*;
 import java.net.URL;
@@ -35,6 +33,7 @@ import org.eclipse.pde.internal.core.ibundle.IBundle;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.core.text.bundle.BundleModelFactory;
+import org.eclipse.pde.ui.tests.PDETestsPlugin;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Version;
 
@@ -44,13 +43,13 @@ import org.osgi.framework.Version;
  * @since 3.6
  */
 public class ProjectCreationTests extends TestCase {
-	
-	protected static final IBundleClasspathEntry DEFAULT_BUNDLE_CLASSPATH_ENTRY; 
-	
+
+	protected static final IBundleClasspathEntry DEFAULT_BUNDLE_CLASSPATH_ENTRY;
+
 	static {
 		DEFAULT_BUNDLE_CLASSPATH_ENTRY = getBundleProjectService().newBundleClasspathEntry(null, null, new Path("."));
 	}
-	
+
 	public static IBundleProjectService getBundleProjectService() {
 		return (IBundleProjectService) PDECore.getDefault().acquireService(IBundleProjectService.class.getName());
 	}
@@ -58,25 +57,25 @@ public class ProjectCreationTests extends TestCase {
 	public static Test suite() {
 		return new TestSuite(ProjectCreationTests.class);
 	}
-	
-	   /**
-     * Wait for builds to complete
-     */
-    public static void waitForBuild() {
-        boolean wasInterrupted = false;
-        do {
-            try {
-                Job.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_BUILD, null);
-                Job.getJobManager().join(ResourcesPlugin.FAMILY_MANUAL_BUILD, null);
-                wasInterrupted = false;
-            } catch (OperationCanceledException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
-                wasInterrupted = true;
-            }
-        } while (wasInterrupted);
-    }	
-	
+
+	/**
+	 * Wait for builds to complete
+	 */
+	public static void waitForBuild() {
+		boolean wasInterrupted = false;
+		do {
+			try {
+				Job.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_BUILD, null);
+				Job.getJobManager().join(ResourcesPlugin.FAMILY_MANUAL_BUILD, null);
+				wasInterrupted = false;
+			} catch (OperationCanceledException e) {
+				e.printStackTrace();
+			} catch (InterruptedException e) {
+				wasInterrupted = true;
+			}
+		} while (wasInterrupted);
+	}
+
 	/**
 	 * Provides a project for the test case.
 	 * 
@@ -93,7 +92,7 @@ public class ProjectCreationTests extends TestCase {
 		description.setSymbolicName(proj.getName());
 		return description;
 	}
-	
+
 	/**
 	 * Minimal bundle project creation - set a symbolic name, and go.
 	 * 
@@ -103,9 +102,9 @@ public class ProjectCreationTests extends TestCase {
 		IBundleProjectDescription description = newProject();
 		IProject project = description.getProject();
 		description.apply(null);
-		
+
 		IBundleProjectDescription d2 = getBundleProjectService().getDescription(project);
-		
+
 		assertNull("Should be no activator", d2.getActivator());
 		assertNull("Should be no activation policy", d2.getActivationPolicy());
 		IPath[] binIncludes = d2.getBinIncludes();
@@ -141,7 +140,7 @@ public class ProjectCreationTests extends TestCase {
 		assertNull("Wrong export wizard", d2.getExportWizardId());
 		assertNull("Wrong launch shortctus", d2.getLaunchShortcuts());
 	}
-	
+
 	/**
 	 * Tests that a header can be written with an empty value.
 	 * 
@@ -152,9 +151,9 @@ public class ProjectCreationTests extends TestCase {
 		IProject project = description.getProject();
 		description.setHeader("Test-Empty-Value", "");
 		description.apply(null);
-		
+
 		IBundleProjectDescription d2 = getBundleProjectService().getDescription(project);
-		
+
 		String value = d2.getHeader("Test-Empty-Value");
 		assertNotNull("Missing header 'Test-Empty-Value:'", value);
 		assertEquals("Should be an blank header", "", value);
@@ -192,8 +191,8 @@ public class ProjectCreationTests extends TestCase {
 		assertFalse("Wrong singleton", d2.isSingleton());
 		assertNull("Wrong export wizard", d2.getExportWizardId());
 		assertNull("Wrong launch shortctus", d2.getLaunchShortcuts());
-	}	
-	
+	}
+
 	/**
 	 * Tests that an empty package import header can be tolerated (see bug 312291)
 	 * 
@@ -204,24 +203,24 @@ public class ProjectCreationTests extends TestCase {
 		IProject project = description.getProject();
 		description.setHeader(Constants.IMPORT_PACKAGE, "");
 		description.apply(null);
-		
+
 		IBundleProjectDescription d2 = getBundleProjectService().getDescription(project);
-		
+
 		String value = d2.getHeader(Constants.IMPORT_PACKAGE);
 		assertNotNull("Missing header 'Import-Package:'", value);
 		assertEquals("Should be a blank header", "", value);
-		
+
 		d2.setBundleName("EmptyTest");
 		d2.apply(null);
-		
+
 		IBundleProjectDescription d3 = getBundleProjectService().getDescription(project);
 		value = d3.getHeader(Constants.IMPORT_PACKAGE);
 		assertNotNull("Missing header 'Import-Package:'", value);
 		assertEquals("Should be a blank header", "", value);
 		assertEquals("Wrong bundle name", "EmptyTest", d3.getBundleName());
-		
-	}		
-	
+
+	}
+
 	/**
 	 * Minimal fragment project creation - set a symbolic name and host, and go.
 	 * 
@@ -234,9 +233,9 @@ public class ProjectCreationTests extends TestCase {
 		IHostDescription host = service.newHost("some.host", null);
 		description.setHost(host);
 		description.apply(null);
-		
+
 		IBundleProjectDescription d2 = service.getDescription(project);
-		
+
 		assertNull("Should be no activator", d2.getActivator());
 		assertNull("Should be no activation policy", d2.getActivationPolicy());
 		IPath[] binIncludes = d2.getBinIncludes();
@@ -268,8 +267,8 @@ public class ProjectCreationTests extends TestCase {
 		assertFalse("Wrong singleton", d2.isSingleton());
 		assertNull("Wrong export wizard", d2.getExportWizardId());
 		assertNull("Wrong launch shortctus", d2.getLaunchShortcuts());
-	}	
-	
+	}
+
 	/**
 	 * Fragment project creation with source folder and host range.
 	 * 
@@ -286,9 +285,9 @@ public class ProjectCreationTests extends TestCase {
 		IBundleClasspathEntry e1 = service.newBundleClasspathEntry(new Path("frag"), new Path("bin"), new Path("frag.jar"));
 		description.setBundleClasspath(new IBundleClasspathEntry[]{e1});
 		description.apply(null);
-		
+
 		IBundleProjectDescription d2 = service.getDescription(project);
-		
+
 		assertNull("Should be no activator", d2.getActivator());
 		assertNull("Should be no activation policy", d2.getActivationPolicy());
 		IPath[] binIncludes = d2.getBinIncludes();
@@ -320,8 +319,8 @@ public class ProjectCreationTests extends TestCase {
 		assertFalse("Wrong singleton", d2.isSingleton());
 		assertNull("Wrong export wizard", d2.getExportWizardId());
 		assertNull("Wrong launch shortctus", d2.getLaunchShortcuts());
-	}	
-	
+	}
+
 	/**
 	 * Two source folders mapped to the same jar.
 	 * 
@@ -336,9 +335,9 @@ public class ProjectCreationTests extends TestCase {
 		description.setBundleClasspath(new IBundleClasspathEntry[]{e1, e2});
 		description.setBundleVersion(new Version("1.2.3"));
 		description.apply(null);
-		
+
 		IBundleProjectDescription d2 = service.getDescription(project);
-		
+
 		assertNull("Should be no activator", d2.getActivator());
 		assertNull("Should be no activation policy", d2.getActivationPolicy());
 		IPath[] binIncludes = d2.getBinIncludes();
@@ -372,7 +371,7 @@ public class ProjectCreationTests extends TestCase {
 		assertFalse("Wrong singleton", d2.isSingleton());
 		assertNull("Wrong export wizard", d2.getExportWizardId());
 		assertNull("Wrong launch shortctus", d2.getLaunchShortcuts());
-		
+
 		// validate there's only one output.the.jar entry in build.properties
 		WorkspaceBuildModel properties = new WorkspaceBuildModel(PDEProject.getBuildProperties(project));
 		IBuildEntry entry = properties.getBuild().getEntry("output.the.jar");
@@ -380,7 +379,7 @@ public class ProjectCreationTests extends TestCase {
 		String[] tokens = entry.getTokens();
 		assertEquals("Wrong number of output folders", 1, tokens.length);
 	}
-	
+
 	/**
 	 * Test two source folders to different jars
 	 * 
@@ -395,9 +394,9 @@ public class ProjectCreationTests extends TestCase {
 		description.setBundleClasspath(new IBundleClasspathEntry[]{e1, e2});
 		description.setBundleVersion(new Version("1.2.3"));
 		description.apply(null);
-		
+
 		IBundleProjectDescription d2 = service.getDescription(project);
-		
+
 		assertNull("Should be no activator", d2.getActivator());
 		assertNull("Should be no activation policy", d2.getActivationPolicy());
 		IPath[] binIncludes = d2.getBinIncludes();
@@ -430,7 +429,7 @@ public class ProjectCreationTests extends TestCase {
 		assertFalse("Wrong singleton", d2.isSingleton());
 		assertNull("Wrong export wizard", d2.getExportWizardId());
 		assertNull("Wrong launch shortctus", d2.getLaunchShortcuts());
-	}	
+	}
 	/**
 	 * Set a symbolic name and singleton property, and go.
 	 * 
@@ -475,7 +474,7 @@ public class ProjectCreationTests extends TestCase {
 		assertNull("Wrong export wizard", d2.getExportWizardId());
 		assertNull("Wrong launch shortctus", d2.getLaunchShortcuts());
 	}
-	
+
 	/**
 	 * A simple project with a single source folder, default output folder, and bundle classpath (.).
 	 * 
@@ -496,7 +495,7 @@ public class ProjectCreationTests extends TestCase {
 		description.setPackageExports(new IPackageExportDescription[]{ex0, ex1, ex2, ex3});
 		description.setActivationPolicy(Constants.ACTIVATION_LAZY);
 		description.apply(null);
-		
+
 		IBundleProjectDescription d2 = service.getDescription(project);
 		assertNull("Should be no activator", d2.getActivator());
 		assertEquals("Wrong activation policy", Constants.ACTIVATION_LAZY, d2.getActivationPolicy());
@@ -535,8 +534,8 @@ public class ProjectCreationTests extends TestCase {
 		assertTrue("Wrong singleton", d2.isSingleton());
 		assertNull("Wrong export wizard", d2.getExportWizardId());
 		assertNull("Wrong launch shortctus", d2.getLaunchShortcuts());
-	}	
-	
+	}
+
 	/**
 	 * Convert a bundle to a fragment
 	 * 
@@ -552,13 +551,13 @@ public class ProjectCreationTests extends TestCase {
 		description.setBundleClasspath(new IBundleClasspathEntry[] {spec});
 		description.setActivationPolicy(Constants.ACTIVATION_LAZY);
 		description.apply(null);
-		
+
 		// modify
 		IBundleProjectDescription modify = service.getDescription(project);
 		IHostDescription host = service.newHost("host." + project.getName(), new VersionRange("[1.0.0,2.0.0)"));
 		modify.setHost(host);
 		modify.apply(null);
-		
+
 		// validate
 		IBundleProjectDescription d2 = service.getDescription(project);
 		assertNull("Should be no activator", d2.getActivator());
@@ -592,8 +591,8 @@ public class ProjectCreationTests extends TestCase {
 		assertTrue("Wrong singleton", d2.isSingleton());
 		assertNull("Wrong export wizard", d2.getExportWizardId());
 		assertNull("Wrong launch shortctus", d2.getLaunchShortcuts());
-	}	
-	
+	}
+
 	/**
 	 * A project with a source folder, plugin.xml, activator, execution environment,
 	 * required bundles, and package import.
@@ -627,7 +626,7 @@ public class ProjectCreationTests extends TestCase {
 		description.setBundleVersion(new Version("2.0.0"));
 		description.setHeader(Constants.BUNDLE_VERSION, "3.2.1");
 		description.apply(null);
-		
+
 		IBundleProjectDescription d2 = service.getDescription(project);
 		assertEquals("Wrong activator", "org.eclipse.foo.Activator", d2.getActivator());
 		assertEquals("Wrong activation policy", Constants.ACTIVATION_LAZY, d2.getActivationPolicy());
@@ -674,8 +673,8 @@ public class ProjectCreationTests extends TestCase {
 		assertNull("Wrong launch shortctus", d2.getLaunchShortcuts());
 		assertEquals("Wrong header", "something", d2.getHeader("SomeHeader"));
 		assertNull("Header should be missing", d2.getHeader("AnotherHeader"));
-	}		
-	
+	}
+
 	/**
 	 * Modify a simple project - change class path, add activator and plugin.xml.
 	 * 
@@ -694,7 +693,7 @@ public class ProjectCreationTests extends TestCase {
 		IPackageExportDescription ex3 = service.newPackageExport("a.b.c.interal.y", new Version("1.2.3"), false, new String[]{"d.e.f", "g.h.i"});
 		description.setPackageExports(new IPackageExportDescription[]{ex0, ex1, ex2, ex3});
 		description.apply(null);
-		
+
 		// modify the project
 		IBundleProjectDescription modify = service.getDescription(project);
 		IPath srcB = new Path("srcB");
@@ -706,10 +705,10 @@ public class ProjectCreationTests extends TestCase {
 		modify.setActivator("org.eclipse.foo.Activator");
 		modify.setActivationPolicy(Constants.ACTIVATION_LAZY);
 		modify.apply(null);
-		
+
 		// verify attributes
 		IBundleProjectDescription d2 = service.getDescription(project);
-		
+
 		assertEquals("Wrong activator", "org.eclipse.foo.Activator", d2.getActivator());
 		assertEquals("Wrong activation policy", Constants.ACTIVATION_LAZY, d2.getActivationPolicy());
 		IPath[] binIncludes = d2.getBinIncludes();
@@ -749,7 +748,7 @@ public class ProjectCreationTests extends TestCase {
 		assertNull("Wrong export wizard", d2.getExportWizardId());
 		assertNull("Wrong launch shortctus", d2.getLaunchShortcuts());
 	}
-	
+
 	/**
 	 * Modify a simple project to add/remove/clear some entries.
 	 * See bug 380444 where previous settings weren't being cleared
@@ -760,79 +759,79 @@ public class ProjectCreationTests extends TestCase {
 		IBundleProjectDescription description = newProject();
 		IProject project = description.getProject();
 		IBundleProjectService service = getBundleProjectService();
-		
+
 		IRequiredBundleDescription requireDesc = service.newRequiredBundle("requiredBundleOne", null, false, false);
 		IRequiredBundleDescription requireDesc2 = service.newRequiredBundle("requiredBundleTwo", new VersionRange("[1.0.0,2.0.0)"), false, false);
 		IRequiredBundleDescription requireDesc3 = service.newRequiredBundle("requiredBundleThree", null, true, false);
 		IRequiredBundleDescription requireDesc4 = service.newRequiredBundle("requiredBundleFour", null, false, true);
 		description.setRequiredBundles(new IRequiredBundleDescription[]{requireDesc, requireDesc2, requireDesc3, requireDesc4});
-		
+
 		IPackageExportDescription ex0 = service.newPackageExport("a.b.c", new Version("2.0.0"), true, null);
 		IPackageExportDescription ex1 = service.newPackageExport("a.b.c.interal", null, false, null);
 		IPackageExportDescription ex2 = service.newPackageExport("a.b.c.interal.x", null, false, new String[]{"x.y.z"});
 		IPackageExportDescription ex3 = service.newPackageExport("a.b.c.interal.y", new Version("1.2.3"), false, new String[]{"d.e.f", "g.h.i"});
 		description.setPackageExports(new IPackageExportDescription[]{ex0, ex1, ex2, ex3});
-		
-		IPackageImportDescription importDesc = service.newPackageImport("importPkgOne", null, false);		
+
+		IPackageImportDescription importDesc = service.newPackageImport("importPkgOne", null, false);
 		IPackageImportDescription importDesc2 = service.newPackageImport("importPkgTwo", new VersionRange("[1.0.0,2.0.0)"), false);
 		IPackageImportDescription importDesc3 = service.newPackageImport("importPkgThree", null, true);
 		IPackageImportDescription importDesc4 = service.newPackageImport("importPkgFour", null, false);
 		description.setPackageImports(new IPackageImportDescription[]{importDesc, importDesc2, importDesc3, importDesc4});
-		
+
 		description.apply(null);
-		
+
 		// verify attributes
 		IBundleProjectDescription d2 = service.getDescription(project);
 		assertEquals("Wrong number of required bundles", 4, d2.getRequiredBundles().length);
 		assertEquals("Wrong number of package exports", 4, d2.getPackageExports().length);
 		assertEquals("Wrong number of package imports", 4, d2.getPackageImports().length);
-		
+
 		// add entries
 		IRequiredBundleDescription requireDesc5 = service.newRequiredBundle("requiredBundleFive", null, false, false);
 		IRequiredBundleDescription requireDesc6 = service.newRequiredBundle("requiredBundleSix", null, false, false);
 		description.setRequiredBundles(new IRequiredBundleDescription[]{requireDesc, requireDesc2, requireDesc3, requireDesc4, requireDesc5, requireDesc6});
-		
+
 		IPackageExportDescription ex4 = service.newPackageExport("a.b.c.interal.x2", null, false, new String[]{"x.y.z"});
 		IPackageExportDescription ex5 = service.newPackageExport("a.b.c.interal.y2", new Version("1.2.3"), false, new String[]{"d.e.f", "g.h.i"});
 		description.setPackageExports(new IPackageExportDescription[]{ex0, ex1, ex2, ex3, ex4, ex5});
-	
+
 		IPackageImportDescription importDesc5 = service.newPackageImport("importPkgFive", null, true);
 		IPackageImportDescription importDesc6 = service.newPackageImport("importPkgSix", null, false);
 		description.setPackageImports(new IPackageImportDescription[]{importDesc, importDesc2, importDesc3, importDesc4, importDesc5, importDesc6});
-		
+
 		description.apply(null);
-		
+
 		// verify attributes
 		IBundleProjectDescription d3 = service.getDescription(project);
 		assertEquals("Wrong number of required bundles after additions", 6, d3.getRequiredBundles().length);
 		assertEquals("Wrong number of package exports after addtions", 6, d3.getPackageExports().length);
 		assertEquals("Wrong number of package imports after additions", 6, d3.getPackageImports().length);
-		
+
 		// remove most entries
 		description.setRequiredBundles(new IRequiredBundleDescription[]{requireDesc2, requireDesc5});
 		description.setPackageExports(new IPackageExportDescription[]{ex1, ex4});
 		description.setPackageImports(new IPackageImportDescription[]{importDesc2, importDesc5});
 		description.apply(null);
-		
+
 		// verify attributes
 		IBundleProjectDescription d4 = service.getDescription(project);
 		assertEquals("Wrong number of required bundles after removals", 2, d4.getRequiredBundles().length);
 		assertEquals("Wrong number of package exports after removals", 2, d4.getPackageExports().length);
 		assertEquals("Wrong number of package imports after removals", 2, d4.getPackageImports().length);
-		
+
 		// clear entries
 		description.setRequiredBundles(null);
 		description.setPackageExports(null);
 		description.setPackageImports(null);
 		description.apply(null);
-		
+
 		// verify attributes
 		IBundleProjectDescription d5 = service.getDescription(project);
 		assertNull("Wrong number of required bundles after removals", d5.getRequiredBundles());
 		assertNull("Wrong number of package exports after removals", d5.getPackageExports());
 		assertNull("Wrong number of package imports after removals", d5.getPackageImports());
 	}
-		
+
 	/**
 	 * Convert a fragment into a bundle
 	 * 
@@ -846,17 +845,17 @@ public class ProjectCreationTests extends TestCase {
 		description.setHeader("HeaderOne", "one"); // arbitrary header
 		description.setHost(host);
 		description.apply(null);
-		
+
 		//modify to a bundle and remove a header
 		IBundleProjectDescription modify = service.getDescription(project);
 		assertEquals("Wrong header value", "one", modify.getHeader("HeaderOne"));
 		modify.setHeader("HeaderOne", null);
 		modify.setHost(null);
 		modify.apply(null);
-		
+
 		// validate
 		IBundleProjectDescription d2 = service.getDescription(project);
-		
+
 		assertNull("Header should be removed", d2.getHeader("HeaderOne"));
 		assertNull("Should be no activator", d2.getActivator());
 		assertNull("Wrong activation policy", d2.getActivationPolicy());
@@ -889,8 +888,8 @@ public class ProjectCreationTests extends TestCase {
 		assertFalse("Wrong singleton", d2.isSingleton());
 		assertNull("Wrong export wizard", d2.getExportWizardId());
 		assertNull("Wrong launch shortctus", d2.getLaunchShortcuts());
-	}		
-	
+	}
+
 	/**
 	 * Tests creating a project that simply wraps jars into a bundle.
 	 * 
@@ -912,9 +911,9 @@ public class ProjectCreationTests extends TestCase {
 		// create bogus jar files
 		createBogusJar(project.getFile("one.jar"));
 		createBogusJar(project.getFile(new Path("lib/two.jar")));
-		
+
 		IBundleProjectDescription d2 = service.getDescription(project);
-		
+
 		assertNull("Should be no activator", d2.getActivator());
 		assertNull("Wrong activation policy", d2.getActivationPolicy());
 		IPath[] binIncludes = d2.getBinIncludes();
@@ -955,7 +954,7 @@ public class ProjectCreationTests extends TestCase {
 		assertNull("Wrong export wizard", d2.getExportWizardId());
 		assertNull("Wrong launch shortctus", d2.getLaunchShortcuts());
 	}
-	
+
 	/**
 	 * Creates a file with some content at the given location.
 	 * 
@@ -976,7 +975,7 @@ public class ProjectCreationTests extends TestCase {
 		file.create(stream, false, null);
 		stream.close();
 	}
-	
+
 	/**
 	 * Tests creating a project that simply wraps jars into a bundle.
 	 * 
@@ -998,9 +997,9 @@ public class ProjectCreationTests extends TestCase {
 		// create folders
 		project.getFolder("bin1").create(false, true, null);
 		project.getFolder("bin2").create(false, true, null);
-		
+
 		IBundleProjectDescription d2 = service.getDescription(project);
-		
+
 		assertNull("Should be no activator", d2.getActivator());
 		assertNull("Wrong activation policy", d2.getActivationPolicy());
 		IPath[] binIncludes = d2.getBinIncludes();
@@ -1040,8 +1039,8 @@ public class ProjectCreationTests extends TestCase {
 		assertFalse("Wrong singleton", d2.isSingleton());
 		assertNull("Wrong export wizard", d2.getExportWizardId());
 		assertNull("Wrong launch shortctus", d2.getLaunchShortcuts());
-	}	
-	
+	}
+
 	/**
 	 * Test custom export wizard and launch shortcuts.
 	 * 
@@ -1053,9 +1052,9 @@ public class ProjectCreationTests extends TestCase {
 		description.setLaunchShortcuts(new String[]{"org.eclipse.jdt.debug.ui.javaAppletShortcut"});
 		description.setExportWizardId("org.eclipse.debug.internal.ui.importexport.breakpoints.WizardExportBreakpoints");
 		description.apply(null);
-		
+
 		IBundleProjectDescription d2 = getBundleProjectService().getDescription(project);
-		
+
 		assertNull("Should be no activator", d2.getActivator());
 		assertNull("Wrong activation policy", d2.getActivationPolicy());
 		IPath[] binIncludes = d2.getBinIncludes();
@@ -1091,7 +1090,7 @@ public class ProjectCreationTests extends TestCase {
 		assertEquals("Wrong number of shortcuts", 1, ids.length);
 		assertEquals("org.eclipse.jdt.debug.ui.javaAppletShortcut", ids[0]);
 	}
-	
+
 	/**
 	 * Targeting 3.1, should get result it Eclipse-AutoStart: true
 	 * 
@@ -1121,7 +1120,7 @@ public class ProjectCreationTests extends TestCase {
 		IPackageImportDescription pi1 = service.newPackageImport("com.ibm.icu.text", null, false);
 		description.setPackageImports(new IPackageImportDescription[]{pi1});
 		description.apply(null);
-		
+
 		IBundleProjectDescription d2 = service.getDescription(project);
 		assertEquals("Wrong activator", "org.eclipse.foo.Activator", d2.getActivator());
 		assertEquals("Wrong activation policy", Constants.ACTIVATION_LAZY, d2.getActivationPolicy());
@@ -1165,7 +1164,7 @@ public class ProjectCreationTests extends TestCase {
 		assertTrue("Wrong singleton", d2.isSingleton());
 		assertNull("Wrong export wizard", d2.getExportWizardId());
 		assertNull("Wrong launch shortctus", d2.getLaunchShortcuts());
-		
+
 		// ensure proper header was generated
 		waitForBuild();
 		IPluginModelBase model = PluginRegistry.findModel(project);
@@ -1175,7 +1174,7 @@ public class ProjectCreationTests extends TestCase {
 		IManifestHeader header = createHeader(bundle, ICoreConstants.ECLIPSE_AUTOSTART);
 		assertNotNull("Missing header", header);
 	}
-	
+
 	/**
 	 * Returns a structured header from a bundle model
 	 * 
@@ -1191,7 +1190,7 @@ public class ProjectCreationTests extends TestCase {
 		}
 		return factory.createHeader(header, headerValue);
 	}
-	
+
 	/**
 	 * Targeting 3.1, eager bundle should omit Eclipse-AutoStart: header
 	 * 
@@ -1211,7 +1210,7 @@ public class ProjectCreationTests extends TestCase {
 		description.setEquinox(true);
 		description.setExtensionRegistry(true);
 		description.apply(null);
-		
+
 		IBundleProjectDescription d2 = service.getDescription(project);
 		assertEquals("Wrong activator", "org.eclipse.foo.Activator", d2.getActivator());
 		assertNull("Wrong activation policy", d2.getActivationPolicy());
@@ -1247,7 +1246,7 @@ public class ProjectCreationTests extends TestCase {
 		assertTrue("Wrong singleton", d2.isSingleton());
 		assertNull("Wrong export wizard", d2.getExportWizardId());
 		assertNull("Wrong launch shortctus", d2.getLaunchShortcuts());
-		
+
 		// ensure header was *not* generated
 		waitForBuild();
 		IPluginModelBase model = PluginRegistry.findModel(project);
@@ -1257,7 +1256,7 @@ public class ProjectCreationTests extends TestCase {
 		IManifestHeader header = createHeader(bundle, ICoreConstants.ECLIPSE_AUTOSTART);
 		assertNull("Header should not be present", header);
 	}
-	
+
 	/**
 	 * Targeting 3.2, lazy bundle should have Eclipse-LazyStart: header
 	 * 
@@ -1278,7 +1277,7 @@ public class ProjectCreationTests extends TestCase {
 		description.setEquinox(true);
 		description.setExtensionRegistry(true);
 		description.apply(null);
-		
+
 		IBundleProjectDescription d2 = service.getDescription(project);
 		assertEquals("Wrong activator", "org.eclipse.foo.Activator", d2.getActivator());
 		assertEquals("Wrong activation policy", Constants.ACTIVATION_LAZY, d2.getActivationPolicy());
@@ -1314,7 +1313,7 @@ public class ProjectCreationTests extends TestCase {
 		assertTrue("Wrong singleton", d2.isSingleton());
 		assertNull("Wrong export wizard", d2.getExportWizardId());
 		assertNull("Wrong launch shortctus", d2.getLaunchShortcuts());
-		
+
 		// ensure header was generated
 		waitForBuild();
 		IPluginModelBase model = PluginRegistry.findModel(project);
@@ -1324,7 +1323,7 @@ public class ProjectCreationTests extends TestCase {
 		IManifestHeader header = createHeader(bundle, ICoreConstants.ECLIPSE_LAZYSTART);
 		assertNotNull("Header should be present", header);
 	}
-	
+
 	/**
 	 * Targeting 3.2, eager bundle should not have Eclipse-LazyStart: header
 	 * 
@@ -1344,7 +1343,7 @@ public class ProjectCreationTests extends TestCase {
 		description.setEquinox(true);
 		description.setExtensionRegistry(true);
 		description.apply(null);
-		
+
 		IBundleProjectDescription d2 = service.getDescription(project);
 		assertEquals("Wrong activator", "org.eclipse.foo.Activator", d2.getActivator());
 		assertNull("Wrong activation policy", d2.getActivationPolicy());
@@ -1380,7 +1379,7 @@ public class ProjectCreationTests extends TestCase {
 		assertTrue("Wrong singleton", d2.isSingleton());
 		assertNull("Wrong export wizard", d2.getExportWizardId());
 		assertNull("Wrong launch shortctus", d2.getLaunchShortcuts());
-		
+
 		// ensure header was generated
 		waitForBuild();
 		IPluginModelBase model = PluginRegistry.findModel(project);
@@ -1389,13 +1388,13 @@ public class ProjectCreationTests extends TestCase {
 		IBundle bundle = ((BundlePluginBase) base).getBundle();
 		IManifestHeader header = createHeader(bundle, ICoreConstants.ECLIPSE_LAZYSTART);
 		assertNull("Header should not be present", header);
-	}		
-	
+	}
+
 	/**
 	 * Returns the given input stream's contents as a character array.
 	 * If a length is specified (i.e. if length != -1), this represents the number of bytes in the stream.
 	 * Note the specified stream is not closed in this method
-	 * @param stream the stream to get convert to the char array 
+	 * @param stream the stream to get convert to the char array
 	 * @return the given input stream's contents as a character array.
 	 * @throws IOException if a problem occurred reading the stream.
 	 */
@@ -1418,7 +1417,7 @@ public class ProjectCreationTests extends TestCase {
 		byteBuffer.flip();
 		return charsetDecoder.decode(byteBuffer).array();
 	}
-	
+
 	/**
 	 * Returns the given input stream as a byte array
 	 * @param stream the stream to get as a byte array
@@ -1467,8 +1466,8 @@ public class ProjectCreationTests extends TestCase {
 			}
 		}
 		return contents;
-	}	
-	
+	}
+
 	/**
 	 * Tests that package import/export headers don't get flattened when doing an unrelated edit.
 	 * 
@@ -1487,27 +1486,27 @@ public class ProjectCreationTests extends TestCase {
 		description.setPackageExports(new IPackageExportDescription[]{ex1, ex2, ex3});
 		IProject project = description.getProject();
 		description.apply(null);
-		
-		// should be 12 lines
+
+		// should be 11 lines
 		IFile manifest = PDEProject.getManifest(project);
 		char[] chars = getInputStreamAsCharArray(manifest.getContents());
 		Document document = new Document(new String(chars));
 		int lines = document.getNumberOfLines();
-		assertEquals("Wrong number of lines", 12, lines);
-		
+		assertEquals("Wrong number of lines", 11, lines);
+
 		// modify version attribute
 		IBundleProjectDescription d2 = getBundleProjectService().getDescription(project);
 		d2.setBundleVersion(new Version("2.0.0"));
 		d2.apply(null);
-		
-		// should be 12 lines
+
+		// should be 11 lines
 		manifest = PDEProject.getManifest(project);
 		chars = getInputStreamAsCharArray(manifest.getContents());
 		document = new Document(new String(chars));
 		lines = document.getNumberOfLines();
-		assertEquals("Wrong number of lines", 12, lines);
+		assertEquals("Wrong number of lines", 11, lines);
 	}
-	
+
 	/**
 	 * Changes a non-plug-in project into a a plug-in.
 	 * 
@@ -1521,13 +1520,13 @@ public class ProjectCreationTests extends TestCase {
 		IProjectDescription pd = proj.getDescription();
 		pd.setNatureIds(new String[]{JavaCore.NATURE_ID});
 		proj.setDescription(pd, null);
-		
+
 		IBundleProjectDescription description = getBundleProjectService().getDescription(proj);
 		assertTrue("Missing Java Nature", description.hasNature(JavaCore.NATURE_ID));
 		description.setSymbolicName("test.non.bundle.to.bundle");
 		description.setNatureIds(new String[]{IBundleProjectDescription.PLUGIN_NATURE, JavaCore.NATURE_ID});
 		description.apply(null);
-		
+
 		// validate
 		IBundleProjectDescription d2 = getBundleProjectService().getDescription(proj);
 		assertEquals("Wrong symbolic name", proj.getName(), d2.getSymbolicName());
@@ -1539,9 +1538,9 @@ public class ProjectCreationTests extends TestCase {
 		IBundleClasspathEntry[] classpath = d2.getBundleClasspath();
 		assertEquals("Wrong number of Bundle-Classpath entries", 1, classpath.length);
 		assertEquals("Wrong Bundle-Classpath entry", DEFAULT_BUNDLE_CLASSPATH_ENTRY, classpath[0]);
-		
+
 	}
-	
+
 	/**
 	 * Convert an existing Java project into a bundle project. Ensure it's build path
 	 * doesn't get toasted in the process.
@@ -1569,7 +1568,7 @@ public class ProjectCreationTests extends TestCase {
 		IClasspathEntry entry2 = JavaCore.newContainerEntry(JavaRuntime.newJREContainerPath(JavaRuntime.getExecutionEnvironmentsManager().getEnvironment("J2SE-1.4")));
 		IClasspathEntry entry3 = JavaCore.newContainerEntry(ClasspathContainerInitializer.PATH);
 		javaProject.setRawClasspath(new IClasspathEntry[]{entry1, entry2, entry3}, null);
-		
+
 		// convert to a bundle
 		IBundleProjectDescription description = getBundleProjectService().getDescription(proj);
 		assertTrue("Missing Java Nature", description.hasNature(JavaCore.NATURE_ID));
@@ -1578,7 +1577,7 @@ public class ProjectCreationTests extends TestCase {
 		IBundleClasspathEntry entry = getBundleProjectService().newBundleClasspathEntry(src.getProjectRelativePath(), null, null);
 		description.setBundleClasspath(new IBundleClasspathEntry[]{entry});
 		description.apply(null);
-		
+
 		// validate
 		IBundleProjectDescription d2 = getBundleProjectService().getDescription(proj);
 		assertEquals("Wrong symbolic name", proj.getName(), d2.getSymbolicName());
@@ -1594,11 +1593,11 @@ public class ProjectCreationTests extends TestCase {
 		assertEquals("Wrong EE", "J2SE-1.4", ees[0]);
 		// version
 		assertEquals("Wrong version", "1.0.0.qualifier", d2.getBundleVersion().toString());
-		
+
 		IBundleClasspathEntry[] classpath = d2.getBundleClasspath();
 		assertEquals("Wrong number of Bundle-Classpath entries", 1, classpath.length);
 		assertEquals("Wrong Bundle-Classpath entry", getBundleProjectService().newBundleClasspathEntry(src.getProjectRelativePath(), null, new Path(".")), classpath[0]);
-		
+
 		// raw class path should still be intact
 		IClasspathEntry[] rawClasspath = javaProject.getRawClasspath();
 		assertEquals("Wrong number of entries", 4, rawClasspath.length);
@@ -1607,7 +1606,7 @@ public class ProjectCreationTests extends TestCase {
 		assertEquals("Wrong entry", entry3, rawClasspath[2]);
 		assertEquals("Missing Required Plug-ins Container", ClasspathComputer.createContainerEntry(), rawClasspath[3]);
 	}
-	
+
 	/**
 	 * Tests creating a project that has a nested class file folders instead of a jar
 	 * 
@@ -1625,9 +1624,9 @@ public class ProjectCreationTests extends TestCase {
 		description.setBundleVersion(new Version("1.0.0"));
 		description.setExecutionEnvironments(new String[]{"J2SE-1.5"});
 		description.apply(null);
-		
+
 		IBundleProjectDescription d2 = service.getDescription(project);
-		
+
 		assertNull("Should be no activator", d2.getActivator());
 		assertNull("Wrong activation policy", d2.getActivationPolicy());
 		IPath[] binIncludes = d2.getBinIncludes();
@@ -1666,14 +1665,14 @@ public class ProjectCreationTests extends TestCase {
 		assertFalse("Wrong singleton", d2.isSingleton());
 		assertNull("Wrong export wizard", d2.getExportWizardId());
 		assertNull("Wrong launch shortctus", d2.getLaunchShortcuts());
-		
+
 		// should be no warnings on build.properties
 		IFile file = PDEProject.getBuildProperties(project);
 		IMarker[] markers = file.findMarkers(PDEMarkerFactory.MARKER_ID, true, 0);
 		assertEquals("Should be no errors", 0, markers.length);
-	}	
-		
-	
+	}
+
+
 	/**
 	 * Tests that adding package exports incrementally works
 	 * 
@@ -1686,12 +1685,12 @@ public class ProjectCreationTests extends TestCase {
 		IPackageExportDescription e1 = service.newPackageExport("a.b.c", null, true, null);
 		description.setPackageExports(new IPackageExportDescription[]{e1});
 		description.apply(null);
-		
+
 		IBundleProjectDescription d2 = service.getDescription(project);
 		IPackageExportDescription e2 = service.newPackageExport("a.b.c.internal", null, false, null);
 		d2.setPackageExports(new IPackageExportDescription[]{e1, e2});
 		d2.apply(null);
-		
+
 		IBundleProjectDescription d3 = service.getDescription(project);
 		IPackageExportDescription[] exports = d3.getPackageExports();
 		assertNotNull("Wrong exports", exports);
