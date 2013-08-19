@@ -291,4 +291,24 @@ public class InvalidAnnotationTagTests extends TagTest {
 		String typename = "test13.java"; 
 		deployTagTest(typename, inc, true);
 	}
+	
+	public void testInvalidAnnotationTag14I() {
+		x14(true);
+	}
+	
+	public void testInvalidAnnotationTag14F() {
+		x14(false);
+	}
+	
+	/**
+	 * Tests for an invalid @noreference tag on a field in a visible member annotation
+	 */
+	private void x14(boolean inc) {
+		setExpectedProblemIds(getDefaultProblemSet(1));
+		setExpectedMessageArgs(new String[][] {
+				{"@noreference", BuilderMessages.TagValidator_annotation_field}	
+		});
+		String typename = "test14.java"; 
+		deployTagTest(typename, inc, true);
+	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,6 +32,7 @@ import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+
 import org.eclipse.jdt.internal.core.builder.ReferenceCollection;
 import org.eclipse.jdt.internal.core.builder.State;
 import org.eclipse.jdt.internal.core.builder.StringSet;
@@ -126,7 +127,7 @@ public class IncrementalApiBuilder {
 							String typename = resolveTypeName(resource, CLASS_FILE);
 							if(typename != null) {
 								if (ApiPlugin.DEBUG_BUILDER) {
-									System.out.println("Found removed class file " + typename); //$NON-NLS-1$
+									System.out.println("ApiAnalysisBuilder: Found removed class file " + typename); //$NON-NLS-1$
 								}
 								changes.add(new Change(STRUCTURAL, delta.getKind(), resource, typename, CLASS_FILE));
 							}
@@ -233,7 +234,7 @@ public class IncrementalApiBuilder {
 			//do nothing, but don't forward it
 			//https://bugs.eclipse.org/bugs/show_bug.cgi?id=304315
 			if(ApiPlugin.DEBUG_BUILDER) {
-				System.out.println("Trapped OperationCanceledException"); //$NON-NLS-1$
+				System.out.println("ApiAnalysisBuilder: Trapped OperationCanceledException"); //$NON-NLS-1$
 			}
 		}
 		finally {
@@ -492,7 +493,7 @@ public class IncrementalApiBuilder {
 						continue;
 					}
 					if (ApiPlugin.DEBUG_BUILDER) {
-						System.out.println("  adding affected source file " + file.getName()); //$NON-NLS-1$
+						System.out.println("ApiAnalysisBuilder:   adding affected source file " + file.getName()); //$NON-NLS-1$
 					}
 					addDependentTypeToContext(file, kind);
 				}
@@ -515,7 +516,7 @@ public class IncrementalApiBuilder {
 			typeName = typeName.substring(0, idx);
 		}
 		if (simpleTypes.add(typeName) && packages.add(packageName) && ApiPlugin.DEBUG_BUILDER) {
-			System.out.println("  will look for dependents of " + typeName + " in " + packageName);  //$NON-NLS-1$ //$NON-NLS-2$
+			System.out.println("ApiAnalysisBuilder:   will look for dependents of " + typeName + " in " + packageName);  //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	

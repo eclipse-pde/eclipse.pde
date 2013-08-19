@@ -48,6 +48,7 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+
 import org.eclipse.jdt.internal.core.JavaModelManager;
 import org.eclipse.jdt.internal.core.builder.State;
 import org.eclipse.osgi.service.resolver.BundleDescription;
@@ -185,7 +186,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		try {
 			if (resource != null && resource.isAccessible()) {
 				if (ApiPlugin.DEBUG_BUILDER) {
-					System.out.println("cleaning api use problems"); //$NON-NLS-1$
+					System.out.println("ApiAnalysisBuilder: cleaning api use problems"); //$NON-NLS-1$
 				}
 				resource.deleteMarkers(IApiMarkerConstants.API_USESCAN_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
 
@@ -215,7 +216,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		try {
 			if(resource != null && resource.isAccessible()) {
 				if(ApiPlugin.DEBUG_BUILDER) {
-					System.out.println("cleaning unsupported tag problems"); //$NON-NLS-1$
+					System.out.println("ApiAnalysisBuilder: cleaning unsupported tag problems"); //$NON-NLS-1$
 				}
 				resource.deleteMarkers(IApiMarkerConstants.UNSUPPORTED_TAG_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
 			}
@@ -305,13 +306,13 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		// update build time stamp
 		BuildStamps.incBuildStamp(this.currentproject);
 		if (ApiPlugin.DEBUG_BUILDER) {
-			System.out.println("\nApiAnalysis builder - Starting build of " + this.currentproject.getName() + " @ " + new Date(System.currentTimeMillis())); //$NON-NLS-1$ //$NON-NLS-2$
+			System.out.println("\nApiAnalysisBuilder: Starting build of " + this.currentproject.getName() + " @ " + new Date(System.currentTimeMillis())); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		SubMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.api_analysis_builder, 8);
 		IApiBaseline wbaseline = ApiPlugin.getDefault().getApiBaselineManager().getWorkspaceBaseline();
 		if (wbaseline == null) {
 			if (ApiPlugin.DEBUG_BUILDER) {
-				System.err.println("Could not retrieve a workspace baseline");  //$NON-NLS-1$
+				System.err.println("ApiAnalysisBuilder: Could not retrieve a workspace baseline");  //$NON-NLS-1$
 			}
 			return NO_PROJECTS;
 		}
@@ -321,7 +322,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			switch(kind) {
 				case FULL_BUILD : {
 					if (ApiPlugin.DEBUG_BUILDER) {
-						System.out.println("Performing full build as requested by user"); //$NON-NLS-1$
+						System.out.println("ApiAnalysisBuilder: Performing full build as requested"); //$NON-NLS-1$
 					}
 					buildAll(baseline, wbaseline, localMonitor.newChild(1));
 					break;
@@ -373,7 +374,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 							}
 							if (full) {
 								if (ApiPlugin.DEBUG_BUILDER) {
-									System.out.println("Performing full build since MANIFEST.MF or .api_filters was modified"); //$NON-NLS-1$
+									System.out.println("ApiAnalysisBuilder: Performing full build since MANIFEST.MF or .api_filters was modified"); //$NON-NLS-1$
 		 						}
 								buildAll(baseline, wbaseline, localMonitor.newChild(1));
 							}
@@ -402,7 +403,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			//do nothing, but don't forward it
 			//https://bugs.eclipse.org/bugs/show_bug.cgi?id=304315
 			if(ApiPlugin.DEBUG_BUILDER) {
-				System.out.println("Trapped OperationCanceledException"); //$NON-NLS-1$
+				System.out.println("ApiAnalysisBuilder: Trapped OperationCanceledException"); //$NON-NLS-1$
 			}
 		}
 		catch(CoreException e) {
@@ -467,12 +468,12 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				//do nothing, but don't forward it
 				//https://bugs.eclipse.org/bugs/show_bug.cgi?id=304315
 				if(ApiPlugin.DEBUG_BUILDER) {
-					System.out.println("Trapped OperationCanceledException"); //$NON-NLS-1$
+					System.out.println("ApiAnalysisBuilder: Trapped OperationCanceledException"); //$NON-NLS-1$
 				}
 			}
 		}
 		if (ApiPlugin.DEBUG_BUILDER) {
-			System.out.println("Finished build of " + this.currentproject.getName() + " @ " + new Date(System.currentTimeMillis())); //$NON-NLS-1$ //$NON-NLS-2$
+			System.out.println("ApiAnalysisBuilder: Finished build of " + this.currentproject.getName() + " @ " + new Date(System.currentTimeMillis())); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return projects;
 	}
@@ -755,7 +756,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				continue;
 			}
 			if(ApiPlugin.DEBUG_BUILDER) {
-				System.out.println("creating marker for: " + problems[i].toString()); //$NON-NLS-1$
+				System.out.println("ApiAnalysisBuilder: creating marker for: " + problems[i].toString()); //$NON-NLS-1$
 			}
 			createMarkerForProblem(category, type, problems[i]);
 		}
@@ -878,7 +879,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				marker.setAttributes(problem.getExtraMarkerAttributeIds(), problem.getExtraMarkerAttributeValues());
 			}
 			if (ApiPlugin.DEBUG_BUILDER) {
-				System.out.println("Created the marker: " + marker.getId() + " - " + marker.getAttributes().entrySet()); //$NON-NLS-1$ //$NON-NLS-2$
+				System.out.println("ApiAnalysisBuilder: Created the marker: " + marker.getId() + " - " + marker.getAttributes().entrySet()); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		} catch (CoreException e) {
 			//ignore and continue
@@ -990,7 +991,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				}
 			}
 			else if(ApiPlugin.DEBUG_BUILDER) {
-				System.out.println("Tried to look up bundle description for: " + workspaceModels[i].toString()); //$NON-NLS-1$
+				System.out.println("ApiAnalysisBuilder: Tried to look up bundle description for: " + workspaceModels[i].toString()); //$NON-NLS-1$
 			}
 		}
 		return currentModel;
@@ -1003,13 +1004,13 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	 */
 	IResourceDelta[] getDeltas(IProject[] projects) {
 		if(ApiPlugin.DEBUG_BUILDER) {
-			System.out.println("Searching for deltas for build of project: "+this.currentproject.getName()); //$NON-NLS-1$
+			System.out.println("ApiAnalysisBuilder: Searching for deltas for build of project: "+this.currentproject.getName()); //$NON-NLS-1$
 		}
 		ArrayList deltas = new ArrayList();
 		IResourceDelta delta = getDelta(this.currentproject);
 		if(delta != null) {
 			if (ApiPlugin.DEBUG_BUILDER) {
-				System.out.println("Found a delta: " + delta); //$NON-NLS-1$
+				System.out.println("ApiAnalysisBuilder: Found a delta: " + delta); //$NON-NLS-1$
 			}
 			deltas.add(delta);
 		}
@@ -1017,7 +1018,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			delta = getDelta(projects[i]);
 			if(delta != null) {
 				if (ApiPlugin.DEBUG_BUILDER) {
-					System.out.println("Found a delta: " + delta); //$NON-NLS-1$
+					System.out.println("ApiAnalysisBuilder: Found a delta: " + delta); //$NON-NLS-1$
 				}
 				deltas.add(delta);
 			}
