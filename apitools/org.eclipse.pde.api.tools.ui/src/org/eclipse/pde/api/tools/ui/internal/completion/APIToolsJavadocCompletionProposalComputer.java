@@ -22,7 +22,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.CompletionContext;
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMember;
@@ -47,6 +46,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.api.tools.internal.JavadocTagManager;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiJavadocTag;
+import org.eclipse.pde.api.tools.internal.util.JavaUtils;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 import org.eclipse.swt.graphics.Image;
@@ -122,7 +122,7 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 			try {
 				int offset = jcontext.getInvocationOffset();
 				IJavaElement element = cunit.getElementAt(offset);
-				if (element == null) {
+				if (!JavaUtils.isVisible(element)) {
 					return Collections.EMPTY_LIST;
 				}
 				ImageDescriptor imagedesc = jcontext.getLabelProvider().createImageDescriptor(
@@ -131,24 +131,9 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 				fImageHandle = (imagedesc == null ? null : imagedesc.createImage());
 				int type = getType(element);
 				int member = IApiJavadocTag.MEMBER_NONE;
-				int elementtype = element.getElementType();
-				switch(elementtype) {
-					case IJavaElement.TYPE: {
-						IType itype = (IType) element;
-						if(hasNonVisibleParent(element, itype.isInterface())) {
-							return Collections.EMPTY_LIST;
-						}
-						break;
-					}
+				switch(element.getElementType()) {
 					case IJavaElement.METHOD: {
 						IMethod method = (IMethod) element;
-						int flags = method.getFlags();
-						boolean inter = method.getDeclaringType().isInterface();
-						if(Flags.isPrivate(flags) || 
-								(Flags.isPackageDefault(flags) && !inter) || 
-								hasNonVisibleParent(element, inter)) {
-							return Collections.EMPTY_LIST;
-						}
 						member = IApiJavadocTag.MEMBER_METHOD;
 						if(method.isConstructor()) {
 							member = IApiJavadocTag.MEMBER_CONSTRUCTOR;
@@ -156,16 +141,6 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 						break;
 					}
 					case IJavaElement.FIELD: {
-						IField field  = (IField) element;
-						int flags = field.getFlags();
-						boolean inter = field.getDeclaringType().isInterface();
-						if(Flags.isFinal(flags) || 
-								field.isEnumConstant() || 
-								Flags.isPrivate(flags) || 
-								(Flags.isPackageDefault(flags) && !inter) || 
-								hasNonVisibleParent(element, inter)) {
-							return Collections.EMPTY_LIST;
-						}
 						member = IApiJavadocTag.MEMBER_FIELD;
 						break;
 					}
@@ -200,52 +175,6 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 			}
 		}
 		return Collections.EMPTY_LIST;
-	}
-	
-	/**
-	 * Returns if the given element has a non-visible parent in its parent hierarchy
-	 * 
-	 * @param element
-	 * @return <code>true</code> if a parent type is non-visible, <code>false</code> otherwise
-	 * @throws JavaModelException
-	 * @since 1.0.400
-	 */
-	boolean hasNonVisibleParent(IJavaElement element, boolean isinterface) throws JavaModelException {
-		if(element == null) {
-			return false;
-		}
-		boolean isinter = isinterface;
-		switch(element.getElementType()) {
-			case IJavaElement.TYPE: {
-				IType type = (IType) element;
-				int flags = type.getFlags();
-				IType ptype = type.getDeclaringType();
-				if(type.isInterface()) {
-					if(ptype == null) {
-						return false;
-					}
-					isinter &= true;
-					if(Flags.isPublic(flags) || isinter) {
-						return hasNonVisibleParent(ptype, isinter);
-					}
-					if(ptype.isClass()) {
-						if(Flags.isPrivate(flags) || Flags.isPackageDefault(flags)) {
-							return true;
-						}
-					}
-				}
-				if(ptype != null) {
-					if(!Flags.isStatic(flags) && ! Flags.isPublic(flags)) {
-						return true;
-					}
-				}
-				if(Flags.isPrivate(flags) || Flags.isPackageDefault(flags)) {
-					return true;
-				}
-				break;
-			}
-		}
-		return hasNonVisibleParent(element.getParent(), isinter);
 	}
 	
 	/**
