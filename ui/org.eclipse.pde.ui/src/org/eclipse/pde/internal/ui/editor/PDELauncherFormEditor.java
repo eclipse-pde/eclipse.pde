@@ -84,6 +84,7 @@ public abstract class PDELauncherFormEditor extends MultiSourceEditor {
 		LauncherAction[] result = new LauncherAction[elements.length];
 		for (int i = 0; i < elements.length; i++) {
 			LauncherAction thisAction = new LauncherAction(elements[i]) {
+				@Override
 				public void run() {
 					doSave(null);
 					String id = getConfigurationElement().getAttribute("id"); //$NON-NLS-1$
@@ -120,7 +121,8 @@ public abstract class PDELauncherFormEditor extends MultiSourceEditor {
 				try {
 					ILaunchShortcut shortcut = (ILaunchShortcut) elements[i].createExecutableExtension("class"); //$NON-NLS-1$
 					preLaunch.run();
-					shortcut.launch(new StructuredSelection(launchObject), mode);
+					StructuredSelection selection = launchObject != null ? new StructuredSelection(launchObject) : StructuredSelection.EMPTY;
+					shortcut.launch(selection, mode);
 				} catch (CoreException e1) {
 				}
 			}
