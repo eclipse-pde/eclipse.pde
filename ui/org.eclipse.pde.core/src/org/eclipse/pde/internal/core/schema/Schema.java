@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -14,8 +14,7 @@ package org.eclipse.pde.internal.core.schema;
 import java.io.*;
 import java.net.*;
 import java.util.*;
-import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
@@ -62,6 +61,8 @@ public class Schema extends PlatformObject implements ISchema {
 	private boolean fValid;
 
 	private boolean fAbbreviated;
+
+	private List<IPath> fSearchPath;
 
 	public Schema(String pluginId, String pointId, String name, boolean abbreviated) {
 		fPluginID = pluginId;
@@ -752,7 +753,7 @@ public class Schema extends PlatformObject implements ISchema {
 
 	private void processInclude(Node node) {
 		String location = getAttribute(node, "schemaLocation"); //$NON-NLS-1$
-		SchemaInclude include = new SchemaInclude(this, location, fAbbreviated);
+		SchemaInclude include = new SchemaInclude(this, location, fAbbreviated, fSearchPath);
 		if (fIncludes == null)
 			fIncludes = new Vector<ISchemaInclude>();
 		fIncludes.add(include);
@@ -887,6 +888,18 @@ public class Schema extends PlatformObject implements ISchema {
 		fNotificationEnabled = newNotificationEnabled;
 	}
 
+	/**
+	 * Sets a list of additional schema relative or absolute paths to search when
+	 * trying to find an included schema.  Must be set before {@link #load()} is
+	 * called.
+	 * 
+	 * @param searchPath the list of paths to search for included schema or <code>null</code> for no additional paths
+	 */
+	public void setSearchPath(List<IPath> searchPath) {
+		fSearchPath = searchPath;
+	}
+
+	@Override
 	public String toString() {
 		return fName;
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2012 IBM Corporation and others.
+ *  Copyright (c) 2005, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -84,6 +84,7 @@ public class SchemaErrorReporter extends XMLErrorReporter {
 		fSchema = desc.getSchema(false);
 	}
 
+	@Override
 	public void validateContent(IProgressMonitor monitor) {
 		List<String> elements = new ArrayList<String>();
 		Element element = getDocumentRoot();
@@ -278,7 +279,7 @@ public class SchemaErrorReporter extends XMLErrorReporter {
 					if (includedSchema == null)
 						continue;
 					URL includedSchemaUrl = includedSchema.getURL();
-					URL computedUrl = IncludedSchemaDescriptor.computeURL(fSchema.getSchemaDescriptor(), schemaLocation);
+					URL computedUrl = IncludedSchemaDescriptor.computeURL(fSchema.getSchemaDescriptor(), schemaLocation, null);
 					if (includedSchemaUrl != null && computedUrl != null && includedSchemaUrl.equals(computedUrl)) {
 						if (!includedSchema.isValid())
 							report(NLS.bind(PDECoreMessages.Builders_Schema_includeNotValid, schemaLocation), getLine(element), CompilerFlags.ERROR, PDEMarkerFactory.CAT_OTHER);

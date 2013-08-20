@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -13,10 +13,10 @@ package org.eclipse.pde.internal.core.ant;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.osgi.util.NLS;
@@ -31,16 +31,29 @@ import org.eclipse.pde.internal.core.util.HeaderMap;
 import org.eclipse.pde.internal.core.util.SAXParserWrapper;
 import org.osgi.framework.Constants;
 
+/**
+ * Ant task that takes a plug-in and created HTML reference documents for all schema (.exsd) files.
+ * 
+ */
 public class ConvertSchemaToHTML extends Task {
 
 	private SchemaTransformer fTransformer = new SchemaTransformer();
 	private String manifest;
 	private String destination;
 	private URL cssURL;
+	private String additionalSearchPaths;
 
+	@Override
 	public void execute() throws BuildException {
-		if (!validateDestination())
-			return;
+		if (destination == null) {
+			throw new BuildException(NLS.bind(PDECoreMessages.Builders_Convert_missingAttribute, "destination")); //$NON-NLS-1$
+		}
+		if (manifest == null) {
+			throw new BuildException(NLS.bind(PDECoreMessages.Builders_Convert_missingAttribute, "manifest")); //$NON-NLS-1$
+		}
+		if (!new Path(destination).isValidPath(destination)) {
+			throw new BuildException(NLS.bind(PDECoreMessages.Builders_Convert_illegalValue, "destination")); //$NON-NLS-1$ 
+		}
 
 		IPluginModelBase model = readManifestFile();
 		if (model == null)
@@ -50,6 +63,8 @@ public class ConvertSchemaToHTML extends Task {
 		if (pluginID == null) {
 			pluginID = getPluginID();
 		}
+
+		List<IPath> searchPaths = getSearchPaths();
 
 		IPluginExtensionPoint[] extPoints = model.getPluginBase().getExtensionPoints();
 		for (int i = 0; i < extPoints.length; i++) {
@@ -65,9 +80,8 @@ public class ConvertSchemaToHTML extends Task {
 				File schemaFile = new File(model.getInstallLocation(), schemaLocation);
 				XMLDefaultHandler handler = new XMLDefaultHandler();
 				parser.parse(schemaFile, handler);
-
 				URL url = schemaFile.toURL();
-				SchemaDescriptor desc = new SchemaDescriptor(extPoints[i].getFullId(), url);
+				SchemaDescriptor desc = new SchemaDescriptor(extPoints[i].getFullId(), url, searchPaths);
 				schema = (Schema) desc.getSchema(false);
 
 				File directory = new Path(destination).isAbsolute() ? new File(destination) : new File(getProject().getBaseDir(), destination);
@@ -84,8 +98,7 @@ public class ConvertSchemaToHTML extends Task {
 				out = new PrintWriter(new OutputStreamWriter(new FileOutputStream(file), ICoreConstants.UTF_8), true);
 				fTransformer.transform(schema, out, cssURL, SchemaTransformer.BUILD);
 			} catch (Exception e) {
-				if (e.getMessage() != null)
-					System.out.println(e.getMessage());
+				throw new BuildException(e);
 			} finally {
 				if (out != null)
 					out.close();
@@ -93,6 +106,76 @@ public class ConvertSchemaToHTML extends Task {
 					schema.dispose();
 			}
 		}
+	}
+
+	/**
+	 * Required attribute describing the location of the plugin.xml file
+	 * for the plug-in to create schema html docs for.
+	 * 
+	 * @param manifest string file path to plugin.xml for the plug-in to convert
+	 */
+	public void setManifest(String manifest) {
+		this.manifest = manifest;
+	}
+
+	/**
+	 * Required attribute describing the location to output the HTML.
+	 * 
+	 * @param destination string file path to output html to
+	 */
+	public void setDestination(String destination) {
+		this.destination = destination;
+	}
+
+	/**
+	 * Optional attribute providing a comma <code>','</code> delimited 
+	 * list of file paths to search for plug-ins that provide schema
+	 * files included by the schema files being converted.
+	 * <p>
+	 * When a schema file includes another the html will include the 
+	 * element definitions from the included schema if it is available.
+	 * If the schema does not exist in the same plug-in, the task will
+	 * assume the schema url is of the form
+	 * <code>schema://<pluginID>/<schemaPath>. It will extract the plug-in
+	 * ID and look for a folder of that name in the same directory as the
+	 * parent schema's host plug-in. If the plug-ins are not all in the same
+	 * directory, this attribute can be used to locate them.
+	 * </p><p>
+	 * The paths can be absolute file paths or paths relative to the schema
+	 * file. For example if converting a schema at <code>/WS/org.eclipse.test/schema/schemaA.exsd</code>
+	 * which includes a schema: <code>schema://org.eclipse.included/schema/schemaB.exsd</code>
+	 * you could provide the search paths: <code>c:\MySchemas\</code> to 
+	 * add an absolute path and <code>..\..\..\..\MyRepos\</code> to check 
+	 * a directory higher than where the plug-in is.
+	 * </p> 
+	 * 
+	 * @param additionalSearchPaths comma delimited list of search paths
+	 */
+	public void setAdditionalSearchPaths(String additionalSearchPaths) {
+		this.additionalSearchPaths = additionalSearchPaths;
+	}
+
+	public URL getCSSURL() {
+		return cssURL;
+	}
+
+	/**
+	 * Sets a url location to lookup a CSS file to use during
+	 * the schema transformation.  If not set, the task will search
+	 * for a default CSS in the product plug-in.
+	 * 
+	 * @param url string form of url pointing to a CSS file
+	 */
+	public void setCSSURL(String url) {
+		try {
+			cssURL = new URL(url);
+		} catch (MalformedURLException e) {
+			PDECore.logException(e);
+		}
+	}
+
+	public void setCSSURL(URL url) {
+		cssURL = url;
 	}
 
 	private String getPluginID() {
@@ -115,44 +198,33 @@ public class ConvertSchemaToHTML extends Task {
 		return null;
 	}
 
-	public void setManifest(String manifest) {
-		this.manifest = manifest;
-	}
-
-	public void setDestination(String destination) {
-		this.destination = destination;
-	}
-
-	public URL getCSSURL() {
-		return cssURL;
-	}
-
-	public void setCSSURL(String url) {
-		try {
-			cssURL = new URL(url);
-		} catch (MalformedURLException e) {
-			PDECore.logException(e);
-		}
-	}
-
-	public void setCSSURL(URL url) {
-		cssURL = url;
-	}
-
-	private IPluginModelBase readManifestFile() {
-		if (manifest == null) {
-			System.out.println(NLS.bind(PDECoreMessages.Builders_Convert_missingAttribute, "manifest")); //$NON-NLS-1$ 
+	/**
+	 * @return user specified search paths or <code>null</code>
+	 */
+	private List<IPath> getSearchPaths() {
+		if (this.additionalSearchPaths == null) {
 			return null;
 		}
+		String[] paths = this.additionalSearchPaths.split(","); //$NON-NLS-1$
+		List<IPath> result = new ArrayList<IPath>(paths.length);
+		for (int i = 0; i < paths.length; i++) {
+			Path path = new Path(paths[i]);
+			if (path.isValidPath(paths[i])) {
+				result.add(path);
+			} else {
+				System.out.println(NLS.bind(PDECoreMessages.ConvertSchemaToHTML_InvalidAdditionalSearchPath, paths[i]));
+			}
+		}
+		return result;
+	}
 
+	private IPluginModelBase readManifestFile() throws BuildException {
 		File file = new Path(manifest).isAbsolute() ? new File(manifest) : new File(getProject().getBaseDir(), manifest);
 		InputStream stream = null;
 		try {
 			stream = new BufferedInputStream(new FileInputStream(file));
 		} catch (Exception e) {
-			if (e.getMessage() != null)
-				System.out.println(e.getMessage());
-			return null;
+			throw new BuildException(e);
 		}
 
 		ExternalPluginModelBase model = null;
@@ -162,9 +234,8 @@ public class ConvertSchemaToHTML extends Task {
 			else if (file.getName().toLowerCase(Locale.ENGLISH).equals(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR))
 				model = new ExternalPluginModel();
 			else {
-				System.out.println(NLS.bind(PDECoreMessages.Builders_Convert_illegalValue, "manifest")); //$NON-NLS-1$ 
 				stream.close();
-				return null;
+				throw new BuildException(NLS.bind(PDECoreMessages.Builders_Convert_illegalValue, "manifest")); //$NON-NLS-1$ 
 			}
 
 			String parentPath = file.getParentFile().getAbsolutePath();
@@ -172,23 +243,10 @@ public class ConvertSchemaToHTML extends Task {
 			model.load(stream, false);
 			stream.close();
 		} catch (Exception e) {
-			if (e.getMessage() != null)
-				System.out.println(e.getMessage());
+			throw new BuildException(e);
 		}
 
 		return model;
-	}
-
-	private boolean validateDestination() {
-		boolean valid = true;
-		if (destination == null) {
-			System.out.println(NLS.bind(PDECoreMessages.Builders_Convert_missingAttribute, "destination")); //$NON-NLS-1$
-			valid = false;
-		} else if (!new Path(destination).isValidPath(destination)) {
-			System.out.println(NLS.bind(PDECoreMessages.Builders_Convert_illegalValue, "destination")); //$NON-NLS-1$ 
-			valid = false;
-		}
-		return valid;
 	}
 
 }

@@ -11,9 +11,11 @@
 package org.eclipse.pde.internal.core.schema;
 
 import java.io.File;
-import java.net.*;
-import org.eclipse.core.filesystem.URIUtil;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.List;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaDescriptor;
 
@@ -24,8 +26,21 @@ public class SchemaDescriptor implements ISchemaDescriptor {
 	private Schema fSchema;
 	private long fLastModified;
 	private boolean fEditable;
+	private List<IPath> fSearchPath;
 
 	public SchemaDescriptor(String extPointID, URL schemaURL) {
+		this(extPointID, schemaURL, null);
+	}
+
+	/**
+	 * Creates a new schema descriptor for a schema at the given url.  The searchPath will
+	 * be used to lookup included schemas.
+	 * 
+	 * @param extPointID the extension point the schema describes
+	 * @param schemaURL the url location of the schema
+	 * @param searchPath list of absolute or schema relative paths to search for included schemas, may be <code>null</code>
+	 */
+	public SchemaDescriptor(String extPointID, URL schemaURL, List<IPath> searchPath) {
 		fPoint = extPointID;
 		fSchemaURL = schemaURL;
 		if (fSchemaURL != null) {
@@ -33,6 +48,7 @@ public class SchemaDescriptor implements ISchemaDescriptor {
 			if (file.exists())
 				fLastModified = file.lastModified();
 		}
+		fSearchPath = searchPath;
 	}
 
 	public SchemaDescriptor(IFile file, boolean editable) {
@@ -43,9 +59,7 @@ public class SchemaDescriptor implements ISchemaDescriptor {
 	public SchemaDescriptor(File file) {
 		try {
 			if (file.exists()) {
-				// Encode the url in case the file path has special characters (Bug 403512)
-				URI encodedURI = URIUtil.toURI(file.toString());
-				fSchemaURL = encodedURI.toURL();
+				fSchemaURL = file.toURL();
 				fLastModified = file.lastModified();
 			}
 		} catch (MalformedURLException e) {
@@ -70,6 +84,7 @@ public class SchemaDescriptor implements ISchemaDescriptor {
 				fSchema = new EditableSchema(this, fSchemaURL, abbreviated);
 			else
 				fSchema = new Schema(this, fSchemaURL, abbreviated);
+			fSchema.setSearchPath(fSearchPath);
 			fSchema.load();
 		}
 		return fSchema;
