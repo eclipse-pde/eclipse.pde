@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.junit.runtime;
 
-import junit.framework.Assert;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
+import org.junit.Assert;
 
 /**
  * A Workbench that runs a test suite specified in the

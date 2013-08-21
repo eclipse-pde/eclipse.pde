@@ -20,7 +20,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 	 * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#initializeDefaultPreferences()
 	 */
 	public void initializeDefaultPreferences() {
-		IEclipsePreferences prefs = new DefaultScope().getNode(IPDEConstants.PLUGIN_ID);
+		IEclipsePreferences prefs = DefaultScope.INSTANCE.getNode(IPDEConstants.PLUGIN_ID);
 		prefs.put(ILaunchingPreferenceConstants.DEFAULT_OSGI_FRAMEOWRK, OSGiFrameworkManager.DEFAULT_FRAMEWORK);
 		prefs.put(ILaunchingPreferenceConstants.PROP_RUNTIME_WORKSPACE_LOCATION, "${workspace_loc}/../runtime-"); //$NON-NLS-1$
 		prefs.putBoolean(ILaunchingPreferenceConstants.PROP_RUNTIME_WORKSPACE_LOCATION_IS_CONTAINER, true);
@@ -28,8 +28,8 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		prefs.putBoolean(ILaunchingPreferenceConstants.PROP_JUNIT_WORKSPACE_LOCATION_IS_CONTAINER, false);
 
 		// copy over instance scope prefs from UI plugin
-		IEclipsePreferences oldInstancePrefs = new InstanceScope().getNode(IPDEConstants.UI_PLUGIN_ID);
-		IEclipsePreferences newInstancePrefs = new InstanceScope().getNode(IPDEConstants.PLUGIN_ID);
+		IEclipsePreferences oldInstancePrefs = InstanceScope.INSTANCE.getNode(IPDEConstants.UI_PLUGIN_ID);
+		IEclipsePreferences newInstancePrefs = InstanceScope.INSTANCE.getNode(IPDEConstants.PLUGIN_ID);
 
 		String osgiFramework = oldInstancePrefs.get(ILaunchingPreferenceConstants.DEFAULT_OSGI_FRAMEOWRK, null);
 		if (osgiFramework != null) {

@@ -125,7 +125,7 @@ public class CompilerFlags {
 	 */
 	public static void save() {
 		try {
-			new InstanceScope().getNode(PDE.PLUGIN_ID).flush();
+			InstanceScope.INSTANCE.getNode(PDE.PLUGIN_ID).flush();
 		} catch (BackingStoreException e) {
 		}
 	}

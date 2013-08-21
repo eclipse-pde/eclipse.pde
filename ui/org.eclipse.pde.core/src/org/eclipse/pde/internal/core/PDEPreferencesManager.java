@@ -30,8 +30,8 @@ public final class PDEPreferencesManager {
 	 * @param ID scope for the preferences
 	 */
 	public PDEPreferencesManager(String ID) {
-		fInstanceScopePrefs = new InstanceScope().getNode(ID);
-		fDefaultScopePrefs = new DefaultScope().getNode(ID);
+		fInstanceScopePrefs = InstanceScope.INSTANCE.getNode(ID);
+		fDefaultScopePrefs = DefaultScope.INSTANCE.getNode(ID);
 	}
 
 	/**

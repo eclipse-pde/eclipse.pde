@@ -25,9 +25,10 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 	 * 
 	 * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#initializeDefaultPreferences()
 	 */
+	@Override
 	public void initializeDefaultPreferences() {
-		IEclipsePreferences defaultPreferences = new DefaultScope().getNode(PDECore.PLUGIN_ID);
-		IEclipsePreferences preferences = new InstanceScope().getNode(PDECore.PLUGIN_ID);
+		IEclipsePreferences defaultPreferences = DefaultScope.INSTANCE.getNode(PDECore.PLUGIN_ID);
+		IEclipsePreferences preferences = InstanceScope.INSTANCE.getNode(PDECore.PLUGIN_ID);
 		defaultPreferences.put(ICoreConstants.TARGET_MODE, ICoreConstants.VALUE_USE_THIS);
 		defaultPreferences.put(ICoreConstants.CHECKED_PLUGINS, ICoreConstants.VALUE_SAVED_ALL);
 		defaultPreferences.put(ICoreConstants.CHECKED_VERSION_PLUGINS, ICoreConstants.VALUE_SAVED_NONE);
@@ -49,7 +50,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 			PDECore.log(bse);
 		}
 		//set defaults for compiler preferences in org.eclipse.pde pref node, not org.eclipse.pde.core
-		IEclipsePreferences prefs = new DefaultScope().getNode(PDE.PLUGIN_ID);
+		IEclipsePreferences prefs = DefaultScope.INSTANCE.getNode(PDE.PLUGIN_ID);
 		prefs.putInt(CompilerFlags.P_UNRESOLVED_IMPORTS, CompilerFlags.ERROR);
 		prefs.putInt(CompilerFlags.P_UNRESOLVED_EX_POINTS, CompilerFlags.ERROR);
 		prefs.putInt(CompilerFlags.P_NO_REQUIRED_ATT, CompilerFlags.ERROR);

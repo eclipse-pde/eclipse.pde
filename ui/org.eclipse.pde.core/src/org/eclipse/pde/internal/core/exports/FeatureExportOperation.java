@@ -75,6 +75,7 @@ public class FeatureExportOperation extends Job {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	protected IStatus run(IProgressMonitor monitor) {
 		try {
 			createDestination();
@@ -472,8 +473,8 @@ public class FeatureExportOperation extends Job {
 			fAntBuildProperties.put(IXMLConstants.PROPERTY_JAVAC_DEBUG_INFO, "on"); //$NON-NLS-1$ 
 			fAntBuildProperties.put(IXMLConstants.PROPERTY_JAVAC_VERBOSE, "false"); //$NON-NLS-1$
 
-			IEclipsePreferences prefs = new InstanceScope().getNode(JavaCore.PLUGIN_ID);
-			IEclipsePreferences def = new DefaultScope().getNode(JavaCore.PLUGIN_ID);
+			IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(JavaCore.PLUGIN_ID);
+			IEclipsePreferences def = DefaultScope.INSTANCE.getNode(JavaCore.PLUGIN_ID);
 			String source = prefs.get(JavaCore.COMPILER_SOURCE, null);
 			if (source == null) {
 				source = def.get(JavaCore.COMPILER_SOURCE, null);
