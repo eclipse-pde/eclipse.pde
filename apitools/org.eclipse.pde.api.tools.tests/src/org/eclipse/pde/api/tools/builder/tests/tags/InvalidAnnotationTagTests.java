@@ -318,9 +318,10 @@ public class InvalidAnnotationTagTests extends TagTest {
 	 * Tests for an invalid @noreference tag on a non-visible member annotation
 	 */
 	private void x15(boolean inc) {
-		setExpectedProblemIds(getDefaultProblemSet(1));
+		setExpectedProblemIds(getDefaultProblemSet(2));
 		setExpectedMessageArgs(new String[][] {
 				{"@noreference", BuilderMessages.TagValidator_annotation_not_visible},
+				{"@noreference", BuilderMessages.TagValidator_annotation_not_visible}
 		});
 		String typename = "test15.java"; 
 		deployTagTest(typename, inc, true);
@@ -358,9 +359,10 @@ public class InvalidAnnotationTagTests extends TagTest {
 	 * Tests for an invalid @noreference tag on a non-visible member annotation
 	 */
 	private void x17(boolean inc) {
-		setExpectedProblemIds(getDefaultProblemSet(1));
+		setExpectedProblemIds(getDefaultProblemSet(2));
 		setExpectedMessageArgs(new String[][] {
 				{"@noreference", BuilderMessages.TagValidator_annotation_not_visible},
+				{"@noreference", BuilderMessages.TagValidator_annotation_not_visible}
 		});
 		String typename = "test17.java"; 
 		deployTagTest(typename, inc, true);
