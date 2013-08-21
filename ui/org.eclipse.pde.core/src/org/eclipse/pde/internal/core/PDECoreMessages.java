@@ -272,6 +272,8 @@ public class PDECoreMessages extends NLS {
 
 	public static String ClasspathHelper_BadFileLocation;
 
+	public static String ConvertSchemaToHTML_CannotFindIncludedSchema;
+
 	public static String ConvertSchemaToHTML_InvalidAdditionalSearchPath;
 
 	public static String ExportWizard_badDirectory;

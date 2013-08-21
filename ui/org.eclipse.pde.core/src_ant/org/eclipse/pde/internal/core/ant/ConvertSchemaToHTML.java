@@ -14,8 +14,7 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Task;
+import org.apache.tools.ant.*;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.osgi.util.ManifestElement;
@@ -24,6 +23,7 @@ import org.eclipse.pde.core.plugin.IPluginExtensionPoint;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.builders.SchemaTransformer;
+import org.eclipse.pde.internal.core.ischema.ISchemaInclude;
 import org.eclipse.pde.internal.core.plugin.*;
 import org.eclipse.pde.internal.core.schema.Schema;
 import org.eclipse.pde.internal.core.schema.SchemaDescriptor;
@@ -83,6 +83,14 @@ public class ConvertSchemaToHTML extends Task {
 				URL url = schemaFile.toURL();
 				SchemaDescriptor desc = new SchemaDescriptor(extPoints[i].getFullId(), url, searchPaths);
 				schema = (Schema) desc.getSchema(false);
+
+				// Check that all included schemas are available
+				ISchemaInclude[] includes = schema.getIncludes();
+				for (int j = 0; j < includes.length; j++) {
+					if (includes[j].getIncludedSchema() == null) {
+						log(NLS.bind(PDECoreMessages.ConvertSchemaToHTML_CannotFindIncludedSchema, includes[j].getLocation(), schemaFile), Project.MSG_ERR);
+					}
+				}
 
 				File directory = new Path(destination).isAbsolute() ? new File(destination) : new File(getProject().getBaseDir(), destination);
 				if (!directory.exists() || !directory.isDirectory())
