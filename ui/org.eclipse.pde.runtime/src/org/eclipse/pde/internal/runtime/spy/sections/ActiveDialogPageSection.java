@@ -16,17 +16,12 @@ import org.eclipse.jface.dialogs.IDialogPage;
 import org.eclipse.jface.dialogs.IPageChangeProvider;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.internal.runtime.PDERuntimeMessages;
-import org.eclipse.pde.internal.runtime.PDERuntimePlugin;
 import org.eclipse.pde.internal.runtime.spy.SpyFormToolkit;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.forms.widgets.ExpandableComposite;
-import org.eclipse.ui.forms.widgets.FormText;
-import org.eclipse.ui.forms.widgets.ScrolledForm;
-import org.eclipse.ui.forms.widgets.Section;
-import org.eclipse.ui.forms.widgets.TableWrapData;
+import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.osgi.framework.Bundle;
-import org.osgi.service.packageadmin.PackageAdmin;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * @since 3.4
@@ -68,8 +63,7 @@ public class ActiveDialogPageSection implements ISpySection {
 
 				buffer.append(toolkit.createClassSection(text, PDERuntimeMessages.SpyDialog_activeDialogPageSection_desc, new Class[] {clazz}));
 
-				PackageAdmin admin = PDERuntimePlugin.getDefault().getPackageAdmin();
-				Bundle bundle = admin.getBundle(clazz);
+				Bundle bundle = FrameworkUtil.getBundle(clazz);
 				toolkit.generatePluginDetailsText(bundle, null, "dialog page", buffer, text); //$NON-NLS-1$
 
 				buffer.append("</form>"); //$NON-NLS-1$

@@ -17,7 +17,6 @@ import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.jface.action.*;
 import org.eclipse.pde.internal.runtime.PDERuntimeMessages;
-import org.eclipse.pde.internal.runtime.PDERuntimePlugin;
 import org.eclipse.pde.internal.runtime.spy.SpyFormToolkit;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IActionDelegate;
@@ -26,7 +25,7 @@ import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.internal.*;
 import org.eclipse.ui.menus.CommandContributionItem;
 import org.osgi.framework.Bundle;
-import org.osgi.service.packageadmin.PackageAdmin;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * @since 3.5
@@ -131,8 +130,7 @@ public class ActiveMenuSection implements ISpySection {
 			// normal JFace Actions
 			Class clazz = action.getClass();
 			buffer.append(toolkit.createClassSection(text, PDERuntimeMessages.ActiveMenuSection_5, new Class[] {clazz}));
-			PackageAdmin admin = PDERuntimePlugin.getDefault().getPackageAdmin();
-			Bundle bundle = admin.getBundle(clazz);
+			Bundle bundle = FrameworkUtil.getBundle(clazz);
 			toolkit.generatePluginDetailsText(bundle, null, "meow", buffer, text); //$NON-NLS-1$
 		}
 
@@ -161,8 +159,7 @@ public class ActiveMenuSection implements ISpySection {
 				}
 			}
 			buffer.append(toolkit.createClassSection(text, PDERuntimeMessages.ActiveMenuSection_6, new Class[] {(retargetAction == null) ? delegate.getClass() : retargetAction.getActionHandler().getClass()}));
-			PackageAdmin admin = PDERuntimePlugin.getDefault().getPackageAdmin();
-			Bundle bundle = admin.getBundle(clazz);
+			Bundle bundle = FrameworkUtil.getBundle(clazz);
 			toolkit.generatePluginDetailsText(bundle, null, "menu item", buffer, text); //$NON-NLS-1$
 
 		} catch (Exception e) {

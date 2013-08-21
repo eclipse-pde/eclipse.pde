@@ -30,6 +30,7 @@ import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.*;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * @since 3.4
@@ -222,7 +223,7 @@ public class SpyFormToolkit extends FormToolkit {
 	}
 
 	private void createClassReference(StringBuffer buffer, Class clazz) {
-		Bundle bundle = PDERuntimePlugin.HAS_IDE_BUNDLES ? PDERuntimePlugin.getDefault().getPackageAdmin().getBundle(clazz) : null;
+		Bundle bundle = PDERuntimePlugin.HAS_IDE_BUNDLES ? FrameworkUtil.getBundle(clazz) : null;
 		if (bundle != null) {
 			bundleClassByName.put(clazz.getName(), bundle);
 			buffer.append("<a href=\"").append(CLASS_PROTOCOL_PREFIX).append( //$NON-NLS-1$
