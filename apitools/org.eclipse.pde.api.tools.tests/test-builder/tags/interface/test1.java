@@ -16,11 +16,13 @@ package a.b.c;
  */
 public interface test1 {
 
-	/**
-	 * @noreference
-	 */
-	interface inner {
-		
+	class C1 {
+		/**
+		 * @noreference
+		 */
+		interface inner {
+			
+		}
 	}
 	
 	interface inner1 {

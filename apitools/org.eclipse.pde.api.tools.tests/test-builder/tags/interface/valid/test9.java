@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,28 +11,38 @@
 package a.b.c;
 
 /**
- * Test supported @noreference tag on an interface
+ * Tests invalid @noreference tags on nested inner interfaces
  * @noreference
  */
-public interface test8 {
+public interface test9 {
 
 	/**
 	 * @noreference
 	 */
-	public interface inner {
+	interface inner {
 		
 	}
 	
-	public interface inner1 {
+	interface inner1 {
 		/**
 		 * @noreference
 		 */
-		public interface inner2 {
+		interface inner2 {
 			
 		}
 	}
 	
 	interface inner2 {
+		
+	}
+}
+
+interface outer {
+	
+	/**
+	 * @noreference
+	 */
+	interface InnerNoRef4 {
 		
 	}
 }

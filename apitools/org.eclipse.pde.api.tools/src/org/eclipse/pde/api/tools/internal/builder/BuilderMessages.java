@@ -81,8 +81,10 @@ public class BuilderMessages extends NLS {
 	public static String TagValidator_an_interface_method;
 	public static String TagValidator_an_interface_that_is_not_visible;
 	public static String TagValidator_annotation_field;
+	public static String TagValidator_annotation_not_visible;
 	public static String TagValidator_constructor_in_final_class;
 	public static String TagValidator_enum_field;
+	public static String TagValidator_enum_not_visible;
 	public static String TagValidator_final_constructor;
 	public static String TagValidator_not_visible_constructor;
 	public static String TagValidator_not_visible_enum_field;

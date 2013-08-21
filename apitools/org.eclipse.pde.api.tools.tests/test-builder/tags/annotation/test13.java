@@ -20,7 +20,6 @@ public @interface test13 {
 		 * @noextend
 		 * @noinstantiate
 		 * @noreference
-		 * 
 		 */
 		public static class Clazz {
 

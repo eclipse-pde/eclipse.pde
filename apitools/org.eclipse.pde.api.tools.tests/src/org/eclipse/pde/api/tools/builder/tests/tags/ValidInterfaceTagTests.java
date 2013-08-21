@@ -131,9 +131,39 @@ public class ValidInterfaceTagTests extends InvalidInterfaceTagTests {
 	}
 	
 	/**
-	 * Tests having an @noextend tag on an outer interface in package a.b.c
+	 * Tests having an @noreference tag on outer / inner interfaces in package a.b.c
 	 */
 	private void x7(boolean inc) {
 		deployTagTest("test7.java", inc, false);
+	}
+	
+	public void testInvalidInterfaceTag8I() {
+		x8(true);
+	}
+	
+	public void testInvalidInterfaceTag8F() {
+		x8(false);
+	}
+	
+	/**
+	 * Tests having an @noreference tag on outer/inner interfaces in package a.b.c
+	 */
+	private void x8(boolean inc) {
+		deployTagTest("test8.java", inc, false);
+	}
+	
+	public void testInvalidInterfaceTag9I() {
+		x9(true);
+	}
+	
+	public void testInvalidInterfaceTag9F() {
+		x9(false);
+	}
+	
+	/**
+	 * Tests having an @noextend tag on an outer interface in package a.b.c
+	 */
+	private void x9(boolean inc) {
+		deployTagTest("test9.java", inc, false);
 	}
 }

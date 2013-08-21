@@ -19,11 +19,13 @@ public interface test11 {
 		 * @noreference
 		 */
 		public final int f2 = 0;
-		interface inner2 {
-			/**
-			 * @noreference
-			 */
-			public final char[] f3 = {};
+		class C {
+			interface inner2 {
+				/**
+				 * @noreference
+				 */
+				public final char[] f3 = {};
+			}
 		}
 	}
 }

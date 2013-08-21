@@ -78,13 +78,12 @@ public class InvalidEnumTagTests extends TagTest {
 	 * Tests having an @noreference tag on a variety of inner / outer / top-level enums in package a.b.c
 	 */
 	private void x1(boolean inc) {
-		/*setExpectedProblemIds(getDefaultProblemSet(4));
+		setExpectedProblemIds(getDefaultProblemSet(3));
 		setExpectedMessageArgs(new String[][] {
-				{"@noreference", BuilderMessages.TagValidator_an_enum},
-				{"@noreference", BuilderMessages.TagValidator_an_enum},
-				{"@noreference", BuilderMessages.TagValidator_an_enum},
-				{"@noreference", BuilderMessages.TagValidator_an_enum}
-		});*/
+				{"@noreference", BuilderMessages.TagValidator_enum_not_visible},
+				{"@noreference", BuilderMessages.TagValidator_enum_not_visible},
+				{"@noreference", BuilderMessages.TagValidator_enum_not_visible},
+		});
 		deployTagTest("test1.java", inc, false);
 	}
 	
@@ -264,10 +263,10 @@ public class InvalidEnumTagTests extends TagTest {
 	 * Tests all tags are invalid when parent enum is private or package default
 	 */
 	private void x11(boolean inc) {
-		setExpectedProblemIds(getDefaultProblemSet(1));
+		setExpectedProblemIds(getDefaultProblemSet(2));
 		setExpectedMessageArgs(new String[][] {
-				{"@noreference", BuilderMessages.TagValidator_an_enum_constant}
-				/*{"@noreference", BuilderMessages.TagValidator_an_enum},*/
+				{"@noreference", BuilderMessages.TagValidator_an_enum_constant},
+				{"@noreference", BuilderMessages.TagValidator_enum_not_visible}
 		});
 		deployTagTest("test11.java", inc, true);
 	}

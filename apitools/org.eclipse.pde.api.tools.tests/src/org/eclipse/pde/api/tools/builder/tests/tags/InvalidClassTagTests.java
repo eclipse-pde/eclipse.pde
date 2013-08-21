@@ -329,7 +329,7 @@ public class InvalidClassTagTests extends TagTest {
 	}
 	
 	private void x12(boolean inc) {
-		setExpectedProblemIds(getDefaultProblemSet(11));
+		setExpectedProblemIds(getDefaultProblemSet(13));
 		setExpectedMessageArgs(new String[][] {
 				{"@noextend", BuilderMessages.TagValidator_a_class_that_is_not_visible},
 				{"@noextend", BuilderMessages.TagValidator_an_interface_that_is_not_visible},
@@ -339,6 +339,8 @@ public class InvalidClassTagTests extends TagTest {
 				{"@noreference", BuilderMessages.TagValidator_an_interface_that_is_not_visible},
 				{"@noreference", BuilderMessages.TagValidator_a_field_that_is_not_visible},
 				{"@noreference", BuilderMessages.TagValidator_a_class_that_is_not_visible},	
+				{"@noreference", BuilderMessages.TagValidator_enum_not_visible},	
+				{"@noreference", BuilderMessages.TagValidator_annotation_not_visible},	
 				{"@noreference", BuilderMessages.TagValidator_a_method_that_is_not_visible},
 				{"@nooverride", BuilderMessages.TagValidator_a_method_that_is_not_visible},
 				{"@noinstantiate", BuilderMessages.TagValidator_a_class_that_is_not_visible}				

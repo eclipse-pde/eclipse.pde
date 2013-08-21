@@ -47,6 +47,11 @@ import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
  * Visit Javadoc comments of types and member to find API javadoc tags that are being misused
+ * <br><br>
+ * The logic in this class must be kept in sync with how we determine what is visible in out
+ * completion proposal code
+ * 
+ * @see org.eclipse.pde.api.tools.ui.internal.completion.APIToolsJavadocCompletionProposalComputer
  * 
  * @since 1.0.0
  */
@@ -55,12 +60,10 @@ public class TagValidator extends ASTVisitor {
 	class Item {
 		String typename;
 		int flags;
-		boolean allints = false;
 		boolean visible = false;
-		Item(String name, int flags, boolean ints, boolean vis) {
+		Item(String name, int flags, boolean vis) {
 			typename = name;
 			this.flags = flags;
-			allints = ints;
 			visible = vis;
 		}
 	}
@@ -71,7 +74,6 @@ public class TagValidator extends ASTVisitor {
 	private ArrayList fTagProblems = null;
 	
 	private ICompilationUnit fCompilationUnit = null;
-	boolean allinterfaces = true;
 	boolean isvisible = true;
 	Stack fStack/*<Item>*/ = new Stack();
 	
@@ -95,78 +97,88 @@ public class TagValidator extends ASTVisitor {
 		return false;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.AnnotationTypeDeclaration)
+	 */
 	public boolean visit(AnnotationTypeDeclaration node) {
-		int flags = node.getModifiers();
-		isvisible = !Flags.isPrivate(flags) && !Flags.isPackageDefault(flags);
-		fStack.push(new Item(getTypeName(node), node.getModifiers(), allinterfaces, isvisible));
+		isvisible &= !Flags.isPrivate(node.getModifiers());
+		fStack.push(new Item(getTypeName(node), node.getModifiers(), isvisible));
 		return true;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#endVisit(org.eclipse.jdt.core.dom.AnnotationTypeDeclaration)
+	 */
 	public void endVisit(AnnotationTypeDeclaration node) {
 		fStack.pop();
+		if(!fStack.isEmpty()) {
+			Item item = (Item) fStack.peek();
+			isvisible = item.visible;
+		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.TypeDeclaration)
+	 */
 	public boolean visit(TypeDeclaration node) {
 		int flags = node.getModifiers();
-		if(node.isInterface() && node.isMemberTypeDeclaration()) {
-			if(Flags.isPublic(flags)) {
-				allinterfaces = true;
+		if(Flags.isPrivate(flags)) {
+			isvisible &= false;
+		} else {
+			if(node.isMemberTypeDeclaration()) {
+				isvisible &= (Flags.isPublic(flags) && Flags.isStatic(flags)) || 
+						Flags.isPublic(flags) ||
+						Flags.isProtected(flags) ||
+						node.isInterface();
 			}
-			if(isvisible) {
-				switch(node.getParent().getNodeType()) {
-					case ASTNode.ANNOTATION_TYPE_DECLARATION: {
-						AbstractTypeDeclaration parent = (AbstractTypeDeclaration) node.getParent();
-						if(Flags.isPublic(parent.getModifiers())) {
-							isvisible = true;
-						}
-						else if(!allinterfaces) {
-							isvisible &= !Flags.isPrivate(flags) && !Flags.isPackageDefault(flags);
-						}
-						break;
-					}
-					case ASTNode.TYPE_DECLARATION: {
-						TypeDeclaration parent = (TypeDeclaration) node.getParent();
-						if(parent.isInterface() && Flags.isPublic(parent.getModifiers())) {
-							isvisible = true;
-						}
-						else if(!allinterfaces){
-							isvisible &= !Flags.isPrivate(flags) && !Flags.isPackageDefault(flags);
-						}
-						break;
-					}
-					default:
-						break;
-				}
+			else {
+				isvisible &= (!Flags.isPrivate(flags) && !Flags.isPackageDefault(flags)) || node.isInterface();
 			}
 		}
-		else {
-			allinterfaces &= node.isInterface();
-			isvisible &= !Flags.isPrivate(flags) && !Flags.isPackageDefault(flags);
-		}
-		fStack.push(new Item(getTypeName(node), node.getModifiers(), allinterfaces, isvisible));
+		fStack.push(new Item(getTypeName(node), node.getModifiers(), isvisible));
 		return true;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#endVisit(org.eclipse.jdt.core.dom.TypeDeclaration)
+	 */
 	public void endVisit(TypeDeclaration node) {
 		fStack.pop();
-		if(!fStack.empty()) {
-			Item i = (Item) fStack.peek();
-			allinterfaces = i.allints;
-			isvisible = i.visible;
+		if(!fStack.isEmpty()) {
+			Item item = (Item) fStack.peek();
+			isvisible = item.visible;
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.EnumDeclaration)
+	 */
 	public boolean visit(EnumDeclaration node) {
 		int flags = node.getModifiers();
-		isvisible = !Flags.isPrivate(flags) && !Flags.isPackageDefault(flags);
-		fStack.push(new Item(getTypeName(node), node.getModifiers(), allinterfaces, isvisible));
+		if(node.isMemberTypeDeclaration()) {
+			isvisible &= Flags.isPublic(flags);
+		}
+		else {
+			isvisible &= !Flags.isPrivate(flags) && !Flags.isPackageDefault(flags);
+		}
+		fStack.push(new Item(getTypeName(node), node.getModifiers(), isvisible));
 		return true;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#endVisit(org.eclipse.jdt.core.dom.EnumDeclaration)
+	 */
 	public void endVisit(EnumDeclaration node){
 		fStack.pop();
+		if(!fStack.isEmpty()) {
+			Item item = (Item) fStack.peek();
+			isvisible = item.visible;
+		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#endVisit(org.eclipse.jdt.core.dom.CompilationUnit)
+	 */
 	public void endVisit(CompilationUnit node) {
 		fStack.clear();
 	}
@@ -202,6 +214,15 @@ public class TagValidator extends ASTVisitor {
 								IApiProblem.UNSUPPORTED_TAG_USE, 
 								IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
 								BuilderMessages.TagValidator_an_enum);
+						continue;
+					}
+					if(!item.visible) {
+						processTagProblem(item.typename, 
+								tag, 
+								IElementDescriptor.TYPE, 
+								IApiProblem.UNSUPPORTED_TAG_USE, 
+								IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
+								BuilderMessages.TagValidator_enum_not_visible);
 					}
 				}
 				break;
@@ -225,7 +246,7 @@ public class TagValidator extends ASTVisitor {
 			}
 			case ASTNode.ANNOTATION_TYPE_DECLARATION: {
 				Item item = (Item) fStack.peek();
-				Set supported = getSupportedTagNames(IApiJavadocTag.TYPE_ENUM, IApiJavadocTag.MEMBER_NONE);
+				Set supported = getSupportedTagNames(IApiJavadocTag.TYPE_ANNOTATION, IApiJavadocTag.MEMBER_NONE);
 				for (Iterator i = tags.iterator(); i.hasNext();) {
 					TagElement tag = (TagElement) i.next();
 					String tagname = tag.getTagName();
@@ -239,6 +260,15 @@ public class TagValidator extends ASTVisitor {
 								IApiProblem.UNSUPPORTED_TAG_USE, 
 								IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
 								BuilderMessages.TagValidator_an_annotation);
+						continue;
+					}
+					if(!item.visible) {
+						processTagProblem(item.typename, 
+								tag, 
+								IElementDescriptor.TYPE, 
+								IApiProblem.UNSUPPORTED_TAG_USE, 
+								IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
+								BuilderMessages.TagValidator_annotation_not_visible);
 					}
 				}
 				break;
@@ -301,7 +331,6 @@ public class TagValidator extends ASTVisitor {
 			}
 			else {
 				Set supportedtags = getSupportedTagNames(type.isInterface() ? IApiJavadocTag.TYPE_INTERFACE : IApiJavadocTag.TYPE_CLASS, IApiJavadocTag.MEMBER_NONE);
-				boolean visible = item.allints && item.visible;
 				if(!type.isInterface()) {
 					int flags = type.getModifiers();
 					if(!supportedtags.contains(tagname)) {
@@ -361,7 +390,7 @@ public class TagValidator extends ASTVisitor {
 								IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
 								BuilderMessages.TagValidator_an_interface);
 					}
-					else if(!visible) {
+					else if(!item.visible) {
 						processTagProblem(item.typename, 
 								tag, 
 								IElementDescriptor.TYPE, 
@@ -450,7 +479,7 @@ public class TagValidator extends ASTVisitor {
 									IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
 									BuilderMessages.TagValidator_an_interface_field);
 						}
-						else if(!(item.visible && item.allints)) {
+						else if(!item.visible) {
 							processTagProblem(item.typename, 
 									tag, 
 									IElementDescriptor.FIELD, 
@@ -578,7 +607,7 @@ public class TagValidator extends ASTVisitor {
 								IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
 								BuilderMessages.TagValidator_an_interface_method);
 					}
-					else if(!(item.allints && item.visible)) {
+					else if(!item.visible) {
 						processTagProblem(item.typename, 
 								tag, 
 								IElementDescriptor.METHOD, 

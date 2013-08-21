@@ -44,9 +44,9 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.pde.api.tools.internal.JavadocTagManager;
+import org.eclipse.pde.api.tools.internal.builder.TagValidator;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiJavadocTag;
-import org.eclipse.pde.api.tools.internal.util.JavaUtils;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 import org.eclipse.swt.graphics.Image;
@@ -54,7 +54,10 @@ import org.eclipse.swt.graphics.Image;
 /**
  * This class creates completion proposals to javadoc header blocks
  * for the javadoc tags contributed via the apiJavadocTags extension point.
+ * <br><br>
+ * Any changes to the visibility logic here also must be updated in the {@link TagValidator}
  * 
+ * @see TagValidator
  * @see IApiJavadocTag
  * @see JavadocTagManager
  * @see APIToolsJavadocCompletionProposal
@@ -122,7 +125,7 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 			try {
 				int offset = jcontext.getInvocationOffset();
 				IJavaElement element = cunit.getElementAt(offset);
-				if (!JavaUtils.isVisible(element)) {
+				if (!isVisible(element)) {
 					return Collections.EMPTY_LIST;
 				}
 				ImageDescriptor imagedesc = jcontext.getLabelProvider().createImageDescriptor(
@@ -175,6 +178,58 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 			}
 		}
 		return Collections.EMPTY_LIST;
+	}
+	
+	/**
+	 * Returns if the given {@link IJavaElement} is externally visible 
+	 * <br><br>
+	 * Changes to the logic here must also be made in the {@link TagValidator} to ensure the 
+	 * visibility is computed equally.
+	 * 
+	 * @see TagValidator
+	 * @param element
+	 * @return <code>true</code> if the given element is visible <code>false</code> otherwise
+	 * @throws JavaModelException if a model lookup fails
+	 */
+	boolean isVisible(IJavaElement element) throws JavaModelException {
+		if(element != null) {
+			switch(element.getElementType()) {
+				case IJavaElement.FIELD:
+				case IJavaElement.METHOD: {
+					IMember member = (IMember) element;
+					int flags = member.getFlags();
+					IType type = member.getDeclaringType();
+					if(Flags.isPublic(flags) || Flags.isProtected(flags) || (type != null && type.isInterface())) {
+						return isVisible(type);
+					}
+					break;
+				}
+				case IJavaElement.TYPE: {
+					IType type = (IType) element;
+					int flags = type.getFlags();
+					if(type.isLocal() && !type.isAnonymous() || Flags.isPrivate(flags)) {
+						return false;
+					}
+					if(type.isMember()) {
+						if((Flags.isPublic(flags) && Flags.isStatic(flags)) || 
+								Flags.isPublic(flags) ||
+								Flags.isProtected(flags) ||
+								type.isInterface()) {
+							return isVisible(type.getDeclaringType());
+						}
+					}
+					else {
+						return Flags.isPublic(flags) || type.isInterface();
+					}
+					break;
+				}
+				default: {
+					break;
+				}
+					
+			}
+		}
+		return false;
 	}
 	
 	/**

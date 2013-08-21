@@ -153,7 +153,7 @@ public class BadClassfileTests extends TestCase {
 	
 	/**
 	 * Tests that the {@link org.eclipse.pde.api.tools.internal.provisional.scanner.TagScanner}
-	 * handles ad class files
+	 * handles bad class files
 	 */
 	public void testTagScanner() throws Exception {
 		writePreamble("testTagScanner()");

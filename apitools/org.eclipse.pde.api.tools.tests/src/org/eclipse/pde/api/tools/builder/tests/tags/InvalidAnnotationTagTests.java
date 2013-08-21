@@ -276,17 +276,10 @@ public class InvalidAnnotationTagTests extends TagTest {
 	 * Tests all tags are invalid when parent annotation is private or package default
 	 */
 	private void x13(boolean inc) {
-		setExpectedProblemIds(getDefaultProblemSet(7));
+		setExpectedProblemIds(getDefaultProblemSet(2));
 		setExpectedMessageArgs(new String[][] {
-				{"@noextend", BuilderMessages.TagValidator_a_class_that_is_not_visible},
-				{"@noinstantiate", BuilderMessages.TagValidator_a_class_that_is_not_visible},
-				{"@noreference", BuilderMessages.TagValidator_a_class_that_is_not_visible},
-				{"@noextend", BuilderMessages.TagValidator_an_interface_that_is_not_visible},
-				{"@noimplement", BuilderMessages.TagValidator_an_interface_that_is_not_visible},
-				{"@noreference", BuilderMessages.TagValidator_an_interface_that_is_not_visible},
-				{"@noreference", BuilderMessages.TagValidator_annotation_field}	
-				/*{"@noreference", BuilderMessages.TagValidator_an_annotation},
-				{"@noreference", BuilderMessages.TagValidator_an_enum},*/
+				{"@noreference", BuilderMessages.TagValidator_annotation_field},
+				{"@noreference", BuilderMessages.TagValidator_enum_not_visible},
 		});
 		String typename = "test13.java"; 
 		deployTagTest(typename, inc, true);
@@ -304,11 +297,72 @@ public class InvalidAnnotationTagTests extends TagTest {
 	 * Tests for an invalid @noreference tag on a field in a visible member annotation
 	 */
 	private void x14(boolean inc) {
-		setExpectedProblemIds(getDefaultProblemSet(1));
+		setExpectedProblemIds(getDefaultProblemSet(2));
 		setExpectedMessageArgs(new String[][] {
-				{"@noreference", BuilderMessages.TagValidator_annotation_field}	
+				{"@noreference", BuilderMessages.TagValidator_annotation_field},
+				{"@noreference", BuilderMessages.TagValidator_enum_not_visible}
 		});
 		String typename = "test14.java"; 
+		deployTagTest(typename, inc, true);
+	}
+	
+	public void testInvalidAnnotationTag15I() {
+		x15(true);
+	}
+	
+	public void testInvalidAnnotationTag15F() {
+		x15(false);
+	}
+	
+	/**
+	 * Tests for an invalid @noreference tag on a non-visible member annotation
+	 */
+	private void x15(boolean inc) {
+		setExpectedProblemIds(getDefaultProblemSet(1));
+		setExpectedMessageArgs(new String[][] {
+				{"@noreference", BuilderMessages.TagValidator_annotation_not_visible},
+		});
+		String typename = "test15.java"; 
+		deployTagTest(typename, inc, true);
+	}
+	
+	public void testInvalidAnnotationTag16I() {
+		x16(true);
+	}
+	
+	public void testInvalidAnnotationTag16F() {
+		x16(false);
+	}
+	
+	/**
+	 * Tests for an invalid @noreference tag on a non-visible member annotation
+	 */
+	private void x16(boolean inc) {
+		setExpectedProblemIds(getDefaultProblemSet(1));
+		setExpectedMessageArgs(new String[][] {
+				{"@noreference", BuilderMessages.TagValidator_annotation_not_visible},
+		});
+		String typename = "test16.java"; 
+		deployTagTest(typename, inc, true);
+	}
+	
+	public void testInvalidAnnotationTag17I() {
+		x17(true);
+	}
+	
+	public void testInvalidAnnotationTag17F() {
+		x17(false);
+	}
+	
+	/**
+	 * Tests for an invalid @noreference tag on a non-visible member annotation
+	 */
+	private void x17(boolean inc) {
+		setExpectedProblemIds(getDefaultProblemSet(1));
+		setExpectedMessageArgs(new String[][] {
+				{"@noreference", BuilderMessages.TagValidator_annotation_not_visible},
+		});
+		String typename = "test17.java"; 
 		deployTagTest(typename, inc, true);
 	}
 }
