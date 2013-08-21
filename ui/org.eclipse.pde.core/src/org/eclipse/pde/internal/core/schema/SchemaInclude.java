@@ -78,6 +78,9 @@ public class SchemaInclude extends SchemaObject implements ISchemaInclude {
 	}
 
 	public ISchema getIncludedSchema() {
+		if (fIncludedSchema != null) {
+			return fIncludedSchema;
+		}
 		ISchemaDescriptor descriptor = getSchema().getSchemaDescriptor();
 		if (fAbbreviated) {
 			SchemaRegistry registry = PDECore.getDefault().getSchemaRegistry();
