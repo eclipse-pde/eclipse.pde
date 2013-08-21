@@ -17,7 +17,6 @@ import java.util.List;
 import org.eclipse.core.runtime.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
-import org.eclipse.pde.internal.core.ant.ConvertSchemaToHTML;
 import org.eclipse.pde.internal.core.ischema.ISchema;
 import org.eclipse.pde.internal.core.ischema.ISchemaDescriptor;
 
@@ -60,7 +59,7 @@ public class IncludedSchemaDescriptor implements ISchemaDescriptor {
 	 * @param pluginID ID of the plug-in owning the schema
 	 * @param path the path to the schema inside the plug-in
 	 * @param parentURL url of the parent schema file
-	 * @param additionalSearchPath list of additional locations to search, only used with the {@link ConvertSchemaToHTML} ant task
+	 * @param additionalSearchPath list of additional locations to search; only used with the <code>pde.convertSchemaToHTML</code> Ant task
 	 * @return a url location of the included schema or <code>null</code>
 	 */
 	private static URL getPluginRelativePath(String pluginID, IPath path, URL parentURL, List<IPath> additionalSearchPath) {
