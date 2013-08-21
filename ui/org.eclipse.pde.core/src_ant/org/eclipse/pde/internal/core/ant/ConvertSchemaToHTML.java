@@ -110,7 +110,8 @@ public class ConvertSchemaToHTML extends Task {
 
 	/**
 	 * Required attribute describing the location of the plugin.xml file
-	 * for the plug-in to create schema html docs for.
+	 * for the plug-in to create schema html docs for.  May be an absolute
+	 * file path or a path relative to the ant base directory <code>${basedir}</code>
 	 * 
 	 * @param manifest string file path to plugin.xml for the plug-in to convert
 	 */
@@ -132,7 +133,7 @@ public class ConvertSchemaToHTML extends Task {
 	 * list of file paths to search for plug-ins that provide schema
 	 * files included by the schema files being converted.
 	 * <p>
-	 * When a schema file includes another the html will include the 
+	 * When a schema file includes another, the html will include the 
 	 * element definitions from the included schema if it is available.
 	 * If the schema does not exist in the same plug-in, the task will
 	 * assume the schema url is of the form
@@ -141,13 +142,9 @@ public class ConvertSchemaToHTML extends Task {
 	 * parent schema's host plug-in. If the plug-ins are not all in the same
 	 * directory, this attribute can be used to locate them.
 	 * </p><p>
-	 * The paths can be absolute file paths or paths relative to the schema
-	 * file. For example if converting a schema at <code>/WS/org.eclipse.test/schema/schemaA.exsd</code>
-	 * which includes a schema: <code>schema://org.eclipse.included/schema/schemaB.exsd</code>
-	 * you could provide the search paths: <code>c:\MySchemas\</code> to 
-	 * add an absolute path and <code>..\..\..\..\MyRepos\</code> to check 
-	 * a directory higher than where the plug-in is.
-	 * </p> 
+	 * The paths can be absolute file paths or paths relative to the ant
+	 * base directory <code>${basedir}</code>.
+	 * </p>
 	 * 
 	 * @param additionalSearchPaths comma delimited list of search paths
 	 */
@@ -208,8 +205,12 @@ public class ConvertSchemaToHTML extends Task {
 		String[] paths = this.additionalSearchPaths.split(","); //$NON-NLS-1$
 		List<IPath> result = new ArrayList<IPath>(paths.length);
 		for (int i = 0; i < paths.length; i++) {
-			Path path = new Path(paths[i]);
+			IPath path = new Path(paths[i]);
 			if (path.isValidPath(paths[i])) {
+				if (!path.isAbsolute()) {
+					File baseDir = getProject().getBaseDir();
+					path = new Path(baseDir.getPath()).append(path);
+				}
 				result.add(path);
 			} else {
 				System.out.println(NLS.bind(PDECoreMessages.ConvertSchemaToHTML_InvalidAdditionalSearchPath, paths[i]));
