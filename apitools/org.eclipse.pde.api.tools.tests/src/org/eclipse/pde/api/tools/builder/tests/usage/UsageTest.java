@@ -224,6 +224,8 @@ public abstract class UsageTest extends ApiBuilderTest {
 			classes.add(Java5FieldUsageTests.class);
 			classes.add(Java5MethodUsageTests.class);
 			classes.add(Java5ClassUsageTests.class);
+			classes.add(AnnotationUsageTests.class);
+			classes.add(EnumUsageTests.class);
 		}
 		if(ProjectUtils.isJava7Compatible()) {
 			classes.add(Java7MethodUsageTests.class);

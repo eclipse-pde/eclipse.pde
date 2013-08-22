@@ -734,6 +734,12 @@ public class Reference implements IReference {
 			}
 			buffer.append("SUPER_CONSTRUCTORMETHOD"); //$NON-NLS-1$
 		}
+		if((kind & IReference.REF_ANNOTATION_USE) > 0) {
+			if(buffer.length() != 0) {
+				buffer.append(" | "); //$NON-NLS-1$
+			}
+			buffer.append("ANNOTATION_USE"); //$NON-NLS-1$
+		}
 		if(buffer.length() == 0) {
 			buffer.append(Util.UNKNOWN_KIND);
 		}

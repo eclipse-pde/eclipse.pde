@@ -119,11 +119,15 @@ public class ApiProblemFactory {
 		for (int i = 0; i < argumentsCharsLength;) {
 			char c = argumentsChars[i];
 			switch(c) {
-			case '(' :
-				balance++;
-				break;
-			case ')' :
-				balance--;
+				case '(' : {
+					balance++;
+					break;
+				}
+				case ')' : {
+					balance--;
+					break;
+				}
+				default: break;
 			}
 			if (c == delimiterChars[0] && balance == 0) {
 				// see if this is a matching delimiter start only if not within parenthesis (balance == 0)
@@ -537,6 +541,7 @@ public class ApiProblemFactory {
 			case IApiProblem.CATEGORY_API_BASELINE: {
 				switch(kind) {
 					case IApiProblem.API_BASELINE_MISSING: return 1;
+					default: break;
 				}
 				break;
 			}
@@ -545,6 +550,7 @@ public class ApiProblemFactory {
 					case IApiProblem.SINCE_TAG_INVALID: return 2;
 					case IApiProblem.SINCE_TAG_MALFORMED: return 3;
 					case IApiProblem.SINCE_TAG_MISSING: return 4;
+					default: break;
 				}
 				break;
 			}
@@ -556,6 +562,7 @@ public class ApiProblemFactory {
 					case IApiProblem.MINOR_VERSION_CHANGE_NO_NEW_API: return 56;
 					case IApiProblem.REEXPORTED_MAJOR_VERSION_CHANGE : return 19;
 					case IApiProblem.REEXPORTED_MINOR_VERSION_CHANGE : return 20;
+					default: break;
 				}
 				break;
 			}
@@ -568,6 +575,7 @@ public class ApiProblemFactory {
 							case IApiProblem.LOCAL_TYPE: return 18;
 							case IApiProblem.INDIRECT_LOCAL_REFERENCE: return 37;
 							case IApiProblem.ANONYMOUS_TYPE: return 27;
+							default: break;
 						}
 						break;
 					}
@@ -576,6 +584,7 @@ public class ApiProblemFactory {
 							case IApiProblem.NO_FLAGS: return 9;
 							case IApiProblem.LOCAL_TYPE : return 25;
 							case IApiProblem.ANONYMOUS_TYPE: return 28;
+							default: break;
 						}
 						break;
 					}
@@ -586,6 +595,8 @@ public class ApiProblemFactory {
 							case IApiProblem.FIELD: return 12;
 							case IApiProblem.CONSTRUCTOR_METHOD: return 110;
 							case IApiProblem.METHOD: return 111;
+							case IApiProblem.ANNOTATION: return 42;
+							default: break;
 						}
 						break;
 					}
@@ -597,6 +608,7 @@ public class ApiProblemFactory {
 							case IApiProblem.LEAK_RETURN_TYPE: return 16;
 							case IApiProblem.LEAK_METHOD_PARAMETER: return 17;
 							case IApiProblem.LEAK_CONSTRUCTOR_PARAMETER: return 109;
+							default: break;
 						}
 						break;
 					}
@@ -611,6 +623,7 @@ public class ApiProblemFactory {
 						}
 					case IApiProblem.UNUSED_PROBLEM_FILTERS: return 30;
 					case IApiProblem.MISSING_EE_DESCRIPTIONS: return 38;
+					default: break;
 				}
 				break;
 			}
@@ -622,12 +635,14 @@ public class ApiProblemFactory {
 								switch(flags) {
 									case IDelta.METHOD: return 41;
 									case IDelta.RESTRICTIONS: return 72;
+									default: break;
 								}
 								break;
 							}
 							case IDelta.ANNOTATION_ELEMENT_TYPE: {
 								switch(flags) {
 									case IDelta.FIELD: return 39;
+									default: break;
 								}
 								break;
 							}
@@ -637,14 +652,18 @@ public class ApiProblemFactory {
 									case IDelta.METHOD: return 44;
 									case IDelta.RESTRICTIONS: return 72;
 									case IDelta.SUPER_INTERFACE_WITH_METHODS : return 133;
+									default: break;
 								}
 								break;
 							}
 							case IDelta.METHOD_ELEMENT_TYPE : {
 								switch(flags) {
 									case IDelta.RESTRICTIONS: return 132;
+									default: break;
 								}
+								break;
 							}
+							default: break;
 						}
 						switch(flags) {
 							case IDelta.CLASS_BOUND: return 21;
@@ -653,6 +672,7 @@ public class ApiProblemFactory {
 							case IDelta.METHOD_WITHOUT_DEFAULT_VALUE: return 29;
 							case IDelta.TYPE_PARAMETER: return 32;
 							case IDelta.TYPE_ARGUMENT: return 106;
+							default: break;
 						}
 						break;
 					}
@@ -666,6 +686,7 @@ public class ApiProblemFactory {
 									case IDelta.NON_FINAL_TO_FINAL: return 118;
 									case IDelta.STATIC_TO_NON_STATIC: return 121;
 									case IDelta.NON_STATIC_TO_STATIC: return 69;
+									default: break;
 								}
 								break;
 							}
@@ -676,14 +697,18 @@ public class ApiProblemFactory {
 									case IDelta.NON_FINAL_TO_FINAL: return 119;
 									case IDelta.NON_STATIC_TO_STATIC: return 120;
 									case IDelta.STATIC_TO_NON_STATIC: return 122;
+									default: break;
 								}
 								break;
 							}
 							case IDelta.CONSTRUCTOR_ELEMENT_TYPE : {
 								switch(flags) {
 									case IDelta.DECREASE_ACCESS : return 116;
+									default: break;
 								}
+								break;
 							}
+							default: break;
 						}
 						switch(flags) {
 							case IDelta.CLASS_BOUND: return 52;
@@ -698,6 +723,7 @@ public class ApiProblemFactory {
 							case IDelta.TYPE_CONVERSION: return TYPE_CONVERSION_ID;
 							case IDelta.VARARGS_TO_ARRAY: return 85;
 							case IDelta.TYPE_ARGUMENT: return 124;
+							default: break;
 						}
 						break;
 					}
@@ -729,20 +755,25 @@ public class ApiProblemFactory {
 							case IDelta.SUPERCLASS: return 131;
 							case IDelta.REEXPORTED_API_TYPE: return 134;
 							case IDelta.REEXPORTED_TYPE: return 135;
+							default: break;
 						}
+						break;
 					}
+					default: break;
 				}
 				break;
 			}
 			case IApiProblem.CATEGORY_API_COMPONENT_RESOLUTION: {
 				switch(kind) {
 					case IApiProblem.API_COMPONENT_RESOLUTION: return 99;
+					default: break;
 				}
 				break;
 			}
 			case IApiProblem.CATEGORY_FATAL_PROBLEM: {
 				switch(kind) {
 					case IApiProblem.FATAL_JDT_BUILDPATH_PROBLEM: return 31;
+					default: break;
 				}
 				break;
 			}
@@ -751,8 +782,11 @@ public class ApiProblemFactory {
 					case IApiProblem.API_USE_SCAN_TYPE_PROBLEM: return 136 + flags;
 					case IApiProblem.API_USE_SCAN_METHOD_PROBLEM: return 138 + flags;
 					case IApiProblem.API_USE_SCAN_FIELD_PROBLEM: return 140 + flags;
+					default: break;
 				}
+				break;
 			}
+			default: break;
 		}
 		return 0;
 	}
@@ -770,18 +804,21 @@ public class ApiProblemFactory {
 			case IApiProblem.CATEGORY_FATAL_PROBLEM: {
 				switch(problem.getKind()) {
 					case IApiProblem.FATAL_JDT_BUILDPATH_PROBLEM: return IApiProblemTypes.FATAL_PROBLEMS;
+					default: break;
 				}
 				break;	
 			}
 			case IApiProblem.CATEGORY_API_COMPONENT_RESOLUTION : {
 				switch(problem.getKind()) {
 					case IApiProblem.API_COMPONENT_RESOLUTION: return IApiProblemTypes.REPORT_RESOLUTION_ERRORS_API_COMPONENT;
+					default: break;
 				}
 				break;
 			}
 			case IApiProblem.CATEGORY_API_BASELINE: {
 				switch(problem.getKind()) {
 					case IApiProblem.API_BASELINE_MISSING: return IApiProblemTypes.MISSING_DEFAULT_API_BASELINE;
+					default: break;
 				}
 				break;
 			}
@@ -790,6 +827,7 @@ public class ApiProblemFactory {
 					case IApiProblem.SINCE_TAG_INVALID: return IApiProblemTypes.INVALID_SINCE_TAG_VERSION;
 					case IApiProblem.SINCE_TAG_MALFORMED: return IApiProblemTypes.MALFORMED_SINCE_TAG;
 					case IApiProblem.SINCE_TAG_MISSING: return IApiProblemTypes.MISSING_SINCE_TAG;
+					default: break;
 				}
 				break;
 			}
@@ -811,6 +849,7 @@ public class ApiProblemFactory {
 							case IApiProblem.LEAK_CONSTRUCTOR_PARAMETER: 
 							case IApiProblem.LEAK_METHOD_PARAMETER : return IApiProblemTypes.LEAK_METHOD_PARAM;
 							case IApiProblem.LEAK_RETURN_TYPE : return IApiProblemTypes.LEAK_METHOD_RETURN_TYPE;
+							default: break;
 						}
 						break;
 					}
@@ -819,6 +858,7 @@ public class ApiProblemFactory {
 					case IApiProblem.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES: return IApiProblemTypes.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES;
 					case IApiProblem.UNUSED_PROBLEM_FILTERS: return IApiProblemTypes.UNUSED_PROBLEM_FILTERS;
 					case IApiProblem.MISSING_EE_DESCRIPTIONS: return IApiProblemTypes.MISSING_EE_DESCRIPTIONS;
+					default: break;
 				}
 				break;
 			}
@@ -830,8 +870,11 @@ public class ApiProblemFactory {
 					case IApiProblem.API_USE_SCAN_TYPE_PROBLEM : return IApiProblemTypes.API_USE_SCAN_TYPE_SEVERITY;
 					case IApiProblem.API_USE_SCAN_METHOD_PROBLEM : return IApiProblemTypes.API_USE_SCAN_METHOD_SEVERITY;
 					case IApiProblem.API_USE_SCAN_FIELD_PROBLEM : return IApiProblemTypes.API_USE_SCAN_FIELD_SEVERITY;
+					default: break;
 				}
+				break;
 			}
+			default: break;
 		}
 		return null;
 	}

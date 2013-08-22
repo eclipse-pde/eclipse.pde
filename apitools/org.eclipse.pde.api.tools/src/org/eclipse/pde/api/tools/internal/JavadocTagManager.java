@@ -162,21 +162,21 @@ public final class JavadocTagManager {
 			newtag.setApplicableTo(IApiJavadocTag.TYPE_CLASS, 
 					IApiJavadocTag.MEMBER_METHOD, 
 					CoreMessages.JavadocTagManager_method_no_reference);
+			newtag.setApplicableTo(IApiJavadocTag.TYPE_CLASS, 
+					IApiJavadocTag.MEMBER_CONSTRUCTOR, 
+					CoreMessages.JavadocTagManager_constructor_no_reference);
+			newtag.setApplicableTo(IApiJavadocTag.TYPE_CLASS, 
+					IApiJavadocTag.MEMBER_FIELD, 
+					CoreMessages.JavadocTagManager_field_no_reference);
 			newtag.setApplicableTo(IApiJavadocTag.TYPE_INTERFACE, 
 					IApiJavadocTag.MEMBER_METHOD, 
 					CoreMessages.JavadocTagManager_method_no_reference);
 			newtag.setApplicableTo(IApiJavadocTag.TYPE_INTERFACE, 
-					IApiJavadocTag.MEMBER_NONE, 
-					CoreMessages.JavadocTagManager_interface_no_reference);
-			newtag.setApplicableTo(IApiJavadocTag.TYPE_CLASS, 
 					IApiJavadocTag.MEMBER_FIELD, 
 					CoreMessages.JavadocTagManager_field_no_reference);
 			newtag.setApplicableTo(IApiJavadocTag.TYPE_INTERFACE, 
-					IApiJavadocTag.MEMBER_FIELD, 
-					CoreMessages.JavadocTagManager_field_no_reference);
-			newtag.setApplicableTo(IApiJavadocTag.TYPE_CLASS, 
-					IApiJavadocTag.MEMBER_CONSTRUCTOR, 
-					CoreMessages.JavadocTagManager_constructor_no_reference);
+					IApiJavadocTag.MEMBER_NONE, 
+					CoreMessages.JavadocTagManager_interface_no_reference);
 			newtag.setApplicableTo(IApiJavadocTag.TYPE_ENUM, 
 					IApiJavadocTag.MEMBER_NONE, 
 					CoreMessages.JavadocTagManager_enum_no_reference);

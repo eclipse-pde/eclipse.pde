@@ -34,6 +34,8 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiMethod;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.util.Signatures;
 import org.eclipse.pde.api.tools.internal.util.Util;
+import org.objectweb.asm.AnnotationVisitor;
+import org.objectweb.asm.Attribute;
 import org.objectweb.asm.ClassAdapter;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.FieldVisitor;
@@ -55,7 +57,6 @@ public class ReferenceExtractor extends ClassAdapter {
 
 	/**
 	 * A visitor for visiting java 5+ signatures
-	 * TODO this visitor does not currently visit annotations
 	 *
 	 * ClassSignature = (visitFormalTypeParameter visitClassBound? visitInterfaceBound* )* (visitSuperClass visitInterface* )
 	 * MethodSignature = (visitFormalTypeParameter visitClassBound? visitInterfaceBound* )* (visitParameterType visitReturnType visitExceptionType* )
@@ -200,6 +201,7 @@ public class ReferenceExtractor extends ClassAdapter {
 		public SignatureVisitor visitTypeArgument(char wildcard) {
 			return this;
 		}
+		
 		/* (non-Javadoc)
 		 * @see org.objectweb.asm.signature.SignatureVisitor#visitEnd()
 		 */
@@ -440,10 +442,6 @@ public class ReferenceExtractor extends ClassAdapter {
 			this.linePositionTracker.addLineInfo(line, start);
 		}
 		
-		public void visitCode() {
-			super.visitCode();
-		}
-
 		/* (non-Javadoc)
 		 * @see java.lang.Object#toString()
 		 */
@@ -593,7 +591,45 @@ public class ReferenceExtractor extends ClassAdapter {
 			}
 		}
 		
-		
+		/* (non-Javadoc)
+		 * @see org.objectweb.asm.MethodAdapter#visitAnnotation(java.lang.String, boolean)
+		 */
+		public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
+			Type ctype = this.getTypeFromDescription(desc);
+			Reference reference = ReferenceExtractor.this.addTypeReference(ctype, IReference.REF_ANNOTATION_USE);
+			if(reference != null) {
+				linePositionTracker.addLocation(reference);
+			}
+			return null;
+		}
+	}
+	
+	/**
+	 * {@link FieldVisitor} to track use of types in annotations
+	 * 
+	 * @since 1.0.600
+	 */
+	class ClassFileFieldVisitor implements FieldVisitor {
+
+		/* (non-Javadoc)
+		 * @see org.objectweb.asm.FieldVisitor#visitAnnotation(java.lang.String, boolean)
+		 */
+		public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
+			addTypeReference(Type.getType(desc), IReference.REF_ANNOTATION_USE);
+			return null;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.objectweb.asm.FieldVisitor#visitAttribute(org.objectweb.asm.Attribute)
+		 */
+		public void visitAttribute(Attribute attr) {}
+
+		/* (non-Javadoc)
+		 * @see org.objectweb.asm.FieldVisitor#visitEnd()
+		 */
+		public void visitEnd() {
+			exitMember();
+		}
 	}
 	
 	/**
@@ -902,6 +938,12 @@ public class ReferenceExtractor extends ClassAdapter {
 	private ClassFileSignatureVisitor signaturevisitor = new ClassFileSignatureVisitor();
 	static int TYPE = 0, FIELD = 1, METHOD = 2;
 
+	/**
+	 * {@link FieldVisitor} used to track and collect references to annotation types
+	 * @since 1.0.600
+	 */
+	private ClassFileFieldVisitor fieldvisitor = new ClassFileFieldVisitor();
+	
 	/**
 	 * Constructor
 	 * @param type the type to extract references from
@@ -1222,7 +1264,7 @@ public class ReferenceExtractor extends ClassAdapter {
 			else {
 				fieldtracker.addField(addTypeReference(Type.getType(desc), IReference.REF_FIELDDECL));
 			}
-			this.exitMember();
+			return fieldvisitor;
 		}
 		return null;
 	}
@@ -1281,6 +1323,19 @@ public class ReferenceExtractor extends ClassAdapter {
 		ClassReader reader = new ClassReader(((AbstractApiTypeRoot)type.getTypeRoot()).getContents());
 		reader.accept(extractor, ClassReader.SKIP_FRAMES);
 		return refs;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.objectweb.asm.ClassAdapter#visitAnnotation(java.lang.String, boolean)
+	 */
+	public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
+		try {
+			addTypeReference(Type.getType(desc), IReference.REF_ANNOTATION_USE);
+		}
+		catch(ArrayIndexOutOfBoundsException e) {
+			//when file has compile errors this gets thrown, but we can ignore it
+		}
+		return null;
 	}
 	
 	/* (non-Javadoc)

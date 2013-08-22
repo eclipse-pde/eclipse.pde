@@ -294,6 +294,14 @@ public interface IReference {
 	 */
 	public static final int REF_SUPER_CONSTRUCTORMETHOD = 0x1 << 29;
 	/**
+	 * Constant representing an annotation member was referenced
+	 * <br><br>
+	 * Value is: <code>2^30</code>
+	 * 
+	 * @since 1.0.600
+	 */
+	public static final int REF_ANNOTATION_USE = 0x1 << 30;
+	/**
 	 * Bit mask used to indicate all kinds of references.
 	 * 
 	 * @see #getReferenceKind()

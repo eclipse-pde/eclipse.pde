@@ -68,6 +68,7 @@ public class ProblemDetectorBuilder extends ApiDescriptionVisitor {
 	private IllegalOverrideProblemDetector fIllegalOverride = null;
 	private IllegalMethodReferenceDetector fIllegalMethodRef = null;
 	private IllegalFieldReferenceDetector fIllegalFieldRef = null;
+	private IllegalAnnotationReferenceDetector fIllegalAnnotationRef = null;
 	private SystemApiDetector fSystemApiDetector = null;
 	
 	/**
@@ -123,23 +124,27 @@ public class ProblemDetectorBuilder extends ApiDescriptionVisitor {
 			}
 			case IElementDescriptor.TYPE: {
 				if((fKindMask & K_USE) > 0) {
+					String symbolicname = fComponent.getSymbolicName();
 					IReferenceTypeDescriptor type = (IReferenceTypeDescriptor) element;
 					if (RestrictionModifiers.isExtendRestriction(mask) && fIllegalExtends != null) {
-						fIllegalExtends.addIllegalType(type, fComponent.getSymbolicName());
+						fIllegalExtends.addIllegalType(type, symbolicname);
 					}
 					if (RestrictionModifiers.isImplementRestriction(mask) && fIllegalImplements != null) {
-						fIllegalImplements.addIllegalType(type, fComponent.getSymbolicName());
+						fIllegalImplements.addIllegalType(type, symbolicname);
 					}
 					if (RestrictionModifiers.isInstantiateRestriction(mask) && fIllegalInstantiate != null) {
-						fIllegalInstantiate.addIllegalType(type, fComponent.getSymbolicName());
+						fIllegalInstantiate.addIllegalType(type, symbolicname);
 					}
 					if(RestrictionModifiers.isReferenceRestriction(mask)) {
 						fRestrictedTypes.add(element);
 						if(fIllegalFieldRef != null) {
-							fIllegalFieldRef.addIllegalType(type, fComponent.getSymbolicName());
+							fIllegalFieldRef.addIllegalType(type, symbolicname);
 						}
 						if(fIllegalMethodRef != null) {
-							fIllegalMethodRef.addIllegalType(type, fComponent.getSymbolicName());
+							fIllegalMethodRef.addIllegalType(type, symbolicname);
+						}
+						if(fIllegalAnnotationRef != null) {
+							fIllegalAnnotationRef.addIllegalType(type, symbolicname);
 						}
 					}
 				}
@@ -147,13 +152,14 @@ public class ProblemDetectorBuilder extends ApiDescriptionVisitor {
 			}
 			case IElementDescriptor.METHOD: {
 				if((fKindMask & K_USE) > 0) {
+					String symbolicname = fComponent.getSymbolicName();
 					IMethodDescriptor method = (IMethodDescriptor) element;
 					if(RestrictionModifiers.isOverrideRestriction(mask) && fIllegalOverride != null) {
-						fIllegalOverride.addIllegalMethod(method, fComponent.getSymbolicName());
+						fIllegalOverride.addIllegalMethod(method, symbolicname);
 					}
 					if(fIllegalMethodRef != null) {
 						if (RestrictionModifiers.isReferenceRestriction(mask)) {
-							fIllegalMethodRef.addIllegalMethod(method, fComponent.getSymbolicName());
+							fIllegalMethodRef.addIllegalMethod(method, symbolicname);
 						}
 					}
 				}
@@ -301,6 +307,8 @@ public class ProblemDetectorBuilder extends ApiDescriptionVisitor {
 				detectors.add(fIllegalMethodRef);
 				fIllegalFieldRef = new IllegalFieldReferenceDetector();
 				detectors.add(fIllegalFieldRef);
+				fIllegalAnnotationRef = new IllegalAnnotationReferenceDetector();
+				detectors.add(fIllegalAnnotationRef);
 			}
 		}
 		else {
@@ -317,6 +325,8 @@ public class ProblemDetectorBuilder extends ApiDescriptionVisitor {
 			detectors.add(fIllegalMethodRef);
 			fIllegalFieldRef = new IllegalFieldReferenceDetector();
 			detectors.add(fIllegalFieldRef);
+			fIllegalAnnotationRef = new IllegalAnnotationReferenceDetector();
+			detectors.add(fIllegalAnnotationRef);
 		}
 	}
 	

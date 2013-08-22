@@ -31,10 +31,18 @@ import org.eclipse.jdt.core.ISourceRange;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
+import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.ASTParser;
+import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
+import org.eclipse.jdt.core.dom.ITypeBinding;
+import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Position;
+import org.eclipse.pde.api.tools.internal.model.ApiType;
 import org.eclipse.pde.api.tools.internal.model.ProjectComponent;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
@@ -56,6 +64,62 @@ import org.eclipse.pde.api.tools.internal.util.Util;
  */
 public abstract class AbstractProblemDetector implements IApiProblemDetector {
 
+	/**
+	 * Class used to look up the name of the enclosing method for an {@link IApiType} when we do not have any 
+	 * enclosing method infos (pre Java 1.5 class files 
+	 */
+	class MethodFinder extends ASTVisitor {
+		IMethod method = null;
+		private IType jtype = null;
+		private ApiType type = null;
+		
+		public MethodFinder(ApiType type, IType jtype) {
+			this.type = type;
+			this.jtype = jtype;
+		}
+		public boolean visit(AnonymousClassDeclaration node) {
+			if(method == null) {
+				ITypeBinding binding = node.resolveBinding();
+				String binaryName = binding.getBinaryName();
+				if(type.getName().endsWith(binaryName)) {
+					try {
+						IJavaElement element = jtype.getCompilationUnit().getElementAt(node.getStartPosition());
+						if(element != null) {
+							IJavaElement ancestor = element.getAncestor(IJavaElement.METHOD);
+							if(ancestor != null) {
+								method = (IMethod) ancestor;
+							}
+						}
+					}
+					catch(JavaModelException jme) {}
+					return false;
+				}
+			}
+			return true;
+		}
+		public boolean visit(TypeDeclaration node) {
+			if(method == null && node.isLocalTypeDeclaration()) {
+				ITypeBinding binding = node.resolveBinding();
+				String binaryName = binding.getBinaryName();
+				if(type.getName().endsWith(binaryName)) {
+					try {
+						IJavaElement element = jtype.getCompilationUnit().getElementAt(node.getStartPosition());
+						if(element.getElementType() == IJavaElement.TYPE) {
+							IType ltype = (IType) element;
+							IJavaElement parent = ltype.getParent();
+							if(parent.getElementType() == IJavaElement.METHOD) {
+								method = (IMethod) parent;
+							}
+						}
+					}
+					catch(JavaModelException jme) {}
+					return false;
+				}
+			}
+			return true;
+		}
+	};
+	
 	/**
 	 * List of potential {@link IReference} problems
 	 */
@@ -505,6 +569,157 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 			}
 		}
 		return match;
+	}
+	
+	/**
+	 * Tries to find the given {@link IApiField} in the given {@link IType}. If the field cannot be found 
+	 * <code>null</code> is returned
+	 * 
+	 * @param type
+	 * @param field
+	 * @return the {@link IField} matching the given {@link IApiField} or <code>null</code>
+	 * @since 1.0.600
+	 * @throws JavaModelException
+	 */
+	protected IField findFieldInType(IType type, IApiField field) throws JavaModelException {
+		IField  match = null;
+		match = type.getField(field.getName());
+		if(!match.exists()) {
+			IField[] fields = type.getFields();
+			//optimistically try to find the first match
+			for (int i = 0; i < fields.length; i++) {
+				if(fields[i].getElementName().equals(field.getName())) {
+					match = fields[i];
+					break;
+				}
+			}
+		}
+		return match;
+	}
+	
+	/**
+	 * Tries to find the given {@link IApiType} in the given {@link IType}. If no match is found 
+	 * <code>null</code> is returned.
+	 * @param type
+	 * @param apitype
+	 * @param reference
+	 * @param doc
+	 * @return the matching {@link IType} or <code>null</code>
+	 * @since 1.0.600
+	 * @throws CoreException
+	 * @throws JavaModelException 
+	 */
+	protected IType findTypeInType(IType type, IApiType apitype, IReference reference, IDocument doc) throws CoreException, JavaModelException {
+		if(apitype.isLocal()) {
+			String name = apitype.getSimpleName();
+			ICompilationUnit cunit = type.getCompilationUnit();
+			if(cunit.isWorkingCopy()) {
+				cunit.reconcile(AST.JLS4, false, null, null);
+			}
+			IMethod method = getEnclosingMethod(type, reference, doc);
+			if(method != null) {
+				return method.getType(name, 1);
+			}
+		}
+		String tname = type.getElementName();
+		if(tname.equals(apitype.getName()) ||
+				tname.equals(apitype.getSimpleName())) {
+			return type;
+		}
+		IType match = null;
+		IType[] types = type.getTypes();
+		for (int i = 0; i < types.length; i++) {
+			if((types[i].getElementName().equals(apitype.getName()))) {
+				match = types[i];
+				break;
+			}
+		}
+		return match;
+	}
+	
+	/**
+	 * Returns the enclosing {@link IMethod} for the given type or <code>null</code>
+	 * if it cannot be computed
+	 * @param type
+	 * @param jtype
+	 * @param reference
+	 * @param document
+	 * @return the {@link IMethod} enclosing the given type or <code>null</code>
+	 * @throws CoreException
+	 */
+	protected IMethod getEnclosingMethod(final IType jtype, IReference reference, IDocument document) throws CoreException { 
+		IApiMember member = reference.getMember();
+		if((member.getType() == IApiElement.TYPE)) {
+			ApiType type = (ApiType) member;
+			IApiMethod apimethod = type.getEnclosingMethod();
+			if(apimethod != null) {
+				String signature = Signatures.processMethodSignature(apimethod);
+				String methodname = Signatures.getMethodName(apimethod);
+				IMethod method = jtype.getMethod(methodname, Signature.getParameterTypes(signature));
+				if(method.exists()) {
+					return method;
+				}
+			}
+			else {
+				//try to look it up
+				IMethod method = null;
+				if(reference.getLineNumber() > -1) {
+					try {
+						int offset = document.getLineOffset(reference.getLineNumber());
+						method = quickLookup(jtype, document, reference, offset);
+					}
+					catch(BadLocationException ble) {}
+				}
+				if(method == null) {
+					//look it up the hard way
+					ISourceRange range = jtype.getCompilationUnit().getSourceRange();
+					ASTParser parser = ASTParser.newParser(AST.JLS4);
+					parser.setSource(jtype.getCompilationUnit());
+					parser.setSourceRange(range.getOffset(), range.getLength());
+					parser.setResolveBindings(true);
+					ASTNode ptype = parser.createAST(null);
+					MethodFinder finder = new MethodFinder(type, jtype);
+					ptype.accept(finder);
+					method = finder.method;
+				}
+				if(method != null && method.exists()) {
+					ApiType etype = (ApiType) type.getEnclosingType();
+					IApiMethod[] methods = etype.getMethods();
+					String msig = null;
+					for (int i = 0; i < methods.length; i++) {
+						msig = methods[i].getSignature();
+						if(Signatures.getMethodName(methods[i]).equals(method.getElementName()) &&
+								Signatures.matchesSignatures(msig.replace('/', '.'), method.getSignature())) {
+							type.setEnclosingMethodInfo(methods[i].getName(), msig);
+						}
+					}
+					return method;
+				}
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Performs a quick look-up using the offset into the the {@link ICompilationUnit}
+	 * @param jtype
+	 * @param document
+	 * @param reference
+	 * @param offset
+	 * @return
+	 * @throws JavaModelException
+	 */
+	protected IMethod quickLookup(final IType jtype, IDocument document, IReference reference, int offset) throws JavaModelException {
+		if(offset > -1) {
+			IJavaElement element = jtype.getCompilationUnit().getElementAt(offset);
+			if(element != null) {
+				IJavaElement ancestor = element.getAncestor(IJavaElement.METHOD);
+				if (ancestor != null) {
+					return (IMethod) ancestor;
+				}
+			}
+		}
+		return null;
 	}
 	
 	/**

@@ -201,22 +201,28 @@ public class TagValidator extends ASTVisitor {
 			case ASTNode.ENUM_DECLARATION: {
 				Item item = (Item) fStack.peek();
 				Set supported = getSupportedTagNames(IApiJavadocTag.TYPE_ENUM, IApiJavadocTag.MEMBER_NONE);
+				HashSet processed = new HashSet();
 				for (Iterator i = tags.iterator(); i.hasNext();) {
 					TagElement tag = (TagElement) i.next();
 					String tagname = tag.getTagName();
 					if(tagname == null || !JavadocTagManager.ALL_TAGS.contains(tagname)) {
 						continue;
 					}
-					if(!supported.contains(tagname)) {
+					if(processed.contains(tagname)) {
+						processTagProblem(item.typename, 
+								tag, 
+								IElementDescriptor.METHOD, 
+								IApiProblem.DUPLICATE_TAG_USE, 
+								IApiMarkerConstants.DUPLICATE_TAG_MARKER_ID, 
+								null);
+					} else if(!supported.contains(tagname)) {
 						processTagProblem(item.typename, 
 								tag, 
 								IElementDescriptor.TYPE, 
 								IApiProblem.UNSUPPORTED_TAG_USE, 
 								IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
 								BuilderMessages.TagValidator_an_enum);
-						continue;
-					}
-					if(!item.visible) {
+					} else if(!item.visible) {
 						processTagProblem(item.typename, 
 								tag, 
 								IElementDescriptor.TYPE, 
@@ -224,6 +230,7 @@ public class TagValidator extends ASTVisitor {
 								IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
 								BuilderMessages.TagValidator_enum_not_visible);
 					}
+					processed.add(tagname);
 				}
 				break;
 			}
@@ -247,22 +254,28 @@ public class TagValidator extends ASTVisitor {
 			case ASTNode.ANNOTATION_TYPE_DECLARATION: {
 				Item item = (Item) fStack.peek();
 				Set supported = getSupportedTagNames(IApiJavadocTag.TYPE_ANNOTATION, IApiJavadocTag.MEMBER_NONE);
+				HashSet processed = new HashSet();
 				for (Iterator i = tags.iterator(); i.hasNext();) {
 					TagElement tag = (TagElement) i.next();
 					String tagname = tag.getTagName();
 					if(tagname == null || !JavadocTagManager.ALL_TAGS.contains(tagname)) {
 						continue;
 					}
-					if(!supported.contains(tagname)) {
+					if(processed.contains(tagname)) {
+						processTagProblem(item.typename, 
+								tag, 
+								IElementDescriptor.METHOD, 
+								IApiProblem.DUPLICATE_TAG_USE, 
+								IApiMarkerConstants.DUPLICATE_TAG_MARKER_ID, 
+								null);
+					} else if(!supported.contains(tagname)) {
 						processTagProblem(item.typename, 
 								tag, 
 								IElementDescriptor.TYPE, 
 								IApiProblem.UNSUPPORTED_TAG_USE, 
 								IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
 								BuilderMessages.TagValidator_an_annotation);
-						continue;
-					}
-					if(!item.visible) {
+					} else if(!item.visible) {
 						processTagProblem(item.typename, 
 								tag, 
 								IElementDescriptor.TYPE, 
@@ -270,6 +283,7 @@ public class TagValidator extends ASTVisitor {
 								IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
 								BuilderMessages.TagValidator_annotation_not_visible);
 					}
+					processed.add(tagname);
 				}
 				break;
 			}
@@ -563,104 +577,85 @@ public class TagValidator extends ASTVisitor {
 			}
 			else {
 				switch(pkind) {
-				case IApiJavadocTag.TYPE_ENUM: {
-					if(!supportedtags.contains(tagname)) {
-						processTagProblem(item.typename, 
-								tag, 
-								IElementDescriptor.METHOD, 
-								IApiProblem.UNSUPPORTED_TAG_USE, 
-								IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
-								BuilderMessages.TagValidator_an_enum_method);
-					}
-					else if(Flags.isPrivate(mods)) {
-						processTagProblem(item.typename, 
-								tag, 
-								IElementDescriptor.METHOD, 
-								IApiProblem.UNSUPPORTED_TAG_USE, 
-								IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
-								BuilderMessages.TagValidator_private_enum_method);
-					}
-					else if(Flags.isPackageDefault(mods)) {
-						processTagProblem(item.typename, 
-								tag, 
-								IElementDescriptor.METHOD, 
-								IApiProblem.UNSUPPORTED_TAG_USE, 
-								IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
-								BuilderMessages.TagValidator_a_package_default_enum);
-					}
-					else if(!item.visible) {
-						processTagProblem(item.typename, 
-								tag, 
-								IElementDescriptor.METHOD, 
-								IApiProblem.UNSUPPORTED_TAG_USE, 
-								IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
-								BuilderMessages.TagValidator_not_visible_enum_method);
-					}
-					break;
-				}
-				case IApiJavadocTag.TYPE_INTERFACE: {
-					if(!supportedtags.contains(tagname)) {
-						processTagProblem(item.typename, 
-								tag, 
-								IElementDescriptor.METHOD, 
-								IApiProblem.UNSUPPORTED_TAG_USE, 
-								IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
-								BuilderMessages.TagValidator_an_interface_method);
-					}
-					else if(!item.visible) {
-						processTagProblem(item.typename, 
-								tag, 
-								IElementDescriptor.METHOD, 
-								IApiProblem.UNSUPPORTED_TAG_USE, 
-								IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
-								BuilderMessages.TagValidator_not_visible_interface_method);
-					}
-					break;
-				}
-				case IApiJavadocTag.TYPE_CLASS: {
-					if(!supportedtags.contains(tagname)) {
-						processTagProblem(item.typename, 
-								tag, 
-								IElementDescriptor.METHOD, 
-								IApiProblem.UNSUPPORTED_TAG_USE, 
-								IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
-								isconstructor ? BuilderMessages.TagValidator_a_constructor : BuilderMessages.TagValidator_a_method);
-					}
-					else if(Flags.isPrivate(mods)) {
-						processTagProblem(item.typename, 
-								tag, 
-								IElementDescriptor.METHOD, 
-								IApiProblem.UNSUPPORTED_TAG_USE, 
-								IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
-								isconstructor ? BuilderMessages.TagValidator_private_constructor : BuilderMessages.TagValidator_private_method);
-					}
-					else if(Flags.isPackageDefault(mods)) {
-						if(isstatic) {
+					case IApiJavadocTag.TYPE_ENUM: {
+						if(!supportedtags.contains(tagname)) {
 							processTagProblem(item.typename, 
 									tag, 
 									IElementDescriptor.METHOD, 
 									IApiProblem.UNSUPPORTED_TAG_USE, 
 									IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
-									isconstructor ? BuilderMessages.TagValidator_static_package_constructor : BuilderMessages.TagValidator_a_static_package_default_method);
+									BuilderMessages.TagValidator_an_enum_method);
 						}
-						else {
+						else if(Flags.isPrivate(mods)) {
 							processTagProblem(item.typename, 
 									tag, 
 									IElementDescriptor.METHOD, 
 									IApiProblem.UNSUPPORTED_TAG_USE, 
 									IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
-									isconstructor ? BuilderMessages.TagValidator_a_package_default_constructor : BuilderMessages.TagValidator_a_package_default_method);
+									BuilderMessages.TagValidator_private_enum_method);
 						}
+						else if(Flags.isPackageDefault(mods)) {
+							processTagProblem(item.typename, 
+									tag, 
+									IElementDescriptor.METHOD, 
+									IApiProblem.UNSUPPORTED_TAG_USE, 
+									IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
+									BuilderMessages.TagValidator_a_package_default_enum);
+						}
+						else if(!item.visible) {
+							processTagProblem(item.typename, 
+									tag, 
+									IElementDescriptor.METHOD, 
+									IApiProblem.UNSUPPORTED_TAG_USE, 
+									IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
+									BuilderMessages.TagValidator_not_visible_enum_method);
+						}
+						break;
 					}
-					else if(JavadocTagManager.TAG_NOOVERRIDE.equals(tagname)) {
-						if (Flags.isFinal(mods)) {
+					case IApiJavadocTag.TYPE_INTERFACE: {
+						if(!supportedtags.contains(tagname)) {
+							processTagProblem(item.typename, 
+									tag, 
+									IElementDescriptor.METHOD, 
+									IApiProblem.UNSUPPORTED_TAG_USE, 
+									IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
+									BuilderMessages.TagValidator_an_interface_method);
+						}
+						else if(!item.visible) {
+							processTagProblem(item.typename, 
+									tag, 
+									IElementDescriptor.METHOD, 
+									IApiProblem.UNSUPPORTED_TAG_USE, 
+									IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
+									BuilderMessages.TagValidator_not_visible_interface_method);
+						}
+						break;
+					}
+					case IApiJavadocTag.TYPE_CLASS: {
+						if(!supportedtags.contains(tagname)) {
+							processTagProblem(item.typename, 
+									tag, 
+									IElementDescriptor.METHOD, 
+									IApiProblem.UNSUPPORTED_TAG_USE, 
+									IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
+									isconstructor ? BuilderMessages.TagValidator_a_constructor : BuilderMessages.TagValidator_a_method);
+						}
+						else if(Flags.isPrivate(mods)) {
+							processTagProblem(item.typename, 
+									tag, 
+									IElementDescriptor.METHOD, 
+									IApiProblem.UNSUPPORTED_TAG_USE, 
+									IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
+									isconstructor ? BuilderMessages.TagValidator_private_constructor : BuilderMessages.TagValidator_private_method);
+						}
+						else if(Flags.isPackageDefault(mods)) {
 							if(isstatic) {
 								processTagProblem(item.typename, 
 										tag, 
 										IElementDescriptor.METHOD, 
 										IApiProblem.UNSUPPORTED_TAG_USE, 
 										IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
-										isconstructor ? BuilderMessages.TagValidator_static_final_constructor : BuilderMessages.TagValidator_a_static_final_method);
+										isconstructor ? BuilderMessages.TagValidator_static_package_constructor : BuilderMessages.TagValidator_a_static_package_default_method);
 							}
 							else {
 								processTagProblem(item.typename, 
@@ -668,24 +663,52 @@ public class TagValidator extends ASTVisitor {
 										IElementDescriptor.METHOD, 
 										IApiProblem.UNSUPPORTED_TAG_USE, 
 										IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
-										isconstructor ? BuilderMessages.TagValidator_final_constructor : BuilderMessages.TagValidator_a_final_method);
+										isconstructor ? BuilderMessages.TagValidator_a_package_default_constructor : BuilderMessages.TagValidator_a_package_default_method);
 							}
 						}
-						else if(isstatic) {
-							processTagProblem(item.typename, 
-									tag, 
-									IElementDescriptor.METHOD, 
-									IApiProblem.UNSUPPORTED_TAG_USE, 
-									IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
-									isconstructor ? BuilderMessages.TagValidator_a_static_constructor : BuilderMessages.TagValidator_a_static_method);
-						}
-						else if(Flags.isFinal(getParentModifiers(method))) {
-							processTagProblem(item.typename, 
-									tag, 
-									IElementDescriptor.METHOD, 
-									IApiProblem.UNSUPPORTED_TAG_USE, 
-									IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
-									isconstructor ? BuilderMessages.TagValidator_constructor_in_final_class : BuilderMessages.TagValidator_a_method_in_a_final_class);
+						else if(JavadocTagManager.TAG_NOOVERRIDE.equals(tagname)) {
+							if (Flags.isFinal(mods)) {
+								if(isstatic) {
+									processTagProblem(item.typename, 
+											tag, 
+											IElementDescriptor.METHOD, 
+											IApiProblem.UNSUPPORTED_TAG_USE, 
+											IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
+											isconstructor ? BuilderMessages.TagValidator_static_final_constructor : BuilderMessages.TagValidator_a_static_final_method);
+								}
+								else {
+									processTagProblem(item.typename, 
+											tag, 
+											IElementDescriptor.METHOD, 
+											IApiProblem.UNSUPPORTED_TAG_USE, 
+											IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
+											isconstructor ? BuilderMessages.TagValidator_final_constructor : BuilderMessages.TagValidator_a_final_method);
+								}
+							}
+							else if(isstatic) {
+								processTagProblem(item.typename, 
+										tag, 
+										IElementDescriptor.METHOD, 
+										IApiProblem.UNSUPPORTED_TAG_USE, 
+										IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
+										isconstructor ? BuilderMessages.TagValidator_a_static_constructor : BuilderMessages.TagValidator_a_static_method);
+							}
+							else if(Flags.isFinal(getParentModifiers(method))) {
+								processTagProblem(item.typename, 
+										tag, 
+										IElementDescriptor.METHOD, 
+										IApiProblem.UNSUPPORTED_TAG_USE, 
+										IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
+										isconstructor ? BuilderMessages.TagValidator_constructor_in_final_class : BuilderMessages.TagValidator_a_method_in_a_final_class);
+							}
+							else if(!item.visible) {
+								processTagProblem(item.typename, 
+										tag, 
+										IElementDescriptor.METHOD, 
+										IApiProblem.UNSUPPORTED_TAG_USE, 
+										IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
+										isconstructor ? BuilderMessages.TagValidator_not_visible_constructor : BuilderMessages.TagValidator_a_method_that_is_not_visible);
+							}
 						}
 						else if(!item.visible) {
 							processTagProblem(item.typename, 
@@ -695,21 +718,12 @@ public class TagValidator extends ASTVisitor {
 									IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
 									isconstructor ? BuilderMessages.TagValidator_not_visible_constructor : BuilderMessages.TagValidator_a_method_that_is_not_visible);
 						}
+						break;
 					}
-					else if(!item.visible) {
-						processTagProblem(item.typename, 
-								tag, 
-								IElementDescriptor.METHOD, 
-								IApiProblem.UNSUPPORTED_TAG_USE, 
-								IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
-								isconstructor ? BuilderMessages.TagValidator_not_visible_constructor : BuilderMessages.TagValidator_a_method_that_is_not_visible);
+					default: {
+						break;
 					}
-					break;
 				}
-				default: {
-					break;
-				}
-			}
 			}
 			processed.add(tagname);
 		}

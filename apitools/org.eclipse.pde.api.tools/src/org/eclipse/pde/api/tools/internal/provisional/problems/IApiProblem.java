@@ -419,6 +419,17 @@ public interface IApiProblem {
 	 * @see #CATEGORY_USAGE
 	 */
 	public static final int INDIRECT_LOCAL_REFERENCE = 13;
+	/**
+	 * Flags to indicate a reference to an annotation
+	 * <br><br>
+	 * Values is: <code>14</code>
+	 * 
+	 * @see #getFlags()
+	 * @see #CATEGORY_USAGE
+	 * 
+	 * @since 1.0.600
+	 */
+	public static final int ANNOTATION = 14;
 
 	/**
 	 * Constant representing the value of a default API profile {@link IApiProblem} kind.
