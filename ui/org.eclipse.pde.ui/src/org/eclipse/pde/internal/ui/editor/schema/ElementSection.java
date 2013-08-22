@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Kurtakov <akurtako@redhat.com> - bug 415649
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.schema;
 
@@ -29,8 +30,6 @@ import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.TreePart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.*;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.actions.ActionFactory;
@@ -94,6 +93,7 @@ public class ElementSection extends TreeSection {
 		getSection().setDescription(PDEUIMessages.SchemaEditor_ElementSection_desc);
 	}
 
+	@Override
 	public void createClient(Section section, FormToolkit toolkit) {
 		Composite container = createClientContainer(section, 2, toolkit);
 		createTree(container, toolkit);
@@ -111,16 +111,8 @@ public class ElementSection extends TreeSection {
 
 		ToolBarManager toolBarManager = new ToolBarManager(SWT.FLAT);
 		ToolBar toolbar = toolBarManager.createControl(section);
-		final Cursor handCursor = new Cursor(Display.getCurrent(), SWT.CURSOR_HAND);
+		final Cursor handCursor = Display.getCurrent().getSystemCursor(SWT.CURSOR_HAND);
 		toolbar.setCursor(handCursor);
-		// Cursor needs to be explicitly disposed
-		toolbar.addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent e) {
-				if (handCursor.isDisposed() == false) {
-					handCursor.dispose();
-				}
-			}
-		});
 		// Add collapse action to the tool bar
 		fCollapseAction = new CollapseAction(fTreeViewer, PDEUIMessages.ExtensionsPage_collapseAll);
 		toolBarManager.add(fCollapseAction);
@@ -153,6 +145,7 @@ public class ElementSection extends TreeSection {
 		return fTreeViewer;
 	}
 
+	@Override
 	public void refresh() {
 		fTreeViewer.refresh();
 		super.refresh();
@@ -162,6 +155,7 @@ public class ElementSection extends TreeSection {
 		}
 	}
 
+	@Override
 	protected void buttonSelected(int index) {
 		switch (index) {
 			case 0 :
@@ -195,6 +189,7 @@ public class ElementSection extends TreeSection {
 			new NewCompositorAction(sourceElement, selection, kind).run();
 	}
 
+	@Override
 	public void dispose() {
 		if (fClipboard != null) {
 			fClipboard.dispose();
@@ -204,6 +199,7 @@ public class ElementSection extends TreeSection {
 		super.dispose();
 	}
 
+	@Override
 	public boolean doGlobalAction(String actionId) {
 		boolean cut = actionId.equals(ActionFactory.CUT.getId());
 		if (cut || actionId.equals(ActionFactory.DELETE.getId())) {
@@ -227,6 +223,7 @@ public class ElementSection extends TreeSection {
 		return false;
 	}
 
+	@Override
 	public boolean setFormInput(Object object) {
 		if (object instanceof ISchemaElement || object instanceof ISchemaAttribute || object instanceof ISchemaCompositor) {
 			fTreeViewer.setSelection(new StructuredSelection(object), true);
@@ -244,6 +241,7 @@ public class ElementSection extends TreeSection {
 		return false;
 	}
 
+	@Override
 	protected void fillContextMenu(IMenuManager manager) {
 		final ISelection selection = fTreeViewer.getSelection();
 		final Object object = ((IStructuredSelection) selection).getFirstElement();
@@ -307,6 +305,7 @@ public class ElementSection extends TreeSection {
 					manager.add(new Separator());
 				if (!(object instanceof ISchemaAttribute && ((ISchemaAttribute) object).getParent() instanceof ISchemaRootElement)) {
 					Action deleteAction = new Action() {
+						@Override
 						public void run() {
 							handleDelete((IStructuredSelection) selection);
 						}
@@ -598,6 +597,7 @@ public class ElementSection extends TreeSection {
 		fTreeViewer.expandToLevel(1);
 	}
 
+	@Override
 	protected void selectionChanged(IStructuredSelection selection) {
 //		getPage().getManagedForm().fireSelectionChanged(this, selection);
 		getPage().getPDEEditor().setSelection(selection);
@@ -607,6 +607,7 @@ public class ElementSection extends TreeSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#setFocus()
 	 */
+	@Override
 	public void setFocus() {
 		if (fTreeViewer != null) {
 			fTreeViewer.getTree().setFocus();
@@ -686,6 +687,7 @@ public class ElementSection extends TreeSection {
 		return null;
 	}
 
+	@Override
 	protected boolean canPaste(Object target, Object[] objects) {
 		for (int i = 0; i < objects.length; i++) {
 			Object obj = objects[i];
@@ -701,6 +703,7 @@ public class ElementSection extends TreeSection {
 		return true;
 	}
 
+	@Override
 	protected void handleDoubleClick(IStructuredSelection selection) {
 		super.handleDoubleClick(selection);
 		Object object = selection.getFirstElement();
@@ -734,6 +737,7 @@ public class ElementSection extends TreeSection {
 		fTreeViewer.setSelection(selection);
 	}
 
+	@Override
 	protected void doPaste(Object target, Object[] objects) {
 		handleOp(target, objects, DND.DROP_COPY);
 	}

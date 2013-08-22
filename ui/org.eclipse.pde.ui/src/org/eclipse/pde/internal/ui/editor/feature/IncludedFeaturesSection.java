@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Kurtakov <akurtako@redhat.com> - bug 415649
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
@@ -34,8 +35,6 @@ import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
@@ -71,10 +70,12 @@ public class IncludedFeaturesSection extends TableSection implements IFeatureMod
 		getSection().setLayoutData(new GridData(GridData.FILL_BOTH));
 	}
 
+	@Override
 	public void commit(boolean onSave) {
 		super.commit(onSave);
 	}
 
+	@Override
 	public void createClient(Section section, FormToolkit toolkit) {
 
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
@@ -104,16 +105,8 @@ public class IncludedFeaturesSection extends TableSection implements IFeatureMod
 
 		ToolBarManager toolBarManager = new ToolBarManager(SWT.FLAT);
 		ToolBar toolbar = toolBarManager.createControl(section);
-		final Cursor handCursor = new Cursor(Display.getCurrent(), SWT.CURSOR_HAND);
+		final Cursor handCursor = Display.getCurrent().getSystemCursor(SWT.CURSOR_HAND);
 		toolbar.setCursor(handCursor);
-		// Cursor needs to be explicitly disposed
-		toolbar.addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent e) {
-				if (handCursor.isDisposed() == false) {
-					handCursor.dispose();
-				}
-			}
-		});
 		// Add sort action to the tool bar
 		fSortAction = new SortAction(getStructuredViewerPart().getViewer(), PDEUIMessages.FeatureEditor_IncludedFeatures_sortAlpha, ListUtil.NAME_COMPARATOR, null, this);
 		toolBarManager.add(fSortAction);
@@ -123,10 +116,12 @@ public class IncludedFeaturesSection extends TableSection implements IFeatureMod
 		section.setTextClient(toolbar);
 	}
 
+	@Override
 	protected void handleDoubleClick(IStructuredSelection selection) {
 		fOpenAction.run();
 	}
 
+	@Override
 	protected void buttonSelected(int index) {
 		switch (index) {
 			case 0 :
@@ -141,6 +136,7 @@ public class IncludedFeaturesSection extends TableSection implements IFeatureMod
 		}
 	}
 
+	@Override
 	public void dispose() {
 		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		if (model != null)
@@ -150,6 +146,7 @@ public class IncludedFeaturesSection extends TableSection implements IFeatureMod
 		super.dispose();
 	}
 
+	@Override
 	public boolean setFormInput(Object object) {
 		if (object instanceof IFeatureChild) {
 			fIncludesViewer.setSelection(new StructuredSelection(object), true);
@@ -158,6 +155,7 @@ public class IncludedFeaturesSection extends TableSection implements IFeatureMod
 		return false;
 	}
 
+	@Override
 	protected void fillContextMenu(IMenuManager manager) {
 		manager.add(fOpenAction);
 		manager.add(new Separator());
@@ -293,6 +291,7 @@ public class IncludedFeaturesSection extends TableSection implements IFeatureMod
 		}
 	}
 
+	@Override
 	public boolean doGlobalAction(String actionId) {
 		if (actionId.equals(ActionFactory.DELETE.getId())) {
 			BusyIndicator.showWhile(fIncludesViewer.getTable().getDisplay(), new Runnable() {
@@ -323,6 +322,7 @@ public class IncludedFeaturesSection extends TableSection implements IFeatureMod
 		return false;
 	}
 
+	@Override
 	protected void selectionChanged(IStructuredSelection selection) {
 		getPage().getPDEEditor().setSelection(selection);
 		updateButtons();
@@ -337,6 +337,7 @@ public class IncludedFeaturesSection extends TableSection implements IFeatureMod
 		mng.addFeatureModelListener(this);
 	}
 
+	@Override
 	public void modelChanged(IModelChangedEvent e) {
 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
 			markStale();
@@ -360,6 +361,7 @@ public class IncludedFeaturesSection extends TableSection implements IFeatureMod
 	private void makeActions() {
 		IModel model = (IModel) getPage().getModel();
 		fNewAction = new Action() {
+			@Override
 			public void run() {
 				handleNew();
 			}
@@ -368,6 +370,7 @@ public class IncludedFeaturesSection extends TableSection implements IFeatureMod
 		fNewAction.setEnabled(model.isEditable());
 
 		fDeleteAction = new Action() {
+			@Override
 			public void run() {
 				BusyIndicator.showWhile(fIncludesViewer.getTable().getDisplay(), new Runnable() {
 					public void run() {
@@ -410,11 +413,13 @@ public class IncludedFeaturesSection extends TableSection implements IFeatureMod
 		return false;
 	}
 
+	@Override
 	public void setFocus() {
 		if (fIncludesViewer != null)
 			fIncludesViewer.getTable().setFocus();
 	}
 
+	@Override
 	public void refresh() {
 		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		IFeature feature = model.getFeature();
@@ -437,6 +442,7 @@ public class IncludedFeaturesSection extends TableSection implements IFeatureMod
 	/**
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(Clipboard)
 	 */
+	@Override
 	public boolean canPaste(Clipboard clipboard) {
 		Object[] objects = (Object[]) clipboard.getContents(ModelDataTransfer.getInstance());
 		if (objects != null && objects.length > 0) {
@@ -449,6 +455,7 @@ public class IncludedFeaturesSection extends TableSection implements IFeatureMod
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(Object,
 	 *      Object[])
 	 */
+	@Override
 	protected boolean canPaste(Object target, Object[] objects) {
 		for (int i = 0; i < objects.length; i++) {
 			if (!(objects[i] instanceof FeatureChild))
@@ -460,6 +467,7 @@ public class IncludedFeaturesSection extends TableSection implements IFeatureMod
 	/**
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste()
 	 */
+	@Override
 	protected void doPaste() {
 		Clipboard clipboard = getPage().getPDEEditor().getClipboard();
 		ModelDataTransfer modelTransfer = ModelDataTransfer.getInstance();
@@ -473,6 +481,7 @@ public class IncludedFeaturesSection extends TableSection implements IFeatureMod
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste(Object,
 	 *      Object[])
 	 */
+	@Override
 	protected void doPaste(Object target, Object[] objects) {
 		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		IFeature feature = model.getFeature();
@@ -505,6 +514,7 @@ public class IncludedFeaturesSection extends TableSection implements IFeatureMod
 		}
 	}
 
+	@Override
 	protected boolean createCount() {
 		return true;
 	}

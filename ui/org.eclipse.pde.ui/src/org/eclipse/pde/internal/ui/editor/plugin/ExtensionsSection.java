@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Peter Friese <peter.friese@gentleware.com> - bug 194529, bug 196867
  *     Sascha Becher <s.becher@qualitype.com> - bug 360894
+ *     Alexander Kurtakov <akurtako@redhat.com> - bug 415649
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
@@ -51,7 +52,8 @@ import org.eclipse.pde.ui.IExtensionEditorWizard;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.internal.BidiUtil;
 import org.eclipse.swt.widgets.*;
@@ -276,14 +278,8 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 	private void createSectionToolbar(Section section, FormToolkit toolkit) {
 		ToolBarManager toolBarManager = new ToolBarManager(SWT.FLAT);
 		ToolBar toolbar = toolBarManager.createControl(section);
-		final Cursor handCursor = new Cursor(Display.getCurrent(), SWT.CURSOR_HAND);
+		final Cursor handCursor = Display.getCurrent().getSystemCursor(SWT.CURSOR_HAND);
 		toolbar.setCursor(handCursor);
-		// Cursor needs to be explicitly disposed
-		toolbar.addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent e) {
-				handCursor.dispose();
-			}
-		});
 		// Add sort action to the tool bar
 		fSortAction = new SortAction(fExtensionTree, PDEUIMessages.ExtensionsPage_sortAlpha, null, null, this) {
 			@Override

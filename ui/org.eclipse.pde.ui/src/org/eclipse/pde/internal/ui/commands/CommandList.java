@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2012 IBM Corporation and others.
+ *  Copyright (c) 2006, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Kurtakov <akurtako@redhat.com> - bug 415649
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.commands;
 
@@ -42,6 +43,7 @@ public class CommandList {
 		private HashMap<Object, Image> fImgMap = new HashMap<Object, Image>();
 		private Image fDefaultImage;
 
+		@Override
 		public String getText(Object element) {
 			if (element instanceof Category)
 				return CommandList.getText(element);
@@ -50,6 +52,7 @@ public class CommandList {
 			return null;
 		}
 
+		@Override
 		public Image getImage(Object element) {
 			Image img = fImgMap.get(element);
 			if (img != null)
@@ -73,6 +76,7 @@ public class CommandList {
 			return img;
 		}
 
+		@Override
 		public void dispose() {
 			for (Iterator<Object> i = fImgMap.keySet().iterator(); i.hasNext();)
 				fImgMap.get(i.next()).dispose();
@@ -83,12 +87,14 @@ public class CommandList {
 	}
 
 	protected class CommandTreeComparator extends ViewerComparator {
+		@Override
 		public int compare(Viewer viewer, Object e1, Object e2) {
 			return getText(e1).compareTo(getText(e2));
 		}
 	}
 
 	protected class WildcardFilter extends ViewerFilter {
+		@Override
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
 			String filterText = fFilterText.getText();
 			if (filterText.length() == 0)
@@ -168,16 +174,12 @@ public class CommandList {
 
 		ToolBarManager toolBarManager = new ToolBarManager(SWT.FLAT);
 		ToolBar toolbar = toolBarManager.createControl(section);
-		final Cursor handCursor = new Cursor(Display.getCurrent(), SWT.CURSOR_HAND);
+		final Cursor handCursor = Display.getCurrent().getSystemCursor(SWT.CURSOR_HAND);
 		toolbar.setCursor(handCursor);
 		toolBarManager.add(new CollapseAction() {
+			@Override
 			public void run() {
 				fTreeViewer.collapseAll();
-			}
-		});
-		toolbar.addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent e) {
-				handCursor.dispose();
 			}
 		});
 		fToolkit.adapt(toolbar, true, true);
@@ -214,6 +216,7 @@ public class CommandList {
 		fFilterText = fToolkit.createText(c, "", SWT.BORDER); //$NON-NLS-1$
 		fFilterText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fFilterText.addKeyListener(new KeyAdapter() {
+			@Override
 			public void keyPressed(KeyEvent e) {
 				if (e.keyCode == SWT.ARROW_DOWN)
 					fTreeViewer.getControl().setFocus();
@@ -230,6 +233,7 @@ public class CommandList {
 			}
 		});
 		clearButton.addHyperlinkListener(new HyperlinkAdapter() {
+			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				fFilterText.setText(""); //$NON-NLS-1$
 			}

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Kurtakov <akurtako@redhat.com> - bug 415649
  *******************************************************************************/
 
 package org.eclipse.pde.internal.ua.ui.editor.toc;
@@ -44,8 +45,6 @@ import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -200,18 +199,9 @@ public class TocTreeSection extends TreeSection {
 		ToolBarManager toolBarManager = new ToolBarManager(SWT.FLAT);
 		ToolBar toolbar = toolBarManager.createControl(section);
 
-		final Cursor handCursor = new Cursor(Display.getCurrent(),
+		final Cursor handCursor = Display.getCurrent().getSystemCursor(
 				SWT.CURSOR_HAND);
 		toolbar.setCursor(handCursor);
-		// Cursor needs to be explicitly disposed
-		toolbar.addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent e) {
-				if ((handCursor != null) && (handCursor.isDisposed() == false)) {
-					handCursor.dispose();
-				}
-			}
-		});
-
 		// Add collapse action to the tool bar
 		fCollapseAction = new CollapseAction(fTocTree,
 				TocMessages.TocTreeSection_collapseAll, 1, fModel.getToc());

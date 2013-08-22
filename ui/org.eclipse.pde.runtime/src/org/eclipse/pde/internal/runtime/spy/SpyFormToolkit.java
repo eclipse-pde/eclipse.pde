@@ -9,6 +9,7 @@
  *     Chris Aniszczyk <zx@us.ibm.com> - initial API and implementation
  *     Willian Mitsuda <wmitsuda@gmail.com> - bug 209841
  *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 209487
+ *     Alexander Kurtakov <akurtako@redhat.com> - bug 415649
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime.spy;
 
@@ -288,16 +289,8 @@ public class SpyFormToolkit extends FormToolkit {
 		}
 		ToolBarManager manager = new ToolBarManager(SWT.FLAT);
 		ToolBar toolbar = manager.createControl(section);
-		final Cursor handCursor = new Cursor(Display.getCurrent(), SWT.CURSOR_HAND);
+		final Cursor handCursor = Display.getCurrent().getSystemCursor(SWT.CURSOR_HAND);
 		toolbar.setCursor(handCursor);
-		// Cursor needs to be explicitly disposed
-		toolbar.addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent e) {
-				if ((handCursor != null) && (handCursor.isDisposed() == false)) {
-					handCursor.dispose();
-				}
-			}
-		});
 		section.setTextClient(toolbar);
 		section.setData("toolbarmanager", manager); //$NON-NLS-1$
 		return manager;

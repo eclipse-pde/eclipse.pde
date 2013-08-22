@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Kurtakov <akurtako@redhat.com> - bug 415649
  *******************************************************************************/
 
 package org.eclipse.pde.internal.ua.ui.editor.cheatsheet.comp;
@@ -38,8 +39,6 @@ import org.eclipse.pde.internal.ui.editor.TreeSection;
 import org.eclipse.pde.internal.ui.editor.actions.CollapseAction;
 import org.eclipse.pde.internal.ui.parts.TreePart;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -55,7 +54,7 @@ import org.eclipse.ui.forms.widgets.Section;
 
 /**
  * CompCSMasterTreeSection
- *
+ * 
  */
 public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 
@@ -96,7 +95,13 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 	 * @param buttonLabels
 	 */
 	public CompCSMasterTreeSection(PDEFormPage formPage, Composite parent) {
-		super(formPage, parent, Section.DESCRIPTION, new String[] {Messages.CompCSMasterTreeSection_addTask, Messages.CompCSMasterTreeSection_addGroup, Messages.CompCSMasterTreeSection_Remove, Messages.CompCSMasterTreeSection_Up, Messages.CompCSMasterTreeSection_Down, Messages.CompCSMasterTreeSection_Preview});
+		super(formPage, parent, Section.DESCRIPTION, new String[] {
+				Messages.CompCSMasterTreeSection_addTask,
+				Messages.CompCSMasterTreeSection_addGroup,
+				Messages.CompCSMasterTreeSection_Remove,
+				Messages.CompCSMasterTreeSection_Up,
+				Messages.CompCSMasterTreeSection_Down,
+				Messages.CompCSMasterTreeSection_Preview });
 
 		// Create actions
 		fAddGroupAction = new CompCSAddGroupAction();
@@ -105,8 +110,12 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 		fCollapseAction = null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.pde.internal.ui.editor.PDESection#createClient(org.eclipse
+	 * .ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
 	 */
 	protected void createClient(Section section, FormToolkit toolkit) {
 		// Get the model
@@ -131,7 +140,8 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 		createViewerPartControl(container, SWT.SINGLE, 2, toolkit);
 		fTreeViewer = treePart.getTreeViewer();
 		fTreeViewer.setContentProvider(new CompCSContentProvider());
-		fTreeViewer.setLabelProvider(PDEUserAssistanceUIPlugin.getDefault().getLabelProvider());
+		fTreeViewer.setLabelProvider(PDEUserAssistanceUIPlugin.getDefault()
+				.getLabelProvider());
 		PDEUserAssistanceUIPlugin.getDefault().getLabelProvider().connect(this);
 		createTreeListeners();
 		// TODO: MP: LOW: CompCS: Implement drag and drop move feature
@@ -141,9 +151,10 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 	 * 
 	 */
 	private void createTreeListeners() {
-		// Create listener for the outline view 'link with editor' toggle 
+		// Create listener for the outline view 'link with editor' toggle
 		// button
-		fTreeViewer.addPostSelectionChangedListener(getPage().getPDEEditor().new PDEFormEditorChangeListener());
+		fTreeViewer
+				.addPostSelectionChangedListener(getPage().getPDEEditor().new PDEFormEditorChangeListener());
 	}
 
 	/**
@@ -166,7 +177,8 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 
 		// Create the group validator and register all existing groups to be
 		// validated within the workspace model
-		fGroupValidator = new CompCSGroupValidator(cheatsheet, getManagedForm().getForm().getForm(), Messages.CompCSMasterTreeSection_content);
+		fGroupValidator = new CompCSGroupValidator(cheatsheet, getManagedForm()
+				.getForm().getForm(), Messages.CompCSMasterTreeSection_content);
 
 		// If the cheat sheet already has a task object, then the object has
 		// to be deleted first before a new task or group can be added to
@@ -178,17 +190,23 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 		getTreePart().setButtonEnabled(F_BUTTON_ADD_TASK, addFlag);
 		getTreePart().setButtonEnabled(F_BUTTON_ADD_GROUP, addFlag);
 
-		// Set to false because initial node selected is the root cheatsheet node
+		// Set to false because initial node selected is the root cheatsheet
+		// node
 		getTreePart().setButtonEnabled(F_BUTTON_REMOVE, false);
-		// Set to false because initial node selected is the root cheatsheet node
+		// Set to false because initial node selected is the root cheatsheet
+		// node
 		getTreePart().setButtonEnabled(F_BUTTON_UP, false);
-		// Set to false because initial node selected is the root cheatsheet node
+		// Set to false because initial node selected is the root cheatsheet
+		// node
 		getTreePart().setButtonEnabled(F_BUTTON_DOWN, false);
 
 		// Validate initial file content
-		// TODO: MP: LOW: CompCS: The error message does not show up in the form on load for some reason
-		// TODO: MP: LOW: CompCS: Implement error image overlay on icon ILightWeightLabelDecorator
-		// TODO: MP: LOW: CompCS: The error message dissapears on up / down movement
+		// TODO: MP: LOW: CompCS: The error message does not show up in the form
+		// on load for some reason
+		// TODO: MP: LOW: CompCS: Implement error image overlay on icon
+		// ILightWeightLabelDecorator
+		// TODO: MP: LOW: CompCS: The error message dissapears on up / down
+		// movement
 		updatePreviewButton(fGroupValidator.validate());
 
 		// Select the cheatsheet node in the tree
@@ -204,18 +222,13 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 
 		ToolBarManager toolBarManager = new ToolBarManager(SWT.FLAT);
 		ToolBar toolbar = toolBarManager.createControl(section);
-		final Cursor handCursor = new Cursor(Display.getCurrent(), SWT.CURSOR_HAND);
+		final Cursor handCursor = Display.getCurrent().getSystemCursor(
+				SWT.CURSOR_HAND);
 		toolbar.setCursor(handCursor);
-		// Cursor needs to be explicitly disposed
-		toolbar.addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent e) {
-				if ((handCursor != null) && (handCursor.isDisposed() == false)) {
-					handCursor.dispose();
-				}
-			}
-		});
 		// Add collapse action to the tool bar
-		fCollapseAction = new CollapseAction(fTreeViewer, Messages.CompCSMasterTreeSection_collapseAll, 1, fModel.getCompCS());
+		fCollapseAction = new CollapseAction(fTreeViewer,
+				Messages.CompCSMasterTreeSection_collapseAll, 1,
+				fModel.getCompCS());
 		toolBarManager.add(fCollapseAction);
 
 		toolBarManager.update(true);
@@ -223,47 +236,60 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 		section.setTextClient(toolbar);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#buttonSelected(int)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.pde.internal.ui.editor.StructuredViewerSection#buttonSelected
+	 * (int)
 	 */
 	protected void buttonSelected(int index) {
 		switch (index) {
-			case F_BUTTON_ADD_TASK :
-				handleAddTaskAction();
-				break;
-			case F_BUTTON_ADD_GROUP :
-				handleAddGroupAction();
-				break;
-			case F_BUTTON_REMOVE :
-				handleDeleteAction();
-				break;
-			case F_BUTTON_UP :
-				handleMoveTaskObjectAction(F_UP_FLAG);
-				break;
-			case F_BUTTON_DOWN :
-				handleMoveTaskObjectAction(F_DOWN_FLAG);
-				break;
-			case F_BUTTON_PREVIEW :
-				handlePreviewAction();
-				break;
+		case F_BUTTON_ADD_TASK:
+			handleAddTaskAction();
+			break;
+		case F_BUTTON_ADD_GROUP:
+			handleAddGroupAction();
+			break;
+		case F_BUTTON_REMOVE:
+			handleDeleteAction();
+			break;
+		case F_BUTTON_UP:
+			handleMoveTaskObjectAction(F_UP_FLAG);
+			break;
+		case F_BUTTON_DOWN:
+			handleMoveTaskObjectAction(F_DOWN_FLAG);
+			break;
+		case F_BUTTON_PREVIEW:
+			handlePreviewAction();
+			break;
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.TreeSection#selectionChanged(org.eclipse.jface.viewers.IStructuredSelection)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.pde.internal.ui.editor.TreeSection#selectionChanged(org.eclipse
+	 * .jface.viewers.IStructuredSelection)
 	 */
 	protected void selectionChanged(IStructuredSelection selection) {
 		updateButtons();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.simple.details.ISimpleCSMaster#updateButtons()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.pde.internal.ui.editor.cheatsheet.simple.details.ISimpleCSMaster
+	 * #updateButtons()
 	 */
 	public void updateButtons() {
 		if (!fModel.isEditable()) {
 			return;
 		}
-		Object object = ((IStructuredSelection) fTreeViewer.getSelection()).getFirstElement();
+		Object object = ((IStructuredSelection) fTreeViewer.getSelection())
+				.getFirstElement();
 		ICompCSObject csObject = (ICompCSObject) object;
 		boolean canAddTask = false;
 		boolean canAddGroup = false;
@@ -273,9 +299,11 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 
 		if (csObject != null) {
 			ICompCSObject parent = csObject.getParent();
-			if ((csObject.getType() == ICompCSConstants.TYPE_TASK) || (csObject.getType() == ICompCSConstants.TYPE_TASKGROUP)) {
+			if ((csObject.getType() == ICompCSConstants.TYPE_TASK)
+					|| (csObject.getType() == ICompCSConstants.TYPE_TASKGROUP)) {
 
-				if ((parent.getType() == ICompCSConstants.TYPE_COMPOSITE_CHEATSHEET) && (csObject.getType() == ICompCSConstants.TYPE_TASKGROUP)) {
+				if ((parent.getType() == ICompCSConstants.TYPE_COMPOSITE_CHEATSHEET)
+						&& (csObject.getType() == ICompCSConstants.TYPE_TASKGROUP)) {
 					canAddTask = true;
 					canAddGroup = true;
 				} else if (parent.getType() == ICompCSConstants.TYPE_TASKGROUP) {
@@ -315,7 +343,8 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 			fAddTaskAction.setParentObject((ICompCSObject) object);
 			fAddTaskAction.run();
 		} else if (object instanceof ICompCSTask) {
-			fAddTaskAction.setParentObject(((ICompCSObject) object).getParent());
+			fAddTaskAction
+					.setParentObject(((ICompCSObject) object).getParent());
 			fAddTaskAction.run();
 		}
 	}
@@ -341,7 +370,8 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 			fAddGroupAction.setParentObject((ICompCSObject) object);
 			fAddGroupAction.run();
 		} else if (object instanceof ICompCSTask) {
-			fAddGroupAction.setParentObject(((ICompCSObject) object).getParent());
+			fAddGroupAction.setParentObject(((ICompCSObject) object)
+					.getParent());
 			fAddGroupAction.run();
 		}
 	}
@@ -374,8 +404,10 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 	 */
 	private void handlePreviewAction() {
 		// Get the editor input
-		// Could be IFileEditorInput (File in workpspace - e.g. Package Explorer View)
-		// Could be IStorageEditorInput (File not in workpsace - e.g. CVS Repositories View)
+		// Could be IFileEditorInput (File in workpspace - e.g. Package Explorer
+		// View)
+		// Could be IStorageEditorInput (File not in workpsace - e.g. CVS
+		// Repositories View)
 		IEditorInput input = getPage().getEditorInput();
 		URL url = null;
 		try {
@@ -383,15 +415,16 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 				IFileEditorInput fileInput = (IFileEditorInput) input;
 				url = fileInput.getFile().getLocationURI().toURL();
 			} else if (input instanceof IStorageEditorInput) {
-				// Note:  This URL does not exist on the local file system
-				// As a result any tasks this composite cheat sheet has that 
+				// Note: This URL does not exist on the local file system
+				// As a result any tasks this composite cheat sheet has that
 				// specify a pathes to simple cheat sheets will not resolve
 				// Cheat sheet view will log an error loading simple cheat
 				// sheets
 				IStorageEditorInput storageInput = (IStorageEditorInput) input;
-				url = storageInput.getStorage().getFullPath().toFile().toURI().toURL();
+				url = storageInput.getStorage().getFullPath().toFile().toURI()
+						.toURL();
 			} else {
-				// No base URL.  Pathes will definitely not resolve here 
+				// No base URL. Pathes will definitely not resolve here
 				url = null;
 			}
 
@@ -402,7 +435,8 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 			writer.flush();
 			swriter.close();
 			// Launch in the cheat sheet view
-			OpenCheatSheetAction openAction = new OpenCheatSheetAction(input.getName(), input.getName(), swriter.toString(), url);
+			OpenCheatSheetAction openAction = new OpenCheatSheetAction(
+					input.getName(), input.getName(), swriter.toString(), url);
 			openAction.run();
 		} catch (IOException e) {
 			PDEUserAssistanceUIPlugin.logException(e);
@@ -411,8 +445,12 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESection#modelChanged(org.eclipse.pde.core.IModelChangedEvent)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.pde.internal.ui.editor.PDESection#modelChanged(org.eclipse
+	 * .pde.core.IModelChangedEvent)
 	 */
 	public void modelChanged(IModelChangedEvent event) {
 		// No need to call super, world changed event handled here
@@ -427,7 +465,7 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 		}
 
 		// Validate registered groups regardless of change type
-		// Validation is not required for task and composite cheat sheet 
+		// Validation is not required for task and composite cheat sheet
 		// change types (performance savings available); but, is required for
 		// everything else
 		updatePreviewButton(fGroupValidator.validate());
@@ -447,22 +485,26 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 			// Get the form page
 			CompCSPage page = (CompCSPage) getPage();
 			// Remember the currently selected page
-			IDetailsPage previousDetailsPage = page.getBlock().getDetailsPart().getCurrentPage();
+			IDetailsPage previousDetailsPage = page.getBlock().getDetailsPart()
+					.getCurrentPage();
 			// Replace the current dirty model with the model reloaded from
 			// file
 			fModel = ((ICompCS) object).getModel();
 			// Reset the treeviewer using the new model as input
-			// TODO: MP: CompCS:  This is redundant and should be deleted
+			// TODO: MP: CompCS: This is redundant and should be deleted
 			fTreeViewer.setInput(fModel);
-			// Re-initialize the tree viewer.  Makes a details page selection
+			// Re-initialize the tree viewer. Makes a details page selection
 			initializeTreeViewer();
 			// Get the current details page selection
-			IDetailsPage currentDetailsPage = page.getBlock().getDetailsPart().getCurrentPage();
-			// If the selected page before the revert is the same as the 
+			IDetailsPage currentDetailsPage = page.getBlock().getDetailsPart()
+					.getCurrentPage();
+			// If the selected page before the revert is the same as the
 			// selected page after the revert, then its fields will need to
 			// be updated
-			// TODO: MP: REVERT: LOW: Revisit to see if updating details page is necessary - especially after making static
-			if (currentDetailsPage.equals(previousDetailsPage) && currentDetailsPage instanceof ICSDetails) {
+			// TODO: MP: REVERT: LOW: Revisit to see if updating details page is
+			// necessary - especially after making static
+			if (currentDetailsPage.equals(previousDetailsPage)
+					&& currentDetailsPage instanceof ICSDetails) {
 				((ICSDetails) currentDetailsPage).updateFields();
 			}
 		}
@@ -492,7 +534,8 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 	 */
 	private void handleTaskObjectInsert(ICompCSObject object) {
 		// Refresh the parent element in the tree viewer
-		// TODO: MP: CompCS: LOW: Can we get away with an update instead of a refresh here?
+		// TODO: MP: CompCS: LOW: Can we get away with an update instead of a
+		// refresh here?
 		fTreeViewer.refresh(object.getParent());
 		// Select the new task / group in the tree
 		fTreeViewer.setSelection(new StructuredSelection(object), true);
@@ -554,14 +597,19 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.pde.internal.ui.editor.cheatsheet.ICSMaster#fireSelection()
+	 * @see
+	 * org.eclipse.pde.internal.ui.editor.cheatsheet.ICSMaster#fireSelection()
 	 */
 	public void fireSelection() {
 		fTreeViewer.setSelection(fTreeViewer.getSelection());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#fillContextMenu(org.eclipse.jface.action.IMenuManager)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.pde.internal.ui.editor.StructuredViewerSection#fillContextMenu
+	 * (org.eclipse.jface.action.IMenuManager)
 	 */
 	protected void fillContextMenu(IMenuManager manager) {
 		// Get the current selection
@@ -571,10 +619,12 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 		// Could be null
 		ICompCSObject csObject = (ICompCSObject) object;
 		// Create the "New" sub-menu
-		MenuManager submenu = new MenuManager(Messages.CompCSMasterTreeSection_new);
+		MenuManager submenu = new MenuManager(
+				Messages.CompCSMasterTreeSection_new);
 		// Add the "New" sub-menu to the main context menu
 		manager.add(submenu);
-		if ((csObject == null) || (csObject.getType() == ICompCSConstants.TYPE_COMPOSITE_CHEATSHEET)) {
+		if ((csObject == null)
+				|| (csObject.getType() == ICompCSConstants.TYPE_COMPOSITE_CHEATSHEET)) {
 			// NO-OP
 		} else if (csObject.getType() == ICompCSConstants.TYPE_TASK) {
 			// Remove task action
@@ -595,16 +645,17 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 			fillContextMenuRemoveAction(manager, (ICompCSTaskObject) csObject);
 		}
 		// Add normal edit operations
-		// TODO: MP: LOW: SimpleCS:  Enable context menu edit operations
-		//getPage().getPDEEditor().getContributor().contextMenuAboutToShow(manager);
-		//manager.add(new Separator());
+		// TODO: MP: LOW: SimpleCS: Enable context menu edit operations
+		// getPage().getPDEEditor().getContributor().contextMenuAboutToShow(manager);
+		// manager.add(new Separator());
 	}
 
 	/**
 	 * @param manager
 	 * @param csObject
 	 */
-	private void fillContextMenuRemoveAction(IMenuManager manager, ICompCSTaskObject taskObject) {
+	private void fillContextMenuRemoveAction(IMenuManager manager,
+			ICompCSTaskObject taskObject) {
 		// Add to the main context menu
 		// Add a separator to the main context menu
 		manager.add(new Separator());
@@ -619,8 +670,12 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESection#doGlobalAction(java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.pde.internal.ui.editor.PDESection#doGlobalAction(java.lang
+	 * .String)
 	 */
 	public boolean doGlobalAction(String actionId) {
 		if (actionId.equals(ActionFactory.DELETE.getId())) {
@@ -643,7 +698,7 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 				ICompCSObject parent = taskObject.getParent();
 				if (canRemoveTaskObject(parent) == false) {
 					// Preserve cheat sheet validity
-					// Semantic Rule:  Cannot have a task group with no tasks					
+					// Semantic Rule: Cannot have a task group with no tasks
 					Display.getCurrent().beep();
 				} else {
 					fRemoveTaskObjectAction.setTaskObject(taskObject);
@@ -651,7 +706,7 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 				}
 			} else if (object instanceof ICompCS) {
 				// Preserve cheat sheet validity
-				// Semantic Rule:  Cannot have a cheat sheet with no root
+				// Semantic Rule: Cannot have a cheat sheet with no root
 				// cheatsheet node
 				// Produce audible beep
 				Display.getCurrent().beep();
@@ -677,7 +732,9 @@ public class CompCSMasterTreeSection extends TreeSection implements ICSMaster {
 		return true;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.forms.AbstractFormPart#setFormInput(java.lang.Object)
 	 */
 	public boolean setFormInput(Object object) {

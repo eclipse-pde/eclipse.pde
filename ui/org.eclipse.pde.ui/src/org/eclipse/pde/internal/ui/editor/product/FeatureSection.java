@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,10 +7,9 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Kurtakov <akurtako@redhat.com> - bug 415649
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
-
-import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 
 import java.util.*;
 import org.eclipse.jface.action.*;
@@ -34,8 +33,6 @@ import org.eclipse.pde.internal.ui.parts.TablePart;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.wizards.feature.NewFeatureProjectWizard;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
@@ -65,6 +62,7 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 			setImageDescriptor(PDEPluginImages.DESC_NEWFTRPRJ_TOOL);
 		}
 
+		@Override
 		public void run() {
 			handleNewFeature();
 		}
@@ -91,6 +89,7 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
 	 */
+	@Override
 	protected void createClient(Section section, FormToolkit toolkit) {
 
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
@@ -135,16 +134,8 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 	private void createSectionToolbar(Section section, FormToolkit toolkit) {
 		ToolBarManager toolBarManager = new ToolBarManager(SWT.FLAT);
 		ToolBar toolbar = toolBarManager.createControl(section);
-		final Cursor handCursor = new Cursor(Display.getCurrent(), SWT.CURSOR_HAND);
+		final Cursor handCursor = Display.getCurrent().getSystemCursor(SWT.CURSOR_HAND);
 		toolbar.setCursor(handCursor);
-		// Cursor needs to be explicitly disposed
-		toolbar.addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent e) {
-				if (handCursor.isDisposed() == false) {
-					handCursor.dispose();
-				}
-			}
-		});
 		fNewFeatureAction = new NewFeatureAction();
 		toolBarManager.add(fNewFeatureAction);
 		fSortAction = new SortAction(fFeatureTable, PDEUIMessages.Product_FeatureSection_sortAlpha, null, null, this);
@@ -157,6 +148,7 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#buttonSelected(int)
 	 */
+	@Override
 	protected void buttonSelected(int index) {
 		switch (index) {
 			case 0 :
@@ -223,6 +215,7 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.TableSection#handleDoubleClick(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
+	@Override
 	protected void handleDoubleClick(IStructuredSelection selection) {
 		handleOpen(selection);
 	}
@@ -230,6 +223,7 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
 	 */
+	@Override
 	public void dispose() {
 		IProductModel model = getModel();
 		if (model != null)
@@ -240,6 +234,7 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#doGlobalAction(java.lang.String)
 	 */
+	@Override
 	public boolean doGlobalAction(String actionId) {
 		if (actionId.equals(ActionFactory.DELETE.getId())) {
 			handleDelete();
@@ -256,6 +251,7 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 		return false;
 	}
 
+	@Override
 	protected boolean canPaste(Object target, Object[] objects) {
 		for (int i = 0; i < objects.length; i++) {
 			if (objects[i] instanceof IProductFeature)
@@ -264,6 +260,7 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 		return false;
 	}
 
+	@Override
 	protected void doPaste(Object target, Object[] objects) {
 		IProductFeature[] features;
 		if (objects instanceof IProductFeature[])
@@ -290,12 +287,14 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#fillContextMenu(org.eclipse.jface.action.IMenuManager)
 	 */
+	@Override
 	protected void fillContextMenu(IMenuManager manager) {
 		IStructuredSelection ssel = (IStructuredSelection) fFeatureTable.getSelection();
 		if (ssel == null)
 			return;
 
 		Action openAction = new Action(PDEUIMessages.Product_FeatureSection_open) {
+			@Override
 			public void run() {
 				handleDoubleClick((IStructuredSelection) fFeatureTable.getSelection());
 			}
@@ -306,6 +305,7 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 		manager.add(new Separator());
 
 		Action removeAction = new Action(PDEUIMessages.Product_FeatureSection_remove) {
+			@Override
 			public void run() {
 				handleDelete();
 			}
@@ -314,6 +314,7 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 		manager.add(removeAction);
 
 		Action removeAll = new Action(PDEUIMessages.FeatureSection_removeAll) {
+			@Override
 			public void run() {
 				handleRemoveAll();
 			}
@@ -419,6 +420,7 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#modelChanged(org.eclipse.pde.core.IModelChangedEvent)
 	 */
+	@Override
 	public void modelChanged(IModelChangedEvent e) {
 		Object[] objects = e.getChangedObjects();
 		// No need to call super, handling world changed event here
@@ -478,17 +480,20 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#refresh()
 	 */
+	@Override
 	public void refresh() {
 		fFeatureTable.refresh();
 		updateButtons(true, true);
 		super.refresh();
 	}
 
+	@Override
 	protected void selectionChanged(IStructuredSelection selection) {
 		getPage().getPDEEditor().setSelection(selection);
 		updateButtons(true, false);
 	}
 
+	@Override
 	public boolean setFormInput(Object input) {
 		if (input instanceof IProductFeature) {
 			fFeatureTable.setSelection(new StructuredSelection(input), true);
@@ -517,6 +522,7 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 		tablePart.setButtonEnabled(6, canMove && hasSelection && isEditable() && table.getSelectionIndex() < table.getItemCount() - 1);
 	}
 
+	@Override
 	protected boolean createCount() {
 		return true;
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     EclipseSource Corporation - ongoing enhancements
+ *     Alexander Kurtakov <akurtako@redhat.com> - bug 415649
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
@@ -38,7 +39,8 @@ import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.wizards.plugin.NewFragmentProjectWizard;
 import org.eclipse.pde.internal.ui.wizards.plugin.NewPluginProjectWizard;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
@@ -70,6 +72,7 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 			setImageDescriptor(PDEPluginImages.DESC_NEWPPRJ_TOOL);
 		}
 
+		@Override
 		public void run() {
 			handleNewPlugin();
 		}
@@ -82,6 +85,7 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 			setImageDescriptor(PDEPluginImages.DESC_NEWFRAGPRJ_TOOL);
 		}
 
+		@Override
 		public void run() {
 			handleNewFragment();
 		}
@@ -105,6 +109,7 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
 	 */
+	@Override
 	protected void createClient(Section section, FormToolkit toolkit) {
 
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
@@ -123,6 +128,7 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 		fPluginTable.setContentProvider(new ContentProvider());
 		fPluginTable.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 		fPluginTable.setComparator(new ViewerComparator() {
+			@Override
 			public int compare(Viewer viewer, Object e1, Object e2) {
 				IProductPlugin p1 = (IProductPlugin) e1;
 				IProductPlugin p2 = (IProductPlugin) e2;
@@ -153,16 +159,8 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 	private void createSectionToolbar(Section section, FormToolkit toolkit) {
 		ToolBarManager toolBarManager = new ToolBarManager(SWT.FLAT);
 		ToolBar toolbar = toolBarManager.createControl(section);
-		final Cursor handCursor = new Cursor(Display.getCurrent(), SWT.CURSOR_HAND);
+		final Cursor handCursor = Display.getCurrent().getSystemCursor(SWT.CURSOR_HAND);
 		toolbar.setCursor(handCursor);
-		// Cursor needs to be explicitly disposed
-		toolbar.addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent e) {
-				if (handCursor.isDisposed() == false) {
-					handCursor.dispose();
-				}
-			}
-		});
 		fNewPluginAction = new NewPluginAction();
 		fNewFragmentAction = new NewFragmentAction();
 		toolBarManager.add(fNewPluginAction);
@@ -187,6 +185,7 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 			}
 			// create listener to save value when the checkbox is changed
 			fIncludeOptionalButton.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					IEditorInput input = getPage().getEditorInput();
 					if (input instanceof IFileEditorInput) {
@@ -204,6 +203,7 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#buttonSelected(int)
 	 */
+	@Override
 	protected void buttonSelected(int index) {
 		switch (index) {
 			case 0 :
@@ -265,6 +265,7 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.TableSection#handleDoubleClick(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
+	@Override
 	protected void handleDoubleClick(IStructuredSelection selection) {
 		handleOpen(selection);
 	}
@@ -272,6 +273,7 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
 	 */
+	@Override
 	public void dispose() {
 		IProductModel model = getModel();
 		if (model != null)
@@ -282,6 +284,7 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#doGlobalAction(java.lang.String)
 	 */
+	@Override
 	public boolean doGlobalAction(String actionId) {
 		if (actionId.equals(ActionFactory.DELETE.getId())) {
 			handleDelete();
@@ -298,6 +301,7 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 		return false;
 	}
 
+	@Override
 	protected boolean canPaste(Object target, Object[] objects) {
 		for (int i = 0; i < objects.length; i++) {
 			if (objects[i] instanceof IProductPlugin)
@@ -309,12 +313,14 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#fillContextMenu(org.eclipse.jface.action.IMenuManager)
 	 */
+	@Override
 	protected void fillContextMenu(IMenuManager manager) {
 		IStructuredSelection ssel = (IStructuredSelection) fPluginTable.getSelection();
 		if (ssel == null)
 			return;
 
 		Action openAction = new Action(PDEUIMessages.PluginSection_open) {
+			@Override
 			public void run() {
 				handleDoubleClick((IStructuredSelection) fPluginTable.getSelection());
 			}
@@ -325,6 +331,7 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 		manager.add(new Separator());
 
 		Action removeAction = new Action(PDEUIMessages.PluginSection_remove) {
+			@Override
 			public void run() {
 				handleDelete();
 			}
@@ -333,6 +340,7 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 		manager.add(removeAction);
 
 		Action removeAll = new Action(PDEUIMessages.PluginSection_removeAll) {
+			@Override
 			public void run() {
 				handleRemoveAll();
 			}
@@ -478,6 +486,7 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#modelChanged(org.eclipse.pde.core.IModelChangedEvent)
 	 */
+	@Override
 	public void modelChanged(IModelChangedEvent e) {
 		// No need to call super, handling world changed event here
 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
@@ -538,6 +547,7 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#refresh()
 	 */
+	@Override
 	public void refresh() {
 		fPluginTable.refresh();
 		updateRemoveButtons(true, true);
@@ -572,11 +582,13 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 		return null;
 	}
 
+	@Override
 	protected void selectionChanged(IStructuredSelection selection) {
 		getPage().getPDEEditor().setSelection(selection);
 		updateRemoveButtons(true, false);
 	}
 
+	@Override
 	public boolean setFormInput(Object input) {
 		if (input instanceof IProductPlugin) {
 			fPluginTable.setSelection(new StructuredSelection(input), true);
@@ -585,6 +597,7 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 		return super.setFormInput(input);
 	}
 
+	@Override
 	protected void doPaste(Object target, Object[] objects) {
 		IProductPlugin[] plugins;
 		if (objects instanceof IProductPlugin[])
@@ -613,6 +626,7 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 		tablePart.setButtonEnabled(5, isEditable() && tableSelection.length == 1);
 	}
 
+	@Override
 	protected boolean createCount() {
 		return true;
 	}
