@@ -581,7 +581,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		//fDuplicateButton.setEnabled(size == 1);
 		if (selection.getFirstElement() != null) {
 			fMoveButton.setEnabled(size == 1 && ((ITargetDefinition) selection.getFirstElement()).getHandle() instanceof LocalTargetHandle);
-			fReloadButton.setEnabled(((ITargetDefinition) selection.getFirstElement()) == fActiveTarget && fActiveTarget.getHandle().equals(fPrevious.getHandle()));
+			fReloadButton.setEnabled(((ITargetDefinition) selection.getFirstElement()) == fActiveTarget && fActiveTarget.getHandle().equals(fPrevious.getHandle()) && fTableViewer.getChecked(fActiveTarget));
 		} else {
 			fMoveButton.setEnabled(false);
 			fReloadButton.setEnabled(false);
