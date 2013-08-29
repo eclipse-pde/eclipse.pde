@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -9,8 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
-
-import java.io.File;
 
 import java.io.*;
 import java.net.MalformedURLException;
@@ -96,10 +94,21 @@ public class PluginPathFinder {
 		return sites.toArray(new File[sites.size()]);
 	}
 
-	public static URL[] getPluginPaths(String platformHome) {
+	/**
+	 * Attempts to find all plugin paths if the target platform was at the given string location.
+	 * <p>
+	 * Should not be called in PDE. It should only be used to confirm test results match the
+	 * old way of doing things (before ITargetPlatformService).
+	 * </p>
+	 * 
+	 * @param platformHome the target platform location
+	 * @param installedOnly whether to check for a bundles.info or another configuration file to 
+	 * 		determine what bundles are installed rather than what bundles simply exist in the plugins folder
+	 * @return list of URL plug-in locations
+	 */
+	public static URL[] getPluginPaths(String platformHome, boolean installedOnly) {
 		// If we don't care about installed bundles, simply scan the location
-		PDEPreferencesManager store = PDECore.getDefault().getPreferencesManager();
-		if (!store.getBoolean(ICoreConstants.TARGET_PLATFORM_REALIZATION))
+		if (!installedOnly)
 			return scanLocations(getSites(platformHome, false));
 
 		// See if we can find a bundles.info to get installed bundles from

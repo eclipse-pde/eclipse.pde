@@ -82,7 +82,7 @@ public class TargetStatus {
 			try {
 				ITargetHandle handle = TargetPlatformService.getDefault().getWorkspaceTargetHandle();
 				if (handle != null) {
-					ITargetDefinition target = handle.getTargetDefinition();
+					ITargetDefinition target = TargetPlatformService.getDefault().getWorkspaceTargetDefinition();
 					String name = target.getName();
 					if (name != null && name.length() > 0) {
 						result = name;

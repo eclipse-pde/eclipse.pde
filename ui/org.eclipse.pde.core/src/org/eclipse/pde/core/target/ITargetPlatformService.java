@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -174,13 +174,30 @@ public interface ITargetPlatformService {
 
 	/**
 	 * Returns a handle to the target definition that corresponds to the active target platform
-	 * or <code>null</code> if none.  If the plug-in registry has not been initialized, this method
-	 * will initialize it so the workspace target can be set.
+	 * or <code>null</code> if none.
 	 * 
 	 * @return handle to workspace target platform or <code>null</code> if none
 	 * @exception CoreException if an error occurs generating the handle
 	 */
 	public ITargetHandle getWorkspaceTargetHandle() throws CoreException;
+
+	/**
+	 * Returns a {@link ITargetDefinition} that corresponds to the active target platform. Will
+	 * return an empty target definition if no target platform has been specified. Will return
+	 * a target definition based on deprecated preference settings if no target definition has
+	 * been created before. Will throw a {@link CoreException} if the backing target file
+	 * does not exist or if there is a problem reading it.
+	 * <p>
+	 * The returned target definition may have been resolved previously, but this is not 
+	 * guaranteed. It is recommended clients use this method over {@link #getWorkspaceTargetHandle()}.
+	 * </p>
+	 * 
+	 * @return a target definition corresponding to the active target platform
+	 * @throws CoreException if an error occurs loading the workspace target definition
+	 * 
+	 * @since 3.10 Added in the Luna 4.4 release
+	 */
+	public ITargetDefinition getWorkspaceTargetDefinition() throws CoreException;
 
 	/**
 	 * Returns a status describing whether the given target definition is synchronized with

@@ -11,16 +11,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.preferences;
 
-import org.eclipse.pde.internal.ui.PDEUIMessages;
-
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.pde.core.target.ITargetHandle;
+import org.eclipse.pde.core.target.ITargetPlatformService;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDEPreferencesManager;
-import org.eclipse.pde.internal.core.target.TargetPlatformService;
 import org.eclipse.pde.internal.launching.ILaunchingPreferenceConstants;
 import org.eclipse.pde.internal.launching.PDELaunchingPlugin;
 import org.eclipse.pde.internal.ui.*;
@@ -217,7 +214,7 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 	@Override
 	public void createControl(Composite composite) {
 		super.createControl(composite);
-		Dialog.applyDialogFont(getControl());
+		org.eclipse.jface.dialogs.Dialog.applyDialogFont(getControl());
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.MAIN_PREFERENCE_PAGE);
 	}
 
@@ -237,9 +234,9 @@ public class MainPreferencePage extends PreferencePage implements IWorkbenchPref
 			store.setValue(IPreferenceConstants.ADD_TO_JAVA_SEARCH, synchJavaSearch);
 			try {
 				if (synchJavaSearch) {
-					ITargetHandle target = TargetPlatformService.getDefault().getWorkspaceTargetHandle();
-					if (target != null) {
-						AddToJavaSearchJob.synchWithTarget(target.getTargetDefinition());
+					ITargetPlatformService service = (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
+					if (service != null) {
+						AddToJavaSearchJob.synchWithTarget(service.getWorkspaceTargetDefinition());
 					}
 				} else {
 					AddToJavaSearchJob.clearAll();

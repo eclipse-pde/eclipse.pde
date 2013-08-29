@@ -40,14 +40,8 @@ public class Messages extends NLS {
 	public static String IUBundleContainer_9;
 	public static String IUBundleContainer_ProblemsLoadingRepositories;
 	public static String LoadTargetDefinitionJob_0;
-	public static String LoadTargetDefinitionJob_1;
-	public static String LoadTargetOperation_argsTaskName;
-	public static String LoadTargetOperation_envTaskName;
-	public static String LoadTargetOperation_implicitPluginsTaskName;
 	public static String LoadTargetOperation_jreTaskName;
-	public static String LoadTargetOperation_loadPluginsTaskName;
 	public static String LoadTargetOperation_mainTaskName;
-	public static String LoadTargetOperation_reloadTaskName;
 	public static String LocalTargetHandle_0;
 	public static String LocalTargetHandle_1;
 	public static String LocalTargetHandle_2;

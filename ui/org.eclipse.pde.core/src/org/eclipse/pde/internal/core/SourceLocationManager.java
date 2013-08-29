@@ -177,8 +177,12 @@ public class SourceLocationManager implements ICoreConstants {
 	}
 
 	/**
+	 * While there is no UI to access this feature, we still support additional
+	 * source locations being provided via preference.
+	 * 
 	 * @return array of source locations that have been specified by the user
 	 */
+	@SuppressWarnings("deprecation")
 	public List<SourceLocation> getUserLocations() {
 		List<SourceLocation> userLocations = new ArrayList<SourceLocation>();
 		String pref = PDECore.getDefault().getPreferencesManager().getString(P_SOURCE_LOCATIONS);

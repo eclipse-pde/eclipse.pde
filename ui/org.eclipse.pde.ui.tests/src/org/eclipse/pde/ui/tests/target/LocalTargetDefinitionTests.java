@@ -30,13 +30,13 @@ import org.osgi.framework.ServiceReference;
  * Tests for target definitions.  The tested targets will be created in the metadata.
  * @see WorkspaceTargetDefinitionTests
  * 
- * @since 3.5 
+ * @since 3.5
  */
 public class LocalTargetDefinitionTests extends AbstractTargetTest {
-	
+
 	public static final NameVersionDescriptor MULTI_VERSION_LOW_DESCRIPTION = new NameVersionDescriptor("a.typical.bundle", "1.0.0.200907071058");
 	public static final NameVersionDescriptor MULTI_VERSION_HIGH_DESCRIPTION = new NameVersionDescriptor("a.typical.bundle", "1.1.0.200907071100");
-	
+
 	public static Test suite() {
 		return new TestSuite(LocalTargetDefinitionTests.class);
 	}
@@ -53,7 +53,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 			return null;
 		return (ITargetPlatformService) PDETestsPlugin.getBundleContext().getService(reference);
 	}
-	
+
 	/**
 	 * Retrieves all bundles (source and code) in the given target definition
 	 * returning them as a set of URLs.
@@ -72,7 +72,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		}
 		return urls;
 	}
-	
+
 	/**
 	 * Tests that resetting the target platform should work OK (i.e. is equivalent to the
 	 * models in the default target platform).
@@ -89,10 +89,10 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 				fragments.add(new File(bundles[i].getBundleInfo().getLocation()).toURL());
 			}
 		}
-		
+
 		// current platform
 		IPluginModelBase[] models = TargetPlatformHelper.getPDEState().getTargetModels();
-		
+
 		// should be equivalent
 		assertEquals("Should have same number of bundles", urls.size(), models.length);
 		for (int i = 0; i < models.length; i++) {
@@ -104,11 +104,11 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 			}
 		}
 		assertTrue("Different number of fragments", fragments.isEmpty());
-	}	
+	}
 
 	/**
 	 * Tests that a target definition equivalent to the default target platform
-	 * contains the same bundles as the default target platform (this is an 
+	 * contains the same bundles as the default target platform (this is an
 	 * explicit location with no target weaving).
 	 * 
 	 * @throws Exception
@@ -118,8 +118,8 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		ITargetDefinition definition = getNewTarget();
 		ITargetLocation container = getTargetService().newProfileLocation(TargetPlatform.getDefaultLocation(), null);
 		definition.setTargetLocations(new ITargetLocation[]{container});
-		Set urls = getAllBundleURLs(definition);	
-		
+		Set urls = getAllBundleURLs(definition);
+
 		// the old way
 		IPath location = new Path(TargetPlatform.getDefaultLocation());
 		URL[] pluginPaths = P2Utils.readBundlesTxt(location.toOSString(), location.append("configuration").toFile().toURL());
@@ -129,9 +129,9 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 			URL url = pluginPaths[i];
 			assertTrue("Missing plug-in " + url.toString(), urls.contains(url));
 		}
-		
+
 	}
-	
+
 	/**
 	 * Tests that a target definition based on the default target platform
 	 * restricted to a subset of bundles contains the right set.
@@ -148,7 +148,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		definition.setTargetLocations(new ITargetLocation[]{container});
 		definition.setIncluded(restrictions);
 		List infos = getAllBundleInfos(definition);
-		
+
 		assertEquals("Wrong number of bundles", 2, infos.size());
 		Set set = collectAllSymbolicNames(infos);
 		for (int i = 0; i < restrictions.length; i++) {
@@ -156,9 +156,9 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 			set.remove(info.getId());
 		}
 		assertEquals("Wrong bundles", 0, set.size());
-		
-	}	
-	
+
+	}
+
 	/**
 	 * Tests that a target definition based on the default target platform
 	 * restricted to a subset of bundle versions contains the right set.
@@ -186,14 +186,14 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		assertFalse(v1.equals(BundleInfo.EMPTY_VERSION));
 		assertNotNull(v2);
 		assertFalse(v2.equals(BundleInfo.EMPTY_VERSION));
-		
+
 		NameVersionDescriptor[] restrictions = new NameVersionDescriptor[]{
 				new NameVersionDescriptor("org.eclipse.jdt.launching", v1),
 				new NameVersionDescriptor("org.eclipse.jdt.debug", v2)
 		};
 		definition.setIncluded(restrictions);
 		infos = getAllBundleInfos(definition);
-		
+
 		assertEquals("Wrong number of bundles", 2, infos.size());
 		iterator = infos.iterator();
 		while (iterator.hasNext()) {
@@ -204,8 +204,8 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 				assertEquals(v2, info.getVersion());
 			}
 		}
-	}	
-	
+	}
+
 	/**
 	 * Tests that a target definition based on the default target platform
 	 * restricted to a subset of bundles contains the right set. In this case
@@ -224,18 +224,18 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		definition.setIncluded(restrictions);
 		definition.resolve(null);
 		TargetBundle[] bundles = definition.getBundles();
-		
+
 		assertEquals("Wrong number of bundles", 2, bundles.length);
 		for (int i = 0; i < bundles.length; i++) {
 			TargetBundle rb = bundles[i];
 			assertEquals("Should be a missing bundle version", TargetBundle.STATUS_VERSION_DOES_NOT_EXIST, rb.getStatus().getCode());
 			assertEquals("Should be an error", IStatus.ERROR, rb.getStatus().getSeverity());
 		}
-	}	
-	
+	}
+
 	/**
 	 * Tests that a target definition equivalent to the default target platform
-	 * contains the same bundles as the default target platform (this is an 
+	 * contains the same bundles as the default target platform (this is an
 	 * explicit location with no target weaving), when created with a variable
 	 * referencing ${eclipse_home}
 	 * 
@@ -247,7 +247,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		ITargetLocation container = getTargetService().newProfileLocation("${eclipse_home}", null);
 		definition.setTargetLocations(new ITargetLocation[]{container});
 		Set urls = getAllBundleURLs(definition);
-		
+
 		// the old way
 		IPath location = new Path(TargetPlatform.getDefaultLocation());
 		URL[] pluginPaths = P2Utils.readBundlesTxt(location.toOSString(), location.append("configuration").toFile().toURL());
@@ -257,12 +257,12 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 			URL url = pluginPaths[i];
 			assertTrue("Missing plug-in " + url.toString(), urls.contains(url));
 		}
-		
-	}	
-	
+
+	}
+
 	/**
 	 * Tests that a target definition equivalent to the default target platform
-	 * contains the same bundles as the default target platform (this is an 
+	 * contains the same bundles as the default target platform (this is an
 	 * explicit location with no target weaving), when created with a variable
 	 * referencing ${eclipse_home}.
 	 * 
@@ -274,7 +274,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		ITargetLocation container = getTargetService().newProfileLocation("${eclipse_home}", "${eclipse_home}/configuration");
 		definition.setTargetLocations(new ITargetLocation[]{container});
 		Set urls = getAllBundleURLs(definition);
-		
+
 		// the old way
 		IPath location = new Path(TargetPlatform.getDefaultLocation());
 		URL[] pluginPaths = P2Utils.readBundlesTxt(location.toOSString(), location.append("configuration").toFile().toURL());
@@ -284,9 +284,9 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 			URL url = pluginPaths[i];
 			assertTrue("Missing plug-in " + url.toString(), urls.contains(url));
 		}
-		
-	}		
-	
+
+	}
+
 	/**
 	 * Tests that a target definition equivalent to the default target platform
 	 * contains the same bundles as the default target platform using the
@@ -303,16 +303,16 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 				new File(Platform.getConfigurationLocation().getURL().getFile()).getAbsolutePath());
 		definition.setTargetLocations(new ITargetLocation[]{container});
 		Set urls = getAllBundleURLs(definition);
-		
+
 		// the old way
-		URL[] pluginPaths = PluginPathFinder.getPluginPaths(TargetPlatform.getDefaultLocation());
-		assertEquals("Should have same number of bundles", pluginPaths.length, urls.size());
+		URL[] pluginPaths = PluginPathFinder.getPluginPaths(TargetPlatform.getDefaultLocation(), true);
 		for (int i = 0; i < pluginPaths.length; i++) {
 			URL url = pluginPaths[i];
 			assertTrue("Missing plug-in " + url.toString(), urls.contains(url));
 		}
-		
-	}	
+		assertEquals("Should have same number of bundles", pluginPaths.length, urls.size());
+
+	}
 
 	/**
 	 * Tests that a bundle directory container is equivalent to scanning locations.
@@ -325,24 +325,16 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		ITargetLocation container = getTargetService().newDirectoryLocation(TargetPlatform.getDefaultLocation() + "/plugins");
 		definition.setTargetLocations(new ITargetLocation[]{container});
 		Set urls = getAllBundleURLs(definition);
-		
-		Preferences store = PDECore.getDefault().getPluginPreferences();
-		boolean restore = store.getBoolean(ICoreConstants.TARGET_PLATFORM_REALIZATION);
-		try {
-			store.setValue(ICoreConstants.TARGET_PLATFORM_REALIZATION, false);
-			// the old way
-			URL[] pluginPaths = PluginPathFinder.getPluginPaths(TargetPlatform.getDefaultLocation());
-			assertEquals("Should have same number of bundles", pluginPaths.length, urls.size());
-			for (int i = 0; i < pluginPaths.length; i++) {
-				URL url = pluginPaths[i];
-				assertTrue("Missing plug-in " + url.toString(), urls.contains(url));
-			}
-		}
-		finally {
-			store.setValue(ICoreConstants.TARGET_PLATFORM_REALIZATION, restore);
+
+		// the old way
+		URL[] pluginPaths = PluginPathFinder.getPluginPaths(TargetPlatform.getDefaultLocation(), false);
+		assertEquals("Should have same number of bundles", pluginPaths.length, urls.size());
+		for (int i = 0; i < pluginPaths.length; i++) {
+			URL url = pluginPaths[i];
+			assertTrue("Missing plug-in " + url.toString(), urls.contains(url));
 		}
 	}
-	
+
 	/**
 	 * Tests that a bundle directory container is equivalent to scanning locations
 	 * when it uses a variable to specify its location.
@@ -355,24 +347,16 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		ITargetLocation container = getTargetService().newDirectoryLocation("${eclipse_home}/plugins");
 		definition.setTargetLocations(new ITargetLocation[]{container});
 		Set urls = getAllBundleURLs(definition);
-		
-		Preferences store = PDECore.getDefault().getPluginPreferences();
-		boolean restore = store.getBoolean(ICoreConstants.TARGET_PLATFORM_REALIZATION);
-		try {
-			store.setValue(ICoreConstants.TARGET_PLATFORM_REALIZATION, false);
-			// the old way
-			URL[] pluginPaths = PluginPathFinder.getPluginPaths(TargetPlatform.getDefaultLocation());
-			assertEquals("Should have same number of bundles", pluginPaths.length, urls.size());
-			for (int i = 0; i < pluginPaths.length; i++) {
-				URL url = pluginPaths[i];
-				assertTrue("Missing plug-in " + url.toString(), urls.contains(url));
-			}
+
+		// the old way
+		URL[] pluginPaths = PluginPathFinder.getPluginPaths(TargetPlatform.getDefaultLocation(), false);
+		assertEquals("Should have same number of bundles", pluginPaths.length, urls.size());
+		for (int i = 0; i < pluginPaths.length; i++) {
+			URL url = pluginPaths[i];
+			assertTrue("Missing plug-in " + url.toString(), urls.contains(url));
 		}
-		finally {
-			store.setValue(ICoreConstants.TARGET_PLATFORM_REALIZATION, restore);
-		}
-	}	
-	
+	}
+
 	/**
 	 * Tests reading a 3.0.2 install with a mix of classic and OSGi plug-ins.
 	 * 
@@ -381,33 +365,25 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	public void testClassicPlugins() throws Exception {
 		// extract the 3.0.2 skeleton
 		IPath location = extractClassicPlugins();
-		
+
 		// the new way
 		ITargetDefinition definition = getNewTarget();
 		ITargetLocation container = getTargetService().newDirectoryLocation(location.toOSString());
 		definition.setTargetLocations(new ITargetLocation[]{container});
 		Set urls = getAllBundleURLs(definition);
 		assertTrue("Must be bundles", urls.size() > 0);
-		
-		Preferences store = PDECore.getDefault().getPluginPreferences();
-		boolean restore = store.getBoolean(ICoreConstants.TARGET_PLATFORM_REALIZATION);
-		try {
-			store.setValue(ICoreConstants.TARGET_PLATFORM_REALIZATION, false);
-			// the old way
-			URL[] pluginPaths = PluginPathFinder.getPluginPaths(location.toOSString());
-			for (int i = 0; i < pluginPaths.length; i++) {
-				URL url = pluginPaths[i];
-				if (!urls.contains(url)) {
-					System.err.println(url.toString());
-				}
+
+		// the old way
+		URL[] pluginPaths = PluginPathFinder.getPluginPaths(location.toOSString(), false);
+		for (int i = 0; i < pluginPaths.length; i++) {
+			URL url = pluginPaths[i];
+			if (!urls.contains(url)) {
+				System.err.println(url.toString());
 			}
-			assertEquals("Wrong number of bundles", pluginPaths.length, urls.size());
 		}
-		finally {
-			store.setValue(ICoreConstants.TARGET_PLATFORM_REALIZATION, restore);
-		}		
+		assertEquals("Wrong number of bundles", pluginPaths.length, urls.size());
 	}
-	
+
 	/**
 	 * Tests identification of source bundles in a 3.0.2 install.
 	 * 
@@ -416,12 +392,12 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	public void testClassicSourcePlugins() throws Exception {
 		// extract the 3.0.2 skeleton
 		IPath location = extractClassicPlugins();
-		
+
 		// the new way
 		ITargetDefinition definition = getNewTarget();
 		ITargetLocation container = getTargetService().newDirectoryLocation(location.toOSString());
 		definition.setTargetLocations(new ITargetLocation[]{container});
-		
+
 		definition.resolve(null);
 		TargetBundle[] bundles = definition.getBundles();
 		List source = new ArrayList();
@@ -431,7 +407,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 				source.add(sb);
 			}
 		}
-		
+
 		assertEquals("Wrong number of source bundles", 4, source.size());
 		Set names = new HashSet();
 		for (int i = 0; i < source.size(); i++) {
@@ -439,10 +415,10 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		}
 		String[] expected = new String[]{"org.eclipse.platform.source", "org.eclipse.jdt.source", "org.eclipse.pde.source", "org.eclipse.platform.source.win32.win32.x86"};
 		for (int i = 0; i < expected.length; i++) {
-			assertTrue("Missing source for " + expected[i], names.contains(expected[i]));	
+			assertTrue("Missing source for " + expected[i], names.contains(expected[i]));
 		}
 	}
-	
+
 	/**
 	 * Tests reading a 3.0 style plug-in that has a MANIFEST file that is not a bundle
 	 * manifest.
@@ -452,7 +428,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	public void testClassicPluginsWithNonBundleManifest() throws Exception {
 		// extract the plug-in
 		IPath location = extractClassicNonBundleManifestPlugins();
-		
+
 		// the new way
 		ITargetDefinition definition = getNewTarget();
 		ITargetLocation container = getTargetService().newDirectoryLocation(location.toOSString());
@@ -460,8 +436,8 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		definition.resolve(null);
 		TargetBundle[] bundles = definition.getAllBundles();
 		assertEquals("Wrong number of bundles", 1, bundles.length);
-		assertEquals("Wrong bundle", "org.eclipse.core.variables", bundles[0].getBundleInfo().getSymbolicName());				
-	}	
+		assertEquals("Wrong bundle", "org.eclipse.core.variables", bundles[0].getBundleInfo().getSymbolicName());
+	}
 
 	/**
 	 * Returns the given input stream as a byte array
@@ -511,8 +487,8 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 			}
 		}
 		return contents;
-	}	
-	
+	}
+
 	/**
 	 * Returns the location of the JDT feature in the running host as
 	 * a path in the local file system.
@@ -535,21 +511,21 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		assertNotNull("Missing JDT feature", location);
 		return new Path(location);
 	}
-	
+
 	/**
 	 * Tests a JDT feature bundle container contains the appropriate bundles
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public void testFeatureBundleContainer() throws Exception {
 		// extract the feature
 		IPath location = extractModifiedFeatures();
-		
+
 		// the new way
 		ITargetDefinition definition = getNewTarget();
 		ITargetLocation container = getTargetService().newFeatureLocation(location.toOSString(), "org.eclipse.jdt", null);
 		container.resolve(definition, null);
 		TargetBundle[] bundles = container.getBundles();
-		
+
 		List expected = new ArrayList();
 		expected.add("org.eclipse.jdt");
 		expected.add("org.eclipse.jdt.launching");
@@ -560,7 +536,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		if (Platform.getOS().equals(Platform.OS_MACOSX)) {
 			expected.add("org.eclipse.jdt.launching.macosx");
 		}
-		
+
 		assertEquals("Wrong number of bundles in test JDT feature", expected.size(), bundles.length);
 		for (int i = 0; i < bundles.length; i++) {
 			expected.remove(bundles[i].getBundleInfo().getSymbolicName());
@@ -571,29 +547,29 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 			System.err.println("Missing: " + name);
 		}
 		assertTrue("Wrong bundles in JDT feature", expected.isEmpty());
-		
+
 		// should be no source bundles
 		for (int i = 0; i < bundles.length; i++) {
 			TargetBundle bundle = bundles[i];
 			assertFalse("Should be no source bundles", bundle.isSourceBundle());
 		}
 	}
-	
+
 	/**
 	 * Tests a JDT feature bundle container contains the appropriate bundles for a specific OS.
 	 * 
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public void testMacOSFeatureBundleContainer() throws Exception {
 		// extract the feature
 		IPath location = extractModifiedFeatures();
-		
+
 		ITargetDefinition definition = getNewTarget();
 		definition.setOS(Platform.OS_MACOSX);
 		ITargetLocation container = getTargetService().newFeatureLocation(location.toOSString(), "org.eclipse.jdt", null);
 		container.resolve(definition, null);
 		TargetBundle[] bundles = container.getBundles();
-		
+
 		List expected = new ArrayList();
 		expected.add("org.eclipse.jdt");
 		expected.add("org.eclipse.jdt.launching");
@@ -602,7 +578,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		expected.add("org.junit");
 		expected.add("org.junit4");
 		expected.add("org.eclipse.jdt.launching.macosx");
-		
+
 		assertEquals("Wrong number of bundles in JDT feature", expected.size(), bundles.length);
 		for (int i = 0; i < bundles.length; i++) {
 			String symbolicName = bundles[i].getBundleInfo().getSymbolicName();
@@ -624,14 +600,14 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 			System.err.println("Missing: " + name);
 		}
 		assertTrue("Wrong bundles in JDT feature", expected.isEmpty());
-		
-		
+
+
 		// should be no source bundles
 		for (int i = 0; i < bundles.length; i++) {
 			TargetBundle bundle = bundles[i];
 			assertFalse("Should be no source bundles", bundle.isSourceBundle());
 		}
-	}	
+	}
 	/**
 	 * Tests that a target definition based on the JDT feature
 	 * restricted to a subset of bundles contains the right set.
@@ -641,7 +617,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	public void testRestrictedFeatureBundleContainer() throws Exception {
 		// extract the feature
 		IPath location = extractModifiedFeatures();
-		
+
 		ITargetDefinition definition = getNewTarget();
 		ITargetLocation container = getTargetService().newFeatureLocation(location.toOSString(), "org.eclipse.jdt", null);
 		NameVersionDescriptor[] restrictions = new NameVersionDescriptor[]{
@@ -651,7 +627,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		definition.setTargetLocations(new ITargetLocation[]{container});
 		definition.setIncluded(restrictions);
 		List infos = getAllBundleInfos(definition);
-		
+
 		assertEquals("Wrong number of bundles", 2, infos.size());
 		Set set = collectAllSymbolicNames(infos);
 		for (int i = 0; i < restrictions.length; i++) {
@@ -659,22 +635,22 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 			set.remove(info.getId());
 		}
 		assertEquals("Wrong bundles", 0, set.size());
-		
-	}	
-	
+
+	}
+
 	/**
 	 * Tests a JDT source feature bundle container contains the appropriate bundles
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public void testSourceFeatureBundleContainer() throws Exception {
 		// extract the feature
 		IPath location = extractModifiedFeatures();
-		
+
 		ITargetDefinition definition = getNewTarget();
 		ITargetLocation container = getTargetService().newFeatureLocation(location.toOSString(), "org.eclipse.jdt.source", null);
 		container.resolve(definition, null);
 		TargetBundle[] bundles = container.getBundles();
-	
+
 		List expected = new ArrayList();
 		expected.add("org.eclipse.jdt.source");
 		expected.add("org.eclipse.jdt.launching.source");
@@ -684,7 +660,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		if (Platform.getOS().equals(Platform.OS_MACOSX)) {
 			expected.add("org.eclipse.jdt.launching.macosx.source");
 		}
-		
+
 		assertEquals("Wrong number of bundles", expected.size(), bundles.length);
 		for (int i = 0; i < bundles.length; i++) {
 			if (bundles[i].getBundleInfo().getSymbolicName().equals("org.eclipse.jdt.doc.isv")) {
@@ -696,26 +672,26 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		}
 		assertTrue("Wrong bundles in JDT feature", expected.isEmpty());
 	}
-	
-	
+
+
 	/**
 	 * Tests setting the target platform to the stored JDT feature test data
 	 * 
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public void testSetTargetPlatformToJdtFeature() throws Exception {
 		try {
 			// extract the feature
 			IPath location = extractModifiedFeatures();
 			//org.eclipse.jdt_3.6.0.v20100105-0800-7z8VFR9FMTb52_pOyKHhoek1
-			
+
 			ITargetDefinition target = getNewTarget();
 			ITargetLocation container = getTargetService().newFeatureLocation(location.toOSString(), "org.eclipse.jdt", "3.6.0.v20100105-0800-7z8VFR9FMTb52_pOyKHhoek1");
-			
+
 			target.setTargetLocations(new ITargetLocation[]{container});
-			
+
 			setTargetPlatform(target);
-			
+
 			List expected = new ArrayList();
 			expected.add("org.eclipse.jdt");
 			expected.add("org.eclipse.jdt.launching");
@@ -726,10 +702,10 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 			if (Platform.getOS().equals(Platform.OS_MACOSX)) {
 				expected.add("org.eclipse.jdt.launching.macosx");
 			}
-			
+
 			// current platform
 			IPluginModelBase[] models = TargetPlatformHelper.getPDEState().getTargetModels();
-			
+
 			assertEquals("Wrong number of bundles in JDT feature", expected.size(), models.length);
 			for (int i = 0; i < models.length; i++) {
 				expected.remove(models[i].getPluginBase().getId());
@@ -744,31 +720,31 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		} finally {
 			resetTargetPlatform();
 		}
-	}	
-	
+	}
+
 	/**
 	 * Tests setting the target platform to empty.
-	 * @throws CoreException 
+	 * @throws CoreException
 	 */
 	public void testSetEmptyTargetPlatform() throws CoreException {
 		try {
 			setTargetPlatform(null);
-						
+
 			// current platform
 			IPluginModelBase[] models = TargetPlatformHelper.getPDEState().getTargetModels();
-			
+
 			assertEquals("Wrong number of bundles in empty target", 0, models.length);
 
 		} finally {
 			resetTargetPlatform();
-		}		
+		}
 	}
-	
+
 	protected void assertTargetDefinitionsEqual(ITargetDefinition targetA, ITargetDefinition targetB) {
 		assertTrue("Target content not equal",((TargetDefinition)targetA).isContentEqual(targetB));
 	}
-	
-	
+
+
 	/**
 	 * Reads a target definition file from the tests/targets/target-files location
 	 * with the given name. Note that ".target" will be appended.
@@ -786,7 +762,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		stream.close();
 		return target;
 	}
-	
+
 	/**
 	 * A directory of bundles should not have VM arguments.
 	 * 
@@ -797,7 +773,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		ITargetLocation directoryContainer = getTargetService().newDirectoryLocation(TargetPlatform.getDefaultLocation() + "/plugins");
 		assertNull("Plugins directory containers should not have arguments", directoryContainer.getVMArguments());
 	}
-	
+
 	/**
 	 * A directory that points to an installation should have VM arguments.
 	 * 
@@ -809,17 +785,17 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		assertNotNull("Install directory should have arguments", installArgs);
 		assertTrue("Install directory should have arguments", installArgs.length > 0);
 	}
-	
+
 	/**
 	 * A feature container should not have VM arguments.
 	 * 
 	 * @throws Exception
 	 */
-	public void testArgumentsFeatureContainer() throws Exception {		
+	public void testArgumentsFeatureContainer() throws Exception {
 		ITargetLocation featureContainer = getTargetService().newFeatureLocation(TargetPlatform.getDefaultLocation(), "DOES NOT EXIST", "DOES NOT EXIST");
 		assertNull("Feature containers should not have arguments", featureContainer.getVMArguments());
 	}
-	
+
 	/**
 	 * A profile container should have VM arguments.
 	 * 
@@ -829,9 +805,9 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 		ITargetLocation profileContainer = getTargetService().newProfileLocation(TargetPlatform.getDefaultLocation(), null);
 		String[] arguments = profileContainer.getVMArguments();
 		assertNotNull("Profile containers should have arguments", arguments);
-		assertTrue("Profile containers should have arguments", arguments.length > 0);		
+		assertTrue("Profile containers should have arguments", arguments.length > 0);
 	}
-	
+
 	/**
 	 * Tests the ability to add arguments to a target platform and have them show up on new configs
 	 * 
@@ -839,32 +815,32 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	 */
 	public void testArguments() throws Exception {
 		ITargetDefinition definition = getNewTarget();
-		
+
 		// Add program arguments
 		String programArgs = "-testProgramArgument -testProgramArgument2";
 		definition.setProgramArguments(programArgs);
 		assertEquals(programArgs, definition.getProgramArguments());
-		
+
 		// Add VM arguments
-		String vmArgs = "-testVMArgument -testVMArgument2"; 
+		String vmArgs = "-testVMArgument -testVMArgument2";
 		definition.setVMArguments(vmArgs);
 		assertEquals(vmArgs, definition.getVMArguments());
-		
+
 		try {
 			getTargetService().saveTargetDefinition(definition);
 			setTargetPlatform(definition);
-		
+
 			// Check that new launch configs will be prepopulated from target
 			assertEquals(vmArgs, LaunchArgumentsHelper.getInitialVMArguments());
 			assertEquals("-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl} -consoleLog ".concat(programArgs), LaunchArgumentsHelper.getInitialProgramArguments());
-		
+
 		} finally {
 			getTargetService().deleteTarget(definition.getHandle());
 			resetTargetPlatform();
 		}
-		
+
 	}
-	
+
 	/**
 	 * Tests that a single (lower) version of a bundle can be included in the target platform.
 	 * 
@@ -873,7 +849,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	public void testLowerVersionOfBundle() throws Exception {
 		doIncludeVersions(new NameVersionDescriptor[]{MULTI_VERSION_LOW_DESCRIPTION});
 	}
-	
+
 	/**
 	 * Tests that a single (higher) version of a bundle can be included in the target platform.
 	 * 
@@ -882,7 +858,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	public void testHigherVersionOfBundle() throws Exception {
 		doIncludeVersions(new NameVersionDescriptor[]{MULTI_VERSION_HIGH_DESCRIPTION});
 	}
-	
+
 	/**
 	 * Tests all versions of a bundle can be excluded.
 	 * 
@@ -891,7 +867,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	public void testNoVersionsOfBundle() throws Exception {
 		doIncludeVersions(new NameVersionDescriptor[0]);
 	}
-	
+
 	/**
 	 * Tests all versions of a bundle can be included.
 	 * 
@@ -900,7 +876,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	public void testAllVersionsOfBundle() throws Exception {
 		doIncludeVersions(null);
 	}
-	
+
 	/**
 	 * Tests all versions of a bundle can be included.
 	 * 
@@ -909,10 +885,10 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 	public void testAllVersionsOfBundleExplicit() throws Exception {
 		doIncludeVersions(new NameVersionDescriptor[]{MULTI_VERSION_LOW_DESCRIPTION, MULTI_VERSION_HIGH_DESCRIPTION});
 	}
-	
+
 	protected void doIncludeVersions(NameVersionDescriptor[] descriptions) throws Exception {
 		String bsn = MULTI_VERSION_LOW_DESCRIPTION.getId();
-		
+
 		IPath extras = extractMultiVersionPlugins();
 		ITargetDefinition target = getNewTarget();
 		ITargetLocation container = getTargetService().newDirectoryLocation(extras.toOSString());
@@ -933,7 +909,7 @@ public class LocalTargetDefinitionTests extends AbstractTargetTest {
 				}
 			}
 			if (descriptions == null) {
-				
+
 			} else {
 				assertEquals("Wrong number of enabled bundles", descriptions.length, enabled.size());
 				for (int i = 0; i < descriptions.length; i++) {

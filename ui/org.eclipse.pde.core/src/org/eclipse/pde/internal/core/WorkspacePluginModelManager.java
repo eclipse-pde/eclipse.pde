@@ -410,7 +410,7 @@ public class WorkspacePluginModelManager extends WorkspaceModelManager {
 	 * 
 	 * @param models  the workspace plug-in models
 	 */
-	protected void initializeModels(IPluginModelBase[] models) {
+	protected void setModels(IPluginModelBase[] models) {
 		fModels = Collections.synchronizedMap(new HashMap<IProject, IModel>());
 		for (int i = 0; i < models.length; i++) {
 			IProject project = models[i].getUnderlyingResource().getProject();

@@ -14,68 +14,150 @@ package org.eclipse.pde.internal.core;
 import java.util.Locale;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.core.project.IBundleProjectDescription;
+import org.eclipse.pde.core.target.ITargetPlatformService;
 import org.osgi.framework.Constants;
 
+/**
+ *	Contains constants for the core PDE models including the target platform.
+ */
 public interface ICoreConstants {
 
 	// Target Platform
-	String PLATFORM_PATH = "platform_path"; //$NON-NLS-1$
-	String SAVED_PLATFORM = "saved_platform"; //$NON-NLS-1$
-	String TARGET_MODE = "target_mode"; //$NON-NLS-1$
-	String VALUE_USE_THIS = "useThis"; //$NON-NLS-1$
-	String VALUE_USE_OTHER = "useOther"; //$NON-NLS-1$
-	String CHECKED_PLUGINS = "checkedPlugins"; //$NON-NLS-1$
-	String VALUE_SAVED_NONE = "[savedNone]"; //$NON-NLS-1$
-	String VALUE_SAVED_ALL = "[savedAll]"; //$NON-NLS-1$
-	String VALUE_SAVED_SOME = "savedSome"; //$NON-NLS-1$
-	String P_SOURCE_LOCATIONS = "source_locations"; //$NON-NLS-1$
-	String P_EXT_LOCATIONS = "ext_locations"; //$NON-NLS-1$
-	String PROGRAM_ARGS = "program_args"; //$NON-NLS-1$
-	String VM_ARGS = "vm_args"; //$NON-NLS-1$
-	String VM_LAUNCHER_INI = "vm_launcher_ini"; //$NON-NLS-1$
-	String IMPLICIT_DEPENDENCIES = "implicit_dependencies"; //$NON-NLS-1$
-	String GROUP_PLUGINS_VIEW = "group_plugins"; //$NON-NLS-1$
-	String ADDITIONAL_LOCATIONS = "additional_locations"; //$NON-NLS-1$
-	String TARGET_PLATFORM_REALIZATION = "target_platform_realization"; //$NON-NLS-1$
-
 	/**
-	 * This preference was only used during 3.5, it has been replaced in 3.6
-	 * with POOLED_URLS.
-	 * 
-	 * @deprecated
+	 * Preference key that stores the string path to the root location of the 
+	 * target platform.  Should be accessed through {@link TargetPlatform#getLocation()}.
+	 * @deprecated Since the 4.4 Luna release, target platform information is no longer stored in preferences. Instead use {@link ITargetPlatformService}.
 	 */
+	@Deprecated
+	String PLATFORM_PATH = "platform_path"; //$NON-NLS-1$
+	/**
+	 * @deprecated Since the 4.4 Luna release, target platform information is no longer stored in preferences. Instead use {@link ITargetPlatformService}.
+	 */
+	@Deprecated
+	String TARGET_MODE = "target_mode"; //$NON-NLS-1$
+	/**
+	 * @deprecated Since the 4.4 Luna release, target platform information is no longer stored in preferences. Instead use {@link ITargetPlatformService}.
+	 */
+	@Deprecated
+	String VALUE_USE_THIS = "useThis"; //$NON-NLS-1$
+	/**
+	 * @deprecated Since the 4.4 Luna release, target platform information is no longer stored in preferences. Instead use {@link ITargetPlatformService}.
+	 */
+	@Deprecated
+	String VALUE_USE_OTHER = "useOther"; //$NON-NLS-1$
+	/**
+	 * @deprecated Since the 4.4 Luna release, target platform information is no longer stored in preferences. Instead use {@link ITargetPlatformService}.
+	 */
+	@Deprecated
+	String CHECKED_PLUGINS = "checkedPlugins"; //$NON-NLS-1$
+	/**
+	 * @deprecated Since the 4.4 Luna release, target platform information is no longer stored in preferences. Instead use {@link ITargetPlatformService}.
+	 */
+	@Deprecated
+	String VALUE_SAVED_NONE = "[savedNone]"; //$NON-NLS-1$
+	/**
+	 * @deprecated Since the 4.4 Luna release, target platform information is no longer stored in preferences. Instead use {@link ITargetPlatformService}.
+	 */
+	@Deprecated
+	String VALUE_SAVED_ALL = "[savedAll]"; //$NON-NLS-1$
+	/**
+	 * @deprecated Since the 4.4 Luna release, target platform information is no longer stored in preferences. Instead use {@link ITargetPlatformService}.
+	 */
+	@Deprecated
+	String VALUE_SAVED_SOME = "savedSome"; //$NON-NLS-1$
+	/**
+	 * @since 3.6 - Bug 282708: [target] issues with two versions of the same bundle 
+	 * @deprecated Since the 4.4 Luna release, target platform information is no longer stored in preferences. Instead use {@link ITargetPlatformService}.
+	 */
+	@Deprecated
+	String CHECKED_VERSION_PLUGINS = "checkedVersionPlugins"; //$NON-NLS-1$
+	/**
+	 * @deprecated Since the 4.4 Luna release, target platform information is no longer stored in preferences. Instead use {@link ITargetPlatformService}.
+	 */
+	@Deprecated
+	String PROGRAM_ARGS = "program_args"; //$NON-NLS-1$
+	/**
+	 * @deprecated Since the 4.4 Luna release, target platform information is no longer stored in preferences. Instead use {@link ITargetPlatformService}.
+	 */
+	@Deprecated
+	String VM_ARGS = "vm_args"; //$NON-NLS-1$
+	/**
+	 * @deprecated Since the 4.4 Luna release, target platform information is no longer stored in preferences. Instead use {@link ITargetPlatformService}.
+	 */
+	@Deprecated
+	String VM_LAUNCHER_INI = "vm_launcher_ini"; //$NON-NLS-1$
+	/**
+	 * @deprecated Since the 4.4 Luna release, target platform information is no longer stored in preferences. Instead use {@link ITargetPlatformService}.
+	 */
+	@Deprecated
+	String IMPLICIT_DEPENDENCIES = "implicit_dependencies"; //$NON-NLS-1$
+	/**
+	 * @deprecated Since the 4.4 Luna release, target platform information is no longer stored in preferences. Instead use {@link ITargetPlatformService}.
+	 */
+	@Deprecated
+	String ADDITIONAL_LOCATIONS = "additional_locations"; //$NON-NLS-1$
+	/**
+	 * @deprecated Since the 4.4 Luna release, target platform information is no longer stored in preferences. Instead use {@link ITargetPlatformService}.
+	 */
+	@Deprecated
+	String TARGET_PLATFORM_REALIZATION = "target_platform_realization"; //$NON-NLS-1$
+	/**
+	 * @deprecated This preference was only used during 3.5, it has been replaced in 3.6 with {@link #POOLED_URLS}
+	 */
+	@Deprecated
 	String POOLED_BUNDLES = "pooled_bundles"; //$NON-NLS-1$
 	/**
 	 * Comma separated list of bundle URLs used from the bundle pool.
 	 * @since 3.6
+	 * @deprecated Since the 4.4 Luna release, target platform information is no longer stored in preferences. Instead use {@link ITargetPlatformService}.
 	 */
+	@Deprecated
 	String POOLED_URLS = "pooled_urls"; //$NON-NLS-1$
 	/**
 	 * List of feature ids and versions that are available in the target platform.  Features
 	 * are comma separated, with each entry taking the form of [id]@[version]
 	 * 
 	 * @since 3.6
+	 * @deprecated Since the 4.4 Luna release, target platform information is no longer stored in preferences. Instead use {@link ITargetPlatformService}.
 	 */
+	@Deprecated
 	String EXTERNAL_FEATURES = "external_features"; //$NON-NLS-1$
-	/**
-	 * @since 3.6 - Bug 282708: [target] issues with two versions of the same bundle 
-	 */
-	String CHECKED_VERSION_PLUGINS = "checkedVersionPlugins"; //$NON-NLS-1$
 
 	// Target Environment
+	/**
+	 * @deprecated Since the 4.4 Luna release, target platform information is no longer stored in preferences. Instead use {@link ITargetPlatformService}.
+	 */
+	@Deprecated
 	String OS = "org.eclipse.pde.ui.os"; //$NON-NLS-1$
+	/**
+	 * @deprecated Since the 4.4 Luna release, target platform information is no longer stored in preferences. Instead use {@link ITargetPlatformService}.
+	 */
+	@Deprecated
 	String WS = "org.eclipse.pde.ui.ws"; //$NON-NLS-1$
+	/**
+	 * @deprecated Since the 4.4 Luna release, target platform information is no longer stored in preferences. Instead use {@link ITargetPlatformService}.
+	 */
+	@Deprecated
 	String NL = "org.eclipse.pde.ui.nl"; //$NON-NLS-1$
+	/**
+	 * @deprecated Since the 4.4 Luna release, target platform information is no longer stored in preferences. Instead use {@link ITargetPlatformService}.
+	 */
+	@Deprecated
 	String ARCH = "org.eclipse.pde.ui.arch"; //$NON-NLS-1$
+	/**
+	 * @deprecated Since the 4.4 Luna release, target platform information is no longer stored in preferences. Instead use {@link ITargetPlatformService}.
+	 */
+	@Deprecated
+	String TARGET_PROFILE = "target.profile"; //$NON-NLS-1$
 
+	// Preferences to allow products to add additional options in the target environment combos
+	// Unknown if they are being used
 	String OS_EXTRA = "org.eclipse.pde.os.extra"; //$NON-NLS-1$
 	String WS_EXTRA = "org.eclipse.pde.ws.extra"; //$NON-NLS-1$
 	String NL_EXTRA = "org.eclipse.pde.nl.extra"; //$NON-NLS-1$
 	String ARCH_EXTRA = "org.eclipse.pde.arch.extra"; //$NON-NLS-1$
-
-	// Target JRE
-	String TARGET_JRE = "targetJRE"; //$NON-NLS-1$
 
 	/** Constant for the string <code>extension</code> */
 	public final static String EXTENSION_NAME = "extension"; //$NON-NLS-1$	
@@ -253,6 +335,14 @@ public interface ICoreConstants {
 	 */
 	public final static String TARGET_VERSION_LATEST = TARGET38;
 
+	/**
+	 * Preference key that stores a list of user specified source locations.
+	 * No longer supported in the UI.
+	 * @deprecated Not supported in the UI.
+	 */
+	@Deprecated
+	String P_SOURCE_LOCATIONS = "source_locations"; //$NON-NLS-1$
+
 	public final static String EQUINOX = "Equinox"; //$NON-NLS-1$
 
 	// project preferences
@@ -260,7 +350,7 @@ public interface ICoreConstants {
 	public static final String EQUINOX_PROPERTY = "pluginProject.equinox"; //$NON-NLS-1$
 	public static final String EXTENSIONS_PROPERTY = "pluginProject.extensions"; //$NON-NLS-1$
 	public static final String RESOLVE_WITH_REQUIRE_BUNDLE = "resolve.requirebundle"; //$NON-NLS-1$
-	public static final String TARGET_PROFILE = "target.profile"; //$NON-NLS-1$
+
 	/**
 	 * Configures launch shortcuts visible in the manifest editor for a project.
 	 * Value is a comma separated list of <code>org.eclipse.pde.ui.launchShortcuts</code>
@@ -364,12 +454,15 @@ public interface ICoreConstants {
 	public static final String TARGET_FILE_EXTENSION = "target"; //$NON-NLS-1$
 
 	/**
-	 * Preference key for the active workspace target platform handle memento 
+	 * Preference key for the active workspace target platform handle memento.  If not set,
+	 * old target preferences will be used to create a default.  If no external bundles are
+	 * wanted, this value should be set to {@link #NO_TARGET}.
 	 */
 	public static final String WORKSPACE_TARGET_HANDLE = "workspace_target_handle"; //$NON-NLS-1$
 
 	/**
-	 * Explicit setting when the user chooses no target for the workspace.
+	 * Explicit preference value for {@link #WORKSPACE_TARGET_HANDLE} when the user chooses no
+	 * target for the workspace (no external bundles).
 	 */
 	public static final String NO_TARGET = "NO_TARGET"; //$NON-NLS-1$
 

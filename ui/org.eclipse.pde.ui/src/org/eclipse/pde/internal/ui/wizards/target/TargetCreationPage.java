@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,6 @@ import org.eclipse.jface.wizard.WizardSelectionPage;
 import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.ITargetPlatformService;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.target.TargetPlatformService;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -74,6 +73,7 @@ public class TargetCreationPage extends WizardSelectionPage {
 		fCurrentTPButton = SWTFactory.createRadioButton(comp, PDEUIMessages.TargetCreationPage_3, 2);
 		fExistingTargetButton = SWTFactory.createRadioButton(comp, PDEUIMessages.TargetCreationPage_4, 1);
 		fExistingTargetButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				boolean enabled = fExistingTargetButton.getSelection();
 				fTargets.setEnabled(enabled);
@@ -87,6 +87,7 @@ public class TargetCreationPage extends WizardSelectionPage {
 		initializeTargetCombo();
 		fTargets.addSelectionListener(new SelectionAdapter() {
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				templateTargetId = fTargetIds[fTargets.getSelectionIndex()];
 
@@ -193,9 +194,9 @@ public class TargetCreationPage extends WizardSelectionPage {
 	 */
 	private void populateFromCurrentTargetPlatform(ITargetDefinition definition) throws CoreException {
 		ITargetPlatformService service = getTargetService();
-		if (service instanceof TargetPlatformService) {
-			TargetPlatformService ts = (TargetPlatformService) service;
-			ts.loadTargetDefinitionFromPreferences(definition);
+		if (service != null) {
+			ITargetDefinition current = service.getWorkspaceTargetDefinition();
+			service.copyTargetDefinition(current, definition);
 		}
 	}
 
@@ -216,6 +217,7 @@ public class TargetCreationPage extends WizardSelectionPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.WizardSelectionPage#getNextPage()
 	 */
+	@Override
 	public IWizardPage getNextPage() {
 		ITargetDefinition target = null;
 		int option = getInitializationOption();

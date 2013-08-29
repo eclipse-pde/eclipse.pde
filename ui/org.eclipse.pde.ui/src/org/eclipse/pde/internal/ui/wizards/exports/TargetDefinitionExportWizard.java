@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 EclipseSource Corporation and others.
+ * Copyright (c) 2010, 2013 EclipseSource Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,8 +18,9 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.pde.core.target.ITargetDefinition;
+import org.eclipse.pde.core.target.ITargetPlatformService;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.target.ExportTargetJob;
-import org.eclipse.pde.internal.core.target.TargetPlatformService;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.ui.IExportWizard;
 import org.eclipse.ui.IWorkbench;
@@ -51,10 +52,12 @@ public class TargetDefinitionExportWizard extends Wizard implements IExportWizar
 		fTarget = target;
 		if (fTarget == null)
 			try {
-				fTarget = TargetPlatformService.getDefault().getWorkspaceTargetHandle().getTargetDefinition();
+				ITargetPlatformService service = (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
+				if (service != null) {
+					fTarget = service.getWorkspaceTargetDefinition();
+				}
 			} catch (CoreException e) {
-				// TODO log something?
-				return;
+				PDEPlugin.log(e);
 			}
 		setNeedsProgressMonitor(true);
 		setWindowTitle(PDEUIMessages.ExportActiveTargetDefinition);

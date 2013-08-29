@@ -207,19 +207,14 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 	private ITargetDefinition fActiveTarget;
 
 	/**
-	 * Previously active target handle or null
+	 * Currently active target definition
 	 */
-	private ITargetHandle fPrevious;
+	private ITargetDefinition fPrevious;
 
 	/**
 	 * Stores whether the current target platform is out of synch with the file system and must be reloaded
 	 */
 	private boolean isOutOfSynch = false;
-
-	/**
-	 * Composite containing a warning image and label for when the backing file for the active target could not be found
-	 */
-	private Composite fWarningComp;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
@@ -366,27 +361,16 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 
 		if (service != null) {
 			try {
-				fPrevious = service.getWorkspaceTargetHandle();
+				fPrevious = service.getWorkspaceTargetDefinition();
 				Iterator<ITargetDefinition> iterator = fTargets.iterator();
 				while (iterator.hasNext()) {
 					ITargetDefinition target = iterator.next();
-					if (target.getHandle().equals(fPrevious)) {
+					if (target.getHandle().equals(fPrevious.getHandle())) {
 						fActiveTarget = target;
 						fTableViewer.setCheckedElements(new Object[] {fActiveTarget});
 						fTableViewer.refresh(target);
 						break;
 					}
-				}
-				if (fPrevious != null && !fPrevious.exists()) {
-					setMessage(PDEUIMessages.TargetPlatformPreferencePage2_23, IStatus.WARNING);
-					fWarningComp = SWTFactory.createComposite(comp, 2, 1, GridData.FILL_HORIZONTAL, 0, 0);
-					Label warningImage = SWTFactory.createLabel(fWarningComp, "", 1); //$NON-NLS-1$
-					gd = new GridData();
-					gd.verticalAlignment = SWT.TOP;
-					warningImage.setLayoutData(gd);
-					warningImage.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_WARN_TSK));
-					SWTFactory.createWrapLabel(fWarningComp, PDEUIMessages.TargetPlatformPreferencePage2_24, 1);
-					fWarningComp.moveAbove(tableComposite);
 				}
 			} catch (CoreException e) {
 				PDEPlugin.log(e);
@@ -406,12 +390,6 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		if (checked.length > 0) {
 			fActiveTarget = (ITargetDefinition) checked[0];
 			setMessage(null);
-			if (fWarningComp != null) {
-				Composite parent = fWarningComp.getParent();
-				fWarningComp.dispose();
-				fWarningComp = null;
-				parent.layout();
-			}
 			fTableViewer.refresh(true);
 			fTableViewer.setSelection(new StructuredSelection(fActiveTarget));
 		} else {
@@ -461,7 +439,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 
 				// Compare the target to the existing platform
 				try {
-					if (bundleStatus.getSeverity() != IStatus.ERROR && fActiveTarget.getHandle().equals(fPrevious) && ((TargetDefinition) fPrevious.getTargetDefinition()).isContentEquivalent(fActiveTarget)) {
+					if (bundleStatus.getSeverity() != IStatus.ERROR && fActiveTarget.getHandle().equals(fPrevious.getHandle()) && ((TargetDefinition) fPrevious).isContentEquivalent(fActiveTarget)) {
 						IStatus compare = getTargetService().compareWithTargetPlatform(fActiveTarget);
 						if (!compare.isOK()) {
 							MessageDialog.openInformation(getShell(), PDEUIMessages.TargetPlatformPreferencePage2_17, PDEUIMessages.TargetPlatformPreferencePage2_18);
@@ -603,7 +581,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		//fDuplicateButton.setEnabled(size == 1);
 		if (selection.getFirstElement() != null) {
 			fMoveButton.setEnabled(size == 1 && ((ITargetDefinition) selection.getFirstElement()).getHandle() instanceof LocalTargetHandle);
-			fReloadButton.setEnabled(((ITargetDefinition) selection.getFirstElement()) == fActiveTarget && fActiveTarget.getHandle().equals(fPrevious));
+			fReloadButton.setEnabled(((ITargetDefinition) selection.getFirstElement()) == fActiveTarget && fActiveTarget.getHandle().equals(fPrevious.getHandle()));
 		} else {
 			fMoveButton.setEnabled(false);
 			fReloadButton.setEnabled(false);
@@ -688,37 +666,30 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		// determine if default target has changed
 		ITargetDefinition toLoad = null;
 		boolean load = false;
-		try {
-			ITargetHandle activeHandle = null;
-			if (fActiveTarget != null) {
-				activeHandle = fActiveTarget.getHandle();
+		ITargetHandle activeHandle = null;
+		if (fActiveTarget != null) {
+			activeHandle = fActiveTarget.getHandle();
+		}
+		if (fPrevious == null) {
+			if (activeHandle != null) {
+				toLoad = fActiveTarget;
+				load = true;
 			}
-			if (fPrevious == null) {
-				if (activeHandle != null) {
-					toLoad = fActiveTarget;
-					load = true;
-				}
+		} else {
+			if (activeHandle == null) {
+				// load empty
+				load = true;
+			} else if (!fPrevious.getHandle().equals(activeHandle) || isOutOfSynch) {
+				toLoad = fActiveTarget;
+				load = true;
 			} else {
-				if (activeHandle == null) {
-					// load empty
-					load = true;
-				} else if (!fPrevious.equals(activeHandle) || isOutOfSynch) {
-					toLoad = fActiveTarget;
-					load = true;
+				if (((TargetDefinition) fPrevious).isContentEquivalent(fActiveTarget)) {
+					load = false;
 				} else {
-					ITargetDefinition original = fPrevious.getTargetDefinition();
-					// TODO: should just check for structural changes
-					if (((TargetDefinition) original).isContentEquivalent(fActiveTarget)) {
-						load = false;
-					} else {
-						load = true;
-						toLoad = fActiveTarget;
-					}
+					load = true;
+					toLoad = fActiveTarget;
 				}
 			}
-		} catch (CoreException e) {
-			ErrorDialog.openError(getShell(), PDEUIMessages.TargetPlatformPreferencePage2_8, PDEUIMessages.TargetPlatformPreferencePage2_9, e.getStatus());
-			return false;
 		}
 
 		// Move the marked definitions to workspace
@@ -829,7 +800,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 			};
 
 			LoadTargetDefinitionJob.load(toLoad, listener);
-			fPrevious = toLoad == null ? null : toLoad.getHandle();
+			fPrevious = toLoad == null ? null : toLoad;
 		}
 
 		fMoved.clear();

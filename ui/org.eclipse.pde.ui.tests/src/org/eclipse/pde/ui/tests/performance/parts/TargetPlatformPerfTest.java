@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 IBM Corporation and others.
+ * Copyright (c) 2011, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,8 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.performance.parts;
-
-import org.eclipse.pde.ui.tests.PDETestsPlugin;
 
 import java.io.*;
 import java.net.URL;
@@ -28,6 +26,7 @@ import org.eclipse.pde.core.project.IBundleProjectDescription;
 import org.eclipse.pde.core.project.IBundleProjectService;
 import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.ui.tests.PDETestsPlugin;
 import org.eclipse.pde.ui.tests.target.LocalTargetDefinitionTests;
 import org.eclipse.pde.ui.tests.util.TestBundleCreator;
 import org.eclipse.test.performance.Dimension;
@@ -56,7 +55,7 @@ public class TargetPlatformPerfTest extends PerformanceTestCase {
 	public static Test suite() {
 		return new TestSuite(TargetPlatformPerfTest.class);
 	}
-	
+
 	/**
 	 * Resolves an example target definition
 	 */
@@ -94,7 +93,7 @@ public class TargetPlatformPerfTest extends PerformanceTestCase {
 	 * Searches the model registry for various plug-ins to see how efficient model retrieval is
 	 */
 	public void testSearchModelRegistry() throws Exception {
-		tagAsSummary("Search model registry", Dimension.ELAPSED_PROCESS); //$NON-NLS-1$
+		tagAsSummary("Resolve target definition", Dimension.ELAPSED_PROCESS); //$NON-NLS-1$
 		IPath testBundles = extractTargetPerfTestPlugins();
 
 		IBundleProjectService service = (IBundleProjectService) PDECore.getDefault().acquireService(IBundleProjectService.class.getName());
@@ -229,7 +228,7 @@ public class TargetPlatformPerfTest extends PerformanceTestCase {
 
 	}
 
-	private IPath extractTargetPerfTestPlugins() throws Exception {
+	static IPath extractTargetPerfTestPlugins() throws Exception {
 		IPath stateLocation = PDETestsPlugin.getDefault().getStateLocation();
 		IPath location = stateLocation.append("targetPerfTestPlugins");
 		if (!location.toFile().exists()) {
@@ -245,7 +244,7 @@ public class TargetPlatformPerfTest extends PerformanceTestCase {
 	 * @param archivePath path to archive relative to the test plug-in
 	 * @throws IOException
 	 */
-	private IPath doUnZip(IPath location, String archivePath) throws IOException {
+	private static IPath doUnZip(IPath location, String archivePath) throws IOException {
 		URL zipURL = PDETestsPlugin.getBundleContext().getBundle().getEntry(archivePath);
 		Path zipPath = new Path(new File(FileLocator.toFileURL(zipURL).getFile()).getAbsolutePath());
 		ZipFile zipFile = new ZipFile(zipPath.toFile());

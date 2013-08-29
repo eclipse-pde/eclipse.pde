@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,12 +17,11 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IModelProviderEvent;
 import org.eclipse.pde.core.IModelProviderListener;
+import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.TargetFeature;
 import org.eclipse.pde.internal.core.feature.ExternalFeatureModel;
-import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.target.Messages;
-import org.osgi.framework.Version;
 
 /**
  * Manages the features known to the PDE state that come from the target platform.
@@ -60,67 +59,9 @@ public class ExternalFeatureModelManager {
 		}
 	}
 
-	public static IFeatureModel[] createModels(String platformHome, ArrayList<String> additionalLocations, IProgressMonitor monitor) {
-		if (platformHome != null && platformHome.length() > 0) {
-			URL[] featureURLs = PluginPathFinder.getFeaturePaths(platformHome);
-
-			if (additionalLocations.size() == 0)
-				return createModels(featureURLs, monitor);
-
-			File[] dirs = new File[additionalLocations.size()];
-			for (int i = 0; i < dirs.length; i++) {
-				String directory = additionalLocations.get(i).toString();
-				File dir = new File(directory, "features"); //$NON-NLS-1$
-				if (!dir.exists())
-					dir = new File(directory);
-				dirs[i] = dir;
-			}
-
-			URL[] newUrls = PluginPathFinder.scanLocations(dirs);
-
-			URL[] result = new URL[featureURLs.length + newUrls.length];
-			System.arraycopy(featureURLs, 0, result, 0, featureURLs.length);
-			System.arraycopy(newUrls, 0, result, featureURLs.length, newUrls.length);
-			return createModels(result, monitor);
-		}
-		return new IFeatureModel[0];
-	}
-
-	private static IFeatureModel[] createModels(URL[] featurePaths, IProgressMonitor monitor) {
-		if (monitor == null)
-			monitor = new NullProgressMonitor();
-		monitor.beginTask("", featurePaths.length); //$NON-NLS-1$
-		Map<String, IFeatureModel> uniqueFeatures = new HashMap<String, IFeatureModel>();
-		for (int i = 0; i < featurePaths.length; i++) {
-			File manifest = new File(featurePaths[i].getFile(), ICoreConstants.FEATURE_FILENAME_DESCRIPTOR);
-			if (!manifest.exists() || !manifest.isFile()) {
-				monitor.worked(1);
-				continue;
-			}
-			try {
-				IFeatureModel model = createModel(manifest);
-				if (model != null && model.isLoaded()) {
-					IFeature feature = model.getFeature();
-					uniqueFeatures.put(feature.getId() + "_" + feature.getVersion(), model); //$NON-NLS-1$
-				}
-			} catch (CoreException e) {
-				PDECore.log(e);
-			}
-			monitor.worked(1);
-		}
-		Collection<IFeatureModel> models = uniqueFeatures.values();
-		return models.toArray(new IFeatureModel[models.size()]);
-	}
-
 	private ListenerList fListeners = new ListenerList();
 
 	private IFeatureModel[] fModels;
-
-	private PDEPreferencesManager fPref;
-
-	public ExternalFeatureModelManager() {
-		fPref = PDECore.getDefault().getPreferencesManager();
-	}
 
 	public void addModelProviderListener(IModelProviderListener listener) {
 		fListeners.add(listener);
@@ -138,80 +79,61 @@ public class ExternalFeatureModelManager {
 	 * Loads new feature models from preferences and notifies listeners.
 	 */
 	public void initialize() {
-		// Load all features from the platform path and addditional locations then filter by the list of external features, if available
-		String platformHome = fPref.getString(ICoreConstants.PLATFORM_PATH);
-		String additionalLocations = fPref.getString(ICoreConstants.ADDITIONAL_LOCATIONS);
-		String externalFeaturesString = fPref.getString(ICoreConstants.EXTERNAL_FEATURES);
-
-		IFeatureModel[] oldModels = null;
-		IFeatureModel[] newModels = null;
 		// Do the model loading in a synch block in case other changes cause the models to load
+		IFeatureModel[] oldModels = null;
 		synchronized (this) {
 			oldModels = fModels != null ? fModels : new IFeatureModel[0];
-			IFeatureModel[] allModels = createModels(platformHome, parseAdditionalLocations(additionalLocations), null);
-			if (externalFeaturesString == null || externalFeaturesString.trim().length() == 0) {
-				fModels = allModels;
-			} else {
-				// To allow multiple versions of features, create a map of feature ids to a list of models
-				Map<String, List<IFeatureModel>> modelMap = new HashMap<String, List<IFeatureModel>>();
-				for (int i = 0; i < allModels.length; i++) {
-					String id = allModels[i].getFeature().getId();
-					if (modelMap.containsKey(id)) {
-						List<IFeatureModel> list = modelMap.get(id);
-						list.add(allModels[i]);
-					} else {
-						List<IFeatureModel> list = new ArrayList<IFeatureModel>();
-						list.add(allModels[i]);
-						modelMap.put(id, list);
-					}
-				}
-
-				// Loop through the filter list, finding an exact match in the available models or highest version match
-				Set<IFeatureModel> filteredModels = new HashSet<IFeatureModel>();
-				String[] entries = externalFeaturesString.split(","); //$NON-NLS-1$
-				for (int i = 0; i < entries.length; i++) {
-					String[] parts = entries[i].split("@"); //$NON-NLS-1$
-					if (parts.length > 0) {
-						String id = parts[0];
-						List<?> possibilities = modelMap.get(id);
-						if (possibilities != null) {
-							IFeatureModel candidate = null;
-							for (Iterator<?> iterator = possibilities.iterator(); iterator.hasNext();) {
-								IFeatureModel current = (IFeatureModel) iterator.next();
-								if (candidate == null) {
-									candidate = current;
-								} else if (parts.length > 1 && parts[1].equals(current.getFeature().getVersion())) {
-									candidate = current;
-								} else {
-									Version currentVersion = Version.parseVersion(current.getFeature().getVersion());
-									Version candidateVersion = Version.parseVersion(candidate.getFeature().getVersion());
-									if (currentVersion.compareTo(candidateVersion) == 1) {
-										candidate = current;
-									}
-								}
-							}
-							if (candidate != null) {
-								filteredModels.add(candidate);
-							}
-						}
-					}
-				}
-				fModels = filteredModels.toArray(new IFeatureModel[filteredModels.size()]);
+			long startTime = System.currentTimeMillis();
+			fModels = getExternalModels();
+			if (PDECore.DEBUG_MODEL) {
+				System.out.println("Time to load features from target platform (ms): " + (System.currentTimeMillis() - startTime)); //$NON-NLS-1$
+				System.out.println("External features loaded: " + fModels.length); //$NON-NLS-1$
 			}
-			newModels = new IFeatureModel[fModels.length];
-			System.arraycopy(fModels, 0, newModels, 0, fModels.length);
 		}
 		// Release lock when notifying listeners. See bug 270891.
-		notifyListeners(oldModels, newModels);
+		notifyListeners(oldModels, fModels);
 	}
 
-	private ArrayList<String> parseAdditionalLocations(String additionalLocations) {
-		ArrayList<String> result = new ArrayList<String>();
-		StringTokenizer tokenizer = new StringTokenizer(additionalLocations, ","); //$NON-NLS-1$
-		while (tokenizer.hasMoreTokens()) {
-			result.add(tokenizer.nextToken().trim());
+	/**
+	 * Returns a list of feature models from the target platform or an empty
+	 * array if there is a problem.
+	 * 
+	 * @return list of external feature models, possibly empty
+	 */
+	private IFeatureModel[] getExternalModels() {
+		ITargetDefinition target = null;
+		try {
+			target = TargetPlatformHelper.getWorkspaceTargetResolved(null);
+		} catch (CoreException e) {
+			PDECore.log(e);
+			return new IFeatureModel[0];
 		}
-		return result;
+
+		// Resolution cancelled
+		if (target == null) {
+			return new IFeatureModel[0];
+		}
+
+		List<IFeatureModel> result = new ArrayList<IFeatureModel>();
+		TargetFeature[] features = target.getAllFeatures();
+		if (features != null) {
+			for (int i = 0; i < features.length; i++) {
+				String location = features[i].getLocation();
+				File manifest = new File(location, ICoreConstants.FEATURE_FILENAME_DESCRIPTOR);
+				if (!manifest.exists() || !manifest.isFile()) {
+					continue;
+				}
+				try {
+					IFeatureModel model = createModel(manifest);
+					if (model != null && model.isLoaded()) {
+						result.add(model);
+					}
+				} catch (CoreException e) {
+					PDECore.log(e);
+				}
+			}
+		}
+		return result.toArray(new IFeatureModel[result.size()]);
 	}
 
 	private void notifyListeners(IFeatureModel[] oldModels, IFeatureModel[] newFeatureModels) {

@@ -11,6 +11,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.*;
 import java.util.Map.Entry;
 import org.eclipse.core.resources.*;
@@ -22,8 +25,8 @@ import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.core.target.*;
-import org.eclipse.pde.internal.core.target.*;
+import org.eclipse.pde.core.target.ITargetDefinition;
+import org.eclipse.pde.core.target.TargetBundle;
 
 public class PluginModelManager implements IModelProviderListener {
 
@@ -179,15 +182,6 @@ public class PluginModelManager implements IModelProviderListener {
 	}
 
 	/**
-	 * Saves the state of the instance of {@link PluginModelManager} if it exists.
-	 */
-	public static synchronized void saveInstance() {
-		if (fModelManager != null) {
-			fModelManager.save();
-		}
-	}
-
-	/**
 	 * Shuts down the instance of {@link PluginModelManager} if it exists.
 	 */
 	public static synchronized void shutdownInstance() {
@@ -204,7 +198,7 @@ public class PluginModelManager implements IModelProviderListener {
 
 		// Removes from the master table and the state all workspace plug-ins that have been
 		// removed (project closed/deleted) from the workspace.
-		// Also if the taget location changes, all models from the old target are removed
+		// Also if the target location changes, all models from the old target are removed
 		if ((e.getEventTypes() & IModelProviderEvent.MODELS_REMOVED) != 0) {
 			IModel[] removed = e.getRemovedModels();
 			for (int i = 0; i < removed.length; i++) {
@@ -212,14 +206,6 @@ public class PluginModelManager implements IModelProviderListener {
 				String id = model.getPluginBase().getId();
 				if (id != null)
 					handleRemove(id, model, delta);
-			}
-		}
-
-		// reset the state
-		if ((e.getEventTypes() & IModelProviderEvent.TARGET_CHANGED) != 0) {
-			Object newState = e.getEventSource();
-			if (newState instanceof PDEState) {
-				fState = (PDEState) newState;
 			}
 		}
 
@@ -239,17 +225,6 @@ public class PluginModelManager implements IModelProviderListener {
 			}
 		}
 
-		// add workspace plug-ins to the new state
-		// and remove their target counterparts from the state.
-		if ((e.getEventTypes() & IModelProviderEvent.TARGET_CHANGED) != 0) {
-			IPluginModelBase[] models = fWorkspaceManager.getPluginModels();
-			for (int i = 0; i < models.length; i++) {
-				addWorkspaceBundleToState(models[i]);
-			}
-			if (models.length > 0)
-				fState.resolveState(true);
-		}
-
 		// Update the bundle description of plug-ins whose state has changed.
 		// A plug-in changes state if the MANIFEST.MF has been touched.
 		// or if a plug-in on the Target Platform has changed state (from checked to unchecked,
@@ -264,23 +239,16 @@ public class PluginModelManager implements IModelProviderListener {
 			// if the target location has not changed, incrementally re-resolve the state after processing all the add/remove/modify changes
 			// Otherwise, the state is in a good resolved state
 			StateDelta stateDelta = null;
-			if ((e.getEventTypes() & IModelProviderEvent.TARGET_CHANGED) == 0) {
-				if ((e.getEventTypes() & IModelProviderEvent.ENVIRONMENT_CHANGED) != 0) {
-					// environment has changed, do complete resolution
-					stateDelta = fState.resolveState(false);
-				} else {
-					if (addedBSNs.isEmpty()) {
-						// resolve incrementally
-						stateDelta = fState.resolveState(true);
-					} else {
-						// resolve based on added bundles, in case there are multiple versions of the added bundles
-						stateDelta = fState.resolveState(addedBSNs.toArray(new String[addedBSNs.size()]));
-					}
-				}
+			if (addedBSNs.isEmpty()) {
+				// resolve incrementally
+				stateDelta = fState.resolveState(true);
+			} else {
+				// resolve based on added bundles, in case there are multiple versions of the added bundles
+				stateDelta = fState.resolveState(addedBSNs.toArray(new String[addedBSNs.size()]));
 			}
 			// trigger a classpath update for all workspace plug-ins affected by the
-			// processed batch of changes
-			updateAffectedEntries(stateDelta, e);
+			// processed batch of changes, run asynch for manifest changes
+			updateAffectedEntries(stateDelta, (e.getEventTypes() & IModelProviderEvent.MODELS_CHANGED) != 0);
 			fireStateDelta(stateDelta);
 
 		}
@@ -294,10 +262,10 @@ public class PluginModelManager implements IModelProviderListener {
 	 * model changes
 	 * 
 	 * @param delta  a state delta containing a list of bundles affected by the processed
-	 * 				changes
-	 * @param event event that triggered this update
+	 * 				changes, may be <code>null</code> to indicate the entire target has changed
+	 * @param runAsynch whether classpath updates should be done in an asynchronous job
 	 */
-	private void updateAffectedEntries(StateDelta delta, IModelProviderEvent event) {
+	private void updateAffectedEntries(StateDelta delta, boolean runAsynch) {
 		Map<IJavaProject, RequiredPluginsClasspathContainer> map = new HashMap<IJavaProject, RequiredPluginsClasspathContainer>();
 		if (delta == null) {
 			// if the delta is null, then the entire target changed.
@@ -363,8 +331,8 @@ public class PluginModelManager implements IModelProviderListener {
 				containers[index] = (IClasspathContainer) entry.getValue();
 				index++;
 			}
-			int types = event.getEventTypes();
-			if (types == IModelProviderEvent.MODELS_CHANGED) {
+			// TODO Consider always running in a job - better reporting and cancellation options
+			if (runAsynch) {
 				// We may be in the UI thread, so the classpath is updated in a job to avoid blocking (bug 376135)
 				fUpdateJob.add(projects, containers);
 				fUpdateJob.schedule();
@@ -484,6 +452,14 @@ public class PluginModelManager implements IModelProviderListener {
 	}
 
 	/**
+	 * Clears all existing models and recreates them
+	 */
+	public void targetReloaded(IProgressMonitor monitor) {
+		fEntries = null;
+		initializeTable(monitor);
+	}
+
+	/**
 	 * Allow access to the table only through this getter.
 	 * It always calls initialize to make sure the table is initialized.
 	 * If more than one thread tries to read the table at the same time,
@@ -491,17 +467,18 @@ public class PluginModelManager implements IModelProviderListener {
 	 * This way there are no partial reads.
 	 */
 	private Map<String, LocalModelEntry> getEntryTable() {
-		initializeTable();
+		initializeTable(null);
 		return fEntries;
 	}
 
 	/**
+	 * 
 	 * This method must be synchronized so that only one thread
 	 * initializes the table, and the rest would block until
 	 * the table is initialized.
 	 * 
 	 */
-	private synchronized void initializeTable() {
+	private synchronized void initializeTable(IProgressMonitor monitor) {
 		if (fEntries != null)
 			return;
 
@@ -513,160 +490,137 @@ public class PluginModelManager implements IModelProviderListener {
 			return;
 		}
 
+		SubMonitor subMon = SubMonitor.convert(monitor, PDECoreMessages.PluginModelManager_InitializingPluginModels, 100);
+		if (PDECore.DEBUG_MODEL) {
+			if (fState == null) {
+				System.out.println("\nInitializing PDE models"); //$NON-NLS-1$
+			} else {
+				System.out.println("\nTarget changed, recreating PDE models"); //$NON-NLS-1$
+			}
+		}
+
+		PDEState oldState = fState;
 		long startTime = System.currentTimeMillis();
 
 		// Cannot assign to fEntries here - will create a race condition with isInitialized()
 		Map<String, LocalModelEntry> entries = Collections.synchronizedMap(new TreeMap<String, LocalModelEntry>());
+		if (subMon.isCanceled()) {
+			return;
+		}
 
-		// Create a state that contains all bundles from the target and workspace
-		// If a workspace bundle has the same symbolic name as a target bundle,
-		// the target counterpart is subsequently removed from the state.
-		fState = new PDEState(fWorkspaceManager.getPluginPaths(), fExternalManager.getPluginPaths(), true, true, new NullProgressMonitor());
+		long startTargetModels = System.currentTimeMillis();
+		// Target models
+		URL[] externalUrls = getExternalBundles(subMon.newChild(40));
+		if (subMon.isCanceled()) {
+			return;
+		}
+		fState = new PDEState(externalUrls, true, true, subMon.newChild(15));
+		fExternalManager.setModels(fState.getTargetModels());
+		addToTable(entries, fExternalManager.getAllModels());
+		if (PDECore.DEBUG_MODEL) {
+			System.out.println(fState.getTargetModels().length + " target models created in  " + (System.currentTimeMillis() - startTargetModels) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		if (subMon.isCanceled()) {
+			return;
+		}
 
-		// initialize the enabled/disabled state of target models
-		// based on whether the bundle is checked/unchecked on the Target Platform
-		// preference page.
-		fExternalManager.initializeModels(fState.getTargetModels());
-
-		// add target models to the master table
-		boolean statechanged = addToTable(entries, fExternalManager.getAllModels());
-
-		// a state is combined only if the workspace plug-ins have not changed
-		// since the last shutdown of the workbench
-		if (fState.isCombined()) {
-			IPluginModelBase[] models = fState.getWorkspaceModels();
-			// initialize the workspace models from the cached state
-			fWorkspaceManager.initializeModels(models);
-			// add workspace models to the master table
-			addToTable(entries, models);
-			// resolve the state incrementally if some target models
-			// were removed
-			if (statechanged)
-				fState.resolveState(true);
-		} else {
-			// if we have no good cached state of workspace plug-ins,
-			// re-parse all/any workspace plug-ins
-			IPluginModelBase[] models = fWorkspaceManager.getPluginModels();
-
-			// add workspace plug-ins to the master table
-			addToTable(entries, models);
-
-			// add workspace plug-ins to the state
-			// and remove their target counterparts from the state.
-			for (int i = 0; i < models.length; i++) {
-				addWorkspaceBundleToState(entries, models[i]);
-			}
-
-			// resolve the state incrementally if any workspace plug-ins were found
-			if (models.length > 0)
-				fState.resolveState(true);
-
-			// flush the extension registry cache since workspace data (BundleDescription id's) have changed.
-			PDECore.getDefault().getExtensionsRegistry().targetReloaded();
+		// Workspace models
+		IPluginModelBase[] models = fWorkspaceManager.getPluginModels();
+		addToTable(entries, models);
+		if (subMon.isCanceled()) {
+			return;
+		}
+		long startWorkspaceAdditions = System.currentTimeMillis();
+		// add workspace plug-ins to the state
+		// and remove their target counterparts from the state.
+		for (int i = 0; i < models.length; i++) {
+			addWorkspaceBundleToState(entries, models[i]);
+		}
+		// resolve the state incrementally if any workspace plug-ins were found
+		if (models.length > 0) {
+			fState.resolveState(true);
+		}
+		subMon.worked(20);
+		if (PDECore.DEBUG_MODEL) {
+			System.out.println(fWorkspaceManager.getModels().length + " workspace models created in  " + (System.currentTimeMillis() - startWorkspaceAdditions) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		if (subMon.isCanceled()) {
+			return;
 		}
 
 		fEntries = entries;
-
-		// Create default target platform definition if required
-		initDefaultTargetPlatformDefinition();
-
-		// re-load the target if the corrupt POOLED_BUNDLES preference was being used
-		PDEPreferencesManager pref = PDECore.getDefault().getPreferencesManager();
-		String pooled = pref.getString(ICoreConstants.POOLED_BUNDLES);
-		if (pooled != null && pooled.trim().length() > 0) {
-			if (!ICoreConstants.VALUE_SAVED_NONE.equals(pooled.trim())) {
-				ITargetPlatformService service = (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
-				if (service != null) {
-					try {
-						ITargetHandle handle = service.getWorkspaceTargetHandle();
-						LoadTargetDefinitionJob.load(handle.getTargetDefinition());
-					} catch (CoreException e) {
-						PDECore.log(e);
-					}
-				}
-			}
+		// flush the extension registry cache since workspace data (BundleDescription id's) have changed.
+		PDECore.getDefault().getExtensionsRegistry().targetReloaded();
+		if (oldState != null) {
+			// Need to update classpath entries
+			updateAffectedEntries(null, true);
 		}
-
+		fireStateChanged(fState);
+		subMon.worked(25);
 		if (PDECore.DEBUG_MODEL) {
 			long time = System.currentTimeMillis() - startTime;
 			System.out.println("PDE plug-in model initialization complete: " + time + " ms"); //$NON-NLS-1$//$NON-NLS-2$
 		}
+
+		subMon.done();
+		if (monitor != null) {
+			monitor.done();
+		}
 	}
 
 	/**
-	 * Sets active target definition handle if not yet set. If an existing target
-	 * definition corresponds to workspace target settings, it is selected as the
-	 * active target. If there are no targets that correspond to workspace settings
-	 * a new definition is created. 
+	 * Returns an array of URL plug-in locations for external bundles loaded from the
+	 * current target platform.  The URLs will not be encoded.
+	 * 
+	 * @param monitor progress monitor
+	 * @return array of URLs for external bundles
 	 */
-	private synchronized void initDefaultTargetPlatformDefinition() {
-		ITargetPlatformService service = (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
-		if (service != null) {
-			String memento = PDECore.getDefault().getPreferencesManager().getString(ICoreConstants.WORKSPACE_TARGET_HANDLE);
-			if (memento.equals("")) { //$NON-NLS-1$
-				// no workspace target handle set, check if any targets are equivalent to current settings
-				ITargetHandle[] targets = service.getTargets(null);
-				TargetPlatformService ts = (TargetPlatformService) service;
-				// create target platform from current workspace settings
-				TargetDefinition curr = (TargetDefinition) ts.newTarget();
-				ITargetHandle wsHandle = null;
-				try {
-					ts.loadTargetDefinitionFromPreferences(curr);
-					for (int i = 0; i < targets.length; i++) {
-						if (curr.isContentEquivalent(targets[i].getTargetDefinition())) {
-							wsHandle = targets[i];
-							break;
-						}
-					}
-					if (wsHandle == null) {
-						// restore settings from preferences
-						ITargetDefinition def = ts.newDefaultTarget();
-						String defVMargs = def.getVMArguments();
-						if (curr.getVMArguments() == null) {
-							// previous to 3.5, default VM arguments were null instead of matching the host's
-							// so compare to null VM arguments
-							def.setVMArguments(null);
-						}
-						if (curr.isContentEquivalent(def)) {
-							// Target is equivalent to the default settings, just add it as active
-							curr.setName(Messages.TargetPlatformService_7);
-							curr.setVMArguments(defVMargs); // restore default VM arguments
-						} else {
-							// Custom target settings, add as new target platform and add default as well
-							curr.setName(PDECoreMessages.PluginModelManager_0);
+	private URL[] getExternalBundles(IProgressMonitor monitor) {
+		ITargetDefinition target = null;
+		try {
+			target = TargetPlatformHelper.getWorkspaceTargetResolved(monitor);
+		} catch (CoreException e) {
+			PDECore.log(e);
+			return new URL[0];
+		}
 
-							boolean defaultExists = false;
-							for (int i = 0; i < targets.length; i++) {
-								if (((TargetDefinition) def).isContentEquivalent(targets[i].getTargetDefinition())) {
-									defaultExists = true;
-									break;
-								}
-							}
-							if (!defaultExists) {
-								ts.saveTargetDefinition(def);
-							}
-						}
-						ts.saveTargetDefinition(curr);
-						wsHandle = curr.getHandle();
+		// Resolution was cancelled
+		if (target == null) {
+			return new URL[0];
+		}
+
+		// Log any known issues with the target platform to warn user
+		if (target.getStatus().getSeverity() == IStatus.ERROR) {
+			PDECore.log(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.PluginModelManager_CurrentTargetPlatformContainsErrors, new CoreException(target.getStatus())));
+		}
+
+		URL[] externalURLs = new URL[0];
+		TargetBundle[] bundles = target.getBundles();
+		if (bundles != null) {
+			List<URL> urls = new ArrayList<URL>(bundles.length);
+			for (int i = 0; i < bundles.length; i++) {
+				if (bundles[i].getStatus().isOK()) {
+					try {
+						File file = URIUtil.toFile(bundles[i].getBundleInfo().getLocation());
+						urls.add(file.toURL());
+					} catch (MalformedURLException e) {
+						// Ignore bad urls as they should be caught by the target resolution
 					}
-					PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
-					preferences.setValue(ICoreConstants.WORKSPACE_TARGET_HANDLE, wsHandle.getMemento());
-				} catch (CoreException e) {
-					PDECore.log(e);
 				}
 			}
+			externalURLs = urls.toArray(new URL[urls.size()]);
 		}
+
+		return externalURLs;
+
 	}
 
 	/**
 	 * Adds the given models to the corresponding ModelEntry in the master table
 	 * 
-	 * @param models  the models to be added to the master tabl
-	 * 
-	 * @return <code>true</code> if changes were made to the state; <code>false</code> otherwise
+	 * @param models  the models to be added to the master table
 	 */
-	private boolean addToTable(Map<String, LocalModelEntry> entries, IPluginModelBase[] models) {
-		boolean stateChanged = false;
+	private void addToTable(Map<String, LocalModelEntry> entries, IPluginModelBase[] models) {
 		for (int i = 0; i < models.length; i++) {
 			String id = models[i].getPluginBase().getId();
 			if (id == null)
@@ -679,15 +633,7 @@ public class PluginModelManager implements IModelProviderListener {
 			}
 			// add the model to the entry
 			entry.addModel(models[i]);
-
-			// if the model is a disabled external (target) model, remove it from 
-			// the state and set the stateChanged flag to true
-			if (models[i].getUnderlyingResource() == null && !models[i].isEnabled()) {
-				fState.removeBundleDescription(models[i].getBundleDescription());
-				stateChanged = true;
-			}
 		}
-		return stateChanged;
 	}
 
 	/**
@@ -915,7 +861,7 @@ public class PluginModelManager implements IModelProviderListener {
 	 * 			is not a plug-in project
 	 */
 	public IPluginModelBase findModel(IProject project) {
-		initializeTable();
+		initializeTable(null);
 		return fWorkspaceManager.getPluginModel(project);
 	}
 
@@ -1038,7 +984,7 @@ public class PluginModelManager implements IModelProviderListener {
 	 * @return  all plug-ins in the target platform
 	 */
 	public IPluginModelBase[] getExternalModels() {
-		initializeTable();
+		initializeTable(null);
 		return fExternalManager.getAllModels();
 	}
 
@@ -1048,7 +994,7 @@ public class PluginModelManager implements IModelProviderListener {
 	 * @return all plug-in models in the workspace
 	 */
 	public IPluginModelBase[] getWorkspaceModels() {
-		initializeTable();
+		initializeTable(null);
 		return fWorkspaceManager.getPluginModels();
 	}
 
@@ -1058,7 +1004,7 @@ public class PluginModelManager implements IModelProviderListener {
 	 * @return  the model manager that keeps track of plug-ins in the target platform
 	 */
 	public ExternalModelManager getExternalModelManager() {
-		initializeTable();
+		initializeTable(null);
 		return fExternalManager;
 	}
 
@@ -1067,30 +1013,8 @@ public class PluginModelManager implements IModelProviderListener {
 	 * that form the current PDE state
 	 */
 	public PDEState getState() {
-		initializeTable();
+		initializeTable(null);
 		return fState;
-	}
-
-	/**
-	 * Sets the PDE state.  This method is meant to be called when the target platform
-	 * location changes.
-	 * 
-	 * @param state  the new state
-	 */
-	public void resetState(PDEState state) {
-		if (fState != null && fState.equals(state))
-			return;
-		// clear all models and add new ones
-		int type = IModelProviderEvent.TARGET_CHANGED;
-		IModel[] removed = fState.getTargetModels();
-		if (removed.length > 0)
-			type |= IModelProviderEvent.MODELS_REMOVED;
-		IModel[] added = state.getTargetModels();
-		if (added.length > 0)
-			type |= IModelProviderEvent.MODELS_ADDED;
-		modelsChanged(new ModelProviderEvent(state, type, added, removed, new IModel[0]));
-
-		fireStateChanged(state);
 	}
 
 	/**
@@ -1113,16 +1037,6 @@ public class PluginModelManager implements IModelProviderListener {
 			fListeners.clear();
 		if (fStateListeners != null)
 			fStateListeners.clear();
-	}
-
-	/**
-	 * Called as part of save participant. Save's PDE model state.
-	 */
-	protected void save() {
-		if (fState != null) {
-			fState.saveExternalState();
-			fState.saveWorkspaceState();
-		}
 	}
 
 	public void addExtensionDeltaListener(IExtensionDeltaListener listener) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 IBM Corporation and others.
+ * Copyright (c) 2006, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,7 @@ package org.eclipse.pde.internal.launching.launcher;
 import java.util.*;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.launching.IPDEConstants;
 import org.eclipse.pde.launching.IPDELauncherConstants;
 import org.eclipse.pde.launching.OSGiLaunchConfigurationInitializer;
@@ -45,8 +45,7 @@ public class EquinoxInitializer extends OSGiLaunchConfigurationInitializer {
 
 	private void initializeVMArguments(ILaunchConfigurationWorkingCopy configuration) {
 		configuration.setAttribute(IPDEConstants.LAUNCHER_PDE_VERSION, "3.3"); //$NON-NLS-1$
-		PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
-		StringBuffer vmArgs = new StringBuffer(preferences.getString(ICoreConstants.VM_ARGS));
+		StringBuffer vmArgs = new StringBuffer(LaunchArgumentsHelper.getInitialVMArguments());
 		if (vmArgs.indexOf("-Declipse.ignoreApp") == -1) { //$NON-NLS-1$
 			if (vmArgs.length() > 0)
 				vmArgs.append(" "); //$NON-NLS-1$

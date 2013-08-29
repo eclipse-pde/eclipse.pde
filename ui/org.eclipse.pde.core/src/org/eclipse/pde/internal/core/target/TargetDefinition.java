@@ -721,15 +721,18 @@ public class TargetDefinition implements ITargetDefinition {
 	 * specified definition
 	 */
 	public boolean isContentEquivalent(ITargetDefinition definition) {
-		if (isNullOrEqual(getArch(), definition.getArch()) && isNullOrEqual(getNL(), definition.getNL()) && isNullOrEqual(getOS(), definition.getOS()) && isNullOrEqual(getWS(), definition.getWS()) && isArgsNullOrEqual(getProgramArguments(), definition.getProgramArguments()) && isArgsNullOrEqual(getVMArguments(), definition.getVMArguments()) && isNullOrEqual(getJREContainer(), definition.getJREContainer())) {
-			// Check includes/optional
-			if (isNullOrEqual(getIncluded(), definition.getIncluded())) {
-				// Check containers
-				ITargetLocation[] c1 = getTargetLocations();
-				ITargetLocation[] c2 = definition.getTargetLocations();
-				if (areContainersEqual(c1, c2)) {
-					// Check implicit dependencies
-					return isNullOrEqual(getImplicitDependencies(), definition.getImplicitDependencies());
+		// Environment settings of null mean to take the current platform settings, therefore we treat null values are always being equal
+		if (isEitherNullOrEqual(getArch(), definition.getArch()) && isEitherNullOrEqual(getNL(), definition.getNL()) && isEitherNullOrEqual(getOS(), definition.getOS()) && isEitherNullOrEqual(getWS(), definition.getWS())) {
+			if (isArgsNullOrEqual(getProgramArguments(), definition.getProgramArguments()) && isArgsNullOrEqual(getVMArguments(), definition.getVMArguments()) && isNullOrEqual(getJREContainer(), definition.getJREContainer())) {
+				// Check includes/optional
+				if (isNullOrEqual(getIncluded(), definition.getIncluded())) {
+					// Check containers
+					ITargetLocation[] c1 = getTargetLocations();
+					ITargetLocation[] c2 = definition.getTargetLocations();
+					if (areContainersEqual(c1, c2)) {
+						// Check implicit dependencies
+						return isNullOrEqual(getImplicitDependencies(), definition.getImplicitDependencies());
+					}
 				}
 			}
 		}
@@ -742,6 +745,13 @@ public class TargetDefinition implements ITargetDefinition {
 		}
 		if (o2 == null) {
 			return false;
+		}
+		return o1.equals(o2);
+	}
+
+	private boolean isEitherNullOrEqual(Object o1, Object o2) {
+		if (o1 == null || o2 == null) {
+			return true;
 		}
 		return o1.equals(o2);
 	}
@@ -812,6 +822,7 @@ public class TargetDefinition implements ITargetDefinition {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		StringBuffer buf = new StringBuffer();
 		buf.append(fName != null ? fName : "No Name"); //$NON-NLS-1$

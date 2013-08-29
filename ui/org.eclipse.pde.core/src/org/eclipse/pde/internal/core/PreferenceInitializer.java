@@ -10,10 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.util.Locale;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.*;
-import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.builders.CompilerFlags;
 import org.eclipse.pde.internal.core.natures.PDE;
 import org.osgi.service.prefs.BackingStoreException;
@@ -27,28 +24,6 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 	 */
 	@Override
 	public void initializeDefaultPreferences() {
-		IEclipsePreferences defaultPreferences = DefaultScope.INSTANCE.getNode(PDECore.PLUGIN_ID);
-		IEclipsePreferences preferences = InstanceScope.INSTANCE.getNode(PDECore.PLUGIN_ID);
-		defaultPreferences.put(ICoreConstants.TARGET_MODE, ICoreConstants.VALUE_USE_THIS);
-		defaultPreferences.put(ICoreConstants.CHECKED_PLUGINS, ICoreConstants.VALUE_SAVED_ALL);
-		defaultPreferences.put(ICoreConstants.CHECKED_VERSION_PLUGINS, ICoreConstants.VALUE_SAVED_NONE);
-		if (preferences.get(ICoreConstants.TARGET_MODE, defaultPreferences.get(ICoreConstants.TARGET_MODE, "")).equals(ICoreConstants.VALUE_USE_THIS)) { //$NON-NLS-1$
-			preferences.put(ICoreConstants.PLATFORM_PATH, TargetPlatform.getDefaultLocation());
-		} else {
-			defaultPreferences.put(ICoreConstants.PLATFORM_PATH, TargetPlatform.getDefaultLocation());
-		}
-		// set defaults for the target environment variables.
-		defaultPreferences.put(ICoreConstants.OS, Platform.getOS());
-		defaultPreferences.put(ICoreConstants.WS, Platform.getWS());
-		defaultPreferences.put(ICoreConstants.NL, Locale.getDefault().toString());
-		defaultPreferences.put(ICoreConstants.ARCH, Platform.getOSArch());
-		defaultPreferences.putBoolean(ICoreConstants.TARGET_PLATFORM_REALIZATION, TargetPlatform.getDefaultLocation().equals(TargetPlatform.getLocation()));
-		try {
-			preferences.flush();
-			defaultPreferences.flush();
-		} catch (BackingStoreException bse) {
-			PDECore.log(bse);
-		}
 		//set defaults for compiler preferences in org.eclipse.pde pref node, not org.eclipse.pde.core
 		IEclipsePreferences prefs = DefaultScope.INSTANCE.getNode(PDE.PLUGIN_ID);
 		prefs.putInt(CompilerFlags.P_UNRESOLVED_IMPORTS, CompilerFlags.ERROR);

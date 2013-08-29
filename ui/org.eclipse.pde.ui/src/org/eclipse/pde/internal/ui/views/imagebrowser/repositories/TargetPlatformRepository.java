@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2012 Christian Pontesegger and others.
+ *  Copyright (c) 2012, 2013 Christian Pontesegger and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -71,10 +71,7 @@ public class TargetPlatformRepository extends AbstractRepository {
 			if (service != null) {
 				ITargetDefinition fDefinition = null;
 				if (fUseCurrent) {
-					ITargetHandle workspaceTargetHandle = service.getWorkspaceTargetHandle();
-					if (workspaceTargetHandle != null) {
-						fDefinition = workspaceTargetHandle.getTargetDefinition();
-					}
+					fDefinition = service.getWorkspaceTargetDefinition();
 				} else {
 					fDefinition = service.newDefaultTarget();
 				}
@@ -111,15 +108,12 @@ public class TargetPlatformRepository extends AbstractRepository {
 		try {
 			ITargetPlatformService service = (ITargetPlatformService) PlatformUI.getWorkbench().getService(ITargetPlatformService.class);
 			if (service != null) {
-				ITargetHandle workspaceTargetHandle = service.getWorkspaceTargetHandle();
-				if (workspaceTargetHandle != null) {
-					ITargetDefinition definition = workspaceTargetHandle.getTargetDefinition();
-					String name = definition.getName();
-					if (name.length() > 30) {
-						name = name.substring(0, 30);
-					}
-					return NLS.bind(PDEUIMessages.TargetPlatformRepository_TargetPlatformLabel, name);
+				ITargetDefinition definition = service.getWorkspaceTargetDefinition();
+				String name = definition.getName();
+				if (name.length() > 30) {
+					name = name.substring(0, 30);
 				}
+				return NLS.bind(PDEUIMessages.TargetPlatformRepository_TargetPlatformLabel, name);
 			}
 		} catch (CoreException e) {
 			PDEPlugin.log(e);

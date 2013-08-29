@@ -24,7 +24,6 @@ import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.launching.ExecutionArguments;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.core.target.ITargetHandle;
 import org.eclipse.pde.core.target.ITargetPlatformService;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.core.*;
@@ -124,42 +123,34 @@ public class LaunchArgumentsHelper {
 	 * @return	VM Arguments from the current Target Platform or empty string if none found
 	 */
 	public static String getInitialVMArguments() {
-
 		try {
 			ITargetPlatformService service = (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
 			if (service != null) {
-				ITargetHandle target = service.getWorkspaceTargetHandle();
-				if (target != null) {
-					String result = target.getTargetDefinition().getVMArguments();
-					result = result != null ? result : ""; //$NON-NLS-1$
-					return result;
-				}
+				String result = service.getWorkspaceTargetDefinition().getVMArguments();
+				result = result != null ? result : ""; //$NON-NLS-1$
+				return result;
 			}
 		} catch (CoreException e) {
+			PDECore.log(e);
 		}
-
-		// TODO: Generally, once the new preference target platform preference page is in use,
-		// this code path will not be used. Once we decide to remove support for old targets/preferences
-		// this code can be removed.
-		PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
-		StringBuffer result = new StringBuffer(preferences.getString(ICoreConstants.VM_ARGS));
-
-		if (preferences.getBoolean(ICoreConstants.VM_LAUNCHER_INI)) {
-			// hack on the arguments from eclipse.ini
-			result.append(TargetPlatformHelper.getIniVMArgs());
-		}
-		return result.toString();
+		return ""; //$NON-NLS-1$
 	}
 
 	public static String getInitialProgramArguments() {
 		StringBuffer buffer = new StringBuffer("-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl} -consoleLog"); //$NON-NLS-1$
 
-		PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
-		String programArgs = preferences.getString(ICoreConstants.PROGRAM_ARGS);
-		if (programArgs.length() > 0) {
-			buffer.append(" "); //$NON-NLS-1$
-			buffer.append(programArgs);
+		try {
+			ITargetPlatformService service = (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
+			if (service != null) {
+				String result = service.getWorkspaceTargetDefinition().getProgramArguments();
+				if (result != null) {
+					buffer.append(' ').append(result);
+				}
+			}
+		} catch (CoreException e) {
+			PDECore.log(e);
 		}
+
 		return buffer.toString();
 	}
 

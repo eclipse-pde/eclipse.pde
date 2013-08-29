@@ -81,7 +81,6 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 		if (fModel == null) {
 			if (PDECore.DEBUG_CLASSPATH) {
 				System.out.println("********Returned an empty container"); //$NON-NLS-1$
-				System.out.println();
 			}
 			return new IClasspathEntry[0];
 		}
@@ -91,9 +90,8 @@ public class RequiredPluginsClasspathContainer extends PDEClasspathContainer imp
 		if (PDECore.DEBUG_CLASSPATH) {
 			System.out.println("Dependencies for plugin '" + fModel.getPluginBase().getId() + "':"); //$NON-NLS-1$ //$NON-NLS-2$
 			for (int i = 0; i < fEntries.length; i++) {
-				System.out.println(fEntries[i]);
+				System.out.println("\t" + fEntries[i]); //$NON-NLS-1$
 			}
-			System.out.println();
 		}
 		return fEntries;
 	}

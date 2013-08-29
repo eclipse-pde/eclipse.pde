@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,9 +11,6 @@
  *     EclipseSource Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.launcher;
-
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
 
 import java.util.*;
 import java.util.List;
@@ -30,7 +27,8 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.DependencyManager;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.launching.launcher.BundleLauncherHelper;
 import org.eclipse.pde.internal.launching.launcher.LaunchValidationOperation;
 import org.eclipse.pde.internal.ui.*;
@@ -119,6 +117,7 @@ public abstract class AbstractPluginBlock {
 			return BundleLauncherHelper.writeBundleEntry(model, startLevel, autoStart);
 		}
 
+		@Override
 		public String toString() {
 			Collections.sort(nameList);
 			StringBuffer result = new StringBuffer();
@@ -141,10 +140,12 @@ public abstract class AbstractPluginBlock {
 	 */
 	class OSGiLabelProvider extends PDELabelProvider {
 
+		@Override
 		public Image getColumnImage(Object obj, int index) {
 			return index == 0 ? super.getColumnImage(obj, index) : null;
 		}
 
+		@Override
 		public String getColumnText(Object obj, int index) {
 			boolean isChecked = fPluginTreeViewer.getChecked(obj);
 			switch (index) {
@@ -198,6 +199,7 @@ public abstract class AbstractPluginBlock {
 			}
 		}
 
+		@Override
 		public void widgetSelected(SelectionEvent e) {
 			Object source = e.getSource();
 
@@ -258,26 +260,7 @@ public abstract class AbstractPluginBlock {
 	 */
 	protected IPluginModelBase[] getExternalModels() {
 		if (fExternalModels == null) {
-			PDEPreferencesManager pref = PDECore.getDefault().getPreferencesManager();
-			String saved = pref.getString(ICoreConstants.CHECKED_PLUGINS);
-			if (saved.equals(ICoreConstants.VALUE_SAVED_NONE)) {
-				fExternalModels = new IPluginModelBase[0];
-				return fExternalModels;
-			}
-
-			IPluginModelBase[] models = PluginRegistry.getExternalModels();
-			if (saved.equals(ICoreConstants.VALUE_SAVED_ALL)) {
-				fExternalModels = models;
-				return fExternalModels;
-			}
-
-			ArrayList<IPluginModelBase> list = new ArrayList<IPluginModelBase>(models.length);
-			for (int i = 0; i < models.length; i++) {
-				if (models[i].isEnabled()) {
-					list.add(models[i]);
-				}
-			}
-			fExternalModels = list.toArray(new IPluginModelBase[list.size()]);
+			fExternalModels = PluginRegistry.getExternalModels();
 		}
 		return fExternalModels;
 	}
@@ -414,6 +397,7 @@ public abstract class AbstractPluginBlock {
 			}
 		});
 		fPluginTreeViewer.setComparator(new ListUtil.PluginComparator() {
+			@Override
 			public int category(Object obj) {
 				if (obj == fWorkspacePlugins)
 					return -1;
@@ -470,6 +454,7 @@ public abstract class AbstractPluginBlock {
 		autoColumnEditor.minimumWidth = 60;
 
 		tree.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				// Clean up any previous editor control
 				Control oldEditor = levelColumnEditor.getEditor();
@@ -509,6 +494,7 @@ public abstract class AbstractPluginBlock {
 					combo.setText(item.getText(2));
 					combo.pack();
 					combo.addSelectionListener(new SelectionAdapter() {
+						@Override
 						public void widgetSelected(SelectionEvent e) {
 							if (item.getChecked()) {
 								item.setText(2, combo.getText());
@@ -550,6 +536,7 @@ public abstract class AbstractPluginBlock {
 	 *
 	 */
 	class Filter extends ViewerFilter {
+		@Override
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
 			if (fFilterButton.getSelection()) {
 				return fPluginTreeViewer.getChecked(element);

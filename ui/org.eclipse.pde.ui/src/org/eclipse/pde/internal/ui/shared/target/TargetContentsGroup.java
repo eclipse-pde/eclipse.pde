@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -258,6 +258,7 @@ public class TargetContentsGroup {
 			}
 		});
 		fTree.setSorter(new ViewerSorter() {
+			@Override
 			public int compare(Viewer viewer, Object e1, Object e2) {
 				if (fFeaureModeButton.getSelection()) {
 					if (e1 == OTHER_CATEGORY) {
@@ -290,6 +291,7 @@ public class TargetContentsGroup {
 
 		fMenuManager = new MenuManager();
 		fMenuManager.add(new Action(Messages.TargetContentsGroup_collapseAll, PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_ELCL_COLLAPSEALL)) {
+			@Override
 			public void run() {
 				fTree.collapseAll();
 			}
@@ -377,6 +379,7 @@ public class TargetContentsGroup {
 			fGroupComboPart.setItems(new String[] {Messages.TargetContentsGroup_1, Messages.TargetContentsGroup_2, Messages.TargetContentsGroup_3});
 			fGroupComboPart.setVisibleItemCount(30);
 			fGroupComboPart.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					handleGroupChange();
 				}
@@ -432,6 +435,7 @@ public class TargetContentsGroup {
 			gd.horizontalIndent = 10;
 			fGroupCombo.setLayoutData(gd);
 			fGroupCombo.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					handleGroupChange();
 				}
@@ -440,6 +444,7 @@ public class TargetContentsGroup {
 		}
 
 		fSelectButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (!fTree.getSelection().isEmpty()) {
 					Object[] selected = ((IStructuredSelection) fTree.getSelection()).toArray();
@@ -455,6 +460,7 @@ public class TargetContentsGroup {
 		});
 
 		fDeselectButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (!fTree.getSelection().isEmpty()) {
 					Object[] selected = ((IStructuredSelection) fTree.getSelection()).toArray();
@@ -470,6 +476,7 @@ public class TargetContentsGroup {
 		});
 
 		fSelectAllButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fTree.setAllChecked(true);
 				saveIncludedBundleState();
@@ -480,6 +487,7 @@ public class TargetContentsGroup {
 		});
 
 		fDeselectAllButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fTree.setAllChecked(false);
 				saveIncludedBundleState();
@@ -490,6 +498,7 @@ public class TargetContentsGroup {
 		});
 
 		fSelectRequiredButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				Object[] allChecked = fTree.getCheckedLeafElements();
 				Collection<Object> required = new ArrayList<Object>();
@@ -509,6 +518,7 @@ public class TargetContentsGroup {
 		});
 
 		fPluginModeButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				// Moving from feature based filtering to plug-in based, need to update storage
 				fTargetDefinition.setUIMode(TargetDefinition.MODE_PLUGIN);
@@ -536,6 +546,7 @@ public class TargetContentsGroup {
 		fPluginModeButton.setLayoutData(gd);
 
 		fFeaureModeButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				// Moving from plug-in based filtering to feature based, need to update storage
 				fTargetDefinition.setUIMode(TargetDefinition.MODE_FEATURE);
@@ -563,6 +574,7 @@ public class TargetContentsGroup {
 		fFeaureModeButton.setLayoutData(gd);
 
 		fShowPluginsButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (!fShowPluginsButton.getSelection()) {
 					fTree.addFilter(fPluginFilter);
@@ -580,6 +592,7 @@ public class TargetContentsGroup {
 		fShowPluginsButton.setLayoutData(gd);
 
 		fShowSourceButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (!fShowSourceButton.getSelection()) {
 					fTree.addFilter(fSourceFilter);
@@ -600,6 +613,7 @@ public class TargetContentsGroup {
 
 	private void initializeFilters() {
 		fSourceFilter = new ViewerFilter() {
+			@Override
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
 				if (element instanceof TargetBundle) {
 					if (((TargetBundle) element).isSourceBundle()) {
@@ -610,6 +624,7 @@ public class TargetContentsGroup {
 			}
 		};
 		fPluginFilter = new ViewerFilter() {
+			@Override
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
 				if (element instanceof TargetBundle) {
 					if (!((TargetBundle) element).isSourceBundle()) {
@@ -724,7 +739,7 @@ public class TargetContentsGroup {
 					monitor.worked(20);
 
 					// Create a PDE State containing all of the target bundles					
-					PDEState state = new PDEState(allLocations.toArray(new URL[allLocations.size()]), true, new SubProgressMonitor(monitor, 50));
+					PDEState state = new PDEState(allLocations.toArray(new URL[allLocations.size()]), true, false, new SubProgressMonitor(monitor, 50));
 					if (monitor.isCanceled()) {
 						return;
 					}

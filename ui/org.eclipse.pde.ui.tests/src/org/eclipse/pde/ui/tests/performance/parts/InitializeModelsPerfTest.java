@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2008 IBM Corporation and others.
+ *  Copyright (c) 2005, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -11,15 +11,21 @@
 package org.eclipse.pde.ui.tests.performance.parts;
 
 import java.io.File;
-import java.net.URL;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.pde.core.plugin.TargetPlatform;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.core.target.*;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.test.performance.Dimension;
 import org.eclipse.test.performance.PerformanceTestCase;
 
+/**
+ * Calls the load target platform job which will take a resolved target definition and
+ * initialize the PDE models from its content.
+ *
+ */
 public class InitializeModelsPerfTest extends PerformanceTestCase {
 
 	public static Test suite() {
@@ -33,22 +39,35 @@ public class InitializeModelsPerfTest extends PerformanceTestCase {
 	}
 
 	public void testModels() throws Exception {
-		tagAsGlobalSummary("Initialize Plug-ins (no caching)", Dimension.ELAPSED_PROCESS);
-		URL[] paths = getURLs();
-		startMeasuring();
-		new PDEState(paths, false, new NullProgressMonitor());
-		stopMeasuring();
-		commitMeasurements();
-		assertPerformance();
-	}
+		tagAsGlobalSummary("Initialize PDE Models", Dimension.ELAPSED_PROCESS);
+		IPath testBundles = TargetPlatformPerfTest.extractTargetPerfTestPlugins();
+		ITargetPlatformService tps = (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
+		ITargetDefinition originalTarget = tps.newTarget();
+		originalTarget.setTargetLocations(new ITargetLocation[]{tps.newDirectoryLocation(testBundles.toPortableString())});
+		tps.saveTargetDefinition(originalTarget);
 
-	public void testCachedModels() throws Exception {
-		tagAsSummary("Initialize Plug-ins (with caching)", Dimension.ELAPSED_PROCESS);
-		URL[] paths = getURLs();
-		new PDEState(paths, true, new NullProgressMonitor());
-		startMeasuring();
-		new PDEState(paths, true, new NullProgressMonitor());
-		stopMeasuring();
+		// Target resolution performance handled in TargetPlatformPerfTest
+		originalTarget.resolve(new NullProgressMonitor());
+
+		LoadTargetDefinitionJob load = new LoadTargetDefinitionJob(originalTarget);
+		LoadTargetDefinitionJob clear = new LoadTargetDefinitionJob(null);
+
+		// Warm-up Iterations
+		for (int i = 0; i < 3; i++) {
+			load.schedule();
+			load.join();
+			clear.schedule();
+			clear.join();
+		}
+		// Test Iterations
+		for (int i = 0; i < 50; i++) {
+			startMeasuring();
+			load.schedule();
+			load.join();
+			stopMeasuring();
+			clear.schedule();
+			clear.join();
+		}
 		commitMeasurements();
 		assertPerformance();
 	}
@@ -69,14 +88,6 @@ public class InitializeModelsPerfTest extends PerformanceTestCase {
 			}
 			curr.delete();
 		}
-	}
-
-	private URL[] getURLs() {
-		URL[] paths = PluginPathFinder.getPluginPaths(TargetPlatform.getLocation());
-		// FAIR ANALYSIS: this is the number of plug-ins in 3.1.x
-		URL[] result = new URL[89];
-		System.arraycopy(paths, 0, result, 0, 89);
-		return result;
 	}
 
 }

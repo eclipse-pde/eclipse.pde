@@ -228,7 +228,7 @@ public class MinimalState {
 			if (!all[i].isResolved()) {
 				VersionConstraint[] unsatisfiedConstraints = helper.getUnsatisfiedConstraints(all[i]);
 				if (unsatisfiedConstraints.length == 0) {
-					if (PDECore.DEBUG_CACHE) {
+					if (PDECore.DEBUG_MODEL) {
 						BundleDescription activeBundle = findActiveBundle(all[i].getSymbolicName());
 						String message = "Plug-in located at \"" + all[i].getLocation() + "\" was disabled because plug-in located at \"" + activeBundle.getLocation() + "\" was selected."; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 						System.out.print(message);

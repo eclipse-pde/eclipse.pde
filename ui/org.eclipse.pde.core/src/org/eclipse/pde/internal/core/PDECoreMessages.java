@@ -57,6 +57,8 @@ public class PDECoreMessages extends NLS {
 
 	public static String P2Utils_UnableToAcquireP2Service;
 
+	public static String PDEState_CreatingTargetModelState;
+
 	public static String ProductExportOperation_0;
 
 	public static String PropertiesTextChangeListener_editNames_delete;
@@ -70,6 +72,10 @@ public class PDECoreMessages extends NLS {
 	public static String SchemaElementReference_refElementMissing;
 
 	public static String TargetPlatform_exceptionThrown;
+
+	public static String TargetPlatformHelper_CouldNotAcquireTargetService;
+
+	public static String TargetPlatformHelper_LoadingTargetPlatform;
 
 	public static String TargetPlatformProvisionTask_ErrorDefinitionNotFoundAtSpecifiedLocation;
 	public static String TargetPlatformProvisionTask_ErrorDefinitionNotSet;
@@ -298,17 +304,14 @@ public class PDECoreMessages extends NLS {
 
 	public static String ExtensionsErrorReporter_InvalidSchema;
 
-	public static String PluginConverter_BundleLocationIsNull;
-	public static String PluginConverter_EclipseConverterErrorCreatingBundleManifest;
-	public static String PluginConverter_EclipseConverterErrorParsingPluginManifest;
-	public static String PluginConverter_EclipseConverterFileNotFound;
-
 	public static String PluginModelManager_0;
 	public static String PluginModelManager_1;
 
-	public static String PluginModelManager_PlatformAdminMissingErrorMessage;
+	public static String PluginModelManager_CurrentTargetPlatformContainsErrors;
 
-	public static String PluginParser_EclipseConverterMissingAttribute;
+	public static String PluginModelManager_InitializingPluginModels;
+
+	public static String PluginModelManager_PlatformAdminMissingErrorMessage;
 
 	public static String XMLTextChangeListener_editNames_addAttribute;
 	public static String XMLTextChangeListener_editNames_addContent;

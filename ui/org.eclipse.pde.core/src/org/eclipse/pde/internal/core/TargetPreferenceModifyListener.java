@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,30 +28,8 @@ public class TargetPreferenceModifyListener extends PreferenceModifyListener {
 		 */
 		public boolean visit(IEclipsePreferences node) throws BackingStoreException {
 			if (node.name().equals(PDECore.PLUGIN_ID)) {
-				// remove all target platform setting preferences
-				node.remove(ICoreConstants.ADDITIONAL_LOCATIONS);
-				node.remove(ICoreConstants.ARCH);
-				node.remove(ICoreConstants.CHECKED_PLUGINS);
-				node.remove(ICoreConstants.CHECKED_VERSION_PLUGINS);
-				node.remove(ICoreConstants.IMPLICIT_DEPENDENCIES);
-				node.remove(ICoreConstants.NL);
-				node.remove(ICoreConstants.PLATFORM_PATH);
-				node.remove(ICoreConstants.POOLED_BUNDLES);
-				node.remove(ICoreConstants.POOLED_URLS);
-				node.remove(ICoreConstants.PROGRAM_ARGS);
-				node.remove(ICoreConstants.OS);
-				for (int i = 0; i < 4; i++) {
-					StringBuffer key = new StringBuffer();
-					key.append(ICoreConstants.SAVED_PLATFORM);
-					key.append(i);
-					node.remove(key.toString());
-				}
-				node.remove(ICoreConstants.TARGET_MODE);
-				node.remove(ICoreConstants.TARGET_PLATFORM_REALIZATION);
-				node.remove(ICoreConstants.TARGET_PROFILE);
-				node.remove(ICoreConstants.VM_ARGS);
+				// Importing the preferences should not change the current target platform
 				node.remove(ICoreConstants.WORKSPACE_TARGET_HANDLE);
-				node.remove(ICoreConstants.WS);
 				return false;
 			}
 			return true;
@@ -62,6 +40,7 @@ public class TargetPreferenceModifyListener extends PreferenceModifyListener {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.preferences.PreferenceModifyListener#preApply(org.eclipse.core.runtime.preferences.IEclipsePreferences)
 	 */
+	@Override
 	public IEclipsePreferences preApply(IEclipsePreferences node) {
 		try {
 			node.accept(new Visitor());

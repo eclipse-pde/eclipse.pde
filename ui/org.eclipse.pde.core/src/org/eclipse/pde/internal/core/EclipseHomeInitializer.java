@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2009 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.ClasspathVariableInitializer;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.pde.core.plugin.TargetPlatform;
 
 public class EclipseHomeInitializer extends ClasspathVariableInitializer {
 
@@ -22,15 +23,14 @@ public class EclipseHomeInitializer extends ClasspathVariableInitializer {
 	/**
 	 * @see ClasspathVariableInitializer#initialize(String)
 	 */
+	@Override
 	public void initialize(String variable) {
 		resetEclipseHomeVariable();
 	}
 
 	public static void resetEclipseHomeVariable() {
 		try {
-			PDEPreferencesManager pref = PDECore.getDefault().getPreferencesManager();
-			String platformHome = pref.getString(ICoreConstants.PLATFORM_PATH);
-			JavaCore.setClasspathVariable(ECLIPSE_HOME_VARIABLE, new Path(platformHome), null);
+			JavaCore.setClasspathVariable(ECLIPSE_HOME_VARIABLE, new Path(TargetPlatform.getLocation()), null);
 		} catch (CoreException e) {
 		}
 	}

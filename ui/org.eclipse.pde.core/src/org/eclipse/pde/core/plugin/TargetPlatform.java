@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2012 IBM Corporation and others.
+ *  Copyright (c) 2007, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -15,8 +15,13 @@ import java.net.URL;
 import java.util.Properties;
 import java.util.Set;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.variables.IStringVariableManager;
+import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.osgi.service.datalocation.Location;
+import org.eclipse.pde.core.target.ITargetDefinition;
+import org.eclipse.pde.core.target.ITargetLocation;
 import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.target.TargetPlatformService;
 
 /**
  * The central class for the plug-in development target platform. This class cannot
@@ -45,14 +50,29 @@ public class TargetPlatform {
 	private static String IDE_APPLICATION = "org.eclipse.ui.ide.workbench"; //$NON-NLS-1$
 
 	/**
-	 * Returns the target platform's main location as specified on the <b>Environment</b>
-	 * tab of the <b>Plug-in Development > Target Platform</b> preference page.
+	 * Returns the target platform's main location. As target platforms may contain multiple
+	 * locations it is recommended that you use ITargetPlatformService instead.
 	 *  
 	 * @return the target platform's main location
 	 */
 	public static String getLocation() {
-		PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
-		return preferences.getString(ICoreConstants.PLATFORM_PATH);
+		try {
+			ITargetDefinition target = TargetPlatformService.getDefault().getWorkspaceTargetDefinition();
+			ITargetLocation[] containers = target.getTargetLocations();
+			// the first container is assumed to be the primary/home location
+			String path = null;
+			if (containers != null && containers.length > 0) {
+				path = containers[0].getLocation(true);
+				if (path != null) {
+					IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
+					path = manager.performStringSubstitution(path);
+					return path;
+				}
+			}
+		} catch (CoreException e) {
+			PDECore.log(e);
+		}
+		return getDefaultLocation();
 	}
 
 	/**
@@ -78,7 +98,16 @@ public class TargetPlatform {
 	 * @return the target operating system
 	 */
 	public static String getOS() {
-		return getProperty(ICoreConstants.OS, Platform.getOS());
+		try {
+			ITargetDefinition target = TargetPlatformService.getDefault().getWorkspaceTargetDefinition();
+			String result = target.getOS();
+			if (result != null) {
+				return result;
+			}
+		} catch (CoreException e) {
+			PDECore.log(e);
+		}
+		return Platform.getOS();
 	}
 
 	/**
@@ -88,7 +117,16 @@ public class TargetPlatform {
 	 * @return the target windowing system
 	 */
 	public static String getWS() {
-		return getProperty(ICoreConstants.WS, Platform.getWS());
+		try {
+			ITargetDefinition target = TargetPlatformService.getDefault().getWorkspaceTargetDefinition();
+			String result = target.getWS();
+			if (result != null) {
+				return result;
+			}
+		} catch (CoreException e) {
+			PDECore.log(e);
+		}
+		return Platform.getWS();
 	}
 
 	/**
@@ -98,7 +136,16 @@ public class TargetPlatform {
 	 * @return the target locale
 	 */
 	public static String getNL() {
-		return getProperty(ICoreConstants.NL, Platform.getNL());
+		try {
+			ITargetDefinition target = TargetPlatformService.getDefault().getWorkspaceTargetDefinition();
+			String result = target.getNL();
+			if (result != null) {
+				return result;
+			}
+		} catch (CoreException e) {
+			PDECore.log(e);
+		}
+		return Platform.getNL();
 	}
 
 	/**
@@ -108,13 +155,16 @@ public class TargetPlatform {
 	 * @return the target system architecture
 	 */
 	public static String getOSArch() {
-		return getProperty(ICoreConstants.ARCH, Platform.getOSArch());
-	}
-
-	private static String getProperty(String key, String defaultValue) {
-		PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
-		String value = preferences.getString(key);
-		return value.equals("") ? defaultValue : value; //$NON-NLS-1$
+		try {
+			ITargetDefinition target = TargetPlatformService.getDefault().getWorkspaceTargetDefinition();
+			String result = target.getArch();
+			if (result != null) {
+				return result;
+			}
+		} catch (CoreException e) {
+			PDECore.log(e);
+		}
+		return Platform.getOSArch();
 	}
 
 	/**

@@ -2771,8 +2771,6 @@ public class PDEUIMessages extends NLS {
 
 	public static String TargetPlatformPreferencePage2_23;
 
-	public static String TargetPlatformPreferencePage2_24;
-
 	public static String TargetPlatformPreferencePage2_25;
 
 	public static String TargetPlatformPreferencePage2_26;
@@ -2792,8 +2790,6 @@ public class PDEUIMessages extends NLS {
 	public static String TargetPlatformPreferencePage2_7;
 
 	public static String TargetPlatformPreferencePage2_8;
-
-	public static String TargetPlatformPreferencePage2_9;
 
 	public static String TargetPlatformRepository_CouldNotFindTargetPlatformService;
 

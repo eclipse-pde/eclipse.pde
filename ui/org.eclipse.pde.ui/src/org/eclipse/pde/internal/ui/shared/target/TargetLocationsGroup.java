@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,9 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.core.target.*;
-import org.eclipse.pde.internal.core.target.*;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.target.AbstractBundleContainer;
+import org.eclipse.pde.internal.core.target.IUBundleContainer;
 import org.eclipse.pde.internal.ui.SWTFactory;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.targetdefinition.TargetEditor;
@@ -439,11 +441,14 @@ public class TargetLocationsGroup {
 							fTreeViewer.refresh(true);
 							// If the target is the current platform, run a load job for the user
 							try {
-								ITargetHandle currentTarget = TargetPlatformService.getDefault().getWorkspaceTargetHandle();
-								if (fTarget.getHandle().equals(currentTarget))
-									LoadTargetDefinitionJob.load(fTarget);
+								ITargetPlatformService service = (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
+								if (service != null) {
+									ITargetHandle currentTarget = service.getWorkspaceTargetHandle();
+									if (fTarget.getHandle().equals(currentTarget))
+										LoadTargetDefinitionJob.load(fTarget);
+								}
 							} catch (CoreException e) {
-								// do nothing if we could not see the current target.
+								// do nothing if we could not set the current target.
 							}
 							updateButtons();
 						}

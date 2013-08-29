@@ -76,8 +76,7 @@ public class TargetRepositorySearchHandler extends AbstractHandler {
 	 */
 	private static void installIntoActiveTarget(IInstallableUnit[] units, URI[] repositories) throws CoreException {
 		ITargetPlatformService service = (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
-		ITargetHandle currentTarget = service.getWorkspaceTargetHandle();
-		ITargetDefinition definition = currentTarget.getTargetDefinition();
+		ITargetDefinition definition = service.getWorkspaceTargetDefinition();
 		// Force the target into slicer mode as all requirements may not be available
 		int flags = IUBundleContainer.INCLUDE_ALL_ENVIRONMENTS | IUBundleContainer.INCLUDE_SOURCE;
 		IUBundleContainer container = (IUBundleContainer) service.newIULocation(units, repositories, flags);

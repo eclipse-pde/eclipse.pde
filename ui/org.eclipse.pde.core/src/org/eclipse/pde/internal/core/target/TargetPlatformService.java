@@ -42,6 +42,12 @@ public class TargetPlatformService implements ITargetPlatformService {
 	private static Map<URI, ExternalFileTargetHandle> fExtTargetHandles;
 
 	/**
+	 * The target definition currently being used as the target platform for
+	 * the workspace.
+	 */
+	private ITargetDefinition fWorkspaceTarget;
+
+	/**
 	 * Collects target files in the workspace
 	 */
 	class ResourceProxyVisitor implements IResourceProxyVisitor {
@@ -252,21 +258,93 @@ public class TargetPlatformService implements ITargetPlatformService {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.target.ITargetPlatformService#getWorkspaceTargetDefinition()
+	 * @see org.eclipse.pde.core.target.ITargetPlatformService#getWorkspaceTargetHandle()
 	 */
 	public ITargetHandle getWorkspaceTargetHandle() throws CoreException {
-		// If the plug-in registry has not been initialized we may not have a target set, getting the start forces the init
-		PluginModelManager manager = PDECore.getDefault().getModelManager();
-		if (!manager.isInitialized()) {
-			manager.getExternalModelManager();
-		}
-
 		PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
 		String memento = preferences.getString(ICoreConstants.WORKSPACE_TARGET_HANDLE);
 		if (memento != null && memento.length() != 0 && !memento.equals(ICoreConstants.NO_TARGET)) {
 			return getTarget(memento);
 		}
 		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.target.ITargetPlatformService#getWorkspaceTargetDefinition()
+	 */
+	public synchronized ITargetDefinition getWorkspaceTargetDefinition() throws CoreException {
+		// TODO Check if the preference has changed, might be better to listen for preference changes
+		if (fWorkspaceTarget != null && fWorkspaceTarget.getHandle().equals(getWorkspaceTargetHandle())) {
+			return fWorkspaceTarget;
+		}
+
+		// If no target definition has been chosen before, try using preferences
+		initDefaultTargetPlatformDefinition();
+
+		// Load and resolve
+		String memento = PDECore.getDefault().getPreferencesManager().getString(ICoreConstants.WORKSPACE_TARGET_HANDLE);
+		ITargetDefinition target = null;
+		if (memento == null || memento.equals("") || memento.equals(ICoreConstants.NO_TARGET)) { //$NON-NLS-1$
+			target = newTarget();
+		} else {
+			ITargetHandle handle = getTarget(memento);
+			target = handle.getTargetDefinition();
+		}
+
+		fWorkspaceTarget = target;
+		return target;
+	}
+
+	/**
+	 * Updates the current stored target. Provided to allow the LoadTargetDefinitionJob
+	 * to pass along a possibly resolved target rather than force it to be resolved again.
+	 * This method will not update the stored {@link ICoreConstants#WORKSPACE_TARGET_HANDLE},
+	 * as it should only be called from LoadTargetDefinitionJob which does additional
+	 * steps to reset the target.
+	 * 
+	 * @param target the new workspace target definition
+	 */
+	public void setWorkspaceTargetDefinition(ITargetDefinition target) {
+		fWorkspaceTarget = target;
+	}
+
+	/**
+	 * Sets active target definition handle if not yet set. If an existing target
+	 * definition corresponds to workspace target settings, it is selected as the
+	 * active target. If there are no targets that correspond to workspace settings
+	 * a new definition is created. 
+	 */
+	private void initDefaultTargetPlatformDefinition() {
+		String memento = PDECore.getDefault().getPreferencesManager().getString(ICoreConstants.WORKSPACE_TARGET_HANDLE);
+		if (memento == null || memento.equals("")) { //$NON-NLS-1$
+			try {
+				if (PDECore.DEBUG_MODEL) {
+					System.out.println("No target platform memento, add default target."); //$NON-NLS-1$
+				}
+
+				// Add default target
+				ITargetDefinition defaultTarget = newDefaultTarget();
+				defaultTarget.setName(Messages.TargetPlatformService_7);
+				saveTargetDefinition(defaultTarget);
+
+				// Add target from preferences
+				TargetDefinition preferencesTarget = (TargetDefinition) getTargetFromPreferences();
+				if (preferencesTarget != null) {
+					if (PDECore.DEBUG_MODEL) {
+						System.out.println("Old target preferences found, loading them into active target."); //$NON-NLS-1$
+					}
+					preferencesTarget.setName(PDECoreMessages.PluginModelManager_0);
+					saveTargetDefinition(preferencesTarget);
+				}
+
+				// Set active platform
+				PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
+				ITargetHandle active = preferencesTarget != null ? preferencesTarget.getHandle() : defaultTarget.getHandle();
+				preferences.setValue(ICoreConstants.WORKSPACE_TARGET_HANDLE, active.getMemento());
+			} catch (CoreException e) {
+				PDECore.log(e);
+			}
+		}
 	}
 
 	/* (non-Javadoc)
@@ -302,22 +380,30 @@ public class TargetPlatformService implements ITargetPlatformService {
 	}
 
 	/**
-	 * This is a utility method to initialize a target definition based on current workspace
-	 * preference settings (target platform settings). It is not part of the service API since
-	 * the preference settings should eventually be removed.
+	 * Returns a target definition initialized with existing settings from the deprecated 
+	 * target platform preferences or <code>null</code> if no deprecated preferences are
+	 * found.
 	 * 
-	 * @param target target definition
-	 * @throws CoreException
+	 * @return a target definition initialized with existing settings or <code>null</code>
 	 */
-	public void loadTargetDefinitionFromPreferences(ITargetDefinition target) throws CoreException {
+	@SuppressWarnings("deprecation")
+	public ITargetDefinition getTargetFromPreferences() {
 		PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
-		initializeArgumentsInfo(preferences, target);
-		initializeEnvironmentInfo(preferences, target);
-		initializeImplicitInfo(preferences, target);
-		initializeLocationInfo(preferences, target);
-		initializeAdditionalLocsInfo(preferences, target);
-		initializeJREInfo(target);
-		initializePluginContent(preferences, target);
+		// See if the old preference for the primary target platform location exist 
+		boolean useThis = preferences.getString(ICoreConstants.TARGET_MODE).equals(ICoreConstants.VALUE_USE_THIS);
+		String platformPath = preferences.getString(ICoreConstants.PLATFORM_PATH);
+		if (useThis || (platformPath != null && platformPath.length() > 0)) {
+			ITargetDefinition target = newTarget();
+			initializeArgumentsInfo(preferences, target);
+			initializeEnvironmentInfo(preferences, target);
+			initializeImplicitInfo(preferences, target);
+			initializeLocationInfo(preferences, target);
+			initializeAdditionalLocsInfo(preferences, target);
+			initializeJREInfo(target);
+			initializePluginContent(preferences, target);
+			return target;
+		}
+		return null;
 	}
 
 	/**
@@ -336,6 +422,7 @@ public class TargetPlatformService implements ITargetPlatformService {
 		return value;
 	}
 
+	@SuppressWarnings("deprecation")
 	private void initializeArgumentsInfo(PDEPreferencesManager preferences, ITargetDefinition target) {
 		target.setProgramArguments(getValueOrNull(preferences.getString(ICoreConstants.PROGRAM_ARGS)));
 		StringBuffer result = new StringBuffer();
@@ -354,6 +441,7 @@ public class TargetPlatformService implements ITargetPlatformService {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	private void initializeEnvironmentInfo(PDEPreferencesManager preferences, ITargetDefinition target) {
 		target.setOS(getValueOrNull(preferences.getString(ICoreConstants.OS)));
 		target.setWS(getValueOrNull(preferences.getString(ICoreConstants.WS)));
@@ -361,6 +449,7 @@ public class TargetPlatformService implements ITargetPlatformService {
 		target.setArch(getValueOrNull(preferences.getString(ICoreConstants.ARCH)));
 	}
 
+	@SuppressWarnings("deprecation")
 	private void initializeImplicitInfo(PDEPreferencesManager preferences, ITargetDefinition target) {
 		String value = preferences.getString(ICoreConstants.IMPLICIT_DEPENDENCIES);
 		if (value.length() > 0) {
@@ -375,6 +464,7 @@ public class TargetPlatformService implements ITargetPlatformService {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	private void initializeLocationInfo(PDEPreferencesManager preferences, ITargetDefinition target) {
 		boolean useThis = preferences.getString(ICoreConstants.TARGET_MODE).equals(ICoreConstants.VALUE_USE_THIS);
 		boolean profile = preferences.getBoolean(ICoreConstants.TARGET_PLATFORM_REALIZATION);
@@ -418,6 +508,7 @@ public class TargetPlatformService implements ITargetPlatformService {
 		target.setTargetLocations(new ITargetLocation[] {primary});
 	}
 
+	@SuppressWarnings("deprecation")
 	private void initializeAdditionalLocsInfo(PDEPreferencesManager preferences, ITargetDefinition target) {
 		String additional = preferences.getString(ICoreConstants.ADDITIONAL_LOCATIONS);
 		StringTokenizer tokenizer = new StringTokenizer(additional, ","); //$NON-NLS-1$
@@ -437,6 +528,7 @@ public class TargetPlatformService implements ITargetPlatformService {
 		target.setJREContainer(null);
 	}
 
+	@SuppressWarnings("deprecation")
 	private void initializePluginContent(PDEPreferencesManager preferences, ITargetDefinition target) {
 		String value = preferences.getString(ICoreConstants.CHECKED_PLUGINS);
 		if (value.length() == 0 || value.equals(ICoreConstants.VALUE_SAVED_NONE)) {
@@ -502,17 +594,6 @@ public class TargetPlatformService implements ITargetPlatformService {
 		ITargetLocation container = newProfileLocation("${eclipse_home}", configLocation); //$NON-NLS-1$
 		target.setTargetLocations(new ITargetLocation[] {container});
 		target.setName(Messages.TargetPlatformService_7);
-		PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
-
-		// initialize environment with default settings
-		String value = getValueOrNull(preferences.getDefaultString(ICoreConstants.ARCH));
-		target.setArch(value);
-		value = getValueOrNull(preferences.getDefaultString(ICoreConstants.OS));
-		target.setOS(value);
-		value = getValueOrNull(preferences.getDefaultString(ICoreConstants.WS));
-		target.setWS(value);
-		value = getValueOrNull(preferences.getDefaultString(ICoreConstants.NL));
-		target.setNL(value);
 
 		// initialize vm arguments from the default container
 		ITargetLocation[] containers = target.getTargetLocations();

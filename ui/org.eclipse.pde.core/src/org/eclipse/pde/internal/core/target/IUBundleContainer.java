@@ -372,12 +372,6 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		return updated;
 	}
 
-	@Override
-	protected void clearResolutionStatus() {
-		super.clearResolutionStatus();
-		fSynchronizer.markDirty();
-	}
-
 	/**
 	 * Collects all available installable units from the given source that represent OSGI
 	 * bundles.  A IResolvedBundle is created for each and a map containing all results
@@ -636,8 +630,6 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	protected void associateWithTarget(ITargetDefinition target) {
 		super.associateWithTarget(target);
 		fSynchronizer = getSynchronizer(target);
-		// The synchronizer is being made dirty because this IU container is being associated with it
-		fSynchronizer.markDirty();
 		fSynchronizer.setIncludeAllRequired((fFlags & INCLUDE_REQUIRED) == INCLUDE_REQUIRED);
 		fSynchronizer.setIncludeAllEnvironments((fFlags & INCLUDE_ALL_ENVIRONMENTS) == INCLUDE_ALL_ENVIRONMENTS);
 		fSynchronizer.setIncludeSource((fFlags & INCLUDE_SOURCE) == INCLUDE_SOURCE);

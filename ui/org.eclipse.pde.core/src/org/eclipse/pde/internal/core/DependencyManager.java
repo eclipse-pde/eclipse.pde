@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2012 IBM Corporation and others.
+ *  Copyright (c) 2005, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -11,9 +11,12 @@
 package org.eclipse.pde.internal.core;
 
 import java.util.*;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.pde.core.plugin.IPluginExtension;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.target.ITargetPlatformService;
+import org.eclipse.pde.core.target.NameVersionDescriptor;
 import org.osgi.framework.Constants;
 
 /**
@@ -158,17 +161,22 @@ public class DependencyManager {
 	 * @return a set if bundle ids 
 	 */
 	private static String[] getImplicitDependencies() {
-		PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
-		String dependencies = preferences.getString(ICoreConstants.IMPLICIT_DEPENDENCIES);
-		if (dependencies.length() == 0) {
-			return new String[0];
+		try {
+			ITargetPlatformService service = (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
+			if (service != null) {
+				NameVersionDescriptor[] implicit = service.getWorkspaceTargetDefinition().getImplicitDependencies();
+				if (implicit != null) {
+					String[] result = new String[implicit.length];
+					for (int i = 0; i < implicit.length; i++) {
+						result[i] = implicit[i].getId();
+					}
+					return result;
+				}
+			}
+		} catch (CoreException e) {
+			PDECore.log(e);
 		}
-		StringTokenizer tokenizer = new StringTokenizer(dependencies, ","); //$NON-NLS-1$
-		String[] implicitIds = new String[tokenizer.countTokens()];
-		for (int i = 0; i < implicitIds.length; i++) {
-			implicitIds[i] = tokenizer.nextToken();
-		}
-		return implicitIds;
+		return new String[0];
 	}
 
 	/**

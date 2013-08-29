@@ -15,11 +15,14 @@ package org.eclipse.pde.internal.core;
 import java.io.*;
 import java.util.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.core.target.ITargetDefinition;
+import org.eclipse.pde.core.target.ITargetPlatformService;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.util.*;
@@ -136,7 +139,7 @@ public class TargetPlatformHelper {
 				if (underscoreIndex >= 0) {
 					id = id.substring(0, underscoreIndex);
 				}
-				// TODO If a relative path is used with a non .jar extension and does not have a version, we have no way of recognizing what the symbolic name is (bug 355890) 
+				// If a relative path is used with a non .jar extension and does not have a version, we have no way of recognizing what the symbolic name is (bug 355890) 
 				if (id.endsWith(JAR_EXTENSION)) {
 					id = id.substring(0, id.length() - 4);
 				}
@@ -158,7 +161,7 @@ public class TargetPlatformHelper {
 			return fCachedLocations.get(path);
 		}
 
-		// TODO There needs to be a better option than loading the entire manifest every time we need a name
+		// TODO Loading the entire manifest to get a name is an unecessary performance hit
 		File file = new File(path);
 		if (file.exists()) {
 			try {
@@ -424,6 +427,53 @@ public class TargetPlatformHelper {
 
 	public static State getState() {
 		return getPDEState().getState();
+	}
+
+	/**
+	 * Utility method to get the workspace active target platform and ensure it
+	 * has been resolved.  This is potentially a long running operation. If a 
+	 * monitor is provided, progress is reported to it.  If a monitor is not 
+	 * provided, the resolution will run in a named {@link Job}, but this
+	 * thread will join to run synchronously.
+	 * 
+	 * @param monitor optional progress monitor to report progress to
+	 * @return a resolved target definition or <code>null</code> if the resolution was cancelled
+	 * @throws CoreException if there is a problem accessing the workspace target definition
+	 */
+	public static ITargetDefinition getWorkspaceTargetResolved(IProgressMonitor monitor) throws CoreException {
+		ITargetPlatformService service = (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
+		if (service == null) {
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.TargetPlatformHelper_CouldNotAcquireTargetService));
+		}
+		final ITargetDefinition target = service.getWorkspaceTargetDefinition();
+
+		// Don't resolve again if we don't have to
+		if (!target.isResolved()) {
+			if (monitor == null) {
+				// Resolve the target definition in a separate job to allow cancellation
+				Job job = new Job(PDECoreMessages.TargetPlatformHelper_LoadingTargetPlatform) {
+					@Override
+					protected IStatus run(IProgressMonitor monitor) {
+						return target.resolve(monitor);
+					}
+				};
+				job.schedule();
+				try {
+					job.join();
+				} catch (InterruptedException e1) {
+				}
+				if (job.getResult().getSeverity() == IStatus.CANCEL) {
+					return null;
+				}
+
+			} else {
+				target.resolve(monitor);
+				if (monitor.isCanceled()) {
+					return null;
+				}
+			}
+		}
+		return target;
 	}
 
 	public static Map<Long, String> getPatchMap(PDEState state) {

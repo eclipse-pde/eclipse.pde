@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 IBM Corporation and others.
+ * Copyright (c) 2010, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,14 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target;
 
-import org.eclipse.pde.core.target.*;
-
 import java.io.File;
 import java.net.URI;
 import java.util.HashSet;
 import java.util.Set;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.URIUtil;
+import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.internal.core.PDECore;
 
 /**
@@ -47,8 +46,7 @@ public class TargetMetadataCollector {
 			if (service == null) {
 				return null;
 			}
-			ITargetHandle handle = service.getWorkspaceTargetHandle();
-			definition = handle.getTargetDefinition();
+			definition = service.getWorkspaceTargetDefinition();
 		}
 
 		Set<URI> repos = new HashSet<URI>();

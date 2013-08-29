@@ -48,13 +48,11 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 	public static final QualifiedName SCHEMA_PREVIEW_FILE = new QualifiedName(PLUGIN_ID, "SCHEMA_PREVIEW_FILE"); //$NON-NLS-1$
 
 	private static boolean DEBUG = false;
-	public static boolean DEBUG_CACHE = false;
 	public static boolean DEBUG_CLASSPATH = false;
 	public static boolean DEBUG_MODEL = false;
 	public static boolean DEBUG_TARGET_PROFILE = false;
 	public static boolean DEBUG_VALIDATION = false;
 	private static final String DEBUG_FLAG = PLUGIN_ID + "/debug"; //$NON-NLS-1$
-	private static final String CACHE_DEBUG = PLUGIN_ID + "/cache"; //$NON-NLS-1$
 	private static final String CLASSPATH_DEBUG = PLUGIN_ID + "/classpath"; //$NON-NLS-1$
 	private static final String MODEL_DEBUG = PLUGIN_ID + "/model"; //$NON-NLS-1$
 	private static final String TARGET_PROFILE_DEBUG = PLUGIN_ID + "/target/profile"; //$NON-NLS-1$
@@ -182,7 +180,7 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 	public IPluginModelBase findPluginInHost(String id) {
 		if (registryPlugins == null) {
 			URL[] pluginPaths = ConfiguratorUtils.getCurrentPlatformConfiguration().getPluginPath();
-			PDEState state = new PDEState(pluginPaths, false, new NullProgressMonitor());
+			PDEState state = new PDEState(pluginPaths, false, false, new NullProgressMonitor());
 			registryPlugins = state.getTargetModels();
 		}
 
@@ -269,6 +267,7 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 		return getModelManager().isInitialized();
 	}
 
+	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		fBundleContext = context;
@@ -295,7 +294,6 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 				if (fSearchablePluginsManager != null) {
 					fSearchablePluginsManager.saving(saveContext);
 				}
-				PluginModelManager.saveInstance();
 			}
 
 			public void rollback(ISaveContext saveContext) {
@@ -323,6 +321,7 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 		return fBundleContext;
 	}
 
+	@Override
 	public void stop(BundleContext context) throws CoreException {
 
 		if (fPreferenceManager != null) {
@@ -391,7 +390,6 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 	 */
 	public void optionsChanged(DebugOptions options) {
 		DEBUG = options.getBooleanOption(DEBUG_FLAG, false);
-		DEBUG_CACHE = DEBUG && options.getBooleanOption(CACHE_DEBUG, false);
 		DEBUG_CLASSPATH = DEBUG && options.getBooleanOption(CLASSPATH_DEBUG, false);
 		DEBUG_MODEL = DEBUG && options.getBooleanOption(MODEL_DEBUG, false);
 		DEBUG_TARGET_PROFILE = DEBUG && options.getBooleanOption(TARGET_PROFILE_DEBUG, false);

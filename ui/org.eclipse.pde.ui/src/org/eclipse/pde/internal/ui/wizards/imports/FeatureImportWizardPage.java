@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,8 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.imports;
-
-import org.eclipse.core.runtime.IStatus;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
@@ -23,7 +21,9 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.core.plugin.TargetPlatform;
+import org.eclipse.pde.internal.core.ICoreConstants;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.feature.ExternalFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.ui.*;
@@ -90,6 +90,7 @@ public class FeatureImportWizardPage extends WizardPage {
 			super(jobDisplay, name);
 		}
 
+		@Override
 		public IStatus runInUIThread(IProgressMonitor monitor) {
 			if (monitor.isCanceled()) {
 				return Status.CANCEL_STATUS;
@@ -152,6 +153,7 @@ public class FeatureImportWizardPage extends WizardPage {
 
 		fSelectAllButton = SWTFactory.createPushButton(buttonComp, PDEUIMessages.WizardCheckboxTablePart_selectAll, null);
 		fSelectAllButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fFeatureViewer.setAllChecked(true);
 				updateCounter();
@@ -160,6 +162,7 @@ public class FeatureImportWizardPage extends WizardPage {
 		});
 		fDeselectAllButton = SWTFactory.createPushButton(buttonComp, PDEUIMessages.WizardCheckboxTablePart_deselectAll, null);
 		fDeselectAllButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fFeatureViewer.setAllChecked(false);
 				updateCounter();
@@ -179,16 +182,12 @@ public class FeatureImportWizardPage extends WizardPage {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IHelpContextIds.FEATURE_IMPORT_FIRST_PAGE);
 	}
 
-	private String getTargetHome() {
-		PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
-		return preferences.getString(ICoreConstants.PLATFORM_PATH);
-	}
-
 	private void hookListeners() {
 		fRuntimeLocationButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				setOtherEnabled(!fRuntimeLocationButton.getSelection());
-				setLocation(fRuntimeLocationButton.getSelection() ? getTargetHome() : fCurrDropLocation);
+				setLocation(fRuntimeLocationButton.getSelection() ? TargetPlatform.getLocation() : fCurrDropLocation);
 				handleReload();
 			}
 		});
@@ -209,6 +208,7 @@ public class FeatureImportWizardPage extends WizardPage {
 		});
 
 		fBrowseButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				IPath chosen = chooseDropLocation();
 				if (chosen != null) {
@@ -266,7 +266,7 @@ public class FeatureImportWizardPage extends WizardPage {
 		fDropLocation.setItems(dropItems);
 		fRuntimeLocationButton.setSelection(!doOther);
 		setOtherEnabled(doOther);
-		fCurrDropLocation = doOther ? dropItems[0] : getTargetHome();
+		fCurrDropLocation = doOther ? dropItems[0] : TargetPlatform.getLocation();
 		setLocation(fCurrDropLocation);
 		fBinaryButton.setSelection(binary);
 
@@ -438,6 +438,7 @@ public class FeatureImportWizardPage extends WizardPage {
 		fCounterLabel.setText(NLS.bind(PDEUIMessages.WizardCheckboxTablePart_counter, new String[] {new Integer(checked).toString(), new Integer(total).toString()}));
 	}
 
+	@Override
 	public void dispose() {
 		super.dispose();
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
@@ -445,7 +446,7 @@ public class FeatureImportWizardPage extends WizardPage {
 
 	public IFeatureModel[] getModels() {
 		final IPath home = getDropLocation();
-		final boolean useRuntimeLocation = fRuntimeLocationButton.getSelection() || getTargetHome().equals(fDropLocation.getText().trim());
+		final boolean useRuntimeLocation = fRuntimeLocationButton.getSelection() || TargetPlatform.getLocation().equals(fDropLocation.getText().trim());
 		IRunnableWithProgress runnable = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				monitor.beginTask(PDEUIMessages.FeatureImportWizard_messages_updating, IProgressMonitor.UNKNOWN);
@@ -550,6 +551,7 @@ public class FeatureImportWizardPage extends WizardPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.WizardPage#isPageComplete()
 	 */
+	@Override
 	public boolean isPageComplete() {
 		return fFeatureViewer.getCheckedLeafCount() > 0;
 	}

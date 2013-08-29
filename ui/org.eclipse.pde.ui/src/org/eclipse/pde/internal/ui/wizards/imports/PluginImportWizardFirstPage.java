@@ -215,7 +215,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		importDirectory.setEnabled(source == FROM_DIRECTORY);
 		browseButton.setEnabled(source == FROM_DIRECTORY);
 		if (source == FROM_ACTIVE_PLATFORM) {
-			importDirectory.setText(getTargetHome());
+			importDirectory.setText(TargetPlatform.getLocation());
 		}
 	}
 
@@ -391,14 +391,6 @@ public class PluginImportWizardFirstPage extends WizardPage {
 			return new Path(res);
 		}
 		return null;
-	}
-
-	/**
-	 * @return the value of the {@link ICoreConstants#PLATFORM_PATH} preference
-	 */
-	private String getTargetHome() {
-		PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
-		return preferences.getString(ICoreConstants.PLATFORM_PATH);
 	}
 
 	/**
@@ -605,7 +597,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 					}
 				}
 				pm = new SubProgressMonitor(monitor, 50);
-				state = new PDEState(all.toArray(new URL[0]), false, pm);
+				state = new PDEState(all.toArray(new URL[0]), false, false, pm);
 				models = state.getTargetModels();
 				List<IPluginModelBase> sourceModels = new ArrayList<IPluginModelBase>();
 				List<TargetBundle> sourceBundles = new ArrayList<TargetBundle>();

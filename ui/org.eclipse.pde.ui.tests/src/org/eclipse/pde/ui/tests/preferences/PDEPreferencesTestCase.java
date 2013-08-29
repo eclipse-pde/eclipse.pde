@@ -11,14 +11,11 @@
 package org.eclipse.pde.ui.tests.preferences;
 
 import junit.framework.*;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.preferences.*;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.pde.core.plugin.TargetPlatform;
-import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.PDEPreferencesManager;
 import org.eclipse.pde.internal.core.builders.CompilerFlags;
 import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.pde.internal.launching.ILaunchingPreferenceConstants;
@@ -110,28 +107,12 @@ public class PDEPreferencesTestCase extends TestCase {
 			preferences.put(key, originalValue);
 	}
 
-	public void testPDECoreDefaultPreferences(){
-		PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
-		assertEquals(preferences.getDefaultString(ICoreConstants.TARGET_MODE), ICoreConstants.VALUE_USE_THIS);
-		assertEquals(preferences.getDefaultString(ICoreConstants.CHECKED_PLUGINS), ICoreConstants.VALUE_SAVED_ALL);
-		assertEquals(preferences.getDefaultString(ICoreConstants.OS), Platform.getOS());
-		assertEquals(preferences.getDefaultBoolean(ICoreConstants.TARGET_PLATFORM_REALIZATION), TargetPlatform.getDefaultLocation().equals(TargetPlatform.getLocation()));
-	}
-
 	public void testCompilerPreferences(){
 		// Testing the compiler preferences set by PDECore in org.eclipse.pde
 		PDEPreferencesManager preferences = new PDEPreferencesManager(PDE.PLUGIN_ID);
 		assertEquals(preferences.getDefaultInt(CompilerFlags.P_UNRESOLVED_IMPORTS), CompilerFlags.ERROR);
 		assertEquals(preferences.getDefaultInt(CompilerFlags.P_DEPRECATED), CompilerFlags.WARNING);
 		assertEquals(preferences.getDefaultInt(CompilerFlags.P_MISSING_VERSION_EXP_PKG), CompilerFlags.IGNORE);
-	}
-
-	public void testPreferencesCompatability(){
-		Preferences preferences = PDECore.getDefault().getPluginPreferences();
-		PDEPreferencesManager preferencesManager = PDECore.getDefault().getPreferencesManager();
-		assertEquals(preferences.getString(ICoreConstants.TARGET_MODE), preferencesManager.getString(ICoreConstants.TARGET_MODE));
-		assertEquals(preferences.getString(ICoreConstants.CHECKED_PLUGINS), preferencesManager.getString(ICoreConstants.CHECKED_PLUGINS));
-		assertEquals(preferences.getBoolean(ICoreConstants.TARGET_PLATFORM_REALIZATION), preferencesManager.getBoolean(ICoreConstants.TARGET_PLATFORM_REALIZATION));
 	}
 
 	public void testCompatibilityWithPreferenceStore(){
