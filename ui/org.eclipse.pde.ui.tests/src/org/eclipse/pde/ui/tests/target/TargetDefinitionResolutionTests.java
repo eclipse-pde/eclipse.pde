@@ -193,7 +193,7 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 		String originalTarget = store.getString(ICoreConstants.TARGET_MODE);
 		store.setValue(ICoreConstants.TARGET_MODE, ICoreConstants.VALUE_USE_THIS);
 		try {
-			ITargetDefinition target = ((TargetPlatformService) getTargetService()).getTargetFromPreferences();
+			ITargetDefinition target = ((TargetPlatformService) getTargetService()).newTargetFromPreferences();
 			assertNotNull("No target was created from old preferences", target);
 			String vmArguments = target.getVMArguments();
 			String iniVmArgs = TargetPlatformHelper.getIniVMArgs();
@@ -215,7 +215,7 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 		String originalTarget = store.getString(ICoreConstants.TARGET_MODE);
 		store.setValue(ICoreConstants.TARGET_MODE, ICoreConstants.VALUE_USE_THIS);
 		try {
-			ITargetDefinition target = ((TargetPlatformService) getTargetService()).getTargetFromPreferences();
+			ITargetDefinition target = ((TargetPlatformService) getTargetService()).newTargetFromPreferences();
 			assertNotNull("No target was created from old preferences", target);
 			String vmArguments = target.getVMArguments();
 			assertNull("Arguments should be empty", vmArguments);

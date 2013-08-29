@@ -273,7 +273,6 @@ public class TargetPlatformService implements ITargetPlatformService {
 	 * @see org.eclipse.pde.core.target.ITargetPlatformService#getWorkspaceTargetDefinition()
 	 */
 	public synchronized ITargetDefinition getWorkspaceTargetDefinition() throws CoreException {
-		// TODO Check if the preference has changed, might be better to listen for preference changes
 		if (fWorkspaceTarget != null && fWorkspaceTarget.getHandle().equals(getWorkspaceTargetHandle())) {
 			return fWorkspaceTarget;
 		}
@@ -328,7 +327,7 @@ public class TargetPlatformService implements ITargetPlatformService {
 				saveTargetDefinition(defaultTarget);
 
 				// Add target from preferences
-				TargetDefinition preferencesTarget = (TargetDefinition) getTargetFromPreferences();
+				TargetDefinition preferencesTarget = (TargetDefinition) newTargetFromPreferences();
 				if (preferencesTarget != null) {
 					if (PDECore.DEBUG_MODEL) {
 						System.out.println("Old target preferences found, loading them into active target."); //$NON-NLS-1$
@@ -387,7 +386,7 @@ public class TargetPlatformService implements ITargetPlatformService {
 	 * @return a target definition initialized with existing settings or <code>null</code>
 	 */
 	@SuppressWarnings("deprecation")
-	public ITargetDefinition getTargetFromPreferences() {
+	public ITargetDefinition newTargetFromPreferences() {
 		PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
 		// See if the old preference for the primary target platform location exist 
 		boolean useThis = preferences.getString(ICoreConstants.TARGET_MODE).equals(ICoreConstants.VALUE_USE_THIS);
@@ -594,6 +593,12 @@ public class TargetPlatformService implements ITargetPlatformService {
 		ITargetLocation container = newProfileLocation("${eclipse_home}", configLocation); //$NON-NLS-1$
 		target.setTargetLocations(new ITargetLocation[] {container});
 		target.setName(Messages.TargetPlatformService_7);
+
+		// initialize environment with default settings
+		target.setArch(Platform.getOSArch());
+		target.setOS(Platform.getOS());
+		target.setWS(Platform.getWS());
+		target.setNL(Platform.getNL());
 
 		// initialize vm arguments from the default container
 		ITargetLocation[] containers = target.getTargetLocations();

@@ -721,8 +721,7 @@ public class TargetDefinition implements ITargetDefinition {
 	 * specified definition
 	 */
 	public boolean isContentEquivalent(ITargetDefinition definition) {
-		// Environment settings of null mean to take the current platform settings, therefore we treat null values are always being equal
-		if (isEitherNullOrEqual(getArch(), definition.getArch()) && isEitherNullOrEqual(getNL(), definition.getNL()) && isEitherNullOrEqual(getOS(), definition.getOS()) && isEitherNullOrEqual(getWS(), definition.getWS())) {
+		if (isNullOrEqual(getArch(), definition.getArch()) && isNullOrEqual(getNL(), definition.getNL()) && isNullOrEqual(getOS(), definition.getOS()) && isNullOrEqual(getWS(), definition.getWS())) {
 			if (isArgsNullOrEqual(getProgramArguments(), definition.getProgramArguments()) && isArgsNullOrEqual(getVMArguments(), definition.getVMArguments()) && isNullOrEqual(getJREContainer(), definition.getJREContainer())) {
 				// Check includes/optional
 				if (isNullOrEqual(getIncluded(), definition.getIncluded())) {
@@ -745,13 +744,6 @@ public class TargetDefinition implements ITargetDefinition {
 		}
 		if (o2 == null) {
 			return false;
-		}
-		return o1.equals(o2);
-	}
-
-	private boolean isEitherNullOrEqual(Object o1, Object o2) {
-		if (o1 == null || o2 == null) {
-			return true;
 		}
 		return o1.equals(o2);
 	}
