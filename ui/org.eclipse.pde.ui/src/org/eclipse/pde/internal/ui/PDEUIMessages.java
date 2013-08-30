@@ -2202,6 +2202,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String WorkspaceDataBlock_name;
 
+	public static String WorkspaceDataBlock_WorkspaceDataLocationCannotContainPound;
+
 	public static String ConfigurationAreaBlock_name;
 	public static String ConfigurationPageMock_pageTitle;
 	public static String ConfigurationPageMock_sectionTitle;

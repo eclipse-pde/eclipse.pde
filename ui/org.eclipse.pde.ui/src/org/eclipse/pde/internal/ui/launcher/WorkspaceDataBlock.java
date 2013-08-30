@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -76,6 +76,7 @@ public class WorkspaceDataBlock extends BaseBlock {
 		fClearWorkspaceCheck.setText(PDEUIMessages.WorkspaceDataBlock_clear);
 		fClearWorkspaceCheck.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
 		fClearWorkspaceCheck.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fAskClearCheck.setEnabled(fClearWorkspaceCheck.getSelection());
 				fClearWorkspaceRadio.setEnabled(fClearWorkspaceCheck.getSelection());
@@ -88,6 +89,7 @@ public class WorkspaceDataBlock extends BaseBlock {
 		fClearWorkspaceRadio.setText(PDEUIMessages.WorkspaceDataBlock_clearWorkspace);
 		fClearWorkspaceRadio.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
 		fClearWorkspaceRadio.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fTab.updateLaunchConfigurationDialog();
 			}
@@ -96,6 +98,7 @@ public class WorkspaceDataBlock extends BaseBlock {
 		fClearWorkspaceLogRadio.setText(PDEUIMessages.WorkspaceDataBlock_clearLog);
 		fClearWorkspaceLogRadio.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fClearWorkspaceLogRadio.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fTab.updateLaunchConfigurationDialog();
 			}
@@ -119,6 +122,7 @@ public class WorkspaceDataBlock extends BaseBlock {
 		configureDefaults.setLayoutData(new GridData(SWT.END, SWT.FILL, true, false));
 		configureDefaults.setText("<A>" + PDEUIMessages.WorkspaceDataBlock_configureDefaults + "</A>"); //$NON-NLS-1$//$NON-NLS-2$
 		configureDefaults.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				PreferencesUtil.createPreferenceDialogOn(configureDefaults.getShell(), MainPreferencePage.ID, new String[] {MainPreferencePage.ID}, null).open();
 			}
@@ -177,28 +181,38 @@ public class WorkspaceDataBlock extends BaseBlock {
 		configuration.setAttribute(ATTR_IS_NEWLY_CREATED, true);
 	}
 
+	@Override
 	protected String getName() {
 		return PDEUIMessages.WorkspaceDataBlock_name;
 	}
 
+	@Override
 	protected boolean isFile() {
 		return false;
 	}
 
+	@Override
 	protected void handleBrowseWorkspace() {
 		super.handleBrowseWorkspace();
 	}
 
+	@Override
 	protected void handleBrowseFileSystem() {
 		super.handleBrowseFileSystem();
 	}
 
+	@Override
 	public String validate() {
 		int length = getLocation().length();
 		fClearWorkspaceCheck.setEnabled(length > 0);
 		fAskClearCheck.setEnabled(fClearWorkspaceCheck.getSelection() && length > 0);
 		if (length == 0)
 			fClearWorkspaceCheck.setSelection(false);
+		// Equinox doesn't allow # in the workspace name (Bug 415488), this doesn't check variable substitution as doing so can open dialogs
+		String currentLocation = fLocationText.getText();
+		if (currentLocation.contains("#")) { //$NON-NLS-1$
+			return PDEUIMessages.WorkspaceDataBlock_WorkspaceDataLocationCannotContainPound;
+		}
 		return null;
 	}
 
