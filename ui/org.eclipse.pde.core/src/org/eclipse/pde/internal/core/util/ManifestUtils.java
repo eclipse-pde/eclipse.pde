@@ -44,6 +44,12 @@ public class ManifestUtils {
 	public static final int STATUS_CODE_PLUGIN_CONVERTER_UNAVAILABLE = 201;
 
 	/**
+	 * Status code given to the returned core exception when a manifest file is found,
+	 * but not have the contain the required Bundle-SymbolicName header.
+	 */
+	public static final int STATUS_CODE_NOT_A_BUNDLE_MANIFEST = 204;
+
+	/**
 	 * Utility method to parse a bundle's manifest into a dictionary. The bundle may be in 
 	 * a directory or an archive at the specified location.  If the manifest does not contain
 	 * the necessary entries, the plugin.xml and fragment.xml will be checked for an old style
@@ -127,7 +133,7 @@ public class ManifestUtils {
 			}
 
 			// The necessary bundle information has not been found in manifest.mf or plugin.xml
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, 0, NLS.bind(UtilMessages.ErrorReadingManifest, bundleLocation.getAbsolutePath()), null));
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, STATUS_CODE_NOT_A_BUNDLE_MANIFEST, NLS.bind(UtilMessages.ErrorReadingManifest, bundleLocation.getAbsolutePath()), null));
 
 		} catch (BundleException e) {
 			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, 0, NLS.bind(UtilMessages.ErrorReadingManifest, bundleLocation.getAbsolutePath()), e));
