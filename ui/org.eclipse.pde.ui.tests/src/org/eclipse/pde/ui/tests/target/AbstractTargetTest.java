@@ -28,7 +28,7 @@ import org.osgi.framework.ServiceReference;
  */
 public abstract class AbstractTargetTest extends TestCase {
 
-	
+
 	/**
 	 * Returns the target platform service or <code>null</code> if none
 	 * 
@@ -41,7 +41,7 @@ public abstract class AbstractTargetTest extends TestCase {
 			return null;
 		return (ITargetPlatformService) PDETestsPlugin.getBundleContext().getService(reference);
 	}
-	
+
 	/**
 	 * Extracts bundles a through e and returns a path to the root directory containing
 	 * the plug-ins.
@@ -59,14 +59,14 @@ public abstract class AbstractTargetTest extends TestCase {
 		}
 		return doUnZip(location, "/tests/targets/abcde-plugins.zip");
 	}
-	
+
 	/**
 	 * Extracts the same plugins as {@link #extractAbcdePlugins()}, but puts them
 	 * in a linked folder setup (linked/eclipse/plugins).  Returns the location
 	 * of the plugins directory.
 	 * 
 	 * @return path to the plug-ins directory
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	protected IPath extractLinkedPlugins() throws Exception {
 		IPath stateLocation = PDETestsPlugin.getDefault().getStateLocation();
@@ -78,7 +78,7 @@ public abstract class AbstractTargetTest extends TestCase {
 		}
 		return doUnZip(location, "/tests/targets/abcde-plugins.zip");
 	}
-	
+
 	/**
 	 * Extracts the classic plug-ins archive, if not already done, and returns a path to the
 	 * root directory containing the plug-ins.
@@ -96,7 +96,7 @@ public abstract class AbstractTargetTest extends TestCase {
 		doUnZip(location,"/tests/targets/classic-plugins.zip");
 		return location.append("plugins");
 	}
-	
+
 	/**
 	 * Extracts the modified jdt features archive, if not already done, and returns a path to the
 	 * root directory containing the features and plug-ins
@@ -119,9 +119,9 @@ public abstract class AbstractTargetTest extends TestCase {
 			}
 		}
 		return location;
-	}	
-	
-	
+	}
+
+
 	/**
 	 * Extracts the multiple versions plug-ins archive, if not already done, and returns a path to the
 	 * root directory containing the plug-ins.
@@ -137,7 +137,7 @@ public abstract class AbstractTargetTest extends TestCase {
 		}
 		doUnZip(location,"/tests/targets/multi-versions.zip");
 		return location;
-	}	
+	}
 
 	/**
 	 * Extracts the classic plug-ins archive, if not already done, and returns a path to the
@@ -155,8 +155,8 @@ public abstract class AbstractTargetTest extends TestCase {
 		}
 		doUnZip(location,"/tests/targets/eclipse-nbm.zip");
 		return location.append("plugins");
-	}	
-	
+	}
+
 	/**
 	 * Unzips the given archive to the specified location.
 	 * 
@@ -188,8 +188,8 @@ public abstract class AbstractTargetTest extends TestCase {
 		}
 		zipFile.close();
 		return parent;
-	}	
-	
+	}
+
 	/**
 	 * Recursively deletes the directory and files within.
 	 * 
@@ -207,17 +207,17 @@ public abstract class AbstractTargetTest extends TestCase {
 		}
 		dir.delete();
 	}
-	
+
 	/**
 	 * Used to reset the target platform to original settings after a test that changes
 	 * the target platform.
-	 * @throws CoreException 
+	 * @throws CoreException
 	 */
 	protected void resetTargetPlatform() throws CoreException {
 		ITargetDefinition definition = getDefaultTargetPlatorm();
 		setTargetPlatform(definition);
 	}
-	
+
 	/**
 	 * Returns a new target definition from the target service.  This method is
 	 * overridden by {@link WorkspaceTargetDefinitionTests} to use a workspace
@@ -228,10 +228,10 @@ public abstract class AbstractTargetTest extends TestCase {
 	protected ITargetDefinition getNewTarget() {
 		return getTargetService().newTarget();
 	}
-	
+
 	/**
 	 * Returns a default target platform that takes target weaving into account
-	 * if in a second instance of Eclipse. This allows the target platform to be 
+	 * if in a second instance of Eclipse. This allows the target platform to be
 	 * reset after changing it in a test.
 	 * 
 	 * @return default settings for target platform
@@ -242,13 +242,14 @@ public abstract class AbstractTargetTest extends TestCase {
 				new File(Platform.getConfigurationLocation().getURL().getFile()).getAbsolutePath());
 		definition.setTargetLocations(new ITargetLocation[]{container});
 		return definition;
-	}	
-	
+	}
+
 	/**
-	 * Synchronously sets the target platform based on the given definition.
+	 * Synchronously sets the target platform based on the given definition. This method should
+	 * be called inside of a try/finally block that will always call {@link #resetTargetPlatform()}
 	 * 
 	 * @param target target definition or <code>null</code>
-	 * @throws CoreException 
+	 * @throws CoreException
 	 */
 	protected void setTargetPlatform(ITargetDefinition target) throws CoreException {
 		// Create the job to load the target, but then join with the job's thread
@@ -263,7 +264,7 @@ public abstract class AbstractTargetTest extends TestCase {
 		if (target != null) {
 			handle = target.getHandle();
 		}
-		assertEquals("Wrong target platform handle preference setting", handle, getTargetService().getWorkspaceTargetHandle());		
+		assertEquals("Wrong target platform handle preference setting", handle, getTargetService().getWorkspaceTargetHandle());
 	}
 
 	/**
@@ -299,8 +300,8 @@ public abstract class AbstractTargetTest extends TestCase {
 			list.add(bundles[i].getBundleInfo());
 		}
 		return list;
-	}		
-	
+	}
+
 	/**
 	 * Returns a list of bundles included in the given container.
 	 * 

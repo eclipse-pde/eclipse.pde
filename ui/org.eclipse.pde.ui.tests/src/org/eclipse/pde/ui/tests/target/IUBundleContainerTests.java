@@ -284,35 +284,38 @@ public class IUBundleContainerTests extends AbstractTargetTest {
 	 * @throws Exception
 	 */
 	public void testExternalModelManagerPreferences() throws Exception {
-		// Set the active target to feature b (has 6 bundles)
-		String[]unitIds = new String[]{"feature.b.feature.group"};
-		IUBundleContainer container = createContainer(unitIds);
-		ITargetDefinition targetB = getTargetService().newTarget();
-		targetB.setTargetLocations(new ITargetLocation[]{container});
-		getTargetService().saveTargetDefinition(targetB);
-		setTargetPlatform(targetB);
+		try {
+			// Set the active target to feature b (has 6 bundles)
+			String[]unitIds = new String[]{"feature.b.feature.group"};
+			IUBundleContainer container = createContainer(unitIds);
+			ITargetDefinition targetB = getTargetService().newTarget();
+			targetB.setTargetLocations(new ITargetLocation[]{container});
+			getTargetService().saveTargetDefinition(targetB);
+			setTargetPlatform(targetB);
 
-		// Set the active target to feature a (has 3 bundles)
-		unitIds = new String[]{"feature.a.feature.group"};
-		container = createContainer(unitIds);
-		ITargetDefinition targetA = getTargetService().newTarget();
-		targetA.setTargetLocations(new ITargetLocation[]{container});
-		getTargetService().saveTargetDefinition(targetA);
-		setTargetPlatform(targetA);
+			// Set the active target to feature a (has 3 bundles)
+			unitIds = new String[]{"feature.a.feature.group"};
+			container = createContainer(unitIds);
+			ITargetDefinition targetA = getTargetService().newTarget();
+			targetA.setTargetLocations(new ITargetLocation[]{container});
+			getTargetService().saveTargetDefinition(targetA);
+			setTargetPlatform(targetA);
 
-		// ensure the external model manager only knows about bundles in target A
-		IPluginModelBase[] externalBundles = PDECore.getDefault().getModelManager().getExternalModelManager().getAllModels();
-		assertEquals("Wrong number of external bundles", 3, externalBundles.length);
-		// expected bundles
-		Set expected = new HashSet();
-		expected.add("bundle.a1");
-		expected.add("bundle.a2");
-		expected.add("bundle.a3");
-		for (int i = 0; i < externalBundles.length; i++) {
-			assertTrue("Unexpected bundle in restored list: " + externalBundles[i].getInstallLocation(), expected.remove(externalBundles[i].getBundleDescription().getName()));
+			// ensure the external model manager only knows about bundles in target A
+			IPluginModelBase[] externalBundles = PDECore.getDefault().getModelManager().getExternalModelManager().getAllModels();
+			assertEquals("Wrong number of external bundles", 3, externalBundles.length);
+			// expected bundles
+			Set expected = new HashSet();
+			expected.add("bundle.a1");
+			expected.add("bundle.a2");
+			expected.add("bundle.a3");
+			for (int i = 0; i < externalBundles.length; i++) {
+				assertTrue("Unexpected bundle in restored list: " + externalBundles[i].getInstallLocation(), expected.remove(externalBundles[i].getBundleDescription().getName()));
+			}
+			assertTrue(expected.isEmpty());
+		} finally {
+			resetTargetPlatform();
 		}
-		assertTrue(expected.isEmpty());
-		resetTargetPlatform();
 	}
 
 	/**
