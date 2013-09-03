@@ -10,10 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.target;
 
-import org.eclipse.pde.core.target.NameVersionDescriptor;
-
-import org.eclipse.pde.core.target.*;
-
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.List;
@@ -28,6 +24,7 @@ import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
+import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.util.VMUtil;
@@ -104,6 +101,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.ProgressMonitorWrapper#setBlocked(org.eclipse.core.runtime.IStatus)
 		 */
+		@Override
 		public void setBlocked(IStatus reason) {
 			subTask(reason.getMessage());
 		}
@@ -111,6 +109,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.ProgressMonitorWrapper#clearBlocked()
 		 */
+		@Override
 		public void clearBlocked() {
 			subTask(""); //$NON-NLS-1$
 		}
@@ -241,11 +240,13 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.wizards.target.TargetDefinitionPage#targetChanged()
 	 */
+	@Override
 	protected void targetChanged(ITargetDefinition definition) {
 		super.targetChanged(definition);
 		if (definition != null) {
 			// When  If the page isn't open yet, try running a UI job so the dialog has time to finish opening
 			new UIJob(PDEUIMessages.TargetDefinitionContentPage_0) {
+				@Override
 				public IStatus runInUIThread(IProgressMonitor monitor) {
 					ITargetDefinition definition = getTargetDefinition();
 					if (!definition.isResolved()) {
@@ -412,7 +413,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 	 * Loads combo choices fromt he platform and from PDE core preferences
 	 */
 	private void initializeChoices() {
-		IEclipsePreferences node = new InstanceScope().getNode(PDECore.PLUGIN_ID);
+		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(PDECore.PLUGIN_ID);
 
 		fOSChoices = new TreeSet<String>();
 		String[] os = Platform.knownOSValues();
@@ -464,6 +465,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 
 		fDefaultJREButton = SWTFactory.createRadioButton(group, PDEUIMessages.JRESection_defaultJRE, 2);
 		fDefaultJREButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateJREWidgets();
 				getTargetDefinition().setJREContainer(JavaRuntime.newDefaultJREContainerPath());
@@ -472,6 +474,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 
 		fNamedJREButton = SWTFactory.createRadioButton(group, PDEUIMessages.JRESection_JREName);
 		fNamedJREButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateJREWidgets();
 				getTargetDefinition().setJREContainer(JavaRuntime.newJREContainerPath(VMUtil.getVMInstall(fNamedJREsCombo.getText())));
@@ -487,6 +490,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 
 		fExecEnvButton = SWTFactory.createRadioButton(group, PDEUIMessages.JRESection_ExecutionEnv);
 		fExecEnvButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateJREWidgets();
 				getTargetDefinition().setJREContainer(JavaRuntime.newJREContainerPath(VMUtil.getExecutionEnvironment(fExecEnvsCombo.getText())));
@@ -570,6 +574,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 	 */
 	private SelectionListener getVMArgsListener(final Text textControl) {
 		return new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				ArgumentsFromContainerSelectionDialog dialog = new ArgumentsFromContainerSelectionDialog(getShell(), getTargetDefinition());
 				if (dialog.open() == Window.OK) {
@@ -596,6 +601,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 	 */
 	private SelectionListener getVariablesListener(final Text textControl) {
 		return new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				StringVariableSelectionDialog dialog = new StringVariableSelectionDialog(getShell());
 				dialog.open();
@@ -650,6 +656,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		fElementViewer.setLabelProvider(new StyledBundleLabelProvider(false, false));
 		fElementViewer.setInput(PDEPlugin.getDefault());
 		fElementViewer.setComparator(new ViewerComparator() {
+			@Override
 			public int compare(Viewer viewer, Object e1, Object e2) {
 				NameVersionDescriptor bundle1 = (NameVersionDescriptor) e1;
 				NameVersionDescriptor bundle2 = (NameVersionDescriptor) e2;
@@ -662,6 +669,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 			}
 		});
 		fElementViewer.getTable().addKeyListener(new KeyAdapter() {
+			@Override
 			public void keyPressed(KeyEvent e) {
 				if (e.character == SWT.DEL && e.stateMask == 0) {
 					handleRemove();
@@ -675,6 +683,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 
 		fAddButton = SWTFactory.createPushButton(buttonContainer, PDEUIMessages.SourceBlock_add, null);
 		fAddButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleAdd();
 			}
@@ -682,6 +691,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 
 		fRemoveButton = SWTFactory.createPushButton(buttonContainer, PDEUIMessages.SourceBlock_remove, null);
 		fRemoveButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleRemove();
 			}
@@ -689,6 +699,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 
 		fRemoveAllButton = SWTFactory.createPushButton(buttonContainer, PDEUIMessages.TargetImplicitPluginsTab_removeAll3, null);
 		fRemoveAllButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleRemoveAll();
 			}
@@ -792,6 +803,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.WizardPage#isPageComplete()
 	 */
+	@Override
 	public boolean isPageComplete() {
 		if (fNameText.getText().trim().length() == 0)
 			return false;

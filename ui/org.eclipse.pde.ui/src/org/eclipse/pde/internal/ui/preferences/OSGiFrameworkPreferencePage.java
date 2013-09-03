@@ -48,10 +48,12 @@ public class OSGiFrameworkPreferencePage extends PreferencePage implements IWork
 	class FrameworkLabelProvider extends LabelProvider implements IFontProvider {
 		private Font font = null;
 
+		@Override
 		public Image getImage(Object element) {
 			return PDEPluginImages.get(PDEPluginImages.OBJ_DESC_BUNDLE);
 		}
 
+		@Override
 		public String getText(Object element) {
 			if (element instanceof IConfigurationElement) {
 				String name = ((IConfigurationElement) element).getAttribute(OSGiFrameworkManager.ATT_NAME);
@@ -87,6 +89,7 @@ public class OSGiFrameworkPreferencePage extends PreferencePage implements IWork
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.BaseLabelProvider#dispose()
 		 */
+		@Override
 		public void dispose() {
 			if (this.font != null) {
 				this.font.dispose();
@@ -116,6 +119,7 @@ public class OSGiFrameworkPreferencePage extends PreferencePage implements IWork
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createContents(Composite parent) {
 		Composite comp = SWTFactory.createComposite(parent, 2, 1, GridData.FILL_BOTH);
 
@@ -126,6 +130,7 @@ public class OSGiFrameworkPreferencePage extends PreferencePage implements IWork
 		gd.horizontalSpan = 2;
 		text.setLayoutData(gd);
 		text.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				new ShowDescriptionAction(point, true).run();
 			}
@@ -158,9 +163,10 @@ public class OSGiFrameworkPreferencePage extends PreferencePage implements IWork
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
 	 */
+	@Override
 	public boolean performOk() {
-		IEclipsePreferences instancePrefs = new InstanceScope().getNode(IPDEConstants.PLUGIN_ID);
-		IEclipsePreferences defaultPrefs = new DefaultScope().getNode(IPDEConstants.PLUGIN_ID);
+		IEclipsePreferences instancePrefs = InstanceScope.INSTANCE.getNode(IPDEConstants.PLUGIN_ID);
+		IEclipsePreferences defaultPrefs = DefaultScope.INSTANCE.getNode(IPDEConstants.PLUGIN_ID);
 		if (defaultPrefs.get(ILaunchingPreferenceConstants.DEFAULT_OSGI_FRAMEOWRK, "").equals(fDefaultFramework)) { //$NON-NLS-1$
 			instancePrefs.remove(ILaunchingPreferenceConstants.DEFAULT_OSGI_FRAMEOWRK);
 		} else {
@@ -178,6 +184,7 @@ public class OSGiFrameworkPreferencePage extends PreferencePage implements IWork
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
+	@Override
 	protected void performDefaults() {
 		setDefaultFramework();
 		fTableViewer.refresh();
