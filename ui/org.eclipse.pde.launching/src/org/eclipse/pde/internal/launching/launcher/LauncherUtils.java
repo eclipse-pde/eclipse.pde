@@ -181,7 +181,6 @@ public class LauncherUtils {
 			timeStamp = launch.getAttribute(TIMESTAMP, "0"); //$NON-NLS-1$
 			autoAdd = launch.getAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true);
 			useDefault = launch.getAttribute(IPDELauncherConstants.USE_DEFAULT, true);
-			useDefault |= launch.getAttribute(IPDELauncherConstants.USEFEATURES, false);
 			final ArrayList projects = new ArrayList();
 			if (useDefault)
 				handleUseDefault(timeStamp, projects);

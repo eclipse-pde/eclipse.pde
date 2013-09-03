@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2008 IBM Corporation and others.
+ * Copyright (c) 2003, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,6 +48,7 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 		return fBundleModel;
 	}
 
+	@Override
 	public IResource getUnderlyingResource() {
 		return fBundleModel.getUnderlyingResource();
 	}
@@ -61,6 +62,7 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 		return fExtensionsModel;
 	}
 
+	@Override
 	public void dispose() {
 		if (fBundleModel != null) {
 			if (fBundlePluginBase != null)
@@ -121,6 +123,7 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 			extensionsModel.addModelChangedListener(fBundlePluginBase);
 	}
 
+	@Deprecated
 	public IBuildModel getBuildModel() {
 		return fBuildModel;
 	}
@@ -140,6 +143,7 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModelChangeProvider#fireModelChanged(org.eclipse.pde.core.IModelChangedEvent)
 	 */
+	@Override
 	public void fireModelChanged(IModelChangedEvent event) {
 		super.fireModelChanged(event);
 		Object[] objects = event.getChangedObjects();
@@ -206,11 +210,13 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 
 	}
 
+	@Override
 	protected NLResourceHelper createNLResourceHelper() {
 		String localization = getBundleLocalization();
 		return localization == null ? null : new NLResourceHelper(localization, PDEManager.getNLLookupLocations(this));
 	}
 
+	@Deprecated
 	public URL getNLLookupLocation() {
 		try {
 			return new URL("file:" + getInstallLocation()); //$NON-NLS-1$
@@ -246,6 +252,7 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 	 * 
 	 * @see org.eclipse.pde.core.IModel#isValid()
 	 */
+	@Override
 	public boolean isValid() {
 		return ((fBundleModel == null || fBundleModel.isValid()) && (fExtensionsModel == null || fExtensionsModel.isValid()));
 	}
@@ -289,6 +296,7 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 	 * 
 	 * @see org.eclipse.pde.internal.core.AbstractModel#updateTimeStamp()
 	 */
+	@Override
 	protected void updateTimeStamp() {
 	}
 
@@ -389,6 +397,7 @@ public abstract class BundlePluginModelBase extends AbstractNLModel implements I
 		//does nothing
 	}
 
+	@Override
 	public String toString() {
 		IPluginBase base = getPluginBase();
 		if (base != null)

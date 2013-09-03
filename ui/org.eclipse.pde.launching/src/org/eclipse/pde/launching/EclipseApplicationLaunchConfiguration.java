@@ -23,8 +23,6 @@ import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.core.util.VersionUtil;
-import org.eclipse.pde.internal.launching.PDELaunchingPlugin;
-import org.eclipse.pde.internal.launching.PDEMessages;
 import org.eclipse.pde.internal.launching.launcher.*;
 import org.osgi.framework.Version;
 
@@ -87,31 +85,16 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 		}
 
 		boolean showSplash = true;
-		if (configuration.getAttribute(IPDELauncherConstants.USEFEATURES, false)) {
-			validateFeatures();
-			IPath installPath = PDELaunchingPlugin.getWorkspace().getRoot().getLocation();
-			programArgs.add("-install"); //$NON-NLS-1$
-			programArgs.add("file:" + installPath.removeLastSegments(1).addTrailingSeparator().toString()); //$NON-NLS-1$
-			if (!configuration.getAttribute(IPDELauncherConstants.CONFIG_USE_DEFAULT_AREA, true)) {
-				programArgs.add("-configuration"); //$NON-NLS-1$
-				programArgs.add("file:" + new Path(getConfigDir(configuration).getPath()).addTrailingSeparator().toString()); //$NON-NLS-1$
-			}
-			programArgs.add("-update"); //$NON-NLS-1$
-			// add the output folder names
-			programArgs.add("-dev"); //$NON-NLS-1$
-			programArgs.add(ClasspathHelper.getDevEntriesProperties(getConfigDir(configuration).toString() + "/dev.properties", true)); //$NON-NLS-1$
-		} else {
-			String productID = LaunchConfigurationHelper.getProductID(configuration);
-			Properties prop = LaunchConfigurationHelper.createConfigIniFile(configuration, productID, fAllBundles, fModels, getConfigDir(configuration));
-			showSplash = prop.containsKey("osgi.splashPath") || prop.containsKey("splashLocation"); //$NON-NLS-1$ //$NON-NLS-2$
-			TargetPlatformHelper.checkPluginPropertiesConsistency(fAllBundles, getConfigDir(configuration));
-			programArgs.add("-configuration"); //$NON-NLS-1$
-			programArgs.add("file:" + new Path(getConfigDir(configuration).getPath()).addTrailingSeparator().toString()); //$NON-NLS-1$
+		String productID = LaunchConfigurationHelper.getProductID(configuration);
+		Properties prop = LaunchConfigurationHelper.createConfigIniFile(configuration, productID, fAllBundles, fModels, getConfigDir(configuration));
+		showSplash = prop.containsKey("osgi.splashPath") || prop.containsKey("splashLocation"); //$NON-NLS-1$ //$NON-NLS-2$
+		TargetPlatformHelper.checkPluginPropertiesConsistency(fAllBundles, getConfigDir(configuration));
+		programArgs.add("-configuration"); //$NON-NLS-1$
+		programArgs.add("file:" + new Path(getConfigDir(configuration).getPath()).addTrailingSeparator().toString()); //$NON-NLS-1$
 
-			// add the output folder names
-			programArgs.add("-dev"); //$NON-NLS-1$
-			programArgs.add(ClasspathHelper.getDevEntriesProperties(getConfigDir(configuration).toString() + "/dev.properties", fAllBundles)); //$NON-NLS-1$
-		}
+		// add the output folder names
+		programArgs.add("-dev"); //$NON-NLS-1$
+		programArgs.add(ClasspathHelper.getDevEntriesProperties(getConfigDir(configuration).toString() + "/dev.properties", fAllBundles)); //$NON-NLS-1$
 		// necessary for PDE to know how to load plugins when target platform = host platform
 		// see PluginPathFinder.getPluginPaths() and PluginPathFinder.isDevLaunchMode()
 		IPluginModelBase base = (IPluginModelBase) fAllBundles.get(PDECore.PLUGIN_ID);
@@ -150,45 +133,10 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 		return (String[]) programArgs.toArray(new String[programArgs.size()]);
 	}
 
-	private void validateFeatures() throws CoreException {
-		IPath installPath = PDELaunchingPlugin.getWorkspace().getRoot().getLocation();
-		String lastSegment = installPath.lastSegment();
-		boolean badStructure = lastSegment == null;
-		if (!badStructure) {
-			IPath featuresPath = installPath.removeLastSegments(1).append("features"); //$NON-NLS-1$
-			badStructure = !lastSegment.equalsIgnoreCase("plugins") //$NON-NLS-1$
-					|| !featuresPath.toFile().exists();
-		}
-		if (badStructure) {
-			throw new CoreException(LauncherUtils.createErrorStatus(PDEMessages.WorkbenchLauncherConfigurationDelegate_badFeatureSetup));
-		}
-		// Ensure important files are present
-		ensureProductFilesExist(getProductPath());
-	}
-
-	private IPath getProductPath() {
-		return PDELaunchingPlugin.getWorkspace().getRoot().getLocation().removeLastSegments(1);
-	}
-
 	private String computeShowsplashArgument() {
 		IPath eclipseHome = new Path(TargetPlatform.getLocation());
 		IPath fullPath = eclipseHome.append("eclipse"); //$NON-NLS-1$
 		return fullPath.toOSString() + " -showsplash 600"; //$NON-NLS-1$
-	}
-
-	private void ensureProductFilesExist(IPath productArea) {
-		File productDir = productArea.toFile();
-		File marker = new File(productDir, ".eclipseproduct"); //$NON-NLS-1$
-		IPath eclipsePath = new Path(TargetPlatform.getLocation());
-		if (!marker.exists())
-			CoreUtility.copyFile(eclipsePath, ".eclipseproduct", marker); //$NON-NLS-1$
-
-		File configDir = new File(productDir, "configuration"); //$NON-NLS-1$
-		if (!configDir.exists())
-			configDir.mkdirs();
-		File ini = new File(configDir, "config.ini"); //$NON-NLS-1$
-		if (!ini.exists())
-			CoreUtility.copyFile(eclipsePath.append("configuration"), "config.ini", ini); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/*
@@ -197,19 +145,7 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 	 */
 	protected File getConfigDir(ILaunchConfiguration config) {
 		if (fConfigDir == null) {
-			try {
-				if (config.getAttribute(IPDELauncherConstants.USEFEATURES, false) && config.getAttribute(IPDELauncherConstants.CONFIG_USE_DEFAULT_AREA, true)) {
-					String root = getProductPath().toString();
-					root += "/configuration"; //$NON-NLS-1$
-					fConfigDir = new File(root);
-					if (!fConfigDir.exists())
-						fConfigDir.mkdirs();
-				} else {
-					fConfigDir = LaunchConfigurationHelper.getConfigurationArea(config);
-				}
-			} catch (CoreException e) {
-				fConfigDir = LaunchConfigurationHelper.getConfigurationArea(config);
-			}
+			fConfigDir = LaunchConfigurationHelper.getConfigurationArea(config);
 		}
 		return fConfigDir;
 	}

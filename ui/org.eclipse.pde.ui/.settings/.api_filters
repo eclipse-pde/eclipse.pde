@@ -1,5 +1,37 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.pde.ui" version="2">
+    <resource path="src/org/eclipse/pde/internal/ui/editor/category/SiteBundleAdapter.java" type="org.eclipse.pde.internal.ui.editor.category.SiteBundleAdapter">
+        <filter comment="PDE UI may use restricted code from PDE Core" id="574619656">
+            <message_arguments>
+                <message_argument value="IWritable"/>
+                <message_argument value="SiteBundleAdapter"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/pde/internal/ui/editor/category/SiteFeatureAdapter.java" type="org.eclipse.pde.internal.ui.editor.category.SiteFeatureAdapter">
+        <filter comment="PDE UI may use restricted code from PDE Core" id="574619656">
+            <message_arguments>
+                <message_argument value="IWritable"/>
+                <message_argument value="SiteFeatureAdapter"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/pde/internal/ui/editor/plugin/PluginInputContextManager.java" type="org.eclipse.pde.internal.ui.editor.plugin.PluginInputContextManager">
+        <filter comment="PDE UI may use restricted code from PDE Core" id="572522506">
+            <message_arguments>
+                <message_argument value="ModelChangedEvent"/>
+                <message_argument value="PluginInputContextManager"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/pde/internal/ui/editor/site/SiteFeatureAdapter.java" type="org.eclipse.pde.internal.ui.editor.site.SiteFeatureAdapter">
+        <filter comment="PDE UI may use restricted code from PDE Core" id="574619656">
+            <message_arguments>
+                <message_argument value="IWritable"/>
+                <message_argument value="SiteFeatureAdapter"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/pde/internal/ui/shared/target/StyledBundleLabelProvider.java" type="org.eclipse.pde.internal.ui.shared.target.StyledBundleLabelProvider">
         <filter comment="It is useful to display the location in the UI" id="640712815">
             <message_arguments>
@@ -21,6 +53,15 @@
             <message_arguments>
                 <message_argument value="TeamUI"/>
                 <message_argument value="PluginImportWizardFirstPage"/>
+                <message_argument value="getPages(String)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/pde/internal/ui/wizards/imports/RepositoryImportWizard.java" type="org.eclipse.pde.internal.ui.wizards.imports.RepositoryImportWizard">
+        <filter comment="Required usage for IBundleImporter provisional API" id="640712815">
+            <message_arguments>
+                <message_argument value="TeamUI"/>
+                <message_argument value="RepositoryImportWizard"/>
                 <message_argument value="getPages(String)"/>
             </message_arguments>
         </filter>
@@ -48,6 +89,22 @@
                 <message_argument value="IPDELauncherConstants"/>
                 <message_argument value="MainTab"/>
                 <message_argument value="IPDELauncherConstants"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/pde/ui/templates/NewPluginProjectFromTemplateWizard.java" type="org.eclipse.pde.ui.templates.NewPluginProjectFromTemplateWizard">
+        <filter id="576720909">
+            <message_arguments>
+                <message_argument value="NewWizard"/>
+                <message_argument value="NewPluginProjectFromTemplateWizard"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/pde/ui/templates/PluginReference.java" type="org.eclipse.pde.ui.templates.PluginReference">
+        <filter comment="PDE UI may use restricted code from PDE Core" id="574619656">
+            <message_arguments>
+                <message_argument value="IPluginReference"/>
+                <message_argument value="PluginReference"/>
             </message_arguments>
         </filter>
     </resource>

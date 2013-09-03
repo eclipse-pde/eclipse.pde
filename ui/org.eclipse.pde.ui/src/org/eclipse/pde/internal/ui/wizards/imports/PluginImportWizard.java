@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -30,6 +30,8 @@ import org.eclipse.team.ui.IScmUrlImportWizardPage;
 import org.eclipse.ui.IImportWizard;
 import org.eclipse.ui.IWorkbench;
 
+@SuppressWarnings("restriction")
+//The IBundleImporter API is currently provisional
 public class PluginImportWizard extends Wizard implements IImportWizard, IPageChangingListener {
 
 	private static final String STORE_SECTION = "PluginImportWizard"; //$NON-NLS-1$
@@ -53,6 +55,7 @@ public class PluginImportWizard extends Wizard implements IImportWizard, IPageCh
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.Wizard#createPageControls(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createPageControls(Composite pageContainer) {
 		super.createPageControls(pageContainer);
 		IWizardContainer container = getContainer();
@@ -62,6 +65,7 @@ public class PluginImportWizard extends Wizard implements IImportWizard, IPageCh
 		}
 	}
 
+	@Override
 	public void addPages() {
 		setNeedsProgressMonitor(true);
 		page1 = new PluginImportWizardFirstPage("first"); //$NON-NLS-1$
@@ -86,6 +90,7 @@ public class PluginImportWizard extends Wizard implements IImportWizard, IPageCh
 		return page3.getModelsToImport();
 	}
 
+	@Override
 	public boolean performFinish() {
 		page1.storeSettings();
 		((BaseImportWizardSecondPage) page1.getNextPage()).storeSettings();
@@ -180,6 +185,7 @@ public class PluginImportWizard extends Wizard implements IImportWizard, IPageCh
 		job.schedule();
 	}
 
+	@Override
 	public IWizardPage getNextPage(IWizardPage page) {
 		if (page.equals(page1)) {
 			if (page1.getScanAllPlugins()) {
@@ -196,6 +202,7 @@ public class PluginImportWizard extends Wizard implements IImportWizard, IPageCh
 		return null;
 	}
 
+	@Override
 	public IWizardPage getPreviousPage(IWizardPage page) {
 		if (page.equals(page1)) {
 			return null;
@@ -210,6 +217,7 @@ public class PluginImportWizard extends Wizard implements IImportWizard, IPageCh
 		return prev;
 	}
 
+	@Override
 	public boolean canFinish() {
 		return !page1.isCurrentPage() && page1.getNextPage().isPageComplete() && page1.arePagesComplete();
 	}

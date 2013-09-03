@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,14 +57,6 @@ public class BundleLauncherHelper {
 
 			if (configuration.getAttribute(IPDELauncherConstants.USE_DEFAULT, true)) {
 				IPluginModelBase[] models = PluginRegistry.getActiveModels();
-				for (int i = 0; i < models.length; i++) {
-					addBundleToMap(map, models[i], "default:default"); //$NON-NLS-1$
-				}
-				return map;
-			}
-
-			if (configuration.getAttribute(IPDELauncherConstants.USEFEATURES, false)) {
-				IPluginModelBase[] models = PluginRegistry.getWorkspaceModels();
 				for (int i = 0; i < models.length; i++) {
 					addBundleToMap(map, models[i], "default:default"); //$NON-NLS-1$
 				}
@@ -538,9 +530,8 @@ public class BundleLauncherHelper {
 		if (upgrade) {
 			wc.setAttribute(IPDEConstants.LAUNCHER_PDE_VERSION, newApp ? "3.3" : "3.2a"); //$NON-NLS-1$ //$NON-NLS-2$
 			boolean usedefault = configuration.getAttribute(IPDELauncherConstants.USE_DEFAULT, true);
-			boolean useFeatures = configuration.getAttribute(IPDELauncherConstants.USEFEATURES, false);
 			boolean automaticAdd = configuration.getAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true);
-			if (!usedefault && !useFeatures) {
+			if (!usedefault) {
 				ArrayList list = new ArrayList();
 				if (version == null) {
 					list.add("org.eclipse.core.contenttype"); //$NON-NLS-1$

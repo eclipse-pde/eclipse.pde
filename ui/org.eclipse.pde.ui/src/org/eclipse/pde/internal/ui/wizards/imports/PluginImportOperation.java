@@ -55,6 +55,8 @@ import org.osgi.framework.BundleException;
  * ways to import a plugin: as binary, as binary with linked source,
  * and as source. 
  */
+@SuppressWarnings("restriction")
+// The IBundleImporter API is currently provisional
 public class PluginImportOperation extends WorkspaceJob {
 
 	public static final int IMPORT_BINARY = 1;

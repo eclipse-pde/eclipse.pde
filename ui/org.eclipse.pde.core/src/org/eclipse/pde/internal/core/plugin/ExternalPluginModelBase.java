@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,10 +31,15 @@ public abstract class ExternalPluginModelBase extends AbstractPluginModelBase {
 		super();
 	}
 
+	@Override
 	protected NLResourceHelper createNLResourceHelper() {
 		return (fLocalization == null) ? null : new NLResourceHelper(fLocalization, PDEManager.getNLLookupLocations(this));
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#getNLLookupLocation()
+	 */
+	@Deprecated
 	public URL getNLLookupLocation() {
 		try {
 			if (fInstallLocation != null && new File(fInstallLocation).isDirectory() && !fInstallLocation.endsWith("/")) //$NON-NLS-1$
@@ -45,10 +50,12 @@ public abstract class ExternalPluginModelBase extends AbstractPluginModelBase {
 		}
 	}
 
+	@Deprecated
 	public IBuildModel getBuildModel() {
 		return null;
 	}
 
+	@Override
 	public String getInstallLocation() {
 		return fInstallLocation;
 	}
@@ -60,6 +67,7 @@ public abstract class ExternalPluginModelBase extends AbstractPluginModelBase {
 	public void load() {
 	}
 
+	@Override
 	public void load(BundleDescription description, PDEState state) {
 		IPath path = new Path(description.getLocation());
 		String device = path.getDevice();
@@ -87,6 +95,7 @@ public abstract class ExternalPluginModelBase extends AbstractPluginModelBase {
 		return file;
 	}
 
+	@Override
 	protected void updateTimeStamp() {
 		updateTimeStamp(getLocalFile());
 	}

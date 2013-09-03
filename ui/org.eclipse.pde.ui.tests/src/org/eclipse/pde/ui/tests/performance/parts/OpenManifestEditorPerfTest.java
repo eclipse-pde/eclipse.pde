@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.performance.parts;
 
-import org.eclipse.pde.ui.tests.PDETestsPlugin;
-
 import java.io.File;
 import java.net.URL;
 import junit.framework.Test;
@@ -21,7 +19,9 @@ import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.test.performance.*;
+import org.eclipse.pde.ui.tests.PDETestsPlugin;
+import org.eclipse.test.performance.Dimension;
+import org.eclipse.test.performance.PerformanceTestCase;
 import org.eclipse.ui.*;
 import org.eclipse.ui.ide.FileStoreEditorInput;
 import org.eclipse.ui.ide.IDE;
@@ -73,7 +73,6 @@ public class OpenManifestEditorPerfTest extends PerformanceTestCase {
 		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
 		if (store.getBoolean(IPreferenceConstants.EDITOR_FOLDING_ENABLED)) {
 			store.setValue(IPreferenceConstants.EDITOR_FOLDING_ENABLED, false);
-			PDEPlugin.getDefault().savePluginPreferences();
 		}
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2008 IBM Corporation and others.
+ *  Copyright (c) 2006, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.model.bundle;
 
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
@@ -19,9 +21,8 @@ import org.eclipse.pde.internal.core.text.bundle.RequiredExecutionEnvironmentHea
 import org.eclipse.text.edits.TextEdit;
 import org.osgi.framework.Constants;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
+@SuppressWarnings("deprecation")
+// This testcase tests a deprecated constant
 public class ExecutionEnvironmentTestCase extends MultiLineHeaderTestCase {
 
 	public ExecutionEnvironmentTestCase() {

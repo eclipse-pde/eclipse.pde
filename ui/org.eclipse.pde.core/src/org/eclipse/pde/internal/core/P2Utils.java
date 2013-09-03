@@ -488,7 +488,7 @@ public class P2Utils {
 
 	private static Version fromOSGiVersion(org.osgi.framework.Version version) {
 		if (version == null)
-			return null;
+			return Version.MAX_VERSION;
 		if (version.getMajor() == Integer.MAX_VALUE && version.getMicro() == Integer.MAX_VALUE && version.getMicro() == Integer.MAX_VALUE)
 			return Version.MAX_VERSION;
 		return Version.createOSGi(version.getMajor(), version.getMinor(), version.getMicro(), version.getQualifier());
@@ -497,6 +497,6 @@ public class P2Utils {
 	private static VersionRange fromOSGiVersionRange(org.eclipse.osgi.service.resolver.VersionRange range) {
 		if (range.equals(org.eclipse.osgi.service.resolver.VersionRange.emptyRange))
 			return VersionRange.emptyRange;
-		return new VersionRange(fromOSGiVersion(range.getMinimum()), range.getIncludeMinimum(), fromOSGiVersion(range.getMaximum()), range.getIncludeMaximum());
+		return new VersionRange(fromOSGiVersion(range.getMinimum()), range.getIncludeMinimum(), fromOSGiVersion(range.getRight()), range.getIncludeMaximum());
 	}
 }

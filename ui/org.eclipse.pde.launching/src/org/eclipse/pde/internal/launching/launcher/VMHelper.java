@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,7 +23,6 @@ import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.util.VMUtil;
 import org.eclipse.pde.internal.launching.PDEMessages;
 import org.eclipse.pde.launching.EquinoxLaunchConfiguration;
-import org.eclipse.pde.launching.IPDELauncherConstants;
 
 public class VMHelper {
 
@@ -143,16 +142,6 @@ public class VMHelper {
 					throw new CoreException(LauncherUtils.createErrorStatus(NLS.bind(PDEMessages.WorkbenchLauncherConfigurationDelegate_noJRE, name)));
 				}
 				throw new CoreException(LauncherUtils.createErrorStatus(NLS.bind(PDEMessages.VMHelper_cannotFindExecEnv, id)));
-			}
-			return vm;
-		}
-
-		// Check if legacy attribute is set, throw exception if associated vm not found
-		String vmInstallAttribute = configuration.getAttribute(IPDELauncherConstants.VMINSTALL, (String) null);
-		if (vmInstallAttribute != null) {
-			IVMInstall vm = getVMInstall(vmInstallAttribute);
-			if (vm == null) {
-				throw new CoreException(LauncherUtils.createErrorStatus(NLS.bind(PDEMessages.WorkbenchLauncherConfigurationDelegate_noJRE, vmInstallAttribute)));
 			}
 			return vm;
 		}

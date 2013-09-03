@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2012 IBM Corporation and others.
+ *  Copyright (c) 2007, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -22,6 +22,8 @@ import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.update.configurator.ConfiguratorUtils;
 import org.eclipse.update.configurator.IPlatformConfiguration;
 
+@SuppressWarnings("deprecation")
+// The update manager is deprecated, but still supported in PDE launching
 public class UpdateManagerHelper {
 
 	private static class LocalSite {

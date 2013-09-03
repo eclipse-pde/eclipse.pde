@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2011 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -55,6 +55,7 @@ public abstract class PluginModelBase extends XMLEditingModel implements IPlugin
 		return fPluginBase;
 	}
 
+	@Override
 	protected IWritable getRoot() {
 		return getPluginBase();
 	}
@@ -66,6 +67,7 @@ public abstract class PluginModelBase extends XMLEditingModel implements IPlugin
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#getBuildModel()
 	 */
+	@Deprecated
 	public IBuildModel getBuildModel() {
 		return null;
 	}
@@ -125,6 +127,7 @@ public abstract class PluginModelBase extends XMLEditingModel implements IPlugin
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.plugin.IPluginModelBase#getNLLookupLocation()
 	 */
+	@Deprecated
 	public URL getNLLookupLocation() {
 		try {
 			String installLocation = getInstallLocation();
@@ -144,6 +147,7 @@ public abstract class PluginModelBase extends XMLEditingModel implements IPlugin
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.AbstractEditingModel#createNLResourceHelper()
 	 */
+	@Override
 	protected NLResourceHelper createNLResourceHelper() {
 		URL[] locations = PDEManager.getNLLookupLocations(this);
 		return (locations.length == 0) ? null : new NLResourceHelper(fLocalization == null ? "plugin" : fLocalization, //$NON-NLS-1$
@@ -153,6 +157,7 @@ public abstract class PluginModelBase extends XMLEditingModel implements IPlugin
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.model.XMLEditingModel#createDocumentHandler(org.eclipse.pde.core.IModel)
 	 */
+	@Override
 	protected DefaultHandler createDocumentHandler(IModel model, boolean reconciling) {
 		if (fHandler == null)
 			fHandler = new PluginDocumentHandler(this, reconciling);
@@ -173,6 +178,7 @@ public abstract class PluginModelBase extends XMLEditingModel implements IPlugin
 	 * @see org.eclipse.pde.internal.core.text.AbstractEditingModel#dispose()
 	 * @since 3.6
 	 */
+	@Override
 	public void dispose() {
 		getDocument().removeDocumentListener(this);
 		super.dispose();

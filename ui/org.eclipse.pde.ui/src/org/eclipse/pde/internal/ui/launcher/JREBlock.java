@@ -195,13 +195,10 @@ public class JREBlock {
 		String vmInstallName = null;
 		String eeId = null;
 		if (jrePath == null) {
-			vmInstallName = config.getAttribute(IPDELauncherConstants.VMINSTALL, (String) null);
-			if (vmInstallName == null) {
-				// Try to get a default EE based on the selected plug-ins in the config
-				eeId = VMHelper.getDefaultEEName(config);
-				if (eeId == null) {
-					vmInstallName = VMHelper.getDefaultVMInstallName(config);
-				}
+			// Try to get a default EE based on the selected plug-ins in the config
+			eeId = VMHelper.getDefaultEEName(config);
+			if (eeId == null) {
+				vmInstallName = VMHelper.getDefaultVMInstallName(config);
 			}
 		} else {
 			eeId = JavaRuntime.getExecutionEnvironmentId(jrePath);
@@ -283,8 +280,6 @@ public class JREBlock {
 		if (jrePath != null) {
 			attr = jrePath.toPortableString();
 		}
-		// remove old attribute first
-		config.removeAttribute(IPDELauncherConstants.VMINSTALL);
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_JRE_CONTAINER_PATH, attr);
 	}
 

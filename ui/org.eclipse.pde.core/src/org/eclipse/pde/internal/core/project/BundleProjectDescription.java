@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 IBM Corporation and others.
+ * Copyright (c) 2010, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,8 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.core.project;
-
-import org.eclipse.pde.core.project.IBundleClasspathEntry;
 
 import java.io.IOException;
 import java.net.URI;
@@ -735,8 +733,9 @@ public class BundleProjectDescription implements IBundleProjectDescription {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#setBundleClassath(org.eclipse.pde.core.project.IBundleClasspathSpecification[])
+	 * @see org.eclipse.pde.core.project.IBundleProjectDescription#setBundleClassath(org.eclipse.pde.core.project.IBundleClasspathEntry[])
 	 */
+	@Deprecated
 	public void setBundleClassath(IBundleClasspathEntry[] entries) {
 		setBundleClasspath(entries);
 	}

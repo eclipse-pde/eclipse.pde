@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,10 +36,12 @@ public abstract class WorkspacePluginModelBase extends AbstractPluginModelBase i
 
 	private boolean fEditable = true;
 
+	@Override
 	protected NLResourceHelper createNLResourceHelper() {
 		return new NLResourceHelper("plugin", PDEManager.getNLLookupLocations(this)); //$NON-NLS-1$
 	}
 
+	@Deprecated
 	public URL getNLLookupLocation() {
 		try {
 			return new URL("file:" + getInstallLocation() + "/"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -54,11 +56,13 @@ public abstract class WorkspacePluginModelBase extends AbstractPluginModelBase i
 		setEnabled(true);
 	}
 
+	@Override
 	public void fireModelChanged(IModelChangedEvent event) {
 		fDirty = true;
 		super.fireModelChanged(event);
 	}
 
+	@Deprecated
 	public IBuildModel getBuildModel() {
 		return null;
 	}
@@ -80,11 +84,13 @@ public abstract class WorkspacePluginModelBase extends AbstractPluginModelBase i
 		return fUnderlyingResource;
 	}
 
+	@Override
 	public String getInstallLocation() {
 		IPath path = fUnderlyingResource.getLocation();
 		return path == null ? null : path.removeLastSegments(1).addTrailingSeparator().toOSString();
 	}
 
+	@Override
 	public IResource getUnderlyingResource() {
 		return fUnderlyingResource;
 	}
@@ -130,6 +136,7 @@ public abstract class WorkspacePluginModelBase extends AbstractPluginModelBase i
 		}
 	}
 
+	@Override
 	protected void updateTimeStamp() {
 		updateTimeStamp(fUnderlyingResource.getLocation().toFile());
 	}

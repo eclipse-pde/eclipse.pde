@@ -186,6 +186,7 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 	 * Tests that if users have the old preference to append .ini VM arguments,
 	 * target definitions are migrated properly with the arguments appended.
 	 */
+	@SuppressWarnings("deprecation")
 	public void testVMArgumentsMigrationAppend() throws Exception {
 		Preferences store = PDECore.getDefault().getPluginPreferences();
 		boolean original = store.getBoolean(ICoreConstants.VM_LAUNCHER_INI);
@@ -208,6 +209,7 @@ public class TargetDefinitionResolutionTests extends AbstractTargetTest {
 	 * Tests that if users *don't* have the old preference to append .ini VM arguments,
 	 * target definitions are migrated properly *without* the arguments appended.
 	 */
+	@SuppressWarnings("deprecation")
 	public void testVMArgumentsMigrationNoAppend() throws Exception {
 		Preferences store = PDECore.getDefault().getPluginPreferences();
 		boolean original = store.getBoolean(ICoreConstants.VM_LAUNCHER_INI);

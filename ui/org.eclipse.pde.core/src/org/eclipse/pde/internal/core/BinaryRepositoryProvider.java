@@ -186,6 +186,7 @@ public class BinaryRepositoryProvider extends RepositoryProvider {
 	}
 
 	// we need to remove this but our tests will fail if we do, see bug 252003
+	@Deprecated
 	@Override
 	public boolean canHandleLinkedResources() {
 		return true;

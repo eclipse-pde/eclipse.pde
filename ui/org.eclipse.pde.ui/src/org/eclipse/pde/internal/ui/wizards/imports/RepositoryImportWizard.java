@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 IBM Corporation and others.
+ * Copyright (c) 2011, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,6 +29,8 @@ import org.eclipse.team.ui.TeamUI;
  * 
  * @since 3.6
  */
+@SuppressWarnings("restriction")
+//The IBundleImporter API is currently provisional
 public class RepositoryImportWizard extends Wizard {
 
 	/**
@@ -59,6 +61,7 @@ public class RepositoryImportWizard extends Wizard {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.Wizard#addPages()
 	 */
+	@Override
 	public void addPages() {
 		Iterator<?> iterator = fImportMap.entrySet().iterator();
 		while (iterator.hasNext()) {
@@ -93,6 +96,7 @@ public class RepositoryImportWizard extends Wizard {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.Wizard#performFinish()
 	 */
+	@Override
 	public boolean performFinish() {
 		// collect the bundle descriptions from each page and import
 		List<Object> plugins = new ArrayList<Object>();

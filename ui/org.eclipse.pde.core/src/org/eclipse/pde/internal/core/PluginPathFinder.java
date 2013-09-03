@@ -22,6 +22,8 @@ import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.update.configurator.ConfiguratorUtils;
 import org.eclipse.update.configurator.IPlatformConfiguration;
 
+@SuppressWarnings("deprecation")
+// PDE still supports searching the platform.xml for plug-in/feature listings
 public class PluginPathFinder {
 
 	private static final String URL_PROPERTY = "org.eclipse.update.resolution_url"; //$NON-NLS-1$

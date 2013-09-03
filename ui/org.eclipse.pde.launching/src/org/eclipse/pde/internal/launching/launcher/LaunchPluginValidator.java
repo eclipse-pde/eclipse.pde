@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,8 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.launching.launcher;
-
-import org.eclipse.pde.launching.IPDELauncherConstants;
 
 import java.util.*;
 import org.eclipse.core.resources.IProject;
@@ -23,6 +21,7 @@ import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.SearchablePluginsManager;
 import org.eclipse.pde.internal.launching.*;
+import org.eclipse.pde.launching.IPDELauncherConstants;
 
 public class LaunchPluginValidator {
 	public static final int DISPLAY_VALIDATION_ERROR_CODE = 1001;
@@ -30,11 +29,10 @@ public class LaunchPluginValidator {
 	private static IPluginModelBase[] getSelectedWorkspacePlugins(ILaunchConfiguration configuration) throws CoreException {
 
 		boolean usedefault = configuration.getAttribute(IPDELauncherConstants.USE_DEFAULT, true);
-		boolean useFeatures = configuration.getAttribute(IPDELauncherConstants.USEFEATURES, false);
 
 		IPluginModelBase[] models = PluginRegistry.getWorkspaceModels();
 
-		if (usedefault || useFeatures || models.length == 0)
+		if (usedefault || models.length == 0)
 			return models;
 
 		Collection result = null;

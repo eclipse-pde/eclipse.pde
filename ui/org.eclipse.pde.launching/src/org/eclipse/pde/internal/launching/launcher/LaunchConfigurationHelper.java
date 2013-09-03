@@ -160,8 +160,7 @@ public class LaunchConfigurationHelper {
 			// Write out P2 files (bundles.txt)
 			URL bundlesTxt = null;
 			boolean usedefault = configuration.getAttribute(IPDELauncherConstants.USE_DEFAULT, true);
-			boolean useFeatures = configuration.getAttribute(IPDELauncherConstants.USEFEATURES, false);
-			if (usedefault || useFeatures) {
+			if (usedefault) {
 				bundlesTxt = P2Utils.writeBundlesTxt(bundlesWithStartLevels, start, autostart, configurationDirectory, osgiBundles);
 			} else {
 				bundlesTxt = P2Utils.writeBundlesTxt(bundlesWithStartLevels, start, autostart, configurationDirectory, null);
