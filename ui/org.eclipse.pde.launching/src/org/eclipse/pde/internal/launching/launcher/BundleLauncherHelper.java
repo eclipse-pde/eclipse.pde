@@ -38,17 +38,17 @@ public class BundleLauncherHelper {
 
 	public static final char VERSION_SEPARATOR = '*';
 
-	public static Map getWorkspaceBundleMap(ILaunchConfiguration configuration) throws CoreException {
+	public static Map<IPluginModelBase, String> getWorkspaceBundleMap(ILaunchConfiguration configuration) throws CoreException {
 		return getWorkspaceBundleMap(configuration, null, IPDELauncherConstants.WORKSPACE_BUNDLES);
 	}
 
-	public static Map getTargetBundleMap(ILaunchConfiguration configuration) throws CoreException {
+	public static Map<IPluginModelBase, String> getTargetBundleMap(ILaunchConfiguration configuration) throws CoreException {
 		return getTargetBundleMap(configuration, null, IPDELauncherConstants.TARGET_BUNDLES);
 	}
 
-	public static Map getMergedBundleMap(ILaunchConfiguration configuration, boolean osgi) throws CoreException {
-		Set set = new HashSet();
-		Map map = new HashMap();
+	public static Map<IPluginModelBase, String> getMergedBundleMap(ILaunchConfiguration configuration, boolean osgi) throws CoreException {
+		Set<String> set = new HashSet<String>();
+		Map<IPluginModelBase, String> map = new HashMap<IPluginModelBase, String>();
 
 		// if we are using the eclipse-based launcher, we need special checks
 		if (!osgi) {
@@ -70,8 +70,8 @@ public class BundleLauncherHelper {
 			String defaultPluginResolution = configuration.getAttribute(IPDELauncherConstants.FEATURE_PLUGIN_RESOLUTION, IPDELauncherConstants.LOCATION_WORKSPACE);
 
 			// Get all available features
-			HashMap workspaceFeatureMap = new HashMap();
-			HashMap externalFeatureMap = new HashMap();
+			HashMap<String, IFeatureModel> workspaceFeatureMap = new HashMap<String, IFeatureModel>();
+			HashMap<String, IFeatureModel> externalFeatureMap = new HashMap<String, IFeatureModel>();
 
 			FeatureModelManager fmm = PDECore.getDefault().getFeatureModelManager();
 			IFeatureModel[] workspaceFeatureModels = fmm.getWorkspaceModels();
@@ -87,11 +87,11 @@ public class BundleLauncherHelper {
 			}
 
 			// Get the selected features and their plugin resolution
-			Map featureResolutionMap = new HashMap();
-			Set selectedFeatures = configuration.getAttribute(IPDELauncherConstants.SELECTED_FEATURES, (Set) null);
+			Map<String, String> featureResolutionMap = new HashMap<String, String>();
+			Set<String> selectedFeatures = configuration.getAttribute(IPDELauncherConstants.SELECTED_FEATURES, (Set<String>) null);
 			if (selectedFeatures != null) {
-				for (Iterator iterator = selectedFeatures.iterator(); iterator.hasNext();) {
-					String currentSelected = (String) iterator.next();
+				for (Iterator<String> iterator = selectedFeatures.iterator(); iterator.hasNext();) {
+					String currentSelected = iterator.next();
 					String[] attributes = currentSelected.split(":"); //$NON-NLS-1$
 					if (attributes.length > 1) {
 						featureResolutionMap.put(attributes[0], attributes[1]);
@@ -100,17 +100,17 @@ public class BundleLauncherHelper {
 			}
 
 			// Get the feature model for each selected feature id and resolve its plugins
-			Set launchPlugins = new HashSet();
-			for (Iterator iterator = featureResolutionMap.keySet().iterator(); iterator.hasNext();) {
-				String id = (String) iterator.next();
+			Set<IPluginModelBase> launchPlugins = new HashSet<IPluginModelBase>();
+			for (Iterator<String> iterator = featureResolutionMap.keySet().iterator(); iterator.hasNext();) {
+				String id = iterator.next();
 
 				IFeatureModel featureModel = null;
 				if (IPDELauncherConstants.LOCATION_WORKSPACE.equalsIgnoreCase(defaultLocation)) {
-					featureModel = (IFeatureModel) workspaceFeatureMap.get(id);
+					featureModel = workspaceFeatureMap.get(id);
 				}
 				if (featureModel == null || IPDELauncherConstants.LOCATION_EXTERNAL.equalsIgnoreCase(defaultLocation)) {
 					if (externalFeatureMap.containsKey(id)) {
-						featureModel = (IFeatureModel) externalFeatureMap.get(id);
+						featureModel = externalFeatureMap.get(id);
 					}
 				}
 				if (featureModel == null) {
@@ -118,7 +118,7 @@ public class BundleLauncherHelper {
 				}
 
 				IFeaturePlugin[] featurePlugins = featureModel.getFeature().getPlugins();
-				String pluginResolution = (String) featureResolutionMap.get(id);
+				String pluginResolution = featureResolutionMap.get(id);
 				if (IPDELauncherConstants.LOCATION_DEFAULT.equalsIgnoreCase(pluginResolution)) {
 					pluginResolution = defaultPluginResolution;
 				}
@@ -145,7 +145,7 @@ public class BundleLauncherHelper {
 				}
 			}
 
-			HashMap additionalPlugins = getAdditionalPlugins(configuration, true);
+			HashMap<IPluginModelBase, String> additionalPlugins = getAdditionalPlugins(configuration, true);
 			launchPlugins.addAll(additionalPlugins.keySet());
 
 			// Get any plug-ins required by the application/product set on the config
@@ -163,10 +163,10 @@ public class BundleLauncherHelper {
 
 			// Get all required plugins
 			// exclude "org.eclipse.ui.workbench.compatibility" - it is only needed for pre-3.0 bundles
-			Set additionalIds = DependencyManager.getDependencies(launchPlugins.toArray(), false, new String[] {"org.eclipse.ui.workbench.compatibility"}); //$NON-NLS-1$
-			Iterator it = additionalIds.iterator();
+			Set<String> additionalIds = DependencyManager.getDependencies(launchPlugins.toArray(), false, new String[] {"org.eclipse.ui.workbench.compatibility"}); //$NON-NLS-1$
+			Iterator<String> it = additionalIds.iterator();
 			while (it.hasNext()) {
-				String id = (String) it.next();
+				String id = it.next();
 				ModelEntry modelEntry = PluginRegistry.findEntry(id);
 				if (modelEntry != null) {
 					IPluginModelBase model = findModel(modelEntry, null, defaultPluginResolution);
@@ -176,13 +176,13 @@ public class BundleLauncherHelper {
 			}
 
 			//remove conflicting duplicates - if they have same version or both are singleton
-			HashMap pluginMap = new HashMap();
-			List workspaceModels = null;
-			for (Iterator iterator = launchPlugins.iterator(); iterator.hasNext();) {
-				IPluginModelBase model = (IPluginModelBase) iterator.next();
+			HashMap<String, IPluginModelBase> pluginMap = new HashMap<String, IPluginModelBase>();
+			List<IPluginModelBase> workspaceModels = null;
+			for (Iterator<IPluginModelBase> iterator = launchPlugins.iterator(); iterator.hasNext();) {
+				IPluginModelBase model = iterator.next();
 				String id = model.getPluginBase().getId();
 				if (pluginMap.containsKey(id)) {
-					IPluginModelBase existing = (IPluginModelBase) pluginMap.get(id);
+					IPluginModelBase existing = pluginMap.get(id);
 					if (model.getPluginBase().getVersion().equalsIgnoreCase(existing.getPluginBase().getVersion()) || (isSingleton(model) && isSingleton(existing))) {
 						if (workspaceModels == null)
 							workspaceModels = Arrays.asList(PluginRegistry.getWorkspaceModels());
@@ -196,8 +196,8 @@ public class BundleLauncherHelper {
 			}
 
 			// Create the start levels for the selected plugins and add them to the map
-			for (Iterator iterator = pluginMap.values().iterator(); iterator.hasNext();) {
-				IPluginModelBase model = (IPluginModelBase) iterator.next();
+			for (Iterator<IPluginModelBase> iterator = pluginMap.values().iterator(); iterator.hasNext();) {
+				IPluginModelBase model = iterator.next();
 				addBundleToMap(map, model, "default:default"); //$NON-NLS-1$
 			}
 			return map;
@@ -293,13 +293,13 @@ public class BundleLauncherHelper {
 	}
 
 	public static IPluginModelBase[] getMergedBundles(ILaunchConfiguration configuration, boolean osgi) throws CoreException {
-		Map map = getMergedBundleMap(configuration, osgi);
-		return (IPluginModelBase[]) map.keySet().toArray(new IPluginModelBase[map.size()]);
+		Map<IPluginModelBase, String> map = getMergedBundleMap(configuration, osgi);
+		return map.keySet().toArray(new IPluginModelBase[map.size()]);
 	}
 
-	public static Map getWorkspaceBundleMap(ILaunchConfiguration configuration, Set set, String attribute) throws CoreException {
+	public static Map<IPluginModelBase, String> getWorkspaceBundleMap(ILaunchConfiguration configuration, Set<String> set, String attribute) throws CoreException {
 		String selected = configuration.getAttribute(attribute, ""); //$NON-NLS-1$
-		Map map = new HashMap();
+		Map<IPluginModelBase, String> map = new HashMap<IPluginModelBase, String>();
 		StringTokenizer tok = new StringTokenizer(selected, ","); //$NON-NLS-1$
 		while (tok.hasMoreTokens()) {
 			String token = tok.nextToken();
@@ -317,7 +317,7 @@ public class BundleLauncherHelper {
 			ModelEntry entry = PluginRegistry.findEntry(id);
 			if (entry != null) {
 				IPluginModelBase[] models = entry.getWorkspaceModels();
-				Set versions = new HashSet();
+				Set<String> versions = new HashSet<String>();
 				for (int i = 0; i < models.length; i++) {
 					IPluginBase base = models[i].getPluginBase();
 					String v = base.getVersion();
@@ -335,7 +335,7 @@ public class BundleLauncherHelper {
 		}
 
 		if (configuration.getAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true)) {
-			Set deselectedPlugins = LaunchPluginValidator.parsePlugins(configuration, IPDELauncherConstants.DESELECTED_WORKSPACE_PLUGINS);
+			Set<IPluginModelBase> deselectedPlugins = LaunchPluginValidator.parsePlugins(configuration, IPDELauncherConstants.DESELECTED_WORKSPACE_PLUGINS);
 			IPluginModelBase[] models = PluginRegistry.getWorkspaceModels();
 			for (int i = 0; i < models.length; i++) {
 				String id = models[i].getPluginBase().getId();
@@ -407,7 +407,7 @@ public class BundleLauncherHelper {
 	 * @param bundle The bundle to add
 	 * @param substring the start information in the form level:autostart
 	 */
-	private static void addBundleToMap(Map map, IPluginModelBase bundle, String sl) {
+	private static void addBundleToMap(Map<IPluginModelBase, String> map, IPluginModelBase bundle, String sl) {
 		BundleDescription desc = bundle.getBundleDescription();
 		boolean defaultsl = (sl == null || sl.equals("default:default")); //$NON-NLS-1$
 		if (desc != null && defaultsl) {
@@ -424,9 +424,9 @@ public class BundleLauncherHelper {
 
 	}
 
-	public static Map getTargetBundleMap(ILaunchConfiguration configuration, Set set, String attribute) throws CoreException {
+	public static Map<IPluginModelBase, String> getTargetBundleMap(ILaunchConfiguration configuration, Set<String> set, String attribute) throws CoreException {
 		String selected = configuration.getAttribute(attribute, ""); //$NON-NLS-1$
-		Map map = new HashMap();
+		Map<IPluginModelBase, String> map = new HashMap<IPluginModelBase, String>();
 		StringTokenizer tok = new StringTokenizer(selected, ","); //$NON-NLS-1$
 		while (tok.hasMoreTokens()) {
 			String token = tok.nextToken();
@@ -532,7 +532,7 @@ public class BundleLauncherHelper {
 			boolean usedefault = configuration.getAttribute(IPDELauncherConstants.USE_DEFAULT, true);
 			boolean automaticAdd = configuration.getAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true);
 			if (!usedefault) {
-				ArrayList list = new ArrayList();
+				ArrayList<String> list = new ArrayList<String>();
 				if (version == null) {
 					list.add("org.eclipse.core.contenttype"); //$NON-NLS-1$
 					list.add("org.eclipse.core.jobs"); //$NON-NLS-1$
@@ -600,13 +600,13 @@ public class BundleLauncherHelper {
 	 * @return map of IPluginModelBase to String resolution setting
 	 * @throws CoreException if there is a problem reading the launch config
 	 */
-	public static HashMap getAdditionalPlugins(ILaunchConfiguration config, boolean onlyEnabled) throws CoreException {
-		HashMap resolvedAdditionalPlugins = new HashMap();
-		Set userAddedPlugins = config.getAttribute(IPDELauncherConstants.ADDITIONAL_PLUGINS, (Set) null);
+	public static HashMap<IPluginModelBase, String> getAdditionalPlugins(ILaunchConfiguration config, boolean onlyEnabled) throws CoreException {
+		HashMap<IPluginModelBase, String> resolvedAdditionalPlugins = new HashMap<IPluginModelBase, String>();
+		Set<String> userAddedPlugins = config.getAttribute(IPDELauncherConstants.ADDITIONAL_PLUGINS, (Set<String>) null);
 		String defaultPluginResolution = config.getAttribute(IPDELauncherConstants.FEATURE_PLUGIN_RESOLUTION, IPDELauncherConstants.LOCATION_WORKSPACE);
 		if (userAddedPlugins != null) {
-			for (Iterator iterator = userAddedPlugins.iterator(); iterator.hasNext();) {
-				String addedPlugin = (String) iterator.next();
+			for (Iterator<String> iterator = userAddedPlugins.iterator(); iterator.hasNext();) {
+				String addedPlugin = iterator.next();
 				String[] pluginData = addedPlugin.split(":"); //$NON-NLS-1$
 				boolean checked = Boolean.valueOf(pluginData[3]).booleanValue();
 				if (!onlyEnabled || checked) {

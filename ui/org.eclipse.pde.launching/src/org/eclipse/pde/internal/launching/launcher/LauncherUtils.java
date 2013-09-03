@@ -78,8 +78,10 @@ public class LauncherUtils {
 		boolean isLocked = false;
 		try {
 			BundleContext context = PDECore.getDefault().getBundleContext();
+			@SuppressWarnings("rawtypes")
 			ServiceReference[] references = context.getServiceReferences(Location.class.getName(), "(type=osgi.configuration.area)"); //$NON-NLS-1$
 			if (references.length > 0) {
+				@SuppressWarnings("unchecked")
 				Object service = context.getService(references[0]);
 				if (service instanceof Location) {
 					URL workspaceURL = new Path(workspace).toFile().toURI().toURL();
@@ -181,7 +183,7 @@ public class LauncherUtils {
 			timeStamp = launch.getAttribute(TIMESTAMP, "0"); //$NON-NLS-1$
 			autoAdd = launch.getAttribute(IPDELauncherConstants.AUTOMATIC_ADD, true);
 			useDefault = launch.getAttribute(IPDELauncherConstants.USE_DEFAULT, true);
-			final ArrayList projects = new ArrayList();
+			final ArrayList<IProject> projects = new ArrayList<IProject>();
 			if (useDefault)
 				handleUseDefault(timeStamp, projects);
 			else if (autoAdd)
@@ -226,10 +228,10 @@ public class LauncherUtils {
 					if (path == null)
 						continue;
 					file = path.toFile();
-					Stack files = new Stack();
+					Stack<File> files = new Stack<File>();
 					files.push(file);
 					while (!files.isEmpty()) {
-						file = (File) files.pop();
+						file = files.pop();
 						if (file.isDirectory()) {
 							File[] children = file.listFiles();
 							if (children != null) {
@@ -256,7 +258,7 @@ public class LauncherUtils {
 		return "0"; //$NON-NLS-1$
 	}
 
-	private static void handleUseDefault(String launcherTimeStamp, ArrayList projects) {
+	private static void handleUseDefault(String launcherTimeStamp, ArrayList<IProject> projects) {
 		IProject[] projs = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		for (int i = 0; i < projs.length; i++) {
 			if (!WorkspaceModelManager.isPluginProject(projs[i]))
@@ -267,11 +269,11 @@ public class LauncherUtils {
 		}
 	}
 
-	private static void handleSelectedPlugins(ILaunchConfiguration config, String timeStamp, ArrayList projects) throws CoreException {
-		Map selectedPlugins = BundleLauncherHelper.getWorkspaceBundleMap(config, null, IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS);
-		Iterator it = selectedPlugins.keySet().iterator();
+	private static void handleSelectedPlugins(ILaunchConfiguration config, String timeStamp, ArrayList<IProject> projects) throws CoreException {
+		Map<IPluginModelBase, String> selectedPlugins = BundleLauncherHelper.getWorkspaceBundleMap(config, null, IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS);
+		Iterator<IPluginModelBase> it = selectedPlugins.keySet().iterator();
 		while (it.hasNext()) {
-			IPluginModelBase model = (IPluginModelBase) it.next();
+			IPluginModelBase model = it.next();
 			IResource res = model.getUnderlyingResource();
 			if (res != null) {
 				IProject project = res.getProject();
@@ -282,8 +284,8 @@ public class LauncherUtils {
 		}
 	}
 
-	private static void handleDeselectedPlugins(ILaunchConfiguration config, String launcherTimeStamp, ArrayList projects) throws CoreException {
-		Map deSelectedPlugins = BundleLauncherHelper.getWorkspaceBundleMap(config, null, IPDELauncherConstants.DESELECTED_WORKSPACE_PLUGINS);
+	private static void handleDeselectedPlugins(ILaunchConfiguration config, String launcherTimeStamp, ArrayList<IProject> projects) throws CoreException {
+		Map<IPluginModelBase, String> deSelectedPlugins = BundleLauncherHelper.getWorkspaceBundleMap(config, null, IPDELauncherConstants.DESELECTED_WORKSPACE_PLUGINS);
 		IProject[] projs = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		for (int i = 0; i < projs.length; i++) {
 			if (!WorkspaceModelManager.isPluginProject(projs[i]))
@@ -364,7 +366,7 @@ public class LauncherUtils {
 				if (project instanceof IProject) {
 					IPluginModelBase model = PluginRegistry.findModel((IProject) project);
 					if (model != null) {
-						Set plugins = DependencyManager.getSelfAndDependencies(model, null);
+						Set<String> plugins = DependencyManager.getSelfAndDependencies(model, null);
 						return plugins.contains("org.eclipse.swt"); //$NON-NLS-1$
 					}
 				}

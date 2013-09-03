@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,7 +38,7 @@ public class RequirementHelper {
 	 * @throws CoreException if there is a problem reading the launch config
 	 */
 	public static String[] getApplicationRequirements(ILaunchConfiguration config) throws CoreException {
-		Set requiredIds = new HashSet();
+		Set<String> requiredIds = new HashSet<String>();
 		if (config.getAttribute(IPDELauncherConstants.USE_PRODUCT, false)) {
 			String product = config.getAttribute(IPDELauncherConstants.PRODUCT, (String) null);
 			if (product != null) {
@@ -65,10 +65,10 @@ public class RequirementHelper {
 				}
 			}
 		}
-		return (String[]) requiredIds.toArray(new String[requiredIds.size()]);
+		return requiredIds.toArray(new String[requiredIds.size()]);
 	}
 
-	private static void getProductRequirements(String product, Collection requiredIds) {
+	private static void getProductRequirements(String product, Collection<String> requiredIds) {
 		PDEExtensionRegistry registry = PDECore.getDefault().getExtensionsRegistry();
 		IExtension[] extensions = registry.findExtensions("org.eclipse.core.runtime.products", true); //$NON-NLS-1$
 		for (int i = 0; i < extensions.length; i++) {
@@ -89,7 +89,7 @@ public class RequirementHelper {
 		}
 	}
 
-	private static void getApplicationRequirements(String application, Collection requiredIds) {
+	private static void getApplicationRequirements(String application, Collection<String> requiredIds) {
 		PDEExtensionRegistry registry = PDECore.getDefault().getExtensionsRegistry();
 		IExtension[] extensions = registry.findExtensions("org.eclipse.core.runtime.applications", true); //$NON-NLS-1$
 		for (int i = 0; i < extensions.length; i++) {

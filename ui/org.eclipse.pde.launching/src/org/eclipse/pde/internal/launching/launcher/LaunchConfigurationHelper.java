@@ -104,7 +104,7 @@ public class LaunchConfigurationHelper {
 	 * @return a properties object containing the properties written out to config.ini 
 	 * @throws CoreException
 	 */
-	public static Properties createConfigIniFile(ILaunchConfiguration configuration, String productID, Map bundles, Map bundlesWithStartLevels, File configurationDirectory) throws CoreException {
+	public static Properties createConfigIniFile(ILaunchConfiguration configuration, String productID, Map<String, IPluginModelBase> bundles, Map<IPluginModelBase, String> bundlesWithStartLevels, File configurationDirectory) throws CoreException {
 		Properties properties = null;
 		// if we are to generate a config.ini, start with the values in the target platform's config.ini - bug 141918
 		if (configuration.getAttribute(IPDELauncherConstants.CONFIG_GENERATE_DEFAULT, true)) {
@@ -149,9 +149,9 @@ public class LaunchConfigurationHelper {
 		if (osgiBundles != null && osgiBundles.indexOf(IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR) != -1 && bundles.containsKey(IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR)) {
 
 			// If update configurator is set to its default start level, override it as simple/update configurators should not be autostarted together
-			Object updateConfiguratorBundle = bundles.get(IPDEBuildConstants.BUNDLE_UPDATE_CONFIGURATOR);
+			IPluginModelBase updateConfiguratorBundle = bundles.get(IPDEBuildConstants.BUNDLE_UPDATE_CONFIGURATOR);
 			if (updateConfiguratorBundle != null) {
-				String startLevel = (String) bundlesWithStartLevels.get(updateConfiguratorBundle);
+				String startLevel = bundlesWithStartLevels.get(updateConfiguratorBundle);
 				if (startLevel != null && startLevel.equals(BundleLauncherHelper.DEFAULT_UPDATE_CONFIGURATOR_START_LEVEL)) {
 					bundlesWithStartLevels.put(updateConfiguratorBundle, "4:false"); //$NON-NLS-1$
 				}
@@ -194,7 +194,7 @@ public class LaunchConfigurationHelper {
 			// Special processing for update manager (update configurator)
 			String brandingId = LaunchConfigurationHelper.getContributingPlugin(productID);
 			// Create a platform.xml
-			TargetPlatform.createPlatformConfiguration(configurationDirectory, (IPluginModelBase[]) bundles.values().toArray(new IPluginModelBase[bundles.size()]), brandingId != null ? (IPluginModelBase) bundles.get(brandingId) : null);
+			TargetPlatform.createPlatformConfiguration(configurationDirectory, bundles.values().toArray(new IPluginModelBase[bundles.size()]), brandingId != null ? (IPluginModelBase) bundles.get(brandingId) : null);
 		}
 
 		setBundleLocations(bundles, properties, autostart);
@@ -203,7 +203,7 @@ public class LaunchConfigurationHelper {
 		return properties;
 	}
 
-	private static void addRequiredProperties(Properties properties, String productID, Map bundles, Map bundlesWithStartLevels) {
+	private static void addRequiredProperties(Properties properties, String productID, Map<String, IPluginModelBase> bundles, Map<IPluginModelBase, String> bundlesWithStartLevels) {
 		if (!properties.containsKey("osgi.install.area")) //$NON-NLS-1$
 			properties.setProperty("osgi.install.area", "file:" + TargetPlatform.getLocation()); //$NON-NLS-1$ //$NON-NLS-2$
 		if (!properties.containsKey("osgi.configuration.cascaded")) //$NON-NLS-1$
@@ -231,7 +231,7 @@ public class LaunchConfigurationHelper {
 	 * @param bundlesWithStartLevels map of bundles of start level
 	 * @return string list of osgi bundles
 	 */
-	private static String computeOSGiBundles(String bundleList, Map bundles, Map bundlesWithStartLevels) {
+	private static String computeOSGiBundles(String bundleList, Map<String, IPluginModelBase> bundles, Map<IPluginModelBase, String> bundlesWithStartLevels) {
 
 		// if p2 and only simple configurator and
 		// if simple configurator isn't selected & isn't in bundle list... hack it
@@ -241,7 +241,7 @@ public class LaunchConfigurationHelper {
 			return "org.eclipse.equinox.simpleconfigurator@1:start"; //$NON-NLS-1$
 
 		StringBuffer buffer = new StringBuffer();
-		Set initialBundleSet = new HashSet();
+		Set<String> initialBundleSet = new HashSet<String>();
 		StringTokenizer tokenizer = new StringTokenizer(bundleList, ","); //$NON-NLS-1$
 		while (tokenizer.hasMoreTokens()) {
 			String token = tokenizer.nextToken();
@@ -260,15 +260,15 @@ public class LaunchConfigurationHelper {
 		// if org.eclipse.update.configurator is not included (LIKE IN BASIC RCP APPLICATION), then write out all bundles in osgi.bundles - bug 170772
 		if (!initialBundleSet.contains(IPDEBuildConstants.BUNDLE_UPDATE_CONFIGURATOR)) {
 			initialBundleSet.add(IPDEBuildConstants.BUNDLE_OSGI);
-			Iterator iter = bundlesWithStartLevels.keySet().iterator();
+			Iterator<IPluginModelBase> iter = bundlesWithStartLevels.keySet().iterator();
 			while (iter.hasNext()) {
-				IPluginModelBase model = (IPluginModelBase) iter.next();
+				IPluginModelBase model = iter.next();
 				String id = model.getPluginBase().getId();
 				if (!initialBundleSet.contains(id)) {
 					if (buffer.length() > 0)
 						buffer.append(',');
 
-					String slinfo = (String) bundlesWithStartLevels.get(model);
+					String slinfo = bundlesWithStartLevels.get(model);
 					buffer.append(id);
 					buffer.append('@');
 					buffer.append(slinfo);
@@ -302,15 +302,15 @@ public class LaunchConfigurationHelper {
 		return properties;
 	}
 
-	private static void addSplashLocation(Properties properties, String productID, Map map) {
+	private static void addSplashLocation(Properties properties, String productID, Map<String, IPluginModelBase> map) {
 		Properties targetConfig = TargetPlatformHelper.getConfigIniProperties();
 		String targetProduct = targetConfig == null ? null : targetConfig.getProperty("eclipse.product"); //$NON-NLS-1$
 		String targetSplash = targetConfig == null ? null : targetConfig.getProperty("osgi.splashPath"); //$NON-NLS-1$
 		if (!productID.equals(targetProduct) || targetSplash == null) {
-			ArrayList locations = new ArrayList();
+			ArrayList<String> locations = new ArrayList<String>();
 			String plugin = getContributingPlugin(productID);
 			locations.add(plugin);
-			IPluginModelBase model = (IPluginModelBase) map.get(plugin);
+			IPluginModelBase model = map.get(plugin);
 			if (model != null) {
 				BundleDescription desc = model.getBundleDescription();
 				if (desc != null) {
@@ -324,18 +324,18 @@ public class LaunchConfigurationHelper {
 			resolveLocationPath(targetSplash, properties, map);
 	}
 
-	private static void resolveLocationPath(String splashPath, Properties properties, Map map) {
-		ArrayList locations = new ArrayList();
+	private static void resolveLocationPath(String splashPath, Properties properties, Map<String, IPluginModelBase> map) {
+		ArrayList<String> locations = new ArrayList<String>();
 		StringTokenizer tok = new StringTokenizer(splashPath, ","); //$NON-NLS-1$
 		while (tok.hasMoreTokens())
 			locations.add(tok.nextToken());
 		resolveLocationPath(locations, properties, map);
 	}
 
-	private static void resolveLocationPath(ArrayList locations, Properties properties, Map map) {
+	private static void resolveLocationPath(ArrayList<String> locations, Properties properties, Map<String, IPluginModelBase> map) {
 		StringBuffer buffer = new StringBuffer();
 		for (int i = 0; i < locations.size(); i++) {
-			String location = (String) locations.get(i);
+			String location = locations.get(i);
 			if (location.startsWith("platform:/base/plugins/")) { //$NON-NLS-1$
 				location = location.replaceFirst("platform:/base/plugins/", ""); //$NON-NLS-1$ //$NON-NLS-2$
 			}
@@ -358,8 +358,8 @@ public class LaunchConfigurationHelper {
 	 * @param includeReference whether to prefix the url with 'reference:'
 	 * @return string url for the bundle location
 	 */
-	public static String getBundleURL(String id, Map pluginMap, boolean includeReference) {
-		IPluginModelBase model = (IPluginModelBase) pluginMap.get(id.trim());
+	public static String getBundleURL(String id, Map<String, IPluginModelBase> pluginMap, boolean includeReference) {
+		IPluginModelBase model = pluginMap.get(id.trim());
 		return getBundleURL(model, includeReference);
 	}
 
@@ -387,7 +387,7 @@ public class LaunchConfigurationHelper {
 	 * @param map map of bundles being launched (id mapped to model)
 	 * @param properties properties for config.ini
 	 */
-	private static void setBundleLocations(Map map, Properties properties, boolean defaultAuto) {
+	private static void setBundleLocations(Map<String, IPluginModelBase> map, Properties properties, boolean defaultAuto) {
 		String framework = properties.getProperty(PROP_OSGI_FRAMEWORK);
 		if (framework != null) {
 			framework = TargetPlatformHelper.stripPathInformation(framework);

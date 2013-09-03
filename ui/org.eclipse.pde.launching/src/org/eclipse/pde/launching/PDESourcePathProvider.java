@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2011 IBM Corporation and others.
+ *  Copyright (c) 2006, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -45,14 +45,15 @@ public class PDESourcePathProvider extends StandardSourcePathProvider {
 	 * (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.StandardSourcePathProvider#computeUnresolvedClasspath(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public IRuntimeClasspathEntry[] computeUnresolvedClasspath(ILaunchConfiguration configuration) throws CoreException {
-		List sourcePath = new ArrayList();
+		List<IRuntimeClasspathEntry> sourcePath = new ArrayList<IRuntimeClasspathEntry>();
 		sourcePath.add(getJREEntry(configuration));
 		IProject[] projects = getJavaProjects(configuration);
 		for (int i = 0; i < projects.length; i++) {
 			sourcePath.add(JavaRuntime.newProjectRuntimeClasspathEntry(JavaCore.create(projects[i])));
 		}
-		return (IRuntimeClasspathEntry[]) sourcePath.toArray(new IRuntimeClasspathEntry[sourcePath.size()]);
+		return sourcePath.toArray(new IRuntimeClasspathEntry[sourcePath.size()]);
 	}
 
 	/**
@@ -94,8 +95,9 @@ public class PDESourcePathProvider extends StandardSourcePathProvider {
 	 * (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.StandardSourcePathProvider#resolveClasspath(org.eclipse.jdt.launching.IRuntimeClasspathEntry[], org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public IRuntimeClasspathEntry[] resolveClasspath(IRuntimeClasspathEntry[] entries, ILaunchConfiguration configuration) throws CoreException {
-		List all = new ArrayList(entries.length);
+		List<IRuntimeClasspathEntry> all = new ArrayList<IRuntimeClasspathEntry>(entries.length);
 		for (int i = 0; i < entries.length; i++) {
 			if (entries[i].getType() == IRuntimeClasspathEntry.PROJECT) {
 				// a project resolves to itself for source lookup (rather than
@@ -113,7 +115,7 @@ public class PDESourcePathProvider extends StandardSourcePathProvider {
 				}
 			}
 		}
-		return (IRuntimeClasspathEntry[]) all.toArray(new IRuntimeClasspathEntry[all.size()]);
+		return all.toArray(new IRuntimeClasspathEntry[all.size()]);
 	}
 
 	/**
@@ -127,7 +129,7 @@ public class PDESourcePathProvider extends StandardSourcePathProvider {
 	 * @throws CoreException
 	 * 			if unable to evaluate the package fragment roots
 	 */
-	private void addBinaryPackageFragmentRoots(IJavaProject jProject, List all) throws CoreException {
+	private void addBinaryPackageFragmentRoots(IJavaProject jProject, List<IRuntimeClasspathEntry> all) throws CoreException {
 		IPackageFragmentRoot[] roots = jProject.getPackageFragmentRoots();
 		for (int j = 0; j < roots.length; j++) {
 			if (roots[j].getKind() == IPackageFragmentRoot.K_BINARY && !PDEJavaHelper.isJRELibrary(roots[j])) {

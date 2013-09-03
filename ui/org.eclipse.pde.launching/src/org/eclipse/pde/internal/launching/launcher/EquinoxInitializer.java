@@ -20,8 +20,9 @@ import org.eclipse.pde.launching.OSGiLaunchConfigurationInitializer;
 
 public class EquinoxInitializer extends OSGiLaunchConfigurationInitializer {
 
-	private Map fStartLevels;
+	private Map<String, String> fStartLevels;
 
+	@Override
 	public void initialize(ILaunchConfigurationWorkingCopy configuration) {
 		super.initialize(configuration);
 		initializeProgramArguments(configuration);
@@ -61,11 +62,13 @@ public class EquinoxInitializer extends OSGiLaunchConfigurationInitializer {
 		configuration.setAttribute(IPDELauncherConstants.TRACING_CHECKED, IPDELauncherConstants.TRACING_NONE);
 	}
 
+	@Override
 	protected void initializeBundleState(ILaunchConfigurationWorkingCopy configuration) {
 		initializeBundleState();
 		super.initializeBundleState(configuration);
 	}
 
+	@Override
 	protected String getAutoStart(String bundleID) {
 		if (fStartLevels.containsKey(bundleID)) {
 			String value = fStartLevels.get(bundleID).toString();
@@ -74,6 +77,7 @@ public class EquinoxInitializer extends OSGiLaunchConfigurationInitializer {
 		return super.getAutoStart(bundleID);
 	}
 
+	@Override
 	protected String getStartLevel(String bundleID) {
 		if (fStartLevels.containsKey(bundleID)) {
 			String value = fStartLevels.get(bundleID).toString();
@@ -84,7 +88,7 @@ public class EquinoxInitializer extends OSGiLaunchConfigurationInitializer {
 
 	private void initializeBundleState() {
 		if (fStartLevels == null)
-			fStartLevels = new HashMap();
+			fStartLevels = new HashMap<String, String>();
 		Properties props = TargetPlatformHelper.getConfigIniProperties();
 		if (props != null) {
 			String value = (String) props.get("osgi.bundles"); //$NON-NLS-1$

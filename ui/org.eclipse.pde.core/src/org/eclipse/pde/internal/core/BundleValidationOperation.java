@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,9 +50,9 @@ public class BundleValidationOperation implements IWorkspaceRunnable {
 		monitor.done();
 	}
 
-	public Map<BundleDescription, Object[]> getResolverErrors() {
+	public Map<Object, Object[]> getResolverErrors() {
 		Set<String> alreadyDuplicated = new HashSet<String>();
-		Map<BundleDescription, Object[]> map = new HashMap<BundleDescription, Object[]>();
+		Map<Object, Object[]> map = new HashMap<Object, Object[]>();
 		BundleDescription[] bundles = fState.getBundles();
 		for (int i = 0; i < bundles.length; i++) {
 			BundleDescription desc = bundles[i];

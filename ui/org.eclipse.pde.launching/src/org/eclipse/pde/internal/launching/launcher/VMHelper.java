@@ -37,7 +37,7 @@ public class VMHelper {
 	 */
 	public static String getDefaultEEName(ILaunchConfiguration configuration) throws CoreException {
 		// List of all valid EEs, removed if they don't match
-		List validEEs = new LinkedList(); // Use a list to keep order
+		List<IExecutionEnvironment> validEEs = new LinkedList<IExecutionEnvironment>(); // Use a list to keep order
 		validEEs.addAll(Arrays.asList(JavaRuntime.getExecutionEnvironmentsManager().getExecutionEnvironments()));
 
 		// Iterate through all launch models 
@@ -58,8 +58,8 @@ public class VMHelper {
 				if (bundleEnvs.length > 0) {
 
 					// Iterate through all remaining valid EEs, removing any that don't match
-					for (Iterator iterator = validEEs.iterator(); iterator.hasNext();) {
-						IExecutionEnvironment currentEE = (IExecutionEnvironment) iterator.next();
+					for (Iterator<IExecutionEnvironment> iterator = validEEs.iterator(); iterator.hasNext();) {
+						IExecutionEnvironment currentEE = iterator.next();
 						boolean isValid = false;
 						// To be valid, an EE must match at least one BREE
 						for (int j = 0; j < bundleEnvs.length; j++) {
@@ -90,7 +90,7 @@ public class VMHelper {
 		// JavaRuntime appears to return the EEs from smallest to largest, so taking the first valid EE is a good selection
 		// To improve this we could check if any valid EE has another valid EE as a subEnvironment
 		if (!validEEs.isEmpty()) {
-			return ((IExecutionEnvironment) validEEs.iterator().next()).getId();
+			return validEEs.iterator().next().getId();
 		}
 		return null;
 	}

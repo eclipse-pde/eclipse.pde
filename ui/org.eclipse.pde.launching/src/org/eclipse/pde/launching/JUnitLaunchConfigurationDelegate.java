@@ -54,15 +54,16 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 
 	// used to generate the dev classpath entries
 	// key is bundle ID, value is a model
-	private Map fAllBundles;
+	private Map<String, IPluginModelBase> fAllBundles;
 
 	// key is a model, value is startLevel:autoStart
-	private Map fModels;
+	private Map<IPluginModelBase, String> fModels;
 
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate#getVMRunner(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String)
 	 */
+	@Override
 	public IVMRunner getVMRunner(ILaunchConfiguration configuration, String mode) throws CoreException {
 		IVMInstall launcher = VMHelper.createLauncher(configuration);
 		return launcher.getVMRunner(mode);
@@ -71,6 +72,7 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.junit.launcher.JUnitLaunchConfigurationDelegate#verifyMainTypeName(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public String verifyMainTypeName(ILaunchConfiguration configuration) throws CoreException {
 		if (TargetPlatformHelper.getTargetVersion() >= 3.3)
 			return "org.eclipse.equinox.launcher.Main"; //$NON-NLS-1$
@@ -92,6 +94,7 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 	 * (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.junit.launcher.JUnitBaseLaunchConfiguration#abort(java.lang.String, java.lang.Throwable, int)
 	 */
+	@Override
 	protected void abort(String message, Throwable exception, int code) throws CoreException {
 		throw new CoreException(new Status(IStatus.ERROR, IPDEConstants.PLUGIN_ID, code, message, exception));
 	}
@@ -99,7 +102,11 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.junit.launcher.JUnitLaunchConfigurationDelegate#collectExecutionArguments(org.eclipse.debug.core.ILaunchConfiguration, java.util.List, java.util.List)
 	 */
-	protected void collectExecutionArguments(ILaunchConfiguration configuration, List/*String*/vmArguments, List/*String*/programArgs) throws CoreException {
+	@SuppressWarnings("unchecked")
+	@Override
+	protected void collectExecutionArguments(ILaunchConfiguration configuration, @SuppressWarnings("rawtypes")
+	List vmArguments, @SuppressWarnings("rawtypes")
+	List programArgs) throws CoreException {
 		super.collectExecutionArguments(configuration, vmArguments, programArgs);
 
 		// Specify the JUnit Plug-in test application to launch
@@ -223,7 +230,7 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 		// if application is not set, we should launch the default UI test app
 		// Check to see if we should launch the legacy UI app
 		if (application == null) {
-			IPluginModelBase model = (IPluginModelBase) fAllBundles.get("org.eclipse.pde.junit.runtime"); //$NON-NLS-1$
+			IPluginModelBase model = fAllBundles.get("org.eclipse.pde.junit.runtime"); //$NON-NLS-1$
 			BundleDescription desc = model != null ? model.getBundleDescription() : null;
 			if (desc != null) {
 				Version version = desc.getVersion();
@@ -256,6 +263,7 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 	 * (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate#getProgramArguments(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public String getProgramArguments(ILaunchConfiguration configuration) throws CoreException {
 		return LaunchArgumentsHelper.getUserProgramArguments(configuration);
 	}
@@ -264,11 +272,12 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 	 * (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate#getVMArguments(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public String getVMArguments(ILaunchConfiguration configuration) throws CoreException {
 		String vmArgs = LaunchArgumentsHelper.getUserVMArguments(configuration);
 
 		// necessary for PDE to know how to load plugins when target platform = host platform
-		IPluginModelBase base = (IPluginModelBase) fAllBundles.get(PDECore.PLUGIN_ID);
+		IPluginModelBase base = fAllBundles.get(PDECore.PLUGIN_ID);
 		if (base != null && VersionUtil.compareMacroMinorMicro(base.getBundleDescription().getVersion(), new Version("3.3.1")) >= 0) { //$NON-NLS-1$
 			vmArgs = concatArg(vmArgs, "-Declipse.pde.launch=true"); //$NON-NLS-1$
 		}
@@ -299,6 +308,7 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 	 * (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate#getEnvironment(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public String[] getEnvironment(ILaunchConfiguration configuration) throws CoreException {
 		return DebugPlugin.getDefault().getLaunchManager().getEnvironment(configuration);
 	}
@@ -307,6 +317,7 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 	 * (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate#getClasspath(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public String[] getClasspath(ILaunchConfiguration configuration) throws CoreException {
 		String[] classpath = LaunchArgumentsHelper.constructClasspath(configuration);
 		if (classpath == null) {
@@ -319,6 +330,7 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 	 * (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate#getWorkingDirectory(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public File getWorkingDirectory(ILaunchConfiguration configuration) throws CoreException {
 		return LaunchArgumentsHelper.getWorkingDirectory(configuration);
 	}
@@ -327,7 +339,8 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 	 * (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate#getVMSpecificAttributesMap(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
-	public Map getVMSpecificAttributesMap(ILaunchConfiguration configuration) throws CoreException {
+	@Override
+	public Map<String, Object> getVMSpecificAttributesMap(ILaunchConfiguration configuration) throws CoreException {
 		return LaunchArgumentsHelper.getVMSpecificAttributesMap(configuration);
 	}
 
@@ -335,6 +348,7 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 	 * (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate#setDefaultSourceLocator(org.eclipse.debug.core.ILaunch, org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	protected void setDefaultSourceLocator(ILaunch launch, ILaunchConfiguration configuration) throws CoreException {
 		ILaunchConfigurationWorkingCopy wc = null;
 		if (configuration.isWorkingCopy()) {
@@ -368,6 +382,7 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 	 * (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate#getBuildOrder(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String)
 	 */
+	@Override
 	protected IProject[] getBuildOrder(ILaunchConfiguration configuration, String mode) throws CoreException {
 		return computeBuildOrder(LaunchPluginValidator.getAffectedProjects(configuration));
 	}
@@ -376,6 +391,7 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 	 * (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate#getProjectsForProblemSearch(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String)
 	 */
+	@Override
 	protected IProject[] getProjectsForProblemSearch(ILaunchConfiguration configuration, String mode) throws CoreException {
 		return LaunchPluginValidator.getAffectedProjects(configuration);
 	}
@@ -394,14 +410,15 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.junit.launcher.JUnitLaunchConfigurationDelegate#preLaunchCheck(org.eclipse.debug.core.ILaunchConfiguration, org.eclipse.debug.core.ILaunch, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	protected void preLaunchCheck(ILaunchConfiguration configuration, ILaunch launch, IProgressMonitor monitor) throws CoreException {
 		fWorkspaceLocation = null;
 		fConfigDir = null;
 		fModels = BundleLauncherHelper.getMergedBundleMap(configuration, false);
-		fAllBundles = new HashMap(fModels.size());
-		Iterator iter = fModels.keySet().iterator();
+		fAllBundles = new HashMap<String, IPluginModelBase>(fModels.size());
+		Iterator<IPluginModelBase> iter = fModels.keySet().iterator();
 		while (iter.hasNext()) {
-			IPluginModelBase model = (IPluginModelBase) iter.next();
+			IPluginModelBase model = iter.next();
 			fAllBundles.put(model.getPluginBase().getId(), model);
 		}
 

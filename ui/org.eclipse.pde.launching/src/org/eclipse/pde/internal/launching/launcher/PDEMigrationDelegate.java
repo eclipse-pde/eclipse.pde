@@ -19,6 +19,7 @@ import org.eclipse.pde.launching.IPDELauncherConstants;
 
 public class PDEMigrationDelegate implements ILaunchConfigurationMigrationDelegate {
 
+	@SuppressWarnings("deprecation")
 	public boolean isCandidate(ILaunchConfiguration candidate) throws CoreException {
 		return !candidate.getAttribute(IPDEConstants.APPEND_ARGS_EXPLICITLY, false) || candidate.hasAttribute(IPDELauncherConstants.VMINSTALL);
 	}
@@ -29,6 +30,7 @@ public class PDEMigrationDelegate implements ILaunchConfigurationMigrationDelega
 		wc.doSave();
 	}
 
+	@SuppressWarnings("deprecation")
 	public void migrate(ILaunchConfigurationWorkingCopy candidate) throws CoreException {
 		if (!candidate.getAttribute(IPDEConstants.APPEND_ARGS_EXPLICITLY, false)) {
 			candidate.setAttribute(IPDEConstants.APPEND_ARGS_EXPLICITLY, true);

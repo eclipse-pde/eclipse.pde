@@ -167,8 +167,8 @@ public class LaunchArgumentsHelper {
 		return dir;
 	}
 
-	public static Map getVMSpecificAttributesMap(ILaunchConfiguration config) throws CoreException {
-		Map map = new HashMap(2);
+	public static Map<String, Object> getVMSpecificAttributesMap(ILaunchConfiguration config) throws CoreException {
+		Map<String, Object> map = new HashMap<String, Object>(2);
 		String javaCommand = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_JAVA_COMMAND, (String) null);
 		map.put(IJavaLaunchConfigurationConstants.ATTR_JAVA_COMMAND, javaCommand);
 		if (TargetPlatform.getOS().equals("macosx")) { //$NON-NLS-1$
@@ -192,12 +192,12 @@ public class LaunchArgumentsHelper {
 	public static String getTracingFileArgument(ILaunchConfiguration config, String optionsFileName) {
 		try {
 			TracingOptionsManager mng = PDECore.getDefault().getTracingOptionsManager();
-			Map options = config.getAttribute(IPDELauncherConstants.TRACING_OPTIONS, (Map) null);
+			Map<String, String> options = config.getAttribute(IPDELauncherConstants.TRACING_OPTIONS, (Map<String, String>) null);
 			String selected = config.getAttribute(IPDELauncherConstants.TRACING_CHECKED, (String) null);
 			if (selected == null) {
 				mng.save(optionsFileName, options);
 			} else if (!selected.equals(IPDELauncherConstants.TRACING_NONE)) {
-				HashSet result = new HashSet();
+				HashSet<String> result = new HashSet<String>();
 				StringTokenizer tokenizer = new StringTokenizer(selected, ","); //$NON-NLS-1$
 				while (tokenizer.hasMoreTokens()) {
 					result.add(tokenizer.nextToken());
@@ -219,14 +219,14 @@ public class LaunchArgumentsHelper {
 		if (jarPath == null)
 			return null;
 
-		ArrayList entries = new ArrayList();
+		ArrayList<String> entries = new ArrayList<String>();
 		entries.add(jarPath);
 
 		String bootstrap = configuration.getAttribute(IPDELauncherConstants.BOOTSTRAP_ENTRIES, ""); //$NON-NLS-1$
 		StringTokenizer tok = new StringTokenizer(getSubstitutedString(bootstrap), ","); //$NON-NLS-1$
 		while (tok.hasMoreTokens())
 			entries.add(tok.nextToken().trim());
-		return (String[]) entries.toArray(new String[entries.size()]);
+		return entries.toArray(new String[entries.size()]);
 	}
 
 	/**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,17 +41,18 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 
 	// used to generate the dev classpath entries
 	// key is bundle ID, value is a model
-	protected Map fAllBundles;
+	protected Map<String, IPluginModelBase> fAllBundles;
 
 	// key is a model, value is startLevel:autoStart
-	private Map fModels;
+	private Map<IPluginModelBase, String> fModels;
 
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.pde.ui.launcher.AbstractPDELaunchConfiguration#getProgramArguments(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public String[] getProgramArguments(ILaunchConfiguration configuration) throws CoreException {
-		ArrayList programArgs = new ArrayList();
+		ArrayList<String> programArgs = new ArrayList<String>();
 
 		programArgs.add("-dev"); //$NON-NLS-1$
 		programArgs.add(ClasspathHelper.getDevEntriesProperties(getConfigDir(configuration).toString() + "/dev.properties", fAllBundles)); //$NON-NLS-1$
@@ -64,7 +65,7 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 		for (int i = 0; i < args.length; i++) {
 			programArgs.add(args[i]);
 		}
-		return (String[]) programArgs.toArray(new String[programArgs.size()]);
+		return programArgs.toArray(new String[programArgs.size()]);
 	}
 
 	private void saveConfigurationFile(ILaunchConfiguration configuration) throws CoreException {
@@ -80,9 +81,9 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 		if (fAllBundles.containsKey(IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR)) {
 
 			// If update configurator is set to its default start level, override it as simple/update configurators should not be autostarted together
-			Object updateConfiguratorBundle = fAllBundles.get(IPDEBuildConstants.BUNDLE_UPDATE_CONFIGURATOR);
+			IPluginModelBase updateConfiguratorBundle = fAllBundles.get(IPDEBuildConstants.BUNDLE_UPDATE_CONFIGURATOR);
 			if (updateConfiguratorBundle != null) {
-				String startLevel = (String) fModels.get(updateConfiguratorBundle);
+				String startLevel = fModels.get(updateConfiguratorBundle);
 				if (startLevel != null && startLevel.equals(BundleLauncherHelper.DEFAULT_UPDATE_CONFIGURATOR_START_LEVEL)) {
 					fModels.put(updateConfiguratorBundle, "4:false"); //$NON-NLS-1$
 				}
@@ -97,9 +98,9 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 				}
 			}
 			StringBuffer buffer = new StringBuffer();
-			IPluginModelBase model = (IPluginModelBase) fAllBundles.get(IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR);
+			IPluginModelBase model = fAllBundles.get(IPDEBuildConstants.BUNDLE_SIMPLE_CONFIGURATOR);
 			buffer.append(LaunchConfigurationHelper.getBundleURL(model, true));
-			appendStartData(buffer, (String) fModels.get(model), autostart);
+			appendStartData(buffer, fModels.get(model), autostart);
 			bundles = buffer.toString();
 		} else {
 			bundles = getBundles(autostart);
@@ -117,9 +118,9 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 
 	private String getBundles(boolean defaultAuto) {
 		StringBuffer buffer = new StringBuffer();
-		Iterator iter = fModels.keySet().iterator();
+		Iterator<IPluginModelBase> iter = fModels.keySet().iterator();
 		while (iter.hasNext()) {
-			IPluginModelBase model = (IPluginModelBase) iter.next();
+			IPluginModelBase model = iter.next();
 			String id = model.getPluginBase().getId();
 			if (!IPDEBuildConstants.BUNDLE_OSGI.equals(id)) {
 				if (buffer.length() > 0)
@@ -167,12 +168,13 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 	 * (non-Javadoc)
 	 * @see org.eclipse.pde.ui.launcher.AbstractPDELaunchConfiguration#preLaunchCheck(org.eclipse.debug.core.ILaunchConfiguration, org.eclipse.debug.core.ILaunch, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	protected void preLaunchCheck(ILaunchConfiguration configuration, ILaunch launch, IProgressMonitor monitor) throws CoreException {
 		fModels = BundleLauncherHelper.getMergedBundleMap(configuration, true);
-		fAllBundles = new HashMap(fModels.size());
-		Iterator iter = fModels.keySet().iterator();
+		fAllBundles = new HashMap<String, IPluginModelBase>(fModels.size());
+		Iterator<IPluginModelBase> iter = fModels.keySet().iterator();
 		while (iter.hasNext()) {
-			IPluginModelBase model = (IPluginModelBase) iter.next();
+			IPluginModelBase model = iter.next();
 			fAllBundles.put(model.getPluginBase().getId(), model);
 		}
 
@@ -194,6 +196,7 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 	 * (non-Javadoc)
 	 * @see org.eclipse.pde.ui.launcher.AbstractPDELaunchConfiguration#validatePluginDependencies(org.eclipse.debug.core.ILaunchConfiguration, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	protected void validatePluginDependencies(ILaunchConfiguration configuration, IProgressMonitor monitor) throws CoreException {
 		OSGiValidationOperation op = new OSGiValidationOperation(configuration);
 		LaunchPluginValidator.runValidationOperation(op, monitor);
@@ -210,6 +213,7 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 	 * 			if unable to retrieve launch attribute values
 	 * @since 3.3
 	 */
+	@Override
 	protected void clear(ILaunchConfiguration configuration, IProgressMonitor monitor) throws CoreException {
 		// clear config area, if necessary
 		if (configuration.getAttribute(IPDELauncherConstants.CONFIG_CLEAR_AREA, false))

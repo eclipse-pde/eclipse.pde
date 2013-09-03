@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,12 +33,12 @@ public class PDESourceLookupDirector extends AbstractSourceLookupDirector {
 	/**
 	 * Cache of source containers by location and id (String & String)
 	 */
-	private Map fSourceContainerMap = new HashMap();
+	private Map<String, ISourceContainer[]> fSourceContainerMap = new HashMap<String, ISourceContainer[]>();
 
-	private static Set fFilteredTypes;
+	private static Set<String> fFilteredTypes;
 
 	static {
-		fFilteredTypes = new HashSet(3);
+		fFilteredTypes = new HashSet<String>(3);
 		fFilteredTypes.add(ProjectSourceContainer.TYPE_ID);
 		fFilteredTypes.add(WorkspaceSourceContainer.TYPE_ID);
 		fFilteredTypes.add("org.eclipse.debug.ui.containerType.workingSet"); //$NON-NLS-1$
@@ -59,6 +59,7 @@ public class PDESourceLookupDirector extends AbstractSourceLookupDirector {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector#supportsSourceContainerType(org.eclipse.debug.internal.core.sourcelookup.ISourceContainerType)
 	 */
+	@Override
 	public boolean supportsSourceContainerType(ISourceContainerType type) {
 		return !fFilteredTypes.contains(type.getId());
 	}
@@ -66,6 +67,7 @@ public class PDESourceLookupDirector extends AbstractSourceLookupDirector {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.AbstractSourceLookupDirector#getSourceElement(java.lang.Object)
 	 */
+	@Override
 	public Object getSourceElement(Object element) {
 		PDESourceLookupQuery query = new PDESourceLookupQuery(this, element);
 		SafeRunner.run(query);
@@ -76,6 +78,7 @@ public class PDESourceLookupDirector extends AbstractSourceLookupDirector {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.AbstractSourceLookupDirector#findSourceElements(java.lang.Object)
 	 */
+	@Override
 	public Object[] findSourceElements(Object object) throws CoreException {
 		Object[] sourceElements = null;
 		if (object instanceof IJavaStackFrame || object instanceof IJavaObject || object instanceof IJavaReferenceType) {
@@ -89,12 +92,12 @@ public class PDESourceLookupDirector extends AbstractSourceLookupDirector {
 
 	ISourceContainer[] getSourceContainers(String location, String id) throws CoreException {
 
-		ISourceContainer[] containers = (ISourceContainer[]) fSourceContainerMap.get(location);
+		ISourceContainer[] containers = fSourceContainerMap.get(location);
 		if (containers != null) {
 			return containers;
 		}
 
-		ArrayList result = new ArrayList();
+		ArrayList<IRuntimeClasspathEntry> result = new ArrayList<IRuntimeClasspathEntry>();
 		ModelEntry entry = PluginRegistry.findEntry(id);
 
 		boolean match = false;
@@ -142,7 +145,7 @@ public class PDESourceLookupDirector extends AbstractSourceLookupDirector {
 			}
 		}
 
-		IRuntimeClasspathEntry[] entries = (IRuntimeClasspathEntry[]) result.toArray(new IRuntimeClasspathEntry[result.size()]);
+		IRuntimeClasspathEntry[] entries = result.toArray(new IRuntimeClasspathEntry[result.size()]);
 		containers = JavaRuntime.getSourceContainers(entries);
 		fSourceContainerMap.put(location, containers);
 		return containers;
@@ -192,7 +195,7 @@ public class PDESourceLookupDirector extends AbstractSourceLookupDirector {
 		return null;
 	}
 
-	private void addProjectSourceContainers(IProject project, ArrayList result) throws CoreException {
+	private void addProjectSourceContainers(IProject project, ArrayList<IRuntimeClasspathEntry> result) throws CoreException {
 		if (project == null || !project.hasNature(JavaCore.NATURE_ID))
 			return;
 
@@ -219,10 +222,11 @@ public class PDESourceLookupDirector extends AbstractSourceLookupDirector {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.sourcelookup.AbstractSourceLookupDirector#dispose()
 	 */
+	@Override
 	public synchronized void dispose() {
-		Iterator iterator = fSourceContainerMap.values().iterator();
+		Iterator<ISourceContainer[]> iterator = fSourceContainerMap.values().iterator();
 		while (iterator.hasNext()) {
-			ISourceContainer[] containers = (ISourceContainer[]) iterator.next();
+			ISourceContainer[] containers = iterator.next();
 			for (int i = 0; i < containers.length; i++) {
 				containers[i].dispose();
 			}

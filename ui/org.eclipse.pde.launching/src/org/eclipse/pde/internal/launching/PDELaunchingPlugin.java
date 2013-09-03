@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 EclipseSource Corporation and others.
+ * Copyright (c) 2009, 2013 EclipseSource Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,12 +7,12 @@
  *
  * Contributors:
  *     EclipseSource Corporation - initial API and implementation
+ *     IBM - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.launching;
 
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
-import java.util.Hashtable;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
@@ -31,8 +31,6 @@ public class PDELaunchingPlugin extends Plugin implements IPDEConstants {
 	private LaunchListener fLaunchListener;
 
 	private BundleContext fBundleContext;
-
-	private Hashtable fCounters;
 
 	/**
 	 * Utility class to help setup the launch configuration listener without
@@ -68,12 +66,6 @@ public class PDELaunchingPlugin extends Plugin implements IPDEConstants {
 		return fInstance;
 	}
 
-	public Hashtable getDefaultNameCounters() {
-		if (fCounters == null)
-			fCounters = new Hashtable();
-		return fCounters;
-	}
-
 	public static String getPluginId() {
 		return getDefault().getBundle().getSymbolicName();
 	}
@@ -87,8 +79,7 @@ public class PDELaunchingPlugin extends Plugin implements IPDEConstants {
 	}
 
 	public static void logErrorMessage(String message) {
-		log(new Status(IStatus.ERROR, getPluginId(), IStatus.ERROR, message,
-				null));
+		log(new Status(IStatus.ERROR, getPluginId(), IStatus.ERROR, message, null));
 	}
 
 	public static void log(Throwable e) {
@@ -98,8 +89,7 @@ public class PDELaunchingPlugin extends Plugin implements IPDEConstants {
 		if (e instanceof CoreException)
 			status = ((CoreException) e).getStatus();
 		else
-			status = new Status(IStatus.ERROR, getPluginId(), IStatus.OK, e
-					.getMessage(), e);
+			status = new Status(IStatus.ERROR, getPluginId(), IStatus.OK, e.getMessage(), e);
 		log(status);
 	}
 
@@ -109,6 +99,7 @@ public class PDELaunchingPlugin extends Plugin implements IPDEConstants {
 	 * @see
 	 * org.eclipse.core.runtime.Plugin#start(org.osgi.framework.BundleContext)
 	 */
+	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		fBundleContext = context;
@@ -134,8 +125,7 @@ public class PDELaunchingPlugin extends Plugin implements IPDEConstants {
 		if (!listenerStarted) {
 			fBundleContext.addBundleListener(new BundleListener() {
 				public void bundleChanged(BundleEvent event) {
-					if (event.getType() == BundleEvent.STARTED
-							&& "org.eclipse.debug.core".equals(event.getBundle().getSymbolicName())) { //$NON-NLS-1$
+					if (event.getType() == BundleEvent.STARTED && "org.eclipse.debug.core".equals(event.getBundle().getSymbolicName())) { //$NON-NLS-1$
 						fDebugPluginUtil = new DebugPluginUtil();
 						fDebugPluginUtil.addListener();
 						fBundleContext.removeBundleListener(this);
@@ -156,6 +146,7 @@ public class PDELaunchingPlugin extends Plugin implements IPDEConstants {
 	 * org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext
 	 * )
 	 */
+	@Override
 	public void stop(BundleContext context) throws Exception {
 		if (fLaunchListener != null)
 			fLaunchListener.shutdown();
@@ -192,16 +183,12 @@ public class PDELaunchingPlugin extends Plugin implements IPDEConstants {
 			if (fLaunchConfigurationListener == null) {
 				fLaunchConfigurationListener = new LaunchConfigurationListener();
 			}
-			DebugPlugin.getDefault().getLaunchManager()
-					.addLaunchConfigurationListener(
-							fLaunchConfigurationListener);
+			DebugPlugin.getDefault().getLaunchManager().addLaunchConfigurationListener(fLaunchConfigurationListener);
 		}
 
 		public void removeListener() {
 			if (fLaunchConfigurationListener != null) {
-				DebugPlugin.getDefault().getLaunchManager()
-						.removeLaunchConfigurationListener(
-								fLaunchConfigurationListener);
+				DebugPlugin.getDefault().getLaunchManager().removeLaunchConfigurationListener(fLaunchConfigurationListener);
 				fLaunchConfigurationListener = null;
 			}
 		}

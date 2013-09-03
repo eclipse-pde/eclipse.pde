@@ -45,17 +45,18 @@ public abstract class LaunchValidationOperation implements IWorkspaceRunnable {
 
 	protected abstract IPluginModelBase[] getModels() throws CoreException;
 
+	@SuppressWarnings("rawtypes")
 	protected Dictionary[] getPlatformProperties() throws CoreException {
 		IExecutionEnvironment[] envs = getMatchingEnvironments();
 		if (envs.length == 0)
 			return new Dictionary[] {TargetPlatformHelper.getTargetEnvironment()};
 
 		// add java profiles for those EE's that have a .profile file in the current system bundle
-		ArrayList result = new ArrayList(envs.length);
+		ArrayList<Dictionary<String, String>> result = new ArrayList<Dictionary<String, String>>(envs.length);
 		for (int i = 0; i < envs.length; i++) {
 			Properties profileProps = getJavaProfileProperties(envs[i].getId());
 			if (profileProps != null) {
-				Dictionary props = TargetPlatformHelper.getTargetEnvironment();
+				Dictionary<String, String> props = TargetPlatformHelper.getTargetEnvironment();
 				String systemPackages = profileProps.getProperty(Constants.FRAMEWORK_SYSTEMPACKAGES);
 				if (systemPackages != null)
 					props.put(Constants.FRAMEWORK_SYSTEMPACKAGES, systemPackages);
@@ -66,7 +67,7 @@ public abstract class LaunchValidationOperation implements IWorkspaceRunnable {
 			}
 		}
 		if (result.size() > 0)
-			return (Dictionary[]) result.toArray(new Dictionary[result.size()]);
+			return result.toArray(new Dictionary[result.size()]);
 		return new Dictionary[] {TargetPlatformHelper.getTargetEnvironment()};
 
 	}
@@ -78,7 +79,7 @@ public abstract class LaunchValidationOperation implements IWorkspaceRunnable {
 
 		IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
 		IExecutionEnvironment[] envs = manager.getExecutionEnvironments();
-		List result = new ArrayList(envs.length);
+		List<IExecutionEnvironment> result = new ArrayList<IExecutionEnvironment>(envs.length);
 		for (int i = 0; i < envs.length; i++) {
 			IExecutionEnvironment env = envs[i];
 			IVMInstall[] compatible = env.getCompatibleVMs();
@@ -89,7 +90,7 @@ public abstract class LaunchValidationOperation implements IWorkspaceRunnable {
 				}
 			}
 		}
-		return (IExecutionEnvironment[]) result.toArray(new IExecutionEnvironment[result.size()]);
+		return result.toArray(new IExecutionEnvironment[result.size()]);
 	}
 
 	private Properties getJavaProfileProperties(String ee) {
@@ -145,7 +146,7 @@ public abstract class LaunchValidationOperation implements IWorkspaceRunnable {
 		return fOperation.hasErrors();
 	}
 
-	public Map getInput() {
+	public Map<Object, Object[]> getInput() {
 		return fOperation.getResolverErrors();
 	}
 

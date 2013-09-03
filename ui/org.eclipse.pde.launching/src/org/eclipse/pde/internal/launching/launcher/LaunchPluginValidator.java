@@ -35,10 +35,10 @@ public class LaunchPluginValidator {
 		if (usedefault || models.length == 0)
 			return models;
 
-		Collection result = null;
-		Map bundles = BundleLauncherHelper.getWorkspaceBundleMap(configuration, null, IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS);
+		Collection<IPluginModelBase> result = null;
+		Map<IPluginModelBase, String> bundles = BundleLauncherHelper.getWorkspaceBundleMap(configuration, null, IPDELauncherConstants.SELECTED_WORKSPACE_PLUGINS);
 		result = bundles.keySet();
-		return (IPluginModelBase[]) result.toArray(new IPluginModelBase[result.size()]);
+		return result.toArray(new IPluginModelBase[result.size()]);
 	}
 
 	/**
@@ -48,12 +48,12 @@ public class LaunchPluginValidator {
 	 * @return a TreeSet containing IPluginModelBase objects which are represented by the value of the attribute
 	 * @throws CoreException
 	 */
-	public static Set parsePlugins(ILaunchConfiguration configuration, String attribute) throws CoreException {
-		HashSet set = new HashSet();
+	public static Set<IPluginModelBase> parsePlugins(ILaunchConfiguration configuration, String attribute) throws CoreException {
+		HashSet<IPluginModelBase> set = new HashSet<IPluginModelBase>();
 		String ids = configuration.getAttribute(attribute, (String) null);
 		if (ids != null) {
 			String[] entries = ids.split(","); //$NON-NLS-1$
-			Map unmatchedEntries = new HashMap();
+			Map<String, IPluginModelBase> unmatchedEntries = new HashMap<String, IPluginModelBase>();
 			for (int i = 0; i < entries.length; i++) {
 				int index = entries[i].indexOf('@');
 				if (index < 0) { // if no start levels, assume default
@@ -94,7 +94,7 @@ public class LaunchPluginValidator {
 		// if restarting, no need to check projects for errors
 		if (config.getAttribute(IPDEConstants.RESTART, false))
 			return new IProject[0];
-		ArrayList projects = new ArrayList();
+		ArrayList<IProject> projects = new ArrayList<IProject>();
 		IPluginModelBase[] models = getSelectedWorkspacePlugins(config);
 		for (int i = 0; i < models.length; i++) {
 			IProject project = models[i].getUnderlyingResource().getProject();
@@ -108,7 +108,7 @@ public class LaunchPluginValidator {
 		if (proxy != null) {
 			projects.add(proxy.getProject());
 		}
-		return (IProject[]) projects.toArray(new IProject[projects.size()]);
+		return projects.toArray(new IProject[projects.size()]);
 	}
 
 	public static void runValidationOperation(final LaunchValidationOperation op, IProgressMonitor monitor) throws CoreException {

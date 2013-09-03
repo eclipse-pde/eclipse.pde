@@ -41,10 +41,10 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 
 	// used to generate the dev classpath entries
 	// key is bundle ID, value is a model
-	private Map fAllBundles;
+	private Map<String, IPluginModelBase> fAllBundles;
 
 	// key is a model, value is startLevel:autoStart
-	private Map fModels;
+	private Map<IPluginModelBase, String> fModels;
 
 	/**
 	 * To avoid duplicating variable substitution (and duplicate prompts)
@@ -56,8 +56,9 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 	 * (non-Javadoc)
 	 * @see org.eclipse.pde.ui.launcher.AbstractPDELaunchConfiguration#getProgramArguments(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public String[] getProgramArguments(ILaunchConfiguration configuration) throws CoreException {
-		ArrayList programArgs = new ArrayList();
+		ArrayList<String> programArgs = new ArrayList<String>();
 
 		// If a product is specified, then add it to the program args
 		if (configuration.getAttribute(IPDELauncherConstants.USE_PRODUCT, false)) {
@@ -97,7 +98,7 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 		programArgs.add(ClasspathHelper.getDevEntriesProperties(getConfigDir(configuration).toString() + "/dev.properties", fAllBundles)); //$NON-NLS-1$
 		// necessary for PDE to know how to load plugins when target platform = host platform
 		// see PluginPathFinder.getPluginPaths() and PluginPathFinder.isDevLaunchMode()
-		IPluginModelBase base = (IPluginModelBase) fAllBundles.get(PDECore.PLUGIN_ID);
+		IPluginModelBase base = fAllBundles.get(PDECore.PLUGIN_ID);
 		if (base != null && VersionUtil.compareMacroMinorMicro(base.getBundleDescription().getVersion(), new Version("3.3.1")) < 0) //$NON-NLS-1$
 			programArgs.add("-pdelaunch"); //$NON-NLS-1$
 
@@ -130,7 +131,7 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 				programArgs.add(1, computeShowsplashArgument());
 			}
 		}
-		return (String[]) programArgs.toArray(new String[programArgs.size()]);
+		return programArgs.toArray(new String[programArgs.size()]);
 	}
 
 	private String computeShowsplashArgument() {
@@ -143,6 +144,7 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 	 * (non-Javadoc)
 	 * @see org.eclipse.pde.ui.launcher.AbstractPDELaunchConfiguration#getConfigDir(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	protected File getConfigDir(ILaunchConfiguration config) {
 		if (fConfigDir == null) {
 			fConfigDir = LaunchConfigurationHelper.getConfigurationArea(config);
@@ -162,6 +164,7 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 	 * 			if unable to retrieve launch attribute values
 	 * @since 3.3
 	 */
+	@Override
 	protected void clear(ILaunchConfiguration configuration, IProgressMonitor monitor) throws CoreException {
 		if (fWorkspaceLocation == null) {
 			fWorkspaceLocation = LaunchArgumentsHelper.getWorkspaceLocation(configuration);
@@ -188,14 +191,15 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.launcher.AbstractPDELaunchConfiguration#preLaunchCheck(org.eclipse.debug.core.ILaunchConfiguration, org.eclipse.debug.core.ILaunch, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	protected void preLaunchCheck(ILaunchConfiguration configuration, ILaunch launch, IProgressMonitor monitor) throws CoreException {
 		fWorkspaceLocation = null;
 
 		fModels = BundleLauncherHelper.getMergedBundleMap(configuration, false);
-		fAllBundles = new HashMap(fModels.size());
-		Iterator iter = fModels.keySet().iterator();
+		fAllBundles = new HashMap<String, IPluginModelBase>(fModels.size());
+		Iterator<IPluginModelBase> iter = fModels.keySet().iterator();
 		while (iter.hasNext()) {
-			IPluginModelBase model = (IPluginModelBase) iter.next();
+			IPluginModelBase model = iter.next();
 			fAllBundles.put(model.getPluginBase().getId(), model);
 		}
 		validateConfigIni(configuration);
@@ -221,9 +225,10 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.launcher.AbstractPDELaunchConfiguration#getVMArguments(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public String[] getVMArguments(ILaunchConfiguration configuration) throws CoreException {
 		String[] vmArgs = super.getVMArguments(configuration);
-		IPluginModelBase base = (IPluginModelBase) fAllBundles.get(PDECore.PLUGIN_ID);
+		IPluginModelBase base = fAllBundles.get(PDECore.PLUGIN_ID);
 		if (base != null && VersionUtil.compareMacroMinorMicro(base.getBundleDescription().getVersion(), new Version("3.3.1")) >= 0) { //$NON-NLS-1$
 			// necessary for PDE to know how to load plugins when target platform = host platform
 			// see PluginPathFinder.getPluginPaths() and PluginPathFinder.isDevLaunchMode()

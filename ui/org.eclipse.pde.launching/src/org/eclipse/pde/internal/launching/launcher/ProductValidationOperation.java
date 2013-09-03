@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 EclipseSource Corporation and others.
+ * Copyright (c) 2009, 2013 EclipseSource Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     EclipseSource Corporation - initial API and implementation
+ *     IBM Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.launching.launcher;
 
@@ -28,16 +29,18 @@ public class ProductValidationOperation extends LaunchValidationOperation {
 		fModels = models;
 	}
 
+	@Override
 	protected IPluginModelBase[] getModels() throws CoreException {
 		return fModels;
 	}
 
+	@Override
 	protected IExecutionEnvironment[] getMatchingEnvironments() throws CoreException {
 		IVMInstall install = JavaRuntime.getDefaultVMInstall();
 
 		IExecutionEnvironmentsManager manager = JavaRuntime.getExecutionEnvironmentsManager();
 		IExecutionEnvironment[] envs = manager.getExecutionEnvironments();
-		List result = new ArrayList(envs.length);
+		List<IExecutionEnvironment> result = new ArrayList<IExecutionEnvironment>(envs.length);
 		for (int i = 0; i < envs.length; i++) {
 			IExecutionEnvironment env = envs[i];
 			IVMInstall[] compatible = env.getCompatibleVMs();
@@ -48,7 +51,7 @@ public class ProductValidationOperation extends LaunchValidationOperation {
 				}
 			}
 		}
-		return (IExecutionEnvironment[]) result.toArray(new IExecutionEnvironment[result.size()]);
+		return result.toArray(new IExecutionEnvironment[result.size()]);
 	}
 
 }

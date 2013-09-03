@@ -37,6 +37,7 @@ import org.osgi.framework.Version;
  * @deprecated use {@link org.eclipse.pde.launching.EclipseApplicationLaunchConfiguration}
  * @see org.eclipse.pde.launching.AbstractPDELaunchConfiguration
  */
+@Deprecated
 public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConfiguration {
 
 	// used to generate the dev classpath entries
@@ -44,7 +45,7 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 	private Map<String, IPluginModelBase> fAllBundles;
 
 	// key is a model, value is startLevel:autoStart
-	private Map<?, ?> fModels;
+	private Map<IPluginModelBase, String> fModels;
 
 	/**
 	 * To avoid duplicating variable substitution (and duplicate prompts)
@@ -56,6 +57,7 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 	 * (non-Javadoc)
 	 * @see org.eclipse.pde.ui.launcher.AbstractPDELaunchConfiguration#getProgramArguments(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public String[] getProgramArguments(ILaunchConfiguration configuration) throws CoreException {
 		ArrayList<String> programArgs = new ArrayList<String>();
 
@@ -195,6 +197,7 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 	 * (non-Javadoc)
 	 * @see org.eclipse.pde.ui.launcher.AbstractPDELaunchConfiguration#getConfigDir(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	protected File getConfigDir(ILaunchConfiguration config) {
 		if (fConfigDir == null) {
 			try {
@@ -226,6 +229,7 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 	 * 			if unable to retrieve launch attribute values
 	 * @since 3.3
 	 */
+	@Override
 	protected void clear(ILaunchConfiguration configuration, IProgressMonitor monitor) throws CoreException {
 		if (fWorkspaceLocation == null) {
 			fWorkspaceLocation = LaunchArgumentsHelper.getWorkspaceLocation(configuration);
@@ -252,6 +256,7 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.launcher.AbstractPDELaunchConfiguration#preLaunchCheck(org.eclipse.debug.core.ILaunchConfiguration, org.eclipse.debug.core.ILaunch, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	protected void preLaunchCheck(ILaunchConfiguration configuration, ILaunch launch, IProgressMonitor monitor) throws CoreException {
 		fWorkspaceLocation = null;
 
@@ -285,6 +290,7 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.launcher.AbstractPDELaunchConfiguration#getVMArguments(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public String[] getVMArguments(ILaunchConfiguration configuration) throws CoreException {
 		String[] vmArgs = super.getVMArguments(configuration);
 		IPluginModelBase base = fAllBundles.get(PDECore.PLUGIN_ID);

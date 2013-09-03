@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2012 IBM Corporation and others.
+ *  Copyright (c) 2005, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ import org.eclipse.debug.core.*;
 import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
 import org.eclipse.jdt.core.IJavaModelMarker;
 import org.eclipse.jdt.launching.*;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.TargetPlatform;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
@@ -45,6 +46,7 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.LaunchConfigurationDelegate#isLaunchProblem(org.eclipse.core.resources.IMarker)
 	 */
+	@Override
 	protected boolean isLaunchProblem(IMarker problemMarker) throws CoreException {
 		return super.isLaunchProblem(problemMarker) && (problemMarker.getType().equals(IJavaModelMarker.JAVA_MODEL_PROBLEM_MARKER) || problemMarker.getType().equals(PDEMarkerFactory.MARKER_ID));
 	}
@@ -186,7 +188,7 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 	 * @exception CoreException
 	 *                if unable to retrieve the attribute
 	 */
-	public Map getVMSpecificAttributesMap(ILaunchConfiguration configuration) throws CoreException {
+	public Map<String, Object> getVMSpecificAttributesMap(ILaunchConfiguration configuration) throws CoreException {
 		return LaunchArgumentsHelper.getVMSpecificAttributesMap(configuration);
 	}
 
@@ -204,7 +206,7 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 	public String[] getVMArguments(ILaunchConfiguration configuration) throws CoreException {
 		String[] vmArgs = new ExecutionArguments(LaunchArgumentsHelper.getUserVMArguments(configuration), "").getVMArgumentsArray(); //$NON-NLS-1$
 		// For p2 target, add "-Declipse.p2.data.area=@config.dir/p2" unless already specified by user
-		Map bundleMap = BundleLauncherHelper.getMergedBundleMap(configuration, false);
+		Map<IPluginModelBase, String> bundleMap = BundleLauncherHelper.getMergedBundleMap(configuration, false);
 		if (bundleMap.containsKey("org.eclipse.equinox.p2.core")) { //$NON-NLS-1$
 			for (int i = 0; i < vmArgs.length; i++) {
 				String arg = vmArgs[i];
@@ -235,7 +237,7 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 	 *                necessary configuration files      
 	 */
 	public String[] getProgramArguments(ILaunchConfiguration configuration) throws CoreException {
-		ArrayList programArgs = new ArrayList();
+		ArrayList<String> programArgs = new ArrayList<String>();
 
 		// add tracing, if turned on	
 		if (configuration.getAttribute(IPDELauncherConstants.TRACING, false) && !IPDELauncherConstants.TRACING_NONE.equals(configuration.getAttribute(IPDELauncherConstants.TRACING_CHECKED, (String) null))) {
@@ -245,7 +247,7 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 
 		// add the program args specified by the user
 		String[] userArgs = LaunchArgumentsHelper.getUserProgramArgumentArray(configuration);
-		ArrayList userDefined = new ArrayList();
+		ArrayList<String> userDefined = new ArrayList<String>();
 		for (int i = 0; i < userArgs.length; i++) {
 			// be forgiving if people have tracing turned on and forgot
 			// to remove the -debug from the program args field.
@@ -274,7 +276,7 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 			programArgs.addAll(userDefined);
 		}
 
-		return (String[]) programArgs.toArray(new String[programArgs.size()]);
+		return programArgs.toArray(new String[programArgs.size()]);
 	}
 
 	/**
@@ -320,6 +322,7 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.LaunchConfigurationDelegate#getBuildOrder(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String)
 	 */
+	@Override
 	protected IProject[] getBuildOrder(ILaunchConfiguration configuration, String mode) throws CoreException {
 		return computeBuildOrder(LaunchPluginValidator.getAffectedProjects(configuration));
 	}
@@ -328,6 +331,7 @@ public abstract class AbstractPDELaunchConfiguration extends LaunchConfiguration
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.LaunchConfigurationDelegate#getProjectsForProblemSearch(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String)
 	 */
+	@Override
 	protected IProject[] getProjectsForProblemSearch(ILaunchConfiguration configuration, String mode) throws CoreException {
 		return LaunchPluginValidator.getAffectedProjects(configuration);
 	}

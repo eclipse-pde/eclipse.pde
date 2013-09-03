@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,10 +19,10 @@ import org.eclipse.pde.internal.launching.*;
 import org.eclipse.pde.launching.IPDELauncherConstants;
 
 public class LaunchListener implements ILaunchListener, IDebugEventSetListener {
-	private ArrayList managedLaunches;
+	private ArrayList<ILaunch> managedLaunches;
 
 	public LaunchListener() {
-		managedLaunches = new ArrayList();
+		managedLaunches = new ArrayList<ILaunch>();
 	}
 
 	public void manage(ILaunch launch) {
