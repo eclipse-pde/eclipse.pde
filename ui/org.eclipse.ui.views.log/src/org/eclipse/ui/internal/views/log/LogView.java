@@ -810,7 +810,7 @@ public class LogView extends ViewPart implements ILogListener {
 
 		List result = new ArrayList();
 		LogSession lastLogSession = LogReader.parseLogFile(fInputFile, result, fMemento);
-		if ((lastLogSession != null) && isEclipseStartTime(lastLogSession.getDate())) {
+		if (lastLogSession != null && (lastLogSession.getDate() == null || isEclipseStartTime(lastLogSession.getDate()))) {
 			currentSession = lastLogSession;
 		} else {
 			currentSession = null;
@@ -830,7 +830,7 @@ public class LogView extends ViewPart implements ILogListener {
 	private boolean isEclipseStartTime(Date date) {
 		String ts = System.getProperty("eclipse.startTime"); //$NON-NLS-1$
 		try {
-			return (ts != null && date != null && date.getTime() == Long.parseLong(ts));
+			return (ts != null && date.getTime() == Long.parseLong(ts));
 		} catch (NumberFormatException e) {
 			// empty
 		}
