@@ -1034,6 +1034,25 @@ public class LogView extends ViewPart implements ILogListener {
 	private LogEntry createLogEntry(IStatus status) {
 		LogEntry entry = new LogEntry(status);
 		entry.setSession(currentSession);
+
+		if (status.getException() instanceof CoreException) {
+			IStatus coreStatus = ((CoreException) status.getException()).getStatus();
+			if (coreStatus != null) {
+				LogEntry childEntry = createLogEntry(coreStatus);
+				entry.addChild(childEntry);
+				childEntry.setSession(currentSession);
+			}
+		}
+
+		if (status.isMultiStatus()) {
+			IStatus[] children = status.getChildren();
+			for (int i = 0; i < children.length; i++) {
+				LogEntry childEntry = createLogEntry(children[i]);
+				entry.addChild(childEntry);
+				childEntry.setSession(currentSession);
+			}
+		}
+
 		return entry;
 	}
 
