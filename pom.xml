@@ -26,6 +26,7 @@
 
   <properties>
     <tycho.scmUrl>scm:git:git://git.eclipse.org/gitroot/pde/eclipse.pde.build.git</tycho.scmUrl>
+    <defaultSigning-excludeInnerJars>true</defaultSigning-excludeInnerJars>
   </properties>
 
   <repositories>
