@@ -21,5 +21,6 @@
   <packaging>pom</packaging>
   <properties>
     <code.ignoredWarnings>${tests.ignoredWarnings}</code.ignoredWarnings>
+    <defaultSigning-excludeInnerJars>true</defaultSigning-excludeInnerJars>
   </properties>
 </project>
