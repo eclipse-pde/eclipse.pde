@@ -21,4 +21,7 @@
   <artifactId>org.eclipse.pde.api.tools</artifactId>
   <version>1.0.600-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
+  <properties>
+    <defaultSigning-excludeInnerJars>true</defaultSigning-excludeInnerJars>
+  </properties>
 </project>
