@@ -29,12 +29,12 @@ public class ClassCompatibilityTypeParameterTests extends ClassCompatibilityTest
 	/**
 	 * Workspace relative path classes in bundle/project A
 	 */
-	protected static IPath WORKSPACE_CLASSES_PACKAGE_A = new Path("bundle.a/src/a/classes/typeparameters");
+	protected static IPath WORKSPACE_CLASSES_PACKAGE_A = new Path("bundle.a/src/a/classes/typeparameters"); //$NON-NLS-1$
 
 	/**
 	 * Package prefix for test classes
 	 */
-	protected static String PACKAGE_PREFIX = "a.classes.typeparameters.";
+	protected static String PACKAGE_PREFIX = "a.classes.typeparameters."; //$NON-NLS-1$
 
 	/**
 	 * Constructor
@@ -47,8 +47,9 @@ public class ClassCompatibilityTypeParameterTests extends ClassCompatibilityTest
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestSourcePath()
 	 */
+	@Override
 	protected IPath getTestSourcePath() {
-		return super.getTestSourcePath().append("typeparameters");
+		return super.getTestSourcePath().append("typeparameters"); //$NON-NLS-1$
 	}
 
 	/**
@@ -61,6 +62,7 @@ public class ClassCompatibilityTypeParameterTests extends ClassCompatibilityTest
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getDefaultProblemId()
 	 */
+	@Override
 	protected int getDefaultProblemId() {
 		return -1;
 	}
@@ -76,15 +78,16 @@ public class ClassCompatibilityTypeParameterTests extends ClassCompatibilityTest
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestingProjectName()
 	 */
+	@Override
 	protected String getTestingProjectName() {
-		return "classcompat";
+		return "classcompat"; //$NON-NLS-1$
 	}
 
 	/**
 	 * Tests adding a first/single type parameter to a class
 	 */
 	private void xAddFirstTypeParameter(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddFirstTypeParameter.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddFirstTypeParameter.java"); //$NON-NLS-1$
 		// no problems expected
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -101,13 +104,13 @@ public class ClassCompatibilityTypeParameterTests extends ClassCompatibilityTest
 	 * Tests adding a second type parameter to a class
 	 */
 	private void xAddSecondaryTypeParameter(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddTypeParameter.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddTypeParameter.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 				getProblemId(IDelta.ADDED, IDelta.TYPE_PARAMETER)
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "AddTypeParameter", "K"};
+		args[0] = new String[]{PACKAGE_PREFIX + "AddTypeParameter", "K"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -124,13 +127,13 @@ public class ClassCompatibilityTypeParameterTests extends ClassCompatibilityTest
 	 * Tests removing a type parameter
 	 */
 	private void xRemoveTypeParameter(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveTypeParameter.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveTypeParameter.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 				getProblemId(IDelta.REMOVED, IDelta.TYPE_PARAMETER)
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "RemoveTypeParameter", "E"};
+		args[0] = new String[]{PACKAGE_PREFIX + "RemoveTypeParameter", "E"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -147,13 +150,13 @@ public class ClassCompatibilityTypeParameterTests extends ClassCompatibilityTest
 	 * Tests adding a class bound to a type parameter
 	 */
 	private void xAddClassBound(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddClassBound.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddClassBound.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 				getProblemId(IDelta.ADDED, IDelta.CLASS_BOUND)
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "AddClassBound", "E"};
+		args[0] = new String[]{PACKAGE_PREFIX + "AddClassBound", "E"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -170,13 +173,13 @@ public class ClassCompatibilityTypeParameterTests extends ClassCompatibilityTest
 	 * Tests removing a class bound to a type parameter
 	 */
 	private void xRemoveClassBound(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveClassBound.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveClassBound.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 				getProblemId(IDelta.REMOVED, IDelta.CLASS_BOUND)
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "RemoveClassBound", "E"};
+		args[0] = new String[]{PACKAGE_PREFIX + "RemoveClassBound", "E"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -193,13 +196,13 @@ public class ClassCompatibilityTypeParameterTests extends ClassCompatibilityTest
 	 * Tests adding an interface bound to a type parameter
 	 */
 	private void xAddInterfaceBound(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddInterfaceBound.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddInterfaceBound.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 				getProblemId(IDelta.ADDED, IDelta.INTERFACE_BOUND),
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "AddInterfaceBound", "E", PACKAGE_PREFIX + "IBound"};
+		args[0] = new String[]{PACKAGE_PREFIX + "AddInterfaceBound", "E", PACKAGE_PREFIX + "IBound"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -216,13 +219,13 @@ public class ClassCompatibilityTypeParameterTests extends ClassCompatibilityTest
 	 * Tests removing an interface bound to a type parameter
 	 */
 	private void xRemoveInterfaceBound(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveInterfaceBound.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveInterfaceBound.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 				getProblemId(IDelta.REMOVED, IDelta.INTERFACE_BOUND), 
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "RemoveInterfaceBound", "E", PACKAGE_PREFIX + "IBound"};
+		args[0] = new String[]{PACKAGE_PREFIX + "RemoveInterfaceBound", "E", PACKAGE_PREFIX + "IBound"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -239,13 +242,13 @@ public class ClassCompatibilityTypeParameterTests extends ClassCompatibilityTest
 	 * Tests removing a secondary interface bound from a type parameter
 	 */
 	private void xRemoveSecondaryInterfaceBound(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveSecondInterfaceBound.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveSecondInterfaceBound.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 				getProblemId(IDelta.REMOVED, IDelta.INTERFACE_BOUND)
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "RemoveSecondInterfaceBound", "E", PACKAGE_PREFIX + "IBoundTwo"};
+		args[0] = new String[]{PACKAGE_PREFIX + "RemoveSecondInterfaceBound", "E", PACKAGE_PREFIX + "IBoundTwo"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -262,13 +265,13 @@ public class ClassCompatibilityTypeParameterTests extends ClassCompatibilityTest
 	 * Tests changing a class bound to a type parameter
 	 */
 	private void xChangeClassBound(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ChangeClassBound.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ChangeClassBound.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 				getProblemId(IDelta.CHANGED, IDelta.CLASS_BOUND)
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "ChangeClassBound", "E"};
+		args[0] = new String[]{PACKAGE_PREFIX + "ChangeClassBound", "E"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -285,13 +288,13 @@ public class ClassCompatibilityTypeParameterTests extends ClassCompatibilityTest
 	 * Tests changing a class bound to a type parameter
 	 */
 	private void xChangeInterfaceBound(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ChangeInterfaceBound.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ChangeInterfaceBound.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 				getProblemId(IDelta.CHANGED, IDelta.INTERFACE_BOUND)
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "ChangeInterfaceBound", "E", PACKAGE_PREFIX + "IBound"};
+		args[0] = new String[]{PACKAGE_PREFIX + "ChangeInterfaceBound", "E", PACKAGE_PREFIX + "IBound"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -308,13 +311,13 @@ public class ClassCompatibilityTypeParameterTests extends ClassCompatibilityTest
 	 * Tests changing a class to an annotation
 	 */
 	private void xConvertToAnnotation(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ConvertToAnnotation.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ConvertToAnnotation.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 				getProblemId(IDelta.CHANGED, IDelta.TYPE_CONVERSION)
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "ConvertToAnnotation",
+		args[0] = new String[]{PACKAGE_PREFIX + "ConvertToAnnotation", //$NON-NLS-1$
 				Integer.toString(IDelta.CLASS_ELEMENT_TYPE),
 				Integer.toString(IDelta.ANNOTATION_ELEMENT_TYPE)};
 		setExpectedMessageArgs(args);
@@ -333,13 +336,13 @@ public class ClassCompatibilityTypeParameterTests extends ClassCompatibilityTest
 	 * Tests changing a class to an enum
 	 */
 	private void xConvertToEnum(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ConvertToEnum.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ConvertToEnum.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 				getProblemId(IDelta.CHANGED, IDelta.TYPE_CONVERSION)
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "ConvertToEnum",
+		args[0] = new String[]{PACKAGE_PREFIX + "ConvertToEnum", //$NON-NLS-1$
 				Integer.toString(IDelta.CLASS_ELEMENT_TYPE),
 				Integer.toString(IDelta.ENUM_ELEMENT_TYPE)};
 		setExpectedMessageArgs(args);
@@ -358,13 +361,13 @@ public class ClassCompatibilityTypeParameterTests extends ClassCompatibilityTest
 	 * Tests changing a class to an interface
 	 */
 	private void xConvertToInterface(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ConvertToInterface.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ConvertToInterface.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 				getProblemId(IDelta.CHANGED, IDelta.TYPE_CONVERSION)
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "ConvertToInterface",
+		args[0] = new String[]{PACKAGE_PREFIX + "ConvertToInterface", //$NON-NLS-1$
 				Integer.toString(IDelta.CLASS_ELEMENT_TYPE),
 				Integer.toString(IDelta.INTERFACE_ELEMENT_TYPE)};
 		setExpectedMessageArgs(args);

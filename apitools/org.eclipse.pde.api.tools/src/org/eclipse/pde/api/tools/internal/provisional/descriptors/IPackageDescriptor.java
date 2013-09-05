@@ -10,36 +10,35 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.provisional.descriptors;
 
-
-
 /**
  * Description of a package.
  * <p>
  * A package has no parent.
  * </p>
+ * 
  * @since 1.0.0
  */
 public interface IPackageDescriptor extends IElementDescriptor {
-	
+
 	/**
 	 * Returns this package's name. Package names are dot qualified.
 	 * 
 	 * @return package name
 	 */
 	public String getName();
-	
+
 	/**
-	 * Returns a descriptor for a type in this package with the given name. The given
-	 * name is not package qualified. Inner types are '$'-separated.
+	 * Returns a descriptor for a type in this package with the given name. The
+	 * given name is not package qualified. Inner types are '$'-separated.
 	 * 
 	 * @param typeQualifiedName type qualified name
 	 * @return type descriptor
 	 */
 	public IReferenceTypeDescriptor getType(String typeQualifiedName);
-	
+
 	/**
-	 * Returns a descriptor for a type in this package with the given name. The given
-	 * name is not package qualified. Inner types are '$'-separated.
+	 * Returns a descriptor for a type in this package with the given name. The
+	 * given name is not package qualified. Inner types are '$'-separated.
 	 * <p>
 	 * Extra type signature information may be provided for generic types.
 	 * </p>
@@ -48,6 +47,6 @@ public interface IPackageDescriptor extends IElementDescriptor {
 	 * @param signature type signature information or <code>null</code>
 	 * @return type descriptor
 	 */
-	public IReferenceTypeDescriptor getType(String typeQualifiedName, String signature);	
-	
+	public IReferenceTypeDescriptor getType(String typeQualifiedName, String signature);
+
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.builder;
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jdt.core.dom.ASTNode;
@@ -38,11 +37,11 @@ import org.eclipse.pde.api.tools.internal.util.Util;
  * @since 1.0.0
  */
 public class SinceTagChecker extends ASTVisitor {
-	
+
 	private static final int ABORT = 0x01;
 	private static final int MISSING = 0x02;
 	private static final int HAS_JAVA_DOC = 0x04;
-	private static final int HAS_NO_COMMENT  = 0x10;
+	private static final int HAS_NO_COMMENT = 0x10;
 
 	private int nameStart;
 	int bits;
@@ -50,24 +49,33 @@ public class SinceTagChecker extends ASTVisitor {
 
 	/**
 	 * Constructor
+	 * 
 	 * @param nameStart
 	 */
 	public SinceTagChecker(int nameStart) {
 		this.nameStart = nameStart;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.CompilationUnit)
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
+	 * CompilationUnit)
 	 */
+	@Override
 	public boolean visit(CompilationUnit compilationUnit) {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.VariableDeclarationFragment)
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
+	 * VariableDeclarationFragment)
 	 */
+	@Override
 	public boolean visit(VariableDeclarationFragment node) {
-		if ((this.bits & ABORT) != 0) return false;
+		if ((this.bits & ABORT) != 0) {
+			return false;
+		}
 		if (node.getName().getStartPosition() == this.nameStart) {
 			this.bits |= ABORT;
 			ASTNode parent = node.getParent();
@@ -79,16 +87,22 @@ public class SinceTagChecker extends ASTVisitor {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.EnumDeclaration)
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
+	 * EnumDeclaration)
 	 */
+	@Override
 	public boolean visit(EnumDeclaration node) {
 		return visitAbstractTypeDeclaration(node);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.TypeDeclaration)
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
+	 * TypeDeclaration)
 	 */
+	@Override
 	public boolean visit(TypeDeclaration node) {
 		return visitAbstractTypeDeclaration(node);
 	}
@@ -108,16 +122,22 @@ public class SinceTagChecker extends ASTVisitor {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.AnnotationTypeDeclaration)
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
+	 * AnnotationTypeDeclaration)
 	 */
+	@Override
 	public boolean visit(AnnotationTypeDeclaration node) {
 		return visitAbstractTypeDeclaration(node);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.MethodDeclaration)
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
+	 * MethodDeclaration)
 	 */
+	@Override
 	public boolean visit(MethodDeclaration node) {
 		if ((this.bits & ABORT) != 0) {
 			return false;
@@ -129,9 +149,12 @@ public class SinceTagChecker extends ASTVisitor {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.AnnotationTypeMemberDeclaration)
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
+	 * AnnotationTypeMemberDeclaration)
 	 */
+	@Override
 	public boolean visit(AnnotationTypeMemberDeclaration node) {
 		if ((this.bits & ABORT) != 0) {
 			return false;
@@ -142,17 +165,23 @@ public class SinceTagChecker extends ASTVisitor {
 		}
 		return false;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.Initializer)
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
+	 * Initializer)
 	 */
+	@Override
 	public boolean visit(Initializer node) {
 		return false;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.EnumConstantDeclaration)
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
+	 * EnumConstantDeclaration)
 	 */
+	@Override
 	public boolean visit(EnumConstantDeclaration node) {
 		if ((this.bits & ABORT) != 0) {
 			return false;
@@ -163,9 +192,10 @@ public class SinceTagChecker extends ASTVisitor {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Processes a javadoc tag
+	 * 
 	 * @param bodyDeclaration
 	 */
 	private void processJavadoc(BodyDeclaration bodyDeclaration) {
@@ -173,17 +203,16 @@ public class SinceTagChecker extends ASTVisitor {
 		boolean found = false;
 		if (javadoc != null) {
 			this.bits |= HAS_JAVA_DOC;
-			List tags = javadoc.tags();
-			for (Iterator iterator = tags.iterator(); iterator.hasNext();) {
-				TagElement element = (TagElement) iterator.next();
+			List<TagElement> tags = javadoc.tags();
+			for (TagElement element : tags) {
 				String tagName = element.getTagName();
 				if (TagElement.TAG_SINCE.equals(tagName)) {
 					// @since is present
 					// check if valid
 					found = true;
-					List fragments = element.fragments();
+					List<ASTNode> fragments = element.fragments();
 					if (fragments.size() >= 1) {
-						ASTNode fragment = (ASTNode) fragments.get(0);
+						ASTNode fragment = fragments.get(0);
 						if (fragment.getNodeType() == ASTNode.TEXT_ELEMENT) {
 							this.sinceVersion = ((TextElement) fragment).getText();
 						}
@@ -200,6 +229,7 @@ public class SinceTagChecker extends ASTVisitor {
 			this.bits |= HAS_NO_COMMENT;
 		}
 	}
+
 	/**
 	 * @return if the javadoc tag is missing
 	 */
@@ -225,8 +255,9 @@ public class SinceTagChecker extends ASTVisitor {
 	 * @return the version the should be placed in the tag
 	 */
 	public String getSinceVersion() {
-		if (this.sinceVersion != null)
+		if (this.sinceVersion != null) {
 			return this.sinceVersion.trim();
+		}
 		return null;
 	}
 }

@@ -31,9 +31,9 @@ import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
  */
 public class UseSearchTests extends SearchTest {
 
-	static IPath TMP_PATH = TestSuiteHelper.getUserDirectoryPath().append("use-search-tests");
-	static IPath XML_PATH = TMP_PATH.append("xml");
-	static IPath HTML_PATH = TMP_PATH.append("html");
+	static IPath TMP_PATH = TestSuiteHelper.getUserDirectoryPath().append("use-search-tests"); //$NON-NLS-1$
+	static IPath XML_PATH = TMP_PATH.append("xml"); //$NON-NLS-1$
+	static IPath HTML_PATH = TMP_PATH.append("html"); //$NON-NLS-1$
 	final HashMap<String, HashSet<String>> usedprojects = new HashMap<String, HashSet<String>>();
 	
 	/* (non-Javadoc)
@@ -51,33 +51,34 @@ public class UseSearchTests extends SearchTest {
 	 */
 	private void assertXMLReport(IPath reportroot){
 		File root = reportroot.toFile();
-		assertTrue("the report root must exist", root.exists());
+		assertTrue("the report root must exist", root.exists()); //$NON-NLS-1$
 		File[] files = root.listFiles(new FileFilter(){
+			@Override
 			public boolean accept(File pathname) {
 				return pathname.isDirectory();
 			}
 		});
 		int flength = files.length;
 		int epsize = this.usedprojects.size();
-		assertTrue("the used project roots must be the same as we are expecting", flength == epsize);
-		assertFalse("The files list should be not be greater than the expected used projects", flength > epsize);
-		assertFalse("The files list should be not be less than the expected used projects", flength < epsize);
+		assertTrue("the used project roots must be the same as we are expecting", flength == epsize); //$NON-NLS-1$
+		assertFalse("The files list should be not be greater than the expected used projects", flength > epsize); //$NON-NLS-1$
+		assertFalse("The files list should be not be less than the expected used projects", flength < epsize); //$NON-NLS-1$
 		HashSet<String> names = null;
 		File[] projects = null;
 		for (int i = 0; i < files.length; i++) {
 			names = this.usedprojects.get(files[i].getName());
-			assertNotNull("the expeced set of using project names should exist", names);
+			assertNotNull("the expeced set of using project names should exist", names); //$NON-NLS-1$
 			projects = files[i].listFiles();
-			assertTrue("the only files should be the folders for the projects using ["+files[i].getName()+"]", projects.length == names.size());
+			assertTrue("the only files should be the folders for the projects using ["+files[i].getName()+"]", projects.length == names.size()); //$NON-NLS-1$ //$NON-NLS-2$
 			for (int j = 0; j < projects.length; j++) {
 				if(!projects[j].isDirectory()) {
-					reportFailure("Unexpected non-folder entry found: ["+projects[j].getName()+"]");
+					reportFailure("Unexpected non-folder entry found: ["+projects[j].getName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				if(!names.remove(projects[j].getName())) {
-					reportFailure("Unexpected folder entry in the report location: ["+projects[j].getName()+"]");
+					reportFailure("Unexpected folder entry in the report location: ["+projects[j].getName()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
-			assertTrue("All of the using projects should have been detected", names.size() == 0);
+			assertTrue("All of the using projects should have been detected", names.size() == 0); //$NON-NLS-1$
 		}
 	}
 	
@@ -155,7 +156,7 @@ public class UseSearchTests extends SearchTest {
 			assertXMLReport(XML_PATH);
 		}
 		catch(Exception e) {
-			fail("The search engine should not throw an exception: "+e.toString());
+			fail("The search engine should not throw an exception: "+e.toString()); //$NON-NLS-1$
 		}
 	}
 	
@@ -179,13 +180,13 @@ public class UseSearchTests extends SearchTest {
 			assertXMLReport(XML_PATH);
 		}
 		catch(Exception e) {
-			fail("The search engine should not throw an exception: "+e.toString());
+			fail("The search engine should not throw an exception: "+e.toString()); //$NON-NLS-1$
 		}
 	}
 	
 	String getProjectId(String project, String version) {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append(project).append(" ").append('(').append(version).append(')');
+		buffer.append(project).append(" ").append('(').append(version).append(')'); //$NON-NLS-1$
 		return buffer.toString();
 	}
 }

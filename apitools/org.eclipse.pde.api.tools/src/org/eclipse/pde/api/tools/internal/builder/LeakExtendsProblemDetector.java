@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.pde.api.tools.internal.builder;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -42,37 +41,53 @@ public class LeakExtendsProblemDetector extends AbstractTypeLeakDetector {
 	/**
 	 * @param nonApiPackageNames
 	 */
-	public LeakExtendsProblemDetector(Set nonApiPackageNames) {
+	public LeakExtendsProblemDetector(Set<String> nonApiPackageNames) {
 		super(nonApiPackageNames);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiProblemDetector#getReferenceKinds()
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.provisional.search.IApiProblemDetector
+	 * #getReferenceKinds()
 	 */
+	@Override
 	public int getReferenceKinds() {
 		return IReference.REF_EXTENDS;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#getSeverityKey()
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#
+	 * getSeverityKey()
 	 */
+	@Override
 	protected String getSeverityKey() {
 		return IApiProblemTypes.LEAK_EXTEND;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#getProblemFlags(org.eclipse.pde.api.tools.internal.provisional.model.IReference)
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#
+	 * getProblemFlags
+	 * (org.eclipse.pde.api.tools.internal.provisional.model.IReference)
 	 */
+	@Override
 	protected int getProblemFlags(IReference reference) {
 		return IApiProblem.LEAK_EXTENDS;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.AbstractTypeLeakDetector#isProblem(org.eclipse.pde.api.tools.internal.provisional.model.IReference)
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.search.AbstractTypeLeakDetector#isProblem
+	 * (org.eclipse.pde.api.tools.internal.provisional.model.IReference)
 	 */
+	@Override
 	public boolean isProblem(IReference reference) {
 		if (super.isProblem(reference)) {
-			// check the use restrictions on the API type (can be extended or not)
+			// check the use restrictions on the API type (can be extended or
+			// not)
 			IApiType type = (IApiType) reference.getMember();
 			IApiComponent component = type.getApiComponent();
 			try {
@@ -80,10 +95,13 @@ public class LeakExtendsProblemDetector extends AbstractTypeLeakDetector {
 					int modifiers = 0;
 					IApiAnnotations annotations = component.getApiDescription().resolveAnnotations(type.getHandle());
 					if (annotations != null) {
-						// if annotations are null, the reference should not have been retained
-						// as it indicates a reference from a top level non public type
+						// if annotations are null, the reference should not
+						// have been retained
+						// as it indicates a reference from a top level non
+						// public type
 						if (RestrictionModifiers.isExtendRestriction(annotations.getRestrictions())) {
-							// The no extend restriction means only public members can be seen
+							// The no extend restriction means only public
+							// members can be seen
 							modifiers = Flags.AccPublic;
 						} else {
 							if (Flags.isFinal(type.getModifiers())) {
@@ -96,33 +114,35 @@ public class LeakExtendsProblemDetector extends AbstractTypeLeakDetector {
 						}
 						IApiType nonApiSuper = type.getSuperclass();
 						// collect all visible methods in non-API types
-						Set methods = new HashSet();
+						Set<MethodKey> methods = new HashSet<MethodKey>();
 						while (!isAPIType(nonApiSuper)) {
 							if (hasVisibleField(nonApiSuper, modifiers)) {
-								// a visible field in a non-API type is a definite leak
+								// a visible field in a non-API type is a
+								// definite leak
 								return true;
 							}
 							gatherVisibleMethods(nonApiSuper, methods, modifiers);
 							nonApiSuper = nonApiSuper.getSuperclass();
 						}
 						if (methods.size() > 0) {
-							// check if the visible members are part of an API interface/class
-							List apiTypes = new LinkedList();
+							// check if the visible members are part of an API
+							// interface/class
+							List<IApiType> apiTypes = new LinkedList<IApiType>();
 							apiTypes.add(type);
 							gatherAPISuperTypes(apiTypes, type);
-							Iterator iterator2 = apiTypes.iterator();
-							while (iterator2.hasNext()) {
-								IApiType t2 = (IApiType) iterator2.next();
-								Set apiMembers = new HashSet();
+							for (IApiType t2 : apiTypes) {
+								Set<MethodKey> apiMembers = new HashSet<MethodKey>();
 								gatherVisibleMethods(t2, apiMembers, modifiers);
 								methods.removeAll(apiMembers);
 								if (methods.size() == 0) {
-									// there are no visible methods left that are not part of an API type/interface
+									// there are no visible methods left that
+									// are not part of an API type/interface
 									return false;
-								}	
+								}
 							}
 							if (methods.size() > 0) {
-								// there are visible members that are not part of an API type/interface
+								// there are visible members that are not part
+								// of an API type/interface
 								return true;
 							}
 						}
@@ -132,7 +152,7 @@ public class LeakExtendsProblemDetector extends AbstractTypeLeakDetector {
 					return true;
 				}
 			} catch (CoreException ce) {
-				if(ApiPlugin.DEBUG_PROBLEM_DETECTOR) {
+				if (ApiPlugin.DEBUG_PROBLEM_DETECTOR) {
 					ApiPlugin.log(ce);
 				}
 				return true;
@@ -148,7 +168,7 @@ public class LeakExtendsProblemDetector extends AbstractTypeLeakDetector {
 	 * @param members set to add methods to
 	 * @param modifiers visibilities to consider
 	 */
-	private void gatherVisibleMethods(IApiType type, Set members, int modifiers) {
+	private void gatherVisibleMethods(IApiType type, Set<MethodKey> members, int modifiers) {
 		IApiMethod[] methods = type.getMethods();
 		for (int i = 0; i < methods.length; i++) {
 			IApiMethod method = methods[i];
@@ -157,7 +177,7 @@ public class LeakExtendsProblemDetector extends AbstractTypeLeakDetector {
 			}
 		}
 	}
-	
+
 	/**
 	 * Returns whether the given type has any visible fields base on the given
 	 * visibility flags to consider. A field is visible signals a definite leak.
@@ -176,15 +196,15 @@ public class LeakExtendsProblemDetector extends AbstractTypeLeakDetector {
 		}
 		return false;
 	}
-	
+
 	/**
-	 * Adds all API super types of the given type to the given list in
-	 * top down order.
+	 * Adds all API super types of the given type to the given list in top down
+	 * order.
 	 * 
 	 * @param superTypes list to add to
 	 * @param type type being processed
 	 */
-	private void gatherAPISuperTypes(List superTypes, IApiType type) throws CoreException {
+	private void gatherAPISuperTypes(List<IApiType> superTypes, IApiType type) throws CoreException {
 		if (type != null) {
 			if (isAPIType(type)) {
 				superTypes.add(0, type);
@@ -200,7 +220,7 @@ public class LeakExtendsProblemDetector extends AbstractTypeLeakDetector {
 				}
 			}
 		}
-	}	
+	}
 
 	/**
 	 * Returns whether the given type has API visibility.
@@ -212,10 +232,11 @@ public class LeakExtendsProblemDetector extends AbstractTypeLeakDetector {
 		IApiDescription description = type.getApiComponent().getApiDescription();
 		IApiAnnotations annotations = description.resolveAnnotations(type.getHandle());
 		if (annotations == null) {
-			// top level non-public top can have no annotations - they are not API
+			// top level non-public top can have no annotations - they are not
+			// API
 			return false;
 		}
 		return VisibilityModifiers.isAPI(annotations.getVisibility());
-	}	
-	
+	}
+
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,31 +12,36 @@ package org.eclipse.pde.api.tools.internal.search;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jdt.internal.core.util.ILRUCacheable;
 
 /**
- * This class is used by {@link org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent} for storing
- * its references
+ * This class is used by
+ * {@link org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent}
+ * for storing its references
  */
 public class UseScanReferences implements ILRUCacheable, IReferenceCollection {
 
-	Map fReferencesMap;
+	Map<String, List<IReferenceDescriptor>> fReferencesMap;
 
 	public UseScanReferences() {
-		fReferencesMap = new HashMap();
+		fReferencesMap = new HashMap<String, List<IReferenceDescriptor>>();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.IReferenceCollection#add(java.lang.String, org.eclipse.pde.api.tools.internal.search.IReferenceDescriptor)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.search.IReferenceCollection#add(java
+	 * .lang.String,
+	 * org.eclipse.pde.api.tools.internal.search.IReferenceDescriptor)
 	 */
+	@Override
 	public void add(String type, IReferenceDescriptor refDesc) {
-		List refDescList = (List) fReferencesMap.get(type);
+		List<IReferenceDescriptor> refDescList = fReferencesMap.get(type);
 		if (refDescList == null) {
-			refDescList = new ArrayList();
+			refDescList = new ArrayList<IReferenceDescriptor>();
 			fReferencesMap.put(type, refDescList);
 		}
 		if (!refDescList.contains(refDesc)) {
@@ -44,56 +49,64 @@ public class UseScanReferences implements ILRUCacheable, IReferenceCollection {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.IReferenceCollection#hasReferencesTo(java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.search.IReferenceCollection#
+	 * hasReferencesTo(java.lang.String)
 	 */
+	@Override
 	public boolean hasReferencesTo(String type) {
-		List refDescList = (List) fReferencesMap.get(type);
-		if (refDescList == null || refDescList.size() == 0) {
-			return false;
-		}
-		return true;
+		List<IReferenceDescriptor> refDescList = fReferencesMap.get(type);
+		return refDescList != null && refDescList.size() > 0;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.IReferenceCollection#getExternalDependenciesTo(java.lang.String[])
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.search.IReferenceCollection#
+	 * getExternalDependenciesTo(java.lang.String[])
 	 */
+	@Override
 	public IReferenceDescriptor[] getExternalDependenciesTo(String[] types) {
 		if (types == null || types.length == 0) {
 			return new IReferenceDescriptor[0];
 		}
-		
-		List referenceDescriptorList = new ArrayList();
+
+		List<IReferenceDescriptor> referenceDescriptorList = new ArrayList<IReferenceDescriptor>();
 		for (int i = 0; i < types.length; i++) {
-			List refDescs = (List) fReferencesMap.get(types[i]);
+			List<IReferenceDescriptor> refDescs = fReferencesMap.get(types[i]);
 			if (refDescs == null || refDescs.size() == 0) {
 				continue;
 			}
-			referenceDescriptorList.addAll(refDescs);			
+			referenceDescriptorList.addAll(refDescs);
 		}
 
-		return (IReferenceDescriptor[]) referenceDescriptorList.toArray(new IReferenceDescriptor[referenceDescriptorList.size()]);
+		return referenceDescriptorList.toArray(new IReferenceDescriptor[referenceDescriptorList.size()]);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.IReferenceCollection#getAllExternalDependencies()
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.search.IReferenceCollection#
+	 * getAllExternalDependencies()
 	 */
+	@Override
 	public IReferenceDescriptor[] getAllExternalDependencies() {
-		List allRefDescs = new ArrayList();
-		for (Iterator iterator = fReferencesMap.values().iterator(); iterator.hasNext();) {
-			List refDescList = (List) iterator.next();
+		List<IReferenceDescriptor> allRefDescs = new ArrayList<IReferenceDescriptor>();
+		for (List<IReferenceDescriptor> refDescList : fReferencesMap.values()) {
 			allRefDescs.addAll(refDescList);
 		}
-		return (IReferenceDescriptor[]) allRefDescs.toArray(new IReferenceDescriptor[allRefDescs.size()]);
+		return allRefDescs.toArray(new IReferenceDescriptor[allRefDescs.size()]);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.core.util.ILRUCacheable#getCacheFootprint()
 	 */
+	@Override
 	public int getCacheFootprint() {
 		return fReferencesMap.size();
 	}
 
+	@Override
 	public void clear() {
 		fReferencesMap.clear();
 	}

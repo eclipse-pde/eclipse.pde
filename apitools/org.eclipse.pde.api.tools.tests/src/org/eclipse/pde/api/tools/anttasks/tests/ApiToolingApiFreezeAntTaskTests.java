@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,56 +28,58 @@ import org.xml.sax.SAXException;
 
 public class ApiToolingApiFreezeAntTaskTests extends AntRunnerTestCase {
 
+	@Override
 	public String getTestResourcesFolder() {
-		return "apitooling.apifreeze/";
-	}
-	
-	public void test1() throws Exception {
-		runTaskAndVerify("test1");
+		return "apitooling.apifreeze/"; //$NON-NLS-1$
 	}
 
-	private void runTaskAndVerify(String resourceName) throws Exception,
-			CoreException, ParserConfigurationException, SAXException,
-			IOException {
-		
-		IFolder buildFolder = newTest(getTestResourcesFolder(), new String[]{resourceName, "profile"});
-		String buildXMLPath = buildFolder.getFile("build.xml").getLocation().toOSString();
+	public void test1() throws Exception {
+		runTaskAndVerify("test1"); //$NON-NLS-1$
+	}
+
+	private void runTaskAndVerify(String resourceName) throws Exception, CoreException, ParserConfigurationException, SAXException, IOException {
+
+		IFolder buildFolder = newTest(getTestResourcesFolder(), new String[] {
+				resourceName, "profile" }); //$NON-NLS-1$
+		String buildXMLPath = buildFolder.getFile("build.xml").getLocation().toOSString(); //$NON-NLS-1$
 		Properties properties = new Properties();
-		properties.put("baseline_location", buildFolder.getFile("rcpapp_1.0.0.zip").getLocation().toOSString());
-		properties.put("profile_location", buildFolder.getFile("rcpapp_2.0.0.zip").getLocation().toOSString());
-		properties.put("report_location", buildFolder.getLocation().append("report").toOSString());
-		properties.put("filter_location", buildFolder.getLocation().toOSString());
-		runAntScript(buildXMLPath, new String[] {"run"}, buildFolder.getLocation().toOSString(), properties);
-		assertFalse("allNonApiBundles must not exist", buildFolder.getFolder("allNonApiBundles").exists());
-		IFile reportFile = buildFolder.getFile("report.xml");
-		assertTrue("report.xml must exist", reportFile.exists());
+		properties.put("baseline_location", buildFolder.getFile("rcpapp_1.0.0.zip").getLocation().toOSString()); //$NON-NLS-1$ //$NON-NLS-2$
+		properties.put("profile_location", buildFolder.getFile("rcpapp_2.0.0.zip").getLocation().toOSString()); //$NON-NLS-1$ //$NON-NLS-2$
+		properties.put("report_location", buildFolder.getLocation().append("report").toOSString()); //$NON-NLS-1$ //$NON-NLS-2$
+		properties.put("filter_location", buildFolder.getLocation().toOSString()); //$NON-NLS-1$
+		runAntScript(buildXMLPath, new String[] { "run" }, buildFolder.getLocation().toOSString(), properties); //$NON-NLS-1$
+		assertFalse("allNonApiBundles must not exist", buildFolder.getFolder("allNonApiBundles").exists()); //$NON-NLS-1$ //$NON-NLS-2$
+		IFile reportFile = buildFolder.getFile("report.xml"); //$NON-NLS-1$
+		assertTrue("report.xml must exist", reportFile.exists()); //$NON-NLS-1$
 		InputSource is = new InputSource(reportFile.getContents());
 		DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 		Document doc = db.parse(is);
-		NodeList elems = doc.getElementsByTagName("delta");
+		NodeList elems = doc.getElementsByTagName("delta"); //$NON-NLS-1$
 		boolean found = false;
 		for (int i = 0; i < elems.getLength(); i++) {
-			Node node = elems.item(i).getAttributes().getNamedItem("componentId");
-			assertFalse("org.example.rcpintro should have been filtered out.", node.getNodeValue().startsWith("org.example.rcpintro"));
-			if (node.getNodeValue().startsWith("org.example.rcpmail"))
+			Node node = elems.item(i).getAttributes().getNamedItem("componentId"); //$NON-NLS-1$
+			assertFalse("org.example.rcpintro should have been filtered out.", node.getNodeValue().startsWith("org.example.rcpintro")); //$NON-NLS-1$ //$NON-NLS-2$
+			if (node.getNodeValue().startsWith("org.example.rcpmail")) { //$NON-NLS-1$
 				found = true;
+			}
 		}
-		assertTrue("org.example.rcpmail", found);
+		assertTrue("org.example.rcpmail", found); //$NON-NLS-1$
 	}
-	
+
 	public void test2() throws Exception {
-		runTaskAndVerify("test2");
+		runTaskAndVerify("test2"); //$NON-NLS-1$
 	}
-	
+
 	public void test3() throws Exception {
-		runTaskAndVerify("test3");
+		runTaskAndVerify("test3"); //$NON-NLS-1$
 	}
+
 	public void test4() throws Exception {
 		try {
-			runTaskAndVerify("test4");
-			assertTrue("Should not be there", false);
-		} catch(Exception e) {
-			assertEquals("Wrong exception", "org.apache.tools.ant.BuildException", e.getClass().getCanonicalName());
+			runTaskAndVerify("test4"); //$NON-NLS-1$
+			assertTrue("Should not be there", false); //$NON-NLS-1$
+		} catch (Exception e) {
+			assertEquals("Wrong exception", "org.apache.tools.ant.BuildException", e.getClass().getCanonicalName()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 }

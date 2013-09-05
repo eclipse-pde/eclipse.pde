@@ -28,16 +28,17 @@ import org.eclipse.pde.api.tools.internal.util.Util;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class ApiField extends ApiMember implements IApiField {
-	
+
 	/**
 	 * Constant value
 	 */
 	private Object fValue;
-	
+
 	private IFieldDescriptor fHandle;
-	
+
 	/**
 	 * Constructor
+	 * 
 	 * @param parent the enclosing type of the field
 	 * @param name the name of the field
 	 * @param signature the signature for the field
@@ -50,17 +51,22 @@ public class ApiField extends ApiMember implements IApiField {
 		super(enclosing, name, signature, genericSig, IApiElement.FIELD, flags);
 		fValue = value;
 	}
-	
+
 	/**
 	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiField#isEnumConstant()
 	 */
+	@Override
 	public boolean isEnumConstant() {
 		return (Flags.isEnum(getModifiers()));
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.model.ApiMember#equals(java.lang.Object)
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.model.ApiMember#equals(java.lang.Object
+	 * )
 	 */
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof IApiField) {
 			return super.equals(obj);
@@ -68,50 +74,54 @@ public class ApiField extends ApiMember implements IApiField {
 		return false;
 	}
 
+	@Override
 	public int hashCode() {
 		return super.hashCode() + (this.fValue != null ? this.fValue.hashCode() : 0);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiField#getConstantValue()
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiField#
+	 * getConstantValue()
 	 */
+	@Override
 	public Object getConstantValue() {
 		return fValue;
 	}
-	
+
+	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
-		buffer
-			.append("Field : access(") //$NON-NLS-1$
-			.append(getModifiers())
-			.append(") ") //$NON-NLS-1$
-			.append(getSignature())
-			.append(' ')
-			.append(getName())
-			.append(" isEnum constant ") //$NON-NLS-1$
-			.append(isEnumConstant());
+		buffer.append("Field : access(") //$NON-NLS-1$
+		.append(getModifiers()).append(") ") //$NON-NLS-1$
+		.append(getSignature()).append(' ').append(getName()).append(" isEnum constant ") //$NON-NLS-1$
+		.append(isEnumConstant());
 		if (getConstantValue() != null) {
 			buffer.append(" = ").append(getConstantValue()); //$NON-NLS-1$
 		}
 		buffer.append(';').append(Util.LINE_DELIMITER);
 		if (getGenericSignature() != null) {
-			buffer
-				.append(" Signature : ") //$NON-NLS-1$
-				.append(getGenericSignature()).append(Util.LINE_DELIMITER);
+			buffer.append(" Signature : ") //$NON-NLS-1$
+			.append(getGenericSignature()).append(Util.LINE_DELIMITER);
 		}
 		return String.valueOf(buffer);
-	}	
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiMember#getHandle()
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.provisional.model.IApiMember#getHandle
+	 * ()
 	 */
+	@Override
 	public IMemberDescriptor getHandle() {
 		if (fHandle == null) {
 			try {
 				IApiType type = getEnclosingType();
-				fHandle = ((IReferenceTypeDescriptor)type.getHandle()).getField(getName());
+				fHandle = ((IReferenceTypeDescriptor) type.getHandle()).getField(getName());
 			} catch (CoreException e) {
-				// should not happen for field or method - enclosing type is cached
+				// should not happen for field or method - enclosing type is
+				// cached
 			}
 		}
 		return fHandle;

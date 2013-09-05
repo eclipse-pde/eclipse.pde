@@ -32,8 +32,9 @@ public class ValidClassTagTests extends InvalidClassTagTests {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.InvalidJavadocTagClassTests#getTestSourcePath()
 	 */
+	@Override
 	protected IPath getTestSourcePath() {
-		return super.getTestSourcePath().append("valid");
+		return super.getTestSourcePath().append("valid"); //$NON-NLS-1$
 	}
 	
 	/**
@@ -60,7 +61,7 @@ public class ValidClassTagTests extends InvalidClassTagTests {
 	}
 	
 	private void x1(boolean inc) {
-		deployTagTest("test1.java", inc, false);
+		deployTagTest("test1.java", inc, false); //$NON-NLS-1$
 	}
 	
 	
@@ -82,6 +83,6 @@ public class ValidClassTagTests extends InvalidClassTagTests {
 	}
 	
 	private void x5(boolean inc) {
-		deployTagTest("test5.java", inc, false);
+		deployTagTest("test5.java", inc, false); //$NON-NLS-1$
 	}
 }

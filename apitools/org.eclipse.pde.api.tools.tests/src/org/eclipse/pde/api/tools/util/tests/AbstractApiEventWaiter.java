@@ -30,7 +30,7 @@ public abstract class AbstractApiEventWaiter {
 				this.wait(DEFAULT_TIMEOUT);
 			}
 			catch(InterruptedException e) {
-				System.err.println("Thread interrupted waiting for element changed event");
+				System.err.println("Thread interrupted waiting for element changed event"); //$NON-NLS-1$
 			}
 		}
 		unregister();

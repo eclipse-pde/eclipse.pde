@@ -19,8 +19,8 @@ import org.eclipse.pde.api.tools.internal.search.UseReportConverter;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
- * Default task for converting the XML output from the apitooling.apiuse ant task
- * to HTML
+ * Default task for converting the XML output from the apitooling.apiuse ant
+ * task to HTML
  * 
  * @since 1.0.0
  * @noinstantiate This class is not intended to be instantiated by clients.
@@ -32,75 +32,98 @@ public final class ApiUseReportConversionTask extends CommonUtilsTask {
 	private String xsltFileLocation = null;
 	private String[] filterPatterns = null;
 	private String[] toPatterns = null;
-	
+
 	/**
 	 * Set the debug value.
-	 * <p>The possible values are: <code>true</code>, <code>false</code></p>
-	 * <p>Default is <code>false</code>.</p>
-	 *
+	 * <p>
+	 * The possible values are: <code>true</code>, <code>false</code>
+	 * </p>
+	 * <p>
+	 * Default is <code>false</code>.
+	 * </p>
+	 * 
 	 * @param debugValue the given debug value
 	 */
 	public void setDebug(String debugValue) {
-		this.debug = Boolean.toString(true).equals(debugValue); 
+		this.debug = Boolean.toString(true).equals(debugValue);
 	}
+
 	/**
 	 * Set the location where the html reports are generated.
 	 * 
-	 * <p>This is optional. If not set, the html files are created in the same folder as the
-	 * xml files.</p>
-	 * <p>The location is set using an absolute path.</p>
+	 * <p>
+	 * This is optional. If not set, the html files are created in the same
+	 * folder as the xml files.
+	 * </p>
+	 * <p>
+	 * The location is set using an absolute path.
+	 * </p>
 	 * 
-	 * @param htmlFilesLocation the given the location where the html reports are generated
+	 * @param htmlFilesLocation the given the location where the html reports
+	 *            are generated
 	 */
 	public void setHtmlFiles(String htmlFilesLocation) {
 		this.htmlReportsLocation = htmlFilesLocation;
 	}
+
 	/**
 	 * Set the location where the xml reports are retrieved.
 	 * 
-	 * <p>The location is set using an absolute path.</p>
-	 *
+	 * <p>
+	 * The location is set using an absolute path.
+	 * </p>
+	 * 
 	 * @param xmlFilesLocation the given location to retrieve the xml reports
 	 */
 	public void setXmlFiles(String xmlFilesLocation) {
 		this.xmlReportsLocation = xmlFilesLocation;
 	}
-	
+
 	/**
 	 * Set the group of {@link String} patterns to use as heuristics to filter
-	 * references to names matching any of the given patterns during the report conversion
+	 * references to names matching any of the given patterns during the report
+	 * conversion
+	 * 
 	 * @param patterns
 	 */
 	public void setToFilterPatterns(String patterns) {
 		this.toPatterns = parsePatterns(patterns);
 	}
-	
+
 	/**
 	 * Set the group of {@link String} patterns to use as heuristics to filter
-	 * references from names matching any of the given patterns during the report conversion
+	 * references from names matching any of the given patterns during the
+	 * report conversion
+	 * 
 	 * @param patterns
 	 */
 	public void setFilterPatterns(String patterns) {
-		this.filterPatterns = parsePatterns(patterns);	
+		this.filterPatterns = parsePatterns(patterns);
 	}
-	
+
 	/**
 	 * Sets the location of the XSLT file to use in the conversion of the XML
 	 * the HTML.
 	 * 
-	 * <p>This is optional. If none is specified, then a default one is used.</p>
+	 * <p>
+	 * This is optional. If none is specified, then a default one is used.
+	 * </p>
 	 * 
-	 * <p>The location is an absolute path.</p>
+	 * <p>
+	 * The location is an absolute path.
+	 * </p>
 	 * 
 	 * @param xsltFileLocation
 	 */
 	public void setXSLTFile(String xsltFileLocation) {
 		this.xsltFileLocation = xsltFileLocation;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see org.apache.tools.ant.Task#execute()
 	 */
+	@Override
 	public void execute() throws BuildException {
 		if (this.debug) {
 			System.out.println("XML report location: " + this.xmlReportsLocation); //$NON-NLS-1$
@@ -117,11 +140,8 @@ public final class ApiUseReportConversionTask extends CommonUtilsTask {
 			ApiPlugin.DEBUG_USE_REPORT_CONVERTER = this.debug;
 			converter.convert(this.xsltFileLocation, null);
 			File index = converter.getReportIndex();
-			System.out.println(NLS.bind(
-					Messages.ApiUseReportConversionTask_conversion_complete,
-					index.getAbsolutePath()));
-		}
-		catch(Exception e) {
+			System.out.println(NLS.bind(Messages.ApiUseReportConversionTask_conversion_complete, index.getAbsolutePath()));
+		} catch (Exception e) {
 			throw new BuildException(e);
 		}
 	}

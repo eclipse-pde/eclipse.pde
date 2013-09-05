@@ -63,18 +63,19 @@ import org.eclipse.ui.preferences.WorkingCopyManager;
 import org.osgi.service.prefs.BackingStoreException;
 
 /**
- * Preference page to allow users to add use scans.  The use scans are analyzed in the 
- * API Tools builder to see if any methods found in the scan have been removed.
+ * Preference page to allow users to add use scans. The use scans are analyzed
+ * in the API Tools builder to see if any methods found in the scan have been
+ * removed.
  * 
  * @since 3.7
  */
 public class ApiUseScanPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
 	public static final String ID = "org.eclipse.pde.api.tools.ui.apiusescan.prefpage"; //$NON-NLS-1$
-	
+
 	private IWorkingCopyManager fManager;
 	CheckboxTableViewer fTableViewer;
-	HashSet fLocationList = new HashSet();
+	HashSet<String> fLocationList = new HashSet<String>();
 	Button remove = null;
 	Button editbutton = null;
 
@@ -82,46 +83,60 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 	 * Column provider for the use scan table
 	 */
 	class TableColumnLabelProvider extends ColumnLabelProvider {
-		
+
 		Image archive = null;
-		
-		/* (non-Javadoc)
+
+		/*
+		 * (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.BaseLabelProvider#dispose()
 		 */
+		@Override
 		public void dispose() {
-			if(archive != null) {
+			if (archive != null) {
 				archive.dispose();
 			}
 			super.dispose();
 		}
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ColumnLabelProvider#getImage(java.lang.Object)
+
+		/*
+		 * (non-Javadoc)
+		 * @see
+		 * org.eclipse.jface.viewers.ColumnLabelProvider#getImage(java.lang.
+		 * Object)
 		 */
+		@Override
 		public Image getImage(Object element) {
 			File file = new File(element.toString());
 			if (file.isDirectory()) {
 				return PlatformUI.getWorkbench().getSharedImages().getImage(org.eclipse.ui.ISharedImages.IMG_OBJ_FOLDER);
 			}
-			if(archive == null) {
+			if (archive == null) {
 				ImageDescriptor image = PlatformUI.getWorkbench().getEditorRegistry().getImageDescriptor(file.getName());
 				archive = image.createImage();
 			}
 			return archive;
 		}
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */
-	public void init(IWorkbench workbench) {		
+	@Override
+	public void init(IWorkbench workbench) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse
+	 * .swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createContents(Composite parent) {
 		Composite comp = SWTFactory.createComposite(parent, 2, 1, GridData.FILL_HORIZONTAL, 0, 0);
-		
+
 		SWTFactory.createWrapLabel(comp, PreferenceMessages.ApiUseScanPreferencePage_0, 2, 250);
 		SWTFactory.createVerticalSpacer(comp, 1);
 		SWTFactory.createWrapLabel(comp, PreferenceMessages.ApiUseScanPreferencePage_2, 2);
@@ -131,6 +146,7 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 		GridData gd = (GridData) table.getLayoutData();
 		gd.widthHint = 250;
 		table.addKeyListener(new KeyAdapter() {
+			@Override
 			public void keyReleased(KeyEvent e) {
 				if (e.stateMask == SWT.NONE && e.keyCode == SWT.DEL) {
 					removeLocation();
@@ -144,45 +160,51 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 		Composite bcomp = SWTFactory.createComposite(comp, 1, 1, GridData.FILL_VERTICAL | GridData.VERTICAL_ALIGN_BEGINNING, 0, 0);
 		Button button = SWTFactory.createPushButton(bcomp, PreferenceMessages.ApiUseScanPreferencePage_3, null);
 		button.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				select(true);
 			}
 		});
 		button = SWTFactory.createPushButton(bcomp, PreferenceMessages.ApiUseScanPreferencePage_10, null);
 		button.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				select(false);
 			}
 		});
-		
+
 		SWTFactory.createHorizontalSpacer(bcomp, 1);
-		
+
 		button = SWTFactory.createPushButton(bcomp, PreferenceMessages.ApiUseScanPreferencePage_4, null);
 		button.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				String loc = getDirectory(null);
-				if(loc != null) {
+				if (loc != null) {
 					String exactLocation = UseScanManager.getExactScanLocation(loc);
-					if (exactLocation == null)
+					if (exactLocation == null) {
 						addLocation(loc);
-					else
+					} else {
 						addLocation(exactLocation);
+					}
 				}
 			}
 		});
 		button = SWTFactory.createPushButton(bcomp, PreferenceMessages.ApiUseScanPreferencePage_5, null);
 		button.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				String loc = getArchive(null);
-				if(loc != null) {
+				if (loc != null) {
 					addLocation(loc);
 				}
 			}
 		});
-		
+
 		editbutton = SWTFactory.createPushButton(bcomp, PreferenceMessages.ApiUseScanPreferencePage_1, null);
 		editbutton.setEnabled(false);
 		editbutton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				edit();
 			}
@@ -190,12 +212,14 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 		remove = SWTFactory.createPushButton(bcomp, PreferenceMessages.ApiUseScanPreferencePage_6, null);
 		remove.setEnabled(false);
 		remove.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				removeLocation();
 			}
 		});
-		
+
 		fTableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				IStructuredSelection selection = (IStructuredSelection) fTableViewer.getSelection();
 				remove.setEnabled(!selection.isEmpty());
@@ -203,21 +227,20 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 			}
 		});
 		fTableViewer.addDoubleClickListener(new IDoubleClickListener() {
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				edit();
 			}
 		});
-		
-		HashMap linkdata = new HashMap();
+
+		HashMap<String, Object> linkdata = new HashMap<String, Object>();
 		linkdata.put(ApiErrorsWarningsPreferencePage.INITIAL_TAB, new Integer(ApiErrorsWarningsConfigurationBlock.API_USE_SCANS_PAGE_ID));
-		PreferenceLinkArea apiErrorLinkArea = new PreferenceLinkArea(comp, SWT.NONE,
-				ApiErrorsWarningsPreferencePage.ID, PreferenceMessages.ApiUseScanPreferencePage_9,
-				(IWorkbenchPreferenceContainer) getContainer(), linkdata);
+		PreferenceLinkArea apiErrorLinkArea = new PreferenceLinkArea(comp, SWT.NONE, ApiErrorsWarningsPreferencePage.ID, PreferenceMessages.ApiUseScanPreferencePage_9, (IWorkbenchPreferenceContainer) getContainer(), linkdata);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
 		data.widthHint = 250;
 		data.horizontalSpan = 2;
 		apiErrorLinkArea.getControl().setLayoutData(data);
-		
+
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IApiToolsHelpContextIds.APIUSESCANS_PREF_PAGE);
 		performInit();
 		validateScans();
@@ -227,17 +250,20 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 
 	/**
 	 * Selects (checks) all of the entries in the table
+	 * 
 	 * @param checked
 	 */
 	void select(boolean checked) {
 		fTableViewer.setAllChecked(checked);
 		fTableViewer.refresh();
 	}
-	
+
 	/**
 	 * Allows users to select a directory with a use scan in it
+	 * 
 	 * @param prevLocation
-	 * @return the new directory or <code>null</code> if the dialog was cancelled
+	 * @return the new directory or <code>null</code> if the dialog was
+	 *         cancelled
 	 */
 	String getDirectory(String prevLocation) {
 		DirectoryDialog dialog = new DirectoryDialog(getShell());
@@ -247,7 +273,7 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 		}
 		return dialog.open();
 	}
-	
+
 	/**
 	 * Allows the user to select an archive from the file system
 	 * 
@@ -256,17 +282,18 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 	 */
 	String getArchive(File file) {
 		FileDialog dialog = new FileDialog(getShell(), SWT.OPEN);
-		dialog.setFilterNames(new String[] {PreferenceMessages.archives__zip});
-		dialog.setFilterExtensions(new String[] {"*.zip;*.jar"}); //$NON-NLS-1$
+		dialog.setFilterNames(new String[] { PreferenceMessages.archives__zip });
+		dialog.setFilterExtensions(new String[] { "*.zip;*.jar" }); //$NON-NLS-1$
 		if (file != null) {
 			dialog.setFilterPath(file.getParent());
 			dialog.setFileName(file.getName());
 		}
 		return dialog.open();
 	}
-	
+
 	/**
 	 * Adds the given location to the table
+	 * 
 	 * @param location
 	 */
 	void addLocation(String location) {
@@ -274,7 +301,7 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 		fTableViewer.refresh();
 		fTableViewer.setChecked(location, true);
 		fTableViewer.setSelection(new StructuredSelection(location));
-		//do the whole pass in case you have more than one invalid location
+		// do the whole pass in case you have more than one invalid location
 		validateScans();
 	}
 
@@ -283,7 +310,7 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 	 */
 	void edit() {
 		IStructuredSelection selection = (IStructuredSelection) fTableViewer.getSelection();
-		String location = selection.getFirstElement().toString();			
+		String location = selection.getFirstElement().toString();
 		File file = new File(location);
 		String newloc = null;
 		if (file.isDirectory()) {
@@ -291,12 +318,12 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 		} else {
 			newloc = getArchive(file);
 		}
-		if(newloc != null) {
+		if (newloc != null) {
 			fLocationList.remove(location);
 			addLocation(newloc);
 		}
 	}
-	
+
 	/**
 	 * Removes the selected locations
 	 */
@@ -313,8 +340,8 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 	private void validateScans() {
 		if (fLocationList.size() > 0) {
 			String loc = null;
-			for (Iterator iterator = fLocationList.iterator(); iterator.hasNext();) {
-				loc = (String) iterator.next();
+			for (Iterator<String> iterator = fLocationList.iterator(); iterator.hasNext();) {
+				loc = iterator.next();
 				if (!UseScanManager.isValidScanLocation(loc)) {
 					setErrorMessage(NLS.bind(PreferenceMessages.ApiUseScanPreferencePage_8, loc));
 					setValid(false);
@@ -325,25 +352,31 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 		setValid(true);
 		setErrorMessage(null);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
 	 */
+	@Override
 	public boolean performOk() {
 		applyChanges();
 		return true;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#performApply()
 	 */
+	@Override
 	protected void performApply() {
 		applyChanges();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
+	@Override
 	protected void performDefaults() {
 		fLocationList.clear();
 		fTableViewer.refresh();
@@ -351,7 +384,7 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 		setErrorMessage(null);
 		super.performDefaults();
 	}
-	
+
 	/**
 	 * Initializes the page
 	 */
@@ -365,22 +398,23 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 		fLocationList.clear();
 
 		String location = getStoredValue(IApiCoreConstants.API_USE_SCAN_LOCATION, null);
-		
-		ArrayList checkedLocations = new ArrayList();
+
+		ArrayList<String> checkedLocations = new ArrayList<String>();
 		if (location != null && location.length() > 0) {
 			String[] locations = location.split(UseScanManager.ESCAPE_REGEX + UseScanManager.LOCATION_DELIM);
 			for (int i = 0; i < locations.length; i++) {
 				String values[] = locations[i].split(UseScanManager.ESCAPE_REGEX + UseScanManager.STATE_DELIM);
 				fLocationList.add(values[0]);
-				if (Boolean.valueOf(values[1]).booleanValue())
+				if (Boolean.valueOf(values[1]).booleanValue()) {
 					checkedLocations.add(values[0]);
-			}			
+				}
+			}
 			fLocationList.remove(""); //$NON-NLS-1$
 		}
 		fTableViewer.setInput(fLocationList);
 		fTableViewer.setCheckedElements(checkedLocations.toArray(new String[checkedLocations.size()]));
 		fTableViewer.refresh();
-		
+
 		setErrorMessage(null);
 	}
 
@@ -389,26 +423,27 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 	 */
 	private void applyChanges() {
 		StringBuffer locations = new StringBuffer();
-		for (Iterator iterator = fLocationList.iterator(); iterator.hasNext();) {
+		for (Iterator<String> iterator = fLocationList.iterator(); iterator.hasNext();) {
 			Object location = iterator.next();
 			locations.append(location);
 			locations.append(UseScanManager.STATE_DELIM);
 			locations.append(fTableViewer.getChecked(location));
 			locations.append(UseScanManager.LOCATION_DELIM);
 		}
-		
+
 		if (hasLocationsChanges(locations.toString())) {
 			IProject[] projects = Util.getApiProjects();
-			// If there are API projects in the workspace, ask the user if they should be cleaned and built to run the new tooling
-			if (projects != null){
-				if(MessageDialog.openQuestion(getShell(), PreferenceMessages.ApiUseScanPreferencePage_11, PreferenceMessages.ApiUseScanPreferencePage_12)) {
+			// If there are API projects in the workspace, ask the user if they
+			// should be cleaned and built to run the new tooling
+			if (projects != null) {
+				if (MessageDialog.openQuestion(getShell(), PreferenceMessages.ApiUseScanPreferencePage_11, PreferenceMessages.ApiUseScanPreferencePage_12)) {
 					Util.getBuildJob(projects).schedule();
 				}
 			}
 		}
-		
+
 		setStoredValue(IApiCoreConstants.API_USE_SCAN_LOCATION, locations.toString());
-			
+
 		try {
 			fManager.applyChanges();
 		} catch (BackingStoreException e) {
@@ -418,17 +453,18 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 
 	/**
 	 * Detects changes to the use scan locations
+	 * 
 	 * @param newLocations
 	 * @return if there have been changes to the use scan entries
 	 */
 	private boolean hasLocationsChanges(String newLocations) {
 		String oldLocations = getStoredValue(IApiCoreConstants.API_USE_SCAN_LOCATION, null);
-		
+
 		if (oldLocations != null && oldLocations.equalsIgnoreCase(newLocations)) {
 			return false;
 		}
-		
-		ArrayList oldCheckedElements = new ArrayList();
+
+		ArrayList<String> oldCheckedElements = new ArrayList<String>();
 		if (oldLocations != null && oldLocations.length() > 0) {
 			String[] locations = oldLocations.split(UseScanManager.ESCAPE_REGEX + UseScanManager.LOCATION_DELIM);
 			for (int i = 0; i < locations.length; i++) {
@@ -436,7 +472,7 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 				if (Boolean.valueOf(values[1]).booleanValue()) {
 					oldCheckedElements.add(values[0]);
 				}
-			}			
+			}
 		}
 		Object[] newCheckedLocations = fTableViewer.getCheckedElements();
 		if (newCheckedLocations.length != oldCheckedElements.size()) {
@@ -452,6 +488,7 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 
 	/**
 	 * Sets the value to the given preference key
+	 * 
 	 * @param key
 	 * @param value
 	 */
@@ -465,10 +502,12 @@ public class ApiUseScanPreferencePage extends PreferencePage implements IWorkben
 	}
 
 	/**
-	 * Retrieves the value for the given preference key or the returns the given default if it is not defined
+	 * Retrieves the value for the given preference key or the returns the given
+	 * default if it is not defined
+	 * 
 	 * @param key
 	 * @param defaultValue
-	 * @return the stored value or the specified default 
+	 * @return the stored value or the specified default
 	 */
 	public String getStoredValue(String key, String defaultValue) {
 		IEclipsePreferences node = getNode();

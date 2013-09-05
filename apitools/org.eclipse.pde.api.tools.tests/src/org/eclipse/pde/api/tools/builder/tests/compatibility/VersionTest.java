@@ -38,15 +38,15 @@ public class VersionTest extends CompatibilityTest {
 	/**
 	 * Workspace relative path classes in bundle/project A
 	 */
-	protected static IPath WORKSPACE_CLASSES_PACKAGE_A = new Path("bundle.a/src/a/version");
-	protected static IPath WORKSPACE_CLASSES_PACKAGE_INTERNAL = new Path("bundle.a/src/a/version/internal");
+	protected static IPath WORKSPACE_CLASSES_PACKAGE_A = new Path("bundle.a/src/a/version"); //$NON-NLS-1$
+	protected static IPath WORKSPACE_CLASSES_PACKAGE_INTERNAL = new Path("bundle.a/src/a/version/internal"); //$NON-NLS-1$
 	
-	protected static IPath MANIFEST_PATH = new Path("bundle.a").append(JarFile.MANIFEST_NAME);
+	protected static IPath MANIFEST_PATH = new Path("bundle.a").append(JarFile.MANIFEST_NAME); //$NON-NLS-1$
 
 	/**
 	 * Package prefix for test classes
 	 */
-	protected static String PACKAGE_PREFIX = "a.version.";
+	protected static String PACKAGE_PREFIX = "a.version."; //$NON-NLS-1$
 	
 	/**
 	 * @return the tests for this class
@@ -66,6 +66,7 @@ public class VersionTest extends CompatibilityTest {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#setBuilderOptions()
 	 */
+	@Override
 	protected void setBuilderOptions() {
 		enableUnsupportedTagOptions(false);
 		enableBaselineOptions(false);
@@ -79,13 +80,15 @@ public class VersionTest extends CompatibilityTest {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestSourcePath()
 	 */
+	@Override
 	protected IPath getTestSourcePath() {
-		return super.getTestSourcePath().append("version");
+		return super.getTestSourcePath().append("version"); //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getDefaultProblemId()
 	 */
+	@Override
 	protected int getDefaultProblemId() {
 		return ApiProblemFactory.createProblemId(
 				IApiProblem.CATEGORY_VERSION,
@@ -97,15 +100,16 @@ public class VersionTest extends CompatibilityTest {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestingProjectName()
 	 */
+	@Override
 	protected String getTestingProjectName() {
-		return "enumcompat";
+		return "enumcompat"; //$NON-NLS-1$
 	}
 
 	/**
 	 * Tests API addition (minor version change)
 	 */
 	private void xAddApi(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddApi.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddApi.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 				ApiProblemFactory.createProblemId(
 						IApiProblem.CATEGORY_VERSION,
@@ -115,7 +119,7 @@ public class VersionTest extends CompatibilityTest {
 			};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{"1.0.0", "1.0.0"};
+		args[0] = new String[]{"1.0.0", "1.0.0"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performVersionTest(filePath, incremental);
 	}
@@ -132,7 +136,7 @@ public class VersionTest extends CompatibilityTest {
 	 * Tests API breakage (major version change)
 	 */
 	private void xBreakApi(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("BreakApi.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("BreakApi.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 				ApiProblemFactory.createProblemId(
 						IApiProblem.CATEGORY_VERSION,
@@ -142,7 +146,7 @@ public class VersionTest extends CompatibilityTest {
 			};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{"1.0.0", "1.0.0"};
+		args[0] = new String[]{"1.0.0", "1.0.0"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performVersionTest(filePath, incremental);
 	}
@@ -159,7 +163,7 @@ public class VersionTest extends CompatibilityTest {
 	 * Tests API stability (no change)
 	 */
 	private void xStableApi(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("StableApi.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("StableApi.java"); //$NON-NLS-1$
 		// no problems
 		performVersionTest(filePath, incremental);
 	}
@@ -177,7 +181,7 @@ public class VersionTest extends CompatibilityTest {
 	 */
 	private void xFalseMinorInc(boolean incremental) throws Exception {
 		IEclipsePreferences inode = InstanceScope.INSTANCE.getNode(ApiPlugin.PLUGIN_ID);
-		assertNotNull("the instance pref node must exist", inode);
+		assertNotNull("the instance pref node must exist", inode); //$NON-NLS-1$
 		inode.put(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MINOR_WITHOUT_API_CHANGE, ApiPlugin.VALUE_ENABLED);
 		inode.flush();
 		
@@ -190,14 +194,14 @@ public class VersionTest extends CompatibilityTest {
 			};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{"1.1.0", "1.0.0"};
+		args[0] = new String[]{"1.1.0", "1.0.0"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		
 		// update manifest minor version
 		IFile file = getEnv().getWorkspace().getRoot().getFile(MANIFEST_PATH);
-		assertTrue("Missing manifest", file.exists());
+		assertTrue("Missing manifest", file.exists()); //$NON-NLS-1$
 		String content = Util.getFileContentAsString(file.getLocation().toFile());
-		content = content.replace("1.0.0", "1.1.0");
+		content = content.replace("1.0.0", "1.1.0"); //$NON-NLS-1$ //$NON-NLS-2$
 		getEnv().addFile(MANIFEST_PATH.removeLastSegments(1), MANIFEST_PATH.lastSegment(), content);
 		
 		if (incremental) {
@@ -222,7 +226,7 @@ public class VersionTest extends CompatibilityTest {
 	 */
 	private void xFalseMajorInc(boolean incremental) throws Exception {
 		IEclipsePreferences inode = InstanceScope.INSTANCE.getNode(ApiPlugin.PLUGIN_ID);
-		assertNotNull("The instance pref node must exist", inode);
+		assertNotNull("The instance pref node must exist", inode); //$NON-NLS-1$
 		inode.put(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MAJOR_WITHOUT_BREAKING_CHANGE, ApiPlugin.VALUE_ENABLED);
 		inode.flush();
 		
@@ -235,14 +239,14 @@ public class VersionTest extends CompatibilityTest {
 			};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{"2.0.0", "1.0.0"};
+		args[0] = new String[]{"2.0.0", "1.0.0"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		
 		// update manifest minor version
 		IFile file = getEnv().getWorkspace().getRoot().getFile(MANIFEST_PATH);
-		assertTrue("Missing manifest", file.exists());
+		assertTrue("Missing manifest", file.exists()); //$NON-NLS-1$
 		String content = Util.getFileContentAsString(file.getLocation().toFile());
-		content = content.replace("1.0.0", "2.0.0");
+		content = content.replace("1.0.0", "2.0.0"); //$NON-NLS-1$ //$NON-NLS-2$
 		getEnv().addFile(MANIFEST_PATH.removeLastSegments(1), MANIFEST_PATH.lastSegment(), content);
 		
 		if (incremental) {
@@ -266,7 +270,7 @@ public class VersionTest extends CompatibilityTest {
 	 * Tests removing a non-API class
 	 */
 	private void xRemoveInternalClass(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_INTERNAL.append("RemoveInternalClass.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_INTERNAL.append("RemoveInternalClass.java"); //$NON-NLS-1$
 		// no problems expected
 		performDeletionCompatibilityTest(filePath, incremental);
 	}
@@ -293,7 +297,7 @@ public class VersionTest extends CompatibilityTest {
 	 */
 	private void xRegardlessMajorInc(boolean incremental) throws Exception {
 		IEclipsePreferences inode = InstanceScope.INSTANCE.getNode(ApiPlugin.PLUGIN_ID);
-		assertNotNull("The instance pref node must exist", inode);
+		assertNotNull("The instance pref node must exist", inode); //$NON-NLS-1$
 		inode.put(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MAJOR_WITHOUT_BREAKING_CHANGE, ApiPlugin.VALUE_ENABLED);
 		inode.put(IApiProblemTypes.REPORT_API_BREAKAGE_WHEN_MAJOR_VERSION_INCREMENTED, ApiPlugin.VALUE_ENABLED);
 		inode.flush();
@@ -307,20 +311,20 @@ public class VersionTest extends CompatibilityTest {
 			};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "BreakApi", "method()"};
+		args[0] = new String[]{PACKAGE_PREFIX + "BreakApi", "method()"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		
 		// break the API be removing a method
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("BreakApi.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("BreakApi.java"); //$NON-NLS-1$
 		updateWorkspaceFile(
 				filePath,
 				getUpdateFilePath(filePath.lastSegment()));
 		
 		// update manifest major version
 		IFile file = getEnv().getWorkspace().getRoot().getFile(MANIFEST_PATH);
-		assertTrue("Missing manifest", file.exists());
+		assertTrue("Missing manifest", file.exists()); //$NON-NLS-1$
 		String content = Util.getFileContentAsString(file.getLocation().toFile());
-		content = content.replace("1.0.0", "2.0.0");
+		content = content.replace("1.0.0", "2.0.0"); //$NON-NLS-1$ //$NON-NLS-2$
 		getEnv().addFile(MANIFEST_PATH.removeLastSegments(1), MANIFEST_PATH.lastSegment(), content);
 		
 		if (incremental) {

@@ -25,70 +25,65 @@ import org.eclipse.pde.api.tools.builder.tests.ApiProblem;
 import org.eclipse.pde.api.tools.builder.tests.ApiTestingEnvironment;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 
-
 /**
- * Tests the builder to make sure it correctly finds and reports
- * unsupported tag usage.
+ * Tests the builder to make sure it correctly finds and reports unsupported tag
+ * usage.
  * 
  * @since 1.0
  */
 public abstract class TagTest extends ApiBuilderTest {
 
-	protected static IPath WORKSPACE_PATH = new Path("tagproject/src/a/b/c");
-	protected static IPath WORKSPACE_PATH_DEFAULT = new Path("tagproject/src");
-	
+	protected static IPath WORKSPACE_PATH = new Path("tagproject/src/a/b/c"); //$NON-NLS-1$
+	protected static IPath WORKSPACE_PATH_DEFAULT = new Path("tagproject/src"); //$NON-NLS-1$
+
 	/**
 	 * Constructor
 	 */
 	public TagTest(String name) {
 		super(name);
 	}
-	
+
 	/**
-	 * Sets the message arguments we are expecting for the given test, the number of times denoted
-	 * by count
+	 * Sets the message arguments we are expecting for the given test, the
+	 * number of times denoted by count
+	 * 
 	 * @param tagname
 	 * @param context
 	 * @param count
 	 */
 	protected void setExpectedMessageArgs(String tagname, String context, int count) {
 		String[][] args = new String[count][];
-		for(int i = 0; i < count; i++) {
-			args[i] = new String[] {tagname, context};
+		for (int i = 0; i < count; i++) {
+			args[i] = new String[] { tagname, context };
 		}
 		setExpectedMessageArgs(args);
 	}
-	
+
 	/**
 	 * @return all of the child test classes of this class
 	 */
-	private static Class[] getAllTestClasses() {
-		Class[] classes = new Class[] {
-			InvalidClassTagTests.class,
-			ValidClassTagTests.class,
-			InvalidInterfaceTagTests.class,
-			ValidInterfaceTagTests.class,
-			InvalidFieldTagTests.class,
-			ValidFieldTagTests.class,
-			InvalidMethodTagTests.class,
-			ValidMethodTagTests.class,
-			ValidEnumTagTests.class,
-			InvalidEnumTagTests.class,
-			ValidAnnotationTagTests.class,
-			InvalidAnnotationTagTests.class,
-			InvalidDuplicateTagsTests.class
-		};
+	private static Class<?>[] getAllTestClasses() {
+		Class<?>[] classes = new Class[] {
+				InvalidClassTagTests.class, ValidClassTagTests.class,
+				InvalidInterfaceTagTests.class, ValidInterfaceTagTests.class,
+				InvalidFieldTagTests.class, ValidFieldTagTests.class,
+				InvalidMethodTagTests.class, ValidMethodTagTests.class,
+				ValidEnumTagTests.class, InvalidEnumTagTests.class,
+				ValidAnnotationTagTests.class, InvalidAnnotationTagTests.class,
+				InvalidDuplicateTagsTests.class };
 		return classes;
 	}
-	
+
 	/**
 	 * Collects tests from the getAllTestClasses() method into the given suite
+	 * 
 	 * @param suite
 	 */
 	private static void collectTests(TestSuite suite) {
 		// Hack to load all classes before computing their suite of test cases
-		// this allow to reset test cases subsets while running all Builder tests...
-		Class[] classes = getAllTestClasses();
+		// this allow to reset test cases subsets while running all Builder
+		// tests...
+		Class<?>[] classes = getAllTestClasses();
 
 		// Reset forgotten subsets of tests
 		TestCase.TESTS_PREFIX = null;
@@ -102,7 +97,7 @@ public abstract class TagTest extends ApiBuilderTest {
 			Class<?> clazz = classes[i];
 			Method suiteMethod;
 			try {
-				suiteMethod = clazz.getDeclaredMethod("suite", new Class[0]);
+				suiteMethod = clazz.getDeclaredMethod("suite", new Class[0]); //$NON-NLS-1$
 			} catch (NoSuchMethodException e) {
 				e.printStackTrace();
 				continue;
@@ -120,7 +115,7 @@ public abstract class TagTest extends ApiBuilderTest {
 			suite.addTest((Test) test);
 		}
 	}
-	
+
 	/**
 	 * @return the tests for this class
 	 */
@@ -129,15 +124,19 @@ public abstract class TagTest extends ApiBuilderTest {
 		collectTests(suite);
 		return suite;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#setBuilderOptions()
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#setBuilderOptions
+	 * ()
 	 */
+	@Override
 	protected void setBuilderOptions() {
-		//only care about unsupported tags
+		// only care about unsupported tags
 		enableUnsupportedTagOptions(true);
-		
-		//disable the rest
+
+		// disable the rest
 		enableBaselineOptions(false);
 		enableCompatibilityOptions(false);
 		enableLeakOptions(false);
@@ -145,42 +144,53 @@ public abstract class TagTest extends ApiBuilderTest {
 		enableUsageOptions(false);
 		enableVersionNumberOptions(false);
 	}
-	
+
 	/**
-	 * Returns an array composed only of the specified number of {@link #PROBLEM_ID}
+	 * Returns an array composed only of the specified number of
+	 * {@link #PROBLEM_ID}
+	 * 
 	 * @param problemcount
-	 * @return an array of {@link #PROBLEM_ID} of the specified size, or an empty array if the specified
-	 * size is < 1
+	 * @return an array of {@link #PROBLEM_ID} of the specified size, or an
+	 *         empty array if the specified size is < 1
 	 */
 	protected int[] getDefaultProblemSet(int problemcount) {
-		if(problemcount < 1) {
+		if (problemcount < 1) {
 			return new int[0];
 		}
 		int[] array = new int[problemcount];
 		int defaultproblem = getDefaultProblemId();
-		for(int i = 0; i < problemcount; i++) {
+		for (int i = 0; i < problemcount; i++) {
 			array[i] = defaultproblem;
 		}
 		return array;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestSourcePath()
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestSourcePath
+	 * ()
 	 */
+	@Override
 	protected IPath getTestSourcePath() {
-		return new Path("tags");
+		return new Path("tags"); //$NON-NLS-1$
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestingProjectName()
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestingProjectName
+	 * ()
 	 */
+	@Override
 	protected String getTestingProjectName() {
-		return "tagproject";
+		return "tagproject"; //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Deploys a build test for API Javadoc tags using the given source file,
 	 * looking for problems specified from {@link #getExpectedProblemIds()()}
+	 * 
 	 * @param sourcename
 	 * @param incremental if an incremental build should take place
 	 * @param usedefault if the default package should be used or not
@@ -188,26 +198,25 @@ public abstract class TagTest extends ApiBuilderTest {
 	protected void deployTagTest(String sourcename, boolean incremental, boolean usedefault) {
 		try {
 			IPath path = WORKSPACE_PATH.append(sourcename);
-			if(usedefault) {
+			if (usedefault) {
 				path = WORKSPACE_PATH_DEFAULT.append(sourcename);
 			}
 			createWorkspaceFile(path, TestSuiteHelper.getPluginDirectoryPath().append(TEST_SOURCE_ROOT).append(getTestSourcePath()).append(sourcename));
-			if(incremental) {
+			if (incremental) {
 				incrementalBuild();
-			}
-			else {
+			} else {
 				fullBuild();
 			}
 			expectingNoJDTProblemsFor(path);
 			ApiProblem[] problems = getEnv().getProblemsFor(path, null);
 			assertProblems(problems);
-		}
-		catch(Exception e) {
+		} catch (Exception e) {
 			fail(e.getMessage());
 		}
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#setUp()
 	 */
 	@Override
@@ -221,11 +230,12 @@ public abstract class TagTest extends ApiBuilderTest {
 		IProject project = getEnv().getWorkspace().getRoot().getProject(getTestingProjectName());
 		if (!project.exists()) {
 			// populate the workspace with initial plug-ins/projects
-			createExistingProjects("tagprojects", true, true, false);
+			createExistingProjects("tagprojects", true, true, false); //$NON-NLS-1$
 		}
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#tearDown()
 	 */
 	@Override

@@ -25,7 +25,7 @@ public class Messages extends NLS {
 	public static String configuring_baseline;
 	public static String resolving_target_definition;
 	public static String TypeStructureBuilder_badClassFileEncountered;
-	
+
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

@@ -15,64 +15,75 @@ import org.eclipse.pde.api.tools.internal.provisional.IVersionRange;
 import org.osgi.framework.Version;
 
 /**
- * Implementation of a required component description based on
- * OSGi bundles.
+ * Implementation of a required component description based on OSGi bundles.
  * 
  * @since 1.0.0
  */
 public class BundleVersionRange implements IVersionRange {
-	
+
 	private VersionRange fRange;
-	
-	
+
 	/**
-	 * Constructs a new version range based on the given
-	 * required bundle version interval. 
+	 * Constructs a new version range based on the given required bundle version
+	 * interval.
 	 * 
 	 * @param versionInterval string representing mathematical interval
-	 *  describing range of compatible versions
+	 *            describing range of compatible versions
 	 */
 	public BundleVersionRange(String versionInterval) {
 		fRange = new VersionRange(versionInterval);
 	}
-	
+
 	/**
 	 * Constructs a new version range based on the given range.
 	 * 
 	 * @param range version range
-	 */	
+	 */
 	public BundleVersionRange(VersionRange range) {
 		fRange = range;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.manifest.IRequiredComponentDescription#getMaximumVersion()
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.manifest.IRequiredComponentDescription#
+	 * getMaximumVersion()
 	 */
+	@Override
 	public String getMaximumVersion() {
 		return fRange.getMaximum().toString();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.manifest.IRequiredComponentDescription#getMinimumVersion()
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.manifest.IRequiredComponentDescription#
+	 * getMinimumVersion()
 	 */
+	@Override
 	public String getMinimumVersion() {
 		return fRange.getMinimum().toString();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.manifest.IRequiredComponentDescription#isIncludeMaximum()
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.manifest.IRequiredComponentDescription#
+	 * isIncludeMaximum()
 	 */
+	@Override
 	public boolean isIncludeMaximum() {
 		return fRange.getIncludeMaximum();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.manifest.IRequiredComponentDescription#isIncludeMinimum()
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.manifest.IRequiredComponentDescription#
+	 * isIncludeMinimum()
 	 */
+	@Override
 	public boolean isIncludeMinimum() {
 		return fRange.getIncludeMinimum();
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof BundleVersionRange) {
 			BundleVersionRange range = (BundleVersionRange) obj;
@@ -80,27 +91,30 @@ public class BundleVersionRange implements IVersionRange {
 		}
 		return false;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		return fRange.hashCode();
 	}
 
+	@Override
 	public String toString() {
 		return fRange.toString();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.manifest.IVersionRange#isIncluded(java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.manifest.IVersionRange#isIncluded(java.lang
+	 * .String)
 	 */
+	@Override
 	public boolean isIncluded(String version) {
 		return fRange.isIncluded(new Version(version));
 	}
-	
-	
-	
-	
 
 }

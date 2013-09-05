@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,34 +28,46 @@ public class FilterProblemWithCommentResolution extends FilterProblemResolution 
 
 	/**
 	 * Constructor
+	 * 
 	 * @param marker
 	 */
 	public FilterProblemWithCommentResolution(IMarker marker) {
 		super(marker);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.ui.internal.markers.FilterProblemResolution#getLabel()
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.ui.internal.markers.FilterProblemResolution
+	 * #getLabel()
 	 */
+	@Override
 	public String getLabel() {
-		if(plural) {
+		if (plural) {
 			return MarkerMessages.FilterProblemWithCommentResolution_create_commented_filters;
-		}
-		else {
+		} else {
 			IJavaElement element = resolveElementFromMarker();
-			if(element != null) {
-				return MessageFormat.format(MarkerMessages.FilterProblemWithCommentResolution_create_commented_filter, new String[] {JavaElementLabels.getTextLabel(element, JavaElementLabels.M_PARAMETER_TYPES), resolveCategoryName()});
-			}
-			else {
+			if (element != null) {
+				return MessageFormat.format(MarkerMessages.FilterProblemWithCommentResolution_create_commented_filter, new Object[] {
+						JavaElementLabels.getTextLabel(element, JavaElementLabels.M_PARAMETER_TYPES),
+						resolveCategoryName() });
+			} else {
 				IResource res = fBackingMarker.getResource();
-				return MessageFormat.format(MarkerMessages.FilterProblemWithCommentResolution_create_commented_filter, new String[] {res.getFullPath().removeFileExtension().lastSegment(), resolveCategoryName()});
+				return MessageFormat.format(MarkerMessages.FilterProblemWithCommentResolution_create_commented_filter, new Object[] {
+						res.getFullPath().removeFileExtension().lastSegment(),
+						resolveCategoryName() });
 			}
 		}
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.ui.internal.markers.FilterProblemResolution#run(org.eclipse.core.resources.IMarker[], org.eclipse.core.runtime.IProgressMonitor)
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.ui.internal.markers.FilterProblemResolution
+	 * #run(org.eclipse.core.resources.IMarker[],
+	 * org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public void run(IMarker[] markers, IProgressMonitor monitor) {
 		CreateApiFilterOperation op = new CreateApiFilterOperation(markers, true);
 		op.setSystem(true);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,9 +54,10 @@ public class RemoveUnsupportedTagOperation extends UIJob {
 	 * The backing marker for the quick-fix
 	 */
 	private IMarker[] markers = null;
-	
+
 	/**
 	 * Constructor
+	 * 
 	 * @param marker
 	 */
 	public RemoveUnsupportedTagOperation(IMarker[] markers) {
@@ -64,12 +65,16 @@ public class RemoveUnsupportedTagOperation extends UIJob {
 		this.markers = markers;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.
+	 * IProgressMonitor)
 	 */
+	@Override
 	public IStatus runInUIThread(IProgressMonitor monitor) {
 		SubMonitor localMonitor = SubMonitor.convert(monitor, MarkerMessages.RemoveUnsupportedTagOperation_removeing_unsupported_tag, this.markers.length + 6);
-		HashMap seen = new HashMap();
+		HashMap<ICompilationUnit, Boolean> seen = new HashMap<ICompilationUnit, Boolean>();
 		for (int i = 0; i < this.markers.length; i++) {
 			// retrieve the AST node compilation unit
 			IResource resource = this.markers[i].getResource();
@@ -77,14 +82,15 @@ public class RemoveUnsupportedTagOperation extends UIJob {
 			try {
 				if (javaElement != null && javaElement.getElementType() == IJavaElement.COMPILATION_UNIT) {
 					ICompilationUnit compilationUnit = (ICompilationUnit) javaElement;
-					if(!seen.containsKey(compilationUnit)) {
+					if (!seen.containsKey(compilationUnit)) {
 						seen.put(compilationUnit, Boolean.valueOf(compilationUnit.hasUnsavedChanges()));
 					}
 					if (!compilationUnit.isWorkingCopy()) {
-						// open an editor of the corresponding unit to "show" the quick-fix change
+						// open an editor of the corresponding unit to "show"
+						// the quick-fix change
 						JavaUI.openInEditor(compilationUnit);
 					}
-					if(!compilationUnit.isConsistent()) {
+					if (!compilationUnit.isConsistent()) {
 						compilationUnit.reconcile(ICompilationUnit.NO_AST, false, null, null);
 						Util.updateMonitor(localMonitor, 1);
 					}
@@ -95,7 +101,7 @@ public class RemoveUnsupportedTagOperation extends UIJob {
 					charStartAttribute = (Integer) this.markers[i].getAttribute(IMarker.CHAR_START);
 					int intValue = charStartAttribute.intValue();
 					parser.setFocalPosition(intValue);
-					Map options = compilationUnit.getJavaProject().getOptions(true);
+					Map<String, String> options = compilationUnit.getJavaProject().getOptions(true);
 					options.put(JavaCore.COMPILER_DOC_COMMENT_SUPPORT, JavaCore.ENABLED);
 					parser.setCompilerOptions(options);
 					final CompilationUnit unit = (CompilationUnit) parser.createAST(new NullProgressMonitor());
@@ -111,17 +117,17 @@ public class RemoveUnsupportedTagOperation extends UIJob {
 						if (docnode == null) {
 							return Status.CANCEL_STATUS;
 						} else {
-							List tags = docnode.tags();
+							List<TagElement> tags = docnode.tags();
 							String arg = (String) this.markers[i].getAttribute(IApiMarkerConstants.MARKER_ATTR_MESSAGE_ARGUMENTS);
 							String[] args = arg.split("#"); //$NON-NLS-1$
 							TagElement tag = null;
-							for (Iterator iterator = tags.iterator(); iterator.hasNext();) {
-								tag = (TagElement) iterator.next();
+							for (Iterator<TagElement> iterator = tags.iterator(); iterator.hasNext();) {
+								tag = iterator.next();
 								if (args[0].equals(tag.getTagName()) && tag.getStartPosition() == intValue) {
 									break;
 								}
 							}
-							if(tag == null) {
+							if (tag == null) {
 								return Status.CANCEL_STATUS;
 							}
 							ListRewrite lrewrite = rewrite.getListRewrite(docnode, Javadoc.TAGS_PROPERTY);
@@ -133,19 +139,19 @@ public class RemoveUnsupportedTagOperation extends UIJob {
 						Util.updateMonitor(localMonitor, 1);
 					}
 				}
+			} catch (JavaModelException jme) {
+			} catch (PartInitException e) {
+			} catch (CoreException e) {
 			}
-			catch(JavaModelException jme) {} 
-			catch (PartInitException e) {}
-			catch (CoreException e) {}
 		}
-		//try saving the compilation units if they were in a saved state when the quick-fix started
-		Map.Entry entry = null;
-		for (Iterator itr = seen.entrySet().iterator(); itr.hasNext();) {
-			entry = (Entry) itr.next();
-			if(!((Boolean)entry.getValue()).booleanValue()) {
+		// try saving the compilation units if they were in a saved state when
+		// the quick-fix started
+		for (Entry<ICompilationUnit, Boolean> entry : seen.entrySet()) {
+			if (!entry.getValue().booleanValue()) {
 				try {
-					((ICompilationUnit)entry.getKey()).commitWorkingCopy(true, null);
-				} catch (JavaModelException jme) {}
+					entry.getKey().commitWorkingCopy(true, null);
+				} catch (JavaModelException jme) {
+				}
 			}
 		}
 		return Status.OK_STATUS;

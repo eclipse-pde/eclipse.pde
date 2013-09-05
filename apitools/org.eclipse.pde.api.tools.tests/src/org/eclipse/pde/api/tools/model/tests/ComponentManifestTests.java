@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.pde.api.tools.model.tests;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,82 +34,80 @@ public class ComponentManifestTests extends TestCase {
 
 	public static Test suite() {
 		return new TestSuite(ComponentManifestTests.class);
-	}	
-	
+	}
+
 	public ComponentManifestTests() {
 		super();
 	}
-	
+
 	public ComponentManifestTests(String name) {
 		super(name);
 	}
-	
-	public void testComponentManifest() throws FileNotFoundException, CoreException {
+
+	public void testComponentManifest() throws CoreException {
 		IPath path = TestSuiteHelper.getPluginDirectoryPath();
-		path = path.append("test-manifests");
+		path = path.append("test-manifests"); //$NON-NLS-1$
 		File file = path.toFile();
-		assertTrue("Missing manifest directory", file.exists());
-		IApiBaseline baseline = TestSuiteHelper.newApiBaseline("test", TestSuiteHelper.getEEDescriptionFile());
+		assertTrue("Missing manifest directory", file.exists()); //$NON-NLS-1$
+		IApiBaseline baseline = TestSuiteHelper.newApiBaseline("test", TestSuiteHelper.getEEDescriptionFile()); //$NON-NLS-1$
 		try {
 			IApiComponent component = ApiModelFactory.newApiComponent(baseline, file.getAbsolutePath());
 			baseline.addApiComponents(new IApiComponent[] { component });
-			assertEquals("Id: ", "org.eclipse.debug.ui" , component.getSymbolicName());
-			assertEquals("Name: ", "Debug Platform UI" , component.getName());
-			assertEquals("Version: ", "3.3.100" , component.getVersion());
+			assertEquals("Id: ", "org.eclipse.debug.ui", component.getSymbolicName()); //$NON-NLS-1$ //$NON-NLS-2$
+			assertEquals("Name: ", "Debug Platform UI", component.getName()); //$NON-NLS-1$ //$NON-NLS-2$
+			assertEquals("Version: ", "3.3.100", component.getVersion()); //$NON-NLS-1$ //$NON-NLS-2$
 			String[] envs = component.getExecutionEnvironments();
-			assertEquals("Wrong number of execution environments", 1, envs.length);
-			assertEquals("Version: ", "J2SE-1.4" , envs[0]);
-			
+			assertEquals("Wrong number of execution environments", 1, envs.length); //$NON-NLS-1$
+			assertEquals("Version: ", "J2SE-1.4", envs[0]); //$NON-NLS-1$ //$NON-NLS-2$
+
 			IRequiredComponentDescription[] requiredComponents = component.getRequiredComponents();
-			assertEquals("Wrong number of required components", 11, requiredComponents.length);
-			
+			assertEquals("Wrong number of required components", 11, requiredComponents.length); //$NON-NLS-1$
+
 			List<RequiredComponentDescription> reqs = new ArrayList<RequiredComponentDescription>();
-			reqs.add(new RequiredComponentDescription("org.eclipse.core.expressions", new BundleVersionRange("(3.3.0,4.0.0)")));
-			reqs.add(new RequiredComponentDescription("org.eclipse.core.variables", new BundleVersionRange("[3.2.0,4.0.0]")));
-			reqs.add(new RequiredComponentDescription("org.eclipse.ui", new BundleVersionRange("[3.3.0,4.0.0]")));
-			reqs.add(new RequiredComponentDescription("org.eclipse.ui.console", new BundleVersionRange("[3.2.0,4.0.0)")));
-			reqs.add(new RequiredComponentDescription("org.eclipse.help", new BundleVersionRange("3.3.0")));
-			reqs.add(new RequiredComponentDescription("org.eclipse.debug.core", new BundleVersionRange("3.4.0")));
-			reqs.add(new RequiredComponentDescription("org.eclipse.jface.text", new BundleVersionRange("[3.3.0,4.0.0)")));
-			reqs.add(new RequiredComponentDescription("org.eclipse.ui.workbench.texteditor", new BundleVersionRange("[3.3.0,4.0.0)")));
-			reqs.add(new RequiredComponentDescription("org.eclipse.ui.ide", new BundleVersionRange("[3.3.0,4.0.0)")));
-			reqs.add(new RequiredComponentDescription("org.eclipse.ui.editors", new BundleVersionRange("[3.3.0,4.0.0)")));
-			reqs.add(new RequiredComponentDescription("org.eclipse.core.runtime", new BundleVersionRange("[3.3.0,4.0.0)")));
-			
+			reqs.add(new RequiredComponentDescription("org.eclipse.core.expressions", new BundleVersionRange("(3.3.0,4.0.0)"))); //$NON-NLS-1$ //$NON-NLS-2$
+			reqs.add(new RequiredComponentDescription("org.eclipse.core.variables", new BundleVersionRange("[3.2.0,4.0.0]"))); //$NON-NLS-1$ //$NON-NLS-2$
+			reqs.add(new RequiredComponentDescription("org.eclipse.ui", new BundleVersionRange("[3.3.0,4.0.0]"))); //$NON-NLS-1$ //$NON-NLS-2$
+			reqs.add(new RequiredComponentDescription("org.eclipse.ui.console", new BundleVersionRange("[3.2.0,4.0.0)"))); //$NON-NLS-1$ //$NON-NLS-2$
+			reqs.add(new RequiredComponentDescription("org.eclipse.help", new BundleVersionRange("3.3.0"))); //$NON-NLS-1$ //$NON-NLS-2$
+			reqs.add(new RequiredComponentDescription("org.eclipse.debug.core", new BundleVersionRange("3.4.0"))); //$NON-NLS-1$ //$NON-NLS-2$
+			reqs.add(new RequiredComponentDescription("org.eclipse.jface.text", new BundleVersionRange("[3.3.0,4.0.0)"))); //$NON-NLS-1$ //$NON-NLS-2$
+			reqs.add(new RequiredComponentDescription("org.eclipse.ui.workbench.texteditor", new BundleVersionRange("[3.3.0,4.0.0)"))); //$NON-NLS-1$ //$NON-NLS-2$
+			reqs.add(new RequiredComponentDescription("org.eclipse.ui.ide", new BundleVersionRange("[3.3.0,4.0.0)"))); //$NON-NLS-1$ //$NON-NLS-2$
+			reqs.add(new RequiredComponentDescription("org.eclipse.ui.editors", new BundleVersionRange("[3.3.0,4.0.0)"))); //$NON-NLS-1$ //$NON-NLS-2$
+			reqs.add(new RequiredComponentDescription("org.eclipse.core.runtime", new BundleVersionRange("[3.3.0,4.0.0)"))); //$NON-NLS-1$ //$NON-NLS-2$
+
 			for (int i = 0; i < reqs.size(); i++) {
-				assertEquals("Wrong required component", reqs.get(i), requiredComponents[i]);
+				assertEquals("Wrong required component", reqs.get(i), requiredComponents[i]); //$NON-NLS-1$
 			}
-		}
-		finally {
+		} finally {
 			baseline.dispose();
 		}
 	}
-	
-	public void testReExport() throws FileNotFoundException, CoreException {
+
+	public void testReExport() throws CoreException {
 		IPath path = TestSuiteHelper.getPluginDirectoryPath();
-		path = path.append("test-manifests");
+		path = path.append("test-manifests"); //$NON-NLS-1$
 		File file = path.toFile();
-		assertTrue("Missing manifest directory", file.exists());
-		IApiBaseline baseline = TestSuiteHelper.newApiBaseline("test", TestSuiteHelper.getEEDescriptionFile());
+		assertTrue("Missing manifest directory", file.exists()); //$NON-NLS-1$
+		IApiBaseline baseline = TestSuiteHelper.newApiBaseline("test", TestSuiteHelper.getEEDescriptionFile()); //$NON-NLS-1$
 		try {
 			IApiComponent component = ApiModelFactory.newApiComponent(baseline, file.getAbsolutePath());
 			baseline.addApiComponents(new IApiComponent[] { component });
-			
+
 			boolean debugCoreExport = false;
 			boolean others = false;
-			IRequiredComponentDescription[] requiredComponents = component.getRequiredComponents();		
+			IRequiredComponentDescription[] requiredComponents = component.getRequiredComponents();
 			for (int i = 0; i < requiredComponents.length; i++) {
 				IRequiredComponentDescription description = requiredComponents[i];
-				if (description.getId().equals("org.eclipse.debug.core")) {
+				if (description.getId().equals("org.eclipse.debug.core")) { //$NON-NLS-1$
 					debugCoreExport = description.isExported();
 				} else {
 					others = others || description.isExported();
 				}
 			}
-			assertTrue("org.eclipse.debug.core should be re-exported", debugCoreExport);
-			assertFalse("Other components should not be re-exported", others);
-		}
-		finally {
+			assertTrue("org.eclipse.debug.core should be re-exported", debugCoreExport); //$NON-NLS-1$
+			assertFalse("Other components should not be re-exported", others); //$NON-NLS-1$
+		} finally {
 			baseline.dispose();
 		}
 	}

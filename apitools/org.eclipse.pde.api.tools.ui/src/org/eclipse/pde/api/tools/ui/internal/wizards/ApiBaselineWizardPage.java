@@ -67,46 +67,55 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.PlatformUI;
 
 /**
- * The wizard page allowing a new API profiles to be created
- * or an existing one to be edited
+ * The wizard page allowing a new API profiles to be created or an existing one
+ * to be edited
+ * 
  * @since 1.0.0
  */
 public class ApiBaselineWizardPage extends WizardPage {
-	
+
 	/**
 	 * an EE entry (child of an api component in the viewer)
 	 */
 	public static class EEEntry {
 		String name = null;
+
 		/**
 		 * Constructor
 		 */
 		public EEEntry(String name) {
 			this.name = name;
 		}
-		/* (non-Javadoc)
+
+		/*
+		 * (non-Javadoc)
 		 * @see java.lang.Object#toString()
 		 */
+		@Override
 		public String toString() {
 			return this.name;
 		}
 	}
-	
+
 	/**
 	 * Content provider for the viewer
 	 */
 	static class ContentProvider implements ITreeContentProvider {
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
+		/*
+		 * (non-Javadoc)
+		 * @see
+		 * org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang
+		 * .Object)
 		 */
+		@Override
 		public Object[] getChildren(Object parentElement) {
-			if(parentElement instanceof IApiComponent) {
+			if (parentElement instanceof IApiComponent) {
 				try {
 					IApiComponent component = (IApiComponent) parentElement;
 					String[] ees = component.getExecutionEnvironments();
-					ArrayList entries = new ArrayList(ees.length);
-					for(int i = 0; i < ees.length; i++) {
+					ArrayList<EEEntry> entries = new ArrayList<EEEntry>(ees.length);
+					for (int i = 0; i < ees.length; i++) {
 						entries.add(new EEEntry(ees[i]));
 					}
 					return entries.toArray();
@@ -117,11 +126,15 @@ public class ApiBaselineWizardPage extends WizardPage {
 			return null;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
+		/*
+		 * (non-Javadoc)
+		 * @see
+		 * org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang
+		 * .Object)
 		 */
+		@Override
 		public boolean hasChildren(Object element) {
-			if(element instanceof IApiComponent) {
+			if (element instanceof IApiComponent) {
 				try {
 					IApiComponent component = (IApiComponent) element;
 					return component.getExecutionEnvironments().length > 0;
@@ -132,39 +145,58 @@ public class ApiBaselineWizardPage extends WizardPage {
 			return false;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
+		/*
+		 * (non-Javadoc)
+		 * @see
+		 * org.eclipse.jface.viewers.IStructuredContentProvider#getElements(
+		 * java.lang.Object)
 		 */
+		@Override
 		public Object[] getElements(Object inputElement) {
-			if(inputElement instanceof IApiComponent[]) {
+			if (inputElement instanceof IApiComponent[]) {
 				return (Object[]) inputElement;
 			}
 			return new Object[0];
 		}
-		public void dispose() {}
-		public Object getParent(Object element) {return null;}
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
+
+		@Override
+		public void dispose() {
+		}
+
+		@Override
+		public Object getParent(Object element) {
+			return null;
+		}
+
+		@Override
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		}
 	}
-	
+
 	/**
-	 * Resets the baseline contents based on current settings and a location from which
-	 * to read plug-ins.
+	 * Resets the baseline contents based on current settings and a location
+	 * from which to read plug-ins.
 	 */
 	class ReloadOperation implements IRunnableWithProgress {
 		private String location, name;
-	
+
 		/**
 		 * Constructor
+		 * 
 		 * @param platformPath
 		 */
 		public ReloadOperation(String name, String location) {
 			this.location = location;
 			this.name = name;
 		}
-			
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
+
+		/*
+		 * (non-Javadoc)
+		 * @see
+		 * org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse
+		 * .core.runtime.IProgressMonitor)
 		 */
+		@Override
 		public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 			monitor.beginTask(WizardMessages.ApiProfileWizardPage_0, 10);
 			try {
@@ -173,33 +205,37 @@ public class ApiBaselineWizardPage extends WizardPage {
 				ApiBaselineWizardPage.this.contentchange = true;
 			} catch (CoreException e) {
 				ApiPlugin.log(e);
-			}
-			finally {
+			} finally {
 				monitor.done();
 			}
 		}
-		
+
 	}
-	
+
 	/**
-	 * Operation that creates a new working copy for an {@link IApiProfile} that is being edited
+	 * Operation that creates a new working copy for an {@link IApiProfile} that
+	 * is being edited
 	 */
 	static class WorkingCopyOperation implements IRunnableWithProgress {
-		
-		IApiBaseline original = null, 
-					workingcopy = null;
-		
+
+		IApiBaseline original = null, workingcopy = null;
+
 		/**
 		 * Constructor
+		 * 
 		 * @param original
 		 */
 		public WorkingCopyOperation(IApiBaseline original) {
 			this.original = original;
 		}
-		
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
+
+		/*
+		 * (non-Javadoc)
+		 * @see
+		 * org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse
+		 * .core.runtime.IProgressMonitor)
 		 */
+		@Override
 		public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 			try {
 				IApiComponent[] components = original.getApiComponents();
@@ -208,103 +244,111 @@ public class ApiBaselineWizardPage extends WizardPage {
 				workingcopy = ApiModelFactory.newApiBaseline(original.getName(), original.getLocation());
 				localmonitor.worked(1);
 				localmonitor.subTask(WizardMessages.ApiProfileWizardPage_copy_api_components);
-				ArrayList comps = new ArrayList();
+				ArrayList<IApiComponent> comps = new ArrayList<IApiComponent>();
 				IApiComponent comp = null;
-				for(int i = 0; i < components.length; i++) {
+				for (int i = 0; i < components.length; i++) {
 					comp = ApiModelFactory.newApiComponent(workingcopy, components[i].getLocation());
-					if(comp != null) {
+					if (comp != null) {
 						comps.add(comp);
 					}
 					localmonitor.worked(1);
 				}
-				workingcopy.addApiComponents((IApiComponent[]) comps.toArray(new IApiComponent[comps.size()]));
-			}
-			catch(CoreException ce) {
+				workingcopy.addApiComponents(comps.toArray(new IApiComponent[comps.size()]));
+			} catch (CoreException ce) {
 				ApiUIPlugin.log(ce);
 			}
 		}
-		
+
 		/**
-		 * Returns the newly created {@link IApiProfile} working copy or <code>null</code>
+		 * Returns the newly created {@link IApiProfile} working copy or
+		 * <code>null</code>
+		 * 
 		 * @return the working copy or <code>null</code>
 		 */
 		public IApiBaseline getWorkingCopy() {
 			return workingcopy;
 		}
 	}
-	
+
 	IApiBaseline fProfile = null;
 	private String originalname = null;
 	/**
-	 * Flag to know if the baselines' content has actually changed, or just some other attribute
-	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=267875
+	 * Flag to know if the baselines' content has actually changed, or just some
+	 * other attribute https://bugs.eclipse.org/bugs/show_bug.cgi?id=267875
 	 */
 	boolean contentchange = false;
-	
+
 	/**
-	 * We need to know if we are initializing the page to not respond to changed events
-	 * causing validation when the wizard opens.
+	 * We need to know if we are initializing the page to not respond to changed
+	 * events causing validation when the wizard opens.
 	 * 
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=266597
 	 */
 	private boolean initializing = false;
-	
+
 	/**
 	 * widgets
 	 */
 	private Text nametext = null;
 	private TreeViewer treeviewer = null;
 	Combo locationcombo = null;
-	private Button browsebutton = null,
-				   reloadbutton = null;
+	private Button browsebutton = null, reloadbutton = null;
+
 	/**
 	 * Constructor
+	 * 
 	 * @param profile
 	 */
 	protected ApiBaselineWizardPage(IApiBaseline profile) {
 		super(WizardMessages.ApiProfileWizardPage_1);
 		this.fProfile = profile;
 		setTitle(WizardMessages.ApiProfileWizardPage_1);
-		if(profile == null) {
+		if (profile == null) {
 			setMessage(WizardMessages.ApiProfileWizardPage_3);
-		}
-		else {
+		} else {
 			setMessage(WizardMessages.ApiProfileWizardPage_4);
 		}
 		setImageDescriptor(ApiUIPlugin.getImageDescriptor(IApiToolsConstants.IMG_WIZBAN_PROFILE));
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets
+	 * .Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		Composite comp = SWTFactory.createComposite(parent, 4, 1, GridData.FILL_HORIZONTAL);
 		SWTFactory.createWrapLabel(comp, WizardMessages.ApiProfileWizardPage_5, 1);
 		nametext = SWTFactory.createText(comp, SWT.BORDER | SWT.SINGLE, 3, GridData.GRAB_HORIZONTAL | GridData.FILL_HORIZONTAL | GridData.BEGINNING);
 		nametext.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				setPageComplete(pageValid());
 			}
 		});
-		
+
 		IExecutionEnvironment[] envs = JavaRuntime.getExecutionEnvironmentsManager().getExecutionEnvironments();
-		ArrayList items = new ArrayList();
-		for(int i = 0; i < envs.length; i++) {
-			if(envs[i].getCompatibleVMs().length > 0) {
+		ArrayList<String> items = new ArrayList<String>();
+		for (int i = 0; i < envs.length; i++) {
+			if (envs[i].getCompatibleVMs().length > 0) {
 				items.add(envs[i].getId());
 			}
 		}
-		Collections.sort(items, new Comparator() {
+		Collections.sort(items, new Comparator<Object>() {
+			@Override
 			public int compare(Object o1, Object o2) {
 				return ((String) o1).compareTo((String) o2);
 			}
-		});		
-				
+		});
+
 		SWTFactory.createVerticalSpacer(comp, 1);
-		
+
 		SWTFactory.createWrapLabel(comp, WizardMessages.ApiProfileWizardPage_9, 1);
 		locationcombo = SWTFactory.createCombo(comp, SWT.BORDER | SWT.SINGLE, 1, GridData.GRAB_HORIZONTAL | GridData.FILL_HORIZONTAL | GridData.BEGINNING, null);
 		locationcombo.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				setPageComplete(pageValid());
 				updateButtons();
@@ -312,6 +356,7 @@ public class ApiBaselineWizardPage extends WizardPage {
 		});
 		browsebutton = SWTFactory.createPushButton(comp, WizardMessages.ApiProfileWizardPage_10, null);
 		browsebutton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				DirectoryDialog dialog = new DirectoryDialog(getShell());
 				dialog.setMessage(WizardMessages.ApiProfileWizardPage_11);
@@ -320,12 +365,12 @@ public class ApiBaselineWizardPage extends WizardPage {
 					dialog.setFilterPath(loctext);
 				}
 				String newPath = dialog.open();
-				if (newPath != null && (!new Path(loctext).equals(new Path(newPath))
-						|| getCurrentComponents().length == 0)) {
+				if (newPath != null && (!new Path(loctext).equals(new Path(newPath)) || getCurrentComponents().length == 0)) {
 					/*
-					 * If the path is identical, but there is no component loaded, we still
-					 * want to reload. This might be the case if the combo is initialized by
-					 * copy/paste with a path that points to a plugin directory
+					 * If the path is identical, but there is no component
+					 * loaded, we still want to reload. This might be the case
+					 * if the combo is initialized by copy/paste with a path
+					 * that points to a plugin directory
 					 */
 					locationcombo.setText(newPath);
 					setErrorMessage(null);
@@ -333,15 +378,16 @@ public class ApiBaselineWizardPage extends WizardPage {
 				}
 			}
 		});
-		
+
 		reloadbutton = SWTFactory.createPushButton(comp, WizardMessages.ApiProfileWizardPage_12, null);
 		reloadbutton.setEnabled(locationcombo.getText().trim().length() > 0);
 		reloadbutton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				doReload();
 			}
 		});
-		
+
 		SWTFactory.createWrapLabel(comp, WizardMessages.ApiProfileWizardPage_13, 4);
 		Tree tree = new Tree(comp, SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);
 		GridData gd = new GridData(GridData.FILL_BOTH);
@@ -354,16 +400,18 @@ public class ApiBaselineWizardPage extends WizardPage {
 		treeviewer.setComparator(new ViewerComparator());
 		treeviewer.setInput(getCurrentComponents());
 		treeviewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				updateButtons();
 			}
 		});
 		treeviewer.addFilter(new ViewerFilter() {
+			@Override
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
-				if(element instanceof IApiComponent) {
+				if (element instanceof IApiComponent) {
 					IApiComponent component = (IApiComponent) element;
 					try {
-						if(component.isSourceComponent() || component.isSystemComponent()) {
+						if (component.isSourceComponent() || component.isSystemComponent()) {
 							return false;
 						}
 					} catch (CoreException e) {
@@ -374,21 +422,22 @@ public class ApiBaselineWizardPage extends WizardPage {
 				return !(element instanceof SystemLibraryApiComponent);
 			}
 		});
-	
+
 		setControl(comp);
 		setPageComplete(fProfile != null);
 		initialize();
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(comp, IApiToolsHelpContextIds.APIPROFILES_WIZARD_PAGE);
 		Dialog.applyDialogFont(comp);
 	}
-	
+
 	/**
-	 * Initializes the controls of the page if the profile is not <code>null</code>
+	 * Initializes the controls of the page if the profile is not
+	 * <code>null</code>
 	 */
 	protected void initialize() {
 		initializing = true;
 		try {
-			if(fProfile != null) {
+			if (fProfile != null) {
 				originalname = fProfile.getName();
 				WorkingCopyOperation op = new WorkingCopyOperation(fProfile);
 				try {
@@ -401,51 +450,51 @@ public class ApiBaselineWizardPage extends WizardPage {
 				fProfile = op.getWorkingCopy();
 				nametext.setText(fProfile.getName());
 				IApiComponent[] components = fProfile.getApiComponents();
-				HashSet locations = new HashSet();
+				HashSet<String> locations = new HashSet<String>();
 				String loc = fProfile.getLocation();
 				IPath location = null;
 				if (loc != null) {
 					location = new Path(loc);
 					// check if the location is a file
-					if(location.toFile().isDirectory()) {
+					if (location.toFile().isDirectory()) {
 						locations.add(location.removeTrailingSeparator().toOSString());
 					}
 				} else {
-					for(int i = 0; i < components.length; i++) {
-						if(!components[i].isSystemComponent()) {
+					for (int i = 0; i < components.length; i++) {
+						if (!components[i].isSystemComponent()) {
 							location = new Path(components[i].getLocation()).removeLastSegments(1);
-							if(location.toFile().isDirectory()) {
+							if (location.toFile().isDirectory()) {
 								locations.add(location.removeTrailingSeparator().toOSString());
 							}
 						}
 					}
 				}
-				if(locations.size() > 0) {
-					locationcombo.setItems((String[]) locations.toArray(new String[locations.size()]));
+				if (locations.size() > 0) {
+					locationcombo.setItems(locations.toArray(new String[locations.size()]));
 					locationcombo.select(0);
 				}
-			}
-			else {
-				//try to set the default location to be the current install directory
-				//https://bugs.eclipse.org/bugs/show_bug.cgi?id=258969
+			} else {
+				// try to set the default location to be the current install
+				// directory
+				// https://bugs.eclipse.org/bugs/show_bug.cgi?id=258969
 				Location location = Platform.getInstallLocation();
-				if(location != null) {
+				if (location != null) {
 					URL url = location.getURL();
 					IPath path = new Path(url.getFile()).removeTrailingSeparator();
-					if(path.toFile().exists()) {
+					if (path.toFile().exists()) {
 						locationcombo.add(path.toOSString());
 						locationcombo.select(0);
 					}
 				}
 			}
-		}
-		finally {
+		} finally {
 			initializing = false;
 		}
 	}
-	
+
 	/**
-	 * Reloads all of the plugins from the location specified in the location text field.
+	 * Reloads all of the plugins from the location specified in the location
+	 * text field.
 	 */
 	protected void doReload() {
 		ReloadOperation op = new ReloadOperation(nametext.getText().trim(), locationcombo.getText().trim());
@@ -454,34 +503,35 @@ public class ApiBaselineWizardPage extends WizardPage {
 			treeviewer.setInput(getCurrentComponents());
 			treeviewer.refresh();
 			setPageComplete(pageValid());
+		} catch (InvocationTargetException ite) {
+		} catch (InterruptedException ie) {
 		}
-		catch (InvocationTargetException ite) {}
-		catch (InterruptedException ie) {}
 	}
-	
+
 	/**
-	 * @return if the page is valid, such that it is considered complete and can be 'finished'
+	 * @return if the page is valid, such that it is considered complete and can
+	 *         be 'finished'
 	 */
 	protected boolean pageValid() {
-		if(initializing) {
+		if (initializing) {
 			return false;
 		}
 		setErrorMessage(null);
-		if(!isNameValid(nametext.getText().trim())) {
+		if (!isNameValid(nametext.getText().trim())) {
 			return false;
 		}
 		String text = locationcombo.getText().trim();
-		if(text.length() < 1) {
+		if (text.length() < 1) {
 			setErrorMessage(WizardMessages.ApiProfileWizardPage_23);
 			reloadbutton.setEnabled(false);
 			return false;
 		}
-		if(!new Path(text).toFile().exists()) {
+		if (!new Path(text).toFile().exists()) {
 			setErrorMessage(WizardMessages.ApiProfileWizardPage_24);
 			reloadbutton.setEnabled(false);
 			return false;
 		}
-		if(fProfile != null) {	
+		if (fProfile != null) {
 			if (fProfile.getApiComponents().length == 0) {
 				setErrorMessage(WizardMessages.ApiProfileWizardPage_2);
 				return false;
@@ -491,44 +541,44 @@ public class ApiBaselineWizardPage extends WizardPage {
 				setErrorMessage(status.getMessage());
 				return false;
 			}
-			if (!fProfile.getLocation().equals(locationcombo.getText())){
+			if (!fProfile.getLocation().equals(locationcombo.getText())) {
 				setErrorMessage(WizardMessages.ApiProfileWizardPage_location_needs_reset);
 				return false;
 			}
-		}
-		else {
+		} else {
 			setErrorMessage(WizardMessages.ApiProfileWizardPage_location_needs_reset);
 			return false;
 		}
 		return true;
 	}
-	
+
 	/**
 	 * @param name
 	 * @return
 	 */
 	private boolean isNameValid(String name) {
-		if(name.length() < 1) {
+		if (name.length() < 1) {
 			setErrorMessage(WizardMessages.ApiProfileWizardPage_20);
 			return false;
 		}
-		if(!name.equals(originalname) && (((ApiBaselineManager)ApiPlugin.getDefault().getApiBaselineManager()).isExistingProfileName(name) &&
-				!ApiBaselinePreferencePage.isRemovedBaseline(name))) {
+		if (!name.equals(originalname) && (((ApiBaselineManager) ApiPlugin.getDefault().getApiBaselineManager()).isExistingProfileName(name) && !ApiBaselinePreferencePage.isRemovedBaseline(name))) {
 			setErrorMessage(WizardMessages.ApiProfileWizardPage_profile_with_that_name_exists);
 			return false;
 		}
 		IStatus status = ResourcesPlugin.getWorkspace().validateName(name, IResource.FILE);
-		if(!status.isOK()) {
+		if (!status.isOK()) {
 			setErrorMessage(status.getMessage());
 			return false;
 		}
 		return true;
 	}
-	
+
 	/**
-	 * Returns the current API components in the baseline or an empty collection if none.
+	 * Returns the current API components in the baseline or an empty collection
+	 * if none.
 	 * 
-	 * @return the current API components in the baseline or an empty collection if none
+	 * @return the current API components in the baseline or an empty collection
+	 *         if none
 	 */
 	protected IApiComponent[] getCurrentComponents() {
 		if (fProfile != null) {
@@ -536,7 +586,7 @@ public class ApiBaselineWizardPage extends WizardPage {
 		}
 		return new IApiComponent[0];
 	}
-	
+
 	/**
 	 * Updates the state of a variety of buttons on this page
 	 */
@@ -544,32 +594,35 @@ public class ApiBaselineWizardPage extends WizardPage {
 		String loctext = locationcombo.getText().trim();
 		reloadbutton.setEnabled(loctext.length() > 0);
 	}
-	
+
 	/**
 	 * Creates or edits the profile and returns it
-	 * @return a new {@link IApiProfile} or <code>null</code> if an error was encountered
-	 * creating the new profile
+	 * 
+	 * @return a new {@link IApiProfile} or <code>null</code> if an error was
+	 *         encountered creating the new profile
+	 * @throws IOException
+	 * @throws CoreException
 	 */
 	public IApiBaseline finish() throws IOException, CoreException {
-		if(fProfile != null) {
+		if (fProfile != null) {
 			fProfile.setName(nametext.getText().trim());
-		}	
+		}
 		return fProfile;
 	}
-	
+
 	/**
-	 * @return if the actual content of the base line has changed and not just some
-	 * other attribute
+	 * @return if the actual content of the base line has changed and not just
+	 *         some other attribute
 	 */
 	public boolean contentChanged() {
 		return this.contentchange;
 	}
-	
+
 	/**
 	 * Cleans up the working copy if the page is canceled
 	 */
 	public void cancel() {
-		if(fProfile != null) {
+		if (fProfile != null) {
 			fProfile.dispose();
 		}
 	}

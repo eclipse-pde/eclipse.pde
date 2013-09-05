@@ -22,49 +22,54 @@ import org.eclipse.pde.api.tools.internal.provisional.IApiJavadocTag;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 
 /**
- * Manages contributed javadoc tags. This manager is lazy, in that
- * nothing is loaded until it is asked for.
+ * Manages contributed javadoc tags. This manager is lazy, in that nothing is
+ * loaded until it is asked for.
  * 
  * @since 1.0.0
  */
 public final class JavadocTagManager {
-	
+
 	/**
-	 * Constant for the <code>noinsantiate</code> tag
-	 * <br><br>
+	 * Constant for the <code>noinsantiate</code> tag <br>
+	 * <br>
 	 * Value is: <code>@noinstantiate</code>
+	 * 
 	 * @since 1.0.500
 	 */
 	public static final String TAG_NOINSTANTIATE = "@noinstantiate"; //$NON-NLS-1$
 	/**
-	 * Constant for the <code>noextend</code> tag
-	 * <br><br>
+	 * Constant for the <code>noextend</code> tag <br>
+	 * <br>
 	 * Value is: <code>@noextend</code>
+	 * 
 	 * @since 1.0.500
 	 */
 	public static final String TAG_NOEXTEND = "@noextend"; //$NON-NLS-1$
 	/**
-	 * Constant for the <code>noimplement</code> tag
-	 * <br><br>
+	 * Constant for the <code>noimplement</code> tag <br>
+	 * <br>
 	 * Value is: <code>@noimplement</code>
+	 * 
 	 * @since 1.0.500
 	 */
 	public static final String TAG_NOIMPLEMENT = "@noimplement"; //$NON-NLS-1$
 	/**
-	 * Constant for the <code>nooverride</code> tag
-	 * <br><br>
+	 * Constant for the <code>nooverride</code> tag <br>
+	 * <br>
 	 * Value is: <code>@nooverride</code>
+	 * 
 	 * @since 1.0.500
 	 */
 	public static final String TAG_NOOVERRIDE = "@nooverride"; //$NON-NLS-1$
 	/**
-	 * Constant for the <code>noreference</code> tag
-	 * <br><br>
+	 * Constant for the <code>noreference</code> tag <br>
+	 * <br>
 	 * Value is: <code>@noreference</code>
+	 * 
 	 * @since 1.0.500
 	 */
 	public static final String TAG_NOREFERENCE = "@noreference"; //$NON-NLS-1$
-	
+
 	/**
 	 * The collection of all tags
 	 * 
@@ -74,10 +79,10 @@ public final class JavadocTagManager {
 	 * @see #TAG_NOOVERRIDE
 	 * @see #TAG_NOREFERENCE
 	 */
-	public static final Set ALL_TAGS/*<String>*/;
-	
+	public static final Set<String> ALL_TAGS;
+
 	static {
-		HashSet tags = new HashSet(5, 1);
+		HashSet<String> tags = new HashSet<String>(5, 1);
 		tags.add(TAG_NOEXTEND);
 		tags.add(TAG_NOIMPLEMENT);
 		tags.add(TAG_NOINSTANTIATE);
@@ -85,184 +90,155 @@ public final class JavadocTagManager {
 		tags.add(TAG_NOREFERENCE);
 		ALL_TAGS = Collections.unmodifiableSet(tags);
 	}
-	
+
 	/**
-	 * Cache for the contributed javadoc tags. 
-	 * Cache form:
+	 * Cache for the contributed javadoc tags. Cache form:
+	 * 
 	 * <pre>
 	 * HashMap<String(id), tag>
 	 * </pre>
 	 */
-	private HashMap tagcache = null;
-	
+	private HashMap<String, IApiJavadocTag> tagcache = null;
+
 	/**
 	 * Collection of tag extensions
 	 */
 	private IApiJavadocTag[] tags;
-	
+
 	/**
-	 * Initializes the cache of contributed Javadoc tags.
-	 * If the cache has already been initialized no work is done.
+	 * Initializes the cache of contributed Javadoc tags. If the cache has
+	 * already been initialized no work is done.
 	 */
 	private void initializeJavadocTags() {
-		if(tagcache == null) {
-			tagcache = new HashMap();
-			List list = new ArrayList(4);
-			
-			//noimplement tag
-			ApiJavadocTag newtag = new ApiJavadocTag(IApiJavadocTag.NO_IMPLEMENT_TAG_ID, 
-					"noimplement", //$NON-NLS-1$
-					RestrictionModifiers.NO_IMPLEMENT);
-			newtag.setApplicableTo(IApiJavadocTag.TYPE_INTERFACE, 
-					IApiJavadocTag.MEMBER_NONE, 
-					CoreMessages.JavadocTagManager_interface_no_implement);
+		if (tagcache == null) {
+			tagcache = new HashMap<String, IApiJavadocTag>();
+			List<ApiJavadocTag> list = new ArrayList<ApiJavadocTag>(4);
+
+			// noimplement tag
+			ApiJavadocTag newtag = new ApiJavadocTag(IApiJavadocTag.NO_IMPLEMENT_TAG_ID, "noimplement", //$NON-NLS-1$
+			RestrictionModifiers.NO_IMPLEMENT);
+			newtag.setApplicableTo(IApiJavadocTag.TYPE_INTERFACE, IApiJavadocTag.MEMBER_NONE, CoreMessages.JavadocTagManager_interface_no_implement);
 			tagcache.put(newtag.getTagId(), newtag);
 			list.add(newtag);
-			
-			//noextend tag
-			newtag = new ApiJavadocTag(IApiJavadocTag.NO_EXTEND_TAG_ID, 
-					"noextend", //$NON-NLS-1$
-					RestrictionModifiers.NO_EXTEND);
-			newtag.setApplicableTo(IApiJavadocTag.TYPE_CLASS, 
-					IApiJavadocTag.MEMBER_NONE, 
-					CoreMessages.JavadocTagManager_class_no_subclass);
-			newtag.setApplicableTo(IApiJavadocTag.TYPE_INTERFACE, 
-					IApiJavadocTag.MEMBER_NONE, 
-					CoreMessages.JavadocTagManager_interface_no_extend);
+
+			// noextend tag
+			newtag = new ApiJavadocTag(IApiJavadocTag.NO_EXTEND_TAG_ID, "noextend", //$NON-NLS-1$
+			RestrictionModifiers.NO_EXTEND);
+			newtag.setApplicableTo(IApiJavadocTag.TYPE_CLASS, IApiJavadocTag.MEMBER_NONE, CoreMessages.JavadocTagManager_class_no_subclass);
+			newtag.setApplicableTo(IApiJavadocTag.TYPE_INTERFACE, IApiJavadocTag.MEMBER_NONE, CoreMessages.JavadocTagManager_interface_no_extend);
 			tagcache.put(newtag.getTagId(), newtag);
 			list.add(newtag);
-			
-			//nooverride tag
-			newtag = new ApiJavadocTag(IApiJavadocTag.NO_OVERRIDE_TAG_ID,
-					"nooverride", //$NON-NLS-1$
-					RestrictionModifiers.NO_OVERRIDE);
-			newtag.setApplicableTo(IApiJavadocTag.TYPE_CLASS, 
-					 IApiJavadocTag.MEMBER_METHOD, 
-					 CoreMessages.JavadocTagManager_method_no_overried);
+
+			// nooverride tag
+			newtag = new ApiJavadocTag(IApiJavadocTag.NO_OVERRIDE_TAG_ID, "nooverride", //$NON-NLS-1$
+			RestrictionModifiers.NO_OVERRIDE);
+			newtag.setApplicableTo(IApiJavadocTag.TYPE_CLASS, IApiJavadocTag.MEMBER_METHOD, CoreMessages.JavadocTagManager_method_no_overried);
 			tagcache.put(newtag.getTagId(), newtag);
 			list.add(newtag);
-			
-			//noinstantiate tag
-			newtag = new ApiJavadocTag(IApiJavadocTag.NO_INSTANTIATE_TAG_ID,
-					"noinstantiate", //$NON-NLS-1$
-					RestrictionModifiers.NO_INSTANTIATE);
-			newtag.setApplicableTo(IApiJavadocTag.TYPE_CLASS,
-					IApiJavadocTag.MEMBER_NONE, 
-					CoreMessages.JavadocTagManager_class_no_instantiate);
+
+			// noinstantiate tag
+			newtag = new ApiJavadocTag(IApiJavadocTag.NO_INSTANTIATE_TAG_ID, "noinstantiate", //$NON-NLS-1$
+			RestrictionModifiers.NO_INSTANTIATE);
+			newtag.setApplicableTo(IApiJavadocTag.TYPE_CLASS, IApiJavadocTag.MEMBER_NONE, CoreMessages.JavadocTagManager_class_no_instantiate);
 			tagcache.put(newtag.getTagId(), newtag);
 			list.add(newtag);
-			
-			//noreference tag
-			newtag = new ApiJavadocTag(IApiJavadocTag.NO_REFERENCE_TAG_ID,
-					"noreference", //$NON-NLS-1$
-					RestrictionModifiers.NO_REFERENCE);
-			newtag.setApplicableTo(IApiJavadocTag.TYPE_CLASS, 
-					IApiJavadocTag.MEMBER_NONE, 
-					CoreMessages.JavadocTagManager_class_no_reference);
-			newtag.setApplicableTo(IApiJavadocTag.TYPE_CLASS, 
-					IApiJavadocTag.MEMBER_METHOD, 
-					CoreMessages.JavadocTagManager_method_no_reference);
-			newtag.setApplicableTo(IApiJavadocTag.TYPE_CLASS, 
-					IApiJavadocTag.MEMBER_CONSTRUCTOR, 
-					CoreMessages.JavadocTagManager_constructor_no_reference);
-			newtag.setApplicableTo(IApiJavadocTag.TYPE_CLASS, 
-					IApiJavadocTag.MEMBER_FIELD, 
-					CoreMessages.JavadocTagManager_field_no_reference);
-			newtag.setApplicableTo(IApiJavadocTag.TYPE_INTERFACE, 
-					IApiJavadocTag.MEMBER_METHOD, 
-					CoreMessages.JavadocTagManager_method_no_reference);
-			newtag.setApplicableTo(IApiJavadocTag.TYPE_INTERFACE, 
-					IApiJavadocTag.MEMBER_FIELD, 
-					CoreMessages.JavadocTagManager_field_no_reference);
-			newtag.setApplicableTo(IApiJavadocTag.TYPE_INTERFACE, 
-					IApiJavadocTag.MEMBER_NONE, 
-					CoreMessages.JavadocTagManager_interface_no_reference);
-			newtag.setApplicableTo(IApiJavadocTag.TYPE_ENUM, 
-					IApiJavadocTag.MEMBER_NONE, 
-					CoreMessages.JavadocTagManager_enum_no_reference);
-			newtag.setApplicableTo(IApiJavadocTag.TYPE_ENUM, 
-					IApiJavadocTag.MEMBER_FIELD, 
-					CoreMessages.JavadocTagManager_enum_field_no_reference);
-			newtag.setApplicableTo(IApiJavadocTag.TYPE_ENUM, 
-					IApiJavadocTag.MEMBER_METHOD, 
-					CoreMessages.JavadocTagManager_enum_method_no_reference);
-			newtag.setApplicableTo(IApiJavadocTag.TYPE_ANNOTATION, 
-					IApiJavadocTag.MEMBER_NONE, 
-					CoreMessages.JavadocTagManager_annotation_no_reference);
+
+			// noreference tag
+			newtag = new ApiJavadocTag(IApiJavadocTag.NO_REFERENCE_TAG_ID, "noreference", //$NON-NLS-1$
+			RestrictionModifiers.NO_REFERENCE);
+			newtag.setApplicableTo(IApiJavadocTag.TYPE_CLASS, IApiJavadocTag.MEMBER_NONE, CoreMessages.JavadocTagManager_class_no_reference);
+			newtag.setApplicableTo(IApiJavadocTag.TYPE_CLASS, IApiJavadocTag.MEMBER_METHOD, CoreMessages.JavadocTagManager_method_no_reference);
+			newtag.setApplicableTo(IApiJavadocTag.TYPE_CLASS, IApiJavadocTag.MEMBER_CONSTRUCTOR, CoreMessages.JavadocTagManager_constructor_no_reference);
+			newtag.setApplicableTo(IApiJavadocTag.TYPE_CLASS, IApiJavadocTag.MEMBER_FIELD, CoreMessages.JavadocTagManager_field_no_reference);
+			newtag.setApplicableTo(IApiJavadocTag.TYPE_INTERFACE, IApiJavadocTag.MEMBER_METHOD, CoreMessages.JavadocTagManager_method_no_reference);
+			newtag.setApplicableTo(IApiJavadocTag.TYPE_INTERFACE, IApiJavadocTag.MEMBER_FIELD, CoreMessages.JavadocTagManager_field_no_reference);
+			newtag.setApplicableTo(IApiJavadocTag.TYPE_INTERFACE, IApiJavadocTag.MEMBER_NONE, CoreMessages.JavadocTagManager_interface_no_reference);
+			newtag.setApplicableTo(IApiJavadocTag.TYPE_ENUM, IApiJavadocTag.MEMBER_NONE, CoreMessages.JavadocTagManager_enum_no_reference);
+			newtag.setApplicableTo(IApiJavadocTag.TYPE_ENUM, IApiJavadocTag.MEMBER_FIELD, CoreMessages.JavadocTagManager_enum_field_no_reference);
+			newtag.setApplicableTo(IApiJavadocTag.TYPE_ENUM, IApiJavadocTag.MEMBER_METHOD, CoreMessages.JavadocTagManager_enum_method_no_reference);
+			newtag.setApplicableTo(IApiJavadocTag.TYPE_ANNOTATION, IApiJavadocTag.MEMBER_NONE, CoreMessages.JavadocTagManager_annotation_no_reference);
 			tagcache.put(newtag.getTagId(), newtag);
 			list.add(newtag);
-			tags = (IApiJavadocTag[]) list.toArray(new IApiJavadocTag[list.size()]);
+			tags = list.toArray(new IApiJavadocTag[list.size()]);
 		}
 	}
-	
+
 	/**
 	 * Returns all of the java doc tags for a given kind of type and member. See
-	 * {@link IApiJavadocTag} for a complete listing of tag Java type and member types.
+	 * {@link IApiJavadocTag} for a complete listing of tag Java type and member
+	 * types.
 	 * 
 	 * @param type one of <code>CLASS</code> or <code>INTERFACE</code>
-	 * @param member one of <code>METHOD</code> or <code>FIELD</code> or <code>NONE</code> 
-	 * @return an array of {@link IApiJavadocTag}s that apply to the specified 
-	 * Java type or an empty array, never <code>null</code>
+	 * @param member one of <code>METHOD</code> or <code>FIELD</code> or
+	 *            <code>NONE</code>
+	 * @return an array of {@link IApiJavadocTag}s that apply to the specified
+	 *         Java type or an empty array, never <code>null</code>
 	 */
 	public synchronized IApiJavadocTag[] getTagsForType(int type, int member) {
 		initializeJavadocTags();
-		List list = new ArrayList();
+		List<IApiJavadocTag> list = new ArrayList<IApiJavadocTag>();
 		for (int i = 0; i < tags.length; i++) {
 			if (tags[i].isApplicable(type, member)) {
 				list.add(tags[i]);
 			}
 		}
-		return (IApiJavadocTag[]) list.toArray(new IApiJavadocTag[list.size()]);
+		return list.toArray(new IApiJavadocTag[list.size()]);
 	}
-	
+
 	/**
-	 * Returns the {@link IApiJavadocTag} that has the given id or <code>null</code> if there is 
-	 * no tag with the given id
+	 * Returns the {@link IApiJavadocTag} that has the given id or
+	 * <code>null</code> if there is no tag with the given id
+	 * 
 	 * @param id the id of the tag to fetch
 	 * @return the {@link IApiJavadocTag} with the given id or <code>null</code>
 	 */
 	public synchronized IApiJavadocTag getTag(String id) {
 		initializeJavadocTags();
-		return (IApiJavadocTag) tagcache.get(id);
+		return tagcache.get(id);
 	}
-	
+
 	/**
-	 * Returns the complete listing of {@link IApiJavadocTag}s contained in the manager or an empty 
-	 * array, never <code>null</code>
+	 * Returns the complete listing of {@link IApiJavadocTag}s contained in the
+	 * manager or an empty array, never <code>null</code>
+	 * 
 	 * @return the complete listing of tags in the manager or <code>null</code>
 	 */
 	public synchronized IApiJavadocTag[] getAllTags() {
 		initializeJavadocTags();
-		if(tagcache == null) {
+		if (tagcache == null) {
 			return new IApiJavadocTag[0];
 		}
-		Collection values = tagcache.values();
-		return (IApiJavadocTag[]) values.toArray(new IApiJavadocTag[values.size()]);
+		Collection<IApiJavadocTag> values = tagcache.values();
+		return values.toArray(new IApiJavadocTag[values.size()]);
 	}
-	
+
 	/**
-	 * @return The complete set of tags names that this manager currently knows about.
+	 * @return The complete set of tags names that this manager currently knows
+	 *         about.
 	 */
-	public synchronized Set getAllTagNames() {
+	public synchronized Set<String> getAllTagNames() {
 		IApiJavadocTag[] tags = getAllTags();
-		HashSet names = new HashSet(tags.length);
-		for(int i = 0; i < tags.length; i++) {
+		HashSet<String> names = new HashSet<String>(tags.length);
+		for (int i = 0; i < tags.length; i++) {
 			names.add(tags[i].getTagName());
 		}
 		return names;
 	}
-	
+
 	/**
-	 * Returns the restriction modifier set on the javadoc tag with the given name.
-	 * If the manager has no entry for the specified tag name <code>-1</code> is returned.
+	 * Returns the restriction modifier set on the javadoc tag with the given
+	 * name. If the manager has no entry for the specified tag name
+	 * <code>-1</code> is returned.
 	 * 
 	 * @param tagname the name of the tag
 	 * @param type one of <code>CLASS</code> or <code>INTERFACE</code>
-	 * @param member one of <code>METHOD</code> or <code>FIELD</code> or <code>NONE</code> 
-	 * @return the restriction modifier for the given tag name or {@link RestrictionModifiers#NO_RESTRICTIONS} if not found
+	 * @param member one of <code>METHOD</code> or <code>FIELD</code> or
+	 *            <code>NONE</code>
+	 * @return the restriction modifier for the given tag name or
+	 *         {@link RestrictionModifiers#NO_RESTRICTIONS} if not found
 	 */
 	public synchronized int getRestrictionsForTag(String tagname, int type, int member) {
-		if(tagname == null) {
+		if (tagname == null) {
 			return RestrictionModifiers.NO_RESTRICTIONS;
 		}
 		initializeJavadocTags();

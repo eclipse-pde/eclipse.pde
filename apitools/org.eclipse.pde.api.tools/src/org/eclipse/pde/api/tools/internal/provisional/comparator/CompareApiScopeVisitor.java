@@ -25,11 +25,12 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
- * ApiScope visitor implementation to run the comparison on all elements of the scope.
+ * ApiScope visitor implementation to run the comparison on all elements of the
+ * scope.
  */
 public class CompareApiScopeVisitor extends ApiScopeVisitor {
 
-	Set deltas;
+	Set<IDelta> deltas;
 	IApiBaseline referenceBaseline;
 	int visibilityModifiers;
 	boolean force;
@@ -37,13 +38,7 @@ public class CompareApiScopeVisitor extends ApiScopeVisitor {
 	boolean containsErrors = false;
 	IProgressMonitor monitor;
 
-	public CompareApiScopeVisitor(
-			final Set deltas,
-			final IApiBaseline baseline,
-			final boolean force,
-			final int visibilityModifiers,
-			final boolean continueOnResolverError,
-			final IProgressMonitor monitor) {
+	public CompareApiScopeVisitor(final Set<IDelta> deltas, final IApiBaseline baseline, final boolean force, final int visibilityModifiers, final boolean continueOnResolverError, final IProgressMonitor monitor) {
 		this.deltas = deltas;
 		this.referenceBaseline = baseline;
 		this.visibilityModifiers = visibilityModifiers;
@@ -51,13 +46,15 @@ public class CompareApiScopeVisitor extends ApiScopeVisitor {
 		this.continueOnResolverError = continueOnResolverError;
 		this.monitor = monitor;
 	}
-	
+
+	@Override
 	public boolean visit(IApiBaseline baseline) throws CoreException {
 		try {
 			Util.updateMonitor(this.monitor);
 			IDelta delta = ApiComparator.compare(this.referenceBaseline, baseline, this.visibilityModifiers, this.force, null);
 			if (delta != null) {
 				delta.accept(new DeltaVisitor() {
+					@Override
 					public void endVisit(IDelta localDelta) {
 						if (localDelta.getChildren().length == 0) {
 							CompareApiScopeVisitor.this.deltas.add(localDelta);
@@ -73,10 +70,12 @@ public class CompareApiScopeVisitor extends ApiScopeVisitor {
 		}
 	}
 
+	@Override
 	public boolean visit(IApiTypeContainer container) throws CoreException {
 		try {
 			Util.updateMonitor(this.monitor);
 			container.accept(new ApiTypeContainerVisitor() {
+				@Override
 				public void visit(String packageName, IApiTypeRoot typeroot) {
 					try {
 						Util.updateMonitor(CompareApiScopeVisitor.this.monitor);
@@ -92,6 +91,7 @@ public class CompareApiScopeVisitor extends ApiScopeVisitor {
 		}
 	}
 
+	@Override
 	public boolean visit(IApiComponent component) throws CoreException {
 		try {
 			Util.updateMonitor(this.monitor);
@@ -100,7 +100,7 @@ public class CompareApiScopeVisitor extends ApiScopeVisitor {
 			}
 			if (component.getErrors() != null) {
 				this.containsErrors = true;
-				if (!continueOnResolverError){
+				if (!continueOnResolverError) {
 					return false;
 				}
 			}
@@ -108,11 +108,11 @@ public class CompareApiScopeVisitor extends ApiScopeVisitor {
 			// referenceComponent can be null if this is an added component
 			if (referenceComponent != null && referenceComponent.getErrors() != null) {
 				this.containsErrors = true;
-				if (!continueOnResolverError){
+				if (!continueOnResolverError) {
 					return false;
 				}
 			}
-			
+
 			Util.updateMonitor(this.monitor);
 			final Delta globalDelta = new Delta();
 			globalDelta.add(ApiComparator.compare(referenceComponent, component, this.visibilityModifiers, null));
@@ -125,6 +125,7 @@ public class CompareApiScopeVisitor extends ApiScopeVisitor {
 				}
 			}
 			globalDelta.accept(new DeltaVisitor() {
+				@Override
 				public void endVisit(IDelta localDelta) {
 					if (localDelta.getChildren().length == 0) {
 						CompareApiScopeVisitor.this.deltas.add(localDelta);
@@ -136,7 +137,8 @@ public class CompareApiScopeVisitor extends ApiScopeVisitor {
 			this.monitor.worked(1);
 		}
 	}
-	
+
+	@Override
 	public void visit(IApiTypeRoot root) throws CoreException {
 		try {
 			Util.updateMonitor(this.monitor);
@@ -153,28 +155,25 @@ public class CompareApiScopeVisitor extends ApiScopeVisitor {
 		}
 		if (apiComponent.getErrors() != null) {
 			this.containsErrors = true;
-			if (!continueOnResolverError){
+			if (!continueOnResolverError) {
 				return;
 			}
 		}
 		IApiComponent referenceComponent = this.referenceBaseline.getApiComponent(apiComponent.getSymbolicName());
-		if (referenceComponent == null) return;
+		if (referenceComponent == null) {
+			return;
+		}
 		if (referenceComponent.getErrors() != null) {
 			this.containsErrors = true;
-			if (!continueOnResolverError){
+			if (!continueOnResolverError) {
 				return;
 			}
 		}
 		IApiBaseline baseline = referenceComponent.getBaseline();
-		IDelta delta = ApiComparator.compare(
-				root,
-				referenceComponent,
-				apiComponent,
-				null,
-				this.referenceBaseline,
-				baseline, this.visibilityModifiers, null);
+		IDelta delta = ApiComparator.compare(root, referenceComponent, apiComponent, null, this.referenceBaseline, baseline, this.visibilityModifiers, null);
 		if (delta != null) {
 			delta.accept(new DeltaVisitor() {
+				@Override
 				public void endVisit(IDelta localDelta) {
 					if (localDelta.getChildren().length == 0) {
 						CompareApiScopeVisitor.this.deltas.add(localDelta);
@@ -185,7 +184,7 @@ public class CompareApiScopeVisitor extends ApiScopeVisitor {
 			this.containsErrors = true;
 		}
 	}
-	
+
 	public boolean containsError() {
 		return this.containsErrors;
 	}

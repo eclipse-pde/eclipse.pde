@@ -13,7 +13,7 @@ package org.eclipse.pde.api.tools.builder.tests.tags;
 import junit.framework.Test;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
+import org.eclipse.jdt.core.JavaCore;
 
 /**
  * Tests the valid @noreference tags on enum methods
@@ -33,15 +33,17 @@ public class ValidEnumMethodTagTests extends ValidMethodTagTests {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getTestCompliance()
 	 */
+	@Override
 	protected String getTestCompliance() {
-		return CompilerOptions.VERSION_1_5;
+		return JavaCore.VERSION_1_5;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.tags.ValidMethodTagTests#getTestSourcePath()
 	 */
+	@Override
 	protected IPath getTestSourcePath() {
-		return super.getTestSourcePath().append("enum");
+		return super.getTestSourcePath().append("enum"); //$NON-NLS-1$
 	}
 
 	/**
@@ -68,7 +70,7 @@ public class ValidEnumMethodTagTests extends ValidMethodTagTests {
 	}
 	
 	private void x1(boolean inc) {
-		deployTagTest("test1.java", inc, false);
+		deployTagTest("test1.java", inc, false); //$NON-NLS-1$
 	}
 	
 	/**
@@ -88,7 +90,7 @@ public class ValidEnumMethodTagTests extends ValidMethodTagTests {
 	}
 	
 	private void x3(boolean inc) {
-		deployTagTest("test3.java", inc, false);
+		deployTagTest("test3.java", inc, false); //$NON-NLS-1$
 	}
 	
 	/**
@@ -108,7 +110,7 @@ public class ValidEnumMethodTagTests extends ValidMethodTagTests {
 	}
 	
 	private void x4(boolean inc) {
-		deployTagTest("test4.java", inc, false);
+		deployTagTest("test4.java", inc, false); //$NON-NLS-1$
 	}
 	
 	/**
@@ -128,6 +130,6 @@ public class ValidEnumMethodTagTests extends ValidMethodTagTests {
 	}
 	
 	private void x5(boolean inc) {
-		deployTagTest("test5.java", inc, true);
+		deployTagTest("test5.java", inc, true); //$NON-NLS-1$
 	}
 }

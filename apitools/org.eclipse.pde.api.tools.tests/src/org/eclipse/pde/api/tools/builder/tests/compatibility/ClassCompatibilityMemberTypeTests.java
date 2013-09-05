@@ -29,12 +29,12 @@ public class ClassCompatibilityMemberTypeTests extends ClassCompatibilityTests {
 	/**
 	 * Workspace relative path classes in bundle/project A
 	 */
-	protected static IPath WORKSPACE_CLASSES_PACKAGE_A = new Path("bundle.a/src/a/classes/membertypes");
+	protected static IPath WORKSPACE_CLASSES_PACKAGE_A = new Path("bundle.a/src/a/classes/membertypes"); //$NON-NLS-1$
 
 	/**
 	 * Package prefix for test classes
 	 */
-	protected static String PACKAGE_PREFIX = "a.classes.membertypes.";
+	protected static String PACKAGE_PREFIX = "a.classes.membertypes."; //$NON-NLS-1$
 	
 	/**
 	 * Constructor
@@ -47,8 +47,9 @@ public class ClassCompatibilityMemberTypeTests extends ClassCompatibilityTests {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestSourcePath()
 	 */
+	@Override
 	protected IPath getTestSourcePath() {
-		return super.getTestSourcePath().append("membertypes");
+		return super.getTestSourcePath().append("membertypes"); //$NON-NLS-1$
 	}
 	
 	/**
@@ -89,21 +90,22 @@ public class ClassCompatibilityMemberTypeTests extends ClassCompatibilityTests {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestingProjectName()
 	 */
+	@Override
 	protected String getTestingProjectName() {
-		return "classcompat";
+		return "classcompat"; //$NON-NLS-1$
 	}
 	
 	/**
 	 * Tests removing a public member type
 	 */
 	private void xRemovePublicMemberType(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemovePublicMemberType.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemovePublicMemberType.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			getDefaultProblemId()
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{"a.classes.membertypes.RemovePublicMemberType.PublicType", "bundle.a_1.0.0"};
+		args[0] = new String[]{"a.classes.membertypes.RemovePublicMemberType.PublicType", "bundle.a_1.0.0"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -120,13 +122,13 @@ public class ClassCompatibilityMemberTypeTests extends ClassCompatibilityTests {
 	 * Tests removing a protected member type
 	 */
 	private void xRemoveProtectedMemberType(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveProtectedMemberType.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveProtectedMemberType.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			getDefaultProblemId()
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{"a.classes.membertypes.RemoveProtectedMemberType.ProtectedType", "bundle.a_1.0.0"};
+		args[0] = new String[]{"a.classes.membertypes.RemoveProtectedMemberType.ProtectedType", "bundle.a_1.0.0"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -143,7 +145,7 @@ public class ClassCompatibilityMemberTypeTests extends ClassCompatibilityTests {
 	 * Tests removing a default/package visible member type
 	 */
 	private void xRemovePackageMemberType(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemovePackageMemberType.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemovePackageMemberType.java"); //$NON-NLS-1$
 		// no problems expected
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -160,7 +162,7 @@ public class ClassCompatibilityMemberTypeTests extends ClassCompatibilityTests {
 	 * Tests removing a private member type
 	 */
 	private void xRemovePrivateMemberType(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemovePrivateMemberType.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemovePrivateMemberType.java"); //$NON-NLS-1$
 		// no problems expected
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -178,7 +180,7 @@ public class ClassCompatibilityMemberTypeTests extends ClassCompatibilityTests {
 	 * noextend.
 	 */
 	private void xRemoveProtectedMemberTypeNoExtend(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveProtectedMemberTypeNoExtend.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveProtectedMemberTypeNoExtend.java"); //$NON-NLS-1$
 		// no problems expected
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -195,13 +197,13 @@ public class ClassCompatibilityMemberTypeTests extends ClassCompatibilityTests {
 	 * Tests reducing visibility from public to protected
 	 */
 	private void xPublicToProtected(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("PublicToProtectedVisibility.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("PublicToProtectedVisibility.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			getReducedVisibilityId()
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "PublicToProtectedVisibility.PublicToProtected"};
+		args[0] = new String[]{PACKAGE_PREFIX + "PublicToProtectedVisibility.PublicToProtected"}; //$NON-NLS-1$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -218,13 +220,13 @@ public class ClassCompatibilityMemberTypeTests extends ClassCompatibilityTests {
 	 * Tests reducing visibility from public to package
 	 */
 	private void xPublicToPackage(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("PublicToPackageVisibility.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("PublicToPackageVisibility.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			getReducedVisibilityId()
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "PublicToPackageVisibility.PublicToPackage"};
+		args[0] = new String[]{PACKAGE_PREFIX + "PublicToPackageVisibility.PublicToPackage"}; //$NON-NLS-1$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -241,13 +243,13 @@ public class ClassCompatibilityMemberTypeTests extends ClassCompatibilityTests {
 	 * Tests reducing visibility from public to private
 	 */
 	private void xPublicToPrivate(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("PublicToPrivateVisibility.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("PublicToPrivateVisibility.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			getReducedVisibilityId()
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "PublicToPrivateVisibility.PublicToPrivate"};
+		args[0] = new String[]{PACKAGE_PREFIX + "PublicToPrivateVisibility.PublicToPrivate"}; //$NON-NLS-1$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -264,13 +266,13 @@ public class ClassCompatibilityMemberTypeTests extends ClassCompatibilityTests {
 	 * Tests reducing visibility from protected to package
 	 */
 	private void xProtectedToPackage(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ProtectedToPackageVisibility.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ProtectedToPackageVisibility.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			getReducedVisibilityId()
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "ProtectedToPackageVisibility.ProtectedToPackage"};
+		args[0] = new String[]{PACKAGE_PREFIX + "ProtectedToPackageVisibility.ProtectedToPackage"}; //$NON-NLS-1$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -287,13 +289,13 @@ public class ClassCompatibilityMemberTypeTests extends ClassCompatibilityTests {
 	 * Tests reducing visibility from protected to private
 	 */
 	private void xProtectedToPrivate(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ProtectedToPrivateVisibility.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ProtectedToPrivateVisibility.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			getReducedVisibilityId()
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "ProtectedToPrivateVisibility.ProtectedToPrivate"};
+		args[0] = new String[]{PACKAGE_PREFIX + "ProtectedToPrivateVisibility.ProtectedToPrivate"}; //$NON-NLS-1$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -310,7 +312,7 @@ public class ClassCompatibilityMemberTypeTests extends ClassCompatibilityTests {
 	 * Tests reducing visibility from package to private
 	 */
 	private void xPackageToPrivate(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("PackageToPrivateVisibility.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("PackageToPrivateVisibility.java"); //$NON-NLS-1$
 		//no errors expected
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -327,7 +329,7 @@ public class ClassCompatibilityMemberTypeTests extends ClassCompatibilityTests {
 	 * Tests reducing visibility from protected to package for a noextend enclosing type
 	 */
 	private void xProtectedToPackageNoExtend(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ProtectedToPackageVisibilityNoExtend.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ProtectedToPackageVisibilityNoExtend.java"); //$NON-NLS-1$
 		// no problem expected
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -344,7 +346,7 @@ public class ClassCompatibilityMemberTypeTests extends ClassCompatibilityTests {
 	 * Tests reducing visibility from protected to private for a noextend enclosing type
 	 */
 	private void xProtectedToPrivateNoExtend(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ProtectedToPrivateVisibilityNoExtend.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ProtectedToPrivateVisibilityNoExtend.java"); //$NON-NLS-1$
 		// no problem expected
 		performCompatibilityTest(filePath, incremental);
 	}

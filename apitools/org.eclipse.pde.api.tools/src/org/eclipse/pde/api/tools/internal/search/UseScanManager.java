@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 IBM Corporation and others.
+ * Copyright (c) 2010, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,8 +47,8 @@ public class UseScanManager {
 	public static final String LOCATION_DELIM = "|"; //$NON-NLS-1$
 	public static final String ESCAPE_REGEX = "\\"; //$NON-NLS-1$
 	/**
-	 * Regular expression for finding use scan directories
-	 * <br><br>
+	 * Regular expression for finding use scan directories <br>
+	 * <br>
 	 * Value is: <code>^.* \\(.*\\)$</code>
 	 */
 	public static final Pattern NAME_REGEX = Pattern.compile("^.* \\(.*\\)$"); //$NON-NLS-1$
@@ -56,9 +56,10 @@ public class UseScanManager {
 	 * Number of entries to cache in the {@link UseScanCache}
 	 */
 	public static final int DEFAULT_CACHE_SIZE = 1000;
-	
+
 	/**
-	 * Cache to maintain the list of least recently used <code>UseScanReferences</code>
+	 * Cache to maintain the list of least recently used
+	 * <code>UseScanReferences</code>
 	 */
 	private static class UseScanCache extends OverflowingLRUCache {
 
@@ -70,12 +71,14 @@ public class UseScanManager {
 			super(size, overflow);
 		}
 
+		@Override
 		protected boolean close(LRUCacheEntry entry) {
 			IReferenceCollection references = (IReferenceCollection) entry.value;
 			references.clear();
 			return true;
 		}
 
+		@Override
 		protected LRUCache newInstance(int size, int newOverflow) {
 			return new UseScanCache(size, newOverflow);
 		}
@@ -88,15 +91,16 @@ public class UseScanManager {
 	 * {@link FileFilter} for finding use scan directories
 	 */
 	static FileFilter USESCAN_FILTER = new FileFilter() {
+		@Override
 		public boolean accept(File pathname) {
-			if(NAME_REGEX.matcher(pathname.getName()).matches()) {
+			if (NAME_REGEX.matcher(pathname.getName()).matches()) {
 				throw new RuntimeException(pathname.getName());
 			}
 			return false;
 		}
 	};
-	
-	//Singleton
+
+	// Singleton
 	private UseScanManager() {
 	}
 
@@ -114,11 +118,14 @@ public class UseScanManager {
 	}
 
 	/**
-	 * Returns the references for a given <code>IApiComponent</code>. If it can not find them in cache, they will be fetched from the 
-	 * API Use Scans and stored.
+	 * Returns the references for a given <code>IApiComponent</code>. If it can
+	 * not find them in cache, they will be fetched from the API Use Scans and
+	 * stored.
+	 * 
 	 * @param apiComponent component whose references have to be fetched
-	 * @param refTypes reference types for which the references has to be computed in the  given <code>IApiComponent</code>. 
-	 * If <code>null</code> or empty, all references will be returned
+	 * @param refTypes reference types for which the references has to be
+	 *            computed in the given <code>IApiComponent</code>. If
+	 *            <code>null</code> or empty, all references will be returned
 	 * @param monitor
 	 * @return the array of reference descriptors
 	 */
@@ -129,7 +136,7 @@ public class UseScanManager {
 		}
 		SubMonitor localmonitor = SubMonitor.convert(monitor, SearchMessages.collecting_external_dependencies, 10);
 		try {
-			ArrayList unavailableMembers = new ArrayList();
+			ArrayList<String> unavailableMembers = new ArrayList<String>();
 			if (apiUseTypes != null && apiUseTypes.length > 0) {
 				for (int i = 0; i < apiUseTypes.length; i++) {
 					if (!references.hasReferencesTo(apiUseTypes[i])) {
@@ -137,23 +144,29 @@ public class UseScanManager {
 					}
 				}
 				if (unavailableMembers.size() > 0) {
-					fetch(apiComponent, (String[]) unavailableMembers.toArray(new String[unavailableMembers.size()]), references, monitor);
+					fetch(apiComponent, unavailableMembers.toArray(new String[unavailableMembers.size()]), references, monitor);
 				}
 				Util.updateMonitor(localmonitor, 1);
 				return references.getExternalDependenciesTo(apiUseTypes);
 			} else {
-				fetch(apiComponent, null, references, localmonitor.newChild(8)); // full build has been triggered so re-fetch
+				fetch(apiComponent, null, references, localmonitor.newChild(8)); // full
+																					// build
+																					// has
+																					// been
+																					// triggered
+																					// so
+																					// re-fetch
 				Util.updateMonitor(localmonitor, 1);
 				return references.getAllExternalDependencies();
 			}
-		}
-		finally {
+		} finally {
 			localmonitor.done();
 		}
 	}
 
 	/**
 	 * fetches the references from the API Use Scan locations
+	 * 
 	 * @param apiComponent
 	 * @param member
 	 * @param references
@@ -167,8 +180,7 @@ public class UseScanManager {
 			String[] locations;
 			if (fLocations == null) {
 				locations = getReportLocations();
-			}
-			else {
+			} else {
 				locations = fLocations;
 			}
 			if (locations != null) {
@@ -198,7 +210,7 @@ public class UseScanManager {
 								}
 							} else {
 								Util.unzip(file.getPath(), locations[i]);
-							}							
+							}
 						} else {
 							continue;
 						}
@@ -217,22 +229,27 @@ public class UseScanManager {
 						parser.parse(locations[i], localmonitor.newChild(2), visitor);
 						Util.updateMonitor(localmonitor);
 					} catch (Exception e) {
-						ApiPlugin.log(e); // log the exception and continue with next location
+						ApiPlugin.log(e); // log the exception and continue with
+											// next location
 					}
 				}
-				fApiComponentCache.remove(apiComponent); // remove current value so that it only doesn't gets purged if size limit is reached
+				fApiComponentCache.remove(apiComponent); // remove current value
+															// so that it only
+															// doesn't gets
+															// purged if size
+															// limit is reached
 				fApiComponentCache.put(apiComponent, references);
 			}
 		} catch (Exception e) {
 			ApiPlugin.log(e);
-		}
-		finally {
+		} finally {
 			localmonitor.done();
 		}
 	}
 
 	/**
-	 * Returns the scan 
+	 * Returns the scan
+	 * 
 	 * @param location
 	 * @return
 	 */
@@ -247,32 +264,34 @@ public class UseScanManager {
 		}
 		return null;
 	}
-	
+
 	/**
-	 * Validate if the given {@link File} is a folder that contains a use scan.
-	 * <br><br> 
+	 * Validate if the given {@link File} is a folder that contains a use scan. <br>
+	 * <br>
 	 * The {@link File} is considered valid iff:
 	 * <ul>
 	 * <li>it is a folder</li>
-	 * <li>the folder has child folder that matches the name pattern <code>^.* (.*)$</code></li>
-	 * <li>the previous child directory has its own child directory that matches the name pattern <code>^.* (.*)$</code></li>
+	 * <li>the folder has child folder that matches the name pattern
+	 * <code>^.* (.*)$</code></li>
+	 * <li>the previous child directory has its own child directory that matches
+	 * the name pattern <code>^.* (.*)$</code></li>
 	 * </ul>
+	 * 
 	 * @param file
-	 * @return <code>true</code> is the sub folders match the patterns, <code>false</code> otherwise
+	 * @return <code>true</code> is the sub folders match the patterns,
+	 *         <code>false</code> otherwise
 	 */
 	public static boolean isValidDirectory(File file) {
-		if(file.exists() && file.isDirectory()) {
+		if (file.exists() && file.isDirectory()) {
 			try {
 				file.listFiles(USESCAN_FILTER);
-			}
-			catch(RuntimeException rte) {
+			} catch (RuntimeException rte) {
 				File f = new File(file, rte.getMessage());
 				try {
-					if(f.exists() && f.isDirectory()) {
+					if (f.exists() && f.isDirectory()) {
 						f.listFiles(USESCAN_FILTER);
 					}
-				}
-				catch(RuntimeException re) {
+				} catch (RuntimeException re) {
 					return true;
 				}
 			}
@@ -281,31 +300,34 @@ public class UseScanManager {
 	}
 
 	/**
-	 * Validate if the given {@link File} is an archive that contains a use scan.
-	 * <br><br> 
+	 * Validate if the given {@link File} is an archive that contains a use
+	 * scan. <br>
+	 * <br>
 	 * The {@link File} is considered valid iff:
 	 * <ul>
 	 * <li>it has an XML folder</li>
-	 * <li>the XML folder has child folder that matches the name pattern <code>{@link #NAME_REGEX}</code></li>
-	 * <li>the previous child directory has its own child directory that matches the name pattern <code>{@link #NAME_REGEX}</code></li>
+	 * <li>the XML folder has child folder that matches the name pattern
+	 * <code>{@link #NAME_REGEX}</code></li>
+	 * <li>the previous child directory has its own child directory that matches
+	 * the name pattern <code>{@link #NAME_REGEX}</code></li>
 	 * </ul>
+	 * 
 	 * @param file
-	 * @return <code>true</code> is the sub folders match the patterns, <code>false</code> otherwise
+	 * @return <code>true</code> is the sub folders match the patterns,
+	 *         <code>false</code> otherwise
 	 */
 	public static boolean isValidArchive(File file) {
 		String fname = file.getName().toLowerCase();
-		if(file.exists() && Util.isArchive(fname)) {
-			Enumeration entries = null;
-			if(fname.endsWith(Util.DOT_JAR)) {
+		if (file.exists() && Util.isArchive(fname)) {
+			Enumeration<? extends ZipEntry> entries = null;
+			if (fname.endsWith(Util.DOT_JAR)) {
 				try {
 					JarFile jfile = new JarFile(file);
 					entries = jfile.entries();
-				}
-				catch(IOException ioe) {
+				} catch (IOException ioe) {
 					return false;
 				}
-			}
-			else if(fname.endsWith(Util.DOT_ZIP)) {
+			} else if (fname.endsWith(Util.DOT_ZIP)) {
 				try {
 					ZipFile zfile = new ZipFile(file);
 					entries = zfile.entries();
@@ -313,13 +335,13 @@ public class UseScanManager {
 					return false;
 				}
 			}
-			if(entries != null) {
-				while(entries.hasMoreElements()) {
-					ZipEntry o = (ZipEntry) entries.nextElement();
-					if(o.isDirectory()) {
+			if (entries != null) {
+				while (entries.hasMoreElements()) {
+					ZipEntry o = entries.nextElement();
+					if (o.isDirectory()) {
 						IPath path = new Path(o.getName());
 						int count = path.segmentCount();
-						if(count > 2) {
+						if (count > 2) {
 							return NAME_REGEX.matcher(path.segment(0)).matches() || NAME_REGEX.matcher(path.segment(1)).matches();
 						}
 					}
@@ -328,23 +350,25 @@ public class UseScanManager {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Returns if the scan if a valid API use scan
+	 * 
 	 * @param location
 	 * @return true if the scan is valid false otherwise
 	 */
 	public static boolean isValidScanLocation(String location) {
 		if (location != null && location.length() > 0) {
-			IPath path = new Path(location);		
+			IPath path = new Path(location);
 			File file = path.toFile();
 			return isValidDirectory(file) || isValidArchive(file);
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Returns the report locations from the preferences
+	 * 
 	 * @return
 	 */
 	public String[] getReportLocations() {
@@ -353,20 +377,23 @@ public class UseScanManager {
 		if (apiUseScanPaths == null || apiUseScanPaths.length() == 0) {
 			return new String[0];
 		}
-		
+
 		String[] locations = apiUseScanPaths.split(ESCAPE_REGEX + LOCATION_DELIM);
-		ArrayList locationList = new ArrayList(locations.length);
+		ArrayList<String> locationList = new ArrayList<String>(locations.length);
 		for (int i = 0; i < locations.length; i++) {
 			String values[] = locations[i].split(ESCAPE_REGEX + STATE_DELIM);
-			if (Boolean.valueOf(values[1]).booleanValue())
+			if (Boolean.valueOf(values[1]).booleanValue()) {
 				locationList.add(values[0]);
+			}
 		}
-		return (String[]) locationList.toArray(new String[locationList.size()]);
+		return locationList.toArray(new String[locationList.size()]);
 	}
 
 	/**
-	 * Sets the report locations to be used. Once set, these locations will be used instead of ones in the preference.
-	 * When set to <code>null</code>, the locations in preference will be used.
+	 * Sets the report locations to be used. Once set, these locations will be
+	 * used instead of ones in the preference. When set to <code>null</code>,
+	 * the locations in preference will be used.
+	 * 
 	 * @param locations
 	 */
 	public void setReportLocations(String[] locations) {
@@ -375,6 +402,7 @@ public class UseScanManager {
 
 	/**
 	 * Sets the cache size
+	 * 
 	 * @param size The total number of references that can be held in memory
 	 */
 	public void setCacheSize(int size) {
@@ -385,7 +413,7 @@ public class UseScanManager {
 	 * Purges all reference information
 	 */
 	public void clearCache() {
-		Enumeration elementss = fApiComponentCache.elements();
+		Enumeration<?> elementss = fApiComponentCache.elements();
 		while (elementss.hasMoreElements()) {
 			IReferenceCollection reference = (IReferenceCollection) elementss.nextElement();
 			reference.clear();

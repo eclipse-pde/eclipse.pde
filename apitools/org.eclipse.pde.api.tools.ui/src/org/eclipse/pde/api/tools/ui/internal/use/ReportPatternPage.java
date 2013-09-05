@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,15 +32,16 @@ import org.eclipse.ui.PlatformUI;
 public class ReportPatternPage extends UsePatternPage {
 
 	static final String PAGE_NAME = "report"; //$NON-NLS-1$
-	
+
 	private Text patterntext = null;
 	int kind = Pattern.REPORT_TO;
 	Button to = null;
 	Button from = null;
 	String pattern = null;
-	
+
 	/**
 	 * Constructor
+	 * 
 	 * @param pattern
 	 */
 	public ReportPatternPage(String pattern, int kind) {
@@ -48,51 +49,62 @@ public class ReportPatternPage extends UsePatternPage {
 		this.pattern = pattern;
 		this.kind = kind;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.ui.internal.use.UsePatternPage#getKind()
 	 */
+	@Override
 	public int getKind() {
 		return this.kind;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.ui.internal.use.UsePatternPage#getPattern()
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.ui.internal.use.UsePatternPage#getPattern()
 	 */
+	@Override
 	public String getPattern() {
 		return this.patterntext.getText().trim();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets
+	 * .Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		Composite comp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_HORIZONTAL);
 		this.to = SWTFactory.createRadioButton(comp, Messages.ReportPatternPage_filter_to_pattern);
 		this.to.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				ReportPatternPage.this.kind = Pattern.REPORT_TO;
 			}
 		});
 		this.from = SWTFactory.createRadioButton(comp, Messages.ReportPatternPage_filter_from_pattern);
 		this.from.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				ReportPatternPage.this.kind = Pattern.REPORT;
 			}
 		});
-		if(this.kind == Pattern.REPORT) {
+		if (this.kind == Pattern.REPORT) {
 			this.from.setSelection(true);
-		}
-		else {
+		} else {
 			this.to.setSelection(true);
 			this.kind = Pattern.REPORT_TO;
 		}
 		SWTFactory.createLabel(comp, Messages.ReportPatternPage_pattern, 1);
 		this.patterntext = SWTFactory.createSingleText(comp, 1);
-		if(this.pattern != null) {
+		if (this.pattern != null) {
 			this.patterntext.setText(this.pattern);
 		}
 		this.patterntext.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				setDirty();
 				setPageComplete(isPageComplete());
@@ -103,40 +115,44 @@ public class ReportPatternPage extends UsePatternPage {
 		setControl(comp);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IApiToolsHelpContextIds.APITOOLS_REPORT_PATTERN_WIZARD_PAGE);
 	}
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.WizardPage#isPageComplete()
 	 */
+	@Override
 	public boolean isPageComplete() {
 		String newtext = this.patterntext.getText().trim();
-		if(IApiToolsConstants.EMPTY_STRING.equals(newtext)) {
-			if(pageDirty()) {
+		if (IApiToolsConstants.EMPTY_STRING.equals(newtext)) {
+			if (pageDirty()) {
 				setErrorMessage(Messages.ReportPatternPage_enter_conversion_pattern);
-			}
-			else {
+			} else {
 				setMessage(Messages.ReportPatternPage_enter_conversion_pattern);
 			}
 			return false;
 		}
 		try {
 			java.util.regex.Pattern.compile(newtext);
-		}
-		catch(PatternSyntaxException pse) {
+		} catch (PatternSyntaxException pse) {
 			setErrorMessage(pse.getMessage());
 			return false;
 		}
 		resetMessage(this.pattern != null);
 		return true;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.ui.internal.use.UsePatternPage#resetMessage(boolean)
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.ui.internal.use.UsePatternPage#resetMessage
+	 * (boolean)
 	 */
+	@Override
 	protected void resetMessage(boolean isediting) {
 		setErrorMessage(null);
-		if(isediting) {
+		if (isediting) {
 			setMessage(Messages.ReportPatternPage_edit_conversion_pattern);
-		}
-		else {
+		} else {
 			setMessage(Messages.ReportPatternPage_create_conversion_pattern);
 		}
 	}

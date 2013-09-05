@@ -30,7 +30,9 @@ import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.IMarkerResolutionGenerator2;
 
 /**
- * Returns the listing of applicable {@link IMarkerResolution}s given a certain kind of marker.
+ * Returns the listing of applicable {@link IMarkerResolution}s given a certain
+ * kind of marker.
+ * 
  * @since 1.0.0
  */
 public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator2 {
@@ -39,71 +41,80 @@ public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator2
 	 * Default empty listing of {@link IMarkerResolution}s
 	 */
 	private final IMarkerResolution[] NO_RESOLUTIONS = new IMarkerResolution[0];
-	
+
 	private MissingEEDescriptionProblemResolution eeResolution = new MissingEEDescriptionProblemResolution();
 	private InstallEEDescriptionProblemResolution installEEResolution = new InstallEEDescriptionProblemResolution();
 	private DefaultApiProfileResolution profileResolution = new DefaultApiProfileResolution();
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IMarkerResolutionGenerator#getResolutions(org.eclipse.core.resources.IMarker)
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.ui.IMarkerResolutionGenerator#getResolutions(org.eclipse.
+	 * core.resources.IMarker)
 	 */
+	@Override
 	public IMarkerResolution[] getResolutions(IMarker marker) {
 		if (!hasResolutions(marker)) {
 			return NO_RESOLUTIONS;
 		}
-		switch(marker.getAttribute(IApiMarkerConstants.API_MARKER_ATTR_ID, -1)) {
-			case IApiMarkerConstants.API_USAGE_MARKER_ID : {
+		switch (marker.getAttribute(IApiMarkerConstants.API_MARKER_ATTR_ID, -1)) {
+			case IApiMarkerConstants.API_USAGE_MARKER_ID: {
 				int id = ApiProblemFactory.getProblemId(marker);
-				if(id > -1 && ApiProblemFactory.getProblemKind(id) == IApiProblem.MISSING_EE_DESCRIPTIONS) {
-					return new IMarkerResolution[] {installEEResolution, eeResolution};
+				if (id > -1 && ApiProblemFactory.getProblemKind(id) == IApiProblem.MISSING_EE_DESCRIPTIONS) {
+					return new IMarkerResolution[] {
+							installEEResolution, eeResolution };
 				}
-				return new IMarkerResolution[] {new FilterProblemResolution(marker), new FilterProblemWithCommentResolution(marker)};
+				return new IMarkerResolution[] {
+						new FilterProblemResolution(marker),
+						new FilterProblemWithCommentResolution(marker) };
 			}
-			case IApiMarkerConstants.COMPATIBILITY_MARKER_ID : {
-				return new IMarkerResolution[] {new FilterProblemResolution(marker), new FilterProblemWithCommentResolution(marker)};
+			case IApiMarkerConstants.COMPATIBILITY_MARKER_ID: {
+				return new IMarkerResolution[] {
+						new FilterProblemResolution(marker),
+						new FilterProblemWithCommentResolution(marker) };
 			}
-			case IApiMarkerConstants.DEFAULT_API_BASELINE_MARKER_ID : {
-				return new IMarkerResolution[] {profileResolution};
+			case IApiMarkerConstants.DEFAULT_API_BASELINE_MARKER_ID: {
+				return new IMarkerResolution[] { profileResolution };
 			}
-			case IApiMarkerConstants.SINCE_TAG_MARKER_ID : {
-				return new IMarkerResolution[] {new SinceTagResolution(marker), new FilterProblemResolution(marker), new FilterProblemWithCommentResolution(marker)};
+			case IApiMarkerConstants.SINCE_TAG_MARKER_ID: {
+				return new IMarkerResolution[] {
+						new SinceTagResolution(marker),
+						new FilterProblemResolution(marker),
+						new FilterProblemWithCommentResolution(marker) };
 			}
-			case IApiMarkerConstants.VERSION_NUMBERING_MARKER_ID : {
-				return new IMarkerResolution[] {new VersionNumberingResolution(marker), new FilterProblemResolution(marker), new FilterProblemWithCommentResolution(marker)};
+			case IApiMarkerConstants.VERSION_NUMBERING_MARKER_ID: {
+				return new IMarkerResolution[] {
+						new VersionNumberingResolution(marker),
+						new FilterProblemResolution(marker),
+						new FilterProblemWithCommentResolution(marker) };
 			}
 			case IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID: {
-				return new IMarkerResolution[] {new UnsupportedTagResolution(marker)};
+				return new IMarkerResolution[] { new UnsupportedTagResolution(marker) };
 			}
 			case IApiMarkerConstants.DUPLICATE_TAG_MARKER_ID: {
-				return new IMarkerResolution[] {new DuplicateTagResolution(marker)};
+				return new IMarkerResolution[] { new DuplicateTagResolution(marker) };
 			}
 			case IApiMarkerConstants.API_COMPONENT_RESOLUTION_MARKER_ID: {
-				return new IMarkerResolution[] {new UpdateProjectSettingResolution(marker)};
+				return new IMarkerResolution[] { new UpdateProjectSettingResolution(marker) };
 			}
 			case IApiMarkerConstants.UNUSED_PROBLEM_FILTER_MARKER_ID: {
 				IApiProblemFilter filter = resolveFilter(marker);
-				if(filter != null) {
+				if (filter != null) {
 					return new IMarkerResolution[] {
 							new RemoveFilterProblemResolution(filter, marker),
-							new OpenPropertyPageResolution(
-									MarkerMessages.ApiMarkerResolutionGenerator_api_problem_filters,
-									IApiToolsConstants.ID_FILTERS_PROP_PAGE,
-									marker.getResource().getProject())};
-				}
-				else {
-					return new IMarkerResolution[] {
-							new OpenPropertyPageResolution(
-									MarkerMessages.ApiMarkerResolutionGenerator_api_problem_filters,
-									IApiToolsConstants.ID_FILTERS_PROP_PAGE,
-									marker.getResource().getProject())};
+							new OpenPropertyPageResolution(MarkerMessages.ApiMarkerResolutionGenerator_api_problem_filters, IApiToolsConstants.ID_FILTERS_PROP_PAGE, marker.getResource().getProject()) };
+				} else {
+					return new IMarkerResolution[] { new OpenPropertyPageResolution(MarkerMessages.ApiMarkerResolutionGenerator_api_problem_filters, IApiToolsConstants.ID_FILTERS_PROP_PAGE, marker.getResource().getProject()) };
 				}
 			}
-			default : return NO_RESOLUTIONS;
+			default:
+				return NO_RESOLUTIONS;
 		}
 	}
-	
+
 	/**
 	 * resolves the {@link IApiProblemFilter} for the given marker
+	 * 
 	 * @param marker
 	 */
 	static IApiProblemFilter resolveFilter(IMarker marker) {
@@ -112,29 +123,33 @@ public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator2
 			String[] values = filterhandle.split(ApiProblemFilter.HANDLE_DELIMITER);
 			IProject project = marker.getResource().getProject();
 			IApiComponent component = ApiBaselineManager.getManager().getWorkspaceBaseline().getApiComponent(project);
-			if(component != null) {
+			if (component != null) {
 				IApiFilterStore store = component.getFilterStore();
 				IPath path = new Path(values[1]);
 				IResource resource = project.findMember(path);
-				if(resource == null) {
+				if (resource == null) {
 					resource = project.getFile(path);
 				}
 				int hashcode = ApiProblemFactory.getProblemHashcode(filterhandle);
 				IApiProblemFilter[] filters = store.getFilters(resource);
 				for (int i = 0; i < filters.length; i++) {
-					if(filters[i].getUnderlyingProblem().hashCode() == hashcode) {
+					if (filters[i].getUnderlyingProblem().hashCode() == hashcode) {
 						return filters[i];
 					}
 				}
 			}
+		} catch (CoreException ce) {
 		}
-		catch(CoreException ce) {}
 		return null;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IMarkerResolutionGenerator2#hasResolutions(org.eclipse.core.resources.IMarker)
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.ui.IMarkerResolutionGenerator2#hasResolutions(org.eclipse
+	 * .core.resources.IMarker)
 	 */
+	@Override
 	public boolean hasResolutions(IMarker marker) {
 		return Util.isApiProblemMarker(marker);
 	}

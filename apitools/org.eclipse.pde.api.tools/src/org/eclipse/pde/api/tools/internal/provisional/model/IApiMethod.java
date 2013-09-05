@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.provisional.model;
 
-
-
 /**
  * A method type member.
  * 
@@ -21,35 +19,39 @@ package org.eclipse.pde.api.tools.internal.provisional.model;
  * @noextend This interface is not intended to be extended by clients.
  */
 public interface IApiMethod extends IApiMember {
-	
+
 	/**
-	 * Returns the signature of this method. This includes the signatures for the
-	 * parameter types and return type, but does not include the method name,
-	 * exception types, or type parameters.
+	 * Returns the signature of this method. This includes the signatures for
+	 * the parameter types and return type, but does not include the method
+	 * name, exception types, or type parameters.
 	 * <p>
-	 * For example, a method declared as <code>public void foo(String text, int length)</code>
-	 * would return <code>"(Ljava.lang.String;I)V"</code>.
+	 * For example, a method declared as
+	 * <code>public void foo(String text, int length)</code> would return
+	 * <code>"(Ljava.lang.String;I)V"</code>.
 	 * </p>
+	 * 
 	 * @return the signature of this method
 	 */
+	@Override
 	public String getSignature();
-	
+
 	/**
 	 * Returns whether this method is a constructor.
 	 * 
 	 * @return whether this method is a constructor
 	 */
-	public boolean isConstructor();	
-	
+	public boolean isConstructor();
+
 	/**
 	 * Returns whether this method is a class initializer.
 	 * 
 	 * @return whether this method is a class initializer
 	 */
 	public boolean isClassInitializer();
-	
+
 	/**
-	 * Returns names of exceptions thrown by this method, or <code>null</code> if none
+	 * Returns names of exceptions thrown by this method, or <code>null</code>
+	 * if none
 	 * 
 	 * @return exception names thrown by this method or <code>null</code>
 	 */
@@ -62,7 +64,7 @@ public interface IApiMethod extends IApiMember {
 	 * @return default value or <code>null</code>
 	 */
 	public String getDefaultValue();
-	
+
 	/**
 	 * Returns whether this method is synthetic.
 	 * 

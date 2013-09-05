@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,84 +32,87 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
  * Delta tests using api scope
  */
 public class ApiScopeDeltaTests extends DeltaTestSetup {
-	
+
 	public static Test suite() {
 		return new TestSuite(ApiScopeDeltaTests.class);
-//		TestSuite suite = new TestSuite(EnumDeltaTests.class.getName());
-//		suite.addTest(new EnumDeltaTests("test13"));
-//		return suite;
+		// TestSuite suite = new TestSuite(EnumDeltaTests.class.getName());
+		// suite.addTest(new EnumDeltaTests("test13"));
+		// return suite;
 	}
 
 	public ApiScopeDeltaTests(String name) {
 		super(name);
 	}
 
+	@Override
 	public String getTestRoot() {
-		return "scope";
+		return "scope"; //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Use api scope
 	 */
 	public void test1() throws CoreException {
-		deployBundles("test1");
+		deployBundles("test1"); //$NON-NLS-1$
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent);
+		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent);
+		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
 		ApiScope scope = new ApiScope();
 		scope.addElement(after);
 		IApiElement[] apiElement = scope.getApiElements();
-		assertEquals("Empty", 1, apiElement.length);
+		assertEquals("Empty", 1, apiElement.length); //$NON-NLS-1$
 		IDelta delta = ApiComparator.compare(scope, before, VisibilityModifiers.API, false, null);
-		assertNotNull("No delta", delta);
+		assertNotNull("No delta", delta); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length);
+		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
-		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags());
-		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
+		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind()); //$NON-NLS-1$
+		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags()); //$NON-NLS-1$
+		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
+
 	/**
 	 * Use api scope
 	 */
 	public void test2() throws CoreException {
-		deployBundles("test2");
+		deployBundles("test2"); //$NON-NLS-1$
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent);
+		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent);
+		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
 		ApiScope scope = new ApiScope();
 		IApiComponent[] apiComponents = after.getApiComponents();
 		for (int i = 0, max = apiComponents.length; i < max; i++) {
 			scope.addElement(apiComponents[i]);
 		}
 		IDelta delta = ApiComparator.compare(scope, before, VisibilityModifiers.API, true, null);
-		assertNotNull("No delta", delta);
+		assertNotNull("No delta", delta); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length);
+		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
-		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags());
-		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
+		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind()); //$NON-NLS-1$
+		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags()); //$NON-NLS-1$
+		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
+
 	/**
 	 * Use api scope
 	 */
 	public void test3() throws CoreException {
-		deployBundles("test3");
+		deployBundles("test3"); //$NON-NLS-1$
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent);
+		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent);
+		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
 		ApiScope scope = new ApiScope();
 		IApiComponent[] apiComponents = after.getApiComponents();
 		for (int i = 0, max = apiComponents.length; i < max; i++) {
@@ -120,31 +123,32 @@ public class ApiScopeDeltaTests extends DeltaTestSetup {
 			}
 		}
 		IDelta delta = ApiComparator.compare(scope, before, VisibilityModifiers.API, true, null);
-		assertNotNull("No delta", delta);
+		assertNotNull("No delta", delta); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length);
+		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
-		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags());
-		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
+		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind()); //$NON-NLS-1$
+		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags()); //$NON-NLS-1$
+		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
+
 	/**
 	 * Use api scope
 	 */
 	public void test4() throws CoreException {
-		deployBundles("test4");
+		deployBundles("test4"); //$NON-NLS-1$
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent);
+		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent);
+		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
 		ApiScope scope = new ApiScope();
 		IApiComponent[] apiComponents = after.getApiComponents();
 		IApiTypeRoot root = null;
 		for (int i = 0, max = apiComponents.length; i < max; i++) {
-			IApiTypeRoot findTypeRoot = apiComponents[i].findTypeRoot("p.X");
+			IApiTypeRoot findTypeRoot = apiComponents[i].findTypeRoot("p.X"); //$NON-NLS-1$
 			if (findTypeRoot != null) {
 				root = findTypeRoot;
 				break;
@@ -154,33 +158,34 @@ public class ApiScopeDeltaTests extends DeltaTestSetup {
 			scope.addElement(root);
 		}
 		IDelta delta = ApiComparator.compare(scope, before, VisibilityModifiers.API, true, null);
-		assertNotNull("No delta", delta);
+		assertNotNull("No delta", delta); //$NON-NLS-1$
 		IDelta[] allLeavesDeltas = collectLeaves(delta);
-		assertEquals("Wrong size", 1, allLeavesDeltas.length);
+		assertEquals("Wrong size", 1, allLeavesDeltas.length); //$NON-NLS-1$
 		IDelta child = allLeavesDeltas[0];
-		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind());
-		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags());
-		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType());
-		assertFalse("Is compatible", DeltaProcessor.isCompatible(child));
+		assertEquals("Wrong kind", IDelta.REMOVED, child.getKind()); //$NON-NLS-1$
+		assertEquals("Wrong flag", IDelta.METHOD, child.getFlags()); //$NON-NLS-1$
+		assertEquals("Wrong element type", IDelta.CLASS_ELEMENT_TYPE, child.getElementType()); //$NON-NLS-1$
+		assertFalse("Is compatible", DeltaProcessor.isCompatible(child)); //$NON-NLS-1$
 	}
+
 	/**
 	 * Use api scope
 	 */
 	public void test5() throws CoreException {
-		deployBundles("test5");
+		deployBundles("test5"); //$NON-NLS-1$
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent);
+		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent);
+		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
 		ApiScope scope = new ApiScope();
 		IApiElement[] apiElement = scope.getApiElements();
-		assertEquals("Not empty", 0, apiElement.length);
+		assertEquals("Not empty", 0, apiElement.length); //$NON-NLS-1$
 		IApiComponent[] apiComponents = after.getApiComponents();
 		IApiTypeRoot root = null;
 		for (int i = 0, max = apiComponents.length; i < max; i++) {
-			IApiTypeRoot findTypeRoot = apiComponents[i].findTypeRoot("p.X");
+			IApiTypeRoot findTypeRoot = apiComponents[i].findTypeRoot("p.X"); //$NON-NLS-1$
 			if (findTypeRoot != null) {
 				root = findTypeRoot;
 				break;
@@ -195,53 +200,54 @@ public class ApiScopeDeltaTests extends DeltaTestSetup {
 		}
 		try {
 			ApiComparator.compare(scope, before, VisibilityModifiers.API, true, null);
-			assertFalse("Should not be there", true);
+			assertFalse("Should not be there", true); //$NON-NLS-1$
 		} catch (CoreException e) {
 			// should fail to visit a method
 		}
 	}
+
 	/**
 	 * Use api scope
 	 */
 	public void test6() throws CoreException {
-		deployBundles("test6");
+		deployBundles("test6"); //$NON-NLS-1$
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent);
+		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent);
+		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
 		ApiScope scope = new ApiScope();
 		scope.addElement(after);
 		IDelta delta = ApiComparator.compare(scope, before, VisibilityModifiers.API, false, null);
-		assertNotNull("No delta", delta);
-		assertTrue("Not NO_DELTA", delta == ApiComparator.NO_DELTA);
+		assertNotNull("No delta", delta); //$NON-NLS-1$
+		assertTrue("Not NO_DELTA", delta == ApiComparator.NO_DELTA); //$NON-NLS-1$
 	}
+
 	/**
 	 * Use api scope
 	 */
 	public void test7() throws CoreException {
-		deployBundles("test7");
+		deployBundles("test7"); //$NON-NLS-1$
 		IApiBaseline before = getBeforeState();
 		IApiBaseline after = getAfterState();
 		IApiComponent beforeApiComponent = before.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", beforeApiComponent);
+		assertNotNull("no api component", beforeApiComponent); //$NON-NLS-1$
 		IApiComponent afterApiComponent = after.getApiComponent(BUNDLE_NAME);
-		assertNotNull("no api component", afterApiComponent);
+		assertNotNull("no api component", afterApiComponent); //$NON-NLS-1$
 		ApiScope scope = new ApiScope();
 		scope.addElement(after);
 		try {
 			ApiComparator.compare((IApiScope) null, before, VisibilityModifiers.API, false, null);
-			assertFalse("Should not be there", true);
+			assertFalse("Should not be there", true); //$NON-NLS-1$
 		} catch (IllegalArgumentException e) {
 			// expected as scope is null
 		}
 		try {
 			ApiComparator.compare(scope, null, VisibilityModifiers.API, false, null);
-			assertFalse("Should not be there", true);
+			assertFalse("Should not be there", true); //$NON-NLS-1$
 		} catch (IllegalArgumentException e) {
 			// expected as scope is null
 		}
 	}
 }
-

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -33,6 +32,7 @@ import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
 import org.eclipse.pde.api.tools.internal.provisional.ProfileModifiers;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer;
 
 /**
  * An API component for a system library.
@@ -41,14 +41,14 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
  */
 public class StubApiComponent extends SystemLibraryApiComponent {
 	private static final String STUB_PATH = "/org/eclipse/pde/api/tools/internal/api_stubs/"; //$NON-NLS-1$
-	private static Map AllSystemLibraryApiComponents;
+	private static Map<String, IApiComponent> AllSystemLibraryApiComponents;
 
 	public static IApiComponent getStubApiComponent(int eeValue) {
 		if (AllSystemLibraryApiComponents == null) {
-			AllSystemLibraryApiComponents = new HashMap();
+			AllSystemLibraryApiComponents = new HashMap<String, IApiComponent>();
 		}
 		String name = ProfileModifiers.getName(eeValue);
-		IApiComponent component = (IApiComponent) AllSystemLibraryApiComponents.get(name);
+		IApiComponent component = AllSystemLibraryApiComponents.get(name);
 		if (component == null) {
 			// search if the corresponding stub file exists
 			File stubFile = getFileFor(eeValue, name);
@@ -64,13 +64,16 @@ public class StubApiComponent extends SystemLibraryApiComponent {
 	private static File getFileFor(int eeValue, String name) {
 		try {
 			String lname = name;
-			switch(eeValue) {
-				case ProfileModifiers.CDC_1_0_FOUNDATION_1_0 :
-				case ProfileModifiers.CDC_1_1_FOUNDATION_1_1 :
-				case ProfileModifiers.OSGI_MINIMUM_1_0 :
-				case ProfileModifiers.OSGI_MINIMUM_1_1 :
-				case ProfileModifiers.OSGI_MINIMUM_1_2 :
+			switch (eeValue) {
+				case ProfileModifiers.CDC_1_0_FOUNDATION_1_0:
+				case ProfileModifiers.CDC_1_1_FOUNDATION_1_1:
+				case ProfileModifiers.OSGI_MINIMUM_1_0:
+				case ProfileModifiers.OSGI_MINIMUM_1_1:
+				case ProfileModifiers.OSGI_MINIMUM_1_2:
 					lname = lname.replace('/', '_');
+					break;
+				default:
+					break;
 			}
 			String stubName = lname + ".zip"; //$NON-NLS-1$
 			URL stub = null;
@@ -95,13 +98,16 @@ public class StubApiComponent extends SystemLibraryApiComponent {
 			return null;
 		}
 	}
-	
+
 	/**
-	 * Returns a listing of all of the installed meta-data or an empty array, never <code>null</code>
-	 * @return list of installed meta-data or an empty list, never <code>null</code>
+	 * Returns a listing of all of the installed meta-data or an empty array,
+	 * never <code>null</code>
+	 * 
+	 * @return list of installed meta-data or an empty list, never
+	 *         <code>null</code>
 	 */
 	public static String[] getInstalledMetadata() {
-		List allEEs = new ArrayList();
+		List<String> allEEs = new ArrayList<String>();
 		int[] allEEsValues = ProfileModifiers.getAllIds();
 		String name = null;
 		File stubFile = null;
@@ -109,13 +115,16 @@ public class StubApiComponent extends SystemLibraryApiComponent {
 		for (int i = 0; i < allEEsValues.length; i++) {
 			eeValue = allEEsValues[i];
 			name = ProfileModifiers.getName(eeValue);
-			switch(eeValue) {
-				case ProfileModifiers.CDC_1_0_FOUNDATION_1_0 :
-				case ProfileModifiers.CDC_1_1_FOUNDATION_1_1 :
-				case ProfileModifiers.OSGI_MINIMUM_1_0 :
-				case ProfileModifiers.OSGI_MINIMUM_1_1 :
-				case ProfileModifiers.OSGI_MINIMUM_1_2 :
+			switch (eeValue) {
+				case ProfileModifiers.CDC_1_0_FOUNDATION_1_0:
+				case ProfileModifiers.CDC_1_1_FOUNDATION_1_1:
+				case ProfileModifiers.OSGI_MINIMUM_1_0:
+				case ProfileModifiers.OSGI_MINIMUM_1_1:
+				case ProfileModifiers.OSGI_MINIMUM_1_2:
 					name = name.replace('/', '_');
+					break;
+				default:
+					break;
 			}
 			stubFile = getFileFor(eeValue, name);
 			if (stubFile == null) {
@@ -128,60 +137,78 @@ public class StubApiComponent extends SystemLibraryApiComponent {
 		Arrays.sort(result);
 		return result;
 	}
+
 	/**
-	 * Constructs a system library from the given execution environment description file.
+	 * Constructs a system library from the given execution environment
+	 * description file.
 	 * 
 	 * @param baseline owning baseline
-	 * @param fileName the file name that corresponds to the stub file for the corresponding profile
+	 * @param fileName the file name that corresponds to the stub file for the
+	 *            corresponding profile
 	 * @param profileName the given profile name
-	 * @exception CoreException if unable to read the execution environment description file
+	 * @exception CoreException if unable to read the execution environment
+	 *                description file
 	 */
 	private StubApiComponent(IApiBaseline baseline, String fileName, String profileName) {
 		super(baseline);
 		IPath path = new Path(fileName);
 		fLibraries = new LibraryLocation[] { new LibraryLocation(path, null, null) };
-		fExecEnv = new String[]{ profileName };
+		fExecEnv = new String[] { profileName };
 		fVersion = fExecEnv[0];
 		setName(fExecEnv[0]);
 		fLocation = path.toOSString();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.descriptors.AbstractApiComponent#createApiDescription()
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.descriptors.AbstractApiComponent#
+	 * createApiDescription()
 	 */
+	@Override
 	protected IApiDescription createApiDescription() throws CoreException {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.AbstractApiComponent#createApiFilterStore()
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.AbstractApiComponent#createApiFilterStore
+	 * ()
 	 */
+	@Override
 	protected IApiFilterStore createApiFilterStore() {
-		//TODO
+		// TODO
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.descriptors.AbstractApiComponent#createClassFileContainers()
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.model.SystemLibraryApiComponent#
+	 * createApiTypeContainers()
 	 */
-	protected List createApiTypeContainers() throws CoreException {
-		List libs = new ArrayList(fLibraries.length);
+	@Override
+	protected List<IApiTypeContainer> createApiTypeContainers() throws CoreException {
+		List<IApiTypeContainer> libs = new ArrayList<IApiTypeContainer>(fLibraries.length);
 		for (int i = 0; i < fLibraries.length; i++) {
 			LibraryLocation lib = fLibraries[i];
 			libs.add(new StubArchiveApiTypeContainer(this, lib.getSystemLibraryPath().toOSString()));
 		}
 		return libs;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent#isSystemComponent()
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent#
+	 * isSystemComponent()
 	 */
+	@Override
 	public boolean isSystemComponent() {
 		return false;
 	}
+
 	public static void disposeAllCaches() {
 		if (AllSystemLibraryApiComponents != null) {
-			for (Iterator iterator = AllSystemLibraryApiComponents.values().iterator(); iterator.hasNext(); ) {
-				IApiComponent apiComponent = (IApiComponent) iterator.next();
+			for (IApiComponent apiComponent : AllSystemLibraryApiComponents.values()) {
 				apiComponent.dispose();
 			}
 		}
@@ -189,13 +216,16 @@ public class StubApiComponent extends SystemLibraryApiComponent {
 
 	public static boolean isInstalled(int eeValue) {
 		String name = ProfileModifiers.getName(eeValue);
-		switch(eeValue) {
-			case ProfileModifiers.CDC_1_0_FOUNDATION_1_0 :
-			case ProfileModifiers.CDC_1_1_FOUNDATION_1_1 :
-			case ProfileModifiers.OSGI_MINIMUM_1_0 :
-			case ProfileModifiers.OSGI_MINIMUM_1_1 :
-			case ProfileModifiers.OSGI_MINIMUM_1_2 :
+		switch (eeValue) {
+			case ProfileModifiers.CDC_1_0_FOUNDATION_1_0:
+			case ProfileModifiers.CDC_1_1_FOUNDATION_1_1:
+			case ProfileModifiers.OSGI_MINIMUM_1_0:
+			case ProfileModifiers.OSGI_MINIMUM_1_1:
+			case ProfileModifiers.OSGI_MINIMUM_1_2:
 				name = name.replace('/', '_');
+				break;
+			default:
+				break;
 		}
 		File stubFile = getFileFor(eeValue, name);
 		return stubFile != null;

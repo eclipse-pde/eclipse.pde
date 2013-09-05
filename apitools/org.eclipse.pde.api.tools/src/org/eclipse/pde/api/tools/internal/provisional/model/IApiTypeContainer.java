@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.CoreException;
  * @since 1.0.0
  */
 public interface IApiTypeContainer extends IApiElement {
-	
+
 	/**
 	 * Container type that is a JAR or ZIP archive
 	 */
@@ -37,8 +37,8 @@ public interface IApiTypeContainer extends IApiElement {
 	public static final int COMPONENT = 4;
 
 	/**
-	 * Returns the names of all packages in this container in dot
-	 * separated format. Does not include empty packages.
+	 * Returns the names of all packages in this container in dot separated
+	 * format. Does not include empty packages.
 	 * 
 	 * @return names of all packages in this container
 	 * @exception if unable to retrieve package names
@@ -46,11 +46,11 @@ public interface IApiTypeContainer extends IApiElement {
 	public String[] getPackageNames() throws CoreException;
 
 	/**
-	 * Returns the {@link IApiTypeRoot} with the given fully qualified name
-	 * or <code>null</code> if none.
+	 * Returns the {@link IApiTypeRoot} with the given fully qualified name or
+	 * <code>null</code> if none.
 	 * 
-	 * @param qualifiedName fully qualified type name. Package names
-	 * are dot separated and type names are '$'-separated.
+	 * @param qualifiedName fully qualified type name. Package names are dot
+	 *            separated and type names are '$'-separated.
 	 * @return {@link IApiTypeRoot} or <code>null</code>
 	 * @exception if an exception occurs retrieving the class file
 	 */
@@ -60,8 +60,8 @@ public interface IApiTypeContainer extends IApiElement {
 	 * Returns the {@link IApiTypeRoot} with the given fully qualified name
 	 * coming from the component with the given id or <code>null</code> if none.
 	 * 
-	 * @param qualifiedName fully qualified type name. Package names
-	 * are dot separated and type names are '$'-separated.
+	 * @param qualifiedName fully qualified type name. Package names are dot
+	 *            separated and type names are '$'-separated.
 	 * @param id the API component id to consider
 	 * @return {@link IApiTypeRoot} or <code>null</code>
 	 * @exception if an exception occurs retrieving the class file
@@ -75,16 +75,16 @@ public interface IApiTypeContainer extends IApiElement {
 	 * @exception CoreException if unable to visit this container
 	 */
 	public void accept(ApiTypeContainerVisitor visitor) throws CoreException;
-	
+
 	/**
-	 * Closes this {@link IApiTypeContainer}. The container may still be used after closing,
-	 * but clients should close the container when they are done with it to free
-	 * system resources.
+	 * Closes this {@link IApiTypeContainer}. The container may still be used
+	 * after closing, but clients should close the container when they are done
+	 * with it to free system resources.
 	 * 
 	 * @throws CoreException if closing fails
 	 */
 	public void close() throws CoreException;
-	
+
 	/**
 	 * Returns the kind of container this is, one of:
 	 * <ul>
@@ -93,6 +93,7 @@ public interface IApiTypeContainer extends IApiElement {
 	 * <li>{@link #FOLDER}</li>
 	 * <li>{@link #STUB}</li>
 	 * </ul>
+	 * 
 	 * @return the type of container this is
 	 */
 	public int getContainerType();

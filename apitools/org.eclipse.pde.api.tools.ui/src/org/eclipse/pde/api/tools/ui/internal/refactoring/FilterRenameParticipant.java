@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,56 +23,80 @@ import org.eclipse.ltk.core.refactoring.participants.RenameParticipant;
 import org.eclipse.osgi.util.NLS;
 
 /**
- * Handles updating {@link org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemFilter}s
- * when a type they reference is renamed
+ * Handles updating
+ * {@link org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemFilter}
+ * s when a type they reference is renamed
  * 
  * @since 1.0.1
  */
 public class FilterRenameParticipant extends RenameParticipant {
 
 	private IJavaElement element = null;
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#checkConditions(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext)
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#
+	 * checkConditions(org.eclipse.core.runtime.IProgressMonitor,
+	 * org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext)
 	 */
+	@Override
 	public RefactoringStatus checkConditions(IProgressMonitor pm, CheckConditionsContext context) throws OperationCanceledException {
 		return new RefactoringStatus();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#createChange(org.eclipse.core.runtime.IProgressMonitor)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#
+	 * createChange(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#createPreChange(org.eclipse.core.runtime.IProgressMonitor)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#
+	 * createPreChange(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public Change createPreChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
-		switch(this.element.getElementType()) {
-		case IJavaElement.TYPE: {
-			return RefactoringUtils.createRenameFilterChanges((IType)this.element, getArguments().getNewName());
+		switch (this.element.getElementType()) {
+			case IJavaElement.TYPE: {
+				return RefactoringUtils.createRenameFilterChanges((IType) this.element, getArguments().getNewName());
+			}
+			case IJavaElement.PACKAGE_FRAGMENT: {
+				return RefactoringUtils.createRenameFilterChanges((IPackageFragment) this.element, getArguments().getNewName());
+			}
+			default:
+				break;
 		}
-		case IJavaElement.PACKAGE_FRAGMENT: {
-			return RefactoringUtils.createRenameFilterChanges((IPackageFragment)this.element, getArguments().getNewName());
-		}
+		return null;
 	}
-	return null;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#getName()
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#
+	 * getName()
 	 */
+	@Override
 	public String getName() {
 		return NLS.bind(RefactoringMessages.FilterDeleteParticipant_remove_unused_filters_for_0, this.element.getElementName());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#initialize(java.lang.Object)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant#
+	 * initialize(java.lang.Object)
 	 */
+	@Override
 	protected boolean initialize(Object element) {
-		if(element instanceof IJavaElement) {
+		if (element instanceof IJavaElement) {
 			this.element = (IJavaElement) element;
 			return true;
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,18 +12,21 @@ package org.eclipse.pde.api.tools.ui.internal.wizards;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 
 /**
- * The wizard for comparing a selected set of projects against a selected {@link IApiBaseline}
+ * The wizard for comparing a selected set of projects against a selected
+ * {@link IApiBaseline}
  * 
  * @since 1.0.100
  */
 public class CompareToBaselineWizard extends Wizard {
 
 	private IStructuredSelection selection = null;
-	
+
 	/**
 	 * Constructor
+	 * 
 	 * @param selection
 	 * @param title
 	 */
@@ -31,18 +34,22 @@ public class CompareToBaselineWizard extends Wizard {
 		this.selection = selection;
 		setWindowTitle(title);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.Wizard#addPages()
 	 */
+	@Override
 	public void addPages() {
 		addPage(new CompareToBaselineWizardPage(this.selection));
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.Wizard#performFinish()
 	 */
+	@Override
 	public boolean performFinish() {
-		return ((CompareToBaselineWizardPage)getStartingPage()).finish();
+		return ((CompareToBaselineWizardPage) getStartingPage()).finish();
 	}
 }

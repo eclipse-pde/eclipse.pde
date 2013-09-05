@@ -18,12 +18,13 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 
 public class ApiToolProjectNature implements IProjectNature {
-	
+
 	IProject project;
 
 	/**
 	 * Add the API plugin builder in the project build spec
 	 */
+	@Override
 	public void configure() throws CoreException {
 		addToBuildSpec(ApiPlugin.BUILDER_ID);
 	}
@@ -31,6 +32,7 @@ public class ApiToolProjectNature implements IProjectNature {
 	/**
 	 * Remove the API plugin builder from the project build spec
 	 */
+	@Override
 	public void deconfigure() throws CoreException {
 		removeFromBuildSpec(ApiPlugin.BUILDER_ID);
 	}
@@ -40,6 +42,7 @@ public class ApiToolProjectNature implements IProjectNature {
 	 * 
 	 * @return the current project
 	 */
+	@Override
 	public IProject getProject() {
 		return this.project;
 	}
@@ -47,6 +50,7 @@ public class ApiToolProjectNature implements IProjectNature {
 	/**
 	 * Sset the current project
 	 */
+	@Override
 	public void setProject(IProject project) {
 		this.project = project;
 	}
@@ -84,7 +88,7 @@ public class ApiToolProjectNature implements IProjectNature {
 		description.setBuildSpec(newCommands);
 		this.project.setDescription(description, null);
 	}
-	
+
 	/**
 	 * Removes the given builder from the build spec for the given project.
 	 */

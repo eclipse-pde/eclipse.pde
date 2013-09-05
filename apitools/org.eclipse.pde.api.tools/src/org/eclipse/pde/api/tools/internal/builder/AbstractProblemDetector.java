@@ -65,69 +65,74 @@ import org.eclipse.pde.api.tools.internal.util.Util;
 public abstract class AbstractProblemDetector implements IApiProblemDetector {
 
 	/**
-	 * Class used to look up the name of the enclosing method for an {@link IApiType} when we do not have any 
-	 * enclosing method infos (pre Java 1.5 class files 
+	 * Class used to look up the name of the enclosing method for an
+	 * {@link IApiType} when we do not have any enclosing method infos (pre Java
+	 * 1.5 class files
 	 */
 	class MethodFinder extends ASTVisitor {
 		IMethod method = null;
 		private IType jtype = null;
 		private ApiType type = null;
-		
+
 		public MethodFinder(ApiType type, IType jtype) {
 			this.type = type;
 			this.jtype = jtype;
 		}
+
+		@Override
 		public boolean visit(AnonymousClassDeclaration node) {
-			if(method == null) {
+			if (method == null) {
 				ITypeBinding binding = node.resolveBinding();
 				String binaryName = binding.getBinaryName();
-				if(type.getName().endsWith(binaryName)) {
+				if (type.getName().endsWith(binaryName)) {
 					try {
 						IJavaElement element = jtype.getCompilationUnit().getElementAt(node.getStartPosition());
-						if(element != null) {
+						if (element != null) {
 							IJavaElement ancestor = element.getAncestor(IJavaElement.METHOD);
-							if(ancestor != null) {
+							if (ancestor != null) {
 								method = (IMethod) ancestor;
 							}
 						}
+					} catch (JavaModelException jme) {
 					}
-					catch(JavaModelException jme) {}
 					return false;
 				}
 			}
 			return true;
 		}
+
+		@Override
 		public boolean visit(TypeDeclaration node) {
-			if(method == null && node.isLocalTypeDeclaration()) {
+			if (method == null && node.isLocalTypeDeclaration()) {
 				ITypeBinding binding = node.resolveBinding();
 				String binaryName = binding.getBinaryName();
-				if(type.getName().endsWith(binaryName)) {
+				if (type.getName().endsWith(binaryName)) {
 					try {
 						IJavaElement element = jtype.getCompilationUnit().getElementAt(node.getStartPosition());
-						if(element.getElementType() == IJavaElement.TYPE) {
+						if (element.getElementType() == IJavaElement.TYPE) {
 							IType ltype = (IType) element;
 							IJavaElement parent = ltype.getParent();
-							if(parent.getElementType() == IJavaElement.METHOD) {
+							if (parent.getElementType() == IJavaElement.METHOD) {
 								method = (IMethod) parent;
 							}
 						}
+					} catch (JavaModelException jme) {
 					}
-					catch(JavaModelException jme) {}
 					return false;
 				}
 			}
 			return true;
 		}
-	};
-	
+	}
+
 	/**
 	 * List of potential {@link IReference} problems
 	 */
-	private List fPotentialProblems = new LinkedList();
-	
+	private List<IReference> fPotentialProblems = new LinkedList<IReference>();
+
 	/**
 	 * Retains the reference for further analysis.
-	 *  
+	 * 
 	 * @param reference reference
 	 */
 	protected void retainReference(IReference reference) {
@@ -139,17 +144,23 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	 * 
 	 * @return references
 	 */
-	protected List getRetainedReferences() {
+	protected List<IReference> getRetainedReferences() {
 		return fPotentialProblems;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.builder.IApiProblemDetector#considerReference(org.eclipse.pde.api.tools.internal.provisional.builder.IReference)
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.provisional.builder.IApiProblemDetector
+	 * #
+	 * considerReference(org.eclipse.pde.api.tools.internal.provisional.builder.
+	 * IReference)
 	 */
+	@Override
 	public boolean considerReference(IReference reference) {
 		return reference != null && (reference.getReferenceKind() & getReferenceKinds()) > 0;
 	}
-	
+
 	/**
 	 * Creates a problem for a specific reference in the workspace
 	 * 
@@ -162,7 +173,7 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 		IProject project = javaProject.getProject();
 		if (ApiPlugin.getDefault().getSeverityLevel(getSeverityKey(), project) == ApiPlugin.SEVERITY_IGNORE) {
 			return null;
-		}		
+		}
 		try {
 			IApiMember member = reference.getMember();
 			String lookupName = getTypeName(member).replace('$', '.');
@@ -185,21 +196,19 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 			if (!Util.isManifest(resource.getProjectRelativePath()) && !type.isBinary()) {
 				IDocument document = Util.getDocument(compilationUnit);
 				if (lineNumber > 0) {
-					// reference line number are 1-based, but the api problem 
+					// reference line number are 1-based, but the API problem
 					// line number are 0-based
 					// they will be converted to 1-based at marker creation time
 					lineNumber--;
 				}
 				// retrieve line number, char start and char end
-				if ((reference.getReferenceKind() & 
-						(IReference.REF_OVERRIDE | IReference.REF_EXTENDS | IReference.REF_IMPLEMENTS
-						| IReference.REF_PARAMETER | IReference.REF_RETURNTYPE | IReference.REF_THROWS)) != 0) {
+				if ((reference.getReferenceKind() & (IReference.REF_OVERRIDE | IReference.REF_EXTENDS | IReference.REF_IMPLEMENTS | IReference.REF_PARAMETER | IReference.REF_RETURNTYPE | IReference.REF_THROWS)) != 0) {
 					IApiType enclosingType = member.getEnclosingType();
 					if (lineNumber > 0 && enclosingType != null && enclosingType.isAnonymous()) {
 						String superclass = enclosingType.getSuperclassName();
 						String name = null;
 						if ("java.lang.Object".equals(superclass)) { //$NON-NLS-1$
-							// check the superinterfaces
+							// check the super_interfaces
 							String[] superinterfaces = enclosingType.getSuperInterfaceNames();
 							if (superinterfaces != null) {
 								String superinterface = superinterfaces[0];
@@ -238,37 +247,30 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 					} catch (CoreException e) {
 						ApiPlugin.log(e);
 						return null;
-					}
-					catch (BadLocationException e) {
+					} catch (BadLocationException e) {
 						ApiPlugin.log(e);
 						return null;
 					}
 				}
-				if(charStart > -1) {
+				if (charStart > -1) {
 					element = compilationUnit.getElementAt(charStart);
 				}
 			}
-			return ApiProblemFactory.newApiUsageProblem(resource.getProjectRelativePath().toPortableString(),
-					type.getFullyQualifiedName(),
-					getMessageArgs(reference), 
-					new String[] {IApiMarkerConstants.MARKER_ATTR_HANDLE_ID, IApiMarkerConstants.API_MARKER_ATTR_ID}, 
-					new Object[] {(element == null ? compilationUnit.getHandleIdentifier() : element.getHandleIdentifier()),
-								   new Integer(IApiMarkerConstants.API_USAGE_MARKER_ID)}, 
-					lineNumber, // 0-based
-					charStart, 
-					charEnd, 
-					getElementType(reference), 
-					getProblemKind(),
-					getProblemFlags(reference));
+			return ApiProblemFactory.newApiUsageProblem(resource.getProjectRelativePath().toPortableString(), type.getFullyQualifiedName(), getMessageArgs(reference), new String[] {
+					IApiMarkerConstants.MARKER_ATTR_HANDLE_ID,
+					IApiMarkerConstants.API_MARKER_ATTR_ID }, new Object[] {
+					(element == null ? compilationUnit.getHandleIdentifier() : element.getHandleIdentifier()),
+					new Integer(IApiMarkerConstants.API_USAGE_MARKER_ID) }, lineNumber, // 0-based
+					charStart, charEnd, getElementType(reference), getProblemKind(), getProblemFlags(reference));
 		} catch (CoreException e) {
 			ApiPlugin.log(e);
 		}
 		return null;
 	}
-	
+
 	/**
-	 * Returns the source range to include in the associated problem or <code>null</code>
-	 * if a valid source range could not be computed.
+	 * Returns the source range to include in the associated problem or
+	 * <code>null</code> if a valid source range could not be computed.
 	 * 
 	 * @param type resolved type where the reference occurs
 	 * @param doc source document of the type
@@ -283,7 +285,7 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	 * @return
 	 */
 	protected abstract int getElementType(IReference reference);
-	
+
 	/**
 	 * Returns problem flags, if any.
 	 * 
@@ -291,35 +293,35 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	 * @return problem flags
 	 */
 	protected abstract int getProblemFlags(IReference reference);
-	
+
 	/**
 	 * Returns problem message arguments
 	 * 
 	 * @return message arguments
 	 */
 	protected abstract String[] getMessageArgs(IReference reference) throws CoreException;
-	
+
 	/**
 	 * Returns problem message arguments to be used in headless build
 	 * 
 	 * @return message arguments
-	 */	
+	 */
 	protected abstract String[] getQualifiedMessageArgs(IReference reference) throws CoreException;
-	
+
 	/**
 	 * Returns the kind of problem to create
 	 * 
 	 * @return problem kind
 	 */
 	protected abstract int getProblemKind();
-	
+
 	/**
 	 * Returns the key used to lookup problem severity.
 	 * 
 	 * @return problem severity key
 	 */
 	protected abstract String getSeverityKey();
-	
+
 	/**
 	 * Returns the fully qualified type name associated with the given member.
 	 * 
@@ -330,10 +332,9 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 		switch (member.getType()) {
 			case IApiElement.TYPE: {
 				IApiType type = (IApiType) member;
-				if(type.isAnonymous()) {
+				if (type.isAnonymous()) {
 					return getTypeName(member.getEnclosingType());
-				}
-				else if(type.isLocal()) {
+				} else if (type.isLocal()) {
 					return getTypeName(member.getEnclosingType());
 				}
 				return member.getName();
@@ -343,26 +344,26 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 			}
 		}
 	}
-	
+
 	/**
-	 * Returns the qualified type name to display. This method delegates to the 
+	 * Returns the qualified type name to display. This method delegates to the
 	 * {@link Signatures} class to build the display signatures
+	 * 
 	 * @param member
-	 * @return fully qualified display signature for the given {@link IApiType} or enclosing
-	 * type if the member is not a type itself
+	 * @return fully qualified display signature for the given {@link IApiType}
+	 *         or enclosing type if the member is not a type itself
 	 * @throws CoreException
 	 */
 	protected String getQualifiedTypeName(IApiMember member) throws CoreException {
 		switch (member.getType()) {
 			case IApiElement.TYPE: {
 				IApiType type = (IApiType) member;
-				if(type.isAnonymous()) {
+				if (type.isAnonymous()) {
 					return getQualifiedTypeName(member.getEnclosingType());
-				}
-				else if(type.isLocal()) {
+				} else if (type.isLocal()) {
 					String name = getTypeName(member.getEnclosingType());
 					int idx = name.indexOf('$');
-					if(idx > -1) {
+					if (idx > -1) {
 						return name.substring(0, idx);
 					}
 					return name;
@@ -374,7 +375,7 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 			}
 		}
 	}
-	
+
 	/**
 	 * Returns the unqualified type name associated with the given member.
 	 * 
@@ -385,13 +386,12 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 		switch (member.getType()) {
 			case IApiElement.TYPE: {
 				IApiType type = (IApiType) member;
-				if(type.isAnonymous()) {
+				if (type.isAnonymous()) {
 					return getSimpleTypeName(type.getEnclosingType());
-				}
-				else if(type.isLocal()) {
+				} else if (type.isLocal()) {
 					String name = getSimpleTypeName(member.getEnclosingType());
 					int idx = name.indexOf('$');
-					if(idx > -1) {
+					if (idx > -1) {
 						return name.substring(0, idx);
 					}
 					return name;
@@ -401,38 +401,44 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 			default:
 				return getSimpleTypeName(member.getEnclosingType());
 		}
-	}	
-	
+	}
+
 	/**
-	 * Default strategy for when no source position can be computed: creates
-	 * a {@link Position} for the name of the given {@link IType}. Returns <code>null</code> in the event
-	 * the given {@link IType} is <code>null</code> or the name range cannot be computed for the type.
+	 * Default strategy for when no source position can be computed: creates a
+	 * {@link Position} for the name of the given {@link IType}. Returns
+	 * <code>null</code> in the event the given {@link IType} is
+	 * <code>null</code> or the name range cannot be computed for the type.
 	 * 
 	 * @param type the type
 	 * @param reference the reference
 	 * @throws CoreException
-	 * @return returns a default {@link Position} for the name range of the given {@link IType}
+	 * @return returns a default {@link Position} for the name range of the
+	 *         given {@link IType}
 	 */
 	protected Position defaultSourcePosition(IType type, IReference reference) throws CoreException {
-		if(type != null) {
+		if (type != null) {
 			ISourceRange range = type.getNameRange();
-			if(range != null) {
+			if (range != null) {
 				return new Position(range.getOffset(), range.getLength());
 			}
 		}
 		return null;
 	}
-	
+
 	/**
-	 * Finds the method name to select on the given line of code starting from the given index.
-	 * This method will recurse to find a method name in the even there is a name clash with the type.
-	 * For example:
+	 * Finds the method name to select on the given line of code starting from
+	 * the given index. This method will recurse to find a method name in the
+	 * even there is a name clash with the type. For example:
+	 * 
 	 * <pre>
-	 * 		MyType type = new MyType();
+	 * MyType type = new MyType();
 	 * </pre>
-	 * If we are trying to find the constructor method call we have a name collision (and the first occurrence of MyType would be selected). 
-	 * <br>
-	 * A name is determined to be a method name if it is followed by a '(' character (excluding spaces)
+	 * 
+	 * If we are trying to find the constructor method call we have a name
+	 * collision (and the first occurrence of MyType would be selected). <br>
+	 * A name is determined to be a method name if it is followed by a '('
+	 * character (excluding spaces)
+	 * 
 	 * @param namepart
 	 * @param line
 	 * @param index
@@ -440,34 +446,37 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	 */
 	protected int findMethodNameStart(String namepart, String line, int index) {
 		int start = line.indexOf(namepart, index);
-		if(start < 0) {
+		if (start < 0) {
 			return -1;
 		}
-		int offset = start+namepart.length();
-		while(line.charAt(offset) == ' ') {
+		int offset = start + namepart.length();
+		while (line.charAt(offset) == ' ') {
 			offset++;
 		}
-		if(line.charAt(offset) == '(' ||
-				line.charAt(offset) == '<') {
+		if (line.charAt(offset) == '(' || line.charAt(offset) == '<') {
 			return start;
 		}
 		return findMethodNameStart(namepart, line, offset);
-	}	
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiProblemDetector#createProblems()
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.provisional.search.IApiProblemDetector
+	 * #createProblems()
 	 */
-	public List createProblems() {
-		List references = getRetainedReferences();
-		if(references.isEmpty()) {
+	@Override
+	public List<IApiProblem> createProblems() {
+		List<IReference> references = getRetainedReferences();
+		if (references.isEmpty()) {
 			return Collections.EMPTY_LIST;
 		}
-		List problems = new LinkedList();
-		Iterator iterator = references.iterator();
+		List<IApiProblem> problems = new LinkedList<IApiProblem>();
+		Iterator<IReference> iterator = references.iterator();
 		while (iterator.hasNext()) {
-			IReference reference = (IReference) iterator.next();
+			IReference reference = iterator.next();
 			if (reference.getResolvedReference() == null) {
-				// TODO: unresolved reference
+				// unresolved reference ignore it
 			} else {
 				if (isProblem(reference)) {
 					try {
@@ -499,28 +508,28 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	 * @return whether a problem
 	 */
 	protected boolean isProblem(IReference reference) {
-		//by default fragment -> host references are not problems 
-		//https://bugs.eclipse.org/bugs/show_bug.cgi?id=255659
+		// by default fragment -> host references are not problems
+		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=255659
 		IApiMember member = reference.getResolvedReference();
-		if(member != null) {
+		if (member != null) {
 			IApiMember local = reference.getMember();
 			try {
 				IApiComponent lcomp = local.getApiComponent();
-				if(lcomp != null && lcomp.isFragment()) {
+				if (lcomp != null && lcomp.isFragment()) {
 					return !lcomp.getHost().equals(member.getApiComponent());
 				}
-			}
-			catch(CoreException ce) {
+			} catch (CoreException ce) {
 				ApiPlugin.log(ce);
 			}
 		}
 		return true;
 	}
-	
+
 	protected boolean isReferenceFromComponent(IReference reference, String componentId) {
 		if (componentId != null) {
 			final IApiComponent apiComponent = reference.getResolvedReference().getApiComponent();
-			// API component is either component id itself or one of its fragment
+			// API component is either component id itself or one of its
+			// fragment
 			if (apiComponent.getSymbolicName().equals(componentId)) {
 				return true;
 			}
@@ -533,13 +542,16 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 		}
 		return false;
 	}
+
 	/**
-	 * Tries to find the given {@link IApiMethod} in the given {@link IType}. If a matching method is not
-	 * found <code>null</code> is returned 
+	 * Tries to find the given {@link IApiMethod} in the given {@link IType}. If
+	 * a matching method is not found <code>null</code> is returned
+	 * 
 	 * @param type the type top look in for the given {@link IApiMethod}
 	 * @param method the {@link IApiMethod} to look for
-	 * @return the {@link IMethod} from the given {@link IType} that matches the given {@link IApiMethod} or <code>null</code> if no
-	 * matching method is found
+	 * @return the {@link IMethod} from the given {@link IType} that matches the
+	 *         given {@link IApiMethod} or <code>null</code> if no matching
+	 *         method is found
 	 * @throws JavaModelException
 	 * @throws CoreException
 	 */
@@ -549,10 +561,11 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 			parameterTypes[i] = parameterTypes[i].replace('/', '.');
 		}
 		String methodname = method.getName();
-		if(method.isConstructor()) {
+		if (method.isConstructor()) {
 			IApiType enclosingType = method.getEnclosingType();
 			if (enclosingType.isMemberType() && !Flags.isStatic(enclosingType.getModifiers())) {
-				// remove the synthetic argument that corresponds to the enclosing type
+				// remove the synthetic argument that corresponds to the
+				// enclosing type
 				int length = parameterTypes.length - 1;
 				System.arraycopy(parameterTypes, 1, (parameterTypes = new String[length]), 0, length);
 			}
@@ -570,25 +583,26 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 		}
 		return match;
 	}
-	
+
 	/**
-	 * Tries to find the given {@link IApiField} in the given {@link IType}. If the field cannot be found 
-	 * <code>null</code> is returned
+	 * Tries to find the given {@link IApiField} in the given {@link IType}. If
+	 * the field cannot be found <code>null</code> is returned
 	 * 
 	 * @param type
 	 * @param field
-	 * @return the {@link IField} matching the given {@link IApiField} or <code>null</code>
+	 * @return the {@link IField} matching the given {@link IApiField} or
+	 *         <code>null</code>
 	 * @since 1.0.600
 	 * @throws JavaModelException
 	 */
 	protected IField findFieldInType(IType type, IApiField field) throws JavaModelException {
-		IField  match = null;
+		IField match = null;
 		match = type.getField(field.getName());
-		if(!match.exists()) {
+		if (!match.exists()) {
 			IField[] fields = type.getFields();
-			//optimistically try to find the first match
+			// optimistically try to find the first match
 			for (int i = 0; i < fields.length; i++) {
-				if(fields[i].getElementName().equals(field.getName())) {
+				if (fields[i].getElementName().equals(field.getName())) {
 					match = fields[i];
 					break;
 				}
@@ -596,10 +610,11 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 		}
 		return match;
 	}
-	
+
 	/**
-	 * Tries to find the given {@link IApiType} in the given {@link IType}. If no match is found 
-	 * <code>null</code> is returned.
+	 * Tries to find the given {@link IApiType} in the given {@link IType}. If
+	 * no match is found <code>null</code> is returned.
+	 * 
 	 * @param type
 	 * @param apitype
 	 * @param reference
@@ -607,39 +622,39 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	 * @return the matching {@link IType} or <code>null</code>
 	 * @since 1.0.600
 	 * @throws CoreException
-	 * @throws JavaModelException 
+	 * @throws JavaModelException
 	 */
 	protected IType findTypeInType(IType type, IApiType apitype, IReference reference, IDocument doc) throws CoreException, JavaModelException {
-		if(apitype.isLocal()) {
+		if (apitype.isLocal()) {
 			String name = apitype.getSimpleName();
 			ICompilationUnit cunit = type.getCompilationUnit();
-			if(cunit.isWorkingCopy()) {
+			if (cunit.isWorkingCopy()) {
 				cunit.reconcile(AST.JLS4, false, null, null);
 			}
 			IMethod method = getEnclosingMethod(type, reference, doc);
-			if(method != null) {
+			if (method != null) {
 				return method.getType(name, 1);
 			}
 		}
 		String tname = type.getElementName();
-		if(tname.equals(apitype.getName()) ||
-				tname.equals(apitype.getSimpleName())) {
+		if (tname.equals(apitype.getName()) || tname.equals(apitype.getSimpleName())) {
 			return type;
 		}
 		IType match = null;
 		IType[] types = type.getTypes();
 		for (int i = 0; i < types.length; i++) {
-			if((types[i].getElementName().equals(apitype.getName()))) {
+			if ((types[i].getElementName().equals(apitype.getName()))) {
 				match = types[i];
 				break;
 			}
 		}
 		return match;
 	}
-	
+
 	/**
-	 * Returns the enclosing {@link IMethod} for the given type or <code>null</code>
-	 * if it cannot be computed
+	 * Returns the enclosing {@link IMethod} for the given type or
+	 * <code>null</code> if it cannot be computed
+	 * 
 	 * @param type
 	 * @param jtype
 	 * @param reference
@@ -647,31 +662,30 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	 * @return the {@link IMethod} enclosing the given type or <code>null</code>
 	 * @throws CoreException
 	 */
-	protected IMethod getEnclosingMethod(final IType jtype, IReference reference, IDocument document) throws CoreException { 
+	protected IMethod getEnclosingMethod(final IType jtype, IReference reference, IDocument document) throws CoreException {
 		IApiMember member = reference.getMember();
-		if((member.getType() == IApiElement.TYPE)) {
+		if ((member.getType() == IApiElement.TYPE)) {
 			ApiType type = (ApiType) member;
 			IApiMethod apimethod = type.getEnclosingMethod();
-			if(apimethod != null) {
+			if (apimethod != null) {
 				String signature = Signatures.processMethodSignature(apimethod);
 				String methodname = Signatures.getMethodName(apimethod);
 				IMethod method = jtype.getMethod(methodname, Signature.getParameterTypes(signature));
-				if(method.exists()) {
+				if (method.exists()) {
 					return method;
 				}
-			}
-			else {
-				//try to look it up
+			} else {
+				// try to look it up
 				IMethod method = null;
-				if(reference.getLineNumber() > -1) {
+				if (reference.getLineNumber() > -1) {
 					try {
 						int offset = document.getLineOffset(reference.getLineNumber());
 						method = quickLookup(jtype, document, reference, offset);
+					} catch (BadLocationException ble) {
 					}
-					catch(BadLocationException ble) {}
 				}
-				if(method == null) {
-					//look it up the hard way
+				if (method == null) {
+					// look it up the hard way
 					ISourceRange range = jtype.getCompilationUnit().getSourceRange();
 					ASTParser parser = ASTParser.newParser(AST.JLS4);
 					parser.setSource(jtype.getCompilationUnit());
@@ -682,14 +696,13 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 					ptype.accept(finder);
 					method = finder.method;
 				}
-				if(method != null && method.exists()) {
+				if (method != null && method.exists()) {
 					ApiType etype = (ApiType) type.getEnclosingType();
 					IApiMethod[] methods = etype.getMethods();
 					String msig = null;
 					for (int i = 0; i < methods.length; i++) {
 						msig = methods[i].getSignature();
-						if(Signatures.getMethodName(methods[i]).equals(method.getElementName()) &&
-								Signatures.matchesSignatures(msig.replace('/', '.'), method.getSignature())) {
+						if (Signatures.getMethodName(methods[i]).equals(method.getElementName()) && Signatures.matchesSignatures(msig.replace('/', '.'), method.getSignature())) {
 							type.setEnclosingMethodInfo(methods[i].getName(), msig);
 						}
 					}
@@ -699,9 +712,11 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 		}
 		return null;
 	}
-	
+
 	/**
-	 * Performs a quick look-up using the offset into the the {@link ICompilationUnit}
+	 * Performs a quick look-up using the offset into the the
+	 * {@link ICompilationUnit}
+	 * 
 	 * @param jtype
 	 * @param document
 	 * @param reference
@@ -710,9 +725,9 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	 * @throws JavaModelException
 	 */
 	protected IMethod quickLookup(final IType jtype, IDocument document, IReference reference, int offset) throws JavaModelException {
-		if(offset > -1) {
+		if (offset > -1) {
 			IJavaElement element = jtype.getCompilationUnit().getElementAt(offset);
-			if(element != null) {
+			if (element != null) {
 				IJavaElement ancestor = element.getAncestor(IJavaElement.METHOD);
 				if (ancestor != null) {
 					return (IMethod) ancestor;
@@ -721,13 +736,16 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 		}
 		return null;
 	}
-	
+
 	/**
-	 * Returns the source range for the given {@link IApiMethod} within the given {@link IType}
+	 * Returns the source range for the given {@link IApiMethod} within the
+	 * given {@link IType}
+	 * 
 	 * @param type the type to look for the method within
 	 * @param reference the reference the method comes from
 	 * @param method the {@link IApiMethod} to look for the source range for
-	 * @return the {@link ISourceRange} in the {@link IType} enclosing the given {@link IApiMethod}
+	 * @return the {@link ISourceRange} in the {@link IType} enclosing the given
+	 *         {@link IApiMethod}
 	 * @throws CoreException
 	 * @throws JavaModelException
 	 */
@@ -736,22 +754,25 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 		Position pos = null;
 		if (match != null) {
 			ISourceRange range = match.getNameRange();
-			if(range != null) {
+			if (range != null) {
 				pos = new Position(range.getOffset(), range.getLength());
 			}
 		}
-		if(pos == null) {
+		if (pos == null) {
 			return defaultSourcePosition(type, reference);
 		}
 		return pos;
 	}
-	
+
 	/**
-	 * Returns the source range to use for the given field within the given {@link IType}
+	 * Returns the source range to use for the given field within the given
+	 * {@link IType}
+	 * 
 	 * @param type the type to look in for the given {@link IApiField}
 	 * @param reference the reference the field is involved in
 	 * @param field the field to find the range for
-	 * @return the {@link ISourceRange} in the given {@link IType} that encloses the given {@link IApiField} 
+	 * @return the {@link ISourceRange} in the given {@link IType} that encloses
+	 *         the given {@link IApiField}
 	 * @throws JavaModelException
 	 * @throws CoreException
 	 */
@@ -760,19 +781,20 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 		Position pos = null;
 		if (javaField.exists()) {
 			ISourceRange range = javaField.getNameRange();
-			if(range != null) {
-				pos = new Position(range.getOffset(), range.getLength()); 
+			if (range != null) {
+				pos = new Position(range.getOffset(), range.getLength());
 			}
 		}
-		if(pos == null) {
+		if (pos == null) {
 			return defaultSourcePosition(type, reference);
 		}
 		return pos;
 	}
-	
+
 	/**
-	 * Returns the range of the name of the given {@link IApiField} to select when creating {@link IApiProblem}s.
-	 * Source ranges are computed and tried in the following order:
+	 * Returns the range of the name of the given {@link IApiField} to select
+	 * when creating {@link IApiProblem}s. Source ranges are computed and tried
+	 * in the following order:
 	 * <ol>
 	 * <li>Try the type-qualified name of the variable</li>
 	 * <li>Try looking for 'super.variable'</li>
@@ -780,65 +802,69 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	 * <li>Try looking for pattern '*.variable'</li>
 	 * <li>Else select the entire line optimistically</li>
 	 * </ol>
+	 * 
 	 * @param field the field to find the name range for
 	 * @param document the document to look within
 	 * @param reference the reference the field is from
-	 * @return the range of text to select, or <code>null</code> if one could not be computed
+	 * @return the range of text to select, or <code>null</code> if one could
+	 *         not be computed
 	 * @throws BadLocationException
 	 * @throws CoreException
 	 */
 	protected Position getFieldNameRange(IApiField field, IDocument document, IReference reference) throws BadLocationException, CoreException {
 		return getFieldNameRange(field.getEnclosingType().getName(), field.getName(), document, reference);
 	}
-	protected Position getFieldNameRange(String typeName, String fieldName, IDocument document, IReference reference) throws BadLocationException, CoreException {
+
+	protected Position getFieldNameRange(String typeName, String fieldName, IDocument document, IReference reference) throws BadLocationException {
 		int linenumber = reference.getLineNumber();
 		if (linenumber > 0) {
-			// line number are 1-based for the reference, but 0-based for the document
+			// line number are 1-based for the reference, but 0-based for the
+			// document
 			linenumber--;
 		}
 		if (linenumber > 0) {
 			int offset = document.getLineOffset(linenumber);
 			String line = document.get(offset, document.getLineLength(linenumber));
-			String qname = typeName +"."+fieldName; //$NON-NLS-1$
+			String qname = typeName + "." + fieldName; //$NON-NLS-1$
 			int first = line.indexOf(qname);
-			if(first < 0) {
-				qname = "super."+fieldName; //$NON-NLS-1$
+			if (first < 0) {
+				qname = "super." + fieldName; //$NON-NLS-1$
 				first = line.indexOf(qname);
 			}
-			if(first < 0) {
-				qname = "this."+fieldName; //$NON-NLS-1$
+			if (first < 0) {
+				qname = "this." + fieldName; //$NON-NLS-1$
 				first = line.indexOf(qname);
 			}
-			if(first < 0) {
-				//try a pattern [.*fieldname] 
-				//the field might be ref'd via a constant, e.g. enum constant
+			if (first < 0) {
+				// try a pattern [.*field_name]
+				// the field might be ref'd via a constant, e.g. enum constant
 				int idx = line.indexOf(fieldName);
-				while(idx > -1) {
-					if(line.charAt(idx-1) == '.') {
+				while (idx > -1) {
+					if (line.charAt(idx - 1) == '.') {
 						first = idx;
 						qname = fieldName;
 						break;
 					}
-					idx = line.indexOf(fieldName, idx+1);
+					idx = line.indexOf(fieldName, idx + 1);
 				}
 			}
 			Position pos = null;
-			if(first > -1) {
+			if (first > -1) {
 				pos = new Position(offset + first, qname.length());
-			}
-			else {
-				//optimistically select the whole line since we can't find the correct variable name and we can't just select
-				//the first occurrence
+			} else {
+				// optimistically select the whole line since we can't find the
+				// correct variable name and we can't just select
+				// the first occurrence
 				pos = new Position(offset, line.length());
 			}
 			return pos;
 		}
 		return null;
 	}
-	
+
 	/**
-	 * Searches for the name of a method at the line number specified in the given
-	 * reference.
+	 * Searches for the name of a method at the line number specified in the
+	 * given reference.
 	 * 
 	 * @param name method name
 	 * @param document document to search in
@@ -849,78 +875,78 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	protected Position getMethodNameRange(boolean isContructor, String name, IDocument document, IReference reference) throws CoreException, BadLocationException {
 		int linenumber = reference.getLineNumber();
 		if (linenumber > 0) {
-			// line number are 1-based for the reference, but 0-based for the document
+			// line number are 1-based for the reference, but 0-based for the
+			// document
 			linenumber--;
 		}
 		String methodname = name;
 		int idx = methodname.indexOf('$');
-		if(idx > -1) {
+		if (idx > -1) {
 			methodname = methodname.substring(0, idx);
 		}
 		idx = methodname.indexOf(Signatures.getLT());
-		if(idx > -1) {
+		if (idx > -1) {
 			methodname = methodname.substring(0, idx);
 		}
 		int offset = document.getLineOffset(linenumber);
 		String line = document.get(offset, document.getLineLength(linenumber));
 		int start = line.indexOf('=');
-		if(start < 0) {
+		if (start < 0) {
 			if (isContructor) {
-				// new keyword should only be checked if the method is a constructor
+				// new keyword should only be checked if the method is a
+				// constructor
 				start = line.indexOf("new"); //$NON-NLS-1$
-				if(start < 0) {
+				if (start < 0) {
 					start = 0;
 				}
 			} else {
 				start = 0;
 			}
-		}
-		else {
-			char charat = line.charAt(start-1);
-			//make sure its not '==' | '!=' | '<=' | '>='
-			if(line.charAt(start+1) == '=' ||
-					charat == '!' || charat == '<' || charat == '>') {
+		} else {
+			char charat = line.charAt(start - 1);
+			// make sure its not '==' | '!=' | '<=' | '>='
+			if (line.charAt(start + 1) == '=' || charat == '!' || charat == '<' || charat == '>') {
 				start = 0;
 			}
 		}
 		int first = findMethodNameStart(methodname, line, start);
-		if(first < 0) {
+		if (first < 0) {
 			methodname = "super"; //$NON-NLS-1$
 			first = findMethodNameStart(methodname, line, start);
 		}
-		if(first > -1) {
+		if (first > -1) {
 			return new Position(offset + first, methodname.length());
 		}
 		return null;
 	}
-	
+
 	/**
-	 * Returns if the signature is enclosed by the one of the elements of the 
+	 * Returns if the signature is enclosed by the one of the elements of the
 	 * given set of type names.
 	 * 
-	 * @param signature the signature of the element 
+	 * @param signature the signature of the element
 	 * @param typenames the Set of {@link String}s of type names
-	 * @return <code>true</code> if the given set contains a type name that encloses the 
-	 * given signature, <code>false</code> otherwise
+	 * @return <code>true</code> if the given set contains a type name that
+	 *         encloses the given signature, <code>false</code> otherwise
 	 * 
 	 * @since 1.0.400
 	 */
-	boolean isEnclosedBy(String signature, Set typenames) {
-		if(signature == null || typenames == null) {
+	boolean isEnclosedBy(String signature, Set<String> typenames) {
+		if (signature == null || typenames == null) {
 			return false;
 		}
-		if(typenames.contains(signature)) {
+		if (typenames.contains(signature)) {
 			return true;
 		}
 		StringTokenizer tokenizer = new StringTokenizer(signature, "$"); //$NON-NLS-1$
-		while(tokenizer.hasMoreTokens()) {
-			if(typenames.contains(tokenizer.nextToken())) {
+		while (tokenizer.hasMoreTokens()) {
+			if (typenames.contains(tokenizer.nextToken())) {
 				return true;
 			}
 		}
 		return false;
 	}
-	
+
 	/**
 	 * @param reference
 	 * @return
@@ -932,18 +958,7 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 			lineNumber--;
 		}
 		String ltypename = getTypeName(reference.getMember());
-		return ApiProblemFactory.newApiUsageProblem(
-				null,
-				ltypename,
-				getQualifiedMessageArgs(reference),
-				new String[] {IApiMarkerConstants.API_MARKER_ATTR_ID}, 
-				new Object[] {new Integer(IApiMarkerConstants.API_USAGE_MARKER_ID)}, 
-				lineNumber, 
-				IApiProblem.NO_CHARRANGE, 
-				IApiProblem.NO_CHARRANGE,
-				getElementType(reference), 
-				getProblemKind(),
-				getProblemFlags(reference));
-	}	
-	
+		return ApiProblemFactory.newApiUsageProblem(null, ltypename, getQualifiedMessageArgs(reference), new String[] { IApiMarkerConstants.API_MARKER_ATTR_ID }, new Object[] { new Integer(IApiMarkerConstants.API_USAGE_MARKER_ID) }, lineNumber, IApiProblem.NO_CHARRANGE, IApiProblem.NO_CHARRANGE, getElementType(reference), getProblemKind(), getProblemFlags(reference));
+	}
+
 }

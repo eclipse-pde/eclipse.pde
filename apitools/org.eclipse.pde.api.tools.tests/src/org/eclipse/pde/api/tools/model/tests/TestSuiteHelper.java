@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,8 +28,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import junit.framework.Assert;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
@@ -57,23 +55,24 @@ import org.eclipse.pde.api.tools.internal.search.IReferenceCollection;
 import org.eclipse.pde.api.tools.internal.search.UseScanReferences;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.tests.ApiTestsPlugin;
+import org.junit.Assert;
 
 /**
  * Helper methods to set up baselines, etc.
  * 
  * @since 1.0.0
  */
+@SuppressWarnings("restriction")
 public class TestSuiteHelper {
 
-	public static final String[] COMPILER_OPTIONS = new String[] {
-		"-1.5",
-		"-preserveAllLocals",
-		"-nowarn"
+	public static final String[] COMPILER_OPTIONS = new String[] { "-1.5", //$NON-NLS-1$
+			"-preserveAllLocals", //$NON-NLS-1$
+			"-nowarn" //$NON-NLS-1$
 	};
-	
+
 	/**
 	 * Creates a baseline from all bundles in the specified directory.
-	 *
+	 * 
 	 * @param rootDirectory directory to collect bundles from
 	 * @return API baseline
 	 * @throws CoreException
@@ -88,7 +87,7 @@ public class TestSuiteHelper {
 		for (int i = 0; i < files.length; i++) {
 			File bundle = files[i];
 			IApiComponent component = ApiModelFactory.newApiComponent(baseline, bundle.getAbsolutePath());
-			if(component != null) {
+			if (component != null) {
 				components.add(component);
 				requiredComponents.add(component.getSymbolicName());
 			}
@@ -98,14 +97,15 @@ public class TestSuiteHelper {
 		for (int i = 0; i < base.length; i++) {
 			IApiComponent component = base[i];
 			addAllRequired(baseline, requiredComponents, component, components);
-		} 
-		
+		}
+
 		baseline.addApiComponents(components.toArray(new IApiComponent[components.size()]));
 		return baseline;
-	}	
-	
+	}
+
 	/**
 	 * Creates a testing API baseline
+	 * 
 	 * @param testDirectory
 	 * @return
 	 * @throws CoreException
@@ -113,113 +113,183 @@ public class TestSuiteHelper {
 	public static IApiBaseline createTestingBaseline(String testDirectory) throws CoreException {
 		return createTestingBaseline(null, new Path(testDirectory));
 	}
-	
+
 	/**
-	 * Creates a testing {@link IApiComponent} that has a testing baseline created for it
+	 * Creates a testing {@link IApiComponent} that has a testing baseline
+	 * created for it
 	 * 
-	 * @param baselinename the name for the owning testing {@link IApiBaseline} or <code>null</code>
+	 * @param baselinename the name for the owning testing {@link IApiBaseline}
+	 *            or <code>null</code>
 	 * @param name the name for the component
 	 * @param id the id for the component
-	 * @param description an {@link IApiDescription} for the component or <code>null</code>
+	 * @param description an {@link IApiDescription} for the component or
+	 *            <code>null</code>
 	 * 
 	 * @return a new {@link IApiComponent} for testing purposes only
 	 */
 	public static IApiComponent createTestingApiComponent(final String baselinename, final String name, final String id, final IApiDescription description) {
 		return new IApiComponent() {
 			private IReferenceCollection fReferences;
+
+			@Override
 			public String[] getPackageNames() throws CoreException {
 				return null;
 			}
+
+			@Override
 			public IApiTypeRoot findTypeRoot(String qualifiedName) throws CoreException {
 				return null;
 			}
+
+			@Override
 			public void close() throws CoreException {
 			}
+
+			@Override
 			public void accept(ApiTypeContainerVisitor visitor) throws CoreException {
 			}
+
+			@Override
 			public String getVersion() {
 				return null;
 			}
+
+			@Override
 			public IRequiredComponentDescription[] getRequiredComponents() {
 				return null;
 			}
+
+			@Override
 			public String getName() {
 				return name;
 			}
+
+			@Override
 			public String getLocation() {
 				return null;
 			}
+
+			@Override
 			public String getSymbolicName() {
 				return id;
 			}
+
+			@Override
 			public String[] getExecutionEnvironments() {
 				return null;
 			}
+
+			@Override
 			public IApiTypeContainer[] getApiTypeContainers() {
 				return null;
 			}
+
+			@Override
 			public IApiDescription getApiDescription() {
 				return description;
 			}
+
+			@Override
 			public boolean hasApiDescription() {
 				return false;
 			}
+
+			@Override
 			public boolean isSystemComponent() {
 				return false;
 			}
+
+			@Override
 			public void dispose() {
 			}
+
+			@Override
 			public IApiBaseline getBaseline() {
 				return ApiModelFactory.newApiBaseline(baselinename);
 			}
+
+			@Override
 			public IApiFilterStore getFilterStore() {
 				return null;
 			}
+
+			@Override
 			public boolean isSourceComponent() {
 				return false;
 			}
+
+			@Override
 			public boolean isFragment() {
 				return false;
 			}
+
+			@Override
 			public boolean hasFragments() {
 				return false;
 			}
+
+			@Override
 			public IApiTypeContainer[] getApiTypeContainers(String id) {
 				return null;
 			}
+
+			@Override
 			public IApiTypeRoot findTypeRoot(String qualifiedName, String id) throws CoreException {
 				return null;
 			}
+
+			@Override
 			public IApiElement getAncestor(int ancestorType) {
 				return null;
 			}
+
+			@Override
 			public IApiElement getParent() {
 				return null;
 			}
+
+			@Override
 			public int getType() {
 				return IApiElement.COMPONENT;
 			}
+
+			@Override
 			public String[] getLowestEEs() {
 				return null;
 			}
+
+			@Override
 			public ResolverError[] getErrors() throws CoreException {
 				return null;
 			}
+
+			@Override
 			public IApiComponent getApiComponent() {
 				return this;
 			}
+
+			@Override
 			public IElementDescriptor getHandle() {
 				return null;
 			}
+
+			@Override
 			public IApiComponent getHost() throws CoreException {
 				return null;
 			}
+
+			@Override
 			public int getContainerType() {
 				return 0;
 			}
-			/* (non-Javadoc)
-			 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent#getExternalDependencies()
+
+			/*
+			 * (non-Javadoc)
+			 * @see
+			 * org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent
+			 * #getExternalDependencies()
 			 */
+			@Override
 			public IReferenceCollection getExternalDependencies() {
 				if (fReferences == null) {
 					fReferences = new UseScanReferences();
@@ -228,9 +298,10 @@ public class TestSuiteHelper {
 			}
 		};
 	}
-	
+
 	/**
 	 * Creates a testing {@link IApiComponent}
+	 * 
 	 * @param name
 	 * @param id
 	 * @param description
@@ -239,24 +310,24 @@ public class TestSuiteHelper {
 	public static IApiComponent createTestingApiComponent(final String name, final String id, final IApiDescription description) {
 		return createTestingApiComponent(null, name, id, description);
 	}
-	
+
 	/**
-	 * Creates a simple baseline from bundles in the specified directory of 
-	 * the test plug-in project.
+	 * Creates a simple baseline from bundles in the specified directory of the
+	 * test plug-in project.
 	 * 
 	 * @param baselineid the name for the testing baseline
 	 * @param testDirectory the dir the test baseline resides in
 	 * 
-	 * @return Testing API baseline. If for some reason the testing directory is not available
-	 * <code>null</code> is returned
+	 * @return Testing API baseline. If for some reason the testing directory is
+	 *         not available <code>null</code> is returned
 	 * @throws CoreException
 	 */
 	public static IApiBaseline createTestingBaseline(String baselineid, IPath testDirectory) throws CoreException {
 		IPath path = TestSuiteHelper.getPluginDirectoryPath();
 		path = path.append(testDirectory);
 		File file = path.toFile();
-		String name = baselineid == null ? "test" : baselineid;
-		if(file.exists()) {
+		String name = baselineid == null ? "test" : baselineid; //$NON-NLS-1$
+		if (file.exists()) {
 			File eeFile = getEEDescriptionFile();
 			IApiBaseline baseline = newApiBaseline(name, eeFile);
 			// create a component for each jar/directory in the folder
@@ -265,10 +336,10 @@ public class TestSuiteHelper {
 			Set<String> requiredComponents = new HashSet<String>();
 			for (int i = 0; i < files.length; i++) {
 				File bundle = files[i];
-				if (!bundle.getName().equals("CVS")) {
+				if (!bundle.getName().equals("CVS")) { //$NON-NLS-1$
 					// ignore CVS folder
 					IApiComponent component = ApiModelFactory.newApiComponent(baseline, bundle.getAbsolutePath());
-					if(component != null) {
+					if (component != null) {
 						components.add(component);
 						requiredComponents.add(component.getSymbolicName());
 					}
@@ -279,8 +350,8 @@ public class TestSuiteHelper {
 			for (int i = 0; i < base.length; i++) {
 				IApiComponent component = base[i];
 				addAllRequired(baseline, requiredComponents, component, components);
-			} 
-			
+			}
+
 			baseline.addApiComponents(components.toArray(new IApiComponent[components.size()]));
 			return baseline;
 		}
@@ -288,11 +359,13 @@ public class TestSuiteHelper {
 	}
 
 	/**
-	 * Constructs a new {@link IApiProfile} with the given name, id, version, and environment.
+	 * Constructs a new {@link IApiProfile} with the given name, id, version,
+	 * and environment.
 	 * <p>
-	 * Attempts to locate OSGi execution environment baseline when not running in 
-	 * an OSGi framework.
+	 * Attempts to locate OSGi execution environment baseline when not running
+	 * in an OSGi framework.
 	 * </p>
+	 * 
 	 * @param name
 	 * @param ee execution environment description file
 	 * @return API baseline
@@ -304,6 +377,7 @@ public class TestSuiteHelper {
 
 	/**
 	 * Creates a new {@link IApiType} for testing
+	 * 
 	 * @param componentid
 	 * @param name
 	 * @param sig
@@ -313,37 +387,29 @@ public class TestSuiteHelper {
 	 * @return a new testing {@link IApiType}
 	 */
 	public static IApiType createTestingApiType(String baselineid, String componentid, String name, String sig, String genericsig, int flags, String enclosingname) {
-		return new ApiType(
-				TestSuiteHelper.createTestingApiComponent(baselineid, componentid, componentid, null), 
-				name, 
-				sig, 
-				genericsig, 
-				flags, 
-				enclosingname, 
-				null);
+		return new ApiType(TestSuiteHelper.createTestingApiComponent(baselineid, componentid, componentid, null), name, sig, genericsig, flags, enclosingname, null);
 	}
-	
+
 	/**
-	 * Gets the .ee file supplied to run tests based on system
-	 * property.
+	 * Gets the .ee file supplied to run tests based on system property.
 	 * 
 	 * @return
 	 */
 	public static File getEEDescriptionFile() {
-		String eePath = System.getProperty("ee.file");
+		String eePath = System.getProperty("ee.file"); //$NON-NLS-1$
 		if (eePath == null) {
 			// generate a fake 1.5 ee file
 			File fakeEEFile = null;
 			PrintWriter writer = null;
 			try {
-				fakeEEFile = Util.createTempFile("eefile", ".ee");
+				fakeEEFile = Util.createTempFile("eefile", ".ee"); //$NON-NLS-1$ //$NON-NLS-2$
 				writer = new PrintWriter(new BufferedWriter(new FileWriter(fakeEEFile)));
-				writer.print("-Djava.home=");
-				writer.println(System.getProperty("java.home"));
-				writer.print("-Dee.bootclasspath=");
+				writer.print("-Djava.home="); //$NON-NLS-1$
+				writer.println(System.getProperty("java.home")); //$NON-NLS-1$
+				writer.print("-Dee.bootclasspath="); //$NON-NLS-1$
 				writer.println(org.eclipse.pde.api.tools.internal.util.Util.getJavaClassLibsAsString());
-				writer.println("-Dee.language.level=1.5");
-				writer.println("-Dee.class.library.level=J2SE-1.5");
+				writer.println("-Dee.language.level=1.5"); //$NON-NLS-1$
+				writer.println("-Dee.class.library.level=J2SE-1.5"); //$NON-NLS-1$
 				writer.flush();
 			} catch (IOException e) {
 				// ignore
@@ -355,11 +421,12 @@ public class TestSuiteHelper {
 			fakeEEFile.deleteOnExit();
 			eePath = fakeEEFile.getAbsolutePath();
 		}
-		Assert.assertNotNull("-Dee.file not specified", eePath);
+		Assert.assertNotNull("-Dee.file not specified", eePath); //$NON-NLS-1$
 		File eeFile = new File(eePath);
-		Assert.assertTrue("EE file does not exist: " + eePath, eeFile.exists());
+		Assert.assertTrue("EE file does not exist: " + eePath, eeFile.exists()); //$NON-NLS-1$
 		return eeFile;
 	}
+
 	/**
 	 * Returns a file to the root of the specified bundle or <code>null</code>
 	 * if none. Searches for plug-ins based on the "requiredBundles" system
@@ -369,12 +436,12 @@ public class TestSuiteHelper {
 	 * @return bundle root or <code>null</code>
 	 */
 	public static File getBundle(String bundleName) {
-		String root = System.getProperty("requiredBundles");
+		String root = System.getProperty("requiredBundles"); //$NON-NLS-1$
 		if (root != null) {
 			File bundlesRoot = new File(root);
 			if (bundlesRoot.exists() && bundlesRoot.isDirectory()) {
 				File[] bundles = bundlesRoot.listFiles();
-				String key = bundleName + "_";
+				String key = bundleName + "_"; //$NON-NLS-1$
 				for (int i = 0; i < bundles.length; i++) {
 					File file = bundles[i];
 					if (file.getName().startsWith(key)) {
@@ -392,7 +459,7 @@ public class TestSuiteHelper {
 	 * @param done set of component id's that have already been collected
 	 * @param component component to add all prerequisites for
 	 * @param collection collection to add prerequisites to.
-	 * @throws CoreException 
+	 * @throws CoreException
 	 */
 	public static void addAllRequired(IApiBaseline baseline, Set<String> done, IApiComponent component, List<IApiComponent> collection) throws CoreException {
 		IRequiredComponentDescription[] descriptions = component.getRequiredComponents();
@@ -419,13 +486,13 @@ public class TestSuiteHelper {
 			}
 		}
 		if (error) {
-			throw new CoreException(new Status(IStatus.ERROR, ApiTestsPlugin.PLUGIN_ID, 
-					"Check the property : -DrequiredBundles=...\nMissing required bundle(s): " + String.valueOf(buffer)));
+			throw new CoreException(new Status(IStatus.ERROR, ApiTestsPlugin.PLUGIN_ID, "Check the property : -DrequiredBundles=...\nMissing required bundle(s): " + String.valueOf(buffer))); //$NON-NLS-1$
 		}
 	}
 
 	/**
-	 * Compiles a single source file 
+	 * Compiles a single source file
+	 * 
 	 * @param sourcename
 	 * @param destinationpath
 	 * @param compileroptions
@@ -437,16 +504,16 @@ public class TestSuiteHelper {
 		StringWriter err = new StringWriter();
 		PrintWriter errWriter = new PrintWriter(err);
 		List<String> cmd = new ArrayList<String>();
-		cmd.add("-noExit");
+		cmd.add("-noExit"); //$NON-NLS-1$
 		for (int i = 0, max = compileroptions.length; i < max; i++) {
 			cmd.add(compileroptions[i]);
 		}
 		if (destinationpath != null) {
-			cmd.add("-d");
+			cmd.add("-d"); //$NON-NLS-1$
 			cmd.add(destinationpath);
 		}
 		cmd.add(sourcename);
-		
+
 		String[] args = new String[cmd.size()];
 		cmd.toArray(args);
 		boolean result = false;
@@ -460,10 +527,11 @@ public class TestSuiteHelper {
 		}
 		return result;
 	}
-	
+
 	/**
-	 * Compiles all source files in the specified source paths to the specified destination path, with the given 
-	 * compiler options
+	 * Compiles all source files in the specified source paths to the specified
+	 * destination path, with the given compiler options
+	 * 
 	 * @param sourceFilePaths
 	 * @param destinationPath
 	 * @param compilerOptions
@@ -475,19 +543,21 @@ public class TestSuiteHelper {
 		StringWriter err = new StringWriter();
 		PrintWriter errWriter = new PrintWriter(err);
 		List<String> cmd = new ArrayList<String>();
-		cmd.add("-noExit");
+		cmd.add("-noExit"); //$NON-NLS-1$
 		for (int i = 0, max = compilerOptions.length; i < max; i++) {
 			cmd.add(compilerOptions[i]);
 		}
 		if (destinationPath != null) {
-			cmd.add("-d");
+			cmd.add("-d"); //$NON-NLS-1$
 			cmd.add(destinationPath);
 		}
 		Set<String> directories = new HashSet<String>();
 		for (int i = 0, max = sourceFilePaths.length; i < max; i++) {
 			String sourceFilePath = sourceFilePaths[i];
 			File file = new File(sourceFilePath);
-			if (!file.exists()) continue;
+			if (!file.exists()) {
+				continue;
+			}
 			if (file.isDirectory()) {
 				directories.add(file.getAbsolutePath());
 			} else {
@@ -508,7 +578,7 @@ public class TestSuiteHelper {
 					classpathEntry.append(File.pathSeparatorChar);
 				}
 			}
-			cmd.add("-classpath");
+			cmd.add("-classpath"); //$NON-NLS-1$
 			cmd.add(String.valueOf(classpathEntry));
 		}
 		String[] args = new String[cmd.size()];
@@ -524,57 +594,62 @@ public class TestSuiteHelper {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Delete the file f and all sub-directories if f is a directory
+	 * 
 	 * @param f the given file to delete
 	 * @return true if the file was successfully deleted, false otherwise
 	 */
 	public static boolean delete(File f) {
 		if (!Util.delete(f)) {
-			System.err.println("Could not delete " + f.getAbsolutePath());
+			System.err.println("Could not delete " + f.getAbsolutePath()); //$NON-NLS-1$
 			return false;
 		}
 		return true;
 	}
 
 	/**
-	 * Copy file into the destination folder.
-	 * If file is not a directory, it is copied into the destination folder.
-	 * If file is a directory, all its files and subfolders are copied to the destination folder.
+	 * Copy file into the destination folder. If file is not a directory, it is
+	 * copied into the destination folder. If file is a directory, all its files
+	 * and subfolders are copied to the destination folder.
 	 * 
 	 * <code>dest</code> has to be a directory.
 	 * 
 	 * @param file the given file to copy
 	 * @param dest the given destination folder
-	 * @throws IllegalArgumentException if dest is not a directory
-	 *        or it doesn't exist or if the given file doesn't exist
+	 * @throws IllegalArgumentException if dest is not a directory or it doesn't
+	 *             exist or if the given file doesn't exist
 	 */
 	public static void copy(File file, File dest) {
 		if (!dest.exists()) {
 			if (!dest.mkdirs()) {
-				throw new IllegalArgumentException("could not create destination");
+				throw new IllegalArgumentException("could not create destination"); //$NON-NLS-1$
 			}
 		} else if (!dest.isDirectory()) {
-			throw new IllegalArgumentException("destination is not a directory");
+			throw new IllegalArgumentException("destination is not a directory"); //$NON-NLS-1$
 		}
 		if (!file.exists()) {
-			throw new IllegalArgumentException("The given file to copy doesn't exist");
+			throw new IllegalArgumentException("The given file to copy doesn't exist"); //$NON-NLS-1$
 		}
 		copy0(file, dest);
 	}
-	
+
 	private static void copy0(File f, File dest) {
 		dest.mkdirs();
 		if (f.isDirectory()) {
 			String dirName = f.getName();
-			if ("CVS".equals(dirName)) return;
+			if ("CVS".equals(dirName)) { //$NON-NLS-1$
+				return;
+			}
 			File[] files = f.listFiles();
 			for (int i = 0, max = files.length; i < max; i++) {
 				File file = files[i];
 				if (file.isDirectory()) {
 					String name = file.getName();
-					if ("CVS".equals(name)) continue;
+					if ("CVS".equals(name)) { //$NON-NLS-1$
+						continue;
+					}
 					copy0(new File(f, name), new File(dest, name));
 				} else {
 					copy0(file, dest);
@@ -613,7 +688,7 @@ public class TestSuiteHelper {
 					if (outputStream != null) {
 						try {
 							outputStream.close();
-						} catch(IOException e) {
+						} catch (IOException e) {
 							ApiPlugin.log(e);
 						}
 					}
@@ -621,26 +696,27 @@ public class TestSuiteHelper {
 			}
 		}
 	}
+
 	/**
 	 * Returns the OS path to the directory that contains this plugin.
 	 */
 	public static IPath getPluginDirectoryPath() {
 		if (Platform.isRunning()) {
 			try {
-				URL platformURL = Platform.getBundle("org.eclipse.pde.api.tools.tests").getEntry("/");
+				URL platformURL = Platform.getBundle("org.eclipse.pde.api.tools.tests").getEntry("/"); //$NON-NLS-1$ //$NON-NLS-2$
 				return new Path(new File(FileLocator.toFileURL(platformURL).getFile()).getAbsolutePath());
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
-		return new Path(System.getProperty("user.dir"));
+		return new Path(System.getProperty("user.dir")); //$NON-NLS-1$
 	}
 
 	/**
 	 * @return the path for the system property <code>user.dir</code>
 	 */
 	public static IPath getUserDirectoryPath() {
-		return new Path(System.getProperty("user.dir"));
+		return new Path(System.getProperty("user.dir")); //$NON-NLS-1$
 	}
-	
+
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@ package org.eclipse.pde.api.tools.internal.descriptors;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 
 /**
@@ -21,46 +20,31 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescri
  * 
  * @since 1.0.0
  */
-public abstract class ElementDescriptorImpl implements IElementDescriptor, Comparable {
+public abstract class ElementDescriptorImpl implements IElementDescriptor, Comparable<IElementDescriptor> {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.model.component.IElementDescriptor#getParent()
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.model.component.IElementDescriptor#getParent()
 	 */
+	@Override
 	public IElementDescriptor getParent() {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.model.component.IElementDescriptor#getPath()
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.model.component.IElementDescriptor#getPath()
 	 */
+	@Override
 	public IElementDescriptor[] getPath() {
-		List list = new ArrayList();
+		List<IElementDescriptor> list = new ArrayList<IElementDescriptor>();
 		IElementDescriptor element = this;
 		while (element != null) {
 			list.add(0, element);
 			element = element.getParent();
 		}
-		return (IElementDescriptor[]) list.toArray(new IElementDescriptor[list.size()]);
+		return list.toArray(new IElementDescriptor[list.size()]);
 	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Comparable#compareTo(java.lang.Object)
-	 */
-	public int compareTo(Object o) {
-		if (o instanceof ElementDescriptorImpl) {
-			ElementDescriptorImpl element = (ElementDescriptorImpl) o;
-			return getComparable().compareTo(element.getComparable());
-		}
-		if (ApiPlugin.DEBUG_ELEMENT_DESCRIPTOR_FRAMEWORK) {
-			System.err.println(o.getClass());
-		}
-		return -1;
-	}
-
-	/**
-	 * Returns this element's comparable delegate.
-	 * 
-	 * @return comparable
-	 */
-	protected abstract Comparable getComparable();
 }

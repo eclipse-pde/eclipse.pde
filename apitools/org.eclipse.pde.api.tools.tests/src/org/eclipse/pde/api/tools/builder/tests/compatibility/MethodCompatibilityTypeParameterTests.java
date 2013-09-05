@@ -29,12 +29,12 @@ public class MethodCompatibilityTypeParameterTests extends MethodCompatibilityTe
 	/**
 	 * Workspace relative path classes in bundle/project A
 	 */
-	protected static IPath WORKSPACE_CLASSES_PACKAGE_A = new Path("bundle.a/src/a/methods/typeparameters");
+	protected static IPath WORKSPACE_CLASSES_PACKAGE_A = new Path("bundle.a/src/a/methods/typeparameters"); //$NON-NLS-1$
 
 	/**
 	 * Package prefix for test classes
 	 */
-	protected static String PACKAGE_PREFIX = "a.methods.typeparameters.";
+	protected static String PACKAGE_PREFIX = "a.methods.typeparameters."; //$NON-NLS-1$
 	
 	/**
 	 * Constructor
@@ -47,8 +47,9 @@ public class MethodCompatibilityTypeParameterTests extends MethodCompatibilityTe
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestSourcePath()
 	 */
+	@Override
 	protected IPath getTestSourcePath() {
-		return super.getTestSourcePath().append("typeparameters");
+		return super.getTestSourcePath().append("typeparameters"); //$NON-NLS-1$
 	}
 	
 	/**
@@ -61,15 +62,16 @@ public class MethodCompatibilityTypeParameterTests extends MethodCompatibilityTe
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestingProjectName()
 	 */
+	@Override
 	protected String getTestingProjectName() {
-		return "classcompat";
+		return "classcompat"; //$NON-NLS-1$
 	}	
 	
 	/**
 	 * Tests adding a type parameter to a method
 	 */
 	private void xAddTypeParameter(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddTypeParameter.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddTypeParameter.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			ApiProblemFactory.createProblemId(
 				IApiProblem.CATEGORY_COMPATIBILITY,
@@ -79,7 +81,7 @@ public class MethodCompatibilityTypeParameterTests extends MethodCompatibilityTe
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "AddTypeParameter.method(Object)", "U"};
+		args[0] = new String[]{PACKAGE_PREFIX + "AddTypeParameter.method(Object)", "U"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -96,7 +98,7 @@ public class MethodCompatibilityTypeParameterTests extends MethodCompatibilityTe
 	 * Tests removing a type parameter from a method
 	 */
 	private void xRemoveTypeParameter(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveTypeParameter.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveTypeParameter.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			ApiProblemFactory.createProblemId(
 				IApiProblem.CATEGORY_COMPATIBILITY,
@@ -106,7 +108,7 @@ public class MethodCompatibilityTypeParameterTests extends MethodCompatibilityTe
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "RemoveTypeParameter.method(Object)", "U"};
+		args[0] = new String[]{PACKAGE_PREFIX + "RemoveTypeParameter.method(Object)", "U"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -123,7 +125,7 @@ public class MethodCompatibilityTypeParameterTests extends MethodCompatibilityTe
 	 * Tests converting variable arguments to an array
 	 */
 	private void xVarArgsToArray(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("VarArgsToArray.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("VarArgsToArray.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			ApiProblemFactory.createProblemId(
 				IApiProblem.CATEGORY_COMPATIBILITY,
@@ -133,7 +135,7 @@ public class MethodCompatibilityTypeParameterTests extends MethodCompatibilityTe
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "VarArgsToArray", "method(int, int[])"};
+		args[0] = new String[]{PACKAGE_PREFIX + "VarArgsToArray", "method(int, int[])"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -150,7 +152,7 @@ public class MethodCompatibilityTypeParameterTests extends MethodCompatibilityTe
 	 * Tests converting an array to variable arguments
 	 */
 	private void xArrayToVarArgs(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ArrayToVarArgs.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ArrayToVarArgs.java"); //$NON-NLS-1$
 		// no problems
 		performCompatibilityTest(filePath, incremental);
 	}

@@ -43,13 +43,15 @@ public class InvalidInterfaceTagTests extends TagTest {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.tags.JavadocTagTest#getTestSourcePath()
 	 */
+	@Override
 	protected IPath getTestSourcePath() {
-		return super.getTestSourcePath().append("interface");
+		return super.getTestSourcePath().append("interface"); //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.tags.TagTest#getDefaultProblemId()
 	 */
+	@Override
 	protected int getDefaultProblemId() {
 		return ApiProblemFactory.createProblemId(
 				IApiProblem.CATEGORY_USAGE, 
@@ -72,9 +74,9 @@ public class InvalidInterfaceTagTests extends TagTest {
 	private void x1(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		setExpectedMessageArgs(new String[][] {
-				{"@noreference", BuilderMessages.TagValidator_an_interface_that_is_not_visible},
+				{"@noreference", BuilderMessages.TagValidator_an_interface_that_is_not_visible}, //$NON-NLS-1$
 		});
-		deployTagTest("test1.java", inc, false);
+		deployTagTest("test1.java", inc, false); //$NON-NLS-1$
 	}
 	
 	public void testInvalidInterfaceTag2I() {
@@ -93,7 +95,7 @@ public class InvalidInterfaceTagTests extends TagTest {
 		setExpectedMessageArgs(new String[][] {
 				{"@noreference", BuilderMessages.TagValidator_an_interface}	
 		});*/
-		deployTagTest("test2.java", inc, true);
+		deployTagTest("test2.java", inc, true); //$NON-NLS-1$
 	}
 
 	public void testInvalidInterfaceTag3I() {
@@ -110,12 +112,12 @@ public class InvalidInterfaceTagTests extends TagTest {
 	private void x3(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(4));
 		setExpectedMessageArgs(new String[][] {
-				{"@nooverride", BuilderMessages.TagValidator_an_interface},
-				{"@nooverride", BuilderMessages.TagValidator_an_interface},
-				{"@nooverride", BuilderMessages.TagValidator_an_interface},
-				{"@nooverride", BuilderMessages.TagValidator_an_interface}
+				{"@nooverride", BuilderMessages.TagValidator_an_interface}, //$NON-NLS-1$
+				{"@nooverride", BuilderMessages.TagValidator_an_interface}, //$NON-NLS-1$
+				{"@nooverride", BuilderMessages.TagValidator_an_interface}, //$NON-NLS-1$
+				{"@nooverride", BuilderMessages.TagValidator_an_interface} //$NON-NLS-1$
 		});
-		deployTagTest("test3.java", inc, false);
+		deployTagTest("test3.java", inc, false); //$NON-NLS-1$
 	}
 	
 	public void testInvalidInterfaceTag4I() {
@@ -132,9 +134,9 @@ public class InvalidInterfaceTagTests extends TagTest {
 	private void x4(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		setExpectedMessageArgs(new String[][] {
-				{"@nooverride", BuilderMessages.TagValidator_an_interface}	
+				{"@nooverride", BuilderMessages.TagValidator_an_interface}	 //$NON-NLS-1$
 		});
-		deployTagTest("test4.java", inc, true);
+		deployTagTest("test4.java", inc, true); //$NON-NLS-1$
 	}
 
 	public void testInvalidInterfaceTag5I() {
@@ -151,12 +153,12 @@ public class InvalidInterfaceTagTests extends TagTest {
 	private void x5(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(4));
 		setExpectedMessageArgs(new String[][] {
-				{"@noinstantiate", BuilderMessages.TagValidator_an_interface},
-				{"@noinstantiate", BuilderMessages.TagValidator_an_interface},
-				{"@noinstantiate", BuilderMessages.TagValidator_an_interface},
-				{"@noinstantiate", BuilderMessages.TagValidator_an_interface}
+				{"@noinstantiate", BuilderMessages.TagValidator_an_interface}, //$NON-NLS-1$
+				{"@noinstantiate", BuilderMessages.TagValidator_an_interface}, //$NON-NLS-1$
+				{"@noinstantiate", BuilderMessages.TagValidator_an_interface}, //$NON-NLS-1$
+				{"@noinstantiate", BuilderMessages.TagValidator_an_interface} //$NON-NLS-1$
 		});
-		deployTagTest("test5.java", inc, false);
+		deployTagTest("test5.java", inc, false); //$NON-NLS-1$
 	}
 	
 	public void testInvalidInterfaceTag6I() {
@@ -173,8 +175,8 @@ public class InvalidInterfaceTagTests extends TagTest {
 	private void x6(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(1));
 		setExpectedMessageArgs(new String[][] {
-				{"@noinstantiate", BuilderMessages.TagValidator_an_interface}	
+				{"@noinstantiate", BuilderMessages.TagValidator_an_interface}	 //$NON-NLS-1$
 		});
-		deployTagTest("test6.java", inc, true);
+		deployTagTest("test6.java", inc, true); //$NON-NLS-1$
 	}
 }

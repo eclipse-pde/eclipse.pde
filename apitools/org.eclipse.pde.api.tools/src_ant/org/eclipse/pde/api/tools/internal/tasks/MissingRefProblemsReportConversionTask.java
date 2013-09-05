@@ -20,7 +20,8 @@ import org.eclipse.pde.api.tools.internal.search.MissingRefReportConverter;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
- * Default task for converting the XML output from the apitooling.apiuse ants to HTML
+ * Default task for converting the XML output from the apitooling.apiuse ants to
+ * HTML
  * 
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
@@ -31,9 +32,13 @@ public final class MissingRefProblemsReportConversionTask extends CommonUtilsTas
 
 	/**
 	 * Set the debug value.
-	 * <p>The possible values are: <code>true</code>, <code>false</code></p>
-	 * <p>Default is <code>false</code>.</p>
-	 *
+	 * <p>
+	 * The possible values are: <code>true</code>, <code>false</code>
+	 * </p>
+	 * <p>
+	 * Default is <code>false</code>.
+	 * </p>
+	 * 
 	 * @param debugValue the given debug value
 	 */
 	public void setDebug(String debugValue) {
@@ -43,11 +48,16 @@ public final class MissingRefProblemsReportConversionTask extends CommonUtilsTas
 	/**
 	 * Set the location where the html reports are generated.
 	 * 
-	 * <p>This is optional. If not set, the html files are created in the same folder as the
-	 * xml files.</p>
-	 * <p>The location is set using an absolute path.</p>
+	 * <p>
+	 * This is optional. If not set, the html files are created in the same
+	 * folder as the xml files.
+	 * </p>
+	 * <p>
+	 * The location is set using an absolute path.
+	 * </p>
 	 * 
-	 * @param htmlFilesLocation the given the location where the html reports are generated
+	 * @param htmlFilesLocation the given the location where the html reports
+	 *            are generated
 	 */
 	public void setHtmlFiles(String htmlFilesLocation) {
 		this.htmlReportsLocation = htmlFilesLocation;
@@ -56,22 +66,26 @@ public final class MissingRefProblemsReportConversionTask extends CommonUtilsTas
 	/**
 	 * Set the location where the xml reports are retrieved.
 	 * 
-	 * <p>The location is set using an absolute path.</p>
-	 *
+	 * <p>
+	 * The location is set using an absolute path.
+	 * </p>
+	 * 
 	 * @param xmlFilesLocation the given location to retrieve the xml reports
 	 */
 	public void setXmlFiles(String xmlFilesLocation) {
 		this.xmlReportsLocation = xmlFilesLocation;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see org.apache.tools.ant.Task#execute()
 	 */
+	@Override
 	public void execute() throws BuildException {
-		if(this.xmlReportsLocation == null) {
+		if (this.xmlReportsLocation == null) {
 			throw new BuildException(Messages.no_xml_location);
 		}
-		if(this.htmlReportsLocation == null) {
+		if (this.htmlReportsLocation == null) {
 			throw new BuildException(Messages.no_html_location);
 		}
 		if (this.debug) {

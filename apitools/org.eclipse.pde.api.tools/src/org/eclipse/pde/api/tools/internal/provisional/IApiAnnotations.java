@@ -10,27 +10,26 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.provisional;
 
-
 /**
- * Describes API usage restrictions, visibility and profiles information of an element contained
- * in an API component. 
- *   
+ * Describes API usage restrictions, visibility and profiles information of an
+ * element contained in an API component.
+ * 
  * @since 1.0.0
  */
 public interface IApiAnnotations {
-	
+
 	/**
 	 * Returns the visibility modifiers annotation.
 	 * 
-	 * @return a visibility constant defined by {@link VisibilityModifiers} 
+	 * @return a visibility constant defined by {@link VisibilityModifiers}
 	 */
 	public int getVisibility();
-	
+
 	/**
 	 * Returns the restriction modifiers annotation.
 	 * 
 	 * @return restriction constant defined by {@link RestrictionModifiers}
 	 */
 	public int getRestrictions();
-	
+
 }

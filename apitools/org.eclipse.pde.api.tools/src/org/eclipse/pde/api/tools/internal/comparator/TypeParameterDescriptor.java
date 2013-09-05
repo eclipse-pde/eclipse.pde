@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,7 +22,7 @@ import org.eclipse.pde.api.tools.internal.util.Util;
 class TypeParameterDescriptor {
 	private static final String JAVA_LANG_OBJECT = "java.lang.Object"; //$NON-NLS-1$
 	String classBound;
-	List interfaceBounds;
+	List<String> interfaceBounds;
 	String name;
 
 	public TypeParameterDescriptor(String name) {
@@ -31,11 +31,11 @@ class TypeParameterDescriptor {
 
 	public void addInterfaceBound(String bound) {
 		if (this.interfaceBounds == null) {
-			this.interfaceBounds = new ArrayList();
+			this.interfaceBounds = new ArrayList<String>();
 		}
 		this.interfaceBounds.add(bound);
 	}
-	
+
 	public void setClassBound(String bound) {
 		if (JAVA_LANG_OBJECT.equals(bound)) {
 			// we consider Object as an implicit bound
@@ -44,7 +44,8 @@ class TypeParameterDescriptor {
 		}
 		this.classBound = bound;
 	}
-	
+
+	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("type parameter ").append(this.name).append(" : ").append(Util.LINE_DELIMITER); //$NON-NLS-1$ //$NON-NLS-2$
@@ -54,8 +55,10 @@ class TypeParameterDescriptor {
 		if (this.interfaceBounds != null) {
 			buffer.append("interface bounds : "); //$NON-NLS-1$
 			int i = 0;
-			for (Iterator iterator = this.interfaceBounds.iterator(); iterator.hasNext(); ) {
-				if (i > 0) buffer.append(',');
+			for (Iterator<String> iterator = this.interfaceBounds.iterator(); iterator.hasNext();) {
+				if (i > 0) {
+					buffer.append(',');
+				}
 				i++;
 				buffer.append(iterator.next());
 			}

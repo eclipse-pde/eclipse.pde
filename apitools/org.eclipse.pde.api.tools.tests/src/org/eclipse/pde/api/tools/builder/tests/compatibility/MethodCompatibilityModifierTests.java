@@ -29,12 +29,12 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 	/**
 	 * Workspace relative path classes in bundle/project A
 	 */
-	protected static IPath WORKSPACE_CLASSES_PACKAGE_A = new Path("bundle.a/src/a/methods/modifiers");
+	protected static IPath WORKSPACE_CLASSES_PACKAGE_A = new Path("bundle.a/src/a/methods/modifiers"); //$NON-NLS-1$
 
 	/**
 	 * Package prefix for test classes
 	 */
-	protected static String PACKAGE_PREFIX = "a.methods.modifiers.";
+	protected static String PACKAGE_PREFIX = "a.methods.modifiers."; //$NON-NLS-1$
 	
 	/**
 	 * Constructor
@@ -47,8 +47,9 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestSourcePath()
 	 */
+	@Override
 	protected IPath getTestSourcePath() {
-		return super.getTestSourcePath().append("modifiers");
+		return super.getTestSourcePath().append("modifiers"); //$NON-NLS-1$
 	}
 	
 	/**
@@ -61,8 +62,9 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestingProjectName()
 	 */
+	@Override
 	protected String getTestingProjectName() {
-		return "classcompat";
+		return "classcompat"; //$NON-NLS-1$
 	}
 
 	/**
@@ -99,13 +101,13 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 	 * Tests making a non-final method final
 	 */
 	private void xAddFinal(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddFinal.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddFinal.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			getChangedProblemId(IDelta.NON_FINAL_TO_FINAL)
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "AddFinal", "method()"};
+		args[0] = new String[]{PACKAGE_PREFIX + "AddFinal", "method()"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -138,13 +140,13 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 	 * Tests making a non-abstract method abstract
 	 */
 	private void xAddAbstract(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddAbstract.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddAbstract.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			getChangedProblemId(IDelta.NON_ABSTRACT_TO_ABSTRACT)
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "AddAbstract", "method()"};
+		args[0] = new String[]{PACKAGE_PREFIX + "AddAbstract", "method()"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -161,7 +163,7 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 	 * Tests making a non-final no-override method final
 	 */
 	private void xAddFinalNoOverride(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddFinalNoOverride.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddFinalNoOverride.java"); //$NON-NLS-1$
 		// no problems expected since @nooverride
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -178,7 +180,7 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 	 * Tests making a non-final no-override method final, and remove the no-override tag.
 	 */
 	private void xAddFinalRemoveNoOverride(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddFinalRemoveNoOverride.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddFinalRemoveNoOverride.java"); //$NON-NLS-1$
 		// no problems expected since @nooverride
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -195,7 +197,7 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 	 * Tests making a non-final method final in a no-extend class
 	 */
 	private void xAddFinalNoExtend(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddFinalNoExtend.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddFinalNoExtend.java"); //$NON-NLS-1$
 		// should be no problems since @noextend
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -212,13 +214,13 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 	 * Tests making a non-static method static
 	 */
 	private void xAddStatic(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddStatic.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddStatic.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			getChangedProblemId(IDelta.NON_STATIC_TO_STATIC)
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "AddStatic", "method()"};
+		args[0] = new String[]{PACKAGE_PREFIX + "AddStatic", "method()"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -235,7 +237,7 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 	 * Tests making a non-static no-reference method static
 	 */
 	private void xAddStaticNoReference(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddStaticNoReference.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddStaticNoReference.java"); //$NON-NLS-1$
 		// no problem expected
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -252,13 +254,13 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 	 * Tests making a static method non-static
 	 */
 	private void xRemoveStatic(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveStatic.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveStatic.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			getChangedProblemId(IDelta.STATIC_TO_NON_STATIC)
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "RemoveStatic", "method()"};
+		args[0] = new String[]{PACKAGE_PREFIX + "RemoveStatic", "method()"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -275,7 +277,7 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 	 * Tests making a static no-reference field non-static
 	 */
 	private void xRemoveStaticNoReference(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveStaticNoReference.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveStaticNoReference.java"); //$NON-NLS-1$
 		// no problem expected
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -292,13 +294,13 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 	 * Tests changing a protected method to package protected
 	 */
 	private void xProtectedToPackage(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ProtectedToPackage.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ProtectedToPackage.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			getChangedProblemId(IDelta.DECREASE_ACCESS)
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "ProtectedToPackage", "method()"};
+		args[0] = new String[]{PACKAGE_PREFIX + "ProtectedToPackage", "method()"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -315,7 +317,7 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 	 * Tests changing a protected method to package protected when no-reference
 	 */
 	private void xProtectedToPackageNoReference(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ProtectedToPackageNoReference.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ProtectedToPackageNoReference.java"); //$NON-NLS-1$
 		// no problem expected
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -332,13 +334,13 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 	 * Tests changing a protected method to private
 	 */
 	private void xProtectedToPrivate(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ProtectedToPrivate.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ProtectedToPrivate.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			getChangedProblemId(IDelta.DECREASE_ACCESS)
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "ProtectedToPrivate", "method()"};
+		args[0] = new String[]{PACKAGE_PREFIX + "ProtectedToPrivate", "method()"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -355,7 +357,7 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 	 * Tests changing a protected method to private method in a no-extend class
 	 */
 	private void xProtectedToPrivateNoExtend(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ProtectedToPrivateNoExtend.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ProtectedToPrivateNoExtend.java"); //$NON-NLS-1$
 		// no expected errors
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -372,13 +374,13 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 	 * Tests changing a protected no-override method to private method
 	 */
 	private void xProtectedToPrivateNoOverride(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ProtectedToPrivateNoOverride.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ProtectedToPrivateNoOverride.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			getChangedProblemId(IDelta.DECREASE_ACCESS)
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "ProtectedToPrivateNoOverride", "method()"};
+		args[0] = new String[]{PACKAGE_PREFIX + "ProtectedToPrivateNoOverride", "method()"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -395,13 +397,13 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 	 * Tests changing a public method to package
 	 */
 	private void xPublicToPackage(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("PublicToPackage.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("PublicToPackage.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			getChangedProblemId(IDelta.DECREASE_ACCESS)
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "PublicToPackage", "method()"};
+		args[0] = new String[]{PACKAGE_PREFIX + "PublicToPackage", "method()"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -418,13 +420,13 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 	 * Tests changing a public method to private
 	 */
 	private void xPublicToPrivate(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("PublicToPrivate.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("PublicToPrivate.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			getChangedProblemId(IDelta.DECREASE_ACCESS)
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "PublicToPrivate", "method()"};
+		args[0] = new String[]{PACKAGE_PREFIX + "PublicToPrivate", "method()"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -441,7 +443,7 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 	 * Tests changing a private method to public, no-reference
 	 */
 	private void xPrivateToPublic(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("PrivateToPublicNoReference.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("PrivateToPublicNoReference.java"); //$NON-NLS-1$
 		// no problems expected
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -458,7 +460,7 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 	 * Tests changing a public method to private
 	 */
 	private void xPublicToPrivateNoReference(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("PublicToPrivateNoReference.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("PublicToPrivateNoReference.java"); //$NON-NLS-1$
 		// no problem expected
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -475,13 +477,13 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 	 * Tests changing a public method to protected
 	 */
 	private void xPublicToProtected(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("PublicToProtected.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("PublicToProtected.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			getChangedProblemId(IDelta.DECREASE_ACCESS)
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "PublicToProtected", "method()"};
+		args[0] = new String[]{PACKAGE_PREFIX + "PublicToProtected", "method()"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -498,13 +500,13 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 	 * Tests adding no-override
 	 */
 	private void xAddNoOverride(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddNoOverride.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddNoOverride.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			getAddedProblemId(IDelta.RESTRICTIONS)
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "AddNoOverride", "method()"};
+		args[0] = new String[]{PACKAGE_PREFIX + "AddNoOverride", "method()"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -513,7 +515,7 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 	 * Tests adding no-override to a final method (no-op)
 	 */
 	private void xAddNoOverrideToFinal(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddNoOverrideToFinal.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddNoOverrideToFinal.java"); //$NON-NLS-1$
 		// no problems
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -522,7 +524,7 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 	 * Tests adding no-reference
 	 */
 	private void xAddNoReference(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddNoReference.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddNoReference.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			ApiProblemFactory.createProblemId(
 				IApiProblem.CATEGORY_COMPATIBILITY,
@@ -532,7 +534,7 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "AddNoReference", "method()"};
+		args[0] = new String[]{PACKAGE_PREFIX + "AddNoReference", "method()"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -556,7 +558,7 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 	 * Tests removing no-override to a final method (no-op)
 	 */
 	private void xRemoveNoOverrideToFinal(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveNoOverrideToFinal.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveNoOverrideToFinal.java"); //$NON-NLS-1$
 		// no problems
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -572,7 +574,7 @@ public class MethodCompatibilityModifierTests extends MethodCompatibilityTests {
 	 * Tests removing no-override to a final method (no-op)
 	 */
 	private void xRemoveNoOverride(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveNoOverride.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveNoOverride.java"); //$NON-NLS-1$
 		performCompatibilityTest(filePath, incremental);
 	}
 }

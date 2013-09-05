@@ -10,17 +10,19 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.provisional;
 
+import java.util.HashMap;
+
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 
 /**
- * A visitor for an API component. Component visitors must subclass
- * this class.
+ * A visitor for an API component. Component visitors must subclass this class.
  * <p>
- * Package nodes are visited, followed by its type nodes. Component
- * specific nodes are visited before children nodes. 
+ * Package nodes are visited, followed by its type nodes. Component specific
+ * nodes are visited before children nodes.
  * </p>
- * <p> 
+ * <p>
  * Specific visit ordering:
+ * 
  * <pre>
  * ComponentDescription := [visitElement[PackageDescription] endVisitElement[PackageDescription]]*
  * PackageDescription := [visitElement[TypeDescription] endVisitElement[TypeDescription]]*
@@ -29,7 +31,8 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescri
  * OverrideDescription := PackageDescription | TypeDescription | MethodDescription | FieldDescription
  * </pre>
  * 
- * MemberDescriptions are visited in the order they are keyed for the backing {@link HashMap}
+ * MemberDescriptions are visited in the order they are keyed for the backing
+ * {@link HashMap}
  * </p>
  * 
  * @since 1.0.0
@@ -37,25 +40,27 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescri
 public abstract class ApiDescriptionVisitor {
 
 	/**
-	 * Visits an element in the manifest and returns whether children nodes
-	 * in the manifest should be visited.
+	 * Visits an element in the manifest and returns whether children nodes in
+	 * the manifest should be visited.
 	 * <p>
 	 * The default implementation does nothing and returns <code>true</code>.
 	 * Subclasses may re-implement.
 	 * </p>
+	 * 
 	 * @param element element being visited
-	 * @param description description of the element visited 
+	 * @param description description of the element visited
 	 * @return whether child elements should be visited
 	 */
 	public boolean visitElement(IElementDescriptor element, IApiAnnotations description) {
 		return true;
 	}
-	
+
 	/**
 	 * End visiting an element.
 	 * <p>
 	 * The default implementation does nothing. Subclasses may re-implement.
 	 * </p>
+	 * 
 	 * @param element element being end-visited
 	 * @param description description of the element end-visited
 	 */

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,10 +18,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.zip.GZIPInputStream;
+
 /**
- * Reads a .tar or .tar.gz archive file, providing an index enumeration
- * and allows for accessing an InputStream for arbitrary files in the
- * archive.
+ * Reads a .tar or .tar.gz archive file, providing an index enumeration and
+ * allows for accessing an InputStream for arbitrary files in the archive.
  */
 public class TarFile {
 	private static class TarInputStream extends FilterInputStream {
@@ -48,8 +48,8 @@ public class TarFile {
 		}
 
 		/**
-		 * Create a new tar input stream, skipping ahead to the given entry
-		 * in the file.
+		 * Create a new tar input stream, skipping ahead to the given entry in
+		 * the file.
 		 * 
 		 * @param in input stream
 		 * @param entry skips to this entry in the file
@@ -62,15 +62,15 @@ public class TarFile {
 		}
 
 		/**
-		 *  The checksum of a tar file header is simply the sum of the bytes in
-		 *  the header.
+		 * The checksum of a tar file header is simply the sum of the bytes in
+		 * the header.
 		 * 
 		 * @param header
 		 * @return checksum
 		 */
 		private long headerChecksum(byte[] header) {
 			long sum = 0;
-			for(int i = 0; i < 512; i++) {
+			for (int i = 0; i < 512; i++) {
 				sum += header[i] & 0xff;
 			}
 			return sum;
@@ -86,12 +86,12 @@ public class TarFile {
 		 */
 		boolean skipToEntry(TarEntry entry) throws TarException, IOException {
 			int bytestoskip = entry.filepos - bytesread;
-			if(bytestoskip < 0) {
+			if (bytestoskip < 0) {
 				return false;
 			}
-			while(bytestoskip > 0) {
+			while (bytestoskip > 0) {
 				long ret = in.skip(bytestoskip);
-				if(ret < 0) {
+				if (ret < 0) {
 					throw new IOException("early end of stream"); //$NON-NLS-1$
 				}
 				bytestoskip -= ret;
@@ -114,33 +114,33 @@ public class TarFile {
 		private boolean isValidTarHeader(byte[] header) {
 			long fileChecksum, calculatedChecksum;
 			int pos, i;
-			
+
 			pos = 148;
 			StringBuffer checksumString = new StringBuffer();
-			for(i = 0; i < 8; i++) {
-				if(header[pos + i] == ' ') {
+			for (i = 0; i < 8; i++) {
+				if (header[pos + i] == ' ') {
 					continue;
 				}
-				if(header[pos + i] == 0 || !Character.isDigit((char) header[pos + i])) {
+				if (header[pos + i] == 0 || !Character.isDigit((char) header[pos + i])) {
 					break;
 				}
 				checksumString.append((char) header[pos + i]);
 			}
-			if(checksumString.length() == 0) {
+			if (checksumString.length() == 0) {
 				return false;
 			}
-			if(checksumString.charAt(0) != '0') {
+			if (checksumString.charAt(0) != '0') {
 				checksumString.insert(0, '0');
 			}
 			try {
 				fileChecksum = Long.decode(checksumString.toString()).longValue();
-			} catch(NumberFormatException exception) {
-				//This is not valid if it cannot be parsed
+			} catch (NumberFormatException exception) {
+				// This is not valid if it cannot be parsed
 				return false;
 			}
 
 			// Blank out the checksum.
-			for(i = 0; i < 8; i++) {
+			for (i = 0; i < 8; i++) {
 				header[pos + i] = ' ';
 			}
 			calculatedChecksum = headerChecksum(header);
@@ -149,8 +149,8 @@ public class TarFile {
 		}
 
 		/**
-		 * Returns the next entry in the tar file.  Does not handle
-		 * GNU @LongLink extensions.
+		 * Returns the next entry in the tar file. Does not handle GNU @LongLink
+		 * extensions.
 		 * 
 		 * @return the next entry in the tar file
 		 * @throws TarException
@@ -161,15 +161,15 @@ public class TarFile {
 			int pos = 0;
 			int i;
 
-			if(firstEntry != null) {
+			if (firstEntry != null) {
 				TarEntry entryReturn = firstEntry;
 				firstEntry = null;
 				return entryReturn;
 			}
 
-			while(nextEntry > 0) {
+			while (nextEntry > 0) {
 				long ret = in.skip(nextEntry);
-				if(ret < 0) {
+				if (ret < 0) {
 					throw new IOException("early end of stream"); //$NON-NLS-1$
 				}
 				nextEntry -= ret;
@@ -177,9 +177,9 @@ public class TarFile {
 			}
 
 			int bytestoread = 512;
-			while(bytestoread > 0) {
+			while (bytestoread > 0) {
 				int ret = super.read(header, 512 - bytestoread, bytestoread);
-				if( ret < 0 ) {
+				if (ret < 0) {
 					throw new IOException("early end of stream"); //$NON-NLS-1$
 				}
 				bytestoread -= ret;
@@ -187,18 +187,18 @@ public class TarFile {
 			}
 
 			// If we have a header of all zeros, this marks the end of the file.
-			if(headerChecksum(header) == 0) {
+			if (headerChecksum(header) == 0) {
 				// We are at the end of the file.
-				if(filepos > 0) {
+				if (filepos > 0) {
 					return null;
 				}
-				
+
 				// Invalid stream.
 				throw new TarException("not in tar format"); //$NON-NLS-1$
 			}
-			
+
 			// Validate checksum.
-			if(!isValidTarHeader(header)) {
+			if (!isValidTarHeader(header)) {
 				throw new TarException("not in tar format"); //$NON-NLS-1$
 			}
 
@@ -208,70 +208,70 @@ public class TarFile {
 			String name = new String(header, 0, pos, "UTF8"); //$NON-NLS-1$
 			// Prepend the prefix here.
 			pos = 345;
-			if(header[pos] != 0) {
+			if (header[pos] != 0) {
 				while (pos < 500 && header[pos] != 0) {
 					pos++;
 				}
 				String prefix = new String(header, 345, pos - 345, "UTF8"); //$NON-NLS-1$
 				name = prefix + "/" + name; //$NON-NLS-1$
 			}
-			
+
 			TarEntry entry;
-			if(longLinkName != null) {
+			if (longLinkName != null) {
 				entry = new TarEntry(longLinkName, filepos);
 				longLinkName = null;
 			} else {
 				entry = new TarEntry(name, filepos);
 			}
-			if(header[156] != 0) {
+			if (header[156] != 0) {
 				entry.setFileType(header[156]);
 			}
-			
+
 			pos = 100;
 			StringBuffer mode = new StringBuffer();
-			for(i = 0; i < 8; i++) {
-				if(header[pos + i] == 0) {
+			for (i = 0; i < 8; i++) {
+				if (header[pos + i] == 0) {
 					break;
 				}
-				if(header[pos + i] == ' ') {
+				if (header[pos + i] == ' ') {
 					continue;
 				}
 				mode.append((char) header[pos + i]);
 			}
-			if(mode.length() > 0 && mode.charAt(0) != '0') {
+			if (mode.length() > 0 && mode.charAt(0) != '0') {
 				mode.insert(0, '0');
 			}
 			try {
 				long fileMode = Long.decode(mode.toString()).longValue();
 				entry.setMode(fileMode);
-			} catch(NumberFormatException nfe) {
+			} catch (NumberFormatException nfe) {
 				throw new TarException("Not a valid tar format", nfe); //$NON-NLS-1$
 			}
-			
+
 			pos = 100 + 24;
 			StringBuffer size = new StringBuffer();
-			for(i = 0; i < 12; i++) {
-				if(header[pos + i] == 0) {
+			for (i = 0; i < 12; i++) {
+				if (header[pos + i] == 0) {
 					break;
 				}
-				if(header[pos + i] == ' ') {
+				if (header[pos + i] == ' ') {
 					continue;
 				}
 				size.append((char) header[pos + i]);
 			}
-			if(size.charAt(0) != '0') {
+			if (size.charAt(0) != '0') {
 				size.insert(0, '0');
 			}
 			int fileSize;
 			try {
 				fileSize = Integer.decode(size.toString()).intValue();
-			} catch(NumberFormatException nfe) {
+			} catch (NumberFormatException nfe) {
 				throw new TarException("Not a valid tar format", nfe); //$NON-NLS-1$
 			}
 
 			entry.setSize(fileSize);
 			nextEOF = fileSize;
-			if(fileSize % 512 > 0) {
+			if (fileSize % 512 > 0) {
 				nextEntry = fileSize + (512 - (fileSize % 512));
 			} else {
 				nextEntry = fileSize;
@@ -281,8 +281,8 @@ public class TarFile {
 		}
 
 		/**
-		 * Moves ahead to the next file in the tar archive and returns
-		 * a TarEntry object describing it.
+		 * Moves ahead to the next file in the tar archive and returns a
+		 * TarEntry object describing it.
 		 * 
 		 * @return the next entry in the tar file
 		 * @throws TarException
@@ -291,18 +291,18 @@ public class TarFile {
 		public TarEntry getNextEntry() throws TarException, IOException {
 			TarEntry entry = getNextEntryInternal();
 
-			if(entry != null && entry.getName().equals("././@LongLink")) { //$NON-NLS-1$
+			if (entry != null && entry.getName().equals("././@LongLink")) { //$NON-NLS-1$
 				// This is a GNU extension for doing long filenames.
 				// We get a file called ././@LongLink which just contains
 				// the real pathname.
 				byte[] longNameData = new byte[(int) entry.getSize()];
-				int bytesread = 0;
-				while (bytesread < longNameData.length) {
-					int cur = read(longNameData, bytesread, longNameData.length - bytesread);
+				int lbytesread = 0;
+				while (lbytesread < longNameData.length) {
+					int cur = read(longNameData, lbytesread, longNameData.length - lbytesread);
 					if (cur < 0) {
 						throw new IOException("early end of stream"); //$NON-NLS-1$
 					}
-					bytesread += cur;
+					lbytesread += cur;
 				}
 
 				int pos = 0;
@@ -315,11 +315,13 @@ public class TarFile {
 			return entry;
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
 		 * @see java.io.FilterInputStream#read(byte[], int, int)
 		 */
+		@Override
 		public int read(byte[] b, int off, int len) throws IOException {
-			if(nextEOF == 0) {
+			if (nextEOF == 0) {
 				return -1;
 			}
 			int size = super.read(b, off, (len > nextEOF ? nextEOF : len));
@@ -329,9 +331,11 @@ public class TarFile {
 			return size;
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
 		 * @see java.io.FilterInputStream#read()
 		 */
+		@Override
 		public int read() throws IOException {
 			byte[] data = new byte[1];
 			int size = read(data, 0, 1);
@@ -341,13 +345,14 @@ public class TarFile {
 			return data[0];
 		}
 	}
+
 	private File file;
 	TarInputStream entryEnumerationStream;
 	TarEntry curEntry;
 	private TarInputStream entryStream;
 
 	private InputStream internalEntryStream;
-	
+
 	/**
 	 * Create a new TarFile for the given file.
 	 * 
@@ -362,9 +367,9 @@ public class TarFile {
 		// First, check if it's a GZIPInputStream.
 		try {
 			in = new GZIPInputStream(in);
-		} catch(IOException e) {
-			//If it is not compressed we close
-			//the old one and recreate
+		} catch (IOException e) {
+			// If it is not compressed we close
+			// the old one and recreate
 			in.close();
 			in = new FileInputStream(file);
 		}
@@ -376,17 +381,19 @@ public class TarFile {
 		}
 		curEntry = entryEnumerationStream.getNextEntry();
 	}
-	
+
 	/**
 	 * Close the tar file input stream.
 	 * 
 	 * @throws IOException if the file cannot be successfully closed
 	 */
 	public void close() throws IOException {
-		if (entryEnumerationStream != null)
+		if (entryEnumerationStream != null) {
 			entryEnumerationStream.close();
-		if (internalEntryStream != null)
+		}
+		if (internalEntryStream != null) {
 			internalEntryStream.close();
+		}
 	}
 
 	/**
@@ -405,19 +412,21 @@ public class TarFile {
 	 * 
 	 * @return enumeration of all files in the archive
 	 */
-	public Enumeration entries() {
-		return new Enumeration() {
+	public Enumeration<?> entries() {
+		return new Enumeration<Object>() {
+			@Override
 			public boolean hasMoreElements() {
 				return (curEntry != null);
 			}
-			
+
+			@Override
 			public Object nextElement() {
 				TarEntry oldEntry = curEntry;
 				try {
 					curEntry = entryEnumerationStream.getNextEntry();
-				} catch(TarException e) {
+				} catch (TarException e) {
 					curEntry = null;
-				} catch(IOException e) {
+				} catch (IOException e) {
 					curEntry = null;
 				}
 				return oldEntry;
@@ -434,7 +443,7 @@ public class TarFile {
 	 * @throws IOException
 	 */
 	public InputStream getInputStream(TarEntry entry) throws TarException, IOException {
-		if(entryStream == null || !entryStream.skipToEntry(entry)) {
+		if (entryStream == null || !entryStream.skipToEntry(entry)) {
 			if (internalEntryStream != null) {
 				internalEntryStream.close();
 			}
@@ -442,13 +451,14 @@ public class TarFile {
 			// First, check if it's a GZIPInputStream.
 			try {
 				internalEntryStream = new GZIPInputStream(internalEntryStream);
-			} catch(IOException e) {
-				//If it is not compressed we close
-				//the old one and recreate
+			} catch (IOException e) {
+				// If it is not compressed we close
+				// the old one and recreate
 				internalEntryStream.close();
 				internalEntryStream = new FileInputStream(file);
 			}
 			entryStream = new TarInputStream(internalEntryStream, entry) {
+				@Override
 				public void close() {
 					// Ignore close() since we want to reuse the stream.
 				}
@@ -466,10 +476,11 @@ public class TarFile {
 		return file.getPath();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see java.util.zip.ZipFile#finalize()
-	 * 
 	 */
+	@Override
 	protected void finalize() throws Throwable {
 		close();
 	}

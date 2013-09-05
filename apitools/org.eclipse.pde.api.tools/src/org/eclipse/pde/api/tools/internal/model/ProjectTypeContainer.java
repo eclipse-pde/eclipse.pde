@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@ package org.eclipse.pde.api.tools.internal.model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
@@ -31,51 +30,56 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
- * An {@link IApiTypeRoot} rooted at a project output container in the workspace.
+ * An {@link IApiTypeRoot} rooted at a project output container in the
+ * workspace.
  * 
  * @since 1.0.0
  */
 public class ProjectTypeContainer extends ApiElement implements IApiTypeContainer {
-	
+
 	/**
-	 * Proxy visitor for collecting package names, etc for our 
-	 * type containers
+	 * Proxy visitor for collecting package names, etc for our type containers
 	 * 
 	 * @since 1.1
 	 */
 	class ContainerVisitor implements IResourceProxyVisitor {
-		
-		List collector = null;
+
+		List<String> collector = null;
 		int segmentcount = 0;
-		
+
 		/**
 		 * Constructor
+		 * 
 		 * @param collector
 		 * @param root
 		 */
-		public ContainerVisitor(List collector, IContainer root) {
+		public ContainerVisitor(List<String> collector, IContainer root) {
 			this.collector = collector;
 			this.segmentcount = root.getFullPath().segmentCount();
 		}
-		
-		/* (non-Javadoc)
-		 * @see org.eclipse.core.resources.IResourceProxyVisitor#visit(org.eclipse.core.resources.IResourceProxy)
+
+		/*
+		 * (non-Javadoc)
+		 * @see
+		 * org.eclipse.core.resources.IResourceProxyVisitor#visit(org.eclipse
+		 * .core.resources.IResourceProxy)
 		 */
+		@Override
 		public boolean visit(IResourceProxy proxy) throws CoreException {
-			if(proxy.getType() == IResource.FOLDER) {
+			if (proxy.getType() == IResource.FOLDER) {
 				String path = proxy.requestFullPath().removeFirstSegments(this.segmentcount).toString();
 				return this.collector.add(path.replace(IPath.SEPARATOR, '.'));
 			}
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Root directory of the {@link IApiTypeContainer}
 	 */
 	private IContainer fRoot;
 	private String[] fPackageNames = null;
-	
+
 	/**
 	 * Constructs an {@link IApiTypeContainer} rooted at the location.
 	 * 
@@ -86,35 +90,39 @@ public class ProjectTypeContainer extends ApiElement implements IApiTypeContaine
 		super(parent, IApiElement.API_TYPE_CONTAINER, container.getName());
 		this.fRoot = container;
 	}
-	
+
 	/**
 	 * @see org.eclipse.pde.api.tools.internal.AbstractApiTypeContainer#accept(org.eclipse.pde.api.tools.internal.provisional.ApiTypeContainerVisitor)
 	 */
+	@Override
 	public void accept(ApiTypeContainerVisitor visitor) throws CoreException {
-		if(visitor.visit(this)) {
+		if (visitor.visit(this)) {
 			doVisit(fRoot, Util.DEFAULT_PACKAGE_NAME, visitor);
 		}
 		visitor.end(this);
 	}
-	
+
 	/**
 	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiTypeContainer#close()
 	 */
+	@Override
 	public void close() throws CoreException {
 		fPackageNames = null;
 	}
-	
+
 	/**
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		StringBuffer buff = new StringBuffer();
-		buff.append("Project Class File Container: "+getName()); //$NON-NLS-1$
+		buff.append("Project Class File Container: " + getName()); //$NON-NLS-1$
 		return buff.toString();
 	}
-	
+
 	/**
 	 * Visits the given {@link IContainer}
+	 * 
 	 * @param container
 	 * @param pkgName
 	 * @param visitor
@@ -122,35 +130,35 @@ public class ProjectTypeContainer extends ApiElement implements IApiTypeContaine
 	 */
 	private void doVisit(IContainer container, String pkgName, ApiTypeContainerVisitor visitor) throws CoreException {
 		IResource[] members = container.members();
-		List dirs = new ArrayList();
+		List<IContainer> dirs = new ArrayList<IContainer>();
 		boolean visitPkg = visitor.visitPackage(pkgName);
 		for (int i = 0; i < members.length; i++) {
 			IResource file = members[i];
 			switch (file.getType()) {
-			case IResource.FOLDER:
-				dirs.add(file);
-				break;
-			case IResource.FILE:
-				if (visitPkg && file.getName().endsWith(Util.DOT_CLASS_SUFFIX)) {
-					String name = file.getName();
-					String typeName = name.substring(0, name.length() - 6);
-					if (pkgName.length() > 0) {
-						StringBuffer buf = new StringBuffer(pkgName);
-						buf.append('.');
-						buf.append(typeName);
-						typeName = buf.toString();
+				case IResource.FOLDER:
+					dirs.add((IContainer) file);
+					break;
+				case IResource.FILE:
+					if (visitPkg && file.getName().endsWith(Util.DOT_CLASS_SUFFIX)) {
+						String name = file.getName();
+						String typeName = name.substring(0, name.length() - 6);
+						if (pkgName.length() > 0) {
+							StringBuffer buf = new StringBuffer(pkgName);
+							buf.append('.');
+							buf.append(typeName);
+							typeName = buf.toString();
+						}
+						ResourceApiTypeRoot cf = new ResourceApiTypeRoot(this, (IFile) file, typeName);
+						visitor.visit(pkgName, cf);
+						visitor.end(pkgName, cf);
 					}
-					ResourceApiTypeRoot cf = new ResourceApiTypeRoot(this, (IFile) file, typeName);
-					visitor.visit(pkgName, cf);
-					visitor.end(pkgName, cf);
-				}
-				break;
+					break;
+				default:
+					break;
 			}
 		}
 		visitor.endVisitPackage(pkgName);
-		Iterator iterator = dirs.iterator();
-		while (iterator.hasNext()) {
-			IContainer child = (IContainer)iterator.next();
+		for (IContainer child : dirs) {
 			String nextName = null;
 			if (pkgName.length() == 0) {
 				nextName = child.getName();
@@ -167,6 +175,7 @@ public class ProjectTypeContainer extends ApiElement implements IApiTypeContaine
 	/**
 	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiTypeContainer#findTypeRoot(java.lang.String)
 	 */
+	@Override
 	public IApiTypeRoot findTypeRoot(String qualifiedName) throws CoreException {
 		int index = qualifiedName.lastIndexOf('.');
 		String cfName = qualifiedName;
@@ -188,16 +197,17 @@ public class ProjectTypeContainer extends ApiElement implements IApiTypeContaine
 	/**
 	 * @see org.eclipse.pde.api.tools.internal.AbstractApiTypeContainer#getPackageNames()
 	 */
+	@Override
 	public String[] getPackageNames() throws CoreException {
-		if(fPackageNames == null) {
-			List names = new ArrayList();
+		if (fPackageNames == null) {
+			List<String> names = new ArrayList<String>();
 			collectPackageNames(names, Util.DEFAULT_PACKAGE_NAME, fRoot);
-			fPackageNames = (String[]) names.toArray(new String[names.size()]);
+			fPackageNames = names.toArray(new String[names.size()]);
 			Arrays.sort(fPackageNames);
 		}
 		return fPackageNames;
 	}
-	
+
 	/**
 	 * Traverses a directory to determine if it has {@link IApiTypeRoot}s and
 	 * then visits sub-directories.
@@ -205,20 +215,26 @@ public class ProjectTypeContainer extends ApiElement implements IApiTypeContaine
 	 * @param packageName package name of directory being visited
 	 * @param dir directory being visited
 	 */
-	private void collectPackageNames(List names, String packageName, IContainer dir) throws CoreException {
+	private void collectPackageNames(List<String> names, String packageName, IContainer dir) throws CoreException {
 		dir.accept(new ContainerVisitor(names, dir), IResource.NONE);
 	}
 
 	/**
-	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiTypeContainer#findTypeRoot(java.lang.String, java.lang.String)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiTypeContainer#findTypeRoot(java.lang.String,
+	 *      java.lang.String)
 	 */
+	@Override
 	public IApiTypeRoot findTypeRoot(String qualifiedName, String id) throws CoreException {
 		return findTypeRoot(qualifiedName);
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer#getContainerType()
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer
+	 * #getContainerType()
 	 */
+	@Override
 	public int getContainerType() {
 		return FOLDER;
 	}

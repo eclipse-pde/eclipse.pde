@@ -13,6 +13,7 @@ package org.eclipse.pde.api.tools.internal.provisional.builder;
 import java.util.Properties;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.pde.api.tools.internal.builder.ApiAnalysisBuilder;
 import org.eclipse.pde.api.tools.internal.builder.BuildState;
 import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
@@ -31,37 +32,46 @@ public interface IApiAnalyzer {
 
 	/**
 	 * Analyzes a given {@link IApiComponent} for API problems.
-	 * <p>The component is guaranteed to not be <code>null</code> and to be 
-	 * up-to-date in the API description it belongs to.</p>
-	 * <p>If the baseline is null, no analysis is done.</p>
-	 * <p>The given <code>preferences</code> are used when the platform is not running. When the platform is running,
-	 * the references are retrieved using the preference store.</p>
-	 *
+	 * <p>
+	 * The component is guaranteed to not be <code>null</code> and to be
+	 * up-to-date in the API description it belongs to.
+	 * </p>
+	 * <p>
+	 * If the baseline is null, no analysis is done.
+	 * </p>
+	 * <p>
+	 * The given <code>preferences</code> are used when the platform is not
+	 * running. When the platform is running, the references are retrieved using
+	 * the preference store.
+	 * </p>
+	 * 
 	 * @param buildState the given build state or null if none
 	 * @param filterStore the given filter store or null if none
 	 * @param preferences the given preferences to be used for the analysis
 	 * @param baseline the baseline context to check the component against
 	 * @param component the component to analyze
-	 * @param context the build context reported from the {@link ApiAnalysisBuilder}
+	 * @param context the build context reported from the
+	 *            {@link ApiAnalysisBuilder}
 	 * @param monitor to report progress
 	 * @see PluginProjectApiComponent
 	 * @see BundleApiComponent
 	 */
 	public void analyzeComponent(final BuildState buildState, final IApiFilterStore filterStore, final Properties preferences, final IApiBaseline baseline, final IApiComponent component, final IBuildContext context, IProgressMonitor monitor);
-	
+
 	/**
-	 * Returns the complete set of {@link IApiProblem}s found by this analyzer, or an empty
-	 * array. This method must never return <code>null</code>
+	 * Returns the complete set of {@link IApiProblem}s found by this analyzer,
+	 * or an empty array. This method must never return <code>null</code>
 	 * 
-	 * @return the complete set of problems found by this analyzer or an empty array.
+	 * @return the complete set of problems found by this analyzer or an empty
+	 *         array.
 	 */
 	public IApiProblem[] getProblems();
-	
+
 	/**
-	 * Cleans up and disposes this analyzer, freeing all held memory.
-	 * Once the analyzer has been disposed it cannot be used again without 
-	 * specifying a new reporter to use.
+	 * Cleans up and disposes this analyzer, freeing all held memory. Once the
+	 * analyzer has been disposed it cannot be used again without specifying a
+	 * new reporter to use.
 	 */
 	public void dispose();
-	
+
 }

@@ -38,15 +38,15 @@ import org.eclipse.pde.api.tools.tests.ApiTestsPlugin;
  */
 public class BundleVersionTests extends ApiBuilderTest {
 
-	private static final String API_BASELINE = "API-baseline";
+	private static final String API_BASELINE = "API-baseline"; //$NON-NLS-1$
 	/**
 	 * Workspace relative path
 	 */
-	protected static String WORKSPACE_ROOT = "bundleversions";
+	protected static String WORKSPACE_ROOT = "bundleversions"; //$NON-NLS-1$
 
-	public static final String WORKSPACE_PROFILE = "after";
+	public static final String WORKSPACE_PROFILE = "after"; //$NON-NLS-1$
 	
-	public static final String BASELINE = "before";
+	public static final String BASELINE = "before"; //$NON-NLS-1$
 
 	IApiBaseline baseline;
 
@@ -61,6 +61,7 @@ public class BundleVersionTests extends ApiBuilderTest {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#setBuilderOptions()
 	 */
+	@Override
 	protected void setBuilderOptions() {
 		enableUnsupportedTagOptions(false);
 		enableBaselineOptions(true);
@@ -106,7 +107,7 @@ public class BundleVersionTests extends ApiBuilderTest {
 	 */
 	@Override
 	protected IPath getTestSourcePath() {
-		return new Path("");
+		return new Path(""); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -114,7 +115,7 @@ public class BundleVersionTests extends ApiBuilderTest {
 	 */
 	@Override
 	protected String getTestingProjectName() {
-		return "bundleversions";
+		return "bundleversions"; //$NON-NLS-1$
 	}
 	@Override
 	protected void tearDown() throws Exception {
@@ -135,7 +136,7 @@ public class BundleVersionTests extends ApiBuilderTest {
 		cleanBuild();
 		fullBuild();
 		expectingNoJDTProblems();
-		IPath manifestPath = new Path("deltatest").append("META-INF").append("MANIFEST.MF");
+		IPath manifestPath = new Path("deltatest").append("META-INF").append("MANIFEST.MF"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		ApiProblem[] problems = getEnv().getProblemsFor(manifestPath, null);
 		assertProblems(problems);
 	}
@@ -161,7 +162,7 @@ public class BundleVersionTests extends ApiBuilderTest {
 		for (int i = 0; i < length; i++) {
 			IProject currentProject = projects[i];
 			IApiComponent apiComponent = manager.getWorkspaceComponent(currentProject.getName());
-			assertNotNull("The project was not found in the workspace baseline: "+currentProject.getName(), apiComponent);
+			assertNotNull("The project was not found in the workspace baseline: "+currentProject.getName(), apiComponent); //$NON-NLS-1$
 			exportApiComponent(currentProject, apiComponent, baselineLocation);
 		}
 		this.baseline = ApiModelFactory.newApiBaseline(API_BASELINE);
@@ -191,7 +192,7 @@ public class BundleVersionTests extends ApiBuilderTest {
 	 */
 	public void test001() throws Exception {
 		// setup the environment
-		setupTest("test1");
+		setupTest("test1"); //$NON-NLS-1$
 		// expecting no problems
 		performBundleVersion();
 	}
@@ -202,7 +203,7 @@ public class BundleVersionTests extends ApiBuilderTest {
 	 */
 	public void test002() throws Exception {
 		// setup the environment
-		setupTest("test2");
+		setupTest("test2"); //$NON-NLS-1$
 		// expecting no problems
 		int[] ids = new int[] {
 				ApiProblemFactory.createProblemId(
@@ -213,7 +214,7 @@ public class BundleVersionTests extends ApiBuilderTest {
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{"1.0.0", "exportedbundle" };
+		args[0] = new String[]{"1.0.0", "exportedbundle" }; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performBundleVersion();
 	}
@@ -224,7 +225,7 @@ public class BundleVersionTests extends ApiBuilderTest {
 	 */
 	public void test003() throws Exception {
 		// setup the environment
-		setupTest("test3");
+		setupTest("test3"); //$NON-NLS-1$
 		// expecting no problems
 		int[] ids = new int[] {
 				ApiProblemFactory.createProblemId(
@@ -235,7 +236,7 @@ public class BundleVersionTests extends ApiBuilderTest {
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{"1.0.0", "exportedbundle" };
+		args[0] = new String[]{"1.0.0", "exportedbundle" }; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performBundleVersion();
 	}
@@ -246,7 +247,7 @@ public class BundleVersionTests extends ApiBuilderTest {
 	 */
 	public void test004() throws Exception {
 		// setup the environment
-		setupTest("test4");
+		setupTest("test4"); //$NON-NLS-1$
 		// expecting no problems
 		int[] ids = new int[] {
 				ApiProblemFactory.createProblemId(
@@ -257,7 +258,7 @@ public class BundleVersionTests extends ApiBuilderTest {
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{"1.0.0", "exportedbundle" };
+		args[0] = new String[]{"1.0.0", "exportedbundle" }; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performBundleVersion();
 	}
@@ -268,7 +269,7 @@ public class BundleVersionTests extends ApiBuilderTest {
 	 */
 	public void test005() throws Exception {
 		// setup the environment
-		setupTest("test5");
+		setupTest("test5"); //$NON-NLS-1$
 		// expecting no problems
 		int[] ids = new int[] {
 				ApiProblemFactory.createProblemId(
@@ -279,7 +280,7 @@ public class BundleVersionTests extends ApiBuilderTest {
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{"1.0.0", "exportedbundle" };
+		args[0] = new String[]{"1.0.0", "exportedbundle" }; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performBundleVersion();
 	}

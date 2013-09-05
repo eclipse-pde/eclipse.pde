@@ -86,75 +86,75 @@ import org.xml.sax.SAXException;
  * @since 1.0.0
  */
 public class BundleComponent extends Component {
-	
+
 	static final String TMP_API_FILE_PREFIX = "api"; //$NON-NLS-1$
 	static final String TMP_API_FILE_POSTFIX = "tmp"; //$NON-NLS-1$
-	
+
 	/**
 	 * Dictionary parsed from MANIFEST.MF
 	 */
-	private Map fManifest;
-	
+	private Map<String, String> fManifest;
+
 	/**
-	 * Manifest headers that are maintained after {@link BundleDescription} creation.
-	 * Only these headers are maintained in the manifest dictionary to reduce footprint.  
+	 * Manifest headers that are maintained after {@link BundleDescription}
+	 * creation. Only these headers are maintained in the manifest dictionary to
+	 * reduce footprint.
 	 */
 	private static final String[] MANIFEST_HEADERS = new String[] {
-		IApiCoreConstants.ECLIPSE_SOURCE_BUNDLE,
-		Constants.BUNDLE_CLASSPATH,
-		Constants.BUNDLE_NAME,
-		Constants.BUNDLE_VERSION
-	};
-	
+			IApiCoreConstants.ECLIPSE_SOURCE_BUNDLE,
+			Constants.BUNDLE_CLASSPATH, Constants.BUNDLE_NAME,
+			Constants.BUNDLE_VERSION };
+
 	/**
 	 * Whether there is an underlying .api_description file
 	 */
 	private boolean fHasApiDescription = false;
-	
+
 	/**
 	 * Root location of component in the file system
 	 */
 	private String fLocation;
-	
+
 	/**
 	 * Underlying bundle description (OSGi model of a bundle)
 	 */
 	private BundleDescription fBundleDescription;
-	
+
 	/**
 	 * Symbolic name of this bundle
 	 */
 	private String fSymbolicName = null;
-	
+
 	/**
 	 * Bundle version
 	 */
 	private Version fVersion = null;
-	
+
 	/**
 	 * Cached value for the lowest EEs
 	 */
 	private String[] lowestEEs;
-	
+
 	/**
-	 * Flag to know if this component is a binary bundle in the workspace
-	 * i.e. an imported binary bundle
+	 * Flag to know if this component is a binary bundle in the workspace i.e.
+	 * an imported binary bundle
 	 */
 	private boolean fWorkspaceBinary = false;
-	
+
 	/**
 	 * The id of this component
 	 */
 	private long fBundleId = 0L;
 
 	/**
-	 * Constructs a new API component from the specified location in the file system
-	 * in the given baseline.
+	 * Constructs a new API component from the specified location in the file
+	 * system in the given baseline.
 	 * 
 	 * @param baseline owning API baseline
 	 * @param location directory or jar file
 	 * @param bundleid
-	 * @exception CoreException if unable to create a component from the specified location
+	 * @exception CoreException if unable to create a component from the
+	 *                specified location
 	 */
 	public BundleComponent(IApiBaseline baseline, String location, long bundleid) throws CoreException {
 		super(baseline);
@@ -162,46 +162,54 @@ public class BundleComponent extends Component {
 		fBundleId = bundleid;
 		fWorkspaceBinary = isBinary() && ApiBaselineManager.WORKSPACE_API_BASELINE_ID.equals(baseline.getName());
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.descriptors.AbstractApiComponent#dispose()
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.descriptors.AbstractApiComponent#dispose
+	 * ()
 	 */
+	@Override
 	public void dispose() {
 		try {
 			super.dispose();
 		} finally {
-			synchronized(this) {
+			synchronized (this) {
 				fManifest = null;
 				fBundleDescription = null;
 			}
 		}
 	}
-	
+
 	/**
-	 * Returns this bundle's manifest as a dictionary or <code>null</code> if
-	 * no manifest was found.
+	 * Returns this bundle's manifest as a dictionary or <code>null</code> if no
+	 * manifest was found.
 	 * 
 	 * @return manifest dictionary or <code>null</code>
 	 * @exception CoreException if something goes terribly wrong
 	 */
-	protected synchronized Map getManifest() throws CoreException {
-		if(fManifest == null) {
+	protected synchronized Map<String, String> getManifest() throws CoreException {
+		if (fManifest == null) {
 			try {
 				fManifest = ManifestUtils.loadManifest(new File(fLocation));
-			} catch (CoreException e){
-				if (e.getStatus().getCode() == ManifestUtils.STATUS_CODE_PLUGIN_CONVERTER_UNAVAILABLE){
-					// If we encounter an old style bundle, but can't convert because the service is unavailable, inform the user, but don't quit
+			} catch (CoreException e) {
+				if (e.getStatus().getCode() == ManifestUtils.STATUS_CODE_PLUGIN_CONVERTER_UNAVAILABLE) {
+					// If we encounter an old style bundle, but can't convert
+					// because the service is unavailable, inform the user, but
+					// don't quit
 					System.err.println(e.getMessage());
 					return null;
-				} else if (e.getStatus().getCode() == ManifestUtils.STATUS_CODE_NOT_A_BUNDLE_MANIFEST){
-					// If we load a component with a manifest file that isn't a bundle, ignore it
+				} else if (e.getStatus().getCode() == ManifestUtils.STATUS_CODE_NOT_A_BUNDLE_MANIFEST) {
+					// If we load a component with a manifest file that isn't a
+					// bundle, ignore it
 					return null;
 				} else {
 					throw e;
 				}
 			}
 			if (isWorkspaceBinary()) {
-				// must account for bundles in development mode - look for class files in output
+				// must account for bundles in development mode - look for class
+				// files in output
 				// folders rather than jars
 				TargetWeaver.weaveManifest(fManifest);
 			}
@@ -210,180 +218,191 @@ public class BundleComponent extends Component {
 	}
 
 	/**
-	 * Reduce the manifest to only contain required headers after {@link BundleDescription} creation.
+	 * Reduce the manifest to only contain required headers after
+	 * {@link BundleDescription} creation.
 	 */
 	protected synchronized void doManifestCompaction() {
-		Map temp = fManifest;
-		fManifest = new Hashtable(MANIFEST_HEADERS.length, 1);
+		Map<String, String> temp = fManifest;
+		fManifest = new Hashtable<String, String>(MANIFEST_HEADERS.length, 1);
 		for (int i = 0; i < MANIFEST_HEADERS.length; i++) {
 			String header = MANIFEST_HEADERS[i];
-			Object value = temp.get(header);
+			String value = temp.get(header);
 			if (value != null) {
 				fManifest.put(header, value);
 			}
 		}
 	}
-	
+
 	/**
 	 * Returns if the bundle at the specified location is a valid bundle or not.
 	 * Validity is determined via the existence of a readable manifest file
+	 * 
 	 * @param location
 	 * @return true if the bundle at the given location is valid false otherwise
 	 * @throws IOException
 	 */
 	public boolean isValidBundle() throws CoreException {
-		Map manifest = getManifest();
+		Map<String, String> manifest = getManifest();
 		return manifest != null && (manifest.get(Constants.BUNDLE_NAME) != null && manifest.get(Constants.BUNDLE_VERSION) != null);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object obj) {
-		if(obj instanceof BundleComponent) {
+		if (obj instanceof BundleComponent) {
 			BundleComponent comp = (BundleComponent) obj;
-			return getName().equals(comp.getName()) && 
-					getSymbolicName().equals(comp.getSymbolicName()) &&
-					getVersion().equals(comp.getVersion());
+			return getName().equals(comp.getName()) && getSymbolicName().equals(comp.getSymbolicName()) && getVersion().equals(comp.getVersion());
 		}
 		return false;
 	}
-	
+
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		return getName().hashCode() + getSymbolicName().hashCode() + getVersion().hashCode();
+	}
+
 	/**
 	 * Initializes the component
+	 * 
 	 * @throws CoreException on failure
 	 */
 	protected synchronized void init() {
-		if(fBundleDescription != null) {
+		if (fBundleDescription != null) {
 			return;
 		}
 		try {
-			Map manifest = getManifest();
-			if (manifest == null){
-				ApiPlugin.log(new Status(
-						IStatus.ERROR, 
-						ApiPlugin.PLUGIN_ID, 
-						"Unable to find a manifest for the component from: " + fLocation,  //$NON-NLS-1$
-						null));
+			Map<String, String> manifest = getManifest();
+			if (manifest == null) {
+				ApiPlugin.log(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, "Unable to find a manifest for the component from: " + fLocation, //$NON-NLS-1$
+				null));
 				return;
 			}
 			fBundleDescription = getBundleDescription(manifest, fLocation, fBundleId);
 			fSymbolicName = fBundleDescription.getSymbolicName();
 			fVersion = fBundleDescription.getVersion();
-			setName((String)manifest.get(Constants.BUNDLE_NAME));
+			setName(manifest.get(Constants.BUNDLE_NAME));
 		} catch (BundleException e) {
-			ApiPlugin.log(new Status(
-					IStatus.ERROR, 
-					ApiPlugin.PLUGIN_ID, 
-					"Unable to create API component from specified location: " + fLocation,  //$NON-NLS-1$
-					e));
-		}
-		catch (CoreException ce) {
+			ApiPlugin.log(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, "Unable to create API component from specified location: " + fLocation, //$NON-NLS-1$
+			e));
+		} catch (CoreException ce) {
 			ApiPlugin.log(ce);
 		}
 		// compact manifest after initialization - only keep used headers
 		doManifestCompaction();
 	}
-	
+
 	/**
-	 * Returns if this component is a a binary bundle in the workspace
-	 * i.e. an imported binary bundle
-	 * @return true if the component is a binary bundle in the workspace, false otherwise
+	 * Returns if this component is a a binary bundle in the workspace i.e. an
+	 * imported binary bundle
+	 * 
+	 * @return true if the component is a binary bundle in the workspace, false
+	 *         otherwise
 	 */
 	public boolean isWorkspaceBinary() {
 		return fWorkspaceBinary;
 	}
-	
+
 	/**
 	 * Returns the {@link State} from the backing baseline
+	 * 
 	 * @return the state from the backing {@link ApiBaseline}
 	 */
 	protected State getState() {
-		return ((ApiBaseline)getBaseline()).getState();
+		return ((ApiBaseline) getBaseline()).getState();
 	}
-	
+
 	/**
-	 * Returns the {@link BundleDescription} for the given manifest + state or throws an exception, never
-	 * returns <code>null</code>
+	 * Returns the {@link BundleDescription} for the given manifest + state or
+	 * throws an exception, never returns <code>null</code>
+	 * 
 	 * @param manifest
 	 * @param location
 	 * @param id
 	 * @return the {@link BundleDescription} or throws an exception
 	 * @throws BundleException
 	 */
-	protected BundleDescription getBundleDescription(Map manifest, String location, long id) throws BundleException {
+	protected BundleDescription getBundleDescription(Map<String, String> manifest, String location, long id) throws BundleException {
 		State state = getState();
 		BundleDescription bundle = lookupBundle(state, manifest);
-		if(bundle != null) {
+		if (bundle != null) {
 			return bundle;
 		}
 		StateObjectFactory factory = StateObjectFactory.defaultFactory;
-		Hashtable dictionaryManifest = new Hashtable(manifest);
+		Hashtable<String, String> dictionaryManifest = new Hashtable<String, String>(manifest);
 		bundle = factory.createBundleDescription(state, dictionaryManifest, fLocation, id);
 		state.addBundle(bundle);
 		return bundle;
 	}
-	
+
 	/**
-	 * Tries to look up the bundle described by the given manifest in the given state
+	 * Tries to look up the bundle described by the given manifest in the given
+	 * state
+	 * 
 	 * @param manifest
 	 * @return the bundle for the given manifest, <code>null</code> otherwise
 	 * @throws BundleException
 	 */
-	protected BundleDescription lookupBundle(State state, Map manifest) throws BundleException {
+	protected BundleDescription lookupBundle(State state, Map<String, String> manifest) throws BundleException {
 		Version version = null;
 		try {
-			//just in case the version is not a number
-			String ver = (String)manifest.get(Constants.BUNDLE_VERSION);
+			// just in case the version is not a number
+			String ver = manifest.get(Constants.BUNDLE_VERSION);
 			version = ver != null ? new Version(ver) : null;
-		}
-		catch (NumberFormatException nfe) {
+		} catch (NumberFormatException nfe) {
 			// ignore
 		}
-		ManifestElement[] name = ManifestElement.parseHeader(Constants.BUNDLE_SYMBOLICNAME, (String)manifest.get(Constants.BUNDLE_SYMBOLICNAME));
-		if(name.length < 1) {
+		ManifestElement[] name = ManifestElement.parseHeader(Constants.BUNDLE_SYMBOLICNAME, manifest.get(Constants.BUNDLE_SYMBOLICNAME));
+		if (name.length < 1) {
 			return null;
 		}
 		return state.getBundle(name[0].getValue(), version);
 	}
-	
+
 	/**
-	 * Returns whether this API component represents a binary bundle versus a project bundle.
+	 * Returns whether this API component represents a binary bundle versus a
+	 * project bundle.
 	 * 
 	 * @return whether this API component represents a binary bundle
 	 */
 	protected boolean isBinary() {
 		return true;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.AbstractApiComponent#createApiDescription()
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.AbstractApiComponent#createApiDescription
+	 * ()
 	 */
+	@Override
 	protected IApiDescription createApiDescription() throws CoreException {
 		BundleDescription[] fragments = getBundleDescription().getFragments();
 		if (fragments.length == 0) {
 			return createLocalApiDescription();
 		}
 		// build a composite description
-		ArrayList descriptions = new ArrayList(fragments.length);
+		ArrayList<IApiDescription> descriptions = new ArrayList<IApiDescription>(fragments.length);
 		descriptions.add(createLocalApiDescription());
 		IApiComponent component = null;
 		for (int i = 0; i < fragments.length; i++) {
-			if(!fragments[i].isResolved()) {
+			if (!fragments[i].isResolved()) {
 				continue;
 			}
 			component = getBaseline().getApiComponent(fragments[i].getSymbolicName());
-			if(component != null) {
+			if (component != null) {
 				descriptions.add(component.getApiDescription());
-			}
-			else {
-				ApiPlugin.log(new Status(
-						IStatus.WARNING, 
-						ApiPlugin.PLUGIN_ID,
-						NLS.bind(Messages.BundleComponent_failed_to_lookup_fragment, fragments[i].getSymbolicName())));
+			} else {
+				ApiPlugin.log(new Status(IStatus.WARNING, ApiPlugin.PLUGIN_ID, NLS.bind(Messages.BundleComponent_failed_to_lookup_fragment, fragments[i].getSymbolicName())));
 			}
 		}
-		return new CompositeApiDescription((IApiDescription[]) descriptions.toArray(new IApiDescription[descriptions.size()]));
+		return new CompositeApiDescription(descriptions.toArray(new IApiDescription[descriptions.size()]));
 	}
 
 	/**
@@ -391,7 +410,7 @@ public class BundleComponent extends Component {
 	 * supplied by this component, exported packages, and associated directives.
 	 * 
 	 * @return API description
-	 * @throws CoreException if unable to initialize 
+	 * @throws CoreException if unable to initialize
 	 */
 	protected IApiDescription createLocalApiDescription() throws CoreException {
 		IApiDescription apiDesc = new ApiDescription(getSymbolicName());
@@ -408,16 +427,16 @@ public class BundleComponent extends Component {
 		}
 		return apiDesc;
 	}
-	
+
 	/**
-	 * Returns the names of all packages that originate from this bundle.
-	 * Does not include packages that originate from fragments or a host.
+	 * Returns the names of all packages that originate from this bundle. Does
+	 * not include packages that originate from fragments or a host.
 	 * 
 	 * @return local package names
 	 * @throws CoreException
 	 */
-	protected Set getLocalPackageNames() throws CoreException {
-		Set names = new HashSet();
+	protected Set<String> getLocalPackageNames() throws CoreException {
+		Set<String> names = new HashSet<String>();
 		IApiTypeContainer[] containers = getApiTypeContainers();
 		IApiComponent comp = null;
 		for (int i = 0; i < containers.length; i++) {
@@ -430,32 +449,29 @@ public class BundleComponent extends Component {
 			}
 		}
 		return names;
-	}	
-	
+	}
 
 	/**
-	 * Initializes the given API description based on package exports in the manifest.
-	 * The API description for a bundle only contains packages that originate from
-	 * this bundle (so a host will not contain API descriptions for packages that
-	 * originate from fragments). However, a host's API description will be represented
-	 * by a proxy that delegates to the host and all of its fragments to provide
-	 * a complete description of the host.
+	 * Initializes the given API description based on package exports in the
+	 * manifest. The API description for a bundle only contains packages that
+	 * originate from this bundle (so a host will not contain API descriptions
+	 * for packages that originate from fragments). However, a host's API
+	 * description will be represented by a proxy that delegates to the host and
+	 * all of its fragments to provide a complete description of the host.
 	 * 
 	 * @param apiDesc API description to initialize
 	 * @param bundle the bundle to load from
-	 * @param packages the complete set of packages names originating from the backing
-	 * 		component
+	 * @param packages the complete set of packages names originating from the
+	 *            backing component
 	 * @throws CoreException if an error occurs
 	 */
-	public static void initializeApiDescription(IApiDescription apiDesc, BundleDescription bundle, Set packages) throws CoreException {
-		Iterator iterator = packages.iterator();
-		while (iterator.hasNext()) {
-			String name = (String) iterator.next();
+	public static void initializeApiDescription(IApiDescription apiDesc, BundleDescription bundle, Set<String> packages) throws CoreException {
+		for (String name : packages) {
 			apiDesc.setVisibility(Factory.packageDescriptor(name), VisibilityModifiers.PRIVATE);
 		}
 		// then process exported packages that originate from this bundle
 		// considering host and fragment package exports
-		List supplied = new ArrayList();
+		List<ExportPackageDescription> supplied = new ArrayList<ExportPackageDescription>();
 		ExportPackageDescription[] exportPackages = bundle.getExportPackages();
 		addSuppliedPackages(packages, supplied, exportPackages);
 		HostSpecification host = bundle.getHost();
@@ -467,24 +483,24 @@ public class BundleComponent extends Component {
 		}
 		BundleDescription[] fragments = bundle.getFragments();
 		for (int i = 0; i < fragments.length; i++) {
-			if(!fragments[i].isResolved()) {
+			if (!fragments[i].isResolved()) {
 				continue;
 			}
 			addSuppliedPackages(packages, supplied, fragments[i].getExportPackages());
 		}
-		
-		annotateExportedPackages(apiDesc, (ExportPackageDescription[]) supplied.toArray(new ExportPackageDescription[supplied.size()]));
+
+		annotateExportedPackages(apiDesc, supplied.toArray(new ExportPackageDescription[supplied.size()]));
 	}
 
 	/**
-	 * Adds package exports to the given list if the associated package originates
-	 * from this bundle.
-	 *   
+	 * Adds package exports to the given list if the associated package
+	 * originates from this bundle.
+	 * 
 	 * @param packages names of packages supplied by this bundle
 	 * @param supplied list to append package exports to
 	 * @param exportPackages package exports to consider
 	 */
-	protected static void addSuppliedPackages(Set packages, List supplied, ExportPackageDescription[] exportPackages) {
+	protected static void addSuppliedPackages(Set<String> packages, List<ExportPackageDescription> supplied, ExportPackageDescription[] exportPackages) {
 		for (int i = 0; i < exportPackages.length; i++) {
 			ExportPackageDescription pkg = exportPackages[i];
 			String name = pkg.getName();
@@ -497,7 +513,7 @@ public class BundleComponent extends Component {
 			}
 		}
 	}
-	
+
 	/**
 	 * Annotates the API description with exported packages.
 	 * 
@@ -505,7 +521,7 @@ public class BundleComponent extends Component {
 	 * @param exportedPackages packages that are exported
 	 */
 	protected static void annotateExportedPackages(IApiDescription apiDesc, ExportPackageDescription[] exportedPackages) {
-		for(int i = 0; i < exportedPackages.length; i++) {
+		for (int i = 0; i < exportedPackages.length; i++) {
 			ExportPackageDescription pkg = exportedPackages[i];
 			boolean internal = ((Boolean) pkg.getDirective("x-internal")).booleanValue(); //$NON-NLS-1$
 			String[] friends = (String[]) pkg.getDirective("x-friends"); //$NON-NLS-1$
@@ -515,74 +531,79 @@ public class BundleComponent extends Component {
 				pkgName = ""; //$NON-NLS-1$
 			}
 			IPackageDescriptor pkgDesc = Factory.packageDescriptor(pkgName);
-			if(internal) {
+			if (internal) {
 				apiDesc.setVisibility(pkgDesc, VisibilityModifiers.PRIVATE);
 			}
 			if (friends != null) {
 				apiDesc.setVisibility(pkgDesc, VisibilityModifiers.PRIVATE);
-				for(int j = 0; j < friends.length; j++) {
-					//annotate the api description for x-friends access levels
-					apiDesc.setAccessLevel(
-							Factory.componentDescriptor(friends[j]), 
-							Factory.packageDescriptor(pkgName), 
-							IApiAccess.FRIEND);
+				for (int j = 0; j < friends.length; j++) {
+					// annotate the api description for x-friends access levels
+					apiDesc.setAccessLevel(Factory.componentDescriptor(friends[j]), Factory.packageDescriptor(pkgName), IApiAccess.FRIEND);
 				}
 			}
 			if (!internal && friends == null) {
-				//there could have been directives that have nothing to do with
-				//visibility, so we need to add the package as API in that case
+				// there could have been directives that have nothing to do with
+				// visibility, so we need to add the package as API in that case
 				apiDesc.setVisibility(pkgDesc, VisibilityModifiers.API);
 			}
 		}
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.AbstractApiComponent#createApiFilterStore()
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.AbstractApiComponent#createApiFilterStore
+	 * ()
 	 */
+	@Override
 	protected IApiFilterStore createApiFilterStore() throws CoreException {
 		return new FilterStore(this);
 	}
-	
+
 	/**
 	 * @see org.eclipse.pde.api.tools.internal.AbstractApiTypeContainer#createApiTypeContainers()
 	 */
-	protected synchronized List createApiTypeContainers() throws CoreException {
-		List containers = new ArrayList(5);
+	@Override
+	protected synchronized List<IApiTypeContainer> createApiTypeContainers() throws CoreException {
+		List<IApiTypeContainer> containers = new ArrayList<IApiTypeContainer>(5);
 		try {
-			List all = new ArrayList();
+			List<IApiComponent> all = new ArrayList<IApiComponent>();
 			// build the classpath from bundle and all fragments
 			all.add(this);
 			boolean considerFragments = true;
 			if (Util.ORG_ECLIPSE_SWT.equals(getSymbolicName())) {
-				// if SWT is a project to be built/analyzed don't consider its fragments
+				// if SWT is a project to be built/analyzed don't consider its
+				// fragments
 				considerFragments = !isApiEnabled();
 			}
-			if (considerFragments) { 
+			if (considerFragments) {
 				BundleDescription[] fragments = getBundleDescription().getFragments();
 				IApiComponent component = null;
 				for (int i = 0; i < fragments.length; i++) {
-					if(!fragments[i].isResolved()) {
+					if (!fragments[i].isResolved()) {
 						continue;
 					}
 					component = getBaseline().getApiComponent(fragments[i].getSymbolicName());
 					if (component != null) {
-						// force initialization of the fragment so we can retrieve its class file containers
+						// force initialization of the fragment so we can
+						// retrieve its class file containers
 						component.getApiTypeContainers();
 						all.add(component);
 					}
 				}
 			}
-			Iterator iterator = all.iterator();
-			Set entryNames = new HashSet(5);
+			Iterator<IApiComponent> iterator = all.iterator();
+			Set<String> entryNames = new HashSet<String>(5);
 			BundleComponent other = null;
 			while (iterator.hasNext()) {
 				BundleComponent component = (BundleComponent) iterator.next();
-				Map manifest = component.getManifest();
-				if (manifest != null){
+				Map<String, String> manifest = component.getManifest();
+				if (manifest != null) {
 					String[] paths = getClasspathEntries(manifest);
 					for (int i = 0; i < paths.length; i++) {
 						String path = paths[i];
-						// don't re-process the same entry twice (except default entries ".")
+						// don't re-process the same entry twice (except default
+						// entries ".")
 						if (!(".".equals(path))) { //$NON-NLS-1$
 							if (entryNames.contains(path)) {
 								continue;
@@ -590,7 +611,7 @@ public class BundleComponent extends Component {
 						}
 						IApiTypeContainer container = component.createApiTypeContainer(path);
 						if (container == null) {
-							for(Iterator iter = all.iterator(); iter.hasNext();) {
+							for (Iterator<IApiComponent> iter = all.iterator(); iter.hasNext();) {
 								other = (BundleComponent) iter.next();
 								if (other != component) {
 									container = other.createApiTypeContainer(path);
@@ -613,16 +634,18 @@ public class BundleComponent extends Component {
 		}
 		return containers;
 	}
-	
+
 	/**
-	 * Returns whether this API component is enabled for API analysis by the API builder.
+	 * Returns whether this API component is enabled for API analysis by the API
+	 * builder.
 	 * 
-	 * @return whether this API component is enabled for API analysis by the API builder.
+	 * @return whether this API component is enabled for API analysis by the API
+	 *         builder.
 	 */
 	protected boolean isApiEnabled() {
 		return false;
 	}
-	
+
 	/**
 	 * Returns classpath entries defined in the given manifest.
 	 * 
@@ -630,12 +653,12 @@ public class BundleComponent extends Component {
 	 * @return classpath entries as bundle relative paths
 	 * @throws BundleException
 	 */
-	protected String[] getClasspathEntries(Map manifest) throws BundleException {
-		ManifestElement[] classpath = ManifestElement.parseHeader(Constants.BUNDLE_CLASSPATH, (String) manifest.get(Constants.BUNDLE_CLASSPATH));
+	protected String[] getClasspathEntries(Map<String, String> manifest) throws BundleException {
+		ManifestElement[] classpath = ManifestElement.parseHeader(Constants.BUNDLE_CLASSPATH, manifest.get(Constants.BUNDLE_CLASSPATH));
 		String elements[] = null;
 		if (classpath == null) {
 			// default classpath is '.'
-			elements = new String[]{"."}; //$NON-NLS-1$
+			elements = new String[] { "." }; //$NON-NLS-1$
 		} else {
 			elements = new String[classpath.length];
 			for (int i = 0; i < classpath.length; i++) {
@@ -644,16 +667,18 @@ public class BundleComponent extends Component {
 		}
 		return elements;
 	}
-	
+
 	/**
 	 * Creates and returns an {@link IApiTypeContainer} at the specified path in
-	 * this bundle, or <code>null</code> if the {@link IApiTypeContainer} does not
-	 * exist. The path is the name (path) of entries specified by the
+	 * this bundle, or <code>null</code> if the {@link IApiTypeContainer} does
+	 * not exist. The path is the name (path) of entries specified by the
 	 * <code>Bundle-ClassPath:</code> header.
 	 * 
 	 * @param path relative path to a class file container in this bundle
 	 * @return {@link IApiTypeContainer} or <code>null</code>
-	 * @exception IOException
+	 * @throws IOException
+	 * @throws CoreException if something goes wrong while creating the
+	 *             container
 	 */
 	protected IApiTypeContainer createApiTypeContainer(String path) throws IOException, CoreException {
 		File bundle = new File(fLocation);
@@ -674,34 +699,33 @@ public class BundleComponent extends Component {
 				if (path.equals(".")) { //$NON-NLS-1$
 					return new ArchiveApiTypeContainer(this, fLocation);
 				} else {
-					//classpath element can be jar or folder
-					//https://bugs.eclipse.org/bugs/show_bug.cgi?id=279729
+					// classpath element can be jar or folder
+					// https://bugs.eclipse.org/bugs/show_bug.cgi?id=279729
 					zip = new ZipFile(fLocation);
 					ZipEntry entry = zip.getEntry(path);
 					if (entry != null) {
 						File tmpfolder = new File(System.getProperty("java.io.tmpdir")); //$NON-NLS-1$
-						if(entry.isDirectory()) {
-							//extract the dir and all children
+						if (entry.isDirectory()) {
+							// extract the dir and all children
 							File dir = Util.createTempFile(TMP_API_FILE_PREFIX, TMP_API_FILE_POSTFIX);
-							//hack to create a temp directory
-							// see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4735419
-							if(dir.delete()) {
+							// hack to create a temp directory
+							// see
+							// http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4735419
+							if (dir.delete()) {
 								dir.mkdir();
 								FileManager.getManager().recordTempFileRoot(dir.getCanonicalPath());
 							}
 							extractDirectory(zip, entry.getName(), dir);
-							if(dir.isDirectory() && dir.exists()) {
+							if (dir.isDirectory() && dir.exists()) {
 								return new DirectoryApiTypeContainer(this, dir.getCanonicalPath());
 							}
-						}
-						else {
+						} else {
 							File file = extractEntry(zip, entry, tmpfolder);
-							if(Util.isArchive(file.getName())) {
+							if (Util.isArchive(file.getName())) {
 								File parent = file.getParentFile();
-								if(!parent.equals(tmpfolder)) {
+								if (!parent.equals(tmpfolder)) {
 									FileManager.getManager().recordTempFileRoot(parent.getCanonicalPath());
-								}
-								else {
+								} else {
 									FileManager.getManager().recordTempFileRoot(file.getCanonicalPath());
 								}
 								return new ArchiveApiTypeContainer(this, file.getCanonicalPath());
@@ -717,25 +741,26 @@ public class BundleComponent extends Component {
 		}
 		return null;
 	}
-		
+
 	/**
-	 * Extracts a directory from the archive given a path prefix for entries to retrieve.
-	 * <code>null</code> can be passed in as a prefix, causing all entries to be be extracted from 
-	 * the archive.
+	 * Extracts a directory from the archive given a path prefix for entries to
+	 * retrieve. <code>null</code> can be passed in as a prefix, causing all
+	 * entries to be be extracted from the archive.
 	 * 
 	 * @param zip the {@link ZipFile} to extract from
 	 * @param pathprefix the prefix'ing path to include for extraction
 	 * @param parent the parent directory to extract to
-	 * @throws IOException if the {@link ZipFile} cannot be read or extraction fails to write the file(s)
+	 * @throws IOException if the {@link ZipFile} cannot be read or extraction
+	 *             fails to write the file(s)
 	 */
 	void extractDirectory(ZipFile zip, String pathprefix, File parent) throws IOException {
-		Enumeration entries = zip.entries();
+		Enumeration<? extends ZipEntry> entries = zip.entries();
 		String prefix = (pathprefix == null ? Util.EMPTY_STRING : pathprefix);
 		ZipEntry entry = null;
 		File file = null;
 		while (entries.hasMoreElements()) {
-			entry = (ZipEntry) entries.nextElement();
-			if(entry.getName().startsWith(prefix)) {
+			entry = entries.nextElement();
+			if (entry.getName().startsWith(prefix)) {
 				file = new File(parent, entry.getName());
 				if (entry.isDirectory()) {
 					file.mkdir();
@@ -745,13 +770,16 @@ public class BundleComponent extends Component {
 			}
 		}
 	}
-	
+
 	/**
-	 * Extracts a non-directory entry from a zip file and returns the File handle
+	 * Extracts a non-directory entry from a zip file and returns the File
+	 * handle
+	 * 
 	 * @param zip the zip to extract from
 	 * @param entry the entry to extract
 	 * @param parent the parent directory to add the extracted entry to
-	 * @return the file handle to the extracted entry, <code>null</code> otherwise
+	 * @return the file handle to the extracted entry, <code>null</code>
+	 *         otherwise
 	 * @throws IOException
 	 */
 	File extractEntry(ZipFile zip, ZipEntry entry, File parent) throws IOException {
@@ -762,7 +790,7 @@ public class BundleComponent extends Component {
 			inputStream = zip.getInputStream(entry);
 			file = new File(parent, entry.getName());
 			File lparent = file.getParentFile();
-			if(!lparent.exists()) {
+			if (!lparent.exists()) {
 				lparent.mkdirs();
 			}
 			outputStream = new FileOutputStream(file);
@@ -777,21 +805,21 @@ public class BundleComponent extends Component {
 			if (inputStream != null) {
 				try {
 					inputStream.close();
-				} catch(IOException e) {
+				} catch (IOException e) {
 					ApiPlugin.log(e);
 				}
 			}
 			if (outputStream != null) {
 				try {
 					outputStream.close();
-				} catch(IOException e) {
+				} catch (IOException e) {
 					ApiPlugin.log(e);
 				}
 			}
 		}
 		return file;
 	}
-	
+
 	public void closingZipFileAndStream(InputStream stream, ZipFile jarFile) {
 		try {
 			if (stream != null) {
@@ -808,7 +836,7 @@ public class BundleComponent extends Component {
 			ApiPlugin.log(e);
 		}
 	}
-	
+
 	/**
 	 * Reads and returns the file contents corresponding to the given file name.
 	 * The bundle may be in a jar or in a directory at the specified location.
@@ -838,8 +866,7 @@ public class BundleComponent extends Component {
 				return null;
 			}
 			return new String(Util.getInputStreamAsCharArray(stream, -1, IApiCoreConstants.UTF_8));
-		} catch(IOException e) {
-			//TODO abort
+		} catch (IOException e) {
 			ApiPlugin.log(e);
 		} finally {
 			closingZipFileAndStream(stream, jarFile);
@@ -848,8 +875,8 @@ public class BundleComponent extends Component {
 	}
 
 	/**
-	 * Parses a bundle's .api_description XML into a string. The file may be in a jar
-	 * or in a directory at the specified location.
+	 * Parses a bundle's .api_description XML into a string. The file may be in
+	 * a jar or in a directory at the specified location.
 	 * 
 	 * @param bundleLocation root location of the bundle
 	 * @return API description XML as a string or <code>null</code> if none
@@ -885,16 +912,15 @@ public class BundleComponent extends Component {
 		}
 		return contents;
 	}
-	
-	
+
 	/**
 	 * Returns a URL describing a file inside a bundle.
 	 * 
-	 * @param bundleLocation root location of the bundle. May be a
-	 *  directory or a file (jar)
+	 * @param bundleLocation root location of the bundle. May be a directory or
+	 *            a file (jar)
 	 * @param filePath bundle relative path to desired file
 	 * @return URL to the file
-	 * @throws MalformedURLException 
+	 * @throws MalformedURLException
 	 */
 	protected URL getFileInBundle(File bundleLocation, String filePath) throws MalformedURLException {
 		String extension = new Path(bundleLocation.getName()).getFileExtension();
@@ -909,13 +935,17 @@ public class BundleComponent extends Component {
 			urlSt.append(bundleLocation.getAbsolutePath());
 			urlSt.append(File.separatorChar);
 			urlSt.append(filePath);
-		}	
+		}
 		return new URL(urlSt.toString());
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.manifest.IApiComponent#getExecutionEnvironments()
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.manifest.IApiComponent#getExecutionEnvironments
+	 * ()
 	 */
+	@Override
 	public synchronized String[] getExecutionEnvironments() throws CoreException {
 		if (fBundleDescription == null) {
 			baselineDisposed(getBaseline());
@@ -923,17 +953,22 @@ public class BundleComponent extends Component {
 		return fBundleDescription.getExecutionEnvironments();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.manifest.IApiComponent#getSymbolicName()
 	 */
+	@Override
 	public final String getSymbolicName() {
 		init();
 		return fSymbolicName;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.manifest.IApiComponent#getRequiredComponents()
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.manifest.IApiComponent#getRequiredComponents()
 	 */
+	@Override
 	public synchronized IRequiredComponentDescription[] getRequiredComponents() throws CoreException {
 		if (fBundleDescription == null) {
 			baselineDisposed(getBaseline());
@@ -942,17 +977,16 @@ public class BundleComponent extends Component {
 		IRequiredComponentDescription[] req = new IRequiredComponentDescription[requiredBundles.length];
 		for (int i = 0; i < requiredBundles.length; i++) {
 			BundleSpecification bundle = requiredBundles[i];
-			req[i] = new RequiredComponentDescription(bundle.getName(),
-					new BundleVersionRange(bundle.getVersionRange()),
-					bundle.isOptional(),
-					bundle.isExported());
+			req[i] = new RequiredComponentDescription(bundle.getName(), new BundleVersionRange(bundle.getVersionRange()), bundle.isOptional(), bundle.isExported());
 		}
 		return req;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.manifest.IApiComponent#getVersion()
 	 */
+	@Override
 	public synchronized String getVersion() {
 		init();
 		// remove the qualifier
@@ -960,12 +994,13 @@ public class BundleComponent extends Component {
 		buffer.append(fVersion.getMajor()).append('.').append(fVersion.getMinor()).append('.').append(fVersion.getMicro());
 		return String.valueOf(buffer);
 	}
-	
+
+	@Override
 	public String getName() {
 		init();
 		return super.getName();
 	}
-	
+
 	/**
 	 * Returns this component's bundle description.
 	 * 
@@ -979,9 +1014,11 @@ public class BundleComponent extends Component {
 		return fBundleDescription;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		if (fBundleDescription != null) {
 			try {
@@ -994,10 +1031,9 @@ public class BundleComponent extends Component {
 				buffer.append("[source bundle: ").append(isSourceComponent()).append("] "); //$NON-NLS-1$ //$NON-NLS-2$
 				buffer.append("[dev bundle: ").append(fWorkspaceBinary).append("]"); //$NON-NLS-1$ //$NON-NLS-2$
 				return buffer.toString();
+			} catch (CoreException ce) {
 			}
-			catch(CoreException ce) {} 
-		}
-		else {
+		} else {
 			StringBuffer buffer = new StringBuffer();
 			buffer.append("Un-initialized Bundle Component"); //$NON-NLS-1$
 			buffer.append("[location: ").append(fLocation).append("]"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -1007,31 +1043,40 @@ public class BundleComponent extends Component {
 		return super.toString();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.model.component.IApiComponent#getLocation()
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.model.component.IApiComponent#getLocation()
 	 */
+	@Override
 	public String getLocation() {
 		return fLocation;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.model.component.IApiComponent#isSystemComponent()
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.model.component.IApiComponent#isSystemComponent
+	 * ()
 	 */
+	@Override
 	public boolean isSystemComponent() {
 		return false;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see IApiComponent#isSourceComponent()
 	 */
+	@Override
 	public synchronized boolean isSourceComponent() throws CoreException {
-		Map manifest = getManifest();
+		Map<String, String> manifest = getManifest();
 		if (manifest == null) {
 			baselineDisposed(getBaseline());
 		}
 		ManifestElement[] sourceBundle = null;
 		try {
-			sourceBundle = ManifestElement.parseHeader(IApiCoreConstants.ECLIPSE_SOURCE_BUNDLE, (String) manifest.get(IApiCoreConstants.ECLIPSE_SOURCE_BUNDLE));
+			sourceBundle = ManifestElement.parseHeader(IApiCoreConstants.ECLIPSE_SOURCE_BUNDLE, manifest.get(IApiCoreConstants.ECLIPSE_SOURCE_BUNDLE));
 		} catch (BundleException e) {
 			// ignore
 		}
@@ -1040,14 +1085,15 @@ public class BundleComponent extends Component {
 			return true;
 		}
 		// check for the old format
-		String pluginXMLContents = readFileContents(IApiCoreConstants.PLUGIN_XML_NAME,new File(getLocation()));
+		String pluginXMLContents = readFileContents(IApiCoreConstants.PLUGIN_XML_NAME, new File(getLocation()));
 		if (pluginXMLContents != null) {
 			if (containsSourceExtensionPoint(pluginXMLContents)) {
 				return true;
 			}
 		}
-		// check if it contains a fragment.xml with the appropriate extension point
-		pluginXMLContents = readFileContents(IApiCoreConstants.FRAGMENT_XML_NAME,new File(getLocation()));
+		// check if it contains a fragment.xml with the appropriate extension
+		// point
+		pluginXMLContents = readFileContents(IApiCoreConstants.FRAGMENT_XML_NAME, new File(getLocation()));
 		if (pluginXMLContents != null) {
 			if (containsSourceExtensionPoint(pluginXMLContents)) {
 				return true;
@@ -1095,11 +1141,13 @@ public class BundleComponent extends Component {
 			// ignore
 		}
 		return false;
-	}	
+	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.IApiComponent#isFragment()
 	 */
+	@Override
 	public synchronized boolean isFragment() throws CoreException {
 		init();
 		if (fBundleDescription == null) {
@@ -1108,40 +1156,48 @@ public class BundleComponent extends Component {
 		return fBundleDescription.getHost() != null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.model.Component#getHost()
 	 */
+	@Override
 	public synchronized IApiComponent getHost() throws CoreException {
 		init();
 		if (fBundleDescription == null) {
 			baselineDisposed(getBaseline());
 		}
 		HostSpecification host = fBundleDescription.getHost();
-		if(host != null) {
+		if (host != null) {
 			return getBaseline().getApiComponent(host.getName());
 		}
 		return null;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.IApiComponent#hasFragments()
 	 */
+	@Override
 	public synchronized boolean hasFragments() throws CoreException {
 		return getBundleDescription().getFragments().length != 0;
 	}
-	
+
 	/**
 	 * Sets whether this bundle has an underlying API description file.
 	 * 
-	 * @param hasApiDescription whether this bundle has an underlying API description file
+	 * @param hasApiDescription whether this bundle has an underlying API
+	 *            description file
 	 */
 	protected void setHasApiDescription(boolean hasApiDescription) {
 		fHasApiDescription = hasApiDescription;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiComponent#hasApiDescription()
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiComponent#
+	 * hasApiDescription()
 	 */
+	@Override
 	public boolean hasApiDescription() {
 		// ensure initialized
 		try {
@@ -1150,22 +1206,27 @@ public class BundleComponent extends Component {
 		}
 		return fHasApiDescription;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent#getLowestEEs()
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent#
+	 * getLowestEEs()
 	 */
+	@Override
 	public String[] getLowestEEs() throws CoreException {
-		if (lowestEEs != null) return lowestEEs;
+		if (lowestEEs != null) {
+			return lowestEEs;
+		}
 		String[] temp = null;
 		String[] executionEnvironments = getExecutionEnvironments();
 		int length = executionEnvironments.length;
-		switch(length) {
-			case 0 :
+		switch (length) {
+			case 0:
 				return null;
-			case 1 :
+			case 1:
 				temp = new String[] { executionEnvironments[0] };
 				break;
-			default :
+			default:
 				int values = ProfileModifiers.NO_PROFILE_VALUE;
 				for (int i = 0; i < length; i++) {
 					values |= ProfileModifiers.getValue(executionEnvironments[i]);
@@ -1191,13 +1252,17 @@ public class BundleComponent extends Component {
 				if (ProfileModifiers.isCDC_Foundation(values)) {
 					if (ProfileModifiers.isCDC_1_0_FOUNDATION_1_0(values)) {
 						if (temp != null) {
-							temp = new String[] { temp[0], ProfileModifiers.CDC_1_0_FOUNDATION_1_0_NAME };
+							temp = new String[] {
+									temp[0],
+									ProfileModifiers.CDC_1_0_FOUNDATION_1_0_NAME };
 						} else {
 							temp = new String[] { ProfileModifiers.CDC_1_0_FOUNDATION_1_0_NAME };
 						}
 					} else {
 						if (temp != null) {
-							temp = new String[] { temp[0], ProfileModifiers.CDC_1_1_FOUNDATION_1_1_NAME };
+							temp = new String[] {
+									temp[0],
+									ProfileModifiers.CDC_1_1_FOUNDATION_1_1_NAME };
 						} else {
 							temp = new String[] { ProfileModifiers.CDC_1_1_FOUNDATION_1_1_NAME };
 						}
@@ -1235,10 +1300,14 @@ public class BundleComponent extends Component {
 		lowestEEs = temp;
 		return temp;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent#getErrors()
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent#getErrors
+	 * ()
 	 */
+	@Override
 	public synchronized ResolverError[] getErrors() throws CoreException {
 		init();
 		ApiBaseline baseline = (ApiBaseline) getBaseline();
@@ -1254,18 +1323,12 @@ public class BundleComponent extends Component {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * @param baseline the baseline that is disposed
 	 * @throws CoreException with the baseline disposed information
 	 */
 	protected void baselineDisposed(IApiBaseline baseline) throws CoreException {
-		throw new CoreException(
-				new Status(
-						IStatus.ERROR,
-						ApiPlugin.PLUGIN_ID,
-						ApiPlugin.REPORT_BASELINE_IS_DISPOSED,
-						NLS.bind(Messages.BundleApiComponent_baseline_disposed, baseline.getName()),
-						null));
+		throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, ApiPlugin.REPORT_BASELINE_IS_DISPOSED, NLS.bind(Messages.BundleApiComponent_baseline_disposed, baseline.getName()), null));
 	}
 }

@@ -34,8 +34,9 @@ public class InvalidClassConstructorTagTests extends InvalidMethodTagTests {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestSourcePath()
 	 */
+	@Override
 	protected IPath getTestSourcePath() {
-		return super.getTestSourcePath().append("class");
+		return super.getTestSourcePath().append("class"); //$NON-NLS-1$
 	}
 	
 	/**
@@ -60,16 +61,16 @@ public class InvalidClassConstructorTagTests extends InvalidMethodTagTests {
 	private void x1(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(8));
 		setExpectedMessageArgs(new String[][] {
-				{"@noreference", BuilderMessages.TagValidator_private_constructor},
-				{"@noreference", BuilderMessages.TagValidator_private_constructor},
-				{"@noreference", BuilderMessages.TagValidator_private_constructor},
-				{"@noreference", BuilderMessages.TagValidator_private_constructor},
-				{"@noreference", BuilderMessages.TagValidator_private_constructor},
-				{"@noreference", BuilderMessages.TagValidator_private_constructor},
-				{"@noreference", BuilderMessages.TagValidator_private_constructor},
-				{"@noreference", BuilderMessages.TagValidator_private_constructor}
+				{"@noreference", BuilderMessages.TagValidator_private_constructor}, //$NON-NLS-1$
+				{"@noreference", BuilderMessages.TagValidator_private_constructor}, //$NON-NLS-1$
+				{"@noreference", BuilderMessages.TagValidator_private_constructor}, //$NON-NLS-1$
+				{"@noreference", BuilderMessages.TagValidator_private_constructor}, //$NON-NLS-1$
+				{"@noreference", BuilderMessages.TagValidator_private_constructor}, //$NON-NLS-1$
+				{"@noreference", BuilderMessages.TagValidator_private_constructor}, //$NON-NLS-1$
+				{"@noreference", BuilderMessages.TagValidator_private_constructor}, //$NON-NLS-1$
+				{"@noreference", BuilderMessages.TagValidator_private_constructor} //$NON-NLS-1$
 		});
-		deployTagTest("test15.java", inc, false);
+		deployTagTest("test15.java", inc, false); //$NON-NLS-1$
 	}
 
 	public void testInvalidClassMethodTag2I() {
@@ -87,10 +88,10 @@ public class InvalidClassConstructorTagTests extends InvalidMethodTagTests {
 	private void x2(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(2));
 		setExpectedMessageArgs(new String[][] {
-				{"@noreference", BuilderMessages.TagValidator_private_constructor},
-				{"@noreference", BuilderMessages.TagValidator_private_constructor}
+				{"@noreference", BuilderMessages.TagValidator_private_constructor}, //$NON-NLS-1$
+				{"@noreference", BuilderMessages.TagValidator_private_constructor} //$NON-NLS-1$
 		});
-		deployTagTest("test16.java", inc, true);
+		deployTagTest("test16.java", inc, true); //$NON-NLS-1$
 	}
 
 	public void testInvalidClassMethodTag3I() {
@@ -108,16 +109,16 @@ public class InvalidClassConstructorTagTests extends InvalidMethodTagTests {
 	private void x3(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(8));
 		setExpectedMessageArgs(new String[][] {
-				{"@noinstantiate", BuilderMessages.TagValidator_a_constructor},
-				{"@noinstantiate", BuilderMessages.TagValidator_a_constructor},
-				{"@noinstantiate", BuilderMessages.TagValidator_a_constructor},
-				{"@noinstantiate", BuilderMessages.TagValidator_a_constructor},
-				{"@noinstantiate", BuilderMessages.TagValidator_a_constructor},
-				{"@noinstantiate", BuilderMessages.TagValidator_a_constructor},
-				{"@noinstantiate", BuilderMessages.TagValidator_a_constructor},
-				{"@noinstantiate", BuilderMessages.TagValidator_a_constructor}
+				{"@noinstantiate", BuilderMessages.TagValidator_a_constructor}, //$NON-NLS-1$
+				{"@noinstantiate", BuilderMessages.TagValidator_a_constructor}, //$NON-NLS-1$
+				{"@noinstantiate", BuilderMessages.TagValidator_a_constructor}, //$NON-NLS-1$
+				{"@noinstantiate", BuilderMessages.TagValidator_a_constructor}, //$NON-NLS-1$
+				{"@noinstantiate", BuilderMessages.TagValidator_a_constructor}, //$NON-NLS-1$
+				{"@noinstantiate", BuilderMessages.TagValidator_a_constructor}, //$NON-NLS-1$
+				{"@noinstantiate", BuilderMessages.TagValidator_a_constructor}, //$NON-NLS-1$
+				{"@noinstantiate", BuilderMessages.TagValidator_a_constructor} //$NON-NLS-1$
 		});
-		deployTagTest("test17.java", inc, false);
+		deployTagTest("test17.java", inc, false); //$NON-NLS-1$
 	}
 	
 	public void testInvalidClassMethodTag4I() {
@@ -135,10 +136,10 @@ public class InvalidClassConstructorTagTests extends InvalidMethodTagTests {
 	private void x4(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(2));
 		setExpectedMessageArgs(new String[][] {
-				{"@noinstantiate", BuilderMessages.TagValidator_a_constructor},
-				{"@noinstantiate", BuilderMessages.TagValidator_a_constructor}
+				{"@noinstantiate", BuilderMessages.TagValidator_a_constructor}, //$NON-NLS-1$
+				{"@noinstantiate", BuilderMessages.TagValidator_a_constructor} //$NON-NLS-1$
 		});
-		deployTagTest("test18.java", inc, true);
+		deployTagTest("test18.java", inc, true); //$NON-NLS-1$
 	}
 	
 	public void testInvalidClassMethodTag5I() {
@@ -156,16 +157,16 @@ public class InvalidClassConstructorTagTests extends InvalidMethodTagTests {
 	private void x5(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(8));
 		setExpectedMessageArgs(new String[][] {
-				{"@noextend", BuilderMessages.TagValidator_a_constructor},
-				{"@noextend", BuilderMessages.TagValidator_a_constructor},
-				{"@noextend", BuilderMessages.TagValidator_a_constructor},
-				{"@noextend", BuilderMessages.TagValidator_a_constructor},
-				{"@noextend", BuilderMessages.TagValidator_a_constructor},
-				{"@noextend", BuilderMessages.TagValidator_a_constructor},
-				{"@noextend", BuilderMessages.TagValidator_a_constructor},
-				{"@noextend", BuilderMessages.TagValidator_a_constructor}
+				{"@noextend", BuilderMessages.TagValidator_a_constructor}, //$NON-NLS-1$
+				{"@noextend", BuilderMessages.TagValidator_a_constructor}, //$NON-NLS-1$
+				{"@noextend", BuilderMessages.TagValidator_a_constructor}, //$NON-NLS-1$
+				{"@noextend", BuilderMessages.TagValidator_a_constructor}, //$NON-NLS-1$
+				{"@noextend", BuilderMessages.TagValidator_a_constructor}, //$NON-NLS-1$
+				{"@noextend", BuilderMessages.TagValidator_a_constructor}, //$NON-NLS-1$
+				{"@noextend", BuilderMessages.TagValidator_a_constructor}, //$NON-NLS-1$
+				{"@noextend", BuilderMessages.TagValidator_a_constructor} //$NON-NLS-1$
 		});
-		deployTagTest("test19.java", inc, false);
+		deployTagTest("test19.java", inc, false); //$NON-NLS-1$
 	}
 
 	public void testInvalidClassMethodTag6I() {
@@ -183,10 +184,10 @@ public class InvalidClassConstructorTagTests extends InvalidMethodTagTests {
 	private void x6(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(2));
 		setExpectedMessageArgs(new String[][] {
-				{"@noextend", BuilderMessages.TagValidator_a_constructor},	
-				{"@noextend", BuilderMessages.TagValidator_a_constructor}
+				{"@noextend", BuilderMessages.TagValidator_a_constructor},	 //$NON-NLS-1$
+				{"@noextend", BuilderMessages.TagValidator_a_constructor} //$NON-NLS-1$
 		});
-		deployTagTest("test20.java", inc, true);
+		deployTagTest("test20.java", inc, true); //$NON-NLS-1$
 	}
 
 	public void testInvalidClassMethodTag7I() {
@@ -204,16 +205,16 @@ public class InvalidClassConstructorTagTests extends InvalidMethodTagTests {
 	private void x7(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(8));
 		setExpectedMessageArgs(new String[][] {
-				{"@nooverride", BuilderMessages.TagValidator_a_constructor},
-				{"@nooverride", BuilderMessages.TagValidator_a_constructor},
-				{"@nooverride", BuilderMessages.TagValidator_a_constructor},
-				{"@nooverride", BuilderMessages.TagValidator_a_constructor},
-				{"@nooverride", BuilderMessages.TagValidator_a_constructor},
-				{"@nooverride", BuilderMessages.TagValidator_a_constructor},
-				{"@nooverride", BuilderMessages.TagValidator_a_constructor},
-				{"@nooverride", BuilderMessages.TagValidator_a_constructor}
+				{"@nooverride", BuilderMessages.TagValidator_a_constructor}, //$NON-NLS-1$
+				{"@nooverride", BuilderMessages.TagValidator_a_constructor}, //$NON-NLS-1$
+				{"@nooverride", BuilderMessages.TagValidator_a_constructor}, //$NON-NLS-1$
+				{"@nooverride", BuilderMessages.TagValidator_a_constructor}, //$NON-NLS-1$
+				{"@nooverride", BuilderMessages.TagValidator_a_constructor}, //$NON-NLS-1$
+				{"@nooverride", BuilderMessages.TagValidator_a_constructor}, //$NON-NLS-1$
+				{"@nooverride", BuilderMessages.TagValidator_a_constructor}, //$NON-NLS-1$
+				{"@nooverride", BuilderMessages.TagValidator_a_constructor} //$NON-NLS-1$
 		});
-		deployTagTest("test21.java", inc, false);
+		deployTagTest("test21.java", inc, false); //$NON-NLS-1$
 	}
 
 	public void testInvalidClassMethodTag8I() {
@@ -232,10 +233,10 @@ public class InvalidClassConstructorTagTests extends InvalidMethodTagTests {
 	private void x8(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(2));
 		setExpectedMessageArgs(new String[][] {
-				{"@nooverride", BuilderMessages.TagValidator_a_constructor},
-				{"@nooverride", BuilderMessages.TagValidator_a_constructor}
+				{"@nooverride", BuilderMessages.TagValidator_a_constructor}, //$NON-NLS-1$
+				{"@nooverride", BuilderMessages.TagValidator_a_constructor} //$NON-NLS-1$
 		});
-		deployTagTest("test22.java", inc, true);
+		deployTagTest("test22.java", inc, true); //$NON-NLS-1$
 	}
 	
 	public void testInvalidClassMethodTag9I() {
@@ -253,16 +254,16 @@ public class InvalidClassConstructorTagTests extends InvalidMethodTagTests {
 	private void x9(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(8));
 		setExpectedMessageArgs(new String[][] {
-				{"@noimplement", BuilderMessages.TagValidator_a_constructor},
-				{"@noimplement", BuilderMessages.TagValidator_a_constructor},
-				{"@noimplement", BuilderMessages.TagValidator_a_constructor},
-				{"@noimplement", BuilderMessages.TagValidator_a_constructor},
-				{"@noimplement", BuilderMessages.TagValidator_a_constructor},
-				{"@noimplement", BuilderMessages.TagValidator_a_constructor},
-				{"@noimplement", BuilderMessages.TagValidator_a_constructor},
-				{"@noimplement", BuilderMessages.TagValidator_a_constructor}
+				{"@noimplement", BuilderMessages.TagValidator_a_constructor}, //$NON-NLS-1$
+				{"@noimplement", BuilderMessages.TagValidator_a_constructor}, //$NON-NLS-1$
+				{"@noimplement", BuilderMessages.TagValidator_a_constructor}, //$NON-NLS-1$
+				{"@noimplement", BuilderMessages.TagValidator_a_constructor}, //$NON-NLS-1$
+				{"@noimplement", BuilderMessages.TagValidator_a_constructor}, //$NON-NLS-1$
+				{"@noimplement", BuilderMessages.TagValidator_a_constructor}, //$NON-NLS-1$
+				{"@noimplement", BuilderMessages.TagValidator_a_constructor}, //$NON-NLS-1$
+				{"@noimplement", BuilderMessages.TagValidator_a_constructor} //$NON-NLS-1$
 		});
-		deployTagTest("test23.java", inc, false);
+		deployTagTest("test23.java", inc, false); //$NON-NLS-1$
 	}
 
 	public void testInvalidClassMethodTag10I() {
@@ -280,10 +281,10 @@ public class InvalidClassConstructorTagTests extends InvalidMethodTagTests {
 	private void x10(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(2));
 		setExpectedMessageArgs(new String[][] {
-				{"@noimplement", BuilderMessages.TagValidator_a_constructor},
-				{"@noimplement", BuilderMessages.TagValidator_a_constructor}
+				{"@noimplement", BuilderMessages.TagValidator_a_constructor}, //$NON-NLS-1$
+				{"@noimplement", BuilderMessages.TagValidator_a_constructor} //$NON-NLS-1$
 		});
-		deployTagTest("test24.java", inc, true);
+		deployTagTest("test24.java", inc, true); //$NON-NLS-1$
 	}
 	
 	public void testInvalidConstructorMethodTag1I() {
@@ -308,6 +309,6 @@ public class InvalidClassConstructorTagTests extends InvalidMethodTagTests {
 				{JavadocTagManager.TAG_NOREFERENCE, BuilderMessages.TagValidator_private_constructor},
 				{JavadocTagManager.TAG_NOREFERENCE, BuilderMessages.TagValidator_a_package_default_constructor}
 		});
-		deployTagTest("test25.java", inc, true);
+		deployTagTest("test25.java", inc, true); //$NON-NLS-1$
 	}	
 }

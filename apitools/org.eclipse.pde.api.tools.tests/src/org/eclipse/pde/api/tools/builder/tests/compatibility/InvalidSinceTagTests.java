@@ -58,8 +58,8 @@ public class InvalidSinceTagTests extends SinceTagTest {
 	 * Tests adding a field with a wrong since tag
 	 */
 	private void xInvalidField(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("InvalidField.java");
-		configureExpectedProblems(IDelta.FIELD_ELEMENT_TYPE, new String[]{"3.0", "1.0", "FIELD"});
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("InvalidField.java"); //$NON-NLS-1$
+		configureExpectedProblems(IDelta.FIELD_ELEMENT_TYPE, new String[]{"3.0", "1.0", "FIELD"}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		performCompatibilityTest(filePath, incremental);
 	}
 	
@@ -75,8 +75,8 @@ public class InvalidSinceTagTests extends SinceTagTest {
 	 * Tests adding a method with a wrong since tag
 	 */
 	private void xInvalidMethod(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("InvalidMethod.java");
-		configureExpectedProblems(IDelta.METHOD_ELEMENT_TYPE, new String[]{"3.0", "1.0", "method()"});
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("InvalidMethod.java"); //$NON-NLS-1$
+		configureExpectedProblems(IDelta.METHOD_ELEMENT_TYPE, new String[]{"3.0", "1.0", "method()"}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		performCompatibilityTest(filePath, incremental);
 	}
 	
@@ -92,8 +92,8 @@ public class InvalidSinceTagTests extends SinceTagTest {
 	 * Tests adding a member type with a wrong since tag
 	 */
 	private void xInvalidMemberType(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("InvalidMemberType.java");
-		configureExpectedProblems(IDelta.CLASS_ELEMENT_TYPE, new String[]{"3.0", "1.0", "MemberType"});
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("InvalidMemberType.java"); //$NON-NLS-1$
+		configureExpectedProblems(IDelta.CLASS_ELEMENT_TYPE, new String[]{"3.0", "1.0", "MemberType"}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		performCompatibilityTest(filePath, incremental);
 	}
 	
@@ -109,8 +109,8 @@ public class InvalidSinceTagTests extends SinceTagTest {
 	 * Tests adding a class with a wrong since tag
 	 */
 	private void xInvalidType(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("InvalidType.java");
-		configureExpectedProblems(IDelta.CLASS_ELEMENT_TYPE, new String[]{"3.0", "1.0", PACKAGE_PREFIX + "InvalidType"});
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("InvalidType.java"); //$NON-NLS-1$
+		configureExpectedProblems(IDelta.CLASS_ELEMENT_TYPE, new String[]{"3.0", "1.0", PACKAGE_PREFIX + "InvalidType"}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		performCreationCompatibilityTest(filePath, incremental);
 	}
 	

@@ -41,12 +41,15 @@ import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 
 public class Util {
 	private static final int DEFAULT_READING_SIZE = 8192;
-	private final static String UTF_8 = "UTF-8";	//$NON-NLS-1$
+	private final static String UTF_8 = "UTF-8"; //$NON-NLS-1$
 
-	private static final byte[] CHARSET = new byte[] {99, 104, 97, 114, 115, 101, 116, 61 };
+	private static final byte[] CHARSET = new byte[] {
+			99, 104, 97, 114, 115, 101, 116, 61 };
 	private static final byte[] CLOSING_DOUBLE_QUOTE = new byte[] { 34 };
-	private static final byte[] CONTENT = new byte[] { 99, 111, 110, 116, 101, 110, 116, 61, 34 };
-	private static final byte[] CONTENT_TYPE = new byte[] { 34, 67, 111, 110, 116, 101, 110, 116, 45, 84, 121, 112, 101, 34 };
+	private static final byte[] CONTENT = new byte[] {
+			99, 111, 110, 116, 101, 110, 116, 61, 34 };
+	private static final byte[] CONTENT_TYPE = new byte[] {
+			34, 67, 111, 110, 116, 101, 110, 116, 45, 84, 121, 112, 101, 34 };
 	private static final CRC32 CRC32 = new CRC32();
 	public static final String LINE_SEPARATOR = System.getProperty("line.separator"); //$NON-NLS-1$
 
@@ -61,48 +64,50 @@ public class Util {
 	}
 
 	private static int getIndexOf(byte[] array, byte[] toBeFound, int start) {
-		if (array == null || toBeFound == null)
+		if (array == null || toBeFound == null) {
 			return -1;
+		}
 		final int toBeFoundLength = toBeFound.length;
 		final int arrayLength = array.length;
-		if (arrayLength < toBeFoundLength)
+		if (arrayLength < toBeFoundLength) {
 			return -1;
+		}
 		loop: for (int i = start, max = arrayLength - toBeFoundLength + 1; i < max; i++) {
 			if (array[i] == toBeFound[0]) {
 				for (int j = 1; j < toBeFoundLength; j++) {
-					if (array[i + j] != toBeFound[j])
+					if (array[i + j] != toBeFound[j]) {
 						continue loop;
+					}
 				}
 				return i;
 			}
 		}
 		return -1;
 	}
+
 	/**
-	 * Returns the given input stream's contents as a byte array.
-	 * If a length is specified (ie. if length != -1), only length bytes
-	 * are returned. Otherwise all bytes in the stream are returned.
-	 * Note this doesn't close the stream.
+	 * Returns the given input stream's contents as a byte array. If a length is
+	 * specified (ie. if length != -1), only length bytes are returned.
+	 * Otherwise all bytes in the stream are returned. Note this doesn't close
+	 * the stream.
+	 * 
 	 * @throws IOException if a problem occured reading the stream.
 	 */
-	public static byte[] getInputStreamAsByteArray(InputStream stream, int length)
-		throws IOException {
+	public static byte[] getInputStreamAsByteArray(InputStream stream, int length) throws IOException {
 		byte[] contents;
 		if (length == -1) {
 			contents = new byte[0];
 			int contentsLength = 0;
 			int amountRead = -1;
 			do {
-				int amountRequested = Math.max(stream.available(), DEFAULT_READING_SIZE);  // read at least 8K
+				int amountRequested = Math.max(stream.available(), DEFAULT_READING_SIZE); // read
+																							// at
+																							// least
+																							// 8K
 
 				// resize contents if needed
 				if (contentsLength + amountRequested > contents.length) {
-					System.arraycopy(
-						contents,
-						0,
-						contents = new byte[contentsLength + amountRequested],
-						0,
-						contentsLength);
+					System.arraycopy(contents, 0, contents = new byte[contentsLength + amountRequested], 0, contentsLength);
 				}
 
 				// read as many bytes as possible
@@ -116,12 +121,7 @@ public class Util {
 
 			// resize contents if necessary
 			if (contentsLength < contents.length) {
-				System.arraycopy(
-					contents,
-					0,
-					contents = new byte[contentsLength],
-					0,
-					contentsLength);
+				System.arraycopy(contents, 0, contents = new byte[contentsLength], 0, contentsLength);
 			}
 		} else {
 			contents = new byte[length];
@@ -129,7 +129,8 @@ public class Util {
 			int readSize = 0;
 			while ((readSize != -1) && (len != length)) {
 				// See PR 1FMS89U
-				// We record first the read size. In this case len is the actual read size.
+				// We record first the read size. In this case len is the actual
+				// read size.
 				len += readSize;
 				readSize = stream.read(contents, len, length - len);
 			}
@@ -137,29 +138,29 @@ public class Util {
 
 		return contents;
 	}
+
 	/**
-	 * Returns the given input stream's contents as a character array.
-	 * If a length is specified (i.e. if length != -1), this represents the number of bytes in the stream.
-	 * Note this doesn't close the stream.
+	 * Returns the given input stream's contents as a character array. If a
+	 * length is specified (i.e. if length != -1), this represents the number of
+	 * bytes in the stream. Note this doesn't close the stream.
+	 * 
 	 * @throws IOException if a problem occured reading the stream.
 	 */
-	public static char[] getInputStreamAsCharArray(InputStream stream, int length, String encoding)
-			throws IOException {
+	public static char[] getInputStreamAsCharArray(InputStream stream, int length, String encoding) throws IOException {
 		BufferedReader reader = null;
 		try {
-			reader = encoding == null
-						? new BufferedReader(new InputStreamReader(stream))
-						: new BufferedReader(new InputStreamReader(stream, encoding));
+			reader = encoding == null ? new BufferedReader(new InputStreamReader(stream)) : new BufferedReader(new InputStreamReader(stream, encoding));
 		} catch (UnsupportedEncodingException e) {
 			// encoding is not supported
-			reader =  new BufferedReader(new InputStreamReader(stream));
+			reader = new BufferedReader(new InputStreamReader(stream));
 		}
 		char[] contents;
 		int totalRead = 0;
 		if (length == -1) {
 			contents = CharOperation.NO_CHAR;
 		} else {
-			// length is a good guess when the encoding produces less or the same amount of characters than the file length
+			// length is a good guess when the encoding produces less or the
+			// same amount of characters than the file length
 			contents = new char[length]; // best guess
 		}
 
@@ -171,20 +172,29 @@ public class Util {
 			} else {
 				// reading beyond known length
 				int current = reader.read();
-				if (current < 0) break;
+				if (current < 0) {
+					break;
+				}
 
-				amountRequested = Math.max(stream.available(), DEFAULT_READING_SIZE);  // read at least 8K
+				amountRequested = Math.max(stream.available(), DEFAULT_READING_SIZE); // read
+																						// at
+																						// least
+																						// 8K
 
 				// resize contents if needed
-				if (totalRead + 1 + amountRequested > contents.length)
-					System.arraycopy(contents, 	0, 	contents = new char[totalRead + 1 + amountRequested], 0, totalRead);
+				if (totalRead + 1 + amountRequested > contents.length) {
+					System.arraycopy(contents, 0, contents = new char[totalRead + 1 + amountRequested], 0, totalRead);
+				}
 
 				// add current character
-				contents[totalRead++] = (char) current; // coming from totalRead==length
+				contents[totalRead++] = (char) current; // coming from
+														// totalRead==length
 			}
 			// read as many chars as possible
 			int amountRead = reader.read(contents, totalRead, amountRequested);
-			if (amountRead < 0) break;
+			if (amountRead < 0) {
+				break;
+			}
 			totalRead += amountRead;
 		}
 
@@ -198,8 +208,9 @@ public class Util {
 		}
 
 		// resize contents if necessary
-		if (totalRead < contents.length)
-			System.arraycopy(contents, start, contents = new char[totalRead], 	0, 	totalRead);
+		if (totalRead < contents.length) {
+			System.arraycopy(contents, start, contents = new char[totalRead], 0, totalRead);
+		}
 
 		return contents;
 	}
@@ -214,19 +225,22 @@ public class Util {
 		}
 		return String.valueOf(buffer);
 	}
+
 	public static ZipOutputStream getOutputStream(File file) throws FileNotFoundException {
 		return new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(file)));
 	}
+
 	public static String getSimpleName(char[] name) {
 		return new String(getSimpleNameAsCharArray(name));
 	}
+
 	public static char[] getSimpleNameAsCharArray(char[] name) {
 		int index = CharOperation.lastIndexOf('.', name);
 		char[] subarray = CharOperation.subarray(name, index + 1, name.length);
 		subarray = CharOperation.replaceOnCopy(subarray, '$', '.');
 		return subarray;
 	}
-	
+
 	public static void write(String rootDirName, String subDirName, String fileName, String contents) {
 		BufferedWriter writer = null;
 		try {
@@ -256,6 +270,7 @@ public class Util {
 
 	/**
 	 * Writes the given entry information into the output stream
+	 * 
 	 * @param outputStream the output stream to write out to
 	 * @param entryName
 	 * @param bytes
@@ -263,9 +278,7 @@ public class Util {
 	 * @param bits
 	 * @throws IOException
 	 */
-	public static void writeZipFileEntry(ZipOutputStream outputStream,
-			String entryName,
-			byte[] bytes) throws IOException {
+	public static void writeZipFileEntry(ZipOutputStream outputStream, String entryName, byte[] bytes) throws IOException {
 		CRC32.reset();
 		int byteArraySize = bytes.length;
 		CRC32.update(bytes, 0, byteArraySize);
@@ -277,9 +290,11 @@ public class Util {
 		outputStream.write(bytes, 0, byteArraySize);
 		outputStream.closeEntry();
 	}
+
 	/*
-	 * We don't use getContentEncoding() on the URL connection, because it might leave open streams behind.
-	 * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=117890
+	 * We don't use getContentEncoding() on the URL connection, because it might
+	 * leave open streams behind. See
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=117890
 	 */
 	public static char[] getURLContents(String docUrlValue) {
 		InputStream stream = null;
@@ -289,7 +304,7 @@ public class Util {
 			URLConnection connection = docUrl.openConnection();
 			connection.setConnectTimeout(10000);
 			connection.setReadTimeout(10000);
-			
+
 			if (connection instanceof JarURLConnection) {
 				connection2 = (JarURLConnection) connection;
 				// https://bugs.eclipse.org/bugs/show_bug.cgi?id=156307
@@ -336,14 +351,18 @@ public class Util {
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		} catch (FileNotFoundException e) {
-			// ignore. see bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=120559
-		} catch(SocketException e) {
-			// ignore. see bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=247845
-		} catch(UnknownHostException e) {
-			// ignore. see bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=247845
-		} catch(ProtocolException e) {
-			// ignore. see bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=247845
-		} catch(IOException e) {
+			// ignore. see bug
+			// https://bugs.eclipse.org/bugs/show_bug.cgi?id=120559
+		} catch (SocketException e) {
+			// ignore. see bug
+			// https://bugs.eclipse.org/bugs/show_bug.cgi?id=247845
+		} catch (UnknownHostException e) {
+			// ignore. see bug
+			// https://bugs.eclipse.org/bugs/show_bug.cgi?id=247845
+		} catch (ProtocolException e) {
+			// ignore. see bug
+			// https://bugs.eclipse.org/bugs/show_bug.cgi?id=247845
+		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
 			if (stream != null) {
@@ -356,18 +375,20 @@ public class Util {
 			if (connection2 != null) {
 				try {
 					connection2.getJarFile().close();
-				} catch(IOException e) {
+				} catch (IOException e) {
 					// ignore
-				} catch(IllegalStateException e) {
+				} catch (IllegalStateException e) {
 					/*
-					 * ignore. Can happen in case the stream.close() did close the jar file
-					 * see https://bugs.eclipse.org/bugs/show_bug.cgi?id=140750
+					 * ignore. Can happen in case the stream.close() did close
+					 * the jar file see
+					 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=140750
 					 */
 				}
- 			}
+			}
 		}
 		return null;
 	}
+
 	private static void collectAllFiles(File root, ArrayList<File> collector, FileFilter fileFilter) {
 		File[] files = root.listFiles(fileFilter);
 		for (int i = 0; i < files.length; i++) {

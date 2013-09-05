@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,25 +31,31 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
  * @since 1.0.0
  */
 public abstract class AbstractApiTypeContainer extends ApiElement implements IApiTypeContainer {
-	
+
 	/**
 	 * Collection of {@link IApiTypeContainer}s
 	 */
-	private List fApiTypeContainers = null;	
+	private List<IApiTypeContainer> fApiTypeContainers = null;
 
 	/**
 	 * Constructor
-	 * @param parent the parent {@link IApiElement} or <code>null</code> if none.
+	 * 
+	 * @param parent the parent {@link IApiElement} or <code>null</code> if
+	 *            none.
 	 * @param type the type of the container
 	 * @param name the name
 	 */
 	protected AbstractApiTypeContainer(IApiElement parent, int type, String name) {
 		super(parent, type, name);
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiTypeContainer#accept(org.eclipse.pde.api.tools.internal.provisional.ApiTypeContainerVisitor)
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.provisional.IApiTypeContainer#accept
+	 * (org.eclipse.pde.api.tools.internal.provisional.ApiTypeContainerVisitor)
 	 */
+	@Override
 	public void accept(ApiTypeContainerVisitor visitor) throws CoreException {
 		IApiTypeContainer[] containers = getApiTypeContainers();
 		for (int i = 0; i < containers.length; i++) {
@@ -57,16 +63,19 @@ public abstract class AbstractApiTypeContainer extends ApiElement implements IAp
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiTypeContainer#close()
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.provisional.IApiTypeContainer#close()
 	 */
+	@Override
 	public synchronized void close() throws CoreException {
 		if (fApiTypeContainers == null) {
 			return;
 		}
-		//clean component cache elements
+		// clean component cache elements
 		ApiModelCache.getCache().removeElementInfo(this);
-		
+
 		MultiStatus multi = null;
 		IStatus single = null;
 		IApiTypeContainer[] containers = getApiTypeContainers();
@@ -95,6 +104,7 @@ public abstract class AbstractApiTypeContainer extends ApiElement implements IAp
 	/**
 	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiTypeContainer#findTypeRoot(java.lang.String)
 	 */
+	@Override
 	public IApiTypeRoot findTypeRoot(String qualifiedName) throws CoreException {
 		IApiTypeContainer[] containers = getApiTypeContainers();
 		for (int i = 0; i < containers.length; i++) {
@@ -105,17 +115,19 @@ public abstract class AbstractApiTypeContainer extends ApiElement implements IAp
 		}
 		return null;
 	}
-	
+
 	/**
-	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiTypeContainer#findTypeRoot(java.lang.String, java.lang.String)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiTypeContainer#findTypeRoot(java.lang.String,
+	 *      java.lang.String)
 	 */
+	@Override
 	public IApiTypeRoot findTypeRoot(String qualifiedName, String id) throws CoreException {
 		IApiTypeContainer[] containers = getApiTypeContainers();
 		String origin = null;
 		IApiComponent comp = null;
 		for (int i = 0; i < containers.length; i++) {
 			comp = (IApiComponent) containers[i].getAncestor(IApiElement.COMPONENT);
-			if(comp != null) {
+			if (comp != null) {
 				origin = comp.getSymbolicName();
 			}
 			if (origin == null) {
@@ -133,11 +145,14 @@ public abstract class AbstractApiTypeContainer extends ApiElement implements IAp
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiTypeContainer#getPackageNames()
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiTypeContainer#
+	 * getPackageNames()
 	 */
+	@Override
 	public String[] getPackageNames() throws CoreException {
-		List names = new ArrayList();
+		List<String> names = new ArrayList<String>();
 		IApiTypeContainer[] containers = getApiTypeContainers();
 		for (int i = 0, max = containers.length; i < max; i++) {
 			String[] packageNames = containers[i].getPackageNames();
@@ -152,8 +167,8 @@ public abstract class AbstractApiTypeContainer extends ApiElement implements IAp
 	}
 
 	/**
-	 * Returns the {@link IApiTypeContainer}s in this container. Creates the containers if
-	 * they are not yet created.
+	 * Returns the {@link IApiTypeContainer}s in this container. Creates the
+	 * containers if they are not yet created.
 	 * 
 	 * @return the {@link IApiTypeContainer}s
 	 */
@@ -161,12 +176,12 @@ public abstract class AbstractApiTypeContainer extends ApiElement implements IAp
 		if (fApiTypeContainers == null) {
 			fApiTypeContainers = createApiTypeContainers();
 		}
-		return (IApiTypeContainer[]) fApiTypeContainers.toArray(new IApiTypeContainer[fApiTypeContainers.size()]);
+		return fApiTypeContainers.toArray(new IApiTypeContainer[fApiTypeContainers.size()]);
 	}
-	
+
 	/**
-	 * Returns the {@link IApiTypeContainer}s in this container. Creates the containers if
-	 * they are not yet created.
+	 * Returns the {@link IApiTypeContainer}s in this container. Creates the
+	 * containers if they are not yet created.
 	 * 
 	 * @param id the given id
 	 * @return the {@link IApiTypeContainer}s
@@ -175,17 +190,17 @@ public abstract class AbstractApiTypeContainer extends ApiElement implements IAp
 		if (fApiTypeContainers == null) {
 			fApiTypeContainers = createApiTypeContainers();
 		}
-		List containers = new ArrayList();
+		List<IApiTypeContainer> containers = new ArrayList<IApiTypeContainer>();
 		String origin = null;
 		IApiTypeContainer container = null;
-		for (Iterator iterator = this.fApiTypeContainers.iterator(); iterator.hasNext(); ) {
-			container = (IApiTypeContainer) iterator.next();
-			origin = ((IApiComponent)container.getAncestor(IApiElement.COMPONENT)).getSymbolicName();
+		for (Iterator<IApiTypeContainer> iterator = fApiTypeContainers.iterator(); iterator.hasNext();) {
+			container = iterator.next();
+			origin = ((IApiComponent) container.getAncestor(IApiElement.COMPONENT)).getSymbolicName();
 			if (origin != null && origin.equals(id)) {
 				containers.add(container);
 			}
 		}
-		return (IApiTypeContainer[]) containers.toArray(new IApiTypeContainer[containers.size()]);
+		return containers.toArray(new IApiTypeContainer[containers.size()]);
 	}
 
 	/**
@@ -194,7 +209,7 @@ public abstract class AbstractApiTypeContainer extends ApiElement implements IAp
 	 * 
 	 * @return list of {@link IApiTypeContainer}s for this component
 	 */
-	protected abstract List createApiTypeContainers() throws CoreException;
+	protected abstract List<IApiTypeContainer> createApiTypeContainers() throws CoreException;
 
 	/**
 	 * Sets the {@link IApiTypeContainer}s in this container.
@@ -202,7 +217,7 @@ public abstract class AbstractApiTypeContainer extends ApiElement implements IAp
 	 * @param containers the {@link IApiTypeContainer}s to set
 	 */
 	protected synchronized void setApiTypeContainers(IApiTypeContainer[] containers) {
-		if (fApiTypeContainers != null) { 
+		if (fApiTypeContainers != null) {
 			try {
 				close();
 			} catch (CoreException e) {
@@ -210,16 +225,20 @@ public abstract class AbstractApiTypeContainer extends ApiElement implements IAp
 			}
 			fApiTypeContainers.clear();
 		} else {
-			fApiTypeContainers = new ArrayList(containers.length);
+			fApiTypeContainers = new ArrayList<IApiTypeContainer>(containers.length);
 		}
 		for (int i = 0; i < containers.length; i++) {
 			fApiTypeContainers.add(containers[i]);
 		}
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer#getContainerType()
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer
+	 * #getContainerType()
 	 */
+	@Override
 	public int getContainerType() {
 		return 0;
 	}

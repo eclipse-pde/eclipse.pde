@@ -68,7 +68,7 @@ import com.ibm.icu.text.MessageFormat;
  * Job that performs a API use scan.
  */
 public class ApiUseScanJob extends Job {
-	
+
 	/**
 	 * Associated launch configuration
 	 */
@@ -77,37 +77,40 @@ public class ApiUseScanJob extends Job {
 	/**
 	 * List of components that were not searched
 	 */
-	Set notsearched = null;
-	
+	Set<SkippedComponent> notsearched = null;
+
 	/**
 	 * @param name
 	 */
 	public ApiUseScanJob(ILaunchConfiguration configuration) {
-		super(MessageFormat.format(Messages.ApiUseScanJob_api_use_report, new String[]{configuration.getName()}));
+		super(MessageFormat.format(Messages.ApiUseScanJob_api_use_report, new Object[] { configuration.getName() }));
 		this.configuration = configuration;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.
+	 * IProgressMonitor)
 	 */
+	@Override
 	protected IStatus run(IProgressMonitor monitor) {
 		// Build API baseline
 		SubMonitor localmonitor = SubMonitor.convert(monitor);
 		try {
 			IPath rootpath = null;
-			String xmlPath = this.configuration.getAttribute(ApiUseLaunchDelegate.REPORT_PATH, (String)null);
+			String xmlPath = this.configuration.getAttribute(ApiUseLaunchDelegate.REPORT_PATH, (String) null);
 			if (xmlPath == null) {
 				abort(Messages.ApiUseScanJob_missing_xml_loc);
 			}
-			rootpath = new Path(xmlPath); 
+			rootpath = new Path(xmlPath);
 			int kind = this.configuration.getAttribute(ApiUseLaunchDelegate.TARGET_KIND, 0);
-			if(kind != ApiUseLaunchDelegate.KIND_HTML_ONLY) {
+			if (kind != ApiUseLaunchDelegate.KIND_HTML_ONLY) {
 				localmonitor.setTaskName(Messages.ApiUseScanJob_preparing_for_scan);
 				localmonitor.setWorkRemaining((isSpecified(ApiUseLaunchDelegate.CREATE_HTML) ? 14 : 13));
 				// create baseline
 				IApiBaseline baseline = createApiBaseline(kind, localmonitor.newChild(1));
-				Set ids = new HashSet();
-				TreeSet scope = new TreeSet(Util.componentsorter);	
+				Set<String> ids = new HashSet<String>();
+				TreeSet<IApiComponent> scope = new TreeSet<IApiComponent>(Util.componentsorter);
 				getContext(baseline, ids, scope, localmonitor.newChild(2));
 				int kinds = 0;
 				if (isSpecified(ApiUseLaunchDelegate.MOD_API_REFERENCES)) {
@@ -116,18 +119,18 @@ public class ApiUseScanJob extends Job {
 				if (isSpecified(ApiUseLaunchDelegate.MOD_INTERNAL_REFERENCES)) {
 					kinds |= IApiSearchRequestor.INCLUDE_INTERNAL;
 				}
-				if(isSpecified(ApiUseLaunchDelegate.MOD_ILLEGAL_USE)) {
+				if (isSpecified(ApiUseLaunchDelegate.MOD_ILLEGAL_USE)) {
 					kinds |= IApiSearchRequestor.INCLUDE_ILLEGAL_USE;
 				}
-				UseSearchRequestor requestor = new UseSearchRequestor(ids, (IApiElement[]) scope.toArray(new IApiElement[scope.size()]), kinds);
-				List jars = this.configuration.getAttribute(ApiUseLaunchDelegate.JAR_PATTERNS_LIST, (List)null);
+				UseSearchRequestor requestor = new UseSearchRequestor(ids, scope.toArray(new IApiElement[scope.size()]), kinds);
+				List<String> jars = this.configuration.getAttribute(ApiUseLaunchDelegate.JAR_PATTERNS_LIST, (List<String>) null);
 				String[] sjars = getStrings(jars);
 				requestor.setJarPatterns(sjars);
-				List api = this.configuration.getAttribute(ApiUseLaunchDelegate.API_PATTERNS_LIST, (List)null);
+				List<String> api = this.configuration.getAttribute(ApiUseLaunchDelegate.API_PATTERNS_LIST, (List<String>) null);
 				String[] sapi = getStrings(api);
-				String filterRoot = this.configuration.getAttribute(ApiUseLaunchDelegate.FILTER_ROOT, (String)null);
+				String filterRoot = this.configuration.getAttribute(ApiUseLaunchDelegate.FILTER_ROOT, (String) null);
 				requestor.setFilterRoot(filterRoot);
-				List internal = this.configuration.getAttribute(ApiUseLaunchDelegate.INTERNAL_PATTERNS_LIST, (List)null);
+				List<String> internal = this.configuration.getAttribute(ApiUseLaunchDelegate.INTERNAL_PATTERNS_LIST, (List<String>) null);
 				String[] sinternal = getStrings(internal);
 				if (sapi != null || sinternal != null) {
 					// modify API descriptions
@@ -142,30 +145,17 @@ public class ApiUseScanJob extends Job {
 					}
 				}
 				xmlPath = rootpath.append("xml").toOSString(); //$NON-NLS-1$
-				if(isSpecified(ApiUseLaunchDelegate.CLEAN_XML)) {
+				if (isSpecified(ApiUseLaunchDelegate.CLEAN_XML)) {
 					localmonitor.setTaskName(Messages.ApiUseScanJob_cleaning_xml_loc);
 					scrubReportLocation(new File(xmlPath), localmonitor.newChild(1));
 				}
-				UseMetadata data = new UseMetadata(
-						kinds, 
-						this.configuration.getAttribute(ApiUseLaunchDelegate.TARGET_SCOPE, (String)null), 
-						this.configuration.getAttribute(ApiUseLaunchDelegate.SEARCH_SCOPE, (String)null), 
-						baseline.getLocation(), 
-						xmlPath, 
-						sapi, 
-						sinternal, 
-						sjars,
-						DateFormat.getDateTimeInstance().format(Calendar.getInstance().getTime()),
-						this.configuration.getAttribute(ApiUseLaunchDelegate.DESCRIPTION, (String)null));
-				IApiSearchReporter reporter = new XmlSearchReporter(
-						xmlPath, 
-						false);
+				UseMetadata data = new UseMetadata(kinds, this.configuration.getAttribute(ApiUseLaunchDelegate.TARGET_SCOPE, (String) null), this.configuration.getAttribute(ApiUseLaunchDelegate.SEARCH_SCOPE, (String) null), baseline.getLocation(), xmlPath, sapi, sinternal, sjars, DateFormat.getDateTimeInstance().format(Calendar.getInstance().getTime()), this.configuration.getAttribute(ApiUseLaunchDelegate.DESCRIPTION, (String) null));
+				IApiSearchReporter reporter = new XmlSearchReporter(xmlPath, false);
 				try {
 					ApiSearchEngine engine = new ApiSearchEngine();
 					engine.search(baseline, requestor, reporter, localmonitor.newChild(6));
-				}
-				finally {
-					reporter.reportNotSearched((IApiElement[]) ApiUseScanJob.this.notsearched.toArray(new IApiElement[ApiUseScanJob.this.notsearched.size()]));
+				} finally {
+					reporter.reportNotSearched(ApiUseScanJob.this.notsearched.toArray(new IApiElement[ApiUseScanJob.this.notsearched.size()]));
 					reporter.reportMetadata(data);
 					reporter.reportCounts();
 					// Dispose the baseline if it's not managed (it's temporary)
@@ -182,48 +172,39 @@ public class ApiUseScanJob extends Job {
 						baseline.dispose();
 					}
 				}
-			}
-			else {
+			} else {
 				localmonitor.setWorkRemaining(10);
 			}
-			if(isSpecified(ApiUseLaunchDelegate.CREATE_HTML)) {
+			if (isSpecified(ApiUseLaunchDelegate.CREATE_HTML)) {
 				localmonitor.setTaskName(Messages.ApiUseScanJob_generating_html_reports);
 				String htmlPath = rootpath.append("html").toOSString(); //$NON-NLS-1$
-				
+
 				int reportType = ApiUseLaunchDelegate.REPORT_KIND_PRODUCER;
-				if (this.configuration.getAttribute(ApiUseLaunchDelegate.REPORT_TYPE, ApiUseLaunchDelegate.REPORT_KIND_PRODUCER) == ApiUseLaunchDelegate.REPORT_KIND_CONSUMER){
+				if (this.configuration.getAttribute(ApiUseLaunchDelegate.REPORT_TYPE, ApiUseLaunchDelegate.REPORT_KIND_PRODUCER) == ApiUseLaunchDelegate.REPORT_KIND_CONSUMER) {
 					reportType = ApiUseLaunchDelegate.REPORT_KIND_CONSUMER;
 				}
-				
-				performReportCreation(
-						reportType,
-						isSpecified(ApiUseLaunchDelegate.CLEAN_HTML),
-						htmlPath,
-						xmlPath,
-						isSpecified(ApiUseLaunchDelegate.DISPLAY_REPORT),
-						getStrings(this.configuration.getAttribute(ApiUseLaunchDelegate.REPORT_TO_PATTERNS_LIST, (List)null)),
-						getStrings(this.configuration.getAttribute(ApiUseLaunchDelegate.REPORT_PATTERNS_LIST, (List)null)),
-						localmonitor.newChild(10));
+
+				performReportCreation(reportType, isSpecified(ApiUseLaunchDelegate.CLEAN_HTML), htmlPath, xmlPath, isSpecified(ApiUseLaunchDelegate.DISPLAY_REPORT), getStrings(this.configuration.getAttribute(ApiUseLaunchDelegate.REPORT_TO_PATTERNS_LIST, (List<String>) null)), getStrings(this.configuration.getAttribute(ApiUseLaunchDelegate.REPORT_PATTERNS_LIST, (List<String>) null)), localmonitor.newChild(10));
 			}
-			
+
 		} catch (CoreException e) {
 			return e.getStatus();
-		}
-		finally {
+		} finally {
 			localmonitor.done();
 		}
 		return Status.OK_STATUS;
 	}
-	
-	private String[] getStrings(List list) {
+
+	private String[] getStrings(List<String> list) {
 		if (list == null || list.isEmpty()) {
 			return null;
 		}
-		return (String[]) list.toArray(new String[list.size()]);
+		return list.toArray(new String[list.size()]);
 	}
-	
+
 	/**
 	 * Throws a new {@link CoreException} with the given message
+	 * 
 	 * @param message
 	 * @throws CoreException
 	 */
@@ -232,7 +213,9 @@ public class ApiUseScanJob extends Job {
 	}
 
 	/**
-	 * Creates a new {@link IApiBaseline} from the location set in the backing launch configuration
+	 * Creates a new {@link IApiBaseline} from the location set in the backing
+	 * launch configuration
+	 * 
 	 * @param kind
 	 * @param monitor
 	 * @return the new {@link IApiBaseline}
@@ -242,27 +225,27 @@ public class ApiUseScanJob extends Job {
 		ApiBaselineManager bmanager = ApiBaselineManager.getManager();
 		switch (kind) {
 			case ApiUseLaunchDelegate.KIND_API_BASELINE:
-				String name = this.configuration.getAttribute(ApiUseLaunchDelegate.BASELINE_NAME, (String)null);
+				String name = this.configuration.getAttribute(ApiUseLaunchDelegate.BASELINE_NAME, (String) null);
 				if (name == null) {
 					abort(Messages.ApiUseScanJob_baseline_name_missing);
 				}
 				IApiBaseline baseline = bmanager.getApiBaseline(name);
 				if (baseline == null) {
-					abort(MessageFormat.format(Messages.ApiUseScanJob_baseline_does_not_exist, new String[]{name}));
+					abort(MessageFormat.format(Messages.ApiUseScanJob_baseline_does_not_exist, new Object[] { name }));
 				}
 				return baseline;
 			case ApiUseLaunchDelegate.KIND_INSTALL_PATH:
-				String path = this.configuration.getAttribute(ApiUseLaunchDelegate.INSTALL_PATH, (String)null);
+				String path = this.configuration.getAttribute(ApiUseLaunchDelegate.INSTALL_PATH, (String) null);
 				if (path == null) {
 					abort(Messages.ApiUseScanJob_unspecified_install_path);
 				}
 				File file = new File(path);
 				if (!file.exists() || !file.isDirectory()) {
-					abort(MessageFormat.format(Messages.ApiUseScanJob_intall_dir_does_no_exist, new String[]{path}));
+					abort(MessageFormat.format(Messages.ApiUseScanJob_intall_dir_does_no_exist, new Object[] { path }));
 				}
 				return createBaseline(path, monitor);
 			case ApiUseLaunchDelegate.KIND_TARGET_DEFINITION:
-				String memento = this.configuration.getAttribute(ApiUseLaunchDelegate.TARGET_HANDLE, (String)null);
+				String memento = this.configuration.getAttribute(ApiUseLaunchDelegate.TARGET_HANDLE, (String) null);
 				if (memento == null) {
 					abort(Messages.ApiUseScanJob_target_unspecified);
 				}
@@ -275,7 +258,7 @@ public class ApiUseScanJob extends Job {
 		}
 		return null;
 	}
-		
+
 	/**
 	 * Returns the target service or <code>null</code>
 	 * 
@@ -284,21 +267,22 @@ public class ApiUseScanJob extends Job {
 	private ITargetPlatformService getTargetService() {
 		return (ITargetPlatformService) ApiPlugin.getDefault().acquireService(ITargetPlatformService.class.getName());
 	}
-	
+
 	/**
 	 * Collects the context of reference ids and scope elements in one pass
+	 * 
 	 * @param baseline the baseline to check components from
 	 * @param ids the reference ids to consider
 	 * @param scope the scope of elements to search
 	 * @param monitor
 	 * @throws CoreException
 	 */
-	private void getContext(IApiBaseline baseline, Set ids, Set scope, IProgressMonitor monitor) throws CoreException {
+	private void getContext(IApiBaseline baseline, Set<String> ids, Set<IApiComponent> scope, IProgressMonitor monitor) throws CoreException {
 		SubMonitor localmonitor = SubMonitor.convert(monitor, Messages.ApiUseScanJob_collecting_target_components, 10);
-		this.notsearched = new TreeSet(Util.componentsorter);
-		String regex = this.configuration.getAttribute(ApiUseLaunchDelegate.TARGET_SCOPE, (String)null);
+		this.notsearched = new TreeSet<SkippedComponent>(Util.componentsorter);
+		String regex = this.configuration.getAttribute(ApiUseLaunchDelegate.TARGET_SCOPE, (String) null);
 		Pattern pattern = getPattern(regex);
-		regex = this.configuration.getAttribute(ApiUseLaunchDelegate.SEARCH_SCOPE, (String)null);
+		regex = this.configuration.getAttribute(ApiUseLaunchDelegate.SEARCH_SCOPE, (String) null);
 		Pattern pattern2 = getPattern(regex);
 		IApiComponent[] components = baseline.getApiComponents();
 		localmonitor.setWorkRemaining(components.length);
@@ -311,16 +295,16 @@ public class ApiUseScanJob extends Job {
 			}
 			if (acceptComponent(component, pattern2, false)) {
 				scope.add(component);
-			}
-			else {
+			} else {
 				localmonitor.subTask(NLS.bind(Messages.ApiUseScanJob_skipping_component, component.getSymbolicName()));
 				this.notsearched.add(new SkippedComponent(component.getSymbolicName(), component.getVersion(), null));
 			}
 		}
 	}
-	
+
 	/**
-	 * Returns a pattern for the given regular expression or <code>null</code> if none.
+	 * Returns a pattern for the given regular expression or <code>null</code>
+	 * if none.
 	 * 
 	 * @param regex expression, <code>null</code> or empty
 	 * @return associated pattern or <code>null</code>
@@ -334,9 +318,10 @@ public class ApiUseScanJob extends Job {
 		}
 		return Pattern.compile(regex);
 	}
-	
+
 	/**
 	 * Returns if we should add the given component to our search scope
+	 * 
 	 * @param component
 	 * @param pattern
 	 * @param allowresolve
@@ -344,26 +329,26 @@ public class ApiUseScanJob extends Job {
 	 * @throws CoreException
 	 */
 	boolean acceptComponent(IApiComponent component, Pattern pattern, boolean allowresolve) throws CoreException {
-		if(!allowresolve) {
+		if (!allowresolve) {
 			ResolverError[] errors = component.getErrors();
-			if(errors != null) {
-				this.notsearched.add(new SkippedComponent(component.getSymbolicName(), component.getVersion(), errors)); 
+			if (errors != null) {
+				this.notsearched.add(new SkippedComponent(component.getSymbolicName(), component.getVersion(), errors));
 				return false;
 			}
 		}
-		if(component.isSystemComponent()) {
+		if (component.isSystemComponent()) {
 			return false;
 		}
-		if(pattern != null) {
+		if (pattern != null) {
 			return pattern.matcher(component.getSymbolicName()).matches();
 		}
 		return true;
 	}
-	
-	
-	
+
 	/**
-	 * Returns if the given search modifier is set in the backing {@link ILaunchConfiguration}
+	 * Returns if the given search modifier is set in the backing
+	 * {@link ILaunchConfiguration}
+	 * 
 	 * @param modifier
 	 * @return true if the modifier is set, false otherwise
 	 * @throws CoreException
@@ -372,10 +357,13 @@ public class ApiUseScanJob extends Job {
 		int modifiers = configuration.getAttribute(ApiUseLaunchDelegate.SEARCH_MODIFIERS, 0);
 		return (modifiers & modifier) > 0;
 	}
-	
+
 	/**
 	 * Performs the report creation
-	 * @param reportType what report converter to use, either {@link ApiUseLaunchDelegate#REPORT_KIND_PRODUCER} or {@link ApiUseLaunchDelegate#REPORT_KIND_CONSUMER}
+	 * 
+	 * @param reportType what report converter to use, either
+	 *            {@link ApiUseLaunchDelegate#REPORT_KIND_PRODUCER} or
+	 *            {@link ApiUseLaunchDelegate#REPORT_KIND_CONSUMER}
 	 * @param cleanh
 	 * @param hlocation
 	 * @param rlocation
@@ -383,40 +371,31 @@ public class ApiUseScanJob extends Job {
 	 * @param monitor
 	 * @throws OperationCanceledException
 	 */
-	void performReportCreation(int reportType, 
-			boolean cleanh, 
-			String hlocation, 
-			String rlocation, 
-			boolean openhtml,
-			String[] topatterns,
-			String[] frompatterns,
-			IProgressMonitor monitor) {
+	void performReportCreation(int reportType, boolean cleanh, String hlocation, String rlocation, boolean openhtml, String[] topatterns, String[] frompatterns, IProgressMonitor monitor) {
 		SubMonitor localmonitor = SubMonitor.convert(monitor, Messages.ApiUseScanJob_creating_html_reports, 10);
-		if(cleanh) {
+		if (cleanh) {
 			cleanReportLocation(hlocation, localmonitor.newChild(5));
 		}
 		try {
 			UseReportConverter converter = null;
-			if (reportType == ApiUseLaunchDelegate.REPORT_KIND_CONSUMER){
+			if (reportType == ApiUseLaunchDelegate.REPORT_KIND_CONSUMER) {
 				converter = new ConsumerReportConvertor(hlocation, rlocation, topatterns, frompatterns);
 			} else {
 				converter = new UseReportConverter(hlocation, rlocation, topatterns, frompatterns);
 			}
-			
+
 			converter.convert(null, localmonitor.newChild(5));
-			if(openhtml) {
+			if (openhtml) {
 				final File index = converter.getReportIndex();
-				if(index != null) {
-					UIJob ujob = new UIJob(Util.EMPTY_STRING){
+				if (index != null) {
+					UIJob ujob = new UIJob(Util.EMPTY_STRING) {
+						@Override
 						public IStatus runInUIThread(IProgressMonitor monitor) {
 							IEditorDescriptor edesc = null;
 							try {
 								edesc = IDE.getEditorDescriptor(index.getName());
 								IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-								IDE.openEditor(window.getActivePage(), 
-										index.toURI(), 
-										edesc.getId(), 
-										true);
+								IDE.openEditor(window.getActivePage(), index.toURI(), edesc.getId(), true);
 							} catch (PartInitException e) {
 								e.printStackTrace();
 							}
@@ -428,54 +407,53 @@ public class ApiUseScanJob extends Job {
 					ujob.schedule();
 				}
 			}
-		}
-		catch (OperationCanceledException oce) {
-			//re-throw
+		} catch (OperationCanceledException oce) {
+			// re-throw
 			throw oce;
-		}
-		catch(Exception e) {
+		} catch (Exception e) {
 			ApiPlugin.log(e);
 		}
 	}
-	
+
 	/**
 	 * Cleans the report location specified by the parameter reportLocation
+	 * 
 	 * @param monitor
 	 */
 	void cleanReportLocation(String location, IProgressMonitor monitor) {
 		File file = new File(location);
 		SubMonitor localmonitor = SubMonitor.convert(monitor, Messages.ApiUseScanJob_deleting_old_reports, IProgressMonitor.UNKNOWN);
-		if(file.exists()) {
+		if (file.exists()) {
 			Util.updateMonitor(localmonitor, 0);
 			scrubReportLocation(file, localmonitor);
 			localmonitor.subTask(NLS.bind(Messages.ApiUseScanJob_deleting_root_folder, file.getName()));
 		}
 	}
-	
+
 	/**
 	 * Cleans the location if it exists
+	 * 
 	 * @param file
 	 * @param monitor
 	 */
 	void scrubReportLocation(File file, IProgressMonitor monitor) {
-		if(file.exists() && file.isDirectory()) {
+		if (file.exists() && file.isDirectory()) {
 			File[] files = file.listFiles();
-			if (files != null){
+			if (files != null) {
 				for (int i = 0; i < files.length; i++) {
 					monitor.subTask(NLS.bind(Messages.ApiUseScanJob_deleteing_file, files[i].getPath()));
 					Util.updateMonitor(monitor, 0);
-					if(files[i].isDirectory()) {
+					if (files[i].isDirectory()) {
 						scrubReportLocation(files[i], monitor);
-					}
-					else {
+					} else {
 						files[i].delete();
 					}
 				}
 			}
 			file.delete();
 		}
-	}	
-	
+	}
+
 	/**
 	 * Creates an API baseline from a target definition.
 	 * 
@@ -487,7 +465,7 @@ public class ApiUseScanJob extends Job {
 		definition.resolve(localmonitor.newChild(2));
 		Util.updateMonitor(localmonitor, 1);
 		TargetBundle[] bundles = definition.getBundles();
-		List components = new ArrayList();
+		List<IApiComponent> components = new ArrayList<IApiComponent>();
 		IApiBaseline profile = ApiModelFactory.newApiBaseline(definition.getName());
 		localmonitor.setWorkRemaining(bundles.length);
 		for (int i = 0; i < bundles.length; i++) {
@@ -499,10 +477,10 @@ public class ApiUseScanJob extends Job {
 				}
 			}
 		}
-		profile.addApiComponents((IApiComponent[]) components.toArray(new IApiComponent[components.size()]));
+		profile.addApiComponents(components.toArray(new IApiComponent[components.size()]));
 		return profile;
-	}	
-	
+	}
+
 	/**
 	 * Creates a baseline at an install location
 	 * 
@@ -513,10 +491,10 @@ public class ApiUseScanJob extends Job {
 		SubMonitor localmonitor = SubMonitor.convert(monitor, Messages.ApiUseScanJob_scanning, 10);
 		IApiBaseline baseline = ApiModelFactory.newApiBaseline(this.configuration.getName());
 		IApiComponent[] components = ApiModelFactory.addComponents(baseline, installLocation, localmonitor);
-		if (components.length == 0){
-			abort(MessageFormat.format(Messages.ApiUseScanJob_no_bundles, new String[]{installLocation}));
+		if (components.length == 0) {
+			abort(MessageFormat.format(Messages.ApiUseScanJob_no_bundles, new Object[] { installLocation }));
 		}
 		return baseline;
-	}	
-	
+	}
+
 }

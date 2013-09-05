@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,35 +42,44 @@ import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 
 /**
  * Class provides the general API tool preference page
+ * 
  * @since 1.0.0
  */
 public class ApiErrorsWarningsPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
 	public static final String ID = ApiUIPlugin.PLUGIN_ID + ".apitools.errorwarnings.prefpage"; //$NON-NLS-1$
 	/**
-	 * Id of a setting in the data map applied when the page is opened.  
-	 * Value must be a Boolean object.  If true, the customize project settings link will be hidden.
+	 * Id of a setting in the data map applied when the page is opened. Value
+	 * must be a Boolean object. If true, the customize project settings link
+	 * will be hidden.
 	 */
-	public static final String NO_LINK= "PropertyAndPreferencePage.nolink"; //$NON-NLS-1$
+	public static final String NO_LINK = "PropertyAndPreferencePage.nolink"; //$NON-NLS-1$
 	/**
-	 * Id of a setting in the data map applied when the page is opened. 
-	 * Value must be an Integer object with a value match the id of a tab on the page
-	 * See constants {@link ApiErrorsWarningsConfigurationBlock#API_USE_SCANS_PAGE_ID}, {@link ApiErrorsWarningsConfigurationBlock#COMPATIBILITY_PAGE_ID}, {@link ApiErrorsWarningsConfigurationBlock#VERSION_MANAGEMENT_PAGE_ID}, {@link ApiErrorsWarningsConfigurationBlock#API_COMPONENT_RESOLUTION_PAGE_ID} and {@link ApiErrorsWarningsConfigurationBlock#API_USE_SCANS_PAGE_ID}
-	 * If an id is provided, the preference page will open with the specified tab visible
+	 * Id of a setting in the data map applied when the page is opened. Value
+	 * must be an Integer object with a value match the id of a tab on the page
+	 * See constants
+	 * {@link ApiErrorsWarningsConfigurationBlock#API_USE_SCANS_PAGE_ID},
+	 * {@link ApiErrorsWarningsConfigurationBlock#COMPATIBILITY_PAGE_ID},
+	 * {@link ApiErrorsWarningsConfigurationBlock#VERSION_MANAGEMENT_PAGE_ID},
+	 * {@link ApiErrorsWarningsConfigurationBlock#API_COMPONENT_RESOLUTION_PAGE_ID}
+	 * and {@link ApiErrorsWarningsConfigurationBlock#API_USE_SCANS_PAGE_ID} If
+	 * an id is provided, the preference page will open with the specified tab
+	 * visible
 	 */
 	public static final String INITIAL_TAB = "PropertyAndPreferencePage.initialTab"; //$NON-NLS-1$
-	
+
 	/**
 	 * The main configuration block for the page
 	 */
 	ApiErrorsWarningsConfigurationBlock block = null;
 	private Link link = null;
-	
+
 	/**
-	 * Since {@link #applyData(Object)} can be called before createContents, store the data
+	 * Since {@link #applyData(Object)} can be called before createContents,
+	 * store the data
 	 */
-	private Map fPageData = null;
-	
+	private Map<String, Object> fPageData = null;
+
 	/**
 	 * Constructor
 	 */
@@ -78,118 +87,138 @@ public class ApiErrorsWarningsPreferencePage extends PreferencePage implements I
 		super(PreferenceMessages.ApiErrorsWarningsPreferencePage_0);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse
+	 * .swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createContents(Composite parent) {
-		Composite comp  = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH, 0, 0);
+		Composite comp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH, 0, 0);
 		link = new Link(comp, SWT.NONE);
 		link.setLayoutData(new GridData(GridData.END, GridData.CENTER, true, false));
 		link.setFont(comp.getFont());
-		link.setText(PreferenceMessages.ApiErrorsWarningsPreferencePage_1); 
+		link.setText(PreferenceMessages.ApiErrorsWarningsPreferencePage_1);
 		link.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
-				HashSet set = new HashSet();
+				HashSet<IJavaProject> set = new HashSet<IJavaProject>();
 				try {
 					IJavaProject[] projects = JavaCore.create(ResourcesPlugin.getWorkspace().getRoot()).getJavaProjects();
 					IProject project = null;
-					for(int i = 0; i < projects.length; i++) {
+					for (int i = 0; i < projects.length; i++) {
 						project = projects[i].getProject();
 						try {
-							if(project.hasNature(ApiPlugin.NATURE_ID) && block.hasProjectSpecificSettings(project)) {
+							if (project.hasNature(ApiPlugin.NATURE_ID) && block.hasProjectSpecificSettings(project)) {
 								set.add(projects[i]);
 							}
-						}
-						catch(CoreException ce) {
-							//do nothing ignore the project
+						} catch (CoreException ce) {
+							// do nothing ignore the project
 						}
 					}
-				}
-				catch (JavaModelException jme) {
-					//ignore
+				} catch (JavaModelException jme) {
+					// ignore
 				}
 				ProjectSelectionDialog psd = new ProjectSelectionDialog(getShell(), set);
-				if(psd.open() == IDialogConstants.OK_ID) {
-					HashMap data = new HashMap();
+				if (psd.open() == IDialogConstants.OK_ID) {
+					HashMap<String, Boolean> data = new HashMap<String, Boolean>();
 					data.put(NO_LINK, Boolean.TRUE);
-					PreferencesUtil.createPropertyDialogOn(getShell(), ((IJavaProject) psd.getFirstResult()).getProject(), 
-							IApiToolsConstants.ID_ERRORS_WARNINGS_PROP_PAGE,
-							new String[] { IApiToolsConstants.ID_ERRORS_WARNINGS_PROP_PAGE }, data).open();
+					PreferencesUtil.createPropertyDialogOn(getShell(), ((IJavaProject) psd.getFirstResult()).getProject(), IApiToolsConstants.ID_ERRORS_WARNINGS_PROP_PAGE, new String[] { IApiToolsConstants.ID_ERRORS_WARNINGS_PROP_PAGE }, data).open();
 				}
-			};
+			}
 		});
-		block = new ApiErrorsWarningsConfigurationBlock(null, (IWorkbenchPreferenceContainer)getContainer());
+		block = new ApiErrorsWarningsConfigurationBlock(null, (IWorkbenchPreferenceContainer) getContainer());
 		block.createControl(comp);
-		
-		// Initialize with data map in case applyData was called before createContents
+
+		// Initialize with data map in case applyData was called before
+		// createContents
 		applyData(fPageData);
-		
+
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IApiToolsHelpContextIds.APITOOLS_ERROR_WARNING_PREF_PAGE);
 		return comp;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.DialogPage#dispose()
 	 */
+	@Override
 	public void dispose() {
-		if(block != null) {
+		if (block != null) {
 			block.dispose();
 		}
 		super.dispose();
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */
-	public void init(IWorkbench workbench) {}
-	
-	/* (non-Javadoc)
+	@Override
+	public void init(IWorkbench workbench) {
+	}
+
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#performCancel()
 	 */
+	@Override
 	public boolean performCancel() {
 		block.performCancel();
 		return super.performCancel();
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
 	 */
+	@Override
 	public boolean performOk() {
 		block.performOK();
 		return super.performOk();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#performApply()
 	 */
+	@Override
 	protected void performApply() {
 		block.performApply();
 		super.performApply();
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
+	@Override
 	protected void performDefaults() {
 		block.performDefaults();
 		super.performDefaults();
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferencePage#applyData(java.lang.Object)
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.jface.preference.PreferencePage#applyData(java.lang.Object)
 	 */
+	@SuppressWarnings("unchecked")
+	@Override
 	public void applyData(Object data) {
-		if(data instanceof Map) {
-			fPageData = (Map)data;
-			if (link != null && fPageData.containsKey(NO_LINK)){
+		if (data instanceof Map) {
+			fPageData = (Map<String, Object>) data;
+			if (link != null && fPageData.containsKey(NO_LINK)) {
 				link.setVisible(!Boolean.TRUE.equals(fPageData.get(NO_LINK)));
 			}
-			if (block != null && fPageData.containsKey(INITIAL_TAB)){
-				Integer tabIndex = (Integer)fPageData.get(INITIAL_TAB);
-				if (tabIndex != null){
+			if (block != null && fPageData.containsKey(INITIAL_TAB)) {
+				Integer tabIndex = (Integer) fPageData.get(INITIAL_TAB);
+				if (tabIndex != null) {
 					try {
 						block.selectTab(tabIndex.intValue());
-					} catch (NumberFormatException e){
+					} catch (NumberFormatException e) {
 						// Page was called with bad data, just ignore
 					}
 				}

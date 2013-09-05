@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,6 +52,7 @@ public class ExportSessionAction extends Action {
 	private static final String XML_FILE_EXTENSION = ".xml"; //$NON-NLS-1$
 	private static final String HTML_FILE_EXTENSION = ".html"; //$NON-NLS-1$
 	APIToolingView view;
+
 	public ExportSessionAction(APIToolingView view) {
 		setText(ActionMessages.ExportSessionAction_label);
 		setToolTipText(ActionMessages.ExportSessionAction_tooltip);
@@ -63,6 +64,7 @@ public class ExportSessionAction extends Action {
 		this.view = view;
 	}
 
+	@Override
 	public void run() {
 		final ISession activeSession = ApiPlugin.getDefault().getSessionManager().getActiveSession();
 		if (activeSession == null) {
@@ -81,8 +83,9 @@ public class ExportSessionAction extends Action {
 		if (!lowerCase.endsWith(HTML_FILE_EXTENSION) && !lowerCase.endsWith(XML_FILE_EXTENSION)) {
 			return;
 		}
-		
-		Job job = new Job(ActionMessages.CompareWithAction_comparing_apis){
+
+		Job job = new Job(ActionMessages.CompareWithAction_comparing_apis) {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				SubMonitor progress = SubMonitor.convert(monitor, 100);
 				progress.subTask(ActionMessages.CompareDialogCollectingElementTaskName);
@@ -105,7 +108,7 @@ public class ExportSessionAction extends Action {
 								xmlOutputFile.delete();
 							} else {
 								File parent = xmlOutputFile.getParentFile();
-								if(!parent.exists() && !parent.mkdirs()) {
+								if (!parent.exists() && !parent.mkdirs()) {
 									return new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, ActionMessages.ExportSessionAction_failed_to_create_parent_folders);
 								}
 							}
@@ -129,13 +132,14 @@ public class ExportSessionAction extends Action {
 							if (writer != null) {
 								try {
 									writer.close();
-								} catch(IOException e) {
+								} catch (IOException e) {
 									// ignore
 								}
 							}
 						}
-						if(isHtmlFile) {
-							// remaining part is to convert the xml file to html using XSLT
+						if (isHtmlFile) {
+							// remaining part is to convert the xml file to html
+							// using XSLT
 							Util.updateMonitor(progress);
 							Source xmlSource = new StreamSource(xmlOutputFile);
 							InputStream stream = ApiPlugin.class.getResourceAsStream(DELTAS_XSLT_TRANSFORM_PATH);
@@ -145,7 +149,7 @@ public class ExportSessionAction extends Action {
 									reportFile.delete();
 								} else {
 									File parent = reportFile.getParentFile();
-									if(!parent.exists() && !parent.mkdirs()) {
+									if (!parent.exists() && !parent.mkdirs()) {
 										return new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, ActionMessages.ExportSessionAction_failed_to_create_parent_folders);
 									}
 								}
@@ -159,13 +163,13 @@ public class ExportSessionAction extends Action {
 								ApiUIPlugin.log(e);
 							} catch (TransformerException e) {
 								ApiUIPlugin.log(e);
-							} catch(IOException e) {
+							} catch (IOException e) {
 								ApiUIPlugin.log(e);
 							} finally {
 								if (writer != null) {
 									try {
 										writer.close();
-									} catch(IOException e) {
+									} catch (IOException e) {
 										// ignore
 									}
 								}
@@ -173,7 +177,7 @@ public class ExportSessionAction extends Action {
 						}
 						progress.worked(25);
 						return Status.OK_STATUS;
-					} catch(OperationCanceledException e) {
+					} catch (OperationCanceledException e) {
 						// ignore
 						if (xmlOutputFile != null && xmlOutputFile.exists()) {
 							xmlOutputFile.delete();
@@ -192,6 +196,7 @@ public class ExportSessionAction extends Action {
 		job.setPriority(Job.LONG);
 		job.schedule();
 	}
+
 	public void dispose() {
 	}
 

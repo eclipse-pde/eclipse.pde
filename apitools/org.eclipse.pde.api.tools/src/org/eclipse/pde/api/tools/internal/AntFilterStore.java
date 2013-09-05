@@ -23,18 +23,18 @@ import org.eclipse.pde.api.tools.internal.problems.ApiProblemFilter;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemFilter;
 
-
 /**
- * This filter store is only used to filter problem using existing filters.
- * It doesn't add or remove any filters.
+ * This filter store is only used to filter problem using existing filters. It
+ * doesn't add or remove any filters.
  */
 public class AntFilterStore extends FilterStore {
 
 	String fComponentId = null;
 	String fFiltersRoot = null;
-	
+
 	/**
 	 * Constructor
+	 * 
 	 * @param debug
 	 * @param filtersRoot
 	 * @param componentID
@@ -44,14 +44,17 @@ public class AntFilterStore extends FilterStore {
 		fFiltersRoot = filtersRoot;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.FilterStore#initializeApiFilters()
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.FilterStore#initializeApiFilters()
 	 */
+	@Override
 	protected synchronized void initializeApiFilters() {
-		if(fFilterMap != null) {
+		if (fFilterMap != null) {
 			return;
 		}
-		fFilterMap = new HashMap(5);
+		fFilterMap = new HashMap<String, Set<IApiProblemFilter>>(5);
 		InputStream contents = null;
 		try {
 			File filterFileParent = new File(fFiltersRoot, fComponentId);
@@ -60,42 +63,45 @@ public class AntFilterStore extends FilterStore {
 			}
 			contents = new BufferedInputStream(new FileInputStream(new File(filterFileParent, IApiCoreConstants.API_FILTERS_XML_NAME)));
 			readFilterFile(contents);
-		}
-		catch(IOException ioe) {
-		}
-		finally {
+		} catch (IOException ioe) {
+		} finally {
 			if (contents != null) {
 				try {
 					contents.close();
-				} catch(IOException e) {
+				} catch (IOException e) {
 					// ignore
 				}
 			}
 		}
 	}
-	
+
 	/**
-	 * Internal use method that allows auto-persisting of the filter file to be turned on or off
+	 * Internal use method that allows auto-persisting of the filter file to be
+	 * turned on or off
+	 * 
 	 * @param problems the problems to add the the store
-	 * @param persist if the filters should be auto-persisted after they are added
+	 * @param persist if the filters should be auto-persisted after they are
+	 *            added
 	 */
+	@Override
 	protected void internalAddFilters(IApiProblem[] problems, String[] comments) {
-		if(problems == null || problems.length == 0) {
+		if (problems == null || problems.length == 0) {
 			return;
 		}
-		// This filter store doesn't handle resources so all filters are added to GLOBAL
-		Set globalFilters = (Set) fFilterMap.get(GLOBAL);
-		if(globalFilters == null) {
-			globalFilters = new HashSet();
+		// This filter store doesn't handle resources so all filters are added
+		// to GLOBAL
+		Set<IApiProblemFilter> globalFilters = fFilterMap.get(GLOBAL);
+		if (globalFilters == null) {
+			globalFilters = new HashSet<IApiProblemFilter>();
 			fFilterMap.put(GLOBAL, globalFilters);
 		}
-		
-		for(int i = 0; i < problems.length; i++) {
+
+		for (int i = 0; i < problems.length; i++) {
 			IApiProblem problem = problems[i];
 			String comment = comments != null ? comments[i] : null;
 			IApiProblemFilter filter = new ApiProblemFilter(fComponentId, problem, comment);
 			globalFilters.add(filter);
 		}
 	}
-	
+
 }

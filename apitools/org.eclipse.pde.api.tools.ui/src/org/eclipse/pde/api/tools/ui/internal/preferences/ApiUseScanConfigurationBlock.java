@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 IBM Corporation and others.
+ * Copyright (c) 2010, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.pde.api.tools.ui.internal.preferences;
 
 import java.util.ArrayList;
-import java.util.IdentityHashMap;
 import java.util.List;
 
 import org.eclipse.core.runtime.preferences.DefaultScope;
@@ -112,8 +111,7 @@ public class ApiUseScanConfigurationBlock {
 		 * @param manager
 		 * @return the {@link IEclipsePreferences} node or <code>null</code>
 		 */
-		private IEclipsePreferences getNode(IScopeContext context,
-				IWorkingCopyManager manager) {
+		private IEclipsePreferences getNode(IScopeContext context, IWorkingCopyManager manager) {
 			IEclipsePreferences node = context.getNode(qualifier);
 			if (manager != null) {
 				return manager.getWorkingCopy(node);
@@ -130,8 +128,7 @@ public class ApiUseScanConfigurationBlock {
 		 * @return the value from the {@link IEclipsePreferences} node or
 		 *         <code>null</code>
 		 */
-		public String getStoredValue(IScopeContext context,
-				IWorkingCopyManager manager) {
+		public String getStoredValue(IScopeContext context, IWorkingCopyManager manager) {
 			IEclipsePreferences node = getNode(context, manager);
 			if (node != null) {
 				return node.get(key, null);
@@ -149,8 +146,7 @@ public class ApiUseScanConfigurationBlock {
 		 * @return the value from the {@link IEclipsePreferences} node or
 		 *         <code>null</code>
 		 */
-		public String getStoredValue(IScopeContext[] lookupOrder,
-				boolean ignoreTopScope, IWorkingCopyManager manager) {
+		public String getStoredValue(IScopeContext[] lookupOrder, boolean ignoreTopScope, IWorkingCopyManager manager) {
 			for (int i = ignoreTopScope ? 1 : 0; i < lookupOrder.length; i++) {
 				String value = getStoredValue(lookupOrder[i], manager);
 				if (value != null) {
@@ -167,8 +163,7 @@ public class ApiUseScanConfigurationBlock {
 		 * @param value
 		 * @param manager
 		 */
-		public void setStoredValue(IScopeContext context, String value,
-				IWorkingCopyManager manager) {
+		public void setStoredValue(IScopeContext context, String value, IWorkingCopyManager manager) {
 			IEclipsePreferences node = getNode(context, manager);
 			if (value != null) {
 				node.put(key, value);
@@ -179,9 +174,9 @@ public class ApiUseScanConfigurationBlock {
 
 		/*
 		 * (non-Javadoc)
-		 * 
 		 * @see java.lang.Object#toString()
 		 */
+		@Override
 		public String toString() {
 			return qualifier + '/' + key;
 		}
@@ -204,8 +199,9 @@ public class ApiUseScanConfigurationBlock {
 	/**
 	 * An array of all of the keys for the page
 	 */
-	private static Key[] fgAllKeys = { KEY_API_USE_SCAN_TYPE_PROBLEM,
-			KEY_API_USE_SCAN_METHOD_PROBLEM, KEY_API_USE_SCAN_FIELD_PROBLEM };
+	private static Key[] fgAllKeys = {
+			KEY_API_USE_SCAN_TYPE_PROBLEM, KEY_API_USE_SCAN_METHOD_PROBLEM,
+			KEY_API_USE_SCAN_FIELD_PROBLEM };
 
 	/**
 	 * Constant representing the severity values presented in the combo boxes
@@ -220,19 +216,20 @@ public class ApiUseScanConfigurationBlock {
 	 * Constant representing the severity values presented in the combo boxes
 	 * for each option
 	 */
-	private static final String[] SEVERITIES = { ApiPlugin.VALUE_ERROR,
-			ApiPlugin.VALUE_WARNING, ApiPlugin.VALUE_IGNORE, };
+	private static final String[] SEVERITIES = {
+			ApiPlugin.VALUE_ERROR, ApiPlugin.VALUE_WARNING,
+			ApiPlugin.VALUE_IGNORE, };
 
 	/**
 	 * Default selection listener for controls on the page
 	 */
 	private SelectionListener selectionlistener = new SelectionAdapter() {
+		@Override
 		public void widgetSelected(SelectionEvent e) {
 			if (e.widget instanceof Combo) {
 				Combo combo = (Combo) e.widget;
 				ControlData data = (ControlData) combo.getData();
-				data.key.setStoredValue(fLookupOrder[0], combo.getText(),
-						fManager);
+				data.key.setStoredValue(fLookupOrder[0], combo.getText(), fManager);
 				ApiBaselinePreferencePage.rebuildcount = 0;
 			}
 		}
@@ -260,45 +257,28 @@ public class ApiUseScanConfigurationBlock {
 	private Composite fMainComp = null;
 
 	/**
-	 * Stored old fProject specific settings.
-	 */
-	// TODO will be used when we turn it into project specific settings
-	private IdentityHashMap fOldProjectSettings = null;
-
-	/**
 	 * Constructor
 	 * 
 	 * @param project
 	 */
 	public ApiUseScanConfigurationBlock(IWorkingCopyManager manager) {
-		fLookupOrder = new IScopeContext[] { InstanceScope.INSTANCE,
-				DefaultScope.INSTANCE };
+		fLookupOrder = new IScopeContext[] {
+				InstanceScope.INSTANCE, DefaultScope.INSTANCE };
 		fManager = manager;
-		fOldProjectSettings = null;
 	}
 
 	/**
 	 * Creates the control in the parent control
 	 * 
-	 * @param parent
-	 *            the parent control
+	 * @param parent the parent control
 	 */
 	public Control createControl(Composite parent) {
-		fMainComp = SWTFactory.createComposite(parent, 1, 1,
-				GridData.FILL_HORIZONTAL, 0, 0);
-		Group optionsProfileGroup = SWTFactory.createGroup(fMainComp,
-				PreferenceMessages.ApiUseScanConfigurationBlock_0, 2, 1,
-				GridData.FILL_BOTH);
+		fMainComp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_HORIZONTAL, 0, 0);
+		Group optionsProfileGroup = SWTFactory.createGroup(fMainComp, PreferenceMessages.ApiUseScanConfigurationBlock_0, 2, 1, GridData.FILL_BOTH);
 		fCombo = new Combo[3];
-		fCombo[0] = createComboControl(optionsProfileGroup,
-				PreferenceMessages.ApiUseScanConfigurationBlock_unresolvedTypeProblem,
-				KEY_API_USE_SCAN_TYPE_PROBLEM);
-		fCombo[1] = createComboControl(optionsProfileGroup,
-				PreferenceMessages.ApiUseScanConfigurationBlock_unresolvedMethodProblem,
-				KEY_API_USE_SCAN_METHOD_PROBLEM);
-		fCombo[2] = createComboControl(optionsProfileGroup,
-				PreferenceMessages.ApiUseScanConfigurationBlock_unresolvedFieldProblem,
-				KEY_API_USE_SCAN_FIELD_PROBLEM);
+		fCombo[0] = createComboControl(optionsProfileGroup, PreferenceMessages.ApiUseScanConfigurationBlock_unresolvedTypeProblem, KEY_API_USE_SCAN_TYPE_PROBLEM);
+		fCombo[1] = createComboControl(optionsProfileGroup, PreferenceMessages.ApiUseScanConfigurationBlock_unresolvedMethodProblem, KEY_API_USE_SCAN_METHOD_PROBLEM);
+		fCombo[2] = createComboControl(optionsProfileGroup, PreferenceMessages.ApiUseScanConfigurationBlock_unresolvedFieldProblem, KEY_API_USE_SCAN_FIELD_PROBLEM);
 		Dialog.applyDialogFont(fMainComp);
 		return fMainComp;
 	}
@@ -322,7 +302,7 @@ public class ApiUseScanConfigurationBlock {
 	 */
 	private void save() {
 		try {
-			ArrayList changes = new ArrayList();
+			ArrayList<Key> changes = new ArrayList<Key>();
 			collectChanges(fLookupOrder[0], changes);
 			if (changes.size() > 0) {
 				fManager.applyChanges();
@@ -360,8 +340,7 @@ public class ApiUseScanConfigurationBlock {
 		if (fCombo != null) {
 			for (int i = 0; i < fCombo.length; i++) {
 				ControlData data = (ControlData) fCombo[i].getData();
-				fCombo[i].select(data.getSelection(data.getKey()
-						.getStoredValue(fLookupOrder, false, fManager)));
+				fCombo[i].select(data.getSelection(data.getKey().getStoredValue(fLookupOrder, false, fManager)));
 			}
 		}
 	}
@@ -383,8 +362,7 @@ public class ApiUseScanConfigurationBlock {
 	 */
 	protected Combo createComboControl(Composite parent, String label, Key key) {
 		Label lbl = new Label(parent, SWT.NONE);
-		GridData gd = new GridData(GridData.BEGINNING, GridData.CENTER, true,
-				false);
+		GridData gd = new GridData(GridData.BEGINNING, GridData.CENTER, true, false);
 		lbl.setLayoutData(gd);
 		lbl.setText(label);
 		Combo combo = new Combo(parent, SWT.DROP_DOWN | SWT.READ_ONLY);
@@ -394,21 +372,19 @@ public class ApiUseScanConfigurationBlock {
 		combo.setData(data);
 		combo.setItems(SEVERITIES_LABELS);
 		combo.addSelectionListener(selectionlistener);
-		combo.select(data.getSelection(key.getStoredValue(fLookupOrder, false,
-				fManager)));
+		combo.select(data.getSelection(key.getStoredValue(fLookupOrder, false, fManager)));
 		return combo;
 	}
 
 	/**
 	 * Collects the keys that have changed on the page into the specified list
 	 * 
-	 * @param changes
-	 *            the {@link List} to collect changed keys into
+	 * @param changes the {@link List} to collect changed keys into
 	 */
-	private void collectChanges(IScopeContext context, List changes) {
+	private void collectChanges(IScopeContext context, List<Key> changes) {
 		Key key = null;
 		String origval = null, newval = null;
-		boolean complete = fOldProjectSettings == null;
+		boolean complete = true;
 		for (int i = 0; i < fgAllKeys.length; i++) {
 			key = fgAllKeys[i];
 			origval = key.getStoredValue(context, null);
@@ -417,9 +393,7 @@ public class ApiUseScanConfigurationBlock {
 				if (origval != null) {
 					changes.add(key);
 				} else if (complete) {
-					key.setStoredValue(context,
-							key.getStoredValue(fLookupOrder, true, fManager),
-							fManager);
+					key.setStoredValue(context, key.getStoredValue(fLookupOrder, true, fManager), fManager);
 					changes.add(key);
 				}
 			} else if (!newval.equals(origval)) {

@@ -38,6 +38,7 @@ public class MethodReturnTypeLeak extends LeakTest {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getDefaultProblemId()
 	 */
+	@Override
 	protected int getDefaultProblemId() {
 		if(pid == -1) {
 			pid = ApiProblemFactory.createProblemId(
@@ -61,7 +62,7 @@ public class MethodReturnTypeLeak extends LeakTest {
 	 */
 	@Override
 	protected IPath getTestSourcePath() {
-		return super.getTestSourcePath().append("method");
+		return super.getTestSourcePath().append("method"); //$NON-NLS-1$
 	}
 	
 	/**
@@ -82,12 +83,12 @@ public class MethodReturnTypeLeak extends LeakTest {
 	
 	private void x1(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemIdSet(4));
-		String typename = "testMRL1";
-		setExpectedMessageArgs(new String[][] {{TESTING_INTERNAL_CLASS_NAME, typename, "m1()"},
-				{TESTING_INTERNAL_CLASS_NAME, typename, "m2()"},
-				{TESTING_INTERNAL_INTERFACE_NAME, typename, "m3()"},
-				{TESTING_INTERNAL_INTERFACE_NAME, typename, "m4()"}});
-		deployLeakTest(typename+".java", inc);
+		String typename = "testMRL1"; //$NON-NLS-1$
+		setExpectedMessageArgs(new String[][] {{TESTING_INTERNAL_CLASS_NAME, typename, "m1()"}, //$NON-NLS-1$
+				{TESTING_INTERNAL_CLASS_NAME, typename, "m2()"}, //$NON-NLS-1$
+				{TESTING_INTERNAL_INTERFACE_NAME, typename, "m3()"}, //$NON-NLS-1$
+				{TESTING_INTERNAL_INTERFACE_NAME, typename, "m4()"}}); //$NON-NLS-1$
+		deployLeakTest(typename+".java", inc); //$NON-NLS-1$
 	}
 	
 	/**
@@ -108,8 +109,8 @@ public class MethodReturnTypeLeak extends LeakTest {
 	
 	private void x2(boolean inc) {
 		expectingNoProblems();
-		String typename = "testMRL2";
-		deployLeakTest(typename+".java", inc);
+		String typename = "testMRL2"; //$NON-NLS-1$
+		deployLeakTest(typename+".java", inc); //$NON-NLS-1$
 	}
 	
 	/**
@@ -130,13 +131,13 @@ public class MethodReturnTypeLeak extends LeakTest {
 	
 	private void x3(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemIdSet(4));
-		String typename = "testMRL3";
-		String innertype = "inner";
-		setExpectedMessageArgs(new String[][] {{TESTING_INTERNAL_CLASS_NAME, innertype, "m1()"},
-				{TESTING_INTERNAL_CLASS_NAME, innertype, "m2()"},
-				{TESTING_INTERNAL_INTERFACE_NAME, innertype, "m3()"},
-				{TESTING_INTERNAL_INTERFACE_NAME, innertype, "m4()"}});
-		deployLeakTest(typename+".java", inc);
+		String typename = "testMRL3"; //$NON-NLS-1$
+		String innertype = "inner"; //$NON-NLS-1$
+		setExpectedMessageArgs(new String[][] {{TESTING_INTERNAL_CLASS_NAME, innertype, "m1()"}, //$NON-NLS-1$
+				{TESTING_INTERNAL_CLASS_NAME, innertype, "m2()"}, //$NON-NLS-1$
+				{TESTING_INTERNAL_INTERFACE_NAME, innertype, "m3()"}, //$NON-NLS-1$
+				{TESTING_INTERNAL_INTERFACE_NAME, innertype, "m4()"}}); //$NON-NLS-1$
+		deployLeakTest(typename+".java", inc); //$NON-NLS-1$
 	}
 	
 	/**
@@ -157,8 +158,8 @@ public class MethodReturnTypeLeak extends LeakTest {
 	
 	private void x4(boolean inc) {
 		expectingNoProblems();
-		String typename = "testMRL4";
-		deployLeakTest(typename+".java", inc);
+		String typename = "testMRL4"; //$NON-NLS-1$
+		deployLeakTest(typename+".java", inc); //$NON-NLS-1$
 	}
 	
 	/**
@@ -179,13 +180,13 @@ public class MethodReturnTypeLeak extends LeakTest {
 	
 	private void x5(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemIdSet(4));
-		String typename = "testMRL5";
-		String innertype = "inner2";
-		setExpectedMessageArgs(new String[][] {{TESTING_INTERNAL_CLASS_NAME, innertype, "m1()"},
-				{TESTING_INTERNAL_CLASS_NAME, innertype, "m2()"},
-				{TESTING_INTERNAL_INTERFACE_NAME, innertype, "m3()"},
-				{TESTING_INTERNAL_INTERFACE_NAME, innertype, "m4()"}});
-		deployLeakTest(typename+".java", inc);
+		String typename = "testMRL5"; //$NON-NLS-1$
+		String innertype = "inner2"; //$NON-NLS-1$
+		setExpectedMessageArgs(new String[][] {{TESTING_INTERNAL_CLASS_NAME, innertype, "m1()"}, //$NON-NLS-1$
+				{TESTING_INTERNAL_CLASS_NAME, innertype, "m2()"}, //$NON-NLS-1$
+				{TESTING_INTERNAL_INTERFACE_NAME, innertype, "m3()"}, //$NON-NLS-1$
+				{TESTING_INTERNAL_INTERFACE_NAME, innertype, "m4()"}}); //$NON-NLS-1$
+		deployLeakTest(typename+".java", inc); //$NON-NLS-1$
 	}
 	
 	/**
@@ -206,8 +207,8 @@ public class MethodReturnTypeLeak extends LeakTest {
 	
 	public void x6(boolean inc) {
 		expectingNoProblems();
-		String typename = "testMRL6";
-		deployLeakTest(typename+".java", inc);
+		String typename = "testMRL6"; //$NON-NLS-1$
+		deployLeakTest(typename+".java", inc); //$NON-NLS-1$
 	}
 	
 	/**
@@ -228,14 +229,14 @@ public class MethodReturnTypeLeak extends LeakTest {
 	
 	private void x7(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemIdSet(4));
-		String typename = "testMRL7";
-		String innertype = "inner2";
+		String typename = "testMRL7"; //$NON-NLS-1$
+		String innertype = "inner2"; //$NON-NLS-1$
 		setExpectedMessageArgs(new String[][] {
-				{TESTING_INTERNAL_CLASS_NAME, innertype, "m1()"},
-				{TESTING_INTERNAL_CLASS_NAME, innertype, "m2()"},
-				{TESTING_INTERNAL_INTERFACE_NAME, innertype, "m3()"},
-				{TESTING_INTERNAL_INTERFACE_NAME, innertype, "m4()"}});
-		deployLeakTest(typename+".java", inc);
+				{TESTING_INTERNAL_CLASS_NAME, innertype, "m1()"}, //$NON-NLS-1$
+				{TESTING_INTERNAL_CLASS_NAME, innertype, "m2()"}, //$NON-NLS-1$
+				{TESTING_INTERNAL_INTERFACE_NAME, innertype, "m3()"}, //$NON-NLS-1$
+				{TESTING_INTERNAL_INTERFACE_NAME, innertype, "m4()"}}); //$NON-NLS-1$
+		deployLeakTest(typename+".java", inc); //$NON-NLS-1$
 	}
 	
 	/**
@@ -256,13 +257,13 @@ public class MethodReturnTypeLeak extends LeakTest {
 	
 	private void x8(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemIdSet(4));
-		String typename = "testMRL8";
+		String typename = "testMRL8"; //$NON-NLS-1$
 		setExpectedMessageArgs(new String[][] {
-				{TESTING_INTERNAL_CLASS_NAME, typename, "m1()"},
-				{TESTING_INTERNAL_CLASS_NAME, typename, "m2()"},
-				{TESTING_INTERNAL_INTERFACE_NAME, typename, "m3()"},
-				{TESTING_INTERNAL_INTERFACE_NAME, typename, "m4()"}});
-		deployLeakTest(typename+".java", inc);
+				{TESTING_INTERNAL_CLASS_NAME, typename, "m1()"}, //$NON-NLS-1$
+				{TESTING_INTERNAL_CLASS_NAME, typename, "m2()"}, //$NON-NLS-1$
+				{TESTING_INTERNAL_INTERFACE_NAME, typename, "m3()"}, //$NON-NLS-1$
+				{TESTING_INTERNAL_INTERFACE_NAME, typename, "m4()"}}); //$NON-NLS-1$
+		deployLeakTest(typename+".java", inc); //$NON-NLS-1$
 	}
 	
 	/**
@@ -283,11 +284,11 @@ public class MethodReturnTypeLeak extends LeakTest {
 	
 	private void x9(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemIdSet(2));
-		String typename = "testMRL9";
+		String typename = "testMRL9"; //$NON-NLS-1$
 		setExpectedMessageArgs(new String[][] {
-				{TESTING_INTERNAL_CLASS_NAME, typename, "m1()"},
-				{TESTING_INTERNAL_INTERFACE_NAME, typename, "m3()"}});
-		deployLeakTest(typename+".java", inc);
+				{TESTING_INTERNAL_CLASS_NAME, typename, "m1()"}, //$NON-NLS-1$
+				{TESTING_INTERNAL_INTERFACE_NAME, typename, "m3()"}}); //$NON-NLS-1$
+		deployLeakTest(typename+".java", inc); //$NON-NLS-1$
 	}
 	
 	/**
@@ -308,8 +309,8 @@ public class MethodReturnTypeLeak extends LeakTest {
 	
 	private void x10(boolean inc) {
 		expectingNoProblems();
-		String typename = "testMRL10";
-		deployLeakTest(typename+".java", inc);
+		String typename = "testMRL10"; //$NON-NLS-1$
+		deployLeakTest(typename+".java", inc); //$NON-NLS-1$
 	}
 	
 	/**
@@ -330,17 +331,17 @@ public class MethodReturnTypeLeak extends LeakTest {
 	
 	private void x11(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemIdSet(8));
-		String typename = "testMRL11";
+		String typename = "testMRL11"; //$NON-NLS-1$
 		setExpectedMessageArgs(new String[][] {
-				{TESTING_INTERNAL_CLASS_NAME, typename, "m1()"},
-				{TESTING_INTERNAL_CLASS_NAME, typename, "m2()"},
-				{TESTING_INTERNAL_INTERFACE_NAME, typename, "m3()"},
-				{TESTING_INTERNAL_INTERFACE_NAME, typename, "m4()"},
-				{TESTING_INTERNAL_CLASS_NAME, "inner", "m1()"},
-				{TESTING_INTERNAL_CLASS_NAME, "inner", "m2()"},
-				{TESTING_INTERNAL_INTERFACE_NAME, "inner", "m3()"},
-				{TESTING_INTERNAL_INTERFACE_NAME, "inner", "m4()"}});
-		deployLeakTest(typename+".java", inc);
+				{TESTING_INTERNAL_CLASS_NAME, typename, "m1()"}, //$NON-NLS-1$
+				{TESTING_INTERNAL_CLASS_NAME, typename, "m2()"}, //$NON-NLS-1$
+				{TESTING_INTERNAL_INTERFACE_NAME, typename, "m3()"}, //$NON-NLS-1$
+				{TESTING_INTERNAL_INTERFACE_NAME, typename, "m4()"}, //$NON-NLS-1$
+				{TESTING_INTERNAL_CLASS_NAME, "inner", "m1()"}, //$NON-NLS-1$ //$NON-NLS-2$
+				{TESTING_INTERNAL_CLASS_NAME, "inner", "m2()"}, //$NON-NLS-1$ //$NON-NLS-2$
+				{TESTING_INTERNAL_INTERFACE_NAME, "inner", "m3()"}, //$NON-NLS-1$ //$NON-NLS-2$
+				{TESTING_INTERNAL_INTERFACE_NAME, "inner", "m4()"}}); //$NON-NLS-1$ //$NON-NLS-2$
+		deployLeakTest(typename+".java", inc); //$NON-NLS-1$
 	}
 	/**
 	 * Tests that methods leaking return types are properly reported even with an @noreference tag present
@@ -360,17 +361,17 @@ public class MethodReturnTypeLeak extends LeakTest {
 	
 	private void x12(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemIdSet(8));
-		String typename = "testMRL12";
+		String typename = "testMRL12"; //$NON-NLS-1$
 		setExpectedMessageArgs(new String[][] {
-				{TESTING_INTERNAL_CLASS_NAME, typename, "m1()"},
-				{TESTING_INTERNAL_CLASS_NAME, typename, "m2()"},
-				{TESTING_INTERNAL_INTERFACE_NAME, typename, "m3()"},
-				{TESTING_INTERNAL_INTERFACE_NAME, typename, "m4()"},
-				{TESTING_INTERNAL_CLASS_NAME, "inner", "m1()"},
-				{TESTING_INTERNAL_CLASS_NAME, "inner", "m2()"},
-				{TESTING_INTERNAL_INTERFACE_NAME, "inner", "m3()"},
-				{TESTING_INTERNAL_INTERFACE_NAME, "inner", "m4()"}});
-		deployLeakTest(typename+".java", inc);
+				{TESTING_INTERNAL_CLASS_NAME, typename, "m1()"}, //$NON-NLS-1$
+				{TESTING_INTERNAL_CLASS_NAME, typename, "m2()"}, //$NON-NLS-1$
+				{TESTING_INTERNAL_INTERFACE_NAME, typename, "m3()"}, //$NON-NLS-1$
+				{TESTING_INTERNAL_INTERFACE_NAME, typename, "m4()"}, //$NON-NLS-1$
+				{TESTING_INTERNAL_CLASS_NAME, "inner", "m1()"}, //$NON-NLS-1$ //$NON-NLS-2$
+				{TESTING_INTERNAL_CLASS_NAME, "inner", "m2()"}, //$NON-NLS-1$ //$NON-NLS-2$
+				{TESTING_INTERNAL_INTERFACE_NAME, "inner", "m3()"}, //$NON-NLS-1$ //$NON-NLS-2$
+				{TESTING_INTERNAL_INTERFACE_NAME, "inner", "m4()"}}); //$NON-NLS-1$ //$NON-NLS-2$
+		deployLeakTest(typename+".java", inc); //$NON-NLS-1$
 	}
 	
 	/**
@@ -391,8 +392,8 @@ public class MethodReturnTypeLeak extends LeakTest {
 	
 	private void x13(boolean inc) {
 		expectingNoProblems();
-		String typename = "testMRL13";
-		deployLeakTest(typename+".java", inc);
+		String typename = "testMRL13"; //$NON-NLS-1$
+		deployLeakTest(typename+".java", inc); //$NON-NLS-1$
 	}
 	
 	/**
@@ -413,8 +414,8 @@ public class MethodReturnTypeLeak extends LeakTest {
 	
 	private void x14(boolean inc) {
 		expectingNoProblems();
-		String typename = "testMRL14";
-		deployLeakTest(typename+".java", inc);
+		String typename = "testMRL14"; //$NON-NLS-1$
+		deployLeakTest(typename+".java", inc); //$NON-NLS-1$
 	}
 	
 	/**
@@ -435,8 +436,8 @@ public class MethodReturnTypeLeak extends LeakTest {
 	
 	private void x15(boolean inc) {
 		expectingNoProblems();
-		String typename = "testMRL15";
-		deployLeakTest(typename+".java", inc);
+		String typename = "testMRL15"; //$NON-NLS-1$
+		deployLeakTest(typename+".java", inc); //$NON-NLS-1$
 	}
 	
 	/**
@@ -457,8 +458,8 @@ public class MethodReturnTypeLeak extends LeakTest {
 	
 	private void x16(boolean inc) {
 		expectingNoProblems();
-		String typename = "testMRL16";
-		deployLeakTest(typename+".java", inc);
+		String typename = "testMRL16"; //$NON-NLS-1$
+		deployLeakTest(typename+".java", inc); //$NON-NLS-1$
 	}
 	
 	/**
@@ -477,9 +478,9 @@ public class MethodReturnTypeLeak extends LeakTest {
 	
 	private void x17(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemIdSet(1));
-		String typename = "testMRL17";
-		setExpectedMessageArgs(new String[][] {{"outer", typename, "m1()"}});
-		deployLeakTest(typename+".java", inc);
+		String typename = "testMRL17"; //$NON-NLS-1$
+		setExpectedMessageArgs(new String[][] {{"outer", typename, "m1()"}}); //$NON-NLS-1$ //$NON-NLS-2$
+		deployLeakTest(typename+".java", inc); //$NON-NLS-1$
 	}
 	
 	public void testMethodReturnType18F() {
@@ -497,8 +498,8 @@ public class MethodReturnTypeLeak extends LeakTest {
 	 */
 	private void x18(boolean inc) {
 		expectingNoProblems();
-		String typename = "testMRL18";
-		deployLeakTest(typename+".java", inc);
+		String typename = "testMRL18"; //$NON-NLS-1$
+		deployLeakTest(typename+".java", inc); //$NON-NLS-1$
 	}
 	
 	public void testMethodReturnType19F() {
@@ -516,8 +517,8 @@ public class MethodReturnTypeLeak extends LeakTest {
 	 */
 	private void x19(boolean inc) {
 		expectingNoProblems();
-		String typename = "testMRL19";
-		deployLeakTest(typename+".java", inc);
+		String typename = "testMRL19"; //$NON-NLS-1$
+		deployLeakTest(typename+".java", inc); //$NON-NLS-1$
 	}
 		
  }

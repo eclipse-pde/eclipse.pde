@@ -24,8 +24,8 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
  */
 public class MethodUsageTests extends UsageTest {
 	
-	protected static final String METHOD_CLASS_NAME = "MethodUsageClass";
-	protected static final String METHOD_INTERFACE_NAME = "MethodUsageInterface";
+	protected static final String METHOD_CLASS_NAME = "MethodUsageClass"; //$NON-NLS-1$
+	protected static final String METHOD_INTERFACE_NAME = "MethodUsageInterface"; //$NON-NLS-1$
 	
 	/**
 	 * Constructor
@@ -60,7 +60,7 @@ public class MethodUsageTests extends UsageTest {
 	 */
 	@Override
 	protected IPath getTestSourcePath() {
-		return super.getTestSourcePath().append("method");
+		return super.getTestSourcePath().append("method"); //$NON-NLS-1$
 	}
 
 	public static Test suite() {
@@ -93,14 +93,14 @@ public class MethodUsageTests extends UsageTest {
 				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD)
 		};
 		setExpectedProblemIds(pids);
-		String typename = "testM1";
+		String typename = "testM1"; //$NON-NLS-1$
 		String[][] args = new String[][] {
-				{METHOD_CLASS_NAME, INNER_NAME1, "m1()"},
-				{METHOD_CLASS_NAME, INNER_NAME1, "m3()"},
-				{METHOD_CLASS_NAME, INNER_NAME2, "m1()"},
-				{METHOD_CLASS_NAME, INNER_NAME2, "m3()"},
-				{METHOD_CLASS_NAME, OUTER_NAME, "m1()"},
-				{METHOD_CLASS_NAME, OUTER_NAME, "m3()"},
+				{METHOD_CLASS_NAME, INNER_NAME1, "m1()"}, //$NON-NLS-1$
+				{METHOD_CLASS_NAME, INNER_NAME1, "m3()"}, //$NON-NLS-1$
+				{METHOD_CLASS_NAME, INNER_NAME2, "m1()"}, //$NON-NLS-1$
+				{METHOD_CLASS_NAME, INNER_NAME2, "m3()"}, //$NON-NLS-1$
+				{METHOD_CLASS_NAME, OUTER_NAME, "m1()"}, //$NON-NLS-1$
+				{METHOD_CLASS_NAME, OUTER_NAME, "m3()"}, //$NON-NLS-1$
 		};
 		setExpectedMessageArgs(args);
 		setExpectedLineMappings(new LineMapping[] {
@@ -138,12 +138,12 @@ public class MethodUsageTests extends UsageTest {
 				getProblemId(IApiProblem.ILLEGAL_OVERRIDE, IApiProblem.NO_FLAGS)
 		};
 		setExpectedProblemIds(pids);
-		String typename = "testM2";
+		String typename = "testM2"; //$NON-NLS-1$
 		String[][] args = new String[][] {
-				{METHOD_CLASS_NAME, typename, "m2()"},
-				{METHOD_CLASS_NAME, INNER_NAME1, "m2()"},
-				{METHOD_CLASS_NAME, INNER_NAME2, "m2()"},
-				{METHOD_CLASS_NAME, "outermu2", "m2()"}
+				{METHOD_CLASS_NAME, typename, "m2()"}, //$NON-NLS-1$
+				{METHOD_CLASS_NAME, INNER_NAME1, "m2()"}, //$NON-NLS-1$
+				{METHOD_CLASS_NAME, INNER_NAME2, "m2()"}, //$NON-NLS-1$
+				{METHOD_CLASS_NAME, "outermu2", "m2()"} //$NON-NLS-1$ //$NON-NLS-2$
 		};
 		setExpectedMessageArgs(args);
 		setExpectedLineMappings(new LineMapping[] {
@@ -183,16 +183,16 @@ public class MethodUsageTests extends UsageTest {
 				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD)
 		};
 		setExpectedProblemIds(pids);
-		String typename = "testM3";
+		String typename = "testM3"; //$NON-NLS-1$
 		String[][] args = new String[][] {
-				{METHOD_CLASS_NAME, typename, "m4()"},
-				{METHOD_CLASS_NAME, typename, "m6()"},
-				{METHOD_CLASS_NAME, INNER_NAME1, "m4()"},
-				{METHOD_CLASS_NAME, INNER_NAME1, "m6()"},
-				{METHOD_CLASS_NAME, INNER_NAME2, "m4()"},
-				{METHOD_CLASS_NAME, INNER_NAME2, "m6()"},
-				{METHOD_CLASS_NAME, OUTER_NAME, "m4()"},
-				{METHOD_CLASS_NAME, OUTER_NAME, "m6()"},
+				{METHOD_CLASS_NAME, typename, "m4()"}, //$NON-NLS-1$
+				{METHOD_CLASS_NAME, typename, "m6()"}, //$NON-NLS-1$
+				{METHOD_CLASS_NAME, INNER_NAME1, "m4()"}, //$NON-NLS-1$
+				{METHOD_CLASS_NAME, INNER_NAME1, "m6()"}, //$NON-NLS-1$
+				{METHOD_CLASS_NAME, INNER_NAME2, "m4()"}, //$NON-NLS-1$
+				{METHOD_CLASS_NAME, INNER_NAME2, "m6()"}, //$NON-NLS-1$
+				{METHOD_CLASS_NAME, OUTER_NAME, "m4()"}, //$NON-NLS-1$
+				{METHOD_CLASS_NAME, OUTER_NAME, "m6()"}, //$NON-NLS-1$
 		};
 		setExpectedMessageArgs(args);
 		setExpectedLineMappings(new LineMapping[] {
@@ -234,14 +234,14 @@ public class MethodUsageTests extends UsageTest {
 				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD)
 		};
 		setExpectedProblemIds(pids);
-		String typename = "testM4";
+		String typename = "testM4"; //$NON-NLS-1$
 		String[][] args = new String[][] {
-				{METHOD_INTERFACE_NAME, INNER_NAME1, "m1()"},
-				{METHOD_INTERFACE_NAME, INNER_NAME1, "m3()"},
-				{METHOD_INTERFACE_NAME, INNER_NAME2, "m1()"},
-				{METHOD_INTERFACE_NAME, INNER_NAME2, "m3()"},
-				{METHOD_INTERFACE_NAME, OUTER_NAME, "m1()"},
-				{METHOD_INTERFACE_NAME, OUTER_NAME, "m3()"},
+				{METHOD_INTERFACE_NAME, INNER_NAME1, "m1()"}, //$NON-NLS-1$
+				{METHOD_INTERFACE_NAME, INNER_NAME1, "m3()"}, //$NON-NLS-1$
+				{METHOD_INTERFACE_NAME, INNER_NAME2, "m1()"}, //$NON-NLS-1$
+				{METHOD_INTERFACE_NAME, INNER_NAME2, "m3()"}, //$NON-NLS-1$
+				{METHOD_INTERFACE_NAME, OUTER_NAME, "m1()"}, //$NON-NLS-1$
+				{METHOD_INTERFACE_NAME, OUTER_NAME, "m3()"}, //$NON-NLS-1$
 		};
 		setExpectedMessageArgs(args);
 		setExpectedLineMappings(new LineMapping[] {
@@ -275,9 +275,9 @@ public class MethodUsageTests extends UsageTest {
 				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD),
 		};
 		setExpectedProblemIds(pids);
-		String typename = "testM8";
+		String typename = "testM8"; //$NON-NLS-1$
 		String[][] args = new String[][] {
-				{METHOD_CLASS_NAME, typename, "m1()"},
+				{METHOD_CLASS_NAME, typename, "m1()"}, //$NON-NLS-1$
 		};
 		setExpectedMessageArgs(args);
 		setExpectedLineMappings(new LineMapping[] {
@@ -306,9 +306,9 @@ public class MethodUsageTests extends UsageTest {
 				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD),
 		};
 		setExpectedProblemIds(pids);
-		String typename = "testM9";
+		String typename = "testM9"; //$NON-NLS-1$
 		String[][] args = new String[][] {
-				{METHOD_CLASS_NAME, typename, "m1()"},
+				{METHOD_CLASS_NAME, typename, "m1()"}, //$NON-NLS-1$
 		};
 		setExpectedMessageArgs(args);
 		setExpectedLineMappings(new LineMapping[] {
@@ -337,9 +337,9 @@ public class MethodUsageTests extends UsageTest {
 				getProblemId(IApiProblem.ILLEGAL_OVERRIDE, IApiProblem.NO_FLAGS),
 		};
 		setExpectedProblemIds(pids);
-		String typename = "testM10";
+		String typename = "testM10"; //$NON-NLS-1$
 		String[][] args = new String[][] {
-				{METHOD_CLASS_NAME, typename, "m2()"},
+				{METHOD_CLASS_NAME, typename, "m2()"}, //$NON-NLS-1$
 		};
 		setExpectedMessageArgs(args);
 		setExpectedLineMappings(new LineMapping[] {

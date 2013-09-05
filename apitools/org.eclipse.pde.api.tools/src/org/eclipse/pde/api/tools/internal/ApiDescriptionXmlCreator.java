@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import java.util.Stack;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor;
 import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
+import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IFieldDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor;
@@ -29,42 +30,43 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
- * {@link IApiDescription} visitor that generates XML for the given {@link IApiComponent}.
- *  
+ * {@link IApiDescription} visitor that generates XML for the given
+ * {@link IApiComponent}.
+ * 
  * @since 1.0.0
  */
 public class ApiDescriptionXmlCreator extends ApiDescriptionVisitor {
-	
+
 	/**
 	 * Component element
 	 */
 	private Element fComponent;
-	
+
 	/**
 	 * XML doc being generated
 	 */
 	private Document fDoc;
-	
+
 	/**
 	 * Current package node being created
 	 */
 	private Element fPackage;
-	
+
 	/**
 	 * Visibility modifiers for package being visited
 	 */
 	private int fPackageVisibility;
-	
+
 	/**
 	 * The stack of current type node being visited
 	 */
-	private Stack fTypeStack;
+	private Stack<Element> fTypeStack;
 
 	/**
 	 * Set of package names already visited (to avoid re-visiting same package)
 	 */
-	private Set fVisitedPackages;
-	
+	private Set<String> fVisitedPackages;
+
 	/**
 	 * Constructs a new visitor for the given component.
 	 * 
@@ -92,14 +94,15 @@ public class ApiDescriptionXmlCreator extends ApiDescriptionVisitor {
 		Element plugin = fDoc.createElement(IApiXmlConstants.ELEMENT_PLUGIN);
 		plugin.setAttribute(IApiXmlConstants.ATTR_ID, componentId);
 		fComponent.appendChild(plugin);
-		fVisitedPackages = new HashSet();
-		fTypeStack = new Stack();
+		fVisitedPackages = new HashSet<String>();
+		fTypeStack = new Stack<Element>();
 	}
 
 	/**
 	 * Annotates the attribute set of the specified {@link Element}
 	 * 
-	 * @param componentContext component context to which the API applies, or <code>null</code>
+	 * @param componentContext component context to which the API applies, or
+	 *            <code>null</code>
 	 * @param description the description to annotate from
 	 * @param element the element to annotate
 	 */
@@ -110,15 +113,24 @@ public class ApiDescriptionXmlCreator extends ApiDescriptionVisitor {
 			element.setAttribute(IApiXmlConstants.ATTR_VISIBILITY, Integer.toString(visibility));
 		}
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor#endVisitElement(org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor, org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations)
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor#
+	 * endVisitElement
+	 * (org.eclipse.pde.api.tools.internal.provisional.descriptors
+	 * .IElementDescriptor,
+	 * org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations)
 	 */
+	@Override
 	public void endVisitElement(IElementDescriptor element, IApiAnnotations description) {
-		switch(element.getElementType()) {
+		switch (element.getElementType()) {
 			case IElementDescriptor.PACKAGE: {
-				// A null package indicates there was an override for the package in a different context.
-				// Package rules are stored in the manifest, not the API description file. 
+				// A null package indicates there was an override for the
+				// package in a different context.
+				// Package rules are stored in the manifest, not the API
+				// description file.
 				// No need to add empty packages.
 				if (fPackage != null && fPackage.hasChildNodes()) {
 					fComponent.appendChild(fPackage);
@@ -130,32 +142,41 @@ public class ApiDescriptionXmlCreator extends ApiDescriptionVisitor {
 				fTypeStack.pop();
 				break;
 			}
+			default:
+				break;
 		}
 	}
-	
+
 	/**
 	 * Returns the settings as a UTF-8 string containing XML.
 	 * 
 	 * @return XML
-	 * @throws CoreException if something goes wrong 
+	 * @throws CoreException if something goes wrong
 	 */
 	public String getXML() throws CoreException {
 		return Util.serializeDocument(fDoc);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.model.component.ApiDescriptionVisitor#visitElement(org.eclipse.pde.api.tools.model.component.IElementDescriptor, java.lang.String, org.eclipse.pde.api.tools.model.IApiAnnotations)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.model.component.ApiDescriptionVisitor#visitElement
+	 * (org.eclipse.pde.api.tools.model.component.IElementDescriptor,
+	 * java.lang.String, org.eclipse.pde.api.tools.model.IApiAnnotations)
 	 */
+	@Override
 	public boolean visitElement(IElementDescriptor element, IApiAnnotations description) {
-		switch(element.getElementType()) {
+		switch (element.getElementType()) {
 			case IElementDescriptor.PACKAGE: {
 				IPackageDescriptor pkg = (IPackageDescriptor) element;
 				String pkgName = pkg.getName();
 				if (fVisitedPackages.add(pkgName)) {
 					fPackage = fDoc.createElement(IApiXmlConstants.ELEMENT_PACKAGE);
 					fPackage.setAttribute(IApiXmlConstants.ATTR_NAME, pkgName);
-					// package visibility settings are stored in MANIFEST.MF, so omit them here.
-					// still keep track of the visibility to know if children should override
+					// package visibility settings are stored in MANIFEST.MF, so
+					// omit them here.
+					// still keep track of the visibility to know if children
+					// should override
 					fPackageVisibility = description.getVisibility();
 					fPackage.setAttribute(IApiXmlConstants.ATTR_VISIBILITY, Integer.toString(fPackageVisibility));
 					fVisitedPackages.add(pkgName);
@@ -165,7 +186,7 @@ public class ApiDescriptionXmlCreator extends ApiDescriptionVisitor {
 			case IElementDescriptor.TYPE: {
 				IReferenceTypeDescriptor typeDesc = (IReferenceTypeDescriptor) element;
 				fTypeStack.push(fDoc.createElement(IApiXmlConstants.ELEMENT_TYPE));
-				Element type = (Element) fTypeStack.peek();
+				Element type = fTypeStack.peek();
 				annotateElementAttributes(description, type);
 				fPackage.appendChild(type);
 				type.setAttribute(IApiXmlConstants.ATTR_NAME, Signatures.getSimpleTypeName(typeDesc.getQualifiedName()));
@@ -174,12 +195,12 @@ public class ApiDescriptionXmlCreator extends ApiDescriptionVisitor {
 			case IElementDescriptor.METHOD: {
 				IMethodDescriptor desc = (IMethodDescriptor) element;
 				Element method = fDoc.createElement(IApiXmlConstants.ELEMENT_METHOD);
-				Element type = (Element) fTypeStack.peek();
-				//add standard attributes
+				Element type = fTypeStack.peek();
+				// add standard attributes
 				annotateElementAttributes(description, method);
 				if (method.hasAttributes()) {
 					type.appendChild(method);
-					//add specific method attributes
+					// add specific method attributes
 					method.setAttribute(IApiXmlConstants.ATTR_SIGNATURE, desc.getSignature());
 					method.setAttribute(IApiXmlConstants.ATTR_NAME, desc.getName());
 				}
@@ -188,16 +209,18 @@ public class ApiDescriptionXmlCreator extends ApiDescriptionVisitor {
 			case IElementDescriptor.FIELD: {
 				IFieldDescriptor desc = (IFieldDescriptor) element;
 				Element field = fDoc.createElement(IApiXmlConstants.ELEMENT_FIELD);
-				Element type = (Element) fTypeStack.peek();
+				Element type = fTypeStack.peek();
 				annotateElementAttributes(description, field);
 				if (field.hasAttributes()) {
 					type.appendChild(field);
-					//add standard attributes
-					//add specific field attributes
+					// add standard attributes
+					// add specific field attributes
 					field.setAttribute(IApiXmlConstants.ATTR_NAME, desc.getName());
 				}
 				break;
 			}
+			default:
+				break;
 		}
 		return true;
 	}

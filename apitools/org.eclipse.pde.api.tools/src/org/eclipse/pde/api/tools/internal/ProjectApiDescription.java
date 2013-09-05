@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -58,41 +58,42 @@ import org.w3c.dom.Element;
  * @since 1.0
  */
 public class ProjectApiDescription extends ApiDescription {
-	
+
 	/**
 	 * Associated Java project
 	 */
 	private IJavaProject fProject;
-	
+
 	/**
 	 * Time stamp at which package information was created
 	 */
 	public long fPackageTimeStamp = 0L;
-	
-	/** 
+
+	/**
 	 * Whether a package refresh is in progress
 	 */
 	private boolean fRefreshingInProgress = false;
-	
+
 	/**
 	 * Associated manifest file
 	 */
 	public IFile fManifestFile;
-	
+
 	/**
-	 * Whether this API description is in synch with its project. Becomes
-	 * false if anything in a project changes. When true, visiting can
-	 * be performed by traversing the cached nodes, rather than traversing
-	 * the java model elements (effectively building the cache).
+	 * Whether this API description is in synch with its project. Becomes false
+	 * if anything in a project changes. When true, visiting can be performed by
+	 * traversing the cached nodes, rather than traversing the java model
+	 * elements (effectively building the cache).
 	 */
 	private boolean fInSynch = false;
-			
+
 	/**
 	 * A node for a package.
 	 */
 	class PackageNode extends ManifestNode {
 
 		IPackageFragment[] fFragments;
+
 		/**
 		 * Constructs a new node.
 		 * 
@@ -106,9 +107,13 @@ public class ProjectApiDescription extends ApiDescription {
 			fFragments = fragments;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.pde.api.tools.internal.ApiDescription.ManifestNode#refresh()
+		/*
+		 * (non-Javadoc)
+		 * @see
+		 * org.eclipse.pde.api.tools.internal.ApiDescription.ManifestNode#refresh
+		 * ()
 		 */
+		@Override
 		protected ManifestNode refresh() {
 			refreshPackages();
 			for (int i = 0; i < fFragments.length; i++) {
@@ -119,11 +124,15 @@ public class ProjectApiDescription extends ApiDescription {
 			}
 			return this;
 		}
-		
-		/* (non-Javadoc)
-		 * @see org.eclipse.pde.api.tools.internal.ApiDescription.ManifestNode#persistXML(org.w3c.dom.Document, org.w3c.dom.Element, java.lang.String)
+
+		/*
+		 * (non-Javadoc)
+		 * @see
+		 * org.eclipse.pde.api.tools.internal.ApiDescription.ManifestNode#persistXML
+		 * (org.w3c.dom.Document, org.w3c.dom.Element, java.lang.String)
 		 */
-		void persistXML(Document document, Element parent) {
+		@Override
+		void persistXML(Document document, Element parentElement) {
 			if (hasApiVisibility(this)) {
 				Element pkg = document.createElement(IApiXmlConstants.ELEMENT_PACKAGE);
 				for (int i = 0; i < fFragments.length; i++) {
@@ -133,23 +142,27 @@ public class ProjectApiDescription extends ApiDescription {
 				}
 				pkg.setAttribute(IApiXmlConstants.ATTR_VISIBILITY, Integer.toString(this.visibility));
 				persistChildren(document, pkg, children);
-				parent.appendChild(pkg);
+				parentElement.appendChild(pkg);
 			}
 		}
-		
-		/* (non-Javadoc)
-		 * @see org.eclipse.pde.api.tools.internal.ApiDescription.ManifestNode#toString()
+
+		/*
+		 * (non-Javadoc)
+		 * @see
+		 * org.eclipse.pde.api.tools.internal.ApiDescription.ManifestNode#toString
+		 * ()
 		 */
+		@Override
 		public String toString() {
 			StringBuffer buffer = new StringBuffer();
-			String name = ((IPackageDescriptor)element).getName();
+			String name = ((IPackageDescriptor) element).getName();
 			buffer.append("Package Node: ").append(name.equals("") ? "<default package>" : name); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			buffer.append("\nVisibility: ").append(VisibilityModifiers.getVisibilityName(visibility)); //$NON-NLS-1$
 			buffer.append("\nRestrictions: ").append(RestrictionModifiers.getRestrictionText(restrictions)); //$NON-NLS-1$
-			if(fFragments != null) {
+			if (fFragments != null) {
 				buffer.append("\nFragments:"); //$NON-NLS-1$
 				IPackageFragment fragment = null;
-				for(int i = 0; i < fFragments.length; i++) {
+				for (int i = 0; i < fFragments.length; i++) {
 					fragment = fFragments[i];
 					buffer.append("\n\t").append(fragment.getElementName()); //$NON-NLS-1$
 					buffer.append(" ["); //$NON-NLS-1$
@@ -160,16 +173,16 @@ public class ProjectApiDescription extends ApiDescription {
 			return buffer.toString();
 		}
 	}
-	
+
 	/**
 	 * Node for a reference type.
 	 */
 	class TypeNode extends ManifestNode {
-		
+
 		long fTimeStamp = -1L;
 		long fBuildStamp = -1L;
 		private boolean fRefreshing = false;
-		
+
 		IType fType;
 
 		/**
@@ -185,17 +198,21 @@ public class ProjectApiDescription extends ApiDescription {
 			super(parent, element, visibility, restrictions);
 			fType = type;
 			if (parent instanceof TypeNode) {
-				fTimeStamp = ((TypeNode)parent).fTimeStamp;
-				fBuildStamp = ((TypeNode)parent).fBuildStamp;
+				fTimeStamp = ((TypeNode) parent).fTimeStamp;
+				fBuildStamp = ((TypeNode) parent).fBuildStamp;
 			}
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.pde.api.tools.internal.ApiDescription.ManifestNode#refresh()
+		/*
+		 * (non-Javadoc)
+		 * @see
+		 * org.eclipse.pde.api.tools.internal.ApiDescription.ManifestNode#refresh
+		 * ()
 		 */
+		@Override
 		protected synchronized ManifestNode refresh() {
 			if (fRefreshing) {
-				if(ApiPlugin.DEBUG_API_DESCRIPTION) {
+				if (ApiPlugin.DEBUG_API_DESCRIPTION) {
 					StringBuffer buffer = new StringBuffer();
 					buffer.append("Refreshing manifest node: "); //$NON-NLS-1$
 					buffer.append(this);
@@ -214,7 +231,7 @@ public class ProjectApiDescription extends ApiDescription {
 						try {
 							resource = unit.getUnderlyingResource();
 						} catch (JavaModelException e) {
-							if(ApiPlugin.DEBUG_API_DESCRIPTION) {
+							if (ApiPlugin.DEBUG_API_DESCRIPTION) {
 								StringBuffer buffer = new StringBuffer();
 								buffer.append("Failed to get underlying resource for compilation unit: "); //$NON-NLS-1$
 								buffer.append(unit);
@@ -233,7 +250,7 @@ public class ProjectApiDescription extends ApiDescription {
 								CRCVisitor visitor = new CRCVisitor();
 								visitType(this, visitor);
 								long crc = visitor.getValue();
-								if(ApiPlugin.DEBUG_API_DESCRIPTION) {
+								if (ApiPlugin.DEBUG_API_DESCRIPTION) {
 									StringBuffer buffer = new StringBuffer();
 									buffer.append("Resource has changed for type manifest node: "); //$NON-NLS-1$
 									buffer.append(this);
@@ -248,8 +265,7 @@ public class ProjectApiDescription extends ApiDescription {
 								restrictions = RestrictionModifiers.NO_RESTRICTIONS;
 								fTimeStamp = resource.getModificationStamp();
 								try {
-									TagScanner.newScanner().scan(unit, ProjectApiDescription.this,
-										getApiTypeContainer((IPackageFragmentRoot) fType.getPackageFragment().getParent()), null);
+									TagScanner.newScanner().scan(unit, ProjectApiDescription.this, getApiTypeContainer((IPackageFragmentRoot) fType.getPackageFragment().getParent()), null);
 								} catch (CoreException e) {
 									ApiPlugin.log(e.getStatus());
 								}
@@ -260,7 +276,7 @@ public class ProjectApiDescription extends ApiDescription {
 								if (crc != crc2) {
 									// update relative build time stamp
 									fBuildStamp = BuildStamps.getBuildStamp(resource.getProject());
-									if(ApiPlugin.DEBUG_API_DESCRIPTION) {
+									if (ApiPlugin.DEBUG_API_DESCRIPTION) {
 										StringBuffer buffer = new StringBuffer();
 										buffer.append("CRC changed for type manifest node: "); //$NON-NLS-1$
 										buffer.append(this);
@@ -272,7 +288,7 @@ public class ProjectApiDescription extends ApiDescription {
 								}
 							}
 						} else {
-							if(ApiPlugin.DEBUG_API_DESCRIPTION) {
+							if (ApiPlugin.DEBUG_API_DESCRIPTION) {
 								StringBuffer buffer = new StringBuffer();
 								buffer.append("Underlying resource for the type manifest node: "); //$NON-NLS-1$
 								buffer.append(this);
@@ -285,7 +301,7 @@ public class ProjectApiDescription extends ApiDescription {
 							return null;
 						}
 					} else {
-						if(ApiPlugin.DEBUG_API_DESCRIPTION) {
+						if (ApiPlugin.DEBUG_API_DESCRIPTION) {
 							StringBuffer buffer = new StringBuffer();
 							buffer.append("Failed to look up compilation unit for "); //$NON-NLS-1$
 							buffer.append(fType);
@@ -303,38 +319,45 @@ public class ProjectApiDescription extends ApiDescription {
 			}
 			return this;
 		}
-		
-		/* (non-Javadoc)
-		 * @see org.eclipse.pde.api.tools.internal.ApiDescription.ManifestNode#persistXML(org.w3c.dom.Document, org.w3c.dom.Element, java.lang.String)
+
+		/*
+		 * (non-Javadoc)
+		 * @see
+		 * org.eclipse.pde.api.tools.internal.ApiDescription.ManifestNode#persistXML
+		 * (org.w3c.dom.Document, org.w3c.dom.Element, java.lang.String)
 		 */
-		void persistXML(Document document, Element parent) {
-			if(hasApiVisibility(this)) {
+		@Override
+		void persistXML(Document document, Element parentElement) {
+			if (hasApiVisibility(this)) {
 				Element type = document.createElement(IApiXmlConstants.ELEMENT_TYPE);
 				type.setAttribute(IApiXmlConstants.ATTR_HANDLE, fType.getHandleIdentifier());
 				persistAnnotations(type);
 				type.setAttribute(IApiXmlConstants.ATTR_MODIFICATION_STAMP, Long.toString(fTimeStamp));
 				persistChildren(document, type, children);
-				parent.appendChild(type);
+				parentElement.appendChild(type);
 			}
 		}
-		
-		/* (non-Javadoc)
-		 * @see org.eclipse.pde.api.tools.internal.ApiDescription.ManifestNode#toString()
+
+		/*
+		 * (non-Javadoc)
+		 * @see
+		 * org.eclipse.pde.api.tools.internal.ApiDescription.ManifestNode#toString
+		 * ()
 		 */
+		@Override
 		public String toString() {
 			StringBuffer buffer = new StringBuffer();
 			buffer.append("Type Node: ").append(fType.getFullyQualifiedName()); //$NON-NLS-1$
 			buffer.append("\nVisibility: ").append(VisibilityModifiers.getVisibilityName(visibility)); //$NON-NLS-1$
 			buffer.append("\nRestrictions: ").append(RestrictionModifiers.getRestrictionText(restrictions)); //$NON-NLS-1$
-			if(parent != null) {
-				String pname = parent.element.getElementType() == IElementDescriptor.PACKAGE ?
-						((IPackageDescriptor)parent.element).getName() : ((IReferenceTypeDescriptor)parent.element).getQualifiedName();
+			if (parent != null) {
+				String pname = parent.element.getElementType() == IElementDescriptor.PACKAGE ? ((IPackageDescriptor) parent.element).getName() : ((IReferenceTypeDescriptor) parent.element).getQualifiedName();
 				buffer.append("\nParent: ").append(pname); //$NON-NLS-1$
 			}
 			return buffer.toString();
 		}
 	}
-	
+
 	/**
 	 * Constructs a new API description for the given project API component.
 	 * 
@@ -345,9 +368,13 @@ public class ProjectApiDescription extends ApiDescription {
 		fProject = project;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiDescription#accept(org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.provisional.IApiDescription#accept
+	 * (org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor)
 	 */
+	@Override
 	public synchronized void accept(ApiDescriptionVisitor visitor, IProgressMonitor monitor) {
 		boolean completeVisit = true;
 		if (fInSynch) {
@@ -373,11 +400,11 @@ public class ProjectApiDescription extends ApiDescription {
 								child = children[k];
 								if (child instanceof ICompilationUnit) {
 									unit = (ICompilationUnit) child;
-									String cuName = unit.getElementName(); 
+									String cuName = unit.getElementName();
 									String tName = cuName.substring(0, cuName.length() - ".java".length()); //$NON-NLS-1$
 									visit(visitor, unit.getType(tName));
 								} else if (child instanceof IClassFile) {
-									visit(visitor, ((IClassFile)child).getType());
+									visit(visitor, ((IClassFile) child).getType());
 								}
 							}
 						} else {
@@ -396,7 +423,7 @@ public class ProjectApiDescription extends ApiDescription {
 			}
 		}
 	}
-	
+
 	/**
 	 * Visits a type.
 	 * 
@@ -411,7 +438,7 @@ public class ProjectApiDescription extends ApiDescription {
 			visitType(typeNode, visitor);
 		}
 	}
-	
+
 	void visitType(ManifestNode node, ApiDescriptionVisitor visitor) {
 		IApiAnnotations annotations = resolveAnnotations(node, node.element);
 		if (visitor.visitElement(node.element, annotations)) {
@@ -422,10 +449,15 @@ public class ProjectApiDescription extends ApiDescription {
 		}
 		visitor.endVisitElement(node.element, annotations);
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.ApiDescription#isInsertOnResolve(org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor)
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.ApiDescription#isInsertOnResolve(org
+	 * .eclipse
+	 * .pde.api.tools.internal.provisional.descriptors.IElementDescriptor)
 	 */
+	@Override
 	protected boolean isInsertOnResolve(IElementDescriptor elementDescriptor) {
 		switch (elementDescriptor.getElementType()) {
 			case IElementDescriptor.METHOD:
@@ -438,45 +470,50 @@ public class ProjectApiDescription extends ApiDescription {
 				return true;
 		}
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.ApiDescription#createNode(org.eclipse.pde.api.tools.internal.ApiDescription.ManifestNode, org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor)
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.ApiDescription#createNode(org.eclipse
+	 * .pde.api.tools.internal.ApiDescription.ManifestNode,
+	 * org.eclipse.pde.api.tools
+	 * .internal.provisional.descriptors.IElementDescriptor)
 	 */
+	@Override
 	protected ManifestNode createNode(ManifestNode parentNode, IElementDescriptor element) {
 		switch (element.getElementType()) {
 			case IElementDescriptor.PACKAGE:
 				try {
 					IPackageDescriptor pkg = (IPackageDescriptor) element;
 					IPackageFragmentRoot[] roots = getJavaProject().getPackageFragmentRoots();
-					List fragments = new ArrayList(1);
+					List<IPackageFragment> fragments = new ArrayList<IPackageFragment>(1);
 					for (int i = 0; i < roots.length; i++) {
 						IPackageFragmentRoot root = roots[i];
 						IClasspathEntry entry = root.getRawClasspathEntry();
 						switch (entry.getEntryKind()) {
-						case IClasspathEntry.CPE_SOURCE:
-						case IClasspathEntry.CPE_LIBRARY:
-							IPackageFragment fragment = root.getPackageFragment(pkg.getName());
-							if (fragment.exists()) {
-								fragments.add(fragment);
-							}
-							break;
-						default:
-							if (!root.isArchive()
-									&& root.getKind() == IPackageFragmentRoot.K_BINARY) {
-								// class file folder
-								fragment = root.getPackageFragment(pkg.getName());
+							case IClasspathEntry.CPE_SOURCE:
+							case IClasspathEntry.CPE_LIBRARY:
+								IPackageFragment fragment = root.getPackageFragment(pkg.getName());
 								if (fragment.exists()) {
 									fragments.add(fragment);
 								}
-							}
+								break;
+							default:
+								if (!root.isArchive() && root.getKind() == IPackageFragmentRoot.K_BINARY) {
+									// class file folder
+									fragment = root.getPackageFragment(pkg.getName());
+									if (fragment.exists()) {
+										fragments.add(fragment);
+									}
+								}
 						}
 					}
 					if (fragments.isEmpty()) {
 						return null;
 					} else {
-						return newPackageNode((IPackageFragment[])fragments.toArray(new IPackageFragment[fragments.size()]), parentNode, element, VisibilityModifiers.PRIVATE, RestrictionModifiers.NO_RESTRICTIONS);
+						return newPackageNode(fragments.toArray(new IPackageFragment[fragments.size()]), parentNode, element, VisibilityModifiers.PRIVATE, RestrictionModifiers.NO_RESTRICTIONS);
 					}
-					
+
 				} catch (CoreException e) {
 					return null;
 				}
@@ -486,7 +523,7 @@ public class ProjectApiDescription extends ApiDescription {
 					IType type = null;
 					String name = descriptor.getName();
 					if (parentNode instanceof PackageNode) {
-						IPackageFragment[] fragments = ((PackageNode) parentNode).fFragments; 
+						IPackageFragment[] fragments = ((PackageNode) parentNode).fFragments;
 						for (int i = 0; i < fragments.length; i++) {
 							IPackageFragment fragment = fragments[i];
 							if (fragment.getKind() == IPackageFragmentRoot.K_SOURCE) {
@@ -510,20 +547,22 @@ public class ProjectApiDescription extends ApiDescription {
 							}
 						}
 					} else if (parentNode instanceof TypeNode) {
-						type = ((TypeNode)parentNode).fType.getType(name);
+						type = ((TypeNode) parentNode).fType.getType(name);
 					}
 					if (type != null) {
 						return newTypeNode(type, parentNode, element, VISIBILITY_INHERITED, RestrictionModifiers.NO_RESTRICTIONS);
 					}
-				} catch (CoreException e ) {
+				} catch (CoreException e) {
 					return null;
 				}
 				return null;
+			default:
+				break;
 		}
 		return super.createNode(parentNode, element);
 	}
 
-	/** 
+	/**
 	 * Constructs and returns a new node for the given package fragment.
 	 * 
 	 * @param fragment
@@ -550,7 +589,7 @@ public class ProjectApiDescription extends ApiDescription {
 	TypeNode newTypeNode(IType type, ManifestNode parent, IElementDescriptor descriptor, int vis, int res) {
 		return new TypeNode(type, parent, descriptor, vis, res);
 	}
-	
+
 	/**
 	 * Constructs a new manifest node.
 	 * 
@@ -569,7 +608,7 @@ public class ProjectApiDescription extends ApiDescription {
 	 */
 	synchronized void refreshPackages() {
 		if (fRefreshingInProgress) {
-			if(ApiPlugin.DEBUG_API_DESCRIPTION) {
+			if (ApiPlugin.DEBUG_API_DESCRIPTION) {
 				StringBuffer buffer = new StringBuffer();
 				buffer.append("Refreshing manifest node: "); //$NON-NLS-1$
 				buffer.append(this);
@@ -585,7 +624,7 @@ public class ProjectApiDescription extends ApiDescription {
 				fRefreshingInProgress = true;
 				// set all existing packages to PRIVATE (could clear
 				// the map, but it would be less efficient)
-				Iterator iterator = fPackageMap.values().iterator();
+				Iterator<ManifestNode> iterator = fPackageMap.values().iterator();
 				while (iterator.hasNext()) {
 					PackageNode node = (PackageNode) iterator.next();
 					node.visibility = VisibilityModifiers.PRIVATE;
@@ -594,7 +633,7 @@ public class ProjectApiDescription extends ApiDescription {
 				if (fManifestFile.exists()) {
 					try {
 						IPackageFragment[] fragments = getLocalPackageFragments();
-						Set names = new HashSet();
+						Set<String> names = new HashSet<String>();
 						for (int i = 0; i < fragments.length; i++) {
 							names.add(fragments[i].getElementName());
 						}
@@ -616,12 +655,12 @@ public class ProjectApiDescription extends ApiDescription {
 			case IJavaElement.PACKAGE_FRAGMENT:
 				return Factory.packageDescriptor(element.getElementName());
 			case IJavaElement.TYPE:
-				return Factory.typeDescriptor(((IType)element).getFullyQualifiedName('$'));
+				return Factory.typeDescriptor(((IType) element).getFullyQualifiedName('$'));
 			default:
 				return null;
 		}
 	}
-	
+
 	/**
 	 * Returns the Java project associated with this component.
 	 * 
@@ -639,25 +678,26 @@ public class ProjectApiDescription extends ApiDescription {
 	 * @exception CoreException if container cannot be located
 	 */
 	synchronized IApiTypeContainer getApiTypeContainer(IPackageFragmentRoot root) throws CoreException {
-		IApiTypeContainer container  = getApiComponent().getTypeContainer(root);
+		IApiTypeContainer container = getApiComponent().getTypeContainer(root);
 		if (container == null) {
-			throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, "Unable to resolve type conatiner for package fragment root"));  //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, "Unable to resolve type conatiner for package fragment root")); //$NON-NLS-1$
 		}
 		return container;
 	}
-	
+
 	/**
 	 * Returns all package fragments that originate from this project.
 	 * 
 	 * @return all package fragments that originate from this project
 	 */
 	private IPackageFragment[] getLocalPackageFragments() {
-		List local = new ArrayList();
+		List<IJavaElement> local = new ArrayList<IJavaElement>();
 		try {
 			IPackageFragmentRoot[] roots = getJavaProject().getPackageFragmentRoots();
 			for (int i = 0; i < roots.length; i++) {
 				IPackageFragmentRoot root = roots[i];
-				// only care about roots originating from this project (binary or source)
+				// only care about roots originating from this project (binary
+				// or source)
 				IResource resource = root.getCorrespondingResource();
 				if (resource != null && resource.getProject().equals(getJavaProject().getProject())) {
 					IJavaElement[] children = root.getChildren();
@@ -669,16 +709,16 @@ public class ProjectApiDescription extends ApiDescription {
 		} catch (JavaModelException e) {
 			// ignore
 		}
-		return (IPackageFragment[]) local.toArray(new IPackageFragment[local.size()]);
+		return local.toArray(new IPackageFragment[local.size()]);
 	}
-	
+
 	/**
 	 * Returns this API description as XML.
 	 * 
 	 * @throws CoreException
 	 */
 	public synchronized String getXML() throws CoreException {
-		Document document = Util.newDocument();	
+		Document document = Util.newDocument();
 		Element component = document.createElement(IApiXmlConstants.ELEMENT_COMPONENT);
 		component.setAttribute(IApiXmlConstants.ATTR_ID, getJavaProject().getElementName());
 		component.setAttribute(IApiXmlConstants.ATTR_MODIFICATION_STAMP, Long.toString(fPackageTimeStamp));
@@ -689,21 +729,21 @@ public class ProjectApiDescription extends ApiDescription {
 	}
 
 	/**
-	 * Persists the elements in the given map as XML elements, appended
-	 * to the given xmlElement.
-	 *  
+	 * Persists the elements in the given map as XML elements, appended to the
+	 * given xmlElement.
+	 * 
 	 * @param document XML document
 	 * @param xmlElement node to append children no
 	 * @param elementMap elements to persist
 	 */
-	void persistChildren(Document document, Element xmlElement, Map elementMap) {
-		Iterator iterator = elementMap.values().iterator();
+	void persistChildren(Document document, Element xmlElement, Map<IElementDescriptor, ManifestNode> elementMap) {
+		Iterator<ManifestNode> iterator = elementMap.values().iterator();
 		while (iterator.hasNext()) {
-			ManifestNode node = (ManifestNode) iterator.next();
+			ManifestNode node = iterator.next();
 			node.persistXML(document, xmlElement);
 		}
 	}
-	
+
 	/**
 	 * Cleans this API description so it will be re-populated with fresh data.
 	 */
@@ -713,7 +753,7 @@ public class ProjectApiDescription extends ApiDescription {
 		fInSynch = false;
 		modified();
 	}
-	
+
 	/**
 	 * Notes that the underlying project has changed in some way and that the
 	 * description cache is no longer in synch with the project.
@@ -723,24 +763,27 @@ public class ProjectApiDescription extends ApiDescription {
 	}
 
 	/**
-	 * Notes that the underlying project classpath has changed in some way and that the
-	 * description cache is no longer in synch with the project.
+	 * Notes that the underlying project classpath has changed in some way and
+	 * that the description cache is no longer in synch with the project.
 	 */
 	public synchronized void projectClasspathChanged() {
 		fInSynch = false;
-		// we want to flush the packages cache to "reload" all packages using the new package fragment roots
+		// we want to flush the packages cache to "reload" all packages using
+		// the new package fragment roots
 		fPackageTimeStamp = -1L;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.ApiDescription#toString()
 	 */
+	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Project API description for: ").append(getJavaProject().getElementName()); //$NON-NLS-1$
 		return buffer.toString();
 	}
-	
+
 	/**
 	 * Returns the API component associated with this API description
 	 * 
@@ -751,11 +794,11 @@ public class ProjectApiDescription extends ApiDescription {
 		IApiBaseline baseline = ApiBaselineManager.getManager().getWorkspaceBaseline();
 		ProjectComponent component = (ProjectComponent) baseline.getApiComponent(getJavaProject().getProject());
 		if (component == null) {
-			throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, "Unable to resolve project API component for API description"));  //$NON-NLS-1$
+			throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, "Unable to resolve project API component for API description")); //$NON-NLS-1$
 		}
 		return component;
 	}
-	
+
 	/**
 	 * Resolves annotations based on inheritance for the given node and element.
 	 * 
@@ -763,12 +806,13 @@ public class ProjectApiDescription extends ApiDescription {
 	 * @param element the element annotations are being resolved for
 	 * @return annotations
 	 */
+	@Override
 	protected IApiAnnotations resolveAnnotations(ManifestNode node, IElementDescriptor element) {
 		IApiAnnotations ann = super.resolveAnnotations(node, element);
 		if (node instanceof TypeNode) {
-			return new TypeAnnotations(ann, ((TypeNode)node).fBuildStamp);
+			return new TypeAnnotations(ann, ((TypeNode) node).fBuildStamp);
 		}
 		return ann;
-		
-	}	
+
+	}
 }

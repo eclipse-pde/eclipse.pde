@@ -10,9 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.provisional.comparator;
 
-
 public class DeltaVisitor {
-	
+
 	/**
 	 * Visit the given delta
 	 * 

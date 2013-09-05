@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,95 +30,117 @@ final class SignatureDecoder implements SignatureVisitor {
 	public SignatureDecoder(SignatureDescriptor signatureDescriptor) {
 		this.signatureDescriptor = signatureDescriptor;
 	}
+
+	@Override
 	public SignatureVisitor visitArrayType() {
 		return this;
 	}
 
+	@Override
 	public void visitBaseType(char descriptor) {
 		// nothing to do
 	}
 
+	@Override
 	public SignatureVisitor visitClassBound() {
 		this.mode = CLASS_BOUND;
 		return this;
 	}
 
+	@Override
 	public void visitClassType(String name) {
 		String classTypeName = name.replace('/', '.');
-		switch(this.mode) {
-			case CLASS_BOUND :
+		switch (this.mode) {
+			case CLASS_BOUND:
 				this.signatureDescriptor.setClassBound(classTypeName);
 				break;
-			case INTERFACE_BOUND :
+			case INTERFACE_BOUND:
 				this.signatureDescriptor.addInterfaceBound(classTypeName);
 				break;
-			case SUPER_CLASS :
+			case SUPER_CLASS:
 				this.signatureDescriptor.setSuperclass(classTypeName);
 				break;
-			case EXTENDS_TYPE_ARGUMENT :
-			case SUPER_TYPE_ARGUMENT :
-			case NORMAL_TYPE_ARGUMENT :
+			case EXTENDS_TYPE_ARGUMENT:
+			case SUPER_TYPE_ARGUMENT:
+			case NORMAL_TYPE_ARGUMENT:
 				this.signatureDescriptor.addTypeArgument(classTypeName);
+				break;
+			default:
 				break;
 		}
 		this.mode = DEFAULT;
 	}
 
+	@Override
 	public void visitEnd() {
 		// nothing to do
 	}
 
+	@Override
 	public SignatureVisitor visitExceptionType() {
 		// nothing to do
 		return this;
 	}
 
+	@Override
 	public void visitFormalTypeParameter(String name) {
 		this.signatureDescriptor.addTypeParameterDescriptor(name);
 	}
 
+	@Override
 	public void visitInnerClassType(String name) {
 	}
 
+	@Override
 	public SignatureVisitor visitInterface() {
 		return this;
 	}
 
+	@Override
 	public SignatureVisitor visitInterfaceBound() {
 		this.mode = INTERFACE_BOUND;
 		return this;
 	}
 
+	@Override
 	public SignatureVisitor visitParameterType() {
 		return this;
 	}
 
+	@Override
 	public SignatureVisitor visitReturnType() {
 		return this;
 	}
 
+	@Override
 	public SignatureVisitor visitSuperclass() {
 		this.mode = SUPER_CLASS;
 		return this;
 	}
 
+	@Override
 	public void visitTypeArgument() {
 	}
 
+	@Override
 	public SignatureVisitor visitTypeArgument(char wildcard) {
-		switch(wildcard) {
-			case SignatureVisitor.EXTENDS :
-				this.mode= EXTENDS_TYPE_ARGUMENT;
+		switch (wildcard) {
+			case SignatureVisitor.EXTENDS:
+				this.mode = EXTENDS_TYPE_ARGUMENT;
 				break;
-			case SignatureVisitor.SUPER :
-				this.mode= SUPER_TYPE_ARGUMENT;
+			case SignatureVisitor.SUPER:
+				this.mode = SUPER_TYPE_ARGUMENT;
 				break;
-			case SignatureVisitor.INSTANCEOF :
-				this.mode= NORMAL_TYPE_ARGUMENT;
+			case SignatureVisitor.INSTANCEOF:
+				this.mode = NORMAL_TYPE_ARGUMENT;
+				break;
+			default:
+				break;
 		}
 		return this;
 	}
 
+	@Override
 	public void visitTypeVariable(String name) {
 	}
 }

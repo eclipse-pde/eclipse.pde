@@ -45,18 +45,18 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 	static {
 //		TESTS_NUMBERS = new int[] { 9 };
 	}
-	private static final String API_BASELINE = "API-baseline";
+	private static final String API_BASELINE = "API-baseline"; //$NON-NLS-1$
 	/**
 	 * Workspace relative path
 	 */
-	protected static String WORKSPACE_ROOT = "mergesplit";
+	protected static String WORKSPACE_ROOT = "mergesplit"; //$NON-NLS-1$
 
 	/**
 	 * 
 	 */
-	public static final String WORKSPACE_PROFILE = "post-split";
+	public static final String WORKSPACE_PROFILE = "post-split"; //$NON-NLS-1$
 	
-	public static final String BASELINE = "pre-split";
+	public static final String BASELINE = "pre-split"; //$NON-NLS-1$
 
 	IApiBaseline baseline;
 
@@ -71,6 +71,7 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#setBuilderOptions()
 	 */
+	@Override
 	protected void setBuilderOptions() {
 		enableUnsupportedTagOptions(false);
 		enableBaselineOptions(true);
@@ -129,7 +130,7 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 	 */
 	public void test001() throws Exception {
 		// setup the environment
-		setupTest("test1");
+		setupTest("test1"); //$NON-NLS-1$
 		performMergeSplit();
 	}
 	/**
@@ -140,7 +141,7 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 	 */
 	public void test002() throws Exception {
 		// setup the environment
-		setupTest("test2");
+		setupTest("test2"); //$NON-NLS-1$
 		performMergeSplit();
 	}
 	/**
@@ -152,7 +153,7 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 	 */
 	public void test003() throws Exception {
 		// setup the environment
-		setupTest("test3");
+		setupTest("test3"); //$NON-NLS-1$
 		int[] ids = new int[] {
 				ApiProblemFactory.createProblemId(
 						IApiProblem.CATEGORY_COMPATIBILITY,
@@ -167,8 +168,8 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[2][];
-		args[0] = new String[]{"a.b.c.ClassB", "a.b.c_1.0.0"};
-		args[1] = new String[]{"1.0.0", "1.0.0"};
+		args[0] = new String[]{"a.b.c.ClassB", "a.b.c_1.0.0"}; //$NON-NLS-1$ //$NON-NLS-2$
+		args[1] = new String[]{"1.0.0", "1.0.0"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performMergeSplit();
 	}
@@ -181,7 +182,7 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 	 */
 	public void test004() throws Exception {
 		// setup the environment
-		setupTest("test4");
+		setupTest("test4"); //$NON-NLS-1$
 		// no problem expected
 		performMergeSplit();
 	}
@@ -194,7 +195,7 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 	 */
 	public void test005() throws Exception {
 		// setup the environment
-		setupTest("test5");
+		setupTest("test5"); //$NON-NLS-1$
 		int[] ids = new int[] {
 				ApiProblemFactory.createProblemId(
 						IApiProblem.CATEGORY_COMPATIBILITY,
@@ -209,8 +210,8 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[2][];
-		args[0] = new String[]{"a.b.c.ClassB", "a.b.c_1.0.0"};
-		args[1] = new String[]{"1.0.0", "1.0.0"};
+		args[0] = new String[]{"a.b.c.ClassB", "a.b.c_1.0.0"}; //$NON-NLS-1$ //$NON-NLS-2$
+		args[1] = new String[]{"1.0.0", "1.0.0"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performMergeSplit();
 	}
@@ -223,7 +224,7 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 	 */
 	public void test006() throws Exception {
 		// setup the environment
-		setupTest("test6");
+		setupTest("test6"); //$NON-NLS-1$
 		int[] ids = new int[] {
 				ApiProblemFactory.createProblemId(
 						IApiProblem.CATEGORY_COMPATIBILITY,
@@ -238,8 +239,8 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[2][];
-		args[0] = new String[]{"a.b.c.ClassB", "a.b.c_1.0.0"};
-		args[1] = new String[]{"1.0.0", "1.0.0"};
+		args[0] = new String[]{"a.b.c.ClassB", "a.b.c_1.0.0"}; //$NON-NLS-1$ //$NON-NLS-2$
+		args[1] = new String[]{"1.0.0", "1.0.0"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performMergeSplit();
 	}
@@ -252,7 +253,7 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 	 */
 	public void test007() throws Exception {
 		// setup the environment
-		setupTest("test7");
+		setupTest("test7"); //$NON-NLS-1$
 		// no problem expected
 		performMergeSplit();
 	}
@@ -265,7 +266,7 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 	 */
 	public void test008() throws Exception {
 		// setup the environment
-		setupTest("test8");
+		setupTest("test8"); //$NON-NLS-1$
 		int[] ids = new int[] {
 				ApiProblemFactory.createProblemId(
 						IApiProblem.CATEGORY_COMPATIBILITY,
@@ -280,8 +281,8 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[2][];
-		args[0] = new String[]{"a.b.c.ClassB", "a.b.c_1.0.0"};
-		args[1] = new String[]{"1.0.0", "1.0.0"};
+		args[0] = new String[]{"a.b.c.ClassB", "a.b.c_1.0.0"}; //$NON-NLS-1$ //$NON-NLS-2$
+		args[1] = new String[]{"1.0.0", "1.0.0"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performMergeSplit();
 	}
@@ -294,7 +295,7 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 	 */
 	public void test009() throws Exception {
 		// setup the environment
-		setupTest("test9");
+		setupTest("test9"); //$NON-NLS-1$
 		int[] ids = new int[] {
 				ApiProblemFactory.createProblemId(
 						IApiProblem.CATEGORY_COMPATIBILITY,
@@ -319,10 +320,10 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[4][];
-		args[0] = new String[]{"d.e.f.ClassD", "a.b.c_1.0.0"};
-		args[1] = new String[]{"d.e.f.ClassD", "a.b.c.core_1.0.0"};
-		args[2] = new String[]{"1.0.0", "1.0.0"};
-		args[3] = new String[]{"1.0.0", "1.0.0"};
+		args[0] = new String[]{"d.e.f.ClassD", "a.b.c_1.0.0"}; //$NON-NLS-1$ //$NON-NLS-2$
+		args[1] = new String[]{"d.e.f.ClassD", "a.b.c.core_1.0.0"}; //$NON-NLS-1$ //$NON-NLS-2$
+		args[2] = new String[]{"1.0.0", "1.0.0"}; //$NON-NLS-1$ //$NON-NLS-2$
+		args[3] = new String[]{"1.0.0", "1.0.0"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performMergeSplit();
 	}
@@ -339,12 +340,12 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 	 */
 	public void test010() throws Exception {
 		// setup the environment
-		setupTest("test10");
+		setupTest("test10"); //$NON-NLS-1$
 		performMergeSplit();
 		// no problems should appear in an incremental build either
-		IProject project = getEnv().getProject("a.b.c.core");
-		IFile file = project.getFile(new Path("src").append("a").append("b").append("c").append("core").append("ClassD.java"));
-		IPath replacement = TestSuiteHelper.getPluginDirectoryPath().append(TEST_SOURCE_ROOT).append(WORKSPACE_ROOT).append("test10").append("post-changes").append("ClassD.java");
+		IProject project = getEnv().getProject("a.b.c.core"); //$NON-NLS-1$
+		IFile file = project.getFile(new Path("src").append("a").append("b").append("c").append("core").append("ClassD.java")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+		IPath replacement = TestSuiteHelper.getPluginDirectoryPath().append(TEST_SOURCE_ROOT).append(WORKSPACE_ROOT).append("test10").append("post-changes").append("ClassD.java"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		updateWorkspaceFile(file.getFullPath(), replacement);
 		incrementalBuild();
 		assertProblems(getEnv().getProblems());
@@ -397,7 +398,7 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 		for (int i = 0; i < length; i++) {
 			IProject currentProject = projects[i];
 			IApiComponent component = manager.getWorkspaceComponent(currentProject.getName());
-			assertNotNull("The project was not found in the workspace baseline: "+currentProject.getName(), component);
+			assertNotNull("The project was not found in the workspace baseline: "+currentProject.getName(), component); //$NON-NLS-1$
 			exportApiComponent(currentProject, component, baselineLocation);
 		}
 		this.baseline = ApiModelFactory.newApiBaseline(API_BASELINE);
@@ -440,7 +441,7 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 	 */
 	@Override
 	protected IPath getTestSourcePath() {
-		return new Path("");
+		return new Path(""); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -448,7 +449,7 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 	 */
 	@Override
 	protected String getTestingProjectName() {
-		return "bundlemergesplit";
+		return "bundlemergesplit"; //$NON-NLS-1$
 	}
 	
 }

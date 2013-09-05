@@ -49,7 +49,7 @@ public class Messages extends NLS {
 	public static String fullReportTask_problementry_odd_error;
 	public static String fullReportTask_problementry_odd_warning;
 	public static String fullReportTask_category_no_elements;
-	
+
 	public static String fullReportTask_indexheader;
 	public static String fullReportTask_indexfooter;
 	public static String fullReportTask_indexsummary_even;
@@ -58,7 +58,7 @@ public class Messages extends NLS {
 	public static String fullReportTask_resolutionsummary_odd;
 	public static String fullReportTask_resolutiondetails;
 	public static String fullReportTask_resolutiondetailsSingle;
-	
+
 	public static String missing_xml_files_location;
 	public static String invalid_directory_name;
 	public static String could_not_create_sax_parser;
@@ -98,7 +98,7 @@ public class Messages extends NLS {
 	public static String ApiUseTask_missing_report_location;
 	public static String ApiUseTask_search_engine_problem;
 	public static String UseTask_no_scan_both_types_not_searched_for;
-	
+
 	public static String AddedElement;
 
 	public static String AnalysisReportConversionTask_component_resolution_header;

@@ -48,16 +48,17 @@ public class TestCompositeSearchReporter implements IApiSearchReporter {
 			}
 		}
 		else {
-			this.test.reportFailure("you must specify IApiSearchReporters");
+			this.test.reportFailure("you must specify IApiSearchReporters"); //$NON-NLS-1$
 		}
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchReporter#reportNotSearched(org.eclipse.pde.api.tools.internal.provisional.model.IApiElement[])
 	 */
+	@Override
 	public void reportNotSearched(IApiElement[] elements) {
 		if(this.testreporteridx > this.reporters.size()) {
-			this.test.reportFailure("the index for the TestReporter does not exist");
+			this.test.reportFailure("the index for the TestReporter does not exist"); //$NON-NLS-1$
 		}
 		IApiSearchReporter reporter = this.reporters.get(testreporteridx);
 		reporter.reportNotSearched(elements);
@@ -72,9 +73,10 @@ public class TestCompositeSearchReporter implements IApiSearchReporter {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchReporter#reportResults(org.eclipse.pde.api.tools.internal.provisional.model.IApiElement, org.eclipse.pde.api.tools.internal.provisional.builder.IReference[])
 	 */
+	@Override
 	public void reportResults(IApiElement element, IReference[] references) {
 		if(this.testreporteridx > this.reporters.size()) {
-			this.test.reportFailure("the index for the TestReporter does not exist");
+			this.test.reportFailure("the index for the TestReporter does not exist"); //$NON-NLS-1$
 		}
 		IApiSearchReporter reporter = this.reporters.get(testreporteridx);
 		reporter.reportResults(element, references);
@@ -89,12 +91,14 @@ public class TestCompositeSearchReporter implements IApiSearchReporter {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchReporter#reportMetadata(org.eclipse.pde.api.tools.internal.provisional.search.IMetadata)
 	 */
+	@Override
 	public void reportMetadata(IMetadata data) {
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchReporter#reportCounts()
 	 */
+	@Override
 	public void reportCounts() {
 	}
 }

@@ -29,12 +29,12 @@ public class ConstructorCompatibilityTests extends CompatibilityTest {
 	/**
 	 * Workspace relative path classes in bundle/project A
 	 */
-	protected static IPath WORKSPACE_CLASSES_PACKAGE_A = new Path("bundle.a/src/a/constructors");
+	protected static IPath WORKSPACE_CLASSES_PACKAGE_A = new Path("bundle.a/src/a/constructors"); //$NON-NLS-1$
 
 	/**
 	 * Package prefix for test classes
 	 */
-	protected static String PACKAGE_PREFIX = "a.constructors.";
+	protected static String PACKAGE_PREFIX = "a.constructors."; //$NON-NLS-1$
 	
 	/**
 	 * Constructor
@@ -47,8 +47,9 @@ public class ConstructorCompatibilityTests extends CompatibilityTest {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestSourcePath()
 	 */
+	@Override
 	protected IPath getTestSourcePath() {
-		return super.getTestSourcePath().append("constructors");
+		return super.getTestSourcePath().append("constructors"); //$NON-NLS-1$
 	}
 	
 	/**
@@ -61,6 +62,7 @@ public class ConstructorCompatibilityTests extends CompatibilityTest {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getDefaultProblemId()
 	 */
+	@Override
 	protected int getDefaultProblemId() {
 		return 0;
 	}
@@ -83,21 +85,22 @@ public class ConstructorCompatibilityTests extends CompatibilityTest {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestingProjectName()
 	 */
+	@Override
 	protected String getTestingProjectName() {
-		return "constcompat";
+		return "constcompat"; //$NON-NLS-1$
 	}
 	
 	/**
 	 * Tests changing a protected method to package protected
 	 */
 	private void xProtectedToPackage(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ProtectedToPackage.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ProtectedToPackage.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			getChangedProblemId(IDelta.DECREASE_ACCESS)
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "ProtectedToPackage", "ProtectedToPackage()"};
+		args[0] = new String[]{PACKAGE_PREFIX + "ProtectedToPackage", "ProtectedToPackage()"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -114,7 +117,7 @@ public class ConstructorCompatibilityTests extends CompatibilityTest {
 	 * Tests changing a protected method to package protected when no-reference
 	 */
 	private void xProtectedToPackageNoReference(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ProtectedToPackageNoReference.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ProtectedToPackageNoReference.java"); //$NON-NLS-1$
 		// no problem expected
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -131,13 +134,13 @@ public class ConstructorCompatibilityTests extends CompatibilityTest {
 	 * Tests changing a protected method to private
 	 */
 	private void xProtectedToPrivate(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ProtectedToPrivate.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ProtectedToPrivate.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			getChangedProblemId(IDelta.DECREASE_ACCESS)
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "ProtectedToPrivate", "ProtectedToPrivate()"};
+		args[0] = new String[]{PACKAGE_PREFIX + "ProtectedToPrivate", "ProtectedToPrivate()"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -154,7 +157,7 @@ public class ConstructorCompatibilityTests extends CompatibilityTest {
 	 * Tests changing a protected method to private method in a no-extend class
 	 */
 	private void xProtectedToPrivateNoExtend(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ProtectedToPrivateNoExtend.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ProtectedToPrivateNoExtend.java"); //$NON-NLS-1$
 		// no expected errors
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -171,13 +174,13 @@ public class ConstructorCompatibilityTests extends CompatibilityTest {
 	 * Tests changing a public method to package
 	 */
 	private void xPublicToPackage(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("PublicToPackage.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("PublicToPackage.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			getChangedProblemId(IDelta.DECREASE_ACCESS)
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "PublicToPackage", "PublicToPackage()"};
+		args[0] = new String[]{PACKAGE_PREFIX + "PublicToPackage", "PublicToPackage()"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -194,13 +197,13 @@ public class ConstructorCompatibilityTests extends CompatibilityTest {
 	 * Tests changing a public method to private
 	 */
 	private void xPublicToPrivate(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("PublicToPrivate.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("PublicToPrivate.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			getChangedProblemId(IDelta.DECREASE_ACCESS)
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "PublicToPrivate", "PublicToPrivate()"};
+		args[0] = new String[]{PACKAGE_PREFIX + "PublicToPrivate", "PublicToPrivate()"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -217,7 +220,7 @@ public class ConstructorCompatibilityTests extends CompatibilityTest {
 	 * Tests changing a public method to private
 	 */
 	private void xPublicToPrivateNoReference(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("PublicToPrivateNoReference.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("PublicToPrivateNoReference.java"); //$NON-NLS-1$
 		// no problem expected
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -234,13 +237,13 @@ public class ConstructorCompatibilityTests extends CompatibilityTest {
 	 * Tests changing a public method to protected
 	 */
 	private void xPublicToProtected(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("PublicToProtected.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("PublicToProtected.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			getChangedProblemId(IDelta.DECREASE_ACCESS)
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "PublicToProtected", "PublicToProtected()"};
+		args[0] = new String[]{PACKAGE_PREFIX + "PublicToProtected", "PublicToProtected()"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -257,7 +260,7 @@ public class ConstructorCompatibilityTests extends CompatibilityTest {
 	 * Tests adding a type parameter to a constructor
 	 */
 	private void xAddTypeParameter(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddTypeParameter.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddTypeParameter.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			ApiProblemFactory.createProblemId(
 				IApiProblem.CATEGORY_COMPATIBILITY,
@@ -267,7 +270,7 @@ public class ConstructorCompatibilityTests extends CompatibilityTest {
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "AddTypeParameter.AddTypeParameter(T)", "U"};
+		args[0] = new String[]{PACKAGE_PREFIX + "AddTypeParameter.AddTypeParameter(T)", "U"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -284,7 +287,7 @@ public class ConstructorCompatibilityTests extends CompatibilityTest {
 	 * Tests removing a type parameter from a constructor
 	 */
 	private void xRemoveTypeParameter(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveTypeParameter.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveTypeParameter.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			ApiProblemFactory.createProblemId(
 				IApiProblem.CATEGORY_COMPATIBILITY,
@@ -294,7 +297,7 @@ public class ConstructorCompatibilityTests extends CompatibilityTest {
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "RemoveTypeParameter.RemoveTypeParameter(T)", "U"};
+		args[0] = new String[]{PACKAGE_PREFIX + "RemoveTypeParameter.RemoveTypeParameter(T)", "U"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -311,7 +314,7 @@ public class ConstructorCompatibilityTests extends CompatibilityTest {
 	 * Tests converting variable arguments to an array
 	 */
 	private void xVarArgsToArray(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("VarArgsToArray.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("VarArgsToArray.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			ApiProblemFactory.createProblemId(
 				IApiProblem.CATEGORY_COMPATIBILITY,
@@ -321,7 +324,7 @@ public class ConstructorCompatibilityTests extends CompatibilityTest {
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "VarArgsToArray", "VarArgsToArray(int, int[])"};
+		args[0] = new String[]{PACKAGE_PREFIX + "VarArgsToArray", "VarArgsToArray(int, int[])"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -338,7 +341,7 @@ public class ConstructorCompatibilityTests extends CompatibilityTest {
 	 * Tests converting an array to variable arguments
 	 */
 	private void xArrayToVarArgs(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ArrayToVarArgs.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ArrayToVarArgs.java"); //$NON-NLS-1$
 		// no problems
 		performCompatibilityTest(filePath, incremental);
 	}

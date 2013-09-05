@@ -21,18 +21,20 @@ public class SourceDefaultHandler extends DefaultHandler {
 	private static final String EXTENSION_NAME = "extension"; //$NON-NLS-1$
 	private static final String ECLIPSE_POINT_ATTRIBUTE_NAME = "point"; //$NON-NLS-1$
 	boolean isSource = false;
+
+	@Override
 	public void error(SAXParseException e) throws SAXException {
 		e.printStackTrace();
 	}
-	public void startElement(String uri, String localName, String name, Attributes attributes)
-			throws SAXException {
-		if (this.isSource) return;
-		this.isSource = EXTENSION_NAME.equals(name)
-				&& attributes.getLength() == 1
-				&& (ECLIPSE_POINT_ATTRIBUTE_NAME.equals(attributes.getQName(0))
-						|| ECLIPSE_POINT_ATTRIBUTE_NAME.equals(attributes.getLocalName(0)))
-				&& ORG_ECLIPSE_PDE_CORE_SOURCE_EXTENSION_POINT_NAME.equals(attributes.getValue(0));
+
+	@Override
+	public void startElement(String uri, String localName, String name, Attributes attributes) throws SAXException {
+		if (this.isSource) {
+			return;
+		}
+		this.isSource = EXTENSION_NAME.equals(name) && attributes.getLength() == 1 && (ECLIPSE_POINT_ATTRIBUTE_NAME.equals(attributes.getQName(0)) || ECLIPSE_POINT_ATTRIBUTE_NAME.equals(attributes.getLocalName(0))) && ORG_ECLIPSE_PDE_CORE_SOURCE_EXTENSION_POINT_NAME.equals(attributes.getValue(0));
 	}
+
 	public boolean isSource() {
 		return this.isSource;
 	}

@@ -41,67 +41,73 @@ import org.eclipse.pde.internal.core.natures.PDE;
 /**
  * Abstract class with commonly used methods for API Tools tests
  * 
- * @since 1.0.0 
+ * @since 1.0.0
  */
-public class AbstractApiTest extends TestCase {	
-	
+@SuppressWarnings("restriction")
+public class AbstractApiTest extends TestCase {
+
 	/**
-	 * Constant representing the name of the testing project created for plugin tests.
-	 * Value is: <code>APITests</code>.
+	 * Constant representing the name of the testing project created for plugin
+	 * tests. Value is: <code>APITests</code>.
 	 */
-	protected static final String TESTING_PROJECT_NAME = "APITests";
-	
+	protected static final String TESTING_PROJECT_NAME = "APITests"; //$NON-NLS-1$
+
 	/**
-	 * Constant representing the name of the testing plugin project created for plugin tests.
-	 * Value is: <code>APIPluginTests</code>.
+	 * Constant representing the name of the testing plugin project created for
+	 * plugin tests. Value is: <code>APIPluginTests</code>.
 	 */
-	protected static final String TESTING_PLUGIN_PROJECT_NAME = "APIPluginTests";
-	
+	protected static final String TESTING_PLUGIN_PROJECT_NAME = "APIPluginTests"; //$NON-NLS-1$
+
 	/**
-	 * Returns the {@link IJavaProject} with the given name. If this method
-	 * is called from a non-plugin unit test, <code>null</code> is always returned.
+	 * Returns the {@link IJavaProject} with the given name. If this method is
+	 * called from a non-plugin unit test, <code>null</code> is always returned.
+	 * 
 	 * @return the {@link IJavaProject} with the given name or <code>null</code>
 	 */
 	protected IJavaProject getTestingJavaProject(String name) {
 		IWorkspace ws = ResourcesPlugin.getWorkspace();
-		if(ws != null) {
+		if (ws != null) {
 			IProject pro = ws.getRoot().getProject(name);
-			if(pro.exists()) {
+			if (pro.exists()) {
 				return JavaCore.create(pro);
 			}
 		}
 		return null;
 	}
-	
+
 	/**
-	 * Returns the {@link IApiComponent} for the given project name or <code>null</code> if it does not exist
+	 * Returns the {@link IApiComponent} for the given project name or
+	 * <code>null</code> if it does not exist
+	 * 
 	 * @param projectname the name of the project
-	 * @return the {@link IApiComponent} for the given project name or <code>null</code>
+	 * @return the {@link IApiComponent} for the given project name or
+	 *         <code>null</code>
 	 */
 	protected IApiComponent getProjectApiComponent(String projectname) {
 		IJavaProject project = getTestingJavaProject(projectname);
-		assertNotNull("the project " + projectname + " must exist", project);
+		assertNotNull("the project " + projectname + " must exist", project); //$NON-NLS-1$ //$NON-NLS-2$
 		IApiBaseline profile = ApiPlugin.getDefault().getApiBaselineManager().getWorkspaceBaseline();
-		assertNotNull("the workspace profile must exist", profile);
+		assertNotNull("the workspace profile must exist", profile); //$NON-NLS-1$
 		return profile.getApiComponent(project.getElementName());
 	}
-	
+
 	/**
 	 * Performs the given refactoring
+	 * 
 	 * @param refactoring
 	 * @throws Exception
 	 */
 	protected void performRefactoring(final Refactoring refactoring) throws CoreException {
-		if(refactoring == null) {
+		if (refactoring == null) {
 			return;
 		}
 		NullProgressMonitor monitor = new NullProgressMonitor();
-		CreateChangeOperation create= new CreateChangeOperation(refactoring);
+		CreateChangeOperation create = new CreateChangeOperation(refactoring);
 		refactoring.checkFinalConditions(monitor);
 		PerformChangeOperation perform = new PerformChangeOperation(create);
 		ResourcesPlugin.getWorkspace().run(perform, monitor);
 	}
-	
+
 	/**
 	 * Wait for autobuild notification to occur
 	 */
@@ -118,78 +124,84 @@ public class AbstractApiTest extends TestCase {
 			}
 		} while (wasInterrupted);
 	}
-	
+
 	/**
 	 * Creates a project with the given name and adds the default 'src' folder
+	 * 
 	 * @param name
-	 * @param packages an optional list of packages to add to the project when it is created
+	 * @param packages an optional list of packages to add to the project when
+	 *            it is created
 	 * @throws Exception
 	 */
 	protected void createProject(final String name, String[] packages) throws Exception {
-		if(name == null) {
+		if (name == null) {
 			return;
 		}
-		
-        // create project and import source
-        IJavaProject jproject = ProjectUtils.createPluginProject(name, new String[] {PDE.PLUGIN_NATURE, ApiPlugin.NATURE_ID});
-        assertNotNull("The java project must have been created", jproject);
-        
-        IPackageFragmentRoot root = jproject.getPackageFragmentRoot(jproject.getProject().getFolder(ProjectUtils.SRC_FOLDER));
-        assertTrue("the src root must have been created", root.exists());
-        if(packages != null) {
-	        IPackageFragment fragment = null;
-	        for (int i = 0; i < packages.length; i++) {
-	        	fragment = root.createPackageFragment(packages[i], true, new NullProgressMonitor());
-	    		assertNotNull("the package fragment "+packages[i]+" cannot be null", fragment);
+
+		// create project and import source
+		IJavaProject jproject = ProjectUtils.createPluginProject(name, new String[] {
+				PDE.PLUGIN_NATURE, ApiPlugin.NATURE_ID });
+		assertNotNull("The java project must have been created", jproject); //$NON-NLS-1$
+
+		IPackageFragmentRoot root = jproject.getPackageFragmentRoot(jproject.getProject().getFolder(ProjectUtils.SRC_FOLDER));
+		assertTrue("the src root must have been created", root.exists()); //$NON-NLS-1$
+		if (packages != null) {
+			IPackageFragment fragment = null;
+			for (int i = 0; i < packages.length; i++) {
+				fragment = root.createPackageFragment(packages[i], true, new NullProgressMonitor());
+				assertNotNull("the package fragment " + packages[i] + " cannot be null", fragment); //$NON-NLS-1$ //$NON-NLS-2$
 			}
-        }
-        
-        PluginRegistry.getWorkspaceModels();
-        
-        IApiBaseline baseline = getWorkspaceBaseline();
-        assertNotNull("the workspace baseline cannot be null", baseline);
-        
-        // This assertion caused intermittant failures, skipping it hasn't caused any problems in the tests (Bug 368458)
-//        IApiComponent component = baseline.getApiComponent(name);
-//        assertNotNull("the test project api component must exist in the workspace baseline", component);
-		
+		}
+
+		PluginRegistry.getWorkspaceModels();
+
+		IApiBaseline baseline = getWorkspaceBaseline();
+		assertNotNull("the workspace baseline cannot be null", baseline); //$NON-NLS-1$
+
+		// This assertion caused intermittant failures, skipping it hasn't
+		// caused any problems in the tests (Bug 368458)
+		// IApiComponent component = baseline.getApiComponent(name);
+		// assertNotNull("the test project api component must exist in the workspace baseline",
+		// component);
+
 	}
-	
+
 	/**
 	 * Deletes a project with the given name
+	 * 
 	 * @param name
 	 */
 	protected void deleteProject(String name) {
-		if(name == null) {
+		if (name == null) {
 			return;
 		}
 		getWorkspaceBaseline().dispose();
 		try {
-	        IProject pro = getProject(name);
-	        if (pro.exists()) {
-	        	ResourceEventWaiter waiter = new ResourceEventWaiter(new Path(name), IResourceChangeEvent.POST_CHANGE, IResourceDelta.CHANGED, 0);
-	            pro.delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, new NullProgressMonitor());
-	            Object obj = waiter.waitForEvent();
-	            assertNotNull("the project delete event did not arrive", obj);
-	        }
-		}
-		catch(Exception e) {
-			System.err.println("tearDown failed");
+			IProject pro = getProject(name);
+			if (pro.exists()) {
+				ResourceEventWaiter waiter = new ResourceEventWaiter(new Path(name), IResourceChangeEvent.POST_CHANGE, IResourceDelta.CHANGED, 0);
+				pro.delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, new NullProgressMonitor());
+				Object obj = waiter.waitForEvent();
+				assertNotNull("the project delete event did not arrive", obj); //$NON-NLS-1$
+			}
+		} catch (Exception e) {
+			System.err.println("tearDown failed"); //$NON-NLS-1$
 			e.printStackTrace();
 			fail(e.getMessage());
 		}
 	}
-	
+
 	/**
-	 * Returns a the project with the given name. The returned project has not been checked
-	 * for existence.
+	 * Returns a the project with the given name. The returned project has not
+	 * been checked for existence.
+	 * 
 	 * @param name
 	 * @return the handle to the project with the given name.
 	 */
 	protected IProject getProject(String name) {
 		return ResourcesPlugin.getWorkspace().getRoot().getProject(name);
 	}
-	
+
 	/**
 	 * Returns the workspace baseline.
 	 * 

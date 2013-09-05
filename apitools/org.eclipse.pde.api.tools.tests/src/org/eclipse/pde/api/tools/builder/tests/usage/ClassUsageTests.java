@@ -25,7 +25,7 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
  */
 public class ClassUsageTests extends UsageTest {
 
-	protected static final String CLASS_NAME = "ClassUsageClass";
+	protected static final String CLASS_NAME = "ClassUsageClass"; //$NON-NLS-1$
 	
 	
 	/**
@@ -66,7 +66,7 @@ public class ClassUsageTests extends UsageTest {
 	 */
 	@Override
 	protected IPath getTestSourcePath() {
-		return super.getTestSourcePath().append("class");
+		return super.getTestSourcePath().append("class"); //$NON-NLS-1$
 	}
 	
 	/**
@@ -92,7 +92,7 @@ public class ClassUsageTests extends UsageTest {
 				getProblemId(IApiProblem.ILLEGAL_EXTEND, IApiProblem.NO_FLAGS),
 				getProblemId(IApiProblem.ILLEGAL_EXTEND, IApiProblem.NO_FLAGS)
 		});
-		String typename = "testC1";
+		String typename = "testC1"; //$NON-NLS-1$
 		setExpectedMessageArgs(new String[][] {
 				{CLASS_NAME, typename},
 				{CLASS_NAME, INNER_NAME1},
@@ -125,7 +125,7 @@ public class ClassUsageTests extends UsageTest {
 				getProblemId(IApiProblem.ILLEGAL_INSTANTIATE, IApiProblem.NO_FLAGS),
 				getProblemId(IApiProblem.ILLEGAL_INSTANTIATE, IApiProblem.NO_FLAGS)
 		});
-		String typename = "testC2";
+		String typename = "testC2"; //$NON-NLS-1$
 		setExpectedMessageArgs(new String[][] {
 				{CLASS_NAME, typename},
 				{CLASS_NAME, INNER_NAME1},
@@ -157,9 +157,9 @@ public class ClassUsageTests extends UsageTest {
 		setExpectedProblemIds(new int[] {
 				getProblemId(IApiProblem.ILLEGAL_IMPLEMENT, IApiProblem.INDIRECT_REFERENCE)
 		});
-		String typename = "testC3";
+		String typename = "testC3"; //$NON-NLS-1$
 		setExpectedMessageArgs(new String[][] {
-				{"IExtInterface1", typename, "INoImpl1"},
+				{"IExtInterface1", typename, "INoImpl1"}, //$NON-NLS-1$ //$NON-NLS-2$
 		});
 		deployUsageTest(typename, inc);
 	}
@@ -186,7 +186,7 @@ public class ClassUsageTests extends UsageTest {
 	
 	private void x4(boolean inc) {
 		expectingNoProblems();
-		deployUsageTest("testC4", inc);
+		deployUsageTest("testC4", inc); //$NON-NLS-1$
 	}
 	
 	/**
@@ -216,12 +216,12 @@ public class ClassUsageTests extends UsageTest {
 				getProblemId(IApiProblem.ILLEGAL_IMPLEMENT, IApiProblem.INDIRECT_REFERENCE),
 				getProblemId(IApiProblem.ILLEGAL_IMPLEMENT, IApiProblem.INDIRECT_REFERENCE)
 		});
-		String typename = "testC5";
+		String typename = "testC5"; //$NON-NLS-1$
 		setExpectedMessageArgs(new String[][] {
-				{"IExtInterface1", typename, "INoImpl1"},
-				{"IExtInterface2", typename, "INoImpl1"},
-				{"IExtInterface3", typename, "INoImpl1"},
-				{"IExtInterface4", typename, "INoImpl4"}
+				{"IExtInterface1", typename, "INoImpl1"}, //$NON-NLS-1$ //$NON-NLS-2$
+				{"IExtInterface2", typename, "INoImpl1"}, //$NON-NLS-1$ //$NON-NLS-2$
+				{"IExtInterface3", typename, "INoImpl1"}, //$NON-NLS-1$ //$NON-NLS-2$
+				{"IExtInterface4", typename, "INoImpl4"} //$NON-NLS-1$ //$NON-NLS-2$
 		});
 		deployUsageTest(typename, inc);
 	}
@@ -248,7 +248,7 @@ public class ClassUsageTests extends UsageTest {
 	
 	private void x6(boolean inc) {
 		expectingNoProblems();
-		deployUsageTest("testC6", inc);
+		deployUsageTest("testC6", inc); //$NON-NLS-1$
 	}
 	
 	/**
@@ -273,7 +273,7 @@ public class ClassUsageTests extends UsageTest {
 	
 	private void x7(boolean inc) {
 		expectingNoProblems();
-		deployUsageTest("testC7", inc);
+		deployUsageTest("testC7", inc); //$NON-NLS-1$
 	}
 	
 	/**
@@ -292,7 +292,7 @@ public class ClassUsageTests extends UsageTest {
 	
 	private void x8(boolean inc) {
 		expectingNoProblems();
-		deployUsageTest("testC8", inc);
+		deployUsageTest("testC8", inc); //$NON-NLS-1$
 	}
 	
 	/**
@@ -313,9 +313,9 @@ public class ClassUsageTests extends UsageTest {
 		setExpectedProblemIds(new int[] {
 				getProblemId(IApiProblem.ILLEGAL_IMPLEMENT, IApiProblem.NO_FLAGS)
 		});
-		String typename = "testC9";
+		String typename = "testC9"; //$NON-NLS-1$
 		setExpectedMessageArgs(new String[][] {
-				{"INoImpl1", typename}
+				{"INoImpl1", typename} //$NON-NLS-1$
 		});
 		deployUsageTest(typename, inc);
 	}
@@ -348,14 +348,14 @@ public class ClassUsageTests extends UsageTest {
 		int localId = getProblemId(IApiProblem.ILLEGAL_IMPLEMENT, IApiProblem.LOCAL_TYPE);
 		int indId = getProblemId(IApiProblem.ILLEGAL_IMPLEMENT, IApiProblem.INDIRECT_LOCAL_REFERENCE);
 		setExpectedProblemIds(new int[] {localId, indId});
-		String typename = "testC11";
+		String typename = "testC11"; //$NON-NLS-1$
 		setExpectedLineMappings(new LineMapping[] {
-			new LineMapping(29, localId, new String[] {"local1", "x.y.z.testC11.method1()", "INoImpl2"}),
-			new LineMapping(31, indId, new String[] {"local2", "x.y.z.testC11.method1()", "INoImpl5", "INoImpl2"})
+			new LineMapping(29, localId, new String[] {"local1", "x.y.z.testC11.method1()", "INoImpl2"}), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			new LineMapping(31, indId, new String[] {"local2", "x.y.z.testC11.method1()", "INoImpl5", "INoImpl2"}) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		});
 		setExpectedMessageArgs(new String[][] {
-				{"local1", "x.y.z.testC11.method1()", "INoImpl2"},
-				{"local2", "x.y.z.testC11.method1()", "INoImpl5", "INoImpl2"},
+				{"local1", "x.y.z.testC11.method1()", "INoImpl2"}, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				{"local2", "x.y.z.testC11.method1()", "INoImpl5", "INoImpl2"}, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		});
 		deployUsageTest(typename, inc);
 	}
@@ -390,12 +390,12 @@ public class ClassUsageTests extends UsageTest {
 		int indId = getProblemId(IApiProblem.ILLEGAL_IMPLEMENT, IApiProblem.INDIRECT_LOCAL_REFERENCE);
 		setExpectedProblemIds(new int[] {indId});
 		setExpectedLineMappings(new LineMapping[] {
-				new LineMapping(24, indId, new String[] {"local2", "x.y.z.testC12.method1()", "INoImpl5", "INoImpl2"}),
+				new LineMapping(24, indId, new String[] {"local2", "x.y.z.testC12.method1()", "INoImpl5", "INoImpl2"}), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			});
 		setExpectedMessageArgs(new String[][] {
-				{"local2", "x.y.z.testC12.method1()", "INoImpl5", "INoImpl2"}
+				{"local2", "x.y.z.testC12.method1()", "INoImpl5", "INoImpl2"} //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		});
-		String typename = "testC12";
+		String typename = "testC12"; //$NON-NLS-1$
 		deployUsageTest(typename, inc);
 	}
 	
@@ -428,12 +428,12 @@ public class ClassUsageTests extends UsageTest {
 		int indId = getProblemId(IApiProblem.ILLEGAL_IMPLEMENT, IApiProblem.ANONYMOUS_TYPE);
 		setExpectedProblemIds(new int[] {indId});
 		setExpectedLineMappings(new LineMapping[] {
-				new LineMapping(25, indId, new String[] {"x.y.z.testC13.testC13()", "INoImpl2"})
+				new LineMapping(25, indId, new String[] {"x.y.z.testC13.testC13()", "INoImpl2"}) //$NON-NLS-1$ //$NON-NLS-2$
 			});
 		setExpectedMessageArgs(new String[][] {
-				{"x.y.z.testC13.testC13()", "INoImpl2"}
+				{"x.y.z.testC13.testC13()", "INoImpl2"} //$NON-NLS-1$ //$NON-NLS-2$
 		});
-		String typename = "testC13";
+		String typename = "testC13"; //$NON-NLS-1$
 		deployUsageTest(typename, inc);
 	}
 	
@@ -461,9 +461,9 @@ public class ClassUsageTests extends UsageTest {
 		setExpectedProblemIds(new int[] {
 				getProblemId(IApiProblem.ILLEGAL_EXTEND, IApiProblem.ANONYMOUS_TYPE)
 		});
-		String typename = "testA2";
+		String typename = "testA2"; //$NON-NLS-1$
 		setExpectedMessageArgs(new String[][] {
-				{"x.y.z.testA2.m1()", CLASS_NAME}	
+				{"x.y.z.testA2.m1()", CLASS_NAME}	 //$NON-NLS-1$
 		});
 		deployUsageTest(typename, inc);
 	}
@@ -492,9 +492,9 @@ public class ClassUsageTests extends UsageTest {
 		setExpectedProblemIds(new int[] {
 				getProblemId(IApiProblem.ILLEGAL_EXTEND, IApiProblem.ANONYMOUS_TYPE)
 		});
-		String typename = "testA3";
+		String typename = "testA3"; //$NON-NLS-1$
 		setExpectedMessageArgs(new String[][] {
-				{"x.y.z.testA3.m1()", CLASS_NAME}	
+				{"x.y.z.testA3.m1()", CLASS_NAME}	 //$NON-NLS-1$
 		});
 		deployUsageTest(typename, inc);
 	}
@@ -523,9 +523,9 @@ public class ClassUsageTests extends UsageTest {
 		setExpectedProblemIds(new int[] {
 				getProblemId(IApiProblem.ILLEGAL_EXTEND, IApiProblem.ANONYMOUS_TYPE)
 		});
-		String typename = "testA4";
+		String typename = "testA4"; //$NON-NLS-1$
 		setExpectedMessageArgs(new String[][] {
-				{"x.y.z.testA4", CLASS_NAME}	
+				{"x.y.z.testA4", CLASS_NAME}	 //$NON-NLS-1$
 		});
 		deployUsageTest(typename, inc);
 	}
@@ -554,9 +554,9 @@ public class ClassUsageTests extends UsageTest {
 		setExpectedProblemIds(new int[] {
 				getProblemId(IApiProblem.ILLEGAL_EXTEND, IApiProblem.ANONYMOUS_TYPE)
 		});
-		String typename = "testA6";
+		String typename = "testA6"; //$NON-NLS-1$
 		setExpectedMessageArgs(new String[][] {
-				{"x.y.z.testA6.testA6()", CLASS_NAME}	
+				{"x.y.z.testA6.testA6()", CLASS_NAME}	 //$NON-NLS-1$
 		});
 		deployUsageTest(typename, inc);
 	}
@@ -585,9 +585,9 @@ public class ClassUsageTests extends UsageTest {
 		setExpectedProblemIds(new int[] {
 				getProblemId(IApiProblem.ILLEGAL_EXTEND, IApiProblem.ANONYMOUS_TYPE)
 		});
-		String typename = "testA11";
+		String typename = "testA11"; //$NON-NLS-1$
 		setExpectedMessageArgs(new String[][] {
-				{"x.y.z.testA11", CLASS_NAME}
+				{"x.y.z.testA11", CLASS_NAME} //$NON-NLS-1$
 		});
 		deployUsageTest(typename, inc);
 	}
@@ -613,16 +613,16 @@ public class ClassUsageTests extends UsageTest {
 		});
 		getEnv().getJavaProject(getTestingProjectName()).getOption(JavaCore.COMPILER_COMPLIANCE, true);
 		setExpectedMessageArgs(new String[][] {
-				{"inner", "x.y.z.testA7.m1()", CLASS_NAME},
-				{"inner", "x.y.z.testA7.m2()", CLASS_NAME},
-				{"inner", "x.y.z.testA7.m3()", CLASS_NAME}
+				{"inner", "x.y.z.testA7.m1()", CLASS_NAME}, //$NON-NLS-1$ //$NON-NLS-2$
+				{"inner", "x.y.z.testA7.m2()", CLASS_NAME}, //$NON-NLS-1$ //$NON-NLS-2$
+				{"inner", "x.y.z.testA7.m3()", CLASS_NAME} //$NON-NLS-1$ //$NON-NLS-2$
 		});
 		setExpectedLineMappings(new LineMapping[] {
 				new LineMapping(21, getExpectedProblemIds()[0], getExpectedMessageArgs()[0]),
 				new LineMapping(28, getExpectedProblemIds()[1], getExpectedMessageArgs()[1]),
 				new LineMapping(35, getExpectedProblemIds()[2], getExpectedMessageArgs()[2])
 		});
-		String typename = "testA7";
+		String typename = "testA7"; //$NON-NLS-1$
 		deployUsageTest(typename, inc);
 	}
 	
@@ -650,9 +650,9 @@ public class ClassUsageTests extends UsageTest {
 		setExpectedProblemIds(new int[] {
 				getProblemId(IApiProblem.ILLEGAL_EXTEND, IApiProblem.LOCAL_TYPE)
 		});
-		String typename = "testA5";
+		String typename = "testA5"; //$NON-NLS-1$
 		setExpectedMessageArgs(new String[][] {
-				{"inner", "x.y.z.testA5.testA5()", CLASS_NAME}	
+				{"inner", "x.y.z.testA5.testA5()", CLASS_NAME}	 //$NON-NLS-1$ //$NON-NLS-2$
 		});
 		deployUsageTest(typename, inc);
 	}
@@ -681,9 +681,9 @@ public class ClassUsageTests extends UsageTest {
 		setExpectedProblemIds(new int[] {
 				getProblemId(IApiProblem.ILLEGAL_EXTEND, IApiProblem.LOCAL_TYPE)
 		});
-		String typename = "testA8";
+		String typename = "testA8"; //$NON-NLS-1$
 		setExpectedMessageArgs(new String[][] {
-				{"inner", "x.y.z.testA8.m1()", CLASS_NAME}	
+				{"inner", "x.y.z.testA8.m1()", CLASS_NAME}	 //$NON-NLS-1$ //$NON-NLS-2$
 		});
 		deployUsageTest(typename, inc);
 	}
@@ -712,9 +712,9 @@ public class ClassUsageTests extends UsageTest {
 		setExpectedProblemIds(new int[] {
 				getProblemId(IApiProblem.ILLEGAL_EXTEND, IApiProblem.LOCAL_TYPE)
 		});
-		String typename = "testA1";
+		String typename = "testA1"; //$NON-NLS-1$
 		setExpectedMessageArgs(new String[][] {
-				{"inner", "x.y.z.testA1.m1()", CLASS_NAME}	
+				{"inner", "x.y.z.testA1.m1()", CLASS_NAME}	 //$NON-NLS-1$ //$NON-NLS-2$
 		});
 		deployUsageTest(typename, inc);
 	}
@@ -753,14 +753,14 @@ public class ClassUsageTests extends UsageTest {
 				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.FIELD)
 		});
 		setExpectedMessageArgs(new String[][] {
-				{"NoRefClass", "testC14", "noRefClassMethod()"},
-				{"NoRefClass", "Inner", "noRefClassMethod()"},
-				{"NoRefClass()", "testC14"},
-				{"NoRefClass()", "Inner"},
-				{"NoRefClass", "testC14", "fNoRefClassField"},
-				{"NoRefClass", "Inner", "fNoRefClassField"},
+				{"NoRefClass", "testC14", "noRefClassMethod()"}, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				{"NoRefClass", "Inner", "noRefClassMethod()"}, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				{"NoRefClass()", "testC14"}, //$NON-NLS-1$ //$NON-NLS-2$
+				{"NoRefClass()", "Inner"}, //$NON-NLS-1$ //$NON-NLS-2$
+				{"NoRefClass", "testC14", "fNoRefClassField"}, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				{"NoRefClass", "Inner", "fNoRefClassField"}, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		});
-		String typename = "testC14";
+		String typename = "testC14"; //$NON-NLS-1$
 		deployUsageTest(typename, inc);
 	}
 	
@@ -797,13 +797,13 @@ public class ClassUsageTests extends UsageTest {
 				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.FIELD)
 		});
 		setExpectedMessageArgs(new String[][] {
-				{"NoRefClass", "testC15", "noRefClassMethod()"},
-				{"NoRefClass", "testC15", "noRefClassMethod()"},
-				{"NoRefClass()", "testC15"},
-				{"NoRefClass", "testC15", "fNoRefClassField"},
-				{"NoRefClass", "testC15", "fNoRefClassField"},
+				{"NoRefClass", "testC15", "noRefClassMethod()"}, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				{"NoRefClass", "testC15", "noRefClassMethod()"}, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				{"NoRefClass()", "testC15"}, //$NON-NLS-1$ //$NON-NLS-2$
+				{"NoRefClass", "testC15", "fNoRefClassField"}, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				{"NoRefClass", "testC15", "fNoRefClassField"}, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		});
-		String typename = "testC15";
+		String typename = "testC15"; //$NON-NLS-1$
 		deployUsageTest(typename, inc);
 	}
 	
@@ -838,11 +838,11 @@ public class ClassUsageTests extends UsageTest {
 				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.FIELD),
 		});
 		setExpectedMessageArgs(new String[][] {
-				{"Inner", "testC16", "noRefMemberClassMethod()"},
-				{"Inner()", "testC16"},
-				{"Inner", "testC16", "fNoRefMemberClassField"},
+				{"Inner", "testC16", "noRefMemberClassMethod()"}, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				{"Inner()", "testC16"}, //$NON-NLS-1$ //$NON-NLS-2$
+				{"Inner", "testC16", "fNoRefMemberClassField"}, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		});
-		String typename = "testC16";
+		String typename = "testC16"; //$NON-NLS-1$
 		deployUsageTest(typename, inc);
 	}
 }

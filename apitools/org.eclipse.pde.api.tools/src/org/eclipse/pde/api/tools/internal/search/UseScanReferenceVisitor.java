@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,12 +19,13 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceType
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 
 /**
- * This class is used by <code>{@link UseScanParser}</code> to visit the API Use Scan reports
- *
+ * This class is used by <code>{@link UseScanParser}</code> to visit the API Use
+ * Scan reports
+ * 
  */
 public class UseScanReferenceVisitor extends UseScanVisitor {
 	private IApiComponent fLookupAPIComponent;
-	private List fLookupMemberTypes;
+	private List<String> fLookupMemberTypes;
 	private String fCurrentReferencedMemberRootType;
 	private IComponentDescriptor fCurrentComponent;
 	private IComponentDescriptor fReferencingComponent;
@@ -41,9 +42,15 @@ public class UseScanReferenceVisitor extends UseScanVisitor {
 		fReferences = references;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.UseScanVisitor#visitComponent(org.eclipse.pde.api.tools.internal.provisional.descriptors.IComponentDescriptor)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.search.UseScanVisitor#visitComponent
+	 * (org
+	 * .eclipse.pde.api.tools.internal.provisional.descriptors.IComponentDescriptor
+	 * )
 	 */
+	@Override
 	public boolean visitComponent(IComponentDescriptor target) {
 
 		if (fLookupAPIComponent == null || fLookupAPIComponent.getSymbolicName().equals(target.getId())) {
@@ -53,16 +60,21 @@ public class UseScanReferenceVisitor extends UseScanVisitor {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.UseScanVisitor#visitMember(org.eclipse.pde.api.tools.internal.provisional.descriptors.IMemberDescriptor)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.search.UseScanVisitor#visitMember(
+	 * org.eclipse
+	 * .pde.api.tools.internal.provisional.descriptors.IMemberDescriptor)
 	 */
 	// Visit only for the specific types, if supplied.
+	@Override
 	public boolean visitMember(IMemberDescriptor referencedMember) {
 		boolean found = false;
 
 		String referencedMemberRootType;
 		if (referencedMember instanceof IReferenceTypeDescriptor) {
-			referencedMemberRootType = ((IReferenceTypeDescriptor)referencedMember).getQualifiedName();
+			referencedMemberRootType = ((IReferenceTypeDescriptor) referencedMember).getQualifiedName();
 		} else {
 			referencedMemberRootType = referencedMember.getEnclosingType().getQualifiedName();
 		}
@@ -72,21 +84,30 @@ public class UseScanReferenceVisitor extends UseScanVisitor {
 		found = fLookupMemberTypes == null || fLookupMemberTypes.contains(referencedMemberRootType);
 		fCurrentReferencedMemberRootType = referencedMemberRootType;
 		fCurrentReferencedMember = referencedMember;
-		
+
 		return found;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.UseScanVisitor#visitReference(org.eclipse.pde.api.tools.internal.search.IReferenceDescriptor)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.search.UseScanVisitor#visitReference
+	 * (org.eclipse.pde.api.tools.internal.search.IReferenceDescriptor)
 	 */
+	@Override
 	public void visitReference(IReferenceDescriptor reference) {
 		ReferenceDescriptor refDesc = new ReferenceDescriptor(fReferencingComponent, reference.getMember(), reference.getLineNumber(), fCurrentComponent, fCurrentReferencedMember, reference.getReferenceKind(), reference.getReferenceFlags(), reference.getVisibility(), null);
 		fReferences.add(fCurrentReferencedMemberRootType, refDesc);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.UseScanVisitor#visitReferencingComponent(org.eclipse.pde.api.tools.internal.provisional.descriptors.IComponentDescriptor)
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.search.UseScanVisitor#
+	 * visitReferencingComponent
+	 * (org.eclipse.pde.api.tools.internal.provisional.descriptors
+	 * .IComponentDescriptor)
 	 */
+	@Override
 	public boolean visitReferencingComponent(IComponentDescriptor component) {
 		fReferencingComponent = component;
 		return true;

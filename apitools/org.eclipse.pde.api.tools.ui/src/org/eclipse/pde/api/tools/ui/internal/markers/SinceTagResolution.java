@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,22 +25,25 @@ import org.eclipse.ui.IMarkerResolution2;
 import org.eclipse.ui.progress.UIJob;
 
 /**
- * This resolution helps users to pick a default API profile when the tooling has been set up
- * but there is no default profile
+ * This resolution helps users to pick a default API profile when the tooling
+ * has been set up but there is no default profile
  * 
  * @since 1.0.0
  */
 public class SinceTagResolution implements IMarkerResolution2 {
 	int kind;
 	String newVersionValue;
-	
+
 	public SinceTagResolution(IMarker marker) {
 		this.kind = ApiProblemFactory.getProblemKind(marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_PROBLEM_ID, 0));
-		this.newVersionValue = (String) marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_VERSION, null);
+		this.newVersionValue = marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_VERSION, null);
 	}
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.ui.IMarkerResolution2#getDescription()
 	 */
+	@Override
 	public String getDescription() {
 		if (IApiProblem.SINCE_TAG_INVALID == this.kind) {
 			return NLS.bind(MarkerMessages.SinceTagResolution_invalid0, this.newVersionValue);
@@ -51,16 +54,20 @@ public class SinceTagResolution implements IMarkerResolution2 {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.ui.IMarkerResolution2#getImage()
 	 */
+	@Override
 	public Image getImage() {
 		return JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_JAVADOCTAG);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.ui.IMarkerResolution#getLabel()
 	 */
+	@Override
 	public String getLabel() {
 		if (IApiProblem.SINCE_TAG_INVALID == this.kind) {
 			return NLS.bind(MarkerMessages.SinceTagResolution_invalid1, this.newVersionValue);
@@ -71,9 +78,12 @@ public class SinceTagResolution implements IMarkerResolution2 {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IMarkerResolution#run(org.eclipse.core.resources.IMarker)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.ui.IMarkerResolution#run(org.eclipse.core.resources.IMarker)
 	 */
+	@Override
 	public void run(final IMarker marker) {
 		String title = null;
 		if (IApiProblem.SINCE_TAG_INVALID == this.kind) {
@@ -83,12 +93,10 @@ public class SinceTagResolution implements IMarkerResolution2 {
 		} else {
 			title = NLS.bind(MarkerMessages.SinceTagResolution_missing2, this.newVersionValue);
 		}
-		UIJob job  = new UIJob(title) {
+		UIJob job = new UIJob(title) {
+			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
-				UpdateSinceTagOperation updateSinceTagOperation = new UpdateSinceTagOperation(
-						marker,
-						SinceTagResolution.this.kind,
-						SinceTagResolution.this.newVersionValue);
+				UpdateSinceTagOperation updateSinceTagOperation = new UpdateSinceTagOperation(marker, SinceTagResolution.this.kind, SinceTagResolution.this.newVersionValue);
 				updateSinceTagOperation.run(monitor);
 				return Status.OK_STATUS;
 			}

@@ -57,8 +57,8 @@ public class MissingSinceTagTests extends SinceTagTest {
 	 * Tests adding a generic method
 	 */
 	private void xAddMethod2(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddMethod2.java");
-		configureExpectedProblems(IDelta.METHOD_ELEMENT_TYPE, "foo(List<?>)");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddMethod2.java"); //$NON-NLS-1$
+		configureExpectedProblems(IDelta.METHOD_ELEMENT_TYPE, "foo(List<?>)"); //$NON-NLS-1$
 		performCompatibilityTest(filePath, incremental);
 	}
 	
@@ -73,8 +73,8 @@ public class MissingSinceTagTests extends SinceTagTest {
 	 * Tests adding a non-visible method
 	 */
 	private void xAddNonVisibleMethod2(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddNonVisibleMethod2.java");
-		configureExpectedProblems(IDelta.METHOD_ELEMENT_TYPE, "method()");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddNonVisibleMethod2.java"); //$NON-NLS-1$
+		configureExpectedProblems(IDelta.METHOD_ELEMENT_TYPE, "method()"); //$NON-NLS-1$
 		performCompatibilityTest(filePath, incremental);
 	}
 	
@@ -90,8 +90,8 @@ public class MissingSinceTagTests extends SinceTagTest {
 	 * Tests adding a field
 	 */
 	private void xAddField(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddField.java");
-		configureExpectedProblems(IDelta.FIELD_ELEMENT_TYPE, "FIELD");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddField.java"); //$NON-NLS-1$
+		configureExpectedProblems(IDelta.FIELD_ELEMENT_TYPE, "FIELD"); //$NON-NLS-1$
 		performCompatibilityTest(filePath, incremental);
 	}
 	
@@ -107,7 +107,7 @@ public class MissingSinceTagTests extends SinceTagTest {
 	 * Tests adding a private field
 	 */
 	private void xAddPrivateField(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddPrivateField.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddPrivateField.java"); //$NON-NLS-1$
 		// no problems expected
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -124,8 +124,8 @@ public class MissingSinceTagTests extends SinceTagTest {
 	 * Tests adding a member type
 	 */
 	private void xAddMemberType(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddMemberType.java");
-		configureExpectedProblems(IDelta.CLASS_ELEMENT_TYPE, "MemberType");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddMemberType.java"); //$NON-NLS-1$
+		configureExpectedProblems(IDelta.CLASS_ELEMENT_TYPE, "MemberType"); //$NON-NLS-1$
 		performCompatibilityTest(filePath, incremental);
 	}
 	
@@ -141,8 +141,8 @@ public class MissingSinceTagTests extends SinceTagTest {
 	 * Tests adding a method
 	 */
 	private void xAddMethod(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddMethod.java");
-		configureExpectedProblems(IDelta.METHOD_ELEMENT_TYPE, "method()");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddMethod.java"); //$NON-NLS-1$
+		configureExpectedProblems(IDelta.METHOD_ELEMENT_TYPE, "method()"); //$NON-NLS-1$
 		performCompatibilityTest(filePath, incremental);
 	}
 	
@@ -158,8 +158,8 @@ public class MissingSinceTagTests extends SinceTagTest {
 	 * Tests adding a method that is part of a newly implemented interface
 	 */
 	private void xAddNewInterfaceMethod(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddNewInterfaceMethod.java");
-		configureExpectedProblems(IDelta.METHOD_ELEMENT_TYPE, "methodA()");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddNewInterfaceMethod.java"); //$NON-NLS-1$
+		configureExpectedProblems(IDelta.METHOD_ELEMENT_TYPE, "methodA()"); //$NON-NLS-1$
 		performCompatibilityTest(filePath, incremental);
 	}
 	
@@ -176,7 +176,7 @@ public class MissingSinceTagTests extends SinceTagTest {
 	 * required.
 	 */
 	private void xAddInheritedMethod(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddInheritedMethod.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddInheritedMethod.java"); //$NON-NLS-1$
 		// no problem expected
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -193,7 +193,7 @@ public class MissingSinceTagTests extends SinceTagTest {
 	 * Tests adding a non-visible method
 	 */
 	private void xAddNonVisibleMethod(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddNonVisibleMethod.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddNonVisibleMethod.java"); //$NON-NLS-1$
 		// no problems expected
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -210,8 +210,8 @@ public class MissingSinceTagTests extends SinceTagTest {
 	 * Tests adding a class
 	 */
 	private void xAddType(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddType.java");
-		configureExpectedProblems(IDelta.CLASS_ELEMENT_TYPE, PACKAGE_PREFIX + "AddType");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddType.java"); //$NON-NLS-1$
+		configureExpectedProblems(IDelta.CLASS_ELEMENT_TYPE, PACKAGE_PREFIX + "AddType"); //$NON-NLS-1$
 		performCreationCompatibilityTest(filePath, incremental);
 	}
 	

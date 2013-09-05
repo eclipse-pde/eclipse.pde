@@ -16,35 +16,35 @@ package org.eclipse.pde.api.tools.internal.provisional;
  * @since 1.0.0
  */
 public interface IVersionRange {
-	
+
 	/**
 	 * Returns the minimum version in this range.
 	 * 
-	 * @return minimum version 
+	 * @return minimum version
 	 */
 	public String getMinimumVersion();
-	
+
 	/**
 	 * Returns whether the minimum version is included in the range.
 	 * 
 	 * @return whether the minimum version is included in the range
 	 */
 	public boolean isIncludeMinimum();
-	
+
 	/**
 	 * Returns the maximum version in this range.
 	 * 
-	 * @return maximum version 
-	 */	
+	 * @return maximum version
+	 */
 	public String getMaximumVersion();
-	
+
 	/**
 	 * Returns whether the maximum version is included in the range.
 	 * 
 	 * @return whether the maximum version is included in the range
 	 */
-	public boolean isIncludeMaximum();	
-	
+	public boolean isIncludeMaximum();
+
 	/**
 	 * Returns whether the given version is included in this range.
 	 * 

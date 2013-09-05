@@ -54,29 +54,28 @@ import org.w3c.dom.NodeList;
 import com.ibm.icu.text.MessageFormat;
 
 /**
- * Manages a cache of API descriptions for Java projects. Descriptions
- * are re-used between API components for the same project.
+ * Manages a cache of API descriptions for Java projects. Descriptions are
+ * re-used between API components for the same project.
  * 
  * @since 1.0
  */
 public final class ApiDescriptionManager implements ISaveParticipant {
-	
+
 	/**
 	 * Singleton
 	 */
 	private static ApiDescriptionManager fgDefault;
-	
+
 	/**
 	 * Maps Java projects to API descriptions
 	 */
-	private Map fDescriptions = new HashMap();
-	
+	private Map<IJavaProject, IApiDescription> fDescriptions = new HashMap<IJavaProject, IApiDescription>();
+
 	/**
-	 * Path to the local directory where API descriptions are cached
-	 * per project.
+	 * Path to the local directory where API descriptions are cached per
+	 * project.
 	 */
-	public static final IPath API_DESCRIPTIONS_CONTAINER_PATH =
-		ApiPlugin.getDefault().getStateLocation();
+	public static final IPath API_DESCRIPTIONS_CONTAINER_PATH = ApiPlugin.getDefault().getStateLocation();
 
 	/**
 	 * Constructs an API description manager.
@@ -93,7 +92,7 @@ public final class ApiDescriptionManager implements ISaveParticipant {
 			ApiPlugin.getDefault().removeSaveParticipant(fgDefault);
 		}
 	}
-	
+
 	/**
 	 * Returns the singleton API description manager.
 	 * 
@@ -105,12 +104,14 @@ public final class ApiDescriptionManager implements ISaveParticipant {
 		}
 		return fgDefault;
 	}
-	
+
 	/**
-	 * Returns an API description for the given project component and connect it to the
-	 * given bundle description.
+	 * Returns an API description for the given project component and connect it
+	 * to the given bundle description.
 	 * 
 	 * @param project Java project
+	 * @param bundle
+	 * 
 	 * @return API description
 	 */
 	public synchronized IApiDescription getApiDescription(ProjectComponent component, BundleDescription bundle) {
@@ -132,6 +133,7 @@ public final class ApiDescriptionManager implements ISaveParticipant {
 		}
 		return description;
 	}
+
 	/**
 	 * Cleans the API description for the given project.
 	 * 
@@ -150,18 +152,17 @@ public final class ApiDescriptionManager implements ISaveParticipant {
 			desc.clean();
 		}
 		if (delete) {
-			File file = API_DESCRIPTIONS_CONTAINER_PATH.append(project.getElementName())
-				.append(IApiCoreConstants.API_DESCRIPTION_XML_NAME).toFile();
+			File file = API_DESCRIPTIONS_CONTAINER_PATH.append(project.getElementName()).append(IApiCoreConstants.API_DESCRIPTION_XML_NAME).toFile();
 			if (file.exists()) {
 				file.delete();
 			}
 			file = API_DESCRIPTIONS_CONTAINER_PATH.append(project.getElementName()).toFile();
-			if(file.exists() && file.isDirectory()) {
+			if (file.exists() && file.isDirectory()) {
 				file.delete();
 			}
 		}
 	}
-	
+
 	/**
 	 * Notifies the API description that the underlying project has changed.
 	 * 
@@ -175,7 +176,8 @@ public final class ApiDescriptionManager implements ISaveParticipant {
 	}
 
 	/**
-	 * Notifies the API description that the underlying project classpath has changed.
+	 * Notifies the API description that the underlying project classpath has
+	 * changed.
 	 * 
 	 * @param project
 	 */
@@ -188,85 +190,95 @@ public final class ApiDescriptionManager implements ISaveParticipant {
 
 	/**
 	 * Flushes the changed element from the model cache
+	 * 
 	 * @param element
 	 */
 	void flushElementCache(IJavaElement element) {
-		switch(element.getElementType()) {
+		switch (element.getElementType()) {
 			case IJavaElement.COMPILATION_UNIT: {
 				ICompilationUnit unit = (ICompilationUnit) element;
 				IType type = unit.findPrimaryType();
-				if(type != null) {
-					ApiModelCache.getCache().removeElementInfo(
-							ApiBaselineManager.WORKSPACE_API_BASELINE_ID,
-							element.getJavaProject().getElementName(), 
-							type.getFullyQualifiedName(), 
-							IApiElement.TYPE);
+				if (type != null) {
+					ApiModelCache.getCache().removeElementInfo(ApiBaselineManager.WORKSPACE_API_BASELINE_ID, element.getJavaProject().getElementName(), type.getFullyQualifiedName(), IApiElement.TYPE);
 				}
 				break;
 			}
 			case IJavaElement.JAVA_PROJECT: {
-				ApiModelCache.getCache().removeElementInfo(
-						ApiBaselineManager.WORKSPACE_API_BASELINE_ID,
-						element.getElementName(), 
-						null, 
-						IApiElement.COMPONENT);
+				ApiModelCache.getCache().removeElementInfo(ApiBaselineManager.WORKSPACE_API_BASELINE_ID, element.getElementName(), null, IApiElement.COMPONENT);
 				break;
 			}
+			default:
+				break;
 		}
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.ISaveParticipant#doneSaving(org.eclipse.core.resources.ISaveContext)
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.core.resources.ISaveParticipant#doneSaving(org.eclipse.core
+	 * .resources.ISaveContext)
 	 */
+	@Override
 	public void doneSaving(ISaveContext context) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.ISaveParticipant#prepareToSave(org.eclipse.core.resources.ISaveContext)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.core.resources.ISaveParticipant#prepareToSave(org.eclipse
+	 * .core.resources.ISaveContext)
 	 */
+	@Override
 	public void prepareToSave(ISaveContext context) throws CoreException {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.ISaveParticipant#rollback(org.eclipse.core.resources.ISaveContext)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.core.resources.ISaveParticipant#rollback(org.eclipse.core
+	 * .resources.ISaveContext)
 	 */
+	@Override
 	public void rollback(ISaveContext context) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.ISaveParticipant#saving(org.eclipse.core.resources.ISaveContext)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.core.resources.ISaveParticipant#saving(org.eclipse.core.resources
+	 * .ISaveContext)
 	 */
+	@Override
 	public synchronized void saving(ISaveContext context) throws CoreException {
-		Iterator entries = fDescriptions.entrySet().iterator();
+		Iterator<Entry<IJavaProject, IApiDescription>> entries = fDescriptions.entrySet().iterator();
 		while (entries.hasNext()) {
-			Entry entry = (Entry) entries.next();
-			IJavaProject project = (IJavaProject) entry.getKey();
+			Entry<IJavaProject, IApiDescription> entry = entries.next();
+			IJavaProject project = entry.getKey();
 			ProjectApiDescription desc = (ProjectApiDescription) entry.getValue();
 			if (desc.isModified()) {
 				File dir = API_DESCRIPTIONS_CONTAINER_PATH.append(project.getElementName()).toFile();
 				dir.mkdirs();
 				String xml = desc.getXML();
 				try {
-					Util.saveFile(new File(dir,  IApiCoreConstants.API_DESCRIPTION_XML_NAME), xml);
+					Util.saveFile(new File(dir, IApiCoreConstants.API_DESCRIPTION_XML_NAME), xml);
 				} catch (IOException e) {
-					abort(MessageFormat.format(ScannerMessages.ApiDescriptionManager_0, new String[]{project.getElementName()}), e);
+					abort(MessageFormat.format(ScannerMessages.ApiDescriptionManager_0, new Object[] { project.getElementName() }), e);
 				}
 			}
 		}
-	}	
-	
+	}
+
 	/**
-	 * Restores the API description from its saved file, if any and returns
-	 * true if successful.
+	 * Restores the API description from its saved file, if any and returns true
+	 * if successful.
 	 * 
 	 * @param project
 	 * @param description
 	 * @return whether the restore succeeded
-	 * @throws CoreException 
+	 * @throws CoreException
 	 */
 	private boolean restoreDescription(IJavaProject project, ProjectApiDescription description) throws CoreException {
-		File file = API_DESCRIPTIONS_CONTAINER_PATH.append(project.getElementName()).
-			append(IApiCoreConstants.API_DESCRIPTION_XML_NAME).toFile();
+		File file = API_DESCRIPTIONS_CONTAINER_PATH.append(project.getElementName()).append(IApiCoreConstants.API_DESCRIPTION_XML_NAME).toFile();
 		if (file.exists()) {
 			BufferedInputStream stream = null;
 			try {
@@ -274,7 +286,7 @@ public final class ApiDescriptionManager implements ISaveParticipant {
 				String xml = new String(Util.getInputStreamAsCharArray(stream, -1, IApiCoreConstants.UTF_8));
 				Element root = Util.parseDocument(xml);
 				if (!root.getNodeName().equals(IApiXmlConstants.ELEMENT_COMPONENT)) {
-					abort(ScannerMessages.ComponentXMLScanner_0, null); 
+					abort(ScannerMessages.ComponentXMLScanner_0, null);
 				}
 				long timestamp = getLong(root, IApiXmlConstants.ATTR_MODIFICATION_STAMP);
 				String version = root.getAttribute(IApiXmlConstants.ATTR_VERSION);
@@ -286,8 +298,7 @@ public final class ApiDescriptionManager implements ISaveParticipant {
 					return true;
 				}
 			} catch (IOException e) {
-				abort(MessageFormat.format(ScannerMessages.ApiDescriptionManager_1,
-						new String[]{project.getElementName()}), e);
+				abort(MessageFormat.format(ScannerMessages.ApiDescriptionManager_1, new Object[] { project.getElementName() }), e);
 			} finally {
 				if (stream != null) {
 					try {
@@ -300,8 +311,8 @@ public final class ApiDescriptionManager implements ISaveParticipant {
 		}
 		return false;
 	}
-	
-	private void restoreChildren(ProjectApiDescription apiDesc, Element element, ManifestNode parentNode, Map childrenMap) throws CoreException {
+
+	private void restoreChildren(ProjectApiDescription apiDesc, Element element, ManifestNode parentNode, Map<IElementDescriptor, ManifestNode> childrenMap) throws CoreException {
 		NodeList children = element.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
@@ -310,21 +321,21 @@ public final class ApiDescriptionManager implements ISaveParticipant {
 			}
 		}
 	}
-	
-	private void restoreNode(ProjectApiDescription apiDesc, Element element, ManifestNode parentNode, Map childrenMap) throws CoreException {
+
+	private void restoreNode(ProjectApiDescription apiDesc, Element element, ManifestNode parentNode, Map<IElementDescriptor, ManifestNode> childrenMap) throws CoreException {
 		ManifestNode node = null;
 		IElementDescriptor elementDesc = null;
 		if (element.getTagName().equals(IApiXmlConstants.ELEMENT_PACKAGE)) {
 			int vis = getInt(element, IApiXmlConstants.ATTR_VISIBILITY);
 			int res = getInt(element, IApiXmlConstants.ATTR_RESTRICTIONS);
 			// collect fragments
-			List fragments = new ArrayList();
+			List<IJavaElement> fragments = new ArrayList<IJavaElement>();
 			NodeList childNodes = element.getChildNodes();
 			String pkgName = null;
 			for (int i = 0; i < childNodes.getLength(); i++) {
 				Node child = childNodes.item(i);
 				if (child.getNodeType() == Node.ELEMENT_NODE) {
-					if (((Element)child).getTagName().equals(IApiXmlConstants.ELEMENT_PACKAGE_FRAGMENT)) {
+					if (((Element) child).getTagName().equals(IApiXmlConstants.ELEMENT_PACKAGE_FRAGMENT)) {
 						Element fragment = (Element) child;
 						String handle = fragment.getAttribute(IApiXmlConstants.ATTR_HANDLE);
 						IJavaElement je = JavaCore.create(handle);
@@ -338,7 +349,7 @@ public final class ApiDescriptionManager implements ISaveParticipant {
 			}
 			if (!fragments.isEmpty()) {
 				elementDesc = Factory.packageDescriptor(pkgName);
-				node = apiDesc.newPackageNode((IPackageFragment[])fragments.toArray(new IPackageFragment[fragments.size()]), parentNode, elementDesc, vis, res);
+				node = apiDesc.newPackageNode(fragments.toArray(new IPackageFragment[fragments.size()]), parentNode, elementDesc, vis, res);
 			} else {
 				abort(ScannerMessages.ApiDescriptionManager_2, null);
 			}
@@ -358,7 +369,7 @@ public final class ApiDescriptionManager implements ISaveParticipant {
 			node = tn;
 			tn.fTimeStamp = getLong(element, IApiXmlConstants.ATTR_MODIFICATION_STAMP);
 		} else if (element.getTagName().equals(IApiXmlConstants.ELEMENT_FIELD)) {
-			if(parentNode.element instanceof IReferenceTypeDescriptor) {
+			if (parentNode.element instanceof IReferenceTypeDescriptor) {
 				IReferenceTypeDescriptor type = (IReferenceTypeDescriptor) parentNode.element;
 				int vis = getInt(element, IApiXmlConstants.ATTR_VISIBILITY);
 				int res = getInt(element, IApiXmlConstants.ATTR_RESTRICTIONS);
@@ -367,7 +378,7 @@ public final class ApiDescriptionManager implements ISaveParticipant {
 				node = apiDesc.newNode(parentNode, elementDesc, vis, res);
 			}
 		} else if (element.getTagName().equals(IApiXmlConstants.ELEMENT_METHOD)) {
-			if(parentNode.element instanceof IReferenceTypeDescriptor) {
+			if (parentNode.element instanceof IReferenceTypeDescriptor) {
 				IReferenceTypeDescriptor type = (IReferenceTypeDescriptor) parentNode.element;
 				int vis = getInt(element, IApiXmlConstants.ATTR_VISIBILITY);
 				int res = getInt(element, IApiXmlConstants.ATTR_RESTRICTIONS);
@@ -377,17 +388,18 @@ public final class ApiDescriptionManager implements ISaveParticipant {
 					// old files might use '.' instead of '/'
 					sig = sig.replace('.', '/');
 				}
-				elementDesc = type.getMethod(name,sig);
+				elementDesc = type.getMethod(name, sig);
 				node = apiDesc.newNode(parentNode, elementDesc, vis, res);
 			}
 		}
-		if (node == null) {
+		if (node != null) {
+			childrenMap.put(elementDesc, node);
+			restoreChildren(apiDesc, element, node, node.children);
+		} else {
 			abort(ScannerMessages.ApiDescriptionManager_4, null);
 		}
-		childrenMap.put(elementDesc, node);
-		restoreChildren(apiDesc, element, node, node.children);
 	}
-	
+
 	/**
 	 * Returns an integer attribute.
 	 * 
@@ -399,11 +411,11 @@ public final class ApiDescriptionManager implements ISaveParticipant {
 		String attribute = element.getAttribute(attr);
 		try {
 			return Integer.parseInt(attribute);
-		} 
-		catch (NumberFormatException e) {}
+		} catch (NumberFormatException e) {
+		}
 		return 0;
 	}
-	
+
 	/**
 	 * Returns a long attribute.
 	 * 
@@ -416,12 +428,12 @@ public final class ApiDescriptionManager implements ISaveParticipant {
 		if (attribute != null) {
 			try {
 				return Long.parseLong(attribute);
-			} 
-			catch (NumberFormatException e) {}
+			} catch (NumberFormatException e) {
+			}
 		}
 		return 0L;
-	}	
-	
+	}
+
 	/**
 	 * Throws an exception with the given message and underlying exception.
 	 * 

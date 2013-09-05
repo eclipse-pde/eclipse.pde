@@ -1,10 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
+ * Copyright (c) 2011, 2013 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -57,8 +57,6 @@ import org.eclipse.jdt.core.util.IInnerClassesAttribute;
 import org.eclipse.jdt.core.util.IInnerClassesAttributeEntry;
 import org.eclipse.jdt.core.util.IMethodInfo;
 import org.eclipse.jdt.core.util.ISignatureAttribute;
-import org.eclipse.jdt.internal.compiler.classfmt.ClassFileConstants;
-import org.eclipse.jdt.internal.core.JavadocConstants;
 import org.eclipse.pde.api.tools.generator.util.Util;
 import org.eclipse.pde.api.tools.internal.IApiXmlConstants;
 import org.eclipse.pde.api.tools.internal.provisional.ProfileModifiers;
@@ -76,8 +74,11 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
- * This is a java application to generate the EE descriptions for specified EE names:
- * <p>Accepted names are:</p>
+ * This is a java application to generate the EE descriptions for specified EE
+ * names:
+ * <p>
+ * Accepted names are:
+ * </p>
  * <ol>
  * <li>JRE-1.1,</li>
  * <li>J2SE-1.2,</li>
@@ -92,8 +93,11 @@ import org.w3c.dom.Element;
  * <li>OSGi_Minimum-1.1,</li>
  * <li>OSGi_Minimum-1.2.</li>
  * </ol>
- * This can be called using:
- * -output c:/EE_descriptions -config C:\OSGi_profiles\configuration.properties -EEs JRE-1.1,J2SE-1.2,J2SE-1.3,J2SE-1.4,J2SE-1.5,JavaSE-1.6,JavaSE-1.7,CDC-1.0_Foundation-1.0,CDC-1.1_Foundation-1.1,OSGi_Minimum-1.0,OSGi_Minimum-1.1,OSGi_Minimum-1.2
+ * This can be called using: -output c:/EE_descriptions -config
+ * C:\OSGi_profiles\configuration.properties -EEs
+ * JRE-1.1,J2SE-1.2,J2SE-1.3,J2SE-1.4,J2SE-1.5,JavaSE-1.6,JavaSE-1.7,CDC-
+ * 1.0_Foundation-1.0,CDC-1.1_Foundation-1.1,OSGi_Minimum-1.0,OSGi_Minimum-1.1,OSGi_Min
+ * i m u m - 1 . 2
  */
 public class EEGenerator {
 	static class AbstractNode {
@@ -122,6 +126,7 @@ public class EEGenerator {
 			}
 			this.addedProfileValue = value;
 		}
+
 		public void setRemovedProfileValue(int value) {
 			if (this.removedProfileValue != -1) {
 				System.err.println("Remove profile value is already set"); //$NON-NLS-1$
@@ -129,6 +134,7 @@ public class EEGenerator {
 			this.removedProfileValue = value;
 		}
 	}
+
 	static class Field extends AbstractNode implements Comparable<Field> {
 		char[] name;
 		char[] type;
@@ -139,9 +145,12 @@ public class EEGenerator {
 				this.type = CharOperation.replaceOnCopy(ftype, '/', '.');
 			}
 		}
+
+		@Override
 		public int compareTo(Field field) {
 			return CharOperation.compareTo(this.name, field.name);
 		}
+
 		@Override
 		public boolean equals(Object obj) {
 			if (this == obj) {
@@ -187,14 +196,12 @@ public class EEGenerator {
 		@Override
 		public String toString() {
 			StringBuilder builder = new StringBuilder();
-			builder
-				.append("Field : ") //$NON-NLS-1$
-				.append(this.name)
-				.append(' ')
-				.append(Signature.toCharArray(this.type));
+			builder.append("Field : ") //$NON-NLS-1$
+			.append(this.name).append(' ').append(Signature.toCharArray(this.type));
 			return String.valueOf(builder);
 		}
 	}
+
 	static class Method extends AbstractNode implements Comparable<Method> {
 		public static final char[] NO_GENERIC_SIGNATURE = new char[0];
 		char[] genericSignature;
@@ -212,6 +219,8 @@ public class EEGenerator {
 				this.genericSignature = genericsig;
 			}
 		}
+
+		@Override
 		public int compareTo(Method method) {
 			int compare = CharOperation.compareTo(this.selector, method.selector);
 			if (compare == 0) {
@@ -254,7 +263,7 @@ public class EEGenerator {
 			result = prime * result + Arrays.hashCode(signature);
 			return result;
 		}
-		
+
 		public void persistXML(Document document, Element parent) {
 			Element method = document.createElement(IApiXmlConstants.ELEMENT_METHOD);
 			parent.appendChild(method);
@@ -291,12 +300,14 @@ public class EEGenerator {
 		public Package(String pname) {
 			this.name = pname;
 		}
+
 		public void addType(Type type) {
 			if (this.types == null) {
 				this.types = new ArrayList<Type>();
 			}
 			this.types.add(type);
 		}
+
 		public void collectTypes(Map<String, Type> result) {
 			Collections.sort(this.types);
 			for (Iterator<Type> iterator2 = this.types.iterator(); iterator2.hasNext();) {
@@ -305,9 +316,12 @@ public class EEGenerator {
 				result.put(typeName, type);
 			}
 		}
+
+		@Override
 		public int compareTo(Package package1) {
 			return this.name.compareTo(package1.name);
 		}
+
 		@Override
 		public boolean equals(Object obj) {
 			if (this == obj) {
@@ -331,13 +345,16 @@ public class EEGenerator {
 		}
 
 		public Type getType(Type typeToFind) {
-			if (this.types == null) return null;
+			if (this.types == null) {
+				return null;
+			}
 			int index = this.types.indexOf(typeToFind);
 			if (index != -1) {
 				return this.types.get(index);
 			}
 			return null;
 		}
+
 		@Override
 		public int hashCode() {
 			final int prime = 31;
@@ -345,8 +362,11 @@ public class EEGenerator {
 			result = prime * result + ((name == null) ? 0 : name.hashCode());
 			return result;
 		}
+
 		public void persistAsClassStubsForZip(ZipOutputStream zipOutputStream, ProfileInfo info) throws IOException {
-			if (this.types == null) return;
+			if (this.types == null) {
+				return;
+			}
 			Collections.sort(this.types);
 			for (Iterator<Type> iterator2 = this.types.iterator(); iterator2.hasNext();) {
 				Type type = iterator2.next();
@@ -359,19 +379,24 @@ public class EEGenerator {
 				}
 			}
 		}
+
 		public void persistXML(Document document, Element element, String OSGiProfileName) {
 			Element pkg = document.createElement(IApiXmlConstants.ELEMENT_PACKAGE);
 			pkg.setAttribute(IApiXmlConstants.ATTR_NAME, this.name);
 			element.appendChild(pkg);
-			if (this.types == null) return;
+			if (this.types == null) {
+				return;
+			}
 			Collections.sort(this.types);
 			for (Iterator<Type> iterator2 = this.types.iterator(); iterator2.hasNext();) {
 				iterator2.next().persistXML(document, pkg, OSGiProfileName);
 			}
 		}
+
 		public int size() {
 			return this.types == null ? 0 : this.types.size();
 		}
+
 		@Override
 		public String toString() {
 			StringBuilder builder = new StringBuilder();
@@ -422,15 +447,7 @@ public class EEGenerator {
 			return String.valueOf(buffer);
 		}
 
-		public static ProfileInfo getProfileInfo(
-				String profileName,
-				String jreLib,
-				String osgiProfile,
-				String jreDoc,
-				String jreURL,
-				String docRoot,
-				String cacheLocation,
-				String whiteList) {
+		public static ProfileInfo getProfileInfo(String profileName, String jreLib, String osgiProfile, String jreDoc, String jreURL, String docRoot, String cacheLocation, String whiteList) {
 			ProfileInfo info = new ProfileInfo(profileName, jreLib, osgiProfile, jreDoc, jreURL, docRoot, cacheLocation, whiteList);
 			if (info.getProfileName() == null) {
 				return null;
@@ -457,11 +474,12 @@ public class EEGenerator {
 				} else {
 					knownPackages = Collections.emptySet();
 				}
-			} catch(IOException e) {
+			} catch (IOException e) {
 				// ignore
 			}
 			return knownPackages;
 		}
+
 		private static Set<String> initializeWhiteList(String fileName) {
 			if (fileName == null) {
 				return Collections.emptySet();
@@ -478,13 +496,13 @@ public class EEGenerator {
 						values.add(trimmedLine);
 					}
 				}
-			} catch(IOException e) {
+			} catch (IOException e) {
 				// ignore
 			} finally {
 				if (reader != null) {
 					try {
 						reader.close();
-					} catch(IOException e) {
+					} catch (IOException e) {
 						// ignore
 					}
 				}
@@ -506,18 +524,10 @@ public class EEGenerator {
 		String OSGiProfile;
 		String profileName;
 		long totalSize;
-		
+
 		Set<String> whiteList;
 
-		private ProfileInfo(
-				String profilename,
-				String jreLib,
-				String osgiProfile,
-				String jreDoc,
-				String jreURL,
-				String docroot,
-				String cacheloc,
-				String whitelist) {
+		private ProfileInfo(String profilename, String jreLib, String osgiProfile, String jreDoc, String jreURL, String docroot, String cacheloc, String whitelist) {
 			this.JREdoc = jreDoc;
 			this.JREURL = jreURL;
 			this.JRElib = jreLib;
@@ -527,7 +537,7 @@ public class EEGenerator {
 			this.cacheLocation = cacheloc;
 			this.whiteList = initializeWhiteList(whitelist);
 		}
-		
+
 		private void addToBlackList(String typeName) {
 			if (this.blackList != null) {
 				this.blackList.add(typeName);
@@ -575,17 +585,17 @@ public class EEGenerator {
 				} catch (IOException e) {
 					e.printStackTrace();
 				} finally {
-					if (writer != null)  {
+					if (writer != null) {
 						try {
 							writer.close();
-						} catch(IOException e) {
+						} catch (IOException e) {
 							// ignore
 						}
 					}
 				}
 			}
 		}
-		
+
 		void generateEEDescription(String outputDir) {
 			if (this.data == null) {
 				System.err.println("No data to persist for " + this.getProfileName()); //$NON-NLS-1$
@@ -596,8 +606,8 @@ public class EEGenerator {
 			persistDataAsClassFilesInZipFormat(outputDir, subDir);
 		}
 
-		public Map<String,Type> getAllTypes() {
-			Map<String,Type> result = new HashMap<String,Type>();
+		public Map<String, Type> getAllTypes() {
+			Map<String, Type> result = new HashMap<String, Type>();
 			Set<String> keySet = this.data.keySet();
 			String[] sortedKeys = new String[keySet.size()];
 			keySet.toArray(sortedKeys);
@@ -630,14 +640,16 @@ public class EEGenerator {
 				throw new IllegalStateException("No jar files to open"); //$NON-NLS-1$
 			}
 			String typeName = new String(type.name);
-			byte[] classFileBytes = null; 
+			byte[] classFileBytes = null;
 			try {
 				String zipFileEntryName = typeName.replace('.', '/') + ".class"; //$NON-NLS-1$
 				loop: for (int i = 0, max = this.allFiles.length; i < max; i++) {
 					ZipFile zipFile = new ZipFile(allFiles[i]);
 					try {
 						ZipEntry zipEntry = zipFile.getEntry(zipFileEntryName);
-						if (zipEntry == null) continue loop;
+						if (zipEntry == null) {
+							continue loop;
+						}
 						InputStream inputStream = new BufferedInputStream(zipFile.getInputStream(zipEntry));
 						try {
 							classFileBytes = Util.getInputStreamAsByteArray(inputStream, -1);
@@ -663,7 +675,7 @@ public class EEGenerator {
 			if (visitor.shouldIgnore()) {
 				return null;
 			}
-			
+
 			return visitor.getStub().getBytes();
 		}
 
@@ -684,10 +696,10 @@ public class EEGenerator {
 					} catch (IOException e) {
 						e.printStackTrace();
 					} finally {
-						if (stream != null)  {
+						if (stream != null) {
 							try {
 								stream.close();
-							} catch(IOException e) {
+							} catch (IOException e) {
 								// ignore
 							}
 						}
@@ -726,12 +738,9 @@ public class EEGenerator {
 		}
 
 		private String getSubDir() {
-			if (Util.getProfileFileName(ProfileModifiers.CDC_1_0_FOUNDATION_1_0_NAME).equals(this.profileName)
-					|| Util.getProfileFileName(ProfileModifiers.CDC_1_1_FOUNDATION_1_1_NAME).equals(this.profileName)) {
+			if (Util.getProfileFileName(ProfileModifiers.CDC_1_0_FOUNDATION_1_0_NAME).equals(this.profileName) || Util.getProfileFileName(ProfileModifiers.CDC_1_1_FOUNDATION_1_1_NAME).equals(this.profileName)) {
 				return CDC_SUBDIR;
-			} else if (Util.getProfileFileName(ProfileModifiers.OSGI_MINIMUM_1_0_NAME).equals(this.profileName)
-					|| Util.getProfileFileName(ProfileModifiers.OSGI_MINIMUM_1_1_NAME).equals(this.profileName)
-					|| Util.getProfileFileName(ProfileModifiers.OSGI_MINIMUM_1_2_NAME).equals(this.profileName)) {
+			} else if (Util.getProfileFileName(ProfileModifiers.OSGI_MINIMUM_1_0_NAME).equals(this.profileName) || Util.getProfileFileName(ProfileModifiers.OSGI_MINIMUM_1_1_NAME).equals(this.profileName) || Util.getProfileFileName(ProfileModifiers.OSGI_MINIMUM_1_2_NAME).equals(this.profileName)) {
 				return OSGI_SUBDIR;
 			} else {
 				return JRE_SUBDIR;
@@ -750,17 +759,18 @@ public class EEGenerator {
 					while ((line = reader.readLine()) != null) {
 						String trimmedLine = line.trim();
 						if (!trimmedLine.isEmpty()) {
-							// only non-empty lines are added trimmed on both ends
+							// only non-empty lines are added trimmed on both
+							// ends
 							values.add(trimmedLine);
 						}
 					}
-				} catch(IOException e) {
+				} catch (IOException e) {
 					// ignore
 				} finally {
 					if (reader != null) {
 						try {
 							reader.close();
-						} catch(IOException e) {
+						} catch (IOException e) {
 							// ignore
 						}
 					}
@@ -778,10 +788,11 @@ public class EEGenerator {
 			}
 
 			if (DEBUG) {
-				System.out.println("Profile : "  + pname); //$NON-NLS-1$
+				System.out.println("Profile : " + pname); //$NON-NLS-1$
 			}
 			long time = System.currentTimeMillis();
 			this.allFiles = Util.getAllFiles(new File(this.JRElib), new FileFilter() {
+				@Override
 				public boolean accept(File pathname) {
 					return pathname.isDirectory() || pathname.getName().toLowerCase().endsWith(".jar"); //$NON-NLS-1$
 				}
@@ -807,9 +818,11 @@ public class EEGenerator {
 				this.totalSize += currentFile.length();
 				ZipFile zipFile = new ZipFile(currentFile);
 				try {
-					for (Enumeration<? extends ZipEntry> enumeration = zipFile.entries(); enumeration.hasMoreElements(); ) {
+					for (Enumeration<? extends ZipEntry> enumeration = zipFile.entries(); enumeration.hasMoreElements();) {
 						ZipEntry zipEntry = enumeration.nextElement();
-						if (!zipEntry.getName().endsWith(".class")) continue; //$NON-NLS-1$
+						if (!zipEntry.getName().endsWith(".class")) { //$NON-NLS-1$
+							continue;
+						}
 						InputStream inputStream = new BufferedInputStream(zipFile.getInputStream(zipEntry));
 						IClassFileReader classFileReader = null;
 						try {
@@ -817,7 +830,9 @@ public class EEGenerator {
 						} finally {
 							inputStream.close();
 						}
-						if (classFileReader == null) continue;
+						if (classFileReader == null) {
+							continue;
+						}
 						char[] className = classFileReader.getClassName();
 						char[] packageName = null;
 						int lastIndexOf = CharOperation.lastIndexOf('/', className);
@@ -843,7 +858,8 @@ public class EEGenerator {
 			// list all results
 			List<Type> visibleTypes = new ArrayList<Type>();
 			visibleTypes.addAll(allVisibleTypes.values());
-			// check transitive closure to make sure all methods/fields from superclass are visible when resolving fields/methods
+			// check transitive closure to make sure all methods/fields from
+			// superclass are visible when resolving fields/methods
 			while (!visibleTypes.isEmpty()) {
 				Type type = visibleTypes.remove(0);
 				String superclassName = type.getSuperclassName();
@@ -873,7 +889,7 @@ public class EEGenerator {
 			if (this.JREdoc != null) {
 				try {
 					docZip = new ZipFile(this.JREdoc);
-				} catch(FileNotFoundException e) {
+				} catch (FileNotFoundException e) {
 					// no zip file
 				}
 			}
@@ -929,12 +945,15 @@ public class EEGenerator {
 			this.blackList = initializeBlackList();
 			return this.blackList.contains(typeName);
 		}
+
 		private boolean isOnWhiteList(String packageName) {
 			return packageName.startsWith("java.") || packageName.startsWith("javax.") || this.whiteList.contains(packageName); //$NON-NLS-1$ //$NON-NLS-2$
 		}
+
 		private boolean isOnWhiteList(Type type) {
 			return isOnWhiteList(type.getPackage());
 		}
+
 		private void persistBlackList() {
 			if (this.blackList == null || this.blackList.isEmpty()) {
 				return;
@@ -949,7 +968,7 @@ public class EEGenerator {
 						writer.println(iterator.next());
 					}
 					writer.flush();
-				} catch(IOException e) {
+				} catch (IOException e) {
 					// ignore
 				} finally {
 					if (writer != null) {
@@ -958,11 +977,8 @@ public class EEGenerator {
 				}
 			}
 		}
-		private void persistChildren(
-				Document document,
-				Element xmlElement,
-				Map<String, Package> packageMap,
-				String OSGiProfileName) {
+
+		private void persistChildren(Document document, Element xmlElement, Map<String, Package> packageMap, String OSGiProfileName) {
 			Set<String> keySet = packageMap.keySet();
 			String[] sortedKeys = new String[keySet.size()];
 			keySet.toArray(sortedKeys);
@@ -977,10 +993,8 @@ public class EEGenerator {
 				}
 			}
 		}
-		private void persistChildrenAsClassFile(
-				ZipOutputStream zipOutputStream,
-				Map<String, Package> packageMap,
-				ProfileInfo info) throws IOException {
+
+		private void persistChildrenAsClassFile(ZipOutputStream zipOutputStream, Map<String, Package> packageMap, ProfileInfo info) throws IOException {
 			Set<String> keySet = packageMap.keySet();
 			String[] sortedKeys = new String[keySet.size()];
 			keySet.toArray(sortedKeys);
@@ -995,9 +1009,10 @@ public class EEGenerator {
 				}
 			}
 		}
+
 		private void persistData(String rootName, String subDirName) {
 			try {
-				Document document = org.eclipse.pde.api.tools.internal.util.Util.newDocument();	
+				Document document = org.eclipse.pde.api.tools.internal.util.Util.newDocument();
 				Element component = document.createElement(IApiXmlConstants.ELEMENT_COMPONENT);
 				String profileName2 = this.getProfileName();
 				component.setAttribute(IApiXmlConstants.ATTR_ID, profileName2);
@@ -1013,9 +1028,8 @@ public class EEGenerator {
 				e.printStackTrace();
 			}
 		}
-		private void persistDataAsClassFilesInZipFormat(
-				String rootName,
-				String subDirName) {
+
+		private void persistDataAsClassFilesInZipFormat(String rootName, String subDirName) {
 			ZipOutputStream zipOutputStream = null;
 			String profileName2 = this.getProfileFileName();
 			File root = new File(rootName);
@@ -1056,11 +1070,13 @@ public class EEGenerator {
 			System.out.println("Its generated size is " + this.generatedSize + " bytes."); //$NON-NLS-1$ //$NON-NLS-2$
 			System.out.println("Ratio : " + (((double) this.generatedSize / (double) this.totalSize) * 100.0) + "%"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
+
+		@Override
 		public String toString() {
 			return this.getProfileName();
 		}
 	}
-	
+
 	static class StubClass {
 		private static final int CURRENT_VERSION = 3;
 		int access;
@@ -1072,11 +1088,8 @@ public class EEGenerator {
 		Map<String, Integer> pool;
 		int poolIndex;
 		int superNameIndex;
-		
-		public StubClass(int acc,
-				String className2,
-				String superName2,
-				String[] interfaces2) {
+
+		public StubClass(int acc, String className2, String superName2, String[] interfaces2) {
 			this.access = acc;
 			this.pool = new HashMap<String, Integer>();
 			this.classNameIndex = getIndex(className2);
@@ -1104,14 +1117,14 @@ public class EEGenerator {
 			this.methods.add(method);
 			return method;
 		}
-		
+
 		public byte[] getBytes() {
 			ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 			DataOutputStream outputStream = new DataOutputStream(byteArrayOutputStream);
 			try {
 				outputStream.writeShort(CURRENT_VERSION);
 				outputStream.writeShort(this.poolIndex);
-				for (Iterator<Map.Entry<String, Integer>> iterator = this.pool.entrySet().iterator(); iterator.hasNext(); ) {
+				for (Iterator<Map.Entry<String, Integer>> iterator = this.pool.entrySet().iterator(); iterator.hasNext();) {
 					Map.Entry<String, Integer> next = iterator.next();
 					outputStream.writeUTF(next.getKey());
 					outputStream.writeShort(next.getValue().intValue());
@@ -1138,12 +1151,12 @@ public class EEGenerator {
 					outputStream.writeByte(stubMethod.isPolymorphic ? 1 : 0);
 				}
 				outputStream.flush();
-			} catch(IOException e) {
+			} catch (IOException e) {
 				e.printStackTrace();
 			} finally {
 				try {
 					outputStream.close();
-				} catch(IOException e) {
+				} catch (IOException e) {
 					// ignore
 				}
 			}
@@ -1177,6 +1190,7 @@ public class EEGenerator {
 
 		/**
 		 * Constructor
+		 * 
 		 * @param stubtype
 		 */
 		public StubClassAdapter(Type stubtype) {
@@ -1195,15 +1209,13 @@ public class EEGenerator {
 			return (this.flags & IGNORE_CLASS_FILE) != 0;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.objectweb.asm.ClassAdapter#visit(int, int, java.lang.String, java.lang.String, java.lang.String, java.lang.String[])
+		/*
+		 * (non-Javadoc)
+		 * @see org.objectweb.asm.ClassAdapter#visit(int, int, java.lang.String,
+		 * java.lang.String, java.lang.String, java.lang.String[])
 		 */
-		public void visit(int version,
-				int access,
-				String className,
-				String signature,
-				String superName,
-				String[] interfaces) {
+		@Override
+		public void visit(int version, int access, String className, String signature, String superName, String[] interfaces) {
 			this.name = className;
 			this.stub = new StubClass(access, className, superName, interfaces);
 		}
@@ -1213,22 +1225,29 @@ public class EEGenerator {
 			return null;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.objectweb.asm.ClassAdapter#visitAttribute(org.objectweb.asm.Attribute)
+		/*
+		 * (non-Javadoc)
+		 * @see
+		 * org.objectweb.asm.ClassAdapter#visitAttribute(org.objectweb.asm.Attribute
+		 * )
 		 */
+		@Override
 		public void visitAttribute(Attribute attr) {
 			if ("Synthetic".equals(attr.type)) { //$NON-NLS-1$
 				this.flags |= IGNORE_CLASS_FILE;
 			}
 		}
-		
+
 		@Override
 		public void visitEnd() {
 		}
-		
-		/* (non-Javadoc)
-		 * @see org.objectweb.asm.ClassAdapter#visitField(int, java.lang.String, java.lang.String, java.lang.String, java.lang.Object)
+
+		/*
+		 * (non-Javadoc)
+		 * @see org.objectweb.asm.ClassAdapter#visitField(int, java.lang.String,
+		 * java.lang.String, java.lang.String, java.lang.Object)
 		 */
+		@Override
 		public FieldVisitor visitField(int access, String fieldName, String desc, String signature, Object value) {
 			if (type.getField(fieldName) == null) {
 				return null;
@@ -1236,32 +1255,35 @@ public class EEGenerator {
 			this.stub.addField(fieldName);
 			return null;
 		}
-		
-		/* (non-Javadoc)
-		 * @see org.objectweb.asm.ClassAdapter#visitInnerClass(java.lang.String, java.lang.String, java.lang.String, int)
+
+		/*
+		 * (non-Javadoc)
+		 * @see org.objectweb.asm.ClassAdapter#visitInnerClass(java.lang.String,
+		 * java.lang.String, java.lang.String, int)
 		 */
+		@Override
 		public void visitInnerClass(String innerClassName, String outerName, String innerName, int access) {
 			if (this.name.equals(innerClassName) && (outerName == null)) {
 				// local class
 				this.flags |= IGNORE_CLASS_FILE;
 			}
 		}
-		/* (non-Javadoc)
-		 * @see org.objectweb.asm.ClassAdapter#visitMethod(int, java.lang.String, java.lang.String, java.lang.String, java.lang.String[])
+
+		/*
+		 * (non-Javadoc)
+		 * @see org.objectweb.asm.ClassAdapter#visitMethod(int,
+		 * java.lang.String, java.lang.String, java.lang.String,
+		 * java.lang.String[])
 		 */
-		public MethodVisitor visitMethod(int access,
-				String methodName,
-				String desc,
-				String signature,
-				String[] exceptions) {
+		@Override
+		public MethodVisitor visitMethod(int access, String methodName, String desc, String signature, String[] exceptions) {
 			if ("<clinit>".equals(methodName)) { //$NON-NLS-1$
 				return null;
 			}
 			if ((access & (Opcodes.ACC_PUBLIC | Opcodes.ACC_PROTECTED)) == 0) {
 				return null;
 			}
-			if (((access & Opcodes.ACC_BRIDGE) != 0)
-					|| ((access & Opcodes.ACC_SYNTHETIC) != 0)) {
+			if (((access & Opcodes.ACC_BRIDGE) != 0) || ((access & Opcodes.ACC_SYNTHETIC) != 0)) {
 				return null;
 			}
 			if (this.type.getMethod(methodName, desc) == null) {
@@ -1278,19 +1300,21 @@ public class EEGenerator {
 				}
 			};
 		}
+
 		@Override
 		public void visitOuterClass(String arg0, String arg1, String arg2) {
 			// ignore
 		}
+
 		@Override
 		public void visitSource(String arg0, String arg1) {
 			// ignore
 		}
 	}
-	
+
 	static class StubField {
 		int nameIndex;
-		
+
 		public StubField(int index) {
 			this.nameIndex = index;
 		}
@@ -1300,23 +1324,24 @@ public class EEGenerator {
 		boolean isPolymorphic;
 		int selectorIndex;
 		int signatureIndex;
-		
+
 		public StubMethod(int selectorindex, int sigindex) {
 			this.selectorIndex = selectorindex;
 			this.signatureIndex = sigindex;
 		}
-		
+
 		public void isPolymorphic() {
 			this.isPolymorphic = true;
 		}
 	}
+
 	static class Type extends AbstractNode implements Comparable<Type> {
 		private static boolean checkDocStatus(IFieldInfo fieldInfo, char[] contents) {
 			if (contents == null) {
 				return true;
 			}
 			StringBuffer buffer = new StringBuffer();
-			buffer.append(JavadocConstants.ANCHOR_PREFIX_START).append(fieldInfo.getName()).append(JavadocConstants.ANCHOR_PREFIX_END);
+			buffer.append(ANCHOR_PREFIX_START).append(fieldInfo.getName()).append(ANCHOR_PREFIX_END);
 			char[] anchor = String.valueOf(buffer).toCharArray();
 			return CharOperation.indexOf(anchor, contents, false) != -1;
 		}
@@ -1330,12 +1355,8 @@ public class EEGenerator {
 			char[] anchor = org.eclipse.jdt.internal.core.util.Util.toAnchor(startingIndex, newsignature, selector, Flags.isVarargs(accessFlags));
 			return CharOperation.indexOf(anchor, contents, true) != -1;
 		}
-		static char[] getDocContents(
-				ProfileInfo info,
-				Type type,
-				ZipFile docZip,
-				String docURL,
-				String docRoot) {
+
+		static char[] getDocContents(ProfileInfo info, Type type, ZipFile docZip, String docURL, String docRoot) {
 			if (docZip == null && docURL == null) {
 				if (DEBUG) {
 					System.out.println("No javadoc zip or url specified for " + info.getProfileFileName()); //$NON-NLS-1$
@@ -1369,34 +1390,39 @@ public class EEGenerator {
 			InputStream inputStream = null;
 			try {
 				inputStream = docZip.getInputStream(entry);
-				return org.eclipse.jdt.internal.compiler.util.Util.getInputStreamAsCharArray(inputStream, -1, null);
-			} catch(IOException e) {
+				return Util.getInputStreamAsCharArray(inputStream, -1, null);
+			} catch (IOException e) {
 				e.printStackTrace();
 			} finally {
 				if (inputStream != null) {
 					try {
 						inputStream.close();
-					} catch(IOException e) {
+					} catch (IOException e) {
 						// ignore
 					}
 				}
 			}
 			return null;
 		}
+
 		static boolean isFinal(int accessFlags) {
-			return (accessFlags & ClassFileConstants.AccFinal) != 0;
+			return (accessFlags & Flags.AccFinal) != 0;
 		}
+
 		static boolean isPrivate(int accessFlags) {
-			return (accessFlags & ClassFileConstants.AccPrivate) != 0;
+			return (accessFlags & Flags.AccPrivate) != 0;
 		}
+
 		static boolean isProtected(int accessFlags) {
-			return (accessFlags & ClassFileConstants.AccProtected) != 0;
+			return (accessFlags & Flags.AccProtected) != 0;
 		}
+
 		static boolean isPublic(int accessFlags) {
-			return (accessFlags & ClassFileConstants.AccPublic) != 0;
+			return (accessFlags & Flags.AccPublic) != 0;
 		}
+
 		static boolean isStatic(int accessFlags) {
-			return (accessFlags & ClassFileConstants.AccStatic) != 0;
+			return (accessFlags & Flags.AccStatic) != 0;
 		}
 
 		private static boolean isVisibleField(int typeAccessFlags, int fieldAccessFlags) {
@@ -1419,18 +1445,13 @@ public class EEGenerator {
 			return false;
 		}
 
-		public static Type newType(
-				ProfileInfo info,
-				IClassFileReader reader,
-				String docZipFileName,
-				String docURL,
-				String docRoot) {
+		public static Type newType(ProfileInfo info, IClassFileReader reader, String docZipFileName, String docURL, String docRoot) {
 			int startingIndex = 0;
 			IInnerClassesAttribute innerClassesAttribute = reader.getInnerClassesAttribute();
 			if (innerClassesAttribute != null) {
 				// search the right entry
 				IInnerClassesAttributeEntry[] entries = innerClassesAttribute.getInnerClassAttributesEntries();
-				for (int i = 0, max = entries.length; i < max ; i++) {
+				for (int i = 0, max = entries.length; i < max; i++) {
 					IInnerClassesAttributeEntry entry = entries[i];
 					char[] innerClassName = entry.getInnerClassName();
 					if (innerClassName != null) {
@@ -1442,7 +1463,7 @@ public class EEGenerator {
 								}
 							}
 							if (isPrivate(accessFlags2)) {
-								return null; 
+								return null;
 							}
 						}
 					}
@@ -1458,20 +1479,14 @@ public class EEGenerator {
 		char[] name;
 		char[] superclassName;
 		char[][] superinterfacesNames;
-		
-		private Type(
-				ProfileInfo info,
-				int startingIndex,
-				IClassFileReader reader,
-				String docZipFileName,
-				String docURL,
-				String docRoot) {
+
+		private Type(ProfileInfo info, int startingIndex, IClassFileReader reader, String docZipFileName, String docURL, String docRoot) {
 			ZipFile docZip = null;
 			try {
 				if (docZipFileName != null) {
 					try {
 						docZip = new ZipFile(docZipFileName);
-					} catch(FileNotFoundException e) {
+					} catch (FileNotFoundException e) {
 						// no zip file
 					}
 				}
@@ -1497,8 +1512,7 @@ public class EEGenerator {
 				int length = fieldInfos.length;
 				for (int i = 0; i < length; i++) {
 					IFieldInfo fieldInfo = fieldInfos[i];
-					if (isVisibleField(this.modifiers, fieldInfo.getAccessFlags())
-							&& checkDocStatus(fieldInfo, contents)) {
+					if (isVisibleField(this.modifiers, fieldInfo.getAccessFlags()) && checkDocStatus(fieldInfo, contents)) {
 						if (fields == null) {
 							this.fields = new HashSet<Field>();
 						}
@@ -1543,11 +1557,7 @@ public class EEGenerator {
 							if (methods == null) {
 								this.methods = new HashSet<Method>();
 							}
-							Method method = new Method(
-									accessFlags,
-									methodInfo.getName(),
-									methodInfo.getDescriptor(),
-									signatureAttribute == null ? null : signature);
+							Method method = new Method(accessFlags, methodInfo.getName(), methodInfo.getDescriptor(), signatureAttribute == null ? null : signature);
 							methods.add(method);
 							if (DEBUG) {
 								System.out.println("Adding method: " + method); //$NON-NLS-1$
@@ -1555,7 +1565,7 @@ public class EEGenerator {
 						}
 					}
 				}
-			} catch(IOException e) {
+			} catch (IOException e) {
 				// no zip file
 				System.err.println("Missing doc zip at " + docZipFileName); //$NON-NLS-1$
 			} finally {
@@ -1575,12 +1585,15 @@ public class EEGenerator {
 			}
 			this.fields.add(f);
 		}
+
 		public void addMethod(Method m) {
 			if (this.methods == null) {
 				this.methods = new HashSet<Method>();
 			}
 			this.methods.add(m);
 		}
+
+		@Override
 		public int compareTo(Type type) {
 			return this.getSimpleName().compareTo(type.getSimpleName());
 		}
@@ -1599,10 +1612,13 @@ public class EEGenerator {
 			Type other = (Type) obj;
 			return Arrays.equals(name, other.name);
 		}
+
 		public Field getField(String fname) {
-			if (this.fields == null) return null;
+			if (this.fields == null) {
+				return null;
+			}
 			Field fieldToFind = new Field(fname.toCharArray(), null);
-			for (Iterator<Field> iterator = this.fields.iterator(); iterator.hasNext(); ) {
+			for (Iterator<Field> iterator = this.fields.iterator(); iterator.hasNext();) {
 				Field currentField = iterator.next();
 				if (fieldToFind.equals(currentField)) {
 					return currentField;
@@ -1614,14 +1630,20 @@ public class EEGenerator {
 		public String getFullQualifiedName() {
 			return String.valueOf(this.name);
 		}
+
 		public String getSuperclassName() {
-			if (this.superclassName == null) return null;
+			if (this.superclassName == null) {
+				return null;
+			}
 			return String.valueOf(this.superclassName);
 		}
+
 		public Method getMethod(String selector, String signature) {
-			if (this.methods == null) return null;
+			if (this.methods == null) {
+				return null;
+			}
 			Method methodToFind = new Method(0, selector.toCharArray(), signature.toCharArray(), null);
-			for (Iterator<Method> iterator = this.methods.iterator(); iterator.hasNext(); ) {
+			for (Iterator<Method> iterator = this.methods.iterator(); iterator.hasNext();) {
 				Method currentMethod = iterator.next();
 				if (methodToFind.equals(currentMethod)) {
 					return currentMethod;
@@ -1629,10 +1651,12 @@ public class EEGenerator {
 			}
 			return null;
 		}
+
 		public String getPackage() {
 			int index = CharOperation.lastIndexOf('.', this.name);
 			return new String(CharOperation.subarray(this.name, 0, index));
 		}
+
 		public String getSimpleName() {
 			return Util.getSimpleName(this.name);
 		}
@@ -1663,7 +1687,7 @@ public class EEGenerator {
 			if (this.superinterfacesNames != null && this.superinterfacesNames.length != 0) {
 				type.setAttribute(IApiXmlConstants.ATTR_SUPER_INTERFACES, Util.getInterfaces(this.superinterfacesNames));
 			}
-			type.setAttribute(IApiXmlConstants.ATTR_INTERFACE, Boolean.toString((this.modifiers & ClassFileConstants.AccInterface) != 0));
+			type.setAttribute(IApiXmlConstants.ATTR_INTERFACE, Boolean.toString((this.modifiers & Flags.AccInterface) != 0));
 			persistAnnotations(type, OSGiProfileName);
 			if (this.fields != null) {
 				Field[] allFields = new Field[this.fields.size()];
@@ -1682,10 +1706,11 @@ public class EEGenerator {
 				}
 			}
 		}
+
 		@Override
 		public String toString() {
 			StringBuffer buffer = new StringBuffer();
-			buffer.append(this.getPackage()+ "." + this.getSimpleName()).append(Util.LINE_SEPARATOR); //$NON-NLS-1$
+			buffer.append(this.getPackage() + "." + this.getSimpleName()).append(Util.LINE_SEPARATOR); //$NON-NLS-1$
 			// list all fields
 
 			if (this.fields != null) {
@@ -1694,10 +1719,8 @@ public class EEGenerator {
 				Arrays.sort(allFields);
 				for (int i = 0, max = allFields.length; i < max; i++) {
 					Field field = allFields[i];
-					buffer
-					.append("\t") //$NON-NLS-1$
-					.append(field)
-					.append(Util.LINE_SEPARATOR);
+					buffer.append("\t") //$NON-NLS-1$
+					.append(field).append(Util.LINE_SEPARATOR);
 				}
 			}
 			if (this.methods != null) {
@@ -1712,6 +1735,26 @@ public class EEGenerator {
 			return String.valueOf(buffer);
 		}
 	}
+
+	/**
+	 * Start of a HTML link
+	 * 
+	 * @since 1.0.200
+	 */
+	static final char[] ANCHOR_PREFIX_START = "<A NAME=\"".toCharArray(); //$NON-NLS-1$
+	/**
+	 * End of a HTML link in a single tag
+	 * 
+	 * @since 1.0.200
+	 */
+	static final String ANCHOR_PREFIX_END = "\""; //$NON-NLS-1$
+	/**
+	 * End of a HTML link
+	 * 
+	 * @since 1.0.200
+	 */
+	static final char[] ANCHOR_SUFFIX = "</A>".toCharArray(); //$NON-NLS-1$
+
 	static SortedSet<String> ACCEPTED_EEs;
 	static boolean CACHE_ENABLED = true;
 	static boolean DEBUG = false;
@@ -1725,25 +1768,25 @@ public class EEGenerator {
 	static final String PROPERTY_WHITE_LIST = ".whiteList"; //$NON-NLS-1$
 
 	static {
-		String[] ees = new String[] {
-			"JRE-1.1", //$NON-NLS-1$
-			"J2SE-1.2", //$NON-NLS-1$
-			"J2SE-1.3", //$NON-NLS-1$
-			"J2SE-1.4", //$NON-NLS-1$
-			"J2SE-1.5", //$NON-NLS-1$
-			"JavaSE-1.6", //$NON-NLS-1$
-			"JavaSE-1.7", //$NON-NLS-1$
-			"CDC-1.0_Foundation-1.0", //$NON-NLS-1$
-			"CDC-1.1_Foundation-1.1", //$NON-NLS-1$
-			"OSGi_Minimum-1.0", //$NON-NLS-1$
-			"OSGi_Minimum-1.1", //$NON-NLS-1$
-			"OSGi_Minimum-1.2" //$NON-NLS-1$
+		String[] ees = new String[] { "JRE-1.1", //$NON-NLS-1$
+				"J2SE-1.2", //$NON-NLS-1$
+				"J2SE-1.3", //$NON-NLS-1$
+				"J2SE-1.4", //$NON-NLS-1$
+				"J2SE-1.5", //$NON-NLS-1$
+				"JavaSE-1.6", //$NON-NLS-1$
+				"JavaSE-1.7", //$NON-NLS-1$
+				"CDC-1.0_Foundation-1.0", //$NON-NLS-1$
+				"CDC-1.1_Foundation-1.1", //$NON-NLS-1$
+				"OSGi_Minimum-1.0", //$NON-NLS-1$
+				"OSGi_Minimum-1.1", //$NON-NLS-1$
+				"OSGi_Minimum-1.2" //$NON-NLS-1$
 		};
 		ACCEPTED_EEs = new TreeSet<String>();
 		for (String ee : ees) {
 			ACCEPTED_EEs.add(ee);
 		}
 	}
+
 	private static String getAllEEValues() {
 		StringBuffer buffer = new StringBuffer();
 		for (String ee : ACCEPTED_EEs) {
@@ -1755,7 +1798,7 @@ public class EEGenerator {
 		return String.valueOf(buffer);
 	}
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) {
 		EEGenerator generator = new EEGenerator();
 		generator.configure(args);
 		if (!generator.isInitialized()) {
@@ -1766,9 +1809,10 @@ public class EEGenerator {
 		DEBUG = (property != null) && "true".equalsIgnoreCase(property); //$NON-NLS-1$
 		generator.run();
 	}
+
 	private ProfileInfo[] allProfiles;
 	String configurationFile;
-	
+
 	String[] EEToGenerate;
 
 	String output;
@@ -1800,37 +1844,41 @@ public class EEGenerator {
 		int mode = DEFAULT;
 		while (++index < argCount) {
 			currentArg = args[index];
-			switch(mode) {
-				case DEFAULT :
+			switch (mode) {
+				case DEFAULT:
 					if ("-output".equals(currentArg)) { //$NON-NLS-1$
-						if (this.output != null)
+						if (this.output != null) {
 							throw new IllegalArgumentException("output value is already set"); //$NON-NLS-1$
+						}
 						mode = OUTPUT;
 						continue;
 					}
 					if ("-config".equals(currentArg)) { //$NON-NLS-1$
-						if (this.configurationFile != null)
+						if (this.configurationFile != null) {
 							throw new IllegalArgumentException("configuration value is already set"); //$NON-NLS-1$
+						}
 						mode = CONFIG;
 						continue;
 					}
 					if ("-EEs".equals(currentArg)) { //$NON-NLS-1$
-						if (this.EEToGenerate != null)
+						if (this.EEToGenerate != null) {
 							throw new IllegalArgumentException("EEs value is already set"); //$NON-NLS-1$
+						}
 						mode = EEs;
 						continue;
 					}
-					// ignore unknown arguments - might be passed in by the Eclipse application
+					// ignore unknown arguments - might be passed in by the
+					// Eclipse application
 					continue;
-				case OUTPUT :
+				case OUTPUT:
 					this.output = currentArg;
 					mode = DEFAULT;
 					continue;
-				case CONFIG :
+				case CONFIG:
 					this.configurationFile = currentArg;
 					mode = DEFAULT;
 					continue;
-				case EEs :
+				case EEs:
 					String listOfEEs = currentArg;
 					StringTokenizer tokenizer = new StringTokenizer(listOfEEs, ","); //$NON-NLS-1$
 					List<String> list = new ArrayList<String>();
@@ -1847,6 +1895,8 @@ public class EEGenerator {
 					}
 					mode = DEFAULT;
 					continue;
+				default:
+					break;
 			}
 		}
 		if (this.output == null) {
@@ -1871,14 +1921,14 @@ public class EEGenerator {
 		try {
 			reader = new BufferedReader(new FileReader(configuration));
 			properties.load(reader);
-		} catch(IOException e ) {
+		} catch (IOException e) {
 			e.printStackTrace();
 			throw new IllegalArgumentException("Could not properly initialize the properties"); //$NON-NLS-1$
 		} finally {
 			if (reader != null) {
 				try {
 					reader.close();
-				} catch(IOException e) {
+				} catch (IOException e) {
 					// ignore
 				}
 			}
@@ -1937,16 +1987,7 @@ public class EEGenerator {
 			} else {
 				whiteListProperty = null;
 			}
-			infos.add(
-				ProfileInfo.getProfileInfo(
-						EE,
-						jreLibProperty,
-						osgiProfileProperty,
-						jreDocProperty,
-						jreUrlProperty,
-						docRootProperty,
-						cacheLocationProperty,
-						whiteListProperty));
+			infos.add(ProfileInfo.getProfileInfo(EE, jreLibProperty, osgiProfileProperty, jreDocProperty, jreUrlProperty, docRootProperty, cacheLocationProperty, whiteListProperty));
 		}
 		if (infos.isEmpty()) {
 			throw new IllegalArgumentException("Profile infos cannot be empty"); //$NON-NLS-1$

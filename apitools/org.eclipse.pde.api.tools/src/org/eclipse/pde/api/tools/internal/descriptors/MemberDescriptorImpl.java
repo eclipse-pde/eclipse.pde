@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,17 +21,18 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceType
  * @since 1.0.0
  */
 public abstract class MemberDescriptorImpl extends NamedElementDescriptorImpl implements IMemberDescriptor {
-	
+
 	/**
 	 * parent element or <code>null</code>
 	 */
 	private IElementDescriptor fParent;
-	
+
 	/**
 	 * Constructs a member with the given name and parent
 	 * 
 	 * @param name field name
-	 * @param parent type containing the field declaration or package containing the type
+	 * @param parent type containing the field declaration or package containing
+	 *            the type
 	 * @param modifiers
 	 */
 	MemberDescriptorImpl(String name, IElementDescriptor parent) {
@@ -39,31 +40,41 @@ public abstract class MemberDescriptorImpl extends NamedElementDescriptorImpl im
 		fParent = parent;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.model.component.IMemberDescriptor#getEnclosingType()
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.model.component.IMemberDescriptor#getEnclosingType
+	 * ()
 	 */
+	@Override
 	public IReferenceTypeDescriptor getEnclosingType() {
 		IElementDescriptor parent = getParent();
 		if (parent instanceof IReferenceTypeDescriptor) {
-			return (IReferenceTypeDescriptor)parent;
+			return (IReferenceTypeDescriptor) parent;
 		}
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.model.component.IMemberDescriptor#getPackage()
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.model.component.IMemberDescriptor#getPackage()
 	 */
+	@Override
 	public IPackageDescriptor getPackage() {
 		IElementDescriptor parent = getParent();
 		while (!(parent instanceof IPackageDescriptor)) {
-			parent = ((MemberDescriptorImpl)parent).getParent();
+			parent = ((MemberDescriptorImpl) parent).getParent();
 		}
 		return (IPackageDescriptor) parent;
-	}	
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.model.component.IElementDescriptor#getParent()
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.model.component.IElementDescriptor#getParent()
 	 */
+	@Override
 	public IElementDescriptor getParent() {
 		return fParent;
 	}

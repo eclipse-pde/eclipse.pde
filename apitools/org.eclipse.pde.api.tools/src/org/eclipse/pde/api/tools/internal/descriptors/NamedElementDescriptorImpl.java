@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.descriptors;
 
-
+import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
+import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 
 /**
  * Common base class for element descriptors with names.
@@ -23,7 +24,7 @@ public abstract class NamedElementDescriptorImpl extends ElementDescriptorImpl {
 	 * element name
 	 */
 	private String fName;
-	
+
 	/**
 	 * Constructs an element descriptor with the given name and parent.
 	 * 
@@ -32,7 +33,7 @@ public abstract class NamedElementDescriptorImpl extends ElementDescriptorImpl {
 	NamedElementDescriptorImpl(String name) {
 		fName = name;
 	}
-	
+
 	/**
 	 * Returns this element's simple name.
 	 * 
@@ -42,10 +43,21 @@ public abstract class NamedElementDescriptorImpl extends ElementDescriptorImpl {
 		return fName;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.descriptors.ElementDescriptorImpl#getComparable()
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
-	protected Comparable getComparable() {
-		return getName();
+	@Override
+	public int compareTo(IElementDescriptor o) {
+		if (o instanceof ReferenceTypeDescriptorImpl) {
+			return getName().compareTo(((ReferenceTypeDescriptorImpl) o).getQualifiedName());
+		}
+		if (o instanceof NamedElementDescriptorImpl) {
+			return getName().compareTo(((NamedElementDescriptorImpl) o).getName());
+		}
+		if (ApiPlugin.DEBUG_ELEMENT_DESCRIPTOR_FRAMEWORK) {
+			System.err.println(o.getClass());
+		}
+		return 0;
 	}
 }

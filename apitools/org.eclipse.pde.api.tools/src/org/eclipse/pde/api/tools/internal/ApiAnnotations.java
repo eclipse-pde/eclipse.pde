@@ -26,29 +26,34 @@ public class ApiAnnotations implements IApiAnnotations {
 	public static final int OFFSET_VISIBILITY = 0;
 	public static final int OFFSET_RESTRICTIONS = 4;
 	private int bits;
-	
+
 	public ApiAnnotations(int visibility, int restrictions) {
-		this.bits = (visibility << OFFSET_VISIBILITY)
-			| (restrictions << OFFSET_RESTRICTIONS);
+		this.bits = (visibility << OFFSET_VISIBILITY) | (restrictions << OFFSET_RESTRICTIONS);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.model.IApiAnnotations#getRestrictions()
 	 */
+	@Override
 	public int getRestrictions() {
 		return (this.bits & RESTRICTIONS_MASK) >> OFFSET_RESTRICTIONS;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.model.IApiAnnotations#getVisibility()
 	 */
+	@Override
 	public int getVisibility() {
 		return (this.bits & VISIBILITY_MASK) >> OFFSET_VISIBILITY;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(VisibilityModifiers.getVisibilityName(getVisibility()));
@@ -58,23 +63,26 @@ public class ApiAnnotations implements IApiAnnotations {
 		return buffer.toString();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof ApiAnnotations) {
 			ApiAnnotations desc = (ApiAnnotations) obj;
-			return
-				this.bits == desc.bits;
+			return this.bits == desc.bits;
 		}
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		return this.bits;
 	}
-	
+
 }

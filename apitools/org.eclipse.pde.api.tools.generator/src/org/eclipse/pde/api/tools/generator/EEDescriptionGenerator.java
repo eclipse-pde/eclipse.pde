@@ -18,6 +18,7 @@ public class EEDescriptionGenerator implements IApplication {
 	/**
 	 * Runs the application to generate the EE description
 	 */
+	@Override
 	public Object start(IApplicationContext context) throws Exception {
 		Object arguments = context.getArguments().get(IApplicationContext.APPLICATION_ARGS);
 		if (arguments instanceof String[]) {
@@ -26,6 +27,8 @@ public class EEDescriptionGenerator implements IApplication {
 		}
 		return IApplication.EXIT_OK;
 	}
+
+	@Override
 	public void stop() {
 		// do nothing
 	}

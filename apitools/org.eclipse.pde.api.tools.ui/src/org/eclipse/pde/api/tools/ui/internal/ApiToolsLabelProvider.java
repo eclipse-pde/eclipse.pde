@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,51 +51,67 @@ import com.ibm.icu.text.MessageFormat;
 public class ApiToolsLabelProvider extends BaseLabelProvider implements ILabelProvider, IFontProvider {
 
 	/**
-	 * Font for the default {@link IApiProfile} 
+	 * Font for the default {@link IApiProfile}
 	 */
 	private Font font = null;
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.BaseLabelProvider#dispose()
 	 */
+	@Override
 	public void dispose() {
-		if(font != null) {
+		if (font != null) {
 			font.dispose();
 		}
 		super.dispose();
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
 	 */
+	@Override
 	public Image getImage(Object element) {
 		if (element instanceof IApiComponent) {
 			IApiComponent comp = (IApiComponent) element;
 			return getApiComponentImage(comp);
 		}
-		if(element instanceof IResource) {
+		if (element instanceof IResource) {
 			IResource resource = (IResource) element;
-			switch(resource.getType()) {
-				case IResource.FILE: return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FILE);
-				case IResource.FOLDER: return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
-				case IResource.PROJECT: return PlatformUI.getWorkbench().getSharedImages().getImage(SharedImages.IMG_OBJ_PROJECT);
+			switch (resource.getType()) {
+				case IResource.FILE:
+					return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FILE);
+				case IResource.FOLDER:
+					return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
+				case IResource.PROJECT:
+					return PlatformUI.getWorkbench().getSharedImages().getImage(SharedImages.IMG_OBJ_PROJECT);
+				default:
+					break;
 			}
 		}
 		if (element instanceof File) {
 			return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
 		}
-		if(element instanceof IApiBaseline) {
+		if (element instanceof IApiBaseline) {
 			return getBaselineImage();
 		}
-		if(element instanceof EEEntry) {
+		if (element instanceof EEEntry) {
 			return ApiUIPlugin.getSharedImage(IApiToolsConstants.IMG_OBJ_API_SYSTEM_LIBRARY);
 		}
-		if(element instanceof IApiProblemFilter) {
+		if (element instanceof IApiProblemFilter) {
 			IApiProblemFilter filter = (IApiProblemFilter) element;
 			IApiProblem problem = filter.getUnderlyingProblem();
-			/*int flags = (problem.getSeverity() == ApiPlugin.SEVERITY_ERROR ? CompositeApiImageDescriptor.ERROR : CompositeApiImageDescriptor.WARNING);
-			CompositeApiImageDescriptor desc = new CompositeApiImageDescriptor(image, flags);*/
-			return getApiProblemElementImage(problem);/*ApiUIPlugin.getImage(desc);*/
+			/*
+			 * int flags = (problem.getSeverity() == ApiPlugin.SEVERITY_ERROR ?
+			 * CompositeApiImageDescriptor.ERROR :
+			 * CompositeApiImageDescriptor.WARNING); CompositeApiImageDescriptor
+			 * desc = new CompositeApiImageDescriptor(image, flags);
+			 */
+			return getApiProblemElementImage(problem);/*
+													 * ApiUIPlugin.getImage(desc)
+													 * ;
+													 */
 		}
 		return null;
 	}
@@ -105,40 +121,50 @@ public class ApiToolsLabelProvider extends BaseLabelProvider implements ILabelPr
 	 * 
 	 * @param problem
 	 * @return the image to use for the given {@link IApiProblem
+
 	 */
 	private Image getApiProblemElementImage(IApiProblem problem) {
-		if(problem.getCategory() != IApiProblem.CATEGORY_USAGE) {
-			switch(problem.getElementKind()) {
-				case IDelta.ANNOTATION_ELEMENT_TYPE: return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_ANNOTATION);
-				case IDelta.ENUM_ELEMENT_TYPE: return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_ENUM);
-				case IDelta.CLASS_ELEMENT_TYPE: return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_CLASS);
-				case IDelta.INTERFACE_ELEMENT_TYPE: return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_INTERFACE);
-				case IDelta.FIELD_ELEMENT_TYPE: return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_FIELD_PUBLIC);
-				case IDelta.METHOD_ELEMENT_TYPE: return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_PUBLIC);
-				case IDelta.TYPE_PARAMETER_ELEMENT_TYPE: return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_CUNIT);
-				case IDelta.API_BASELINE_ELEMENT_TYPE: return getBaselineImage();
+		if (problem.getCategory() != IApiProblem.CATEGORY_USAGE) {
+			switch (problem.getElementKind()) {
+				case IDelta.ANNOTATION_ELEMENT_TYPE:
+					return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_ANNOTATION);
+				case IDelta.ENUM_ELEMENT_TYPE:
+					return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_ENUM);
+				case IDelta.CLASS_ELEMENT_TYPE:
+					return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_CLASS);
+				case IDelta.INTERFACE_ELEMENT_TYPE:
+					return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_INTERFACE);
+				case IDelta.FIELD_ELEMENT_TYPE:
+					return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_FIELD_PUBLIC);
+				case IDelta.METHOD_ELEMENT_TYPE:
+					return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_PUBLIC);
+				case IDelta.TYPE_PARAMETER_ELEMENT_TYPE:
+					return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_CUNIT);
+				case IDelta.API_BASELINE_ELEMENT_TYPE:
+					return getBaselineImage();
 				case IDelta.API_COMPONENT_ELEMENT_TYPE: {
 					IPath path = new Path(problem.getResourcePath());
-					//try to find the component via the resource handle
+					// try to find the component via the resource handle
 					IResource res = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
-					if(res != null) {
-						IApiComponent comp = ApiPlugin.getDefault().
-														getApiBaselineManager().
-														getWorkspaceBaseline().
-														getApiComponent(res.getProject().getName());
-						if(comp != null) {
+					if (res != null) {
+						IApiComponent comp = ApiPlugin.getDefault().getApiBaselineManager().getWorkspaceBaseline().getApiComponent(res.getProject().getName());
+						if (comp != null) {
 							return getApiComponentImage(comp);
 						}
 					}
 					return ApiUIPlugin.getSharedImage(IApiToolsConstants.IMG_OBJ_BUNDLE);
 				}
+				default:
+					break;
 			}
-		}
-		else {
-			switch(problem.getElementKind()) {
-				case IElementDescriptor.TYPE: return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_CLASS);
-				case IElementDescriptor.METHOD: return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_PUBLIC);
-				case IElementDescriptor.FIELD: return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_FIELD_PUBLIC);
+		} else {
+			switch (problem.getElementKind()) {
+				case IElementDescriptor.TYPE:
+					return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_CLASS);
+				case IElementDescriptor.METHOD:
+					return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_PUBLIC);
+				case IElementDescriptor.FIELD:
+					return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_FIELD_PUBLIC);
 				default: {
 					System.out.println();
 				}
@@ -146,14 +172,14 @@ public class ApiToolsLabelProvider extends BaseLabelProvider implements ILabelPr
 		}
 		return null;
 	}
-	
+
 	/**
 	 * @return the image to use for an {@link IApiBaseline}
 	 */
 	private Image getBaselineImage() {
 		return ApiUIPlugin.getSharedImage(IApiToolsConstants.IMG_OBJ_ECLIPSE_PROFILE);
 	}
-	
+
 	/**
 	 * Returns the image to use for the given {@link IApiComponent}
 	 * 
@@ -161,7 +187,7 @@ public class ApiToolsLabelProvider extends BaseLabelProvider implements ILabelPr
 	 * @return the image to use for the given {@link IApiComponent}
 	 */
 	private Image getApiComponentImage(IApiComponent component) {
-		if(component.isSystemComponent()) {
+		if (component.isSystemComponent()) {
 			return ApiUIPlugin.getSharedImage(IApiToolsConstants.IMG_OBJ_API_SYSTEM_LIBRARY);
 		}
 		try {
@@ -173,39 +199,42 @@ public class ApiToolsLabelProvider extends BaseLabelProvider implements ILabelPr
 		}
 		return ApiUIPlugin.getSharedImage(IApiToolsConstants.IMG_OBJ_BUNDLE);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
 	 */
+	@Override
 	public String getText(Object element) {
 		if (element instanceof IApiComponent) {
 			IApiComponent comp = (IApiComponent) element;
-			return MessageFormat.format(Messages.ApiToolsLabelProvider_0, new String[]{comp.getSymbolicName(), comp.getVersion()});
+			return MessageFormat.format(Messages.ApiToolsLabelProvider_0, new Object[] {
+					comp.getSymbolicName(), comp.getVersion() });
 		}
 		if (element instanceof File) {
 			try {
-				return ((File)element).getCanonicalPath();
+				return ((File) element).getCanonicalPath();
 			} catch (IOException e) {
-				return ((File)element).getName();
+				return ((File) element).getName();
 			}
 		}
-		if(element instanceof IApiBaseline) {
-			IApiBaseline baseline  = (IApiBaseline) element;
+		if (element instanceof IApiBaseline) {
+			IApiBaseline baseline = (IApiBaseline) element;
 			StringBuffer buffer = new StringBuffer();
 			buffer.append(baseline.getName());
-			if(isDefaultBaseline(baseline)) {
+			if (isDefaultBaseline(baseline)) {
 				buffer.append(NLS.bind(Messages.ApiToolsLabelProvider_default_baseline_place_holder, Messages.ApiToolsLabelProvider_default_baseline));
 			}
 			return buffer.toString();
 		}
-		if(element instanceof EEEntry) {
-			return ((EEEntry)element).toString();
+		if (element instanceof EEEntry) {
+			return ((EEEntry) element).toString();
 		}
-		if(element instanceof IApiProblemFilter) {
+		if (element instanceof IApiProblemFilter) {
 			IApiProblemFilter filter = (IApiProblemFilter) element;
 			return filter.getUnderlyingProblem().getMessage();
 		}
-		if(element instanceof IResource) {
+		if (element instanceof IResource) {
 			IResource resource = (IResource) element;
 			IPath path = resource.getProjectRelativePath();
 			StringBuffer buffer = new StringBuffer();
@@ -215,33 +244,37 @@ public class ApiToolsLabelProvider extends BaseLabelProvider implements ILabelPr
 			buffer.append(")"); //$NON-NLS-1$
 			return buffer.toString();
 		}
-		if(element instanceof String) {
+		if (element instanceof String) {
 			return (String) element;
 		}
 		return "<unknown>"; //$NON-NLS-1$
 	}
 
 	/**
-	 * Returns if the specified {@link IApiProfile} is the default profile or not
+	 * Returns if the specified {@link IApiProfile} is the default profile or
+	 * not
+	 * 
 	 * @param element
 	 * @return if the profile is the default or not
 	 */
 	protected boolean isDefaultBaseline(Object element) {
-		if(element instanceof IApiBaseline) {
+		if (element instanceof IApiBaseline) {
 			IApiBaseline profile = (IApiBaseline) element;
 			IApiBaseline def = ApiPlugin.getDefault().getApiBaselineManager().getDefaultApiBaseline();
-			if(def != null) {
+			if (def != null) {
 				return profile.getName().equals(def.getName());
 			}
 		}
 		return false;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.IFontProvider#getFont(java.lang.Object)
 	 */
+	@Override
 	public Font getFont(Object element) {
-		if(isDefaultBaseline(element)) {
+		if (isDefaultBaseline(element)) {
 			if (font == null) {
 				Font dialogFont = JFaceResources.getDialogFont();
 				FontData[] fontData = dialogFont.getFontData();

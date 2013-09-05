@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,161 +42,199 @@ import org.eclipse.pde.api.tools.internal.util.Util;
  * @since 1.0.0
  */
 public class Reference implements IReference {
-	
+
 	/**
 	 * Line number where the reference occurred.
 	 */
 	private int fSourceLine = -1;
-	
+
 	/**
 	 * Member where the reference occurred.
 	 */
 	private IApiMember fSourceMember;
-	
+
 	/**
-	 * One of the valid {@link org.eclipse.pde.api.tools.internal.provisional.search.ReferenceModifiers}
+	 * One of the valid
+	 * {@link org.eclipse.pde.api.tools.internal.provisional.search.ReferenceModifiers}
 	 */
 	private int fKind;
-	
+
 	/**
 	 * Flags for the reference
 	 */
 	private int fFlags = 0;
-	
+
 	/**
 	 * One of the valid type, method, field.
 	 */
 	private int fType;
-	
+
 	/**
 	 * Name of the referenced type
 	 */
 	private String fTypeName;
-	
+
 	/**
 	 * Name of the referenced member or <code>null</code>
 	 */
 	private String fMemberName;
-	
+
 	/**
 	 * Signature of the referenced method or <code>null</code>
 	 */
 	private String fSignature;
-	
+
 	/**
 	 * Resolved reference or <code>null</code>
 	 */
 	private IApiMember fResolved;
-	
+
 	/**
 	 * Resolvable status
 	 */
 	private boolean fStatus = true;
-	
+
 	/**
 	 * List of problems that have been reported against this problem
 	 */
-	private List fProblems = null;
-	
+	private List<IApiProblem> fProblems = null;
+
 	/**
-	 * Adds the given collection of {@link org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem}s
-	 * to the backing listing.
+	 * Adds the given collection of
+	 * {@link org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem}
+	 * s to the backing listing.
 	 * 
-	 * @param problems the list of problems to add - <code>null</code> is not accepted.
-	 * @return <code>true</code> if the problems were all added, <code>false</code> otherwise
+	 * @param problems the list of problems to add - <code>null</code> is not
+	 *            accepted.
+	 * @return <code>true</code> if the problems were all added,
+	 *         <code>false</code> otherwise
 	 * @since 1.1
 	 */
 	public boolean addProblems(IApiProblem problem) {
-		if(problem == null) {
+		if (problem == null) {
 			return false;
 		}
-		if(fProblems == null) {
-			fProblems = new ArrayList(2);
+		if (fProblems == null) {
+			fProblems = new ArrayList<IApiProblem>(2);
 		}
-		if(fProblems.contains(problem)) {
+		if (fProblems.contains(problem)) {
 			return false;
 		}
 		return fProblems.add(problem);
 	}
-	
+
 	/**
-	 * Returns the complete listing of {@link org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem}s
-	 * recorded for this reference or <code>null</code> if none have been reported.
+	 * Returns the complete listing of
+	 * {@link org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem}
+	 * s recorded for this reference or <code>null</code> if none have been
+	 * reported.
 	 * 
-	 * @return the listing of {@link org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem}s or <code>null</code>
+	 * @return the listing of
+	 *         {@link org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem}
+	 *         s or <code>null</code>
 	 * @since 1.1
 	 */
-	public List getProblems() {
+	public List<IApiProblem> getProblems() {
 		return fProblems;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IReference#getLineNumber()
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.provisional.model.IReference#getLineNumber
+	 * ()
 	 */
+	@Override
 	public int getLineNumber() {
 		return fSourceLine;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IReference#getMember()
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.provisional.model.IReference#getMember
+	 * ()
 	 */
+	@Override
 	public IApiMember getMember() {
 		return fSourceMember;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IReference#getReferenceKind()
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IReference#
+	 * getReferenceKind()
 	 */
+	@Override
 	public int getReferenceKind() {
 		return fKind;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.builder.IReference#getReferenceFlags()
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.builder.IReference#
+	 * getReferenceFlags()
 	 */
+	@Override
 	public int getReferenceFlags() {
 		return fFlags;
 	}
-	
+
 	/**
 	 * OR's the given set of new flags with the current set of flags
+	 * 
 	 * @param newflags
 	 */
 	public void setFlags(int newflags) {
 		fFlags |= newflags;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IReference#getReferenceType()
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IReference#
+	 * getReferenceType()
 	 */
+	@Override
 	public int getReferenceType() {
 		return fType;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IReference#getReferencedMember()
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IReference#
+	 * getReferencedMember()
 	 */
+	@Override
 	public IApiMember getResolvedReference() {
 		return fResolved;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IReference#getReferencedMemberName()
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IReference#
+	 * getReferencedMemberName()
 	 */
+	@Override
 	public String getReferencedMemberName() {
 		return fMemberName;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IReference#getReferencedSignature()
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IReference#
+	 * getReferencedSignature()
 	 */
+	@Override
 	public String getReferencedSignature() {
 		return fSignature;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IReference#getReferencedTypeName()
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IReference#
+	 * getReferencedTypeName()
 	 */
+	@Override
 	public String getReferencedTypeName() {
 		return fTypeName;
 	}
@@ -205,7 +243,8 @@ public class Reference implements IReference {
 	 * Creates and returns a method reference.
 	 * 
 	 * @param origin where the reference occurred from
-	 * @param typeName name of the referenced type where virtual method lookup begins
+	 * @param typeName name of the referenced type where virtual method lookup
+	 *            begins
 	 * @param methodName name of the referenced method
 	 * @param signature signature of the referenced method
 	 * @param kind kind of method reference
@@ -220,7 +259,7 @@ public class Reference implements IReference {
 		ref.fType = IReference.T_METHOD_REFERENCE;
 		return ref;
 	}
-	
+
 	/**
 	 * Creates and returns a field reference.
 	 * 
@@ -237,8 +276,8 @@ public class Reference implements IReference {
 		ref.fKind = kind;
 		ref.fType = IReference.T_FIELD_REFERENCE;
 		return ref;
-	}	
-	
+	}
+
 	/**
 	 * Creates and returns a type reference.
 	 * 
@@ -253,8 +292,8 @@ public class Reference implements IReference {
 		ref.fKind = kind;
 		ref.fType = IReference.T_TYPE_REFERENCE;
 		return ref;
-	}	
-	
+	}
+
 	/**
 	 * Creates and returns a type reference.
 	 * 
@@ -267,8 +306,8 @@ public class Reference implements IReference {
 		Reference ref = typeReference(origin, typeName, kind);
 		ref.fSignature = signature;
 		return ref;
-	}	
-	
+	}
+
 	/**
 	 * Sets the line number - used by the reference extractor.
 	 * 
@@ -277,9 +316,10 @@ public class Reference implements IReference {
 	void setLineNumber(int line) {
 		fSourceLine = line;
 	}
-	
+
 	/**
 	 * Resolves this reference
+	 * 
 	 * @throws CoreException
 	 */
 	public void resolve() throws CoreException {
@@ -288,59 +328,62 @@ public class Reference implements IReference {
 		}
 		if (fResolved == null) {
 			IApiComponent sourceComponent = getMember().getApiComponent();
-			if(sourceComponent != null) {
-				IApiTypeRoot result = Util.getClassFile(
-						sourceComponent.getBaseline().resolvePackage(sourceComponent, Signatures.getPackageName(getReferencedTypeName())),
-						getReferencedTypeName());
-				if(result != null) {
+			if (sourceComponent != null) {
+				IApiTypeRoot result = Util.getClassFile(sourceComponent.getBaseline().resolvePackage(sourceComponent, Signatures.getPackageName(getReferencedTypeName())), getReferencedTypeName());
+				if (result != null) {
 					IApiType type = result.getStructure();
-					if(type == null) {
-						//cannot resolve a type that is in a bad classfile
+					if (type == null) {
+						// cannot resolve a type that is in a bad classfile
 						return;
 					}
 					switch (getReferenceType()) {
-					case IReference.T_TYPE_REFERENCE:
-						fResolved = type;
-						break;
-					case IReference.T_FIELD_REFERENCE:
-						resolveField(type, getReferencedMemberName());
-						break;
-					case IReference.T_METHOD_REFERENCE:
-						resolveVirtualMethod(type, getReferencedMemberName(), getReferencedSignature());
-						break;
+						case IReference.T_TYPE_REFERENCE:
+							fResolved = type;
+							break;
+						case IReference.T_FIELD_REFERENCE:
+							resolveField(type, getReferencedMemberName());
+							break;
+						case IReference.T_METHOD_REFERENCE:
+							resolveVirtualMethod(type, getReferencedMemberName(), getReferencedSignature());
+							break;
+						default:
+							break;
 					}
 				}
 			}
 		}
-		// TODO: throw exception on failure
 	}
+
 	public boolean resolve(int eeValue) throws CoreException {
 		IApiComponent sourceComponent = StubApiComponent.getStubApiComponent(eeValue);
 		if (sourceComponent == null) {
-			// if there is no source component for the ee value, the reference is considered as resolved
+			// if there is no source component for the EE value, the reference
+			// is considered as resolved
 			return true;
 		}
-		IApiTypeRoot result = Util.getClassFile(
-				new IApiComponent[] { sourceComponent },
-				getReferencedTypeName());
-		if(result != null) {
+		IApiTypeRoot result = Util.getClassFile(new IApiComponent[] { sourceComponent }, getReferencedTypeName());
+		if (result != null) {
 			IApiType type = result.getStructure();
-			if(type == null) {
+			if (type == null) {
 				return false;
 			}
 			switch (getReferenceType()) {
-			case IReference.T_TYPE_REFERENCE:
-				return true;
-			case IReference.T_FIELD_REFERENCE:
-				return resolveField(type, getReferencedMemberName());
-			case IReference.T_METHOD_REFERENCE:
-				return resolveMethod(sourceComponent, type, getReferencedMemberName(), getReferencedSignature());
+				case IReference.T_TYPE_REFERENCE:
+					return true;
+				case IReference.T_FIELD_REFERENCE:
+					return resolveField(type, getReferencedMemberName());
+				case IReference.T_METHOD_REFERENCE:
+					return resolveMethod(sourceComponent, type, getReferencedMemberName(), getReferencedSignature());
+				default:
+					break;
 			}
 		}
 		return false;
-	}	
+	}
+
 	/**
 	 * Resolves the field in the parent class hierarchy
+	 * 
 	 * @param type the initial type to search
 	 * @param fieldame the name of the field
 	 * @return true if the field resolved
@@ -349,7 +392,7 @@ public class Reference implements IReference {
 	 */
 	private boolean resolveField(IApiType type, String fieldame) throws CoreException {
 		IApiField field = type.getField(fieldame);
-		if(field != null) {
+		if (field != null) {
 			fResolved = field;
 			return true;
 		}
@@ -359,12 +402,14 @@ public class Reference implements IReference {
 		}
 		return false;
 	}
+
 	/**
-	 * Resolves a virtual method and returns whether the method lookup was successful.
-	 * We need to resolve the actual type that implements the method - i.e. do the virtual
-	 * method lookup.
+	 * Resolves a virtual method and returns whether the method lookup was
+	 * successful. We need to resolve the actual type that implements the method
+	 * - i.e. do the virtual method lookup.
 	 * 
-	 * @param callSiteComponent the component where the method call site was located
+	 * @param callSiteComponent the component where the method call site was
+	 *            located
 	 * @param typeName referenced type name
 	 * @param methodName referenced method name
 	 * @param methodSignature referenced method signature
@@ -399,14 +444,15 @@ public class Reference implements IReference {
 			}
 		}
 		return false;
-	}		
+	}
 
 	/**
 	 * Resolves a method and returns whether the method lookup was successful.
-	 * We need to resolve the actual type that implements the method - i.e. do the virtual
-	 * method lookup.
+	 * We need to resolve the actual type that implements the method - i.e. do
+	 * the virtual method lookup.
 	 * 
-	 * @param callSiteComponent the component where the method call site was located
+	 * @param callSiteComponent the component where the method call site was
+	 *            located
 	 * @param typeName referenced type name
 	 * @param methodName referenced method name
 	 * @param methodSignature referenced method signature
@@ -423,15 +469,13 @@ public class Reference implements IReference {
 				return true;
 			}
 		}
-		switch(this.fKind) {
-			case IReference.REF_INTERFACEMETHOD : 
+		switch (this.fKind) {
+			case IReference.REF_INTERFACEMETHOD:
 				// resolve method in super interfaces rather than class
 				String[] interfacesNames = type.getSuperInterfaceNames();
 				if (interfacesNames != null) {
 					for (int i = 0, max = interfacesNames.length; i < max; i++) {
-						IApiTypeRoot classFile = Util.getClassFile(
-								new IApiComponent[] { sourceComponent },
-								interfacesNames[i]);
+						IApiTypeRoot classFile = Util.getClassFile(new IApiComponent[] { sourceComponent }, interfacesNames[i]);
 						if (classFile == null) {
 							ApiPlugin.logErrorMessage("Class file for " + interfacesNames[i] + " was not found for " + sourceComponent.getName()); //$NON-NLS-1$ //$NON-NLS-2$
 							return false;
@@ -443,12 +487,10 @@ public class Reference implements IReference {
 					}
 				}
 				break;
-			case IReference.REF_STATICMETHOD :
+			case IReference.REF_STATICMETHOD:
 				String superclassName = type.getSuperclassName();
 				if (superclassName != null) {
-					IApiTypeRoot classFile = Util.getClassFile(
-							new IApiComponent[] { sourceComponent },
-							superclassName);
+					IApiTypeRoot classFile = Util.getClassFile(new IApiComponent[] { sourceComponent }, superclassName);
 					if (classFile == null) {
 						ApiPlugin.logErrorMessage("Class file for " + superclassName + " was not found for " + sourceComponent.getName()); //$NON-NLS-1$ //$NON-NLS-2$
 						return false;
@@ -460,9 +502,10 @@ public class Reference implements IReference {
 					}
 				}
 				break;
-			case IReference.REF_VIRTUALMETHOD :
-			case IReference.REF_SPECIALMETHOD :
-				// check polymorphic methods: polymorphic method signature is ([Ljava/lang/Object;)Ljava/lang/Object;
+			case IReference.REF_VIRTUALMETHOD:
+			case IReference.REF_SPECIALMETHOD:
+				// check polymorphic methods: polymorphic method signature is
+				// ([Ljava/lang/Object;)Ljava/lang/Object;
 				target = type.getMethod(methodName, "([Ljava/lang/Object;)Ljava/lang/Object;"); //$NON-NLS-1$
 				if (target != null) {
 					if (methodName.equals(target.getName()) && target.isPolymorphic()) {
@@ -471,9 +514,7 @@ public class Reference implements IReference {
 				}
 				superclassName = type.getSuperclassName();
 				if (superclassName != null) {
-					IApiTypeRoot classFile = Util.getClassFile(
-							new IApiComponent[] { sourceComponent },
-							superclassName);
+					IApiTypeRoot classFile = Util.getClassFile(new IApiComponent[] { sourceComponent }, superclassName);
 					if (classFile == null) {
 						ApiPlugin.logErrorMessage("Class file for " + superclassName + " was not found for " + sourceComponent.getName()); //$NON-NLS-1$ //$NON-NLS-2$
 						return false;
@@ -488,9 +529,7 @@ public class Reference implements IReference {
 					interfacesNames = type.getSuperInterfaceNames();
 					if (interfacesNames != null) {
 						for (int i = 0, max = interfacesNames.length; i < max; i++) {
-							IApiTypeRoot classFile = Util.getClassFile(
-									new IApiComponent[] { sourceComponent },
-									interfacesNames[i]);
+							IApiTypeRoot classFile = Util.getClassFile(new IApiComponent[] { sourceComponent }, interfacesNames[i]);
 							if (classFile == null) {
 								ApiPlugin.logErrorMessage("Class file for " + interfacesNames[i] + " was not found for " + sourceComponent.getName()); //$NON-NLS-1$ //$NON-NLS-2$
 								return false;
@@ -502,9 +541,13 @@ public class Reference implements IReference {
 						}
 					}
 				}
+				break;
+			default:
+				break;
 		}
 		return false;
 	}
+
 	/**
 	 * Used by the search engine when resolving multiple references.
 	 * 
@@ -513,10 +556,12 @@ public class Reference implements IReference {
 	public void setResolution(IApiMember resolution) {
 		fResolved = resolution;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		StringBuffer buf = new StringBuffer();
 		buf.append("From: "); //$NON-NLS-1$
@@ -542,13 +587,13 @@ public class Reference implements IReference {
 		buf.append(Reference.getReferenceText(getReferenceKind()));
 		return buf.toString();
 	}
-	
+
 	public void setResolveStatus(boolean value) {
 		this.fStatus = value;
 	}
 
 	/**
-	 * Returns the string representation for the given reference kind or 
+	 * Returns the string representation for the given reference kind or
 	 * <code>UKNOWN_KIND</code> if the kind cannot be determined.
 	 * 
 	 * @param kind the kid(s) to get the display text for
@@ -557,199 +602,200 @@ public class Reference implements IReference {
 	 */
 	public static final String getReferenceText(int kind) {
 		StringBuffer buffer = new StringBuffer();
-		if((kind & IReference.REF_EXTENDS) > 0) {
-				buffer.append("EXTENDS"); //$NON-NLS-1$
+		if ((kind & IReference.REF_EXTENDS) > 0) {
+			buffer.append("EXTENDS"); //$NON-NLS-1$
 		}
-		if((kind & IReference.REF_IMPLEMENTS) > 0) {
-			if(buffer.length() != 0) {
+		if ((kind & IReference.REF_IMPLEMENTS) > 0) {
+			if (buffer.length() != 0) {
 				buffer.append(" | "); //$NON-NLS-1$
 			}
 			buffer.append("IMPLEMENTS"); //$NON-NLS-1$
 		}
 		if ((kind & IReference.REF_SPECIALMETHOD) > 0) {
-			if(buffer.length() != 0) {
+			if (buffer.length() != 0) {
 				buffer.append(" | "); //$NON-NLS-1$
 			}
 			buffer.append("INVOKED_SPECIAL"); //$NON-NLS-1$
 		}
-		if((kind & IReference.REF_STATICMETHOD) > 0) {
-			if(buffer.length() != 0) {
+		if ((kind & IReference.REF_STATICMETHOD) > 0) {
+			if (buffer.length() != 0) {
 				buffer.append(" | "); //$NON-NLS-1$
 			}
 			buffer.append("INVOKED_STATIC"); //$NON-NLS-1$
 		}
-		if((kind & IReference.REF_PUTFIELD) > 0) {
-			if(buffer.length() != 0) {
+		if ((kind & IReference.REF_PUTFIELD) > 0) {
+			if (buffer.length() != 0) {
 				buffer.append(" | "); //$NON-NLS-1$
 			}
 			buffer.append("PUT_FIELD"); //$NON-NLS-1$
 		}
-		if((kind & IReference.REF_PUTSTATIC) > 0) {
-			if(buffer.length() != 0) {
+		if ((kind & IReference.REF_PUTSTATIC) > 0) {
+			if (buffer.length() != 0) {
 				buffer.append(" | "); //$NON-NLS-1$
 			}
 			buffer.append("PUT_STATIC_FIELD"); //$NON-NLS-1$
 		}
-		if((kind & IReference.REF_FIELDDECL) > 0) {
-			if(buffer.length() != 0) {
+		if ((kind & IReference.REF_FIELDDECL) > 0) {
+			if (buffer.length() != 0) {
 				buffer.append(" | "); //$NON-NLS-1$
 			}
 			buffer.append("DECLARED_FIELD"); //$NON-NLS-1$
 		}
-		if((kind & IReference.REF_PARAMETERIZED_TYPEDECL) > 0) {
-			if(buffer.length() != 0) {
+		if ((kind & IReference.REF_PARAMETERIZED_TYPEDECL) > 0) {
+			if (buffer.length() != 0) {
 				buffer.append(" | "); //$NON-NLS-1$
 			}
 			buffer.append("DECLARED_PARAMETERIZED_TYPE"); //$NON-NLS-1$
 		}
-		if((kind & IReference.REF_PARAMETERIZED_FIELDDECL) > 0) {
-			if(buffer.length() != 0) {
+		if ((kind & IReference.REF_PARAMETERIZED_FIELDDECL) > 0) {
+			if (buffer.length() != 0) {
 				buffer.append(" | "); //$NON-NLS-1$
 			}
 			buffer.append("DECLARED_PARAMETERIZED_FIELD"); //$NON-NLS-1$
 		}
-		if((kind & IReference.REF_PARAMETERIZED_METHODDECL) > 0) {
-			if(buffer.length() != 0) {
+		if ((kind & IReference.REF_PARAMETERIZED_METHODDECL) > 0) {
+			if (buffer.length() != 0) {
 				buffer.append(" | "); //$NON-NLS-1$
 			}
 			buffer.append("DECLARED_PARAMETERIZED_METHOD"); //$NON-NLS-1$
 		}
-		if((kind & IReference.REF_PARAMETER) > 0) {
-			if(buffer.length() != 0) {
+		if ((kind & IReference.REF_PARAMETER) > 0) {
+			if (buffer.length() != 0) {
 				buffer.append(" | "); //$NON-NLS-1$
 			}
 			buffer.append("PARAMETER"); //$NON-NLS-1$
 		}
-		if((kind & IReference.REF_LOCALVARIABLEDECL) > 0) {
-			if(buffer.length() != 0) {
+		if ((kind & IReference.REF_LOCALVARIABLEDECL) > 0) {
+			if (buffer.length() != 0) {
 				buffer.append(" | "); //$NON-NLS-1$
 			}
 			buffer.append("LOCAL_VAR_DECLARED"); //$NON-NLS-1$
 		}
-		if((kind & IReference.REF_PARAMETERIZED_VARIABLE) > 0) {
-			if(buffer.length() != 0) {
+		if ((kind & IReference.REF_PARAMETERIZED_VARIABLE) > 0) {
+			if (buffer.length() != 0) {
 				buffer.append(" | "); //$NON-NLS-1$
 			}
 			buffer.append("DECLARED_PARAMETERIZED_VARIABLE"); //$NON-NLS-1$
 		}
-		if((kind & IReference.REF_THROWS) > 0) {
-			if(buffer.length() != 0) {
+		if ((kind & IReference.REF_THROWS) > 0) {
+			if (buffer.length() != 0) {
 				buffer.append(" | "); //$NON-NLS-1$
 			}
 			buffer.append("THROWS"); //$NON-NLS-1$
 		}
-		if((kind & IReference.REF_CHECKCAST) > 0) {
-			if(buffer.length() != 0) {
+		if ((kind & IReference.REF_CHECKCAST) > 0) {
+			if (buffer.length() != 0) {
 				buffer.append(" | "); //$NON-NLS-1$
 			}
 			buffer.append("CASTS"); //$NON-NLS-1$
 		}
-		if((kind & IReference.REF_ARRAYALLOC) > 0) {
-			if(buffer.length() != 0) {
+		if ((kind & IReference.REF_ARRAYALLOC) > 0) {
+			if (buffer.length() != 0) {
 				buffer.append(" | "); //$NON-NLS-1$
 			}
 			buffer.append("ALLOCATES_ARRAY"); //$NON-NLS-1$
 		}
-		if((kind & IReference.REF_CATCHEXCEPTION) > 0) {
-			if(buffer.length() != 0) {
+		if ((kind & IReference.REF_CATCHEXCEPTION) > 0) {
+			if (buffer.length() != 0) {
 				buffer.append(" | "); //$NON-NLS-1$
 			}
 			buffer.append("CATCHES_EXCEPTION"); //$NON-NLS-1$
 		}
-		if((kind & IReference.REF_GETFIELD) > 0) {
-			if(buffer.length() != 0) {
+		if ((kind & IReference.REF_GETFIELD) > 0) {
+			if (buffer.length() != 0) {
 				buffer.append(" | "); //$NON-NLS-1$
 			}
 			buffer.append("GETS_FIELD"); //$NON-NLS-1$
 		}
-		if((kind & IReference.REF_GETSTATIC) > 0) {
-			if(buffer.length() != 0) {
+		if ((kind & IReference.REF_GETSTATIC) > 0) {
+			if (buffer.length() != 0) {
 				buffer.append(" | "); //$NON-NLS-1$
 			}
 			buffer.append("GETS_STATIC_FIELD"); //$NON-NLS-1$
 		}
-		if((kind & IReference.REF_INSTANCEOF) > 0) {
-			if(buffer.length() != 0) {
+		if ((kind & IReference.REF_INSTANCEOF) > 0) {
+			if (buffer.length() != 0) {
 				buffer.append(" | "); //$NON-NLS-1$
 			}
 			buffer.append("INSTANCEOF"); //$NON-NLS-1$
 		}
-		if((kind & IReference.REF_INTERFACEMETHOD) > 0) {
-			if(buffer.length() != 0) {
+		if ((kind & IReference.REF_INTERFACEMETHOD) > 0) {
+			if (buffer.length() != 0) {
 				buffer.append(" | "); //$NON-NLS-1$
 			}
 			buffer.append("INTERFACE_METHOD"); //$NON-NLS-1$
 		}
-		if((kind & IReference.REF_CONSTRUCTORMETHOD) > 0) {
-			if(buffer.length() != 0) {
+		if ((kind & IReference.REF_CONSTRUCTORMETHOD) > 0) {
+			if (buffer.length() != 0) {
 				buffer.append(" | "); //$NON-NLS-1$
 			}
 			buffer.append("CONSTRUCTOR_METHOD"); //$NON-NLS-1$
 		}
-		if((kind & IReference.REF_LOCALVARIABLE) > 0) {
-			if(buffer.length() != 0) {
+		if ((kind & IReference.REF_LOCALVARIABLE) > 0) {
+			if (buffer.length() != 0) {
 				buffer.append(" | "); //$NON-NLS-1$
 			}
 			buffer.append("LOCAL_VARIABLE"); //$NON-NLS-1$
 		}
-		if((kind & IReference.REF_PASSEDPARAMETER) > 0) {
-			if(buffer.length() != 0) {
+		if ((kind & IReference.REF_PASSEDPARAMETER) > 0) {
+			if (buffer.length() != 0) {
 				buffer.append(" | "); //$NON-NLS-1$
 			}
 			buffer.append("PASSED_PARAMETER"); //$NON-NLS-1$
 		}
-		if((kind & IReference.REF_RETURNTYPE) > 0) {
-			if(buffer.length() != 0) {
+		if ((kind & IReference.REF_RETURNTYPE) > 0) {
+			if (buffer.length() != 0) {
 				buffer.append(" | "); //$NON-NLS-1$
 			}
 			buffer.append("RETURN_TYPE"); //$NON-NLS-1$
 		}
-		if((kind & IReference.REF_VIRTUALMETHOD) > 0) {
-			if(buffer.length() != 0) {
+		if ((kind & IReference.REF_VIRTUALMETHOD) > 0) {
+			if (buffer.length() != 0) {
 				buffer.append(" | "); //$NON-NLS-1$
 			}
 			buffer.append("VIRTUAL_METHOD"); //$NON-NLS-1$
 		}
-		if((kind & IReference.REF_CONSTANTPOOL) > 0) {
-			if(buffer.length() != 0) {
+		if ((kind & IReference.REF_CONSTANTPOOL) > 0) {
+			if (buffer.length() != 0) {
 				buffer.append(" | "); //$NON-NLS-1$
 			}
 			buffer.append("CONSTANT_POOL"); //$NON-NLS-1$
 		}
-		if((kind & IReference.REF_INSTANTIATE) > 0) {
-			if(buffer.length() != 0) {
+		if ((kind & IReference.REF_INSTANTIATE) > 0) {
+			if (buffer.length() != 0) {
 				buffer.append(" | "); //$NON-NLS-1$
 			}
 			buffer.append("INSTANTIATION"); //$NON-NLS-1$
 		}
-		if((kind & IReference.REF_OVERRIDE) > 0) {
-			if(buffer.length() != 0) {
+		if ((kind & IReference.REF_OVERRIDE) > 0) {
+			if (buffer.length() != 0) {
 				buffer.append(" | "); //$NON-NLS-1$
 			}
 			buffer.append("OVERRIDE"); //$NON-NLS-1$
 		}
-		if((kind & IReference.REF_SUPER_CONSTRUCTORMETHOD) > 0) {
-			if(buffer.length() != 0) {
+		if ((kind & IReference.REF_SUPER_CONSTRUCTORMETHOD) > 0) {
+			if (buffer.length() != 0) {
 				buffer.append(" | "); //$NON-NLS-1$
 			}
 			buffer.append("SUPER_CONSTRUCTORMETHOD"); //$NON-NLS-1$
 		}
-		if((kind & IReference.REF_ANNOTATION_USE) > 0) {
-			if(buffer.length() != 0) {
+		if ((kind & IReference.REF_ANNOTATION_USE) > 0) {
+			if (buffer.length() != 0) {
 				buffer.append(" | "); //$NON-NLS-1$
 			}
 			buffer.append("ANNOTATION_USE"); //$NON-NLS-1$
 		}
-		if(buffer.length() == 0) {
+		if (buffer.length() == 0) {
 			buffer.append(Util.UNKNOWN_KIND);
 		}
 		return buffer.toString();
 	}
-	
+
 	/**
 	 * Builds a reference descriptor from this reference or <code>null</code>.
 	 * 
-	 * @return corresponding reference descriptor or <code>null</code> if unresolved
+	 * @return corresponding reference descriptor or <code>null</code> if
+	 *         unresolved
 	 * @throws CoreException if unable to resolve visibility
 	 */
 	public IReferenceDescriptor getReferenceDescriptor() throws CoreException {
@@ -762,43 +808,39 @@ public class Reference implements IReference {
 		IApiAnnotations annot = description.resolveAnnotations(getResolvedReference().getHandle());
 		int visibility = -1;
 		IApiComponent mcomponent = getMember().getApiComponent();
-		if(annot != null) {
+		if (annot != null) {
 			visibility = annot.getVisibility();
-			if(annot.getVisibility() == VisibilityModifiers.PRIVATE) {
+			if (annot.getVisibility() == VisibilityModifiers.PRIVATE) {
 				IApiComponent host = mcomponent.getHost();
-				if(host != null && host.getSymbolicName().equals(rcomponent.getSymbolicName())) {
+				if (host != null && host.getSymbolicName().equals(rcomponent.getSymbolicName())) {
 					visibility = UseReportConverter.FRAGMENT_PERMISSIBLE;
-				}
-				else {
-					IApiAccess access = description.resolveAccessLevel(
-							Factory.componentDescriptor(mcomponent.getSymbolicName()),  // component descriptors in API description are not version qualified
+				} else {
+					IApiAccess access = description.resolveAccessLevel(Factory.componentDescriptor(mcomponent.getSymbolicName()), // component
+																																	// descriptors
+																																	// in
+																																	// API
+																																	// description
+																																	// are
+																																	// not
+																																	// version
+																																	// qualified
 							getResolvedReference().getHandle().getPackage());
-					if(access != null && access.getAccessLevel() == IApiAccess.FRIEND) {
+					if (access != null && access.getAccessLevel() == IApiAccess.FRIEND) {
 						visibility = VisibilityModifiers.PRIVATE_PERMISSIBLE;
 					}
 				}
 			}
-		}
-		else {
-			//overflow for those references that cannot be resolved
+		} else {
+			// overflow for those references that cannot be resolved
 			visibility = VisibilityModifiers.ALL_VISIBILITIES;
 		}
 		String[] messages = null;
-		if(fProblems != null) {
+		if (fProblems != null) {
 			messages = new String[fProblems.size()];
 			for (int i = 0; i < messages.length; i++) {
-				messages[i] = ((IApiProblem)fProblems.get(i)).getMessage();
+				messages[i] = fProblems.get(i).getMessage();
 			}
 		}
-		return Factory.referenceDescriptor(
-				(IComponentDescriptor)mcomponent.getHandle(),
-				getMember().getHandle(),
-				getLineNumber(),
-				(IComponentDescriptor)rcomponent.getHandle(),
-				res.getHandle(),
-				getReferenceKind(),
-				getReferenceFlags(),
-				visibility,
-				messages);
+		return Factory.referenceDescriptor((IComponentDescriptor) mcomponent.getHandle(), getMember().getHandle(), getLineNumber(), (IComponentDescriptor) rcomponent.getHandle(), res.getHandle(), getReferenceKind(), getReferenceFlags(), visibility, messages);
 	}
 }

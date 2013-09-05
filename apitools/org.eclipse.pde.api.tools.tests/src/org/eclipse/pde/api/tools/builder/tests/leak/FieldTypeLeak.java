@@ -38,6 +38,7 @@ public class FieldTypeLeak extends LeakTest {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getDefaultProblemId()
 	 */
+	@Override
 	protected int getDefaultProblemId() {
 		if(pid == -1){
 			pid = ApiProblemFactory.createProblemId(
@@ -59,8 +60,9 @@ public class FieldTypeLeak extends LeakTest {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.leak.LeakTest#getTestSourcePath()
 	 */
+	@Override
 	protected IPath getTestSourcePath() {
-		return super.getTestSourcePath().append("field");
+		return super.getTestSourcePath().append("field"); //$NON-NLS-1$
 	}
 	
 	/**
@@ -81,14 +83,14 @@ public class FieldTypeLeak extends LeakTest {
 	
 	private void x1(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemIdSet(4));
-		String typename = "testFTL1";
+		String typename = "testFTL1"; //$NON-NLS-1$
 		setExpectedMessageArgs(new String[][] {
-				{TESTING_INTERNAL_CLASS_NAME, typename, "f1"},
-				{TESTING_INTERNAL_INTERFACE_NAME, typename, "f2"},
-				{TESTING_INTERNAL_CLASS_NAME, typename, "f3"},
-				{TESTING_INTERNAL_INTERFACE_NAME, typename, "f4"}
+				{TESTING_INTERNAL_CLASS_NAME, typename, "f1"}, //$NON-NLS-1$
+				{TESTING_INTERNAL_INTERFACE_NAME, typename, "f2"}, //$NON-NLS-1$
+				{TESTING_INTERNAL_CLASS_NAME, typename, "f3"}, //$NON-NLS-1$
+				{TESTING_INTERNAL_INTERFACE_NAME, typename, "f4"} //$NON-NLS-1$
 		});
-		deployLeakTest(typename+".java", inc);
+		deployLeakTest(typename+".java", inc); //$NON-NLS-1$
 	}
 	
 	/**
@@ -109,19 +111,19 @@ public class FieldTypeLeak extends LeakTest {
 	
 	private void x2(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemIdSet(8));
-		String typename = "testFTL2";
-		String innertype = "inner";
+		String typename = "testFTL2"; //$NON-NLS-1$
+		String innertype = "inner"; //$NON-NLS-1$
 		setExpectedMessageArgs(new String[][] {
-				{TESTING_INTERNAL_CLASS_NAME, typename, "f1"},
-				{TESTING_INTERNAL_INTERFACE_NAME, typename, "f2"},
-				{TESTING_INTERNAL_CLASS_NAME, typename, "f3"},
-				{TESTING_INTERNAL_INTERFACE_NAME, typename, "f4"},
-				{TESTING_INTERNAL_CLASS_NAME, innertype, "f1"},
-				{TESTING_INTERNAL_INTERFACE_NAME, innertype, "f2"},
-				{TESTING_INTERNAL_CLASS_NAME, innertype, "f3"},
-				{TESTING_INTERNAL_INTERFACE_NAME, innertype, "f4"}
+				{TESTING_INTERNAL_CLASS_NAME, typename, "f1"}, //$NON-NLS-1$
+				{TESTING_INTERNAL_INTERFACE_NAME, typename, "f2"}, //$NON-NLS-1$
+				{TESTING_INTERNAL_CLASS_NAME, typename, "f3"}, //$NON-NLS-1$
+				{TESTING_INTERNAL_INTERFACE_NAME, typename, "f4"}, //$NON-NLS-1$
+				{TESTING_INTERNAL_CLASS_NAME, innertype, "f1"}, //$NON-NLS-1$
+				{TESTING_INTERNAL_INTERFACE_NAME, innertype, "f2"}, //$NON-NLS-1$
+				{TESTING_INTERNAL_CLASS_NAME, innertype, "f3"}, //$NON-NLS-1$
+				{TESTING_INTERNAL_INTERFACE_NAME, innertype, "f4"} //$NON-NLS-1$
 		});
-		deployLeakTest(typename+".java", inc);
+		deployLeakTest(typename+".java", inc); //$NON-NLS-1$
 	}
 	
 	/**
@@ -142,8 +144,8 @@ public class FieldTypeLeak extends LeakTest {
 	
 	private void x3(boolean inc) {
 		expectingNoProblems();
-		String typename = "testFTL3";
-		deployLeakTest(typename+".java", inc);
+		String typename = "testFTL3"; //$NON-NLS-1$
+		deployLeakTest(typename+".java", inc); //$NON-NLS-1$
 	}
 	
 	/**
@@ -164,19 +166,19 @@ public class FieldTypeLeak extends LeakTest {
 	
 	private void x4(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemIdSet(8));
-		String typename = "testFTL4";
-		String innertype = "inner";
+		String typename = "testFTL4"; //$NON-NLS-1$
+		String innertype = "inner"; //$NON-NLS-1$
 		setExpectedMessageArgs(new String[][] {
-				{TESTING_INTERNAL_CLASS_NAME, typename, "f1"},
-				{TESTING_INTERNAL_INTERFACE_NAME, typename, "f2"},
-				{TESTING_INTERNAL_CLASS_NAME, typename, "f3"},
-				{TESTING_INTERNAL_INTERFACE_NAME, typename, "f4"},
-				{TESTING_INTERNAL_CLASS_NAME, innertype, "f1"},
-				{TESTING_INTERNAL_INTERFACE_NAME, innertype, "f2"},
-				{TESTING_INTERNAL_CLASS_NAME, innertype, "f3"},
-				{TESTING_INTERNAL_INTERFACE_NAME, innertype, "f4"}
+				{TESTING_INTERNAL_CLASS_NAME, typename, "f1"}, //$NON-NLS-1$
+				{TESTING_INTERNAL_INTERFACE_NAME, typename, "f2"}, //$NON-NLS-1$
+				{TESTING_INTERNAL_CLASS_NAME, typename, "f3"}, //$NON-NLS-1$
+				{TESTING_INTERNAL_INTERFACE_NAME, typename, "f4"}, //$NON-NLS-1$
+				{TESTING_INTERNAL_CLASS_NAME, innertype, "f1"}, //$NON-NLS-1$
+				{TESTING_INTERNAL_INTERFACE_NAME, innertype, "f2"}, //$NON-NLS-1$
+				{TESTING_INTERNAL_CLASS_NAME, innertype, "f3"}, //$NON-NLS-1$
+				{TESTING_INTERNAL_INTERFACE_NAME, innertype, "f4"} //$NON-NLS-1$
 		});
-		deployLeakTest(typename+".java", inc);
+		deployLeakTest(typename+".java", inc); //$NON-NLS-1$
 	}
 	
 	/**
@@ -197,19 +199,19 @@ public class FieldTypeLeak extends LeakTest {
 	
 	private void x5(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemIdSet(8));
-		String typename = "testFTL5";
-		String innertype = "inner";
+		String typename = "testFTL5"; //$NON-NLS-1$
+		String innertype = "inner"; //$NON-NLS-1$
 		setExpectedMessageArgs(new String[][] {
-				{TESTING_INTERNAL_CLASS_NAME, typename, "f1"},
-				{TESTING_INTERNAL_INTERFACE_NAME, typename, "f2"},
-				{TESTING_INTERNAL_CLASS_NAME, typename, "f3"},
-				{TESTING_INTERNAL_INTERFACE_NAME, typename, "f4"},
-				{TESTING_INTERNAL_CLASS_NAME, innertype, "f1"},
-				{TESTING_INTERNAL_INTERFACE_NAME, innertype, "f2"},
-				{TESTING_INTERNAL_CLASS_NAME, innertype, "f3"},
-				{TESTING_INTERNAL_INTERFACE_NAME, innertype, "f4"}
+				{TESTING_INTERNAL_CLASS_NAME, typename, "f1"}, //$NON-NLS-1$
+				{TESTING_INTERNAL_INTERFACE_NAME, typename, "f2"}, //$NON-NLS-1$
+				{TESTING_INTERNAL_CLASS_NAME, typename, "f3"}, //$NON-NLS-1$
+				{TESTING_INTERNAL_INTERFACE_NAME, typename, "f4"}, //$NON-NLS-1$
+				{TESTING_INTERNAL_CLASS_NAME, innertype, "f1"}, //$NON-NLS-1$
+				{TESTING_INTERNAL_INTERFACE_NAME, innertype, "f2"}, //$NON-NLS-1$
+				{TESTING_INTERNAL_CLASS_NAME, innertype, "f3"}, //$NON-NLS-1$
+				{TESTING_INTERNAL_INTERFACE_NAME, innertype, "f4"} //$NON-NLS-1$
 		});
-		deployLeakTest(typename+".java", inc);
+		deployLeakTest(typename+".java", inc); //$NON-NLS-1$
 	}
 	
 	/**
@@ -229,10 +231,10 @@ public class FieldTypeLeak extends LeakTest {
 	}
 	
 	private void x6(boolean inc) {
-		String typename = "testFTL6";
+		String typename = "testFTL6"; //$NON-NLS-1$
 		expectingNoProblems();
 		// no problems expected
-		deployLeakTest(typename+".java", inc);
+		deployLeakTest(typename+".java", inc); //$NON-NLS-1$
 	}	
 	
 	/**
@@ -252,10 +254,10 @@ public class FieldTypeLeak extends LeakTest {
 	}
 	
 	private void x7(boolean inc) {
-		String typename = "testFTL7";
+		String typename = "testFTL7"; //$NON-NLS-1$
 		expectingNoProblems();
 		// no problems expected
-		deployLeakTest(typename+".java", inc);
+		deployLeakTest(typename+".java", inc); //$NON-NLS-1$
 	}		
 	
 	/**
@@ -276,14 +278,14 @@ public class FieldTypeLeak extends LeakTest {
 	
 	private void x8(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemIdSet(4));
-		String typename = "testFTL8";
-		String fieldType = "outerFTL8";
+		String typename = "testFTL8"; //$NON-NLS-1$
+		String fieldType = "outerFTL8"; //$NON-NLS-1$
 		setExpectedMessageArgs(new String[][] {
-				{fieldType, typename, "f1"},
-				{fieldType, typename, "f2"},
-				{fieldType, typename, "f3"},
-				{fieldType, typename, "f4"},
+				{fieldType, typename, "f1"}, //$NON-NLS-1$
+				{fieldType, typename, "f2"}, //$NON-NLS-1$
+				{fieldType, typename, "f3"}, //$NON-NLS-1$
+				{fieldType, typename, "f4"}, //$NON-NLS-1$
 		});
-		deployLeakTest(typename+".java", inc);
+		deployLeakTest(typename+".java", inc); //$NON-NLS-1$
 	}	
 }

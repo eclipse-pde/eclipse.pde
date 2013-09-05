@@ -32,19 +32,20 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiScope;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
+import org.eclipse.pde.api.tools.internal.provisional.search.ApiSearchEngine;
 import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor;
 
 /**
  * Default implementation of an {@link IApiSearchRequestor} to use with the
- * {@link ApiSearchEngine}. This requestor returns a search scope
- * composed of the dependent (visible) {@link IApiComponent}s for the given 
+ * {@link ApiSearchEngine}. This requestor returns a search scope composed of
+ * the dependent (visible) {@link IApiComponent}s for the given
  * {@link IApiElement}
  * 
  * <p>
- * The references are filtered based on api filter stores.  The filters may
- * come from a .api_filters found in the component or a separate filter location
- * set in the ant task via {@link #setFilterRoot(String)}.  If filter files are
- * found in both locations, the filters at both will be applied.  
+ * The references are filtered based on api filter stores. The filters may come
+ * from a .api_filters found in the component or a separate filter location set
+ * in the ant task via {@link #setFilterRoot(String)}. If filter files are found
+ * in both locations, the filters at both will be applied.
  * </p>
  * 
  * @since 1.0.0
@@ -54,28 +55,33 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 	/**
 	 * The backing elements to search with
 	 */
-	private Set fComponentIds = null;
+	private Set<String> fComponentIds = null;
 
 	/**
-	 * The current {@link IApiFilterStore} from the current {@link IApiComponent} context we are visiting.
+	 * The current {@link IApiFilterStore} from the current
+	 * {@link IApiComponent} context we are visiting.
 	 */
 	private IApiFilterStore currentStore = null;
-	
+
 	/**
-	 * The current {@link IApiFilterStore} for the current {@link IApiComponent} context that we
-	 * are visiting.  The filter store will be created by finding each component's filter file in the
-	 * root filter location {@link #antFilterRoot}.
+	 * The current {@link IApiFilterStore} for the current {@link IApiComponent}
+	 * context that we are visiting. The filter store will be created by finding
+	 * each component's filter file in the root filter location
+	 * {@link #antFilterRoot}.
 	 */
 	private IApiFilterStore antStore = null;
-	
+
 	/**
-	 * The root directory of the .api_filters files that should be used to filter references.
+	 * The root directory of the .api_filters files that should be used to
+	 * filter references.
 	 * 
-	 * The .api_filters files specify specific problems to ignore during api analysis. During the use scan, the 
-	 * problem filters will be used to filter the use scan results.
-	 *
-	 * The root is specified using an absolute path.
-	 * The root needs to contain the following structure: 
+	 * The .api_filters files specify specific problems to ignore during api
+	 * analysis. During the use scan, the problem filters will be used to filter
+	 * the use scan results.
+	 * 
+	 * The root is specified using an absolute path. The root needs to contain
+	 * the following structure:
+	 * 
 	 * <pre>
 	 * root
 	 *  |
@@ -85,17 +91,17 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 	 * </pre>
 	 */
 	private String antFilterRoot = null;
-	
+
 	/**
 	 * The mask to use while searching
 	 */
 	private int fSearchMask = 0;
-	
+
 	/**
 	 * The search scope for this requestor
 	 */
 	private IApiScope fScope = null;
-	
+
 	/**
 	 * Patterns for jar API type roots to not scan
 	 */
@@ -103,62 +109,81 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 
 	/**
 	 * The default {@link ReferenceAnalyzer} for detecting illegal API use
+	 * 
 	 * @see #includesIllegalUse()
 	 */
 	ReferenceAnalyzer fAnalyzer = null;
-	
+
 	/**
 	 * Constructor
-	 * @param elements an array of {@link IApiElement}s for the search engine to use
-	 * @param scope the raw list of {@link IApiElement}s to extract references from
-	 * @param searchkinds the kinds of references to search for. 
-	 * <br>Options include: 
-	 * <ol>
-	 * <li>{@link #INCLUDE_API}</li>
-	 * <li>{@link #INCLUDE_INTERNAL}</li>
-	 * </ol>
+	 * 
+	 * @param elements an array of {@link IApiElement}s for the search engine to
+	 *            use
+	 * @param scope the raw list of {@link IApiElement}s to extract references
+	 *            from
+	 * @param searchkinds the kinds of references to search for. <br>
+	 *            Options include:
+	 *            <ol>
+	 *            <li>{@link #INCLUDE_API}</li>
+	 *            <li>{@link #INCLUDE_INTERNAL}</li>
+	 *            </ol>
 	 */
-	public UseSearchRequestor(Set/*<String>*/ elementnames, IApiElement[] scope, int searchkinds) {
+	public UseSearchRequestor(Set<String> elementnames, IApiElement[] scope, int searchkinds) {
 		fSearchMask = searchkinds;
 		fComponentIds = elementnames;
 		fAnalyzer = new ReferenceAnalyzer();
 		prepareScope(scope);
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor#acceptComponent(org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent)
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor
+	 * #acceptComponent(org.eclipse.pde.api.tools.internal.provisional.model.
+	 * IApiComponent)
 	 */
+	@Override
 	public boolean acceptComponent(IApiComponent component) {
 		try {
-			if(!component.isSystemComponent() && getScope().encloses(component)) {
-				if(includesIllegalUse()) {
+			if (!component.isSystemComponent() && getScope().encloses(component)) {
+				if (includesIllegalUse()) {
 					fAnalyzer.buildProblemDetectors(component, ProblemDetectorBuilder.K_USE, null);
 				}
 				currentStore = component.getFilterStore();
-				antStore = antFilterRoot != null ? new AntFilterStore(antFilterRoot, component.getSymbolicName()): null; 
+				antStore = antFilterRoot != null ? new AntFilterStore(antFilterRoot, component.getSymbolicName()) : null;
 				return true;
 			}
-		}
-		catch(CoreException ce) {
-			//do nothing, return false
+		} catch (CoreException ce) {
+			// do nothing, return false
 		}
 		currentStore = null;
 		return false;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor#acceptContainer(org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer)
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor
+	 * #acceptContainer(org.eclipse.pde.api.tools.internal.provisional.model.
+	 * IApiTypeContainer)
 	 */
+	@Override
 	public boolean acceptContainer(IApiTypeContainer container) {
 		return considerTypeContainer(container);
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor#acceptMember(org.eclipse.pde.api.tools.internal.provisional.model.IApiMember)
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor
+	 * #
+	 * acceptMember(org.eclipse.pde.api.tools.internal.provisional.model.IApiMember
+	 * )
 	 */
+	@Override
 	public boolean acceptMember(IApiMember member) {
 		// don't consider inner types, as they are considered with the root type
-		switch(member.getType()) {
+		switch (member.getType()) {
 			case IApiElement.TYPE: {
 				IApiType type = (IApiType) member;
 				return !(type.isMemberType() || type.isLocal());
@@ -167,25 +192,26 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 				return true;
 			}
 		}
-		
+
 	}
-	
+
 	/**
 	 * Returns if the given {@link IApiTypeContainer} should be processed
+	 * 
 	 * @param container
 	 * @return true if the container should be processed false otherwise
 	 */
 	boolean considerTypeContainer(IApiTypeContainer container) {
-		if(jarPatterns != null && container != null) {
-			if(container.getContainerType() == IApiTypeContainer.ARCHIVE) {
+		if (jarPatterns != null && container != null) {
+			if (container.getContainerType() == IApiTypeContainer.ARCHIVE) {
 				String[] pparts = null;
 				for (int i = 0; i < jarPatterns.length; i++) {
 					pparts = jarPatterns[i].split(":"); //$NON-NLS-1$
-					if(pparts.length != 2) {
+					if (pparts.length != 2) {
 						continue;
 					}
-					if(container.getApiComponent().getSymbolicName().equals(pparts[0])) {
-						if(container.getName().endsWith(pparts[1])) {
+					if (container.getApiComponent().getSymbolicName().equals(pparts[0])) {
+						if (container.getName().endsWith(pparts[1])) {
 							return false;
 						}
 					}
@@ -194,42 +220,46 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 		}
 		return true;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor#acceptReference(org.eclipse.pde.api.tools.internal.provisional.builder.IReference)
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor
+	 * #acceptReference(org.eclipse.pde.api.tools.internal.provisional.builder.
+	 * IReference)
 	 */
+	@Override
 	public boolean acceptReference(IReference reference) {
 		try {
 			IApiMember member = reference.getResolvedReference();
-			if(member != null) {
+			if (member != null) {
 				IApiComponent component = member.getApiComponent();
-				if(!fComponentIds.contains(component.getSymbolicName()) || component.equals(reference.getMember().getApiComponent())) {
+				if (!fComponentIds.contains(component.getSymbolicName()) || component.equals(reference.getMember().getApiComponent())) {
 					return false;
 				}
-				if(isIllegalUse(reference) || (includesAPI() && includesInternal())) {
+				if (isIllegalUse(reference) || (includesAPI() && includesInternal())) {
 					return true;
 				}
 				IApiAnnotations annots = component.getApiDescription().resolveAnnotations(member.getHandle());
-				if(annots != null) {
+				if (annots != null) {
 					int vis = annots.getVisibility();
-					if(VisibilityModifiers.isAPI(vis) && includesAPI()) {
+					if (VisibilityModifiers.isAPI(vis) && includesAPI()) {
 						return true;
-					}
-					else if(VisibilityModifiers.isPrivate(vis) && includesInternal()) {
+					} else if (VisibilityModifiers.isPrivate(vis) && includesInternal()) {
 						return true;
 					}
 				}
 			}
-		}
-		catch(CoreException ce) {
+		} catch (CoreException ce) {
 			ApiPlugin.log(ce);
 		}
 		return false;
 	}
-	
+
 	/**
-	 * Returns true if the given reference is an illegal usage reference
-	 * iff illegal use is part of the search mask.
+	 * Returns true if the given reference is an illegal usage reference iff
+	 * illegal use is part of the search mask.
+	 * 
 	 * @param reference
 	 * @return true if the reference is illegal use false otherwise
 	 * @since 1.1
@@ -237,12 +267,12 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 	boolean isIllegalUse(IReference reference) {
 		IApiProblemDetector[] detectors = fAnalyzer.getProblemDetectors(reference.getReferenceKind());
 		for (int i = 0; i < detectors.length; i++) {
-			if(detectors[i].considerReference(reference)) {
+			if (detectors[i].considerReference(reference)) {
 				Reference ref = (Reference) reference;
 				ref.setFlags(IReference.F_ILLEGAL);
 				try {
-					IApiProblem pb = ((AbstractProblemDetector)detectors[i]).createProblem(reference);
-					if(!isFiltered(pb)) {
+					IApiProblem pb = ((AbstractProblemDetector) detectors[i]).createProblem(reference);
+					if (!isFiltered(pb)) {
 						ref.addProblems(pb);
 					} else {
 						return false;
@@ -255,82 +285,109 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Returns if the given problem is filtered
+	 * 
 	 * @param problem
 	 * @return <code>true</code> is filtered, false otherwise
 	 */
-	boolean isFiltered(IApiProblem problem) throws CoreException {
-		return (currentStore != null && currentStore.isFiltered(problem)) || 
-				(antStore != null && antStore.isFiltered(problem));
+	boolean isFiltered(IApiProblem problem) {
+		return (currentStore != null && currentStore.isFiltered(problem)) || (antStore != null && antStore.isFiltered(problem));
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor#getReferenceKinds()
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor
+	 * #getReferenceKinds()
 	 */
+	@Override
 	public int getReferenceKinds() {
 		return IReference.MASK_REF_ALL & ~IReference.REF_CONSTANTPOOL;
 	}
-	
+
 	/**
-	 * Prepares the search scope based on the available entries in the constructor
+	 * Prepares the search scope based on the available entries in the
+	 * constructor
+	 * 
 	 * @param elements
 	 */
 	private void prepareScope(IApiElement[] elements) {
-		if(elements != null) {
+		if (elements != null) {
 			fScope = new ApiScope();
-			for(int i = 0; i < elements.length; i++) {
+			for (int i = 0; i < elements.length; i++) {
 				fScope.addElement(elements[i].getApiComponent());
 			}
 		}
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor#getScope()
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor
+	 * #getScope()
 	 */
+	@Override
 	public IApiScope getScope() {
 		return fScope;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor#includesAPI()
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor
+	 * #includesAPI()
 	 */
+	@Override
 	public boolean includesAPI() {
 		return (fSearchMask & INCLUDE_API) > 0;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor#includesInternal()
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor
+	 * #includesInternal()
 	 */
+	@Override
 	public boolean includesInternal() {
 		return (fSearchMask & INCLUDE_INTERNAL) > 0;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor#includesIllegalUse()
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor
+	 * #includesIllegalUse()
 	 */
+	@Override
 	public boolean includesIllegalUse() {
 		return (fSearchMask & INCLUDE_ILLEGAL_USE) > 0;
 	}
-	
+
 	/**
 	 * The patterns for jar names to exclude from the search
+	 * 
 	 * @param patterns
 	 */
 	public void setJarPatterns(String[] patterns) {
 		jarPatterns = patterns;
 	}
-	
+
 	/**
-	 * Sets the root directory of the .api_filters files that should be used to filter references.
+	 * Sets the root directory of the .api_filters files that should be used to
+	 * filter references.
 	 * 
-	 * The .api_filters files specify specific problems to ignore during api analysis. During the use scan, the 
-	 * problem filters will be used to filter the use scan results.  If .api_filter files are found inside the component
-	 * those filters will be applied in addition to any found at this filter root.
-	 *
-	 * The root is specified using an absolute path.
-	 * The root needs to contain the following structure: 
+	 * The .api_filters files specify specific problems to ignore during api
+	 * analysis. During the use scan, the problem filters will be used to filter
+	 * the use scan results. If .api_filter files are found inside the component
+	 * those filters will be applied in addition to any found at this filter
+	 * root.
+	 * 
+	 * The root is specified using an absolute path. The root needs to contain
+	 * the following structure:
+	 * 
 	 * <pre>
 	 * root
 	 *  |
@@ -338,6 +395,7 @@ public class UseSearchRequestor implements IApiSearchRequestor {
 	 *         |
 	 *         +--- .api_filters
 	 * </pre>
+	 * 
 	 * @param filterRoot the absolute string path to the root of the filters
 	 */
 	public void setFilterRoot(String filterRoot) {

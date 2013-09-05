@@ -12,7 +12,7 @@ package org.eclipse.pde.api.tools.internal.provisional;
 
 /**
  * The session manager holds a list of currently available sessions.
- *
+ * 
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  */
@@ -23,7 +23,8 @@ public interface ISessionManager {
 	 * part of this session manager, the method has no effect.
 	 * 
 	 * @param session the new session
-	 * @param activate if <code>true</code> the session will also be activated, <code>false</code> otherwise
+	 * @param activate if <code>true</code> the session will also be activated,
+	 *            <code>false</code> otherwise
 	 * @throws IllegalArgumentException if the given session is null
 	 */
 	public void addSession(ISession session, boolean activate);
@@ -70,11 +71,13 @@ public interface ISessionManager {
 	 * @return active session or <code>null</null>
 	 */
 	public ISession getActiveSession();
+
 	/**
 	 * Activates the given session. If the session is not in included in this
 	 * session manager this method has no effect.
 	 * 
-	 * @param session the given session or <code>null</code> to remove the active session.
+	 * @param session the given session or <code>null</code> to remove the
+	 *            active session.
 	 */
 	public void activateSession(ISession session);
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,25 +41,25 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.ui.PlatformUI;
 
-
 /**
  * Wizard page for the compare UI elements
  * 
  * @since 1.0.1
  */
 public class CompareToBaselineWizardPage extends WizardPage {
-	
-	//widget state ids 
+
+	// widget state ids
 	static final String SETTINGS_SECTION = ApiUIPlugin.PLUGIN_ID + ".api.compare"; //$NON-NLS-1$
 	static final String BASELINE_STATE = SETTINGS_SECTION + ".baseline"; //$NON-NLS-1$
-	
+
 	private IStructuredSelection selection = null;
 	private Combo baselinecombo = null;
 	String baselineName = null;
 	private Link link = null;
-	
+
 	/**
 	 * Constructor
+	 * 
 	 * @param selection
 	 * @param pageName
 	 */
@@ -71,16 +71,21 @@ public class CompareToBaselineWizardPage extends WizardPage {
 		setImageDescriptor(ApiUIPlugin.getImageDescriptor(IApiToolsConstants.IMG_WIZBAN_COMPARE_TO_BASELINE));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets
+	 * .Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		Composite comp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_HORIZONTAL);
 		setControl(comp);
-		
+
 		SWTFactory.createLabel(comp, ActionMessages.SelectABaseline, 1);
 		this.baselinecombo = SWTFactory.createCombo(comp, SWT.BORDER | SWT.FLAT | SWT.READ_ONLY, 1, GridData.FILL_HORIZONTAL, null);
-		this.baselinecombo.addSelectionListener(new SelectionAdapter(){
+		this.baselinecombo.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				Combo combo = (Combo) e.widget;
 				String[] baselineNames = (String[]) combo.getData();
@@ -91,9 +96,10 @@ public class CompareToBaselineWizardPage extends WizardPage {
 		});
 		this.link = SWTFactory.createLink(comp, ActionMessages.AddNewBaseline, JFaceResources.getDialogFont(), 1, GridData.FILL_HORIZONTAL | GridData.HORIZONTAL_ALIGN_END);
 		link.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				IAdaptable element = getAdaptable();
-				if(element == null) {
+				if (element == null) {
 					return;
 				}
 				CompareToBaselineWizardPage.this.baselineName = null;
@@ -103,17 +109,19 @@ public class CompareToBaselineWizardPage extends WizardPage {
 			}
 		});
 		link.setToolTipText(ActionMessages.CompareToBaselineWizardPage_open_baseline_pref_page);
-		//do initialization
+		// do initialization
 		initialize();
 		getShell().pack();
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(comp, IApiToolsHelpContextIds.API_COMPARE_WIZARD_PAGE);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.WizardPage#isPageComplete()
 	 */
+	@Override
 	public boolean isPageComplete() {
-		if(this.baselineName == null || Util.EMPTY_STRING.equals(this.baselineName)) {
+		if (this.baselineName == null || Util.EMPTY_STRING.equals(this.baselineName)) {
 			setMessage(ActionMessages.CompareToBaselineWizardPage_create_baseline);
 			this.link.forceFocus();
 			return false;
@@ -122,7 +130,7 @@ public class CompareToBaselineWizardPage extends WizardPage {
 		this.baselinecombo.setFocus();
 		return true;
 	}
-	
+
 	/**
 	 * Initialize the page controls, etc
 	 */
@@ -155,16 +163,16 @@ public class CompareToBaselineWizardPage extends WizardPage {
 		this.baselinecombo.setItems(baselinesItems);
 		this.baselinecombo.setData(baselinesNames);
 		this.baselinecombo.select(index);
-		
+
 		IDialogSettings settings = ApiUIPlugin.getDefault().getDialogSettings().getSection(SETTINGS_SECTION);
-		if(settings != null) {
+		if (settings != null) {
 			restoreComboSelection(this.baselinecombo, BASELINE_STATE, settings, baselinesNames);
 		}
 	}
-	
+
 	/**
-	 * Restores the selected item for the given combo based on the stored value from the 
-	 * dialog settings
+	 * Restores the selected item for the given combo based on the stored value
+	 * from the dialog settings
 	 * 
 	 * @param combo
 	 * @param id
@@ -172,7 +180,7 @@ public class CompareToBaselineWizardPage extends WizardPage {
 	 */
 	private void restoreComboSelection(Combo combo, String id, IDialogSettings settings, String[] baselinesNames) {
 		String value = settings.get(id);
-		if(value != null) {
+		if (value != null) {
 			// retrieve the right index in the combo
 			int index = 0;
 			int length = baselinesNames.length;
@@ -187,24 +195,25 @@ public class CompareToBaselineWizardPage extends WizardPage {
 			combo.select(index);
 		}
 	}
-	
+
 	/**
 	 * Returns the {@link IAdaptable} from the current selection context
+	 * 
 	 * @param selection
 	 * @return the {@link IAdaptable} for the current selection context
 	 */
 	IAdaptable getAdaptable() {
 		Object o = this.selection.getFirstElement();
-		if(o instanceof IAdaptable) {
+		if (o instanceof IAdaptable) {
 			IAdaptable adapt = (IAdaptable) o;
 			IResource resource = (IResource) adapt.getAdapter(IResource.class);
-			if(resource != null) {
+			if (resource != null) {
 				return (resource instanceof IProject ? resource : resource.getProject());
 			}
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Performs the finishing actions from this page
 	 */
@@ -220,14 +229,14 @@ public class CompareToBaselineWizardPage extends WizardPage {
 		op.schedule();
 		return true;
 	}
-	
+
 	/**
 	 * Saves the state of the widgets on the page
 	 */
 	void saveWidgetState() {
 		IDialogSettings rootsettings = ApiUIPlugin.getDefault().getDialogSettings();
 		IDialogSettings settings = rootsettings.getSection(SETTINGS_SECTION);
-		if(settings == null) {
+		if (settings == null) {
 			settings = rootsettings.addNewSection(SETTINGS_SECTION);
 		}
 		settings.put(BASELINE_STATE, this.baselineName);

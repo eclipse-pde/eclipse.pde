@@ -24,7 +24,7 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
  */
 public class FieldUsageTests extends UsageTest {
 	
-	protected static final String FIELD_CLASS_NAME = "FieldUsageClass";
+	protected static final String FIELD_CLASS_NAME = "FieldUsageClass"; //$NON-NLS-1$
 	
 	private int pid = -1;
 	
@@ -55,7 +55,7 @@ public class FieldUsageTests extends UsageTest {
 	 */
 	@Override
 	protected IPath getTestSourcePath() {
-		return super.getTestSourcePath().append("field");
+		return super.getTestSourcePath().append("field"); //$NON-NLS-1$
 	}
 	
 	/**
@@ -83,16 +83,16 @@ public class FieldUsageTests extends UsageTest {
 	
 	private void x1(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemIdSet(8));
-		String typename = "testF1";
+		String typename = "testF1"; //$NON-NLS-1$
 		setExpectedMessageArgs(new String[][] {
-				{FIELD_CLASS_NAME, typename, "f1"},
-				{FIELD_CLASS_NAME, typename, "f2"},
-				{FIELD_CLASS_NAME, INNER_NAME1, "f1"},
-				{FIELD_CLASS_NAME, INNER_NAME1, "f2"},
-				{FIELD_CLASS_NAME, INNER_NAME2, "f1"},
-				{FIELD_CLASS_NAME, INNER_NAME2, "f2"},
-				{FIELD_CLASS_NAME, OUTER_NAME, "f1"},
-				{FIELD_CLASS_NAME, OUTER_NAME, "f2"}
+				{FIELD_CLASS_NAME, typename, "f1"}, //$NON-NLS-1$
+				{FIELD_CLASS_NAME, typename, "f2"}, //$NON-NLS-1$
+				{FIELD_CLASS_NAME, INNER_NAME1, "f1"}, //$NON-NLS-1$
+				{FIELD_CLASS_NAME, INNER_NAME1, "f2"}, //$NON-NLS-1$
+				{FIELD_CLASS_NAME, INNER_NAME2, "f1"}, //$NON-NLS-1$
+				{FIELD_CLASS_NAME, INNER_NAME2, "f2"}, //$NON-NLS-1$
+				{FIELD_CLASS_NAME, OUTER_NAME, "f1"}, //$NON-NLS-1$
+				{FIELD_CLASS_NAME, OUTER_NAME, "f2"} //$NON-NLS-1$
 		});
 		deployUsageTest(typename, inc);
 	}
@@ -115,16 +115,16 @@ public class FieldUsageTests extends UsageTest {
 	
 	private void x2(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemIdSet(8));
-		String typename = "testF2";
+		String typename = "testF2"; //$NON-NLS-1$
 		setExpectedMessageArgs(new String[][] {
-				{INNER_NAME1, typename, "f1"},
-				{INNER_NAME1, typename, "f2"},
-				{INNER_NAME1, INNER_NAME1, "f1"},
-				{INNER_NAME1, INNER_NAME1, "f2"},
-				{INNER_NAME1, INNER_NAME2, "f1"},
-				{INNER_NAME1, INNER_NAME2, "f2"},
-				{INNER_NAME1, OUTER_NAME, "f1"},
-				{INNER_NAME1, OUTER_NAME, "f2"}
+				{INNER_NAME1, typename, "f1"}, //$NON-NLS-1$
+				{INNER_NAME1, typename, "f2"}, //$NON-NLS-1$
+				{INNER_NAME1, INNER_NAME1, "f1"}, //$NON-NLS-1$
+				{INNER_NAME1, INNER_NAME1, "f2"}, //$NON-NLS-1$
+				{INNER_NAME1, INNER_NAME2, "f1"}, //$NON-NLS-1$
+				{INNER_NAME1, INNER_NAME2, "f2"}, //$NON-NLS-1$
+				{INNER_NAME1, OUTER_NAME, "f1"}, //$NON-NLS-1$
+				{INNER_NAME1, OUTER_NAME, "f2"} //$NON-NLS-1$
 		});
 		deployUsageTest(typename, inc);
 	}
@@ -147,7 +147,7 @@ public class FieldUsageTests extends UsageTest {
 	
 	private void x3(boolean inc) {
 		expectingNoProblems();
-		String typename = "testF3";
+		String typename = "testF3"; //$NON-NLS-1$
 		deployUsageTest(typename, inc);
 	}
 	
@@ -169,7 +169,7 @@ public class FieldUsageTests extends UsageTest {
 	
 	private void x4(boolean inc) {
 		expectingNoProblems();
-		String typename = "testF4";
+		String typename = "testF4"; //$NON-NLS-1$
 		deployUsageTest(typename, inc);
 	}
 	
@@ -191,7 +191,7 @@ public class FieldUsageTests extends UsageTest {
 	
 	private void x5(boolean inc) {
 		expectingNoProblems();
-		String typename = "testF5";
+		String typename = "testF5"; //$NON-NLS-1$
 		deployUsageTest(typename, inc);
 	}
 	/**
@@ -212,9 +212,9 @@ public class FieldUsageTests extends UsageTest {
 	
 	private void x6(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemIdSet(1));
-		String typename = "testF8";
+		String typename = "testF8"; //$NON-NLS-1$
 		setExpectedMessageArgs(new String[][] {
-				{FIELD_CLASS_NAME, typename, "f1"},
+				{FIELD_CLASS_NAME, typename, "f1"}, //$NON-NLS-1$
 		});
 		deployUsageTest(typename, inc);
 	}

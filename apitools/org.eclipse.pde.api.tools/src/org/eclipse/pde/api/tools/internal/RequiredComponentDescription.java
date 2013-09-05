@@ -14,23 +14,21 @@ import org.eclipse.pde.api.tools.internal.provisional.IRequiredComponentDescript
 import org.eclipse.pde.api.tools.internal.provisional.IVersionRange;
 
 /**
- * Implementation of a required component description based on
- * OSGi bundles.
+ * Implementation of a required component description based on OSGi bundles.
  * 
  * @since 1.0.0
  */
 public class RequiredComponentDescription implements IRequiredComponentDescription {
-	
+
 	private String fId;
 	private boolean fIsOptional;
 	private boolean fIsExprted;
 	private IVersionRange fRange;
-	
-	
+
 	/**
 	 * Constructs a new required component description based on the given
-	 * required component id and version range. The required component description is
-	 * mandatory. 
+	 * required component id and version range. The required component
+	 * description is mandatory.
 	 * 
 	 * @param id component's symbolic name
 	 * @param range version range
@@ -38,15 +36,16 @@ public class RequiredComponentDescription implements IRequiredComponentDescripti
 	public RequiredComponentDescription(String id, IVersionRange range) {
 		this(id, range, false, false);
 	}
-	
+
 	/**
 	 * Constructs a new required component description based on the given
-	 * required component id and version range. 
+	 * required component id and version range.
 	 * 
 	 * @param id component's symbolic name
 	 * @param range version range
 	 * @param isOptional the optional flag of the required component
-	 * @param isExported whether the required component is re-exported by the declaring component
+	 * @param isExported whether the required component is re-exported by the
+	 *            declaring component
 	 */
 	public RequiredComponentDescription(String id, IVersionRange range, boolean isOptional, boolean isExported) {
 		fId = id;
@@ -55,9 +54,11 @@ public class RequiredComponentDescription implements IRequiredComponentDescripti
 		fIsExprted = isExported;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof RequiredComponentDescription) {
 			RequiredComponentDescription desc = (RequiredComponentDescription) obj;
@@ -66,36 +67,48 @@ public class RequiredComponentDescription implements IRequiredComponentDescripti
 		return super.equals(obj);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see IRequiredComponentDescription#getId()
 	 */
+	@Override
 	public String getId() {
 		return fId;
 	}
 
-	/** (non-Javadoc)
+	/**
+	 * (non-Javadoc)
+	 * 
 	 * @see IRequiredComponentDescription#getVersionRange()
 	 */
+	@Override
 	public IVersionRange getVersionRange() {
 		return fRange;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		return fId.hashCode() + fRange.hashCode();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see IRequiredComponentDescription#isOptional()
 	 */
+	@Override
 	public boolean isOptional() {
 		return this.fIsOptional;
 	}
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		StringBuffer buf = new StringBuffer();
 		buf.append(fId);
@@ -104,9 +117,13 @@ public class RequiredComponentDescription implements IRequiredComponentDescripti
 		return buf.toString();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.IRequiredComponentDescription#isExported()
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.provisional.IRequiredComponentDescription
+	 * #isExported()
 	 */
+	@Override
 	public boolean isExported() {
 		return fIsExprted;
 	}

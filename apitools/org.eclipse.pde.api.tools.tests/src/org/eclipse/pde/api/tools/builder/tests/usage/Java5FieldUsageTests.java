@@ -12,7 +12,7 @@ package org.eclipse.pde.api.tools.builder.tests.usage;
 
 import junit.framework.Test;
 
-import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
+import org.eclipse.jdt.core.JavaCore;
 
 /**
  * Tests field usage to Java 5 fields elements
@@ -21,7 +21,7 @@ import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
  */
 public class Java5FieldUsageTests extends FieldUsageTests {
 
-	protected static final String FIELD_ENUM_NAME = "FieldUsageEnum";
+	protected static final String FIELD_ENUM_NAME = "FieldUsageEnum"; //$NON-NLS-1$
 	
 	/**
 	 * Constructor
@@ -43,14 +43,16 @@ public class Java5FieldUsageTests extends FieldUsageTests {
 	 */
 	@Override
 	protected String getTestCompliance() {
-		return CompilerOptions.VERSION_1_5;
+		return JavaCore.VERSION_1_5;
 	}
 
+	@Override
 	public void testFieldUsage1F() {
 		x1(false);
 	}
 	
 	
+	@Override
 	public void testFieldUsage1I() {
 		x1(true);
 	}
@@ -61,25 +63,27 @@ public class Java5FieldUsageTests extends FieldUsageTests {
 	 */
 	private void x1(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemIdSet(8));
-		String typename = "testF6";
+		String typename = "testF6"; //$NON-NLS-1$
 		setExpectedMessageArgs(new String[][] {
-				{FIELD_ENUM_NAME, typename, "f3"},
-				{FIELD_ENUM_NAME, typename, "f2"},
-				{FIELD_ENUM_NAME, INNER_NAME1, "f3"},
-				{FIELD_ENUM_NAME, INNER_NAME1, "f2"},
-				{FIELD_ENUM_NAME, INNER_NAME2, "f3"},
-				{FIELD_ENUM_NAME, INNER_NAME2, "f2"},
-				{FIELD_ENUM_NAME, OUTER_NAME, "f3"},
-				{FIELD_ENUM_NAME, OUTER_NAME, "f2"}
+				{FIELD_ENUM_NAME, typename, "f3"}, //$NON-NLS-1$
+				{FIELD_ENUM_NAME, typename, "f2"}, //$NON-NLS-1$
+				{FIELD_ENUM_NAME, INNER_NAME1, "f3"}, //$NON-NLS-1$
+				{FIELD_ENUM_NAME, INNER_NAME1, "f2"}, //$NON-NLS-1$
+				{FIELD_ENUM_NAME, INNER_NAME2, "f3"}, //$NON-NLS-1$
+				{FIELD_ENUM_NAME, INNER_NAME2, "f2"}, //$NON-NLS-1$
+				{FIELD_ENUM_NAME, OUTER_NAME, "f3"}, //$NON-NLS-1$
+				{FIELD_ENUM_NAME, OUTER_NAME, "f2"} //$NON-NLS-1$
 		});
 		deployUsageTest(typename, inc);
 	}
 	
+	@Override
 	public void testFieldUsage2F() {
 		x2(false);
 	}
 	
 	
+	@Override
 	public void testFieldUsage2I() {
 		x2(true);
 	}
@@ -90,7 +94,7 @@ public class Java5FieldUsageTests extends FieldUsageTests {
 	 */
 	private void x2(boolean inc) {
 		expectingNoProblems();
-		String typename = "testF7";
+		String typename = "testF7"; //$NON-NLS-1$
 		deployUsageTest(typename, inc);
 	}
 }

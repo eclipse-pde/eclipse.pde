@@ -56,82 +56,73 @@ import org.eclipse.ui.PlatformUI;
 
 /**
  * Tab for an API use scan
+ * 
  * @since 1.1
  */
 public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
-	
-	static final String[] EXTENSIONS = new String[] {"*.txt"}; //$NON-NLS-1$
-	
+
+	static final String[] EXTENSIONS = new String[] { "*.txt" }; //$NON-NLS-1$
+
 	/**
 	 * Default selection adapter for updating the launch dialog
 	 */
 	SelectionAdapter selectionadapter = new SelectionAdapter() {
+		@Override
 		public void widgetSelected(SelectionEvent e) {
 			updateDialog();
-		};
+		}
 	};
-	
+
 	/**
 	 * Default modify adapter for updating the launch dialog
 	 */
 	ModifyListener modifyadapter = new ModifyListener() {
+		@Override
 		public void modifyText(ModifyEvent e) {
 			updateDialog();
 		}
 	};
-	
+
 	boolean initializing = false;
 	Combo baseline, targetCombo, reportTypeCombo;
-	Button radioBaseline = null, 
-		   radioTarget = null, 
-		   radioInstall = null,
-		   radioReportOnly = null,
-		   baselinesButton = null, 
-		   targetsButton = null, 
-		   installButton = null,
-		   considerapi = null,
-		   considerinternal = null,
-		   consideruse = null,
-		   createhtml = null,
-		   openreport = null,
-		   cleanreportlocation = null,
-		   cleanhtmllocation = null;
+	Button radioBaseline = null, radioTarget = null, radioInstall = null,
+			radioReportOnly = null, baselinesButton = null,
+			targetsButton = null, installButton = null, considerapi = null,
+			considerinternal = null, consideruse = null, createhtml = null,
+			openreport = null, cleanreportlocation = null,
+			cleanhtmllocation = null;
 	ITargetHandle[] targetHandles = new ITargetHandle[0];
-	Text installLocation = null,
-		 searchScope = null,
-		 targetScope = null,
-		 reportlocation = null,
-		 description = null,
-		 filterRoot = null;
-	Group searchForGroup = null,
-		  searchInGroup = null,
-		  filterGroup = null;
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
+	Text installLocation = null, searchScope = null, targetScope = null,
+			reportlocation = null, description = null, filterRoot = null;
+	Group searchForGroup = null, searchInGroup = null, filterGroup = null;
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse
+	 * .swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		Composite comp = SWTFactory.createComposite(parent, 2, 1, GridData.FILL_HORIZONTAL);
 		GridLayout layout = (GridLayout) comp.getLayout();
 		layout.makeColumnsEqualWidth = true;
-		
+
 		Group reportGroup = SWTFactory.createGroup(comp, Messages.ApiUseScanTab_analuze, 3, 3, GridData.FILL_HORIZONTAL);
 		this.radioBaseline = SWTFactory.createRadioButton(reportGroup, Messages.ApiUseScanTab_api_baseline);
 		this.radioBaseline.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateTarget();
 			}
 		});
-		this.baseline = SWTFactory.createCombo(reportGroup, 
-				SWT.BORDER | SWT.FLAT | SWT.READ_ONLY, 
-				1, 
-				GridData.BEGINNING | GridData.FILL_HORIZONTAL, 
-				null);
+		this.baseline = SWTFactory.createCombo(reportGroup, SWT.BORDER | SWT.FLAT | SWT.READ_ONLY, 1, GridData.BEGINNING | GridData.FILL_HORIZONTAL, null);
 		GridData gd = (GridData) this.baseline.getLayoutData();
 		gd.grabExcessHorizontalSpace = true;
 		this.baseline.addSelectionListener(selectionadapter);
 		this.baselinesButton = SWTFactory.createPushButton(reportGroup, Messages.ApiUseScanTab_baselines, null);
 		this.baselinesButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				int bef = ApiUseScanTab.this.baseline.getSelectionIndex();
 				String name = null;
@@ -152,23 +143,21 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 				updateDialog();
 			}
 		});
-		
+
 		this.radioTarget = SWTFactory.createRadioButton(reportGroup, Messages.ApiUseScanTab_target_definitions);
 		this.radioTarget.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateTarget();
 			}
 		});
-		this.targetCombo = SWTFactory.createCombo(reportGroup, 
-				SWT.BORDER | SWT.FLAT | SWT.READ_ONLY, 
-				1, 
-				GridData.BEGINNING | GridData.FILL_HORIZONTAL, 
-				null);
+		this.targetCombo = SWTFactory.createCombo(reportGroup, SWT.BORDER | SWT.FLAT | SWT.READ_ONLY, 1, GridData.BEGINNING | GridData.FILL_HORIZONTAL, null);
 		gd = (GridData) this.targetCombo.getLayoutData();
 		gd.grabExcessHorizontalSpace = true;
 		this.targetCombo.addSelectionListener(selectionadapter);
 		this.targetsButton = SWTFactory.createPushButton(reportGroup, Messages.ApiUseScanTab_targets, null);
 		this.targetsButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				int index = ApiUseScanTab.this.targetCombo.getSelectionIndex();
 				ITargetHandle handle = null;
@@ -188,9 +177,10 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 				updateDialog();
 			}
 		});
-		
+
 		this.radioInstall = SWTFactory.createRadioButton(reportGroup, Messages.ApiUseScanTab_install_location);
 		this.radioInstall.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateTarget();
 			}
@@ -199,71 +189,78 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 		gd = (GridData) this.installLocation.getLayoutData();
 		gd.grabExcessHorizontalSpace = true;
 		this.installLocation.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				scheduleUpdate();
 			}
 		});
-		
+
 		this.installButton = SWTFactory.createPushButton(reportGroup, Messages.ApiUseScanTab_browse, null);
-		this.installButton.addSelectionListener(new SelectionAdapter(){
+		this.installButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleFolderBrowse(ApiUseScanTab.this.installLocation, Messages.ApiUseScanTab_select_install_location);
 				updateDialog();
 			}
 		});
 		this.radioReportOnly = SWTFactory.createRadioButton(reportGroup, Messages.ApiUseScanTab_generate_html_only);
-		gd = (GridData)this.radioReportOnly.getLayoutData();
+		gd = (GridData) this.radioReportOnly.getLayoutData();
 		gd.grabExcessHorizontalSpace = true;
 		gd.horizontalSpan = 2;
 		this.radioReportOnly.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateTarget();
 			}
 		});
-		
+
 		searchForGroup = SWTFactory.createGroup(comp, Messages.ApiUseScanTab_search_for, 2, 1, GridData.FILL_HORIZONTAL);
 		SWTFactory.createLabel(searchForGroup, Messages.ApiUseScanTab_references_to, 1);
 		this.targetScope = SWTFactory.createText(searchForGroup, SWT.SINGLE | SWT.FLAT | SWT.BORDER, 1, GridData.FILL_HORIZONTAL);
-		this.targetScope.addModifyListener(modifyadapter);		
+		this.targetScope.addModifyListener(modifyadapter);
 		this.considerapi = SWTFactory.createCheckButton(searchForGroup, Messages.ApiUseScanTab_api_references, null, true, 2);
 		this.considerapi.addSelectionListener(selectionadapter);
 		this.considerinternal = SWTFactory.createCheckButton(searchForGroup, Messages.ApiUseScanTab_internal_references, null, true, 2);
-		this.considerinternal.addSelectionListener(selectionadapter);		
+		this.considerinternal.addSelectionListener(selectionadapter);
 		this.consideruse = SWTFactory.createCheckButton(searchForGroup, Messages.ApiUseScanTab_illegal_api_use, null, true, 2);
 		this.consideruse.addSelectionListener(selectionadapter);
-		
+
 		searchInGroup = SWTFactory.createGroup(comp, Messages.ApiUseScanTab_search_in, 2, 1, GridData.FILL_HORIZONTAL);
-		gd = (GridData)searchInGroup.getLayoutData();
+		gd = (GridData) searchInGroup.getLayoutData();
 		gd.verticalAlignment = SWT.FILL;
 		SWTFactory.createLabel(searchInGroup, Messages.ApiUseScanTab_bundles_matching, 1);
 		this.searchScope = SWTFactory.createText(searchInGroup, SWT.SINGLE | SWT.FLAT | SWT.BORDER, 1, GridData.FILL_HORIZONTAL);
 		this.searchScope.addModifyListener(modifyadapter);
-		
+
 		filterGroup = SWTFactory.createGroup(comp, Messages.ApiUseScanTab_filters, 3, 2, GridData.FILL_HORIZONTAL);
 		SWTFactory.createLabel(filterGroup, Messages.ApiUseScanTab_additionalFilters, 1);
 		this.filterRoot = SWTFactory.createText(filterGroup, SWT.SINGLE | SWT.FLAT | SWT.BORDER, 1, GridData.FILL_HORIZONTAL);
 		this.filterRoot.addModifyListener(modifyadapter);
 		Button filterBrowse = SWTFactory.createPushButton(filterGroup, Messages.ApiUseScanTab_Browse, null);
-		filterBrowse.addSelectionListener(new SelectionAdapter(){
+		filterBrowse.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleFolderBrowse(ApiUseScanTab.this.filterRoot, Messages.ApiUseScanTab_FilterBrowseTitle);
 			}
 		});
-		
+
 		reportGroup = SWTFactory.createGroup(comp, Messages.ApiUseScanTab_reporting, 2, 2, GridData.FILL_HORIZONTAL);
-		
+
 		Composite reportTypeComp = SWTFactory.createComposite(reportGroup, 2, 2, GridData.BEGINNING, 0, 0);
 		SWTFactory.createLabel(reportTypeComp, Messages.ApiUseScanTab_reportType, 1);
-		reportTypeCombo = SWTFactory.createCombo(reportTypeComp, SWT.READ_ONLY, 1, GridData.FILL_BOTH, new String[] {Messages.ApiUseScanTab_referencedBundlesReport, Messages.ApiUseScanTab_referencingBundlesReport});
+		reportTypeCombo = SWTFactory.createCombo(reportTypeComp, SWT.READ_ONLY, 1, GridData.FILL_BOTH, new String[] {
+				Messages.ApiUseScanTab_referencedBundlesReport,
+				Messages.ApiUseScanTab_referencingBundlesReport });
 		reportTypeCombo.addSelectionListener(selectionadapter);
-		
+
 		SWTFactory.createLabel(reportGroup, Messages.ApiUseScanTab_report_location, 2);
 		this.reportlocation = SWTFactory.createText(reportGroup, SWT.SINGLE | SWT.FLAT | SWT.BORDER, 1, GridData.FILL_HORIZONTAL);
 		this.reportlocation.addModifyListener(modifyadapter);
 		gd = (GridData) this.reportlocation.getLayoutData();
 		gd.grabExcessHorizontalSpace = true;
 		Button browse = SWTFactory.createPushButton(reportGroup, Messages.ApiUseScanTab_brows_e_, null);
-		browse.addSelectionListener(new SelectionAdapter(){
+		browse.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleFolderBrowse(ApiUseScanTab.this.reportlocation, Messages.ApiUseScanTab_SelectDirectory);
 			}
@@ -272,9 +269,10 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 		gd = (GridData) this.cleanreportlocation.getLayoutData();
 		this.cleanreportlocation.addSelectionListener(selectionadapter);
 		gd.horizontalIndent = 10;
-		
+
 		this.createhtml = SWTFactory.createCheckButton(reportGroup, Messages.ApiUseScanTab_create_html_report, null, false, 2);
-		this.createhtml.addSelectionListener(new SelectionAdapter(){
+		this.createhtml.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateReportOptions();
 				updateDialog();
@@ -297,21 +295,21 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(comp, IApiToolsHelpContextIds.API_USE_SCAN_TAB);
 		setControl(comp);
 	}
-	
+
 	/**
 	 * Avoid synthetic accessor
 	 */
 	void updateDialog() {
 		updateLaunchConfigurationDialog();
 	}
-	
+
 	/**
 	 * Avoid synthetic accessor
 	 */
-	void scheduleUpdate(){
+	void scheduleUpdate() {
 		scheduleUpdateJob();
 	}
-	
+
 	/**
 	 * Avoid synthetic accessor
 	 */
@@ -320,7 +318,8 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 	}
 
 	/**
-	 * The selected target has changed (radio selection). Update control enabled state and dialog.
+	 * The selected target has changed (radio selection). Update control enabled
+	 * state and dialog.
 	 */
 	void updateTarget() {
 		switch (getTargetKind()) {
@@ -385,11 +384,13 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 				setGroupEnablement(this.filterGroup, false);
 				break;
 			}
+			default:
+				break;
 		}
 		updateReportOptions();
 		updateLaunchConfigurationDialog();
 	}
-	
+
 	/**
 	 * Updates the report options
 	 */
@@ -398,9 +399,10 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 		this.openreport.setEnabled(enabled);
 		this.cleanhtmllocation.setEnabled(enabled);
 	}
-	
+
 	/**
 	 * Sets the enabled state of all of the child of the given group
+	 * 
 	 * @param group
 	 * @param enabled
 	 */
@@ -410,7 +412,7 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 			children[i].setEnabled(enabled);
 		}
 	}
-	
+
 	/**
 	 * @return the kind of target selected for the scan
 	 */
@@ -421,36 +423,40 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 			return ApiUseLaunchDelegate.KIND_TARGET_DEFINITION;
 		} else if (this.radioInstall.getSelection()) {
 			return ApiUseLaunchDelegate.KIND_INSTALL_PATH;
-		} else if(this.radioReportOnly.getSelection()) {
+		} else if (this.radioReportOnly.getSelection()) {
 			return ApiUseLaunchDelegate.KIND_HTML_ONLY;
 		} else {
 			return -1;
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
+	@Override
 	public String getName() {
 		return Messages.ApiUseScanTab_api_use_report;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getImage()
 	 */
+	@Override
 	public Image getImage() {
 		return ApiUIPlugin.getSharedImage(IApiToolsConstants.IMG_ELCL_SETUP_APITOOLS);
 	}
-	
+
 	/**
 	 * Updates available target definitions.
 	 */
 	void updateAvailableTargets() {
-		List names = new ArrayList();
+		List<String> names = new ArrayList<String>();
 		ITargetPlatformService service = getTargetService();
 		if (service != null) {
 			ITargetHandle[] handles = service.getTargets(null);
-			List defs = new ArrayList();
+			List<ITargetDefinition> defs = new ArrayList<ITargetDefinition>();
 			for (int i = 0; i < handles.length; i++) {
 				try {
 					defs.add(handles[i].getTargetDefinition());
@@ -458,11 +464,12 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 					// Suppress
 				}
 			}
-			Collections.sort(defs, new Comparator() {
+			Collections.sort(defs, new Comparator<Object>() {
+				@Override
 				public int compare(Object o1, Object o2) {
 					ITargetDefinition d1 = (ITargetDefinition) o1;
 					ITargetDefinition d2 = (ITargetDefinition) o2;
-					
+
 					final String name1 = d1.getName();
 					final String name2 = d2.getName();
 					if (name1 == null) {
@@ -478,14 +485,14 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 			});
 			targetHandles = new ITargetHandle[defs.size()];
 			for (int i = 0; i < defs.size(); i++) {
-				ITargetDefinition def = (ITargetDefinition) defs.get(i);
+				ITargetDefinition def = defs.get(i);
 				final ITargetHandle handle = def.getHandle();
 				targetHandles[i] = handle;
 				final String name = def.getName();
 				names.add(name == null ? handle.toString() : name);
 			}
 		}
-		this.targetCombo.setItems((String[]) names.toArray(new String[names.size()]));
+		this.targetCombo.setItems(names.toArray(new String[names.size()]));
 	}
 
 	/**
@@ -501,25 +508,29 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 	 * Updates available baselines.
 	 */
 	void updateAvailableBaselines() {
-		HashSet ids = new HashSet();
+		HashSet<String> ids = new HashSet<String>();
 		IApiBaseline[] baselines = ApiPlugin.getDefault().getApiBaselineManager().getApiBaselines();
 		for (int i = 0; i < baselines.length; i++) {
 			ids.add(baselines[i].getName());
 		}
-		this.baseline.setItems((String[]) ids.toArray(new String[ids.size()]));
+		this.baseline.setItems(ids.toArray(new String[ids.size()]));
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse
+	 * .debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		this.initializing = true;
 		try {
 			updateAvailableBaselines();
 			updateAvailableTargets();
 			updateRadioButtons(configuration);
-			restoreComboSelection(this.baseline, configuration.getAttribute(ApiUseLaunchDelegate.BASELINE_NAME, (String)null));
-			String memento = configuration.getAttribute(ApiUseLaunchDelegate.TARGET_HANDLE, (String)null);
+			restoreComboSelection(this.baseline, configuration.getAttribute(ApiUseLaunchDelegate.BASELINE_NAME, (String) null));
+			String memento = configuration.getAttribute(ApiUseLaunchDelegate.TARGET_HANDLE, (String) null);
 			if (memento != null) {
 				ITargetPlatformService service = getTargetService();
 				if (service != null) {
@@ -532,23 +543,23 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 					}
 				}
 			}
-			if(this.targetCombo.getSelectionIndex() < 0) {
+			if (this.targetCombo.getSelectionIndex() < 0) {
 				this.targetCombo.select(0);
 			}
-			this.installLocation.setText(configuration.getAttribute(ApiUseLaunchDelegate.INSTALL_PATH, IApiToolsConstants.EMPTY_STRING)); 
+			this.installLocation.setText(configuration.getAttribute(ApiUseLaunchDelegate.INSTALL_PATH, IApiToolsConstants.EMPTY_STRING));
 			this.considerapi.setSelection(isSpecified(ApiUseLaunchDelegate.MOD_API_REFERENCES, configuration));
 			this.considerinternal.setSelection(isSpecified(ApiUseLaunchDelegate.MOD_INTERNAL_REFERENCES, configuration));
 			this.consideruse.setSelection(isSpecified(ApiUseLaunchDelegate.MOD_ILLEGAL_USE, configuration));
 			this.filterRoot.setText(configuration.getAttribute(ApiUseLaunchDelegate.FILTER_ROOT, IApiToolsConstants.EMPTY_STRING));
-			
+
 			int reportType = configuration.getAttribute(ApiUseLaunchDelegate.REPORT_TYPE, ApiUseLaunchDelegate.REPORT_KIND_PRODUCER);
-			if (reportType == ApiUseLaunchDelegate.REPORT_KIND_CONSUMER){
+			if (reportType == ApiUseLaunchDelegate.REPORT_KIND_CONSUMER) {
 				this.reportTypeCombo.select(1);
 			} else {
 				this.reportTypeCombo.select(0);
 			}
-			
-			this.reportlocation.setText(configuration.getAttribute(ApiUseLaunchDelegate.REPORT_PATH, IApiToolsConstants.EMPTY_STRING)); 
+
+			this.reportlocation.setText(configuration.getAttribute(ApiUseLaunchDelegate.REPORT_PATH, IApiToolsConstants.EMPTY_STRING));
 			this.cleanreportlocation.setSelection(isSpecified(ApiUseLaunchDelegate.CLEAN_XML, configuration));
 			boolean enabled = isSpecified(ApiUseLaunchDelegate.CREATE_HTML, configuration);
 			this.createhtml.setSelection(enabled);
@@ -556,21 +567,21 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 			this.cleanhtmllocation.setEnabled(enabled);
 			this.openreport.setSelection(isSpecified(ApiUseLaunchDelegate.DISPLAY_REPORT, configuration));
 			this.cleanhtmllocation.setSelection(isSpecified(ApiUseLaunchDelegate.CLEAN_HTML, configuration));
-			this.searchScope.setText(configuration.getAttribute(ApiUseLaunchDelegate.SEARCH_SCOPE, IApiToolsConstants.EMPTY_STRING)); 
-			this.targetScope.setText(configuration.getAttribute(ApiUseLaunchDelegate.TARGET_SCOPE, IApiToolsConstants.EMPTY_STRING)); 
-			this.description.setText(configuration.getAttribute(ApiUseLaunchDelegate.DESCRIPTION, IApiToolsConstants.EMPTY_STRING)); 
+			this.searchScope.setText(configuration.getAttribute(ApiUseLaunchDelegate.SEARCH_SCOPE, IApiToolsConstants.EMPTY_STRING));
+			this.targetScope.setText(configuration.getAttribute(ApiUseLaunchDelegate.TARGET_SCOPE, IApiToolsConstants.EMPTY_STRING));
+			this.description.setText(configuration.getAttribute(ApiUseLaunchDelegate.DESCRIPTION, IApiToolsConstants.EMPTY_STRING));
 			updateTarget();
 		} catch (CoreException e) {
 			setErrorMessage(e.getStatus().getMessage());
-		}
-		finally {
+		} finally {
 			this.initializing = false;
 		}
 	}
-	
+
 	/**
-	 * Updates the radio button group in {@link #initializeFrom(ILaunchConfiguration)} to ensure
-	 * the radio group stays up-to-date when a revert is performed
+	 * Updates the radio button group in
+	 * {@link #initializeFrom(ILaunchConfiguration)} to ensure the radio group
+	 * stays up-to-date when a revert is performed
 	 * 
 	 * @param configuration
 	 */
@@ -613,9 +624,11 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 			}
 		}
 	}
-	
+
 	/**
-	 * Returns <code>true</code> if the given modifier is set in the configuration
+	 * Returns <code>true</code> if the given modifier is set in the
+	 * configuration
+	 * 
 	 * @param modifier
 	 * @param configuration
 	 * @return
@@ -625,10 +638,10 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 		int modifiers = configuration.getAttribute(ApiUseLaunchDelegate.SEARCH_MODIFIERS, 0);
 		return (modifiers & modifier) > 0;
 	}
-	
+
 	/**
-	 * Restores the selected item for the given combo based on the stored value from the 
-	 * configuration
+	 * Restores the selected item for the given combo based on the stored value
+	 * from the configuration
 	 * 
 	 * @param combo
 	 * @param value
@@ -636,23 +649,25 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 	 */
 	private void restoreComboSelection(Combo combo, String value) {
 		int idx = -1;
-		if(value != null) {
+		if (value != null) {
 			idx = combo.indexOf(value);
-			if(idx > -1) {
+			if (idx > -1) {
 				combo.select(idx);
-			}
-			else {
+			} else {
 				combo.select(0);
 			}
-		}
-		else {
+		} else {
 			combo.select(0);
 		}
-	}	
+	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse
+	 * .debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		configuration.setAttribute(ApiUseLaunchDelegate.TARGET_KIND, getTargetKind());
 		configuration.setAttribute(ApiUseLaunchDelegate.BASELINE_NAME, this.baseline.getText().trim());
@@ -668,28 +683,29 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 		modifiers = consider(this.createhtml, ApiUseLaunchDelegate.CREATE_HTML, modifiers);
 		configuration.setAttribute(ApiUseLaunchDelegate.SEARCH_MODIFIERS, modifiers);
 		String filterRoot = this.filterRoot.getText().trim();
-		if (filterRoot.length() > 0){
+		if (filterRoot.length() > 0) {
 			IPath path = new Path(filterRoot);
 			configuration.setAttribute(ApiUseLaunchDelegate.FILTER_ROOT, path.toPortableString());
 		} else {
 			configuration.removeAttribute(ApiUseLaunchDelegate.FILTER_ROOT);
 		}
-		
+
 		IPath path = new Path(this.reportlocation.getText().trim());
 		configuration.setAttribute(ApiUseLaunchDelegate.REPORT_PATH, path.toPortableString());
 		configuration.setAttribute(ApiUseLaunchDelegate.SEARCH_SCOPE, this.searchScope.getText().trim());
 		configuration.setAttribute(ApiUseLaunchDelegate.TARGET_SCOPE, this.targetScope.getText().trim());
 		configuration.setAttribute(ApiUseLaunchDelegate.DESCRIPTION, this.description.getText().trim());
-		if (reportTypeCombo.getSelectionIndex() == 1){
+		if (reportTypeCombo.getSelectionIndex() == 1) {
 			configuration.setAttribute(ApiUseLaunchDelegate.REPORT_TYPE, ApiUseLaunchDelegate.REPORT_KIND_CONSUMER);
 		} else {
 			// TODO This will likely make the config dirty
 			configuration.setAttribute(ApiUseLaunchDelegate.REPORT_TYPE, ApiUseLaunchDelegate.REPORT_KIND_PRODUCER);
 		}
 	}
-	
+
 	/**
-	 * Returns the memento for the selected target definition or <code>null</code> if none.
+	 * Returns the memento for the selected target definition or
+	 * <code>null</code> if none.
 	 * 
 	 * @return memento or <code>null</code>
 	 */
@@ -705,7 +721,7 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 			return null;
 		}
 	}
-	
+
 	/**
 	 * Returns the handle of the selected target or <code>null</code> if none.
 	 * 
@@ -718,7 +734,7 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 		}
 		return null;
 	}
-	
+
 	private int consider(Button button, int mask, int modifiers) {
 		if (button.getSelection()) {
 			return modifiers | mask;
@@ -726,46 +742,52 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 		return modifiers;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.
+	 * debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		int modifiers = ApiUseLaunchDelegate.MOD_INTERNAL_REFERENCES;
 		configuration.setAttribute(ApiUseLaunchDelegate.SEARCH_MODIFIERS, modifiers);
 		configuration.setAttribute(ApiUseLaunchDelegate.REPORT_TYPE, ApiUseLaunchDelegate.REPORT_KIND_PRODUCER);
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.debug.ui.AbstractLaunchConfigurationTab#isValid(org.eclipse
+	 * .debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public boolean isValid(ILaunchConfiguration launchConfig) {
-		if(this.initializing) {
+		if (this.initializing) {
 			return true;
 		}
 		setErrorMessage(null);
-		
+
 		String text = this.reportlocation.getText().trim();
-		if(IApiToolsConstants.EMPTY_STRING.equals(text)) {
+		if (IApiToolsConstants.EMPTY_STRING.equals(text)) {
 			setErrorMessage(Messages.ApiUseScanTab_enter_report_location);
 			return false;
 		}
-		if(!this.considerapi.getSelection() && !this.considerinternal.getSelection() && !this.consideruse.getSelection()) {
+		if (!this.considerapi.getSelection() && !this.considerinternal.getSelection() && !this.consideruse.getSelection()) {
 			setErrorMessage(Messages.ApiUseScanTab_must_search_something);
 			return false;
 		}
 		text = this.searchScope.getText().trim();
 		try {
 			Pattern.compile(text);
-		}
-		catch(PatternSyntaxException pse) {
+		} catch (PatternSyntaxException pse) {
 			setErrorMessage(NLS.bind(Messages.ApiUseScanTab_regex_problem, pse.getPattern()));
 			return false;
 		}
 		text = this.targetScope.getText().trim();
 		try {
 			Pattern.compile(text);
-		}
-		catch(PatternSyntaxException pse) {
+		} catch (PatternSyntaxException pse) {
 			setErrorMessage(NLS.bind(Messages.ApiUseScanTab_regex_problem, pse.getPattern()));
 			return false;
 		}
@@ -774,6 +796,7 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 
 	/**
 	 * Handles browsing for a file with a given set of valid extensions
+	 * 
 	 * @param text
 	 * @param message
 	 */
@@ -785,13 +808,14 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 			dialog.setFilterPath(loctext);
 		}
 		String newpath = dialog.open();
-		if(newpath != null) {
+		if (newpath != null) {
 			text.setText(newpath);
 		}
 	}
-	
+
 	/**
 	 * Handles the Browse... button being selected
+	 * 
 	 * @param text
 	 */
 	void handleFolderBrowse(Text text, String message) {
@@ -802,8 +826,8 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 			dialog.setFilterPath(loctext);
 		}
 		String newpath = dialog.open();
-		if(newpath != null) {
+		if (newpath != null) {
 			text.setText(newpath);
 		}
-	}	
+	}
 }

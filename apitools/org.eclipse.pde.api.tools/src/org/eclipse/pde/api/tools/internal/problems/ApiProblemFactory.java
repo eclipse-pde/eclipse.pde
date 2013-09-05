@@ -20,6 +20,7 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.pde.api.tools.internal.builder.BuilderMessages;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
 import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
@@ -37,16 +38,17 @@ import com.ibm.icu.text.MessageFormat;
  * @since 1.0.0
  */
 public class ApiProblemFactory {
-	
+
 	public static final int TYPE_CONVERSION_ID = 76;
 
 	/**
 	 * The current mapping of problem id to message
 	 */
-	private static Hashtable fMessages = null;
-	
+	private static Hashtable<Comparable<? extends Object>, String> fMessages = null;
+
 	/**
 	 * Creates a new {@link IApiProblemFilter}
+	 * 
 	 * @param componentid
 	 * @param problem
 	 * @param comment
@@ -56,60 +58,63 @@ public class ApiProblemFactory {
 	public static IApiProblemFilter newProblemFilter(String componentid, IApiProblem problem, String comment) {
 		return new ApiProblemFilter(componentid, problem, comment);
 	}
-	
+
 	/**
-	 * Computes an {@link IApiProblem} hashcode from the given filter handle. If the handle is <code>null</code>
-	 * this method returns <code>-1</code>.
+	 * Computes an {@link IApiProblem} hashcode from the given filter handle. If
+	 * the handle is <code>null</code> this method returns <code>-1</code>.
 	 * 
 	 * @param filterhandle the problem handle
-	 * @return a new hashcode for the {@link IApiProblem} described in the filter or <code>-1</code>
+	 * @return a new hashcode for the {@link IApiProblem} described in the
+	 *         filter or <code>-1</code>
 	 * @see ApiProblem#hashCode()
 	 * @see ApiProblemFilter#getHandle()
 	 * @since 1.0.500
 	 */
 	public static int getProblemHashcode(String filterhandle) {
-		if(filterhandle != null) {
+		if (filterhandle != null) {
 			String[] args = filterhandle.split(ApiProblemFilter.HANDLE_DELIMITER);
 			int hashcode = 0;
 			try {
-				//the problem id
+				// the problem id
 				hashcode += Integer.parseInt(args[0]);
-				//the resource path
+				// the resource path
 				hashcode += args[1].hashCode();
-				//the type name, do not add to the hashcode if the type name is null
-				//https://bugs.eclipse.org/bugs/show_bug.cgi?id=404173
-				if(args[2] != null && !args[2].equalsIgnoreCase("null")) { //$NON-NLS-1$
+				// the type name, do not add to the hashcode if the type name is
+				// null
+				// https://bugs.eclipse.org/bugs/show_bug.cgi?id=404173
+				if (args[2] != null && !args[2].equalsIgnoreCase("null")) { //$NON-NLS-1$
 					hashcode += args[2].hashCode();
 				}
-				//the message arguments
+				// the message arguments
 				String[] margs = splitHandle(args[3], ApiProblemFilter.HANDLE_ARGUMENTS_DELIMITER);
 				hashcode += argumentsHashcode(margs);
-			}
-			catch(Exception e) {} finally {
+			} catch (Exception e) {
+			} finally {
 			}
 			return hashcode;
 		}
 		return -1;
 	}
-	
+
 	/**
 	 * Returns the deep hash code of the complete listing of message arguments
+	 * 
 	 * @param arguments
 	 * @return the hash code of the message arguments
 	 */
 	private static int argumentsHashcode(String[] arguments) {
-		if(arguments == null) {
+		if (arguments == null) {
 			return 0;
 		}
 		int hashcode = 0;
-		for(int i = 0; i < arguments.length; i++) {
+		for (int i = 0; i < arguments.length; i++) {
 			hashcode += arguments[i].hashCode();
 		}
 		return hashcode;
 	}
-	
+
 	private static String[] splitHandle(String messageArguments, String delimiter) {
-		List matches = null;
+		List<String> matches = null;
 		char[] argumentsChars = messageArguments.toCharArray();
 		char[] delimiterChars = delimiter.toCharArray();
 		int delimiterLength = delimiterChars.length;
@@ -142,7 +147,7 @@ public class ApiProblemFactory {
 					if (match) {
 						// record the matching substring and proceed
 						if (matches == null) {
-							matches = new ArrayList();
+							matches = new ArrayList<String>();
 						}
 						matches.add(messageArguments.substring(start, i));
 						start = i + delimiterLength;
@@ -162,22 +167,27 @@ public class ApiProblemFactory {
 		} else {
 			matches.add(messageArguments.substring(start, argumentsCharsLength));
 		}
-		return (String[]) matches.toArray(new String[matches.size()]);
+		return matches.toArray(new String[matches.size()]);
 	}
-	
+
 	/**
 	 * Creates a new {@link IApiProblem}
+	 * 
 	 * @param resourcepath the path to the resource this problem was found in
 	 * @param typeName the type name this problem was found in
-	 * @param messageargs listing of arguments to pass in to the localized message.
-	 * The arguments are passed into the string in the order they appear in the array.
+	 * @param messageargs listing of arguments to pass in to the localized
+	 *            message. The arguments are passed into the string in the order
+	 *            they appear in the array.
 	 * @param argumentids the ids of arguments passed into the problem
 	 * @param arguments the arguments that correspond to the listing of ids
 	 * @param linenumber the number of the line the problem occurred on
 	 * @param charstart the start of a char selection range
 	 * @param charend the end of a char selection range
-	 * @param category the category of the problem. See {@link IApiProblem} for categories
-	 * @param element the id of the backing element for this problem See {@link IElementDescriptor}, {@link IDelta} and {@link IJavaElement} for kinds
+	 * @param category the category of the problem. See {@link IApiProblem} for
+	 *            categories
+	 * @param element the id of the backing element for this problem See
+	 *            {@link IElementDescriptor}, {@link IDelta} and
+	 *            {@link IJavaElement} for kinds
 	 * @param kind the kind of the problem
 	 * @param flags any additional flags for the kind
 	 * @return a new {@link IApiProblem}
@@ -185,13 +195,15 @@ public class ApiProblemFactory {
 	public static IApiProblem newApiProblem(String resourcepath, String typeName, String[] messageargs, String[] argumentids, Object[] arguments, int linenumber, int charstart, int charend, int category, int element, int kind, int flags) {
 		return newApiProblem(resourcepath, typeName, messageargs, argumentids, arguments, linenumber, charstart, charend, createProblemId(category, element, kind, flags));
 	}
-	
+
 	/**
 	 * Creates a new {@link IApiProblem}
+	 * 
 	 * @param resourcepath the path to the resource this problem was found in
 	 * @param typeName the type name this problem was found in
-	 * @param messageargs listing of arguments to pass in to the localized message.
-	 * The arguments are passed into the string in the order they appear in the array.
+	 * @param messageargs listing of arguments to pass in to the localized
+	 *            message. The arguments are passed into the string in the order
+	 *            they appear in the array.
 	 * @param argumentids the ids of arguments passed into the problem
 	 * @param arguments the arguments that correspond to the listing of ids
 	 * @param linenumber the number of the line the problem occurred on
@@ -203,13 +215,15 @@ public class ApiProblemFactory {
 	public static IApiProblem newApiProblem(String resourcepath, String typeName, String[] messageargs, String[] argumentids, Object[] arguments, int linenumber, int charstart, int charend, int id) {
 		return new ApiProblem(resourcepath, typeName, messageargs, argumentids, arguments, linenumber, charstart, charend, id);
 	}
-	
+
 	/**
 	 * Creates a new API usage {@link IApiProblem}
+	 * 
 	 * @param resourcepath the path to the resource this problem was found in
 	 * @param typeName the type name this problem was found in
-	 * @param messageargs listing of arguments to pass in to the localized message.
-	 * The arguments are passed into the string in the order they appear in the array.
+	 * @param messageargs listing of arguments to pass in to the localized
+	 *            message. The arguments are passed into the string in the order
+	 *            they appear in the array.
 	 * @param argumentids the ids of arguments passed into the problem
 	 * @param arguments the arguments that correspond to the listing of ids
 	 * @param linenumber the number of the line the problem occurred on
@@ -226,10 +240,12 @@ public class ApiProblemFactory {
 
 	/**
 	 * Creates a new API usage {@link IApiProblem}
+	 * 
 	 * @param resourcepath the path to the resource this problem was found in
 	 * @param typeName the type name this problem was found in
-	 * @param messageargs listing of arguments to pass in to the localized message.
-	 * The arguments are passed into the string in the order they appear in the array.
+	 * @param messageargs listing of arguments to pass in to the localized
+	 *            message. The arguments are passed into the string in the order
+	 *            they appear in the array.
 	 * @param argumentids the ids of arguments passed into the problem
 	 * @param arguments the arguments that correspond to the listing of ids
 	 * @param linenumber the number of the line the problem occurred on
@@ -244,11 +260,13 @@ public class ApiProblemFactory {
 		int id = createProblemId(IApiProblem.CATEGORY_USAGE, element, kind, flags);
 		return newApiProblem(resourcepath, typeName, messageargs, argumentids, arguments, linenumber, charstart, charend, id);
 	}
-	
+
 	/**
 	 * Creates a new API baseline {@link IApiProblem}
+	 * 
 	 * @param resourcepath the path to the resource this problem was found in
-	 * The arguments are passed into the string in the order they appear in the array.
+	 *            The arguments are passed into the string in the order they
+	 *            appear in the array.
 	 * @param argumentids the ids of arguments passed into the problem
 	 * @param arguments the arguments that correspond to the listing of ids
 	 * @param element the element kind
@@ -259,11 +277,14 @@ public class ApiProblemFactory {
 		int id = createProblemId(IApiProblem.CATEGORY_API_BASELINE, element, kind, IApiProblem.NO_FLAGS);
 		return newApiProblem(resourcepath, null, null, argumentids, arguments, -1, -1, -1, id);
 	}
+
 	/**
 	 * Creates a new API component resolution {@link IApiProblem}
+	 * 
 	 * @param resourcepath the path to the resource this problem was found in
-	 * @param messageargs listing of arguments to pass in to the localized message.
-	 * The arguments are passed into the string in the order they appear in the array.
+	 * @param messageargs listing of arguments to pass in to the localized
+	 *            message. The arguments are passed into the string in the order
+	 *            they appear in the array.
 	 * @param argumentids the ids of arguments passed into the problem
 	 * @param arguments the arguments that correspond to the listing of ids
 	 * @param element the element kind
@@ -274,11 +295,14 @@ public class ApiProblemFactory {
 		int id = createProblemId(IApiProblem.CATEGORY_API_COMPONENT_RESOLUTION, element, kind, IApiProblem.NO_FLAGS);
 		return newApiProblem(resourcepath, null, messageargs, argumentids, arguments, -1, -1, -1, id);
 	}
+
 	/**
 	 * Creates a new fatal {@link IApiProblem}
+	 * 
 	 * @param resourcepath the path to the resource this problem was found in
-	 * @param messageargs listing of arguments to pass in to the localized message.
-	 * The arguments are passed into the string in the order they appear in the array.
+	 * @param messageargs listing of arguments to pass in to the localized
+	 *            message. The arguments are passed into the string in the order
+	 *            they appear in the array.
 	 * @param kind the kind
 	 * @return a new {@link IApiProblem} for API usage
 	 */
@@ -286,12 +310,15 @@ public class ApiProblemFactory {
 		int id = createProblemId(IApiProblem.CATEGORY_FATAL_PROBLEM, IElementDescriptor.RESOURCE, kind, IApiProblem.NO_FLAGS);
 		return newApiProblem(resourcepath, null, messageargs, null, null, -1, -1, -1, id);
 	}
+
 	/**
 	 * Creates a new since tag {@link IApiProblem}
+	 * 
 	 * @param resourcepath the path to the resource this problem was found in
 	 * @param typeName the type name this problem was found in
-	 * @param messageargs listing of arguments to pass in to the localized message.
-	 * The arguments are passed into the string in the order they appear in the array.
+	 * @param messageargs listing of arguments to pass in to the localized
+	 *            message. The arguments are passed into the string in the order
+	 *            they appear in the array.
 	 * @param argumentids the ids of arguments passed into the problem
 	 * @param arguments the arguments that correspond to the listing of ids
 	 * @param linenumber the number of the line the problem occurred on
@@ -305,13 +332,15 @@ public class ApiProblemFactory {
 		int id = createProblemId(IApiProblem.CATEGORY_SINCETAGS, element, kind, IApiProblem.NO_FLAGS);
 		return newApiProblem(resourcepath, typeName, messageargs, argumentids, arguments, linenumber, charstart, charend, id);
 	}
-	
+
 	/**
 	 * Creates a new version number {@link IApiProblem}
+	 * 
 	 * @param resourcepath the path to the resource this problem was found in
 	 * @param typeName the type name this problem was found in
-	 * @param messageargs listing of arguments to pass in to the localized message.
-	 * The arguments are passed into the string in the order they appear in the array.
+	 * @param messageargs listing of arguments to pass in to the localized
+	 *            message. The arguments are passed into the string in the order
+	 *            they appear in the array.
 	 * @param argumentids the ids of arguments passed into the problem
 	 * @param arguments the arguments that correspond to the listing of ids
 	 * @param linenumber the number of the line the problem occurred on
@@ -325,14 +354,15 @@ public class ApiProblemFactory {
 		int id = createProblemId(IApiProblem.CATEGORY_VERSION, element, kind, IApiProblem.NO_FLAGS);
 		return newApiProblem(resourcepath, typeName, messageargs, argumentids, arguments, linenumber, charstart, charend, id);
 	}
-	
+
 	/**
 	 * Creates a new API Use Scan breakage {@link IApiProblem}
 	 * 
 	 * @param resourcePath path of the resource associated with the problem
 	 * @param typeName the type name this problem was found in
-	 * @param messageargs listing of arguments to pass in to the localized message.
-	 * The arguments are passed into the string in the order they appear in the array.
+	 * @param messageargs listing of arguments to pass in to the localized
+	 *            message. The arguments are passed into the string in the order
+	 *            they appear in the array.
 	 * @param argumentids the ids of arguments passed into the problem
 	 * @param arguments the arguments that correspond to the listing of ids
 	 * @param linenumber the number of the line the problem occurred on
@@ -340,57 +370,60 @@ public class ApiProblemFactory {
 	 * @param charend the end of a char selection range
 	 * @param element the element kind
 	 * @param kind the kind
-	 * @param flags flags the reason for problem. <code>0</code> if the type could not be resolved. 
-	 * <code>1</code> if member could not be located in the type.
+	 * @param flags flags the reason for problem. <code>0</code> if the type
+	 *            could not be resolved. <code>1</code> if member could not be
+	 *            located in the type.
 	 * @return a new {@link IApiProblem} for API Use Scan breakage
 	 */
-	public static IApiProblem newApiUseScanProblem( String resourcePath, String typeName, String[] messageargs, String[] argumentids, Object[] arguments, int linenumber, int charstart, int charend, int element, int kind, int flags) {
+	public static IApiProblem newApiUseScanProblem(String resourcePath, String typeName, String[] messageargs, String[] argumentids, Object[] arguments, int linenumber, int charstart, int charend, int element, int kind, int flags) {
 		int id = createProblemId(IApiProblem.CATEGORY_API_USE_SCAN_PROBLEM, element, kind, flags);
 		return newApiProblem(resourcePath, typeName, messageargs, argumentids, arguments, linenumber, charstart, charend, id);
 	}
-	
+
 	/**
 	 * Returns the localized message for the given {@link IApiProblem}. Returns
 	 * <code>null</code> if no localized message cannot be created.
-	 * @param problemid the id of the problem to create a message for
-	 * @param arguments the arguments to pass into the localized string. The arguments are passed in to the string
-	 * in the order they appear in the array.
 	 * 
-	 * @return a localized message for the given {@link IApiProblem} or <code>null</code>
+	 * @param problemid the id of the problem to create a message for
+	 * @param arguments the arguments to pass into the localized string. The
+	 *            arguments are passed in to the string in the order they appear
+	 *            in the array.
+	 * 
+	 * @return a localized message for the given {@link IApiProblem} or
+	 *         <code>null</code>
 	 */
 	public static String getLocalizedMessage(IApiProblem problem) {
 		return getLocalizedMessage(problem.getMessageid(), problem.getMessageArguments());
 	}
-	
+
 	/**
-	 * Returns the localized message for the given problem id and message arguments. Returns
-	 * a not found message if no localized message cannot be created.
+	 * Returns the localized message for the given problem id and message
+	 * arguments. Returns a not found message if no localized message cannot be
+	 * created.
+	 * 
 	 * @param messageid
 	 * @param messageargs
-	 * @return a localized message for the given arguments or a 'not found' message
+	 * @return a localized message for the given arguments or a 'not found'
+	 *         message
 	 */
-	public static String getLocalizedMessage(int messageid, String[] messageargs){
-		if(fMessages == null) {
+	public static String getLocalizedMessage(int messageid, String[] messageargs) {
+		if (fMessages == null) {
 			fMessages = loadMessageTemplates(Locale.getDefault());
 		}
-		String pattern = (String) fMessages.get(new Integer(messageid));
-		if(pattern == null) {
-			return MessageFormat.format(BuilderMessages.ApiProblemFactory_problem_message_not_found, new String[] {Integer.toString(messageid)});
+		String pattern = fMessages.get(new Integer(messageid));
+		if (pattern == null) {
+			return MessageFormat.format(BuilderMessages.ApiProblemFactory_problem_message_not_found, new Object[] { Integer.toString(messageid) });
 		}
 		if (messageid == TYPE_CONVERSION_ID) {
 			MessageFormat messageFormat = new MessageFormat(pattern);
 			double[] typeElementTypes = {
-				IDelta.ANNOTATION_ELEMENT_TYPE,
-				IDelta.CLASS_ELEMENT_TYPE,
-				IDelta.ENUM_ELEMENT_TYPE,
-				IDelta.INTERFACE_ELEMENT_TYPE,
-			};
-			String [] typeElementTypesStrings = {
-					(String) fMessages.get(Util.getDeltaElementType(IDelta.ANNOTATION_ELEMENT_TYPE)),
-					(String) fMessages.get(Util.getDeltaElementType(IDelta.CLASS_ELEMENT_TYPE)),
-					(String) fMessages.get(Util.getDeltaElementType(IDelta.ENUM_ELEMENT_TYPE)),
-					(String) fMessages.get(Util.getDeltaElementType(IDelta.INTERFACE_ELEMENT_TYPE)),
-			};
+					IDelta.ANNOTATION_ELEMENT_TYPE, IDelta.CLASS_ELEMENT_TYPE,
+					IDelta.ENUM_ELEMENT_TYPE, IDelta.INTERFACE_ELEMENT_TYPE, };
+			String[] typeElementTypesStrings = {
+					fMessages.get(Util.getDeltaElementType(IDelta.ANNOTATION_ELEMENT_TYPE)),
+					fMessages.get(Util.getDeltaElementType(IDelta.CLASS_ELEMENT_TYPE)),
+					fMessages.get(Util.getDeltaElementType(IDelta.ENUM_ELEMENT_TYPE)),
+					fMessages.get(Util.getDeltaElementType(IDelta.INTERFACE_ELEMENT_TYPE)), };
 			ChoiceFormat choiceFormat = new ChoiceFormat(typeElementTypes, typeElementTypesStrings);
 			messageFormat.setFormatByArgumentIndex(1, choiceFormat);
 			messageFormat.setFormatByArgumentIndex(2, choiceFormat);
@@ -400,43 +433,45 @@ public class ApiProblemFactory {
 			args[2] = Integer.decode(messageargs[2]);
 			return messageFormat.format(args);
 		}
-		return MessageFormat.format(pattern, messageargs);
+		return MessageFormat.format(pattern, (Object[]) messageargs);
 	}
-	
+
 	/**
-	 * This method initializes the MessageTemplates class variable according
-	 * to the current Locale.
+	 * This method initializes the MessageTemplates class variable according to
+	 * the current Locale.
+	 * 
 	 * @param loc Locale
 	 * @return HashtableOfInt
 	 */
-	public static Hashtable loadMessageTemplates(Locale loc) {
+	public static Hashtable<Comparable<? extends Object>, String> loadMessageTemplates(Locale loc) {
 		ResourceBundle bundle = null;
 		String bundleName = "org.eclipse.pde.api.tools.internal.problems.problemmessages"; //$NON-NLS-1$
 		try {
-			bundle = ResourceBundle.getBundle(bundleName, loc); 
-		} catch(MissingResourceException e) {
+			bundle = ResourceBundle.getBundle(bundleName, loc);
+		} catch (MissingResourceException e) {
 			System.out.println("Missing resource : " + bundleName.replace('.', '/') + ".properties for locale " + loc); //$NON-NLS-1$//$NON-NLS-2$
 			throw e;
 		}
-		Hashtable templates = new Hashtable(700);
-		Enumeration keys = bundle.getKeys();
+		Hashtable<Comparable<? extends Object>, String> templates = new Hashtable<Comparable<? extends Object>, String>(700);
+		Enumeration<String> keys = bundle.getKeys();
 		while (keys.hasMoreElements()) {
-		    String key = (String)keys.nextElement();
-		    try {
-		        int messageID = Integer.parseInt(key);
+			String key = keys.nextElement();
+			try {
+				int messageID = Integer.parseInt(key);
 				templates.put(new Integer(messageID), bundle.getString(key));
-		    } catch(NumberFormatException e) {
-		        // key is not a number
-		    	templates.put(key, bundle.getString(key));
+			} catch (NumberFormatException e) {
+				// key is not a number
+				templates.put(key, bundle.getString(key));
 			} catch (MissingResourceException e) {
 				// available ID
-		    }
+			}
 		}
 		return templates;
 	}
-	
+
 	/**
 	 * Creates a problem id from the composite members of a problem id.
+	 * 
 	 * @param category
 	 * @param element
 	 * @param kind
@@ -444,30 +479,28 @@ public class ApiProblemFactory {
 	 * @return a new problem id
 	 */
 	public static int createProblemId(int category, int element, int kind, int flags) {
-		return category | element << IApiProblem.OFFSET_ELEMENT | 
-						  kind << IApiProblem.OFFSET_KINDS | 
-						  flags << IApiProblem.OFFSET_FLAGS |
-						  getProblemMessageId(category, element, kind, flags);
+		return category | element << IApiProblem.OFFSET_ELEMENT | kind << IApiProblem.OFFSET_KINDS | flags << IApiProblem.OFFSET_FLAGS | getProblemMessageId(category, element, kind, flags);
 	}
-	
+
 	/**
-	 * Returns the {@link IApiProblem} id from the given marker or <code>-1</code> if the marker is <code>null</code> or the marker 
-	 * does not contain the {@link IApiMarkerConstants#MARKER_ATTR_PROBLEM_ID} attribute
+	 * Returns the {@link IApiProblem} id from the given marker or
+	 * <code>-1</code> if the marker is <code>null</code> or the marker does not
+	 * contain the {@link IApiMarkerConstants#MARKER_ATTR_PROBLEM_ID} attribute
 	 * 
 	 * @param marker
 	 * @return the {@link IApiProblem} id or <code>-1</code>
 	 * @since 1.0.400
 	 */
 	public static int getProblemId(IMarker marker) {
-		if(marker != null) {
+		if (marker != null) {
 			return marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_PROBLEM_ID, -1);
 		}
 		return -1;
 	}
-	
+
 	/**
-	 * Returns the kind of the problem from the given problem id. The returned kind is not checked to see if it
-	 * is correct or existing.
+	 * Returns the kind of the problem from the given problem id. The returned
+	 * kind is not checked to see if it is correct or existing.
 	 * 
 	 * @see IApiProblem#getKind()
 	 * @see IDelta#getKind()
@@ -478,10 +511,10 @@ public class ApiProblemFactory {
 	public static int getProblemKind(int problemid) {
 		return (problemid & ApiProblem.KIND_MASK) >> IApiProblem.OFFSET_KINDS;
 	}
-	
+
 	/**
-	 * Returns the kind of element from the given problem id. The returned element kind is not checked to see if it
-	 * is correct or existing.
+	 * Returns the kind of element from the given problem id. The returned
+	 * element kind is not checked to see if it is correct or existing.
 	 * 
 	 * @see IElementDescriptor#getElementType()
 	 * @see IDelta#getElementType()
@@ -492,10 +525,10 @@ public class ApiProblemFactory {
 	public static int getProblemElementKind(int problemid) {
 		return (problemid & ApiProblem.ELEMENT_KIND_MASK) >> IApiProblem.OFFSET_ELEMENT;
 	}
-	
+
 	/**
-	 * Returns the flags from the given problem id. The returned flags are not checked to see if they
-	 * are correct or existing.
+	 * Returns the flags from the given problem id. The returned flags are not
+	 * checked to see if they are correct or existing.
 	 * 
 	 * @see IDelta#getFlags()
 	 * 
@@ -505,10 +538,10 @@ public class ApiProblemFactory {
 	public static int getProblemFlags(int problemid) {
 		return (problemid & ApiProblem.FLAGS_MASK) >> IApiProblem.OFFSET_FLAGS;
 	}
-	
+
 	/**
-	 * Returns the category of the given problem id. The returned category is not checked to see if it
-	 * is correct or existing.
+	 * Returns the category of the given problem id. The returned category is
+	 * not checked to see if it is correct or existing.
 	 * 
 	 * @see IApiProblem#getCategory()
 	 * 

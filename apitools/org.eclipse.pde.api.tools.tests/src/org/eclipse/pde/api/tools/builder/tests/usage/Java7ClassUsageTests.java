@@ -16,7 +16,7 @@ import junit.framework.Test;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 
@@ -48,11 +48,11 @@ public class Java7ClassUsageTests extends ClassUsageTests {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		IProject project = getEnv().getWorkspace().getRoot().getProject("usageprojectjava7");
+		IProject project = getEnv().getWorkspace().getRoot().getProject("usageprojectjava7"); //$NON-NLS-1$
 		if (!project.exists()) {
-			IPath path = TestSuiteHelper.getPluginDirectoryPath().append(TEST_SOURCE_ROOT).append("usageprojectjava7");
+			IPath path = TestSuiteHelper.getPluginDirectoryPath().append(TEST_SOURCE_ROOT).append("usageprojectjava7"); //$NON-NLS-1$
 			File dir = path.toFile();
-			assertTrue("Test data directory does not exist: " + path.toOSString(), dir.exists());
+			assertTrue("Test data directory does not exist: " + path.toOSString(), dir.exists()); //$NON-NLS-1$
 			createExistingProject(dir, true, true);
 		}
 	}
@@ -62,7 +62,7 @@ public class Java7ClassUsageTests extends ClassUsageTests {
 	 */
 	@Override
 	protected String getTestCompliance() {
-		return CompilerOptions.VERSION_1_7;
+		return JavaCore.VERSION_1_7;
 	}
 
 	/* (non-Javadoc)
@@ -70,7 +70,7 @@ public class Java7ClassUsageTests extends ClassUsageTests {
 	 */
 	@Override
 	protected IPath getTestSourcePath() {
-		return super.getTestSourcePath().removeLastSegments(1).append("java7");
+		return super.getTestSourcePath().removeLastSegments(1).append("java7"); //$NON-NLS-1$
 	}
 
 	/**
@@ -95,7 +95,7 @@ public class Java7ClassUsageTests extends ClassUsageTests {
 				getProblemId(IApiProblem.ILLEGAL_INSTANTIATE, IApiProblem.NO_FLAGS),
 				getProblemId(IApiProblem.ILLEGAL_INSTANTIATE, IApiProblem.NO_FLAGS)
 		});
-		String typename = "testCStringSwitch";
+		String typename = "testCStringSwitch"; //$NON-NLS-1$
 		setExpectedMessageArgs(new String[][] {
 				{CLASS_NAME, typename},
 				{CLASS_NAME, typename},
@@ -121,12 +121,12 @@ public class Java7ClassUsageTests extends ClassUsageTests {
 	}
 	
 	private void x2(boolean inc) {
-		String exceptionTypeName = "ExceptionA";
+		String exceptionTypeName = "ExceptionA"; //$NON-NLS-1$
 		setExpectedProblemIds(new int[] {
 				getProblemId(IApiProblem.ILLEGAL_INSTANTIATE, IApiProblem.NO_FLAGS),
 				getProblemId(IApiProblem.ILLEGAL_INSTANTIATE, IApiProblem.NO_FLAGS)
 		});
-		String typename = "testCMultiCatch";
+		String typename = "testCMultiCatch"; //$NON-NLS-1$
 		setExpectedMessageArgs(new String[][] {
 				{exceptionTypeName, typename},
 				{exceptionTypeName, typename}
@@ -151,12 +151,12 @@ public class Java7ClassUsageTests extends ClassUsageTests {
 	}
 	
 	private void x3(boolean inc) {
-		String resourceTypeName = "TryWithResourcesClass";
+		String resourceTypeName = "TryWithResourcesClass"; //$NON-NLS-1$
 		setExpectedProblemIds(new int[] {
 				getProblemId(IApiProblem.ILLEGAL_INSTANTIATE, IApiProblem.NO_FLAGS),
 				getProblemId(IApiProblem.ILLEGAL_INSTANTIATE, IApiProblem.NO_FLAGS)
 		});
-		String typename = "testCTryWith";
+		String typename = "testCTryWith"; //$NON-NLS-1$
 		setExpectedMessageArgs(new String[][] {
 				{resourceTypeName, typename},
 				{resourceTypeName, typename}
@@ -181,11 +181,11 @@ public class Java7ClassUsageTests extends ClassUsageTests {
 	}
 	
 	private void x4(boolean inc) {
-		String resourceTypeName = "GenericClassUsageClass<T>";
+		String resourceTypeName = "GenericClassUsageClass<T>"; //$NON-NLS-1$
 		setExpectedProblemIds(new int[] {
 				getProblemId(IApiProblem.ILLEGAL_INSTANTIATE, IApiProblem.NO_FLAGS)
 		});
-		String typename = "testCDiamond";
+		String typename = "testCDiamond"; //$NON-NLS-1$
 		setExpectedMessageArgs(new String[][] {
 				{resourceTypeName, typename}
 		});

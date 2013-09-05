@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,15 +41,21 @@ public abstract class AbstractTypeLeakDetector extends AbstractLeakProblemDetect
 	/**
 	 * @param nonApiPackageNames
 	 */
-	public AbstractTypeLeakDetector(Set nonApiPackageNames) {
+	public AbstractTypeLeakDetector(Set<String> nonApiPackageNames) {
 		super(nonApiPackageNames);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiProblemDetector#considerReference(org.eclipse.pde.api.tools.internal.provisional.model.IReference)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.provisional.search.IApiProblemDetector
+	 * #considerReference(org.eclipse.pde.api.tools.internal.provisional.model.
+	 * IReference)
 	 */
+	@Override
 	public boolean considerReference(IReference reference) {
-		// consider the reference if the location the reference is made from is visible:
+		// consider the reference if the location the reference is made from is
+		// visible:
 		// i.e. a public or protected class in an API package
 		if (super.considerReference(reference) && isNonAPIReference(reference)) {
 			IApiMember member = reference.getMember();
@@ -57,7 +63,8 @@ public abstract class AbstractTypeLeakDetector extends AbstractLeakProblemDetect
 			if (((Flags.AccPublic | Flags.AccProtected) & modifiers) > 0) {
 				try {
 					IApiAnnotations annotations = member.getApiComponent().getApiDescription().resolveAnnotations(member.getHandle());
-					// annotations can be null for members in top level non public types, but they are not visible/API
+					// annotations can be null for members in top level non
+					// public types, but they are not visible/API
 					if (annotations != null) {
 						if (isApplicable(annotations) && isEnclosingTypeVisible(member)) {
 							retainReference(reference);
@@ -71,10 +78,14 @@ public abstract class AbstractTypeLeakDetector extends AbstractLeakProblemDetect
 		}
 		return false;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#isProblem(org.eclipse.pde.api.tools.internal.provisional.model.IReference)
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#isProblem
+	 * (org.eclipse.pde.api.tools.internal.provisional.model.IReference)
 	 */
+	@Override
 	protected boolean isProblem(IReference reference) {
 		IApiMember member = reference.getResolvedReference();
 		try {
@@ -84,11 +95,9 @@ public abstract class AbstractTypeLeakDetector extends AbstractLeakProblemDetect
 			} else {
 				// could be a reference to a top level secondary/non-public type
 				if (isEnclosingTypeVisible(member)) {
-					// this is an unexpected condition - the enclosing type is visible, but it has no annotations - log an error
-					ApiPlugin.log(
-						new Status(
-							IStatus.INFO, ApiPlugin.PLUGIN_ID,
-							MessageFormat.format(BuilderMessages.AbstractTypeLeakDetector_vis_type_has_no_api_description, new String[]{member.getName()})));
+					// this is an unexpected condition - the enclosing type is
+					// visible, but it has no annotations - log an error
+					ApiPlugin.log(new Status(IStatus.INFO, ApiPlugin.PLUGIN_ID, MessageFormat.format(BuilderMessages.AbstractTypeLeakDetector_vis_type_has_no_api_description, new Object[] { member.getName() })));
 				} else {
 					// enclosing type is not visible - this is a problem
 					return true;
@@ -106,48 +115,72 @@ public abstract class AbstractTypeLeakDetector extends AbstractLeakProblemDetect
 	protected boolean isApplicable(IApiAnnotations annotations) {
 		return VisibilityModifiers.isAPI(annotations.getVisibility());
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#getQualifiedMessageArgs(org.eclipse.pde.api.tools.internal.provisional.model.IReference)
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#
+	 * getQualifiedMessageArgs
+	 * (org.eclipse.pde.api.tools.internal.provisional.model.IReference)
 	 */
+	@Override
 	protected String[] getQualifiedMessageArgs(IReference reference) throws CoreException {
-		return new String[] {getQualifiedTypeName(reference.getResolvedReference()), getQualifiedTypeName(reference.getMember())};
+		return new String[] {
+				getQualifiedTypeName(reference.getResolvedReference()),
+				getQualifiedTypeName(reference.getMember()) };
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#getMessageArgs(org.eclipse.pde.api.tools.internal.provisional.model.IReference)
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#
+	 * getMessageArgs
+	 * (org.eclipse.pde.api.tools.internal.provisional.model.IReference)
 	 */
+	@Override
 	protected String[] getMessageArgs(IReference reference) throws CoreException {
-		return new String[] {getSimpleTypeName(reference.getResolvedReference()), getSimpleTypeName(reference.getMember())};
+		return new String[] {
+				getSimpleTypeName(reference.getResolvedReference()),
+				getSimpleTypeName(reference.getMember()) };
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#getSourceRange(org.eclipse.jdt.core.IType, org.eclipse.jface.text.IDocument, org.eclipse.pde.api.tools.internal.provisional.model.IReference)
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#
+	 * getSourceRange(org.eclipse.jdt.core.IType,
+	 * org.eclipse.jface.text.IDocument,
+	 * org.eclipse.pde.api.tools.internal.provisional.model.IReference)
 	 */
+	@Override
 	protected Position getSourceRange(IType type, IDocument doc, IReference reference) throws CoreException, BadLocationException {
 		ISourceRange range = type.getNameRange();
 		Position pos = null;
-		if(range != null) {
+		if (range != null) {
 			pos = new Position(range.getOffset(), range.getLength());
 		}
-		if(pos == null) {
+		if (pos == null) {
 			return defaultSourcePosition(type, reference);
 		}
 		return pos;
-	}		
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#getElementType(org.eclipse.pde.api.tools.internal.provisional.model.IReference)
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#
+	 * getElementType
+	 * (org.eclipse.pde.api.tools.internal.provisional.model.IReference)
 	 */
+	@Override
 	protected int getElementType(IReference reference) {
 		return IElementDescriptor.TYPE;
-	}	
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#getProblemKind()
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#
+	 * getProblemKind()
 	 */
+	@Override
 	protected int getProblemKind() {
 		return IApiProblem.API_LEAK;
-	}	
-	
+	}
+
 }

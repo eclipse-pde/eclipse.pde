@@ -23,25 +23,31 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceType
  * Builds a CRC code for a type's API annotations
  */
 public class CRCVisitor extends ApiDescriptionVisitor {
-	
+
 	private CRC32 fCrc = new CRC32();
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor#visitElement(org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor, org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations)
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor#
+	 * visitElement(org.eclipse.pde.api.tools.internal.provisional.descriptors.
+	 * IElementDescriptor,
+	 * org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations)
 	 */
+	@Override
 	public boolean visitElement(IElementDescriptor element, IApiAnnotations description) {
 		String signature = null;
 		String name = null;
 		switch (element.getElementType()) {
 			case IElementDescriptor.TYPE:
-				signature = ((IReferenceTypeDescriptor)element).getSignature();
+				signature = ((IReferenceTypeDescriptor) element).getSignature();
 				break;
 			case IElementDescriptor.METHOD:
-				signature = ((IMethodDescriptor)element).getSignature();
-				name = ((IMethodDescriptor)element).getName();
+				signature = ((IMethodDescriptor) element).getSignature();
+				name = ((IMethodDescriptor) element).getName();
 				break;
 			case IElementDescriptor.FIELD:
-				name = ((IFieldDescriptor)element).getName();
+				name = ((IFieldDescriptor) element).getName();
 				break;
 			default:
 				break;
@@ -56,7 +62,7 @@ public class CRCVisitor extends ApiDescriptionVisitor {
 		fCrc.update(description.getVisibility());
 		return true;
 	}
-	
+
 	public long getValue() {
 		return fCrc.getValue();
 	}

@@ -52,18 +52,22 @@ import org.osgi.framework.BundleException;
  * <p>
  * Note: this class requires a running workspace to be instantiated.
  * </p>
+ * 
  * @since 1.0.0
  */
 public class ProjectComponent extends BundleComponent {
-	
+
 	/**
 	 * Constant used to describe the custom build.properties entry
+	 * 
 	 * @since 1.0.3
 	 */
 	public static final String ENTRY_CUSTOM = "custom"; //$NON-NLS-1$
 
 	/**
-	 * Constant used to describe build.properties that start with <code>extra.</code>
+	 * Constant used to describe build.properties that start with
+	 * <code>extra.</code>
+	 * 
 	 * @since 1.0.3
 	 */
 	public static final String EXTRA_PREFIX = "extra."; //$NON-NLS-1$
@@ -77,19 +81,20 @@ public class ProjectComponent extends BundleComponent {
 	 * Associated IPluginModelBase object
 	 */
 	private IPluginModelBase fModel = null;
-	
+
 	/**
 	 * A cache of bundle class path entries to class file containers.
 	 */
-	private Map fPathToOutputContainers = null;
-	
+	private Map<String, IApiTypeContainer> fPathToOutputContainers = null;
+
 	/**
 	 * A cache of output location paths to corresponding class file containers.
 	 */
-	private Map fOutputLocationToContainer = null;
+	private Map<IPath, IApiTypeContainer> fOutputLocationToContainer = null;
 
 	/**
-	 * Constructs an API component for the given Java project in the specified baseline.
+	 * Constructs an API component for the given Java project in the specified
+	 * baseline.
 	 * 
 	 * @param baseline the owning API baseline
 	 * @param location the given location of the component
@@ -104,66 +109,82 @@ public class ProjectComponent extends BundleComponent {
 		this.fProject = JavaCore.create(project);
 		this.fModel = model;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.model.ApiElement#setName(java.lang.String)
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.model.ApiElement#setName(java.lang
+	 * .String)
 	 */
+	@Override
 	protected void setName(String newname) {
 		// Override to use the translated name from the plug-in model
 		super.setName(fModel.getResourceString(newname));
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.model.BundleComponent#isBinary()
 	 */
+	@Override
 	protected boolean isBinary() {
 		return false;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.model.BundleComponent#getBundleDescription(java.util.Map, java.lang.String, long)
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.model.BundleComponent#getBundleDescription
+	 * (java.util.Map, java.lang.String, long)
 	 */
-	protected BundleDescription getBundleDescription(Map manifest, String location, long id) throws BundleException {
+	@Override
+	protected BundleDescription getBundleDescription(Map<String, String> manifest, String location, long id) throws BundleException {
 		try {
 			BundleDescription result = getModel().getBundleDescription();
-			if (result == null){
+			if (result == null) {
 				throw new BundleException("Cannot find manifest for bundle at " + location); //$NON-NLS-1$
 			}
 			return result;
-		}
-		catch(CoreException ce) {
+		} catch (CoreException ce) {
 			throw new BundleException(ce.getMessage());
 		}
 	}
-	
+
 	/**
 	 * Returns the {@link IPluginModelBase} backing this component
-	 * @return the {@link IPluginModelBase} or throws and exception, never retruns <code>null</code>
+	 * 
+	 * @return the {@link IPluginModelBase} or throws and exception, never
+	 *         retruns <code>null</code>
 	 * @throws CoreException
 	 */
 	IPluginModelBase getModel() throws CoreException {
-		if(fModel == null) {
+		if (fModel == null) {
 			fModel = PluginRegistry.findModel(fProject.getProject());
-			if(fModel == null) {
+			if (fModel == null) {
 				abort(NLS.bind(CoreMessages.ProjectComponent_could_not_locate_model, fProject.getElementName()), null);
 			}
 		}
 		return fModel;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.model.BundleComponent#isApiEnabled()
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.model.BundleComponent#isApiEnabled()
 	 */
+	@Override
 	protected boolean isApiEnabled() {
 		return Util.isApiProject(fProject);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.model.BundleComponent#dispose()
 	 */
+	@Override
 	public void dispose() {
 		try {
-			if(hasApiFilterStore()) {
+			if (hasApiFilterStore()) {
 				getFilterStore().dispose();
 			}
 			fModel = null;
@@ -175,77 +196,87 @@ public class ProjectComponent extends BundleComponent {
 				fPathToOutputContainers.clear();
 				fPathToOutputContainers = null;
 			}
-		} 
-		catch(CoreException ce) {
+		} catch (CoreException ce) {
 			ApiPlugin.log(ce);
-		}
-		finally {
+		} finally {
 			super.dispose();
 		}
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.model.BundleComponent#createLocalApiDescription()
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.model.BundleComponent#
+	 * createLocalApiDescription()
 	 */
+	@Override
 	protected IApiDescription createLocalApiDescription() throws CoreException {
 		long time = System.currentTimeMillis();
-		if(Util.isApiProject(getJavaProject())) {
+		if (Util.isApiProject(getJavaProject())) {
 			setHasApiDescription(true);
 		}
 		IApiDescription apiDesc = ApiDescriptionManager.getManager().getApiDescription(this, getBundleDescription());
 		if (ApiPlugin.DEBUG_PROJECT_COMPONENT) {
-			System.out.println("Time to create api description for: ["+fProject.getElementName()+"] " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			System.out.println("Time to create api description for: [" + fProject.getElementName() + "] " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 		return apiDesc;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.model.BundleComponent#createApiFilterStore()
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.model.BundleComponent#createApiFilterStore
+	 * ()
 	 */
+	@Override
 	protected IApiFilterStore createApiFilterStore() throws CoreException {
 		long time = System.currentTimeMillis();
 		IApiFilterStore store = new ApiFilterStore(getJavaProject());
 		if (ApiPlugin.DEBUG_PROJECT_COMPONENT) {
-			System.out.println("Time to create api filter store for: ["+fProject.getElementName()+"] " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			System.out.println("Time to create api filter store for: [" + fProject.getElementName() + "] " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 		return store;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.model.BundleComponent#createApiTypeContainers()
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.model.BundleComponent#
+	 * createApiTypeContainers()
 	 */
-	protected synchronized List createApiTypeContainers() throws CoreException {
-		// first populate build.properties cache so we can create class file containers
+	@Override
+	protected synchronized List<IApiTypeContainer> createApiTypeContainers() throws CoreException {
+		// first populate build.properties cache so we can create class file
+		// containers
 		// from bundle classpath entries
-		fPathToOutputContainers = new HashMap(4);
-		fOutputLocationToContainer = new HashMap(4);
+		fPathToOutputContainers = new HashMap<String, IApiTypeContainer>(4);
+		fOutputLocationToContainer = new HashMap<IPath, IApiTypeContainer>(4);
 		if (fProject.exists() && fProject.getProject().isOpen()) {
 			IPluginModelBase model = PluginRegistry.findModel(fProject.getProject());
 			if (model != null) {
 				IBuildModel buildModel = PluginRegistry.createBuildModel(model);
 				if (buildModel != null) {
 					IBuild build = buildModel.getBuild();
-					IBuildEntry entry = build.getEntry(ENTRY_CUSTOM); 
+					IBuildEntry entry = build.getEntry(ENTRY_CUSTOM);
 					if (entry != null) {
 						String[] tokens = entry.getTokens();
 						if (tokens.length == 1 && tokens[0].equals("true")) { //$NON-NLS-1$
-							// hack : add the current output location for each classpath entries
+							// hack : add the current output location for each
+							// classpath entries
 							IClasspathEntry[] classpathEntries = fProject.getRawClasspath();
-							List containers = new ArrayList();
+							List<IApiTypeContainer> containers = new ArrayList<IApiTypeContainer>();
 							for (int i = 0; i < classpathEntries.length; i++) {
 								IClasspathEntry classpathEntry = classpathEntries[i];
-								switch(classpathEntry.getEntryKind()) {
-									case IClasspathEntry.CPE_SOURCE :
+								switch (classpathEntry.getEntryKind()) {
+									case IClasspathEntry.CPE_SOURCE:
 										String containerPath = classpathEntry.getPath().removeFirstSegments(1).toString();
 										IApiTypeContainer container = getApiTypeContainer(containerPath, this);
 										if (container != null && !containers.contains(container)) {
 											containers.add(container);
 										}
 										break;
-									case IClasspathEntry.CPE_VARIABLE :
+									case IClasspathEntry.CPE_VARIABLE:
 										classpathEntry = JavaCore.getResolvedClasspathEntry(classpathEntry);
 										//$FALL-THROUGH$
-									case IClasspathEntry.CPE_LIBRARY :
+									case IClasspathEntry.CPE_LIBRARY:
 										IPath path = classpathEntry.getPath();
 										if (Util.isArchive(path.lastSegment())) {
 											IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
@@ -258,12 +289,14 @@ public class ProjectComponent extends BundleComponent {
 											}
 										}
 										break;
+									default:
+										break;
 								}
 							}
 							if (!containers.isEmpty()) {
 								IApiTypeContainer cfc = null;
 								if (containers.size() == 1) {
-									cfc = (IApiTypeContainer) containers.get(0);
+									cfc = containers.get(0);
 								} else {
 									cfc = new CompositeApiTypeContainer(this, containers);
 								}
@@ -278,8 +311,8 @@ public class ProjectComponent extends BundleComponent {
 							String name = buildEntry.getName();
 							if (name.startsWith(IBuildEntry.JAR_PREFIX)) {
 								retrieveContainers(name, IBuildEntry.JAR_PREFIX, buildEntry);
-							} else if (name.startsWith(EXTRA_PREFIX)) { 
-								retrieveContainers(name, EXTRA_PREFIX, buildEntry); 
+							} else if (name.startsWith(EXTRA_PREFIX)) {
+								retrieveContainers(name, EXTRA_PREFIX, buildEntry);
 							}
 						}
 					}
@@ -289,16 +322,17 @@ public class ProjectComponent extends BundleComponent {
 		}
 		return Collections.EMPTY_LIST;
 	}
+
 	private void retrieveContainers(String name, String prefix, IBuildEntry buildEntry) throws CoreException {
 		String jar = name.substring(prefix.length());
 		String[] tokens = buildEntry.getTokens();
 		if (tokens.length == 1) {
 			IApiTypeContainer container = getApiTypeContainer(tokens[0], this);
 			if (container != null) {
-				IApiTypeContainer existingContainer = (IApiTypeContainer) this.fPathToOutputContainers.get(jar);
+				IApiTypeContainer existingContainer = this.fPathToOutputContainers.get(jar);
 				if (existingContainer != null) {
 					// concat both containers
-					List allContainers = new ArrayList();
+					List<IApiTypeContainer> allContainers = new ArrayList<IApiTypeContainer>();
 					allContainers.add(existingContainer);
 					allContainers.add(container);
 					IApiTypeContainer apiTypeContainer = new CompositeApiTypeContainer(this, allContainers);
@@ -308,7 +342,7 @@ public class ProjectComponent extends BundleComponent {
 				}
 			}
 		} else {
-			List containers = new ArrayList();
+			List<IApiTypeContainer> containers = new ArrayList<IApiTypeContainer>();
 			for (int j = 0; j < tokens.length; j++) {
 				String currentToken = tokens[j];
 				IApiTypeContainer container = getApiTypeContainer(currentToken, this);
@@ -317,14 +351,14 @@ public class ProjectComponent extends BundleComponent {
 				}
 			}
 			if (!containers.isEmpty()) {
-				IApiTypeContainer existingContainer = (IApiTypeContainer) this.fPathToOutputContainers.get(jar);
+				IApiTypeContainer existingContainer = this.fPathToOutputContainers.get(jar);
 				if (existingContainer != null) {
 					// concat both containers
 					containers.add(existingContainer);
 				}
 				IApiTypeContainer cfc = null;
 				if (containers.size() == 1) {
-					cfc = (IApiTypeContainer) containers.get(0);
+					cfc = containers.get(0);
 				} else {
 					cfc = new CompositeApiTypeContainer(this, containers);
 				}
@@ -333,24 +367,27 @@ public class ProjectComponent extends BundleComponent {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.model.BundleComponent#createApiTypeContainer(java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.model.BundleComponent#
+	 * createApiTypeContainer(java.lang.String)
 	 */
+	@Override
 	protected IApiTypeContainer createApiTypeContainer(String path) throws IOException, CoreException {
 		if (this.fPathToOutputContainers == null) {
 			baselineDisposed(getBaseline());
 		}
-		IApiTypeContainer container = (IApiTypeContainer) fPathToOutputContainers.get(path);
+		IApiTypeContainer container = fPathToOutputContainers.get(path);
 		if (container == null) {
 			// could be a binary jar included in the plug-in, just look for it
 			container = findApiTypeContainer(path);
 		}
 		return container;
 	}
-	
-	/** 
-	 * Finds and returns an existing {@link IApiTypeContainer} at the specified location
-	 * in this project, or <code>null</code> if none.
+
+	/**
+	 * Finds and returns an existing {@link IApiTypeContainer} at the specified
+	 * location in this project, or <code>null</code> if none.
 	 * 
 	 * @param location project relative path to the class file container
 	 * @return {@link IApiTypeContainer} or <code>null</code>
@@ -366,12 +403,12 @@ public class ProjectComponent extends BundleComponent {
 		}
 		return null;
 	}
-	
-	/** 
-	 * Finds and returns an {@link IApiTypeContainer} for the specified
-	 * source folder, or <code>null</code> if it does not exist. If the
-	 * source folder shares an output location with a previous source
-	 * folder, the output location is shared (a new one is not created).
+
+	/**
+	 * Finds and returns an {@link IApiTypeContainer} for the specified source
+	 * folder, or <code>null</code> if it does not exist. If the source folder
+	 * shares an output location with a previous source folder, the output
+	 * location is shared (a new one is not created).
 	 * 
 	 * @param location project relative path to the source folder
 	 * @return {@link IApiTypeContainer} or <code>null</code>
@@ -388,7 +425,7 @@ public class ProjectComponent extends BundleComponent {
 					if (res.getType() == IResource.FOLDER) {
 						// class file folder
 						IPath location2 = res.getLocation();
-						IApiTypeContainer cfc = (IApiTypeContainer) fOutputLocationToContainer.get(location2);
+						IApiTypeContainer cfc = fOutputLocationToContainer.get(location2);
 						if (cfc == null) {
 							cfc = new ProjectTypeContainer(component, (IContainer) res);
 							fOutputLocationToContainer.put(location2, cfc);
@@ -401,7 +438,7 @@ public class ProjectComponent extends BundleComponent {
 					if (outputLocation == null) {
 						outputLocation = fProject.getOutputLocation();
 					}
-					IApiTypeContainer cfc = (IApiTypeContainer) fOutputLocationToContainer.get(outputLocation);
+					IApiTypeContainer cfc = fOutputLocationToContainer.get(outputLocation);
 					if (cfc == null) {
 						IPath projectFullPath = fProject.getProject().getFullPath();
 						IContainer container = null;
@@ -419,8 +456,8 @@ public class ProjectComponent extends BundleComponent {
 			}
 		}
 		return null;
-	}	
-	
+	}
+
 	/**
 	 * Returns the Java project associated with this component.
 	 * 
@@ -429,16 +466,17 @@ public class ProjectComponent extends BundleComponent {
 	public IJavaProject getJavaProject() {
 		return fProject;
 	}
-	
+
 	/**
-	 * Returns the cached API type container for the given package fragment root, or <code>null</code>
-	 * if none. The given package fragment has to be a SOURCE package fragment - this method is only
-	 * used by the project API description to obtain a class file corresponding to a compilation unit
+	 * Returns the cached API type container for the given package fragment
+	 * root, or <code>null</code> if none. The given package fragment has to be
+	 * a SOURCE package fragment - this method is only used by the project API
+	 * description to obtain a class file corresponding to a compilation unit
 	 * when tag scanning (to resolve signatures).
-	 *  
+	 * 
 	 * @param root source package fragment root
-	 * @return API type container associated with the package fragment root, or <code>null</code> 
-	 * 	if none
+	 * @return API type container associated with the package fragment root, or
+	 *         <code>null</code> if none
 	 */
 	public IApiTypeContainer getTypeContainer(IPackageFragmentRoot root) throws CoreException {
 		if (root.getKind() == IPackageFragmentRoot.K_SOURCE) {
@@ -451,5 +489,5 @@ public class ProjectComponent extends BundleComponent {
 		}
 		return null;
 	}
-	
+
 }

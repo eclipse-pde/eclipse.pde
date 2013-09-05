@@ -22,7 +22,7 @@ import org.w3c.dom.Element;
 
 /**
  * Delta visitor that generates XML for the delta.
- *  
+ * 
  * @since 1.0.0
  */
 public class DeltaXmlVisitor extends DeltaVisitor {
@@ -35,7 +35,6 @@ public class DeltaXmlVisitor extends DeltaVisitor {
 	 * Top deltas element
 	 */
 	private Element fDeltas;
-	
 
 	/**
 	 * Constructs a new visitor for the given component.
@@ -49,11 +48,17 @@ public class DeltaXmlVisitor extends DeltaVisitor {
 		fDoc.appendChild(fDeltas);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.comparator.DeltaVisitor#visit(org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.provisional.comparator.DeltaVisitor
+	 * #visit(org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta)
 	 */
+	@Override
 	public boolean visit(IDelta delta) {
-		if (delta == ApiComparator.NO_DELTA) return false;
+		if (delta == ApiComparator.NO_DELTA) {
+			return false;
+		}
 		if (delta.getChildren().length == 0) {
 			processLeafDelta(delta);
 		}
@@ -81,7 +86,7 @@ public class DeltaXmlVisitor extends DeltaVisitor {
 		deltaElement.setAttribute(IApiXmlConstants.ATTR_MESSAGE, delta.getMessage());
 		String[] messageArguments = delta.getArguments();
 		int length = messageArguments.length;
-		if(length > 0) {
+		if (length > 0) {
 			Element messageArgumentsElement = fDoc.createElement(IApiXmlConstants.ELEMENT_DELTA_MESSAGE_ARGUMENTS);
 			for (int j = 0; j < length; j++) {
 				Element messageArgumentElement = fDoc.createElement(IApiXmlConstants.ELEMENT_DELTA_MESSAGE_ARGUMENT);
@@ -93,26 +98,31 @@ public class DeltaXmlVisitor extends DeltaVisitor {
 		fDeltas.appendChild(deltaElement);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.comparator.DeltaVisitor#endVisit(org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.provisional.comparator.DeltaVisitor
+	 * #endVisit
+	 * (org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta)
 	 */
+	@Override
 	public void endVisit(IDelta delta) {
 		// nothing to do
 	}
-	
+
 	/**
 	 * Returns the settings as a UTF-8 string containing XML.
 	 * 
 	 * @return XML
-	 * @throws CoreException if something goes wrong 
+	 * @throws CoreException if something goes wrong
 	 */
 	public String getXML() throws CoreException {
 		return Util.serializeDocument(fDoc);
 	}
-	
+
 	/**
-	 * Return the xml dom document this visitor generates.  Use {@link #getXML()} to
-	 * get the serialized xml string.
+	 * Return the xml dom document this visitor generates. Use {@link #getXML()}
+	 * to get the serialized xml string.
 	 * 
 	 * @return xml dom document
 	 */

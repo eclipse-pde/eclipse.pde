@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eclipse.pde.api.tools.internal.provisional.builder;
 
 import java.util.List;
 
+import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 
 /**
  * Detects API use problems and leaks.
@@ -19,7 +20,7 @@ import java.util.List;
  * @since 1.1
  */
 public interface IApiProblemDetector {
-	
+
 	/**
 	 * Returns a bit mask of reference kinds this analyzer is interested in.
 	 * 
@@ -36,12 +37,13 @@ public interface IApiProblemDetector {
 	 * @return whether the unresolved reference is a potential problem
 	 */
 	public boolean considerReference(IReference reference);
-	
+
 	/**
-	 * Returns a list of any problems detected after analyzing potential reference
-	 * problems that are now resolved.
+	 * Returns a list of any problems detected after analyzing potential
+	 * reference problems that are now resolved.
 	 * 
-	 * @return list of {@link org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem}
+	 * @return list of
+	 *         {@link org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem}
 	 */
-	public List createProblems();
+	public List<IApiProblem> createProblems();
 }

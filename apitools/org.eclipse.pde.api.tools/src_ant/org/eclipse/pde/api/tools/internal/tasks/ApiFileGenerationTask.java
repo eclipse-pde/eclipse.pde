@@ -70,25 +70,32 @@ public class ApiFileGenerationTask extends Task {
 		boolean isAPIToolsNature = false;
 		boolean insideNature = false;
 		StringBuffer buffer;
+
+		@Override
 		public void error(SAXParseException e) throws SAXException {
 			e.printStackTrace();
 		}
-		public void startElement(String uri, String localName, String name, Attributes attributes)
-				throws SAXException {
-			if (this.isAPIToolsNature) return;
+
+		@Override
+		public void startElement(String uri, String localName, String name, Attributes attributes) throws SAXException {
+			if (this.isAPIToolsNature) {
+				return;
+			}
 			this.insideNature = NATURE_ELEMENT_NAME.equals(name);
 			if (this.insideNature) {
 				this.buffer = new StringBuffer();
 			}
 		}
-		public void characters(char[] ch, int start, int length)
-				throws SAXException {
+
+		@Override
+		public void characters(char[] ch, int start, int length) throws SAXException {
 			if (this.insideNature) {
 				this.buffer.append(ch, start, length);
 			}
 		}
-		public void endElement(String uri, String localName, String name)
-				throws SAXException {
+
+		@Override
+		public void endElement(String uri, String localName, String name) throws SAXException {
 			if (this.insideNature) {
 				// check the contents of the characters
 				String natureName = String.valueOf(this.buffer).trim();
@@ -96,6 +103,7 @@ public class ApiFileGenerationTask extends Task {
 			}
 			this.insideNature = false;
 		}
+
 		public boolean isAPIToolsNature() {
 			return this.isAPIToolsNature;
 		}
@@ -112,6 +120,7 @@ public class ApiFileGenerationTask extends Task {
 	boolean allowNonApiProject = false;
 	/**
 	 * The encoding to read the source files with
+	 * 
 	 * @since 1.0.600
 	 */
 	String encoding;
@@ -125,51 +134,72 @@ public class ApiFileGenerationTask extends Task {
 	public void setProjectName(String projectName) {
 		this.projectName = projectName;
 	}
+
 	/**
 	 * Set the project location.
 	 * 
-	 * <br><br>This is the folder that contains all the source files for the given project.
-	 * <br><br>The location is set using an absolute path.</p>
+	 * <br>
+	 * <br>
+	 * This is the folder that contains all the source files for the given
+	 * project. <br>
+	 * <br>
+	 * The location is set using an absolute path.</p>
 	 * 
 	 * @param projectLocation the given project location
 	 */
 	public void setProject(String projectLocation) {
 		this.projectLocation = projectLocation;
 	}
+
 	/**
 	 * Set the target location.
 	 * 
-	 * <br><br>This is the folder in which the generated files are generated.
-	 * <br><br>The location is set using an absolute path.</p>
-	 *
+	 * <br>
+	 * <br>
+	 * This is the folder in which the generated files are generated. <br>
+	 * <br>
+	 * The location is set using an absolute path.</p>
+	 * 
 	 * @param targetLocation the given target location
 	 */
 	public void setTarget(String targetLocation) {
 		this.targetFolder = targetLocation;
 	}
+
 	/**
 	 * Set the binary locations.
 	 * 
-	 * <br><br>This is a list of folders or jar files that contain all the .class files for the given project.
-	 * They are separated by the platform path separator. Each entry must exist.
-	 * <br><br>They should be specified using absolute paths.
-	 *
+	 * <br>
+	 * <br>
+	 * This is a list of folders or jar files that contain all the .class files
+	 * for the given project. They are separated by the platform path separator.
+	 * Each entry must exist. <br>
+	 * <br>
+	 * They should be specified using absolute paths.
+	 * 
 	 * @param binaryLocations the given binary locations
 	 */
 	public void setBinary(String binaryLocations) {
 		this.binaryLocations = binaryLocations;
 	}
-	
+
 	/**
-	 * Set if the task should scan the project even if it is not API tools enabled.
-	 * <p>The possible values are: <code>true</code> or <code>false</code></p>
-	 * <p>Default is: <code>false</code>.</p>
+	 * Set if the task should scan the project even if it is not API tools
+	 * enabled.
+	 * <p>
+	 * The possible values are: <code>true</code> or <code>false</code>
+	 * </p>
+	 * <p>
+	 * Default is: <code>false</code>.
+	 * </p>
+	 * 
 	 * @since 1.2
 	 * @param allow
 	 */
 	public void setAllowNonApiProject(String allow) {
 		this.allowNonApiProject = Boolean.valueOf(allow).booleanValue();
 	}
+
 	/**
 	 * Sets the encoding the task should use when reading text streams
 	 * 
@@ -179,62 +209,72 @@ public class ApiFileGenerationTask extends Task {
 	public void setEncoding(String encoding) {
 		this.encoding = encoding;
 	}
+
 	/**
 	 * Set the debug value.
-	 * <p>The possible values are: <code>true</code>, <code>false</code></p>
-	 * <p>Default is <code>false</code>.</p>
-	 *
+	 * <p>
+	 * The possible values are: <code>true</code>, <code>false</code>
+	 * </p>
+	 * <p>
+	 * Default is <code>false</code>.
+	 * </p>
+	 * 
 	 * @param debugValue the given debug value
 	 */
 	public void setDebug(String debugValue) {
-		this.debug = Boolean.toString(true).equals(debugValue); 
+		this.debug = Boolean.toString(true).equals(debugValue);
 	}
+
 	/**
 	 * Set the extra manifest files' locations.
 	 * 
-	 * <p>This is a list of extra MANIFEST.MF files' locations that can be set to provide more API
-	 * packages to scan. They are separated by the platform path separator. Each entry must exist.</p>
-	 * <p>If the path is not absolute, it will be resolved relative to the current working directory.</p>
-	 * <p>Jar files can be specified instead of MANIFEST.MF file. If a jar file is specified, its MANIFEST.MF file
-	 * will be read if it exists.</p>
-	 *
+	 * <p>
+	 * This is a list of extra MANIFEST.MF files' locations that can be set to
+	 * provide more API packages to scan. They are separated by the platform
+	 * path separator. Each entry must exist.
+	 * </p>
+	 * <p>
+	 * If the path is not absolute, it will be resolved relative to the current
+	 * working directory.
+	 * </p>
+	 * <p>
+	 * Jar files can be specified instead of MANIFEST.MF file. If a jar file is
+	 * specified, its MANIFEST.MF file will be read if it exists.
+	 * </p>
+	 * 
 	 * @param manifests the given extra manifest files' locations
 	 */
 	public void setExtraManifests(String manifests) {
 		this.manifests = manifests;
 	}
+
 	/**
 	 * Set the extra source locations.
 	 * 
-	 * <br><br>This is a list of locations for source files that will be scanned.
-	 * They are separated by the platform path separator. Each entry must exist.
-	 * <br><br>They should be specified using absolute paths.
-	 *
+	 * <br>
+	 * <br>
+	 * This is a list of locations for source files that will be scanned. They
+	 * are separated by the platform path separator. Each entry must exist. <br>
+	 * <br>
+	 * They should be specified using absolute paths.
+	 * 
 	 * @param manifests the given extra source locations
 	 */
 	public void setExtraSourceLocations(String sourceLocations) {
 		this.sourceLocations = sourceLocations;
 	}
-	
+
 	/**
 	 * Execute the ant task
 	 */
+	@Override
 	public void execute() throws BuildException {
-		if (this.binaryLocations == null
-				|| this.projectName == null
-				|| this.projectLocation == null
-				|| this.targetFolder == null) {
+		if (this.binaryLocations == null || this.projectName == null || this.projectLocation == null || this.targetFolder == null) {
 			StringWriter out = new StringWriter();
 			PrintWriter writer = new PrintWriter(out);
-			writer.println(
-				NLS.bind(Messages.api_generation_printArguments,
-					new String[] {
-						this.projectName,
-						this.projectLocation,
-						this.binaryLocations,
-						this.targetFolder
-					})
-			);
+			writer.println(NLS.bind(Messages.api_generation_printArguments, new String[] {
+					this.projectName, this.projectLocation,
+					this.binaryLocations, this.targetFolder }));
 			writer.flush();
 			writer.close();
 			throw new BuildException(String.valueOf(out.getBuffer()));
@@ -258,13 +298,12 @@ public class ApiFileGenerationTask extends Task {
 			if (this.debug) {
 				System.err.println("Must be a directory : " + this.projectLocation); //$NON-NLS-1$
 			}
-			throw new BuildException(
-					NLS.bind(Messages.api_generation_projectLocationNotADirectory, this.projectLocation));
+			throw new BuildException(NLS.bind(Messages.api_generation_projectLocationNotADirectory, this.projectLocation));
 		}
 		// check if the project contains the API tools nature
 		File dotProjectFile = new File(root, ".project"); //$NON-NLS-1$
-		
-		if(!this.allowNonApiProject && !isAPIToolsNature(dotProjectFile)) {
+
+		if (!this.allowNonApiProject && !isAPIToolsNature(dotProjectFile)) {
 			System.err.println("The project does not have an API Tools nature so a api_description file will not be generated"); //$NON-NLS-1$
 			return;
 		}
@@ -276,13 +315,12 @@ public class ApiFileGenerationTask extends Task {
 			if (this.debug) {
 				System.err.println("Must be a directory : " + this.targetFolder); //$NON-NLS-1$
 			}
-			throw new BuildException(
-				NLS.bind(Messages.api_generation_targetFolderNotADirectory, this.targetFolder));
+			throw new BuildException(NLS.bind(Messages.api_generation_targetFolderNotADirectory, this.targetFolder));
 		}
 		File apiDescriptionFile = new File(targetProjectFolder, IApiCoreConstants.API_DESCRIPTION_XML_NAME);
 		if (apiDescriptionFile.exists()) {
-			//get rid of the existing one
-			//see https://bugs.eclipse.org/bugs/show_bug.cgi?id=414053
+			// get rid of the existing one
+			// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=414053
 			if (this.debug) {
 				System.out.println("Existing api description file deleted"); //$NON-NLS-1$
 			}
@@ -292,7 +330,8 @@ public class ApiFileGenerationTask extends Task {
 		Map manifestMap = null;
 		IApiTypeContainer classFileContainer = null;
 		if (!this.projectLocation.endsWith(Util.ORG_ECLIPSE_SWT)) {
-			// create the directory class file container used to resolve signatures during tag scanning
+			// create the directory class file container used to resolve
+			// signatures during tag scanning
 			String[] allBinaryLocations = this.binaryLocations.split(File.pathSeparator);
 			List allContainers = new ArrayList();
 			IApiTypeContainer container = null;
@@ -325,8 +364,8 @@ public class ApiFileGenerationTask extends Task {
 					if (inputStream != null) {
 						try {
 							inputStream.close();
-						} 
-						catch(IOException e) {}
+						} catch (IOException e) {
+						}
 					}
 				}
 			}
@@ -362,16 +401,14 @@ public class ApiFileGenerationTask extends Task {
 							if (inputStream != null) {
 								try {
 									inputStream.close();
-								} 
-								catch(IOException e) {
+								} catch (IOException e) {
 									// ignore
 								}
 							}
 							if (zipFile != null) {
 								try {
 									zipFile.close();
-								} 
-								catch(IOException e) {
+								} catch (IOException e) {
 									// ignore
 								}
 							}
@@ -387,6 +424,7 @@ public class ApiFileGenerationTask extends Task {
 				}
 			}
 			FileFilter fileFilter = new FileFilter() {
+				@Override
 				public boolean accept(File path) {
 					return (path.isFile() && Util.isJavaFileName(path.getName()) && isApi(path.getParent())) || path.isDirectory();
 				}
@@ -430,8 +468,8 @@ public class ApiFileGenerationTask extends Task {
 						if (classFileContainer != null) {
 							classFileContainer.close();
 						}
-					} 
-					catch (CoreException e) {}
+					} catch (CoreException e) {
+					}
 				}
 			}
 		}
@@ -449,34 +487,40 @@ public class ApiFileGenerationTask extends Task {
 
 	/**
 	 * Returns if the given path ends with one of the collected API path names
+	 * 
 	 * @param path
-	 * @return true if the given path name ends with one of the collected API package names 
+	 * @return true if the given path name ends with one of the collected API
+	 *         package names
 	 */
 	boolean isApi(String path) {
 		String pkg = null;
-		for(Iterator iter = this.apiPackages.iterator(); iter.hasNext();) {
+		for (Iterator iter = this.apiPackages.iterator(); iter.hasNext();) {
 			pkg = (String) iter.next();
-			if(path.endsWith(pkg.replace('.', File.separatorChar))) {
+			if (path.endsWith(pkg.replace('.', File.separatorChar))) {
 				return true;
 			}
 		}
 		return false;
 	}
-	
+
 	/**
-	 * Collects the names of the packages that are API for the bundle the API description is being created for
+	 * Collects the names of the packages that are API for the bundle the API
+	 * description is being created for
+	 * 
 	 * @param manifestmap
-	 * @return the names of the packages that are API for the bundle the API description is being created for
-	 * @throws BundleException if parsing the manifest map to get API package names fail for some reason
+	 * @return the names of the packages that are API for the bundle the API
+	 *         description is being created for
+	 * @throws BundleException if parsing the manifest map to get API package
+	 *             names fail for some reason
 	 */
-	private Set/*<String>*/ collectApiPackageNames(Map manifestmap) throws BundleException {
+	private Set/* <String> */collectApiPackageNames(Map manifestmap) throws BundleException {
 		HashSet set = new HashSet();
 		ManifestElement[] packages = ManifestElement.parseHeader(Constants.EXPORT_PACKAGE, (String) manifestmap.get(Constants.EXPORT_PACKAGE));
 		if (packages != null) {
 			for (int i = 0; i < packages.length; i++) {
 				ManifestElement packageName = packages[i];
 				Enumeration directiveKeys = packageName.getDirectiveKeys();
-				if(directiveKeys == null) {
+				if (directiveKeys == null) {
 					set.add(packageName.getValue());
 				} else {
 					boolean include = true;
@@ -502,51 +546,61 @@ public class ApiFileGenerationTask extends Task {
 		}
 		return set;
 	}
-	
+
 	private IApiTypeContainer getContainer(String location) {
 		File f = new File(location);
-		if (!f.exists()) return null;
+		if (!f.exists()) {
+			return null;
+		}
 		if (isZipJarFile(location)) {
 			return new ArchiveApiTypeContainer(null, location);
 		} else {
 			return new DirectoryApiTypeContainer(null, location);
 		}
 	}
+
 	/**
-	 * Resolves the compiler compliance based on the BREE entry in the MANIFEST.MF file
+	 * Resolves the compiler compliance based on the BREE entry in the
+	 * MANIFEST.MF file
+	 * 
 	 * @param manifestmap
-	 * @return The derived {@link JavaCore#COMPILER_COMPLIANCE} from the BREE in the manifest map,
-	 * or {@link JavaCore#VERSION_1_3} if there is no BREE entry in the map or if the BREE entry does not directly map
-	 * to one of {"1.3", "1.4", "1.5", "1.6", "1.7"}.
+	 * @return The derived {@link JavaCore#COMPILER_COMPLIANCE} from the BREE in
+	 *         the manifest map, or {@link JavaCore#VERSION_1_3} if there is no
+	 *         BREE entry in the map or if the BREE entry does not directly map
+	 *         to one of {"1.3", "1.4", "1.5", "1.6", "1.7"}.
 	 */
 	private String resolveCompliance(Map manifestmap) {
-		if(manifestmap != null) {
+		if (manifestmap != null) {
 			String eename = (String) manifestmap.get(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT);
-			if(eename != null) {
-				if("J2SE-1.4".equals(eename)) { //$NON-NLS-1$
+			if (eename != null) {
+				if ("J2SE-1.4".equals(eename)) { //$NON-NLS-1$
 					return JavaCore.VERSION_1_4;
 				}
-				if("J2SE-1.5".equals(eename)) { //$NON-NLS-1$
+				if ("J2SE-1.5".equals(eename)) { //$NON-NLS-1$
 					return JavaCore.VERSION_1_5;
 				}
-				if("JavaSE-1.6".equals(eename)) { //$NON-NLS-1$
+				if ("JavaSE-1.6".equals(eename)) { //$NON-NLS-1$
 					return JavaCore.VERSION_1_6;
 				}
-				if("JavaSE-1.7".equals(eename)) { //$NON-NLS-1$
+				if ("JavaSE-1.7".equals(eename)) { //$NON-NLS-1$
 					return JavaCore.VERSION_1_7;
 				}
 			}
 		}
 		return JavaCore.VERSION_1_3;
 	}
-	
+
 	/**
 	 * Resolves if the '.project' file belongs to an API enabled project or not
+	 * 
 	 * @param dotProjectFile
-	 * @return true if the '.project' file is for an API enabled project, false otherwise
+	 * @return true if the '.project' file is for an API enabled project, false
+	 *         otherwise
 	 */
 	private boolean isAPIToolsNature(File dotProjectFile) {
-		if (!dotProjectFile.exists()) return false;
+		if (!dotProjectFile.exists()) {
+			return false;
+		}
 		BufferedInputStream stream = null;
 		try {
 			stream = new BufferedInputStream(new FileInputStream(dotProjectFile));
@@ -567,11 +621,13 @@ public class ApiFileGenerationTask extends Task {
 		}
 		return false;
 	}
+
 	private static boolean isZipJarFile(String fileName) {
 		String normalizedFileName = fileName.toLowerCase();
 		return normalizedFileName.endsWith(".zip") //$NON-NLS-1$
-			|| normalizedFileName.endsWith(".jar"); //$NON-NLS-1$
+				|| normalizedFileName.endsWith(".jar"); //$NON-NLS-1$
 	}
+
 	/**
 	 * Check if the given source contains an source extension point.
 	 * 

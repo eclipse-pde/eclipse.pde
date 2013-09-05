@@ -26,42 +26,50 @@ public abstract class AbstractApiTypeRoot extends ApiElement implements IApiType
 
 	/**
 	 * Constructor
+	 * 
 	 * @param parent the parent {@link IApiElement} or <code>null</code> if none
 	 * @param name the name of the type root
 	 */
 	protected AbstractApiTypeRoot(IApiElement parent, String name) {
 		super(parent, IApiElement.API_TYPE_ROOT, name);
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiTypeRoot#getContents()
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.provisional.IApiTypeRoot#getContents()
 	 */
 	public abstract byte[] getContents() throws CoreException;
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiTypeRoot#getStructure()
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.provisional.IApiTypeRoot#getStructure
+	 * ()
 	 */
+	@Override
 	public IApiType getStructure() throws CoreException {
 		ApiModelCache cache = ApiModelCache.getCache();
 		IApiComponent comp = getApiComponent();
 		IApiType type = null;
-		if(comp != null) {
+		if (comp != null) {
 			IApiBaseline baseline = comp.getBaseline();
 			type = (IApiType) cache.getElementInfo(baseline.getName(), comp.getSymbolicName(), this.getTypeName(), IApiElement.TYPE);
 		}
-		if(type == null) {
+		if (type == null) {
 			type = TypeStructureBuilder.buildTypeStructure(getContents(), getApiComponent(), this);
-			if(type == null) {
+			if (type == null) {
 				return null;
 			}
 			cache.cacheElementInfo(type);
 		}
 		return type;
 	}
-	
+
 	/**
 	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiTypeRoot#getApiComponent()
 	 */
+	@Override
 	public IApiComponent getApiComponent() {
 		return (IApiComponent) getAncestor(IApiElement.COMPONENT);
 	}

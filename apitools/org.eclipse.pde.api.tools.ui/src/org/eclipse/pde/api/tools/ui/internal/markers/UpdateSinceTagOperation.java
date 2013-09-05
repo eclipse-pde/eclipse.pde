@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,7 +40,7 @@ import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 import org.eclipse.text.edits.TextEdit;
 
 public class UpdateSinceTagOperation {
-	
+
 	private IMarker fMarker;
 	private int sinceTagType;
 	private String sinceTagVersion;
@@ -52,7 +52,9 @@ public class UpdateSinceTagOperation {
 	}
 
 	public void run(IProgressMonitor monitor) {
-		if (monitor != null && monitor.isCanceled()) return;
+		if (monitor != null && monitor.isCanceled()) {
+			return;
+		}
 		if (monitor != null) {
 			monitor.beginTask(MarkerMessages.UpdateSinceTagOperation_title, 3);
 		}
@@ -66,9 +68,10 @@ public class UpdateSinceTagOperation {
 				IResource resource = this.fMarker.getResource();
 				javaElement = JavaCore.create(resource);
 			} else {
-				// this is a case where the marker is reported against the MANIFEST.MF file
+				// this is a case where the marker is reported against the
+				// MANIFEST.MF file
 				String handle = (String) fMarker.getAttribute(IApiMarkerConstants.MARKER_ATTR_HANDLE_ID);
-				if(handle != null) {
+				if (handle != null) {
 					handleElement = JavaCore.create(handle);
 				}
 				if (handleElement != null && handleElement.exists()) {
@@ -78,7 +81,8 @@ public class UpdateSinceTagOperation {
 			if (javaElement != null && javaElement.getElementType() == IJavaElement.COMPILATION_UNIT) {
 				ICompilationUnit compilationUnit = (ICompilationUnit) javaElement;
 				if (!compilationUnit.isWorkingCopy()) {
-					// open an editor of the corresponding unit to "show" the quickfix change
+					// open an editor of the corresponding unit to "show" the
+					// quickfix change
 					JavaUI.openInEditor(compilationUnit);
 				}
 				ASTParser parser = ASTParser.newParser(AST.JLS4);
@@ -104,7 +108,7 @@ public class UpdateSinceTagOperation {
 				}
 				parser.setFocalPosition(intValue);
 				parser.setResolveBindings(true);
-				Map options = compilationUnit.getJavaProject().getOptions(true);
+				Map<String, String> options = compilationUnit.getJavaProject().getOptions(true);
 				options.put(JavaCore.COMPILER_DOC_COMMENT_SUPPORT, JavaCore.ENABLED);
 				parser.setCompilerOptions(options);
 				final CompilationUnit unit = (CompilationUnit) parser.createAST(new NullProgressMonitor());
@@ -123,21 +127,24 @@ public class UpdateSinceTagOperation {
 						Javadoc docnode = node.getJavadoc();
 						if (docnode == null) {
 							docnode = ast.newJavadoc();
-							//we do not want to create a new empty Javadoc node in
-							//the AST if there are no missing tags
+							// we do not want to create a new empty Javadoc node
+							// in
+							// the AST if there are no missing tags
 							rewrite.set(node, node.getJavadocProperty(), docnode, null);
 						} else {
-							List tags = docnode.tags();
+							List<TagElement> tags = docnode.tags();
 							boolean found = false;
-							loop: for (Iterator iterator = tags.iterator(); iterator.hasNext();) {
-								TagElement element = (TagElement) iterator.next();
+							loop: for (Iterator<TagElement> iterator = tags.iterator(); iterator.hasNext();) {
+								TagElement element = iterator.next();
 								String tagName = element.getTagName();
 								if (TagElement.TAG_SINCE.equals(tagName)) {
 									found = true;
 									break loop;
 								}
 							}
-							if (found) return;
+							if (found) {
+								return;
+							}
 						}
 						ListRewrite lrewrite = rewrite.getListRewrite(docnode, Javadoc.TAGS_PROPERTY);
 						// check the existing tags list
@@ -149,19 +156,19 @@ public class UpdateSinceTagOperation {
 						lrewrite.insertLast(newtag, null);
 					} else {
 						Javadoc docnode = node.getJavadoc();
-						List tags = docnode.tags();
+						List<TagElement> tags = docnode.tags();
 						TagElement sinceTag = null;
-						for (Iterator iterator = tags.iterator(); iterator.hasNext(); ) {
-							TagElement tagElement = (TagElement) iterator.next();
+						for (Iterator<TagElement> iterator = tags.iterator(); iterator.hasNext();) {
+							TagElement tagElement = iterator.next();
 							if (TagElement.TAG_SINCE.equals(tagElement.getTagName())) {
 								sinceTag = tagElement;
 								break;
 							}
 						}
 						if (sinceTag != null) {
-							List fragments = sinceTag.fragments();
+							List<TextElement> fragments = sinceTag.fragments();
 							if (fragments.size() >= 1) {
-								TextElement textElement = (TextElement) fragments.get(0);
+								TextElement textElement = fragments.get(0);
 								StringBuffer buffer = new StringBuffer();
 								buffer.append(' ').append(this.sinceTagVersion);
 								rewrite.set(textElement, TextElement.TEXT_PROPERTY, String.valueOf(buffer), null);
@@ -181,17 +188,27 @@ public class UpdateSinceTagOperation {
 						if (monitor != null) {
 							monitor.worked(1);
 						}
-						TextEdit edit= rewrite.rewriteAST();
+						TextEdit edit = rewrite.rewriteAST();
 						compilationUnit.applyTextEdit(edit, monitor);
 						if (monitor != null) {
 							monitor.worked(1);
 						}
 					} finally {
-						compilationUnit.reconcile(
-								ICompilationUnit.NO_AST,
-								false /* don't force problem detection */,
-								null /* use primary owner */,
-								null /* no progress monitor */);
+						compilationUnit.reconcile(ICompilationUnit.NO_AST, false /*
+																				 * don
+																				 * 't
+																				 * force
+																				 * problem
+																				 * detection
+																				 */, null /*
+																						 * use
+																						 * primary
+																						 * owner
+																						 */, null /*
+																								 * no
+																								 * progress
+																								 * monitor
+																								 */);
 					}
 				}
 			}

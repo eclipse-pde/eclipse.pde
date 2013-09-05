@@ -33,8 +33,9 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.tags.InvalidJavadocTagFieldTests#getTestSourcePath()
 	 */
+	@Override
 	protected IPath getTestSourcePath() {
-		return super.getTestSourcePath().append("class");
+		return super.getTestSourcePath().append("class"); //$NON-NLS-1$
 	}
 	
 	/**
@@ -59,22 +60,22 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	private void x1(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(14));
 		setExpectedMessageArgs(new String[][] {
-				{"@noreference", BuilderMessages.TagValidator_private_field},
-				{"@noreference", BuilderMessages.TagValidator_private_field},
-				{"@noreference", BuilderMessages.TagValidator_private_field},
-				{"@noreference", BuilderMessages.TagValidator_a_field_that_is_not_visible},
-				{"@noreference", BuilderMessages.TagValidator_a_field_that_is_not_visible},
-				{"@noreference", BuilderMessages.TagValidator_a_field_that_is_not_visible},
-				{"@noreference", BuilderMessages.TagValidator_a_field_that_is_not_visible},
-				{"@noreference", BuilderMessages.TagValidator_a_field_that_is_not_visible},
-				{"@noreference", BuilderMessages.TagValidator_a_field_that_is_not_visible},
-				{"@noreference", BuilderMessages.TagValidator_private_field},
-				{"@noreference", BuilderMessages.TagValidator_a_package_default_field},
-				{"@noreference", BuilderMessages.TagValidator_a_package_default_field},
-				{"@noreference", BuilderMessages.TagValidator_a_package_default_field},
-				{"@noreference", BuilderMessages.TagValidator_a_package_default_field}
+				{"@noreference", BuilderMessages.TagValidator_private_field}, //$NON-NLS-1$
+				{"@noreference", BuilderMessages.TagValidator_private_field}, //$NON-NLS-1$
+				{"@noreference", BuilderMessages.TagValidator_private_field}, //$NON-NLS-1$
+				{"@noreference", BuilderMessages.TagValidator_a_field_that_is_not_visible}, //$NON-NLS-1$
+				{"@noreference", BuilderMessages.TagValidator_a_field_that_is_not_visible}, //$NON-NLS-1$
+				{"@noreference", BuilderMessages.TagValidator_a_field_that_is_not_visible}, //$NON-NLS-1$
+				{"@noreference", BuilderMessages.TagValidator_a_field_that_is_not_visible}, //$NON-NLS-1$
+				{"@noreference", BuilderMessages.TagValidator_a_field_that_is_not_visible}, //$NON-NLS-1$
+				{"@noreference", BuilderMessages.TagValidator_a_field_that_is_not_visible}, //$NON-NLS-1$
+				{"@noreference", BuilderMessages.TagValidator_private_field}, //$NON-NLS-1$
+				{"@noreference", BuilderMessages.TagValidator_a_package_default_field}, //$NON-NLS-1$
+				{"@noreference", BuilderMessages.TagValidator_a_package_default_field}, //$NON-NLS-1$
+				{"@noreference", BuilderMessages.TagValidator_a_package_default_field}, //$NON-NLS-1$
+				{"@noreference", BuilderMessages.TagValidator_a_package_default_field} //$NON-NLS-1$
 		});
-		deployTagTest("test1.java", inc, false);
+		deployTagTest("test1.java", inc, false); //$NON-NLS-1$
 	}
 	
 	public void testInvalidClassFieldTag2I() {
@@ -92,10 +93,10 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	private void x2(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(2));
 		setExpectedMessageArgs(new String[][] {
-				{"@noreference", BuilderMessages.TagValidator_private_field},
-				{"@noreference", BuilderMessages.TagValidator_a_package_default_field}
+				{"@noreference", BuilderMessages.TagValidator_private_field}, //$NON-NLS-1$
+				{"@noreference", BuilderMessages.TagValidator_a_package_default_field} //$NON-NLS-1$
 		});
-		deployTagTest("test2.java", inc, true);
+		deployTagTest("test2.java", inc, true); //$NON-NLS-1$
 	}
 	
 	public void testInvalidClassFieldTag3I() {
@@ -113,22 +114,22 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	private void x3(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(14));
 		setExpectedMessageArgs(new String[][] {
-				{"@noreference", BuilderMessages.TagValidator_a_field_that_is_not_visible},
-				{"@noreference", BuilderMessages.TagValidator_a_field_that_is_not_visible},
-				{"@noreference", BuilderMessages.TagValidator_a_field_that_is_not_visible},
-				{"@noreference", BuilderMessages.TagValidator_a_field_that_is_not_visible},
-				{"@noreference", BuilderMessages.TagValidator_a_field_that_is_not_visible},
-				{"@noreference", BuilderMessages.TagValidator_a_field_that_is_not_visible},
-				{"@noreference", BuilderMessages.TagValidator_private_field},
-				{"@noreference", BuilderMessages.TagValidator_private_field},
-				{"@noreference", BuilderMessages.TagValidator_private_field},
-				{"@noreference", BuilderMessages.TagValidator_private_field},
-				{"@noreference", BuilderMessages.TagValidator_a_package_default_field},
-				{"@noreference", BuilderMessages.TagValidator_a_package_default_field},
-				{"@noreference", BuilderMessages.TagValidator_a_package_default_field},
-				{"@noreference", BuilderMessages.TagValidator_a_package_default_field}
+				{"@noreference", BuilderMessages.TagValidator_a_field_that_is_not_visible}, //$NON-NLS-1$
+				{"@noreference", BuilderMessages.TagValidator_a_field_that_is_not_visible}, //$NON-NLS-1$
+				{"@noreference", BuilderMessages.TagValidator_a_field_that_is_not_visible}, //$NON-NLS-1$
+				{"@noreference", BuilderMessages.TagValidator_a_field_that_is_not_visible}, //$NON-NLS-1$
+				{"@noreference", BuilderMessages.TagValidator_a_field_that_is_not_visible}, //$NON-NLS-1$
+				{"@noreference", BuilderMessages.TagValidator_a_field_that_is_not_visible}, //$NON-NLS-1$
+				{"@noreference", BuilderMessages.TagValidator_private_field}, //$NON-NLS-1$
+				{"@noreference", BuilderMessages.TagValidator_private_field}, //$NON-NLS-1$
+				{"@noreference", BuilderMessages.TagValidator_private_field}, //$NON-NLS-1$
+				{"@noreference", BuilderMessages.TagValidator_private_field}, //$NON-NLS-1$
+				{"@noreference", BuilderMessages.TagValidator_a_package_default_field}, //$NON-NLS-1$
+				{"@noreference", BuilderMessages.TagValidator_a_package_default_field}, //$NON-NLS-1$
+				{"@noreference", BuilderMessages.TagValidator_a_package_default_field}, //$NON-NLS-1$
+				{"@noreference", BuilderMessages.TagValidator_a_package_default_field} //$NON-NLS-1$
 		});
-		deployTagTest("test3.java", inc, false);
+		deployTagTest("test3.java", inc, false); //$NON-NLS-1$
 	}
 	
 	public void testInvalidClassFieldTag4I() {
@@ -146,10 +147,10 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	private void x4(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(2));
 		setExpectedMessageArgs(new String[][] {
-				{"@noreference", BuilderMessages.TagValidator_private_field},
-				{"@noreference", BuilderMessages.TagValidator_a_package_default_field}
+				{"@noreference", BuilderMessages.TagValidator_private_field}, //$NON-NLS-1$
+				{"@noreference", BuilderMessages.TagValidator_a_package_default_field} //$NON-NLS-1$
 		});
-		deployTagTest("test4.java", inc, true);
+		deployTagTest("test4.java", inc, true); //$NON-NLS-1$
 	}
 	
 	public void testInvalidClassFieldTag5I() {
@@ -167,24 +168,24 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	private void x5(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(16));
 		setExpectedMessageArgs(new String[][] {
-				{"@noextend", BuilderMessages.TagValidator_a_field},
-				{"@noextend", BuilderMessages.TagValidator_a_field},
-				{"@noextend", BuilderMessages.TagValidator_a_field},
-				{"@noextend", BuilderMessages.TagValidator_a_field},
-				{"@noextend", BuilderMessages.TagValidator_a_field},
-				{"@noextend", BuilderMessages.TagValidator_a_field},
-				{"@noextend", BuilderMessages.TagValidator_a_field},
-				{"@noextend", BuilderMessages.TagValidator_a_field},
-				{"@noextend", BuilderMessages.TagValidator_a_field},
-				{"@noextend", BuilderMessages.TagValidator_a_field},
-				{"@noextend", BuilderMessages.TagValidator_a_field},
-				{"@noextend", BuilderMessages.TagValidator_a_field},
-				{"@noextend", BuilderMessages.TagValidator_a_field},
-				{"@noextend", BuilderMessages.TagValidator_a_field},
-				{"@noextend", BuilderMessages.TagValidator_a_field},
-				{"@noextend", BuilderMessages.TagValidator_a_field}
+				{"@noextend", BuilderMessages.TagValidator_a_field}, //$NON-NLS-1$
+				{"@noextend", BuilderMessages.TagValidator_a_field}, //$NON-NLS-1$
+				{"@noextend", BuilderMessages.TagValidator_a_field}, //$NON-NLS-1$
+				{"@noextend", BuilderMessages.TagValidator_a_field}, //$NON-NLS-1$
+				{"@noextend", BuilderMessages.TagValidator_a_field}, //$NON-NLS-1$
+				{"@noextend", BuilderMessages.TagValidator_a_field}, //$NON-NLS-1$
+				{"@noextend", BuilderMessages.TagValidator_a_field}, //$NON-NLS-1$
+				{"@noextend", BuilderMessages.TagValidator_a_field}, //$NON-NLS-1$
+				{"@noextend", BuilderMessages.TagValidator_a_field}, //$NON-NLS-1$
+				{"@noextend", BuilderMessages.TagValidator_a_field}, //$NON-NLS-1$
+				{"@noextend", BuilderMessages.TagValidator_a_field}, //$NON-NLS-1$
+				{"@noextend", BuilderMessages.TagValidator_a_field}, //$NON-NLS-1$
+				{"@noextend", BuilderMessages.TagValidator_a_field}, //$NON-NLS-1$
+				{"@noextend", BuilderMessages.TagValidator_a_field}, //$NON-NLS-1$
+				{"@noextend", BuilderMessages.TagValidator_a_field}, //$NON-NLS-1$
+				{"@noextend", BuilderMessages.TagValidator_a_field} //$NON-NLS-1$
 		});
-		deployTagTest("test5.java", inc, false);
+		deployTagTest("test5.java", inc, false); //$NON-NLS-1$
 	}
 	
 	public void testInvalidClassFieldTag6I() {
@@ -202,12 +203,12 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	private void x6(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(4));
 		setExpectedMessageArgs(new String[][] {
-				{"@noextend", BuilderMessages.TagValidator_a_field},
-				{"@noextend", BuilderMessages.TagValidator_a_field},
-				{"@noextend", BuilderMessages.TagValidator_a_field},
-				{"@noextend", BuilderMessages.TagValidator_a_field}
+				{"@noextend", BuilderMessages.TagValidator_a_field}, //$NON-NLS-1$
+				{"@noextend", BuilderMessages.TagValidator_a_field}, //$NON-NLS-1$
+				{"@noextend", BuilderMessages.TagValidator_a_field}, //$NON-NLS-1$
+				{"@noextend", BuilderMessages.TagValidator_a_field} //$NON-NLS-1$
 		});
-		deployTagTest("test6.java", inc, true);
+		deployTagTest("test6.java", inc, true); //$NON-NLS-1$
 	}
 	
 	public void testInvalidClassFieldTag7I() {
@@ -225,24 +226,24 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	private void x7(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(16));
 		setExpectedMessageArgs(new String[][] {
-				{"@noimplement", BuilderMessages.TagValidator_a_field},
-				{"@noimplement", BuilderMessages.TagValidator_a_field},
-				{"@noimplement", BuilderMessages.TagValidator_a_field},
-				{"@noimplement", BuilderMessages.TagValidator_a_field},
-				{"@noimplement", BuilderMessages.TagValidator_a_field},
-				{"@noimplement", BuilderMessages.TagValidator_a_field},
-				{"@noimplement", BuilderMessages.TagValidator_a_field},
-				{"@noimplement", BuilderMessages.TagValidator_a_field},
-				{"@noimplement", BuilderMessages.TagValidator_a_field},
-				{"@noimplement", BuilderMessages.TagValidator_a_field},
-				{"@noimplement", BuilderMessages.TagValidator_a_field},
-				{"@noimplement", BuilderMessages.TagValidator_a_field},
-				{"@noimplement", BuilderMessages.TagValidator_a_field},
-				{"@noimplement", BuilderMessages.TagValidator_a_field},
-				{"@noimplement", BuilderMessages.TagValidator_a_field},
-				{"@noimplement", BuilderMessages.TagValidator_a_field}
+				{"@noimplement", BuilderMessages.TagValidator_a_field}, //$NON-NLS-1$
+				{"@noimplement", BuilderMessages.TagValidator_a_field}, //$NON-NLS-1$
+				{"@noimplement", BuilderMessages.TagValidator_a_field}, //$NON-NLS-1$
+				{"@noimplement", BuilderMessages.TagValidator_a_field}, //$NON-NLS-1$
+				{"@noimplement", BuilderMessages.TagValidator_a_field}, //$NON-NLS-1$
+				{"@noimplement", BuilderMessages.TagValidator_a_field}, //$NON-NLS-1$
+				{"@noimplement", BuilderMessages.TagValidator_a_field}, //$NON-NLS-1$
+				{"@noimplement", BuilderMessages.TagValidator_a_field}, //$NON-NLS-1$
+				{"@noimplement", BuilderMessages.TagValidator_a_field}, //$NON-NLS-1$
+				{"@noimplement", BuilderMessages.TagValidator_a_field}, //$NON-NLS-1$
+				{"@noimplement", BuilderMessages.TagValidator_a_field}, //$NON-NLS-1$
+				{"@noimplement", BuilderMessages.TagValidator_a_field}, //$NON-NLS-1$
+				{"@noimplement", BuilderMessages.TagValidator_a_field}, //$NON-NLS-1$
+				{"@noimplement", BuilderMessages.TagValidator_a_field}, //$NON-NLS-1$
+				{"@noimplement", BuilderMessages.TagValidator_a_field}, //$NON-NLS-1$
+				{"@noimplement", BuilderMessages.TagValidator_a_field} //$NON-NLS-1$
 		});
-		deployTagTest("test7.java", inc, false);
+		deployTagTest("test7.java", inc, false); //$NON-NLS-1$
 	}
 
 	public void testInvalidClassFieldTag8I() {
@@ -260,12 +261,12 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	private void x8(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(4));
 		setExpectedMessageArgs(new String[][] {
-				{"@noimplement", BuilderMessages.TagValidator_a_field},
-				{"@noimplement", BuilderMessages.TagValidator_a_field},
-				{"@noimplement", BuilderMessages.TagValidator_a_field},
-				{"@noimplement", BuilderMessages.TagValidator_a_field}
+				{"@noimplement", BuilderMessages.TagValidator_a_field}, //$NON-NLS-1$
+				{"@noimplement", BuilderMessages.TagValidator_a_field}, //$NON-NLS-1$
+				{"@noimplement", BuilderMessages.TagValidator_a_field}, //$NON-NLS-1$
+				{"@noimplement", BuilderMessages.TagValidator_a_field} //$NON-NLS-1$
 		});
-		deployTagTest("test8.java", inc, true);
+		deployTagTest("test8.java", inc, true); //$NON-NLS-1$
 	}
 
 	public void testInvalidClassFieldTag9I() {
@@ -283,24 +284,24 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	private void x9(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(16));
 		setExpectedMessageArgs(new String[][] {
-				{"@nooverride", BuilderMessages.TagValidator_a_field},
-				{"@nooverride", BuilderMessages.TagValidator_a_field},
-				{"@nooverride", BuilderMessages.TagValidator_a_field},
-				{"@nooverride", BuilderMessages.TagValidator_a_field},
-				{"@nooverride", BuilderMessages.TagValidator_a_field},
-				{"@nooverride", BuilderMessages.TagValidator_a_field},
-				{"@nooverride", BuilderMessages.TagValidator_a_field},
-				{"@nooverride", BuilderMessages.TagValidator_a_field},
-				{"@nooverride", BuilderMessages.TagValidator_a_field},
-				{"@nooverride", BuilderMessages.TagValidator_a_field},
-				{"@nooverride", BuilderMessages.TagValidator_a_field},
-				{"@nooverride", BuilderMessages.TagValidator_a_field},
-				{"@nooverride", BuilderMessages.TagValidator_a_field},
-				{"@nooverride", BuilderMessages.TagValidator_a_field},
-				{"@nooverride", BuilderMessages.TagValidator_a_field},
-				{"@nooverride", BuilderMessages.TagValidator_a_field}
+				{"@nooverride", BuilderMessages.TagValidator_a_field}, //$NON-NLS-1$
+				{"@nooverride", BuilderMessages.TagValidator_a_field}, //$NON-NLS-1$
+				{"@nooverride", BuilderMessages.TagValidator_a_field}, //$NON-NLS-1$
+				{"@nooverride", BuilderMessages.TagValidator_a_field}, //$NON-NLS-1$
+				{"@nooverride", BuilderMessages.TagValidator_a_field}, //$NON-NLS-1$
+				{"@nooverride", BuilderMessages.TagValidator_a_field}, //$NON-NLS-1$
+				{"@nooverride", BuilderMessages.TagValidator_a_field}, //$NON-NLS-1$
+				{"@nooverride", BuilderMessages.TagValidator_a_field}, //$NON-NLS-1$
+				{"@nooverride", BuilderMessages.TagValidator_a_field}, //$NON-NLS-1$
+				{"@nooverride", BuilderMessages.TagValidator_a_field}, //$NON-NLS-1$
+				{"@nooverride", BuilderMessages.TagValidator_a_field}, //$NON-NLS-1$
+				{"@nooverride", BuilderMessages.TagValidator_a_field}, //$NON-NLS-1$
+				{"@nooverride", BuilderMessages.TagValidator_a_field}, //$NON-NLS-1$
+				{"@nooverride", BuilderMessages.TagValidator_a_field}, //$NON-NLS-1$
+				{"@nooverride", BuilderMessages.TagValidator_a_field}, //$NON-NLS-1$
+				{"@nooverride", BuilderMessages.TagValidator_a_field} //$NON-NLS-1$
 		});
-		deployTagTest("test9.java", inc, false);
+		deployTagTest("test9.java", inc, false); //$NON-NLS-1$
 	}
 
 	public void testInvalidClassFieldTag10I() {
@@ -318,12 +319,12 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	private void x10(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(4));
 		setExpectedMessageArgs(new String[][] {
-				{"@nooverride", BuilderMessages.TagValidator_a_field},
-				{"@nooverride", BuilderMessages.TagValidator_a_field},
-				{"@nooverride", BuilderMessages.TagValidator_a_field},
-				{"@nooverride", BuilderMessages.TagValidator_a_field}
+				{"@nooverride", BuilderMessages.TagValidator_a_field}, //$NON-NLS-1$
+				{"@nooverride", BuilderMessages.TagValidator_a_field}, //$NON-NLS-1$
+				{"@nooverride", BuilderMessages.TagValidator_a_field}, //$NON-NLS-1$
+				{"@nooverride", BuilderMessages.TagValidator_a_field} //$NON-NLS-1$
 		});
-		deployTagTest("test10.java", inc, true);
+		deployTagTest("test10.java", inc, true); //$NON-NLS-1$
 	}
 
 	public void testInvalidClassFieldTag11I() {
@@ -341,24 +342,24 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	private void x11(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(16));
 		setExpectedMessageArgs(new String[][] {
-				{"@noinstantiate", BuilderMessages.TagValidator_a_field},
-				{"@noinstantiate", BuilderMessages.TagValidator_a_field},
-				{"@noinstantiate", BuilderMessages.TagValidator_a_field},
-				{"@noinstantiate", BuilderMessages.TagValidator_a_field},
-				{"@noinstantiate", BuilderMessages.TagValidator_a_field},
-				{"@noinstantiate", BuilderMessages.TagValidator_a_field},
-				{"@noinstantiate", BuilderMessages.TagValidator_a_field},
-				{"@noinstantiate", BuilderMessages.TagValidator_a_field},
-				{"@noinstantiate", BuilderMessages.TagValidator_a_field},
-				{"@noinstantiate", BuilderMessages.TagValidator_a_field},
-				{"@noinstantiate", BuilderMessages.TagValidator_a_field},
-				{"@noinstantiate", BuilderMessages.TagValidator_a_field},
-				{"@noinstantiate", BuilderMessages.TagValidator_a_field},
-				{"@noinstantiate", BuilderMessages.TagValidator_a_field},
-				{"@noinstantiate", BuilderMessages.TagValidator_a_field},
-				{"@noinstantiate", BuilderMessages.TagValidator_a_field}
+				{"@noinstantiate", BuilderMessages.TagValidator_a_field}, //$NON-NLS-1$
+				{"@noinstantiate", BuilderMessages.TagValidator_a_field}, //$NON-NLS-1$
+				{"@noinstantiate", BuilderMessages.TagValidator_a_field}, //$NON-NLS-1$
+				{"@noinstantiate", BuilderMessages.TagValidator_a_field}, //$NON-NLS-1$
+				{"@noinstantiate", BuilderMessages.TagValidator_a_field}, //$NON-NLS-1$
+				{"@noinstantiate", BuilderMessages.TagValidator_a_field}, //$NON-NLS-1$
+				{"@noinstantiate", BuilderMessages.TagValidator_a_field}, //$NON-NLS-1$
+				{"@noinstantiate", BuilderMessages.TagValidator_a_field}, //$NON-NLS-1$
+				{"@noinstantiate", BuilderMessages.TagValidator_a_field}, //$NON-NLS-1$
+				{"@noinstantiate", BuilderMessages.TagValidator_a_field}, //$NON-NLS-1$
+				{"@noinstantiate", BuilderMessages.TagValidator_a_field}, //$NON-NLS-1$
+				{"@noinstantiate", BuilderMessages.TagValidator_a_field}, //$NON-NLS-1$
+				{"@noinstantiate", BuilderMessages.TagValidator_a_field}, //$NON-NLS-1$
+				{"@noinstantiate", BuilderMessages.TagValidator_a_field}, //$NON-NLS-1$
+				{"@noinstantiate", BuilderMessages.TagValidator_a_field}, //$NON-NLS-1$
+				{"@noinstantiate", BuilderMessages.TagValidator_a_field} //$NON-NLS-1$
 		});
-		deployTagTest("test11.java", inc, false);
+		deployTagTest("test11.java", inc, false); //$NON-NLS-1$
 	}
 	
 	public void testInvalidClassFieldTag12I() {
@@ -376,11 +377,11 @@ public class InvalidClassFieldTagTests extends InvalidFieldTagTests {
 	private void x12(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(4));
 		setExpectedMessageArgs(new String[][] {
-				{"@noinstantiate", BuilderMessages.TagValidator_a_field},
-				{"@noinstantiate", BuilderMessages.TagValidator_a_field},
-				{"@noinstantiate", BuilderMessages.TagValidator_a_field},
-				{"@noinstantiate", BuilderMessages.TagValidator_a_field}
+				{"@noinstantiate", BuilderMessages.TagValidator_a_field}, //$NON-NLS-1$
+				{"@noinstantiate", BuilderMessages.TagValidator_a_field}, //$NON-NLS-1$
+				{"@noinstantiate", BuilderMessages.TagValidator_a_field}, //$NON-NLS-1$
+				{"@noinstantiate", BuilderMessages.TagValidator_a_field} //$NON-NLS-1$
 		});
-		deployTagTest("test12.java", inc, true);
+		deployTagTest("test12.java", inc, true); //$NON-NLS-1$
 	}
 }

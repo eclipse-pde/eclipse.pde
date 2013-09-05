@@ -27,7 +27,7 @@ public class ApiProblemFilter implements IApiProblemFilter, Cloneable {
 	private String fComponentId = null;
 	private IApiProblem fProblem = null;
 	private String fComment = null;
-	
+
 	/**
 	 * Constructor
 	 * 
@@ -41,60 +41,70 @@ public class ApiProblemFilter implements IApiProblemFilter, Cloneable {
 		fProblem = problem;
 		fComment = comment;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemFilter#getComment()
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemFilter
+	 * #getComment()
 	 */
+	@Override
 	public String getComment() {
 		return fComment;
 	}
-	
+
 	/**
 	 * Sets the comment for this filter.
 	 * 
-	 * @param comment the comment or <code>null</code> to remove the existing comment
+	 * @param comment the comment or <code>null</code> to remove the existing
+	 *            comment
 	 * @since 1.1
 	 */
 	public void setComment(String comment) {
 		fComment = comment;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.IApiProblemFilter#getComponentId()
 	 */
+	@Override
 	public String getComponentId() {
 		return fComponentId;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object obj) {
-		if(obj instanceof IApiProblemFilter) {
+		if (obj instanceof IApiProblemFilter) {
 			IApiProblemFilter filter = (IApiProblemFilter) obj;
-			return elementsEqual(filter.getComponentId(), fComponentId) &&
-					filter.getUnderlyingProblem().equals(fProblem);
-		}
-		else if(obj instanceof IApiProblem) {
+			return elementsEqual(filter.getComponentId(), fComponentId) && filter.getUnderlyingProblem().equals(fProblem);
+		} else if (obj instanceof IApiProblem) {
 			return fProblem.equals(obj);
 		}
 		return super.equals(obj);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		return fProblem.hashCode() + fComponentId.hashCode();
 	}
-	
+
 	/**
-	 * Returns if the two specified objects are equal.
-	 * Objects are considered equal if:
+	 * Returns if the two specified objects are equal. Objects are considered
+	 * equal if:
 	 * <ol>
 	 * <li>they are both null</li>
 	 * <li>they are equal via the default .equals() method</li>
 	 * </ol>
+	 * 
 	 * @param s1
 	 * @param s2
 	 * @return true if the objects are equal, false otherwise
@@ -102,31 +112,38 @@ public class ApiProblemFilter implements IApiProblemFilter, Cloneable {
 	private boolean elementsEqual(Object s1, Object s2) {
 		return (s1 == null && s2 == null) || (s1 != null && s1.equals(s2));
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Filter for : "); //$NON-NLS-1$
 		buffer.append(fProblem.toString());
 		return buffer.toString();
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Object#clone()
 	 */
+	@Override
 	public Object clone() {
 		return new ApiProblemFilter(this.fComponentId, fProblem, fComment);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiProblemFilter#getUnderlyingProblem()
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiProblemFilter#
+	 * getUnderlyingProblem()
 	 */
+	@Override
 	public IApiProblem getUnderlyingProblem() {
 		return fProblem;
 	}
-	
+
 	/**
 	 * @return returns a handle that can be used to identify the filter
 	 */
@@ -139,9 +156,9 @@ public class ApiProblemFilter implements IApiProblemFilter, Cloneable {
 		buffer.append(fProblem.getTypeName());
 		buffer.append(HANDLE_DELIMITER);
 		String[] margs = fProblem.getMessageArguments();
-		for(int i = 0; i < margs.length; i++) {
+		for (int i = 0; i < margs.length; i++) {
 			buffer.append(margs[i]);
-			if(i < margs.length-1) {
+			if (i < margs.length - 1) {
 				buffer.append(HANDLE_ARGUMENTS_DELIMITER);
 			}
 		}

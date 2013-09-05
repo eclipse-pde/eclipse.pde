@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.model;
 
-
 /**
  * A key for a method - name & signature based.
  * 
@@ -21,13 +20,17 @@ public class MethodKey {
 	private String fSig;
 	private String fTypename;
 	private boolean fConsiderTypename = false;
-	
+
 	/**
 	 * Constructs a new method key
-	 * @param typename the name (fully qualified or otherwise) of the type the method is from
+	 * 
+	 * @param typename the name (fully qualified or otherwise) of the type the
+	 *            method is from
 	 * @param name method name the name of the method
-	 * @param sig method signature the signature of the method or <code>null</code>
-	 * @param considertypename if the given type name should be used when computing equality and hash codes
+	 * @param sig method signature the signature of the method or
+	 *            <code>null</code>
+	 * @param considertypename if the given type name should be used when
+	 *            computing equality and hash codes
 	 */
 	public MethodKey(String typename, String name, String sig, boolean considertypename) {
 		fTypename = typename;
@@ -35,28 +38,32 @@ public class MethodKey {
 		fSig = sig;
 		fConsiderTypename = considertypename;
 	}
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof MethodKey) {
 			MethodKey key = (MethodKey) obj;
-			return fSelector.equals(key.fSelector) &&
-			 signaturesEqual(fSig, key.fSig) &&
-			 (fConsiderTypename ? fTypename.equals(key.fTypename) : true);
+			return fSelector.equals(key.fSelector) && signaturesEqual(fSig, key.fSig) && (fConsiderTypename ? fTypename.equals(key.fTypename) : true);
 		}
 		return false;
 	}
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		return (fConsiderTypename ? fTypename.hashCode() : 0) + fSelector.hashCode() + (fSig == null ? 0 : fSig.hashCode());
 	}
-	
+
 	/**
-	 * Returns if the given signatures are equal.
-	 * Signatures are considered equal iff:
+	 * Returns if the given signatures are equal. Signatures are considered
+	 * equal iff:
 	 * <ul>
 	 * <li>both are equal</li>
 	 * <li>both are <code>null</code></li>
@@ -64,18 +71,21 @@ public class MethodKey {
 	 * 
 	 * @param sig1
 	 * @param sig2
-	 * @return <code>true</code> if the signatures are equal <code>false</code> otherwise
+	 * @return <code>true</code> if the signatures are equal <code>false</code>
+	 *         otherwise
 	 */
 	boolean signaturesEqual(String sig1, String sig2) {
-		if(sig1 != null) {
+		if (sig1 != null) {
 			return sig1.equals(sig2);
 		}
 		return sig2 == null;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		StringBuffer buf = new StringBuffer();
 		buf.append("Method Key: [enclosing type - ").append(fTypename).append("] "); //$NON-NLS-1$ //$NON-NLS-2$

@@ -13,7 +13,7 @@ package org.eclipse.pde.api.tools.builder.tests.usage;
 import junit.framework.Test;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
+import org.eclipse.jdt.core.JavaCore;
 
 /**
  * Test class usage for Java 7 code snippets
@@ -42,12 +42,12 @@ public class Java7FieldUsageTests extends FieldUsageTests {
 	 */
 	@Override
 	protected String getTestCompliance() {
-		return CompilerOptions.VERSION_1_7;
+		return JavaCore.VERSION_1_7;
 	}
 
 	@Override
 	protected IPath getTestSourcePath() {
-		return super.getTestSourcePath().removeLastSegments(1).append("java7");
+		return super.getTestSourcePath().removeLastSegments(1).append("java7"); //$NON-NLS-1$
 	}
 
 	/**
@@ -69,12 +69,12 @@ public class Java7FieldUsageTests extends FieldUsageTests {
 	
 	private void x1(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemIdSet(3));
-		String typename = "testFStringSwitch";
+		String typename = "testFStringSwitch"; //$NON-NLS-1$
 		// Note that since constants are inlined, we do not get markers for illegal use
 		setExpectedMessageArgs(new String[][] {
-				{FIELD_CLASS_NAME, typename, "f1"},
-				{FIELD_CLASS_NAME, typename, "f1"},
-				{FIELD_CLASS_NAME, typename, "f1"}
+				{FIELD_CLASS_NAME, typename, "f1"}, //$NON-NLS-1$
+				{FIELD_CLASS_NAME, typename, "f1"}, //$NON-NLS-1$
+				{FIELD_CLASS_NAME, typename, "f1"} //$NON-NLS-1$
 			
 		});
 		deployUsageTest(typename, inc);
@@ -99,10 +99,10 @@ public class Java7FieldUsageTests extends FieldUsageTests {
 	
 	private void x2(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemIdSet(2));
-		String typename = "testFMultiCatch";
+		String typename = "testFMultiCatch"; //$NON-NLS-1$
 		setExpectedMessageArgs(new String[][] {
-				{"MultipleThrowableClass", typename, "f1"},
-				{"MultipleThrowableClass", typename, "f1"}
+				{"MultipleThrowableClass", typename, "f1"}, //$NON-NLS-1$ //$NON-NLS-2$
+				{"MultipleThrowableClass", typename, "f1"} //$NON-NLS-1$ //$NON-NLS-2$
 		});
 		deployUsageTest(typename, inc);
 	}

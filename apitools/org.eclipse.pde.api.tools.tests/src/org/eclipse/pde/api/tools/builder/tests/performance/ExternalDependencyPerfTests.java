@@ -26,11 +26,12 @@ public class ExternalDependencyPerfTests extends PerformanceTest {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.performance.PerformanceTest#setUp()
 	 */
+	@Override
 	protected void setUp() throws Exception {
 		enableExternalDependencyCheckOptions(true);
-		String location = ExternalDependencyTestUtils.setupReport("api-ws", true);
+		String location = ExternalDependencyTestUtils.setupReport("api-ws", true); //$NON-NLS-1$
 		if (location == null) {
-			fail("Could not setup the report : api-ws.zip");
+			fail("Could not setup the report : api-ws.zip"); //$NON-NLS-1$
 		}
 		super.setUp();
 	}
@@ -39,8 +40,9 @@ public class ExternalDependencyPerfTests extends PerformanceTest {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.performance.PerformanceTest#getWorkspaceLocation()
 	 */
+	@Override
 	protected String getWorkspaceLocation() {
-		return getTestSourcePath().append("source-ws.zip").toOSString();
+		return getTestSourcePath().append("source-ws.zip").toOSString(); //$NON-NLS-1$
 	}
 	
 	/**
@@ -51,27 +53,27 @@ public class ExternalDependencyPerfTests extends PerformanceTest {
 	}
 	
 	public void testIncrementalBuildTests() throws Exception {
-		IncrementalBuildTests incBuildTests = new IncrementalBuildTests("IncrementalBuildTests with External Dependency checks");
+		IncrementalBuildTests incBuildTests = new IncrementalBuildTests("IncrementalBuildTests with External Dependency checks"); //$NON-NLS-1$
 		incBuildTests.setUp();
 		incBuildTests.testIncrementalBuildAll();
 	}
 	
 	public void testEnumIncrementalBuildTests() throws Exception {
-		EnumIncrementalBuildTests enumIncBuildTests = new EnumIncrementalBuildTests("EnumIncrementalBuildTests with External Dependency check");
+		EnumIncrementalBuildTests enumIncBuildTests = new EnumIncrementalBuildTests("EnumIncrementalBuildTests with External Dependency check"); //$NON-NLS-1$
 		enumIncBuildTests.setUp();
 		enumIncBuildTests.testIncremantalEnum();
 	}
 	
 	
 	public void testAnnotationIncrementalBuildTests() throws Exception {
-		AnnotationIncrementalBuildTests annotIncBuildTests = new AnnotationIncrementalBuildTests("AnnotationIncrementalBuildTests with External Dependency check");
+		AnnotationIncrementalBuildTests annotIncBuildTests = new AnnotationIncrementalBuildTests("AnnotationIncrementalBuildTests with External Dependency check"); //$NON-NLS-1$
 		annotIncBuildTests.setUp();
 		annotIncBuildTests.testIncrementalAnnot();
 	}
 	
 	
 	public void testFullSourceBuildTests() throws Exception {
-		FullSourceBuildTests fullSrcBuildTests = new FullSourceBuildTests("FullSourceBuildTests with External Dependency check");
+		FullSourceBuildTests fullSrcBuildTests = new FullSourceBuildTests("FullSourceBuildTests with External Dependency check"); //$NON-NLS-1$
 		fullSrcBuildTests.setUp();
 		fullSrcBuildTests.testCleanFullBuild();
 		fullSrcBuildTests.testFullBuild();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,15 +38,15 @@ import org.xml.sax.helpers.DefaultHandler;
  * Parses a use scan (XML) to visit a {@link UseScanVisitor}
  */
 public class UseScanParser {
-	
+
 	private UseScanVisitor visitor;
-	
+
 	private IComponentDescriptor targetComponent;
 	private IComponentDescriptor referencingComponent;
 	private IMemberDescriptor targetMember;
 	private int referenceKind;
 	private int visibility;
-	
+
 	private boolean visitReferencingComponent = true;
 	private boolean visitMembers = true;
 	private boolean visitReferences = true;
@@ -56,28 +56,34 @@ public class UseScanParser {
 	 */
 	class ReferenceHandler extends DefaultHandler {
 
-		// type of file being analyzed - type reference, method reference, field reference
+		// type of file being analyzed - type reference, method reference, field
+		// reference
 		private int type = 0;
 
 		/**
 		 * Constructor
 		 * 
-		 * @param type one of IReference.T_TYPE_REFERENCE, IReference.T_METHOD_REFERENCE,
-		 * 			IReference.T_FIELD_REFERENCE
+		 * @param type one of IReference.T_TYPE_REFERENCE,
+		 *            IReference.T_METHOD_REFERENCE,
+		 *            IReference.T_FIELD_REFERENCE
 		 */
 		public ReferenceHandler(int type) {
 			this.type = type;
 		}
-			
-		/* (non-Javadoc)
-		 * @see org.xml.sax.helpers.DefaultHandler#startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes)
+
+		/*
+		 * (non-Javadoc)
+		 * @see
+		 * org.xml.sax.helpers.DefaultHandler#startElement(java.lang.String,
+		 * java.lang.String, java.lang.String, org.xml.sax.Attributes)
 		 */
+		@Override
 		public void startElement(String uri, String localName, String name, Attributes attributes) throws SAXException {
 			processElement(uri, localName, name, attributes, type);
 		}
-			
+
 	}
-	
+
 	protected String[] getIdVersion(String value) {
 		int index = value.indexOf(' ');
 		if (index > 0) {
@@ -86,41 +92,46 @@ public class UseScanParser {
 			if (version.startsWith("(")) { //$NON-NLS-1$
 				version = version.substring(1);
 				if (version.endsWith(")")) { //$NON-NLS-1$
-					version = version.substring(0,version.length() - 1);
+					version = version.substring(0, version.length() - 1);
 				}
 			}
-			return new String[]{id, version};
+			return new String[] { id, version };
 		}
-		return new String[]{value, null};
+		return new String[] { value, null };
 	}
-	
+
 	/**
-	 * Process the XML element described by the URI, local name, name and attributes
+	 * Process the XML element described by the URI, local name, name and
+	 * attributes
+	 * 
 	 * @param uri the URI of the XML element
 	 * @param localName the local name of the XML element
 	 * @param name the name of the XML element
 	 * @param attributes the attribute listing for the XML element
-	 * @param type the type of the XML file. One of: {@link IReference#T_TYPE_REFERENCE}, {@link IReference#T_METHOD_REFERENCE} or
-	 * {@link IReference#T_FIELD_REFERENCE}
+	 * @param type the type of the XML file. One of:
+	 *            {@link IReference#T_TYPE_REFERENCE},
+	 *            {@link IReference#T_METHOD_REFERENCE} or
+	 *            {@link IReference#T_FIELD_REFERENCE}
 	 * @throws SAXException
 	 */
 	protected void processElement(String uri, String localName, String name, Attributes attributes, int type) throws SAXException {
 		if (IApiXmlConstants.REFERENCES.equals(name)) {
-			// Check that the current target component and referencing component match what is in the file
+			// Check that the current target component and referencing component
+			// match what is in the file
 			String target = attributes.getValue(IApiXmlConstants.ATTR_REFEREE);
 			String[] idv = getIdVersion(target);
-			IComponentDescriptor targetComponent = Factory.componentDescriptor(idv[0], idv[1]);
-			if (!targetComponent.equals(this.targetComponent)){
-				System.out.println("WARNING: The referee in the xml file (" + targetComponent + ") does not match the directory name (" + this.targetComponent + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			IComponentDescriptor tcomp = Factory.componentDescriptor(idv[0], idv[1]);
+			if (!tcomp.equals(this.targetComponent)) {
+				System.out.println("WARNING: The referee in the xml file (" + tcomp + ") does not match the directory name (" + this.targetComponent + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
-			
+
 			String source = attributes.getValue(IApiXmlConstants.ATTR_ORIGIN);
 			idv = getIdVersion(source);
 			IComponentDescriptor sourceComponent = Factory.componentDescriptor(idv[0], idv[1]);
-			if (!sourceComponent.equals(this.referencingComponent)){
+			if (!sourceComponent.equals(this.referencingComponent)) {
 				System.out.println("WARNING: The origin in the xml file (" + sourceComponent + ") does not match the directory name (" + this.referencingComponent + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
-			
+
 			// Track the current reference visibility
 			String visString = attributes.getValue(IApiXmlConstants.ATTR_REFERENCE_VISIBILITY);
 			try {
@@ -131,7 +142,7 @@ public class UseScanParser {
 				enterVisibility(-1);
 				System.out.println("Internal error: invalid visibility: " + visString); //$NON-NLS-1$
 			}
-		} else if(IApiXmlConstants.ELEMENT_TARGET.equals(name)) {
+		} else if (IApiXmlConstants.ELEMENT_TARGET.equals(name)) {
 			String qName = attributes.getValue(IApiXmlConstants.ATTR_TYPE);
 			String memberName = attributes.getValue(IApiXmlConstants.ATTR_MEMBER_NAME);
 			String signature = attributes.getValue(IApiXmlConstants.ATTR_SIGNATURE);
@@ -145,6 +156,8 @@ public class UseScanParser {
 					break;
 				case IReference.T_FIELD_REFERENCE:
 					member = Factory.fieldDescriptor(qName, memberName);
+					break;
+				default:
 					break;
 			}
 			enterTargetMember(member);
@@ -161,7 +174,7 @@ public class UseScanParser {
 		} else if (IApiXmlConstants.ATTR_REFERENCE.equals(name)) {
 			String qName = attributes.getValue(IApiXmlConstants.ATTR_TYPE);
 
-			if (qName != null){
+			if (qName != null) {
 
 				String memberName = attributes.getValue(IApiXmlConstants.ATTR_MEMBER_NAME);
 				String signature = attributes.getValue(IApiXmlConstants.ATTR_SIGNATURE);
@@ -178,29 +191,20 @@ public class UseScanParser {
 				try {
 					int num = Integer.parseInt(line);
 					int flgs = 0;
-					if(flags != null) {
+					if (flags != null) {
 						flgs = Integer.parseInt(flags);
 					}
-					setReference(Factory.referenceDescriptor(
-							referencingComponent, 
-							origin, 
-							num, 
-							targetComponent, 
-							targetMember, 
-							referenceKind, 
-							flgs, 
-							visibility, 
-							parseMessages(attributes)));
+					setReference(Factory.referenceDescriptor(referencingComponent, origin, num, targetComponent, targetMember, referenceKind, flgs, visibility, parseMessages(attributes)));
 				} catch (NumberFormatException e) {
 					// TODO:
 					System.out.println("Internal error: invalid line number: " + line); //$NON-NLS-1$
 				}
 			} else {
-				System.out.println(NLS.bind("Element {0} is missing type attribute and will be skipped",targetMember.getName())); //$NON-NLS-1$
+				System.out.println(NLS.bind("Element {0} is missing type attribute and will be skipped", targetMember.getName())); //$NON-NLS-1$
 			}
 		}
 	}
-	
+
 	/**
 	 * Parses the problem messages from the attributes
 	 * 
@@ -211,15 +215,15 @@ public class UseScanParser {
 	protected String[] parseMessages(Attributes attribs) {
 		String msgs = attribs.getValue(IApiXmlConstants.ELEMENT_PROBLEM_MESSAGE_ARGUMENTS);
 		String[] messages = null;
-		if(msgs != null) {
+		if (msgs != null) {
 			messages = msgs.split("\\,"); //$NON-NLS-1$
 		}
 		return messages;
 	}
-	
+
 	/**
-	 * Resolves references from an API use scan rooted at the specified location in the file
-	 * system in the given baseline.
+	 * Resolves references from an API use scan rooted at the specified location
+	 * in the file system in the given baseline.
 	 * 
 	 * @param xmlLocation root of API use scan (XML directory).
 	 * @param monitor progress monitor
@@ -246,38 +250,46 @@ public class UseScanParser {
 			SAXParser parser = getParser();
 			// Treat each top level directory as a producer component
 			for (int i = 0; i < referees.length; i++) {
-				if (referees[i].isDirectory()){
+				if (referees[i].isDirectory()) {
 					String[] idv = getIdVersion(referees[i].getName());
-					IComponentDescriptor targetComponent = Factory.componentDescriptor(idv[0], idv[1]);
-					enterTargetComponent(targetComponent);
-					if (visitReferencingComponent){
+					IComponentDescriptor tcomp = Factory.componentDescriptor(idv[0], idv[1]);
+					enterTargetComponent(tcomp);
+					if (visitReferencingComponent) {
 
-						// If the visitor returned true, treat sub-directories as consumer components
+						// If the visitor returned true, treat sub-directories
+						// as consumer components
 						origins = getDirectories(referees[i]);
-						origins = sort(origins); // sort to visit in determined order
+						origins = sort(origins); // sort to visit in determined
+													// order
 						for (int j = 0; j < origins.length; j++) {
-							if (origins[j].isDirectory()){
+							if (origins[j].isDirectory()) {
 								idv = getIdVersion(origins[j].getName());
-								IComponentDescriptor referencingComponent = Factory.componentDescriptor(idv[0], idv[1]);
-								enterReferencingComponent(referencingComponent);
-								if (visitMembers){
+								IComponentDescriptor rcomp = Factory.componentDescriptor(idv[0], idv[1]);
+								enterReferencingComponent(rcomp);
+								if (visitMembers) {
 
-									// If the visitor returned true, open all xml files in the directory and process them to find members
-									localmonitor.subTask(NLS.bind(SearchMessages.UseScanParser_analyzing_references, new String[] {origins[j].getName()}));
+									// If the visitor returned true, open all
+									// xml files in the directory and process
+									// them to find members
+									localmonitor.subTask(NLS.bind(SearchMessages.UseScanParser_analyzing_references, new String[] { origins[j].getName() }));
 									xmlfiles = Util.getAllFiles(origins[j], new FileFilter() {
+										@Override
 										public boolean accept(File pathname) {
 											return pathname.isDirectory() || pathname.getName().endsWith(".xml"); //$NON-NLS-1$
 										}
 									});
 									if (xmlfiles != null && xmlfiles.length > 0) {
-										xmlfiles = sort(xmlfiles); // sort to visit in determined order
+										xmlfiles = sort(xmlfiles); // sort to
+																	// visit in
+																	// determined
+																	// order
 										for (int k = 0; k < xmlfiles.length; k++) {
 											try {
 												ReferenceHandler handler = new ReferenceHandler(getTypeFromFileName(xmlfiles[k]));
 												parser.parse(xmlfiles[k], handler);
-											} 
-											catch (SAXException e) {}
-											catch (IOException e) {}
+											} catch (SAXException e) {
+											} catch (IOException e) {
+											}
 										}
 									}
 									endMember();
@@ -290,17 +302,18 @@ public class UseScanParser {
 					endComponent();
 				}
 			}
-		}
-		finally {
+		} finally {
 			visitor.endVisitScan();
 			localmonitor.done();
-		}		
+		}
 	}
-	
+
 	/**
 	 * Returns a parser
+	 * 
 	 * @return default parser
-	 * @throws Exception forwarded general exception that can be trapped in Ant builds
+	 * @throws Exception forwarded general exception that can be trapped in Ant
+	 *             builds
 	 */
 	SAXParser getParser() throws Exception {
 		SAXParserFactory factory = SAXParserFactory.newInstance();
@@ -311,72 +324,75 @@ public class UseScanParser {
 		} catch (SAXException se) {
 			throw new Exception(SearchMessages.UseReportConverter_se_error_parser_handle, se);
 		}
-	}	
-	
+	}
+
 	/**
 	 * @return the referencingComponent or <code>null</code>
 	 */
 	protected IComponentDescriptor getReferencingComponent() {
 		return referencingComponent;
 	}
-	
+
 	/**
 	 * @return the targetComponent or <code>null</code>
 	 */
 	protected IComponentDescriptor getTargetComponent() {
 		return targetComponent;
 	}
-	
+
 	/**
 	 * @return the targetMember or <code>null</code>
 	 */
 	protected IMemberDescriptor getTargetMember() {
 		return targetMember;
 	}
-	
+
 	/**
 	 * @return the referenceKind
 	 */
 	protected int getReferenceKind() {
 		return referenceKind;
 	}
-	
+
 	/**
 	 * @return the visibility
 	 */
 	protected int getVisibility() {
 		return visibility;
 	}
-	
+
 	/**
 	 * Returns all the child directories from the given directory
+	 * 
 	 * @param file
 	 * @return
 	 */
 	File[] getDirectories(File file) {
 		File[] directories = file.listFiles(new FileFilter() {
+			@Override
 			public boolean accept(File pathname) {
 				return pathname.isDirectory() && !pathname.isHidden();
 			}
 		});
 		return directories;
-	}	
-	
+	}
+
 	/**
 	 * Returns the {@link IReference} type from the file name
+	 * 
 	 * @param xmlfile
 	 * @return the type from the file name
 	 */
 	private int getTypeFromFileName(File xmlfile) {
-		if(xmlfile.getName().indexOf(XmlReferenceDescriptorWriter.TYPE_REFERENCES) > -1) {
+		if (xmlfile.getName().indexOf(XmlReferenceDescriptorWriter.TYPE_REFERENCES) > -1) {
 			return IReference.T_TYPE_REFERENCE;
 		}
-		if(xmlfile.getName().indexOf(XmlReferenceDescriptorWriter.METHOD_REFERENCES) > -1) {
+		if (xmlfile.getName().indexOf(XmlReferenceDescriptorWriter.METHOD_REFERENCES) > -1) {
 			return IReference.T_METHOD_REFERENCE;
 		}
 		return IReference.T_FIELD_REFERENCE;
 	}
-	
+
 	public void enterTargetComponent(IComponentDescriptor component) {
 		boolean different = false;
 		if (targetComponent == null) {
@@ -391,13 +407,13 @@ public class UseScanParser {
 			endMember();
 			endReferencingComponent();
 			endComponent();
-			
+
 			// start next
 			targetComponent = component;
 			visitReferencingComponent = visitor.visitComponent(targetComponent);
 		}
 	}
-	
+
 	public void enterReferencingComponent(IComponentDescriptor component) {
 		boolean different = false;
 		if (referencingComponent == null) {
@@ -411,39 +427,39 @@ public class UseScanParser {
 			// end visit
 			endMember();
 			endReferencingComponent();
-			
+
 			// start next
 			referencingComponent = component;
 			if (visitReferencingComponent) {
 				visitMembers = visitor.visitReferencingComponent(referencingComponent);
 			}
-		}		
+		}
 	}
-	
+
 	public void enterVisibility(int vis) {
 		visibility = vis;
 	}
-	
+
 	public void enterTargetMember(IMemberDescriptor member) {
 		if (targetMember == null || !targetMember.equals(member)) {
 			endMember();
 			targetMember = member;
 			if (visitReferencingComponent && visitMembers) {
-				visitReferences  =visitor.visitMember(targetMember);
+				visitReferences = visitor.visitMember(targetMember);
 			}
 		}
 	}
-	
+
 	public void enterReferenceKind(int refKind) {
 		referenceKind = refKind;
 	}
-	
+
 	public void setReference(IReferenceDescriptor reference) {
-		if (visitReferencingComponent&& visitMembers && visitReferences) {
+		if (visitReferencingComponent && visitMembers && visitReferences) {
 			visitor.visitReference(reference);
 		}
 	}
-	
+
 	private void endMember() {
 		if (targetMember != null) {
 			if (visitReferencingComponent && visitMembers) {
@@ -452,23 +468,23 @@ public class UseScanParser {
 			targetMember = null;
 		}
 	}
-	
+
 	private void endReferencingComponent() {
 		if (referencingComponent != null) {
-			if (visitReferencingComponent){
+			if (visitReferencingComponent) {
 				visitor.endVisitReferencingComponent(referencingComponent);
 			}
 			referencingComponent = null;
 		}
 	}
-	
+
 	private void endComponent() {
 		if (targetComponent != null) {
 			visitor.endVisitComponent(targetComponent);
 			targetComponent = null;
 		}
 	}
-	
+
 	/**
 	 * Sorts the given files by name (not path).
 	 * 
@@ -476,12 +492,12 @@ public class UseScanParser {
 	 * @return sorted files
 	 */
 	File[] sort(File[] files) {
-		List sorted = new ArrayList(files.length + 2);
+		List<File> sorted = new ArrayList<File>(files.length + 2);
 		for (int i = 0; i < files.length; i++) {
 			sorted.add(files[i]);
 		}
-		
+
 		Collections.sort(sorted, Util.filesorter);
-		return (File[]) sorted.toArray(new File[sorted.size()]);
+		return sorted.toArray(new File[sorted.size()]);
 	}
 }

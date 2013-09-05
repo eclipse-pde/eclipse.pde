@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.provisional;
 
-
-
 /**
  * Listener interface for changes of the session manager.
  * 
@@ -24,7 +22,7 @@ public interface ISessionListener {
 	 * Called when a session has been added.
 	 * 
 	 * @param addedSession the given added session
-	 */  
+	 */
 	public void sessionAdded(ISession addedSession);
 
 	/**
@@ -33,7 +31,7 @@ public interface ISessionListener {
 	 * @param removedSession the given removed session
 	 */
 	public void sessionRemoved(ISession removedSession);
-	
+
 	/**
 	 * Called when a new session has been activated or the last session has been
 	 * removed. In this case <code>null</code> is passed as a parameter.

@@ -28,18 +28,18 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 
 public abstract class DeltaTestSetup extends TestCase {
-	protected static final String AFTER = "after";
+	protected static final String AFTER = "after"; //$NON-NLS-1$
 	
-	protected static final String BEFORE = "before";
+	protected static final String BEFORE = "before"; //$NON-NLS-1$
 
-	protected static final String BUNDLE_NAME = "deltatest";
+	protected static final String BUNDLE_NAME = "deltatest"; //$NON-NLS-1$
 
 	private static final boolean DEBUG = false;
 
 	private static final IDelta[] EMPTY_CHILDREN = new IDelta[0];
-	private static final String TESTS_DELTAS_NAME = "tests-deltas";
+	private static final String TESTS_DELTAS_NAME = "tests-deltas"; //$NON-NLS-1$
 	
-	private static final String WORKSPACE_NAME = "tests_deltas_workspace";
+	private static final String WORKSPACE_NAME = "tests_deltas_workspace"; //$NON-NLS-1$
 
 	private static IPath WORKSPACE_ROOT;
 	
@@ -72,7 +72,7 @@ public abstract class DeltaTestSetup extends TestCase {
 	 * @return the sorted list of children if any, an empty array otherwise
 	 */
 	protected IDelta[] collectLeaves(IDelta delta) {
-		assertTrue("Should not be NO_DELTA", delta != ApiComparator.NO_DELTA);
+		assertTrue("Should not be NO_DELTA", delta != ApiComparator.NO_DELTA); //$NON-NLS-1$
 		List<IDelta> leaves = new ArrayList<IDelta>();
 		collect0(delta, leaves);
 		int size = leaves.size();
@@ -81,6 +81,7 @@ public abstract class DeltaTestSetup extends TestCase {
 		IDelta[] result = new IDelta[size];
 		leaves.toArray(result);
 		Arrays.sort(result, new Comparator<IDelta>() {
+			@Override
 			public int compare(IDelta delta, IDelta delta2) {
 				int kind = delta.getKind();
 				int kind2 = delta2.getKind();
@@ -100,11 +101,11 @@ public abstract class DeltaTestSetup extends TestCase {
 		for (int i = 0, max = result.length; i < max; i++) {
 			IDelta leafDelta = result[i];
 			String message = leafDelta.getMessage();
-			assertNotNull("No message", message);
+			assertNotNull("No message", message); //$NON-NLS-1$
 			if (DEBUG) {
-				System.out.println("message : " + message);
+				System.out.println("message : " + message); //$NON-NLS-1$
 			}
-			assertFalse("Should not be an unknown message : " + leafDelta, message.startsWith(unknownMessageStart));
+			assertFalse("Should not be an unknown message : " + leafDelta, message.startsWith(unknownMessageStart)); //$NON-NLS-1$
 		}
 		return result;
 	}
@@ -116,14 +117,14 @@ public abstract class DeltaTestSetup extends TestCase {
 	 */
 	private void copyResources(String testName, String name, String destination) {
 		IPath path = TestSuiteHelper.getPluginDirectoryPath();
-		path = path.append(TESTS_DELTAS_NAME).append("resources");
+		path = path.append(TESTS_DELTAS_NAME).append("resources"); //$NON-NLS-1$
 		File file = path.toFile();
 		File dest = new File(destination);
 		TestSuiteHelper.copy(file, dest);
 
 		// check if there is specific local resources to copy
 		path = TestSuiteHelper.getPluginDirectoryPath();
-		path = path.append(TESTS_DELTAS_NAME).append(getTestRoot()).append(testName).append("resources").append(name);
+		path = path.append(TESTS_DELTAS_NAME).append(getTestRoot()).append(testName).append("resources").append(name); //$NON-NLS-1$
 		file = path.toFile();
 		if (file.exists()) {
 			TestSuiteHelper.copy(file, dest);
@@ -132,7 +133,7 @@ public abstract class DeltaTestSetup extends TestCase {
 
 		// check if there is a global local resources to copy
 		path = TestSuiteHelper.getPluginDirectoryPath();
-		path = path.append(TESTS_DELTAS_NAME).append(getTestRoot()).append(testName).append("resources");
+		path = path.append(TESTS_DELTAS_NAME).append(getTestRoot()).append(testName).append("resources"); //$NON-NLS-1$
 		file = path.toFile();
 		if (file.exists()) {
 			TestSuiteHelper.copy(file, dest);
@@ -180,7 +181,7 @@ public abstract class DeltaTestSetup extends TestCase {
 			after = TestSuiteHelper.createTestingBaseline(AFTER, getBaseLineFolder(AFTER));
 		} catch (CoreException e) {
 			e.printStackTrace();
-			assertTrue("Should not happen", false);
+			assertTrue("Should not happen", false); //$NON-NLS-1$
 		}
 		return after;
 	}
@@ -194,19 +195,21 @@ public abstract class DeltaTestSetup extends TestCase {
 			before = TestSuiteHelper.createTestingBaseline(BEFORE, getBaseLineFolder(BEFORE));
 		} catch (CoreException e) {
 			e.printStackTrace();
-			assertTrue("Should not happen", false);
+			assertTrue("Should not happen", false); //$NON-NLS-1$
 		}
 		return before;
 	}
 
 	public abstract String getTestRoot();
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		// create workspace root
 		new File(WORKSPACE_ROOT.toOSString()).mkdirs();
 	}
 	
+	@Override
 	protected void tearDown() throws Exception {
 		//clean up
 		if(this.after != null) {

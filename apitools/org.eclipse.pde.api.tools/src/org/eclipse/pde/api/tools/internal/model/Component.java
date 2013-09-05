@@ -25,7 +25,8 @@ import org.eclipse.pde.api.tools.internal.search.IReferenceCollection;
 import org.eclipse.pde.api.tools.internal.search.UseScanReferences;
 
 /**
- * Common implementation of an API component as a composite class file container.
+ * Common implementation of an API component as a composite class file
+ * container.
  * 
  * @since 1.0.0
  */
@@ -34,7 +35,7 @@ public abstract class Component extends AbstractApiTypeContainer implements IApi
 	 * API description
 	 */
 	private IApiDescription fApiDescription = null;
-		
+
 	/**
 	 * API Filter store
 	 */
@@ -44,7 +45,7 @@ public abstract class Component extends AbstractApiTypeContainer implements IApi
 	 * References in API use scan reports
 	 */
 	private IReferenceCollection fReferences;
-	
+
 	/**
 	 * Constructs an API component in the given {@link IApiBaseline}.
 	 * 
@@ -53,64 +54,83 @@ public abstract class Component extends AbstractApiTypeContainer implements IApi
 	public Component(IApiBaseline baseline) {
 		super(baseline, IApiElement.COMPONENT, null);
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.model.component.IClassFileContainer#accept(org.eclipse.pde.api.tools.model.component.ClassFileContainerVisitor)
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.model.component.IClassFileContainer#accept(
+	 * org.eclipse.pde.api.tools.model.component.ClassFileContainerVisitor)
 	 */
+	@Override
 	public void accept(ApiTypeContainerVisitor visitor) throws CoreException {
 		if (visitor.visit(this)) {
 			super.accept(visitor);
 		}
 		visitor.end(this);
-	}	
-		
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent#getHost()
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent#getHost
+	 * ()
 	 */
+	@Override
 	public IApiComponent getHost() throws CoreException {
 		return null;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent#getBaseline()
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent#
+	 * getBaseline()
 	 */
+	@Override
 	public IApiBaseline getBaseline() {
 		return (IApiBaseline) getAncestor(IApiElement.BASELINE);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.model.component.IApiComponent#dispose()
 	 */
+	@Override
 	public void dispose() {
 		try {
 			close();
 		} catch (CoreException e) {
 			ApiPlugin.log(e);
-		}
-		finally {
-			synchronized(this) {
+		} finally {
+			synchronized (this) {
 				fApiDescription = null;
 			}
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.model.ApiElement#getApiComponent()
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.model.ApiElement#getApiComponent()
 	 */
+	@Override
 	public IApiComponent getApiComponent() {
 		return this;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.model.component.IApiComponent#getApiDescription()
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.model.component.IApiComponent#getApiDescription
+	 * ()
 	 */
+	@Override
 	public synchronized IApiDescription getApiDescription() throws CoreException {
 		if (fApiDescription == null) {
 			fApiDescription = createApiDescription();
 		}
 		return fApiDescription;
 	}
-	
+
 	/**
 	 * Returns whether this component has created an API description.
 	 * 
@@ -128,17 +148,23 @@ public abstract class Component extends AbstractApiTypeContainer implements IApi
 	protected synchronized boolean hasApiFilterStore() {
 		return fFilterStore != null;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.model.AbstractApiTypeContainer#getApiTypeContainers()
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.model.AbstractApiTypeContainer#
+	 * getApiTypeContainers()
 	 */
+	@Override
 	public synchronized IApiTypeContainer[] getApiTypeContainers() throws CoreException {
 		return super.getApiTypeContainers();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.model.AbstractApiTypeContainer#getApiTypeContainers()
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.model.AbstractApiTypeContainer#
+	 * getApiTypeContainers()
 	 */
+	@Override
 	public synchronized IApiTypeContainer[] getApiTypeContainers(String id) throws CoreException {
 		if (this.hasFragments()) {
 			return super.getApiTypeContainers(id);
@@ -146,7 +172,7 @@ public abstract class Component extends AbstractApiTypeContainer implements IApi
 			return super.getApiTypeContainers();
 		}
 	}
-	
+
 	/**
 	 * Creates and returns the API description for this component.
 	 * 
@@ -154,42 +180,54 @@ public abstract class Component extends AbstractApiTypeContainer implements IApi
 	 */
 	protected abstract IApiDescription createApiDescription() throws CoreException;
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.IApiComponent#getFilterStore()
 	 */
+	@Override
 	public IApiFilterStore getFilterStore() throws CoreException {
-		if(fFilterStore == null) {
+		if (fFilterStore == null) {
 			fFilterStore = createApiFilterStore();
 		}
 		return fFilterStore;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent#getHandle()
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent#getHandle
+	 * ()
 	 */
+	@Override
 	public IElementDescriptor getHandle() {
 		return Factory.componentDescriptor(this.getSymbolicName(), this.getVersion());
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer#getContainerType()
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer
+	 * #getContainerType()
 	 */
+	@Override
 	public int getContainerType() {
 		return IApiTypeContainer.COMPONENT;
 	}
-	
+
 	/**
 	 * Lazily creates a new {@link IApiFilterStore} when it is requested
 	 * 
 	 * @return the current {@link IApiFilterStore} for this component
 	 * @throws CoreException
 	 */
-	protected abstract IApiFilterStore createApiFilterStore() throws CoreException;	
-	
+	protected abstract IApiFilterStore createApiFilterStore() throws CoreException;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent#getExternalDependencies()
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent#
+	 * getExternalDependencies()
 	 */
+	@Override
 	public IReferenceCollection getExternalDependencies() {
 		if (fReferences == null) {
 			fReferences = new UseScanReferences();

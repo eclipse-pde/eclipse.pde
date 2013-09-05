@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,111 +23,141 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 
 /**
- * Finds an AST node at the given position in the AST, and allows access to the {@link BodyDeclaration} at that position
+ * Finds an AST node at the given position in the AST, and allows access to the
+ * {@link BodyDeclaration} at that position
  * 
  * @since 1.0.0
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class NodeFinder extends ASTVisitor {
-		
+
 	private BodyDeclaration declaration;
 	private int position;
-	
+
 	/**
 	 * Constructor
+	 * 
 	 * @param position
 	 */
 	public NodeFinder(int position) {
 		this.position = position;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.AnnotationTypeDeclaration)
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
+	 * AnnotationTypeDeclaration)
 	 */
+	@Override
 	public boolean visit(AnnotationTypeDeclaration node) {
 		return visitNode(node);
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.EnumDeclaration)
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
+	 * EnumDeclaration)
 	 */
+	@Override
 	public boolean visit(EnumDeclaration node) {
 		return visitNode(node);
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.TypeDeclaration)
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
+	 * TypeDeclaration)
 	 */
+	@Override
 	public boolean visit(TypeDeclaration node) {
 		return visitNode(node);
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.MethodDeclaration)
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
+	 * MethodDeclaration)
 	 */
+	@Override
 	public boolean visit(MethodDeclaration node) {
 		return visitNode(node);
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.FieldDeclaration)
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
+	 * FieldDeclaration)
 	 */
+	@Override
 	public boolean visit(FieldDeclaration node) {
 		return visitNode(node);
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.EnumConstantDeclaration)
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
+	 * EnumConstantDeclaration)
 	 */
+	@Override
 	public boolean visit(EnumConstantDeclaration node) {
 		return visitNode(node);
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.AnnotationTypeMemberDeclaration)
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
+	 * AnnotationTypeMemberDeclaration)
 	 */
+	@Override
 	public boolean visit(AnnotationTypeMemberDeclaration node) {
 		return visitNode(node);
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.Initializer)
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.
+	 * Initializer)
 	 */
+	@Override
 	public boolean visit(Initializer node) {
 		return false;
 	}
-	
+
 	/**
-	 * Visit the {@link BodyDeclaration} node to see if it is at the specified position
+	 * Visit the {@link BodyDeclaration} node to see if it is at the specified
+	 * position
+	 * 
 	 * @param bodyDeclaration
 	 * @return
 	 */
 	private boolean visitNode(BodyDeclaration bodyDeclaration) {
 		int start = bodyDeclaration.getStartPosition();
 		int end = bodyDeclaration.getLength() - 1 + start;
-		switch(bodyDeclaration.getNodeType()) {
-			case ASTNode.TYPE_DECLARATION :
-			case ASTNode.ENUM_DECLARATION :
-			case ASTNode.ANNOTATION_TYPE_DECLARATION :
+		switch (bodyDeclaration.getNodeType()) {
+			case ASTNode.TYPE_DECLARATION:
+			case ASTNode.ENUM_DECLARATION:
+			case ASTNode.ANNOTATION_TYPE_DECLARATION:
 				if (start <= this.position && this.position <= end) {
 					this.declaration = bodyDeclaration;
 					return true;
 				}
 				return false;
-			case ASTNode.ENUM_CONSTANT_DECLARATION :
-			case ASTNode.FIELD_DECLARATION :
-			case ASTNode.METHOD_DECLARATION :
-			case ASTNode.ANNOTATION_TYPE_MEMBER_DECLARATION :
+			case ASTNode.ENUM_CONSTANT_DECLARATION:
+			case ASTNode.FIELD_DECLARATION:
+			case ASTNode.METHOD_DECLARATION:
+			case ASTNode.ANNOTATION_TYPE_MEMBER_DECLARATION:
 				if (start <= this.position && this.position <= end) {
 					this.declaration = bodyDeclaration;
 				}
 				return false;
-			default :
+			default:
 				return false;
 		}
 	}
+
 	/**
-	 * @return the {@link BodyDeclaration} at the given position or <code>null</code> if one was not found at that position
+	 * @return the {@link BodyDeclaration} at the given position or
+	 *         <code>null</code> if one was not found at that position
 	 */
 	public BodyDeclaration getNode() {
 		return this.declaration;

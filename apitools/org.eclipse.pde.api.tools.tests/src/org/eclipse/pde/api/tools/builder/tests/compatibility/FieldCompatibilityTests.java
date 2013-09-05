@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,8 +20,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.tests.junit.extension.TestCase;
 
 /**
- * Tests that the builder correctly finds and reports field
- * compatibility problems
+ * Tests that the builder correctly finds and reports field compatibility
+ * problems
  * 
  * @since 1.0
  */
@@ -29,12 +29,14 @@ public class FieldCompatibilityTests extends CompatibilityTest {
 
 	/**
 	 * Collects tests from the getAllTestClasses() method into the given suite
+	 * 
 	 * @param suite
 	 */
 	private static void collectTests(TestSuite suite) {
 		// Hack to load all classes before computing their suite of test cases
-		// this allow to reset test cases subsets while running all Builder tests...
-		Class[] classes = getAllTestClasses();
+		// this allow to reset test cases subsets while running all Builder
+		// tests...
+		Class<?>[] classes = getAllTestClasses();
 
 		// Reset forgotten subsets of tests
 		TestCase.TESTS_PREFIX = null;
@@ -45,10 +47,10 @@ public class FieldCompatibilityTests extends CompatibilityTest {
 
 		/* tests */
 		for (int i = 0, length = classes.length; i < length; i++) {
-			Class clazz = classes[i];
+			Class<?> clazz = classes[i];
 			Method suiteMethod;
 			try {
-				suiteMethod = clazz.getDeclaredMethod("suite", new Class[0]);
+				suiteMethod = clazz.getDeclaredMethod("suite", new Class[0]); //$NON-NLS-1$
 			} catch (NoSuchMethodException e) {
 				e.printStackTrace();
 				continue;
@@ -66,32 +68,35 @@ public class FieldCompatibilityTests extends CompatibilityTest {
 			suite.addTest((Test) test);
 		}
 	}
-	
+
 	/**
 	 * @return all of the child test classes of this class
 	 */
-	private static Class[] getAllTestClasses() {
-		Class[] classes = new Class[] {
-			FieldCompatibilityModifierTests.class
-		};
+	private static Class<?>[] getAllTestClasses() {
+		Class<?>[] classes = new Class[] { FieldCompatibilityModifierTests.class };
 		return classes;
-	}	
-	
+	}
+
 	/**
 	 * Constructor
+	 * 
 	 * @param name
 	 */
 	public FieldCompatibilityTests(String name) {
 		super(name);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestSourcePath()
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestSourcePath
+	 * ()
 	 */
+	@Override
 	protected IPath getTestSourcePath() {
-		return super.getTestSourcePath().append("field");
+		return super.getTestSourcePath().append("field"); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * @return the tests for this class
 	 */
@@ -101,17 +106,25 @@ public class FieldCompatibilityTests extends CompatibilityTest {
 		return suite;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getDefaultProblemId()
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getDefaultProblemId
+	 * ()
 	 */
+	@Override
 	protected int getDefaultProblemId() {
 		return 0;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestingProjectName()
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestingProjectName
+	 * ()
 	 */
+	@Override
 	protected String getTestingProjectName() {
-		return "fieldcompat";
+		return "fieldcompat"; //$NON-NLS-1$
 	}
 }

@@ -22,60 +22,75 @@ import org.eclipse.pde.api.tools.internal.provisional.IApiAccess;
 public class ApiAccess implements IApiAccess {
 
 	public static final IApiAccess NORMAL_ACCESS = new NormalAccess();
-	
+
 	static class NormalAccess implements IApiAccess {
-		/* (non-Javadoc)
-		 * @see org.eclipse.pde.api.tools.internal.provisional.IApiAccess#getAccessLevel()
+		/*
+		 * (non-Javadoc)
+		 * @see
+		 * org.eclipse.pde.api.tools.internal.provisional.IApiAccess#getAccessLevel
+		 * ()
 		 */
+		@Override
 		public int getAccessLevel() {
 			return IApiAccess.NORMAL;
 		}
 	}
-	
+
 	private int access = IApiAccess.NORMAL;
-	
+
 	/**
 	 * Constructor
+	 * 
 	 * @param access
 	 */
 	public ApiAccess(int access) {
 		this.access = access;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiAccess#getAccessLevel()
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.provisional.IApiAccess#getAccessLevel
+	 * ()
 	 */
+	@Override
 	public int getAccessLevel() {
 		return this.access;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		return this.access;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object obj) {
-		if(obj instanceof IApiAccess) {
-			return this.access == ((IApiAccess)obj).getAccessLevel();
+		if (obj instanceof IApiAccess) {
+			return this.access == ((IApiAccess) obj).getAccessLevel();
 		}
 		return false;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Access Level: "); //$NON-NLS-1$
 		buffer.append(getAccessText(getAccessLevel()));
 		return buffer.toString();
 	}
-	
+
 	/**
 	 * Returns a textual representation of an {@link IApiAccess}
 	 * 
@@ -83,9 +98,11 @@ public class ApiAccess implements IApiAccess {
 	 * @return the textual representation of an {@link IApiAccess}
 	 */
 	public static String getAccessText(int access) {
-		switch(access) {
-			case IApiAccess.NORMAL: return "NORMAL"; //$NON-NLS-1$
-			case IApiAccess.FRIEND: return "FRIEND"; //$NON-NLS-1$
+		switch (access) {
+			case IApiAccess.NORMAL:
+				return "NORMAL"; //$NON-NLS-1$
+			case IApiAccess.FRIEND:
+				return "FRIEND"; //$NON-NLS-1$
 			default:
 				break;
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,61 +45,66 @@ import org.osgi.framework.Version;
  * 
  * @since 1.0.0
  */
+@SuppressWarnings("restriction")
 public class ProjectUtils {
-	
+
 	/**
 	 * Constant representing the name of the output directory for a project.
 	 * Value is: <code>bin</code>
 	 */
-	public static final String BIN_FOLDER = "bin";
-	
+	public static final String BIN_FOLDER = "bin"; //$NON-NLS-1$
+
 	/**
 	 * Constant representing the name of the source directory for a project.
 	 * Value is: <code>src</code>
 	 */
-	public static final String SRC_FOLDER = "src";
-	
+	public static final String SRC_FOLDER = "src"; //$NON-NLS-1$
+
 	public static IBundleProjectService getBundleProjectService() {
 		return (IBundleProjectService) PDECore.getDefault().acquireService(IBundleProjectService.class.getName());
 	}
-	
+
 	/**
 	 * Returns if the currently running VM is version compatible with Java 7
 	 * 
-	 * @return <code>true</code> if a Java 7 (or greater) VM is running <code>false</code> otherwise
+	 * @return <code>true</code> if a Java 7 (or greater) VM is running
+	 *         <code>false</code> otherwise
 	 */
 	public static boolean isJava7Compatible() {
 		return isCompatible(7);
 	}
-	
+
 	/**
 	 * Returns if the currently running VM is version compatible with Java 6
 	 * 
-	 * @return <code>true</code> if a Java 6 (or greater) VM is running <code>false</code> otherwise
+	 * @return <code>true</code> if a Java 6 (or greater) VM is running
+	 *         <code>false</code> otherwise
 	 */
 	public static boolean isJava6Compatible() {
 		return isCompatible(6);
 	}
-	
+
 	/**
 	 * Returns if the currently running VM is version compatible with Java 5
 	 * 
-	 * @return <code>true</code> if a Java 5 (or greater) VM is running <code>false</code> otherwise
+	 * @return <code>true</code> if a Java 5 (or greater) VM is running
+	 *         <code>false</code> otherwise
 	 */
 	public static boolean isJava5Compatible() {
 		return isCompatible(5);
 	}
-	
+
 	/**
-	 * Returns if the current running system is compatible with the given Java minor version
+	 * Returns if the current running system is compatible with the given Java
+	 * minor version
 	 * 
 	 * @param ver the version to test - either 4, 5, 6 or 7
 	 * @return <code>true</code> if compatible <code>false</code> otherwise
 	 */
 	static boolean isCompatible(int ver) {
-		String version = System.getProperty("java.specification.version");
+		String version = System.getProperty("java.specification.version"); //$NON-NLS-1$
 		if (version != null) {
-			String[] nums = version.split("\\.");
+			String[] nums = version.split("\\."); //$NON-NLS-1$
 			if (nums.length == 2) {
 				try {
 					int major = Integer.parseInt(nums[0]);
@@ -115,9 +120,10 @@ public class ProjectUtils {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Crate a plug-in project with the given name
+	 * 
 	 * @param projectName
 	 * @param additionalNatures
 	 * @return a new plug-in project
@@ -125,38 +131,41 @@ public class ProjectUtils {
 	 */
 	public static IJavaProject createPluginProject(String projectName, String[] additionalNatures) throws CoreException {
 		String[] resolvednatures = additionalNatures;
-		if(additionalNatures != null) {
+		if (additionalNatures != null) {
 			ArrayList<String> natures = new ArrayList<String>(Arrays.asList(additionalNatures));
-			if(!natures.contains(IBundleProjectDescription.PLUGIN_NATURE)) {
-				//need to always set this one first, in case others depend on it, like API Tools does
+			if (!natures.contains(IBundleProjectDescription.PLUGIN_NATURE)) {
+				// need to always set this one first, in case others depend on
+				// it, like API Tools does
 				natures.add(0, IBundleProjectDescription.PLUGIN_NATURE);
 			}
 			if (!natures.contains(JavaCore.NATURE_ID)) {
 				natures.add(0, JavaCore.NATURE_ID);
 			}
-			resolvednatures = (String[]) natures.toArray(new String[natures.size()]);
+			resolvednatures = natures.toArray(new String[natures.size()]);
 		}
-		
+
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
 		IBundleProjectService service = getBundleProjectService();
 		IBundleProjectDescription description = service.getDescription(project);
 		IBundleClasspathEntry entry = service.newBundleClasspathEntry(new Path(SRC_FOLDER), new Path(BIN_FOLDER), null);
 		description.setSymbolicName(projectName);
-		description.setBundleClasspath(new IBundleClasspathEntry[]{entry});
+		description.setBundleClasspath(new IBundleClasspathEntry[] { entry });
 		description.setNatureIds(resolvednatures);
-		description.setBundleVendor("ibm");
+		description.setBundleVendor("ibm"); //$NON-NLS-1$
 		description.setTargetVersion(IBundleProjectDescription.VERSION_3_4);
 		description.setExtensionRegistry(true);
 		description.setEquinox(true);
-		description.setBundleVersion(new Version("1.0.0"));
-		description.setExecutionEnvironments(new String[]{"J2SE-1.5"});
-		description.apply(null);	
+		description.setBundleVersion(new Version("1.0.0")); //$NON-NLS-1$
+		description.setExecutionEnvironments(new String[] { "J2SE-1.5" }); //$NON-NLS-1$
+		description.apply(null);
 		AbstractApiTest.waitForAutoBuild();
 		return JavaCore.create(project);
 	}
-	
+
 	/**
-	 * creates a java project with the specified name and additional project natures
+	 * creates a java project with the specified name and additional project
+	 * natures
+	 * 
 	 * @param projectName
 	 * @param additionalNatures
 	 * @return a new java project
@@ -168,8 +177,8 @@ public class ProjectUtils {
 		if (!project.hasNature(JavaCore.NATURE_ID)) {
 			addNatureToProject(project, JavaCore.NATURE_ID, monitor);
 		}
-		if(additionalNatures != null) {
-			for(int i = 0; i < additionalNatures.length; i++) {
+		if (additionalNatures != null) {
+			for (int i = 0; i < additionalNatures.length; i++) {
 				addNatureToProject(project, additionalNatures[i], monitor);
 			}
 		}
@@ -177,11 +186,12 @@ public class ProjectUtils {
 		jproject.setOutputLocation(getDefaultProjectOutputLocation(project), monitor);
 		jproject.setRawClasspath(new IClasspathEntry[0], monitor);
 		addContainerEntry(jproject, JavaRuntime.newDefaultJREContainerPath());
-		return jproject;	
+		return jproject;
 	}
-	
+
 	/**
 	 * Gets the output location for the given project, creates it if needed
+	 * 
 	 * @param project
 	 * @return the path of the output location for the given project
 	 * @throws CoreException
@@ -193,9 +203,11 @@ public class ProjectUtils {
 		}
 		return binFolder.getFullPath();
 	}
-	
+
 	/**
-	 * Adds a new source container specified by the container name to the source path of the specified project
+	 * Adds a new source container specified by the container name to the source
+	 * path of the specified project
+	 * 
 	 * @param jproject
 	 * @param containerName
 	 * @return the package fragment root of the container name
@@ -207,10 +219,11 @@ public class ProjectUtils {
 		IClasspathEntry cpe = JavaCore.newSourceEntry(root.getPath());
 		addToClasspath(jproject, cpe);
 		return root;
-	}  
-	
+	}
+
 	/**
 	 * Adds a container entry to the specified java project
+	 * 
 	 * @param project
 	 * @param container
 	 * @throws JavaModelException
@@ -219,16 +232,17 @@ public class ProjectUtils {
 		IClasspathEntry cpe = JavaCore.newContainerEntry(container, false);
 		addToClasspath(project, cpe);
 	}
-	
+
 	/**
 	 * Adds a folder with the given name to the specified project
+	 * 
 	 * @param project
 	 * @param name
 	 * @return the new container added to the specified project
 	 * @throws CoreException
 	 */
 	public static IContainer addFolderToProject(IProject project, String name) throws CoreException {
-		IContainer container= null;
+		IContainer container = null;
 		if (name == null || name.length() == 0) {
 			container = project;
 		} else {
@@ -240,9 +254,10 @@ public class ProjectUtils {
 		}
 		return container;
 	}
-	
+
 	/**
 	 * Adds the specified classpath entry to the specified java project
+	 * 
 	 * @param jproject
 	 * @param cpe
 	 * @throws JavaModelException
@@ -256,7 +271,7 @@ public class ProjectUtils {
 				found = true;
 			}
 		}
-		if(!found) {
+		if (!found) {
 			int nEntries = entries.length;
 			IClasspathEntry[] newEntries = new IClasspathEntry[nEntries + 1];
 			System.arraycopy(entries, 0, newEntries, 0, nEntries);
@@ -264,10 +279,11 @@ public class ProjectUtils {
 			entries = newEntries;
 		}
 		jproject.setRawClasspath(entries, true, new NullProgressMonitor());
-	}  
-	
+	}
+
 	/**
 	 * Removes the specified entry from the classpath of the specified project
+	 * 
 	 * @param project
 	 * @param entry
 	 * @throws JavaModelException
@@ -275,19 +291,20 @@ public class ProjectUtils {
 	public static void removeFromClasspath(IJavaProject project, IClasspathEntry entry) throws JavaModelException {
 		IClasspathEntry[] oldEntries = project.getRawClasspath();
 		ArrayList<IClasspathEntry> entries = new ArrayList<IClasspathEntry>();
-		for (int i= 0; i < oldEntries.length; i++) {
+		for (int i = 0; i < oldEntries.length; i++) {
 			if (!oldEntries[i].equals(entry)) {
 				entries.add(oldEntries[i]);
 			}
 		}
-		if(entries.size() != oldEntries.length) {
+		if (entries.size() != oldEntries.length) {
 			project.setRawClasspath(entries.toArray(new IClasspathEntry[entries.size()]), new NullProgressMonitor());
 		}
 	}
-	
+
 	/**
-	 * Delegate equals method to cover the test cases where we want to insert an updated element 
-	 * and one with the same path/type/kind is already there. 
+	 * Delegate equals method to cover the test cases where we want to insert an
+	 * updated element and one with the same path/type/kind is already there.
+	 * 
 	 * @param e1
 	 * @param e2
 	 * @return
@@ -295,10 +312,12 @@ public class ProjectUtils {
 	private static boolean entriesEqual(IClasspathEntry e1, IClasspathEntry e2) {
 		return e1.equals(e2) || (e1.getEntryKind() == e2.getEntryKind() && e1.getContentKind() == e2.getContentKind() && e1.getPath().equals(e2.getPath()));
 	}
-	
+
 	/**
-	 * Creates a project with the given name in the workspace and returns it.
-	 * If a project with the given name exists, it is refreshed and opened (if closed) and returned
+	 * Creates a project with the given name in the workspace and returns it. If
+	 * a project with the given name exists, it is refreshed and opened (if
+	 * closed) and returned
+	 * 
 	 * @param projectName
 	 * @param monitor
 	 * @return a project with the given name
@@ -317,9 +336,10 @@ public class ProjectUtils {
 		}
 		return project;
 	}
-	
+
 	/**
 	 * Adds the specified nature to the specified project
+	 * 
 	 * @param proj
 	 * @param natureId
 	 * @param monitor
@@ -327,21 +347,23 @@ public class ProjectUtils {
 	 */
 	public static void addNatureToProject(IProject proj, String natureId, IProgressMonitor monitor) throws CoreException {
 		IProjectDescription description = proj.getDescription();
-		String[] prevNatures= description.getNatureIds();
-		String[] newNatures= new String[prevNatures.length + 1];
+		String[] prevNatures = description.getNatureIds();
+		String[] newNatures = new String[prevNatures.length + 1];
 		System.arraycopy(prevNatures, 0, newNatures, 0, prevNatures.length);
-		newNatures[prevNatures.length]= natureId;
+		newNatures[prevNatures.length] = natureId;
 		description.setNatureIds(newNatures);
 		proj.setDescription(description, monitor);
 	}
-	
+
 	/**
-	 * Removes the given package from the exported packages header, if it exists.
+	 * Removes the given package from the exported packages header, if it
+	 * exists.
 	 * 
 	 * This method is not safe to use in a head-less manner.
 	 * 
 	 * @param project the project to remove the package from
-	 * @param packagename the name of the package to remove from the export package header
+	 * @param packagename the name of the package to remove from the export
+	 *            package header
 	 */
 	public static void removeExportedPackage(IProject project, String packagename) throws CoreException {
 		IBundleProjectDescription description = getBundleProjectService().getDescription(project);
@@ -354,26 +376,26 @@ public class ProjectUtils {
 				}
 			}
 			if (list.size() < exports.length) {
-				description.setPackageExports((IPackageExportDescription[]) list.toArray(new IPackageExportDescription[list.size()]));
+				description.setPackageExports(list.toArray(new IPackageExportDescription[list.size()]));
 				description.apply(null);
 			}
 		}
 	}
-	
+
 	/**
 	 * Adds a new exported package to the manifest.
 	 * 
 	 * This method is not safe to use in a head-less manner.
 	 * 
 	 * @param project the project to get the manifest information from
-	 * @param packagename the fully qualified name of the package to add 
+	 * @param packagename the fully qualified name of the package to add
 	 * @param internal if the added package should be internal or not
 	 * @param friends a listing of friends for this exported package
 	 * @throws CoreException if something bad happens
 	 */
 	public static void addExportedPackage(IProject project, String packagename, boolean internal, String[] friends) throws CoreException {
-		if(!project.exists() || packagename == null) {
-			//do no work
+		if (!project.exists() || packagename == null) {
+			// do no work
 			return;
 		}
 		IBundleProjectService service = getBundleProjectService();
@@ -386,23 +408,24 @@ public class ProjectUtils {
 			}
 		}
 		list.add(service.newPackageExport(packagename, null, !internal, friends));
-		description.setPackageExports((IPackageExportDescription[]) list.toArray(new IPackageExportDescription[list.size()]));
+		description.setPackageExports(list.toArray(new IPackageExportDescription[list.size()]));
 		description.apply(null);
 		AbstractApiTest.waitForAutoBuild();
 	}
-	
+
 	/**
-	 * Returns the {@link IPackageExportDescription}s for the given project or <code>null</code>
-	 * if none.
+	 * Returns the {@link IPackageExportDescription}s for the given project or
+	 * <code>null</code> if none.
 	 * 
 	 * @param project the project
-	 * @return the {@link IPackageExportDescription}s for the given project or <code>null</code>
+	 * @return the {@link IPackageExportDescription}s for the given project or
+	 *         <code>null</code>
 	 */
 	public static IPackageExportDescription[] getExportedPackages(IProject project) throws CoreException {
 		IBundleProjectDescription description = getBundleProjectService().getDescription(project);
 		return description.getPackageExports();
 	}
-	
+
 	/**
 	 * Adds an entry to the bundle class path header
 	 * 

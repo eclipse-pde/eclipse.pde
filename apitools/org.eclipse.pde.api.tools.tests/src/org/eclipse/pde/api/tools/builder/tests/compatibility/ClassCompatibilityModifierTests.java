@@ -29,12 +29,12 @@ public class ClassCompatibilityModifierTests extends ClassCompatibilityTests {
 	/**
 	 * Workspace relative path classes in bundle/project A
 	 */
-	protected static IPath WORKSPACE_CLASSES_PACKAGE_A = new Path("bundle.a/src/a/classes/modifiers");
+	protected static IPath WORKSPACE_CLASSES_PACKAGE_A = new Path("bundle.a/src/a/classes/modifiers"); //$NON-NLS-1$
 
 	/**
 	 * Package prefix for test classes
 	 */
-	protected static String PACKAGE_PREFIX = "a.classes.modifiers.";
+	protected static String PACKAGE_PREFIX = "a.classes.modifiers."; //$NON-NLS-1$
 	
 	/**
 	 * Constructor
@@ -47,8 +47,9 @@ public class ClassCompatibilityModifierTests extends ClassCompatibilityTests {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestSourcePath()
 	 */
+	@Override
 	protected IPath getTestSourcePath() {
-		return super.getTestSourcePath().append("modifiers");
+		return super.getTestSourcePath().append("modifiers"); //$NON-NLS-1$
 	}
 	
 	/**
@@ -77,21 +78,22 @@ public class ClassCompatibilityModifierTests extends ClassCompatibilityTests {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestingProjectName()
 	 */
+	@Override
 	protected String getTestingProjectName() {
-		return "classcompat";
+		return "classcompat"; //$NON-NLS-1$
 	}
 	
 	/**
 	 * Tests making a non-final class final
 	 */
 	private void xAddFinal(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddFinal.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddFinal.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			getChangedProblemId(IDelta.NON_FINAL_TO_FINAL)
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "AddFinal"};
+		args[0] = new String[]{PACKAGE_PREFIX + "AddFinal"}; //$NON-NLS-1$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -108,7 +110,7 @@ public class ClassCompatibilityModifierTests extends ClassCompatibilityTests {
 	 * Tests making a non-final class with a noextend tag final
 	 */
 	private void xAddFinalNoExtend(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddFinalNoExtend.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddFinalNoExtend.java"); //$NON-NLS-1$
 		// no problems expected
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -125,7 +127,7 @@ public class ClassCompatibilityModifierTests extends ClassCompatibilityTests {
 	 * Tests making a non-final class with a no-extend tag final while removing the no-extend tag
 	 */
 	private void xAddFinalRemoveNoExtend(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddFinalRemoveNoExtend.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddFinalRemoveNoExtend.java"); //$NON-NLS-1$
 		// no problems expected
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -142,13 +144,13 @@ public class ClassCompatibilityModifierTests extends ClassCompatibilityTests {
 	 * Tests making a non-final class final that has the noinstantiate tag
 	 */
 	private void xAddFinalNoInstantiate(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddFinalNoInstantiate.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddFinalNoInstantiate.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			getChangedProblemId(IDelta.NON_FINAL_TO_FINAL)
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "AddFinalNoInstantiate"};
+		args[0] = new String[]{PACKAGE_PREFIX + "AddFinalNoInstantiate"}; //$NON-NLS-1$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -166,7 +168,7 @@ public class ClassCompatibilityModifierTests extends ClassCompatibilityTests {
 	 * noextend tag
 	 */
 	private void xAddFinalNoExtendNoInstantiate(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddFinalNoExtendNoInstantiate.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddFinalNoExtendNoInstantiate.java"); //$NON-NLS-1$
 		// no problems expected
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -183,7 +185,7 @@ public class ClassCompatibilityModifierTests extends ClassCompatibilityTests {
 	 * Tests making a final class non-final
 	 */
 	private void xRemoveFinal(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveFinal.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveFinal.java"); //$NON-NLS-1$
 		// no errors
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -200,7 +202,7 @@ public class ClassCompatibilityModifierTests extends ClassCompatibilityTests {
 	 * Tests making a final class non-final and adding the no-extend tag
 	 */
 	private void xRemoveFinalAddNoExtend(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveFinalAddNoExtend.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveFinalAddNoExtend.java"); //$NON-NLS-1$
 		// no errors
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -217,13 +219,13 @@ public class ClassCompatibilityModifierTests extends ClassCompatibilityTests {
 	 * Tests making a non-abstract class abstract
 	 */
 	private void xAddAbstract(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddAbstract.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddAbstract.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			getChangedProblemId(IDelta.NON_ABSTRACT_TO_ABSTRACT)
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "AddAbstract"};
+		args[0] = new String[]{PACKAGE_PREFIX + "AddAbstract"}; //$NON-NLS-1$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -240,13 +242,13 @@ public class ClassCompatibilityModifierTests extends ClassCompatibilityTests {
 	 * Tests making a non-abstract class with a noextend tag abstract
 	 */
 	private void xAddAbstractNoExtend(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddAbstractNoExtend.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddAbstractNoExtend.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			getChangedProblemId(IDelta.NON_ABSTRACT_TO_ABSTRACT)
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "AddAbstractNoExtend"};
+		args[0] = new String[]{PACKAGE_PREFIX + "AddAbstractNoExtend"}; //$NON-NLS-1$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -263,7 +265,7 @@ public class ClassCompatibilityModifierTests extends ClassCompatibilityTests {
 	 * Tests making a non-abstract class abstract that has the noinstantiate tag
 	 */
 	private void xAddAbstractNoInstantiate(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddAbstractNoInstantiate.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddAbstractNoInstantiate.java"); //$NON-NLS-1$
 		// no problems expected
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -281,7 +283,7 @@ public class ClassCompatibilityModifierTests extends ClassCompatibilityTests {
 	 * noextend tag
 	 */
 	private void xAddAbstractNoExtendNoInstantiate(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddAbstractNoExtendNoInstantiate.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddAbstractNoExtendNoInstantiate.java"); //$NON-NLS-1$
 		// no problems expected
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -298,7 +300,7 @@ public class ClassCompatibilityModifierTests extends ClassCompatibilityTests {
 	 * Tests making a public class package protected
 	 */
 	private void xPublicToPackageVisibility(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("PublicToPackageVisibility.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("PublicToPackageVisibility.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 				ApiProblemFactory.createProblemId(
 						IApiProblem.CATEGORY_COMPATIBILITY,
@@ -308,7 +310,7 @@ public class ClassCompatibilityModifierTests extends ClassCompatibilityTests {
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "PublicToPackageVisibility", "bundle.a_1.0.0"};
+		args[0] = new String[]{PACKAGE_PREFIX + "PublicToPackageVisibility", "bundle.a_1.0.0"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}

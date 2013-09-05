@@ -13,7 +13,7 @@ package org.eclipse.pde.api.tools.builder.tests.usage;
 import junit.framework.Test;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
+import org.eclipse.jdt.core.JavaCore;
 
 /**
  * Tests using restricted enums
@@ -29,30 +29,39 @@ public class EnumUsageTests extends UsageTest {
 		super(name);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getDefaultProblemId()
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getDefaultProblemId
+	 * ()
 	 */
 	@Override
 	protected int getDefaultProblemId() {
 		return 0;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.usage.UsageTest#getTestSourcePath()
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.builder.tests.usage.UsageTest#getTestSourcePath
+	 * ()
 	 */
 	@Override
 	protected IPath getTestSourcePath() {
-		return super.getTestSourcePath().append("enum");
+		return super.getTestSourcePath().append("enum"); //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getTestCompliance()
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getTestCompliance
+	 * ()
 	 */
 	@Override
 	protected String getTestCompliance() {
-		return CompilerOptions.VERSION_1_5;
+		return JavaCore.VERSION_1_5;
 	}
-	
+
 	public static Test suite() {
 		return buildTestSuite(EnumUsageTests.class);
 	}

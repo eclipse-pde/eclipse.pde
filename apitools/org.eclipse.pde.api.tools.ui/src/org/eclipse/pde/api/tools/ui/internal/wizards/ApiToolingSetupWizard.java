@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,8 @@ import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.ui.refactoring.RefactoringWizard;
 
 /**
- * Wizard for updating the Javadoc tags of a java project using the component.xml file for the project
+ * Wizard for updating the Javadoc tags of a java project using the
+ * component.xml file for the project
  * 
  * @since 1.0.0
  */
@@ -30,18 +31,22 @@ public class ApiToolingSetupWizard extends RefactoringWizard {
 		setChangeCreationCancelable(false);
 		setDefaultPageTitle(WizardMessages.ApiToolingSetupWizard_0);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.ltk.ui.refactoring.RefactoringWizard#performFinish()
 	 */
+	@Override
 	public boolean performFinish() {
 		super.performFinish();
 		return ((ApiToolingSetupWizardPage) getStartingPage()).finish();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.ltk.ui.refactoring.RefactoringWizard#addUserInputPages()
 	 */
+	@Override
 	protected void addUserInputPages() {
 		addPage(new ApiToolingSetupWizardPage());
 	}

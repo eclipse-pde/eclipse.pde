@@ -18,7 +18,10 @@ public interface ITreeNode {
 	public static final int PACKAGE = 5;
 
 	Object[] getChildren();
+
 	boolean hasChildren();
+
 	int getId();
+
 	Object getData();
 }

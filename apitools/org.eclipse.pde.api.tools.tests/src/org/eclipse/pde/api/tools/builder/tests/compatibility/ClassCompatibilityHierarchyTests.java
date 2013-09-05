@@ -29,12 +29,12 @@ public class ClassCompatibilityHierarchyTests extends ClassCompatibilityTests {
 	/**
 	 * Workspace relative path classes in bundle/project A
 	 */
-	protected static IPath WORKSPACE_CLASSES_PACKAGE_A = new Path("bundle.a/src/a/classes/hierarchy");
+	protected static IPath WORKSPACE_CLASSES_PACKAGE_A = new Path("bundle.a/src/a/classes/hierarchy"); //$NON-NLS-1$
 
 	/**
 	 * Package prefix for test classes
 	 */
-	protected static String PACKAGE_PREFIX = "a.classes.hierarchy.";
+	protected static String PACKAGE_PREFIX = "a.classes.hierarchy."; //$NON-NLS-1$
 	
 	/**
 	 * Constructor
@@ -47,8 +47,9 @@ public class ClassCompatibilityHierarchyTests extends ClassCompatibilityTests {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestSourcePath()
 	 */
+	@Override
 	protected IPath getTestSourcePath() {
-		return super.getTestSourcePath().append("hierarchy");
+		return super.getTestSourcePath().append("hierarchy"); //$NON-NLS-1$
 	}
 	
 	/**
@@ -92,21 +93,22 @@ public class ClassCompatibilityHierarchyTests extends ClassCompatibilityTests {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestingProjectName()
 	 */
+	@Override
 	protected String getTestingProjectName() {
-		return "classcompat";
+		return "classcompat"; //$NON-NLS-1$
 	}
 	
 	/**
 	 * Tests the reduction of class hierarchy from C to A
 	 */
 	private void xReduceHierarchyCtoA(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ReduceFromCtoA.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ReduceFromCtoA.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			getRemovedProblemId(IDelta.SUPERCLASS)
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "ReduceFromCtoA"};
+		args[0] = new String[]{PACKAGE_PREFIX + "ReduceFromCtoA"}; //$NON-NLS-1$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -123,13 +125,13 @@ public class ClassCompatibilityHierarchyTests extends ClassCompatibilityTests {
 	 * Tests the reduction of class hierarchy from C to B
 	 */
 	private void xReduceHierarchyCtoB(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ReduceFromCtoB.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ReduceFromCtoB.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 				getRemovedProblemId(IDelta.SUPERCLASS)
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "ReduceFromCtoB"};
+		args[0] = new String[]{PACKAGE_PREFIX + "ReduceFromCtoB"}; //$NON-NLS-1$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -146,13 +148,13 @@ public class ClassCompatibilityHierarchyTests extends ClassCompatibilityTests {
 	 * Tests the reduction of class hierarchy from C to Object
 	 */
 	private void xReduceHierarchyCtoObject(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ReduceFromCtoObject.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ReduceFromCtoObject.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			getRemovedProblemId(IDelta.SUPERCLASS) // TODO appears as changed superclass versus reduced
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "ReduceFromCtoObject"};
+		args[0] = new String[]{PACKAGE_PREFIX + "ReduceFromCtoObject"}; //$NON-NLS-1$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -169,13 +171,13 @@ public class ClassCompatibilityHierarchyTests extends ClassCompatibilityTests {
 	 * Tests the change of superclass from A to D
 	 */
 	private void xChangeHierarchyAtoD(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ChangedFromAtoD.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ChangedFromAtoD.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 				getRemovedProblemId(IDelta.SUPERCLASS)
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "ChangedFromAtoD"};
+		args[0] = new String[]{PACKAGE_PREFIX + "ChangedFromAtoD"}; //$NON-NLS-1$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -192,13 +194,13 @@ public class ClassCompatibilityHierarchyTests extends ClassCompatibilityTests {
 	 * Tests the reduction of super interfaces from A, B to A
 	 */
 	private void xReduceInterfaceABtoA(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ReduceInterfaceFromABtoA.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ReduceInterfaceFromABtoA.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			getChangedProblemId(IDelta.CONTRACTED_SUPERINTERFACES_SET)
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "ReduceInterfaceFromABtoA"};
+		args[0] = new String[]{PACKAGE_PREFIX + "ReduceInterfaceFromABtoA"}; //$NON-NLS-1$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -215,13 +217,13 @@ public class ClassCompatibilityHierarchyTests extends ClassCompatibilityTests {
 	 * Tests the reduction of super interfaces from A, B to empty/none
 	 */
 	private void xReduceInterfaceABtoEmpty(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ReduceInterfaceFromABtoEmpty.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ReduceInterfaceFromABtoEmpty.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			getChangedProblemId(IDelta.CONTRACTED_SUPERINTERFACES_SET)
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "ReduceInterfaceFromABtoEmpty"};
+		args[0] = new String[]{PACKAGE_PREFIX + "ReduceInterfaceFromABtoEmpty"}; //$NON-NLS-1$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -238,13 +240,13 @@ public class ClassCompatibilityHierarchyTests extends ClassCompatibilityTests {
 	 * Tests the change of super interfaces from A to B
 	 */
 	private void xChangeInterfaceAtoB(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ChangeInterfaceFromAtoB.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ChangeInterfaceFromAtoB.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			getChangedProblemId(IDelta.CONTRACTED_SUPERINTERFACES_SET)
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "ChangeInterfaceFromAtoB"};
+		args[0] = new String[]{PACKAGE_PREFIX + "ChangeInterfaceFromAtoB"}; //$NON-NLS-1$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -261,7 +263,7 @@ public class ClassCompatibilityHierarchyTests extends ClassCompatibilityTests {
 	 * Tests the addition of super interface A
 	 */
 	private void xAddInterfaceA(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddInterfaceA.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddInterfaceA.java"); //$NON-NLS-1$
 		// no problems expected
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -279,11 +281,11 @@ public class ClassCompatibilityHierarchyTests extends ClassCompatibilityTests {
 	 */
 	private void xPushMethodUp(boolean incremental) throws Exception {
 		// modify two files
-		IPath file1 = WORKSPACE_CLASSES_PACKAGE_A.append("SuperClazz.java");
+		IPath file1 = WORKSPACE_CLASSES_PACKAGE_A.append("SuperClazz.java"); //$NON-NLS-1$
 		updateWorkspaceFile(
 				file1,
 				getUpdateFilePath(file1.lastSegment()));
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("SubClazz.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("SubClazz.java"); //$NON-NLS-1$
 		// no problems expected
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -300,7 +302,7 @@ public class ClassCompatibilityHierarchyTests extends ClassCompatibilityTests {
 	 * Tests removing an internal superclass
 	 */
 	private void xRemoveInternalSuperClass(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveInternalSuperClass.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveInternalSuperClass.java"); //$NON-NLS-1$
 		// no problems expected
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -325,7 +327,7 @@ public class ClassCompatibilityHierarchyTests extends ClassCompatibilityTests {
 	 * Tests removing an internal superclass that defines a public constructor
 	 */
 	private void xRemoveInternalSuperClassWithConstructor(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveConstructorFromInternalSuperclass.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveConstructorFromInternalSuperclass.java"); //$NON-NLS-1$
 		// no problems expected
 		performCompatibilityTest(filePath, incremental);
 	}

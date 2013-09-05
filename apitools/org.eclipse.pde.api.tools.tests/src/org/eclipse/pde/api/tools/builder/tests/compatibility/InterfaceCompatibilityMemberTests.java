@@ -29,12 +29,12 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 	/**
 	 * Workspace relative path classes in bundle/project A
 	 */
-	protected static IPath WORKSPACE_CLASSES_PACKAGE_A = new Path("bundle.a/src/a/interfaces/members");
+	protected static IPath WORKSPACE_CLASSES_PACKAGE_A = new Path("bundle.a/src/a/interfaces/members"); //$NON-NLS-1$
 
 	/**
 	 * Package prefix for test classes
 	 */
-	protected static String PACKAGE_PREFIX = "a.interfaces.members.";
+	protected static String PACKAGE_PREFIX = "a.interfaces.members."; //$NON-NLS-1$
 	
 	/**
 	 * Constructor
@@ -47,8 +47,9 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestSourcePath()
 	 */
+	@Override
 	protected IPath getTestSourcePath() {
-		return super.getTestSourcePath().append("members");
+		return super.getTestSourcePath().append("members"); //$NON-NLS-1$
 	}
 	
 	/**
@@ -61,8 +62,9 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestingProjectName()
 	 */
+	@Override
 	protected String getTestingProjectName() {
-		return "intercompat";
+		return "intercompat"; //$NON-NLS-1$
 	}
 	
 	public void testAddSuperInterfaceAI() throws Exception {
@@ -77,7 +79,7 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 	 * Tests adding a field to an interface
 	 */
 	private void xAddField(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddField.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddField.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 				ApiProblemFactory.createProblemId(
 						IApiProblem.CATEGORY_COMPATIBILITY,
@@ -87,7 +89,7 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "AddField", "ADDED_FIELD"};
+		args[0] = new String[]{PACKAGE_PREFIX + "AddField", "ADDED_FIELD"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -104,7 +106,7 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 	 * Tests adding a field to a noimplement interface
 	 */
 	private void xAddFieldNoImplement(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddFieldNoImplement.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddFieldNoImplement.java"); //$NON-NLS-1$
 		expectingNoProblems();
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -121,7 +123,7 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 	 * Tests adding a field to a noextend interface
 	 */
 	private void xAddFieldNoExtend(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddFieldNoExtend.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddFieldNoExtend.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 				ApiProblemFactory.createProblemId(
 						IApiProblem.CATEGORY_COMPATIBILITY,
@@ -131,7 +133,7 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "AddFieldNoExtend", "ADDED_FIELD"};
+		args[0] = new String[]{PACKAGE_PREFIX + "AddFieldNoExtend", "ADDED_FIELD"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -148,7 +150,7 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 	 * Tests adding a field to a noextend / noimplement interface
 	 */
 	private void xAddFieldNoExtendNoImplement(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddFieldNoExtendNoImplement.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddFieldNoExtendNoImplement.java"); //$NON-NLS-1$
 		//expecting no problems
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -165,7 +167,7 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 	 * Tests adding a method to an interface
 	 */
 	private void xAddMethod(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddMethod.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddMethod.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 				ApiProblemFactory.createProblemId(
 						IApiProblem.CATEGORY_COMPATIBILITY,
@@ -175,7 +177,7 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "AddMethod", "addMethod(String)"};
+		args[0] = new String[]{PACKAGE_PREFIX + "AddMethod", "addMethod(String)"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -192,7 +194,7 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 	 * Tests adding a method to a noimplement interface
 	 */
 	private void xAddMethodNoImplement(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddMethodNoImplement.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddMethodNoImplement.java"); //$NON-NLS-1$
 		expectingNoProblems();
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -209,7 +211,7 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 	 * Tests adding a method to a noimplement interface
 	 */
 	private void xAddMethodNoExtend(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddMethodNoExtend.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddMethodNoExtend.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 				ApiProblemFactory.createProblemId(
 						IApiProblem.CATEGORY_COMPATIBILITY,
@@ -219,7 +221,7 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "AddMethodNoExtend", "addMethod(String)"};
+		args[0] = new String[]{PACKAGE_PREFIX + "AddMethodNoExtend", "addMethod(String)"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -236,7 +238,7 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 	 * Tests adding a method to a noimplement interface
 	 */
 	private void xAddMethodNoExtendNoImplement(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddMethodNoExtendNoImplement.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddMethodNoExtendNoImplement.java"); //$NON-NLS-1$
 		//expecting no problems
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -253,7 +255,7 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 	 * Tests adding a  member type to an interface
 	 */
 	private void xAddMemberType(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddMemberType.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddMemberType.java"); //$NON-NLS-1$
 		// no problems expected
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -270,7 +272,7 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 	 * Tests adding a  member type to a noimplement interface
 	 */
 	private void xAddMemberTypeNoImplement(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddMemberTypeNoImplement.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddMemberTypeNoImplement.java"); //$NON-NLS-1$
 		// no problems expected
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -287,7 +289,7 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 	 * Tests removing a field from an interface
 	 */
 	private void xRemoveField(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveField.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveField.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 				ApiProblemFactory.createProblemId(
 						IApiProblem.CATEGORY_COMPATIBILITY,
@@ -297,7 +299,7 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "RemoveField", "FIELD"};
+		args[0] = new String[]{PACKAGE_PREFIX + "RemoveField", "FIELD"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -314,7 +316,7 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 	 * Tests removing a method from an interface
 	 */
 	private void xRemoveMethod(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveMethod.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveMethod.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 				ApiProblemFactory.createProblemId(
 						IApiProblem.CATEGORY_COMPATIBILITY,
@@ -324,7 +326,7 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "RemoveMethod", "removeMethod(String)"};
+		args[0] = new String[]{PACKAGE_PREFIX + "RemoveMethod", "removeMethod(String)"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -341,7 +343,7 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 	 * Tests removing a member type from an interface
 	 */
 	private void xRemoveMemberType(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveMemberType.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveMemberType.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 				ApiProblemFactory.createProblemId(
 						IApiProblem.CATEGORY_COMPATIBILITY,
@@ -351,7 +353,7 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{"a.interfaces.members.RemoveMemberType.MemberType", "bundle.a_1.0.0"};
+		args[0] = new String[]{"a.interfaces.members.RemoveMemberType.MemberType", "bundle.a_1.0.0"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -368,7 +370,7 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 	 * Tests adding a super interface
 	 */
 	private void xAddSuperInterfaceA(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddInterfaceA.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddInterfaceA.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 				ApiProblemFactory.createProblemId(
 						IApiProblem.CATEGORY_COMPATIBILITY,
@@ -379,9 +381,9 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
 		args[0] = new String[]{
-				PACKAGE_PREFIX + "AddInterfaceA",
-				"a.classes.hierarchy.InterfaceA",
-				"methodA()"};
+				PACKAGE_PREFIX + "AddInterfaceA", //$NON-NLS-1$
+				"a.classes.hierarchy.InterfaceA", //$NON-NLS-1$
+				"methodA()"}; //$NON-NLS-1$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -390,7 +392,7 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 	 * Tests adding a super interface to a noimplement interface
 	 */
 	private void xAddSuperInterfaceANoImplement(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddInterfaceANoImplement.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddInterfaceANoImplement.java"); //$NON-NLS-1$
 		expectingNoProblems();
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -407,7 +409,7 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 	 * Tests adding a super interface to a noimplement interface
 	 */
 	private void xAddSuperInterfaceANoExtend(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddInterfaceANoExtend.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddInterfaceANoExtend.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 				ApiProblemFactory.createProblemId(
 						IApiProblem.CATEGORY_COMPATIBILITY,
@@ -418,9 +420,9 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
 		args[0] = new String[]{
-				PACKAGE_PREFIX + "AddInterfaceANoExtend",
-				"a.classes.hierarchy.InterfaceA",
-				"methodA()"};
+				PACKAGE_PREFIX + "AddInterfaceANoExtend", //$NON-NLS-1$
+				"a.classes.hierarchy.InterfaceA", //$NON-NLS-1$
+				"methodA()"}; //$NON-NLS-1$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -437,7 +439,7 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 	 * Tests adding a super interface to a noimplement interface
 	 */
 	private void xAddSuperInterfaceANoExtendNoImplement(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddInterfaceANoExtendNoImplement.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddInterfaceANoExtendNoImplement.java"); //$NON-NLS-1$
 		// no problems expected
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -454,7 +456,7 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 	 * Tests removing a super interface
 	 */
 	private void xReduceSuperInterfaceABtoA(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ReduceFromABtoA.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ReduceFromABtoA.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 				ApiProblemFactory.createProblemId(
 						IApiProblem.CATEGORY_COMPATIBILITY,
@@ -464,7 +466,7 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "ReduceFromABtoA"};
+		args[0] = new String[]{PACKAGE_PREFIX + "ReduceFromABtoA"}; //$NON-NLS-1$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -481,7 +483,7 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 	 * Tests removing all super interfaces
 	 */
 	private void xReduceSuperInterfaceABtoEmpty(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ReduceFromABtoEmpty.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ReduceFromABtoEmpty.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 				ApiProblemFactory.createProblemId(
 						IApiProblem.CATEGORY_COMPATIBILITY,
@@ -491,7 +493,7 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "ReduceFromABtoEmpty"};
+		args[0] = new String[]{PACKAGE_PREFIX + "ReduceFromABtoEmpty"}; //$NON-NLS-1$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -508,19 +510,19 @@ public class InterfaceCompatibilityMemberTests extends InterfaceCompatibilityTes
 	 * Tests adding a method to a noimplement interface
 	 */
 	private void xAddMethodNoImplement2(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("K.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("K.java"); //$NON-NLS-1$
 		updateWorkspaceFile(
 				filePath,
 				getUpdateFilePath(filePath.lastSegment()));
-		filePath = WORKSPACE_CLASSES_PACKAGE_A.append("I.java");
+		filePath = WORKSPACE_CLASSES_PACKAGE_A.append("I.java"); //$NON-NLS-1$
 		createWorkspaceFile(
 				filePath,
 				getUpdateFilePath(filePath.lastSegment()));
-		filePath = WORKSPACE_CLASSES_PACKAGE_A.append("J.java");
+		filePath = WORKSPACE_CLASSES_PACKAGE_A.append("J.java"); //$NON-NLS-1$
 		createWorkspaceFile(
 				filePath,
 				getUpdateFilePath(filePath.lastSegment()));
-		filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddMethodNoImplement2.java");
+		filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddMethodNoImplement2.java"); //$NON-NLS-1$
 		expectingNoProblems();
 		performCompatibilityTest(filePath, incremental);
 	}

@@ -37,6 +37,7 @@ public class InterfaceExtendsLeak extends LeakTest {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getDefaultProblemId()
 	 */
+	@Override
 	protected int getDefaultProblemId() {
 		if(pid == -1) {
 			pid = ApiProblemFactory.createProblemId(
@@ -51,8 +52,9 @@ public class InterfaceExtendsLeak extends LeakTest {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.leak.LeakTest#getTestSourcePath()
 	 */
+	@Override
 	protected IPath getTestSourcePath() {
-		return super.getTestSourcePath().append("interface");
+		return super.getTestSourcePath().append("interface"); //$NON-NLS-1$
 	}
 	
 	/**
@@ -80,9 +82,9 @@ public class InterfaceExtendsLeak extends LeakTest {
 	
 	private void x1(boolean inc) {
 		setExpectedProblemIds(new int[] {getDefaultProblemId()});
-		String typename = "Etest1";
+		String typename = "Etest1"; //$NON-NLS-1$
 		setExpectedMessageArgs(new String[][] {{TESTING_INTERNAL_INTERFACE_NAME, typename}});
-		deployLeakTest(typename+".java", inc);
+		deployLeakTest(typename+".java", inc); //$NON-NLS-1$
 	}
 	
 	/**
@@ -103,8 +105,8 @@ public class InterfaceExtendsLeak extends LeakTest {
 	
 	private void x2(boolean inc) {
 		expectingNoProblems();
-		String typename = "Etest2";
-		deployLeakTest(typename+".java", inc);
+		String typename = "Etest2"; //$NON-NLS-1$
+		deployLeakTest(typename+".java", inc); //$NON-NLS-1$
 	}
 	
 	/**
@@ -125,10 +127,10 @@ public class InterfaceExtendsLeak extends LeakTest {
 	
 	private void x3(boolean inc) {
 		setExpectedProblemIds(new int[] {getDefaultProblemId()});
-		String typename = "Etest3";
-		String innertype = "inner";
+		String typename = "Etest3"; //$NON-NLS-1$
+		String innertype = "inner"; //$NON-NLS-1$
 		setExpectedMessageArgs(new String[][] {{TESTING_INTERNAL_INTERFACE_NAME, innertype}});
-		deployLeakTest(typename+".java", inc);
+		deployLeakTest(typename+".java", inc); //$NON-NLS-1$
 	}
 	
 	/**
@@ -149,10 +151,10 @@ public class InterfaceExtendsLeak extends LeakTest {
 	
 	private void x4(boolean inc) {
 		setExpectedProblemIds(new int[] {getDefaultProblemId()});
-		String typename = "Etest4";
-		String innertype = "inner";
+		String typename = "Etest4"; //$NON-NLS-1$
+		String innertype = "inner"; //$NON-NLS-1$
 		setExpectedMessageArgs(new String[][] {{TESTING_INTERNAL_INTERFACE_NAME, innertype}});
-		deployLeakTest(typename+".java", inc);
+		deployLeakTest(typename+".java", inc); //$NON-NLS-1$
 	}
 	
 	/**
@@ -173,8 +175,8 @@ public class InterfaceExtendsLeak extends LeakTest {
 	
 	private void x5(boolean inc) {
 		expectingNoProblems();
-		String typename = "Etest5";
-		deployLeakTest(typename+".java", inc);
+		String typename = "Etest5"; //$NON-NLS-1$
+		deployLeakTest(typename+".java", inc); //$NON-NLS-1$
 	}
 	
 	/**
@@ -195,9 +197,9 @@ public class InterfaceExtendsLeak extends LeakTest {
 	
 	private void x6(boolean inc) {
 		setExpectedProblemIds(new int[] {getDefaultProblemId()});
-		String typename = "Etest6";
+		String typename = "Etest6"; //$NON-NLS-1$
 		setExpectedMessageArgs(new String[][] {{TESTING_INTERNAL_INTERFACE_NAME, typename}});
-		deployLeakTest(typename+".java", inc);
+		deployLeakTest(typename+".java", inc); //$NON-NLS-1$
 	}
 	
 	/**
@@ -218,10 +220,10 @@ public class InterfaceExtendsLeak extends LeakTest {
 	
 	private void x7(boolean inc) {
 		setExpectedProblemIds(new int[] {getDefaultProblemId()});
-		String typename = "Etest7";
-		String innertype = "inner2";
+		String typename = "Etest7"; //$NON-NLS-1$
+		String innertype = "inner2"; //$NON-NLS-1$
 		setExpectedMessageArgs(new String[][] {{TESTING_INTERNAL_INTERFACE_NAME, innertype}});
-		deployLeakTest(typename+".java", inc);
+		deployLeakTest(typename+".java", inc); //$NON-NLS-1$
 	}
 	
 	/**
@@ -242,13 +244,13 @@ public class InterfaceExtendsLeak extends LeakTest {
 	
 	private void x8(boolean inc) {
 		setExpectedProblemIds(new int[] {getDefaultProblemId(), getDefaultProblemId(), getDefaultProblemId()});
-		String typename = "Etest8";
-		String inner = "inner";
-		String innertype3 = "inner3";
+		String typename = "Etest8"; //$NON-NLS-1$
+		String inner = "inner"; //$NON-NLS-1$
+		String innertype3 = "inner3"; //$NON-NLS-1$
 		setExpectedMessageArgs(new String[][] {{TESTING_INTERNAL_INTERFACE_NAME, typename},
 				{TESTING_INTERNAL_INTERFACE_NAME, innertype3},
 				{TESTING_INTERNAL_INTERFACE_NAME, inner}});
-		deployLeakTest(typename+".java", inc);
+		deployLeakTest(typename+".java", inc); //$NON-NLS-1$
 	}
 	
 	/**
@@ -269,13 +271,13 @@ public class InterfaceExtendsLeak extends LeakTest {
 	
 	private void x9(boolean inc) {
 		setExpectedProblemIds(new int[] {getDefaultProblemId(), getDefaultProblemId(), getDefaultProblemId()});
-		String typename = "Etest9";
-		String innertype1 = "inner";
-		String innertype2 = "inner2";
+		String typename = "Etest9"; //$NON-NLS-1$
+		String innertype1 = "inner"; //$NON-NLS-1$
+		String innertype2 = "inner2"; //$NON-NLS-1$
 		setExpectedMessageArgs(new String[][] {{TESTING_INTERNAL_INTERFACE_NAME, typename},	
 				{TESTING_INTERNAL_INTERFACE_NAME, innertype1},
 				{TESTING_INTERNAL_INTERFACE_NAME, innertype2}});
-		deployLeakTest(typename+".java", inc);
+		deployLeakTest(typename+".java", inc); //$NON-NLS-1$
 	}
 	
 	/**
@@ -294,8 +296,8 @@ public class InterfaceExtendsLeak extends LeakTest {
 	
 	private void x10(boolean inc) {
 		setExpectedProblemIds(new int[] {getDefaultProblemId()});
-		String typename = "Etest10";
-		setExpectedMessageArgs(new String[][] {{"Iouter", typename}});
-		deployLeakTest(typename+".java", inc);
+		String typename = "Etest10"; //$NON-NLS-1$
+		setExpectedMessageArgs(new String[][] {{"Iouter", typename}}); //$NON-NLS-1$
+		deployLeakTest(typename+".java", inc); //$NON-NLS-1$
 	}	
 }

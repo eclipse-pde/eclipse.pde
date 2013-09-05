@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,7 +27,7 @@ public class NavigateAction extends Action {
 	private final boolean next;
 	private IViewSite site;
 	private TreeViewer viewer;
-	
+
 	public NavigateAction(APIToolingView view, boolean next) {
 		this.site = view.getViewSite();
 		this.viewer = view.viewer;
@@ -41,8 +41,9 @@ public class NavigateAction extends Action {
 			ImageDescriptor disabledImageDescriptor = ApiUIPlugin.getImageDescriptor(IApiToolsConstants.IMG_DLCL_NEXT_NAV);
 			setDisabledImageDescriptor(disabledImageDescriptor);
 			setActionDefinitionId(ActionFactory.NEXT.getCommandId());
-			if (bars != null)
+			if (bars != null) {
 				bars.setGlobalActionHandler(ActionFactory.NEXT.getId(), this);
+			}
 		} else {
 			setText(ActionMessages.PreviousAction_label);
 			setToolTipText(ActionMessages.PreviousAction_tooltip);
@@ -51,15 +52,18 @@ public class NavigateAction extends Action {
 			ImageDescriptor disabledImageDescriptor = ApiUIPlugin.getImageDescriptor(IApiToolsConstants.IMG_DLCL_PREV_NAV);
 			setDisabledImageDescriptor(disabledImageDescriptor);
 			setActionDefinitionId(ActionFactory.PREVIOUS.getCommandId());
-			if (bars != null)
+			if (bars != null) {
 				bars.setGlobalActionHandler(ActionFactory.PREVIOUS.getId(), this);
+			}
 		}
 	}
-	
+
 	/**
-	 * Two types of navigation is supported: navigation that is specific to coordinating between a view
-	 * and a compare editor and navigation simply using the configured navigator.
- 	 */
+	 * Two types of navigation is supported: navigation that is specific to
+	 * coordinating between a view and a compare editor and navigation simply
+	 * using the configured navigator.
+	 */
+	@Override
 	public void run() {
 		TreeViewerNavigator navigator = new TreeViewerNavigator(this.viewer);
 		navigator.navigateNext(this.next);

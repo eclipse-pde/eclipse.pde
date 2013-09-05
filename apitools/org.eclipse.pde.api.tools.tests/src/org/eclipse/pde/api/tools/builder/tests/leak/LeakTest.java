@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,18 +26,17 @@ import org.eclipse.pde.api.tools.builder.tests.ApiTestingEnvironment;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 
 /**
- * Tests the builder to make sure it correctly reports 
- * non-API type leaks
+ * Tests the builder to make sure it correctly reports non-API type leaks
  * 
  * @since 1.0
  */
 public abstract class LeakTest extends ApiBuilderTest {
 
-	protected static IPath WORKSPACE_PATH = new Path("leakproject/src/x/y/z");
-	
-	protected final String TESTING_INTERNAL_CLASS_NAME = "internal";
-	protected final String TESTING_INTERNAL_INTERFACE_NAME = "Iinternal";
-	
+	protected static IPath WORKSPACE_PATH = new Path("leakproject/src/x/y/z"); //$NON-NLS-1$
+
+	protected final String TESTING_INTERNAL_CLASS_NAME = "internal"; //$NON-NLS-1$
+	protected final String TESTING_INTERNAL_INTERFACE_NAME = "Iinternal"; //$NON-NLS-1$
+
 	/**
 	 * Constructor
 	 */
@@ -45,9 +44,13 @@ public abstract class LeakTest extends ApiBuilderTest {
 		super(name);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#setBuilderOptions()
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#setBuilderOptions
+	 * ()
 	 */
+	@Override
 	protected void setBuilderOptions() {
 		enableUnsupportedTagOptions(false);
 		enableBaselineOptions(false);
@@ -57,21 +60,29 @@ public abstract class LeakTest extends ApiBuilderTest {
 		enableUsageOptions(false);
 		enableVersionNumberOptions(false);
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestSourcePath()
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestSourcePath
+	 * ()
 	 */
+	@Override
 	protected IPath getTestSourcePath() {
-		return new Path("leak");
+		return new Path("leak"); //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestingProjectName()
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestingProjectName
+	 * ()
 	 */
+	@Override
 	protected String getTestingProjectName() {
-		return "leakproject";
+		return "leakproject"; //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * @return the tests for this class
 	 */
@@ -83,12 +94,14 @@ public abstract class LeakTest extends ApiBuilderTest {
 
 	/**
 	 * Collects tests from the getAllTestClasses() method into the given suite
+	 * 
 	 * @param suite
 	 */
 	private static void collectTests(TestSuite suite) {
 		// Hack to load all classes before computing their suite of test cases
-		// this allow to reset test cases subsets while running all Builder tests...
-		Class[] classes = getAllTestClasses();
+		// this allow to reset test cases subsets while running all Builder
+		// tests...
+		Class<?>[] classes = getAllTestClasses();
 
 		// Reset forgotten subsets of tests
 		TestCase.TESTS_PREFIX = null;
@@ -99,10 +112,10 @@ public abstract class LeakTest extends ApiBuilderTest {
 
 		/* tests */
 		for (int i = 0, length = classes.length; i < length; i++) {
-			Class clazz = classes[i];
+			Class<?> clazz = classes[i];
 			Method suiteMethod;
 			try {
-				suiteMethod = clazz.getDeclaredMethod("suite", new Class[0]);
+				suiteMethod = clazz.getDeclaredMethod("suite", new Class[0]); //$NON-NLS-1$
 			} catch (NoSuchMethodException e) {
 				e.printStackTrace();
 				continue;
@@ -120,48 +133,45 @@ public abstract class LeakTest extends ApiBuilderTest {
 			suite.addTest((Test) test);
 		}
 	}
-	
+
 	/**
 	 * @return all of the child test classes of this class
 	 */
-	private static Class[] getAllTestClasses() {
-		Class[] classes = new Class[] {
-				ClassExtendsLeak.class,
-				ClassImplementsLeak.class,
-				InterfaceExtendsLeak.class,
-				ConstructorParameterLeak.class,
-				MethodParameterLeak.class,
-				MethodReturnTypeLeak.class,
-				FieldTypeLeak.class
-		};
+	private static Class<?>[] getAllTestClasses() {
+		Class<?>[] classes = new Class[] {
+				ClassExtendsLeak.class, ClassImplementsLeak.class,
+				InterfaceExtendsLeak.class, ConstructorParameterLeak.class,
+				MethodParameterLeak.class, MethodReturnTypeLeak.class,
+				FieldTypeLeak.class };
 		return classes;
 	}
-	
+
 	/**
 	 * Deploys a leak test
-	 * @param sourcename the name of the source files to create in the testing project. 
+	 * 
+	 * @param sourcename the name of the source files to create in the testing
+	 *            project.
 	 * @param incremental if an incremental build should be performed
 	 */
 	protected void deployLeakTest(String sourcename, boolean incremantal) {
 		try {
 			IPath path = WORKSPACE_PATH.append(sourcename);
 			createWorkspaceFile(path, TestSuiteHelper.getPluginDirectoryPath().append(TEST_SOURCE_ROOT).append(getTestSourcePath()).append(sourcename));
-			if(incremantal) {
+			if (incremantal) {
 				incrementalBuild();
-			}
-			else {
+			} else {
 				fullBuild();
 			}
 			expectingNoJDTProblemsFor(path);
 			ApiProblem[] problems = getEnv().getProblemsFor(path, null);
 			assertProblems(problems);
-		}
-		catch(Exception e) {
+		} catch (Exception e) {
 			fail(e.getMessage());
 		}
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#setUp()
 	 */
 	@Override
@@ -175,11 +185,12 @@ public abstract class LeakTest extends ApiBuilderTest {
 		IProject project = getEnv().getWorkspace().getRoot().getProject(getTestingProjectName());
 		if (!project.exists()) {
 			// populate the workspace with initial plug-ins/projects
-			createExistingProjects("leakprojects", true, true, true);
+			createExistingProjects("leakprojects", true, true, true); //$NON-NLS-1$
 		}
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#tearDown()
 	 */
 	@Override

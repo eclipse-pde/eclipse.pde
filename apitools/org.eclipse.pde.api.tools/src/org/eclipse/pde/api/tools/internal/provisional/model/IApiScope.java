@@ -18,21 +18,21 @@ import org.eclipse.core.runtime.CoreException;
  * @since 1.1.0
  */
 public interface IApiScope {
-	
+
 	/**
 	 * Adds the given {@link IApiElement} to the scope
 	 * 
 	 * @param newelements
 	 */
 	public void addElement(IApiElement newelement);
-	
+
 	/**
 	 * Returns all API elements contained within this scope
 	 * 
 	 * @return all API elements contained within this scope
 	 */
 	IApiElement[] getApiElements();
-	
+
 	/**
 	 * Visits all {@link IApiElement} in this scope.
 	 * 
@@ -40,7 +40,7 @@ public interface IApiScope {
 	 * @exception CoreException if unable to visit this scope
 	 */
 	void accept(ApiScopeVisitor visitor) throws CoreException;
-	
+
 	/**
 	 * Returns if this scope encloses the given element
 	 * 

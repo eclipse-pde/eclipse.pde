@@ -13,22 +13,21 @@ package org.eclipse.pde.api.tools.internal.util;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 public class FilteredElements {
 
-	private Set exactMatches;
-	private Set partialMatches;
+	private Set<String> exactMatches;
+	private Set<String> partialMatches;
 
-	public Set getExactMatches() {
+	public Set<String> getExactMatches() {
 		if (this.exactMatches == null) {
 			return Collections.EMPTY_SET;
 		}
 		return this.exactMatches;
 	}
 
-	public Set getPartialMatches() {
+	public Set<String> getPartialMatches() {
 		if (this.partialMatches == null) {
 			return Collections.EMPTY_SET;
 		}
@@ -36,13 +35,14 @@ public class FilteredElements {
 	}
 
 	public boolean containsPartialMatch(String componentId) {
-		if (this.partialMatches == null) return false;
-		if (this.partialMatches.contains(componentId)) {
+		if (partialMatches == null) {
+			return false;
+		}
+		if (partialMatches.contains(componentId)) {
 			return true;
 		}
-		for (Iterator iterator = this.partialMatches.iterator(); iterator.hasNext(); ) {
-			String partialMatch = (String) iterator.next();
-			if (componentId.startsWith(partialMatch)) {
+		for (String match : partialMatches) {
+			if (componentId.startsWith(match)) {
 				return true;
 			}
 		}
@@ -50,24 +50,27 @@ public class FilteredElements {
 	}
 
 	public boolean containsExactMatch(String key) {
-		if (this.exactMatches == null) return false;
+		if (exactMatches == null) {
+			return false;
+		}
 		return this.exactMatches.contains(key);
 	}
 
 	public void addPartialMatch(String componentid) {
 		if (this.partialMatches == null) {
-			this.partialMatches = new HashSet();
+			this.partialMatches = new HashSet<String>();
 		}
 		this.partialMatches.add(componentid);
 	}
 
 	public void addExactMatch(String match) {
 		if (this.exactMatches == null) {
-			this.exactMatches = new HashSet();
+			this.exactMatches = new HashSet<String>();
 		}
 		this.exactMatches.add(match);
 	}
-	
+
+	@Override
 	public String toString() {
 		final String lineSeparator = System.getProperty("line.separator"); //$NON-NLS-1$
 		StringBuffer buffer = new StringBuffer();
@@ -77,12 +80,10 @@ public class FilteredElements {
 		buffer.append("==============================================================================").append(lineSeparator); //$NON-NLS-1$
 		return String.valueOf(buffer);
 	}
-	
-	private void printSet(StringBuffer buffer, Set set, String title) {
+
+	private void printSet(StringBuffer buffer, Set<String> set, String title) {
 		final String lineSeparator = System.getProperty("line.separator"); //$NON-NLS-1$
-		buffer
-			.append(title)
-			.append(lineSeparator);
+		buffer.append(title).append(lineSeparator);
 		if (set != null) {
 			final int max = set.size();
 			String[] allEntries = new String[max];
@@ -94,8 +95,8 @@ public class FilteredElements {
 			buffer.append(lineSeparator);
 		}
 	}
-	
-	public boolean isEmpty(){
+
+	public boolean isEmpty() {
 		return (exactMatches == null || exactMatches.isEmpty()) && (partialMatches == null || partialMatches.isEmpty());
 	}
 }

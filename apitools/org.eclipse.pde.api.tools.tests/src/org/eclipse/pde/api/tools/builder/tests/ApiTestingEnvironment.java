@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.api.tools.builder.tests;
-
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -30,9 +29,11 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IJavaModelMarker;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.tests.builder.TestingEnvironment;
 import org.eclipse.jdt.core.tests.util.AbstractCompilerTest;
 import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
+import org.eclipse.pde.api.tools.internal.builder.ApiAnalysisBuilder;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
@@ -41,74 +42,76 @@ import org.eclipse.pde.api.tools.tests.util.ProjectUtils;
 import org.eclipse.pde.internal.core.natures.PDE;
 
 /**
- * Environment used to test the {@link ApiAnalysisBuilder}.
- * This environment emulates a typical workbench environment
+ * Environment used to test the {@link ApiAnalysisBuilder}. This environment
+ * emulates a typical workbench environment
  * 
  * @since 1.0.0
  */
+@SuppressWarnings("restriction")
 public class ApiTestingEnvironment extends TestingEnvironment {
-	
+
 	protected static final IMarker[] NO_MARKERS = new IMarker[0];
-	
+
 	/**
 	 * Whether to revert vs. reset the workspace
 	 */
 	private boolean fRevert = false;
-	
+
 	/**
-	 * The default path to be used to revert the workspace to (if revert is enabled)
+	 * The default path to be used to revert the workspace to (if revert is
+	 * enabled)
 	 */
 	private IPath fRevertSourcePath = null;
-	
+
 	/**
-	 * Modified files for each build so that we can undo the changes incrementally
-	 * rather than recreating the workspace for each test.
+	 * Modified files for each build so that we can undo the changes
+	 * incrementally rather than recreating the workspace for each test.
 	 */
 	private List<IPath> fAdded = new ArrayList<IPath>();
 	private List<IPath> fChanged = new ArrayList<IPath>();
 	private List<IPath> fRemoved = new ArrayList<IPath>();
-	
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.core.tests.builder.TestingEnvironment#addProject(java.lang.String, java.lang.String)
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.jdt.core.tests.builder.TestingEnvironment#addProject(java
+	 * .lang.String, java.lang.String)
 	 */
+	@Override
 	public IPath addProject(String projectName, String compliance) throws UnsupportedOperationException {
 		IJavaProject javaProject = createProject(projectName);
 		IProject project = javaProject.getProject();
 		setProjectCompliance(javaProject, compliance);
 		return project != null ? project.getFullPath() : Path.EMPTY;
 	}
-	
+
 	/**
 	 * Sets the given compliance on the given project.
+	 * 
 	 * @param project
 	 * @param compliance
 	 */
 	public void setProjectCompliance(IJavaProject project, String compliance) {
 		int requiredComplianceFlag = 0;
 		String compilerVersion = null;
-		if(CompilerOptions.VERSION_1_4.equals(compliance)) {
+		if (CompilerOptions.VERSION_1_4.equals(compliance)) {
 			requiredComplianceFlag = AbstractCompilerTest.F_1_4;
 			compilerVersion = CompilerOptions.VERSION_1_4;
-		}
-		else if (CompilerOptions.VERSION_1_5.equals(compliance)) {
+		} else if (CompilerOptions.VERSION_1_5.equals(compliance)) {
 			requiredComplianceFlag = AbstractCompilerTest.F_1_5;
-			compilerVersion = CompilerOptions.VERSION_1_5;
-		}
-		else if (CompilerOptions.VERSION_1_6.equals(compliance)) {
+			compilerVersion = JavaCore.VERSION_1_5;
+		} else if (CompilerOptions.VERSION_1_6.equals(compliance)) {
 			requiredComplianceFlag = AbstractCompilerTest.F_1_6;
 			compilerVersion = CompilerOptions.VERSION_1_6;
-		}
-		else if (CompilerOptions.VERSION_1_7.equals(compliance)) {
+		} else if (CompilerOptions.VERSION_1_7.equals(compliance)) {
 			requiredComplianceFlag = AbstractCompilerTest.F_1_7;
-			compilerVersion = CompilerOptions.VERSION_1_7;
-		}
-		else if (!CompilerOptions.VERSION_1_4.equals(compliance) && !CompilerOptions.VERSION_1_3.equals(compliance)) {
-			throw new UnsupportedOperationException("Test framework doesn't support compliance level: " + compliance);
+			compilerVersion = JavaCore.VERSION_1_7;
+		} else if (!CompilerOptions.VERSION_1_4.equals(compliance) && !CompilerOptions.VERSION_1_3.equals(compliance)) {
+			throw new UnsupportedOperationException("Test framework doesn't support compliance level: " + compliance); //$NON-NLS-1$
 		}
 		if (requiredComplianceFlag != 0) {
 			if ((AbstractCompilerTest.getPossibleComplianceLevels() & requiredComplianceFlag) == 0) {
-				throw new RuntimeException("This test requires a " + compliance + " JRE");
+				throw new RuntimeException("This test requires a " + compliance + " JRE"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			HashMap<String, String> options = new HashMap<String, String>();
 			options.put(CompilerOptions.OPTION_Compliance, compilerVersion);
@@ -117,66 +120,79 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 			project.setOptions(options);
 		}
 	}
-	
+
 	/**
-	 * Creates a new plug-in project with the given name.
-	 * If a project with the same name already exists in the testing workspace
-	 * it will be deleted and new project created.
+	 * Creates a new plug-in project with the given name. If a project with the
+	 * same name already exists in the testing workspace it will be deleted and
+	 * new project created.
+	 * 
 	 * @param projectName
-	 * @return the newly created {@link IJavaProject} or <code>null</code> if there is an exception creating the project
+	 * @return the newly created {@link IJavaProject} or <code>null</code> if
+	 *         there is an exception creating the project
 	 */
 	protected IJavaProject createProject(String projectName) {
 		IJavaProject jproject = null;
 		try {
 			IProject project = getWorkspace().getRoot().getProject(projectName);
-			if(project.exists()) {
+			if (project.exists()) {
 				project.delete(true, new NullProgressMonitor());
 			}
-			jproject = ProjectUtils.createPluginProject(projectName, new String[] {PDE.PLUGIN_NATURE, ApiPlugin.NATURE_ID});
+			jproject = ProjectUtils.createPluginProject(projectName, new String[] {
+					PDE.PLUGIN_NATURE, ApiPlugin.NATURE_ID });
 			addProject(jproject.getProject());
-		}
-		catch(CoreException ce) {
+		} catch (CoreException ce) {
 			ApiPlugin.log(ce);
 			ce.printStackTrace();
 		}
 		return jproject;
 	}
-	
+
 	/**
-	 * Performs a clean build on the project using the builder with the given builder id
+	 * Performs a clean build on the project using the builder with the given
+	 * builder id
+	 * 
 	 * @param project
 	 * @param builderid
 	 */
 	public void cleanBuild(IProject project, String builderid) {
 		try {
 			getProject(project.getName()).build(IncrementalProjectBuilder.CLEAN_BUILD, builderid, null, null);
-		} catch (CoreException e) {}
+		} catch (CoreException e) {
+		}
 	}
-	
+
 	/**
-	 * Incrementally builds the given project using the builder with the given builder id
+	 * Incrementally builds the given project using the builder with the given
+	 * builder id
+	 * 
 	 * @param project
 	 * @param builderid
 	 */
 	public void incrementalBuild(IProject project, String builderid) {
 		try {
 			getProject(project.getName()).build(IncrementalProjectBuilder.INCREMENTAL_BUILD, builderid, null, null);
-		} catch (CoreException e) {}
+		} catch (CoreException e) {
+		}
 	}
-	
+
 	/**
-	 * Performs a full build on the given project using the builder with the given builder id
+	 * Performs a full build on the given project using the builder with the
+	 * given builder id
+	 * 
 	 * @param project
 	 * @param builderid
 	 */
 	public void fullBuild(IProject project, String builderid) {
 		try {
 			getProject(project.getName()).build(IncrementalProjectBuilder.FULL_BUILD, builderid, null, null);
-		} catch (CoreException e) {}
+		} catch (CoreException e) {
+		}
 	}
-	
+
 	/**
-	 * returns all of the usage markers for the specified resource and its children
+	 * returns all of the usage markers for the specified resource and its
+	 * children
+	 * 
 	 * @param resource
 	 * @return all API usage problem markers
 	 * @throws CoreException
@@ -184,19 +200,22 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	 * @see {@link IApiMarkerConstants#API_USAGE_PROBLEM_MARKER}
 	 */
 	protected IMarker[] getAllUsageMarkers(IResource resource) throws CoreException {
-		if(resource == null) {
+		if (resource == null) {
 			return NO_MARKERS;
 		}
-		if(!resource.isAccessible()) {
+		if (!resource.isAccessible()) {
 			return NO_MARKERS;
 		}
 		return resource.findMarkers(IApiMarkerConstants.API_USAGE_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
 	}
-	
+
 	/**
-	 * returns all of the usage markers for the specified resource and its children
+	 * returns all of the usage markers for the specified resource and its
+	 * children
+	 * 
 	 * @param resource
-	 * @return all JDT problem markers that are on the resource backing the given path
+	 * @return all JDT problem markers that are on the resource backing the
+	 *         given path
 	 * @throws CoreException
 	 */
 	public IMarker[] getAllJDTMarkers(IPath path) throws CoreException {
@@ -204,16 +223,18 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	}
 
 	/**
-	 * returns all of the usage markers for the specified resource and its children
+	 * returns all of the usage markers for the specified resource and its
+	 * children
+	 * 
 	 * @param resource
 	 * @return all JDT problem markers on the given {@link IResource}
 	 * @throws CoreException
 	 */
 	protected IMarker[] getAllJDTMarkers(IResource resource) throws CoreException {
-		if(resource == null) {
+		if (resource == null) {
 			return NO_MARKERS;
 		}
-		if(!resource.isAccessible()) {
+		if (!resource.isAccessible()) {
 			return NO_MARKERS;
 		}
 		IMarker[] javaModelMarkers = resource.findMarkers(IJavaModelMarker.JAVA_MODEL_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
@@ -230,28 +251,31 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 		System.arraycopy(buildpathMarkers, 0, allMarkers, javaModelMarkersLength, buildpathMarkersLength);
 		return allMarkers;
 	}
-	
+
 	/**
-	 * Returns all of the unsupported Javadoc tag markers on the specified resource
-	 * and all of its children.
+	 * Returns all of the unsupported Javadoc tag markers on the specified
+	 * resource and all of its children.
+	 * 
 	 * @param resource
 	 * @return all unsupported tag problem markers
 	 * @throws CoreException
 	 * 
-	 * @see {@link IApiMarkerConstants#UNSUPPORTED_TAG_PROBLEM_MARKER} 
+	 * @see {@link IApiMarkerConstants#UNSUPPORTED_TAG_PROBLEM_MARKER}
 	 */
 	protected IMarker[] getAllUnsupportedTagMarkers(IResource resource) throws CoreException {
-		if(resource == null) {
+		if (resource == null) {
 			return NO_MARKERS;
 		}
-		if(!resource.isAccessible()) {
+		if (!resource.isAccessible()) {
 			return NO_MARKERS;
 		}
 		return resource.findMarkers(IApiMarkerConstants.UNSUPPORTED_TAG_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
 	}
-	
+
 	/**
-	 * Returns all of the compatibility markers on the given resource and its children
+	 * Returns all of the compatibility markers on the given resource and its
+	 * children
+	 * 
 	 * @param resource
 	 * @return all compatibility problem markers
 	 * @throws CoreException
@@ -259,17 +283,19 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	 * @see {@link IApiMarkerConstants#COMPATIBILITY_PROBLEM_MARKER}
 	 */
 	protected IMarker[] getAllCompatibilityMarkers(IResource resource) throws CoreException {
-		if(resource == null) {
+		if (resource == null) {
 			return NO_MARKERS;
 		}
-		if(!resource.isAccessible()) {
+		if (!resource.isAccessible()) {
 			return NO_MARKERS;
 		}
 		return resource.findMarkers(IApiMarkerConstants.COMPATIBILITY_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
 	}
-	
+
 	/**
-	 * Returns all of the API profile markers on the given resource and its children
+	 * Returns all of the API profile markers on the given resource and its
+	 * children
+	 * 
 	 * @param resource
 	 * @return all API baseline problem markers
 	 * @throws CoreException
@@ -277,17 +303,19 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	 * @see {@link IApiMarkerConstants#DEFAULT_API_BASELINE_PROBLEM_MARKER}
 	 */
 	protected IMarker[] getAllApiBaselineMarkers(IResource resource) throws CoreException {
-		if(resource == null) {
+		if (resource == null) {
 			return NO_MARKERS;
 		}
-		if(!resource.isAccessible()) {
+		if (!resource.isAccessible()) {
 			return NO_MARKERS;
 		}
 		return resource.findMarkers(IApiMarkerConstants.DEFAULT_API_BASELINE_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
 	}
-	
+
 	/**
-	 * Returns all of the since tag markers on the given resource and its children
+	 * Returns all of the since tag markers on the given resource and its
+	 * children
+	 * 
 	 * @param resource
 	 * @return all since tag problem markers
 	 * @throws CoreException
@@ -295,17 +323,18 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	 * @see {@link IApiMarkerConstants#SINCE_TAGS_PROBLEM_MARKER}
 	 */
 	protected IMarker[] getAllSinceTagMarkers(IResource resource) throws CoreException {
-		if(resource == null) {
+		if (resource == null) {
 			return NO_MARKERS;
 		}
-		if(!resource.isAccessible()) {
+		if (!resource.isAccessible()) {
 			return NO_MARKERS;
 		}
 		return resource.findMarkers(IApiMarkerConstants.SINCE_TAGS_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
 	}
-	
+
 	/**
 	 * Returns all of the version markers on the given resource and its children
+	 * 
 	 * @param resource
 	 * @return all version problem markers
 	 * @throws CoreException
@@ -313,17 +342,19 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	 * @see {@link IApiMarkerConstants#VERSION_NUMBERING_PROBLEM_MARKER}
 	 */
 	protected IMarker[] getAllVersionMarkers(IResource resource) throws CoreException {
-		if(resource == null) {
+		if (resource == null) {
 			return NO_MARKERS;
 		}
-		if(!resource.isAccessible()) {
+		if (!resource.isAccessible()) {
 			return NO_MARKERS;
 		}
 		return resource.findMarkers(IApiMarkerConstants.VERSION_NUMBERING_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
 	}
-	
+
 	/**
-	 * Returns all of the unused API problem filters markers on the given resource to infinite depth
+	 * Returns all of the unused API problem filters markers on the given
+	 * resource to infinite depth
+	 * 
 	 * @param resource
 	 * @return all unused problem filter markers
 	 * @throws CoreException
@@ -331,39 +362,44 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	 * @see {@link IApiMarkerConstants#UNUSED_FILTER_PROBLEM_MARKER}
 	 */
 	protected IMarker[] getAllUnusedApiProblemFilterMarkers(IResource resource) throws CoreException {
-		if(resource == null) {
+		if (resource == null) {
 			return NO_MARKERS;
 		}
-		if(!resource.isAccessible()) {
+		if (!resource.isAccessible()) {
 			return NO_MARKERS;
 		}
 		return resource.findMarkers(IApiMarkerConstants.UNUSED_FILTER_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
 	}
-	
+
 	/**
 	 * Returns all of the markers from the testing workspace
+	 * 
 	 * @return all {@link IMarker}s currently set in the workspace
 	 */
 	public IMarker[] getMarkers() {
 		return getMarkersFor(getWorkspaceRootPath());
 	}
-	
+
 	/**
 	 * Returns the collection of API problem markers for the given element
+	 * 
 	 * @param root
-	 * @return the array of {@link IMarker}s found on the resource that corresponds to the given path
+	 * @return the array of {@link IMarker}s found on the resource that
+	 *         corresponds to the given path
 	 */
 	public IMarker[] getMarkersFor(IPath root) {
 		return getMarkersFor(root, null);
 	}
-	
+
 	/**
 	 * Return all problems with the specified element.
+	 * 
 	 * @param path
 	 * @param additionalMarkerType
-	 * @return the array of {@link IMarker}s found on the resource that corresponds to the given path
+	 * @return the array of {@link IMarker}s found on the resource that
+	 *         corresponds to the given path
 	 */
-	public IMarker[] getMarkersFor(IPath path, String additionalMarkerType){
+	public IMarker[] getMarkersFor(IPath path, String additionalMarkerType) {
 		IResource resource = getResource(path);
 		try {
 			List<Object> problems = new ArrayList<Object>();
@@ -374,13 +410,13 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 			addToList(problems, getAllVersionMarkers(resource));
 			addToList(problems, getAllUnsupportedTagMarkers(resource));
 			addToList(problems, getAllUnusedApiProblemFilterMarkers(resource));
-			
-			//additional markers
-			if(additionalMarkerType != null) {
+
+			// additional markers
+			if (additionalMarkerType != null) {
 				problems.addAll(Arrays.asList(resource.findMarkers(additionalMarkerType, true, IResource.DEPTH_INFINITE)));
 			}
-			return (IMarker[]) problems.toArray(new IMarker[problems.size()]);
-		} catch(CoreException e){
+			return problems.toArray(new IMarker[problems.size()]);
+		} catch (CoreException e) {
 			// ignore
 		}
 		return new IMarker[0];
@@ -388,18 +424,19 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 
 	/**
 	 * Looks up the {@link IResource} in the workspace from the given path
+	 * 
 	 * @param path
 	 * @return the {@link IResource} handle for the given path
 	 */
 	public IResource getResource(IPath path) {
 		IResource resource;
-		if(path.equals(getWorkspaceRootPath())){
+		if (path.equals(getWorkspaceRootPath())) {
 			resource = getWorkspace().getRoot();
 		} else {
 			IProject p = getProject(path);
-			if(p != null && path.equals(p.getFullPath())) {
+			if (p != null && path.equals(p.getFullPath())) {
 				resource = getProject(path.lastSegment());
-			} else if(path.getFileExtension() == null) {
+			} else if (path.getFileExtension() == null) {
 				resource = getWorkspace().getRoot().getFolder(path);
 			} else {
 				resource = getWorkspace().getRoot().getFile(path);
@@ -407,114 +444,127 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 		}
 		return resource;
 	}
-	
+
 	/**
 	 * Adds the array of objects to the given list
+	 * 
 	 * @param list
 	 * @param objects
 	 */
 	private void addToList(List<Object> list, Object[] objects) {
-		if(list == null || objects == null) {
+		if (list == null || objects == null) {
 			return;
 		}
-		if(objects.length == 0) {
+		if (objects.length == 0) {
 			return;
 		}
-		for(int i = 0; i < objects.length; i++) {
+		for (int i = 0; i < objects.length; i++) {
 			list.add(objects[i]);
 		}
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.jdt.core.tests.builder.TestingEnvironment#getProblems()
 	 */
+	@Override
 	public ApiProblem[] getProblems() {
 		return (ApiProblem[]) super.getProblems();
 	}
-	
+
 	/**
 	 * Returns the current workspace {@link IApiProfile}
+	 * 
 	 * @return the workspace baseline
 	 */
 	protected IApiBaseline getWorkspaceProfile() {
 		return ApiPlugin.getDefault().getApiBaselineManager().getWorkspaceBaseline();
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.core.tests.builder.TestingEnvironment#getProblemsFor(org.eclipse.core.runtime.IPath, java.lang.String)
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.jdt.core.tests.builder.TestingEnvironment#getProblemsFor(
+	 * org.eclipse.core.runtime.IPath, java.lang.String)
 	 */
-	public ApiProblem[] getProblemsFor(IPath path, String additionalMarkerType){
+	@Override
+	public ApiProblem[] getProblemsFor(IPath path, String additionalMarkerType) {
 		IMarker[] markers = getMarkersFor(path, additionalMarkerType);
 		ArrayList<ApiProblem> problems = new ArrayList<ApiProblem>();
-		for(int i = 0; i < markers.length; i++) {
+		for (int i = 0; i < markers.length; i++) {
 			problems.add(new ApiProblem(markers[i]));
 		}
 		return problems.toArray(new ApiProblem[problems.size()]);
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.core.tests.builder.TestingEnvironment#removeProject(org.eclipse.core.runtime.IPath)
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.jdt.core.tests.builder.TestingEnvironment#removeProject(org
+	 * .eclipse.core.runtime.IPath)
 	 */
+	@Override
 	public void removeProject(IPath projectPath) {
 		IJavaProject project = getJavaProject(projectPath);
-		if(project != null) {
+		if (project != null) {
 			try {
 				project.getProject().delete(true, new NullProgressMonitor());
-			}
-			catch(CoreException ce) {
-				
+			} catch (CoreException ce) {
+
 			}
 		}
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.core.tests.builder.TestingEnvironment#resetWorkspace()
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.jdt.core.tests.builder.TestingEnvironment#resetWorkspace()
 	 */
+	@Override
 	public void resetWorkspace() {
 		try {
 			if (fRevert) {
 				try {
 					revertWorkspace();
-				}
-				catch(Exception e) {
-					//in case we have an exception reverting a file, just toast it all
+				} catch (Exception e) {
+					// in case we have an exception reverting a file, just toast
+					// it all
 					deleteWorkspace();
 				}
 			} else {
 				deleteWorkspace();
 			}
-		}
-		catch(Exception e) {
-			//dump the trace https://bugs.eclipse.org/bugs/show_bug.cgi?id=275005
+		} catch (Exception e) {
+			// dump the trace
+			// https://bugs.eclipse.org/bugs/show_bug.cgi?id=275005
 			e.printStackTrace();
-		}
-		finally {
+		} finally {
 			// clear all changes
 			fAdded.clear();
 			fChanged.clear();
 			fRemoved.clear();
 		}
 	}
-	
+
 	/**
 	 * Completely deletes the workspace
+	 * 
 	 * @since 1.1
 	 */
 	void deleteWorkspace() {
 		super.resetWorkspace();
-		//clean up any left over projects from other tests
+		// clean up any left over projects from other tests
 		IProject[] projects = getWorkspace().getRoot().getProjects();
-		for(int i = 0; i < projects.length; i++) {
+		for (int i = 0; i < projects.length; i++) {
 			try {
 				projects[i].delete(true, new NullProgressMonitor());
-			}
-			catch(CoreException ce) {
-				//help with debugging
+			} catch (CoreException ce) {
+				// help with debugging
 				ce.printStackTrace();
 			}
 		}
 	}
-	
+
 	/**
 	 * Sets the default revert source path to the given path.
 	 * 
@@ -523,37 +573,39 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	public void setRevertSourcePath(IPath path) {
 		fRevertSourcePath = path;
 	}
-	
+
 	/**
-	 * @return the currently set source path to use when reverting changes to the workspace.
+	 * @return the currently set source path to use when reverting changes to
+	 *         the workspace.
 	 */
 	public IPath getRevertSourcePath() {
 		return fRevertSourcePath;
 	}
-	
+
 	/**
 	 * Reverts changes in the workspace - added, removed, changed files
 	 * 
-	 * @throws Exception if something happens trying to revert the workspace contents
+	 * @throws Exception if something happens trying to revert the workspace
+	 *             contents
 	 */
-	public void revertWorkspace() throws Exception {	
+	public void revertWorkspace() throws Exception {
 		// remove each added file
 		Iterator<IPath> iterator = fAdded.iterator();
 		while (iterator.hasNext()) {
 			IPath path = iterator.next();
 			deleteWorkspaceFile(path);
 		}
-		
+
 		// revert each changed file
 		iterator = fChanged.iterator();
 		IPath revert = getRevertSourcePath();
-		if(revert != null) {
-			IPath path= null;
+		if (revert != null) {
+			IPath path = null;
 			while (iterator.hasNext()) {
 				path = iterator.next();
 				updateWorkspaceFile(path, TestSuiteHelper.getPluginDirectoryPath().append(ApiBuilderTest.TEST_SOURCE_ROOT).append(getRevertSourcePath()).append(path));
 			}
-			
+
 			// replace each deleted file
 			iterator = fRemoved.iterator();
 			while (iterator.hasNext()) {
@@ -562,7 +614,7 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 			}
 		}
 	}
-	
+
 	/**
 	 * Deletes the workspace file at the specified location (full path).
 	 * 
@@ -574,15 +626,16 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 		try {
 			file.delete(true, null);
 		} catch (CoreException e) {
-			//try to bring the resource in to sync an re-delete
+			// try to bring the resource in to sync an re-delete
 			file.refreshLocal(IResource.DEPTH_ONE, null);
 			file.delete(true, null);
 		}
-	}		
-	
+	}
+
 	/**
-	 * Updates the contents of a workspace file at the specified location (full path),
-	 * with the contents of a local file at the given replacement location (absolute path).
+	 * Updates the contents of a workspace file at the specified location (full
+	 * path), with the contents of a local file at the given replacement
+	 * location (absolute path).
 	 * 
 	 * @param workspaceLocation
 	 * @param replacementLocation
@@ -595,17 +648,17 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 		try {
 			stream = new FileInputStream(replacement);
 			file.setContents(stream, false, true, null);
-		}
-		finally {
-			if(stream != null) {
+		} finally {
+			if (stream != null) {
 				stream.close();
 			}
 		}
-	}	
+	}
 
 	/**
-	 * Updates the contents of a workspace file at the specified location (full path),
-	 * with the contents of a local file at the given replacement location (absolute path).
+	 * Updates the contents of a workspace file at the specified location (full
+	 * path), with the contents of a local file at the given replacement
+	 * location (absolute path).
 	 * 
 	 * @param workspaceLocation
 	 * @param replacementLocation
@@ -618,32 +671,35 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 		try {
 			stream = new FileInputStream(replacement);
 			file.create(stream, false, null);
-		}
-		finally {
-			if(stream != null) {
+		} finally {
+			if (stream != null) {
 				stream.close();
 			}
 		}
 	}
-	
+
 	/**
 	 * Notes a file was added during the test, to be undone
+	 * 
 	 * @param path
 	 */
 	public void added(IPath path) {
 		fAdded.add(path);
 	}
-	
+
 	public void changed(IPath path) {
 		fChanged.add(path);
 	}
-	
+
 	public void removed(IPath path) {
 		fRemoved.add(path);
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.core.tests.builder.TestingEnvironment#addFile(org.eclipse.core.runtime.IPath, java.lang.String, java.lang.String)
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.jdt.core.tests.builder.TestingEnvironment#addFile(org.eclipse
+	 * .core.runtime.IPath, java.lang.String, java.lang.String)
 	 */
 	@Override
 	public IPath addFile(IPath root, String fileName, String contents) {
@@ -655,21 +711,25 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 			added(path);
 		}
 		return super.addFile(root, fileName, contents);
-	}	
-	
+	}
+
 	/**
-	 * Returns the listing of projects in the order the workspace has computed they should be built.
-	 * This method calls out to {@link org.eclipse.core.resources.IWorkspace#computeProjectOrder(IProject[])}, which
-	 * can slow down testing with successive calls.
+	 * Returns the listing of projects in the order the workspace has computed
+	 * they should be built. This method calls out to
+	 * {@link org.eclipse.core.resources.IWorkspace#computeProjectOrder(IProject[])}
+	 * , which can slow down testing with successive calls.
 	 * 
 	 * @return a build-ordered listing of the workspace projects
 	 */
 	public IProject[] getProjectBuildOrder() {
 		return getWorkspace().computeProjectOrder(getWorkspace().getRoot().getProjects()).projects;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.core.tests.builder.TestingEnvironment#addClass(org.eclipse.core.runtime.IPath, java.lang.String, java.lang.String)
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.jdt.core.tests.builder.TestingEnvironment#addClass(org.eclipse
+	 * .core.runtime.IPath, java.lang.String, java.lang.String)
 	 */
 	@Override
 	public IPath addClass(IPath packagePath, String className, String contents) {
@@ -681,7 +741,7 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 		}
 		return super.addClass(packagePath, className, contents);
 	}
-	
+
 	/**
 	 * Sets whether to revert the workspace rather than reset.
 	 * 

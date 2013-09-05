@@ -32,8 +32,9 @@ public class ValidInterfaceFieldTagTests extends ValidFieldTagTests {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.tags.ValidJavadocTagFieldTests#getTestSourcePath()
 	 */
+	@Override
 	protected IPath getTestSourcePath() {
-		return super.getTestSourcePath().append("interface");
+		return super.getTestSourcePath().append("interface"); //$NON-NLS-1$
 	}
 	
 	/**
@@ -60,7 +61,7 @@ public class ValidInterfaceFieldTagTests extends ValidFieldTagTests {
 	}
 	
 	private void x1(boolean inc) {
-		deployTagTest("test1.java", inc, false);
+		deployTagTest("test1.java", inc, false); //$NON-NLS-1$
 	}
 	
 	/**
@@ -80,7 +81,7 @@ public class ValidInterfaceFieldTagTests extends ValidFieldTagTests {
 	}
 	
 	private void x3(boolean inc) {
-		deployTagTest("test3.java", inc, false);
+		deployTagTest("test3.java", inc, false); //$NON-NLS-1$
 	}
 	
 	/**
@@ -100,7 +101,7 @@ public class ValidInterfaceFieldTagTests extends ValidFieldTagTests {
 	}
 	
 	private void x4(boolean inc) {
-		deployTagTest("test4.java", inc, false);
+		deployTagTest("test4.java", inc, false); //$NON-NLS-1$
 	}
 	
 	/**
@@ -120,6 +121,6 @@ public class ValidInterfaceFieldTagTests extends ValidFieldTagTests {
 	}
 	
 	private void x5(boolean inc) {
-		deployTagTest("test5.java", inc, false);
+		deployTagTest("test5.java", inc, false); //$NON-NLS-1$
 	}
 }

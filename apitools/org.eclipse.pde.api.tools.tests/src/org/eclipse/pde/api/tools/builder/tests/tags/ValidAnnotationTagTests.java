@@ -13,7 +13,7 @@ package org.eclipse.pde.api.tools.builder.tests.tags;
 import junit.framework.Test;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
+import org.eclipse.jdt.core.JavaCore;
 
 /**
  * Tests that the builder accepts valid tags on annotations
@@ -38,15 +38,17 @@ public class ValidAnnotationTagTests extends InvalidAnnotationTagTests {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestSourcePath()
 	 */
+	@Override
 	protected IPath getTestSourcePath() {
-		return super.getTestSourcePath().append("valid");
+		return super.getTestSourcePath().append("valid"); //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getTestCompliance()
 	 */
+	@Override
 	protected String getTestCompliance() {
-		return CompilerOptions.VERSION_1_5;
+		return JavaCore.VERSION_1_5;
 	}
 	
 	
@@ -62,7 +64,7 @@ public class ValidAnnotationTagTests extends InvalidAnnotationTagTests {
 	 * Tests having an @noreference tag on a variety of annotations in package a.b.c
 	 */
 	private void x1(boolean inc) {
-		String typename = "test1.java"; 
+		String typename = "test1.java";  //$NON-NLS-1$
 		deployTagTest(typename, inc, false);
 	}
 	
@@ -79,14 +81,16 @@ public class ValidAnnotationTagTests extends InvalidAnnotationTagTests {
 	 * Tests having an @noreference tag on an annotation in the default package
 	 */
 	private void x2(boolean inc) {
-		String typename = "test2.java"; 
+		String typename = "test2.java";  //$NON-NLS-1$
 		deployTagTest(typename, inc, true);
 	}
 	
+	@Override
 	public void testInvalidAnnotationTag3I() {
 		x3(true);
 	}
 
+	@Override
 	public void testInvalidAnnotationTag3F() {
 		x3(false);
 	}
@@ -95,7 +99,7 @@ public class ValidAnnotationTagTests extends InvalidAnnotationTagTests {
 	 * Tests having a bunch tags on member annotation elements
 	 */
 	private void x3(boolean inc) {
-		String typename = "test2.java"; 
+		String typename = "test2.java";  //$NON-NLS-1$
 		deployTagTest(typename, inc, true);
 	}
 	

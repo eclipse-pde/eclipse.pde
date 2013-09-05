@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -75,9 +75,9 @@ public class DeltaSession implements ISession {
 		public static final String P_PREVIOUS_RESTRICTIONS = ActionMessages.PropertyPreviousRestrictionsKey;
 		public static final String P_TYPENAME = ActionMessages.PropertyTypeNameKey;
 
-		private static List Descriptors;
+		private static List<PropertyDescriptor> Descriptors;
 		static {
-			Descriptors = new ArrayList();
+			Descriptors = new ArrayList<PropertyDescriptor>();
 
 			PropertyDescriptor propertyDescriptor = new PropertyDescriptor(ID_MESSAGE, P_MESSAGE);
 			propertyDescriptor.setCategory(P_MESSAGE_CATEGORY);
@@ -119,18 +119,20 @@ public class DeltaSession implements ISession {
 			propertyDescriptor = new PropertyDescriptor(ID_FLAGS, P_FLAGS);
 			propertyDescriptor.setCategory(P_INFO_CATEGORY);
 			Descriptors.add(propertyDescriptor);
-			
+
 			propertyDescriptor = new PropertyDescriptor(ID_ELEMENT_TYPE, P_ELEMENT_TYPE);
 			propertyDescriptor.setCategory(P_INFO_CATEGORY);
 			Descriptors.add(propertyDescriptor);
 		}
+
 		/**
 		 * Returns the descriptors
 		 */
-		static List getDescriptors() {
+		static List<PropertyDescriptor> getDescriptors() {
 			return Descriptors;
 		}
-		Map children;
+
+		Map<String, TreeNode> children;
 		String name;
 		DeltaSession.TreeNode parent;
 		Object data;
@@ -141,48 +143,67 @@ public class DeltaSession implements ISession {
 			this.id = id;
 			this.data = data;
 		}
+
+		@Override
 		public Object[] getChildren() {
 			if (this.children == null) {
 				return NO_CHILDREN;
 			}
 			return this.children.values().toArray(new Object[this.children.size()]);
 		}
+
 		public DeltaSession.TreeNode getNode(String name) {
 			if (this.children == null) {
 				return null;
 			}
-			return (DeltaSession.TreeNode) this.children.get(name);
+			return this.children.get(name);
 		}
+
+		@Override
 		public int getId() {
 			return this.id;
 		}
+
 		public void add(DeltaSession.TreeNode node) {
 			if (this.children == null) {
-				this.children = new HashMap();
+				this.children = new HashMap<String, TreeNode>();
 			}
 			this.children.put(node.name, node);
 		}
+
+		@Override
 		public boolean hasChildren() {
 			return this.children != null && !this.children.isEmpty();
 		}
+
+		@Override
 		public String toString() {
 			return String.valueOf(this.name);
 		}
+
+		@Override
 		public Object getData() {
 			return this.data;
 		}
+
+		@Override
 		public Object getEditableValue() {
 			return this;
 		}
+
+		@Override
 		public IPropertyDescriptor[] getPropertyDescriptors() {
 			if (this.data != null) {
-				return (IPropertyDescriptor[]) getDescriptors().toArray(
-						new IPropertyDescriptor[getDescriptors().size()]);
+				return getDescriptors().toArray(new IPropertyDescriptor[getDescriptors().size()]);
 			}
 			return NO_PROPERTY_DESCRIPTORS;
 		}
+
+		@Override
 		public Object getPropertyValue(Object propKey) {
-			if (this.data == null) return null;
+			if (this.data == null) {
+				return null;
+			}
 			IDelta delta = (IDelta) this.data;
 			if (ID_MESSAGE.equals(propKey)) {
 				return delta.getMessage();
@@ -230,100 +251,110 @@ public class DeltaSession implements ISession {
 			}
 			return null;
 		}
+
 		private Object getDisplayRestrictions(int restrictions) {
 			StringBuffer buffer = new StringBuffer(RestrictionModifiers.getRestrictionText(restrictions));
 			buffer.append(" (0x").append(Integer.toHexString(restrictions)).append(')'); //$NON-NLS-1$
 			return String.valueOf(buffer);
 		}
+
+		@Override
 		public boolean isPropertySet(Object id) {
 			return false;
 		}
+
+		@Override
 		public void resetPropertyValue(Object id) {
 			// nothing to do
 		}
+
+		@Override
 		public void setPropertyValue(Object id, Object value) {
 			// nothing to do
 		}
-		/* (non-Javadoc)
-		 * Method declared on IAdaptable
+
+		/*
+		 * (non-Javadoc) Method declared on IAdaptable
 		 */
+		@Override
 		public Object getAdapter(Class adapter) {
 			if (adapter == IPropertySource.class) {
 				return this;
 			}
 			return null;
 		}
+
 		private static String getDisplayedModifiers(int newModifiers) {
 			StringBuffer buffer = new StringBuffer();
-			if(newModifiers == 0) {
+			if (newModifiers == 0) {
 				buffer.append(ActionMessages.PropertyPackageVisibility);
 			} else {
 				if (Flags.isAbstract(newModifiers)) {
 					buffer.append("abstract"); //$NON-NLS-1$
 				}
 				String separator = " | "; //$NON-NLS-1$
-				if(Flags.isFinal(newModifiers)) {
-					if(buffer.length() > 0) {
+				if (Flags.isFinal(newModifiers)) {
+					if (buffer.length() > 0) {
 						buffer.append(separator);
 					}
 					buffer.append("final"); //$NON-NLS-1$
 				}
-				if(Flags.isNative(newModifiers)) {
-					if(buffer.length() > 0) {
+				if (Flags.isNative(newModifiers)) {
+					if (buffer.length() > 0) {
 						buffer.append(separator);
 					}
 					buffer.append("native"); //$NON-NLS-1$
 				}
-				if(Flags.isPrivate(newModifiers)) {
-					if(buffer.length() > 0) {
+				if (Flags.isPrivate(newModifiers)) {
+					if (buffer.length() > 0) {
 						buffer.append(separator);
 					}
 					buffer.append("private"); //$NON-NLS-1$
 				}
-				if(Flags.isProtected(newModifiers)) {
-					if(buffer.length() > 0) {
+				if (Flags.isProtected(newModifiers)) {
+					if (buffer.length() > 0) {
 						buffer.append(separator);
 					}
 					buffer.append("protected"); //$NON-NLS-1$
 				}
-				if(Flags.isPublic(newModifiers)) {
-					if(buffer.length() > 0) {
+				if (Flags.isPublic(newModifiers)) {
+					if (buffer.length() > 0) {
 						buffer.append(separator);
 					}
 					buffer.append("public"); //$NON-NLS-1$
 				}
-				if(Flags.isStatic(newModifiers)) {
-					if(buffer.length() > 0) {
+				if (Flags.isStatic(newModifiers)) {
+					if (buffer.length() > 0) {
 						buffer.append(separator);
 					}
 					buffer.append("static"); //$NON-NLS-1$
 				}
-				if(Flags.isStrictfp(newModifiers)) {
-					if(buffer.length() > 0) {
+				if (Flags.isStrictfp(newModifiers)) {
+					if (buffer.length() > 0) {
 						buffer.append(separator);
 					}
 					buffer.append("strictfp"); //$NON-NLS-1$
 				}
-				if(Flags.isSynchronized(newModifiers)) {
-					if(buffer.length() > 0) {
+				if (Flags.isSynchronized(newModifiers)) {
+					if (buffer.length() > 0) {
 						buffer.append(separator);
 					}
 					buffer.append("synchronized"); //$NON-NLS-1$
 				}
-				if(Flags.isTransient(newModifiers)) {
-					if(buffer.length() > 0) {
+				if (Flags.isTransient(newModifiers)) {
+					if (buffer.length() > 0) {
 						buffer.append(separator);
 					}
 					buffer.append("transient"); //$NON-NLS-1$
 				}
-				if(Flags.isVolatile(newModifiers)) {
-					if(buffer.length() > 0) {
+				if (Flags.isVolatile(newModifiers)) {
+					if (buffer.length() > 0) {
 						buffer.append(separator);
 					}
 					buffer.append("volatile"); //$NON-NLS-1$
 				}
-				if(Flags.isVarargs(newModifiers)) {
-					if(buffer.length() > 0) {
+				if (Flags.isVarargs(newModifiers)) {
+					if (buffer.length() > 0) {
 						buffer.append(separator);
 					}
 					buffer.append("vargars"); //$NON-NLS-1$
@@ -332,6 +363,8 @@ public class DeltaSession implements ISession {
 			buffer.append(" (0x").append(Integer.toHexString(newModifiers)).append(')'); //$NON-NLS-1$
 			return buffer.toString();
 		}
+
+		@Override
 		public boolean isPropertyResettable(Object id) {
 			return false;
 		}
@@ -343,6 +376,8 @@ public class DeltaSession implements ISession {
 		TreeModel(DeltaSession.TreeNode root) {
 			this.root = root;
 		}
+
+		@Override
 		public ITreeNode getRoot() {
 			return this.root;
 		}
@@ -359,15 +394,19 @@ public class DeltaSession implements ISession {
 		this.timestamp = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM).format(new Date(System.currentTimeMillis()));
 		this.description = description;
 	}
+
+	@Override
 	public ITreeModel getModel() {
 		DeltaSession.TreeNode root = new TreeNode(0, null, this.delta);
 		DeltaSession.TreeModel model = new TreeModel(root);
 		class TreeBuilder extends DeltaVisitor {
 			DeltaSession.TreeNode node;
-			
+
 			public TreeBuilder(DeltaSession.TreeNode node) {
 				this.node = node;
 			}
+
+			@Override
 			public void endVisit(IDelta delta) {
 				if (delta.getChildren().length == 0) {
 					String typeName = delta.getTypeName();
@@ -394,27 +433,25 @@ public class DeltaSession implements ISession {
 						DeltaSession.TreeNode node3 = node2.getNode(actualTypeName);
 						if (node3 == null) {
 							int id = 0;
-							switch(delta.getElementType()) {
-								case IDelta.ANNOTATION_ELEMENT_TYPE :
+							switch (delta.getElementType()) {
+								case IDelta.ANNOTATION_ELEMENT_TYPE:
 									id = ITreeNode.ANNOTATION;
 									break;
-								case IDelta.INTERFACE_ELEMENT_TYPE :
+								case IDelta.INTERFACE_ELEMENT_TYPE:
 									id = ITreeNode.INTERFACE;
 									break;
-								case IDelta.CLASS_ELEMENT_TYPE :
+								case IDelta.CLASS_ELEMENT_TYPE:
 									id = ITreeNode.CLASS;
 									break;
-								case IDelta.ENUM_ELEMENT_TYPE :
+								case IDelta.ENUM_ELEMENT_TYPE:
 									id = ITreeNode.ENUM;
-								default :
+									break;
+								default:
 									// we need to retrieve the type kind
 									try {
 										String componentVersionId = delta.getComponentVersionId();
 										if (componentVersionId != null) {
-											int modifiers = retrieveTypeModifiers(
-													delta,
-													typeName,
-													componentVersionId);
+											int modifiers = retrieveTypeModifiers(delta, typeName, componentVersionId);
 											if (Flags.isEnum(modifiers)) {
 												id = ITreeNode.ENUM;
 											} else if (Flags.isAnnotation(modifiers)) {
@@ -436,9 +473,8 @@ public class DeltaSession implements ISession {
 					}
 				}
 			}
-			private int retrieveTypeModifiers(IDelta delta,
-					String typeName,
-					String componentVersionId) throws CoreException {
+
+			private int retrieveTypeModifiers(IDelta delta, String typeName, String componentVersionId) throws CoreException {
 				int indexOfOpen = componentVersionId.lastIndexOf('(');
 				String componentID = componentVersionId.substring(0, indexOfOpen);
 				IApiBaseline baseline = ApiBaselineManager.getManager().getApiBaseline(baselineName);
@@ -450,11 +486,13 @@ public class DeltaSession implements ISession {
 						// need to handle reexported types
 						IApiTypeRoot typeRoot = null;
 						String id = apiComponent.getSymbolicName();
-						switch(delta.getFlags()) {
-							case IDelta.REEXPORTED_TYPE :
-							case IDelta.REEXPORTED_API_TYPE :
+						switch (delta.getFlags()) {
+							case IDelta.REEXPORTED_TYPE:
+							case IDelta.REEXPORTED_API_TYPE:
 								// handle re-exported types
-								// check if the type is provided by a required component (it could have been moved/re-exported)
+								// check if the type is provided by a required
+								// component (it could have been
+								// moved/re-exported)
 								String packageName = Util.EMPTY_STRING;
 								int indexOf = typeName.lastIndexOf('.');
 								if (indexOf != -1) {
@@ -475,16 +513,16 @@ public class DeltaSession implements ISession {
 									index++;
 								}
 								break;
-							default :
+							default:
 								if (Util.ORG_ECLIPSE_SWT.equals(id)) {
 									typeRoot = apiComponent.findTypeRoot(typeName);
-								} else{
+								} else {
 									typeRoot = apiComponent.findTypeRoot(typeName, id);
 								}
 						}
 						if (typeRoot != null) {
 							IApiType structure = typeRoot.getStructure();
-							if(structure != null) {
+							if (structure != null) {
 								modifiers = structure.getModifiers();
 							}
 						}
@@ -498,11 +536,13 @@ public class DeltaSession implements ISession {
 						if (apiComponent != null) {
 							IApiTypeRoot typeRoot = null;
 							String id = apiComponent.getSymbolicName();
-							switch(delta.getFlags()) {
-								case IDelta.REEXPORTED_TYPE :
-								case IDelta.REEXPORTED_API_TYPE :
+							switch (delta.getFlags()) {
+								case IDelta.REEXPORTED_TYPE:
+								case IDelta.REEXPORTED_API_TYPE:
 									// handle re-exported types
-									// check if the type is provided by a required component (it could have been moved/re-exported)
+									// check if the type is provided by a
+									// required component (it could have been
+									// moved/re-exported)
 									String packageName = Util.EMPTY_STRING;
 									int indexOf = typeName.lastIndexOf('.');
 									if (indexOf != -1) {
@@ -523,10 +563,10 @@ public class DeltaSession implements ISession {
 										index++;
 									}
 									break;
-								default :
+								default:
 									if (Util.ORG_ECLIPSE_SWT.equals(id)) {
 										typeRoot = apiComponent.findTypeRoot(typeName);
-									} else{
+									} else {
 										typeRoot = apiComponent.findTypeRoot(typeName, id);
 									}
 							}
@@ -547,8 +587,10 @@ public class DeltaSession implements ISession {
 		}
 		return model;
 	}
-	
+
+	@Override
 	public String getDescription() {
-		return NLS.bind(ActionMessages.SessionDescription, new String[] { this.timestamp, this.description });
+		return NLS.bind(ActionMessages.SessionDescription, new String[] {
+				this.timestamp, this.description });
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,7 +55,7 @@ public class CompareOperation extends Job {
 
 	private IApiBaseline baseline = null;
 	private IStructuredSelection selection = null;
-	
+
 	/**
 	 * Constructor
 	 * 
@@ -69,9 +69,12 @@ public class CompareOperation extends Job {
 		this.selection = selection;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.
+	 * IProgressMonitor)
 	 */
+	@Override
 	protected IStatus run(IProgressMonitor monitor) {
 		monitor.beginTask(ActionMessages.CompareDialogCollectingElementTaskName, IProgressMonitor.UNKNOWN);
 		String baselineName = this.baseline.getName();
@@ -81,27 +84,25 @@ public class CompareOperation extends Job {
 			try {
 				IDelta delta = ApiComparator.compare(scope, baseline, VisibilityModifiers.API, false, monitor);
 				if (delta == null) {
-					// we don't want to continue. The .log file should already contain details about the failure
+					// we don't want to continue. The .log file should already
+					// contain details about the failure
 					return Status.CANCEL_STATUS;
 				}
 				int size = this.selection.size();
 				String description = NLS.bind(ActionMessages.CompareWithAction_compared_with_against, new Object[] {
-						new Integer(size), 
-						baselineName, 
-						new Integer(delta.getChildren().length)
-					});
-				if(size == 1) {
+						new Integer(size), baselineName,
+						new Integer(delta.getChildren().length) });
+				if (size == 1) {
 					description = NLS.bind(ActionMessages.CompareWithAction_compared_project_with, new Object[] {
-							((IJavaElement)this.selection.getFirstElement()).getElementName(), 
-							baselineName, 
-							new Integer(delta.getChildren().length)
-						});
+							((IJavaElement) this.selection.getFirstElement()).getElementName(),
+							baselineName,
+							new Integer(delta.getChildren().length) });
 				}
 				ApiPlugin.getDefault().getSessionManager().addSession(new DeltaSession(description, delta, baselineName), true);
 				return Status.OK_STATUS;
 			} catch (CoreException e) {
 				ApiPlugin.log(e);
-			} catch(OperationCanceledException e) {
+			} catch (OperationCanceledException e) {
 				// ignore
 			}
 		} finally {
@@ -110,16 +111,20 @@ public class CompareOperation extends Job {
 		return Status.CANCEL_STATUS;
 	}
 
-	public static ApiScope walkStructureSelection(
-			IStructuredSelection structuredSelection,
-			IProgressMonitor monitor) {
-		Object[] selected=structuredSelection.toArray();
+	/**
+	 * @param structuredSelection
+	 * @param monitor
+	 * @return the scope
+	 */
+	public static ApiScope walkStructureSelection(IStructuredSelection structuredSelection, IProgressMonitor monitor) {
+		Object[] selected = structuredSelection.toArray();
 		ApiScope scope = new ApiScope();
 		IApiBaseline workspaceBaseline = ApiBaselineManager.getManager().getWorkspaceBaseline();
 		if (workspaceBaseline == null) {
 			return scope;
 		}
-		Arrays.sort(selected, new Comparator() {
+		Arrays.sort(selected, new Comparator<Object>() {
+			@Override
 			public int compare(Object o1, Object o2) {
 				if (o1 instanceof IJavaElement && o2 instanceof IJavaElement) {
 					IJavaElement element = (IJavaElement) o1;
@@ -130,10 +135,10 @@ public class CompareOperation extends Job {
 			}
 		});
 		int length = selected.length;
-		for (int i=0; i < length; i++) {
+		for (int i = 0; i < length; i++) {
 			Object currentSelection = selected[i];
 			if (currentSelection instanceof IJavaElement) {
-				IJavaElement element =(IJavaElement) currentSelection;
+				IJavaElement element = (IJavaElement) currentSelection;
 				IJavaProject javaProject = element.getJavaProject();
 				try {
 					switch (element.getElementType()) {
@@ -172,6 +177,8 @@ public class CompareOperation extends Job {
 								scope.addElement(apiComponent);
 							}
 							break;
+						default:
+							break;
 					}
 				} catch (JavaModelException e) {
 					ApiPlugin.log(e);
@@ -183,9 +190,7 @@ public class CompareOperation extends Job {
 		return scope;
 	}
 
-	private static void addElementFor(
-			IPackageFragmentRoot fragmentRoot, IApiComponent apiComponent,
-			ApiScope scope) throws JavaModelException, CoreException {
+	private static void addElementFor(IPackageFragmentRoot fragmentRoot, IApiComponent apiComponent, ApiScope scope) throws JavaModelException, CoreException {
 		boolean isArchive = fragmentRoot.isArchive();
 		IJavaElement[] packageFragments = fragmentRoot.getChildren();
 		for (int j = 0, max2 = packageFragments.length; j < max2; j++) {
@@ -194,12 +199,7 @@ public class CompareOperation extends Job {
 		}
 	}
 
-	private static void addElementFor(
-			IPackageFragment packageFragment,
-			boolean isArchive,
-			IApiComponent apiComponent,
-			ApiScope scope)
-		throws JavaModelException, CoreException {
+	private static void addElementFor(IPackageFragment packageFragment, boolean isArchive, IApiComponent apiComponent, ApiScope scope) throws JavaModelException, CoreException {
 
 		// add package fragment elements only if this is an API package
 		IApiDescription apiDescription = apiComponent.getApiDescription();
@@ -209,19 +209,18 @@ public class CompareOperation extends Job {
 		}
 		if (isArchive) {
 			IClassFile[] classFiles = packageFragment.getClassFiles();
-			for (int i = 0, max= classFiles.length; i < max; i++) {
+			for (int i = 0, max = classFiles.length; i < max; i++) {
 				addElementFor(classFiles[i], apiComponent, scope);
 			}
 		} else {
 			ICompilationUnit[] units = packageFragment.getCompilationUnits();
-			for (int i = 0, max= units.length; i < max; i++) {
+			for (int i = 0, max = units.length; i < max; i++) {
 				addElementFor(units[i], apiComponent, scope);
 			}
 		}
 	}
 
-	private static void addElementFor(IClassFile classFile,
-			IApiComponent apiComponent, ApiScope scope) {
+	private static void addElementFor(IClassFile classFile, IApiComponent apiComponent, ApiScope scope) {
 		try {
 			IApiTypeRoot typeRoot = apiComponent.findTypeRoot(classFile.getType().getFullyQualifiedName());
 			if (typeRoot != null) {

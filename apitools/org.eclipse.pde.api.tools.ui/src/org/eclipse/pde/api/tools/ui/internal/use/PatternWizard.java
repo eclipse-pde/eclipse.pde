@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,12 +20,13 @@ import org.eclipse.pde.api.tools.ui.internal.use.ApiUsePatternTab.Pattern;
  * @since 1.0.1
  */
 public class PatternWizard extends Wizard {
-	
+
 	private String pattern = null;
 	private int kind = -1;
 
 	/**
 	 * Constructor
+	 * 
 	 * @param pattern
 	 * @param kind
 	 */
@@ -34,19 +35,20 @@ public class PatternWizard extends Wizard {
 		this.pattern = pattern;
 		this.kind = kind;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.Wizard#addPages()
 	 */
+	@Override
 	public void addPages() {
-		if(this.pattern == null) {
+		if (this.pattern == null) {
 			addPage(new PatternSelectionPage());
 			addPage(new DescriptionPatternPage(null, -1));
 			addPage(new ArchivePatternPage(null));
 			addPage(new ReportPatternPage(null, -1));
-		}
-		else {
-			switch(this.kind) {
+		} else {
+			switch (this.kind) {
 				case Pattern.API:
 				case Pattern.INTERNAL: {
 					addPage(new DescriptionPatternPage(this.pattern, this.kind));
@@ -61,49 +63,54 @@ public class PatternWizard extends Wizard {
 					addPage(new ReportPatternPage(this.pattern, this.kind));
 					break;
 				}
+				default:
+					break;
 			}
 		}
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.Wizard#performFinish()
 	 */
+	@Override
 	public boolean performFinish() {
 		IWizardPage page = getStartingPage();
 		UsePatternPage upage = null;
-		if(page instanceof PatternSelectionPage) {
-			upage = (UsePatternPage) getPage(((PatternSelectionPage)page).nextPage());
-		}
-		else {
+		if (page instanceof PatternSelectionPage) {
+			upage = (UsePatternPage) getPage(((PatternSelectionPage) page).nextPage());
+		} else {
 			upage = (UsePatternPage) page;
 		}
 		this.pattern = upage.getPattern();
 		this.kind = upage.getKind();
 		return true;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.Wizard#canFinish()
 	 */
+	@Override
 	public boolean canFinish() {
 		String name = getStartingPage().getName();
-		if(!name.equals(PatternSelectionPage.PAGE_NAME)) {
+		if (!name.equals(PatternSelectionPage.PAGE_NAME)) {
 			return getStartingPage().isPageComplete();
 		}
 		IWizardPage page = getStartingPage().getNextPage();
-		if(page != null) {
+		if (page != null) {
 			return page.isPageComplete();
 		}
 		return false;
 	}
-	
+
 	/**
 	 * @return the pattern
 	 */
 	public String getPattern() {
 		return this.pattern;
 	}
-	
+
 	/**
 	 * @return the pattern kind
 	 */

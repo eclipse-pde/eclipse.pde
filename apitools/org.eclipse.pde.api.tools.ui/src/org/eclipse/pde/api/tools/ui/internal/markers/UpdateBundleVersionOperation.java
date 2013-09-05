@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,8 +37,11 @@ public class UpdateBundleVersionOperation {
 		this.fMarker = marker;
 		this.fVersion = version;
 	}
+
 	public IStatus run(IProgressMonitor monitor) {
-		if (monitor != null && monitor.isCanceled()) return Status.CANCEL_STATUS;
+		if (monitor != null && monitor.isCanceled()) {
+			return Status.CANCEL_STATUS;
+		}
 		if (monitor != null) {
 			monitor.beginTask(MarkerMessages.UpdateVersionNumberingOperation_title, 2);
 		}
@@ -55,9 +58,11 @@ public class UpdateBundleVersionOperation {
 			if (resource.getType() == IResource.FILE) {
 				IFile file = (IFile) resource;
 				ModelModification mod = new ModelModification(file) {
+					@Override
 					protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
-						if (!(model instanceof IBundlePluginModelBase))
+						if (!(model instanceof IBundlePluginModelBase)) {
 							return;
+						}
 						IBundlePluginModelBase modelBase = (IBundlePluginModelBase) model;
 						IBundle bundle = modelBase.getBundleModel().getBundle();
 						IManifestHeader header = bundle.getManifestHeader(Constants.BUNDLE_VERSION);
@@ -69,7 +74,7 @@ public class UpdateBundleVersionOperation {
 				};
 				PDEModelUtility.modifyModel(mod, null);
 			}
-			Util.getBuildJob(new IProject[] {project}, IncrementalProjectBuilder.INCREMENTAL_BUILD).schedule();
+			Util.getBuildJob(new IProject[] { project }, IncrementalProjectBuilder.INCREMENTAL_BUILD).schedule();
 			if (monitor != null) {
 				monitor.worked(1);
 			}

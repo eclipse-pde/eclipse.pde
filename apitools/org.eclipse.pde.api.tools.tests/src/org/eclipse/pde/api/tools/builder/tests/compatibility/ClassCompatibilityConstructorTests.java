@@ -29,12 +29,12 @@ public class ClassCompatibilityConstructorTests extends ClassCompatibilityTests 
 	/**
 	 * Workspace relative path classes in bundle/project A
 	 */
-	protected static IPath WORKSPACE_CLASSES_PACKAGE_A = new Path("bundle.a/src/a/classes/constructors");
+	protected static IPath WORKSPACE_CLASSES_PACKAGE_A = new Path("bundle.a/src/a/classes/constructors"); //$NON-NLS-1$
 
 	/**
 	 * Package prefix for test classes
 	 */
-	protected static String PACKAGE_PREFIX = "a.classes.constructors.";
+	protected static String PACKAGE_PREFIX = "a.classes.constructors."; //$NON-NLS-1$
 	
 	/**
 	 * Constructor
@@ -47,8 +47,9 @@ public class ClassCompatibilityConstructorTests extends ClassCompatibilityTests 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestSourcePath()
 	 */
+	@Override
 	protected IPath getTestSourcePath() {
-		return super.getTestSourcePath().append("constructors");
+		return super.getTestSourcePath().append("constructors"); //$NON-NLS-1$
 	}
 	
 	/**
@@ -61,6 +62,7 @@ public class ClassCompatibilityConstructorTests extends ClassCompatibilityTests 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getDefaultProblemId()
 	 */
+	@Override
 	protected int getDefaultProblemId() {
 		return ApiProblemFactory.createProblemId(
 				IApiProblem.CATEGORY_COMPATIBILITY,
@@ -72,21 +74,22 @@ public class ClassCompatibilityConstructorTests extends ClassCompatibilityTests 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestingProjectName()
 	 */
+	@Override
 	protected String getTestingProjectName() {
-		return "classcompat";
+		return "classcompat"; //$NON-NLS-1$
 	}
 	
 	/**
 	 * Tests the removal of a public constructor from an API class.
 	 */
 	private void xRemovePublicAPIConstructor(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemovePublicConstructor.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemovePublicConstructor.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			getDefaultProblemId()
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "RemovePublicConstructor", "RemovePublicConstructor(int)"};
+		args[0] = new String[]{PACKAGE_PREFIX + "RemovePublicConstructor", "RemovePublicConstructor(int)"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -111,15 +114,15 @@ public class ClassCompatibilityConstructorTests extends ClassCompatibilityTests 
 	 * Tests the removal of a public constructors from an API class - incremental.
 	 */
 	private void xRemoveTwoPublicAPIConstructors(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveTwoPublicConstructors.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveTwoPublicConstructors.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			getDefaultProblemId(),
 			getDefaultProblemId()
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[2][];
-		args[0] = new String[]{PACKAGE_PREFIX + "RemoveTwoPublicConstructors", "RemoveTwoPublicConstructors(String)"};
-		args[1] = new String[]{PACKAGE_PREFIX + "RemoveTwoPublicConstructors", "RemoveTwoPublicConstructors(int)"};
+		args[0] = new String[]{PACKAGE_PREFIX + "RemoveTwoPublicConstructors", "RemoveTwoPublicConstructors(String)"}; //$NON-NLS-1$ //$NON-NLS-2$
+		args[1] = new String[]{PACKAGE_PREFIX + "RemoveTwoPublicConstructors", "RemoveTwoPublicConstructors(int)"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -128,13 +131,13 @@ public class ClassCompatibilityConstructorTests extends ClassCompatibilityTests 
 	 * Tests the removal of a protected constructor from an API class.
 	 */
 	private void xRemoveProtectedAPIConstructor(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveProtectedConstructor.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveProtectedConstructor.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			getDefaultProblemId()
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "RemoveProtectedConstructor", "RemoveProtectedConstructor(int)"};
+		args[0] = new String[]{PACKAGE_PREFIX + "RemoveProtectedConstructor", "RemoveProtectedConstructor(int)"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -151,7 +154,7 @@ public class ClassCompatibilityConstructorTests extends ClassCompatibilityTests 
 	 * Tests the removal of a private constructor from an API class.
 	 */
 	private void xRemovePrivateAPIConstructor(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemovePrivateConstructor.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemovePrivateConstructor.java"); //$NON-NLS-1$
 		// there are no expected problems
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -168,7 +171,7 @@ public class ClassCompatibilityConstructorTests extends ClassCompatibilityTests 
 	 * Tests the removal of a package protected constructor from an API class.
 	 */
 	private void xRemovePackageConstructor(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemovePackageConstructor.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemovePackageConstructor.java"); //$NON-NLS-1$
 		// there are no expected problems
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -185,13 +188,13 @@ public class ClassCompatibilityConstructorTests extends ClassCompatibilityTests 
 	 * Tests the removal of a public constructor from an API class annotated as noextend - incremental.
 	 */
 	private void xRemovePublicAPIConstructorNoExtend(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemovePublicConstructorNoExtend.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemovePublicConstructorNoExtend.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			getDefaultProblemId()
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "RemovePublicConstructorNoExtend", "RemovePublicConstructorNoExtend(int)"};
+		args[0] = new String[]{PACKAGE_PREFIX + "RemovePublicConstructorNoExtend", "RemovePublicConstructorNoExtend(int)"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -208,7 +211,7 @@ public class ClassCompatibilityConstructorTests extends ClassCompatibilityTests 
 	 * Tests the removal of a protected constructor from an API class annotated as noextend.
 	 */
 	private void xRemoveProtectedAPIConstructorNoExtend(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveProtectedConstructorNoExtend.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveProtectedConstructorNoExtend.java"); //$NON-NLS-1$
 		// no problems expected since the constructor is not accessible
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -225,13 +228,13 @@ public class ClassCompatibilityConstructorTests extends ClassCompatibilityTests 
 	 * Tests the removal of a public constructor from an API class annotated as noinstantiate - incremental.
 	 */
 	private void xRemovePublicAPIConstructorNoInstantiate(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemovePublicConstructorNoInstantiate.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemovePublicConstructorNoInstantiate.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			getDefaultProblemId()
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "RemovePublicConstructorNoInstantiate", "RemovePublicConstructorNoInstantiate(int)"};
+		args[0] = new String[]{PACKAGE_PREFIX + "RemovePublicConstructorNoInstantiate", "RemovePublicConstructorNoInstantiate(int)"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -248,13 +251,13 @@ public class ClassCompatibilityConstructorTests extends ClassCompatibilityTests 
 	 * Tests the removal of a protected constructor from an API class annotated as noinstantiate.
 	 */
 	private void xRemoveProtectedAPIConstructorNoInstantiate(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveProtectedConstructorNoInstantiate.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveProtectedConstructorNoInstantiate.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 				getDefaultProblemId()
 			};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "RemoveProtectedConstructorNoInstantiate", "RemoveProtectedConstructorNoInstantiate(int)"};
+		args[0] = new String[]{PACKAGE_PREFIX + "RemoveProtectedConstructorNoInstantiate", "RemoveProtectedConstructorNoInstantiate(int)"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -272,7 +275,7 @@ public class ClassCompatibilityConstructorTests extends ClassCompatibilityTests 
 	 * noextend and noinstantiate.
 	 */
 	private void xRemovePublicAPIConstructorNoExtendNoInstatiate(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemovePublicConstructorNoExtendNoInstantiate.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemovePublicConstructorNoExtendNoInstantiate.java"); //$NON-NLS-1$
 		// no problems expected
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -290,7 +293,7 @@ public class ClassCompatibilityConstructorTests extends ClassCompatibilityTests 
 	 * noextend and noinstantiate.
 	 */
 	private void xRemoveProtectedAPIConstructorNoExtendNoInstatiate(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveProtectedConstructorNoExtendNoInstantiate.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveProtectedConstructorNoExtendNoInstantiate.java"); //$NON-NLS-1$
 		// no problems expected due to noextend
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -307,7 +310,7 @@ public class ClassCompatibilityConstructorTests extends ClassCompatibilityTests 
 	 * Tests the removal of a public constructor from an API class tagged noreference.
 	 */
 	private void xRemovePublicAPIConstructorNoReference(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemovePublicConstructorNoReference.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemovePublicConstructorNoReference.java"); //$NON-NLS-1$
 		// no problems since no references allowed
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -324,7 +327,7 @@ public class ClassCompatibilityConstructorTests extends ClassCompatibilityTests 
 	 * Tests the removal of a protected constructor from an API class tagged noreference.
 	 */
 	private void xRemoveProtectedAPIConstructorNoReference(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveProtectedConstructorNoReference.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveProtectedConstructorNoReference.java"); //$NON-NLS-1$
 		// no problems since no references allowed
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -341,13 +344,13 @@ public class ClassCompatibilityConstructorTests extends ClassCompatibilityTests 
 	 * Tests the removal of a public constructor from an API class tagged no override.
 	 */
 	private void xRemovePublicAPIConstructorNoOverride(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemovePublicConstructorNoOverride.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemovePublicConstructorNoOverride.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 				getDefaultProblemId()
 			};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "RemovePublicConstructorNoOverride", "RemovePublicConstructorNoOverride(int)"};
+		args[0] = new String[]{PACKAGE_PREFIX + "RemovePublicConstructorNoOverride", "RemovePublicConstructorNoOverride(int)"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -364,13 +367,13 @@ public class ClassCompatibilityConstructorTests extends ClassCompatibilityTests 
 	 * Tests the removal of a protected constructor from an API class tagged no override.
 	 */
 	private void xRemoveProtectedAPIConstructorNoOverride(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveProtectedConstructorNoOverride.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveProtectedConstructorNoOverride.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 				getDefaultProblemId()
 			};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "RemoveProtectedConstructorNoOverride", "RemoveProtectedConstructorNoOverride(int)"};
+		args[0] = new String[]{PACKAGE_PREFIX + "RemoveProtectedConstructorNoOverride", "RemoveProtectedConstructorNoOverride(int)"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -387,7 +390,7 @@ public class ClassCompatibilityConstructorTests extends ClassCompatibilityTests 
 	 * Tests the addition of a private constructor in an API class.
 	 */
 	private void xAddPrivateAPIConstructor(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddPrivateConstructor.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddPrivateConstructor.java"); //$NON-NLS-1$
 		// there are no expected problems
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -404,7 +407,7 @@ public class ClassCompatibilityConstructorTests extends ClassCompatibilityTests 
 	 * Tests the addition of a protected constructor in an API class.
 	 */
 	private void xAddProtectedAPIConstructor(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddProtectedConstructor.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddProtectedConstructor.java"); //$NON-NLS-1$
 		// there are no expected problems
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -421,7 +424,7 @@ public class ClassCompatibilityConstructorTests extends ClassCompatibilityTests 
 	 * Tests the addition of a protected constructor in an API class.
 	 */
 	private void xAddPublicAPIConstructor(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddPublicConstructor.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddPublicConstructor.java"); //$NON-NLS-1$
 		// there are no expected problems
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -438,13 +441,13 @@ public class ClassCompatibilityConstructorTests extends ClassCompatibilityTests 
 	 * Tests the addition of a singleton private constructor in an API class.
 	 */
 	private void xAddSingletonPrivateAPIConstructor(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddSinglePrivateConstructor.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddSinglePrivateConstructor.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 				getDefaultProblemId()
 			};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "AddSinglePrivateConstructor", "AddSinglePrivateConstructor()"};
+		args[0] = new String[]{PACKAGE_PREFIX + "AddSinglePrivateConstructor", "AddSinglePrivateConstructor()"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -461,13 +464,13 @@ public class ClassCompatibilityConstructorTests extends ClassCompatibilityTests 
 	 * Tests the addition of a singleton protected constructor in an API class.
 	 */
 	private void xAddSingletonProtectedAPIConstructor(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddSingleProtectedConstructor.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddSingleProtectedConstructor.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 				getDefaultProblemId()
 			};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "AddSingleProtectedConstructor", "AddSingleProtectedConstructor()"};
+		args[0] = new String[]{PACKAGE_PREFIX + "AddSingleProtectedConstructor", "AddSingleProtectedConstructor()"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -484,13 +487,13 @@ public class ClassCompatibilityConstructorTests extends ClassCompatibilityTests 
 	 * Tests the addition of a singleton protected constructor in an API class.
 	 */
 	private void xAddSingletonPublicAPIConstructor(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddSinglePublicConstructor.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddSinglePublicConstructor.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 				getDefaultProblemId()
 			};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "AddSinglePublicConstructor", "AddSinglePublicConstructor()"};
+		args[0] = new String[]{PACKAGE_PREFIX + "AddSinglePublicConstructor", "AddSinglePublicConstructor()"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}

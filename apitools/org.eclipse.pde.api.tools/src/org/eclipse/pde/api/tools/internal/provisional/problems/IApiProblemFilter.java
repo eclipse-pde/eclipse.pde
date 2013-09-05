@@ -10,33 +10,36 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.provisional.problems;
 
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
+
 /**
- * Describes API problems that should be filtered. 
+ * Describes API problems that should be filtered.
  * <p>
  * Problem filters are created from an {@link IApiComponent}.
  * </p>
+ * 
  * @since 1.0.0
  */
 public interface IApiProblemFilter {
 
 	/**
-	 * Returns the identifier of the API component this filter applies to. Problems
-	 * contained within this component are potentially filtered.
+	 * Returns the identifier of the API component this filter applies to.
+	 * Problems contained within this component are potentially filtered.
 	 * 
 	 * @return identifier of the API component this filter applies to
 	 */
 	public String getComponentId();
-	
+
 	/**
 	 * Returns the underlying {@link IApiProblem} for this filter.
 	 * 
 	 * @return the underlying {@link IApiProblem} for this filter
 	 */
 	public IApiProblem getUnderlyingProblem();
-	
+
 	/**
-	 * Returns the comment associated with this filter or <code>null</code> if a comment has not
-	 * been added to the filter.
+	 * Returns the comment associated with this filter or <code>null</code> if a
+	 * comment has not been added to the filter.
 	 * 
 	 * @return the comment for the filter or <code>null</code>
 	 * @since 1.1

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 IBM Corporation and others.
+ * Copyright (c) 2010, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,25 +33,26 @@ import org.osgi.service.prefs.BackingStoreException;
 
 public class ExternalDependencyTestUtils {
 
-	public static String PROJECT_NAME = "tests.apiusescan.coretestproject"; 
+	public static String PROJECT_NAME = "tests.apiusescan.coretestproject"; //$NON-NLS-1$
 	public static String fReportLocation;
-	private static IProject fTestProject;	
-	
+	private static IProject fTestProject;
+
 	/**
 	 * Unzips the test project. Opens it before returning it
+	 * 
 	 * @return returns the <code>IProject</code>
 	 */
-	public static IProject setupProject() {		
-		IPath pluginDirectoryPath = TestSuiteHelper.getPluginDirectoryPath();		
-		String path = pluginDirectoryPath.append(new Path("/test-apiusescan/projects/" + PROJECT_NAME + ".zip")).toOSString();
+	public static IProject setupProject() {
+		IPath pluginDirectoryPath = TestSuiteHelper.getPluginDirectoryPath();
+		String path = pluginDirectoryPath.append(new Path("/test-apiusescan/projects/" + PROJECT_NAME + ".zip")).toOSString(); //$NON-NLS-1$ //$NON-NLS-2$
 		File sourceFile = new File(path);
 		if (!sourceFile.exists()) {
 			return null;
 		}
-		
+
 		enableExternalDependencyCheckOptions(true);
-		
-		fTestProject = ResourcesPlugin.getWorkspace().getRoot().getProject(PROJECT_NAME);		
+
+		fTestProject = ResourcesPlugin.getWorkspace().getRoot().getProject(PROJECT_NAME);
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		try {
 			if (fTestProject.exists()) {
@@ -60,18 +61,18 @@ public class ExternalDependencyTestUtils {
 			Util.unzip(path, root.getLocation().toOSString());
 			fTestProject.create(null);
 			fTestProject.open(null);
-			//fTestProject.refreshLocal(IResource.DEPTH_INFINITE, null);
-			
+			// fTestProject.refreshLocal(IResource.DEPTH_INFINITE, null);
+
 		} catch (Exception e) {
 			return null;
 		}
-		
+
 		return fTestProject;
 	}
 
 	private static void enableExternalDependencyCheckOptions(boolean enabled) {
 		String value = enabled ? ApiPlugin.VALUE_ERROR : ApiPlugin.VALUE_IGNORE;
-		IEclipsePreferences inode = InstanceScope.INSTANCE.getNode(ApiPlugin.PLUGIN_ID);		;
+		IEclipsePreferences inode = InstanceScope.INSTANCE.getNode(ApiPlugin.PLUGIN_ID);
 		inode.put(IApiProblemTypes.API_USE_SCAN_TYPE_SEVERITY, value);
 		inode.put(IApiProblemTypes.API_USE_SCAN_METHOD_SEVERITY, value);
 		inode.put(IApiProblemTypes.API_USE_SCAN_FIELD_SEVERITY, value);
@@ -92,36 +93,35 @@ public class ExternalDependencyTestUtils {
 		return fTestProject;
 	}
 
-	
 	public static String setupReport(String reportName, boolean asDir) {
-		fReportLocation = TestSuiteHelper.getPluginDirectoryPath() + "/test-apiusescan/reports/";
+		fReportLocation = TestSuiteHelper.getPluginDirectoryPath() + "/test-apiusescan/reports/"; //$NON-NLS-1$
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		String location = null;
 		try {
 			if (asDir) {
-				String destLoc = root.getLocation().toOSString() + "/Reports/";
+				String destLoc = root.getLocation().toOSString() + "/Reports/"; //$NON-NLS-1$
 				Util.delete(new File(destLoc));
-				Util.unzip(fReportLocation + reportName + ".zip", destLoc);
+				Util.unzip(fReportLocation + reportName + ".zip", destLoc); //$NON-NLS-1$
 				location = destLoc + reportName + File.separator + IApiCoreConstants.XML;
 			} else {
-				File newFile = new File( root.getLocation().toOSString() + "/Reports/" + reportName + ".zip");
+				File newFile = new File(root.getLocation().toOSString() + "/Reports/" + reportName + ".zip"); //$NON-NLS-1$ //$NON-NLS-2$
 				Util.delete(newFile);
 				newFile.getParentFile().mkdirs();
-				newFile.createNewFile();				
-				boolean result = Util.copy(new File(fReportLocation + reportName + ".zip"), newFile);
+				newFile.createNewFile();
+				boolean result = Util.copy(new File(fReportLocation + reportName + ".zip"), newFile); //$NON-NLS-1$
 				location = result ? newFile.getAbsolutePath() : null;
 			}
 		} catch (IOException e) {
 			ApiPlugin.log(e);
 		}
-		UseScanManager.getInstance().setReportLocations(new String[] {location});
+		UseScanManager.getInstance().setReportLocations(new String[] { location });
 		return location;
 	}
-	
+
 	/**
 	 * Wait for the running build to the complete
 	 */
-	public static void waitForBuild() {		
+	public static void waitForBuild() {
 		boolean wasInterrupted = false;
 		do {
 			try {
@@ -129,11 +129,11 @@ public class ExternalDependencyTestUtils {
 				Job.getJobManager().join(ResourcesPlugin.FAMILY_MANUAL_BUILD, null);
 				wasInterrupted = false;
 			} catch (OperationCanceledException e) {
-				return ;
+				return;
 			} catch (InterruptedException e) {
 				wasInterrupted = true;
-			}			
+			}
 		} while (wasInterrupted);
-		return ;
+		return;
 	}
 }

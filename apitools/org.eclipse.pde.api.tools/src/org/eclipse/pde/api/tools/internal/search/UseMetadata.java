@@ -83,25 +83,22 @@ public class UseMetadata implements IMetadata {
 	 * XML tag name for the description field
 	 */
 	public static final String DESCRIPTION = "description"; //$NON-NLS-1$
-	
+
 	int searchflags = 0;
 	String[] apipatterns = null, intpatterns = null, archivepatterns = null;
-	String baselinelocation = null, 
-			reportlocation = null, 
-			scopepattern = null, 
-			refpattern = null, 
-			runatdate = null,
-			description = null;
-	
+	String baselinelocation = null, reportlocation = null, scopepattern = null,
+			refpattern = null, runatdate = null, description = null;
+
 	/**
 	 * Constructor
 	 */
 	public UseMetadata() {
-		//create an empty metadata object
+		// create an empty metadata object
 	}
-	
+
 	/**
 	 * Constructor
+	 * 
 	 * @param searchflags
 	 * @param scopepattern
 	 * @param refpattern
@@ -113,9 +110,7 @@ public class UseMetadata implements IMetadata {
 	 * @param runatdate
 	 * @param description
 	 */
-	public UseMetadata(int searchflags, String scopepattern, String refpattern, 
-			String baselinelocation, String reportlocation, String[] apipatterns, String[] internalpatterns, 
-			String[] archivepatterns, String runatdate, String description) {
+	public UseMetadata(int searchflags, String scopepattern, String refpattern, String baselinelocation, String reportlocation, String[] apipatterns, String[] internalpatterns, String[] archivepatterns, String runatdate, String description) {
 		this.searchflags = searchflags;
 		this.scopepattern = scopepattern;
 		this.refpattern = refpattern;
@@ -127,10 +122,13 @@ public class UseMetadata implements IMetadata {
 		this.runatdate = runatdate;
 		this.description = description;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IMetadata#serializeToFile(java.io.File)
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IMetadata#
+	 * serializeToFile(java.io.File)
 	 */
+	@Override
 	public void serializeToFile(File file) throws IOException, CoreException {
 		BufferedWriter writer = null;
 		try {
@@ -161,7 +159,7 @@ public class UseMetadata implements IMetadata {
 			child = doc.createElement(APIPATTERNS);
 			root.appendChild(child);
 			Element sub = null;
-			if(this.apipatterns != null) {
+			if (this.apipatterns != null) {
 				for (int i = 0; i < this.apipatterns.length; i++) {
 					sub = doc.createElement(PATTERN);
 					child.appendChild(sub);
@@ -170,7 +168,7 @@ public class UseMetadata implements IMetadata {
 			}
 			child = doc.createElement(INTERNALPATTERNS);
 			root.appendChild(child);
-			if(this.intpatterns != null) {
+			if (this.intpatterns != null) {
 				for (int i = 0; i < this.intpatterns.length; i++) {
 					sub = doc.createElement(PATTERN);
 					child.appendChild(sub);
@@ -179,7 +177,7 @@ public class UseMetadata implements IMetadata {
 			}
 			child = doc.createElement(ARCHIVEPATTERNS);
 			root.appendChild(child);
-			if(this.archivepatterns != null) {
+			if (this.archivepatterns != null) {
 				for (int i = 0; i < this.archivepatterns.length; i++) {
 					sub = doc.createElement(PATTERN);
 					child.appendChild(sub);
@@ -189,9 +187,8 @@ public class UseMetadata implements IMetadata {
 			writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), IApiCoreConstants.UTF_8));
 			writer.write(Util.serializeDocument(doc));
 			writer.flush();
-		}
-		finally {
-			if(writer != null) {
+		} finally {
+			if (writer != null) {
 				writer.close();
 			}
 		}
@@ -199,62 +196,69 @@ public class UseMetadata implements IMetadata {
 
 	/**
 	 * @return true if the search8 flags include searching for API references,
-	 * false otherwise
+	 *         false otherwise
 	 */
 	public boolean includesAPI() {
 		return (this.searchflags & IApiSearchRequestor.INCLUDE_API) != 0;
 	}
-	
+
 	/**
-	 * @return true if the search flags include searching for internal references, 
-	 * false otherwise
+	 * @return true if the search flags include searching for internal
+	 *         references, false otherwise
 	 */
 	public boolean includesInternal() {
 		return (this.searchflags & IApiSearchRequestor.INCLUDE_INTERNAL) != 0;
 	}
-	
+
 	/**
-	 * @return true if the search flags include searching for illegal use, 
-	 * false otherwise
+	 * @return true if the search flags include searching for illegal use, false
+	 *         otherwise
 	 */
 	public boolean includesIllegalUse() {
 		return (this.searchflags & IApiSearchRequestor.INCLUDE_ILLEGAL_USE) != 0;
 	}
-	
+
 	/**
 	 * Allows the run-at date to be set. This method accepts <code>null</code>
+	 * 
 	 * @param date the date to set
 	 */
 	public void setRunAtDate(String date) {
 		this.runatdate = date;
 	}
-	
+
 	/**
-	 * Returns the run-at date set in this metadata or <code>null</code> if none.
+	 * Returns the run-at date set in this metadata or <code>null</code> if
+	 * none.
+	 * 
 	 * @return the run-at date or <code>null</code>
 	 */
 	public String getRunAtDate() {
 		return this.runatdate;
 	}
-	
+
 	/**
 	 * Returns the human-readable description of the scan
+	 * 
 	 * @return the description
 	 */
 	public String getDescription() {
 		return this.description;
 	}
-	
+
 	/**
-	 * Allows the human-readable description to be set. This method accepts <code>null</code>
+	 * Allows the human-readable description to be set. This method accepts
+	 * <code>null</code>
+	 * 
 	 * @param description the description to set
 	 */
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
+
 	/**
 	 * Allows the combined search flags to be set.
+	 * 
 	 * @param flags the search flags to set
 	 */
 	public void setSearchflags(int flags) {
@@ -262,15 +266,18 @@ public class UseMetadata implements IMetadata {
 	}
 
 	/**
-	 * Returns the collection of API patterns set in this metadata or <code>null</code> if none.
+	 * Returns the collection of API patterns set in this metadata or
+	 * <code>null</code> if none.
+	 * 
 	 * @return the API patterns or <code>null</code>
 	 */
 	public String[] getApiPatterns() {
 		return apipatterns;
 	}
-	
+
 	/**
 	 * Allows the API patterns to be set. This method accepts <code>null</code>
+	 * 
 	 * @param patterns the patterns to set
 	 */
 	public void setApiPatterns(String[] patterns) {
@@ -278,7 +285,9 @@ public class UseMetadata implements IMetadata {
 	}
 
 	/**
-	 * Returns the collection of internal patterns set in this metadata or <code>null</code> if none.
+	 * Returns the collection of internal patterns set in this metadata or
+	 * <code>null</code> if none.
+	 * 
 	 * @return the internal patterns or <code>null</code>
 	 */
 	public String[] getInternalPatterns() {
@@ -286,7 +295,9 @@ public class UseMetadata implements IMetadata {
 	}
 
 	/**
-	 * Allows the internal patterns to be set. This method accepts <code>null</code>.
+	 * Allows the internal patterns to be set. This method accepts
+	 * <code>null</code>.
+	 * 
 	 * @param patterns the internal patterns to set
 	 */
 	public void setInternalPatterns(String[] patterns) {
@@ -294,7 +305,9 @@ public class UseMetadata implements IMetadata {
 	}
 
 	/**
-	 * Returns the collection of archive patterns set in this metadata or <code>null</code> if none.
+	 * Returns the collection of archive patterns set in this metadata or
+	 * <code>null</code> if none.
+	 * 
 	 * @return the archive patterns or <code>null</code>
 	 */
 	public String[] getArchivePatterns() {
@@ -302,7 +315,9 @@ public class UseMetadata implements IMetadata {
 	}
 
 	/**
-	 * Allows the set of archive patterns to be set. This method accepts <code>null</code>
+	 * Allows the set of archive patterns to be set. This method accepts
+	 * <code>null</code>
+	 * 
 	 * @param patterns the archive patterns to set
 	 */
 	public void setArchivePatterns(String[] patterns) {
@@ -310,7 +325,9 @@ public class UseMetadata implements IMetadata {
 	}
 
 	/**
-	 * Returns the baseline location set in this metadata or <code>null</code> if none.
+	 * Returns the baseline location set in this metadata or <code>null</code>
+	 * if none.
+	 * 
 	 * @return the baseline location or <code>null</code>
 	 */
 	public String getBaselineLocation() {
@@ -318,7 +335,9 @@ public class UseMetadata implements IMetadata {
 	}
 
 	/**
-	 * Allows the baseline location to be set. This method accepts <code>null</code>.
+	 * Allows the baseline location to be set. This method accepts
+	 * <code>null</code>.
+	 * 
 	 * @param location the new location
 	 */
 	public void setBaselineLocation(String location) {
@@ -326,7 +345,9 @@ public class UseMetadata implements IMetadata {
 	}
 
 	/**
-	 * Returns the report location set in this metadata or <code>null</code> if none.
+	 * Returns the report location set in this metadata or <code>null</code> if
+	 * none.
+	 * 
 	 * @return the report location or <code>null</code>
 	 */
 	public String getReportLocation() {
@@ -334,7 +355,9 @@ public class UseMetadata implements IMetadata {
 	}
 
 	/**
-	 * Allows the report location to be set. This method accepts <code>null</code>.
+	 * Allows the report location to be set. This method accepts
+	 * <code>null</code>.
+	 * 
 	 * @param location the new report location
 	 */
 	public void setReportLocation(String location) {
@@ -342,31 +365,38 @@ public class UseMetadata implements IMetadata {
 	}
 
 	/**
-	 * Allows the reference pattern to be set. This method accepts <code>null</code>
+	 * Allows the reference pattern to be set. This method accepts
+	 * <code>null</code>
+	 * 
 	 * @param pattern the new pattern
 	 */
 	public void setReferencePattern(String pattern) {
 		this.refpattern = pattern;
 	}
-	
+
 	/**
-	 * Returns the reference pattern set in this metadata or <code>null</code> if none.
+	 * Returns the reference pattern set in this metadata or <code>null</code>
+	 * if none.
+	 * 
 	 * @return the reference pattern or <code>null</code>
 	 */
 	public String getReferencePattern() {
 		return this.refpattern;
 	}
-	
+
 	/**
 	 * Allows the scope pattern to be set. This method accepts <code>null</code>
+	 * 
 	 * @param pattern the new pattern
 	 */
 	public void setScopePattern(String pattern) {
 		this.scopepattern = pattern;
 	}
-	
+
 	/**
-	 * Returns the scope pattern set in this metadata or <code>null</code> if none.
+	 * Returns the scope pattern set in this metadata or <code>null</code> if
+	 * none.
+	 * 
 	 * @return the scope pattern or <code>null</code>
 	 */
 	public String getScopePattern() {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,10 +51,12 @@ public class CreateApiFilterOperation extends UIJob {
 
 	private IMarker[] fMarkers = null;
 	private boolean fAddingComment = false;
-	
+
 	/**
 	 * Constructor
-	 * @param element the element to create the filter for (method, field, class, enum, etc)
+	 * 
+	 * @param element the element to create the filter for (method, field,
+	 *            class, enum, etc)
 	 * @param kind the kind of filter to create
 	 * 
 	 * @see IApiProblemFilter#getKinds()
@@ -65,92 +67,83 @@ public class CreateApiFilterOperation extends UIJob {
 		this.fAddingComment = addingcomments;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.
+	 * IProgressMonitor)
 	 */
+	@Override
 	public IStatus runInUIThread(IProgressMonitor monitor) {
 		try {
-			HashMap map = new HashMap(fMarkers.length);
+			HashMap<IApiComponent, HashSet<IApiProblemFilter>> map = new HashMap<IApiComponent, HashSet<IApiProblemFilter>>(fMarkers.length);
 			IResource resource = null;
 			IProject project = null;
 			String comment = null;
-			HashSet projects = new HashSet();
-			if(fAddingComment) {
-				InputDialog dialog = new InputDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), 
-						MarkerMessages.CreateApiFilterOperation_add_filter_comment, 
-						MarkerMessages.CreateApiFilterOperation_filter_comment, 
-						null, 
-						null);
-				if(dialog.open() == IDialogConstants.OK_ID) {
+			HashSet<IProject> projects = new HashSet<IProject>();
+			if (fAddingComment) {
+				InputDialog dialog = new InputDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), MarkerMessages.CreateApiFilterOperation_add_filter_comment, MarkerMessages.CreateApiFilterOperation_filter_comment, null, null);
+				if (dialog.open() == IDialogConstants.OK_ID) {
 					comment = dialog.getValue();
-					if(comment != null && comment.length() < 1) {
+					if (comment != null && comment.length() < 1) {
 						comment = null;
 					}
 				}
 			}
 			IMarker marker = null;
 			IApiProblem problem = null;
-			HashSet filters = null;
+			HashSet<IApiProblemFilter> filters = null;
 			IApiComponent component = null;
 			for (int i = 0; i < fMarkers.length; i++) {
 				marker = fMarkers[i];
 				resource = marker.getResource();
 				project = resource.getProject();
-				if(project == null) {
+				if (project == null) {
 					return Status.CANCEL_STATUS;
 				}
 				component = ApiPlugin.getDefault().getApiBaselineManager().getWorkspaceBaseline().getApiComponent(project);
-				if(component == null) {
+				if (component == null) {
 					return Status.CANCEL_STATUS;
 				}
 				projects.add(project);
-				filters = (HashSet) map.get(component);
-				if(filters == null) {
-					filters = new HashSet();
+				filters = map.get(component);
+				if (filters == null) {
+					filters = new HashSet<IApiProblemFilter>();
 					map.put(component, filters);
 				}
 				String typeNameFromMarker = Util.getTypeNameFromMarker(marker);
-				problem = ApiProblemFactory.newApiProblem(resource.getProjectRelativePath().toPortableString(),
-						typeNameFromMarker,
-						getMessageArgumentsFromMarker(marker), 
-						null,
-						null,
-						marker.getAttribute(IMarker.LINE_NUMBER, -1), 
-						marker.getAttribute(IMarker.CHAR_START, -1),
-						marker.getAttribute(IMarker.CHAR_END, -1), 
-						marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_PROBLEM_ID, 0));
+				problem = ApiProblemFactory.newApiProblem(resource.getProjectRelativePath().toPortableString(), typeNameFromMarker, getMessageArgumentsFromMarker(marker), null, null, marker.getAttribute(IMarker.LINE_NUMBER, -1), marker.getAttribute(IMarker.CHAR_START, -1), marker.getAttribute(IMarker.CHAR_END, -1), marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_PROBLEM_ID, 0));
 				filters.add(ApiProblemFactory.newProblemFilter(component.getSymbolicName(), problem, comment));
 				Util.touchCorrespondingResource(project, resource, typeNameFromMarker);
 			}
-			for (Iterator iter = map.keySet().iterator(); iter.hasNext();) {
-				component = (IApiComponent) iter.next();
+			for (Iterator<IApiComponent> iter = map.keySet().iterator(); iter.hasNext();) {
+				component = iter.next();
 				IApiFilterStore store = component.getFilterStore();
-				filters = (HashSet) map.get(component);
-				if(filters == null) {
+				filters = map.get(component);
+				if (filters == null) {
 					continue;
 				}
-				store.addFilters((IApiProblemFilter[]) filters.toArray(new IApiProblemFilter[filters.size()]));
+				store.addFilters(filters.toArray(new IApiProblemFilter[filters.size()]));
 			}
-			if(!ResourcesPlugin.getWorkspace().isAutoBuilding()) {
-				Util.getBuildJob((IProject[]) projects.toArray(new IProject[projects.size()]), IncrementalProjectBuilder.INCREMENTAL_BUILD).schedule();
+			if (!ResourcesPlugin.getWorkspace().isAutoBuilding()) {
+				Util.getBuildJob(projects.toArray(new IProject[projects.size()]), IncrementalProjectBuilder.INCREMENTAL_BUILD).schedule();
 			}
 			return Status.OK_STATUS;
-		}
-		catch(CoreException ce) {
+		} catch (CoreException ce) {
 			ApiUIPlugin.log(ce);
 		}
 		return Status.CANCEL_STATUS;
 	}
-	
+
 	/**
 	 * @return the listing of message arguments from the marker.
 	 */
 	private String[] getMessageArgumentsFromMarker(IMarker marker) {
-		ArrayList args = new ArrayList();
+		ArrayList<String> args = new ArrayList<String>();
 		String arguments = marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_MESSAGE_ARGUMENTS, null);
-		if(arguments != null) {
+		if (arguments != null) {
 			return arguments.split("#"); //$NON-NLS-1$
 		}
-		return (String[]) args.toArray(new String[args.size()]);
+		return args.toArray(new String[args.size()]);
 	}
 }

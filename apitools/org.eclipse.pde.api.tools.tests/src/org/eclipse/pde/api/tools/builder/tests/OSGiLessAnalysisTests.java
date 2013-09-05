@@ -36,11 +36,11 @@ import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 public class OSGiLessAnalysisTests extends TestCase {
 	
 	public void testAnalyzer() throws CoreException {
-		IApiBaseline baseline = TestSuiteHelper.createTestingBaseline("baseline", new Path("test-analyzer-1"));
-		IApiBaseline current = TestSuiteHelper.createTestingBaseline("current", new Path("test-analyzer-2"));
+		IApiBaseline baseline = TestSuiteHelper.createTestingBaseline("baseline", new Path("test-analyzer-1")); //$NON-NLS-1$ //$NON-NLS-2$
+		IApiBaseline current = TestSuiteHelper.createTestingBaseline("current", new Path("test-analyzer-2")); //$NON-NLS-1$ //$NON-NLS-2$
 		BaseApiAnalyzer analyzer = new BaseApiAnalyzer();
-		IApiComponent component = current.getApiComponent("test.bundle.a");
-		assertNotNull("Missing API component test.bundle.a", component);
+		IApiComponent component = current.getApiComponent("test.bundle.a"); //$NON-NLS-1$
+		assertNotNull("Missing API component test.bundle.a", component); //$NON-NLS-1$
 		analyzer.analyzeComponent(null, null, null, baseline, component, new BuildContext(), new NullProgressMonitor());
 		IApiProblem[] problems = analyzer.getProblems();
 		Set<Integer> expectedIds = new HashSet<Integer>();
@@ -60,11 +60,11 @@ public class OSGiLessAnalysisTests extends TestCase {
 																		IElementDescriptor.RESOURCE, 
 																		IApiProblem.MAJOR_VERSION_CHANGE, 
 																		IApiProblem.NO_FLAGS));
-		assertEquals("Wrong number of problems", 4, problems.length);
+		assertEquals("Wrong number of problems", 4, problems.length); //$NON-NLS-1$
 		for (int i = 0; i < problems.length; i++) {
 			expectedIds.remove(new Integer(problems[i].getId()));
 		}
-		assertTrue("Did not find expected problems", expectedIds.isEmpty());
+		assertTrue("Did not find expected problems", expectedIds.isEmpty()); //$NON-NLS-1$
 		baseline.dispose();
 		current.dispose();
 	}

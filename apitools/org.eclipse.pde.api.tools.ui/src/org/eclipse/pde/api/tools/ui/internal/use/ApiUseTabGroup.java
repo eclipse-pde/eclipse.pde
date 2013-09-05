@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,15 +22,16 @@ import org.eclipse.debug.ui.ILaunchConfigurationTab;
  */
 public class ApiUseTabGroup extends AbstractLaunchConfigurationTabGroup {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTabGroup#createTabs(org.eclipse.debug.ui.ILaunchConfigurationDialog, java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.debug.ui.ILaunchConfigurationTabGroup#createTabs(org.eclipse
+	 * .debug.ui.ILaunchConfigurationDialog, java.lang.String)
 	 */
+	@Override
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
-		setTabs(new ILaunchConfigurationTab[]{
-				new ApiUseScanTab(),
-				new ApiUsePatternTab(),
-				new CommonTab()
-				});
+		setTabs(new ILaunchConfigurationTab[] {
+				new ApiUseScanTab(), new ApiUsePatternTab(), new CommonTab() });
 	}
 
 }

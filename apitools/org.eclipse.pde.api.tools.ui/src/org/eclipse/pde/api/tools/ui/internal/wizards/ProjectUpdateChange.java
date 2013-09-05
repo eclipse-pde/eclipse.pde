@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,7 +38,7 @@ import com.ibm.icu.text.MessageFormat;
 public class ProjectUpdateChange extends Change {
 
 	private IProject fProject = null;
-	
+
 	/**
 	 * Constructor
 	 * 
@@ -47,39 +47,56 @@ public class ProjectUpdateChange extends Change {
 	public ProjectUpdateChange(IProject project) {
 		fProject = project;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.Change#getModifiedElement()
 	 */
+	@Override
 	public Object getModifiedElement() {
 		return fProject;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.Change#getName()
 	 */
+	@Override
 	public String getName() {
-		return MessageFormat.format(WizardMessages.ProjectUpdateChange_add_nature_and_builder, new String[] {});
+		return MessageFormat.format(WizardMessages.ProjectUpdateChange_add_nature_and_builder, new Object[] {});
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.Change#initializeValidationData(org.eclipse.core.runtime.IProgressMonitor)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.ltk.core.refactoring.Change#initializeValidationData(org.
+	 * eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void initializeValidationData(IProgressMonitor pm) {}
+	@Override
+	public void initializeValidationData(IProgressMonitor pm) {
+	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.Change#isValid(org.eclipse.core.runtime.IProgressMonitor)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.ltk.core.refactoring.Change#isValid(org.eclipse.core.runtime
+	 * .IProgressMonitor)
 	 */
+	@Override
 	public RefactoringStatus isValid(IProgressMonitor pm) throws CoreException, OperationCanceledException {
-		if(fProject.isAccessible()) {
+		if (fProject.isAccessible()) {
 			return RefactoringStatus.create(Status.OK_STATUS);
 		}
-		return RefactoringStatus.createErrorStatus(MessageFormat.format(WizardMessages.ProjectUpdateChange_project_not_accessible, new String[] {fProject.getName()}));
+		return RefactoringStatus.createErrorStatus(MessageFormat.format(WizardMessages.ProjectUpdateChange_project_not_accessible, new Object[] { fProject.getName() }));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.Change#perform(org.eclipse.core.runtime.IProgressMonitor)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.ltk.core.refactoring.Change#perform(org.eclipse.core.runtime
+	 * .IProgressMonitor)
 	 */
+	@Override
 	public Change perform(IProgressMonitor pm) throws CoreException {
 		SubMonitor localmonitor = SubMonitor.convert(pm);
 		localmonitor.beginTask(IApiToolsConstants.EMPTY_STRING, 1);
@@ -94,13 +111,14 @@ public class ProjectUpdateChange extends Change {
 		IJavaProject javaProject = JavaCore.create(this.fProject);
 		// make sure we get rid of the previous api description file
 		ApiDescriptionManager.getManager().clean(javaProject, true, true);
-		// we want a full build of the converted project next time a build is triggered
+		// we want a full build of the converted project next time a build is
+		// triggered
 		if (ResourcesPlugin.getWorkspace().isAutoBuilding()) {
 			Util.getBuildJob(new IProject[] { this.fProject }).schedule();
 		} else {
 			/*
-			 * If autobuild is off, clear the last build state to force a full build of
-			 * this project on the next build.
+			 * If autobuild is off, clear the last build state to force a full
+			 * build of this project on the next build.
 			 */
 			BuildState.setLastBuiltState(this.fProject, null);
 		}

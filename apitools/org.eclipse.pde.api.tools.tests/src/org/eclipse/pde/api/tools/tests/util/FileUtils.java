@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,14 +41,15 @@ import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
  * 
  * @since 1.0.0
  */
+@SuppressWarnings("restriction")
 public class FileUtils {
 	/**
-	 * Maximum of time in ms to wait in deletion operation while running JDT/Core tests.
-	 * Default is 10 seconds. This number cannot exceed 1 minute (i.e. 60000).
-	 * <br>
-	 * To avoid too many loops while waiting, the ten first ones are done waiting
-	 * 10ms before repeating, the ten loops after are done waiting 100ms and
-	 * the other loops are done waiting 1s...
+	 * Maximum of time in ms to wait in deletion operation while running
+	 * JDT/Core tests. Default is 10 seconds. This number cannot exceed 1 minute
+	 * (i.e. 60000). <br>
+	 * To avoid too many loops while waiting, the ten first ones are done
+	 * waiting 10ms before repeating, the ten loops after are done waiting 100ms
+	 * and the other loops are done waiting 1s...
 	 */
 	public static int DELETE_MAX_WAIT = 10000;
 
@@ -59,6 +60,7 @@ public class FileUtils {
 
 	/**
 	 * Recursively adds files from the specified directory to the provided list
+	 * 
 	 * @param dir
 	 * @param collection
 	 * @throws IOException
@@ -82,6 +84,7 @@ public class FileUtils {
 
 	/**
 	 * Imports files from the specified root directory into the specified path
+	 * 
 	 * @param rootDir
 	 * @param destPath
 	 * @param monitor
@@ -91,7 +94,9 @@ public class FileUtils {
 	public static void importFilesFromDirectory(File rootDir, IPath destPath, IProgressMonitor monitor) throws InvocationTargetException, IOException {
 		IResource findMember = ResourcesPlugin.getWorkspace().getRoot().getFolder(destPath);
 		File dest = findMember.getLocation().toFile();
-		if (!dest.exists()) dest.mkdirs();
+		if (!dest.exists()) {
+			dest.mkdirs();
+		}
 		TestSuiteHelper.copy(rootDir, dest);
 		try {
 			findMember.refreshLocal(IResource.DEPTH_INFINITE, null);
@@ -100,21 +105,24 @@ public class FileUtils {
 	}
 
 	/**
-	 * Imports the specified file to the destination path 
+	 * Imports the specified file to the destination path
+	 * 
 	 * @param file
 	 * @param destPath
 	 * @param monitor
 	 * @throws InvocationTargetException
 	 * @throws IOException
 	 */
-	public static void importFileFromDirectory(File file, IPath destPath, IProgressMonitor monitor) throws CoreException, InvocationTargetException, IOException {
+	public static void importFileFromDirectory(File file, IPath destPath, IProgressMonitor monitor) throws InvocationTargetException, IOException {
 		IResource findMember = null;
 		if (destPath.segmentCount() == 1) {
 			findMember = ResourcesPlugin.getWorkspace().getRoot().getProject(destPath.lastSegment());
 		} else {
 			findMember = ResourcesPlugin.getWorkspace().getRoot().getFolder(destPath);
 		}
-		if (findMember == null) return;
+		if (findMember == null) {
+			return;
+		}
 		File dest = findMember.getLocation().toFile();
 		if (!dest.exists()) {
 			dest.mkdirs();
@@ -128,6 +136,7 @@ public class FileUtils {
 
 	/**
 	 * Creates a new java.io.File at the given path with the given contents
+	 * 
 	 * @param path
 	 * @param contents
 	 * @throws IOException
@@ -143,8 +152,9 @@ public class FileUtils {
 
 	/**
 	 * Delete a file or directory and insure that the file is no longer present
-	 * on file system. In case of directory, delete all the hierarchy underneath.
-	 *
+	 * on file system. In case of directory, delete all the hierarchy
+	 * underneath.
+	 * 
 	 * @param resource The resource to delete
 	 * @return true iff the file was really delete, false otherwise
 	 */
@@ -154,17 +164,17 @@ public class FileUtils {
 			if (isResourceDeleted(resource)) {
 				return true;
 			}
-		}
-		catch (CoreException e) {
-			//	skip
+		} catch (CoreException e) {
+			// skip
 		}
 		return waitUntilResourceDeleted(resource);
 	}
 
 	/**
 	 * Delete a file or directory and insure that the file is no longer present
-	 * on file system. In case of directory, delete all the hierarchy underneath.
-	 *
+	 * on file system. In case of directory, delete all the hierarchy
+	 * underneath.
+	 * 
 	 * @param path The path of the file or directory to delete
 	 * @return true iff the file was really delete, false otherwise
 	 */
@@ -173,12 +183,14 @@ public class FileUtils {
 	}
 
 	/**
-	 * Flush content of a given directory (leaving it empty),
-	 * no-op if not a directory.
+	 * Flush content of a given directory (leaving it empty), no-op if not a
+	 * directory.
 	 */
 	public static void flushDirectoryContent(File dir) {
 		File[] files = dir.listFiles();
-		if (files == null) return;
+		if (files == null) {
+			return;
+		}
 		for (int i = 0, max = files.length; i < max; i++) {
 			Util.delete(files[i]);
 		}
@@ -186,7 +198,7 @@ public class FileUtils {
 
 	/**
 	 * Wait until a resource is _really_ deleted on file system.
-	 *
+	 * 
 	 * @param resource Deleted resource
 	 * @return true if the file was finally deleted, false otherwise
 	 */
@@ -194,7 +206,7 @@ public class FileUtils {
 		IPath location = resource.getLocation();
 		if (location == null) {
 			System.out.println();
-			System.out.println("	!!! ERROR: "+resource+" getLocation() returned null!!!");
+			System.out.println("	!!! ERROR: " + resource + " getLocation() returned null!!!"); //$NON-NLS-1$ //$NON-NLS-2$
 			System.out.println();
 			return false;
 		}
@@ -208,15 +220,17 @@ public class FileUtils {
 				count++;
 				Thread.sleep(delay);
 				time += delay;
-				if (time > DELETE_MAX_TIME) DELETE_MAX_TIME = time;
+				if (time > DELETE_MAX_TIME) {
+					DELETE_MAX_TIME = time;
+				}
 				if (resource.isAccessible()) {
 					try {
 						resource.delete(true, null);
 						if (isResourceDeleted(resource) && Util.isFileDeleted(file)) {
 							return true;
 						}
+					} catch (CoreException e) {
 					}
-					catch (CoreException e) {}
 				}
 				if (isResourceDeleted(resource) && Util.isFileDeleted(file)) {
 					return true;
@@ -226,28 +240,28 @@ public class FileUtils {
 					count = 1;
 					delay *= 10;
 					maxRetry = DELETE_MAX_WAIT / delay;
-					if ((DELETE_MAX_WAIT%delay) != 0) {
+					if ((DELETE_MAX_WAIT % delay) != 0) {
 						maxRetry++;
 					}
 				}
-			}
-			catch (InterruptedException ie) {
+			} catch (InterruptedException ie) {
 				break; // end loop
 			}
 		}
 		System.out.println();
-		System.out.println("	!!! ERROR: "+resource+" was never deleted even after having waited "+DELETE_MAX_TIME+"ms!!!");
+		System.out.println("	!!! ERROR: " + resource + " was never deleted even after having waited " + DELETE_MAX_TIME + "ms!!!"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		System.out.println();
 		return false;
 	}
 
 	/**
-	 * Returns whether a resource is really deleted or not.
-	 * Does not only rely on {@link IResource#isAccessible()} method but also
-	 * look if it's not in its parent children {@link #getParentChildResource(IResource)}.
-	 *
+	 * Returns whether a resource is really deleted or not. Does not only rely
+	 * on {@link IResource#isAccessible()} method but also look if it's not in
+	 * its parent children {@link #getParentChildResource(IResource)}.
+	 * 
 	 * @param resource The resource to test if deleted
-	 * @return true if the resource is not accessible and was not found in its parent children.
+	 * @return true if the resource is not accessible and was not found in its
+	 *         parent children.
 	 */
 	public static boolean isResourceDeleted(IResource resource) {
 		return !resource.isAccessible() && getParentChildResource(resource) == null;
@@ -274,7 +288,7 @@ public class FileUtils {
 			do {
 				read = input.read();
 				if (read != -1) {
-					sourceContentBuffer.append((char)read);
+					sourceContentBuffer.append((char) read);
 				}
 			} while (read != -1);
 			input.close();
@@ -286,6 +300,7 @@ public class FileUtils {
 
 	/**
 	 * Writes the given content string to the output file, specified
+	 * 
 	 * @param contents
 	 * @param destinationFilePath
 	 */
@@ -314,7 +329,9 @@ public class FileUtils {
 	}
 
 	/**
-	 * writes a new zip file from all of the files contained in the specified root directory
+	 * writes a new zip file from all of the files contained in the specified
+	 * root directory
+	 * 
 	 * @param rootDir
 	 * @param zipPath
 	 * @throws IOException
@@ -327,7 +344,8 @@ public class FileUtils {
 				Util.delete(zipFile);
 			}
 			zip = new ZipOutputStream(new FileOutputStream(zipFile));
-			zip(rootDir, zip, rootDir.getPath().length()+1); // 1 for last slash
+			zip(rootDir, zip, rootDir.getPath().length() + 1); // 1 for last
+																// slash
 		} finally {
 			if (zip != null) {
 				zip.close();
@@ -336,7 +354,9 @@ public class FileUtils {
 	}
 
 	/**
-	 * Writes all of the zip entries from the given directory to the specified zip output stream
+	 * Writes all of the zip entries from the given directory to the specified
+	 * zip output stream
+	 * 
 	 * @param dir
 	 * @param zip
 	 * @param rootPathLength
@@ -362,19 +382,22 @@ public class FileUtils {
 	}
 
 	/**
-	 * Returns parent's child resource matching the given resource or null if not found.
-	 *
+	 * Returns parent's child resource matching the given resource or null if
+	 * not found.
+	 * 
 	 * @param resource The searched file in parent
 	 * @return The parent's child matching the given file or null if not found.
 	 */
 	private static IResource getParentChildResource(IResource resource) {
 		IContainer parent = resource.getParent();
-		if (parent == null || !parent.exists()) return null;
+		if (parent == null || !parent.exists()) {
+			return null;
+		}
 		try {
 			IResource[] members = parent.members();
-			int length = members ==null ? 0 : members.length;
+			int length = members == null ? 0 : members.length;
 			if (length > 0) {
-				for (int i=0; i<length; i++) {
+				for (int i = 0; i < length; i++) {
 					if (members[i] == resource) {
 						return members[i];
 					} else if (members[i].equals(resource)) {
@@ -384,23 +407,27 @@ public class FileUtils {
 					}
 				}
 			}
-		}
-		catch (CoreException ce) {
+		} catch (CoreException ce) {
 			// skip
 		}
 		return null;
 	}
 
 	/**
-	 * Copy the given source (a file or a directory that must exists) to the given destination (a directory that must exists).
+	 * Copy the given source (a file or a directory that must exists) to the
+	 * given destination (a directory that must exists).
 	 */
 	public static void copyFile(String sourcePath, String destPath) {
 		sourcePath = Util.toNativePath(sourcePath);
 		destPath = Util.toNativePath(destPath);
 		File source = new File(sourcePath);
-		if (!source.exists()) return;
+		if (!source.exists()) {
+			return;
+		}
 		File dest = new File(destPath);
-		if (!dest.exists()) return;
+		if (!dest.exists()) {
+			return;
+		}
 		if (source.isDirectory()) {
 			String[] files = source.list();
 			if (files != null) {
@@ -424,7 +451,7 @@ public class FileUtils {
 				File destFile = new File(dest, source.getName());
 				if (destFile.exists()) {
 					if (!Util.delete(destFile)) {
-						throw new IOException(destFile + " is in use");
+						throw new IOException(destFile + " is in use"); //$NON-NLS-1$
 					}
 				}
 				out = new FileOutputStream(destFile);
@@ -459,7 +486,7 @@ public class FileUtils {
 	/**
 	 * Delete this resource.
 	 */
-	public static void deleteResource(IProject project) throws CoreException {
+	public static void deleteResource(IProject project) {
 		int retryCount = 0; // wait 1 minute at most
 		while (++retryCount <= 60) {
 			if (delete(project)) {
@@ -468,7 +495,7 @@ public class FileUtils {
 				System.gc();
 			}
 		}
-		throw new RuntimeException("Could not delete " + project.getFullPath());
+		throw new RuntimeException("Could not delete " + project.getFullPath()); //$NON-NLS-1$
 	}
 
 	public static boolean delete(IProject project) {
@@ -477,9 +504,8 @@ public class FileUtils {
 			if (org.eclipse.jdt.core.tests.util.Util.isResourceDeleted(project)) {
 				return true;
 			}
-		}
-		catch (CoreException e) {
-			//	skip
+		} catch (CoreException e) {
+			// skip
 		}
 		return org.eclipse.jdt.core.tests.util.Util.waitUntilResourceDeleted(project);
 	}

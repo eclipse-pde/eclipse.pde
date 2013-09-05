@@ -35,56 +35,77 @@ import org.eclipse.pde.api.tools.internal.util.Signatures;
  */
 public class IllegalAnnotationReferenceDetector extends AbstractIllegalTypeReference {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.builder.IApiProblemDetector#getReferenceKinds()
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.provisional.builder.IApiProblemDetector
+	 * #getReferenceKinds()
 	 */
+	@Override
 	public int getReferenceKinds() {
 		return IReference.REF_ANNOTATION_USE;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.builder.AbstractProblemDetector#getProblemFlags(org.eclipse.pde.api.tools.internal.provisional.builder.IReference)
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.builder.AbstractProblemDetector#
+	 * getProblemFlags
+	 * (org.eclipse.pde.api.tools.internal.provisional.builder.IReference)
 	 */
+	@Override
 	protected int getProblemFlags(IReference reference) {
 		return IApiProblem.ANNOTATION;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.builder.AbstractProblemDetector#getProblemKind()
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.builder.AbstractProblemDetector#
+	 * getProblemKind()
 	 */
+	@Override
 	protected int getProblemKind() {
 		return IApiProblem.ILLEGAL_REFERENCE;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.builder.AbstractProblemDetector#getSeverityKey()
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.builder.AbstractProblemDetector#
+	 * getSeverityKey()
 	 */
+	@Override
 	protected String getSeverityKey() {
 		return IApiProblemTypes.ILLEGAL_REFERENCE;
 	}
-	
+
+	@Override
 	public boolean considerReference(IReference reference) {
 		return super.considerReference(reference);
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.builder.AbstractIllegalTypeReference#getSourceRange(org.eclipse.jdt.core.IType, org.eclipse.jface.text.IDocument, org.eclipse.pde.api.tools.internal.provisional.builder.IReference)
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.builder.AbstractIllegalTypeReference
+	 * #getSourceRange(org.eclipse.jdt.core.IType,
+	 * org.eclipse.jface.text.IDocument,
+	 * org.eclipse.pde.api.tools.internal.provisional.builder.IReference)
 	 */
+	@Override
 	protected Position getSourceRange(IType type, IDocument doc, IReference reference) throws CoreException, BadLocationException {
 		IApiMember member = reference.getMember();
-		if(member != null) {
+		if (member != null) {
 			IAnnotatable annotable = findAnnotableElement(type, member, reference, doc);
-			if(annotable != null) {
+			if (annotable != null) {
 				IAnnotation[] annots = annotable.getAnnotations();
 				String typename = Signatures.getSimpleTypeName(reference.getResolvedReference().getName());
 				for (int i = 0; i < annots.length; i++) {
-					if(annots[i].getElementName().equals(typename)) {
+					if (annots[i].getElementName().equals(typename)) {
 						ISourceRange range = annots[i].getNameRange();
-						if(range != null) {
-							//select the '@' as well - augment offset and length accordingly
-							return new Position(range.getOffset()-1, range.getLength()+1);
-						}
-						else {
+						if (range != null) {
+							// select the '@' as well - augment offset and
+							// length accordingly
+							return new Position(range.getOffset() - 1, range.getLength() + 1);
+						} else {
 							break;
 						}
 					}
@@ -93,21 +114,24 @@ public class IllegalAnnotationReferenceDetector extends AbstractIllegalTypeRefer
 		}
 		return defaultSourcePosition(type, reference);
 	}
-	
+
 	/**
-	 * Tries to find the {@link IAnnotatable} parent for the given {@link IApiMember}. If the direct parent 
-	 * cannot be computed return <code>null</code> and not the enclosing {@link IAnnotatable} (if there is one). That way
-	 * we can fetch the default illegal type reference message location
+	 * Tries to find the {@link IAnnotatable} parent for the given
+	 * {@link IApiMember}. If the direct parent cannot be computed return
+	 * <code>null</code> and not the enclosing {@link IAnnotatable} (if there is
+	 * one). That way we can fetch the default illegal type reference message
+	 * location
 	 * 
 	 * @param type
 	 * @param member
 	 * @param reference
 	 * @param doc
-	 * @return the {@link IAnnotatable} parent or <code>null</code> if it could not be computed.
+	 * @return the {@link IAnnotatable} parent or <code>null</code> if it could
+	 *         not be computed.
 	 * @throws CoreException
 	 */
 	IAnnotatable findAnnotableElement(IType type, IApiMember member, IReference reference, IDocument doc) throws CoreException {
-		switch(member.getType()) {
+		switch (member.getType()) {
 			case IApiElement.TYPE: {
 				return findTypeInType(type, (IApiType) member, reference, doc);
 			}
@@ -117,15 +141,20 @@ public class IllegalAnnotationReferenceDetector extends AbstractIllegalTypeRefer
 			case IApiElement.METHOD: {
 				return findMethodInType(type, (IApiMethod) member);
 			}
-			default: break;
+			default:
+				break;
 		}
 		return null;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#getMessageArgs(org.eclipse.pde.api.tools.internal.provisional.model.IReference)
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#
+	 * getMessageArgs
+	 * (org.eclipse.pde.api.tools.internal.provisional.model.IReference)
 	 */
+	@Override
 	protected String[] getMessageArgs(IReference reference) throws CoreException {
-		return new String[] {getSimpleTypeName(reference.getResolvedReference())};
+		return new String[] { getSimpleTypeName(reference.getResolvedReference()) };
 	}
 }

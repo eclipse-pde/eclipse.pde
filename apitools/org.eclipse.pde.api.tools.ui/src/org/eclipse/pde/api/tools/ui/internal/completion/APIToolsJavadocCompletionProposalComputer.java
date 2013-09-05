@@ -13,7 +13,6 @@ package org.eclipse.pde.api.tools.ui.internal.completion;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -43,6 +42,8 @@ import org.eclipse.jdt.ui.text.java.JavaContentAssistInvocationContext;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.contentassist.ICompletionProposal;
+import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.pde.api.tools.internal.JavadocTagManager;
 import org.eclipse.pde.api.tools.internal.builder.TagValidator;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
@@ -52,10 +53,11 @@ import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 import org.eclipse.swt.graphics.Image;
 
 /**
- * This class creates completion proposals to javadoc header blocks
- * for the javadoc tags contributed via the apiJavadocTags extension point.
- * <br><br>
- * Any changes to the visibility logic here also must be updated in the {@link TagValidator}
+ * This class creates completion proposals to javadoc header blocks for the
+ * javadoc tags contributed via the apiJavadocTags extension point. <br>
+ * <br>
+ * Any changes to the visibility logic here also must be updated in the
+ * {@link TagValidator}
  * 
  * @see TagValidator
  * @see IApiJavadocTag
@@ -65,80 +67,85 @@ import org.eclipse.swt.graphics.Image;
  * @since 1.0.0
  */
 public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletionProposalComputer {
-	
+
 	private String fErrorMessage = null;
 	private Image fImageHandle = null;
 	private ASTParser fParser = null;
-	HashMap/*<String, Boolean>*/ fExistingTags = null;
-	
+	HashMap<String, Boolean> fExistingTags = null;
+
 	/**
-	 * Collects all of the existing API Tools Javadoc tags form a given Javadoc node
+	 * Collects all of the existing API Tools Javadoc tags form a given Javadoc
+	 * node
 	 */
 	class TagCollector extends ASTVisitor {
-		/* (non-Javadoc)
-		 * @see org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom.Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * @see
+		 * org.eclipse.jdt.core.dom.ASTVisitor#visit(org.eclipse.jdt.core.dom
+		 * .Javadoc)
 		 */
+		@Override
 		public boolean visit(Javadoc node) {
-			Set tagnames = ApiPlugin.getJavadocTagManager().getAllTagNames();
-			List tags = node.tags();
-			if(fExistingTags == null) {
-				fExistingTags = new HashMap(tags.size());
+			Set<String> tagnames = ApiPlugin.getJavadocTagManager().getAllTagNames();
+			List<TagElement> tags = node.tags();
+			if (fExistingTags == null) {
+				fExistingTags = new HashMap<String, Boolean>(tags.size());
 			}
-			TagElement tag = null;
 			String name = null;
-			for(Iterator iter = tags.iterator(); iter.hasNext();) {
-				tag = (TagElement) iter.next();
+			for (TagElement tag : tags) {
 				name = tag.getTagName();
-				if(name == null) {
+				if (name == null) {
 					continue;
 				}
-				if(tagnames.contains(name)) {
-					//only add existing API tools tags
+				if (tagnames.contains(name)) {
+					// only add existing API tools tags
 					fExistingTags.put(name, Boolean.valueOf(tag.fragments().isEmpty()));
 				}
 			}
 			return false;
 		}
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.ui.text.java.IJavaCompletionProposalComputer#computeCompletionProposals(org.eclipse.jdt.ui.text.java.ContentAssistInvocationContext, org.eclipse.core.runtime.IProgressMonitor)
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.jdt.ui.text.java.IJavaCompletionProposalComputer#
+	 * computeCompletionProposals
+	 * (org.eclipse.jdt.ui.text.java.ContentAssistInvocationContext,
+	 * org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public List computeCompletionProposals(ContentAssistInvocationContext context, IProgressMonitor monitor) {
+	@Override
+	public List<ICompletionProposal> computeCompletionProposals(ContentAssistInvocationContext context, IProgressMonitor monitor) {
 		JavaContentAssistInvocationContext jcontext = null;
-		if(context instanceof JavaContentAssistInvocationContext) {
+		if (context instanceof JavaContentAssistInvocationContext) {
 			jcontext = (JavaContentAssistInvocationContext) context;
-		}
-		else {
+		} else {
 			return Collections.EMPTY_LIST;
 		}
 		IJavaProject project = jcontext.getProject();
-		if(project == null || !Util.isApiProject(project)) {
+		if (project == null || !Util.isApiProject(project)) {
 			return Collections.EMPTY_LIST;
 		}
 		CompletionContext corecontext = jcontext.getCoreContext();
-		if(!corecontext.isInJavadoc()) {
+		if (!corecontext.isInJavadoc()) {
 			return Collections.EMPTY_LIST;
 		}
 		ICompilationUnit cunit = jcontext.getCompilationUnit();
-		if(cunit != null) {
+		if (cunit != null) {
 			try {
 				int offset = jcontext.getInvocationOffset();
 				IJavaElement element = cunit.getElementAt(offset);
 				if (!isVisible(element)) {
 					return Collections.EMPTY_LIST;
 				}
-				ImageDescriptor imagedesc = jcontext.getLabelProvider().createImageDescriptor(
-						org.eclipse.jdt.core.CompletionProposal.create(org.eclipse.jdt.core.CompletionProposal.JAVADOC_BLOCK_TAG, 
-						offset));
+				ImageDescriptor imagedesc = jcontext.getLabelProvider().createImageDescriptor(org.eclipse.jdt.core.CompletionProposal.create(org.eclipse.jdt.core.CompletionProposal.JAVADOC_BLOCK_TAG, offset));
 				fImageHandle = (imagedesc == null ? null : imagedesc.createImage());
 				int type = getType(element);
 				int member = IApiJavadocTag.MEMBER_NONE;
-				switch(element.getElementType()) {
+				switch (element.getElementType()) {
 					case IJavaElement.METHOD: {
 						IMethod method = (IMethod) element;
 						member = IApiJavadocTag.MEMBER_METHOD;
-						if(method.isConstructor()) {
+						if (method.isConstructor()) {
 							member = IApiJavadocTag.MEMBER_CONSTRUCTOR;
 						}
 						break;
@@ -147,59 +154,61 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 						member = IApiJavadocTag.MEMBER_FIELD;
 						break;
 					}
+					default:
+						break;
 				}
 				IApiJavadocTag[] tags = ApiPlugin.getJavadocTagManager().getTagsForType(type, member);
 				int tagcount = tags.length;
-				if(tagcount > 0) {
-					ArrayList list = null;
+				if (tagcount > 0) {
+					ArrayList<ICompletionProposal> list = null;
 					collectExistingTags(element, jcontext);
 					String completiontext = null;
 					int tokenstart = corecontext.getTokenStart();
 					int length = offset - tokenstart;
-					for(int i = 0; i < tagcount; i++) {
-						if(!acceptTag(tags[i], element)) {
+					for (int i = 0; i < tagcount; i++) {
+						if (!acceptTag(tags[i], element)) {
 							continue;
 						}
 						completiontext = tags[i].getCompleteTag(type, member);
-						if(appliesToContext(jcontext.getDocument(), completiontext, tokenstart, (length > 0 ? length : 1))) {
-							if(list == null) {
-								list = new ArrayList(tagcount-i);
+						if (appliesToContext(jcontext.getDocument(), completiontext, tokenstart, (length > 0 ? length : 1))) {
+							if (list == null) {
+								list = new ArrayList<ICompletionProposal>(tagcount - i);
 							}
 							list.add(new APIToolsJavadocCompletionProposal(corecontext, completiontext, tags[i].getTagName(), fImageHandle));
 						}
 					}
-					if(list != null) {
+					if (list != null) {
 						return list;
 					}
 				}
-			} 
-			catch (JavaModelException e) {
+			} catch (JavaModelException e) {
 				fErrorMessage = e.getMessage();
 			}
 		}
 		return Collections.EMPTY_LIST;
 	}
-	
+
 	/**
-	 * Returns if the given {@link IJavaElement} is externally visible 
-	 * <br><br>
-	 * Changes to the logic here must also be made in the {@link TagValidator} to ensure the 
-	 * visibility is computed equally.
+	 * Returns if the given {@link IJavaElement} is externally visible <br>
+	 * <br>
+	 * Changes to the logic here must also be made in the {@link TagValidator}
+	 * to ensure the visibility is computed equally.
 	 * 
 	 * @see TagValidator
 	 * @param element
-	 * @return <code>true</code> if the given element is visible <code>false</code> otherwise
+	 * @return <code>true</code> if the given element is visible
+	 *         <code>false</code> otherwise
 	 * @throws JavaModelException if a model lookup fails
 	 */
 	boolean isVisible(IJavaElement element) throws JavaModelException {
-		if(element != null) {
-			switch(element.getElementType()) {
+		if (element != null) {
+			switch (element.getElementType()) {
 				case IJavaElement.FIELD:
 				case IJavaElement.METHOD: {
 					IMember member = (IMember) element;
 					int flags = member.getFlags();
 					IType type = member.getDeclaringType();
-					if(Flags.isPublic(flags) || Flags.isProtected(flags) || (type != null && type.isInterface())) {
+					if (Flags.isPublic(flags) || Flags.isProtected(flags) || (type != null && type.isInterface())) {
 						return isVisible(type);
 					}
 					break;
@@ -207,18 +216,14 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 				case IJavaElement.TYPE: {
 					IType type = (IType) element;
 					int flags = type.getFlags();
-					if(type.isLocal() && !type.isAnonymous() || Flags.isPrivate(flags)) {
+					if (type.isLocal() && !type.isAnonymous() || Flags.isPrivate(flags)) {
 						return false;
 					}
-					if(type.isMember()) {
-						if((Flags.isPublic(flags) && Flags.isStatic(flags)) || 
-								Flags.isPublic(flags) ||
-								Flags.isProtected(flags) ||
-								type.isInterface()) {
+					if (type.isMember()) {
+						if ((Flags.isPublic(flags) && Flags.isStatic(flags)) || Flags.isPublic(flags) || Flags.isProtected(flags) || type.isInterface()) {
 							return isVisible(type.getDeclaringType());
 						}
-					}
-					else {
+					} else {
 						return Flags.isPublic(flags) || type.isInterface();
 					}
 					break;
@@ -226,58 +231,64 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 				default: {
 					break;
 				}
-					
+
 			}
 		}
 		return false;
 	}
-	
+
 	/**
-	 * Method to post process returned flags from the {@link org.eclipse.pde.api.tools.internal.JavadocTagManager}
+	 * Method to post process returned flags from the
+	 * {@link org.eclipse.pde.api.tools.internal.JavadocTagManager}
+	 * 
 	 * @param tag the tag to process
 	 * @param element the {@link IJavaElement} the tag will appear on
-	 * @return true if the tag should be included in completion proposals, false otherwise
+	 * @return true if the tag should be included in completion proposals, false
+	 *         otherwise
 	 */
 	private boolean acceptTag(IApiJavadocTag tag, IJavaElement element) throws JavaModelException {
-		if(fExistingTags != null) {
-			Boolean fragments = (Boolean) fExistingTags.get(tag.getTagName());
-			//if the tag has a fragment don't overwrite / propose again
-			if(fragments != null && Boolean.FALSE.equals(fragments)) {
+		if (fExistingTags != null) {
+			Boolean fragments = fExistingTags.get(tag.getTagName());
+			// if the tag has a fragment don't overwrite / propose again
+			if (fragments != null && Boolean.FALSE.equals(fragments)) {
 				return false;
 			}
 		}
-		switch(element.getElementType()) {
+		switch (element.getElementType()) {
 			case IJavaElement.TYPE: {
 				IType type = (IType) element;
 				int flags = type.getFlags();
 				String tagname = tag.getTagName();
-				if(Flags.isAbstract(flags)) {
+				if (Flags.isAbstract(flags)) {
 					return !tagname.equals(JavadocTagManager.TAG_NOINSTANTIATE);
 				}
-				if(Flags.isFinal(flags)) {
+				if (Flags.isFinal(flags)) {
 					return !tagname.equals(JavadocTagManager.TAG_NOEXTEND);
 				}
 				break;
 			}
 			case IJavaElement.METHOD: {
 				IMethod method = (IMethod) element;
-				if(Flags.isFinal(method.getFlags()) || Flags.isStatic(method.getFlags())) {
+				if (Flags.isFinal(method.getFlags()) || Flags.isStatic(method.getFlags())) {
 					return !tag.getTagName().equals(JavadocTagManager.TAG_NOOVERRIDE);
 				}
 				IType type = method.getDeclaringType();
-				if(type != null && Flags.isFinal(type.getFlags())) {
+				if (type != null && Flags.isFinal(type.getFlags())) {
 					return !tag.getTagName().equals(JavadocTagManager.TAG_NOOVERRIDE);
 				}
+				break;
 			}
+			default:
+				break;
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Returns the type of the enclosing type.
 	 * 
 	 * @param element java element
-	 * @return TYPE_INTERFACE, TYPE_CLASS, TYPE_ENUM, TYPE_ANNOTATION or -1 
+	 * @return TYPE_INTERFACE, TYPE_CLASS, TYPE_ENUM, TYPE_ANNOTATION or -1
 	 * @throws JavaModelException
 	 */
 	private int getType(IJavaElement element) throws JavaModelException {
@@ -287,13 +298,11 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 		}
 		if (lelement instanceof IType) {
 			IType type = (IType) lelement;
-			if(type.isAnnotation()) {
+			if (type.isAnnotation()) {
 				return IApiJavadocTag.TYPE_ANNOTATION;
-			}
-			else if (type.isInterface()) {
+			} else if (type.isInterface()) {
 				return IApiJavadocTag.TYPE_INTERFACE;
-			}
-			else if(type.isEnum()) {
+			} else if (type.isEnum()) {
 				return IApiJavadocTag.TYPE_ENUM;
 			}
 		}
@@ -301,23 +310,25 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 	}
 
 	/**
-	 * Collects the existing tags on the {@link IJavaElement} we have been activated on
+	 * Collects the existing tags on the {@link IJavaElement} we have been
+	 * activated on
+	 * 
 	 * @param element
 	 * @param jcontext
 	 * @throws JavaModelException
 	 * @throws BadLocationException
 	 */
 	private void collectExistingTags(IJavaElement element, JavaContentAssistInvocationContext jcontext) throws JavaModelException {
-		if(element instanceof IMember) {
+		if (element instanceof IMember) {
 			IMember member = (IMember) element;
 			ICompilationUnit cunit = jcontext.getCompilationUnit();
-			if(cunit != null) {
-				if(cunit.isWorkingCopy()) {
+			if (cunit != null) {
+				if (cunit.isWorkingCopy()) {
 					cunit.reconcile(ICompilationUnit.NO_AST, false, false, null, null);
 				}
 				fParser.setSource(member.getSource().toCharArray());
 				fParser.setKind(ASTParser.K_CLASS_BODY_DECLARATIONS);
-				Map options = element.getJavaProject().getOptions(true);
+				Map<String, String> options = element.getJavaProject().getOptions(true);
 				options.put(JavaCore.COMPILER_DOC_COMMENT_SUPPORT, JavaCore.ENABLED);
 				fParser.setCompilerOptions(options);
 				fParser.setStatementsRecovery(false);
@@ -327,10 +338,11 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 				TagCollector collector = new TagCollector();
 				if (ast.getNodeType() == ASTNode.TYPE_DECLARATION) {
 					TypeDeclaration typeDeclaration = (TypeDeclaration) ast;
-					List bodyDeclarations = typeDeclaration.bodyDeclarations();
+					List<BodyDeclaration> bodyDeclarations = typeDeclaration.bodyDeclarations();
 					if (bodyDeclarations.size() == 1) {
-						// only one element should be there as we are parsing a specific member
-						BodyDeclaration bodyDeclaration = (BodyDeclaration) bodyDeclarations.iterator().next();
+						// only one element should be there as we are parsing a
+						// specific member
+						BodyDeclaration bodyDeclaration = bodyDeclarations.iterator().next();
 						Javadoc javadoc = bodyDeclaration.getJavadoc();
 						if (javadoc != null) {
 							javadoc.accept(collector);
@@ -340,60 +352,78 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 			}
 		}
 	}
-	
+
 	/**
-	 * Determines if the specified completion applies to the current offset context in the document
+	 * Determines if the specified completion applies to the current offset
+	 * context in the document
+	 * 
 	 * @param document
 	 * @param completiontext
 	 * @param offset
 	 * @return true if the completion applies, false otherwise
 	 */
 	private boolean appliesToContext(IDocument document, String completiontext, int tokenstart, int length) {
-		if(length > completiontext.length()) {
+		if (length > completiontext.length()) {
 			return false;
 		}
 		try {
 			String prefix = document.get(tokenstart, length);
 			return prefix.equals(completiontext.substring(0, length));
-		}
-		catch (BadLocationException e) {
+		} catch (BadLocationException e) {
 			ApiUIPlugin.log(e);
 		}
 		return false;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.ui.text.java.IJavaCompletionProposalComputer#computeContextInformation(org.eclipse.jdt.ui.text.java.ContentAssistInvocationContext, org.eclipse.core.runtime.IProgressMonitor)
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.jdt.ui.text.java.IJavaCompletionProposalComputer#
+	 * computeContextInformation
+	 * (org.eclipse.jdt.ui.text.java.ContentAssistInvocationContext,
+	 * org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public List computeContextInformation(ContentAssistInvocationContext context, IProgressMonitor monitor) {
+	@Override
+	public List<IContextInformation> computeContextInformation(ContentAssistInvocationContext context, IProgressMonitor monitor) {
 		return Collections.EMPTY_LIST;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.ui.text.java.IJavaCompletionProposalComputer#getErrorMessage()
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.jdt.ui.text.java.IJavaCompletionProposalComputer#getErrorMessage
+	 * ()
 	 */
+	@Override
 	public String getErrorMessage() {
 		return fErrorMessage;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.ui.text.java.IJavaCompletionProposalComputer#sessionEnded()
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.jdt.ui.text.java.IJavaCompletionProposalComputer#sessionEnded
+	 * ()
 	 */
+	@Override
 	public void sessionEnded() {
-		if(fImageHandle != null) {
+		if (fImageHandle != null) {
 			fImageHandle.dispose();
 		}
 		fParser = null;
-		if(fExistingTags != null) {
+		if (fExistingTags != null) {
 			fExistingTags.clear();
 			fExistingTags = null;
 		}
 		fErrorMessage = null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.ui.text.java.IJavaCompletionProposalComputer#sessionStarted()
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.jdt.ui.text.java.IJavaCompletionProposalComputer#sessionStarted
+	 * ()
 	 */
+	@Override
 	public void sessionStarted() {
 		fParser = ASTParser.newParser(AST.JLS4);
 		fErrorMessage = null;

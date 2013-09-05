@@ -40,212 +40,273 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceType
 import org.eclipse.pde.api.tools.internal.util.Signatures;
 
 /**
- * Generates an HTML report from an XML use scan.  The generated report
- * is 'consumer based'.  It lists the bundles that have references in them
- * (rather than listing bundles that produce the types being referenced)
+ * Generates an HTML report from an XML use scan. The generated report is
+ * 'consumer based'. It lists the bundles that have references in them (rather
+ * than listing bundles that produce the types being referenced)
  * 
  * @since 1.0.300
  */
 public class ConsumerReportConvertor extends UseReportConverter {
-	
+
 	/**
-	 * Use scan visitor that collects a list of the bundles (as {@link IComponentDescriptor}s)
-	 * that consume api references.
+	 * Use scan visitor that collects a list of the bundles (as
+	 * {@link IComponentDescriptor}s) that consume api references.
 	 */
-	class ListConsumersVisitor extends UseScanVisitor{
+	class ListConsumersVisitor extends UseScanVisitor {
 		/**
-		 * Set of {@link IComponentDescriptor}s representing the consumers of references
+		 * Set of {@link IComponentDescriptor}s representing the consumers of
+		 * references
 		 */
-		Set consumers = new HashSet();
-		
-		/* (non-Javadoc)
-		 * @see org.eclipse.pde.api.tools.internal.search.UseScanVisitor#visitComponent(org.eclipse.pde.api.tools.internal.provisional.descriptors.IComponentDescriptor)
+		Set<IComponentDescriptor> consumers = new HashSet<IComponentDescriptor>();
+
+		/*
+		 * (non-Javadoc)
+		 * @see
+		 * org.eclipse.pde.api.tools.internal.search.UseScanVisitor#visitComponent
+		 * (org.eclipse.pde.api.tools.internal.provisional.descriptors.
+		 * IComponentDescriptor)
 		 */
+		@Override
 		public boolean visitComponent(IComponentDescriptor target) {
 			return true;
 		}
-		
-		/* (non-Javadoc)
-		 * @see org.eclipse.pde.api.tools.internal.search.UseScanVisitor#visitReferencingComponent(org.eclipse.pde.api.tools.internal.provisional.descriptors.IComponentDescriptor)
+
+		/*
+		 * (non-Javadoc)
+		 * @see org.eclipse.pde.api.tools.internal.search.UseScanVisitor#
+		 * visitReferencingComponent
+		 * (org.eclipse.pde.api.tools.internal.provisional
+		 * .descriptors.IComponentDescriptor)
 		 */
+		@Override
 		public boolean visitReferencingComponent(IComponentDescriptor component) {
 			consumers.add(component);
 			return false;
 		}
-		
-		/* (non-Javadoc)
-		 * @see org.eclipse.pde.api.tools.internal.search.UseScanVisitor#visitMember(org.eclipse.pde.api.tools.internal.provisional.descriptors.IMemberDescriptor)
+
+		/*
+		 * (non-Javadoc)
+		 * @see
+		 * org.eclipse.pde.api.tools.internal.search.UseScanVisitor#visitMember
+		 * (org
+		 * .eclipse.pde.api.tools.internal.provisional.descriptors.IMemberDescriptor
+		 * )
 		 */
+		@Override
 		public boolean visitMember(IMemberDescriptor referencedMember) {
 			return false;
 		}
-		
-		/* (non-Javadoc)
-		 * @see org.eclipse.pde.api.tools.internal.search.UseScanVisitor#visitReference(org.eclipse.pde.api.tools.internal.search.IReferenceDescriptor)
+
+		/*
+		 * (non-Javadoc)
+		 * @see
+		 * org.eclipse.pde.api.tools.internal.search.UseScanVisitor#visitReference
+		 * (org.eclipse.pde.api.tools.internal.search.IReferenceDescriptor)
 		 */
+		@Override
 		public void visitReference(IReferenceDescriptor reference) {
 		}
-		
+
 	}
-	
+
 	/**
-	 * Use scan visitor that produces the report data for a single consumer bundle.  The visitor collects the
-	 * report data in a {@link Consumer}.
-	 *
+	 * Use scan visitor that produces the report data for a single consumer
+	 * bundle. The visitor collects the report data in a {@link Consumer}.
+	 * 
 	 */
-	class ConsumerReportVisitor extends UseScanVisitor{
+	class ConsumerReportVisitor extends UseScanVisitor {
 		Consumer consumer;
-		Map producers = new HashMap();
+		Map<String, Producer> producers = new HashMap<String, Producer>();
 		private IComponentDescriptor consumerDescriptor;
 		private Producer currentProducer;
 		private Type2 currenttype = null;
 		private Member currentmember = null;
-		
+
 		/**
-		 * Cache for type descriptions, maps enclosing descriptors to Type objects
+		 * Cache for type descriptions, maps enclosing descriptors to Type
+		 * objects
 		 */
-		HashMap keys = new HashMap();
-		
+		HashMap<IReferenceTypeDescriptor, Type2> keys = new HashMap<IReferenceTypeDescriptor, Type2>();
+
 		/**
 		 * Constructor
-		 * @param consumerDescriptor the bundle that we are collecting information on
+		 * 
+		 * @param consumerDescriptor the bundle that we are collecting
+		 *            information on
 		 */
-		public ConsumerReportVisitor(IComponentDescriptor consumerDescriptor){
+		public ConsumerReportVisitor(IComponentDescriptor consumerDescriptor) {
 			this.consumerDescriptor = consumerDescriptor;
 			consumer = new Consumer();
 			consumer.name = composeName(consumerDescriptor.getId(), consumerDescriptor.getVersion());
 		}
-		
-		/* (non-Javadoc)
-		 * @see org.eclipse.pde.api.tools.internal.search.UseScanVisitor#endVisitScan()
+
+		/*
+		 * (non-Javadoc)
+		 * @see
+		 * org.eclipse.pde.api.tools.internal.search.UseScanVisitor#endVisitScan
+		 * ()
 		 */
+		@Override
 		public void endVisitScan() {
 			try {
 				long start = 0;
-				if(ApiPlugin.DEBUG_USE_REPORT_CONVERTER) {
-					System.out.println("Writing consumer report for bundle: "+ consumer.name); //$NON-NLS-1$
+				if (ApiPlugin.DEBUG_USE_REPORT_CONVERTER) {
+					System.out.println("Writing consumer report for bundle: " + consumer.name); //$NON-NLS-1$
 					start = System.currentTimeMillis();
 				}
-				if(consumer.counts.getTotalRefCount() > 0) {
+				if (consumer.counts.getTotalRefCount() > 0) {
 					writeConsumerReport(consumer, producers);
 					producers.clear();
 				}
-				if(ApiPlugin.DEBUG_USE_REPORT_CONVERTER) {
-					System.out.println("Done in: "+(System.currentTimeMillis()-start)+ " ms"); //$NON-NLS-1$ //$NON-NLS-2$
+				if (ApiPlugin.DEBUG_USE_REPORT_CONVERTER) {
+					System.out.println("Done in: " + (System.currentTimeMillis() - start) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
-			}
-			catch(Exception e) {
+			} catch (Exception e) {
 				ApiPlugin.log(e);
 			}
 		}
-		
-		/* (non-Javadoc)
-		 * @see org.eclipse.pde.api.tools.internal.search.UseScanVisitor#visitComponent(org.eclipse.pde.api.tools.internal.provisional.descriptors.IComponentDescriptor)
+
+		/*
+		 * (non-Javadoc)
+		 * @see
+		 * org.eclipse.pde.api.tools.internal.search.UseScanVisitor#visitComponent
+		 * (org.eclipse.pde.api.tools.internal.provisional.descriptors.
+		 * IComponentDescriptor)
 		 */
+		@Override
 		public boolean visitComponent(IComponentDescriptor target) {
 			currentProducer = new Producer();
 			currentProducer.name = composeName(target.getId(), target.getVersion());
 			return true;
 		}
-		
-		/* (non-Javadoc)
-		 * @see org.eclipse.pde.api.tools.internal.search.UseScanVisitor#endVisitComponent(org.eclipse.pde.api.tools.internal.provisional.descriptors.IComponentDescriptor)
+
+		/*
+		 * (non-Javadoc)
+		 * @see org.eclipse.pde.api.tools.internal.search.UseScanVisitor#
+		 * endVisitComponent
+		 * (org.eclipse.pde.api.tools.internal.provisional.descriptors
+		 * .IComponentDescriptor)
 		 */
+		@Override
 		public void endVisitComponent(IComponentDescriptor target) {
-			if(this.currentProducer.counts.getTotalRefCount() > 0) {
+			if (this.currentProducer.counts.getTotalRefCount() > 0) {
 				try {
-					if (!producers.containsKey(currentProducer.name)){
+					if (!producers.containsKey(currentProducer.name)) {
 						producers.put(currentProducer.name, currentProducer);
 					}
 					long start = 0;
-					if(ApiPlugin.DEBUG_USE_REPORT_CONVERTER) {
-						System.out.println("Writing producer report for bundle: "+ currentProducer.name); //$NON-NLS-1$
+					if (ApiPlugin.DEBUG_USE_REPORT_CONVERTER) {
+						System.out.println("Writing producer report for bundle: " + currentProducer.name); //$NON-NLS-1$
 						start = System.currentTimeMillis();
 					}
-					if(consumer.counts.getTotalRefCount() > 0) {
+					if (consumer.counts.getTotalRefCount() > 0) {
 						writeProducerReport(consumer, currentProducer);
 					}
-					if(ApiPlugin.DEBUG_USE_REPORT_CONVERTER) {
-						System.out.println("Done in: "+(System.currentTimeMillis()-start)+ " ms"); //$NON-NLS-1$ //$NON-NLS-2$
+					if (ApiPlugin.DEBUG_USE_REPORT_CONVERTER) {
+						System.out.println("Done in: " + (System.currentTimeMillis() - start) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$
 					}
-				}
-				catch(Exception e) {
+				} catch (Exception e) {
 					ApiPlugin.log(e);
 				}
 			}
 		}
-		
-		/* (non-Javadoc)
-		 * @see org.eclipse.pde.api.tools.internal.search.UseScanVisitor#visitReferencingComponent(org.eclipse.pde.api.tools.internal.provisional.descriptors.IComponentDescriptor)
+
+		/*
+		 * (non-Javadoc)
+		 * @see org.eclipse.pde.api.tools.internal.search.UseScanVisitor#
+		 * visitReferencingComponent
+		 * (org.eclipse.pde.api.tools.internal.provisional
+		 * .descriptors.IComponentDescriptor)
 		 */
+		@Override
 		public boolean visitReferencingComponent(IComponentDescriptor component) {
 			return component.equals(consumerDescriptor);
 		}
-		
-		/* (non-Javadoc)
-		 * @see org.eclipse.pde.api.tools.internal.search.UseScanVisitor#endVisitReferencingComponent(org.eclipse.pde.api.tools.internal.provisional.descriptors.IComponentDescriptor)
+
+		/*
+		 * (non-Javadoc)
+		 * @see org.eclipse.pde.api.tools.internal.search.UseScanVisitor#
+		 * endVisitReferencingComponent
+		 * (org.eclipse.pde.api.tools.internal.provisional
+		 * .descriptors.IComponentDescriptor)
 		 */
+		@Override
 		public void endVisitReferencingComponent(IComponentDescriptor component) {
-			//Do nothing, visitor only runs for one consumer at a time, html gets written and the end of the scan
+			// Do nothing, visitor only runs for one consumer at a time, html
+			// gets written and the end of the scan
 		}
-		
-		/* (non-Javadoc)
-		 * @see org.eclipse.pde.api.tools.internal.search.UseScanVisitor#visitMember(org.eclipse.pde.api.tools.internal.provisional.descriptors.IMemberDescriptor)
+
+		/*
+		 * (non-Javadoc)
+		 * @see
+		 * org.eclipse.pde.api.tools.internal.search.UseScanVisitor#visitMember
+		 * (org
+		 * .eclipse.pde.api.tools.internal.provisional.descriptors.IMemberDescriptor
+		 * )
 		 */
+		@Override
 		public boolean visitMember(IMemberDescriptor referencedMember) {
 			IReferenceTypeDescriptor desc = getEnclosingDescriptor(referencedMember);
-			if(desc == null) {
+			if (desc == null) {
 				return false;
 			}
-			this.currenttype = (Type2) this.keys.get(desc);
-			if(this.currenttype == null) {
+			this.currenttype = this.keys.get(desc);
+			if (this.currenttype == null) {
 				this.currenttype = new Type2(desc);
 				this.keys.put(desc, this.currenttype);
 			}
-			
+
 			currentProducer.types.put(desc, currenttype);
-			
+
 			this.currentmember = new Member(referencedMember);
 			this.currenttype.referencingMembers.put(referencedMember, currentmember);
-			
+
 			return true;
 		}
-		
-		/* (non-Javadoc)
-		 * @see org.eclipse.pde.api.tools.internal.search.UseScanVisitor#endVisitMember(org.eclipse.pde.api.tools.internal.provisional.descriptors.IMemberDescriptor)
+
+		/*
+		 * (non-Javadoc)
+		 * @see
+		 * org.eclipse.pde.api.tools.internal.search.UseScanVisitor#endVisitMember
+		 * (org.eclipse.pde.api.tools.internal.provisional.descriptors.
+		 * IMemberDescriptor)
 		 */
+		@Override
 		public void endVisitMember(IMemberDescriptor referencedMember) {
-			if(this.currenttype.counts.getTotalRefCount() == 0) {
+			if (this.currenttype.counts.getTotalRefCount() == 0) {
 				IReferenceTypeDescriptor desc = getEnclosingDescriptor(referencedMember);
-				if(desc != null) {
+				if (desc != null) {
 					this.keys.remove(desc);
 					this.currentProducer.types.remove(this.currenttype);
 				}
 			}
 		}
-		
-		/* (non-Javadoc)
-		 * @see org.eclipse.pde.api.tools.internal.search.UseScanVisitor#visitReference(org.eclipse.pde.api.tools.internal.search.IReferenceDescriptor)
+
+		/*
+		 * (non-Javadoc)
+		 * @see
+		 * org.eclipse.pde.api.tools.internal.search.UseScanVisitor#visitReference
+		 * (org.eclipse.pde.api.tools.internal.search.IReferenceDescriptor)
 		 */
+		@Override
 		public void visitReference(IReferenceDescriptor reference) {
 			IMemberDescriptor fromMember = reference.getMember();
-			if(!acceptReference(reference.getReferencedMember(), topatterns) || 
-					!acceptReference(fromMember, frompatterns)) {
+			if (!acceptReference(reference.getReferencedMember(), topatterns) || !acceptReference(fromMember, frompatterns)) {
 				return;
 			}
 			int lineNumber = reference.getLineNumber();
 			int refKind = reference.getReferenceKind();
 			int visibility = reference.getVisibility();
 			String refname = org.eclipse.pde.api.tools.internal.builder.Reference.getReferenceText(refKind);
-			ArrayList refs = (ArrayList) this.currentmember.children.get(refname);
-			if(refs == null) {
-				refs = new ArrayList();
+			List<Reference> refs = this.currentmember.children.get(refname);
+			if (refs == null) {
+				refs = new ArrayList<Reference>();
 				this.currentmember.children.put(refname, refs);
 			}
 			refs.add(new Reference(fromMember, lineNumber, visibility, formatMessages(reference.getProblemMessages())));
-			switch(fromMember.getElementType()) {
+			switch (fromMember.getElementType()) {
 				case IElementDescriptor.TYPE: {
-					switch(visibility) {
+					switch (visibility) {
 						case VisibilityModifiers.API: {
 							this.consumer.counts.total_api_type_count++;
 							this.currentProducer.counts.total_api_type_count++;
@@ -281,11 +342,13 @@ public class ConsumerReportConvertor extends UseReportConverter {
 							this.currenttype.counts.total_illegal_type_count++;
 							break;
 						}
+						default:
+							break;
 					}
 					break;
 				}
 				case IElementDescriptor.METHOD: {
-					switch(visibility) {
+					switch (visibility) {
 						case VisibilityModifiers.API: {
 							this.consumer.counts.total_api_method_count++;
 							this.currentProducer.counts.total_api_method_count++;
@@ -321,11 +384,13 @@ public class ConsumerReportConvertor extends UseReportConverter {
 							this.currenttype.counts.total_illegal_method_count++;
 							break;
 						}
+						default:
+							break;
 					}
 					break;
 				}
 				case IElementDescriptor.FIELD: {
-					switch(visibility) {
+					switch (visibility) {
 						case VisibilityModifiers.API: {
 							this.consumer.counts.total_api_field_count++;
 							this.currentProducer.counts.total_api_field_count++;
@@ -361,59 +426,68 @@ public class ConsumerReportConvertor extends UseReportConverter {
 							this.currenttype.counts.total_illegal_field_count++;
 							break;
 						}
+						default:
+							break;
 					}
 					break;
 				}
+				default:
+					break;
 			}
 		}
-		
+
 		/**
 		 * Returns if the reference should be reported or not
+		 * 
 		 * @param desc
 		 * @return true if the reference should be reported false otherwise
 		 */
 		private boolean acceptReference(IMemberDescriptor desc, Pattern[] patterns) {
-			if(patterns != null) {
+			if (patterns != null) {
 				for (int i = 0; i < patterns.length; i++) {
-					if(patterns[i].matcher(desc.getPackage().getName()).find()) {
+					if (patterns[i].matcher(desc.getPackage().getName()).find()) {
 						return false;
 					}
 				}
 			}
 			return true;
 		}
-		
+
 		/**
-		 * Returns the enclosing {@link IReferenceTypeDescriptor} for the given member
-		 * descriptor
+		 * Returns the enclosing {@link IReferenceTypeDescriptor} for the given
+		 * member descriptor
+		 * 
 		 * @param member
-		 * @return the enclosing {@link IReferenceTypeDescriptor} or <code>null</code>
+		 * @return the enclosing {@link IReferenceTypeDescriptor} or
+		 *         <code>null</code>
 		 */
 		private IReferenceTypeDescriptor getEnclosingDescriptor(IMemberDescriptor member) {
-			switch(member.getElementType()) {
-			case IElementDescriptor.TYPE: {
-				return (IReferenceTypeDescriptor) member;
-			}
-			case IElementDescriptor.METHOD:
-			case IElementDescriptor.FIELD: {
-				return member.getEnclosingType();
-			}
+			switch (member.getElementType()) {
+				case IElementDescriptor.TYPE: {
+					return (IReferenceTypeDescriptor) member;
+				}
+				case IElementDescriptor.METHOD:
+				case IElementDescriptor.FIELD: {
+					return member.getEnclosingType();
+				}
+				default:
+					break;
 			}
 			return null;
 		}
-		
 
 		/**
 		 * Formats the arrays of messages
+		 * 
 		 * @param messages
 		 * @return the formatted messages or <code>null</code>
 		 */
 		private String formatMessages(String[] messages) {
-			if(messages != null) {
+			if (messages != null) {
 				StringBuffer buffer = new StringBuffer();
 				for (int i = 0; i < messages.length; i++) {
 					buffer.append(messages[i]);
-					if(i < messages.length-1) {
+					if (i < messages.length - 1) {
 						buffer.append("\n"); //$NON-NLS-1$
 					}
 				}
@@ -422,53 +496,60 @@ public class ConsumerReportConvertor extends UseReportConverter {
 			return null;
 		}
 	}
-	
-	class Consumer{
+
+	class Consumer {
 		String name;
 		CountGroup counts = new CountGroup();
 	}
-	
+
 	class Producer {
 		String name;
-		Map types = new HashMap();
+		Map<IReferenceTypeDescriptor, Type2> types = new HashMap<IReferenceTypeDescriptor, Type2>();
 		CountGroup counts = new CountGroup();
 	}
-	
-	class Type2 extends Type{
+
+	class Type2 extends Type {
 		public Type2(IElementDescriptor desc) {
 			super(desc);
 		}
-		Map referencingMembers = new HashMap();
+
+		Map<IMemberDescriptor, Member> referencingMembers = new HashMap<IMemberDescriptor, Member>();
 	}
-	
+
 	/**
 	 * Constructor
+	 * 
 	 * @param htmlroot the folder root where the HTML reports should be written
-	 * @param xmlroot the folder root where the current API use scan output is located
-	 * @param topatterns array of regular expressions used to prune references to a given name pattern
-	 * @param frompatterns array of regular expressions used to prune references from a given name pattern
+	 * @param xmlroot the folder root where the current API use scan output is
+	 *            located
+	 * @param topatterns array of regular expressions used to prune references
+	 *            to a given name pattern
+	 * @param frompatterns array of regular expressions used to prune references
+	 *            from a given name pattern
 	 */
 	public ConsumerReportConvertor(String htmlroot, String xmlroot, String[] topatterns, String[] frompatterns) {
 		super(htmlroot, xmlroot, topatterns, frompatterns);
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.UseReportConverter#parse(org.eclipse.core.runtime.IProgressMonitor)
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.search.UseReportConverter#parse(org
+	 * .eclipse.core.runtime.IProgressMonitor)
 	 */
-	protected List parse(IProgressMonitor monitor) throws Exception {
+	@Override
+	protected List<?> parse(IProgressMonitor monitor) throws Exception {
 		SubMonitor subMon = SubMonitor.convert(monitor, 20);
 		ListConsumersVisitor listVisitor = new ListConsumersVisitor();
-		UseScanParser parser = new UseScanParser();
-		parser.parse(getXmlLocation(), subMon.newChild(5), listVisitor);
-		List consumerReports = new ArrayList();
-		
-		IComponentDescriptor currentConsumer = null;
+		UseScanParser lparser = new UseScanParser();
+		lparser.parse(getXmlLocation(), subMon.newChild(5), listVisitor);
+		List<Consumer> consumerReports = new ArrayList<Consumer>();
+
 		ConsumerReportVisitor visitor = null;
-		for (Iterator iterator = listVisitor.consumers.iterator(); iterator.hasNext();) {
-			currentConsumer = (IComponentDescriptor)iterator.next();
-			visitor = new ConsumerReportVisitor(currentConsumer);
-			parser.parse(getXmlLocation(), null, visitor);
-			if (visitor.consumer.counts.getTotalRefCount() > 0){
+		for (IComponentDescriptor consumer : listVisitor.consumers) {
+			visitor = new ConsumerReportVisitor(consumer);
+			lparser.parse(getXmlLocation(), null, visitor);
+			if (visitor.consumer.counts.getTotalRefCount() > 0) {
 				consumerReports.add(visitor.consumer);
 			}
 		}
@@ -478,89 +559,93 @@ public class ConsumerReportConvertor extends UseReportConverter {
 	protected String getConsumerTitle(String bundle) {
 		return NLS.bind(SearchMessages.ConsumerReportConvertor_ConsumerTitle, bundle);
 	}
-	
+
 	protected String getProducerTitle(String consumer, String producer) {
 		return NLS.bind(SearchMessages.ConsumerReportConvertor_ProducerTitle, consumer, producer);
 	}
-	
+
+	@Override
 	protected String getIndexTitle() {
 		return SearchMessages.ConsumerReportConvertor_IndexTitle;
 	}
-	
+
 	/**
 	 * Writes the main index file for the reports
-	 * @param scanResult a list of {@link Consumer} objects returns from the use scan parser
-	 * @param reportsRoot 
+	 * 
+	 * @param scanResult a list of {@link Consumer} objects returns from the use
+	 *            scan parser
+	 * @param reportsRoot
 	 */
-	void writeIndexPage(List scanResult) throws Exception {
-		Collections.sort(scanResult, new Comparator() {
+	@Override
+	protected void writeIndexPage(List<?> scanResult) throws Exception {
+		Collections.sort(scanResult, new Comparator<Object>() {
+			@Override
 			public int compare(Object o1, Object o2) {
-				return ((Consumer)o1).name.compareTo(((Consumer)o2).name);
+				return ((Consumer) o1).name.compareTo(((Consumer) o2).name);
 			}
 		});
-		
+
 		PrintWriter writer = null;
 		try {
 			File reportIndex = new File(getHtmlLocation(), "index.html"); //$NON-NLS-1$
-			if(!reportIndex.exists()) {
+			if (!reportIndex.exists()) {
 				reportIndex.createNewFile();
 			}
 			setReportIndex(reportIndex);
-			
+
 			StringBuffer buffer = new StringBuffer();
 			buffer.append(HTML_HEADER);
 			buffer.append(OPEN_HTML).append(OPEN_HEAD).append(CONTENT_TYPE_META);
 			writeMetadataHeaders(buffer);
-			buffer.append(OPEN_TITLE).append(getIndexTitle()).append(CLOSE_TITLE); 
-			buffer.append(CLOSE_HEAD); 
-			buffer.append(OPEN_BODY); 
+			buffer.append(OPEN_TITLE).append(getIndexTitle()).append(CLOSE_TITLE);
+			buffer.append(CLOSE_HEAD);
+			buffer.append(OPEN_BODY);
 			buffer.append(OPEN_H3).append(getIndexTitle()).append(CLOSE_H3);
 			try {
 				getMetadata();
 				writeMetadataSummary(buffer);
+			} catch (Exception e) {
+				// do nothing, failed meta-data should not prevent the index
+				// from being written
 			}
-			catch(Exception e) {
-				//do nothing, failed meta-data should not prevent the index from being written
+			buffer.append(OPEN_H4).append(SearchMessages.UseReportConvertor_additional_infos_section).append(CLOSE_H4);
+			if (hasMissing()) {
+				buffer.append(OPEN_P);
+				buffer.append(NLS.bind(SearchMessages.UseReportConverter_missing_bundles_prevented_scan, new String[] {
+						" <a href=\"./missing.html\">", "</a>" })); //$NON-NLS-1$ //$NON-NLS-2$
+				buffer.append(CLOSE_P);
 			}
-			buffer.append(OPEN_H4).append(SearchMessages.UseReportConvertor_additional_infos_section).append(CLOSE_H4); 
-			if(hasMissing()) {
-				buffer.append(OPEN_P); 
-				buffer.append(NLS.bind(SearchMessages.UseReportConverter_missing_bundles_prevented_scan, 
-						new String[] {" <a href=\"./missing.html\">", "</a>"})); //$NON-NLS-1$ //$NON-NLS-2$
-				buffer.append(CLOSE_P); 
-			}
-			buffer.append(OPEN_P); 
-			buffer.append(NLS.bind(SearchMessages.UseReportConverter_bundles_that_were_not_searched, new String[] {"<a href=\"./not_searched.html\">", "</a></p>\n"}));  //$NON-NLS-1$//$NON-NLS-2$
+			buffer.append(OPEN_P);
+			buffer.append(NLS.bind(SearchMessages.UseReportConverter_bundles_that_were_not_searched, new String[] {
+					"<a href=\"./not_searched.html\">", "</a></p>\n" })); //$NON-NLS-1$//$NON-NLS-2$
 			String additional = getAdditionalIndexInfo(scanResult.size() > 0);
-			if(additional != null) {
+			if (additional != null) {
 				buffer.append(additional);
 			}
-			if(scanResult.size() > 0) {
+			if (scanResult.size() > 0) {
 				buffer.append(OPEN_P).append(SearchMessages.UseReportConverter_inlined_description).append(CLOSE_P);
 				buffer.append(getColourLegend());
 				buffer.append(getReferencesTableHeader(SearchMessages.ConsumerReportConvertor_ProducerListHeader, SearchMessages.UseReportConverter_bundle, true));
-				if(scanResult.size() > 0) {
-					Consumer consumer = null;
+				if (scanResult.size() > 0) {
 					File refereehtml = null;
 					String link = null;
-					for(Iterator iter = scanResult.iterator(); iter.hasNext();) {
-						consumer = (Consumer) iter.next();
-						if(consumer != null) {
-							refereehtml = new File(getReportsRoot(), consumer.name+File.separator+"index.html"); //$NON-NLS-1$
+					for (Object obj : scanResult) {
+						if (obj instanceof Consumer) {
+							Consumer consumer = (Consumer) obj;
+							refereehtml = new File(getReportsRoot(), consumer.name + File.separator + "index.html"); //$NON-NLS-1$
 							link = extractLinkFrom(getReportsRoot(), refereehtml.getAbsolutePath());
 							buffer.append(getReferenceTableEntry(consumer.counts, link, consumer.name, true));
 						}
 					}
-					buffer.append(CLOSE_TABLE); 
+					buffer.append(CLOSE_TABLE);
 				}
-			}
-			else {
-				buffer.append(getNoReportsInformation()); 
+			} else {
+				buffer.append(getNoReportsInformation());
 			}
 			buffer.append(W3C_FOOTER);
-			buffer.append(CLOSE_BODY).append(CLOSE_HTML);  
-			
-			//write the file
+			buffer.append(CLOSE_BODY).append(CLOSE_HTML);
+
+			// write the file
 			writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(reportIndex), IApiCoreConstants.UTF_8));
 			writer.print(buffer.toString());
 			writer.flush();
@@ -572,24 +657,26 @@ public class ConsumerReportConvertor extends UseReportConverter {
 			}
 		}
 	}
+
 	/**
-	 * Writes the html report for a specific consumer.  It lists all the producers (bundles that provide the api) that
-	 * the consumer bundle references.
+	 * Writes the HTML report for a specific consumer. It lists all the
+	 * producers (bundles that provide the API) that the consumer bundle
+	 * references.
 	 * 
 	 * @param consumer consumer to write the report for
 	 * @param producers a map of producer name to a {@link Producer} object
 	 * @throws Exception
 	 */
-	protected void writeConsumerReport(Consumer consumer, Map producers) throws Exception {
+	protected void writeConsumerReport(Consumer consumer, Map<String, Producer> producers) throws Exception {
 		PrintWriter writer = null;
 		File originhtml = null;
 		try {
 			File htmlroot = new File(getHtmlLocation(), consumer.name);
-			if(!htmlroot.exists()) {
+			if (!htmlroot.exists()) {
 				htmlroot.mkdirs();
 			}
 			originhtml = new File(htmlroot, "index.html"); //$NON-NLS-1$
-			if(!originhtml.exists()) {
+			if (!originhtml.exists()) {
 				originhtml.createNewFile();
 			}
 			StringBuffer buffer = new StringBuffer();
@@ -597,53 +684,52 @@ public class ConsumerReportConvertor extends UseReportConverter {
 			buffer.append(OPEN_HTML).append(OPEN_HEAD).append(CONTENT_TYPE_META);
 			buffer.append(REF_STYLE);
 			buffer.append(REF_SCRIPT);
-			buffer.append(OPEN_TITLE).append(getConsumerTitle(consumer.name)).append(CLOSE_TITLE); 
-			buffer.append(CLOSE_HEAD); 
-			buffer.append(OPEN_BODY); 
+			buffer.append(OPEN_TITLE).append(getConsumerTitle(consumer.name)).append(CLOSE_TITLE);
+			buffer.append(CLOSE_HEAD);
+			buffer.append(OPEN_BODY);
 			buffer.append(OPEN_H3).append(getConsumerTitle(consumer.name)).append(CLOSE_H3);
-			
-			List producerNames = new ArrayList();
+
+			List<String> producerNames = new ArrayList<String>();
 			producerNames.addAll(producers.keySet());
 			Collections.sort(producerNames, compare);
-			
+
 			buffer.append(getReferencesTableHeader(SearchMessages.ConsumerReportConvertor_ConsumerListHeader, SearchMessages.UseReportConverter_bundle, true));
 			Producer producer = null;
 			File refereehtml = null;
 			String link = null;
-			for(Iterator iter = producerNames.iterator(); iter.hasNext();) {
-				producer = (Producer)producers.get(iter.next());
-				if(producer != null) {
-					refereehtml = new File(getReportsRoot(), producer.name+File.separator+"index.html"); //$NON-NLS-1$
+			for (Iterator<String> iter = producerNames.iterator(); iter.hasNext();) {
+				producer = producers.get(iter.next());
+				if (producer != null) {
+					refereehtml = new File(getReportsRoot(), producer.name + File.separator + "index.html"); //$NON-NLS-1$
 					link = extractLinkFrom(getReportsRoot(), refereehtml.getAbsolutePath());
 					buffer.append(getReferenceTableEntry(producer.counts, link, producer.name, true));
 				}
 			}
-			buffer.append(CLOSE_TABLE); 
+			buffer.append(CLOSE_TABLE);
 			buffer.append(BR);
-			
+
 			buffer.append(OPEN_P).append("<a href=\"../index.html\">").append(SearchMessages.UseReportConverter_back_to_bundle_index).append(CLOSE_A).append(CLOSE_P); //$NON-NLS-1$ 
 			buffer.append(W3C_FOOTER);
-			
-			writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(originhtml), IApiCoreConstants.UTF_8));;
+
+			writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(originhtml), IApiCoreConstants.UTF_8));
 			writer.println(buffer.toString());
 			writer.flush();
-		}
-		catch(IOException ioe) {
+		} catch (IOException ioe) {
 			throw new Exception(NLS.bind(SearchMessages.ioexception_writing_html_file, originhtml.getAbsolutePath()), ioe);
-		}
-		finally {
+		} finally {
 			if (writer != null) {
 				writer.close();
 			}
 		}
 	}
-	
+
 	/**
-	 * Writes the html report for a given producer.  The page lists all the types that are referenced by the
-	 * parent consumer that are from the producer.
+	 * Writes the html report for a given producer. The page lists all the types
+	 * that are referenced by the parent consumer that are from the producer.
 	 * <p>
 	 * Called from {@link #writeConsumerReport(Consumer)}
 	 * </p>
+	 * 
 	 * @param producer producer to write the report for
 	 * @throws Exception
 	 */
@@ -652,11 +738,11 @@ public class ConsumerReportConvertor extends UseReportConverter {
 		File originhtml = null;
 		try {
 			File htmlroot = new Path(getHtmlLocation()).append(parentConsumer.name).append(producer.name).toFile();
-			if(!htmlroot.exists()) {
+			if (!htmlroot.exists()) {
 				htmlroot.mkdirs();
 			}
 			originhtml = new File(htmlroot, "index.html"); //$NON-NLS-1$
-			if(!originhtml.exists()) {
+			if (!originhtml.exists()) {
 				originhtml.createNewFile();
 			}
 			StringBuffer buffer = new StringBuffer();
@@ -664,55 +750,53 @@ public class ConsumerReportConvertor extends UseReportConverter {
 			buffer.append(OPEN_HTML).append(OPEN_HEAD).append(CONTENT_TYPE_META);
 			buffer.append(REF_STYLE);
 			buffer.append(REF_SCRIPT);
-			buffer.append(OPEN_TITLE).append(getProducerTitle(parentConsumer.name, producer.name)).append(CLOSE_TITLE); 
-			buffer.append(CLOSE_HEAD); 
-			buffer.append(OPEN_BODY); 
+			buffer.append(OPEN_TITLE).append(getProducerTitle(parentConsumer.name, producer.name)).append(CLOSE_TITLE);
+			buffer.append(CLOSE_HEAD);
+			buffer.append(OPEN_BODY);
 			buffer.append(OPEN_H3).append(getProducerTitle(parentConsumer.name, producer.name)).append(CLOSE_H3);
 			String additional = getAdditionalReferencedTypeInformation();
-			if(additional != null) {
+			if (additional != null) {
 				buffer.append(additional);
 			}
 			buffer.append(getReferencesTableHeader(SearchMessages.ConsumerReportConvertor_TypeListHeader, SearchMessages.UseReportConverter_referenced_type, false));
-			
-			List producerTypes = new ArrayList();
+
+			List<IReferenceTypeDescriptor> producerTypes = new ArrayList<IReferenceTypeDescriptor>();
 			producerTypes.addAll(producer.types.keySet());
 			Collections.sort(producerTypes, compare);
-			
+
 			CountGroup counts = null;
 			String link = null;
 			File typefile = null;
 			Type2 type = null;
-			for (Iterator iter = producerTypes.iterator(); iter.hasNext();) {
-				type = (Type2) producer.types.get(iter.next());
+			for (Iterator<IReferenceTypeDescriptor> iter = producerTypes.iterator(); iter.hasNext();) {
+				type = producer.types.get(iter.next());
 				counts = type.counts;
-				
+
 				String fqname = Signatures.getQualifiedTypeSignature((IReferenceTypeDescriptor) type.desc);
-				typefile = new File(htmlroot, fqname+HTML_EXTENSION); 
-				if(!typefile.exists()) {
+				typefile = new File(htmlroot, fqname + HTML_EXTENSION);
+				if (!typefile.exists()) {
 					typefile.createNewFile();
 				}
 				link = extractLinkFrom(htmlroot, typefile.getAbsolutePath());
 				buffer.append(getReferenceTableEntry(counts, link, fqname, false));
 				writeTypePage(type.referencingMembers, type, typefile, fqname);
 			}
-			buffer.append(CLOSE_TABLE); 
+			buffer.append(CLOSE_TABLE);
 			buffer.append(BR);
-			
+
 			buffer.append(OPEN_P).append("<a href=\"../index.html\">").append(NLS.bind(SearchMessages.ConsumerReportConvertor_BackLinkToConsumer, parentConsumer.name)).append(CLOSE_A).append(CLOSE_P); //$NON-NLS-1$ 
 			buffer.append(W3C_FOOTER);
-			
-			writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(originhtml), IApiCoreConstants.UTF_8));;
+
+			writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(originhtml), IApiCoreConstants.UTF_8));
 			writer.println(buffer.toString());
 			writer.flush();
-		}
-		catch(IOException ioe) {
+		} catch (IOException ioe) {
 			throw new Exception(NLS.bind(SearchMessages.ioexception_writing_html_file, originhtml.getAbsolutePath()));
-		}
-		finally {
+		} finally {
 			if (writer != null) {
 				writer.close();
 			}
 		}
 	}
-	
+
 }

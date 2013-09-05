@@ -38,6 +38,7 @@ public class ConstructorParameterLeak extends LeakTest {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getDefaultProblemId()
 	 */
+	@Override
 	protected int getDefaultProblemId() {
 		if(pid == -1) {
 			pid = ApiProblemFactory.createProblemId(
@@ -59,8 +60,9 @@ public class ConstructorParameterLeak extends LeakTest {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.leak.LeakTest#getTestSourcePath()
 	 */
+	@Override
 	protected IPath getTestSourcePath() {
-		return super.getTestSourcePath().append("method");
+		return super.getTestSourcePath().append("method"); //$NON-NLS-1$
 	}
 	
 	/**
@@ -81,10 +83,10 @@ public class ConstructorParameterLeak extends LeakTest {
 	
 	private void x1(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemIdSet(4));
-		String typename = "testCPL1";
+		String typename = "testCPL1"; //$NON-NLS-1$
 		setExpectedMessageArgs(new String[][] {{TESTING_INTERNAL_CLASS_NAME, typename}, {TESTING_INTERNAL_CLASS_NAME, typename},
 				{TESTING_INTERNAL_CLASS_NAME, typename}, {TESTING_INTERNAL_CLASS_NAME, typename}});
-		deployLeakTest(typename+".java", inc);
+		deployLeakTest(typename+".java", inc); //$NON-NLS-1$
 	}
 	
 	/**
@@ -105,8 +107,8 @@ public class ConstructorParameterLeak extends LeakTest {
 	
 	private void x2(boolean inc) {
 		expectingNoProblems();
-		String typename = "testCPL2";
-		deployLeakTest(typename+".java", inc);
+		String typename = "testCPL2"; //$NON-NLS-1$
+		deployLeakTest(typename+".java", inc); //$NON-NLS-1$
 	}
 	
 	/**
@@ -127,10 +129,10 @@ public class ConstructorParameterLeak extends LeakTest {
 	
 	private void x3(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemIdSet(4));
-		String typename = "testCPL3";
+		String typename = "testCPL3"; //$NON-NLS-1$
 		setExpectedMessageArgs(new String[][] {{TESTING_INTERNAL_INTERFACE_NAME, typename}, {TESTING_INTERNAL_INTERFACE_NAME, typename},
 				{TESTING_INTERNAL_INTERFACE_NAME, typename}, {TESTING_INTERNAL_INTERFACE_NAME, typename}});
-		deployLeakTest(typename+".java", inc);
+		deployLeakTest(typename+".java", inc); //$NON-NLS-1$
 	}
 	
 	/**
@@ -151,8 +153,8 @@ public class ConstructorParameterLeak extends LeakTest {
 	
 	private void x4(boolean inc) {
 		expectingNoProblems();
-		String typename = "testCPL4";
-		deployLeakTest(typename+".java", inc);
+		String typename = "testCPL4"; //$NON-NLS-1$
+		deployLeakTest(typename+".java", inc); //$NON-NLS-1$
 	}
 	
 	/**
@@ -173,11 +175,11 @@ public class ConstructorParameterLeak extends LeakTest {
 	
 	private void x5(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemIdSet(8));
-		String typename = "testCPL5";
+		String typename = "testCPL5"; //$NON-NLS-1$
 		setExpectedMessageArgs(new String[][] {{TESTING_INTERNAL_INTERFACE_NAME, typename}, {TESTING_INTERNAL_INTERFACE_NAME, typename},
 				{TESTING_INTERNAL_INTERFACE_NAME, typename}, {TESTING_INTERNAL_INTERFACE_NAME, typename}, {TESTING_INTERNAL_CLASS_NAME, typename}, {TESTING_INTERNAL_CLASS_NAME, typename},
 				{TESTING_INTERNAL_CLASS_NAME, typename}, {TESTING_INTERNAL_CLASS_NAME, typename}});
-		deployLeakTest(typename+".java", inc);
+		deployLeakTest(typename+".java", inc); //$NON-NLS-1$
 	}
 	
 	/**
@@ -198,8 +200,8 @@ public class ConstructorParameterLeak extends LeakTest {
 	
 	private void x6(boolean inc) {
 		expectingNoProblems();
-		String typename = "testCPL6";
-		deployLeakTest(typename+".java", inc);
+		String typename = "testCPL6"; //$NON-NLS-1$
+		deployLeakTest(typename+".java", inc); //$NON-NLS-1$
 	}
 	
 	/**
@@ -220,13 +222,13 @@ public class ConstructorParameterLeak extends LeakTest {
 	
 	private void x7(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemIdSet(8));
-		String typename = "testCPL7";
-		String innertype = "inner";
+		String typename = "testCPL7"; //$NON-NLS-1$
+		String innertype = "inner"; //$NON-NLS-1$
 		setExpectedMessageArgs(new String[][] {{TESTING_INTERNAL_INTERFACE_NAME, innertype}, {TESTING_INTERNAL_INTERFACE_NAME, innertype},
 				{TESTING_INTERNAL_INTERFACE_NAME, innertype}, {TESTING_INTERNAL_INTERFACE_NAME, innertype}, 
 				{TESTING_INTERNAL_CLASS_NAME, innertype}, {TESTING_INTERNAL_CLASS_NAME, innertype}, 
 				{TESTING_INTERNAL_CLASS_NAME, innertype}, {TESTING_INTERNAL_CLASS_NAME, innertype}});
-		deployLeakTest(typename+".java", inc);
+		deployLeakTest(typename+".java", inc); //$NON-NLS-1$
 	}
 	
 	/**
@@ -247,8 +249,8 @@ public class ConstructorParameterLeak extends LeakTest {
 	
 	private void x8(boolean inc) {
 		expectingNoProblems();
-		String typename = "testCPL8";
-		deployLeakTest(typename+".java", inc);
+		String typename = "testCPL8"; //$NON-NLS-1$
+		deployLeakTest(typename+".java", inc); //$NON-NLS-1$
 	}
 	
 	/**
@@ -269,14 +271,14 @@ public class ConstructorParameterLeak extends LeakTest {
 	
 	private void x9(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemIdSet(8));
-		String typename = "testCPL9";
-		String innertype1 = "inner2";
-		String innertype2 = "inner3";
+		String typename = "testCPL9"; //$NON-NLS-1$
+		String innertype1 = "inner2"; //$NON-NLS-1$
+		String innertype2 = "inner3"; //$NON-NLS-1$
 		setExpectedMessageArgs(new String[][] {{TESTING_INTERNAL_INTERFACE_NAME, innertype1}, {TESTING_INTERNAL_INTERFACE_NAME, innertype1},
 				{TESTING_INTERNAL_INTERFACE_NAME, innertype2}, {TESTING_INTERNAL_INTERFACE_NAME, innertype2}, 
 				{TESTING_INTERNAL_CLASS_NAME, innertype1}, {TESTING_INTERNAL_CLASS_NAME, innertype1}, 
 				{TESTING_INTERNAL_CLASS_NAME, innertype2}, {TESTING_INTERNAL_CLASS_NAME, innertype2}});
-		deployLeakTest(typename+".java", inc);
+		deployLeakTest(typename+".java", inc); //$NON-NLS-1$
 	}
 	
 	/**
@@ -297,8 +299,8 @@ public class ConstructorParameterLeak extends LeakTest {
 	
 	private void x10(boolean inc) {
 		expectingNoProblems();
-		String typename = "testCPL10";
-		deployLeakTest(typename+".java", inc);
+		String typename = "testCPL10"; //$NON-NLS-1$
+		deployLeakTest(typename+".java", inc); //$NON-NLS-1$
 	}
 	
 	/**
@@ -319,9 +321,9 @@ public class ConstructorParameterLeak extends LeakTest {
 	
 	private void x11(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemIdSet(6));
-		String typename = "testCPL11";
-		String innertype1 = "inner2";
-		String innertype2 = "inner3";
+		String typename = "testCPL11"; //$NON-NLS-1$
+		String innertype1 = "inner2"; //$NON-NLS-1$
+		String innertype2 = "inner3"; //$NON-NLS-1$
 		setExpectedMessageArgs(new String[][] {
 				{TESTING_INTERNAL_INTERFACE_NAME, innertype1}, 
 				{TESTING_INTERNAL_CLASS_NAME, innertype1},
@@ -329,7 +331,7 @@ public class ConstructorParameterLeak extends LeakTest {
 				{TESTING_INTERNAL_INTERFACE_NAME, innertype2}, 
 				{TESTING_INTERNAL_CLASS_NAME, innertype2}, 
 				{TESTING_INTERNAL_CLASS_NAME, innertype2}});
-		deployLeakTest(typename+".java", inc);
+		deployLeakTest(typename+".java", inc); //$NON-NLS-1$
 	}
 	
 	/**
@@ -350,15 +352,15 @@ public class ConstructorParameterLeak extends LeakTest {
 	
 	private void x12(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemIdSet(4));
-		String typename = "testCPL12";
-		String innertype1 = "inner2";
-		String innertype2 = "inner3";
+		String typename = "testCPL12"; //$NON-NLS-1$
+		String innertype1 = "inner2"; //$NON-NLS-1$
+		String innertype2 = "inner3"; //$NON-NLS-1$
 		setExpectedMessageArgs(new String[][] {
 				{TESTING_INTERNAL_INTERFACE_NAME, innertype1}, 
 				{TESTING_INTERNAL_CLASS_NAME, innertype1},
 				{TESTING_INTERNAL_INTERFACE_NAME, innertype2}, 
 				{TESTING_INTERNAL_CLASS_NAME, innertype2}});
-		deployLeakTest(typename+".java", inc);
+		deployLeakTest(typename+".java", inc); //$NON-NLS-1$
 	}
 	
 	/**
@@ -379,8 +381,8 @@ public class ConstructorParameterLeak extends LeakTest {
 	
 	private void x13(boolean inc) {
 		expectingNoProblems();
-		String typename = "testCPL13";
-		deployLeakTest(typename+".java", inc);
+		String typename = "testCPL13"; //$NON-NLS-1$
+		deployLeakTest(typename+".java", inc); //$NON-NLS-1$
 	}
 	
 	
@@ -400,8 +402,8 @@ public class ConstructorParameterLeak extends LeakTest {
 	
 	private void x14(boolean inc) {
 		setExpectedProblemIds(new int[] {getDefaultProblemId()});
-		String typename = "testCPL14";
-		setExpectedMessageArgs(new String[][] {{"outercpl14", typename}});
-		deployLeakTest(typename+".java", inc);
+		String typename = "testCPL14"; //$NON-NLS-1$
+		setExpectedMessageArgs(new String[][] {{"outercpl14", typename}}); //$NON-NLS-1$
+		deployLeakTest(typename+".java", inc); //$NON-NLS-1$
 	}	
 }

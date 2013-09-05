@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,14 +19,13 @@ import org.eclipse.osgi.service.resolver.VersionConstraint;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
 
-
-public class SkippedComponent implements IApiElement{
+public class SkippedComponent implements IApiElement {
 	/**
 	 * the id of of the skipped component
 	 */
 	private String componentid;
 	/**
-	 * The version of the component 
+	 * The version of the component
 	 */
 	private String version;
 	/**
@@ -36,47 +35,54 @@ public class SkippedComponent implements IApiElement{
 
 	/**
 	 * Constructor
+	 * 
 	 * @param componentid
 	 * @param version
-	 * @param errors the {@link ResolverError}s, if any, that prevented this component from being scanned
+	 * @param errors the {@link ResolverError}s, if any, that prevented this
+	 *            component from being scanned
 	 */
 	public SkippedComponent(String componentid, String version, ResolverError[] errors) {
 		this.componentid = componentid;
 		this.version = version;
 		this.errors = errors;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object obj) {
-		if(obj instanceof SkippedComponent) {
-			return this.componentid.equals(((SkippedComponent)obj).componentid);
+		if (obj instanceof SkippedComponent) {
+			return this.componentid.equals(((SkippedComponent) obj).componentid);
 		}
 		return false;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		return this.componentid.hashCode();
 	}
-	
+
 	/**
 	 * @return the component id of the skipped component
 	 */
 	public String getComponentId() {
 		return this.componentid;
 	}
-	
+
 	/**
-	 * @return true if the component was skipped because it appeared in an exclude list
+	 * @return true if the component was skipped because it appeared in an
+	 *         exclude list
 	 */
 	public boolean wasExcluded() {
 		return this.errors == null;
 	}
-	
+
 	/**
 	 * @return true if the the component had resolution errors
 	 */
@@ -87,6 +93,7 @@ public class SkippedComponent implements IApiElement{
 	/**
 	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiElement#getAncestor(int)
 	 */
+	@Override
 	public IApiElement getAncestor(int ancestorType) {
 		return null;
 	}
@@ -97,10 +104,11 @@ public class SkippedComponent implements IApiElement{
 	public String getVersion() {
 		return this.version;
 	}
-	
+
 	/**
 	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiElement#getApiComponent()
 	 */
+	@Override
 	public IApiComponent getApiComponent() {
 		return null;
 	}
@@ -108,6 +116,7 @@ public class SkippedComponent implements IApiElement{
 	/**
 	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiElement#getName()
 	 */
+	@Override
 	public String getName() {
 		return this.componentid;
 	}
@@ -115,6 +124,7 @@ public class SkippedComponent implements IApiElement{
 	/**
 	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiElement#getParent()
 	 */
+	@Override
 	public IApiElement getParent() {
 		return null;
 	}
@@ -122,54 +132,57 @@ public class SkippedComponent implements IApiElement{
 	/**
 	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiElement#getType()
 	 */
+	@Override
 	public int getType() {
 		return IApiElement.COMPONENT;
 	}
-	
+
 	/**
 	 * @return the errors
 	 */
 	public ResolverError[] getErrors() {
 		return this.errors;
 	}
-	
+
 	/**
 	 * Resolves the root errors for the given set of errors
-	 * @param errors
+	 * 
+	 * @param rerrors
 	 * @param collector
 	 * @return the resolved leaf set of problem messages
 	 */
-	private String[] resolveRootErrors(ResolverError[] errors) {
-		TreeSet collector = new TreeSet(new Comparator() {
+	private String[] resolveRootErrors(ResolverError[] rerrors) {
+		TreeSet<String> collector = new TreeSet<String>(new Comparator<Object>() {
+			@Override
 			public int compare(Object o1, Object o2) {
-				return ((String)o1).compareTo((String)o2);
+				return ((String) o1).compareTo((String) o2);
 			}
 		});
 		ResolverError error = null;
 		VersionConstraint[] constraints = null;
 		BundleDescription[] bundle = new BundleDescription[1];
-		for (int i = 0; i < errors.length; i++) {
-			error = errors[i];
-			if(error.getType() != ResolverError.MISSING_REQUIRE_BUNDLE) {
+		for (int i = 0; i < rerrors.length; i++) {
+			error = rerrors[i];
+			if (error.getType() != ResolverError.MISSING_REQUIRE_BUNDLE) {
 				collector.add(error.toString());
 			}
 			bundle[0] = error.getBundle();
 			constraints = bundle[0].getContainingState().getStateHelper().getUnsatisfiedLeaves(bundle);
-			if(constraints.length == 0) {
+			if (constraints.length == 0) {
 				collector.add(error.toString());
 			}
 			for (int j = 0; j < constraints.length; j++) {
 				collector.add(constraints[j].toString());
 			}
 		}
-		return (String[]) collector.toArray(new String[collector.size()]);
+		return collector.toArray(new String[collector.size()]);
 	}
-	
+
 	/**
 	 * @return the formatted details of why the component was skipped
 	 */
 	public String getErrorDetails() {
-		if(this.errors != null) {
+		if (this.errors != null) {
 			StringBuffer buffer = new StringBuffer();
 			String[] problems = resolveRootErrors(this.errors);
 			for (int i = 0; i < problems.length; i++) {

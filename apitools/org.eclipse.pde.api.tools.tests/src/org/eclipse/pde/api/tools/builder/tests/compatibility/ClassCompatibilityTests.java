@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,26 +21,27 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.tests.junit.extension.TestCase;
 
 /**
- * Tests that the builder correctly reports compatibility problems
- * for classes.
+ * Tests that the builder correctly reports compatibility problems for classes.
  * 
  * @since 1.0
  */
 public abstract class ClassCompatibilityTests extends CompatibilityTest {
-	
+
 	/**
 	 * Workspace relative path classes in bundle/project A
 	 */
-	protected static IPath WORKSPACE_CLASSES_PACKAGE_A = new Path("bundle.a/src/a/classes");
+	protected static IPath WORKSPACE_CLASSES_PACKAGE_A = new Path("bundle.a/src/a/classes"); //$NON-NLS-1$
 
 	/**
 	 * Collects tests from the getAllTestClasses() method into the given suite
+	 * 
 	 * @param suite
 	 */
 	private static void collectTests(TestSuite suite) {
 		// Hack to load all classes before computing their suite of test cases
-		// this allow to reset test cases subsets while running all Builder tests...
-		Class[] classes = getAllTestClasses();
+		// this allow to reset test cases subsets while running all Builder
+		// tests...
+		Class<?>[] classes = getAllTestClasses();
 
 		// Reset forgotten subsets of tests
 		TestCase.TESTS_PREFIX = null;
@@ -51,10 +52,10 @@ public abstract class ClassCompatibilityTests extends CompatibilityTest {
 
 		/* tests */
 		for (int i = 0, length = classes.length; i < length; i++) {
-			Class clazz = classes[i];
+			Class<?> clazz = classes[i];
 			Method suiteMethod;
 			try {
-				suiteMethod = clazz.getDeclaredMethod("suite", new Class[0]);
+				suiteMethod = clazz.getDeclaredMethod("suite", new Class[0]); //$NON-NLS-1$
 			} catch (NoSuchMethodException e) {
 				e.printStackTrace();
 				continue;
@@ -72,39 +73,43 @@ public abstract class ClassCompatibilityTests extends CompatibilityTest {
 			suite.addTest((Test) test);
 		}
 	}
-	
+
 	/**
 	 * @return all of the child test classes of this class
 	 */
-	private static Class[] getAllTestClasses() {
-		Class[] classes = new Class[] {
-			ClassCompatibilityMethodTests.class,
-			ClassCompatibilityFieldTests.class,
-			ClassCompatibilityHierarchyTests.class,
-			ClassCompatibilityConstructorTests.class,
-			ClassCompatibilityModifierTests.class,
-			ClassCompatibilityMemberTypeTests.class,
-			ClassCompatibilityRestrictionTests.class,
-			ClassCompatibilityTypeParameterTests.class
-		};
+	private static Class<?>[] getAllTestClasses() {
+		Class<?>[] classes = new Class[] {
+				ClassCompatibilityMethodTests.class,
+				ClassCompatibilityFieldTests.class,
+				ClassCompatibilityHierarchyTests.class,
+				ClassCompatibilityConstructorTests.class,
+				ClassCompatibilityModifierTests.class,
+				ClassCompatibilityMemberTypeTests.class,
+				ClassCompatibilityRestrictionTests.class,
+				ClassCompatibilityTypeParameterTests.class };
 		return classes;
-	}	
-	
+	}
+
 	/**
 	 * Constructor
+	 * 
 	 * @param name
 	 */
 	public ClassCompatibilityTests(String name) {
 		super(name);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestSourcePath()
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestSourcePath
+	 * ()
 	 */
+	@Override
 	protected IPath getTestSourcePath() {
-		return super.getTestSourcePath().append("class");
+		return super.getTestSourcePath().append("class"); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * @return the tests for this class
 	 */
@@ -114,11 +119,15 @@ public abstract class ClassCompatibilityTests extends CompatibilityTest {
 		return suite;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestingProjectName()
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestingProjectName
+	 * ()
 	 */
+	@Override
 	protected String getTestingProjectName() {
-		return "classcompat";
+		return "classcompat"; //$NON-NLS-1$
 	}
 
 }

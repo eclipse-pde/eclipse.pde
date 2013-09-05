@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,11 +16,11 @@ import java.util.Map;
 import org.eclipse.core.resources.IProject;
 
 /**
- * Stores relative build time stamps for each project. 
+ * Stores relative build time stamps for each project.
  */
 public class BuildStamps {
-	
-	private static Map fStamps = new HashMap(); 
+
+	private static Map<IProject, long[]> fStamps = new HashMap<IProject, long[]>();
 
 	/**
 	 * Returns the current build time stamp for the given project.
@@ -29,25 +29,25 @@ public class BuildStamps {
 	 * @return relative build time stamp
 	 */
 	public static synchronized long getBuildStamp(IProject project) {
-		long[] stamp = (long[]) fStamps.get(project);
+		long[] stamp = fStamps.get(project);
 		if (stamp != null) {
 			return stamp[0];
-		};
+		}
 		return 0L;
 	}
-	
+
 	/**
-	 * Increments the build time stamp for the given project. Only to be called 
+	 * Increments the build time stamp for the given project. Only to be called
 	 * by the builder.
 	 * 
 	 * @param project project being built
 	 */
 	public static synchronized void incBuildStamp(IProject project) {
-		long[] stamp = (long[]) fStamps.get(project);
+		long[] stamp = fStamps.get(project);
 		if (stamp != null) {
 			stamp[0] = stamp[0]++;
 		} else {
-			fStamps.put(project, new long[]{1L});
+			fStamps.put(project, new long[] { 1L });
 		}
 	}
 }

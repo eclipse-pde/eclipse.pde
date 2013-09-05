@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,8 +36,8 @@ public class ApiJavadocTag implements IApiJavadocTag {
 	/**
 	 * Map of integer ids to comments
 	 */
-	private HashMap fTagItems = null;
-	
+	private HashMap<Integer, String> fTagItems = null;
+
 	private static String EMPTY_STRING = ""; //$NON-NLS-1$
 	/**
 	 * restriction modifier for the tag
@@ -48,12 +48,13 @@ public class ApiJavadocTag implements IApiJavadocTag {
 	 * Lazily computed tag label, cached once it has been computed
 	 */
 	private String fTaglabel = null;
-	
+
 	/**
 	 * Constructor
+	 * 
 	 * @param id the id of the tag
 	 * @param name the name of the tag (not including the '@' symbol)
-	 * @param rmodifier 
+	 * @param rmodifier
 	 */
 	public ApiJavadocTag(String id, String name, int rmodifier) {
 		Assert.isNotNull(id);
@@ -62,50 +63,61 @@ public class ApiJavadocTag implements IApiJavadocTag {
 		fName = name;
 		fRModifier = rmodifier;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.model.IApiJavadocTag#getTagId()
 	 */
 	public String getTagId() {
 		return fId;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.model.IApiJavadocTag#getRestrictionModifier()
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.model.IApiJavadocTag#getRestrictionModifier()
 	 */
+	@Override
 	public int getRestrictionModifier() {
 		return fRModifier;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiJavadocTag#setApplicableTo(int, int, java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.provisional.IApiJavadocTag#setApplicableTo
+	 * (int, int, java.lang.String)
 	 */
+	@Override
 	public void setApplicableTo(int type, int member, String comment) {
-		if(fTagItems == null) {
-			fTagItems = new HashMap(6);
+		if (fTagItems == null) {
+			fTagItems = new HashMap<Integer, String>(6);
 		}
 		fTagItems.put(getTagKey(type, member), comment);
 	}
-	
+
 	/**
 	 * Returns the comment for the given type ad member
+	 * 
 	 * @param type
 	 * @param member
 	 * @return the comment for the tag
 	 */
 	public String getTagComment(int type, int member) {
-		if(fTagItems == null) {
+		if (fTagItems == null) {
 			return EMPTY_STRING;
 		}
 		Object obj = fTagItems.get(getTagKey(type, member));
 		return (String) (obj == null ? EMPTY_STRING : obj);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.model.IApiJavadocTag#getTagLabel()
 	 */
+	@Override
 	public String getTagName() {
-		if(fTaglabel == null) {
+		if (fTaglabel == null) {
 			StringBuffer tag = new StringBuffer();
 			tag.append("@"); //$NON-NLS-1$
 			tag.append(fName);
@@ -113,22 +125,26 @@ public class ApiJavadocTag implements IApiJavadocTag {
 		}
 		return fTaglabel;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		return getTagName();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.IApiJavadocTag#getCompleteTag(int, int)
 	 */
+	@Override
 	public String getCompleteTag(int type, int member) {
 		StringBuffer tag = new StringBuffer();
 		tag.append(getTagName());
 		String comment = getTagComment(type, member);
-		if(EMPTY_STRING.equals(comment)) {
+		if (EMPTY_STRING.equals(comment)) {
 			return tag.toString();
 		}
 		tag.append(" "); //$NON-NLS-1$
@@ -136,35 +152,43 @@ public class ApiJavadocTag implements IApiJavadocTag {
 		return tag.toString();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.IApiJavadocTag#isApplicable(int, int)
 	 */
+	@Override
 	public boolean isApplicable(int type, int member) {
 		return fTagItems != null && fTagItems.keySet().contains(getTagKey(type, member));
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object obj) {
-		if(obj instanceof IApiJavadocTag) {
-			return ((IApiJavadocTag)obj).getTagName().equals(getTagName());
+		if (obj instanceof IApiJavadocTag) {
+			return ((IApiJavadocTag) obj).getTagName().equals(getTagName());
 		}
-		if(obj instanceof String) {
-			return ((String)obj).equals(getTagName());
+		if (obj instanceof String) {
+			return ((String) obj).equals(getTagName());
 		}
 		return false;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		return getTagName().hashCode();
 	}
-	
+
 	/**
-	 * Returns a key to use for tag when getting / setting comment related attributes
+	 * Returns a key to use for tag when getting / setting comment related
+	 * attributes
+	 * 
 	 * @param type
 	 * @param member
 	 * @return a new key that can be used for map lookups

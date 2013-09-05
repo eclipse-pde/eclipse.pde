@@ -88,18 +88,19 @@ public class MissingRefProblemsTask extends CommonUtilsTask {
 	/**
 	 * Run the api use scan problems task
 	 * 
-	 * @throws BuildException
-	 *             exception is thrown if anything goes wrong during the
-	 *             verification
+	 * @throws BuildException exception is thrown if anything goes wrong during
+	 *             the verification
 	 */
+	@Override
 	public void execute() throws BuildException {
 		if (super.currentBaselineLocation == null || super.reportLocation == null || this.apiUseScans == null) {
-			StringBuffer error = new StringBuffer(NLS.bind(Messages.MissingRefProblemsTask_missingArguments, new String[] {super.currentBaselineLocation, super.reportLocation,}));
+			StringBuffer error = new StringBuffer(NLS.bind(Messages.MissingRefProblemsTask_missingArguments, new String[] {
+					super.currentBaselineLocation, super.reportLocation, }));
 			throw new BuildException(error.toString());
 		}
-		//scrub the directory each time
+		// scrub the directory each time
 		File loc = new File(this.reportLocation);
-		if(loc.exists()) {
+		if (loc.exists()) {
 			Util.delete(loc);
 		}
 		if (usescans != null && usescans.length > 0) {
@@ -157,7 +158,7 @@ public class MissingRefProblemsTask extends CommonUtilsTask {
 			System.out.println("===================================================================================="); //$NON-NLS-1$
 			System.out.println("API Use Scan locations:"); //$NON-NLS-1$
 			for (int i = 0; i < usescans.length; i++) {
-				System.out.println("Location " + (i+1) + " : " + usescans[i]); //$NON-NLS-1$ //$NON-NLS-2$
+				System.out.println("Location " + (i + 1) + " : " + usescans[i]); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 
@@ -170,7 +171,7 @@ public class MissingRefProblemsTask extends CommonUtilsTask {
 				IApiComponent apiComponent = apiComponents[i];
 				String name = apiComponent.getSymbolicName();
 				String version = apiComponent.getVersion();
-				if(!acceptComponent(apiComponent)) {
+				if (!acceptComponent(apiComponent)) {
 					continue;
 				}
 				visitedApiComponentNames.add(name);
@@ -182,7 +183,7 @@ public class MissingRefProblemsTask extends CommonUtilsTask {
 					analyzer.checkExternalDependencies(apiComponent, new BuildContext(), this.properties, new NullProgressMonitor());
 					IApiProblem[] problems = analyzer.getProblems();
 					if (problems.length != 0) {
-						allProblems.put(name +" ("+new Version(version).toString()+")", problems); //$NON-NLS-1$ //$NON-NLS-2$
+						allProblems.put(name + " (" + new Version(version).toString() + ")", problems); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 				} catch (RuntimeException e) {
 					ApiPlugin.log(e);
@@ -215,16 +216,18 @@ public class MissingRefProblemsTask extends CommonUtilsTask {
 	}
 
 	/**
-	 * If the component should be scanned or not. If not than it is added to the 'not searched' listing
+	 * If the component should be scanned or not. If not than it is added to the
+	 * 'not searched' listing
 	 * 
 	 * @param component
-	 * @return <code>true</code> if the component should be scanned, <code>false</code> otherwise
+	 * @return <code>true</code> if the component should be scanned,
+	 *         <code>false</code> otherwise
 	 */
 	boolean acceptComponent(IApiComponent component) {
 		String name = component.getSymbolicName();
 		String version = component.getVersion();
 		try {
-			ResolverError[] errors = component.getErrors(); 
+			ResolverError[] errors = component.getErrors();
 			if ((errors != null && errors.length > 0) || component.isSystemComponent() || !Util.isApiToolsComponent(component)) {
 				notsearched.add(new SkippedComponent(name, version, errors));
 				return false;
@@ -237,14 +240,13 @@ public class MissingRefProblemsTask extends CommonUtilsTask {
 				notsearched.add(new SkippedComponent(name, version, errors));
 				return false;
 			}
-		}
-		catch(CoreException ce) {
+		} catch (CoreException ce) {
 			notsearched.add(new SkippedComponent(name, version, null));
 			return false;
 		}
 		return true;
 	}
-	
+
 	private void addDefaultProperties() {
 		this.properties.put(IApiProblemTypes.API_USE_SCAN_TYPE_SEVERITY, ApiPlugin.VALUE_ERROR);
 		this.properties.put(IApiProblemTypes.API_USE_SCAN_METHOD_SEVERITY, ApiPlugin.VALUE_ERROR);
@@ -255,8 +257,9 @@ public class MissingRefProblemsTask extends CommonUtilsTask {
 		try {
 			if (!file.exists()) {
 				file.getParentFile().mkdirs();
-				if (!file.createNewFile())
+				if (!file.createNewFile()) {
 					return; // could not create meta.xml
+				}
 			}
 			if (super.debug) {
 				System.out.println("Writing metadata to " + file.getAbsolutePath()); //$NON-NLS-1$ 
@@ -284,6 +287,7 @@ public class MissingRefProblemsTask extends CommonUtilsTask {
 		List allEntries = new ArrayList();
 		allEntries.addAll(entrySet);
 		Collections.sort(allEntries, new Comparator() {
+			@Override
 			public int compare(Object o1, Object o2) {
 				Map.Entry entry1 = (Map.Entry) o1;
 				Map.Entry entry2 = (Map.Entry) o2;
@@ -383,6 +387,7 @@ public class MissingRefProblemsTask extends CommonUtilsTask {
 		Element element = null;
 		// sort the problem by type name
 		Collections.sort(problems, new Comparator() {
+			@Override
 			public int compare(Object o1, Object o2) {
 				IApiProblem p1 = (IApiProblem) o1;
 				IApiProblem p2 = (IApiProblem) o2;
@@ -441,8 +446,7 @@ public class MissingRefProblemsTask extends CommonUtilsTask {
 	 * Default is <code>false</code>.
 	 * </p>
 	 * 
-	 * @param debugValue
-	 *            the given debug value
+	 * @param debugValue the given debug value
 	 */
 	public void setDebug(boolean debugValue) {
 		super.debug = debugValue;
@@ -478,8 +482,7 @@ public class MissingRefProblemsTask extends CommonUtilsTask {
 	 * The location is set using an absolute path.
 	 * </p>
 	 * 
-	 * @param excludeListLocation
-	 *            the given location for the excluded list file
+	 * @param excludeListLocation the given location for the excluded list file
 	 */
 	public void setExcludeList(String excludeListLocation) {
 		this.excludeListLocation = excludeListLocation;
@@ -515,8 +518,7 @@ public class MissingRefProblemsTask extends CommonUtilsTask {
 	 * The location is set using an absolute path.
 	 * </p>
 	 * 
-	 * @param includeListLocation
-	 *            the given location for the included list file
+	 * @param includeListLocation the given location for the included list file
 	 */
 	public void setIncludeList(String includeListLocation) {
 		this.includeListLocation = includeListLocation;
@@ -554,8 +556,7 @@ public class MissingRefProblemsTask extends CommonUtilsTask {
 	 * The location is set using an absolute path.
 	 * </p>
 	 * 
-	 * @param preferencesLocation
-	 *            the location of the preference file
+	 * @param preferencesLocation the location of the preference file
 	 */
 	public void setPreferences(String preferencesLocation) {
 		File preferencesFile = new File(preferencesLocation);
@@ -591,8 +592,7 @@ public class MissingRefProblemsTask extends CommonUtilsTask {
 	 * which you can find the Eclipse executable.
 	 * </p>
 	 * 
-	 * @param baselineLocation
-	 *            the given location for the baseline to analyze
+	 * @param baselineLocation the given location for the baseline to analyze
 	 */
 	public void setProfile(String baselineLocation) {
 		this.currentBaselineLocation = baselineLocation;
@@ -603,12 +603,11 @@ public class MissingRefProblemsTask extends CommonUtilsTask {
 	 * to check against the reference baseline.
 	 * 
 	 * <p>
-	 * It can be a .zip file or a directory that corresponds to the API Use Scan report. 
-	 * This is the directory is which you can find the XML folder.
+	 * It can be a .zip file or a directory that corresponds to the API Use Scan
+	 * report. This is the directory is which you can find the XML folder.
 	 * </p>
 	 * 
-	 * @param baselineLocation
-	 *            the given location for the baseline to analyze
+	 * @param baselineLocation the given location for the baseline to analyze
 	 */
 	public void setAPIUseScans(String apiUseScans) {
 		this.apiUseScans = apiUseScans;
@@ -631,8 +630,8 @@ public class MissingRefProblemsTask extends CommonUtilsTask {
 	 * bundles that are not using the api tooling nature.
 	 * </p>
 	 * 
-	 * @param baselineLocation
-	 *            the given location for the reference baseline to analyze
+	 * @param baselineLocation the given location for the reference baseline to
+	 *            analyze
 	 */
 	public void setReport(String reportLocation) {
 		this.reportLocation = reportLocation;

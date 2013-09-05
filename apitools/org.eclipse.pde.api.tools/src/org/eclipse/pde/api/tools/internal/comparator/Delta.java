@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,6 @@ import org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
-// TODO add javadoc
 public class Delta implements IDelta {
 	private static final IDelta[] EMPTY_CHILDREN = new IDelta[0];
 	private static final int INITIAL_SIZE = 4;
@@ -33,38 +32,41 @@ public class Delta implements IDelta {
 
 	/**
 	 * Writes the delta to the given {@link PrintWriter}
+	 * 
 	 * @param delta
 	 * @param writer
 	 */
 	private static void print(IDelta delta, PrintWriter writer) {
 		writer.print("delta (elementType: "); //$NON-NLS-1$
-		switch(delta.getElementType()) {
-			case IDelta.FIELD_ELEMENT_TYPE :
+		switch (delta.getElementType()) {
+			case IDelta.FIELD_ELEMENT_TYPE:
 				writer.print("field"); //$NON-NLS-1$
 				break;
-			case IDelta.ANNOTATION_ELEMENT_TYPE :
+			case IDelta.ANNOTATION_ELEMENT_TYPE:
 				writer.print("annotation type"); //$NON-NLS-1$
 				break;
-			case IDelta.CLASS_ELEMENT_TYPE :
+			case IDelta.CLASS_ELEMENT_TYPE:
 				writer.print("class type"); //$NON-NLS-1$
 				break;
-			case IDelta.INTERFACE_ELEMENT_TYPE :
+			case IDelta.INTERFACE_ELEMENT_TYPE:
 				writer.print("interface type"); //$NON-NLS-1$
 				break;
-			case IDelta.ENUM_ELEMENT_TYPE :
+			case IDelta.ENUM_ELEMENT_TYPE:
 				writer.print("enum type"); //$NON-NLS-1$
 				break;
-			case IDelta.API_COMPONENT_ELEMENT_TYPE :
+			case IDelta.API_COMPONENT_ELEMENT_TYPE:
 				writer.print("API component type"); //$NON-NLS-1$
 				break;
-			case IDelta.METHOD_ELEMENT_TYPE :
+			case IDelta.METHOD_ELEMENT_TYPE:
 				writer.print("method"); //$NON-NLS-1$
 				break;
-			case IDelta.CONSTRUCTOR_ELEMENT_TYPE :
+			case IDelta.CONSTRUCTOR_ELEMENT_TYPE:
 				writer.print("constructor"); //$NON-NLS-1$
 				break;
-			case IDelta.API_BASELINE_ELEMENT_TYPE :
+			case IDelta.API_BASELINE_ELEMENT_TYPE:
 				writer.print("API baseline"); //$NON-NLS-1$
+				break;
+			default:
 				break;
 		}
 		writer.print(", kind : "); //$NON-NLS-1$
@@ -75,6 +77,7 @@ public class Delta implements IDelta {
 		writer.print('-');
 		writer.print(Util.getDetail(delta));
 	}
+
 	private IDelta[] children;
 	private String componentID;
 	private String[] datas;
@@ -98,6 +101,7 @@ public class Delta implements IDelta {
 
 	/**
 	 * Constructor
+	 * 
 	 * @param elementType
 	 * @param kind
 	 * @param flags
@@ -108,7 +112,7 @@ public class Delta implements IDelta {
 	 * @param data
 	 */
 	public Delta(String componentID, int elementType, int kind, int flags, int restrictions, int oldModifiers, int newModifiers, String typeName, String key, String data) {
-		this(componentID, elementType, kind, flags, restrictions, 0, oldModifiers, newModifiers, typeName, key, new String[] {data});
+		this(componentID, elementType, kind, flags, restrictions, 0, oldModifiers, newModifiers, typeName, key, new String[] { data });
 	}
 
 	public Delta(String componentID, int elementType, int kind, int flags, int restrictions, int previousRestrictions, int oldModifiers, int newModifiers, String typeName, String key, String[] datas) {
@@ -122,9 +126,10 @@ public class Delta implements IDelta {
 		this.key = key;
 		this.datas = datas;
 	}
-	
+
 	/**
 	 * Constructor
+	 * 
 	 * @param elementType
 	 * @param kind
 	 * @param flags
@@ -136,9 +141,13 @@ public class Delta implements IDelta {
 		this(componentID, elementType, kind, flags, RestrictionModifiers.NO_RESTRICTIONS, 0, 0, typeName, key, data);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta#accept(org.eclipse.pde.api.tools.internal.provisional.comparator.DeltaVisitor)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta#accept
+	 * (org.eclipse.pde.api.tools.internal.provisional.comparator.DeltaVisitor)
 	 */
+	@Override
 	public void accept(DeltaVisitor visitor) {
 		if (visitor.visit(this)) {
 			if (this.children != null) {
@@ -152,8 +161,9 @@ public class Delta implements IDelta {
 	}
 
 	/**
-	 * Adds a child delta to this delta. If the specified delta 
-	 * is <code>null</code> no work is done.
+	 * Adds a child delta to this delta. If the specified delta is
+	 * <code>null</code> no work is done.
+	 * 
 	 * @param delta the new child delta
 	 */
 	public void add(IDelta delta) {
@@ -171,40 +181,55 @@ public class Delta implements IDelta {
 		this.children[this.deltasCounter++] = delta;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (!(obj instanceof Delta))
+		}
+		if (!(obj instanceof Delta)) {
 			return false;
+		}
 		Delta other = (Delta) obj;
-		if (this.elementType != other.elementType)
+		if (this.elementType != other.elementType) {
 			return false;
-		if (this.flags != other.flags)
+		}
+		if (this.flags != other.flags) {
 			return false;
-		if (this.kind != other.kind)
+		}
+		if (this.kind != other.kind) {
 			return false;
-		if (this.modifiers != other.modifiers)
+		}
+		if (this.modifiers != other.modifiers) {
 			return false;
-		if (this.restrictions != other.restrictions)
+		}
+		if (this.restrictions != other.restrictions) {
 			return false;
+		}
 		if (this.typeName == null) {
-			if (other.typeName != null)
+			if (other.typeName != null) {
 				return false;
-		} else if (!this.typeName.equals(other.typeName))
+			}
+		} else if (!this.typeName.equals(other.typeName)) {
 			return false;
+		}
 		if (this.key == null) {
-			if (other.key != null)
+			if (other.key != null) {
 				return false;
-		} else if (!this.key.equals(other.key))
+			}
+		} else if (!this.key.equals(other.key)) {
 			return false;
+		}
 		if (this.datas == null) {
-			if (other.datas != null)
+			if (other.datas != null) {
 				return false;
+			}
 		} else if (other.datas == null) {
 			return false;
 		} else {
@@ -218,38 +243,54 @@ public class Delta implements IDelta {
 			}
 		}
 		if (this.componentID == null) {
-			if (other.componentID != null)
+			if (other.componentID != null) {
 				return false;
-		} else if (!this.componentID.equals(other.componentID))
+			}
+		} else if (!this.componentID.equals(other.componentID)) {
 			return false;
+		}
 		return true;
 	}
-	
+
+	@Override
 	public String getComponentVersionId() {
 		return this.componentID;
 	}
 
+	@Override
 	public String getComponentId() {
-		if (this.componentID == null) return null;
+		if (this.componentID == null) {
+			return null;
+		}
 		int index = this.componentID.indexOf(Util.VERSION_SEPARATOR);
 		return this.componentID.substring(0, index);
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta#getArguments()
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta#getArguments
+	 * ()
 	 */
+	@Override
 	public String[] getArguments() {
-		if(this.datas == null) {
+		if (this.datas == null) {
 			return new String[] { typeName };
 		}
 		return this.datas;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta#getChildren()
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta#getChildren
+	 * ()
 	 */
+	@Override
 	public IDelta[] getChildren() {
-		if (this.children == null) return EMPTY_CHILDREN;
+		if (this.children == null) {
+			return EMPTY_CHILDREN;
+		}
 		int resizeLength = this.deltasCounter;
 		if (resizeLength != this.children.length) {
 			System.arraycopy(this.children, 0, (this.children = new IDelta[resizeLength]), 0, resizeLength);
@@ -257,77 +298,115 @@ public class Delta implements IDelta {
 		return this.children;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta#getElementType()
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta#
+	 * getElementType()
 	 */
+	@Override
 	public int getElementType() {
 		return this.elementType;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta#getFlags()
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta#getFlags
+	 * ()
 	 */
+	@Override
 	public int getFlags() {
 		return this.flags;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta#getKey()
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta#getKey()
 	 */
+	@Override
 	public String getKey() {
 		return this.key;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta#getKind()
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta#getKind
+	 * ()
 	 */
+	@Override
 	public int getKind() {
 		return this.kind;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta#getMessage()
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta#getMessage
+	 * ()
 	 */
+	@Override
 	public String getMessage() {
 		if (DeltaProcessor.isCompatible(this)) {
 			return Messages.getCompatibleLocalizedMessage(this);
 		}
-		int id = ApiProblemFactory.getProblemMessageId(IApiProblem.CATEGORY_COMPATIBILITY, 
-				this.elementType, this.kind, this.flags);
+		int id = ApiProblemFactory.getProblemMessageId(IApiProblem.CATEGORY_COMPATIBILITY, this.elementType, this.kind, this.flags);
 		return ApiProblemFactory.getLocalizedMessage(id, (this.datas != null ? this.datas : null));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta#getModifiers()
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta#getModifiers
+	 * ()
 	 */
+	@Override
 	public int getNewModifiers() {
 		return (this.modifiers >>> NEW_MODIFIERS_OFFSET);
 	}
+
+	@Override
 	public int getOldModifiers() {
 		return this.modifiers & MODIFIERS_MASK;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta#getCurrentRestrictions()
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta#
+	 * getCurrentRestrictions()
 	 */
+	@Override
 	public int getCurrentRestrictions() {
 		return (this.restrictions & RESTRICTIONS_MASK);
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta#getPreviousRestrictions()
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta#
+	 * getPreviousRestrictions()
 	 */
+	@Override
 	public int getPreviousRestrictions() {
 		return (this.restrictions >>> PREVIOUS_RESTRICTIONS_OFFSET);
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta#getTypeName()
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta#getTypeName
+	 * ()
 	 */
+	@Override
 	public String getTypeName() {
 		return this.typeName;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
@@ -343,16 +422,22 @@ public class Delta implements IDelta {
 		return result;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta#isEmpty()
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.provisional.comparator.IDelta#isEmpty
+	 * ()
 	 */
+	@Override
 	public boolean isEmpty() {
 		return this.deltasCounter == 0;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		StringWriter writer = new StringWriter();
 		PrintWriter printWriter = new PrintWriter(writer);

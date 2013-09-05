@@ -16,6 +16,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
@@ -49,18 +50,22 @@ public abstract class CommonUtilsTask extends Task {
 	protected String referenceBaselineLocation;
 	protected String excludeListLocation;
 	protected String includeListLocation;
-	
+
 	protected String reportLocation;
-	
+
 	/**
-	 * Creates a baseline with the given name and EE file location in the given directory.  The installLocation
-	 * will be searched for bundles to add as API components. If an error occurs creating the baseline, the
-	 * exception stack trace will be printed and an empty baseline will be returned. 
+	 * Creates a baseline with the given name and EE file location in the given
+	 * directory. The installLocation will be searched for bundles to add as API
+	 * components. If an error occurs creating the baseline, the exception stack
+	 * trace will be printed and an empty baseline will be returned.
 	 * 
 	 * @param baselineName Name to use for the new baseline
-	 * @param installLocation Location of an installation or directory of bundles to add as API components
-	 * @param eeFileLocation execution environment location or <code>null</code> to have the EE determined from API components
-	 * @return a new {@link IApiBaseline} or <code>null</code> if an error occurred
+	 * @param installLocation Location of an installation or directory of
+	 *            bundles to add as API components
+	 * @param eeFileLocation execution environment location or <code>null</code>
+	 *            to have the EE determined from API components
+	 * @return a new {@link IApiBaseline} or <code>null</code> if an error
+	 *         occurred
 	 */
 	protected IApiBaseline createBaseline(String baselineName, String installLocation, String eeFileLocation) {
 		try {
@@ -72,9 +77,9 @@ public abstract class CommonUtilsTask extends Task {
 			} else {
 				baseline = ApiModelFactory.newApiBaseline(baselineName, Util.getEEDescriptionFile());
 			}
-			
+
 			IApiComponent[] components = ApiModelFactory.addComponents(baseline, installLocation, null);
-			if (components.length == 0){			
+			if (components.length == 0) {
 				throw new BuildException(NLS.bind(Messages.directoryIsEmpty, installLocation));
 			}
 			return baseline;
@@ -83,9 +88,10 @@ public abstract class CommonUtilsTask extends Task {
 			return ApiModelFactory.newApiBaseline(baselineName);
 		}
 	}
-	
+
 	/**
 	 * Deletes an {@link IApiBaseline} from the given folder
+	 * 
 	 * @param referenceLocation
 	 * @param folder
 	 */
@@ -94,9 +100,11 @@ public abstract class CommonUtilsTask extends Task {
 			Util.delete(folder.getParentFile());
 		}
 	}
-	
+
 	/**
-	 * Extract extracts the SDK from the given location to the given directory name
+	 * Extract extracts the SDK from the given location to the given directory
+	 * name
+	 * 
 	 * @param installDirName
 	 * @param location
 	 * @return the {@link File} handle to the extracted SDK
@@ -113,17 +121,11 @@ public abstract class CommonUtilsTask extends Task {
 			if (installDir.exists()) {
 				// delete existing folder
 				if (!Util.delete(installDir)) {
-					throw new BuildException(
-						NLS.bind(
-							Messages.couldNotDelete,
-							installDir.getAbsolutePath()));
+					throw new BuildException(NLS.bind(Messages.couldNotDelete, installDir.getAbsolutePath()));
 				}
 			}
 			if (!installDir.mkdirs()) {
-				throw new BuildException(
-						NLS.bind(
-								Messages.couldNotCreate,
-								installDir.getAbsolutePath()));
+				throw new BuildException(NLS.bind(Messages.couldNotCreate, installDir.getAbsolutePath()));
 			}
 			try {
 				if (Util.isZipJarFile(location)) {
@@ -132,31 +134,21 @@ public abstract class CommonUtilsTask extends Task {
 					Util.guntar(location, installDir.getAbsolutePath());
 				}
 			} catch (IOException e) {
-				throw new BuildException(
-					NLS.bind(
-						Messages.couldNotUnzip,
-						new String[] {
-								location,
-								installDir.getAbsolutePath()
-						}));
+				throw new BuildException(NLS.bind(Messages.couldNotUnzip, new String[] {
+						location, installDir.getAbsolutePath() }));
 			} catch (TarException e) {
-				throw new BuildException(
-						NLS.bind(
-								Messages.couldNotUntar,
-								new String[] {
-										location,
-										installDir.getAbsolutePath()
-								}));
+				throw new BuildException(NLS.bind(Messages.couldNotUntar, new String[] {
+						location, installDir.getAbsolutePath() }));
 			}
 			return new File(installDir, ECLIPSE_FOLDER_NAME);
 		} else {
 			return locationFile;
 		}
 	}
-	
+
 	/**
-	 * Initializes the include/exclude list from the given file location, and returns
-	 * a {@link Set} of project names that should be include/excluded.
+	 * Initializes the include/exclude list from the given file location, and
+	 * returns a {@link Set} of project names that should be include/excluded.
 	 * 
 	 * @param excludeListLocation
 	 * @return the set of project names to be excluded
@@ -170,9 +162,12 @@ public abstract class CommonUtilsTask extends Task {
 	}
 
 	/**
-	 * Saves the report with the given name in the report location.  If a componentID is provided, a child
-	 * directory using that name will be created to put the report in.
-	 * @param componentID Name of the component to create a child directory for or <code>null<code> to put the report in the XML root
+	 * Saves the report with the given name in the report location. If a
+	 * componentID is provided, a child directory using that name will be
+	 * created to put the report in.
+	 * 
+	 * @param componentID Name of the component to create a child directory for
+	 *            or <code>null<code> to put the report in the XML root
 	 * @param contents contents to output to the report
 	 * @param reportname name of the file to output to
 	 */
@@ -184,7 +179,7 @@ public abstract class CommonUtilsTask extends Task {
 			}
 		}
 		// If the caller has provided a component id, create a child directory
-		if (componentID != null){
+		if (componentID != null) {
 			dir = new File(dir, componentID);
 			if (!dir.exists()) {
 				if (!dir.mkdirs()) {
@@ -210,9 +205,10 @@ public abstract class CommonUtilsTask extends Task {
 			}
 		}
 	}
-	
+
 	/**
-	 * Parses and returns patterns as an array of Strings or <code>null</code> if none.
+	 * Parses and returns patterns as an array of Strings or <code>null</code>
+	 * if none.
 	 * 
 	 * @param patterns comma separated list or <code>null</code>
 	 * @return individual patterns or <code>null</code>

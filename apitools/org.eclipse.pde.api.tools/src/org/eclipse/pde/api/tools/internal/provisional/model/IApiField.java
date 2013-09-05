@@ -29,7 +29,7 @@ public interface IApiField extends IApiMember {
 	 * @return whether this field represents a constant in an enum type
 	 */
 	public boolean isEnumConstant();
-	
+
 	/**
 	 * Returns the constant value for this field or <code>null</code> if none.
 	 * 

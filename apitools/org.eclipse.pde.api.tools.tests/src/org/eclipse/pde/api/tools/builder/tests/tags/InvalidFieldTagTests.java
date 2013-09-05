@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,14 +23,16 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescri
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 
 /**
- * Tests unsupported javadoc tags on fields in classes, interfaces, enums and annotations
+ * Tests unsupported javadoc tags on fields in classes, interfaces, enums and
+ * annotations
  * 
  * @since 1.0
  */
 public class InvalidFieldTagTests extends TagTest {
-	
+
 	/**
 	 * Constructor
+	 * 
 	 * @param name
 	 */
 	public InvalidFieldTagTests(String name) {
@@ -45,43 +47,52 @@ public class InvalidFieldTagTests extends TagTest {
 		collectTests(suite);
 		return suite;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.tags.TagTest#getDefaultProblemId()
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.builder.tests.tags.TagTest#getDefaultProblemId
+	 * ()
 	 */
+	@Override
 	protected int getDefaultProblemId() {
 		return ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_USAGE, IElementDescriptor.FIELD, IApiProblem.UNSUPPORTED_TAG_USE, IApiProblem.NO_FLAGS);
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestSourcePath()
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestSourcePath
+	 * ()
 	 */
+	@Override
 	protected IPath getTestSourcePath() {
-		return super.getTestSourcePath().append("field");
+		return super.getTestSourcePath().append("field"); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * @return all of the child test classes of this class
 	 */
-	private static Class[] getAllTestClasses() {
-		Class[] classes = new Class[] {
-			InvalidClassFieldTagTests.class,
-			InvalidInterfaceFieldTagTests.class,
-			InvalidAnnotationFieldTagTests.class,
-			InvalidEnumFieldTagTests.class,
-			InvalidEnumConstantTagTests.class
-		};
+	private static Class<?>[] getAllTestClasses() {
+		Class<?>[] classes = new Class[] {
+				InvalidClassFieldTagTests.class,
+				InvalidInterfaceFieldTagTests.class,
+				InvalidAnnotationFieldTagTests.class,
+				InvalidEnumFieldTagTests.class,
+				InvalidEnumConstantTagTests.class };
 		return classes;
 	}
-	
+
 	/**
 	 * Collects tests from the getAllTestClasses() method into the given suite
+	 * 
 	 * @param suite
 	 */
 	private static void collectTests(TestSuite suite) {
 		// Hack to load all classes before computing their suite of test cases
-		// this allow to reset test cases subsets while running all Builder tests...
-		Class[] classes = getAllTestClasses();
+		// this allow to reset test cases subsets while running all Builder
+		// tests...
+		Class<?>[] classes = getAllTestClasses();
 
 		// Reset forgotten subsets of tests
 		TestCase.TESTS_PREFIX = null;
@@ -92,10 +103,10 @@ public class InvalidFieldTagTests extends TagTest {
 
 		/* tests */
 		for (int i = 0, length = classes.length; i < length; i++) {
-			Class clazz = classes[i];
+			Class<?> clazz = classes[i];
 			Method suiteMethod;
 			try {
-				suiteMethod = clazz.getDeclaredMethod("suite", new Class[0]);
+				suiteMethod = clazz.getDeclaredMethod("suite", new Class[0]); //$NON-NLS-1$
 			} catch (NoSuchMethodException e) {
 				e.printStackTrace();
 				continue;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,13 +19,13 @@ import org.eclipse.pde.api.tools.internal.util.Util;
  * @since 1.0.0
  */
 public final class VisibilityModifiers {
-	
+
 	/**
 	 * Visibility constant indicating an element is public API.
 	 */
 	public static final int API = 0x0001;
 	/**
-	 * Visibility constant indicating a element should not be referenced. This 
+	 * Visibility constant indicating a element should not be referenced. This
 	 * indicates the element is internal and not intended for general use.
 	 */
 	public static final int PRIVATE = 0x0002;
@@ -35,27 +35,27 @@ public final class VisibilityModifiers {
 	 */
 	public static final int SPI = 0x0004;
 	/**
-	 * Visibility constant indicating an element is API but illegal to use.
-	 * i.e. the element has API restrictions
+	 * Visibility constant indicating an element is API but illegal to use. i.e.
+	 * the element has API restrictions
 	 */
 	public static final int ILLEGAL_API = 0x0016;
 	/**
-	 * Visibility constant indicating an element is private, but some
-	 * clients have been permitted access to the element.
+	 * Visibility constant indicating an element is private, but some clients
+	 * have been permitted access to the element.
 	 */
 	public static final int PRIVATE_PERMISSIBLE = 0x0008;
-	
+
 	/**
 	 * Bit mask of all visibilities.
 	 */
 	public static final int ALL_VISIBILITIES = 0xFFFF;
-	
+
 	/**
-	 * Constructor
-	 * no instantiating
+	 * Constructor no instantiating
 	 */
-	private VisibilityModifiers() {}
-	
+	private VisibilityModifiers() {
+	}
+
 	/**
 	 * Returns if the modifier is 'API'
 	 * 
@@ -65,7 +65,7 @@ public final class VisibilityModifiers {
 	public static final boolean isAPI(int modifiers) {
 		return (modifiers & API) > 0;
 	}
-	
+
 	/**
 	 * Returns if the modifier is 'SPI'
 	 * 
@@ -75,7 +75,7 @@ public final class VisibilityModifiers {
 	public static final boolean isSPI(int modifiers) {
 		return (modifiers & SPI) > 0;
 	}
-	
+
 	/**
 	 * Returns if the modifier is 'Private'
 	 * 
@@ -85,7 +85,7 @@ public final class VisibilityModifiers {
 	public static final boolean isPrivate(int modifiers) {
 		return (modifiers & PRIVATE) > 0;
 	}
-	
+
 	/**
 	 * Returns if the modifier is 'Private Permissible'
 	 * 
@@ -94,18 +94,19 @@ public final class VisibilityModifiers {
 	 */
 	public static final boolean isPermissiblePrivate(int modifiers) {
 		return (modifiers & PRIVATE_PERMISSIBLE) > 0;
-	}	
-	
+	}
+
 	/**
-	 * Returns the string representation of the specified visibility modifier or <code>UNKNOWN_VISIBILITY</code>
-	 * if the modifier is unknown.
+	 * Returns the string representation of the specified visibility modifier or
+	 * <code>UNKNOWN_VISIBILITY</code> if the modifier is unknown.
 	 * 
 	 * @param visibility
-	 * @return the string representation of the visibility or <code>UNKNOWN_VISIBILITY</code>
+	 * @return the string representation of the visibility or
+	 *         <code>UNKNOWN_VISIBILITY</code>
 	 * @since 1.0.1
 	 */
 	public static String getVisibilityName(int visibility) {
-		switch(visibility) {
+		switch (visibility) {
 			case ALL_VISIBILITIES: {
 				return "ALL_VISIBILITIES"; //$NON-NLS-1$
 			}
@@ -130,6 +131,8 @@ public final class VisibilityModifiers {
 			case 0: {
 				return "INHERITED"; //$NON-NLS-1$
 			}
+			default:
+				break;
 		}
 		return Util.UNKNOWN_VISIBILITY;
 	}

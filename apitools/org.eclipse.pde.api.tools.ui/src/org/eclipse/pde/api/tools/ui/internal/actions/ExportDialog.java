@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,16 +40,16 @@ import org.eclipse.ui.PlatformUI;
 /**
  * A simple input dialog for soliciting an input string from the user.
  * <p>
- * This concrete dialog class can be instantiated as is, or further subclassed as
- * required.
+ * This concrete dialog class can be instantiated as is, or further subclassed
+ * as required.
  * </p>
  */
 public class ExportDialog extends Dialog {
 
-	//widget state ids 
+	// widget state ids
 	static final String SETTINGS_SECTION = ApiUIPlugin.PLUGIN_ID + ".api.exportsession"; //$NON-NLS-1$
 	static final String REPORT_PATH_STATE = SETTINGS_SECTION + ".reportpath"; //$NON-NLS-1$
-	
+
 	/**
 	 * The title of the dialog.
 	 */
@@ -89,28 +89,28 @@ public class ExportDialog extends Dialog {
 	 * Error message string.
 	 */
 	private String errorMessage;
+
 	/**
 	 * Constructor
+	 * 
 	 * @param provider
 	 * @param title
 	 */
 	public ExportDialog(Shell shell, String title) {
-		this(shell,
-				title,
-				ActionMessages.ExportDialogDescription,
-				Util.EMPTY_STRING,
-				new IInputValidator() {
-					public String isValid(String newText) {
-						if (newText != null && newText.length() > 0) {
-							if (!newText.endsWith(".html") & !newText.endsWith(".xml")) { //$NON-NLS-1$ //$NON-NLS-2$
-								return ActionMessages.ExportDialogErrorMessage;
-							}
-							return null;
-						}
+		this(shell, title, ActionMessages.ExportDialogDescription, Util.EMPTY_STRING, new IInputValidator() {
+			@Override
+			public String isValid(String newText) {
+				if (newText != null && newText.length() > 0) {
+					if (!newText.endsWith(".html") & !newText.endsWith(".xml")) { //$NON-NLS-1$ //$NON-NLS-2$
 						return ActionMessages.ExportDialogErrorMessage;
 					}
-				});
+					return null;
+				}
+				return ActionMessages.ExportDialogErrorMessage;
+			}
+		});
 	}
+
 	/**
 	 * Creates an input dialog with OK and Cancel buttons. Note that the dialog
 	 * will have no visual representation (no widgets) until it is told to open.
@@ -118,21 +118,15 @@ public class ExportDialog extends Dialog {
 	 * Note that the <code>open</code> method blocks for input dialogs.
 	 * </p>
 	 * 
-	 * @param parentShell
-	 *            the parent shell, or <code>null</code> to create a top-level
-	 *            shell
-	 * @param dialogTitle
-	 *            the dialog title, or <code>null</code> if none
-	 * @param dialogMessage
-	 *            the dialog message, or <code>null</code> if none
-	 * @param initialValue
-	 *            the initial input value, or <code>null</code> if none
+	 * @param parentShell the parent shell, or <code>null</code> to create a
+	 *            top-level shell
+	 * @param dialogTitle the dialog title, or <code>null</code> if none
+	 * @param dialogMessage the dialog message, or <code>null</code> if none
+	 * @param initialValue the initial input value, or <code>null</code> if none
 	 *            (equivalent to the empty string)
-	 * @param validator
-	 *            an input validator, or <code>null</code> if none
+	 * @param validator an input validator, or <code>null</code> if none
 	 */
-	public ExportDialog(Shell parentShell, String dialogTitle,
-			String dialogMessage, String initialValue, IInputValidator validator) {
+	public ExportDialog(Shell parentShell, String dialogTitle, String dialogMessage, String initialValue, IInputValidator validator) {
 		super(parentShell);
 		this.title = dialogTitle;
 		message = dialogMessage;
@@ -147,6 +141,7 @@ public class ExportDialog extends Dialog {
 	/*
 	 * (non-Javadoc) Method declared on Dialog.
 	 */
+	@Override
 	protected void buttonPressed(int buttonId) {
 		if (buttonId == IDialogConstants.OK_ID) {
 			value = text.getText();
@@ -158,9 +153,11 @@ public class ExportDialog extends Dialog {
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
+	 * @see
+	 * org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets
+	 * .Shell)
 	 */
+	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
 		if (title != null) {
@@ -170,16 +167,16 @@ public class ExportDialog extends Dialog {
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
+	 * @see
+	 * org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse
+	 * .swt.widgets.Composite)
 	 */
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		// create OK and Cancel buttons by default
-		okButton = createButton(parent, IDialogConstants.OK_ID,
-				IDialogConstants.OK_LABEL, true);
-		createButton(parent, IDialogConstants.CANCEL_ID,
-				IDialogConstants.CANCEL_LABEL, false);
-		//do this here because setting the text will set enablement on the ok
+		okButton = createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
+		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
+		// do this here because setting the text will set enablement on the ok
 		// button
 		text.setFocus();
 		if (value != null) {
@@ -192,6 +189,7 @@ public class ExportDialog extends Dialog {
 	/*
 	 * (non-Javadoc) Method declared on Dialog.
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		// create composite
 		Composite composite = (Composite) super.createDialogArea(parent);
@@ -204,9 +202,7 @@ public class ExportDialog extends Dialog {
 		if (message != null) {
 			Label label = new Label(comp, SWT.WRAP);
 			label.setText(message);
-			GridData data = new GridData(GridData.GRAB_HORIZONTAL
-					| GridData.GRAB_VERTICAL | GridData.HORIZONTAL_ALIGN_FILL
-					| GridData.VERTICAL_ALIGN_CENTER);
+			GridData data = new GridData(GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL | GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_CENTER);
 			data.horizontalSpan = 2;
 			data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);
 			label.setLayoutData(data);
@@ -215,6 +211,7 @@ public class ExportDialog extends Dialog {
 		text = new Text(comp, getInputTextStyle());
 		text.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
 		text.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				validateInput();
 			}
@@ -224,6 +221,7 @@ public class ExportDialog extends Dialog {
 		browseButton.setLayoutData(data);
 
 		browseButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				FileDialog dialog = new FileDialog(getShell());
 				dialog.setText(ActionMessages.SelectFileName);
@@ -241,12 +239,10 @@ public class ExportDialog extends Dialog {
 			}
 		});
 		errorMessageText = new Text(comp, SWT.READ_ONLY | SWT.WRAP);
-		GridData layoutData = new GridData(GridData.GRAB_HORIZONTAL
-				| GridData.HORIZONTAL_ALIGN_FILL);
+		GridData layoutData = new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL);
 		layoutData.horizontalSpan = 2;
 		errorMessageText.setLayoutData(layoutData);
-		errorMessageText.setBackground(errorMessageText.getDisplay()
-				.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
+		errorMessageText.setBackground(errorMessageText.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 		// Set the error message text
 		// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=66292
 		setErrorMessage(errorMessage);
@@ -256,6 +252,7 @@ public class ExportDialog extends Dialog {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(comp, IApiToolsHelpContextIds.API_COMPARE_EXPORT_DIALOG);
 		return parent;
 	}
+
 	/**
 	 * Returns the ok button.
 	 * 
@@ -312,11 +309,10 @@ public class ExportDialog extends Dialog {
 	}
 
 	/**
-	 * Sets or clears the error message.
-	 * If not <code>null</code>, the OK button is disabled.
+	 * Sets or clears the error message. If not <code>null</code>, the OK button
+	 * is disabled.
 	 * 
-	 * @param errorMessage
-	 *            the error message, or <code>null</code> to clear
+	 * @param errorMessage the error message, or <code>null</code> to clear
 	 * @since 3.0
 	 */
 	public void setErrorMessage(String errorMessage) {
@@ -324,14 +320,15 @@ public class ExportDialog extends Dialog {
 		if (errorMessageText != null && !errorMessageText.isDisposed()) {
 			errorMessageText.setText(errorMessage == null ? " \n " : errorMessage); //$NON-NLS-1$
 			// Disable the error message text control if there is no error, or
-			// no error text (empty or whitespace only).  Hide it also to avoid
+			// no error text (empty or whitespace only). Hide it also to avoid
 			// color change.
 			// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=130281
 			boolean hasError = errorMessage != null && (StringConverter.removeWhiteSpaces(errorMessage)).length() > 0;
 			errorMessageText.setEnabled(hasError);
 			errorMessageText.setVisible(hasError);
 			errorMessageText.getParent().update();
-			// Access the ok button by id, in case clients have overridden button creation.
+			// Access the ok button by id, in case clients have overridden
+			// button creation.
 			// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=113643
 			Control button = getButton(IDialogConstants.OK_ID);
 			if (button != null) {
@@ -352,16 +349,20 @@ public class ExportDialog extends Dialog {
 	protected int getInputTextStyle() {
 		return SWT.SINGLE | SWT.BORDER;
 	}
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
+	@Override
 	protected void okPressed() {
 		saveWidgetState();
 		super.okPressed();
 	}
+
 	/**
-	 * Restores the selected item for the given combo based on the stored value from the 
-	 * dialog settings
+	 * Restores the selected item for the given combo based on the stored value
+	 * from the dialog settings
 	 * 
 	 * @param combo
 	 * @param id
@@ -369,18 +370,18 @@ public class ExportDialog extends Dialog {
 	 */
 	private void restoreTextSelection(String id, IDialogSettings settings) {
 		String restoredValue = settings.get(id);
-		if(restoredValue != null) {
+		if (restoredValue != null) {
 			this.getText().setText(restoredValue);
 		}
 	}
-	
+
 	/**
 	 * Saves the state of the widgets on the page
 	 */
 	void saveWidgetState() {
 		IDialogSettings rootsettings = ApiUIPlugin.getDefault().getDialogSettings();
 		IDialogSettings settings = rootsettings.getSection(SETTINGS_SECTION);
-		if(settings == null) {
+		if (settings == null) {
 			settings = rootsettings.addNewSection(SETTINGS_SECTION);
 		}
 		settings.put(REPORT_PATH_STATE, getValue());
@@ -391,7 +392,7 @@ public class ExportDialog extends Dialog {
 	 */
 	void initialize() {
 		IDialogSettings settings = ApiUIPlugin.getDefault().getDialogSettings().getSection(SETTINGS_SECTION);
-		if(settings != null) {
+		if (settings != null) {
 			restoreTextSelection(REPORT_PATH_STATE, settings);
 		}
 	}

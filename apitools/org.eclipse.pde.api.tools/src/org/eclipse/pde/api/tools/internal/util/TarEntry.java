@@ -28,10 +28,10 @@ public class TarEntry implements Cloneable {
 	 * Entry type for directories.
 	 */
 	public static final int DIRECTORY = '5';
-	
+
 	/**
-	 * Create a new TarEntry for a file of the given name at the
-	 * given position in the file.
+	 * Create a new TarEntry for a file of the given name at the given position
+	 * in the file.
 	 * 
 	 * @param name filename
 	 * @param pos position in the file in bytes
@@ -53,9 +53,11 @@ public class TarEntry implements Cloneable {
 		this(name, -1);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Object#clone()
 	 */
+	@Override
 	public Object clone() {
 		TarEntry entry = new TarEntry(this.name, this.filepos);
 		entry.setFileType(this.type);
@@ -66,8 +68,8 @@ public class TarEntry implements Cloneable {
 	}
 
 	/**
-	 * Returns the type of this file, one of FILE, LINK, SYM_LINK,
-	 * CHAR_DEVICE, BLOCK_DEVICE, DIRECTORY or FIFO.
+	 * Returns the type of this file, one of FILE, LINK, SYM_LINK, CHAR_DEVICE,
+	 * BLOCK_DEVICE, DIRECTORY or FIFO.
 	 * 
 	 * @return file type
 	 */
@@ -103,8 +105,8 @@ public class TarEntry implements Cloneable {
 	}
 
 	/**
-	 * Returns the modification time of the file in seconds since January
-	 * 1st 1970.
+	 * Returns the modification time of the file in seconds since January 1st
+	 * 1970.
 	 * 
 	 * @return time
 	 */
@@ -141,14 +143,15 @@ public class TarEntry implements Cloneable {
 	}
 
 	/**
-	 * Sets the modification time of the file in seconds since January
-	 * 1st 1970.
+	 * Sets the modification time of the file in seconds since January 1st 1970.
 	 * 
 	 * @param time
 	 */
 	public void setTime(long time) {
 		this.time = time;
 	}
+
+	@Override
 	public String toString() {
 		return this.getName();
 	}

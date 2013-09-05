@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,22 +20,21 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiMember;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.util.Signatures;
 
-
 /**
- * Leak detectors keep track of all pre-requisite non-API package names to weed out
- * public references.
+ * Leak detectors keep track of all pre-requisite non-API package names to weed
+ * out public references.
  * 
  * @since 1.1
- * @noextend This class is not intended to be subclassed by clients.
+ * @noextend This class is not intended to be sub-classed by clients.
  */
 public abstract class AbstractLeakProblemDetector extends AbstractProblemDetector {
 
-	private Set fNonApiPackageNames;
-	
-	public AbstractLeakProblemDetector(Set nonApiPackageNames) {
+	private Set<String> fNonApiPackageNames;
+
+	public AbstractLeakProblemDetector(Set<String> nonApiPackageNames) {
 		fNonApiPackageNames = nonApiPackageNames;
 	}
-	
+
 	/**
 	 * Returns whether the referenced type name matches a non-API package.
 	 * 
@@ -61,7 +60,7 @@ public abstract class AbstractLeakProblemDetector extends AbstractProblemDetecto
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Returns whether all enclosing types of the given member are visible.
 	 * 
@@ -78,11 +77,12 @@ public abstract class AbstractLeakProblemDetector extends AbstractProblemDetecto
 		}
 		while (type != null) {
 			if (((Flags.AccPublic | Flags.AccProtected) & type.getModifiers()) == 0) {
-				// the type is private or default protection, do not retain the reference
+				// the type is private or default protection, do not retain the
+				// reference
 				return false;
 			}
 			type = type.getEnclosingType();
 		}
 		return true;
-	}	
+	}
 }

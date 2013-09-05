@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,7 @@ package org.eclipse.pde.api.tools.builder.tests.tags;
 import junit.framework.Test;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.api.tools.internal.builder.BuilderMessages;
 
 /**
@@ -25,24 +25,33 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 
 	/**
 	 * Constructor
+	 * 
 	 * @param name
 	 */
 	public InvalidAnnotationMethodTagTests(String name) {
 		super(name);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getTestCompliance()
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getTestCompliance
+	 * ()
 	 */
+	@Override
 	protected String getTestCompliance() {
-		return CompilerOptions.VERSION_1_5;
+		return JavaCore.VERSION_1_5;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestSourcePath()
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestSourcePath
+	 * ()
 	 */
+	@Override
 	protected IPath getTestSourcePath() {
-		return super.getTestSourcePath().append("annotation");
+		return super.getTestSourcePath().append("annotation"); //$NON-NLS-1$
 	}
 
 	/**
@@ -59,88 +68,91 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 	public void testInvalidAnnotationMethodTag1F() {
 		x1(false);
 	}
-	
+
 	/**
-	 * Tests the unsupported @noextend tag on a variety of inner / outer annotation methods
+	 * Tests the unsupported @noextend tag on a variety of inner / outer
+	 * annotation methods
 	 */
 	private void x1(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(6));
-		setExpectedMessageArgs("@noextend", BuilderMessages.TagValidator_an_annotation_method, 6);
-		String typename = "test1.java"; 
+		setExpectedMessageArgs("@noextend", BuilderMessages.TagValidator_an_annotation_method, 6); //$NON-NLS-1$
+		String typename = "test1.java"; //$NON-NLS-1$
 		deployTagTest(typename, inc, false);
 	}
 
 	public void testInvalidAnnotationMethodTag2I() {
 		x2(true);
 	}
-	
+
 	public void testInvalidAnnotationMethodTag2F() {
 		x2(false);
 	}
-	
+
 	/**
-	 * Tests the unsupported @noextend tag on annotation methods in the default package
+	 * Tests the unsupported @noextend tag on annotation methods in the default
+	 * package
 	 */
 	private void x2(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(2));
-		setExpectedMessageArgs("@noextend", BuilderMessages.TagValidator_an_annotation_method, 2);
-		String typename = "test2.java"; 
+		setExpectedMessageArgs("@noextend", BuilderMessages.TagValidator_an_annotation_method, 2); //$NON-NLS-1$
+		String typename = "test2.java"; //$NON-NLS-1$
 		deployTagTest(typename, inc, true);
 	}
 
 	public void testInvalidAnnotationMethodTag3I() {
 		x3(true);
 	}
-	
-	
+
 	public void testInvalidAnnotationMethodTag3F() {
 		x3(false);
 	}
-	
+
 	/**
-	 * Tests the unsupported @noinstantiate tag on a variety of inner / outer annotation methods
+	 * Tests the unsupported @noinstantiate tag on a variety of inner / outer
+	 * annotation methods
 	 */
 	private void x3(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(6));
-		setExpectedMessageArgs("@noinstantiate", BuilderMessages.TagValidator_an_annotation_method, 6);
-		String typename = "test3.java"; 
+		setExpectedMessageArgs("@noinstantiate", BuilderMessages.TagValidator_an_annotation_method, 6); //$NON-NLS-1$
+		String typename = "test3.java"; //$NON-NLS-1$
 		deployTagTest(typename, inc, false);
 	}
-	
+
 	public void testInvalidAnnotationMethodTag4I() {
 		x4(true);
 	}
-	
-	
+
 	public void testInvalidAnnotationMethodTag4F() {
 		x4(false);
 	}
-	
+
 	/**
-	 * Tests the unsupported @noinstantiate tag on annotation methods in the default package
+	 * Tests the unsupported @noinstantiate tag on annotation methods in the
+	 * default package
 	 */
 	private void x4(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(2));
-		setExpectedMessageArgs("@noinstantiate", BuilderMessages.TagValidator_an_annotation_method, 2);
-		String typename = "test4.java"; 
+		setExpectedMessageArgs("@noinstantiate", BuilderMessages.TagValidator_an_annotation_method, 2); //$NON-NLS-1$
+		String typename = "test4.java"; //$NON-NLS-1$
 		deployTagTest(typename, inc, true);
 	}
 
 	public void testInvalidAnnotationMethodTag5I() {
 		x5(true);
 	}
-	
+
 	public void testInvalidAnnotationMethodTag5F() {
 		x5(false);
 	}
-	
+
 	/**
-	 * Tests the unsupported @noimplement tag on a variety of inner / outer annotation methods
+	 * Tests the unsupported @noimplement tag on a variety of inner / outer
+	 * annotation methods
 	 */
 	private void x5(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(6));
-		setExpectedMessageArgs("@noimplement", BuilderMessages.TagValidator_an_annotation_method, 6);
-		String typename = "test5.java"; 
+		setExpectedMessageArgs("@noimplement", BuilderMessages.TagValidator_an_annotation_method, 6); //$NON-NLS-1$
+		String typename = "test5.java"; //$NON-NLS-1$
 		deployTagTest(typename, inc, false);
 	}
 
@@ -151,99 +163,132 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 	public void testInvalidAnnotationMethodTag6F() {
 		x6(false);
 	}
-	
+
 	/**
-	 * Tests the unsupported @noimplement tag on annotation methods in the default package
+	 * Tests the unsupported @noimplement tag on annotation methods in the
+	 * default package
 	 */
 	private void x6(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(2));
-		setExpectedMessageArgs("@noimplement", BuilderMessages.TagValidator_an_annotation_method, 2);
-		String typename = "test6.java"; 
+		setExpectedMessageArgs("@noimplement", BuilderMessages.TagValidator_an_annotation_method, 2); //$NON-NLS-1$
+		String typename = "test6.java"; //$NON-NLS-1$
 		deployTagTest(typename, inc, true);
 	}
-	
+
 	public void testInvalidAnnotationMethodTag7I() {
 		x7(true);
 	}
-	
+
 	public void testInvalidAnnotationMethodTag7F() {
 		x7(false);
 	}
-	
+
 	/**
-	 * Tests the unsupported @nooverride tag on a variety of inner / outer annotation methods
+	 * Tests the unsupported @nooverride tag on a variety of inner / outer
+	 * annotation methods
 	 */
 	private void x7(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(6));
-		setExpectedMessageArgs("@nooverride", BuilderMessages.TagValidator_an_annotation_method, 6);
-		String typename = "test7.java"; 
+		setExpectedMessageArgs("@nooverride", BuilderMessages.TagValidator_an_annotation_method, 6); //$NON-NLS-1$
+		String typename = "test7.java"; //$NON-NLS-1$
 		deployTagTest(typename, inc, false);
 	}
-	
+
 	public void testInvalidAnnotationMethodTag8I() {
 		x8(true);
 	}
-	
+
 	public void testInvalidAnnotationMethodTag8F() {
 		x8(false);
 	}
-	
+
 	/**
-	 * Tests the unsupported @nooverride tag on annotation methods in the default package
+	 * Tests the unsupported @nooverride tag on annotation methods in the
+	 * default package
 	 */
 	private void x8(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(2));
-		setExpectedMessageArgs("@nooverride", BuilderMessages.TagValidator_an_annotation_method, 2);
-		String typename = "test8.java"; 
+		setExpectedMessageArgs("@nooverride", BuilderMessages.TagValidator_an_annotation_method, 2); //$NON-NLS-1$
+		String typename = "test8.java"; //$NON-NLS-1$
 		deployTagTest(typename, inc, true);
 	}
-	
+
 	public void testInvalidAnnotationMethodTag9I() {
 		x9(true);
 	}
-	
+
 	public void testInvalidAnnotationMethodTag9F() {
 		x9(false);
 	}
-	
+
 	/**
 	 * Tests all the unsupported tags on a variety of annotation methods
 	 */
 	private void x9(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(30));
 		setExpectedMessageArgs(new String[][] {
-				{"@nooverride", BuilderMessages.TagValidator_an_annotation_method},
-				{"@noimplement", BuilderMessages.TagValidator_an_annotation_method},
-				{"@noinstantiate", BuilderMessages.TagValidator_an_annotation_method},
-				{"@noextend", BuilderMessages.TagValidator_an_annotation_method},
-				{"@noreference", BuilderMessages.TagValidator_an_annotation_method},
-				{"@nooverride", BuilderMessages.TagValidator_an_annotation_method},
-				{"@noimplement", BuilderMessages.TagValidator_an_annotation_method},
-				{"@noinstantiate", BuilderMessages.TagValidator_an_annotation_method},
-				{"@noextend", BuilderMessages.TagValidator_an_annotation_method},
-				{"@noreference", BuilderMessages.TagValidator_an_annotation_method},
-				{"@nooverride", BuilderMessages.TagValidator_an_annotation_method},
-				{"@noimplement", BuilderMessages.TagValidator_an_annotation_method},
-				{"@noinstantiate", BuilderMessages.TagValidator_an_annotation_method},
-				{"@noextend", BuilderMessages.TagValidator_an_annotation_method},
-				{"@noreference", BuilderMessages.TagValidator_an_annotation_method},
-				{"@nooverride", BuilderMessages.TagValidator_an_annotation_method},
-				{"@noimplement", BuilderMessages.TagValidator_an_annotation_method},
-				{"@noinstantiate", BuilderMessages.TagValidator_an_annotation_method},
-				{"@noextend", BuilderMessages.TagValidator_an_annotation_method},
-				{"@noreference", BuilderMessages.TagValidator_an_annotation_method},
-				{"@nooverride", BuilderMessages.TagValidator_an_annotation_method},
-				{"@noimplement", BuilderMessages.TagValidator_an_annotation_method},
-				{"@noinstantiate", BuilderMessages.TagValidator_an_annotation_method},
-				{"@noextend", BuilderMessages.TagValidator_an_annotation_method},
-				{"@noreference", BuilderMessages.TagValidator_an_annotation_method},
-				{"@nooverride", BuilderMessages.TagValidator_an_annotation_method},
-				{"@noimplement", BuilderMessages.TagValidator_an_annotation_method},
-				{"@noinstantiate", BuilderMessages.TagValidator_an_annotation_method},
-				{"@noextend", BuilderMessages.TagValidator_an_annotation_method},
-				{"@noreference", BuilderMessages.TagValidator_an_annotation_method},
+				{
+						"@nooverride", BuilderMessages.TagValidator_an_annotation_method }, //$NON-NLS-1$
+				{
+						"@noimplement", BuilderMessages.TagValidator_an_annotation_method }, //$NON-NLS-1$
+				{
+						"@noinstantiate", BuilderMessages.TagValidator_an_annotation_method }, //$NON-NLS-1$
+				{
+						"@noextend", BuilderMessages.TagValidator_an_annotation_method }, //$NON-NLS-1$
+				{
+						"@noreference", BuilderMessages.TagValidator_an_annotation_method }, //$NON-NLS-1$
+				{
+						"@nooverride", BuilderMessages.TagValidator_an_annotation_method }, //$NON-NLS-1$
+				{
+						"@noimplement", BuilderMessages.TagValidator_an_annotation_method }, //$NON-NLS-1$
+				{
+						"@noinstantiate", BuilderMessages.TagValidator_an_annotation_method }, //$NON-NLS-1$
+				{
+						"@noextend", BuilderMessages.TagValidator_an_annotation_method }, //$NON-NLS-1$
+				{
+						"@noreference", BuilderMessages.TagValidator_an_annotation_method }, //$NON-NLS-1$
+				{
+						"@nooverride", BuilderMessages.TagValidator_an_annotation_method }, //$NON-NLS-1$
+				{
+						"@noimplement", BuilderMessages.TagValidator_an_annotation_method }, //$NON-NLS-1$
+				{
+						"@noinstantiate", BuilderMessages.TagValidator_an_annotation_method }, //$NON-NLS-1$
+				{
+						"@noextend", BuilderMessages.TagValidator_an_annotation_method }, //$NON-NLS-1$
+				{
+						"@noreference", BuilderMessages.TagValidator_an_annotation_method }, //$NON-NLS-1$
+				{
+						"@nooverride", BuilderMessages.TagValidator_an_annotation_method }, //$NON-NLS-1$
+				{
+						"@noimplement", BuilderMessages.TagValidator_an_annotation_method }, //$NON-NLS-1$
+				{
+						"@noinstantiate", BuilderMessages.TagValidator_an_annotation_method }, //$NON-NLS-1$
+				{
+						"@noextend", BuilderMessages.TagValidator_an_annotation_method }, //$NON-NLS-1$
+				{
+						"@noreference", BuilderMessages.TagValidator_an_annotation_method }, //$NON-NLS-1$
+				{
+						"@nooverride", BuilderMessages.TagValidator_an_annotation_method }, //$NON-NLS-1$
+				{
+						"@noimplement", BuilderMessages.TagValidator_an_annotation_method }, //$NON-NLS-1$
+				{
+						"@noinstantiate", BuilderMessages.TagValidator_an_annotation_method }, //$NON-NLS-1$
+				{
+						"@noextend", BuilderMessages.TagValidator_an_annotation_method }, //$NON-NLS-1$
+				{
+						"@noreference", BuilderMessages.TagValidator_an_annotation_method }, //$NON-NLS-1$
+				{
+						"@nooverride", BuilderMessages.TagValidator_an_annotation_method }, //$NON-NLS-1$
+				{
+						"@noimplement", BuilderMessages.TagValidator_an_annotation_method }, //$NON-NLS-1$
+				{
+						"@noinstantiate", BuilderMessages.TagValidator_an_annotation_method }, //$NON-NLS-1$
+				{
+						"@noextend", BuilderMessages.TagValidator_an_annotation_method }, //$NON-NLS-1$
+				{
+						"@noreference", BuilderMessages.TagValidator_an_annotation_method }, //$NON-NLS-1$
 		});
-		String typename = "test9.java"; 
+		String typename = "test9.java"; //$NON-NLS-1$
 		deployTagTest(typename, inc, false);
 	}
 
@@ -254,67 +299,83 @@ public class InvalidAnnotationMethodTagTests extends InvalidMethodTagTests {
 	public void testInvalidAnnotationMethodTag10F() {
 		x10(false);
 	}
-	
+
 	/**
-	 * Tests the unsupported @noreference tag on a variety of inner / outer annotation methods
+	 * Tests the unsupported @noreference tag on a variety of inner / outer
+	 * annotation methods
 	 */
 	private void x10(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(6));
-		setExpectedMessageArgs("@noreference", BuilderMessages.TagValidator_an_annotation_method, 6);
-		String typename = "test10.java"; 
+		setExpectedMessageArgs("@noreference", BuilderMessages.TagValidator_an_annotation_method, 6); //$NON-NLS-1$
+		String typename = "test10.java"; //$NON-NLS-1$
 		deployTagTest(typename, inc, false);
 	}
 
 	public void testInvalidAnnotationMethodTag11I() {
-	x11(true);
+		x11(true);
 	}
-	
-	
+
 	public void testInvalidAnnotationMethodTag11F() {
 		x11(false);
 	}
-	
+
 	/**
-	 * Tests the unsupported @noreference tag on annotation methods in the default package
+	 * Tests the unsupported @noreference tag on annotation methods in the
+	 * default package
 	 */
 	private void x11(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(2));
-		setExpectedMessageArgs("@noreference", BuilderMessages.TagValidator_an_annotation_method, 2);
-		String typename = "test11.java"; 
+		setExpectedMessageArgs("@noreference", BuilderMessages.TagValidator_an_annotation_method, 2); //$NON-NLS-1$
+		String typename = "test11.java"; //$NON-NLS-1$
 		deployTagTest(typename, inc, true);
 	}
-	
+
 	public void testInvalidAnnotationMethodTag12I() {
 		x12(true);
 	}
-	
+
 	public void testInvalidAnnotationMethodTag12F() {
 		x12(false);
 	}
-	
+
 	/**
 	 * Tests the unsupported tags on an annotation method with a default value
 	 */
 	private void x12(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(15));
 		setExpectedMessageArgs(new String[][] {
-				{"@nooverride", BuilderMessages.TagValidator_an_annotation_method},
-				{"@noimplement", BuilderMessages.TagValidator_an_annotation_method},
-				{"@noinstantiate", BuilderMessages.TagValidator_an_annotation_method},
-				{"@noextend", BuilderMessages.TagValidator_an_annotation_method},
-				{"@noreference", BuilderMessages.TagValidator_an_annotation_method},
-				{"@nooverride", BuilderMessages.TagValidator_an_annotation_method},
-				{"@noimplement", BuilderMessages.TagValidator_an_annotation_method},
-				{"@noinstantiate", BuilderMessages.TagValidator_an_annotation_method},
-				{"@noextend", BuilderMessages.TagValidator_an_annotation_method},
-				{"@noreference", BuilderMessages.TagValidator_an_annotation_method},
-				{"@nooverride", BuilderMessages.TagValidator_an_annotation_method},
-				{"@noimplement", BuilderMessages.TagValidator_an_annotation_method},
-				{"@noinstantiate", BuilderMessages.TagValidator_an_annotation_method},
-				{"@noextend", BuilderMessages.TagValidator_an_annotation_method},
-				{"@noreference", BuilderMessages.TagValidator_an_annotation_method},
+				{
+						"@nooverride", BuilderMessages.TagValidator_an_annotation_method }, //$NON-NLS-1$
+				{
+						"@noimplement", BuilderMessages.TagValidator_an_annotation_method }, //$NON-NLS-1$
+				{
+						"@noinstantiate", BuilderMessages.TagValidator_an_annotation_method }, //$NON-NLS-1$
+				{
+						"@noextend", BuilderMessages.TagValidator_an_annotation_method }, //$NON-NLS-1$
+				{
+						"@noreference", BuilderMessages.TagValidator_an_annotation_method }, //$NON-NLS-1$
+				{
+						"@nooverride", BuilderMessages.TagValidator_an_annotation_method }, //$NON-NLS-1$
+				{
+						"@noimplement", BuilderMessages.TagValidator_an_annotation_method }, //$NON-NLS-1$
+				{
+						"@noinstantiate", BuilderMessages.TagValidator_an_annotation_method }, //$NON-NLS-1$
+				{
+						"@noextend", BuilderMessages.TagValidator_an_annotation_method }, //$NON-NLS-1$
+				{
+						"@noreference", BuilderMessages.TagValidator_an_annotation_method }, //$NON-NLS-1$
+				{
+						"@nooverride", BuilderMessages.TagValidator_an_annotation_method }, //$NON-NLS-1$
+				{
+						"@noimplement", BuilderMessages.TagValidator_an_annotation_method }, //$NON-NLS-1$
+				{
+						"@noinstantiate", BuilderMessages.TagValidator_an_annotation_method }, //$NON-NLS-1$
+				{
+						"@noextend", BuilderMessages.TagValidator_an_annotation_method }, //$NON-NLS-1$
+				{
+						"@noreference", BuilderMessages.TagValidator_an_annotation_method }, //$NON-NLS-1$
 		});
-		String typename = "test12.java"; 
+		String typename = "test12.java"; //$NON-NLS-1$
 		deployTagTest(typename, inc, false);
 	}
 }

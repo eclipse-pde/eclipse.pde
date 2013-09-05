@@ -12,7 +12,7 @@ package org.eclipse.pde.api.tools.builder.tests.usage;
 
 import junit.framework.Test;
 
-import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 
 /**
@@ -22,9 +22,9 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
  */
 public class Java5MethodUsageTests extends MethodUsageTests {
 
-	protected static final String GENERIC_METHOD_CLASS_NAME = "GenericMethodUsageClass<T>";
-	protected static final String GENERIC_METHOD_CLASS_NAME2 = "GenericMethodUsageClass2";
-	protected static final String METHOD_ENUM_NAME = "MethodUsageEnum";
+	protected static final String GENERIC_METHOD_CLASS_NAME = "GenericMethodUsageClass<T>"; //$NON-NLS-1$
+	protected static final String GENERIC_METHOD_CLASS_NAME2 = "GenericMethodUsageClass2"; //$NON-NLS-1$
+	protected static final String METHOD_ENUM_NAME = "MethodUsageEnum"; //$NON-NLS-1$
 	
 	/**
 	 * Constructor
@@ -46,13 +46,15 @@ public class Java5MethodUsageTests extends MethodUsageTests {
 	 */
 	@Override
 	protected String getTestCompliance() {
-		return CompilerOptions.VERSION_1_5;
+		return JavaCore.VERSION_1_5;
 	}
 
+	@Override
 	public void testMethodUsageTests1F() {
 		x1(false);
 	}
 		
+	@Override
 	public void testMethodUsageTests1I() {
 		x1(true);
 	}
@@ -73,17 +75,17 @@ public class Java5MethodUsageTests extends MethodUsageTests {
 				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD),
 		};
 		setExpectedProblemIds(pids);
-		String typename = "testM5";
+		String typename = "testM5"; //$NON-NLS-1$
 		String[][] args = new String[][] {
-				{METHOD_ENUM_NAME, INNER_NAME1, "m1()"},
-				{METHOD_ENUM_NAME, INNER_NAME1, "m3()"},
-				{METHOD_ENUM_NAME, INNER_NAME1, "m4()"},
-				{METHOD_ENUM_NAME, INNER_NAME2, "m1()"},
-				{METHOD_ENUM_NAME, INNER_NAME2, "m3()"},
-				{METHOD_ENUM_NAME, INNER_NAME2, "m4()"},
-				{METHOD_ENUM_NAME, OUTER_NAME, "m1()"},
-				{METHOD_ENUM_NAME, OUTER_NAME, "m3()"},
-				{METHOD_ENUM_NAME, OUTER_NAME, "m4()"}
+				{METHOD_ENUM_NAME, INNER_NAME1, "m1()"}, //$NON-NLS-1$
+				{METHOD_ENUM_NAME, INNER_NAME1, "m3()"}, //$NON-NLS-1$
+				{METHOD_ENUM_NAME, INNER_NAME1, "m4()"}, //$NON-NLS-1$
+				{METHOD_ENUM_NAME, INNER_NAME2, "m1()"}, //$NON-NLS-1$
+				{METHOD_ENUM_NAME, INNER_NAME2, "m3()"}, //$NON-NLS-1$
+				{METHOD_ENUM_NAME, INNER_NAME2, "m4()"}, //$NON-NLS-1$
+				{METHOD_ENUM_NAME, OUTER_NAME, "m1()"}, //$NON-NLS-1$
+				{METHOD_ENUM_NAME, OUTER_NAME, "m3()"}, //$NON-NLS-1$
+				{METHOD_ENUM_NAME, OUTER_NAME, "m4()"} //$NON-NLS-1$
 		};
 		setExpectedMessageArgs(args);
 		setExpectedLineMappings(new LineMapping[] {
@@ -100,10 +102,12 @@ public class Java5MethodUsageTests extends MethodUsageTests {
 		deployUsageTest(typename, inc);
 	}
 
+	@Override
 	public void testMethodUsageTests2F() {
 		x2(false);
 	}
 	
+	@Override
 	public void testMethodUsageTests2I() {
 		x2(true);
 	}
@@ -121,14 +125,14 @@ public class Java5MethodUsageTests extends MethodUsageTests {
 				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD),
 		};
 		setExpectedProblemIds(pids);
-		String typename = "testM6";
+		String typename = "testM6"; //$NON-NLS-1$
 		String[][] args = new String[][] {
-				{GENERIC_METHOD_CLASS_NAME, INNER_NAME1, "m1()"},
-				{GENERIC_METHOD_CLASS_NAME, INNER_NAME1, "m2(T)"},
-				{GENERIC_METHOD_CLASS_NAME, INNER_NAME2, "m1()"},
-				{GENERIC_METHOD_CLASS_NAME, INNER_NAME2, "m2(T)"},
-				{GENERIC_METHOD_CLASS_NAME, OUTER_NAME, "m1()"},
-				{GENERIC_METHOD_CLASS_NAME, OUTER_NAME, "m2(T)"},
+				{GENERIC_METHOD_CLASS_NAME, INNER_NAME1, "m1()"}, //$NON-NLS-1$
+				{GENERIC_METHOD_CLASS_NAME, INNER_NAME1, "m2(T)"}, //$NON-NLS-1$
+				{GENERIC_METHOD_CLASS_NAME, INNER_NAME2, "m1()"}, //$NON-NLS-1$
+				{GENERIC_METHOD_CLASS_NAME, INNER_NAME2, "m2(T)"}, //$NON-NLS-1$
+				{GENERIC_METHOD_CLASS_NAME, OUTER_NAME, "m1()"}, //$NON-NLS-1$
+				{GENERIC_METHOD_CLASS_NAME, OUTER_NAME, "m2(T)"}, //$NON-NLS-1$
 		};
 		setExpectedMessageArgs(args);
 		setExpectedLineMappings(new LineMapping[] {
@@ -142,10 +146,12 @@ public class Java5MethodUsageTests extends MethodUsageTests {
 		deployUsageTest(typename, inc);
 	}
 
+	@Override
 	public void testMethodUsageTests3F() {
 		x3(false);
 	}
 
+	@Override
 	public void testMethodUsageTests3I() {
 		x3(true);
 	}
@@ -161,11 +167,11 @@ public class Java5MethodUsageTests extends MethodUsageTests {
 				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD),
 		};
 		setExpectedProblemIds(pids);
-		String typename = "testM7";
+		String typename = "testM7"; //$NON-NLS-1$
 		String[][] args = new String[][] {
-				{GENERIC_METHOD_CLASS_NAME2, INNER_NAME1, "m1(GenericClassUsageClass<?>)"},
-				{GENERIC_METHOD_CLASS_NAME2, INNER_NAME2, "m1(GenericClassUsageClass<?>)"},
-				{GENERIC_METHOD_CLASS_NAME2, OUTER_NAME, "m1(GenericClassUsageClass<?>)"},
+				{GENERIC_METHOD_CLASS_NAME2, INNER_NAME1, "m1(GenericClassUsageClass<?>)"}, //$NON-NLS-1$
+				{GENERIC_METHOD_CLASS_NAME2, INNER_NAME2, "m1(GenericClassUsageClass<?>)"}, //$NON-NLS-1$
+				{GENERIC_METHOD_CLASS_NAME2, OUTER_NAME, "m1(GenericClassUsageClass<?>)"}, //$NON-NLS-1$
 		};
 		setExpectedMessageArgs(args);
 		setExpectedLineMappings(new LineMapping[] {

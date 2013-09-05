@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,18 +47,19 @@ import org.xml.sax.helpers.DefaultHandler;
  * @since 1.0.1
  */
 public class XmlSearchReporter implements IApiSearchReporter {
-	
+
 	private String fLocation = null;
 	private DocumentBuilder parser = null;
-	private boolean debug = false; 
+	private boolean debug = false;
 	private int referenceCount = 0;
 	private int illegalCount = 0;
 	private int internalCount = 0;
-	
+
 	/**
 	 * Constructor
 	 * 
-	 * @param location the absolute path in the local file system to the folder to write the reports to 
+	 * @param location the absolute path in the local file system to the folder
+	 *            to write the reports to
 	 * @param debug if debugging infos should be written out to the console
 	 */
 	public XmlSearchReporter(String location, boolean debug) {
@@ -67,58 +68,67 @@ public class XmlSearchReporter implements IApiSearchReporter {
 		try {
 			parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			parser.setErrorHandler(new DefaultHandler());
-		}
-		catch(FactoryConfigurationError fce) {
+		} catch (FactoryConfigurationError fce) {
 			ApiPlugin.log(fce);
-		} 
-		catch (ParserConfigurationException pce) {
+		} catch (ParserConfigurationException pce) {
 			ApiPlugin.log(pce);
 		}
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchReporter#reportResults(org.eclipse.pde.api.tools.internal.provisional.builder.IReference[])
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchReporter
+	 * #reportResults
+	 * (org.eclipse.pde.api.tools.internal.provisional.builder.IReference[])
 	 */
+	@Override
 	public void reportResults(IApiElement element, final IReference[] references) {
-		if (references.length == 0){
-			// This reporter does not create xml for components with no references
+		if (references.length == 0) {
+			// This reporter does not create xml for components with no
+			// references
 			return;
 		}
-		// Use a hashset for counting to remove any duplicate references that the writer would remove
-		HashSet writtenReferences = new HashSet();
+		// Use a hashset for counting to remove any duplicate references that
+		// the writer would remove
+		HashSet<IReferenceDescriptor> writtenReferences = new HashSet<IReferenceDescriptor>();
 		XmlReferenceDescriptorWriter writer = new XmlReferenceDescriptorWriter(fLocation);
-		List descriptors = new ArrayList(references.length + 1);
+		List<IReferenceDescriptor> descriptors = new ArrayList<IReferenceDescriptor>(references.length + 1);
 		for (int i = 0; i < references.length; i++) {
 			Reference reference = (Reference) references[i];
 			try {
 				IReferenceDescriptor descriptor = reference.getReferenceDescriptor();
 				descriptors.add(descriptor);
-				
+
 				// Update counters
-				if (!writtenReferences.contains(descriptor)){
+				if (!writtenReferences.contains(descriptor)) {
 					referenceCount++;
-					if((references[i].getReferenceFlags() & IReference.F_ILLEGAL) > 0) {
+					if ((references[i].getReferenceFlags() & IReference.F_ILLEGAL) > 0) {
 						illegalCount++;
 					}
-					// Though visibility is a bit flag, we want to match the xml output exactly, which separates into folders by visibility equality
-					if (descriptor.getVisibility() == VisibilityModifiers.PRIVATE){
+					// Though visibility is a bit flag, we want to match the xml
+					// output exactly, which separates into folders by
+					// visibility equality
+					if (descriptor.getVisibility() == VisibilityModifiers.PRIVATE) {
 						internalCount++;
 					}
 					writtenReferences.add(descriptor);
 				}
-			
+
 			} catch (CoreException e) {
 				ApiPlugin.log(e.getStatus());
 			}
 		}
-		
-		writer.writeReferences((IReferenceDescriptor[]) descriptors.toArray(new IReferenceDescriptor[descriptors.size()]));
+
+		writer.writeReferences(descriptors.toArray(new IReferenceDescriptor[descriptors.size()]));
 	}
-		
+
 	/**
 	 * Resolves the id to use for the component in the mapping
+	 * 
 	 * @param component
-	 * @return the id to use for the component in the mapping, includes the version information as well
+	 * @return the id to use for the component in the mapping, includes the
+	 *         version information as well
 	 * @throws CoreException
 	 */
 	String getId(IApiComponent component) throws CoreException {
@@ -130,21 +140,22 @@ public class XmlSearchReporter implements IApiSearchReporter {
 	/**
 	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchReporter#reportNotSearched(org.eclipse.pde.api.tools.internal.provisional.model.IApiElement[])
 	 */
+	@Override
 	public void reportNotSearched(IApiElement[] elements) {
-		if(elements == null) {
+		if (elements == null) {
 			return;
 		}
 		BufferedWriter writer = null;
 		try {
-			if(this.debug) {
+			if (this.debug) {
 				System.out.println("Writing file for projects that were not searched..."); //$NON-NLS-1$
 			}
 			File rootfile = new File(fLocation);
-			if(!rootfile.exists()) {
+			if (!rootfile.exists()) {
 				rootfile.mkdirs();
 			}
 			File file = new File(rootfile, "not_searched.xml"); //$NON-NLS-1$
-			if(!file.exists()) {
+			if (!file.exists()) {
 				file.createNewFile();
 			}
 			Document doc = Util.newDocument();
@@ -152,8 +163,8 @@ public class XmlSearchReporter implements IApiSearchReporter {
 			doc.appendChild(root);
 			Element comp = null;
 			SkippedComponent component = null;
-			for(int i = 0; i < elements.length; i++) {
-				component = (SkippedComponent)elements[i];
+			for (int i = 0; i < elements.length; i++) {
+				component = (SkippedComponent) elements[i];
 				comp = doc.createElement(IApiXmlConstants.ELEMENT_COMPONENT);
 				comp.setAttribute(IApiXmlConstants.ATTR_ID, component.getComponentId());
 				comp.setAttribute(IApiXmlConstants.ATTR_VERSION, component.getVersion());
@@ -163,88 +174,94 @@ public class XmlSearchReporter implements IApiSearchReporter {
 			writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), IApiCoreConstants.UTF_8));
 			writer.write(Util.serializeDocument(doc));
 			writer.flush();
-		}
-		catch(FileNotFoundException fnfe) {}
-		catch(IOException ioe) {}
-		catch(CoreException ce) {}
-		finally {
-			if(writer != null) {
+		} catch (FileNotFoundException fnfe) {
+		} catch (IOException ioe) {
+		} catch (CoreException ce) {
+		} finally {
+			if (writer != null) {
 				try {
 					writer.close();
-				} catch (IOException e) {}
+				} catch (IOException e) {
+				}
 			}
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchReporter#reportMetadata(org.eclipse.pde.api.tools.internal.provisional.search.IMetadata)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchReporter
+	 * #reportMetadata
+	 * (org.eclipse.pde.api.tools.internal.provisional.search.IMetadata)
 	 */
+	@Override
 	public void reportMetadata(IMetadata data) {
-		if(data == null) {
+		if (data == null) {
 			return;
 		}
 		try {
-			if(this.debug) {
+			if (this.debug) {
 				System.out.println("Writing file for projects that were not searched..."); //$NON-NLS-1$
 			}
 			File rootfile = new File(fLocation);
-			if(!rootfile.exists()) {
+			if (!rootfile.exists()) {
 				rootfile.mkdirs();
 			}
 			File file = new File(rootfile, "meta.xml"); //$NON-NLS-1$
-			if(!file.exists()) {
+			if (!file.exists()) {
 				file.createNewFile();
 			}
 			data.serializeToFile(file);
-		}
-		catch(FileNotFoundException fnfe) {
+		} catch (FileNotFoundException fnfe) {
 			ApiPlugin.log(fnfe);
-		}
-		catch(IOException ioe) {
+		} catch (IOException ioe) {
 			ApiPlugin.log(ioe);
-		}
-		catch (CoreException ce) {
+		} catch (CoreException ce) {
 			ApiPlugin.log(ce);
 		}
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchReporter#reportCounts()
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchReporter
+	 * #reportCounts()
 	 */
-	public void reportCounts(){
+	@Override
+	public void reportCounts() {
 		BufferedWriter writer = null;
 		try {
-			if(this.debug) {
+			if (this.debug) {
 				System.out.println("Writing file for counting total references..."); //$NON-NLS-1$
 			}
 			File rootfile = new File(fLocation);
-			if(!rootfile.exists()) {
+			if (!rootfile.exists()) {
 				rootfile.mkdirs();
 			}
 			File file = new File(rootfile, "counts.xml"); //$NON-NLS-1$
-			if(!file.exists()) {
+			if (!file.exists()) {
 				file.createNewFile();
 			}
-			
+
 			Document doc = Util.newDocument();
 			Element root = doc.createElement(IApiXmlConstants.ELEMENT_REPORTED_COUNT);
 			doc.appendChild(root);
 			root.setAttribute(IApiXmlConstants.ATTR_TOTAL, Integer.toString(referenceCount));
 			root.setAttribute(IApiXmlConstants.ATTR_COUNT_ILLEGAL, Integer.toString(illegalCount));
 			root.setAttribute(IApiXmlConstants.ATTR_COUNT_INTERNAL, Integer.toString(internalCount));
-			
+
 			writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), IApiCoreConstants.UTF_8));
 			writer.write(Util.serializeDocument(doc));
 			writer.flush();
-		}
-		catch(FileNotFoundException fnfe) {}
-		catch(IOException ioe) {}
-		catch(CoreException ce) {}
-		finally {
-			if(writer != null) {
+		} catch (FileNotFoundException fnfe) {
+		} catch (IOException ioe) {
+		} catch (CoreException ce) {
+		} finally {
+			if (writer != null) {
 				try {
 					writer.close();
-				} catch (IOException e) {}
+				} catch (IOException e) {
+				}
 			}
 		}
 	}

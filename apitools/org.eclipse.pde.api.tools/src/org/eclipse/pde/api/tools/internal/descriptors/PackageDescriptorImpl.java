@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,18 +29,22 @@ public class PackageDescriptorImpl extends NamedElementDescriptorImpl implements
 	public PackageDescriptorImpl(String name) {
 		super(name);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		String name = getName();
 		return name.equals("") ? "<default package>" : name; //$NON-NLS-1$ //$NON-NLS-2$
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof IPackageDescriptor) {
 			IPackageDescriptor pkg = (IPackageDescriptor) obj;
@@ -48,23 +52,34 @@ public class PackageDescriptorImpl extends NamedElementDescriptorImpl implements
 		}
 		return false;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		return getName().hashCode();
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.model.component.IElementDescriptor#getElementType()
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.model.component.IElementDescriptor#getElementType
+	 * ()
 	 */
+	@Override
 	public int getElementType() {
 		return IElementDescriptor.PACKAGE;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.model.component.IPackageDescriptor#getType(java.lang.String, java.lang.String)
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.model.component.IPackageDescriptor#getType(
+	 * java.lang.String, java.lang.String)
 	 */
+	@Override
 	public IReferenceTypeDescriptor getType(String typeQualifiedName, String signature) {
 		String[] names = typeQualifiedName.split("\\$"); //$NON-NLS-1$
 		IReferenceTypeDescriptor typeDescriptor = new ReferenceTypeDescriptorImpl(names[0], this, signature);
@@ -74,9 +89,13 @@ public class PackageDescriptorImpl extends NamedElementDescriptorImpl implements
 		return typeDescriptor;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescriptor#getType(java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescriptor
+	 * #getType(java.lang.String)
 	 */
+	@Override
 	public IReferenceTypeDescriptor getType(String typeQualifiedName) {
 		String[] names = typeQualifiedName.split("\\$"); //$NON-NLS-1$
 		IReferenceTypeDescriptor typeDescriptor = new ReferenceTypeDescriptorImpl(names[0], this);
@@ -84,5 +103,5 @@ public class PackageDescriptorImpl extends NamedElementDescriptorImpl implements
 			typeDescriptor = typeDescriptor.getType(names[i]);
 		}
 		return typeDescriptor;
-	}	
+	}
 }

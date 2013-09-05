@@ -18,7 +18,7 @@ package org.eclipse.pde.api.tools.internal.search;
 public abstract class HTMLConvertor {
 
 	/**
-	 * Default file extension for HTML files: <code>.html</code> 
+	 * Default file extension for HTML files: <code>.html</code>
 	 */
 	public static final String HTML_EXTENSION = ".html"; //$NON-NLS-1$
 	/**
@@ -157,15 +157,16 @@ public abstract class HTMLConvertor {
 	 * Opening h4 tag: <code>&lt;h4&gt;</code>
 	 */
 	public static final String OPEN_H4 = "<h4>"; //$NON-NLS-1$
-	
+
 	/**
 	 * Opens a new <code>&lt;td&gt;</code> with the given width attribute set
+	 * 
 	 * @param width
 	 * @return a new open <code>&lt;td&gt;</code> tag
 	 */
 	public static String openTD(int width) {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("<td width=\"").append(width).append("%\">");  //$NON-NLS-1$//$NON-NLS-2$
+		buffer.append("<td width=\"").append(width).append("%\">"); //$NON-NLS-1$//$NON-NLS-2$
 		return buffer.toString();
 	}
 }

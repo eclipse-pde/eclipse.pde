@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,10 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
+import org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
+import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
+import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemFilter;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.ui.internal.preferences.PreferenceMessages;
@@ -39,10 +42,12 @@ import org.osgi.service.prefs.BackingStoreException;
 public class UpdateProjectSettingsOperation extends UIJob {
 
 	private IMarker fBackingMarker = null;
-	
+
 	/**
 	 * Constructor
-	 * @param element the element to create the filter for (method, field, class, enum, etc)
+	 * 
+	 * @param element the element to create the filter for (method, field,
+	 *            class, enum, etc)
 	 * @param kind the kind of filter to create
 	 * 
 	 * @see IApiProblemFilter#getKinds()
@@ -52,28 +57,32 @@ public class UpdateProjectSettingsOperation extends UIJob {
 		fBackingMarker = marker;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.
+	 * IProgressMonitor)
 	 */
+	@Override
 	public IStatus runInUIThread(IProgressMonitor monitor) {
 		boolean notNull = monitor != null;
-		if (notNull && monitor.isCanceled()) return Status.CANCEL_STATUS;
-		if (notNull) {
-			monitor.beginTask(
-					NLS.bind(MarkerMessages.UpdateProjectSettingsOperation_title, PreferenceMessages.ReportApiComponentResolutionFailureDescription),
-					3);
+		if (notNull && monitor.isCanceled()) {
+			return Status.CANCEL_STATUS;
 		}
-		try{
+		if (notNull) {
+			monitor.beginTask(NLS.bind(MarkerMessages.UpdateProjectSettingsOperation_title, PreferenceMessages.ReportApiComponentResolutionFailureDescription), 3);
+		}
+		try {
 			if (notNull) {
 				monitor.worked(1);
 			}
 			IResource resource = fBackingMarker.getResource();
 			IProject project = resource.getProject();
-			if(project == null) {
+			if (project == null) {
 				return Status.CANCEL_STATUS;
 			}
 			IApiComponent component = ApiPlugin.getDefault().getApiBaselineManager().getWorkspaceBaseline().getApiComponent(project.getName());
-			if(component == null) {
+			if (component == null) {
 				return Status.CANCEL_STATUS;
 			}
 			IEclipsePreferences inode = new ProjectScope(project).getNode(ApiPlugin.PLUGIN_ID);
@@ -86,7 +95,7 @@ public class UpdateProjectSettingsOperation extends UIJob {
 			if (notNull) {
 				monitor.worked(1);
 			}
-			Util.getBuildJob(new IProject[] {project}).schedule();
+			Util.getBuildJob(new IProject[] { project }).schedule();
 			if (notNull) {
 				monitor.worked(1);
 			}
@@ -94,7 +103,7 @@ public class UpdateProjectSettingsOperation extends UIJob {
 			if (notNull) {
 				monitor.done();
 			}
-		}		
+		}
 		return Status.OK_STATUS;
 	}
 }

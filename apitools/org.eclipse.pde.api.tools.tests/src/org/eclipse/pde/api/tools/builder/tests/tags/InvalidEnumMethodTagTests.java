@@ -13,7 +13,7 @@ package org.eclipse.pde.api.tools.builder.tests.tags;
 import junit.framework.Test;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.api.tools.internal.builder.BuilderMessages;
 
 /**
@@ -34,15 +34,17 @@ public class InvalidEnumMethodTagTests extends InvalidMethodTagTests {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getTestCompliance()
 	 */
+	@Override
 	protected String getTestCompliance() {
-		return CompilerOptions.VERSION_1_5;
+		return JavaCore.VERSION_1_5;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestSourcePath()
 	 */
+	@Override
 	protected IPath getTestSourcePath() {
-		return super.getTestSourcePath().append("enum");
+		return super.getTestSourcePath().append("enum"); //$NON-NLS-1$
 	}
 	
 	/**
@@ -66,14 +68,14 @@ public class InvalidEnumMethodTagTests extends InvalidMethodTagTests {
 	public void x1(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(6));
 		setExpectedMessageArgs(new String[][] {
-				{"@noextend", BuilderMessages.TagValidator_an_enum_method},
-				{"@noextend", BuilderMessages.TagValidator_an_enum_method},
-				{"@noextend", BuilderMessages.TagValidator_an_enum_method},
-				{"@noextend", BuilderMessages.TagValidator_an_enum_method},
-				{"@noextend", BuilderMessages.TagValidator_an_enum_method},
-				{"@noextend", BuilderMessages.TagValidator_an_enum_method}
+				{"@noextend", BuilderMessages.TagValidator_an_enum_method}, //$NON-NLS-1$
+				{"@noextend", BuilderMessages.TagValidator_an_enum_method}, //$NON-NLS-1$
+				{"@noextend", BuilderMessages.TagValidator_an_enum_method}, //$NON-NLS-1$
+				{"@noextend", BuilderMessages.TagValidator_an_enum_method}, //$NON-NLS-1$
+				{"@noextend", BuilderMessages.TagValidator_an_enum_method}, //$NON-NLS-1$
+				{"@noextend", BuilderMessages.TagValidator_an_enum_method} //$NON-NLS-1$
 		});
-		deployTagTest("test1.java", inc, false);
+		deployTagTest("test1.java", inc, false); //$NON-NLS-1$
 	}
 	
 	public void testInvalidEnumMethodTag2I() {
@@ -90,10 +92,10 @@ public class InvalidEnumMethodTagTests extends InvalidMethodTagTests {
 	private void x2(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(2));
 		setExpectedMessageArgs(new String[][] {
-				{"@noextend", BuilderMessages.TagValidator_an_enum_method},
-				{"@noextend", BuilderMessages.TagValidator_an_enum_method}
+				{"@noextend", BuilderMessages.TagValidator_an_enum_method}, //$NON-NLS-1$
+				{"@noextend", BuilderMessages.TagValidator_an_enum_method} //$NON-NLS-1$
 		});
-		deployTagTest("test2.java", inc, true);
+		deployTagTest("test2.java", inc, true); //$NON-NLS-1$
 	}
 	
 	public void testInvalidEnumMethodTag3I() {
@@ -110,14 +112,14 @@ public class InvalidEnumMethodTagTests extends InvalidMethodTagTests {
 	public void x3(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(6));
 		setExpectedMessageArgs(new String[][] {
-				{"@noinstantiate", BuilderMessages.TagValidator_an_enum_method},
-				{"@noinstantiate", BuilderMessages.TagValidator_an_enum_method},
-				{"@noinstantiate", BuilderMessages.TagValidator_an_enum_method},
-				{"@noinstantiate", BuilderMessages.TagValidator_an_enum_method},
-				{"@noinstantiate", BuilderMessages.TagValidator_an_enum_method},
-				{"@noinstantiate", BuilderMessages.TagValidator_an_enum_method}
+				{"@noinstantiate", BuilderMessages.TagValidator_an_enum_method}, //$NON-NLS-1$
+				{"@noinstantiate", BuilderMessages.TagValidator_an_enum_method}, //$NON-NLS-1$
+				{"@noinstantiate", BuilderMessages.TagValidator_an_enum_method}, //$NON-NLS-1$
+				{"@noinstantiate", BuilderMessages.TagValidator_an_enum_method}, //$NON-NLS-1$
+				{"@noinstantiate", BuilderMessages.TagValidator_an_enum_method}, //$NON-NLS-1$
+				{"@noinstantiate", BuilderMessages.TagValidator_an_enum_method} //$NON-NLS-1$
 		});
-		deployTagTest("test3.java", inc, false);
+		deployTagTest("test3.java", inc, false); //$NON-NLS-1$
 	}
 	
 	public void testInvalidEnumMethodTag4I() {
@@ -134,10 +136,10 @@ public class InvalidEnumMethodTagTests extends InvalidMethodTagTests {
 	private void x4(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(2));
 		setExpectedMessageArgs(new String[][] {
-				{"@noinstantiate", BuilderMessages.TagValidator_an_enum_method},
-				{"@noinstantiate", BuilderMessages.TagValidator_an_enum_method}
+				{"@noinstantiate", BuilderMessages.TagValidator_an_enum_method}, //$NON-NLS-1$
+				{"@noinstantiate", BuilderMessages.TagValidator_an_enum_method} //$NON-NLS-1$
 		});
-		deployTagTest("test4.java", inc, true);
+		deployTagTest("test4.java", inc, true); //$NON-NLS-1$
 	}
 	
 	public void testInvalidEnumMethodTag5I() {
@@ -154,14 +156,14 @@ public class InvalidEnumMethodTagTests extends InvalidMethodTagTests {
 	public void x5(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(6));
 		setExpectedMessageArgs(new String[][] {
-				{"@noimplement", BuilderMessages.TagValidator_an_enum_method},
-				{"@noimplement", BuilderMessages.TagValidator_an_enum_method},
-				{"@noimplement", BuilderMessages.TagValidator_an_enum_method},
-				{"@noimplement", BuilderMessages.TagValidator_an_enum_method},
-				{"@noimplement", BuilderMessages.TagValidator_an_enum_method},
-				{"@noimplement", BuilderMessages.TagValidator_an_enum_method}
+				{"@noimplement", BuilderMessages.TagValidator_an_enum_method}, //$NON-NLS-1$
+				{"@noimplement", BuilderMessages.TagValidator_an_enum_method}, //$NON-NLS-1$
+				{"@noimplement", BuilderMessages.TagValidator_an_enum_method}, //$NON-NLS-1$
+				{"@noimplement", BuilderMessages.TagValidator_an_enum_method}, //$NON-NLS-1$
+				{"@noimplement", BuilderMessages.TagValidator_an_enum_method}, //$NON-NLS-1$
+				{"@noimplement", BuilderMessages.TagValidator_an_enum_method} //$NON-NLS-1$
 		});
-		deployTagTest("test5.java", inc, false);
+		deployTagTest("test5.java", inc, false); //$NON-NLS-1$
 	}
 
 	public void testInvalidEnumMethodTag6I() {
@@ -178,10 +180,10 @@ public class InvalidEnumMethodTagTests extends InvalidMethodTagTests {
 	private void x6(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(2));
 		setExpectedMessageArgs(new String[][] {
-				{"@noimplement", BuilderMessages.TagValidator_an_enum_method},
-				{"@noimplement", BuilderMessages.TagValidator_an_enum_method}
+				{"@noimplement", BuilderMessages.TagValidator_an_enum_method}, //$NON-NLS-1$
+				{"@noimplement", BuilderMessages.TagValidator_an_enum_method} //$NON-NLS-1$
 		});
-		deployTagTest("test6.java", inc, true);
+		deployTagTest("test6.java", inc, true); //$NON-NLS-1$
 	}
 	
 	public void testInvalidEnumMethodTag7I() {
@@ -198,14 +200,14 @@ public class InvalidEnumMethodTagTests extends InvalidMethodTagTests {
 	public void x7(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(6));
 		setExpectedMessageArgs(new String[][] {
-				{"@nooverride", BuilderMessages.TagValidator_an_enum_method},
-				{"@nooverride", BuilderMessages.TagValidator_an_enum_method},
-				{"@nooverride", BuilderMessages.TagValidator_an_enum_method},
-				{"@nooverride", BuilderMessages.TagValidator_an_enum_method},
-				{"@nooverride", BuilderMessages.TagValidator_an_enum_method},
-				{"@nooverride", BuilderMessages.TagValidator_an_enum_method}
+				{"@nooverride", BuilderMessages.TagValidator_an_enum_method}, //$NON-NLS-1$
+				{"@nooverride", BuilderMessages.TagValidator_an_enum_method}, //$NON-NLS-1$
+				{"@nooverride", BuilderMessages.TagValidator_an_enum_method}, //$NON-NLS-1$
+				{"@nooverride", BuilderMessages.TagValidator_an_enum_method}, //$NON-NLS-1$
+				{"@nooverride", BuilderMessages.TagValidator_an_enum_method}, //$NON-NLS-1$
+				{"@nooverride", BuilderMessages.TagValidator_an_enum_method} //$NON-NLS-1$
 		});
-		deployTagTest("test7.java", inc, false);
+		deployTagTest("test7.java", inc, false); //$NON-NLS-1$
 	}
 	
 	public void testInvalidEnumMethodTag8I() {
@@ -222,10 +224,10 @@ public class InvalidEnumMethodTagTests extends InvalidMethodTagTests {
 	private void x8(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(2));
 		setExpectedMessageArgs(new String[][] {
-				{"@nooverride", BuilderMessages.TagValidator_an_enum_method},
-				{"@nooverride", BuilderMessages.TagValidator_an_enum_method}
+				{"@nooverride", BuilderMessages.TagValidator_an_enum_method}, //$NON-NLS-1$
+				{"@nooverride", BuilderMessages.TagValidator_an_enum_method} //$NON-NLS-1$
 		});
-		deployTagTest("test8.java", inc, true);
+		deployTagTest("test8.java", inc, true); //$NON-NLS-1$
 	}
 
 	public void testInvalidEnumMethodTag9I() {
@@ -242,9 +244,9 @@ public class InvalidEnumMethodTagTests extends InvalidMethodTagTests {
 	private void x9(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(2));
 		setExpectedMessageArgs(new String[][] {
-				{"@nooverride", BuilderMessages.TagValidator_an_enum_method},
-				{"@nooverride", BuilderMessages.TagValidator_an_enum_method}
+				{"@nooverride", BuilderMessages.TagValidator_an_enum_method}, //$NON-NLS-1$
+				{"@nooverride", BuilderMessages.TagValidator_an_enum_method} //$NON-NLS-1$
 		});
-		deployTagTest("test9.java", inc, true);
+		deployTagTest("test9.java", inc, true); //$NON-NLS-1$
 	}
 }

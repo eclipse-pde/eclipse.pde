@@ -16,7 +16,7 @@ import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
  * Extends annotations with relative build time stamp
  */
 public class TypeAnnotations implements IApiAnnotations {
-	
+
 	private IApiAnnotations fAnnotations;
 	private long fBuildStamp;
 
@@ -28,21 +28,28 @@ public class TypeAnnotations implements IApiAnnotations {
 		fAnnotations = annotations;
 		fBuildStamp = stamp;
 	}
-	
+
 	public long getBuildStamp() {
 		return fBuildStamp;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations#getVisibility()
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations#getVisibility
+	 * ()
 	 */
+	@Override
 	public int getVisibility() {
 		return fAnnotations.getVisibility();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations#getRestrictions()
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations#
+	 * getRestrictions()
 	 */
+	@Override
 	public int getRestrictions() {
 		return fAnnotations.getRestrictions();
 	}

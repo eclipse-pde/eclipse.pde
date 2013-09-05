@@ -29,10 +29,11 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.util.FilteredElements;
 
 /**
- * Ant task to retrieve all deprecation changes (addition or removal) between two api baselines
+ * Ant task to retrieve all deprecation changes (addition or removal) between
+ * two api baselines
  */
 public class APIDeprecationTask extends CommonUtilsTask {
-	
+
 	private boolean debug;
 
 	private String eeFileLocation;
@@ -40,20 +41,14 @@ public class APIDeprecationTask extends CommonUtilsTask {
 	private String includeListLocation;
 	private static final String REPORT_XML_FILE_NAME = "apiDeprecation.xml"; //$NON-NLS-1$
 
+	@Override
 	public void execute() throws BuildException {
-		if (this.referenceBaselineLocation == null
-				|| this.currentBaselineLocation == null
-				|| this.reportLocation == null) {
+		if (this.referenceBaselineLocation == null || this.currentBaselineLocation == null || this.reportLocation == null) {
 			StringWriter out = new StringWriter();
 			PrintWriter writer = new PrintWriter(out);
-			writer.println(
-				NLS.bind(Messages.printArguments,
-					new String[] {
-						this.referenceBaselineLocation,
-						this.currentBaselineLocation,
-						this.reportLocation,
-					})
-			);
+			writer.println(NLS.bind(Messages.printArguments, new String[] {
+					this.referenceBaselineLocation,
+					this.currentBaselineLocation, this.reportLocation, }));
 			writer.flush();
 			writer.close();
 			throw new BuildException(String.valueOf(out.getBuffer()));
@@ -89,7 +84,7 @@ public class APIDeprecationTask extends CommonUtilsTask {
 		// create baseline for the reference
 		IApiBaseline referenceBaseline = createBaseline(REFERENCE_BASELINE_NAME, referenceInstallDir.getAbsolutePath(), this.eeFileLocation);
 		IApiBaseline currentBaseline = createBaseline(CURRENT_BASELINE_NAME, baselineInstallDir.getAbsolutePath(), this.eeFileLocation);
-		
+
 		FilteredElements excludedElements = CommonUtilsTask.initializeFilteredElements(this.excludeListLocation, currentBaseline, this.debug);
 
 		if (this.debug) {
@@ -97,7 +92,7 @@ public class APIDeprecationTask extends CommonUtilsTask {
 			System.out.println("Excluded elements list:"); //$NON-NLS-1$
 			System.out.println(excludedElements);
 		}
-		
+
 		FilteredElements includedElements = CommonUtilsTask.initializeFilteredElements(this.includeListLocation, currentBaseline, this.debug);
 
 		if (this.debug) {
@@ -105,7 +100,7 @@ public class APIDeprecationTask extends CommonUtilsTask {
 			System.out.println("Included elements list:"); //$NON-NLS-1$
 			System.out.println(includedElements);
 		}
-		
+
 		IDelta delta = null;
 		if (this.debug) {
 			System.out.println("Creation of both baselines : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -137,8 +132,8 @@ public class APIDeprecationTask extends CommonUtilsTask {
 			BufferedWriter writer = null;
 			File outputFile = new File(this.reportLocation);
 			if (outputFile.exists()) {
-				if (outputFile.isDirectory()){
-					 outputFile = new File(this.reportLocation, REPORT_XML_FILE_NAME);
+				if (outputFile.isDirectory()) {
+					outputFile = new File(this.reportLocation, REPORT_XML_FILE_NAME);
 				}
 				// delete the file
 				// TODO we might want to customize it
@@ -147,8 +142,7 @@ public class APIDeprecationTask extends CommonUtilsTask {
 				File outputDir = outputFile.getParentFile();
 				if (!outputDir.exists()) {
 					if (!outputDir.mkdirs()) {
-						throw new BuildException(
-							NLS.bind(Messages.errorCreatingParentReportFile, outputDir.getAbsolutePath()));
+						throw new BuildException(NLS.bind(Messages.errorCreatingParentReportFile, outputDir.getAbsolutePath()));
 					}
 				}
 			}
@@ -174,7 +168,7 @@ public class APIDeprecationTask extends CommonUtilsTask {
 					if (writer != null) {
 						writer.close();
 					}
-				} catch(IOException e) {
+				} catch (IOException e) {
 					// ignore
 				}
 			}
@@ -183,35 +177,52 @@ public class APIDeprecationTask extends CommonUtilsTask {
 			}
 		}
 	}
+
 	/**
 	 * Set the debug value.
-	 * <p>The possible values are: <code>true</code>, <code>false</code></p>
-	 * <p>Default is <code>false</code>.</p>
-	 *
+	 * <p>
+	 * The possible values are: <code>true</code>, <code>false</code>
+	 * </p>
+	 * <p>
+	 * Default is <code>false</code>.
+	 * </p>
+	 * 
 	 * @param debugValue the given debug value
 	 */
 	public void setDebug(String debugValue) {
-		this.debug = Boolean.toString(true).equals(debugValue); 
+		this.debug = Boolean.toString(true).equals(debugValue);
 	}
+
 	/**
 	 * Set the execution environment file to use.
-	 * <p>By default, an execution environment file corresponding to a JavaSE-1.6 execution environment
-	 * is used.</p>
-	 * <p>The file is specified using an absolute path. This is optional.</p> 
-	 *
+	 * <p>
+	 * By default, an execution environment file corresponding to a JavaSE-1.6
+	 * execution environment is used.
+	 * </p>
+	 * <p>
+	 * The file is specified using an absolute path. This is optional.
+	 * </p>
+	 * 
 	 * @param eeFileLocation the given execution environment file
 	 */
 	public void setEEFile(String eeFileLocation) {
 		this.eeFileLocation = eeFileLocation;
 	}
+
 	/**
 	 * Set the exclude list location.
 	 * 
-	 * <p>The exclude list is used to know what bundles and members should excluded from the xml report
-	 * generated by the task execution. Lines starting with '#' are ignored from
-	 * the excluded element.</p>
-	 * <p>The format of the exclude file looks like this:</p>
-	 * <pre># 229688
+	 * <p>
+	 * The exclude list is used to know what bundles and members should excluded
+	 * from the xml report generated by the task execution. Lines starting with
+	 * '#' are ignored from the excluded element.
+	 * </p>
+	 * <p>
+	 * The format of the exclude file looks like this:
+	 * </p>
+	 * 
+	 * <pre>
+	 * # 229688
 	 * org.eclipse.jface.databinding_1.2.0:org.eclipse.jface.databinding.viewers.ObservableListContentProvider#dispose()V
 	 * org.eclipse.jface.databinding_1.2.0:org.eclipse.jface.databinding.viewers.ObservableListContentProvider#getElements(Ljava/lang/Object;)[Ljava/lang/Object;
 	 * org.eclipse.jface.databinding_1.2.0:org.eclipse.jface.databinding.viewers.ObservableListContentProvider#inputChanged(Lorg/eclipse/jface/viewers/Viewer;Ljava/lang/Object;Ljava/lang/Object;)V
@@ -219,19 +230,25 @@ public class APIDeprecationTask extends CommonUtilsTask {
 	 * org.eclipse.jface.databinding_1.2.0:org.eclipse.jface.databinding.viewers.ObservableListTreeContentProvider#getChildren(Ljava/lang/Object;)[Ljava/lang/Object;
 	 * ...
 	 * </pre>
+	 * 
 	 * @param excludeListLocation the given location for the excluded list file
 	 */
 	public void setExcludeList(String excludeListLocation) {
 		this.excludeListLocation = excludeListLocation;
 	}
-	
+
 	/**
 	 * Set the include list location.
 	 * 
-	 * <p>The include list is used to know what bundles and members should included from the xml report
-	 * generated by the task execution. Lines starting with '#' are ignored from
-	 * the included element.</p>
-	 * <p>The format of the exclude file looks like this:</p>
+	 * <p>
+	 * The include list is used to know what bundles and members should included
+	 * from the xml report generated by the task execution. Lines starting with
+	 * '#' are ignored from the included element.
+	 * </p>
+	 * <p>
+	 * The format of the exclude file looks like this:
+	 * </p>
+	 * 
 	 * <pre>
 	 * org.eclipse.jface.databinding_1.2.0:org.eclipse.jface.databinding.viewers.ObservableListContentProvider#dispose()V
 	 * org.eclipse.jface.databinding_1.2.0:org.eclipse.jface.databinding.viewers.ObservableListContentProvider#getElements(Ljava/lang/Object;)[Ljava/lang/Object;
@@ -240,39 +257,45 @@ public class APIDeprecationTask extends CommonUtilsTask {
 	 * org.eclipse.jface.databinding_1.2.0:org.eclipse.jface.databinding.viewers.ObservableListTreeContentProvider#getChildren(Ljava/lang/Object;)[Ljava/lang/Object;
 	 * ...
 	 * </pre>
+	 * 
 	 * @param includeListLocation the given location for the included list file
 	 */
 	public void setIncludeList(String includeListLocation) {
 		this.includeListLocation = includeListLocation;
 	}
-	
+
 	/**
-	 * Set the location of the current product or baseline that you want to compare against
-	 * the reference baseline.
+	 * Set the location of the current product or baseline that you want to
+	 * compare against the reference baseline.
 	 * 
-	 * <p>It can be a .zip, .jar, .tgz, .tar.gz file, or a directory that corresponds to 
-	 * the Eclipse installation folder. This is the directory is which you can find the 
-	 * Eclipse executable.
+	 * <p>
+	 * It can be a .zip, .jar, .tgz, .tar.gz file, or a directory that
+	 * corresponds to the Eclipse installation folder. This is the directory is
+	 * which you can find the Eclipse executable.
 	 * </p>
-	 *
+	 * 
 	 * @param baselineLocation the given location for the baseline to analyze
 	 */
 	public void setProfile(String baselineLocation) {
 		this.currentBaselineLocation = baselineLocation;
 	}
+
 	/**
 	 * Set the location of the reference baseline.
 	 * 
-	 * <p>It can be a .zip, .jar, .tgz, .tar.gz file, or a directory that corresponds to 
-	 * the Eclipse installation folder. This is the directory is which you can find the 
-	 * Eclipse executable.
+	 * <p>
+	 * It can be a .zip, .jar, .tgz, .tar.gz file, or a directory that
+	 * corresponds to the Eclipse installation folder. This is the directory is
+	 * which you can find the Eclipse executable.
 	 * </p>
-	 *
-	 * @param baselineLocation the given location for the reference baseline to analyze
+	 * 
+	 * @param baselineLocation the given location for the reference baseline to
+	 *            analyze
 	 */
 	public void setBaseline(String baselineLocation) {
 		this.referenceBaselineLocation = baselineLocation;
 	}
+
 	/**
 	 * Set the given report file name to be generated.
 	 * 

@@ -13,7 +13,7 @@ package org.eclipse.pde.api.tools.builder.tests.tags;
 import junit.framework.Test;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
+import org.eclipse.jdt.core.JavaCore;
 
 /**
  * Tests valid use of @noreference tags in an enum
@@ -33,8 +33,9 @@ public class ValidEnumFieldTagTests extends ValidFieldTagTests {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.tags.ValidFieldTagTests#getTestSourcePath()
 	 */
+	@Override
 	protected IPath getTestSourcePath() {
-		return super.getTestSourcePath().append("enum");
+		return super.getTestSourcePath().append("enum"); //$NON-NLS-1$
 	}
 	
 	/**
@@ -47,8 +48,9 @@ public class ValidEnumFieldTagTests extends ValidFieldTagTests {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getTestCompliance()
 	 */
+	@Override
 	protected String getTestCompliance() {
-		return CompilerOptions.VERSION_1_5;
+		return JavaCore.VERSION_1_5;
 	}
 	
 	/**
@@ -68,7 +70,7 @@ public class ValidEnumFieldTagTests extends ValidFieldTagTests {
 	}
 	
 	private void x1(boolean inc) {
-		deployTagTest("test1.java", inc, false);
+		deployTagTest("test1.java", inc, false); //$NON-NLS-1$
 	}
 	
 	/**
@@ -88,7 +90,7 @@ public class ValidEnumFieldTagTests extends ValidFieldTagTests {
 	}
 	
 	private void x4(boolean inc) {
-		deployTagTest("test4.java", inc, false);
+		deployTagTest("test4.java", inc, false); //$NON-NLS-1$
 	}
 	
 	/**
@@ -108,7 +110,7 @@ public class ValidEnumFieldTagTests extends ValidFieldTagTests {
 	}
 	
 	private void x3(boolean inc) {
-		deployTagTest("test3.java", inc, true);
+		deployTagTest("test3.java", inc, true); //$NON-NLS-1$
 	}
 	
 	/**
@@ -128,6 +130,6 @@ public class ValidEnumFieldTagTests extends ValidFieldTagTests {
 	}
 	
 	private void x5(boolean inc) {
-		deployTagTest("test5.java", inc, false);
+		deployTagTest("test5.java", inc, false); //$NON-NLS-1$
 	}
 }

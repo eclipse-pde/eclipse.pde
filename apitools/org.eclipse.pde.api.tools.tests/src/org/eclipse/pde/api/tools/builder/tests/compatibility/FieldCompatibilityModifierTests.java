@@ -29,12 +29,12 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 	/**
 	 * Workspace relative path classes in bundle/project A
 	 */
-	protected static IPath WORKSPACE_CLASSES_PACKAGE_A = new Path("bundle.a/src/a/fields/modifiers");
+	protected static IPath WORKSPACE_CLASSES_PACKAGE_A = new Path("bundle.a/src/a/fields/modifiers"); //$NON-NLS-1$
 
 	/**
 	 * Package prefix for test classes
 	 */
-	protected static String PACKAGE_PREFIX = "a.fields.modifiers.";
+	protected static String PACKAGE_PREFIX = "a.fields.modifiers."; //$NON-NLS-1$
 	
 	/**
 	 * Constructor
@@ -47,8 +47,9 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestSourcePath()
 	 */
+	@Override
 	protected IPath getTestSourcePath() {
-		return super.getTestSourcePath().append("modifiers");
+		return super.getTestSourcePath().append("modifiers"); //$NON-NLS-1$
 	}
 	
 	/**
@@ -61,8 +62,9 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestingProjectName()
 	 */
+	@Override
 	protected String getTestingProjectName() {
-		return "classcompat";
+		return "classcompat"; //$NON-NLS-1$
 	}
 
 	/**
@@ -84,13 +86,13 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 	 * Tests making a non-final field final
 	 */
 	private void xAddFinal(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddFinal.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddFinal.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			getChangedProblemId(IDelta.NON_FINAL_TO_FINAL)
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "AddFinal", "ADD_FINAL"};
+		args[0] = new String[]{PACKAGE_PREFIX + "AddFinal", "ADD_FINAL"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -107,7 +109,7 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 	 * Tests making a non-final no-reference field final
 	 */
 	private void xAddFinalNoReference(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddFinalNoReference.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddFinalNoReference.java"); //$NON-NLS-1$
 		// expecting no errors
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -124,13 +126,13 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 	 * Tests making a non-final field final
 	 */
 	private void xAddFinalOnStatic(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddFinalOnStatic.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddFinalOnStatic.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			getChangedProblemId(IDelta.NON_FINAL_TO_FINAL)
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "AddFinalOnStatic", "ADD_FINAL"};
+		args[0] = new String[]{PACKAGE_PREFIX + "AddFinalOnStatic", "ADD_FINAL"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -147,7 +149,7 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 	 * Tests making a non-final no-reference field final
 	 */
 	private void xAddFinalOnStaticNoReference(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddFinalOnStaticNoReference.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddFinalOnStaticNoReference.java"); //$NON-NLS-1$
 		// expecting no errors
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -164,13 +166,13 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 	 * Tests making a non-final field final
 	 */
 	private void xRemoveFinalOnConstant(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveFinalOnConstant.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveFinalOnConstant.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			getChangedProblemId(IDelta.FINAL_TO_NON_FINAL_STATIC_CONSTANT)
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "RemoveFinalOnConstant", "CONSTANT"};
+		args[0] = new String[]{PACKAGE_PREFIX + "RemoveFinalOnConstant", "CONSTANT"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -187,13 +189,13 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 	 * Tests making a non-static field static
 	 */
 	private void xAddStatic(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddStatic.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddStatic.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			getChangedProblemId(IDelta.NON_STATIC_TO_STATIC)
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "AddStatic", "ADD_STATIC"};
+		args[0] = new String[]{PACKAGE_PREFIX + "AddStatic", "ADD_STATIC"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -210,7 +212,7 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 	 * Tests making a non-static no-reference field static
 	 */
 	private void xAddStaticNoReference(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddStaticNoReference.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddStaticNoReference.java"); //$NON-NLS-1$
 		// expecting no errors
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -227,13 +229,13 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 	 * Tests making a static field non-static
 	 */
 	private void xRemoveStatic(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveStatic.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveStatic.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			getChangedProblemId(IDelta.STATIC_TO_NON_STATIC)
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "RemoveStatic", "REMOVE_STATIC"};
+		args[0] = new String[]{PACKAGE_PREFIX + "RemoveStatic", "REMOVE_STATIC"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -250,7 +252,7 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 	 * Tests making a static no-reference field non-static
 	 */
 	private void xRemoveStaticNoReference(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveStaticNoReference.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveStaticNoReference.java"); //$NON-NLS-1$
 		// expecting no errors
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -267,13 +269,13 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 	 * Tests changing a protected field to package protected
 	 */
 	private void xProtectedToPackage(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ProtectedToPackage.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ProtectedToPackage.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			getChangedProblemId(IDelta.DECREASE_ACCESS)
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "ProtectedToPackage", "FIELD"};
+		args[0] = new String[]{PACKAGE_PREFIX + "ProtectedToPackage", "FIELD"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -290,7 +292,7 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 	 * Tests changing a protected field to package protected when no-reference
 	 */
 	private void xProtectedToPackageNoReference(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ProtectedToPackageNoReference.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ProtectedToPackageNoReference.java"); //$NON-NLS-1$
 		// expecting no errors
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -308,7 +310,7 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 	 * the no-reference tag
 	 */
 	private void xProtectedToPackageRemoveNoReference(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ProtectedToPackageRemoveNoReference.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ProtectedToPackageRemoveNoReference.java"); //$NON-NLS-1$
 		// expecting no errors
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -325,13 +327,13 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 	 * Tests changing a protected field to private
 	 */
 	private void xProtectedToPrivate(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ProtectedToPrivate.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ProtectedToPrivate.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			getChangedProblemId(IDelta.DECREASE_ACCESS)
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "ProtectedToPrivate", "FIELD"};
+		args[0] = new String[]{PACKAGE_PREFIX + "ProtectedToPrivate", "FIELD"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -348,7 +350,7 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 	 * Tests changing a protected field to private field in a no-extend class
 	 */
 	private void xProtectedToPrivateNoExtend(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ProtectedToPrivateNoExtend.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ProtectedToPrivateNoExtend.java"); //$NON-NLS-1$
 		// expected no error
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -365,13 +367,13 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 	 * Tests changing a public field to package
 	 */
 	private void xPublicToPackage(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("PublicToPackage.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("PublicToPackage.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			getChangedProblemId(IDelta.DECREASE_ACCESS)
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "PublicToPackage", "FIELD"};
+		args[0] = new String[]{PACKAGE_PREFIX + "PublicToPackage", "FIELD"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -388,13 +390,13 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 	 * Tests changing a public field to private
 	 */
 	private void xPublicToPrivate(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("PublicToPrivate.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("PublicToPrivate.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			getChangedProblemId(IDelta.DECREASE_ACCESS)
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "PublicToPrivate", "FIELD"};
+		args[0] = new String[]{PACKAGE_PREFIX + "PublicToPrivate", "FIELD"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -411,7 +413,7 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 	 * Tests changing a public field to private
 	 */
 	private void xPublicToPrivateNoReference(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("PublicToPrivateNoReference.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("PublicToPrivateNoReference.java"); //$NON-NLS-1$
 		// expecting no errors
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -428,13 +430,13 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 	 * Tests changing a public field to protected
 	 */
 	private void xPublicToProtected(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("PublicToProtected.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("PublicToProtected.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			getChangedProblemId(IDelta.DECREASE_ACCESS)
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "PublicToProtected", "FIELD"};
+		args[0] = new String[]{PACKAGE_PREFIX + "PublicToProtected", "FIELD"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -451,13 +453,13 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 	 * Tests changing the value of a constant
 	 */
 	private void xModifyValue(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ModifyValue.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ModifyValue.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			getChangedProblemId(IDelta.VALUE)
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "ModifyValue", "CONSTANT", "VALUE_1"};
+		args[0] = new String[]{PACKAGE_PREFIX + "ModifyValue", "CONSTANT", "VALUE_1"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -474,13 +476,13 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 	 * Tests changing the type of a field
 	 */
 	private void xChangeType(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ChangeType.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ChangeType.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			getChangedProblemId(IDelta.TYPE)
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "ChangeType", "FIELD"};
+		args[0] = new String[]{PACKAGE_PREFIX + "ChangeType", "FIELD"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -497,7 +499,7 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 	 * Tests changing the type of a protected field with a no-extend class
 	 */
 	private void xChangeTypeNoExtend(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ChangeTypeNoExtend.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ChangeTypeNoExtend.java"); //$NON-NLS-1$
 		// should be no problems
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -514,7 +516,7 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 	 * Tests changing the type of a protected field annotated no-reference
 	 */
 	private void xChangeTypeNoReference(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ChangeTypeNoReference.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ChangeTypeNoReference.java"); //$NON-NLS-1$
 		// expecting no errors
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -531,13 +533,13 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 	 * Tests generalizing the type of a field
 	 */
 	private void xGeneralizeType(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("GeneralizeType.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("GeneralizeType.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			getChangedProblemId(IDelta.TYPE)
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "GeneralizeType", "FIELD"};
+		args[0] = new String[]{PACKAGE_PREFIX + "GeneralizeType", "FIELD"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -554,7 +556,7 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 	 * Tests generalizing the type of a protected field with a no-extend class
 	 */
 	private void xGeneralizeTypeNoExtend(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("GeneralizeTypeNoExtend.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("GeneralizeTypeNoExtend.java"); //$NON-NLS-1$
 		// should be no problems
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -571,7 +573,7 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 	 * Tests generalizing the type of a protected field annotated no-reference
 	 */
 	private void xGeneralizeTypeNoReference(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("GeneralizeTypeNoReference.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("GeneralizeTypeNoReference.java"); //$NON-NLS-1$
 		// expecting no errors
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -588,14 +590,14 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 	 * Tests specializing the type of a field
 	 */
 	private void xSpecializeType(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("SpecializeType.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("SpecializeType.java"); //$NON-NLS-1$
 		// should be a problem - @see bug 245150
 		int[] ids = new int[] {
 			getChangedProblemId(IDelta.TYPE)
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "SpecializeType", "FIELD"};
+		args[0] = new String[]{PACKAGE_PREFIX + "SpecializeType", "FIELD"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -612,7 +614,7 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 	 * Tests remove a type argument
 	 */
 	private void xRemoveTypeArguments(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveTypeArguments.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveTypeArguments.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			ApiProblemFactory.createProblemId(
 				IApiProblem.CATEGORY_COMPATIBILITY,
@@ -622,7 +624,7 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "RemoveTypeArguments.FIELD", "java.lang.String"};
+		args[0] = new String[]{PACKAGE_PREFIX + "RemoveTypeArguments.FIELD", "java.lang.String"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -639,7 +641,7 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 	 * Tests adding a type parameter
 	 */
 	private void xAddTypeArguments(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddTypeArguments.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddTypeArguments.java"); //$NON-NLS-1$
 		// no problems expected
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -656,7 +658,7 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 	 * Tests adding no-reference
 	 */
 	private void xAddNoReference(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddNoReference.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddNoReference.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			ApiProblemFactory.createProblemId(
 				IApiProblem.CATEGORY_COMPATIBILITY,
@@ -666,7 +668,7 @@ public class FieldCompatibilityModifierTests extends FieldCompatibilityTests {
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "AddNoReference", "FIELD"};
+		args[0] = new String[]{PACKAGE_PREFIX + "AddNoReference", "FIELD"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}

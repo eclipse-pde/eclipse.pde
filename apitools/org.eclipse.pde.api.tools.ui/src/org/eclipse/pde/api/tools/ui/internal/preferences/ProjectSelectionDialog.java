@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -58,39 +58,38 @@ import org.eclipse.ui.dialogs.SelectionStatusDialog;
 public class ProjectSelectionDialog extends SelectionStatusDialog {
 
 	static class ApiJavaElementContentProvider extends StandardJavaElementContentProvider {
+		@Override
 		public Object[] getChildren(Object element) {
-			if(element instanceof IJavaModel) {
+			if (element instanceof IJavaModel) {
 				IJavaModel model = (IJavaModel) element;
-				HashSet set = new HashSet();
+				HashSet<IJavaProject> set = new HashSet<IJavaProject>();
 				try {
 					IJavaProject[] projects = model.getJavaProjects();
-					for(int i = 0; i < projects.length; i++) {
-						if(projects[i].getProject().hasNature(ApiPlugin.NATURE_ID)) {
+					for (int i = 0; i < projects.length; i++) {
+						if (projects[i].getProject().hasNature(ApiPlugin.NATURE_ID)) {
 							set.add(projects[i]);
 						}
 					}
-				}
-				catch(JavaModelException jme) {
-					//ignore
-				}
-				catch(CoreException ce) {
-					//ignore
+				} catch (JavaModelException jme) {
+					// ignore
+				} catch (CoreException ce) {
+					// ignore
 				}
 				return set.toArray();
 			}
 			return super.getChildren(element);
 		}
 	}
-	
+
 	// the visual selection widget group
 	private TableViewer fTableViewer;
-	Set fProjectsWithSpecifics;
+	Set<?> fProjectsWithSpecifics;
 
 	// sizing constants
-	private final static int SIZING_SELECTION_WIDGET_HEIGHT= 250;
-	private final static int SIZING_SELECTION_WIDGET_WIDTH= 300;
-	
-	private final static String DIALOG_SETTINGS_SHOW_ALL= "ProjectSelectionDialog.show_all"; //$NON-NLS-1$
+	private final static int SIZING_SELECTION_WIDGET_HEIGHT = 250;
+	private final static int SIZING_SELECTION_WIDGET_WIDTH = 300;
+
+	private final static String DIALOG_SETTINGS_SHOW_ALL = "ProjectSelectionDialog.show_all"; //$NON-NLS-1$
 
 	/**
 	 * The filter for the viewer
@@ -99,43 +98,48 @@ public class ProjectSelectionDialog extends SelectionStatusDialog {
 
 	/**
 	 * Constructor
+	 * 
 	 * @param parentShell
 	 * @param projectsWithSpecifics
 	 */
-	public ProjectSelectionDialog(Shell parentShell, Set projectsWithSpecifics) {
+	public ProjectSelectionDialog(Shell parentShell, Set<?> projectsWithSpecifics) {
 		super(parentShell);
 		setTitle(PreferenceMessages.ProjectSelectionDialog_title);
-		setMessage(PreferenceMessages.ProjectSelectionDialog_message); 
-		fProjectsWithSpecifics= projectsWithSpecifics;
-		
-		fFilter= new ViewerFilter() {
+		setMessage(PreferenceMessages.ProjectSelectionDialog_message);
+		fProjectsWithSpecifics = projectsWithSpecifics;
+
+		fFilter = new ViewerFilter() {
+			@Override
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
 				return fProjectsWithSpecifics.contains(element);
 			}
 		};
 	}
-	
-	/* (non-Javadoc)
-	 * Method declared on Dialog.
+
+	/*
+	 * (non-Javadoc) Method declared on Dialog.
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		// page group
-		Composite composite= (Composite) super.createDialogArea(parent);
+		Composite composite = (Composite) super.createDialogArea(parent);
 
-		Font font= parent.getFont();
+		Font font = parent.getFont();
 		composite.setFont(font);
 
 		createMessageArea(composite);
 
 		fTableViewer = new TableViewer(composite, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		fTableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				doSelectionChanged(((IStructuredSelection) event.getSelection()).toArray());
 			}
 		});
 		fTableViewer.addDoubleClickListener(new IDoubleClickListener() {
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
-                okPressed();
+				okPressed();
 			}
 		});
 		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
@@ -150,29 +154,44 @@ public class ProjectSelectionDialog extends SelectionStatusDialog {
 
 		Button checkbox = SWTFactory.createCheckButton(composite, PreferenceMessages.ProjectSelectionDialog_checkbox_text, null, false, 1);
 		checkbox.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateFilter(((Button) e.widget).getSelection());
 			}
+
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				updateFilter(((Button) e.widget).getSelection());
 			}
 		});
 		IDialogSettings dialogSettings = ApiUIPlugin.getDefault().getDialogSettings();
-		boolean doFilter= !dialogSettings.getBoolean(DIALOG_SETTINGS_SHOW_ALL) && !fProjectsWithSpecifics.isEmpty();
+		boolean doFilter = !dialogSettings.getBoolean(DIALOG_SETTINGS_SHOW_ALL) && !fProjectsWithSpecifics.isEmpty();
 		checkbox.setSelection(doFilter);
 		updateFilter(doFilter);
-		
+
 		IJavaModel input = JavaCore.create(ResourcesPlugin.getWorkspace().getRoot());
 		fTableViewer.setInput(input);
-		
+
 		doSelectionChanged(new Object[0]);
 		Dialog.applyDialogFont(composite);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IApiToolsHelpContextIds.APITOOLS_PROJECT_SPECIFIC_SETTINGS_SELECTION_DIALOG);
 		return composite;
 	}
-	
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.ui.dialogs.SelectionStatusDialog#okPressed()
+	 */
+	@Override
+	protected void okPressed() {
+		// override to avoid synthetic accessor warnings
+		super.okPressed();
+	}
+
 	/**
-	 * Handles the change in selection of the viewer and updates the status of the dialog at the same time
+	 * Handles the change in selection of the viewer and updates the status of
+	 * the dialog at the same time
+	 * 
 	 * @param objects
 	 */
 	void doSelectionChanged(Object[] objects) {
@@ -180,13 +199,15 @@ public class ProjectSelectionDialog extends SelectionStatusDialog {
 			updateStatus(new Status(IStatus.ERROR, ApiUIPlugin.getPluginIdentifier(), "")); //$NON-NLS-1$
 			setSelectionResult(null);
 		} else {
-			updateStatus(new Status(IStatus.OK, ApiUIPlugin.getPluginIdentifier(), ""));  //$NON-NLS-1$
+			updateStatus(new Status(IStatus.OK, ApiUIPlugin.getPluginIdentifier(), "")); //$NON-NLS-1$
 			setSelectionResult(objects);
 		}
 	}
-	
+
 	/**
-	 * Updates the viewer filter based on the selection of the 'show project with...' button
+	 * Updates the viewer filter based on the selection of the 'show project
+	 * with...' button
+	 * 
 	 * @param selected
 	 */
 	protected void updateFilter(boolean selected) {
@@ -198,8 +219,11 @@ public class ProjectSelectionDialog extends SelectionStatusDialog {
 		ApiUIPlugin.getDefault().getDialogSettings().put(DIALOG_SETTINGS_SHOW_ALL, !selected);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.SelectionStatusDialog#computeResult()
 	 */
-	protected void computeResult() {}
+	@Override
+	protected void computeResult() {
+	}
 }

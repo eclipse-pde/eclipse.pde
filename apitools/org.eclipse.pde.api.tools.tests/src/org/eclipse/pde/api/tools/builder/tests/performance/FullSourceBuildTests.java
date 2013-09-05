@@ -42,15 +42,17 @@ public class FullSourceBuildTests extends PerformanceTest {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.performance.PerformanceTest#getBaselineLocation()
 	 */
+	@Override
 	protected String getBaselineLocation() {
-		return getTestSourcePath().append("bin-baseline.zip").toOSString();
+		return getTestSourcePath().append("bin-baseline.zip").toOSString(); //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.performance.PerformanceTest#getWorkspaceLocation()
 	 */
+	@Override
 	protected String getWorkspaceLocation() {
-		return getTestSourcePath().append("source-ws.zip").toOSString();
+		return getTestSourcePath().append("source-ws.zip").toOSString(); //$NON-NLS-1$
 	}	
 	
 	/**
@@ -60,7 +62,7 @@ public class FullSourceBuildTests extends PerformanceTest {
 	 * @throws Exception
 	 */
 	public void testFullBuild() throws Exception {
-		tagAsSummary("Full Build", Dimension.ELAPSED_PROCESS);
+		tagAsSummary("Full Build", Dimension.ELAPSED_PROCESS); //$NON-NLS-1$
 		
 		// get everything built
 		fullBuild();
@@ -94,7 +96,7 @@ public class FullSourceBuildTests extends PerformanceTest {
 	 * @throws Exception
 	 */
 	public void testCleanFullBuild() throws Exception {
-		tagAsSummary("Clean & Full Build", Dimension.ELAPSED_PROCESS);
+		tagAsSummary("Clean & Full Build", Dimension.ELAPSED_PROCESS); //$NON-NLS-1$
 		
 		// get everything built
 		fullBuild();

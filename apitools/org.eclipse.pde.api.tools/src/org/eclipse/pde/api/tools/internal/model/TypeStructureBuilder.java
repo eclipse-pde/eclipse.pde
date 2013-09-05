@@ -50,23 +50,25 @@ public class TypeStructureBuilder extends ClassAdapter {
 	IApiTypeRoot fFile;
 
 	/**
-	 * Builds a type structure for a class file. Note that if an API 
-	 * component is not specified, then some operations on the resulting
-	 * {@link IApiType} will not be available (navigating super types,
-	 * member types, etc).
+	 * Builds a type structure for a class file. Note that if an API component
+	 * is not specified, then some operations on the resulting {@link IApiType}
+	 * will not be available (navigating super types, member types, etc).
 	 * 
 	 * @param cv class file visitor
-	 * @param component originating API component or <code>null</code> if unknown
+	 * @param component originating API component or <code>null</code> if
+	 *            unknown
 	 */
 	TypeStructureBuilder(ClassVisitor cv, IApiComponent component, IApiTypeRoot file) {
 		super(cv);
 		fComponent = component;
 		fFile = file;
 	}
-	
+
 	/**
-	 * @see org.objectweb.asm.ClassAdapter#visit(int, int, java.lang.String, java.lang.String, java.lang.String, java.lang.String[])
+	 * @see org.objectweb.asm.ClassAdapter#visit(int, int, java.lang.String,
+	 *      java.lang.String, java.lang.String, java.lang.String[])
 	 */
+	@Override
 	public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
 		StringBuffer simpleSig = new StringBuffer();
 		simpleSig.append('L');
@@ -78,7 +80,8 @@ public class TypeStructureBuilder extends ClassAdapter {
 			enclosingName = name.substring(0, index).replace('/', '.');
 		}
 		int laccess = access;
-		// TODO: inner types should be have enclosing type as parent instead of component
+		// TODO: inner types should be have enclosing type as parent instead of
+		// component
 		if ((laccess & Opcodes.ACC_DEPRECATED) != 0) {
 			laccess &= ~Opcodes.ACC_DEPRECATED;
 			laccess |= ClassFileConstants.AccDeprecated;
@@ -96,27 +99,31 @@ public class TypeStructureBuilder extends ClassAdapter {
 		}
 		super.visit(version, laccess, name, signature, superName, interfaces);
 	}
+
 	/**
-	 * @see org.objectweb.asm.ClassAdapter#visitInnerClass(java.lang.String, java.lang.String, java.lang.String, int)
+	 * @see org.objectweb.asm.ClassAdapter#visitInnerClass(java.lang.String,
+	 *      java.lang.String, java.lang.String, int)
 	 */
+	@Override
 	public void visitInnerClass(String name, String outerName, String innerName, int access) {
 		super.visitInnerClass(name, outerName, innerName, access);
 		String currentName = name.replace('/', '.');
 		if (currentName.equals(fType.getName())) {
 			if (innerName == null) {
 				fType.setAnonymous();
-			}
-			else if(outerName == null) {
+			} else if (outerName == null) {
 				fType.setLocal();
 				fType.setSimpleName(innerName);
 			}
 		}
 		if (outerName != null && innerName != null) {
-			// technically speaking innerName != null is not necessary, but this is a workaround for some
+			// technically speaking innerName != null is not necessary, but this
+			// is a workaround for some
 			// bogus synthetic types created by another compiler
 			String currentOuterName = outerName.replace('/', '.');
 			if (currentOuterName.equals(fType.getName())) {
-				// this is a real type member defined in the descriptor (not just a reference to a type member)
+				// this is a real type member defined in the descriptor (not
+				// just a reference to a type member)
 				fType.addMemberType(currentName, access);
 			} else if (currentName.equals(fType.getName())) {
 				fType.setModifiers(access);
@@ -125,17 +132,23 @@ public class TypeStructureBuilder extends ClassAdapter {
 			}
 		}
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.objectweb.asm.ClassAdapter#visitOuterClass(java.lang.String, java.lang.String, java.lang.String)
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.objectweb.asm.ClassAdapter#visitOuterClass(java.lang.String,
+	 * java.lang.String, java.lang.String)
 	 */
+	@Override
 	public void visitOuterClass(String owner, String name, String desc) {
 		fType.setEnclosingMethodInfo(name, desc);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.objectweb.asm.ClassAdapter#visitField(int, java.lang.String, java.lang.String, java.lang.String, java.lang.Object)
+	/*
+	 * (non-Javadoc)
+	 * @see org.objectweb.asm.ClassAdapter#visitField(int, java.lang.String,
+	 * java.lang.String, java.lang.String, java.lang.Object)
 	 */
+	@Override
 	public FieldVisitor visitField(int access, String name, String desc, String signature, Object value) {
 		int laccess = access;
 		if ((access & Opcodes.ACC_DEPRECATED) != 0) {
@@ -146,9 +159,12 @@ public class TypeStructureBuilder extends ClassAdapter {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.objectweb.asm.ClassAdapter#visitMethod(int, java.lang.String, java.lang.String, java.lang.String, java.lang.String[])
+	/*
+	 * (non-Javadoc)
+	 * @see org.objectweb.asm.ClassAdapter#visitMethod(int, java.lang.String,
+	 * java.lang.String, java.lang.String, java.lang.String[])
 	 */
+	@Override
 	public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
 		String[] names = null;
 		int laccess = access;
@@ -164,14 +180,18 @@ public class TypeStructureBuilder extends ClassAdapter {
 		}
 		final ApiMethod method = fType.addMethod(name, desc, signature, laccess, names);
 		return new MethodAdapter(super.visitMethod(laccess, name, desc, signature, exceptions)) {
+			@Override
 			public AnnotationVisitor visitAnnotation(String sig, boolean visible) {
 				if (visible && "Ljava/lang/invoke/MethodHandle$PolymorphicSignature;".equals(sig)) { //$NON-NLS-1$
 					method.isPolymorphic();
 				}
 				return super.visitAnnotation(sig, visible);
 			}
+
+			@Override
 			public AnnotationVisitor visitAnnotationDefault() {
 				return new TraceAnnotationVisitor() {
+					@Override
 					public void visitEnd() {
 						super.visitEnd();
 						StringWriter stringWriter = new StringWriter();
@@ -186,7 +206,7 @@ public class TypeStructureBuilder extends ClassAdapter {
 			}
 		};
 	}
-	
+
 	/**
 	 * Builds a type structure with the given .class file bytes in the specified
 	 * API component.
@@ -202,17 +222,15 @@ public class TypeStructureBuilder extends ClassAdapter {
 			ClassReader classReader = new ClassReader(bytes);
 			classReader.accept(visitor, ClassReader.SKIP_CODE | ClassReader.SKIP_FRAMES);
 		} catch (ArrayIndexOutOfBoundsException e) {
-			if(ApiPlugin.DEBUG_BUILDER) {
-				IStatus status = new Status(IStatus.ERROR, 
-						ApiPlugin.PLUGIN_ID, 
-						NLS.bind(Messages.TypeStructureBuilder_badClassFileEncountered, file.getTypeName()), 
-						e);
+			if (ApiPlugin.DEBUG_BUILDER) {
+				IStatus status = new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, NLS.bind(Messages.TypeStructureBuilder_badClassFileEncountered, file.getTypeName()), e);
 				ApiPlugin.log(status);
 			}
 			return null;
 		}
 		return visitor.fType;
 	}
+
 	/**
 	 * Builds a type structure with the given .class file bytes in the specified
 	 * API component.
@@ -232,7 +250,7 @@ public class TypeStructureBuilder extends ClassAdapter {
 				classReader.accept(visitor, ClassReader.SKIP_FRAMES);
 			} catch (ArrayIndexOutOfBoundsException e) {
 				ApiPlugin.log(e);
-			} catch(CoreException e) {
+			} catch (CoreException e) {
 				// bytes could not be retrieved for abstractApiTypeRoot
 				ApiPlugin.log(e);
 			}
@@ -241,6 +259,7 @@ public class TypeStructureBuilder extends ClassAdapter {
 			}
 		}
 	}
+
 	static class EnclosingMethodSetter extends ClassAdapter {
 		String name;
 		String signature;
@@ -251,6 +270,8 @@ public class TypeStructureBuilder extends ClassAdapter {
 			super(cv);
 			this.typeName = typeName.replace('.', '/');
 		}
+
+		@Override
 		public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
 			if ("<clinit>".equals(name)) { //$NON-NLS-1$
 				return null;
@@ -274,46 +295,59 @@ public class TypeStructureBuilder extends ClassAdapter {
 			return null;
 		}
 	}
+
 	static class TypeNameFinder extends MethodAdapter {
 		protected EnclosingMethodSetter setter;
-		
+
 		public TypeNameFinder(MethodVisitor mv, EnclosingMethodSetter enclosingMethodSetter) {
 			super(mv);
 			this.setter = enclosingMethodSetter;
 		}
+
+		@Override
 		public void visitTypeInsn(int opcode, String type) {
 			if (setter.typeName.equals(type)) {
 				setter.found = true;
 			}
 		}
 	}
+
 	static class TypeNameFinderInConstructor extends TypeNameFinder {
 		int lineNumberStart;
 		int matchingLineNumber;
 		int currentLineNumber = -1;
-		
+
 		public TypeNameFinderInConstructor(MethodVisitor mv, EnclosingMethodSetter enclosingMethodSetter) {
 			super(mv, enclosingMethodSetter);
 		}
-		/* (non-Javadoc)
-		 * @see org.objectweb.asm.MethodAdapter#visitFieldInsn(int, java.lang.String, java.lang.String, java.lang.String)
+
+		/*
+		 * (non-Javadoc)
+		 * @see org.objectweb.asm.MethodAdapter#visitFieldInsn(int,
+		 * java.lang.String, java.lang.String, java.lang.String)
 		 */
-		public void visitFieldInsn(int opcode, String owner, String name,
-				String desc) {
+		@Override
+		public void visitFieldInsn(int opcode, String owner, String name, String desc) {
 			super.visitFieldInsn(opcode, owner, name, desc);
 		}
+
+		@Override
 		public void visitTypeInsn(int opcode, String type) {
 			if (!setter.found && setter.typeName.equals(type)) {
 				this.matchingLineNumber = this.currentLineNumber;
 				setter.found = true;
 			}
 		}
+
+		@Override
 		public void visitLineNumber(int line, Label start) {
 			if (this.currentLineNumber == -1) {
 				this.lineNumberStart = line;
 			}
 			this.currentLineNumber = line;
 		}
+
+		@Override
 		public void visitEnd() {
 			if (setter.found) {
 				// check that the line number is between the constructor bounds
@@ -323,9 +357,12 @@ public class TypeStructureBuilder extends ClassAdapter {
 			}
 		}
 	}
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("Type structure builder for: ").append(fType.getName()); //$NON-NLS-1$
@@ -333,14 +370,15 @@ public class TypeStructureBuilder extends ClassAdapter {
 		return buffer.toString();
 	}
 
-	public static IApiType buildStubTypeStructure(byte[] contents,
-			IApiComponent apiComponent, ArchiveApiTypeRoot archiveApiTypeRoot) {
+	public static IApiType buildStubTypeStructure(byte[] contents, IApiComponent apiComponent, ArchiveApiTypeRoot archiveApiTypeRoot) {
 		// decode the byte[]
 		DataInputStream inputStream = new DataInputStream(new ByteArrayInputStream(contents));
 		ApiType type = null;
 		try {
-			Map pool = new HashMap();
-			short currentVersion = inputStream.readShort(); // read file version (for now there is only one version)
+			Map<Integer, String> pool = new HashMap<Integer, String>();
+			short currentVersion = inputStream.readShort(); // read file version
+															// (for now there is
+															// only one version)
 			short poolSize = inputStream.readShort();
 			for (int i = 0; i < poolSize; i++) {
 				String readUtf = inputStream.readUTF();
@@ -353,7 +391,7 @@ public class TypeStructureBuilder extends ClassAdapter {
 				access = inputStream.readChar();
 			}
 			int classIndex = inputStream.readShort();
-			String name = (String) pool.get(new Integer(classIndex));
+			String name = pool.get(new Integer(classIndex));
 			StringBuffer simpleSig = new StringBuffer();
 			simpleSig.append('L');
 			simpleSig.append(name);
@@ -361,28 +399,28 @@ public class TypeStructureBuilder extends ClassAdapter {
 			type = new ApiType(apiComponent, name.replace('/', '.'), simpleSig.toString(), null, access, null, archiveApiTypeRoot);
 			int superclassNameIndex = inputStream.readShort();
 			if (superclassNameIndex != -1) {
-				String superclassName = (String) pool.get(new Integer(superclassNameIndex));
+				String superclassName = pool.get(new Integer(superclassNameIndex));
 				type.setSuperclassName(superclassName.replace('/', '.'));
 			}
 			int interfacesLength = inputStream.readShort();
 			if (interfacesLength != 0) {
 				String[] names = new String[interfacesLength];
 				for (int i = 0; i < names.length; i++) {
-					String interfaceName = (String) pool.get(new Integer(inputStream.readShort()));
+					String interfaceName = pool.get(new Integer(inputStream.readShort()));
 					names[i] = interfaceName.replace('/', '.');
 				}
 				type.setSuperInterfaceNames(names);
 			}
 			int fieldsLength = inputStream.readShort();
 			for (int i = 0; i < fieldsLength; i++) {
-				String fieldName = (String) pool.get(new Integer(inputStream.readShort()));
+				String fieldName = pool.get(new Integer(inputStream.readShort()));
 				type.addField(fieldName, null, null, 0, null);
 			}
 			int methodsLength = inputStream.readShort();
 			for (int i = 0; i < methodsLength; i++) {
 				int isPolymorphic = 0;
-				String methodSelector = (String) pool.get(new Integer(inputStream.readShort()));
-				String methodSignature = (String) pool.get(new Integer(inputStream.readShort()));
+				String methodSelector = pool.get(new Integer(inputStream.readShort()));
+				String methodSignature = pool.get(new Integer(inputStream.readShort()));
 				if (currentVersion == 3) {
 					isPolymorphic = inputStream.readByte();
 				}

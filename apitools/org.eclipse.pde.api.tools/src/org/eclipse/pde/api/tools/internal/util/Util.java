@@ -75,6 +75,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.AssertionFailedException;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -149,23 +150,28 @@ public final class Util {
 
 		/**
 		 * Constructor
+		 * 
 		 * @param name
 		 * @param project
 		 */
 		BuildJob(String name, IProject[] projects) {
 			this(name, projects, IncrementalProjectBuilder.FULL_BUILD);
 		}
+
 		BuildJob(String name, IProject[] projects, int buildType) {
 			super(name);
 			fProjects = projects;
 			this.fBuildType = buildType;
 		}
+
+		@Override
 		public boolean belongsTo(Object family) {
 			return ResourcesPlugin.FAMILY_MANUAL_BUILD == family;
 		}
-		
+
 		/**
 		 * Returns if this build job is covered by another build job
+		 * 
 		 * @param other
 		 * @return true if covered by another build job, false otherwise
 		 */
@@ -183,9 +189,11 @@ public final class Util {
 			}
 			return false;
 		}
-		
+
 		public boolean contains(IProject project) {
-			if (project == null) return false;
+			if (project == null) {
+				return false;
+			}
 			for (int i = 0, max = this.fProjects.length; i < max; i++) {
 				if (project.equals(this.fProjects[i])) {
 					return true;
@@ -193,28 +201,34 @@ public final class Util {
 			}
 			return false;
 		}
-		/* (non-Javadoc)
-		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
+
+		/*
+		 * (non-Javadoc)
+		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.
+		 * IProgressMonitor)
 		 */
+		@Override
 		protected IStatus run(IProgressMonitor monitor) {
 			synchronized (getClass()) {
 				if (monitor.isCanceled()) {
 					return Status.CANCEL_STATUS;
 				}
-				//cancelBuild(ResourcesPlugin.FAMILY_AUTO_BUILD);
+				// cancelBuild(ResourcesPlugin.FAMILY_AUTO_BUILD);
 				cancelBuild(ResourcesPlugin.FAMILY_MANUAL_BUILD);
 			}
 			try {
 				if (fProjects != null) {
 					SubMonitor localmonitor = SubMonitor.convert(monitor, UtilMessages.Util_0, fProjects.length);
 					for (int i = 0, max = fProjects.length; i < max; i++) {
-						// clear last build state for project to force a full build using our builder
-						// This makes it possible to have only an incremental build from the java builder
+						// clear last build state for project to force a full
+						// build using our builder
+						// This makes it possible to have only an incremental
+						// build from the java builder
 						IProject currentProject = fProjects[i];
 						if (this.fBuildType == IncrementalProjectBuilder.FULL_BUILD) {
 							BuildState.setLastBuiltState(currentProject, null);
 						}
-						localmonitor.subTask(NLS.bind(UtilMessages.Util_5, currentProject.getName())); 
+						localmonitor.subTask(NLS.bind(UtilMessages.Util_5, currentProject.getName()));
 						if (ResourcesPlugin.getWorkspace().isAutoBuilding()) {
 							currentProject.touch(null);
 						} else {
@@ -226,31 +240,31 @@ public final class Util {
 				return new Status(e.getStatus().getSeverity(), ApiPlugin.PLUGIN_ID, ApiPlugin.INTERNAL_ERROR, UtilMessages.Util_builder_errorMessage, e);
 			} catch (OperationCanceledException e) {
 				return Status.CANCEL_STATUS;
-			}
-			finally {
+			} finally {
 				monitor.done();
 			}
 			return Status.OK_STATUS;
 		}
-		
+
 		private void cancelBuild(Object jobfamily) {
 			Job[] buildJobs = Job.getJobManager().find(jobfamily);
-			for (int i= 0; i < buildJobs.length; i++) {
+			for (int i = 0; i < buildJobs.length; i++) {
 				Job curr = buildJobs[i];
 				if (curr != this && curr instanceof BuildJob) {
 					BuildJob job = (BuildJob) curr;
 					if (job.isCoveredBy(this)) {
-						curr.cancel(); // cancel all other build jobs of our kind
+						curr.cancel(); // cancel all other build jobs of our
+										// kind
 					}
 				}
 			}
 		}
 	}
-	
+
 	public static final String EMPTY_STRING = "";//$NON-NLS-1$
 	public static final String DEFAULT_PACKAGE_NAME = EMPTY_STRING;
 	public static final String MANIFEST_NAME = "MANIFEST.MF"; //$NON-NLS-1$
-	
+
 	public static final String DOT_CLASS_SUFFIX = ".class"; //$NON-NLS-1$
 	public static final String DOT_JAVA_SUFFIX = ".java"; //$NON-NLS-1$
 
@@ -258,11 +272,11 @@ public final class Util {
 	 * Constant representing the default size to read from an input stream
 	 */
 	private static final int DEFAULT_READING_SIZE = 8192;
-	
+
 	private static final String JAVA_LANG_OBJECT = "java.lang.Object"; //$NON-NLS-1$
 	private static final String JAVA_LANG_RUNTIMEEXCEPTION = "java.lang.RuntimeException"; //$NON-NLS-1$
 	public static final String LINE_DELIMITER = System.getProperty("line.separator"); //$NON-NLS-1$
-	
+
 	public static final String UNKNOWN_ELEMENT_KIND = "UNKNOWN_ELEMENT_KIND"; //$NON-NLS-1$
 
 	public static final String UNKNOWN_FLAGS = "UNKNOWN_FLAGS"; //$NON-NLS-1$
@@ -273,7 +287,8 @@ public final class Util {
 
 	// Trace for delete operation
 	/*
-	 * Maximum time wasted repeating delete operations while running JDT/Core tests.
+	 * Maximum time wasted repeating delete operations while running JDT/Core
+	 * tests.
 	 */
 	private static int DELETE_MAX_TIME = 0;
 	/**
@@ -281,12 +296,12 @@ public final class Util {
 	 */
 	private static boolean DELETE_DEBUG = false;
 	/**
-	 * Maximum of time in milliseconds to wait in deletion operation while running JDT/Core tests.
-	 * Default is 10 seconds. This number cannot exceed 1 minute (i.e. 60000).
-	 * <br>
-	 * To avoid too many loops while waiting, the ten first ones are done waiting
-	 * 10ms before repeating, the ten loops after are done waiting 100ms and
-	 * the other loops are done waiting 1s...
+	 * Maximum of time in milliseconds to wait in deletion operation while
+	 * running JDT/Core tests. Default is 10 seconds. This number cannot exceed
+	 * 1 minute (i.e. 60000). <br>
+	 * To avoid too many loops while waiting, the ten first ones are done
+	 * waiting 10ms before repeating, the ten loops after are done waiting 100ms
+	 * and the other loops are done waiting 1s...
 	 */
 	private static int DELETE_MAX_WAIT = 10000;
 
@@ -307,8 +322,8 @@ public final class Util {
 	}
 
 	/**
-	 * Appends a property to the given string buffer with the given key and value
-	 * in the format "key=value\n".
+	 * Appends a property to the given string buffer with the given key and
+	 * value in the format "key=value\n".
 	 * 
 	 * @param buffer buffer to append to
 	 * @param key key
@@ -323,12 +338,14 @@ public final class Util {
 
 	/**
 	 * Collects all of the deltas from the given parent delta
+	 * 
 	 * @param delta
 	 * @return
 	 */
-	public static List collectAllDeltas(IDelta delta) {
-		final List list = new ArrayList();
+	public static List<IDelta> collectAllDeltas(IDelta delta) {
+		final List<IDelta> list = new ArrayList<IDelta>();
 		delta.accept(new DeltaVisitor() {
+			@Override
 			public void endVisit(IDelta localDelta) {
 				if (localDelta.getChildren().length == 0) {
 					list.add(localDelta);
@@ -338,19 +355,16 @@ public final class Util {
 		});
 		return list;
 	}
-	
+
 	/**
 	 * Collects files into the collector array list
 	 * 
-	 * @param root
-	 *            the root to collect the files from
-	 * @param collector
-	 *            the collector to place matches into
-	 * @param fileFilter
-	 *            the filter for files or <code>null</code> to accept all
+	 * @param root the root to collect the files from
+	 * @param collector the collector to place matches into
+	 * @param fileFilter the filter for files or <code>null</code> to accept all
 	 *            files
 	 */
-	private static void collectAllFiles(File root, ArrayList collector, FileFilter fileFilter) {
+	private static void collectAllFiles(File root, ArrayList<File> collector, FileFilter fileFilter) {
 		File[] files = root.listFiles(fileFilter);
 		for (int i = 0; i < files.length; i++) {
 			final File currentFile = files[i];
@@ -364,11 +378,13 @@ public final class Util {
 
 	/**
 	 * Returns all of the API projects in the workspace
-	 * @return all of the API projects in the workspace or <code>null</code> if there are none.
+	 * 
+	 * @return all of the API projects in the workspace or <code>null</code> if
+	 *         there are none.
 	 */
 	public static IProject[] getApiProjects() {
 		IProject[] allProjects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
-		ArrayList temp = new ArrayList();
+		ArrayList<IProject> temp = new ArrayList<IProject>();
 		IProject project = null;
 		for (int i = 0, max = allProjects.length; i < max; i++) {
 			project = allProjects[i];
@@ -377,8 +393,8 @@ public final class Util {
 					if (project.hasNature(org.eclipse.pde.api.tools.internal.provisional.ApiPlugin.NATURE_ID)) {
 						temp.add(project);
 					}
-				} 
-				catch (CoreException e) {}
+				} catch (CoreException e) {
+				}
 			}
 		}
 		IProject[] projects = null;
@@ -388,9 +404,10 @@ public final class Util {
 		}
 		return projects;
 	}
-	
+
 	/**
 	 * Copies the given file to the new file
+	 * 
 	 * @param file
 	 * @param newFile
 	 * @return if the copy succeeded
@@ -428,7 +445,7 @@ public final class Util {
 				if (outputStream != null) {
 					try {
 						outputStream.close();
-					} catch(IOException e) {
+					} catch (IOException e) {
 						// ignore
 					}
 				}
@@ -437,9 +454,10 @@ public final class Util {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Creates an EE file for the given JRE and specified EE id
+	 * 
 	 * @param jre
 	 * @param eeid
 	 * @return
@@ -458,10 +476,11 @@ public final class Util {
 			}
 		}
 		return eeFile;
-	}	
+	}
 
 	/**
-	 * Returns whether the objects are equal, accounting for either one being <code>null</code>.
+	 * Returns whether the objects are equal, accounting for either one being
+	 * <code>null</code>.
 	 * 
 	 * @param o1
 	 * @param o2
@@ -476,7 +495,7 @@ public final class Util {
 
 	/**
 	 * Returns an execution environment description for the given VM.
-	 *  
+	 * 
 	 * @param vm JRE to create an definition for
 	 * @return an execution environment description for the given VM
 	 * @throws IOException if unable to generate description
@@ -495,9 +514,9 @@ public final class Util {
 		}
 		appendProperty(buffer, ExecutionEnvironmentDescription.BOOT_CLASS_PATH, paths.toString());
 		appendProperty(buffer, ExecutionEnvironmentDescription.CLASS_LIB_LEVEL, eeId);
-		return  buffer.toString();
+		return buffer.toString();
 	}
-	
+
 	/**
 	 * Returns an array of all of the files from the given root that are
 	 * accepted by the given file filter. If the file filter is null all files
@@ -508,7 +527,7 @@ public final class Util {
 	 * @return the list of files from within the given root
 	 */
 	public static File[] getAllFiles(File root, FileFilter fileFilter) {
-		ArrayList files = new ArrayList();
+		ArrayList<File> files = new ArrayList<File>();
 		if (root.isDirectory()) {
 			collectAllFiles(root, files, fileFilter);
 			File[] result = new File[files.size()];
@@ -521,7 +540,9 @@ public final class Util {
 	/**
 	 * Returns a build job that will perform a full build on the given projects.
 	 * 
-	 * If <code>projects</code> are null, then an AssertionFailedException is thrown
+	 * If <code>projects</code> are null, then an AssertionFailedException is
+	 * thrown
+	 * 
 	 * @param projects the projects to build
 	 * @return the build job
 	 * @throws AssertionFailedException if the given projects are null
@@ -533,12 +554,14 @@ public final class Util {
 		buildJob.setUser(true);
 		return buildJob;
 	}
-	
+
 	/**
-	 * Returns a build job that will return the build that corresponds to the given
-	 * build kind on the given projects.
+	 * Returns a build job that will return the build that corresponds to the
+	 * given build kind on the given projects.
 	 * 
-	 * If <code>projects</code> are null, then an AssertionFailedException is thrown
+	 * If <code>projects</code> are null, then an AssertionFailedException is
+	 * thrown
+	 * 
 	 * @param projects the projects to build
 	 * @param buildKind the given build kind
 	 * @return the build job
@@ -553,9 +576,9 @@ public final class Util {
 	}
 
 	/**
-	 * Returns a result of searching the given components for  class file with the
-	 * given type name.
-	 *  
+	 * Returns a result of searching the given components for class file with
+	 * the given type name.
+	 * 
 	 * @param components API components to search or <code>null</code> if none
 	 * @param typeName type to search for
 	 * @return class file or <code>null</code> if none found
@@ -579,10 +602,11 @@ public final class Util {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Return a string that represents the element type of the given delta.
-	 * Returns {@link #UNKNOWN_ELEMENT_KIND} if the element type cannot be determined.
+	 * Returns {@link #UNKNOWN_ELEMENT_KIND} if the element type cannot be
+	 * determined.
 	 * 
 	 * @param delta the given delta
 	 * @return a string that represents the element type of the given delta.
@@ -593,11 +617,12 @@ public final class Util {
 
 	/**
 	 * Returns a text representation of a marker severity level
+	 * 
 	 * @param severity
 	 * @return text of a marker severity level
 	 */
 	public static String getSeverity(int severity) {
-		switch(severity) {
+		switch (severity) {
 			case IMarker.SEVERITY_ERROR: {
 				return "ERROR"; //$NON-NLS-1$
 			}
@@ -612,15 +637,16 @@ public final class Util {
 			}
 		}
 	}
+
 	/**
-	 * Return an int value that represents the given element type
-	 * Returns -1 if the element type cannot be determined.
+	 * Return an int value that represents the given element type Returns -1 if
+	 * the element type cannot be determined.
 	 * 
 	 * @param elementType the given element type
 	 * @return an int that represents the given element type constant.
 	 */
 	public static int getDeltaElementTypeValue(String elementType) {
-		Class IDeltaClass = IDelta.class;
+		Class<IDelta> IDeltaClass = IDelta.class;
 		try {
 			Field field = IDeltaClass.getField(elementType);
 			return field.getInt(null);
@@ -635,121 +661,192 @@ public final class Util {
 		}
 		return -1;
 	}
+
 	/**
-	 * Return a string that represents the given element type
-	 * Returns {@link #UNKNOWN_ELEMENT_KIND} if the element type cannot be determined.
+	 * Return a string that represents the given element type Returns
+	 * {@link #UNKNOWN_ELEMENT_KIND} if the element type cannot be determined.
 	 * 
 	 * @param elementType the given element type
 	 * @return a string that represents the given element type.
 	 */
 	public static String getDeltaElementType(int elementType) {
-		switch(elementType) {
-			case IDelta.ANNOTATION_ELEMENT_TYPE :
+		switch (elementType) {
+			case IDelta.ANNOTATION_ELEMENT_TYPE:
 				return "ANNOTATION_ELEMENT_TYPE"; //$NON-NLS-1$
-			case IDelta.INTERFACE_ELEMENT_TYPE :
+			case IDelta.INTERFACE_ELEMENT_TYPE:
 				return "INTERFACE_ELEMENT_TYPE"; //$NON-NLS-1$
-			case IDelta.ENUM_ELEMENT_TYPE :
+			case IDelta.ENUM_ELEMENT_TYPE:
 				return "ENUM_ELEMENT_TYPE"; //$NON-NLS-1$
-			case IDelta.API_COMPONENT_ELEMENT_TYPE :
+			case IDelta.API_COMPONENT_ELEMENT_TYPE:
 				return "API_COMPONENT_ELEMENT_TYPE"; //$NON-NLS-1$
-			case IDelta.API_BASELINE_ELEMENT_TYPE :
+			case IDelta.API_BASELINE_ELEMENT_TYPE:
 				return "API_BASELINE_ELEMENT_TYPE"; //$NON-NLS-1$
-			case IDelta.CONSTRUCTOR_ELEMENT_TYPE :
+			case IDelta.CONSTRUCTOR_ELEMENT_TYPE:
 				return "CONSTRUCTOR_ELEMENT_TYPE"; //$NON-NLS-1$
-			case IDelta.METHOD_ELEMENT_TYPE :
+			case IDelta.METHOD_ELEMENT_TYPE:
 				return "METHOD_ELEMENT_TYPE"; //$NON-NLS-1$
-			case IDelta.FIELD_ELEMENT_TYPE :
+			case IDelta.FIELD_ELEMENT_TYPE:
 				return "FIELD_ELEMENT_TYPE"; //$NON-NLS-1$
-			case IDelta.CLASS_ELEMENT_TYPE :
+			case IDelta.CLASS_ELEMENT_TYPE:
 				return "CLASS_ELEMENT_TYPE"; //$NON-NLS-1$
-			case IDelta.TYPE_PARAMETER_ELEMENT_TYPE :
+			case IDelta.TYPE_PARAMETER_ELEMENT_TYPE:
 				return "TYPE_PARAMETER_ELEMENT_TYPE"; //$NON-NLS-1$
+			default:
+				break;
 		}
 		return UNKNOWN_ELEMENT_KIND;
 	}
-	
+
 	/**
-	 * Return a string that represents the given flags
-	 * Returns {@link #UNKNOWN_FLAGS} if the flags cannot be determined.
+	 * Return a string that represents the given flags Returns
+	 * {@link #UNKNOWN_FLAGS} if the flags cannot be determined.
 	 * 
 	 * @param flags the given delta's flags
 	 * @return a string that represents the given flags.
 	 */
 	public static String getDeltaFlagsName(int flags) {
-		switch(flags) {
-			case IDelta.ABSTRACT_TO_NON_ABSTRACT : return "ABSTRACT_TO_NON_ABSTRACT"; //$NON-NLS-1$
-			case IDelta.ANNOTATION_DEFAULT_VALUE : return "ANNOTATION_DEFAULT_VALUE"; //$NON-NLS-1$
-			case IDelta.API_COMPONENT : return "API_COMPONENT"; //$NON-NLS-1$
-			case IDelta.ARRAY_TO_VARARGS : return "ARRAY_TO_VARARGS"; //$NON-NLS-1$
-			case IDelta.CHECKED_EXCEPTION : return "CHECKED_EXCEPTION"; //$NON-NLS-1$
-			case IDelta.CLASS_BOUND : return "CLASS_BOUND"; //$NON-NLS-1$
-			case IDelta.CLINIT : return "CLINIT"; //$NON-NLS-1$
-			case IDelta.CONSTRUCTOR : return "CONSTRUCTOR"; //$NON-NLS-1$
-			case IDelta.CONTRACTED_SUPERINTERFACES_SET : return "CONTRACTED_SUPERINTERFACES_SET"; //$NON-NLS-1$
-			case IDelta.DECREASE_ACCESS : return "DECREASE_ACCESS"; //$NON-NLS-1$
-			case IDelta.ENUM_CONSTANT : return "ENUM_CONSTANT"; //$NON-NLS-1$
-			case IDelta.EXECUTION_ENVIRONMENT : return "EXECUTION_ENVIRONMENT"; //$NON-NLS-1$
-			case IDelta.EXPANDED_SUPERINTERFACES_SET : return "EXPANDED_SUPERINTERFACES_SET"; //$NON-NLS-1$
-			case IDelta.FIELD : return "FIELD"; //$NON-NLS-1$
-			case IDelta.FIELD_MOVED_UP : return "FIELD_MOVED_UP"; //$NON-NLS-1$
-			case IDelta.FINAL_TO_NON_FINAL : return "FINAL_TO_NON_FINAL"; //$NON-NLS-1$
-			case IDelta.FINAL_TO_NON_FINAL_NON_STATIC : return "FINAL_TO_NON_FINAL_NON_STATIC"; //$NON-NLS-1$
-			case IDelta.FINAL_TO_NON_FINAL_STATIC_CONSTANT : return "FINAL_TO_NON_FINAL_STATIC_CONSTANT"; //$NON-NLS-1$
-			case IDelta.FINAL_TO_NON_FINAL_STATIC_NON_CONSTANT : return "FINAL_TO_NON_FINAL_STATIC_NON_CONSTANT"; //$NON-NLS-1$
-			case IDelta.INCREASE_ACCESS : return "INCREASE_ACCESS"; //$NON-NLS-1$
-			case IDelta.INTERFACE_BOUND : return "INTERFACE_BOUND"; //$NON-NLS-1$
-			case IDelta.METHOD : return "METHOD"; //$NON-NLS-1$
-			case IDelta.METHOD_MOVED_UP : return "METHOD_MOVED_UP"; //$NON-NLS-1$
-			case IDelta.METHOD_WITH_DEFAULT_VALUE : return "METHOD_WITH_DEFAULT_VALUE"; //$NON-NLS-1$
-			case IDelta.METHOD_WITHOUT_DEFAULT_VALUE : return "METHOD_WITHOUT_DEFAULT_VALUE"; //$NON-NLS-1$
-			case IDelta.NATIVE_TO_NON_NATIVE : return "NATIVE_TO_NON_NATIVE"; //$NON-NLS-1$
-			case IDelta.NON_ABSTRACT_TO_ABSTRACT : return "NON_ABSTRACT_TO_ABSTRACT"; //$NON-NLS-1$
-			case IDelta.NON_FINAL_TO_FINAL : return "NON_FINAL_TO_FINAL"; //$NON-NLS-1$
-			case IDelta.NON_NATIVE_TO_NATIVE : return "NON_NATIVE_TO_NATIVE"; //$NON-NLS-1$
-			case IDelta.NON_STATIC_TO_STATIC : return "NON_STATIC_TO_STATIC"; //$NON-NLS-1$
-			case IDelta.NON_SYNCHRONIZED_TO_SYNCHRONIZED : return "NON_SYNCHRONIZED_TO_SYNCHRONIZED"; //$NON-NLS-1$
-			case IDelta.NON_TRANSIENT_TO_TRANSIENT : return "NON_TRANSIENT_TO_TRANSIENT"; //$NON-NLS-1$
-			case IDelta.OVERRIDEN_METHOD : return "OVERRIDEN_METHOD"; //$NON-NLS-1$
-			case IDelta.STATIC_TO_NON_STATIC : return "STATIC_TO_NON_STATIC"; //$NON-NLS-1$
-			case IDelta.SUPERCLASS : return "SUPERCLASS"; //$NON-NLS-1$
-			case IDelta.SYNCHRONIZED_TO_NON_SYNCHRONIZED : return "SYNCHRONIZED_TO_NON_SYNCHRONIZED"; //$NON-NLS-1$
-			case IDelta.TYPE_CONVERSION : return "TYPE_CONVERSION"; //$NON-NLS-1$
-			case IDelta.TRANSIENT_TO_NON_TRANSIENT : return "TRANSIENT_TO_NON_TRANSIENT"; //$NON-NLS-1$
-			case IDelta.TYPE : return "TYPE"; //$NON-NLS-1$
-			case IDelta.TYPE_ARGUMENTS : return "TYPE_ARGUMENTS"; //$NON-NLS-1$
-			case IDelta.TYPE_MEMBER : return "TYPE_MEMBER"; //$NON-NLS-1$
-			case IDelta.TYPE_PARAMETER : return "TYPE_PARAMETER"; //$NON-NLS-1$
-			case IDelta.TYPE_PARAMETER_NAME : return "TYPE_PARAMETER_NAME"; //$NON-NLS-1$
-			case IDelta.TYPE_PARAMETERS : return "TYPE_PARAMETERS"; //$NON-NLS-1$
-			case IDelta.TYPE_VISIBILITY : return "TYPE_VISIBILITY"; //$NON-NLS-1$
-			case IDelta.UNCHECKED_EXCEPTION : return "UNCHECKED_EXCEPTION"; //$NON-NLS-1$
-			case IDelta.VALUE : return "VALUE"; //$NON-NLS-1$
-			case IDelta.VARARGS_TO_ARRAY : return "VARARGS_TO_ARRAY"; //$NON-NLS-1$
-			case IDelta.RESTRICTIONS : return "RESTRICTIONS"; //$NON-NLS-1$
-			case IDelta.API_TYPE : return "API_TYPE"; //$NON-NLS-1$
-			case IDelta.NON_VOLATILE_TO_VOLATILE : return "NON_VOLATILE_TO_VOLATILE"; //$NON-NLS-1$
-			case IDelta.VOLATILE_TO_NON_VOLATILE : return "VOLATILE_TO_NON_VOLATILE"; //$NON-NLS-1$
-			case IDelta.MINOR_VERSION : return "MINOR_VERSION"; //$NON-NLS-1$
-			case IDelta.MAJOR_VERSION : return "MAJOR_VERSION"; //$NON-NLS-1$
-			case IDelta.API_FIELD : return "API_FIELD"; //$NON-NLS-1$
-			case IDelta.API_METHOD : return "API_METHOD"; //$NON-NLS-1$
-			case IDelta.API_CONSTRUCTOR : return "API_CONSTRUCTOR"; //$NON-NLS-1$
-			case IDelta.API_ENUM_CONSTANT : return "API_ENUM_CONSTANT"; //$NON-NLS-1$
-			case IDelta.API_METHOD_WITH_DEFAULT_VALUE : return "API_METHOD_WITH_DEFAULT_VALUE"; //$NON-NLS-1$
-			case IDelta.API_METHOD_WITHOUT_DEFAULT_VALUE : return "API_METHOD_WITHOUT_DEFAULT_VALUE"; //$NON-NLS-1$
-			case IDelta.TYPE_ARGUMENT : return "TYPE_ARGUMENT"; //$NON-NLS-1$
-			case IDelta.SUPER_INTERFACE_WITH_METHODS : return "SUPER_INTERFACE_WITH_METHODS"; //$NON-NLS-1$
-			case IDelta.REEXPORTED_API_TYPE : return "REEXPORTED_API_TYPE"; //$NON-NLS-1$
-			case IDelta.REEXPORTED_TYPE : return "REEXPORTED_TYPE"; //$NON-NLS-1$
-			case IDelta.METHOD_MOVED_DOWN : return "METHOD_MOVED_DOWN"; //$NON-NLS-1$
-			case IDelta.DEPRECATION : return "DEPRECATION"; //$NON-NLS-1$
+		switch (flags) {
+			case IDelta.ABSTRACT_TO_NON_ABSTRACT:
+				return "ABSTRACT_TO_NON_ABSTRACT"; //$NON-NLS-1$
+			case IDelta.ANNOTATION_DEFAULT_VALUE:
+				return "ANNOTATION_DEFAULT_VALUE"; //$NON-NLS-1$
+			case IDelta.API_COMPONENT:
+				return "API_COMPONENT"; //$NON-NLS-1$
+			case IDelta.ARRAY_TO_VARARGS:
+				return "ARRAY_TO_VARARGS"; //$NON-NLS-1$
+			case IDelta.CHECKED_EXCEPTION:
+				return "CHECKED_EXCEPTION"; //$NON-NLS-1$
+			case IDelta.CLASS_BOUND:
+				return "CLASS_BOUND"; //$NON-NLS-1$
+			case IDelta.CLINIT:
+				return "CLINIT"; //$NON-NLS-1$
+			case IDelta.CONSTRUCTOR:
+				return "CONSTRUCTOR"; //$NON-NLS-1$
+			case IDelta.CONTRACTED_SUPERINTERFACES_SET:
+				return "CONTRACTED_SUPERINTERFACES_SET"; //$NON-NLS-1$
+			case IDelta.DECREASE_ACCESS:
+				return "DECREASE_ACCESS"; //$NON-NLS-1$
+			case IDelta.ENUM_CONSTANT:
+				return "ENUM_CONSTANT"; //$NON-NLS-1$
+			case IDelta.EXECUTION_ENVIRONMENT:
+				return "EXECUTION_ENVIRONMENT"; //$NON-NLS-1$
+			case IDelta.EXPANDED_SUPERINTERFACES_SET:
+				return "EXPANDED_SUPERINTERFACES_SET"; //$NON-NLS-1$
+			case IDelta.FIELD:
+				return "FIELD"; //$NON-NLS-1$
+			case IDelta.FIELD_MOVED_UP:
+				return "FIELD_MOVED_UP"; //$NON-NLS-1$
+			case IDelta.FINAL_TO_NON_FINAL:
+				return "FINAL_TO_NON_FINAL"; //$NON-NLS-1$
+			case IDelta.FINAL_TO_NON_FINAL_NON_STATIC:
+				return "FINAL_TO_NON_FINAL_NON_STATIC"; //$NON-NLS-1$
+			case IDelta.FINAL_TO_NON_FINAL_STATIC_CONSTANT:
+				return "FINAL_TO_NON_FINAL_STATIC_CONSTANT"; //$NON-NLS-1$
+			case IDelta.FINAL_TO_NON_FINAL_STATIC_NON_CONSTANT:
+				return "FINAL_TO_NON_FINAL_STATIC_NON_CONSTANT"; //$NON-NLS-1$
+			case IDelta.INCREASE_ACCESS:
+				return "INCREASE_ACCESS"; //$NON-NLS-1$
+			case IDelta.INTERFACE_BOUND:
+				return "INTERFACE_BOUND"; //$NON-NLS-1$
+			case IDelta.METHOD:
+				return "METHOD"; //$NON-NLS-1$
+			case IDelta.METHOD_MOVED_UP:
+				return "METHOD_MOVED_UP"; //$NON-NLS-1$
+			case IDelta.METHOD_WITH_DEFAULT_VALUE:
+				return "METHOD_WITH_DEFAULT_VALUE"; //$NON-NLS-1$
+			case IDelta.METHOD_WITHOUT_DEFAULT_VALUE:
+				return "METHOD_WITHOUT_DEFAULT_VALUE"; //$NON-NLS-1$
+			case IDelta.NATIVE_TO_NON_NATIVE:
+				return "NATIVE_TO_NON_NATIVE"; //$NON-NLS-1$
+			case IDelta.NON_ABSTRACT_TO_ABSTRACT:
+				return "NON_ABSTRACT_TO_ABSTRACT"; //$NON-NLS-1$
+			case IDelta.NON_FINAL_TO_FINAL:
+				return "NON_FINAL_TO_FINAL"; //$NON-NLS-1$
+			case IDelta.NON_NATIVE_TO_NATIVE:
+				return "NON_NATIVE_TO_NATIVE"; //$NON-NLS-1$
+			case IDelta.NON_STATIC_TO_STATIC:
+				return "NON_STATIC_TO_STATIC"; //$NON-NLS-1$
+			case IDelta.NON_SYNCHRONIZED_TO_SYNCHRONIZED:
+				return "NON_SYNCHRONIZED_TO_SYNCHRONIZED"; //$NON-NLS-1$
+			case IDelta.NON_TRANSIENT_TO_TRANSIENT:
+				return "NON_TRANSIENT_TO_TRANSIENT"; //$NON-NLS-1$
+			case IDelta.OVERRIDEN_METHOD:
+				return "OVERRIDEN_METHOD"; //$NON-NLS-1$
+			case IDelta.STATIC_TO_NON_STATIC:
+				return "STATIC_TO_NON_STATIC"; //$NON-NLS-1$
+			case IDelta.SUPERCLASS:
+				return "SUPERCLASS"; //$NON-NLS-1$
+			case IDelta.SYNCHRONIZED_TO_NON_SYNCHRONIZED:
+				return "SYNCHRONIZED_TO_NON_SYNCHRONIZED"; //$NON-NLS-1$
+			case IDelta.TYPE_CONVERSION:
+				return "TYPE_CONVERSION"; //$NON-NLS-1$
+			case IDelta.TRANSIENT_TO_NON_TRANSIENT:
+				return "TRANSIENT_TO_NON_TRANSIENT"; //$NON-NLS-1$
+			case IDelta.TYPE:
+				return "TYPE"; //$NON-NLS-1$
+			case IDelta.TYPE_ARGUMENTS:
+				return "TYPE_ARGUMENTS"; //$NON-NLS-1$
+			case IDelta.TYPE_MEMBER:
+				return "TYPE_MEMBER"; //$NON-NLS-1$
+			case IDelta.TYPE_PARAMETER:
+				return "TYPE_PARAMETER"; //$NON-NLS-1$
+			case IDelta.TYPE_PARAMETER_NAME:
+				return "TYPE_PARAMETER_NAME"; //$NON-NLS-1$
+			case IDelta.TYPE_PARAMETERS:
+				return "TYPE_PARAMETERS"; //$NON-NLS-1$
+			case IDelta.TYPE_VISIBILITY:
+				return "TYPE_VISIBILITY"; //$NON-NLS-1$
+			case IDelta.UNCHECKED_EXCEPTION:
+				return "UNCHECKED_EXCEPTION"; //$NON-NLS-1$
+			case IDelta.VALUE:
+				return "VALUE"; //$NON-NLS-1$
+			case IDelta.VARARGS_TO_ARRAY:
+				return "VARARGS_TO_ARRAY"; //$NON-NLS-1$
+			case IDelta.RESTRICTIONS:
+				return "RESTRICTIONS"; //$NON-NLS-1$
+			case IDelta.API_TYPE:
+				return "API_TYPE"; //$NON-NLS-1$
+			case IDelta.NON_VOLATILE_TO_VOLATILE:
+				return "NON_VOLATILE_TO_VOLATILE"; //$NON-NLS-1$
+			case IDelta.VOLATILE_TO_NON_VOLATILE:
+				return "VOLATILE_TO_NON_VOLATILE"; //$NON-NLS-1$
+			case IDelta.MINOR_VERSION:
+				return "MINOR_VERSION"; //$NON-NLS-1$
+			case IDelta.MAJOR_VERSION:
+				return "MAJOR_VERSION"; //$NON-NLS-1$
+			case IDelta.API_FIELD:
+				return "API_FIELD"; //$NON-NLS-1$
+			case IDelta.API_METHOD:
+				return "API_METHOD"; //$NON-NLS-1$
+			case IDelta.API_CONSTRUCTOR:
+				return "API_CONSTRUCTOR"; //$NON-NLS-1$
+			case IDelta.API_ENUM_CONSTANT:
+				return "API_ENUM_CONSTANT"; //$NON-NLS-1$
+			case IDelta.API_METHOD_WITH_DEFAULT_VALUE:
+				return "API_METHOD_WITH_DEFAULT_VALUE"; //$NON-NLS-1$
+			case IDelta.API_METHOD_WITHOUT_DEFAULT_VALUE:
+				return "API_METHOD_WITHOUT_DEFAULT_VALUE"; //$NON-NLS-1$
+			case IDelta.TYPE_ARGUMENT:
+				return "TYPE_ARGUMENT"; //$NON-NLS-1$
+			case IDelta.SUPER_INTERFACE_WITH_METHODS:
+				return "SUPER_INTERFACE_WITH_METHODS"; //$NON-NLS-1$
+			case IDelta.REEXPORTED_API_TYPE:
+				return "REEXPORTED_API_TYPE"; //$NON-NLS-1$
+			case IDelta.REEXPORTED_TYPE:
+				return "REEXPORTED_TYPE"; //$NON-NLS-1$
+			case IDelta.METHOD_MOVED_DOWN:
+				return "METHOD_MOVED_DOWN"; //$NON-NLS-1$
+			case IDelta.DEPRECATION:
+				return "DEPRECATION"; //$NON-NLS-1$
+			default:
+				break;
 		}
 		return UNKNOWN_FLAGS;
 	}
 
 	/**
-	 * Return a string that represents the kind of the given delta.
-	 * Returns {@link #UNKNOWN_KIND} if the kind cannot be determined.
+	 * Return a string that represents the kind of the given delta. Returns
+	 * {@link #UNKNOWN_KIND} if the kind cannot be determined.
 	 * 
 	 * @param delta the given delta
 	 * @return a string that represents the kind of the given delta.
@@ -759,72 +856,77 @@ public final class Util {
 	}
 
 	/**
-	 * Return a string that represents the given kind.
-	 * Returns {@link #UNKNOWN_KIND} if the kind cannot be determined.
+	 * Return a string that represents the given kind. Returns
+	 * {@link #UNKNOWN_KIND} if the kind cannot be determined.
 	 * 
 	 * @param delta the given kind
 	 * @return a string that represents the given kind.
 	 */
 	public static String getDeltaKindName(int kind) {
-		switch(kind) {
-			case IDelta.ADDED :
+		switch (kind) {
+			case IDelta.ADDED:
 				return "ADDED"; //$NON-NLS-1$
-			case IDelta.CHANGED :
+			case IDelta.CHANGED:
 				return "CHANGED"; //$NON-NLS-1$
-			case IDelta.REMOVED :
+			case IDelta.REMOVED:
 				return "REMOVED"; //$NON-NLS-1$
+			default:
+				break;
 		}
 		return UNKNOWN_KIND;
 	}
 
 	/**
-	 * Returns the preference key for the given element type, the given kind and the given flags.
+	 * Returns the preference key for the given element type, the given kind and
+	 * the given flags.
 	 * 
-	 * @param elementType the given element type (retrieved using {@link IDelta#getElementType()}
+	 * @param elementType the given element type (retrieved using
+	 *            {@link IDelta#getElementType()}
 	 * @param kind the given kind (retrieved using {@link IDelta#getKind()}
 	 * @param flags the given flags (retrieved using {@link IDelta#getFlags()}
-	 * @return the preference key for the given element type, the given kind and the given flags.
+	 * @return the preference key for the given element type, the given kind and
+	 *         the given flags.
 	 */
 	public static String getDeltaPrefererenceKey(int elementType, int kind, int flags) {
 		StringBuffer buffer = new StringBuffer(Util.getDeltaElementType(elementType));
 		buffer.append('_').append(Util.getDeltaKindName(kind));
 		if (flags != -1) {
 			buffer.append('_');
-			switch(flags) {
-				case IDelta.API_FIELD :
+			switch (flags) {
+				case IDelta.API_FIELD:
 					buffer.append(Util.getDeltaFlagsName(IDelta.FIELD));
 					break;
-				case IDelta.API_ENUM_CONSTANT :
+				case IDelta.API_ENUM_CONSTANT:
 					buffer.append(Util.getDeltaFlagsName(IDelta.ENUM_CONSTANT));
 					break;
-				case IDelta.API_CONSTRUCTOR :
+				case IDelta.API_CONSTRUCTOR:
 					buffer.append(Util.getDeltaFlagsName(IDelta.CONSTRUCTOR));
 					break;
-				case IDelta.API_METHOD :
+				case IDelta.API_METHOD:
 					buffer.append(Util.getDeltaFlagsName(IDelta.METHOD));
 					break;
-				case IDelta.API_METHOD_WITH_DEFAULT_VALUE :
+				case IDelta.API_METHOD_WITH_DEFAULT_VALUE:
 					if (kind == IDelta.REMOVED) {
 						buffer.append(Util.getDeltaFlagsName(IDelta.METHOD));
 					} else {
 						buffer.append(Util.getDeltaFlagsName(IDelta.METHOD_WITH_DEFAULT_VALUE));
 					}
 					break;
-				case IDelta.API_METHOD_WITHOUT_DEFAULT_VALUE :
+				case IDelta.API_METHOD_WITHOUT_DEFAULT_VALUE:
 					if (kind == IDelta.REMOVED) {
 						buffer.append(Util.getDeltaFlagsName(IDelta.METHOD));
 					} else {
 						buffer.append(Util.getDeltaFlagsName(IDelta.METHOD_WITHOUT_DEFAULT_VALUE));
 					}
 					break;
-				case IDelta.METHOD_WITH_DEFAULT_VALUE :
+				case IDelta.METHOD_WITH_DEFAULT_VALUE:
 					if (kind == IDelta.REMOVED) {
 						buffer.append(Util.getDeltaFlagsName(IDelta.METHOD));
 					} else {
 						buffer.append(Util.getDeltaFlagsName(IDelta.METHOD_WITH_DEFAULT_VALUE));
 					}
 					break;
-				case IDelta.METHOD_WITHOUT_DEFAULT_VALUE :
+				case IDelta.METHOD_WITHOUT_DEFAULT_VALUE:
 					if (kind == IDelta.REMOVED) {
 						buffer.append(Util.getDeltaFlagsName(IDelta.METHOD));
 					} else {
@@ -840,54 +942,57 @@ public final class Util {
 
 	/**
 	 * Returns the details of the API delta as a string
+	 * 
 	 * @param delta
 	 * @return the details of the delta as a string
 	 */
 	public static String getDetail(IDelta delta) {
 		StringBuffer buffer = new StringBuffer();
-		switch(delta.getElementType()) {
-			case IDelta.CLASS_ELEMENT_TYPE :
+		switch (delta.getElementType()) {
+			case IDelta.CLASS_ELEMENT_TYPE:
 				buffer.append("class"); //$NON-NLS-1$
 				break;
-			case IDelta.ANNOTATION_ELEMENT_TYPE :
+			case IDelta.ANNOTATION_ELEMENT_TYPE:
 				buffer.append("annotation"); //$NON-NLS-1$
 				break;
-			case IDelta.INTERFACE_ELEMENT_TYPE :
+			case IDelta.INTERFACE_ELEMENT_TYPE:
 				buffer.append("interface"); //$NON-NLS-1$
 				break;
-			case IDelta.API_COMPONENT_ELEMENT_TYPE :
+			case IDelta.API_COMPONENT_ELEMENT_TYPE:
 				buffer.append("api component"); //$NON-NLS-1$
 				break;
-			case IDelta.API_BASELINE_ELEMENT_TYPE :
+			case IDelta.API_BASELINE_ELEMENT_TYPE:
 				buffer.append("api baseline"); //$NON-NLS-1$
 				break;
 			case IDelta.METHOD_ELEMENT_TYPE:
 				buffer.append("method"); //$NON-NLS-1$
 				break;
-			case IDelta.CONSTRUCTOR_ELEMENT_TYPE :
+			case IDelta.CONSTRUCTOR_ELEMENT_TYPE:
 				buffer.append("constructor"); //$NON-NLS-1$
 				break;
-			case IDelta.ENUM_ELEMENT_TYPE :
+			case IDelta.ENUM_ELEMENT_TYPE:
 				buffer.append("enum"); //$NON-NLS-1$
 				break;
-			case IDelta.FIELD_ELEMENT_TYPE :
+			case IDelta.FIELD_ELEMENT_TYPE:
 				buffer.append("field"); //$NON-NLS-1$
+				break;
+			default:
 				break;
 		}
 		buffer.append(' ');
-		switch(delta.getKind()) {
-			case IDelta.ADDED :
+		switch (delta.getKind()) {
+			case IDelta.ADDED:
 				buffer.append("added"); //$NON-NLS-1$
 				break;
-			case IDelta.REMOVED :
+			case IDelta.REMOVED:
 				buffer.append("removed"); //$NON-NLS-1$
 				break;
-			case IDelta.CHANGED :
+			case IDelta.CHANGED:
 				buffer.append("changed"); //$NON-NLS-1$
 				break;
 			default:
 				buffer.append("unknown kind"); //$NON-NLS-1$
-			break;
+				break;
 		}
 		buffer.append(' ').append(getDeltaFlagsName(delta.getFlags())).append(' ').append(delta.getTypeName()).append("#").append(delta.getKey()); //$NON-NLS-1$
 		return String.valueOf(buffer);
@@ -895,16 +1000,17 @@ public final class Util {
 
 	/**
 	 * Returns the {@link IDocument} for the specified {@link ICompilationUnit}
+	 * 
 	 * @param cu
 	 * @return the {@link IDocument} for the specified {@link ICompilationUnit}
 	 * @throws CoreException
 	 */
 	public static IDocument getDocument(ICompilationUnit cu) throws CoreException {
 		if (cu.getOwner() == null) {
-			IFile file= (IFile) cu.getResource();
+			IFile file = (IFile) cu.getResource();
 			if (file.exists()) {
-				ITextFileBufferManager bufferManager= FileBuffers.getTextFileBufferManager();
-				IPath path= cu.getPath();
+				ITextFileBufferManager bufferManager = FileBuffers.getTextFileBufferManager();
+				IPath path = cu.getPath();
 				bufferManager.connect(path, LocationKind.IFILE, new NullProgressMonitor());
 				try {
 					return bufferManager.getTextFileBuffer(path, LocationKind.IFILE).getDocument();
@@ -921,7 +1027,7 @@ public final class Util {
 	 * environment id, or <code>null</code> if none.
 	 * 
 	 * @param eeId OSGi profile identifier
-	 *
+	 * 
 	 * @return the corresponding properties or <code>null</code> if none
 	 */
 	public static Properties getEEProfile(String eeId) {
@@ -937,24 +1043,28 @@ public final class Util {
 			} finally {
 				try {
 					stream.close();
-				} catch(IOException e) {
+				} catch (IOException e) {
 					ApiPlugin.log(e);
 				}
 			}
 		}
 		return null;
 	}
-	
+
 	/**
-	 * Returns the number of fragments for the given version value, -1 if the format is unknown.
-	 * The version is formed like: [optional plug-in name] major.minor.micro.qualifier.
+	 * Returns the number of fragments for the given version value, -1 if the
+	 * format is unknown. The version is formed like: [optional plug-in name]
+	 * major.minor.micro.qualifier.
 	 * 
 	 * @param version the given version value
-	 * @return the number of fragments for the given version value or -1 if the format is unknown
+	 * @return the number of fragments for the given version value or -1 if the
+	 *         format is unknown
 	 * @throws IllegalArgumentException if version is null
 	 */
 	public static final int getFragmentNumber(String version) {
-		if (version == null) throw new IllegalArgumentException("The given version should not be null"); //$NON-NLS-1$
+		if (version == null) {
+			throw new IllegalArgumentException("The given version should not be null"); //$NON-NLS-1$
+		}
 		int index = version.indexOf(' ');
 		char[] charArray = version.toCharArray();
 		int length = charArray.length;
@@ -963,22 +1073,22 @@ public final class Util {
 		}
 		int counter = 1;
 		for (int i = index + 1; i < length; i++) {
-			switch(charArray[i]) {
-				case '0' :
-				case '1' :
-				case '2' :
-				case '3' :
-				case '4' :
-				case '5' :
-				case '6' :
-				case '7' :
-				case '8' :
-				case '9' :
+			switch (charArray[i]) {
+				case '0':
+				case '1':
+				case '2':
+				case '3':
+				case '4':
+				case '5':
+				case '6':
+				case '7':
+				case '8':
+				case '9':
 					continue;
-				case '.' :
+				case '.':
 					counter++;
 					break;
-				default :
+				default:
 					return -1;
 			}
 		}
@@ -987,98 +1097,112 @@ public final class Util {
 
 	public static IMember getIMember(IDelta delta, IJavaProject javaProject) {
 		String typeName = delta.getTypeName();
-		if (typeName == null) return null;
+		if (typeName == null) {
+			return null;
+		}
 		IType type = null;
 		try {
 			type = javaProject.findType(typeName.replace('$', '.'));
 		} catch (JavaModelException e) {
 			// ignore
 		}
-		if (type == null) return null;
+		if (type == null) {
+			return null;
+		}
 		String key = delta.getKey();
-		switch(delta.getElementType()) {
-			case IDelta.FIELD_ELEMENT_TYPE : {
-					IField field = type.getField(key);
-					if (field.exists()) {
-						return field;
-					}
+		switch (delta.getElementType()) {
+			case IDelta.FIELD_ELEMENT_TYPE: {
+				IField field = type.getField(key);
+				if (field.exists()) {
+					return field;
 				}
+			}
 				break;
-			case IDelta.CLASS_ELEMENT_TYPE :
-			case IDelta.ANNOTATION_ELEMENT_TYPE :
-			case IDelta.INTERFACE_ELEMENT_TYPE :
-			case IDelta.ENUM_ELEMENT_TYPE :
+			case IDelta.CLASS_ELEMENT_TYPE:
+			case IDelta.ANNOTATION_ELEMENT_TYPE:
+			case IDelta.INTERFACE_ELEMENT_TYPE:
+			case IDelta.ENUM_ELEMENT_TYPE:
 				// we report the marker on the type
-				switch(delta.getKind()) {
-					case IDelta.ADDED :
-						switch(delta.getFlags()) {
-							case IDelta.FIELD :
-							case IDelta.ENUM_CONSTANT :
+				switch (delta.getKind()) {
+					case IDelta.ADDED:
+						switch (delta.getFlags()) {
+							case IDelta.FIELD:
+							case IDelta.ENUM_CONSTANT:
 								IField field = type.getField(key);
 								if (field.exists()) {
 									return field;
 								}
 								break;
-							case IDelta.METHOD_WITH_DEFAULT_VALUE :
-							case IDelta.METHOD_WITHOUT_DEFAULT_VALUE :
-							case IDelta.METHOD :
-							case IDelta.CONSTRUCTOR :
+							case IDelta.METHOD_WITH_DEFAULT_VALUE:
+							case IDelta.METHOD_WITHOUT_DEFAULT_VALUE:
+							case IDelta.METHOD:
+							case IDelta.CONSTRUCTOR:
 								return getMethod(type, key);
-							case IDelta.TYPE_MEMBER :
+							case IDelta.TYPE_MEMBER:
 								IType type2 = type.getType(key);
 								if (type2.exists()) {
 									return type2;
 								}
+								break;
+							default:
+								break;
 						}
 						break;
-					case IDelta.REMOVED :
-						switch(delta.getFlags()) {
-							case IDelta.API_FIELD :
-							case IDelta.API_ENUM_CONSTANT :
+					case IDelta.REMOVED:
+						switch (delta.getFlags()) {
+							case IDelta.API_FIELD:
+							case IDelta.API_ENUM_CONSTANT:
 								IField field = type.getField(key);
 								if (field.exists()) {
 									return field;
 								}
 								break;
-							case IDelta.API_METHOD_WITH_DEFAULT_VALUE :
-							case IDelta.API_METHOD_WITHOUT_DEFAULT_VALUE :
-							case IDelta.API_METHOD :
-							case IDelta.API_CONSTRUCTOR :
+							case IDelta.API_METHOD_WITH_DEFAULT_VALUE:
+							case IDelta.API_METHOD_WITHOUT_DEFAULT_VALUE:
+							case IDelta.API_METHOD:
+							case IDelta.API_CONSTRUCTOR:
 								return getMethod(type, key);
+							default:
+								break;
 						}
+						break;
+					default:
+						break;
 				}
 				return type;
-			case IDelta.METHOD_ELEMENT_TYPE :
-			case IDelta.CONSTRUCTOR_ELEMENT_TYPE : {
-					return getMethod(type, key);
-				}
-			case IDelta.API_COMPONENT_ELEMENT_TYPE :
+			case IDelta.METHOD_ELEMENT_TYPE:
+			case IDelta.CONSTRUCTOR_ELEMENT_TYPE: {
+				return getMethod(type, key);
+			}
+			case IDelta.API_COMPONENT_ELEMENT_TYPE:
 				return type;
+			default:
+				break;
 		}
 		return null;
 	}
 
 	/**
-	 * Updates a given progress monitor the given amount of work.
-	 * Throws an {@link OperationCanceledException} if the monitor has been canceled.
+	 * Updates a given progress monitor the given amount of work. Throws an
+	 * {@link OperationCanceledException} if the monitor has been canceled.
 	 * 
 	 * @param monitor
 	 * @param work
 	 * @throws OperationCanceledException
 	 */
 	public static void updateMonitor(IProgressMonitor monitor, int work) throws OperationCanceledException {
-		if(monitor == null) {
+		if (monitor == null) {
 			return;
 		}
-		if(monitor.isCanceled()) {
+		if (monitor.isCanceled()) {
 			throw new OperationCanceledException();
 		}
 		monitor.worked(work);
 	}
-	
+
 	/**
-	 * Updates the given monitor 0 work ticks. This method is used to poll for cancellation
-	 * without advancing the work done.
+	 * Updates the given monitor 0 work ticks. This method is used to poll for
+	 * cancellation without advancing the work done.
 	 * 
 	 * @param monitor
 	 * @throws OperationCanceledException
@@ -1086,7 +1210,7 @@ public final class Util {
 	public static void updateMonitor(IProgressMonitor monitor) throws OperationCanceledException {
 		updateMonitor(monitor, 0);
 	}
-	
+
 	private static IMember getMethod(IType type, String key) {
 		boolean isGeneric = false;
 		int indexOfTypeVariable = key.indexOf('<');
@@ -1133,7 +1257,8 @@ public final class Util {
 		if (method.exists()) {
 			return method;
 		} else {
-			// if the method is not null and it doesn't exist, it might be the default constructor
+			// if the method is not null and it doesn't exist, it might be the
+			// default constructor
 			if (selector.equals(type.getElementName()) && parameterTypes.length == 0) {
 				return null;
 			}
@@ -1144,33 +1269,29 @@ public final class Util {
 			} catch (JavaModelException e) {
 				ApiPlugin.log(e);
 				// do not default to the enclosing type - see bug 224713
-				ApiPlugin.log(
-						new Status(IStatus.ERROR,
-								ApiPlugin.PLUGIN_ID,
-								NLS.bind(UtilMessages.Util_6, new String[] { selector, descriptor })));
+				ApiPlugin.log(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, NLS.bind(UtilMessages.Util_6, new String[] {
+						selector, descriptor })));
 				return null;
 			}
-			List list = new ArrayList();
+			List<IMethod> list = new ArrayList<IMethod>();
 			for (int i = 0, max = methods.length; i < max; i++) {
 				IMethod method2 = methods[i];
 				if (selector.equals(method2.getElementName())) {
 					list.add(method2);
 				}
 			}
-			switch(list.size()) {
-				case 0 :
+			switch (list.size()) {
+				case 0:
 					// do not default to the enclosing type - see bug 224713
-					ApiPlugin.log(
-							new Status(IStatus.ERROR,
-									ApiPlugin.PLUGIN_ID,
-									NLS.bind(UtilMessages.Util_6, new String[] { selector, descriptor })));
+					ApiPlugin.log(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, NLS.bind(UtilMessages.Util_6, new String[] {
+							selector, descriptor })));
 					return null;
-				case 1 :
-					return (IMember) list.get(0);
+				case 1:
+					return list.get(0);
 				default:
 					// need to find a matching parameters
-					for (Iterator iterator = list.iterator(); iterator.hasNext(); ) {
-						IMethod method2 = (IMethod) iterator.next();
+					for (Iterator<IMethod> iterator = list.iterator(); iterator.hasNext();) {
+						IMethod method2 = iterator.next();
 						try {
 							if (Signatures.matchesSignatures(method2.getSignature(), signature)) {
 								return method2;
@@ -1182,15 +1303,14 @@ public final class Util {
 			}
 		}
 		// do not default to the enclosing type - see bug 224713
-		ApiPlugin.log(
-				new Status(IStatus.ERROR,
-						ApiPlugin.PLUGIN_ID,
-						NLS.bind(UtilMessages.Util_6, new String[] { selector, descriptor })));
+		ApiPlugin.log(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, NLS.bind(UtilMessages.Util_6, new String[] {
+				selector, descriptor })));
 		return null;
 	}
 
 	/**
 	 * Returns the given input stream as a byte array
+	 * 
 	 * @param stream the stream to get as a byte array
 	 * @param length the length to read from the stream or -1 for unknown
 	 * @return the given input stream as a byte array
@@ -1207,11 +1327,7 @@ public final class Util {
 				int amountRequested = Math.max(stream.available(), DEFAULT_READING_SIZE);
 				// resize contents if needed
 				if (contentsLength + amountRequested > contents.length) {
-					System.arraycopy(contents,
-							0,
-							contents = new byte[contentsLength + amountRequested],
-							0,
-							contentsLength);
+					System.arraycopy(contents, 0, contents = new byte[contentsLength + amountRequested], 0, contentsLength);
 				}
 				// read as many bytes as possible
 				amountRead = stream.read(contents, contentsLength, amountRequested);
@@ -1230,7 +1346,8 @@ public final class Util {
 			int readSize = 0;
 			while ((readSize != -1) && (len != length)) {
 				// See PR 1FMS89U
-				// We record first the read size. In this case length is the actual
+				// We record first the read size. In this case length is the
+				// actual
 				// read size.
 				len += readSize;
 				readSize = stream.read(contents, len, length - len);
@@ -1238,26 +1355,27 @@ public final class Util {
 		}
 		return contents;
 	}
-	
+
 	/**
-	 * Returns the given input stream's contents as a character array.
-	 * If a length is specified (i.e. if length != -1), this represents the number of bytes in the stream.
-	 * Note the specified stream is not closed in this method
-	 * @param stream the stream to get convert to the char array 
+	 * Returns the given input stream's contents as a character array. If a
+	 * length is specified (i.e. if length != -1), this represents the number of
+	 * bytes in the stream. Note the specified stream is not closed in this
+	 * method
+	 * 
+	 * @param stream the stream to get convert to the char array
 	 * @param length the length of the input stream, or -1 if unknown
 	 * @param encoding the encoding to use when reading the stream
 	 * @return the given input stream's contents as a character array.
 	 * @throws IOException if a problem occurred reading the stream.
 	 */
-	public static char[] getInputStreamAsCharArray(InputStream stream, int
-			length, String encoding) throws IOException {
+	public static char[] getInputStreamAsCharArray(InputStream stream, int length, String encoding) throws IOException {
 		Charset charset = null;
 		try {
 			charset = Charset.forName(encoding);
 		} catch (IllegalCharsetNameException e) {
 			System.err.println("Illegal charset name : " + encoding); //$NON-NLS-1$
 			return null;
-		} catch(UnsupportedCharsetException e) {
+		} catch (UnsupportedCharsetException e) {
 			System.err.println("Unsupported charset : " + encoding); //$NON-NLS-1$
 			return null;
 		}
@@ -1277,9 +1395,9 @@ public final class Util {
 		}
 		return array;
 	}
-	
+
 	/**
-	 * Tries to find the 'MANIFEST.MF' file with in the given project in the 
+	 * Tries to find the 'MANIFEST.MF' file with in the given project in the
 	 * 'META-INF folder'.
 	 * 
 	 * @param currentProject
@@ -1288,18 +1406,22 @@ public final class Util {
 	public static IResource getManifestFile(IProject currentProject) {
 		return currentProject.findMember("META-INF/MANIFEST.MF"); //$NON-NLS-1$
 	}
-	
+
 	/**
-	 * Returns if the given {@link IMarker} is representing an {@link org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem}
+	 * Returns if the given {@link IMarker} is representing an
+	 * {@link org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem}
 	 * or not
+	 * 
 	 * @param marker the marker to check
-	 * @return true if the marker is for an {@link org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem} false otherwise
+	 * @return true if the marker is for an
+	 *         {@link org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem}
+	 *         false otherwise
 	 * @throws CoreException
 	 */
 	public static boolean isApiProblemMarker(IMarker marker) {
 		return marker.getAttribute(IApiMarkerConstants.API_MARKER_ATTR_ID, -1) > 0;
 	}
-	
+
 	/**
 	 * Returns a reference type for the given fully qualified type name.
 	 * 
@@ -1312,8 +1434,10 @@ public final class Util {
 		String type = index == -1 ? fullyQualifiedName : fullyQualifiedName.substring(index + 1);
 		return Factory.packageDescriptor(pkg).getType(type);
 	}
+
 	/**
 	 * Returns if the given project is API enabled
+	 * 
 	 * @param project the given project
 	 * @return true if the project is API enabled, false otherwise
 	 */
@@ -1324,11 +1448,13 @@ public final class Util {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Returns if the given project is a java project
+	 * 
 	 * @param project the given project
-	 * @return <code>true</code> if the project is a java project, <code>false</code> otherwise
+	 * @return <code>true</code> if the project is a java project,
+	 *         <code>false</code> otherwise
 	 */
 	public static boolean isJavaProject(IProject project) {
 		try {
@@ -1337,18 +1463,21 @@ public final class Util {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Returns if the given project is API enabled
+	 * 
 	 * @param project the given project
 	 * @return true if the project is API enabled, false otherwise
 	 */
 	public static boolean isApiProject(IJavaProject project) {
 		return isApiProject(project.getProject());
 	}
-	
+
 	/**
-	 * Returns if the given {@link IApiComponent} is a valid {@link IApiComponent}
+	 * Returns if the given {@link IApiComponent} is a valid
+	 * {@link IApiComponent}
+	 * 
 	 * @param apiComponent the given component
 	 * @return true if the given {@link IApiComponent} is valid, false otherwise
 	 */
@@ -1370,7 +1499,9 @@ public final class Util {
 				// ignore
 			} finally {
 				try {
-					if (zipFile != null) zipFile.close();
+					if (zipFile != null) {
+						zipFile.close();
+					}
 				} catch (IOException e) {
 					// ignore
 				}
@@ -1378,7 +1509,7 @@ public final class Util {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Returns if the specified file name is an archive name. A name is
 	 * considered to be an archive name if it ends with either '.zip' or '.jar'
@@ -1389,42 +1520,43 @@ public final class Util {
 	public static boolean isArchive(String fileName) {
 		return isZipJarFile(fileName) || isTGZFile(fileName);
 	}
-	
+
 	/**
-	 * Returns if the given file name represents a 'standard' archive, where the name
-	 * has an extension of *.zip or *.jar
+	 * Returns if the given file name represents a 'standard' archive, where the
+	 * name has an extension of *.zip or *.jar
 	 * 
 	 * @param fileName
-	 * @return true if the given file name is that of a 'standard' archive, false otherwise
+	 * @return true if the given file name is that of a 'standard' archive,
+	 *         false otherwise
 	 */
 	public static boolean isZipJarFile(String fileName) {
 		String normalizedFileName = fileName.toLowerCase();
-		return normalizedFileName.endsWith(DOT_ZIP) 
-			|| normalizedFileName.endsWith(DOT_JAR); 
+		return normalizedFileName.endsWith(DOT_ZIP) || normalizedFileName.endsWith(DOT_JAR);
 	}
-	
+
 	/**
-	 * Returns if the given file name represents a G-zip file name, where the name 
-	 * has an extension of *.tar.gz or *.tgz
+	 * Returns if the given file name represents a G-zip file name, where the
+	 * name has an extension of *.tar.gz or *.tgz
 	 * 
 	 * @param fileName
-	 * @return true if the given file name is that of a G-zip archive, false otherwise
+	 * @return true if the given file name is that of a G-zip archive, false
+	 *         otherwise
 	 */
 	public static boolean isTGZFile(String fileName) {
 		String normalizedFileName = fileName.toLowerCase();
-		return normalizedFileName.endsWith(DOT_TAR_GZ) 
-			|| normalizedFileName.endsWith(DOT_TGZ); 
+		return normalizedFileName.endsWith(DOT_TAR_GZ) || normalizedFileName.endsWith(DOT_TGZ);
 	}
-	
+
 	/**
 	 * Returns if the flags are for a class
+	 * 
 	 * @param accessFlags the given access flags
 	 * @return
 	 */
 	public static boolean isClass(int accessFlags) {
 		return (accessFlags & (Opcodes.ACC_ENUM | Opcodes.ACC_ANNOTATION | Opcodes.ACC_INTERFACE)) == 0;
 	}
-	
+
 	/**
 	 * Returns if the specified file name is for a class file. A name is
 	 * considered to be a class file if it ends in '.class'
@@ -1433,14 +1565,12 @@ public final class Util {
 	 * @return true if the name is for a class file false otherwise
 	 */
 	public static boolean isClassFile(String fileName) {
-		return fileName.toLowerCase().endsWith(DOT_CLASS_SUFFIX); 
+		return fileName.toLowerCase().endsWith(DOT_CLASS_SUFFIX);
 	}
 
 	public static boolean isDefault(int accessFlags) {
 		// none of the private, protected or public bit is set
-		return (accessFlags & (Opcodes.ACC_PRIVATE
-		|	Opcodes.ACC_PROTECTED
-		|	Opcodes.ACC_PUBLIC)) == 0;
+		return (accessFlags & (Opcodes.ACC_PRIVATE | Opcodes.ACC_PROTECTED | Opcodes.ACC_PUBLIC)) == 0;
 	}
 
 	public static final boolean isDifferentVersion(String versionToBeChecked, String referenceVersion) {
@@ -1481,27 +1611,32 @@ public final class Util {
 
 	/**
 	 * Returns if the given name is {@link java.lang.Object}
+	 * 
 	 * @param name
 	 * @return true if the name is java.lang.Object, false otherwise
 	 */
 	public static boolean isJavaLangObject(String name) {
 		return name != null && name.equals(JAVA_LANG_OBJECT);
 	}
-	
+
 	/**
 	 * Return if the name is {@link java.lang.RuntimeException}
+	 * 
 	 * @param name
 	 * @return true if the name is java.lang.RuntimeException, false otherwise
 	 */
 	public static boolean isJavaLangRuntimeException(String name) {
 		return name != null && name.equals(JAVA_LANG_RUNTIMEEXCEPTION);
 	}
+
 	public static boolean isVisible(int modifiers) {
 		return Flags.isProtected(modifiers) || Flags.isPublic(modifiers);
 	}
+
 	public static boolean isBinaryProject(IProject project) {
 		return org.eclipse.pde.internal.core.WorkspaceModelManager.isBinaryProject(project);
 	}
+
 	/**
 	 * Returns a new XML document.
 	 * 
@@ -1509,20 +1644,20 @@ public final class Util {
 	 * @throws CoreException if unable to create a new document
 	 */
 	public static Document newDocument() throws CoreException {
-		DocumentBuilderFactory dfactory= DocumentBuilderFactory.newInstance();
+		DocumentBuilderFactory dfactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder docBuilder = null;
 		try {
 			docBuilder = dfactory.newDocumentBuilder();
 		} catch (ParserConfigurationException e) {
 			abort("Unable to create new XML document.", e); //$NON-NLS-1$
 		}
-		Document doc= docBuilder.newDocument();
+		Document doc = docBuilder.newDocument();
 		return doc;
 	}
-	
+
 	/**
-	 * Parses the given string representing an XML document, returning its
-	 * root element.
+	 * Parses the given string representing an XML document, returning its root
+	 * element.
 	 * 
 	 * @param document XML document as a string
 	 * @return the document's root element
@@ -1531,33 +1666,34 @@ public final class Util {
 	public static Element parseDocument(String document) throws CoreException {
 		Element root = null;
 		InputStream stream = null;
-		try{
+		try {
 			DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			parser.setErrorHandler(new DefaultHandler());
 			stream = new ByteArrayInputStream(document.getBytes(IApiCoreConstants.UTF_8));
 			root = parser.parse(stream).getDocumentElement();
 		} catch (ParserConfigurationException e) {
-			abort("Unable to parse XML document.", e);  //$NON-NLS-1$
+			abort("Unable to parse XML document.", e); //$NON-NLS-1$
 		} catch (FactoryConfigurationError e) {
-			abort("Unable to parse XML document.", e);  //$NON-NLS-1$
+			abort("Unable to parse XML document.", e); //$NON-NLS-1$
 		} catch (SAXException e) {
-			abort("Unable to parse XML document.", e);  //$NON-NLS-1$
+			abort("Unable to parse XML document.", e); //$NON-NLS-1$
 		} catch (IOException e) {
-			abort("Unable to parse XML document.", e);  //$NON-NLS-1$
-		} finally { 
-			try{
+			abort("Unable to parse XML document.", e); //$NON-NLS-1$
+		} finally {
+			try {
 				if (stream != null) {
 					stream.close();
 				}
-			} catch(IOException e) {
-				abort("Unable to parse XML document.", e);  //$NON-NLS-1$
+			} catch (IOException e) {
+				abort("Unable to parse XML document.", e); //$NON-NLS-1$
 			}
 		}
 		return root;
 	}
-	
+
 	/**
-	 * Save the given contents into the given file. The file parent folder must exist.
+	 * Save the given contents into the given file. The file parent folder must
+	 * exist.
 	 * 
 	 * @param file the given file target
 	 * @param contents the given contents
@@ -1573,7 +1709,7 @@ public final class Util {
 			if (writer != null) {
 				try {
 					writer.close();
-				} catch(IOException e) {
+				} catch (IOException e) {
 					// ignore
 				}
 			}
@@ -1582,6 +1718,7 @@ public final class Util {
 
 	/**
 	 * Returns the contents of the given file as a string, or <code>null</code>
+	 * 
 	 * @param file the file to get the contents for
 	 * @return the contents of the file as a {@link String} or <code>null</code>
 	 */
@@ -1592,8 +1729,7 @@ public final class Util {
 			stream = new FileInputStream(file);
 			char[] array = getInputStreamAsCharArray(stream, -1, IApiCoreConstants.UTF_8);
 			contents = new String(array);
-		}
-		catch(IOException ioe) {
+		} catch (IOException ioe) {
 			ApiPlugin.log(ioe);
 		} finally {
 			if (stream != null) {
@@ -1606,23 +1742,23 @@ public final class Util {
 		}
 		return contents;
 	}
-	
+
 	/**
-	 * Returns the given string as an {@link InputStream}. It is up to the caller to close
-	 * the new stream.
+	 * Returns the given string as an {@link InputStream}. It is up to the
+	 * caller to close the new stream.
+	 * 
 	 * @param string the string to convert
 	 * @return the {@link InputStream} for the given string
 	 */
 	public static InputStream getInputStreamFromString(String string) {
 		try {
 			return new ByteArrayInputStream(string.getBytes(IApiCoreConstants.UTF_8));
-		}
-		catch(UnsupportedEncodingException uee) {
+		} catch (UnsupportedEncodingException uee) {
 			ApiPlugin.log(uee);
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Serializes the given XML document into a UTF-8 string.
 	 * 
@@ -1635,22 +1771,24 @@ public final class Util {
 			ByteArrayOutputStream s = new ByteArrayOutputStream();
 			TransformerFactory factory = TransformerFactory.newInstance();
 			Transformer transformer = factory.newTransformer();
-			transformer.setOutputProperty(OutputKeys.METHOD, "xml");  //$NON-NLS-1$
+			transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
 			transformer.setOutputProperty(OutputKeys.INDENT, "yes"); //$NON-NLS-1$
-			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount","4"); //$NON-NLS-1$ //$NON-NLS-2$
+			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4"); //$NON-NLS-1$ //$NON-NLS-2$
 			DOMSource source = new DOMSource(document);
 			StreamResult outputTarget = new StreamResult(s);
 			transformer.transform(source, outputTarget);
-			return s.toString(IApiCoreConstants.UTF_8);	
+			return s.toString(IApiCoreConstants.UTF_8);
 		} catch (TransformerException e) {
-			abort("Unable to serialize XML document.", e);   //$NON-NLS-1$
+			abort("Unable to serialize XML document.", e); //$NON-NLS-1$
 		} catch (IOException e) {
-			abort("Unable to serialize XML document.",e);  //$NON-NLS-1$
+			abort("Unable to serialize XML document.", e); //$NON-NLS-1$
 		}
 		return null;
 	}
+
 	/**
-	 * Unzip the contents of the given zip in the given directory (create it if it doesn't exist)
+	 * Unzip the contents of the given zip in the given directory (create it if
+	 * it doesn't exist)
 	 */
 	public static void unzip(String zipPath, String destDirPath) throws IOException {
 		InputStream zipIn = new FileInputStream(zipPath);
@@ -1673,9 +1811,9 @@ public final class Util {
 				if (lastSeparator >= 0) {
 					fileDir = filePath.substring(0, lastSeparator);
 				}
-				//create directory for a file
+				// create directory for a file
 				new File(destDir, fileDir).mkdirs();
-				//write file
+				// write file
 				File outFile = new File(destDir, filePath);
 				outputStream = new BufferedOutputStream(new FileOutputStream(outFile));
 				int n = 0;
@@ -1699,14 +1837,16 @@ public final class Util {
 			}
 		}
 	}
+
 	/**
-	 * Unzip the contents of the given zip in the given directory (create it if it doesn't exist)
+	 * Unzip the contents of the given zip in the given directory (create it if
+	 * it doesn't exist)
 	 */
 	public static void guntar(String zipPath, String destDirPath) throws TarException, IOException {
 		TarFile tarFile = new TarFile(zipPath);
-		Enumeration entries = tarFile.entries();
+		Enumeration<?> entries = tarFile.entries();
 		byte[] buf = new byte[8192];
-		for (;entries.hasMoreElements(); ) {
+		for (; entries.hasMoreElements();) {
 			TarEntry zEntry;
 			while ((zEntry = (TarEntry) entries.nextElement()) != null) {
 				// if it is empty directory, create it
@@ -1721,9 +1861,9 @@ public final class Util {
 				if (lastSeparator >= 0) {
 					fileDir = filePath.substring(0, lastSeparator);
 				}
-				//create directory for a file
+				// create directory for a file
 				new File(destDirPath, fileDir).mkdirs();
-				//write file
+				// write file
 				File outFile = new File(destDirPath, filePath);
 				BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(outFile));
 				int n = 0;
@@ -1737,9 +1877,9 @@ public final class Util {
 			}
 		}
 	}
+
 	/**
-	 * Gets the .ee file supplied to run tests based on system
-	 * property.
+	 * Gets the .ee file supplied to run tests based on system property.
 	 * 
 	 * @return
 	 */
@@ -1769,6 +1909,7 @@ public final class Util {
 
 	/**
 	 * Creates a new file in the users' <code>temp</code> directory
+	 * 
 	 * @param prefix
 	 * @param suffix
 	 * @return a new temp file
@@ -1781,10 +1922,10 @@ public final class Util {
 		FileManager.getManager().recordTempFileRoot(file.getCanonicalPath());
 		return file;
 	}
-	
+
 	/**
-	 * @return a string representation of all of the libraries from the bootpath 
-	 * of the current default system VM.
+	 * @return a string representation of all of the libraries from the bootpath
+	 *         of the current default system VM.
 	 */
 	public static String getJavaClassLibsAsString() {
 		String[] libs = Util.getJavaClassLibs();
@@ -1797,9 +1938,10 @@ public final class Util {
 		}
 		return String.valueOf(buffer);
 	}
-	
+
 	/**
-	 * @return an array of the library names from the bootpath of the current default system VM 
+	 * @return an array of the library names from the bootpath of the current
+	 *         default system VM
 	 */
 	public static String[] getJavaClassLibs() {
 		// check bootclasspath properties for Sun, JRockit and Harmony VMs
@@ -1836,29 +1978,27 @@ public final class Util {
 				return new String[] {};
 			}
 			if (osName.startsWith("Mac")) { //$NON-NLS-1$
-				return new String[] {
-						toNativePath(jreDir + "/../Classes/classes.jar") //$NON-NLS-1$
+				return new String[] { toNativePath(jreDir + "/../Classes/classes.jar") //$NON-NLS-1$
 				};
 			}
 			final String vmName = System.getProperty("java.vm.name"); //$NON-NLS-1$
 			if ("J9".equals(vmName)) { //$NON-NLS-1$
-				return new String[] {
-						toNativePath(jreDir + "/lib/jclMax/classes.zip") //$NON-NLS-1$
+				return new String[] { toNativePath(jreDir + "/lib/jclMax/classes.zip") //$NON-NLS-1$
 				};
 			}
 			String[] jarsNames = null;
-			ArrayList paths = new ArrayList();
+			ArrayList<String> paths = new ArrayList<String>();
 			if ("DRLVM".equals(vmName)) { //$NON-NLS-1$
 				FilenameFilter jarFilter = new FilenameFilter() {
+					@Override
 					public boolean accept(File dir, String name) {
-						return name.endsWith(DOT_JAR) & !name.endsWith("-src.jar");  //$NON-NLS-1$
+						return name.endsWith(DOT_JAR) & !name.endsWith("-src.jar"); //$NON-NLS-1$
 					}
 				};
 				jarsNames = new File(jreDir + "/lib/boot/").list(jarFilter); //$NON-NLS-1$
 				addJarEntries(jreDir + "/lib/boot/", jarsNames, paths); //$NON-NLS-1$
 			} else {
-				jarsNames = new String[] {
-						"/lib/vm.jar", //$NON-NLS-1$
+				jarsNames = new String[] { "/lib/vm.jar", //$NON-NLS-1$
 						"/lib/rt.jar", //$NON-NLS-1$
 						"/lib/core.jar", //$NON-NLS-1$
 						"/lib/security.jar", //$NON-NLS-1$
@@ -1872,19 +2012,18 @@ public final class Util {
 		}
 		return jars;
 	}
+
 	/**
-	 * Makes the given path a path using native path separators as returned by File.getPath()
-	 * and trimming any extra slash.
+	 * Makes the given path a path using native path separators as returned by
+	 * File.getPath() and trimming any extra slash.
 	 */
 	public static String toNativePath(String path) {
 		String nativePath = path.replace('\\', File.separatorChar).replace('/', File.separatorChar);
-		return
-		nativePath.endsWith("/") || nativePath.endsWith("\\") ? //$NON-NLS-1$ //$NON-NLS-2$
-				nativePath.substring(0, nativePath.length() - 1) :
-					nativePath;
+		return nativePath.endsWith("/") || nativePath.endsWith("\\") ? //$NON-NLS-1$ //$NON-NLS-2$
+		nativePath.substring(0, nativePath.length() - 1) : nativePath;
 	}
 
-	private static void addJarEntries(String jreDir, String[] jarNames, ArrayList paths) {
+	private static void addJarEntries(String jreDir, String[] jarNames, ArrayList<String> paths) {
 		for (int i = 0, max = jarNames.length; i < max; i++) {
 			final String currentName = jreDir + jarNames[i];
 			File f = new File(currentName);
@@ -1893,10 +2032,12 @@ public final class Util {
 			}
 		}
 	}
+
 	/**
 	 * Delete a file or directory and insure that the file is no longer present
-	 * on file system. In case of directory, delete all the hierarchy underneath.
-	 *
+	 * on file system. In case of directory, delete all the hierarchy
+	 * underneath.
+	 * 
 	 * @param file The file or directory to delete
 	 * @return true iff the file was really delete, false otherwise
 	 */
@@ -1915,16 +2056,20 @@ public final class Util {
 		}
 		return waitUntilFileDeleted(file);
 	}
+
 	public static void flushDirectoryContent(File dir) {
 		File[] files = dir.listFiles();
-		if (files == null) return;
+		if (files == null) {
+			return;
+		}
 		for (int i = 0, max = files.length; i < max; i++) {
 			delete(files[i]);
 		}
 	}
+
 	/**
 	 * Wait until the file is _really_ deleted on file system.
-	 *
+	 * 
 	 * @param file Deleted file
 	 * @return true if the file was finally deleted, false otherwise
 	 */
@@ -1938,8 +2083,12 @@ public final class Util {
 				count++;
 				Thread.sleep(delay);
 				time += delay;
-				if (time > DELETE_MAX_TIME) DELETE_MAX_TIME = time;
-				if (DELETE_DEBUG) System.out.print('.');
+				if (time > DELETE_MAX_TIME) {
+					DELETE_MAX_TIME = time;
+				}
+				if (DELETE_DEBUG) {
+					System.out.print('.');
+				}
 				if (file.exists()) {
 					if (file.delete()) {
 						// SUCCESS
@@ -1955,44 +2104,52 @@ public final class Util {
 					count = 1;
 					delay *= 10;
 					maxRetry = DELETE_MAX_WAIT / delay;
-					if ((DELETE_MAX_WAIT%delay) != 0) {
+					if ((DELETE_MAX_WAIT % delay) != 0) {
 						maxRetry++;
 					}
 				}
-			}
-			catch (InterruptedException ie) {
+			} catch (InterruptedException ie) {
 				break; // end loop
 			}
 		}
 		System.err.println();
-		System.err.println("	!!! ERROR: "+file+" was never deleted even after having waited "+DELETE_MAX_TIME+"ms!!!"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		System.err.println("	!!! ERROR: " + file + " was never deleted even after having waited " + DELETE_MAX_TIME + "ms!!!"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		System.err.println();
 		return false;
 	}
+
 	/**
-	 * Returns whether a file is really deleted or not.
-	 * Does not only rely on {@link File#exists()} method but also
-	 * look if it's not in its parent children {@link #getParentChildFile(File)}.
-	 *
+	 * Returns whether a file is really deleted or not. Does not only rely on
+	 * {@link File#exists()} method but also look if it's not in its parent
+	 * children {@link #getParentChildFile(File)}.
+	 * 
 	 * @param file The file to test if deleted
-	 * @return true if the file does not exist and was not found in its parent children.
+	 * @return true if the file does not exist and was not found in its parent
+	 *         children.
 	 */
 	public static boolean isFileDeleted(File file) {
 		return !file.exists() && getParentChildFile(file) == null;
 	}
+
 	/**
-	 * Returns the parent's child file matching the given file or null if not found.
-	 *
+	 * Returns the parent's child file matching the given file or null if not
+	 * found.
+	 * 
 	 * @param file The searched file in parent
 	 * @return The parent's child matching the given file or null if not found.
 	 */
 	private static File getParentChildFile(File file) {
 		File parent = file.getParentFile();
-		if (parent == null || !parent.exists()) return null;
+		if (parent == null || !parent.exists()) {
+			return null;
+		}
 		File[] files = parent.listFiles();
-		int length = files==null ? 0 : files.length;
+		if (files == null) {
+			return null;
+		}
+		int length = files == null ? 0 : files.length;
 		if (length > 0) {
-			for (int i=0; i<length; i++) {
+			for (int i = 0; i < length; i++) {
 				if (files[i] == file) {
 					return files[i];
 				} else if (files[i].equals(file)) {
@@ -2007,11 +2164,12 @@ public final class Util {
 
 	/**
 	 * Turns the given array of strings into a {@link HashSet}
+	 * 
 	 * @param values
 	 * @return a new {@link HashSet} of the string array
 	 */
-	public static Set convertAsSet(String[] values) {
-		Set set = new HashSet();
+	public static Set<String> convertAsSet(String[] values) {
+		Set<String> set = new HashSet<String>();
 		if (values != null && values.length != 0) {
 			for (int i = 0, max = values.length; i < max; i++) {
 				set.add(values[i]);
@@ -2021,9 +2179,9 @@ public final class Util {
 	}
 
 	/**
-	 * Returns an identifier for the given API component including its version identifier
-	 * (component id + '(' + major + . + minor + . + micro + ')' )
-	 *  
+	 * Returns an identifier for the given API component including its version
+	 * identifier (component id + '(' + major + . + minor + . + micro + ')' )
+	 * 
 	 * @param component API component
 	 * @return API component + version identifier
 	 */
@@ -2035,12 +2193,7 @@ public final class Util {
 			buffer.append(Util.VERSION_SEPARATOR);
 			try {
 				Version version2 = new Version(version);
-				buffer
-					.append(version2.getMajor())
-					.append('.')
-					.append(version2.getMinor())
-					.append('.')
-					.append(version2.getMicro());
+				buffer.append(version2.getMajor()).append('.').append(version2.getMinor()).append('.').append(version2.getMicro());
 			} catch (IllegalArgumentException e) {
 				// the version string doesn't follow the Eclipse pattern
 				// we keep the version as is
@@ -2050,10 +2203,11 @@ public final class Util {
 		}
 		return String.valueOf(buffer);
 	}
+
 	/**
-	 * Returns an identifier for the given API component including its version identifier
-	 * (component id + _ + major + _ + minor + _ + micro)
-	 *  
+	 * Returns an identifier for the given API component including its version
+	 * identifier (component id + _ + major + _ + minor + _ + micro)
+	 * 
 	 * @param component API component
 	 * @return API component + version identifier
 	 */
@@ -2065,12 +2219,7 @@ public final class Util {
 			buffer.append('_');
 			try {
 				Version version2 = new Version(version);
-				buffer
-					.append(version2.getMajor())
-					.append('.')
-					.append(version2.getMinor())
-					.append('.')
-					.append(version2.getMicro());
+				buffer.append(version2.getMajor()).append('.').append(version2.getMinor()).append('.').append(version2.getMicro());
 			} catch (IllegalArgumentException e) {
 				// the version string doesn't follow the Eclipse pattern
 				// we keep the version as is
@@ -2079,6 +2228,7 @@ public final class Util {
 		}
 		return String.valueOf(buffer);
 	}
+
 	public static String getDescriptorName(IApiType descriptor) {
 		String typeName = descriptor.getName();
 		int index = typeName.lastIndexOf('$');
@@ -2090,22 +2240,22 @@ public final class Util {
 
 	public static String getDeltaArgumentString(IDelta delta) {
 		String[] arguments = delta.getArguments();
-		switch(delta.getFlags()) {
-			case IDelta.TYPE_MEMBER :
-			case IDelta.TYPE :
+		switch (delta.getFlags()) {
+			case IDelta.TYPE_MEMBER:
+			case IDelta.TYPE:
 				return arguments[0];
-			case IDelta.METHOD :
-			case IDelta.CONSTRUCTOR :
-			case IDelta.ENUM_CONSTANT :
-			case IDelta.METHOD_WITH_DEFAULT_VALUE :
-			case IDelta.METHOD_WITHOUT_DEFAULT_VALUE :
-			case IDelta.FIELD :
+			case IDelta.METHOD:
+			case IDelta.CONSTRUCTOR:
+			case IDelta.ENUM_CONSTANT:
+			case IDelta.METHOD_WITH_DEFAULT_VALUE:
+			case IDelta.METHOD_WITHOUT_DEFAULT_VALUE:
+			case IDelta.FIELD:
 				return arguments[1];
-			case IDelta.INCREASE_ACCESS :
-				switch(delta.getElementType()) {
-					case IDelta.FIELD_ELEMENT_TYPE :
-					case IDelta.METHOD_ELEMENT_TYPE :
-					case IDelta.CONSTRUCTOR_ELEMENT_TYPE :
+			case IDelta.INCREASE_ACCESS:
+				switch (delta.getElementType()) {
+					case IDelta.FIELD_ELEMENT_TYPE:
+					case IDelta.METHOD_ELEMENT_TYPE:
+					case IDelta.CONSTRUCTOR_ELEMENT_TYPE:
 						return arguments[1];
 					default:
 						return arguments[0];
@@ -2115,27 +2265,28 @@ public final class Util {
 		}
 		return EMPTY_STRING;
 	}
-	
+
 	/**
 	 * Returns the string representation of the {@link IApiElement} type
+	 * 
 	 * @param type
 	 * @return the string of the {@link IApiElement} type
 	 */
 	public static String getApiElementType(int type) {
-		switch(type) {
-			case IApiElement.API_TYPE_CONTAINER :
+		switch (type) {
+			case IApiElement.API_TYPE_CONTAINER:
 				return "API_TYPE_CONTAINER"; //$NON-NLS-1$
-			case IApiElement.API_TYPE_ROOT :
+			case IApiElement.API_TYPE_ROOT:
 				return "API_TYPE_ROOT"; //$NON-NLS-1$
-			case IApiElement.BASELINE :
+			case IApiElement.BASELINE:
 				return "BASELINE"; //$NON-NLS-1$
-			case IApiElement.COMPONENT :
+			case IApiElement.COMPONENT:
 				return "COMPONENT"; //$NON-NLS-1$
-			case IApiElement.FIELD :
+			case IApiElement.FIELD:
 				return "FIELD"; //$NON-NLS-1$
-			case IApiElement.METHOD :
+			case IApiElement.METHOD:
 				return "METHOD"; //$NON-NLS-1$
-			case IApiElement.TYPE :
+			case IApiElement.TYPE:
 				return "TYPE"; //$NON-NLS-1$
 			default:
 				return "UNKNOWN"; //$NON-NLS-1$
@@ -2145,10 +2296,11 @@ public final class Util {
 	public static boolean isConstructor(String referenceMemberName) {
 		return Arrays.equals(ConstantPool.Init, referenceMemberName.toCharArray());
 	}
-	
+
 	public static boolean isManifest(IPath path) {
 		return MANIFEST_PROJECT_RELATIVE_PATH.equals(path);
 	}
+
 	public static void touchCorrespondingResource(IProject project, IResource resource, String typeName) {
 		if (typeName != null && typeName != FilterStore.GLOBAL) {
 			if (Util.isManifest(resource.getProjectRelativePath())) {
@@ -2178,16 +2330,17 @@ public final class Util {
 			}
 		}
 	}
+
 	public static String getTypeNameFromMarker(IMarker marker) {
 		return marker.getAttribute(IApiMarkerConstants.MARKER_ATTR_PROBLEM_TYPE_NAME, null);
 	}
-	
+
 	public static IApiComponent[] getReexportedComponents(IApiComponent component) {
 		try {
 			IRequiredComponentDescription[] requiredComponents = component.getRequiredComponents();
 			int length = requiredComponents.length;
 			if (length != 0) {
-				List reexportedComponents = null;
+				List<IApiComponent> reexportedComponents = null;
 				IApiBaseline baseline = component.getBaseline();
 				for (int i = 0; i < length; i++) {
 					IRequiredComponentDescription description = requiredComponents[i];
@@ -2196,7 +2349,7 @@ public final class Util {
 						IApiComponent reexportedComponent = baseline.getApiComponent(id);
 						if (reexportedComponent != null) {
 							if (reexportedComponents == null) {
-								reexportedComponents = new ArrayList();
+								reexportedComponents = new ArrayList<IApiComponent>();
 							}
 							reexportedComponents.add(reexportedComponent);
 						}
@@ -2205,7 +2358,7 @@ public final class Util {
 				if (reexportedComponents == null || reexportedComponents.size() == 0) {
 					return null;
 				}
-				return (IApiComponent[]) reexportedComponents.toArray(new IApiComponent[reexportedComponents.size()]);
+				return reexportedComponents.toArray(new IApiComponent[reexportedComponents.size()]);
 			}
 		} catch (CoreException e) {
 			ApiPlugin.log(e);
@@ -2214,13 +2367,17 @@ public final class Util {
 	}
 
 	/**
-	 * Returns the {@link IResource} to create markers on when building. If the {@link IType} is <code>null</code>
-	 * or the type cannot be located (does not exist) than the MANIFEST.MF will be returned. <code>null</code> can be 
-	 * returned in the case that the project does not have a manifest file.
+	 * Returns the {@link IResource} to create markers on when building. If the
+	 * {@link IType} is <code>null</code> or the type cannot be located (does
+	 * not exist) than the MANIFEST.MF will be returned. <code>null</code> can
+	 * be returned in the case that the project does not have a manifest file.
+	 * 
 	 * @param project the project to look in for the {@link IResource}
-	 * @param type the type we are looking for the resource for, or <code>null</code>
-	 * @return the {@link IResource} associated with the given {@link IType} or the MANIFEST.MF file, or <code>null</code> if the project does
-	 * not have a manifest
+	 * @param type the type we are looking for the resource for, or
+	 *            <code>null</code>
+	 * @return the {@link IResource} associated with the given {@link IType} or
+	 *         the MANIFEST.MF file, or <code>null</code> if the project does
+	 *         not have a manifest
 	 */
 	public static IResource getResource(IProject project, IType type) {
 		try {
@@ -2240,31 +2397,34 @@ public final class Util {
 	}
 
 	/**
-	 * Default comparator that orders {@link IApiComponent} by their ID 
+	 * Default comparator that orders {@link IApiComponent} by their ID
 	 */
-	public static final Comparator componentsorter = new Comparator(){
+	public static final Comparator<Object> componentsorter = new Comparator<Object>() {
+		@Override
 		public int compare(Object o1, Object o2) {
-			if(o1 instanceof IApiComponent && o2 instanceof IApiComponent) {
-				return ((IApiComponent)o1).getSymbolicName().compareTo(((IApiComponent)o2).getSymbolicName());
+			if (o1 instanceof IApiComponent && o2 instanceof IApiComponent) {
+				return ((IApiComponent) o1).getSymbolicName().compareTo(((IApiComponent) o2).getSymbolicName());
 			}
-			if(o1 instanceof SkippedComponent && o2 instanceof SkippedComponent) {
-				return ((SkippedComponent)o1).getComponentId().compareTo(((SkippedComponent)o2).getComponentId());
+			if (o1 instanceof SkippedComponent && o2 instanceof SkippedComponent) {
+				return ((SkippedComponent) o1).getComponentId().compareTo(((SkippedComponent) o2).getComponentId());
 			}
-			if(o1 instanceof String && o2 instanceof String) {
-				return ((String)o1).compareTo((String)o2);
+			if (o1 instanceof String && o2 instanceof String) {
+				return ((String) o1).compareTo((String) o2);
 			}
 			return -1;
 		}
 	};
 
 	/**
-	 * Initializes the exclude set with regex support. The API baseline is used to determine which
-	 * bundles should be added to the list when processing regex expressions.
+	 * Initializes the exclude set with regex support. The API baseline is used
+	 * to determine which bundles should be added to the list when processing
+	 * regex expressions.
 	 * 
 	 * @param location
 	 * @param baseline
 	 * @return the list of bundles to be excluded
-	 * @throws CoreException if the location does not describe a includes file or an IOException occurs
+	 * @throws CoreException if the location does not describe a includes file
+	 *             or an IOException occurs
 	 */
 	public static FilteredElements initializeRegexFilterList(String location, IApiBaseline baseline, boolean debug) throws CoreException {
 		FilteredElements excludedElements = new FilteredElements();
@@ -2276,15 +2436,15 @@ public final class Util {
 				stream = new BufferedInputStream(new FileInputStream(file));
 				contents = getInputStreamAsCharArray(stream, -1, ISO_8859_1);
 			} catch (FileNotFoundException e) {
-				abort(NLS.bind(UtilMessages.Util_couldNotFindFilterFile,location), e);
+				abort(NLS.bind(UtilMessages.Util_couldNotFindFilterFile, location), e);
 			} catch (IOException e) {
-				abort(NLS.bind(UtilMessages.Util_problemWithFilterFile,location), e);
-			} 
-			finally {
+				abort(NLS.bind(UtilMessages.Util_problemWithFilterFile, location), e);
+			} finally {
 				if (stream != null) {
 					try {
 						stream.close();
-					} catch (IOException e) {}
+					} catch (IOException e) {
+					}
 				}
 			}
 			if (contents != null) {
@@ -2294,10 +2454,10 @@ public final class Util {
 					while ((line = reader.readLine()) != null) {
 						line = line.trim();
 						if (line.startsWith("#") || line.length() == 0) { //$NON-NLS-1$
-							continue; 
+							continue;
 						}
-						if(line.startsWith(REGULAR_EXPRESSION_START)) {
-							if(baseline != null) {
+						if (line.startsWith(REGULAR_EXPRESSION_START)) {
+							if (baseline != null) {
 								Util.collectRegexIds(line, excludedElements, baseline.getApiComponents(), debug);
 							}
 						} else {
@@ -2305,12 +2465,12 @@ public final class Util {
 						}
 					}
 				} catch (IOException e) {
-					abort(NLS.bind(UtilMessages.Util_problemWithFilterFile,location), e);
-				} 
-				finally {
+					abort(NLS.bind(UtilMessages.Util_problemWithFilterFile, location), e);
+				} finally {
 					try {
 						reader.close();
-					} catch (IOException e) {}
+					} catch (IOException e) {
+					}
 				}
 			}
 		}
@@ -2318,7 +2478,9 @@ public final class Util {
 	}
 
 	/**
-	 * Collects the set of component ids that match a given regex in the exclude file
+	 * Collects the set of component ids that match a given regex in the exclude
+	 * file
+	 * 
 	 * @param line
 	 * @param list
 	 * @param components
@@ -2347,9 +2509,7 @@ public final class Util {
 					}
 				}
 			} catch (PatternSyntaxException e) {
-				abort(NLS.bind(
-						UtilMessages.comparison_invalidRegularExpression,
-						componentname),e);
+				abort(NLS.bind(UtilMessages.comparison_invalidRegularExpression, componentname), e);
 			}
 		}
 	}
@@ -2357,19 +2517,20 @@ public final class Util {
 	/**
 	 * Default comparator that orders {@link File}s by their name
 	 */
-	public static final Comparator filesorter = new Comparator(){
+	public static final Comparator<Object> filesorter = new Comparator<Object>() {
+		@Override
 		public int compare(Object o1, Object o2) {
-			if(o1 instanceof File && o2 instanceof File) {
-				return ((File)o1).getName().compareTo(((File)o2).getName());
+			if (o1 instanceof File && o2 instanceof File) {
+				return ((File) o1).getName().compareTo(((File) o2).getName());
 			}
 			return 0;
 		}
 	};
 
 	/**
-	 * Returns true if the given {@link IApiType} is API or not, where API is defined
-	 * as having API visibility in an API description and having either the public of protected 
-	 * Java flag set
+	 * Returns true if the given {@link IApiType} is API or not, where API is
+	 * defined as having API visibility in an API description and having either
+	 * the public of protected Java flag set
 	 * 
 	 * @param visibility
 	 * @param typeDescriptor
@@ -2379,9 +2540,11 @@ public final class Util {
 		int access = typeDescriptor.getModifiers();
 		return VisibilityModifiers.isAPI(visibility) && (Flags.isPublic(access) || Flags.isProtected(access));
 	}
-	
+
 	/**
-	 * Simple method to walk an array and call <code>toString()</code> on each of the entries. Does not descend into sub-collections.
+	 * Simple method to walk an array and call <code>toString()</code> on each
+	 * of the entries. Does not descend into sub-collections.
+	 * 
 	 * @param array the array
 	 * @return the comma-separated string representation of the the array
 	 * @since 1.0.3
@@ -2390,7 +2553,7 @@ public final class Util {
 		StringBuffer buffer = new StringBuffer();
 		for (int i = 0; i < array.length; i++) {
 			buffer.append(array[i].toString());
-			if(i < array.length-1) {
+			if (i < array.length - 1) {
 				buffer.append(',');
 			}
 		}

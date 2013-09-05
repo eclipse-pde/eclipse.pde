@@ -60,10 +60,10 @@ public class AnnotationIncrementalBuildTests extends EnumIncrementalBuildTests {
 						IApiProblem.NO_FLAGS)
 		};
 		deployIncrementalPerformanceTest(
-				"Incremetal Build (Annotation) - All", 
-				"test12", 
+				"Incremetal Build (Annotation) - All",  //$NON-NLS-1$
+				"test12",  //$NON-NLS-1$
 				JAVA_5_PERF, 
-				"api.TestAnnot", 
+				"api.TestAnnot",  //$NON-NLS-1$
 				problemids, 500);
 	}
 	
@@ -83,10 +83,10 @@ public class AnnotationIncrementalBuildTests extends EnumIncrementalBuildTests {
 						IDelta.METHOD_WITH_DEFAULT_VALUE),
 		};
 		deployIncrementalPerformanceTest(
-				"Incremetal Build (Annotation) - Compatibility", 
-				"test13", 
+				"Incremetal Build (Annotation) - Compatibility",  //$NON-NLS-1$
+				"test13",  //$NON-NLS-1$
 				JAVA_5_PERF, 
-				"api.TestAnnot", 
+				"api.TestAnnot",  //$NON-NLS-1$
 				problemids, 500);
 	}
 	
@@ -111,10 +111,10 @@ public class AnnotationIncrementalBuildTests extends EnumIncrementalBuildTests {
 						IApiProblem.NO_FLAGS)
 		};
 		deployIncrementalPerformanceTest(
-				"Incremetal Build (Annotation) - Unsupported Tags", 
-				"test14", 
+				"Incremetal Build (Annotation) - Unsupported Tags",  //$NON-NLS-1$
+				"test14",  //$NON-NLS-1$
 				JAVA_5_PERF, 
-				"api.TestAnnot", 
+				"api.TestAnnot",  //$NON-NLS-1$
 				problemids, 500);
 	}
 }

@@ -38,6 +38,7 @@ public class ClassImplementsLeak extends LeakTest {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getDefaultProblemId()
 	 */
+	@Override
 	protected int getDefaultProblemId() {
 		if(pid == -1) {
 			pid = ApiProblemFactory.createProblemId(
@@ -52,8 +53,9 @@ public class ClassImplementsLeak extends LeakTest {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.tags.InvalidFieldTagTests#getTestSourcePath()
 	 */
+	@Override
 	protected IPath getTestSourcePath() {
-		return super.getTestSourcePath().append("class");
+		return super.getTestSourcePath().append("class"); //$NON-NLS-1$
 	}
 	
 	/**
@@ -81,9 +83,9 @@ public class ClassImplementsLeak extends LeakTest {
 	
 	private void x1(boolean inc) {
 		setExpectedProblemIds(new int[] {getDefaultProblemId()});
-		String typename = "test8";
+		String typename = "test8"; //$NON-NLS-1$
 		setExpectedMessageArgs(new String[][] {{TESTING_INTERNAL_INTERFACE_NAME, typename}});
-		deployLeakTest(typename+".java", inc);
+		deployLeakTest(typename+".java", inc); //$NON-NLS-1$
 	}
 	
 	/**
@@ -104,8 +106,8 @@ public class ClassImplementsLeak extends LeakTest {
 	
 	private void x2(boolean inc) {
 		expectingNoProblems();
-		String typename = "test9";
-		deployLeakTest(typename+".java", inc);
+		String typename = "test9"; //$NON-NLS-1$
+		deployLeakTest(typename+".java", inc); //$NON-NLS-1$
 	}
 	
 	/**
@@ -126,8 +128,8 @@ public class ClassImplementsLeak extends LeakTest {
 	
 	private void x3(boolean inc) {
 		expectingNoProblems();
-		String typename = "test10";
-		deployLeakTest(typename+".java", inc);
+		String typename = "test10"; //$NON-NLS-1$
+		deployLeakTest(typename+".java", inc); //$NON-NLS-1$
 	}
 	
 	/**
@@ -148,8 +150,8 @@ public class ClassImplementsLeak extends LeakTest {
 	
 	private void x4(boolean inc) {
 		expectingNoProblems();
-		String typename = "test11";
-		deployLeakTest(typename+".java", inc);
+		String typename = "test11"; //$NON-NLS-1$
+		deployLeakTest(typename+".java", inc); //$NON-NLS-1$
 	}
 	
 	/**
@@ -170,9 +172,9 @@ public class ClassImplementsLeak extends LeakTest {
 	
 	private void x5(boolean inc) {
 		setExpectedProblemIds(new int[] {getDefaultProblemId()});
-		String typename = "test12";
+		String typename = "test12"; //$NON-NLS-1$
 		setExpectedMessageArgs(new String[][] {{TESTING_INTERNAL_INTERFACE_NAME, typename}});
-		deployLeakTest(typename+".java", inc);
+		deployLeakTest(typename+".java", inc); //$NON-NLS-1$
 	}
 	
 	/**
@@ -193,9 +195,9 @@ public class ClassImplementsLeak extends LeakTest {
 	
 	private void x6(boolean inc) {
 		setExpectedProblemIds(new int[] {getDefaultProblemId()});
-		String typename = "test13";
+		String typename = "test13"; //$NON-NLS-1$
 		setExpectedMessageArgs(new String[][] {{TESTING_INTERNAL_INTERFACE_NAME, typename}});
-		deployLeakTest(typename+".java", inc);
+		deployLeakTest(typename+".java", inc); //$NON-NLS-1$
 	}
 	
 	/**
@@ -216,9 +218,9 @@ public class ClassImplementsLeak extends LeakTest {
 	
 	private void x7(boolean inc) {
 		setExpectedProblemIds(new int[] {getDefaultProblemId()});
-		String typename = "test14";
+		String typename = "test14"; //$NON-NLS-1$
 		setExpectedMessageArgs(new String[][] {{TESTING_INTERNAL_INTERFACE_NAME, typename}});
-		deployLeakTest(typename+".java", inc);
+		deployLeakTest(typename+".java", inc); //$NON-NLS-1$
 	}
 	
 	/**
@@ -239,13 +241,13 @@ public class ClassImplementsLeak extends LeakTest {
 	
 	private void x8(boolean inc) {
 		setExpectedProblemIds(new int[] {getDefaultProblemId(), getDefaultProblemId(), getDefaultProblemId()});
-		String typename = "test20";
-		String innertype = "inner";
-		String innertype2 = "inner2";
+		String typename = "test20"; //$NON-NLS-1$
+		String innertype = "inner"; //$NON-NLS-1$
+		String innertype2 = "inner2"; //$NON-NLS-1$
 		setExpectedMessageArgs(new String[][] {{TESTING_INTERNAL_INTERFACE_NAME, typename},
 				{TESTING_INTERNAL_INTERFACE_NAME, innertype},
 				{TESTING_INTERNAL_INTERFACE_NAME, innertype2}});
-		deployLeakTest(typename+".java", inc);
+		deployLeakTest(typename+".java", inc); //$NON-NLS-1$
 	}
 	
 	/**
@@ -266,13 +268,13 @@ public class ClassImplementsLeak extends LeakTest {
 	
 	private void x9(boolean inc) {
 		setExpectedProblemIds(new int[] {getDefaultProblemId(), getDefaultProblemId(), getDefaultProblemId()});
-		String typename = "test21";
-		String innertype = "inner";
-		String innertype2 = "inner2";
+		String typename = "test21"; //$NON-NLS-1$
+		String innertype = "inner"; //$NON-NLS-1$
+		String innertype2 = "inner2"; //$NON-NLS-1$
 		setExpectedMessageArgs(new String[][] {{TESTING_INTERNAL_INTERFACE_NAME, typename},
 				{TESTING_INTERNAL_INTERFACE_NAME, innertype},
 				{TESTING_INTERNAL_INTERFACE_NAME, innertype2}});
-		deployLeakTest(typename+".java", inc);
+		deployLeakTest(typename+".java", inc); //$NON-NLS-1$
 	}
 	
 	/**
@@ -293,13 +295,13 @@ public class ClassImplementsLeak extends LeakTest {
 	
 	private void x10(boolean inc) {
 		setExpectedProblemIds(new int[] {getDefaultProblemId(), getDefaultProblemId(), getDefaultProblemId()});
-		String typename = "test22";
-		String innertype = "inner";
-		String innertype2 = "inner2";
+		String typename = "test22"; //$NON-NLS-1$
+		String innertype = "inner"; //$NON-NLS-1$
+		String innertype2 = "inner2"; //$NON-NLS-1$
 		setExpectedMessageArgs(new String[][] {{TESTING_INTERNAL_INTERFACE_NAME, typename},
 				{TESTING_INTERNAL_INTERFACE_NAME, innertype},
 				{TESTING_INTERNAL_INTERFACE_NAME, innertype2}});
-		deployLeakTest(typename+".java", inc);
+		deployLeakTest(typename+".java", inc); //$NON-NLS-1$
 	}
 	
 	/**
@@ -318,8 +320,8 @@ public class ClassImplementsLeak extends LeakTest {
 	
 	private void x11(boolean inc) {
 		setExpectedProblemIds(new int[] {getDefaultProblemId()});
-		String typename = "test31";
-		setExpectedMessageArgs(new String[][] {{"Iouter", typename}});
-		deployLeakTest(typename+".java", inc);
+		String typename = "test31"; //$NON-NLS-1$
+		setExpectedMessageArgs(new String[][] {{"Iouter", typename}}); //$NON-NLS-1$
+		deployLeakTest(typename+".java", inc); //$NON-NLS-1$
 	}	
 }

@@ -23,7 +23,6 @@ import org.eclipse.osgi.service.resolver.ResolverError;
 import org.eclipse.pde.api.tools.internal.ApiDescription;
 import org.eclipse.pde.api.tools.internal.CompilationUnit;
 import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
-import org.eclipse.pde.api.tools.internal.builder.Reference;
 import org.eclipse.pde.api.tools.internal.model.ApiBaseline;
 import org.eclipse.pde.api.tools.internal.model.Component;
 import org.eclipse.pde.api.tools.internal.model.DirectoryApiTypeContainer;
@@ -47,126 +46,231 @@ import org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor
 import org.eclipse.pde.api.tools.internal.provisional.search.IMetadata;
 
 /**
- * Tests that our framework properly handles bad class files.
- * I.e. class files that are not well-formed
+ * Tests that our framework properly handles bad class files. I.e. class files
+ * that are not well-formed
  */
 public class BadClassfileTests extends TestCase {
 
 	IPath source = null;
 	DirectoryApiTypeContainer container = null;
-	String CLASSFILE = "nobytecodes";
-	
-	/* (non-Javadoc)
+	String CLASSFILE = "nobytecodes"; //$NON-NLS-1$
+
+	/*
+	 * (non-Javadoc)
 	 * @see junit.framework.TestCase#setUp()
 	 */
 	@Override
 	protected void setUp() throws Exception {
-		if(source == null) {
-			source = TestSuiteHelper.getPluginDirectoryPath().append("test-classes").append("bad");
+		if (source == null) {
+			source = TestSuiteHelper.getPluginDirectoryPath().append("test-classes").append("bad"); //$NON-NLS-1$ //$NON-NLS-2$
 			container = new DirectoryApiTypeContainer(null, source.toOSString());
 		}
 	}
-	
+
 	/**
 	 * Writes any expected error pre-amble prior to the test running
+	 * 
 	 * @param test
 	 */
 	void writePreamble(String test) {
-		System.err.println("Expected 'java.lang.ArrayIndexOutOfBoundsException: 34' in "+test+" from ASM ClassReader");
+		System.err.println("Expected 'java.lang.ArrayIndexOutOfBoundsException: 34' in " + test + " from ASM ClassReader"); //$NON-NLS-1$ //$NON-NLS-2$
 		System.err.flush();
 	}
-	
+
 	/**
 	 * Tests trying to get the structure for a bad classfile
 	 * 
 	 * @throws Exception if something bad happens
 	 */
 	public void testClassfileScanner() throws Exception {
-		writePreamble("testClassfileScanner()");
+		writePreamble("testClassfileScanner()"); //$NON-NLS-1$
 		IApiTypeRoot root = container.findTypeRoot(CLASSFILE);
 		IApiType type = root.getStructure();
-		assertNull("The type must be null", type);
+		assertNull("The type must be null", type); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Tests trying to search a bad class file
 	 * 
 	 * @throws Exception
 	 */
 	public void testSearchEngine() throws Exception {
-		writePreamble("testSearchEngine()");
+		writePreamble("testSearchEngine()"); //$NON-NLS-1$
 		final Component component = new Component(null) {
-			public boolean isSystemComponent() {return false;}
-			public boolean isSourceComponent() throws CoreException {return false;}
-			public boolean isFragment() throws CoreException {return false;}
-			public boolean hasFragments() throws CoreException {return false;}
-			public boolean hasApiDescription() {return false;}
-			public String getVersion() {return "1.0.0";}
-			public IRequiredComponentDescription[] getRequiredComponents() throws CoreException {return null;}
-			public String[] getLowestEEs() throws CoreException {return null;}
-			public String getLocation() {return null;}
-			public String getSymbolicName() {return "test";}
-			public String[] getExecutionEnvironments() throws CoreException {return null;}
-			public ResolverError[] getErrors() throws CoreException {return null;}
-			protected List createApiTypeContainers() throws CoreException {
+			@Override
+			public boolean isSystemComponent() {
+				return false;
+			}
+
+			@Override
+			public boolean isSourceComponent() throws CoreException {
+				return false;
+			}
+
+			@Override
+			public boolean isFragment() throws CoreException {
+				return false;
+			}
+
+			@Override
+			public boolean hasFragments() throws CoreException {
+				return false;
+			}
+
+			@Override
+			public boolean hasApiDescription() {
+				return false;
+			}
+
+			@Override
+			public String getVersion() {
+				return "1.0.0"; //$NON-NLS-1$
+			}
+
+			@Override
+			public IRequiredComponentDescription[] getRequiredComponents() throws CoreException {
+				return null;
+			}
+
+			@Override
+			public String[] getLowestEEs() throws CoreException {
+				return null;
+			}
+
+			@Override
+			public String getLocation() {
+				return null;
+			}
+
+			@Override
+			public String getSymbolicName() {
+				return "test"; //$NON-NLS-1$
+			}
+
+			@Override
+			public String[] getExecutionEnvironments() throws CoreException {
+				return null;
+			}
+
+			@Override
+			public ResolverError[] getErrors() throws CoreException {
+				return null;
+			}
+
+			@Override
+			protected List<IApiTypeContainer> createApiTypeContainers() throws CoreException {
 				ArrayList<IApiTypeContainer> containers = new ArrayList<IApiTypeContainer>();
 				containers.add(BadClassfileTests.this.container);
 				return containers;
 			}
+
+			@Override
 			public IApiBaseline getBaseline() {
-				return new ApiBaseline("testbaseline");
+				return new ApiBaseline("testbaseline"); //$NON-NLS-1$
 			}
-			protected IApiFilterStore createApiFilterStore() throws CoreException {return null;}
-			protected IApiDescription createApiDescription() throws CoreException {return null;}
+
+			@Override
+			protected IApiFilterStore createApiFilterStore() throws CoreException {
+				return null;
+			}
+
+			@Override
+			protected IApiDescription createApiDescription() throws CoreException {
+				return null;
+			}
 		};
-		
+
 		ApiSearchEngine engine = new ApiSearchEngine();
-		IApiBaseline baseline = new ApiBaseline("testbaseline") {
+		IApiBaseline baseline = new ApiBaseline("testbaseline") { //$NON-NLS-1$
+			@Override
 			public IApiComponent[] getApiComponents() {
-				return new IApiComponent[] {component};
+				return new IApiComponent[] { component };
 			}
 		};
 		IApiSearchRequestor requestor = new IApiSearchRequestor() {
-			public boolean includesInternal() {return true;}
-			public boolean includesAPI() {return true;}
-			public boolean includesIllegalUse() {return false;}
+			@Override
+			public boolean includesInternal() {
+				return true;
+			}
+
+			@Override
+			public boolean includesAPI() {
+				return true;
+			}
+
+			@Override
+			public boolean includesIllegalUse() {
+				return false;
+			}
+
+			@Override
 			public IApiScope getScope() {
 				ApiScope scope = new ApiScope();
 				scope.addElement(component);
 				return scope;
 			}
-			
-			public int getReferenceKinds() {return Reference.MASK_REF_ALL;}
-			public boolean acceptReference(IReference reference) {return true;}
-			public boolean acceptMember(IApiMember member) {return true;}
-			public boolean acceptComponent(IApiComponent component) {return true;}
-			public boolean acceptContainer(IApiTypeContainer container) {return false;}
+
+			@Override
+			public int getReferenceKinds() {
+				return IReference.MASK_REF_ALL;
+			}
+
+			@Override
+			public boolean acceptReference(IReference reference) {
+				return true;
+			}
+
+			@Override
+			public boolean acceptMember(IApiMember member) {
+				return true;
+			}
+
+			@Override
+			public boolean acceptComponent(IApiComponent component) {
+				return true;
+			}
+
+			@Override
+			public boolean acceptContainer(IApiTypeContainer container) {
+				return false;
+			}
 		};
 		IApiSearchReporter reporter = new IApiSearchReporter() {
-			public void reportResults(IApiElement element, IReference[] references) {}
-			public void reportNotSearched(IApiElement[] elements) {}
-			public void reportMetadata(IMetadata data) {}
-			public void reportCounts() {}
+			@Override
+			public void reportResults(IApiElement element, IReference[] references) {
+			}
+
+			@Override
+			public void reportNotSearched(IApiElement[] elements) {
+			}
+
+			@Override
+			public void reportMetadata(IMetadata data) {
+			}
+
+			@Override
+			public void reportCounts() {
+			}
 		};
 		engine.search(baseline, requestor, reporter, null);
 	}
-	
+
 	/**
-	 * Tests that the {@link org.eclipse.pde.api.tools.internal.provisional.scanner.TagScanner}
+	 * Tests that the
+	 * {@link org.eclipse.pde.api.tools.internal.provisional.scanner.TagScanner}
 	 * handles bad class files
 	 */
 	public void testTagScanner() throws Exception {
-		writePreamble("testTagScanner()");
-		CompilationUnit unit = new CompilationUnit(TestSuiteHelper.getPluginDirectoryPath().append("test-classes").append("bad").append("nobytecodes.java").toOSString(), IApiCoreConstants.UTF_8);
+		writePreamble("testTagScanner()"); //$NON-NLS-1$
+		CompilationUnit unit = new CompilationUnit(TestSuiteHelper.getPluginDirectoryPath().append("test-classes").append("bad").append("nobytecodes.java").toOSString(), IApiCoreConstants.UTF_8); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		TagScanner scanner = TagScanner.newScanner();
 		try {
-			scanner.scan(unit, new ApiDescription("test"), this.container, null, null);
-		}
-		catch(CoreException ce) {
-			assertTrue("The tag scanner should return a multi status exception", ce.getStatus() instanceof MultiStatus);
-			IStatus[] children = ((MultiStatus)ce.getStatus()).getChildren();
-			assertEquals("There should only be one problem", 1, children.length);
-			assertTrue("the message should be about nobytecodes#method() not resolving", children[0].getMessage().equals("Unable to resolve method signature: nobytecodes#void method()"));
+			scanner.scan(unit, new ApiDescription("test"), this.container, null, null); //$NON-NLS-1$
+		} catch (CoreException ce) {
+			assertTrue("The tag scanner should return a multi status exception", ce.getStatus() instanceof MultiStatus); //$NON-NLS-1$
+			IStatus[] children = ((MultiStatus) ce.getStatus()).getChildren();
+			assertEquals("There should only be one problem", 1, children.length); //$NON-NLS-1$
+			assertTrue("the message should be about nobytecodes#method() not resolving", children[0].getMessage().equals("Unable to resolve method signature: nobytecodes#void method()")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 }

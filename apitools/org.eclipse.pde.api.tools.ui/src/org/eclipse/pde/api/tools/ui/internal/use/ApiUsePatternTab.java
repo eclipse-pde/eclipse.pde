@@ -56,27 +56,32 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.PlatformUI;
 
 /**
- * Tab that allows users to specify patterns that can be used to augment the search
- * to override API description settings for what is and what is not API.
- *<br><br>
- * For example a bundle manifest could say that a.b.c.provisional.package is
- * API and using this tab a user could provide a pattern a\.\.c\.provisional.* saying that
- * this should be treated as internal code use
+ * Tab that allows users to specify patterns that can be used to augment the
+ * search to override API description settings for what is and what is not API. <br>
+ * <br>
+ * For example a bundle manifest could say that a.b.c.provisional.package is API
+ * and using this tab a user could provide a pattern a\.\.c\.provisional.*
+ * saying that this should be treated as internal code use
  * 
  * @since 1.1
  */
 public class ApiUsePatternTab extends AbstractLaunchConfigurationTab {
 
 	class Labels extends LabelProvider implements ITableLabelProvider {
-		public Image getColumnImage(Object element, int columnIndex) {return null;}
+		@Override
+		public Image getColumnImage(Object element, int columnIndex) {
+			return null;
+		}
+
+		@Override
 		public String getColumnText(Object element, int columnIndex) {
 			Pattern pattern = (Pattern) element;
-			switch(columnIndex) {
+			switch (columnIndex) {
 				case 0: {
 					return pattern.pattern;
 				}
 				case 1: {
-					switch(pattern.kind) {
+					switch (pattern.kind) {
 						case Pattern.API: {
 							return Messages.ApiUsePatternTab_API;
 						}
@@ -92,62 +97,75 @@ public class ApiUsePatternTab extends AbstractLaunchConfigurationTab {
 						case Pattern.REPORT_TO: {
 							return Messages.ApiUsePatternTab_report_to;
 						}
+						default:
+							break;
 					}
+					break;
 				}
+				default:
+					break;
 			}
 			return null;
 		}
 	}
-	
+
 	class RegexValidator implements IInputValidator {
+		@Override
 		public String isValid(String newText) {
-			if(IApiToolsConstants.EMPTY_STRING.equals(newText)) {
+			if (IApiToolsConstants.EMPTY_STRING.equals(newText)) {
 				return Messages.ApiUsePatternTab_provide_regex;
 			}
 			try {
 				java.util.regex.Pattern.compile(newText);
-			}
-			catch(PatternSyntaxException pse) {
-				return pse.getDescription(); 
+			} catch (PatternSyntaxException pse) {
+				return pse.getDescription();
 			}
 			return null;
 		}
 	}
-	
+
 	class Pattern {
-		static final int API = 1, INTERNAL = 2, JAR = 3, REPORT = 4, REPORT_TO = 5;
+		static final int API = 1, INTERNAL = 2, JAR = 3, REPORT = 4,
+				REPORT_TO = 5;
 		String pattern = null;
 		int kind = -1;
+
 		public Pattern(String pattern, int kind) {
 			this.pattern = pattern;
 			this.kind = kind;
 		}
-		/* (non-Javadoc)
+
+		/*
+		 * (non-Javadoc)
 		 * @see java.lang.Object#toString()
 		 */
+		@Override
 		public String toString() {
 			return this.pattern;
 		}
 	}
-	
-	TreeSet patterns = new TreeSet(new Comparator() {
+
+	TreeSet<Pattern> patterns = new TreeSet<Pattern>(new Comparator<Object>() {
+		@Override
 		public int compare(Object o1, Object o2) {
-			return ((Pattern)o1).pattern.compareTo(((Pattern)o2).pattern);
+			return ((Pattern) o1).pattern.compareTo(((Pattern) o2).pattern);
 		}
 	});
 	TableViewer viewer = null;
 	Image image = null;
 	Button addbutton = null, editbutton = null, removebutton = null;
 	ColumnLayoutData[] columndata = {
-			new ColumnWeightData(80), 
-			new ColumnWeightData(20)}; 
-	String[] columnnames = {
-			"Pattern", //$NON-NLS-1$
-			"Kind"}; //$NON-NLS-1$
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
+			new ColumnWeightData(80), new ColumnWeightData(20) };
+	String[] columnnames = { "Pattern", //$NON-NLS-1$
+			"Kind" }; //$NON-NLS-1$
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse
+	 * .swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		Composite comp = SWTFactory.createComposite(parent, 2, 1, GridData.FILL_BOTH);
 		SWTFactory.createWrapLabel(comp, Messages.ApiUsePatternTab_patterns, 2, 100);
@@ -168,18 +186,21 @@ public class ApiUsePatternTab extends AbstractLaunchConfigurationTab {
 		this.viewer = new TableViewer(table);
 		this.viewer.setColumnProperties(columnnames);
 		this.viewer.setComparator(new ViewerComparator() {
+			@Override
 			public int category(Object element) {
-				return ((Pattern)element).kind;
+				return ((Pattern) element).kind;
 			}
 		});
 		this.viewer.setLabelProvider(new Labels());
 		this.viewer.setContentProvider(new ArrayContentProvider());
 		this.viewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				updateButtons((IStructuredSelection) event.getSelection());
 			}
 		});
 		this.viewer.addDoubleClickListener(new IDoubleClickListener() {
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				doEdit();
 			}
@@ -193,20 +214,22 @@ public class ApiUsePatternTab extends AbstractLaunchConfigurationTab {
 		}
 		this.viewer.setInput(this.patterns);
 		table.addKeyListener(new KeyAdapter() {
+			@Override
 			public void keyPressed(KeyEvent event) {
 				if (event.character == SWT.DEL && event.stateMask == 0) {
 					doRemove();
 				}
 			}
 		});
-		
+
 		Composite bcomp = SWTFactory.createComposite(comp, 1, 1, GridData.FILL_VERTICAL, 0, 0);
 		this.addbutton = SWTFactory.createPushButton(bcomp, Messages.ApiUsePatternTab_add, null);
 		this.addbutton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				PatternWizard wizard = new PatternWizard(null, -1);
 				WizardDialog dialog = new WizardDialog(getShell(), wizard);
-				if(dialog.open() == IDialogConstants.OK_ID) {
+				if (dialog.open() == IDialogConstants.OK_ID) {
 					addPattern(wizard.getPattern(), wizard.getKind());
 					ApiUsePatternTab.this.viewer.refresh(true, true);
 					updateLaunchConfigurationDialog();
@@ -216,6 +239,7 @@ public class ApiUsePatternTab extends AbstractLaunchConfigurationTab {
 		this.editbutton = SWTFactory.createPushButton(bcomp, Messages.ApiUsePatternTab_edit, null);
 		this.editbutton.setEnabled(false);
 		this.editbutton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				doEdit();
 			}
@@ -223,6 +247,7 @@ public class ApiUsePatternTab extends AbstractLaunchConfigurationTab {
 		this.removebutton = SWTFactory.createPushButton(bcomp, Messages.ApiUsePatternTab_remove, null);
 		this.removebutton.setEnabled(false);
 		this.removebutton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				doRemove();
 			}
@@ -231,32 +256,37 @@ public class ApiUsePatternTab extends AbstractLaunchConfigurationTab {
 		setControl(comp);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getShell()
 	 */
+	@Override
 	protected Shell getShell() {
 		return super.getShell();
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#updateLaunchConfigurationDialog()
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#
+	 * updateLaunchConfigurationDialog()
 	 */
+	@Override
 	protected void updateLaunchConfigurationDialog() {
 		super.updateLaunchConfigurationDialog();
 	}
-	
+
 	/**
 	 * Removes the selected elements from the table
 	 */
 	void doRemove() {
 		IStructuredSelection selection = (IStructuredSelection) ApiUsePatternTab.this.viewer.getSelection();
-		for (Iterator iter = selection.iterator(); iter.hasNext();) {
+		for (Iterator<?> iter = selection.iterator(); iter.hasNext();) {
 			removePattern((Pattern) iter.next());
 		}
 		this.viewer.refresh();
 		updateLaunchConfigurationDialog();
 	}
-	
+
 	/**
 	 * handles editing a selected pattern
 	 */
@@ -265,16 +295,17 @@ public class ApiUsePatternTab extends AbstractLaunchConfigurationTab {
 		Pattern pattern = (Pattern) selection.getFirstElement();
 		PatternWizard wizard = new PatternWizard(pattern.pattern, pattern.kind);
 		WizardDialog dialog = new WizardDialog(getShell(), wizard);
-		if(dialog.open() == IDialogConstants.OK_ID) {
+		if (dialog.open() == IDialogConstants.OK_ID) {
 			pattern.pattern = wizard.getPattern();
 			pattern.kind = wizard.getKind();
 			ApiUsePatternTab.this.viewer.refresh(pattern, true, true);
 			updateLaunchConfigurationDialog();
 		}
 	}
-	
+
 	/**
 	 * Updates the buttons based on the selection in the viewer
+	 * 
 	 * @param selection
 	 */
 	void updateButtons(IStructuredSelection selection) {
@@ -282,66 +313,74 @@ public class ApiUsePatternTab extends AbstractLaunchConfigurationTab {
 		this.editbutton.setEnabled(size == 1);
 		this.removebutton.setEnabled(size > 0);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
+	@Override
 	public String getName() {
 		return Messages.ApiUsePatternTab_patterns_title;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getImage()
 	 */
+	@Override
 	public Image getImage() {
 		return ApiUIPlugin.getSharedImage(IApiToolsConstants.IMG_ELCL_TEXT_EDIT);
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse
+	 * .debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		try {
 			this.patterns.clear();
-			List pats = configuration.getAttribute(ApiUseLaunchDelegate.API_PATTERNS_LIST, (List)null);
-			if(pats != null) {
-				for (Iterator iter = pats.iterator(); iter.hasNext();) {
-					addPattern((String) iter.next(), Pattern.API);
+			List<String> pats = configuration.getAttribute(ApiUseLaunchDelegate.API_PATTERNS_LIST, (List<String>) null);
+			if (pats != null) {
+				for (String pattern : pats) {
+					addPattern(pattern, Pattern.API);
 				}
 			}
-			pats = configuration.getAttribute(ApiUseLaunchDelegate.INTERNAL_PATTERNS_LIST, (List)null);
-			if(pats != null) {
-				for (Iterator iter = pats.iterator(); iter.hasNext();) {
-					addPattern((String) iter.next(), Pattern.INTERNAL);
+			pats = configuration.getAttribute(ApiUseLaunchDelegate.INTERNAL_PATTERNS_LIST, (List<String>) null);
+			if (pats != null) {
+				for (String pattern : pats) {
+					addPattern(pattern, Pattern.INTERNAL);
 				}
 			}
-			pats = configuration.getAttribute(ApiUseLaunchDelegate.JAR_PATTERNS_LIST, (List)null);
-			if(pats != null) {
-				for (Iterator iter = pats.iterator(); iter.hasNext();) {
-					addPattern((String) iter.next(), Pattern.JAR);
+			pats = configuration.getAttribute(ApiUseLaunchDelegate.JAR_PATTERNS_LIST, (List<String>) null);
+			if (pats != null) {
+				for (String pattern : pats) {
+					addPattern(pattern, Pattern.JAR);
 				}
 			}
-			pats = configuration.getAttribute(ApiUseLaunchDelegate.REPORT_PATTERNS_LIST, (List)null);
-			if(pats != null) {
-				for (Iterator iter = pats.iterator(); iter.hasNext();) {
-					addPattern((String) iter.next(), Pattern.REPORT);
+			pats = configuration.getAttribute(ApiUseLaunchDelegate.REPORT_PATTERNS_LIST, (List<String>) null);
+			if (pats != null) {
+				for (String pattern : pats) {
+					addPattern(pattern, Pattern.REPORT);
 				}
 			}
-			pats = configuration.getAttribute(ApiUseLaunchDelegate.REPORT_TO_PATTERNS_LIST, (List)null);
-			if(pats != null) {
-				for (Iterator iter = pats.iterator(); iter.hasNext();) {
-					addPattern((String) iter.next(), Pattern.REPORT_TO);
+			pats = configuration.getAttribute(ApiUseLaunchDelegate.REPORT_TO_PATTERNS_LIST, (List<String>) null);
+			if (pats != null) {
+				for (String pattern : pats) {
+					addPattern(pattern, Pattern.REPORT_TO);
 				}
 			}
 			this.viewer.refresh();
-		}
-		catch(CoreException ce) {
+		} catch (CoreException ce) {
 			ApiUIPlugin.log(ce);
 		}
 	}
 
 	/**
 	 * Adds a new pattern to the list
+	 * 
 	 * @param pattern
 	 * @param kind
 	 * @return
@@ -349,29 +388,32 @@ public class ApiUsePatternTab extends AbstractLaunchConfigurationTab {
 	boolean addPattern(String pattern, int kind) {
 		return this.patterns.add(new Pattern(pattern, kind));
 	}
-	
+
 	/**
 	 * Removes the pattern from the listing
+	 * 
 	 * @param pattern
 	 * @return
 	 */
 	boolean removePattern(Pattern pattern) {
 		return this.patterns.remove(pattern);
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse
+	 * .debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
-		ArrayList api = new ArrayList();
-		ArrayList internal = new ArrayList();
-		ArrayList jar = new ArrayList();
-		ArrayList report = new ArrayList();
-		ArrayList reportto = new ArrayList();
-		Pattern pattern = null;
-		for (Iterator iter = this.patterns.iterator(); iter.hasNext();) {
-			pattern = (Pattern) iter.next();
-			switch(pattern.kind) {
+		ArrayList<String> api = new ArrayList<String>();
+		ArrayList<String> internal = new ArrayList<String>();
+		ArrayList<String> jar = new ArrayList<String>();
+		ArrayList<String> report = new ArrayList<String>();
+		ArrayList<String> reportto = new ArrayList<String>();
+		for (Pattern pattern : this.patterns) {
+			switch (pattern.kind) {
 				case Pattern.API: {
 					api.add(pattern.pattern);
 					break;
@@ -392,19 +434,25 @@ public class ApiUsePatternTab extends AbstractLaunchConfigurationTab {
 					reportto.add(pattern.pattern);
 					break;
 				}
+				default:
+					break;
 			}
 		}
-		configuration.setAttribute(ApiUseLaunchDelegate.API_PATTERNS_LIST, api.size() > 0 ? api : (List)null);
-		configuration.setAttribute(ApiUseLaunchDelegate.INTERNAL_PATTERNS_LIST, internal.size() > 0 ? internal : (List)null);
-		configuration.setAttribute(ApiUseLaunchDelegate.JAR_PATTERNS_LIST, jar.size() > 0 ? jar : (List)null);
-		configuration.setAttribute(ApiUseLaunchDelegate.REPORT_PATTERNS_LIST, report.size() > 0 ? report : (List)null);
-		configuration.setAttribute(ApiUseLaunchDelegate.REPORT_TO_PATTERNS_LIST, reportto.size() > 0 ? reportto : (List)null);
+		configuration.setAttribute(ApiUseLaunchDelegate.API_PATTERNS_LIST, api.size() > 0 ? api : (List<String>) null);
+		configuration.setAttribute(ApiUseLaunchDelegate.INTERNAL_PATTERNS_LIST, internal.size() > 0 ? internal : (List<String>) null);
+		configuration.setAttribute(ApiUseLaunchDelegate.JAR_PATTERNS_LIST, jar.size() > 0 ? jar : (List<String>) null);
+		configuration.setAttribute(ApiUseLaunchDelegate.REPORT_PATTERNS_LIST, report.size() > 0 ? report : (List<String>) null);
+		configuration.setAttribute(ApiUseLaunchDelegate.REPORT_TO_PATTERNS_LIST, reportto.size() > 0 ? reportto : (List<String>) null);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.
+	 * debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
-		//do nothing, default is no patterns
+		// do nothing, default is no patterns
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,87 +37,97 @@ public class ApiScope implements IApiScope {
 	/**
 	 * Contains all API elements of this scope
 	 */
-	ArrayList elements;
+	ArrayList<IApiElement> elements;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiScope#accept(org.eclipse.pde.api.tools.internal.provisional.model.ApiScopeVisitor)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.provisional.model.IApiScope#accept
+	 * (org.eclipse.pde.api.tools.internal.provisional.model.ApiScopeVisitor)
 	 */
+	@Override
 	public void accept(ApiScopeVisitor visitor) throws CoreException {
-		IApiElement[] elements = getApiElements();
-		for (int i = 0; i < elements.length; i++) {
-			IApiElement apiElement = elements[i];
+		IApiElement[] elems = getApiElements();
+		for (int i = 0; i < elems.length; i++) {
+			IApiElement apiElement = elems[i];
 			int type = apiElement.getType();
-			switch(type) {
-				case IApiElement.API_TYPE_CONTAINER : {
+			switch (type) {
+				case IApiElement.API_TYPE_CONTAINER: {
 					IApiTypeContainer container = (IApiTypeContainer) apiElement;
 					visitor.visit(container);
 					visitor.endVisit(container);
 					break;
 				}
-				case IApiElement.API_TYPE_ROOT : {
+				case IApiElement.API_TYPE_ROOT: {
 					IApiTypeRoot root = (IApiTypeRoot) apiElement;
 					visitor.visit(root);
 					visitor.endVisit(root);
 					break;
 				}
-				case IApiElement.BASELINE : {
+				case IApiElement.BASELINE: {
 					IApiBaseline baseline = (IApiBaseline) apiElement;
 					visitor.visit(baseline);
 					visitor.endVisit(baseline);
 					break;
 				}
-				case IApiElement.COMPONENT : {
+				case IApiElement.COMPONENT: {
 					IApiComponent component = (IApiComponent) apiElement;
 					visitor.visit(component);
 					visitor.endVisit(component);
 					break;
 				}
 				default:
-					throw new CoreException(
-							new Status(
-									IStatus.ERROR,
-									ApiPlugin.PLUGIN_ID,
-									NLS.bind(
-											Messages.ApiScope_0,
-											Util.getApiElementType(type))));
+					throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, NLS.bind(Messages.ApiScope_0, Util.getApiElementType(type))));
 			}
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiScope#addElement(org.eclipse.pde.api.tools.internal.provisional.model.IApiElement)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.provisional.model.IApiScope#addElement
+	 * (org.eclipse.pde.api.tools.internal.provisional.model.IApiElement)
 	 */
+	@Override
 	public void addElement(IApiElement newelement) {
 		if (this.elements == null) {
-			this.elements = new ArrayList();
+			this.elements = new ArrayList<IApiElement>();
 		}
 		this.elements.add(newelement);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiScope#encloses(org.eclipse.pde.api.tools.internal.provisional.model.IApiElement)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.provisional.model.IApiScope#encloses
+	 * (org.eclipse.pde.api.tools.internal.provisional.model.IApiElement)
 	 */
+	@Override
 	public boolean encloses(IApiElement element) {
-		if(element != null) {
+		if (element != null) {
 			IApiComponent component = element.getApiComponent();
 			IApiComponent enclosing = null;
-			for(Iterator iter = this.elements.iterator(); iter.hasNext();) {
-				enclosing = ((IApiElement)iter.next()).getApiComponent();
-				if(component.equals(enclosing)) {
+			for (Iterator<IApiElement> iter = this.elements.iterator(); iter.hasNext();) {
+				enclosing = iter.next().getApiComponent();
+				if (component.equals(enclosing)) {
 					return true;
 				}
 			}
 		}
 		return false;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiScope#getApiElement()
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.provisional.model.IApiScope#getApiElement
+	 * ()
 	 */
+	@Override
 	public IApiElement[] getApiElements() {
 		if (this.elements == null || this.elements.size() == 0) {
 			return NO_ELEMENTS;
 		}
-		return (IApiElement[]) this.elements.toArray(new IApiElement[this.elements.size()]);
+		return this.elements.toArray(new IApiElement[this.elements.size()]);
 	}
 }

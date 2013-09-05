@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,26 +44,35 @@ import org.eclipse.pde.api.tools.tests.ApiTestsPlugin;
  * 
  * @since 1.0
  */
-public abstract class PerformanceTest extends ApiBuilderTest {	
+public abstract class PerformanceTest extends ApiBuilderTest {
 
 	/**
 	 * Constructor
+	 * 
 	 * @param name
 	 */
 	public PerformanceTest(String name) {
 		super(name);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestSourcePath()
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestSourcePath
+	 * ()
 	 */
+	@Override
 	protected IPath getTestSourcePath() {
-		return TestSuiteHelper.getPluginDirectoryPath().append(TEST_SOURCE_ROOT).append("perf");
+		return TestSuiteHelper.getPluginDirectoryPath().append(TEST_SOURCE_ROOT).append("perf"); //$NON-NLS-1$
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#setBuilderOptions()
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#setBuilderOptions
+	 * ()
 	 */
+	@Override
 	protected void setBuilderOptions() {
 		enableUnsupportedTagOptions(true);
 		enableBaselineOptions(true);
@@ -73,28 +82,27 @@ public abstract class PerformanceTest extends ApiBuilderTest {
 		enableUsageOptions(true);
 		enableVersionNumberOptions(true);
 	}
-	
+
 	/**
 	 * @return all of the child test classes of this class
 	 */
-	private static Class[] getAllTestClasses() {
-		Class[] classes = new Class[] {
-			FullSourceBuildTests.class,
-			ApiDescriptionTests.class,
-			IncrementalBuildTests.class,
-			ExternalDependencyPerfTests.class
-		};
+	private static Class<?>[] getAllTestClasses() {
+		Class<?>[] classes = new Class[] {
+				FullSourceBuildTests.class, ApiDescriptionTests.class,
+				IncrementalBuildTests.class, ExternalDependencyPerfTests.class };
 		return classes;
 	}
-	
+
 	/**
 	 * Collects tests from the getAllTestClasses() method into the given suite
+	 * 
 	 * @param suite
 	 */
 	private static void collectTests(TestSuite suite) {
 		// Hack to load all classes before computing their suite of test cases
-		// this allow to reset test cases subsets while running all Builder tests...
-		Class[] classes = getAllTestClasses();
+		// this allow to reset test cases subsets while running all Builder
+		// tests...
+		Class<?>[] classes = getAllTestClasses();
 
 		// Reset forgotten subsets of tests
 		TestCase.TESTS_PREFIX = null;
@@ -105,10 +113,10 @@ public abstract class PerformanceTest extends ApiBuilderTest {
 
 		/* tests */
 		for (int i = 0, length = classes.length; i < length; i++) {
-			Class clazz = classes[i];
+			Class<?> clazz = classes[i];
 			Method suiteMethod;
 			try {
-				suiteMethod = clazz.getDeclaredMethod("suite", new Class[0]);
+				suiteMethod = clazz.getDeclaredMethod("suite", new Class[0]); //$NON-NLS-1$
 			} catch (NoSuchMethodException e) {
 				e.printStackTrace();
 				continue;
@@ -126,25 +134,31 @@ public abstract class PerformanceTest extends ApiBuilderTest {
 			suite.addTest((Test) test);
 		}
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getDefaultProblemId()
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getDefaultProblemId
+	 * ()
 	 */
+	@Override
 	protected int getDefaultProblemId() {
 		return 0;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestingProjectName()
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestingProjectName
+	 * ()
 	 */
+	@Override
 	protected String getTestingProjectName() {
-		return "dummy";
+		return "dummy"; //$NON-NLS-1$
 	}
-	
-	/* (non-Javadoc)
-	 * 
-	 * Ensure a baseline has been created to compare against.
-	 * 
+
+	/*
+	 * (non-Javadoc) Ensure a baseline has been created to compare against.
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#setUp()
 	 */
 	@Override
@@ -153,10 +167,12 @@ public abstract class PerformanceTest extends ApiBuilderTest {
 		// populate the workspace with initial plug-ins/projects
 		createInitialWorkspace();
 		createBaseline();
-	}	
-	
+	}
+
 	/**
-	 * Performs a clean and full build on the projects in the workspace computed ordering
+	 * Performs a clean and full build on the projects in the workspace computed
+	 * ordering
+	 * 
 	 * @throws CoreException
 	 */
 	protected void orderedBuild(IProject[] projects) throws CoreException {
@@ -165,7 +181,7 @@ public abstract class PerformanceTest extends ApiBuilderTest {
 			projects[i].build(IncrementalProjectBuilder.FULL_BUILD, null);
 		}
 	}
-	
+
 	/**
 	 * Creates the API baseline for this test.
 	 * 
@@ -182,11 +198,11 @@ public abstract class PerformanceTest extends ApiBuilderTest {
 				// create the API baseline
 				IPath baselineLocation = ApiTestsPlugin.getDefault().getStateLocation().append(id);
 				long start = System.currentTimeMillis();
-				System.out.println("Unzipping baseline: "+zipPath);
-				System.out.print("	in "+baselineLocation.toOSString()+"...");
+				System.out.println("Unzipping baseline: " + zipPath); //$NON-NLS-1$
+				System.out.print("	in " + baselineLocation.toOSString() + "..."); //$NON-NLS-1$ //$NON-NLS-2$
 				Util.unzip(zipPath, baselineLocation.toOSString());
-				System.out.println(" done in "+(System.currentTimeMillis()-start)+"ms.");	
-					
+				System.out.println(" done in " + (System.currentTimeMillis() - start) + "ms."); //$NON-NLS-1$ //$NON-NLS-2$
+
 				perfline = ApiModelFactory.newApiBaseline(id);
 				File[] files = baselineLocation.toFile().listFiles();
 				IApiComponent[] components = new IApiComponent[files.length];
@@ -196,8 +212,8 @@ public abstract class PerformanceTest extends ApiBuilderTest {
 				}
 				perfline.addApiComponents(components);
 				manager.addApiBaseline(perfline);
-				System.out.println("Setting default baseline to be: "+perfline.getName());
-				manager.setDefaultApiBaseline(perfline.getName());			
+				System.out.println("Setting default baseline to be: " + perfline.getName()); //$NON-NLS-1$
+				manager.setDefaultApiBaseline(perfline.getName());
 			}
 			IApiBaseline baseline = manager.getDefaultApiBaseline();
 			if (baseline != perfline) {
@@ -205,30 +221,29 @@ public abstract class PerformanceTest extends ApiBuilderTest {
 			}
 		}
 	}
-	
+
 	/**
-	 * Creates the workspace by importing projects from the source zip. This is the 
-	 * initial state of the workspace.
-	 *  
+	 * Creates the workspace by importing projects from the source zip. This is
+	 * the initial state of the workspace.
+	 * 
 	 * @throws Exception
 	 */
 	protected void createInitialWorkspace() throws Exception {
 		// Get workspace info
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 
-		// Modify resources workspace preferences to avoid disturbing tests while running them
+		// Modify resources workspace preferences to avoid disturbing tests
+		// while running them
 		IEclipsePreferences resourcesPreferences = InstanceScope.INSTANCE.getNode(ResourcesPlugin.PI_RESOURCES);
-		resourcesPreferences.put(ResourcesPlugin.PREF_AUTO_REFRESH, "false");
-		
+		resourcesPreferences.put(ResourcesPlugin.PREF_AUTO_REFRESH, "false"); //$NON-NLS-1$
+
 		// do not show the dialog if a build fails...will lock the workspace
-		IEclipsePreferences antuiprefs = InstanceScope.INSTANCE.getNode("org.eclipse.ant.ui");
-		antuiprefs.put("errorDialog", "false");
-		
+		IEclipsePreferences antuiprefs = InstanceScope.INSTANCE.getNode("org.eclipse.ant.ui"); //$NON-NLS-1$
+		antuiprefs.put("errorDialog", "false"); //$NON-NLS-1$ //$NON-NLS-2$
+
 		workspace.getDescription().setSnapshotInterval(Long.MAX_VALUE);
 		workspace.getDescription().setAutoBuilding(false);
 
-		
-		
 		// Get projects directories
 		long start = System.currentTimeMillis();
 		String fullSourceZipPath = getWorkspaceLocation();
@@ -243,22 +258,22 @@ public abstract class PerformanceTest extends ApiBuilderTest {
 		}
 		dir.mkdirs();
 		String targetWorkspacePath = location.toOSString();
-		System.out.println("Unzipping "+fullSourceZipPath);
-		System.out.print("	in "+targetWorkspacePath+"...");
+		System.out.println("Unzipping " + fullSourceZipPath); //$NON-NLS-1$
+		System.out.print("	in " + targetWorkspacePath + "..."); //$NON-NLS-1$ //$NON-NLS-2$
 		Util.unzip(fullSourceZipPath, targetWorkspacePath);
-		System.out.println(" done in "+(System.currentTimeMillis()-start)+"ms.");
-		
+		System.out.println(" done in " + (System.currentTimeMillis() - start) + "ms."); //$NON-NLS-1$ //$NON-NLS-2$
+
 		start = System.currentTimeMillis();
-		System.out.println("Importing projects... ");
+		System.out.println("Importing projects... "); //$NON-NLS-1$
 		File root = dir;
 		File[] projects = root.listFiles();
 		for (int i = 0; i < projects.length; i++) {
-			System.out.println("\t" + projects[i].getName());
+			System.out.println("\t" + projects[i].getName()); //$NON-NLS-1$
 			createExistingProject(projects[i], true, false);
 		}
-		System.out.println(" done in "+(System.currentTimeMillis()-start)+"ms.");
-	}		
-	
+		System.out.println(" done in " + (System.currentTimeMillis() - start) + "ms."); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
 	/**
 	 * Recursively deletes directories and all files in it.
 	 * 
@@ -274,31 +289,31 @@ public abstract class PerformanceTest extends ApiBuilderTest {
 			file.delete();
 		}
 	}
-	
+
 	/**
-	 * Returns the a string of the absolute path in the local file system to an archive of the
-	 * API baseline to use for this test or <code>null</code> if none. Subclasses must override
-	 * if they need a baseline.
+	 * Returns the a string of the absolute path in the local file system to an
+	 * archive of the API baseline to use for this test or <code>null</code> if
+	 * none. Subclasses must override if they need a baseline.
 	 * 
-	 * @return absolute path in the local file system to an archive of the
-	 * 	API baseline to use for this test or <code>null</code>
+	 * @return absolute path in the local file system to an archive of the API
+	 *         baseline to use for this test or <code>null</code>
 	 */
 	protected String getBaselineLocation() {
 		return null;
 	}
-	
+
 	/**
-	 * Returns the a string of the absolute path in the local file system to an archive of the
-	 * source workspace to use for this test or <code>null</code> if none. Subclasses must override
-	 * if they need to populate a workspace.
+	 * Returns the a string of the absolute path in the local file system to an
+	 * archive of the source workspace to use for this test or <code>null</code>
+	 * if none. Subclasses must override if they need to populate a workspace.
 	 * 
 	 * @return absolute path in the local file system to an archive of the
-	 * 	source workspace to use for this test or <code>null</code>
-	 */	
+	 *         source workspace to use for this test or <code>null</code>
+	 */
 	protected String getWorkspaceLocation() {
 		return null;
 	}
-	
+
 	/**
 	 * @return the tests for this class
 	 */
@@ -307,88 +322,84 @@ public abstract class PerformanceTest extends ApiBuilderTest {
 		collectTests(suite);
 		return suite;
 	}
-	
+
 	/**
-	 * Performs a compatibility test. The workspace file at the specified (full workspace path)
-	 * location is updated with a corresponding file from test data. A build is performed
-	 * and problems are compared against the expected problems for the associated resource.
+	 * Performs a compatibility test. The workspace file at the specified (full
+	 * workspace path) location is updated with a corresponding file from test
+	 * data. A build is performed and problems are compared against the expected
+	 * problems for the associated resource.
 	 * 
 	 * @param workspaceFile file to update
-	 * @param incremental whether to perform an incremental (<code>true</code>) or
-	 * 	full (<code>false</code>) build
+	 * @param incremental whether to perform an incremental (<code>true</code>)
+	 *            or full (<code>false</code>) build
 	 * @throws Exception
 	 */
 	protected void performCompatibilityTest(IPath workspaceFile, boolean incremental) throws Exception {
-			updateWorkspaceFile(
-					workspaceFile,
-					getUpdateFilePath(workspaceFile.lastSegment()));
-			if (incremental) {
-				incrementalBuild();
-			} else {
-				fullBuild();
-			}
-			ApiProblem[] problems = getEnv().getProblemsFor(workspaceFile, null);
-			assertProblems(problems);
+		updateWorkspaceFile(workspaceFile, getUpdateFilePath(workspaceFile.lastSegment()));
+		if (incremental) {
+			incrementalBuild();
+		} else {
+			fullBuild();
+		}
+		ApiProblem[] problems = getEnv().getProblemsFor(workspaceFile, null);
+		assertProblems(problems);
 	}
-	
+
 	/**
-	 * Performs a compatibility test. The workspace file at the specified (full workspace path)
-	 * location is updated with a corresponding file from test data. A build is performed
-	 * and problems are compared against the expected problems for the associated resource.
+	 * Performs a compatibility test. The workspace file at the specified (full
+	 * workspace path) location is updated with a corresponding file from test
+	 * data. A build is performed and problems are compared against the expected
+	 * problems for the associated resource.
 	 * 
 	 * @param workspaceFile file to update
-	 * @param incremental whether to perform an incremental (<code>true</code>) or
-	 * 	full (<code>false</code>) build
+	 * @param incremental whether to perform an incremental (<code>true</code>)
+	 *            or full (<code>false</code>) build
 	 * @throws Exception
 	 */
 	protected void performVersionTest(IPath workspaceFile, boolean incremental) throws Exception {
-			updateWorkspaceFile(
-					workspaceFile,
-					getUpdateFilePath(workspaceFile.lastSegment()));
-			if (incremental) {
-				incrementalBuild();
-			} else {
-				fullBuild();
-			}
-			ApiProblem[] problems = getEnv().getProblemsFor(new Path(workspaceFile.segment(0)).append(JarFile.MANIFEST_NAME), null);
-			assertProblems(problems);
-	}	
-	
+		updateWorkspaceFile(workspaceFile, getUpdateFilePath(workspaceFile.lastSegment()));
+		if (incremental) {
+			incrementalBuild();
+		} else {
+			fullBuild();
+		}
+		ApiProblem[] problems = getEnv().getProblemsFor(new Path(workspaceFile.segment(0)).append(JarFile.MANIFEST_NAME), null);
+		assertProblems(problems);
+	}
+
 	/**
-	 * Performs a compatibility test. The workspace file at the specified (full workspace path)
-	 * location is deleted. A build is performed and problems are compared against the expected
-	 * problems for the associated resource.
+	 * Performs a compatibility test. The workspace file at the specified (full
+	 * workspace path) location is deleted. A build is performed and problems
+	 * are compared against the expected problems for the associated resource.
 	 * 
 	 * @param workspaceFile file to update
-	 * @param incremental whether to perform an incremental (<code>true</code>) or
-	 * 	full (<code>false</code>) build
+	 * @param incremental whether to perform an incremental (<code>true</code>)
+	 *            or full (<code>false</code>) build
 	 * @throws Exception
 	 */
 	protected void performDeletionCompatibilityTest(IPath workspaceFile, boolean incremental) throws Exception {
-			deleteWorkspaceFile(workspaceFile, true);
-			if (incremental) {
-				incrementalBuild();
-			} else {
-				fullBuild();
-			}
-			ApiProblem[] problems = getEnv().getProblems();
-			assertProblems(problems);
-	}	
-	
+		deleteWorkspaceFile(workspaceFile, true);
+		if (incremental) {
+			incrementalBuild();
+		} else {
+			fullBuild();
+		}
+		ApiProblem[] problems = getEnv().getProblems();
+		assertProblems(problems);
+	}
+
 	/**
-	 * Performs a compatibility test. The workspace file at the specified (full workspace path)
-	 * location is created. A build is performed and problems are compared against the expected
-	 * problems for the associated resource.
+	 * Performs a compatibility test. The workspace file at the specified (full
+	 * workspace path) location is created. A build is performed and problems
+	 * are compared against the expected problems for the associated resource.
 	 * 
 	 * @param workspaceFile file to update
-	 * @param incremental whether to perform an incremental (<code>true</code>) or
-	 * 	full (<code>false</code>) build
+	 * @param incremental whether to perform an incremental (<code>true</code>)
+	 *            or full (<code>false</code>) build
 	 * @throws Exception
 	 */
 	protected void performCreationCompatibilityTest(IPath workspaceFile, boolean incremental) throws Exception {
-		createWorkspaceFile(
-				workspaceFile,
-				getUpdateFilePath(workspaceFile.lastSegment()));
+		createWorkspaceFile(workspaceFile, getUpdateFilePath(workspaceFile.lastSegment()));
 		if (incremental) {
 			incrementalBuild();
 		} else {

@@ -29,12 +29,12 @@ public class EnumCompatibilityTests extends CompatibilityTest {
 	/**
 	 * Workspace relative path classes in bundle/project A
 	 */
-	protected static IPath WORKSPACE_CLASSES_PACKAGE_A = new Path("bundle.a/src/a/enums");
+	protected static IPath WORKSPACE_CLASSES_PACKAGE_A = new Path("bundle.a/src/a/enums"); //$NON-NLS-1$
 
 	/**
 	 * Package prefix for test classes
 	 */
-	protected static String PACKAGE_PREFIX = "a.enums.";
+	protected static String PACKAGE_PREFIX = "a.enums."; //$NON-NLS-1$
 	
 
 	/**
@@ -48,8 +48,9 @@ public class EnumCompatibilityTests extends CompatibilityTest {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestSourcePath()
 	 */
+	@Override
 	protected IPath getTestSourcePath() {
-		return super.getTestSourcePath().append("enums");
+		return super.getTestSourcePath().append("enums"); //$NON-NLS-1$
 	}
 	
 	/**
@@ -62,6 +63,7 @@ public class EnumCompatibilityTests extends CompatibilityTest {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getDefaultProblemId()
 	 */
+	@Override
 	protected int getDefaultProblemId() {
 		return 0;
 	}
@@ -69,15 +71,16 @@ public class EnumCompatibilityTests extends CompatibilityTest {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestingProjectName()
 	 */
+	@Override
 	protected String getTestingProjectName() {
-		return "enumcompat";
+		return "enumcompat"; //$NON-NLS-1$
 	}
 	
 	/**
 	 * Tests removing a member type
 	 */
 	private void xRemoveMemberType(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveMemberType.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveMemberType.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			ApiProblemFactory.createProblemId(
 				IApiProblem.CATEGORY_COMPATIBILITY,
@@ -87,7 +90,7 @@ public class EnumCompatibilityTests extends CompatibilityTest {
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "RemoveMemberType.MemberType", "bundle.a_1.0.0"};
+		args[0] = new String[]{PACKAGE_PREFIX + "RemoveMemberType.MemberType", "bundle.a_1.0.0"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -104,7 +107,7 @@ public class EnumCompatibilityTests extends CompatibilityTest {
 	 * Tests removing a method
 	 */
 	private void xRemoveMethod(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveMethod.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveMethod.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			ApiProblemFactory.createProblemId(
 				IApiProblem.CATEGORY_COMPATIBILITY,
@@ -114,7 +117,7 @@ public class EnumCompatibilityTests extends CompatibilityTest {
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "RemoveMethod", "method(int)"};
+		args[0] = new String[]{PACKAGE_PREFIX + "RemoveMethod", "method(int)"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -131,7 +134,7 @@ public class EnumCompatibilityTests extends CompatibilityTest {
 	 * Tests conversion to a class
 	 */
 	private void xConvertToClass(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ToClass.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ToClass.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			ApiProblemFactory.createProblemId(
 				IApiProblem.CATEGORY_COMPATIBILITY,
@@ -141,7 +144,7 @@ public class EnumCompatibilityTests extends CompatibilityTest {
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "ToClass",
+		args[0] = new String[]{PACKAGE_PREFIX + "ToClass", //$NON-NLS-1$
 				Integer.toString(IDelta.ENUM_ELEMENT_TYPE),
 				Integer.toString(IDelta.CLASS_ELEMENT_TYPE)};
 		setExpectedMessageArgs(args);
@@ -160,7 +163,7 @@ public class EnumCompatibilityTests extends CompatibilityTest {
 	 * Tests conversion to an annotation
 	 */
 	private void xConvertToAnnotation(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ToAnnotation.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ToAnnotation.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			ApiProblemFactory.createProblemId(
 				IApiProblem.CATEGORY_COMPATIBILITY,
@@ -170,7 +173,7 @@ public class EnumCompatibilityTests extends CompatibilityTest {
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "ToAnnotation",
+		args[0] = new String[]{PACKAGE_PREFIX + "ToAnnotation", //$NON-NLS-1$
 				Integer.toString(IDelta.ENUM_ELEMENT_TYPE),
 				Integer.toString(IDelta.ANNOTATION_ELEMENT_TYPE)};
 		setExpectedMessageArgs(args);
@@ -189,7 +192,7 @@ public class EnumCompatibilityTests extends CompatibilityTest {
 	 * Tests conversion to an interface
 	 */
 	private void xConvertToInterface(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ToInterface.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ToInterface.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			ApiProblemFactory.createProblemId(
 				IApiProblem.CATEGORY_COMPATIBILITY,
@@ -199,7 +202,7 @@ public class EnumCompatibilityTests extends CompatibilityTest {
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "ToInterface",
+		args[0] = new String[]{PACKAGE_PREFIX + "ToInterface", //$NON-NLS-1$
 				Integer.toString(IDelta.ENUM_ELEMENT_TYPE),
 				Integer.toString(IDelta.INTERFACE_ELEMENT_TYPE)};
 		setExpectedMessageArgs(args);
@@ -218,7 +221,7 @@ public class EnumCompatibilityTests extends CompatibilityTest {
 	 * Tests removing a field
 	 */
 	private void xRemoveField(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveField.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveField.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			ApiProblemFactory.createProblemId(
 				IApiProblem.CATEGORY_COMPATIBILITY,
@@ -228,7 +231,7 @@ public class EnumCompatibilityTests extends CompatibilityTest {
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "RemoveField", "FIELD"};
+		args[0] = new String[]{PACKAGE_PREFIX + "RemoveField", "FIELD"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -245,7 +248,7 @@ public class EnumCompatibilityTests extends CompatibilityTest {
 	 * Tests removing an enum constant
 	 */
 	private void xRemoveEnumConstant(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveEnumConstant.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveEnumConstant.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			ApiProblemFactory.createProblemId(
 				IApiProblem.CATEGORY_COMPATIBILITY,
@@ -255,7 +258,7 @@ public class EnumCompatibilityTests extends CompatibilityTest {
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "RemoveEnumConstant", "A"};
+		args[0] = new String[]{PACKAGE_PREFIX + "RemoveEnumConstant", "A"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -272,7 +275,7 @@ public class EnumCompatibilityTests extends CompatibilityTest {
 	 * Tests reducing super interface set
 	 */
 	private void xRemoveSuperInterface(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveSuperInterface.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveSuperInterface.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			ApiProblemFactory.createProblemId(
 				IApiProblem.CATEGORY_COMPATIBILITY,
@@ -282,7 +285,7 @@ public class EnumCompatibilityTests extends CompatibilityTest {
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "RemoveSuperInterface"};
+		args[0] = new String[]{PACKAGE_PREFIX + "RemoveSuperInterface"}; //$NON-NLS-1$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}

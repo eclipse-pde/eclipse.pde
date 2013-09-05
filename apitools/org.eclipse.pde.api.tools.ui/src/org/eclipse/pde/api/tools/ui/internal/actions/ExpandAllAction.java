@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@ package org.eclipse.pde.api.tools.ui.internal.actions;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.TreeViewer;
-
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsConstants;
 
@@ -31,9 +30,10 @@ public class ExpandAllAction extends Action {
 		setImageDescriptor(enabledImageDescriptor);
 		ImageDescriptor disabledImageDescriptor = ApiUIPlugin.getImageDescriptor(IApiToolsConstants.IMG_DLCL_EXPANDALL);
 		setDisabledImageDescriptor(disabledImageDescriptor);
-		fViewer= viewer;
+		fViewer = viewer;
 	}
 
+	@Override
 	public void run() {
 		try {
 			fViewer.getControl().setRedraw(false);

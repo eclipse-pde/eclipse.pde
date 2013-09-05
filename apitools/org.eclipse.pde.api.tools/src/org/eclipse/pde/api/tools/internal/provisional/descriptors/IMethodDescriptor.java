@@ -10,27 +10,27 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.provisional.descriptors;
 
-
-
 /**
  * Describes a method.
  * 
  * @since 1.0.0
  */
 public interface IMethodDescriptor extends IMemberDescriptor {
-	
+
 	/**
-	 * Returns the signature of this method. This includes the signatures for the
-	 * parameter types and return type, but does not include the method name,
-	 * exception types, or type parameters.
+	 * Returns the signature of this method. This includes the signatures for
+	 * the parameter types and return type, but does not include the method
+	 * name, exception types, or type parameters.
 	 * <p>
-	 * For example, a method declared as <code>public void foo(String text, int length)</code>
-	 * would return <code>"(Ljava.lang.String;I)V"</code>.
+	 * For example, a method declared as
+	 * <code>public void foo(String text, int length)</code> would return
+	 * <code>"(Ljava.lang.String;I)V"</code>.
 	 * </p>
+	 * 
 	 * @return the signature of this method
 	 */
 	public String getSignature();
-	
+
 	/**
 	 * Returns whether this method is a constructor
 	 * 

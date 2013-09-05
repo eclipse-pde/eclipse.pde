@@ -29,12 +29,12 @@ public class ClassCompatibilityRestrictionTests extends ClassCompatibilityTests 
 	/**
 	 * Workspace relative path classes in bundle/project A
 	 */
-	protected static IPath WORKSPACE_CLASSES_PACKAGE_A = new Path("bundle.a/src/a/classes/restrictions");
+	protected static IPath WORKSPACE_CLASSES_PACKAGE_A = new Path("bundle.a/src/a/classes/restrictions"); //$NON-NLS-1$
 
 	/**
 	 * Package prefix for test classes
 	 */
-	protected static String PACKAGE_PREFIX = "a.classes.restrictions.";
+	protected static String PACKAGE_PREFIX = "a.classes.restrictions."; //$NON-NLS-1$
 	
 	/**
 	 * Constructor
@@ -47,8 +47,9 @@ public class ClassCompatibilityRestrictionTests extends ClassCompatibilityTests 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestSourcePath()
 	 */
+	@Override
 	protected IPath getTestSourcePath() {
-		return super.getTestSourcePath().append("restrictions");
+		return super.getTestSourcePath().append("restrictions"); //$NON-NLS-1$
 	}
 	
 	/**
@@ -73,21 +74,22 @@ public class ClassCompatibilityRestrictionTests extends ClassCompatibilityTests 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestingProjectName()
 	 */
+	@Override
 	protected String getTestingProjectName() {
-		return "classcompat";
+		return "classcompat"; //$NON-NLS-1$
 	}
 	
 	/**
 	 * Tests adding a noextend annotation
 	 */
 	private void xAddNoExtend(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddNoExtend.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddNoExtend.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			getDefaultProblemId()
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "AddNoExtend"};
+		args[0] = new String[]{PACKAGE_PREFIX + "AddNoExtend"}; //$NON-NLS-1$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -104,13 +106,13 @@ public class ClassCompatibilityRestrictionTests extends ClassCompatibilityTests 
 	 * Tests adding a noinstantiate annotation
 	 */
 	private void xAddNoInstantiate(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddNoInstantiate.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddNoInstantiate.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			getDefaultProblemId()
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "AddNoInstantiate"};
+		args[0] = new String[]{PACKAGE_PREFIX + "AddNoInstantiate"}; //$NON-NLS-1$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -127,7 +129,7 @@ public class ClassCompatibilityRestrictionTests extends ClassCompatibilityTests 
 	 * Tests adding a noextend annotation
 	 */
 	private void xFinalAddNoExtend(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("FinalAddNoExtend.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("FinalAddNoExtend.java"); //$NON-NLS-1$
 		// no errors expected
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -144,7 +146,7 @@ public class ClassCompatibilityRestrictionTests extends ClassCompatibilityTests 
 	 * Tests adding a noextend annotation
 	 */
 	private void xFinalRemoveNoExtend(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("FinalRemoveNoExtend.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("FinalRemoveNoExtend.java"); //$NON-NLS-1$
 		// no errors expected
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -161,7 +163,7 @@ public class ClassCompatibilityRestrictionTests extends ClassCompatibilityTests 
 	 * Tests adding a noextend annotation
 	 */
 	private void xAbstractRemoveNoInstantiate(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AbstractRemoveNoInstantiate.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AbstractRemoveNoInstantiate.java"); //$NON-NLS-1$
 		// no errors expected
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -178,7 +180,7 @@ public class ClassCompatibilityRestrictionTests extends ClassCompatibilityTests 
 	 * Tests adding a no-instantiate annotation to an abstract class 
 	 */
 	private void xAbstractAddNoInstantiate(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AbstractAddNoInstantiate.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AbstractAddNoInstantiate.java"); //$NON-NLS-1$
 		// no errors expected
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -195,7 +197,7 @@ public class ClassCompatibilityRestrictionTests extends ClassCompatibilityTests 
 	 * Tests adding an abstract keyword to a no-instantiate class 
 	 */
 	private void xNoInstantiateAddAbstract(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("NoInstantiateAddAbstract.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("NoInstantiateAddAbstract.java"); //$NON-NLS-1$
 		// no errors expected
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -219,7 +221,7 @@ public class ClassCompatibilityRestrictionTests extends ClassCompatibilityTests 
 	 * Tests removing a noextend annotation
 	 */
 	private void xRemoveNoExtend(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveNoExtend.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveNoExtend.java"); //$NON-NLS-1$
 		// no problem expected
 		performCompatibilityTest(filePath, incremental);
 	}

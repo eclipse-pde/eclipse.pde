@@ -33,13 +33,13 @@ public class DecodeBuildState {
 	 */
 	public static void main(String[] args) {
 		if (args.length != 1) {
-			System.err.println("Usage: <path to build state>");
+			System.err.println("Usage: <path to build state>"); //$NON-NLS-1$
 			return;
 		}
 		String fileName = args[0];
 		File file = new File(fileName);
 		if (!file.exists()) {
-			System.err.println("Build state file : " + fileName + " doesn't exist");
+			System.err.println("Build state file : " + fileName + " doesn't exist"); //$NON-NLS-1$ //$NON-NLS-2$
 			return;
 		}
 		BuildState state = null;
@@ -66,7 +66,7 @@ public class DecodeBuildState {
 	private static void printBuildState(BuildState state) {
 		StringWriter stringWriter = new StringWriter();
 		PrintWriter writer = new PrintWriter(stringWriter);
-		writer.println("Breaking changes");
+		writer.println("Breaking changes"); //$NON-NLS-1$
 		IDelta[] breakingChanges = state.getBreakingChanges();
 		int length = breakingChanges.length;
 		if (length != 0) {
@@ -76,9 +76,9 @@ public class DecodeBuildState {
 				writer.println(delta.getMessage());
 			}
 		} else {
-			writer.println("No breaking changes");
+			writer.println("No breaking changes"); //$NON-NLS-1$
 		}
-		writer.println("Compatible changes");
+		writer.println("Compatible changes"); //$NON-NLS-1$
 		IDelta[] compatibleChanges = state.getCompatibleChanges();
 		length = compatibleChanges.length;
 		if (length != 0) {
@@ -88,11 +88,11 @@ public class DecodeBuildState {
 				writer.println(delta.getMessage());
 			}
 		} else {
-			writer.println("No compatible changes");
+			writer.println("No compatible changes"); //$NON-NLS-1$
 		}
 		writer.flush();
 		writer.close();
-		System.out.println("Build state:" + String.valueOf(stringWriter.getBuffer()));
+		System.out.println("Build state:" + String.valueOf(stringWriter.getBuffer())); //$NON-NLS-1$
 	}
 
 	

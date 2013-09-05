@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,22 +24,25 @@ public class DuplicateTagResolution extends UnsupportedTagResolution {
 
 	/**
 	 * Constructor
+	 * 
 	 * @param marker
 	 */
 	public DuplicateTagResolution(IMarker marker) {
 		super(marker);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.ui.IMarkerResolution#getLabel()
 	 */
+	@Override
 	public String getLabel() {
 		try {
 			String arg = (String) fBackingMarker.getAttribute(IApiMarkerConstants.MARKER_ATTR_MESSAGE_ARGUMENTS);
 			String[] args = arg.split("#"); //$NON-NLS-1$
-			return NLS.bind(MarkerMessages.DuplicateTagResolution_remove_dupe_tag_resolution_label, new String[] {args[0]});
-		} 
-		catch (CoreException e) {}
+			return NLS.bind(MarkerMessages.DuplicateTagResolution_remove_dupe_tag_resolution_label, new String[] { args[0] });
+		} catch (CoreException e) {
+		}
 		return null;
 	}
 }

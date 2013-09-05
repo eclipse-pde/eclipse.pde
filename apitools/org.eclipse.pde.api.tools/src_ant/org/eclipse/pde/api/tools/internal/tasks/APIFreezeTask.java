@@ -44,40 +44,34 @@ import org.w3c.dom.NodeList;
  * Ant task to run the API freeze check during Eclipse build.
  */
 public class APIFreezeTask extends CommonUtilsTask {
-	
+
 	private boolean debug;
 
 	private String eeFileLocation;
 	private String excludeListLocation;
 	private String includeListLocation;
-	
+
 	/**
-	 * When <code>true</code>, components containing resolver errors will still be included
-	 * in the comparison.  A list of bundles with resolver errors will be
-	 * included in the output xml.  Set to <code>true</code> by default.
+	 * When <code>true</code>, components containing resolver errors will still
+	 * be included in the comparison. A list of bundles with resolver errors
+	 * will be included in the output xml. Set to <code>true</code> by default.
 	 */
 	private boolean processUnresolvedBundles = true;
 	/**
 	 * If {@link #continueOnResolverError} is <code>true</code> this map will
-	 * store the resolver errors of components. Maps String component IDs to
-	 * an array of ResolverErrors.
+	 * store the resolver errors of components. Maps String component IDs to an
+	 * array of ResolverErrors.
 	 */
-	private Map/*<String, ResolverError[]>*/ resolverErrors = new HashMap();
-	
+	private Map/* <String, ResolverError[]> */resolverErrors = new HashMap();
+
+	@Override
 	public void execute() throws BuildException {
-		if (this.referenceBaselineLocation == null
-				|| this.currentBaselineLocation == null
-				|| this.reportLocation == null) {
+		if (this.referenceBaselineLocation == null || this.currentBaselineLocation == null || this.reportLocation == null) {
 			StringWriter out = new StringWriter();
 			PrintWriter writer = new PrintWriter(out);
-			writer.println(
-				NLS.bind(Messages.printArguments,
-					new String[] {
-						this.referenceBaselineLocation,
-						this.currentBaselineLocation,
-						this.reportLocation,
-					})
-			);
+			writer.println(NLS.bind(Messages.printArguments, new String[] {
+					this.referenceBaselineLocation,
+					this.currentBaselineLocation, this.reportLocation, }));
 			writer.flush();
 			writer.close();
 			throw new BuildException(String.valueOf(out.getBuffer()));
@@ -99,23 +93,20 @@ public class APIFreezeTask extends CommonUtilsTask {
 		}
 		File outputFile = new File(this.reportLocation);
 		if (outputFile.exists()) {
-			if (outputFile.isDirectory()){
+			if (outputFile.isDirectory()) {
 				// the output file cannot be a directory
-				throw new BuildException(
-						NLS.bind(Messages.reportLocationHasToBeAFile, outputFile.getAbsolutePath()));
+				throw new BuildException(NLS.bind(Messages.reportLocationHasToBeAFile, outputFile.getAbsolutePath()));
 			}
 		} else {
 			File outputDir = outputFile.getParentFile();
 			if (!outputDir.exists()) {
 				if (!outputDir.mkdirs()) {
-					throw new BuildException(
-						NLS.bind(Messages.errorCreatingParentReportFile, outputDir.getAbsolutePath()));
+					throw new BuildException(NLS.bind(Messages.errorCreatingParentReportFile, outputDir.getAbsolutePath()));
 				}
 			}
 		}
 		int index = this.reportLocation.lastIndexOf('.');
-		if (index == -1
-				|| !this.reportLocation.substring(index).toLowerCase().equals(".xml")) { //$NON-NLS-1$
+		if (index == -1 || !this.reportLocation.substring(index).toLowerCase().equals(".xml")) { //$NON-NLS-1$
 			throw new BuildException(Messages.deltaReportTask_xmlFileLocationShouldHaveAnXMLExtension);
 		}
 		// unzip reference
@@ -134,7 +125,7 @@ public class APIFreezeTask extends CommonUtilsTask {
 		// create baseline for the reference
 		IApiBaseline referenceBaseline = createBaseline(REFERENCE_BASELINE_NAME, referenceInstallDir.getAbsolutePath(), this.eeFileLocation);
 		IApiBaseline currentBaseline = createBaseline(CURRENT_BASELINE_NAME, baselineInstallDir.getAbsolutePath(), this.eeFileLocation);
-		
+
 		FilteredElements excludedElements = CommonUtilsTask.initializeFilteredElements(this.excludeListLocation, currentBaseline, this.debug);
 
 		if (this.debug) {
@@ -142,7 +133,7 @@ public class APIFreezeTask extends CommonUtilsTask {
 			System.out.println("Excluded elements list:"); //$NON-NLS-1$
 			System.out.println(excludedElements);
 		}
-		
+
 		FilteredElements includedElements = CommonUtilsTask.initializeFilteredElements(this.includeListLocation, currentBaseline, this.debug);
 
 		if (this.debug) {
@@ -150,7 +141,7 @@ public class APIFreezeTask extends CommonUtilsTask {
 			System.out.println("Included elements list:"); //$NON-NLS-1$
 			System.out.println(includedElements);
 		}
-		
+
 		IDelta delta = null;
 		if (this.debug) {
 			System.out.println("Creation of both baselines : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -186,13 +177,14 @@ public class APIFreezeTask extends CommonUtilsTask {
 				writer = new BufferedWriter(new FileWriter(outputFile));
 				FilterListDeltaVisitor visitor = new FilterListDeltaVisitor(excludedElements, includedElements, FilterListDeltaVisitor.CHECK_OTHER);
 				delta.accept(visitor);
-				
+
 				Document doc = visitor.getDocument();
-				if (processUnresolvedBundles){
-					// Store any components that had resolver errors in the xml to add warnings in the html
+				if (processUnresolvedBundles) {
+					// Store any components that had resolver errors in the xml
+					// to add warnings in the html
 					addResolverErrors(doc);
 				}
-				
+
 				String serializedXml = org.eclipse.pde.api.tools.internal.util.Util.serializeDocument(doc);
 				writer.write(serializedXml);
 				writer.flush();
@@ -212,7 +204,7 @@ public class APIFreezeTask extends CommonUtilsTask {
 					if (writer != null) {
 						writer.close();
 					}
-				} catch(IOException e) {
+				} catch (IOException e) {
 					// ignore
 				}
 			}
@@ -240,9 +232,10 @@ public class APIFreezeTask extends CommonUtilsTask {
 							System.out.println(errors[j]);
 						}
 					}
-					// If a component has a resolver error we either skip the component or
+					// If a component has a resolver error we either skip the
+					// component or
 					// add it to the list component's with errors
-					if (processUnresolvedBundles){
+					if (processUnresolvedBundles) {
 						resolverErrors.put(apiComponent.getSymbolicName(), errors);
 					} else {
 						continue;
@@ -255,38 +248,52 @@ public class APIFreezeTask extends CommonUtilsTask {
 		}
 		return scope;
 	}
-	
+
 	/**
 	 * Set the debug value.
-	 * <p>The possible values are: <code>true</code>, <code>false</code></p>
-	 * <p>Default is <code>false</code>.</p>
-	 *
+	 * <p>
+	 * The possible values are: <code>true</code>, <code>false</code>
+	 * </p>
+	 * <p>
+	 * Default is <code>false</code>.
+	 * </p>
+	 * 
 	 * @param debugValue the given debug value
 	 */
 	public void setDebug(String debugValue) {
-		this.debug = Boolean.toString(true).equals(debugValue); 
+		this.debug = Boolean.toString(true).equals(debugValue);
 	}
-	
+
 	/**
 	 * Set the execution environment file to use.
-	 * <p>By default, an execution environment file corresponding to a JavaSE-1.6 execution environment
-	 * is used.</p>
-	 * <p>The file is specified using an absolute path. This is optional.</p> 
-	 *
+	 * <p>
+	 * By default, an execution environment file corresponding to a JavaSE-1.6
+	 * execution environment is used.
+	 * </p>
+	 * <p>
+	 * The file is specified using an absolute path. This is optional.
+	 * </p>
+	 * 
 	 * @param eeFileLocation the given execution environment file
 	 */
 	public void setEEFile(String eeFileLocation) {
 		this.eeFileLocation = eeFileLocation;
 	}
-	
+
 	/**
 	 * Set the exclude list location.
 	 * 
-	 * <p>The exclude list is used to know what bundles and members should excluded from the xml report
-	 * generated by the task execution. Lines starting with '#' are ignored from
-	 * the excluded element.</p>
-	 * <p>The format of the exclude file looks like this:</p>
-	 * <pre># 229688
+	 * <p>
+	 * The exclude list is used to know what bundles and members should excluded
+	 * from the xml report generated by the task execution. Lines starting with
+	 * '#' are ignored from the excluded element.
+	 * </p>
+	 * <p>
+	 * The format of the exclude file looks like this:
+	 * </p>
+	 * 
+	 * <pre>
+	 * # 229688
 	 * org.eclipse.jface.databinding_1.2.0:org.eclipse.jface.databinding.viewers.ObservableListContentProvider#dispose()V
 	 * org.eclipse.jface.databinding_1.2.0:org.eclipse.jface.databinding.viewers.ObservableListContentProvider#getElements(Ljava/lang/Object;)[Ljava/lang/Object;
 	 * org.eclipse.jface.databinding_1.2.0:org.eclipse.jface.databinding.viewers.ObservableListContentProvider#inputChanged(Lorg/eclipse/jface/viewers/Viewer;Ljava/lang/Object;Ljava/lang/Object;)V
@@ -294,19 +301,25 @@ public class APIFreezeTask extends CommonUtilsTask {
 	 * org.eclipse.jface.databinding_1.2.0:org.eclipse.jface.databinding.viewers.ObservableListTreeContentProvider#getChildren(Ljava/lang/Object;)[Ljava/lang/Object;
 	 * ...
 	 * </pre>
+	 * 
 	 * @param excludeListLocation the given location for the excluded list file
 	 */
 	public void setExcludeList(String excludeListLocation) {
 		this.excludeListLocation = excludeListLocation;
 	}
-	
+
 	/**
 	 * Set the include list location.
 	 * 
-	 * <p>The include list is used to know what bundles and members should included from the xml report
-	 * generated by the task execution. Lines starting with '#' are ignored from
-	 * the included element.</p>
-	 * <p>The format of the include file looks like this:</p>
+	 * <p>
+	 * The include list is used to know what bundles and members should included
+	 * from the xml report generated by the task execution. Lines starting with
+	 * '#' are ignored from the included element.
+	 * </p>
+	 * <p>
+	 * The format of the include file looks like this:
+	 * </p>
+	 * 
 	 * <pre>
 	 * org.eclipse.jface.databinding_1.2.0:org.eclipse.jface.databinding.viewers.ObservableListContentProvider#dispose()V
 	 * org.eclipse.jface.databinding_1.2.0:org.eclipse.jface.databinding.viewers.ObservableListContentProvider#getElements(Ljava/lang/Object;)[Ljava/lang/Object;
@@ -315,39 +328,45 @@ public class APIFreezeTask extends CommonUtilsTask {
 	 * org.eclipse.jface.databinding_1.2.0:org.eclipse.jface.databinding.viewers.ObservableListTreeContentProvider#getChildren(Ljava/lang/Object;)[Ljava/lang/Object;
 	 * ...
 	 * </pre>
+	 * 
 	 * @param includeListLocation the given location for the included list file
 	 */
 	public void setIncludeList(String includeListLocation) {
 		this.includeListLocation = includeListLocation;
 	}
-	
+
 	/**
-	 * Set the location of the current product or baseline that you want to compare against
-	 * the reference baseline.
+	 * Set the location of the current product or baseline that you want to
+	 * compare against the reference baseline.
 	 * 
-	 * <p>It can be a .zip, .jar, .tgz, .tar.gz file, or a directory that corresponds to 
-	 * the Eclipse installation folder. This is the directory is which you can find the 
-	 * Eclipse executable.
+	 * <p>
+	 * It can be a .zip, .jar, .tgz, .tar.gz file, or a directory that
+	 * corresponds to the Eclipse installation folder. This is the directory is
+	 * which you can find the Eclipse executable.
 	 * </p>
-	 *
+	 * 
 	 * @param baselineLocation the given location for the baseline to analyze
 	 */
 	public void setProfile(String baselineLocation) {
 		this.currentBaselineLocation = baselineLocation;
 	}
+
 	/**
 	 * Set the location of the reference baseline.
 	 * 
-	 * <p>It can be a .zip, .jar, .tgz, .tar.gz file, or a directory that corresponds to 
-	 * the Eclipse installation folder. This is the directory is which you can find the 
-	 * Eclipse executable.
+	 * <p>
+	 * It can be a .zip, .jar, .tgz, .tar.gz file, or a directory that
+	 * corresponds to the Eclipse installation folder. This is the directory is
+	 * which you can find the Eclipse executable.
 	 * </p>
-	 *
-	 * @param baselineLocation the given location for the reference baseline to analyze
+	 * 
+	 * @param baselineLocation the given location for the reference baseline to
+	 *            analyze
 	 */
 	public void setBaseline(String baselineLocation) {
 		this.referenceBaselineLocation = baselineLocation;
 	}
+
 	/**
 	 * Set the given report file name to be generated.
 	 * 
@@ -356,19 +375,21 @@ public class APIFreezeTask extends CommonUtilsTask {
 	public void setReport(String reportLocation) {
 		this.reportLocation = reportLocation;
 	}
-	
+
 	/**
-	 * Set whether to continue comparing an api component (bundle) even if it has resolver errors such
-	 * as missing dependencies.  The results of the comparison may not be accurate. A list of the 
-	 * bundles with resolver errors is included in the xml output and is incorporated into the html
-	 * output of the report conversion task.  Defaults to <code>true</code>
+	 * Set whether to continue comparing an api component (bundle) even if it
+	 * has resolver errors such as missing dependencies. The results of the
+	 * comparison may not be accurate. A list of the bundles with resolver
+	 * errors is included in the xml output and is incorporated into the html
+	 * output of the report conversion task. Defaults to <code>true</code>
 	 * 
-	 * @param processUnresolvedBundles whether to continue processing a bundle that has resolver errors
+	 * @param processUnresolvedBundles whether to continue processing a bundle
+	 *            that has resolver errors
 	 */
 	public void setProcessUnresolvedBundles(boolean processUnresolvedBundles) {
 		this.processUnresolvedBundles = processUnresolvedBundles;
 	}
-	
+
 	/**
 	 * Modifies the given doc to add a new element under the root element that
 	 * lists all the components that had resolver errors which could affect the
@@ -377,21 +398,21 @@ public class APIFreezeTask extends CommonUtilsTask {
 	 * @param document xml document to modify
 	 */
 	private void addResolverErrors(Document document) {
-		if (resolverErrors != null && !resolverErrors.isEmpty()){
+		if (resolverErrors != null && !resolverErrors.isEmpty()) {
 			Element errorElement = document.createElement(IApiXmlConstants.ELEMENT_RESOLVER_ERRORS);
-			
+
 			// Create xml elements for each component with resolver errors
 			for (Iterator iterator = resolverErrors.entrySet().iterator(); iterator.hasNext();) {
-				Map.Entry entry = (Map.Entry)iterator.next();
-				String componentID = (String)entry.getKey();
-				
+				Map.Entry entry = (Map.Entry) iterator.next();
+				String componentID = (String) entry.getKey();
+
 				// Use the same format as output from analysis task
 				Element report = document.createElement(IApiXmlConstants.ELEMENT_API_TOOL_REPORT);
 				report.setAttribute(IApiXmlConstants.ATTR_VERSION, IApiXmlConstants.API_REPORT_CURRENT_VERSION);
 				report.setAttribute(IApiXmlConstants.ATTR_COMPONENT_ID, componentID);
 				errorElement.appendChild(report);
-				 
-				ResolverError[] errors = (ResolverError[])entry.getValue();
+
+				ResolverError[] errors = (ResolverError[]) entry.getValue();
 				for (int j = 0; j < errors.length; j++) {
 					Element error = document.createElement(IApiXmlConstants.ELEMENT_RESOLVER_ERROR);
 					error.setAttribute(IApiXmlConstants.ATTR_MESSAGE, errors[j].toString());

@@ -35,7 +35,7 @@ public class SearchEngineTests extends SearchTest {
 			engine.search(null, TEST_REQUESTOR, null, null);
 		}
 		catch(Exception e) {
-			fail("The search engine should not throw an exception: "+e.getMessage());
+			fail("The search engine should not throw an exception: "+e.getMessage()); //$NON-NLS-1$
 		}
 	}
 	
@@ -55,7 +55,7 @@ public class SearchEngineTests extends SearchTest {
 			engine.search(getTestBaseline(), TEST_REQUESTOR, TEST_REPORTER, null);
 		}
 		catch(Exception e) {
-			fail("The search engine should not throw an exception: "+e.getMessage());
+			fail("The search engine should not throw an exception: "+e.getMessage()); //$NON-NLS-1$
 		}
 	}
 	
@@ -76,7 +76,7 @@ public class SearchEngineTests extends SearchTest {
 			engine.search(getTestBaseline(), TEST_REQUESTOR, TEST_REPORTER, null);
 		}
 		catch(Exception e) {
-			fail("The search engine should not throw an exception: "+e.getMessage());
+			fail("The search engine should not throw an exception: "+e.getMessage()); //$NON-NLS-1$
 		}
 	}
 	
@@ -89,7 +89,7 @@ public class SearchEngineTests extends SearchTest {
 			this.scope = getTestScope(DEFAULT_SCOPE_PROJECTS);
 			TEST_REQUESTOR.setScopeBaseline(this.scope);
 			TEST_REQUESTOR.setSearchMask(IApiSearchRequestor.INCLUDE_API | IApiSearchRequestor.INCLUDE_INTERNAL);
-			TEST_REQUESTOR.setExcludedElements(getExcludeSet(getTestBaseline(), "excludeone.txt"));
+			TEST_REQUESTOR.setExcludedElements(getExcludeSet(getTestBaseline(), "excludeone.txt")); //$NON-NLS-1$
 			TEST_REPORTER.setExpectedReferences(
 					new String[] {P2_NAME}, 
 					new int[][] {{IReference.REF_FIELDDECL, IReference.REF_FIELDDECL}});
@@ -97,7 +97,7 @@ public class SearchEngineTests extends SearchTest {
 			engine.search(getTestBaseline(), TEST_REQUESTOR, TEST_REPORTER, null);
 		}
 		catch(Exception e) {
-			fail("The search engine should not throw an exception: "+e.getMessage());
+			fail("The search engine should not throw an exception: "+e.getMessage()); //$NON-NLS-1$
 		}
 	}
 	
@@ -110,14 +110,14 @@ public class SearchEngineTests extends SearchTest {
 			this.scope = getTestScope(DEFAULT_SCOPE_PROJECTS);
 			TEST_REQUESTOR.setScopeBaseline(this.scope);
 			TEST_REQUESTOR.setSearchMask(IApiSearchRequestor.INCLUDE_API | IApiSearchRequestor.INCLUDE_INTERNAL);
-			TEST_REQUESTOR.setExcludedElements(getExcludeSet(getTestBaseline(), "excludeall.txt"));
+			TEST_REQUESTOR.setExcludedElements(getExcludeSet(getTestBaseline(), "excludeall.txt")); //$NON-NLS-1$
 			//expecting no reported references
 			TEST_REPORTER.setExpectedReferences(null, null);
 			TEST_REPORTER.setExpectedNotSearched(new String[] {P1_NAME, P2_NAME, P3_NAME});
 			engine.search(getTestBaseline(), TEST_REQUESTOR, TEST_REPORTER, null);
 		}
 		catch(Exception e) {
-			fail("The search engine should not throw an exception: "+e.getMessage());
+			fail("The search engine should not throw an exception: "+e.getMessage()); //$NON-NLS-1$
 		}
 	}
 	
@@ -130,7 +130,7 @@ public class SearchEngineTests extends SearchTest {
 			this.scope = getTestScope(DEFAULT_SCOPE_PROJECTS);
 			TEST_REQUESTOR.setScopeBaseline(this.scope);
 			TEST_REQUESTOR.setSearchMask(IApiSearchRequestor.INCLUDE_API | IApiSearchRequestor.INCLUDE_INTERNAL);
-			TEST_REQUESTOR.setExcludedElements(getExcludeSet(getTestBaseline(), "excluderegex.txt"));
+			TEST_REQUESTOR.setExcludedElements(getExcludeSet(getTestBaseline(), "excluderegex.txt")); //$NON-NLS-1$
 			TEST_REPORTER.setExpectedReferences(
 					new String[] {P3_NAME}, 
 					new int[][] {{IReference.REF_FIELDDECL, IReference.REF_FIELDDECL}});
@@ -138,7 +138,7 @@ public class SearchEngineTests extends SearchTest {
 			engine.search(getTestBaseline(), TEST_REQUESTOR, TEST_REPORTER, null);
 		}
 		catch(Exception e) {
-			fail("The search engine should not throw an exception: "+e.getMessage());
+			fail("The search engine should not throw an exception: "+e.getMessage()); //$NON-NLS-1$
 		}
 	}
 	
@@ -151,14 +151,14 @@ public class SearchEngineTests extends SearchTest {
 			this.scope = getTestScope(DEFAULT_SCOPE_PROJECTS);
 			TEST_REQUESTOR.setScopeBaseline(this.scope);
 			TEST_REQUESTOR.setSearchMask(IApiSearchRequestor.INCLUDE_API | IApiSearchRequestor.INCLUDE_INTERNAL);
-			TEST_REQUESTOR.setExcludedElements(getExcludeSet(getTestBaseline(), "excluderegexall.txt"));
+			TEST_REQUESTOR.setExcludedElements(getExcludeSet(getTestBaseline(), "excluderegexall.txt")); //$NON-NLS-1$
 			//expecting no reported references
 			TEST_REPORTER.setExpectedReferences(null, null);
 			TEST_REPORTER.setExpectedNotSearched(new String[] {P1_NAME, P2_NAME, P3_NAME});
 			engine.search(getTestBaseline(), TEST_REQUESTOR, TEST_REPORTER, null);
 		}
 		catch(Exception e) {
-			fail("The search engine should not throw an exception: "+e.getMessage());
+			fail("The search engine should not throw an exception: "+e.getMessage()); //$NON-NLS-1$
 		}
 	}
 	
@@ -178,7 +178,7 @@ public class SearchEngineTests extends SearchTest {
 			engine.search(getTestBaseline(), TEST_REQUESTOR, TEST_REPORTER, null);
 		}
 		catch(Exception e) {
-			fail("The search engine should not throw an exception: "+e.getMessage());
+			fail("The search engine should not throw an exception: "+e.getMessage()); //$NON-NLS-1$
 		}
 	}
 	
@@ -198,7 +198,7 @@ public class SearchEngineTests extends SearchTest {
 			engine.search(getTestBaseline(), TEST_REQUESTOR, TEST_REPORTER, null);
 		}
 		catch(Exception e) {
-			fail("The search engine should not throw an exception: "+e.getMessage());
+			fail("The search engine should not throw an exception: "+e.getMessage()); //$NON-NLS-1$
 		}
 	}
 	
@@ -219,7 +219,7 @@ public class SearchEngineTests extends SearchTest {
 			engine.search(getTestBaseline(), TEST_REQUESTOR, TEST_REPORTER, null);
 		}
 		catch(Exception e) {
-			fail("The search engine should not throw an exception: "+e.getMessage());
+			fail("The search engine should not throw an exception: "+e.getMessage()); //$NON-NLS-1$
 		}
 	}
 	
@@ -240,7 +240,7 @@ public class SearchEngineTests extends SearchTest {
 			engine.search(getTestBaseline(), TEST_REQUESTOR, TEST_REPORTER, null);
 		}
 		catch(Exception e) {
-			fail("The search engine should not throw an exception: "+e.getMessage());
+			fail("The search engine should not throw an exception: "+e.getMessage()); //$NON-NLS-1$
 		}
 	}
 }

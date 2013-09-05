@@ -20,24 +20,36 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemTypes;
  * @since 1.1
  */
 public class IllegalExtendsProblemDetector extends AbstractIllegalTypeReference {
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiProblemDetector#getReferenceKinds()
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.provisional.search.IApiProblemDetector
+	 * #getReferenceKinds()
 	 */
+	@Override
 	public int getReferenceKinds() {
 		return IReference.REF_EXTENDS;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.AbstractIllegalTypeReference#getProblemKind()
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.search.AbstractIllegalTypeReference
+	 * #getProblemKind()
 	 */
+	@Override
 	protected int getProblemKind() {
 		return IApiProblem.ILLEGAL_EXTEND;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.AbstractIllegalTypeReference#getSeverityKey()
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.search.AbstractIllegalTypeReference
+	 * #getSeverityKey()
 	 */
+	@Override
 	protected String getSeverityKey() {
 		return IApiProblemTypes.ILLEGAL_EXTEND;
 	}

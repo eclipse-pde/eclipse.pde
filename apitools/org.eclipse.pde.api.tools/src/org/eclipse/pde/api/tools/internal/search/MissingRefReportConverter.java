@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 IBM Corporation and others.
+ * Copyright (c) 2011, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,6 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.TreeMap;
@@ -36,10 +35,10 @@ import org.osgi.framework.Version;
 public class MissingRefReportConverter extends UseReportConverter {
 
 	class MissingRefVisitor {
-		public List reports;
+		public List<Report> reports;
 
 		public void visitScan() {
-			reports = new ArrayList();
+			reports = new ArrayList<Report>();
 		}
 
 		public boolean visitComponent(IComponentDescriptor targetComponent) {
@@ -51,6 +50,7 @@ public class MissingRefReportConverter extends UseReportConverter {
 
 		/**
 		 * Builds the name for the component
+		 * 
 		 * @param id id of the component
 		 * @param version version of the component, can be <code>null</code>
 		 * @return string name
@@ -99,25 +99,26 @@ public class MissingRefReportConverter extends UseReportConverter {
 				StringBuffer typeProblems = new StringBuffer();
 				StringBuffer methodProblems = new StringBuffer();
 				StringBuffer fieldProblems = new StringBuffer();
-				Entry entry = null;
 				Integer key = null;
-				TreeMap types = null;
-				for (Iterator iterator = report.apiProblems.entrySet().iterator(); iterator.hasNext();) {
-					entry = (Entry) iterator.next();
-					key = (Integer) entry.getKey();
-					types = (TreeMap) entry.getValue();
+				TreeMap<String, List<IApiProblem>> types = null;
+				for (Entry<Integer, TreeMap<String, List<IApiProblem>>> entry : report.apiProblems.entrySet()) {
+					key = entry.getKey();
+					types = entry.getValue();
 					switch (key.intValue()) {
-						case IApiProblem.API_USE_SCAN_TYPE_PROBLEM :
+						case IApiProblem.API_USE_SCAN_TYPE_PROBLEM:
 							typeProblems.append(getProblemTable(types));
 							break;
-						case IApiProblem.API_USE_SCAN_METHOD_PROBLEM :
+						case IApiProblem.API_USE_SCAN_METHOD_PROBLEM:
 							methodProblems.append(getProblemTable(types));
 							break;
-						case IApiProblem.API_USE_SCAN_FIELD_PROBLEM :
+						case IApiProblem.API_USE_SCAN_FIELD_PROBLEM:
 							fieldProblems.append(getProblemTable(types));
+							break;
+						default:
+							break;
 					}
 				}
-				buffer.append(getProblemsTableHeader(SearchMessages.MissingRefReportConverter_ProblemDetails, SearchMessages.MissingRefReportConverter_ProblemTypes)); 
+				buffer.append(getProblemsTableHeader(SearchMessages.MissingRefReportConverter_ProblemDetails, SearchMessages.MissingRefReportConverter_ProblemTypes));
 				if (typeProblems.length() > 0) {
 					buffer.append(getProblemRow(typeProblems, SearchMessages.MissingRefReportConverter_Type));
 				}
@@ -125,7 +126,7 @@ public class MissingRefReportConverter extends UseReportConverter {
 					buffer.append(getProblemRow(methodProblems, SearchMessages.MissingRefReportConverter_Method));
 				}
 				if (fieldProblems.length() > 0) {
-					buffer.append(getProblemRow(fieldProblems, SearchMessages.MissingRefReportConverter_Field)); 
+					buffer.append(getProblemRow(fieldProblems, SearchMessages.MissingRefReportConverter_Field));
 				}
 				buffer.append(CLOSE_TABLE);
 
@@ -133,7 +134,7 @@ public class MissingRefReportConverter extends UseReportConverter {
 				buffer.append(W3C_FOOTER);
 				buffer.append(CLOSE_BODY);
 
-				writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(originhtml), IApiCoreConstants.UTF_8));;
+				writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(originhtml), IApiCoreConstants.UTF_8));
 				writer.println(buffer.toString());
 				writer.flush();
 			} catch (IOException ioe) {
@@ -162,23 +163,19 @@ public class MissingRefReportConverter extends UseReportConverter {
 			return buffer;
 		}
 
-		private StringBuffer getProblemTable(TreeMap types) {
+		private StringBuffer getProblemTable(TreeMap<String, List<IApiProblem>> types) {
 			StringBuffer buffer = new StringBuffer();
 			buffer.append("<table width=\"100%\" border=\"0\" cellspacing=\"1\" cellpadding=\"6\">\n"); //$NON-NLS-1$
-			Entry entry = null;
 			String tname = null;
-			ArrayList pbs = null;
-			for (Iterator i = types.entrySet().iterator(); i.hasNext();) {
-				entry = (Entry) i.next();
-				tname = (String) entry.getKey();
-				pbs = (ArrayList) entry.getValue();
+			List<IApiProblem> pbs = null;
+			for (Entry<String, List<IApiProblem>> entry : types.entrySet()) {
+				tname = entry.getKey();
+				pbs = entry.getValue();
 				buffer.append("<tr align=\"left\"> \n"); //$NON-NLS-1$
 				buffer.append("<td colspan=\"1\" bgcolor=\"#CCCCCC\">").append(OPEN_B).append(tname).append(CLOSE_B).append(CLOSE_TD); //$NON-NLS-1$
 				buffer.append(CLOSE_TR);
-				ApiProblem pb = null;
-				Collections.sort(pbs, compare);
-				for (Iterator i2 = pbs.iterator(); i2.hasNext();) {
-					pb = (ApiProblem) i2.next();
+				Collections.sort(pbs, missingcompare);
+				for (IApiProblem pb : pbs) {
 					buffer.append(OPEN_TR);
 					buffer.append("<td align=\"left\" width=\"75%\">").append(pb.getMessage()).append(CLOSE_TD); //$NON-NLS-1$ 
 					buffer.append(CLOSE_TR);
@@ -191,12 +188,14 @@ public class MissingRefReportConverter extends UseReportConverter {
 		private Object getProblemSummary(Report report) {
 			StringBuffer buffer = new StringBuffer();
 			buffer.append(OPEN_H4).append(SearchMessages.MissingRefReportConverter_Summary).append(CLOSE_H4);
-			buffer.append(OPEN_P).append(NLS.bind(SearchMessages.MissingRefReportConverter_SummaryDesc, new String[] {report.name, Integer.toString(report.apiProblems.size())})).append(CLOSE_P);
+			buffer.append(OPEN_P).append(NLS.bind(SearchMessages.MissingRefReportConverter_SummaryDesc, new String[] {
+					report.name, Integer.toString(report.apiProblems.size()) })).append(CLOSE_P);
 			return buffer.toString();
 		}
 
 		/**
 		 * Returns the HTML markup for the problems table header.
+		 * 
 		 * @param sectionname
 		 * @param type
 		 * @return the default references table header
@@ -217,16 +216,16 @@ public class MissingRefReportConverter extends UseReportConverter {
 
 		/**
 		 * @param bundle
-		 * @return the page title 
+		 * @return the page title
 		 */
 		protected String getProblemTitle(String bundle) {
 			return NLS.bind(SearchMessages.MissingRefReportConverter_ProblemTitle, bundle);
 		}
 
-		public void addToCurrentReport(List apiProblems) {
+		public void addToCurrentReport(List<IApiProblem> apiProblems) {
 			currentreport.add(apiProblems);
 		}
-	};
+	}
 
 	private String xmlLocation = null;
 	private String htmlLocation = null;
@@ -234,56 +233,57 @@ public class MissingRefReportConverter extends UseReportConverter {
 	private File htmlIndex = null;
 	Report currentreport = null;
 
-	static final Comparator compare = new Comparator() {
+	static final Comparator<Object> missingcompare = new Comparator<Object>() {
+		@Override
 		public int compare(Object o1, Object o2) {
-			if(o1 instanceof String && o2 instanceof String) {
-				return ((String)o1).compareTo((String)o2);
+			if (o1 instanceof String && o2 instanceof String) {
+				return ((String) o1).compareTo((String) o2);
 			}
-			if(o1 instanceof ApiProblem && o2 instanceof ApiProblem) {
-				return ((ApiProblem)o1).getMessage().compareTo(((ApiProblem)o2).getMessage());
+			if (o1 instanceof ApiProblem && o2 instanceof ApiProblem) {
+				return ((ApiProblem) o1).getMessage().compareTo(((ApiProblem) o2).getMessage());
 			}
 			return 0;
 		}
 	};
-	
+
 	/**
 	 * Root item describing the use of one component
 	 */
 	static class Report {
 		String name = null;
-		TreeMap apiProblems = new TreeMap();
+		TreeMap<Integer, TreeMap<String, List<IApiProblem>>> apiProblems = new TreeMap<Integer, TreeMap<String, List<IApiProblem>>>();
 		int typeProblems = 0;
 		int methodProblems = 0;
 		int fieldProblems = 0;
 
-		public void add(List apiProblems) {
-			ApiProblem pb = null;
-			ArrayList list = null;
-			TreeMap types = null;
-			for (Iterator i = apiProblems.iterator(); i.hasNext();) {
-				pb = (ApiProblem) i.next();
+		public void add(List<IApiProblem> apipbs) {
+			List<IApiProblem> list = null;
+			TreeMap<String, List<IApiProblem>> types = null;
+			for (IApiProblem pb : apipbs) {
 				Integer key = new Integer(pb.getKind());
-				types = (TreeMap) this.apiProblems.get(key);
-				if(types == null) {
-					types = new TreeMap(compare);
+				types = this.apiProblems.get(key);
+				if (types == null) {
+					types = new TreeMap<String, List<IApiProblem>>(missingcompare);
 					this.apiProblems.put(key, types);
 				}
 				String tname = pb.getTypeName();
-				list = (ArrayList) types.get(tname);
-				if(list == null) {
-					list = new ArrayList();
+				list = types.get(tname);
+				if (list == null) {
+					list = new ArrayList<IApiProblem>();
 					types.put(tname, list);
 				}
 				list.add(pb);
 				switch (pb.getKind()) {
-					case 1 :
+					case 1:
 						++typeProblems;
 						break;
-					case 2 :
+					case 2:
 						++methodProblems;
 						break;
-					case 3 :
+					case 3:
 						++fieldProblems;
+						break;
+					default:
 						break;
 				}
 			}
@@ -296,8 +296,10 @@ public class MissingRefReportConverter extends UseReportConverter {
 
 	/**
 	 * Constructor
+	 * 
 	 * @param htmlroot the folder root where the HTML reports should be written
-	 * @param xmlroot the folder root where the current API use scan output is located
+	 * @param xmlroot the folder root where the current API use scan output is
+	 *            located
 	 */
 	public MissingRefReportConverter(String htmlroot, String xmlroot) {
 		super(htmlroot, xmlroot, null, null);
@@ -305,9 +307,13 @@ public class MissingRefReportConverter extends UseReportConverter {
 		this.htmlLocation = htmlroot;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.UseReportConverter#convert(java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.search.UseReportConverter#convert(
+	 * java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public void convert(String xslt, IProgressMonitor monitor) throws Exception {
 		File htmlRoot = new File(this.htmlLocation);
 		if (!htmlRoot.exists()) {
@@ -317,8 +323,8 @@ public class MissingRefReportConverter extends UseReportConverter {
 		} else {
 			htmlRoot.mkdirs();
 		}
-		File reportsRoot = getReportsRoot();
-		if (!reportsRoot.exists() || !reportsRoot.isDirectory()) {
+		File lreportsRoot = getReportsRoot();
+		if (!lreportsRoot.exists() || !lreportsRoot.isDirectory()) {
 			throw new Exception(NLS.bind(SearchMessages.invalid_directory_name, this.xmlLocation));
 		}
 
@@ -333,7 +339,7 @@ public class MissingRefReportConverter extends UseReportConverter {
 			System.out.println("Parsing use scan..."); //$NON-NLS-1$
 			start = System.currentTimeMillis();
 		}
-		List result = parse();
+		List<?> result = parse();
 		if (ApiPlugin.DEBUG_USE_REPORT_CONVERTER) {
 			System.out.println("done in: " + (System.currentTimeMillis() - start) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$
 			System.out.println("Sorting reports and writing index..."); //$NON-NLS-1$
@@ -341,13 +347,17 @@ public class MissingRefReportConverter extends UseReportConverter {
 		}
 		writeIndexPage(result);
 	}
-	
+
 	/**
 	 * Writes the main index file for the reports
-	 * @param result a list of {@link Report} objects returns from the use scan parser
+	 * 
+	 * @param result a list of {@link Report} objects returns from the use scan
+	 *            parser
 	 */
-	void writeIndexPage(List result) throws Exception {
-		Collections.sort(result, new Comparator() {
+	@Override
+	protected void writeIndexPage(List<?> result) throws Exception {
+		Collections.sort(result, new Comparator<Object>() {
+			@Override
 			public int compare(Object o1, Object o2) {
 				return ((Report) o1).name.compareTo(((Report) o2).name);
 			}
@@ -359,7 +369,7 @@ public class MissingRefReportConverter extends UseReportConverter {
 			if (!reportIndex.exists()) {
 				reportIndex.createNewFile();
 			}
-//			setReportIndex(reportIndex);
+			// setReportIndex(reportIndex);
 
 			StringBuffer buffer = new StringBuffer();
 			buffer.append(HTML_HEADER);
@@ -373,21 +383,21 @@ public class MissingRefReportConverter extends UseReportConverter {
 			writeMetadataSummary(buffer);
 
 			buffer.append(OPEN_H4).append(SearchMessages.MissingRefReportConverter_AddlBundleInfo).append(CLOSE_H4);
-//			if(hasMissing()) {
-//				buffer.append(OPEN_P); 
-//				buffer.append(NLS.bind(SearchMessages.UseReportConverter_missing_bundles_prevented_scan, 
-//						new String[] {" <a href=\"./missing.html\">", "</a>"})); //$NON-NLS-1$ //$NON-NLS-2$
-//				buffer.append(CLOSE_P); 
-//			}
+			// if(hasMissing()) {
+			// buffer.append(OPEN_P);
+			// buffer.append(NLS.bind(SearchMessages.UseReportConverter_missing_bundles_prevented_scan,
+			//						new String[] {" <a href=\"./missing.html\">", "</a>"})); //$NON-NLS-1$ //$NON-NLS-2$
+			// buffer.append(CLOSE_P);
+			// }
 			buffer.append(OPEN_P);
-			buffer.append(NLS.bind(SearchMessages.MissingRefReportConverter_NotSearched, new String[] {"<a href=\"./not_searched.html\">", "</a></p>\n"}));  //$NON-NLS-1$//$NON-NLS-2$
+			buffer.append(NLS.bind(SearchMessages.MissingRefReportConverter_NotSearched, new String[] {
+					"<a href=\"./not_searched.html\">", "</a></p>\n" })); //$NON-NLS-1$//$NON-NLS-2$
 			if (result.size() > 0) {
 				buffer.append(getProblemSummaryTable());
 				if (result.size() > 0) {
-					Report report = null;
-					for (Iterator iter = result.iterator(); iter.hasNext();) {
-						report = (Report) iter.next();
-						if (report != null) {
+					for (Object obj : result) {
+						if (obj instanceof Report) {
+							Report report = (Report) obj;
 							File refereehtml = new File(getReportsRoot(), report.name + File.separator + "index.html"); //$NON-NLS-1$
 							String link = extractLinkFrom(getReportsRoot(), refereehtml.getAbsolutePath());
 							buffer.append(getReferenceTableEntry(report, link));
@@ -396,12 +406,12 @@ public class MissingRefReportConverter extends UseReportConverter {
 					buffer.append(CLOSE_TABLE);
 				}
 			} else {
-				buffer.append(getNoReportsInformation()); 
+				buffer.append(getNoReportsInformation());
 			}
 			buffer.append(W3C_FOOTER);
 			buffer.append(CLOSE_BODY).append(CLOSE_HTML);
 
-			//write the file
+			// write the file
 			writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(reportIndex), IApiCoreConstants.UTF_8));
 			writer.print(buffer.toString());
 			writer.flush();
@@ -414,17 +424,21 @@ public class MissingRefReportConverter extends UseReportConverter {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.UseReportConverter#getNoReportsInformation()
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.search.UseReportConverter#
+	 * getNoReportsInformation()
 	 */
+	@Override
 	protected String getNoReportsInformation() {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append(OPEN_P).append(BR).append(SearchMessages.no_use_scan_ref_problems).append(CLOSE_P); 
+		buffer.append(OPEN_P).append(BR).append(SearchMessages.no_use_scan_ref_problems).append(CLOSE_P);
 		return buffer.toString();
 	}
-	
+
 	/**
 	 * Returns the HTML markup for one entry in the problem summary table.
+	 * 
 	 * @param report
 	 * @param link
 	 * @return a single reference table entry
@@ -449,31 +463,32 @@ public class MissingRefReportConverter extends UseReportConverter {
 		buffer.append("<table border=\"1\" width=\"80%\">\n"); //$NON-NLS-1$
 		buffer.append(OPEN_TR);
 		buffer.append("\t<td bgcolor=\"").append(REFERENCES_TABLE_HEADER_COLOUR).append("\" width=\"25%\" title=\""); //$NON-NLS-1$ //$NON-NLS-2$
-		buffer.append(SearchMessages.MissingRefReportConverter_ProblemTable_ColumnBundleTooltip).append("\"\">");  //$NON-NLS-1$
+		buffer.append(SearchMessages.MissingRefReportConverter_ProblemTable_ColumnBundleTooltip).append("\"\">"); //$NON-NLS-1$
 		buffer.append(OPEN_B).append(SearchMessages.MissingRefReportConverter_ProblemTable_ColumnBundle).append(CLOSE_B).append(CLOSE_TD);
-		//version header
+		// version header
 		buffer.append("\t<td bgcolor=\"").append(REFERENCES_TABLE_HEADER_COLOUR).append("\" align=\"center\" width=\"15%\" title=\""); //$NON-NLS-1$ //$NON-NLS-2$
-		buffer.append(SearchMessages.MissingRefReportConverter_ProblemTable_ColumnVersionTooltip).append("\"\">");  //$NON-NLS-1$
+		buffer.append(SearchMessages.MissingRefReportConverter_ProblemTable_ColumnVersionTooltip).append("\"\">"); //$NON-NLS-1$
 		buffer.append(OPEN_B).append(SearchMessages.MissingRefReportConverter_ProblemTable_ColumnVersion).append(CLOSE_B).append(CLOSE_TD);
-		//Missing Types
+		// Missing Types
 		buffer.append("\t<td bgcolor=\"").append(REFERENCES_TABLE_HEADER_COLOUR).append("\" align=\"center\" width=\"15%\" title=\""); //$NON-NLS-1$ //$NON-NLS-2$
-		buffer.append(SearchMessages.MissingRefReportConverter_ProblemTable_ColumnMissingTypesTooltip).append("\">");  //$NON-NLS-1$
+		buffer.append(SearchMessages.MissingRefReportConverter_ProblemTable_ColumnMissingTypesTooltip).append("\">"); //$NON-NLS-1$
 		buffer.append(OPEN_B).append(SearchMessages.MissingRefReportConverter_ProblemTable_ColumnMissingTypes).append(CLOSE_B).append(CLOSE_TD);
-		//Missing Methods
+		// Missing Methods
 		buffer.append("\t<td bgcolor=\"").append(REFERENCES_TABLE_HEADER_COLOUR).append("\" align=\"center\" width=\"15%\" title=\""); //$NON-NLS-1$ //$NON-NLS-2$
-		buffer.append(SearchMessages.MissingRefReportConverter_ProblemTable_ColumnMissingMethodsTooltip).append("\">");  //$NON-NLS-1$
+		buffer.append(SearchMessages.MissingRefReportConverter_ProblemTable_ColumnMissingMethodsTooltip).append("\">"); //$NON-NLS-1$
 		buffer.append(OPEN_B).append(SearchMessages.MissingRefReportConverter_ProblemTable_ColumnMissingMethods).append(CLOSE_B).append(CLOSE_TD);
-		//Missing Fields
+		// Missing Fields
 		buffer.append("\t<td bgcolor=\"").append(REFERENCES_TABLE_HEADER_COLOUR).append("\" align=\"center\" width=\"15%\" title=\""); //$NON-NLS-1$ //$NON-NLS-2$
-		buffer.append(SearchMessages.MissingRefReportConverter_ProblemTable_ColumnMissingFieldsTooltip).append("\">");  //$NON-NLS-1$
+		buffer.append(SearchMessages.MissingRefReportConverter_ProblemTable_ColumnMissingFieldsTooltip).append("\">"); //$NON-NLS-1$
 		buffer.append(OPEN_B).append(SearchMessages.MissingRefReportConverter_ProblemTable_ColumnMissingFields).append(CLOSE_B).append(CLOSE_TD);
-		//Total
+		// Total
 		buffer.append("\t<td bgcolor=\"").append(REFERENCES_TABLE_HEADER_COLOUR).append("\" align=\"center\" width=\"15%\" title=\""); //$NON-NLS-1$ //$NON-NLS-2$
-		buffer.append(SearchMessages.MissingRefReportConverter_ProblemTable_ColumnTotalTooltip).append("\">");  //$NON-NLS-1$
+		buffer.append(SearchMessages.MissingRefReportConverter_ProblemTable_ColumnTotalTooltip).append("\">"); //$NON-NLS-1$
 		buffer.append(OPEN_B).append(SearchMessages.MissingRefReportConverter_ProblemTable_ColumnTotal).append(CLOSE_B).append(CLOSE_TD);
 		return buffer;
 	}
 
+	@Override
 	void writeMetadataSummary(StringBuffer buffer) throws Exception {
 		MissingRefMetadata metadata = (MissingRefMetadata) getMetadata();
 		buffer.append(OPEN_H4).append(SearchMessages.MissingRefReportConverter_MetadataTitle).append(CLOSE_H4);
@@ -507,61 +522,84 @@ public class MissingRefReportConverter extends UseReportConverter {
 		buffer.append(CLOSE_TABLE);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.UseReportConverter#getMetadata()
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.search.UseReportConverter#getMetadata
+	 * ()
 	 */
+	@Override
 	IMetadata getMetadata() throws Exception {
 		File xmlFile = new File(getReportsRoot(), "meta" + XML_EXTENSION); //$NON-NLS-1$
 		if (!xmlFile.exists()) {
-			//try looking in the default 'xml' directory as a raw report root
-			//might have been specified
+			// try looking in the default 'xml' directory as a raw report root
+			// might have been specified
 			xmlFile = new File(getReportsRoot() + File.separator + "xml", "meta" + XML_EXTENSION); //$NON-NLS-1$//$NON-NLS-2$
 		}
 		return MissingRefMetadata.getMetadata(xmlFile);
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.UseReportConverter#getIndexTitle()
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.search.UseReportConverter#getIndexTitle
+	 * ()
 	 */
+	@Override
 	protected String getIndexTitle() {
 		return SearchMessages.MissingRefReportConverter_ReportTitle;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.UseReportConverter#writeMetadataHeaders(java.lang.StringBuffer)
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.search.UseReportConverter#
+	 * writeMetadataHeaders(java.lang.StringBuffer)
 	 */
+	@Override
 	protected void writeMetadataHeaders(StringBuffer buffer) {
 		buffer.append("<meta name=\"").append("description").append("\" content=\"").append(SearchMessages.MissingRefReportConverter_IndexMetaTag).append("\">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ 
 	}
 
 	/**
-	 * Parse the xml directories and report.xml and generate html for them
+	 * Parse the XML directories and report.xml and generate HTML for them
 	 */
-	protected List parse() throws Exception {
-		MissingRefParser parser = new MissingRefParser();
+	protected List<?> parse() throws Exception {
+		MissingRefParser lparser = new MissingRefParser();
 		MissingRefVisitor visitor = new MissingRefVisitor();
-		parser.parse(getXmlLocation(), visitor);
+		lparser.parse(getXmlLocation(), visitor);
 		return visitor.reports;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.UseReportConverter#getHtmlLocation()
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.search.UseReportConverter#getHtmlLocation
+	 * ()
 	 */
+	@Override
 	protected String getHtmlLocation() {
 		return this.htmlLocation;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.UseReportConverter#getXmlLocation()
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.search.UseReportConverter#getXmlLocation
+	 * ()
 	 */
+	@Override
 	protected String getXmlLocation() {
 		return this.xmlLocation;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.UseReportConverter#getReportsRoot()
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.search.UseReportConverter#getReportsRoot
+	 * ()
 	 */
+	@Override
 	protected File getReportsRoot() {
 		if (this.reportsRoot == null) {
 			this.reportsRoot = new File(getXmlLocation());
@@ -569,15 +607,18 @@ public class MissingRefReportConverter extends UseReportConverter {
 		return this.reportsRoot;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.UseReportConverter#getReportIndex()
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.search.UseReportConverter#getReportIndex
+	 * ()
 	 */
+	@Override
 	public File getReportIndex() {
-		//TODO remove if
+		// TODO remove if
 		if (htmlIndex == null) {
 			return new File(htmlLocation);
-		}
-		else {
+		} else {
 			return htmlIndex;
 		}
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,10 +19,11 @@ import org.eclipse.pde.internal.core.PluginModelDelta;
  * 
  * since 1.0.0
  */
+@SuppressWarnings("restriction")
 public class PluginModelEventWaiter extends AbstractApiEventWaiter implements IPluginModelListener {
 
 	private int fKind = -1;
-	
+
 	/**
 	 * Constructor
 	 */
@@ -30,21 +31,28 @@ public class PluginModelEventWaiter extends AbstractApiEventWaiter implements IP
 		this.fKind = kind;
 		PDECore.getDefault().getModelManager().addPluginModelListener(this);
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.IPluginModelListener#modelsChanged(org.eclipse.pde.internal.core.PluginModelDelta)
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.internal.core.IPluginModelListener#modelsChanged(org.
+	 * eclipse.pde.internal.core.PluginModelDelta)
 	 */
+	@Override
 	public synchronized void modelsChanged(PluginModelDelta delta) {
-		if(delta.getKind() == fKind) {
+		if (delta.getKind() == fKind) {
 			setEvent(delta);
 			notifyAll();
 			unregister();
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.util.tests.AbstractApiEventWaiter#unregister()
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.util.tests.AbstractApiEventWaiter#unregister()
 	 */
+	@Override
 	protected void unregister() {
 		PDECore.getDefault().getModelManager().removePluginModelListener(this);
 	}

@@ -145,39 +145,39 @@ public class ApiDescriptionTests extends TestCase {
 	protected IApiDescription buildManifest() {
 		IApiDescription manifest = newDescription();
 		// add packages to the manifest with default rules - public API
-		manifest.setVisibility(Factory.packageDescriptor(""), VisibilityModifiers.API);
-		manifest.setVisibility(Factory.packageDescriptor("a.b.c"), VisibilityModifiers.API);
-		manifest.setVisibility(Factory.packageDescriptor("a.b.c.spi"), VisibilityModifiers.SPI);
-		manifest.setVisibility(Factory.packageDescriptor("a.b.c.internal"), VisibilityModifiers.PRIVATE);
+		manifest.setVisibility(Factory.packageDescriptor(""), VisibilityModifiers.API); //$NON-NLS-1$
+		manifest.setVisibility(Factory.packageDescriptor("a.b.c"), VisibilityModifiers.API); //$NON-NLS-1$
+		manifest.setVisibility(Factory.packageDescriptor("a.b.c.spi"), VisibilityModifiers.SPI); //$NON-NLS-1$
+		manifest.setVisibility(Factory.packageDescriptor("a.b.c.internal"), VisibilityModifiers.PRIVATE); //$NON-NLS-1$
 		
 		// add type specific settings
-		manifest.setRestrictions(Factory.typeDescriptor("B"), RestrictionModifiers.NO_INSTANTIATE);
-		manifest.setRestrictions(Factory.typeDescriptor("C"), RestrictionModifiers.NO_EXTEND | RestrictionModifiers.NO_INSTANTIATE);
-		manifest.setRestrictions(Factory.typeDescriptor("D"), RestrictionModifiers.NO_REFERENCE);
-		manifest.setRestrictions(Factory.typeDescriptor("IB"), RestrictionModifiers.NO_IMPLEMENT);
+		manifest.setRestrictions(Factory.typeDescriptor("B"), RestrictionModifiers.NO_INSTANTIATE); //$NON-NLS-1$
+		manifest.setRestrictions(Factory.typeDescriptor("C"), RestrictionModifiers.NO_EXTEND | RestrictionModifiers.NO_INSTANTIATE); //$NON-NLS-1$
+		manifest.setRestrictions(Factory.typeDescriptor("D"), RestrictionModifiers.NO_REFERENCE); //$NON-NLS-1$
+		manifest.setRestrictions(Factory.typeDescriptor("IB"), RestrictionModifiers.NO_IMPLEMENT); //$NON-NLS-1$
 		
-		manifest.setRestrictions(Factory.typeDescriptor("a.b.c.A"), RestrictionModifiers.NO_EXTEND | RestrictionModifiers.NO_INSTANTIATE);
-		manifest.setRestrictions(Factory.typeDescriptor("a.b.c.C"), RestrictionModifiers.NO_EXTEND);
-		manifest.setRestrictions(Factory.typeDescriptor("a.b.c.D"), RestrictionModifiers.NO_INSTANTIATE);
-		manifest.setRestrictions(Factory.typeDescriptor("a.b.c.IC"), RestrictionModifiers.NO_IMPLEMENT);
+		manifest.setRestrictions(Factory.typeDescriptor("a.b.c.A"), RestrictionModifiers.NO_EXTEND | RestrictionModifiers.NO_INSTANTIATE); //$NON-NLS-1$
+		manifest.setRestrictions(Factory.typeDescriptor("a.b.c.C"), RestrictionModifiers.NO_EXTEND); //$NON-NLS-1$
+		manifest.setRestrictions(Factory.typeDescriptor("a.b.c.D"), RestrictionModifiers.NO_INSTANTIATE); //$NON-NLS-1$
+		manifest.setRestrictions(Factory.typeDescriptor("a.b.c.IC"), RestrictionModifiers.NO_IMPLEMENT); //$NON-NLS-1$
 		
-		manifest.setRestrictions(Factory.typeDescriptor("a.b.c.spi.SpiB"), RestrictionModifiers.NO_EXTEND);
-		manifest.setRestrictions(Factory.typeDescriptor("a.b.c.spi.SpiC"), RestrictionModifiers.NO_INSTANTIATE);
-		manifest.setRestrictions(Factory.typeDescriptor("a.b.c.spi.SpiD"), RestrictionModifiers.NO_EXTEND | RestrictionModifiers.NO_INSTANTIATE);
-		manifest.setRestrictions(Factory.typeDescriptor("a.b.c.spi.SpiE"), RestrictionModifiers.NO_REFERENCE);
-		manifest.setRestrictions(Factory.typeDescriptor("a.b.c.spi.ISpiB"), RestrictionModifiers.NO_IMPLEMENT);		
+		manifest.setRestrictions(Factory.typeDescriptor("a.b.c.spi.SpiB"), RestrictionModifiers.NO_EXTEND); //$NON-NLS-1$
+		manifest.setRestrictions(Factory.typeDescriptor("a.b.c.spi.SpiC"), RestrictionModifiers.NO_INSTANTIATE); //$NON-NLS-1$
+		manifest.setRestrictions(Factory.typeDescriptor("a.b.c.spi.SpiD"), RestrictionModifiers.NO_EXTEND | RestrictionModifiers.NO_INSTANTIATE); //$NON-NLS-1$
+		manifest.setRestrictions(Factory.typeDescriptor("a.b.c.spi.SpiE"), RestrictionModifiers.NO_REFERENCE); //$NON-NLS-1$
+		manifest.setRestrictions(Factory.typeDescriptor("a.b.c.spi.ISpiB"), RestrictionModifiers.NO_IMPLEMENT);		 //$NON-NLS-1$
 		
 		//add method specific settings
-		manifest.setRestrictions(Factory.methodDescriptor("B", "m1", Signature.createMethodSignature(new String[0], Signature.SIG_VOID)), RestrictionModifiers.NO_OVERRIDE);
-		manifest.setRestrictions(Factory.methodDescriptor("a.b.c.A","m2", Signature.createMethodSignature(new String[0], Signature.SIG_VOID)), RestrictionModifiers.NO_REFERENCE);
-		manifest.setRestrictions(Factory.methodDescriptor("a.b.c.spi.SpiB","m3", Signature.createMethodSignature(new String[0], Signature.SIG_VOID)), RestrictionModifiers.NO_RESTRICTIONS);
-		manifest.setRestrictions(Factory.methodDescriptor("a.b.c.spi.SpiC", "m4", Signature.createMethodSignature(new String[0], Signature.SIG_VOID)), RestrictionModifiers.NO_OVERRIDE);
+		manifest.setRestrictions(Factory.methodDescriptor("B", "m1", Signature.createMethodSignature(new String[0], Signature.SIG_VOID)), RestrictionModifiers.NO_OVERRIDE); //$NON-NLS-1$ //$NON-NLS-2$
+		manifest.setRestrictions(Factory.methodDescriptor("a.b.c.A","m2", Signature.createMethodSignature(new String[0], Signature.SIG_VOID)), RestrictionModifiers.NO_REFERENCE); //$NON-NLS-1$ //$NON-NLS-2$
+		manifest.setRestrictions(Factory.methodDescriptor("a.b.c.spi.SpiB","m3", Signature.createMethodSignature(new String[0], Signature.SIG_VOID)), RestrictionModifiers.NO_RESTRICTIONS); //$NON-NLS-1$ //$NON-NLS-2$
+		manifest.setRestrictions(Factory.methodDescriptor("a.b.c.spi.SpiC", "m4", Signature.createMethodSignature(new String[0], Signature.SIG_VOID)), RestrictionModifiers.NO_OVERRIDE); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		//add field specific settings
-		manifest.setRestrictions(Factory.fieldDescriptor("D", "f1"), RestrictionModifiers.NO_REFERENCE);
-		manifest.setRestrictions(Factory.fieldDescriptor("a.b.c.D","f2"), RestrictionModifiers.NO_REFERENCE);
-		manifest.setRestrictions(Factory.fieldDescriptor("a.b.c.spi.SpiD","f3"), RestrictionModifiers.NO_RESTRICTIONS);
-		manifest.setRestrictions(Factory.fieldDescriptor("a.b.c.spi.SpiC", "f4"), RestrictionModifiers.NO_REFERENCE);
+		manifest.setRestrictions(Factory.fieldDescriptor("D", "f1"), RestrictionModifiers.NO_REFERENCE); //$NON-NLS-1$ //$NON-NLS-2$
+		manifest.setRestrictions(Factory.fieldDescriptor("a.b.c.D","f2"), RestrictionModifiers.NO_REFERENCE); //$NON-NLS-1$ //$NON-NLS-2$
+		manifest.setRestrictions(Factory.fieldDescriptor("a.b.c.spi.SpiD","f3"), RestrictionModifiers.NO_RESTRICTIONS); //$NON-NLS-1$ //$NON-NLS-2$
+		manifest.setRestrictions(Factory.fieldDescriptor("a.b.c.spi.SpiC", "f4"), RestrictionModifiers.NO_REFERENCE); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		return manifest;
 	}
@@ -187,29 +187,29 @@ public class ApiDescriptionTests extends TestCase {
 	 */
 	protected IApiDescription buildModifiableManifest() {
 		IApiDescription desc = newDescription();
-		desc.setVisibility(Factory.packageDescriptor("a.b.c"), VisibilityModifiers.API);
-		desc.setVisibility(Factory.packageDescriptor(""), VisibilityModifiers.SPI);
-		IElementDescriptor element = Factory.typeDescriptor("C"); 
+		desc.setVisibility(Factory.packageDescriptor("a.b.c"), VisibilityModifiers.API); //$NON-NLS-1$
+		desc.setVisibility(Factory.packageDescriptor(""), VisibilityModifiers.SPI); //$NON-NLS-1$
+		IElementDescriptor element = Factory.typeDescriptor("C");  //$NON-NLS-1$
 		desc.setRestrictions(element, RestrictionModifiers.NO_EXTEND | RestrictionModifiers.NO_INSTANTIATE);
 		desc.setVisibility(element, VisibilityModifiers.PRIVATE);
 		
-		element = Factory.typeDescriptor("a.b.c.D");
+		element = Factory.typeDescriptor("a.b.c.D"); //$NON-NLS-1$
 		desc.setRestrictions(element, RestrictionModifiers.NO_REFERENCE);
 		desc.setVisibility(element, VisibilityModifiers.PRIVATE);
 		
-		element = Factory.methodDescriptor("C", "m1", Signature.createMethodSignature(new String[0], Signature.SIG_VOID));
+		element = Factory.methodDescriptor("C", "m1", Signature.createMethodSignature(new String[0], Signature.SIG_VOID)); //$NON-NLS-1$ //$NON-NLS-2$
 		desc.setRestrictions(element, RestrictionModifiers.NO_OVERRIDE);
 		desc.setVisibility(element, VisibilityModifiers.PRIVATE);
 		
-		element = Factory.methodDescriptor("a.b.c.A","m2", Signature.createMethodSignature(new String[0], Signature.SIG_VOID));
+		element = Factory.methodDescriptor("a.b.c.A","m2", Signature.createMethodSignature(new String[0], Signature.SIG_VOID)); //$NON-NLS-1$ //$NON-NLS-2$
 		desc.setRestrictions(element, RestrictionModifiers.NO_REFERENCE);
 		desc.setVisibility(element, VisibilityModifiers.PRIVATE);
 		
-		element = Factory.fieldDescriptor("D", "f1");
+		element = Factory.fieldDescriptor("D", "f1"); //$NON-NLS-1$ //$NON-NLS-2$
 		desc.setRestrictions(element, RestrictionModifiers.NO_REFERENCE);
 		desc.setVisibility(element, VisibilityModifiers.PRIVATE);
 		
-		element = Factory.fieldDescriptor("a.b.c","f2");
+		element = Factory.fieldDescriptor("a.b.c","f2"); //$NON-NLS-1$ //$NON-NLS-2$
 		desc.setRestrictions(element, RestrictionModifiers.NO_REFERENCE);
 		desc.setVisibility(element, VisibilityModifiers.PRIVATE);
 		return desc;
@@ -274,39 +274,39 @@ public class ApiDescriptionTests extends TestCase {
 	 */
 	public void testRestoreFromXML() throws FileNotFoundException, IOException, CoreException {
 		IPath path = TestSuiteHelper.getPluginDirectoryPath();
-		path = path.append("test-xml");
+		path = path.append("test-xml"); //$NON-NLS-1$
 		File file = path.toFile();
-		assertTrue("Missing xml directory", file.exists());
-		IApiBaseline baseline = TestSuiteHelper.newApiBaseline("test", TestSuiteHelper.getEEDescriptionFile());
+		assertTrue("Missing xml directory", file.exists()); //$NON-NLS-1$
+		IApiBaseline baseline = TestSuiteHelper.newApiBaseline("test", TestSuiteHelper.getEEDescriptionFile()); //$NON-NLS-1$
 		IApiComponent component = ApiModelFactory.newApiComponent(baseline, file.getAbsolutePath());
 		baseline.addApiComponents(new IApiComponent[] { component });
 		
-		IPackageDescriptor defPkgDesc = Factory.packageDescriptor("");
+		IPackageDescriptor defPkgDesc = Factory.packageDescriptor(""); //$NON-NLS-1$
 		ElementDescription defPkg = new ElementDescription(defPkgDesc, VisibilityModifiers.API, RestrictionModifiers.NO_RESTRICTIONS);
-			ElementDescription B = new ElementDescription(defPkgDesc.getType("B"), VisibilityModifiers.API, RestrictionModifiers.NO_INSTANTIATE);
-				ElementDescription m1 = new ElementDescription(defPkgDesc.getType("B").getMethod("m1", Signature.createMethodSignature(new String[0],Signature.SIG_VOID)), VisibilityModifiers.API, RestrictionModifiers.NO_OVERRIDE);
-			ElementDescription C = new ElementDescription(defPkgDesc.getType("C"), VisibilityModifiers.API, RestrictionModifiers.NO_EXTEND | RestrictionModifiers.NO_INSTANTIATE);
-			ElementDescription D = new ElementDescription(defPkgDesc.getType("D"), VisibilityModifiers.API, RestrictionModifiers.NO_RESTRICTIONS);
-				ElementDescription f1 = new ElementDescription(defPkgDesc.getType("D").getField("f1"), VisibilityModifiers.API, RestrictionModifiers.NO_REFERENCE);
-			ElementDescription IB = new ElementDescription(defPkgDesc.getType("IB"), VisibilityModifiers.API, RestrictionModifiers.NO_IMPLEMENT);
-		IPackageDescriptor abcPkgDesc = Factory.packageDescriptor("a.b.c");
+			ElementDescription B = new ElementDescription(defPkgDesc.getType("B"), VisibilityModifiers.API, RestrictionModifiers.NO_INSTANTIATE); //$NON-NLS-1$
+				ElementDescription m1 = new ElementDescription(defPkgDesc.getType("B").getMethod("m1", Signature.createMethodSignature(new String[0],Signature.SIG_VOID)), VisibilityModifiers.API, RestrictionModifiers.NO_OVERRIDE); //$NON-NLS-1$ //$NON-NLS-2$
+			ElementDescription C = new ElementDescription(defPkgDesc.getType("C"), VisibilityModifiers.API, RestrictionModifiers.NO_EXTEND | RestrictionModifiers.NO_INSTANTIATE); //$NON-NLS-1$
+			ElementDescription D = new ElementDescription(defPkgDesc.getType("D"), VisibilityModifiers.API, RestrictionModifiers.NO_RESTRICTIONS); //$NON-NLS-1$
+				ElementDescription f1 = new ElementDescription(defPkgDesc.getType("D").getField("f1"), VisibilityModifiers.API, RestrictionModifiers.NO_REFERENCE); //$NON-NLS-1$ //$NON-NLS-2$
+			ElementDescription IB = new ElementDescription(defPkgDesc.getType("IB"), VisibilityModifiers.API, RestrictionModifiers.NO_IMPLEMENT); //$NON-NLS-1$
+		IPackageDescriptor abcPkgDesc = Factory.packageDescriptor("a.b.c"); //$NON-NLS-1$
 		ElementDescription abcPkg = new ElementDescription(abcPkgDesc, VisibilityModifiers.API, RestrictionModifiers.NO_RESTRICTIONS);
-			ElementDescription abcA = new ElementDescription(abcPkgDesc.getType("A"), VisibilityModifiers.API, RestrictionModifiers.NO_EXTEND | RestrictionModifiers.NO_INSTANTIATE);
-				ElementDescription abcAm2 = new ElementDescription(abcPkgDesc.getType("A").getMethod("m2", Signature.createMethodSignature(new String[0], Signature.SIG_VOID)), VisibilityModifiers.API, RestrictionModifiers.NO_REFERENCE);
-			ElementDescription abcC = new ElementDescription(abcPkgDesc.getType("C"), VisibilityModifiers.API, RestrictionModifiers.NO_EXTEND);
-			ElementDescription abcD = new ElementDescription(abcPkgDesc.getType("D"), VisibilityModifiers.API, RestrictionModifiers.NO_INSTANTIATE);
-				ElementDescription abcDf2 = new ElementDescription(abcPkgDesc.getType("D").getField("f2"), VisibilityModifiers.API, RestrictionModifiers.NO_REFERENCE);
-			ElementDescription abcIC = new ElementDescription(abcPkgDesc.getType("IC"), VisibilityModifiers.API, RestrictionModifiers.NO_IMPLEMENT);
-		IPackageDescriptor spiPkgDesc = Factory.packageDescriptor("a.b.c.spi");
+			ElementDescription abcA = new ElementDescription(abcPkgDesc.getType("A"), VisibilityModifiers.API, RestrictionModifiers.NO_EXTEND | RestrictionModifiers.NO_INSTANTIATE); //$NON-NLS-1$
+				ElementDescription abcAm2 = new ElementDescription(abcPkgDesc.getType("A").getMethod("m2", Signature.createMethodSignature(new String[0], Signature.SIG_VOID)), VisibilityModifiers.API, RestrictionModifiers.NO_REFERENCE); //$NON-NLS-1$ //$NON-NLS-2$
+			ElementDescription abcC = new ElementDescription(abcPkgDesc.getType("C"), VisibilityModifiers.API, RestrictionModifiers.NO_EXTEND); //$NON-NLS-1$
+			ElementDescription abcD = new ElementDescription(abcPkgDesc.getType("D"), VisibilityModifiers.API, RestrictionModifiers.NO_INSTANTIATE); //$NON-NLS-1$
+				ElementDescription abcDf2 = new ElementDescription(abcPkgDesc.getType("D").getField("f2"), VisibilityModifiers.API, RestrictionModifiers.NO_REFERENCE); //$NON-NLS-1$ //$NON-NLS-2$
+			ElementDescription abcIC = new ElementDescription(abcPkgDesc.getType("IC"), VisibilityModifiers.API, RestrictionModifiers.NO_IMPLEMENT); //$NON-NLS-1$
+		IPackageDescriptor spiPkgDesc = Factory.packageDescriptor("a.b.c.spi"); //$NON-NLS-1$
 		ElementDescription spiPkg = new ElementDescription(spiPkgDesc, VisibilityModifiers.API, RestrictionModifiers.NO_RESTRICTIONS);
-			ElementDescription spiB = new ElementDescription(spiPkgDesc.getType("SpiB"), VisibilityModifiers.API, RestrictionModifiers.NO_EXTEND);
-			ElementDescription spiC = new ElementDescription(spiPkgDesc.getType("SpiC"), VisibilityModifiers.API, RestrictionModifiers.NO_INSTANTIATE);
-				ElementDescription spiCf4 = new ElementDescription(spiPkgDesc.getType("SpiC").getField("f4"), VisibilityModifiers.API, RestrictionModifiers.NO_REFERENCE);
-				ElementDescription spiCm4 = new ElementDescription(spiPkgDesc.getType("SpiC").getMethod("m4", Signature.createMethodSignature(new String[0], Signature.SIG_VOID)), VisibilityModifiers.API, RestrictionModifiers.NO_OVERRIDE);
-			ElementDescription spiD = new ElementDescription(spiPkgDesc.getType("SpiD"), VisibilityModifiers.API, RestrictionModifiers.NO_EXTEND | RestrictionModifiers.NO_INSTANTIATE);
-			ElementDescription spiE = new ElementDescription(spiPkgDesc.getType("SpiE"), VisibilityModifiers.API, RestrictionModifiers.NO_RESTRICTIONS);
-			ElementDescription IspiB = new ElementDescription(spiPkgDesc.getType("ISpiB"), VisibilityModifiers.API, RestrictionModifiers.NO_IMPLEMENT);
-		IPackageDescriptor intPkgDesc = Factory.packageDescriptor("a.b.c.internal");
+			ElementDescription spiB = new ElementDescription(spiPkgDesc.getType("SpiB"), VisibilityModifiers.API, RestrictionModifiers.NO_EXTEND); //$NON-NLS-1$
+			ElementDescription spiC = new ElementDescription(spiPkgDesc.getType("SpiC"), VisibilityModifiers.API, RestrictionModifiers.NO_INSTANTIATE); //$NON-NLS-1$
+				ElementDescription spiCf4 = new ElementDescription(spiPkgDesc.getType("SpiC").getField("f4"), VisibilityModifiers.API, RestrictionModifiers.NO_REFERENCE); //$NON-NLS-1$ //$NON-NLS-2$
+				ElementDescription spiCm4 = new ElementDescription(spiPkgDesc.getType("SpiC").getMethod("m4", Signature.createMethodSignature(new String[0], Signature.SIG_VOID)), VisibilityModifiers.API, RestrictionModifiers.NO_OVERRIDE); //$NON-NLS-1$ //$NON-NLS-2$
+			ElementDescription spiD = new ElementDescription(spiPkgDesc.getType("SpiD"), VisibilityModifiers.API, RestrictionModifiers.NO_EXTEND | RestrictionModifiers.NO_INSTANTIATE); //$NON-NLS-1$
+			ElementDescription spiE = new ElementDescription(spiPkgDesc.getType("SpiE"), VisibilityModifiers.API, RestrictionModifiers.NO_RESTRICTIONS); //$NON-NLS-1$
+			ElementDescription IspiB = new ElementDescription(spiPkgDesc.getType("ISpiB"), VisibilityModifiers.API, RestrictionModifiers.NO_IMPLEMENT); //$NON-NLS-1$
+		IPackageDescriptor intPkgDesc = Factory.packageDescriptor("a.b.c.internal"); //$NON-NLS-1$
 		ElementDescription intPkg = new ElementDescription(intPkgDesc, VisibilityModifiers.PRIVATE, RestrictionModifiers.NO_RESTRICTIONS);
 		
 		final List<ElementDescription> visitOrder = new ArrayList<ElementDescription>();
@@ -346,25 +346,27 @@ public class ApiDescriptionTests extends TestCase {
 		visitOrder.add(spiPkg); // end a.b.c.spi
 				
 		ApiDescriptionVisitor visitor = new ApiDescriptionVisitor() {
+			@Override
 			public boolean visitElement(IElementDescriptor element, IApiAnnotations description) {
 				ElementDescription expected = visitOrder.remove(0);
-				assertEquals("Wrong begin visit element", expected.fElement, element);
-				assertEquals("Wrong begin visit visibility", expected.fVis, description.getVisibility());
-				assertEquals("Wrong begin visit restrictions for ", expected.fRes, description.getRestrictions());
+				assertEquals("Wrong begin visit element", expected.fElement, element); //$NON-NLS-1$
+				assertEquals("Wrong begin visit visibility", expected.fVis, description.getVisibility()); //$NON-NLS-1$
+				assertEquals("Wrong begin visit restrictions for ", expected.fRes, description.getRestrictions()); //$NON-NLS-1$
 				return true;
 			}
 		
+			@Override
 			public void endVisitElement(IElementDescriptor element, IApiAnnotations description) {
 				ElementDescription expected = visitOrder.remove(0);
-				assertEquals("Wrong end visit element", expected.fElement, element);
-				assertEquals("Wrong end visit visibility", expected.fVis, description.getVisibility());
-				assertEquals("Wrong end visit restrictions", expected.fRes, description.getRestrictions());
+				assertEquals("Wrong end visit element", expected.fElement, element); //$NON-NLS-1$
+				assertEquals("Wrong end visit visibility", expected.fVis, description.getVisibility()); //$NON-NLS-1$
+				assertEquals("Wrong end visit restrictions", expected.fRes, description.getRestrictions()); //$NON-NLS-1$
 			}
 		};
 		
 		component.getApiDescription().accept(visitor, null);
 		
-		assertEquals("Visit incomplete", 0, visitOrder.size());
+		assertEquals("Visit incomplete", 0, visitOrder.size()); //$NON-NLS-1$
 		baseline.dispose();
 	}
 	
@@ -391,9 +393,9 @@ public class ApiDescriptionTests extends TestCase {
 	public void testPersistRestoreXML() throws CoreException, IOException {
 		// read XML into API settings
 		IPath path = TestSuiteHelper.getPluginDirectoryPath();
-		path = path.append("test-xml");
+		path = path.append("test-xml"); //$NON-NLS-1$
 		File file = path.toFile();
-		assertTrue("Missing xml directory", file.exists());
+		assertTrue("Missing xml directory", file.exists()); //$NON-NLS-1$
 		File descfile = new File(file, IApiCoreConstants.API_DESCRIPTION_XML_NAME);
 		String readXML = null;
 		if (descfile.exists()) {
@@ -413,7 +415,7 @@ public class ApiDescriptionTests extends TestCase {
 		ApiDescriptionProcessor.annotateApiSettings(null, settings, readXML);
 		
 		// write back to XML and then re-create
-		IApiComponent component = TestSuiteHelper.createTestingApiComponent("test", "test", settings);
+		IApiComponent component = TestSuiteHelper.createTestingApiComponent("test", "test", settings); //$NON-NLS-1$ //$NON-NLS-2$
 		String writeXML = getApiDescriptionXML(component);
 		
 		IApiDescription restored = new ApiDescription(null); 
@@ -427,6 +429,7 @@ public class ApiDescriptionTests extends TestCase {
 			/* (non-Javadoc)
 			 * @see org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor#visitElement(org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor, org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations)
 			 */
+			@Override
 			public boolean visitElement(IElementDescriptor element, IApiAnnotations description) {
 				visitOrder.add(new ElementDescription(null, element, description.getVisibility(), description.getRestrictions()));
 				return super.visitElement(element, description);
@@ -434,6 +437,7 @@ public class ApiDescriptionTests extends TestCase {
 			/* (non-Javadoc)
 			 * @see org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor#endVisitElement(org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor, org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations)
 			 */
+			@Override
 			public void endVisitElement(IElementDescriptor element, IApiAnnotations description) {
 				visitOrder.add(new ElementDescription(null, element, description.getVisibility(), description.getRestrictions()));
 				super.endVisitElement(element, description);
@@ -446,64 +450,66 @@ public class ApiDescriptionTests extends TestCase {
 			/* (non-Javadoc)
 			 * @see org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor#visitElement(org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor, org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations)
 			 */
+			@Override
 			public boolean visitElement(IElementDescriptor element, IApiAnnotations description) {
 				ElementDescription expected = visitOrder.remove(0);
-				assertEquals("Wrong begin visit element", expected.fElement, element);
-				assertEquals("Wrong begin visit component", expected.fComponent, null);
-				assertEquals("Wrong begin visit visibility", expected.fVis, description.getVisibility());
-				assertEquals("Wrong begin visit restrictions", expected.fRes, description.getRestrictions());
+				assertEquals("Wrong begin visit element", expected.fElement, element); //$NON-NLS-1$
+				assertEquals("Wrong begin visit component", expected.fComponent, null); //$NON-NLS-1$
+				assertEquals("Wrong begin visit visibility", expected.fVis, description.getVisibility()); //$NON-NLS-1$
+				assertEquals("Wrong begin visit restrictions", expected.fRes, description.getRestrictions()); //$NON-NLS-1$
 				return true;
 			}
 
 			/* (non-Javadoc)
 			 * @see org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor#endVisitElement(org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor, org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations)
 			 */
+			@Override
 			public void endVisitElement(IElementDescriptor element, IApiAnnotations description) {
 				ElementDescription expected = visitOrder.remove(0);
-				assertEquals("Wrong end visit element", expected.fElement, element);
-				assertEquals("Wrong end visit component", expected.fComponent, null);
-				assertEquals("Wrong end visit visibility", expected.fVis, description.getVisibility());
-				assertEquals("Wrong end visit restrictions", expected.fRes, description.getRestrictions());
+				assertEquals("Wrong end visit element", expected.fElement, element); //$NON-NLS-1$
+				assertEquals("Wrong end visit component", expected.fComponent, null); //$NON-NLS-1$
+				assertEquals("Wrong end visit visibility", expected.fVis, description.getVisibility()); //$NON-NLS-1$
+				assertEquals("Wrong end visit restrictions", expected.fRes, description.getRestrictions()); //$NON-NLS-1$
 			}
 		};
 		
 		restored.accept(visitor, null);
 		
-		assertEquals("Visit incomplete", 0, visitOrder.size());		
+		assertEquals("Visit incomplete", 0, visitOrder.size());		 //$NON-NLS-1$
 	}
 	
 	/**
 	 * Test visiting types
 	 */
 	protected void doVisitTypes(IApiDescription manifest) {
-		IPackageDescriptor defPkgDesc= Factory.packageDescriptor("");
+		IPackageDescriptor defPkgDesc= Factory.packageDescriptor(""); //$NON-NLS-1$
 		ElementDescription defPkg = new ElementDescription(defPkgDesc, VisibilityModifiers.API, RestrictionModifiers.NO_RESTRICTIONS);
-			ElementDescription B = new ElementDescription(defPkgDesc.getType("B"), VisibilityModifiers.API, RestrictionModifiers.NO_INSTANTIATE);
-			ElementDescription m1 = new ElementDescription(defPkgDesc.getType("B").getMethod("m1", Signature.createMethodSignature(new String[0], Signature.SIG_VOID)), VisibilityModifiers.API, RestrictionModifiers.NO_OVERRIDE);
-			ElementDescription C = new ElementDescription(defPkgDesc.getType("C"), VisibilityModifiers.API, RestrictionModifiers.NO_EXTEND | RestrictionModifiers.NO_INSTANTIATE);
-			ElementDescription D = new ElementDescription(defPkgDesc.getType("D"), VisibilityModifiers.API, RestrictionModifiers.NO_REFERENCE);
-				ElementDescription f1 = new ElementDescription(defPkgDesc.getType("D").getField("f1"), VisibilityModifiers.API, RestrictionModifiers.NO_REFERENCE);
-			ElementDescription IB = new ElementDescription(defPkgDesc.getType("IB"), VisibilityModifiers.API, RestrictionModifiers.NO_IMPLEMENT);
-		IPackageDescriptor abcPkgDesc = Factory.packageDescriptor("a.b.c");
+			ElementDescription B = new ElementDescription(defPkgDesc.getType("B"), VisibilityModifiers.API, RestrictionModifiers.NO_INSTANTIATE); //$NON-NLS-1$
+			ElementDescription m1 = new ElementDescription(defPkgDesc.getType("B").getMethod("m1", Signature.createMethodSignature(new String[0], Signature.SIG_VOID)), VisibilityModifiers.API, RestrictionModifiers.NO_OVERRIDE);  //$NON-NLS-1$//$NON-NLS-2$
+			ElementDescription C = new ElementDescription(defPkgDesc.getType("C"), VisibilityModifiers.API, RestrictionModifiers.NO_EXTEND | RestrictionModifiers.NO_INSTANTIATE); //$NON-NLS-1$
+			ElementDescription D = new ElementDescription(defPkgDesc.getType("D"), VisibilityModifiers.API, RestrictionModifiers.NO_REFERENCE); //$NON-NLS-1$
+				ElementDescription f1 = new ElementDescription(defPkgDesc.getType("D").getField("f1"), VisibilityModifiers.API, RestrictionModifiers.NO_REFERENCE); //$NON-NLS-1$ //$NON-NLS-2$
+			ElementDescription IB = new ElementDescription(defPkgDesc.getType("IB"), VisibilityModifiers.API, RestrictionModifiers.NO_IMPLEMENT); //$NON-NLS-1$
+		IPackageDescriptor abcPkgDesc = Factory.packageDescriptor("a.b.c"); //$NON-NLS-1$
 		ElementDescription abcPkg = new ElementDescription(abcPkgDesc, VisibilityModifiers.API, RestrictionModifiers.NO_RESTRICTIONS);
-			ElementDescription abcA = new ElementDescription(abcPkgDesc.getType("A"), VisibilityModifiers.API, RestrictionModifiers.NO_EXTEND | RestrictionModifiers.NO_INSTANTIATE);
-			ElementDescription abcAm2 = new ElementDescription(abcPkgDesc.getType("A").getMethod("m2", Signature.createMethodSignature(new String[0], Signature.SIG_VOID)), VisibilityModifiers.API, RestrictionModifiers.NO_REFERENCE);
-			ElementDescription abcC = new ElementDescription(abcPkgDesc.getType("C"), VisibilityModifiers.API, RestrictionModifiers.NO_EXTEND);
-			ElementDescription abcD = new ElementDescription(abcPkgDesc.getType("D"), VisibilityModifiers.API, RestrictionModifiers.NO_INSTANTIATE);
-				ElementDescription abcDf2 = new ElementDescription(abcPkgDesc.getType("D").getField("f2"), VisibilityModifiers.API, RestrictionModifiers.NO_REFERENCE);
-			ElementDescription abcIC = new ElementDescription(abcPkgDesc.getType("IC"), VisibilityModifiers.API, RestrictionModifiers.NO_IMPLEMENT);
-		IPackageDescriptor spiPkgDesc = Factory.packageDescriptor("a.b.c.spi");
+			ElementDescription abcA = new ElementDescription(abcPkgDesc.getType("A"), VisibilityModifiers.API, RestrictionModifiers.NO_EXTEND | RestrictionModifiers.NO_INSTANTIATE); //$NON-NLS-1$
+			ElementDescription abcAm2 = new ElementDescription(abcPkgDesc.getType("A").getMethod("m2", Signature.createMethodSignature(new String[0], Signature.SIG_VOID)), VisibilityModifiers.API, RestrictionModifiers.NO_REFERENCE); //$NON-NLS-1$ //$NON-NLS-2$
+			ElementDescription abcC = new ElementDescription(abcPkgDesc.getType("C"), VisibilityModifiers.API, RestrictionModifiers.NO_EXTEND); //$NON-NLS-1$
+			ElementDescription abcD = new ElementDescription(abcPkgDesc.getType("D"), VisibilityModifiers.API, RestrictionModifiers.NO_INSTANTIATE); //$NON-NLS-1$
+				ElementDescription abcDf2 = new ElementDescription(abcPkgDesc.getType("D").getField("f2"), VisibilityModifiers.API, RestrictionModifiers.NO_REFERENCE); //$NON-NLS-1$ //$NON-NLS-2$
+			ElementDescription abcIC = new ElementDescription(abcPkgDesc.getType("IC"), VisibilityModifiers.API, RestrictionModifiers.NO_IMPLEMENT); //$NON-NLS-1$
+		IPackageDescriptor spiPkgDesc = Factory.packageDescriptor("a.b.c.spi"); //$NON-NLS-1$
 		ElementDescription spiPkg = new ElementDescription(spiPkgDesc, VisibilityModifiers.SPI, RestrictionModifiers.NO_RESTRICTIONS);
-			ElementDescription spiB = new ElementDescription(spiPkgDesc.getType("SpiB"), VisibilityModifiers.SPI, RestrictionModifiers.NO_EXTEND);
-			ElementDescription spiBm3 = new ElementDescription(spiPkgDesc.getType("SpiB").getMethod("m3", Signature.createMethodSignature(new String[0], Signature.SIG_VOID)), VisibilityModifiers.SPI, RestrictionModifiers.NO_RESTRICTIONS);
-			ElementDescription spiC = new ElementDescription(spiPkgDesc.getType("SpiC"), VisibilityModifiers.SPI, RestrictionModifiers.NO_INSTANTIATE);
-				ElementDescription spiCf4 = new ElementDescription(spiPkgDesc.getType("SpiC").getField("f4"), VisibilityModifiers.SPI, RestrictionModifiers.NO_REFERENCE);
-				ElementDescription spiCm4 = new ElementDescription(spiPkgDesc.getType("SpiC").getMethod("m4", Signature.createMethodSignature(new String[0], Signature.SIG_VOID)), VisibilityModifiers.SPI, RestrictionModifiers.NO_OVERRIDE);
-			ElementDescription spiD = new ElementDescription(spiPkgDesc.getType("SpiD"), VisibilityModifiers.SPI, RestrictionModifiers.NO_EXTEND | RestrictionModifiers.NO_INSTANTIATE);
-				ElementDescription spiDf3 = new ElementDescription(spiPkgDesc.getType("SpiD").getField("f3"), VisibilityModifiers.SPI, RestrictionModifiers.NO_RESTRICTIONS);
-			ElementDescription spiE = new ElementDescription(spiPkgDesc.getType("SpiE"), VisibilityModifiers.SPI, RestrictionModifiers.NO_REFERENCE);
-			ElementDescription IspiB = new ElementDescription(spiPkgDesc.getType("ISpiB"), VisibilityModifiers.SPI, RestrictionModifiers.NO_IMPLEMENT);
-		IPackageDescriptor intPkgDesc = Factory.packageDescriptor("a.b.c.internal");
+			ElementDescription spiB = new ElementDescription(spiPkgDesc.getType("SpiB"), VisibilityModifiers.SPI, RestrictionModifiers.NO_EXTEND); //$NON-NLS-1$
+			ElementDescription spiBm3 = new ElementDescription(spiPkgDesc.getType("SpiB").getMethod("m3", Signature.createMethodSignature(new String[0], Signature.SIG_VOID)), VisibilityModifiers.SPI, RestrictionModifiers.NO_RESTRICTIONS); //$NON-NLS-1$ //$NON-NLS-2$
+			ElementDescription spiC = new ElementDescription(spiPkgDesc.getType("SpiC"), VisibilityModifiers.SPI, RestrictionModifiers.NO_INSTANTIATE); //$NON-NLS-1$
+				ElementDescription spiCf4 = new ElementDescription(spiPkgDesc.getType("SpiC").getField("f4"), VisibilityModifiers.SPI, RestrictionModifiers.NO_REFERENCE); //$NON-NLS-1$ //$NON-NLS-2$
+				ElementDescription spiCm4 = new ElementDescription(spiPkgDesc.getType("SpiC").getMethod("m4", Signature.createMethodSignature(new String[0], Signature.SIG_VOID)), VisibilityModifiers.SPI, RestrictionModifiers.NO_OVERRIDE); //$NON-NLS-1$ //$NON-NLS-2$
+			ElementDescription spiD = new ElementDescription(spiPkgDesc.getType("SpiD"), VisibilityModifiers.SPI, RestrictionModifiers.NO_EXTEND | RestrictionModifiers.NO_INSTANTIATE); //$NON-NLS-1$
+				ElementDescription spiDf3 = new ElementDescription(spiPkgDesc.getType("SpiD").getField("f3"), VisibilityModifiers.SPI, RestrictionModifiers.NO_RESTRICTIONS); //$NON-NLS-1$ //$NON-NLS-2$
+			ElementDescription spiE = new ElementDescription(spiPkgDesc.getType("SpiE"), VisibilityModifiers.SPI, RestrictionModifiers.NO_REFERENCE); //$NON-NLS-1$
+			ElementDescription IspiB = new ElementDescription(spiPkgDesc.getType("ISpiB"), VisibilityModifiers.SPI, RestrictionModifiers.NO_IMPLEMENT); //$NON-NLS-1$
+		IPackageDescriptor intPkgDesc = Factory.packageDescriptor("a.b.c.internal"); //$NON-NLS-1$
 		ElementDescription intPkg = new ElementDescription(intPkgDesc, VisibilityModifiers.PRIVATE, RestrictionModifiers.NO_RESTRICTIONS);
 		
 		final List<ElementDescription> visitOrder = new ArrayList<ElementDescription>();
@@ -545,36 +551,38 @@ public class ApiDescriptionTests extends TestCase {
 		visitOrder.add(spiPkg); // end a.b.c.spi
 				
 		ApiDescriptionVisitor visitor = new ApiDescriptionVisitor() {
+			@Override
 			public boolean visitElement(IElementDescriptor element, IApiAnnotations description) {
 				ElementDescription expected = visitOrder.remove(0);
-				assertEquals("Wrong begin visit element", expected.fElement, element);
-				assertEquals("Wrong begin visit visibility", expected.fVis, description.getVisibility());
-				assertEquals("Wrong begin visit restrictions", expected.fRes, description.getRestrictions());
+				assertEquals("Wrong begin visit element", expected.fElement, element); //$NON-NLS-1$
+				assertEquals("Wrong begin visit visibility", expected.fVis, description.getVisibility()); //$NON-NLS-1$
+				assertEquals("Wrong begin visit restrictions", expected.fRes, description.getRestrictions()); //$NON-NLS-1$
 				return true;
 			}
 		
+			@Override
 			public void endVisitElement(IElementDescriptor element, IApiAnnotations description) {
 				ElementDescription expected = visitOrder.remove(0);
-				assertEquals("Wrong end visit element", expected.fElement, element);
-				assertEquals("Wrong end visit visibility", expected.fVis, description.getVisibility());
-				assertEquals("Wrong end visit restrictions", expected.fRes, description.getRestrictions());
+				assertEquals("Wrong end visit element", expected.fElement, element); //$NON-NLS-1$
+				assertEquals("Wrong end visit visibility", expected.fVis, description.getVisibility()); //$NON-NLS-1$
+				assertEquals("Wrong end visit restrictions", expected.fRes, description.getRestrictions()); //$NON-NLS-1$
 			}
 		};
 		
 		manifest.accept(visitor, null);
 		
-		assertEquals("Visit incomplete", 0, visitOrder.size());
+		assertEquals("Visit incomplete", 0, visitOrder.size()); //$NON-NLS-1$
 	}
 
 	/**
 	 * Tests visiting packages
 	 */
 	public void testVisitPackages() {
-		ElementDescription defPkg = new ElementDescription(Factory.packageDescriptor(""), VisibilityModifiers.API, RestrictionModifiers.NO_RESTRICTIONS);
-		ElementDescription abcPkg = new ElementDescription(Factory.packageDescriptor("a.b.c"), VisibilityModifiers.API, RestrictionModifiers.NO_RESTRICTIONS);
-		ElementDescription spiPkg = new ElementDescription(Factory.packageDescriptor("a.b.c.spi"), VisibilityModifiers.SPI, RestrictionModifiers.NO_RESTRICTIONS);
+		ElementDescription defPkg = new ElementDescription(Factory.packageDescriptor(""), VisibilityModifiers.API, RestrictionModifiers.NO_RESTRICTIONS); //$NON-NLS-1$
+		ElementDescription abcPkg = new ElementDescription(Factory.packageDescriptor("a.b.c"), VisibilityModifiers.API, RestrictionModifiers.NO_RESTRICTIONS); //$NON-NLS-1$
+		ElementDescription spiPkg = new ElementDescription(Factory.packageDescriptor("a.b.c.spi"), VisibilityModifiers.SPI, RestrictionModifiers.NO_RESTRICTIONS); //$NON-NLS-1$
 		//ElementDescription spiPkgForNoFriend = new ElementDescription("no.friend", Factory.packageDescriptor("a.b.c.spi"), VisibilityModifiers.PRIVATE, RestrictionModifiers.NO_RESTRICTIONS);
-		ElementDescription intPkg = new ElementDescription(Factory.packageDescriptor("a.b.c.internal"), VisibilityModifiers.PRIVATE, RestrictionModifiers.NO_RESTRICTIONS);
+		ElementDescription intPkg = new ElementDescription(Factory.packageDescriptor("a.b.c.internal"), VisibilityModifiers.PRIVATE, RestrictionModifiers.NO_RESTRICTIONS); //$NON-NLS-1$
 		//ElementDescription intPkgForFriend = new ElementDescription("a.friend", Factory.packageDescriptor("a.b.c.internal"), VisibilityModifiers.API, RestrictionModifiers.NO_RESTRICTIONS);
 		
 		final List<ElementDescription> visitOrder = new ArrayList<ElementDescription>();
@@ -588,26 +596,28 @@ public class ApiDescriptionTests extends TestCase {
 		visitOrder.add(spiPkg); // end a.b.c.spi
 				
 		ApiDescriptionVisitor visitor = new ApiDescriptionVisitor() {
+			@Override
 			public boolean visitElement(IElementDescriptor element, IApiAnnotations description) {
 				ElementDescription expected = visitOrder.remove(0);
-				assertEquals("Wrong begin visit element", expected.fElement, element);
-				assertEquals("Wrong begin visit visibility", expected.fVis, description.getVisibility());
-				assertEquals("Wrong begin visit restrictions", expected.fRes, description.getRestrictions());
+				assertEquals("Wrong begin visit element", expected.fElement, element); //$NON-NLS-1$
+				assertEquals("Wrong begin visit visibility", expected.fVis, description.getVisibility()); //$NON-NLS-1$
+				assertEquals("Wrong begin visit restrictions", expected.fRes, description.getRestrictions()); //$NON-NLS-1$
 				return false;
 			}
 		
+			@Override
 			public void endVisitElement(IElementDescriptor element, IApiAnnotations description) {
 				ElementDescription expected = visitOrder.remove(0);
-				assertEquals("Wrong end visit element", expected.fElement, element);
-				assertEquals("Wrong end visit visibility", expected.fVis, description.getVisibility());
-				assertEquals("Wrong end visit restrictions", expected.fRes, description.getRestrictions());
+				assertEquals("Wrong end visit element", expected.fElement, element); //$NON-NLS-1$
+				assertEquals("Wrong end visit visibility", expected.fVis, description.getVisibility()); //$NON-NLS-1$
+				assertEquals("Wrong end visit restrictions", expected.fRes, description.getRestrictions()); //$NON-NLS-1$
 			}
 		};
 		
 		IApiDescription manifest = buildManifest();
 		manifest.accept(visitor, null);
 		
-		assertEquals("Visit incomplete", 0, visitOrder.size());
+		assertEquals("Visit incomplete", 0, visitOrder.size()); //$NON-NLS-1$
 	}	
 	
 	/**
@@ -615,12 +625,12 @@ public class ApiDescriptionTests extends TestCase {
 	 * and not performing an insertion for missing elements throws an NPE
 	 */
 	public void test209335() {
-		String typename = "x.y.z.209335";
+		String typename = "x.y.z.209335"; //$NON-NLS-1$
 		String packageName = Signatures.getPackageName(typename);
 		String tName = Signatures.getTypeName(typename);
 		IReferenceTypeDescriptor type = Factory.packageDescriptor(packageName).getType(tName);
 		IApiAnnotations description = fManifest.resolveAnnotations(type);
-		assertTrue("The description must be null", description == null);
+		assertTrue("The description must be null", description == null); //$NON-NLS-1$
 	}
 	
 	/**
@@ -635,8 +645,8 @@ public class ApiDescriptionTests extends TestCase {
 		String tName = Signatures.getTypeName(typeName);
 		IReferenceTypeDescriptor type = Factory.packageDescriptor(packageName).getType(tName);
 		IApiAnnotations description = fManifest.resolveAnnotations(type);
-		assertEquals("Wrong visibility", expectedVisibility, description.getVisibility());
-		assertEquals("Wrong restrictions", expectedRestrictions, description.getRestrictions());
+		assertEquals("Wrong visibility", expectedVisibility, description.getVisibility()); //$NON-NLS-1$
+		assertEquals("Wrong restrictions", expectedRestrictions, description.getRestrictions()); //$NON-NLS-1$
 	}
 		
 	/**
@@ -644,28 +654,28 @@ public class ApiDescriptionTests extends TestCase {
 	 * Note that 'A' has not been added to the manifest
 	 */
 	public void testADefPkg() {
-		resolveType("A", VisibilityModifiers.API, RestrictionModifiers.NO_RESTRICTIONS);
+		resolveType("A", VisibilityModifiers.API, RestrictionModifiers.NO_RESTRICTIONS); //$NON-NLS-1$
 	}
 	
 	/**
 	 * Tests API description: B = API with no instantiate.
 	 */
 	public void testBDefPkg() {
-		resolveType("B", VisibilityModifiers.API, RestrictionModifiers.NO_INSTANTIATE);
+		resolveType("B", VisibilityModifiers.API, RestrictionModifiers.NO_INSTANTIATE); //$NON-NLS-1$
 	}
 	
 	/**
 	 * Tests API description: C = API with no instantiate, no subclass.
 	 */
 	public void testCDefPkg() {
-		resolveType("C", VisibilityModifiers.API, RestrictionModifiers.NO_EXTEND | RestrictionModifiers.NO_INSTANTIATE);
+		resolveType("C", VisibilityModifiers.API, RestrictionModifiers.NO_EXTEND | RestrictionModifiers.NO_INSTANTIATE); //$NON-NLS-1$
 	}	
 	
 	/**
 	 * Tests API description: D = API with no reference.
 	 */
 	public void testDDefPkg() {
-		resolveType("D", VisibilityModifiers.API, RestrictionModifiers.NO_REFERENCE);
+		resolveType("D", VisibilityModifiers.API, RestrictionModifiers.NO_REFERENCE); //$NON-NLS-1$
 	}		
 		
 	/**
@@ -673,21 +683,21 @@ public class ApiDescriptionTests extends TestCase {
 	 * Note that this type is not explicitly in the manifest.
 	 */
 	public void testIADefPkg() {
-		resolveType("IA", VisibilityModifiers.API, RestrictionModifiers.NO_RESTRICTIONS);
+		resolveType("IA", VisibilityModifiers.API, RestrictionModifiers.NO_RESTRICTIONS); //$NON-NLS-1$
 	}
 	
 	/**
 	 * Tests API description: IB = API with no implement.
 	 */
 	public void testIBDefPkg() {
-		resolveType("IB", VisibilityModifiers.API, RestrictionModifiers.NO_IMPLEMENT);
+		resolveType("IB", VisibilityModifiers.API, RestrictionModifiers.NO_IMPLEMENT); //$NON-NLS-1$
 	}
 	
 	/**
 	 * Tests API description: a.b.c.A = API with no instantiate, no subclass.
 	 */
 	public void testAApiPkg() {
-		resolveType("a.b.c.A", VisibilityModifiers.API, RestrictionModifiers.NO_INSTANTIATE | RestrictionModifiers.NO_EXTEND);
+		resolveType("a.b.c.A", VisibilityModifiers.API, RestrictionModifiers.NO_INSTANTIATE | RestrictionModifiers.NO_EXTEND); //$NON-NLS-1$
 	}
 	
 	/**
@@ -695,28 +705,28 @@ public class ApiDescriptionTests extends TestCase {
 	 * Note that this type is not explicitly in the manifest.
 	 */
 	public void testBApiPkg() {
-		resolveType("a.b.c.B", VisibilityModifiers.API, RestrictionModifiers.NO_RESTRICTIONS);
+		resolveType("a.b.c.B", VisibilityModifiers.API, RestrictionModifiers.NO_RESTRICTIONS); //$NON-NLS-1$
 	}		
 	
 	/**
 	 * Tests API description: a.b.c.C = API with no subclass.
 	 */
 	public void testCApiPkg() {
-		resolveType("a.b.c.C", VisibilityModifiers.API, RestrictionModifiers.NO_EXTEND);
+		resolveType("a.b.c.C", VisibilityModifiers.API, RestrictionModifiers.NO_EXTEND); //$NON-NLS-1$
 	}
 	
 	/**
 	 * Tests API description: a.b.c.D = API with no instantiate.
 	 */
 	public void testDApiPkg() {
-		resolveType("a.b.c.D", VisibilityModifiers.API, RestrictionModifiers.NO_INSTANTIATE);
+		resolveType("a.b.c.D", VisibilityModifiers.API, RestrictionModifiers.NO_INSTANTIATE); //$NON-NLS-1$
 	}		
 	
 	/**
 	 * Tests API description: a.b.c.IC = API with no implement.
 	 */
 	public void testICApiPkg() {
-		resolveType("a.b.c.IC", VisibilityModifiers.API, RestrictionModifiers.NO_IMPLEMENT);
+		resolveType("a.b.c.IC", VisibilityModifiers.API, RestrictionModifiers.NO_IMPLEMENT); //$NON-NLS-1$
 	}
 	
 	/**
@@ -724,7 +734,7 @@ public class ApiDescriptionTests extends TestCase {
 	 * Note that this type is not explicitly in the manifest.
 	 */
 	public void testIDApiPkg() {
-		resolveType("a.b.c.ID", VisibilityModifiers.API, RestrictionModifiers.NO_RESTRICTIONS);
+		resolveType("a.b.c.ID", VisibilityModifiers.API, RestrictionModifiers.NO_RESTRICTIONS); //$NON-NLS-1$
 	}
 	
 	/**
@@ -732,35 +742,35 @@ public class ApiDescriptionTests extends TestCase {
 	 * Note that this type is not explicitly in the manifest.
 	 */
 	public void testASpiPkg() {
-		resolveType("a.b.c.spi.SpiA", VisibilityModifiers.SPI, RestrictionModifiers.NO_RESTRICTIONS);
+		resolveType("a.b.c.spi.SpiA", VisibilityModifiers.SPI, RestrictionModifiers.NO_RESTRICTIONS); //$NON-NLS-1$
 	}
 	
 	/**
 	 * Tests API description: a.b.c.spi.SpiB = SPI with no subclass.
 	 */
 	public void testBSpiPkg() {
-		resolveType("a.b.c.spi.SpiB", VisibilityModifiers.SPI, RestrictionModifiers.NO_EXTEND);
+		resolveType("a.b.c.spi.SpiB", VisibilityModifiers.SPI, RestrictionModifiers.NO_EXTEND); //$NON-NLS-1$
 	}
 	
 	/**
 	 * Tests API description: a.b.c.spi.SpiC = SPI with no instantiate.
 	 */
 	public void testCSpiPkg() {
-		resolveType("a.b.c.spi.SpiC", VisibilityModifiers.SPI, RestrictionModifiers.NO_INSTANTIATE);
+		resolveType("a.b.c.spi.SpiC", VisibilityModifiers.SPI, RestrictionModifiers.NO_INSTANTIATE); //$NON-NLS-1$
 	}	
 	
 	/**
 	 * Tests API description: a.b.c.spi.SpiD = SPI with no instantiate, no subclass.
 	 */
 	public void testDSpiPkg() {
-		resolveType("a.b.c.spi.SpiD", VisibilityModifiers.SPI, RestrictionModifiers.NO_INSTANTIATE | RestrictionModifiers.NO_EXTEND);
+		resolveType("a.b.c.spi.SpiD", VisibilityModifiers.SPI, RestrictionModifiers.NO_INSTANTIATE | RestrictionModifiers.NO_EXTEND); //$NON-NLS-1$
 	}
 	
 	/**
 	 * Tests API description: a.b.c.spi.SpiD = SPI with no reference.
 	 */
 	public void testESpiPkg() {
-		resolveType("a.b.c.spi.SpiE", VisibilityModifiers.SPI, RestrictionModifiers.NO_REFERENCE);
+		resolveType("a.b.c.spi.SpiE", VisibilityModifiers.SPI, RestrictionModifiers.NO_REFERENCE); //$NON-NLS-1$
 	}
 	
 	/**
@@ -768,14 +778,14 @@ public class ApiDescriptionTests extends TestCase {
 	 * Note this type is not explicitly in the manifest.
 	 */
 	public void testIASpiPkg() {
-		resolveType("a.b.c.spi.ISpiA", VisibilityModifiers.SPI, RestrictionModifiers.NO_RESTRICTIONS);
+		resolveType("a.b.c.spi.ISpiA", VisibilityModifiers.SPI, RestrictionModifiers.NO_RESTRICTIONS); //$NON-NLS-1$
 	}
 	
 	/**
 	 * Tests API description: a.b.c.spi.ISpiB = SPI with no implement.
 	 */
 	public void testIBSpiPkg() {
-		resolveType("a.b.c.spi.ISpiB", VisibilityModifiers.SPI, RestrictionModifiers.NO_IMPLEMENT);
+		resolveType("a.b.c.spi.ISpiB", VisibilityModifiers.SPI, RestrictionModifiers.NO_IMPLEMENT); //$NON-NLS-1$
 	}
 	
 	/**
@@ -783,7 +793,7 @@ public class ApiDescriptionTests extends TestCase {
 	 * Note this type is not in the manifest explicitly.
 	 */
 	public void testAInternalPkg() {
-		resolveType("a.b.c.internal.PA", VisibilityModifiers.PRIVATE, RestrictionModifiers.NO_RESTRICTIONS);
+		resolveType("a.b.c.internal.PA", VisibilityModifiers.PRIVATE, RestrictionModifiers.NO_RESTRICTIONS); //$NON-NLS-1$
 	}
 	
 	/**
@@ -791,24 +801,24 @@ public class ApiDescriptionTests extends TestCase {
 	 * Note this type is not in the manifest explicitly.
 	 */
 	public void testBInternalPkg() {
-		resolveType("a.b.c.internal.PB", VisibilityModifiers.PRIVATE, RestrictionModifiers.NO_RESTRICTIONS);
+		resolveType("a.b.c.internal.PB", VisibilityModifiers.PRIVATE, RestrictionModifiers.NO_RESTRICTIONS); //$NON-NLS-1$
 	}
 		
 	/**
 	 * tests that a binary bundle with no .api_description file has no API description
 	 */
 	public void testBinaryHasNoApiDescription() throws CoreException {
-		IApiBaseline profile = TestSuiteHelper.createTestingBaseline("test-plugins");
-		IApiComponent componentA = profile.getApiComponent("component.a");
-		assertFalse("Should have no .api_description file", componentA.hasApiDescription());
+		IApiBaseline profile = TestSuiteHelper.createTestingBaseline("test-plugins"); //$NON-NLS-1$
+		IApiComponent componentA = profile.getApiComponent("component.a"); //$NON-NLS-1$
+		assertFalse("Should have no .api_description file", componentA.hasApiDescription()); //$NON-NLS-1$
 	}
 	
 	/**
 	 * tests that a binary bundle with an .api_description file has an API description
 	 */
 	public void testBinaryHasApiDescription() throws CoreException {
-		IApiBaseline profile = TestSuiteHelper.createTestingBaseline("test-plugins-with-desc");
-		IApiComponent componentA = profile.getApiComponent("component.a");
-		assertTrue("Should have an .api_description file", componentA.hasApiDescription());
+		IApiBaseline profile = TestSuiteHelper.createTestingBaseline("test-plugins-with-desc"); //$NON-NLS-1$
+		IApiComponent componentA = profile.getApiComponent("component.a"); //$NON-NLS-1$
+		assertTrue("Should have an .api_description file", componentA.hasApiDescription()); //$NON-NLS-1$
 	}	
 }

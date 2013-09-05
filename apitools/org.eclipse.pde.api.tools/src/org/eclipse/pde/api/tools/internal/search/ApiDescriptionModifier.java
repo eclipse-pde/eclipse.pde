@@ -24,33 +24,34 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescri
  * matching.
  */
 public class ApiDescriptionModifier extends ApiDescriptionVisitor {
-	
+
 	/**
 	 * Internal package patterns or <code>null</code> if none.
 	 */
 	private Pattern[] fInternalPackages;
-		
+
 	/**
 	 * API package patterns of <code>null</code> if none.
 	 */
-	private Pattern[] fApiPackages; 
-	
+	private Pattern[] fApiPackages;
+
 	/**
 	 * API description to modify.
 	 */
 	private IApiDescription fDescription;
-	
+
 	/**
 	 * Constructs a visitor with the given patterns.
 	 * 
-	 * @param internal regular expressions to match as internal packages or <code>null</code>
+	 * @param internal regular expressions to match as internal packages or
+	 *            <code>null</code>
 	 * @param api regular expressions to match as API or <code>null</code>
 	 */
 	public ApiDescriptionModifier(String[] internal, String[] api) {
 		setInternalPatterns(internal);
 		setApiPatterns(api);
 	}
-	
+
 	/**
 	 * Sets the description to be modified.
 	 * 
@@ -61,8 +62,8 @@ public class ApiDescriptionModifier extends ApiDescriptionVisitor {
 	}
 
 	/**
-	 * Sets regular expressions to consider as internal packages. Used to override visibility settings
-	 * in an API description.
+	 * Sets regular expressions to consider as internal packages. Used to
+	 * override visibility settings in an API description.
 	 * 
 	 * @param patterns regular expressions, may be empty or <code>null</code>
 	 */
@@ -76,10 +77,10 @@ public class ApiDescriptionModifier extends ApiDescriptionVisitor {
 			}
 		}
 	}
-	
+
 	/**
-	 * Sets regular expressions to consider as API packages. Used to override visibility settings
-	 * in an API description.
+	 * Sets regular expressions to consider as API packages. Used to override
+	 * visibility settings in an API description.
 	 * 
 	 * @param patterns regular expressions, may be empty or <code>null</code>
 	 */
@@ -93,10 +94,16 @@ public class ApiDescriptionModifier extends ApiDescriptionVisitor {
 			}
 		}
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor#visitElement(org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor, org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations)
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor#
+	 * visitElement(org.eclipse.pde.api.tools.internal.provisional.descriptors.
+	 * IElementDescriptor,
+	 * org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations)
 	 */
+	@Override
 	public boolean visitElement(IElementDescriptor element, IApiAnnotations description) {
 		switch (element.getElementType()) {
 			case IElementDescriptor.COMPONENT:
@@ -118,7 +125,7 @@ public class ApiDescriptionModifier extends ApiDescriptionVisitor {
 				return false;
 		}
 	}
-	
+
 	/**
 	 * Returns whether the package matches any of the given patterns.
 	 * 

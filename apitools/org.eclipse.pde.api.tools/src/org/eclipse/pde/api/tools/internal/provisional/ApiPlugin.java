@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@ package org.eclipse.pde.api.tools.internal.provisional;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.Set;
 import java.util.StringTokenizer;
 
@@ -53,33 +52,33 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.service.prefs.BackingStoreException;
 
 /**
- * API Tools core plug-in.
- * API tools can be run with or without an OSGi framework.
+ * API Tools core plug-in. API tools can be run with or without an OSGi
+ * framework.
  * 
  * @since 1.0.0
  */
 public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsListener {
-	
+
 	/**
-	 * Constant representing the expected name for an execution environment description fragment
-	 * Value is <code>org.eclipse.pde.api.tools.ee"
+	 * Constant representing the expected name for an execution environment
+	 * description fragment Value is <code>org.eclipse.pde.api.tools.ee"
 	 */
 	private static final String EE_DESCRIPTION_PREFIX = "org.eclipse.pde.api.tools.ee"; //$NON-NLS-1$
 	/**
-	 * Constant representing the name of the javadoc tag extension point.
-	 * Value is <code>apiJavadocTags</code>
+	 * Constant representing the name of the javadoc tag extension point. Value
+	 * is <code>apiJavadocTags</code>
 	 */
 	public static final String EXTENSION_JAVADOC_TAGS = "apiJavadocTags"; //$NON-NLS-1$
 	/**
-	 * The plug-in identifier of the PDE API tool support
-	 * (value <code>"org.eclipse.pde.api.tools"</code>).
+	 * The plug-in identifier of the PDE API tool support (value
+	 * <code>"org.eclipse.pde.api.tools"</code>).
 	 */
-	public static final String PLUGIN_ID = "org.eclipse.pde.api.tools" ; //$NON-NLS-1$
+	public static final String PLUGIN_ID = "org.eclipse.pde.api.tools"; //$NON-NLS-1$
 	/**
-	 * The API Tools nature id
-	 * (value <code>"org.eclipse.pde.api.tools.apiAnalysisNature"</code>).
+	 * The API Tools nature id (value
+	 * <code>"org.eclipse.pde.api.tools.apiAnalysisNature"</code>).
 	 */
-	public static final String NATURE_ID = PLUGIN_ID + ".apiAnalysisNature" ; //$NON-NLS-1$
+	public static final String NATURE_ID = PLUGIN_ID + ".apiAnalysisNature"; //$NON-NLS-1$
 	/**
 	 * Status code indicating an unexpected internal error.
 	 */
@@ -88,7 +87,7 @@ public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsL
 	 * Status code indicating an unexpected error
 	 */
 	public static final int ERROR = 121;
-	
+
 	/**
 	 * Status code indicating a resolution error
 	 */
@@ -100,58 +99,60 @@ public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsL
 	public static final int REPORT_BASELINE_IS_DISPOSED = 123;
 
 	/**
-	 * Constant representing severity levels for error/warning preferences
-	 * Value is: <code>0</code>
+	 * Constant representing severity levels for error/warning preferences Value
+	 * is: <code>0</code>
 	 */
 	public static final int SEVERITY_IGNORE = 0;
 	/**
-	 * Constant representing severity levels for error/warning preferences
-	 * Value is: <code>1</code>
+	 * Constant representing severity levels for error/warning preferences Value
+	 * is: <code>1</code>
 	 */
 	public static final int SEVERITY_WARNING = 1;
 	/**
-	 * Constant representing severity levels for error/warning preferences
-	 * Value is: <code>2</code>
+	 * Constant representing severity levels for error/warning preferences Value
+	 * is: <code>2</code>
 	 */
 	public static final int SEVERITY_ERROR = 2;
-	
+
 	/**
-	 * Constant representing the preference value 'ignore'.
-	 * Value is: <code>Ignore</code>
+	 * Constant representing the preference value 'ignore'. Value is:
+	 * <code>Ignore</code>
 	 */
 	public static final String VALUE_IGNORE = "Ignore"; //$NON-NLS-1$
 	/**
-	 * Constant representing the preference value 'warning'.
-	 * Value is: <code>Warning</code>
+	 * Constant representing the preference value 'warning'. Value is:
+	 * <code>Warning</code>
 	 */
 	public static final String VALUE_WARNING = "Warning"; //$NON-NLS-1$
 	/**
-	 * Constant representing the preference value 'error'.
-	 * Value is: <code>Error</code>
+	 * Constant representing the preference value 'error'. Value is:
+	 * <code>Error</code>
 	 */
 	public static final String VALUE_ERROR = "Error"; //$NON-NLS-1$
 	/**
-	 * Constant representing the preference value 'disabled'.
-	 * Value is: <code>Disabled</code>
+	 * Constant representing the preference value 'disabled'. Value is:
+	 * <code>Disabled</code>
 	 */
 	public static final String VALUE_DISABLED = "Disabled"; //$NON-NLS-1$
 	/**
-	 * Constant representing the preference value 'enabled'.
-	 * Value is: <code>Enabled</code>
+	 * Constant representing the preference value 'enabled'. Value is:
+	 * <code>Enabled</code>
 	 */
 	public static final String VALUE_ENABLED = "Enabled"; //$NON-NLS-1$
 	/**
-	 * The identifier for the API builder
-	 * Value is: <code>"org.eclipse.pde.api.tools.apiAnalysisBuilder"</code>
+	 * The identifier for the API builder Value is:
+	 * <code>"org.eclipse.pde.api.tools.apiAnalysisBuilder"</code>
 	 */
-	public static final String BUILDER_ID = PLUGIN_ID + ".apiAnalysisBuilder" ; //$NON-NLS-1$
-	
+	public static final String BUILDER_ID = PLUGIN_ID + ".apiAnalysisBuilder"; //$NON-NLS-1$
+
 	/**
-	 * Preference ID for a knownEEFragments of EE fragments that were previously installed, the stored preference
-	 * string must be a list of name followed by version separated by semicolons ';'.
+	 * Preference ID for a knownEEFragments of EE fragments that were previously
+	 * installed, the stored preference string must be a list of name followed
+	 * by version separated by semicolons ';'.
 	 * <p>
 	 * ex: "org.eclipse.one;1.0.0;org.eclipse.two;2.0.0;"
-	 * </p><p>
+	 * </p>
+	 * <p>
 	 * Value is: <code>knownEEFragments</code>
 	 * </p>
 	 */
@@ -172,19 +173,19 @@ public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsL
 	 * This bundle's OSGi context
 	 */
 	private BundleContext fBundleContext = null;
-	
+
 	private static boolean DEBUG = false;
-	
+
 	/**
 	 * Private debug options
 	 */
 	private static final String DEBUG_FLAG = PLUGIN_ID + "/debug"; //$NON-NLS-1$
-	private static final String BUILDER_DEBUG = PLUGIN_ID + "/debug/builder" ; //$NON-NLS-1$
-	private static final String DELTA_DEBUG = PLUGIN_ID + "/debug/delta" ; //$NON-NLS-1$
+	private static final String BUILDER_DEBUG = PLUGIN_ID + "/debug/builder"; //$NON-NLS-1$
+	private static final String DELTA_DEBUG = PLUGIN_ID + "/debug/delta"; //$NON-NLS-1$
 	private static final String SEARCH_DEBUG = PLUGIN_ID + "/debug/search"; //$NON-NLS-1$
-	private static final String CLASSFILE_VISITOR_DEBUG = PLUGIN_ID + "/debug/classfilevisitor" ; //$NON-NLS-1$
-	private static final String DESCRIPTOR_FRAMEWORK_DEBUG = PLUGIN_ID + "/debug/descriptor/framework" ; //$NON-NLS-1$
-	private static final String TAG_SCANNER_DEBUG = PLUGIN_ID + "/debug/tagscanner" ; //$NON-NLS-1$
+	private static final String CLASSFILE_VISITOR_DEBUG = PLUGIN_ID + "/debug/classfilevisitor"; //$NON-NLS-1$
+	private static final String DESCRIPTOR_FRAMEWORK_DEBUG = PLUGIN_ID + "/debug/descriptor/framework"; //$NON-NLS-1$
+	private static final String TAG_SCANNER_DEBUG = PLUGIN_ID + "/debug/tagscanner"; //$NON-NLS-1$
 	private static final String PLUGIN_WORKSPACE_COMPONENT_DEBUG = PLUGIN_ID + "/debug/pluginworkspacecomponent"; //$NON-NLS-1$
 	private static final String API_PROFILE_MANAGER_DEBUG = PLUGIN_ID + "/debug/profilemanager"; //$NON-NLS-1$
 	private static final String API_FILTER_STORE_DEBUG = PLUGIN_ID + "/debug/apifilterstore"; //$NON-NLS-1$
@@ -264,104 +265,104 @@ public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsL
 	 * Constant used for controlling tracing in the API tool builder
 	 */
 	public static boolean DEBUG_BUILDER = false;
-	
+
 	public static String[] AllCompatibilityKeys = new String[] {
-		IApiProblemTypes.API_COMPONENT_REMOVED_TYPE,
-		IApiProblemTypes.API_COMPONENT_REMOVED_API_TYPE,
-		IApiProblemTypes.API_COMPONENT_REMOVED_REEXPORTED_TYPE,
-		IApiProblemTypes.API_COMPONENT_REMOVED_REEXPORTED_API_TYPE,
-		IApiProblemTypes.ANNOTATION_REMOVED_FIELD,
-		IApiProblemTypes.ANNOTATION_REMOVED_METHOD,
-		IApiProblemTypes.ANNOTATION_REMOVED_TYPE_MEMBER,
-		IApiProblemTypes.ANNOTATION_CHANGED_TYPE_CONVERSION,
-		IApiProblemTypes.ANNOTATION_ADDED_METHOD_NO_DEFAULT_VALUE,
-		IApiProblemTypes.INTERFACE_ADDED_FIELD,
-		IApiProblemTypes.INTERFACE_ADDED_METHOD,
-		IApiProblemTypes.INTERFACE_ADDED_RESTRICTIONS,
-		IApiProblemTypes.INTERFACE_ADDED_SUPER_INTERFACE_WITH_METHODS,
-		IApiProblemTypes.INTERFACE_ADDED_TYPE_PARAMETER,
-		IApiProblemTypes.INTERFACE_REMOVED_TYPE_PARAMETER,
-		IApiProblemTypes.INTERFACE_REMOVED_FIELD,
-		IApiProblemTypes.INTERFACE_REMOVED_METHOD,
-		IApiProblemTypes.INTERFACE_REMOVED_TYPE_MEMBER,
-		IApiProblemTypes.INTERFACE_CHANGED_TYPE_CONVERSION,
-		IApiProblemTypes.INTERFACE_CHANGED_CONTRACTED_SUPERINTERFACES_SET,
-		IApiProblemTypes.ENUM_CHANGED_CONTRACTED_SUPERINTERFACES_SET,
-		IApiProblemTypes.ENUM_CHANGED_TYPE_CONVERSION,
-		IApiProblemTypes.ENUM_REMOVED_FIELD,
-		IApiProblemTypes.ENUM_REMOVED_ENUM_CONSTANT,
-		IApiProblemTypes.ENUM_REMOVED_METHOD,
-		IApiProblemTypes.ENUM_REMOVED_TYPE_MEMBER,
-		IApiProblemTypes.CLASS_ADDED_METHOD,
-		IApiProblemTypes.CLASS_ADDED_RESTRICTIONS,
-		IApiProblemTypes.CLASS_ADDED_TYPE_PARAMETER,
-		IApiProblemTypes.CLASS_CHANGED_CONTRACTED_SUPERINTERFACES_SET,
-		IApiProblemTypes.CLASS_CHANGED_NON_ABSTRACT_TO_ABSTRACT,
-		IApiProblemTypes.CLASS_CHANGED_NON_FINAL_TO_FINAL,
-		IApiProblemTypes.CLASS_CHANGED_TYPE_CONVERSION,
-		IApiProblemTypes.CLASS_CHANGED_DECREASE_ACCESS,
-		IApiProblemTypes.CLASS_REMOVED_FIELD,
-		IApiProblemTypes.CLASS_REMOVED_METHOD,
-		IApiProblemTypes.CLASS_REMOVED_CONSTRUCTOR,
-		IApiProblemTypes.CLASS_REMOVED_SUPERCLASS,
-		IApiProblemTypes.CLASS_REMOVED_TYPE_MEMBER,
-		IApiProblemTypes.CLASS_REMOVED_TYPE_PARAMETER,
-		IApiProblemTypes.FIELD_ADDED_VALUE,
-		IApiProblemTypes.FIELD_CHANGED_TYPE,
-		IApiProblemTypes.FIELD_CHANGED_VALUE,
-		IApiProblemTypes.FIELD_CHANGED_DECREASE_ACCESS,
-		IApiProblemTypes.FIELD_CHANGED_FINAL_TO_NON_FINAL_STATIC_CONSTANT,
-		IApiProblemTypes.FIELD_CHANGED_NON_FINAL_TO_FINAL,
-		IApiProblemTypes.FIELD_CHANGED_STATIC_TO_NON_STATIC,
-		IApiProblemTypes.FIELD_CHANGED_NON_STATIC_TO_STATIC,
-		IApiProblemTypes.FIELD_REMOVED_VALUE,
-		IApiProblemTypes.FIELD_REMOVED_TYPE_ARGUMENT,
-		IApiProblemTypes.METHOD_ADDED_RESTRICTIONS,
-		IApiProblemTypes.METHOD_ADDED_TYPE_PARAMETER,
-		IApiProblemTypes.METHOD_CHANGED_VARARGS_TO_ARRAY,
-		IApiProblemTypes.METHOD_CHANGED_DECREASE_ACCESS,
-		IApiProblemTypes.METHOD_CHANGED_NON_ABSTRACT_TO_ABSTRACT,
-		IApiProblemTypes.METHOD_CHANGED_NON_STATIC_TO_STATIC,
-		IApiProblemTypes.METHOD_CHANGED_STATIC_TO_NON_STATIC,
-		IApiProblemTypes.METHOD_CHANGED_NON_FINAL_TO_FINAL,
-		IApiProblemTypes.METHOD_REMOVED_ANNOTATION_DEFAULT_VALUE,
-		IApiProblemTypes.METHOD_REMOVED_TYPE_PARAMETER,
-		IApiProblemTypes.CONSTRUCTOR_ADDED_TYPE_PARAMETER,
-		IApiProblemTypes.CONSTRUCTOR_CHANGED_VARARGS_TO_ARRAY,
-		IApiProblemTypes.CONSTRUCTOR_CHANGED_DECREASE_ACCESS,
-		IApiProblemTypes.CONSTRUCTOR_REMOVED_TYPE_PARAMETER,
-		IApiProblemTypes.TYPE_PARAMETER_ADDED_CLASS_BOUND,
-		IApiProblemTypes.TYPE_PARAMETER_CHANGED_CLASS_BOUND,
-		IApiProblemTypes.TYPE_PARAMETER_REMOVED_CLASS_BOUND,
-		IApiProblemTypes.TYPE_PARAMETER_ADDED_INTERFACE_BOUND,
-		IApiProblemTypes.TYPE_PARAMETER_CHANGED_INTERFACE_BOUND,
-		IApiProblemTypes.TYPE_PARAMETER_REMOVED_INTERFACE_BOUND,
-		IApiProblemTypes.TYPE_PARAMETER_REMOVED_INTERFACE_BOUND,
-		IApiProblemTypes.REPORT_API_BREAKAGE_WHEN_MAJOR_VERSION_INCREMENTED,
-//		IApiProblemTypes.REPORT_API_CHANGE_WHEN_MINOR_VERSION_INCREMENTED,
+			IApiProblemTypes.API_COMPONENT_REMOVED_TYPE,
+			IApiProblemTypes.API_COMPONENT_REMOVED_API_TYPE,
+			IApiProblemTypes.API_COMPONENT_REMOVED_REEXPORTED_TYPE,
+			IApiProblemTypes.API_COMPONENT_REMOVED_REEXPORTED_API_TYPE,
+			IApiProblemTypes.ANNOTATION_REMOVED_FIELD,
+			IApiProblemTypes.ANNOTATION_REMOVED_METHOD,
+			IApiProblemTypes.ANNOTATION_REMOVED_TYPE_MEMBER,
+			IApiProblemTypes.ANNOTATION_CHANGED_TYPE_CONVERSION,
+			IApiProblemTypes.ANNOTATION_ADDED_METHOD_NO_DEFAULT_VALUE,
+			IApiProblemTypes.INTERFACE_ADDED_FIELD,
+			IApiProblemTypes.INTERFACE_ADDED_METHOD,
+			IApiProblemTypes.INTERFACE_ADDED_RESTRICTIONS,
+			IApiProblemTypes.INTERFACE_ADDED_SUPER_INTERFACE_WITH_METHODS,
+			IApiProblemTypes.INTERFACE_ADDED_TYPE_PARAMETER,
+			IApiProblemTypes.INTERFACE_REMOVED_TYPE_PARAMETER,
+			IApiProblemTypes.INTERFACE_REMOVED_FIELD,
+			IApiProblemTypes.INTERFACE_REMOVED_METHOD,
+			IApiProblemTypes.INTERFACE_REMOVED_TYPE_MEMBER,
+			IApiProblemTypes.INTERFACE_CHANGED_TYPE_CONVERSION,
+			IApiProblemTypes.INTERFACE_CHANGED_CONTRACTED_SUPERINTERFACES_SET,
+			IApiProblemTypes.ENUM_CHANGED_CONTRACTED_SUPERINTERFACES_SET,
+			IApiProblemTypes.ENUM_CHANGED_TYPE_CONVERSION,
+			IApiProblemTypes.ENUM_REMOVED_FIELD,
+			IApiProblemTypes.ENUM_REMOVED_ENUM_CONSTANT,
+			IApiProblemTypes.ENUM_REMOVED_METHOD,
+			IApiProblemTypes.ENUM_REMOVED_TYPE_MEMBER,
+			IApiProblemTypes.CLASS_ADDED_METHOD,
+			IApiProblemTypes.CLASS_ADDED_RESTRICTIONS,
+			IApiProblemTypes.CLASS_ADDED_TYPE_PARAMETER,
+			IApiProblemTypes.CLASS_CHANGED_CONTRACTED_SUPERINTERFACES_SET,
+			IApiProblemTypes.CLASS_CHANGED_NON_ABSTRACT_TO_ABSTRACT,
+			IApiProblemTypes.CLASS_CHANGED_NON_FINAL_TO_FINAL,
+			IApiProblemTypes.CLASS_CHANGED_TYPE_CONVERSION,
+			IApiProblemTypes.CLASS_CHANGED_DECREASE_ACCESS,
+			IApiProblemTypes.CLASS_REMOVED_FIELD,
+			IApiProblemTypes.CLASS_REMOVED_METHOD,
+			IApiProblemTypes.CLASS_REMOVED_CONSTRUCTOR,
+			IApiProblemTypes.CLASS_REMOVED_SUPERCLASS,
+			IApiProblemTypes.CLASS_REMOVED_TYPE_MEMBER,
+			IApiProblemTypes.CLASS_REMOVED_TYPE_PARAMETER,
+			IApiProblemTypes.FIELD_ADDED_VALUE,
+			IApiProblemTypes.FIELD_CHANGED_TYPE,
+			IApiProblemTypes.FIELD_CHANGED_VALUE,
+			IApiProblemTypes.FIELD_CHANGED_DECREASE_ACCESS,
+			IApiProblemTypes.FIELD_CHANGED_FINAL_TO_NON_FINAL_STATIC_CONSTANT,
+			IApiProblemTypes.FIELD_CHANGED_NON_FINAL_TO_FINAL,
+			IApiProblemTypes.FIELD_CHANGED_STATIC_TO_NON_STATIC,
+			IApiProblemTypes.FIELD_CHANGED_NON_STATIC_TO_STATIC,
+			IApiProblemTypes.FIELD_REMOVED_VALUE,
+			IApiProblemTypes.FIELD_REMOVED_TYPE_ARGUMENT,
+			IApiProblemTypes.METHOD_ADDED_RESTRICTIONS,
+			IApiProblemTypes.METHOD_ADDED_TYPE_PARAMETER,
+			IApiProblemTypes.METHOD_CHANGED_VARARGS_TO_ARRAY,
+			IApiProblemTypes.METHOD_CHANGED_DECREASE_ACCESS,
+			IApiProblemTypes.METHOD_CHANGED_NON_ABSTRACT_TO_ABSTRACT,
+			IApiProblemTypes.METHOD_CHANGED_NON_STATIC_TO_STATIC,
+			IApiProblemTypes.METHOD_CHANGED_STATIC_TO_NON_STATIC,
+			IApiProblemTypes.METHOD_CHANGED_NON_FINAL_TO_FINAL,
+			IApiProblemTypes.METHOD_REMOVED_ANNOTATION_DEFAULT_VALUE,
+			IApiProblemTypes.METHOD_REMOVED_TYPE_PARAMETER,
+			IApiProblemTypes.CONSTRUCTOR_ADDED_TYPE_PARAMETER,
+			IApiProblemTypes.CONSTRUCTOR_CHANGED_VARARGS_TO_ARRAY,
+			IApiProblemTypes.CONSTRUCTOR_CHANGED_DECREASE_ACCESS,
+			IApiProblemTypes.CONSTRUCTOR_REMOVED_TYPE_PARAMETER,
+			IApiProblemTypes.TYPE_PARAMETER_ADDED_CLASS_BOUND,
+			IApiProblemTypes.TYPE_PARAMETER_CHANGED_CLASS_BOUND,
+			IApiProblemTypes.TYPE_PARAMETER_REMOVED_CLASS_BOUND,
+			IApiProblemTypes.TYPE_PARAMETER_ADDED_INTERFACE_BOUND,
+			IApiProblemTypes.TYPE_PARAMETER_CHANGED_INTERFACE_BOUND,
+			IApiProblemTypes.TYPE_PARAMETER_REMOVED_INTERFACE_BOUND,
+			IApiProblemTypes.TYPE_PARAMETER_REMOVED_INTERFACE_BOUND,
+			IApiProblemTypes.REPORT_API_BREAKAGE_WHEN_MAJOR_VERSION_INCREMENTED,
+	// IApiProblemTypes.REPORT_API_CHANGE_WHEN_MINOR_VERSION_INCREMENTED,
 	};
 	/**
-	 * A set of listeners that want to participate in the saving life-cycle of the workbench
-	 * via this plugin
+	 * A set of listeners that want to participate in the saving life-cycle of
+	 * the workbench via this plug-in
 	 */
-	private HashSet savelisteners = new HashSet();
-	
+	private HashSet<ISaveParticipant> savelisteners = new HashSet<ISaveParticipant>();
+
 	/**
 	 * This is used to log resolution errors only once per session
 	 */
 	private int logBits = 0;
-	
+
 	/**
-	 * This is used to log resolution errors only once per session.
-	 * This is used outside the workbench.
+	 * This is used to log resolution errors only once per session. This is used
+	 * outside the workbench.
 	 */
-	private static int LogBits= 0;
-	
+	private static int LogBits = 0;
+
 	/**
 	 * Standard delta processor for Java element changes
 	 */
 	private WorkspaceDeltaProcessor deltaProcessor = null;
-	
+
 	private static final int RESOLUTION_LOG_BIT = 1;
 	private static final int BASELINE_DISPOSED_LOG_BIT = 2;
 
@@ -372,14 +373,14 @@ public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsL
 		super();
 		fgDefault = this;
 	}
-	
+
 	/**
 	 * @return The singleton instance of the plugin
 	 */
 	public static ApiPlugin getDefault() {
 		return fgDefault;
 	}
-	
+
 	/**
 	 * Logs the specified status with this plug-in's log.
 	 * 
@@ -388,8 +389,8 @@ public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsL
 	public static void log(IStatus status) {
 		ApiPlugin getDefault = getDefault();
 		if (getDefault == null) {
-			switch(status.getCode()) {
-				case REPORT_RESOLUTION_ERRORS :
+			switch (status.getCode()) {
+				case REPORT_RESOLUTION_ERRORS:
 					if ((LogBits & RESOLUTION_LOG_BIT) == 0) {
 						Throwable exception = status.getException();
 						if (exception != null) {
@@ -398,7 +399,7 @@ public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsL
 						LogBits |= RESOLUTION_LOG_BIT;
 					}
 					break;
-				case REPORT_BASELINE_IS_DISPOSED :
+				case REPORT_BASELINE_IS_DISPOSED:
 					if ((LogBits & BASELINE_DISPOSED_LOG_BIT) == 0) {
 						Throwable exception = status.getException();
 						if (exception != null) {
@@ -414,14 +415,14 @@ public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsL
 					}
 			}
 		} else {
-			switch(status.getCode()) {
-				case REPORT_RESOLUTION_ERRORS :
+			switch (status.getCode()) {
+				case REPORT_RESOLUTION_ERRORS:
 					if ((getDefault.logBits & RESOLUTION_LOG_BIT) == 0) {
 						getDefault.getLog().log(status);
 						getDefault.logBits |= RESOLUTION_LOG_BIT;
 					}
 					break;
-				case REPORT_BASELINE_IS_DISPOSED :
+				case REPORT_BASELINE_IS_DISPOSED:
 					if ((getDefault.logBits & BASELINE_DISPOSED_LOG_BIT) == 0) {
 						getDefault.getLog().log(status);
 						getDefault.logBits |= BASELINE_DISPOSED_LOG_BIT;
@@ -436,33 +437,36 @@ public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsL
 	/**
 	 * Logs the specified throwable with this plug-in's log.
 	 * 
-	 * @param t throwable to log 
+	 * @param t throwable to log
 	 */
 	public static void log(Throwable t) {
 		log(newErrorStatus("Error logged from API Tools Core: ", t)); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Logs an internal error with the specified message.
 	 * 
 	 * @param message the error message to log
 	 */
 	public static void logErrorMessage(String message) {
-		// this message is intentionally not internationalized, as an exception may
+		// this message is intentionally not internationalized, as an exception
+		// may
 		// be due to the resource bundle itself
 		log(newErrorStatus("Internal message logged from API Tools Core: " + message, null)); //$NON-NLS-1$	
 	}
-	
+
 	/**
 	 * Returns a new error status for this plug-in with the given message
+	 * 
 	 * @param message the message to be included in the status
-	 * @param exception the exception to be included in the status or <code>null</code> if none
+	 * @param exception the exception to be included in the status or
+	 *            <code>null</code> if none
 	 * @return a new error status
 	 */
 	public static IStatus newErrorStatus(String message, Throwable exception) {
 		return new Status(IStatus.ERROR, PLUGIN_ID, INTERNAL_ERROR, message, exception);
 	}
-	
+
 	/**
 	 * Returns whether the API tools bundle is running inside an OSGi framework.
 	 * 
@@ -473,92 +477,104 @@ public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsL
 	}
 
 	/**
-	 * Returns the {@link IApiBaselineManager}, allowing clients to add/remove and search
-	 * for {@link org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline}s stored in the manager.
+	 * Returns the {@link IApiBaselineManager}, allowing clients to add/remove
+	 * and search for
+	 * {@link org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline}
+	 * s stored in the manager.
 	 * 
 	 * @return the singleton instance of the {@link IApiProfileManager}
 	 */
 	public IApiBaselineManager getApiBaselineManager() {
 		return ApiBaselineManager.getManager();
 	}
-	
+
 	/**
 	 * @return The singleton instance of the {@link JavadocTagManager}
 	 */
 	public static JavadocTagManager getJavadocTagManager() {
-		if(fgTagManager == null) {
+		if (fgTagManager == null) {
 			fgTagManager = new JavadocTagManager();
 		}
 		return fgTagManager;
 	}
-	
+
 	/**
-	 * Adds the given save participant to the listing of participants to 
-	 * be notified when the workbench saving life-cycle occurs. If the specified
+	 * Adds the given save participant to the listing of participants to be
+	 * notified when the workbench saving life-cycle occurs. If the specified
 	 * participant is <code>null</code> no changes are made.
+	 * 
 	 * @param participant
 	 */
 	public void addSaveParticipant(ISaveParticipant participant) {
-		if(participant != null) {
+		if (participant != null) {
 			savelisteners.add(participant);
 		}
 	}
-	
+
 	/**
-	 * Removes the given save participant from the current listing.
-	 * If the specified participant is <code>null</code> no changes are made.
+	 * Removes the given save participant from the current listing. If the
+	 * specified participant is <code>null</code> no changes are made.
+	 * 
 	 * @param participant
 	 */
 	public void removeSaveParticipant(ISaveParticipant participant) {
-		if(participant != null) {
+		if (participant != null) {
 			savelisteners.remove(participant);
 		}
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.ISaveParticipant#doneSaving(org.eclipse.core.resources.ISaveContext)
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.core.resources.ISaveParticipant#doneSaving(org.eclipse.core
+	 * .resources.ISaveContext)
 	 */
+	@Override
 	public void doneSaving(ISaveContext context) {
-		ISaveParticipant sp = null;
-		for(Iterator iter = savelisteners.iterator(); iter.hasNext();) {
-			sp = (ISaveParticipant) iter.next();
+		for (ISaveParticipant sp : savelisteners) {
 			sp.doneSaving(context);
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.ISaveParticipant#prepareToSave(org.eclipse.core.resources.ISaveContext)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.core.resources.ISaveParticipant#prepareToSave(org.eclipse
+	 * .core.resources.ISaveContext)
 	 */
+	@Override
 	public void prepareToSave(ISaveContext context) throws CoreException {
-		ISaveParticipant sp = null;
-		for(Iterator iter = savelisteners.iterator(); iter.hasNext();) {
-			sp = (ISaveParticipant) iter.next();
+		for (ISaveParticipant sp : savelisteners) {
 			sp.prepareToSave(context);
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.ISaveParticipant#rollback(org.eclipse.core.resources.ISaveContext)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.core.resources.ISaveParticipant#rollback(org.eclipse.core
+	 * .resources.ISaveContext)
 	 */
+	@Override
 	public void rollback(ISaveContext context) {
-		ISaveParticipant sp = null;
-		for(Iterator iter = savelisteners.iterator(); iter.hasNext();) {
-			sp = (ISaveParticipant) iter.next();
+		for (ISaveParticipant sp : savelisteners) {
 			sp.rollback(context);
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.ISaveParticipant#saving(org.eclipse.core.resources.ISaveContext)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.core.resources.ISaveParticipant#saving(org.eclipse.core.resources
+	 * .ISaveContext)
 	 */
+	@Override
 	public void saving(ISaveContext context) throws CoreException {
-		ISaveParticipant sp = null;
-		for(Iterator iter = savelisteners.iterator(); iter.hasNext();) {
-			sp = (ISaveParticipant) iter.next();
+		for (ISaveParticipant sp : savelisteners) {
 			sp.saving(context);
 		}
 		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(PLUGIN_ID);
-		if(node != null) {
+		if (node != null) {
 			try {
 				node.flush();
 			} catch (BackingStoreException e) {
@@ -566,14 +582,17 @@ public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsL
 			}
 		}
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.Plugin#start(org.osgi.framework.BundleContext)
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.core.runtime.Plugin#start(org.osgi.framework.BundleContext)
 	 */
+	@Override
 	public void start(BundleContext context) throws Exception {
 		try {
 			super.start(context);
-			Hashtable props = new Hashtable(2);
+			Hashtable<String, String> props = new Hashtable<String, String>(2);
 			props.put(org.eclipse.osgi.service.debug.DebugOptions.LISTENER_SYMBOLICNAME, PLUGIN_ID);
 			context.registerService(DebugOptionsListener.class.getName(), this, props);
 		} finally {
@@ -585,23 +604,25 @@ public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsL
 			checkForEEDescriptionChanges();
 		}
 	}
-	
+
 	/**
-	 * Checks if the current set of installed execution environment description fragments differs from the last
-	 * time this workspace was started.  If so, a full api analysis build is run.
+	 * Checks if the current set of installed execution environment description
+	 * fragments differs from the last time this workspace was started. If so, a
+	 * full api analysis build is run.
 	 */
 	private void checkForEEDescriptionChanges() {
 		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(PLUGIN_ID);
-		if (node == null){
+		if (node == null) {
 			return;
 		}
 		String knownFragmentsList = node.get(KNOWN_EE_FRAGMENTS, null);
 		Bundle[] allFragments = Platform.getFragments(fBundleContext.getBundle());
-		if (allFragments == null)
-			allFragments= new Bundle[0];
+		if (allFragments == null) {
+			allFragments = new Bundle[0];
+		}
 
 		// No preference stored yet, set the preference for future startup
-		if (knownFragmentsList == null){
+		if (knownFragmentsList == null) {
 			String list = getListOfEEFragments(allFragments);
 			node.put(KNOWN_EE_FRAGMENTS, list);
 			try {
@@ -611,25 +632,25 @@ public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsL
 			}
 			return;
 		}
-		
+
 		// Break the list into a set we can search
-		Set knownFragments = new HashSet();
+		Set<NameVersionDescriptor> knownFragments = new HashSet<NameVersionDescriptor>();
 		StringTokenizer tokenizer = new StringTokenizer(knownFragmentsList, ";"); //$NON-NLS-1$
 		String name = null;
 		while (tokenizer.hasMoreTokens()) {
 			name = tokenizer.nextToken().trim();
-			if (name.length() > 0 && tokenizer.hasMoreTokens()){
+			if (name.length() > 0 && tokenizer.hasMoreTokens()) {
 				knownFragments.add(new NameVersionDescriptor(name, tokenizer.nextToken()));
 			}
 		}
-		
+
 		// Figure out if we need to rebuild (fragments added or removed
-		boolean mustRebuild = false; 
+		boolean mustRebuild = false;
 		for (int i = 0; i < allFragments.length; i++) {
-			// We only care about 
-			if (allFragments[i].getSymbolicName().indexOf(EE_DESCRIPTION_PREFIX) >= 0){
+			// We only care about
+			if (allFragments[i].getSymbolicName().indexOf(EE_DESCRIPTION_PREFIX) >= 0) {
 				NameVersionDescriptor current = new NameVersionDescriptor(allFragments[i].getSymbolicName(), allFragments[i].getVersion().toString());
-				if (knownFragments.contains(current)){
+				if (knownFragments.contains(current)) {
 					knownFragments.remove(current);
 				} else {
 					// New EE fragment installed
@@ -638,16 +659,16 @@ public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsL
 				}
 			}
 		}
-			
-		if (knownFragments.size() > 0){
+
+		if (knownFragments.size() > 0) {
 			// EE fragment removed
 			mustRebuild = true;
 		}
-			
+
 		// Run a full api analysis build and update the preference
-		if (mustRebuild){
+		if (mustRebuild) {
 			IProject[] projects = Util.getApiProjects();
-			if (projects != null){
+			if (projects != null) {
 				for (int i = 0; i < projects.length; i++) {
 					try {
 						projects[i].build(IncrementalProjectBuilder.FULL_BUILD, ApiPlugin.BUILDER_ID, null, null);
@@ -656,7 +677,7 @@ public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsL
 					}
 				}
 			}
-			
+
 			// Write out the preferences so we don't rebuild on next startup
 			String list = getListOfEEFragments(allFragments);
 			node.put(KNOWN_EE_FRAGMENTS, list);
@@ -669,12 +690,13 @@ public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsL
 	}
 
 	/**
-	 * @return a list of fragments that consider this bundle their host and symbolic names contain {@link #EE_DESCRIPTION_PREFIX}
+	 * @return a list of fragments that consider this bundle their host and
+	 *         symbolic names contain {@link #EE_DESCRIPTION_PREFIX}
 	 */
-	private String getListOfEEFragments(Bundle[] allFragments){
+	private String getListOfEEFragments(Bundle[] allFragments) {
 		StringBuffer result = new StringBuffer();
 		for (int i = 0; i < allFragments.length; i++) {
-			if (allFragments[i].getSymbolicName().indexOf(EE_DESCRIPTION_PREFIX) >= 0){
+			if (allFragments[i].getSymbolicName().indexOf(EE_DESCRIPTION_PREFIX) >= 0) {
 				result.append(allFragments[i].getSymbolicName());
 				result.append(';');
 				result.append(allFragments[i].getVersion().toString());
@@ -683,10 +705,13 @@ public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsL
 		}
 		return result.toString();
 	}
-		
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.Plugin#stop(org.osgi.framework.BundleContext)
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.core.runtime.Plugin#stop(org.osgi.framework.BundleContext)
 	 */
+	@Override
 	public void stop(BundleContext context) throws Exception {
 		try {
 			ApiDescriptionManager.shutdown();
@@ -694,21 +719,20 @@ public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsL
 			ResourcesPlugin.getWorkspace().removeSaveParticipant(PLUGIN_ID);
 			FileManager.getManager().deleteFiles();
 			fBundleContext = null;
-			if(deltaProcessor != null) {
+			if (deltaProcessor != null) {
 				JavaCore.removeElementChangedListener(deltaProcessor);
 				ResourcesPlugin.getWorkspace().removeResourceChangeListener(deltaProcessor);
 			}
-		}
-		finally {
+		} finally {
 			super.stop(context);
 		}
 	}
 
 	/**
-	 * Returns the severity for the specific key from the given {@link IProject}.
-	 * If the project does not have project specific settings, the workspace preference
-	 * is returned. If <code>null</code> is passed in as the project the workspace
-	 * preferences are consulted.
+	 * Returns the severity for the specific key from the given {@link IProject}
+	 * . If the project does not have project specific settings, the workspace
+	 * preference is returned. If <code>null</code> is passed in as the project
+	 * the workspace preferences are consulted.
 	 * 
 	 * @param prefkey the given preference key
 	 * @param project the given project or <code>null</code>
@@ -717,51 +741,55 @@ public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsL
 	public int getSeverityLevel(String prefkey, IProject project) {
 		IPreferencesService service = Platform.getPreferencesService();
 		IScopeContext[] context = null;
-		if(hasProjectSettings(project)) {
-			context = new IScopeContext[] {new ProjectScope(project), InstanceScope.INSTANCE,DefaultScope.INSTANCE};
-		}
-		else {
-			context = new IScopeContext[] {InstanceScope.INSTANCE, DefaultScope.INSTANCE};
+		if (hasProjectSettings(project)) {
+			context = new IScopeContext[] {
+					new ProjectScope(project), InstanceScope.INSTANCE,
+					DefaultScope.INSTANCE };
+		} else {
+			context = new IScopeContext[] {
+					InstanceScope.INSTANCE, DefaultScope.INSTANCE };
 		}
 		String value = service.get(prefkey, null, getPreferences(context));
-		if(VALUE_ERROR.equals(value)) {
+		if (VALUE_ERROR.equals(value)) {
 			return SEVERITY_ERROR;
 		}
-		if(VALUE_WARNING.equals(value)) {
+		if (VALUE_WARNING.equals(value)) {
 			return SEVERITY_WARNING;
 		}
 		return SEVERITY_IGNORE;
 	}
-	
+
 	/**
-	 * Returns the array of {@link IEclipsePreferences} nodes to look in to determine
-	 * the value of a given preference. 
-	 * This method will return <code>null</code> iff:
+	 * Returns the array of {@link IEclipsePreferences} nodes to look in to
+	 * determine the value of a given preference. This method will return
+	 * <code>null</code> iff:
 	 * <ul>
-	 * <li>the given array of contexts are <code>null</code></li> 
+	 * <li>the given array of contexts are <code>null</code></li>
 	 * <li>if no nodes could be determined from the given contexts</li>
 	 * </ul>
+	 * 
 	 * @param context
-	 * @return the array of {@link IEclipsePreferences} to look in or <code>null</code>.
+	 * @return the array of {@link IEclipsePreferences} to look in or
+	 *         <code>null</code>.
 	 * @since 1.1
 	 */
 	IEclipsePreferences[] getPreferences(IScopeContext[] context) {
-		if(context != null) {
-			ArrayList nodes = new ArrayList(context.length);
+		if (context != null) {
+			ArrayList<IEclipsePreferences> nodes = new ArrayList<IEclipsePreferences>(context.length);
 			IEclipsePreferences node = null;
 			for (int i = 0; i < context.length; i++) {
 				node = context[i].getNode(PLUGIN_ID);
-				if(node != null) {
+				if (node != null) {
 					nodes.add(node);
 				}
 			}
-			if(nodes.size() > 0) {
-				return (IEclipsePreferences[]) nodes.toArray(new IEclipsePreferences[nodes.size()]);
+			if (nodes.size() > 0) {
+				return nodes.toArray(new IEclipsePreferences[nodes.size()]);
 			}
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns if the given project has project-specific settings.
 	 * 
@@ -770,31 +798,30 @@ public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsL
 	 * @since 1.1
 	 */
 	boolean hasProjectSettings(IProject project) {
-		if(project != null) {
+		if (project != null) {
 			ProjectScope scope = new ProjectScope(project);
 			IEclipsePreferences node = scope.getNode(PLUGIN_ID);
 			try {
 				return node != null && node.keys().length > 0;
-			}
-			catch(BackingStoreException bse) {
+			} catch (BackingStoreException bse) {
 				log(bse);
 			}
 		}
 		return false;
 	}
-	
+
 	public ISessionManager getSessionManager() {
-		if(fgSessionManager == null) {
+		if (fgSessionManager == null) {
 			fgSessionManager = new SessionManager();
 		}
 		return fgSessionManager;
 	}
 
 	/**
-	 * Returns the enable state for the specific key from the given {@link IProject}.
-	 * If the project does not have project specific settings, the workspace preference
-	 * is returned. If <code>null</code> is passed in as the project the workspace
-	 * preferences are consulted.
+	 * Returns the enable state for the specific key from the given
+	 * {@link IProject}. If the project does not have project specific settings,
+	 * the workspace preference is returned. If <code>null</code> is passed in
+	 * as the project the workspace preferences are consulted.
 	 * 
 	 * @param prefkey the given preference key
 	 * @param project the given project or <code>null</code>
@@ -803,16 +830,18 @@ public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsL
 	public boolean getEnableState(String prefkey, IProject project) {
 		IPreferencesService service = Platform.getPreferencesService();
 		IScopeContext[] context = null;
-		if(hasProjectSettings(project)) {
-			context = new IScopeContext[] {new ProjectScope(project), InstanceScope.INSTANCE, DefaultScope.INSTANCE};
-		}
-		else {
-			context = new IScopeContext[] {InstanceScope.INSTANCE, DefaultScope.INSTANCE};
+		if (hasProjectSettings(project)) {
+			context = new IScopeContext[] {
+					new ProjectScope(project), InstanceScope.INSTANCE,
+					DefaultScope.INSTANCE };
+		} else {
+			context = new IScopeContext[] {
+					InstanceScope.INSTANCE, DefaultScope.INSTANCE };
 		}
 		String value = service.get(prefkey, null, getPreferences(context));
 		return VALUE_ENABLED.equals(value);
 	}
-	
+
 	/**
 	 * Returns a service with the specified name or <code>null</code> if none.
 	 * 
@@ -820,15 +849,20 @@ public class ApiPlugin extends Plugin implements ISaveParticipant, DebugOptionsL
 	 * @return service object or <code>null</code> if none
 	 */
 	public Object acquireService(String serviceName) {
-		ServiceReference reference = fBundleContext.getServiceReference(serviceName);
-		if (reference == null)
+		ServiceReference<?> reference = fBundleContext.getServiceReference(serviceName);
+		if (reference == null) {
 			return null;
+		}
 		return fBundleContext.getService(reference);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.osgi.service.debug.DebugOptionsListener#optionsChanged(org.eclipse.osgi.service.debug.DebugOptions)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.osgi.service.debug.DebugOptionsListener#optionsChanged(org
+	 * .eclipse.osgi.service.debug.DebugOptions)
 	 */
+	@Override
 	public void optionsChanged(DebugOptions options) {
 		DEBUG = options.getBooleanOption(DEBUG_FLAG, false);
 		boolean option = options.getBooleanOption(DELTA_DEBUG, false);

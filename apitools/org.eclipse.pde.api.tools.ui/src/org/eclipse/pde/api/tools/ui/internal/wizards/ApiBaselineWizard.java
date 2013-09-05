@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,73 +19,78 @@ import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 
 /**
  * A wizard to create a new API profile
+ * 
  * @since 1.0.0
  */
 public class ApiBaselineWizard extends Wizard {
 
 	private IApiBaseline profile = null;
 	private boolean content = false;
-	
+
 	/**
 	 * Constructor
+	 * 
 	 * @param profile
 	 */
 	public ApiBaselineWizard(IApiBaseline profile) {
 		this.profile = profile;
-		if(profile == null) {
+		if (profile == null) {
 			setWindowTitle(WizardMessages.ApiProfileWizard_0);
-		}
-		else {
+		} else {
 			setWindowTitle(WizardMessages.ApiProfileWizard_1);
 		}
 		setNeedsProgressMonitor(true);
 	}
-	
+
 	/**
-	 * @return the current profile in the wizard. The current profile 
-	 * can be <code>null</code> if the wizard has just been opened to create a new API profile
+	 * @return the current profile in the wizard. The current profile can be
+	 *         <code>null</code> if the wizard has just been opened to create a
+	 *         new API profile
 	 */
 	public IApiBaseline getProfile() {
 		return profile;
 	}
-	
+
 	/**
-	 * @return if the underlying content of the baseline has changed and not just
-	 * a change to the name
+	 * @return if the underlying content of the baseline has changed and not
+	 *         just a change to the name
 	 */
 	public boolean contentChanged() {
 		return content;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.Wizard#addPages()
 	 */
+	@Override
 	public void addPages() {
 		addPage(new ApiBaselineWizardPage(profile));
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.Wizard#performFinish()
 	 */
+	@Override
 	public boolean performFinish() {
 		try {
 			ApiBaselineWizardPage page = (ApiBaselineWizardPage) getContainer().getCurrentPage();
 			profile = page.finish();
 			content = page.contentChanged();
 			return profile != null;
-		}
-		catch(IOException e) {
+		} catch (IOException e) {
 			ApiUIPlugin.log(e);
-		}
-		catch(CoreException e) {
+		} catch (CoreException e) {
 			ApiUIPlugin.log(e);
 		}
 		return false;
 	}
-	
+
 	/**
 	 * @see org.eclipse.jface.wizard.Wizard#performCancel()
 	 */
+	@Override
 	public boolean performCancel() {
 		ApiBaselineWizardPage page = (ApiBaselineWizardPage) getContainer().getCurrentPage();
 		page.cancel();

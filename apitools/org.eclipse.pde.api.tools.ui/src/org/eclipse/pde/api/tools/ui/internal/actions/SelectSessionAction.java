@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,6 +41,7 @@ public class SelectSessionAction extends Action implements IMenuCreator {
 		setEnabled(false);
 	}
 
+	@Override
 	public Menu getMenu(Control parent) {
 		if (menu != null) {
 			menu.dispose();
@@ -53,11 +54,12 @@ public class SelectSessionAction extends Action implements IMenuCreator {
 		for (int i = 0; i < sessions.length; i++) {
 			final ISession session = sessions[i];
 			MenuItem item = new MenuItem(menu, SWT.RADIO);
-			Object[] labelparams = new Object[] { new Integer(i + 1), session.getDescription()};
-			item.setText(NLS.bind(ActionMessages.SelectSessionActionEntry_label,
-					labelparams));
+			Object[] labelparams = new Object[] {
+					new Integer(i + 1), session.getDescription() };
+			item.setText(NLS.bind(ActionMessages.SelectSessionActionEntry_label, labelparams));
 			item.setSelection(session == active);
 			item.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					manager.activateSession(session);
 				}
@@ -66,10 +68,12 @@ public class SelectSessionAction extends Action implements IMenuCreator {
 		return menu;
 	}
 
+	@Override
 	public Menu getMenu(Menu parent) {
 		return null;
 	}
 
+	@Override
 	public void dispose() {
 	}
 

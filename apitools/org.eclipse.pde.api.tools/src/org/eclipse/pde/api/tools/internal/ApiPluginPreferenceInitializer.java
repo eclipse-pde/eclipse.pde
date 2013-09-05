@@ -28,12 +28,13 @@ public class ApiPluginPreferenceInitializer extends AbstractPreferenceInitialize
 	public ApiPluginPreferenceInitializer() {
 	}
 
+	@Override
 	public void initializeDefaultPreferences() {
 		IEclipsePreferences node = DefaultScope.INSTANCE.getNode(ApiPlugin.PLUGIN_ID);
-		if(node == null) {
+		if (node == null) {
 			return;
 		}
-		
+
 		// usage
 		node.put(IApiProblemTypes.ILLEGAL_EXTEND, ApiPlugin.VALUE_WARNING);
 		node.put(IApiProblemTypes.ILLEGAL_IMPLEMENT, ApiPlugin.VALUE_WARNING);
@@ -49,7 +50,7 @@ public class ApiPluginPreferenceInitializer extends AbstractPreferenceInitialize
 		node.put(IApiProblemTypes.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES, ApiPlugin.VALUE_IGNORE);
 		node.put(IApiProblemTypes.UNUSED_PROBLEM_FILTERS, ApiPlugin.VALUE_WARNING);
 		node.put(IApiProblemTypes.FATAL_PROBLEMS, ApiPlugin.VALUE_ERROR);
-		
+
 		// compatibilities
 		for (int i = 0, max = ApiPlugin.AllCompatibilityKeys.length; i < max; i++) {
 			node.put(ApiPlugin.AllCompatibilityKeys[i], ApiPlugin.VALUE_ERROR);
@@ -63,14 +64,14 @@ public class ApiPluginPreferenceInitializer extends AbstractPreferenceInitialize
 		node.put(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION, ApiPlugin.VALUE_ERROR);
 		node.put(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MINOR_WITHOUT_API_CHANGE, ApiPlugin.VALUE_DISABLED);
 		node.put(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MAJOR_WITHOUT_BREAKING_CHANGE, ApiPlugin.VALUE_DISABLED);
-		
+
 		node.put(IApiProblemTypes.MISSING_DEFAULT_API_BASELINE, ApiPlugin.VALUE_ERROR);
 		node.put(IApiProblemTypes.MISSING_EE_DESCRIPTIONS, ApiPlugin.VALUE_ERROR);
 
 		// api component resolution
 		node.put(IApiProblemTypes.REPORT_RESOLUTION_ERRORS_API_COMPONENT, ApiPlugin.VALUE_WARNING);
 		node.putBoolean(IApiProblemTypes.AUTOMATICALLY_REMOVE_UNUSED_PROBLEM_FILTERS, false);
-		
+
 		// api use scans
 		node.put(IApiProblemTypes.API_USE_SCAN_TYPE_SEVERITY, ApiPlugin.VALUE_ERROR);
 		node.put(IApiProblemTypes.API_USE_SCAN_METHOD_SEVERITY, ApiPlugin.VALUE_ERROR);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,14 +26,14 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblemFilter
  * @since 1.0.1
  */
 public abstract class FilterChange extends Change {
-	
+
 	static final int DELETE = 1;
 	static final int ADD = 2;
-	
+
 	IApiFilterStore store = null;
 	IApiProblemFilter filter = null;
 	int kind = 0;
-	
+
 	/**
 	 * Constructor
 	 */
@@ -42,99 +42,128 @@ public abstract class FilterChange extends Change {
 		this.filter = filter;
 		this.kind = kind;
 	}
-	
+
 	/**
-	 * Performs the delete operation and returns an undo change or <code>null</code>
+	 * Performs the delete operation and returns an undo change or
+	 * <code>null</code>
+	 * 
 	 * @return an undo change or <code>null</code>
 	 */
 	protected abstract Change performDelete();
-	
+
 	/**
-	 * Performs the add operation and returns an undo change or <code>null</code>
+	 * Performs the add operation and returns an undo change or
+	 * <code>null</code>
+	 * 
 	 * @return an undo change or <code>null</code>
 	 */
 	protected abstract Change performAdd();
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.Change#perform(org.eclipse.core.runtime.IProgressMonitor)
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.ltk.core.refactoring.Change#perform(org.eclipse.core.runtime
+	 * .IProgressMonitor)
 	 */
+	@Override
 	public Change perform(IProgressMonitor pm) throws CoreException {
-		switch(this.kind) {
+		switch (this.kind) {
 			case DELETE: {
 				return performDelete();
 			}
 			case ADD: {
 				return performAdd();
 			}
+			default:
+				break;
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns the name to use for an {@link #ADD} change operation
+	 * 
 	 * @return the name for an {@link #ADD} change
 	 */
 	protected String getAddName() {
 		return NLS.bind(RefactoringMessages.FilterChange_add_filter, this.filter.toString());
 	}
-	
+
 	/**
 	 * Returns the name to use for a {@link #DELETE} change operation
+	 * 
 	 * @return the name for a {@link #DELETE} change
 	 */
 	protected String getDeleteName() {
 		IApiProblem problem = this.filter.getUnderlyingProblem();
 		return NLS.bind(RefactoringMessages.FilterChange_remove_used_filter, problem.getMessage());
 	}
-	
+
 	/**
 	 * Returns the name to use for a {@link #RENAME} change operation
+	 * 
 	 * @return the name for a {@link #RENAME} change
 	 */
 	protected String getRenameName() {
 		IApiProblem problem = this.filter.getUnderlyingProblem();
-		return NLS.bind(RefactoringMessages.FilterChange_remove_used_filter, new Object[] {problem.getMessage()}); 
+		return NLS.bind(RefactoringMessages.FilterChange_remove_used_filter, new Object[] { problem.getMessage() });
 	}
-	
+
 	/**
 	 * Returns the name to use for a {@link #MOVE} change operation
+	 * 
 	 * @return the name for a {@link #MOVE} change
 	 */
 	protected String getMoveName() {
 		IApiProblem problem = this.filter.getUnderlyingProblem();
-		return NLS.bind(RefactoringMessages.FilterChange_remove_used_filter, new Object[] {problem.getMessage()});
+		return NLS.bind(RefactoringMessages.FilterChange_remove_used_filter, new Object[] { problem.getMessage() });
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.Change#getName()
 	 */
+	@Override
 	public String getName() {
-		switch(this.kind) {
+		switch (this.kind) {
 			case ADD: {
 				return getAddName();
 			}
 			case DELETE: {
 				return getDeleteName();
 			}
-		} 
+			default:
+				break;
+		}
 		return null;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.Change#initializeValidationData(org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public void initializeValidationData(IProgressMonitor pm) {}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.Change#isValid(org.eclipse.core.runtime.IProgressMonitor)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.ltk.core.refactoring.Change#initializeValidationData(org.
+	 * eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
+	public void initializeValidationData(IProgressMonitor pm) {
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.ltk.core.refactoring.Change#isValid(org.eclipse.core.runtime
+	 * .IProgressMonitor)
+	 */
+	@Override
 	public RefactoringStatus isValid(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		return new RefactoringStatus();
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.Change#getModifiedElement()
 	 */
+	@Override
 	public Object getModifiedElement() {
 		return this.filter;
 	}

@@ -58,45 +58,48 @@ public class BuildState {
 	private static final IDelta[] EMPTY_DELTAS = new IDelta[0];
 	private static final String[] NO_REEXPORTED_COMPONENTS = new String[0];
 	private static final int VERSION = 0x20;
-	
-	private Map compatibleChanges;
-	private Map breakingChanges;
+
+	private Map<String, Set<IDelta>> compatibleChanges;
+	private Map<String, Set<IDelta>> breakingChanges;
 	/**
 	 * Map of the last saved state of the manifest file
+	 * 
 	 * @since 1.0.3
 	 */
-	private Map manifestChanges;
+	private Map<String, String> manifestChanges;
 	/**
 	 * Map of the last saved state of the build.properties file
+	 * 
 	 * @since 1.0.3
 	 */
-	private Map buildPropChanges;
+	private Map<String, String> buildPropChanges;
 	private String[] reexportedComponents;
-	private Set apiToolingDependentProjects;
+	private Set<String> apiToolingDependentProjects;
 	private long buildpathCRC = -1L;
-	
+
 	/**
 	 * Constructor
 	 */
 	BuildState() {
-		this.compatibleChanges = new HashMap();
-		this.breakingChanges = new HashMap();
-		this.manifestChanges = new HashMap();
-		this.buildPropChanges = new HashMap();
+		this.compatibleChanges = new HashMap<String, Set<IDelta>>();
+		this.breakingChanges = new HashMap<String, Set<IDelta>>();
+		this.manifestChanges = new HashMap<String, String>();
+		this.buildPropChanges = new HashMap<String, String>();
 	}
-	
+
 	/**
 	 * Reads the build state from an input stream
+	 * 
 	 * @param in
 	 * @return the {@link BuildState} from the given input stream
 	 * @throws IOException
 	 */
-	 public static BuildState read(DataInputStream in) throws IOException {
-		String pluginID= in.readUTF();
+	public static BuildState read(DataInputStream in) throws IOException {
+		String pluginID = in.readUTF();
 		if (!pluginID.equals(ApiPlugin.PLUGIN_ID)) {
 			throw new IOException(BuilderMessages.build_wrongFileFormat);
 		}
-		String kind= in.readUTF();
+		String kind = in.readUTF();
 		if (!kind.equals("STATE")) {//$NON-NLS-1$
 			throw new IOException(BuilderMessages.build_wrongFileFormat);
 		}
@@ -129,12 +132,12 @@ public class BuildState {
 			for (int i = 0; i < count; i++) {
 				state.addApiToolingDependentProject(in.readUTF());
 			}
-			if(in.available() > 0) {
+			if (in.available() > 0) {
 				count = in.readInt();
-				if(count > 0) {
-					//read the saved headers
-					HashMap map = new HashMap(count);
-					for(int i = 0; i < count; i++) {
+				if (count > 0) {
+					// read the saved headers
+					HashMap<String, String> map = new HashMap<String, String>(count);
+					for (int i = 0; i < count; i++) {
 						String key = in.readUTF();
 						String value = in.readUTF();
 						map.put(key, value);
@@ -142,10 +145,10 @@ public class BuildState {
 					state.setManifestState(map);
 				}
 				count = in.readInt();
-				if(count > 0) {
-					//read the saved headers
-					HashMap map = new HashMap(count);
-					for(int i = 0; i < count; i++) {
+				if (count > 0) {
+					// read the saved headers
+					HashMap<String, String> map = new HashMap<String, String>(count);
+					for (int i = 0; i < count; i++) {
 						String key = in.readUTF();
 						String value = in.readUTF();
 						map.put(key, value);
@@ -157,9 +160,10 @@ public class BuildState {
 		}
 		return null;
 	}
-	 
+
 	/**
 	 * Writes the given {@link BuildState} to the given output stream
+	 * 
 	 * @param state
 	 * @param out
 	 * @throws IOException
@@ -188,32 +192,33 @@ public class BuildState {
 		for (int i = 0; i < length; i++) {
 			out.writeUTF(reexportedComponents[i]);
 		}
-		Set apiToolingDependentsProjects = state.getApiToolingDependentProjects();
+		Set<String> apiToolingDependentsProjects = state.getApiToolingDependentProjects();
 		length = apiToolingDependentsProjects.size();
 		out.writeInt(length);
-		for (Iterator iterator = apiToolingDependentsProjects.iterator(); iterator.hasNext(); ) {
-			out.writeUTF((String) iterator.next());
+		for (Iterator<String> iterator = apiToolingDependentsProjects.iterator(); iterator.hasNext();) {
+			out.writeUTF(iterator.next());
 		}
-		Map map = state.getManifestState();
+		Map<String, String> map = state.getManifestState();
 		out.writeInt(map.size());
-		Entry entry = null;
-		for (Iterator i = map.entrySet().iterator(); i.hasNext();) {
-			entry = (Entry) i.next();
-			out.writeUTF((String) entry.getKey());
-			out.writeUTF((String) entry.getValue());
+		Entry<String, String> entry = null;
+		for (Iterator<Entry<String, String>> i = map.entrySet().iterator(); i.hasNext();) {
+			entry = i.next();
+			out.writeUTF(entry.getKey());
+			out.writeUTF(entry.getValue());
 		}
 		map = state.getBuildPropertiesState();
 		out.writeInt(map.size());
 		entry = null;
-		for (Iterator i = map.entrySet().iterator(); i.hasNext();) {
-			entry = (Entry) i.next();
-			out.writeUTF((String) entry.getKey());
-			out.writeUTF((String) entry.getValue());
+		for (Iterator<Entry<String, String>> i = map.entrySet().iterator(); i.hasNext();) {
+			entry = i.next();
+			out.writeUTF(entry.getKey());
+			out.writeUTF(entry.getValue());
 		}
 	}
-	
+
 	/**
 	 * Read the {@link IDelta} from the build state (input stream)
+	 * 
 	 * @param in the input stream to read the {@link IDelta} from
 	 * @return a reconstructed {@link IDelta} from the build state
 	 * @throws IOException
@@ -222,7 +227,9 @@ public class BuildState {
 		// decode the delta from the build state
 		boolean hasComponentID = in.readBoolean();
 		String componentID = null;
-		if (hasComponentID) in.readUTF(); // delta.getComponentID()
+		if (hasComponentID) {
+			in.readUTF(); // delta.getComponentID()
+		}
 		int elementType = in.readInt(); // delta.getElementType()
 		int kind = in.readInt(); // delta.getKind()
 		int flags = in.readInt(); // delta.getFlags()
@@ -233,7 +240,7 @@ public class BuildState {
 		int length = in.readInt(); // arguments.length;
 		String[] datas = null;
 		if (length != 0) {
-			ArrayList arguments = new ArrayList();
+			ArrayList<String> arguments = new ArrayList<String>();
 			for (int i = 0; i < length; i++) {
 				arguments.add(in.readUTF());
 			}
@@ -249,16 +256,18 @@ public class BuildState {
 		int currentRestrictions = restrictions & Delta.RESTRICTIONS_MASK;
 		return new Delta(componentID, elementType, kind, flags, currentRestrictions, previousRestrictions, oldModifiers, newModifiers, typeName, key, datas);
 	}
-	
+
 	/**
 	 * Writes a given {@link IDelta} to the build state (the output stream)
+	 * 
 	 * @param delta the delta to write
 	 * @param out the stream to write to
 	 * @throws IOException
 	 */
 	private static void writeDelta(IDelta delta, DataOutputStream out) throws IOException {
 		// encode a delta into the build state
-		// int elementType, int kind, int flags, int restrictions, int modifiers, String typeName, String key, Object data
+		// int elementType, int kind, int flags, int restrictions, int
+		// modifiers, String typeName, String key, Object data
 		String apiComponentID = delta.getComponentVersionId();
 		boolean hasComponentID = apiComponentID != null;
 		out.writeBoolean(hasComponentID);
@@ -282,15 +291,16 @@ public class BuildState {
 	}
 
 	/**
-	 * Adds an {@link IDelta} for a compatible compatibility change to the current state
+	 * Adds an {@link IDelta} for a compatible compatibility change to the
+	 * current state
 	 * 
 	 * @param delta the {@link IDelta} to add to the state
 	 */
 	public void addCompatibleChange(IDelta delta) {
 		String typeName = delta.getTypeName();
-		Set object = (Set) this.compatibleChanges.get(typeName);
+		Set<IDelta> object = this.compatibleChanges.get(typeName);
 		if (object == null) {
-			Set changes = new HashSet();
+			Set<IDelta> changes = new HashSet<IDelta>();
 			changes.add(delta);
 			this.compatibleChanges.put(typeName, changes);
 		} else {
@@ -299,52 +309,53 @@ public class BuildState {
 	}
 
 	/**
-	 * Add an {@link IDelta} for an incompatible compatibility change to the current state
+	 * Add an {@link IDelta} for an incompatible compatibility change to the
+	 * current state
 	 * 
 	 * @param delta the {@link IDelta} to add to the state
 	 */
 	public void addBreakingChange(IDelta delta) {
 		String typeName = delta.getTypeName();
-		Set object = (Set) this.breakingChanges.get(typeName);
+		Set<IDelta> object = this.breakingChanges.get(typeName);
 		if (object == null) {
-			Set changes = new HashSet();
+			Set<IDelta> changes = new HashSet<IDelta>();
 			changes.add(delta);
 			this.breakingChanges.put(typeName, changes);
 		} else {
 			object.add(delta);
 		}
 	}
-	
+
 	/**
-	 * @return the complete list of recorded breaking changes with duplicates removed, or 
-	 * an empty array, never <code>null</code>
+	 * @return the complete list of recorded breaking changes with duplicates
+	 *         removed, or an empty array, never <code>null</code>
 	 */
 	public IDelta[] getBreakingChanges() {
 		if (this.breakingChanges == null || this.breakingChanges.size() == 0) {
 			return EMPTY_DELTAS;
 		}
-		HashSet collector = new HashSet();
-		Collection values = this.breakingChanges.values();
-		for (Iterator iterator = values.iterator(); iterator.hasNext(); ) {
-			collector.addAll((HashSet) iterator.next());
+		HashSet<IDelta> collector = new HashSet<IDelta>();
+		Collection<Set<IDelta>> values = this.breakingChanges.values();
+		for (Iterator<Set<IDelta>> iterator = values.iterator(); iterator.hasNext();) {
+			collector.addAll(iterator.next());
 		}
-		return (IDelta[]) collector.toArray(new IDelta[collector.size()]);
+		return collector.toArray(new IDelta[collector.size()]);
 	}
 
 	/**
-	 * @return the complete list of recorded compatible changes with duplicates removed,
-	 * or an empty array, never <code>null</code>
+	 * @return the complete list of recorded compatible changes with duplicates
+	 *         removed, or an empty array, never <code>null</code>
 	 */
 	public IDelta[] getCompatibleChanges() {
 		if (this.compatibleChanges == null || this.compatibleChanges.size() == 0) {
 			return EMPTY_DELTAS;
 		}
-		HashSet collector = new HashSet();
-		Collection values = this.compatibleChanges.values();
-		for (Iterator iterator = values.iterator(); iterator.hasNext(); ) {
-			collector.addAll((HashSet) iterator.next());
+		HashSet<IDelta> collector = new HashSet<IDelta>();
+		Collection<Set<IDelta>> values = this.compatibleChanges.values();
+		for (Iterator<Set<IDelta>> iterator = values.iterator(); iterator.hasNext();) {
+			collector.addAll(iterator.next());
 		}
-		return (IDelta[]) collector.toArray(new IDelta[collector.size()]);
+		return collector.toArray(new IDelta[collector.size()]);
 	}
 
 	/**
@@ -356,10 +367,10 @@ public class BuildState {
 		}
 		return this.reexportedComponents;
 	}
-	
+
 	/**
 	 * Remove all entries for the given type name.
-	 *
+	 * 
 	 * @param typeName the given type name
 	 */
 	public void cleanup(String typeName) {
@@ -369,7 +380,9 @@ public class BuildState {
 	}
 
 	/**
-	 * Sets the current list if re-exported {@link IApiComponent}s for this build state
+	 * Sets the current list if re-exported {@link IApiComponent}s for this
+	 * build state
+	 * 
 	 * @param components
 	 */
 	public void setReexportedComponents(IApiComponent[] components) {
@@ -388,60 +401,64 @@ public class BuildState {
 
 	/**
 	 * Adds a dependent project to the listing of dependent projects
+	 * 
 	 * @param projectName
 	 */
 	public void addApiToolingDependentProject(String projectName) {
 		if (this.apiToolingDependentProjects == null) {
-			this.apiToolingDependentProjects = new HashSet(3);
+			this.apiToolingDependentProjects = new HashSet<String>(3);
 		}
 		this.apiToolingDependentProjects.add(projectName);
 	}
-	
+
 	/**
 	 * @return the complete listing of dependent projects
 	 */
-	public Set getApiToolingDependentProjects() {
+	public Set<String> getApiToolingDependentProjects() {
 		return this.apiToolingDependentProjects == null ? Collections.EMPTY_SET : this.apiToolingDependentProjects;
 	}
-	
+
 	/**
-	 * Allows the last built state of the manifest to be saved. This method will perform compaction of the manifest,
-	 * removing headers that we not need to care about.
+	 * Allows the last built state of the manifest to be saved. This method will
+	 * perform compaction of the manifest, removing headers that we not need to
+	 * care about.
 	 * 
 	 * @param state the last built state of the manifest
 	 * @since 1.0.3
 	 */
-	public void setManifestState(Map state) {
-		if(state != null) {
-			Map compact = new HashMap(7);
-			for (Iterator i = ApiAnalysisBuilder.IMPORTANT_HEADERS.iterator(); i.hasNext();) {
-				String key = (String) i.next();
-				Object val = state.get(key);
-				if(val != null) {
+	public void setManifestState(Map<String, String> state) {
+		if (state != null) {
+			Map<String, String> compact = new HashMap<String, String>(7);
+			for (Iterator<String> i = ApiAnalysisBuilder.IMPORTANT_HEADERS.iterator(); i.hasNext();) {
+				String key = i.next();
+				String val = state.get(key);
+				if (val != null) {
 					compact.put(key, val);
 				}
 			}
 			this.manifestChanges = compact;
-		}
-		else {
+		} else {
 			this.manifestChanges.clear();
 		}
 	}
-	
+
 	/**
-	 * Returns the last saved state of the manifest or an empty {@link Map}, never <code>null</code>
+	 * Returns the last saved state of the manifest or an empty {@link Map},
+	 * never <code>null</code>
 	 * 
-	 * @return the last built state of the manifest or an empty {@link Map}, never <code>null</code>
+	 * @return the last built state of the manifest or an empty {@link Map},
+	 *         never <code>null</code>
 	 * @since 1.0.3
 	 */
-	public Map getManifestState() {
+	public Map<String, String> getManifestState() {
 		return this.manifestChanges;
 	}
-	
+
 	/**
-	 * Allows the last built state of the build.properties file to be saved. This method will only save 
-	 * entries that we care about, not an entire build.properties file snap-shot.
-	 * <br><br>
+	 * Allows the last built state of the build.properties file to be saved.
+	 * This method will only save entries that we care about, not an entire
+	 * build.properties file snap-shot. <br>
+	 * <br>
 	 * The retained entries are:
 	 * <ul>
 	 * <li>names that match: <code>custom</code></li>
@@ -453,51 +470,51 @@ public class BuildState {
 	 * @since 1.0.3
 	 */
 	public void setBuildPropertiesState(IBuildModel model) {
-		if(model != null) {
+		if (model != null) {
 			IBuildEntry[] entries = model.getBuild().getBuildEntries();
 			String name = null;
 			for (int i = 0; i < entries.length; i++) {
 				name = entries[i].getName();
-				if(ProjectComponent.ENTRY_CUSTOM.equals(name)) {
+				if (ProjectComponent.ENTRY_CUSTOM.equals(name)) {
 					this.buildPropChanges.put(ProjectComponent.ENTRY_CUSTOM, Util.deepToString(entries[i].getTokens()));
-				}
-				else if(name.startsWith(IBuildEntry.JAR_PREFIX)) {
+				} else if (name.startsWith(IBuildEntry.JAR_PREFIX)) {
 					this.buildPropChanges.put(name, Util.deepToString(entries[i].getTokens()));
-				}
-				else if(name.startsWith(ProjectComponent.EXTRA_PREFIX)) {
+				} else if (name.startsWith(ProjectComponent.EXTRA_PREFIX)) {
 					this.buildPropChanges.put(name, Util.deepToString(entries[i].getTokens()));
 				}
 			}
-		}
-		else {
+		} else {
 			this.buildPropChanges.clear();
 		}
 	}
-	
+
 	/**
-	 * Allows the map to be reset to the given map, passing in <code>null</code> clears the current mapping.
+	 * Allows the map to be reset to the given map, passing in <code>null</code>
+	 * clears the current mapping.
+	 * 
 	 * @param map the map to set
 	 * @since 1.0.3
 	 */
-	void setBuildPropertiesState(Map map) {
-		if(map != null) {
+	void setBuildPropertiesState(Map<String, String> map) {
+		if (map != null) {
 			this.buildPropChanges = map;
-		}
-		else {
+		} else {
 			this.buildPropChanges.clear();
 		}
 	}
-	
+
 	/**
-	 * Returns the last built state of the build.properties file or an empty {@link Map}, never <code>null</code>
+	 * Returns the last built state of the build.properties file or an empty
+	 * {@link Map}, never <code>null</code>
 	 * 
-	 * @return the last built state of the build.properties file or an empty {@link Map}, never <code>null</code>
+	 * @return the last built state of the build.properties file or an empty
+	 *         {@link Map}, never <code>null</code>
 	 * @since 1.0.3
 	 */
-	public Map getBuildPropertiesState() {
+	public Map<String, String> getBuildPropertiesState() {
 		return this.buildPropChanges;
 	}
-	
+
 	/**
 	 * Returns a CRC32 code of the project's build path or -1 if unknown.
 	 * 
@@ -506,7 +523,7 @@ public class BuildState {
 	public long getBuildPathCRC() {
 		return buildpathCRC;
 	}
-	
+
 	/**
 	 * Sets the build path CRC for this project's resolved build path.
 	 * 
@@ -515,7 +532,7 @@ public class BuildState {
 	public void setBuildPathCRC(long crc32) {
 		buildpathCRC = crc32;
 	}
-	
+
 	/**
 	 * Return the last built state for the given project, or null if none
 	 */
@@ -526,16 +543,18 @@ public class BuildState {
 		}
 		return readState(project);
 	}
-	
+
 	/**
 	 * Reads the build state for the relevant project.
-	 * @return the current {@link BuildState} for the given project or <code>null</code> if there is not one
+	 * 
+	 * @return the current {@link BuildState} for the given project or
+	 *         <code>null</code> if there is not one
 	 */
 	static BuildState readState(IProject project) throws CoreException {
 		File file = getSerializationFile(project);
 		if (file != null && file.exists()) {
 			try {
-				DataInputStream in= new DataInputStream(new BufferedInputStream(new FileInputStream(file)));
+				DataInputStream in = new DataInputStream(new BufferedInputStream(new FileInputStream(file)));
 				try {
 					return read(in);
 				} finally {
@@ -546,7 +565,7 @@ public class BuildState {
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
-				throw new CoreException(new Status(IStatus.ERROR, JavaCore.PLUGIN_ID, Platform.PLUGIN_ERROR, "Error reading last build state for project "+ project.getName(), e)); //$NON-NLS-1$
+				throw new CoreException(new Status(IStatus.ERROR, JavaCore.PLUGIN_ID, Platform.PLUGIN_ERROR, "Error reading last build state for project " + project.getName(), e)); //$NON-NLS-1$
 			}
 		} else if (ApiPlugin.DEBUG_BUILDER) {
 			if (file == null) {
@@ -557,7 +576,7 @@ public class BuildState {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Sets the last built state for the given project, or null to reset it.
 	 * 
@@ -575,18 +594,20 @@ public class BuildState {
 					if (file != null && file.exists()) {
 						file.delete();
 					}
-				} catch(SecurityException se) {
+				} catch (SecurityException se) {
 					// could not delete file: cannot do much more
 				}
 			}
 		}
 	}
-	
+
 	/**
-	 * Returns the {@link File} to use for saving and restoring the last built state for the given project.
+	 * Returns the {@link File} to use for saving and restoring the last built
+	 * state for the given project.
 	 * 
 	 * @param project gets the saved state file for the given project
-	 * @return the {@link File} to use for saving and restoring the last built state for the given project.
+	 * @return the {@link File} to use for saving and restoring the last built
+	 *         state for the given project.
 	 */
 	static File getSerializationFile(IProject project) {
 		if (!project.exists()) {
@@ -595,19 +616,22 @@ public class BuildState {
 		IPath workingLocation = project.getWorkingLocation(ApiPlugin.PLUGIN_ID);
 		return workingLocation.append("state.dat").toFile(); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Saves the current build state
+	 * 
 	 * @param project
 	 * @param state
 	 * @throws CoreException
 	 */
 	static void saveBuiltState(IProject project, BuildState state) throws CoreException {
 		if (ApiPlugin.DEBUG_BUILDER) {
-			System.out.println("ApiAnalysisBuilder: Saving build state for project: "+project.getName()); //$NON-NLS-1$
+			System.out.println("ApiAnalysisBuilder: Saving build state for project: " + project.getName()); //$NON-NLS-1$
 		}
 		File file = BuildState.getSerializationFile(project);
-		if (file == null) return;
+		if (file == null) {
+			return;
+		}
 		long t = 0;
 		if (ApiPlugin.DEBUG_BUILDER) {
 			t = System.currentTimeMillis();
@@ -622,30 +646,27 @@ public class BuildState {
 		} catch (RuntimeException e) {
 			try {
 				file.delete();
-			} catch(SecurityException se) {
+			} catch (SecurityException se) {
 				// could not delete file: cannot do much more
 			}
-			throw new CoreException(
-				new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, Platform.PLUGIN_ERROR,
-					NLS.bind(BuilderMessages.build_cannotSaveState, project.getName()), e)); 
+			throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, Platform.PLUGIN_ERROR, NLS.bind(BuilderMessages.build_cannotSaveState, project.getName()), e));
 		} catch (IOException e) {
 			try {
 				file.delete();
-			} catch(SecurityException se) {
+			} catch (SecurityException se) {
 				// could not delete file: cannot do much more
 			}
-			throw new CoreException(
-				new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, Platform.PLUGIN_ERROR,
-					NLS.bind(BuilderMessages.build_cannotSaveState, project.getName()), e)); 
+			throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, Platform.PLUGIN_ERROR, NLS.bind(BuilderMessages.build_cannotSaveState, project.getName()), e));
 		}
 		if (ApiPlugin.DEBUG_BUILDER) {
 			t = System.currentTimeMillis() - t;
-			System.out.println(NLS.bind(BuilderMessages.build_saveStateComplete, String.valueOf(t))); 
+			System.out.println(NLS.bind(BuilderMessages.build_saveStateComplete, String.valueOf(t)));
 		}
 	}
-	
+
 	/**
-	 * Computes and returns a CRC of the projects resolved build path, or -1 if unknown.
+	 * Computes and returns a CRC of the projects resolved build path, or -1 if
+	 * unknown.
 	 * 
 	 * @param project project
 	 * @return build path CRC or -1

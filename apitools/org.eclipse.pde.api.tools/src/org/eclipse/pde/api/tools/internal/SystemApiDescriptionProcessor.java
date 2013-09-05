@@ -44,21 +44,23 @@ import org.w3c.dom.NodeList;
  */
 public class SystemApiDescriptionProcessor {
 	/**
-	 * Constructor
-	 * can not be instantiated directly
+	 * Constructor can not be instantiated directly
 	 */
-	private SystemApiDescriptionProcessor() {}
-	
+	private SystemApiDescriptionProcessor() {
+	}
+
 	/**
-	 * Parses a component XML into a string. The location may be a jar, directory containing the component.xml file, or 
-	 * the component.xml file itself
+	 * Parses a component XML into a string. The location may be a jar,
+	 * directory containing the component.xml file, or the component.xml file
+	 * itself
 	 * 
-	 * @param location root location of the component.xml file, or the component.xml file itself
+	 * @param location root location of the component.xml file, or the
+	 *            component.xml file itself
 	 * @return component XML as a string or <code>null</code> if none
 	 * @throws IOException if unable to parse
 	 */
 	public static String serializeComponentXml(File location) {
-		if(location.exists()) {
+		if (location.exists()) {
 			ZipFile jarFile = null;
 			InputStream stream = null;
 			try {
@@ -69,21 +71,20 @@ public class SystemApiDescriptionProcessor {
 					if (manifestEntry != null) {
 						stream = jarFile.getInputStream(manifestEntry);
 					}
-				} else if(location.isDirectory()) {
+				} else if (location.isDirectory()) {
 					File file = new File(location, IApiCoreConstants.SYSTEM_API_DESCRIPTION_XML_NAME);
 					if (file.exists()) {
 						stream = new FileInputStream(file);
 					}
-				}
-				else if(location.isFile()) {
-					if(location.getName().equals(IApiCoreConstants.SYSTEM_API_DESCRIPTION_XML_NAME)) {
+				} else if (location.isFile()) {
+					if (location.getName().equals(IApiCoreConstants.SYSTEM_API_DESCRIPTION_XML_NAME)) {
 						stream = new FileInputStream(location);
 					}
 				}
-				if(stream != null) {
-						return new String(Util.getInputStreamAsCharArray(stream, -1, IApiCoreConstants.UTF_8));
+				if (stream != null) {
+					return new String(Util.getInputStreamAsCharArray(stream, -1, IApiCoreConstants.UTF_8));
 				}
-			} catch(IOException e) {
+			} catch (IOException e) {
 				ApiPlugin.log(e);
 			} finally {
 				try {
@@ -104,6 +105,7 @@ public class SystemApiDescriptionProcessor {
 		}
 		return null;
 	}
+
 	/**
 	 * Throws an exception with the given message and underlying exception.
 	 * 
@@ -117,24 +119,24 @@ public class SystemApiDescriptionProcessor {
 	}
 
 	/**
-	 * Parses the given xml document (in string format), and annotates the specified 
-	 * {@link IApiDescription} with {@link IPackageDescriptor}s, {@link IReferenceTypeDescriptor}s, {@link IMethodDescriptor}s
-	 * and {@link IFieldDescriptor}s.
+	 * Parses the given xml document (in string format), and annotates the
+	 * specified {@link IApiDescription} with {@link IPackageDescriptor}s,
+	 * {@link IReferenceTypeDescriptor}s, {@link IMethodDescriptor}s and
+	 * {@link IFieldDescriptor}s.
 	 * 
 	 * @param settings API settings to annotate
 	 * @param xml XML used to generate settings
-	 * @throws CoreException 
+	 * @throws CoreException
 	 */
 	public static void annotateApiSettings(IApiDescription settings, String xml) throws CoreException {
 		Element root = null;
 		try {
 			root = Util.parseDocument(xml);
-		}
-		catch(CoreException ce) {
+		} catch (CoreException ce) {
 			abort("Failed to parse API description xml file", ce); //$NON-NLS-1$
 		}
 		if (!root.getNodeName().equals(IApiXmlConstants.ELEMENT_COMPONENT)) {
-			abort(ScannerMessages.ComponentXMLScanner_0, null); 
+			abort(ScannerMessages.ComponentXMLScanner_0, null);
 		}
 		NodeList packages = root.getElementsByTagName(IApiXmlConstants.ELEMENT_PACKAGE);
 		NodeList types = null;
@@ -153,17 +155,18 @@ public class SystemApiDescriptionProcessor {
 				if (name.length() == 0) {
 					abort("Missing type name", null); //$NON-NLS-1$
 				}
-				IReferenceTypeDescriptor typedesc = packdesc.getType(name); 
+				IReferenceTypeDescriptor typedesc = packdesc.getType(name);
 				annotateDescriptor(settings, typedesc, type);
 				annotateMethodSettings(settings, typedesc, type);
 				annotateFieldSettings(settings, typedesc, type);
 			}
 		}
 	}
-	
+
 	/**
-	 * Annotates the backing {@link IApiDescription} from the given {@link Element}, by adding the visibility
-	 * and restriction attributes to the specified {@link IElementDescriptor}
+	 * Annotates the backing {@link IApiDescription} from the given
+	 * {@link Element}, by adding the visibility and restriction attributes to
+	 * the specified {@link IElementDescriptor}
 	 * 
 	 * @param settings the settings to annotate
 	 * @param descriptor the current descriptor context
@@ -178,14 +181,15 @@ public class SystemApiDescriptionProcessor {
 		settings.setSuperinterfaces(descriptor, retrieveStringElementAttribute(element, IApiXmlConstants.ATTR_SUPER_INTERFACES));
 		settings.setInterface(descriptor, retrieveBooleanElementAttribute(element, IApiXmlConstants.ATTR_INTERFACE));
 	}
+
 	/**
-	 * Tests if the given restriction exists for the given element
-	 * and returns an updated restrictions flag.
+	 * Tests if the given restriction exists for the given element and returns
+	 * an updated restrictions flag.
 	 * 
 	 * @param element XML element
 	 * @param name attribute to test
 	 * @param flag bit mask for attribute
-	 * @param res flag to combine with 
+	 * @param res flag to combine with
 	 * @return updated flags
 	 */
 	private static int retrieveElementAttribute(Element element, String name) {
@@ -195,14 +199,15 @@ public class SystemApiDescriptionProcessor {
 		}
 		return ProfileModifiers.NO_PROFILE_VALUE;
 	}
+
 	/**
-	 * Tests if the given restriction exists for the given element
-	 * and returns an updated restrictions flag.
+	 * Tests if the given restriction exists for the given element and returns
+	 * an updated restrictions flag.
 	 * 
 	 * @param element XML element
 	 * @param name attribute to test
 	 * @param flag bit mask for attribute
-	 * @param res flag to combine with 
+	 * @param res flag to combine with
 	 * @return updated flags
 	 */
 	private static String retrieveStringElementAttribute(Element element, String name) {
@@ -212,14 +217,15 @@ public class SystemApiDescriptionProcessor {
 		}
 		return null;
 	}
+
 	/**
-	 * Tests if the given restriction exists for the given element
-	 * and returns an updated restrictions flag.
+	 * Tests if the given restriction exists for the given element and returns
+	 * an updated restrictions flag.
 	 * 
 	 * @param element XML element
 	 * @param name attribute to test
 	 * @param flag bit mask for attribute
-	 * @param res flag to combine with 
+	 * @param res flag to combine with
 	 * @return updated flags
 	 */
 	private static boolean retrieveBooleanElementAttribute(Element element, String name) {
@@ -229,12 +235,15 @@ public class SystemApiDescriptionProcessor {
 		}
 		return false;
 	}
+
 	/**
-	 * Annotates the supplied {@link IApiDescription} from all of the field elements
-	 * that are direct children of the specified {@link Element}. {@link IFieldDescriptor}s are created
-	 * as needed and added as children of the specified {@link IReferenceTypeDescriptor}.
+	 * Annotates the supplied {@link IApiDescription} from all of the field
+	 * elements that are direct children of the specified {@link Element}.
+	 * {@link IFieldDescriptor}s are created as needed and added as children of
+	 * the specified {@link IReferenceTypeDescriptor}.
 	 * 
-	 * @param settings the {@link IApiDescription} to add the new {@link IFieldDescriptor} to
+	 * @param settings the {@link IApiDescription} to add the new
+	 *            {@link IFieldDescriptor} to
 	 * @param typedesc the containing type descriptor for this field
 	 * @param type the parent {@link Element}
 	 * @throws CoreException
@@ -244,23 +253,25 @@ public class SystemApiDescriptionProcessor {
 		Element field = null;
 		IFieldDescriptor fielddesc = null;
 		String name = null;
-		for(int i = 0; i < fields.getLength(); i++) {
+		for (int i = 0; i < fields.getLength(); i++) {
 			field = (Element) fields.item(i);
 			name = field.getAttribute(IApiXmlConstants.ATTR_NAME);
-			if(name == null) {
-				abort(ScannerMessages.ComponentXMLScanner_1, null); 
+			if (name == null) {
+				abort(ScannerMessages.ComponentXMLScanner_1, null);
 			}
 			fielddesc = typedesc.getField(name);
 			annotateDescriptor(settings, fielddesc, field);
 		}
 	}
-	
+
 	/**
-	 * Annotates the supplied {@link IApiDescription} from all of the method elements
-	 * that are direct children of the specified {@link Element}. {@link IMethodDescriptor}s are created
-	 * as needed and added as children of the specified {@link IReferenceTypeDescriptor}.
+	 * Annotates the supplied {@link IApiDescription} from all of the method
+	 * elements that are direct children of the specified {@link Element}.
+	 * {@link IMethodDescriptor}s are created as needed and added as children of
+	 * the specified {@link IReferenceTypeDescriptor}.
 	 * 
-	 * @param settings the {@link IApiDescription} to add the new {@link IMethodDescriptor} to 
+	 * @param settings the {@link IApiDescription} to add the new
+	 *            {@link IMethodDescriptor} to
 	 * @param typedesc the containing type descriptor for this method
 	 * @param type the parent {@link Element}
 	 * @throws CoreException
@@ -270,15 +281,15 @@ public class SystemApiDescriptionProcessor {
 		Element method = null;
 		IMethodDescriptor methoddesc = null;
 		String name, signature;
-		for(int i = 0; i < methods.getLength(); i++) {
+		for (int i = 0; i < methods.getLength(); i++) {
 			method = (Element) methods.item(i);
 			name = method.getAttribute(IApiXmlConstants.ATTR_NAME);
-			if(name == null) {
-				abort(ScannerMessages.ComponentXMLScanner_2, null); 
+			if (name == null) {
+				abort(ScannerMessages.ComponentXMLScanner_2, null);
 			}
 			signature = method.getAttribute(IApiXmlConstants.ATTR_SIGNATURE);
-			if(signature == null) {
-				abort(ScannerMessages.ComponentXMLScanner_3, null); 
+			if (signature == null) {
+				abort(ScannerMessages.ComponentXMLScanner_3, null);
 			}
 			methoddesc = typedesc.getMethod(name, signature);
 			annotateDescriptor(settings, methoddesc, method);

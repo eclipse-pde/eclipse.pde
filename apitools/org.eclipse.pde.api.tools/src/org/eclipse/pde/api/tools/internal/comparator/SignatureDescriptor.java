@@ -14,17 +14,17 @@ class SignatureDescriptor {
 	private static final TypeParameterDescriptor[] EMPTY_TYPE_PARAMETER_DESCRIPTORS = new TypeParameterDescriptor[0];
 	private static final String[] EMPTY_TYPE_ARGUMENTS = new String[0];
 	static final int INITIAL_SIZE = 1;
-	
+
 	TypeParameterDescriptor currentTypeParameterDescriptor;
 	String superClass;
 	TypeParameterDescriptor[] typeParameterDescriptors;
 	int typeParameterDescriptorsCounter;
 	String[] typeArguments;
 	int typeArgumentsCounter;
-	
+
 	public SignatureDescriptor() {
 	}
-	
+
 	public void addInterfaceBound(String bound) {
 		this.currentTypeParameterDescriptor.addInterfaceBound(bound);
 	}
@@ -34,7 +34,7 @@ class SignatureDescriptor {
 			this.typeArguments = new String[INITIAL_SIZE];
 			this.typeArgumentsCounter = 0;
 		} else {
-			int length = typeArguments.length; 
+			int length = typeArguments.length;
 			if (length == this.typeArgumentsCounter) {
 				// resize
 				System.arraycopy(this.typeArguments, 0, (this.typeArguments = new String[length * 2]), 0, length);
@@ -75,7 +75,7 @@ class SignatureDescriptor {
 		}
 		int length = this.typeArguments.length;
 		if (this.typeArgumentsCounter != length) {
-			System.arraycopy(this.typeArguments, 0, (this.typeArguments= new String[this.typeArgumentsCounter]), 0, this.typeArgumentsCounter);
+			System.arraycopy(this.typeArguments, 0, (this.typeArguments = new String[this.typeArgumentsCounter]), 0, this.typeArgumentsCounter);
 		}
 		return this.typeArguments;
 	}
@@ -83,20 +83,25 @@ class SignatureDescriptor {
 	public void setClassBound(String bound) {
 		this.currentTypeParameterDescriptor.setClassBound(bound);
 	}
-	
+
 	public void setSuperclass(String superclass) {
 		this.superClass = superclass;
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		for (int i = 0, max = this.typeParameterDescriptorsCounter; i < max; i++) {
-			if (i > 0) buffer.append(',');
+			if (i > 0) {
+				buffer.append(',');
+			}
 			buffer.append(this.typeParameterDescriptors[i]);
 		}
 		buffer.append("superclass: " + this.superClass); //$NON-NLS-1$
 		for (int i = 0, max = this.typeArgumentsCounter; i < max; i++) {
-			if (i > 0) buffer.append(',');
+			if (i > 0) {
+				buffer.append(',');
+			}
 			buffer.append(this.typeArguments[i]);
 		}
 		return String.valueOf(buffer);

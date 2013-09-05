@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,41 +41,55 @@ import com.ibm.icu.text.MessageFormat;
  * Detects leaks in method return types and parameters
  * 
  * @since 1.1
- * @noextend This class is not intended to be subclassed by clients.
+ * @noextend This class is not intended to be sub-classed by clients.
  */
 public abstract class MethodLeakDetector extends AbstractLeakProblemDetector {
 
 	/**
 	 * @param nonApiPackageNames
 	 */
-	public MethodLeakDetector(Set nonApiPackageNames) {
+	public MethodLeakDetector(Set<String> nonApiPackageNames) {
 		super(nonApiPackageNames);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#getElementType(org.eclipse.pde.api.tools.internal.provisional.model.IReference)
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#
+	 * getElementType
+	 * (org.eclipse.pde.api.tools.internal.provisional.model.IReference)
 	 */
+	@Override
 	protected int getElementType(IReference reference) {
 		return IElementDescriptor.METHOD;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#getProblemKind()
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#
+	 * getProblemKind()
 	 */
+	@Override
 	protected int getProblemKind() {
 		return IApiProblem.API_LEAK;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#getSeverityKey()
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#
+	 * getSeverityKey()
 	 */
+	@Override
 	protected String getSeverityKey() {
-		return IApiProblemTypes.LEAK_METHOD_RETURN_TYPE ;
+		return IApiProblemTypes.LEAK_METHOD_RETURN_TYPE;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#isProblem(org.eclipse.pde.api.tools.internal.provisional.model.IReference)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#isProblem
+	 * (org.eclipse.pde.api.tools.internal.provisional.model.IReference)
 	 */
+	@Override
 	protected boolean isProblem(IReference reference) {
 		IApiMethod method = (IApiMethod) reference.getMember();
 		IApiType type = (IApiType) reference.getResolvedReference();
@@ -85,8 +99,10 @@ public abstract class MethodLeakDetector extends AbstractLeakProblemDetector {
 			if (annotations != null) {
 				if (VisibilityModifiers.isPrivate(annotations.getVisibility())) {
 					if ((Flags.AccProtected & method.getModifiers()) > 0) {
-						// ignore protected members if contained in a @noextend type
-						// TODO: we could perform this check before resolution - it's on the source location
+						// ignore protected members if contained in a @noextend
+						// type
+						// TODO: we could perform this check before resolution -
+						// it's on the source location
 						IApiDescription description = method.getApiComponent().getApiDescription();
 						annotations = description.resolveAnnotations(method.getHandle().getEnclosingType());
 						if (annotations == null || RestrictionModifiers.isExtendRestriction(annotations.getRestrictions())) {
@@ -99,11 +115,9 @@ public abstract class MethodLeakDetector extends AbstractLeakProblemDetector {
 			} else {
 				// could be a reference to a top level secondary/non-public type
 				if (isEnclosingTypeVisible(type)) {
-					// this is an unexpected condition - the enclosing type is visible, but it has no annotations - log an error
-					ApiPlugin.log(
-						new Status(
-							IStatus.INFO, ApiPlugin.PLUGIN_ID,
-							MessageFormat.format(BuilderMessages.AbstractTypeLeakDetector_vis_type_has_no_api_description, new String[]{type.getName()})));
+					// this is an unexpected condition - the enclosing type is
+					// visible, but it has no annotations - log an error
+					ApiPlugin.log(new Status(IStatus.INFO, ApiPlugin.PLUGIN_ID, MessageFormat.format(BuilderMessages.AbstractTypeLeakDetector_vis_type_has_no_api_description, new Object[] { type.getName() })));
 				} else {
 					// enclosing type is not visible - this is a problem
 					return true;
@@ -114,41 +128,57 @@ public abstract class MethodLeakDetector extends AbstractLeakProblemDetector {
 		}
 		return false;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#getMessageArgs(org.eclipse.pde.api.tools.internal.provisional.model.IReference)
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#
+	 * getMessageArgs
+	 * (org.eclipse.pde.api.tools.internal.provisional.model.IReference)
 	 */
+	@Override
 	protected String[] getMessageArgs(IReference reference) throws CoreException {
 		IApiMethod method = (IApiMethod) reference.getMember();
 		IApiType type = (IApiType) reference.getResolvedReference();
 		return new String[] {
-				getSimpleTypeName(type), 
-				getSimpleTypeName(method), 
-				Signatures.getMethodSignature(method)};
+				getSimpleTypeName(type), getSimpleTypeName(method),
+				Signatures.getMethodSignature(method) };
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#getQualifiedMessageArgs(org.eclipse.pde.api.tools.internal.provisional.model.IReference)
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#
+	 * getQualifiedMessageArgs
+	 * (org.eclipse.pde.api.tools.internal.provisional.model.IReference)
 	 */
+	@Override
 	protected String[] getQualifiedMessageArgs(IReference reference) throws CoreException {
 		IApiMethod method = (IApiMethod) reference.getMember();
 		IApiType type = (IApiType) reference.getResolvedReference();
 		return new String[] {
-				getQualifiedTypeName(type), 
-				getQualifiedTypeName(method), 
-				Signatures.getMethodSignature(method)};
+				getQualifiedTypeName(type), getQualifiedTypeName(method),
+				Signatures.getMethodSignature(method) };
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#getSourceRange(org.eclipse.jdt.core.IType, org.eclipse.jface.text.IDocument, org.eclipse.pde.api.tools.internal.provisional.model.IReference)
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.search.AbstractProblemDetector#
+	 * getSourceRange(org.eclipse.jdt.core.IType,
+	 * org.eclipse.jface.text.IDocument,
+	 * org.eclipse.pde.api.tools.internal.provisional.model.IReference)
 	 */
+	@Override
 	protected Position getSourceRange(IType type, IDocument doc, IReference reference) throws CoreException, BadLocationException {
 		return getSourceRangeForMethod(type, reference, (IApiMethod) reference.getMember());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiProblemDetector#considerReference(org.eclipse.pde.api.tools.internal.provisional.model.IReference)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.provisional.search.IApiProblemDetector
+	 * #considerReference(org.eclipse.pde.api.tools.internal.provisional.model.
+	 * IReference)
 	 */
+	@Override
 	public boolean considerReference(IReference reference) {
 		if (super.considerReference(reference) && isNonAPIReference(reference)) {
 			IApiMember member = reference.getMember();
@@ -159,9 +189,11 @@ public abstract class MethodLeakDetector extends AbstractLeakProblemDetector {
 		}
 		return false;
 	}
-	
+
 	/**
-	 * Returns if the source API restrictions for the given member matches the restrictions in the parent API description
+	 * Returns if the source API restrictions for the given member matches the
+	 * restrictions in the parent API description
+	 * 
 	 * @param member
 	 * @return true if it matches, false otherwise
 	 */
@@ -173,24 +205,20 @@ public abstract class MethodLeakDetector extends AbstractLeakProblemDetector {
 			if (annotations != null) {
 				if (VisibilityModifiers.isAPI(annotations.getVisibility())) {
 					int ares = annotations.getRestrictions();
-					if(ares != 0) {
-						if(method.isConstructor()) {
+					if (ares != 0) {
+						if (method.isConstructor()) {
 							return (ares & RestrictionModifiers.NO_REFERENCE) == 0;
 						}
-						if((ares & RestrictionModifiers.NO_OVERRIDE) == 0) {
+						if ((ares & RestrictionModifiers.NO_OVERRIDE) == 0) {
 							IApiAnnotations annot = apiComponent.getApiDescription().resolveAnnotations(method.getEnclosingType().getHandle());
 							int pres = 0;
-							if(annot != null) {
+							if (annot != null) {
 								pres = annot.getRestrictions();
 							}
-							return (ares & RestrictionModifiers.NO_REFERENCE) != 0 && (!Flags.isFinal(method.getModifiers())
-									&& !Flags.isStatic(method.getModifiers())
-									&& !Flags.isFinal(method.getEnclosingType().getModifiers())
-									&& ((pres & RestrictionModifiers.NO_EXTEND) == 0));
+							return (ares & RestrictionModifiers.NO_REFERENCE) != 0 && (!Flags.isFinal(method.getModifiers()) && !Flags.isStatic(method.getModifiers()) && !Flags.isFinal(method.getEnclosingType().getModifiers()) && ((pres & RestrictionModifiers.NO_EXTEND) == 0));
 						}
-						return  (ares & RestrictionModifiers.NO_REFERENCE) == 0; 
-					}
-					else {
+						return (ares & RestrictionModifiers.NO_REFERENCE) == 0;
+					} else {
 						return !(Flags.isProtected(method.getModifiers()) && Flags.isFinal(method.getEnclosingType().getModifiers()));
 					}
 				}
@@ -201,10 +229,12 @@ public abstract class MethodLeakDetector extends AbstractLeakProblemDetector {
 			ApiPlugin.log(e);
 		}
 		return false;
-	}	
-	
+	}
+
 	/**
-	 * Returns if the source modifiers for the given member match the ones specified in the detector
+	 * Returns if the source modifiers for the given member match the ones
+	 * specified in the detector
+	 * 
 	 * @param member
 	 * @return true if the modifiers match, false otherwise
 	 */
@@ -224,6 +254,6 @@ public abstract class MethodLeakDetector extends AbstractLeakProblemDetector {
 			}
 		}
 		return true;
-	}	
+	}
 
 }

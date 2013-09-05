@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,60 +29,74 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
  * @since 1.0.0
  */
 public class ApiToolingSetupRefactoring extends Refactoring {
-	
+
 	/**
 	 * The current set of changes
 	 */
-	private HashSet fChanges = null;
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.Refactoring#checkFinalConditions(org.eclipse.core.runtime.IProgressMonitor)
+	private HashSet<Change> fChanges = null;
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.ltk.core.refactoring.Refactoring#checkFinalConditions(org
+	 * .eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public RefactoringStatus checkFinalConditions(IProgressMonitor pm) throws CoreException, OperationCanceledException {
-		if(fChanges == null || fChanges.size() < 1) {
+		if (fChanges == null || fChanges.size() < 1) {
 			return RefactoringStatus.createErrorStatus(WizardMessages.JavadocTagRefactoring_0);
 		}
 		return RefactoringStatus.create(Status.OK_STATUS);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.Refactoring#checkInitialConditions(org.eclipse.core.runtime.IProgressMonitor)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.ltk.core.refactoring.Refactoring#checkInitialConditions(org
+	 * .eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public RefactoringStatus checkInitialConditions(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		return RefactoringStatus.create(Status.OK_STATUS);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.Refactoring#createChange(org.eclipse.core.runtime.IProgressMonitor)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.ltk.core.refactoring.Refactoring#createChange(org.eclipse
+	 * .core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
-		if(fChanges == null) {
+		if (fChanges == null) {
 			return new NullChange();
 		}
 		CompositeChange change = new CompositeChange(WizardMessages.JavadocTagRefactoring_1);
-		for(Iterator iter = fChanges.iterator(); iter.hasNext();) {
-			change.add((Change) iter.next());
+		for (Iterator<Change> iter = fChanges.iterator(); iter.hasNext();) {
+			change.add(iter.next());
 		}
 		return change;
 	}
-	
+
 	public void addChange(Change change) {
-		if(fChanges == null) {
-			fChanges = new HashSet();
+		if (fChanges == null) {
+			fChanges = new HashSet<Change>();
 		}
 		fChanges.add(change);
 	}
-	
+
 	public void resetRefactoring() {
-		if(fChanges != null) {
+		if (fChanges != null) {
 			fChanges.clear();
 			fChanges = null;
 		}
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.Refactoring#getName()
 	 */
+	@Override
 	public String getName() {
 		return WizardMessages.JavadocTagRefactoring_3;
 	}

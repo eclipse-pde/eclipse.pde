@@ -29,24 +29,27 @@ import org.objectweb.asm.Opcodes;
  */
 public class ApiMethod extends ApiMember implements IApiMethod {
 	/**
-	 * Extra flags for polymorphic methods. Value doesn't collide with any of the values in org.eclipse.jdt.internal.compiler.classfmt.ClassFileConstants
+	 * Extra flags for polymorphic methods. Value doesn't collide with any of
+	 * the values in
+	 * org.eclipse.jdt.internal.compiler.classfmt.ClassFileConstants
 	 */
 	public static final int Polymorphic = 0x200000;
-	
+
 	private static final String INIT = "<init>"; //$NON-NLS-1$
 	private static final String CLINIT = "<clinit>"; //$NON-NLS-1$	
-	
+
 	private String[] fExceptions;
 	private String fDefaultValue;
-	
+
 	private IMethodDescriptor fHandle;
-	
+
 	/**
 	 * Constructor
+	 * 
 	 * @param enclosing enclosing type
 	 * @param name method name
 	 * @param signature method signature
-	 * @param genericSig 
+	 * @param genericSig
 	 * @param flags
 	 */
 	protected ApiMethod(IApiType enclosing, String name, String signature, String genericSig, int flags, String[] exceptions) {
@@ -57,44 +60,60 @@ public class ApiMethod extends ApiMember implements IApiMethod {
 	/**
 	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiMethod#isConstructor()
 	 */
+	@Override
 	public boolean isConstructor() {
 		return getName().equals(INIT);
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.model.ApiMember#equals(java.lang.Object)
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.model.ApiMember#equals(java.lang.Object
+	 * )
 	 */
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof IApiMethod) {
-			return super.equals(obj) && ((IApiMethod)obj).getSignature().equals(getSignature());
+			return super.equals(obj) && ((IApiMethod) obj).getSignature().equals(getSignature());
 		}
 		return false;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.model.ApiMember#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		return super.hashCode() + getSignature().hashCode();
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiMethod#getExceptionNames()
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiMethod#
+	 * getExceptionNames()
 	 */
+	@Override
 	public String[] getExceptionNames() {
 		return fExceptions;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiMethod#isClassInitializer()
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiMethod#
+	 * isClassInitializer()
 	 */
+	@Override
 	public boolean isClassInitializer() {
 		return getName().equals(CLINIT);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiMethod#getDefaultValue()
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiMethod#
+	 * getDefaultValue()
 	 */
+	@Override
 	public String getDefaultValue() {
 		return fDefaultValue;
 	}
@@ -108,16 +127,24 @@ public class ApiMethod extends ApiMember implements IApiMethod {
 		fDefaultValue = value;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiMethod#isSynthetic()
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.provisional.model.IApiMethod#isSynthetic
+	 * ()
 	 */
+	@Override
 	public boolean isSynthetic() {
 		return (getModifiers() & Opcodes.ACC_SYNTHETIC) != 0;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiMethod#isSynthetic()
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.provisional.model.IApiMethod#isSynthetic
+	 * ()
 	 */
+	@Override
 	public boolean isPolymorphic() {
 		return (getModifiers() & Polymorphic) != 0;
 	}
@@ -125,41 +152,44 @@ public class ApiMethod extends ApiMember implements IApiMethod {
 	/**
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
-		buffer
-			.append("Method : access(") //$NON-NLS-1$
-			.append(getModifiers())
-			.append(") ") //$NON-NLS-1$
-			.append(getSignature())
-			.append(' ')
-			.append(getName());
+		buffer.append("Method : access(") //$NON-NLS-1$
+		.append(getModifiers()).append(") ") //$NON-NLS-1$
+		.append(getSignature()).append(' ').append(getName());
 		if (getExceptionNames() != null) {
 			buffer.append(" throws "); //$NON-NLS-1$
 			for (int i = 0; i < getExceptionNames().length; i++) {
-				if (i > 0) buffer.append(',');
+				if (i > 0) {
+					buffer.append(',');
+				}
 				buffer.append(getExceptionNames()[i]);
 			}
 		}
 		buffer.append(';').append(Util.LINE_DELIMITER);
 		if (getGenericSignature() != null) {
-			buffer
-				.append(" Generic signature : ") //$NON-NLS-1$
-				.append(getGenericSignature()).append(Util.LINE_DELIMITER);
+			buffer.append(" Generic signature : ") //$NON-NLS-1$
+			.append(getGenericSignature()).append(Util.LINE_DELIMITER);
 		}
 		return String.valueOf(buffer);
-	}	
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiMember#getHandle()
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.provisional.model.IApiMember#getHandle
+	 * ()
 	 */
+	@Override
 	public IMemberDescriptor getHandle() {
 		if (fHandle == null) {
 			try {
 				IApiType type = getEnclosingType();
-				fHandle = ((IReferenceTypeDescriptor)type.getHandle()).getMethod(getName(), getSignature());
+				fHandle = ((IReferenceTypeDescriptor) type.getHandle()).getMethod(getName(), getSignature());
 			} catch (CoreException e) {
-				// should not happen for field or method - enclosing type is cached
+				// should not happen for field or method - enclosing type is
+				// cached
 			}
 		}
 		return fHandle;

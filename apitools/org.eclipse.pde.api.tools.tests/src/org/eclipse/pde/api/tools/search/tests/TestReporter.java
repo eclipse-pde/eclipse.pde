@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,43 +32,48 @@ public class TestReporter implements IApiSearchReporter {
 	private SearchTest test = null;
 	private HashSet<String> notsearched = null;
 	private HashMap<String, ArrayList<Integer>> references = null;
-	
+
 	/**
 	 * Constructor
+	 * 
 	 * @param test
 	 */
 	public TestReporter(SearchTest test) {
 		this.test = test;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchReporter#reportNotSearched(org.eclipse.pde.api.tools.internal.provisional.model.IApiElement[])
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchReporter
+	 * #reportNotSearched
+	 * (org.eclipse.pde.api.tools.internal.provisional.model.IApiElement[])
 	 */
+	@Override
 	public void reportNotSearched(IApiElement[] elements) {
-		if(this.notsearched != null) {
-			if(this.notsearched.size() != elements.length) {
-				this.test.reportFailure("Expecting ["+this.notsearched.size()+"] but reported ["+elements.length+"] references");
+		if (this.notsearched != null) {
+			if (this.notsearched.size() != elements.length) {
+				this.test.reportFailure("Expecting [" + this.notsearched.size() + "] but reported [" + elements.length + "] references"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
 			for (int i = 0; i < elements.length; i++) {
-				if(!this.notsearched.remove(elements[i])) {
-					this.test.reportFailure("Not searched element ["+elements[i]+"] was not expected");
+				if (!this.notsearched.remove(elements[i])) {
+					this.test.reportFailure("Not searched element [" + elements[i] + "] was not expected"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
-			if(this.notsearched.size() != 0) {
-				this.test.reportFailure("["+this.notsearched.size()+"] expected not-searched elements were not reported.");
+			if (this.notsearched.size() != 0) {
+				this.test.reportFailure("[" + this.notsearched.size() + "] expected not-searched elements were not reported."); //$NON-NLS-1$ //$NON-NLS-2$
 			}
-			for(Iterator<String> iter = this.notsearched.iterator(); iter.hasNext();) {
-				System.out.println("Expected not-searched element was not reported: ["+iter.next()+"]");
+			for (Iterator<String> iter = this.notsearched.iterator(); iter.hasNext();) {
+				System.out.println("Expected not-searched element was not reported: [" + iter.next() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
-		}
-		else {
-			if(elements.length > 0) {
-				this.test.reportFailure("Expecting no not-searched projects but ["+elements.length+"] were found");
-				System.out.println("Unexpected excluded elements:");
+		} else {
+			if (elements.length > 0) {
+				this.test.reportFailure("Expecting no not-searched projects but [" + elements.length + "] were found"); //$NON-NLS-1$ //$NON-NLS-2$
+				System.out.println("Unexpected excluded elements:"); //$NON-NLS-1$
 				for (int i = 0; i < elements.length; i++) {
-					System.out.println("  - "+elements[i].getName());
+					System.out.println("  - " + elements[i].getName()); //$NON-NLS-1$
 				}
-				
+
 			}
 		}
 	}
@@ -79,69 +84,74 @@ public class TestReporter implements IApiSearchReporter {
 	 * @noextend
 	 */
 	public @interface annot {
-		
+
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchReporter#reportResults(org.eclipse.pde.api.tools.internal.provisional.model.IApiElement, org.eclipse.pde.api.tools.internal.provisional.builder.IReference[])
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchReporter
+	 * #reportResults
+	 * (org.eclipse.pde.api.tools.internal.provisional.model.IApiElement,
+	 * org.eclipse.pde.api.tools.internal.provisional.builder.IReference[])
 	 */
+	@Override
 	public void reportResults(IApiElement element, IReference[] references) {
-		String name = (element.getType() == IApiElement.COMPONENT ? ((IApiComponent)element).getSymbolicName() : element.getName());
-		if(this.references == null) {
-			//expecting no references
-			if(references.length > 0) {
-				System.out.println("Unexpected References:");
+		String name = (element.getType() == IApiElement.COMPONENT ? ((IApiComponent) element).getSymbolicName() : element.getName());
+		if (this.references == null) {
+			// expecting no references
+			if (references.length > 0) {
+				System.out.println("Unexpected References:"); //$NON-NLS-1$
 				for (int i = 0; i < references.length; i++) {
-					System.out.println("  - "+references[i]);
+					System.out.println("  - " + references[i]); //$NON-NLS-1$
 				}
-				this.test.reportFailure("No references were expected for IApiElement ["+name+"] but ["+references.length+"] were found");
+				this.test.reportFailure("No references were expected for IApiElement [" + name + "] but [" + references.length + "] were found"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
 			return;
 		}
 		ArrayList<Integer> refs = this.references.get(name);
-		if(refs == null) {
-			if(references.length == 0) {
+		if (refs == null) {
+			if (references.length == 0) {
 				return;
+			} else {
+				this.test.reportFailure("Unexpected references found for IApiElement [" + name + "], was expecting none"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
-			else {
-				this.test.reportFailure("Unexpected references found for IApiElement ["+name+"], was expecting none");
-			}
-		}
-		else {
-			if(refs.size() != references.length) {
-				this.test.reportFailure("Expecting ["+refs.size()+"] but reported ["+references.length+"] references");
+		} else {
+			if (refs.size() != references.length) {
+				this.test.reportFailure("Expecting [" + refs.size() + "] but reported [" + references.length + "] references"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
 			for (int i = 0; i < references.length; i++) {
-				if(!refs.remove(new Integer(references[i].getReferenceKind()))) {
-					this.test.reportFailure("Reference ["+Reference.getReferenceText(references[i].getReferenceKind())+"] was not expected");
+				if (!refs.remove(new Integer(references[i].getReferenceKind()))) {
+					this.test.reportFailure("Reference [" + Reference.getReferenceText(references[i].getReferenceKind()) + "] was not expected"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
-			if(refs.size() != 0) {
-				System.out.println("Missing references not reported:");
-				for (Iterator iterator = refs.iterator(); iterator.hasNext();) {
-					System.out.println("  - "+Reference.getReferenceText(((Integer)iterator.next())));
+			if (refs.size() != 0) {
+				System.out.println("Missing references not reported:"); //$NON-NLS-1$
+				for (Iterator<Integer> iterator = refs.iterator(); iterator.hasNext();) {
+					System.out.println("  - " + Reference.getReferenceText((iterator.next()))); //$NON-NLS-1$
 				}
-				this.test.reportFailure("["+refs.size()+"] references were not reported");
+				this.test.reportFailure("[" + refs.size() + "] references were not reported"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
-			for(Iterator<Integer> iter = refs.iterator(); iter.hasNext();) {
-				System.out.println("Reference ["+Reference.getReferenceText(iter.next())+"] was not reported");
+			for (Iterator<Integer> iter = refs.iterator(); iter.hasNext();) {
+				System.out.println("Reference [" + Reference.getReferenceText(iter.next()) + "] was not reported"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 	}
 
 	/**
-	 * Sets the expected reference kinds to the names of the element they came from.
-	 * passing in <code>null</code>(s) will reset to not expecting any references
+	 * Sets the expected reference kinds to the names of the element they came
+	 * from. passing in <code>null</code>(s) will reset to not expecting any
+	 * references
+	 * 
 	 * @param references
 	 */
 	void setExpectedReferences(String[] names, int[][] referencekinds) {
-		if(names == null || referencekinds == null) {
-			if(this.references != null) {
+		if (names == null || referencekinds == null) {
+			if (this.references != null) {
 				this.references.clear();
 				this.references = null;
 			}
-		}
-		else {
+		} else {
 			this.references = new HashMap<String, ArrayList<Integer>>(names.length);
 			ArrayList<Integer> ints = null;
 			for (int i = 0; i < names.length; i++) {
@@ -153,35 +163,44 @@ public class TestReporter implements IApiSearchReporter {
 			}
 		}
 	}
-	
+
 	/**
-	 * Sets the {@link IApiElement}s we expect to see as not searched 
+	 * Sets the {@link IApiElement}s we expect to see as not searched
+	 * 
 	 * @param elements
 	 */
 	void setExpectedNotSearched(String[] elements) {
-		if(elements != null) {
+		if (elements != null) {
 			this.notsearched = new HashSet<String>(elements.length);
 			for (int i = 0; i < elements.length; i++) {
 				this.notsearched.add(elements[i]);
 			}
-		}
-		else {
-			if(this.notsearched != null) {
+		} else {
+			if (this.notsearched != null) {
 				this.notsearched.clear();
 				this.notsearched = null;
 			}
 		}
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchReporter#reportMetadata(org.eclipse.pde.api.tools.internal.provisional.search.IMetadata)
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchReporter
+	 * #reportMetadata
+	 * (org.eclipse.pde.api.tools.internal.provisional.search.IMetadata)
 	 */
+	@Override
 	public void reportMetadata(IMetadata data) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchReporter#reportCounts()
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchReporter
+	 * #reportCounts()
 	 */
+	@Override
 	public void reportCounts() {
 	}
 }

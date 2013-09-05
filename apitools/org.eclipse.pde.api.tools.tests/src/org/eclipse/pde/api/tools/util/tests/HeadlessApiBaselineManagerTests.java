@@ -27,6 +27,7 @@ public class HeadlessApiBaselineManagerTests extends AbstractApiTest {
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#tearDown()
 	 */
+	@Override
 	protected void tearDown() throws Exception {
 		fManager.stop();
 		super.tearDown();
@@ -36,31 +37,31 @@ public class HeadlessApiBaselineManagerTests extends AbstractApiTest {
 	 * Tests that we can get an API baseline that exists from the manager 
 	 */
 	public void testGetApiProfile() {
-		IApiBaseline baseline = ApiModelFactory.newApiBaseline("test1");
+		IApiBaseline baseline = ApiModelFactory.newApiBaseline("test1"); //$NON-NLS-1$
 		fManager.addApiBaseline(baseline);
-		baseline = fManager.getApiBaseline("test1");
-		assertNotNull("the test1 baseline must exist in the manager", baseline);
-		assertTrue("the found baseline must be test1", baseline.getName().equals("test1"));
+		baseline = fManager.getApiBaseline("test1"); //$NON-NLS-1$
+		assertNotNull("the test1 baseline must exist in the manager", baseline); //$NON-NLS-1$
+		assertTrue("the found baseline must be test1", baseline.getName().equals("test1")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	/**
 	 * Tests that looking up a baseline that does not exist in the manager returns null
 	 */
 	public void testGetNonExistantProfile() {
-		IApiBaseline baseline = fManager.getApiBaseline("foobaseline");
-		assertNull("There should be no baseline found", baseline);
+		IApiBaseline baseline = fManager.getApiBaseline("foobaseline"); //$NON-NLS-1$
+		assertNull("There should be no baseline found", baseline); //$NON-NLS-1$
 	}
 	
 	/**
 	 * Tests that setting the default baseline works
 	 */
 	public void testSetDefaultProfile() {
-		IApiBaseline baseline = ApiModelFactory.newApiBaseline("test2");
+		IApiBaseline baseline = ApiModelFactory.newApiBaseline("test2"); //$NON-NLS-1$
 		fManager.addApiBaseline(baseline);
 		fManager.setDefaultApiBaseline(baseline.getName());
 		baseline = fManager.getDefaultApiBaseline();
-		assertNotNull("the default baseline should not be null", baseline);
-		assertTrue("the default baselines' name should be test2", baseline.getName().equals("test2"));
+		assertNotNull("the default baseline should not be null", baseline); //$NON-NLS-1$
+		assertTrue("the default baselines' name should be test2", baseline.getName().equals("test2")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	/**
@@ -68,50 +69,50 @@ public class HeadlessApiBaselineManagerTests extends AbstractApiTest {
 	 * when asked for the default.
 	 */
 	public void testGetWrongDefault() {
-		fManager.setDefaultApiBaseline("foobaseline");
+		fManager.setDefaultApiBaseline("foobaseline"); //$NON-NLS-1$
 		IApiBaseline baseline = fManager.getDefaultApiBaseline();
-		assertNull("the default baseline should be null for a non-existant id", baseline);
+		assertNull("the default baseline should be null for a non-existant id", baseline); //$NON-NLS-1$
 	}
 	
 	/**
 	 * Tests getting all baselines from the manager
 	 */
 	public void testGetAllProfiles() {
-		IApiBaseline baseline = ApiModelFactory.newApiBaseline("test1");
+		IApiBaseline baseline = ApiModelFactory.newApiBaseline("test1"); //$NON-NLS-1$
 		fManager.addApiBaseline(baseline);
-		baseline = ApiModelFactory.newApiBaseline("test2");
+		baseline = ApiModelFactory.newApiBaseline("test2"); //$NON-NLS-1$
 		fManager.addApiBaseline(baseline);
 		IApiBaseline[] baselines = fManager.getApiBaselines();
-		assertEquals("there should be 2 baselines", 2, baselines.length);
+		assertEquals("there should be 2 baselines", 2, baselines.length); //$NON-NLS-1$
 	}
 	
 	/**
 	 * Tests removing an existing baseline from the manager
 	 */
 	public void testRemoveApiProfile() {
-		IApiBaseline baseline = ApiModelFactory.newApiBaseline("test2");
+		IApiBaseline baseline = ApiModelFactory.newApiBaseline("test2"); //$NON-NLS-1$
 		fManager.addApiBaseline(baseline);
-		boolean result = fManager.removeApiBaseline("test2");
-		assertTrue("the baseline test2 should have been removed from the manager", result);
-		assertTrue("There should only be 0 baselines left", fManager.getApiBaselines().length == 0);
+		boolean result = fManager.removeApiBaseline("test2"); //$NON-NLS-1$
+		assertTrue("the baseline test2 should have been removed from the manager", result); //$NON-NLS-1$
+		assertTrue("There should only be 0 baselines left", fManager.getApiBaselines().length == 0); //$NON-NLS-1$
 	}
 	
 	/**
 	 * Tests that isExistingProfileName(..) returns return true when expected to 
 	 */
 	public void testIsExistingName() {
-		IApiBaseline baseline = ApiModelFactory.newApiBaseline("test1");
+		IApiBaseline baseline = ApiModelFactory.newApiBaseline("test1"); //$NON-NLS-1$
 		fManager.addApiBaseline(baseline);
-		boolean result = fManager.isExistingProfileName("test1");
-		assertTrue("the name test1 should be an existing name", result);
+		boolean result = fManager.isExistingProfileName("test1"); //$NON-NLS-1$
+		assertTrue("the name test1 should be an existing name", result); //$NON-NLS-1$
 	}
 	
 	/**
 	 * Tests that isExistingProfileName returns false when asked about an non-existent name
 	 */
 	public void testisExistingName2() {
-		boolean result = fManager.isExistingProfileName("foobaseline");
-		assertFalse("foobaseline is not an existing name", result);
+		boolean result = fManager.isExistingProfileName("foobaseline"); //$NON-NLS-1$
+		assertFalse("foobaseline is not an existing name", result); //$NON-NLS-1$
 	}
 	
 	/**
@@ -177,10 +178,10 @@ public class HeadlessApiBaselineManagerTests extends AbstractApiTest {
 	public void testGetWorkspaceProfile() {
 		IApiBaseline baseline = fManager.getWorkspaceBaseline();
 		if(ApiPlugin.isRunningInFramework()) {
-			assertNotNull("the workspace baseline must not be null with the framework running", baseline);
+			assertNotNull("the workspace baseline must not be null with the framework running", baseline); //$NON-NLS-1$
 		}
 		else {
-			assertNull("the workspace baseline must be null in headless mode", baseline);
+			assertNull("the workspace baseline must be null in headless mode", baseline); //$NON-NLS-1$
 		}
 	}
 	
@@ -190,7 +191,7 @@ public class HeadlessApiBaselineManagerTests extends AbstractApiTest {
 	public void testStop() {
 		try {
 			fManager.stop();
-			assertTrue("There should be no api baselines in the manager", fManager.getApiBaselines().length == 0);
+			assertTrue("There should be no api baselines in the manager", fManager.getApiBaselines().length == 0); //$NON-NLS-1$
 			//stop it again to free the memory from the map
 			fManager.stop();
 		}

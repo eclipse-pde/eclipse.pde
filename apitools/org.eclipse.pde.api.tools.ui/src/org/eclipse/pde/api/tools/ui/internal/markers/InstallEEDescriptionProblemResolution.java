@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 IBM Corporation and others.
+ * Copyright (c) 2011, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,24 +34,32 @@ import org.eclipse.ui.progress.UIJob;
  * 
  * @since 1.0.400
  */
-public class InstallEEDescriptionProblemResolution implements
-		IMarkerResolution2 {
+public class InstallEEDescriptionProblemResolution implements IMarkerResolution2 {
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.ui.IMarkerResolution#getLabel()
 	 */
+	@Override
 	public String getLabel() {
 		return MarkerMessages.InstallEEDescriptionProblemResolution_0;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IMarkerResolution#run(org.eclipse.core.resources.IMarker)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.ui.IMarkerResolution#run(org.eclipse.core.resources.IMarker)
 	 */
+	@Override
 	public void run(IMarker marker) {
-		UIJob job  = new UIJob(MarkerMessages.DefaultApiProfileResolution_2) {
-			/* (non-Javadoc)
-			 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+		UIJob job = new UIJob(MarkerMessages.DefaultApiProfileResolution_2) {
+			/*
+			 * (non-Javadoc)
+			 * @see
+			 * org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.
+			 * runtime.IProgressMonitor)
 			 */
+			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				ICommandService commandService = (ICommandService) PlatformUI.getWorkbench().getService(ICommandService.class);
 				final Command command = commandService.getCommand(ApiErrorsWarningsConfigurationBlock.P2_INSTALL_COMMAND_HANDLER);
@@ -76,16 +84,20 @@ public class InstallEEDescriptionProblemResolution implements
 		job.schedule();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.ui.IMarkerResolution2#getDescription()
 	 */
+	@Override
 	public String getDescription() {
 		return MarkerMessages.InstallEEDescriptionProblemResolution_1;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.ui.IMarkerResolution2#getImage()
 	 */
+	@Override
 	public Image getImage() {
 		return ApiUIPlugin.getSharedImage(IApiToolsConstants.IMG_ELCL_SETUP_APITOOLS);
 	}

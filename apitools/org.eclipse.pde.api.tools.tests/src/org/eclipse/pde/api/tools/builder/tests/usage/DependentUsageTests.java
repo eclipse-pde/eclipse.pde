@@ -28,14 +28,14 @@ import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
  */
 public class DependentUsageTests extends UsageTest {
 
-	static final String WITHOUTTAG = "withouttag";
-	static final String WITHTAG = "withtag";
-	static final IPath C_PATH = new Path("/refproject/src/c/");
-	static final IPath F_PATH = new Path("/refproject/src/f/");
-	static final IPath I_PATH = new Path("/refproject/src/i/");
-	static final IPath M_PATH = new Path("/refproject/src/m/");
-	static final IPath XYZ_PATH = new Path("/usagetests/src/x/y/z/");
-	static final IPath MPPATH = new Path("/refproject/src/pack/multi/part");
+	static final String WITHOUTTAG = "withouttag"; //$NON-NLS-1$
+	static final String WITHTAG = "withtag"; //$NON-NLS-1$
+	static final IPath C_PATH = new Path("/refproject/src/c/"); //$NON-NLS-1$
+	static final IPath F_PATH = new Path("/refproject/src/f/"); //$NON-NLS-1$
+	static final IPath I_PATH = new Path("/refproject/src/i/"); //$NON-NLS-1$
+	static final IPath M_PATH = new Path("/refproject/src/m/"); //$NON-NLS-1$
+	static final IPath XYZ_PATH = new Path("/usagetests/src/x/y/z/"); //$NON-NLS-1$
+	static final IPath MPPATH = new Path("/refproject/src/pack/multi/part"); //$NON-NLS-1$
 	
 	/**
 	 * Constructor
@@ -58,7 +58,7 @@ public class DependentUsageTests extends UsageTest {
 	}
 	
 	protected IPath getTestSourcePath(String path) {
-		return super.getTestSourcePath().append("dependent").append(path);
+		return super.getTestSourcePath().append("dependent").append(path); //$NON-NLS-1$
 	}
 	
 	/**
@@ -78,7 +78,7 @@ public class DependentUsageTests extends UsageTest {
 	 * @return the path to the test source given the test name
 	 */
 	protected IPath getTestSource(String test) {
-		return TestSuiteHelper.getPluginDirectoryPath().append(TEST_SOURCE_ROOT).append(getTestSourcePath(test)).append(test).addFileExtension("java");
+		return TestSuiteHelper.getPluginDirectoryPath().append(TEST_SOURCE_ROOT).append(getTestSourcePath(test)).append(test).addFileExtension("java"); //$NON-NLS-1$
 	}
 	
 	/**
@@ -99,7 +99,7 @@ public class DependentUsageTests extends UsageTest {
 			//create the referenced file
 			createWorkspaceFile(updatepath, path);
 			//create the referencing file
-			createWorkspaceFile(usepath.append(test+".java"), getTestSource(test));
+			createWorkspaceFile(usepath.append(test+".java"), getTestSource(test)); //$NON-NLS-1$
 			fullBuild();
 			expectingNoJDTProblems();
 			if(addtag) {
@@ -149,8 +149,8 @@ public class DependentUsageTests extends UsageTest {
 		setExpectedProblemIds(new int[] {
 				ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_USAGE, IElementDescriptor.TYPE, IApiProblem.ILLEGAL_EXTEND, IApiProblem.NO_FLAGS)
 		});
-		setExpectedMessageArgs(new String[][] {{"classref", "test1"}});
-		deployTest("test1", XYZ_PATH, C_PATH, "classref.java", addtag);
+		setExpectedMessageArgs(new String[][] {{"classref", "test1"}}); //$NON-NLS-1$ //$NON-NLS-2$
+		deployTest("test1", XYZ_PATH, C_PATH, "classref.java", addtag); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	/**
@@ -177,8 +177,8 @@ public class DependentUsageTests extends UsageTest {
 		setExpectedProblemIds(new int[] {
 				ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_USAGE, IElementDescriptor.TYPE, IApiProblem.ILLEGAL_IMPLEMENT, IApiProblem.NO_FLAGS)
 		});
-		setExpectedMessageArgs(new String[][] {{"interref", "test2"}});
-		deployTest("test2", XYZ_PATH, I_PATH, "interref.java", addtag);
+		setExpectedMessageArgs(new String[][] {{"interref", "test2"}}); //$NON-NLS-1$ //$NON-NLS-2$
+		deployTest("test2", XYZ_PATH, I_PATH, "interref.java", addtag); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	/**
@@ -205,8 +205,8 @@ public class DependentUsageTests extends UsageTest {
 		setExpectedProblemIds(new int[] {
 				ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_USAGE, IElementDescriptor.TYPE, IApiProblem.ILLEGAL_INSTANTIATE, IApiProblem.NO_FLAGS)
 		});
-		setExpectedMessageArgs(new String[][] {{"classref", "test3"}});
-		deployTest("test3", XYZ_PATH, C_PATH, "classref.java", addtag);
+		setExpectedMessageArgs(new String[][] {{"classref", "test3"}}); //$NON-NLS-1$ //$NON-NLS-2$
+		deployTest("test3", XYZ_PATH, C_PATH, "classref.java", addtag); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	/**
@@ -233,8 +233,8 @@ public class DependentUsageTests extends UsageTest {
 		setExpectedProblemIds(new int[] {
 				ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_USAGE, IElementDescriptor.TYPE, IApiProblem.ILLEGAL_REFERENCE, IApiProblem.CONSTRUCTOR_METHOD)
 		});
-		setExpectedMessageArgs(new String[][] {{"constref()", "test4"}});
-		deployTest("test4", XYZ_PATH, M_PATH, "constref.java", addtag);
+		setExpectedMessageArgs(new String[][] {{"constref()", "test4"}}); //$NON-NLS-1$ //$NON-NLS-2$
+		deployTest("test4", XYZ_PATH, M_PATH, "constref.java", addtag); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	/**
@@ -261,8 +261,8 @@ public class DependentUsageTests extends UsageTest {
 		setExpectedProblemIds(new int[] {
 				ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_USAGE, IElementDescriptor.TYPE, IApiProblem.ILLEGAL_REFERENCE, IApiProblem.FIELD)
 		});
-		setExpectedMessageArgs(new String[][] {{"fieldref", "test5", "number"}});
-		deployTest("test5", XYZ_PATH, F_PATH, "fieldref.java", addtag);
+		setExpectedMessageArgs(new String[][] {{"fieldref", "test5", "number"}}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		deployTest("test5", XYZ_PATH, F_PATH, "fieldref.java", addtag); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	/**
@@ -289,8 +289,8 @@ public class DependentUsageTests extends UsageTest {
 		setExpectedProblemIds(new int[] {
 				ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_USAGE, IElementDescriptor.TYPE, IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD)
 		});
-		setExpectedMessageArgs(new String[][] {{"methodref", "test6", "m1()"}});
-		deployTest("test6", XYZ_PATH, M_PATH, "methodref.java", addtag);
+		setExpectedMessageArgs(new String[][] {{"methodref", "test6", "m1()"}}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		deployTest("test6", XYZ_PATH, M_PATH, "methodref.java", addtag); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	/**
@@ -317,8 +317,8 @@ public class DependentUsageTests extends UsageTest {
 		setExpectedProblemIds(new int[] {
 				ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_USAGE, IElementDescriptor.TYPE, IApiProblem.ILLEGAL_OVERRIDE, IApiProblem.NO_FLAGS)
 		});
-		setExpectedMessageArgs(new String[][] {{"methodref", "test7", "m1()"}});
-		deployTest("test7", XYZ_PATH, M_PATH, "methodref.java", addtag);
+		setExpectedMessageArgs(new String[][] {{"methodref", "test7", "m1()"}}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		deployTest("test7", XYZ_PATH, M_PATH, "methodref.java", addtag); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	/**
@@ -345,8 +345,8 @@ public class DependentUsageTests extends UsageTest {
 		setExpectedProblemIds(new int[] {
 				ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_USAGE, IElementDescriptor.TYPE, IApiProblem.ILLEGAL_EXTEND, IApiProblem.NO_FLAGS)
 		});
-		setExpectedMessageArgs(new String[][] {{"interref", "test8"}});
-		deployTest("test8", XYZ_PATH, I_PATH, "interref.java", addtag);
+		setExpectedMessageArgs(new String[][] {{"interref", "test8"}}); //$NON-NLS-1$ //$NON-NLS-2$
+		deployTest("test8", XYZ_PATH, I_PATH, "interref.java", addtag); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	/**
@@ -375,10 +375,10 @@ public class DependentUsageTests extends UsageTest {
 				ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_USAGE, IElementDescriptor.TYPE, IApiProblem.ILLEGAL_INSTANTIATE, IApiProblem.NO_FLAGS)
 		});
 		setExpectedMessageArgs(new String[][] {
-					{"classref", "test9"},
-					{"classref", "test9"}
+					{"classref", "test9"}, //$NON-NLS-1$ //$NON-NLS-2$
+					{"classref", "test9"} //$NON-NLS-1$ //$NON-NLS-2$
 				});
-		deployTest("test9", XYZ_PATH, C_PATH, "classref.java", addtag);
+		deployTest("test9", XYZ_PATH, C_PATH, "classref.java", addtag); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	/**
@@ -407,10 +407,10 @@ public class DependentUsageTests extends UsageTest {
 				ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_USAGE, IElementDescriptor.TYPE, IApiProblem.ILLEGAL_IMPLEMENT, IApiProblem.NO_FLAGS)
 		});
 		setExpectedMessageArgs(new String[][] {
-					{"interref", "test10"},
-					{"interref", "clazz"}
+					{"interref", "test10"}, //$NON-NLS-1$ //$NON-NLS-2$
+					{"interref", "clazz"} //$NON-NLS-1$ //$NON-NLS-2$
 				});
-		deployTest("test10", XYZ_PATH, I_PATH, "interref.java", addtag);
+		deployTest("test10", XYZ_PATH, I_PATH, "interref.java", addtag); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	/**
@@ -438,9 +438,9 @@ public class DependentUsageTests extends UsageTest {
 				ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_USAGE, IElementDescriptor.TYPE, IApiProblem.ILLEGAL_EXTEND, IApiProblem.NO_FLAGS)
 		});
 		setExpectedMessageArgs(new String[][] {
-				{"mpClassRef", "test11"}
+				{"mpClassRef", "test11"} //$NON-NLS-1$ //$NON-NLS-2$
 			});
-		deployTest("test11", XYZ_PATH, MPPATH, "mpClassRef.java", addtag);
+		deployTest("test11", XYZ_PATH, MPPATH, "mpClassRef.java", addtag); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	/**
@@ -468,8 +468,8 @@ public class DependentUsageTests extends UsageTest {
 				ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_USAGE, IElementDescriptor.TYPE, IApiProblem.ILLEGAL_INSTANTIATE, IApiProblem.NO_FLAGS)
 		});
 		setExpectedMessageArgs(new String[][] {
-				{"mpClassRef", "test12"}
+				{"mpClassRef", "test12"} //$NON-NLS-1$ //$NON-NLS-2$
 			});
-		deployTest("test12", XYZ_PATH, MPPATH, "mpClassRef.java", addtag);
+		deployTest("test12", XYZ_PATH, MPPATH, "mpClassRef.java", addtag); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }

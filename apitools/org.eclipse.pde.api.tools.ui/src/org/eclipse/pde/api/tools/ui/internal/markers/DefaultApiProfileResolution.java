@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,42 +22,55 @@ import org.eclipse.ui.IMarkerResolution2;
 import org.eclipse.ui.progress.UIJob;
 
 /**
- * This resolution helps users to pick a default API profile when the tooling has been set up
- * but there is no default profile
+ * This resolution helps users to pick a default API profile when the tooling
+ * has been set up but there is no default profile
  * 
  * @since 1.0.0
  */
 public class DefaultApiProfileResolution implements IMarkerResolution2 {
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.ui.IMarkerResolution2#getDescription()
 	 */
+	@Override
 	public String getDescription() {
 		return MarkerMessages.DefaultApiProfileResolution_0;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.ui.IMarkerResolution2#getImage()
 	 */
+	@Override
 	public Image getImage() {
 		return ApiUIPlugin.getSharedImage(IApiToolsConstants.IMG_OBJ_ECLIPSE_PROFILE);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.ui.IMarkerResolution#getLabel()
 	 */
+	@Override
 	public String getLabel() {
 		return MarkerMessages.DefaultApiProfileResolution_1;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IMarkerResolution#run(org.eclipse.core.resources.IMarker)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.ui.IMarkerResolution#run(org.eclipse.core.resources.IMarker)
 	 */
+	@Override
 	public void run(IMarker marker) {
-		UIJob job  = new UIJob(MarkerMessages.DefaultApiProfileResolution_2) {
-			/* (non-Javadoc)
-			 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+		UIJob job = new UIJob(MarkerMessages.DefaultApiProfileResolution_2) {
+			/*
+			 * (non-Javadoc)
+			 * @see
+			 * org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.
+			 * runtime.IProgressMonitor)
 			 */
+			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				SWTFactory.showPreferencePage(ApiUIPlugin.getShell(), IApiToolsConstants.ID_BASELINES_PREF_PAGE, null);
 				return Status.OK_STATUS;

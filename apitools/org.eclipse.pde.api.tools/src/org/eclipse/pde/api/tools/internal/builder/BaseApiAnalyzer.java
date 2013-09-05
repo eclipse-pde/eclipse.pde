@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -121,26 +120,27 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * @since 1.1
 	 */
 	static final String[] NO_TYPES = new String[0];
+
 	private static class ReexportedBundleVersionInfo {
 		String componentID;
 		int kind;
-		
+
 		ReexportedBundleVersionInfo(String componentID, int kind) {
 			this.componentID = componentID;
 			this.kind = kind;
 		}
 	}
-	
+
 	/**
 	 * The backing list of problems found so far
 	 */
-	private ArrayList fProblems = new ArrayList(25);
-	
+	private ArrayList<IApiProblem> fProblems = new ArrayList<IApiProblem>(25);
+
 	/**
 	 * List of pending deltas for which the @since tags should be checked
 	 */
-	private List fPendingDeltaInfos = new ArrayList(3);
-		
+	private List<IDelta> fPendingDeltaInfos = new ArrayList<IDelta>(3);
+
 	/**
 	 * The current build state to use
 	 */
@@ -157,38 +157,36 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * The current preferences to use when the platform is not running.
 	 */
 	private Properties fPreferences = null;
-	
+
 	/**
-	 * Boolean setting to continue analyzing a component even if it has resolution errors.
-	 * In the workspace builder we fail fast, but when running the {@link org.eclipse.pde.api.tools.internal.tasks.APIToolsAnalysisTask}
-	 * we want to still be able to produce results with resolver errors.
+	 * Boolean setting to continue analyzing a component even if it has
+	 * resolution errors. In the workspace builder we fail fast, but when
+	 * running the
+	 * {@link org.eclipse.pde.api.tools.internal.tasks.APIToolsAnalysisTask} we
+	 * want to still be able to produce results with resolver errors.
 	 */
 	private boolean fContinueOnResolutionError = false;
-	
+
 	/**
 	 * Constructs an API analyzer
 	 */
 	public BaseApiAnalyzer() {
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.builder.IApiAnalyzer#analyzeComponent(..)
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.builder.IApiAnalyzer#
+	 * analyzeComponent(..)
 	 */
-	public void analyzeComponent(
-			final BuildState state,
-			final IApiFilterStore filterStore,
-			final Properties preferences,
-			final IApiBaseline baseline,
-			final IApiComponent component,
-			final IBuildContext context,
-			IProgressMonitor monitor) {
+	@Override
+	public void analyzeComponent(final BuildState state, final IApiFilterStore filterStore, final Properties preferences, final IApiBaseline baseline, final IApiComponent component, final IBuildContext context, IProgressMonitor monitor) {
 		SubMonitor localMonitor = SubMonitor.convert(monitor, BuilderMessages.BaseApiAnalyzer_analyzing_api, 8);
 		try {
 			fJavaProject = getJavaProject(component);
 			this.fFilterStore = filterStore;
 			this.fPreferences = preferences;
-			if(!ignoreUnusedProblemFilterCheck()) {
-				((ApiFilterStore)component.getFilterStore()).recordFilterUsage();
+			if (!ignoreUnusedProblemFilterCheck()) {
+				((ApiFilterStore) component.getFilterStore()).recordFilterUsage();
 			}
 			ResolverError[] errors = component.getErrors();
 			if (errors != null) {
@@ -197,7 +195,9 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 				for (int i = 0, max = errors.length; i < max; i++) {
 					ResolverError error = errors[i];
 					VersionConstraint constraint = error.getUnsatisfiedConstraint();
-					if (constraint == null) continue;
+					if (constraint == null) {
+						continue;
+					}
 					VersionRange versionRange = constraint.getVersionRange();
 					if (buffer == null) {
 						buffer = new StringBuffer();
@@ -205,14 +205,9 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 					if (i > 0) {
 						buffer.append(',').append(' ');
 					}
-					buffer.append(
-						NLS.bind(
-								BuilderMessages.reportUnsatisfiedConstraint,
-								new String[] {
-										constraint.getName(),
-										versionRange != null ? versionRange.toString() : BuilderMessages.undefinedRange 
-								}
-						));
+					buffer.append(NLS.bind(BuilderMessages.reportUnsatisfiedConstraint, new String[] {
+							constraint.getName(),
+							versionRange != null ? versionRange.toString() : BuilderMessages.undefinedRange }));
 				}
 				if (buffer != null) {
 					// API component has errors that should be reported
@@ -220,28 +215,30 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 					if (baseline == null) {
 						checkDefaultBaselineSet();
 					}
-					// If run from the builder, quit now and report the resolver error.
+					// If run from the builder, quit now and report the resolver
+					// error.
 					// If run from the task, continue processing the component
-					if (!fContinueOnResolutionError){
+					if (!fContinueOnResolutionError) {
 						return;
 					}
 				}
 			}
 			IBuildContext bcontext = context;
-			if(bcontext == null) {
+			if (bcontext == null) {
 				bcontext = new BuildContext();
 			}
 			boolean checkfilters = false;
-			if(baseline != null) {
+			if (baseline != null) {
 				IApiComponent reference = baseline.getApiComponent(component.getSymbolicName());
 				this.fBuildState = state;
-				if(fBuildState == null) {
+				if (fBuildState == null) {
 					fBuildState = getBuildState();
 				}
-				//compatibility checks
-				if(reference != null) {
-					localMonitor.subTask(NLS.bind(BuilderMessages.BaseApiAnalyzer_comparing_api_profiles, new String[] {reference.getSymbolicName(), baseline.getName()}));
-					if(bcontext.hasTypes()) {
+				// compatibility checks
+				if (reference != null) {
+					localMonitor.subTask(NLS.bind(BuilderMessages.BaseApiAnalyzer_comparing_api_profiles, new String[] {
+							reference.getSymbolicName(), baseline.getName() }));
+					if (bcontext.hasTypes()) {
 						String[] changedtypes = bcontext.getStructurallyChangedTypes();
 						checkCompatibility(changedtypes, reference, component, localMonitor);
 					} else {
@@ -251,124 +248,117 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 					}
 					this.fBuildState.setReexportedComponents(Util.getReexportedComponents(component));
 				} else {
-					localMonitor.subTask(NLS.bind(BuilderMessages.BaseApiAnalyzer_comparing_api_profiles, new String[] {component.getSymbolicName(), baseline.getName()}));
+					localMonitor.subTask(NLS.bind(BuilderMessages.BaseApiAnalyzer_comparing_api_profiles, new String[] {
+							component.getSymbolicName(), baseline.getName() }));
 					checkCompatibility(null, component, localMonitor.newChild(1));
 					Util.updateMonitor(localMonitor);
 				}
-				//version checks
+				// version checks
 				checkApiComponentVersion(reference, component);
 				Util.updateMonitor(localMonitor);
 				checkfilters = true;
-			}
-			else {
-				//check default baseline
+			} else {
+				// check default baseline
 				checkDefaultBaselineSet();
 				Util.updateMonitor(localMonitor);
 			}
-			
-			//check E description status
+
+			// check E description status
 			checkEEDescriptions();
-			
-			//usage checks
+
+			// usage checks
 			checkApiUsage(bcontext, component, localMonitor.newChild(1));
 			Util.updateMonitor(localMonitor);
-			//tag validation
+			// tag validation
 			checkTagValidation(bcontext, component, localMonitor.newChild(1));
 			Util.updateMonitor(localMonitor);
-			if(checkfilters) {
-				//check for unused filters only if the scans have been done
+			if (checkfilters) {
+				// check for unused filters only if the scans have been done
 				checkUnusedProblemFilters(bcontext, component, localMonitor.newChild(1));
 			}
 			Util.updateMonitor(localMonitor);
-			
+
 			if (component instanceof ProjectComponent) {
 				checkExternalDependencies(component, bcontext, null, localMonitor.newChild(1));
 			}
-		} catch(CoreException e) {
+		} catch (CoreException e) {
 			ApiPlugin.log(e);
-		}
-		catch(OperationCanceledException oce) {
-			//do nothing, but don't forward it
-			//https://bugs.eclipse.org/bugs/show_bug.cgi?id=304315
-			if(ApiPlugin.DEBUG_API_ANALYZER) {
+		} catch (OperationCanceledException oce) {
+			// do nothing, but don't forward it
+			// https://bugs.eclipse.org/bugs/show_bug.cgi?id=304315
+			if (ApiPlugin.DEBUG_API_ANALYZER) {
 				System.out.println("Trapped OperationCanceledException"); //$NON-NLS-1$
 			}
-		}
-		finally {
+		} finally {
 			localMonitor.done();
 		}
 	}
-	
+
 	/**
-	 * Sets whether to continue analyzing a component even if it has resolution errors.
-	 * By default this is false.  The workspace builder should not analyze components with
-	 * errors to avoid polluting the project with markers.  When running the the API tools
-	 * analysis task the analyzer should continue to process the component to produce some
-	 * results (the task should warn that the results may not be accurate).
+	 * Sets whether to continue analyzing a component even if it has resolution
+	 * errors. By default this is false. The workspace builder should not
+	 * analyze components with errors to avoid polluting the project with
+	 * markers. When running the the API tools analysis task the analyzer should
+	 * continue to process the component to produce some results (the task
+	 * should warn that the results may not be accurate).
 	 * 
-	 * @param continueOnError whether to continue processing a component if it has resolution errors
+	 * @param continueOnError whether to continue processing a component if it
+	 *            has resolution errors
 	 */
-	public void setContinueOnResolverError(boolean continueOnError){
+	public void setContinueOnResolverError(boolean continueOnError) {
 		fContinueOnResolutionError = continueOnError;
 	}
-	
+
 	/**
-	 * Returns whether this analyzer will continue analyzing a component even if it has resolution errors.
-	 * By default this is false.  The workspace builder should not analyze components with
-	 * errors to avoid polluting the project with markers.  When running the the API tools
-	 * analysis task the analyzer should continue to process the component to produce some
-	 * results (the task should warn that the results may not be accurate).
+	 * Returns whether this analyzer will continue analyzing a component even if
+	 * it has resolution errors. By default this is false. The workspace builder
+	 * should not analyze components with errors to avoid polluting the project
+	 * with markers. When running the the API tools analysis task the analyzer
+	 * should continue to process the component to produce some results (the
+	 * task should warn that the results may not be accurate).
 	 * 
-	 * @return whether this analyzer will continue analyzing a component if it has resolution errors
+	 * @return whether this analyzer will continue analyzing a component if it
+	 *         has resolution errors
 	 */
-	public boolean isContinueOnResolverError(){
+	public boolean isContinueOnResolverError() {
 		return fContinueOnResolutionError;
 	}
 
 	/**
-	 * Checks if the setting to scan for invalid references is not set to be ignored AND there are no descriptions installed
+	 * Checks if the setting to scan for invalid references is not set to be
+	 * ignored AND there are no descriptions installed
 	 * 
 	 * @param component
 	 * @param monitor
 	 * @since 1.0.400
 	 */
 	void checkEEDescriptions() {
-		if(ignoreEEDescriptionCheck()) {
-			if(ApiPlugin.DEBUG_API_ANALYZER) {
+		if (ignoreEEDescriptionCheck()) {
+			if (ApiPlugin.DEBUG_API_ANALYZER) {
 				System.out.println("Ignoring check for API EE descriptions"); //$NON-NLS-1$
 			}
 			return;
 		}
-		if(ApiPlugin.DEBUG_API_ANALYZER) {
+		if (ApiPlugin.DEBUG_API_ANALYZER) {
 			System.out.println("Checking if there are any API EE descriptions installed if the preference is set to not be 'ignore'"); //$NON-NLS-1$
 		}
 		String[] ees = StubApiComponent.getInstalledMetadata();
-		if(ees.length < 1) {
-			IApiProblem problem = ApiProblemFactory.newApiUsageProblem(
-					Path.EMPTY.toString(), 
-					null, 
-					new String[] {fJavaProject.getElementName()}, 
-					new String[] {IApiMarkerConstants.API_MARKER_ATTR_ID},
-					new Object[] {new Integer(IApiMarkerConstants.API_USAGE_MARKER_ID)}, 
-					-1, 
-					-1, 
-					-1, 
-					IElementDescriptor.RESOURCE, 
-					IApiProblem.MISSING_EE_DESCRIPTIONS);
+		if (ees.length < 1) {
+			IApiProblem problem = ApiProblemFactory.newApiUsageProblem(Path.EMPTY.toString(), null, new String[] { fJavaProject.getElementName() }, new String[] { IApiMarkerConstants.API_MARKER_ATTR_ID }, new Object[] { new Integer(IApiMarkerConstants.API_USAGE_MARKER_ID) }, -1, -1, -1, IElementDescriptor.RESOURCE, IApiProblem.MISSING_EE_DESCRIPTIONS);
 			addProblem(problem);
 		}
 	}
-	
+
 	/**
 	 * @return if the API EE description check should be ignored or not
 	 */
 	private boolean ignoreEEDescriptionCheck() {
-		if(fJavaProject == null) {
+		if (fJavaProject == null) {
 			return true;
 		}
 		return ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES, fJavaProject.getProject().getProject()) == ApiPlugin.SEVERITY_IGNORE;
 	}
-	
+
 	/**
 	 * Processes the API Use Scan report for the given API Component
 	 * 
@@ -383,20 +373,19 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		}
 		String[] apiUseTypes = getApiUseTypes(bcontext);
 		if (ApiPlugin.DEBUG_API_ANALYZER) {
-			if(apiUseTypes.length < 1) {
-				System.out.println("Checking use scan dependencies for: "+apiComponent.getSymbolicName()+" ("+apiComponent.getVersion()+")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			}
-			else {
+			if (apiUseTypes.length < 1) {
+				System.out.println("Checking use scan dependencies for: " + apiComponent.getSymbolicName() + " (" + apiComponent.getVersion() + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			} else {
 				System.out.println("Checking use scan dependencies for: " + Arrays.asList(apiUseTypes)); //$NON-NLS-1$
 			}
 		}
 		SubMonitor localmonitor = SubMonitor.convert(monitor, BuilderMessages.checking_external_dependencies, 10);
-		IReferenceDescriptor[] externalDependencies  = UseScanManager.getInstance().getExternalDependenciesFor(apiComponent, apiUseTypes, localmonitor.newChild(10));
+		IReferenceDescriptor[] externalDependencies = UseScanManager.getInstance().getExternalDependenciesFor(apiComponent, apiUseTypes, localmonitor.newChild(10));
 		try {
 			if (externalDependencies != null) {
 				localmonitor.setWorkRemaining(externalDependencies.length);
-				HashMap problems = new HashMap();
-				for (int i = 0; i < externalDependencies.length; i++) {		
+				HashMap<String, IApiProblem> problems = new HashMap<String, IApiProblem>();
+				for (int i = 0; i < externalDependencies.length; i++) {
 					Util.updateMonitor(localmonitor, 1);
 					Reference externalReference = null;
 					IApiTypeRoot type = null;
@@ -406,7 +395,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 						type = apiComponent.findTypeRoot(referenceMemberType.getQualifiedName());
 					}
 					switch (referencedMember.getElementType()) {
-						case IElementDescriptor.TYPE : {
+						case IElementDescriptor.TYPE: {
 							referenceMemberType = (IReferenceTypeDescriptor) referencedMember;
 							type = apiComponent.findTypeRoot(referenceMemberType.getQualifiedName());
 							if (type != null) {
@@ -414,46 +403,35 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 							}
 							break;
 						}
-						case IElementDescriptor.METHOD : {
+						case IElementDescriptor.METHOD: {
 							if (type != null) {
 								externalReference = Reference.methodReference(type.getStructure(), referenceMemberType.getQualifiedName(), referencedMember.getName(), ((IMethodDescriptor) referencedMember).getSignature(), externalDependencies[i].getReferenceKind());
 							}
 							break;
 						}
-						case IElementDescriptor.FIELD : {
+						case IElementDescriptor.FIELD: {
 							if (type != null) {
 								externalReference = Reference.fieldReference(type.getStructure(), referenceMemberType.getQualifiedName(), referencedMember.getName(), externalDependencies[i].getReferenceKind());
 							}
 							break;
 						}
-						default: break;
+						default:
+							break;
 					}
 					if (type == null) {
-						createExternalDependenciesProblem(problems, 
-								externalDependencies[i], 
-								referenceMemberType.getQualifiedName(), 
-								referencedMember, 
-								externalDependencies[i].getReferencedMember().getElementType(), 
-								IApiProblem.API_USE_SCAN_DELETED);
+						createExternalDependenciesProblem(problems, externalDependencies[i], referenceMemberType.getQualifiedName(), referencedMember, externalDependencies[i].getReferencedMember().getElementType(), IApiProblem.API_USE_SCAN_DELETED);
 					} else {
 						externalReference.resolve();
 						if (externalReference.getResolvedReference() == null) {
-							createExternalDependenciesProblem(problems, 
-									externalDependencies[i], 
-									referenceMemberType.getQualifiedName(), 
-									referencedMember, 
-									externalDependencies[i].getReferencedMember().getElementType(), 
-									IApiProblem.API_USE_SCAN_UNRESOLVED);
+							createExternalDependenciesProblem(problems, externalDependencies[i], referenceMemberType.getQualifiedName(), referencedMember, externalDependencies[i].getReferencedMember().getElementType(), IApiProblem.API_USE_SCAN_UNRESOLVED);
 						}
-					}				
+					}
 				}
-				for (Iterator iterator = problems.values().iterator(); iterator.hasNext();) {
-					IApiProblem apiProblem = (IApiProblem) iterator.next();
+				for (IApiProblem apiProblem : problems.values()) {
 					addProblem(apiProblem);
 				}
 			}
-		}
-		finally {
+		} finally {
 			localmonitor.done();
 		}
 	}
@@ -461,22 +439,29 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	public boolean isSeverityEnabled(Properties properties) {
 		IEclipsePreferences node = InstanceScope.INSTANCE.getNode(ApiPlugin.PLUGIN_ID);
 		if (properties == null) {
-			if (!isIgnore(node.get(IApiProblemTypes.API_USE_SCAN_TYPE_SEVERITY, ApiPlugin.VALUE_IGNORE)))
+			if (!isIgnore(node.get(IApiProblemTypes.API_USE_SCAN_TYPE_SEVERITY, ApiPlugin.VALUE_IGNORE))) {
 				return true;
-			if (!isIgnore(node.get(IApiProblemTypes.API_USE_SCAN_METHOD_SEVERITY, ApiPlugin.VALUE_IGNORE)))
+			}
+			if (!isIgnore(node.get(IApiProblemTypes.API_USE_SCAN_METHOD_SEVERITY, ApiPlugin.VALUE_IGNORE))) {
 				return true;
-			if (isIgnore(node.get(IApiProblemTypes.API_USE_SCAN_FIELD_SEVERITY, ApiPlugin.VALUE_IGNORE)))
+			}
+			if (isIgnore(node.get(IApiProblemTypes.API_USE_SCAN_FIELD_SEVERITY, ApiPlugin.VALUE_IGNORE))) {
 				return true;
+			}
 			return false;
 		} else {
-			if (properties.isEmpty())
+			if (properties.isEmpty()) {
 				return true; // preferences parameter not provided
-			if (!isIgnore(properties.get(IApiProblemTypes.API_USE_SCAN_TYPE_SEVERITY))) 
+			}
+			if (!isIgnore(properties.get(IApiProblemTypes.API_USE_SCAN_TYPE_SEVERITY))) {
 				return true;
-			if (!isIgnore(properties.get(IApiProblemTypes.API_USE_SCAN_METHOD_SEVERITY))) 
+			}
+			if (!isIgnore(properties.get(IApiProblemTypes.API_USE_SCAN_METHOD_SEVERITY))) {
 				return true;
-			if (!isIgnore(properties.get(IApiProblemTypes.API_USE_SCAN_FIELD_SEVERITY))) 
+			}
+			if (!isIgnore(properties.get(IApiProblemTypes.API_USE_SCAN_FIELD_SEVERITY))) {
 				return true;
+			}
 			return false;
 		}
 	}
@@ -487,9 +472,9 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		}
 		return true;
 	}
-	
+
 	/**
-	 * Creates an {@link IApiProblem} for the broken external dependency 
+	 * Creates an {@link IApiProblem} for the broken external dependency
 	 * 
 	 * @param problems
 	 * @param dependency
@@ -499,22 +484,21 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * @param flag
 	 * @return
 	 */
-	protected IApiProblem createExternalDependenciesProblem(HashMap problems, IReferenceDescriptor dependency, String referenceTypeName, IMemberDescriptor referencedMember, int elementType, int flag) {	
+	protected IApiProblem createExternalDependenciesProblem(HashMap<String, IApiProblem> problems, IReferenceDescriptor dependency, String referenceTypeName, IMemberDescriptor referencedMember, int elementType, int flag) {
 		String resource = referenceTypeName;
-		String primaryTypeName = referenceTypeName.replace('$', '.');		
-		int charStart = -1, charEnd = -1, lineNumber = -1; 
+		String primaryTypeName = referenceTypeName.replace('$', '.');
+		int charStart = -1, charEnd = -1, lineNumber = -1;
 		if (fJavaProject != null) {
 			try {
-				
+
 				IType type = fJavaProject.findType(primaryTypeName);
 				IResource res = Util.getResource(fJavaProject.getProject(), type);
-				if(res == null) {
+				if (res == null) {
 					return null;
 				}
-				if(!Util.isManifest(res.getProjectRelativePath())) {
+				if (!Util.isManifest(res.getProjectRelativePath())) {
 					resource = res.getProjectRelativePath().toString();
-				}
-				else {
+				} else {
 					resource = "."; //$NON-NLS-1$
 				}
 				if (type != null) {
@@ -526,19 +510,22 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 						lineNumber = document.getLineOfOffset(charStart);
 					} catch (BadLocationException e) {
 						// ignore
-					}			
-					catch (CoreException ce) {}
+					} catch (CoreException ce) {
+					}
 				}
-			} catch (JavaModelException e) {}
+			} catch (JavaModelException e) {
+			}
 		}
-		String[] msgArgs = new String[] {referenceTypeName, referencedMember.getName(), dependency.getComponent().getId()};
+		String[] msgArgs = new String[] {
+				referenceTypeName, referencedMember.getName(),
+				dependency.getComponent().getId() };
 		int kind = 0;
 		switch (elementType) {
-			case IElementDescriptor.TYPE : {
-				kind = IApiProblem.API_USE_SCAN_TYPE_PROBLEM;				
+			case IElementDescriptor.TYPE: {
+				kind = IApiProblem.API_USE_SCAN_TYPE_PROBLEM;
 				break;
 			}
-			case IElementDescriptor.METHOD : {
+			case IElementDescriptor.METHOD: {
 				kind = IApiProblem.API_USE_SCAN_METHOD_PROBLEM;
 				msgArgs[1] = BuilderMessages.BaseApiAnalyzer_Method + ' ' + msgArgs[1];
 				if ((dependency.getReferenceKind() & IReference.REF_CONSTRUCTORMETHOD) > 0) {
@@ -546,17 +533,19 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 				}
 				break;
 			}
-			case IElementDescriptor.FIELD : {
+			case IElementDescriptor.FIELD: {
 				kind = IApiProblem.API_USE_SCAN_FIELD_PROBLEM;
 				break;
 			}
-			default: break;
+			default:
+				break;
 		}
-		
-		int dependencyNameIndex = 2;	// the comma separated list of dependent plugins 
+
+		int dependencyNameIndex = 2; // the comma separated list of dependent
+										// plugins
 		int problemId = ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_API_USE_SCAN_PROBLEM, elementType, kind, flag);
-		String problemKey = referenceTypeName +  problemId;
-		IApiProblem similarProblem =  (IApiProblem) problems.get(problemKey);
+		String problemKey = referenceTypeName + problemId;
+		IApiProblem similarProblem = problems.get(problemKey);
 		if (similarProblem != null) {
 			String[] existingMsgArgs = similarProblem.getMessageArguments()[dependencyNameIndex].split(", "); //$NON-NLS-1$
 			if (!Arrays.asList(existingMsgArgs).contains(msgArgs[dependencyNameIndex])) {
@@ -565,22 +554,11 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 				return similarProblem;
 			}
 		}
-		IApiProblem problem = ApiProblemFactory.newApiUseScanProblem(
-				resource, 
-				primaryTypeName, 
-				msgArgs, 
-				new String[] {IApiMarkerConstants.API_USESCAN_TYPE}, 
-				new String[] {primaryTypeName },
-				lineNumber,
-				charStart,
-				charEnd,
-				elementType, 
-				kind, 
-				flag);
+		IApiProblem problem = ApiProblemFactory.newApiUseScanProblem(resource, primaryTypeName, msgArgs, new String[] { IApiMarkerConstants.API_USESCAN_TYPE }, new String[] { primaryTypeName }, lineNumber, charStart, charEnd, elementType, kind, flag);
 		problems.put(problemKey, problem);
-		return problem;		
+		return problem;
 	}
-	
+
 	/**
 	 * Checks the compatibility of each type.
 	 * 
@@ -591,136 +569,118 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * @throws CoreException
 	 */
 	private void checkCompatibility(String[] changedtypes, IApiComponent reference, IApiComponent component, SubMonitor localMonitor) throws CoreException {
-		for(int i = 0; i < changedtypes.length; i++) {
-			if(changedtypes[i] == null) {
+		for (int i = 0; i < changedtypes.length; i++) {
+			if (changedtypes[i] == null) {
 				continue;
 			}
 			checkCompatibility(changedtypes[i], reference, component, localMonitor.newChild(1));
 			Util.updateMonitor(localMonitor);
 		}
 	}
+
 	/**
 	 * Checks for unused API problem filters
+	 * 
 	 * @param context the current build context
 	 * @param reference
 	 * @param monitor
 	 */
 	private void checkUnusedProblemFilters(final IBuildContext context, IApiComponent reference, IProgressMonitor monitor) {
-		if(ignoreUnusedProblemFilterCheck()) {
-			if(ApiPlugin.DEBUG_API_ANALYZER) {
+		if (ignoreUnusedProblemFilterCheck()) {
+			if (ApiPlugin.DEBUG_API_ANALYZER) {
 				System.out.println("Ignoring unused problem filter check"); //$NON-NLS-1$
 			}
 			Util.updateMonitor(monitor, 1);
 			return;
 		}
 		try {
-			ApiFilterStore store = (ApiFilterStore)reference.getFilterStore();
+			ApiFilterStore store = (ApiFilterStore) reference.getFilterStore();
 			IProject project = fJavaProject.getProject();
 			boolean autoremove = ApiPlugin.getDefault().getEnableState(IApiProblemTypes.AUTOMATICALLY_REMOVE_UNUSED_PROBLEM_FILTERS, project);
-			ArrayList toremove = null;
-			if(autoremove) {
-				toremove = new ArrayList(8);
+			ArrayList<IApiProblemFilter> toremove = null;
+			if (autoremove) {
+				toremove = new ArrayList<IApiProblemFilter>(8);
 			}
 			IApiProblemFilter[] filters = null;
-			if(context.hasTypes()) {
+			if (context.hasTypes()) {
 				IResource resource = null;
 				String[] types = getApiUseTypes(context);
 				for (int i = 0; i < types.length; i++) {
-					if(types[i] == null) {
+					if (types[i] == null) {
 						continue;
 					}
 					resource = Util.getResource(project, fJavaProject.findType(Signatures.getPrimaryTypeName(types[i])));
-					if(resource != null) {
+					if (resource != null) {
 						filters = store.getUnusedFilters(resource, types[i], null);
-						if(autoremove) {
-							addToList(toremove, filters);
+						if (autoremove) {
+							for (int j = 0; j < filters.length; j++) {
+								toremove.add(filters[j]);
+							}
 							continue;
 						}
 						createUnusedApiFilterProblems(filters);
 					}
 				}
-				/*types = context.getStructuralDependentTypes();
-				for (int i = 0; i < types.length; i++) {
-					if(types[i] == null) {
-						continue;
-					}
-					resource = Util.getResource(project, fJavaProject.findType(Signatures.getPrimaryTypeName(types[i])));
-					if(resource != null) {
-						filters = store.getUnusedFilters(
-								resource, 
-								types[i], 
-								new int[] {IApiProblem.CATEGORY_COMPATIBILITY, IApiProblem.CATEGORY_SINCETAGS, IApiProblem.CATEGORY_VERSION});
-						if(autoremove) {
-							addToList(toremove, filters);
-							continue;
-						}
-						createUnusedApiFilterProblems(filters);
-					}
-				}*/
-				if(autoremove) {
+				if (autoremove) {
 					removeUnusedProblemFilters(store, toremove, monitor);
 				}
 			} else {
 				filters = store.getUnusedFilters(null, null, null);
-				if(autoremove) {
-					addToList(toremove, filters);
+				if (autoremove) {
+					for (int i = 0; i < filters.length; i++) {
+						toremove.add(filters[i]);
+					}
 					removeUnusedProblemFilters(store, toremove, monitor);
-				}
-				else {
-					//full build, clean up all old markers
+				} else {
+					// full build, clean up all old markers
 					createUnusedApiFilterProblems(filters);
 				}
 			}
-		}
-		catch(CoreException ce) {
-			//ignore, just don't create problems
-		}
-		finally {
+		} catch (CoreException ce) {
+			// ignore, just don't create problems
+		} finally {
 			Util.updateMonitor(monitor, 1);
 		}
 	}
-	
+
 	/**
-	 * Adds all of the non-null elements from the given array to the given list
-	 * @param list
-	 * @param array
-	 * @since 1.1
-	 */
-	void addToList(List list, Object[] array) {
-		for (int i = 0; i < array.length; i++) {
-			if(array[i] != null) {
-				list.add(array[i]);
-			}
-		}
-	}
-	
-	/**
-	 * Removes the given set of {@link IApiProblemFilter}s from the given {@link IApiFilterStore}
-	 * using a workspace runnable to avoid resource notifications
+	 * Removes the given set of {@link IApiProblemFilter}s from the given
+	 * {@link IApiFilterStore} using a workspace runnable to avoid resource
+	 * notifications
+	 * 
 	 * @param store the store to remove from
 	 * @param filterlist list of filters to batch remove
-	 * @param monitor 
+	 * @param monitor
 	 * @throws CoreException
 	 * @since 1.1
 	 */
-	void removeUnusedProblemFilters(final IApiFilterStore store, final List filterlist, final IProgressMonitor monitor) throws CoreException {
-		if(filterlist.size() > 0) {
+	void removeUnusedProblemFilters(final IApiFilterStore store, final List<IApiProblemFilter> filterlist, final IProgressMonitor monitor) throws CoreException {
+		if (filterlist.size() > 0) {
 			IWorkspaceRunnable runner = new IWorkspaceRunnable() {
-				public void run(IProgressMonitor monitor) throws CoreException {
-					store.removeFilters((IApiProblemFilter[]) filterlist.toArray(new IApiProblemFilter[filterlist.size()]));
+				/*
+				 * (non-Javadoc)
+				 * @see
+				 * org.eclipse.core.resources.IWorkspaceRunnable#run(org.eclipse
+				 * .core.runtime.IProgressMonitor)
+				 */
+				@Override
+				public void run(IProgressMonitor lmonitor) throws CoreException {
+					store.removeFilters(filterlist.toArray(new IApiProblemFilter[filterlist.size()]));
 				}
 			};
 			ResourcesPlugin.getWorkspace().run(runner, null, IWorkspace.AVOID_UPDATE, monitor);
 		}
 	}
-	
+
 	/**
 	 * Creates a new unused {@link IApiProblemFilter} problem
+	 * 
 	 * @param filters the filters to create the problems for
-	 * @return a new {@link IApiProblem} for unused problem filters or <code>null</code>
+	 * @return a new {@link IApiProblem} for unused problem filters or
+	 *         <code>null</code>
 	 */
 	private void createUnusedApiFilterProblems(IApiProblemFilter[] filters) {
-		if(fJavaProject == null) {
+		if (fJavaProject == null) {
 			return;
 		}
 		IApiProblemFilter filter = null;
@@ -728,7 +688,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		for (int i = 0; i < filters.length; i++) {
 			filter = filters[i];
 			problem = filter.getUnderlyingProblem();
-			if(problem == null) {
+			if (problem == null) {
 				return;
 			}
 			IResource resource = null;
@@ -761,7 +721,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 					}
 				} catch (JavaModelException e) {
 					ApiPlugin.log(e);
-				} catch(CoreException e) {
+				} catch (CoreException e) {
 					ApiPlugin.log(e);
 				}
 			}
@@ -769,28 +729,24 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			if (resource != null) {
 				path = resource.getProjectRelativePath().toPortableString();
 			}
-			addProblem(ApiProblemFactory.newApiUsageProblem(path,
-					problem.getTypeName(),
-					new String[] {filter.getUnderlyingProblem().getMessage()}, //message args
-					new String[] {IApiMarkerConstants.MARKER_ATTR_FILTER_HANDLE_ID, IApiMarkerConstants.API_MARKER_ATTR_ID},
-					new Object[] {((ApiProblemFilter)filter).getHandle(), new Integer(IApiMarkerConstants.UNUSED_PROBLEM_FILTER_MARKER_ID)},
-					lineNumber,
-					charStart,
-					charEnd,
-					problem.getElementKind(),
-					IApiProblem.UNUSED_PROBLEM_FILTERS));
+			addProblem(ApiProblemFactory.newApiUsageProblem(path, problem.getTypeName(), new String[] { filter.getUnderlyingProblem().getMessage() }, // message
+																																						// args
+					new String[] {
+							IApiMarkerConstants.MARKER_ATTR_FILTER_HANDLE_ID,
+							IApiMarkerConstants.API_MARKER_ATTR_ID }, new Object[] {
+							((ApiProblemFilter) filter).getHandle(),
+							new Integer(IApiMarkerConstants.UNUSED_PROBLEM_FILTER_MARKER_ID) }, lineNumber, charStart, charEnd, problem.getElementKind(), IApiProblem.UNUSED_PROBLEM_FILTERS));
 		}
 	}
-	
+
 	/**
-	 * Check the version changes of re-exported bundles to make sure that the given component
-	 * version is modified accordingly.
+	 * Check the version changes of re-exported bundles to make sure that the
+	 * given component version is modified accordingly.
 	 * 
 	 * @param reference the given reference API component
 	 * @param component the given component
 	 */
-	private ReexportedBundleVersionInfo checkBundleVersionsOfReexportedBundles(
-			IApiComponent reference, IApiComponent component) throws CoreException {
+	private ReexportedBundleVersionInfo checkBundleVersionsOfReexportedBundles(IApiComponent reference, IApiComponent component) throws CoreException {
 		IRequiredComponentDescription[] requiredComponents = component.getRequiredComponents();
 		int length = requiredComponents.length;
 		ReexportedBundleVersionInfo info = null;
@@ -798,7 +754,8 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			loop: for (int i = 0; i < length; i++) {
 				IRequiredComponentDescription description = requiredComponents[i];
 				if (description.isExported()) {
-					// get the corresponding IRequiredComponentDescription for the component from the reference baseline
+					// get the corresponding IRequiredComponentDescription for
+					// the component from the reference baseline
 					String id = description.getId();
 					IRequiredComponentDescription[] requiredComponents2 = reference.getRequiredComponents();
 					// get the corresponding exported bundle
@@ -818,25 +775,24 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 					}
 					IVersionRange versionRange = description.getVersionRange();
 					IVersionRange versionRange2 = referenceDescription.getVersionRange();
-					
+
 					Version currentLowerBound = new Version(versionRange.getMinimumVersion());
 					Version referenceLowerBound = new Version(versionRange2.getMinimumVersion());
-					
+
 					int currentLowerMajorVersion = currentLowerBound.getMajor();
 					int referenceLowerMajorVersion = referenceLowerBound.getMajor();
 					int currentLowerMinorVersion = currentLowerBound.getMinor();
 					int referenceLowerMinorVersion = referenceLowerBound.getMinor();
-					
-					if (currentLowerMajorVersion < referenceLowerMajorVersion
-							|| currentLowerMinorVersion < referenceLowerMinorVersion) {
-						return new ReexportedBundleVersionInfo(id , IApiProblem.REEXPORTED_MAJOR_VERSION_CHANGE);
+
+					if (currentLowerMajorVersion < referenceLowerMajorVersion || currentLowerMinorVersion < referenceLowerMinorVersion) {
+						return new ReexportedBundleVersionInfo(id, IApiProblem.REEXPORTED_MAJOR_VERSION_CHANGE);
 					}
-					
+
 					if (currentLowerMajorVersion > referenceLowerMajorVersion) {
-						return new ReexportedBundleVersionInfo(id , IApiProblem.REEXPORTED_MAJOR_VERSION_CHANGE);
+						return new ReexportedBundleVersionInfo(id, IApiProblem.REEXPORTED_MAJOR_VERSION_CHANGE);
 					}
 					if (currentLowerMinorVersion > referenceLowerMinorVersion) {
-						info = new ReexportedBundleVersionInfo(id , IApiProblem.REEXPORTED_MINOR_VERSION_CHANGE);
+						info = new ReexportedBundleVersionInfo(id, IApiProblem.REEXPORTED_MINOR_VERSION_CHANGE);
 					}
 				}
 			}
@@ -846,24 +802,25 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 
 	/**
 	 * Creates and AST for the given {@link ITypeRoot} at the given offset
+	 * 
 	 * @param root
 	 * @param offset
 	 * @return
 	 */
 	private CompilationUnit createAST(ITypeRoot root, int offset) {
-		if(fJavaProject == null) {
+		if (fJavaProject == null) {
 			return null;
 		}
 		ASTParser parser = ASTParser.newParser(AST.JLS4);
 		parser.setFocalPosition(offset);
 		parser.setResolveBindings(false);
 		parser.setSource(root);
-		Map options = fJavaProject.getOptions(true);
+		Map<String, String> options = fJavaProject.getOptions(true);
 		options.put(JavaCore.COMPILER_DOC_COMMENT_SUPPORT, JavaCore.ENABLED);
 		parser.setCompilerOptions(options);
 		return (CompilationUnit) parser.createAST(new NullProgressMonitor());
 	}
-	
+
 	/**
 	 * @return the build state to use.
 	 */
@@ -872,80 +829,91 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		if (fJavaProject != null) {
 			project = fJavaProject.getProject();
 		}
-		if(project == null) {
+		if (project == null) {
 			return new BuildState();
 		}
 		try {
 			BuildState state = BuildState.getLastBuiltState(project);
-			if(state != null) {
+			if (state != null) {
 				return state;
 			}
-		} 
-		catch (CoreException e) {}
+		} catch (CoreException e) {
+		}
 		return new BuildState();
 	}
-	
+
 	/**
-	 * Returns an {@link IApiTypeContainer} given the component and type names context
+	 * Returns an {@link IApiTypeContainer} given the component and type names
+	 * context
+	 * 
 	 * @param component
 	 * @param types
-	 * @return a new {@link IApiTypeContainer} for the component and type names context
+	 * @return a new {@link IApiTypeContainer} for the component and type names
+	 *         context
 	 */
 	private IApiTypeContainer getSearchScope(final IApiComponent component, final String[] typenames) {
-		if(typenames == null) {
+		if (typenames == null) {
 			return component;
 		}
-		if(typenames.length == 0) {
+		if (typenames.length == 0) {
 			return component;
-		}
-		else {
+		} else {
 			return Factory.newTypeScope(component, getScopedElements(typenames));
 		}
 	}
-	
+
 	/**
-	 * Returns a listing of {@link IReferenceTypeDescriptor}s given the listing of type names
+	 * Returns a listing of {@link IReferenceTypeDescriptor}s given the listing
+	 * of type names
+	 * 
 	 * @param typenames
 	 * @return
 	 */
 	private IReferenceTypeDescriptor[] getScopedElements(final String[] typenames) {
-		ArrayList types = new ArrayList(typenames.length);
-		for(int i = 0; i < typenames.length; i++) {
-			if(typenames[i] == null) {
+		ArrayList<IReferenceTypeDescriptor> types = new ArrayList<IReferenceTypeDescriptor>(typenames.length);
+		for (int i = 0; i < typenames.length; i++) {
+			if (typenames[i] == null) {
 				continue;
 			}
 			types.add(Util.getType(typenames[i]));
 		}
-		return (IReferenceTypeDescriptor[]) types.toArray(new IReferenceTypeDescriptor[types.size()]);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.builder.IApiAnalyzer#getProblems()
-	 */
-	public IApiProblem[] getProblems() {
-		if(fProblems == null) {
-			return new IApiProblem[0];
-		}
-		return (IApiProblem[]) fProblems.toArray(new IApiProblem[fProblems.size()]);
+		return types.toArray(new IReferenceTypeDescriptor[types.size()]);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.builder.IApiAnalyzer#dispose()
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.provisional.builder.IApiAnalyzer#
+	 * getProblems()
 	 */
+	@Override
+	public IApiProblem[] getProblems() {
+		if (fProblems == null) {
+			return new IApiProblem[0];
+		}
+		return fProblems.toArray(new IApiProblem[fProblems.size()]);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.provisional.builder.IApiAnalyzer#dispose
+	 * ()
+	 */
+	@Override
 	public void dispose() {
-		if(fProblems != null) {
+		if (fProblems != null) {
 			fProblems.clear();
 			fProblems = null;
 		}
-		if(fPendingDeltaInfos != null) {
+		if (fPendingDeltaInfos != null) {
 			fPendingDeltaInfos.clear();
 			fPendingDeltaInfos = null;
 		}
-		if(fBuildState != null) {
+		if (fBuildState != null) {
 			fBuildState = null;
 		}
 	}
-	
+
 	/**
 	 * @return if the API usage scan should be ignored
 	 */
@@ -970,6 +938,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		ignore &= plugin.getSeverityLevel(IApiProblemTypes.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES, project) == ApiPlugin.SEVERITY_IGNORE;
 		return ignore;
 	}
+
 	/**
 	 * @return if the API usage scan should be ignored
 	 */
@@ -980,19 +949,22 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		}
 		return ApiPlugin.getDefault().getEnableState(IApiProblemTypes.REPORT_API_BREAKAGE_WHEN_MAJOR_VERSION_INCREMENTED, fJavaProject.getProject().getProject());
 	}
-	
+
 	/**
 	 * @return if the default API baseline check should be ignored or not
 	 */
 	private boolean ignoreDefaultBaselineCheck() {
-		if(fJavaProject == null) {
+		if (fJavaProject == null) {
 			return true;
 		}
 		return ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.MISSING_DEFAULT_API_BASELINE, fJavaProject.getProject().getProject()) == ApiPlugin.SEVERITY_IGNORE;
 	}
+
 	/**
-	 * Whether to ignore since tag checks. If <code>null</code> is passed in we are asking if all since tag checks should be ignored,
-	 * if a pref is specified we only want to know if that kind should be ignored
+	 * Whether to ignore since tag checks. If <code>null</code> is passed in we
+	 * are asking if all since tag checks should be ignored, if a pref is
+	 * specified we only want to know if that kind should be ignored
+	 * 
 	 * @param pref
 	 * @return
 	 */
@@ -1002,17 +974,16 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		}
 		IProject project = fJavaProject.getProject();
 		ApiPlugin plugin = ApiPlugin.getDefault();
-		if(pref == null) {
+		if (pref == null) {
 			boolean ignore = plugin.getSeverityLevel(IApiProblemTypes.MALFORMED_SINCE_TAG, project) == ApiPlugin.SEVERITY_IGNORE;
 			ignore &= plugin.getSeverityLevel(IApiProblemTypes.INVALID_SINCE_TAG_VERSION, project) == ApiPlugin.SEVERITY_IGNORE;
 			ignore &= plugin.getSeverityLevel(IApiProblemTypes.MISSING_SINCE_TAG, project) == ApiPlugin.SEVERITY_IGNORE;
 			return ignore;
-		}
-		else {
+		} else {
 			return plugin.getSeverityLevel(pref, project) == ApiPlugin.SEVERITY_IGNORE;
 		}
 	}
-	
+
 	/**
 	 * @return if the component version checks should be ignored or not
 	 */
@@ -1023,6 +994,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		}
 		return ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION, fJavaProject.getProject().getProject()) == ApiPlugin.SEVERITY_IGNORE;
 	}
+
 	private boolean ignoreMinorVersionCheckWithoutApiChange() {
 		if (fJavaProject == null) {
 			// we ignore it for non-OSGi case
@@ -1030,6 +1002,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		}
 		return !ApiPlugin.getDefault().getEnableState(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MINOR_WITHOUT_API_CHANGE, fJavaProject.getProject().getProject());
 	}
+
 	private boolean ignoreMajorVersionCheckWithoutBreakingChange() {
 		if (fJavaProject == null) {
 			// we ignore it for non-OSGi case
@@ -1037,84 +1010,87 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		}
 		return !ApiPlugin.getDefault().getEnableState(IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MAJOR_WITHOUT_BREAKING_CHANGE, fJavaProject.getProject().getProject());
 	}
+
 	/**
 	 * @return if the invalid tag check should be ignored
 	 */
 	private boolean ignoreInvalidTagCheck() {
-		if(fJavaProject == null) {
+		if (fJavaProject == null) {
 			return true;
 		}
 		return ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.INVALID_JAVADOC_TAG, fJavaProject.getProject()) == ApiPlugin.SEVERITY_IGNORE;
 	}
+
 	/**
 	 * @return if the unused problem filter check should be ignored or not
 	 */
 	private boolean ignoreUnusedProblemFilterCheck() {
-		if(fJavaProject == null) {
+		if (fJavaProject == null) {
 			return true;
 		}
 		return ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.UNUSED_PROBLEM_FILTERS, fJavaProject.getProject()) == ApiPlugin.SEVERITY_IGNORE;
 	}
+
 	/**
 	 * Checks the validation of tags for the given {@link IApiComponent}
+	 * 
 	 * @param context
 	 * @param component
 	 * @param monitor
 	 */
 	private void checkTagValidation(final IBuildContext context, final IApiComponent component, IProgressMonitor monitor) {
-		if(ignoreInvalidTagCheck()) {
+		if (ignoreInvalidTagCheck()) {
 			return;
 		}
 		SubMonitor localMonitor = null;
 		try {
-			
+
 			localMonitor = SubMonitor.convert(monitor, BuilderMessages.BaseApiAnalyzer_validating_javadoc_tags, 1 + component.getApiTypeContainers().length);
-			if(context.hasTypes()) {
+			if (context.hasTypes()) {
 				String[] typenames = context.getStructurallyChangedTypes();
-				for(int i = 0; i < typenames.length; i++) {
-					if(typenames[i] == null) {
+				for (int i = 0; i < typenames.length; i++) {
+					if (typenames[i] == null) {
 						continue;
 					}
 					localMonitor.subTask(NLS.bind(BuilderMessages.BaseApiAnalyzer_scanning_0, typenames[i]));
 					processType(typenames[i]);
 					Util.updateMonitor(localMonitor);
 				}
-			}
-			else {
+			} else {
 				try {
 					IPackageFragmentRoot[] roots = fJavaProject.getPackageFragmentRoots();
-					for(int i = 0; i < roots.length; i++) {
-						if(roots[i].getKind() == IPackageFragmentRoot.K_SOURCE) {
+					for (int i = 0; i < roots.length; i++) {
+						if (roots[i].getKind() == IPackageFragmentRoot.K_SOURCE) {
 							localMonitor.subTask(NLS.bind(BuilderMessages.BaseApiAnalyzer_scanning_0, roots[i].getPath().toOSString()));
 							scanSource(roots[i], localMonitor.newChild(1));
 							Util.updateMonitor(localMonitor);
 						}
 					}
-				}
-				catch(JavaModelException jme) {
+				} catch (JavaModelException jme) {
 					ApiPlugin.log(jme);
 				}
 			}
 			Util.updateMonitor(localMonitor);
-		} catch(CoreException e) {
+		} catch (CoreException e) {
 			ApiPlugin.log(e);
-		}
-		finally {
-			if(localMonitor != null) {
+		} finally {
+			if (localMonitor != null) {
 				localMonitor.done();
 			}
 		}
 	}
-	
+
 	/**
-	 * Recursively finds all source in the given project and scans it for invalid tags 
+	 * Recursively finds all source in the given project and scans it for
+	 * invalid tags
+	 * 
 	 * @param element
 	 * @param monitor
 	 * @throws JavaModelException
 	 */
 	private void scanSource(IJavaElement element, IProgressMonitor monitor) throws JavaModelException {
 		try {
-			switch(element.getElementType()) {
+			switch (element.getElementType()) {
 				case IJavaElement.PACKAGE_FRAGMENT_ROOT:
 				case IJavaElement.PACKAGE_FRAGMENT: {
 					IParent parent = (IParent) element;
@@ -1182,6 +1158,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			addProblem(tagProblems[i]);
 		}
 	}
+
 	/**
 	 * Checks for illegal API usage in the specified component, creating problem
 	 * markers as required.
@@ -1190,17 +1167,17 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * @param component component being built
 	 * @param monitor progress monitor
 	 */
-	private void checkApiUsage(final IBuildContext context, final IApiComponent component, IProgressMonitor monitor) throws CoreException {
-		if(ignoreApiUsageScan()) {
-			if(ApiPlugin.DEBUG_API_ANALYZER) {
+	private void checkApiUsage(final IBuildContext context, final IApiComponent component, IProgressMonitor monitor) {
+		if (ignoreApiUsageScan()) {
+			if (ApiPlugin.DEBUG_API_ANALYZER) {
 				System.out.println("Ignoring API usage scan"); //$NON-NLS-1$
 			}
 			return;
-		} 
+		}
 		IApiTypeContainer scope = null;
-		if(context.hasTypes()) {
+		if (context.hasTypes()) {
 			String[] typenames = getApiUseTypes(context);
-			if(typenames.length < 1) {
+			if (typenames.length < 1) {
 				monitor.done();
 				return;
 			}
@@ -1208,7 +1185,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		} else {
 			scope = getSearchScope(component, null); // entire component
 		}
-		SubMonitor localMonitor = SubMonitor.convert(monitor, MessageFormat.format(BuilderMessages.checking_api_usage, new String[] {component.getSymbolicName()}), 2);
+		SubMonitor localMonitor = SubMonitor.convert(monitor, MessageFormat.format(BuilderMessages.checking_api_usage, new Object[] { component.getSymbolicName() }), 2);
 		ReferenceAnalyzer analyzer = new ReferenceAnalyzer();
 		try {
 			long start = System.currentTimeMillis();
@@ -1216,33 +1193,33 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			Util.updateMonitor(localMonitor);
 			long end = System.currentTimeMillis();
 			if (ApiPlugin.DEBUG_API_ANALYZER) {
-				System.out.println("API usage scan: " + (end- start) + " ms\t" + illegal.length + " problems"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			}		
+				System.out.println("API usage scan: " + (end - start) + " ms\t" + illegal.length + " problems"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			}
 			for (int i = 0; i < illegal.length; i++) {
 				addProblem(illegal[i]);
 			}
 			Util.updateMonitor(localMonitor);
-		} 
-		catch (CoreException ce) {
-			if(ApiPlugin.DEBUG_API_ANALYZER) {
+		} catch (CoreException ce) {
+			if (ApiPlugin.DEBUG_API_ANALYZER) {
 				ApiPlugin.log(ce);
 			}
-		}
-		finally {
-			if(monitor != null) {
+		} finally {
+			if (monitor != null) {
 				monitor.done();
 			}
 		}
 	}
-	
+
 	/**
 	 * Returns the collection of type names to be built
+	 * 
 	 * @param context
-	 * @return the complete listing of type names to build or an empty array, never <code>null</code>
+	 * @return the complete listing of type names to build or an empty array,
+	 *         never <code>null</code>
 	 * @since 1.1
 	 */
 	String[] getApiUseTypes(IBuildContext context) {
-		if(context.hasTypes()) {
+		if (context.hasTypes()) {
 			String[] deptypes = null;
 			int size = 0;
 			if (context.hasDescriptionDependents()) {
@@ -1251,37 +1228,38 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 				size += deptypes.length;
 			}
 			String[] structtypes = context.getStructurallyChangedTypes();
-			HashSet typenames = new HashSet(size + structtypes.length); // TODO: better sizing
+			HashSet<String> typenames = new HashSet<String>(size + structtypes.length);
 			if (deptypes != null) {
 				for (int i = 0; i < deptypes.length; i++) {
-					if(deptypes[i] == null) {
+					if (deptypes[i] == null) {
 						continue;
 					}
 					typenames.add(deptypes[i]);
 				}
 			}
 			for (int i = 0; i < structtypes.length; i++) {
-				if(structtypes[i] == null) {
+				if (structtypes[i] == null) {
 					continue;
 				}
 				typenames.add(structtypes[i]);
 			}
-			return (String[]) typenames.toArray(new String[typenames.size()]);
+			return typenames.toArray(new String[typenames.size()]);
 		}
 		return NO_TYPES;
 	}
-	
+
 	/**
 	 * Compares the given type between the two API components
+	 * 
 	 * @param typeName the type to check in each component
-	 * @param reference 
+	 * @param reference
 	 * @param component
 	 * @param monitor
 	 */
 	private void checkCompatibility(final String typeName, final IApiComponent reference, final IApiComponent component, IProgressMonitor monitor) throws CoreException {
 		String id = component.getSymbolicName();
 		if (ApiPlugin.DEBUG_API_ANALYZER) {
-			System.out.println("comparing components ["+reference.getSymbolicName()+"] and ["+id+"] for type ["+typeName+"]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			System.out.println("comparing components [" + reference.getSymbolicName() + "] and [" + id + "] for type [" + typeName + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		}
 		IApiTypeRoot classFile = null;
 		try {
@@ -1300,7 +1278,8 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			boolean reexported = false;
 			if (classFile == null) {
 				String packageName = Signatures.getPackageName(typeName);
-				// check if the type is provided by a required component (it could have been moved/re-exported)
+				// check if the type is provided by a required component (it
+				// could have been moved/re-exported)
 				IApiComponent[] providers = component.getBaseline().resolvePackage(component, packageName);
 				int index = 0;
 				while (classFile == null && index < providers.length) {
@@ -1342,7 +1321,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 				if (referenceClassFile != null) {
 					try {
 						IApiType type = referenceClassFile.getStructure();
-						if(type == null) {
+						if (type == null) {
 							return;
 						}
 						final IApiDescription referenceApiDescription = reference.getApiDescription();
@@ -1350,30 +1329,22 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 						int restrictions = RestrictionModifiers.NO_RESTRICTIONS;
 						if (!type.isMemberType() && !type.isAnonymous() && !type.isLocal()) {
 							int visibility = VisibilityModifiers.ALL_VISIBILITIES;
-							// we skip nested types (member, local and anonymous)
+							// we skip nested types (member, local and
+							// anonymous)
 							if (elementDescription != null) {
 								restrictions = elementDescription.getRestrictions();
 								visibility = elementDescription.getVisibility();
 							}
-							// if the visibility is API, we only consider public and protected types
-							if (Util.isDefault(type.getModifiers())
-										|| Flags.isPrivate(type.getModifiers())) {
+							// if the visibility is API, we only consider public
+							// and protected types
+							if (Util.isDefault(type.getModifiers()) || Flags.isPrivate(type.getModifiers())) {
 								return;
 							}
 							if (VisibilityModifiers.isAPI(visibility)) {
 								String deltaComponentID = Util.getDeltaComponentVersionsId(reference);
-								delta = new Delta(
-										deltaComponentID,
-										IDelta.API_COMPONENT_ELEMENT_TYPE,
-										IDelta.REMOVED,
-										IDelta.TYPE,
-										restrictions,
-										RestrictionModifiers.NO_RESTRICTIONS,
-										type.getModifiers(),
-										0,
+								delta = new Delta(deltaComponentID, IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.REMOVED, IDelta.TYPE, restrictions, RestrictionModifiers.NO_RESTRICTIONS, type.getModifiers(), 0, typeName, typeName, new String[] {
 										typeName,
-										typeName,
-										new String[] { typeName, Util.getComponentVersionsId(reference)});
+										Util.getComponentVersionsId(reference) });
 							}
 						}
 					} catch (CoreException e) {
@@ -1390,13 +1361,13 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 						exporter = component;
 					}
 					delta = ApiComparator.compare(classFile, reference, provider, exporter, reference.getBaseline(), provider.getBaseline(), VisibilityModifiers.API, localmonitor.newChild(1));
-				} catch(OperationCanceledException oce) {
-					//do nothing, but don't forward it
-					//https://bugs.eclipse.org/bugs/show_bug.cgi?id=304315
-					if(ApiPlugin.DEBUG_API_ANALYZER) {
+				} catch (OperationCanceledException oce) {
+					// do nothing, but don't forward it
+					// https://bugs.eclipse.org/bugs/show_bug.cgi?id=304315
+					if (ApiPlugin.DEBUG_API_ANALYZER) {
 						System.out.println("Trapped OperationCanceledException"); //$NON-NLS-1$
 					}
-				} catch(Exception e) {
+				} catch (Exception e) {
 					ApiPlugin.log(e);
 				} finally {
 					if (ApiPlugin.DEBUG_API_ANALYZER) {
@@ -1409,29 +1380,28 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 				return;
 			}
 			if (delta != ApiComparator.NO_DELTA) {
-				List allDeltas = Util.collectAllDeltas(delta);
+				List<IDelta> allDeltas = Util.collectAllDeltas(delta);
 				localmonitor.subTask(BuilderMessages.BaseApiAnalyzer_processing_deltas);
-				for (Iterator iterator = allDeltas.iterator(); iterator.hasNext();) {
-					processDelta((IDelta) iterator.next(), reference, component);
+				for (IDelta d : allDeltas) {
+					processDelta(d, reference, component);
 					Util.updateMonitor(localmonitor);
 				}
 				Util.updateMonitor(localmonitor, 1);
 				if (!fPendingDeltaInfos.isEmpty()) {
 					localmonitor.subTask(BuilderMessages.BaseApiAnalyzer_checking_since_tags);
-					for (Iterator iterator = fPendingDeltaInfos.iterator(); iterator.hasNext();) {
-						checkSinceTags((Delta) iterator.next(), component);
+					for (IDelta d : fPendingDeltaInfos) {
+						checkSinceTags((Delta) d, component);
 					}
 				}
 				Util.updateMonitor(localmonitor, 1);
-			}
-			else {
+			} else {
 				Util.updateMonitor(localmonitor, 2);
 			}
-		}
-		finally {
+		} finally {
 			localmonitor.done();
 		}
 	}
+
 	/**
 	 * Compares the two given components and generates an {@link IDelta}
 	 * 
@@ -1440,21 +1410,13 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * @param component
 	 * @param monitor
 	 */
-	private void checkCompatibility(final IApiComponent reference, final IApiComponent component, IProgressMonitor monitor) throws CoreException {
+	private void checkCompatibility(final IApiComponent reference, final IApiComponent component, IProgressMonitor monitor) {
 		long time = System.currentTimeMillis();
 		SubMonitor localmonitor = SubMonitor.convert(monitor, BuilderMessages.BaseApiAnalyzer_checking_compat, 3);
 		try {
 			IDelta delta = null;
 			if (reference == null) {
-				delta =
-					new Delta(
-						null,
-						IDelta.API_BASELINE_ELEMENT_TYPE,
-						IDelta.ADDED,
-						IDelta.API_COMPONENT,
-						null,
-						component.getSymbolicName(),
-						component.getSymbolicName());
+				delta = new Delta(null, IDelta.API_BASELINE_ELEMENT_TYPE, IDelta.ADDED, IDelta.API_COMPONENT, null, component.getSymbolicName(), component.getSymbolicName());
 				Util.updateMonitor(localmonitor, 5);
 			} else {
 				try {
@@ -1470,41 +1432,41 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 				return;
 			}
 			if (delta != ApiComparator.NO_DELTA) {
-				List allDeltas = Util.collectAllDeltas(delta);
+				List<IDelta> allDeltas = Util.collectAllDeltas(delta);
 				if (allDeltas.size() != 0) {
 					localmonitor.subTask(BuilderMessages.BaseApiAnalyzer_processing_deltas);
-					for (Iterator iterator = allDeltas.iterator(); iterator.hasNext();) {
-						processDelta((IDelta) iterator.next(), reference, component);
+					for (IDelta d : allDeltas) {
+						processDelta(d, reference, component);
 						Util.updateMonitor(localmonitor);
 					}
 					Util.updateMonitor(localmonitor, 1);
 					localmonitor.subTask(BuilderMessages.BaseApiAnalyzer_checking_since_tags);
 					if (!fPendingDeltaInfos.isEmpty()) {
-						for (Iterator iterator = fPendingDeltaInfos.iterator(); iterator.hasNext();) {
-							checkSinceTags((Delta) iterator.next(), component);
+						for (IDelta d : fPendingDeltaInfos) {
+							checkSinceTags((Delta) d, component);
 						}
 					}
 					Util.updateMonitor(localmonitor, 1);
 				}
-			}
-			else {
+			} else {
 				Util.updateMonitor(localmonitor, 2);
 			}
-		}
-		finally {
+		} finally {
 			localmonitor.done();
 		}
 	}
-	
+
 	/**
-	 * Processes delta to determine if it needs an @since tag. If it does and one
-	 * is not present or the version of the tag is incorrect, a marker is created
+	 * Processes delta to determine if it needs an @since tag. If it does and
+	 * one is not present or the version of the tag is incorrect, a marker is
+	 * created
+	 * 
 	 * @param jproject
 	 * @param delta
 	 * @param component
 	 */
-	private void checkSinceTags(final Delta delta, final IApiComponent component) throws CoreException {
-		if(ignoreSinceTagCheck(null)) {
+	private void checkSinceTags(final Delta delta, final IApiComponent component) {
+		if (ignoreSinceTagCheck(null)) {
 			return;
 		}
 		IMember member = Util.getIMember(delta, fJavaProject);
@@ -1516,7 +1478,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			return;
 		}
 		try {
-			if (! cunit.isConsistent()) {
+			if (!cunit.isConsistent()) {
 				cunit.makeConsistent(null);
 			}
 		} catch (JavaModelException e) {
@@ -1536,12 +1498,13 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		try {
 			int offset = nameRange.getOffset();
 			CompilationUnit comp = createAST(cunit, offset);
-			if(comp == null) {
+			if (comp == null) {
 				return;
 			}
 			SinceTagChecker visitor = new SinceTagChecker(offset);
 			comp.accept(visitor);
-			// we must retrieve the component version from the delta component id
+			// we must retrieve the component version from the delta component
+			// id
 			String componentVersionId = delta.getComponentVersionId();
 			String componentVersionString = null;
 			if (componentVersionId == null) {
@@ -1551,8 +1514,8 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			}
 			try {
 				if (visitor.hasNoComment() || visitor.isMissing()) {
-					if(ignoreSinceTagCheck(IApiProblemTypes.MISSING_SINCE_TAG)) {
-						if(ApiPlugin.DEBUG_API_ANALYZER) {
+					if (ignoreSinceTagCheck(IApiProblemTypes.MISSING_SINCE_TAG)) {
+						if (ApiPlugin.DEBUG_API_ANALYZER) {
 							System.out.println("Ignoring missing since tag problem"); //$NON-NLS-1$
 						}
 						return;
@@ -1568,8 +1531,8 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 						SinceTagVersion tagVersion = new SinceTagVersion(sinceVersion);
 						String postfixString = tagVersion.postfixString();
 						if (tagVersion.getVersion() == null || Util.getFragmentNumber(tagVersion.getVersionString()) > 2) {
-							if(ignoreSinceTagCheck(IApiProblemTypes.MALFORMED_SINCE_TAG)) {
-								if(ApiPlugin.DEBUG_API_ANALYZER) {
+							if (ignoreSinceTagCheck(IApiProblemTypes.MALFORMED_SINCE_TAG)) {
+								if (ApiPlugin.DEBUG_API_ANALYZER) {
 									System.out.println("Ignoring malformed since tag problem"); //$NON-NLS-1$
 								}
 								return;
@@ -1583,10 +1546,12 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 							if (postfixString != null) {
 								buffer.append(postfixString);
 							}
-							problem = createSinceTagProblem(IApiProblem.SINCE_TAG_MALFORMED, new String[] {sinceVersion, Util.getDeltaArgumentString(delta)}, delta, member, String.valueOf(buffer));
+							problem = createSinceTagProblem(IApiProblem.SINCE_TAG_MALFORMED, new String[] {
+									sinceVersion,
+									Util.getDeltaArgumentString(delta) }, delta, member, String.valueOf(buffer));
 						} else {
-							if(ignoreSinceTagCheck(IApiProblemTypes.INVALID_SINCE_TAG_VERSION)) {
-								if(ApiPlugin.DEBUG_API_ANALYZER) {
+							if (ignoreSinceTagCheck(IApiProblemTypes.INVALID_SINCE_TAG_VERSION)) {
+								if (ApiPlugin.DEBUG_API_ANALYZER) {
 									System.out.println("Ignoring invalid tag version problem"); //$NON-NLS-1$
 								}
 								return;
@@ -1607,7 +1572,9 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 									buffer.append(postfixString);
 								}
 								String accurateSinceTagValue = String.valueOf(buffer);
-								problem = createSinceTagProblem(IApiProblem.SINCE_TAG_INVALID, new String[] {sinceVersion, accurateSinceTagValue, Util.getDeltaArgumentString(delta)}, delta, member, accurateSinceTagValue);
+								problem = createSinceTagProblem(IApiProblem.SINCE_TAG_INVALID, new String[] {
+										sinceVersion, accurateSinceTagValue,
+										Util.getDeltaArgumentString(delta) }, delta, member, accurateSinceTagValue);
 							}
 						}
 					}
@@ -1618,20 +1585,22 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		} catch (RuntimeException e) {
 			ApiPlugin.log(e);
 		}
-		if(problem != null) {
+		if (problem != null) {
 			addProblem(problem);
 		}
 	}
-	
+
 	private String extractVersion(String componentVersionId) {
-		// extract the version from the delta component id. It is located between parenthesis
+		// extract the version from the delta component id. It is located
+		// between parenthesis
 		int indexOfOpen = componentVersionId.lastIndexOf('(');
 		return componentVersionId.substring(indexOfOpen + 1, componentVersionId.length() - 1);
 	}
 
 	/**
-	 * Creates a marker to denote a problem with the since tag (existence or correctness) for a member
-	 * and returns it, or <code>null</code>
+	 * Creates a marker to denote a problem with the since tag (existence or
+	 * correctness) for a member and returns it, or <code>null</code>
+	 * 
 	 * @param kind
 	 * @param messageargs
 	 * @param compilationUnit
@@ -1657,7 +1626,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			int charEnd = 1;
 			String qtn = null;
 			if (member instanceof IType) {
-				qtn = ((IType)member).getFullyQualifiedName();
+				qtn = ((IType) member).getFullyQualifiedName();
 			} else {
 				qtn = declaringType.getFullyQualifiedName();
 			}
@@ -1676,7 +1645,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 					ApiPlugin.log(e);
 				}
 			} else {
-				// update the last entry in the message arguments 
+				// update the last entry in the message arguments
 				if (!(member instanceof IType)) {
 					// insert the declaring type
 					int length = messageargs.length;
@@ -1689,24 +1658,22 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 					messageArguments = messageargs;
 				}
 			}
-			return ApiProblemFactory.newApiSinceTagProblem(resource.getProjectRelativePath().toPortableString(),
-					qtn,
-					messageArguments,
-					new String[] {IApiMarkerConstants.MARKER_ATTR_VERSION, IApiMarkerConstants.API_MARKER_ATTR_ID, IApiMarkerConstants.MARKER_ATTR_HANDLE_ID},
-					new Object[] {version, new Integer(IApiMarkerConstants.SINCE_TAG_MARKER_ID), member.getHandleIdentifier()},
-					lineNumber,
-					charStart,
-					charEnd,
-					info.getElementType(),
-					kind);
+			return ApiProblemFactory.newApiSinceTagProblem(resource.getProjectRelativePath().toPortableString(), qtn, messageArguments, new String[] {
+					IApiMarkerConstants.MARKER_ATTR_VERSION,
+					IApiMarkerConstants.API_MARKER_ATTR_ID,
+					IApiMarkerConstants.MARKER_ATTR_HANDLE_ID }, new Object[] {
+					version,
+					new Integer(IApiMarkerConstants.SINCE_TAG_MARKER_ID),
+					member.getHandleIdentifier() }, lineNumber, charStart, charEnd, info.getElementType(), kind);
 		} catch (CoreException e) {
 			ApiPlugin.log(e);
 		}
 		return null;
 	}
-	
+
 	/**
-	 * Creates an {@link IApiProblem} for the given compatibility delta 
+	 * Creates an {@link IApiProblem} for the given compatibility delta
+	 * 
 	 * @param delta
 	 * @param jproject
 	 * @param reference
@@ -1717,9 +1684,9 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		try {
 			Version referenceVersion = new Version(reference.getVersion());
 			Version componentVersion = new Version(component.getVersion());
-			if ((referenceVersion.getMajor() < componentVersion.getMajor())
-					&& !reportApiBreakageWhenMajorVersionIncremented()) {
-				// API breakage are ok in this case and we don't want them to be reported
+			if ((referenceVersion.getMajor() < componentVersion.getMajor()) && !reportApiBreakageWhenMajorVersionIncremented()) {
+				// API breakage are ok in this case and we don't want them to be
+				// reported
 				fBuildState.addBreakingChange(delta);
 				return null;
 			}
@@ -1760,48 +1727,35 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			if (resource != null) {
 				path = resource.getProjectRelativePath().toPortableString();
 			}
-			IApiProblem apiProblem = ApiProblemFactory.newApiProblem(path,
-					delta.getTypeName(),
-					delta.getArguments(),
-					new String[] {
-						IApiMarkerConstants.MARKER_ATTR_HANDLE_ID,
-						IApiMarkerConstants.API_MARKER_ATTR_ID
-					},
-					new Object[] {
-						member == null ? null : member.getHandleIdentifier(),
-						new Integer(IApiMarkerConstants.COMPATIBILITY_MARKER_ID),
-					},
-					lineNumber,
-					charStart,
-					charEnd,
-					IApiProblem.CATEGORY_COMPATIBILITY,
-					delta.getElementType(),
-					delta.getKind(),
-					delta.getFlags());
+			IApiProblem apiProblem = ApiProblemFactory.newApiProblem(path, delta.getTypeName(), delta.getArguments(), new String[] {
+					IApiMarkerConstants.MARKER_ATTR_HANDLE_ID,
+					IApiMarkerConstants.API_MARKER_ATTR_ID }, new Object[] {
+					member == null ? null : member.getHandleIdentifier(),
+					new Integer(IApiMarkerConstants.COMPATIBILITY_MARKER_ID), }, lineNumber, charStart, charEnd, IApiProblem.CATEGORY_COMPATIBILITY, delta.getElementType(), delta.getKind(), delta.getFlags());
 			return apiProblem;
-			
+
 		} catch (CoreException e) {
 			ApiPlugin.log(e);
 		}
 		return null;
 	}
+
 	/**
 	 * Creates an {@link IApiProblem} for the given API component
+	 * 
 	 * @param component
 	 * @return a new API component resolution problem or <code>null</code>
 	 */
-	private void createApiComponentResolutionProblem(final IApiComponent component, final String message) throws CoreException {
-		IApiProblem problem = ApiProblemFactory.newApiComponentResolutionProblem(
-				Path.EMPTY.toString(),
-				new String[] {component.getSymbolicName(), message },
-				new String[] {IApiMarkerConstants.API_MARKER_ATTR_ID},
-				new Object[] {new Integer(IApiMarkerConstants.API_COMPONENT_RESOLUTION_MARKER_ID)},
-				IElementDescriptor.RESOURCE,
-				IApiProblem.API_COMPONENT_RESOLUTION);
+	private void createApiComponentResolutionProblem(final IApiComponent component, final String message) {
+		IApiProblem problem = ApiProblemFactory.newApiComponentResolutionProblem(Path.EMPTY.toString(), new String[] {
+				component.getSymbolicName(), message }, new String[] { IApiMarkerConstants.API_MARKER_ATTR_ID }, new Object[] { new Integer(IApiMarkerConstants.API_COMPONENT_RESOLUTION_MARKER_ID) }, IElementDescriptor.RESOURCE, IApiProblem.API_COMPONENT_RESOLUTION);
 		addProblem(problem);
 	}
+
 	/**
-	 * Processes a delta to know if we need to check for since tag or version numbering problems
+	 * Processes a delta to know if we need to check for since tag or version
+	 * numbering problems
+	 * 
 	 * @param jproject
 	 * @param delta
 	 * @param reference
@@ -1828,7 +1782,9 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 								}
 								if (typeRoot == null) {
 									String packageName = Signatures.getPackageName(typeName);
-									// check if the type is provided by a required component (it could have been moved/re-exported)
+									// check if the type is provided by a
+									// required component (it could have been
+									// moved/re-exported)
 									IApiComponent[] providers = component.getBaseline().resolvePackage(component, packageName);
 									int index = 0;
 									while (typeRoot == null && index < providers.length) {
@@ -1852,24 +1808,26 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 								// ignore
 							}
 							if (type == null || Flags.isFinal(type.getModifiers())) {
-								// no @since tag to report for new protected methods inside a final class
+								// no @since tag to report for new protected
+								// methods inside a final class
 								return;
 							}
 						}
 					}
-					// if protected, we only want to check @since tags if the enclosing class can be sub-classed
-					switch(kind) {
+					// if protected, we only want to check @since tags if the
+					// enclosing class can be sub-classed
+					switch (kind) {
 						case IDelta.ADDED: {
 							// if public, we always want to check @since tags
-							switch(flags) {
-								case IDelta.TYPE_MEMBER :
-								case IDelta.METHOD :
-								case IDelta.CONSTRUCTOR :
-								case IDelta.ENUM_CONSTANT :
-								case IDelta.METHOD_WITH_DEFAULT_VALUE :
-								case IDelta.METHOD_WITHOUT_DEFAULT_VALUE :
-								case IDelta.FIELD :
-								case IDelta.TYPE : {
+							switch (flags) {
+								case IDelta.TYPE_MEMBER:
+								case IDelta.METHOD:
+								case IDelta.CONSTRUCTOR:
+								case IDelta.ENUM_CONSTANT:
+								case IDelta.METHOD_WITH_DEFAULT_VALUE:
+								case IDelta.METHOD_WITHOUT_DEFAULT_VALUE:
+								case IDelta.FIELD:
+								case IDelta.TYPE: {
 									if (ApiPlugin.DEBUG_API_ANALYZER) {
 										String deltaDetails = "Delta : " + Util.getDetail(delta); //$NON-NLS-1$
 										System.out.println(deltaDetails + " is compatible"); //$NON-NLS-1$
@@ -1878,7 +1836,8 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 									fPendingDeltaInfos.add(delta);
 									break;
 								}
-								default: break;
+								default:
+									break;
 							}
 							break;
 						}
@@ -1893,23 +1852,25 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 							}
 							break;
 						}
-						default: break;
+						default:
+							break;
 					}
 				}
 			}
 		} else {
-			switch(kind) {
+			switch (kind) {
 				case IDelta.ADDED: {
 					// if public, we always want to check @since tags
-					switch(flags) {
-						case IDelta.TYPE_MEMBER :
-						case IDelta.METHOD :
-						case IDelta.CONSTRUCTOR :
-						case IDelta.ENUM_CONSTANT :
-						case IDelta.METHOD_WITH_DEFAULT_VALUE :
-						case IDelta.METHOD_WITHOUT_DEFAULT_VALUE :
+					switch (flags) {
+						case IDelta.TYPE_MEMBER:
+						case IDelta.METHOD:
+						case IDelta.CONSTRUCTOR:
+						case IDelta.ENUM_CONSTANT:
+						case IDelta.METHOD_WITH_DEFAULT_VALUE:
+						case IDelta.METHOD_WITHOUT_DEFAULT_VALUE:
 						case IDelta.FIELD: {
-							// ensure that there is a @since tag for the corresponding member
+							// ensure that there is a @since tag for the
+							// corresponding member
 							if (Util.isVisible(modifiers)) {
 								if (ApiPlugin.DEBUG_API_ANALYZER) {
 									String deltaDetails = "Delta : " + Util.getDetail(delta); //$NON-NLS-1$
@@ -1919,26 +1880,31 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 							}
 							break;
 						}
-						default: break;
+						default:
+							break;
 					}
 					break;
 				}
-				default: break;
+				default:
+					break;
 			}
 			IApiProblem problem = createCompatibilityProblem(delta, reference, component);
-			if(addProblem(problem)) {
+			if (addProblem(problem)) {
 				fBuildState.addBreakingChange(delta);
 			}
 		}
 	}
+
 	/**
-	 * Checks the version number of the API component and creates a problem markers as needed
+	 * Checks the version number of the API component and creates a problem
+	 * markers as needed
+	 * 
 	 * @param reference
 	 * @param component
 	 */
 	private void checkApiComponentVersion(final IApiComponent reference, final IApiComponent component) throws CoreException {
-		if(ignoreComponentVersionCheck() || reference == null || component == null) {
-			if(ApiPlugin.DEBUG_API_ANALYZER) {
+		if (ignoreComponentVersionCheck() || reference == null || component == null) {
+			if (ApiPlugin.DEBUG_API_ANALYZER) {
 				System.out.println("Ignoring component version check"); //$NON-NLS-1$
 			}
 			return;
@@ -1958,14 +1924,8 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			// make sure that the major version has been incremented
 			if (compversion.getMajor() <= refversion.getMajor()) {
 				newversion = new Version(compversion.getMajor() + 1, 0, 0, compversion.getQualifier() != null ? QUALIFIER : null);
-				problem = createVersionProblem(
-						IApiProblem.MAJOR_VERSION_CHANGE,
-						new String[] {
-							compversionval,
-							refversionval
-						},
-						String.valueOf(newversion),
-						collectDetails(breakingChanges));
+				problem = createVersionProblem(IApiProblem.MAJOR_VERSION_CHANGE, new String[] {
+						compversionval, refversionval }, String.valueOf(newversion), collectDetails(breakingChanges));
 			}
 		} else {
 			IDelta[] compatibleChanges = fBuildState.getCompatibleChanges();
@@ -1975,52 +1935,28 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 					if (!ignoreMajorVersionCheckWithoutBreakingChange()) {
 						// major version should be identical
 						newversion = new Version(refversion.getMajor(), refversion.getMinor() + 1, 0, compversion.getQualifier() != null ? QUALIFIER : null);
-						problem = createVersionProblem(
-								IApiProblem.MAJOR_VERSION_CHANGE_NO_BREAKAGE,
-								new String[] {
-									compversionval,
-									refversionval
-								},
-								String.valueOf(newversion),
-								collectDetails(compatibleChanges));
+						problem = createVersionProblem(IApiProblem.MAJOR_VERSION_CHANGE_NO_BREAKAGE, new String[] {
+								compversionval, refversionval }, String.valueOf(newversion), collectDetails(compatibleChanges));
 					}
 				} else if (compversion.getMinor() <= refversion.getMinor()) {
 					// the minor version should be incremented
 					newversion = new Version(compversion.getMajor(), compversion.getMinor() + 1, 0, compversion.getQualifier() != null ? QUALIFIER : null);
-					problem = createVersionProblem(
-							IApiProblem.MINOR_VERSION_CHANGE,
-							new String[] {
-								compversionval,
-								refversionval
-							},
-							String.valueOf(newversion),
-							collectDetails(compatibleChanges));
+					problem = createVersionProblem(IApiProblem.MINOR_VERSION_CHANGE, new String[] {
+							compversionval, refversionval }, String.valueOf(newversion), collectDetails(compatibleChanges));
 				}
 			} else if (compversion.getMajor() != refversion.getMajor()) {
 				if (!ignoreMajorVersionCheckWithoutBreakingChange()) {
 					// major version should be identical
 					newversion = new Version(refversion.getMajor(), refversion.getMinor(), refversion.getMicro(), refversion.getQualifier() != null ? QUALIFIER : null);
-					problem = createVersionProblem(
-							IApiProblem.MAJOR_VERSION_CHANGE_NO_BREAKAGE,
-							new String[] {
-								compversionval,
-								refversionval
-							},
-							String.valueOf(newversion),
-							Util.EMPTY_STRING);
+					problem = createVersionProblem(IApiProblem.MAJOR_VERSION_CHANGE_NO_BREAKAGE, new String[] {
+							compversionval, refversionval }, String.valueOf(newversion), Util.EMPTY_STRING);
 				}
 			} else if (compversion.getMinor() > refversion.getMinor()) {
 				// the minor version should not be incremented
 				if (!ignoreMinorVersionCheckWithoutApiChange()) {
 					newversion = new Version(refversion.getMajor(), refversion.getMinor(), refversion.getMicro(), refversion.getQualifier() != null ? QUALIFIER : null);
-					problem = createVersionProblem(
-							IApiProblem.MINOR_VERSION_CHANGE_NO_NEW_API,
-							new String[] {
-								compversionval,
-								refversionval
-							},
-							String.valueOf(newversion),
-							Util.EMPTY_STRING);
+					problem = createVersionProblem(IApiProblem.MINOR_VERSION_CHANGE_NO_NEW_API, new String[] {
+							compversionval, refversionval }, String.valueOf(newversion), Util.EMPTY_STRING);
 				}
 			}
 			// analyze version of required components
@@ -2028,105 +1964,94 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			if (problem != null) {
 				switch (problem.getKind()) {
 					case IApiProblem.MAJOR_VERSION_CHANGE_NO_BREAKAGE: {
-						// check if there is a version change required due to re-exported bundles
+						// check if there is a version change required due to
+						// re-exported bundles
 						info = checkBundleVersionsOfReexportedBundles(reference, component);
 						if (info != null) {
-							switch(info.kind) {
-								case IApiProblem.REEXPORTED_MAJOR_VERSION_CHANGE : {
-									/* we don't do anything since the major version is already incremented
-									 * we cancel the previous issue. No need to report that the major version
-									 * should not be incremented */
+							switch (info.kind) {
+								case IApiProblem.REEXPORTED_MAJOR_VERSION_CHANGE: {
+									/*
+									 * we don't do anything since the major
+									 * version is already incremented we cancel
+									 * the previous issue. No need to report
+									 * that the major version should not be
+									 * incremented
+									 */
 									problem = null;
 									break;
 								}
-								case IApiProblem.REEXPORTED_MINOR_VERSION_CHANGE : {
-									// we should reset the major version and increment only the minor version
+								case IApiProblem.REEXPORTED_MINOR_VERSION_CHANGE: {
+									// we should reset the major version and
+									// increment only the minor version
 									newversion = new Version(refversion.getMajor(), refversion.getMinor() + 1, 0, compversion.getQualifier() != null ? QUALIFIER : null);
-									problem = createVersionProblem(
-											IApiProblem.REEXPORTED_MAJOR_VERSION_CHANGE,
-											new String[] {
-												compversionval,
-												info.componentID,
-											},
-											String.valueOf(newversion),
-											Util.EMPTY_STRING);
+									problem = createVersionProblem(IApiProblem.REEXPORTED_MAJOR_VERSION_CHANGE, new String[] {
+											compversionval, info.componentID, }, String.valueOf(newversion), Util.EMPTY_STRING);
 									break;
 								}
-								default: break;
+								default:
+									break;
 							}
 						}
 						break;
 					}
 					case IApiProblem.MINOR_VERSION_CHANGE: {
-						// check if there is a version change required due to re-exported bundles
+						// check if there is a version change required due to
+						// re-exported bundles
 						info = checkBundleVersionsOfReexportedBundles(reference, component);
 						if (info != null) {
-							switch(info.kind) {
+							switch (info.kind) {
 								case IApiProblem.REEXPORTED_MAJOR_VERSION_CHANGE: {
 									// we keep this problem
 									newversion = new Version(compversion.getMajor() + 1, 0, 0, compversion.getQualifier() != null ? QUALIFIER : null);
-									problem = createVersionProblem(
-											info.kind,
-											new String[] {
-												compversionval,
-												info.componentID,
-											},
-											String.valueOf(newversion),
-											Util.EMPTY_STRING);
+									problem = createVersionProblem(info.kind, new String[] {
+											compversionval, info.componentID, }, String.valueOf(newversion), Util.EMPTY_STRING);
 									break;
 								}
-								default: break;
+								default:
+									break;
 							}
 						}
 						break;
 					}
 					case IApiProblem.MINOR_VERSION_CHANGE_NO_NEW_API: {
-						// check if there is a version change required due to re-exported bundles
+						// check if there is a version change required due to
+						// re-exported bundles
 						info = checkBundleVersionsOfReexportedBundles(reference, component);
 						if (info != null) {
-							switch(info.kind) {
+							switch (info.kind) {
 								case IApiProblem.REEXPORTED_MAJOR_VERSION_CHANGE: {
 									// we return this one
 									newversion = new Version(compversion.getMajor() + 1, 0, 0, compversion.getQualifier() != null ? QUALIFIER : null);
-									problem = createVersionProblem(
-											info.kind,
-											new String[] {
-												compversionval,
-												info.componentID,
-											},
-											String.valueOf(newversion),
-											Util.EMPTY_STRING);
+									problem = createVersionProblem(info.kind, new String[] {
+											compversionval, info.componentID, }, String.valueOf(newversion), Util.EMPTY_STRING);
 									break;
 								}
 								case IApiProblem.REEXPORTED_MINOR_VERSION_CHANGE: {
-									// we don't do anything since we already incremented the minor version
+									// we don't do anything since we already
+									// incremented the minor version
 									// we get rid of the previous problem
 									problem = null;
 									break;
 								}
-								default: break;
+								default:
+									break;
 							}
 						}
 						break;
 					}
-					default: break;
+					default:
+						break;
 				}
 			} else {
 				info = checkBundleVersionsOfReexportedBundles(reference, component);
 				if (info != null) {
-					switch(info.kind) {
+					switch (info.kind) {
 						case IApiProblem.REEXPORTED_MAJOR_VERSION_CHANGE: {
 							// major version change
 							if (compversion.getMajor() <= refversion.getMajor()) {
 								newversion = new Version(compversion.getMajor() + 1, 0, 0, compversion.getQualifier() != null ? QUALIFIER : null);
-								problem = createVersionProblem(
-										info.kind,
-										new String[] {
-											compversionval,
-											info.componentID,
-										},
-										String.valueOf(newversion),
-										Util.EMPTY_STRING);
+								problem = createVersionProblem(info.kind, new String[] {
+										compversionval, info.componentID, }, String.valueOf(newversion), Util.EMPTY_STRING);
 							}
 							break;
 						}
@@ -2134,41 +2059,39 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 							// minor version change
 							if (compversion.getMinor() <= refversion.getMinor()) {
 								newversion = new Version(compversion.getMajor(), compversion.getMinor() + 1, 0, compversion.getQualifier());
-								problem = createVersionProblem(
-									info.kind,
-									new String[] {
-											compversionval,
-											info.componentID,
-									},
-									String.valueOf(newversion),
-									Util.EMPTY_STRING);
+								problem = createVersionProblem(info.kind, new String[] {
+										compversionval, info.componentID, }, String.valueOf(newversion), Util.EMPTY_STRING);
 							}
 							break;
 						}
-						default: break;
+						default:
+							break;
 					}
 				}
 			}
 		}
-		if(problem != null) {
+		if (problem != null) {
 			addProblem(problem);
 		}
 	}
-	
+
 	/**
 	 * Collects details from the given delta listing for version problems
+	 * 
 	 * @param deltas
-	 * @return a {@link String} of the details why the version number should be changed
+	 * @return a {@link String} of the details why the version number should be
+	 *         changed
 	 */
 	private String collectDetails(final IDelta[] deltas) {
 		StringWriter writer = new StringWriter();
 		PrintWriter printWriter = new PrintWriter(writer);
-		//TODO contrived default for https://bugs.eclipse.org/bugs/show_bug.cgi?id=251313
+		// TODO contrived default for
+		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=251313
 		int max = Math.min(20, deltas.length);
 		for (int i = 0; i < max; i++) {
 			printWriter.print("- "); //$NON-NLS-1$
 			printWriter.println(deltas[i].getMessage());
-			if(i == max-1 && max < deltas.length) {
+			if (i == max - 1 && max < deltas.length) {
 				printWriter.println(NLS.bind(BuilderMessages.BaseApiAnalyzer_more_version_problems, new Integer(deltas.length - max)));
 			}
 		}
@@ -2176,10 +2099,11 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		printWriter.close();
 		return String.valueOf(writer.getBuffer());
 	}
-	
+
 	/**
-	 * Creates a marker on a manifest file for a version numbering problem and returns it
-	 * or <code>null</code> 
+	 * Creates a marker on a manifest file for a version numbering problem and
+	 * returns it or <code>null</code>
+	 * 
 	 * @param kind
 	 * @param messageargs
 	 * @param version
@@ -2198,7 +2122,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		int charStart = 0;
 		int charEnd = 1;
 		char[] contents = null;
-		if (manifestFile!= null && manifestFile.getType() == IResource.FILE) {
+		if (manifestFile != null && manifestFile.getType() == IResource.FILE) {
 			path = manifestFile.getProjectRelativePath().toPortableString();
 			IFile file = (IFile) manifestFile;
 			InputStream inputStream = null;
@@ -2245,65 +2169,50 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 				break loop;
 			}
 			loop: for (int i = charStart + 1, max = contents.length; i < max; i++) {
-				switch(contents[i]) {
-					case '\r' :
-					case '\n' :
+				switch (contents[i]) {
+					case '\r':
+					case '\n':
 						charEnd = i;
 						break loop;
-					default: continue;
+					default:
+						continue;
 				}
 			}
 		} else {
 			lineNumber = 1;
 		}
-		return ApiProblemFactory.newApiVersionNumberProblem(path,
-				null,
-				messageargs, 
-				new String[] {
-					IApiMarkerConstants.MARKER_ATTR_VERSION,
-					IApiMarkerConstants.API_MARKER_ATTR_ID,
-					IApiMarkerConstants.VERSION_NUMBERING_ATTR_DESCRIPTION,
-				}, 
-				new Object[] {
-					version,
-					new Integer(IApiMarkerConstants.VERSION_NUMBERING_MARKER_ID),
-					description
-				}, 
-				lineNumber, 
-				charStart, 
-				charEnd, 
-				IElementDescriptor.RESOURCE, 
-				kind);
+		return ApiProblemFactory.newApiVersionNumberProblem(path, null, messageargs, new String[] {
+				IApiMarkerConstants.MARKER_ATTR_VERSION,
+				IApiMarkerConstants.API_MARKER_ATTR_ID,
+				IApiMarkerConstants.VERSION_NUMBERING_ATTR_DESCRIPTION, }, new Object[] {
+				version,
+				new Integer(IApiMarkerConstants.VERSION_NUMBERING_MARKER_ID),
+				description }, lineNumber, charStart, charEnd, IElementDescriptor.RESOURCE, kind);
 	}
-	
+
 	/**
-	 * Checks to see if there is a default API baseline set in the workspace,
-	 * if not create a marker
+	 * Checks to see if there is a default API baseline set in the workspace, if
+	 * not create a marker
 	 */
 	private void checkDefaultBaselineSet() {
-		if(ignoreDefaultBaselineCheck()) {
-			if(ApiPlugin.DEBUG_API_ANALYZER) {
+		if (ignoreDefaultBaselineCheck()) {
+			if (ApiPlugin.DEBUG_API_ANALYZER) {
 				System.out.println("Ignoring check for default API baseline"); //$NON-NLS-1$
 			}
 			return;
 		}
-		if(ApiPlugin.DEBUG_API_ANALYZER) {
+		if (ApiPlugin.DEBUG_API_ANALYZER) {
 			System.out.println("Checking if the default API baseline is set"); //$NON-NLS-1$
 		}
-		IApiProblem problem = ApiProblemFactory.newApiBaselineProblem(
-				Path.EMPTY.toString(),
-				new String[] {IApiMarkerConstants.API_MARKER_ATTR_ID},
-				new Object[] {new Integer(IApiMarkerConstants.DEFAULT_API_BASELINE_MARKER_ID)},
-				IElementDescriptor.RESOURCE,
-				IApiProblem.API_BASELINE_MISSING);
+		IApiProblem problem = ApiProblemFactory.newApiBaselineProblem(Path.EMPTY.toString(), new String[] { IApiMarkerConstants.API_MARKER_ATTR_ID }, new Object[] { new Integer(IApiMarkerConstants.DEFAULT_API_BASELINE_MARKER_ID) }, IElementDescriptor.RESOURCE, IApiProblem.API_BASELINE_MISSING);
 		addProblem(problem);
 	}
-	
+
 	/**
-	 * Returns the Java project associated with the given API component, or <code>null</code>
-	 * if none.
+	 * Returns the Java project associated with the given API component, or
+	 * <code>null</code> if none.
 	 * 
-	 *@param component API component
+	 * @param component API component
 	 * @return Java project or <code>null</code>
 	 */
 	private IJavaProject getJavaProject(IApiComponent component) {
@@ -2313,9 +2222,11 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		}
 		return null;
 	}
-	
+
 	/**
-	 * Adds the problem to the list of problems iff it is not <code>null</code> and not filtered
+	 * Adds the problem to the list of problems iff it is not <code>null</code>
+	 * and not filtered
+	 * 
 	 * @param problem
 	 * @return
 	 */
@@ -2325,11 +2236,14 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		}
 		return fProblems.add(problem);
 	}
+
 	/**
-	 * Returns if the given {@link IApiProblem} should be filtered from having a problem marker created for it
+	 * Returns if the given {@link IApiProblem} should be filtered from having a
+	 * problem marker created for it
 	 * 
 	 * @param problem the problem that may or may not be filtered
-	 * @return true if the {@link IApiProblem} should not have a marker created, false otherwise
+	 * @return true if the {@link IApiProblem} should not have a marker created,
+	 *         false otherwise
 	 */
 	private boolean isProblemFiltered(IApiProblem problem) {
 		if (fJavaProject == null) {
@@ -2357,18 +2271,18 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 
 		IApiBaselineManager manager = ApiBaselineManager.getManager();
 		IApiBaseline baseline = manager.getWorkspaceBaseline();
-		if(baseline == null) {
+		if (baseline == null) {
 			return false;
 		}
 		IApiComponent component = baseline.getApiComponent(project);
-		if(component != null) {
+		if (component != null) {
 			try {
 				IApiFilterStore filterStore = component.getFilterStore();
 				if (filterStore != null) {
 					return filterStore.isFiltered(problem);
 				}
+			} catch (CoreException e) {
 			}
-			catch(CoreException e) {}
 		}
 		return false;
 	}

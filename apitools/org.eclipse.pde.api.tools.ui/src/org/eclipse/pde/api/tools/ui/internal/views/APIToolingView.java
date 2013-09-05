@@ -21,7 +21,6 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -89,14 +88,19 @@ public class APIToolingView extends ViewPart implements ISessionListener {
 	CollapseAllAction collapseallAction;
 	private IPropertySheetPage page;
 
-	class ViewContentProvider implements IStructuredContentProvider, ITreeContentProvider {
+	class ViewContentProvider implements ITreeContentProvider {
 		ITreeModel model;
-		
+
+		@Override
 		public void inputChanged(Viewer v, Object oldInput, Object newInput) {
 			this.model = null;
 		}
+
+		@Override
 		public void dispose() {
 		}
+
+		@Override
 		public Object[] getElements(Object parent) {
 			if (parent instanceof ISession) {
 				ISession session = (ISession) parent;
@@ -107,15 +111,21 @@ public class APIToolingView extends ViewPart implements ISessionListener {
 			}
 			return getChildren(parent);
 		}
+
+		@Override
 		public Object getParent(Object child) {
 			return null;
 		}
-		public Object [] getChildren(Object parent) {
+
+		@Override
+		public Object[] getChildren(Object parent) {
 			if (parent instanceof ITreeNode) {
 				return ((ITreeNode) parent).getChildren();
 			}
 			return new Object[0];
 		}
+
+		@Override
 		public boolean hasChildren(Object parent) {
 			if (parent instanceof ITreeNode) {
 				return ((ITreeNode) parent).hasChildren();
@@ -123,25 +133,30 @@ public class APIToolingView extends ViewPart implements ISessionListener {
 			return false;
 		}
 	}
+
 	class ViewLabelProvider extends LabelProvider {
+		@Override
 		public String getText(Object obj) {
 			return obj.toString();
 		}
 
+		@Override
 		public Image getImage(Object obj) {
 			if (obj instanceof ITreeNode) {
 				ITreeNode treeNode = (ITreeNode) obj;
-				switch(treeNode.getId()) {
-					case ITreeNode.CLASS :
+				switch (treeNode.getId()) {
+					case ITreeNode.CLASS:
 						return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_CLASS);
-					case ITreeNode.INTERFACE :
+					case ITreeNode.INTERFACE:
 						return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_INTERFACE);
-					case ITreeNode.ANNOTATION :
+					case ITreeNode.ANNOTATION:
 						return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_ANNOTATION);
-					case ITreeNode.ENUM :
+					case ITreeNode.ENUM:
 						return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_ENUM);
-					case ITreeNode.PACKAGE :
+					case ITreeNode.PACKAGE:
 						return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_PACKAGE);
+					default:
+						break;
 				}
 				Object data = treeNode.getData();
 				if (data instanceof IDelta) {
@@ -159,92 +174,111 @@ public class APIToolingView extends ViewPart implements ISessionListener {
 		}
 
 		private Image getDeltaElementImage(IDelta delta) {
-			switch(delta.getFlags()) {
-				case IDelta.API_FIELD :
-				case IDelta.FIELD : {
+			switch (delta.getFlags()) {
+				case IDelta.API_FIELD:
+				case IDelta.FIELD: {
 					int modifiers = delta.getNewModifiers();
-					switch(delta.getKind()) {
-						case IDelta.REMOVED : {
+					switch (delta.getKind()) {
+						case IDelta.REMOVED: {
 							modifiers = delta.getOldModifiers();
+							break;
 						}
+						default:
+							break;
 					}
 					if (Flags.isPublic(modifiers)) {
 						return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_FIELD_PUBLIC);
 					} else if (Flags.isProtected(modifiers)) {
 						return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_FIELD_PROTECTED);
-					} else if (Flags.isPrivate(modifiers)){
+					} else if (Flags.isPrivate(modifiers)) {
 						return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_FIELD_PRIVATE);
 					} else {
 						return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_FIELD_DEFAULT);
 					}
 				}
-				case IDelta.METHOD :
-				case IDelta.METHOD_MOVED_DOWN :
-				case IDelta.METHOD_MOVED_UP :
-				case IDelta.METHOD_WITH_DEFAULT_VALUE :
-				case IDelta.METHOD_WITHOUT_DEFAULT_VALUE :
-				case IDelta.CONSTRUCTOR :
-				case IDelta.CLINIT : {
+				case IDelta.METHOD:
+				case IDelta.METHOD_MOVED_DOWN:
+				case IDelta.METHOD_MOVED_UP:
+				case IDelta.METHOD_WITH_DEFAULT_VALUE:
+				case IDelta.METHOD_WITHOUT_DEFAULT_VALUE:
+				case IDelta.CONSTRUCTOR:
+				case IDelta.CLINIT: {
 					int modifiers = delta.getNewModifiers();
-					switch(delta.getKind()) {
-						case IDelta.REMOVED : {
+					switch (delta.getKind()) {
+						case IDelta.REMOVED: {
 							modifiers = delta.getOldModifiers();
+							break;
 						}
+						default:
+							break;
 					}
 					if (Flags.isPublic(modifiers)) {
 						return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_PUBLIC);
 					} else if (Flags.isProtected(modifiers)) {
 						return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_PROTECTED);
-					} else if (Flags.isPrivate(modifiers)){
+					} else if (Flags.isPrivate(modifiers)) {
 						return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_PRIVATE);
 					} else {
 						return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_CLASS_DEFAULT);
 					}
 				}
+				default:
+					break;
 			}
-			switch(delta.getElementType()) {
-				case IDelta.ANNOTATION_ELEMENT_TYPE : return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_ANNOTATION);
-				case IDelta.ENUM_ELEMENT_TYPE : return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_ENUM);
-				case IDelta.CLASS_ELEMENT_TYPE : return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_CLASS);
-				case IDelta.INTERFACE_ELEMENT_TYPE : return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_INTERFACE);
-				case IDelta.FIELD_ELEMENT_TYPE : {
+			switch (delta.getElementType()) {
+				case IDelta.ANNOTATION_ELEMENT_TYPE:
+					return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_ANNOTATION);
+				case IDelta.ENUM_ELEMENT_TYPE:
+					return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_ENUM);
+				case IDelta.CLASS_ELEMENT_TYPE:
+					return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_CLASS);
+				case IDelta.INTERFACE_ELEMENT_TYPE:
+					return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_INTERFACE);
+				case IDelta.FIELD_ELEMENT_TYPE: {
 					int modifiers = delta.getNewModifiers();
-					switch(delta.getKind()) {
-						case IDelta.REMOVED : {
+					switch (delta.getKind()) {
+						case IDelta.REMOVED: {
 							modifiers = delta.getOldModifiers();
+							break;
 						}
+						default:
+							break;
 					}
 					if (Flags.isPublic(modifiers)) {
 						return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_FIELD_PUBLIC);
 					} else if (Flags.isProtected(modifiers)) {
 						return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_FIELD_PROTECTED);
-					} else if (Flags.isPrivate(modifiers)){
+					} else if (Flags.isPrivate(modifiers)) {
 						return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_FIELD_PRIVATE);
 					} else {
 						return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_FIELD_DEFAULT);
 					}
 				}
-				case IDelta.METHOD_ELEMENT_TYPE :
-				case IDelta.CONSTRUCTOR_ELEMENT_TYPE : {
+				case IDelta.METHOD_ELEMENT_TYPE:
+				case IDelta.CONSTRUCTOR_ELEMENT_TYPE: {
 					int modifiers = delta.getNewModifiers();
-					switch(delta.getKind()) {
-						case IDelta.REMOVED : {
+					switch (delta.getKind()) {
+						case IDelta.REMOVED: {
 							modifiers = delta.getOldModifiers();
+							break;
 						}
+						default:
+							break;
 					}
 					if (Flags.isPublic(modifiers)) {
 						return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_PUBLIC);
 					} else if (Flags.isProtected(modifiers)) {
 						return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_PROTECTED);
-					} else if (Flags.isPrivate(modifiers)){
+					} else if (Flags.isPrivate(modifiers)) {
 						return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_PRIVATE);
 					} else {
 						return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_CLASS_DEFAULT);
 					}
 				}
-				case IDelta.TYPE_PARAMETER_ELEMENT_TYPE : return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_PUBLIC);
-				case IDelta.API_BASELINE_ELEMENT_TYPE :
-				case IDelta.API_COMPONENT_ELEMENT_TYPE : {
+				case IDelta.TYPE_PARAMETER_ELEMENT_TYPE:
+					return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_PUBLIC);
+				case IDelta.API_BASELINE_ELEMENT_TYPE:
+				case IDelta.API_COMPONENT_ELEMENT_TYPE: {
 					String componentVersionId = delta.getComponentVersionId();
 					IApiComponent component = null;
 					if (componentVersionId != null) {
@@ -259,7 +293,7 @@ public class APIToolingView extends ViewPart implements ISessionListener {
 						}
 					}
 					if (component != null) {
-						if(component.isSystemComponent()) {
+						if (component.isSystemComponent()) {
 							return ApiUIPlugin.getSharedImage(IApiToolsConstants.IMG_OBJ_API_SYSTEM_LIBRARY);
 						}
 						try {
@@ -272,6 +306,8 @@ public class APIToolingView extends ViewPart implements ISessionListener {
 					}
 					return ApiUIPlugin.getSharedImage(IApiToolsConstants.IMG_OBJ_BUNDLE);
 				}
+				default:
+					break;
 			}
 			return null;
 		}
@@ -282,10 +318,12 @@ public class APIToolingView extends ViewPart implements ISessionListener {
 	 */
 	public APIToolingView() {
 	}
+
 	/**
-	 * This is a callback that will allow us
-	 * to create the viewer and initialize it.
+	 * This is a callback that will allow us to create the viewer and initialize
+	 * it.
 	 */
+	@Override
 	public void createPartControl(Composite parent) {
 		ViewForm form = new ViewForm(parent, SWT.FLAT);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(form, IApiToolsHelpContextIds.API_TOOLING_VIEW);
@@ -295,21 +333,19 @@ public class APIToolingView extends ViewPart implements ISessionListener {
 
 		this.viewer = new TreeViewer(form, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		this.viewer.setContentProvider(new ViewContentProvider());
-		this.viewer.setComparator(
-			new ViewerComparator() {
-				public int category(Object element) {
-					ITreeNode node = (ITreeNode) element;
-					switch(node.getId()) {
-						case ITreeNode.PACKAGE :
-							return 1;
-						default:
-							return 0;
-					}
+		this.viewer.setComparator(new ViewerComparator() {
+			@Override
+			public int category(Object element) {
+				ITreeNode node = (ITreeNode) element;
+				switch (node.getId()) {
+					case ITreeNode.PACKAGE:
+						return 1;
+					default:
+						return 0;
 				}
 			}
-		);
+		});
 		this.viewer.setLabelProvider(new ViewLabelProvider());
-
 
 		createActions();
 		updateActions();
@@ -331,21 +367,28 @@ public class APIToolingView extends ViewPart implements ISessionListener {
 			}
 		}
 	}
+
+	@Override
 	public void init(IViewSite site) throws PartInitException {
 		super.init(site);
 		final ISessionManager sessionManager = ApiPlugin.getDefault().getSessionManager();
 		sessionManager.addSessionListener(this);
 	}
+
 	private void hookDoubleClickAction() {
 		this.viewer.addDoubleClickListener(new IDoubleClickListener() {
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				APIToolingView.this.doubleClickAction.run();
 			}
 		});
 	}
+
+	@Override
 	public void dispose() {
 		ApiPlugin.getDefault().getSessionManager().removeSessionListener(this);
 	}
+
 	protected void configureToolbar() {
 		IActionBars actionBars = getViewSite().getActionBars();
 		IToolBarManager tbm = actionBars.getToolBarManager();
@@ -363,6 +406,7 @@ public class APIToolingView extends ViewPart implements ISessionListener {
 		tbm.add(new Separator());
 		tbm.add(this.exportSessionAction);
 	}
+
 	private void createActions() {
 		final IActionBars actionBars = getViewSite().getActionBars();
 
@@ -372,6 +416,7 @@ public class APIToolingView extends ViewPart implements ISessionListener {
 		this.removeAllSessionsAction = new RemoveAllSessionsAction();
 		this.selectSessionAction = new SelectSessionAction();
 		this.doubleClickAction = new Action() {
+			@Override
 			public void run() {
 				ISelection selection = viewer.getSelection();
 				if (selection instanceof IStructuredSelection) {
@@ -397,13 +442,15 @@ public class APIToolingView extends ViewPart implements ISessionListener {
 		this.expandallAction = new ExpandAllAction(this.viewer);
 		this.collapseallAction = new CollapseAllAction(this.viewer);
 	}
+
 	private void updateActions() {
 		this.viewer.getControl().getDisplay().asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				ISessionManager sessionManager = ApiPlugin.getDefault().getSessionManager();
 				ISession active = sessionManager.getActiveSession();
 				APIToolingView.this.sessionDescription.setText(active == null ? "No Description" : active.getDescription()); //$NON-NLS-1$
-				ISession[] sessions =  sessionManager.getSessions();
+				ISession[] sessions = sessionManager.getSessions();
 				boolean atLeastOne = sessions.length >= 1;
 				APIToolingView.this.removeActiveSessionAction.setEnabled(atLeastOne);
 				APIToolingView.this.removeAllSessionsAction.setEnabled(atLeastOne);
@@ -416,32 +463,43 @@ public class APIToolingView extends ViewPart implements ISessionListener {
 			}
 		});
 	}
+
 	/**
 	 * Passing the focus request to the viewer's control.
 	 */
+	@Override
 	public void setFocus() {
 		this.viewer.getControl().setFocus();
 	}
+
+	@Override
 	public void sessionAdded(final ISession session) {
 		this.viewer.getControl().getDisplay().asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				APIToolingView.this.viewer.setInput(session);
 			}
 		});
 		updateActions();
 	}
+
+	@Override
 	public void sessionRemoved(ISession session) {
 		this.viewer.setInput(null);
 		updateActions();
 	}
+
+	@Override
 	public void sessionActivated(final ISession session) {
 		this.viewer.getControl().getDisplay().asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				APIToolingView.this.viewer.setInput(session);
 			}
 		});
 		updateActions();
 	}
+
 	/**
 	 * Returns the property sheet.
 	 */
@@ -451,9 +509,11 @@ public class APIToolingView extends ViewPart implements ISessionListener {
 		}
 		return this.page;
 	}
-	/* (non-Javadoc)
-	 * Method declared on IAdaptable
+
+	/*
+	 * (non-Javadoc) Method declared on IAdaptable
 	 */
+	@Override
 	public Object getAdapter(Class adapter) {
 		if (adapter.equals(IPropertySheetPage.class)) {
 			return getPropertySheet();

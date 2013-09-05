@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,40 +23,43 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer;
  * @since 1.0
  */
 public class CompositeApiTypeContainer extends AbstractApiTypeContainer {
-	
-	private List fContainers;
-	
+
+	private List<IApiTypeContainer> fContainers;
+
 	/**
 	 * Constructs a composite container on the given list of containers.
 	 * 
 	 * @param containers list of containers
 	 */
-	public CompositeApiTypeContainer(IApiElement parent, List containers) {
+	public CompositeApiTypeContainer(IApiElement parent, List<IApiTypeContainer> containers) {
 		super(parent, IApiElement.API_TYPE_CONTAINER, "Composite Class File Container"); //$NON-NLS-1$
 		this.fContainers = containers;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.AbstractApiTypeContainer#createClassFileContainers()
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.internal.AbstractApiTypeContainer#
+	 * createClassFileContainers()
 	 */
-	protected List createApiTypeContainers() throws CoreException {
+	@Override
+	protected List<IApiTypeContainer> createApiTypeContainers() throws CoreException {
 		return fContainers;
 	}
-	
+
 	/**
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		StringBuffer buff = new StringBuffer();
 		buff.append("Composite Class File Container:\n"); //$NON-NLS-1$
-		if(fContainers == null) {
+		if (fContainers == null) {
 			buff.append("\t<EMPTY>"); //$NON-NLS-1$
-		}
-		else {
+		} else {
 			IApiTypeContainer container = null;
-			for(Iterator iter = fContainers.iterator(); iter.hasNext();) {
-				container = (IApiTypeContainer) iter.next();
-				buff.append("\t"+container.toString()); //$NON-NLS-1$
+			for (Iterator<IApiTypeContainer> iter = fContainers.iterator(); iter.hasNext();) {
+				container = iter.next();
+				buff.append("\t" + container.toString()); //$NON-NLS-1$
 			}
 		}
 		return buff.toString();

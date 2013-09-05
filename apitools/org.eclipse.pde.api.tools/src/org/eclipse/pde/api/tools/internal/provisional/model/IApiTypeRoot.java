@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.CoreException;
  * @since 1.0.0
  */
 public interface IApiTypeRoot extends IApiElement {
-	
+
 	/**
 	 * Returns the fully qualified name of the type this storage represents.
 	 * Package names are dot separated and type names are '$'-separated.
@@ -26,25 +26,26 @@ public interface IApiTypeRoot extends IApiElement {
 	 * @return fully qualified type name
 	 */
 	public String getTypeName();
-	
+
 	/**
-	 * Returns the structure contained in this type storage. I.e. access
-	 * to the methods, fields, and member types in the associated type.
+	 * Returns the structure contained in this type storage. I.e. access to the
+	 * methods, fields, and member types in the associated type.
 	 * 
-	 * @return structure of associated type or <code>null</code> if a problem occurs creating the new type
+	 * @return structure of associated type or <code>null</code> if a problem
+	 *         occurs creating the new type
 	 * @exception CoreException if unable to retrieve the structure
 	 */
 	public IApiType getStructure() throws CoreException;
-	
+
 	/**
 	 * Returns the API component this class file originated from or
-	 * <code>null</code> if unknown. Note that the component will only be <code>null</code>
-	 * in the case that a class file container was created without an owning
-	 * component.
+	 * <code>null</code> if unknown. Note that the component will only be
+	 * <code>null</code> in the case that a class file container was created
+	 * without an owning component.
 	 * 
 	 * @return API component or <code>null</code> if unknown
 	 */
+	@Override
 	public IApiComponent getApiComponent();
-	
-	
+
 }

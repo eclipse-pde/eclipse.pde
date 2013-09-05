@@ -29,12 +29,12 @@ public class ClassCompatibilityMethodTests extends ClassCompatibilityTests {
 	/**
 	 * Workspace relative path classes in bundle/project A
 	 */
-	protected static IPath WORKSPACE_CLASSES_PACKAGE_A = new Path("bundle.a/src/a/classes/methods");
+	protected static IPath WORKSPACE_CLASSES_PACKAGE_A = new Path("bundle.a/src/a/classes/methods"); //$NON-NLS-1$
 
 	/**
 	 * Package prefix for test classes
 	 */
-	protected static String PACKAGE_PREFIX = "a.classes.methods.";
+	protected static String PACKAGE_PREFIX = "a.classes.methods."; //$NON-NLS-1$
 	
 	/**
 	 * Constructor
@@ -47,8 +47,9 @@ public class ClassCompatibilityMethodTests extends ClassCompatibilityTests {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestSourcePath()
 	 */
+	@Override
 	protected IPath getTestSourcePath() {
-		return super.getTestSourcePath().append("methods");
+		return super.getTestSourcePath().append("methods"); //$NON-NLS-1$
 	}
 	
 	/**
@@ -65,6 +66,7 @@ public class ClassCompatibilityMethodTests extends ClassCompatibilityTests {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getDefaultProblemId()
 	 */
+	@Override
 	protected int getDefaultProblemId() {
 		return ApiProblemFactory.createProblemId(
 				IApiProblem.CATEGORY_COMPATIBILITY,
@@ -76,21 +78,22 @@ public class ClassCompatibilityMethodTests extends ClassCompatibilityTests {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestingProjectName()
 	 */
+	@Override
 	protected String getTestingProjectName() {
-		return "classcompat";
+		return "classcompat"; //$NON-NLS-1$
 	}
 	
 	/**
 	 * Tests the removal of a public method from an API class.
 	 */
 	private void xRemovePublicAPIMethod(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemovePublicMethod.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemovePublicMethod.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			getDefaultProblemId()
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "RemovePublicMethod", "publicMethod(String)"};
+		args[0] = new String[]{PACKAGE_PREFIX + "RemovePublicMethod", "publicMethod(String)"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -123,22 +126,22 @@ public class ClassCompatibilityMethodTests extends ClassCompatibilityTests {
 	 * Tests the removal of a public methods from an API class - incremental.
 	 */
 	private void xAddNooverrideRemoveNoextendI(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddNooverrideRemoveNoextend.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddNooverrideRemoveNoextend.java"); //$NON-NLS-1$
 		performCompatibilityTest(filePath, incremental);
 	}
 	/**
 	 * Tests the removal of a public methods from an API class - incremental.
 	 */
 	private void xRemoveTwoPublicAPIMethods(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveTwoPublicMethods.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveTwoPublicMethods.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			getDefaultProblemId(),
 			getDefaultProblemId()
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[2][];
-		args[0] = new String[]{PACKAGE_PREFIX + "RemoveTwoPublicMethods", "methodOne(String)"};
-		args[1] = new String[]{PACKAGE_PREFIX + "RemoveTwoPublicMethods", "methodTwo(int)"};
+		args[0] = new String[]{PACKAGE_PREFIX + "RemoveTwoPublicMethods", "methodOne(String)"}; //$NON-NLS-1$ //$NON-NLS-2$
+		args[1] = new String[]{PACKAGE_PREFIX + "RemoveTwoPublicMethods", "methodTwo(int)"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -147,13 +150,13 @@ public class ClassCompatibilityMethodTests extends ClassCompatibilityTests {
 	 * Tests the removal of a protected method from an API class.
 	 */
 	private void xRemoveProtectedAPIMethod(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveProtectedMethod.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveProtectedMethod.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			getDefaultProblemId()
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "RemoveProtectedMethod", "protectedMethod(String)"};
+		args[0] = new String[]{PACKAGE_PREFIX + "RemoveProtectedMethod", "protectedMethod(String)"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -170,7 +173,7 @@ public class ClassCompatibilityMethodTests extends ClassCompatibilityTests {
 	 * Tests the removal of a private method from an API class.
 	 */
 	private void xRemovePrivateAPIMethod(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemovePrivateMethod.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemovePrivateMethod.java"); //$NON-NLS-1$
 		// there are no expected problems
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -187,7 +190,7 @@ public class ClassCompatibilityMethodTests extends ClassCompatibilityTests {
 	 * Tests the removal of a package protected method from an API class.
 	 */
 	private void xRemovePackageMethod(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemovePackageMethod.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemovePackageMethod.java"); //$NON-NLS-1$
 		// there are no expected problems
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -204,13 +207,13 @@ public class ClassCompatibilityMethodTests extends ClassCompatibilityTests {
 	 * Tests the removal of a public method from an API class annotated as noextend - incremental.
 	 */
 	private void xRemovePublicAPIMethodNoExtend(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemovePublicMethodNoExtend.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemovePublicMethodNoExtend.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			getDefaultProblemId()
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "RemovePublicMethodNoExtend", "publicMethod(String)"};
+		args[0] = new String[]{PACKAGE_PREFIX + "RemovePublicMethodNoExtend", "publicMethod(String)"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -227,7 +230,7 @@ public class ClassCompatibilityMethodTests extends ClassCompatibilityTests {
 	 * Tests the removal of a protected method from an API class annotated as noextend.
 	 */
 	private void xRemoveProtectedAPIMethodNoExtend(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveProtectedMethodNoExtend.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveProtectedMethodNoExtend.java"); //$NON-NLS-1$
 		// no problems expected since the method is not accessible
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -246,7 +249,7 @@ public class ClassCompatibilityMethodTests extends ClassCompatibilityTests {
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=261176
 	 */
 	private void xRemoveProtectedAPIMethodNoExtend2(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveProtectedMethodNoExtend2.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveProtectedMethodNoExtend2.java"); //$NON-NLS-1$
 		// no problems expected since the method is not accessible
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -263,13 +266,13 @@ public class ClassCompatibilityMethodTests extends ClassCompatibilityTests {
 	 * Tests the removal of a public method from an API class annotated as noinstantiate - incremental.
 	 */
 	private void xRemovePublicAPIMethodNoInstantiate(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemovePublicMethodNoInstantiate.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemovePublicMethodNoInstantiate.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			getDefaultProblemId()
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "RemovePublicMethodNoInstantiate", "publicMethod(String)"};
+		args[0] = new String[]{PACKAGE_PREFIX + "RemovePublicMethodNoInstantiate", "publicMethod(String)"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -286,13 +289,13 @@ public class ClassCompatibilityMethodTests extends ClassCompatibilityTests {
 	 * Tests the removal of a protected method from an API class annotated as noinstantiate.
 	 */
 	private void xRemoveProtectedAPIMethodNoInstantiate(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveProtectedMethodNoInstantiate.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveProtectedMethodNoInstantiate.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 				getDefaultProblemId()
 			};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "RemoveProtectedMethodNoInstantiate", "protectedMethod(String)"};
+		args[0] = new String[]{PACKAGE_PREFIX + "RemoveProtectedMethodNoInstantiate", "protectedMethod(String)"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -310,13 +313,13 @@ public class ClassCompatibilityMethodTests extends ClassCompatibilityTests {
 	 * noextend and noinstantiate.
 	 */
 	private void xRemovePublicAPIMethodNoExtendNoInstatiate(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemovePublicMethodNoExtendNoInstantiate.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemovePublicMethodNoExtendNoInstantiate.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			getDefaultProblemId()
 		};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "RemovePublicMethodNoExtendNoInstantiate", "publicMethod(String)"};
+		args[0] = new String[]{PACKAGE_PREFIX + "RemovePublicMethodNoExtendNoInstantiate", "publicMethod(String)"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -334,7 +337,7 @@ public class ClassCompatibilityMethodTests extends ClassCompatibilityTests {
 	 * noextend and noinstantiate.
 	 */
 	private void xRemoveProtectedAPIMethodNoExtendNoInstatiate(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveProtectedMethodNoExtendNoInstantiate.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveProtectedMethodNoExtendNoInstantiate.java"); //$NON-NLS-1$
 		// no problems expected due to noextend
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -351,7 +354,7 @@ public class ClassCompatibilityMethodTests extends ClassCompatibilityTests {
 	 * Tests the removal of a public method from an API class tagged noreference.
 	 */
 	private void xRemovePublicAPIMethodNoReference(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemovePublicMethodNoReference.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemovePublicMethodNoReference.java"); //$NON-NLS-1$
 		// no problems since no references allowed
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -368,7 +371,7 @@ public class ClassCompatibilityMethodTests extends ClassCompatibilityTests {
 	 * Tests the removal of a protected method from an API class tagged noreference.
 	 */
 	private void xRemoveProtectedAPIMethodNoReference(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveProtectedMethodNoReference.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveProtectedMethodNoReference.java"); //$NON-NLS-1$
 		// no problems since no references allowed
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -385,13 +388,13 @@ public class ClassCompatibilityMethodTests extends ClassCompatibilityTests {
 	 * Tests the removal of a public method from an API class tagged no override.
 	 */
 	private void xRemovePublicAPIMethodNoOverride(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemovePublicMethodNoOverride.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemovePublicMethodNoOverride.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 				getDefaultProblemId()
 			};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "RemovePublicMethodNoOverride", "publicMethod(String)"};
+		args[0] = new String[]{PACKAGE_PREFIX + "RemovePublicMethodNoOverride", "publicMethod(String)"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -408,13 +411,13 @@ public class ClassCompatibilityMethodTests extends ClassCompatibilityTests {
 	 * Tests the removal of a protected method from an API class tagged no override.
 	 */
 	private void xRemoveProtectedAPIMethodNoOverride(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveProtectedMethodNoOverride.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("RemoveProtectedMethodNoOverride.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 				getDefaultProblemId()
 			};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "RemoveProtectedMethodNoOverride", "protectedMethod(String)"};
+		args[0] = new String[]{PACKAGE_PREFIX + "RemoveProtectedMethodNoOverride", "protectedMethod(String)"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -431,7 +434,7 @@ public class ClassCompatibilityMethodTests extends ClassCompatibilityTests {
 	 * Tests the addition of a private method in an API class.
 	 */
 	private void xAddPrivateAPIMethod(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddPrivateMethod.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddPrivateMethod.java"); //$NON-NLS-1$
 		// there are no expected problems
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -448,7 +451,7 @@ public class ClassCompatibilityMethodTests extends ClassCompatibilityTests {
 	 * Tests the addition of a protected method in an API class.
 	 */
 	private void xAddProtectedAPIMethod(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddProtectedMethod.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddProtectedMethod.java"); //$NON-NLS-1$
 		// there are no expected problems
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -465,7 +468,7 @@ public class ClassCompatibilityMethodTests extends ClassCompatibilityTests {
 	 * Tests the addition of a protected method in an API class.
 	 */
 	private void xAddPublicAPIMethod(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddPublicMethod.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddPublicMethod.java"); //$NON-NLS-1$
 		// there are no expected problems
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -482,7 +485,7 @@ public class ClassCompatibilityMethodTests extends ClassCompatibilityTests {
 	 * Tests the addition of an abstract method in an API class that can be extended
 	 */
 	private void xAddAbstractMethod(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddAbstractMethod.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddAbstractMethod.java"); //$NON-NLS-1$
 		int[] ids = new int[] {
 			ApiProblemFactory.createProblemId(
 				IApiProblem.CATEGORY_COMPATIBILITY,
@@ -492,7 +495,7 @@ public class ClassCompatibilityMethodTests extends ClassCompatibilityTests {
 			};
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{PACKAGE_PREFIX + "AddAbstractMethod", "method()"};
+		args[0] = new String[]{PACKAGE_PREFIX + "AddAbstractMethod", "method()"}; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performCompatibilityTest(filePath, incremental);
 	}
@@ -509,7 +512,7 @@ public class ClassCompatibilityMethodTests extends ClassCompatibilityTests {
 	 * Tests the addition of an abstract method in an API class that *cannot* be extended
 	 */
 	private void xAddAbstractMethodNoExtend(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddAbstractMethodNoExtend.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("AddAbstractMethodNoExtend.java"); //$NON-NLS-1$
 		// no problems
 		performCompatibilityTest(filePath, incremental);
 	}

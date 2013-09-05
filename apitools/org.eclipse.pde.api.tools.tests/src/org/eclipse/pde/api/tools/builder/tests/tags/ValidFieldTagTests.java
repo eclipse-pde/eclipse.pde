@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,6 +28,7 @@ public class ValidFieldTagTests extends InvalidFieldTagTests {
 
 	/**
 	 * Constructor
+	 * 
 	 * @param name
 	 */
 	public ValidFieldTagTests(String name) {
@@ -37,23 +38,23 @@ public class ValidFieldTagTests extends InvalidFieldTagTests {
 	/**
 	 * @return all of the child test classes of this class
 	 */
-	protected static Class[] getAllTestClasses() {
-		Class[] classes = new Class[] {
-			ValidClassFieldTagTests.class,
-			ValidInterfaceFieldTagTests.class,
-			ValidEnumFieldTagTests.class
-		};
+	protected static Class<?>[] getAllTestClasses() {
+		Class<?>[] classes = new Class[] {
+				ValidClassFieldTagTests.class,
+				ValidInterfaceFieldTagTests.class, ValidEnumFieldTagTests.class };
 		return classes;
 	}
-	
+
 	/**
 	 * Collects tests from the getAllTestClasses() method into the given suite
+	 * 
 	 * @param suite
 	 */
 	private static void collectTests(TestSuite suite) {
 		// Hack to load all classes before computing their suite of test cases
-		// this allow to reset test cases subsets while running all Builder tests...
-		Class[] classes = getAllTestClasses();
+		// this allow to reset test cases subsets while running all Builder
+		// tests...
+		Class<?>[] classes = getAllTestClasses();
 
 		// Reset forgotten subsets of tests
 		TestCase.TESTS_PREFIX = null;
@@ -64,10 +65,10 @@ public class ValidFieldTagTests extends InvalidFieldTagTests {
 
 		/* tests */
 		for (int i = 0, length = classes.length; i < length; i++) {
-			Class clazz = classes[i];
+			Class<?> clazz = classes[i];
 			Method suiteMethod;
 			try {
-				suiteMethod = clazz.getDeclaredMethod("suite", new Class[0]);
+				suiteMethod = clazz.getDeclaredMethod("suite", new Class[0]); //$NON-NLS-1$
 			} catch (NoSuchMethodException e) {
 				e.printStackTrace();
 				continue;
@@ -85,7 +86,7 @@ public class ValidFieldTagTests extends InvalidFieldTagTests {
 			suite.addTest((Test) test);
 		}
 	}
-	
+
 	/**
 	 * @return the tests for this class
 	 */
@@ -94,11 +95,15 @@ public class ValidFieldTagTests extends InvalidFieldTagTests {
 		collectTests(suite);
 		return suite;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestSourcePath()
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestSourcePath
+	 * ()
 	 */
+	@Override
 	protected IPath getTestSourcePath() {
-		return super.getTestSourcePath().append("valid");
+		return super.getTestSourcePath().append("valid"); //$NON-NLS-1$
 	}
 }

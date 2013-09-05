@@ -13,7 +13,7 @@ package org.eclipse.pde.api.tools.builder.tests.usage;
 import junit.framework.Test;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 
 /**
@@ -43,12 +43,12 @@ public class Java7MethodUsageTests extends MethodUsageTests {
 	 */
 	@Override
 	protected String getTestCompliance() {
-		return CompilerOptions.VERSION_1_7;
+		return JavaCore.VERSION_1_7;
 	}
 
 	@Override
 	protected IPath getTestSourcePath() {
-		return super.getTestSourcePath().removeLastSegments(1).append("java7");
+		return super.getTestSourcePath().removeLastSegments(1).append("java7"); //$NON-NLS-1$
 	}
 
 	/**
@@ -78,14 +78,14 @@ public class Java7MethodUsageTests extends MethodUsageTests {
 				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD)
 		};
 		setExpectedProblemIds(pids);
-		String typename = "testMStringSwitch";
+		String typename = "testMStringSwitch"; //$NON-NLS-1$
 		String[][] args = new String[][] {
-				{METHOD_CLASS_NAME, typename, "m1()"},
-				{METHOD_CLASS_NAME, typename, "m3()"},
-				{METHOD_CLASS_NAME, typename, "m1()"},
-				{METHOD_CLASS_NAME, typename, "m3()"},
-				{METHOD_CLASS_NAME, typename, "m1()"},
-				{METHOD_CLASS_NAME, typename, "m3()"},
+				{METHOD_CLASS_NAME, typename, "m1()"}, //$NON-NLS-1$
+				{METHOD_CLASS_NAME, typename, "m3()"}, //$NON-NLS-1$
+				{METHOD_CLASS_NAME, typename, "m1()"}, //$NON-NLS-1$
+				{METHOD_CLASS_NAME, typename, "m3()"}, //$NON-NLS-1$
+				{METHOD_CLASS_NAME, typename, "m1()"}, //$NON-NLS-1$
+				{METHOD_CLASS_NAME, typename, "m3()"}, //$NON-NLS-1$
 		};
 		setExpectedMessageArgs(args);
 		setExpectedLineMappings(new LineMapping[] {
@@ -121,9 +121,9 @@ public class Java7MethodUsageTests extends MethodUsageTests {
 				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD)
 		};
 		setExpectedProblemIds(pids);
-		String typename = "testMMultiCatch";
+		String typename = "testMMultiCatch"; //$NON-NLS-1$
 		String[][] args = new String[][] {
-				{"MultipleThrowableClass", typename, "m2()"}
+				{"MultipleThrowableClass", typename, "m2()"} //$NON-NLS-1$ //$NON-NLS-2$
 		};
 		setExpectedMessageArgs(args);
 		setExpectedLineMappings(new LineMapping[] {

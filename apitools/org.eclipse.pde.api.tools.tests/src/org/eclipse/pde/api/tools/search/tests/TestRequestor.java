@@ -51,6 +51,7 @@ public class TestRequestor implements IApiSearchRequestor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor#acceptComponent(org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent)
 	 */
+	@Override
 	public boolean acceptComponent(IApiComponent component) {
 		return encloses(component);
 	}
@@ -58,6 +59,7 @@ public class TestRequestor implements IApiSearchRequestor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor#acceptContainer(org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer)
 	 */
+	@Override
 	public boolean acceptContainer(IApiTypeContainer container) {
 		return true;
 	}
@@ -65,6 +67,7 @@ public class TestRequestor implements IApiSearchRequestor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor#acceptMember(org.eclipse.pde.api.tools.internal.provisional.model.IApiMember)
 	 */
+	@Override
 	public boolean acceptMember(IApiMember member) {
 		return encloses(member);
 	}
@@ -87,6 +90,7 @@ public class TestRequestor implements IApiSearchRequestor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor#acceptReference(org.eclipse.pde.api.tools.internal.provisional.builder.IReference)
 	 */
+	@Override
 	public boolean acceptReference(IReference reference) {
 		try {
 			IApiMember member = reference.getResolvedReference();
@@ -121,6 +125,7 @@ public class TestRequestor implements IApiSearchRequestor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor#getReferenceKinds()
 	 */
+	@Override
 	public int getReferenceKinds() {
 		return IReference.MASK_REF_ALL & ~IReference.REF_CONSTANTPOOL;
 	}
@@ -128,6 +133,7 @@ public class TestRequestor implements IApiSearchRequestor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor#getScope()
 	 */
+	@Override
 	public IApiScope getScope() {
 		if(this.scopebaseline == null) {
 			return null;
@@ -184,6 +190,7 @@ public class TestRequestor implements IApiSearchRequestor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor#includesAPI()
 	 */
+	@Override
 	public boolean includesAPI() {
 		return (this.searchmask & INCLUDE_API) > 0;
 	}
@@ -191,12 +198,14 @@ public class TestRequestor implements IApiSearchRequestor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor#includesInternal()
 	 */
+	@Override
 	public boolean includesInternal() {
 		return (this.searchmask & INCLUDE_INTERNAL) > 0;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IApiSearchRequestor#includesIllegalUse()
 	 */
+	@Override
 	public boolean includesIllegalUse() {
 		return (this.searchmask & INCLUDE_ILLEGAL_USE) > 0;
 	}

@@ -14,8 +14,8 @@ package org.eclipse.pde.api.tools.internal.provisional;
  * Provide information about the API Tools session.
  */
 public interface ISession {
-	
+
 	public ITreeModel getModel();
-	
+
 	public String getDescription();
 }

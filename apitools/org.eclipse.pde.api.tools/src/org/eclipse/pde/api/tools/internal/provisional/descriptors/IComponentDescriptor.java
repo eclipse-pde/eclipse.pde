@@ -11,10 +11,12 @@
 package org.eclipse.pde.api.tools.internal.provisional.descriptors;
 
 /**
- * Describes an {@link org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent}
- * <br><br>
- * Component descriptors do not have parent components and do not have a path, therefore both the 
- * {@link #getParent()} and {@link #getPath()} method always yield <code>null</code>
+ * Describes an
+ * {@link org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent} <br>
+ * <br>
+ * Component descriptors do not have parent components and do not have a path,
+ * therefore both the {@link #getParent()} and {@link #getPath()} method always
+ * yield <code>null</code>
  * 
  * @since 1.0.1
  * @noimplement This interface is not intended to be implemented by clients.
@@ -28,7 +30,7 @@ public interface IComponentDescriptor extends IElementDescriptor {
 	 * @return the component id
 	 */
 	public String getId();
-	
+
 	/**
 	 * Returns the version id for this component or <code>null</code> if
 	 * unspecified.
@@ -36,5 +38,5 @@ public interface IComponentDescriptor extends IElementDescriptor {
 	 * @return
 	 */
 	public String getVersion();
-	
+
 }

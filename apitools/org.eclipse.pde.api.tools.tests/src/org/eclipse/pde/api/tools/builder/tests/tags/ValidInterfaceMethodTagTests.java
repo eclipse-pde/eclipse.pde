@@ -32,8 +32,9 @@ public class ValidInterfaceMethodTagTests extends ValidMethodTagTests {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestSourcePath()
 	 */
+	@Override
 	protected IPath getTestSourcePath() {
-		return super.getTestSourcePath().append("interface");
+		return super.getTestSourcePath().append("interface"); //$NON-NLS-1$
 	}
 	
 	/**
@@ -55,7 +56,7 @@ public class ValidInterfaceMethodTagTests extends ValidMethodTagTests {
 	 * Tests the supported @noreference tag on interface methods
 	 */
 	private void x1(boolean inc) {
-		deployTagTest("test1.java", inc, false);
+		deployTagTest("test1.java", inc, false); //$NON-NLS-1$
 	}
 
 	public void testValidInterfaceMethodTag4I() {
@@ -70,7 +71,7 @@ public class ValidInterfaceMethodTagTests extends ValidMethodTagTests {
 	 * Tests the supported @noreference tag on a variety of inner / outer interface methods
 	 */
 	private void x4(boolean inc) {
-		deployTagTest("test4.java", inc, false);
+		deployTagTest("test4.java", inc, false); //$NON-NLS-1$
 	}
 	
 	public void testValidInterfaceMethodTag5I() {
@@ -85,6 +86,6 @@ public class ValidInterfaceMethodTagTests extends ValidMethodTagTests {
 	 * Tests the supported @noreference tag on interface methods in the default package
 	 */
 	private void x5(boolean inc) {
-		deployTagTest("test5.java", inc, true);
+		deployTagTest("test5.java", inc, true); //$NON-NLS-1$
 	}
 }

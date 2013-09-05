@@ -58,8 +58,8 @@ public class MalformedSinceTagTests extends SinceTagTest {
 	 * Tests adding a field with a malformed since tag
 	 */
 	private void xMalformedField(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("MalformedField.java");
-		configureExpectedProblems(IDelta.FIELD_ELEMENT_TYPE, new String[]{"2.0a", "FIELD"});
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("MalformedField.java"); //$NON-NLS-1$
+		configureExpectedProblems(IDelta.FIELD_ELEMENT_TYPE, new String[]{"2.0a", "FIELD"}); //$NON-NLS-1$ //$NON-NLS-2$
 		performCompatibilityTest(filePath, incremental);
 	}
 	
@@ -75,8 +75,8 @@ public class MalformedSinceTagTests extends SinceTagTest {
 	 * Tests adding a method with a malformed since tag
 	 */
 	private void xMalformedMethod(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("MalformedMethod.java");
-		configureExpectedProblems(IDelta.METHOD_ELEMENT_TYPE, new String[]{"2.0a", "method()"});
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("MalformedMethod.java"); //$NON-NLS-1$
+		configureExpectedProblems(IDelta.METHOD_ELEMENT_TYPE, new String[]{"2.0a", "method()"}); //$NON-NLS-1$ //$NON-NLS-2$
 		performCompatibilityTest(filePath, incremental);
 	}
 	
@@ -92,8 +92,8 @@ public class MalformedSinceTagTests extends SinceTagTest {
 	 * Tests adding a member type with a malformed since tag
 	 */
 	private void xMalformedMemberType(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("MalformedMemberType.java");
-		configureExpectedProblems(IDelta.CLASS_ELEMENT_TYPE, new String[]{"2.0a", "MemberType"});
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("MalformedMemberType.java"); //$NON-NLS-1$
+		configureExpectedProblems(IDelta.CLASS_ELEMENT_TYPE, new String[]{"2.0a", "MemberType"}); //$NON-NLS-1$ //$NON-NLS-2$
 		performCompatibilityTest(filePath, incremental);
 	}
 	
@@ -109,8 +109,8 @@ public class MalformedSinceTagTests extends SinceTagTest {
 	 * Tests adding a class with a malformed since tag
 	 */
 	private void xMalformedType(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("MalformedType.java");
-		configureExpectedProblems(IDelta.CLASS_ELEMENT_TYPE, new String[]{"2.0a", PACKAGE_PREFIX + "MalformedType"});
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("MalformedType.java"); //$NON-NLS-1$
+		configureExpectedProblems(IDelta.CLASS_ELEMENT_TYPE, new String[]{"2.0a", PACKAGE_PREFIX + "MalformedType"}); //$NON-NLS-1$ //$NON-NLS-2$
 		performCreationCompatibilityTest(filePath, incremental);
 	}
 	
@@ -126,8 +126,8 @@ public class MalformedSinceTagTests extends SinceTagTest {
 	 * Tests adding a method with a malformed since tag like abc1.0
 	 */
 	private void xMalformedTag(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("MalformedTag.java");
-		configureExpectedProblems(IDelta.CLASS_ELEMENT_TYPE, new String[]{"abc1.0", "method()"});
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("MalformedTag.java"); //$NON-NLS-1$
+		configureExpectedProblems(IDelta.CLASS_ELEMENT_TYPE, new String[]{"abc1.0", "method()"}); //$NON-NLS-1$ //$NON-NLS-2$
 		performCompatibilityTest(filePath, incremental);
 	}
 	
@@ -143,7 +143,7 @@ public class MalformedSinceTagTests extends SinceTagTest {
 	 * Tests valid since tag expressions
 	 */
 	private void xValidSinceTags(boolean incremental) throws Exception {
-		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ValidSinceTags.java");
+		IPath filePath = WORKSPACE_CLASSES_PACKAGE_A.append("ValidSinceTags.java"); //$NON-NLS-1$
 		// no problems expected
 		performCompatibilityTest(filePath, incremental);
 	}

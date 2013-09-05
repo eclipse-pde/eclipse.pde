@@ -39,8 +39,9 @@ public class ValidClassFieldTagTests extends ValidFieldTagTests {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.builder.tests.tags.ValidJavadocTagFieldTests#getTestSourcePath()
 	 */
+	@Override
 	protected IPath getTestSourcePath() {
-		return super.getTestSourcePath().append("class");
+		return super.getTestSourcePath().append("class"); //$NON-NLS-1$
 	}
 	
 	/**
@@ -60,7 +61,7 @@ public class ValidClassFieldTagTests extends ValidFieldTagTests {
 	}
 	
 	private void x1(boolean inc) {
-		deployTagTest("test1.java", inc, false);
+		deployTagTest("test1.java", inc, false); //$NON-NLS-1$
 	}
 	
 	/**
@@ -80,7 +81,7 @@ public class ValidClassFieldTagTests extends ValidFieldTagTests {
 	}
 	
 	private void x2(boolean inc) {
-		deployTagTest("test2.java", inc, false);
+		deployTagTest("test2.java", inc, false); //$NON-NLS-1$
 	}
 	
 	/**
@@ -100,7 +101,7 @@ public class ValidClassFieldTagTests extends ValidFieldTagTests {
 	}
 	
 	private void x5(boolean inc) {
-		deployTagTest("test5.java", inc, false);
+		deployTagTest("test5.java", inc, false); //$NON-NLS-1$
 	}
 	
 	/**
@@ -120,7 +121,7 @@ public class ValidClassFieldTagTests extends ValidFieldTagTests {
 	}
 	
 	private void x6(boolean inc) {
-		deployTagTest("test6.java", inc, false);
+		deployTagTest("test6.java", inc, false); //$NON-NLS-1$
 	}
 	
 	/**
@@ -140,7 +141,7 @@ public class ValidClassFieldTagTests extends ValidFieldTagTests {
 	}
 	
 	private void x7(boolean inc) {
-		deployTagTest("test7.java", inc, false);
+		deployTagTest("test7.java", inc, false); //$NON-NLS-1$
 	}
 	
 	/**
@@ -160,6 +161,6 @@ public class ValidClassFieldTagTests extends ValidFieldTagTests {
 	}
 	
 	private void x8(boolean inc) {
-		deployTagTest("test8.java", inc, true);
+		deployTagTest("test8.java", inc, true); //$NON-NLS-1$
 	}
 }

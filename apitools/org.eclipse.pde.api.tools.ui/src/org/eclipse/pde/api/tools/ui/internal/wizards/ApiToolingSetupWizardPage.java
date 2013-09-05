@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,8 +17,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -91,14 +91,14 @@ import com.ibm.icu.text.MessageFormat;
  * @since 1.0.0
  */
 public class ApiToolingSetupWizardPage extends UserInputWizardPage {
-	
+
 	/**
 	 * Job for updating the filtering on the table viewer
 	 */
 	class UpdateJob extends WorkbenchJob {
-		
+
 		private String pattern = null;
-		
+
 		/**
 		 * Constructor
 		 */
@@ -109,17 +109,19 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 
 		/**
 		 * Sets the current text filter to use
+		 * 
 		 * @param filter
 		 */
 		public synchronized void setFilter(String pattern) {
 			this.pattern = pattern;
 		}
-		
+
 		/**
 		 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
 		 */
+		@Override
 		public IStatus runInUIThread(IProgressMonitor monitor) {
-			if(tableviewer != null) {
+			if (tableviewer != null) {
 				try {
 					tableviewer.getTable().setRedraw(false);
 					synchronized (this) {
@@ -127,16 +129,15 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 					}
 					tableviewer.refresh(true);
 					tableviewer.setCheckedElements(checkedset.toArray());
-				}
-				finally {
+				} finally {
 					tableviewer.getTable().setRedraw(true);
 				}
 			}
 			return Status.OK_STATUS;
 		}
-		
+
 	}
-	
+
 	/**
 	 * Filter for the viewer, uses a text matcher
 	 */
@@ -144,46 +145,49 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 
 		private String pattern = null;
 		StringMatcher matcher = null;
-		
+
 		public void setPattern(String pattern) {
 			this.pattern = pattern;
 		}
-		
+
 		/**
-		 * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
+		 * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer,
+		 *      java.lang.Object, java.lang.Object)
 		 */
+		@Override
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
-			if(pattern == null) {
+			if (pattern == null) {
 				return true;
 			}
-			if(pattern.trim().length() == 0) {
+			if (pattern.trim().length() == 0) {
 				return true;
 			}
 			String name = null;
-			if(element instanceof IResource) {
-				name = ((IResource)element).getName();
+			if (element instanceof IResource) {
+				name = ((IResource) element).getName();
 			}
-			if(name == null) {
+			if (name == null) {
 				return false;
 			}
 			matcher = new StringMatcher(pattern, true, false);
 			return matcher.match(name, 0, name.length());
 		}
-		
+
 	}
-	
+
 	private static final String SETTINGS_SECTION = "ApiToolingSetupWizardPage"; //$NON-NLS-1$
 	private static final String SETTINGS_REMOVECXML = "remove_componentxml"; //$NON-NLS-1$
-	
+
 	CheckboxTableViewer tableviewer = null;
-	HashSet checkedset = new HashSet();
+	HashSet<Object> checkedset = new HashSet<Object>();
 	Button removecxml = null;
 	UpdateJob updatejob = new UpdateJob();
 	StringFilter filter = new StringFilter();
 	private Text checkcount = null;
-	
+
 	/**
 	 * Constructor
+	 * 
 	 * @param pageName
 	 */
 	protected ApiToolingSetupWizardPage() {
@@ -192,9 +196,13 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 		setMessage(WizardMessages.UpdateJavadocTagsWizardPage_7);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets
+	 * .Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		Composite comp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH);
 		setControl(comp);
@@ -202,9 +210,10 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 		SWTFactory.createWrapLabel(comp, WizardMessages.UpdateJavadocTagsWizardPage_6, 1, 100);
 		SWTFactory.createVerticalSpacer(comp, 1);
 		SWTFactory.createWrapLabel(comp, WizardMessages.ApiToolingSetupWizardPage_6, 1, 50);
-		
+
 		final Text text = SWTFactory.createText(comp, SWT.BORDER, 1);
 		text.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				updatejob.setFilter(text.getText().trim());
 				updatejob.cancel();
@@ -212,17 +221,18 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 			}
 		});
 		text.addKeyListener(new KeyAdapter() {
+			@Override
 			public void keyPressed(KeyEvent e) {
 				if (e.keyCode == SWT.ARROW_DOWN) {
-					if(tableviewer != null) {
+					if (tableviewer != null) {
 						tableviewer.getTable().setFocus();
 					}
 				}
 			}
 		});
-		
+
 		SWTFactory.createWrapLabel(comp, WizardMessages.UpdateJavadocTagsWizardPage_8, 1, 50);
-		
+
 		Table table = new Table(comp, SWT.BORDER | SWT.FULL_SELECTION | SWT.CHECK | SWT.MULTI);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.heightHint = 150;
@@ -234,11 +244,11 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 		tableviewer.setComparator(new ViewerComparator());
 		tableviewer.addFilter(filter);
 		tableviewer.addCheckStateListener(new ICheckStateListener() {
+			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
-				if(event.getChecked()) {
+				if (event.getChecked()) {
 					checkedset.add(event.getElement());
-				}
-				else {
+				} else {
 					checkedset.remove(event.getElement());
 				}
 				setPageComplete(pageValid());
@@ -247,6 +257,7 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 		Composite bcomp = SWTFactory.createComposite(comp, 3, 1, GridData.FILL_HORIZONTAL | GridData.END, 0, 0);
 		Button button = SWTFactory.createPushButton(bcomp, WizardMessages.UpdateJavadocTagsWizardPage_10, null);
 		button.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				tableviewer.setAllChecked(true);
 				checkedset.addAll(Arrays.asList(tableviewer.getCheckedElements()));
@@ -255,10 +266,11 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 		});
 		button = SWTFactory.createPushButton(bcomp, WizardMessages.UpdateJavadocTagsWizardPage_11, null);
 		button.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				tableviewer.setAllChecked(false);
 				TableItem[] items = tableviewer.getTable().getItems();
-				for(int i = 0; i < items.length; i++) {
+				for (int i = 0; i < items.length; i++) {
 					checkedset.remove(items[i].getData());
 				}
 				setPageComplete(pageValid());
@@ -267,19 +279,19 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 
 		checkcount = SWTFactory.createText(bcomp, SWT.FLAT | SWT.READ_ONLY, 1, GridData.HORIZONTAL_ALIGN_END | GridData.GRAB_HORIZONTAL);
 		checkcount.setBackground(bcomp.getBackground());
-		
+
 		Object[] selected = getWorkbenchSelection();
-		if(selected.length > 0) {
+		if (selected.length > 0) {
 			tableviewer.setCheckedElements(selected);
 			checkedset.addAll(Arrays.asList(selected));
 		}
 		setPageComplete(checkedset.size() > 0);
-		
+
 		SWTFactory.createVerticalSpacer(comp, 1);
 		removecxml = SWTFactory.createCheckButton(comp, WizardMessages.ApiToolingSetupWizardPage_0, null, true, 1);
-		
+
 		IDialogSettings settings = ApiUIPlugin.getDefault().getDialogSettings().getSection(SETTINGS_SECTION);
-		if(settings != null) {
+		if (settings != null) {
 			removecxml.setSelection(settings.getBoolean(SETTINGS_REMOVECXML));
 		}
 	}
@@ -287,79 +299,80 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 	/**
 	 * @see org.eclipse.jface.wizard.WizardPage#setPageComplete(boolean)
 	 */
+	@Override
 	public void setPageComplete(boolean complete) {
 		super.setPageComplete(complete);
 		updateCheckStatus(checkedset.size());
 	}
-	
+
 	/**
 	 * Updates the number of items that have been checked
+	 * 
 	 * @param count
 	 */
 	private void updateCheckStatus(int count) {
-		if(checkcount == null) {
+		if (checkcount == null) {
 			return;
 		}
-		checkcount.setText(MessageFormat.format(WizardMessages.ApiToolingSetupWizardPage_n_items_checked, new String[] {Integer.toString(count)}));
+		checkcount.setText(MessageFormat.format(WizardMessages.ApiToolingSetupWizardPage_n_items_checked, new Object[] { Integer.toString(count) }));
 	}
-	
+
 	/**
-	 * @return the complete listing of projects in the workspace that could have API Tools set-up
-	 * on them
+	 * @return the complete listing of projects in the workspace that could have
+	 *         API Tools set-up on them
 	 * @throws CoreException
 	 */
 	private IProject[] getInputProjects() {
 		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
-		ArrayList pjs = new ArrayList();
-		for(int i = 0; i < projects.length; i++) {
+		ArrayList<IProject> pjs = new ArrayList<IProject>();
+		for (int i = 0; i < projects.length; i++) {
 			try {
 				IProject project = projects[i];
-				if(acceptProject(project)) {
+				if (acceptProject(project)) {
 					pjs.add(project);
 				}
+			} catch (CoreException ce) {
 			}
-			catch(CoreException ce) {}
 		}
-		return (IProject[]) pjs.toArray(new IProject[pjs.size()]);
+		return pjs.toArray(new IProject[pjs.size()]);
 	}
-	
+
 	private boolean acceptProject(IProject project) throws CoreException {
-		if(project == null) {
+		if (project == null) {
 			return false;
 		}
 		return (project.hasNature(JavaCore.NATURE_ID) && project.hasNature("org.eclipse.pde.PluginNature")) //$NON-NLS-1$
-			&& !project.hasNature(ApiPlugin.NATURE_ID)
-			&& !Util.isBinaryProject(project);
+				&& !project.hasNature(ApiPlugin.NATURE_ID) && !Util.isBinaryProject(project);
 	}
-	
+
 	/**
 	 * @return the current selection from the workbench as an array of objects
 	 */
 	protected Object[] getWorkbenchSelection() {
 		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-		if(window != null) {
-			IWorkbenchPage page  = window.getActivePage();
-			if(page != null) {
+		if (window != null) {
+			IWorkbenchPage page = window.getActivePage();
+			if (page != null) {
 				IWorkbenchPart part = page.getActivePart();
-				if(part != null) {
+				if (part != null) {
 					IWorkbenchSite site = part.getSite();
-					if(site != null) {
+					if (site != null) {
 						ISelectionProvider provider = site.getSelectionProvider();
-						if(provider != null) {
+						if (provider != null) {
 							ISelection selection = provider.getSelection();
-							if(selection instanceof IStructuredSelection) {
-								Object[] jps = ((IStructuredSelection)provider.getSelection()).toArray();
-								ArrayList pjs = new ArrayList();
-								for(int i = 0; i < jps.length; i++) {
-									if(jps[i] instanceof IAdaptable) {
+							if (selection instanceof IStructuredSelection) {
+								Object[] jps = ((IStructuredSelection) provider.getSelection()).toArray();
+								ArrayList<IProject> pjs = new ArrayList<IProject>();
+								for (int i = 0; i < jps.length; i++) {
+									if (jps[i] instanceof IAdaptable) {
 										IAdaptable adapt = (IAdaptable) jps[i];
 										IProject pj = (IProject) adapt.getAdapter(IProject.class);
 										try {
-											if(acceptProject(pj)) {
+											if (acceptProject(pj)) {
 												pjs.add(pj);
 											}
+										} catch (CoreException ce) {
 										}
-										catch(CoreException ce){}
 									}
 								}
 								return pjs.toArray();
@@ -371,25 +384,28 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 		}
 		return new Object[0];
 	}
-	
+
 	/**
 	 * @return if the page is valid or not, this method also sets error messages
 	 */
 	protected boolean pageValid() {
-		if(checkedset.size() < 1) {
+		if (checkedset.size() < 1) {
 			setErrorMessage(WizardMessages.UpdateJavadocTagsWizardPage_12);
 			return false;
 		}
 		setErrorMessage(null);
 		return true;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.ltk.ui.refactoring.UserInputWizardPage#getNextPage()
 	 */
+	@Override
 	public IWizardPage getNextPage() {
-		//always have to collect changes again in the event the user goes back and forth, 
-		//as a change cannot ever have more than one parent - EVER
+		// always have to collect changes again in the event the user goes back
+		// and forth,
+		// as a change cannot ever have more than one parent - EVER
 		collectChanges();
 		IWizardPage page = super.getNextPage();
 		if (page != null) {
@@ -397,55 +413,51 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 		}
 		return page;
 	}
-	
+
 	/**
-	 * Creates all of the text edit changes collected from the processor. The collected edits are arranged as multi-edits 
-	 * for the one file that they belong to
+	 * Creates all of the text edit changes collected from the processor. The
+	 * collected edits are arranged as multi-edits for the one file that they
+	 * belong to
+	 * 
 	 * @param projectchange
 	 * @param project
 	 * @param cxml
 	 */
 	void createTagChanges(CompositeChange projectchange, IJavaProject project, File cxml) {
 		try {
-			HashMap map = new HashMap();
+			HashMap<IFile, Set<TextEdit>> map = new HashMap<IFile, Set<TextEdit>>();
 			ApiDescriptionProcessor.collectTagUpdates(project, cxml, map);
 			IFile file = null;
 			TextFileChange change = null;
 			MultiTextEdit multiedit = null;
-			HashSet alledits = null;
-			TextEdit edit = null;
-			for(Iterator iter = map.entrySet().iterator(); iter.hasNext();) {
-				Map.Entry entry = (Map.Entry) iter.next();
-				file = (IFile) entry.getKey();
-				change = new TextFileChange(MessageFormat.format(WizardMessages.JavadocTagRefactoring_2, new String[] {file.getName()}), file);
+			Set<TextEdit> alledits = null;
+			for (Entry<IFile, Set<TextEdit>> entry : map.entrySet()) {
+				file = entry.getKey();
+				change = new TextFileChange(MessageFormat.format(WizardMessages.JavadocTagRefactoring_2, new Object[] { file.getName() }), file);
 				multiedit = new MultiTextEdit();
 				change.setEdit(multiedit);
-				alledits = (HashSet) entry.getValue();
-				if(alledits != null) {
-					for(Iterator iter2 = alledits.iterator(); iter2.hasNext();) {
-						edit = (TextEdit) iter2.next();
+				alledits = entry.getValue();
+				if (alledits != null) {
+					for (TextEdit edit : alledits) {
 						multiedit.addChild(edit);
 					}
 				}
-				if(change != null) {
-					projectchange.add(change);
-				}
+				projectchange.add(change);
 			}
-		}
-		catch (CoreException e) {
+		} catch (CoreException e) {
 			ApiUIPlugin.log(e);
-		} 
-		catch (IOException e) {
+		} catch (IOException e) {
 			ApiUIPlugin.log(e);
 		}
 	}
-	
+
 	/**
 	 * @return the mapping of text edits to the IFile they occur on
 	 */
 	private void collectChanges() {
 		final ApiToolingSetupRefactoring refactoring = (ApiToolingSetupRefactoring) getRefactoring();
 		IRunnableWithProgress op = new IRunnableWithProgress() {
+			@Override
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				Object[] projects = checkedset.toArray(new IProject[checkedset.size()]);
 				IProject project = null;
@@ -455,17 +467,17 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 				refactoring.resetRefactoring();
 				boolean remove = removecxml.getSelection();
 				CompositeChange pchange = null;
-				for(int i = 0; i < projects.length; i++) {
+				for (int i = 0; i < projects.length; i++) {
 					project = (IProject) projects[i];
 					pchange = new CompositeChange(project.getName());
 					refactoring.addChange(pchange);
 					pchange.add(new ProjectUpdateChange(project));
-					localmonitor.subTask(MessageFormat.format(WizardMessages.ApiToolingSetupWizardPage_4, new String[] {project.getName()}));
+					localmonitor.subTask(MessageFormat.format(WizardMessages.ApiToolingSetupWizardPage_4, new Object[] { project.getName() }));
 					IResource cxml = project.findMember(IApiCoreConstants.COMPONENT_XML_NAME);
-					if(cxml != null) {
-						//collect the changes for doc
+					if (cxml != null) {
+						// collect the changes for doc
 						createTagChanges(pchange, JavaCore.create(project), new File(cxml.getLocationURI()));
-						if(remove) {
+						if (remove) {
 							pchange.add(new DeleteResourceChange(cxml.getFullPath(), true));
 						}
 					}
@@ -481,15 +493,17 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 			ApiUIPlugin.log(e);
 		}
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.ltk.ui.refactoring.UserInputWizardPage#performFinish()
 	 */
+	@Override
 	protected boolean performFinish() {
 		collectChanges();
 		return super.performFinish();
 	}
-	
+
 	/**
 	 * Called by the {@link ApiToolingSetupWizard} when finishing the wizard
 	 * 
@@ -501,17 +515,17 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 		notifyNoDefaultProfile();
 		return true;
 	}
-	
+
 	/**
 	 * Notifies the user that they have no default API profile
 	 */
 	private void notifyNoDefaultProfile() {
-		if(ApiPlugin.getDefault().getApiBaselineManager().getDefaultApiBaseline() == null) {
-			UIJob job = new UIJob("No default API profile detected")  { //$NON-NLS-1$
+		if (ApiPlugin.getDefault().getApiBaselineManager().getDefaultApiBaseline() == null) {
+			UIJob job = new UIJob("No default API profile detected") { //$NON-NLS-1$
+				@Override
 				public IStatus runInUIThread(IProgressMonitor monitor) {
-					boolean doit = MessageDialog.openQuestion(getShell(), WizardMessages.ApiToolingSetupWizardPage_1, WizardMessages.ApiToolingSetupWizardPage_2 +
-					WizardMessages.ApiToolingSetupWizardPage_3);
-					if(doit) {
+					boolean doit = MessageDialog.openQuestion(getShell(), WizardMessages.ApiToolingSetupWizardPage_1, WizardMessages.ApiToolingSetupWizardPage_2 + WizardMessages.ApiToolingSetupWizardPage_3);
+					if (doit) {
 						SWTFactory.showPreferencePage(getShell(), IApiToolsConstants.ID_BASELINES_PREF_PAGE, null);
 					}
 					return Status.OK_STATUS;

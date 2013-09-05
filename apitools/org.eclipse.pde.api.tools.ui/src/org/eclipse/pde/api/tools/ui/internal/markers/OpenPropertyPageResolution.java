@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,19 +36,20 @@ public class OpenPropertyPageResolution implements IMarkerResolution2 {
 	 * A human readable name for the page
 	 */
 	private String fPageName = null;
-	
+
 	/**
 	 * The id of the property page to open
 	 */
 	String fPageId = null;
-	
+
 	/**
 	 * The element the page is to be opened on
 	 */
 	IAdaptable fElement = null;
-	
+
 	/**
 	 * Constructor
+	 * 
 	 * @param pageid
 	 */
 	public OpenPropertyPageResolution(String pagename, String pageid, IAdaptable element) {
@@ -59,33 +60,43 @@ public class OpenPropertyPageResolution implements IMarkerResolution2 {
 		Assert.isNotNull(element, MarkerMessages.OpenPropertyPageResolution_element_cannot_be_null);
 		fElement = element;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.ui.IMarkerResolution2#getDescription()
 	 */
+	@Override
 	public String getDescription() {
 		return NLS.bind(MarkerMessages.OpenPropertyPageResolution_opens_the_property_page, fPageName);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.ui.IMarkerResolution2#getImage()
 	 */
+	@Override
 	public Image getImage() {
 		return ApiUIPlugin.getSharedImage(IApiToolsConstants.IMG_ELCL_OPEN_PAGE);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see org.eclipse.ui.IMarkerResolution#getLabel()
 	 */
+	@Override
 	public String getLabel() {
 		return NLS.bind(MarkerMessages.OpenPropertyPageResolution_open_the_property_page, fPageName);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IMarkerResolution#run(org.eclipse.core.resources.IMarker)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.ui.IMarkerResolution#run(org.eclipse.core.resources.IMarker)
 	 */
+	@Override
 	public void run(IMarker marker) {
 		UIJob job = new UIJob(MarkerMessages.OpenPropertyPageResolution_opening_property_page_job_name) {
+			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				SWTFactory.showPropertiesDialog(ApiUIPlugin.getShell(), fPageId, fElement, null);
 				return Status.OK_STATUS;
