@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 IBM Corporation and others.
+ * Copyright (c) 2010, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,13 +10,20 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal;
 
+import org.eclipse.pde.api.tools.internal.builder.BuildState;
+import org.eclipse.pde.api.tools.internal.model.ApiBaseline;
+import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
+import org.eclipse.pde.api.tools.internal.util.Util;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Path;
+
 import org.eclipse.jdt.core.ElementChangedEvent;
 import org.eclipse.jdt.core.IElementChangedListener;
 import org.eclipse.jdt.core.IJavaElement;
@@ -25,14 +32,10 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.pde.api.tools.internal.builder.BuildState;
-import org.eclipse.pde.api.tools.internal.model.ApiBaseline;
-import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
-import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
  * Standard delta processor for us to track element state changes in the workspace
- * using {@link IJavaElementDelta}s and {@link IResourceDelta}s
+ * using {@link IJavaElementDelta}s and {@link IResourceDelta}s.
  * 
  * @since 1.1
  */
