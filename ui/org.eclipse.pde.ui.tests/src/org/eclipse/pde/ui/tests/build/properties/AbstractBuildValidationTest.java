@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.build.properties;
 
-import org.eclipse.pde.ui.tests.PDETestsPlugin;
-
 import java.io.*;
 import java.net.URL;
 import java.util.Enumeration;
@@ -30,14 +28,15 @@ import org.eclipse.pde.internal.core.builders.PDEMarkerFactory;
 import org.eclipse.pde.internal.core.natures.PDE;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.correction.ResolutionGenerator;
+import org.eclipse.pde.ui.tests.PDETestsPlugin;
 import org.eclipse.pde.ui.tests.target.LocalTargetDefinitionTests;
 import org.eclipse.ui.IMarkerResolution;
 import org.osgi.service.prefs.BackingStoreException;
 
 /**
- * Abstract test case for tests that check the build.properties builder and its associated quickfixes.
+ * Abstract test case for tests that check the build.properties builder and its associated quick fixes.
  * 
- * Extracts the necessary build.properties testing files and deletes them on teardown.
+ * Extracts the necessary build.properties testing files and deletes them on tear-down.
  * 
  * @since 3.6
  * @see BuildPropertiesValidationTest
@@ -55,8 +54,8 @@ public abstract class AbstractBuildValidationTest extends TestCase {
 		File projectFile = new File(FileLocator.toFileURL(location).getFile());
 		assertTrue("Could not find test zip file at " + projectFile, projectFile.isFile());
 		doUnZip(PDETestsPlugin.getDefault().getStateLocation().removeLastSegments(2), "/tests/build.properties/build.properties.tests.zip");
-		
-		projectFile = PDETestsPlugin.getDefault().getStateLocation().removeLastSegments(3).toFile();		
+
+		projectFile = PDETestsPlugin.getDefault().getStateLocation().removeLastSegments(3).toFile();
 		File[] projects = projectFile.listFiles(new FileFilter() {
 
 			public boolean accept(File pathname) {
@@ -76,7 +75,7 @@ public abstract class AbstractBuildValidationTest extends TestCase {
 			}
 			project.create(new NullProgressMonitor());
 			project.open(new NullProgressMonitor());
-			
+
 		}
 	}
 
@@ -103,7 +102,7 @@ public abstract class AbstractBuildValidationTest extends TestCase {
 	}
 
 	/**
-	 * Verify the problem markers on the build.properties 
+	 * Verify the problem markers on the build.properties
 	 * @param buildProperty		build.properties file (on which markers will looked for)
 	 * @param expectedValues	properties file from which expected values will be read
 	 * @param severity			expected severity of the problem markers
