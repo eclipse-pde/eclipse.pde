@@ -15,10 +15,6 @@ import java.io.InputStream;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 
-/**
- * AbbreviatedFragmentModel
- *
- */
 public class AbbreviatedFragmentModel extends WorkspaceFragmentModel {
 
 	/**
@@ -51,6 +47,7 @@ public class AbbreviatedFragmentModel extends WorkspaceFragmentModel {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.plugin.AbstractPluginModelBase#load(java.io.InputStream, boolean)
 	 */
+	@Override
 	public void load(InputStream stream, boolean outOfSync) throws CoreException {
 		load(stream, outOfSync, new AbbreviatedPluginHandler(fExtensionPointIDs));
 	}
