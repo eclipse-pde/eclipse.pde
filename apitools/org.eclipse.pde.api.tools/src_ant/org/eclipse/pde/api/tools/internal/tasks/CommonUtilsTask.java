@@ -218,14 +218,14 @@ public abstract class CommonUtilsTask extends Task {
 			return null;
 		}
 		String[] strings = patterns.split(","); //$NON-NLS-1$
-		List list = new ArrayList();
+		List<String> list = new ArrayList<String>();
 		for (int i = 0; i < strings.length; i++) {
 			String pattern = strings[i].trim();
 			if (pattern.length() > 0) {
 				list.add(pattern);
 			}
 		}
-		return (String[]) list.toArray(new String[list.size()]);
+		return list.toArray(new String[list.size()]);
 	}
 
 	public static String convertToHtml(String s) {

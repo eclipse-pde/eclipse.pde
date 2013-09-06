@@ -18,10 +18,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -45,18 +43,18 @@ import org.xml.sax.helpers.DefaultHandler;
 public class APIDeprecationReportConversionTask extends Task {
 	static final class ConverterDefaultHandler extends DefaultHandler {
 		private String[] arguments;
-		private List argumentsList;
+		private List<String> argumentsList;
 		private String componentID;
 		private boolean debug;
 		private int flags;
 		private String key;
 		private String kind;
-		private Map map;
+		private Map<String, List<Entry>> map;
 		private String typename;
 		private int elementType;
 
 		public ConverterDefaultHandler(boolean debug) {
-			this.map = new HashMap();
+			this.map = new HashMap<String, List<Entry>>();
 			this.debug = debug;
 		}
 
@@ -64,11 +62,11 @@ public class APIDeprecationReportConversionTask extends Task {
 		public void endElement(String uri, String localName, String name) throws SAXException {
 			if (IApiXmlConstants.DELTA_ELEMENT_NAME.equals(name)) {
 				Entry entry = new Entry(this.flags, this.elementType, this.key, this.typename, this.arguments, this.kind);
-				Object object = this.map.get(this.componentID);
-				if (object != null) {
-					((List) object).add(entry);
+				List<Entry> list = this.map.get(this.componentID);
+				if (list != null) {
+					list.add(entry);
 				} else {
-					ArrayList value = new ArrayList();
+					ArrayList<Entry> value = new ArrayList<Entry>();
 					value.add(entry);
 					this.map.put(componentID, value);
 				}
@@ -80,7 +78,7 @@ public class APIDeprecationReportConversionTask extends Task {
 			}
 		}
 
-		public Map getEntries() {
+		public Map<String, List<Entry>> getEntries() {
 			return this.map;
 		}
 
@@ -125,7 +123,7 @@ public class APIDeprecationReportConversionTask extends Task {
 				this.kind = attributes.getValue(IApiXmlConstants.ATTR_KIND);
 			} else if (IApiXmlConstants.ELEMENT_DELTA_MESSAGE_ARGUMENTS.equals(name)) {
 				if (this.argumentsList == null) {
-					this.argumentsList = new ArrayList();
+					this.argumentsList = new ArrayList<String>();
 				} else {
 					this.argumentsList.clear();
 				}
@@ -228,63 +226,58 @@ public class APIDeprecationReportConversionTask extends Task {
 		buffer.append(NLS.bind(Messages.deprecationReportTask_endComponentEntry, componentID));
 	}
 
-	private void dumpEntries(Map entries, StringBuffer buffer) {
+	private void dumpEntries(Map<String, List<Entry>> entries, StringBuffer buffer) {
 		dumpHeader(buffer);
-		Set entrySet = entries.entrySet();
-		List allEntries = new ArrayList();
-		for (Iterator iterator = entrySet.iterator(); iterator.hasNext();) {
-			allEntries.add(iterator.next());
+		List<Map.Entry<String, List<Entry>>> allEntries = new ArrayList<Map.Entry<String, List<Entry>>>();
+		for (Map.Entry<String, List<Entry>> entry : entries.entrySet()) {
+			allEntries.add(entry);
 		}
-		Collections.sort(allEntries, new Comparator() {
+		Collections.sort(allEntries, new Comparator<Object>() {
+			@SuppressWarnings("unchecked")
 			@Override
 			public int compare(Object o1, Object o2) {
-				Map.Entry entry1 = (Map.Entry) o1;
-				Map.Entry entry2 = (Map.Entry) o2;
-				return ((String) entry1.getKey()).compareTo((String) entry2.getKey());
+				Map.Entry<String, List<Entry>> entry1 = (Map.Entry<String, List<Entry>>) o1;
+				Map.Entry<String, List<Entry>> entry2 = (Map.Entry<String, List<Entry>>) o2;
+				return entry1.getKey().compareTo(entry2.getKey());
 			}
 		});
-		for (Iterator iterator = allEntries.iterator(); iterator.hasNext();) {
-			Map.Entry mapEntry = (Map.Entry) iterator.next();
-			String key = (String) mapEntry.getKey();
-			Object value = mapEntry.getValue();
+		for (Map.Entry<String, List<Entry>> mapEntry : allEntries) {
+			String key = mapEntry.getKey();
+			List<Entry> values = mapEntry.getValue();
 			dumpEntryForComponent(buffer, key);
-			if (value instanceof List) {
-				List values = (List) value;
-				Collections.sort(values, new Comparator() {
-					@Override
-					public int compare(Object o1, Object o2) {
-						Entry entry1 = (Entry) o1;
-						Entry entry2 = (Entry) o2;
-						String typeName1 = entry1.typeName;
-						String typeName2 = entry2.typeName;
-						if (typeName1 == null) {
-							if (typeName2 == null) {
-								return entry1.key.compareTo(entry2.key);
-							}
-							return -1;
-						} else if (typeName2 == null) {
-							return 1;
+			Collections.sort(values, new Comparator<Object>() {
+				@Override
+				public int compare(Object o1, Object o2) {
+					Entry entry1 = (Entry) o1;
+					Entry entry2 = (Entry) o2;
+					String typeName1 = entry1.typeName;
+					String typeName2 = entry2.typeName;
+					if (typeName1 == null) {
+						if (typeName2 == null) {
+							return entry1.key.compareTo(entry2.key);
 						}
-						if (!typeName1.equals(typeName2)) {
-							return typeName1.compareTo(typeName2);
-						}
-						return entry1.key.compareTo(entry2.key);
+						return -1;
+					} else if (typeName2 == null) {
+						return 1;
 					}
-				});
+					if (!typeName1.equals(typeName2)) {
+						return typeName1.compareTo(typeName2);
+					}
+					return entry1.key.compareTo(entry2.key);
+				}
+			});
+			if (debug) {
+				System.out.println("Entries for " + key); //$NON-NLS-1$
+			}
+			for (Entry entry : values) {
 				if (debug) {
-					System.out.println("Entries for " + key); //$NON-NLS-1$
-				}
-				for (Iterator iterator2 = ((List) value).iterator(); iterator2.hasNext();) {
-					Entry entry = (Entry) iterator2.next();
-					if (debug) {
-						if (entry.typeName != null) {
-							System.out.print(entry.typeName);
-							System.out.print('#');
-						}
-						System.out.println(entry.key);
+					if (entry.typeName != null) {
+						System.out.print(entry.typeName);
+						System.out.print('#');
 					}
-					dumpEntry(buffer, entry);
+					System.out.println(entry.key);
 				}
+				dumpEntry(buffer, entry);
 			}
 			dumpEndEntryForComponent(buffer, key);
 		}

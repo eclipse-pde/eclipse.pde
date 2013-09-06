@@ -21,9 +21,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 
@@ -57,9 +57,9 @@ import org.w3c.dom.Element;
 public class APIToolsAnalysisTask extends CommonUtilsTask {
 
 	private static class Summary {
-		List apiBundleVersionProblems = new ArrayList();
-		List apiCompatibilityProblems = new ArrayList();
-		List apiUsageProblems = new ArrayList();
+		List<IApiProblem> apiBundleVersionProblems = new ArrayList<IApiProblem>();
+		List<IApiProblem> apiCompatibilityProblems = new ArrayList<IApiProblem>();
+		List<IApiProblem> apiUsageProblems = new ArrayList<IApiProblem>();
 		String componentID;
 
 		public Summary(String componentID, IApiProblem[] apiProblems) {
@@ -117,13 +117,12 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 			printWriter.println();
 		}
 
-		private void dumpProblems(String title, List problemsList, PrintWriter printWriter) {
+		private void dumpProblems(String title, List<IApiProblem> problemsList, PrintWriter printWriter) {
 			if (problemsList.isEmpty()) {
 				return;
 			}
 			printWriter.println(title);
-			for (Iterator iterator = problemsList.iterator(); iterator.hasNext();) {
-				IApiProblem problem = (IApiProblem) iterator.next();
+			for (IApiProblem problem : problemsList) {
 				printWriter.println(problem.getMessage());
 			}
 		}
@@ -168,27 +167,27 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 	 */
 	private boolean processUnresolvedBundles = true;
 
-	private Summary[] createAllSummaries(Map allProblems) {
-		Set entrySet = allProblems.entrySet();
+	private Summary[] createAllSummaries(Map<String, IApiProblem[]> allProblems) {
+		Set<Map.Entry<String, IApiProblem[]>> entrySet = allProblems.entrySet();
 		int size = entrySet.size();
 		if (size == 0) {
 			return NO_SUMMARIES;
 		}
-		List allEntries = new ArrayList();
+		List<Entry<String, IApiProblem[]>> allEntries = new ArrayList<Entry<String, IApiProblem[]>>();
 		allEntries.addAll(entrySet);
-		Collections.sort(allEntries, new Comparator() {
+		Collections.sort(allEntries, new Comparator<Object>() {
+			@SuppressWarnings("unchecked")
 			@Override
 			public int compare(Object o1, Object o2) {
-				Map.Entry entry1 = (Map.Entry) o1;
-				Map.Entry entry2 = (Map.Entry) o2;
-				return ((String) entry1.getKey()).compareTo((String) entry2.getKey());
+				Map.Entry<String, IApiProblem[]> entry1 = (Map.Entry<String, IApiProblem[]>) o1;
+				Map.Entry<String, IApiProblem[]> entry2 = (Map.Entry<String, IApiProblem[]>) o2;
+				return entry1.getKey().compareTo(entry2.getKey());
 			}
 		});
 		Summary[] summaries = new Summary[size];
 		int i = 0;
-		for (Iterator iterator = allEntries.iterator(); iterator.hasNext();) {
-			Map.Entry entry = (Map.Entry) iterator.next();
-			summaries[i++] = createProblemSummary((String) entry.getKey(), (IApiProblem[]) entry.getValue());
+		for (Map.Entry<String, IApiProblem[]> entry : allEntries) {
+			summaries[i++] = createProblemSummary(entry.getKey(), entry.getValue());
 		}
 		return summaries;
 	}
@@ -197,7 +196,7 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 		return new Summary(componentID, apiProblems);
 	}
 
-	private void dumpReport(Summary[] summaries, List nonAPIBundleNames, Map bundlesWithErrors) {
+	private void dumpReport(Summary[] summaries, List<String> nonAPIBundleNames, Map<String, Object> bundlesWithErrors) {
 		ProblemCounter counter = new ProblemCounter();
 		for (int i = 0, max = summaries.length; i < max; i++) {
 			Summary summary = summaries[i];
@@ -272,9 +271,7 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 				Element report = document.createElement(IApiXmlConstants.ELEMENT_API_TOOL_REPORT);
 				report.setAttribute(IApiXmlConstants.ATTR_VERSION, IApiXmlConstants.API_REPORT_CURRENT_VERSION);
 				document.appendChild(report);
-
-				for (Iterator iterator = nonAPIBundleNames.iterator(); iterator.hasNext();) {
-					String bundleName = (String) iterator.next();
+				for (String bundleName : nonAPIBundleNames) {
 					if (!isFiltered(bundleName)) {
 						Element bundle = document.createElement(IApiXmlConstants.ELEMENT_BUNDLE);
 						bundle.setAttribute(IApiXmlConstants.ATTR_NAME, bundleName);
@@ -387,14 +384,14 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 			System.out.println("Creation of both baselines : " + (System.currentTimeMillis() - time) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 			time = System.currentTimeMillis();
 		}
-		Map allProblems = new HashMap();
-		List allNonApiBundles = new ArrayList();
-		List allApiBundles = new ArrayList();
-		Map bundlesWithErrors = new HashMap();
+		Map<String, IApiProblem[]> allProblems = new HashMap<String, IApiProblem[]>();
+		List<String> allNonApiBundles = new ArrayList<String>();
+		List<String> allApiBundles = new ArrayList<String>();
+		Map<String, Object> bundlesWithErrors = new HashMap<String, Object>();
 		try {
 			IApiComponent[] apiComponents = currentBaseline.getApiComponents();
 			int length = apiComponents.length;
-			Set visitedApiComponentNames = new HashSet();
+			Set<String> visitedApiComponentNames = new HashSet<String>();
 			for (int i = 0; i < length; i++) {
 				IApiComponent apiComponent = apiComponents[i];
 				String name = apiComponent.getSymbolicName();
@@ -455,24 +452,23 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 				System.out.println("Total number of api tools components in current baseline :" + allApiBundles.size()); //$NON-NLS-1$
 				System.out.println("Details:"); //$NON-NLS-1$
 				Collections.sort(allApiBundles);
-				for (Iterator iterator = allApiBundles.iterator(); iterator.hasNext();) {
-					System.out.println(iterator.next());
+				for (String string : allApiBundles) {
+					System.out.println(string);
 				}
 				System.out.println("=========================="); //$NON-NLS-1$
 				System.out.println("Total number of non-api tools components in current baseline :" + allNonApiBundles.size()); //$NON-NLS-1$
 				System.out.println("Details:"); //$NON-NLS-1$
 				Collections.sort(allNonApiBundles);
-				for (Iterator iterator = allNonApiBundles.iterator(); iterator.hasNext();) {
-					System.out.println(iterator.next());
+				for (String string : allNonApiBundles) {
+					System.out.println(string);
 				}
 				System.out.println("=========================="); //$NON-NLS-1$
 				System.out.println("Total number of components with resolver errors :" + bundlesWithErrors.size()); //$NON-NLS-1$
 				System.out.println("Details:"); //$NON-NLS-1$
-				List names = new ArrayList();
+				List<String> names = new ArrayList<String>();
 				names.addAll(bundlesWithErrors.keySet());
 				Collections.sort(names);
-				for (Iterator iterator = names.iterator(); iterator.hasNext();) {
-					String name = (String) iterator.next();
+				for (String name : names) {
 					System.out.println(name);
 					ResolverError[] errors = (ResolverError[]) bundlesWithErrors.get(name);
 					for (int i = 0; i < errors.length; i++) {
@@ -550,20 +546,20 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 		if (length <= 1) {
 			return problems;
 		}
-		Set uniqueProblems = new HashSet(length);
-		List allProblems = null;
+		Set<String> uniqueProblems = new HashSet<String>(length);
+		List<IApiProblem> allProblems = null;
 		for (int i = 0; i < length; i++) {
 			IApiProblem apiProblem = problems[i];
 			String message = apiProblem.getMessage();
 			if (!uniqueProblems.contains(message)) {
 				if (allProblems == null) {
-					allProblems = new ArrayList(length);
+					allProblems = new ArrayList<IApiProblem>(length);
 				}
 				uniqueProblems.add(message);
 				allProblems.add(apiProblem);
 			}
 		}
-		return (IApiProblem[]) allProblems.toArray(new IApiProblem[allProblems.size()]);
+		return allProblems.toArray(new IApiProblem[allProblems.size()]);
 	}
 
 	private IApiFilterStore getFilterStore(String name) {
@@ -574,21 +570,23 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 	}
 
 	/**
-	 * Returns an element that contains all the api problem nodes.
+	 * Returns an element that contains all the API problem nodes.
 	 * 
-	 * @param document the given xml document
+	 * @param document the given XML document
 	 * @param problems the given problem to dump into the document
 	 * @param counter a counter object to which the reported problems can be
 	 *            added
 	 * @return an element that contains all the api problem nodes or null if an
-	 *         error occured
+	 *         error occurred
+	 * 
+	 * @throws CoreException
 	 */
-	private void insertAPIProblems(Element root, Document document, List problems, ProblemCounter counter) throws CoreException {
+	private void insertAPIProblems(Element root, Document document, List<IApiProblem> problems, ProblemCounter counter) throws CoreException {
 		Element apiProblems = document.createElement(IApiXmlConstants.ELEMENT_API_PROBLEMS);
 		root.appendChild(apiProblems);
 		Element element = null;
 		// sort the problem by type name
-		Collections.sort(problems, new Comparator() {
+		Collections.sort(problems, new Comparator<Object>() {
 			@Override
 			public int compare(Object o1, Object o2) {
 				IApiProblem p1 = (IApiProblem) o1;
@@ -596,8 +594,7 @@ public class APIToolsAnalysisTask extends CommonUtilsTask {
 				return p1.getTypeName().compareTo(p2.getTypeName());
 			}
 		});
-		for (Iterator iterator = problems.iterator(); iterator.hasNext();) {
-			IApiProblem problem = (IApiProblem) iterator.next();
+		for (IApiProblem problem : problems) {
 			int severity = getSeverity(problem);
 			counter.addProblem(severity);
 			element = document.createElement(IApiXmlConstants.ELEMENT_API_PROBLEM);

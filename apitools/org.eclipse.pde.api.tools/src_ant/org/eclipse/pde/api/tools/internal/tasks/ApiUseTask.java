@@ -65,7 +65,7 @@ public final class ApiUseTask extends CommonUtilsTask {
 	/**
 	 * Set of project names that were not searched
 	 */
-	private TreeSet notsearched = null;
+	private TreeSet<SkippedComponent> notsearched = null;
 	/**
 	 * The regex pattern to use to compose the scope
 	 */
@@ -313,11 +313,11 @@ public final class ApiUseTask extends CommonUtilsTask {
 		IApiSearchReporter reporter = new XmlSearchReporter(this.reportLocation, this.debug);
 
 		try {
-			Set ids = new HashSet();
-			TreeSet scope = new TreeSet(Util.componentsorter);
+			Set<String> ids = new HashSet<String>();
+			TreeSet<IApiComponent> scope = new TreeSet<IApiComponent>(Util.componentsorter);
 			getContext(baseline, ids, scope);
 			ApiSearchEngine engine = new ApiSearchEngine();
-			UseSearchRequestor requestor = new UseSearchRequestor(ids, (IApiElement[]) scope.toArray(new IApiElement[scope.size()]), getSearchFlags());
+			UseSearchRequestor requestor = new UseSearchRequestor(ids, scope.toArray(new IApiElement[scope.size()]), getSearchFlags());
 			requestor.setJarPatterns(archivePatterns);
 			requestor.setFilterRoot(filters);
 			// override API descriptions as required
@@ -343,7 +343,7 @@ public final class ApiUseTask extends CommonUtilsTask {
 				baseline.dispose();
 				deleteBaseline(this.currentBaselineLocation, this.baselinedir);
 			}
-			reporter.reportNotSearched((IApiElement[]) this.notsearched.toArray(new IApiElement[this.notsearched.size()]));
+			reporter.reportNotSearched(this.notsearched.toArray(new IApiElement[this.notsearched.size()]));
 			reporter.reportMetadata(data);
 			reporter.reportCounts();
 		}
@@ -383,8 +383,7 @@ public final class ApiUseTask extends CommonUtilsTask {
 	 * @param scope the live set of elements for the scope
 	 * @throws CoreException
 	 */
-	private void getContext(IApiBaseline baseline, Set ids, Set scope) throws CoreException {
-
+	private void getContext(IApiBaseline baseline, Set<String> ids, Set<IApiComponent> scope) throws CoreException {
 		excludedElements = CommonUtilsTask.initializeFilteredElements(this.excludeListLocation, baseline, this.debug);
 		if (this.debug) {
 			System.out.println("===================================================================================="); //$NON-NLS-1$
@@ -400,7 +399,7 @@ public final class ApiUseTask extends CommonUtilsTask {
 		}
 
 		IApiComponent[] components = baseline.getApiComponents();
-		this.notsearched = new TreeSet(Util.componentsorter);
+		this.notsearched = new TreeSet<SkippedComponent>(Util.componentsorter);
 		Pattern refPattern = null, scopePattern = null;
 		if (this.referencepattern != null) {
 			refPattern = Pattern.compile(this.referencepattern);

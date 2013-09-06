@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 IBM Corporation and others.
+ * Copyright (c) 2011, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,9 +25,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
@@ -70,14 +70,14 @@ public class MissingRefProblemsTask extends CommonUtilsTask {
 	private String apiUseScans;
 	private String[] usescans;
 	private Properties properties = new Properties();
-	TreeSet notsearched = new TreeSet(Util.componentsorter);
+	TreeSet<SkippedComponent> notsearched = new TreeSet<SkippedComponent>(Util.componentsorter);
 
 	public static final String COMPATIBILITY = "compatibility"; //$NON-NLS-1$
 	private static final Summary[] NO_SUMMARIES = new Summary[0];
 
 	private static class Summary {
 		String fComponentID;
-		List fApiProblems;
+		List<IApiProblem> fApiProblems;
 
 		public Summary(String componentID, IApiProblem[] apiProblems) {
 			fComponentID = componentID;
@@ -86,7 +86,7 @@ public class MissingRefProblemsTask extends CommonUtilsTask {
 	}
 
 	/**
-	 * Run the api use scan problems task
+	 * Run the API use scan problems task
 	 * 
 	 * @throws BuildException exception is thrown if anything goes wrong during
 	 *             the verification
@@ -162,11 +162,11 @@ public class MissingRefProblemsTask extends CommonUtilsTask {
 			}
 		}
 
-		Map allProblems = new HashMap();
+		Map<String, IApiProblem[]> allProblems = new HashMap<String, IApiProblem[]>();
 		try {
 			IApiComponent[] apiComponents = profile.getApiComponents();
 			int length = apiComponents.length;
-			Set visitedApiComponentNames = new HashSet();
+			Set<String> visitedApiComponentNames = new HashSet<String>();
 			for (int i = 0; i < length; i++) {
 				IApiComponent apiComponent = apiComponents[i];
 				String name = apiComponent.getSymbolicName();
@@ -278,27 +278,27 @@ public class MissingRefProblemsTask extends CommonUtilsTask {
 		}
 	}
 
-	private Summary[] createAllSummaries(Map allProblems) {
-		Set entrySet = allProblems.entrySet();
+	private Summary[] createAllSummaries(Map<String, IApiProblem[]> allProblems) {
+		Set<Map.Entry<String, IApiProblem[]>> entrySet = allProblems.entrySet();
 		int size = entrySet.size();
 		if (size == 0) {
 			return NO_SUMMARIES;
 		}
-		List allEntries = new ArrayList();
+		List<Map.Entry<String, IApiProblem[]>> allEntries = new ArrayList<Entry<String, IApiProblem[]>>();
 		allEntries.addAll(entrySet);
-		Collections.sort(allEntries, new Comparator() {
+		Collections.sort(allEntries, new Comparator<Object>() {
+			@SuppressWarnings("unchecked")
 			@Override
 			public int compare(Object o1, Object o2) {
-				Map.Entry entry1 = (Map.Entry) o1;
-				Map.Entry entry2 = (Map.Entry) o2;
-				return ((String) entry1.getKey()).compareTo((String) entry2.getKey());
+				Map.Entry<String, IApiProblem[]> entry1 = (Map.Entry<String, IApiProblem[]>) o1;
+				Map.Entry<String, IApiProblem[]> entry2 = (Map.Entry<String, IApiProblem[]>) o2;
+				return entry1.getKey().compareTo(entry2.getKey());
 			}
 		});
 		Summary[] summaries = new Summary[size];
 		int i = 0;
-		for (Iterator iterator = allEntries.iterator(); iterator.hasNext();) {
-			Map.Entry entry = (Map.Entry) iterator.next();
-			summaries[i++] = new Summary((String) entry.getKey(), (IApiProblem[]) entry.getValue());
+		for (Map.Entry<String, IApiProblem[]> entry : allEntries) {
+			summaries[i++] = new Summary(entry.getKey(), entry.getValue());
 		}
 		return summaries;
 	}
@@ -335,7 +335,7 @@ public class MissingRefProblemsTask extends CommonUtilsTask {
 
 	}
 
-	public void reportNotSearched(Set notSearchedList) {
+	public void reportNotSearched(Set<SkippedComponent> notSearchedList) {
 		if (notSearchedList.isEmpty()) {
 			return;
 		}
@@ -357,8 +357,7 @@ public class MissingRefProblemsTask extends CommonUtilsTask {
 			root.setAttribute("ShowMissing", "false"); //$NON-NLS-1$ //$NON-NLS-2$
 			doc.appendChild(root);
 			Element comp = null;
-			for (Iterator iterator = notSearchedList.iterator(); iterator.hasNext();) {
-				SkippedComponent component = (SkippedComponent) iterator.next();
+			for (SkippedComponent component : notSearchedList) {
 				comp = doc.createElement(IApiXmlConstants.ELEMENT_COMPONENT);
 				comp.setAttribute(IApiXmlConstants.ATTR_ID, component.getComponentId());
 				comp.setAttribute(IApiXmlConstants.ATTR_VERSION, component.getVersion());
@@ -381,12 +380,20 @@ public class MissingRefProblemsTask extends CommonUtilsTask {
 		}
 	}
 
-	private void insertAPIProblems(Element root, Document document, List problems) throws CoreException {
+	/**
+	 * Adds {@link IApiProblem}s to the given document and root
+	 * 
+	 * @param root
+	 * @param document
+	 * @param problems
+	 * @throws CoreException
+	 */
+	private void insertAPIProblems(Element root, Document document, List<IApiProblem> problems) throws CoreException {
 		Element apiProblems = document.createElement(IApiXmlConstants.ELEMENT_API_PROBLEMS);
 		root.appendChild(apiProblems);
 		Element element = null;
 		// sort the problem by type name
-		Collections.sort(problems, new Comparator() {
+		Collections.sort(problems, new Comparator<Object>() {
 			@Override
 			public int compare(Object o1, Object o2) {
 				IApiProblem p1 = (IApiProblem) o1;
@@ -394,8 +401,7 @@ public class MissingRefProblemsTask extends CommonUtilsTask {
 				return p1.getTypeName().compareTo(p2.getTypeName());
 			}
 		});
-		for (Iterator iterator = problems.iterator(); iterator.hasNext();) {
-			IApiProblem problem = (IApiProblem) iterator.next();
+		for (IApiProblem problem : problems) {
 			element = document.createElement(IApiXmlConstants.ELEMENT_API_PROBLEM);
 			element.setAttribute(IApiXmlConstants.ATTR_TYPE_NAME, String.valueOf(problem.getTypeName()));
 			element.setAttribute(IApiXmlConstants.ATTR_ID, Integer.toString(problem.getId()));

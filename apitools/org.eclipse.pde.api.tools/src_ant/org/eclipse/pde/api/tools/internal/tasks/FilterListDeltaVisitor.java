@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
@@ -36,7 +35,7 @@ public class FilterListDeltaVisitor extends DeltaXmlVisitor {
 
 	private FilteredElements excludedElements;
 	private FilteredElements includedElements;
-	private List nonExcludedElements;
+	private List<String> nonExcludedElements;
 
 	private int flags;
 
@@ -44,7 +43,7 @@ public class FilterListDeltaVisitor extends DeltaXmlVisitor {
 		super();
 		this.excludedElements = excludedElements;
 		this.includedElements = includedElements;
-		this.nonExcludedElements = new ArrayList();
+		this.nonExcludedElements = new ArrayList<String>();
 		this.flags = flags;
 	}
 
@@ -59,8 +58,8 @@ public class FilterListDeltaVisitor extends DeltaXmlVisitor {
 		Collections.sort(this.nonExcludedElements);
 		StringWriter stringWriter = new StringWriter();
 		PrintWriter writer = new PrintWriter(stringWriter);
-		for (Iterator iterator = this.nonExcludedElements.iterator(); iterator.hasNext();) {
-			writer.println(iterator.next());
+		for (String string : nonExcludedElements) {
+			writer.println(string);
 		}
 		writer.close();
 		return String.valueOf(stringWriter.getBuffer());
@@ -110,6 +109,9 @@ public class FilterListDeltaVisitor extends DeltaXmlVisitor {
 				break;
 			case IDelta.API_COMPONENT:
 				buffer.append(Util.getDeltaKindName(delta.getKind())).append('#').append(delta.getKey());
+				break;
+			default:
+				break;
 		}
 
 		String listKey = String.valueOf(buffer);
@@ -137,6 +139,9 @@ public class FilterListDeltaVisitor extends DeltaXmlVisitor {
 									if (!checkExclude(delta)) {
 										super.processLeafDelta(delta);
 									}
+									break;
+								default:
+									break;
 							}
 						}
 						if ((this.flags & CHECK_OTHER) != 0) {
@@ -159,6 +164,8 @@ public class FilterListDeltaVisitor extends DeltaXmlVisitor {
 										super.processLeafDelta(delta);
 									}
 									break;
+								default:
+									break;
 							}
 						}
 					} else if (Flags.isProtected(modifiers) && !RestrictionModifiers.isExtendRestriction(delta.getCurrentRestrictions())) {
@@ -168,6 +175,8 @@ public class FilterListDeltaVisitor extends DeltaXmlVisitor {
 									if (!checkExclude(delta)) {
 										super.processLeafDelta(delta);
 									}
+									break;
+								default:
 									break;
 							}
 						}
@@ -189,6 +198,8 @@ public class FilterListDeltaVisitor extends DeltaXmlVisitor {
 										super.processLeafDelta(delta);
 									}
 									break;
+								default:
+									break;
 							}
 						}
 					}
@@ -200,6 +211,9 @@ public class FilterListDeltaVisitor extends DeltaXmlVisitor {
 										super.processLeafDelta(delta);
 									}
 								}
+								break;
+							default:
+								break;
 						}
 					}
 					break;
@@ -211,6 +225,9 @@ public class FilterListDeltaVisitor extends DeltaXmlVisitor {
 								if (!checkExclude(delta)) {
 									super.processLeafDelta(delta);
 								}
+								break;
+							default:
+								break;
 						}
 					}
 					break;
@@ -221,8 +238,14 @@ public class FilterListDeltaVisitor extends DeltaXmlVisitor {
 								if (!checkExclude(delta)) {
 									super.processLeafDelta(delta);
 								}
+								break;
+							default:
+								break;
 						}
 					}
+					break;
+				default:
+					break;
 			}
 		} else if ((this.flags & CHECK_OTHER) != 0) {
 			switch (delta.getKind()) {
@@ -247,6 +270,9 @@ public class FilterListDeltaVisitor extends DeltaXmlVisitor {
 									super.processLeafDelta(delta);
 								}
 							}
+							break;
+						default:
+							break;
 					}
 					break;
 				case IDelta.REMOVED:
@@ -276,7 +302,12 @@ public class FilterListDeltaVisitor extends DeltaXmlVisitor {
 							if (!checkExclude(delta)) {
 								super.processLeafDelta(delta);
 							}
+							break;
+						default:
+							break;
 					}
+					break;
+				default:
 					break;
 			}
 		}

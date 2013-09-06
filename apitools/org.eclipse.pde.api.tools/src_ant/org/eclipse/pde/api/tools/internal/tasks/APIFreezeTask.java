@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.tools.ant.BuildException;
@@ -62,7 +61,7 @@ public class APIFreezeTask extends CommonUtilsTask {
 	 * store the resolver errors of components. Maps String component IDs to an
 	 * array of ResolverErrors.
 	 */
-	private Map/* <String, ResolverError[]> */resolverErrors = new HashMap();
+	private Map<String, ResolverError[]> resolverErrors = new HashMap<String, ResolverError[]>();
 
 	@Override
 	public void execute() throws BuildException {
@@ -395,16 +394,15 @@ public class APIFreezeTask extends CommonUtilsTask {
 	 * lists all the components that had resolver errors which could affect the
 	 * results of the comparison.
 	 * 
-	 * @param document xml document to modify
+	 * @param document XML document to modify
 	 */
 	private void addResolverErrors(Document document) {
 		if (resolverErrors != null && !resolverErrors.isEmpty()) {
 			Element errorElement = document.createElement(IApiXmlConstants.ELEMENT_RESOLVER_ERRORS);
 
-			// Create xml elements for each component with resolver errors
-			for (Iterator iterator = resolverErrors.entrySet().iterator(); iterator.hasNext();) {
-				Map.Entry entry = (Map.Entry) iterator.next();
-				String componentID = (String) entry.getKey();
+			// Create XML elements for each component with resolver errors
+			for (Map.Entry<String, ResolverError[]> entry : resolverErrors.entrySet()) {
+				String componentID = entry.getKey();
 
 				// Use the same format as output from analysis task
 				Element report = document.createElement(IApiXmlConstants.ELEMENT_API_TOOL_REPORT);
@@ -412,7 +410,7 @@ public class APIFreezeTask extends CommonUtilsTask {
 				report.setAttribute(IApiXmlConstants.ATTR_COMPONENT_ID, componentID);
 				errorElement.appendChild(report);
 
-				ResolverError[] errors = (ResolverError[]) entry.getValue();
+				ResolverError[] errors = entry.getValue();
 				for (int j = 0; j < errors.length; j++) {
 					Element error = document.createElement(IApiXmlConstants.ELEMENT_RESOLVER_ERROR);
 					error.setAttribute(IApiXmlConstants.ATTR_MESSAGE, errors[j].toString());

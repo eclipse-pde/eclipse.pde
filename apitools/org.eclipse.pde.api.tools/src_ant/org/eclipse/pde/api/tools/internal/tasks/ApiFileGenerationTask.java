@@ -23,7 +23,6 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -124,7 +123,7 @@ public class ApiFileGenerationTask extends Task {
 	 * @since 1.0.600
 	 */
 	String encoding;
-	Set apiPackages = new HashSet(0);
+	Set<String> apiPackages = new HashSet<String>(0);
 
 	/**
 	 * Set the project name.
@@ -327,13 +326,13 @@ public class ApiFileGenerationTask extends Task {
 			apiDescriptionFile.delete();
 		}
 		File[] allFiles = null;
-		Map manifestMap = null;
+		Map<String, String> manifestMap = null;
 		IApiTypeContainer classFileContainer = null;
 		if (!this.projectLocation.endsWith(Util.ORG_ECLIPSE_SWT)) {
 			// create the directory class file container used to resolve
 			// signatures during tag scanning
 			String[] allBinaryLocations = this.binaryLocations.split(File.pathSeparator);
-			List allContainers = new ArrayList();
+			List<IApiTypeContainer> allContainers = new ArrayList<IApiTypeContainer>();
 			IApiTypeContainer container = null;
 			for (int i = 0; i < allBinaryLocations.length; i++) {
 				container = getContainer(allBinaryLocations[i]);
@@ -373,7 +372,7 @@ public class ApiFileGenerationTask extends Task {
 				String[] allManifestFiles = this.manifests.split(File.pathSeparator);
 				for (int i = 0, max = allManifestFiles.length; i < max; i++) {
 					File currentManifest = new File(allManifestFiles[i]);
-					Set currentApiPackages = null;
+					Set<String> currentApiPackages = null;
 					if (currentManifest.exists()) {
 						BufferedInputStream inputStream = null;
 						ZipFile zipFile = null;
@@ -451,7 +450,7 @@ public class ApiFileGenerationTask extends Task {
 		ApiDescription apiDescription = new ApiDescription(this.projectName);
 		TagScanner tagScanner = TagScanner.newScanner();
 		if (allFiles != null && allFiles.length != 0) {
-			Map options = JavaCore.getOptions();
+			Map<String, String> options = JavaCore.getOptions();
 			options.put(JavaCore.COMPILER_COMPLIANCE, resolveCompliance(manifestMap));
 			CompilationUnit unit = null;
 			for (int i = 0, max = allFiles.length; i < max; i++) {
@@ -493,9 +492,7 @@ public class ApiFileGenerationTask extends Task {
 	 *         package names
 	 */
 	boolean isApi(String path) {
-		String pkg = null;
-		for (Iterator iter = this.apiPackages.iterator(); iter.hasNext();) {
-			pkg = (String) iter.next();
+		for (String pkg : apiPackages) {
 			if (path.endsWith(pkg.replace('.', File.separatorChar))) {
 				return true;
 			}
@@ -513,13 +510,13 @@ public class ApiFileGenerationTask extends Task {
 	 * @throws BundleException if parsing the manifest map to get API package
 	 *             names fail for some reason
 	 */
-	private Set/* <String> */collectApiPackageNames(Map manifestmap) throws BundleException {
-		HashSet set = new HashSet();
-		ManifestElement[] packages = ManifestElement.parseHeader(Constants.EXPORT_PACKAGE, (String) manifestmap.get(Constants.EXPORT_PACKAGE));
+	private Set<String> collectApiPackageNames(Map<String, String> manifestmap) throws BundleException {
+		HashSet<String> set = new HashSet<String>();
+		ManifestElement[] packages = ManifestElement.parseHeader(Constants.EXPORT_PACKAGE, manifestmap.get(Constants.EXPORT_PACKAGE));
 		if (packages != null) {
 			for (int i = 0; i < packages.length; i++) {
 				ManifestElement packageName = packages[i];
-				Enumeration directiveKeys = packageName.getDirectiveKeys();
+				Enumeration<String> directiveKeys = packageName.getDirectiveKeys();
 				if (directiveKeys == null) {
 					set.add(packageName.getValue());
 				} else {
@@ -569,9 +566,9 @@ public class ApiFileGenerationTask extends Task {
 	 *         BREE entry in the map or if the BREE entry does not directly map
 	 *         to one of {"1.3", "1.4", "1.5", "1.6", "1.7"}.
 	 */
-	private String resolveCompliance(Map manifestmap) {
+	private String resolveCompliance(Map<String, String> manifestmap) {
 		if (manifestmap != null) {
-			String eename = (String) manifestmap.get(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT);
+			String eename = manifestmap.get(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT);
 			if (eename != null) {
 				if ("J2SE-1.4".equals(eename)) { //$NON-NLS-1$
 					return JavaCore.VERSION_1_4;
