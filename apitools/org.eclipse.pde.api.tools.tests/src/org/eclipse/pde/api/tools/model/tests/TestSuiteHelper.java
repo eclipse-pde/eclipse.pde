@@ -62,7 +62,6 @@ import org.junit.Assert;
  * 
  * @since 1.0.0
  */
-@SuppressWarnings("restriction")
 public class TestSuiteHelper {
 
 	public static final String[] COMPILER_OPTIONS = new String[] { "-1.5", //$NON-NLS-1$

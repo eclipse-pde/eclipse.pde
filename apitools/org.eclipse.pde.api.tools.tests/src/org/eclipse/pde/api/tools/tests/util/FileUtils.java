@@ -41,7 +41,6 @@ import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
  * 
  * @since 1.0.0
  */
-@SuppressWarnings("restriction")
 public class FileUtils {
 	/**
 	 * Maximum of time in ms to wait in deletion operation while running

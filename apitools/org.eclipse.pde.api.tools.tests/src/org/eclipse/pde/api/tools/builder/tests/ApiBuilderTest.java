@@ -39,9 +39,9 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.tests.builder.BuilderTests;
 import org.eclipse.jdt.core.tests.junit.extension.TestCase;
-import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
 import org.eclipse.pde.api.tools.builder.tests.compatibility.CompatibilityTest;
 import org.eclipse.pde.api.tools.builder.tests.leak.LeakTest;
 import org.eclipse.pde.api.tools.builder.tests.tags.TagTest;
@@ -64,7 +64,6 @@ import org.osgi.service.prefs.BackingStoreException;
  * 
  * @since 1.0
  */
-@SuppressWarnings("restriction")
 public abstract class ApiBuilderTest extends BuilderTests {
 	/**
 	 * Debug flag
@@ -420,7 +419,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	 * @return the default compiler compliance to use for the test
 	 */
 	protected String getTestCompliance() {
-		return CompilerOptions.VERSION_1_4;
+		return JavaCore.VERSION_1_4;
 	}
 
 	/**

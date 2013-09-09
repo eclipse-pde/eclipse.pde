@@ -43,7 +43,6 @@ import org.eclipse.pde.internal.core.natures.PDE;
  * 
  * @since 1.0.0
  */
-@SuppressWarnings("restriction")
 public class AbstractApiTest extends TestCase {
 
 	/**

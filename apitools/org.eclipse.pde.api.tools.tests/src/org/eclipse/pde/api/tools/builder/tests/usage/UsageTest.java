@@ -21,8 +21,8 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.tests.junit.extension.TestCase;
-import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
 import org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest;
 import org.eclipse.pde.api.tools.builder.tests.ApiProblem;
 import org.eclipse.pde.api.tools.builder.tests.ApiTestingEnvironment;
@@ -34,7 +34,6 @@ import org.eclipse.pde.api.tools.tests.util.ProjectUtils;
  * 
  * @since 1.0.0
  */
-@SuppressWarnings("restriction")
 public abstract class UsageTest extends ApiBuilderTest {
 
 	private static final String USAGE = "usage"; //$NON-NLS-1$
@@ -85,7 +84,7 @@ public abstract class UsageTest extends ApiBuilderTest {
 		for (int i = 0; i < projectnames.length; i++) {
 			project = getEnv().getJavaProject(projectnames[i]);
 			compliance = getTestCompliance();
-			if (!compliance.equals(project.getOption(CompilerOptions.OPTION_Compliance, true))) {
+			if (!compliance.equals(project.getOption(JavaCore.COMPILER_COMPLIANCE, true))) {
 				getEnv().setProjectCompliance(project, compliance);
 			}
 		}
@@ -240,17 +239,17 @@ public abstract class UsageTest extends ApiBuilderTest {
 		classes.add(UnusedApiProblemFilterTests.class);
 		classes.add(DependentUsageTests.class);
 		classes.add(FragmentUsageTests.class);
-		if(ProjectUtils.isJava5Compatible()) {
+		if (ProjectUtils.isJava5Compatible()) {
 			classes.add(Java5FieldUsageTests.class);
 			classes.add(Java5MethodUsageTests.class);
 			classes.add(Java5ClassUsageTests.class);
 			classes.add(AnnotationUsageTests.class);
 			classes.add(EnumUsageTests.class);
 		}
-		if(ProjectUtils.isJava7Compatible()) {
+		if (ProjectUtils.isJava7Compatible()) {
 			classes.add(Java7MethodUsageTests.class);
 			classes.add(Java7ClassUsageTests.class);
-			
+
 		}
 		return classes.toArray(new Class[classes.size()]);
 	}

@@ -32,7 +32,6 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.tests.builder.TestingEnvironment;
 import org.eclipse.jdt.core.tests.util.AbstractCompilerTest;
-import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
 import org.eclipse.pde.api.tools.internal.builder.ApiAnalysisBuilder;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.IApiMarkerConstants;
@@ -47,7 +46,6 @@ import org.eclipse.pde.internal.core.natures.PDE;
  * 
  * @since 1.0.0
  */
-@SuppressWarnings("restriction")
 public class ApiTestingEnvironment extends TestingEnvironment {
 
 	protected static final IMarker[] NO_MARKERS = new IMarker[0];
@@ -94,19 +92,19 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	public void setProjectCompliance(IJavaProject project, String compliance) {
 		int requiredComplianceFlag = 0;
 		String compilerVersion = null;
-		if (CompilerOptions.VERSION_1_4.equals(compliance)) {
+		if (JavaCore.VERSION_1_4.equals(compliance)) {
 			requiredComplianceFlag = AbstractCompilerTest.F_1_4;
-			compilerVersion = CompilerOptions.VERSION_1_4;
-		} else if (CompilerOptions.VERSION_1_5.equals(compliance)) {
+			compilerVersion = JavaCore.VERSION_1_4;
+		} else if (JavaCore.VERSION_1_5.equals(compliance)) {
 			requiredComplianceFlag = AbstractCompilerTest.F_1_5;
 			compilerVersion = JavaCore.VERSION_1_5;
-		} else if (CompilerOptions.VERSION_1_6.equals(compliance)) {
+		} else if (JavaCore.VERSION_1_6.equals(compliance)) {
 			requiredComplianceFlag = AbstractCompilerTest.F_1_6;
-			compilerVersion = CompilerOptions.VERSION_1_6;
-		} else if (CompilerOptions.VERSION_1_7.equals(compliance)) {
+			compilerVersion = JavaCore.VERSION_1_6;
+		} else if (JavaCore.VERSION_1_7.equals(compliance)) {
 			requiredComplianceFlag = AbstractCompilerTest.F_1_7;
 			compilerVersion = JavaCore.VERSION_1_7;
-		} else if (!CompilerOptions.VERSION_1_4.equals(compliance) && !CompilerOptions.VERSION_1_3.equals(compliance)) {
+		} else if (!JavaCore.VERSION_1_4.equals(compliance) && !JavaCore.VERSION_1_3.equals(compliance)) {
 			throw new UnsupportedOperationException("Test framework doesn't support compliance level: " + compliance); //$NON-NLS-1$
 		}
 		if (requiredComplianceFlag != 0) {
@@ -114,9 +112,9 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 				throw new RuntimeException("This test requires a " + compliance + " JRE"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			HashMap<String, String> options = new HashMap<String, String>();
-			options.put(CompilerOptions.OPTION_Compliance, compilerVersion);
-			options.put(CompilerOptions.OPTION_Source, compilerVersion);
-			options.put(CompilerOptions.OPTION_TargetPlatform, compilerVersion);
+			options.put(JavaCore.COMPILER_COMPLIANCE, compilerVersion);
+			options.put(JavaCore.COMPILER_SOURCE, compilerVersion);
+			options.put(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, compilerVersion);
 			project.setOptions(options);
 		}
 	}

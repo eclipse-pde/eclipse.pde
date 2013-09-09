@@ -45,7 +45,6 @@ import org.osgi.framework.Version;
  * 
  * @since 1.0.0
  */
-@SuppressWarnings("restriction")
 public class ProjectUtils {
 
 	/**

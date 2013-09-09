@@ -19,7 +19,6 @@ import org.eclipse.pde.internal.core.PluginModelDelta;
  * 
  * since 1.0.0
  */
-@SuppressWarnings("restriction")
 public class PluginModelEventWaiter extends AbstractApiEventWaiter implements IPluginModelListener {
 
 	private int fKind = -1;
