@@ -516,32 +516,6 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	}
 
 	/**
-	 * Resolves the target platform
-	 * @param type import type
-	 */
-	private void resolveTargetPlatform(final int type) {
-		IRunnableWithProgress op = new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws InvocationTargetException {
-				models = PluginRegistry.getExternalModels();
-				state = PDECore.getDefault().getModelManager().getState();
-				alternateSource = null;
-				try {
-					buildImportDescriptions(monitor, type);
-				} catch (CoreException e) {
-					throw new InvocationTargetException(e);
-				}
-				monitor.done();
-			}
-		};
-		try {
-			getContainer().run(true, false, op);
-		} catch (InvocationTargetException e) {
-			PDEPlugin.log(e);
-		} catch (InterruptedException e) {
-		}
-	}
-
-	/**
 	 * Resolves the plug-ins at the given the base location. Uses plug-ins directory if present.
 	 * 
 	 * @param location
@@ -571,18 +545,21 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	private void resolveTargetDefinition(final ITargetDefinition target, final int type) {
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
-				monitor.beginTask(PDEUIMessages.PluginImportWizardFirstPage_1, 100);
-				SubProgressMonitor pm = new SubProgressMonitor(monitor, 50);
-				target.resolve(pm);
-				pm.done();
-				if (monitor.isCanceled()) {
+				SubMonitor subMon = SubMonitor.convert(monitor);
+				subMon.beginTask(PDEUIMessages.PluginImportWizardFirstPage_1, 100);
+				if (!target.isResolved()) {
+					target.resolve(subMon.newChild(50));
+				}
+				subMon.setWorkRemaining(50);
+				if (subMon.isCanceled()) {
 					return;
 				}
-				TargetBundle[] bundles = target.getBundles();
+				// We allow importing of bundles that are unchecked in the target definition
+				TargetBundle[] allBundles = target.getAllBundles();
 				Map<SourceLocationKey, TargetBundle> sourceMap = new HashMap<SourceLocationKey, TargetBundle>();
 				List<URL> all = new ArrayList<URL>();
-				for (int i = 0; i < bundles.length; i++) {
-					TargetBundle bundle = bundles[i];
+				for (int i = 0; i < allBundles.length; i++) {
+					TargetBundle bundle = allBundles[i];
 					try {
 						if (bundle.getStatus().isOK()) {
 							all.add(new File(bundle.getBundleInfo().getLocation()).toURL());
@@ -592,12 +569,11 @@ public class PluginImportWizardFirstPage extends WizardPage {
 						}
 					} catch (MalformedURLException e) {
 						setErrorMessage(e.getMessage());
-						monitor.setCanceled(true);
+						subMon.setCanceled(true);
 						return;
 					}
 				}
-				pm = new SubProgressMonitor(monitor, 50);
-				state = new PDEState(all.toArray(new URL[0]), false, false, pm);
+				state = new PDEState(all.toArray(new URL[0]), false, false, subMon.newChild(30));
 				models = state.getTargetModels();
 				List<IPluginModelBase> sourceModels = new ArrayList<IPluginModelBase>();
 				List<TargetBundle> sourceBundles = new ArrayList<TargetBundle>();
@@ -611,13 +587,15 @@ public class PluginImportWizardFirstPage extends WizardPage {
 				}
 				alternateSource = new AlternateSourceLocations(sourceModels.toArray(new IPluginModelBase[sourceModels.size()]), sourceBundles.toArray(new TargetBundle[sourceBundles.size()]));
 				try {
-					buildImportDescriptions(pm, type);
+					buildImportDescriptions(subMon.newChild(20), type);
 				} catch (CoreException e) {
 					throw new InvocationTargetException(e);
 				}
-				pm.done();
-				canceled = monitor.isCanceled();
-				monitor.done();
+				canceled = subMon.isCanceled();
+				subMon.done();
+				if (monitor != null) {
+					monitor.done();
+				}
 			}
 		};
 		try {
@@ -784,12 +762,20 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	}
 
 	/**
-	 * @return the complete set of {@link IPluginModelBase}s for the given drop location
+	 * @return the complete set of {@link IPluginModelBase}s for the given drop location, including disabled bundles
 	 */
 	public IPluginModelBase[] getModels() {
 		switch (getImportOrigin()) {
 			case FROM_ACTIVE_PLATFORM :
-				resolveTargetPlatform(getImportType());
+				ITargetPlatformService service = getTargetPlatformService();
+				if (service != null) {
+					try {
+						ITargetDefinition target = service.getWorkspaceTargetDefinition();
+						resolveTargetDefinition(target, getImportType());
+					} catch (CoreException e) {
+						PDEPlugin.log(e);
+					}
+				}
 				break;
 			case FROM_TARGET_DEFINITION :
 				resolveTargetDefinition(getTargetDefinition(), getImportType());
