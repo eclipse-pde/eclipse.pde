@@ -11,13 +11,15 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.io.*;
+import java.io.File;
 import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.resolver.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.core.util.ManifestUtils;
+import org.eclipse.pde.internal.core.util.UtilMessages;
 import org.osgi.framework.BundleException;
 
 public class MinimalState {
@@ -75,7 +77,7 @@ public class MinimalState {
 		}
 	}
 
-	public BundleDescription addBundle(Map<String, String> manifest, File bundleLocation, long bundleId) {
+	public BundleDescription addBundle(Map<String, String> manifest, File bundleLocation, long bundleId) throws CoreException {
 		try {
 			// OSGi requires a dictionary over any map
 			Hashtable<String, String> dictionaryManifest = new Hashtable<String, String>(manifest);
@@ -88,6 +90,10 @@ public class MinimalState {
 			}
 			return descriptor;
 		} catch (BundleException e) {
+			// A stack trace isn't helpful here, but need to list the plug-in location causing the issue
+			MultiStatus status = new MultiStatus(PDECore.PLUGIN_ID, 0, NLS.bind(UtilMessages.ErrorReadingManifest, bundleLocation.toString()), null);
+			status.add(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, e.getMessage()));
+			throw new CoreException(status);
 		} catch (NumberFormatException e) {
 		} catch (IllegalArgumentException e) {
 		}
@@ -114,23 +120,6 @@ public class MinimalState {
 	}
 
 	protected void addAuxiliaryData(BundleDescription desc, Map<String, String> manifest, boolean hasBundleStructure) {
-	}
-
-	protected void saveState(File dir) {
-		saveState(fState, dir);
-	}
-
-	protected void saveState(State state, File dir) {
-		try {
-			if (!dir.exists())
-				dir.mkdirs();
-			stateObjectFactory.writeState(state, dir);
-		} catch (FileNotFoundException e) {
-			PDECore.log(e);
-		} catch (IOException e) {
-			PDECore.log(e);
-		} finally {
-		}
 	}
 
 	public StateDelta resolveState(boolean incremental) {
@@ -207,62 +196,6 @@ public class MinimalState {
 
 	public long getNextId() {
 		return ++fId;
-	}
-
-	private BundleDescription findActiveBundle(String symbolicName) {
-		BundleDescription[] bundles = fState.getBundles(symbolicName);
-		for (int i = 0; i < bundles.length; i++) {
-			if (bundles[i].isResolved())
-				return bundles[i];
-		}
-		return null;
-	}
-
-	protected void logResolutionErrors() {
-		MultiStatus errors = new MultiStatus(PDECore.PLUGIN_ID, 1, "Problems occurred during the resolution of the target platform", //$NON-NLS-1$
-				null);
-
-		StateHelper helper = Platform.getPlatformAdmin().getStateHelper();
-		BundleDescription[] all = fState.getBundles();
-		for (int i = 0; i < all.length; i++) {
-			if (!all[i].isResolved()) {
-				VersionConstraint[] unsatisfiedConstraints = helper.getUnsatisfiedConstraints(all[i]);
-				if (unsatisfiedConstraints.length == 0) {
-					if (PDECore.DEBUG_MODEL) {
-						BundleDescription activeBundle = findActiveBundle(all[i].getSymbolicName());
-						String message = "Plug-in located at \"" + all[i].getLocation() + "\" was disabled because plug-in located at \"" + activeBundle.getLocation() + "\" was selected."; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-						System.out.print(message);
-					}
-				} else {
-					for (int j = 0; j < unsatisfiedConstraints.length; j++) {
-						String message = getResolutionFailureMessage(unsatisfiedConstraints[j]);
-						if (message != null)
-							errors.add(new Status(IStatus.WARNING, all[i].getSymbolicName(), IStatus.WARNING, message, null));
-					}
-				}
-			}
-		}
-		if (errors.getChildren().length > 0)
-			PDECore.log(errors);
-	}
-
-	private String getResolutionFailureMessage(VersionConstraint unsatisfied) {
-		if (unsatisfied.isResolved())
-			throw new IllegalArgumentException();
-		if (unsatisfied instanceof ImportPackageSpecification)
-			return "Missing imported package: " + toString(unsatisfied); //$NON-NLS-1$
-		if (unsatisfied instanceof BundleSpecification && !((BundleSpecification) unsatisfied).isOptional())
-			return "Missing required plug-in: " + toString(unsatisfied); //$NON-NLS-1$
-		if (unsatisfied instanceof HostSpecification)
-			return "Missing Fragment Host: " + toString(unsatisfied); //$NON-NLS-1$
-		return null;
-	}
-
-	private String toString(VersionConstraint constraint) {
-		VersionRange versionRange = constraint.getVersionRange();
-		if (versionRange == null || versionRange.getMinimum() != null)
-			return constraint.getName();
-		return constraint.getName() + '_' + versionRange;
 	}
 
 	public String getSystemBundle() {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.builders;
 
+import java.io.File;
 import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -52,6 +53,25 @@ public class BundleErrorReporter extends JarManifestErrorReporter {
 		// be paranoid.  something could have gone wrong reading the file etc.
 		if (fModel == null || !validateBundleSymbolicName())
 			return;
+
+		BundleDescription desc = fModel.getBundleDescription();
+		if (desc == null && fModel.getInstallLocation() != null) {
+			// There was a problem creating the OSGi bundle description, possibly a bad header
+			try {
+				StateObjectFactory stateObjectFactory = Platform.getPlatformAdmin().getFactory();
+				Map<String, String> manifest = ManifestUtils.loadManifest(new File(fModel.getInstallLocation()));
+				TargetWeaver.weaveManifest(manifest);
+				Hashtable<String, String> dictionaryManifest = new Hashtable<String, String>(manifest);
+				stateObjectFactory.createBundleDescription(null, dictionaryManifest, null, 1);
+			} catch (BundleException e) {
+				if (e.getType() == BundleException.MANIFEST_ERROR) {
+					report(e.getMessage(), 1, CompilerFlags.ERROR, PDEMarkerFactory.CAT_FATAL);
+					return;
+				}
+			} catch (CoreException e) {
+				// Ignore problems loading the manifest for now as the editor shouldn't have opened
+			}
+		}
 
 		validateFragmentHost();
 		validateBundleVersion();
