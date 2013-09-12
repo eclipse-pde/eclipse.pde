@@ -2,23 +2,19 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.pde.ui" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appinfo>
+      <appInfo>
          <meta.schema plugin="org.eclipse.pde.ui" id="newExtension" name="Extension Wizards"/>
-      </appinfo>
+      </appInfo>
       <documentation>
-         This extension point should be used to contribute wizards
-that will be used to create and edit new extensions in 
-PDE plug-in manifest editor. Wizards can create one
-or more extensions at the same time, as well
-as the code needed to implement those extensions. If a contributed wizard is specifically created for a particular extension point, it is advisable to also register a matching editor wizard. This wizard will be used to edit the extension point in the manifest editor after it has been created in the manifest file.
+         This extension point should be used to contribute wizards that will be used to create and edit new extensions in PDE plug-in manifest editor. Wizards can create one or more extensions at the same time, as well as the code needed to implement those extensions. If a contributed wizard is specifically created for a particular extension point, it is advisable to also register a matching editor wizard. This wizard will be used to edit the extension point in the manifest editor after it has been created in the manifest file.
       </documentation>
    </annotation>
 
    <element name="extension">
       <annotation>
-         <appinfo>
+         <appInfo>
             <meta.element />
-         </appinfo>
+         </appInfo>
       </annotation>
       <complexType>
          <choice minOccurs="0" maxOccurs="unbounded">
@@ -52,9 +48,9 @@ as the code needed to implement those extensions. If a contributed wizard is spe
 
    <element name="wizard">
       <annotation>
-         <appinfo>
+         <appInfo>
             <meta.element labelAttribute="name" icon="icon"/>
-         </appinfo>
+         </appInfo>
          <documentation>
             a wizard that can be used to create a new extension from within the plug-in manifest editor
          </documentation>
@@ -68,17 +64,19 @@ as the code needed to implement those extensions. If a contributed wizard is spe
                <documentation>
                   a unique name that will be used to identify this wizard.
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  a translatable name that will be used in UI representation
-of this wizard.
+                  a translatable name that will be used in UI representation of this wizard.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute translatable="true"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="icon" type="string">
@@ -87,9 +85,9 @@ of this wizard.
                   a relative path of an icon that will be used to visually 
 represent the wizard.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="resource"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="class" type="string">
@@ -99,9 +97,9 @@ represent the wizard.
 &lt;samp&gt;org.eclipse.pde.ui.IExtensionWizard&lt;/samp&gt; 
 interface. This attribute is mutually exclusive with the &lt;code&gt;template&lt;/code&gt; attribute.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.pde.ui.IExtensionWizard"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="availableAsShortcut" type="boolean">
@@ -120,9 +118,9 @@ previously defined category. If category is hierarchical,
 full path to the parent category should be specified
 using &apos;/&apos; as a delimiter.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="identifier" basedOn="org.eclipse.pde.ui.newExtension/category/@id"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="template" type="string">
@@ -130,9 +128,9 @@ using &apos;/&apos; as a delimiter.
                <documentation>
                   an identifier of a template declared elsewhere using the extension point &lt;code&gt;org.eclipse.pde.ui.templates&lt;/code&gt;. If defined, the template with the specified id will be located and the extension wizard will be created using the template. This attribute is mutually exclusive with the &lt;code&gt;class&lt;/code&gt; attribute.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="identifier" basedOn="org.eclipse.pde.ui.templates/template/@id"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -140,9 +138,9 @@ using &apos;/&apos; as a delimiter.
 
    <element name="editorWizard">
       <annotation>
-         <appinfo>
+         <appInfo>
             <meta.element labelAttribute="name" icon="icon"/>
-         </appinfo>
+         </appInfo>
          <documentation>
             a wizard that can be used to edit an existing extension from within the plug-in manifest editor
          </documentation>
@@ -156,6 +154,9 @@ using &apos;/&apos; as a delimiter.
                <documentation>
                   a unique name that will be used to identify this wizard.
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="name" type="string" use="required">
@@ -164,9 +165,9 @@ using &apos;/&apos; as a delimiter.
                   a translatable name that will be used in UI representation
 of this wizard.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute translatable="true"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="icon" type="string">
@@ -175,9 +176,9 @@ of this wizard.
                   a relative path of an icon that will be used to visually 
 represent the wizard.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="resource"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="class" type="string" use="required">
@@ -187,9 +188,9 @@ represent the wizard.
 &lt;samp&gt;org.eclipse.pde.ui.IExtensionEditorWizard&lt;/samp&gt; 
 interface.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.pde.ui.IExtensionEditorWizard"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="point" type="string" use="required">
@@ -197,6 +198,9 @@ interface.
                <documentation>
                   a fully qualified identifier of the extension point that this wizard is capable of editing
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -204,9 +208,9 @@ interface.
 
    <element name="category">
       <annotation>
-         <appinfo>
+         <appInfo>
             <meta.element labelAttribute="name"/>
-         </appinfo>
+         </appInfo>
       </annotation>
       <complexType>
          <attribute name="id" type="string" use="required">
@@ -214,6 +218,9 @@ interface.
                <documentation>
                   a unique name that will be used to reference this category
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="name" type="string" use="required">
@@ -222,9 +229,9 @@ interface.
                   a translatable name that will be used for UI presentation
 of this category
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute translatable="true"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="parentCategory" type="string">
@@ -232,9 +239,9 @@ of this category
                <documentation>
                   an optional attribute that can be used to create category hierarchy
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="identifier" basedOn="org.eclipse.pde.ui.newExtension/category/@id"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -242,19 +249,56 @@ of this category
 
    <element name="description" type="string">
       <annotation>
-         <appinfo>
+         <appInfo>
             <meta.element translatable="true"/>
-         </appinfo>
+         </appInfo>
          <documentation>
             A short description of this wizard.
          </documentation>
       </annotation>
    </element>
 
+
    <annotation>
-      <appinfo>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         PDE provides a generic wizard that creates extension
+points based on the extension point schema information. In addition, all templates registered using &lt;code&gt;org.eclipse.pde.ui.templates&lt;/code&gt; extension point in PDE UI are also hooked as individual extension wizards.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         Copyright (c) 2004 IBM Corporation and others.
+&lt;br&gt;
+All rights reserved. This program and the accompanying materials are made 
+available under the terms of the Eclipse Public License v1.0 which 
+accompanies this distribution, and is available at 
+&lt;a href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         This extension point requires that a class that
+implements  
+&lt;samp&gt;org.eclipse.pde.ui.IExtensionWizard&lt;/samp&gt;
+interface.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
          <meta.section type="examples"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          The following is an example of the extension:
 
@@ -281,43 +325,6 @@ of this category
 &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appinfo>
-         <meta.section type="apiInfo"/>
-      </appinfo>
-      <documentation>
-         This extension point requires that a class that
-implements  
-&lt;samp&gt;org.eclipse.pde.ui.IExtensionWizard&lt;/samp&gt;
-interface.
-      </documentation>
-   </annotation>
-
-
-   <annotation>
-      <appinfo>
-         <meta.section type="implementation"/>
-      </appinfo>
-      <documentation>
-         PDE provides a generic wizard that creates extension
-points based on the extension point schema information. In addition, all templates registered using &lt;code&gt;org.eclipse.pde.ui.templates&lt;/code&gt; extension point in PDE UI are also hooked as individual extension wizards.
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appinfo>
-         <meta.section type="copyright"/>
-      </appinfo>
-      <documentation>
-         Copyright (c) 2004 IBM Corporation and others.
-&lt;br&gt;
-All rights reserved. This program and the accompanying materials are made 
-available under the terms of the Eclipse Public License v1.0 which 
-accompanies this distribution, and is available at 
-&lt;a href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;.
       </documentation>
    </annotation>
 

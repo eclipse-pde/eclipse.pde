@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.pde.ui">
+<schema targetNamespace="org.eclipse.pde.ui" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
          <meta.schema plugin="org.eclipse.pde.ui" id="templates" name="Extension Templates"/>
@@ -17,6 +17,11 @@
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="template" minOccurs="1" maxOccurs="unbounded"/>
@@ -60,6 +65,9 @@
                <documentation>
                   a unique name that will be used to identify this template.
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="name" type="string" use="required">
@@ -99,10 +107,22 @@ represent the template.
                <documentation>
                   the identifier of the extension point that this template will contribute into.
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         Each template must provide a class that implements &lt;code&gt;org.eclipse.pde.ui.templates.ITemplateSection&lt;/code&gt; interface. However, abstract classes that implement the interface and can be extended are available.
+      </documentation>
+   </annotation>
 
    <annotation>
       <appInfo>
@@ -131,15 +151,6 @@ represent the template.
       &lt;/template&gt;
    &lt;/extension&gt;
 &lt;/pre&gt;
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="apiInfo"/>
-      </appInfo>
-      <documentation>
-         Each template must provide a class that implements &lt;code&gt;org.eclipse.pde.ui.templates.ITemplateSection&lt;/code&gt; interface. However, abstract classes that implement the interface and can be extended are available.
       </documentation>
    </annotation>
 

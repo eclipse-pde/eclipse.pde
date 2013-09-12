@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.pde.core">
+<schema targetNamespace="org.eclipse.pde.core" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
          <meta.schema plugin="org.eclipse.pde.core" id="source" name="Source Locations"/>
@@ -15,6 +15,11 @@ In addition, it should contain any file or directory specified in the build.prop
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="location" minOccurs="1" maxOccurs="unbounded"/>
@@ -53,10 +58,22 @@ In addition, it should contain any file or directory specified in the build.prop
                <documentation>
                   the relative path of the directory in the contributing plug-in where source content is stored. The folder must contain one or more directories in the form {id}_{version} where &lt;code&gt;id&lt;/code&gt; is a matching plug-in or fragment identifier and &lt;code&gt;version&lt;/code&gt; is the matching plugin/fragment version. These directories in turn should contain source archives and any other file or folder specified using &lt;code&gt;src.includes&lt;/code&gt; variable in build.properties file of the corresponding plug-in/fragment.
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="resource"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         No Java code is required for this extension point.
+      </documentation>
+   </annotation>
 
    <annotation>
       <appInfo>
@@ -80,15 +97,6 @@ In addition, it should contain any file or directory specified in the build.prop
 &lt;/pre&gt;
 
 In the example above, the source location &lt;code&gt;src&lt;/code&gt; in the contributing plug-in has been registered.
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="apiInfo"/>
-      </appInfo>
-      <documentation>
-         No Java code is requied for this extension point.
       </documentation>
    </annotation>
 

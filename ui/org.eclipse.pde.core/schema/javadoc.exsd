@@ -2,9 +2,9 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.pde.core" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appinfo>
+      <appInfo>
          <meta.schema plugin="org.eclipse.pde.core" id="javadoc" name="Javadoc Attachments"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          This extension point associates plug-ins with the javadoc location of the code they contain.  PDE uses these mappings to automatically attach javadoc to plug-in libraries when it computes a plug-in&apos;s classpath.
       </documentation>
@@ -12,9 +12,9 @@
 
    <element name="extension">
       <annotation>
-         <appinfo>
+         <appInfo>
             <meta.element />
-         </appinfo>
+         </appInfo>
       </annotation>
       <complexType>
          <sequence>
@@ -39,9 +39,9 @@
                <documentation>
                   
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute translatable="true"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -57,6 +57,9 @@
                <documentation>
                   The &lt;code&gt;path&lt;/code&gt; is a URL or a path that is relative to the plug-in declaring the extension.
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="resource"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="archive" type="boolean" use="default" value="false">
@@ -82,18 +85,27 @@
    </element>
 
    <annotation>
-      <appinfo>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         No Java code is required for this extension point.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
          <meta.section type="since"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          3.2
       </documentation>
    </annotation>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="examples"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          The following is an example of the &lt;code&gt;javadoc&lt;/code&gt; extension:
 &lt;pre&gt;
@@ -122,27 +134,18 @@ The javadoc for plug-in &lt;code&gt;com.example.jkl&lt;/code&gt; is located in d
    </annotation>
 
    <annotation>
-      <appinfo>
-         <meta.section type="apiInfo"/>
-      </appinfo>
-      <documentation>
-         No Java code is requied for this extension point.
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="implementation"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          Eclipse SDK comes with ISV documentation plug-ins that use this extension point.
       </documentation>
    </annotation>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="copyright"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          Copyright (c) 2005 IBM Corporation and others.
 &lt;br&gt;

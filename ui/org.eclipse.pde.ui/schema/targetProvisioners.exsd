@@ -17,7 +17,7 @@ This extension point is deprecated.  Please use the &lt;code&gt;org.eclipse.pde.
    <element name="extension">
       <annotation>
          <appInfo>
-            <meta.element />
+            <meta.element deprecated="true" />
          </appInfo>
       </annotation>
       <complexType>
@@ -66,6 +66,9 @@ This extension point is deprecated.  Please use the &lt;code&gt;org.eclipse.pde.
                <documentation>
                   a unique identifier of the provisioner
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="name" type="string" use="required">
@@ -115,15 +118,6 @@ represent the provisioner.
 
    <annotation>
       <appInfo>
-         <meta.section type="apiInfo"/>
-      </appInfo>
-      <documentation>
-         Each template must provide a class that implements &lt;code&gt;org.eclipse.pde.ui.IProvisionerWizard&lt;/code&gt; interface.
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
          <meta.section type="since"/>
       </appInfo>
       <documentation>
@@ -167,6 +161,15 @@ All rights reserved. This program and the accompanying materials are made
 available under the terms of the Eclipse Public License v1.0 which 
 accompanies this distribution, and is available at 
 &lt;a href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         Each template must provide a class that implements &lt;code&gt;org.eclipse.pde.ui.IProvisionerWizard&lt;/code&gt; interface.
       </documentation>
    </annotation>
 

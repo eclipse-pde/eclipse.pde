@@ -59,6 +59,9 @@ Target definition files should be edited using the target definition editor prov
                <documentation>
                   a unique identifier for the target
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="name" type="string" use="required">
@@ -97,6 +100,15 @@ Target definition files should be edited using the target definition editor prov
 
    <annotation>
       <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         No Java code is required for this extension point.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
          <meta.section type="since"/>
       </appInfo>
       <documentation>
@@ -122,15 +134,6 @@ Target definition files should be edited using the target definition editor prov
 In the example above, the name and id of the target are declared in the plugin.xml, but its content is stored in a &lt;code&gt;targets/rcp.target&lt;/code&gt; located in the contributing plug-in.
 &lt;br&gt;
 The .target file must be created via &lt;b&gt;File &gt; New &gt; Other... &gt; Plug-in Development &gt; Target Definition&lt;/b&gt; and should be edited using the PDE target definition editor.  The file format is not API and subject to change between releases.
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="apiInfo"/>
-      </appInfo>
-      <documentation>
-         No Java code is requied for this extension point.
       </documentation>
    </annotation>
 

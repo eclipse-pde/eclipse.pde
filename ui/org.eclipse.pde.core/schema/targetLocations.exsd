@@ -56,7 +56,7 @@
          <attribute name="locationFactory" type="string">
             <annotation>
                <documentation>
-                  Factory implementing ITargetLocationFactory.  Used to create new instances of this target location.
+                  Factory implementing &lt;code&gt;ITargetLocationFactory&lt;/code&gt;.  Used to create new instances of this target location.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn=":org.eclipse.pde.core.target.ITargetLocationFactory"/>

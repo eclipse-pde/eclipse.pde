@@ -56,6 +56,9 @@ This extension point is used to register a launching shortcut in a PDE editor. L
                <documentation>
                   the id of the corresponding &lt;code&gt;org.eclipse.debug.ui.launchShortcuts&lt;/code&gt; extension which should be launched when the link is clicked.
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.debug.ui.launchShortcuts/shortcut/@id"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="label" type="string" use="required">
@@ -104,6 +107,20 @@ This extension point is used to register a launching shortcut in a PDE editor. L
 
    <annotation>
       <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         &lt;p&gt;
+The value of the attribute &lt;code&gt;id&lt;/code&gt; must be the id of a defined &lt;code&gt;org.eclipse.debug.ui.launchShortcuts&lt;/code&gt; extension.  The class specified in the matching &lt;code&gt;org.eclipse.debug.ui.launchShortcuts&lt;/code&gt; extension will be instantiated and its &lt;code&gt;launch(IEditorPart, String)&lt;/code&gt; will be called to launch.
+&lt;/p&gt;
+&lt;p&gt;
+The value of the attribute &lt;code&gt;mode&lt;/code&gt; must &lt;code&gt;run&lt;/code&gt;, &lt;code&gt;debug&lt;/code&gt;, or &lt;code&gt;profile&lt;/code&gt;.
+&lt;/p&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
          <meta.section type="since"/>
       </appInfo>
       <documentation>
@@ -128,20 +145,6 @@ The following is an example of the extension point:
             osgi=&quot;false&quot;/&gt;
    &lt;/extension&gt;
 &lt;/pre&gt;
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="apiInfo"/>
-      </appInfo>
-      <documentation>
-         &lt;p&gt;
-The value of the attribute &lt;code&gt;id&lt;/code&gt; must be the id of a defined &lt;code&gt;org.eclipse.debug.ui.launchShortcuts&lt;/code&gt; extension.  The class specified in the matching &lt;code&gt;org.eclipse.debug.ui.launchShortcuts&lt;/code&gt; extension will be instantiated and its &lt;code&gt;launch(IEditorPart, String)&lt;/code&gt; will be called to launch.
-&lt;/p&gt;
-&lt;p&gt;
-The value of the attribute &lt;code&gt;mode&lt;/code&gt; must &lt;code&gt;run&lt;/code&gt;, &lt;code&gt;debug&lt;/code&gt;, or &lt;code&gt;profile&lt;/code&gt;.
-&lt;/p&gt;
       </documentation>
    </annotation>
 
