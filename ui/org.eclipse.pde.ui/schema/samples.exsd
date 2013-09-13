@@ -155,9 +155,6 @@ Each sample has a name, one or more project elements and a final perspective. Th
                <documentation>
                   a project-relative path of the resource to select and reveal in the target view after creation.
                </documentation>
-               <appInfo>
-                  <meta.attribute kind="resource"/>
-               </appInfo>
             </annotation>
          </attribute>
       </complexType>

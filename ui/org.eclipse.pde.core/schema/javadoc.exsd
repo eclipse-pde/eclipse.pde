@@ -57,9 +57,6 @@
                <documentation>
                   The &lt;code&gt;path&lt;/code&gt; is a URL or a path that is relative to the plug-in declaring the extension.
                </documentation>
-               <appInfo>
-                  <meta.attribute kind="resource"/>
-               </appInfo>
             </annotation>
          </attribute>
          <attribute name="archive" type="boolean" use="default" value="false">
