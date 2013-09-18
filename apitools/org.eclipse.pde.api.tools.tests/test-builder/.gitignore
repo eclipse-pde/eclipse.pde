@@ -1,0 +1,7 @@
+/baseline/*/bin/
+/bundleversions/*/*/*/bin/
+/leakprojects/*/bin/
+/mergesplit/*/*/*/bin/
+/tagprojects/*/bin/
+/usageprojectjava7/bin/
+/usageprojects/*/bin/
