@@ -43,6 +43,7 @@
 
   <modules>
     <module>apitools/org.eclipse.pde.api.tools</module>
+    <module>apitools/org.eclipse.pde.api.tools.annotations</module>
     <module>apitools/org.eclipse.pde.api.tools.ee.cdcfoundation10</module>
     <module>apitools/org.eclipse.pde.api.tools.ee.cdcfoundation11</module>
     <module>apitools/org.eclipse.pde.api.tools.ee.feature</module>
