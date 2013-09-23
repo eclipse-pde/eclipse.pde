@@ -23,6 +23,7 @@ public class MarkerMessages extends NLS {
 	public static String DefaultApiProfileResolution_0;
 	public static String DefaultApiProfileResolution_1;
 	public static String DefaultApiProfileResolution_2;
+	public static String DuplicateAnnotationResolution_remove_duplicate_annotation;
 	public static String DuplicateTagResolution_remove_dupe_tag_resolution_label;
 	public static String FilterProblemResolution_0;
 	public static String FilterProblemResolution_compatible;
@@ -47,6 +48,7 @@ public class MarkerMessages extends NLS {
 	public static String RemoveFilterProblemResolution_remove_unused_filter;
 	public static String RemoveFilterProblemResolution_remove_unused_filters;
 	public static String RemoveFilterProblemResolution_removes_selected_problem_filter;
+	public static String RemoveUnsupportedAnnotationOperation_remove_unsupported_annotations;
 	public static String RemoveUnsupportedTagOperation_removeing_unsupported_tag;
 	
 	public static String UpdateProjectSettingsResolution_0;
@@ -65,6 +67,8 @@ public class MarkerMessages extends NLS {
 	public static String SinceTagResolution_invalid1;
 	public static String SinceTagResolution_invalid2;
 
+	public static String UnsupportedAnnotationResolution_remove_unsupported_annotation;
+	public static String UnsupportedAnnotationResolution_remove_unsupported_named_annotation;
 	public static String UnsupportedTagResolution_remove_unsupported_tag;
 	public static String UnsupportedTagResolution_remove_unsupported_tags;
 	public static String UpdateSinceTagOperation_title;

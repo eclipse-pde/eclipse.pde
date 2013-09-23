@@ -135,7 +135,7 @@ public abstract class TagTest extends ApiBuilderTest {
 	protected void setBuilderOptions() {
 		// only care about unsupported tags
 		enableUnsupportedTagOptions(true);
-
+		enableUnsupportedAnnotationOptions(false);
 		// disable the rest
 		enableBaselineOptions(false);
 		enableCompatibilityOptions(false);

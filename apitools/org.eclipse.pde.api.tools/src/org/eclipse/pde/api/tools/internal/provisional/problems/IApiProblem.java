@@ -299,6 +299,24 @@ public interface IApiProblem {
 	 */
 	public static final int MISSING_EE_DESCRIPTIONS = 11;
 	/**
+	 * Constant representing the value of a duplicate annotation in use <br>
+	 * <br>
+	 * Value is: <code>12</code>
+	 * 
+	 * @see #getKind()
+	 * @see #CATEGORY_USAGE
+	 * @since 1.0.600
+	 */
+	public static final int DUPLICATE_ANNOTATION_USE = 12;
+	/**
+	 * COnstant representing the value of an unsupported annotation in use <br>
+	 * <br>
+	 * Value is: <code>13</code>
+	 * 
+	 * @since 1.0.600
+	 */
+	public static final int UNSUPPORTED_ANNOTATION_USE = 13;
+	/**
 	 * Flags to indicate a leak from extending a non-API type. <br>
 	 * Value is: <code>1</code>
 	 * 
@@ -415,8 +433,8 @@ public interface IApiProblem {
 	 */
 	public static final int INDIRECT_LOCAL_REFERENCE = 13;
 	/**
-	 * Flags to indicate a reference to an annotation
-	 * <br><br>
+	 * Flags to indicate a reference to an annotation <br>
+	 * <br>
 	 * Values is: <code>14</code>
 	 * 
 	 * @see #getFlags()

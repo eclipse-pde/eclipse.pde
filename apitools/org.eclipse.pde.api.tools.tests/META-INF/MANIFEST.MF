@@ -28,6 +28,7 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.eclipse.pde.api.tools.anttasks.tests,
  org.eclipse.pde.api.tools.apiusescan.tests,
  org.eclipse.pde.api.tools.builder.tests,
+ org.eclipse.pde.api.tools.builder.tests.annotations,
  org.eclipse.pde.api.tools.builder.tests.compatibility,
  org.eclipse.pde.api.tools.builder.tests.leak,
  org.eclipse.pde.api.tools.builder.tests.performance,

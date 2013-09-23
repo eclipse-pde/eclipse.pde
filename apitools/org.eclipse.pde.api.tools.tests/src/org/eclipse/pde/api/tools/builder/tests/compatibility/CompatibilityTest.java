@@ -67,6 +67,7 @@ public abstract class CompatibilityTest extends ApiBuilderTest {
 	@Override
 	protected void setBuilderOptions() {
 		enableUnsupportedTagOptions(false);
+		enableUnsupportedAnnotationOptions(false);
 		enableBaselineOptions(false);
 		enableCompatibilityOptions(true);
 		enableLeakOptions(false);

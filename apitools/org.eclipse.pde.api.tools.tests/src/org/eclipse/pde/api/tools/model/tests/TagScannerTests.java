@@ -337,6 +337,34 @@ public class TagScannerTests extends TestCase {
 	}
 
 	/**
+	 * Tests that a source file with one type which has annotations and contains
+	 * more than one inner type with annotations is scanned correctly. Scans the
+	 * file <code>TestClass8</code>
+	 * 
+	 * @since 1.0.400
+	 */
+	public void testMultiInnerTypeAnnotations() {
+		IApiDescription manifest = newDescription();
+		doScan("a/b/c/TestClass8.java", manifest); //$NON-NLS-1$
+		IApiAnnotations description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestClass8")); //$NON-NLS-1$
+		assertNotNull("the description for TestClass8 should exist", description); //$NON-NLS-1$
+		assertTrue("There should be noreference restrictions on TestClass8", description.getRestrictions() == RestrictionModifiers.NO_REFERENCE); //$NON-NLS-1$
+		assertTrue("TestClass8 should have API visibility", description.getVisibility() == VisibilityModifiers.API); //$NON-NLS-1$
+		description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestClass8$InnerTestClass8a")); //$NON-NLS-1$
+		assertNotNull("the description for TestClass8$InnerTestClass8a should exist", description); //$NON-NLS-1$
+		assertTrue("There should be no subclass on TestClass8$InnerTestClass8a", description.getRestrictions() == RestrictionModifiers.NO_EXTEND); //$NON-NLS-1$
+		assertTrue("TestClass8$InnerTestClass6a should have API visibility", description.getVisibility() == VisibilityModifiers.API); //$NON-NLS-1$
+		description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestClass8$InnerTestClass8b")); //$NON-NLS-1$
+		assertNotNull("the description for TestClass8$InnerTestClass8b should exist", description); //$NON-NLS-1$
+		assertTrue("There should be no instantiate on TestClass8$InnerTestClass8b", description.getRestrictions() == RestrictionModifiers.NO_INSTANTIATE); //$NON-NLS-1$
+		assertTrue("TestClass6$InnerTestClass8b should have API visibility", description.getVisibility() == VisibilityModifiers.API); //$NON-NLS-1$
+		description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestClass8$InnerTestClass8c")); //$NON-NLS-1$
+		assertNotNull("the description for TestClass8$InnerTestClass8c should exist", description); //$NON-NLS-1$
+		assertTrue("There should be no restrictions on TestClass8$InnerTestClass8c", description.getRestrictions() == RestrictionModifiers.NO_RESTRICTIONS); //$NON-NLS-1$
+		assertTrue("TestClass8$InnerTestClass8c should have API visibility", description.getVisibility() == VisibilityModifiers.API); //$NON-NLS-1$
+	}
+
+	/**
 	 * Tests that a source file with more than one type which has javadoc tags
 	 * and contains more than one inner type with tags is scanned correctly.
 	 * Scans the file <code>TestClass7</code>
@@ -450,6 +478,32 @@ public class TagScannerTests extends TestCase {
 	}
 
 	/**
+	 * Tests that a source file with one interface declaration and multi nested
+	 * interfaces are scanned correctly. Scans the file
+	 * <code>TestInterface5</code>
+	 * 
+	 * @since 1.0.400
+	 */
+	public void testMultiInnerInterfaceAnnotations() {
+		IApiDescription manifest = newDescription();
+		doScan("a/b/c/TestInterface5.java", manifest); //$NON-NLS-1$
+		IApiAnnotations description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestInterface5")); //$NON-NLS-1$
+		assertNotNull("the description for TestInterface5 should exist", description); //$NON-NLS-1$
+		assertTrue("There should be noextend restrictions on TestInterface5", description.getRestrictions() == RestrictionModifiers.NO_EXTEND); //$NON-NLS-1$
+		assertTrue("TestInterface5 should have API visibility", description.getVisibility() == VisibilityModifiers.API); //$NON-NLS-1$
+		description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestInterface5$Inner1")); //$NON-NLS-1$
+		assertNotNull("the description for TestInterface5$Inner1 should exist", description); //$NON-NLS-1$
+		assertTrue("There should be no implement on TestInterface5$Inner1", description.getRestrictions() == RestrictionModifiers.NO_IMPLEMENT); //$NON-NLS-1$
+		assertTrue("TestInterface5$Inner1 should have API visibility", description.getVisibility() == VisibilityModifiers.API); //$NON-NLS-1$
+		description = manifest.resolveAnnotations(Factory.typeDescriptor("a.b.c.TestInterface5$Inner2")); //$NON-NLS-1$
+
+		// Bug 402393 - The description returned is for the parent element
+		// and is expected because the root type has a restricted sub-type
+		assertNotNull("the description for TestInterface5$Inner2 should exist", description); //$NON-NLS-1$
+		assertTrue("The root type should be unrestricted", description.getRestrictions() == RestrictionModifiers.NO_RESTRICTIONS); //$NON-NLS-1$
+	}
+
+	/**
 	 * Tests that source tags are added/collected properly for fields in a base
 	 * public class. Scans the file <code>TestField1</code>
 	 */
@@ -474,6 +528,21 @@ public class TagScannerTests extends TestCase {
 		assertNotNull("the description for field 'field1' in TestField7 should exist", description); //$NON-NLS-1$
 		assertEquals("there shouldbe API visibility on field 'field1'", VisibilityModifiers.API, description.getVisibility()); //$NON-NLS-1$
 		assertEquals("There should be no restrictions on field 'field1'", RestrictionModifiers.NO_RESTRICTIONS, description.getRestrictions()); //$NON-NLS-1$
+	}
+
+	/**
+	 * Tests that the annotations are added/collected properly for fields. Scans
+	 * the file <code>TestField10</code>
+	 * 
+	 * @since 1.0.400
+	 */
+	public void testFieldNoReference() {
+		IApiDescription manifest = newDescription();
+		doScan("a/b/c/TestField10.java", manifest); //$NON-NLS-1$
+		IApiAnnotations description = manifest.resolveAnnotations(Factory.fieldDescriptor("a.b.c.TestField10", "field1")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertNotNull("the description for field 'field1' in TestField10 should exist", description); //$NON-NLS-1$
+		assertEquals("there shouldbe API visibility on field 'field1'", VisibilityModifiers.API, description.getVisibility()); //$NON-NLS-1$
+		assertEquals("There should be noreference restrictions on field 'field1'", RestrictionModifiers.NO_REFERENCE, description.getRestrictions()); //$NON-NLS-1$
 	}
 
 	/**
@@ -586,6 +655,27 @@ public class TagScannerTests extends TestCase {
 		assertTrue("There should be API visibility for method 'void two()'", description.getVisibility() == VisibilityModifiers.API); //$NON-NLS-1$
 		assertTrue("There should be a no override restriction on method 'void two()'", description.getRestrictions() == RestrictionModifiers.NO_OVERRIDE); //$NON-NLS-1$
 		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod1", "three", "()V")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		assertTrue("There should exist a description for method 'void three()'", description != null); //$NON-NLS-1$
+		assertTrue("There should be API visibility for method 'void three()'", description.getVisibility() == VisibilityModifiers.API); //$NON-NLS-1$
+		assertTrue("There should be a no reference restriction on method 'void three()'", description.getRestrictions() == RestrictionModifiers.NO_REFERENCE); //$NON-NLS-1$
+	}
+
+	/**
+	 * Tests that annotations are added/collected properly for methods in a base
+	 * public class. Scans the file <code>TestMethod22</code>
+	 */
+	public void testMethodBaseClassAnnotations() {
+		IApiDescription manifest = newDescription();
+		doScan("a/b/c/TestMethod22.java", manifest); //$NON-NLS-1$
+		IApiAnnotations description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod22", "one", "()V")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		assertTrue("There should exist a description for method 'void one()'", description != null); //$NON-NLS-1$
+		assertTrue("There should be API visibility for method 'void one()'", description.getVisibility() == VisibilityModifiers.API); //$NON-NLS-1$
+		assertTrue("There should be a no reference restriction on method 'void one()'", description.getRestrictions() == RestrictionModifiers.NO_REFERENCE); //$NON-NLS-1$
+		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod22", "two", "()V")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		assertTrue("There should exist a description for method 'void two()'", description != null); //$NON-NLS-1$
+		assertTrue("There should be API visibility for method 'void two()'", description.getVisibility() == VisibilityModifiers.API); //$NON-NLS-1$
+		assertTrue("There should be a no override restriction on method 'void two()'", description.getRestrictions() == RestrictionModifiers.NO_OVERRIDE); //$NON-NLS-1$
+		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestMethod22", "three", "()V")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		assertTrue("There should exist a description for method 'void three()'", description != null); //$NON-NLS-1$
 		assertTrue("There should be API visibility for method 'void three()'", description.getVisibility() == VisibilityModifiers.API); //$NON-NLS-1$
 		assertTrue("There should be a no reference restriction on method 'void three()'", description.getRestrictions() == RestrictionModifiers.NO_REFERENCE); //$NON-NLS-1$

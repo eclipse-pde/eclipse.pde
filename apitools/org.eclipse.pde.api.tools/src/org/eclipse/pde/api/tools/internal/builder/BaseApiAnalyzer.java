@@ -1022,6 +1022,18 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	}
 
 	/**
+	 * @return if the invalid annotation check should be ignored
+	 * 
+	 * @since 1.0.600
+	 */
+	private boolean ignoreInvalidAnnotationCheck() {
+		if (fJavaProject == null) {
+			return true;
+		}
+		return ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.INVALID_ANNOTATION, fJavaProject.getProject()) == ApiPlugin.SEVERITY_IGNORE;
+	}
+
+	/**
 	 * @return if the unused problem filter check should be ignored or not
 	 */
 	private boolean ignoreUnusedProblemFilterCheck() {
@@ -1039,7 +1051,9 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * @param monitor
 	 */
 	private void checkTagValidation(final IBuildContext context, final IApiComponent component, IProgressMonitor monitor) {
-		if (ignoreInvalidTagCheck()) {
+		boolean tags = ignoreInvalidTagCheck();
+		boolean annotations = ignoreInvalidAnnotationCheck();
+		if (tags && annotations) {
 			return;
 		}
 		SubMonitor localMonitor = null;
@@ -1053,7 +1067,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 						continue;
 					}
 					localMonitor.subTask(NLS.bind(BuilderMessages.BaseApiAnalyzer_scanning_0, typenames[i]));
-					processType(typenames[i]);
+					processType(typenames[i], !tags, !annotations);
 					Util.updateMonitor(localMonitor);
 				}
 			} else {
@@ -1062,7 +1076,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 					for (int i = 0; i < roots.length; i++) {
 						if (roots[i].getKind() == IPackageFragmentRoot.K_SOURCE) {
 							localMonitor.subTask(NLS.bind(BuilderMessages.BaseApiAnalyzer_scanning_0, roots[i].getPath().toOSString()));
-							scanSource(roots[i], localMonitor.newChild(1));
+							scanSource(roots[i], !tags, !annotations, localMonitor.newChild(1));
 							Util.updateMonitor(localMonitor);
 						}
 					}
@@ -1088,7 +1102,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * @param monitor
 	 * @throws JavaModelException
 	 */
-	private void scanSource(IJavaElement element, IProgressMonitor monitor) throws JavaModelException {
+	private void scanSource(IJavaElement element, boolean tags, boolean annotations, IProgressMonitor monitor) throws JavaModelException {
 		try {
 			switch (element.getElementType()) {
 				case IJavaElement.PACKAGE_FRAGMENT_ROOT:
@@ -1096,64 +1110,67 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 					IParent parent = (IParent) element;
 					IJavaElement[] children = parent.getChildren();
 					for (int i = 0; i < children.length; i++) {
-						scanSource(children[i], monitor);
+						scanSource(children[i], tags, annotations, monitor);
 						Util.updateMonitor(monitor, 0);
 					}
 					break;
 				}
 				case IJavaElement.COMPILATION_UNIT: {
 					ICompilationUnit unit = (ICompilationUnit) element;
-					processType(unit);
+					processType(unit, tags, annotations);
 					Util.updateMonitor(monitor, 0);
 					break;
 				}
-				default: break;
+				default:
+					break;
 			}
-		}
-		finally {
-			if(monitor != null) {
+		} finally {
+			if (monitor != null) {
 				Util.updateMonitor(monitor);
 				monitor.done();
 			}
 		}
 	}
-	
+
 	/**
 	 * Processes the given type name for invalid Javadoc tags
+	 * 
 	 * @param typename
 	 */
-	private void processType(String typename) {
+	private void processType(String typename, boolean tags, boolean annotations) {
 		try {
 			IType type = fJavaProject.findType(typename);
-			if(type != null && !type.isMember()) {
-				// member types are processed while processing the compilation unit
+			if (type != null && !type.isMember()) {
+				// member types are processed while processing the compilation
+				// unit
 				ICompilationUnit cunit = type.getCompilationUnit();
-				if(cunit != null) {
+				if (cunit != null) {
 					IType ptype = cunit.findPrimaryType();
-					if(type.equals(ptype)) {
-						// outer types are not member types but are processed with the compilation unit
-						processType(cunit);
+					if (type.equals(ptype)) {
+						// outer types are not member types but are processed
+						// with the compilation unit
+						processType(cunit, tags, annotations);
 					}
 				}
 			}
-		} 
-		catch (JavaModelException e) {
-			e.printStackTrace();
+		} catch (JavaModelException e) {
+			ApiPlugin.log(e);
 		}
 	}
-	
+
 	/**
 	 * Processes the given {@link ICompilationUnit} for invalid tags
+	 * 
 	 * @param cunit
 	 */
-	private void processType(ICompilationUnit cunit) {
-		TagValidator tv = new TagValidator(cunit);
+	private void processType(ICompilationUnit cunit, boolean tags, boolean annotations) {
 		CompilationUnit comp = createAST(cunit, 0);
-		if(comp == null) {
+		if (comp == null) {
 			return;
 		}
+		TagValidator tv = new TagValidator(cunit, tags, annotations);
 		comp.accept(tv);
-		IApiProblem[] tagProblems = tv.getTagProblems();
+		IApiProblem[] tagProblems = tv.getProblems();
 		for (int i = 0; i < tagProblems.length; i++) {
 			addProblem(tagProblems[i]);
 		}

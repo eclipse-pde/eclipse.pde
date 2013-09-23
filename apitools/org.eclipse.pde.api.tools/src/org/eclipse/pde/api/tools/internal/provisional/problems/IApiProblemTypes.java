@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -177,6 +177,12 @@ public interface IApiProblemTypes {
 	 * Key for an invalid javadoc tag appearing where it does not belong
 	 */
 	public static final String INVALID_JAVADOC_TAG = "INVALID_JAVADOC_TAG"; //$NON-NLS-1$
+	/**
+	 * Key for an annotation appearing where it is not supported
+	 * 
+	 * @since 1.0.600
+	 */
+	public static final String INVALID_ANNOTATION = "INVALID_ANNOTATION"; //$NON-NLS-1$
 	/**
 	 * Key for the severity of referencing a type/method/field that does not
 	 * belong to the corresponding EE of the bundle

@@ -441,7 +441,7 @@ public class ApiProblem implements IApiProblem {
 	 * {@link IApiProblem} kind
 	 * 
 	 * @param kind
-	 * @return the string for the usage api problem kind
+	 * @return the string for the usage API problem kind
 	 */
 	public static String getUsageProblemKindName(int kind) {
 		switch (kind) {
@@ -459,6 +459,8 @@ public class ApiProblem implements IApiProblem {
 				return "API_LEAK"; //$NON-NLS-1$
 			case IApiProblem.UNSUPPORTED_TAG_USE:
 				return "UNSUPPORTED_TAG_USE"; //$NON-NLS-1$
+			case IApiProblem.UNSUPPORTED_ANNOTATION_USE:
+				return "UNSUPPORTED_ANNOTATION_USE"; //$NON-NLS-1$
 			case IApiProblem.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES:
 				return "INVALID_REFERENCE_IN_SYSTEM_LIBRARIES"; //$NON-NLS-1$
 			case IApiProblem.UNUSED_PROBLEM_FILTERS:
@@ -683,7 +685,7 @@ public class ApiProblem implements IApiProblem {
 			case IApiProblem.CATEGORY_API_COMPONENT_RESOLUTION:
 				return "API_COMPONENT_RESOLUTION"; //$NON-NLS-1$
 			case IApiProblem.CATEGORY_API_USE_SCAN_PROBLEM:
-				return "API USE SCAN PROBLEM"; //$NON-NLS-1$
+				return "API_USE_SCAN_PROBLEM"; //$NON-NLS-1$
 			default:
 				return "UNKNOWN_CATEGORY"; //$NON-NLS-1$
 		}

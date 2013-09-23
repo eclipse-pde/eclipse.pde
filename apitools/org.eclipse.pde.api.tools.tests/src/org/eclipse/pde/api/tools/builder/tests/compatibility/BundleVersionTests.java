@@ -45,25 +45,30 @@ public class BundleVersionTests extends ApiBuilderTest {
 	protected static String WORKSPACE_ROOT = "bundleversions"; //$NON-NLS-1$
 
 	public static final String WORKSPACE_PROFILE = "after"; //$NON-NLS-1$
-	
+
 	public static final String BASELINE = "before"; //$NON-NLS-1$
 
 	IApiBaseline baseline;
 
 	/**
 	 * Constructor
+	 * 
 	 * @param name
 	 */
 	public BundleVersionTests(String name) {
 		super(name);
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#setBuilderOptions()
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#setBuilderOptions
+	 * ()
 	 */
 	@Override
 	protected void setBuilderOptions() {
 		enableUnsupportedTagOptions(false);
+		enableUnsupportedAnnotationOptions(false);
 		enableBaselineOptions(true);
 		enableCompatibilityOptions(true);
 		enableLeakOptions(false);
@@ -78,11 +83,9 @@ public class BundleVersionTests extends ApiBuilderTest {
 	public static Test suite() {
 		return buildTestSuite(BundleVersionTests.class);
 	}
-	
-	/* (non-Javadoc)
-	 * 
-	 * Ensure a baseline has been created to compare against.
-	 * 
+
+	/*
+	 * (non-Javadoc) Ensure a baseline has been created to compare against.
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#setUp()
 	 */
 	@Override
@@ -93,30 +96,40 @@ public class BundleVersionTests extends ApiBuilderTest {
 		}
 		super.setUp();
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getDefaultProblemId()
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getDefaultProblemId
+	 * ()
 	 */
 	@Override
 	protected int getDefaultProblemId() {
 		return 0;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getTestSourcePath()
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getTestSourcePath
+	 * ()
 	 */
 	@Override
 	protected IPath getTestSourcePath() {
 		return new Path(""); //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getTestingProjectName()
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getTestingProjectName
+	 * ()
 	 */
 	@Override
 	protected String getTestingProjectName() {
 		return "bundleversions"; //$NON-NLS-1$
 	}
+
 	@Override
 	protected void tearDown() throws Exception {
 		IApiBaselineManager manager = ApiPlugin.getDefault().getApiBaselineManager();
@@ -132,6 +145,7 @@ public class BundleVersionTests extends ApiBuilderTest {
 		super.tearDown();
 		getEnv().setRevert(false);
 	}
+
 	private void performBundleVersion() throws CoreException {
 		cleanBuild();
 		fullBuild();
@@ -140,12 +154,15 @@ public class BundleVersionTests extends ApiBuilderTest {
 		ApiProblem[] problems = getEnv().getProblemsFor(manifestPath, null);
 		assertProblems(problems);
 	}
+
 	private String getReferenceBaselineLocation(String testName) {
-		return WORKSPACE_ROOT + File.separator + testName + File.separator +  BASELINE;
+		return WORKSPACE_ROOT + File.separator + testName + File.separator + BASELINE;
 	}
+
 	private String getCurrentBaselineLocation(String testName) {
 		return WORKSPACE_ROOT + File.separator + testName + File.separator + WORKSPACE_PROFILE;
 	}
+
 	private void setupTest(String testName) throws Exception {
 		// build the baseline if not present
 		IApiBaselineManager manager = ApiPlugin.getDefault().getApiBaselineManager();
@@ -162,7 +179,7 @@ public class BundleVersionTests extends ApiBuilderTest {
 		for (int i = 0; i < length; i++) {
 			IProject currentProject = projects[i];
 			IApiComponent apiComponent = manager.getWorkspaceComponent(currentProject.getName());
-			assertNotNull("The project was not found in the workspace baseline: "+currentProject.getName(), apiComponent); //$NON-NLS-1$
+			assertNotNull("The project was not found in the workspace baseline: " + currentProject.getName(), apiComponent); //$NON-NLS-1$
 			exportApiComponent(currentProject, apiComponent, baselineLocation);
 		}
 		this.baseline = ApiModelFactory.newApiBaseline(API_BASELINE);
@@ -183,10 +200,11 @@ public class BundleVersionTests extends ApiBuilderTest {
 		String currentBaselineLocation = getCurrentBaselineLocation(testName);
 		createExistingProjects(currentBaselineLocation, false, true, false);
 	}
-	
+
 	/**
-	 * Tests that changing the version of a re-exported bundle has no impact on the version of the
-	 * current bundle as long as the version is within the range and the range has not changed.
+	 * Tests that changing the version of a re-exported bundle has no impact on
+	 * the version of the current bundle as long as the version is within the
+	 * range and the range has not changed.
 	 * 
 	 * @throws Exception
 	 */
@@ -196,8 +214,10 @@ public class BundleVersionTests extends ApiBuilderTest {
 		// expecting no problems
 		performBundleVersion();
 	}
+
 	/**
-	 * Tests that decreasing the minor version of the lower bound of the re-exported bundle range triggers a major version change.
+	 * Tests that decreasing the minor version of the lower bound of the
+	 * re-exported bundle range triggers a major version change.
 	 * 
 	 * @throws Exception
 	 */
@@ -205,21 +225,17 @@ public class BundleVersionTests extends ApiBuilderTest {
 		// setup the environment
 		setupTest("test2"); //$NON-NLS-1$
 		// expecting no problems
-		int[] ids = new int[] {
-				ApiProblemFactory.createProblemId(
-						IApiProblem.CATEGORY_VERSION,
-						IElementDescriptor.RESOURCE,
-						IApiProblem.REEXPORTED_MAJOR_VERSION_CHANGE,
-						IApiProblem.NO_FLAGS)
-		};
+		int[] ids = new int[] { ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_VERSION, IElementDescriptor.RESOURCE, IApiProblem.REEXPORTED_MAJOR_VERSION_CHANGE, IApiProblem.NO_FLAGS) };
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{"1.0.0", "exportedbundle" }; //$NON-NLS-1$ //$NON-NLS-2$
+		args[0] = new String[] { "1.0.0", "exportedbundle" }; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performBundleVersion();
 	}
+
 	/**
-	 * Tests that decreasing the major version of the lower bound of the re-exported bundle range triggers a major version change.
+	 * Tests that decreasing the major version of the lower bound of the
+	 * re-exported bundle range triggers a major version change.
 	 * 
 	 * @throws Exception
 	 */
@@ -227,21 +243,17 @@ public class BundleVersionTests extends ApiBuilderTest {
 		// setup the environment
 		setupTest("test3"); //$NON-NLS-1$
 		// expecting no problems
-		int[] ids = new int[] {
-				ApiProblemFactory.createProblemId(
-						IApiProblem.CATEGORY_VERSION,
-						IElementDescriptor.RESOURCE,
-						IApiProblem.REEXPORTED_MAJOR_VERSION_CHANGE,
-						IApiProblem.NO_FLAGS)
-		};
+		int[] ids = new int[] { ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_VERSION, IElementDescriptor.RESOURCE, IApiProblem.REEXPORTED_MAJOR_VERSION_CHANGE, IApiProblem.NO_FLAGS) };
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{"1.0.0", "exportedbundle" }; //$NON-NLS-1$ //$NON-NLS-2$
+		args[0] = new String[] { "1.0.0", "exportedbundle" }; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performBundleVersion();
 	}
+
 	/**
-	 * Tests that increasing the major version of the lower bound of the re-exported bundle range triggers a major version change.
+	 * Tests that increasing the major version of the lower bound of the
+	 * re-exported bundle range triggers a major version change.
 	 * 
 	 * @throws Exception
 	 */
@@ -249,21 +261,17 @@ public class BundleVersionTests extends ApiBuilderTest {
 		// setup the environment
 		setupTest("test4"); //$NON-NLS-1$
 		// expecting no problems
-		int[] ids = new int[] {
-				ApiProblemFactory.createProblemId(
-						IApiProblem.CATEGORY_VERSION,
-						IElementDescriptor.RESOURCE,
-						IApiProblem.REEXPORTED_MAJOR_VERSION_CHANGE,
-						IApiProblem.NO_FLAGS)
-		};
+		int[] ids = new int[] { ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_VERSION, IElementDescriptor.RESOURCE, IApiProblem.REEXPORTED_MAJOR_VERSION_CHANGE, IApiProblem.NO_FLAGS) };
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{"1.0.0", "exportedbundle" }; //$NON-NLS-1$ //$NON-NLS-2$
+		args[0] = new String[] { "1.0.0", "exportedbundle" }; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performBundleVersion();
 	}
+
 	/**
-	 * Tests that increasing the minor version of the lower bound of the re-exported bundle range triggers a minor version change.
+	 * Tests that increasing the minor version of the lower bound of the
+	 * re-exported bundle range triggers a minor version change.
 	 * 
 	 * @throws Exception
 	 */
@@ -271,16 +279,10 @@ public class BundleVersionTests extends ApiBuilderTest {
 		// setup the environment
 		setupTest("test5"); //$NON-NLS-1$
 		// expecting no problems
-		int[] ids = new int[] {
-				ApiProblemFactory.createProblemId(
-						IApiProblem.CATEGORY_VERSION,
-						IElementDescriptor.RESOURCE,
-						IApiProblem.REEXPORTED_MINOR_VERSION_CHANGE,
-						IApiProblem.NO_FLAGS)
-		};
+		int[] ids = new int[] { ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_VERSION, IElementDescriptor.RESOURCE, IApiProblem.REEXPORTED_MINOR_VERSION_CHANGE, IApiProblem.NO_FLAGS) };
 		setExpectedProblemIds(ids);
 		String[][] args = new String[1][];
-		args[0] = new String[]{"1.0.0", "exportedbundle" }; //$NON-NLS-1$ //$NON-NLS-2$
+		args[0] = new String[] { "1.0.0", "exportedbundle" }; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performBundleVersion();
 	}

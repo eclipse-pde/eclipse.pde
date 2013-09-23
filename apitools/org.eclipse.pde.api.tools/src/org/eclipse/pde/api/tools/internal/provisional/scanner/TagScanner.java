@@ -34,6 +34,7 @@ import org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
 import org.eclipse.jdt.core.dom.EnumDeclaration;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.Javadoc;
+import org.eclipse.jdt.core.dom.MarkerAnnotation;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.Name;
 import org.eclipse.jdt.core.dom.PackageDeclaration;
@@ -45,8 +46,10 @@ import org.eclipse.pde.api.tools.internal.CompilationUnit;
 import org.eclipse.pde.api.tools.internal.JavadocTagManager;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.Factory;
+import org.eclipse.pde.api.tools.internal.provisional.IApiAnnotations;
 import org.eclipse.pde.api.tools.internal.provisional.IApiDescription;
 import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
+import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
@@ -122,6 +125,144 @@ public class TagScanner {
 			fType = fType.getEnclosingType();
 		}
 
+		@Override
+		public boolean visit(MarkerAnnotation node) {
+			String name = node.getTypeName().getFullyQualifiedName();
+			if (JavadocTagManager.ALL_ANNOTATIONS.contains(name)) {
+				ASTNode parent = node.getParent();
+				if (parent != null) {
+					switch (parent.getNodeType()) {
+						case ASTNode.TYPE_DECLARATION: {
+							scanTypeAnnotation(name, (TypeDeclaration) parent);
+							break;
+						}
+						case ASTNode.ANNOTATION_TYPE_DECLARATION:
+						case ASTNode.ENUM_DECLARATION: {
+							IApiAnnotations annots = fDescription.resolveAnnotations(fType);
+							int restrictions = annots != null ? annots.getRestrictions() : RestrictionModifiers.NO_RESTRICTIONS;
+							if (JavadocTagManager.ANNOTATION_NOREFERENCE.equals(name)) {
+								restrictions |= RestrictionModifiers.NO_REFERENCE;
+								fDescription.setRestrictions(fType, restrictions);
+							}
+							break;
+						}
+						case ASTNode.FIELD_DECLARATION: {
+							scanFieldAnnotation(name, (FieldDeclaration) parent);
+							break;
+						}
+						case ASTNode.METHOD_DECLARATION: {
+							scanMethodAnnotation(name, (MethodDeclaration) parent);
+							break;
+						}
+						default:
+							break;
+					}
+				}
+			}
+			return false;
+		}
+
+		/**
+		 * Checks the annotation name found on the given {@link TypeDeclaration}
+		 * 
+		 * @param name the name of the annotation
+		 * @param node the parent {@link TypeDeclaration}
+		 * 
+		 * @since 1.0.600
+		 */
+		void scanTypeAnnotation(String name, TypeDeclaration node) {
+			int flags = node.getModifiers();
+			IApiAnnotations annots = fDescription.resolveAnnotations(fType);
+			int restrictions = annots != null ? annots.getRestrictions() : RestrictionModifiers.NO_RESTRICTIONS;
+			if (JavadocTagManager.ANNOTATION_NOREFERENCE.equals(name)) {
+				restrictions |= RestrictionModifiers.NO_REFERENCE;
+			}
+			if (JavadocTagManager.ANNOTATION_NOEXTEND.equals(name) && !Flags.isFinal(flags)) {
+				restrictions |= RestrictionModifiers.NO_EXTEND;
+			}
+			if (node.isInterface()) {
+				if (JavadocTagManager.ANNOTATION_NOIMPLEMENT.equals(name)) {
+					restrictions |= RestrictionModifiers.NO_IMPLEMENT;
+				}
+			} else {
+				if (JavadocTagManager.ANNOTATION_NOINSTANTIATE.equals(name) && !Flags.isAbstract(flags)) {
+					restrictions |= RestrictionModifiers.NO_INSTANTIATE;
+				}
+			}
+			if (restrictions != RestrictionModifiers.NO_RESTRICTIONS) {
+				fDescription.setRestrictions(fType, restrictions);
+			}
+		}
+
+		/**
+		 * Checks the annotation name found on the given
+		 * {@link FieldDeclaration}
+		 * 
+		 * @param name the annotation name
+		 * @param node the parent {@link FieldDeclaration}
+		 */
+		void scanFieldAnnotation(String name, FieldDeclaration node) {
+			List<VariableDeclarationFragment> fields = node.fragments();
+			int flags = node.getModifiers();
+
+			if (!Flags.isFinal(flags) && JavadocTagManager.ANNOTATION_NOREFERENCE.equals(name)) {
+				for (VariableDeclarationFragment fragment : fields) {
+					IElementDescriptor descriptor = fType.getField(fragment.getName().getFullyQualifiedName());
+					IApiAnnotations annots = fDescription.resolveAnnotations(descriptor);
+					int restrictions = annots != null ? annots.getRestrictions() : RestrictionModifiers.NO_RESTRICTIONS;
+					fDescription.setRestrictions(descriptor, restrictions | RestrictionModifiers.NO_REFERENCE);
+				}
+			}
+		}
+
+		/**
+		 * Checks the annotation name found on the given
+		 * {@link MethodDeclaration}
+		 * 
+		 * @param name the name of the annotation
+		 * @param node the parent {@link MethodDeclaration}
+		 * 
+		 * @since 1.0.600
+		 */
+		void scanMethodAnnotation(String name, MethodDeclaration node) {
+			String signature = Signatures.getMethodSignatureFromNode(node);
+			if (signature != null) {
+				String methodname = node.getName().getFullyQualifiedName();
+				if (node.isConstructor()) {
+					methodname = "<init>"; //$NON-NLS-1$
+				}
+				IMethodDescriptor descriptor = fType.getMethod(methodname, signature);
+				try {
+					descriptor = resolveMethod(descriptor);
+				} catch (CoreException e) {
+					if (ApiPlugin.DEBUG_TAG_SCANNER) {
+						System.err.println(e.getLocalizedMessage());
+					}
+				}
+				IApiAnnotations annots = fDescription.resolveAnnotations(descriptor);
+				int restrictions = annots != null ? annots.getRestrictions() : RestrictionModifiers.NO_RESTRICTIONS;
+				if (JavadocTagManager.ANNOTATION_NOREFERENCE.equals(name)) {
+					restrictions |= RestrictionModifiers.NO_REFERENCE;
+				}
+				if (JavadocTagManager.ANNOTATION_NOOVERRIDE.equals(name)) {
+					if (!Flags.isFinal(node.getModifiers()) && !Flags.isStatic(node.getModifiers())) {
+						ASTNode parent = node.getParent();
+						if (parent instanceof TypeDeclaration) {
+							TypeDeclaration type = (TypeDeclaration) parent;
+							if (!Flags.isFinal(type.getModifiers())) {
+								restrictions |= RestrictionModifiers.NO_OVERRIDE;
+							}
+						} else if (parent instanceof AnonymousClassDeclaration) {
+							restrictions |= RestrictionModifiers.NO_OVERRIDE;
+						}
+					}
+				}
+				if (restrictions != RestrictionModifiers.NO_RESTRICTIONS) {
+					fDescription.setRestrictions(descriptor, restrictions);
+				}
+			}
+		}
+
 		/*
 		 * (non-Javadoc)
 		 * @see
@@ -134,10 +275,22 @@ public class TagScanner {
 				return false;
 			}
 			enterType(node.getName());
+			scanTypeJavaDoc(node);
+			return true;
+		}
+
+		/**
+		 * Scans the JavaDoc of a {@link TypeDeclaration}
+		 * 
+		 * @param node the type
+		 * @since 1.0.600
+		 */
+		void scanTypeJavaDoc(TypeDeclaration node) {
 			Javadoc doc = node.getJavadoc();
 			if (doc != null) {
 				List<TagElement> tags = doc.tags();
-				int restrictions = RestrictionModifiers.NO_RESTRICTIONS;
+				IApiAnnotations annots = fDescription.resolveAnnotations(fType);
+				int restrictions = annots != null ? annots.getRestrictions() : RestrictionModifiers.NO_RESTRICTIONS;
 				for (TagElement tag : tags) {
 					String tagname = tag.getTagName();
 					if (!JavadocTagManager.ALL_TAGS.contains(tagname)) {
@@ -172,7 +325,6 @@ public class TagScanner {
 					fDescription.setRestrictions(fType, restrictions);
 				}
 			}
-			return true;
 		}
 
 		/*
@@ -213,20 +365,33 @@ public class TagScanner {
 				return false;
 			}
 			enterType(node.getName());
+			scanAnnotationJavaDoc(node);
+			return true;
+		}
+
+		/**
+		 * Scans the JavaDoc of an {@link AnnotationTypeDeclaration}
+		 * 
+		 * @param node the annotation
+		 * @since 1.0.600
+		 */
+		void scanAnnotationJavaDoc(AnnotationTypeDeclaration node) {
 			Javadoc doc = node.getJavadoc();
 			if (doc != null) {
 				List<TagElement> tags = doc.tags();
+				IApiAnnotations annots = fDescription.resolveAnnotations(fType);
+				int restrictions = annots != null ? annots.getRestrictions() : RestrictionModifiers.NO_RESTRICTIONS;
 				for (TagElement tag : tags) {
 					String tagname = tag.getTagName();
 					if (!JavadocTagManager.ALL_TAGS.contains(tagname)) {
 						continue;
 					}
 					if (JavadocTagManager.TAG_NOREFERENCE.equals(tagname)) {
-						fDescription.setRestrictions(fType, RestrictionModifiers.NO_REFERENCE);
+						restrictions |= RestrictionModifiers.NO_REFERENCE;
+						fDescription.setRestrictions(fType, restrictions);
 					}
 				}
 			}
-			return true;
 		}
 
 		/*
@@ -241,20 +406,33 @@ public class TagScanner {
 				return false;
 			}
 			enterType(node.getName());
+			scanEnumJavaDoc(node);
+			return true;
+		}
+
+		/**
+		 * Scans the JavaDoc of an {@link EnumDeclaration}
+		 * 
+		 * @param node the enum
+		 * @since 1.0.600
+		 */
+		void scanEnumJavaDoc(EnumDeclaration node) {
 			Javadoc doc = node.getJavadoc();
 			if (doc != null) {
 				List<TagElement> tags = doc.tags();
+				IApiAnnotations annots = fDescription.resolveAnnotations(fType);
+				int restrictions = annots != null ? annots.getRestrictions() : RestrictionModifiers.NO_RESTRICTIONS;
 				for (TagElement tag : tags) {
 					String tagname = tag.getTagName();
 					if (!JavadocTagManager.ALL_TAGS.contains(tagname)) {
 						continue;
 					}
 					if (JavadocTagManager.TAG_NOREFERENCE.equals(tagname)) {
-						fDescription.setRestrictions(fType, RestrictionModifiers.NO_REFERENCE);
+						restrictions |= RestrictionModifiers.NO_REFERENCE;
+						fDescription.setRestrictions(fType, restrictions);
 					}
 				}
 			}
-			return true;
 		}
 
 		/*
@@ -302,6 +480,17 @@ public class TagScanner {
 					return false;
 				}
 			}
+			scanMethodJavaDoc(node);
+			return true;
+		}
+
+		/**
+		 * Scans the JavaDoc node of a {@link MethodDeclaration}
+		 * 
+		 * @param node the method
+		 * @since 1.0.600
+		 */
+		void scanMethodJavaDoc(MethodDeclaration node) {
 			Javadoc doc = node.getJavadoc();
 			if (doc != null) {
 				String signature = Signatures.getMethodSignatureFromNode(node);
@@ -319,7 +508,8 @@ public class TagScanner {
 						}
 					}
 					List<TagElement> tags = doc.tags();
-					int restrictions = RestrictionModifiers.NO_RESTRICTIONS;
+					IApiAnnotations annots = fDescription.resolveAnnotations(descriptor);
+					int restrictions = annots != null ? annots.getRestrictions() : RestrictionModifiers.NO_RESTRICTIONS;
 					for (TagElement tag : tags) {
 						String tagname = tag.getTagName();
 						if (!JavadocTagManager.ALL_TAGS.contains(tagname)) {
@@ -348,7 +538,6 @@ public class TagScanner {
 					}
 				}
 			}
-			return true;
 		}
 
 		/*
@@ -362,6 +551,17 @@ public class TagScanner {
 			if (isNotVisible(node.getModifiers())) {
 				return false;
 			}
+			scanFieldJavaDoc(node);
+			return true;
+		}
+
+		/**
+		 * Scans the JavaDoc nodes of a {@link FieldDeclaration}
+		 * 
+		 * @param node the field
+		 * @since 1.0.600
+		 */
+		void scanFieldJavaDoc(FieldDeclaration node) {
 			Javadoc doc = node.getJavadoc();
 			if (doc != null) {
 				List<VariableDeclarationFragment> fields = node.fragments();
@@ -374,12 +574,14 @@ public class TagScanner {
 					}
 					if (!Flags.isFinal(flags) && JavadocTagManager.TAG_NOREFERENCE.equals(tagname)) {
 						for (VariableDeclarationFragment fragment : fields) {
-							fDescription.setRestrictions(fType.getField(fragment.getName().getFullyQualifiedName()), RestrictionModifiers.NO_REFERENCE);
+							IElementDescriptor descriptor = fType.getField(fragment.getName().getFullyQualifiedName());
+							IApiAnnotations annots = fDescription.resolveAnnotations(fType);
+							int restrictions = annots != null ? annots.getRestrictions() : RestrictionModifiers.NO_RESTRICTIONS;
+							fDescription.setRestrictions(descriptor, restrictions | RestrictionModifiers.NO_REFERENCE);
 						}
 					}
 				}
 			}
-			return true;
 		}
 
 		/**
@@ -433,7 +635,6 @@ public class TagScanner {
 			}
 			return descriptor;
 		}
-
 	}
 
 	/**

@@ -94,6 +94,12 @@ public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator2
 			case IApiMarkerConstants.DUPLICATE_TAG_MARKER_ID: {
 				return new IMarkerResolution[] { new DuplicateTagResolution(marker) };
 			}
+			case IApiMarkerConstants.UNSUPPORTED_ANNOTATION_MARKER_ID: {
+				return new IMarkerResolution[] { new UnsupportedAnnotationResolution(marker) };
+			}
+			case IApiMarkerConstants.DUPLICATE_ANNOTATION_MARKER_ID: {
+				return new IMarkerResolution[] { new DuplicateAnnotationResolution(marker) };
+			}
 			case IApiMarkerConstants.API_COMPONENT_RESOLUTION_MARKER_ID: {
 				return new IMarkerResolution[] { new UpdateProjectSettingResolution(marker) };
 			}

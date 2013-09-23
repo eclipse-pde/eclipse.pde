@@ -248,6 +248,7 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 	private static final Key KEY_LEAK_FIELD_DECL = getApiToolsKey(IApiProblemTypes.LEAK_FIELD_DECL);
 	private static final Key KEY_LEAK_METHOD_PARAM = getApiToolsKey(IApiProblemTypes.LEAK_METHOD_PARAM);
 	private static final Key KEY_INVALID_JAVADOC_TAG = getApiToolsKey(IApiProblemTypes.INVALID_JAVADOC_TAG);
+	private static final Key KEY_INVALID_ANNOTATION = getApiToolsKey(IApiProblemTypes.INVALID_ANNOTATION);
 	private static final Key KEY_INVALID_REFERENCE_IN_SYSTEM_LIBRARIES = getApiToolsKey(IApiProblemTypes.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES);
 	private static final Key KEY_UNUSED_PROBLEM_FILTERS = getApiToolsKey(IApiProblemTypes.UNUSED_PROBLEM_FILTERS);
 	private static final Key KEY_MISSING_EE_DESCRIPTIONS = getApiToolsKey(IApiProblemTypes.MISSING_EE_DESCRIPTIONS);
@@ -430,7 +431,7 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 			KEY_NOOVERRIDE, KEY_LEAK_EXTEND, KEY_LEAK_FIELD_DECL,
 			KEY_LEAK_IMPLEMENT, KEY_LEAK_METHOD_PARAM,
 			KEY_LEAK_METHOD_RETURN_TYPE, KEY_INVALID_JAVADOC_TAG,
-			KEY_INVALID_REFERENCE_IN_SYSTEM_LIBRARIES,
+			KEY_INVALID_ANNOTATION, KEY_INVALID_REFERENCE_IN_SYSTEM_LIBRARIES,
 			KEY_MISSING_EE_DESCRIPTIONS };
 
 	static Key[] fgAllVersionManagementKeys = {
@@ -457,6 +458,7 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 			KEY_LEAK_METHOD_PARAM,
 			KEY_LEAK_METHOD_RETURN_TYPE,
 			KEY_INVALID_JAVADOC_TAG,
+			KEY_INVALID_ANNOTATION,
 			KEY_INVALID_REFERENCE_IN_SYSTEM_LIBRARIES,
 			KEY_UNUSED_PROBLEM_FILTERS,
 			KEY_MISSING_EE_DESCRIPTIONS,
@@ -1114,9 +1116,10 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 		Composite client = createExpansibleComposite(sbody, PreferenceMessages.ApiErrorsWarningsConfigurationBlock_general);
 		initializeComboControls(client, new String[] {
 				PreferenceMessages.ApiErrorsWarningsConfigurationBlock_invalid_tag_use,
+				PreferenceMessages.ApiErrorsWarningsConfigurationBlock_invalid_annotation_use,
 				PreferenceMessages.ApiErrorsWarningsConfigurationBlock_invalid_reference_to_system_libraries, }, new Key[] {
-				KEY_INVALID_JAVADOC_TAG,
-				KEY_INVALID_REFERENCE_IN_SYSTEM_LIBRARIES, });
+				KEY_INVALID_JAVADOC_TAG, KEY_INVALID_ANNOTATION,
+				KEY_INVALID_REFERENCE_IN_SYSTEM_LIBRARIES });
 		initializeInstalledMetatadata(client);
 		initializeComboControls(client, new String[] { PreferenceMessages.ApiErrorsWarningsConfigurationBlock_3 }, new Key[] { KEY_MISSING_EE_DESCRIPTIONS });
 		client = createExpansibleComposite(sbody, PreferenceMessages.ApiErrorsWarningsConfigurationBlock_restrictions);

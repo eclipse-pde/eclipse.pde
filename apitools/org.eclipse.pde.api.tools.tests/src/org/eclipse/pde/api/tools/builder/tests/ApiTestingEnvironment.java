@@ -271,6 +271,25 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	}
 
 	/**
+	 * Returns all of the unsupported annotation markers on the given resource
+	 * and all of its children
+	 * 
+	 * @param resource
+	 * @return all unsupported annotation markers
+	 * @throws CoreException
+	 * @since 1.0.400
+	 */
+	protected IMarker[] getAllUnsupportedAnnotationMarkers(IResource resource) throws CoreException {
+		if (resource == null) {
+			return NO_MARKERS;
+		}
+		if (!resource.isAccessible()) {
+			return NO_MARKERS;
+		}
+		return resource.findMarkers(IApiMarkerConstants.UNSUPPORTED_ANNOTATION_PROBLEM_MARKER, true, IResource.DEPTH_INFINITE);
+	}
+
+	/**
 	 * Returns all of the compatibility markers on the given resource and its
 	 * children
 	 * 
@@ -407,6 +426,7 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 			addToList(problems, getAllSinceTagMarkers(resource));
 			addToList(problems, getAllVersionMarkers(resource));
 			addToList(problems, getAllUnsupportedTagMarkers(resource));
+			addToList(problems, getAllUnsupportedAnnotationMarkers(resource));
 			addToList(problems, getAllUnusedApiProblemFilterMarkers(resource));
 
 			// additional markers

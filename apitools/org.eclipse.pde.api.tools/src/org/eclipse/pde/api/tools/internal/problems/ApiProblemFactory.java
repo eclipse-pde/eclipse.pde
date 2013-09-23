@@ -123,19 +123,21 @@ public class ApiProblemFactory {
 		int balance = 0;
 		for (int i = 0; i < argumentsCharsLength;) {
 			char c = argumentsChars[i];
-			switch(c) {
-				case '(' : {
+			switch (c) {
+				case '(': {
 					balance++;
 					break;
 				}
-				case ')' : {
+				case ')': {
 					balance--;
 					break;
 				}
-				default: break;
+				default:
+					break;
 			}
 			if (c == delimiterChars[0] && balance == 0) {
-				// see if this is a matching delimiter start only if not within parenthesis (balance == 0)
+				// see if this is a matching delimiter start only if not within
+				// parenthesis (balance == 0)
 				if (i + delimiterLength < argumentsCharsLength) {
 					boolean match = true;
 					loop: for (int j = 1; j < delimiterLength; j++) {
@@ -551,316 +553,467 @@ public class ApiProblemFactory {
 	public static int getProblemCategory(int problemid) {
 		return (problemid & ApiProblem.CATEGORY_MASK);
 	}
-	
+
 	/**
 	 * Convenience method to get the message id from a problem id
+	 * 
 	 * @param problemid
 	 * @return the message id to use for the given problem id
 	 */
 	public static int getProblemMessageId(int problemid) {
 		return getProblemMessageId(getProblemCategory(problemid), getProblemElementKind(problemid), getProblemKind(problemid), getProblemFlags(problemid));
 	}
-	
+
 	/**
 	 * Returns the problem message id for the given problem parameters.
+	 * 
 	 * @param category
 	 * @param element
 	 * @param kind
 	 * @param flags
-	 * @return the id of the message to use for the given problem parameters or <code>0</code>
+	 * @return the id of the message to use for the given problem parameters or
+	 *         <code>0</code>
 	 */
 	public static int getProblemMessageId(int category, int element, int kind, int flags) {
-		switch(category) {
+		switch (category) {
 			case IApiProblem.CATEGORY_API_BASELINE: {
-				switch(kind) {
-					case IApiProblem.API_BASELINE_MISSING: return 1;
-					default: break;
+				switch (kind) {
+					case IApiProblem.API_BASELINE_MISSING:
+						return 1;
+					default:
+						break;
 				}
 				break;
 			}
 			case IApiProblem.CATEGORY_SINCETAGS: {
-				switch(kind) {
-					case IApiProblem.SINCE_TAG_INVALID: return 2;
-					case IApiProblem.SINCE_TAG_MALFORMED: return 3;
-					case IApiProblem.SINCE_TAG_MISSING: return 4;
-					default: break;
+				switch (kind) {
+					case IApiProblem.SINCE_TAG_INVALID:
+						return 2;
+					case IApiProblem.SINCE_TAG_MALFORMED:
+						return 3;
+					case IApiProblem.SINCE_TAG_MISSING:
+						return 4;
+					default:
+						break;
 				}
 				break;
 			}
 			case IApiProblem.CATEGORY_VERSION: {
-				switch(kind) {
-					case IApiProblem.MAJOR_VERSION_CHANGE: return 5;
-					case IApiProblem.MAJOR_VERSION_CHANGE_NO_BREAKAGE: return 6;
-					case IApiProblem.MINOR_VERSION_CHANGE: return 7;
-					case IApiProblem.MINOR_VERSION_CHANGE_NO_NEW_API: return 56;
-					case IApiProblem.REEXPORTED_MAJOR_VERSION_CHANGE : return 19;
-					case IApiProblem.REEXPORTED_MINOR_VERSION_CHANGE : return 20;
-					default: break;
+				switch (kind) {
+					case IApiProblem.MAJOR_VERSION_CHANGE:
+						return 5;
+					case IApiProblem.MAJOR_VERSION_CHANGE_NO_BREAKAGE:
+						return 6;
+					case IApiProblem.MINOR_VERSION_CHANGE:
+						return 7;
+					case IApiProblem.MINOR_VERSION_CHANGE_NO_NEW_API:
+						return 56;
+					case IApiProblem.REEXPORTED_MAJOR_VERSION_CHANGE:
+						return 19;
+					case IApiProblem.REEXPORTED_MINOR_VERSION_CHANGE:
+						return 20;
+					default:
+						break;
 				}
 				break;
 			}
 			case IApiProblem.CATEGORY_USAGE: {
-				switch(kind) {
+				switch (kind) {
 					case IApiProblem.ILLEGAL_IMPLEMENT: {
-						switch(flags) {
-							case IApiProblem.NO_FLAGS: return 8;
-							case IApiProblem.INDIRECT_REFERENCE: return 24;
-							case IApiProblem.LOCAL_TYPE: return 18;
-							case IApiProblem.INDIRECT_LOCAL_REFERENCE: return 37;
-							case IApiProblem.ANONYMOUS_TYPE: return 27;
-							default: break;
+						switch (flags) {
+							case IApiProblem.NO_FLAGS:
+								return 8;
+							case IApiProblem.INDIRECT_REFERENCE:
+								return 24;
+							case IApiProblem.LOCAL_TYPE:
+								return 18;
+							case IApiProblem.INDIRECT_LOCAL_REFERENCE:
+								return 37;
+							case IApiProblem.ANONYMOUS_TYPE:
+								return 27;
+							default:
+								break;
 						}
 						break;
 					}
 					case IApiProblem.ILLEGAL_EXTEND: {
-						switch(flags) {
-							case IApiProblem.NO_FLAGS: return 9;
-							case IApiProblem.LOCAL_TYPE : return 25;
-							case IApiProblem.ANONYMOUS_TYPE: return 28;
-							default: break;
+						switch (flags) {
+							case IApiProblem.NO_FLAGS:
+								return 9;
+							case IApiProblem.LOCAL_TYPE:
+								return 25;
+							case IApiProblem.ANONYMOUS_TYPE:
+								return 28;
+							default:
+								break;
 						}
 						break;
 					}
-					case IApiProblem.ILLEGAL_INSTANTIATE: return 10;
-					case IApiProblem.ILLEGAL_OVERRIDE: return 11;
+					case IApiProblem.ILLEGAL_INSTANTIATE:
+						return 10;
+					case IApiProblem.ILLEGAL_OVERRIDE:
+						return 11;
 					case IApiProblem.ILLEGAL_REFERENCE: {
-						switch(flags) {
-							case IApiProblem.FIELD: return 12;
-							case IApiProblem.CONSTRUCTOR_METHOD: return 110;
-							case IApiProblem.METHOD: return 111;
-							case IApiProblem.ANNOTATION: return 42;
-							default: break;
+						switch (flags) {
+							case IApiProblem.FIELD:
+								return 12;
+							case IApiProblem.CONSTRUCTOR_METHOD:
+								return 110;
+							case IApiProblem.METHOD:
+								return 111;
+							case IApiProblem.ANNOTATION:
+								return 42;
+							default:
+								break;
 						}
 						break;
 					}
 					case IApiProblem.API_LEAK: {
-						switch(flags) {
-							case IApiProblem.LEAK_EXTENDS: return 13;
-							case IApiProblem.LEAK_IMPLEMENTS: return 14;
-							case IApiProblem.LEAK_FIELD: return 15;
-							case IApiProblem.LEAK_RETURN_TYPE: return 16;
-							case IApiProblem.LEAK_METHOD_PARAMETER: return 17;
-							case IApiProblem.LEAK_CONSTRUCTOR_PARAMETER: return 109;
-							default: break;
+						switch (flags) {
+							case IApiProblem.LEAK_EXTENDS:
+								return 13;
+							case IApiProblem.LEAK_IMPLEMENTS:
+								return 14;
+							case IApiProblem.LEAK_FIELD:
+								return 15;
+							case IApiProblem.LEAK_RETURN_TYPE:
+								return 16;
+							case IApiProblem.LEAK_METHOD_PARAMETER:
+								return 17;
+							case IApiProblem.LEAK_CONSTRUCTOR_PARAMETER:
+								return 109;
+							default:
+								break;
 						}
 						break;
 					}
-					case IApiProblem.UNSUPPORTED_TAG_USE: return 112;
-					case IApiProblem.DUPLICATE_TAG_USE: return 22;
-					case IApiProblem.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES :
-						switch(flags) {
-							case IApiProblem.METHOD : return 33;
-							case IApiProblem.CONSTRUCTOR_METHOD : return 34;
-							case IApiProblem.FIELD : return 35;
-							default: return 36;
+					case IApiProblem.UNSUPPORTED_TAG_USE:
+						return 112;
+					case IApiProblem.DUPLICATE_TAG_USE:
+						return 22;
+					case IApiProblem.DUPLICATE_ANNOTATION_USE:
+						return 45;
+					case IApiProblem.UNSUPPORTED_ANNOTATION_USE:
+						return 46;
+					case IApiProblem.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES:
+						switch (flags) {
+							case IApiProblem.METHOD:
+								return 33;
+							case IApiProblem.CONSTRUCTOR_METHOD:
+								return 34;
+							case IApiProblem.FIELD:
+								return 35;
+							default:
+								return 36;
 						}
-					case IApiProblem.UNUSED_PROBLEM_FILTERS: return 30;
-					case IApiProblem.MISSING_EE_DESCRIPTIONS: return 38;
-					default: break;
+					case IApiProblem.UNUSED_PROBLEM_FILTERS:
+						return 30;
+					case IApiProblem.MISSING_EE_DESCRIPTIONS:
+						return 38;
+					default:
+						break;
 				}
 				break;
 			}
 			case IApiProblem.CATEGORY_COMPATIBILITY: {
-				switch(kind) {
+				switch (kind) {
 					case IDelta.ADDED: {
-						switch(element) {
+						switch (element) {
 							case IDelta.CLASS_ELEMENT_TYPE: {
-								switch(flags) {
-									case IDelta.METHOD: return 41;
-									case IDelta.RESTRICTIONS: return 72;
-									default: break;
+								switch (flags) {
+									case IDelta.METHOD:
+										return 41;
+									case IDelta.RESTRICTIONS:
+										return 72;
+									default:
+										break;
 								}
 								break;
 							}
 							case IDelta.ANNOTATION_ELEMENT_TYPE: {
-								switch(flags) {
-									case IDelta.FIELD: return 39;
-									default: break;
+								switch (flags) {
+									case IDelta.FIELD:
+										return 39;
+									default:
+										break;
 								}
 								break;
 							}
 							case IDelta.INTERFACE_ELEMENT_TYPE: {
-								switch(flags) {
-									case IDelta.FIELD: return 40;
-									case IDelta.METHOD: return 44;
-									case IDelta.RESTRICTIONS: return 72;
-									case IDelta.SUPER_INTERFACE_WITH_METHODS : return 133;
-									default: break;
+								switch (flags) {
+									case IDelta.FIELD:
+										return 40;
+									case IDelta.METHOD:
+										return 44;
+									case IDelta.RESTRICTIONS:
+										return 72;
+									case IDelta.SUPER_INTERFACE_WITH_METHODS:
+										return 133;
+									default:
+										break;
 								}
 								break;
 							}
-							case IDelta.METHOD_ELEMENT_TYPE : {
-								switch(flags) {
-									case IDelta.RESTRICTIONS: return 132;
-									default: break;
+							case IDelta.METHOD_ELEMENT_TYPE: {
+								switch (flags) {
+									case IDelta.RESTRICTIONS:
+										return 132;
+									default:
+										break;
 								}
 								break;
 							}
-							default: break;
+							default:
+								break;
 						}
-						switch(flags) {
-							case IDelta.CLASS_BOUND: return 21;
-							case IDelta.CONSTRUCTOR: return 23;
-							case IDelta.INTERFACE_BOUND: return 26;
-							case IDelta.METHOD_WITHOUT_DEFAULT_VALUE: return 29;
-							case IDelta.TYPE_PARAMETER: return 32;
-							case IDelta.TYPE_ARGUMENT: return 106;
-							default: break;
+						switch (flags) {
+							case IDelta.CLASS_BOUND:
+								return 21;
+							case IDelta.CONSTRUCTOR:
+								return 23;
+							case IDelta.INTERFACE_BOUND:
+								return 26;
+							case IDelta.METHOD_WITHOUT_DEFAULT_VALUE:
+								return 29;
+							case IDelta.TYPE_PARAMETER:
+								return 32;
+							case IDelta.TYPE_ARGUMENT:
+								return 106;
+							default:
+								break;
 						}
 						break;
 					}
 					case IDelta.CHANGED: {
-						switch(element) {
+						switch (element) {
 							case IDelta.FIELD_ELEMENT_TYPE: {
-								switch(flags) {
-									case IDelta.TYPE: return 81;
-									case IDelta.VALUE: return 84;
-									case IDelta.DECREASE_ACCESS: return 114;
-									case IDelta.NON_FINAL_TO_FINAL: return 118;
-									case IDelta.STATIC_TO_NON_STATIC: return 121;
-									case IDelta.NON_STATIC_TO_STATIC: return 69;
-									default: break;
+								switch (flags) {
+									case IDelta.TYPE:
+										return 81;
+									case IDelta.VALUE:
+										return 84;
+									case IDelta.DECREASE_ACCESS:
+										return 114;
+									case IDelta.NON_FINAL_TO_FINAL:
+										return 118;
+									case IDelta.STATIC_TO_NON_STATIC:
+										return 121;
+									case IDelta.NON_STATIC_TO_STATIC:
+										return 69;
+									default:
+										break;
 								}
 								break;
 							}
-							case IDelta.METHOD_ELEMENT_TYPE : {
-								switch(flags) {
-									case IDelta.DECREASE_ACCESS : return 115;
-									case IDelta.NON_ABSTRACT_TO_ABSTRACT : return 117;
-									case IDelta.NON_FINAL_TO_FINAL: return 119;
-									case IDelta.NON_STATIC_TO_STATIC: return 120;
-									case IDelta.STATIC_TO_NON_STATIC: return 122;
-									default: break;
+							case IDelta.METHOD_ELEMENT_TYPE: {
+								switch (flags) {
+									case IDelta.DECREASE_ACCESS:
+										return 115;
+									case IDelta.NON_ABSTRACT_TO_ABSTRACT:
+										return 117;
+									case IDelta.NON_FINAL_TO_FINAL:
+										return 119;
+									case IDelta.NON_STATIC_TO_STATIC:
+										return 120;
+									case IDelta.STATIC_TO_NON_STATIC:
+										return 122;
+									default:
+										break;
 								}
 								break;
 							}
-							case IDelta.CONSTRUCTOR_ELEMENT_TYPE : {
-								switch(flags) {
-									case IDelta.DECREASE_ACCESS : return 116;
-									default: break;
+							case IDelta.CONSTRUCTOR_ELEMENT_TYPE: {
+								switch (flags) {
+									case IDelta.DECREASE_ACCESS:
+										return 116;
+									default:
+										break;
 								}
 								break;
 							}
-							default: break;
+							default:
+								break;
 						}
-						switch(flags) {
-							case IDelta.CLASS_BOUND: return 52;
-							case IDelta.CONTRACTED_SUPERINTERFACES_SET: return 54;
-							case IDelta.DECREASE_ACCESS: return 55;
-							case IDelta.FINAL_TO_NON_FINAL_STATIC_CONSTANT: return 61;
-							case IDelta.INTERFACE_BOUND: return 64;
-							case IDelta.NON_ABSTRACT_TO_ABSTRACT: return 66;
-							case IDelta.NON_FINAL_TO_FINAL: return 67;
-							case IDelta.NON_STATIC_TO_STATIC: return 123;
-							case IDelta.STATIC_TO_NON_STATIC: return 73;
-							case IDelta.TYPE_CONVERSION: return TYPE_CONVERSION_ID;
-							case IDelta.VARARGS_TO_ARRAY: return 85;
-							case IDelta.TYPE_ARGUMENT: return 124;
-							default: break;
+						switch (flags) {
+							case IDelta.CLASS_BOUND:
+								return 52;
+							case IDelta.CONTRACTED_SUPERINTERFACES_SET:
+								return 54;
+							case IDelta.DECREASE_ACCESS:
+								return 55;
+							case IDelta.FINAL_TO_NON_FINAL_STATIC_CONSTANT:
+								return 61;
+							case IDelta.INTERFACE_BOUND:
+								return 64;
+							case IDelta.NON_ABSTRACT_TO_ABSTRACT:
+								return 66;
+							case IDelta.NON_FINAL_TO_FINAL:
+								return 67;
+							case IDelta.NON_STATIC_TO_STATIC:
+								return 123;
+							case IDelta.STATIC_TO_NON_STATIC:
+								return 73;
+							case IDelta.TYPE_CONVERSION:
+								return TYPE_CONVERSION_ID;
+							case IDelta.VARARGS_TO_ARRAY:
+								return 85;
+							case IDelta.TYPE_ARGUMENT:
+								return 124;
+							default:
+								break;
 						}
 						break;
 					}
 					case IDelta.REMOVED: {
-						switch(flags) {
-							case IDelta.ANNOTATION_DEFAULT_VALUE: return 86;
-							case IDelta.API_COMPONENT: return 87;
-							case IDelta.CLASS_BOUND: return 89;
-							case IDelta.CONSTRUCTOR: return 91;
-							case IDelta.ENUM_CONSTANT: return 92;
-							case IDelta.FIELD: return 94;
-							case IDelta.INTERFACE_BOUND: return 96;
-							case IDelta.METHOD: return 98;
-							case IDelta.METHOD_WITH_DEFAULT_VALUE: return 100;
-							case IDelta.METHOD_WITHOUT_DEFAULT_VALUE: return 101;
-							case IDelta.TYPE: return 102;
-							case IDelta.TYPE_ARGUMENTS: return 103;
-							case IDelta.TYPE_MEMBER: return 104;
-							case IDelta.TYPE_PARAMETER: return 105;
-							case IDelta.VALUE : return 108;
-							case IDelta.API_TYPE: return 113;
-							case IDelta.API_FIELD: return 125;
-							case IDelta.API_METHOD: return 126;
-							case IDelta.API_CONSTRUCTOR: return 127;
-							case IDelta.API_ENUM_CONSTANT: return 128;
-							case IDelta.API_METHOD_WITH_DEFAULT_VALUE : return 129;
-							case IDelta.API_METHOD_WITHOUT_DEFAULT_VALUE: return 130;
-							case IDelta.TYPE_ARGUMENT: return 107;
-							case IDelta.SUPERCLASS: return 131;
-							case IDelta.REEXPORTED_API_TYPE: return 134;
-							case IDelta.REEXPORTED_TYPE: return 135;
-							default: break;
+						switch (flags) {
+							case IDelta.ANNOTATION_DEFAULT_VALUE:
+								return 86;
+							case IDelta.API_COMPONENT:
+								return 87;
+							case IDelta.CLASS_BOUND:
+								return 89;
+							case IDelta.CONSTRUCTOR:
+								return 91;
+							case IDelta.ENUM_CONSTANT:
+								return 92;
+							case IDelta.FIELD:
+								return 94;
+							case IDelta.INTERFACE_BOUND:
+								return 96;
+							case IDelta.METHOD:
+								return 98;
+							case IDelta.METHOD_WITH_DEFAULT_VALUE:
+								return 100;
+							case IDelta.METHOD_WITHOUT_DEFAULT_VALUE:
+								return 101;
+							case IDelta.TYPE:
+								return 102;
+							case IDelta.TYPE_ARGUMENTS:
+								return 103;
+							case IDelta.TYPE_MEMBER:
+								return 104;
+							case IDelta.TYPE_PARAMETER:
+								return 105;
+							case IDelta.VALUE:
+								return 108;
+							case IDelta.API_TYPE:
+								return 113;
+							case IDelta.API_FIELD:
+								return 125;
+							case IDelta.API_METHOD:
+								return 126;
+							case IDelta.API_CONSTRUCTOR:
+								return 127;
+							case IDelta.API_ENUM_CONSTANT:
+								return 128;
+							case IDelta.API_METHOD_WITH_DEFAULT_VALUE:
+								return 129;
+							case IDelta.API_METHOD_WITHOUT_DEFAULT_VALUE:
+								return 130;
+							case IDelta.TYPE_ARGUMENT:
+								return 107;
+							case IDelta.SUPERCLASS:
+								return 131;
+							case IDelta.REEXPORTED_API_TYPE:
+								return 134;
+							case IDelta.REEXPORTED_TYPE:
+								return 135;
+							default:
+								break;
 						}
 						break;
 					}
-					default: break;
+					default:
+						break;
 				}
 				break;
 			}
 			case IApiProblem.CATEGORY_API_COMPONENT_RESOLUTION: {
-				switch(kind) {
-					case IApiProblem.API_COMPONENT_RESOLUTION: return 99;
-					default: break;
+				switch (kind) {
+					case IApiProblem.API_COMPONENT_RESOLUTION:
+						return 99;
+					default:
+						break;
 				}
 				break;
 			}
 			case IApiProblem.CATEGORY_FATAL_PROBLEM: {
-				switch(kind) {
-					case IApiProblem.FATAL_JDT_BUILDPATH_PROBLEM: return 31;
-					default: break;
+				switch (kind) {
+					case IApiProblem.FATAL_JDT_BUILDPATH_PROBLEM:
+						return 31;
+					default:
+						break;
 				}
 				break;
 			}
-			case IApiProblem.CATEGORY_API_USE_SCAN_PROBLEM : {
-				switch(kind) {
-					case IApiProblem.API_USE_SCAN_TYPE_PROBLEM: return 136 + flags;
-					case IApiProblem.API_USE_SCAN_METHOD_PROBLEM: return 138 + flags;
-					case IApiProblem.API_USE_SCAN_FIELD_PROBLEM: return 140 + flags;
-					default: break;
+			case IApiProblem.CATEGORY_API_USE_SCAN_PROBLEM: {
+				switch (kind) {
+					case IApiProblem.API_USE_SCAN_TYPE_PROBLEM:
+						return 136 + flags;
+					case IApiProblem.API_USE_SCAN_METHOD_PROBLEM:
+						return 138 + flags;
+					case IApiProblem.API_USE_SCAN_FIELD_PROBLEM:
+						return 140 + flags;
+					default:
+						break;
 				}
 				break;
 			}
-			default: break;
+			default:
+				break;
 		}
 		return 0;
 	}
-	
+
 	/**
 	 * Returns the problem severity id for the given problem parameters.
+	 * 
 	 * @param category
 	 * @param element
 	 * @param kind
 	 * @param flags
-	 * @return the id of the preference to use to lookup the user specified severity level for the given {@link IApiProblem}
+	 * @return the id of the preference to use to lookup the user specified
+	 *         severity level for the given {@link IApiProblem}
 	 */
 	public static String getProblemSeverityId(IApiProblem problem) {
-		switch(problem.getCategory()) {
+		switch (problem.getCategory()) {
 			case IApiProblem.CATEGORY_FATAL_PROBLEM: {
-				switch(problem.getKind()) {
-					case IApiProblem.FATAL_JDT_BUILDPATH_PROBLEM: return IApiProblemTypes.FATAL_PROBLEMS;
-					default: break;
+				switch (problem.getKind()) {
+					case IApiProblem.FATAL_JDT_BUILDPATH_PROBLEM:
+						return IApiProblemTypes.FATAL_PROBLEMS;
+					default:
+						break;
 				}
-				break;	
+				break;
 			}
-			case IApiProblem.CATEGORY_API_COMPONENT_RESOLUTION : {
-				switch(problem.getKind()) {
-					case IApiProblem.API_COMPONENT_RESOLUTION: return IApiProblemTypes.REPORT_RESOLUTION_ERRORS_API_COMPONENT;
-					default: break;
+			case IApiProblem.CATEGORY_API_COMPONENT_RESOLUTION: {
+				switch (problem.getKind()) {
+					case IApiProblem.API_COMPONENT_RESOLUTION:
+						return IApiProblemTypes.REPORT_RESOLUTION_ERRORS_API_COMPONENT;
+					default:
+						break;
 				}
 				break;
 			}
 			case IApiProblem.CATEGORY_API_BASELINE: {
-				switch(problem.getKind()) {
-					case IApiProblem.API_BASELINE_MISSING: return IApiProblemTypes.MISSING_DEFAULT_API_BASELINE;
-					default: break;
+				switch (problem.getKind()) {
+					case IApiProblem.API_BASELINE_MISSING:
+						return IApiProblemTypes.MISSING_DEFAULT_API_BASELINE;
+					default:
+						break;
 				}
 				break;
 			}
 			case IApiProblem.CATEGORY_SINCETAGS: {
-				switch(problem.getKind()) {
-					case IApiProblem.SINCE_TAG_INVALID: return IApiProblemTypes.INVALID_SINCE_TAG_VERSION;
-					case IApiProblem.SINCE_TAG_MALFORMED: return IApiProblemTypes.MALFORMED_SINCE_TAG;
-					case IApiProblem.SINCE_TAG_MISSING: return IApiProblemTypes.MISSING_SINCE_TAG;
-					default: break;
+				switch (problem.getKind()) {
+					case IApiProblem.SINCE_TAG_INVALID:
+						return IApiProblemTypes.INVALID_SINCE_TAG_VERSION;
+					case IApiProblem.SINCE_TAG_MALFORMED:
+						return IApiProblemTypes.MALFORMED_SINCE_TAG;
+					case IApiProblem.SINCE_TAG_MISSING:
+						return IApiProblemTypes.MISSING_SINCE_TAG;
+					default:
+						break;
 				}
 				break;
 			}
@@ -868,30 +1021,51 @@ public class ApiProblemFactory {
 				return IApiProblemTypes.INCOMPATIBLE_API_COMPONENT_VERSION;
 			}
 			case IApiProblem.CATEGORY_USAGE: {
-				switch(problem.getKind()) {
-					case IApiProblem.ILLEGAL_IMPLEMENT: return IApiProblemTypes.ILLEGAL_IMPLEMENT;
-					case IApiProblem.ILLEGAL_EXTEND: return IApiProblemTypes.ILLEGAL_EXTEND;
-					case IApiProblem.ILLEGAL_INSTANTIATE: return IApiProblemTypes.ILLEGAL_INSTANTIATE;
-					case IApiProblem.ILLEGAL_OVERRIDE: return IApiProblemTypes.ILLEGAL_OVERRIDE;
-					case IApiProblem.ILLEGAL_REFERENCE: return IApiProblemTypes.ILLEGAL_REFERENCE;
+				switch (problem.getKind()) {
+					case IApiProblem.ILLEGAL_IMPLEMENT:
+						return IApiProblemTypes.ILLEGAL_IMPLEMENT;
+					case IApiProblem.ILLEGAL_EXTEND:
+						return IApiProblemTypes.ILLEGAL_EXTEND;
+					case IApiProblem.ILLEGAL_INSTANTIATE:
+						return IApiProblemTypes.ILLEGAL_INSTANTIATE;
+					case IApiProblem.ILLEGAL_OVERRIDE:
+						return IApiProblemTypes.ILLEGAL_OVERRIDE;
+					case IApiProblem.ILLEGAL_REFERENCE:
+						return IApiProblemTypes.ILLEGAL_REFERENCE;
 					case IApiProblem.API_LEAK: {
-						switch(problem.getFlags()) {
-							case IApiProblem.LEAK_EXTENDS : return IApiProblemTypes.LEAK_EXTEND;
-							case IApiProblem.LEAK_FIELD : return IApiProblemTypes.LEAK_FIELD_DECL;
-							case IApiProblem.LEAK_IMPLEMENTS : return IApiProblemTypes.LEAK_IMPLEMENT;
-							case IApiProblem.LEAK_CONSTRUCTOR_PARAMETER: 
-							case IApiProblem.LEAK_METHOD_PARAMETER : return IApiProblemTypes.LEAK_METHOD_PARAM;
-							case IApiProblem.LEAK_RETURN_TYPE : return IApiProblemTypes.LEAK_METHOD_RETURN_TYPE;
-							default: break;
+						switch (problem.getFlags()) {
+							case IApiProblem.LEAK_EXTENDS:
+								return IApiProblemTypes.LEAK_EXTEND;
+							case IApiProblem.LEAK_FIELD:
+								return IApiProblemTypes.LEAK_FIELD_DECL;
+							case IApiProblem.LEAK_IMPLEMENTS:
+								return IApiProblemTypes.LEAK_IMPLEMENT;
+							case IApiProblem.LEAK_CONSTRUCTOR_PARAMETER:
+							case IApiProblem.LEAK_METHOD_PARAMETER:
+								return IApiProblemTypes.LEAK_METHOD_PARAM;
+							case IApiProblem.LEAK_RETURN_TYPE:
+								return IApiProblemTypes.LEAK_METHOD_RETURN_TYPE;
+							default:
+								break;
 						}
 						break;
 					}
-					case IApiProblem.UNSUPPORTED_TAG_USE: return IApiProblemTypes.INVALID_JAVADOC_TAG;
-					case IApiProblem.DUPLICATE_TAG_USE: return IApiProblemTypes.INVALID_JAVADOC_TAG;
-					case IApiProblem.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES: return IApiProblemTypes.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES;
-					case IApiProblem.UNUSED_PROBLEM_FILTERS: return IApiProblemTypes.UNUSED_PROBLEM_FILTERS;
-					case IApiProblem.MISSING_EE_DESCRIPTIONS: return IApiProblemTypes.MISSING_EE_DESCRIPTIONS;
-					default: break;
+					case IApiProblem.UNSUPPORTED_TAG_USE:
+						return IApiProblemTypes.INVALID_JAVADOC_TAG;
+					case IApiProblem.DUPLICATE_TAG_USE:
+						return IApiProblemTypes.INVALID_JAVADOC_TAG;
+					case IApiProblem.DUPLICATE_ANNOTATION_USE:
+						return IApiProblemTypes.INVALID_ANNOTATION;
+					case IApiProblem.UNSUPPORTED_ANNOTATION_USE:
+						return IApiProblemTypes.INVALID_ANNOTATION;
+					case IApiProblem.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES:
+						return IApiProblemTypes.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES;
+					case IApiProblem.UNUSED_PROBLEM_FILTERS:
+						return IApiProblemTypes.UNUSED_PROBLEM_FILTERS;
+					case IApiProblem.MISSING_EE_DESCRIPTIONS:
+						return IApiProblemTypes.MISSING_EE_DESCRIPTIONS;
+					default:
+						break;
 				}
 				break;
 			}
@@ -899,15 +1073,20 @@ public class ApiProblemFactory {
 				return Util.getDeltaPrefererenceKey(problem.getElementKind(), problem.getKind(), problem.getFlags());
 			}
 			case IApiProblem.CATEGORY_API_USE_SCAN_PROBLEM: {
-				switch(problem.getKind()) {
-					case IApiProblem.API_USE_SCAN_TYPE_PROBLEM : return IApiProblemTypes.API_USE_SCAN_TYPE_SEVERITY;
-					case IApiProblem.API_USE_SCAN_METHOD_PROBLEM : return IApiProblemTypes.API_USE_SCAN_METHOD_SEVERITY;
-					case IApiProblem.API_USE_SCAN_FIELD_PROBLEM : return IApiProblemTypes.API_USE_SCAN_FIELD_SEVERITY;
-					default: break;
+				switch (problem.getKind()) {
+					case IApiProblem.API_USE_SCAN_TYPE_PROBLEM:
+						return IApiProblemTypes.API_USE_SCAN_TYPE_SEVERITY;
+					case IApiProblem.API_USE_SCAN_METHOD_PROBLEM:
+						return IApiProblemTypes.API_USE_SCAN_METHOD_SEVERITY;
+					case IApiProblem.API_USE_SCAN_FIELD_PROBLEM:
+						return IApiProblemTypes.API_USE_SCAN_FIELD_SEVERITY;
+					default:
+						break;
 				}
 				break;
 			}
-			default: break;
+			default:
+				break;
 		}
 		return null;
 	}

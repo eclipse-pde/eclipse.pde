@@ -183,6 +183,29 @@
     </attribute>
  </extension>
  <extension
+       id="org.eclipse.pde.api.tools.unsupported_annotations"
+       name="%markerUnsupportedAnnotations.name"
+       point="org.eclipse.core.resources.markers">
+    <super
+          type="org.eclipse.core.resources.problemmarker">
+    </super>
+    <super
+          type="org.eclipse.core.resources.textmarker">
+    </super>
+    <persistent
+          value="true">
+    </persistent>
+    <attribute
+          name="flags">
+    </attribute>
+    <attribute
+          name="kind">
+    </attribute>
+    <attribute
+          name="apiMarkerID">
+    </attribute>
+ </extension>
+ <extension
        point="org.eclipse.core.runtime.preferences">
     <initializer
           class="org.eclipse.pde.api.tools.internal.ApiPluginPreferenceInitializer">

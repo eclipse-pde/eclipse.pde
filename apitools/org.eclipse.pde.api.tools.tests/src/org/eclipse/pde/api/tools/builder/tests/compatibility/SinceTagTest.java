@@ -116,6 +116,7 @@ public abstract class SinceTagTest extends CompatibilityTest {
 	@Override
 	protected void setBuilderOptions() {
 		enableUnsupportedTagOptions(false);
+		enableUnsupportedAnnotationOptions(false);
 		enableBaselineOptions(false);
 		enableCompatibilityOptions(false);
 		enableLeakOptions(false);

@@ -47,6 +47,7 @@ public class ApiPluginPreferenceInitializer extends AbstractPreferenceInitialize
 		node.put(IApiProblemTypes.LEAK_METHOD_PARAM, ApiPlugin.VALUE_WARNING);
 		node.put(IApiProblemTypes.LEAK_METHOD_RETURN_TYPE, ApiPlugin.VALUE_WARNING);
 		node.put(IApiProblemTypes.INVALID_JAVADOC_TAG, ApiPlugin.VALUE_IGNORE);
+		node.put(IApiProblemTypes.INVALID_ANNOTATION, ApiPlugin.VALUE_IGNORE);
 		node.put(IApiProblemTypes.INVALID_REFERENCE_IN_SYSTEM_LIBRARIES, ApiPlugin.VALUE_IGNORE);
 		node.put(IApiProblemTypes.UNUSED_PROBLEM_FILTERS, ApiPlugin.VALUE_WARNING);
 		node.put(IApiProblemTypes.FATAL_PROBLEMS, ApiPlugin.VALUE_ERROR);

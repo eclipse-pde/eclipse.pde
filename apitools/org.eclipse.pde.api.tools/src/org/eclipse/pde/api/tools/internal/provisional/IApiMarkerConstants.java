@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -100,9 +100,15 @@ public interface IApiMarkerConstants {
 	public static final String SINCE_TAGS_PROBLEM_MARKER = ApiPlugin.PLUGIN_ID + ".marker.sincetags"; //$NON-NLS-1$
 	/**
 	 * Constant representing the id for the unsupported Javadoc tag marker
-	 * Values is : <code>>org.eclipse.pde.api.tools.unsupported_tags</code>
+	 * Values is : <code>org.eclipse.pde.api.tools.unsupported_tags</code>
 	 */
 	public static final String UNSUPPORTED_TAG_PROBLEM_MARKER = ApiPlugin.PLUGIN_ID + ".unsupported_tags"; //$NON-NLS-1$
+	/**
+	 * Constant representing the id for the unsupported annotations marker <br>
+	 * <br>
+	 * Value is: <code>org.eclipse.pde.api.tools.unsupported_annotations</code>
+	 */
+	public static final String UNSUPPORTED_ANNOTATION_PROBLEM_MARKER = ApiPlugin.PLUGIN_ID + ".unsupported_annotations"; //$NON-NLS-1$
 	/**
 	 * Constant representing the name of the 'apiMarkerID' attribute on API
 	 * Tools markers. Value is: <code>apiMarkerID</code>
@@ -119,7 +125,7 @@ public interface IApiMarkerConstants {
 	 */
 	public static final int COMPATIBILITY_MARKER_ID = 2;
 	/**
-	 * Constant representing the apiMarkerID value for api usage markers. Value
+	 * Constant representing the apiMarkerID value for API usage markers. Value
 	 * is: <code>3</code>
 	 */
 	public static final int API_USAGE_MARKER_ID = 3;
@@ -153,6 +159,22 @@ public interface IApiMarkerConstants {
 	 * markers. Value is: <code>9</code>
 	 */
 	public static final int UNUSED_PROBLEM_FILTER_MARKER_ID = 9;
+	/**
+	 * Constant representing the apiMarkerID value for a duplicate annotation <br>
+	 * <br>
+	 * Value is: <code>10</code>
+	 * 
+	 * @since 1.0.600
+	 */
+	public static final int DUPLICATE_ANNOTATION_MARKER_ID = 10;
+	/**
+	 * Constant representing the apiMarkerID for unsupported annotation markers. <br>
+	 * <br>
+	 * Value is: <code>11</code>
+	 * 
+	 * @since 1.0.600
+	 */
+	public static final int UNSUPPORTED_ANNOTATION_MARKER_ID = 11;
 	/**
 	 * Constant representing the description for the bundle version marker.
 	 * Value is: <code>description</code>

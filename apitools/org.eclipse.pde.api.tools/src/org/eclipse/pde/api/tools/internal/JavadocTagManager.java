@@ -30,6 +30,35 @@ import org.eclipse.pde.api.tools.internal.provisional.RestrictionModifiers;
 public final class JavadocTagManager {
 
 	/**
+	 * Compound key for the annotation cache
+	 * 
+	 * @since 1.0.600
+	 */
+	class Key {
+		int type;
+		int member;
+
+		public Key(int t, int m) {
+			type = t;
+			member = m;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (obj instanceof Key) {
+				Key other = (Key) obj;
+				return type == other.type && member == other.member;
+			}
+			return super.equals(obj);
+		}
+
+		@Override
+		public int hashCode() {
+			return type + member;
+		}
+	}
+
+	/**
 	 * Constant for the <code>noinsantiate</code> tag <br>
 	 * <br>
 	 * Value is: <code>@noinstantiate</code>
@@ -37,6 +66,14 @@ public final class JavadocTagManager {
 	 * @since 1.0.500
 	 */
 	public static final String TAG_NOINSTANTIATE = "@noinstantiate"; //$NON-NLS-1$
+	/**
+	 * Constant for the <code>&#64;NoInstantiate</code> annotation <br>
+	 * <br>
+	 * Value is: <code>NoInstantiate</code>
+	 * 
+	 * @since 1.0.600
+	 */
+	public static final String ANNOTATION_NOINSTANTIATE = "NoInstantiate"; //$NON-NLS-1$
 	/**
 	 * Constant for the <code>noextend</code> tag <br>
 	 * <br>
@@ -46,6 +83,14 @@ public final class JavadocTagManager {
 	 */
 	public static final String TAG_NOEXTEND = "@noextend"; //$NON-NLS-1$
 	/**
+	 * Constant for the <code>&#64;NoExtend</code> annotation <br>
+	 * <br>
+	 * Value is: <code>NoExtend</code>
+	 * 
+	 * @since 1.0.600
+	 */
+	public static final String ANNOTATION_NOEXTEND = "NoExtend"; //$NON-NLS-1$
+	/**
 	 * Constant for the <code>noimplement</code> tag <br>
 	 * <br>
 	 * Value is: <code>@noimplement</code>
@@ -53,6 +98,14 @@ public final class JavadocTagManager {
 	 * @since 1.0.500
 	 */
 	public static final String TAG_NOIMPLEMENT = "@noimplement"; //$NON-NLS-1$
+	/**
+	 * Constant for the <code>&#64;NoImplement</code> annotation <br>
+	 * <br>
+	 * Value is: <code>NoImplement</code>
+	 * 
+	 * @since 1.0.600
+	 */
+	public static final String ANNOTATION_NOIMPLEMENT = "NoImplement"; //$NON-NLS-1$
 	/**
 	 * Constant for the <code>nooverride</code> tag <br>
 	 * <br>
@@ -62,6 +115,14 @@ public final class JavadocTagManager {
 	 */
 	public static final String TAG_NOOVERRIDE = "@nooverride"; //$NON-NLS-1$
 	/**
+	 * Constant for the <code>&#64;NoOverride</code> annotation <br>
+	 * <br>
+	 * Value is: <code>NoOverride</code>
+	 * 
+	 * @since 1.0.600
+	 */
+	public static final String ANNOTATION_NOOVERRIDE = "NoOverride"; //$NON-NLS-1$
+	/**
 	 * Constant for the <code>noreference</code> tag <br>
 	 * <br>
 	 * Value is: <code>@noreference</code>
@@ -69,6 +130,14 @@ public final class JavadocTagManager {
 	 * @since 1.0.500
 	 */
 	public static final String TAG_NOREFERENCE = "@noreference"; //$NON-NLS-1$
+	/**
+	 * Constant for the <code>&#64;NoReference</code> annotation <br>
+	 * <br>
+	 * Value is: <code>NoReference</code>
+	 * 
+	 * @since 1.0.600
+	 */
+	public static final String ANNOTATION_NOREFERENCE = "NoReference"; //$NON-NLS-1$
 
 	/**
 	 * The collection of all tags
@@ -81,6 +150,19 @@ public final class JavadocTagManager {
 	 */
 	public static final Set<String> ALL_TAGS;
 
+	/**
+	 * The collection of all annotation names
+	 * 
+	 * @see #ANNOTATION_NOEXTEND
+	 * @see #ANNOTATION_NOIMPLEMENT
+	 * @see #ANNOTATION_NOINSTANTIATE
+	 * @see #ANNOTATION_NOOVERRIDE
+	 * @see #ANNOTATION_NOREFERENCE
+	 * 
+	 * @sine 1.0.600
+	 */
+	public static final Set<String> ALL_ANNOTATIONS;
+
 	static {
 		HashSet<String> tags = new HashSet<String>(5, 1);
 		tags.add(TAG_NOEXTEND);
@@ -89,21 +171,68 @@ public final class JavadocTagManager {
 		tags.add(TAG_NOOVERRIDE);
 		tags.add(TAG_NOREFERENCE);
 		ALL_TAGS = Collections.unmodifiableSet(tags);
+
+		tags = new HashSet<String>();
+		tags.add(ANNOTATION_NOEXTEND);
+		tags.add(ANNOTATION_NOIMPLEMENT);
+		tags.add(ANNOTATION_NOINSTANTIATE);
+		tags.add(ANNOTATION_NOOVERRIDE);
+		tags.add(ANNOTATION_NOREFERENCE);
+		ALL_ANNOTATIONS = Collections.unmodifiableSet(tags);
 	}
 
 	/**
 	 * Cache for the contributed javadoc tags. Cache form:
-	 * 
-	 * <pre>
-	 * HashMap<String(id), tag>
-	 * </pre>
 	 */
 	private HashMap<String, IApiJavadocTag> tagcache = null;
+
+	/**
+	 * Cache of annotations keyed by the member the apply to
+	 * 
+	 * @since 1.0.600
+	 */
+	private HashMap<Key, Set<String>> fAnnotationCache = null;
 
 	/**
 	 * Collection of tag extensions
 	 */
 	private IApiJavadocTag[] tags;
+
+	/**
+	 * Initialize the annotation mapping
+	 * 
+	 * @since 1.0.600
+	 */
+	private void initializeAnnotations() {
+		if (fAnnotationCache == null) {
+			fAnnotationCache = new HashMap<Key, Set<String>>();
+			HashSet<String> annots = new HashSet<String>();
+			annots.add(ANNOTATION_NOEXTEND);
+			annots.add(ANNOTATION_NOINSTANTIATE);
+			annots.add(ANNOTATION_NOREFERENCE);
+			fAnnotationCache.put(new Key(IApiJavadocTag.TYPE_CLASS, IApiJavadocTag.MEMBER_NONE), annots);
+			annots = new HashSet<String>();
+			annots.add(ANNOTATION_NOEXTEND);
+			annots.add(ANNOTATION_NOIMPLEMENT);
+			annots.add(ANNOTATION_NOREFERENCE);
+			fAnnotationCache.put(new Key(IApiJavadocTag.TYPE_INTERFACE, IApiJavadocTag.MEMBER_NONE), annots);
+			annots = new HashSet<String>();
+			annots.add(ANNOTATION_NOOVERRIDE);
+			annots.add(ANNOTATION_NOREFERENCE);
+			fAnnotationCache.put(new Key(IApiJavadocTag.TYPE_CLASS, IApiJavadocTag.MEMBER_METHOD), annots);
+			annots = new HashSet<String>();
+			annots.add(ANNOTATION_NOREFERENCE);
+			fAnnotationCache.put(new Key(IApiJavadocTag.TYPE_CLASS, IApiJavadocTag.MEMBER_FIELD), annots);
+			fAnnotationCache.put(new Key(IApiJavadocTag.TYPE_CLASS, IApiJavadocTag.MEMBER_CONSTRUCTOR), annots);
+			fAnnotationCache.put(new Key(IApiJavadocTag.TYPE_INTERFACE, IApiJavadocTag.MEMBER_FIELD), annots);
+			fAnnotationCache.put(new Key(IApiJavadocTag.TYPE_INTERFACE, IApiJavadocTag.MEMBER_METHOD), annots);
+			fAnnotationCache.put(new Key(IApiJavadocTag.TYPE_ANNOTATION, IApiJavadocTag.MEMBER_NONE), annots);
+			fAnnotationCache.put(new Key(IApiJavadocTag.TYPE_ENUM, IApiJavadocTag.MEMBER_NONE), annots);
+			fAnnotationCache.put(new Key(IApiJavadocTag.TYPE_ENUM, IApiJavadocTag.MEMBER_FIELD), annots);
+			fAnnotationCache.put(new Key(IApiJavadocTag.TYPE_ENUM, IApiJavadocTag.MEMBER_METHOD), annots);
+
+		}
+	}
 
 	/**
 	 * Initializes the cache of contributed Javadoc tags. If the cache has
@@ -183,6 +312,24 @@ public final class JavadocTagManager {
 			}
 		}
 		return list.toArray(new IApiJavadocTag[list.size()]);
+	}
+
+	/**
+	 * Returns the set of supported annotations for the given type and member
+	 * 
+	 * @param type the type kind
+	 * @param member the member kind
+	 * @return the set of supported annotations or an empty set, never
+	 *         <code>null</code>
+	 * @since 1.0.600
+	 */
+	public synchronized Set<String> getAnntationsForType(int type, int member) {
+		initializeAnnotations();
+		Set<String> values = fAnnotationCache.get(new Key(type, member));
+		if (values != null) {
+			return values;
+		}
+		return Collections.EMPTY_SET;
 	}
 
 	/**

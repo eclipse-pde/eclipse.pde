@@ -43,7 +43,7 @@ import org.eclipse.pde.api.tools.tests.ApiTestsPlugin;
 public class BundleMergeSplitTests extends ApiBuilderTest {
 
 	static {
-//		TESTS_NUMBERS = new int[] { 9 };
+		// TESTS_NUMBERS = new int[] { 9 };
 	}
 	private static final String API_BASELINE = "API-baseline"; //$NON-NLS-1$
 	/**
@@ -55,25 +55,30 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 	 * 
 	 */
 	public static final String WORKSPACE_PROFILE = "post-split"; //$NON-NLS-1$
-	
+
 	public static final String BASELINE = "pre-split"; //$NON-NLS-1$
 
 	IApiBaseline baseline;
 
 	/**
 	 * Constructor
+	 * 
 	 * @param name
 	 */
 	public BundleMergeSplitTests(String name) {
 		super(name);
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#setBuilderOptions()
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#setBuilderOptions
+	 * ()
 	 */
 	@Override
 	protected void setBuilderOptions() {
 		enableUnsupportedTagOptions(false);
+		enableUnsupportedAnnotationOptions(false);
 		enableBaselineOptions(true);
 		enableCompatibilityOptions(true);
 		enableLeakOptions(false);
@@ -88,11 +93,9 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 	public static Test suite() {
 		return buildTestSuite(BundleMergeSplitTests.class);
 	}
-	
-	/* (non-Javadoc)
-	 * 
-	 * Ensure a baseline has been created to compare against.
-	 * 
+
+	/*
+	 * (non-Javadoc) Ensure a baseline has been created to compare against.
 	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#setUp()
 	 */
 	@Override
@@ -103,6 +106,7 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 		}
 		super.setUp();
 	}
+
 	@Override
 	protected void tearDown() throws Exception {
 		IApiBaselineManager manager = ApiPlugin.getDefault().getApiBaselineManager();
@@ -111,7 +115,7 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 		this.baseline.dispose();
 		this.baseline = null;
 		IApiBaseline wsbaseline = manager.getWorkspaceBaseline();
-		if(wsbaseline != null) {
+		if (wsbaseline != null) {
 			wsbaseline.dispose();
 		}
 		IProject[] projects = getEnv().getWorkspace().getRoot().getProjects();
@@ -121,10 +125,9 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 		super.tearDown();
 		getEnv().setRevert(false);
 	}
-	
+
 	/**
-	 * Tests that merging a plug-in is compatible with
-	 * previous release.
+	 * Tests that merging a plug-in is compatible with previous release.
 	 * 
 	 * @throws Exception
 	 */
@@ -133,9 +136,10 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 		setupTest("test1"); //$NON-NLS-1$
 		performMergeSplit();
 	}
+
 	/**
-	 * Tests that splitting a plug-in and re-exporting the base is compatible with
-	 * previous release.
+	 * Tests that splitting a plug-in and re-exporting the base is compatible
+	 * with previous release.
 	 * 
 	 * @throws Exception
 	 */
@@ -144,10 +148,10 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 		setupTest("test2"); //$NON-NLS-1$
 		performMergeSplit();
 	}
+
 	/**
-	 * Tests that splitting a plug-in and re-exporting the base is compatible with
-	 * previous release.
-	 * Remove a re-exported type
+	 * Tests that splitting a plug-in and re-exporting the base is compatible
+	 * with previous release. Remove a re-exported type
 	 * 
 	 * @throws Exception
 	 */
@@ -155,28 +159,19 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 		// setup the environment
 		setupTest("test3"); //$NON-NLS-1$
 		int[] ids = new int[] {
-				ApiProblemFactory.createProblemId(
-						IApiProblem.CATEGORY_COMPATIBILITY,
-						IDelta.API_COMPONENT_ELEMENT_TYPE,
-						IDelta.REMOVED,
-						IDelta.TYPE),
-				ApiProblemFactory.createProblemId(
-						IApiProblem.CATEGORY_VERSION,
-						IElementDescriptor.RESOURCE,
-						IApiProblem.MAJOR_VERSION_CHANGE,
-						IApiProblem.NO_FLAGS)
-		};
+				ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_COMPATIBILITY, IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.REMOVED, IDelta.TYPE),
+				ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_VERSION, IElementDescriptor.RESOURCE, IApiProblem.MAJOR_VERSION_CHANGE, IApiProblem.NO_FLAGS) };
 		setExpectedProblemIds(ids);
 		String[][] args = new String[2][];
-		args[0] = new String[]{"a.b.c.ClassB", "a.b.c_1.0.0"}; //$NON-NLS-1$ //$NON-NLS-2$
-		args[1] = new String[]{"1.0.0", "1.0.0"}; //$NON-NLS-1$ //$NON-NLS-2$
+		args[0] = new String[] { "a.b.c.ClassB", "a.b.c_1.0.0" }; //$NON-NLS-1$ //$NON-NLS-2$
+		args[1] = new String[] { "1.0.0", "1.0.0" }; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performMergeSplit();
 	}
+
 	/**
-	 * Tests that splitting a plug-in and re-exporting the base is compatible with
-	 * previous release.
-	 * Adding a re-exported type
+	 * Tests that splitting a plug-in and re-exporting the base is compatible
+	 * with previous release. Adding a re-exported type
 	 * 
 	 * @throws Exception
 	 */
@@ -186,10 +181,10 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 		// no problem expected
 		performMergeSplit();
 	}
+
 	/**
-	 * Tests that splitting a plug-in and re-exporting the base is compatible with
-	 * previous release.
-	 * Remove a re-exported type
+	 * Tests that splitting a plug-in and re-exporting the base is compatible
+	 * with previous release. Remove a re-exported type
 	 * 
 	 * @throws Exception
 	 */
@@ -197,28 +192,19 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 		// setup the environment
 		setupTest("test5"); //$NON-NLS-1$
 		int[] ids = new int[] {
-				ApiProblemFactory.createProblemId(
-						IApiProblem.CATEGORY_COMPATIBILITY,
-						IDelta.API_COMPONENT_ELEMENT_TYPE,
-						IDelta.REMOVED,
-						IDelta.REEXPORTED_API_TYPE),
-				ApiProblemFactory.createProblemId(
-						IApiProblem.CATEGORY_VERSION,
-						IElementDescriptor.RESOURCE,
-						IApiProblem.MAJOR_VERSION_CHANGE,
-						IApiProblem.NO_FLAGS)
-		};
+				ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_COMPATIBILITY, IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.REMOVED, IDelta.REEXPORTED_API_TYPE),
+				ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_VERSION, IElementDescriptor.RESOURCE, IApiProblem.MAJOR_VERSION_CHANGE, IApiProblem.NO_FLAGS) };
 		setExpectedProblemIds(ids);
 		String[][] args = new String[2][];
-		args[0] = new String[]{"a.b.c.ClassB", "a.b.c_1.0.0"}; //$NON-NLS-1$ //$NON-NLS-2$
-		args[1] = new String[]{"1.0.0", "1.0.0"}; //$NON-NLS-1$ //$NON-NLS-2$
+		args[0] = new String[] { "a.b.c.ClassB", "a.b.c_1.0.0" }; //$NON-NLS-1$ //$NON-NLS-2$
+		args[1] = new String[] { "1.0.0", "1.0.0" }; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performMergeSplit();
 	}
+
 	/**
-	 * Tests that splitting a plug-in and re-exporting the base is compatible with
-	 * previous release.
-	 * Remove a re-exported type
+	 * Tests that splitting a plug-in and re-exporting the base is compatible
+	 * with previous release. Remove a re-exported type
 	 * 
 	 * @throws Exception
 	 */
@@ -226,28 +212,19 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 		// setup the environment
 		setupTest("test6"); //$NON-NLS-1$
 		int[] ids = new int[] {
-				ApiProblemFactory.createProblemId(
-						IApiProblem.CATEGORY_COMPATIBILITY,
-						IDelta.API_COMPONENT_ELEMENT_TYPE,
-						IDelta.REMOVED,
-						IDelta.REEXPORTED_TYPE),
-				ApiProblemFactory.createProblemId(
-						IApiProblem.CATEGORY_VERSION,
-						IElementDescriptor.RESOURCE,
-						IApiProblem.MAJOR_VERSION_CHANGE,
-						IApiProblem.NO_FLAGS)
-		};
+				ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_COMPATIBILITY, IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.REMOVED, IDelta.REEXPORTED_TYPE),
+				ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_VERSION, IElementDescriptor.RESOURCE, IApiProblem.MAJOR_VERSION_CHANGE, IApiProblem.NO_FLAGS) };
 		setExpectedProblemIds(ids);
 		String[][] args = new String[2][];
-		args[0] = new String[]{"a.b.c.ClassB", "a.b.c_1.0.0"}; //$NON-NLS-1$ //$NON-NLS-2$
-		args[1] = new String[]{"1.0.0", "1.0.0"}; //$NON-NLS-1$ //$NON-NLS-2$
+		args[0] = new String[] { "a.b.c.ClassB", "a.b.c_1.0.0" }; //$NON-NLS-1$ //$NON-NLS-2$
+		args[1] = new String[] { "1.0.0", "1.0.0" }; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performMergeSplit();
 	}
+
 	/**
-	 * Tests that splitting a plug-in and re-exporting the base is compatible with
-	 * previous release.
-	 * Adding a type
+	 * Tests that splitting a plug-in and re-exporting the base is compatible
+	 * with previous release. Adding a type
 	 * 
 	 * @throws Exception
 	 */
@@ -257,10 +234,10 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 		// no problem expected
 		performMergeSplit();
 	}
+
 	/**
-	 * Tests that splitting a plug-in and re-exporting the base is compatible with
-	 * previous release.
-	 * Remove a re-exported type
+	 * Tests that splitting a plug-in and re-exporting the base is compatible
+	 * with previous release. Remove a re-exported type
 	 * 
 	 * @throws Exception
 	 */
@@ -268,28 +245,19 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 		// setup the environment
 		setupTest("test8"); //$NON-NLS-1$
 		int[] ids = new int[] {
-				ApiProblemFactory.createProblemId(
-						IApiProblem.CATEGORY_COMPATIBILITY,
-						IDelta.API_COMPONENT_ELEMENT_TYPE,
-						IDelta.REMOVED,
-						IDelta.REEXPORTED_API_TYPE),
-				ApiProblemFactory.createProblemId(
-						IApiProblem.CATEGORY_VERSION,
-						IElementDescriptor.RESOURCE,
-						IApiProblem.MAJOR_VERSION_CHANGE,
-						IApiProblem.NO_FLAGS)
-		};
+				ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_COMPATIBILITY, IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.REMOVED, IDelta.REEXPORTED_API_TYPE),
+				ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_VERSION, IElementDescriptor.RESOURCE, IApiProblem.MAJOR_VERSION_CHANGE, IApiProblem.NO_FLAGS) };
 		setExpectedProblemIds(ids);
 		String[][] args = new String[2][];
-		args[0] = new String[]{"a.b.c.ClassB", "a.b.c_1.0.0"}; //$NON-NLS-1$ //$NON-NLS-2$
-		args[1] = new String[]{"1.0.0", "1.0.0"}; //$NON-NLS-1$ //$NON-NLS-2$
+		args[0] = new String[] { "a.b.c.ClassB", "a.b.c_1.0.0" }; //$NON-NLS-1$ //$NON-NLS-2$
+		args[1] = new String[] { "1.0.0", "1.0.0" }; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performMergeSplit();
 	}
+
 	/**
-	 * Tests that splitting a plug-in and re-exporting the base is compatible with
-	 * previous release.
-	 * Remove a re-exported type
+	 * Tests that splitting a plug-in and re-exporting the base is compatible
+	 * with previous release. Remove a re-exported type
 	 * 
 	 * @throws Exception
 	 */
@@ -297,44 +265,27 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 		// setup the environment
 		setupTest("test9"); //$NON-NLS-1$
 		int[] ids = new int[] {
-				ApiProblemFactory.createProblemId(
-						IApiProblem.CATEGORY_COMPATIBILITY,
-						IDelta.API_COMPONENT_ELEMENT_TYPE,
-						IDelta.REMOVED,
-						IDelta.REEXPORTED_API_TYPE),
-				ApiProblemFactory.createProblemId(
-						IApiProblem.CATEGORY_COMPATIBILITY,
-						IElementDescriptor.TYPE,
-						IDelta.REMOVED,
-						IDelta.API_TYPE),
-				ApiProblemFactory.createProblemId(
-						IApiProblem.CATEGORY_VERSION,
-						IElementDescriptor.RESOURCE,
-						IApiProblem.MAJOR_VERSION_CHANGE,
-						IApiProblem.NO_FLAGS),
-				ApiProblemFactory.createProblemId(
-						IApiProblem.CATEGORY_VERSION,
-						IElementDescriptor.RESOURCE,
-						IApiProblem.MAJOR_VERSION_CHANGE,
-						IApiProblem.NO_FLAGS)
-		};
+				ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_COMPATIBILITY, IDelta.API_COMPONENT_ELEMENT_TYPE, IDelta.REMOVED, IDelta.REEXPORTED_API_TYPE),
+				ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_COMPATIBILITY, IElementDescriptor.TYPE, IDelta.REMOVED, IDelta.API_TYPE),
+				ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_VERSION, IElementDescriptor.RESOURCE, IApiProblem.MAJOR_VERSION_CHANGE, IApiProblem.NO_FLAGS),
+				ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_VERSION, IElementDescriptor.RESOURCE, IApiProblem.MAJOR_VERSION_CHANGE, IApiProblem.NO_FLAGS) };
 		setExpectedProblemIds(ids);
 		String[][] args = new String[4][];
-		args[0] = new String[]{"d.e.f.ClassD", "a.b.c_1.0.0"}; //$NON-NLS-1$ //$NON-NLS-2$
-		args[1] = new String[]{"d.e.f.ClassD", "a.b.c.core_1.0.0"}; //$NON-NLS-1$ //$NON-NLS-2$
-		args[2] = new String[]{"1.0.0", "1.0.0"}; //$NON-NLS-1$ //$NON-NLS-2$
-		args[3] = new String[]{"1.0.0", "1.0.0"}; //$NON-NLS-1$ //$NON-NLS-2$
+		args[0] = new String[] { "d.e.f.ClassD", "a.b.c_1.0.0" }; //$NON-NLS-1$ //$NON-NLS-2$
+		args[1] = new String[] { "d.e.f.ClassD", "a.b.c.core_1.0.0" }; //$NON-NLS-1$ //$NON-NLS-2$
+		args[2] = new String[] { "1.0.0", "1.0.0" }; //$NON-NLS-1$ //$NON-NLS-2$
+		args[3] = new String[] { "1.0.0", "1.0.0" }; //$NON-NLS-1$ //$NON-NLS-2$
 		setExpectedMessageArgs(args);
 		performMergeSplit();
 	}
-	
+
 	/**
-	 * Tests that splitting a plug-in and re-exporting the base is compatible with
-	 * previous release when package changes name, and old types subclass new types.
-	 * There should be no since tags errors in this case since the new
-	 * types are in new packages and should contain the since tag corresponding
-	 * to the new bundle. Since the new bundle is not in the baseline, the tags
-	 * cannot be validated.
+	 * Tests that splitting a plug-in and re-exporting the base is compatible
+	 * with previous release when package changes name, and old types subclass
+	 * new types. There should be no since tags errors in this case since the
+	 * new types are in new packages and should contain the since tag
+	 * corresponding to the new bundle. Since the new bundle is not in the
+	 * baseline, the tags cannot be validated.
 	 * 
 	 * @throws Exception
 	 */
@@ -349,13 +300,15 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 		updateWorkspaceFile(file.getFullPath(), replacement);
 		incrementalBuild();
 		assertProblems(getEnv().getProblems());
-	}	
+	}
+
 	private void performMergeSplit() throws CoreException {
 		cleanBuild();
 		fullBuild();
 		boolean errors = false;
 		int attempts = 1;
-		// for some reason we get JDT build errors sometimes... so try again until there are none
+		// for some reason we get JDT build errors sometimes... so try again
+		// until there are none
 		do {
 			errors = false;
 			IMarker[] jdtMarkers = getEnv().getAllJDTMarkers(getEnv().getWorkspaceRootPath());
@@ -374,14 +327,21 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 				fullBuild();
 			}
 		} while (errors && attempts < 10);
-		
+
 		expectingNoJDTProblems();
-		//problems are now reported on the types from the fragment
-		//https://bugs.eclipse.org/bugs/show_bug.cgi?id=289640
-		/*IPath manifestPath = new Path("a.b.c").append("META-INF").append("MANIFEST.MF");*/
-		ApiProblem[] problems = getEnv().getProblems();/*For(manifestPath, null);*/
+		// problems are now reported on the types from the fragment
+		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=289640
+		/*
+		 * IPath manifestPath = new
+		 * Path("a.b.c").append("META-INF").append("MANIFEST.MF");
+		 */
+		ApiProblem[] problems = getEnv().getProblems();/*
+														 * For(manifestPath,
+														 * null);
+														 */
 		assertProblems(problems);
 	}
+
 	private void setupTest(String testName) throws Exception {
 		// build the baseline if not present
 		IApiBaselineManager manager = ApiPlugin.getDefault().getApiBaselineManager();
@@ -398,7 +358,7 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 		for (int i = 0; i < length; i++) {
 			IProject currentProject = projects[i];
 			IApiComponent component = manager.getWorkspaceComponent(currentProject.getName());
-			assertNotNull("The project was not found in the workspace baseline: "+currentProject.getName(), component); //$NON-NLS-1$
+			assertNotNull("The project was not found in the workspace baseline: " + currentProject.getName(), component); //$NON-NLS-1$
 			exportApiComponent(currentProject, component, baselineLocation);
 		}
 		this.baseline = ApiModelFactory.newApiBaseline(API_BASELINE);
@@ -425,31 +385,40 @@ public class BundleMergeSplitTests extends ApiBuilderTest {
 	}
 
 	private String getReferenceBaselineLocation(String testName) {
-		return WORKSPACE_ROOT + File.separator + testName + File.separator +  BASELINE;
+		return WORKSPACE_ROOT + File.separator + testName + File.separator + BASELINE;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getDefaultProblemId()
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getDefaultProblemId
+	 * ()
 	 */
 	@Override
 	protected int getDefaultProblemId() {
 		return 0;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getTestSourcePath()
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getTestSourcePath
+	 * ()
 	 */
 	@Override
 	protected IPath getTestSourcePath() {
 		return new Path(""); //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getTestingProjectName()
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getTestingProjectName
+	 * ()
 	 */
 	@Override
 	protected String getTestingProjectName() {
 		return "bundlemergesplit"; //$NON-NLS-1$
 	}
-	
+
 }

@@ -42,6 +42,7 @@ import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.tests.builder.BuilderTests;
 import org.eclipse.jdt.core.tests.junit.extension.TestCase;
+import org.eclipse.pde.api.tools.builder.tests.annotations.AnnotationTest;
 import org.eclipse.pde.api.tools.builder.tests.compatibility.CompatibilityTest;
 import org.eclipse.pde.api.tools.builder.tests.leak.LeakTest;
 import org.eclipse.pde.api.tools.builder.tests.tags.TagTest;
@@ -785,6 +786,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 		inode.put(IApiProblemTypes.LEAK_METHOD_PARAM, ApiPlugin.VALUE_WARNING);
 		inode.put(IApiProblemTypes.LEAK_METHOD_RETURN_TYPE, ApiPlugin.VALUE_WARNING);
 		inode.put(IApiProblemTypes.INVALID_JAVADOC_TAG, ApiPlugin.VALUE_IGNORE);
+		inode.put(IApiProblemTypes.INVALID_ANNOTATION, ApiPlugin.VALUE_IGNORE);
 		inode.put(IApiProblemTypes.UNUSED_PROBLEM_FILTERS, ApiPlugin.VALUE_WARNING);
 
 		// compatibilities
@@ -944,6 +946,22 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	}
 
 	/**
+	 * Enables or disables the unsupported annotation problems for the builder
+	 * 
+	 * @param enabled
+	 * @since 1.0.400
+	 */
+	protected void enableUnsupportedAnnotationOptions(boolean enabled) {
+		IEclipsePreferences inode = InstanceScope.INSTANCE.getNode(ApiPlugin.PLUGIN_ID);
+		inode.put(IApiProblemTypes.INVALID_ANNOTATION, enabled ? ApiPlugin.VALUE_ERROR : ApiPlugin.VALUE_IGNORE);
+		try {
+			inode.flush();
+		} catch (BackingStoreException e) {
+			ApiPlugin.log(e);
+		}
+	}
+
+	/**
 	 * Enables or disables all of the compatibility problems for the builder
 	 * 
 	 * @param enabled if true the builder options are set to 'Error', false sets
@@ -1070,7 +1088,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	private static Class<?>[] getAllTestClasses() {
 		Class<?>[] classes = new Class[] {
 				CompatibilityTest.class, UsageTest.class, LeakTest.class,
-				TagTest.class };
+				TagTest.class, AnnotationTest.class };
 		return classes;
 	}
 

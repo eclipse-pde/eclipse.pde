@@ -177,6 +177,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 		cleanupUsageMarkers(resource);
 		cleanupCompatibilityMarkers(resource);
 		cleanupUnsupportedTagMarkers(resource);
+		cleanupUnsupportedAnnotationMarkers(resource);
 		cleanApiUseScanMarkers(resource);
 		cleanupFatalMarkers(resource);
 	}
@@ -224,6 +225,26 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 					System.out.println("ApiAnalysisBuilder: cleaning unsupported tag problems"); //$NON-NLS-1$
 				}
 				resource.deleteMarkers(IApiMarkerConstants.UNSUPPORTED_TAG_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
+			}
+		} catch (CoreException e) {
+			ApiPlugin.log(e.getStatus());
+		}
+	}
+
+	/**
+	 * Removes all of the unsupported annotation markers from the given resource
+	 * and all of its children
+	 * 
+	 * @param resource
+	 * @since 1.0.600
+	 */
+	void cleanupUnsupportedAnnotationMarkers(IResource resource) {
+		try {
+			if (resource != null && resource.isAccessible()) {
+				if (ApiPlugin.DEBUG_BUILDER) {
+					System.out.println("ApiAnalysisBuilder: cleaning unsupported annotation problems"); //$NON-NLS-1$
+				}
+				resource.deleteMarkers(IApiMarkerConstants.UNSUPPORTED_ANNOTATION_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
 			}
 		} catch (CoreException e) {
 			ApiPlugin.log(e.getStatus());
@@ -792,6 +813,9 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				if (kind == IApiProblem.UNSUPPORTED_TAG_USE) {
 					return IApiMarkerConstants.UNSUPPORTED_TAG_PROBLEM_MARKER;
 				}
+				if (kind == IApiProblem.UNSUPPORTED_ANNOTATION_USE) {
+					return IApiMarkerConstants.UNSUPPORTED_ANNOTATION_PROBLEM_MARKER;
+				}
 				if (kind == IApiProblem.UNUSED_PROBLEM_FILTERS) {
 					return IApiMarkerConstants.UNUSED_FILTER_PROBLEM_MARKER;
 				}
@@ -879,7 +903,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				System.out.println("ApiAnalysisBuilder: Created the marker: " + marker.getId() + " - " + marker.getAttributes().entrySet()); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		} catch (CoreException e) {
-			// ignore and continue
+			ApiPlugin.log(e);
 			return;
 		}
 	}
@@ -954,6 +978,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 			cleanupUsageMarkers(this.currentproject);
 			cleanupCompatibilityMarkers(this.currentproject);
 			cleanupUnsupportedTagMarkers(this.currentproject);
+			cleanupUnsupportedAnnotationMarkers(this.currentproject);
 			this.currentproject.deleteMarkers(IApiMarkerConstants.UNUSED_FILTER_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
 			Util.updateMonitor(localmonitor, 1);
 			// clean up the .api_settings

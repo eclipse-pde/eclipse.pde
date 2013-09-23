@@ -64,6 +64,7 @@ public abstract class UsageTest extends ApiBuilderTest {
 	@Override
 	protected void setBuilderOptions() {
 		enableUnsupportedTagOptions(false);
+		enableUnsupportedAnnotationOptions(false);
 		enableBaselineOptions(false);
 		enableCompatibilityOptions(false);
 		enableLeakOptions(false);

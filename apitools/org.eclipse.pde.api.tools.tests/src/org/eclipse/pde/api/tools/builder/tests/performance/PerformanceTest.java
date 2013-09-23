@@ -75,6 +75,7 @@ public abstract class PerformanceTest extends ApiBuilderTest {
 	@Override
 	protected void setBuilderOptions() {
 		enableUnsupportedTagOptions(true);
+		enableUnsupportedAnnotationOptions(true);
 		enableBaselineOptions(true);
 		enableCompatibilityOptions(true);
 		enableLeakOptions(true);
