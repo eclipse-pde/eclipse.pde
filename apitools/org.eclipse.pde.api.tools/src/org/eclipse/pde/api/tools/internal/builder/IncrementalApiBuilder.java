@@ -96,7 +96,7 @@ public class IncrementalApiBuilder {
 		 *         interesting list <code>false</code> otherwise
 		 */
 		boolean isContained(IProject lproject, HashSet<IProject> others) {
-			return lproject.equals(lproject) || (others != null && others.contains(this.project));
+			return this.project.equals(lproject) || (others != null && others.contains(this.project));
 		}
 	}
 
