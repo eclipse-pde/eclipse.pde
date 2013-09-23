@@ -74,6 +74,7 @@ public class MinimalState {
 				fState.removeBundle(desc);
 		} catch (CoreException e) {
 			PDECore.log(e);
+			model.setBundleDescription(null);
 		}
 	}
 
