@@ -121,6 +121,7 @@ public class TargetLocationsGroup {
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		atree.setLayoutData(gd);
 		atree.addKeyListener(new KeyAdapter() {
+			@Override
 			public void keyPressed(KeyEvent e) {
 				if (e.keyCode == SWT.DEL && fRemoveButton.getEnabled()) {
 					handleRemove();
@@ -162,6 +163,7 @@ public class TargetLocationsGroup {
 		gd.widthHint = 200;
 		atree.setLayoutData(gd);
 		atree.addKeyListener(new KeyAdapter() {
+			@Override
 			public void keyPressed(KeyEvent e) {
 				if (e.keyCode == SWT.DEL && fRemoveButton.getEnabled()) {
 					handleRemove();
@@ -196,6 +198,7 @@ public class TargetLocationsGroup {
 		fTreeViewer.setContentProvider(new TargetLocationContentProvider());
 		fTreeViewer.setLabelProvider(new TargetLocationLabelProvider(true, false));
 		fTreeViewer.setComparator(new ViewerComparator() {
+			@Override
 			public int compare(Viewer viewer, Object e1, Object e2) {
 				// Status at the end of the list
 				if (e1 instanceof IStatus && !(e2 instanceof IStatus)) {
@@ -227,6 +230,7 @@ public class TargetLocationsGroup {
 	 */
 	private void initializeButtons() {
 		fAddButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleAdd();
 			}
@@ -235,6 +239,7 @@ public class TargetLocationsGroup {
 		SWTFactory.setButtonDimensionHint(fAddButton);
 
 		fEditButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleEdit();
 			}
@@ -244,6 +249,7 @@ public class TargetLocationsGroup {
 		SWTFactory.setButtonDimensionHint(fEditButton);
 
 		fRemoveButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleRemove();
 			}
@@ -253,6 +259,7 @@ public class TargetLocationsGroup {
 		SWTFactory.setButtonDimensionHint(fRemoveButton);
 
 		fUpdateButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleUpdate();
 			}
@@ -262,7 +269,9 @@ public class TargetLocationsGroup {
 		SWTFactory.setButtonDimensionHint(fUpdateButton);
 
 		fShowContentButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
+				((TargetLocationContentProvider) fTreeViewer.getContentProvider()).setShowLocationContent(fShowContentButton.getSelection());
 				fTreeViewer.refresh();
 				fTreeViewer.expandAll();
 			}
@@ -427,8 +436,10 @@ public class TargetLocationsGroup {
 			return;
 
 		JobChangeAdapter listener = new JobChangeAdapter() {
+			@Override
 			public void done(final IJobChangeEvent event) {
 				UIJob job = new UIJob(Messages.UpdateTargetJob_UpdateJobName) {
+					@Override
 					public IStatus runInUIThread(IProgressMonitor monitor) {
 						// XXX what if everything is disposed by the time we get back?
 						IStatus result = event.getJob().getResult();
@@ -538,104 +549,4 @@ public class TargetLocationsGroup {
 		}
 	}
 
-	/**
-	 * Content provider for the tree, primary input is a ITargetDefinition, children are ITargetLocation
-	 */
-	class TargetLocationContentProvider implements ITreeContentProvider {
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
-		 */
-		public Object[] getChildren(Object parentElement) {
-			if (parentElement instanceof ITargetDefinition) {
-				ITargetLocation[] containers = ((ITargetDefinition) parentElement).getTargetLocations();
-				return containers != null ? containers : new Object[0];
-			} else if (parentElement instanceof ITargetLocation) {
-				ITargetLocation location = (ITargetLocation) parentElement;
-				if (location.isResolved()) {
-					IStatus status = location.getStatus();
-					if (!status.isOK() && !status.isMultiStatus()) {
-						return new Object[] {status};
-					}
-					if (fShowContentButton.getSelection()) {
-						return location.getBundles();
-					} else if (!status.isOK()) {
-						// Show multi-status children so user can easily see problems
-						if (status.isMultiStatus()) {
-							return status.getChildren();
-						}
-					} else {
-						// Always check for provider last to avoid hurting performance
-						ITreeContentProvider provider = (ITreeContentProvider) Platform.getAdapterManager().getAdapter(parentElement, ITreeContentProvider.class);
-						if (provider != null) {
-							return provider.getChildren(parentElement);
-						}
-					}
-				}
-			} else if (parentElement instanceof MultiStatus) {
-				return ((MultiStatus) parentElement).getChildren();
-			} else {
-				ITreeContentProvider provider = (ITreeContentProvider) Platform.getAdapterManager().getAdapter(parentElement, ITreeContentProvider.class);
-				if (provider != null) {
-					return provider.getChildren(parentElement);
-				}
-			}
-			return new Object[0];
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
-		 */
-		public Object getParent(Object element) {
-			if (element instanceof IUWrapper) {
-				return ((IUWrapper) element).getParent();
-			}
-			return null;
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
-		 */
-		public boolean hasChildren(Object element) {
-			// Since we are already resolved we can't be more efficient
-			return getChildren(element).length > 0;
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getElements(java.lang.Object)
-		 */
-		public Object[] getElements(Object inputElement) {
-			if (inputElement instanceof ITargetDefinition) {
-				boolean hasContainerStatus = false;
-				Collection<Object> result = new ArrayList<Object>();
-				ITargetLocation[] containers = ((ITargetDefinition) inputElement).getTargetLocations();
-				if (containers != null) {
-					for (int i = 0; i < containers.length; i++) {
-						result.add(containers[i]);
-						if (containers[i].getStatus() != null && !containers[i].getStatus().isOK()) {
-							hasContainerStatus = true;
-						}
-					}
-				}
-				// If a container has a problem, it is displayed as a child, if there is a status outside of the container status (missing bundle, etc.) put it as a separate item
-				if (!hasContainerStatus) {
-					IStatus status = ((ITargetDefinition) inputElement).getStatus();
-					if (status != null && !status.isOK()) {
-						result.add(status);
-					}
-				}
-				return result.toArray();
-			} else if (inputElement instanceof String) {
-				return new Object[] {inputElement};
-			}
-			return new Object[0];
-		}
-
-		public void dispose() {
-		}
-
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		}
-
-	}
 }

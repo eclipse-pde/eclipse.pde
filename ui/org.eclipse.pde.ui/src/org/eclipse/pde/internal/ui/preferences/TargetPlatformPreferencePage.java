@@ -32,7 +32,7 @@ import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.target.*;
 import org.eclipse.pde.internal.ui.*;
-import org.eclipse.pde.internal.ui.shared.target.TargetLocationLabelProvider;
+import org.eclipse.pde.internal.ui.shared.target.*;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
 import org.eclipse.pde.internal.ui.wizards.target.*;
@@ -141,9 +141,17 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		private Image getImage(ITargetDefinition target) {
 			int flag = 0;
 			if (target.equals(fActiveTarget) && target.isResolved()) {
+				// If the user has resolved the target, display any errors
 				if (target.getStatus().getSeverity() == IStatus.WARNING) {
 					flag = SharedLabelProvider.F_WARNING;
 				} else if (target.getStatus().getSeverity() == IStatus.ERROR) {
+					flag = SharedLabelProvider.F_ERROR;
+				}
+			} else if (fPrevious != null && target.getHandle().equals(fPrevious.getHandle()) && fPrevious.isResolved()) {
+				// If the user hasn't made any changes to the workspace target, display any errors
+				if (fPrevious.getStatus().getSeverity() == IStatus.WARNING) {
+					flag = SharedLabelProvider.F_WARNING;
+				} else if (fPrevious.getStatus().getSeverity() == IStatus.ERROR) {
 					flag = SharedLabelProvider.F_ERROR;
 				}
 			}
@@ -184,7 +192,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 	private Button fMoveButton;
 
 	// Text displaying additional information
-	private TableViewer fDetails;
+	private TreeViewer fDetails;
 
 	/**
 	 * Initial collection of targets (handles are realized into definitions as working copies)
@@ -352,9 +360,9 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 
 		Composite detailsComposite = SWTFactory.createComposite(comp, 1, 1, GridData.FILL_HORIZONTAL, 0, 0);
 		SWTFactory.createLabel(detailsComposite, PDEUIMessages.TargetPlatformPreferencePage2_25, 1);
-		fDetails = new TableViewer(detailsComposite);
+		fDetails = new TreeViewer(detailsComposite);
 		fDetails.setLabelProvider(new TargetLocationLabelProvider(true, true));
-		fDetails.setContentProvider(new ArrayContentProvider());
+		fDetails.setContentProvider(new TargetLocationContentProvider());
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.heightHint = 50;
 		fDetails.getControl().setLayoutData(gd);
@@ -439,7 +447,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 
 				// Compare the target to the existing platform
 				try {
-					if (bundleStatus.getSeverity() != IStatus.ERROR && fActiveTarget.getHandle().equals(fPrevious.getHandle()) && ((TargetDefinition) fPrevious).isContentEquivalent(fActiveTarget)) {
+					if (fPrevious != null && bundleStatus.getSeverity() != IStatus.ERROR && fActiveTarget.getHandle().equals(fPrevious.getHandle()) && ((TargetDefinition) fPrevious).isContentEquivalent(fActiveTarget)) {
 						IStatus compare = getTargetService().compareWithTargetPlatform(fActiveTarget);
 						if (!compare.isOK()) {
 							MessageDialog.openInformation(getShell(), PDEUIMessages.TargetPlatformPreferencePage2_17, PDEUIMessages.TargetPlatformPreferencePage2_18);
@@ -581,7 +589,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		//fDuplicateButton.setEnabled(size == 1);
 		if (selection.getFirstElement() != null) {
 			fMoveButton.setEnabled(size == 1 && ((ITargetDefinition) selection.getFirstElement()).getHandle() instanceof LocalTargetHandle);
-			fReloadButton.setEnabled(((ITargetDefinition) selection.getFirstElement()) == fActiveTarget && fActiveTarget.getHandle().equals(fPrevious.getHandle()) && fTableViewer.getChecked(fActiveTarget));
+			fReloadButton.setEnabled(((ITargetDefinition) selection.getFirstElement()) == fActiveTarget && fActiveTarget.getHandle().equals(fPrevious != null ? fPrevious.getHandle() : null) && fTableViewer.getChecked(fActiveTarget));
 		} else {
 			fMoveButton.setEnabled(false);
 			fReloadButton.setEnabled(false);
@@ -594,7 +602,13 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 	protected void updateDetails() {
 		IStructuredSelection selection = (IStructuredSelection) fTableViewer.getSelection();
 		if (selection.size() == 1) {
-			fDetails.setInput(((ITargetDefinition) selection.getFirstElement()).getTargetLocations());
+			ITargetDefinition selected = (ITargetDefinition) selection.getFirstElement();
+			if (!selected.isResolved() && fPrevious != null && selected.getHandle().equals(fPrevious.getHandle()) && fPrevious.isResolved()) {
+				// Use the resolved workspace target if the user hasn't made any changes
+				fDetails.setInput(fPrevious);
+			} else {
+				fDetails.setInput(selected);
+			}
 		} else {
 			fDetails.setInput(null);
 		}
@@ -801,6 +815,12 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 
 			LoadTargetDefinitionJob.load(toLoad, listener);
 			fPrevious = toLoad == null ? null : toLoad;
+		} else {
+			// Manually update the active target and status line to update name, resolve status, and errors
+			if (fActiveTarget != null) {
+				((TargetPlatformService) service).setWorkspaceTargetDefinition(fActiveTarget);
+				TargetStatus.refreshTargetStatusContent();
+			}
 		}
 
 		fMoved.clear();

@@ -20,9 +20,12 @@ import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.ITargetHandle;
 import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.target.TargetDefinition;
 import org.eclipse.pde.internal.core.target.TargetPlatformService;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.preferences.TargetPlatformPreferencePage;
+import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
@@ -46,10 +49,13 @@ public class TargetStatus {
 	 */
 	private static class TargetStatusLineContributionItem extends StatusLineContributionItem {
 
+		TargetDefinition fRunningHost;
+
 		public TargetStatusLineContributionItem() {
 			super(TARGET_STATUS_ID, true, 22);
 			PDEPlugin.getDefault().getLabelProvider().connect(this); // Needed to avoid disposing the image early
 			setImage(PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_TARGET_DEFINITION));
+			fRunningHost = (TargetDefinition) TargetPlatformService.getDefault().newDefaultTarget();
 			update();
 			setActionHandler(new Action() {
 				@Override
@@ -78,7 +84,10 @@ public class TargetStatus {
 		 */
 		@Override
 		public void update() {
+			int flag = 0;
 			String result = Messages.TargetStatus_TargetStatusDefaultString;
+			String statusMessage = null;
+			final Image newImage;
 			try {
 				ITargetHandle handle = TargetPlatformService.getDefault().getWorkspaceTargetHandle();
 				if (handle != null) {
@@ -87,23 +96,43 @@ public class TargetStatus {
 					if (name != null && name.length() > 0) {
 						result = name;
 					}
+					if (target.isResolved()) {
+						IStatus status = target.getStatus();
+						if (status.getSeverity() == IStatus.WARNING) {
+							flag = SharedLabelProvider.F_WARNING;
+							statusMessage = getStatusMessage(status).toString();
+						} else if (status.getSeverity() == IStatus.ERROR) {
+							flag = SharedLabelProvider.F_ERROR;
+							statusMessage = getStatusMessage(status).toString();
+						}
+					}
+					if (fRunningHost != null && fRunningHost.isContentEquivalent(target)) {
+						newImage = PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_PRODUCT_BRANDING, flag);
+					} else {
+						newImage = PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_TARGET_DEFINITION, flag);
+					}
 				} else {
 					result = Messages.TargetStatus_NoActiveTargetPlatformStatus;
+					newImage = PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_TARGET_DEFINITION);
 				}
+
+				final String newValue = result;
+				final String newTooltip = statusMessage == null ? newValue : newValue + statusMessage;
+				UIJob job = new UIJob("") { //$NON-NLS-1$
+					@Override
+					public IStatus runInUIThread(IProgressMonitor monitor) {
+						targetStatus.setText(newValue);
+						setImage(newImage);
+						setToolTipText(newTooltip);
+						return Status.OK_STATUS;
+					}
+				};
+				job.setSystem(true);
+				job.schedule();
+
 			} catch (CoreException e) {
 				PDEPlugin.log(e);
 			}
-			final String newValue = result;
-			UIJob job = new UIJob("") { //$NON-NLS-1$
-				@Override
-				public IStatus runInUIThread(IProgressMonitor monitor) {
-					targetStatus.setText(newValue);
-					setToolTipText(newValue);
-					return Status.OK_STATUS;
-				}
-			};
-			job.setSystem(true);
-			job.schedule();
 		}
 
 		private final IPreferenceChangeListener prefListener = new IPreferenceChangeListener() {
@@ -114,6 +143,19 @@ public class TargetStatus {
 
 			}
 		};
+
+		private StringBuffer getStatusMessage(IStatus status) {
+			StringBuffer result = new StringBuffer();
+			if (status.isMultiStatus()) {
+				IStatus[] children = ((MultiStatus) status).getChildren();
+				for (int i = 0; i < children.length; i++) {
+					result.append(getStatusMessage(children[i]));
+				}
+			} else {
+				result.append('\n').append(status.getMessage());
+			}
+			return result;
+		}
 	}
 
 	/**
@@ -184,6 +226,7 @@ public class TargetStatus {
 			IStatusLineManager manager = getStatusLineManager(windows[i]);
 			if (manager != null) {
 				if (showStatus) {
+					manager.remove(TARGET_STATUS_ID);
 					manager.appendToGroup(StatusLineManager.BEGIN_GROUP, getContributionItem());
 				} else {
 					manager.remove(TARGET_STATUS_ID);
@@ -191,6 +234,18 @@ public class TargetStatus {
 				manager.update(false);
 				break;
 			}
+		}
+	}
+
+	/**
+	 * Updates the content of the status line based on the current target platform
+	 * if the status line item is visible
+	 */
+	public static void refreshTargetStatusContent() {
+		PDEPreferencesManager prefs = PDEPlugin.getDefault().getPreferenceManager();
+		boolean showStatus = prefs.getBoolean(IPreferenceConstants.SHOW_TARGET_STATUS);
+		if (showStatus) {
+			getContributionItem().update();
 		}
 	}
 }

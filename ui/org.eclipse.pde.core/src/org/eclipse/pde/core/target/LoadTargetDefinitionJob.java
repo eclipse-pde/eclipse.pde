@@ -106,41 +106,57 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 	 */
 	@Override
 	public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
-		if (monitor == null) {
-			monitor = new NullProgressMonitor();
-		}
+		SubMonitor subMon = SubMonitor.convert(monitor, Messages.LoadTargetOperation_mainTaskName, 40);
 		try {
-			PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
-			monitor.beginTask(Messages.LoadTargetOperation_mainTaskName, 20);
+			if (subMon.isCanceled()) {
+				return Status.CANCEL_STATUS;
+			}
 
+			if (!fTarget.isResolved()) {
+				fTarget.resolve(subMon.newChild(20));
+			}
+			subMon.setWorkRemaining(20);
+			if (subMon.isCanceled()) {
+				return Status.CANCEL_STATUS;
+			}
+
+			PDEPreferencesManager preferences = PDECore.getDefault().getPreferencesManager();
+
+			((TargetPlatformService) TargetPlatformService.getDefault()).setWorkspaceTargetDefinition(fTarget); // Must be set before preference so listeners can react
 			String memento = fTarget.getHandle().getMemento();
 			if (fNone) {
 				memento = ICoreConstants.NO_TARGET;
 			}
+			// If the same target has been modified, clear the preference so listeners can react to the change
+			if (memento.equals(preferences.getString(ICoreConstants.WORKSPACE_TARGET_HANDLE))) {
+				preferences.setValue(ICoreConstants.WORKSPACE_TARGET_HANDLE, ""); //$NON-NLS-1$
+			}
 			preferences.setValue(ICoreConstants.WORKSPACE_TARGET_HANDLE, memento);
-			((TargetPlatformService) TargetPlatformService.getDefault()).setWorkspaceTargetDefinition(fTarget);
-			if (monitor.isCanceled()) {
+			if (subMon.isCanceled()) {
 				return Status.CANCEL_STATUS;
 			}
 
-			clearDeprecatedPreferences(preferences, new SubProgressMonitor(monitor, 3));
-			if (monitor.isCanceled()) {
+			clearDeprecatedPreferences(preferences, subMon.newChild(3));
+			if (subMon.isCanceled()) {
 				return Status.CANCEL_STATUS;
 			}
 
-			loadJRE(new SubProgressMonitor(monitor, 3));
-			if (monitor.isCanceled()) {
+			loadJRE(subMon.newChild(3));
+			if (subMon.isCanceled()) {
 				return Status.CANCEL_STATUS;
 			}
 
 			PDECore.getDefault().getPreferencesManager().savePluginPreferences();
-			resetPlatform(new SubProgressMonitor(monitor, 14));
-			if (monitor.isCanceled()) {
+			resetPlatform(subMon.newChild(14));
+			if (subMon.isCanceled()) {
 				return Status.CANCEL_STATUS;
 			}
 
 		} finally {
-			monitor.done();
+			subMon.done();
+			if (monitor != null) {
+				monitor.done();
+			}
 		}
 		return Status.OK_STATUS;
 	}
