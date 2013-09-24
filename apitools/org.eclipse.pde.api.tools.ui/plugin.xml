@@ -248,6 +248,9 @@
          <markerTypeReference
                id="org.eclipse.pde.api.tools.marker.apiusescan">
          </markerTypeReference>
+         <markerTypeReference
+               id="org.eclipse.pde.api.tools.unsupported_annotations">
+         </markerTypeReference>
       </markerTypeCategory>
    </extension>
     <extension
@@ -289,6 +292,10 @@
              defaultGroupingEntry="org.eclipse.pde.api.tools.jdt_category"
              markerType="org.eclipse.pde.api.tools.marker.apiusescan">
        </markerAttributeGrouping>
+       <markerAttributeGrouping
+             defaultGroupingEntry="org.eclipse.pde.api.tools.jdt_category"
+             markerType="org.eclipse.pde.api.tools.unsupported_annotations">
+       </markerAttributeGrouping>
     </extension>
    <extension
          point="org.eclipse.ui.ide.markerResolution">
@@ -323,6 +330,10 @@
       <markerResolutionGenerator
             class="org.eclipse.pde.api.tools.ui.internal.markers.ApiMarkerResolutionGenerator"
             markerType="org.eclipse.pde.api.tools.unused_filters">
+      </markerResolutionGenerator>
+      <markerResolutionGenerator
+            class="org.eclipse.pde.api.tools.ui.internal.markers.ApiMarkerResolutionGenerator"
+            markerType="org.eclipse.pde.api.tools.unsupported_annotations">
       </markerResolutionGenerator>
    </extension>
    <extension
