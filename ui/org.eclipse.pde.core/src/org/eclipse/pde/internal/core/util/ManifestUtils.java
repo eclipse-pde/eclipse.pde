@@ -63,7 +63,9 @@ public class ManifestUtils {
 	 * This method is called by org.eclipse.pde.api.tools.internal.model.BundleComponent.getManifest()
 	 * when OSGi is not running to load manifest information for a bundle.
 	 * </p><p>
-	 * TODO This method may be removed in favour of one that caches manifest contents
+	 * TODO This method may be removed in favour of one that caches manifest contents. Currently caching is not 
+	 * worthwhile as calling <code>ManifestElement.parseManifest()</code> takes trivial time (under 1ms) on repeat
+	 * calls to the same file.
 	 * </p>
 	 * 
 	 * @param bundleLocation root location of the bundle, may be a archive file or directory
