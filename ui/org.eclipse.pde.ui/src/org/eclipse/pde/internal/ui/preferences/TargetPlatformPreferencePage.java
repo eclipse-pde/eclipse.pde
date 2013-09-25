@@ -815,6 +815,9 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 
 			LoadTargetDefinitionJob.load(toLoad, listener);
 			fPrevious = toLoad == null ? null : toLoad;
+
+			// Start a separate job to clean p2 bundle pool
+			runGC();
 		} else {
 			// Manually update the active target and status line to update name, resolve status, and errors
 			if (fActiveTarget != null) {
@@ -824,17 +827,12 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		}
 
 		fMoved.clear();
-		boolean gc = !fRemoved.isEmpty();
 		fRemoved.clear();
 		if (toLoad != null) {
 			fActiveTarget = toLoad;
 		}
 		fTableViewer.refresh(true);
 		updateButtons();
-		// start job to do GC
-		if (gc) {
-			runGC();
-		}
 		return super.performOk();
 	}
 
