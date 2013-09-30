@@ -51,6 +51,7 @@ import org.eclipse.ltk.core.refactoring.TextFileChange;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
+import org.eclipse.pde.api.tools.internal.util.Signatures;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsConstants;
 import org.eclipse.pde.api.tools.ui.internal.refactoring.CreateFileChange;
@@ -108,7 +109,9 @@ public class ApiQuckFixProcessor implements IQuickFixProcessor {
 
 		@Override
 		public String getDisplayString() {
-			return MarkerMessages.UnknownAnnotationResolution_1;
+			return NLS.bind(MarkerMessages.UnknownAnnotationResolution_1, new Object[] {
+					Signatures.getSimpleTypeName(fName),
+					Signatures.getPackageName(fName) });
 		}
 
 		@Override
@@ -150,17 +153,21 @@ public class ApiQuckFixProcessor implements IQuickFixProcessor {
 	 */
 	@Override
 	public IJavaCompletionProposal[] getCorrections(IInvocationContext context, IProblemLocation[] locations) throws CoreException {
-		ICompilationUnit unit = context.getCompilationUnit();
 		List<IJavaCompletionProposal> proposals = new ArrayList<IJavaCompletionProposal>();
-		for (int i = 0; i < locations.length; i++) {
-			if (locations[i].getProblemId() == IProblem.UndefinedType) {
-				String[] args = locations[i].getProblemArguments();
-				if (args.length == 1) {
-					// only one argument in the missing annotation problem
-					for (int j = 0; j < args.length; j++) {
-						String name = ApiPlugin.getJavadocTagManager().getQualifiedNameForAnnotation(args[j]);
-						if (name != null) {
-							proposals.add(new UnknownAnnotationQuickFix(unit, name));
+		ICompilationUnit unit = context.getCompilationUnit();
+		IProject project = unit.getJavaProject().getProject();
+		IFile build = project.getFile("build.properties"); //$NON-NLS-1$
+		if (needsBuildPropertiesChange(build)) {
+			for (int i = 0; i < locations.length; i++) {
+				if (locations[i].getProblemId() == IProblem.UndefinedType) {
+					String[] args = locations[i].getProblemArguments();
+					if (args.length == 1) {
+						// only one argument in the missing annotation problem
+						for (int j = 0; j < args.length; j++) {
+							String name = ApiPlugin.getJavadocTagManager().getQualifiedNameForAnnotation(args[j]);
+							if (name != null) {
+								proposals.add(new UnknownAnnotationQuickFix(unit, name));
+							}
 						}
 					}
 				}
@@ -180,18 +187,14 @@ public class ApiQuckFixProcessor implements IQuickFixProcessor {
 	 */
 	public static Change createChange(ICompilationUnit unit, String qualifiedname) throws CoreException {
 		IProject project = unit.getJavaProject().getProject();
-		final IFile buildProperties = project.getFile("build.properties"); //$NON-NLS-1$
+		IFile buildProperties = project.getFile("build.properties"); //$NON-NLS-1$
 		boolean isBundle = project.hasNature(ApiPlugin.NATURE_ID);
 		if (!isBundle) {
 			return new NullChange();
 		}
-		Change propschange = createBuildPropertiesChange(buildProperties);
-		if (propschange != null) {
-			return new CompositeChange(MarkerMessages.UnknownAnnotationResolution_3, new Change[] {
-					propschange, createAddImportChange(unit, qualifiedname) });
-		} else {
-			return new CompositeChange(MarkerMessages.UnknownAnnotationResolution_3, new Change[] { createAddImportChange(unit, qualifiedname) });
-		}
+		return new CompositeChange(MarkerMessages.UnknownAnnotationResolution_3, new Change[] {
+				createBuildPropertiesChange(buildProperties),
+				createAddImportChange(unit, qualifiedname) });
 	}
 
 	/**
@@ -206,10 +209,9 @@ public class ApiQuckFixProcessor implements IQuickFixProcessor {
 		String buildPropertiesEntry = "additional.bundles = org.eclipse.pde.api.tools.annotations"; //$NON-NLS-1$
 		if (!build.exists()) {
 			return new CreateFileChange(build.getFullPath(), buildPropertiesEntry, null);
-		} else if (needsBuildPropertiesChange(build)) {
+		} else {
 			TextFileChange change = new TextFileChange(MarkerMessages.UnknownAnnotationResolution_2, build);
 			change.setEdit(new MultiTextEdit());
-
 			IPath filepath = build.getFullPath();
 			ITextFileBufferManager manager = FileBuffers.getTextFileBufferManager();
 			manager.connect(filepath, LocationKind.IFILE, null);
@@ -241,31 +243,32 @@ public class ApiQuckFixProcessor implements IQuickFixProcessor {
 				manager.disconnect(filepath, LocationKind.IFILE, null);
 			}
 		}
-		return null;
 	}
 
-	static boolean needsBuildPropertiesChange(IFile file) {
-		Properties props = new Properties();
-		InputStream stream = null;
-		try {
-			stream = file.getContents();
-			props.load(file.getContents());
-			String entry = (String) props.get("additional.bundles"); //$NON-NLS-1$
-			if (entry != null) {
-				if (entry.contains("org.eclipse.pde.api.tools.annotations")) { //$NON-NLS-1$
-					return false;
+	boolean needsBuildPropertiesChange(IFile file) {
+		if (file != null) {
+			Properties props = new Properties();
+			InputStream stream = null;
+			try {
+				stream = file.getContents();
+				props.load(file.getContents());
+				String entry = (String) props.get("additional.bundles"); //$NON-NLS-1$
+				if (entry != null) {
+					if (entry.contains("org.eclipse.pde.api.tools.annotations")) { //$NON-NLS-1$
+						return false;
+					}
 				}
-			}
-		} catch (CoreException ce) {
-			ApiUIPlugin.log(ce);
-		} catch (IOException e) {
-			ApiUIPlugin.log(e);
-		} finally {
-			if (stream != null) {
-				try {
-					stream.close();
-				} catch (IOException e) {
-					ApiUIPlugin.log(e);
+			} catch (CoreException ce) {
+				ApiUIPlugin.log(ce);
+			} catch (IOException e) {
+				ApiUIPlugin.log(e);
+			} finally {
+				if (stream != null) {
+					try {
+						stream.close();
+					} catch (IOException e) {
+						ApiUIPlugin.log(e);
+					}
 				}
 			}
 		}
