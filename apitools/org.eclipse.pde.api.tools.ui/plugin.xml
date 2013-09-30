@@ -234,6 +234,9 @@
                id="org.eclipse.pde.api.tools.marker.sincetags">
          </markerTypeReference>
          <markerTypeReference
+               id="org.eclipse.pde.api.tools.unsupported_annotations">
+         </markerTypeReference>
+         <markerTypeReference
                id="org.eclipse.pde.api.tools.unsupported_tags">
          </markerTypeReference>
          <markerTypeReference
@@ -330,6 +333,10 @@
       <markerResolutionGenerator
             class="org.eclipse.pde.api.tools.ui.internal.markers.ApiMarkerResolutionGenerator"
             markerType="org.eclipse.pde.api.tools.unused_filters">
+      </markerResolutionGenerator>
+      <markerResolutionGenerator
+            class="org.eclipse.pde.api.tools.ui.internal.markers.ApiMarkerResolutionGenerator"
+            markerType="org.eclipse.pde.api.tools.unsupported_annotations">
       </markerResolutionGenerator>
       <markerResolutionGenerator
             class="org.eclipse.pde.api.tools.ui.internal.markers.ApiMarkerResolutionGenerator"
@@ -531,5 +538,18 @@
                name="org.eclipse.pde.api.tools">
          </bundle>
       </component>
+   </extension>
+   <extension
+         point="org.eclipse.jdt.ui.quickFixProcessors">
+      <quickFixProcessor
+            class="org.eclipse.pde.api.tools.ui.internal.markers.ApiQuckFixProcessor"
+            id="org.eclipse.pde.api.tools.ui.quickFixProcessor"
+            name="%quickFixProcessor.name">
+         <handledMarkerTypes>
+            <markerType
+                  id="org.eclipse.jdt.core.problem">
+            </markerType>
+         </handledMarkerTypes>
+      </quickFixProcessor>
    </extension>
 </plugin>

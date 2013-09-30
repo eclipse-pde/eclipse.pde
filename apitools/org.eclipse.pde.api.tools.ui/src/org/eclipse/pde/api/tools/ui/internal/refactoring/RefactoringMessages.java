@@ -17,6 +17,10 @@ import org.eclipse.osgi.util.NLS;
  */
 public class RefactoringMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.pde.api.tools.ui.internal.refactoring.refactoringmessages"; //$NON-NLS-1$
+	public static String CreateFileChange_0;
+	public static String CreateFileChange_1;
+	public static String CreateFileChange_2;
+	public static String CreateFileChange_3;
 	public static String FilterChange_add_filter;
 	public static String FilterChange_remove_used_filter;
 	public static String FilterDeleteParticipant_remove_unused_filters_for_0;

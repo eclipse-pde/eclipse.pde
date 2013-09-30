@@ -67,6 +67,11 @@ public class MarkerMessages extends NLS {
 	public static String SinceTagResolution_invalid1;
 	public static String SinceTagResolution_invalid2;
 
+	public static String UnknownAnnotationResolution_0;
+	public static String UnknownAnnotationResolution_1;
+	public static String UnknownAnnotationResolution_2;
+	public static String UnknownAnnotationResolution_3;
+	public static String UnknownAnnotationResolution_4;
 	public static String UnsupportedAnnotationResolution_remove_unsupported_annotation;
 	public static String UnsupportedAnnotationResolution_remove_unsupported_named_annotation;
 	public static String UnsupportedTagResolution_remove_unsupported_tag;

@@ -163,6 +163,13 @@ public final class JavadocTagManager {
 	 */
 	public static final Set<String> ALL_ANNOTATIONS;
 
+	/**
+	 * Cache for simple annotation names mapped to their fully qualified name
+	 * 
+	 * @since 1.0.600
+	 */
+	private static final HashMap<String, String> fqAnnotationNames;
+
 	static {
 		HashSet<String> tags = new HashSet<String>(5, 1);
 		tags.add(TAG_NOEXTEND);
@@ -179,6 +186,13 @@ public final class JavadocTagManager {
 		tags.add(ANNOTATION_NOOVERRIDE);
 		tags.add(ANNOTATION_NOREFERENCE);
 		ALL_ANNOTATIONS = Collections.unmodifiableSet(tags);
+
+		fqAnnotationNames = new HashMap<String, String>();
+		fqAnnotationNames.put(ANNOTATION_NOEXTEND, "org.eclipse.pde.api.tools.annotations.NoExtend"); //$NON-NLS-1$
+		fqAnnotationNames.put(ANNOTATION_NOIMPLEMENT, "org.eclipse.pde.api.tools.annotations.NoImplement"); //$NON-NLS-1$
+		fqAnnotationNames.put(ANNOTATION_NOINSTANTIATE, "org.eclipse.pde.api.tools.annotations.NoInstantiate"); //$NON-NLS-1$
+		fqAnnotationNames.put(ANNOTATION_NOOVERRIDE, "org.eclipse.pde.api.tools.annotations.NoOverride"); //$NON-NLS-1$
+		fqAnnotationNames.put(ANNOTATION_NOREFERENCE, "org.eclipse.pde.api.tools.annotations.NoReference"); //$NON-NLS-1$
 	}
 
 	/**
@@ -330,6 +344,24 @@ public final class JavadocTagManager {
 			return values;
 		}
 		return Collections.EMPTY_SET;
+	}
+
+	/**
+	 * Returns the fully qualified name of the class providing the annotation
+	 * with the given simple type name. <code>null</code> is returned if the
+	 * annotation is unknown. <br>
+	 * <br>
+	 * Example: <code>NoExtend</code> returns
+	 * <code>org.eclipse.pde.api.toools.annnotations.NoExtend</code>
+	 * 
+	 * @param typename
+	 * @return the fully qualified type name of the annotation or
+	 *         <code>null</code> if unknown
+	 * 
+	 * @since 1.0.600
+	 */
+	public synchronized String getQualifiedNameForAnnotation(String typename) {
+		return fqAnnotationNames.get(typename);
 	}
 
 	/**

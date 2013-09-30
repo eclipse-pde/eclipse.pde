@@ -118,17 +118,27 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 		JavaContentAssistInvocationContext jcontext = null;
 		if (context instanceof JavaContentAssistInvocationContext) {
 			jcontext = (JavaContentAssistInvocationContext) context;
-		} else {
-			return Collections.EMPTY_LIST;
+			IJavaProject project = jcontext.getProject();
+			if (Util.isApiProject(project)) {
+				CompletionContext corecontext = jcontext.getCoreContext();
+				if (corecontext.isInJavadoc()) {
+					return computeJavadocProposals(jcontext, corecontext);
+				}
+			}
 		}
-		IJavaProject project = jcontext.getProject();
-		if (project == null || !Util.isApiProject(project)) {
-			return Collections.EMPTY_LIST;
-		}
-		CompletionContext corecontext = jcontext.getCoreContext();
-		if (!corecontext.isInJavadoc()) {
-			return Collections.EMPTY_LIST;
-		}
+		return Collections.EMPTY_LIST;
+	}
+
+	/**
+	 * Computes all of the Javadoc completion proposals
+	 * 
+	 * @param jcontext
+	 * @param corecontext
+	 * @return the complete list of Javadoc completion proposals or an empty
+	 *         list, never <code>null</code>
+	 * @since 1.0.500
+	 */
+	List<ICompletionProposal> computeJavadocProposals(JavaContentAssistInvocationContext jcontext, CompletionContext corecontext) {
 		ICompilationUnit cunit = jcontext.getCompilationUnit();
 		if (cunit != null) {
 			try {

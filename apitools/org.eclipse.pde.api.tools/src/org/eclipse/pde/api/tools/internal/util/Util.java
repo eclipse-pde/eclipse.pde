@@ -1468,10 +1468,14 @@ public final class Util {
 	 * Returns if the given project is API enabled
 	 * 
 	 * @param project the given project
-	 * @return true if the project is API enabled, false otherwise
+	 * @return <code>true</code> if the project is API enabled,
+	 *         <code>false</code> otherwise
 	 */
 	public static boolean isApiProject(IJavaProject project) {
-		return isApiProject(project.getProject());
+		if (project != null) {
+			return isApiProject(project.getProject());
+		}
+		return false;
 	}
 
 	/**

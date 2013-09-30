@@ -294,6 +294,7 @@ public class ApiUIPlugin extends AbstractUIPlugin {
 		declareRegistryImage(reg, IApiToolsConstants.IMG_OBJ_FRAGMENT, OBJECT + "frgmt_obj.gif"); //$NON-NLS-1$
 		declareRegistryImage(reg, IApiToolsConstants.IMG_OBJ_ECLIPSE_PROFILE, OBJECT + "eclipse_profile.gif"); //$NON-NLS-1$
 		declareRegistryImage(reg, IApiToolsConstants.IMG_OBJ_BUNDLE_VERSION, OBJECT + "bundleversion.gif"); //$NON-NLS-1$
+		declareRegistryImage(reg, IApiToolsConstants.IMG_OBJ_CHANGE_CORRECTION, OBJECT + "correction_change.gif"); //$NON-NLS-1$
 		declareRegistryImage(reg, IApiToolsConstants.IMG_ELCL_SETUP_APITOOLS, OBJECT + "category_menu.gif"); //$NON-NLS-1$
 
 		// overlays

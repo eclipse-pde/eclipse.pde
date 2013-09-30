@@ -26,7 +26,9 @@ Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.4.0,4.0.0)",
  org.eclipse.equinox.frameworkadmin;bundle-version="[2.0.0,3.0.0)",
  org.eclipse.debug.core;bundle-version="[3.4.0,4.0.0)",
  org.eclipse.debug.ui;bundle-version="[3.4.0,4.0.0)",
- org.eclipse.ui.trace;bundle-version="[1.0.0,2.0.0)"
+ org.eclipse.ui.trace;bundle-version="[1.0.0,2.0.0)",
+ org.eclipse.jdt.core.manipulation;bundle-version="1.5.0",
+ org.eclipse.core.filesystem;bundle-version="1.4.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Activator: org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin
 Export-Package: org.eclipse.pde.api.tools.ui.internal;x-friends:="org.eclipse.pde.api.tools.tests",

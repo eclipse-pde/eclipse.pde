@@ -23,32 +23,29 @@ public interface IApiToolsConstants {
 	 */
 	public static final String ID_API_TOOLS_UI_PLUGIN = "org.eclipse.pde.api.tools.ui"; //$NON-NLS-1$
 	/**
-	 * Id for the API baselines preference page.
-	 * <br>
+	 * Id for the API baselines preference page. <br>
 	 * Value is: <code>org.eclipse.pde.api.tools.ui.apiprofiles.prefpage</code>
 	 */
 	public static final String ID_BASELINES_PREF_PAGE = "org.eclipse.pde.api.tools.ui.apiprofiles.prefpage"; //$NON-NLS-1$
 	/**
-	 * Id for the API errors / warnings preference page
-	 * <br>
-	 * Value is: <code>org.eclipse.pde.api.tools.ui.apitools.errorwarnings.prefpage</code> 
+	 * Id for the API errors / warnings preference page <br>
+	 * Value is:
+	 * <code>org.eclipse.pde.api.tools.ui.apitools.errorwarnings.prefpage</code>
 	 */
 	public static final String ID_ERRORS_WARNINGS_PREF_PAGE = "org.eclipse.pde.api.tools.ui.apitools.errorwarnings.prefpage"; //$NON-NLS-1$
-	
+
 	/**
-	 * The id for the API errors / warnings property page
-	 * <br>
+	 * The id for the API errors / warnings property page <br>
 	 * Value is: <code>org.eclipse.pde.api.tools.ui.apitools.warningspage</code>
 	 */
 	public static final String ID_ERRORS_WARNINGS_PROP_PAGE = "org.eclipse.pde.api.tools.ui.apitools.warningspage"; //$NON-NLS-1$
-	
+
 	/**
-	 * The id for the API problem filters property page
-	 * <br>
+	 * The id for the API problem filters property page <br>
 	 * Value is: <code>org.eclipse.pde.api.tools.ui.apitools.filterspage</code>
 	 */
 	public static final String ID_FILTERS_PROP_PAGE = "org.eclipse.pde.api.tools.ui.apitools.filterspage"; //$NON-NLS-1$
-	
+
 	/**
 	 * Key for a compare api image
 	 */
@@ -74,27 +71,27 @@ public interface IApiToolsConstants {
 	 * Key for enabled remove image
 	 */
 	public static final String IMG_ELCL_REMOVE = "IMG_ELCL_REMOVE"; //$NON-NLS-1$
-	
+
 	/**
 	 * key for text edit image
 	 */
 	public static final String IMG_ELCL_TEXT_EDIT = "IMG_ELCL_TEXT_EDIT"; //$NON-NLS-1$
-	
+
 	/**
 	 * Key for API component image.
 	 */
 	public static final String IMG_OBJ_API_COMPONENT = "IMG_OBJ_API_COMPONENT"; //$NON-NLS-1$
-	
+
 	/**
 	 * Key for API search image
 	 */
 	public static final String IMG_OBJ_API_SEARCH = "IMG_OBJ_API_SEARCH"; //$NON-NLS-1$
-	
+
 	/**
 	 * Key for API system component image
 	 */
 	public static final String IMG_OBJ_API_SYSTEM_LIBRARY = "IMG_OBJ_API_SYSTEM_LIBRARY"; //$NON-NLS-1$
-	
+
 	/**
 	 * Key for bundle image
 	 */
@@ -112,15 +109,21 @@ public interface IApiToolsConstants {
 	 */
 	public static final String IMG_OBJ_FRAGMENT = "IMG_OBJ_FRAGMENT"; //$NON-NLS-1$		
 	/**
+	 * Key for a correction change
+	 * 
+	 * @since 1.0.500
+	 */
+	public static final String IMG_OBJ_CHANGE_CORRECTION = "IMG_OBJ_CHANGE_CORRECTION"; //$NON-NLS-1$
+	/**
 	 * Error overlay.
 	 */
 	public static final String IMG_OVR_ERROR = "IMG_OVR_ERROR"; //$NON-NLS-1$
-	
+
 	/**
 	 * Success overlay
 	 */
 	public static final String IMG_OVR_SUCCESS = "IMG_OVR_SUCCESS"; //$NON-NLS-1$
-	
+
 	/**
 	 * Warning overlay
 	 */
@@ -130,7 +133,9 @@ public interface IApiToolsConstants {
 	 */
 	public static final String IMG_WIZBAN_PROFILE = "IMG_WIZBAN_PROFILE"; //$NON-NLS-1$
 	/**
-	 * Wizard banner for comparing a selected set of projects to a selected baseline
+	 * Wizard banner for comparing a selected set of projects to a selected
+	 * baseline
+	 * 
 	 * @since 1.0.l
 	 */
 	public static final String IMG_WIZBAN_COMPARE_TO_BASELINE = "IMG_WIZBAN_COMPARE_TO_BASELINE"; //$NON-NLS-1$
