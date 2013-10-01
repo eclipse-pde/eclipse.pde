@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,8 +15,10 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.wizards.*;
 import org.eclipse.pde.internal.ui.wizards.plugin.*;
@@ -84,6 +86,7 @@ public abstract class NewPluginProjectFromTemplateWizard extends NewWizard imple
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.Wizard#addPages()
 	 */
+	@Override
 	public void addPages() {
 		WizardElement templateWizardElement = getTemplateWizard();
 		if (templateWizardElement == null) {
@@ -133,6 +136,7 @@ public abstract class NewPluginProjectFromTemplateWizard extends NewWizard imple
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.Wizard#canFinish()
 	 */
+	@Override
 	public boolean canFinish() {
 		if (super.canFinish() && !getContainer().getCurrentPage().equals(fProjectPage)) {
 			if (fTemplateWizard == null || fTemplateWizard.canFinish()) {
@@ -147,6 +151,7 @@ public abstract class NewPluginProjectFromTemplateWizard extends NewWizard imple
 	 * 
 	 * @see org.eclipse.pde.internal.ui.wizards.NewWizard#performFinish()
 	 */
+	@Override
 	public boolean performFinish() {
 		try {
 			fProjectPage.updateData();
@@ -157,6 +162,25 @@ public abstract class NewPluginProjectFromTemplateWizard extends NewWizard imple
 				fContentPage.saveSettings(settings);
 			}
 			BasicNewProjectResourceWizard.updatePerspective(fConfig);
+
+			// If the PDE models are not initialized, initialize with option to cancel
+			if (!PDECore.getDefault().areModelsInitialized()) {
+				try {
+					getContainer().run(true, true, new IRunnableWithProgress() {
+						public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+							// Target reloaded method clears existing models (which don't exist currently) and inits them with a progress monitor
+							PDECore.getDefault().getModelManager().targetReloaded(monitor);
+							if (monitor.isCanceled()) {
+								throw new InterruptedException();
+							}
+						}
+					});
+				} catch (InterruptedException e) {
+					// Model initialization cancelled
+					return false;
+				}
+			}
+
 			getContainer().run(false, true, new NewProjectCreationOperation(fPluginData, fProjectProvider, fTemplateWizard));
 
 			IWorkingSet[] workingSets = fProjectPage.getSelectedWorkingSets();

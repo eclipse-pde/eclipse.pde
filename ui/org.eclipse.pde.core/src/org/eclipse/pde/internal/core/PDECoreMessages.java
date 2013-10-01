@@ -313,6 +313,8 @@ public class PDECoreMessages extends NLS {
 
 	public static String PluginModelManager_PlatformAdminMissingErrorMessage;
 
+	public static String PluginModelManager_TargetInitCancelledLog;
+
 	public static String XMLTextChangeListener_editNames_addAttribute;
 	public static String XMLTextChangeListener_editNames_addContent;
 	public static String XMLTextChangeListener_editNames_insertNode;

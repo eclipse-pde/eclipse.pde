@@ -101,6 +101,11 @@ public class ExternalFeatureModelManager {
 	 * @return list of external feature models, possibly empty
 	 */
 	private IFeatureModel[] getExternalModels() {
+		// Plug-in resolution was cancelled by the user so skip resolving the target
+		if (PDECore.getDefault().getModelManager().isCancelled()) {
+			return new IFeatureModel[0];
+		}
+
 		ITargetDefinition target = null;
 		try {
 			target = TargetPlatformHelper.getWorkspaceTargetResolved(null);

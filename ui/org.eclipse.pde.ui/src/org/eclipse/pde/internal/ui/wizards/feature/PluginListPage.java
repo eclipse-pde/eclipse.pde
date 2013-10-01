@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,12 +11,15 @@
 package org.eclipse.pde.internal.ui.wizards.feature;
 
 import com.ibm.icu.text.Collator;
+import java.lang.reflect.InvocationTargetException;
 import java.util.TreeSet;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.*;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.PDECore;
@@ -38,6 +41,28 @@ public class PluginListPage extends BasePluginListPage {
 		public Object[] getElements(Object parent) {
 			return PluginRegistry.getActiveModels();
 		}
+
+		@Override
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+			// If the PDE models are not initialized, initialize with option to cancel
+			if (newInput != null && !PDECore.getDefault().areModelsInitialized()) {
+				try {
+					getContainer().run(true, false, new IRunnableWithProgress() {
+						public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+							// Target reloaded method clears existing models (which don't exist currently) and inits them with a progress monitor
+							PDECore.getDefault().getModelManager().targetReloaded(monitor);
+							if (monitor.isCanceled()) {
+								throw new InterruptedException();
+							}
+						}
+					});
+				} catch (InvocationTargetException e) {
+				} catch (InterruptedException e) {
+				}
+			}
+
+			super.inputChanged(viewer, oldInput, newInput);
+		}
 	}
 
 	private Combo fLaunchConfigsCombo;
@@ -51,6 +76,7 @@ public class PluginListPage extends BasePluginListPage {
 		setDescription(PDEUIMessages.NewFeatureWizard_PlugPage_desc);
 	}
 
+	@Override
 	public void createControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
@@ -69,6 +95,7 @@ public class PluginListPage extends BasePluginListPage {
 			fInitLaunchConfigButton.setText(PDEUIMessages.PluginListPage_initializeFromLaunch);
 			fInitLaunchConfigButton.setSelection(initLaunch);
 			fInitLaunchConfigButton.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					boolean initLaunchConfigs = fInitLaunchConfigButton.getSelection();
 					fLaunchConfigsCombo.setEnabled(initLaunchConfigs);

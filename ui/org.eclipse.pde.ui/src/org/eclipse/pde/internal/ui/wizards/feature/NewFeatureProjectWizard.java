@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@ package org.eclipse.pde.internal.ui.wizards.feature;
 
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.ui.PDEPluginImages;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 
@@ -27,18 +26,14 @@ public class NewFeatureProjectWizard extends AbstractNewFeatureWizard {
 		setWindowTitle(PDEUIMessages.NewFeatureWizard_wtitle);
 	}
 
+	@Override
 	public void addPages() {
 		super.addPages();
-		if (hasInterestingProjects()) {
-			fSecondPage = new PluginListPage();
-			addPage(fSecondPage);
-		}
+		fSecondPage = new PluginListPage();
+		addPage(fSecondPage);
 	}
 
-	private boolean hasInterestingProjects() {
-		return PluginRegistry.getActiveModels().length > 0;
-	}
-
+	@Override
 	protected AbstractFeatureSpecPage createFirstPage() {
 		return new FeatureSpecPage();
 	}
@@ -51,6 +46,7 @@ public class NewFeatureProjectWizard extends AbstractNewFeatureWizard {
 		return fVersion;
 	}
 
+	@Override
 	protected IRunnableWithProgress getOperation() {
 		FeatureData data = fProvider.getFeatureData();
 		fId = data.id;

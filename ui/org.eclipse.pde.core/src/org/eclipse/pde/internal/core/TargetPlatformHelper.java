@@ -15,7 +15,6 @@ package org.eclipse.pde.internal.core;
 import java.io.*;
 import java.util.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.osgi.service.resolver.BundleDescription;
@@ -432,9 +431,7 @@ public class TargetPlatformHelper {
 	/**
 	 * Utility method to get the workspace active target platform and ensure it
 	 * has been resolved.  This is potentially a long running operation. If a 
-	 * monitor is provided, progress is reported to it.  If a monitor is not 
-	 * provided, the resolution will run in a named {@link Job}, but this
-	 * thread will join to run synchronously.
+	 * monitor is provided, progress is reported to it.
 	 * 
 	 * @param monitor optional progress monitor to report progress to
 	 * @return a resolved target definition or <code>null</code> if the resolution was cancelled
@@ -449,28 +446,10 @@ public class TargetPlatformHelper {
 
 		// Don't resolve again if we don't have to
 		if (!target.isResolved()) {
-			if (monitor == null) {
-				// Resolve the target definition in a separate job to allow cancellation
-				Job job = new Job(PDECoreMessages.TargetPlatformHelper_LoadingTargetPlatform) {
-					@Override
-					protected IStatus run(IProgressMonitor monitor) {
-						return target.resolve(monitor);
-					}
-				};
-				job.schedule();
-				try {
-					job.join();
-				} catch (InterruptedException e1) {
-				}
-				if (job.getResult().getSeverity() == IStatus.CANCEL) {
-					return null;
-				}
-
-			} else {
-				target.resolve(monitor);
-				if (monitor.isCanceled()) {
-					return null;
-				}
+			SubMonitor subMon = SubMonitor.convert(monitor);
+			target.resolve(subMon);
+			if (subMon.isCanceled()) {
+				return null;
 			}
 		}
 		return target;

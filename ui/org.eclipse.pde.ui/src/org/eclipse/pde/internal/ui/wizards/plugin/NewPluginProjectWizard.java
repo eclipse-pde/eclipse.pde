@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,9 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.IWizardPage;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.elements.ElementList;
 import org.eclipse.pde.internal.ui.wizards.*;
@@ -52,6 +54,7 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.Wizard#addPages()
 	 */
+	@Override
 	public void addPages() {
 		fMainPage = new NewProjectCreationPage("main", fPluginData, false, getSelection()); //$NON-NLS-1$
 		fMainPage.setTitle(PDEUIMessages.NewProjectWizard_MainPage_title);
@@ -89,6 +92,7 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.Wizard#canFinish()
 	 */
+	@Override
 	public boolean canFinish() {
 		IWizardPage page = getContainer().getCurrentPage();
 		return super.canFinish() && page != fMainPage;
@@ -99,6 +103,7 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 	 * 
 	 * @see org.eclipse.pde.internal.ui.wizards.NewWizard#performFinish()
 	 */
+	@Override
 	public boolean performFinish() {
 		try {
 			fMainPage.updateData();
@@ -109,6 +114,24 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 				fContentPage.saveSettings(settings);
 			}
 			BasicNewProjectResourceWizard.updatePerspective(fConfig);
+
+			// If the PDE models are not initialized, initialize with option to cancel
+			if (!PDECore.getDefault().areModelsInitialized()) {
+				try {
+					getContainer().run(true, true, new IRunnableWithProgress() {
+						public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+							// Target reloaded method clears existing models (which don't exist currently) and inits them with a progress monitor
+							PDECore.getDefault().getModelManager().targetReloaded(monitor);
+							if (monitor.isCanceled()) {
+								throw new InterruptedException();
+							}
+						}
+					});
+				} catch (InterruptedException e) {
+					// Target platform will be empty, but project still can be created
+				}
+			}
+
 			IPluginContentWizard contentWizard = fWizardListPage.getSelectedWizard();
 			getContainer().run(false, true, new NewProjectCreationOperation(fPluginData, fProjectProvider, contentWizard));
 

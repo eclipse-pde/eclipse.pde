@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,14 +12,19 @@
 
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.TreeSet;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IMessageProvider;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.util.VMUtil;
 import org.eclipse.pde.internal.core.util.VersionUtil;
 import org.eclipse.pde.internal.ui.IHelpContextIds;
@@ -198,6 +203,7 @@ public class FragmentContentPage extends ContentPage {
 		// Set data 
 		fEEChoice.setItems(availableEEs.toArray(new String[availableEEs.size() - 1]));
 		fEEChoice.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				validatePage();
 			}
@@ -234,7 +240,26 @@ public class FragmentContentPage extends ContentPage {
 		browse.setText(PDEUIMessages.ContentPage_browse);
 		browse.setLayoutData(new GridData());
 		browse.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
+				// If the PDE models are not initialized, initialize with option to cancel
+				if (!PDECore.getDefault().areModelsInitialized()) {
+					try {
+						getContainer().run(true, true, new IRunnableWithProgress() {
+							public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+								// Target reloaded method clears existing models (which don't exist currently) and inits them with a progress monitor
+								PDECore.getDefault().getModelManager().targetReloaded(monitor);
+								if (monitor.isCanceled()) {
+									throw new InterruptedException();
+								}
+							}
+						});
+					} catch (InvocationTargetException ex) {
+					} catch (InterruptedException ex) {
+						// Model initialization cancelled, target platform will be empty
+					}
+				}
+
 				BusyIndicator.showWhile(pluginText.getDisplay(), new Runnable() {
 					public void run() {
 						PluginSelectionDialog dialog = new PluginSelectionDialog(pluginText.getShell(), false, false);
@@ -269,6 +294,7 @@ public class FragmentContentPage extends ContentPage {
 		return pluginVersion;
 	}
 
+	@Override
 	public void updateData() {
 		super.updateData();
 		String version;
@@ -293,43 +319,68 @@ public class FragmentContentPage extends ContentPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.wizards.plugin.ContentPage#validatePage()
 	 */
+	@Override
 	protected void validatePage() {
 		String errorMessage = validateProperties();
+		String warningMessage = null;
 
 		if (errorMessage == null) {
 			String pluginID = fNewVersion ? fPluginIdText_newV.getText().trim() : fPluginIdText_oldV.getText().trim();
 			if (pluginID.length() == 0) {
 				errorMessage = PDEUIMessages.ContentPage_nopid;
-			} else if (!(PluginRegistry.findModel(pluginID) instanceof IPluginModel)) {
-				errorMessage = PDEUIMessages.ContentPage_pluginNotFound;
 			} else {
-				if (fNewVersion) {
-					IStatus status = fVersionPart.validateFullVersionRangeText(false);
-					if (status.getSeverity() != IStatus.OK) {
-						errorMessage = status.getMessage();
+				// If the PDE models are not initialized, initialize with option to cancel
+				if (!PDECore.getDefault().areModelsInitialized()) {
+					try {
+						getContainer().run(true, true, new IRunnableWithProgress() {
+							public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+								// Target reloaded method clears existing models (which don't exist currently) and inits them with a progress monitor
+								PDECore.getDefault().getModelManager().targetReloaded(monitor);
+								if (monitor.isCanceled()) {
+									throw new InterruptedException();
+								}
+							}
+						});
+					} catch (InvocationTargetException e) {
+					} catch (InterruptedException e) {
+						// Model initialization cancelled, target platform will be empty
 					}
+				}
+
+				if (!(PluginRegistry.findModel(pluginID) instanceof IPluginModel)) {
+					warningMessage = PDEUIMessages.ContentPage_pluginNotFound;
 				} else {
-					errorMessage = validateVersion(fPluginVersion);
+					if (fNewVersion) {
+						IStatus status = fVersionPart.validateFullVersionRangeText(false);
+						if (status.getSeverity() != IStatus.OK) {
+							errorMessage = status.getMessage();
+						}
+					} else {
+						errorMessage = validateVersion(fPluginVersion);
+					}
 				}
 			}
 		}
-		if (errorMessage == null) {
+		if (errorMessage == null && warningMessage == null) {
 			String eeid = fEEChoice.getText();
 			if (fEEChoice.isEnabled()) {
 				IExecutionEnvironment ee = VMUtil.getExecutionEnvironment(eeid);
 				if (ee != null && ee.getCompatibleVMs().length == 0) {
-					errorMessage = PDEUIMessages.NewProjectCreationPage_invalidEE;
+					warningMessage = PDEUIMessages.NewProjectCreationPage_invalidEE;
 				}
 			}
 		}
-		if (fInitialized)
+		if (fInitialized) {
 			setErrorMessage(errorMessage);
+			setMessage(warningMessage, IMessageProvider.WARNING);
+		}
 		setPageComplete(errorMessage == null);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.wizards.plugin.ContentPage#setVisible(boolean)
 	 */
+	@Override
 	public void setVisible(boolean visible) {
 		if (visible) {
 			fMainPage.updateData();

@@ -158,6 +158,7 @@ public class PluginModelManager implements IModelProviderListener {
 	private Map<String, LocalModelEntry> fEntries; // a master table keyed by plugin ID and the value is a ModelEntry
 	private ArrayList<IPluginModelListener> fListeners; // a list of listeners interested in changes to the plug-in models
 	private ArrayList<IStateDeltaListener> fStateListeners; // a list of listeners interested in changes to the PDE/resolver State
+	private boolean fCancelled = false;
 
 	/**
 	 * Initialize the workspace and external (target) model manager
@@ -452,6 +453,19 @@ public class PluginModelManager implements IModelProviderListener {
 	}
 
 	/**
+	 * Returns whether the model initialization was cancelled by the user.
+	 * Other initializations, such as FeatureModelManager should use this
+	 * setting to avoid resolving the target platform when the user has chosen
+	 * to cancel it previously.
+	 * 
+	 * @return <code>true</code> if the user cancelled the initialization the last time it was run;
+	 * 		<code>false</code> otherwise
+	 */
+	public boolean isCancelled() {
+		return fCancelled;
+	}
+
+	/**
 	 * Clears all existing models and recreates them
 	 */
 	public void targetReloaded(IProgressMonitor monitor) {
@@ -504,32 +518,31 @@ public class PluginModelManager implements IModelProviderListener {
 
 		// Cannot assign to fEntries here - will create a race condition with isInitialized()
 		Map<String, LocalModelEntry> entries = Collections.synchronizedMap(new TreeMap<String, LocalModelEntry>());
-		if (subMon.isCanceled()) {
-			return;
-		}
+		fCancelled = false;
 
 		long startTargetModels = System.currentTimeMillis();
 		// Target models
 		URL[] externalUrls = getExternalBundles(subMon.newChild(40));
 		if (subMon.isCanceled()) {
-			return;
+			// If target resolution is cancelled, externalUrls will be empty. Log warning so user knows how to reload the target.
+			if (PDECore.DEBUG_MODEL) {
+				System.out.println("Target platform initialization cancelled by user"); //$NON-NLS-1$
+			}
+			PDECore.log(new Status(IStatus.WARNING, PDECore.PLUGIN_ID, PDECoreMessages.PluginModelManager_TargetInitCancelledLog));
+			// Set a flag so the feature model manager can avoid starting the target resolve again
+			fCancelled = true;
 		}
+
 		fState = new PDEState(externalUrls, true, true, subMon.newChild(15));
 		fExternalManager.setModels(fState.getTargetModels());
 		addToTable(entries, fExternalManager.getAllModels());
 		if (PDECore.DEBUG_MODEL) {
 			System.out.println(fState.getTargetModels().length + " target models created in  " + (System.currentTimeMillis() - startTargetModels) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		if (subMon.isCanceled()) {
-			return;
-		}
 
 		// Workspace models
 		IPluginModelBase[] models = fWorkspaceManager.getPluginModels();
 		addToTable(entries, models);
-		if (subMon.isCanceled()) {
-			return;
-		}
 		long startWorkspaceAdditions = System.currentTimeMillis();
 		// add workspace plug-ins to the state
 		// and remove their target counterparts from the state.
@@ -543,9 +556,6 @@ public class PluginModelManager implements IModelProviderListener {
 		subMon.worked(20);
 		if (PDECore.DEBUG_MODEL) {
 			System.out.println(fWorkspaceManager.getModels().length + " workspace models created in  " + (System.currentTimeMillis() - startWorkspaceAdditions) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-		if (subMon.isCanceled()) {
-			return;
 		}
 
 		fEntries = entries;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -137,6 +137,7 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 		if (settings != null && !osgiProject) {
 			text = settings.get(S_TARGET_NAME);
 		}
+		// Avoid initializing the PDE models in the wizard
 		if (text == null && PDECore.getDefault().areModelsInitialized()) {
 			text = TargetPlatformHelper.getTargetVersionString();
 		}
@@ -261,10 +262,23 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 	}
 
 	public void saveSettings(IDialogSettings settings) {
-		boolean eclipseSelected = fEclipseButton.getSelection();
-		String targetName = eclipseSelected ? fEclipseCombo.getText() : fOSGiCombo.getText();
-		settings.put(S_TARGET_NAME, (eclipseSelected && TargetPlatformHelper.getTargetVersionString().equals(targetName)) ? null : targetName);
-		settings.put(S_OSGI_PROJECT, !eclipseSelected);
+		if (fEclipseButton.getSelection()) {
+			String targetName = fEclipseCombo.getText();
+			// Avoid initializing the PDE models in the wizard
+			if (PDECore.getDefault().areModelsInitialized()) {
+				if (TargetPlatformHelper.getTargetVersionString().equals(targetName)) {
+					targetName = null;
+				}
+			} else {
+				if (fEclipseCombo.getSelectionIndex() == 0) {
+					targetName = null;
+				}
+			}
+			settings.put(S_TARGET_NAME, targetName);
+			settings.put(S_OSGI_PROJECT, false);
+		} else {
+			settings.put(S_TARGET_NAME, (String) null);
+			settings.put(S_OSGI_PROJECT, true);
+		}
 	}
-
 }

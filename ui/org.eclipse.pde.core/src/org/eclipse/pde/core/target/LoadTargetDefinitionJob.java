@@ -226,8 +226,8 @@ public class LoadTargetDefinitionJob extends WorkspaceJob {
 		PDECore.getDefault().getSourceLocationManager().reset();
 		PDECore.getDefault().getJavadocLocationManager().reset();
 		PDECore.getDefault().getExtensionsRegistry().targetReloaded();
+		PDECore.getDefault().getModelManager().targetReloaded(monitor); // PluginModelManager should be reloaded first to reset isCancelled() flag
 		PDECore.getDefault().getFeatureModelManager().targetReloaded();
-		PDECore.getDefault().getModelManager().targetReloaded(monitor);
 	}
 
 }
