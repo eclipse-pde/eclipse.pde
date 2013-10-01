@@ -66,7 +66,7 @@ import org.eclipse.ui.progress.UIJob;
  * 
  * @since 1.0.500
  */
-public class ApiQuckFixProcessor implements IQuickFixProcessor {
+public class ApiQuickFixProcessor implements IQuickFixProcessor {
 
 	class UnknownAnnotationQuickFix implements IJavaCompletionProposal {
 
@@ -245,7 +245,7 @@ public class ApiQuckFixProcessor implements IQuickFixProcessor {
 		}
 	}
 
-	boolean needsBuildPropertiesChange(IFile file) {
+	public static boolean needsBuildPropertiesChange(IFile file) {
 		if (file != null) {
 			Properties props = new Properties();
 			InputStream stream = null;

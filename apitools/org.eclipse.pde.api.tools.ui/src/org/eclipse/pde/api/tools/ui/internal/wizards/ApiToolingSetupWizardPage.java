@@ -32,7 +32,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.internal.ui.util.StringMatcher;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -43,9 +42,7 @@ import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
-import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
 import org.eclipse.ltk.core.refactoring.TextFileChange;
@@ -134,43 +131,6 @@ public class ApiToolingSetupWizardPage extends UserInputWizardPage {
 				}
 			}
 			return Status.OK_STATUS;
-		}
-
-	}
-
-	/**
-	 * Filter for the viewer, uses a text matcher
-	 */
-	static class StringFilter extends ViewerFilter {
-
-		private String pattern = null;
-		StringMatcher matcher = null;
-
-		public void setPattern(String pattern) {
-			this.pattern = pattern;
-		}
-
-		/**
-		 * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer,
-		 *      java.lang.Object, java.lang.Object)
-		 */
-		@Override
-		public boolean select(Viewer viewer, Object parentElement, Object element) {
-			if (pattern == null) {
-				return true;
-			}
-			if (pattern.trim().length() == 0) {
-				return true;
-			}
-			String name = null;
-			if (element instanceof IResource) {
-				name = ((IResource) element).getName();
-			}
-			if (name == null) {
-				return false;
-			}
-			matcher = new StringMatcher(pattern, true, false);
-			return matcher.match(name, 0, name.length());
 		}
 
 	}

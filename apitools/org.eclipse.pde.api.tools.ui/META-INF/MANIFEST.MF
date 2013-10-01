@@ -33,6 +33,7 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Activator: org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin
 Export-Package: org.eclipse.pde.api.tools.ui.internal;x-friends:="org.eclipse.pde.api.tools.tests",
  org.eclipse.pde.api.tools.ui.internal.actions;x-friends:="org.eclipse.pde.api.tools.tests",
+ org.eclipse.pde.api.tools.ui.internal.commands;x-internal:=true,
  org.eclipse.pde.api.tools.ui.internal.completion;x-friends:="org.eclipse.pde.api.tools.tests",
  org.eclipse.pde.api.tools.ui.internal.markers;x-friends:="org.eclipse.pde.api.tools.tests",
  org.eclipse.pde.api.tools.ui.internal.preferences;x-friends:="org.eclipse.pde.api.tools.tests",

@@ -542,7 +542,7 @@
    <extension
          point="org.eclipse.jdt.ui.quickFixProcessors">
       <quickFixProcessor
-            class="org.eclipse.pde.api.tools.ui.internal.markers.ApiQuckFixProcessor"
+            class="org.eclipse.pde.api.tools.ui.internal.markers.ApiQuickFixProcessor"
             id="org.eclipse.pde.api.tools.ui.quickFixProcessor"
             name="%quickFixProcessor.name">
          <handledMarkerTypes>
@@ -551,5 +551,46 @@
             </markerType>
          </handledMarkerTypes>
       </quickFixProcessor>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:org.eclipse.pde.ui.tools?before=org.eclipse.pde.ui.updateClasspath">
+         <command
+               commandId="org.eclipse.pde.api.tools.ui.convert.javadocs"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <test
+                     property="org.eclipse.core.resources.projectNature"
+                     value="org.eclipse.pde.api.tools.apiAnalysisNature">
+               </test>
+            </visibleWhen>
+            <visibleWhen
+                  checkEnabled="false">
+               <test
+                     property="org.eclipse.pde.api.tools.ui.test1">
+               </test>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="org.eclipse.pde.api.tools.ui.internal.commands.ConvertJabvadocTagsHandler"
+            description="%ConvertJavadocCommand.description"
+            helpContextId="convert_javaodc_tags_command"
+            id="org.eclipse.pde.api.tools.ui.convert.javadocs"
+            name="%ConvertJavadocCommand.name">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commandImages">
+      <image
+            commandId="org.eclipse.pde.api.tools.ui.convert.javadocs"
+            icon="$nl$/icons/full/obj16/annotation_obj.gif">
+      </image>
    </extension>
 </plugin>
