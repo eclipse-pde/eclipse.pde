@@ -802,7 +802,6 @@ public class JavadocConversionPage extends UserInputWizardPage {
 				for (int i = 0; i < projects.length; i++) {
 					project = (IProject) projects[i];
 					pchange = new CompositeChange(project.getName());
-					refactoring.addChange(pchange);
 					IFile build = project.getFile("build.properties"); //$NON-NLS-1$
 					if (ApiQuickFixProcessor.needsBuildPropertiesChange(build)) {
 						try {
@@ -819,6 +818,9 @@ public class JavadocConversionPage extends UserInputWizardPage {
 						createChanges(pchange, JavaCore.create(project), remove);
 					} catch (CoreException e) {
 						ApiUIPlugin.log(e);
+					}
+					if (pchange.getChildren().length > 0) {
+						refactoring.addChange(pchange);
 					}
 					Util.updateMonitor(localmonitor, 1);
 				}
