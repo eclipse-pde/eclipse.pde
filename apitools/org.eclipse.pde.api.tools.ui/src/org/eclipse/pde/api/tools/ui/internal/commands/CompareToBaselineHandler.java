@@ -13,17 +13,19 @@ package org.eclipse.pde.api.tools.ui.internal.commands;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.ltk.ui.refactoring.RefactoringWizardOpenOperation;
-import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
-import org.eclipse.pde.api.tools.ui.internal.wizards.JavadocConversionRefactoring;
-import org.eclipse.pde.api.tools.ui.internal.wizards.JavadocConversionWizard;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.pde.api.tools.ui.internal.actions.ActionMessages;
+import org.eclipse.pde.api.tools.ui.internal.wizards.CompareToBaselineWizard;
+import org.eclipse.ui.handlers.HandlerUtil;
 
 /**
- * Default handler for the convert Javadoc command
+ * Default handler for the compare to baseline command
  * 
  * @since 1.0.500
  */
-public class ConvertJabvadocTagsHandler extends AbstractHandler {
+public class CompareToBaselineHandler extends AbstractHandler {
 
 	/*
 	 * (non-Javadoc)
@@ -33,13 +35,14 @@ public class ConvertJabvadocTagsHandler extends AbstractHandler {
 	 */
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		JavadocConversionWizard wizard = new JavadocConversionWizard(new JavadocConversionRefactoring());
-		RefactoringWizardOpenOperation op = new RefactoringWizardOpenOperation(wizard);
-		try {
-			op.run(ApiUIPlugin.getShell(), Messages.ConvertJabvadocTagsHandler_0);
-		} catch (InterruptedException ie) {
-			ApiUIPlugin.log(ie);
+		ISelection selection = HandlerUtil.getCurrentSelectionChecked(event);
+		if (selection instanceof IStructuredSelection) {
+			final IStructuredSelection structuredSelection = (IStructuredSelection) selection;
+			CompareToBaselineWizard wizard = new CompareToBaselineWizard(structuredSelection, ActionMessages.CompareDialogTitle);
+			WizardDialog wdialog = new WizardDialog(HandlerUtil.getActiveShell(event), wizard);
+			wdialog.open();
 		}
 		return null;
 	}
+
 }

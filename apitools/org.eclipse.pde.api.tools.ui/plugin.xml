@@ -64,95 +64,6 @@
       </page>
    </extension>
    <extension
-         point="org.eclipse.ui.popupMenus">
-      <objectContribution
-            adaptable="true"
-            id="org.eclipse.pde.api.tools.ui.toolsetupcontribution"
-            objectClass="org.eclipse.core.resources.IProject">
-         <action
-               class="org.eclipse.pde.api.tools.ui.internal.actions.ApiToolingSetupObjectContribution"
-               enablesFor="+"
-               helpContextId="api_tooling_setup_action"
-               icon="icons/full/obj16/category_menu.gif"
-               id="org.eclipse.pde.api.tools.ui.update.javadoctags"
-               label="%ApiToolingSetup.name"
-               menubarPath="org.eclipse.pde.ui.tools/group2"
-               tooltip="%ApiToolingSetup.tooltip">
-         </action>
-         <filter
-               name="projectNature"
-               value="org.eclipse.jdt.core.javanature">
-         </filter>
-         <filter
-               name="projectNature"
-               value="org.eclipse.pde.PluginNature">
-         </filter>
-      </objectContribution>
-      <objectContribution
-            adaptable="true"
-            id="org.eclipse.pde.api.tools.ui.configproblemfilters"
-            objectClass="org.eclipse.core.resources.IProject">
-         <action
-               class="org.eclipse.pde.api.tools.ui.internal.actions.ConfigureProblemFiltersAction"
-               enablesFor="1"
-               helpContextId="api_problem_filter_configure"
-               icon="icons/full/elcl16/filter_ps.gif"
-               id="org.eclipse.pde.api.tools.ui.problemfilters"
-               label="%ApiProblemFilters.name"
-               menubarPath="org.eclipse.pde.ui.tools/group2"
-               tooltip="%ApiProblemFilters.tooltip">
-         </action>
-         <filter
-               name="projectNature"
-               value="org.eclipse.pde.api.tools.apiAnalysisNature">
-         </filter>
-      </objectContribution>
-      <objectContribution
-            adaptable="true"
-            id="org.eclipse.pde.api.tools.ui.configproblemfilters.editor"
-            nameFilter=".api_filters"
-            objectClass="org.eclipse.core.resources.IFile">
-         <action
-               class="org.eclipse.pde.api.tools.ui.internal.actions.ConfigureProblemFiltersAction"
-               enablesFor="1"
-               helpContextId="api_problem_filter_configure"
-               icon="icons/full/elcl16/filter_ps.gif"
-               id="org.eclipse.pde.api.tools.ui.problemfilters"
-               label="%ApiProblemFilters.name"
-               menubarPath="org.eclipse.pde.ui.tools/group2"
-               tooltip="%ApiProblemFilters.tooltip">
-         </action>
-         <filter
-               name="projectNature"
-               value="org.eclipse.pde.api.tools.apiAnalysisNature">
-         </filter>
-      </objectContribution>
-      <objectContribution
-            adaptable="false"
-            id="org.eclipse.pde.api.tools.ui.compare"
-            objectClass="org.eclipse.jdt.core.IJavaElement">
-		 <visibility>
-            <objectState name="JavaElementActionFilter" value="isEnabled">
-            </objectState>
-		 </visibility>
-         <action
-               class="org.eclipse.pde.api.tools.ui.internal.actions.CompareWithAction"
-               enablesFor="+"
-               id="org.eclipse.pde.api.tools.ui.action.compare"
-               label="%APICompare.name"
-               menubarPath="compareWithMenu/compareWithGroup">
-         </action>
-         <menu
-               label="%CompareWithMenu.label"
-               path="additions"
-               id="compareWithMenu">
-            <separator
-                  name="compareWithGroup">
-            </separator>
-         </menu>
-      </objectContribution>
-   </extension>
-   <extension
          point="org.eclipse.ui.propertyPages">
       <page
             category="org.eclipse.pde.internal.ui.properties.pluginDevelopmentPage"
@@ -556,34 +467,118 @@
          point="org.eclipse.ui.menus">
       <menuContribution
             allPopups="false"
-            locationURI="popup:org.eclipse.pde.ui.tools?before=org.eclipse.pde.ui.updateClasspath">
+            locationURI="popup:org.eclipse.pde.ui.tools?after=group2">
+         <command
+               commandId="org.eclipse.pde.api.tools.ui.setup.projects"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <iterate>
+                  <adapt
+                        type="org.eclipse.core.resources.IProject">
+                     <and>
+                        <test
+                              property="org.eclipse.core.resources.projectNature"
+                              value="org.eclipse.jdt.core.javanature">
+                        </test>
+                        <test
+                              property="org.eclipse.core.resources.projectNature"
+                              value="org.eclipse.pde.PluginNature">
+                        </test>
+                        <not>
+                           <test
+                                 property="org.eclipse.core.resources.projectNature"
+                                 value="org.eclipse.pde.api.tools.apiAnalysisNature">
+                           </test>
+                        </not>
+                     </and>
+                  </adapt>
+               </iterate>
+            </visibleWhen>
+         </command>
          <command
                commandId="org.eclipse.pde.api.tools.ui.convert.javadocs"
                style="push">
             <visibleWhen
                   checkEnabled="false">
-               <test
-                     property="org.eclipse.core.resources.projectNature"
-                     value="org.eclipse.pde.api.tools.apiAnalysisNature">
-               </test>
-            </visibleWhen>
-            <visibleWhen
-                  checkEnabled="false">
-               <test
-                     property="org.eclipse.pde.api.tools.ui.test1">
-               </test>
+               <iterate>
+                  <adapt
+                        type="org.eclipse.core.resources.IProject">
+                     <test
+                           property="org.eclipse.core.resources.projectNature"
+                           value="org.eclipse.pde.api.tools.apiAnalysisNature">
+                     </test>
+                  </adapt>
+               </iterate>
             </visibleWhen>
          </command>
+         <command
+               commandId="org.eclipse.pde.api.tools.ui.remove.filters"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <iterate>
+                  <adapt
+                        type="org.eclipse.core.resources.IProject">
+                     <test
+                           property="org.eclipse.core.resources.projectNature"
+                           value="org.eclipse.pde.api.tools.apiAnalysisNature">
+                     </test>
+                  </adapt>
+               </iterate>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:org.eclipse.ui.popup.any?after=additions">
+         <menu
+               id="compareWithMenu"
+               label="%CompareWithMenu.label">
+            <command
+                  commandId="org.eclipse.pde.api.tools.ui.compare.to.baseline"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <iterate>
+                     <adapt
+                           type="org.eclipse.jdt.core.IJavaElement">
+                     </adapt>
+                  </iterate>
+               </visibleWhen>
+            </command>
+         </menu>
       </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
       <command
-            defaultHandler="org.eclipse.pde.api.tools.ui.internal.commands.ConvertJabvadocTagsHandler"
+            defaultHandler="org.eclipse.pde.api.tools.ui.internal.commands.SetupApiToolsHandler"
+            description="%ApiToolingSetup.tooltip"
+            helpContextId="api_tooling_setup_action"
+            id="org.eclipse.pde.api.tools.ui.setup.projects"
+            name="%ApiToolingSetup.name">
+      </command>
+      <command
+            defaultHandler="org.eclipse.pde.api.tools.ui.internal.commands.ConvertJavadocTagsHandler"
             description="%ConvertJavadocCommand.description"
             helpContextId="convert_javaodc_tags_command"
             id="org.eclipse.pde.api.tools.ui.convert.javadocs"
             name="%ConvertJavadocCommand.name">
+      </command>
+      <command
+            defaultHandler="org.eclipse.pde.api.tools.ui.internal.commands.RemoveFiltersHandler"
+            description="%ApiProblemFilters.tooltip"
+            helpContextId="remove_api_problem_filters_command"
+            id="org.eclipse.pde.api.tools.ui.remove.filters"
+            name="%ApiProblemFilters.name">
+      </command>
+      <command
+            defaultHandler="org.eclipse.pde.api.tools.ui.internal.commands.CompareToBaselineHandler"
+            description="%CompareToBaselineCommand.description"
+            helpContextId="compare_to_baseline_command"
+            id="org.eclipse.pde.api.tools.ui.compare.to.baseline"
+            name="%APICompare.name">
       </command>
    </extension>
    <extension
@@ -591,6 +586,18 @@
       <image
             commandId="org.eclipse.pde.api.tools.ui.convert.javadocs"
             icon="$nl$/icons/full/obj16/annotation_obj.gif">
+      </image>
+      <image
+            commandId="org.eclipse.pde.api.tools.ui.remove.filters"
+            icon="$nl$/icons/full/elcl16/filter_ps.gif">
+      </image>
+      <image
+            commandId="org.eclipse.pde.api.tools.ui.setup.projects"
+            icon="$nl$/icons/full/obj16/category_menu.gif">
+      </image>
+      <image
+            commandId="org.eclipse.pde.api.tools.ui.compare.to.baseline"
+            icon="$nl$/icons/full/obj16/eclipse_profile.gif">
       </image>
    </extension>
 </plugin>

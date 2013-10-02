@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others.
+ * Copyright (c) 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,48 +8,42 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.api.tools.ui.internal.actions;
+package org.eclipse.pde.api.tools.ui.internal.commands;
 
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsConstants;
 import org.eclipse.pde.api.tools.ui.internal.SWTFactory;
-import org.eclipse.ui.IObjectActionDelegate;
-import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.handlers.HandlerUtil;
 
 /**
- * Allows quick access to the problem filters property page for removal of API
- * problem filters
+ * Default handler for the remove filters command
  * 
- * @since 1.0.0
+ * @since 1.0.500
  */
-public class ConfigureProblemFiltersAction implements IObjectActionDelegate {
+public class RemoveFiltersHandler extends AbstractHandler {
 
-	private ISelection selection = null;
-
-	/**
-	 * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.action.IAction,
-	 *      org.eclipse.ui.IWorkbenchPart)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.
+	 * ExecutionEvent)
 	 */
 	@Override
-	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
-	}
-
-	/**
-	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
-	 */
-	@Override
-	public void run(IAction action) {
-		IAdaptable element = getAdaptable(this.selection);
-		if (element == null) {
-			return;
+	public Object execute(ExecutionEvent event) throws ExecutionException {
+		ISelection selection = HandlerUtil.getCurrentSelectionChecked(event);
+		IAdaptable element = getAdaptable(selection);
+		if (element != null) {
+			SWTFactory.showPropertiesDialog(ApiUIPlugin.getShell(), IApiToolsConstants.ID_FILTERS_PROP_PAGE, element, null);
 		}
-		SWTFactory.showPropertiesDialog(ApiUIPlugin.getShell(), IApiToolsConstants.ID_FILTERS_PROP_PAGE, element, null);
+		return null;
 	}
 
 	/**
@@ -71,15 +65,6 @@ public class ConfigureProblemFiltersAction implements IObjectActionDelegate {
 			}
 		}
 		return null;
-	}
-
-	/**
-	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction,
-	 *      org.eclipse.jface.viewers.ISelection)
-	 */
-	@Override
-	public void selectionChanged(IAction action, ISelection selection) {
-		this.selection = selection;
 	}
 
 }
