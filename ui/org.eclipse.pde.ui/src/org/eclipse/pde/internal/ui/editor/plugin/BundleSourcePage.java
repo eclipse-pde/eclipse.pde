@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2012 IBM Corporation and others.
+ * Copyright (c) 2003, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -135,6 +135,7 @@ public class BundleSourcePage extends KeyValueSourcePage {
 
 	private class BundleLabelProvider extends LabelProvider {
 		// TODO: MP: QO: LOW: Move to PDELabelProvider  
+		@Override
 		public String getText(Object obj) {
 			if (obj instanceof PackageObject) {
 				return ((PackageObject) obj).getName();
@@ -180,6 +181,7 @@ public class BundleSourcePage extends KeyValueSourcePage {
 			return label.toString();
 		}
 
+		@Override
 		public Image getImage(Object obj) {
 			PDELabelProvider labelProvider = PDEPlugin.getDefault().getLabelProvider();
 			if (obj instanceof PackageObject) {
@@ -233,6 +235,7 @@ public class BundleSourcePage extends KeyValueSourcePage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#resetHighlightRange()
 	 */
+	@Override
 	public void resetHighlightRange() {
 		resetCurrentHighlightRangeOffset();
 		super.resetHighlightRange();
@@ -256,10 +259,12 @@ public class BundleSourcePage extends KeyValueSourcePage {
 		return fTargetOutlineSelection;
 	}
 
+	@Override
 	public ILabelProvider createOutlineLabelProvider() {
 		return new BundleLabelProvider();
 	}
 
+	@Override
 	public ITreeContentProvider createOutlineContentProvider() {
 		return new BundleOutlineContentProvider();
 	}
@@ -267,6 +272,7 @@ public class BundleSourcePage extends KeyValueSourcePage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#getRangeElement(int, boolean)
 	 */
+	@Override
 	public IDocumentRange getRangeElement(int offset, boolean searchChildren) {
 		IBundleModel model = (IBundleModel) getInputContext().getModel();
 		Map<?, ?> manifest = ((Bundle) model.getBundle()).getHeaders();
@@ -473,6 +479,7 @@ public class BundleSourcePage extends KeyValueSourcePage {
 		}
 	}
 
+	@Override
 	protected String[] collectContextMenuPreferencePages() {
 		String[] ids = super.collectContextMenuPreferencePages();
 		String[] more = new String[ids.length + 1];
@@ -481,6 +488,7 @@ public class BundleSourcePage extends KeyValueSourcePage {
 		return more;
 	}
 
+	@Override
 	public IDocumentRange findRange() {
 
 		Object selection = getSelection();
@@ -577,11 +585,12 @@ public class BundleSourcePage extends KeyValueSourcePage {
 		return getSpecificRange(model, header, search);
 	}
 
+	@Override
 	protected boolean isSelectionListener() {
 		return true;
 	}
 
-	@SuppressWarnings("rawtypes")
+	@Override
 	public Object getAdapter(Class adapter) {
 		if (IHyperlinkDetector.class.equals(adapter))
 			return new BundleHyperlinkDetector(this);
@@ -591,6 +600,7 @@ public class BundleSourcePage extends KeyValueSourcePage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#updateSelection(java.lang.Object)
 	 */
+	@Override
 	public void updateSelection(Object object) {
 
 		// Update the global selection
@@ -636,6 +646,7 @@ public class BundleSourcePage extends KeyValueSourcePage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#handleSelectionChangedSourcePage(org.eclipse.jface.viewers.SelectionChangedEvent)
 	 */
+	@Override
 	protected void handleSelectionChangedSourcePage(SelectionChangedEvent event) {
 		super.handleSelectionChangedSourcePage(event);
 		ISelection selection = event.getSelection();
@@ -660,6 +671,7 @@ public class BundleSourcePage extends KeyValueSourcePage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#synchronizeOutlinePage(int)
 	 */
+	@Override
 	protected void synchronizeOutlinePage(int offset) {
 		// Prevent cyclical firing of events between source page and outline
 		// view
@@ -678,6 +690,7 @@ public class BundleSourcePage extends KeyValueSourcePage {
 		updateOutlinePageSelection(getTargetOutlineSelection());
 	}
 
+	@Override
 	protected void editorContextMenuAboutToShow(IMenuManager menu) {
 		super.editorContextMenuAboutToShow(menu);
 		StyledText text = getViewer().getTextWidget();
@@ -701,6 +714,7 @@ public class BundleSourcePage extends KeyValueSourcePage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#setActive(boolean)
 	 */
+	@Override
 	public void setActive(boolean active) {
 		super.setActive(active);
 		// Update the text selection if this page is being activated
@@ -709,10 +723,12 @@ public class BundleSourcePage extends KeyValueSourcePage {
 		}
 	}
 
+	@Override
 	protected IFoldingStructureProvider getFoldingStructureProvider(IEditingModel model) {
 		return new BundleFoldingStructureProvider(this, model);
 	}
 
+	@Override
 	protected ChangeAwareSourceViewerConfiguration createSourceViewerConfiguration(IColorManager colorManager) {
 		return new ManifestConfiguration(colorManager, this);
 	}

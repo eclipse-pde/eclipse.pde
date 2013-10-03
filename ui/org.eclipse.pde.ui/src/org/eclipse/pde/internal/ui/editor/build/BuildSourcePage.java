@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2012 IBM Corporation and others.
+ * Copyright (c) 2003, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,6 +60,7 @@ public class BuildSourcePage extends KeyValueSourcePage {
 	}
 
 	class BuildLabelProvider extends LabelProvider {
+		@Override
 		public String getText(Object obj) {
 			if (obj instanceof IBuildEntry) {
 				return ((IBuildEntry) obj).getName();
@@ -67,6 +68,7 @@ public class BuildSourcePage extends KeyValueSourcePage {
 			return super.getText(obj);
 		}
 
+		@Override
 		public Image getImage(Object obj) {
 			if (obj instanceof IBuildEntry)
 				return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_BUILD_VAR_OBJ);
@@ -78,14 +80,17 @@ public class BuildSourcePage extends KeyValueSourcePage {
 		super(editor, id, title);
 	}
 
+	@Override
 	public void setPreferenceStore(IPreferenceStore store) {
 		super.setPreferenceStore(store);
 	}
 
+	@Override
 	public ILabelProvider createOutlineLabelProvider() {
 		return new BuildLabelProvider();
 	}
 
+	@Override
 	public ITreeContentProvider createOutlineContentProvider() {
 		return new BuildOutlineContentProvider();
 	}
@@ -107,6 +112,7 @@ public class BuildSourcePage extends KeyValueSourcePage {
 		return null;
 	}
 
+	@Override
 	protected String[] collectContextMenuPreferencePages() {
 		String[] ids = super.collectContextMenuPreferencePages();
 		String[] more = new String[ids.length + 1];
@@ -115,10 +121,12 @@ public class BuildSourcePage extends KeyValueSourcePage {
 		return more;
 	}
 
+	@Override
 	protected boolean affectsTextPresentation(PropertyChangeEvent event) {
 		return ((BuildSourceViewerConfiguration) getSourceViewerConfiguration()).affectsTextPresentation(event) || super.affectsTextPresentation(event);
 	}
 
+	@Override
 	public IDocumentRange getRangeElement(int offset, boolean searchChildren) {
 		IBuildModel model = (IBuildModel) getInputContext().getModel();
 		IBuildEntry[] buildEntries = model.getBuild().getBuildEntries();
@@ -131,7 +139,7 @@ public class BuildSourcePage extends KeyValueSourcePage {
 		return null;
 	}
 
-	@SuppressWarnings("rawtypes")
+	@Override
 	public Object getAdapter(Class adapter) {
 		if (IHyperlinkDetector.class.equals(adapter))
 			return new BuildHyperlinkDetector(this);
@@ -141,6 +149,7 @@ public class BuildSourcePage extends KeyValueSourcePage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#updateSelection(java.lang.Object)
 	 */
+	@Override
 	public void updateSelection(Object object) {
 		if (object instanceof IDocumentKey) {
 			setHighlightRange((IDocumentKey) object);
@@ -149,6 +158,7 @@ public class BuildSourcePage extends KeyValueSourcePage {
 		}
 	}
 
+	@Override
 	protected ChangeAwareSourceViewerConfiguration createSourceViewerConfiguration(IColorManager colorManager) {
 		IPreferenceStore store = PreferenceConstants.getPreferenceStore();
 		IPreferenceStore generalTextStore = EditorsUI.getPreferenceStore();

@@ -523,7 +523,6 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 	private void handleRemove() {
 		IStructuredSelection selection = (IStructuredSelection) fTableViewer.getSelection();
 		if (!selection.isEmpty()) {
-			@SuppressWarnings("unchecked")
 			List<ITargetDefinition> selected = selection.toList();
 
 			// If we are going to remove a workspace file, prompt to ask the user first

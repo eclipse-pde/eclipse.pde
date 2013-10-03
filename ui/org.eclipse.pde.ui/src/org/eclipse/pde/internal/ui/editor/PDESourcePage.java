@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2012 IBM Corporation and others.
+ * Copyright (c) 2003, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,6 +56,7 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#initializeKeyBindingScopes()
 	 */
+	@Override
 	protected void initializeKeyBindingScopes() {
 		setKeyBindingScopes(new String[] {"org.eclipse.pde.ui.pdeEditorContext"}); //$NON-NLS-1$
 	}
@@ -146,6 +147,7 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 		fEditor = (PDEFormEditor) editor;
 	}
 
+	@Override
 	public void dispose() {
 		if (fEditorSelectionChangedListener != null) {
 			fEditorSelectionChangedListener.uninstall(getSelectionProvider());
@@ -238,6 +240,7 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 		return null;
 	}
 
+	@Override
 	protected void firePropertyChange(int type) {
 		if (type == PROP_DIRTY) {
 			fEditor.fireSaveNeeded(getEditorInput(), true);
@@ -267,6 +270,7 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 		return this.equals(fEditor.getActivePageInstance());
 	}
 
+	@Override
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
 		Control[] children = parent.getChildren();
@@ -380,10 +384,12 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 		sourceViewer.setSelectedRange(offset, length);
 	}
 
+	@Override
 	public int getOrientation() {
 		return SWT.LEFT_TO_RIGHT;
 	}
 
+	@Override
 	protected void createActions() {
 		super.createActions();
 		PDESelectAnnotationRulerAction action = new PDESelectAnnotationRulerAction(getBundleForConstructedKeys(), "PDESelectAnnotationRulerAction.", this, getVerticalRuler()); //$NON-NLS-1$
@@ -474,6 +480,7 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 		return getSourceViewer();
 	}
 
+	@Override
 	protected void editorContextMenuAboutToShow(IMenuManager menu) {
 		PDEFormEditorContributor contributor = fEditor == null ? null : fEditor.getContributor();
 		if (contributor instanceof PDEFormTextEditorContributor) {
@@ -665,7 +672,7 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 	 * is not read-only. Returns <code>super.getAdapter(adapter)</code>
 	 * otherwise.
 	 */
-	@SuppressWarnings("rawtypes")
+	@Override
 	public Object getAdapter(Class adapter) {
 		if ((adapter == IShowInTargetList.class) && (fEditor != null) && (fEditor.getEditorInput() instanceof IFileEditorInput)) {
 			return getShowInTargetList();

@@ -102,11 +102,8 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.junit.launcher.JUnitLaunchConfigurationDelegate#collectExecutionArguments(org.eclipse.debug.core.ILaunchConfiguration, java.util.List, java.util.List)
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
-	protected void collectExecutionArguments(ILaunchConfiguration configuration, @SuppressWarnings("rawtypes")
-	List vmArguments, @SuppressWarnings("rawtypes")
-	List programArgs) throws CoreException {
+	protected void collectExecutionArguments(ILaunchConfiguration configuration, List vmArguments, List programArgs) throws CoreException {
 		super.collectExecutionArguments(configuration, vmArguments, programArgs);
 
 		// Specify the JUnit Plug-in test application to launch

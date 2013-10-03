@@ -33,7 +33,6 @@ public class ActiveImageSourceProvider extends AbstractSourceProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.ISourceProvider#getCurrentState()
 	 */
-	@SuppressWarnings("rawtypes")
 	public Map getCurrentState() {
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put(ACTIVE_IMAGE, mImageData);

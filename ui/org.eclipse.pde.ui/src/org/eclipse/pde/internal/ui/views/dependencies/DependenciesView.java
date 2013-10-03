@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,7 +41,6 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 		public void dispose() {/* dummy */
 		}
 
-		@SuppressWarnings("rawtypes")
 		public Object getAdapter(Class adapter) {
 			return null;
 		}
@@ -84,6 +83,7 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 		/*
 		 * @see Action#actionPerformed
 		 */
+		@Override
 		public void run() {
 			LoopDialog dialog = new LoopDialog(PDEPlugin.getActiveWorkbenchShell(), fLoops);
 			dialog.open();
@@ -104,6 +104,7 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 		/*
 		 * @see Action#actionPerformed
 		 */
+		@Override
 		public void run() {
 			if (isChecked()) {
 				fPreferences.setValue(DEPS_VIEW_SHOW_CALLERS, false);
@@ -125,6 +126,7 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 		/*
 		 * @see Action#actionPerformed
 		 */
+		@Override
 		public void run() {
 			if (isChecked()) {
 				fPreferences.setValue(DEPS_VIEW_SHOW_CALLERS, true);
@@ -146,6 +148,7 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 		/*
 		 * @see Action#actionPerformed
 		 */
+		@Override
 		public void run() {
 			if (isChecked()) {
 				fPreferences.setValue(DEPS_VIEW_SHOW_LIST, true);
@@ -168,6 +171,7 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 		/*
 		 * @see Action#actionPerformed
 		 */
+		@Override
 		public void run() {
 			if (isChecked()) {
 				fPreferences.setValue(DEPS_VIEW_SHOW_LIST, false);
@@ -243,6 +247,7 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 	 * 
 	 * @see org.eclipse.ui.part.PageBookView#createDefaultPage(org.eclipse.ui.part.PageBook)
 	 */
+	@Override
 	protected IPage createDefaultPage(PageBook book) {
 		return createPage(getDefaultPart());
 	}
@@ -289,6 +294,7 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 	 * 
 	 * @see org.eclipse.ui.part.PageBookView#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createPartControl(Composite parent) {
 		fShowCallees = new ShowCalleesAction();
 		fShowCallees.setChecked(!fPreferences.getBoolean(DEPS_VIEW_SHOW_CALLERS));
@@ -320,6 +326,7 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 	 * 
 	 * @see org.eclipse.ui.part.PageBookView#doCreatePage(org.eclipse.ui.IWorkbenchPart)
 	 */
+	@Override
 	protected PageRec doCreatePage(IWorkbenchPart part) {
 		IPageBookViewPage page = fPartsToPages.get(part);
 		if (page == null && !fPartsToPages.containsKey(part)) {
@@ -337,6 +344,7 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 	 * @see org.eclipse.ui.part.PageBookView#doDestroyPage(org.eclipse.ui.IWorkbenchPart,
 	 *      org.eclipse.ui.part.PageBookView.PageRec)
 	 */
+	@Override
 	protected void doDestroyPage(IWorkbenchPart part, PageRec pageRecord) {
 		IPage page = pageRecord.page;
 		page.dispose();
@@ -351,6 +359,7 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 	 * 
 	 * @see org.eclipse.ui.part.PageBookView#getBootstrapPart()
 	 */
+	@Override
 	protected IWorkbenchPart getBootstrapPart() {
 		return getDefaultPart();
 	}
@@ -361,6 +370,7 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 	 * @see org.eclipse.ui.part.ViewPart#init(org.eclipse.ui.IViewSite,
 	 *      org.eclipse.ui.IMemento)
 	 */
+	@Override
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		super.init(site, memento);
 		if (memento == null)
@@ -381,6 +391,7 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 	 * 
 	 * @see org.eclipse.ui.part.PageBookView#isImportant(org.eclipse.ui.IWorkbenchPart)
 	 */
+	@Override
 	protected boolean isImportant(IWorkbenchPart part) {
 		return part instanceof DummyPart;
 	}
@@ -449,6 +460,7 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 	 * 
 	 * @see org.eclipse.ui.part.ViewPart#saveState(org.eclipse.ui.IMemento)
 	 */
+	@Override
 	public void saveState(IMemento memento) {
 		super.saveState(memento);
 		if (fInput != null && fInput instanceof IPluginModelBase) {
@@ -500,6 +512,7 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 	 * 
 	 * @see org.eclipse.ui.part.PageBookView#showPageRec(org.eclipse.ui.part.PageBookView.PageRec)
 	 */
+	@Override
 	protected void showPageRec(PageRec pageRec) {
 		IPage currPage = getCurrentPage();
 		// if we try to show the same page, just call super and return, no use calling any custom functions

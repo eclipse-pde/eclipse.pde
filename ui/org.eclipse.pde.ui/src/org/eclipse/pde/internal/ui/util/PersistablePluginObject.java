@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2012 IBM Corporation and others.
+ *  Copyright (c) 2005, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -58,7 +58,7 @@ public class PersistablePluginObject extends PlatformObject implements IPersista
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.PlatformObject#getAdapter(java.lang.Class)
 	 */
-	@SuppressWarnings("rawtypes")
+	@Override
 	public Object getAdapter(Class adapter) {
 		if (adapter.equals(IPersistableElement.class))
 			return this;
@@ -96,6 +96,7 @@ public class PersistablePluginObject extends PlatformObject implements IPersista
 		return fgContainmentAdapter;
 	}
 
+	@Override
 	public boolean equals(Object arg0) {
 		if (arg0 instanceof PersistablePluginObject) {
 			String id = ((PersistablePluginObject) arg0).fPluginID;
@@ -104,6 +105,7 @@ public class PersistablePluginObject extends PlatformObject implements IPersista
 		return false;
 	}
 
+	@Override
 	public int hashCode() {
 		return fPluginID.hashCode();
 	}

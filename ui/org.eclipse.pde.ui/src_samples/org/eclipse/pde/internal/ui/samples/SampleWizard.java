@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -73,6 +73,7 @@ public class SampleWizard extends Wizard implements INewWizard, IExecutableExten
 		setWindowTitle(PDEUIMessages.ShowSampleAction_title);
 	}
 
+	@Override
 	public void dispose() {
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 		super.dispose();
@@ -85,6 +86,7 @@ public class SampleWizard extends Wizard implements INewWizard, IExecutableExten
 	/**
 	 *  
 	 */
+	@Override
 	public void addPages() {
 		if (selection == null) {
 			addPage(new SelectionPage(this));
@@ -96,6 +98,7 @@ public class SampleWizard extends Wizard implements INewWizard, IExecutableExten
 	/**
 	 *  
 	 */
+	@Override
 	public boolean performFinish() {
 		try {
 			String perspId = selection.getAttribute("perspectiveId"); //$NON-NLS-1$
@@ -182,7 +185,6 @@ public class SampleWizard extends Wizard implements INewWizard, IExecutableExten
 				continue;
 			activitiesToEnable.add(id);
 		}
-		@SuppressWarnings("unchecked")
 		HashSet<String> set = new HashSet<String>(workbenchActivitySupport.getActivityManager().getEnabledActivityIds());
 		set.addAll(activitiesToEnable);
 		workbenchActivitySupport.setEnabledActivityIds(set);

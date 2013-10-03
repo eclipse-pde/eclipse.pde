@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2012 IBM Corporation and others.
+ * Copyright (c) 2003, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -76,6 +76,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 		 */
+		@Override
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
 			if (fPage1.getImportType() == PluginImportOperation.IMPORT_FROM_REPOSITORY) {
 				return fPage1.repositoryModels.contains(element);
@@ -91,6 +92,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 			setPattern("*"); //$NON-NLS-1$
 		}
 
+		@Override
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
 			// filter out any items that are currently selected
 			// on a full refresh, these will have been added back to the list
@@ -140,6 +142,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 			}
 		}
 
+		@Override
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
 			IPluginModelBase plugin = (IPluginModelBase) element;
 			Version hVersion = versions.get(plugin.getBundleDescription().getSymbolicName());
@@ -193,6 +196,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 			fFilterOldVersionButton.setSelection(true);
 
 		fFilterOldVersionButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (fFilterOldVersionButton.getSelection()) {
 					fAvailableListViewer.addFilter(fVersionFilter);
@@ -218,6 +222,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		fAvailableListViewer.addFilter(fRepositoryFilter);
 
 		fFilterJob = new WorkbenchJob("FilterJob") { //$NON-NLS-1$
+			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				handleFilter();
 				return Status.OK_STATUS;
@@ -308,6 +313,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		button.setText(PDEUIMessages.ImportWizard_DetailedPage_existing);
 		button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		button.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleExistingProjects();
 			}
@@ -318,6 +324,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		button.setText(PDEUIMessages.ImportWizard_DetailedPage_existingUnshared);
 		button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		button.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleExistingUnshared();
 			}
@@ -328,6 +335,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		fAddButton.setText(PDEUIMessages.ImportWizard_DetailedPage_add);
 		fAddButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fAddButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleAdd();
 			}
@@ -338,6 +346,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		fAddAllButton.setText(PDEUIMessages.ImportWizard_DetailedPage_addAll);
 		fAddAllButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fAddAllButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleAddAll();
 			}
@@ -348,6 +357,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		fRemoveButton.setText(PDEUIMessages.ImportWizard_DetailedPage_remove);
 		fRemoveButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fRemoveButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleRemove();
 			}
@@ -358,6 +368,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		fRemoveAllButton.setText(PDEUIMessages.ImportWizard_DetailedPage_removeAll);
 		fRemoveAllButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fRemoveAllButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleRemoveAll();
 			}
@@ -368,6 +379,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		button.setText(PDEUIMessages.ImportWizard_DetailedPage_swap);
 		button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		button.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleSwap();
 			}
@@ -378,6 +390,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		fAddRequiredButton.setText(PDEUIMessages.ImportWizard_DetailedPage_addRequired);
 		fAddRequiredButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fAddRequiredButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleAddRequiredPlugins();
 			}
@@ -416,6 +429,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		return container;
 	}
 
+	@Override
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
 		if (visible) {
@@ -424,6 +438,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		}
 	}
 
+	@Override
 	protected void refreshPage() {
 		fAvailableListViewer.addFilter(fSourceFilter);
 		fImportListViewer.getTable().removeAll();
@@ -477,7 +492,6 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 			fRemoveButton.setEnabled(!theSelection.isEmpty());
 	}
 
-	@SuppressWarnings("unchecked")
 	private void handleAdd() {
 		IStructuredSelection ssel = (IStructuredSelection) fAvailableListViewer.getSelection();
 		if (ssel.size() > 0) {
@@ -514,7 +528,6 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private void handleRemove() {
 		IStructuredSelection ssel = (IStructuredSelection) fImportListViewer.getSelection();
 		if (ssel.size() > 0) {
@@ -646,10 +659,12 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		handleSetImportSelection(resultObject);
 	}
 
+	@Override
 	public void dispose() {
 		fFilterJob.cancel();
 	}
 
+	@Override
 	public void storeSettings() {
 		IDialogSettings settings = getDialogSettings();
 		settings.put(SETTINGS_SHOW_LATEST, fFilterOldVersionButton.getSelection());

@@ -226,7 +226,6 @@ public class ArchiveSection extends PDESection {
 		});
 	}
 
-	@SuppressWarnings("unchecked")
 	private void handleDelete() {
 		try {
 			ISelection selection = fViewer.getSelection();

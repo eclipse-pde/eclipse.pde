@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 EclipseSource Corporation and others.
+ * Copyright (c) 2009, 2013 EclipseSource Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,7 +34,6 @@ public class TargetStateView extends PageBookView {
 		public void dispose() {/* dummy */
 		}
 
-		@SuppressWarnings("rawtypes")
 		public Object getAdapter(Class adapter) {
 			return null;
 		}
@@ -67,15 +66,18 @@ public class TargetStateView extends PageBookView {
 		fPagesToParts = new HashMap<IPageBookViewPage, IWorkbenchPart>(4);
 	}
 
+	@Override
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IHelpContextIds.TARGET_STATE_VIEW);
 	}
 
+	@Override
 	protected IPage createDefaultPage(PageBook book) {
 		return createPage(getDefaultPart());
 	}
 
+	@Override
 	protected PageRec doCreatePage(IWorkbenchPart part) {
 		IPageBookViewPage page = fPartsToPages.get(part);
 		if (page == null && !fPartsToPages.containsKey(part)) {
@@ -87,6 +89,7 @@ public class TargetStateView extends PageBookView {
 		return null;
 	}
 
+	@Override
 	protected void doDestroyPage(IWorkbenchPart part, PageRec pageRecord) {
 		IPage page = pageRecord.page;
 		page.dispose();
@@ -96,10 +99,12 @@ public class TargetStateView extends PageBookView {
 		fPartsToPages.remove(part);
 	}
 
+	@Override
 	protected IWorkbenchPart getBootstrapPart() {
 		return getDefaultPart();
 	}
 
+	@Override
 	protected boolean isImportant(IWorkbenchPart part) {
 		return part instanceof DummyPart;
 	}

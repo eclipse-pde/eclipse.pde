@@ -50,7 +50,6 @@ public class ListUtil {
 			if (e1 instanceof IFeatureModel && e2 instanceof IFeatureModel) {
 				IFeature feature1 = ((IFeatureModel) e1).getFeature();
 				IFeature feature2 = ((IFeatureModel) e2).getFeature();
-				@SuppressWarnings("unchecked")
 				int result = getComparator().compare(feature1.getId(), feature2.getId());
 				if (result != 0) {
 					return result;
@@ -78,7 +77,6 @@ public class ListUtil {
 		private static boolean cachedIsFullNameModelEnabled = PDEPlugin.isFullNameModeEnabled();
 
 		@Override
-		@SuppressWarnings("unchecked")
 		public int compare(Viewer viewer, Object e1, Object e2) {
 			int result = 0;
 			String name1 = getName(e1);

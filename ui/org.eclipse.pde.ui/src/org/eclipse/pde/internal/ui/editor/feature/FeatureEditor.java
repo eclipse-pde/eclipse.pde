@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,6 +48,7 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getEditorID()
 	 */
+	@Override
 	protected String getEditorID() {
 		return IPDEUIConstants.FEATURE_EDITOR_ID;
 	}
@@ -88,6 +89,7 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 	public FeatureEditor() {
 	}
 
+	@Override
 	protected void createResourceContexts(InputContextManager manager, IFileEditorInput input) {
 		IFile file = input.getFile();
 		IProject project = file.getProject();
@@ -114,6 +116,7 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 		manager.monitorFile(buildFile);
 	}
 
+	@Override
 	protected InputContextManager createInputContextManager() {
 		FeatureInputContextManager manager = new FeatureInputContextManager(this);
 		manager.setUndoManager(new FeatureUndoManager(this));
@@ -145,6 +148,7 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 		return true;
 	}
 
+	@Override
 	public void editorContextAdded(InputContext context) {
 		addSourcePage(context.getId());
 	}
@@ -159,6 +163,7 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 			removePage(context.getId());
 	}
 
+	@Override
 	protected void createSystemFileContexts(InputContextManager manager, FileStoreEditorInput input) {
 		File file = new File(input.getURI());
 		File buildFile = null;
@@ -198,6 +203,7 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 		return PDEProject.getFeatureXml(project);
 	}
 
+	@Override
 	protected void createStorageContexts(InputContextManager manager, IStorageEditorInput input) {
 		String name = input.getName().toLowerCase(Locale.ENGLISH);
 		if (name.equals(ICoreConstants.BUILD_FILENAME_DESCRIPTOR)) {
@@ -207,6 +213,7 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 		}
 	}
 
+	@Override
 	protected void addEditorPages() {
 		try {
 			addPage(new FeatureFormPage(this, PDEUIMessages.FeatureEditor_FeaturePage_title));
@@ -223,6 +230,7 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 		addSourcePage(BuildInputContext.CONTEXT_ID);
 	}
 
+	@Override
 	protected String computeInitialPageId() {
 		String firstPageId = super.computeInitialPageId();
 		if (firstPageId == null) {
@@ -241,6 +249,7 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 	 * @see org.eclipse.pde.internal.ui.neweditor.MultiSourceEditor#createXMLSourcePage(org.eclipse.pde.internal.ui.neweditor.PDEFormEditor,
 	 *      java.lang.String, java.lang.String)
 	 */
+	@Override
 	protected PDESourcePage createSourcePage(PDEFormEditor editor, String title, String name, String contextId) {
 		if (contextId.equals(FeatureInputContext.CONTEXT_ID))
 			return new FeatureSourcePage(editor, title, name);
@@ -249,6 +258,7 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 		return super.createSourcePage(editor, title, name, contextId);
 	}
 
+	@Override
 	protected ISortableContentOutlinePage createContentOutline() {
 		return new FeatureOutlinePage(this);
 	}
@@ -257,6 +267,7 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 		return null;
 	}
 
+	@Override
 	public String getTitle() {
 		if (!isModelCorrect(getAggregateModel()))
 			return super.getTitle();
@@ -267,6 +278,7 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 		return model.getResourceString(name);
 	}
 
+	@Override
 	public String getTitleProperty() {
 		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
 		String pref = store.getString(IPreferenceConstants.PROP_SHOW_OBJECTS);
@@ -302,7 +314,7 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 		return false;
 	}
 
-	@SuppressWarnings("rawtypes")
+	@Override
 	public Object getAdapter(Class key) {
 		// No property sheet needed - block super
 		if (key.equals(IPropertySheetPage.class)) {
@@ -316,6 +328,7 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 	 * 
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getInputContext(java.lang.Object)
 	 */
+	@Override
 	protected InputContext getInputContext(Object object) {
 		InputContext context = null;
 		if (object instanceof IBuildObject) {
@@ -353,6 +366,7 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 	protected Action getFeatureExportAction() {
 		if (fExportAction == null) {
 			fExportAction = new Action() {
+				@Override
 				public void run() {
 					doSave(null);
 					FeatureEditorContributor contributor = (FeatureEditorContributor) getContributor();
@@ -365,6 +379,7 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 		return fExportAction;
 	}
 
+	@Override
 	public void contributeToToolbar(IToolBarManager manager) {
 		manager.add(getFeatureExportAction());
 	}

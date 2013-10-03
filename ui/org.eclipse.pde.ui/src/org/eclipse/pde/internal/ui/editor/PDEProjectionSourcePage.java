@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 IBM Corporation and others.
+ * Copyright (c) 2006, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,6 +43,7 @@ public abstract class PDEProjectionSourcePage extends PDESourcePage implements I
 			setSourceViewerConfiguration(fConfiguration);
 	}
 
+	@Override
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
 
@@ -54,6 +55,7 @@ public abstract class PDEProjectionSourcePage extends PDESourcePage implements I
 		}
 	}
 
+	@Override
 	protected ISourceViewer createSourceViewer(Composite parent, IVerticalRuler ruler, int styles) {
 		ISourceViewer viewer = new PDEProjectionViewer(parent, ruler, getOverviewRuler(), isOverviewRulerVisible(), styles, isQuickOutlineEnabled());
 		getSourceViewerDecorationSupport(viewer);
@@ -62,6 +64,7 @@ public abstract class PDEProjectionSourcePage extends PDESourcePage implements I
 
 	public abstract boolean isQuickOutlineEnabled();
 
+	@Override
 	public void dispose() {
 		((ProjectionViewer) getSourceViewer()).removeProjectionListener(this);
 		if (fProjectionSupport != null) {
@@ -110,12 +113,14 @@ public abstract class PDEProjectionSourcePage extends PDESourcePage implements I
 		return store.getBoolean(IPreferenceConstants.EDITOR_FOLDING_ENABLED);
 	}
 
+	@Override
 	protected boolean affectsTextPresentation(PropertyChangeEvent event) {
 		if (fConfiguration == null)
 			return false;
 		return fConfiguration.affectsTextPresentation(event) || super.affectsTextPresentation(event);
 	}
 
+	@Override
 	protected void handlePreferenceStoreChanged(PropertyChangeEvent event) {
 		try {
 			if (fConfiguration != null) {
@@ -128,7 +133,7 @@ public abstract class PDEProjectionSourcePage extends PDESourcePage implements I
 		}
 	}
 
-	@SuppressWarnings("rawtypes")
+	@Override
 	public Object getAdapter(Class key) {
 		if (fProjectionSupport != null) {
 			Object adapter = fProjectionSupport.getAdapter(getSourceViewer(), key);
@@ -142,6 +147,7 @@ public abstract class PDEProjectionSourcePage extends PDESourcePage implements I
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#editorContextMenuAboutToShow(org.eclipse.jface.action.IMenuManager)
 	 */
+	@Override
 	protected void editorContextMenuAboutToShow(IMenuManager menu) {
 		// Add the quick outline menu entry to the context menu
 		addQuickOutlineMenuEntry(menu);

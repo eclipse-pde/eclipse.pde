@@ -89,7 +89,6 @@ public abstract class PDESection extends SectionPart implements IContextPart, IA
 		super.refresh();
 	}
 
-	@SuppressWarnings("rawtypes")
 	public Object getAdapter(Class adapter) {
 		return null;
 	}

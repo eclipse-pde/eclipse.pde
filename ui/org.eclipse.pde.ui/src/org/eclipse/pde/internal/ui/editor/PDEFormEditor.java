@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -136,12 +136,14 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 			super(multiPageEditor, editor);
 		}
 
+		@Override
 		public IEditorActionBarContributor getActionBarContributor() {
 			PDEFormEditor editor = (PDEFormEditor) getMultiPageEditor();
 			PDEFormEditorContributor contributor = editor.getContributor();
 			return contributor.getSourceContributor();
 		}
 
+		@Override
 		public IWorkbenchPart getPart() {
 			return getMultiPageEditor();
 		}
@@ -157,6 +159,7 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 	 * We must override nested site creation so that we properly pass the source
 	 * editor contributor when asked.
 	 */
+	@Override
 	protected IEditorSite createSite(IEditorPart editor) {
 		return new PDEMultiPageEditorSite(this, editor);
 	}
@@ -221,6 +224,7 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 	 * 
 	 * @see org.eclipse.ui.forms.editor.FormEditor#createToolkit(org.eclipse.swt.widgets.Display)
 	 */
+	@Override
 	protected FormToolkit createToolkit(Display display) {
 		// Create a toolkit that shares colors between editors.
 		return new FormToolkit(PDEPlugin.getDefault().getFormColors(display));
@@ -229,6 +233,7 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 	/*
 	 * When subclassed, don't forget to call 'super'
 	 */
+	@Override
 	protected void createPages() {
 		clipboard = new Clipboard(getContainer().getDisplay());
 		MenuManager manager = new MenuManager();
@@ -258,6 +263,7 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.editor.FormEditor#pageChange(int)
 	 */
+	@Override
 	protected void pageChange(int newPageIndex) {
 		super.pageChange(newPageIndex);
 		IFormPage page = getActivePageInstance();
@@ -270,6 +276,7 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.MultiPageEditorPart#setFocus()
 	 */
+	@Override
 	public void setFocus() {
 		super.setFocus();
 		IFormPage page = getActivePageInstance();
@@ -323,6 +330,7 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 		return invalidContexts[0].getId();
 	}
 
+	@Override
 	public String getTitle() {
 		if (fInputContextManager == null)
 			return super.getTitle();
@@ -345,6 +353,7 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 	 * 
 	 * @see org.eclipse.ui.ISaveablePart#doSave(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public void doSave(IProgressMonitor monitor) {
 		commitPages(true);
 		fInputContextManager.save(monitor);
@@ -449,6 +458,7 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 	 * 
 	 * @see org.eclipse.ui.ISaveablePart#doSaveAs()
 	 */
+	@Override
 	public void doSaveAs() {
 		try {
 			// Get the context for which the save as operation should be 
@@ -482,6 +492,7 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 	 * 
 	 * @see org.eclipse.ui.ISaveablePart#isSaveAsAllowed()
 	 */
+	@Override
 	public boolean isSaveAsAllowed() {
 		return false;
 	}
@@ -571,6 +582,7 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 		}
 	}
 
+	@Override
 	public void dispose() {
 		storeDefaultPage();
 		if (fEditorSelectionChangedListener != null) {
@@ -590,6 +602,7 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 		fInputContextManager = null;
 	}
 
+	@Override
 	public boolean isDirty() {
 		fLastDirtyState = computeDirtyState();
 		return fLastDirtyState;
@@ -621,6 +634,7 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 			validateEdit(input);
 	}
 
+	@Override
 	public void editorDirtyStateChanged() {
 		super.editorDirtyStateChanged();
 		PDEFormEditorContributor contributor = getContributor();
@@ -688,7 +702,7 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 		return getSite().getSelectionProvider().getSelection();
 	}
 
-	@SuppressWarnings("rawtypes")
+	@Override
 	public Object getAdapter(Class key) {
 		if (key.equals(IContentOutlinePage.class)) {
 			return getContentOutline();
@@ -748,6 +762,7 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.editor.FormEditor#setActivePage(java.lang.String)
 	 */
+	@Override
 	public IFormPage setActivePage(String pageId) {
 		IFormPage page = super.setActivePage(pageId);
 		if (page != null)
@@ -913,6 +928,7 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 
 	protected abstract InputContext getInputContext(Object object);
 
+	@Override
 	protected final void addPages() {
 		fError = getAggregateModel() == null;
 		if (fError) {

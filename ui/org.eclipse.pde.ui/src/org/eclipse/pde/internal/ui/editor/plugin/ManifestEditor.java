@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -58,6 +58,7 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getEditorID()
 	 */
+	@Override
 	protected String getEditorID() {
 		return IPDEUIConstants.MANIFEST_EDITOR_ID;
 	}
@@ -163,6 +164,7 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 		return null;
 	}
 
+	@Override
 	protected void createResourceContexts(InputContextManager manager, IFileEditorInput input) {
 		IFile file = input.getFile();
 		IContainer container = file.getParent();
@@ -208,6 +210,7 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 		}
 	}
 
+	@Override
 	protected InputContextManager createInputContextManager() {
 		PluginInputContextManager manager = new PluginInputContextManager(this);
 		manager.setUndoManager(new PluginUndoManager(this));
@@ -292,6 +295,7 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 		return true;
 	}
 
+	@Override
 	public void editorContextAdded(InputContext context) {
 		addSourcePage(context.getId());
 		try {
@@ -324,6 +328,7 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 		}
 	}
 
+	@Override
 	protected void createSystemFileContexts(InputContextManager manager, FileStoreEditorInput input) {
 		File file = new File(input.getURI());
 		File manifestFile = null;
@@ -381,6 +386,7 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 		return pluginFile;
 	}
 
+	@Override
 	protected void createStorageContexts(InputContextManager manager, IStorageEditorInput input) {
 		if (input instanceof JarEntryEditorInput) {
 			createJarEntryContexts(manager, (JarEntryEditorInput) input);
@@ -432,6 +438,7 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 		}
 	}
 
+	@Override
 	protected void addEditorPages() {
 		try {
 			addPage(new OverviewPage(this));
@@ -470,6 +477,7 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#computeInitialPageId()
 	 */
+	@Override
 	protected String computeInitialPageId() {
 		// Used by plug-in search view to open query results, etc.
 		if (SHOW_SOURCE) {
@@ -494,6 +502,7 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getPropertyEditorPageKey(org.eclipse.ui.IFileEditorInput)
 	 */
+	@Override
 	protected String getPropertyEditorPageKey(IFileEditorInput input) {
 		// We are using the project itself to persist the editor page key property
 		// The value persists even after the editor is closed
@@ -521,6 +530,7 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#setPropertyEditorPageKey(org.eclipse.ui.IFileEditorInput, java.lang.String)
 	 */
+	@Override
 	protected void setPropertyEditorPageKey(IFileEditorInput input, String pageId) {
 		// We are using the project itself to persist the editor page key property
 		// The value persists even after the editor is closed
@@ -561,6 +571,7 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.MultiSourceEditor#createXMLSourcePage(org.eclipse.pde.internal.ui.neweditor.PDEFormEditor, java.lang.String, java.lang.String)
 	 */
+	@Override
 	protected PDESourcePage createSourcePage(PDEFormEditor editor, String title, String name, String contextId) {
 		if (contextId.equals(PluginInputContext.CONTEXT_ID))
 			return new ManifestSourcePage(editor, title, name);
@@ -571,11 +582,12 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 		return super.createSourcePage(editor, title, name, contextId);
 	}
 
+	@Override
 	protected ISortableContentOutlinePage createContentOutline() {
 		return new ManifestOutlinePage(this);
 	}
 
-	@SuppressWarnings("rawtypes")
+	@Override
 	public Object getAdapter(Class key) {
 		//No property sheet needed - block super
 		if (key.equals(IPropertySheetPage.class)) {
@@ -584,6 +596,7 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 		return super.getAdapter(key);
 	}
 
+	@Override
 	public String getTitle() {
 		IPluginModelBase model = (IPluginModelBase) getAggregateModel();
 		if (model == null || !model.isValid())
@@ -594,6 +607,7 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 		return model.getResourceString(text);
 	}
 
+	@Override
 	public String getTitleProperty() {
 		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
 		String pref = store.getString(IPreferenceConstants.PROP_SHOW_OBJECTS);
@@ -613,6 +627,7 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getInputContext(java.lang.Object)
 	 */
+	@Override
 	protected InputContext getInputContext(Object object) {
 		InputContext context = null;
 		if (object instanceof IFile) {
@@ -683,6 +698,7 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 		fShowExtensions = show;
 	}
 
+	@Override
 	public void contributeToToolbar(IToolBarManager manager) {
 		contributeLaunchersToToolbar(manager);
 		manager.add(getExportAction());
@@ -697,6 +713,7 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 		return fExportAction;
 	}
 
+	@Override
 	protected ILauncherFormPageHelper getLauncherHelper() {
 		if (fLauncherHelper == null)
 			fLauncherHelper = new PluginLauncherFormPageHelper(this);

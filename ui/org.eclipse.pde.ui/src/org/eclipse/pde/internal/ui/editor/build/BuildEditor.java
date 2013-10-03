@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -37,10 +37,12 @@ public class BuildEditor extends MultiSourceEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getEditorID()
 	 */
+	@Override
 	protected String getEditorID() {
 		return IPDEUIConstants.BUILD_EDITOR_ID;
 	}
 
+	@Override
 	protected void createResourceContexts(InputContextManager manager, IFileEditorInput input) {
 		IFile file = input.getFile();
 
@@ -48,6 +50,7 @@ public class BuildEditor extends MultiSourceEditor {
 		manager.monitorFile(file);
 	}
 
+	@Override
 	protected InputContextManager createInputContextManager() {
 		BuildInputContextManager manager = new BuildInputContextManager(this);
 		manager.setUndoManager(new BuildUndoManager(this));
@@ -73,6 +76,7 @@ public class BuildEditor extends MultiSourceEditor {
 		return true;
 	}
 
+	@Override
 	public void editorContextAdded(InputContext context) {
 		addSourcePage(context.getId());
 	}
@@ -81,14 +85,17 @@ public class BuildEditor extends MultiSourceEditor {
 		close(false);
 	}
 
+	@Override
 	protected void createSystemFileContexts(InputContextManager manager, FileStoreEditorInput input) {
 		manager.putContext(input, new BuildInputContext(this, input, true));
 	}
 
+	@Override
 	protected void createStorageContexts(InputContextManager manager, IStorageEditorInput input) {
 		manager.putContext(input, new BuildInputContext(this, input, true));
 	}
 
+	@Override
 	protected void addEditorPages() {
 		try {
 			if (getEditorInput() instanceof IFileEditorInput)
@@ -102,6 +109,7 @@ public class BuildEditor extends MultiSourceEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#computeInitialPageId()
 	 */
+	@Override
 	protected String computeInitialPageId() {
 		// Retrieve the initial page
 		String firstPageId = super.computeInitialPageId();
@@ -116,10 +124,12 @@ public class BuildEditor extends MultiSourceEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.MultiSourceEditor#createXMLSourcePage(org.eclipse.pde.internal.ui.neweditor.PDEFormEditor, java.lang.String, java.lang.String)
 	 */
+	@Override
 	protected PDESourcePage createSourcePage(PDEFormEditor editor, String title, String name, String contextId) {
 		return new BuildSourcePage(editor, title, name);
 	}
 
+	@Override
 	protected ISortableContentOutlinePage createContentOutline() {
 		return new BuildOutlinePage(this);
 	}
@@ -128,6 +138,7 @@ public class BuildEditor extends MultiSourceEditor {
 		return null;
 	}
 
+	@Override
 	public String getTitle() {
 		return super.getTitle();
 	}
@@ -151,7 +162,7 @@ public class BuildEditor extends MultiSourceEditor {
 		return false;
 	}
 
-	@SuppressWarnings("rawtypes")
+	@Override
 	public Object getAdapter(Class key) {
 		//No property sheet needed - block super
 		if (key.equals(IPropertySheetPage.class)) {
@@ -163,6 +174,7 @@ public class BuildEditor extends MultiSourceEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getInputContext(java.lang.Object)
 	 */
+	@Override
 	protected InputContext getInputContext(Object object) {
 		InputContext context = null;
 		if (object instanceof IBuildObject) {
@@ -171,6 +183,7 @@ public class BuildEditor extends MultiSourceEditor {
 		return context;
 	}
 
+	@Override
 	public void contributeToToolbar(IToolBarManager manager) {
 		manager.add(getExportAction());
 	}

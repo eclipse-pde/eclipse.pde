@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -93,6 +93,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 			fEnabled = enabled;
 		}
 
+		@Override
 		public boolean select(Viewer v, Object parent, Object element) {
 			if (element instanceof IPluginModelBase) {
 				IPluginModelBase model = (IPluginModelBase) element;
@@ -103,6 +104,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 	}
 
 	class WorkspaceFilter extends ViewerFilter {
+		@Override
 		public boolean select(Viewer v, Object parent, Object element) {
 			if (element instanceof IPluginModelBase) {
 				IPluginModelBase model = (IPluginModelBase) element;
@@ -113,6 +115,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 	}
 
 	class JavaFilter extends ViewerFilter {
+		@Override
 		public boolean select(Viewer v, Object parent, Object element) {
 			if (element instanceof IPackageFragment) {
 				IPackageFragment packageFragment = (IPackageFragment) element;
@@ -139,6 +142,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 		 * 
 		 * @see org.eclipse.jface.action.Action#run()
 		 */
+		@Override
 		public void run() {
 			fTreeViewer.collapseAll();
 		}
@@ -158,6 +162,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 		};
 	}
 
+	@Override
 	public void dispose() {
 		PDECore.getDefault().getModelManager().removePluginModelListener(this);
 		PDECore.getDefault().getSearchablePluginsManager().removePluginModelListener(this);
@@ -173,6 +178,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 	 * (non-Javadoc)
 	 * @see org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createPartControl(Composite parent) {
 		fTreeViewer = new TreeViewer(parent, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.VIRTUAL);
 		fDrillDownAdapter = new DrillDownAdapter(fTreeViewer);
@@ -182,6 +188,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 		// will be sorted to the bottom.  When it is removed after the table is initialized, the focus will go to the last item in the table (bug 216339)
 		fTreeViewer.setComparator(new ListUtil.PluginComparator() {
 
+			@Override
 			public int compare(Viewer viewer, Object e1, Object e2) {
 				if (e1 instanceof PendingUpdateAdapter)
 					return -1;
@@ -234,6 +241,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 	private void registerGlobalActions(IActionBars actionBars) {
 		actionBars.setGlobalActionHandler(ActionFactory.SELECT_ALL.getId(), fSelectAllAction);
 		actionBars.setGlobalActionHandler(ActionFactory.RENAME.getId(), new Action() {
+			@Override
 			public void run() {
 				IStructuredSelection selection = (IStructuredSelection) fTreeViewer.getSelection();
 				if (selection.size() == 1) {
@@ -252,6 +260,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 	private void makeActions() {
 		fClipboard = new Clipboard(fTreeViewer.getTree().getDisplay());
 		fOpenAction = new Action() {
+			@Override
 			public void run() {
 				handleDoubleClick();
 			}
@@ -259,6 +268,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 		fOpenAction.setText(PDEUIMessages.PluginsView_open);
 
 		fHideExtDisabledFilterAction = new Action() {
+			@Override
 			public void run() {
 				boolean checked = fHideExtDisabledFilterAction.isChecked();
 				if (checked)
@@ -272,6 +282,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 		fHideExtDisabledFilterAction.setText(PDEUIMessages.PluginsView_showDisabled);
 
 		fHideExtEnabledFilterAction = new Action() {
+			@Override
 			public void run() {
 				boolean checked = fHideExtEnabledFilterAction.isChecked();
 				if (checked)
@@ -285,6 +296,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 		fHideExtEnabledFilterAction.setText(PDEUIMessages.PluginsView_showEnabled);
 
 		fHideWorkspaceFilterAction = new Action() {
+			@Override
 			public void run() {
 				boolean checked = fHideWorkspaceFilterAction.isChecked();
 				if (checked)
@@ -298,6 +310,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 		fHideWorkspaceFilterAction.setText(PDEUIMessages.PluginsView_showWorkspace);
 
 		fOpenTextEditorAction = new Action() {
+			@Override
 			public void run() {
 				handleOpenTextEditor(getSelectedFile(), null);
 			}
@@ -306,6 +319,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 		fOpenTextEditorAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_FILE));
 
 		fOpenSystemEditorAction = new Action() {
+			@Override
 			public void run() {
 				handleOpenSystemEditor(getSelectedFile());
 			}
@@ -313,6 +327,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 		fOpenSystemEditorAction.setText(PDEUIMessages.PluginsView_systemEditor);
 
 		fOpenManifestAction = new Action() {
+			@Override
 			public void run() {
 				handleOpenManifestEditor(getSelectedFile());
 			}
@@ -320,6 +335,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 		fOpenManifestAction.setText(PDEUIMessages.PluginsView_manifestEditor);
 
 		fOpenSchemaAction = new Action() {
+			@Override
 			public void run() {
 				handleOpenSchemaEditor(getSelectedFile());
 			}
@@ -330,6 +346,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 		fCopyAction.setText(PDEUIMessages.PluginsView_copy);
 
 		fSelectDependentAction = new Action() {
+			@Override
 			public void run() {
 				handleSelectDependencies();
 			}
@@ -337,6 +354,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 		fSelectDependentAction.setText(PDEUIMessages.PluginsView_dependentPlugins);
 
 		fSelectInJavaSearchAction = new Action() {
+			@Override
 			public void run() {
 				handleSelectInJavaSearch();
 			}
@@ -344,6 +362,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 		fSelectInJavaSearchAction.setText(PDEUIMessages.PluginsView_pluginsInJavaSearch);
 
 		fSelectAllAction = new Action() {
+			@Override
 			public void run() {
 				super.run();
 				fTreeViewer.getTree().selectAll();
@@ -770,6 +789,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 	 * (non-Javadoc)
 	 * @see org.eclipse.ui.part.WorkbenchPart#setFocus()
 	 */
+	@Override
 	public void setFocus() {
 		fTreeViewer.getTree().setFocus();
 	}
@@ -857,7 +877,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 		return true;
 	}
 
-	@SuppressWarnings("rawtypes")
+	@Override
 	public Object getAdapter(Class adapter) {
 		if (isShowInApplicable()) {
 			if (adapter == IShowInSource.class && isShowInApplicable()) {

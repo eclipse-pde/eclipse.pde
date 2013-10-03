@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,6 +35,7 @@ import org.eclipse.pde.internal.launching.launcher.*;
  * @deprecated use {@link org.eclipse.pde.launching.EquinoxLaunchConfiguration} instead.
  * @see org.eclipse.pde.launching.EquinoxLaunchConfiguration
  */
+@Deprecated
 public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 
 	// used to generate the dev classpath entries
@@ -48,6 +49,7 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 	 * (non-Javadoc)
 	 * @see org.eclipse.pde.ui.launcher.AbstractPDELaunchConfiguration#getProgramArguments(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public String[] getProgramArguments(ILaunchConfiguration configuration) throws CoreException {
 		ArrayList<String> programArgs = new ArrayList<String>();
 
@@ -155,7 +157,7 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 	 * (non-Javadoc)
 	 * @see org.eclipse.pde.ui.launcher.AbstractPDELaunchConfiguration#preLaunchCheck(org.eclipse.debug.core.ILaunchConfiguration, org.eclipse.debug.core.ILaunch, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	@SuppressWarnings("unchecked")
+	@Override
 	protected void preLaunchCheck(ILaunchConfiguration configuration, ILaunch launch, IProgressMonitor monitor) throws CoreException {
 		fModels = BundleLauncherHelper.getMergedBundleMap(configuration, true);
 		fAllBundles = new HashMap<String, IPluginModelBase>(fModels.size());
@@ -183,6 +185,7 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 	 * (non-Javadoc)
 	 * @see org.eclipse.pde.ui.launcher.AbstractPDELaunchConfiguration#validatePluginDependencies(org.eclipse.debug.core.ILaunchConfiguration, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	protected void validatePluginDependencies(ILaunchConfiguration configuration, IProgressMonitor monitor) throws CoreException {
 		OSGiValidationOperation op = new OSGiValidationOperation(configuration);
 		LaunchPluginValidator.runValidationOperation(op, monitor);
@@ -199,6 +202,7 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 	 * 			if unable to retrieve launch attribute values
 	 * @since 3.3
 	 */
+	@Override
 	protected void clear(ILaunchConfiguration configuration, IProgressMonitor monitor) throws CoreException {
 		// clear config area, if necessary
 		if (configuration.getAttribute(org.eclipse.pde.launching.IPDELauncherConstants.CONFIG_CLEAR_AREA, false))

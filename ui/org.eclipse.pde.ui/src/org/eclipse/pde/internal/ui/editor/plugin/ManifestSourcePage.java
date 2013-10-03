@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2012 IBM Corporation and others.
+ * Copyright (c) 2003, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,6 +54,7 @@ public class ManifestSourcePage extends XMLSourcePage {
 		 * @see org.eclipse.jface.viewers.LabelProvider#dispose()
 		 */
 
+		@Override
 		public String getText(Object obj) {
 			if (obj == fLibraries)
 				return PDEUIMessages.ManifestSourcePage_libraries;
@@ -69,6 +70,7 @@ public class ManifestSourcePage extends XMLSourcePage {
 			return text;
 		}
 
+		@Override
 		public Image getImage(Object obj) {
 			if (obj == fLibraries)
 				return fProvider.get(PDEPluginImages.DESC_RUNTIME_OBJ);
@@ -155,6 +157,7 @@ public class ManifestSourcePage extends XMLSourcePage {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ViewerSorter#category(java.lang.Object)
 		 */
+		@Override
 		public int category(Object element) {
 			if (element == fLibraries)
 				return 0;
@@ -174,10 +177,12 @@ public class ManifestSourcePage extends XMLSourcePage {
 		fActionGroup = new PluginSearchActionGroup();
 	}
 
+	@Override
 	public ILabelProvider createOutlineLabelProvider() {
 		return new OutlineLabelProvider();
 	}
 
+	@Override
 	public ITreeContentProvider createOutlineContentProvider() {
 		return new ContentProvider();
 	}
@@ -185,6 +190,7 @@ public class ManifestSourcePage extends XMLSourcePage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#updateSelection(java.lang.Object)
 	 */
+	@Override
 	public void updateSelection(Object object) {
 		if ((object instanceof IDocumentElementNode) && !((IDocumentElementNode) object).isErrorNode()) {
 			setSelectedObject(object);
@@ -198,10 +204,12 @@ public class ManifestSourcePage extends XMLSourcePage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#createOutlineSorter()
 	 */
+	@Override
 	public ViewerComparator createOutlineComparator() {
 		return new OutlineComparator();
 	}
 
+	@Override
 	public IDocumentRange getRangeElement(int offset, boolean searchChildren) {
 		IPluginBase base = ((IPluginModelBase) getInputContext().getModel()).getPluginBase(false);
 		if (base == null)
@@ -220,6 +228,7 @@ public class ManifestSourcePage extends XMLSourcePage {
 		return node;
 	}
 
+	@Override
 	public IDocumentRange findRange() {
 
 		Object selectedObject = getSelection();
@@ -235,11 +244,12 @@ public class ManifestSourcePage extends XMLSourcePage {
 		return null;
 	}
 
+	@Override
 	protected boolean isSelectionListener() {
 		return true;
 	}
 
-	@SuppressWarnings("rawtypes")
+	@Override
 	public Object getAdapter(Class adapter) {
 		if (IHyperlinkDetector.class.equals(adapter))
 			return new ManifestHyperlinkDetector(this);
@@ -249,6 +259,7 @@ public class ManifestSourcePage extends XMLSourcePage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#editorContextMenuAboutToShow(org.eclipse.jface.action.IMenuManager)
 	 */
+	@Override
 	protected void editorContextMenuAboutToShow(IMenuManager menu) {
 
 		ISelection selection = fDetector.getSelection();
@@ -279,6 +290,7 @@ public class ManifestSourcePage extends XMLSourcePage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEProjectionSourcePage#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
 		// At this point the source page is fully initialized including the 
@@ -289,6 +301,7 @@ public class ManifestSourcePage extends XMLSourcePage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEProjectionSourcePage#isQuickOutlineEnabled()
 	 */
+	@Override
 	public boolean isQuickOutlineEnabled() {
 		return true;
 	}
@@ -296,6 +309,7 @@ public class ManifestSourcePage extends XMLSourcePage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#setActive(boolean)
 	 */
+	@Override
 	public void setActive(boolean active) {
 		super.setActive(active);
 		// Update the text selection if this page is being activated
@@ -304,6 +318,7 @@ public class ManifestSourcePage extends XMLSourcePage {
 		}
 	}
 
+	@Override
 	protected IFoldingStructureProvider getFoldingStructureProvider(IEditingModel model) {
 		return new PluginFoldingStructureProvider(this, model);
 	}
