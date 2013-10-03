@@ -96,7 +96,6 @@ public class PackagerTask extends Task {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private void initializeAntProperties(Properties properties) {
 		properties.setProperty(IBuildPropertiesConstants.PROPERTY_PACKAGER_MODE, "true"); //$NON-NLS-1$
 

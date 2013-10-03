@@ -42,7 +42,6 @@ public class FeatureGeneratorTask extends Task {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private void initializeAntProperties(Properties properties) {
 		String value = getProject().getProperty(IBuildPropertiesConstants.RESOLVER_DEV_MODE);
 		if (Boolean.valueOf(value).booleanValue())

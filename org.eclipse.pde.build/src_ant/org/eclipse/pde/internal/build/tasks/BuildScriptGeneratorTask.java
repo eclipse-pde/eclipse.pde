@@ -134,7 +134,6 @@ public class BuildScriptGeneratorTask extends Task {
 			properties.put(IBuildPropertiesConstants.PROPERTY_ANT_VERSION, value);
 	}
 
-	@SuppressWarnings("unchecked")
 	private void setEEProfileProperties(Properties antProperties) {
 		ProfileManager manager = new ProfileManager(generator.getEESources(), true);
 		manager.copyEEProfileProperties(getProject().getProperties(), antProperties);
