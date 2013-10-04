@@ -16,38 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import org.eclipse.core.filebuffers.FileBuffers;
-import org.eclipse.core.filebuffers.ITextFileBuffer;
-import org.eclipse.core.filebuffers.ITextFileBufferManager;
-import org.eclipse.core.filebuffers.LocationKind;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.Signature;
-import org.eclipse.jdt.core.compiler.IProblem;
-import org.eclipse.jdt.core.dom.rewrite.ImportRewrite;
-import org.eclipse.jdt.core.refactoring.CompilationUnitChange;
-import org.eclipse.jdt.ui.CodeStyleConfiguration;
-import org.eclipse.jdt.ui.text.java.IInvocationContext;
-import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
-import org.eclipse.jdt.ui.text.java.IProblemLocation;
-import org.eclipse.jdt.ui.text.java.IQuickFixProcessor;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.FindReplaceDocumentAdapter;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.TextUtilities;
-import org.eclipse.jface.text.contentassist.IContextInformation;
-import org.eclipse.ltk.core.refactoring.Change;
-import org.eclipse.ltk.core.refactoring.CompositeChange;
-import org.eclipse.ltk.core.refactoring.NullChange;
-import org.eclipse.ltk.core.refactoring.TextFileChange;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
@@ -55,11 +23,53 @@ import org.eclipse.pde.api.tools.internal.util.Signatures;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsConstants;
 import org.eclipse.pde.api.tools.ui.internal.refactoring.CreateFileChange;
+
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+
+import org.eclipse.core.filebuffers.FileBuffers;
+import org.eclipse.core.filebuffers.ITextFileBuffer;
+import org.eclipse.core.filebuffers.ITextFileBufferManager;
+import org.eclipse.core.filebuffers.LocationKind;
+
 import org.eclipse.text.edits.InsertEdit;
 import org.eclipse.text.edits.MultiTextEdit;
+
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.FindReplaceDocumentAdapter;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.TextUtilities;
+import org.eclipse.jface.text.contentassist.IContextInformation;
+
 import org.eclipse.ui.progress.UIJob;
+
+import org.eclipse.ltk.core.refactoring.Change;
+import org.eclipse.ltk.core.refactoring.CompositeChange;
+import org.eclipse.ltk.core.refactoring.NullChange;
+import org.eclipse.ltk.core.refactoring.TextFileChange;
+
+import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.Signature;
+import org.eclipse.jdt.core.compiler.IProblem;
+import org.eclipse.jdt.core.dom.rewrite.ImportRewrite;
+import org.eclipse.jdt.core.refactoring.CompilationUnitChange;
+
+import org.eclipse.jdt.ui.CodeStyleConfiguration;
+import org.eclipse.jdt.ui.text.java.IInvocationContext;
+import org.eclipse.jdt.ui.text.java.IJavaCompletionProposal;
+import org.eclipse.jdt.ui.text.java.IProblemLocation;
+import org.eclipse.jdt.ui.text.java.IQuickFixProcessor;
 
 /**
  * Default quick fix processor for API tools
@@ -156,6 +166,9 @@ public class ApiQuickFixProcessor implements IQuickFixProcessor {
 		List<IJavaCompletionProposal> proposals = new ArrayList<IJavaCompletionProposal>();
 		ICompilationUnit unit = context.getCompilationUnit();
 		IProject project = unit.getJavaProject().getProject();
+		if (!project.hasNature(ApiPlugin.NATURE_ID)) {
+			return new IJavaCompletionProposal[0];
+		}
 		IFile build = project.getFile("build.properties"); //$NON-NLS-1$
 		if (needsBuildPropertiesChange(build)) {
 			for (int i = 0; i < locations.length; i++) {
@@ -246,7 +259,7 @@ public class ApiQuickFixProcessor implements IQuickFixProcessor {
 	}
 
 	public static boolean needsBuildPropertiesChange(IFile file) {
-		if (file != null) {
+		if (file.exists()) {
 			Properties props = new Properties();
 			InputStream stream = null;
 			try {
