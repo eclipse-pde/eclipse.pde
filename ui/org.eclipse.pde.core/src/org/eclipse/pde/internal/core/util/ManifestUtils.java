@@ -33,6 +33,12 @@ import org.osgi.framework.Constants;
 
 public class ManifestUtils {
 
+	/**
+	 * Manifest header for the syntax version of the jar manifest. Not part of
+	 * the OSGi specification. Must be the first header in the manifest. Typically
+	 * set to '1.0'.
+	 */
+	public static final String MANIFEST_VERSION = "Manifest-Version"; //$NON-NLS-1$
 	public static final String MANIFEST_LIST_SEPARATOR = ",\n "; //$NON-NLS-1$
 	public static final String MANIFEST_LINE_SEPARATOR = "\n "; //$NON-NLS-1$
 	private static int MANIFEST_MAXLINE = 511;
@@ -244,9 +250,8 @@ public class ManifestUtils {
 		// replaces any eventual existing file
 		manifestToWrite = new Hashtable<String, String>(manifestToWrite);
 
-		// This value has never changed or been used for anything in PDE. The Bundle-ManifestVersion header is available for syntax changes
-		// private static final String MANIFEST_VERSION = "Manifest-Version"; //$NON-NLS-1$
-		// writeEntry(out, MANIFEST_VERSION, (String) manifestToWrite.remove(MANIFEST_VERSION));
+		// The manifest-version header is not used by OSGi but must be the first header according to the JDK Jar specification
+		writeEntry(out, MANIFEST_VERSION, manifestToWrite.remove(MANIFEST_VERSION));
 		// always attempt to write the Bundle-ManifestVersion header if it exists (bug 109863)
 		writeEntry(out, Constants.BUNDLE_MANIFESTVERSION, manifestToWrite.remove(Constants.BUNDLE_MANIFESTVERSION));
 		writeEntry(out, Constants.BUNDLE_NAME, manifestToWrite.remove(Constants.BUNDLE_NAME));

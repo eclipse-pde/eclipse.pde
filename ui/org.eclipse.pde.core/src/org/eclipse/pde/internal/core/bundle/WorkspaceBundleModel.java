@@ -170,10 +170,19 @@ public class WorkspaceBundleModel extends BundleModel implements IEditableModel 
 	public void save(PrintWriter writer) {
 		IBundle bundle = getBundle();
 		Map<String, String> headers = ((Bundle) bundle).getHeaders();
+		// If the bundle doesn't have a user specified manifest version header, use the default 1.0 but don't save it in the model
+		boolean addManifestVersion = headers.get(ManifestUtils.MANIFEST_VERSION) == null;
+		if (addManifestVersion) {
+			headers.put(ManifestUtils.MANIFEST_VERSION, "1.0"); //$NON-NLS-1$
+		}
 		try {
 			ManifestUtils.writeManifest(headers, writer);
 		} catch (IOException e) {
 			PDECore.logException(e);
+		} finally {
+			if (addManifestVersion) {
+				headers.remove(ManifestUtils.MANIFEST_VERSION);
+			}
 		}
 		fDirty = false;
 	}
