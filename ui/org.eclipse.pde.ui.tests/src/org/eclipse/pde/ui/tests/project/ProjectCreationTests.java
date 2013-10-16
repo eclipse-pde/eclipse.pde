@@ -1487,24 +1487,24 @@ public class ProjectCreationTests extends TestCase {
 		IProject project = description.getProject();
 		description.apply(null);
 
-		// should be 11 lines
+		// should be 12 lines
 		IFile manifest = PDEProject.getManifest(project);
 		char[] chars = getInputStreamAsCharArray(manifest.getContents());
 		Document document = new Document(new String(chars));
 		int lines = document.getNumberOfLines();
-		assertEquals("Wrong number of lines", 11, lines);
+		assertEquals("Wrong number of lines", 12, lines);
 
 		// modify version attribute
 		IBundleProjectDescription d2 = getBundleProjectService().getDescription(project);
 		d2.setBundleVersion(new Version("2.0.0"));
 		d2.apply(null);
 
-		// should be 11 lines
+		// should be 12 lines
 		manifest = PDEProject.getManifest(project);
 		chars = getInputStreamAsCharArray(manifest.getContents());
 		document = new Document(new String(chars));
 		lines = document.getNumberOfLines();
-		assertEquals("Wrong number of lines", 11, lines);
+		assertEquals("Wrong number of lines", 12, lines);
 	}
 
 	/**
