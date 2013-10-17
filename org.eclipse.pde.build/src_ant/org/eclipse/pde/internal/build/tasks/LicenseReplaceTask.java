@@ -7,6 +7,7 @@
  * 
  *  Contributors:
  *     IBM - Initial API and implementation
+ *     Marc-Andre Laperle (Ericsson) - Fix NPE (Bug 419759)
  *******************************************************************************/
 package org.eclipse.pde.internal.build.tasks;
 
@@ -76,8 +77,10 @@ public class LicenseReplaceTask extends Task {
 
 			if (startLicenseText > 0 && endLicenseText > startLicenseText) {
 				// Replace license text
-				buffer.replace(startLicenseText, endLicenseText, licenseText);
-				contentChanged = true;
+				if (licenseText != null) {
+					buffer.replace(startLicenseText, endLicenseText, licenseText);
+					contentChanged = true;
+				}
 			} else if (insertionPoint > -1) {
 				//insert new license after <feature>
 				StringBuffer newLicense = new StringBuffer();
@@ -86,7 +89,8 @@ public class LicenseReplaceTask extends Task {
 				if (licenseURL != null)
 					newLicense.append(licenseURL);
 				newLicense.append(" >"); //$NON-NLS-1$
-				newLicense.append(licenseText);
+				if (licenseText != null)
+					newLicense.append(licenseText);
 				newLicense.append(LICENSE_END_TAG);
 
 				buffer.insert(insertionPoint, newLicense.toString());
@@ -109,7 +113,7 @@ public class LicenseReplaceTask extends Task {
 				// Replace non-empty payload URL
 				if (licenseURL == null) {
 					// with empty license URL
-					buffer.replace(startURLWord, endURLText + 1, ""); //$NON-NLS-1$
+					// No-op
 				} else {
 					// with non-empty license URL
 					buffer.replace(startURLText, endURLText + 1, licenseURL);
