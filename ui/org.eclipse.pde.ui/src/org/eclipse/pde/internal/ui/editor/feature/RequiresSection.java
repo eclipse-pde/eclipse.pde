@@ -8,6 +8,7 @@
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Alexander Kurtakov <akurtako@redhat.com> - bug 415649
+ *     Marc-Andre Laperle (Ericsson) - Handle double click (Bug 328467)
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
@@ -28,6 +29,7 @@ import org.eclipse.pde.internal.ui.dialogs.FeatureSelectionDialog;
 import org.eclipse.pde.internal.ui.dialogs.PluginSelectionDialog;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.actions.SortAction;
+import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
 import org.eclipse.pde.internal.ui.parts.TablePart;
 import org.eclipse.pde.internal.ui.wizards.ListUtil;
@@ -51,6 +53,7 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 	private Action fDeleteAction;
 
 	private SortAction fSortAction;
+	private Action fOpenAction;
 
 	class ImportContentProvider extends DefaultContentProvider implements IStructuredContentProvider {
 		public Object[] getElements(Object parent) {
@@ -111,6 +114,13 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 			}
 		};
 		fDeleteAction.setText(PDEUIMessages.Actions_delete_label);
+
+		fOpenAction = new Action(PDEUIMessages.Actions_open_label) {
+			@Override
+			public void run() {
+				handleOpen();
+			}
+		};
 		toolkit.paintBordersFor(container);
 		section.setClient(container);
 		initialize();
@@ -292,6 +302,28 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 	}
 
 	@Override
+	protected void handleDoubleClick(IStructuredSelection selection) {
+		handleOpen();
+	}
+
+	private void handleOpen() {
+		IStructuredSelection sel = (IStructuredSelection) fPluginViewer.getSelection();
+		Object obj = sel.getFirstElement();
+
+		if (obj instanceof FeatureImport) {
+			FeatureImport featureImport = (FeatureImport) obj;
+			if (featureImport.getType() == IFeatureImport.PLUGIN)
+				ManifestEditor.open(featureImport.getPlugin(), false);
+			else if (featureImport.getType() == IFeatureImport.FEATURE) {
+				IFeature feature = featureImport.getFeature();
+				FeatureModelManager manager = PDECore.getDefault().getFeatureModelManager();
+				IFeatureModel model = manager.findFeatureModel(feature.getId(), feature.getVersion());
+				FeatureEditor.openFeatureEditor(model);
+			}
+		}
+	}
+
+	@Override
 	public void dispose() {
 		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		if (model != null)
@@ -343,6 +375,7 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 	protected void fillContextMenu(IMenuManager manager) {
 		IStructuredSelection selection = (StructuredSelection) fPluginViewer.getSelection();
 		if (!selection.isEmpty()) {
+			manager.add(fOpenAction);
 			manager.add(fDeleteAction);
 			manager.add(new Separator());
 		}
