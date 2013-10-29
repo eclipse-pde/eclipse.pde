@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -250,8 +250,9 @@ public class EditDirectoryContainerPage extends WizardPage implements IEditBundl
 	public void storeSettings() {
 		String newLocation = fInstallLocation.getText().trim();
 
-		if (newLocation.charAt(newLocation.length() - 1) == File.separatorChar) {
-			newLocation = newLocation.substring(0, newLocation.length() - 1);
+		int length = newLocation.length();
+		if (length > 0 && newLocation.charAt(length - 1) == File.separatorChar) {
+			newLocation = newLocation.substring(0, length - 1);
 		}
 		String[] items = fInstallLocation.getItems();
 		for (int i = 0; i < items.length; i++) {
@@ -305,6 +306,9 @@ public class EditDirectoryContainerPage extends WizardPage implements IEditBundl
 	 * @return whether the finish button should be enabled and container creation should continue
 	 */
 	protected boolean validateInput() {
+		if (fInstallLocation.isDisposed())
+			return false;
+
 		// Check if the text field is blank
 		if (fInstallLocation.getText().trim().length() == 0) {
 			setMessage(getDefaultMessage());
