@@ -43,7 +43,7 @@ public class SourceTests extends PDETestCase {
 		IFolder sdk = Utils.createFolder(buildFolder, "features/sdk");
 
 		//generate an SDK feature
-		Utils.generateFeature(buildFolder, "sdk", new String[] {"org.eclipse.jdt", "jdt.source"}, null);
+		Utils.generateFeature(buildFolder, "sdk", new String[] {"org.eclipse.jdt", "jdt.source", "org.eclipse.platform"}, null);
 		Properties properties = new Properties();
 		properties.put("generate.feature@jdt.source", "org.eclipse.jdt");
 		Utils.storeBuildProperties(sdk, properties);
