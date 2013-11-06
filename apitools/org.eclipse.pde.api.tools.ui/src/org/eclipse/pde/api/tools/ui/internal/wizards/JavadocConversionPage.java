@@ -78,6 +78,7 @@ import org.eclipse.ltk.core.refactoring.CompositeChange;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.TextFileChange;
 import org.eclipse.ltk.ui.refactoring.UserInputWizardPage;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.ApiBaselineManager;
 import org.eclipse.pde.api.tools.internal.JavadocTagManager;
 import org.eclipse.pde.api.tools.internal.provisional.ApiDescriptionVisitor;
@@ -94,7 +95,6 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.util.Signatures;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
-import org.eclipse.pde.api.tools.ui.internal.IApiToolsConstants;
 import org.eclipse.pde.api.tools.ui.internal.IApiToolsHelpContextIds;
 import org.eclipse.pde.api.tools.ui.internal.SWTFactory;
 import org.eclipse.pde.api.tools.ui.internal.markers.ApiQuickFixProcessor;
@@ -139,6 +139,7 @@ public class JavadocConversionPage extends UserInputWizardPage {
 		boolean remove = false;
 		IJavaProject project = null;
 		IApiDescription apidescription = null;
+		SubMonitor monitor = null;
 
 		/**
 		 * Constructor
@@ -146,11 +147,13 @@ public class JavadocConversionPage extends UserInputWizardPage {
 		 * @param project the project context
 		 * @param the backing API description
 		 * @param remove if the Javadoc tags should be removed
+		 * @param monitor the progress monitor
 		 */
-		public AnnotVisitor(IJavaProject project, IApiDescription description, boolean remove) {
+		public AnnotVisitor(IJavaProject project, IApiDescription description, boolean remove, IProgressMonitor monitor) {
 			this.project = project;
 			this.apidescription = description;
 			this.remove = remove;
+			this.monitor = SubMonitor.convert(monitor, 1);
 		}
 
 		/*
@@ -196,6 +199,7 @@ public class JavadocConversionPage extends UserInputWizardPage {
 			ASTParser parser = ASTParser.newParser(AST.JLS4);
 			ICompilationUnit cunit = type.getCompilationUnit();
 			if (cunit != null) {
+				this.monitor.setTaskName(NLS.bind(WizardMessages.JavadocConversionPage_scan_javadoc_to_convert, new Object[] { type.getFullyQualifiedName() }));
 				parser.setSource(cunit);
 				parser.setResolveBindings(true);
 				Map<String, String> options = cunit.getJavaProject().getOptions(true);
@@ -799,14 +803,13 @@ public class JavadocConversionPage extends UserInputWizardPage {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				Object[] projects = checkedset.toArray(new IProject[checkedset.size()]);
 				IProject project = null;
-				SubMonitor localmonitor = SubMonitor.convert(monitor);
-				localmonitor.beginTask(IApiToolsConstants.EMPTY_STRING, projects.length);
-				localmonitor.setTaskName(WizardMessages.JavadocConversionPage_scanning_projects_for_javadoc_tags);
+				SubMonitor localmonitor = SubMonitor.convert(monitor, WizardMessages.JavadocConversionPage_scanning_projects_for_javadoc_tags, projects.length * 3);
 				refactoring.resetRefactoring();
 				boolean remove = removetags.getSelection();
 				CompositeChange pchange = null;
 				for (int i = 0; i < projects.length; i++) {
 					project = (IProject) projects[i];
+					localmonitor.setTaskName(NLS.bind(WizardMessages.JavadocConversionPage_scan_javadoc_to_convert, new Object[] { project.getName() }));
 					pchange = new CompositeChange(project.getName());
 					IFile build = project.getFile("build.properties"); //$NON-NLS-1$
 					if (ApiQuickFixProcessor.needsBuildPropertiesChange(build)) {
@@ -818,10 +821,9 @@ public class JavadocConversionPage extends UserInputWizardPage {
 							// reason we fail to create the change
 						}
 					}
-					localmonitor.subTask(MessageFormat.format(WizardMessages.ApiToolingSetupWizardPage_4, new Object[] { project.getName() }));
 					// collect the changes for the conversion
 					try {
-						createChanges(pchange, JavaCore.create(project), remove);
+						createChanges(pchange, JavaCore.create(project), remove, localmonitor.newChild(1));
 					} catch (CoreException e) {
 						ApiUIPlugin.log(e);
 					}
@@ -848,15 +850,13 @@ public class JavadocConversionPage extends UserInputWizardPage {
 	 * @param projectchange the composite change to add to
 	 * @param project the project to scan
 	 * @param remove if the found tags should also be removed
+	 * @param monitor the progress monitor
 	 * @throws CoreException
 	 */
-	RefactoringStatus createChanges(CompositeChange projectchange, IJavaProject project, boolean remove) throws CoreException {
+	RefactoringStatus createChanges(CompositeChange projectchange, IJavaProject project, boolean remove, SubMonitor monitor) throws CoreException {
 		HashMap<IFile, Set<TextEdit>> map = new HashMap<IFile, Set<TextEdit>>();
 		// XXX visit all CU's -> all doc nodes -> create add annotations
-		// changes for each tags
-		// also create remove tag changes if the option is turned on
-		// ApiDescriptionProcessor.collectTagUpdates(project, cxml, map);
-		RefactoringStatus status = collectAnnotationEdits(project, map, remove);
+		RefactoringStatus status = collectAnnotationEdits(project, map, remove, monitor.newChild(1));
 		if (status.isOK()) {
 			IFile file = null;
 			TextFileChange change = null;
@@ -864,6 +864,7 @@ public class JavadocConversionPage extends UserInputWizardPage {
 			Set<TextEdit> alledits = null;
 			for (Entry<IFile, Set<TextEdit>> entry : map.entrySet()) {
 				file = entry.getKey();
+				monitor.setTaskName(NLS.bind(WizardMessages.JavadocConversionPage_collect_edits, new Object[] { file.getName() }));
 				change = new TextFileChange(MessageFormat.format(WizardMessages.JavadocConversionPage_convert_javadoc_tags_in, new Object[] { file.getName() }), file);
 				multiedit = new MultiTextEdit();
 				change.setEdit(multiedit);
@@ -875,6 +876,7 @@ public class JavadocConversionPage extends UserInputWizardPage {
 				}
 				projectchange.add(change);
 			}
+			Util.updateMonitor(monitor, 1);
 		}
 		return status;
 	}
@@ -885,16 +887,17 @@ public class JavadocConversionPage extends UserInputWizardPage {
 	 * @param project the project to scan
 	 * @param collector the map to collect the edits in
 	 * @param remove if the old Javadoc tags should be removed as well
+	 * @param monitor the prgress monitor
 	 * @throws CoreException
 	 */
-	RefactoringStatus collectAnnotationEdits(IJavaProject project, Map<IFile, Set<TextEdit>> collector, boolean remove) throws CoreException {
+	RefactoringStatus collectAnnotationEdits(IJavaProject project, Map<IFile, Set<TextEdit>> collector, boolean remove, IProgressMonitor monitor) throws CoreException {
 		RefactoringStatus status = new RefactoringStatus();
 		IApiBaseline baseline = ApiBaselineManager.getManager().getWorkspaceBaseline();
 		if (baseline != null) {
 			IApiComponent component = baseline.getApiComponent(project.getProject());
 			if (component != null) {
 				IApiDescription description = component.getApiDescription();
-				AnnotVisitor visitor = new AnnotVisitor(project, description, remove);
+				AnnotVisitor visitor = new AnnotVisitor(project, description, remove, monitor);
 				description.accept(visitor, null);
 				collector.putAll(visitor.changes);
 			}
