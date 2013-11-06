@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,6 +46,7 @@ public class WizardMessages extends NLS {
 	public static String ApiToolingSetupWizardPage_7;
 	public static String ApiToolingSetupWizardPage_filter_update_job;
 	public static String ApiToolingSetupWizardPage_n_items_checked;
+	public static String JavadocConversionPage_0;
 	public static String JavadocConversionPage_changes_required_for_conversion;
 	public static String JavadocConversionPage_convert_javadoc_tags_in;
 	public static String JavadocConversionPage_convert_tags_to_annotations_description;

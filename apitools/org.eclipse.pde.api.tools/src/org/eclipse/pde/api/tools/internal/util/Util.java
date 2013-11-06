@@ -406,6 +406,40 @@ public final class Util {
 	}
 
 	/**
+	 * Returns all of the API projects in the workspace
+	 * 
+	 * @param sourcelevel
+	 * @return all of the API projects in the workspace or <code>null</code> if
+	 *         there are none.
+	 */
+	public static IProject[] getApiProjectsMinSourceLevel(String sourcelevel) {
+		IProject[] allProjects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+		ArrayList<IProject> temp = new ArrayList<IProject>();
+		IProject project = null;
+		for (int i = 0, max = allProjects.length; i < max; i++) {
+			project = allProjects[i];
+			if (project.isAccessible()) {
+				try {
+					if (project.hasNature(org.eclipse.pde.api.tools.internal.provisional.ApiPlugin.NATURE_ID)) {
+						IJavaProject jp = JavaCore.create(project);
+						String src = jp.getOption(JavaCore.COMPILER_SOURCE, true);
+						if (src != null && src.compareTo(JavaCore.VERSION_1_4) > 0) {
+							temp.add(project);
+						}
+					}
+				} catch (CoreException e) {
+				}
+			}
+		}
+		IProject[] projects = null;
+		if (temp.size() != 0) {
+			projects = new IProject[temp.size()];
+			temp.toArray(projects);
+		}
+		return projects;
+	}
+
+	/**
 	 * Copies the given file to the new file
 	 * 
 	 * @param file

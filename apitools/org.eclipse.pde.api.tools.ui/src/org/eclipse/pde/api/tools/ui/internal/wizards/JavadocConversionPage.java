@@ -62,6 +62,7 @@ import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -640,7 +641,12 @@ public class JavadocConversionPage extends UserInputWizardPage {
 		tableviewer = new CheckboxTableViewer(table);
 		tableviewer.setLabelProvider(new WorkbenchLabelProvider());
 		tableviewer.setContentProvider(new ArrayContentProvider());
-		tableviewer.setInput(Util.getApiProjects());
+		IProject[] input = Util.getApiProjectsMinSourceLevel(JavaCore.VERSION_1_5);
+		if (input == null) {
+			setMessage(WizardMessages.JavadocConversionPage_0, IMessageProvider.WARNING);
+		} else {
+			tableviewer.setInput(input);
+		}
 		tableviewer.setComparator(new ViewerComparator());
 		tableviewer.addFilter(filter);
 		tableviewer.addCheckStateListener(new ICheckStateListener() {
@@ -685,7 +691,7 @@ public class JavadocConversionPage extends UserInputWizardPage {
 			tableviewer.setCheckedElements(selected);
 			checkedset.addAll(Arrays.asList(selected));
 		}
-		setPageComplete(checkedset.size() > 0);
+		setPageComplete(tableviewer.getCheckedElements().length > 0);
 
 		SWTFactory.createVerticalSpacer(comp, 1);
 		removetags = SWTFactory.createCheckButton(comp, WizardMessages.JavadocConversionPage_delete_tags_during_conversion, null, true, 1);
