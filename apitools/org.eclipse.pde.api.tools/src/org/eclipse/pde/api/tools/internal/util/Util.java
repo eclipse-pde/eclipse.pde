@@ -423,7 +423,7 @@ public final class Util {
 					if (project.hasNature(org.eclipse.pde.api.tools.internal.provisional.ApiPlugin.NATURE_ID)) {
 						IJavaProject jp = JavaCore.create(project);
 						String src = jp.getOption(JavaCore.COMPILER_SOURCE, true);
-						if (src != null && src.compareTo(JavaCore.VERSION_1_4) > 0) {
+						if (src != null && src.compareTo(sourcelevel) >= 0) {
 							temp.add(project);
 						}
 					}
