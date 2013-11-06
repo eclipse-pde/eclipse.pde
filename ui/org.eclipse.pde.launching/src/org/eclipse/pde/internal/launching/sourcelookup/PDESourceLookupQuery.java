@@ -26,14 +26,25 @@ import org.eclipse.pde.internal.core.TargetPlatformHelper;
 
 public class PDESourceLookupQuery implements ISafeRunnable {
 
-	protected static String OSGI_CLASSLOADER = "org.eclipse.osgi.internal.baseadaptor.DefaultClassLoader"; //$NON-NLS-1$
+	private static final String OSGI_CLASSLOADER = "org.eclipse.osgi.internal.baseadaptor.DefaultClassLoader"; //$NON-NLS-1$
 	/**
 	 * Support for refactored bundle class loaders (bug 402005)
 	 */
-	protected static String OSGI_CLASSLOADER2 = "org.eclipse.osgi.internal.loader.ModuleClassLoader"; //$NON-NLS-1$
-	private static String LEGACY_ECLIPSE_CLASSLOADER = "org.eclipse.core.runtime.adaptor.EclipseClassLoader"; //$NON-NLS-1$
-	private static String MAIN_CLASS = "org.eclipse.core.launcher.Main"; //$NON-NLS-1$
-	private static String MAIN_PLUGIN = "org.eclipse.platform"; //$NON-NLS-1$
+	private static final String OSGI_LUNA_CLASSLOADER1 = "org.eclipse.osgi.internal.loader.ModuleClassLoader"; //$NON-NLS-1$
+	private static final String OSGI_LUNA_CLASSLOADER2 = "org.eclipse.osgi.internal.loader.EquinoxClassLoader"; //$NON-NLS-1$
+	private static final String OSGI_CURRENT_CLASSLOADER;
+	static {
+		ClassLoader loader = PDESourceLookupQuery.class.getClassLoader();
+		if (loader != null) {
+			OSGI_CURRENT_CLASSLOADER = loader.getClass().getName();
+		} else {
+			OSGI_CURRENT_CLASSLOADER = "unknown"; //$NON-NLS-1$
+		}
+	}
+
+	private static final String LEGACY_ECLIPSE_CLASSLOADER = "org.eclipse.core.runtime.adaptor.EclipseClassLoader"; //$NON-NLS-1$
+	private static final String MAIN_CLASS = "org.eclipse.core.launcher.Main"; //$NON-NLS-1$
+	private static final String MAIN_PLUGIN = "org.eclipse.platform"; //$NON-NLS-1$
 
 	private Object fElement;
 	private Object fResult;
@@ -78,15 +89,16 @@ public class PDESourceLookupQuery implements ISafeRunnable {
 
 			if (classLoaderObject != null) {
 				IJavaClassType type = (IJavaClassType) classLoaderObject.getJavaType();
-				if (OSGI_CLASSLOADER.equals(type.getName())) {
+				String classLoaderName = type.getName();
+				if (OSGI_CLASSLOADER.equals(classLoaderName)) {
 					if (fDirector.getOSGiRuntimeVersion() < 3.5) {
 						fResult = findSourceElement34(classLoaderObject, sourcePath);
 					} else {
 						fResult = findSourceElement(classLoaderObject, sourcePath);
 					}
-				} else if (OSGI_CLASSLOADER2.equals(type.getName())) {
+				} else if (OSGI_LUNA_CLASSLOADER1.equals(classLoaderName) || OSGI_LUNA_CLASSLOADER2.equals(classLoaderName) || OSGI_CURRENT_CLASSLOADER.equals(classLoaderName)) {
 					fResult = findSourceElement(classLoaderObject, sourcePath);
-				} else if (LEGACY_ECLIPSE_CLASSLOADER.equals(type.getName())) {
+				} else if (LEGACY_ECLIPSE_CLASSLOADER.equals(classLoaderName)) {
 					fResult = findSourceElement_legacy(classLoaderObject, sourcePath);
 				} else if (MAIN_CLASS.equals(declaringTypeName)) {
 					IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(MAIN_PLUGIN);
