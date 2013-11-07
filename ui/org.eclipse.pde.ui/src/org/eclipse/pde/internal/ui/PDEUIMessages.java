@@ -352,6 +352,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String SplashTemplatesSection_typeName;
 
+	public static String StateViewPage_ChangeTargetPlatform;
+
 	public static String StateViewPage_importedPackages;
 
 	public static String StateViewPage_openItem;

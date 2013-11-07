@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 IBM Corporation and others.
+ * Copyright (c) 2009, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,12 +12,12 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.views.target;
 
-import org.eclipse.osgi.service.resolver.VersionConstraint;
 import java.util.ArrayList;
 import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
@@ -26,6 +26,7 @@ import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
 import org.eclipse.pde.internal.ui.elements.DefaultContentProvider;
+import org.eclipse.pde.internal.ui.preferences.TargetPlatformPreferencePage;
 import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
 import org.eclipse.pde.internal.ui.views.dependencies.DependenciesViewComparator;
 import org.eclipse.pde.internal.ui.views.plugins.ImportActionGroup;
@@ -35,8 +36,7 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.actions.ActionContext;
-import org.eclipse.ui.dialogs.FilteredTree;
-import org.eclipse.ui.dialogs.PatternFilter;
+import org.eclipse.ui.dialogs.*;
 import org.eclipse.ui.part.Page;
 import org.eclipse.ui.part.PageBookView;
 import org.osgi.framework.Version;
@@ -55,12 +55,14 @@ public class StateViewPage extends Page implements IStateDeltaListener, IPluginM
 	private static final String SHOW_NONLEAF = "hideNonLeaf"; //$NON-NLS-1$
 
 	private ViewerFilter fHideResolvedFilter = new ViewerFilter() {
+		@Override
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
 			return ((element instanceof BundleDescription && !((BundleDescription) element).isResolved()) || parentElement instanceof BundleDescription && !((BundleDescription) parentElement).isResolved());
 		}
 	};
 
 	private ViewerFilter fShowLeaves = new ViewerFilter() {
+		@Override
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
 			if (element instanceof BundleDescription) {
 				return ((BundleDescription) element).getDependents().length == 0;
@@ -80,6 +82,7 @@ public class StateViewPage extends Page implements IStateDeltaListener, IPluginM
 			return dependencies;
 		}
 
+		@Override
 		public String toString() {
 			return (dependencies[0] instanceof BundleSpecification) ? PDEUIMessages.StateViewPage_requiredBundles : PDEUIMessages.StateViewPage_importedPackages;
 		}
@@ -139,11 +142,13 @@ public class StateViewPage extends Page implements IStateDeltaListener, IPluginM
 			fSharedProvider.connect(this);
 		}
 
+		@Override
 		public void dispose() {
 			fSharedProvider.disconnect(this);
 			super.dispose();
 		}
 
+		@Override
 		public void update(ViewerCell cell) {
 			Object element = cell.getElement();
 			StyledString styledString = new StyledString();
@@ -236,6 +241,7 @@ public class StateViewPage extends Page implements IStateDeltaListener, IPluginM
 		};
 	}
 
+	@Override
 	public void createControl(Composite parent) {
 		fComposite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -244,6 +250,7 @@ public class StateViewPage extends Page implements IStateDeltaListener, IPluginM
 		fComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		fFilteredTree = new FilteredTree(fComposite, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.SINGLE, new PatternFilter(), true) {
+			@Override
 			protected void createControl(Composite parent, int treeStyle) {
 				super.createControl(parent, treeStyle);
 
@@ -297,10 +304,12 @@ public class StateViewPage extends Page implements IStateDeltaListener, IPluginM
 		setActive(true);
 	}
 
+	@Override
 	public Control getControl() {
 		return fComposite;
 	}
 
+	@Override
 	public void setFocus() {
 		if (fFilteredTree != null) {
 			Control c = fFilteredTree.getFilterControl();
@@ -340,9 +349,11 @@ public class StateViewPage extends Page implements IStateDeltaListener, IPluginM
 		}
 	}
 
+	@Override
 	public void makeContributions(IMenuManager menuManager, IToolBarManager toolBarManager, IStatusLineManager statusLineManager) {
 		super.makeContributions(menuManager, toolBarManager, statusLineManager);
 		Action filterResolved = new Action(PDEUIMessages.StateViewPage_showOnlyUnresolved_label, IAction.AS_CHECK_BOX) {
+			@Override
 			public void run() {
 				getSettings().put(HIDE_RESOLVED, isChecked());
 				if (isChecked())
@@ -352,6 +363,7 @@ public class StateViewPage extends Page implements IStateDeltaListener, IPluginM
 			}
 		};
 		Action filterLeaves = new Action(PDEUIMessages.StateViewPage_showLeaves, IAction.AS_CHECK_BOX) {
+			@Override
 			public void run() {
 				getSettings().put(SHOW_NONLEAF, isChecked());
 				if (isChecked())
@@ -365,6 +377,16 @@ public class StateViewPage extends Page implements IStateDeltaListener, IPluginM
 		filterLeaves.setChecked(getSettings().getBoolean(SHOW_NONLEAF));
 		menuManager.add(filterResolved);
 		menuManager.add(filterLeaves);
+		menuManager.add(new Separator());
+
+		Action openPreferences = new Action(PDEUIMessages.StateViewPage_ChangeTargetPlatform, PDEPluginImages.DESC_TARGET_DEFINITION) {
+			@Override
+			public void run() {
+				PreferenceDialog dialog = PreferencesUtil.createPreferenceDialogOn(PDEPlugin.getActiveWorkbenchShell(), TargetPlatformPreferencePage.PAGE_ID, null, null);
+				dialog.open();
+			}
+		};
+		menuManager.add(openPreferences);
 
 		hookContextMenu();
 	}
@@ -389,6 +411,7 @@ public class StateViewPage extends Page implements IStateDeltaListener, IPluginM
 		if (desc != null) {
 			if (fOpenAction == null) {
 				fOpenAction = new Action(PDEUIMessages.StateViewPage_openItem) {
+					@Override
 					public void run() {
 						handleDoubleClick();
 					}
@@ -405,6 +428,7 @@ public class StateViewPage extends Page implements IStateDeltaListener, IPluginM
 		}
 	}
 
+	@Override
 	public void dispose() {
 		PDECore.getDefault().getModelManager().removeStateDeltaListener(this);
 		setActive(false);
@@ -434,7 +458,7 @@ public class StateViewPage extends Page implements IStateDeltaListener, IPluginM
 	}
 
 	public void stateChanged(final State newState) {
-		if (!fView.getCurrentPage().equals(this) || fTreeViewer == null || fTreeViewer.getTree().isDisposed())
+		if (!this.equals(fView.getCurrentPage()) || fTreeViewer == null || fTreeViewer.getTree().isDisposed())
 			// if this page is not active, then wait until we call refresh on next activation
 			return;
 		fTreeViewer.getTree().getDisplay().asyncExec(new Runnable() {

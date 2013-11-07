@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.pde.internal.ui;
 
 import org.eclipse.jdt.ui.JavaUI;
+import org.eclipse.pde.internal.ui.views.target.TargetStateView;
 import org.eclipse.ui.*;
 
 public class PDEPerspective implements IPerspectiveFactory {
@@ -29,16 +30,15 @@ public class PDEPerspective implements IPerspectiveFactory {
 	private void addViews() {
 		IFolderLayout topLeft = factory.createFolder("topLeft", //$NON-NLS-1$
 				IPageLayout.LEFT, 0.25f, factory.getEditorArea());
-		topLeft.addPlaceholder(IPageLayout.ID_RES_NAV);
 		topLeft.addView(JavaUI.ID_PACKAGES);
+		topLeft.addPlaceholder(IPageLayout.ID_PROJECT_EXPLORER);
 		topLeft.addPlaceholder(JavaUI.ID_TYPE_HIERARCHY);
 		topLeft.addView(IPDEUIConstants.PLUGINS_VIEW_ID);
 
 		IFolderLayout bottom = factory.createFolder("bottomRight", //$NON-NLS-1$
 				IPageLayout.BOTTOM, 0.75f, factory.getEditorArea());
-		bottom.addView("org.eclipse.pde.runtime.LogView"); //$NON-NLS-1$
-		bottom.addView(IPageLayout.ID_TASK_LIST);
 		bottom.addView(IPageLayout.ID_PROBLEM_VIEW);
+		bottom.addView(TargetStateView.VIEW_ID);
 
 		factory.addView(IPageLayout.ID_OUTLINE, IPageLayout.RIGHT, 0.75f, factory.getEditorArea());
 
