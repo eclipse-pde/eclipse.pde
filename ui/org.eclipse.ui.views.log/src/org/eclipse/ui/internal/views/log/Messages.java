@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -78,8 +78,9 @@ public class Messages extends NLS {
 	public static String LogViewLabelProvider_truncatedMessage;
 
 	public static String EventDetailsDialog_title;
-	public static String EventDetailsDialog_date;
+	public static String EventDetailsDialog_plugIn;
 	public static String EventDetailsDialog_severity;
+	public static String EventDetailsDialog_date;
 	public static String EventDetailsDialog_message;
 	public static String EventDetailsDialog_exception;
 	public static String EventDetailsDialog_session;

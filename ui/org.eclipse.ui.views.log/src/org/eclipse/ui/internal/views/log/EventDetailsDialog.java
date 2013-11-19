@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -62,9 +62,10 @@ public class EventDetailsDialog extends TrayDialog {
 	private boolean isLastChild;
 	private boolean isAtEndOfLog;
 
-	private Label dateLabel;
+	private Label plugInIdLabel;
 	private Label severityImageLabel;
 	private Label severityLabel;
+	private Label dateLabel;
 	private Text msgText;
 	private Text stackTraceText;
 	private Text sessionDataText;
@@ -351,6 +352,7 @@ public class EventDetailsDialog extends TrayDialog {
 
 			String strDate = dateFormat.format(logEntry.getDate());
 			dateLabel.setText(strDate);
+			plugInIdLabel.setText(logEntry.getPluginId());
 			severityImageLabel.setImage(labelProvider.getColumnImage(entry, 0));
 			severityLabel.setText(logEntry.getSeverityText());
 			msgText.setText(logEntry.getMessage() != null ? logEntry.getMessage() : ""); //$NON-NLS-1$
@@ -639,18 +641,25 @@ public class EventDetailsDialog extends TrayDialog {
 		textContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		Label label = new Label(textContainer, SWT.NONE);
-		label.setText(Messages.EventDetailsDialog_date);
-		dateLabel = new Label(textContainer, SWT.NULL);
+		label.setText(Messages.EventDetailsDialog_plugIn);
+		plugInIdLabel = new Label(textContainer, SWT.NONE);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
-		dateLabel.setLayoutData(gd);
+		plugInIdLabel.setLayoutData(gd);
 
 		label = new Label(textContainer, SWT.NONE);
 		label.setText(Messages.EventDetailsDialog_severity);
-		severityImageLabel = new Label(textContainer, SWT.NULL);
-		severityLabel = new Label(textContainer, SWT.NULL);
+		severityImageLabel = new Label(textContainer, SWT.NONE);
+		severityLabel = new Label(textContainer, SWT.NONE);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		severityLabel.setLayoutData(gd);
+
+		label = new Label(textContainer, SWT.NONE);
+		label.setText(Messages.EventDetailsDialog_date);
+		dateLabel = new Label(textContainer, SWT.NONE);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 2;
+		dateLabel.setLayoutData(gd);
 
 		label = new Label(textContainer, SWT.NONE);
 		label.setText(Messages.EventDetailsDialog_message);
