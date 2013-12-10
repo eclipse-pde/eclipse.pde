@@ -143,6 +143,14 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	static final String SOURCE = "API Tools"; //$NON-NLS-1$
 
 	/**
+	 * Boolean flag to disable the API builder (the builder will always return
+	 * {@link #NO_PROJECTS}. Not accessible from the UI by default, but can be
+	 * set by other tools. The behaviour is not API and may be changed or
+	 * removed in a future release. See bug 221913.
+	 */
+	private static boolean buildDisabled = false;
+
+	/**
 	 * The current project for which this builder was defined
 	 */
 	private IProject currentproject = null;
@@ -332,7 +340,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 	@Override
 	protected IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
 		this.currentproject = getProject();
-		if (shouldAbort(this.currentproject)) {
+		if (buildDisabled || shouldAbort(this.currentproject)) {
 			return NO_PROJECTS;
 		}
 		// update build time stamp
