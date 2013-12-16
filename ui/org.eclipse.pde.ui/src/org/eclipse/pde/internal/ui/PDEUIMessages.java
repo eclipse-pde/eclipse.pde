@@ -2138,6 +2138,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String WindowImagesSection_128;
 
+	public static String WindowImagesSection_256;
+
 	public static String ManifestPackageRenameParticipant_packageRename;
 
 	public static String NewProjectCreationPage_standard;

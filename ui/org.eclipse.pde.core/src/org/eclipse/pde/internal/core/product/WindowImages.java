@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 424113
  *******************************************************************************/
 package org.eclipse.pde.internal.core.product;
 
@@ -24,6 +25,7 @@ public class WindowImages extends ProductObject implements IWindowImages {
 	private String f48ImagePath;
 	private String f64ImagePath;
 	private String f128ImagePath;
+	private String f256ImagePath;
 
 	public WindowImages(IProductModel model) {
 		super(model);
@@ -41,6 +43,8 @@ public class WindowImages extends ProductObject implements IWindowImages {
 				return f64ImagePath;
 			case 4 :
 				return f128ImagePath;
+			case 5 :
+				return f256ImagePath;
 		}
 		return null;
 	}
@@ -78,6 +82,12 @@ public class WindowImages extends ProductObject implements IWindowImages {
 				if (isEditable())
 					firePropertyChanged(P_128, old, f128ImagePath);
 				break;
+			case 5 :
+				old = f256ImagePath;
+				f256ImagePath = path;
+				if (isEditable())
+					firePropertyChanged(P_256, old, f256ImagePath);
+				break;
 		}
 
 	}
@@ -98,6 +108,7 @@ public class WindowImages extends ProductObject implements IWindowImages {
 			f48ImagePath = element.getAttribute(P_48);
 			f64ImagePath = element.getAttribute(P_64);
 			f128ImagePath = element.getAttribute(P_128);
+			f256ImagePath = element.getAttribute(P_256);
 		}
 	}
 
@@ -117,6 +128,9 @@ public class WindowImages extends ProductObject implements IWindowImages {
 		}
 		if (f128ImagePath != null && f128ImagePath.length() > 0) {
 			writer.print(" " + P_128 + "=\"" + getWritableString(f128ImagePath) + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		}
+		if (f256ImagePath != null && f256ImagePath.length() > 0) {
+			writer.print(" " + P_256 + "=\"" + getWritableString(f256ImagePath) + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 		writer.println("/>"); //$NON-NLS-1$
 	}

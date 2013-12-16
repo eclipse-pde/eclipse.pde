@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2008 IBM Corporation and others.
+ *  Copyright (c) 2005, 2013 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Peter Friese <peter.friese@gentleware.com> - bug 201956
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 424113
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
@@ -37,8 +38,8 @@ public class WindowImagesSection extends PDESection {
 
 	private TextValidator[] fWinImageEntryValidator;
 
-	private static final int[][] F_ICON_DIMENSIONS = new int[][] { {16, 16}, {32, 32}, {48, 48}, {64, 64}, {128, 128}};
-	private static final String[] F_ICON_LABELS = new String[] {PDEUIMessages.WindowImagesSection_16, PDEUIMessages.WindowImagesSection_32, PDEUIMessages.WindowImagesSection_48, PDEUIMessages.WindowImagesSection_64, PDEUIMessages.WindowImagesSection_128};
+	private static final int[][] F_ICON_DIMENSIONS = new int[][] { {16, 16}, {32, 32}, {48, 48}, {64, 64}, {128, 128}, {256, 256}};
+	private static final String[] F_ICON_LABELS = new String[] {PDEUIMessages.WindowImagesSection_16, PDEUIMessages.WindowImagesSection_32, PDEUIMessages.WindowImagesSection_48, PDEUIMessages.WindowImagesSection_64, PDEUIMessages.WindowImagesSection_128, PDEUIMessages.WindowImagesSection_256};
 	private FormEntry[] fImages = new FormEntry[F_ICON_LABELS.length];
 
 	public WindowImagesSection(PDEFormPage page, Composite parent) {
@@ -46,9 +47,7 @@ public class WindowImagesSection extends PDESection {
 		createClient(getSection(), page.getEditor().getToolkit());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
-	 */
+	@Override
 	protected void createClient(Section section, FormToolkit toolkit) {
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
@@ -70,19 +69,23 @@ public class WindowImagesSection extends PDESection {
 			fImages[index].setEditable(isEditable());
 			// Create validator
 			fWinImageEntryValidator[index] = new TextValidator(getManagedForm(), fImages[index].getText(), getProject(), true) {
+				@Override
 				protected boolean validateControl() {
 					return validateWinImageEntry(index);
 				}
 			};
 			fImages[index].setFormEntryListener(new FormEntryAdapter(this, actionBars) {
+				@Override
 				public void textValueChanged(FormEntry entry) {
 					getWindowImages().setImagePath(entry.getValue(), index);
 				}
 
+				@Override
 				public void browseButtonSelected(FormEntry entry) {
 					handleBrowse(entry);
 				}
 
+				@Override
 				public void linkActivated(HyperlinkEvent e) {
 					EditorUtilities.openImage(fImages[index].getValue(), getProduct().getDefiningPluginId());
 				}
@@ -95,6 +98,7 @@ public class WindowImagesSection extends PDESection {
 		getModel().addModelChangedListener(this);
 	}
 
+	@Override
 	public void refresh() {
 		IWindowImages images = getWindowImages();
 		// Turn off auto message update until after values are set
@@ -128,6 +132,7 @@ public class WindowImagesSection extends PDESection {
 		return (IProductModel) getPage().getPDEEditor().getAggregateModel();
 	}
 
+	@Override
 	public void commit(boolean onSave) {
 		for (int i = 0; i < F_ICON_LABELS.length; i++) {
 			fImages[i].commit();
@@ -135,6 +140,7 @@ public class WindowImagesSection extends PDESection {
 		super.commit(onSave);
 	}
 
+	@Override
 	public void cancelEdit() {
 		for (int i = 0; i < F_ICON_LABELS.length; i++) {
 			fImages[i].cancelEdit();
@@ -161,6 +167,7 @@ public class WindowImagesSection extends PDESection {
 		}
 	}
 
+	@Override
 	public boolean canPaste(Clipboard clipboard) {
 		Display d = getSection().getDisplay();
 		Control c = d.getFocusControl();
@@ -169,9 +176,7 @@ public class WindowImagesSection extends PDESection {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESection#modelChanged(org.eclipse.pde.core.IModelChangedEvent)
-	 */
+	@Override
 	public void modelChanged(IModelChangedEvent e) {
 		// No need to call super, handling world changed event here
 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
@@ -186,9 +191,7 @@ public class WindowImagesSection extends PDESection {
 		refresh();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
-	 */
+	@Override
 	public void dispose() {
 		IProductModel model = getModel();
 		if (model != null) {
