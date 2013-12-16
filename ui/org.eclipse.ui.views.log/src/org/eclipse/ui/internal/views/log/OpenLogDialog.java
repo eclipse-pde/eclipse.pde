@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2008 IBM Corporation and others.
+ * Copyright (c) 2003, 2013 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 424111
  *******************************************************************************/
 
 package org.eclipse.ui.internal.views.log;
@@ -165,9 +166,19 @@ public final class OpenLogDialog extends TrayDialog {
 
 	// reading file within MAX_FILE_LENGTH size
 	void readFile(PrintWriter writer) throws FileNotFoundException, IOException {
-		BufferedReader bReader = new BufferedReader(new FileReader(logFile));
-		while (bReader.ready())
-			writer.println(bReader.readLine());
+		BufferedReader bReader = null;
+		try {
+			bReader = new BufferedReader(new FileReader(logFile));
+			while (bReader.ready()) {
+				writer.println(bReader.readLine());
+			}
+		} finally {
+			try {
+				if (bReader != null)
+					bReader.close();
+			} catch (IOException e1) { // do nothing
+			}
+		}
 	}
 
 	// reading large files
