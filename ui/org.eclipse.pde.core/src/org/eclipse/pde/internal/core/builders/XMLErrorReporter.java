@@ -1,10 +1,10 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2013 IBM Corporation and others.
+ *  Copyright (c) 2000, 2014 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Fabio Mancinelli <fm@fabiomancinelli.org> - bug 201306
@@ -351,12 +351,14 @@ public class XMLErrorReporter extends DefaultHandler {
 	 * Returns the text content of the xml element or <code>null</code> if there
 	 * is a problem determining the content.  If the element has any children
 	 * nodes, <code>null</code> will be returned.
-	 * 
+	 *
 	 * @param element the xml element to parse
 	 * @return the text content of the xml node or <code>null</code>
 	 */
 	protected String getTextContent(Element element) {
 		ElementData data = fOffsetTable.get(element);
+		if (data == null)
+			return null;
 		try {
 			if (element.hasChildNodes()) {
 				return null;
@@ -383,11 +385,13 @@ public class XMLErrorReporter extends DefaultHandler {
 
 	protected int getLine(Element element, String attName) {
 		ElementData data = fOffsetTable.get(element);
-		try {
-			int offset = getAttributeOffset(attName, element.getAttribute(attName), data.offset);
-			if (offset != -1)
-				return fTextDocument.getLineOfOffset(offset) + 1;
-		} catch (BadLocationException e) {
+		if (data != null) {
+			try {
+				int offset = getAttributeOffset(attName, element.getAttribute(attName), data.offset);
+				if (offset != -1)
+					return fTextDocument.getLineOfOffset(offset) + 1;
+			} catch (BadLocationException e) {
+			}
 		}
 		return getLine(element);
 	}
