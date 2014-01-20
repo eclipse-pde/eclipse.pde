@@ -313,7 +313,7 @@ interface.
    &lt;wizard
          availableAsShortcut=&quot;true&quot;
          name=&quot;Simple Java Editor Extension&quot;
-         icon=&quot;icons/java_edit.gif&quot;
+         icon=&quot;icons/java_edit.png&quot;
          category=&quot;generic&quot;
          class=&quot;com.example.xyz.SimpleJavaEditorExtension&quot;
          id=&quot;com.example.xyz.simple&quot;&gt;
