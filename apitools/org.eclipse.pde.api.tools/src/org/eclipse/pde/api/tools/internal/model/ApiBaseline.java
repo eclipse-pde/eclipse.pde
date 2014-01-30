@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 IBM Corporation and others.
+ * Copyright (c) 2007, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -65,7 +65,7 @@ import com.ibm.icu.text.MessageFormat;
 
 /**
  * Implementation of an {@link IApiBaseline}
- * 
+ *
  * @since 1.0
  */
 public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallChangedListener {
@@ -149,7 +149,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 
 	/**
 	 * Constructs a new API baseline with the given name.
-	 * 
+	 *
 	 * @param name baseline name
 	 */
 	public ApiBaseline(String name) {
@@ -160,7 +160,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 
 	/**
 	 * Constructs a new API baseline with the given attributes.
-	 * 
+	 *
 	 * @param name baseline name
 	 * @param eeDescriptoin execution environment description file
 	 * @throws CoreException if unable to create a baseline with the given
@@ -172,7 +172,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 
 	/**
 	 * Constructs a new API baseline with the given attributes.
-	 * 
+	 *
 	 * @param name baseline name
 	 * @param eeDescriptoin execution environment description file
 	 * @param location the given baseline location
@@ -194,7 +194,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	/**
 	 * Initializes this baseline to resolve in the execution environment
 	 * associated with the given description.
-	 * 
+	 *
 	 * @param ee execution environment description
 	 * @throws CoreException if unable to initialize based on the given id
 	 */
@@ -215,7 +215,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 
 	/**
 	 * Returns the property file for the given environment or <code>null</code>.
-	 * 
+	 *
 	 * @param ee execution environment symbolic name
 	 * @return properties file or <code>null</code> if none
 	 */
@@ -254,7 +254,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 
 	/**
 	 * Initializes this baseline from the given properties.
-	 * 
+	 *
 	 * @param profile OGSi profile properties
 	 * @param description execution environment description
 	 * @throws CoreException if unable to initialize
@@ -309,7 +309,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 
 	/**
 	 * Adds an {@link IApiComponent} to the fComponentsById mapping
-	 * 
+	 *
 	 * @param component
 	 */
 	protected void addComponent(IApiComponent component) {
@@ -449,7 +449,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	 * Returns true if the {@link IApiBaseline} has its information loaded
 	 * (components) false otherwise. This is a handle only method that will not
 	 * load information from disk.
-	 * 
+	 *
 	 * @return true if the {@link IApiBaseline} has its information loaded
 	 *         (components) false otherwise.
 	 */
@@ -524,7 +524,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	 * Resolves the listing of {@link IApiComponent}s that export the given
 	 * package name. The collection of {@link IApiComponent}s is written into
 	 * the specified list <code>componentList</code>
-	 * 
+	 *
 	 * @param component
 	 * @param packageName
 	 * @param componentsList
@@ -538,7 +538,12 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 				ExportPackageDescription[] visiblePackages = helper.getVisiblePackages(bundle);
 				for (int i = 0, max = visiblePackages.length; i < max; i++) {
 					ExportPackageDescription pkg = visiblePackages[i];
-					if (packageName.equals(pkg.getName())) {
+					String pkgName = pkg.getName();
+					if (pkgName.equals(".")) { //$NON-NLS-1$
+						// translate . to default package
+						pkgName = Util.DEFAULT_PACKAGE_NAME;
+					}
+					if (packageName.equals(pkgName)) {
 						BundleDescription bundleDescription = pkg.getExporter();
 						IApiComponent exporter = getApiComponent(bundleDescription.getSymbolicName());
 						if (exporter != null) {
@@ -570,7 +575,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 
 	/**
 	 * Returns all of the visible dependent components from the current state
-	 * 
+	 *
 	 * @param components
 	 * @return the listing of visible dependent components to the given ones
 	 * @throws CoreException
@@ -593,7 +598,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 
 	/**
 	 * Returns whether the specified package is supplied by the system library.
-	 * 
+	 *
 	 * @param packageName package name
 	 * @return whether the specified package is supplied by the system library
 	 */
@@ -663,7 +668,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 
 	/**
 	 * Returns all errors in the state.
-	 * 
+	 *
 	 * @return state errors
 	 * @nooverride This method is not intended to be re-implemented or extended
 	 *             by clients.
@@ -773,7 +778,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 
 	/**
 	 * Clears all element information from the cache for this baseline
-	 * 
+	 *
 	 * @since 1.1
 	 */
 	void clearCachedElements() {
@@ -794,7 +799,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	/**
 	 * Returns an array of API components corresponding to the given bundle
 	 * descriptions.
-	 * 
+	 *
 	 * @param bundles bundle descriptions
 	 * @return corresponding API components
 	 */
@@ -813,7 +818,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	/**
 	 * Returns an array of bundle descriptions corresponding to the given API
 	 * components.
-	 * 
+	 *
 	 * @param components API components
 	 * @return corresponding bundle descriptions
 	 */
@@ -843,7 +848,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 
 	/**
 	 * Clear cached settings for the given package.
-	 * 
+	 *
 	 * @param packageName
 	 * @noreference This method is not intended to be referenced by clients.
 	 * @nooverride This method is not intended to be re-implemented or extended
