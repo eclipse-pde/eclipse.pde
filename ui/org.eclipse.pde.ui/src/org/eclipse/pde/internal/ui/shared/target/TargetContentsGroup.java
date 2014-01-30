@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 IBM Corporation and others.
+ * Copyright (c) 2009, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,6 +42,7 @@ import org.eclipse.pde.internal.ui.wizards.target.TargetDefinitionContentPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -54,7 +55,7 @@ import org.osgi.framework.BundleException;
  * UI Part that displays all of the bundle contents of a target.  The bundles can be
  * excluded by unchecking them.  There are a variety of options to change the tree's
  * format.
- * 
+ *
  * @see TargetEditor
  * @see TargetDefinitionContentPage
  * @see ITargetDefinition
@@ -109,7 +110,7 @@ public class TargetContentsGroup {
 
 	/**
 	 * Creates this part using the form toolkit and adds it to the given composite.
-	 * 
+	 *
 	 * @param parent parent composite
 	 * @param toolkit toolkit to create the widgets with
 	 * @return generated instance of the table part
@@ -122,7 +123,7 @@ public class TargetContentsGroup {
 
 	/**
 	 * Creates this part using standard dialog widgets and adds it to the given composite.
-	 * 
+	 *
 	 * @param parent parent composite
 	 * @return generated instance of the table part
 	 */
@@ -140,8 +141,8 @@ public class TargetContentsGroup {
 
 	/**
 	 * Adds a listener to the set of listeners that will be notified when the bundle containers
-	 * are modified.  This method has no effect if the listener has already been added. 
-	 * 
+	 * are modified.  This method has no effect if the listener has already been added.
+	 *
 	 * @param listener target changed listener to add
 	 */
 	public void addTargetChangedListener(ITargetChangedListener listener) {
@@ -170,7 +171,7 @@ public class TargetContentsGroup {
 	/**
 	 * Creates the contents of this group, using the given toolkit where appropriate so that the controls
 	 * have the form editor look and feel.
-	 * 
+	 *
 	 * @param parent parent composite
 	 * @param toolkit toolkit to create controls with
 	 */
@@ -198,7 +199,7 @@ public class TargetContentsGroup {
 
 	/**
 	 * Creates the contents of this group in the normal dialog style
-	 * 
+	 *
 	 * @param parent parent composite
 	 */
 	protected void createDialogContents(Composite parent) {
@@ -217,7 +218,7 @@ public class TargetContentsGroup {
 
 	/**
 	 * Creates the tree in this group
-	 * 
+	 *
 	 * @param parent parent composite
 	 * @param style toolkit for form style or <code>null</code> for dialog style
 	 */
@@ -232,7 +233,31 @@ public class TargetContentsGroup {
 		fTree.getControl().setFont(parent.getFont());
 		fTree.setUseHashlookup(true);
 		fTree.setContentProvider(new TreeContentProvider());
-		fTree.setLabelProvider(new StyledBundleLabelProvider(true, false));
+		fTree.setLabelProvider(new StyledBundleLabelProvider(true, false) {
+			// If there is a custom target location and the user groups by location,
+			// we need to use the label provider adapter similar to TargetLocationLabelProvider
+			@Override
+			public Image getImage(Object element) {
+				if (element instanceof ITargetLocation) {
+					ILabelProvider provider = (ILabelProvider) Platform.getAdapterManager().getAdapter(element, ILabelProvider.class);
+					if (provider != null) {
+						return provider.getImage(element);
+					}
+				}
+				return super.getImage(element);
+			}
+
+			@Override
+			public String getText(Object element) {
+				if (element instanceof ITargetLocation) {
+					ILabelProvider provider = (ILabelProvider) Platform.getAdapterManager().getAdapter(element, ILabelProvider.class);
+					if (provider != null) {
+						return provider.getText(element);
+					}
+				}
+				return super.getText(element);
+			}
+		});
 		fTree.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
 				IStructuredSelection selection = (IStructuredSelection) event.getSelection();
@@ -304,7 +329,7 @@ public class TargetContentsGroup {
 
 	/**
 	 * Creates the buttons in this group inside a new composite
-	 * 
+	 *
 	 * @param parent parent composite
 	 * @param toolkit toolkit to give form style or <code>null</code> for dialog style
 	 */
@@ -639,7 +664,7 @@ public class TargetContentsGroup {
 	/**
 	 * Returns the file path where the given resolved bundle can be found.
 	 * Used to group bundles by file path in the tree.
-	 * 
+	 *
 	 * @param bundle bundle to lookup parent path for
 	 * @return path of parent directory, if unknown it will be a path object containing "Unknown"
 	 */
@@ -656,7 +681,7 @@ public class TargetContentsGroup {
 	/**
 	 * Parses a bunlde's manifest into a dictionary. The bundle may be in a jar
 	 * or in a directory at the specified location.
-	 * 
+	 *
 	 * @param bundleLocation root location of the bundle
 	 * @return bundle manifest dictionary or <code>null</code> if none
 	 * @throws IOException if unable to parse
@@ -705,7 +730,7 @@ public class TargetContentsGroup {
 	/**
 	 * Uses the target state to determine all bundles required by the
 	 * currently checked bundles and returns them so they can be checked in the tree.
-	 * 
+	 *
 	 * @param allBundles list of all bundles to search requirements in
 	 * @param checkedBundles list of bundles to get requirements for
 	 * @return list of resolved bundles from the collection to be checked
@@ -738,7 +763,7 @@ public class TargetContentsGroup {
 					}
 					monitor.worked(20);
 
-					// Create a PDE State containing all of the target bundles					
+					// Create a PDE State containing all of the target bundles
 					PDEState state = new PDEState(allLocations.toArray(new URL[allLocations.size()]), true, false, new SubProgressMonitor(monitor, 50));
 					if (monitor.isCanceled()) {
 						return;
@@ -820,7 +845,7 @@ public class TargetContentsGroup {
 	/**
 	 * Uses the feature model to determine the set of features required by the
 	 * given list of checked features
-	 * 
+	 *
 	 * @param allFeatures list of all features to search requirements in
 	 * @param checkedFeatures list of features to get requirements for
 	 * @return set of features to be checked
@@ -929,7 +954,7 @@ public class TargetContentsGroup {
 	}
 
 	/**
-	 * Set the container to display in the tree or <code>null</code> to disable the tree 
+	 * Set the container to display in the tree or <code>null</code> to disable the tree
 	 * @param input bundle container or <code>null</code>
 	 */
 	public void setInput(ITargetDefinition input) {
@@ -1006,7 +1031,7 @@ public class TargetContentsGroup {
 
 	/**
 	 * This method clears any current target information and puts "Resolve Cancelled" into the
-	 * tree.  Setting the input to null results in "Resolving..." to be put into the table which 
+	 * tree.  Setting the input to null results in "Resolving..." to be put into the table which
 	 * may not be accurate.
 	 */
 	public void setCancelled() {
