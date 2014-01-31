@@ -59,6 +59,7 @@ public class LaunchAction extends Action {
 		}
 	}
 
+	@Override
 	public void run() {
 		try {
 			ILaunchConfiguration config = findLaunchConfiguration();
@@ -78,7 +79,7 @@ public class LaunchAction extends Action {
 		if (configs.length == 1) {
 			config = configs[0];
 		} else {
-			// Prompt the user to choose a config. 
+			// Prompt the user to choose a config.
 			config = chooseConfiguration(configs);
 		}
 
@@ -92,8 +93,9 @@ public class LaunchAction extends Action {
 		wc.setAttribute(IPDELauncherConstants.PRODUCT, fProduct.getProductId());
 		wc.setAttribute(IPDELauncherConstants.APPLICATION, fProduct.getApplication());
 		String os = Platform.getOS();
-		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, getVMArguments(os));
-		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, getProgramArguments(os));
+		String arch = Platform.getOSArch();
+		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, getVMArguments(os, arch));
+		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, getProgramArguments(os, arch));
 		wc.setAttribute(IJavaLaunchConfigurationConstants.ATTR_JRE_CONTAINER_PATH, getJREContainer(os));
 		StringBuffer wsplugins = new StringBuffer();
 		StringBuffer explugins = new StringBuffer();
@@ -130,17 +132,17 @@ public class LaunchAction extends Action {
 		buffer.append(',');
 	}
 
-	private String getProgramArguments(String os) {
+	private String getProgramArguments(String os, String arch) {
 		StringBuffer buffer = new StringBuffer(LaunchArgumentsHelper.getInitialProgramArguments());
 		IArgumentsInfo info = fProduct.getLauncherArguments();
-		String userArgs = (info != null) ? CoreUtility.normalize(info.getCompleteProgramArguments(os)) : ""; //$NON-NLS-1$
+		String userArgs = (info != null) ? CoreUtility.normalize(info.getCompleteProgramArguments(os, arch)) : ""; //$NON-NLS-1$
 		return concatArgs(buffer, userArgs);
 	}
 
-	private String getVMArguments(String os) {
+	private String getVMArguments(String os, String arch) {
 		StringBuffer buffer = new StringBuffer(LaunchArgumentsHelper.getInitialVMArguments());
 		IArgumentsInfo info = fProduct.getLauncherArguments();
-		String userArgs = (info != null) ? CoreUtility.normalize(info.getCompleteVMArguments(os)) : ""; //$NON-NLS-1$
+		String userArgs = (info != null) ? CoreUtility.normalize(info.getCompleteVMArguments(os, arch)) : ""; //$NON-NLS-1$
 		return concatArgs(buffer, userArgs);
 	}
 

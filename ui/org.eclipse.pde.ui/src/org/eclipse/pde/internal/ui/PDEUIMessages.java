@@ -2533,6 +2533,12 @@ public class PDEUIMessages extends NLS {
 
 	public static String ArgumentsSection_allPlatforms;
 
+	public static String ArgumentsSection_allArch;
+
+	public static String ArgumentsSection_architecture;
+
+	public static String ArgumentsSection_preview;
+
 	public static String JavaArgumentsTab_progamArgsGroup;
 
 	public static String JavaArgumentsTab_programVariables;

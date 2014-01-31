@@ -4,16 +4,20 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.iproduct.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
+import org.eclipse.pde.internal.ui.parts.ComboViewerPart;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -40,16 +44,32 @@ public class ArgumentsSection extends PDESection {
 		TAB_LABELS[IArgumentsInfo.L_ARGS_WIN32] = "win32"; //$NON-NLS-1$
 	}
 
+	private static final String[] TAB_ARCHLABELS = new String[8];
+	static {
+		TAB_ARCHLABELS[IArgumentsInfo.L_ARGS_ALL] = PDEUIMessages.ArgumentsSection_allArch;
+		TAB_ARCHLABELS[IArgumentsInfo.L_ARGS_ARCH_X86] = Platform.ARCH_X86;
+		TAB_ARCHLABELS[IArgumentsInfo.L_ARGS_ARCH_X86_64] = Platform.ARCH_X86_64;
+		TAB_ARCHLABELS[IArgumentsInfo.L_ARGS_ARCH_PPC] = Platform.ARCH_PPC;
+		TAB_ARCHLABELS[IArgumentsInfo.L_ARGS_ARCH_IA_64] = Platform.ARCH_IA64;
+		TAB_ARCHLABELS[IArgumentsInfo.L_ARGS_ARCH_IA_64_32] = Platform.ARCH_IA64_32;
+		TAB_ARCHLABELS[IArgumentsInfo.L_ARGS_ARCH_PA_RISC] = Platform.ARCH_PA_RISC;
+		TAB_ARCHLABELS[IArgumentsInfo.L_ARGS_ARCH_SPARC] = Platform.ARCH_SPARC;
+	}
+
 	private FormEntry fVMArgs;
 	private FormEntry fProgramArgs;
+	private FormEntry fPreviewArgs;
 	private CTabFolder fTabFolder;
+	private ComboViewerPart fArchCombo;
 	private int fLastTab;
+	private int fLastArch;
 
 	public ArgumentsSection(PDEFormPage page, Composite parent) {
 		super(page, parent, Section.DESCRIPTION);
 		createClient(getSection(), page.getEditor().getToolkit());
 	}
 
+	@Override
 	protected void createClient(Section section, FormToolkit toolkit) {
 
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
@@ -73,7 +93,30 @@ public class ArgumentsSection extends PDESection {
 		fTabFolder.setSelectionBackground(new Color[] {selectedColor, toolkit.getColors().getBackground()}, new int[] {100}, true);
 
 		fTabFolder.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
+				if (fProgramArgs.isDirty())
+					fProgramArgs.commit();
+				if (fVMArgs.isDirty())
+					fVMArgs.commit();
+				refresh();
+				// refresh architecture selection to ALL when a new platform is selected
+				fLastArch = 0;
+				fArchCombo.select(fLastArch);
+			}
+		});
+		Composite archParent = toolkit.createComposite(client);
+		archParent.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 2));
+		archParent.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		toolkit.createLabel(archParent, PDEUIMessages.ArgumentsSection_architecture);
+		fArchCombo = new ComboViewerPart();
+		fArchCombo.createControl(archParent, toolkit, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY);
+		fArchCombo.getControl().setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false));
+		fArchCombo.setItems(TAB_ARCHLABELS);
+		fLastArch = 0;
+		((Combo) fArchCombo.getControl()).select(fLastArch);
+		fArchCombo.addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent event) {
 				if (fProgramArgs.isDirty())
 					fProgramArgs.commit();
 				if (fVMArgs.isDirty())
@@ -81,16 +124,17 @@ public class ArgumentsSection extends PDESection {
 				refresh();
 			}
 		});
-		fTabFolder.setUnselectedImageVisible(false);
 
 		IActionBars actionBars = getPage().getPDEEditor().getEditorSite().getActionBars();
 
 		fProgramArgs = new FormEntry(client, toolkit, PDEUIMessages.ArgumentsSection_program, SWT.MULTI | SWT.WRAP);
 		fProgramArgs.getText().setLayoutData(new GridData(GridData.FILL_BOTH));
 		fProgramArgs.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
+			@Override
 			public void textValueChanged(FormEntry entry) {
 				IArgumentsInfo info = getLauncherArguments();
-				info.setProgramArguments(entry.getValue().trim(), fLastTab);
+				info.setProgramArguments(entry.getValue().trim(), fLastTab, fLastArch);
+				updateArgumentPreview(info);
 			}
 		});
 		fProgramArgs.setEditable(isEditable());
@@ -98,12 +142,18 @@ public class ArgumentsSection extends PDESection {
 		fVMArgs = new FormEntry(client, toolkit, PDEUIMessages.ArgumentsSection_vm, SWT.MULTI | SWT.WRAP);
 		fVMArgs.getText().setLayoutData(new GridData(GridData.FILL_BOTH));
 		fVMArgs.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
+			@Override
 			public void textValueChanged(FormEntry entry) {
 				IArgumentsInfo info = getLauncherArguments();
-				info.setVMArguments(entry.getValue().trim(), fLastTab);
+				info.setVMArguments(entry.getValue().trim(), fLastTab, fLastArch);
+				updateArgumentPreview(info);
 			}
 		});
 		fVMArgs.setEditable(isEditable());
+
+		fPreviewArgs = new FormEntry(client, toolkit, PDEUIMessages.ArgumentsSection_preview, SWT.MULTI | SWT.WRAP);
+		fPreviewArgs.getText().setLayoutData(new GridData(GridData.FILL_BOTH));
+		fPreviewArgs.setEditable(false);
 
 		createTabs();
 		toolkit.paintBordersFor(client);
@@ -122,19 +172,25 @@ public class ArgumentsSection extends PDESection {
 		fTabFolder.setSelection(fLastTab);
 	}
 
+	@Override
 	public void refresh() {
 		fLastTab = fTabFolder.getSelectionIndex();
-		fProgramArgs.setValue(getLauncherArguments().getProgramArguments(fLastTab), true);
-		fVMArgs.setValue(getLauncherArguments().getVMArguments(fLastTab), true);
+		fLastArch = ((Combo) fArchCombo.getControl()).getSelectionIndex();
+		IArgumentsInfo launcherArguments = getLauncherArguments();
+		fProgramArgs.setValue(launcherArguments.getProgramArguments(fLastTab, fLastArch), true);
+		fVMArgs.setValue(launcherArguments.getVMArguments(fLastTab, fLastArch), true);
+		updateArgumentPreview(launcherArguments);
 		super.refresh();
 	}
 
+	@Override
 	public void commit(boolean onSave) {
 		fProgramArgs.commit();
 		fVMArgs.commit();
 		super.commit(onSave);
 	}
 
+	@Override
 	public void cancelEdit() {
 		fProgramArgs.cancelEdit();
 		fVMArgs.cancelEdit();
@@ -158,6 +214,7 @@ public class ArgumentsSection extends PDESection {
 		return (IProductModel) getPage().getPDEEditor().getAggregateModel();
 	}
 
+	@Override
 	public boolean canPaste(Clipboard clipboard) {
 		Display d = getSection().getDisplay();
 		return d.getFocusControl() instanceof Text;
@@ -166,6 +223,7 @@ public class ArgumentsSection extends PDESection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#modelChanged(org.eclipse.pde.core.IModelChangedEvent)
 	 */
+	@Override
 	public void modelChanged(IModelChangedEvent e) {
 		// No need to call super, handling world changed event here
 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
@@ -183,12 +241,33 @@ public class ArgumentsSection extends PDESection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
 	 */
+	@Override
 	public void dispose() {
 		IProductModel model = getModel();
 		if (model != null) {
 			model.removeModelChangedListener(this);
 		}
 		super.dispose();
+	}
+
+	private void updateArgumentPreview(IArgumentsInfo launcherArguments) {
+		StringBuffer buffer = new StringBuffer();
+		String delim = System.getProperty("line.separator"); //$NON-NLS-1$
+		String args = launcherArguments.getCompleteProgramArguments(TAB_LABELS[fLastTab], TAB_ARCHLABELS[fLastArch]);
+		if (args.length() > 0) {
+			buffer.append(PDEUIMessages.ArgumentsSection_program);
+			buffer.append(delim);
+			buffer.append(args);
+			buffer.append(delim);
+			buffer.append(delim);
+		}
+		args = launcherArguments.getCompleteVMArguments(TAB_LABELS[fLastTab], TAB_ARCHLABELS[fLastArch]);
+		if (args.length() > 0) {
+			buffer.append(PDEUIMessages.ArgumentsSection_vm);
+			buffer.append(delim);
+			buffer.append(args);
+		}
+		fPreviewArgs.setValue(buffer.toString());
 	}
 
 }
