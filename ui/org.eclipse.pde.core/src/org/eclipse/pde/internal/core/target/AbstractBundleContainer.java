@@ -72,10 +72,13 @@ public abstract class AbstractBundleContainer extends PlatformObject implements 
 	 * @see org.eclipse.pde.core.target.ITargetLocation#resolve(org.eclipse.pde.core.target.ITargetDefinition, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public final IStatus resolve(ITargetDefinition definition, IProgressMonitor monitor) {
-		SubMonitor subMonitor = SubMonitor.convert(monitor, 150);
+	  int resolveBundlesWork = getResolveBundlesWork();
+    int resolveFeaturesWork = getResolveFeaturesWork();
+
+		SubMonitor subMonitor = SubMonitor.convert(monitor, resolveBundlesWork + resolveFeaturesWork);
 		try {
-			fBundles = resolveBundles(definition, subMonitor.newChild(100));
-			fFeatures = resolveFeatures(definition, subMonitor.newChild(50));
+			fBundles = resolveBundles(definition, subMonitor.newChild(resolveBundlesWork));
+			fFeatures = resolveFeatures(definition, subMonitor.newChild(resolveFeaturesWork));
 			fResolutionStatus = Status.OK_STATUS;
 			if (subMonitor.isCanceled()) {
 				fBundles = null;
@@ -94,6 +97,30 @@ public abstract class AbstractBundleContainer extends PlatformObject implements 
 		return fResolutionStatus;
 	}
 
+  /**
+   * Can be overridden in subclasses to redistribute the work between {@link #resolveBundles(ITargetDefinition, IProgressMonitor)}
+   * and {@link #resolveFeatures(ITargetDefinition, IProgressMonitor)}.
+   *
+   * @return the value 100, making {@link #resolveFeatures(ITargetDefinition, IProgressMonitor)} consume two thirds of
+   *  the overall work being done in {@link #resolve(ITargetDefinition, IProgressMonitor)}.
+   * @see #getResolveFeaturesWork()
+   */
+  protected int getResolveBundlesWork() {
+    return 100;
+  }
+
+  /**
+   * Can be overridden in subclasses to redistribute the work between {@link #resolveBundles(ITargetDefinition, IProgressMonitor)}
+   * and {@link #resolveFeatures(ITargetDefinition, IProgressMonitor)}.
+   *
+   * @return the value 50, making {@link #resolveFeatures(ITargetDefinition, IProgressMonitor)} consume one third of
+   *  the overall work being done in {@link #resolve(ITargetDefinition, IProgressMonitor)}.
+   * @see #getResolveBundlesWork()
+   */
+  protected int getResolveFeaturesWork() {
+    return 50;
+  }
+  
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.target.ITargetLocation#getStatus()
 	 */
