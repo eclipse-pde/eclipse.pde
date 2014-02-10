@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2012, 2013 Christian Pontesegger and others.
+ *  Copyright (c) 2012, 2014 Christian Pontesegger and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -95,6 +95,19 @@ public class WorkspaceRepository extends AbstractRepository {
 		else
 			fProjects = Collections.emptyList();
 	}
+
+	@Override
+	protected synchronized IStatus run(IProgressMonitor monitor) {
+		super.run(monitor);
+		if (fProjects != null) {
+			fProjects.clear();
+			fProjects = null;
+		}
+		if (mElementsCache != null)
+			mElementsCache.clear();
+		return Status.OK_STATUS;
+	}
+
 
 	public String toString() {
 		return "Workspace"; //$NON-NLS-1$

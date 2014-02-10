@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2012, 2013 Christian Pontesegger and others.
+ *  Copyright (c) 2012, 2014 Christian Pontesegger and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -57,6 +57,8 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 	private Spinner spinMaxImages;
 
 	private List<Image> displayedImages = new ArrayList<Image>();
+
+	private AbstractRepository repository;
 
 	public ImageBrowserView() {
 		// create default filters
@@ -240,6 +242,9 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 	}
 
 	private void scanImages() {
+		if (repository != null) {
+			repository.cancel();
+		}
 		nextButton.setEnabled(false);
 
 		// reset UI components
@@ -263,7 +268,7 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 			// set maximum image counter
 			mImageCounter = spinMaxImages.getSelection();
 
-			final AbstractRepository repository = (AbstractRepository) ((IStructuredSelection) sourceCombo.getSelection()).getFirstElement();
+			repository = (AbstractRepository) ((IStructuredSelection) sourceCombo.getSelection()).getFirstElement();
 			repository.schedule();
 		}
 	}

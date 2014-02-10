@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2012, 2013 Christian Pontesegger and others.
+ *  Copyright (c) 2012, 2014 Christian Pontesegger and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -14,8 +14,7 @@ package org.eclipse.pde.internal.ui.views.imagebrowser.repositories;
 import java.io.File;
 import java.net.URI;
 import java.util.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
@@ -100,6 +99,19 @@ public class TargetPlatformRepository extends AbstractRepository {
 		}
 	}
 
+	@Override
+	protected synchronized IStatus run(IProgressMonitor monitor) {
+		super.run(monitor);
+		if (fBundles != null) {
+			fBundles.clear();
+			fBundles = null;
+		}
+		if (mElementsCache != null)
+			mElementsCache.clear();
+		return Status.OK_STATUS;
+	}
+
+	@Override
 	public String toString() {
 		if (!fUseCurrent) {
 			return PDEUIMessages.TargetPlatformRepository_RunningPlatform;
