@@ -76,6 +76,7 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 		for (int i = 0; i < envs.length; i++)
 			fExecEnvs[i] = envs[i].getId();
 		Arrays.sort(fExecEnvs, new Comparator<Object>() {
+			@Override
 			public int compare(Object o1, Object o2) {
 				return ((String) o1).compareToIgnoreCase((String) o2);
 			}
@@ -91,6 +92,7 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 		fSourcePage = sourcePage;
 	}
 
+	@Override
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int offset) {
 		IDocument doc = fSourcePage.getDocumentProvider().getDocument(fSourcePage.getInputContext().getInput());
 		if (fHeaders == null) {
@@ -125,8 +127,8 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 						ManifestElement[] elems = ManifestElement.parseHeader(header, value.substring(index + 1));
 						if (shouldStoreSet(header)) {
 							HashSet<String> set = new HashSet<String>((4 / 3) * elems.length + 1);
-							for (int j = 0; j < elems.length; j++)
-								set.add(elems[j].getValue());
+							for (ManifestElement elem : elems)
+								set.add(elem.getValue());
 							fHeaders.put(header, set);
 						} else
 							fHeaders.put(header, elems);
@@ -183,11 +185,11 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 
 	protected ICompletionProposal[] computeHeader(String currentValue, int startOffset, int offset) {
 		ArrayList<TypeCompletionProposal> completions = new ArrayList<TypeCompletionProposal>();
-		for (int i = 0; i < fHeader.length; i++) {
-			if (fHeader[i].regionMatches(true, 0, currentValue, 0, currentValue.length()) && fHeaders.get(fHeader[i]) == null) {
-				TypeCompletionProposal proposal = new TypeCompletionProposal(fHeader[i] + ": ", getImage(F_TYPE_HEADER), //$NON-NLS-1$
-						fHeader[i], startOffset, currentValue.length());
-				proposal.setAdditionalProposalInfo(getJavaDoc(fHeader[i]));
+		for (String element : fHeader) {
+			if (element.regionMatches(true, 0, currentValue, 0, currentValue.length()) && fHeaders.get(element) == null) {
+				TypeCompletionProposal proposal = new TypeCompletionProposal(element + ": ", getImage(F_TYPE_HEADER), //$NON-NLS-1$
+						element, startOffset, currentValue.length());
+				proposal.setAdditionalProposalInfo(getJavaDoc(element));
 				completions.add(proposal);
 			}
 		}
@@ -245,12 +247,12 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 		}
 
 		// only show when we are trying to complete a name
-		for (int i = 0; i < fNames.length; i++) {
+		for (String fName : fNames) {
 			StringTokenizer tokenizer = new StringTokenizer(currentValue, " "); //$NON-NLS-1$
 			while (tokenizer.hasMoreTokens()) {
 				String token = tokenizer.nextToken();
-				if (fNames[i].regionMatches(true, 0, token, 0, token.length())) {
-					return new ICompletionProposal[] {new TypeCompletionProposal(fNames[i], null, fNames[i], offset - token.length(), token.length())};
+				if (fName.regionMatches(true, 0, token, 0, token.length())) {
+					return new ICompletionProposal[] {new TypeCompletionProposal(fName, null, fName, offset - token.length(), token.length())};
 				}
 			}
 		}
@@ -276,13 +278,13 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 			ArrayList<TypeCompletionProposal> completions = new ArrayList<TypeCompletionProposal>();
 			IPluginModelBase[] bases = PluginRegistry.getActiveModels();
 
-			for (int j = 0; j < bases.length; j++) { // Remove any packages already imported through Require-Bundle
-				BundleDescription desc = bases[j].getBundleDescription();
+			for (IPluginModelBase base : bases) { // Remove any packages already imported through Require-Bundle
+				BundleDescription desc = base.getBundleDescription();
 				if (desc == null || importedBundles.contains(desc.getSymbolicName()))
 					continue;
 				ExportPackageDescription[] expPkgs = desc.getExportPackages();
-				for (int i = 0; i < expPkgs.length; i++) {
-					String pkgName = expPkgs[i].getName();
+				for (ExportPackageDescription expPkg : expPkgs) {
+					String pkgName = expPkg.getName();
 					if (pkgName.regionMatches(true, 0, value, 0, length) && !set.contains(pkgName)) {
 						completions.add(new TypeCompletionProposal(pkgName, getImage(F_TYPE_PKG), pkgName, offset - length, length));
 						set.add(pkgName);
@@ -338,10 +340,10 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 			String pluginStart = removeLeadingSpaces(currentValue);
 			int length = pluginStart.length();
 			IPluginModelBase[] bases = PluginRegistry.getActiveModels();
-			for (int i = 0; i < bases.length; i++) {
-				desc = bases[i].getBundleDescription();
+			for (IPluginModelBase base2 : bases) {
+				desc = base2.getBundleDescription();
 				if (desc != null && desc.getHost() == null) {
-					String pluginID = bases[i].getBundleDescription().getSymbolicName();
+					String pluginID = base2.getBundleDescription().getSymbolicName();
 					if (!completions.containsKey(pluginID) && pluginID.regionMatches(true, 0, pluginStart, 0, length) && !pluginID.equals(currentId))
 						completions.put(pluginID, new TypeCompletionProposal(pluginID, getImage(F_TYPE_BUNDLE), pluginID, offset - length, length));
 				}
@@ -392,8 +394,8 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 		if (entry != null) {
 			IPluginModelBase[] hosts = entry.getActiveModels();
 			ArrayList<TypeCompletionProposal> proposals = new ArrayList<TypeCompletionProposal>(hosts.length);
-			for (int i = 0; i < hosts.length; i++) {
-				String proposalValue = getVersionProposal(hosts[i]);
+			for (IPluginModelBase host : hosts) {
+				String proposalValue = getVersionProposal(host);
 				if (proposalValue.regionMatches(0, existingValue, 0, existingValue.length()))
 					proposals.add(new TypeCompletionProposal(proposalValue.substring(existingValue.length()), getImage(F_TYPE_VALUE), proposalValue, offset, 0));
 			}
@@ -416,13 +418,13 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 		} else {
 			char[] chars = base.getPluginBase().getVersion().toCharArray();
 			int periodCount = 0;
-			for (int i = 0; i < chars.length; i++) {
-				if (chars[i] == '.') {
+			for (char c : chars) {
+				if (c == '.') {
 					if (periodCount == 2)
 						break;
 					++periodCount;
 				}
-				buffer.append(chars[i]);
+				buffer.append(c);
 			}
 		}
 		return buffer.append('\"').toString();
@@ -434,8 +436,8 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 		doNotInclude.remove(value);
 		ArrayList<TypeCompletionProposal> completions = new ArrayList<TypeCompletionProposal>();
 		IPluginModelBase[] bases = PluginRegistry.getActiveModels();
-		for (int i = 0; i < bases.length; i++) {
-			BundleDescription desc = bases[i].getBundleDescription();
+		for (IPluginModelBase base : bases) {
+			BundleDescription desc = base.getBundleDescription();
 			if (desc != null) {
 				if (!includeFragments && desc.getHost() != null)
 					continue;
@@ -579,8 +581,8 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 		ManifestElement[] elems = (ManifestElement[]) fHeaders.get(ICoreConstants.ECLIPSE_BUDDY_POLICY);
 		HashSet<String> set = new HashSet<String>();
 		if (elems != null)
-			for (int i = 0; i < elems.length; i++)
-				set.add(elems[i].getValue());
+			for (ManifestElement elem : elems)
+				set.add(elem.getValue());
 		int length = currentValue.length();
 		for (int i = 0; i < validValues.length; i++)
 			if (validValues[i].regionMatches(true, 0, currentValue, 0, length) && !set.contains(validValues[i]))
@@ -695,8 +697,8 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 		if (proj != null) {
 			IJavaProject jp = JavaCore.create(proj);
 			IPackageFragment[] frags = PDEJavaHelper.getPackageFragments(jp, currentPackages, false);
-			for (int i = 0; i < frags.length; i++) {
-				String name = frags[i].getElementName();
+			for (IPackageFragment frag : frags) {
+				String name = frag.getElementName();
 				if (name.regionMatches(true, 0, value, 0, length))
 					proposals.add(new TypeCompletionProposal(name, getImage(F_TYPE_PKG), name, offset - length, length));
 			}
@@ -759,28 +761,31 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 	// if you use java.util.Arrays.asList(), we get an UnsupportedOperation later in the code
 	protected final ArrayList<Object> initializeNewList(Object[] values) {
 		ArrayList<Object> list = new ArrayList<Object>(values.length);
-		for (int i = 0; i < values.length; i++)
-			list.add(values[i]);
+		for (Object value : values)
+			list.add(value);
 		return list;
 	}
 
 	private boolean insideQuotes(String value) {
 		char[] chars = value.toCharArray();
 		int numOfQuotes = 0;
-		for (int i = 0; i < chars.length; i++)
-			if (chars[i] == '\"')
+		for (char c : chars)
+			if (c == '\"')
 				++numOfQuotes;
 		int j = numOfQuotes % 2;
 		return j == 1;
 	}
 
+	@Override
 	public void assistSessionEnded(ContentAssistEvent event) {
 		fHeaders = null;
 	}
 
+	@Override
 	public void assistSessionStarted(ContentAssistEvent event) {
 	}
 
+	@Override
 	public void selectionChanged(ICompletionProposal proposal, boolean smartToggle) {
 	}
 
