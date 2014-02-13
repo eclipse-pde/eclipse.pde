@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 IBM Corporation and others.
+ * Copyright (c) 2007, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 428065
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.correction.java;
 
@@ -36,18 +37,18 @@ public class QuickFixProcessor implements IQuickFixProcessor {
 
 		AbstractClassResolutionCollector collector = createCollector(results);
 
-		for (int i = 0; i < locations.length; i++) {
-			int id = locations[i].getProblemId();
+		for (IProblemLocation location : locations) {
+			int id = location.getProblemId();
 			switch (id) {
 				case IProblem.ForbiddenReference :
-					handleAccessRestrictionProblem(context, locations[i], collector);
+					handleAccessRestrictionProblem(context, location, collector);
 				case IProblem.ImportNotFound : // fall through
 				case IProblem.UndefinedName : // fall through
 				case IProblem.UndefinedType : // fall through
 				case IProblem.UnresolvedVariable : // fall through
 				case IProblem.MissingTypeInMethod : // fall through
 				case IProblem.MissingTypeInConstructor :
-					handleImportNotFound(context, locations[i], collector);
+					handleImportNotFound(context, location, collector);
 
 			}
 		}
@@ -92,11 +93,11 @@ public class QuickFixProcessor implements IQuickFixProcessor {
 					// check if the required package is exported already
 					boolean packageExported = false;
 					if (referencedPackage != null) {
-						for (int i = 0; i < exportPackages.length; i++) {
-							if (exportPackages[i].getName().equals(referencedPackage.getElementName())) {
+						for (ExportPackageDescription exportPackage : exportPackages) {
+							if (exportPackage.getName().equals(referencedPackage.getElementName())) {
 								packageExported = true;
 								// check to see if access restriction is caused by Import-Package
-								handleAccessRestrictionByImportPackage(context.getCompilationUnit().getJavaProject().getProject(), exportPackages[i], collector);
+								handleAccessRestrictionByImportPackage(context.getCompilationUnit().getJavaProject().getProject(), exportPackage, collector);
 								break;
 							}
 						}
@@ -122,14 +123,14 @@ public class QuickFixProcessor implements IQuickFixProcessor {
 		IPluginModelBase base = PluginRegistry.findModel(project);
 		ExportPackageDescription[] descs = base.getBundleDescription().getResolvedImports();
 		ExportPackageDescription foundExportPackage = null;
-		for (int i = 0; i < descs.length; i++) {
-			BundleDescription exporter = descs[i].getExporter();
+		for (ExportPackageDescription desc : descs) {
+			BundleDescription exporter = desc.getExporter();
 			if (set.add(exporter.getSymbolicName())) {
 				ExportPackageDescription[] exportedPkgs = exporter.getExportPackages();
-				for (int j = 0; j < exportedPkgs.length; j++) {
-					if (exportedPkgs[j].getName().equals(pkgName)) {
-						foundExportPackage = exportedPkgs[j]; // any one is fine, so simply remember the last one
-						collector.addRequireBundleModification(project, exportedPkgs[j], 16);
+				for (ExportPackageDescription exportedPkg : exportedPkgs) {
+					if (exportedPkg.getName().equals(pkgName)) {
+						foundExportPackage = exportedPkg; // any one is fine, so simply remember the last one
+						collector.addRequireBundleModification(project, exportedPkg, 16);
 						break;
 					}
 				}
@@ -151,8 +152,8 @@ public class QuickFixProcessor implements IQuickFixProcessor {
 			BundleDescription bd = base.getBundleDescription();
 			BundleSpecification[] imports = bd.getRequiredBundles();
 			boolean supplierImported = false;
-			for (int j = 0; j < imports.length; j++) {
-				BundleDescription importSupplier = (BundleDescription) imports[j].getSupplier();
+			for (BundleSpecification importstatement : imports) {
+				BundleDescription importSupplier = (BundleDescription) importstatement.getSupplier();
 				if (importSupplier != null && importSupplier.getSymbolicName().equals(supplierId)) {
 					supplierImported = true;
 					break;
@@ -163,8 +164,8 @@ public class QuickFixProcessor implements IQuickFixProcessor {
 				boolean proposeImportPackage = true;
 
 				ImportPackageSpecification[] importPackages = bd.getImportPackages();
-				for (int i = 0; i < importPackages.length; i++) {
-					if (desc.getName().equals(importPackages[i].getName())) {
+				for (ImportPackageSpecification importPackage : importPackages) {
+					if (desc.getName().equals(importPackage.getName())) {
 						// already imported, try require-bundle
 						proposeImportPackage = false;
 						break;
@@ -236,6 +237,7 @@ public class QuickFixProcessor implements IQuickFixProcessor {
 
 			boolean isDone = false;
 
+			@Override
 			public void addResolutionModification(IProject project, ExportPackageDescription desc) {
 				// guard against multiple import package resolutions for the same package
 				if (addedImportPackageResolutions.contains(desc.getName())) {
@@ -250,6 +252,7 @@ public class QuickFixProcessor implements IQuickFixProcessor {
 				}
 			}
 
+			@Override
 			public Object addExportPackageResolutionModification(IPackageFragment aPackage) {
 				Object proposal = super.addExportPackageResolutionModification(aPackage);
 				if (proposal != null) {
@@ -277,6 +280,7 @@ public class QuickFixProcessor implements IQuickFixProcessor {
 			}
 
 			// we want to finish after we add the first Import- or Export-Package Change
+			@Override
 			public boolean isDone() {
 				return isDone;
 			}
