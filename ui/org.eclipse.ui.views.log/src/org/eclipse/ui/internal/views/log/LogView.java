@@ -10,7 +10,7 @@
  *     Jacek Pospychala <jacek.pospychala@pl.ibm.com> - bugs 202583, 202584, 207344
  *     													bugs 207323, 207931, 207101
  *     													bugs 172658, 216341, 216657
- *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 218648 
+ *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 218648
  *     Tuukka Lehtonen <tuukka.lehtonen@semantum.fi>  - bug 247907
  *******************************************************************************/
 
@@ -298,7 +298,7 @@ public class LogView extends ViewPart implements ILogListener {
 	}
 
 	private Action createActivateViewAction() {
-		Action action = new Action(Messages.LogView_activate) { //       	
+		Action action = new Action(Messages.LogView_activate) { //
 			public void run() {
 				fMemento.putString(P_ACTIVATE, isChecked() ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
@@ -441,8 +441,8 @@ public class LogView extends ViewPart implements ILogListener {
 	}
 
 	/**
-	 * Creates the Show Text Filter view menu action 
-	 * @return the new action for the Show Text Filter 
+	 * Creates the Show Text Filter view menu action
+	 * @return the new action for the Show Text Filter
 	 */
 	private Action createShowTextFilter() {
 		Action action = new Action(Messages.LogView_show_filter_text) {
@@ -457,9 +457,9 @@ public class LogView extends ViewPart implements ILogListener {
 	}
 
 	/**
-	 * Shows/hides the filter text control from the filtered tree. This method also sets the 
+	 * Shows/hides the filter text control from the filtered tree. This method also sets the
 	 * P_SHOW_FILTER_TEXT preference to the visible state
-	 * 
+	 *
 	 * @param visible if the filter text control should be shown or not
 	 */
 	private void showFilterText(boolean visible) {
@@ -941,7 +941,7 @@ public class LogView extends ViewPart implements ILogListener {
 	 * Returns group appropriate for the entry. Group depends on P_GROUP_BY
 	 * preference, or is null if grouping is disabled (GROUP_BY_NONE), or group
 	 * could not be determined. May create group if it haven't existed before.
-	 * 
+	 *
 	 * @param entry entry to be grouped
 	 * @return group or null if grouping is disabled
 	 */
@@ -1032,24 +1032,13 @@ public class LogView extends ViewPart implements ILogListener {
 	}
 
 	private LogEntry createLogEntry(IStatus status) {
-		LogEntry entry = new LogEntry(status);
-		entry.setSession(currentSession);
+		LogEntry entry = new LogEntry(status, currentSession);
 
 		if (status.getException() instanceof CoreException) {
 			IStatus coreStatus = ((CoreException) status.getException()).getStatus();
 			if (coreStatus != null) {
 				LogEntry childEntry = createLogEntry(coreStatus);
 				entry.addChild(childEntry);
-				childEntry.setSession(currentSession);
-			}
-		}
-
-		if (status.isMultiStatus()) {
-			IStatus[] children = status.getChildren();
-			for (int i = 0; i < children.length; i++) {
-				LogEntry childEntry = createLogEntry(children[i]);
-				entry.addChild(childEntry);
-				childEntry.setSession(currentSession);
 			}
 		}
 
@@ -1167,7 +1156,7 @@ public class LogView extends ViewPart implements ILogListener {
 			this.fMemento = memento;
 		readSettings();
 
-		// initialize column ordering 
+		// initialize column ordering
 		final byte type = this.fMemento.getInteger(P_ORDER_TYPE).byteValue();
 		switch (type) {
 			case DATE :
@@ -1234,7 +1223,7 @@ public class LogView extends ViewPart implements ILogListener {
 	 * @param column the column to get the width from
 	 * @param defaultwidth the width to return if the column has been resized to not be visible
 	 * @return the width of the column or the default value
-	 * 
+	 *
 	 * @since 3.6
 	 */
 	int getColumnWidth(TreeColumn column, int defaultwidth) {
@@ -1602,7 +1591,7 @@ public class LogView extends ViewPart implements ILogListener {
 	 * @param key
 	 * @param defaultwidth
 	 * @return the stored width for the a column described by the given key or the default width
-	 * 
+	 *
 	 * @since 3.6
 	 */
 	int getColumnWidthPreference(Preferences instancePrefs, Preferences defaultPrefs, String key, int defaultwidth) {
@@ -1700,7 +1689,7 @@ public class LogView extends ViewPart implements ILogListener {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public void setPlatformLog() {
 		setLogFile(Platform.getLogFileLocation().toFile());

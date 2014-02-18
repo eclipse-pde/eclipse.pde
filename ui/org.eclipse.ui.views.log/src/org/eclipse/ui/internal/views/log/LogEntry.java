@@ -50,7 +50,15 @@ public class LogEntry extends AbstractEntry {
 	 * @param status an existing status to create a new entry from
 	 */
 	public LogEntry(IStatus status) {
-		processStatus(status);
+		this(status, null);
+	}
+
+	/**
+	 * Constructor - creates a new entry from the given status
+	 * @param status an existing status to create a new entry from
+	 */
+	public LogEntry(IStatus status, LogSession session) {
+		processStatus(status, session);
 	}
 
 	/**
@@ -244,7 +252,7 @@ public class LogEntry extends AbstractEntry {
 	 * Adds the given token to the given buffer, adding a space as needed
 	 * @param buffer
 	 * @param token
-	 * 
+	 *
 	 * @since 3.6
 	 */
 	void appendToken(StringBuffer buffer, String token) {
@@ -312,7 +320,7 @@ public class LogEntry extends AbstractEntry {
 	}
 
 	/**
-	 * Sets the stack to the given stack value. 
+	 * Sets the stack to the given stack value.
 	 * No validation is performed on the new value.
 	 * @param stack
 	 */
@@ -333,13 +341,14 @@ public class LogEntry extends AbstractEntry {
 	 * Process the given status and sub-statuses to fill this entry
 	 * @param status
 	 */
-	private void processStatus(IStatus status) {
+	private void processStatus(IStatus status, LogSession session) {
 		pluginId = status.getPlugin();
 		severity = status.getSeverity();
 		code = status.getCode();
 		fDate = new Date();
 		fDateString = LOCAL_SDF.format(fDate);
 		message = status.getMessage();
+		this.session = session;
 		Throwable throwable = status.getException();
 		if (throwable != null) {
 			StringWriter swriter = new StringWriter();
@@ -352,7 +361,7 @@ public class LogEntry extends AbstractEntry {
 		IStatus[] schildren = status.getChildren();
 		if (schildren.length > 0) {
 			for (int i = 0; i < schildren.length; i++) {
-				addChild(new LogEntry(schildren[i]));
+				addChild(new LogEntry(schildren[i], session));
 			}
 		}
 	}
