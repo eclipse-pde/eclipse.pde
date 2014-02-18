@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 IBM Corporation and others.
+ * Copyright (c) 2009, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -441,15 +441,19 @@ public class TargetLocationsGroup {
 				UIJob job = new UIJob(Messages.UpdateTargetJob_UpdateJobName) {
 					@Override
 					public IStatus runInUIThread(IProgressMonitor monitor) {
-						// XXX what if everything is disposed by the time we get back?
 						IStatus result = event.getJob().getResult();
 						if (!result.isOK()) {
-							//TODO Put up error dialog
-							ErrorDialog.openError(fTreeViewer.getTree().getShell(), Messages.TargetLocationsGroup_TargetUpdateErrorDialog, result.getMessage(), result);
+							if (!fTreeViewer.getControl().isDisposed()) {
+								ErrorDialog.openError(fTreeViewer.getTree().getShell(), Messages.TargetLocationsGroup_TargetUpdateErrorDialog, result.getMessage(), result);
+							}
 						} else if (result.getCode() != ITargetLocationUpdater.STATUS_CODE_NO_CHANGE) {
-							// Update was successful and changed the target
-							contentsChanged(true);
-							fTreeViewer.refresh(true);
+							// Update was successful and changed the target, if dialog/editor still open, update it
+							if (!fTreeViewer.getControl().isDisposed()) {
+								contentsChanged(true);
+								fTreeViewer.refresh(true);
+								updateButtons();
+							}
+
 							// If the target is the current platform, run a load job for the user
 							try {
 								ITargetPlatformService service = (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
@@ -461,7 +465,6 @@ public class TargetLocationsGroup {
 							} catch (CoreException e) {
 								// do nothing if we could not set the current target.
 							}
-							updateButtons();
 						}
 						return Status.OK_STATUS;
 					}
