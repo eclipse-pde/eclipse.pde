@@ -84,4 +84,7 @@ public class TracingConstants {
 	/** The preference identifier for the location of tracing files */
 	public final static String PREFERENCE_FILE_PATH = "tracingFilePath"; //$NON-NLS-1$
 
+	/** The preference identifier for standard output stream selection */
+	public final static String PREFERENCE_OUTPUT_STANDARD_STREAM = "tracingOutputStandard"; //$NON-NLS-1$
+
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2013 IBM Corporation and others.
+ * Copyright (c) 2011, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@ import static org.eclipse.jface.viewers.ColumnViewerEditorActivationEvent.TRAVER
 import java.io.File;
 import java.util.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.jface.layout.*;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.JFaceResources;
@@ -82,8 +83,8 @@ public class TracingPreferencePage extends PreferencePage implements IWorkbenchP
 	/** A {@link Button} for browsing the file-system for the tracing file */
 	protected Button tracingFileBrowseButton = null;
 
-	/** A {@link Label} for 'Output file:' */
-	protected Label tracingFileLabel = null;
+	/** A {@link Button} for 'Output file:' */
+	protected Button tracingOutputFileButton = null;
 
 	/** A {@link Label} for 'Number of historical files:' */
 	protected Label tracingFileMaxCountLabel = null;
@@ -91,6 +92,9 @@ public class TracingPreferencePage extends PreferencePage implements IWorkbenchP
 	/** A {@link Label} for 'Maximum file size (KB):' */
 	protected Label tracingFileMaxSizeLabel = null;
 
+	/** A {@link Button} for 'Standard output stream:' */
+	protected Button standardOutputStreamButton;
+	
 	/**
 	 * Constructor for {@link TracingPreferencePage}
 	 */
@@ -113,13 +117,14 @@ public class TracingPreferencePage extends PreferencePage implements IWorkbenchP
 		disposeWidget(tracingTreeTitleLabel);
 		disposeWidget(filterTree);
 		disposeWidget(tracingOptionsGroup);
-		disposeWidget(tracingFileLabel);
+		disposeWidget(tracingOutputFileButton);
 		disposeWidget(tracingFileText);
 		disposeWidget(tracingFileBrowseButton);
 		disposeWidget(tracingFileMaxCountLabel);
 		disposeWidget(maximumFileCountSpinner);
 		disposeWidget(tracingFileMaxSizeLabel);
 		disposeWidget(maximumFileSizeSpinner);
+		disposeWidget(standardOutputStreamButton);
 		purgeModel();
 	}
 
@@ -165,6 +170,11 @@ public class TracingPreferencePage extends PreferencePage implements IWorkbenchP
 		// set the initial values in the widgets
 		setUIValuesFromPreferences();
 		enableTracingButtonSelected(true);
+
+		// disable after enableTracingButton.
+		if (Boolean.parseBoolean(PreferenceHandler.getOutputToStandardStream())) {
+			setEnableTracingOutputFile(false);
+		}
 		// apply the font to this page
 		applyDialogFont(pageComposite);
 		// set focus on the enablement button
@@ -281,13 +291,23 @@ public class TracingPreferencePage extends PreferencePage implements IWorkbenchP
 		GridDataFactory.fillDefaults().grab(true, false).applyTo(tracingOptionsGroup);
 		GridLayoutFactory.fillDefaults().margins(5, 5).applyTo(tracingOptionsGroup);
 
+
 		Composite outputComp = new Composite(tracingOptionsGroup, SWT.NONE);
 		GridDataFactory.fillDefaults().grab(true, false).applyTo(outputComp);
 		GridLayoutFactory.fillDefaults().numColumns(3).equalWidth(false).margins(0, 0).applyTo(outputComp);
 
-		// add the 'tracing file' label
-		tracingFileLabel = new Label(outputComp, SWT.NONE);
-		tracingFileLabel.setText(Messages.tracingFileLabel);
+		// add the 'tracing file' group
+		tracingOutputFileButton = new Button(outputComp, SWT.RADIO);
+		tracingOutputFileButton.setText(Messages.tracingFileLabel);
+		tracingOutputFileButton.setSelection(true); // during creation - select this option
+		tracingOutputFileButton.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				setEnableTracingOutputFile(true);
+				standardOutputStreamButton.setSelection(false);
+			}
+		});
 		// add the 'tracing file' input field
 		tracingFileText = new Text(outputComp, SWT.SINGLE | SWT.BORDER);
 		tracingFileText.addListener(SWT.Verify, new Listener() {
@@ -330,6 +350,11 @@ public class TracingPreferencePage extends PreferencePage implements IWorkbenchP
 		tracingFileMaxCountLabel = new Label(detailsComp, SWT.NONE);
 		tracingFileMaxCountLabel.setText(Messages.tracingFileMaxCountLabel);
 
+		// put horizontal indentation 
+		GridData gridData = new GridData();
+		gridData.horizontalIndent = 20;
+		tracingFileMaxCountLabel.setLayoutData(gridData);
+
 		// add the 'max count' input field
 		maximumFileCountSpinner = new Spinner(detailsComp, SWT.SINGLE | SWT.BORDER);
 		maximumFileCountSpinner.setValues(10, 10, 100, 0, 5, 10);
@@ -360,8 +385,36 @@ public class TracingPreferencePage extends PreferencePage implements IWorkbenchP
 			}
 		});
 		GridDataFactory.fillDefaults().applyTo(maximumFileSizeSpinner);
+
+
+		standardOutputStreamButton = new Button(tracingOptionsGroup, SWT.RADIO);
+		standardOutputStreamButton.setText(Messages.TracingPreferencePageStandardOutput);
+		standardOutputStreamButton.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+
+				setEnableTracingOutputFile(false);
+				standardOutputStreamButton.setSelection(true);
+			}
+		});
+
 	}
 
+
+	/**
+	 *	 select the outputFileButton and enable rest of the widgets if enable true
+	 *   deselect the outputFileButton and disable rest of the widgets if enable false
+	 */
+	private void setEnableTracingOutputFile(boolean enable) {
+		tracingOutputFileButton.setSelection(enable);
+		tracingFileText.setEnabled(enable);
+		maximumFileSizeSpinner.setEnabled(enable);
+		maximumFileCountSpinner.setEnabled(enable);
+		tracingFileBrowseButton.setEnabled(enable);
+		tracingFileMaxCountLabel.setEnabled(enable);
+		tracingFileMaxSizeLabel.setEnabled(enable);
+	}
 	/**
 	 * Set the default state and value of all the UI elements based on the value in the preferences. This can only be
 	 * called after all the UI elements have been constructed.
@@ -382,14 +435,21 @@ public class TracingPreferencePage extends PreferencePage implements IWorkbenchP
 			enableTracingButton.setSelection(false);
 		}
 
+		tracingOutputFileButton.setSelection(!Boolean.parseBoolean(PreferenceHandler.getOutputToStandardStream()));
 		// set the tracing file name.
 		tracingFileText.setText(PreferenceHandler.getFilePath());
+
+		// default location needs to be put in preference store once ( fringe scenario)
+		final IEclipsePreferences preferences = PreferenceHandler.getPreferences();
+		preferences.put(TracingConstants.PREFERENCE_FILE_PATH, PreferenceHandler.getFilePath());
+
 		// set the max counter field
 		maximumFileCountSpinner.setSelection(PreferenceHandler.getMaxFileCount());
 		// set the max file size field
 		maximumFileSizeSpinner.setSelection(PreferenceHandler.getMaxFileSize());
 		// update the enablement state of all the UI elements
 		enableTracingButtonSelected(false);
+		standardOutputStreamButton.setSelection(Boolean.parseBoolean(PreferenceHandler.getOutputToStandardStream()));
 	}
 
 	/**
@@ -475,9 +535,10 @@ public class TracingPreferencePage extends PreferencePage implements IWorkbenchP
 		maximumFileSizeSpinner.setEnabled(enableTracing);
 		maximumFileCountSpinner.setEnabled(enableTracing);
 		tracingFileBrowseButton.setEnabled(enableTracing);
-		tracingFileLabel.setEnabled(enableTracing);
+		tracingOutputFileButton.setEnabled(enableTracing);
 		tracingFileMaxCountLabel.setEnabled(enableTracing);
 		tracingFileMaxSizeLabel.setEnabled(enableTracing);
+		standardOutputStreamButton.setEnabled(enableTracing);
 	}
 
 	/**
@@ -584,6 +645,7 @@ public class TracingPreferencePage extends PreferencePage implements IWorkbenchP
 		// save the preferences
 		savePreferences(enableTracing);
 		DebugOptionsHandler.setDebugEnabled(enableTracing);
+		DebugOptionsHandler.getDebugOptions().setFile(standardOutputStreamButton.getSelection() ? null : new File(tracingFileText.getText()));
 		if (enableTracing) {
 			Map<String, String> newOptions = new HashMap<String, String>();
 			// get the set of options available
@@ -603,10 +665,12 @@ public class TracingPreferencePage extends PreferencePage implements IWorkbenchP
 			DebugOptionsHandler.getDebugOptions().setOptions(newOptions);
 			TracingCollections.getInstance().getModifiedDebugOptions().clear();
 			// save the tracing file options
-			String defaultFile = DebugOptionsHandler.getDebugOptions().getFile().getAbsolutePath();
-			String newFile = tracingFileText.getText();
-			if (!defaultFile.equals(newFile)) {
-				DebugOptionsHandler.getDebugOptions().setFile(new File(newFile));
+			if (DebugOptionsHandler.getDebugOptions().getFile() != null) {
+				String defaultFile = DebugOptionsHandler.getDebugOptions().getFile().getAbsolutePath();
+				String newFile = tracingFileText.getText();
+				if (!defaultFile.equals(newFile)) {
+					DebugOptionsHandler.getDebugOptions().setFile(new File(newFile));
+				}
 			}
 			// maximum file size
 			int newMaxSize = maximumFileSizeSpinner.getSelection();
@@ -619,7 +683,7 @@ public class TracingPreferencePage extends PreferencePage implements IWorkbenchP
 		}
 		return result;
 	}
-
+ 
 	/**
 	 * Save the property page preferences.
 	 */
@@ -629,6 +693,7 @@ public class TracingPreferencePage extends PreferencePage implements IWorkbenchP
 		prefValues.put(TracingConstants.PREFERENCE_MAX_FILE_COUNT_IDENTIFIER, Integer.toString(maximumFileCountSpinner.getSelection()));
 		prefValues.put(TracingConstants.PREFERENCE_MAX_FILE_SIZE_IDENTIFIER, Integer.toString(maximumFileSizeSpinner.getSelection()));
 		prefValues.put(TracingConstants.PREFERENCE_FILE_PATH, tracingFileText.getText());
+		prefValues.put(TracingConstants.PREFERENCE_OUTPUT_STANDARD_STREAM, Boolean.toString(standardOutputStreamButton.getSelection()));
 		// iterate over the displayable components and store their debug options (all trace strings should be saved)
 		StringBuffer optionsAsString = new StringBuffer();
 		if (displayableTracingComponents != null) {

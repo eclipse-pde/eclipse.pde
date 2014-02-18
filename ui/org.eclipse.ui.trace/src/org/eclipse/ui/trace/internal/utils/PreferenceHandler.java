@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 IBM Corporation and others.
+ * Copyright (c) 2011, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -67,6 +67,7 @@ public class PreferenceHandler extends AbstractPreferenceInitializer {
 		prefValues.put(TracingConstants.PREFERENCE_MAX_FILE_COUNT_IDENTIFIER, Integer.toString(10));
 		// see org.eclipse.osgi.framework.debug.EclipseDebugTrace#DEFAULT_TRACE_FILE_SIZE
 		prefValues.put(TracingConstants.PREFERENCE_MAX_FILE_SIZE_IDENTIFIER, Integer.toString(1000));
+		prefValues.put(TracingConstants.PREFERENCE_OUTPUT_STANDARD_STREAM, Boolean.toString(false));		
 		// no trace entries
 		prefValues.put(TracingConstants.PREFERENCE_ENTRIES_IDENTIFIER, TracingConstants.EMPTY_STRING);
 		savePreferences(prefValues);
@@ -141,7 +142,19 @@ public class PreferenceHandler extends AbstractPreferenceInitializer {
 		final IScopeContext[] lookupOrder = new IScopeContext[] {new InstanceScope()};
 		IPreferencesService prefService = Platform.getPreferencesService();
 		prefService.setDefaultLookupOrder(TracingConstants.BUNDLE_ID, null, new String[] {InstanceScope.SCOPE});
-		return prefService.getString(TracingConstants.BUNDLE_ID, TracingConstants.PREFERENCE_FILE_PATH, DebugOptionsHandler.getDebugOptions().getFile().getAbsolutePath(), lookupOrder);
+		return prefService.getString(TracingConstants.BUNDLE_ID, TracingConstants.PREFERENCE_FILE_PATH, DebugOptionsHandler.getDebugOptions().getFile() == null ? null : DebugOptionsHandler.getDebugOptions().getFile().getAbsolutePath(), lookupOrder);
+	}
+
+	/**
+	 * Accessor for the output to standard output stream selection in the preference store
+	 * 
+	 * @return The output to standard output stream selection in the preference store or the default value if it's not defined.
+	 */
+	public static String getOutputToStandardStream() {
+		final IScopeContext[] lookupOrder = new IScopeContext[] {new InstanceScope()};
+		IPreferencesService prefService = Platform.getPreferencesService();
+		prefService.setDefaultLookupOrder(TracingConstants.BUNDLE_ID, null, new String[] {InstanceScope.SCOPE});
+		return prefService.getString(TracingConstants.BUNDLE_ID, TracingConstants.PREFERENCE_OUTPUT_STANDARD_STREAM, "false", lookupOrder); //$NON-NLS-1$
 	}
 
 }
