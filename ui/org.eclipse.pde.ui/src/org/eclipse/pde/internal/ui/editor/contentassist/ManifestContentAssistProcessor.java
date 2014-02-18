@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 IBM Corporation and others.
+ * Copyright (c) 2006, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -243,7 +243,7 @@ public class ManifestContentAssistProcessor extends TypePackageCompletionProcess
 
 		// only show when there is no bundle name
 		if (length == 0) {
-			return new ICompletionProposal[] {new TypeCompletionProposal(BAUMAN, null, BAUMAN, offset - length, length), new TypeCompletionProposal(ANISZCZYK, null, ANISZCZYK, offset - length, length), new TypeCompletionProposal(LASOCKI_BICZYSKO, null, LASOCKI_BICZYSKO, offset - length, length), new TypeCompletionProposal(PAWLOWSKI, null, PAWLOWSKI, offset - length, length), new TypeCompletionProposal(MELHEM, null, MELHEM, offset - length, length)};
+			return new ICompletionProposal[] {new TypeCompletionProposal(BAUMAN, null, BAUMAN, offset - length, length), new TypeCompletionProposal(ANISZCZYK, null, ANISZCZYK, offset - length, length), new TypeCompletionProposal(LASOCKI_BICZYSKO, null, LASOCKI_BICZYSKO, offset - length, length), new TypeCompletionProposal(PAWLOWSKI, null, PAWLOWSKI, offset - length, length), new TypeCompletionProposal(MELHEM, null, MELHEM, offset - length, length), new TypeCompletionProposal(WINDATT, null, WINDATT, offset - length, length)};
 		}
 
 		// only show when we are trying to complete a name
