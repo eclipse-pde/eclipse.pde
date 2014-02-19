@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 IBM Corporation and others.
+ * Copyright (c) 2007, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -135,7 +135,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 			return true;
 		}
 		/**
-		 * Updates a javadoc tag, by either adding a new one or removing
+		 * Updates a Javadoc tag, by either adding a new one or removing
 		 * an existing one
 		 * @param body
 		 */
@@ -419,7 +419,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	 * @throws BadLocationException
 	 */
 	private void updateTagInSource(ICompilationUnit unit, String membername, String signature, String tagname, boolean remove) throws CoreException, MalformedTreeException, BadLocationException {
-		ASTParser parser = ASTParser.newParser(AST.JLS4);
+		ASTParser parser = ASTParser.newParser(AST.JLS8);
 		parser.setSource(unit);
 		CompilationUnit cunit = (CompilationUnit) parser.createAST(new NullProgressMonitor());
 		assertNotNull("the ast compilation unit cannot be null", cunit);
@@ -488,7 +488,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	}
 	
 	/**
-	 * Tests that changing the javadoc for a method updates the workspace baseline
+	 * Tests that changing the Javadoc for a method updates the workspace baseline
 	 * 
 	 * This test adds a @noextend tag to the method foo() in TestClass1
 	 */
@@ -509,7 +509,7 @@ public class ApiBaselineManagerTests extends AbstractApiTest {
 	}
 	
 	/**
-	 * Tests that changing the javadoc for a field updates the workspace baseline
+	 * Tests that changing the Javadoc for a field updates the workspace baseline
 	 * 
 	 * This test adds a @noextend tag to the field 'field' in TestField9
 	 */

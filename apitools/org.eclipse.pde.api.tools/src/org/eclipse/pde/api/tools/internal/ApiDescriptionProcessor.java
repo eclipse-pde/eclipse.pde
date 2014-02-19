@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 IBM Corporation and others.
+ * Copyright (c) 2007, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -271,7 +271,7 @@ public class ApiDescriptionProcessor {
 			return false;
 		}
 		/**
-		 * Updates the specified javadoc node if needed, creates a new doc node if one is not present
+		 * Updates the specified Javadoc node if needed, creates a new doc node if one is not present
 		 * @param element the element to get API information from 
 		 * @param docnode the doc node to update
 		 * @param type one of <code>CLASS</code> or <code>INTERFACE</code>
@@ -318,7 +318,7 @@ public class ApiDescriptionProcessor {
 			return newtag;
 		}
 		/**
-		 * Collects the missing javadoc tags from based on the given listing of {@link TagElement}s
+		 * Collects the missing Javadoc tags from based on the given listing of {@link TagElement}s
 		 * @param api
 		 * @param tags
 		 * @param type one of <code>CLASS</code> or <code>INTERFACE</code>
@@ -511,7 +511,7 @@ public class ApiDescriptionProcessor {
 	
 	/**
 	 * Given the type, the parent type descriptor and an annotated description, update
-	 * the javadoc comments for the type and all members of the type found in the description.
+	 * the Javadoc comments for the type and all members of the type found in the description.
 	 * @param type
 	 * @param desc
 	 * @param description
@@ -521,7 +521,7 @@ public class ApiDescriptionProcessor {
 	 * @throws BadLocationException
 	 */
 	static void processTagUpdates(IType type, IReferenceTypeDescriptor desc, IApiDescription description, List members, Map collector) throws CoreException, BadLocationException {
-		ASTParser parser = ASTParser.newParser(AST.JLS4);
+		ASTParser parser = ASTParser.newParser(AST.JLS8);
 		ICompilationUnit cunit = type.getCompilationUnit();
 		if(cunit != null) {
 			parser.setSource(cunit);

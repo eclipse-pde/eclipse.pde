@@ -412,7 +412,7 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 	 * @see org.eclipse.jdt.ui.text.java.IJavaCompletionProposalComputer#sessionStarted()
 	 */
 	public void sessionStarted() {
-		fParser = ASTParser.newParser(AST.JLS4);
+		fParser = ASTParser.newParser(AST.JLS8);
 		fErrorMessage = null;
 	}
 

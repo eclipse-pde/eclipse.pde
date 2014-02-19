@@ -141,7 +141,7 @@ public final class JavadocTagManager {
 					 CoreMessages.JavadocTagManager_method_no_overried);
 			newtag.setApplicableTo(IApiJavadocTag.TYPE_INTERFACE, 
 					IApiJavadocTag.MEMBER_METHOD, 
-					"This default method is not intended to be re-implemented or extended by clients.");
+					CoreMessages.JavadocTagManager_default_method_no_override);
 			tagcache.put(newtag.getTagId(), newtag);
 			list.add(newtag);
 			

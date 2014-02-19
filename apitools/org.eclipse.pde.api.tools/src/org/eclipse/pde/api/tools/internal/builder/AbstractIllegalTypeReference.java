@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others.
+ * Copyright (c) 2008, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,7 +53,7 @@ public abstract class AbstractIllegalTypeReference extends AbstractProblemDetect
 
 	/**
 	 * Class used to look up the name of the enclosing method for an {@link IApiType} when we do not have any 
-	 * enclosing method infos (pre Java 1.5 class files 
+	 * enclosing method infos (pre Java 1.5 class files)
 	 */
 	class MethodFinder extends ASTVisitor {
 		IMethod method = null;
@@ -191,7 +191,7 @@ public abstract class AbstractIllegalTypeReference extends AbstractProblemDetect
 				if(method == null) {
 					//look it up the hard way
 					ISourceRange range = jtype.getCompilationUnit().getSourceRange();
-					ASTParser parser = ASTParser.newParser(AST.JLS4);
+					ASTParser parser = ASTParser.newParser(AST.JLS8);
 					parser.setSource(jtype.getCompilationUnit());
 					parser.setSourceRange(range.getOffset(), range.getLength());
 					parser.setResolveBindings(true);
@@ -265,7 +265,7 @@ public abstract class AbstractIllegalTypeReference extends AbstractProblemDetect
 				String name = ltype.getSimpleName();
 				ICompilationUnit cunit = type.getCompilationUnit();
 				if(cunit.isWorkingCopy()) {
-					cunit.reconcile(AST.JLS4, false, null, null);
+					cunit.reconcile(AST.JLS8, false, null, null);
 				}
 				IType localtype = type;
 				method = getEnclosingMethod(type, reference, doc);
