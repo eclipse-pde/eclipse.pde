@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others.
+ * Copyright (c) 2008, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -88,7 +88,6 @@ public interface IApiProblem {
 	 * Value is: <code>-1</code>
 	 */
 	public static final int NO_CHARRANGE = -1;
-	
 	/**
 	 * Constant representing the value of the invalid @since tag {@link IApiProblem} kind.
 	 * <br>
@@ -439,6 +438,15 @@ public interface IApiProblem {
 	 * @see #CATEGORY_API_COMPONENT_RESOLUTION
 	 */
 	public static final int API_COMPONENT_RESOLUTION = 1;
+	/**
+	 * Constant representing the problem kind for unsupported bytecodes
+	 * <br>
+	 * Value is: <code>2</code>
+	 * 
+	 * @see #getKind()
+	 * @see #CATEGORY_API_COMPONENT_RESOLUTION
+	 */
+	public static final int UNSUPPORTED_BYTECODES = 2;
 	/**
 	 * Constant representing the value of a workspace baseline resolution {@link IApiProblem} kind.
 	 * <br>

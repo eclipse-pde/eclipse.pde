@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others.
+ * Copyright (c) 2008, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -737,6 +737,7 @@ public class ApiProblemFactory {
 			case IApiProblem.CATEGORY_API_COMPONENT_RESOLUTION: {
 				switch(kind) {
 					case IApiProblem.API_COMPONENT_RESOLUTION: return 99;
+					case IApiProblem.UNSUPPORTED_BYTECODES: return 42;
 				}
 				break;
 			}
@@ -776,6 +777,7 @@ public class ApiProblemFactory {
 			case IApiProblem.CATEGORY_API_COMPONENT_RESOLUTION : {
 				switch(problem.getKind()) {
 					case IApiProblem.API_COMPONENT_RESOLUTION: return IApiProblemTypes.REPORT_RESOLUTION_ERRORS_API_COMPONENT;
+					case IApiProblem.UNSUPPORTED_BYTECODES: return IApiProblemTypes.UNSUPPORTED_BYTECODES;
 				}
 				break;
 			}
