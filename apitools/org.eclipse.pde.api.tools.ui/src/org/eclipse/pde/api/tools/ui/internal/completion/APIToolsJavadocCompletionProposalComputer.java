@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 IBM Corporation and others.
+ * Copyright (c) 2007, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,8 +52,8 @@ import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 import org.eclipse.swt.graphics.Image;
 
 /**
- * This class creates completion proposals to javadoc header blocks
- * for the javadoc tags contributed via the apiJavadocTags extension point.
+ * This class creates completion proposals to Javadoc header blocks
+ * for the Javadoc tags contributed via the apiJavadocTags extension point.
  * 
  * @see IApiJavadocTag
  * @see JavadocTagManager
@@ -145,6 +145,7 @@ public class APIToolsJavadocCompletionProposalComputer implements IJavaCompletio
 						int flags = method.getFlags();
 						boolean inter = method.getDeclaringType().isInterface();
 						if(Flags.isPrivate(flags) || 
+								(!Flags.isDefaultMethod(flags) && inter) ||
 								(Flags.isPackageDefault(flags) && !inter) || 
 								hasNonVisibleParent(element, inter)) {
 							return Collections.EMPTY_LIST;

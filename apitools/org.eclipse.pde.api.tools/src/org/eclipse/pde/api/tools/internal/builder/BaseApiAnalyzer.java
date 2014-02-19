@@ -272,7 +272,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 				Util.updateMonitor(localMonitor);
 			}
 			
-			//check E description status
+			//check EE description status
 			checkEEDescriptions();
 			
 			//usage checks

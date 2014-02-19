@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others.
+ * Copyright (c) 2008, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -585,6 +585,14 @@ public class TagValidator extends ASTVisitor {
 								IApiProblem.UNSUPPORTED_TAG_USE, 
 								IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
 								BuilderMessages.TagValidator_not_visible_interface_method);
+					}
+					else if(!Flags.isDefaultMethod(mods) && JavadocTagManager.TAG_NOOVERRIDE.equals(tagname)) {
+						processTagProblem(item.typename, 
+								tag, 
+								IElementDescriptor.METHOD, 
+								IApiProblem.UNSUPPORTED_TAG_USE, 
+								IApiMarkerConstants.UNSUPPORTED_TAG_MARKER_ID, 
+								BuilderMessages.TagValidator_nondefault_interface_method);
 					}
 					break;
 				}

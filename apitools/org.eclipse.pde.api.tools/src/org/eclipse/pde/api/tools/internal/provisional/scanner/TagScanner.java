@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 IBM Corporation and others.
+ * Copyright (c) 2007, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -59,13 +59,13 @@ import org.eclipse.pde.api.tools.internal.util.Signatures;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
 /**
- * Scans the source of a *.java file for any API javadoc tags
+ * Scans the source of a *.java file for any API Javadoc tags
  * @since 1.0.0
  */
 public class TagScanner {
 
 	/**
-	 * Visitor to scan a compilation unit. We only care about javadoc nodes that have either 
+	 * Visitor to scan a compilation unit. We only care about Javadoc nodes that have either 
 	 * type or enum declarations as parents, so we have to override the ones we don't care 
 	 * about.
 	 */
@@ -303,7 +303,12 @@ public class TagScanner {
 							ASTNode parent = node.getParent();
 							if(parent instanceof TypeDeclaration) {
 								TypeDeclaration type = (TypeDeclaration) parent;
-								if(!Flags.isFinal(type.getModifiers())) {
+								if(type.isInterface()) {
+									if(Flags.isDefaultMethod(node.getModifiers())) {
+										restrictions |= RestrictionModifiers.NO_OVERRIDE;
+									}
+								}
+								else if(!Flags.isFinal(type.getModifiers())) {
 									restrictions |= RestrictionModifiers.NO_OVERRIDE;
 								}
 							}

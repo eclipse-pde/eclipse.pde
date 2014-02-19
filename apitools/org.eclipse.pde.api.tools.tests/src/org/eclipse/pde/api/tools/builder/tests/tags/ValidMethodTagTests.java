@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,15 +12,17 @@ package org.eclipse.pde.api.tools.builder.tests.tags;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.tests.junit.extension.TestCase;
+import org.eclipse.pde.api.tools.tests.util.ProjectUtils;
 
 /**
- * Tests valid javadoc tags on methods in classes, interfaces, enums and annotations
+ * Tests valid Javadoc tags on methods in classes, interfaces, enums and annotations
  * 
  * @since 1.0
  */
@@ -54,12 +56,14 @@ public class ValidMethodTagTests extends InvalidMethodTagTests {
 	 * @return all of the child test classes of this class
 	 */
 	private static Class[] getAllTestClasses() {
-		Class[] classes = new Class[] {
-			ValidClassMethodTagTests.class,
-			ValidInterfaceMethodTagTests.class,
-			ValidEnumMethodTagTests.class
-		};
-		return classes;
+		ArrayList<Class<?>> classes = new ArrayList<Class<?>>();
+		classes.add(ValidClassMethodTagTests.class);
+		classes.add(ValidInterfaceMethodTagTests.class);
+		classes.add(ValidEnumMethodTagTests.class);
+		if(ProjectUtils.isJava8Compatible()) {
+			classes.add(ValidJava8IntefaceMethodTagTests.class);
+		}
+		return classes.toArray(new Class[classes.size()]);
 	}
 	
 	/**

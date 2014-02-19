@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.api.tools.internal.builder.BuilderMessages;
 
 /**
- * Tests invalid javadoc tags on interface methods
+ * Tests invalid Javadoc tags on interface methods
  * 
  * @since 1.0
  */
@@ -191,12 +191,12 @@ public class InvalidInterfaceMethodTagTests extends InvalidMethodTagTests {
 	private void x7(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(6));
 		setExpectedMessageArgs(new String[][] {
-				{"@nooverride", BuilderMessages.TagValidator_an_interface_method},
-				{"@nooverride", BuilderMessages.TagValidator_an_interface_method},
-				{"@nooverride", BuilderMessages.TagValidator_an_interface_method},
-				{"@nooverride", BuilderMessages.TagValidator_an_interface_method},
-				{"@nooverride", BuilderMessages.TagValidator_an_interface_method},
-				{"@nooverride", BuilderMessages.TagValidator_an_interface_method}
+				{"@nooverride", BuilderMessages.TagValidator_nondefault_interface_method},
+				{"@nooverride", BuilderMessages.TagValidator_nondefault_interface_method},
+				{"@nooverride", BuilderMessages.TagValidator_not_visible_interface_method},
+				{"@nooverride", BuilderMessages.TagValidator_not_visible_interface_method},
+				{"@nooverride", BuilderMessages.TagValidator_nondefault_interface_method},
+				{"@nooverride", BuilderMessages.TagValidator_nondefault_interface_method}
 		});
 		deployTagTest("test7.java", inc, false);
 	}
@@ -215,8 +215,8 @@ public class InvalidInterfaceMethodTagTests extends InvalidMethodTagTests {
 	private void x8(boolean inc) {
 		setExpectedProblemIds(getDefaultProblemSet(2));
 		setExpectedMessageArgs(new String[][] {
-				{"@nooverride", BuilderMessages.TagValidator_an_interface_method},
-				{"@nooverride", BuilderMessages.TagValidator_an_interface_method}
+				{"@nooverride", BuilderMessages.TagValidator_nondefault_interface_method},
+				{"@nooverride", BuilderMessages.TagValidator_nondefault_interface_method}
 		});
 		deployTagTest("test8.java", inc, true);
 	}
