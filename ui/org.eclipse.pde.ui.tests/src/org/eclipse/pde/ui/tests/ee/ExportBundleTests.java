@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.ee;
 
-import org.eclipse.pde.ui.tests.PDETestsPlugin;
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.resources.IProject;
@@ -26,19 +24,20 @@ import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.exports.FeatureExportInfo;
 import org.eclipse.pde.internal.core.exports.PluginExportOperation;
 import org.eclipse.pde.ui.tests.PDETestCase;
+import org.eclipse.pde.ui.tests.PDETestsPlugin;
 import org.eclipse.pde.ui.tests.util.ProjectUtils;
 
 /**
  * Tests exporting bundles.
  */
 public class ExportBundleTests extends PDETestCase {
-	
+
 	private static final IPath EXPORT_PATH = PDETestsPlugin.getDefault().getStateLocation().append(".export");
-	
+
 	public static Test suite() {
 		return new TestSuite(ExportBundleTests.class);
 	}	
-	
+
 	/**
 	 * Deletes the specified project.
 	 * 
@@ -51,7 +50,7 @@ public class ExportBundleTests extends PDETestCase {
 			project.delete(true, null);
 		}
 	}
-	
+
 	/**
 	 * Validates the target level of a generated class file.
 	 * 
@@ -63,7 +62,7 @@ public class ExportBundleTests extends PDETestCase {
 		IClassFileReader reader = ToolFactory.createDefaultClassFileReader(zipFileName, zipEntryName, IClassFileReader.ALL);
 		assertEquals("Wrong major version", major, reader.getMajorVersion());
 	}	
-	
+
 	/**
 	 * Exports a plug-in project with a custom execution environment and validates class file
 	 * target level.
@@ -73,9 +72,9 @@ public class ExportBundleTests extends PDETestCase {
 	public void testExportCustomEnvironment() throws Exception {
 		try {
 			IExecutionEnvironment env = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment(EnvironmentAnalyzerDelegate.EE_NO_SOUND);
-	        IJavaProject project = ProjectUtils.createPluginProject("no.sound.export", env);
-	        assertTrue("Project was not created", project.exists());
-	        
+			IJavaProject project = ProjectUtils.createPluginProject("no.sound.export", env);
+			assertTrue("Project was not created", project.exists());
+
 			final FeatureExportInfo info = new FeatureExportInfo();
 			info.toDirectory = true;
 			info.useJarFormat = true;
@@ -87,7 +86,7 @@ public class ExportBundleTests extends PDETestCase {
 			info.items = new Object[]{PluginRegistry.findModel(project.getProject())};
 			info.signingInfo = null;
 			info.qualifier = "vXYZ";
-			
+
 			PluginExportOperation job = new PluginExportOperation(info, "Test-Export");
 			job.schedule();
 			job.join();
@@ -96,16 +95,25 @@ public class ExportBundleTests extends PDETestCase {
 			}
 			IStatus result = job.getResult();
 			assertTrue("Export job had errors", result.isOK());
-			
-			// veriry exported bundle exists
+
+			// verify exported bundle exists
 			IPath path = EXPORT_PATH.append("plugins/no.sound.export_1.0.0.jar");
+
+			// The jar file may not have been copied to the file system yet, see Bug 424597
+			if (!path.toFile().exists()) {
+				try {
+					Thread.sleep(5000);
+				} catch (InterruptedException e) {
+				}
+			}
+
 			assertTrue("Missing exported bundle", path.toFile().exists());
 			validateTargetLevel(path.toOSString(), "no/sound/export/Activator.class", 47);
 		} finally {
 			deleteProject("no.sound.export");
 		}
 	}
-		
+
 	/**
 	 * Exports a plug-in project with a J2SE-1.4 execution environment and validates class file
 	 * target level.
@@ -115,9 +123,9 @@ public class ExportBundleTests extends PDETestCase {
 	public void testExport14Environment() throws Exception {
 		try {
 			IExecutionEnvironment env = JavaRuntime.getExecutionEnvironmentsManager().getEnvironment("J2SE-1.4");
-	        IJavaProject project = ProjectUtils.createPluginProject("j2se14.export", env);
-	        assertTrue("Project was not created", project.exists());
-	        
+			IJavaProject project = ProjectUtils.createPluginProject("j2se14.export", env);
+			assertTrue("Project was not created", project.exists());
+
 			final FeatureExportInfo info = new FeatureExportInfo();
 			info.toDirectory = true;
 			info.useJarFormat = true;
@@ -129,7 +137,7 @@ public class ExportBundleTests extends PDETestCase {
 			info.items = new Object[]{PluginRegistry.findModel(project.getProject())};
 			info.signingInfo = null;
 			info.qualifier = "vXYZ";
-			
+
 			PluginExportOperation job = new PluginExportOperation(info, "Test-Export");
 			job.schedule();
 			job.join();
@@ -138,14 +146,23 @@ public class ExportBundleTests extends PDETestCase {
 			}
 			IStatus result = job.getResult();
 			assertTrue("Export job had errors", result.isOK());
-			
+
 			// veriry exported bundle exists
 			IPath path = EXPORT_PATH.append("plugins/j2se14.export_1.0.0.jar");
+
+			// The jar file may not have been copied to the file system yet, see Bug 424597
+			if (!path.toFile().exists()) {
+				try {
+					Thread.sleep(5000);
+				} catch (InterruptedException e) {
+				}
+			}
+
 			assertTrue("Missing exported bundle", path.toFile().exists());
 			validateTargetLevel(path.toOSString(), "j2se14/export/Activator.class", 46);
 		} finally {
 			deleteProject("j2se14.export");
 		}
 	}
-			
+
 }
