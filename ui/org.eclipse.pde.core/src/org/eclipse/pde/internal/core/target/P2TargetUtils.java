@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2014 EclipseSource Inc. and others.
+ * Copyright (c) 2010, 2013 EclipseSource Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@ package org.eclipse.pde.internal.core.target;
 
 import java.io.File;
 import java.net.URI;
-import java.security.MessageDigest;
 import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
@@ -768,14 +767,13 @@ public class P2TargetUtils {
 	private static String getProfileId(ITargetHandle handle) throws CoreException {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(PROFILE_ID_PREFIX);
-		// Memento strings can be very long and exceed max filename lengths, trim down to prefix + digest
+		// Memento strings can be very long and exceed max filename lengths, trim down to 200 + prefix + hashcode
 		String memento = handle.getMemento();
-		try {
-			MessageDigest sha = MessageDigest.getInstance("SHA-1"); //$NON-NLS-1$
-			sha.update(memento.getBytes("UTF-8")); //$NON-NLS-1$
-			buffer.append(new String(sha.digest()));
-		} catch (Exception e) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, null, e));
+		if (memento.length() > 200) {
+			buffer.append(memento.substring(memento.length() - 200));
+			buffer.append(memento.hashCode());
+		} else {
+			buffer.append(memento);
 		}
 		return buffer.toString();
 	}
