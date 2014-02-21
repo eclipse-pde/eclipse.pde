@@ -3019,6 +3019,11 @@ public class PDEUIMessages extends NLS {
 	public static String PropertiesSection_Remove;
 	public static String PropertiesSection_Value;
 	public static String PropertiesSection_ValueColumn;
+	public static String PropertiesSection_OS;
+	public static String PropertiesSection_OSColumn;
+	public static String PropertiesSection_Arch;
+	public static String PropertiesSection_ArchColumn;
+	public static String PropertiesSection_All;
 
 	public static String PDECompilersConfigurationBlock_error;
 	public static String PDECompilersConfigurationBlock_warning;

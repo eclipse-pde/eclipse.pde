@@ -1,25 +1,24 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 IBM Corporation and others.
+ * Copyright (c) 2010, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - Initial API and implemntation
+ *     IBM Corporation - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
-import java.util.HashSet;
-import java.util.Set;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
+import java.util.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.StatusDialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.iproduct.*;
+import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.TableSection;
@@ -89,6 +88,10 @@ public class PropertiesSection extends TableSection {
 					//return super.getColumnText(PluginRegistry.findModel(configuration.getId()), index);
 				case 1 :
 					return configuration.getValue();
+				case 2 :
+					return configuration.getOs();
+				case 3 :
+					return configuration.getArch();
 			}
 			return null;
 		}
@@ -98,8 +101,13 @@ public class PropertiesSection extends TableSection {
 	private class PropertyDialog extends StatusDialog {
 		private Text fName;
 		private Text fValue;
+		private Combo fOS;
+		private Combo fArch;
 		private IConfigurationProperty fEdit;
 		private Set<String> fExistingNames;
+		
+		private String[] COMBO_OSLABELS = new String[] {PDEUIMessages.PropertiesSection_All, Platform.OS_LINUX, Platform.OS_MACOSX, Platform.OS_SOLARIS, Platform.OS_WIN32};
+		private String[] COMBO_ARCHLABELS = new String[] {PDEUIMessages.PropertiesSection_All, Platform.ARCH_X86, Platform.ARCH_X86_64, Platform.ARCH_PPC, Platform.ARCH_IA64, Platform.ARCH_IA64_32, Platform.ARCH_PA_RISC, Platform.ARCH_SPARC};
 
 		public PropertyDialog(Shell shell, IConfigurationProperty property, Set<String> existingNames) {
 			super(shell);
@@ -125,6 +133,31 @@ public class PropertiesSection extends TableSection {
 					validate();
 				}
 			});
+			SWTFactory.createLabel(comp, PDEUIMessages.PropertiesSection_OS, 1);
+			fOS = SWTFactory.createCombo(comp, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY, 1, COMBO_OSLABELS);
+			fOS.addSelectionListener(new SelectionListener() {
+				public void widgetSelected(SelectionEvent e) {
+					updateStatus(Status.OK_STATUS);
+				}
+
+				public void widgetDefaultSelected(SelectionEvent e) {
+					updateStatus(Status.OK_STATUS);
+				}
+
+			});
+
+			SWTFactory.createLabel(comp, PDEUIMessages.PropertiesSection_Arch, 1);
+			fArch = SWTFactory.createCombo(comp, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY, 1, COMBO_ARCHLABELS);
+			fArch.addSelectionListener(new SelectionListener() {
+				public void widgetSelected(SelectionEvent e) {
+					updateStatus(Status.OK_STATUS);
+				}
+
+				public void widgetDefaultSelected(SelectionEvent e) {
+					updateStatus(Status.OK_STATUS);
+				}
+
+			});
 
 			if (fEdit != null) {
 				if (fEdit.getName() != null) {
@@ -132,6 +165,18 @@ public class PropertiesSection extends TableSection {
 				}
 				if (fEdit.getValue() != null) {
 					fValue.setText(fEdit.getValue());
+				}
+				int index = Arrays.asList(COMBO_OSLABELS).indexOf(fEdit.getOs());
+				if (index >= 0) {
+					fOS.select(index);
+				} else {
+					fOS.select(0); // "All"
+				}
+				index = Arrays.asList(COMBO_ARCHLABELS).indexOf(fEdit.getArch());
+				if (index >= 0) {
+					fArch.select(index);
+				} else {
+					fArch.select(0); // "All"
 				}
 			}
 
@@ -162,6 +207,10 @@ public class PropertiesSection extends TableSection {
 			fEdit = factory.createConfigurationProperty();
 			fEdit.setName(fName.getText().trim());
 			fEdit.setValue(fValue.getText().trim());
+			int index = fOS.getSelectionIndex();
+			fEdit.setOs(index == 0 ? "" : COMBO_OSLABELS[index]); //$NON-NLS-1$
+			index = fArch.getSelectionIndex();
+			fEdit.setArch(index == 0 ? "" : COMBO_ARCHLABELS[index]); //$NON-NLS-1$
 			getProduct().addConfigurationProperties(new IConfigurationProperty[] {fEdit});
 			super.okPressed();
 		}
@@ -256,11 +305,34 @@ public class PropertiesSection extends TableSection {
 
 		final TableColumn nameColumn = new TableColumn(table, SWT.LEFT);
 		nameColumn.setText(PDEUIMessages.PropertiesSection_NameColumn);
-		nameColumn.setWidth(200);
+		nameColumn.setWidth(160);
 
 		final TableColumn valueColumn = new TableColumn(table, SWT.LEFT);
 		valueColumn.setText(PDEUIMessages.PropertiesSection_ValueColumn);
-		valueColumn.setWidth(300);
+		valueColumn.setWidth(220);
+
+		final TableColumn osColumn = new TableColumn(table, SWT.LEFT);
+		osColumn.setText(PDEUIMessages.PropertiesSection_OSColumn);
+		osColumn.setWidth(60);
+
+		final TableColumn archColumn = new TableColumn(table, SWT.LEFT);
+		archColumn.setText(PDEUIMessages.PropertiesSection_ArchColumn);
+		archColumn.setWidth(60);
+
+		table.addControlListener(new ControlListener() {
+
+			public void controlMoved(ControlEvent e) {
+			}
+
+			public void controlResized(ControlEvent e) {
+				int size = table.getSize().x;
+				nameColumn.setWidth(size / 9 * 3);
+				valueColumn.setWidth(size / 9 * 4);
+				osColumn.setWidth(size / 9 * 1);
+				archColumn.setWidth(size / 9 * 1);
+			}
+
+		});
 
 		TextCellEditor cellEditor = new TextCellEditor(table);
 		cellEditor.getControl().pack();

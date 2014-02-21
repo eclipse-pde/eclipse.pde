@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 EclipseSource Corporation and others.
+ * Copyright (c) 2009, 2014 EclipseSource Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,8 @@ public class ConfigurationProperty extends ProductObject implements IConfigurati
 	private static final long serialVersionUID = -3549668957352554826L;
 	private String fName;
 	private String fValue;
+	private String fOS;
+	private String fArch;
 
 	/**
 	 * Only for parsing usage
@@ -39,6 +41,8 @@ public class ConfigurationProperty extends ProductObject implements IConfigurati
 			Element element = (Element) node;
 			fName = element.getAttribute("name"); //$NON-NLS-1$
 			fValue = element.getAttribute("value"); //$NON-NLS-1$
+			fOS = element.getAttribute("os"); //$NON-NLS-1$
+			fArch = element.getAttribute("arch"); //$NON-NLS-1$
 		}
 
 	}
@@ -49,6 +53,12 @@ public class ConfigurationProperty extends ProductObject implements IConfigurati
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent + "<property name=\"" + fName + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		writer.print(" value=\"" + fValue + "\""); //$NON-NLS-1$//$NON-NLS-2$
+		if (fOS.length() > 0) {
+			writer.print(" os=\"" + fOS + "\""); //$NON-NLS-1$//$NON-NLS-2$
+		}
+		if (fArch.length() > 0) {
+			writer.print(" arch=\"" + fArch + "\""); //$NON-NLS-1$//$NON-NLS-2$
+		}
 		writer.println(" />"); //$NON-NLS-1$
 	}
 
@@ -80,4 +90,27 @@ public class ConfigurationProperty extends ProductObject implements IConfigurati
 		return fName + " : " + fValue; //$NON-NLS-1$
 	}
 
+	public String getOs() {
+		return fOS;
+	}
+
+	public void setOs(String os) {
+		String oldValue = fOS;
+		fOS = os;
+		if (isEditable() && !fOS.equals(oldValue)) {
+			firePropertyChanged(P_OS, oldValue, fOS);
+		}
+	}
+
+	public String getArch() {
+		return fArch;
+	}
+
+	public void setArch(String arch) {
+		String oldValue = fArch;
+		fArch = arch;
+		if (isEditable() && !fArch.equals(oldValue)) {
+			firePropertyChanged(P_ARCH, oldValue, fArch);
+		}
+	}
 }
