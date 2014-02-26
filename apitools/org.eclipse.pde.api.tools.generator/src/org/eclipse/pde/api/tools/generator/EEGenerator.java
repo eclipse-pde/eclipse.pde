@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 IBM Corporation and others.
+ * Copyright (c) 2011, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,7 +57,6 @@ import org.eclipse.jdt.core.util.IInnerClassesAttribute;
 import org.eclipse.jdt.core.util.IInnerClassesAttributeEntry;
 import org.eclipse.jdt.core.util.IMethodInfo;
 import org.eclipse.jdt.core.util.ISignatureAttribute;
-import org.eclipse.jdt.internal.compiler.classfmt.ClassFileConstants;
 import org.eclipse.jdt.internal.core.JavadocConstants;
 import org.eclipse.pde.api.tools.generator.util.Util;
 import org.eclipse.pde.api.tools.internal.IApiXmlConstants;
@@ -86,6 +85,7 @@ import org.w3c.dom.Element;
  * <li>J2SE-1.5,</li>
  * <li>JavaSE-1.6,</li>
  * <li>JavaSE-1.7,</li>
+ * <li>JavaSE-1.8,</li>
  * <li>CDC-1.0_Foundation-1.0,</li>
  * <li>CDC-1.1_Foundation-1.1,</li>
  * <li>OSGi_Minimum-1.0</li>,
@@ -93,7 +93,7 @@ import org.w3c.dom.Element;
  * <li>OSGi_Minimum-1.2.</li>
  * </ol>
  * This can be called using:
- * -output c:/EE_descriptions -config C:\OSGi_profiles\configuration.properties -EEs JRE-1.1,J2SE-1.2,J2SE-1.3,J2SE-1.4,J2SE-1.5,JavaSE-1.6,JavaSE-1.7,CDC-1.0_Foundation-1.0,CDC-1.1_Foundation-1.1,OSGi_Minimum-1.0,OSGi_Minimum-1.1,OSGi_Minimum-1.2
+ * -output c:/EE_descriptions -config C:\OSGi_profiles\configuration.properties -EEs JRE-1.1,J2SE-1.2,J2SE-1.3,J2SE-1.4,J2SE-1.5,JavaSE-1.6,JavaSE-1.7,JavaSE-1.8,CDC-1.0_Foundation-1.0,CDC-1.1_Foundation-1.1,OSGi_Minimum-1.0,OSGi_Minimum-1.1,OSGi_Minimum-1.2
  */
 public class EEGenerator {
 	static class AbstractNode {
@@ -1369,7 +1369,7 @@ public class EEGenerator {
 			InputStream inputStream = null;
 			try {
 				inputStream = docZip.getInputStream(entry);
-				return org.eclipse.jdt.internal.compiler.util.Util.getInputStreamAsCharArray(inputStream, -1, null);
+				return Util.getInputStreamAsCharArray(inputStream, -1, null);
 			} catch(IOException e) {
 				e.printStackTrace();
 			} finally {
@@ -1384,19 +1384,19 @@ public class EEGenerator {
 			return null;
 		}
 		static boolean isFinal(int accessFlags) {
-			return (accessFlags & ClassFileConstants.AccFinal) != 0;
+			return (accessFlags & Flags.AccFinal) != 0;
 		}
 		static boolean isPrivate(int accessFlags) {
-			return (accessFlags & ClassFileConstants.AccPrivate) != 0;
+			return (accessFlags & Flags.AccPrivate) != 0;
 		}
 		static boolean isProtected(int accessFlags) {
-			return (accessFlags & ClassFileConstants.AccProtected) != 0;
+			return (accessFlags & Flags.AccProtected) != 0;
 		}
 		static boolean isPublic(int accessFlags) {
-			return (accessFlags & ClassFileConstants.AccPublic) != 0;
+			return (accessFlags & Flags.AccPublic) != 0;
 		}
 		static boolean isStatic(int accessFlags) {
-			return (accessFlags & ClassFileConstants.AccStatic) != 0;
+			return (accessFlags & Flags.AccStatic) != 0;
 		}
 
 		private static boolean isVisibleField(int typeAccessFlags, int fieldAccessFlags) {
@@ -1663,7 +1663,7 @@ public class EEGenerator {
 			if (this.superinterfacesNames != null && this.superinterfacesNames.length != 0) {
 				type.setAttribute(IApiXmlConstants.ATTR_SUPER_INTERFACES, Util.getInterfaces(this.superinterfacesNames));
 			}
-			type.setAttribute(IApiXmlConstants.ATTR_INTERFACE, Boolean.toString((this.modifiers & ClassFileConstants.AccInterface) != 0));
+			type.setAttribute(IApiXmlConstants.ATTR_INTERFACE, Boolean.toString((this.modifiers & Flags.AccInterface) != 0));
 			persistAnnotations(type, OSGiProfileName);
 			if (this.fields != null) {
 				Field[] allFields = new Field[this.fields.size()];
@@ -1733,6 +1733,7 @@ public class EEGenerator {
 			"J2SE-1.5", //$NON-NLS-1$
 			"JavaSE-1.6", //$NON-NLS-1$
 			"JavaSE-1.7", //$NON-NLS-1$
+			"JavaSE-1.8", //$NON-NLS-1$
 			"CDC-1.0_Foundation-1.0", //$NON-NLS-1$
 			"CDC-1.1_Foundation-1.1", //$NON-NLS-1$
 			"OSGi_Minimum-1.0", //$NON-NLS-1$
@@ -1847,6 +1848,8 @@ public class EEGenerator {
 					}
 					mode = DEFAULT;
 					continue;
+				default:
+					break;
 			}
 		}
 		if (this.output == null) {

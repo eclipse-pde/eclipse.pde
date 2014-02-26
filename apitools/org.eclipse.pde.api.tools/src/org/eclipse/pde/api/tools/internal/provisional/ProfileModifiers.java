@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 IBM Corporation and others.
+ * Copyright (c) 2007, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,8 @@ package org.eclipse.pde.api.tools.internal.provisional;
  * <li>J2SE-1.4</li>
  * <li>J2SE-1.5</li>
  * <li>JavaSE-1.6</li>
+ * <li>JavaSE-1.7</li>
+ * <li>JavaSE-1.8</li>
  * <li>JRE-1.1</li>
  * <li>OSGi_Minimum-1.0</li>
  * <li>OSGi_Minimum-1.1</li>
@@ -42,6 +44,7 @@ public final class ProfileModifiers {
 	public static final String J2SE_1_5_NAME = "J2SE-1.5"; //$NON-NLS-1$
 	public static final String JAVASE_1_6_NAME = "JavaSE-1.6"; //$NON-NLS-1$
 	public static final String JAVASE_1_7_NAME = "JavaSE-1.7"; //$NON-NLS-1$
+	public static final String JAVASE_1_8_NAME = "JavaSE-1.8"; //$NON-NLS-1$
 	public static final String JRE_1_1_NAME = "JRE-1.1"; //$NON-NLS-1$
 	public static final String OSGI_MINIMUM_1_0_NAME = "OSGi/Minimum-1.0"; //$NON-NLS-1$
 	public static final String OSGI_MINIMUM_1_1_NAME = "OSGi/Minimum-1.1"; //$NON-NLS-1$
@@ -88,7 +91,7 @@ public final class ProfileModifiers {
 	public static final int JAVASE_1_6 = 0x0080;
 
 	/**
-	 * Constant indicating the corresponding element has been defined in the JavaSE-1.6 profile
+	 * Constant indicating the corresponding element has been defined in the JavaSE-1.7 profile
 	 */
 	public static final int JAVASE_1_7 = 0x0100;
 
@@ -108,6 +111,11 @@ public final class ProfileModifiers {
 	public static final int OSGI_MINIMUM_1_2 = 0x0800;
 	
 	/**
+	 * Constant indicating the corresponding element has been defined in the JavaSE-1.8 profile
+	 */
+	public static final int JAVASE_1_8 = 0x1000;
+	
+	/**
 	 * Constant indicating all the OSGi profiles are defined
 	 */
 	public static final int OSGI_MINIMUM_MASK = OSGI_MINIMUM_1_0 | OSGI_MINIMUM_1_1 | OSGI_MINIMUM_1_2;
@@ -120,7 +128,7 @@ public final class ProfileModifiers {
 	/**
 	 * Constant indicating all the jres profiles are defined
 	 */
-	public static final int JRES_MAX = JRE_1_1 | J2SE_1_2 | J2SE_1_3 | J2SE_1_4 | J2SE_1_5 | JAVASE_1_6 | JAVASE_1_7;
+	public static final int JRES_MAX = JRE_1_1 | J2SE_1_2 | J2SE_1_3 | J2SE_1_4 | J2SE_1_5 | JAVASE_1_6 | JAVASE_1_7 | JAVASE_1_8;
 
 	/**
 	 * Constructor
@@ -207,6 +215,16 @@ public final class ProfileModifiers {
 	public static boolean isJAVASE_1_7(int modifiers) {
 		return (modifiers & JAVASE_1_7) > 0;
 	}
+	
+	/**
+	 * Returns if the JAVASE_1_8 modifier has been set in the given modifiers.
+	 *
+	 * @param modifiers the given modifiers
+	 * @return true if the JAVASE_1_8 modifier has been set in the specified modifiers, false otherwise
+	 */
+	public static boolean isJAVASE_1_8(int modifiers) {
+		return (modifiers & JAVASE_1_8) > 0;
+	}
 
 	/**
 	 * Returns if the JRE_1_1 modifier has been set in the given modifiers.
@@ -276,6 +294,9 @@ public final class ProfileModifiers {
 		if (JAVASE_1_7_NAME.equals(profileName)) {
 			return JAVASE_1_7;
 		}
+		if (JAVASE_1_8_NAME.equals(profileName)) {
+			return JAVASE_1_8;
+		}
 		if (JRE_1_1_NAME.equals(profileName)) {
 			return JRE_1_1;
 		}
@@ -309,6 +330,8 @@ public final class ProfileModifiers {
 				return JAVASE_1_6_NAME;
 			case JAVASE_1_7 :
 				return JAVASE_1_7_NAME;
+			case JAVASE_1_8 :
+				return JAVASE_1_8_NAME;
 			case JRE_1_1 :
 				return JRE_1_1_NAME;
 			case OSGI_MINIMUM_1_0 :
@@ -354,10 +377,10 @@ public final class ProfileModifiers {
 			J2SE_1_5,
 			JAVASE_1_6,
 			JAVASE_1_7,
+			JAVASE_1_8,
 			OSGI_MINIMUM_1_0,
 			OSGI_MINIMUM_1_1,
 			OSGI_MINIMUM_1_2,
 		};
 	}
 }
-
