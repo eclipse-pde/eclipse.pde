@@ -62,11 +62,9 @@ import org.eclipse.pde.api.tools.internal.IApiXmlConstants;
 import org.eclipse.pde.api.tools.internal.provisional.ProfileModifiers;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.Attribute;
-import org.objectweb.asm.ClassAdapter;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.FieldVisitor;
-import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.w3c.dom.DOMException;
@@ -1179,7 +1177,7 @@ public class EEGenerator {
 	/**
 	 * Class adapter
 	 */
-	static class StubClassAdapter extends ClassAdapter {
+	static class StubClassAdapter extends ClassVisitor {
 		static final int IGNORE_CLASS_FILE = 0x100;
 
 		int flags;
@@ -1193,7 +1191,7 @@ public class EEGenerator {
 		 * @param stubtype
 		 */
 		public StubClassAdapter(Type stubtype) {
-			super(new ClassWriter(0));
+			super(Opcodes.ASM5, new ClassWriter(0));
 			this.type = stubtype;
 		}
 
@@ -1210,7 +1208,7 @@ public class EEGenerator {
 
 		/*
 		 * (non-Javadoc)
-		 * @see org.objectweb.asm.ClassAdapter#visit(int, int, java.lang.String,
+		 * @see org.objectweb.asm.ClassVisitor#visit(int, int, java.lang.String,
 		 * java.lang.String, java.lang.String, java.lang.String[])
 		 */
 		@Override
@@ -1227,7 +1225,7 @@ public class EEGenerator {
 		/*
 		 * (non-Javadoc)
 		 * @see
-		 * org.objectweb.asm.ClassAdapter#visitAttribute(org.objectweb.asm.Attribute
+		 * org.objectweb.asm.ClassVisitor#visitAttribute(org.objectweb.asm.Attribute
 		 * )
 		 */
 		@Override
@@ -1243,7 +1241,7 @@ public class EEGenerator {
 
 		/*
 		 * (non-Javadoc)
-		 * @see org.objectweb.asm.ClassAdapter#visitField(int, java.lang.String,
+		 * @see org.objectweb.asm.ClassVisitor#visitField(int, java.lang.String,
 		 * java.lang.String, java.lang.String, java.lang.Object)
 		 */
 		@Override
@@ -1257,7 +1255,7 @@ public class EEGenerator {
 
 		/*
 		 * (non-Javadoc)
-		 * @see org.objectweb.asm.ClassAdapter#visitInnerClass(java.lang.String,
+		 * @see org.objectweb.asm.ClassVisitor#visitInnerClass(java.lang.String,
 		 * java.lang.String, java.lang.String, int)
 		 */
 		@Override
@@ -1270,7 +1268,7 @@ public class EEGenerator {
 
 		/*
 		 * (non-Javadoc)
-		 * @see org.objectweb.asm.ClassAdapter#visitMethod(int,
+		 * @see org.objectweb.asm.ClassVisitor#visitMethod(int,
 		 * java.lang.String, java.lang.String, java.lang.String,
 		 * java.lang.String[])
 		 */
@@ -1289,7 +1287,7 @@ public class EEGenerator {
 				return null;
 			}
 			final StubMethod method = this.stub.addMethod(methodName, desc);
-			return new MethodAdapter(super.visitMethod(access, methodName, desc, signature, exceptions)) {
+			return new MethodVisitor(Opcodes.ASM5, super.visitMethod(access, methodName, desc, signature, exceptions)) {
 				@Override
 				public AnnotationVisitor visitAnnotation(String sig, boolean visible) {
 					if (visible && "Ljava/lang/invoke/MethodHandle$PolymorphicSignature;".equals(sig)) { //$NON-NLS-1$
@@ -1335,75 +1333,6 @@ public class EEGenerator {
 	}
 
 	static class Type extends AbstractNode implements Comparable<Type> {
-		private static boolean checkDocStatus(IFieldInfo fieldInfo, char[] contents) {
-			if (contents == null) {
-				return true;
-			}
-			StringBuffer buffer = new StringBuffer();
-			buffer.append(ANCHOR_PREFIX_START).append(fieldInfo.getName()).append(ANCHOR_PREFIX_END);
-			char[] anchor = String.valueOf(buffer).toCharArray();
-			return CharOperation.indexOf(anchor, contents, false) != -1;
-		}
-
-		private static boolean checkDocStatus(int startingIndex, int accessFlags, char[] selector, char[] signature, char[] contents) {
-			if (contents == null) {
-				return true;
-			}
-			// retrieve the generic signature if any
-			char[] newsignature = CharOperation.replaceOnCopy(signature, '/', '.');
-			char[] anchor = org.eclipse.jdt.internal.core.util.Util.toAnchor(startingIndex, newsignature, selector, Flags.isVarargs(accessFlags));
-			return CharOperation.indexOf(anchor, contents, true) != -1;
-		}
-
-		static char[] getDocContents(ProfileInfo info, Type type, ZipFile docZip, String docURL, String docRoot) {
-			if (docZip == null && docURL == null) {
-				if (DEBUG) {
-					System.out.println("No javadoc zip or url specified for " + info.getProfileFileName()); //$NON-NLS-1$
-				}
-				return null;
-			}
-			String typeName = ProfileInfo.getDocTypeName(docRoot, type);
-			if (DEBUG) {
-				System.out.println("Retrieve javadoc for type " + typeName); //$NON-NLS-1$
-			}
-			if (docZip == null) {
-				// docURL is not null
-				if (DEBUG) {
-					System.out.println("Retrieve javadoc for type " + typeName + " using javadoc url"); //$NON-NLS-1$ //$NON-NLS-2$
-				}
-				return info.getOnlineDocContents(docURL, typeName);
-			}
-			if (DEBUG) {
-				System.out.println("Retrieve javadoc for type " + typeName + " using javadoc zip"); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-			ZipEntry entry = docZip.getEntry(typeName);
-			if (entry == null) {
-				if (DEBUG) {
-					System.out.println("No entry found in javadoc zip for " + typeName); //$NON-NLS-1$
-				}
-				return null;
-			}
-			if (DEBUG) {
-				System.out.println("Got an entry found in javadoc zip for " + typeName); //$NON-NLS-1$
-			}
-			InputStream inputStream = null;
-			try {
-				inputStream = docZip.getInputStream(entry);
-				return Util.getInputStreamAsCharArray(inputStream, -1, null);
-			} catch (IOException e) {
-				e.printStackTrace();
-			} finally {
-				if (inputStream != null) {
-					try {
-						inputStream.close();
-					} catch (IOException e) {
-						// ignore
-					}
-				}
-			}
-			return null;
-		}
-
 		static boolean isFinal(int accessFlags) {
 			return (accessFlags & Flags.AccFinal) != 0;
 		}
@@ -1506,12 +1435,11 @@ public class EEGenerator {
 				}
 				this.superinterfacesNames = interfaceNames;
 				this.modifiers = reader.getAccessFlags();
-				char[] contents = getDocContents(info, this, docZip, docURL, docRoot);
 				IFieldInfo[] fieldInfos = reader.getFieldInfos();
 				int length = fieldInfos.length;
 				for (int i = 0; i < length; i++) {
 					IFieldInfo fieldInfo = fieldInfos[i];
-					if (isVisibleField(this.modifiers, fieldInfo.getAccessFlags()) && checkDocStatus(fieldInfo, contents)) {
+					if (isVisibleField(this.modifiers, fieldInfo.getAccessFlags())) {
 						if (fields == null) {
 							this.fields = new HashSet<Field>();
 						}
@@ -1543,24 +1471,13 @@ public class EEGenerator {
 					}
 					int accessFlags = methodInfo.getAccessFlags();
 					if (isVisibleMethod(this.modifiers, accessFlags)) {
-						char[] methodDocName = null;
-						int index = startingIndex;
-						if (methodInfo.isConstructor()) {
-							// use the type simple name
-							methodDocName = Util.getSimpleNameAsCharArray(this.name);
-						} else {
-							methodDocName = methodInfo.getName();
-							index = 0;
+						if (methods == null) {
+							this.methods = new HashSet<Method>();
 						}
-						if (checkDocStatus(index, accessFlags, methodDocName, signature, contents)) {
-							if (methods == null) {
-								this.methods = new HashSet<Method>();
-							}
-							Method method = new Method(accessFlags, methodInfo.getName(), methodInfo.getDescriptor(), signatureAttribute == null ? null : signature);
-							methods.add(method);
-							if (DEBUG) {
-								System.out.println("Adding method: " + method); //$NON-NLS-1$
-							}
+						Method method = new Method(accessFlags, methodInfo.getName(), methodInfo.getDescriptor(), signatureAttribute == null ? null : signature);
+						methods.add(method);
+						if (DEBUG) {
+							System.out.println("Adding method: " + method); //$NON-NLS-1$
 						}
 					}
 				}
