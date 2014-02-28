@@ -1165,7 +1165,7 @@ public class EEGenerator {
 	/**
 	 * Class adapter
 	 */
-	static class StubClassAdapter extends ClassVisitor {
+	static class StubClassAdapter extends ClassAdapter {
 		static final int IGNORE_CLASS_FILE = 0x100;
 
 		int flags;
@@ -1178,7 +1178,7 @@ public class EEGenerator {
 		 * @param stubtype
 		 */
 		public StubClassAdapter(Type stubtype) {
-			super(Opcodes.ASM5, new ClassWriter(0));
+			super(new ClassWriter(0));
 			this.type = stubtype;
 		}
 
@@ -1225,7 +1225,7 @@ public class EEGenerator {
 		}
 		
 		/* (non-Javadoc)
-		 * @see org.objectweb.asm.ClassVisitor#visitField(int, java.lang.String, java.lang.String, java.lang.String, java.lang.Object)
+		 * @see org.objectweb.asm.ClassAdapter#visitField(int, java.lang.String, java.lang.String, java.lang.String, java.lang.Object)
 		 */
 		public FieldVisitor visitField(int access, String fieldName, String desc, String signature, Object value) {
 			if (type.getField(fieldName) == null) {
@@ -1236,7 +1236,7 @@ public class EEGenerator {
 		}
 		
 		/* (non-Javadoc)
-		 * @see org.objectweb.asm.ClassVisitor#visitInnerClass(java.lang.String, java.lang.String, java.lang.String, int)
+		 * @see org.objectweb.asm.ClassAdapter#visitInnerClass(java.lang.String, java.lang.String, java.lang.String, int)
 		 */
 		public void visitInnerClass(String innerClassName, String outerName, String innerName, int access) {
 			if (this.name.equals(innerClassName) && (outerName == null)) {
@@ -1245,7 +1245,7 @@ public class EEGenerator {
 			}
 		}
 		/* (non-Javadoc)
-		 * @see org.objectweb.asm.ClassVisitor#visitMethod(int, java.lang.String, java.lang.String, java.lang.String, java.lang.String[])
+		 * @see org.objectweb.asm.ClassAdapter#visitMethod(int, java.lang.String, java.lang.String, java.lang.String, java.lang.String[])
 		 */
 		public MethodVisitor visitMethod(int access,
 				String methodName,
@@ -1266,7 +1266,7 @@ public class EEGenerator {
 				return null;
 			}
 			final StubMethod method = this.stub.addMethod(methodName, desc);
-			return new MethodVisitor(Opcodes.ASM5, super.visitMethod(access, methodName, desc, signature, exceptions)) {
+			return new MethodAdapter(super.visitMethod(access, methodName, desc, signature, exceptions)) {
 				@Override
 				public AnnotationVisitor visitAnnotation(String sig, boolean visible) {
 					if (visible && "Ljava/lang/invoke/MethodHandle$PolymorphicSignature;".equals(sig)) { //$NON-NLS-1$

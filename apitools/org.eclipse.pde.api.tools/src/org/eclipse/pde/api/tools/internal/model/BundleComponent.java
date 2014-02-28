@@ -834,7 +834,6 @@ public class BundleComponent extends Component {
 			}
 			return new String(Util.getInputStreamAsCharArray(stream, -1, IApiCoreConstants.UTF_8));
 		} catch(IOException e) {
-			//TODO abort
 			ApiPlugin.log(e);
 		} finally {
 			closingZipFileAndStream(stream, jarFile);
@@ -1178,9 +1177,11 @@ public class BundleComponent extends Component {
 						temp = new String[] { ProfileModifiers.J2SE_1_5_NAME };
 					} else if (ProfileModifiers.isJAVASE_1_6(values)) {
 						temp = new String[] { ProfileModifiers.JAVASE_1_6_NAME };
-					} else {
-						// this is 1.7
+					} else if (ProfileModifiers.isJAVASE_1_7(values)) {
 						temp = new String[] { ProfileModifiers.JAVASE_1_7_NAME };
+					} else {
+						// this is 1.8
+						temp = new String[] { ProfileModifiers.JAVASE_1_8_NAME };
 					}
 				}
 				if (ProfileModifiers.isCDC_Foundation(values)) {
