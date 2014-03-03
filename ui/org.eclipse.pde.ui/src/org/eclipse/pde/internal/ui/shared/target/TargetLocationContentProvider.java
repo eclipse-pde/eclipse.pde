@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 IBM Corporation and others.
+ * Copyright (c) 2013, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,8 +55,8 @@ public class TargetLocationContentProvider implements ITreeContentProvider {
 					}
 				}
 			}
-		} else if (parentElement instanceof MultiStatus) {
-			return ((MultiStatus) parentElement).getChildren();
+		} else if (parentElement instanceof IStatus) {
+			return ((IStatus) parentElement).getChildren();
 		} else {
 			ITreeContentProvider provider = (ITreeContentProvider) Platform.getAdapterManager().getAdapter(parentElement, ITreeContentProvider.class);
 			if (provider != null) {
