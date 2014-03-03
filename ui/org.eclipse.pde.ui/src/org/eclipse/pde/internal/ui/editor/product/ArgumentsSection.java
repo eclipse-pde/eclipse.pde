@@ -20,8 +20,7 @@ import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.parts.ComboViewerPart;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CTabFolder;
-import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.custom.*;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -114,7 +113,11 @@ public class ArgumentsSection extends PDESection {
 		fArchCombo.getControl().setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false));
 		fArchCombo.setItems(TAB_ARCHLABELS);
 		fLastArch = 0;
-		((Combo) fArchCombo.getControl()).select(fLastArch);
+		Control archComboControl = fArchCombo.getControl();
+		if (archComboControl instanceof Combo)
+			((Combo) archComboControl).select(fLastArch);
+		else
+			((CCombo) archComboControl).select(fLastArch);
 		fArchCombo.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				if (fProgramArgs.isDirty())
@@ -175,7 +178,11 @@ public class ArgumentsSection extends PDESection {
 	@Override
 	public void refresh() {
 		fLastTab = fTabFolder.getSelectionIndex();
-		fLastArch = ((Combo) fArchCombo.getControl()).getSelectionIndex();
+		Control fArchComboControl = fArchCombo.getControl();
+		if (fArchComboControl instanceof Combo)
+			fLastArch = ((Combo) fArchComboControl).getSelectionIndex();
+		else
+			fLastArch = ((CCombo) fArchComboControl).getSelectionIndex();
 		IArgumentsInfo launcherArguments = getLauncherArguments();
 		fProgramArgs.setValue(launcherArguments.getProgramArguments(fLastTab, fLastArch), true);
 		fVMArgs.setValue(launcherArguments.getVMArguments(fLastTab, fLastArch), true);
