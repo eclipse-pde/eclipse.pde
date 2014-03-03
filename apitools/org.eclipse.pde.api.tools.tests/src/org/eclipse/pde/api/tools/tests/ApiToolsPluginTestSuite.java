@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 IBM Corporation and others.
+ * Copyright (c) 2007, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,9 +15,11 @@ import junit.framework.TestSuite;
 
 import org.eclipse.pde.api.tools.anttasks.tests.ApiToolsAntTasksTestSuite;
 import org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest;
+import org.eclipse.pde.api.tools.builder.tests.java8.Java8TypeAnnotationTests;
 import org.eclipse.pde.api.tools.model.tests.ApiFilterStoreTests;
 import org.eclipse.pde.api.tools.model.tests.FilterStoreTests;
 import org.eclipse.pde.api.tools.problems.tests.ApiProblemTests;
+import org.eclipse.pde.api.tools.tests.util.ProjectUtils;
 import org.eclipse.pde.api.tools.util.tests.ApiBaselineManagerTests;
 import org.eclipse.pde.api.tools.util.tests.ApiDescriptionProcessorTests;
 import org.eclipse.pde.api.tools.util.tests.PreferencesTests;
@@ -54,5 +56,8 @@ public class ApiToolsPluginTestSuite extends TestSuite {
 		addTest(ApiBuilderTest.suite());
 		addTest(ApiToolsAntTasksTestSuite.suite());
 		//addTest(ExternalDependencyTestSuite.suite());
+		if(ProjectUtils.isJava8Compatible()) {
+			addTest(new TestSuite(Java8TypeAnnotationTests.class));
+		}
 	}
 }
