@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others.
+ * Copyright (c) 2008, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -100,7 +100,11 @@ public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator2
 			case IApiMarkerConstants.DUPLICATE_ANNOTATION_MARKER_ID: {
 				return new IMarkerResolution[] { new DuplicateAnnotationResolution(marker) };
 			}
-			case IApiMarkerConstants.API_COMPONENT_RESOLUTION_MARKER_ID: {
+			 case IApiMarkerConstants.API_COMPONENT_RESOLUTION_MARKER_ID: {
+				  int id = ApiProblemFactory.getProblemId(marker);
+				  if(id > -1 && ApiProblemFactory.getProblemKind(id) == IApiProblem.UNSUPPORTED_BYTECODES) {
+					  return NO_RESOLUTIONS;
+				  }
 				return new IMarkerResolution[] { new UpdateProjectSettingResolution(marker) };
 			}
 			case IApiMarkerConstants.UNUSED_PROBLEM_FILTER_MARKER_ID: {
