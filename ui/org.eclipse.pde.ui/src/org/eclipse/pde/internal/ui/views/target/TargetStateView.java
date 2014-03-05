@@ -23,16 +23,23 @@ public class TargetStateView extends PageBookView {
 	public static final String VIEW_ID = "org.eclipse.pde.ui.TargetPlatformState"; //$NON-NLS-1$
 	private Map<IPageBookViewPage, IWorkbenchPart> fPagesToParts;
 	private Map<IWorkbenchPart, IPageBookViewPage> fPartsToPages;
-	protected static final IWorkbenchPart PART_STATE = new DummyPart();
+	private IWorkbenchPart fPartState;
 
 	static class DummyPart implements IWorkbenchPart {
+		private IWorkbenchPartSite fSite;
+
+		public DummyPart(IWorkbenchPartSite site) {
+			fSite = site;
+		}
+
 		public void addPropertyListener(IPropertyListener listener) {/* dummy */
 		}
 
 		public void createPartControl(Composite parent) {/* dummy */
 		}
 
-		public void dispose() {/* dummy */
+		public void dispose() {
+			fSite = null;
 		}
 
 		public Object getAdapter(Class adapter) {
@@ -40,7 +47,7 @@ public class TargetStateView extends PageBookView {
 		}
 
 		public IWorkbenchPartSite getSite() {
-			return null;
+			return fSite;
 		}
 
 		public String getTitle() {
@@ -65,6 +72,19 @@ public class TargetStateView extends PageBookView {
 	public TargetStateView() {
 		fPartsToPages = new HashMap<IWorkbenchPart, IPageBookViewPage>(4);
 		fPagesToParts = new HashMap<IPageBookViewPage, IWorkbenchPart>(4);
+	}
+
+	@Override
+	public void init(IViewSite site) throws PartInitException {
+		super.init(site);
+		fPartState = new DummyPart(site);
+	}
+
+	@Override
+	public void dispose() {
+		super.dispose();
+		fPartState.dispose();
+		fPartState = null;
 	}
 
 	@Override
@@ -123,7 +143,7 @@ public class TargetStateView extends PageBookView {
 	}
 
 	private IWorkbenchPart getDefaultPart() {
-		return PART_STATE;
+		return fPartState;
 	}
 
 }

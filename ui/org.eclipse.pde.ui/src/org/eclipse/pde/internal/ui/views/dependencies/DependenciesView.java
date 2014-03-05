@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,13 +32,20 @@ import org.eclipse.ui.part.*;
 public class DependenciesView extends PageBookView implements IPreferenceConstants, IHelpContextIds {
 
 	static class DummyPart implements IWorkbenchPart {
+		private IWorkbenchPartSite fSite;
+
+		public DummyPart(IWorkbenchPartSite site) {
+			fSite = site;
+		}
+
 		public void addPropertyListener(IPropertyListener listener) {/* dummy */
 		}
 
 		public void createPartControl(Composite parent) {/* dummy */
 		}
 
-		public void dispose() {/* dummy */
+		public void dispose() {
+			fSite = null;
 		}
 
 		public Object getAdapter(Class adapter) {
@@ -46,7 +53,7 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 		}
 
 		public IWorkbenchPartSite getSite() {
-			return null;
+			return fSite;
 		}
 
 		public String getTitle() {
@@ -180,11 +187,6 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 		}
 	}
 
-	protected static final IWorkbenchPart PART_CALLEES_LIST = new DummyPart();
-	protected static final IWorkbenchPart PART_CALLEES_TREE = new DummyPart();
-	protected static final IWorkbenchPart PART_CALLERS_LIST = new DummyPart();
-	protected static final IWorkbenchPart PART_CALLERS_TREE = new DummyPart();
-
 	public static final String TREE_ACTION_GROUP = "tree"; //$NON-NLS-1$
 
 	protected static final String MEMENTO_KEY_INPUT = "inputPluginId"; //$NON-NLS-1$
@@ -212,6 +214,11 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 	private HistoryDropDownAction fHistoryDropDownAction;
 
 	private IWorkbenchPart fLastDependenciesPart = null;
+
+	private IWorkbenchPart fPartCalleesList;
+	private IWorkbenchPart fPartCalleesTree;
+	private IWorkbenchPart fPartCallersList;
+	private IWorkbenchPart fPartCallersTree;
 
 	/**
 	 * 
@@ -255,14 +262,14 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 	private IWorkbenchPart getDefaultPart() {
 		if (fPreferences.getBoolean(DEPS_VIEW_SHOW_CALLERS)) {
 			if (fPreferences.getBoolean(DEPS_VIEW_SHOW_LIST)) {
-				return PART_CALLERS_LIST;
+				return fPartCallersList;
 			}
-			return PART_CALLERS_TREE;
+			return fPartCallersTree;
 		}
 		if (fPreferences.getBoolean(DEPS_VIEW_SHOW_LIST)) {
-			return PART_CALLEES_LIST;
+			return fPartCalleesList;
 		}
-		return PART_CALLEES_TREE;
+		return fPartCalleesTree;
 	}
 
 	/**
@@ -270,13 +277,13 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 	 */
 	private IPageBookViewPage createPage(IWorkbenchPart part) {
 		IPageBookViewPage page;
-		if (part == PART_CALLEES_TREE) {
+		if (part == fPartCalleesTree) {
 			page = new DependenciesViewTreePage(this, new CalleesTreeContentProvider(this));
-		} else if (part == PART_CALLEES_LIST) {
+		} else if (part == fPartCalleesList) {
 			page = new DependenciesViewListPage(this, new CalleesListContentProvider(this));
-		} else if (part == PART_CALLERS_TREE) {
+		} else if (part == fPartCallersTree) {
 			page = new DependenciesViewTreePage(this, new CallersTreeContentProvider(this));
-		} else if (part == PART_CALLERS_LIST) {
+		} else if (part == fPartCallersList) {
 			page = new DependenciesViewListPage(this, new CallersListContentProvider(this));
 		} else {
 			page = new StateViewPage(this);
@@ -373,6 +380,11 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 	@Override
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		super.init(site, memento);
+		fPartCalleesList = new DummyPart(site);
+		fPartCalleesTree = new DummyPart(site);
+		fPartCallersList = new DummyPart(site);
+		fPartCallersTree = new DummyPart(site);
+
 		if (memento == null)
 			return;
 		String id = memento.getString(MEMENTO_KEY_INPUT);
@@ -472,17 +484,17 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 	void setPresentation(boolean listNotTree) {
 		IWorkbenchPart currentPart = getCurrentContributingPart();
 		if (listNotTree) {
-			if (currentPart == PART_CALLEES_TREE) {
-				partActivated(PART_CALLEES_LIST);
-			} else if (currentPart == PART_CALLERS_TREE) {
-				partActivated(PART_CALLERS_LIST);
+			if (currentPart == fPartCalleesTree) {
+				partActivated(fPartCalleesList);
+			} else if (currentPart == fPartCallersTree) {
+				partActivated(fPartCallersList);
 			}
 
 		} else {
-			if (currentPart == PART_CALLEES_LIST) {
-				partActivated(PART_CALLEES_TREE);
-			} else if (currentPart == PART_CALLERS_LIST) {
-				partActivated(PART_CALLERS_TREE);
+			if (currentPart == fPartCalleesList) {
+				partActivated(fPartCalleesTree);
+			} else if (currentPart == fPartCallersList) {
+				partActivated(fPartCallersTree);
 			}
 
 		}
@@ -491,17 +503,17 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 	void setViewType(boolean callers) {
 		IWorkbenchPart currentPart = getCurrentContributingPart();
 		if (callers) {
-			if (currentPart == PART_CALLEES_TREE) {
-				partActivated(PART_CALLERS_TREE);
-			} else if (currentPart == PART_CALLEES_LIST) {
-				partActivated(PART_CALLERS_LIST);
+			if (currentPart == fPartCalleesTree) {
+				partActivated(fPartCallersTree);
+			} else if (currentPart == fPartCalleesList) {
+				partActivated(fPartCallersList);
 			}
 
 		} else {
-			if (currentPart == PART_CALLERS_TREE) {
-				partActivated(PART_CALLEES_TREE);
-			} else if (currentPart == PART_CALLERS_LIST) {
-				partActivated(PART_CALLEES_LIST);
+			if (currentPart == fPartCallersTree) {
+				partActivated(fPartCalleesTree);
+			} else if (currentPart == fPartCallersList) {
+				partActivated(fPartCalleesList);
 			}
 
 		}
@@ -544,11 +556,11 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 		} else if (!newInput.equals(PDECore.getDefault().getModelManager())) {
 			String name = PDEPlugin.getDefault().getLabelProvider().getText(newInput);
 			String title;
-			if (getCurrentContributingPart() == PART_CALLEES_TREE) {
+			if (getCurrentContributingPart() == fPartCalleesTree) {
 				title = NLS.bind(PDEUIMessages.DependenciesView_callees_tree_title, name);
-			} else if (getCurrentContributingPart() == PART_CALLEES_LIST) {
+			} else if (getCurrentContributingPart() == fPartCalleesList) {
 				title = NLS.bind(PDEUIMessages.DependenciesView_callees_list_title, name);
-			} else if (getCurrentContributingPart() == PART_CALLERS_TREE) {
+			} else if (getCurrentContributingPart() == fPartCallersTree) {
 				title = NLS.bind(PDEUIMessages.DependenciesView_callers_tree_title, name);
 			} else {
 				title = NLS.bind(PDEUIMessages.DependenciesView_callers_list_title, name);
@@ -643,6 +655,15 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 			partActivated(getDefaultPart());
 		fLastDependenciesPart = null;
 		getViewSite().getActionBars().getToolBarManager().update(true);
+	}
+
+	@Override
+	public void dispose() {
+		super.dispose();
+		fPartCalleesList.dispose();
+		fPartCalleesTree.dispose();
+		fPartCallersList.dispose();
+		fPartCallersTree.dispose();
 	}
 
 }
