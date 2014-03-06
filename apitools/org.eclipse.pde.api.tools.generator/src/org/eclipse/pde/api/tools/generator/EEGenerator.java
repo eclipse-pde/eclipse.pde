@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2013 IBM Corporation and others.
+ * Copyright (c) 2011, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -87,6 +87,7 @@ import org.w3c.dom.Element;
  * <li>J2SE-1.5,</li>
  * <li>JavaSE-1.6,</li>
  * <li>JavaSE-1.7,</li>
+ * <li>JavaSE-1.8,</li>
  * <li>CDC-1.0_Foundation-1.0,</li>
  * <li>CDC-1.1_Foundation-1.1,</li>
  * <li>OSGi_Minimum-1.0</li>,
@@ -95,9 +96,7 @@ import org.w3c.dom.Element;
  * </ol>
  * This can be called using: -output c:/EE_descriptions -config
  * C:\OSGi_profiles\configuration.properties -EEs
- * JRE-1.1,J2SE-1.2,J2SE-1.3,J2SE-1.4,J2SE-1.5,JavaSE-1.6,JavaSE-1.7,CDC-
- * 1.0_Foundation-1.0,CDC-1.1_Foundation-1.1,OSGi_Minimum-1.0,OSGi_Minimum-1.1,OSGi_Min
- * i m u m - 1 . 2
+ * JRE-1.1,J2SE-1.2,J2SE-1.3,J2SE-1.4,J2SE-1.5,JavaSE-1.6,JavaSE-1.7,JavaSE-1.8,CDC-1.0_Foundation-1.0,CDC-1.1_Foundation-1.1,OSGi_Minimum-1.0,OSGi_Minimum-1.1,OSGi_Minimum-1.2
  */
 public class EEGenerator {
 	static class AbstractNode {
@@ -1775,6 +1774,7 @@ public class EEGenerator {
 				"J2SE-1.5", //$NON-NLS-1$
 				"JavaSE-1.6", //$NON-NLS-1$
 				"JavaSE-1.7", //$NON-NLS-1$
+				"JavaSE-1.8", //$NON-NLS-1$
 				"CDC-1.0_Foundation-1.0", //$NON-NLS-1$
 				"CDC-1.1_Foundation-1.1", //$NON-NLS-1$
 				"OSGi_Minimum-1.0", //$NON-NLS-1$
