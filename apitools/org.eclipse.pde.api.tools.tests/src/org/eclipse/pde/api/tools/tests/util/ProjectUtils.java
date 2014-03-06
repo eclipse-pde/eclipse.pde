@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others.
+ * Copyright (c) 2008, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -94,10 +94,20 @@ public class ProjectUtils {
 	}
 
 	/**
+	 * Returns if the currently running VM is version compatible with Java 8
+	 * 
+	 * @return <code>true</code> if a Java 8 (or greater) VM is running
+	 *         <code>false</code> otherwise
+	 */
+	public static boolean isJava8Compatible() {
+		return isCompatible(8);
+	}
+
+	/**
 	 * Returns if the current running system is compatible with the given Java
 	 * minor version
 	 * 
-	 * @param ver the version to test - either 4, 5, 6 or 7
+	 * @param ver the version to test - either 4, 5, 6 , 7 or 8
 	 * @return <code>true</code> if compatible <code>false</code> otherwise
 	 */
 	static boolean isCompatible(int ver) {

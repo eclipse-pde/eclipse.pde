@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others.
+ * Copyright (c) 2008, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eclipse.pde.api.tools.builder.tests.tags;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -21,6 +22,7 @@ import org.eclipse.jdt.core.tests.junit.extension.TestCase;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
+import org.eclipse.pde.api.tools.tests.util.ProjectUtils;
 
 /**
  * Test unsupported javadoc tags on methods in classes, interfaces, enums and
@@ -74,13 +76,15 @@ public class InvalidMethodTagTests extends TagTest {
 	 * @return all of the child test classes of this class
 	 */
 	private static Class<?>[] getAllTestClasses() {
-		Class<?>[] classes = new Class[] {
-				InvalidAnnotationMethodTagTests.class,
-				InvalidEnumMethodTagTests.class,
-				InvalidClassMethodTagTests.class,
-				InvalidClassConstructorTagTests.class,
-				InvalidInterfaceMethodTagTests.class };
-		return classes;
+		ArrayList<Class<?>> classes = new ArrayList<Class<?>>();
+		classes.add(InvalidAnnotationMethodTagTests.class);
+		classes.add(InvalidEnumMethodTagTests.class);
+		classes.add(InvalidClassMethodTagTests.class);
+		classes.add(InvalidInterfaceMethodTagTests.class);
+		if(ProjectUtils.isJava8Compatible()) {
+			classes.add(InvalidJava8InterfaceMethodTagTests.class);
+		}
+		return classes.toArray(new Class[classes.size()]);
 	}
 
 	/**
