@@ -58,7 +58,7 @@ public class Java8TypeAnnotationTests extends ApiBuilderTest {
 
 	@Override
 	protected IPath getTestSourcePath() {
-		return new Path("java8").append("annotations").append("types");
+		return new Path("java8").append("annotations").append("types"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 	
 	@Override
@@ -68,7 +68,7 @@ public class Java8TypeAnnotationTests extends ApiBuilderTest {
 
 	@Override
 	protected String getTestingProjectName() {
-		return "java8tags";
+		return "java8tags"; //$NON-NLS-1$
 	}
 	
 	/**
@@ -86,9 +86,9 @@ public class Java8TypeAnnotationTests extends ApiBuilderTest {
 	
 		IProject project = getEnv().getWorkspace().getRoot().getProject(getTestingProjectName());
 		if (!project.exists()) {
-			IPath path = TestSuiteHelper.getPluginDirectoryPath().append(TEST_SOURCE_ROOT).append("tagprojects").append(getTestingProjectName());
+			IPath path = TestSuiteHelper.getPluginDirectoryPath().append(TEST_SOURCE_ROOT).append("tagprojects").append(getTestingProjectName()); //$NON-NLS-1$
 			File dir = path.toFile();
-			assertTrue("Test data directory does not exist for: " + path.toOSString(), dir.exists());
+			assertTrue("Test data directory does not exist for: " + path.toOSString(), dir.exists()); //$NON-NLS-1$
 			createExistingProject(dir, true, true);
 		}
 	}
@@ -100,8 +100,8 @@ public class Java8TypeAnnotationTests extends ApiBuilderTest {
 	 */
 	void deployTest(String typename, boolean incremental, boolean hasproblems) {
 		try {
-			IPath typepath = new Path(getTestingProjectName()).append("src").append(typename).addFileExtension("java");
-			createWorkspaceFile(typepath, TestSuiteHelper.getPluginDirectoryPath().append(TEST_SOURCE_ROOT).append(getTestSourcePath()).append(typename).addFileExtension("java"));
+			IPath typepath = new Path(getTestingProjectName()).append("src").append(typename).addFileExtension("java"); //$NON-NLS-1$ //$NON-NLS-2$
+			createWorkspaceFile(typepath, TestSuiteHelper.getPluginDirectoryPath().append(TEST_SOURCE_ROOT).append(getTestSourcePath()).append(typename).addFileExtension("java")); //$NON-NLS-1$
 			if(incremental) {
 				incrementalBuild();
 			}
@@ -134,7 +134,7 @@ public class Java8TypeAnnotationTests extends ApiBuilderTest {
 	 * @throws Exception
 	 */
 	void x1(boolean inc) throws Exception{
-		deployTest("test1", inc, false);
+		deployTest("test1", inc, false); //$NON-NLS-1$
 	}
 	
 	public void test2I() throws Exception {
@@ -150,7 +150,7 @@ public class Java8TypeAnnotationTests extends ApiBuilderTest {
 	 * @throws Exception
 	 */
 	void x2(boolean inc) throws Exception{
-		deployTest("test2", inc, false);
+		deployTest("test2", inc, false); //$NON-NLS-1$
 	}
 	
 	public void test3I() throws Exception {
@@ -166,7 +166,7 @@ public class Java8TypeAnnotationTests extends ApiBuilderTest {
 	 * @throws Exception
 	 */
 	void x3(boolean inc) throws Exception{
-		deployTest("test3", inc, false);
+		deployTest("test3", inc, false); //$NON-NLS-1$
 	}
 	
 	public void test4I() throws Exception {
@@ -182,7 +182,7 @@ public class Java8TypeAnnotationTests extends ApiBuilderTest {
 	 * @throws Exception
 	 */
 	void x4(boolean inc) throws Exception{
-		deployTest("test4", inc, true);
+		deployTest("test4", inc, true); //$NON-NLS-1$
 	}
 	
 	public void test5I() throws Exception {
@@ -198,7 +198,7 @@ public class Java8TypeAnnotationTests extends ApiBuilderTest {
 	 * @throws Exception
 	 */
 	void x5(boolean inc) throws Exception{
-		deployTest("test5", inc, true);
+		deployTest("test5", inc, true); //$NON-NLS-1$
 	}
 	
 	public void test6I() throws Exception {
@@ -214,6 +214,6 @@ public class Java8TypeAnnotationTests extends ApiBuilderTest {
 	 * @throws Exception
 	 */
 	void x6(boolean inc) throws Exception{
-		deployTest("test6", inc, true);
+		deployTest("test6", inc, true); //$NON-NLS-1$
 	}
 }
