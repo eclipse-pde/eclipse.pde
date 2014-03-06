@@ -276,7 +276,7 @@ public final class JavadocTagManager {
 			newtag = new ApiJavadocTag(IApiJavadocTag.NO_OVERRIDE_TAG_ID, "nooverride", //$NON-NLS-1$
 			RestrictionModifiers.NO_OVERRIDE);
 			newtag.setApplicableTo(IApiJavadocTag.TYPE_CLASS, IApiJavadocTag.MEMBER_METHOD, CoreMessages.JavadocTagManager_method_no_overried);
-			newtag.setApplicableTo(IApiJavadocTag.TYPE_INTERFACE, IApiJavadocTag.MEMBER_METHOD, "This default method is not intended to be re-implemented or extended by clients."); //$NON-NLS-1$
+			newtag.setApplicableTo(IApiJavadocTag.TYPE_INTERFACE, IApiJavadocTag.MEMBER_METHOD, CoreMessages.JavadocTagManager_default_method_no_override);
 			tagcache.put(newtag.getTagId(), newtag);
 			list.add(newtag);
 
