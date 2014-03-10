@@ -22,6 +22,13 @@ public class ProductFeature extends ProductObject implements IProductFeature {
 	private String fId;
 	private String fVersion;
 
+	/*
+	 * Support for preserving tycho's installMode="root" feature
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=361722
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=429902
+	 */
+	private String fInstallMode;
+
 	public ProductFeature(IProductModel model) {
 		super(model);
 	}
@@ -31,6 +38,7 @@ public class ProductFeature extends ProductObject implements IProductFeature {
 			Element element = (Element) node;
 			fId = element.getAttribute("id"); //$NON-NLS-1$
 			fVersion = element.getAttribute("version"); //$NON-NLS-1$
+			fInstallMode = element.getAttribute("installMode"); //$NON-NLS-1$
 		}
 	}
 
@@ -38,6 +46,9 @@ public class ProductFeature extends ProductObject implements IProductFeature {
 		writer.print(indent + "<feature id=\"" + fId + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		if (fVersion != null && fVersion.length() > 0 && !fVersion.equals("0.0.0")) { //$NON-NLS-1$
 			writer.print(" version=\"" + fVersion + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		if (fInstallMode != null && !fInstallMode.equals("")) { //$NON-NLS-1$
+			writer.print(" installMode=\"" + fInstallMode + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		writer.println("/>"); //$NON-NLS-1$
 	}
