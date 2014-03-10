@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -218,21 +218,17 @@ public class BuilderTemplate extends PDETemplateSection {
 			iterate.setName("iterate"); //$NON-NLS-1$
 			with.add(iterate);
 
-			IPluginElement and = factory.createElement(iterate);
-			and.setName("and"); //$NON-NLS-1$
-			iterate.add(and);
+			IPluginElement adapt = factory.createElement(iterate);
+			adapt.setName("adapt"); //$NON-NLS-1$
+			adapt.setAttribute("type", "org.eclipse.core.resources.IProject"); //$NON-NLS-1$ //$NON-NLS-2$
+			iterate.add(adapt);
 
-			IPluginElement instanceof1 = factory.createElement(and);
-			instanceof1.setName("instanceof"); //$NON-NLS-1$
-			instanceof1.setAttribute("value", "org.eclipse.core.resources.IProject"); //$NON-NLS-1$ //$NON-NLS-2$
-			and.add(instanceof1);
-
-			IPluginElement test = factory.createElement(and);
+			IPluginElement test = factory.createElement(adapt);
 			test.setName("test"); //$NON-NLS-1$
 			test.setAttribute("property", "org.eclipse.core.resources.projectNature"); //$NON-NLS-1$ //$NON-NLS-2$
 			test.setAttribute("value", model.getPluginBase().getId() //$NON-NLS-1$
 					+ "." + getStringOption(KEY_NATURE_ID)); //$NON-NLS-1$
-			and.add(test);
+			adapt.add(test);
 
 			IPluginElement enableCommand = factory.createElement(menuContribution);
 			enableCommand.setName("command"); //$NON-NLS-1$
@@ -261,18 +257,14 @@ public class BuilderTemplate extends PDETemplateSection {
 			iterate2.setName("iterate"); //$NON-NLS-1$
 			with2.add(iterate2);
 
-			IPluginElement and2 = factory.createElement(iterate2);
-			and2.setName("and"); //$NON-NLS-1$
-			iterate2.add(and2);
+			IPluginElement adapt2 = factory.createElement(iterate2);
+			adapt2.setName("adapt"); //$NON-NLS-1$
+			adapt2.setAttribute("type", "org.eclipse.core.resources.IProject"); //$NON-NLS-1$ //$NON-NLS-2$
+			iterate2.add(adapt2);
 
-			IPluginElement instanceof2 = factory.createElement(and2);
-			instanceof2.setName("instanceof"); //$NON-NLS-1$
-			instanceof2.setAttribute("value", "org.eclipse.core.resources.IProject"); //$NON-NLS-1$ //$NON-NLS-2$
-			and2.add(instanceof2);
-
-			IPluginElement not = factory.createElement(and2);
+			IPluginElement not = factory.createElement(adapt2);
 			not.setName("not"); //$NON-NLS-1$
-			and2.add(not);
+			adapt2.add(not);
 
 			IPluginElement test2 = factory.createElement(not);
 			test2.setName("test"); //$NON-NLS-1$
