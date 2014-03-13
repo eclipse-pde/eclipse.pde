@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 IBM Corporation and others.
+ * Copyright (c) 2007, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,11 +36,10 @@ import org.eclipse.pde.api.tools.internal.util.Signatures;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.Attribute;
-import org.objectweb.asm.ClassAdapter;
 import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.Label;
-import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
@@ -53,7 +52,7 @@ import org.objectweb.asm.tree.ClassNode;
  * 
  * @since 1.0.0
  */
-public class ReferenceExtractor extends ClassAdapter {
+public class ReferenceExtractor extends ClassVisitor {
 
 	/**
 	 * A visitor for visiting java 5+ signatures
@@ -66,7 +65,7 @@ public class ReferenceExtractor extends ClassAdapter {
 	 * visitArrayType | (visitClassType visitTypeArgument* (visitInnerClassType
 	 * visitTypeArgument* )* visitEnd</tt> ) )
 	 */
-	class ClassFileSignatureVisitor implements SignatureVisitor {
+	class ClassFileSignatureVisitor extends SignatureVisitor {
 
 		protected int kind = -1;
 		protected int originalkind = -1;
@@ -77,6 +76,7 @@ public class ReferenceExtractor extends ClassAdapter {
 		protected List<Reference> references;
 
 		public ClassFileSignatureVisitor() {
+			super(Opcodes.ASM5);
 			this.references = new ArrayList<Reference>();
 		}
 
@@ -288,7 +288,7 @@ public class ReferenceExtractor extends ClassAdapter {
 	 * visit<i>X</i>Insn | visitLabel | visitTryCatchBlock | visitLocalVariable
 	 * | visitLineNumber)* visitMaxs ] visitEnd
 	 */
-	class ClassFileMethodVisitor extends MethodAdapter {
+	class ClassFileMethodVisitor extends MethodVisitor {
 		int argumentcount = 0;
 		LinePositionTracker linePositionTracker;
 		/**
@@ -309,7 +309,7 @@ public class ReferenceExtractor extends ClassAdapter {
 		 * @param mv
 		 */
 		public ClassFileMethodVisitor(MethodVisitor mv, String name, int argumentcount) {
-			super(mv);
+			super(Opcodes.ASM5, mv);
 			this.argumentcount = argumentcount;
 			this.linePositionTracker = new LinePositionTracker();
 			this.lastLineNumber = -1;
@@ -704,7 +704,11 @@ public class ReferenceExtractor extends ClassAdapter {
 	 * 
 	 * @since 1.0.600
 	 */
-	class ClassFileFieldVisitor implements FieldVisitor {
+	class ClassFileFieldVisitor extends FieldVisitor {
+
+		ClassFileFieldVisitor() {
+			super(Opcodes.ASM5);
+		}
 
 		/*
 		 * (non-Javadoc)
@@ -1078,7 +1082,7 @@ public class ReferenceExtractor extends ClassAdapter {
 	 *            {@link ReferenceModifiers}
 	 */
 	public ReferenceExtractor(IApiType type, Set<Reference> collector, int referenceKinds) {
-		super(new ClassNode());
+		super(Opcodes.ASM5, new ClassNode());
 		fType = type;
 		this.collector = collector;
 		fReferenceKinds = referenceKinds;
@@ -1095,7 +1099,7 @@ public class ReferenceExtractor extends ClassAdapter {
 	 * @param tracker
 	 */
 	protected ReferenceExtractor(IApiType type, Set<Reference> collector, int referenceKinds, FieldTracker tracker) {
-		super(new ClassNode());
+		super(Opcodes.ASM5, new ClassNode());
 		fType = type;
 		this.collector = collector;
 		fReferenceKinds = referenceKinds;

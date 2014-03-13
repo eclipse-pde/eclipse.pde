@@ -304,13 +304,19 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 	 * current version of ASM. Checks the JDT core settings for class file +
 	 * compiler options<br>
 	 * <br>
-	 * Currently the unsupported bytecodes are Java 8 and greater
+	 * For Luna there are no unsupported bytecodes, for Kepler, Java 8 is
+	 * unsupported
 	 * 
 	 * @return true if the backing project is configured to create bytecodes
 	 *         that are not supported
 	 */
 	private boolean unsupportedByteCodes() {
-		return fJavaProject != null && JavaCore.VERSION_1_8.equals(fJavaProject.getOption(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM, true)) && JavaCore.VERSION_1_8.equals(fJavaProject.getOption(JavaCore.COMPILER_COMPLIANCE, true));
+		return false;
+		// fJavaProject != null &&
+		// JavaCore.VERSION_1_8.equals(fJavaProject.getOption(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM,
+		// true)) &&
+		// JavaCore.VERSION_1_8.equals(fJavaProject.getOption(JavaCore.COMPILER_COMPLIANCE,
+		// true));
 	}
 
 	/**

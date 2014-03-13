@@ -62,11 +62,10 @@ import org.eclipse.pde.api.tools.internal.IApiXmlConstants;
 import org.eclipse.pde.api.tools.internal.provisional.ProfileModifiers;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.Attribute;
-import org.objectweb.asm.ClassAdapter;
 import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.FieldVisitor;
-import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.w3c.dom.DOMException;
@@ -1157,7 +1156,7 @@ public class EEGenerator {
 	/**
 	 * Class adapter
 	 */
-	static class StubClassAdapter extends ClassAdapter {
+	static class StubClassAdapter extends ClassVisitor {
 		static final int IGNORE_CLASS_FILE = 0x100;
 
 		int flags;
@@ -1170,7 +1169,7 @@ public class EEGenerator {
 		 * @param stubtype
 		 */
 		public StubClassAdapter(Type stubtype) {
-			super(new ClassWriter(0));
+			super(Opcodes.ASM5, new ClassWriter(0));
 			this.type = stubtype;
 		}
 
@@ -1261,7 +1260,7 @@ public class EEGenerator {
 				return null;
 			}
 			final StubMethod method = this.stub.addMethod(methodName, desc);
-			return new MethodAdapter(super.visitMethod(access, methodName, desc, signature, exceptions)) {
+			return new MethodVisitor(Opcodes.ASM5, super.visitMethod(access, methodName, desc, signature, exceptions)) {
 				@Override
 				public AnnotationVisitor visitAnnotation(String sig, boolean visible) {
 					if (visible && "Ljava/lang/invoke/MethodHandle$PolymorphicSignature;".equals(sig)) { //$NON-NLS-1$

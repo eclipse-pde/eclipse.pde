@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 IBM Corporation and others.
+ * Copyright (c) 2007, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,12 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.comparator;
 
+import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.signature.SignatureVisitor;
 
 /**
  * This class is used to decode a generic signature for class or method
  */
-final class SignatureDecoder implements SignatureVisitor {
+final class SignatureDecoder extends SignatureVisitor {
 	static final int CLASS_BOUND = 1;
 	static final int DEFAULT = 0;
 	static final int INTERFACE_BOUND = 2;
@@ -28,6 +29,7 @@ final class SignatureDecoder implements SignatureVisitor {
 	SignatureDescriptor signatureDescriptor;
 
 	public SignatureDecoder(SignatureDescriptor signatureDescriptor) {
+		super(Opcodes.ASM5);
 		this.signatureDescriptor = signatureDescriptor;
 	}
 
