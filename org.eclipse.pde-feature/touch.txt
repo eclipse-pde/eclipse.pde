@@ -1,0 +1,1 @@
+[Bug 428468] [1.8][compiler] Finishing touches for Java 8 release - Touching bundle to pick up new ASM version
