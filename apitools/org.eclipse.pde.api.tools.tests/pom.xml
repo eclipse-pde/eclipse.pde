@@ -19,6 +19,6 @@
   </parent>
   <groupId>org.eclipse.pde</groupId>
   <artifactId>org.eclipse.pde.api.tools.tests</artifactId>
-  <version>1.0.301-SNAPSHOT</version>
+  <version>1.0.350-SNAPSHOT</version>
   <packaging>eclipse-test-plugin</packaging>
 </project>
