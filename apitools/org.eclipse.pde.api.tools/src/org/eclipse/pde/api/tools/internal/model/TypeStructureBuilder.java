@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 IBM Corporation and others.
+ * Copyright (c) 2007, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,8 +14,6 @@ package org.eclipse.pde.api.tools.internal.model;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,21 +28,18 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
 import org.objectweb.asm.AnnotationVisitor;
-import org.objectweb.asm.ClassAdapter;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.Label;
-import org.objectweb.asm.MethodAdapter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.util.TraceAnnotationVisitor;
 
 /**
  * Class adapter used to create an API type structure
  */
-public class TypeStructureBuilder extends ClassAdapter {
+public class TypeStructureBuilder extends ClassVisitor {
 	ApiType fType;
 	IApiComponent fComponent;
 	IApiTypeRoot fFile;
@@ -59,14 +54,15 @@ public class TypeStructureBuilder extends ClassAdapter {
 	 *            unknown
 	 */
 	TypeStructureBuilder(ClassVisitor cv, IApiComponent component, IApiTypeRoot file) {
-		super(cv);
+		super(Opcodes.ASM5, cv);
 		fComponent = component;
 		fFile = file;
 	}
 
-	/**
-	 * @see org.objectweb.asm.ClassAdapter#visit(int, int, java.lang.String,
-	 *      java.lang.String, java.lang.String, java.lang.String[])
+	/*
+	 * (non-Javadoc)
+	 * @see org.objectweb.asm.ClassVisitor#visit(int, int, java.lang.String,
+	 * java.lang.String, java.lang.String, java.lang.String[])
 	 */
 	@Override
 	public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
@@ -100,9 +96,10 @@ public class TypeStructureBuilder extends ClassAdapter {
 		super.visit(version, laccess, name, signature, superName, interfaces);
 	}
 
-	/**
-	 * @see org.objectweb.asm.ClassAdapter#visitInnerClass(java.lang.String,
-	 *      java.lang.String, java.lang.String, int)
+	/*
+	 * (non-Javadoc)
+	 * @see org.objectweb.asm.ClassVisitor#visitInnerClass(java.lang.String,
+	 * java.lang.String, java.lang.String, int)
 	 */
 	@Override
 	public void visitInnerClass(String name, String outerName, String innerName, int access) {
@@ -135,7 +132,7 @@ public class TypeStructureBuilder extends ClassAdapter {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.objectweb.asm.ClassAdapter#visitOuterClass(java.lang.String,
+	 * @see org.objectweb.asm.ClassVisitor#visitOuterClass(java.lang.String,
 	 * java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -145,7 +142,7 @@ public class TypeStructureBuilder extends ClassAdapter {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.objectweb.asm.ClassAdapter#visitField(int, java.lang.String,
+	 * @see org.objectweb.asm.ClassVisitor#visitField(int, java.lang.String,
 	 * java.lang.String, java.lang.String, java.lang.Object)
 	 */
 	@Override
@@ -161,7 +158,7 @@ public class TypeStructureBuilder extends ClassAdapter {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.objectweb.asm.ClassAdapter#visitMethod(int, java.lang.String,
+	 * @see org.objectweb.asm.ClassVisitor#visitMethod(int, java.lang.String,
 	 * java.lang.String, java.lang.String, java.lang.String[])
 	 */
 	@Override
@@ -179,7 +176,7 @@ public class TypeStructureBuilder extends ClassAdapter {
 			}
 		}
 		final ApiMethod method = fType.addMethod(name, desc, signature, laccess, names);
-		return new MethodAdapter(super.visitMethod(laccess, name, desc, signature, exceptions)) {
+		return new MethodVisitor(Opcodes.ASM5, super.visitMethod(laccess, name, desc, signature, exceptions)) {
 			@Override
 			public AnnotationVisitor visitAnnotation(String sig, boolean visible) {
 				if (visible && "Ljava/lang/invoke/MethodHandle$PolymorphicSignature;".equals(sig)) { //$NON-NLS-1$
@@ -190,21 +187,86 @@ public class TypeStructureBuilder extends ClassAdapter {
 
 			@Override
 			public AnnotationVisitor visitAnnotationDefault() {
-				return new TraceAnnotationVisitor() {
-					@Override
-					public void visitEnd() {
-						super.visitEnd();
-						StringWriter stringWriter = new StringWriter();
-						PrintWriter writer = new PrintWriter(stringWriter);
-						print(writer);
-						writer.flush();
-						writer.close();
-						String def = String.valueOf(stringWriter.getBuffer());
-						method.setDefaultValue(def);
-					}
-				};
+				return new AnnotationDefaultVisitor(method);
 			}
 		};
+	}
+
+	private static IApiType logAndReturn(IApiTypeRoot file, Exception e) {
+		if (ApiPlugin.DEBUG_BUILDER) {
+			IStatus status = new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, NLS.bind(Messages.TypeStructureBuilder_badClassFileEncountered, file.getTypeName()), e);
+			ApiPlugin.log(status);
+		}
+		return null;
+	}
+
+	/**
+	 * Visit the default value for an annotation
+	 */
+	static class AnnotationDefaultVisitor extends AnnotationVisitor {
+		ApiMethod method;
+		Object value;
+		StringBuffer buff = new StringBuffer();
+		boolean trace = false;
+		int traceCount = 0;
+
+		public AnnotationDefaultVisitor(ApiMethod method) {
+			super(Opcodes.ASM5);
+			this.method = method;
+		}
+
+		@Override
+		public void visit(String name, Object value) {
+			if (trace) {
+				appendValue(value);
+				traceCount++;
+				return;
+			}
+			this.value = value;
+		}
+
+		@Override
+		public AnnotationVisitor visitAnnotation(String name, String desc) {
+			trace = true;
+			return this;
+		}
+
+		@Override
+		public void visitEnum(String name, String desc, String value) {
+			if (trace) {
+				appendValue(value);
+				traceCount++;
+				return;
+			}
+			this.value = value;
+		}
+
+		@Override
+		public AnnotationVisitor visitArray(String name) {
+			trace = true;
+			return this;
+		}
+
+		@Override
+		public void visitEnd() {
+			if (trace) {
+				this.value = buff.toString();
+				traceCount--;
+				trace = traceCount != 0;
+			} else {
+				method.setDefaultValue(this.value == null ? null : this.value.toString());
+			}
+		}
+
+		void appendValue(Object val) {
+			if (val != null) {
+				if (buff.length() < 1) {
+					buff.append(val.toString());
+				} else {
+					buff.append(',').append(val.toString());
+				}
+			}
+		}
 	}
 
 	/**
@@ -222,11 +284,11 @@ public class TypeStructureBuilder extends ClassAdapter {
 			ClassReader classReader = new ClassReader(bytes);
 			classReader.accept(visitor, ClassReader.SKIP_CODE | ClassReader.SKIP_FRAMES);
 		} catch (ArrayIndexOutOfBoundsException e) {
-			if (ApiPlugin.DEBUG_BUILDER) {
-				IStatus status = new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, NLS.bind(Messages.TypeStructureBuilder_badClassFileEncountered, file.getTypeName()), e);
-				ApiPlugin.log(status);
-			}
+			logAndReturn(file, e);
 			return null;
+		} catch (IllegalArgumentException iae) {
+			// thrown from ASM 5.0 for bad bytecodes
+			return logAndReturn(file, iae);
 		}
 		return visitor.fType;
 	}
@@ -260,14 +322,14 @@ public class TypeStructureBuilder extends ClassAdapter {
 		}
 	}
 
-	static class EnclosingMethodSetter extends ClassAdapter {
+	static class EnclosingMethodSetter extends ClassVisitor {
 		String name;
 		String signature;
 		boolean found = false;
 		String typeName;
 
 		public EnclosingMethodSetter(ClassVisitor cv, String typeName) {
-			super(cv);
+			super(Opcodes.ASM5, cv);
 			this.typeName = typeName.replace('.', '/');
 		}
 
@@ -296,11 +358,11 @@ public class TypeStructureBuilder extends ClassAdapter {
 		}
 	}
 
-	static class TypeNameFinder extends MethodAdapter {
+	static class TypeNameFinder extends MethodVisitor {
 		protected EnclosingMethodSetter setter;
 
 		public TypeNameFinder(MethodVisitor mv, EnclosingMethodSetter enclosingMethodSetter) {
-			super(mv);
+			super(Opcodes.ASM5, mv);
 			this.setter = enclosingMethodSetter;
 		}
 

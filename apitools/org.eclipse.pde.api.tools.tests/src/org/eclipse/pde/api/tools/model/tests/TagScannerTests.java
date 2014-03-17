@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 IBM Corporation and others.
+ * Copyright (c) 2007, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1168,5 +1168,57 @@ public class TagScannerTests extends TestCase {
 		doScan("a/b/c/InvalidTagScanField3.java", manifest); //$NON-NLS-1$
 		IApiAnnotations description = manifest.resolveAnnotations(Factory.fieldDescriptor("a.b.c.InvalidTagScanField3", "field")); //$NON-NLS-1$ //$NON-NLS-2$
 		assertNull("there should be no annotations for field 'field'", description); //$NON-NLS-1$
+	}
+	
+	/**
+	 * Tests only default methods annotate API descriptions with @nooverride
+	 * 
+	 * @throws Exception
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=427495
+	 */
+	public void testJava8InterfaceMethod1() throws Exception {
+		IApiDescription manifest = newDescription();
+		doScan("a/b/c/TestJava8DefaultMethod1.java", manifest); //$NON-NLS-1$
+		IApiAnnotations description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestJava8DefaultMethod1", "m2", "()I")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		assertNotNull("there should be annotations for method 'm2'", description); //$NON-NLS-1$
+		assertTrue("The annotations should include nooverride", (description.getRestrictions() & RestrictionModifiers.NO_OVERRIDE) > 0); //$NON-NLS-1$
+		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestJava8DefaultMethod1", "m1", "()I")); //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+		assertNotNull("There should be API annotations for the non-default method", description); //$NON-NLS-1$
+		assertTrue("The annotations for the non-default method should be API", description.getRestrictions() == RestrictionModifiers.NO_RESTRICTIONS); //$NON-NLS-1$
+	}
+	
+	/**
+	 * Tests default methods annotate API descriptions with @noreference
+	 * 
+	 * @throws Exception
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=427495
+	 */
+	public void testJava8InterfaceMethod2() throws Exception {
+		IApiDescription manifest = newDescription();
+		doScan("a/b/c/TestJava8DefaultMethod2.java", manifest); //$NON-NLS-1$
+		IApiAnnotations description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestJava8DefaultMethod2", "m2", "()I")); //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+		assertNotNull("there should be annotations for method 'm2'", description); //$NON-NLS-1$
+		assertTrue("The annotations should include noreference", (description.getRestrictions() & RestrictionModifiers.NO_REFERENCE) > 0); //$NON-NLS-1$
+		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestJava8DefaultMethod2", "m1", "()I")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		assertNotNull("There should be API annotations for the non-default method", description); //$NON-NLS-1$
+		assertTrue("The annotations for the non-default method should be API", description.getRestrictions() == RestrictionModifiers.NO_RESTRICTIONS); //$NON-NLS-1$
+	}
+	
+	/**
+	 * Tests default methods annotate API descriptions with @noreference and @nooverride
+	 * 
+	 * @throws Exception
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=427495
+	 */
+	public void testJava8InterfaceMethod3() throws Exception {
+		IApiDescription manifest = newDescription();
+		doScan("a/b/c/TestJava8DefaultMethod3.java", manifest); //$NON-NLS-1$
+		IApiAnnotations description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestJava8DefaultMethod3", "m2", "()I")); //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+		assertNotNull("there should be annotations for method 'm2'", description); //$NON-NLS-1$
+		assertTrue("The annotations should include noreference", (description.getRestrictions() & RestrictionModifiers.NO_REFERENCE) > 0); //$NON-NLS-1$
+		assertTrue("The annotations should include noreference", (description.getRestrictions() & RestrictionModifiers.NO_OVERRIDE) > 0); //$NON-NLS-1$
+		description = manifest.resolveAnnotations(Factory.methodDescriptor("a.b.c.TestJava8DefaultMethod3", "m1", "()I")); //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+		assertNotNull("There should be API annotations for the non-default method", description); //$NON-NLS-1$
+		assertTrue("The annotations for the non-default method should be API", description.getRestrictions() == RestrictionModifiers.NO_RESTRICTIONS); //$NON-NLS-1$
 	}
 }

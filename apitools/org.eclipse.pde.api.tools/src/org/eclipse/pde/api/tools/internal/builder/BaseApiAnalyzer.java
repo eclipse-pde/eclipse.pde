@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others.
+ * Copyright (c) 2008, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -228,7 +228,8 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 				bcontext = new BuildContext();
 			}
 			boolean checkfilters = false;
-			if (baseline != null) {
+			boolean unsupported = unsupportedByteCodes();
+			if (baseline != null && !unsupported) {
 				IApiComponent reference = baseline.getApiComponent(component.getSymbolicName());
 				this.fBuildState = state;
 				if (fBuildState == null) {
@@ -258,12 +259,16 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 				Util.updateMonitor(localMonitor);
 				checkfilters = true;
 			} else {
-				// check default baseline
-				checkDefaultBaselineSet();
+				if (unsupported) {
+					reportUnsupportedBytecodes();
+				} else {
+					// check default baseline
+					checkDefaultBaselineSet();
+				}
 				Util.updateMonitor(localMonitor);
 			}
 
-			// check E description status
+			// check EE description status
 			checkEEDescriptions();
 
 			// usage checks
@@ -291,6 +296,37 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 			}
 		} finally {
 			localMonitor.done();
+		}
+	}
+
+	/**
+	 * Returns if the component is using bytecodes that are not supported by the
+	 * current version of ASM. Checks the JDT core settings for class file +
+	 * compiler options<br>
+	 * <br>
+	 * For Luna there are no unsupported bytecodes, for Kepler, Java 8 is
+	 * unsupported
+	 * 
+	 * @return true if the backing project is configured to create bytecodes
+	 *         that are not supported
+	 */
+	private boolean unsupportedByteCodes() {
+		return false;
+		// fJavaProject != null &&
+		// JavaCore.VERSION_1_8.equals(fJavaProject.getOption(JavaCore.COMPILER_CODEGEN_TARGET_PLATFORM,
+		// true)) &&
+		// JavaCore.VERSION_1_8.equals(fJavaProject.getOption(JavaCore.COMPILER_COMPLIANCE,
+		// true));
+	}
+
+	/**
+	 * Creates a new problem marker on the project using the unsupported
+	 * bytecodes
+	 */
+	private void reportUnsupportedBytecodes() {
+		if (fJavaProject != null && (ApiPlugin.getDefault().getSeverityLevel(IApiProblemTypes.UNSUPPORTED_BYTECODES, fJavaProject.getProject()) != ApiPlugin.SEVERITY_IGNORE)) {
+			IApiProblem pb = ApiProblemFactory.newApiComponentResolutionProblem(Path.EMPTY.toString(), new String[] { fJavaProject.getElementName() }, new String[] { IApiMarkerConstants.API_MARKER_ATTR_ID }, new Object[] { new Integer(IApiMarkerConstants.API_COMPONENT_RESOLUTION_MARKER_ID) }, IElementDescriptor.RESOURCE, IApiProblem.UNSUPPORTED_BYTECODES);
+			addProblem(pb);
 		}
 	}
 
@@ -811,7 +847,7 @@ public class BaseApiAnalyzer implements IApiAnalyzer {
 		if (fJavaProject == null) {
 			return null;
 		}
-		ASTParser parser = ASTParser.newParser(AST.JLS4);
+		ASTParser parser = ASTParser.newParser(AST.JLS8);
 		parser.setFocalPosition(offset);
 		parser.setResolveBindings(false);
 		parser.setSource(root);

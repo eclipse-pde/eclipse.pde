@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 IBM Corporation and others.
+ * Copyright (c) 2007, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -276,6 +276,7 @@ public final class JavadocTagManager {
 			newtag = new ApiJavadocTag(IApiJavadocTag.NO_OVERRIDE_TAG_ID, "nooverride", //$NON-NLS-1$
 			RestrictionModifiers.NO_OVERRIDE);
 			newtag.setApplicableTo(IApiJavadocTag.TYPE_CLASS, IApiJavadocTag.MEMBER_METHOD, CoreMessages.JavadocTagManager_method_no_overried);
+			newtag.setApplicableTo(IApiJavadocTag.TYPE_INTERFACE, IApiJavadocTag.MEMBER_METHOD, CoreMessages.JavadocTagManager_default_method_no_override);
 			tagcache.put(newtag.getTagId(), newtag);
 			list.add(newtag);
 

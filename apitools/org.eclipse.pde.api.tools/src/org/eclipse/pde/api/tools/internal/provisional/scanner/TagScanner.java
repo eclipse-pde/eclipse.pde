@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 IBM Corporation and others.
+ * Copyright (c) 2007, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -68,7 +68,7 @@ import org.eclipse.pde.api.tools.internal.util.Util;
 public class TagScanner {
 
 	/**
-	 * Visitor to scan a compilation unit. We only care about javadoc nodes that
+	 * Visitor to scan a compilation unit. We only care about Javadoc nodes that
 	 * have either type or enum declarations as parents, so we have to override
 	 * the ones we don't care about.
 	 */
@@ -249,7 +249,11 @@ public class TagScanner {
 						ASTNode parent = node.getParent();
 						if (parent instanceof TypeDeclaration) {
 							TypeDeclaration type = (TypeDeclaration) parent;
-							if (!Flags.isFinal(type.getModifiers())) {
+							if (type.isInterface()) {
+								if (Flags.isDefaultMethod(node.getModifiers())) {
+									restrictions |= RestrictionModifiers.NO_OVERRIDE;
+								}
+							} else if (!Flags.isFinal(type.getModifiers())) {
 								restrictions |= RestrictionModifiers.NO_OVERRIDE;
 							}
 						} else if (parent instanceof AnonymousClassDeclaration) {
@@ -525,7 +529,11 @@ public class TagScanner {
 							ASTNode parent = node.getParent();
 							if (parent instanceof TypeDeclaration) {
 								TypeDeclaration type = (TypeDeclaration) parent;
-								if (!Flags.isFinal(type.getModifiers())) {
+								if (type.isInterface()) {
+									if (Flags.isDefaultMethod(node.getModifiers())) {
+										restrictions |= RestrictionModifiers.NO_OVERRIDE;
+									}
+								} else if (!Flags.isFinal(type.getModifiers())) {
 									restrictions |= RestrictionModifiers.NO_OVERRIDE;
 								}
 							} else if (parent instanceof AnonymousClassDeclaration) {
@@ -701,7 +709,7 @@ public class TagScanner {
 	 */
 	public void scan(CompilationUnit source, IApiDescription description, IApiTypeContainer container, Map<String, String> options, IProgressMonitor monitor) throws CoreException {
 		SubMonitor localmonitor = SubMonitor.convert(monitor, 2);
-		ASTParser parser = ASTParser.newParser(AST.JLS4);
+		ASTParser parser = ASTParser.newParser(AST.JLS8);
 		InputStream inputStream = null;
 		try {
 			inputStream = source.getInputStream();

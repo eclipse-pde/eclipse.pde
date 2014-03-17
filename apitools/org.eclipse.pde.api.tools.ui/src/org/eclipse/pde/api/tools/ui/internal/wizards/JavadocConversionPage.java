@@ -196,7 +196,7 @@ public class JavadocConversionPage extends UserInputWizardPage {
 		 * @throws CoreException
 		 */
 		void collectUpdates(IType type, IElementDescriptor element, IApiDescription description) throws CoreException {
-			ASTParser parser = ASTParser.newParser(AST.JLS4);
+			ASTParser parser = ASTParser.newParser(AST.JLS8);
 			ICompilationUnit cunit = type.getCompilationUnit();
 			if (cunit != null) {
 				this.monitor.setTaskName(NLS.bind(WizardMessages.JavadocConversionPage_scan_javadoc_to_convert, new Object[] { type.getFullyQualifiedName() }));
