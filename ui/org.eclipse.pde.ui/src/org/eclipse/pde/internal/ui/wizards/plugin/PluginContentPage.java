@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -364,7 +364,7 @@ public class PluginContentPage extends ContentPage {
 			if (fEEChoice.isEnabled()) {
 				IExecutionEnvironment ee = VMUtil.getExecutionEnvironment(eeid);
 				if (ee != null && ee.getCompatibleVMs().length == 0) {
-					errorMessage = PDEUIMessages.NewProjectCreationPage_invalidEE;
+					setMessage(PDEUIMessages.NewProjectCreationPage_invalidEE, IMessageProvider.WARNING);
 				}
 			}
 		}
