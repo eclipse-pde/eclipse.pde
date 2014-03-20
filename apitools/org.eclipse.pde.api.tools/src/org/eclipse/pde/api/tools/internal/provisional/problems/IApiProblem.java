@@ -463,14 +463,7 @@ public interface IApiProblem {
 	 * @see #CATEGORY_API_COMPONENT_RESOLUTION
 	 */
 	public static final int API_COMPONENT_RESOLUTION = 1;
-	/**
-	 * Constant representing the problem kind for unsupported bytecodes <br>
-	 * Value is: <code>2</code>
-	 *
-	 * @see #getKind()
-	 * @see #CATEGORY_API_COMPONENT_RESOLUTION
-	 */
-	public static final int UNSUPPORTED_BYTECODES = 2;
+
 	/**
 	 * Constant representing the value of a workspace baseline resolution
 	 * {@link IApiProblem} kind. <br>

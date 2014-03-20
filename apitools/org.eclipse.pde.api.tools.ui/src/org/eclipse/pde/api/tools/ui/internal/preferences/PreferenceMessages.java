@@ -14,7 +14,6 @@ import org.eclipse.osgi.util.NLS;
 
 public class PreferenceMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.pde.api.tools.ui.internal.preferences.preferencemessages"; //$NON-NLS-1$
-	public static String ApiBaselinesConfigurationBlock_unsupported_bytecodes;
 	public static String ApiErrorsWarningsConfigurationBlock_0;
 	public static String ApiErrorsWarningsConfigurationBlock_1;
 	public static String ApiErrorsWarningsConfigurationBlock_2;

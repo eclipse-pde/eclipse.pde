@@ -349,7 +349,6 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 	private static final Key KEY_REPORT_API_BREAKAGE_WHEN_MAJOR_VERSION_INCREMENTED = getApiToolsKey(IApiProblemTypes.REPORT_API_BREAKAGE_WHEN_MAJOR_VERSION_INCREMENTED);
 
 	private static final Key KEY_REPORT_RESOLUTION_ERRORS_API_COMPONENT = getApiToolsKey(IApiProblemTypes.REPORT_RESOLUTION_ERRORS_API_COMPONENT);
-	private static final Key KEY_UNSUPPORTED_BYTECODES = getApiToolsKey(IApiProblemTypes.UNSUPPORTED_BYTECODES);
 	// External Dependencies' Keys
 	private static final Key KEY_API_USE_SCAN_TYPE_PROBLEM = getApiToolsKey(IApiProblemTypes.API_USE_SCAN_TYPE_SEVERITY);
 	private static final Key KEY_API_USE_SCAN_METHOD_PROBLEM = getApiToolsKey(IApiProblemTypes.API_USE_SCAN_METHOD_SEVERITY);
@@ -367,7 +366,6 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 
 	static Key[] fgAllApiComponentResolutionKeys = {
 			KEY_REPORT_RESOLUTION_ERRORS_API_COMPONENT,
-			KEY_UNSUPPORTED_BYTECODES,
 			KEY_UNUSED_PROBLEM_FILTERS,
 			KEY_AUTOMATICALLY_REMOVE_PROBLEM_FILTERS };
 
@@ -541,7 +539,6 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 			KEY_INCOMPATIBLE_API_COMPONENT_VERSION_INCLUDE_INCLUDE_MAJOR_WITHOUT_BREAKING_CHANGE,
 			KEY_REPORT_API_BREAKAGE_WHEN_MAJOR_VERSION_INCREMENTED,
 			KEY_REPORT_RESOLUTION_ERRORS_API_COMPONENT,
-			KEY_UNSUPPORTED_BYTECODES,
 			KEY_AUTOMATICALLY_REMOVE_PROBLEM_FILTERS,
 			KEY_API_USE_SCAN_TYPE_PROBLEM, KEY_API_USE_SCAN_METHOD_PROBLEM,
 			KEY_API_USE_SCAN_FIELD_PROBLEM };
@@ -1080,10 +1077,8 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 		Composite vcomp = SWTFactory.createComposite(page, 2, 1, GridData.FILL_BOTH);
 		initializeComboControls(vcomp, new String[] {
 				PreferenceMessages.ReportApiComponentResolutionFailure,
-				PreferenceMessages.ApiBaselinesConfigurationBlock_unsupported_bytecodes,
 				PreferenceMessages.ApiErrorsWarningsConfigurationBlock_unused_problem_filters, }, new Key[] {
 				KEY_REPORT_RESOLUTION_ERRORS_API_COMPONENT,
-				KEY_UNSUPPORTED_BYTECODES,
 				KEY_UNUSED_PROBLEM_FILTERS });
 		addCheckBox(vcomp, PreferenceMessages.ApiErrorsWarningsConfigurationBlock_automatically_remove_problem_filters, KEY_AUTOMATICALLY_REMOVE_PROBLEM_FILTERS, CHECKBOX_VALUES, 0);
 	}

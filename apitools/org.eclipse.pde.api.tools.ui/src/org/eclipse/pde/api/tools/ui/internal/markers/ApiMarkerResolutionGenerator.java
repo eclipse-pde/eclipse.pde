@@ -101,10 +101,6 @@ public class ApiMarkerResolutionGenerator implements IMarkerResolutionGenerator2
 				return new IMarkerResolution[] { new DuplicateAnnotationResolution(marker) };
 			}
 			 case IApiMarkerConstants.API_COMPONENT_RESOLUTION_MARKER_ID: {
-				  int id = ApiProblemFactory.getProblemId(marker);
-				  if(id > -1 && ApiProblemFactory.getProblemKind(id) == IApiProblem.UNSUPPORTED_BYTECODES) {
-					  return NO_RESOLUTIONS;
-				  }
 				return new IMarkerResolution[] { new UpdateProjectSettingResolution(marker) };
 			}
 			case IApiMarkerConstants.UNUSED_PROBLEM_FILTER_MARKER_ID: {

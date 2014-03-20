@@ -932,8 +932,6 @@ public class ApiProblemFactory {
 				switch (kind) {
 					case IApiProblem.API_COMPONENT_RESOLUTION:
 						return 99;
-					case IApiProblem.UNSUPPORTED_BYTECODES:
-						return 43;
 					default:
 						break;
 				}
@@ -992,8 +990,7 @@ public class ApiProblemFactory {
 				switch (problem.getKind()) {
 					case IApiProblem.API_COMPONENT_RESOLUTION:
 						return IApiProblemTypes.REPORT_RESOLUTION_ERRORS_API_COMPONENT;
-					case IApiProblem.UNSUPPORTED_BYTECODES:
-						return IApiProblemTypes.UNSUPPORTED_BYTECODES;
+
 					default:
 						break;
 				}
