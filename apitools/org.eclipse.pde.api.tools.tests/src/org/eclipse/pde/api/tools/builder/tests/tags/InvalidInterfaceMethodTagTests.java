@@ -194,8 +194,8 @@ public class InvalidInterfaceMethodTagTests extends InvalidMethodTagTests {
 		setExpectedMessageArgs(new String[][] {
 				{"@nooverride", BuilderMessages.TagValidator_nondefault_interface_method}, //$NON-NLS-1$
 				{"@nooverride", BuilderMessages.TagValidator_nondefault_interface_method}, //$NON-NLS-1$
-				{"@nooverride", BuilderMessages.TagValidator_not_visible_interface_method}, //$NON-NLS-1$
-				{"@nooverride", BuilderMessages.TagValidator_not_visible_interface_method}, //$NON-NLS-1$
+				{"@nooverride", BuilderMessages.TagValidator_nondefault_interface_method}, //$NON-NLS-1$
+				{"@nooverride", BuilderMessages.TagValidator_nondefault_interface_method}, //$NON-NLS-1$
 				{"@nooverride", BuilderMessages.TagValidator_nondefault_interface_method}, //$NON-NLS-1$
 				{"@nooverride", BuilderMessages.TagValidator_nondefault_interface_method} //$NON-NLS-1$
 		});
