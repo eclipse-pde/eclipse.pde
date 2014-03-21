@@ -170,11 +170,11 @@ public class Java8TypeAnnotationTests extends ApiBuilderTest {
 	}
 	
 	public void test4I() throws Exception {
-		//x4(true); TODO uncomment in Luna
+		x4(true);
 	}
 	
 	public void test4F() throws Exception {
-		//x4(false); TODO uncomment in Luna
+		x4(false);
 	}
 	/**
 	 * Tests there are problems with API tools annotations used in type annotation case in method decls
@@ -186,11 +186,11 @@ public class Java8TypeAnnotationTests extends ApiBuilderTest {
 	}
 	
 	public void test5I() throws Exception {
-		//x5(true); TODO uncomment in Luna
+		x5(true);
 	}
 	
 	public void test5F() throws Exception {
-		//x5(false); TODO uncomment in Luna
+		x5(false);
 	}
 	/**
 	 * Tests there are problems with API tools annotations used in type annotation case in field decls
@@ -202,11 +202,11 @@ public class Java8TypeAnnotationTests extends ApiBuilderTest {
 	}
 	
 	public void test6I() throws Exception {
-		//x6(true); TODO uncomment in Luna
+		x6(true);
 	}
 	
 	public void test6F() throws Exception {
-		//x6(false); TODO uncomment in Luna
+		x6(false);
 	}
 	/**
 	 * Tests there are problems with API tools annotations used in type annotation case in type decls
