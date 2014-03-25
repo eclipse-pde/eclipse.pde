@@ -43,6 +43,7 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
+import org.objectweb.asm.TypePath;
 import org.objectweb.asm.signature.SignatureReader;
 import org.objectweb.asm.signature.SignatureVisitor;
 import org.objectweb.asm.tree.ClassNode;
@@ -498,6 +499,16 @@ public class ReferenceExtractor extends ClassVisitor {
 				}
 			}
 			this.stringLiteral = null;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * @see org.objectweb.asm.MethodVisitor#visitInsnAnnotation(int,
+		 * org.objectweb.asm.TypePath, java.lang.String, boolean)
+		 */
+		@Override
+		public AnnotationVisitor visitInsnAnnotation(int typeRef, TypePath typePath, String desc, boolean visible) {
+			return null;
 		}
 
 		/*

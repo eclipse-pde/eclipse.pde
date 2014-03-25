@@ -35,7 +35,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jdt.internal.compiler.batch.Main;
+import org.eclipse.jdt.core.compiler.batch.BatchCompiler;
 import org.eclipse.osgi.service.resolver.ResolverError;
 import org.eclipse.pde.api.tools.internal.model.ApiModelFactory;
 import org.eclipse.pde.api.tools.internal.model.ApiType;
@@ -55,6 +55,7 @@ import org.eclipse.pde.api.tools.internal.search.IReferenceCollection;
 import org.eclipse.pde.api.tools.internal.search.UseScanReferences;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.tests.ApiTestsPlugin;
+import org.eclipse.pde.api.tools.tests.util.ProjectUtils;
 import org.junit.Assert;
 
 /**
@@ -64,10 +65,24 @@ import org.junit.Assert;
  */
 public class TestSuiteHelper {
 
-	public static final String[] COMPILER_OPTIONS = new String[] { "-1.5", //$NON-NLS-1$
-			"-preserveAllLocals", //$NON-NLS-1$
-			"-nowarn" //$NON-NLS-1$
-	};
+	/**
+	 * Computes the compile options to use. Currently this only changes if we
+	 * are running the tests on Java 8.
+	 * 
+	 * @return the array of compiler options to use
+	 * @since 1.0.400
+	 */
+	public static String[] getCompilerOptions() {
+		ArrayList<String> args = new ArrayList<String>();
+		if (ProjectUtils.isJava8Compatible()) {
+			args.add("-1.8"); //$NON-NLS-1$
+		} else {
+			args.add("-1.5"); //$NON-NLS-1$
+		}
+		args.add("-preserveAllLocals"); //$NON-NLS-1$
+		args.add("-nowarn"); //$NON-NLS-1$
+		return args.toArray(new String[] {});
+	}
 
 	/**
 	 * Creates a baseline from all bundles in the specified directory.
@@ -517,7 +532,7 @@ public class TestSuiteHelper {
 		cmd.toArray(args);
 		boolean result = false;
 		try {
-			result = new Main(outWriter, errWriter, true, null, null).compile(args);
+			result = BatchCompiler.compile(args, outWriter, errWriter, null);
 		} catch (RuntimeException e) {
 			e.printStackTrace();
 		}
@@ -584,7 +599,7 @@ public class TestSuiteHelper {
 		cmd.toArray(args);
 		boolean result = false;
 		try {
-			result = new Main(outWriter, errWriter, true, null, null).compile(args);
+			result = BatchCompiler.compile(args, outWriter, errWriter, null);
 		} catch (RuntimeException e) {
 			e.printStackTrace();
 		}

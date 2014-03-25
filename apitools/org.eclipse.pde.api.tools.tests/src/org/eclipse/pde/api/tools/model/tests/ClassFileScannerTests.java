@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 IBM Corporation and others.
+ * Copyright (c) 2007, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -182,7 +182,7 @@ public class ClassFileScannerTests extends TestCase {
 		super.setUp();
 		if (container == null) {
 			String[] sourceFilePaths = new String[] { ROOT_PATH.toOSString() };
-			assertTrue("working directory should compile", TestSuiteHelper.compile(sourceFilePaths, WORKSPACE_ROOT.toOSString(), TestSuiteHelper.COMPILER_OPTIONS)); //$NON-NLS-1$
+			assertTrue("working directory should compile", TestSuiteHelper.compile(sourceFilePaths, WORKSPACE_ROOT.toOSString(), TestSuiteHelper.getCompilerOptions())); //$NON-NLS-1$
 			assertTrue("Test12 should compile to 1.4", TestSuiteHelper.compile(ROOT_PATH.append("Test12.java").toOSString(), //$NON-NLS-1$ //$NON-NLS-2$
 					WORKSPACE_ROOT.toOSString(), new String[] {
 							"-1.4", "-preserveAllLocals", "-nowarn" })); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$

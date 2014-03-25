@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -76,7 +76,9 @@ public abstract class DeltaTestSetup extends TestCase {
 		List<IDelta> leaves = new ArrayList<IDelta>();
 		collect0(delta, leaves);
 		int size = leaves.size();
-		if (size == 0) return EMPTY_CHILDREN;
+		if (size == 0) {
+			return EMPTY_CHILDREN;
+		}
 
 		IDelta[] result = new IDelta[size];
 		leaves.toArray(result);
@@ -164,7 +166,7 @@ public abstract class DeltaTestSetup extends TestCase {
 				TestSuiteHelper.getPluginDirectoryPath().append(TESTS_DELTAS_NAME).append(getTestRoot()).append(testName).append(name).toOSString()
 		};
 		IPath destinationPath = WORKSPACE_ROOT.append(name).append(bundleName);
-		String[] compilerOptions = TestSuiteHelper.COMPILER_OPTIONS;
+		String[] compilerOptions = TestSuiteHelper.getCompilerOptions();
 		assertTrue(TestSuiteHelper.compile(sourceFilePaths, destinationPath.toOSString(), compilerOptions));
 		
 		// copy the MANIFEST in the workspace folder
