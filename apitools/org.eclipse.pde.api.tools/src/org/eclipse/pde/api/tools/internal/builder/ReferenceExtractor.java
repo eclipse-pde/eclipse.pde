@@ -39,6 +39,7 @@ import org.objectweb.asm.Attribute;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.FieldVisitor;
+import org.objectweb.asm.Handle;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -499,6 +500,20 @@ public class ReferenceExtractor extends ClassVisitor {
 				}
 			}
 			this.stringLiteral = null;
+		}
+
+		@Override
+		public void visitInvokeDynamicInsn(String name, String desc, Handle bsm, Object... bsmArgs) {
+			for (Object arg : bsmArgs) {
+				if (arg instanceof Handle) {
+					Handle handle = (Handle) arg;
+					Type declaringType = Type.getObjectType(handle.getOwner());
+					Reference reference = ReferenceExtractor.this.addMethodReference(declaringType, handle.getName(), handle.getDesc(), IReference.REF_VIRTUALMETHOD);
+					if (reference != null) {
+						this.linePositionTracker.addLocation(reference);
+					}
+				}
+			}
 		}
 
 		/*

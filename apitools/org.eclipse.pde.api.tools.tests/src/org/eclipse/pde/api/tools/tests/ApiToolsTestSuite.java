@@ -25,6 +25,7 @@ import org.eclipse.pde.api.tools.model.tests.CRCTests;
 import org.eclipse.pde.api.tools.model.tests.ClassFileScannerTests;
 import org.eclipse.pde.api.tools.model.tests.ComponentManifestTests;
 import org.eclipse.pde.api.tools.model.tests.ElementDescriptorTests;
+import org.eclipse.pde.api.tools.model.tests.Java8ClassfileScannerTests;
 import org.eclipse.pde.api.tools.model.tests.TagScannerTests;
 import org.eclipse.pde.api.tools.problems.tests.ApiFilterTests;
 import org.eclipse.pde.api.tools.problems.tests.ApiProblemFactoryTests;
@@ -33,6 +34,7 @@ import org.eclipse.pde.api.tools.reference.tests.SearchScopeTests;
 import org.eclipse.pde.api.tools.search.tests.SearchEngineTests;
 import org.eclipse.pde.api.tools.search.tests.SkippedComponentTests;
 import org.eclipse.pde.api.tools.search.tests.UseSearchTests;
+import org.eclipse.pde.api.tools.tests.util.ProjectUtils;
 import org.eclipse.pde.api.tools.util.tests.HeadlessApiBaselineManagerTests;
 import org.eclipse.pde.api.tools.util.tests.SignaturesTests;
 import org.eclipse.pde.api.tools.util.tests.TarEntryTests;
@@ -71,6 +73,9 @@ public class ApiToolsTestSuite extends TestSuite {
 		addTest(new TestSuite(ApiBaselineTests.class));
 		addTest(new TestSuite(ApiTypeContainerTests.class));
 		addTest(ClassFileScannerTests.suite());
+		if (ProjectUtils.isJava8Compatible()) {
+			addTest(Java8ClassfileScannerTests.suite());
+		}
 		addTest(new TestSuite(ElementDescriptorTests.class));
 		addTest(new TestSuite(SearchScopeTests.class));
 		addTest(new TestSuite(ApiProblemTests.class));
