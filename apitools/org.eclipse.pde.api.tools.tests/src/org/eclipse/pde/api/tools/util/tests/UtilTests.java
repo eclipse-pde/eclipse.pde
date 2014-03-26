@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 IBM Corporation and others.
+ * Copyright (c) 2007, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -652,7 +652,7 @@ public class UtilTests extends TestCase {
 		allComponents.toArray(components);
 		FilteredElements excludedElements = new FilteredElements();
 		try {
-			Util.collectRegexIds(line, excludedElements, components, true);
+			Util.collectRegexIds(line, excludedElements, components, false);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -685,8 +685,9 @@ public class UtilTests extends TestCase {
 			// ignore
 		} finally {
 			try {
-				if (inputStream != null)
+				if (inputStream != null) {
 					inputStream.close();
+				}
 			} catch (IOException ioe) {
 				// ignore
 			}
