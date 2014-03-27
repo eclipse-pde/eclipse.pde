@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others.
+ * Copyright (c) 2008, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -445,18 +445,37 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	 * @return the index of the method name on the given line or -1 if not found
 	 */
 	protected int findMethodNameStart(String namepart, String line, int index) {
-		int start = line.indexOf(namepart, index);
-		if (start < 0) {
-			return -1;
+		if (namepart.startsWith("::")) { //$NON-NLS-1$
+			// a method ref, walk back to find the token
+			int offset = index;
+			char c = line.charAt(offset);
+			while (!Character.isJavaIdentifierPart((int) c)) {
+				offset--;
+				c = line.charAt(offset);
+			}
+			while (Character.isJavaIdentifierPart((int) c)) {
+				offset--;
+				c = line.charAt(offset);
+				if (c == '<') {
+					// might encounter the opening bound, skip it
+					c = line.charAt(--offset);
+				}
+			}
+			return offset;
+		} else {
+			int start = line.indexOf(namepart, index);
+			if (start < 0) {
+				return -1;
+			}
+			int offset = start + namepart.length();
+			while (line.charAt(offset) == ' ') {
+				offset++;
+			}
+			if (line.charAt(offset) == '(' || line.charAt(offset) == '<') {
+				return start;
+			}
+			return findMethodNameStart(namepart, line, offset);
 		}
-		int offset = start + namepart.length();
-		while (line.charAt(offset) == ' ') {
-			offset++;
-		}
-		if (line.charAt(offset) == '(' || line.charAt(offset) == '<') {
-			return start;
-		}
-		return findMethodNameStart(namepart, line, offset);
 	}
 
 	/*
@@ -895,9 +914,15 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 			if (isContructor) {
 				// new keyword should only be checked if the method is a
 				// constructor
-				start = line.indexOf("new"); //$NON-NLS-1$
+				start = line.indexOf("::new"); //$NON-NLS-1$
 				if (start < 0) {
-					start = 0;
+					line.indexOf("new"); //$NON-NLS-1$
+					if (start < 0) {
+						start = 0;
+					}
+				} else {
+					int first = findMethodNameStart("::new", line, start); //$NON-NLS-1$
+					return new Position(offset + first, (start - first) + 5);
 				}
 			} else {
 				start = 0;
@@ -919,6 +944,7 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 		}
 		return null;
 	}
+
 
 	/**
 	 * Returns if the signature is enclosed by the one of the elements of the
