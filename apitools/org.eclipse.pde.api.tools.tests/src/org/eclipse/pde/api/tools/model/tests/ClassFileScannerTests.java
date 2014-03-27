@@ -11,20 +11,13 @@
 package org.eclipse.pde.api.tools.model.tests;
 
 import java.io.File;
-import java.util.Iterator;
 import java.util.List;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.pde.api.tools.internal.model.DirectoryApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.provisional.builder.IReference;
-import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
-import org.eclipse.pde.api.tools.internal.provisional.model.IApiMember;
-import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
-import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
 import org.eclipse.test.OrderedTestSuite;
 
 /**
@@ -32,8 +25,16 @@ import org.eclipse.test.OrderedTestSuite;
  * 
  * @since 1.0.0
  */
-public class ClassFileScannerTests extends TestCase {
+public class ClassFileScannerTests extends ScannerTest {
 
+	private static IPath WORKSPACE_ROOT = TestSuiteHelper.getPluginDirectoryPath().append("test_classes_workspace"); //$NON-NLS-1$
+	private static IPath ROOT_PATH = TestSuiteHelper.getPluginDirectoryPath().append("test-source").append("classes"); //$NON-NLS-1$ //$NON-NLS-2$;
+
+	/**
+	 * The ordered {@link Test} suite to run
+	 * 
+	 * @return the {@link Test} suite
+	 */
 	public static Test suite() {
 		return new OrderedTestSuite(ClassFileScannerTests.class, new String[] {
 				"testScanEmptyClass", //$NON-NLS-1$
@@ -59,135 +60,46 @@ public class ClassFileScannerTests extends TestCase {
 		});
 	}
 
-	private static IPath WORKSPACE_ROOT = null;
-	private static String WORKSPACE_NAME = "test_classes_workspace"; //$NON-NLS-1$
-	private static IPath ROOT_PATH = null;
-	private static DirectoryApiTypeContainer container = null;
-
-	static {
-		// setup workspace root
-		WORKSPACE_ROOT = TestSuiteHelper.getPluginDirectoryPath().append(WORKSPACE_NAME);
-		ROOT_PATH = TestSuiteHelper.getPluginDirectoryPath().append("test-source").append("classes"); //$NON-NLS-1$ //$NON-NLS-2$
-		new File(WORKSPACE_ROOT.toOSString()).mkdirs();
-	}
-
-	/**
-	 * Returns the set of references collected from the given class file
-	 * 
-	 * @param qualifiedname
-	 * @return the set of references from the specified class file name or
-	 *         <code>null</code>
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.model.tests.ScannerTest#getWorkspaceRoot()
 	 */
-	protected List<IReference> getRefSet(String qualifiedname) {
-		try {
-			IApiTypeRoot cfile = container.findTypeRoot(qualifiedname);
-			IApiType type = cfile.getStructure();
-			List<IReference> references = type.extractReferences(IReference.MASK_REF_ALL, null);
-			return references;
-		} catch (CoreException ce) {
-			fail(ce.getMessage());
-		}
-		return null;
-	}
-
-	/**
-	 * Finds an {@link IReference} within the given set, where a matching ref
-	 * has the same kind and the target of the reference matches the specified
-	 * qualified name
-	 * 
-	 * @param sourcename the qualified name of the source location
-	 * @param targetname the qualified name of the target location
-	 * @param kind the kind of the {@link IReference}
-	 * @param refs the set of {@link IReference}s to search within
-	 * @return a matching {@link IReference} or <code>null</code>
-	 */
-	protected IReference findReference(String sourcename, String targetname, int kind, List<IReference> refs) throws CoreException {
-		IReference ref = null;
-		for (Iterator<IReference> iter = refs.iterator(); iter.hasNext();) {
-			ref = iter.next();
-			if (ref.getReferenceKind() == kind) {
-				if (getTypeName(ref.getMember()).equals(sourcename)) {
-					if (ref.getReferencedTypeName().equals(targetname)) {
-						return ref;
-					}
-				}
-			}
-			ref = null;
-		}
-		return ref;
-	}
-
-	/**
-	 * Returns the fully qualified type name associated with the given member.
-	 * 
-	 * @param member
-	 * @return fully qualified type name
-	 */
-	private String getTypeName(IApiMember member) throws CoreException {
-		switch (member.getType()) {
-			case IApiElement.TYPE:
-				return member.getName();
-			default:
-				return member.getEnclosingType().getName();
-		}
-	}
-
-	/**
-	 * Finds a reference to a given target from a given source to a given target
-	 * member of a specified kind from the given listing
-	 * 
-	 * @param sourcename the qualified name of the location the reference is
-	 *            from
-	 * @param sourceMember the name of the source member making the reference or
-	 *            <code>null</code> if none
-	 * @param targetname the qualified type name being referenced
-	 * @param targetMember name of target member referenced or <code>null</code>
-	 * @param kind the kind of reference. see {@link IReference} for kinds
-	 * @param refs the current listing of references to search within
-	 * @return an {@link IReference} matching the specified criteria or
-	 *         <code>null</code> if none found
-	 */
-	protected IReference findMemberReference(String sourcename, String sourceMember, String targetname, String targetMember, int kind, List<IReference> refs) throws CoreException {
-		IReference ref = null;
-		for (Iterator<IReference> iter = refs.iterator(); iter.hasNext();) {
-			ref = iter.next();
-			if (ref.getReferenceKind() == kind) {
-				if (getTypeName(ref.getMember()).equals(sourcename)) {
-					if (ref.getReferencedTypeName().equals(targetname)) {
-						if (sourceMember != null) {
-							if (!ref.getMember().getName().equals(sourceMember)) {
-								continue;
-							}
-						}
-						if (targetMember != null) {
-							if (!ref.getReferencedMemberName().equals(targetMember)) {
-								continue;
-							}
-						}
-						return ref;
-					}
-				}
-			}
-			ref = null;
-		}
-		return ref;
+	@Override
+	protected IPath getWorkspaceRoot() {
+		return WORKSPACE_ROOT;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * @see junit.framework.TestCase#setUp()
+	 * @see org.eclipse.pde.api.tools.model.tests.ScannerTest#getPackageName()
 	 */
 	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-		if (container == null) {
-			String[] sourceFilePaths = new String[] { ROOT_PATH.toOSString() };
-			assertTrue("working directory should compile", TestSuiteHelper.compile(sourceFilePaths, WORKSPACE_ROOT.toOSString(), TestSuiteHelper.getCompilerOptions())); //$NON-NLS-1$
-			assertTrue("Test12 should compile to 1.4", TestSuiteHelper.compile(ROOT_PATH.append("Test12.java").toOSString(), //$NON-NLS-1$ //$NON-NLS-2$
-					WORKSPACE_ROOT.toOSString(), new String[] {
-							"-1.4", "-preserveAllLocals", "-nowarn" })); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			container = new DirectoryApiTypeContainer(null, WORKSPACE_ROOT.append("classes").toOSString()); //$NON-NLS-1$
-		}
+	protected String getPackageName() {
+		return "classes"; //$NON-NLS-1$
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.model.tests.ScannerTest#getSourcePath()
+	 */
+	@Override
+	protected IPath getSourcePath() {
+		return ROOT_PATH;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.model.tests.ScannerTest#doCompile()
+	 */
+	@Override
+	protected boolean doCompile() {
+		boolean result = true;
+		String[] sourceFilePaths = new String[] { ROOT_PATH.toOSString() };
+		result &= TestSuiteHelper.compile(sourceFilePaths, WORKSPACE_ROOT.toOSString(), TestSuiteHelper.getCompilerOptions());
+		assertTrue("working directory should compile", result); //$NON-NLS-1$
+		result &= TestSuiteHelper.compile(ROOT_PATH.append("Test12.java").toOSString(), WORKSPACE_ROOT.toOSString(), new String[] {"-1.4", "-preserveAllLocals", "-nowarn" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		assertTrue("Test12 should compile to 1.4", result); //$NON-NLS-1$
+		return result;
 	}
 
 	/**

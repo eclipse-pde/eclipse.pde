@@ -11,20 +11,12 @@
 package org.eclipse.pde.api.tools.model.tests;
 
 import java.io.File;
-import java.util.Iterator;
 import java.util.List;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.pde.api.tools.internal.model.DirectoryApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.provisional.builder.IReference;
-import org.eclipse.pde.api.tools.internal.provisional.model.IApiElement;
-import org.eclipse.pde.api.tools.internal.provisional.model.IApiMember;
-import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
-import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
 import org.eclipse.test.OrderedTestSuite;
 
 /**
@@ -32,109 +24,64 @@ import org.eclipse.test.OrderedTestSuite;
  * 
  * @since 1.0.400
  */
-public class Java8ClassfileScannerTests extends TestCase {
+public class Java8ClassfileScannerTests extends ScannerTest {
 
-	private static IPath WORKSPACE_ROOT = null;
-	private static String WORKSPACE_NAME = "test_classes_workspace_java8"; //$NON-NLS-1$
-	private static IPath ROOT_PATH = null;
-	private static DirectoryApiTypeContainer container = null;
+	private static IPath WORKSPACE_ROOT = TestSuiteHelper.getPluginDirectoryPath().append("test_classes_workspace_java8"); //$NON-NLS-1$
+	private static IPath ROOT_PATH = TestSuiteHelper.getPluginDirectoryPath().append("test-source").append("invokedynamic"); //$NON-NLS-1$ //$NON-NLS-2$
 
-	static {
-		// setup workspace root
-		WORKSPACE_ROOT = TestSuiteHelper.getPluginDirectoryPath().append(WORKSPACE_NAME);
-		ROOT_PATH = TestSuiteHelper.getPluginDirectoryPath().append("test-source").append("invokedynamic"); //$NON-NLS-1$ //$NON-NLS-2$
-		new File(WORKSPACE_ROOT.toOSString()).mkdirs();
-	}
-
+	/**
+	 * Returns the {@link Test} suite to run
+	 * 
+	 * @return the {@link Test} suite
+	 */
 	public static Test suite() {
 		return new OrderedTestSuite(Java8ClassfileScannerTests.class, new String[] {
 				"testStaticMethodRef", //$NON-NLS-1$
+				"testInstanceMethodRef", //$NON-NLS-1$
+				"testArbitraryObjectMethodRef", //$NON-NLS-1$
+				"testConstructorMethodRef", //$NON-NLS-1$
 				"testCleanup" //$NON-NLS-1$
 		});
 	}
-
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.model.tests.ScannerTest#getWorkspaceRoot()
+	 */
 	@Override
-	protected void setUp() throws Exception {
-		if (container == null) {
-			String[] sourceFilePaths = new String[] { ROOT_PATH.toOSString() };
-			assertTrue("working directory should compile", TestSuiteHelper.compile(sourceFilePaths, WORKSPACE_ROOT.toOSString(), TestSuiteHelper.getCompilerOptions())); //$NON-NLS-1$
-			container = new DirectoryApiTypeContainer(null, WORKSPACE_ROOT.append("invokedynamic").toOSString()); //$NON-NLS-1$
-		}
+	protected IPath getWorkspaceRoot() {
+		return WORKSPACE_ROOT;
 	}
 
-	/**
-	 * Returns the set of references collected from the given class file
-	 * 
-	 * @param qualifiedname
-	 * @return the set of references from the specified class file name or
-	 *         <code>null</code>
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.model.tests.ScannerTest#getSourcePath()
 	 */
-	protected List<IReference> getRefSet(String qualifiedname) {
-		try {
-			IApiTypeRoot cfile = container.findTypeRoot(qualifiedname);
-			IApiType type = cfile.getStructure();
-			List<IReference> references = type.extractReferences(IReference.MASK_REF_ALL, null);
-			return references;
-		} catch (CoreException ce) {
-			fail(ce.getMessage());
-		}
-		return null;
+	@Override
+	protected IPath getSourcePath() {
+		return ROOT_PATH;
 	}
 
-	/**
-	 * Returns the fully qualified type name associated with the given member.
-	 * 
-	 * @param member
-	 * @return fully qualified type name
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.model.tests.ScannerTest#getPackageName()
 	 */
-	private String getTypeName(IApiMember member) throws CoreException {
-		switch (member.getType()) {
-			case IApiElement.TYPE:
-				return member.getName();
-			default:
-				return member.getEnclosingType().getName();
-		}
+	@Override
+	protected String getPackageName() {
+		return "invokedynamic"; //$NON-NLS-1$
 	}
 
-	/**
-	 * Finds a reference to a given target from a given source to a given target
-	 * member of a specified kind from the given listing
-	 * 
-	 * @param sourcename the qualified name of the location the reference is
-	 *            from
-	 * @param sourceMember the name of the source member making the reference or
-	 *            <code>null</code> if none
-	 * @param targetname the qualified type name being referenced
-	 * @param targetMember name of target member referenced or <code>null</code>
-	 * @param kind the kind of reference. see {@link IReference} for kinds
-	 * @param refs the current listing of references to search within
-	 * @return an {@link IReference} matching the specified criteria or
-	 *         <code>null</code> if none found
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.pde.api.tools.model.tests.ScannerTest#doCompile()
 	 */
-	protected IReference findMemberReference(String sourcename, String sourceMember, String targetname, String targetMember, int kind, List<IReference> refs) throws CoreException {
-		IReference ref = null;
-		for (Iterator<IReference> iter = refs.iterator(); iter.hasNext();) {
-			ref = iter.next();
-			if (ref.getReferenceKind() == kind) {
-				if (getTypeName(ref.getMember()).equals(sourcename)) {
-					if (ref.getReferencedTypeName().equals(targetname)) {
-						if (sourceMember != null) {
-							if (!ref.getMember().getName().equals(sourceMember)) {
-								continue;
-							}
-						}
-						if (targetMember != null) {
-							if (!ref.getReferencedMemberName().equals(targetMember)) {
-								continue;
-							}
-						}
-						return ref;
-					}
-				}
-			}
-			ref = null;
-		}
-		return ref;
+	@Override
+	protected boolean doCompile() {
+		boolean result = true;
+		String[] sourceFilePaths = new String[] { ROOT_PATH.toOSString() };
+		result &= TestSuiteHelper.compile(sourceFilePaths, WORKSPACE_ROOT.toOSString(), TestSuiteHelper.getCompilerOptions());
+		assertTrue("working directory should compile", result);  //$NON-NLS-1$
+		return true;
 	}
 
 	/**
@@ -146,6 +93,40 @@ public class Java8ClassfileScannerTests extends TestCase {
 		List<IReference> refs = getRefSet("test1"); //$NON-NLS-1$
 		IReference ref = findMemberReference("invokedynamic.test1", "m1", "invokedynamic.test1$MR", "mrCompare", IReference.REF_VIRTUALMETHOD, refs); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		assertTrue("There should be a ref for invokedynamic.test1$MR#mrCompare", ref != null); //$NON-NLS-1$
+	}
+
+	/**
+	 * Tests getting an invoke dynamic ref for an instance method ref
+	 * 
+	 * @throws Exception
+	 */
+	public void testInstanceMethodRef() throws Exception {
+		List<IReference> refs = getRefSet("test2"); //$NON-NLS-1$
+		IReference ref = findMemberReference("invokedynamic.test2", "m1", "invokedynamic.test2$MR", "mrCompare", IReference.REF_VIRTUALMETHOD, refs); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		assertTrue("There should be a ref for invokedynamic.test2$MR#mrCompare", ref != null); //$NON-NLS-1$
+	}
+
+	/**
+	 * Tests an invoke dynamic reference to an instance method of an arbitrary
+	 * object
+	 * 
+	 * @throws Exception
+	 */
+	public void testArbitraryObjectMethodRef() throws Exception {
+		List<IReference> refs = getRefSet("test3"); //$NON-NLS-1$
+		IReference ref = findMemberReference("invokedynamic.test3", "m1", "java.lang.String", "compareToIgnoreCase", IReference.REF_VIRTUALMETHOD, refs); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		assertTrue("There should be a ref for String#compareToIgnoreCase", ref != null); //$NON-NLS-1$
+	}
+
+	/**
+	 * Tests an invoke dynamic reference to a constructor method ref
+	 * 
+	 * @throws Exception
+	 */
+	public void testConstructorMethodRef() throws Exception {
+		List<IReference> refs = getRefSet("test4"); //$NON-NLS-1$
+		IReference ref = findMemberReference("invokedynamic.test4", "m1", "java.util.HashSet", "<init>", IReference.REF_VIRTUALMETHOD, refs); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		assertTrue("There should be a ref for HashSet#<init>", ref != null); //$NON-NLS-1$
 	}
 
 	/**
