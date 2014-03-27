@@ -73,10 +73,21 @@ public abstract class ScannerTest extends TestCase {
 		if (!file.exists()) {
 			file.mkdirs();
 		}
+
 		if (container == null) {
-			assertTrue("compilation should succeed", doCompile()); //$NON-NLS-1$ 
+			assertTrue("The test workspace failed to compile", doCompile()); //$NON-NLS-1$
 			container = new DirectoryApiTypeContainer(null, root.append(getPackageName()).toOSString());
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see junit.framework.TestCase#tearDown()
+	 */
+	@Override
+	protected void tearDown() throws Exception {
+		super.tearDown();
+
 	}
 
 	/**
@@ -188,5 +199,17 @@ public abstract class ScannerTest extends TestCase {
 			ref = null;
 		}
 		return ref;
+	}
+
+	/**
+	 * Close the container and null it out
+	 * 
+	 * @throws Exception
+	 */
+	protected void cleanUp() throws Exception {
+		if (container != null) {
+			container.close();
+			container = null;
+		}
 	}
 }

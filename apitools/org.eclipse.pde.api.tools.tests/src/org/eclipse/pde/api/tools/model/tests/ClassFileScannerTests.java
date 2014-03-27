@@ -424,9 +424,13 @@ public class ClassFileScannerTests extends ScannerTest {
 
 	/**
 	 * Cleans up after the tests are done. This must be the last test run
+	 * 
+	 * @throws Exception
 	 */
-	public void testCleanup() {
+	public void testCleanup() throws Exception {
+		cleanUp();
 		// remove workspace root
 		assertTrue(TestSuiteHelper.delete(new File(WORKSPACE_ROOT.toOSString())));
+
 	}
 }
