@@ -431,13 +431,8 @@ public class ReferenceExtractor extends ClassVisitor {
 			}
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.objectweb.asm.MethodAdapter#visitMethodInsn(int,
-		 * java.lang.String, java.lang.String, java.lang.String)
-		 */
 		@Override
-		public void visitMethodInsn(int opcode, String owner, String name, String desc) {
+		public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean inf) {
 			Type declaringType = Type.getObjectType(owner);
 			int kind = -1;
 			switch (opcode) {
