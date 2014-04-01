@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 IBM Corporation and others.
+ * Copyright (c) 2008, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,6 +48,13 @@ public interface IApiMethod extends IApiMember {
 	 * @return whether this method is a class initializer
 	 */
 	public boolean isClassInitializer();
+
+	/**
+	 * Returns whether this method is a default method or not.
+	 * 
+	 * @return whether this method is a default method
+	 */
+	public boolean isDefaultMethod();
 
 	/**
 	 * Returns names of exceptions thrown by this method, or <code>null</code>

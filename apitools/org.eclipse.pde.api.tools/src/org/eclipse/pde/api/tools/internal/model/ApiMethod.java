@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 IBM Corporation and others.
+ * Copyright (c) 2008, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,18 +51,22 @@ public class ApiMethod extends ApiMember implements IApiMethod {
 	 * @param signature method signature
 	 * @param genericSig
 	 * @param flags
+	 * @param exceptions
+	 * @param isdefault
 	 */
 	protected ApiMethod(IApiType enclosing, String name, String signature, String genericSig, int flags, String[] exceptions) {
 		super(enclosing, name, signature, genericSig, IApiElement.METHOD, flags);
 		fExceptions = exceptions;
 	}
 
-	/**
-	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IApiMethod#isConstructor()
-	 */
 	@Override
 	public boolean isConstructor() {
 		return getName().equals(INIT);
+	}
+
+	@Override
+	public boolean isDefaultMethod() {
+		return ((IApiType) getParent()).isInterface() && (getModifiers() & Opcodes.ACC_ABSTRACT) == 0;
 	}
 
 	/*
@@ -127,31 +131,16 @@ public class ApiMethod extends ApiMember implements IApiMethod {
 		fDefaultValue = value;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.model.IApiMethod#isSynthetic
-	 * ()
-	 */
 	@Override
 	public boolean isSynthetic() {
 		return (getModifiers() & Opcodes.ACC_SYNTHETIC) != 0;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.model.IApiMethod#isSynthetic
-	 * ()
-	 */
 	@Override
 	public boolean isPolymorphic() {
 		return (getModifiers() & Polymorphic) != 0;
 	}
 
-	/**
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
