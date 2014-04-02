@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 IBM Corporation and others.
+ * Copyright (c) 2011, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@ import java.io.File;
 import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.runnable.StartupMonitor;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.trace.internal.utils.*;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
@@ -22,7 +21,8 @@ import org.osgi.framework.ServiceRegistration;
 /**
  * The activator class controls the plug-in life cycle
  */
-public class TracingUIActivator extends AbstractUIPlugin {
+//XXX: Does not extend AbstractUIPlugin to avoid activating the UI layer at load time (bug 431223).
+public class TracingUIActivator extends Plugin {
 
 	/**
 	 * The constructor
