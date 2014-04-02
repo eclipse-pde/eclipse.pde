@@ -43,9 +43,17 @@ public interface IReference {
 	 * API restricted
 	 * {@link org.eclipse.pde.api.tools.internal.provisional.model.IApiElement}
 	 * 
-	 * @since 1.1
+	 * @since 1.0.400
 	 */
-	public static final int F_ILLEGAL = 1;
+	public static final int F_ILLEGAL = 0x1;
+	/**
+	 * Constant representing a default method was called <br>
+	 * <br>
+	 * Value is: <code>2</code>
+	 * 
+	 * @since 1.0.600
+	 */
+	public static final int F_DEFAULT_METHOD = 0x1 << 1;
 
 	/**
 	 * Constant representing the superclass of the class is a class in the

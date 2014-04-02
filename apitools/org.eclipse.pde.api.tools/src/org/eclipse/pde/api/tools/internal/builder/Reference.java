@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others.
+ * Copyright (c) 2008, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,10 +54,11 @@ public class Reference implements IReference {
 	private IApiMember fSourceMember;
 
 	/**
-	 * One of the valid
-	 * {@link org.eclipse.pde.api.tools.internal.provisional.search.ReferenceModifiers}
+	 * One of the valid reference kinds
+	 * 
+	 * @see IReference
 	 */
-	private int fKind;
+	private int fKind = 0;
 
 	/**
 	 * Flags for the reference
@@ -104,11 +105,12 @@ public class Reference implements IReference {
 	 * {@link org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem}
 	 * s to the backing listing.
 	 * 
-	 * @param problems the list of problems to add - <code>null</code> is not
-	 *            accepted.
-	 * @return <code>true</code> if the problems were all added,
-	 *         <code>false</code> otherwise
-	 * @since 1.1
+	 * @param origin where the reference occurred from
+	 * @param typeName name of the referenced type where virtual method lookup
+	 *            begins
+	 * @param methodName name of the referenced method
+	 * @param signature signature of the referenced method
+	 * @param kind kind of method reference
 	 */
 	public boolean addProblems(IApiProblem problem) {
 		if (problem == null) {
@@ -124,57 +126,137 @@ public class Reference implements IReference {
 	}
 
 	/**
-	 * Returns the complete listing of
-	 * {@link org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem}
-	 * s recorded for this reference or <code>null</code> if none have been
-	 * reported.
+	 * Creates and returns a method reference.
 	 * 
-	 * @return the listing of
-	 *         {@link org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem}
-	 *         s or <code>null</code>
-	 * @since 1.1
+	 * @param origin where the reference occurred from
+	 * @param typeName name of the referenced type where virtual method lookup
+	 *            begins
+	 * @param methodName name of the referenced method
+	 * @param signature signature of the referenced method
+	 * @param kind kind of method reference
 	 */
-	public List<IApiProblem> getProblems() {
-		return fProblems;
+	public static Reference methodReference(IApiMember origin, String typeName, String methodName, String signature, int kind) {
+		return methodReference(origin, typeName, methodName, signature, kind, 0);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.model.IReference#getLineNumber
-	 * ()
+	/**
+	 * Creates and returns a method reference.
+	 * 
+	 * @param origin where the reference occurred from
+	 * @param typeName name of the referenced type where virtual method lookup
+	 *            begins
+	 * @param methodName name of the referenced method
+	 * @param signature signature of the referenced method
+	 * @param kind kind of method reference
+	 * @param flags flags for the reference
+	 * @since 1.0.600
 	 */
+	public static Reference methodReference(IApiMember origin, String typeName, String methodName, String signature, int kind, int flags) {
+		Reference ref = new Reference();
+		ref.fSourceMember = origin;
+		ref.fTypeName = typeName;
+		ref.fMemberName = methodName;
+		ref.fSignature = signature;
+		ref.fKind = kind;
+		ref.fType = IReference.T_METHOD_REFERENCE;
+		ref.fFlags = flags;
+		return ref;
+	}
+
+	/**
+	 * Creates and returns a field reference.
+	 * 
+	 * @param origin where the reference occurred from
+	 * @param typeName name of the referenced type where field lookup begins
+	 * @param fieldName name of the referenced field
+	 * @param kind kind of field reference
+	 */
+	public static Reference fieldReference(IApiMember origin, String typeName, String fieldName, int kind) {
+		return fieldReference(origin, typeName, fieldName, kind, 0);
+	}
+
+	/**
+	 * Creates and returns a field reference.
+	 * 
+	 * @param origin where the reference occurred from
+	 * @param typeName name of the referenced type where field lookup begins
+	 * @param fieldName name of the referenced field
+	 * @param kind kind of field reference
+	 * @param flags flags for the reference
+	 * 
+	 * @since 1.0.600
+	 */
+	public static Reference fieldReference(IApiMember origin, String typeName, String fieldName, int kind, int flags) {
+		Reference ref = new Reference();
+		ref.fSourceMember = origin;
+		ref.fTypeName = typeName;
+		ref.fMemberName = fieldName;
+		ref.fKind = kind;
+		ref.fType = IReference.T_FIELD_REFERENCE;
+		ref.fFlags = flags;
+		return ref;
+	}
+
+	/**
+	 * Creates and returns a type reference.
+	 * 
+	 * @param origin where the reference occurred from
+	 * @param typeName name of the referenced type
+	 * @param kind kind of reference
+	 */
+	public static Reference typeReference(IApiMember origin, String typeName, int kind) {
+		return typeReference(origin, typeName, null, kind, 0);
+	}
+
+	/**
+	 * Creates and returns a type reference.
+	 * 
+	 * @param origin where the reference occurred from
+	 * @param typeName name of the referenced type
+	 * @param signature extra type signature information
+	 * @param kind kind of reference
+	 */
+	public static Reference typeReference(IApiMember origin, String typeName, String signature, int kind) {
+		return typeReference(origin, typeName, signature, kind, 0);
+	}
+
+	/**
+	 * Creates and returns a type reference.
+	 * 
+	 * @param origin where the reference occurred from
+	 * @param typeName name of the referenced type
+	 * @param signature extra type signature information
+	 * @param kind kind of reference
+	 * @param flags flags for the reference
+	 * 
+	 * @since 1.0.600
+	 */
+	public static Reference typeReference(IApiMember origin, String typeName, String signature, int kind, int flags) {
+		Reference ref = new Reference();
+		ref.fSourceMember = origin;
+		ref.fTypeName = typeName;
+		ref.fKind = kind;
+		ref.fType = IReference.T_TYPE_REFERENCE;
+		ref.fSignature = signature;
+		ref.fFlags = flags;
+		return ref;
+	}
+
 	@Override
 	public int getLineNumber() {
 		return fSourceLine;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.internal.provisional.model.IReference#getMember
-	 * ()
-	 */
 	@Override
 	public IApiMember getMember() {
 		return fSourceMember;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IReference#
-	 * getReferenceKind()
-	 */
 	@Override
 	public int getReferenceKind() {
 		return fKind;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.builder.IReference#
-	 * getReferenceFlags()
-	 */
 	@Override
 	public int getReferenceFlags() {
 		return fFlags;
@@ -189,123 +271,29 @@ public class Reference implements IReference {
 		fFlags |= newflags;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IReference#
-	 * getReferenceType()
-	 */
 	@Override
 	public int getReferenceType() {
 		return fType;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IReference#
-	 * getReferencedMember()
-	 */
 	@Override
 	public IApiMember getResolvedReference() {
 		return fResolved;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IReference#
-	 * getReferencedMemberName()
-	 */
 	@Override
 	public String getReferencedMemberName() {
 		return fMemberName;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IReference#
-	 * getReferencedSignature()
-	 */
 	@Override
 	public String getReferencedSignature() {
 		return fSignature;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.internal.provisional.model.IReference#
-	 * getReferencedTypeName()
-	 */
 	@Override
 	public String getReferencedTypeName() {
 		return fTypeName;
-	}
-
-	/**
-	 * Creates and returns a method reference.
-	 * 
-	 * @param origin where the reference occurred from
-	 * @param typeName name of the referenced type where virtual method lookup
-	 *            begins
-	 * @param methodName name of the referenced method
-	 * @param signature signature of the referenced method
-	 * @param kind kind of method reference
-	 */
-	public static Reference methodReference(IApiMember origin, String typeName, String methodName, String signature, int kind) {
-		Reference ref = new Reference();
-		ref.fSourceMember = origin;
-		ref.fTypeName = typeName;
-		ref.fMemberName = methodName;
-		ref.fSignature = signature;
-		ref.fKind = kind;
-		ref.fType = IReference.T_METHOD_REFERENCE;
-		return ref;
-	}
-
-	/**
-	 * Creates and returns a field reference.
-	 * 
-	 * @param origin where the reference occurred from
-	 * @param typeName name of the referenced type where field lookup begins
-	 * @param fieldName name of the referenced field
-	 * @param kind kind of field reference
-	 */
-	public static Reference fieldReference(IApiMember origin, String typeName, String fieldName, int kind) {
-		Reference ref = new Reference();
-		ref.fSourceMember = origin;
-		ref.fTypeName = typeName;
-		ref.fMemberName = fieldName;
-		ref.fKind = kind;
-		ref.fType = IReference.T_FIELD_REFERENCE;
-		return ref;
-	}
-
-	/**
-	 * Creates and returns a type reference.
-	 * 
-	 * @param origin where the reference occurred from
-	 * @param typeName name of the referenced type
-	 * @param kind kind of reference
-	 */
-	public static Reference typeReference(IApiMember origin, String typeName, int kind) {
-		Reference ref = new Reference();
-		ref.fSourceMember = origin;
-		ref.fTypeName = typeName;
-		ref.fKind = kind;
-		ref.fType = IReference.T_TYPE_REFERENCE;
-		return ref;
-	}
-
-	/**
-	 * Creates and returns a type reference.
-	 * 
-	 * @param origin where the reference occurred from
-	 * @param typeName name of the referenced type
-	 * @param signature extra type signature information
-	 * @param kind kind of reference
-	 */
-	public static Reference typeReference(IApiMember origin, String typeName, String signature, int kind) {
-		Reference ref = typeReference(origin, typeName, kind);
-		ref.fSignature = signature;
-		return ref;
 	}
 
 	/**
@@ -417,30 +405,92 @@ public class Reference implements IReference {
 	 * @throws CoreException if something goes terribly wrong
 	 */
 	private boolean resolveVirtualMethod(IApiType type, String methodName, String methodSignature) throws CoreException {
-		IApiMethod target = type.getMethod(methodName, methodSignature);
-		if (target != null) {
-			if (target.isSynthetic()) {
+		if (setResolvedMethod(type.getMethod(methodName, methodSignature))) {
+			return true;
+		}
+		if (getReferenceKind() == IReference.REF_INTERFACEMETHOD) {
+			if (resolveInterfaceMethod(type, methodName, methodSignature)) {
+				return true;
+			}
+		} else if (resolveSuperTypeMethod(type, methodName, methodSignature)) {
+			return true;
+		}
+		if ((fFlags & F_DEFAULT_METHOD) > 0) {
+			return resolveInterfaceMethod(type, methodName, methodSignature);
+		}
+		return false;
+	}
+
+	/**
+	 * Sets the resolved value for the invokevirtual or invokeinterface
+	 * reference. If the method is not null and successfully updates the
+	 * reference true is returned
+	 * 
+	 * @param method
+	 * @return
+	 * @throws CoreException
+	 * @since 1.0.600
+	 */
+	boolean setResolvedMethod(IApiMethod method) throws CoreException {
+		if (method != null) {
+			if (method.isSynthetic()) {
 				// don't resolve references to synthetic methods
 				return false;
 			} else {
-				fResolved = target;
+				if (method.isDefaultMethod()) {
+					// correct the referenced class sig
+					fTypeName = method.getEnclosingType().getName();
+				}
+				fResolved = method;
 				return true;
 			}
 		}
-		if (getReferenceKind() == IReference.REF_INTERFACEMETHOD) {
-			// resolve method in super interfaces rather than class
-			IApiType[] interfaces = type.getSuperInterfaces();
-			if (interfaces != null) {
-				for (int i = 0; i < interfaces.length; i++) {
-					if (resolveVirtualMethod(interfaces[i], methodName, methodSignature)) {
-						return true;
-					}
+		return false;
+	}
+
+	/**
+	 * Resolves a given method in the super type hierarchy, returns true if it
+	 * is resolved
+	 * 
+	 * @param type
+	 * @param methodName
+	 * @param methodSignature
+	 * @return
+	 * @throws CoreException
+	 * @since 1.0.600
+	 */
+	boolean resolveSuperTypeMethod(IApiType type, String methodName, String methodSignature) throws CoreException {
+		if (setResolvedMethod(type.getMethod(methodName, methodSignature))) {
+			return true;
+		}
+		IApiType superT = type.getSuperclass();
+		if (superT != null) {
+			return resolveVirtualMethod(superT, methodName, methodSignature);
+		}
+		return false;
+	}
+
+	/**
+	 * Try to find the method in the interface hierarchy
+	 * 
+	 * @param type
+	 * @param methodName
+	 * @param methodSignature
+	 * @return
+	 * @throws CoreException
+	 * 
+	 * @since 1.0.600
+	 */
+	boolean resolveInterfaceMethod(IApiType type, String methodName, String methodSignature) throws CoreException {
+		if (setResolvedMethod(type.getMethod(methodName, methodSignature))) {
+			return true;
+		}
+		IApiType[] interfaces = type.getSuperInterfaces();
+		if (interfaces != null) {
+			for (int i = 0; i < interfaces.length; i++) {
+				if(resolveInterfaceMethod(interfaces[i], methodName, methodSignature)) {
+					return true;
 				}
-			}
-		} else {
-			IApiType superT = type.getSuperclass();
-			if (superT != null) {
-				return resolveVirtualMethod(superT, methodName, methodSignature);
 			}
 		}
 		return false;
@@ -815,15 +865,7 @@ public class Reference implements IReference {
 				if (host != null && host.getSymbolicName().equals(rcomponent.getSymbolicName())) {
 					visibility = UseReportConverter.FRAGMENT_PERMISSIBLE;
 				} else {
-					IApiAccess access = description.resolveAccessLevel(Factory.componentDescriptor(mcomponent.getSymbolicName()), // component
-																																	// descriptors
-																																	// in
-																																	// API
-																																	// description
-																																	// are
-																																	// not
-																																	// version
-																																	// qualified
+					IApiAccess access = description.resolveAccessLevel(Factory.componentDescriptor(mcomponent.getSymbolicName()),
 							getResolvedReference().getHandle().getPackage());
 					if (access != null && access.getAccessLevel() == IApiAccess.FRIEND) {
 						visibility = VisibilityModifiers.PRIVATE_PERMISSIBLE;

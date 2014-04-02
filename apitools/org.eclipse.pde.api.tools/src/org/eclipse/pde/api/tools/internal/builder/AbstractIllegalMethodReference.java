@@ -13,6 +13,7 @@ package org.eclipse.pde.api.tools.internal.builder;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.api.tools.internal.model.MethodKey;
 import org.eclipse.pde.api.tools.internal.provisional.builder.IReference;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
@@ -65,6 +66,23 @@ public abstract class AbstractIllegalMethodReference extends AbstractProblemDete
 		if (super.considerReference(reference) && fIllegalMethods.containsKey(key)) {
 			retainReference(reference);
 			return true;
+		}
+		if ((reference.getReferenceFlags() & IReference.F_DEFAULT_METHOD) > 0) {
+			IApiMember member = reference.getResolvedReference();
+			if (member == null) {
+				try {
+					((Reference) reference).resolve();
+					member = reference.getResolvedReference();
+				} catch (CoreException ce) {
+					// do nothing, skip it
+				}
+				if (member instanceof IApiMethod) {
+					IApiMethod method = (IApiMethod) member;
+					if (method.isDefaultMethod()) {
+						return considerReference(reference);
+					}
+				}
+			}
 		}
 		return false;
 	}

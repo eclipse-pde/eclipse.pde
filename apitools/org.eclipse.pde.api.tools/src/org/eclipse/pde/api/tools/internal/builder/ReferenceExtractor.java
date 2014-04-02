@@ -435,6 +435,7 @@ public class ReferenceExtractor extends ClassVisitor {
 		public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean inf) {
 			Type declaringType = Type.getObjectType(owner);
 			int kind = -1;
+			int flags = 0;
 			switch (opcode) {
 				case Opcodes.INVOKESPECIAL: {
 					kind = ("<init>".equals(name) ? IReference.REF_CONSTRUCTORMETHOD : IReference.REF_SPECIALMETHOD); //$NON-NLS-1$
@@ -475,6 +476,20 @@ public class ReferenceExtractor extends ClassVisitor {
 				}
 				case Opcodes.INVOKEVIRTUAL: {
 					kind = IReference.REF_VIRTUALMETHOD;
+					// try to determine if this is a default method
+					if (fVersion >= Opcodes.V1_8) {
+						IApiMember member = ReferenceExtractor.this.getMember();
+						if (member != null) {
+							try {
+								IApiType type = member.getEnclosingType();
+								if (type != null && isDefaultDefined(type, name, desc)) {
+									flags = IReference.F_DEFAULT_METHOD;
+								}
+							} catch (CoreException ce) {
+								// do nothing, give up
+							}
+						}
+					}
 					break;
 				}
 				case Opcodes.INVOKEINTERFACE: {
@@ -486,7 +501,7 @@ public class ReferenceExtractor extends ClassVisitor {
 				}
 			}
 			if (kind != -1) {
-				Reference reference = ReferenceExtractor.this.addMethodReference(declaringType, name, desc, kind);
+				Reference reference = ReferenceExtractor.this.addMethodReference(declaringType, name, desc, kind, flags);
 				if (reference != null) {
 					this.linePositionTracker.addLocation(reference);
 					if (kind == IReference.REF_STATICMETHOD) {
@@ -497,13 +512,42 @@ public class ReferenceExtractor extends ClassVisitor {
 			this.stringLiteral = null;
 		}
 
+		/**
+		 * Find out if the method declaration is a default method.
+		 * 
+		 * @param type
+		 * @param name
+		 * @param signature
+		 * @return true if the method is a default method, false otherwise
+		 * @throws CoreException
+		 * @since 1.0.600
+		 */
+		boolean isDefaultDefined(IApiType type, String name, String signature) throws CoreException {
+			if (type != null) {
+				IApiMethod method = type.getMethod(name, signature);
+				if (method != null) {
+					return method.isDefaultMethod();
+				}
+				if (isDefaultDefined(type.getSuperclass(), name, signature)) {
+					return true;
+				}
+				IApiType ints[] = type.getSuperInterfaces();
+				for (int i = 0; i < ints.length; i++) {
+					if (isDefaultDefined(ints[i], name, signature)) {
+						return true;
+					}
+				}
+			}
+			return false;
+		}
+
 		@Override
 		public void visitInvokeDynamicInsn(String name, String desc, Handle bsm, Object... bsmArgs) {
 			for (Object arg : bsmArgs) {
 				if (arg instanceof Handle) {
 					Handle handle = (Handle) arg;
 					Type declaringType = Type.getObjectType(handle.getOwner());
-					Reference reference = ReferenceExtractor.this.addMethodReference(declaringType, handle.getName(), handle.getDesc(), IReference.REF_VIRTUALMETHOD);
+					Reference reference = ReferenceExtractor.this.addMethodReference(declaringType, handle.getName(), handle.getDesc(), IReference.REF_VIRTUALMETHOD, 0);
 					if (reference != null) {
 						this.linePositionTracker.addLocation(reference);
 					}
@@ -1070,6 +1114,13 @@ public class ReferenceExtractor extends ClassVisitor {
 	FieldTracker fieldtracker = null;
 
 	/**
+	 * The version for the class being visited
+	 * 
+	 * @since 1.0.600
+	 */
+	private int fVersion;
+
+	/**
 	 * Bit mask that determines if we need to visit members
 	 */
 	private static final int VISIT_MEMBERS_MASK = IReference.MASK_REF_ALL ^ (IReference.REF_EXTENDS | IReference.REF_IMPLEMENTS);
@@ -1253,12 +1304,13 @@ public class ReferenceExtractor extends ClassVisitor {
 	 * @param signature signature of the method
 	 * @param linenumber line number where referenced
 	 * @param kind kind of reference
+	 * @param flags the flags for the reference
 	 * @return reference added, or <code>null</code> if none
 	 */
-	protected Reference addMethodReference(Type declaringType, String name, String signature, int kind) {
+	protected Reference addMethodReference(Type declaringType, String name, String signature, int kind, int flags) {
 		Type rtype = this.resolveType(declaringType.getDescriptor());
 		if (rtype != null) {
-			return this.addReference(Reference.methodReference(getMember(), rtype.getClassName(), name, signature, kind));
+			return this.addReference(Reference.methodReference(getMember(), rtype.getClassName(), name, signature, kind, flags));
 		}
 		return null;
 	}
@@ -1342,6 +1394,7 @@ public class ReferenceExtractor extends ClassVisitor {
 	 */
 	@Override
 	public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
+		this.fVersion = version;
 		this.classname = this.processName(name);
 		if (ApiPlugin.DEBUG_REFERENCE_EXTRACTOR) {
 			System.out.println("Starting visit of type: [" + this.fType.getName() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
