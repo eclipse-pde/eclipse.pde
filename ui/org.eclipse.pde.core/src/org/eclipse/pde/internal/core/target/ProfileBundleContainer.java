@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others.
+ * Copyright (c) 2008, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,9 +18,7 @@ import org.eclipse.equinox.frameworkadmin.BundleInfo;
 import org.eclipse.equinox.internal.p2.engine.EngineActivator;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.target.*;
-import org.eclipse.pde.internal.build.site.PluginPathFinder;
-import org.eclipse.pde.internal.core.P2Utils;
-import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.util.ManifestUtils;
 
 /**
@@ -175,7 +173,11 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 	}
 
 	/**
-	 * Resolves installed bundles based on update manager's platform XML.
+	 * Resolves installed bundles based on update manager's platform XML or scans the plugins directory if
+	 * no platform.xml is available
+	 * 
+	 * TODO When we are willing to drop support for platform.xml (pre Eclipse 3.4) we should
+	 * replace this method with a simple directory scan like {@link DirectoryBundleContainer}
 	 * 
 	 * @param definition
 	 * @param home
@@ -184,7 +186,7 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 	 * @throws CoreException
 	 */
 	protected TargetBundle[] resolvePlatformXML(ITargetDefinition definition, String home, IProgressMonitor monitor) throws CoreException {
-		File[] files = PluginPathFinder.getPaths(home, false, false);
+		URL[] files = PluginPathFinder.getPlatformXMLPaths(home, false);
 		if (files.length > 0) {
 			List<TargetBundle> all = new ArrayList<TargetBundle>(files.length);
 			SubMonitor localMonitor = SubMonitor.convert(monitor, Messages.DirectoryBundleContainer_0, files.length);
@@ -193,7 +195,8 @@ public class ProfileBundleContainer extends AbstractBundleContainer {
 					throw new OperationCanceledException();
 				}
 				try {
-					all.add(new TargetBundle(files[i]));
+					File plugin = new File(files[i].getFile());
+					all.add(new TargetBundle(plugin));
 				} catch (CoreException e) {
 					// If an old style conversion fails because the service is not available, log the error.
 					// Otherwise, ignore non-bundle files

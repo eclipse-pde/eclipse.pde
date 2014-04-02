@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2013 IBM Corporation and others.
+ *  Copyright (c) 2000, 2014 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -146,6 +146,22 @@ public class PluginPathFinder {
 		if (new Path(platformHome).equals(new Path(TargetPlatform.getDefaultLocation())) && !isDevLaunchMode())
 			return ConfiguratorUtils.getCurrentPlatformConfiguration().getPluginPath();
 
+		return getPlatformXMLPaths(platformHome, false);
+	}
+
+	public static URL[] getFeaturePaths(String platformHome) {
+		return getPlatformXMLPaths(platformHome, true);
+	}
+
+	/**
+	 * Returns a list of file URLs for plug-ins or features found in a platform.xml file or in the default 
+	 * directory ("plugins"/"features") if no platform.xml is available.
+	 * 
+	 * @param platformHome base location for the installation, used to search for platform.xml
+	 * @param findFeatures if <code>true</code> will return paths to features, otherwise will return paths to plug-ins.
+	 * @return a list of URL paths to plug-ins or features.  Possibly empty if the platform.xml had no entries or the default directory had no valid files
+	 */
+	public static URL[] getPlatformXMLPaths(String platformHome, boolean findFeatures) {
 		File file = getPlatformFile(platformHome);
 		if (file != null) {
 			try {
@@ -153,7 +169,7 @@ public class PluginPathFinder {
 				System.setProperty(URL_PROPERTY, value);
 				try {
 					IPlatformConfiguration config = ConfiguratorUtils.getPlatformConfiguration(file.toURL());
-					return getConfiguredSitesPaths(platformHome, config, false);
+					return getConfiguredSitesPaths(platformHome, config, findFeatures);
 				} finally {
 					System.setProperty(URL_PROPERTY, EMPTY_STRING);
 				}
@@ -161,11 +177,12 @@ public class PluginPathFinder {
 			} catch (IOException e) {
 			}
 		}
-		return scanLocations(getSites(platformHome, false));
+		return scanLocations(getSites(platformHome, findFeatures));
 	}
 
-	/*
+	/**
 	 * Returns a File object representing the platform.xml or null if the file cannot be found.
+	 * @return File representing platform.xml or <code>null</code>
 	 */
 	private static File getPlatformFile(String platformHome) {
 		String location = System.getProperty("org.eclipse.pde.platform_location"); //$NON-NLS-1$
@@ -187,25 +204,6 @@ public class PluginPathFinder {
 		}
 		file = new File(platformHome, "configuration/org.eclipse.update/platform.xml"); //$NON-NLS-1$
 		return file.exists() ? file : null;
-	}
-
-	public static URL[] getFeaturePaths(String platformHome) {
-		File file = getPlatformFile(platformHome);
-		if (file != null) {
-			try {
-				String value = new Path(platformHome).toFile().toURL().toExternalForm();
-				System.setProperty(URL_PROPERTY, value);
-				try {
-					IPlatformConfiguration config = ConfiguratorUtils.getPlatformConfiguration(file.toURL());
-					return getConfiguredSitesPaths(platformHome, config, true);
-				} finally {
-					System.setProperty(URL_PROPERTY, EMPTY_STRING);
-				}
-			} catch (MalformedURLException e) {
-			} catch (IOException e) {
-			}
-		}
-		return scanLocations(getSites(platformHome, true));
 	}
 
 	private static URL[] getConfiguredSitesPaths(String platformHome, IPlatformConfiguration configuration, boolean features) {
@@ -247,7 +245,7 @@ public class PluginPathFinder {
 	}
 
 	/**
-	 * Scan given plugin/feature directores or jars for existance
+	 * Scan given plugin/feature directories or jars for existence
 	 * @param sites
 	 * @return URLs to plugins/features
 	 */
