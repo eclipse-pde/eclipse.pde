@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 IBM Corporation and others.
+ * Copyright (c) 2013, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,8 +34,8 @@ import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 public abstract class AnnotationTest extends ApiBuilderTest {
 
 	// reuse the Javadoc tag project
-	protected static IPath WORKSPACE_PATH = new Path("tagproject/src/a/b/c"); //$NON-NLS-1$
-	protected static IPath WORKSPACE_PATH_DEFAULT = new Path("tagproject/src"); //$NON-NLS-1$
+	protected static IPath WORKSPACE_PATH = new Path("src/a/b/c"); //$NON-NLS-1$
+	protected static IPath WORKSPACE_PATH_DEFAULT = new Path("src"); //$NON-NLS-1$
 
 	/**
 	 * Constructor
@@ -71,9 +71,12 @@ public abstract class AnnotationTest extends ApiBuilderTest {
 				ValidAnnotationAnnotationsTests.class,
 				InvalidClassAnnotationsTests.class,
 				ValidClassAnnotationsTests.class,
+				InvalidInterfaceAnnotationTests.class,
+				ValidInterfaceAnnotationTests.class,
 				InvalidDuplicateAnnotationTests.class,
 				InvalidEnumAnnotationsTests.class,
-				ValidEnumAnnotationsTests.class, FieldAnnotationTest.class };
+				ValidEnumAnnotationsTests.class, FieldAnnotationTest.class,
+				MethodAnnotationTest.class};
 		return classes;
 	}
 
@@ -212,9 +215,9 @@ public abstract class AnnotationTest extends ApiBuilderTest {
 	 */
 	protected void deployAnnotationTest(String sourcename, boolean incremental, boolean usedefault) {
 		try {
-			IPath path = WORKSPACE_PATH.append(sourcename);
+			IPath path = new Path(getTestingProjectName()).append(WORKSPACE_PATH).append(sourcename);
 			if (usedefault) {
-				path = WORKSPACE_PATH_DEFAULT.append(sourcename);
+				path = new Path(getTestingProjectName()).append(WORKSPACE_PATH_DEFAULT).append(sourcename);
 			}
 			createWorkspaceFile(path, TestSuiteHelper.getPluginDirectoryPath().append(TEST_SOURCE_ROOT).append(getTestSourcePath()).append(sourcename));
 			if (incremental) {
@@ -240,9 +243,9 @@ public abstract class AnnotationTest extends ApiBuilderTest {
 	 */
 	protected void deployAnnotationTestWithErrors(String sourcename, boolean incremental, boolean usedefault) {
 		try {
-			IPath path = WORKSPACE_PATH.append(sourcename);
+			IPath path = new Path(getTestingProjectName()).append(WORKSPACE_PATH).append(sourcename);
 			if (usedefault) {
-				path = WORKSPACE_PATH_DEFAULT.append(sourcename);
+				path = new Path(getTestingProjectName()).append(WORKSPACE_PATH_DEFAULT).append(sourcename);
 			}
 			createWorkspaceFile(path, TestSuiteHelper.getPluginDirectoryPath().append(TEST_SOURCE_ROOT).append(getTestSourcePath()).append(sourcename));
 			if (incremental) {

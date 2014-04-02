@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2014 IBM Corporation and others.
+ * Copyright (c) Apr 2, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,19 +23,16 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescri
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 
 /**
- * Tests annotations being used on fields in classes, interfaces, enums and
- * annotations
+ * Abstract class for method annotation tests
  * 
- * @since 1.0.400
+ * @since 1.0.600
  */
-public abstract class FieldAnnotationTest extends AnnotationTest {
+public abstract class MethodAnnotationTest extends AnnotationTest {
 
 	/**
-	 * Constructor
-	 * 
 	 * @param name
 	 */
-	public FieldAnnotationTest(String name) {
+	public MethodAnnotationTest(String name) {
 		super(name);
 	}
 
@@ -43,19 +40,19 @@ public abstract class FieldAnnotationTest extends AnnotationTest {
 	 * @return the tests for this class
 	 */
 	public static Test suite() {
-		TestSuite suite = new TestSuite(FieldAnnotationTest.class.getName());
+		TestSuite suite = new TestSuite(MethodAnnotationTest.class.getName());
 		collectTests(suite);
 		return suite;
 	}
 
 	@Override
 	protected int getDefaultProblemId() {
-		return ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_USAGE, IElementDescriptor.FIELD, IApiProblem.UNSUPPORTED_ANNOTATION_USE, IApiProblem.NO_FLAGS);
+		return ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_USAGE, IElementDescriptor.METHOD, IApiProblem.UNSUPPORTED_ANNOTATION_USE, IApiProblem.NO_FLAGS);
 	}
 
 	@Override
 	protected IPath getTestSourcePath() {
-		return super.getTestSourcePath().append("field"); //$NON-NLS-1$
+		return super.getTestSourcePath().append("method"); //$NON-NLS-1$
 	}
 
 	/**
@@ -63,9 +60,10 @@ public abstract class FieldAnnotationTest extends AnnotationTest {
 	 */
 	private static Class<?>[] getAllTestClasses() {
 		Class<?>[] classes = new Class[] {
-				InvalidAnnotationFieldAnnotationTests.class,
-				InvalidClassFieldAnnotationTests.class,
-				ValidClassFieldAnnotationTests.class };
+				ValidDefaultMethodAnnotationTests.class,
+				InvalidDefaultMethodAnnotationTests.class,
+				InvalidInterfaceMethodAnnotationTests.class,
+				ValidInterfaceMethodAnnotationTests.class };
 		return classes;
 	}
 
@@ -110,5 +108,4 @@ public abstract class FieldAnnotationTest extends AnnotationTest {
 			suite.addTest((Test) test);
 		}
 	}
-
 }

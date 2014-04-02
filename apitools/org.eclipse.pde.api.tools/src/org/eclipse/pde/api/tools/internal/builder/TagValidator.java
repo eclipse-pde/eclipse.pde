@@ -694,7 +694,7 @@ public class TagValidator extends Validator {
 						createAnnotationProblem(item.typename, node, IElementDescriptor.METHOD, IApiProblem.UNSUPPORTED_ANNOTATION_USE, IApiMarkerConstants.UNSUPPORTED_ANNOTATION_MARKER_ID, BuilderMessages.TagValidator_an_interface_method);
 					} else if (!item.visible) {
 						createAnnotationProblem(item.typename, node, IElementDescriptor.METHOD, IApiProblem.UNSUPPORTED_ANNOTATION_USE, IApiMarkerConstants.UNSUPPORTED_ANNOTATION_MARKER_ID, BuilderMessages.TagValidator_not_visible_interface_method);
-					} else if (!Flags.isDefaultMethod(flags) && JavadocTagManager.TAG_NOOVERRIDE.equals(name)) {
+					} else if (!Flags.isDefaultMethod(flags) && JavadocTagManager.ANNOTATION_NOOVERRIDE.equals(name)) {
 						createAnnotationProblem(item.typename, node, IElementDescriptor.METHOD, IApiProblem.UNSUPPORTED_ANNOTATION_USE, IApiMarkerConstants.UNSUPPORTED_ANNOTATION_MARKER_ID, BuilderMessages.TagValidator_nondefault_interface_method);
 					}
 					break;

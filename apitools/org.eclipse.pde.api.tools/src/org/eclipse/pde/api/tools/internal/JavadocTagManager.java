@@ -234,12 +234,12 @@ public final class JavadocTagManager {
 			annots.add(ANNOTATION_NOOVERRIDE);
 			annots.add(ANNOTATION_NOREFERENCE);
 			fAnnotationCache.put(new Key(IApiJavadocTag.TYPE_CLASS, IApiJavadocTag.MEMBER_METHOD), annots);
+			fAnnotationCache.put(new Key(IApiJavadocTag.TYPE_CLASS, IApiJavadocTag.MEMBER_CONSTRUCTOR), annots);
+			fAnnotationCache.put(new Key(IApiJavadocTag.TYPE_INTERFACE, IApiJavadocTag.MEMBER_METHOD), annots);
 			annots = new HashSet<String>();
 			annots.add(ANNOTATION_NOREFERENCE);
 			fAnnotationCache.put(new Key(IApiJavadocTag.TYPE_CLASS, IApiJavadocTag.MEMBER_FIELD), annots);
-			fAnnotationCache.put(new Key(IApiJavadocTag.TYPE_CLASS, IApiJavadocTag.MEMBER_CONSTRUCTOR), annots);
 			fAnnotationCache.put(new Key(IApiJavadocTag.TYPE_INTERFACE, IApiJavadocTag.MEMBER_FIELD), annots);
-			fAnnotationCache.put(new Key(IApiJavadocTag.TYPE_INTERFACE, IApiJavadocTag.MEMBER_METHOD), annots);
 			fAnnotationCache.put(new Key(IApiJavadocTag.TYPE_ANNOTATION, IApiJavadocTag.MEMBER_NONE), annots);
 			fAnnotationCache.put(new Key(IApiJavadocTag.TYPE_ENUM, IApiJavadocTag.MEMBER_NONE), annots);
 			fAnnotationCache.put(new Key(IApiJavadocTag.TYPE_ENUM, IApiJavadocTag.MEMBER_FIELD), annots);
