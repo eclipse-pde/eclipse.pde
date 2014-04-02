@@ -932,6 +932,9 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 			Image customImage = getCustomImage(element);
 			if (customImage != null)
 				elementImage = customImage;
+			customImage = PDEPlugin.getDefault().getLabelProvider().getImage(obj);
+			if (customImage != null)
+				elementImage = customImage;
 		}
 		return elementImage;
 	}

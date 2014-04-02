@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 218618
+ *     Brian de Alwis (MTI) - bug 429420
  *******************************************************************************/
 package org.eclipse.pde.internal.ui;
 
@@ -33,6 +34,7 @@ import org.eclipse.pde.internal.core.iproduct.IProductPlugin;
 import org.eclipse.pde.internal.core.ischema.*;
 import org.eclipse.pde.internal.core.isite.*;
 import org.eclipse.pde.internal.core.plugin.ImportObject;
+import org.eclipse.pde.internal.core.schema.SchemaRegistry;
 import org.eclipse.pde.internal.core.text.bundle.*;
 import org.eclipse.pde.internal.core.util.VersionUtil;
 import org.eclipse.pde.internal.ui.elements.NamedElement;
@@ -362,6 +364,9 @@ public class PDELabelProvider extends SharedLabelProvider {
 		if (obj instanceof ImportObject) {
 			return getObjectImage((ImportObject) obj);
 		}
+		if (obj instanceof IPluginElement) {
+			return getObjectImage((IPluginElement) obj);
+		}
 		if (obj instanceof IPluginImport) {
 			return getObjectImage((IPluginImport) obj);
 		}
@@ -564,6 +569,44 @@ public class PDELabelProvider extends SharedLabelProvider {
 			flags |= getModelFlags(model);
 		}
 		return get(getRequiredPluginImageDescriptor(iimport), flags);
+	}
+
+	protected ImageDescriptor getRequiredPluginImageDescriptor(IPluginElement iobj) {
+		return PDEPluginImages.DESC_GENERIC_XML_OBJ;
+	}
+
+	private Image getObjectImage(IPluginElement obj) {
+		int flags = 0;
+		IPluginObject parent = obj.getParent();
+		while (parent != null && !(parent instanceof IPluginExtension)) {
+			parent = parent.getParent();
+		}
+		if (parent != null) {
+			String point = ((IPluginExtension) parent).getPoint();
+			SchemaRegistry registry = PDECore.getDefault().getSchemaRegistry();
+			ISchema schema = registry.getSchema(point);
+			if (schema != null) {
+				ISchemaElement schemaElement = schema.findElement(obj.getName());
+				// Only label an element if either the element is deprecated or it actually specifies a deprecated attribute;
+				// We don't want to mislabel non-deprecated elements with no deprecated attributes.  
+				if (schemaElement != null && (schemaElement.isDeprecated() || hasDeprecatedAttributes(obj, schemaElement)))
+					flags |= F_WARNING;
+			}
+		}
+		return get(getRequiredPluginImageDescriptor(obj), flags);
+	}
+
+	/** Return true if the {@code obj} has an attribute that is deprecated */
+	private boolean hasDeprecatedAttributes(IPluginElement obj, ISchemaElement schemaElement) {
+		for (ISchemaAttribute schAtt : schemaElement.getAttributes()) {
+			if (schAtt.isDeprecated()) {
+				IPluginAttribute pAtt = obj.getAttribute(schAtt.getName());
+				if (pAtt != null) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	protected ImageDescriptor getRequiredPluginImageDescriptor(IPluginImport iobj) {

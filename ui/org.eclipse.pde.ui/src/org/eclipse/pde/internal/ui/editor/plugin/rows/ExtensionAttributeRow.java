@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2012 IBM Corporation and others.
+ *  Copyright (c) 2003, 2014 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brian de Alwis (MTI) - bug 429420
  *******************************************************************************/
 
 package org.eclipse.pde.internal.ui.editor.plugin.rows;
@@ -16,6 +17,7 @@ import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.pde.core.plugin.IPluginAttribute;
 import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
+import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.IContextPart;
 import org.eclipse.pde.internal.ui.editor.text.IControlHoverContentProvider;
 import org.eclipse.pde.internal.ui.editor.text.PDETextHover;
@@ -63,9 +65,20 @@ public abstract class ExtensionAttributeRow implements IControlHoverContentProvi
 		return ISchemaAttribute.OPTIONAL;
 	}
 
-	protected String getDescription() {
+	protected boolean isDeprecated() {
 		if (att instanceof ISchemaAttribute)
-			return ((ISchemaAttribute) att).getDescription();
+			return ((ISchemaAttribute) att).isDeprecated();
+		return false;
+	}
+
+	protected String getDescription() {
+		if (att instanceof ISchemaAttribute) {
+			ISchemaAttribute attribute = (ISchemaAttribute) att;
+			if (isDeprecated()) {
+				return "<b>" + PDEUIMessages.ExtensionAttributeRow_AttrDepr + "</b><br>" + attribute.getDescription(); //$NON-NLS-1$//$NON-NLS-2$
+			}
+			return attribute.getDescription();
+		}
 		return ""; //$NON-NLS-1$
 	}
 
@@ -81,6 +94,8 @@ public abstract class ExtensionAttributeRow implements IControlHoverContentProvi
 
 	protected String getPropertyLabel() {
 		String label = getName();
+		if (isDeprecated())
+			label += " (!)"; //$NON-NLS-1$
 		if (getUse() == ISchemaAttribute.REQUIRED)
 			label += "*:"; //$NON-NLS-1$
 		else

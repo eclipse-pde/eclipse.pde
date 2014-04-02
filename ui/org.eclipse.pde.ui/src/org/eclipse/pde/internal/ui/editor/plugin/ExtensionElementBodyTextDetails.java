@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2011 IBM Corporation and others.
+ *  Copyright (c) 2007, 2014 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brian de Alwis (MTI) - bug 429420
  *******************************************************************************/
 
 package org.eclipse.pde.internal.ui.editor.plugin;
@@ -202,7 +203,12 @@ public class ExtensionElementBodyTextDetails extends AbstractPluginElementDetail
 		fSectionElementDetails = fToolkit.createSection(parent, section_style);
 		fSectionElementDetails.clientVerticalSpacing = FormLayoutFactory.SECTION_HEADER_VERTICAL_SPACING;
 		fSectionElementDetails.setText(PDEUIMessages.ExtensionElementDetails_title);
-		fSectionElementDetails.setDescription(PDEUIMessages.ExtensionElementBodyTextDetails_sectionDescElementGeneral);
+		String description = PDEUIMessages.ExtensionElementBodyTextDetails_sectionDescElementGeneral;
+		if (fSchemaElement != null && fSchemaElement.isDeprecated()) {
+			description += "\n\n"; //$NON-NLS-1$
+			description += NLS.bind(PDEUIMessages.ElementIsDeprecated, fSchemaElement.getName());
+		}
+		fSectionElementDetails.setDescription(description);
 		fSectionElementDetails.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		int layout_style = GridData.FILL_HORIZONTAL;
 		GridData data = new GridData(layout_style);
@@ -248,11 +254,17 @@ public class ExtensionElementBodyTextDetails extends AbstractPluginElementDetail
 	private void updateUISectionElementDetails() {
 		// Set the general or specifc section description depending if whether
 		// the plugin element data is defined
+		String description;
 		if (fPluginElement == null) {
-			fSectionElementDetails.setDescription(PDEUIMessages.ExtensionElementBodyTextDetails_sectionDescElementGeneral);
+			description = PDEUIMessages.ExtensionElementBodyTextDetails_sectionDescElementGeneral;
 		} else {
-			fSectionElementDetails.setDescription(NLS.bind(PDEUIMessages.ExtensionElementBodyTextDetails_sectionDescElementSpecific, fPluginElement.getName()));
+			description = NLS.bind(PDEUIMessages.ExtensionElementBodyTextDetails_sectionDescElementSpecific, fPluginElement.getName());
 		}
+		if (fSchemaElement != null && fSchemaElement.isDeprecated()) {
+			description += "\n\n"; //$NON-NLS-1$
+			description += NLS.bind(PDEUIMessages.ElementIsDeprecated, fSchemaElement.getName());
+		}
+		fSectionElementDetails.setDescription(description);
 		// Re-layout the section to properly wrap the new section description
 		fSectionElementDetails.layout();
 	}

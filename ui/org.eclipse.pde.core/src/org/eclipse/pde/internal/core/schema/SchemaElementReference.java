@@ -283,6 +283,15 @@ public class SchemaElementReference extends PlatformObject implements ISchemaEle
 		return element.isDeprecated();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.ischema.ISchemaElement#hasDeprecatedAttributes()
+	 */
+	public boolean hasDeprecatedAttributes() {
+		if (element == null)
+			return false;
+		return element.hasDeprecatedAttributes();
+	}
+
 	public int compareTo(Object arg0) {
 		if (element == null) {
 			return -1;

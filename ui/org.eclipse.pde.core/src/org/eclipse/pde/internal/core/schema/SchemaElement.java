@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2014 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     David Carver - STAR - bug 213255
+ *     Brian de Alwis (MTI) - bug 429420
  *******************************************************************************/
 package org.eclipse.pde.internal.core.schema;
 
@@ -295,6 +296,18 @@ public class SchemaElement extends RepeatableSchemaObject implements ISchemaElem
 	 */
 	public boolean isDeprecated() {
 		return fDeprecated;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.ischema.ISchemaElement#hasDeprecatedAttributes()
+	 */
+	public boolean hasDeprecatedAttributes() {
+		for (ISchemaAttribute att : getAttributes()) {
+			if (att.isDeprecated()) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public String getExtendedAttributes() {

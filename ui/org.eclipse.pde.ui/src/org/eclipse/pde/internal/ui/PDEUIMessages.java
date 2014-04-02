@@ -1226,6 +1226,7 @@ public class PDEUIMessages extends NLS {
 	public static String ExtensionDetails_noPoint_title;
 	public static String ExtensionDetails_extensionPointLinks;
 	public static String ExtensionElementDetails_setDesc;
+	public static String ExtensionElementDetails_setDescDepr;
 	public static String ExtensionEditorSelectionPage_title;
 	public static String ExtensionEditorSelectionPage_message;
 	public static String ExtensionEditorSelectionPage_desc;
@@ -3042,4 +3043,7 @@ public class PDEUIMessages extends NLS {
 	public static String OSGiConsoleFactory_title;
 
 	public static String NewElement_deprecated;
+	public static String ElementIsDeprecated;
+
+	public static String ExtensionAttributeRow_AttrDepr;
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2012 IBM Corporation and others.
+ * Copyright (c) 2003, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,10 +8,9 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Remy Chi Jian Suen <remy.suen@gmail.com> - Provide more structure, safety, and convenience for ID-based references between extension points (id hell)
+ *     Brian de Alwis (MTI) - bug 429420
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
-
-import org.eclipse.pde.internal.ui.editor.plugin.rows.ExtensionAttributeRow;
 
 import java.util.ArrayList;
 import org.eclipse.jface.viewers.ISelection;
@@ -99,14 +98,20 @@ public class ExtensionElementDetails extends AbstractPluginElementDetails {
 				}
 			}
 			glayout.numColumns = span;
-			// Add required attributes first
+			// Add required but non-deprecated attributes first
 			for (int i = 0; i < atts.length; i++) {
-				if (atts[i].getUse() == ISchemaAttribute.REQUIRED)
+				if (atts[i].getUse() == ISchemaAttribute.REQUIRED && !atts[i].isDeprecated())
 					rows.add(createAttributeRow(atts[i], client, toolkit, span));
 			}
-			// Add the rest
+			// Add the non-required non-deprecated attributes
 			for (int i = 0; i < atts.length; i++) {
-				if (atts[i].getUse() != ISchemaAttribute.REQUIRED)
+				if (atts[i].getUse() != ISchemaAttribute.REQUIRED && !atts[i].isDeprecated())
+					rows.add(createAttributeRow(atts[i], client, toolkit, span));
+			}
+			createSpacer(toolkit, client, span);
+			// Add finally the deprecated attributes
+			for (int i = 0; i < atts.length; i++) {
+				if (atts[i].isDeprecated())
 					rows.add(createAttributeRow(atts[i], client, toolkit, span));
 			}
 			createSpacer(toolkit, client, span);
@@ -250,12 +255,22 @@ public class ExtensionElementDetails extends AbstractPluginElementDetails {
 
 	private void updateDescription() {
 		if (input != null) {
+			String iname = input.getName();
+			String label = null;
 			if (0 == input.getAttributeCount()) {
-				section.setDescription(PDEUIMessages.ExtensionElementDetails_descNoAttributes);
+				label = PDEUIMessages.ExtensionElementDetails_descNoAttributes;
 			} else {
-				String iname = input.getName();
-				section.setDescription(NLS.bind(PDEUIMessages.ExtensionElementDetails_setDesc, iname));
+				label = NLS.bind(PDEUIMessages.ExtensionElementDetails_setDesc, iname);
 			}
+			if (schemaElement.hasDeprecatedAttributes()) {
+				label += " "; //$NON-NLS-1$
+				label += NLS.bind(PDEUIMessages.ExtensionElementDetails_setDescDepr, iname);
+			}
+			if (schemaElement.isDeprecated()) {
+				label += "\n\n"; //$NON-NLS-1$
+				label += NLS.bind(PDEUIMessages.ElementIsDeprecated, iname);
+			}
+			section.setDescription(label);
 		} else {
 			// no extensions = no description
 			section.setDescription(""); //$NON-NLS-1$
