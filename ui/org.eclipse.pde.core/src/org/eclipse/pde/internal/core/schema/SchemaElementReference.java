@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2014 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brian de Alwis (MTI) - bug 429420
  *******************************************************************************/
 package org.eclipse.pde.internal.core.schema;
 
@@ -14,19 +15,10 @@ import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.Hashtable;
 import java.util.Vector;
-
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.pde.core.ISourceObject;
 import org.eclipse.pde.internal.core.PDECoreMessages;
-import org.eclipse.pde.internal.core.ischema.IMetaElement;
-import org.eclipse.pde.internal.core.ischema.ISchema;
-import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
-import org.eclipse.pde.internal.core.ischema.ISchemaCompositor;
-import org.eclipse.pde.internal.core.ischema.ISchemaDescriptor;
-import org.eclipse.pde.internal.core.ischema.ISchemaElement;
-import org.eclipse.pde.internal.core.ischema.ISchemaObject;
-import org.eclipse.pde.internal.core.ischema.ISchemaObjectReference;
-import org.eclipse.pde.internal.core.ischema.ISchemaType;
+import org.eclipse.pde.internal.core.ischema.*;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Node;
 
@@ -277,14 +269,18 @@ public class SchemaElementReference extends PlatformObject implements ISchemaEle
 	 * @see org.eclipse.pde.internal.core.ischema.IMetaElement#isTranslatable()
 	 */
 	public boolean hasTranslatableContent() {
-		return false;
+		if (element == null)
+			return false;
+		return element.hasTranslatableContent();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.ischema.IMetaElement#isDeprecated()
 	 */
 	public boolean isDeprecated() {
-		return false;
+		if (element == null)
+			return false;
+		return element.isDeprecated();
 	}
 
 	public int compareTo(Object arg0) {

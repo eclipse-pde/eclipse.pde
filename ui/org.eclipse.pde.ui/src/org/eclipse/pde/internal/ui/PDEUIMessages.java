@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Code 9 Corporation - on going enhancements and maintenance
+ *     Brian de Alwis (MTI) - bug 429420
  *******************************************************************************/
 package org.eclipse.pde.internal.ui;
 
@@ -3040,4 +3041,5 @@ public class PDEUIMessages extends NLS {
 	public static String OSGiConsole_name;
 	public static String OSGiConsoleFactory_title;
 
+	public static String NewElement_deprecated;
 }

@@ -10,6 +10,7 @@
  *     Peter Friese <peter.friese@gentleware.com> - bug 194529, bug 196867
  *     Sascha Becher <s.becher@qualitype.com> - bug 360894
  *     Alexander Kurtakov <akurtako@redhat.com> - bug 415649
+ *     Brian de Alwis (MTI) - bug 429420
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
@@ -182,13 +183,22 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 			// We have a schema complex type.  Either the element has attributes
 			// or the element has children.
 			// Generate the list of element proposals
-			TreeSet<?> elementSet = XMLElementProposalComputer.computeElementProposal(elementInfo, (IDocumentElementNode) parent);
+			TreeSet<ISchemaElement> elementSet = XMLElementProposalComputer.computeElementProposal(elementInfo, (IDocumentElementNode) parent);
 
-			// Create a corresponding menu entry for each element proposal
-			Iterator<?> iterator = elementSet.iterator();
-			while (iterator.hasNext()) {
-				Action action = new NewElementAction((ISchemaElement) iterator.next(), parent);
-				menu.add(action);
+			// Create a corresponding menu entry for each element proposal;
+			// first add non-deprecated elements, then add deprecated elements
+			for (ISchemaElement element : elementSet) {
+				if (!element.isDeprecated()) {
+					Action action = new NewElementAction(element, parent);
+					menu.add(action);
+				}
+			}
+			menu.add(new Separator());
+			for (ISchemaElement element : elementSet) {
+				if (element.isDeprecated()) {
+					Action action = new NewElementAction(element, parent);
+					menu.add(action);
+				}
 			}
 		}
 	}

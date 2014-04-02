@@ -7,11 +7,13 @@
  * 
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brian de Alwis (MTI) - bug 429420
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.plugin;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.Action;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.core.plugin.IPluginParent;
 import org.eclipse.pde.internal.core.ischema.ISchemaElement;
@@ -31,7 +33,11 @@ public class NewElementAction extends Action {
 		this.elementInfo = elementInfo;
 		// this.project = project;
 		this.parent = parent;
-		setText(getElementName());
+		if (elementInfo.isDeprecated()) {
+			setText(NLS.bind(PDEUIMessages.NewElement_deprecated, getElementName()));
+		} else {
+			setText(getElementName());
+		}
 		setImageDescriptor(PDEPluginImages.DESC_GENERIC_XML_OBJ);
 		setEnabled(parent.getModel().isEditable());
 	}
