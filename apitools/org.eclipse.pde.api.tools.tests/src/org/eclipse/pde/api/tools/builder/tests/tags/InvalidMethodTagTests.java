@@ -22,7 +22,6 @@ import org.eclipse.jdt.core.tests.junit.extension.TestCase;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
-import org.eclipse.pde.api.tools.tests.util.ProjectUtils;
 
 /**
  * Test unsupported javadoc tags on methods in classes, interfaces, enums and
@@ -81,9 +80,6 @@ public class InvalidMethodTagTests extends TagTest {
 		classes.add(InvalidEnumMethodTagTests.class);
 		classes.add(InvalidClassMethodTagTests.class);
 		classes.add(InvalidInterfaceMethodTagTests.class);
-		if(ProjectUtils.isJava8Compatible()) {
-			classes.add(InvalidJava8InterfaceMethodTagTests.class);
-		}
 		return classes.toArray(new Class[classes.size()]);
 	}
 

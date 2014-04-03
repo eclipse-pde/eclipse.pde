@@ -8,21 +8,21 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.pde.api.tools.builder.tests.tags;
+package org.eclipse.pde.api.tools.builder.tests.annotations;
 
 import junit.framework.Test;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.pde.api.tools.internal.builder.BuilderMessages;
 
 /**
- * Tests invalid tags in Java 8 interface methods
+ * Tests valid annotations on Java 8 interface methods
  */
-public class InvalidJava8InterfaceMethodTagTests extends InvalidInterfaceMethodTagTests {
+public class ValidJava8InterfaceAnnotationTests extends
+ ValidInterfaceAnnotationTests {
 
-	public InvalidJava8InterfaceMethodTagTests(String name) {
+	public ValidJava8InterfaceAnnotationTests(String name) {
 		super(name);
 	}
 
@@ -33,7 +33,7 @@ public class InvalidJava8InterfaceMethodTagTests extends InvalidInterfaceMethodT
 
 	@Override
 	protected IPath getTestSourcePath() {
-		return new Path("java8").append("tags").append("interface"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+		return new Path("java8").append("tags").append("interface").append("valid"); //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$ //$NON-NLS-4$
 	}
 	
 	@Override
@@ -45,26 +45,36 @@ public class InvalidJava8InterfaceMethodTagTests extends InvalidInterfaceMethodT
 	 * @return the test for this class
 	 */
 	public static Test suite() {
-		return buildTestSuite(InvalidJava8InterfaceMethodTagTests.class);
+		return buildTestSuite(ValidJava8InterfaceAnnotationTests.class);
 	}
-	
-	public void testInvalidJava8InterfaceMethodTag1I() {
+
+	public void testNoOverrideOnDefaultI() {
 		x1(true);
 	}
-	
-	public void testInvalidJava8InterfaceMethodTag1F() {
+
+	public void testNoOverrideOnDefaultF() {
 		x1(false);
+	}
+	
+	/**
+	 * Tests the NoOverride annotation on a default method
+	 */
+	private void x1(boolean inc) {
+		deployAnnotationTest("test1.java", inc, false); //$NON-NLS-1$
+	}
+
+	public void testValidTagsOnFunctionalInterfaceI() {
+		x2(true);
+	}
+
+	public void testValidTagsOnFunctionalInterfaceF() {
+		x2(false);
 	}
 
 	/**
-	 * Tests the unsupported @nooverride tag on non-default interface methods in Java 8 interfaces
+	 * Tests a variety of annotations on a functional interface
 	 */
-	private void x1(boolean inc) {
-		setExpectedProblemIds(getDefaultProblemSet(2));
-		setExpectedMessageArgs(new String[][] {
-				{"@nooverride", BuilderMessages.TagValidator_nondefault_interface_method}, //$NON-NLS-1$
-				{"@nooverride", BuilderMessages.TagValidator_nondefault_interface_method} //$NON-NLS-1$
-		});
-		deployTagTest("test1.java", inc, false); //$NON-NLS-1$
+	private void x2(boolean inc) {
+		deployAnnotationTest("test2.java", inc, false); //$NON-NLS-1$
 	}
 }

@@ -12,6 +12,7 @@ package org.eclipse.pde.api.tools.builder.tests.tags;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -24,6 +25,7 @@ import org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest;
 import org.eclipse.pde.api.tools.builder.tests.ApiProblem;
 import org.eclipse.pde.api.tools.builder.tests.ApiTestingEnvironment;
 import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
+import org.eclipse.pde.api.tools.tests.util.ProjectUtils;
 
 /**
  * Tests the builder to make sure it correctly finds and reports unsupported tag
@@ -63,15 +65,26 @@ public abstract class TagTest extends ApiBuilderTest {
 	 * @return all of the child test classes of this class
 	 */
 	private static Class<?>[] getAllTestClasses() {
-		Class<?>[] classes = new Class[] {
-				InvalidClassTagTests.class, ValidClassTagTests.class,
-				InvalidInterfaceTagTests.class, ValidInterfaceTagTests.class,
-				InvalidFieldTagTests.class, ValidFieldTagTests.class,
-				InvalidMethodTagTests.class, ValidMethodTagTests.class,
-				ValidEnumTagTests.class, InvalidEnumTagTests.class,
-				ValidAnnotationTagTests.class, InvalidAnnotationTagTests.class,
-				InvalidDuplicateTagsTests.class };
-		return classes;
+		ArrayList<Class<?>> classes = new ArrayList<Class<?>>();
+		classes.add(InvalidClassTagTests.class);
+		classes.add(ValidClassTagTests.class);
+		classes.add(InvalidInterfaceTagTests.class);
+		classes.add(ValidInterfaceTagTests.class);
+		classes.add(InvalidFieldTagTests.class);
+		classes.add(ValidFieldTagTests.class);
+		classes.add(InvalidMethodTagTests.class);
+		classes.add(ValidMethodTagTests.class);
+		classes.add(ValidEnumTagTests.class);
+		classes.add(InvalidEnumTagTests.class);
+		classes.add(ValidAnnotationTagTests.class);
+		classes.add(InvalidAnnotationTagTests.class);
+		classes.add(InvalidDuplicateTagsTests.class);
+		if (ProjectUtils.isJava8Compatible()) {
+			classes.add(ValidJava8InterfaceTagTests.class);
+			classes.add(InvalidJava8InterfaceTagTests.class);
+		}
+		
+		return classes.toArray(new Class<?>[classes.size()]);
 	}
 
 	/**

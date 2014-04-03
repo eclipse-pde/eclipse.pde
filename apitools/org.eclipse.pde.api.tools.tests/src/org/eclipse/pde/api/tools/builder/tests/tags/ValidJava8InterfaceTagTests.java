@@ -19,10 +19,10 @@ import org.eclipse.jdt.core.JavaCore;
 /**
  * Tests valid tags on Java 8 interface methods
  */
-public class ValidJava8IntefaceMethodTagTests extends
+public class ValidJava8InterfaceTagTests extends
 		ValidInterfaceMethodTagTests {
 
-	public ValidJava8IntefaceMethodTagTests(String name) {
+	public ValidJava8InterfaceTagTests(String name) {
 		super(name);
 	}
 
@@ -45,7 +45,7 @@ public class ValidJava8IntefaceMethodTagTests extends
 	 * @return the test for this class
 	 */
 	public static Test suite() {
-		return buildTestSuite(ValidJava8IntefaceMethodTagTests.class);
+		return buildTestSuite(ValidJava8InterfaceTagTests.class);
 	}
 
 	public void testNoOverrideOnDefaultI() {
@@ -61,5 +61,20 @@ public class ValidJava8IntefaceMethodTagTests extends
 	 */
 	private void x1(boolean inc) {
 		deployTagTest("test1.java", inc, false); //$NON-NLS-1$
+	}
+
+	public void testValidTagsOnFunctionalInterfaceI() {
+		x2(true);
+	}
+
+	public void testValidTagsOnFunctionalInterfaceF() {
+		x2(false);
+	}
+
+	/**
+	 * Tests a variety of tags on a functional interface
+	 */
+	private void x2(boolean inc) {
+		deployTagTest("test2.java", inc, false); //$NON-NLS-1$
 	}
 }

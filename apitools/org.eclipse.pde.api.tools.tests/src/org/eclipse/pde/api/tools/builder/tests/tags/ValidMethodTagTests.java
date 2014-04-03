@@ -19,7 +19,6 @@ import junit.framework.TestSuite;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.tests.junit.extension.TestCase;
-import org.eclipse.pde.api.tools.tests.util.ProjectUtils;
 
 /**
  * Tests valid javadoc tags on methods in classes, interfaces, enums and
@@ -66,9 +65,6 @@ public class ValidMethodTagTests extends InvalidMethodTagTests {
 		classes.add(ValidClassMethodTagTests.class);
 		classes.add(ValidInterfaceMethodTagTests.class);
 		classes.add(ValidEnumMethodTagTests.class);
-		if (ProjectUtils.isJava8Compatible()) {
-			classes.add(ValidJava8IntefaceMethodTagTests.class);
-		}
 		return classes.toArray(new Class[classes.size()]);
 	}
 
