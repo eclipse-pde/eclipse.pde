@@ -174,6 +174,7 @@ public class Java8UsageTest extends ApiBuilderTest {
 	private static Class<?>[] getAllTestClasses() {
 		ArrayList<Class<?>> classes = new ArrayList<Class<?>>();
 		classes.add(Java8LambdaUsageTests.class);
+		classes.add(Java8MethodConstRefUsageTests.class);
 		return classes.toArray(new Class[classes.size()]);
 	}
 }

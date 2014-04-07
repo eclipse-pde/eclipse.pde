@@ -64,6 +64,9 @@ import org.eclipse.pde.api.tools.internal.util.Util;
  */
 public abstract class AbstractProblemDetector implements IApiProblemDetector {
 
+	public static final String METHOD_REFERENCE = "::"; //$NON-NLS-1$
+	public static final String CONSTRUCTOR_NEW = "new"; //$NON-NLS-1$
+
 	/**
 	 * Class used to look up the name of the enclosing method for an
 	 * {@link IApiType} when we do not have any enclosing method infos (pre Java
@@ -445,7 +448,7 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 	 * @return the index of the method name on the given line or -1 if not found
 	 */
 	protected int findMethodNameStart(String namepart, String line, int index) {
-		if (namepart.startsWith("::")) { //$NON-NLS-1$
+		if (namepart.startsWith(METHOD_REFERENCE)) {
 			// a method ref, walk back to find the token
 			int offset = index;
 			char c = line.charAt(offset);
@@ -468,11 +471,26 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 				return -1;
 			}
 			int offset = start + namepart.length();
-			while (line.charAt(offset) == ' ') {
+			char c = line.charAt(offset);
+			while (c == ' ') {
 				offset++;
+				c = line.charAt(offset);
 			}
-			if (line.charAt(offset) == '(' || line.charAt(offset) == '<') {
+
+			if (c == '(' || c == '<') {
 				return start;
+			}
+
+			// assumes that "::" & method name/"new" in same line
+			if (line.contains(METHOD_REFERENCE)) {
+				if ((c == ';') || (c == '\r') || (c == ')')) {
+					return start;
+				}
+				// method reference constructor
+				if ((c == ':') && line.charAt(offset + 1) == ':' && line.contains(CONSTRUCTOR_NEW)) {
+					return start;
+				}
+
 			}
 			return findMethodNameStart(namepart, line, offset);
 		}
@@ -914,14 +932,15 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 			if (isContructor) {
 				// new keyword should only be checked if the method is a
 				// constructor
-				start = line.indexOf("::new"); //$NON-NLS-1$
+				// what if space between the two?
+				start = line.indexOf(METHOD_REFERENCE + CONSTRUCTOR_NEW);
 				if (start < 0) {
-					line.indexOf("new"); //$NON-NLS-1$
+					line.indexOf(CONSTRUCTOR_NEW);
 					if (start < 0) {
 						start = 0;
 					}
 				} else {
-					int first = findMethodNameStart("::new", line, start); //$NON-NLS-1$
+					int first = findMethodNameStart(METHOD_REFERENCE + CONSTRUCTOR_NEW, line, start);
 					return new Position(offset + first, (start - first) + 5);
 				}
 			} else {
@@ -935,11 +954,21 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 			}
 		}
 		int first = findMethodNameStart(methodname, line, start);
+
+		if (line.contains(METHOD_REFERENCE) && line.contains(CONSTRUCTOR_NEW) && isContructor) {
+			String afterReference = line.substring(line.indexOf(METHOD_REFERENCE));
+			methodname = afterReference.substring(afterReference.indexOf(METHOD_REFERENCE) + 2, afterReference.indexOf(CONSTRUCTOR_NEW) + 3);
+		}
 		if (first < 0) {
 			methodname = "super"; //$NON-NLS-1$
 			first = findMethodNameStart(methodname, line, start);
 		}
 		if (first > -1) {
+			idx = line.indexOf(METHOD_REFERENCE, first);
+			if (idx > -1 && isContructor) {
+				//a method ref, add the start + :: + method name length
+				return new Position(offset + first, (idx - first) + 2 + methodname.length());
+			}
 			return new Position(offset + first, methodname.length());
 		}
 		return null;
