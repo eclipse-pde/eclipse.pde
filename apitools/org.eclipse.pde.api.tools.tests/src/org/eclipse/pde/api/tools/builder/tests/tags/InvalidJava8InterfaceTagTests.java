@@ -33,7 +33,7 @@ public class InvalidJava8InterfaceTagTests extends InvalidInterfaceMethodTagTest
 
 	@Override
 	protected IPath getTestSourcePath() {
-		return new Path("java8").append("tags").append("interface"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+		return new Path("tags").append("java8").append("interface"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 	}
 	
 	@Override
