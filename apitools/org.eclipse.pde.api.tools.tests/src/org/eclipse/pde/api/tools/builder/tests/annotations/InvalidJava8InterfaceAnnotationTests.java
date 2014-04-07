@@ -33,7 +33,7 @@ public class InvalidJava8InterfaceAnnotationTests extends InvalidInterfaceAnnota
 
 	@Override
 	protected IPath getTestSourcePath() {
-		return new Path("java8").append("annotations").append("interface"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+		return new Path("annotations").append("java8").append("interface"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 	}
 	
 	@Override

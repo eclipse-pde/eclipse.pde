@@ -33,7 +33,7 @@ public class ValidJava8InterfaceAnnotationTests extends
 
 	@Override
 	protected IPath getTestSourcePath() {
-		return new Path("java8").append("tags").append("interface").append("valid"); //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$ //$NON-NLS-4$
+		return new Path("annotations").append("java8").append("interface").append("valid"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	}
 	
 	@Override
