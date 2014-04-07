@@ -15,7 +15,7 @@ import junit.framework.TestSuite;
 
 import org.eclipse.pde.api.tools.anttasks.tests.ApiToolsAntTasksTestSuite;
 import org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest;
-import org.eclipse.pde.api.tools.builder.tests.java8.Java8TypeAnnotationTests;
+import org.eclipse.pde.api.tools.builder.tests.annotations.Java8TypeAnnotationTests;
 import org.eclipse.pde.api.tools.model.tests.ApiFilterStoreTests;
 import org.eclipse.pde.api.tools.model.tests.FilterStoreTests;
 import org.eclipse.pde.api.tools.problems.tests.ApiProblemTests;

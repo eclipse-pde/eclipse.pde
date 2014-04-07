@@ -24,7 +24,7 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
  */
 public class FieldUsageTests extends UsageTest {
 	
-	protected static final String FIELD_CLASS_NAME = "FieldUsageClass"; //$NON-NLS-1$
+	public static final String FIELD_CLASS_NAME = "FieldUsageClass"; //$NON-NLS-1$
 	
 	private int pid = -1;
 	

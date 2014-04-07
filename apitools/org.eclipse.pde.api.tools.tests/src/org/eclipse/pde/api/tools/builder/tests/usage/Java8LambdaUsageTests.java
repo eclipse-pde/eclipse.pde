@@ -13,7 +13,6 @@ package org.eclipse.pde.api.tools.builder.tests.usage;
 import junit.framework.Test;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
@@ -22,7 +21,9 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
  * Tests labmda expression usage for Java 8 code snippets
  * 
  */
-public class Java8LambdaUsageTests extends FieldUsageTests {
+public class Java8LambdaUsageTests extends Java8UsageTest {
+
+	int pid = -1;
 
 	/**
 	 * Constructor
@@ -39,17 +40,20 @@ public class Java8LambdaUsageTests extends FieldUsageTests {
 		return buildTestSuite(Java8LambdaUsageTests.class);
 	}
 	
-	/**
-	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getTestCompliance()
-	 */
-	@Override
-	protected String getTestCompliance() {
-		return JavaCore.VERSION_1_8;
-	}
-
 	@Override
 	protected IPath getTestSourcePath() {
-		return super.getTestSourcePath().removeLastSegments(1).append("java8"); //$NON-NLS-1$
+		return super.getTestSourcePath().append("lambda"); //$NON-NLS-1$
+	}
+
+	/**
+	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getDefaultProblemId()
+	 */
+	@Override
+	protected int getDefaultProblemId() {
+		if (pid == -1) {
+			pid = ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_USAGE, IElementDescriptor.FIELD, IApiProblem.ILLEGAL_REFERENCE, IApiProblem.FIELD);
+		}
+		return pid;
 	}
 
 	/**
@@ -80,8 +84,8 @@ public class Java8LambdaUsageTests extends FieldUsageTests {
 		setExpectedProblemIds(getDefaultProblemIdSet(2));
 		String typename = "testLambdaExpression"; //$NON-NLS-1$
 		setExpectedMessageArgs(new String[][] {
-				{ FIELD_CLASS_NAME, typename, "f1" }, //$NON-NLS-1$
-				{ FIELD_CLASS_NAME, typename, "f2" }, //$NON-NLS-1$
+				{ FieldUsageTests.FIELD_CLASS_NAME, typename, "f1" }, //$NON-NLS-1$
+				{ FieldUsageTests.FIELD_CLASS_NAME, typename, "f2" }, //$NON-NLS-1$
 		});
 		deployUsageTest(typename, inc);
 	}
@@ -104,8 +108,8 @@ public class Java8LambdaUsageTests extends FieldUsageTests {
 		setExpectedProblemIds(getDefaultProblemIdSet(2));
 		String typename = "testLambdaStatement"; //$NON-NLS-1$
 		setExpectedMessageArgs(new String[][] {
-				{ FIELD_CLASS_NAME, typename, "f1" }, //$NON-NLS-1$
-				{ FIELD_CLASS_NAME, typename, "f2" }, //$NON-NLS-1$
+				{ FieldUsageTests.FIELD_CLASS_NAME, typename, "f1" }, //$NON-NLS-1$
+				{ FieldUsageTests.FIELD_CLASS_NAME, typename, "f2" }, //$NON-NLS-1$
 		});
 		deployUsageTest(typename, inc);
 	}
@@ -136,9 +140,9 @@ public class Java8LambdaUsageTests extends FieldUsageTests {
 		String typename = "testLambdaBlockStatement"; //$NON-NLS-1$
 		setExpectedMessageArgs(new String[][] {
 				{ ClassUsageTests.CLASS_NAME, typename, "ClassUsageClass" }, //$NON-NLS-1$
-				{ FIELD_CLASS_NAME, typename, "f1" }, //$NON-NLS-1$
+				{ FieldUsageTests.FIELD_CLASS_NAME, typename, "f1" }, //$NON-NLS-1$
 				{ "inner", typename }, //$NON-NLS-1$
-				{ FIELD_CLASS_NAME, typename, "f2" }, //$NON-NLS-1$
+				{ FieldUsageTests.FIELD_CLASS_NAME, typename, "f2" }, //$NON-NLS-1$
 		});
 		deployUsageTest(typename, inc);
 	}

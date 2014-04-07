@@ -69,12 +69,6 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	private List<IPath> fChanged = new ArrayList<IPath>();
 	private List<IPath> fRemoved = new ArrayList<IPath>();
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.jdt.core.tests.builder.TestingEnvironment#addProject(java
-	 * .lang.String, java.lang.String)
-	 */
 	@Override
 	public IPath addProject(String projectName, String compliance) throws UnsupportedOperationException {
 		IJavaProject javaProject = createProject(projectName);
@@ -484,10 +478,6 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jdt.core.tests.builder.TestingEnvironment#getProblems()
-	 */
 	@Override
 	public ApiProblem[] getProblems() {
 		return (ApiProblem[]) super.getProblems();
@@ -502,12 +492,6 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 		return ApiPlugin.getDefault().getApiBaselineManager().getWorkspaceBaseline();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.jdt.core.tests.builder.TestingEnvironment#getProblemsFor(
-	 * org.eclipse.core.runtime.IPath, java.lang.String)
-	 */
 	@Override
 	public ApiProblem[] getProblemsFor(IPath path, String additionalMarkerType) {
 		IMarker[] markers = getMarkersFor(path, additionalMarkerType);
@@ -518,12 +502,6 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 		return problems.toArray(new ApiProblem[problems.size()]);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.jdt.core.tests.builder.TestingEnvironment#removeProject(org
-	 * .eclipse.core.runtime.IPath)
-	 */
 	@Override
 	public void removeProject(IPath projectPath) {
 		IJavaProject project = getJavaProject(projectPath);
@@ -536,11 +514,6 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.jdt.core.tests.builder.TestingEnvironment#resetWorkspace()
-	 */
 	@Override
 	public void resetWorkspace() {
 		try {
@@ -716,12 +689,6 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 		fRemoved.add(path);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.jdt.core.tests.builder.TestingEnvironment#addFile(org.eclipse
-	 * .core.runtime.IPath, java.lang.String, java.lang.String)
-	 */
 	@Override
 	public IPath addFile(IPath root, String fileName, String contents) {
 		IPath path = root.append(fileName);
@@ -746,12 +713,6 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 		return getWorkspace().computeProjectOrder(getWorkspace().getRoot().getProjects()).projects;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.jdt.core.tests.builder.TestingEnvironment#addClass(org.eclipse
-	 * .core.runtime.IPath, java.lang.String, java.lang.String)
-	 */
 	@Override
 	public IPath addClass(IPath packagePath, String className, String contents) {
 		IPath filePath = packagePath.append(className + ".java"); //$NON-NLS-1$

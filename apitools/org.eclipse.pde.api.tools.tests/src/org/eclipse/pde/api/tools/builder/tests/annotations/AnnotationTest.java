@@ -83,6 +83,7 @@ public abstract class AnnotationTest extends ApiBuilderTest {
 		if (ProjectUtils.isJava8Compatible()) {
 			classes.add(InvalidJava8InterfaceAnnotationTests.class);
 			classes.add(ValidJava8InterfaceAnnotationTests.class);
+			classes.add(Java8TypeAnnotationTests.class);
 		}
 		
 		return classes.toArray(new Class<?>[classes.size()]);
@@ -191,23 +192,11 @@ public abstract class AnnotationTest extends ApiBuilderTest {
 		return array;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestSourcePath
-	 * ()
-	 */
 	@Override
 	protected IPath getTestSourcePath() {
 		return new Path("annotations"); //$NON-NLS-1$
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestingProjectName
-	 * ()
-	 */
 	@Override
 	protected String getTestingProjectName() {
 		return "tagproject"; //$NON-NLS-1$
@@ -268,10 +257,6 @@ public abstract class AnnotationTest extends ApiBuilderTest {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#setUp()
-	 */
 	@Override
 	protected void setUp() throws Exception {
 		ApiTestingEnvironment env = getEnv();
@@ -287,10 +272,6 @@ public abstract class AnnotationTest extends ApiBuilderTest {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#tearDown()
-	 */
 	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();

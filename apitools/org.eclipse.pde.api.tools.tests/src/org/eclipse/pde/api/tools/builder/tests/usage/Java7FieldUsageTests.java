@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 IBM Corporation and others.
+ * Copyright (c) 2011, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,16 +12,19 @@ package org.eclipse.pde.api.tools.builder.tests.usage;
 
 import junit.framework.Test;
 
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
+import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
+import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 
 /**
  * Test class usage for Java 7 code snippets
  * 
  * @since 1.0.100
  */
-public class Java7FieldUsageTests extends FieldUsageTests {
+public class Java7FieldUsageTests extends Java7UsageTest {
 
+	private int pid = -1;
+	
 	/**
 	 * Constructor
 	 * @param name
@@ -36,20 +39,15 @@ public class Java7FieldUsageTests extends FieldUsageTests {
 	public static Test suite() {
 		return buildTestSuite(Java7FieldUsageTests.class);
 	}
+
+	@Override
+	protected int getDefaultProblemId() {
+		if (pid == -1) {
+			pid = ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_USAGE, IElementDescriptor.FIELD, IApiProblem.ILLEGAL_REFERENCE, IApiProblem.FIELD);
+		}
+		return pid;
+	}
 	
-	/**
-	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getTestCompliance()
-	 */
-	@Override
-	protected String getTestCompliance() {
-		return JavaCore.VERSION_1_7;
-	}
-
-	@Override
-	protected IPath getTestSourcePath() {
-		return super.getTestSourcePath().removeLastSegments(1).append("java7"); //$NON-NLS-1$
-	}
-
 	/**
 	 * Tests illegal use of classes inside a string switch block
 	 * (full)
@@ -72,9 +70,9 @@ public class Java7FieldUsageTests extends FieldUsageTests {
 		String typename = "testFStringSwitch"; //$NON-NLS-1$
 		// Note that since constants are inlined, we do not get markers for illegal use
 		setExpectedMessageArgs(new String[][] {
-				{FIELD_CLASS_NAME, typename, "f1"}, //$NON-NLS-1$
-				{FIELD_CLASS_NAME, typename, "f1"}, //$NON-NLS-1$
-				{FIELD_CLASS_NAME, typename, "f1"} //$NON-NLS-1$
+				{ FieldUsageTests.FIELD_CLASS_NAME, typename, "f1" }, //$NON-NLS-1$
+				{ FieldUsageTests.FIELD_CLASS_NAME, typename, "f1" }, //$NON-NLS-1$
+				{ FieldUsageTests.FIELD_CLASS_NAME, typename, "f1" } //$NON-NLS-1$
 			
 		});
 		deployUsageTest(typename, inc);
@@ -106,5 +104,4 @@ public class Java7FieldUsageTests extends FieldUsageTests {
 		});
 		deployUsageTest(typename, inc);
 	}
-	
 }

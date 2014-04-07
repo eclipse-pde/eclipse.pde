@@ -46,7 +46,7 @@ public abstract class UsageTest extends ApiBuilderTest {
 	protected static final String INNER_NAME2 = "inner2"; //$NON-NLS-1$
 	protected static final String OUTER_INAME = "Iouter"; //$NON-NLS-1$
 
-	protected static IPath SOURCE_PATH = new Path("src/x/y/z"); //$NON-NLS-1$
+	public static IPath SOURCE_PATH = new Path("src/x/y/z"); //$NON-NLS-1$
 
 	/**
 	 * Constructor
@@ -55,12 +55,6 @@ public abstract class UsageTest extends ApiBuilderTest {
 		super(name);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#setBuilderOptions
-	 * ()
-	 */
 	@Override
 	protected void setBuilderOptions() {
 		enableUnsupportedTagOptions(false);
@@ -91,23 +85,11 @@ public abstract class UsageTest extends ApiBuilderTest {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestSourcePath
-	 * ()
-	 */
 	@Override
 	protected IPath getTestSourcePath() {
 		return new Path(USAGE);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * org.eclipse.pde.api.tools.builder.tests.ApiBuilderTests#getTestingProjectName
-	 * ()
-	 */
 	@Override
 	protected String getTestingProjectName() {
 		return "usagetests"; //$NON-NLS-1$
@@ -146,6 +128,7 @@ public abstract class UsageTest extends ApiBuilderTest {
 			ApiProblem[] problems = getEnv().getProblemsFor(typepath, null);
 			assertProblems(problems);
 		} catch (Exception e) {
+			e.printStackTrace();
 			fail(e.getMessage());
 		}
 	}
@@ -172,10 +155,6 @@ public abstract class UsageTest extends ApiBuilderTest {
 		ensureCompliance(new String[] { getTestingProjectName() });
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#tearDown()
-	 */
 	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
@@ -245,15 +224,7 @@ public abstract class UsageTest extends ApiBuilderTest {
 			classes.add(Java5MethodUsageTests.class);
 			classes.add(Java5ClassUsageTests.class);
 			classes.add(AnnotationUsageTests.class);
-			classes.add(EnumUsageTests.class);
-		}
-		if (ProjectUtils.isJava7Compatible()) {
-			classes.add(Java7MethodUsageTests.class);
-			classes.add(Java7FieldUsageTests.class);
-			classes.add(Java7ClassUsageTests.class);
-		}
-		if (ProjectUtils.isJava8Compatible()) {
-			classes.add(Java8LambdaUsageTests.class);
+			// classes.add(EnumUsageTests.class);
 		}
 		return classes.toArray(new Class[classes.size()]);
 	}

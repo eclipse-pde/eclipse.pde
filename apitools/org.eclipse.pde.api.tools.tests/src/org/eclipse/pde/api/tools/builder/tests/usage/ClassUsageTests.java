@@ -25,7 +25,7 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
  */
 public class ClassUsageTests extends UsageTest {
 
-	protected static final String CLASS_NAME = "ClassUsageClass"; //$NON-NLS-1$
+	public static final String CLASS_NAME = "ClassUsageClass"; //$NON-NLS-1$
 	
 	
 	/**

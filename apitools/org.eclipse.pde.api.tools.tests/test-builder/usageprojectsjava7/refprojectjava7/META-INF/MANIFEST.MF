@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: refprojectjava7
+Bundle-SymbolicName: refprojectjava7
+Bundle-Version: 1.0.0
+Export-Package: a,
+ c,
+ e,
+ f,
+ i,
+ m,
+ pack.multi.part
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Require-Bundle: org.eclipse.pde.api.tools;bundle-version="1.0.600",
+ org.eclipse.pde.api.tools.annotations;bundle-version="1.0.0"

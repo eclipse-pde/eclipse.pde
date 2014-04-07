@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 IBM Corporation and others.
+ * Copyright (c) 2011, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,8 +12,8 @@ package org.eclipse.pde.api.tools.builder.tests.usage;
 
 import junit.framework.Test;
 
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
+import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 
 /**
@@ -21,7 +21,7 @@ import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
  * 
  * @since 1.0.100
  */
-public class Java7MethodUsageTests extends MethodUsageTests {
+public class Java7MethodUsageTests extends Java7UsageTest {
 
 	/**
 	 * Constructor
@@ -37,20 +37,17 @@ public class Java7MethodUsageTests extends MethodUsageTests {
 	public static Test suite() {
 		return buildTestSuite(Java7MethodUsageTests.class);
 	}
-	
+
 	/**
-	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getTestCompliance()
+	 * Returns the problem id with the given kind
+	 * 
+	 * @param kind
+	 * @return the problem id
 	 */
-	@Override
-	protected String getTestCompliance() {
-		return JavaCore.VERSION_1_7;
+	protected int getProblemId(int kind, int flags) {
+		return ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_USAGE, IElementDescriptor.METHOD, kind, flags);
 	}
-
-	@Override
-	protected IPath getTestSourcePath() {
-		return super.getTestSourcePath().removeLastSegments(1).append("java7"); //$NON-NLS-1$
-	}
-
+	
 	/**
 	 * Tests illegal use of methods inside a string switch block
 	 * (full)
@@ -80,12 +77,12 @@ public class Java7MethodUsageTests extends MethodUsageTests {
 		setExpectedProblemIds(pids);
 		String typename = "testMStringSwitch"; //$NON-NLS-1$
 		String[][] args = new String[][] {
-				{METHOD_CLASS_NAME, typename, "m1()"}, //$NON-NLS-1$
-				{METHOD_CLASS_NAME, typename, "m3()"}, //$NON-NLS-1$
-				{METHOD_CLASS_NAME, typename, "m1()"}, //$NON-NLS-1$
-				{METHOD_CLASS_NAME, typename, "m3()"}, //$NON-NLS-1$
-				{METHOD_CLASS_NAME, typename, "m1()"}, //$NON-NLS-1$
-				{METHOD_CLASS_NAME, typename, "m3()"}, //$NON-NLS-1$
+				{ MethodUsageTests.METHOD_CLASS_NAME, typename, "m1()" }, //$NON-NLS-1$
+				{ MethodUsageTests.METHOD_CLASS_NAME, typename, "m3()" }, //$NON-NLS-1$
+				{ MethodUsageTests.METHOD_CLASS_NAME, typename, "m1()" }, //$NON-NLS-1$
+				{ MethodUsageTests.METHOD_CLASS_NAME, typename, "m3()" }, //$NON-NLS-1$
+				{ MethodUsageTests.METHOD_CLASS_NAME, typename, "m1()" }, //$NON-NLS-1$
+				{ MethodUsageTests.METHOD_CLASS_NAME, typename, "m3()" }, //$NON-NLS-1$
 		};
 		setExpectedMessageArgs(args);
 		setExpectedLineMappings(new LineMapping[] {

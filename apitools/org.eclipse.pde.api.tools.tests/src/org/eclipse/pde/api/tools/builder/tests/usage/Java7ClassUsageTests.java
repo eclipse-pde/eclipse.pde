@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 IBM Corporation and others.
+ * Copyright (c) 2011, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,22 +10,18 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.builder.tests.usage;
 
-import java.io.File;
-
 import junit.framework.Test;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
+import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
-import org.eclipse.pde.api.tools.model.tests.TestSuiteHelper;
 
 /**
  * Test class usage for Java 7 code snippets
  * 
  * @since 1.0.100
  */
-public class Java7ClassUsageTests extends ClassUsageTests {
+public class Java7ClassUsageTests extends Java7UsageTest {
 
 	/**
 	 * Constructor
@@ -42,40 +38,18 @@ public class Java7ClassUsageTests extends ClassUsageTests {
 		return buildTestSuite(Java7ClassUsageTests.class);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.usage.UsageTest#setUp()
+	/**
+	 * Returns the problem id with the given kind
+	 * 
+	 * @param kind
+	 * @return the problem id
 	 */
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-		IProject project = getEnv().getWorkspace().getRoot().getProject("usageprojectjava7"); //$NON-NLS-1$
-		if (!project.exists()) {
-			IPath path = TestSuiteHelper.getPluginDirectoryPath().append(TEST_SOURCE_ROOT).append("usageprojectjava7"); //$NON-NLS-1$
-			File dir = path.toFile();
-			assertTrue("Test data directory does not exist: " + path.toOSString(), dir.exists()); //$NON-NLS-1$
-			createExistingProject(dir, true, true);
-		}
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getTestCompliance()
-	 */
-	@Override
-	protected String getTestCompliance() {
-		return JavaCore.VERSION_1_7;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.api.tools.builder.tests.usage.ClassUsageTests#getTestSourcePath()
-	 */
-	@Override
-	protected IPath getTestSourcePath() {
-		return super.getTestSourcePath().removeLastSegments(1).append("java7"); //$NON-NLS-1$
+	protected int getProblemId(int kind, int flags) {
+		return ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_USAGE, IElementDescriptor.TYPE, kind, flags);
 	}
 
 	/**
-	 * Tests illegal use of classes inside a string switch block
-	 * (full)
+	 * Tests illegal use of classes inside a string switch block (full)
 	 */
 	public void testStringSwitchF() {
 		x1(false);
@@ -97,9 +71,9 @@ public class Java7ClassUsageTests extends ClassUsageTests {
 		});
 		String typename = "testCStringSwitch"; //$NON-NLS-1$
 		setExpectedMessageArgs(new String[][] {
-				{CLASS_NAME, typename},
-				{CLASS_NAME, typename},
-				{CLASS_NAME, typename}
+				{ ClassUsageTests.CLASS_NAME, typename },
+				{ ClassUsageTests.CLASS_NAME, typename },
+				{ ClassUsageTests.CLASS_NAME, typename }
 		});
 		deployUsageTest(typename, inc);
 	}
