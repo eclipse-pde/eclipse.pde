@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     EclipseSource Corporation - ongoing enhancements
  *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 268363
+ *     Rapicorp Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
@@ -126,6 +127,7 @@ public class ProductEditor extends PDELauncherFormEditor {
 			addPage(new SplashPage(this));
 			addPage(new BrandingPage(this));
 			addPage(new LicensingPage(this));
+			addPage(new UpdatesPage(this));
 		} catch (PartInitException e) {
 			PDEPlugin.logException(e);
 		}

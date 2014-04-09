@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,11 +8,10 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     EclipseSource Corporation - ongoing enhancements
- *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 265931     
+ *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 265931   
+ *     Rapicorp Corporation - ongoing enhancements  
  *******************************************************************************/
 package org.eclipse.pde.internal.core.product;
-
-import org.eclipse.pde.internal.core.iproduct.IProductObject;
 
 import java.io.PrintWriter;
 import java.util.*;
@@ -44,6 +43,7 @@ public class Product extends ProductObject implements IProduct {
 	private IArgumentsInfo fLauncherArgs;
 	private IIntroInfo fIntroInfo;
 	private ILicenseInfo fLicenseInfo;
+	private List<IProductObject> fRepositories = new ArrayList<IProductObject>();
 
 	public Product(IProductModel model) {
 		super(model);
@@ -253,6 +253,17 @@ public class Product extends ProductObject implements IProduct {
 			writer.println(indent + "   </configurations>"); //$NON-NLS-1$
 		}
 
+		if (fRepositories.size() > 0) {
+			writer.println();
+			writer.println(indent + "   <repositories>"); //$NON-NLS-1$  
+			Iterator<IProductObject> iterator = fRepositories.iterator();
+			while (iterator.hasNext()) {
+				IRepositoryInfo repo = (IRepositoryInfo) iterator.next();
+				repo.write(indent + "      ", writer); //$NON-NLS-1$
+			}
+			writer.println(indent + "   </repositories>"); //$NON-NLS-1$
+		}
+
 		writer.println();
 		writer.println("</product>"); //$NON-NLS-1$
 	}
@@ -342,6 +353,8 @@ public class Product extends ProductObject implements IProduct {
 					} else if (name.equals("license")) { //$NON-NLS-1$
 						fLicenseInfo = factory.createLicenseInfo();
 						fLicenseInfo.parse(child);
+					} else if (name.equals("repositories")) { //$NON-NLS-1$
+						parseRepositories(child.getChildNodes());
 					}
 				}
 			}
@@ -387,6 +400,19 @@ public class Product extends ProductObject implements IProduct {
 					IProductFeature feature = getModel().getFactory().createFeature();
 					feature.parse(child);
 					fFeatures.add(feature);
+				}
+			}
+		}
+	}
+
+	private void parseRepositories(NodeList children) {
+		for (int i = 0; i < children.getLength(); i++) {
+			Node child = children.item(i);
+			if (child.getNodeType() == Node.ELEMENT_NODE) {
+				if (child.getNodeName().equals("repository")) { //$NON-NLS-1$
+					IRepositoryInfo repo = getModel().getFactory().createRepositoryInfo();
+					repo.parse(child);
+					fRepositories.add(repo);
 				}
 			}
 		}
@@ -529,6 +555,38 @@ public class Product extends ProductObject implements IProduct {
 	public IConfigurationProperty[] getConfigurationProperties() {
 		return fConfigurationProperties.values().toArray(new IConfigurationProperty[fConfigurationProperties.size()]);
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#getRepositories()
+	 */
+	public IRepositoryInfo[] getRepositories() {
+		return fRepositories.toArray(new IRepositoryInfo[fRepositories.size()]);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#addRepositories(org.eclipse.pde.internal.core.iproduct.IRepositoryInfo[])
+	 */
+	public void addRepositories(IRepositoryInfo[] repos) {
+		boolean modified = false;
+		for (int i = 0; i < repos.length; i++) {
+			modified = modified || fRepositories.add(repos[i]);
+		}
+		if (modified && isEditable())
+			fireStructureChanged(repos, IModelChangedEvent.INSERT);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#removeRepositories(org.eclipse.pde.internal.core.iproduct.IRepositoryInfo[])
+	 */
+	public void removeRepositories(IRepositoryInfo[] repos) {
+		boolean modified = false;
+		for (int i = 0; i < repos.length; i++) {
+			modified = fRepositories.remove(repos[i]) || modified;
+		}
+		if (modified && isEditable())
+			fireStructureChanged(repos, IModelChangedEvent.REMOVE);
+	}
+
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#getConfigurationFileInfo()

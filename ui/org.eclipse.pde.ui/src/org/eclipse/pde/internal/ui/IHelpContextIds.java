@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     EclipseSource Corporation - ongoing enhancements
+ *     Rapicorp Corporation - ongoing enhancements
  *******************************************************************************/
 package org.eclipse.pde.internal.ui;
 
@@ -259,6 +260,7 @@ public interface IHelpContextIds {
 	public static final String CONFIGURATION_PAGE = PREFIX + "configuration_page"; //$NON-NLS-1$
 	public static final String OVERVIEW_PAGE = PREFIX + "overview_page"; //$NON-NLS-1$
 	public static final String LICENSING_PAGE = PREFIX + "licensing_page"; //$NON-NLS-1$
+	public static final String UPDATES_PAGE = PREFIX + "updates_page"; //$NON-NLS-1$
 
 	public static final String TARGET_EDITOR = PREFIX + "target_editor"; //$NON-NLS-1$
 	public static final String TARGET_EDITOR_ENVIRONMENT_PAGE = PREFIX + "target_editor_environment_page"; //$NON-NLS-1$	

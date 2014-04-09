@@ -2840,6 +2840,20 @@ public class PDEUIMessages extends NLS {
 	public static String LicenseSection_url;
 	public static String LicenseSection_text;
 
+	public static String UpdatesPage_title;
+	public static String UpdatesSection_title;
+	public static String UpdatesSection_add;
+	public static String UpdatesSection_edit;
+	public static String UpdatesSection_remove;
+	public static String UpdatesSection_removeAll;
+	public static String UpdatesSection_description;
+	public static String UpdatesSection_RepositoryDialogTitle;
+	public static String UpdatesSection_Location;
+	public static String UpdatesSection_ErrorLocationNoName;
+	public static String UpdatesSection_ErrorInvalidURL;
+	public static String UpdatesSection_LocationColumn;
+	public static String UpdatesSection_EnabledColumn;
+
 	public static String TargetEditor_0;
 
 	public static String TargetEditor_1;
