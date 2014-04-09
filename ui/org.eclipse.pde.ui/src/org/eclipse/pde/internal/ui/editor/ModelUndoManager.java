@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor;
 
-import org.eclipse.pde.core.IModelChangedEvent;
-
 import java.util.List;
 import java.util.Vector;
 import org.eclipse.jface.action.IAction;
@@ -211,5 +209,9 @@ public abstract class ModelUndoManager implements IModelUndoManager, IModelChang
 
 	public void setIgnoreChanges(boolean ignore) {
 		this.ignoreChanges = ignore;
+	}
+
+	public PDEFormEditor getEditor() {
+		return editor;
 	}
 }

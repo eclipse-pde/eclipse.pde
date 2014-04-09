@@ -11,13 +11,13 @@
 package org.eclipse.pde.internal.ui.editor.plugin;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.core.IModelChangeProvider;
-import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.build.BuildObject;
 import org.eclipse.pde.internal.core.build.IBuildObject;
-import org.eclipse.pde.internal.core.bundle.BundleObject;
+import org.eclipse.pde.internal.core.bundle.*;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.core.ibundle.IManifestHeader;
 import org.eclipse.pde.internal.core.plugin.*;
@@ -123,7 +123,37 @@ public class PluginUndoManager extends ModelUndoManager {
 							((ImportPackageHeader) header).addPackage((PackageObject) element);
 						}
 					}
-				}
+					if (element instanceof RequireBundleObject) {
+						IBaseModel aggModel = getEditor().getAggregateModel();
+						if (aggModel instanceof BundlePluginModel) {
+							BundlePluginModel pluginModel = (BundlePluginModel) aggModel;
+							RequireBundleObject requireBundle = (RequireBundleObject) element;
+							pluginBase = pluginModel.getPluginBase();
+							String elementValue = requireBundle.getValue();
+							IPluginImport importNode = null;
+							if (pluginModel.getPluginFactory() instanceof BundlePluginModelBase)
+								importNode = ((BundlePluginModelBase) pluginModel.getPluginFactory()).createImport(elementValue);
+							String version = ((RequireBundleObject) element).getAttribute(Constants.BUNDLE_VERSION_ATTRIBUTE);
+							IManifestHeader header = bundleModel.getBundle().getManifestHeader(Constants.REQUIRE_BUNDLE);
+							int bundleManifestVersion = BundlePluginBase.getBundleManifestVersion(((RequireBundleHeader) header).getBundle());
+							boolean option = (bundleManifestVersion > 1) ? Constants.RESOLUTION_OPTIONAL.equals(requireBundle.getDirective(Constants.RESOLUTION_DIRECTIVE)) : "true".equals(requireBundle.getAttribute(ICoreConstants.OPTIONAL_ATTRIBUTE)); //$NON-NLS-1$;
+							boolean exported = (bundleManifestVersion > 1) ? Constants.VISIBILITY_REEXPORT.equals(requireBundle.getDirective(Constants.VISIBILITY_DIRECTIVE)) : "true".equals(requireBundle.getAttribute(ICoreConstants.REPROVIDE_ATTRIBUTE)); //$NON-NLS-1$;
+							if (importNode != null) {
+								importNode.setVersion(version);
+								importNode.setOptional(option);
+								importNode.setReexported(exported);
+							}
+							if (pluginBase instanceof BundlePluginBase && importNode != null)
+								((BundlePluginBase) pluginBase).add(importNode);
+						}
+					}
+					if (element instanceof ExportPackageObject) {
+						IManifestHeader header = bundleModel.getBundle().getManifestHeader(Constants.EXPORT_PACKAGE);
+						if (header != null && header instanceof ExportPackageHeader) {
+							((ExportPackageHeader) header).addPackage((PackageObject) element);
+						}
+					}
+				} 
 			}
 		} catch (CoreException e) {
 			PDEPlugin.logException(e);
@@ -170,6 +200,32 @@ public class PluginUndoManager extends ModelUndoManager {
 						IManifestHeader header = bundleModel.getBundle().getManifestHeader(Constants.IMPORT_PACKAGE);
 						if (header != null && header instanceof ImportPackageHeader) {
 							((ImportPackageHeader) header).removePackage((PackageObject) element);
+						}
+					}
+					if (element instanceof RequireBundleObject) {
+						IBaseModel aggModel = getEditor().getAggregateModel();
+						if (aggModel instanceof BundlePluginModel) {
+							BundlePluginModel mod = (BundlePluginModel) aggModel;
+							pluginBase = mod.getPluginBase();
+							IPluginImport[] imports = pluginBase.getImports();
+							IPluginImport currentImport = null;
+							for (int j = 0; j < imports.length; j++) {
+								IPluginImport iPluginImport = imports[j];
+								String elementValue = ((RequireBundleObject) element).getValue();
+								if (iPluginImport.getId().equals(elementValue)) {
+									currentImport = iPluginImport;
+									break;
+								}
+							}
+							IPluginImport[] plugins = {currentImport};
+							if (pluginBase instanceof BundlePluginBase && currentImport != null)
+								((BundlePluginBase) pluginBase).remove(plugins);
+						}
+					}
+					if (element instanceof ExportPackageObject) {
+						IManifestHeader header = bundleModel.getBundle().getManifestHeader(Constants.EXPORT_PACKAGE);
+						if (header != null && header instanceof ExportPackageHeader) {
+							((ExportPackageHeader) header).removePackage((PackageObject) element);
 						}
 					}
 				}
