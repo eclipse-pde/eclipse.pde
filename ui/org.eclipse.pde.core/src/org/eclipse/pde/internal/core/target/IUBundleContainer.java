@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 IBM Corporation and others.
+ * Copyright (c) 2009, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,15 +37,15 @@ import org.w3c.dom.Element;
 
 /**
  * A bundle container that references IU's in one or more repositories.
- * 
+ *
  * @since 3.5
  */
 public class IUBundleContainer extends AbstractBundleContainer {
 
 	/**
-	 * Constant describing the type of bundle container 
+	 * Constant describing the type of bundle container
 	 */
-	public static final String TYPE = "InstallableUnit"; //$NON-NLS-1$	
+	public static final String TYPE = "InstallableUnit"; //$NON-NLS-1$
 
 	/**
 	 * Constant for the string that is appended to feature installable unit ids
@@ -61,7 +61,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 
 	/**
 	 * Whether this container should download and include environment (platform) specific units for all
-	 * available platforms (vs only the current target definition's environment settings).  Only supported 
+	 * available platforms (vs only the current target definition's environment settings).  Only supported
 	 * by the slicer so {@link #INCLUDE_REQUIRED} must be turned off for this setting to be used.
 	 */
 	public static final int INCLUDE_ALL_ENVIRONMENTS = 1 << 1;
@@ -117,7 +117,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 
 	/**
 	 * Constructs a installable unit bundle container for the specified units.
-	 * 
+	 *
 	 * @param ids IU identifiers
 	 * @param versions IU versions
 	 * @param repositories metadata repositories used to search for IU's or <code>null</code> for default set
@@ -140,7 +140,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 
 	/**
 	 * Constructs a installable unit bundle container for the specified units.
-	 * 
+	 *
 	 * @param units IU's
 	 * @param repositories metadata repositories used to search for IU's or <code>null</code> for default set
 	 * @param resolutionFlags bitmask of flags to control IU resolution, possible flags are {@link IUBundleContainer#INCLUDE_ALL_ENVIRONMENTS}, {@link IUBundleContainer#INCLUDE_REQUIRED}, {@link IUBundleContainer#INCLUDE_SOURCE}, {@link IUBundleContainer#INCLUDE_CONFIGURE_PHASE}
@@ -189,7 +189,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	/**
 	 * Returns the target definition that was used to resolve this bundle container or <code>null</code>
 	 * if this container is not resolved.
-	 * 
+	 *
 	 * @return target definition or <code>null</code>
 	 */
 	public ITargetDefinition getTarget() {
@@ -202,10 +202,10 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 * as a result of a synchronization operation.
 	 */
 	TargetFeature[] cacheFeatures(ITargetDefinition target) throws CoreException {
-		// Ideally we would compute the list of features specific to this container but that 
-		// would require running the slicer again to follow the dependencies from this 
+		// Ideally we would compute the list of features specific to this container but that
+		// would require running the slicer again to follow the dependencies from this
 		// container's roots.  Instead, here we find all features in the shared profile.  This means
-		// that all IU containers will return the same thing for getFeatures.  In practice this is 
+		// that all IU containers will return the same thing for getFeatures.  In practice this is
 		// ok because we remove duplicates in TargetDefinition#getAllFeatures.
 
 		Set<NameVersionDescriptor> features = new HashSet<NameVersionDescriptor>();
@@ -217,7 +217,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		for (Iterator<IInstallableUnit> i = queryResult.iterator(); i.hasNext();) {
 			IInstallableUnit unit = i.next();
 			String id = unit.getId();
-			// if the IU naming convention says it is a feature, then add it. 
+			// if the IU naming convention says it is a feature, then add it.
 			// This is less than optimal but there is no clear way of identifying an IU as a feature.
 			if (id.endsWith(FEATURE_ID_SUFFIX)) {
 				id = id.substring(0, id.length() - FEATURE_ID_SUFFIX.length());
@@ -334,11 +334,11 @@ public class IUBundleContainer extends AbstractBundleContainer {
 
 	/**
 	 * Update the root IUs to the latest available in the repos associated with this container.
-	 * 
+	 *
 	 * @param toUpdate the set of IU ids in this container to consider updating.  If empty
 	 * then update everything
 	 * @param monitor progress monitor or <code>null</code>
-	 * @return whether this container was changed as part of this update and must be resolved 
+	 * @return whether this container was changed as part of this update and must be resolved
 	 * @exception CoreException if unable to retrieve IU's
 	 */
 	public synchronized boolean update(Set<Object> toUpdate, IProgressMonitor monitor) throws CoreException {
@@ -379,7 +379,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 * <p>
 	 * If there is an artifact missing for a unit it will be ignored (not added to the returned map).
 	 * If this container is setup to automatically include source, an corresponding source bundles
-	 * found in the given profile will also be added as resolved bundles. 
+	 * found in the given profile will also be added as resolved bundles.
 	 * </p>
 	 * @param source the bundle units to be converted
 	 * @param metadata the metadata backing the conversion
@@ -419,74 +419,53 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.target.AbstractBundleContainer#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object o) {
-		if (o instanceof IUBundleContainer) {
-			IUBundleContainer iuContainer = (IUBundleContainer) o;
-			boolean result = true;
-			result &= iuContainer.getIncludeAllRequired() == getIncludeAllRequired();
-			result &= iuContainer.getIncludeAllEnvironments() == getIncludeAllEnvironments();
-			result &= iuContainer.getIncludeSource() == getIncludeSource();
-			result &= iuContainer.getIncludeConfigurePhase() == getIncludeConfigurePhase();
-			return result && isEqualOrNull(fIds, iuContainer.fIds) && isEqualOrNull(fVersions, iuContainer.fVersions) && isEqualOrNull(fRepos, iuContainer.fRepos);
-		}
-		return false;
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.target.AbstractBundleContainer#hashCode()
 	 */
 	@Override
 	public int hashCode() {
-		boolean result = true;
-		result &= getIncludeAllRequired();
-		result &= getIncludeAllEnvironments();
-		result &= getIncludeSource();
-		result &= getIncludeConfigurePhase();
-		int hash = Boolean.valueOf(result).hashCode();
-		if (fIds != null) {
-			hash += fIds.hashCode();
-		}
-		if (fVersions != null) {
-			hash += fVersions.hashCode();
-		}
-		if (fRepos != null) {
-			hash += fRepos.hashCode();
-		}
-		return hash;
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + fFlags;
+		result = prime * result + Arrays.hashCode(fIds);
+		result = prime * result + Arrays.hashCode(fRepos);
+		result = prime * result + Arrays.hashCode(fVersions);
+		return result;
 	}
 
-	/**
-	 * Returns whether the arrays have equal contents or are both <code>null</code>.
-	 * 
-	 * @param objects1
-	 * @param objects2
-	 * @return whether the arrays have equal contents or are both <code>null</code>
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.target.AbstractBundleContainer#equals(java.lang.Object)
 	 */
-	private boolean isEqualOrNull(Object[] objects1, Object[] objects2) {
-		if (objects1 == null) {
-			return objects2 == null;
-		}
-		if (objects2 == null) {
-			return false;
-		}
-		if (objects1.length == objects2.length) {
-			for (int i = 0; i < objects1.length; i++) {
-				if (!objects1[i].equals(objects2[i])) {
-					return false;
-				}
-			}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
 			return true;
 		}
-		return false;
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof IUBundleContainer)) {
+			return false;
+		}
+		IUBundleContainer other = (IUBundleContainer) obj;
+		if (fFlags != other.fFlags) {
+			return false;
+		}
+		if (!Arrays.equals(fIds, other.fIds)) {
+			return false;
+		}
+		if (!Arrays.equals(fRepos, other.fRepos)) {
+			return false;
+		}
+		if (!Arrays.equals(fVersions, other.fVersions)) {
+			return false;
+		}
+		return true;
 	}
 
 	/**
 	 * Returns the URI's identifying the metadata repositories to consider when resolving
 	 * IU's or <code>null</code> if the default set should be used.
-	 * 
+	 *
 	 * @return metadata repository URI's or <code>null</code>
 	 */
 	public URI[] getRepositories() {
@@ -495,7 +474,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 
 	/**
 	 * Removes an installable unit from this container.  The container will no longer be resolved.
-	 *  
+	 *
 	 * @param unit unit to remove from the list of root IUs
 	 */
 	public synchronized void removeInstallableUnit(IInstallableUnit unit) {
@@ -521,7 +500,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 * error explaining what problems exist.  When <code>false</code> the resolve operation will use the slicer
 	 * to determine what units to include.  Any required units that are not available in the repositories will
 	 * be ignored.
-	 *  
+	 *
 	 * @return whether all required units must be available to resolve this container
 	 */
 	public boolean getIncludeAllRequired() {
@@ -536,7 +515,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 * be included in this container when it is resolved.  This feature is not supported
 	 * by the planner so will only have an effect if the include all required setting
 	 * is turned off ({@link #getIncludeAllRequired()}).
-	 * 
+	 *
 	 * @return whether environment specific units should be included
 	 */
 	public boolean getIncludeAllEnvironments() {
@@ -547,9 +526,9 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	}
 
 	/**
-	 * Returns whether or not source bundles corresponding to selected binary bundles 
+	 * Returns whether or not source bundles corresponding to selected binary bundles
 	 * are automatically included in the target.
-	 * 
+	 *
 	 * @return whether or not source is included automatically
 	 */
 	public boolean getIncludeSource() {
@@ -561,7 +540,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 
 	/**
 	 * Returns whether or not the configuration phase should be executed while installing the IUS
-	 * 
+	 *
 	 * @return whether or not the configuration phase should be executed
 	 */
 	public boolean getIncludeConfigurePhase() {
@@ -573,7 +552,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 
 	/**
 	 * Returns the installable units defined by this container
-	 * 
+	 *
 	 * @return the discovered IUs
 	 * @exception CoreException if unable to retrieve IU's
 	 */
@@ -585,7 +564,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 
 	/**
 	 * Returns installable unit identifiers.
-	 * 
+	 *
 	 * @return IU id's
 	 */
 	String[] getIds() {
@@ -594,7 +573,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 
 	/**
 	 * Returns installable unit versions.
-	 * 
+	 *
 	 * @return IU versions
 	 */
 	Version[] getVersions() {
@@ -602,7 +581,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	}
 
 	/**
-	 * Return the synchronizer for this container.  If there isn't one and a target definition is 
+	 * Return the synchronizer for this container.  If there isn't one and a target definition is
 	 * supplied, then get/create the one used by the target and the other containers.
 	 */
 	P2TargetUtils getSynchronizer(ITargetDefinition definition) {
@@ -615,7 +594,7 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	}
 
 	/**
-	 * Callback method used by the synchronizer to associate containers with 
+	 * Callback method used by the synchronizer to associate containers with
 	 * synchronizers.
 	 */
 	void setSynchronizer(P2TargetUtils value) {
