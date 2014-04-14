@@ -1883,6 +1883,11 @@ public class PDEUIMessages extends NLS {
 	public static String ProductExportWizardPage_browse;
 	public static String Product_PluginSection_removeAll;
 	public static String Product_PluginSection_newPlugin;
+	public static String Product_PluginSection_recommended;
+	public static String Product_PluginSection_doNotShow;
+	public static String Product_PluginSection_RecommendedBundles_title;
+	public static String Product_PluginSection_RecommendedBundles_message;
+	public static String Product_PluginSection_NoRecommendedBundles_message;
 	public static String Product_FeatureSection_properties;
 	public static String Product_DependenciesPage_title;
 	public static String ProductFileWizadPage_groupTitle;

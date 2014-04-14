@@ -12,13 +12,15 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
-import org.eclipse.pde.core.IWritable;
-
 import java.util.ArrayList;
+import java.util.StringTokenizer;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.core.IWritable;
 import org.eclipse.pde.core.plugin.IFragmentModel;
 import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.FeatureModelManager;
@@ -115,12 +117,47 @@ public class PluginConfigurationSection extends TableSection {
 	}
 
 	private static String[] getButtonLabels() {
-		String[] labels = new String[3];
+		String[] labels = new String[4];
 		labels[0] = PDEUIMessages.Product_PluginSection_add;
-		labels[1] = PDEUIMessages.PluginSection_remove;
-		labels[2] = PDEUIMessages.Product_PluginSection_removeAll;
+		labels[1] = PDEUIMessages.Product_PluginSection_recommended;
+		labels[2] = PDEUIMessages.PluginSection_remove;
+		labels[3] = PDEUIMessages.Product_PluginSection_removeAll;
 		return labels;
 	}
+
+	/*
+	 * Return a comma-separated list of bundles that typically require auto-start and optionally
+	 * require a special startlevel. Each entry is of the form <bundleID>[@ [<startlevel>] [":start"]]
+	 * If the startlevel is omitted then the framework will use the default start level for the bundle.
+	 * The "start" tag indicates that the bundle is autostarted.
+	 * 	
+	 * This list loosely based on TargetPlatform.getBundleList and more specifically on
+	 * TargetPlatformHelper.getDefaultBundleList(). Both of these implementations are
+	 * problematic because they are out of date, and also leave out commonly used bundles.
+	 *  
+	 * This list attempts to describe a typical set up on the assumption that an advanced user can
+	 * further modify it. The list is hard-coded rather than walking the plugin requirements of
+	 * the product and all required products. The reason for this is that there are some bundles, 
+	 * such as org.eclipse.equinox.ds, that are typically needed but users do not remember to
+	 * add them, and they are not required by any bundle. The idea of this list is to suggest 
+	 * these commonly used bundles and start levels that clients typically do not remember.
+	 * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=426529
+	 * 
+	 * We use the same String format described in TargetPlatform so that in the future, we could
+	 * obtain this list from another source that uses the same format.
+	 */
+	private static String getBundlesWithStartLevels() {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("org.eclipse.core.runtime@start,"); //$NON-NLS-1$
+		buffer.append("org.eclipse.equinox.common@2:start,"); //$NON-NLS-1$
+		buffer.append("org.eclipse.equinox.ds@2:start,"); //$NON-NLS-1$
+		buffer.append("org.eclipse.equinox.event@2:start,"); //$NON-NLS-1$
+		buffer.append("org.eclipse.equinox.simpleconfigurator@1:start,"); //$NON-NLS-1$
+		buffer.append("org.eclipse.equinox.p2.reconciler.dropins@start"); //$NON-NLS-1$
+		return buffer.toString();
+	}
+
+	private static final char VERSION_SEPARATOR = '*';
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
@@ -179,9 +216,12 @@ public class PluginConfigurationSection extends TableSection {
 				handleAdd();
 				break;
 			case 1 :
-				handleRemove();
+				handleAddDefaults();
 				break;
 			case 2 :
+				handleRemove();
+				break;
+			case 3 :
 				handleRemoveAll();
 				break;
 		}
@@ -263,6 +303,84 @@ public class PluginConfigurationSection extends TableSection {
 		IProduct product = getProduct();
 		product.removePluginConfigurations(product.getPluginConfigurations());
 		clearEditors();
+	}
+
+	private void handleAddDefaults() {
+		StringTokenizer tok = new StringTokenizer(getBundlesWithStartLevels(), ","); //$NON-NLS-1$
+		ArrayList<String[]> plugins = new ArrayList<String[]>();
+		IProduct product = getProduct();
+		while (tok.hasMoreTokens()) {
+			String token = tok.nextToken();
+			int index = token.indexOf('@');
+			if (index >= 0) { // there is a start level and/or autostart information
+				String idVersion = token.substring(0, index);
+				int versionIndex = idVersion.indexOf(VERSION_SEPARATOR);
+				String id = (versionIndex > 0) ? idVersion.substring(0, versionIndex) : idVersion;
+				int endStartLevelIndex = token.indexOf(':', index);
+				String startLevel = ""; //$NON-NLS-1$
+				String autostart;
+				if (endStartLevelIndex > 0) { // there is a start level
+					startLevel = token.substring(index + 1, endStartLevelIndex);
+					autostart = token.substring(endStartLevelIndex + 1);
+				} else {
+					autostart = token.substring(index + 1);
+				}
+				// If the product list does not already have this plugin, build an array of the parsed strings
+				// so that we can show the user what we propose to add. We don't yet create plugin configuration
+				// objects because that will change the model and we want confirmation.
+				if (product.findPluginConfiguration(id) == null) {
+					plugins.add(new String[] {id, startLevel, autostart});
+				}
+			}
+		}
+		if (plugins.size() > 0) {
+			// Build a user-presentable description of the plugins and start levels.
+			StringBuffer bundlesList = new StringBuffer();
+			bundlesList.append('\n');
+			bundlesList.append('\n');
+			for (int i = 0; i < plugins.size(); i++) {
+				String[] config = plugins.get(i);
+				bundlesList.append('\t');
+				bundlesList.append(config[0]);
+				bundlesList.append(", "); //$NON-NLS-1$ // Not translated. This is bundle syntax, not a sentence
+				String startLevel = config[1];
+				if (startLevel.length() > 0) {
+					bundlesList.append(PDEUIMessages.EquinoxPluginBlock_levelColumn);
+					bundlesList.append(' ');
+					bundlesList.append(startLevel);
+				} else {
+					bundlesList.append("Default "); //$NON-NLS-1$ // "default is not translated in AbstractPluginBlock
+					bundlesList.append(PDEUIMessages.EquinoxPluginBlock_levelColumn);
+				}
+				if ("start".equals(config[2])) { //$NON-NLS-1$
+					bundlesList.append(", "); //$NON-NLS-1$ 
+					bundlesList.append(PDEUIMessages.EquinoxPluginBlock_autoColumn);
+				}
+				bundlesList.append('\n');
+			}
+			bundlesList.append('\n');
+			// Confirm with user
+			if (MessageDialog.openConfirm(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.Product_PluginSection_RecommendedBundles_title, NLS.bind(PDEUIMessages.Product_PluginSection_RecommendedBundles_message, bundlesList.toString()))) {
+				IPluginConfiguration[] pluginConfigs = new IPluginConfiguration[plugins.size()];
+				// Build the model objects for the plugins and add to the product model.
+				for (int i = 0; i < plugins.size(); i++) {
+					IProductModelFactory factory = product.getModel().getFactory();
+					IPluginConfiguration configuration = factory.createPluginConfiguration();
+					configuration.setId(plugins.get(i)[0]);
+					String startString = plugins.get(i)[1];
+					if (startString.length() > 0) {
+						configuration.setStartLevel(Integer.parseInt(startString));
+					}
+					configuration.setAutoStart("start".equals(plugins.get(i)[2])); //$NON-NLS-1$		
+					pluginConfigs[i] = configuration;
+				}
+				product.addPluginConfigurations(pluginConfigs);
+				showControls();
+			}
+		} else {
+			// The user already had all the recommended bundles
+			MessageDialog.openInformation(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.Product_PluginSection_RecommendedBundles_title, PDEUIMessages.Product_PluginSection_NoRecommendedBundles_message);
+		}
 	}
 
 	protected void selectionChanged(IStructuredSelection selection) {
@@ -433,11 +551,11 @@ public class PluginConfigurationSection extends TableSection {
 		TablePart tablePart = getTablePart();
 		if (updateRemove) {
 			ISelection selection = getViewerSelection();
-			tablePart.setButtonEnabled(1, isEditable() && !selection.isEmpty());
+			tablePart.setButtonEnabled(2, isEditable() && !selection.isEmpty());
 		}
 		int count = fConfigurationsTable.getTable().getItemCount();
 		if (updateRemoveAll)
-			tablePart.setButtonEnabled(2, isEditable() && count > 0);
+			tablePart.setButtonEnabled(3, isEditable() && count > 0);
 	}
 
 }
