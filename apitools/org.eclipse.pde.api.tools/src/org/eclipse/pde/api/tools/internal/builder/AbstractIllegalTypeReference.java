@@ -95,7 +95,13 @@ public abstract class AbstractIllegalTypeReference extends AbstractProblemDetect
 			return false;
 		}
 		IApiMember type = reference.getResolvedReference();
-		String componentId = fIllegalTypes.get(type.getName());
+		boolean isConstructorVirtualMethod = false;
+		if (type.getName().equals("<init>") && reference.getReferenceKind() == IReference.REF_VIRTUALMETHOD) {//$NON-NLS-1$
+			if (type.getParent() != null) {
+				isConstructorVirtualMethod = true;
+			}
+		}
+		String componentId = fIllegalTypes.get(isConstructorVirtualMethod ? type.getParent().getName() : type.getName());
 		return isReferenceFromComponent(reference, componentId);
 	}
 

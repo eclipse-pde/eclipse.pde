@@ -14,10 +14,11 @@ package org.eclipse.pde.api.tools.builder.tests.usage;
 import junit.framework.Test;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
+import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 
-public class Java8MethodConstRefUsageTests extends MethodUsageTests {
+public class Java8MethodConstRefUsageTests extends Java8UsageTest {
 	/**
 	 * Constructor
 	 * 
@@ -34,17 +35,19 @@ public class Java8MethodConstRefUsageTests extends MethodUsageTests {
 		return buildTestSuite(Java8MethodConstRefUsageTests.class);
 	}
 
-	/**
-	 * @see org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest#getTestCompliance()
-	 */
-	@Override
-	protected String getTestCompliance() {
-		return JavaCore.VERSION_1_8;
-	}
-
 	@Override
 	protected IPath getTestSourcePath() {
-		return super.getTestSourcePath().removeLastSegments(1).append("java8"); //$NON-NLS-1$
+		return super.getTestSourcePath().append("methodref"); //$NON-NLS-1$
+	}
+
+	/**
+	 * Returns a standard method usage problem allowing the kind to be specified
+	 * 
+	 * @param kind
+	 * @return problem id for the specified kind
+	 */
+	protected int getProblemId(int kind, int flags) {
+		return ApiProblemFactory.createProblemId(IApiProblem.CATEGORY_USAGE, IElementDescriptor.METHOD, kind, flags);
 	}
 
 	/**

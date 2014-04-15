@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) Apr 7, 2014 IBM Corporation and others.
+ * Copyright (c) 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -175,6 +175,7 @@ public class Java8UsageTest extends ApiBuilderTest {
 		ArrayList<Class<?>> classes = new ArrayList<Class<?>>();
 		classes.add(Java8LambdaUsageTests.class);
 		classes.add(Java8MethodConstRefUsageTests.class);
+		classes.add(Java8ConsRefInstantiateUsageTests.class);
 		return classes.toArray(new Class[classes.size()]);
 	}
 }
