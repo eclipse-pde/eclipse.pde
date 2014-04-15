@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2008, 2014 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -97,13 +97,17 @@ public class ProfileManager {
 				// need to make sure JavaSE, J2SE profiles are sorted ahead of all other profiles
 				String p1 = profile1;
 				String p2 = profile2;
-				if (p1.startsWith("JavaSE") && !p2.startsWith("JavaSE")) //$NON-NLS-1$ //$NON-NLS-2$
+				if (p1.startsWith("JavaSE-") && !p2.startsWith("JavaSE-")) //$NON-NLS-1$ //$NON-NLS-2$
 					return -1;
-				if (!p1.startsWith("JavaSE") && p2.startsWith("JavaSE")) //$NON-NLS-1$ //$NON-NLS-2$
+				if (!p1.startsWith("JavaSE-") && p2.startsWith("JavaSE-")) //$NON-NLS-1$ //$NON-NLS-2$
 					return 1;
-				if (p1.startsWith("J2SE") && !p2.startsWith("J2SE")) //$NON-NLS-1$ //$NON-NLS-2$
+				if (p1.startsWith("J2SE-") && !p2.startsWith("J2SE-")) //$NON-NLS-1$ //$NON-NLS-2$
 					return -1;
-				if (!p1.startsWith("J2SE") && p2.startsWith("J2SE")) //$NON-NLS-1$ //$NON-NLS-2$
+				if (!p1.startsWith("J2SE-") && p2.startsWith("J2SE-")) //$NON-NLS-1$ //$NON-NLS-2$
+					return 1;
+				if (p1.startsWith("JavaSE/compact") && !p2.startsWith("JavaSE/compact")) //$NON-NLS-1$ //$NON-NLS-2$
+					return -1;
+				if (!p1.startsWith("JavaSE/compact") && p2.startsWith("JavaSE/compact")) //$NON-NLS-1$ //$NON-NLS-2$
 					return 1;
 				return -p1.compareTo(p2);
 			}
