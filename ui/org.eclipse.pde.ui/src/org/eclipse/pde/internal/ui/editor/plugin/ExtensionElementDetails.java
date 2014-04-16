@@ -98,20 +98,14 @@ public class ExtensionElementDetails extends AbstractPluginElementDetails {
 				}
 			}
 			glayout.numColumns = span;
-			// Add required but non-deprecated attributes first
+			// Add required attributes first
 			for (int i = 0; i < atts.length; i++) {
-				if (atts[i].getUse() == ISchemaAttribute.REQUIRED && !atts[i].isDeprecated())
+				if (atts[i].getUse() == ISchemaAttribute.REQUIRED)
 					rows.add(createAttributeRow(atts[i], client, toolkit, span));
 			}
-			// Add the non-required non-deprecated attributes
+			// Add the non-required attributes
 			for (int i = 0; i < atts.length; i++) {
-				if (atts[i].getUse() != ISchemaAttribute.REQUIRED && !atts[i].isDeprecated())
-					rows.add(createAttributeRow(atts[i], client, toolkit, span));
-			}
-			createSpacer(toolkit, client, span);
-			// Add finally the deprecated attributes
-			for (int i = 0; i < atts.length; i++) {
-				if (atts[i].isDeprecated())
+				if (atts[i].getUse() != ISchemaAttribute.REQUIRED)
 					rows.add(createAttributeRow(atts[i], client, toolkit, span));
 			}
 			createSpacer(toolkit, client, span);
@@ -259,12 +253,10 @@ public class ExtensionElementDetails extends AbstractPluginElementDetails {
 			String label = null;
 			if (0 == input.getAttributeCount()) {
 				label = PDEUIMessages.ExtensionElementDetails_descNoAttributes;
+			} else if (schemaElement.hasDeprecatedAttributes()) {
+				label += NLS.bind(PDEUIMessages.ExtensionElementDetails_setDescDepr, iname);
 			} else {
 				label = NLS.bind(PDEUIMessages.ExtensionElementDetails_setDesc, iname);
-			}
-			if (schemaElement.hasDeprecatedAttributes()) {
-				label += " "; //$NON-NLS-1$
-				label += NLS.bind(PDEUIMessages.ExtensionElementDetails_setDescDepr, iname);
 			}
 			if (schemaElement.isDeprecated()) {
 				label += "\n\n"; //$NON-NLS-1$

@@ -14,6 +14,7 @@ package org.eclipse.pde.internal.ui.editor.plugin.rows;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.text.IInformationControl;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginAttribute;
 import org.eclipse.pde.core.plugin.IPluginElement;
 import org.eclipse.pde.internal.core.ischema.ISchemaAttribute;
@@ -71,15 +72,10 @@ public abstract class ExtensionAttributeRow implements IControlHoverContentProvi
 		return false;
 	}
 
-	protected String getDescription() {
-		if (att instanceof ISchemaAttribute) {
-			ISchemaAttribute attribute = (ISchemaAttribute) att;
-			if (isDeprecated()) {
-				return "<b>" + PDEUIMessages.ExtensionAttributeRow_AttrDepr + "</b><br>" + attribute.getDescription(); //$NON-NLS-1$//$NON-NLS-2$
-			}
-			return attribute.getDescription();
-		}
-		return ""; //$NON-NLS-1$
+	protected boolean isRequired() {
+		if (att instanceof ISchemaAttribute)
+			return ((ISchemaAttribute) att).getUse() == ISchemaAttribute.REQUIRED;
+		return false;
 	}
 
 	protected String getValue() {
@@ -94,13 +90,16 @@ public abstract class ExtensionAttributeRow implements IControlHoverContentProvi
 
 	protected String getPropertyLabel() {
 		String label = getName();
-		if (isDeprecated())
-			label += " (!)"; //$NON-NLS-1$
-		if (getUse() == ISchemaAttribute.REQUIRED)
-			label += "*:"; //$NON-NLS-1$
-		else
-			label += ":"; //$NON-NLS-1$
-		return label;
+		if (isDeprecated()) {
+			if (isRequired()) {
+				return NLS.bind(PDEUIMessages.ExtensionAttributeRow_AttrLabelReqDepr, label);
+			}
+			return NLS.bind(PDEUIMessages.ExtensionAttributeRow_AttrLabelDepr, label);
+		}
+		if (isRequired()) {
+			return NLS.bind(PDEUIMessages.ExtensionAttributeRow_AttrLabelReq, label);
+		}
+		return NLS.bind(PDEUIMessages.ExtensionAttributeRow_AttrLabel, label);
 	}
 
 	protected void createLabel(Composite parent, FormToolkit toolkit) {
@@ -119,15 +118,30 @@ public abstract class ExtensionAttributeRow implements IControlHoverContentProvi
 
 	public String getHoverContent(Control c) {
 		if (c instanceof Label || c instanceof Hyperlink) {
-			// reveal keybinding for shortcut to filtering
-			String filterBinding = ((IBindingService) PlatformUI.getWorkbench().getAdapter(IBindingService.class)).getBestActiveBindingFormattedFor(ActionFactory.FIND.getCommandId());
-			String findKeybinding = (getValue().length() > 0) ? "<br><br>Press " + filterBinding + " within text to filter for this attribute." : ""; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			String description = getDescription().trim(); // prettify help text
-			if (description.length() > 0) {
-				String first = String.valueOf(description.charAt(0)); // always make first letter uppercase
-				return getDescription().replaceFirst(first, first.toUpperCase()) + findKeybinding;
+			StringBuffer result = new StringBuffer();
+			ISchemaAttribute attribute = getAttribute();
+			if (attribute != null && attribute.getDescription().length() > 0) {
+				// Append required/deprecated info
+				if (isDeprecated()) {
+					if (isRequired()) {
+						result.append(NLS.bind(PDEUIMessages.ExtensionAttributeRow_AttrReqDepr, attribute.getDescription()));
+					} else {
+						result.append(NLS.bind(PDEUIMessages.ExtensionAttributeRow_AttrDepr, attribute.getDescription()));
+					}
+				} else if (isRequired()) {
+					result.append(NLS.bind(PDEUIMessages.ExtensionAttributeRow_AttrReq, attribute.getDescription()));
+				} else {
+					result.append(attribute.getDescription());
+				}
+				
+				// Append keybinding for filtering by attribute
+				if (getValue().length() > 0) {
+					String filterBinding = ((IBindingService) PlatformUI.getWorkbench().getAdapter(IBindingService.class)).getBestActiveBindingFormattedFor(ActionFactory.FIND.getCommandId());
+					result.append("<br><br>"); //$NON-NLS-1$
+					result.append(NLS.bind(PDEUIMessages.ExtensionAttributeRow_AttrFilter, filterBinding));
+				}
 			}
-			return description;
+			return result.toString();
 		}
 		if (c instanceof Text) {
 			String text = ((Text) c).getText();
@@ -138,7 +152,7 @@ public abstract class ExtensionAttributeRow implements IControlHoverContentProvi
 			}
 			if (!text.equals(translated)) {
 				return translated;
-		}
+			}
 		}
 		return null;
 	}

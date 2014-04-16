@@ -3046,4 +3046,11 @@ public class PDEUIMessages extends NLS {
 	public static String ElementIsDeprecated;
 
 	public static String ExtensionAttributeRow_AttrDepr;
+	public static String ExtensionAttributeRow_AttrReq;
+	public static String ExtensionAttributeRow_AttrReqDepr;
+	public static String ExtensionAttributeRow_AttrFilter;
+	public static String ExtensionAttributeRow_AttrLabel;
+	public static String ExtensionAttributeRow_AttrLabelDepr;
+	public static String ExtensionAttributeRow_AttrLabelReq;
+	public static String ExtensionAttributeRow_AttrLabelReqDepr;
 }
