@@ -52,16 +52,14 @@ public class Java8ConsRefInstantiateUsageTests extends Java8UsageTest {
 
 
 	/**
-	 * Tests illegal references to method reference and constructor reference
-	 * (full)
+	 * Tests illegal reference to class with no instantiate (full)
 	 */
 	public void testConsRefInstantiateF() {
 		x1(false);
 	}
 
 	/**
-	 * Tests illegal references to method reference and constructor reference
-	 * (incremental)
+	 * Tests illegal reference to class with no instantiate (incremental)
 	 */
 	public void testConsRefInstantiateI() {
 		x1(true);
@@ -80,6 +78,48 @@ public class Java8ConsRefInstantiateUsageTests extends Java8UsageTest {
 				{ "ConstructorReference2", typename }, //$NON-NLS-1$ 
 				{ "ConstructorReference2", typename }, //$NON-NLS-1$ 
 				{ "ConstructorReference2", typename } //$NON-NLS-1$ 
+
+		};
+		setExpectedMessageArgs(args);
+		setExpectedLineMappings(new LineMapping[] {
+				new LineMapping(30, pids[0], args[0]),
+				new LineMapping(32, pids[1], args[1]),
+				new LineMapping(34, pids[2], args[2])
+
+		});
+
+		deployUsageTest(typename, inc);
+	}
+
+
+	/**
+	 * Tests illegal reference to class with no annotation instantiate (full)
+	 */
+	public void testConsRefInstantiateAnnoF() {
+		x2(false);
+	}
+
+	/**
+	 * Tests illegal reference to class with no annotation instantiate
+	 * (incremental)
+	 */
+	public void testConsRefInstantiateAnnoI() {
+		x2(true);
+	}
+
+	private void x2(boolean inc) {
+		int[] pids = new int[] {
+
+				getProblemId(IApiProblem.ILLEGAL_INSTANTIATE, IApiProblem.NO_FLAGS),
+				getProblemId(IApiProblem.ILLEGAL_INSTANTIATE, IApiProblem.NO_FLAGS),
+				getProblemId(IApiProblem.ILLEGAL_INSTANTIATE, IApiProblem.NO_FLAGS) };
+		setExpectedProblemIds(pids);
+		String typename = "testConstructorRefInstantiateAnnotation"; //$NON-NLS-1$
+
+		String[][] args = new String[][] {
+				{ "ConstructorReferenceAnno2", typename }, //$NON-NLS-1$ 
+				{ "ConstructorReferenceAnno2", typename }, //$NON-NLS-1$ 
+				{ "ConstructorReferenceAnno2", typename } //$NON-NLS-1$ 
 
 		};
 		setExpectedMessageArgs(args);

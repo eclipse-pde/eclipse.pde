@@ -139,4 +139,92 @@ public class Java8MethodConstRefUsageTests extends Java8UsageTest {
 		deployUsageTest(typename, inc);
 	}
 
+	/**
+	 * Tests illegal annotation references to method reference and constructor
+	 * reference (full)
+	 */
+	public void testMethodConstructorRefAnnoF() {
+		x3(false);
+	}
+
+	/**
+	 * Tests illegal annotation references to method reference and constructor
+	 * reference (incremental)
+	 */
+	public void testMethodConstructorRefAnnoI() {
+		x3(true);
+	}
+
+	private void x3(boolean inc) {
+		int[] pids = new int[] {
+
+				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD),
+				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD),
+				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.CONSTRUCTOR_METHOD),
+				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.CONSTRUCTOR_METHOD),
+				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.CONSTRUCTOR_METHOD) };
+		setExpectedProblemIds(pids);
+		String typename = "testMethodReferenceAnnotation"; //$NON-NLS-1$
+
+		String[][] args = new String[][] {
+				{ "MethodReferenceAnnotation", typename, "method1()" }, //$NON-NLS-1$ //$NON-NLS-2$
+				{ "MethodReferenceAnnotation", typename, "method2()" }, //$NON-NLS-1$ //$NON-NLS-2$
+				{ "ConstructorReferenceAnnotation()", typename, null }, //$NON-NLS-1$ 
+				{ "ConstructorReferenceAnnotation(String)", typename, null }, //$NON-NLS-1$
+				{
+						"ConstructorReferenceAnnotation(List<String>)", typename, null } //$NON-NLS-1$
+
+		};
+		setExpectedMessageArgs(args);
+		setExpectedLineMappings(new LineMapping[] {
+				new LineMapping(31, pids[0], args[0]),
+				new LineMapping(34, pids[1], args[1]),
+				new LineMapping(36, pids[2], args[2]),
+				new LineMapping(38, pids[3], args[3]),
+				new LineMapping(40, pids[4], args[4]),
+
+		});
+
+		deployUsageTest(typename, inc);
+	}
+
+	/**
+	 * Tests illegal annotation references to method reference (full)
+	 */
+	public void testMethodConstructorRefAnno2F() {
+		x4(false);
+	}
+
+	/**
+	 * Tests illegal annotation references to method reference (incremental)
+	 */
+	public void testMethodConstructorRefAnno2I() {
+		x4(true);
+	}
+
+	private void x4(boolean inc) {
+		int[] pids = new int[] {
+
+				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD),
+				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD),
+				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD) };
+		setExpectedProblemIds(pids);
+		String typename = "testMethodReferenceAnnotation2"; //$NON-NLS-1$
+
+		String[][] args = new String[][] {
+				{ "MRAnnotation", typename, "mrCompare(String, String)" }, //$NON-NLS-1$ //$NON-NLS-2$
+				{ "MRAnnotation", typename, "mrCompare2(String, String)" }, //$NON-NLS-1$ //$NON-NLS-2$
+				{ "MRAnnotation", typename, "con(Supplier<T>)" } }; //$NON-NLS-1$ //$NON-NLS-2$
+
+		setExpectedMessageArgs(args);
+		setExpectedLineMappings(new LineMapping[] {
+				new LineMapping(27, pids[0], args[0]),
+				new LineMapping(29, pids[1], args[1]),
+				new LineMapping(31, pids[2], args[2]),
+
+		});
+
+		deployUsageTest(typename, inc);
+	}
+
 }
