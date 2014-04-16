@@ -424,12 +424,14 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	@Override
 	public int hashCode() {
 		final int prime = 31;
-		int result = 1;
-		result = prime * result + fFlags;
-		result = prime * result + Arrays.hashCode(fIds);
-		result = prime * result + Arrays.hashCode(fRepos);
-		result = prime * result + Arrays.hashCode(fVersions);
-		return result;
+		int hash = Boolean.valueOf(getIncludeAllRequired()).hashCode();
+		hash = prime * hash + Boolean.valueOf(getIncludeAllEnvironments()).hashCode();
+		hash = prime * hash + Boolean.valueOf(getIncludeSource()).hashCode();
+		hash = prime * hash + Boolean.valueOf(getIncludeConfigurePhase()).hashCode();
+		hash = prime * hash + Arrays.hashCode(fIds);
+		hash = prime * hash + Arrays.hashCode(fRepos);
+		hash = prime * hash + Arrays.hashCode(fVersions);
+		return hash;
 	}
 
 	/* (non-Javadoc)
@@ -447,7 +449,16 @@ public class IUBundleContainer extends AbstractBundleContainer {
 			return false;
 		}
 		IUBundleContainer other = (IUBundleContainer) obj;
-		if (fFlags != other.fFlags) {
+		if (getIncludeAllRequired() != other.getIncludeAllRequired()) {
+			return false;
+		}
+		if (getIncludeAllEnvironments() != other.getIncludeAllEnvironments()) {
+			return false;
+		}
+		if (getIncludeSource() != other.getIncludeSource()) {
+			return false;
+		}
+		if (getIncludeConfigurePhase() != other.getIncludeConfigurePhase()) {
 			return false;
 		}
 		if (!Arrays.equals(fIds, other.fIds)) {
