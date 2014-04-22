@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2013 EclipseSource Inc. and others.
+ * Copyright (c) 2010, 2014 EclipseSource Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1325,7 +1325,8 @@ public class P2TargetUtils {
 				String[] ids = iuContainer.getIds();
 				Version[] versions = iuContainer.getVersions();
 				for (int j = 0; j < ids.length; j++) {
-					IQuery<IInstallableUnit> query = QueryUtil.createIUQuery(ids[j], versions[j]);
+					// For versions such as 0.0.0, the IU query may return multiple IUs, so we check which is the latest version
+					IQuery<IInstallableUnit> query = QueryUtil.createLatestQuery(QueryUtil.createIUQuery(ids[j], versions[j]));
 					IQueryResult<IInstallableUnit> queryResult = repos.query(query, null);
 					if (queryResult.isEmpty())
 						throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.IUBundleContainer_1, ids[j])));
