@@ -566,39 +566,39 @@ public class BundleComponent extends Component {
 	@Override
 	protected synchronized List<IApiTypeContainer> createApiTypeContainers() throws CoreException {
 		List<IApiTypeContainer> containers = new ArrayList<IApiTypeContainer>(5);
-		try {
-			List<IApiComponent> all = new ArrayList<IApiComponent>();
-			// build the classpath from bundle and all fragments
-			all.add(this);
-			boolean considerFragments = true;
-			if (Util.ORG_ECLIPSE_SWT.equals(getSymbolicName())) {
-				// if SWT is a project to be built/analyzed don't consider its
-				// fragments
-				considerFragments = !isApiEnabled();
-			}
-			if (considerFragments) {
-				BundleDescription[] fragments = getBundleDescription().getFragments();
-				IApiComponent component = null;
-				for (int i = 0; i < fragments.length; i++) {
-					if (!fragments[i].isResolved()) {
-						continue;
-					}
-					component = getBaseline().getApiComponent(fragments[i].getSymbolicName());
-					if (component != null) {
-						// force initialization of the fragment so we can
-						// retrieve its class file containers
-						component.getApiTypeContainers();
-						all.add(component);
-					}
+		List<IApiComponent> all = new ArrayList<IApiComponent>();
+		// build the classpath from bundle and all fragments
+		all.add(this);
+		boolean considerFragments = true;
+		if (Util.ORG_ECLIPSE_SWT.equals(getSymbolicName())) {
+			// if SWT is a project to be built/analyzed don't consider its
+			// fragments
+			considerFragments = !isApiEnabled();
+		}
+		if (considerFragments) {
+			BundleDescription[] fragments = getBundleDescription().getFragments();
+			IApiComponent component = null;
+			for (int i = 0; i < fragments.length; i++) {
+				if (!fragments[i].isResolved()) {
+					continue;
+				}
+				component = getBaseline().getApiComponent(fragments[i].getSymbolicName());
+				if (component != null) {
+					// force initialization of the fragment so we can
+					// retrieve its class file containers
+					component.getApiTypeContainers();
+					all.add(component);
 				}
 			}
-			Iterator<IApiComponent> iterator = all.iterator();
-			Set<String> entryNames = new HashSet<String>(5);
-			BundleComponent other = null;
-			while (iterator.hasNext()) {
-				BundleComponent component = (BundleComponent) iterator.next();
-				Map<String, String> manifest = component.getManifest();
-				if (manifest != null) {
+		}
+		Iterator<IApiComponent> iterator = all.iterator();
+		Set<String> entryNames = new HashSet<String>(5);
+		BundleComponent other = null;
+		while (iterator.hasNext()) {
+			BundleComponent component = (BundleComponent) iterator.next();
+			Map<String, String> manifest = component.getManifest();
+			if (manifest != null) {
+				try {
 					String[] paths = getClasspathEntries(manifest);
 					for (int i = 0; i < paths.length; i++) {
 						String path = paths[i];
@@ -625,12 +625,11 @@ public class BundleComponent extends Component {
 							}
 						}
 					}
+				} catch (BundleException e) {
+					abort("Unable to parse bundle-classpath entry of manifest for bundle at " + component.getLocation(), e); //$NON-NLS-1$
 				}
+
 			}
-		} catch (BundleException e) {
-			abort("Unable to parse bundle classpath", e); //$NON-NLS-1$
-		} catch (IOException e) {
-			abort("Unable to initialize class file containers", e); //$NON-NLS-1$
 		}
 		return containers;
 	}
@@ -680,64 +679,68 @@ public class BundleComponent extends Component {
 	 * @throws CoreException if something goes wrong while creating the
 	 *             container
 	 */
-	protected IApiTypeContainer createApiTypeContainer(String path) throws IOException, CoreException {
-		File bundle = new File(fLocation);
-		if (bundle.isDirectory()) {
-			// bundle is folder
-			File entry = new File(bundle, path);
-			if (entry.exists()) {
-				if (entry.isFile()) {
-					return new ArchiveApiTypeContainer(this, entry.getCanonicalPath());
-				} else {
-					return new DirectoryApiTypeContainer(this, entry.getCanonicalPath());
+	protected IApiTypeContainer createApiTypeContainer(String path) throws CoreException {
+		try {
+			File bundle = new File(fLocation);
+			if (bundle.isDirectory()) {
+				// bundle is folder
+				File entry = new File(bundle, path);
+				if (entry.exists()) {
+					if (entry.isFile()) {
+						return new ArchiveApiTypeContainer(this, entry.getCanonicalPath());
+					} else {
+						return new DirectoryApiTypeContainer(this, entry.getCanonicalPath());
+					}
 				}
-			}
-		} else {
-			// bundle is jar'd
-			ZipFile zip = null;
-			try {
-				if (path.equals(".")) { //$NON-NLS-1$
-					return new ArchiveApiTypeContainer(this, fLocation);
-				} else {
-					// classpath element can be jar or folder
-					// https://bugs.eclipse.org/bugs/show_bug.cgi?id=279729
-					zip = new ZipFile(fLocation);
-					ZipEntry entry = zip.getEntry(path);
-					if (entry != null) {
-						File tmpfolder = new File(System.getProperty("java.io.tmpdir")); //$NON-NLS-1$
-						if (entry.isDirectory()) {
-							// extract the dir and all children
-							File dir = Util.createTempFile(TMP_API_FILE_PREFIX, TMP_API_FILE_POSTFIX);
-							// hack to create a temp directory
-							// see
-							// http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4735419
-							if (dir.delete()) {
-								dir.mkdir();
-								FileManager.getManager().recordTempFileRoot(dir.getCanonicalPath());
-							}
-							extractDirectory(zip, entry.getName(), dir);
-							if (dir.isDirectory() && dir.exists()) {
-								return new DirectoryApiTypeContainer(this, dir.getCanonicalPath());
-							}
-						} else {
-							File file = extractEntry(zip, entry, tmpfolder);
-							if (Util.isArchive(file.getName())) {
-								File parent = file.getParentFile();
-								if (!parent.equals(tmpfolder)) {
-									FileManager.getManager().recordTempFileRoot(parent.getCanonicalPath());
-								} else {
-									FileManager.getManager().recordTempFileRoot(file.getCanonicalPath());
+			} else {
+				// bundle is jar'd
+				ZipFile zip = null;
+				try {
+					if (path.equals(".")) { //$NON-NLS-1$
+						return new ArchiveApiTypeContainer(this, fLocation);
+					} else {
+						// classpath element can be jar or folder
+						// https://bugs.eclipse.org/bugs/show_bug.cgi?id=279729
+						zip = new ZipFile(fLocation);
+						ZipEntry entry = zip.getEntry(path);
+						if (entry != null) {
+							File tmpfolder = new File(System.getProperty("java.io.tmpdir")); //$NON-NLS-1$
+							if (entry.isDirectory()) {
+								// extract the dir and all children
+								File dir = Util.createTempFile(TMP_API_FILE_PREFIX, TMP_API_FILE_POSTFIX);
+								// hack to create a temp directory
+								// see
+								// http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4735419
+								if (dir.delete()) {
+									dir.mkdir();
+									FileManager.getManager().recordTempFileRoot(dir.getCanonicalPath());
 								}
-								return new ArchiveApiTypeContainer(this, file.getCanonicalPath());
+								extractDirectory(zip, entry.getName(), dir);
+								if (dir.isDirectory() && dir.exists()) {
+									return new DirectoryApiTypeContainer(this, dir.getCanonicalPath());
+								}
+							} else {
+								File file = extractEntry(zip, entry, tmpfolder);
+								if (Util.isArchive(file.getName())) {
+									File parent = file.getParentFile();
+									if (!parent.equals(tmpfolder)) {
+										FileManager.getManager().recordTempFileRoot(parent.getCanonicalPath());
+									} else {
+										FileManager.getManager().recordTempFileRoot(file.getCanonicalPath());
+									}
+									return new ArchiveApiTypeContainer(this, file.getCanonicalPath());
+								}
 							}
 						}
 					}
-				}
-			} finally {
-				if (zip != null) {
-					zip.close();
+				} finally {
+					if (zip != null) {
+						zip.close();
+					}
 				}
 			}
+		} catch (IOException e) {
+			abort("Problem creating api type container for path " + path + " in bundle at " + fLocation, e); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return null;
 	}

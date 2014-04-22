@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.model;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -373,7 +372,7 @@ public class ProjectComponent extends BundleComponent {
 	 * createApiTypeContainer(java.lang.String)
 	 */
 	@Override
-	protected IApiTypeContainer createApiTypeContainer(String path) throws IOException, CoreException {
+	protected IApiTypeContainer createApiTypeContainer(String path) throws CoreException {
 		if (this.fPathToOutputContainers == null) {
 			baselineDisposed(getBaseline());
 		}
