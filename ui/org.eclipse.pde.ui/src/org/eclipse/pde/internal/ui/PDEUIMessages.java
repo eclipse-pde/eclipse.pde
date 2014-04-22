@@ -1884,7 +1884,6 @@ public class PDEUIMessages extends NLS {
 	public static String Product_PluginSection_removeAll;
 	public static String Product_PluginSection_newPlugin;
 	public static String Product_PluginSection_recommended;
-	public static String Product_PluginSection_doNotShow;
 	public static String Product_PluginSection_RecommendedBundles_title;
 	public static String Product_PluginSection_RecommendedBundles_message;
 	public static String Product_PluginSection_NoRecommendedBundles_message;
