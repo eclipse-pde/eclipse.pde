@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2007, 2014 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -1609,7 +1609,7 @@ public class ScriptGenerationTests extends PDETestCase {
 		runBuild(buildFolder);
 
 		assertLogContainsLines(buildFolder.getFile("I.TestBuild/compilelogs/plugins/B_1.0.0/@dot.log"), new String[] {"The value of the local variable b is not used", "1 problem (1 error)"});
-		assertLogContainsLines(buildFolder.getFile("I.TestBuild/compilelogs/plugins/C_1.0.0/@dot.log"), new String[] {"Discouraged access: The type A", "3 problems (3 errors)"});
+		assertLogContainsLines(buildFolder.getFile("I.TestBuild/compilelogs/plugins/C_1.0.0/@dot.log"), new String[] {"Discouraged access: The type 'A'", "3 problems (3 errors)"});
 	}
 
 	public void testBug243582() throws Exception {
