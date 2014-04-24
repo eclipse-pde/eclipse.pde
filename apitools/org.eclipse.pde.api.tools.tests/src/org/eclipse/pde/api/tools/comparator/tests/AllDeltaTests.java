@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,8 @@ package org.eclipse.pde.api.tools.comparator.tests;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
+
+import org.eclipse.pde.api.tools.tests.util.ProjectUtils;
 
 /**
  * Test suite for all of the API tools test 
@@ -44,5 +46,8 @@ public class AllDeltaTests extends TestSuite {
 		addTest(new TestSuite(BundlesDeltaTests.class));
 		addTest(new TestSuite(RestrictionsDeltaTests.class));
 		addTest(new TestSuite(ApiScopeDeltaTests.class));
+		if (ProjectUtils.isJava8Compatible()) {
+			addTest(new TestSuite(Java8DeltaTests.class));
+		}
 	}
 }
