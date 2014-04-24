@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Code 9 Corporation and others.
+ * Copyright (c) 2008, 2014 Code 9 Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -177,10 +177,10 @@ public class PluginConfigurationSection extends TableSection {
 		column1.setText(PDEUIMessages.PluginConfigurationSection_tablePluginTitle);
 		column1.setWidth(300);
 
-		final TableColumn levelColumnEditor = new TableColumn(table, SWT.CENTER);
+		final TableColumn levelColumnEditor = new TableColumn(table, SWT.LEFT);
 		levelColumnEditor.setText(PDEUIMessages.EquinoxPluginBlock_levelColumn);
 
-		final TableColumn autoColumnEditor = new TableColumn(table, SWT.CENTER);
+		final TableColumn autoColumnEditor = new TableColumn(table, SWT.LEFT);
 		autoColumnEditor.setText(PDEUIMessages.EquinoxPluginBlock_autoColumn);
 
 		table.addControlListener(new ControlListener() {
@@ -417,6 +417,7 @@ public class PluginConfigurationSection extends TableSection {
 		fLevelColumnEditor = new TableEditor(table);
 		fLevelColumnEditor.horizontalAlignment = SWT.CENTER;
 		fLevelColumnEditor.minimumWidth = 40;
+		fLevelColumnEditor.grabHorizontal = true;
 		if (Util.isMac())
 			fLevelColumnEditor.minimumHeight = 27;
 

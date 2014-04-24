@@ -204,9 +204,8 @@ public class UpdatesSection extends TableSection {
 		section.setLayoutData(sectionData);
 
 		Composite container = createClientContainer(section, 2, toolkit);
-		createViewerPartControl(container, SWT.MULTI, 2, toolkit);
+		createViewerPartControl(container, SWT.MULTI | SWT.FULL_SELECTION, 2, toolkit);
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
-
 
 		TablePart tablePart = getTablePart();
 		fRepositoryTable = tablePart.getTableViewer();
