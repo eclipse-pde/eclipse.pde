@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 IBM Corporation and others.
+ * Copyright (c) 2005, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,18 +27,28 @@ import org.eclipse.pde.launching.EquinoxLaunchConfiguration;
 public class VMHelper {
 
 	/**
-	 * Returns the id of an execution environment that is valid for the minimum BREE supplied by every bundle
-	 * that will be launched in the given launch configuration or <code>null</code> if no valid execution
-	 * environment could be found.
+	 * Returns the id of an execution environment that is both bound to a JRE and valid for the minimum 
+	 * BREE supplied by every bundle that will be launched in the given launch configuration or 
+	 * <code>null</code> if no valid/bound execution environment could be found.
 	 * 
 	 * @param configuration the launch configuration to test the bundle's BREEs of
-	 * @return string id of a valid execution environment or <code>null</code>
+	 * @return string id of a valid execution environment with a bound JRE or <code>null</code>
 	 * @throws CoreException if there is a problem reading the bundles from the launch configuration
 	 */
 	public static String getDefaultEEName(ILaunchConfiguration configuration) throws CoreException {
 		// List of all valid EEs, removed if they don't match
 		List<IExecutionEnvironment> validEEs = new LinkedList<IExecutionEnvironment>(); // Use a list to keep order
 		validEEs.addAll(Arrays.asList(JavaRuntime.getExecutionEnvironmentsManager().getExecutionEnvironments()));
+
+		// Find EEs that do not have a compatible JRE (are unbound)
+		Set<String> unboundEEs = new HashSet<String>();
+		for (Iterator<IExecutionEnvironment> iterator = validEEs.iterator(); iterator.hasNext();) {
+			IExecutionEnvironment current = iterator.next();
+			if (current.getCompatibleVMs().length == 0) {
+				iterator.remove();
+				unboundEEs.add(current.getId());
+			}
+		}
 
 		// Iterate through all launch models 
 		boolean isOSGiLaunch = configuration instanceof EquinoxLaunchConfiguration; // TODO Test this
@@ -56,6 +66,18 @@ public class VMHelper {
 				// List of all the BREEs that a valid environment must match
 				String[] bundleEnvs = desc.getExecutionEnvironments();
 				if (bundleEnvs.length > 0) {
+
+					// See if the BREE matches an unbound EE, if so skip this plug-in as we cannot launch it
+					boolean isUnbound = false;
+					for (int j = 0; j < bundleEnvs.length; j++) {
+						if (unboundEEs.contains(bundleEnvs[j])) {
+							isUnbound = true;
+							break;
+						}
+					}
+					if (isUnbound) {
+						continue; // Use another bundle to determine best EE
+					}
 
 					// Iterate through all remaining valid EEs, removing any that don't match
 					for (Iterator<IExecutionEnvironment> iterator = validEEs.iterator(); iterator.hasNext();) {
