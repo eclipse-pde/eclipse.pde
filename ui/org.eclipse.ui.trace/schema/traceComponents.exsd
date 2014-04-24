@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.ui.trace" id="traceComponents" name="Trace Components"/>
       </appinfo>
       <documentation>
-         This extension point introduces a logical tracing component which includes all option-paths from a set of bundles .options file. These options can be dynamically enabled or disabled via the OSGi DebugOptions service.
+         This extension point allows plug-ins to contribute debug trace options to the Tracing preference page (Preferences &gt; General &gt; Tracing).  All of the option-paths from a set of plug-in .options files will be editable from the preference page.  As the options will be dynamically enabled or disabled via the OSGi DebugOptions service, the specified plug-ins&apos; tracing must listen for changes (see org.eclipse.osgi.service.debug.DebugOptions).
       </documentation>
    </annotation>
 
@@ -115,7 +115,7 @@
          <meta.section type="examples"/>
       </appinfo>
       <documentation>
-         The following is an example for the extension point where a component called &apos;Equinox Framework&apos; includes all of the option-paths from the .options file in the org.eclipse.osgi bundle.  As well, a second component called &apos;JDT Core&apos; includes all of the option-paths from the .options files found in any bundle matching org.eclipse.jdt.*core*.
+         The following is an example for the extension point where a component called &apos;Equinox Framework&apos; includes all of the option-paths from the .options file in the org.eclipse.osgi bundle.  As well, a second component called &apos;JDT Core&apos; includes all of the option-paths from the .options files found in any bundle matching org.eclipse.jdt.*core*.  The tracing preference page would display these two categories in the tree with all known option-paths as children.
 &lt;p&gt;
 &lt;pre&gt;
    &lt;extension
@@ -150,7 +150,7 @@
          <meta.section type="copyright"/>
       </appinfo>
       <documentation>
-         Copyright (c) 2011 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2011, 2014 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made
 available under the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at &lt;a 
 href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;
