@@ -597,7 +597,7 @@
       </image>
       <image
             commandId="org.eclipse.pde.api.tools.ui.compare.to.baseline"
-            icon="$nl$/icons/full/obj16/eclipse_profile.gif">
+            icon="$nl$/icons/full/obj16/eclipse16.png">
       </image>
    </extension>
 </plugin>
