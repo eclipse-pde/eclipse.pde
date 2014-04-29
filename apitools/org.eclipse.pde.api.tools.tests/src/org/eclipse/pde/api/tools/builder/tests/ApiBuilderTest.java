@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others.
+ * Copyright (c) 2008, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -370,7 +370,7 @@ public abstract class ApiBuilderTest extends BuilderTests {
 	protected void createExistingProject(File projectDir, boolean importfiles, boolean usetestcompliance) throws Exception {
 		String projectName = projectDir.getName();
 		final IWorkspace workspace = getEnv().getWorkspace();
-		IPath ppath = getEnv().addProject(projectName, getTestCompliance());
+		IPath ppath = getEnv().addProject(projectName, usetestcompliance ? getTestCompliance() : null);
 		IProject project = getEnv().getProject(ppath);
 		IProjectDescription description = workspace.newProjectDescription(projectName);
 		IPath locationPath = new Path(projectDir.getAbsolutePath());

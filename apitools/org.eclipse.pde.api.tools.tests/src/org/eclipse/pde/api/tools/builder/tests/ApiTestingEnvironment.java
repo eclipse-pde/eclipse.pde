@@ -73,7 +73,9 @@ public class ApiTestingEnvironment extends TestingEnvironment {
 	public IPath addProject(String projectName, String compliance) throws UnsupportedOperationException {
 		IJavaProject javaProject = createProject(projectName);
 		IProject project = javaProject.getProject();
-		setProjectCompliance(javaProject, compliance);
+		if (compliance != null) {
+			setProjectCompliance(javaProject, compliance);
+		}
 		return project != null ? project.getFullPath() : Path.EMPTY;
 	}
 
