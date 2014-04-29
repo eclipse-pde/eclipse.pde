@@ -12,6 +12,7 @@ package org.eclipse.pde.api.tools.builder.tests.annotations;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -21,6 +22,7 @@ import org.eclipse.jdt.core.tests.junit.extension.TestCase;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
+import org.eclipse.pde.api.tools.tests.util.ProjectUtils;
 
 /**
  * Abstract class for method annotation tests
@@ -59,12 +61,14 @@ public abstract class MethodAnnotationTest extends AnnotationTest {
 	 * @return all of the child test classes of this class
 	 */
 	private static Class<?>[] getAllTestClasses() {
-		Class<?>[] classes = new Class[] {
-				ValidDefaultMethodAnnotationTests.class,
-				InvalidDefaultMethodAnnotationTests.class,
-				InvalidInterfaceMethodAnnotationTests.class,
-				ValidInterfaceMethodAnnotationTests.class };
-		return classes;
+		ArrayList<Class<?>> tests = new ArrayList<Class<?>>();
+		tests.add(ValidDefaultMethodAnnotationTests.class);
+		tests.add(InvalidInterfaceMethodAnnotationTests.class);
+		tests.add(ValidInterfaceMethodAnnotationTests.class);
+		if (ProjectUtils.isJava8Compatible()) {
+			tests.add(InvalidDefaultMethodAnnotationTests.class);
+		}
+		return tests.toArray(new Class<?>[tests.size()]);
 	}
 
 	/**
