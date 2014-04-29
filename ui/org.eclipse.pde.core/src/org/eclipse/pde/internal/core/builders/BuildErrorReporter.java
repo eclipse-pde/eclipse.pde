@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Code 9 Corporation - ongoing enhancements
  *     Brock Janiczak <brockj@tpg.com.au> - bug 191545
  *     Jacek Pospychala <jacek.pospychala@pl.ibm.com> - bug 221998
+ *     Steven Spungin <steven@spungin.tv> - Bug 408727
  *******************************************************************************/
 package org.eclipse.pde.internal.core.builders;
 
@@ -18,6 +19,8 @@ import java.io.FilenameFilter;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.xpath.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.core.*;
@@ -38,6 +41,7 @@ import org.eclipse.pde.internal.core.text.build.BuildModel;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.core.util.PatternConstructor;
 import org.osgi.framework.Constants;
+import org.w3c.dom.*;
 
 public class BuildErrorReporter extends ErrorReporter implements IBuildPropertiesConstants {
 
@@ -578,9 +582,15 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 			validateBinIncludes(binIncludes, ICoreConstants.FRAGMENT_FILENAME_DESCRIPTOR);
 		}
 
-		// make sure if we're a plug-in, we have a plugin.xml entry
+
 		if (PDEProject.getPluginXml(fProject).exists()) {
+			// make sure if we're a plug-in, we have a plugin.xml entry
 			validateBinIncludes(binIncludes, ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR);
+			// make sure that we include model fragments
+			validateFragmentContributions(binIncludes);
+			// make sure if we're an application, we are include Application entry
+			validateApplicationContributions(binIncludes);
+
 		}
 
 		// validate for bundle localization
@@ -613,6 +623,47 @@ public class BuildErrorReporter extends ErrorReporter implements IBuildPropertie
 			}
 		}
 
+	}
+
+	// if we're defining fragments, make sure they have entries in plugin.xml
+	private void validateFragmentContributions(IBuildEntry binIncludes) {
+		try {
+			Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(PDEProject.getPluginXml(fProject).getContents());
+			XPath xpath = XPathFactory.newInstance().newXPath();
+			NodeList list = (NodeList) xpath.evaluate("/plugin/extension[@point='org.eclipse.e4.workbench.model']/fragment/@uri", doc, XPathConstants.NODESET); //$NON-NLS-1$
+			for (int i = 0; i < list.getLength(); i++) {
+				Node node = list.item(i);
+				validateBinIncludes(binIncludes, node.getNodeValue());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	// if we're defining an application, make sure it has entries in plugin.xml
+	private void validateApplicationContributions(IBuildEntry binIncludes) {
+		try {
+			Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(PDEProject.getPluginXml(fProject).getContents());
+			XPath xpath = XPathFactory.newInstance().newXPath();
+			// are we an application?
+			Node nodeProduct = (Node) xpath.evaluate("/plugin/extension[@point='org.eclipse.core.runtime.products']/product", doc, XPathConstants.NODE); //$NON-NLS-1$
+			if (nodeProduct != null) {
+				Node attValue = (Node) xpath.evaluate("property[@name='applicationXMI']/@value", nodeProduct, XPathConstants.NODE); //$NON-NLS-1$
+				if (attValue != null) {
+					if (attValue.getNodeValue().isEmpty()) {
+						//Error: no URL defined but should already be reported.
+					} else {
+						validateBinIncludes(binIncludes, attValue.getNodeValue());
+					}
+				} else {
+					// Default if not specified
+					validateBinIncludes(binIncludes, "Application.e4xmi"); //$NON-NLS-1$
+				}
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void validateBinIncludes(IBuildEntry binIncludes, String key) {
