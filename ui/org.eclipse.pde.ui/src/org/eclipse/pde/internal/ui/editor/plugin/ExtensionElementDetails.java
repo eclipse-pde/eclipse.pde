@@ -254,7 +254,7 @@ public class ExtensionElementDetails extends AbstractPluginElementDetails {
 			if (0 == input.getAttributeCount()) {
 				label = PDEUIMessages.ExtensionElementDetails_descNoAttributes;
 			} else if (schemaElement.hasDeprecatedAttributes()) {
-				label += NLS.bind(PDEUIMessages.ExtensionElementDetails_setDescDepr, iname);
+				label = NLS.bind(PDEUIMessages.ExtensionElementDetails_setDescDepr, iname);
 			} else {
 				label = NLS.bind(PDEUIMessages.ExtensionElementDetails_setDesc, iname);
 			}
