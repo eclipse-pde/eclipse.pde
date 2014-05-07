@@ -36,7 +36,7 @@ public class ConvertJavadocTagsHandler extends AbstractHandler {
 		JavadocConversionWizard wizard = new JavadocConversionWizard(new JavadocConversionRefactoring());
 		RefactoringWizardOpenOperation op = new RefactoringWizardOpenOperation(wizard);
 		try {
-			op.run(ApiUIPlugin.getShell(), Messages.ConvertJabvadocTagsHandler_0);
+			op.run(ApiUIPlugin.getShell(), Messages.ConvertJavadocTagsHandler_0);
 		} catch (InterruptedException ie) {
 			ApiUIPlugin.log(ie);
 		}
