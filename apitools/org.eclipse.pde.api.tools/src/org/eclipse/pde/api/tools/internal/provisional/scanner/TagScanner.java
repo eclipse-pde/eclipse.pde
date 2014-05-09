@@ -53,10 +53,7 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescri
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
-import org.eclipse.pde.api.tools.internal.provisional.model.IApiMethod;
-import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer;
-import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
 import org.eclipse.pde.api.tools.internal.util.Signatures;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
@@ -233,7 +230,7 @@ public class TagScanner {
 				}
 				IMethodDescriptor descriptor = fType.getMethod(methodname, signature);
 				try {
-					descriptor = resolveMethod(descriptor);
+					descriptor = Factory.resolveMethod(fContainer, descriptor);
 				} catch (CoreException e) {
 					if (ApiPlugin.DEBUG_TAG_SCANNER) {
 						System.err.println(e.getLocalizedMessage());
@@ -505,7 +502,7 @@ public class TagScanner {
 					}
 					IMethodDescriptor descriptor = fType.getMethod(methodname, signature);
 					try {
-						descriptor = resolveMethod(descriptor);
+						descriptor = Factory.resolveMethod(fContainer, descriptor);
 					} catch (CoreException e) {
 						if (ApiPlugin.DEBUG_TAG_SCANNER) {
 							System.err.println(e.getLocalizedMessage());
@@ -601,47 +598,6 @@ public class TagScanner {
 		 */
 		private boolean isNotVisible(int flags) {
 			return Flags.isPrivate(flags) || Flags.isPackageDefault(flags);
-		}
-
-		/**
-		 * Returns a method descriptor with a resolved signature for the given
-		 * method descriptor with an unresolved signature.
-		 * 
-		 * @param descriptor method to resolve
-		 * @return resolved method descriptor or the same method descriptor if
-		 *         unable to resolve
-		 * @exception CoreException if unable to resolve the method and a class
-		 *                file container was provided for this purpose
-		 */
-		private IMethodDescriptor resolveMethod(IMethodDescriptor descriptor) throws CoreException {
-			if (fContainer != null) {
-				IReferenceTypeDescriptor type = descriptor.getEnclosingType();
-				IApiTypeRoot classFile = fContainer.findTypeRoot(type.getQualifiedName());
-				if (classFile != null) {
-					IApiType structure = classFile.getStructure();
-					if (structure != null) {
-						IApiMethod[] methods = structure.getMethods();
-						for (int i = 0; i < methods.length; i++) {
-							IApiMethod method = methods[i];
-							if (descriptor.getName().equals(method.getName())) {
-								String signature = method.getSignature();
-								String descriptorSignature = descriptor.getSignature().replace('/', '.');
-								if (Signatures.matchesSignatures(descriptorSignature, signature.replace('/', '.'))) {
-									return descriptor.getEnclosingType().getMethod(method.getName(), signature);
-								}
-								String genericSignature = method.getGenericSignature();
-								if (genericSignature != null) {
-									if (Signatures.matchesSignatures(descriptorSignature, genericSignature.replace('/', '.'))) {
-										return descriptor.getEnclosingType().getMethod(method.getName(), signature);
-									}
-								}
-							}
-						}
-					}
-				}
-				throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, MessageFormat.format("Unable to resolve method signature: {0}", new Object[] { descriptor.toString() }), null)); //$NON-NLS-1$
-			}
-			return descriptor;
 		}
 	}
 

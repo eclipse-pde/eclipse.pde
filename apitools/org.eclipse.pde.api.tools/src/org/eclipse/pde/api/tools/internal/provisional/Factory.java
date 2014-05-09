@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 IBM Corporation and others.
+ * Copyright (c) 2007, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,9 +10,12 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.provisional;
 
+import java.text.MessageFormat;
 import java.util.LinkedList;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.pde.api.tools.internal.builder.TypeScope;
 import org.eclipse.pde.api.tools.internal.descriptors.ComponentDescriptorImpl;
 import org.eclipse.pde.api.tools.internal.descriptors.PackageDescriptorImpl;
@@ -24,7 +27,10 @@ import org.eclipse.pde.api.tools.internal.provisional.descriptors.IMethodDescrip
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IPackageDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IReferenceTypeDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiMethod;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiType;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
 import org.eclipse.pde.api.tools.internal.search.IReferenceDescriptor;
 import org.eclipse.pde.api.tools.internal.search.ReferenceDescriptor;
@@ -169,5 +175,46 @@ public class Factory {
 	 */
 	public static IApiTypeContainer newTypeScope(IApiComponent component, IReferenceTypeDescriptor[] types) {
 		return new TypeScope(component, types);
+	}
+
+	/**
+	 * Returns a method descriptor with a resolved signature for the given
+	 * method descriptor with an unresolved signature.
+	 * 
+	 * @param descriptor method to resolve
+	 * @return resolved method descriptor or the same method descriptor if
+	 *         unable to resolve
+	 * @exception CoreException if unable to resolve the method and a class file
+	 *                container was provided for this purpose
+	 */
+	public static IMethodDescriptor resolveMethod(IApiTypeContainer container, IMethodDescriptor descriptor) throws CoreException {
+		if (container != null) {
+			IReferenceTypeDescriptor type = descriptor.getEnclosingType();
+			IApiTypeRoot classFile = container.findTypeRoot(type.getQualifiedName());
+			if (classFile != null) {
+				IApiType structure = classFile.getStructure();
+				if (structure != null) {
+					IApiMethod[] methods = structure.getMethods();
+					for (int i = 0; i < methods.length; i++) {
+						IApiMethod method = methods[i];
+						if (descriptor.getName().equals(method.getName())) {
+							String signature = method.getSignature();
+							String descriptorSignature = descriptor.getSignature().replace('/', '.');
+							if (Signatures.matchesSignatures(descriptorSignature, signature.replace('/', '.'))) {
+								return descriptor.getEnclosingType().getMethod(method.getName(), signature);
+							}
+							String genericSignature = method.getGenericSignature();
+							if (genericSignature != null) {
+								if (Signatures.matchesSignatures(descriptorSignature, genericSignature.replace('/', '.'))) {
+									return descriptor.getEnclosingType().getMethod(method.getName(), signature);
+								}
+							}
+						}
+					}
+				}
+			}
+			throw new CoreException(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, MessageFormat.format("Unable to resolve method signature: {0}", new Object[] { descriptor.toString() }), null)); //$NON-NLS-1$
+		}
+		return descriptor;
 	}
 }

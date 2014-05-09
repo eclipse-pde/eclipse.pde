@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 IBM Corporation and others.
+ * Copyright (c) 2013, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -138,6 +138,7 @@ public class JavadocConversionPage extends UserInputWizardPage {
 		Map<IFile, Set<TextEdit>> changes = new HashMap<IFile, Set<TextEdit>>();
 		boolean remove = false;
 		IJavaProject project = null;
+		IApiComponent component;
 		IApiDescription apidescription = null;
 		SubMonitor monitor = null;
 
@@ -145,12 +146,14 @@ public class JavadocConversionPage extends UserInputWizardPage {
 		 * Constructor
 		 * 
 		 * @param project the project context
+		 * @param component the backing {@link IApiComponent}
 		 * @param the backing API description
 		 * @param remove if the Javadoc tags should be removed
 		 * @param monitor the progress monitor
 		 */
-		public AnnotVisitor(IJavaProject project, IApiDescription description, boolean remove, IProgressMonitor monitor) {
+		public AnnotVisitor(IJavaProject project, IApiComponent component, IApiDescription description, boolean remove, IProgressMonitor monitor) {
 			this.project = project;
+			this.component = component;
 			this.apidescription = description;
 			this.remove = remove;
 			this.monitor = SubMonitor.convert(monitor, 1);
@@ -208,7 +211,7 @@ public class JavadocConversionPage extends UserInputWizardPage {
 				CompilationUnit cast = (CompilationUnit) parser.createAST(new NullProgressMonitor());
 				cast.recordModifications();
 				ASTRewrite rewrite = ASTRewrite.create(cast.getAST());
-				TagVisitor visitor = new TagVisitor(description, rewrite, this.remove);
+				TagVisitor visitor = new TagVisitor(this.component, description, rewrite, this.remove);
 				cast.accept(visitor);
 				ITextFileBufferManager bm = FileBuffers.getTextFileBufferManager();
 				IPath path = cast.getJavaElement().getPath();
@@ -239,6 +242,7 @@ public class JavadocConversionPage extends UserInputWizardPage {
 	 */
 	class TagVisitor extends ASTVisitor {
 
+		IApiComponent component;
 		IApiDescription apidescription = null;
 		ASTRewrite rewrite = null;
 		boolean remove = false;
@@ -248,11 +252,13 @@ public class JavadocConversionPage extends UserInputWizardPage {
 		/**
 		 * Constructor
 		 * 
+		 * @param component
 		 * @param description
 		 * @param rewrite
 		 * @param remove
 		 */
-		public TagVisitor(IApiDescription description, ASTRewrite rewrite, boolean remove) {
+		public TagVisitor(IApiComponent component, IApiDescription description, ASTRewrite rewrite, boolean remove) {
+			this.component = component;
 			this.apidescription = description;
 			this.rewrite = rewrite;
 			this.remove = remove;
@@ -388,17 +394,21 @@ public class JavadocConversionPage extends UserInputWizardPage {
 		@Override
 		public boolean visit(MethodDeclaration node) {
 			ASTNode parent = node.getParent();
-			String typename = null;
+			ITypeBinding binding = null;
 			if (parent instanceof AbstractTypeDeclaration) {
-				typename = ((AbstractTypeDeclaration) parent).getName().getFullyQualifiedName();
+				binding = ((AbstractTypeDeclaration) parent).resolveBinding();
 			} else if (parent instanceof AnnotationTypeDeclaration) {
-				typename = ((AnnotationTypeDeclaration) parent).getName().getFullyQualifiedName();
+				binding = ((AnnotationTypeDeclaration) parent).resolveBinding();
 			}
-			if (typename != null) {
-				IMethodDescriptor desc = Factory.methodDescriptor(typename, node.getName().getIdentifier(), Signatures.getMethodSignatureFromNode(node));
-				IApiAnnotations annots = apidescription.resolveAnnotations(desc);
-				if (annots != null && !RestrictionModifiers.isUnrestricted(annots.getRestrictions())) {
-					updateNode(node, annots);
+			if (binding != null) {
+				try {
+					IMethodDescriptor method = Factory.methodDescriptor(binding.getQualifiedName(), node.getName().getFullyQualifiedName(), Signatures.getMethodSignatureFromNode(node));
+					IApiAnnotations annots = apidescription.resolveAnnotations(Factory.resolveMethod(this.component, method));
+					if (annots != null && !RestrictionModifiers.isUnrestricted(annots.getRestrictions())) {
+						updateNode(node, annots);
+					}
+				} catch (CoreException ce) {
+					// do nothing just move on
 				}
 			}
 			return true;
@@ -897,7 +907,7 @@ public class JavadocConversionPage extends UserInputWizardPage {
 			IApiComponent component = baseline.getApiComponent(project.getProject());
 			if (component != null) {
 				IApiDescription description = component.getApiDescription();
-				AnnotVisitor visitor = new AnnotVisitor(project, description, remove, monitor);
+				AnnotVisitor visitor = new AnnotVisitor(project, component, description, remove, monitor);
 				description.accept(visitor, null);
 				collector.putAll(visitor.changes);
 			}
