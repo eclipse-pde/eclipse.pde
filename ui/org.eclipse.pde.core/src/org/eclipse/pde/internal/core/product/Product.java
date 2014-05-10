@@ -45,6 +45,7 @@ public class Product extends ProductObject implements IProduct {
 	private ILicenseInfo fLicenseInfo;
 	private List<IProductObject> fRepositories = new ArrayList<IProductObject>();
 	private IPreferencesInfo fPreferencesInfo;
+	private ICSSInfo fCSSInfo;
 
 	public Product(IProductModel model) {
 		super(model);
@@ -270,6 +271,11 @@ public class Product extends ProductObject implements IProduct {
 			fPreferencesInfo.write(indent + "   ", writer); //$NON-NLS-1$
 		}
 
+		if (fCSSInfo != null) {
+			writer.println();
+			fCSSInfo.write(indent + "   ", writer); //$NON-NLS-1$
+		}
+
 		writer.println();
 		writer.println("</product>"); //$NON-NLS-1$
 	}
@@ -364,6 +370,9 @@ public class Product extends ProductObject implements IProduct {
 					} else if (name.equals("preferencesInfo")) { //$NON-NLS-1$
 						fPreferencesInfo = factory.createPreferencesInfo();
 						fPreferencesInfo.parse(child);
+					} else if (name.equals("cssInfo")) { //$NON-NLS-1$
+						fCSSInfo = factory.createCSSInfo();
+						fCSSInfo.parse(child);
 					}
 				}
 			}
@@ -608,6 +617,20 @@ public class Product extends ProductObject implements IProduct {
 	 */
 	public void setPreferencesInfo(IPreferencesInfo info) {
 		fPreferencesInfo = info;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#getCSSInfo()
+	 */
+	public ICSSInfo getCSSInfo() {
+		return fCSSInfo;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#setCSSInfo(org.eclipse.pde.internal.core.iproduct.ICSSInfo)
+	 */
+	public void setCSSInfo(ICSSInfo info) {
+		fCSSInfo = info;
 	}
 
 	/* (non-Javadoc)

@@ -46,4 +46,6 @@ public interface IProductModelFactory {
 
 	IPreferencesInfo createPreferencesInfo();
 
+	ICSSInfo createCSSInfo();
+
 }

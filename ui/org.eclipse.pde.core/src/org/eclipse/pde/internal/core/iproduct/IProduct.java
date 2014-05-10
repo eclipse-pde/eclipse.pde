@@ -104,6 +104,8 @@ public interface IProduct extends IProductObject {
 
 	IPreferencesInfo getPreferencesInfo();
 
+	ICSSInfo getCSSInfo();
+
 	/**
 	 * @return The list of properties set in the product configuration
 	 */
@@ -138,6 +140,8 @@ public interface IProduct extends IProductObject {
 	void setLicenseInfo(ILicenseInfo info);
 
 	void setPreferencesInfo(IPreferencesInfo info);
+	
+	void setCSSInfo(ICSSInfo info);
 
 	void setUseFeatures(boolean use);
 

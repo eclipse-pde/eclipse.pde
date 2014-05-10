@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
+import org.eclipse.pde.internal.core.TargetPlatformHelper;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
@@ -50,11 +51,10 @@ public class CustomizationPage extends PDEFormPage {
 
 	private void fillBody(IManagedForm managedForm, FormToolkit toolkit) {
 		Composite body = managedForm.getForm().getBody();
-		body.setLayout(FormLayoutFactory.createFormGridLayout(false, 1));
-
-		PreferencesSection section = new PreferencesSection(this, body);
-
-		managedForm.addPart(section);
+		body.setLayout(FormLayoutFactory.createFormTableWrapLayout(false, 1));
+		managedForm.addPart(new PreferencesSection(this, body));
+		if (TargetPlatformHelper.getTargetVersion() > 3.5) {
+			managedForm.addPart(new CSSSection(this, body));
+		}
 	}
-
 }

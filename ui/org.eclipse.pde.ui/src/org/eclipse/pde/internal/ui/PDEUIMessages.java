@@ -2874,6 +2874,7 @@ public class PDEUIMessages extends NLS {
 	public static String UpdatesSection_EnabledColumn;
 
 	public static String CustomizationPage_title;
+	
 	public static String PreferencesSection_title;
 	public static String PreferencesSection_description;
 	public static String PreferencesSection_generate;
@@ -2907,6 +2908,16 @@ public class PDEUIMessages extends NLS {
 	public static String ConvertPreferencesWizard_errorNoPrefs;
 	public static String ConvertPreferencesWizard_skippedInvalidLine;
 	public static String ConvertPreferencesWizard_progress;
+
+	public static String CSSSection_title;
+	public static String CSSSection_description;
+	public static String CSSSection_file;
+	public static String CSSSection_fileTitle;
+	public static String CSSSection_fileMessage;
+	public static String CSSSection_browse;
+	public static String CSSSection_synchronize;
+	public static String CSSSection_errorNoDefiningPlugin;
+	public static String CSSSection_errorNoDefiningPluginTitle;
 
 	public static String TargetEditor_0;
 

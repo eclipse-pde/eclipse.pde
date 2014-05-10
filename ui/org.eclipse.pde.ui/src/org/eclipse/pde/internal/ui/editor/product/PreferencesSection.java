@@ -33,7 +33,6 @@ import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.wizards.ResizableWizardDialog;
 import org.eclipse.pde.internal.ui.wizards.tools.ConvertPreferencesWizard;
 import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.events.IHyperlinkListener;
@@ -56,24 +55,22 @@ public class PreferencesSection extends PDESection {
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
 	 */
 	protected void createClient(Section section, FormToolkit toolkit) {
-		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
-		GridData data = new GridData(GridData.FILL_HORIZONTAL);
+		section.setLayout(FormLayoutFactory.createClearTableWrapLayout(false, 1));
+		TableWrapData data = new TableWrapData(TableWrapData.FILL_GRAB);
 		section.setLayoutData(data);
 
 		section.setText(PDEUIMessages.PreferencesSection_title);
 		section.setDescription(PDEUIMessages.PreferencesSection_description);
 
 		Composite client = toolkit.createComposite(section);
-		client.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 1));
-		client.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		client.setLayout(FormLayoutFactory.createSectionClientTableWrapLayout(false, 1));
+		client.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 
 		configText = toolkit.createFormText(client, true);
 		String config = getWizardConfigText();
 		configText.setText(config, true, true);
-		GridData gd = new GridData();
-		gd.widthHint = 500;
-		gd.grabExcessHorizontalSpace = true;
-		configText.setLayoutData(gd);
+		data = new TableWrapData(TableWrapData.FILL_GRAB);
+		configText.setLayoutData(data);
 
 		configText.addHyperlinkListener(new IHyperlinkListener() {
 			public void linkEntered(HyperlinkEvent e) {

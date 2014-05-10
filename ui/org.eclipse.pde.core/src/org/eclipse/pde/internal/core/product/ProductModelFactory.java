@@ -104,4 +104,8 @@ public class ProductModelFactory implements IProductModelFactory {
 		return new PreferencesInfo(fModel);
 	}
 
+	public ICSSInfo createCSSInfo() {
+		return new CSSInfo(fModel);
+	}
+
 }

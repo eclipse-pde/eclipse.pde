@@ -33,6 +33,8 @@ import org.eclipse.ui.branding.IProductConstants;
 
 public class ProductDefinitionOperation extends BaseManifestOperation {
 
+	private static final String APPLICATION_CSS = "applicationCSS"; //$NON-NLS-1$
+
 	private String fProductId;
 	private String fApplication;
 	private IProduct fProduct;
@@ -332,6 +334,10 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 		if (child != null)
 			element.add(child);
 
+		child = createElement(element, APPLICATION_CSS, getApplicationCSS());
+		if (child != null)
+			element.add(child);
+
 		return element;
 	}
 
@@ -379,7 +385,7 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 		}
 		return location;
 	}
-		
+
 	private String getFullyQualifiedURL(String location) {
 		if (location == null || location.trim().length() == 0)
 			return null;
@@ -434,6 +440,15 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 		IPreferencesInfo info = fProduct.getPreferencesInfo();
 		if (info != null) {
 			String text = info.getPreferenceCustomizationPath();
+			return text == null || text.length() == 0 ? null : getFullyQualifiedURL(text);
+		}
+		return null;
+	}
+
+	private String getApplicationCSS() {
+		ICSSInfo info = fProduct.getCSSInfo();
+		if (info != null) {
+			String text = info.getFilePath();
 			return text == null || text.length() == 0 ? null : getFullyQualifiedURL(text);
 		}
 		return null;
@@ -503,6 +518,7 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 		synchronizeChild(element, IProductConstants.STARTUP_MESSAGE_RECT, getMessageRect());
 		synchronizeChild(element, IProductConstants.STARTUP_PROGRESS_RECT, getProgressRect());
 		synchronizeChild(element, IProductConstants.PREFERENCE_CUSTOMIZATION, getPreferenceCustomization());
+		synchronizeChild(element, APPLICATION_CSS, getApplicationCSS());
 
 	}
 
