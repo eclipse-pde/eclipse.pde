@@ -40,6 +40,8 @@ public class UpdateSplashProgressOperation implements IWorkspaceRunnable {
 	public static final String F_KEY_SHOW_PROGRESS = "org.eclipse.ui/SHOW_PROGRESS_ON_STARTUP"; //$NON-NLS-1$
 	public static final String F_FILE_NAME_PLUGIN_CUSTOM = "plugin_customization.ini"; //$NON-NLS-1$
 
+	private static final String PLUGIN_URL_PREFIX = "platform:/plugin/"; //$NON-NLS-1$
+
 	private IPluginModelBase fModel;
 	private IProgressMonitor fMonitor;
 	private boolean fShowProgress;
@@ -187,8 +189,18 @@ public class UpdateSplashProgressOperation implements IWorkspaceRunnable {
 		}
 		// Get the plugin customization ini file name
 		String pluginCustomizationFileName = valueAttribute.getValue();
-		// Find the file in the project
-		IResource resource = fProject.findMember(pluginCustomizationFileName);
+
+		// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=435452
+		// Qualified paths should be searched in the workspace, and non-qualified paths
+		// should be assumed to refer to the product's defining plugin project.
+		int index = pluginCustomizationFileName.indexOf(PLUGIN_URL_PREFIX);
+		if (index >= 0) {
+			pluginCustomizationFileName = pluginCustomizationFileName.substring(index + PLUGIN_URL_PREFIX.length());
+		} else if (pluginCustomizationFileName.equals(F_FILE_NAME_PLUGIN_CUSTOM)) {
+			pluginCustomizationFileName = fPluginId + IPath.SEPARATOR + pluginCustomizationFileName;
+		}
+		// Find the file in the workspace
+		IResource resource = fProject.getWorkspace().getRoot().findMember(pluginCustomizationFileName);
 		// Ensure the plug-in customization ini file exists
 		boolean isFileNotExist = !isFileExist(resource);
 		if (isFileNotExist && fShowProgress) {

@@ -142,6 +142,7 @@ public interface IHelpContextIds {
 
 	public static final String XHTML_CONVERSION_PAGE = PREFIX + "xhtml_conversion_page"; //$NON-NLS-1$
 
+	public static final String CONVERT_PREFERENCES_WIZARD = PREFIX + "convert_preferences_page"; //$NON-NLS-1$
 	// dialogs
 	public static final String FRAGMENT_ADD_TARGET = PREFIX + "fragment_add_target"; //$NON-NLS-1$
 	public static final String SCHEMA_TYPE_RESTRICTION = PREFIX + "schema_type_restriction"; //$NON-NLS-1$
@@ -261,6 +262,7 @@ public interface IHelpContextIds {
 	public static final String OVERVIEW_PAGE = PREFIX + "overview_page"; //$NON-NLS-1$
 	public static final String LICENSING_PAGE = PREFIX + "licensing_page"; //$NON-NLS-1$
 	public static final String UPDATES_PAGE = PREFIX + "updates_page"; //$NON-NLS-1$
+	public static final String CUSTOMIZATION_PAGE = PREFIX + "customization_page"; //$NON-NLS-1$
 
 	public static final String TARGET_EDITOR = PREFIX + "target_editor"; //$NON-NLS-1$
 	public static final String TARGET_EDITOR_ENVIRONMENT_PAGE = PREFIX + "target_editor_environment_page"; //$NON-NLS-1$	

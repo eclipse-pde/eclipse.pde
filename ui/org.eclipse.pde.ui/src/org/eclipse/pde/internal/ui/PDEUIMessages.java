@@ -1,5 +1,4 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -2873,6 +2872,41 @@ public class PDEUIMessages extends NLS {
 	public static String UpdatesSection_ErrorInvalidURL;
 	public static String UpdatesSection_LocationColumn;
 	public static String UpdatesSection_EnabledColumn;
+
+	public static String CustomizationPage_title;
+	public static String PreferencesSection_title;
+	public static String PreferencesSection_description;
+	public static String PreferencesSection_generate;
+	public static String PreferencesSection_errorNoDefiningPlugin;
+	public static String PreferencesSection_errorNoDefiningPluginTitle;
+	public static String PreferencesSection_errorReading;
+	public static String PreferencesSection_epf;
+	public static String PreferencesSection_customize;
+	public static String PreferencesSection_merge;
+	public static String PreferencesSection_overwrite;
+
+	public static String ConvertPreferencesWizardPage_title;
+	public static String ConvertPreferencesWizardPage_description;
+	public static String ConvertPreferencesWizardPage_file;
+	public static String ConvertPreferencesWizardPage_browse;
+	public static String ConvertPreferencesWizardPage_merge;
+	public static String ConvertPreferencesWizardPage_overwrite;
+	public static String ConvertPreferencesWizardPage_fileTitle;
+	public static String ConvertPreferencesWizardPage_fileMessage;
+	public static String ConvertPreferencesWizardPage_sourceFileGroup;
+	public static String ConvertPreferencesWizardPage_targetFileGroup;
+	public static String ConvertPreferencesWizardPage_customFileTitle;
+	public static String ConvertPreferencesWizardPage_customFileMessage;
+	public static String ConvertPreferencesWizardPage_options;
+
+	public static String ConvertPreferencesWizard_title;
+	public static String ConvertPreferencesWizard_errorNoFileSpecified;
+	public static String ConvertPreferencesWizard_errorTitle;
+	public static String ConvertPreferencesWizard_errorFile;
+	public static String ConvertPreferencesWizard_errorFileNotFound;
+	public static String ConvertPreferencesWizard_errorNoPrefs;
+	public static String ConvertPreferencesWizard_skippedInvalidLine;
+	public static String ConvertPreferencesWizard_progress;
 
 	public static String TargetEditor_0;
 

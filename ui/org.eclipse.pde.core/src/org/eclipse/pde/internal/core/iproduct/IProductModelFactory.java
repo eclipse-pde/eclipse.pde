@@ -44,4 +44,6 @@ public interface IProductModelFactory {
 
 	IRepositoryInfo createRepositoryInfo();
 
+	IPreferencesInfo createPreferencesInfo();
+
 }

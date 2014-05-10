@@ -100,4 +100,8 @@ public class ProductModelFactory implements IProductModelFactory {
 		return new RepositoryInfo(fModel);
 	}
 
+	public IPreferencesInfo createPreferencesInfo() {
+		return new PreferencesInfo(fModel);
+	}
+
 }

@@ -44,6 +44,7 @@ public class Product extends ProductObject implements IProduct {
 	private IIntroInfo fIntroInfo;
 	private ILicenseInfo fLicenseInfo;
 	private List<IProductObject> fRepositories = new ArrayList<IProductObject>();
+	private IPreferencesInfo fPreferencesInfo;
 
 	public Product(IProductModel model) {
 		super(model);
@@ -264,6 +265,11 @@ public class Product extends ProductObject implements IProduct {
 			writer.println(indent + "   </repositories>"); //$NON-NLS-1$
 		}
 
+		if (fPreferencesInfo != null) {
+			writer.println();
+			fPreferencesInfo.write(indent + "   ", writer); //$NON-NLS-1$
+		}
+
 		writer.println();
 		writer.println("</product>"); //$NON-NLS-1$
 	}
@@ -355,6 +361,9 @@ public class Product extends ProductObject implements IProduct {
 						fLicenseInfo.parse(child);
 					} else if (name.equals("repositories")) { //$NON-NLS-1$
 						parseRepositories(child.getChildNodes());
+					} else if (name.equals("preferencesInfo")) { //$NON-NLS-1$
+						fPreferencesInfo = factory.createPreferencesInfo();
+						fPreferencesInfo.parse(child);
 					}
 				}
 			}
@@ -587,6 +596,19 @@ public class Product extends ProductObject implements IProduct {
 			fireStructureChanged(repos, IModelChangedEvent.REMOVE);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#getPreferencesInfo()
+	 */
+	public IPreferencesInfo getPreferencesInfo() {
+		return fPreferencesInfo;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#setPreferencesInfo(org.eclipse.pde.internal.core.iproduct.IPreferencesInfo)
+	 */
+	public void setPreferencesInfo(IPreferencesInfo info) {
+		fPreferencesInfo = info;
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.iproduct.IProduct#getConfigurationFileInfo()
@@ -747,5 +769,4 @@ public class Product extends ProductObject implements IProduct {
 		if (isEditable())
 			firePropertyChanged(P_INCLUDE_LAUNCHERS, Boolean.toString(old), Boolean.toString(fIncludeLaunchers));
 	}
-
 }

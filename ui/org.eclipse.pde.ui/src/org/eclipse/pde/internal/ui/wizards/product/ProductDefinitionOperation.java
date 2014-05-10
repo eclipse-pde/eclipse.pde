@@ -328,6 +328,10 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 		if (child != null)
 			element.add(child);
 
+		child = createElement(element, IProductConstants.PREFERENCE_CUSTOMIZATION, getPreferenceCustomization());
+		if (child != null)
+			element.add(child);
+
 		return element;
 	}
 
@@ -375,6 +379,24 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 		}
 		return location;
 	}
+		
+	private String getFullyQualifiedURL(String location) {
+		if (location == null || location.trim().length() == 0)
+			return null;
+		IPath path = new Path(location);
+		if (!path.isAbsolute())
+			return location;
+		String projectName = path.segment(0);
+		IProject project = PDEPlugin.getWorkspace().getRoot().getProject(projectName);
+		if (project.exists()) {
+			IPluginModelBase model = PluginRegistry.findModel(project);
+			if (model != null) {
+				String id = model.getPluginBase().getId();
+				return "platform:/plugin/" + id + "/" + path.removeFirstSegments(1); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		}
+		return location;
+	}
 
 	private String getWindowImagesString() {
 		IWindowImages images = fProduct.getWindowImages();
@@ -406,6 +428,15 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 	private String getMessageRect() {
 		ISplashInfo info = fProduct.getSplashInfo();
 		return info != null ? SplashInfo.getGeometryString(info.getMessageGeometry()) : null;
+	}
+
+	private String getPreferenceCustomization() {
+		IPreferencesInfo info = fProduct.getPreferencesInfo();
+		if (info != null) {
+			String text = info.getPreferenceCustomizationPath();
+			return text == null || text.length() == 0 ? null : getFullyQualifiedURL(text);
+		}
+		return null;
 	}
 
 	private void modifyExistingFile(IFile file, IProgressMonitor monitor) throws CoreException {
@@ -471,6 +502,7 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 		synchronizeChild(element, IProductConstants.STARTUP_FOREGROUND_COLOR, getForegroundColor());
 		synchronizeChild(element, IProductConstants.STARTUP_MESSAGE_RECT, getMessageRect());
 		synchronizeChild(element, IProductConstants.STARTUP_PROGRESS_RECT, getProgressRect());
+		synchronizeChild(element, IProductConstants.PREFERENCE_CUSTOMIZATION, getPreferenceCustomization());
 
 	}
 

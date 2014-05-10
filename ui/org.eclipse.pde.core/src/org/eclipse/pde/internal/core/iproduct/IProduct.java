@@ -102,6 +102,8 @@ public interface IProduct extends IProductObject {
 
 	void addRepositories(IRepositoryInfo[] repositories);
 
+	IPreferencesInfo getPreferencesInfo();
+
 	/**
 	 * @return The list of properties set in the product configuration
 	 */
@@ -134,6 +136,8 @@ public interface IProduct extends IProductObject {
 	void setLauncherInfo(ILauncherInfo info);
 
 	void setLicenseInfo(ILicenseInfo info);
+
+	void setPreferencesInfo(IPreferencesInfo info);
 
 	void setUseFeatures(boolean use);
 
