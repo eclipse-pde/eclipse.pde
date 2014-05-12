@@ -710,7 +710,7 @@ public class TagValidator extends Validator {
 						} else {
 							createAnnotationProblem(item.typename, node, IElementDescriptor.METHOD, IApiProblem.UNSUPPORTED_ANNOTATION_USE, IApiMarkerConstants.UNSUPPORTED_ANNOTATION_MARKER_ID, isconstructor ? BuilderMessages.TagValidator_a_package_default_constructor : BuilderMessages.TagValidator_a_package_default_method);
 						}
-					} else if (JavadocTagManager.TAG_NOOVERRIDE.equals(name)) {
+					} else if (JavadocTagManager.ANNOTATION_NOOVERRIDE.equals(name)) {
 						if (Flags.isFinal(flags)) {
 							if (isstatic) {
 								createAnnotationProblem(item.typename, node, IElementDescriptor.METHOD, IApiProblem.UNSUPPORTED_ANNOTATION_USE, IApiMarkerConstants.UNSUPPORTED_ANNOTATION_MARKER_ID, isconstructor ? BuilderMessages.TagValidator_static_final_constructor : BuilderMessages.TagValidator_a_static_final_method);
