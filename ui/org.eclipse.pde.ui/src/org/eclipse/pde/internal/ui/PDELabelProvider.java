@@ -310,12 +310,17 @@ public class PDELabelProvider extends SharedLabelProvider {
 		IFeatureModel model = PDECore.getDefault().getFeatureModelManager().findFeatureModel(obj.getId(), obj.getVersion() != null ? obj.getVersion() : "0.0.0"); //$NON-NLS-1$
 		if (model != null)
 			return getObjectText(model);
-		return preventNull(obj.getURL());
+		String url = obj.getURL();
+		if (url != null)
+			return url;
+		return preventNull(obj.getId());
 	}
 
 	public String getObjectText(ISiteBundle obj) {
 		IPluginModelBase modelBase = PluginRegistry.findModel(obj.getId(), obj.getVersion(), IMatchRules.COMPATIBLE, null);
-		return getObjectText(modelBase.getPluginBase());
+		if (modelBase != null)
+			return getObjectText(modelBase.getPluginBase());
+		return preventNull(obj.getId());
 	}
 
 	public String getObjectText(ISiteArchive obj) {
