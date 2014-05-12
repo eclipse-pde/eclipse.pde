@@ -205,9 +205,7 @@ public class TagScanner {
 			if (!Flags.isFinal(flags) && JavadocTagManager.ANNOTATION_NOREFERENCE.equals(name)) {
 				for (VariableDeclarationFragment fragment : fields) {
 					IElementDescriptor descriptor = fType.getField(fragment.getName().getFullyQualifiedName());
-					IApiAnnotations annots = fDescription.resolveAnnotations(descriptor);
-					int restrictions = annots != null ? annots.getRestrictions() : RestrictionModifiers.NO_RESTRICTIONS;
-					fDescription.setRestrictions(descriptor, restrictions | RestrictionModifiers.NO_REFERENCE);
+					fDescription.setRestrictions(descriptor, RestrictionModifiers.NO_REFERENCE);
 				}
 			}
 		}
@@ -580,9 +578,7 @@ public class TagScanner {
 					if (!Flags.isFinal(flags) && JavadocTagManager.TAG_NOREFERENCE.equals(tagname)) {
 						for (VariableDeclarationFragment fragment : fields) {
 							IElementDescriptor descriptor = fType.getField(fragment.getName().getFullyQualifiedName());
-							IApiAnnotations annots = fDescription.resolveAnnotations(fType);
-							int restrictions = annots != null ? annots.getRestrictions() : RestrictionModifiers.NO_RESTRICTIONS;
-							fDescription.setRestrictions(descriptor, restrictions | RestrictionModifiers.NO_REFERENCE);
+							fDescription.setRestrictions(descriptor, RestrictionModifiers.NO_REFERENCE);
 						}
 					}
 				}

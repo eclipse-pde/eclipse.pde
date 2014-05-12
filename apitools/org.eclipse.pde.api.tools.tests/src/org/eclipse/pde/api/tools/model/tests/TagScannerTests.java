@@ -520,6 +520,8 @@ public class TagScannerTests extends TestCase {
 	 * Tests that the source tags are added/collected properly for fields that
 	 * have no restriction tags, but the parent class does. Scans the file
 	 * <code>TestField7</code>
+	 * 
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=434444
 	 */
 	public void testFieldBaseClassInheritedNotSupported() {
 		IApiDescription manifest = newDescription();
@@ -527,7 +529,7 @@ public class TagScannerTests extends TestCase {
 		IApiAnnotations description = manifest.resolveAnnotations(Factory.fieldDescriptor("a.b.c.TestField7", "field1")); //$NON-NLS-1$ //$NON-NLS-2$
 		assertNotNull("the description for field 'field1' in TestField7 should exist", description); //$NON-NLS-1$
 		assertEquals("there shouldbe API visibility on field 'field1'", VisibilityModifiers.API, description.getVisibility()); //$NON-NLS-1$
-		assertEquals("There should be no restrictions on field 'field1'", RestrictionModifiers.NO_RESTRICTIONS, description.getRestrictions()); //$NON-NLS-1$
+		assertTrue("there should be noreference restrictions on field 'field1'", description.getRestrictions() == RestrictionModifiers.NO_REFERENCE); //$NON-NLS-1$
 	}
 
 	/**
@@ -549,13 +551,33 @@ public class TagScannerTests extends TestCase {
 	 * Tests that the source tags are added/collected properly for fields that
 	 * have no restriction tags, but the parent class does. Scans the file
 	 * <code>TestField8</code>
+	 * 
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=434444
 	 */
-	public void testFieldBaseClassInheritedSupported() {
+	public void testFieldBaseClassInheritedNotSupported2() {
 		IApiDescription manifest = newDescription();
 		doScan("a/b/c/TestField8.java", manifest); //$NON-NLS-1$
 		IApiAnnotations description = manifest.resolveAnnotations(Factory.fieldDescriptor("a.b.c.TestField8", "field1")); //$NON-NLS-1$ //$NON-NLS-2$
 		assertNotNull("the description for field 'field1' in TestField8 should exist", description); //$NON-NLS-1$
-		assertTrue("there shouldbe API visibility on field 'field1'", description.getVisibility() == VisibilityModifiers.API); //$NON-NLS-1$
+		assertTrue("there should be API visibility on field 'field1'", description.getVisibility() == VisibilityModifiers.API); //$NON-NLS-1$
+		assertTrue("there should be noreference restrictions on field 'field1'", description.getRestrictions() == RestrictionModifiers.NO_REFERENCE); //$NON-NLS-1$
+	}
+
+	/**
+	 * Tests that the annotations are added/collected properly for fields that
+	 * have restrictions, but that should not assume the parent restrictions<br>
+	 * <br>
+	 * Scans the file <code>TestField11</code>
+	 * 
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=434444
+	 */
+	public void testFieldBaseClassInheritedNotSupported3() {
+		IApiDescription manifest = newDescription();
+		doScan("a/b/c/TestField11.java", manifest); //$NON-NLS-1$
+		IApiAnnotations description = manifest.resolveAnnotations(Factory.fieldDescriptor("a.b.c.TestField11", "field1")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertNotNull("the description for field 'field1' in TestField11 should exist", description); //$NON-NLS-1$
+		assertTrue("there should be API visibility on field 'field1'", description.getVisibility() == VisibilityModifiers.API); //$NON-NLS-1$
+		assertTrue("there should be noreference restrictions on field 'field1'", description.getRestrictions() == RestrictionModifiers.NO_REFERENCE); //$NON-NLS-1$
 	}
 
 	/**

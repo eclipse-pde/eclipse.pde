@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 IBM Corporation and others.
+ * Copyright (c) 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,16 +10,20 @@
  *******************************************************************************/
 package a.b.c;
 
+import org.eclipse.pde.api.tools.annotations.NoReference;
+import org.eclipse.pde.api.tools.annotations.NoExtend;
+
 /**
- * Used to test that a field with inherited restrictions will not inherit the class restrictions
- * as fields do not support 'no extend'
  * 
- * @noextend
- * @since
  */
-public class TestField7 {
+@NoExtend
+public class TestField11 {
+
+	public Object field = null;
+	
 	/**
-	 * @noreference
 	 */
+	@NoReference
 	public Object field1 = null;
+	
 }
