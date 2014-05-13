@@ -169,6 +169,7 @@ public class Java8UsageTest extends ApiBuilderTest {
 	}
 
 	/**
+	 * 
 	 * @return all of the child test classes of this class
 	 */
 	private static Class<?>[] getAllTestClasses() {
@@ -176,6 +177,7 @@ public class Java8UsageTest extends ApiBuilderTest {
 		classes.add(Java8LambdaUsageTests.class);
 		classes.add(Java8MethodConstRefUsageTests.class);
 		classes.add(Java8ConsRefInstantiateUsageTests.class);
+		classes.add(Java8DefaultMethodUsageTests.class);
 		return classes.toArray(new Class[classes.size()]);
 	}
 }
