@@ -148,4 +148,82 @@ public class Java8TypeAnnotationTests extends AnnotationTest {
 	void x6(boolean inc) throws Exception{
 		deployAnnotationTestWithErrors("test6.java", inc, true); //$NON-NLS-1$
 	}
+
+	public void test7I() throws Exception {
+		x7(true);
+	}
+
+	public void test7F() throws Exception {
+		x7(false);
+	}
+
+	/**
+	 * Tests there are no problems with multiple type annotations at locations
+	 * class, interface, class field, meth param,method,local var
+	 * 
+	 * @param inc
+	 * @throws Exception
+	 */
+	void x7(boolean inc) throws Exception {
+		deployAnnotationTest("test7.java", inc, false); //$NON-NLS-1$
+	}
+
+	public void test8I() throws Exception {
+		x8(true);
+	}
+
+	public void test8F() throws Exception {
+		x8(false);
+	}
+
+	/**
+	 * Tests there are problems with type annotation whose location is different
+	 * than defined in the target
+	 * 
+	 * @param inc
+	 * @throws Exception
+	 */
+	void x8(boolean inc) throws Exception {
+		deployAnnotationTestWithErrors("test8.java", inc, true); //$NON-NLS-1$
+	}
+
+	public void test9I() throws Exception {
+		x9(true);
+	}
+
+	public void test9F() throws Exception {
+		x9(false);
+	}
+
+	/**
+	 * Tests there are problems with type annotation whose attribute is not set
+	 * or if it doesnt have a default value
+	 * 
+	 * @param inc
+	 * @throws Exception
+	 */
+	void x9(boolean inc) throws Exception {
+		deployAnnotationTestWithErrors("test9.java", inc, true); //$NON-NLS-1$
+	}
+
+	public void test10I() throws Exception {
+		x10(true);
+	}
+
+	public void test10F() throws Exception {
+		x10(false);
+	}
+
+	/**
+	 * Tests there are no errors when attribute is not set for type annotation
+	 * 
+	 * @param inc
+	 * @throws Exception
+	 */
+	void x10(boolean inc) throws Exception {
+		deployAnnotationTest("test10.java", inc, false); //$NON-NLS-1$
+	}
+
+	
+	
 }
