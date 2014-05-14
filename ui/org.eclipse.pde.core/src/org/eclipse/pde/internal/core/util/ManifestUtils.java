@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 IBM Corporation and others.
+ * Copyright (c) 2006, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -170,7 +170,7 @@ public class ManifestUtils {
 		File inputFile = new File(project.getLocation().toOSString());
 		PluginConverter converter = (PluginConverter) PDECore.getDefault().acquireService(PluginConverter.class.getName());
 		if (converter == null) {
-			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, STATUS_CODE_PLUGIN_CONVERTER_UNAVAILABLE, NLS.bind(UtilMessages.ManifestUtils_NeedCompatFragmentToConvertManifest, project.getLocation()), null));
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, STATUS_CODE_PLUGIN_CONVERTER_UNAVAILABLE, NLS.bind(UtilMessages.ManifestUtils_NeedCompatFragmentToConvertManifestFile, project.getLocation()), null));
 		}
 		try {
 			converter.convertManifest(inputFile, outputFile, false, targetVersion, true, devProperties);

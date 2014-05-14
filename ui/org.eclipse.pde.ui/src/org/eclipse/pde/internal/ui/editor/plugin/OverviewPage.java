@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2013 IBM Corporation and others.
+ *  Copyright (c) 2000, 2014 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -11,14 +11,18 @@
 package org.eclipse.pde.internal.ui.editor.plugin;
 
 import java.lang.reflect.InvocationTargetException;
+import org.eclipse.core.commands.*;
+import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.service.pluginconversion.PluginConverter;
 import org.eclipse.pde.core.build.*;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.project.PDEProject;
 import org.eclipse.pde.internal.ui.*;
@@ -32,15 +36,18 @@ import org.eclipse.pde.internal.ui.wizards.tools.OrganizeManifestsAction;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.*;
+import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.*;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.progress.UIJob;
 import org.osgi.service.prefs.BackingStoreException;
 
 public class OverviewPage extends LaunchShortcutOverviewPage {
+	public static final String P2_INSTALL_COMMAND_HANDLER = "org.eclipse.equinox.p2.ui.sdk.install"; //$NON-NLS-1$
 	public static final String PAGE_ID = "overview"; //$NON-NLS-1$
 	private PluginExportAction fExportAction;
 	private GeneralInfoSection fInfoSection;
@@ -131,10 +138,21 @@ public class OverviewPage extends LaunchShortcutOverviewPage {
 		PDELabelProvider lp = PDEPlugin.getDefault().getLabelProvider();
 		if (!isBundle() && isEditable()) {
 			String content;
-			if (isFragment()) {
-				content = PDEUIMessages.OverviewPage_fOsgi;
+			PluginConverter converter = (PluginConverter) PDECore.getDefault().acquireService(PluginConverter.class.getName());
+			if (converter == null) {
+				// Help the user install the plugin converter service
+				if (isFragment()) {
+					content = PDEUIMessages.OverviewPage_NoPluginConverterFragment;
+				} else {
+					content = PDEUIMessages.OverviewPage_NoPluginConverterPlugin;
+				}
 			} else {
-				content = PDEUIMessages.OverviewPage_osgi;
+				// Provide link to run the conversion service
+				if (isFragment()) {
+					content = PDEUIMessages.OverviewPage_fOsgi;
+				} else {
+					content = PDEUIMessages.OverviewPage_osgi;
+				}
 			}
 			FormText warningText = createClient(container, content, toolkit);
 			warningText.setImage("warning", lp.get(PDEPluginImages.DESC_WARNING_ST_OBJ, 0)); //$NON-NLS-1$
@@ -235,6 +253,8 @@ public class OverviewPage extends LaunchShortcutOverviewPage {
 			getExportAction().run();
 		} else if (href.equals("action.convert")) { //$NON-NLS-1$
 			handleConvert();
+		} else if (href.equals("action.installPluginConverter")) { //$NON-NLS-1$
+			handleInstallPluginConverter();
 		} else if (href.equals("organize")) { //$NON-NLS-1$
 			getEditor().doSave(null);
 			OrganizeManifestsAction organizeAction = new OrganizeManifestsAction();
@@ -276,6 +296,29 @@ public class OverviewPage extends LaunchShortcutOverviewPage {
 			if (!fDisposed)
 				fInfoSection.addListeners();
 		}
+	}
+
+	private void handleInstallPluginConverter() {
+		ICommandService commandService = (ICommandService) PlatformUI.getWorkbench().getService(ICommandService.class);
+		final Command command = commandService.getCommand(P2_INSTALL_COMMAND_HANDLER);
+		if (command.isHandled()) {
+			IHandlerService handlerService = (IHandlerService) PlatformUI.getWorkbench().getService(IHandlerService.class);
+			try {
+				handlerService.executeCommand(P2_INSTALL_COMMAND_HANDLER, null);
+			} catch (ExecutionException ex) {
+				handleCommandException();
+			} catch (NotDefinedException ex) {
+				handleCommandException();
+			} catch (NotEnabledException ex) {
+				handleCommandException();
+			} catch (NotHandledException ex) {
+				handleCommandException();
+			}
+		}
+	}
+	
+	private void handleCommandException() {
+		MessageDialog.openError(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.OverviewPage_ErrorOccurred, PDEUIMessages.OverviewPage_InstallNewSoftwareCouldNotBeOpened);
 	}
 
 	private void updateBuildProperties() throws InvocationTargetException {

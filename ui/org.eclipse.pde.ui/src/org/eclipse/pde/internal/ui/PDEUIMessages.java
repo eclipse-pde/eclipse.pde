@@ -1838,6 +1838,8 @@ public class PDEUIMessages extends NLS {
 	public static String OverviewPage_title;
 	public static String OverviewPage_deploying;
 	public static String OverviewPage_fOsgi;
+	public static String OverviewPage_NoPluginConverterFragment;
+	public static String OverviewPage_NoPluginConverterPlugin;
 	public static String OverviewPage_error;
 	public static String OverviewPage_fContent;
 	public static String OverviewPage_fTesting;
@@ -2072,6 +2074,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String OverviewPage_buildQuestion;
 
+	public static String OverviewPage_ErrorOccurred;
+
 	public static String PluginWorkingSet_message;
 
 	public static String ProductDefinitonWizardPage_noProductName;
@@ -2181,6 +2185,8 @@ public class PDEUIMessages extends NLS {
 	public static String OverviewPage_extensionPageMessageBody;
 
 	public static String OverviewPage_fExtensionContent;
+
+	public static String OverviewPage_InstallNewSoftwareCouldNotBeOpened;
 
 	public static String OverviewPage_ManifestWarning;
 	public static String OverviewPage_WarnAboutMissingManifest;
