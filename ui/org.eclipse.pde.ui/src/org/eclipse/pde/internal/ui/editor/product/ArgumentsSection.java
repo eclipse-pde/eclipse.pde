@@ -61,7 +61,7 @@ public class ArgumentsSection extends PDESection {
 	private CTabFolder fTabFolder;
 	private ComboViewerPart fArchCombo;
 	private int fLastTab;
-	private int fLastArch;
+	private int[] fLastArch = {0, 0, 0, 0, 0}; // default arch index is "All" (0)
 
 	public ArgumentsSection(PDEFormPage page, Composite parent) {
 		super(page, parent, Section.DESCRIPTION);
@@ -99,11 +99,11 @@ public class ArgumentsSection extends PDESection {
 				if (fVMArgs.isDirty())
 					fVMArgs.commit();
 				refresh();
-				// refresh architecture selection to ALL when a new platform is selected
-				fLastArch = 0;
-				fArchCombo.select(fLastArch);
+				fArchCombo.select(fLastArch[fLastTab]);
 			}
 		});
+		createTabs();
+
 		Composite archParent = toolkit.createComposite(client);
 		archParent.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 2));
 		archParent.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -112,18 +112,24 @@ public class ArgumentsSection extends PDESection {
 		fArchCombo.createControl(archParent, toolkit, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY);
 		fArchCombo.getControl().setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false));
 		fArchCombo.setItems(TAB_ARCHLABELS);
-		fLastArch = 0;
 		Control archComboControl = fArchCombo.getControl();
 		if (archComboControl instanceof Combo)
-			((Combo) archComboControl).select(fLastArch);
+			((Combo) archComboControl).select(fLastArch[fLastTab]);
 		else
-			((CCombo) archComboControl).select(fLastArch);
+			((CCombo) archComboControl).select(fLastArch[fLastTab]);
 		fArchCombo.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				if (fProgramArgs.isDirty())
 					fProgramArgs.commit();
 				if (fVMArgs.isDirty())
 					fVMArgs.commit();
+				// remember the change in combo for currently selected platform
+				Control fArchComboControl = fArchCombo.getControl();
+				if (fArchComboControl instanceof Combo)
+					fLastArch[fLastTab] = ((Combo) fArchComboControl).getSelectionIndex();
+				else
+					fLastArch[fLastTab] = ((CCombo) fArchComboControl).getSelectionIndex();
+
 				refresh();
 			}
 		});
@@ -136,7 +142,7 @@ public class ArgumentsSection extends PDESection {
 			@Override
 			public void textValueChanged(FormEntry entry) {
 				IArgumentsInfo info = getLauncherArguments();
-				info.setProgramArguments(entry.getValue().trim(), fLastTab, fLastArch);
+				info.setProgramArguments(entry.getValue().trim(), fLastTab, fLastArch[fLastTab]);
 				updateArgumentPreview(info);
 			}
 		});
@@ -148,7 +154,7 @@ public class ArgumentsSection extends PDESection {
 			@Override
 			public void textValueChanged(FormEntry entry) {
 				IArgumentsInfo info = getLauncherArguments();
-				info.setVMArguments(entry.getValue().trim(), fLastTab, fLastArch);
+				info.setVMArguments(entry.getValue().trim(), fLastTab, fLastArch[fLastTab]);
 				updateArgumentPreview(info);
 			}
 		});
@@ -158,7 +164,6 @@ public class ArgumentsSection extends PDESection {
 		fPreviewArgs.getText().setLayoutData(new GridData(GridData.FILL_BOTH));
 		fPreviewArgs.setEditable(false);
 
-		createTabs();
 		toolkit.paintBordersFor(client);
 		section.setClient(client);
 		// Register to be notified when the model changes
@@ -178,14 +183,9 @@ public class ArgumentsSection extends PDESection {
 	@Override
 	public void refresh() {
 		fLastTab = fTabFolder.getSelectionIndex();
-		Control fArchComboControl = fArchCombo.getControl();
-		if (fArchComboControl instanceof Combo)
-			fLastArch = ((Combo) fArchComboControl).getSelectionIndex();
-		else
-			fLastArch = ((CCombo) fArchComboControl).getSelectionIndex();
 		IArgumentsInfo launcherArguments = getLauncherArguments();
-		fProgramArgs.setValue(launcherArguments.getProgramArguments(fLastTab, fLastArch), true);
-		fVMArgs.setValue(launcherArguments.getVMArguments(fLastTab, fLastArch), true);
+		fProgramArgs.setValue(launcherArguments.getProgramArguments(fLastTab, fLastArch[fLastTab]), true);
+		fVMArgs.setValue(launcherArguments.getVMArguments(fLastTab, fLastArch[fLastTab]), true);
 		updateArgumentPreview(launcherArguments);
 		super.refresh();
 	}
@@ -260,7 +260,7 @@ public class ArgumentsSection extends PDESection {
 	private void updateArgumentPreview(IArgumentsInfo launcherArguments) {
 		StringBuffer buffer = new StringBuffer();
 		String delim = System.getProperty("line.separator"); //$NON-NLS-1$
-		String args = launcherArguments.getCompleteProgramArguments(TAB_LABELS[fLastTab], TAB_ARCHLABELS[fLastArch]);
+		String args = launcherArguments.getCompleteProgramArguments(TAB_LABELS[fLastTab], TAB_ARCHLABELS[fLastArch[fLastTab]]);
 		if (args.length() > 0) {
 			buffer.append(PDEUIMessages.ArgumentsSection_program);
 			buffer.append(delim);
@@ -268,7 +268,7 @@ public class ArgumentsSection extends PDESection {
 			buffer.append(delim);
 			buffer.append(delim);
 		}
-		args = launcherArguments.getCompleteVMArguments(TAB_LABELS[fLastTab], TAB_ARCHLABELS[fLastArch]);
+		args = launcherArguments.getCompleteVMArguments(TAB_LABELS[fLastTab], TAB_ARCHLABELS[fLastArch[fLastTab]]);
 		if (args.length() > 0) {
 			buffer.append(PDEUIMessages.ArgumentsSection_vm);
 			buffer.append(delim);
