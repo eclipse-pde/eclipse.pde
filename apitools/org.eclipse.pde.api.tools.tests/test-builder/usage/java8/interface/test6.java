@@ -10,12 +10,13 @@
  *******************************************************************************/
 package x.y.z;
 
-import i.INoOverrideInterface2;
+import i.INoOverrideInterface3;
 
 /**
- * Test no overriding (pde annotation)  restricted default methods
+ * Test no overriding (pde annotation) restricted default methods
  */
-public class test5 implements INoOverrideInterface2 {
+public class test6 implements INoOverrideInterface3 {
+
 
 	@Override
 	public void m1() {

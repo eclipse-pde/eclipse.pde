@@ -482,7 +482,7 @@ public class ReferenceExtractor extends ClassVisitor {
 						if (member != null) {
 							try {
 								IApiType type = member.getEnclosingType();
-								if (type != null && isDefaultDefined(type, name, desc)) {
+								if (type != null && getDefaultDefined(type, name, desc, false) != null) {
 									flags = IReference.F_DEFAULT_METHOD;
 								}
 							} catch (CoreException ce) {
@@ -510,35 +510,6 @@ public class ReferenceExtractor extends ClassVisitor {
 				}
 			}
 			this.stringLiteral = null;
-		}
-
-		/**
-		 * Find out if the method declaration is a default method.
-		 * 
-		 * @param type
-		 * @param name
-		 * @param signature
-		 * @return true if the method is a default method, false otherwise
-		 * @throws CoreException
-		 * @since 1.0.600
-		 */
-		boolean isDefaultDefined(IApiType type, String name, String signature) throws CoreException {
-			if (type != null) {
-				IApiMethod method = type.getMethod(name, signature);
-				if (method != null) {
-					return method.isDefaultMethod();
-				}
-				if (isDefaultDefined(type.getSuperclass(), name, signature)) {
-					return true;
-				}
-				IApiType ints[] = type.getSuperInterfaces();
-				for (int i = 0; i < ints.length; i++) {
-					if (isDefaultDefined(ints[i], name, signature)) {
-						return true;
-					}
-				}
-			}
-			return false;
 		}
 
 		@Override
@@ -1589,9 +1560,20 @@ public class ReferenceExtractor extends ClassVisitor {
 			this.enterMember(method);
 			// record potential method override reference
 			if ((access & (Opcodes.ACC_PROTECTED | Opcodes.ACC_PUBLIC)) > 0) {
-				if (!this.fSuperStack.isEmpty()) {
-					String superTypeName = this.fSuperStack.peek();
-					addReference(Reference.methodReference(method, superTypeName, method.getName(), method.getSignature(), IReference.REF_OVERRIDE));
+				try {
+					IApiType def = null;
+					if (fVersion >= Opcodes.V1_8) {
+						// See if we are overriding a default interface method
+						def = getDefaultDefined(owner, name, desc, true);
+					}
+					if (def != null) {
+						addReference(Reference.methodReference(method, def.getName(), method.getName(), method.getSignature(), IReference.REF_OVERRIDE, IReference.F_DEFAULT_METHOD));
+					} else if (!this.fSuperStack.isEmpty()) {
+						String superTypeName = this.fSuperStack.peek();
+						addReference(Reference.methodReference(method, superTypeName, method.getName(), method.getSignature(), IReference.REF_OVERRIDE));
+					}
+				} catch (CoreException e) {
+					// Do nothing, skip this reference
 				}
 			}
 			int argumentcount = 0;
@@ -1646,4 +1628,49 @@ public class ReferenceExtractor extends ClassVisitor {
 	protected IApiMember getMember() {
 		return this.fMemberStack.peek();
 	}
+
+	/**
+	 * Find out if the method declaration is a default method and return the
+	 * type defining it. Uses the JLS specified order of lookup between
+	 * superclasses and superinterfaces.
+	 * 
+	 * @param type the type used as a starting point for the search, will not be
+	 *            searched if <code>isOverride</code> is <code>true</code>
+	 * @param name name of the method
+	 * @param signature signature of the method
+	 * @param isOverride is <code>true</code> the provided IApiType will not be
+	 *            searched for a declaration
+	 * @return the IApiType containing the default method definition or
+	 *         <code>null</code>
+	 * @throws CoreException
+	 */
+	static IApiType getDefaultDefined(IApiType type, String name, String signature, boolean isOverride) throws CoreException {
+		if (type != null) {
+			if (!isOverride) {
+				IApiMethod method = type.getMethod(name, signature);
+				if (method != null) {
+					if (method.isDefaultMethod()) {
+						return type;
+					}
+				}
+			}
+			// TODO We should skip checking super class if it is
+			// java.lang.Object (or system library class)
+			IApiType superclass = getDefaultDefined(type.getSuperclass(), name, signature, false);
+			if (superclass != null) {
+				return superclass;
+			}
+			IApiType ints[] = type.getSuperInterfaces();
+			for (int i = 0; i < ints.length; i++) {
+				IApiType superint = getDefaultDefined(ints[i], name, signature, false);
+				if (superint != null) {
+					return superint;
+				}
+			}
+		}
+		return null;
+	}
+	
+	
+
 }

@@ -8,17 +8,16 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package x.y.z;
+package i;
 
-import i.INoOverrideInterface2;
+import org.eclipse.pde.api.tools.annotations.NoReference;
 
-/**
- * Test no overriding (pde annotation)  restricted default methods
- */
-public class test5 implements INoOverrideInterface2 {
-
-	@Override
-	public void m1() {
-		int a=0;
+public interface INoRefJavadocDefaultInterface2 {
+	/**
+	 * @noreference This method is not intended to be referenced by clients.
+	 *
+	 */
+	default public void m1() {
+		
 	}
 }

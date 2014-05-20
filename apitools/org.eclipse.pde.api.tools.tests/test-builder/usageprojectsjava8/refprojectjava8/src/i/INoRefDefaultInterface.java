@@ -15,7 +15,7 @@ import org.eclipse.pde.api.tools.annotations.NoReference;
 @NoReference
 public interface INoRefDefaultInterface {
 
-	default void m1() {
+	default public void m1() {
 		
 	}
 }

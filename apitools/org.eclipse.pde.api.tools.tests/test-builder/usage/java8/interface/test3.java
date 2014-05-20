@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) Apr 2, 2014 IBM Corporation and others.
+ * Copyright (c) May 16, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,7 @@ import i.INoRefDefaultInterface2;
  */
 public class test3 implements INoRefDefaultInterface2 {
 
-	test3() {
+	public void test3() {
 		m1(); 
 	}
 }

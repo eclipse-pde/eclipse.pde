@@ -43,7 +43,7 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 
 
 	/**
-	 * Tests  implementing an interface with a default method and calling
+	 * Tests implementing an interface with no ref anno with a default method and calling
 	 * it(full)
 	 */
 	public void testNoRefAnnotationOnInterfaceWithDefaultMethodF() {
@@ -51,8 +51,8 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	}
 
 	/**
-	 * Tests  implementing an interface with a default method and calling
-	 * it (incremental)
+	 * Tests implementing an interface with no ref anno with a default method and calling it
+	 * (incremental)
 	 */
 	public void testNoRefAnnotationOnInterfaceWithDefaultMethodI() {
 		x1(true);
@@ -61,8 +61,8 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	private void x1(boolean inc) {
 		int[] pids = new int[] {
 
-				getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD) };
-		
+		getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD) };
+
 		setExpectedProblemIds(pids);
 		String typename = "test1"; //$NON-NLS-1$
 
@@ -71,22 +71,21 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 
 		};
 		setExpectedMessageArgs(args);
-		setExpectedLineMappings(new LineMapping[] {
-				new LineMapping(20, pids[0], args[0])
+		setExpectedLineMappings(new LineMapping[] { new LineMapping(20, pids[0], args[0])
 
 		});
 		deployUsageTest(typename, inc);
 	}
 
 	/**
-	 * Tests  an interface ref for a restricted default method (full)
+	 * Tests an interface with no ref anno for a restricted default method - 2 (full)
 	 */
 	public void testNoRefAnnotationOnInterfaceWithDefaultMethod2F() {
 		x2(false);
 	}
 
 	/**
-	 * Tests an interface ref for a restricted default method (incremental)
+	 * Tests an interface with no ref anno for a restricted default method - 2(incremental)
 	 */
 	public void testNoRefAnnotationOnInterfaceWithDefaultMethod2I() {
 		x2(true);
@@ -119,7 +118,7 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	}
 
 	/**
-	 * Tests an impl and direct ref to a restricted default method (incremental)
+	 * Tests an impl and direct ref to a restricted default method ( with no ref) (incremental)
 	 */
 	public void testNoRefAnnotationDefaultMethodI() {
 		x3(true);
@@ -145,7 +144,7 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 	}
 
 	/**
-	 * Tests an impl and interface ref to a restricted default method (full)
+	 * Tests an impl and interface ref to a restricted default method (with no ref) (full)
 	 */
 	public void testNoRefAnnotationDefaultMethod2F() {
 		x4(false);
@@ -178,35 +177,322 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 		deployUsageTest(typename, inc);
 	}
 
-	// TODO uncomment this after fixing bug below.
-	// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=433528
-	// there should be 1 error
-	// /**
-	// * Tests no overriding restricted default methods (full)
-	// */
-	// public void testOverrideDefaultMethodF() {
-	// x5(false);
-	// }
-	//
-	// /**
-	// * Test no overriding restricted default methods (incremental)
-	// */
-	// public void testOverrideDefaultMethodI() {
-	// x5(true);
-	// }
-	//
-	// private void x5(boolean inc) {
-	// int[] pids = null;
-	//
-	// setExpectedProblemIds(pids);
-	//		String typename = "test5"; //$NON-NLS-1$
-	//
-	// String[][] args = null;
-	// setExpectedMessageArgs(args);
-	// setExpectedLineMappings(null);
-	// deployUsageTest(typename, inc);
-	// }
+	/**
+	 * Tests no overriding restricted default methods  (full)
+	 */
+	public void testOverrideDefaultMethodF() {
+		x5(false);
+	}
 
-	// TODO to add javadoc tag test cases
+	/**
+	 * Test no overriding restricted default methods  (incremental)
+	 */
+	public void testOverrideDefaultMethodI() {
+		x5(true);
+	}
+
+	private void x5(boolean inc) {
+		int[] pids = new int[] { getProblemId(IApiProblem.ILLEGAL_OVERRIDE, IApiProblem.NO_FLAGS) };
+
+		setExpectedProblemIds(pids);
+		String typename = "test5"; //$NON-NLS-1$
+
+		String[][] args = new String[][] { {
+				"INoOverrideInterface2", typename, "m1()" } //$NON-NLS-1$//$NON-NLS-2$
+
+		};
+		setExpectedMessageArgs(args);
+		setExpectedLineMappings(new LineMapping[] { new LineMapping(21, pids[0], args[0]) });
+		deployUsageTest(typename, inc);
+	}
+
+	/**
+	 * Tests no overriding restricted default methods via inherited interface
+	 * (full)
+	 */
+	public void testOverrideDefaultMethodInheritedF() {
+		x6(false);
+	}
+
+	/**
+	 * Test no overriding restricted default methods via inherited
+	 * interface(incremental)
+	 */
+	public void testOverrideDefaultMethodInheritedI() {
+		x6(true);
+	}
+
+	private void x6(boolean inc) {
+		int[] pids = new int[] { getProblemId(IApiProblem.ILLEGAL_OVERRIDE, IApiProblem.NO_FLAGS) };
+
+		setExpectedProblemIds(pids);
+		String typename = "test6"; //$NON-NLS-1$
+
+		String[][] args = new String[][] { {
+				"INoOverrideInterface2", typename, "m1()" } //$NON-NLS-1$//$NON-NLS-2$
+
+		};
+		setExpectedMessageArgs(args);
+		setExpectedLineMappings(new LineMapping[] { new LineMapping(22, pids[0], args[0]) });
+		deployUsageTest(typename, inc);
+	}
+
+	/**
+	 * Tests no overriding restricted default methods via multiple inherited
+	 * interface (full)
+	 */
+	public void testOverrideDefaultMethodMultipleInheritedF() {
+		x7(false);
+	}
+
+	/**
+	 * Test no overriding restricted default methods via multiple inherited
+	 * interface(incremental)
+	 */
+	public void testOverrideDefaultMethodMultipleInheritedI() {
+		x7(true);
+	}
+
+	private void x7(boolean inc) {
+		int[] pids = new int[] { getProblemId(IApiProblem.ILLEGAL_OVERRIDE, IApiProblem.NO_FLAGS) };
+
+		setExpectedProblemIds(pids);
+		String typename = "test7"; //$NON-NLS-1$
+
+		String[][] args = new String[][] { {
+				"INoOverrideInterface2", typename, "m1()" } //$NON-NLS-1$//$NON-NLS-2$
+
+		};
+		setExpectedMessageArgs(args);
+		setExpectedLineMappings(new LineMapping[] { new LineMapping(23, pids[0], args[0]) });
+		deployUsageTest(typename, inc);
+	}
+
+	/**
+	 * Tests implementing an interface with noreference javadoc tag with a default method and calling
+	 * it(full)
+	 */
+	public void testNoRefJavadocTagOnInterfaceWithDefaultMethodF() {
+		x8(false);
+	}
+
+	/**
+	 * Tests implementing an interface  with noreference javadoc tag with a default method and calling it
+	 * (incremental)
+	 */
+	public void testNoRefJavadocTagOnInterfaceWithDefaultMethodI() {
+		x8(true);
+	}
+
+	private void x8(boolean inc) {
+		int[] pids = new int[] {
+
+		getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD) };
+
+		setExpectedProblemIds(pids);
+		String typename = "test8"; //$NON-NLS-1$
+
+		String[][] args = new String[][] { {
+				"INoRefJavadocDefaultInterface", typename, "m1()" } //$NON-NLS-1$//$NON-NLS-2$
+
+		};
+		setExpectedMessageArgs(args);
+		setExpectedLineMappings(new LineMapping[] { new LineMapping(20, pids[0], args[0])
+
+		});
+		deployUsageTest(typename, inc);
+	}
+
+	/**
+	 * Tests an interface ref (( javadoc tag) for a restricted default method - 2 (full)
+	 */
+	public void testNoRefJavadocOnInterfaceWithDefaultMethod2F() {
+		x9(false);
+	}
+
+	/**
+	 * Tests an interface ref (( javadoc tag) for a restricted default method - 2 (incremental)
+	 */
+	public void testNoRefJavadocOnInterfaceWithDefaultMethod2I() {
+		x9(true);
+	}
+
+	private void x9(boolean inc) {
+		int[] pids = new int[] {
+
+		getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD) };
+
+		setExpectedProblemIds(pids);
+		String typename = "test9"; //$NON-NLS-1$
+
+		String[][] args = new String[][] { {
+				"INoRefJavadocDefaultInterface", typename, "m1()" } //$NON-NLS-1$//$NON-NLS-2$
+
+		};
+		setExpectedMessageArgs(args);
+		setExpectedLineMappings(new LineMapping[] { new LineMapping(22, pids[0], args[0])
+
+		});
+		deployUsageTest(typename, inc);
+	}
+
+	/**
+	 * Tests an impl and direct ref to a restricted default method (no ref javadoc tag on method)(full)
+	 */
+	public void testNoRefJavadocDefaultMethodF() {
+		x10(false);
+	}
+
+	/**
+	 * Tests an impl and direct ref to a restricted default method  (no ref javadoc tag on method)(incremental)
+	 */
+	public void testNoRefJavadocDefaultMethodI() {
+		x10(true);
+	}
+
+	private void x10(boolean inc) {
+		int[] pids = new int[] {
+
+		getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD) };
+
+		setExpectedProblemIds(pids);
+		String typename = "test10"; //$NON-NLS-1$
+
+		String[][] args = new String[][] { {
+				"INoRefJavadocDefaultInterface2", typename, "m1()" } //$NON-NLS-1$//$NON-NLS-2$
+
+		};
+		setExpectedMessageArgs(args);
+		setExpectedLineMappings(new LineMapping[] { new LineMapping(21, pids[0], args[0])
+
+		});
+		deployUsageTest(typename, inc);
+	}
+
+	/**
+	 * Tests an impl and interface ref to a restricted default method  (no ref javadoc tag on method)(full)
+	 */
+	public void testNoRefJavadocDefaultMethod2F() {
+		x11(false);
+	}
+
+	/**
+	 * Tests an impl and interface ref to a restricted default method (no ref javadoc tag on method)s
+	 * (incremental)
+	 */
+	public void testNoRefjavadocDefaultMethod2I() {
+		x11(true);
+	}
+
+	private void x11(boolean inc) {
+		int[] pids = new int[] {
+
+		getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD) };
+
+		setExpectedProblemIds(pids);
+		String typename = "test11"; //$NON-NLS-1$
+
+		String[][] args = new String[][] { {
+				"INoRefJavadocDefaultInterface2", typename, "m1()" } //$NON-NLS-1$//$NON-NLS-2$
+
+		};
+		setExpectedMessageArgs(args);
+		setExpectedLineMappings(new LineMapping[] { new LineMapping(22, pids[0], args[0])
+
+		});
+		deployUsageTest(typename, inc);
+	}
+
+	/**
+	 * Tests no overriding (javadoc tag) restricted default methods (full)
+	 */
+	public void testOverrideJavadocDefaultMethodF() {
+		x12(false);
+	}
+
+	/**
+	 * Test no overriding  (javadoc tag) restricted default methods (incremental)
+	 */
+	public void testOverrideJavadocDefaultMethodI() {
+		x12(true);
+	}
+
+	private void x12(boolean inc) {
+		int[] pids = new int[] { getProblemId(IApiProblem.ILLEGAL_OVERRIDE, IApiProblem.NO_FLAGS) };
+
+		setExpectedProblemIds(pids);
+		String typename = "test12"; //$NON-NLS-1$
+
+		String[][] args = new String[][] { {
+				"INoOverrideJavadocInterface2", typename, "m1()" } //$NON-NLS-1$//$NON-NLS-2$
+
+		};
+		setExpectedMessageArgs(args);
+		setExpectedLineMappings(new LineMapping[] { new LineMapping(21, pids[0], args[0]) });
+		deployUsageTest(typename, inc);
+	}
+
+	/**
+	 * Tests no overriding  (javadoc tag) restricted default methods via inherited interface
+	 * (full)
+	 */
+	public void testOverrideJavadocDefaultMethodInheritedF() {
+		x13(false);
+	}
+
+	/**
+	 * Test no overriding  (javadoc tag) restricted default methods via inherited
+	 * interface(incremental)
+	 */
+	public void testOverrideJavadocDefaultMethodInheritedI() {
+		x13(true);
+	}
+
+	private void x13(boolean inc) {
+		int[] pids = new int[] { getProblemId(IApiProblem.ILLEGAL_OVERRIDE, IApiProblem.NO_FLAGS) };
+
+		setExpectedProblemIds(pids);
+		String typename = "test13"; //$NON-NLS-1$
+
+		String[][] args = new String[][] { {
+				"INoOverrideJavadocInterface2", typename, "m1()" } //$NON-NLS-1$//$NON-NLS-2$
+
+		};
+		setExpectedMessageArgs(args);
+		setExpectedLineMappings(new LineMapping[] { new LineMapping(22, pids[0], args[0]) });
+		deployUsageTest(typename, inc);
+	}
+
+	/**
+	 * Tests no overriding  (javadoc tag) restricted default methods via multiple inherited
+	 * interface (full)
+	 */
+	public void testOverrideJavadocDefaultMethodMultipleInheritedF() {
+		x14(false);
+	}
+
+	/**
+	 * Test no overriding restricted default methods via multiple inherited
+	 * interface(incremental)
+	 */
+	public void testOverrideJavadocDefaultMethodMultipleInheritedI() {
+		x14(true);
+	}
+
+	private void x14(boolean inc) {
+		int[] pids = new int[] { getProblemId(IApiProblem.ILLEGAL_OVERRIDE, IApiProblem.NO_FLAGS) };
+
+		setExpectedProblemIds(pids);
+		String typename = "test14"; //$NON-NLS-1$
+
+		String[][] args = new String[][] { {
+				"INoOverrideJavadocInterface2", typename, "m1()" } //$NON-NLS-1$//$NON-NLS-2$
+
+		};
+		setExpectedMessageArgs(args);
+		setExpectedLineMappings(new LineMapping[] { new LineMapping(23, pids[0], args[0]) });
+		deployUsageTest(typename, inc);
+	}
+
 
 }

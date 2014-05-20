@@ -10,12 +10,14 @@
  *******************************************************************************/
 package x.y.z;
 
-import i.INoOverrideInterface2;
+import i.INoOverrideJavadocInterface3;
+import i.INoOverrideInterface4;
 
 /**
- * Test no overriding (pde annotation)  restricted default methods
+ * Test no overriding (javadoc) restricted default methods via multiple inheritance
  */
-public class test5 implements INoOverrideInterface2 {
+public class test14 implements INoOverrideInterface4,INoOverrideJavadocInterface3 {
+
 
 	@Override
 	public void m1() {

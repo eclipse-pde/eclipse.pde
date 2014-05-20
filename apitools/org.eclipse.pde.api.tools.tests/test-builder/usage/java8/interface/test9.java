@@ -10,15 +10,15 @@
  *******************************************************************************/
 package x.y.z;
 
-import i.INoOverrideInterface2;
+import i.INoRefJavadocDefaultInterface;
 
 /**
- * Test no overriding (pde annotation)  restricted default methods
+ * Tests an interface ref for a restricted default method
  */
-public class test5 implements INoOverrideInterface2 {
+public class test9 implements INoRefJavadocDefaultInterface {
 
-	@Override
-	public void m1() {
-		int a=0;
+	public static void main(String[] args) {
+		INoRefJavadocDefaultInterface two = new test9();
+		two.m1();
 	}
 }
