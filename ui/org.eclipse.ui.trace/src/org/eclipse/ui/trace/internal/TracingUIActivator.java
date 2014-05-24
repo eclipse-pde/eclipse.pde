@@ -13,6 +13,7 @@ package org.eclipse.ui.trace.internal;
 import java.io.File;
 import java.util.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.osgi.service.runnable.StartupMonitor;
 import org.eclipse.ui.trace.internal.utils.*;
 import org.osgi.framework.BundleContext;
@@ -57,7 +58,8 @@ public class TracingUIActivator extends Plugin {
 			// bug 395632: see if the instance location is defined.  if not then defer accessing
 			// the preferences until it is defined by being notified via the org.eclipse.osgi.service.runnable.StartupMonitor
 			// service
-			if (!Platform.getInstanceLocation().isSet()) {
+			Location instanceLocation = Platform.getInstanceLocation();
+			if (instanceLocation == null || !instanceLocation.isSet()) {
 				// register a startup monitor to notify us when the application is running
 				final TracingStartupMonitor startupMonitor = new TracingStartupMonitor();
 				final Dictionary<String, ?> properties = new Hashtable<String, Object>(1);
