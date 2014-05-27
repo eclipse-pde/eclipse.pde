@@ -156,6 +156,7 @@ public class OverviewPage extends LaunchShortcutOverviewPage {
 			}
 			FormText warningText = createClient(container, content, toolkit);
 			warningText.setImage("warning", lp.get(PDEPluginImages.DESC_WARNING_ST_OBJ, 0)); //$NON-NLS-1$
+			warningText.setImage("error", lp.get(PDEPluginImages.DESC_ERROR_ST_OBJ, 0)); //$NON-NLS-1$
 		}
 
 		FormText text = createClient(container, isFragment() ? PDEUIMessages.OverviewPage_fContent : PDEUIMessages.OverviewPage_content, toolkit);
