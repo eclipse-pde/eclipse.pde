@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *    G&H Softwareentwicklung GmbH - internationalization implementation (bug 150933)
  *    Prosyst - create proper OSGi bundles (bug 174157)
  *    Felix Riegger (SAP AG) - consolidation of publishers for PDE formats (bug 331974)
+ *    Rapicorp, Inc - Specify download stats URL and type of artifacts to monitor in category.xml (bug 436872)  
  *******************************************************************************/
 package org.eclipse.pde.internal.build;
 
@@ -181,6 +182,7 @@ public class AssembleConfigScriptGenerator extends AbstractScriptGenerator {
 			script.printTab();
 			script.print("<p2.mirror "); //$NON-NLS-1$
 			script.printAttribute("source", Utils.getPropertyFormat(PROPERTY_P2_BUILD_REPO), true); //$NON-NLS-1$
+			script.printAttribute("mirrorProperties", TRUE, true); //$NON-NLS-1$
 			script.println(">"); //$NON-NLS-1$
 			script.printTab();
 			script.print("\t<destination "); //$NON-NLS-1$
