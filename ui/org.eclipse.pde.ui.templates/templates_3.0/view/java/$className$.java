@@ -253,6 +253,7 @@ public class $className$ extends ViewPart {
 		// Create the help context id for the viewer's control
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(viewer.getControl(), "$pluginId$.viewer");
 %endif
+		getSite().setSelectionProvider(viewer);
 		makeActions();
 		hookContextMenu();
 		hookDoubleClickAction();
