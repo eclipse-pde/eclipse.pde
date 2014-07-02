@@ -365,6 +365,12 @@ public class IUBundleContainer extends AbstractBundleContainer {
 				}
 			}
 		}
+		if (updated) {
+			// Increase the sequence number to reload the p2 locations
+			if (fTarget instanceof TargetDefinition) {
+				((TargetDefinition) fTarget).incrementSequenceNumber();
+			}
+		}
 		if (!updated) {
 			// Things have changed so mark the container as unresolved
 			clearResolutionStatus();
