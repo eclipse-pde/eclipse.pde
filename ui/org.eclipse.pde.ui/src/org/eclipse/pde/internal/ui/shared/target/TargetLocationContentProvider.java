@@ -12,11 +12,11 @@ package org.eclipse.pde.internal.ui.shared.target;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.pde.core.target.ITargetDefinition;
-import org.eclipse.pde.core.target.ITargetLocation;
+import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.internal.ui.shared.target.IUContentProvider.IUWrapper;
 
 /**
@@ -41,7 +41,8 @@ public class TargetLocationContentProvider implements ITreeContentProvider {
 					return new Object[] {status};
 				}
 				if (isShowLocationContent()) {
-					return location.getBundles();
+					TargetBundle[] bundles = location.getBundles();
+					return bundles != null ? bundles : new Object[0];
 				} else if (!status.isOK()) {
 					// Show multi-status children so user can easily see problems
 					if (status.isMultiStatus()) {
@@ -51,7 +52,8 @@ public class TargetLocationContentProvider implements ITreeContentProvider {
 					// Always check for provider last to avoid hurting performance
 					ITreeContentProvider provider = (ITreeContentProvider) Platform.getAdapterManager().getAdapter(parentElement, ITreeContentProvider.class);
 					if (provider != null) {
-						return provider.getChildren(parentElement);
+						Object[] provided = provider.getChildren(parentElement);
+						return provided != null ? provided : new Object[0];
 					}
 				}
 			}
@@ -60,7 +62,8 @@ public class TargetLocationContentProvider implements ITreeContentProvider {
 		} else {
 			ITreeContentProvider provider = (ITreeContentProvider) Platform.getAdapterManager().getAdapter(parentElement, ITreeContentProvider.class);
 			if (provider != null) {
-				return provider.getChildren(parentElement);
+				Object[] provided = provider.getChildren(parentElement);
+				return provided != null ? provided : new Object[0];
 			}
 		}
 		return new Object[0];
