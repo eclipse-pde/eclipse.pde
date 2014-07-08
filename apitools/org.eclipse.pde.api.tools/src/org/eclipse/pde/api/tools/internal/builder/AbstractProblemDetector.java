@@ -464,7 +464,8 @@ public abstract class AbstractProblemDetector implements IApiProblemDetector {
 					c = line.charAt(--offset);
 				}
 			}
-			return offset++;
+			offset++;
+			return offset;
 		} else {
 			int start = line.indexOf(namepart, index);
 			if (start < 0) {
