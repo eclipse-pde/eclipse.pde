@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 IBM Corporation and others.
+ * Copyright (c) 2005, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,6 +30,9 @@ import org.xml.sax.SAXException;
 
 public class ExtensionsErrorReporter extends ManifestErrorReporter {
 
+	/**
+	 * PDE model object for the project. May be <code>null</code> if there is no backing model.
+	 */
 	private IPluginModelBase fModel;
 	private IBuild fBuildModel;
 
@@ -88,9 +91,11 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 				}
 			}
 
+			if (fModel != null) {
 			IExtensions extensions = fModel.getExtensions();
 			if (extensions != null && extensions.getExtensions().length == 0 && extensions.getExtensionPoints().length == 0)
 				report(PDECoreMessages.Builders_Manifest_useless_file, -1, IMarker.SEVERITY_WARNING, PDEMarkerFactory.P_USELESS_FILE, PDEMarkerFactory.CAT_OTHER);
+			}
 		}
 	}
 
@@ -212,6 +217,8 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 		if (schemaElement instanceof ISchemaRootElement) {
 			ISchemaRootElement rootElement = (ISchemaRootElement) schemaElement;
 			String epid = schemaElement.getSchema().getPluginId();
+			if (fModel == null || fModel.getPluginBase() == null)
+				return;
 			String pid = fModel.getPluginBase().getId();
 			if (epid == null || pid == null)
 				return;
@@ -547,6 +554,9 @@ public class ExtensionsErrorReporter extends ManifestErrorReporter {
 
 		severity = CompilerFlags.getFlag(fProject, CompilerFlags.P_DISCOURAGED_CLASS);
 		if (severity != CompilerFlags.IGNORE && javaProject.isOpen()) {
+			if (fModel == null) {
+				return;
+			}
 			BundleDescription desc = fModel.getBundleDescription();
 			if (desc == null)
 				return;
