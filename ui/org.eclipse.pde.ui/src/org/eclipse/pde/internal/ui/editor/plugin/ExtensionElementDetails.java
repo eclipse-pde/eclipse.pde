@@ -253,12 +253,12 @@ public class ExtensionElementDetails extends AbstractPluginElementDetails {
 			String label = null;
 			if (0 == input.getAttributeCount()) {
 				label = PDEUIMessages.ExtensionElementDetails_descNoAttributes;
-			} else if (schemaElement.hasDeprecatedAttributes()) {
+			} else if (schemaElement != null && schemaElement.hasDeprecatedAttributes()) {
 				label = NLS.bind(PDEUIMessages.ExtensionElementDetails_setDescDepr, iname);
 			} else {
 				label = NLS.bind(PDEUIMessages.ExtensionElementDetails_setDesc, iname);
 			}
-			if (schemaElement.isDeprecated()) {
+			if (schemaElement != null && schemaElement.isDeprecated()) {
 				label += "\n\n"; //$NON-NLS-1$
 				label += NLS.bind(PDEUIMessages.ElementIsDeprecated, iname);
 			}
