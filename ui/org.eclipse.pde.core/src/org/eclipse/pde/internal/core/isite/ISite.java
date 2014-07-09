@@ -28,6 +28,8 @@ public interface ISite extends ISiteObject {
 
 	String P_ASSOCIATE_SITES_URL = "associateSitesURL"; //$NON-NLS-1$
 
+	String P_STATS = "stats"; //$NON-NLS-1$
+
 	void setType(String type) throws CoreException;
 
 	String getType();
@@ -81,6 +83,10 @@ public interface ISite extends ISiteObject {
 	ISiteCategoryDefinition[] getCategoryDefinitions();
 
 	IRepositoryReference[] getRepositoryReferences();
+
+	IStatsInfo getStatsInfo();
+
+	void setStatsInfo(IStatsInfo info) throws CoreException;
 
 	boolean isValid();
 

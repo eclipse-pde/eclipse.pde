@@ -80,4 +80,11 @@ public interface ISiteModelFactory {
 	 */
 	IRepositoryReference createRepositoryReference();
 
+	/**
+	 * Creates a new stats info.
+	 * 
+	 * @return a new stats info
+	 */
+	IStatsInfo createStatsInfo();
+
 }

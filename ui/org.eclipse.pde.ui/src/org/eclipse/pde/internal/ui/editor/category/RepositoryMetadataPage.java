@@ -53,5 +53,6 @@ public class RepositoryMetadataPage extends PDEFormPage {
 		body.setLayout(FormLayoutFactory.createFormGridLayout(false, 1));
 
 		managedForm.addPart(new RepositoryReferenceSection(this, body));
+		managedForm.addPart(new DownloadStatsSection(this, body));
 	}
 }

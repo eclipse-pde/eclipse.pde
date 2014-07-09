@@ -91,4 +91,14 @@ public class SiteModelFactory implements ISiteModelFactory {
 		return archive;
 	}
 
+	/**
+	 * @see org.eclipse.pde.internal.core.isite.ISiteModelFactory#createStatsInfo()
+	 */
+	public IStatsInfo createStatsInfo() {
+		StatsInfo info = new StatsInfo();
+		info.model = model;
+		info.parent = model.getSite();
+		return info;
+	}
+
 }

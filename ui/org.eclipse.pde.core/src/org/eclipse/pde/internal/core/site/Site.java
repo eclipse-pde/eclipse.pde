@@ -36,6 +36,7 @@ public class Site extends SiteObject implements ISite {
 	private String digestUrl;
 	private String associateSitesUrl;
 	private ISiteDescription description;
+	private IStatsInfo statsInfo;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.isite.ISite#setType(java.lang.String)
@@ -304,6 +305,23 @@ public class Site extends SiteObject implements ISite {
 		return repositoryReferences.toArray(new IRepositoryReference[repositoryReferences.size()]);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.isite.ISite#getStatsInfo()
+	 */
+	public IStatsInfo getStatsInfo() {
+		return statsInfo;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.isite.ISite#setStatsInfo(org.eclipse.pde.internal.core.isite.IStatsInfo)
+	 */
+	public void setStatsInfo(IStatsInfo info) throws CoreException {
+		ensureModelEditable();
+		Object oldValue = this.statsInfo;
+		this.statsInfo = info;
+		firePropertyChanged(P_STATS, oldValue, info);
+	}
+
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.site.SiteObject#reset()
@@ -321,6 +339,7 @@ public class Site extends SiteObject implements ISite {
 		digestUrl = null;
 		associateSitesUrl = null;
 		repositoryReferences = null;
+		statsInfo = null;
 	}
 
 	/* (non-Javadoc)
@@ -369,6 +388,11 @@ public class Site extends SiteObject implements ISite {
 			((RepositoryReference) ref).parse(child);
 			((RepositoryReference) ref).setInTheModel(true);
 			repositoryReferences.add(ref);
+		} else if (tag.equals("stats")) { //$NON-NLS-1$
+			IStatsInfo info = getModel().getFactory().createStatsInfo();
+			((StatsInfo) info).parse(child);
+			((StatsInfo) info).setInTheModel(true);
+			statsInfo = info;
 		} else if (tag.equals(P_DESCRIPTION)) {
 			if (description != null)
 				return;
@@ -410,6 +434,10 @@ public class Site extends SiteObject implements ISite {
 
 		if (description != null) {
 			description.write(indent2, writer);
+		}
+
+		if (statsInfo != null) {
+			statsInfo.write(indent2, writer);
 		}
 		writeChildren(indent2, features, writer);
 		writeChildren(indent2, bundles, writer);

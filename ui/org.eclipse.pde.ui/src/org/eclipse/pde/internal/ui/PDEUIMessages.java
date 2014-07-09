@@ -1750,6 +1750,13 @@ public class PDEUIMessages extends NLS {
 	public static String RepositorySection_edit;
 	public static String RepositorySection_remove;
 	public static String RepositorySection_removeAll;
+	public static String StatsSection_title;
+	public static String StatsSection_description;
+	public static String StatsSection_url;
+	public static String StatsSection_addFeature;
+	public static String StatsSection_addBundle;
+	public static String StatsSection_remove;
+	public static String StatsSection_removeAll;
 
 	// Site Editor #########################################
 	public static String CategorySection_title;
