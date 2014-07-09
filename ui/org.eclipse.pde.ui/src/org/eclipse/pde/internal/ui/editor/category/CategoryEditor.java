@@ -82,6 +82,7 @@ public class CategoryEditor extends PDEFormEditor {
 	protected void addEditorPages() {
 		try {
 			addPage(new IUsPage(this));
+			addPage(new RepositoryMetadataPage(this));
 		} catch (PartInitException e) {
 			PDEPlugin.logException(e);
 		}

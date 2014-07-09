@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core.isite;
 
+
 /**
  * This model factory should be used to create
  * model objects of the feature model.
@@ -71,5 +72,12 @@ public interface ISiteModelFactory {
 	 * @return a new feature install handler.
 	 */
 	ISiteArchive createArchive();
+
+	/**
+	 *  Creates a new repository reference.
+	 *  
+	 * @return a new repository reference.
+	 */
+	IRepositoryReference createRepositoryReference();
 
 }

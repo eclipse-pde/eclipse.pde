@@ -1743,6 +1743,13 @@ public class PDEUIMessages extends NLS {
 	public static String CategoryDefinitionCategorySection_title;
 	public static String CategoryDefinitionCategorySection_new;
 	public static String CategoryDefinitionCategorySection_desc;
+	public static String RepositoryPage_title;
+	public static String RepositorySection_title;
+	public static String RepositorySection_description;
+	public static String RepositorySection_add;
+	public static String RepositorySection_edit;
+	public static String RepositorySection_remove;
+	public static String RepositorySection_removeAll;
 
 	// Site Editor #########################################
 	public static String CategorySection_title;

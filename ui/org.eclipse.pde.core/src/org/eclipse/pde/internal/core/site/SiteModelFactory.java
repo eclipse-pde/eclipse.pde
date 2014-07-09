@@ -64,6 +64,13 @@ public class SiteModelFactory implements ISiteModelFactory {
 		return def;
 	}
 
+	public IRepositoryReference createRepositoryReference() {
+		RepositoryReference repo = new RepositoryReference();
+		repo.model = model;
+		repo.parent = model.getSite();
+		return repo;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.isite.ISiteModelFactory#createDescription(org.eclipse.pde.internal.core.isite.ISiteObject)
 	 */

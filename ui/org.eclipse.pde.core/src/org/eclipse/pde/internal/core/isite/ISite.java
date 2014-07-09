@@ -60,6 +60,8 @@ public interface ISite extends ISiteObject {
 
 	void addCategoryDefinitions(ISiteCategoryDefinition[] defs) throws CoreException;
 
+	void addRepositoryReferences(IRepositoryReference[] repositories) throws CoreException;
+
 	void removeFeatures(ISiteFeature[] features) throws CoreException;
 
 	void removeBundles(ISiteBundle[] bundles) throws CoreException;
@@ -67,6 +69,8 @@ public interface ISite extends ISiteObject {
 	void removeArchives(ISiteArchive[] archives) throws CoreException;
 
 	void removeCategoryDefinitions(ISiteCategoryDefinition[] defs) throws CoreException;
+
+	void removeRepositoryReferences(IRepositoryReference[] repositories) throws CoreException;
 
 	ISiteFeature[] getFeatures();
 
@@ -76,5 +80,8 @@ public interface ISite extends ISiteObject {
 
 	ISiteCategoryDefinition[] getCategoryDefinitions();
 
+	IRepositoryReference[] getRepositoryReferences();
+
 	boolean isValid();
+
 }

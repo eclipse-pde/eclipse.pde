@@ -28,6 +28,8 @@ public class Site extends SiteObject implements ISite {
 	private Vector<ISiteObject> bundles = new Vector<ISiteObject>();
 	private Vector<ISiteObject> archives = new Vector<ISiteObject>();
 	private Vector<ISiteObject> categoryDefs = new Vector<ISiteObject>();
+	private Vector<ISiteObject> repositoryReferences = new Vector<ISiteObject>();
+
 	private String type;
 	private String url;
 	private String mirrorsUrl;
@@ -190,6 +192,19 @@ public class Site extends SiteObject implements ISite {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.isite.ISite#addRepositoryReferences(org.eclipse.pde.internal.core.isite.IRepositoryReference[])
+	 */
+	public void addRepositoryReferences(IRepositoryReference[] repos) throws CoreException {
+		ensureModelEditable();
+		for (int i = 0; i < repos.length; i++) {
+			IRepositoryReference repo = repos[i];
+			((RepositoryReference) repo).setInTheModel(true);
+			repositoryReferences.add(repos[i]);
+		}
+		fireStructureChanged(repos, IModelChangedEvent.INSERT);
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.isite.ISite#removeFeatures(org.eclipse.pde.internal.core.isite.ISiteFeature[])
 	 */
 	public void removeFeatures(ISiteFeature[] newFeatures) throws CoreException {
@@ -242,6 +257,19 @@ public class Site extends SiteObject implements ISite {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.isite.ISite#removeRepositoryReferences(org.eclipse.pde.internal.core.isite.IRepositoryReference[])
+	 */
+	public void removeRepositoryReferences(IRepositoryReference[] repos) throws CoreException {
+		ensureModelEditable();
+		for (int i = 0; i < repos.length; i++) {
+			IRepositoryReference repo = repos[i];
+			((RepositoryReference) repo).setInTheModel(false);
+			repositoryReferences.remove(repos[i]);
+		}
+		fireStructureChanged(repos, IModelChangedEvent.REMOVE);
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.isite.ISite#getFeatures()
 	 */
 	public ISiteFeature[] getFeatures() {
@@ -270,6 +298,14 @@ public class Site extends SiteObject implements ISite {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.pde.internal.core.isite.ISite#getRepositoryReferences()
+	 */
+	public IRepositoryReference[] getRepositoryReferences() {
+		return repositoryReferences.toArray(new IRepositoryReference[repositoryReferences.size()]);
+	}
+
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.site.SiteObject#reset()
 	 */
 	@Override
@@ -284,6 +320,7 @@ public class Site extends SiteObject implements ISite {
 		mirrorsUrl = null;
 		digestUrl = null;
 		associateSitesUrl = null;
+		repositoryReferences = null;
 	}
 
 	/* (non-Javadoc)
@@ -327,6 +364,11 @@ public class Site extends SiteObject implements ISite {
 			((SiteCategoryDefinition) def).parse(child);
 			((SiteCategoryDefinition) def).setInTheModel(true);
 			categoryDefs.add(def);
+		} else if (tag.equals("repository-reference")) { //$NON-NLS-1$
+			IRepositoryReference ref = getModel().getFactory().createRepositoryReference();
+			((RepositoryReference) ref).parse(child);
+			((RepositoryReference) ref).setInTheModel(true);
+			repositoryReferences.add(ref);
 		} else if (tag.equals(P_DESCRIPTION)) {
 			if (description != null)
 				return;
@@ -373,6 +415,7 @@ public class Site extends SiteObject implements ISite {
 		writeChildren(indent2, bundles, writer);
 		writeChildren(indent2, archives, writer);
 		writeChildren(indent2, categoryDefs, writer);
+		writeChildren(indent2, repositoryReferences, writer);
 		writer.println(indent + "</site>"); //$NON-NLS-1$
 	}
 
@@ -395,6 +438,11 @@ public class Site extends SiteObject implements ISite {
 		for (int i = 0; i < categoryDefs.size(); i++) {
 			ISiteCategoryDefinition def = (ISiteCategoryDefinition) categoryDefs.get(i);
 			if (!def.isValid())
+				return false;
+		}
+		for (int i = 0; i < repositoryReferences.size(); i++) {
+			IRepositoryReference repo = (IRepositoryReference) repositoryReferences.get(i);
+			if (!repo.isValid())
 				return false;
 		}
 		return true;
