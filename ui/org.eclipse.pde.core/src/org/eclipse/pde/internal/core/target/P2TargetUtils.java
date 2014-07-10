@@ -708,14 +708,21 @@ public class P2TargetUtils {
 			return;
 		progress.setWorkRemaining(75);
 
-		// Now resolve the profile and refresh the relate IU containers
-		if (getIncludeAllRequired())
-			resolveWithPlanner(target, progress.newChild(60));
-		else
-			resolveWithSlicer(target, progress.newChild(60));
-
-		// If we are updating a profile then delete the old snapshot on success.
-		notify(target, progress.newChild(15));
+		try {
+			// Now resolve the profile and refresh the relate IU containers
+			if (getIncludeAllRequired())
+				resolveWithPlanner(target, progress.newChild(60));
+			else
+				resolveWithSlicer(target, progress.newChild(60));
+	
+			// If we are updating a profile then delete the old snapshot on success.
+			notify(target, progress.newChild(15));
+		} catch (CoreException e) {
+			// There was at least one problem getting the contents, delete the profile so we don't cache in a bad state, Bug 439034
+			// TODO ALL we really want to delete is the sequence property, so that checkProfile will compare settings and contents 
+			deleteProfile(target.getHandle());
+			throw e;
+		}
 	}
 
 	private void createProfile(ITargetDefinition target) throws CoreException, ProvisionException {
