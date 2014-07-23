@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 IBM Corporation and others.
+ * Copyright (c) 2009, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -92,9 +92,13 @@ public class CompareOperation extends Job {
 				String description = NLS.bind(ActionMessages.CompareWithAction_compared_with_against, new Object[] {
 						new Integer(size), baselineName,
 						new Integer(delta.getChildren().length) });
-				if (size == 1) {
+				if (size == 0) {
+					description = ActionMessages.CompareWithAction_compared_against_nothing;
+				} else if (size == 1) {
+					Object selectedElement = this.selection.getFirstElement();
+					String elementName = selectedElement instanceof IJavaElement ? ((IJavaElement) selectedElement).getElementName() : selectedElement.toString();
 					description = NLS.bind(ActionMessages.CompareWithAction_compared_project_with, new Object[] {
-							((IJavaElement) this.selection.getFirstElement()).getElementName(),
+							elementName,
 							baselineName,
 							new Integer(delta.getChildren().length) });
 				}
