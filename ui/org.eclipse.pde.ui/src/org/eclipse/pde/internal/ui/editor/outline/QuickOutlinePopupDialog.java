@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2011 IBM Corporation and others.
+ *  Copyright (c) 2006, 2014 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -412,7 +412,11 @@ public class QuickOutlinePopupDialog extends PopupDialog implements IInformation
 		// Get the content outline page within the content outline view
 		// and select the item there to keep the quick outline in sync with the
 		// main outline and prevent duplicate selection events from occurring
-		fOutlineSelectionHandler.getContentOutline().setSelection(new StructuredSelection(selectedElement));
+		if (fOutlineSelectionHandler.getContentOutline().getControl() == null || fOutlineSelectionHandler.getContentOutline().getControl().isDisposed()) {
+			fOutlineSelectionHandler.updateSelection(selectedElement);
+		} else {
+			fOutlineSelectionHandler.getContentOutline().setSelection(new StructuredSelection(selectedElement));
+		}
 	}
 
 	private void createUIListenersFilterText() {
