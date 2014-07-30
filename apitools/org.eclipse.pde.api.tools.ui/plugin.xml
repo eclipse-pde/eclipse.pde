@@ -540,7 +540,7 @@
                   style="push">
                <visibleWhen
                      checkEnabled="false">
-                  <iterate>
+                   <iterate ifEmpty="false">
                      <adapt
                            type="org.eclipse.jdt.core.IJavaElement">
                      </adapt>
