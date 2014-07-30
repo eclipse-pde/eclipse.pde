@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -549,15 +549,15 @@ public class PluginModelManager implements IModelProviderListener {
 		for (int i = 0; i < models.length; i++) {
 			addWorkspaceBundleToState(entries, models[i]);
 		}
-		// resolve the state incrementally if any workspace plug-ins were found
-		if (models.length > 0) {
-			fState.resolveState(true);
-		}
-		subMon.worked(20);
+
+		subMon.worked(15);
 		if (PDECore.DEBUG_MODEL) {
 			System.out.println(fWorkspaceManager.getModels().length + " workspace models created in  " + (System.currentTimeMillis() - startWorkspaceAdditions) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
+		// Resolve the state for all external and workspace models
+		fState.resolveState(true);
+		subMon.worked(5);
 		fEntries = entries;
 		// flush the extension registry cache since workspace data (BundleDescription id's) have changed.
 		PDECore.getDefault().getExtensionsRegistry().targetReloaded();
