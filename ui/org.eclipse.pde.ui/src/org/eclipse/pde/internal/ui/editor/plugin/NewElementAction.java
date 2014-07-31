@@ -33,7 +33,7 @@ public class NewElementAction extends Action {
 		this.elementInfo = elementInfo;
 		// this.project = project;
 		this.parent = parent;
-		if (elementInfo.isDeprecated()) {
+		if (elementInfo != null && elementInfo.isDeprecated()) {
 			setText(NLS.bind(PDEUIMessages.NewElement_deprecated, getElementName()));
 		} else {
 			setText(getElementName());
