@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 IBM Corporation and others.
+ * Copyright (c) 2009, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,8 @@ public class Messages extends NLS {
 	public static String ApiUsePatternTab_internal;
 	public static String ApiUsePatternTab_patterns;
 	public static String ApiUsePatternTab_patterns_title;
+	public static String ApiUsePatternTab_column_pattern;
+	public static String ApiUsePatternTab_column_kind;
 	public static String ApiUsePatternTab_provide_regex;
 	public static String ApiUsePatternTab_remove;
 	public static String ApiUsePatternTab_report;
