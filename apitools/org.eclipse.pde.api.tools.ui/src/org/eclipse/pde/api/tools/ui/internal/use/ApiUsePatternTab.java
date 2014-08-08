@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 IBM Corporation and others.
+ * Copyright (c) 2009, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -156,8 +156,9 @@ public class ApiUsePatternTab extends AbstractLaunchConfigurationTab {
 	Button addbutton = null, editbutton = null, removebutton = null;
 	ColumnLayoutData[] columndata = {
 			new ColumnWeightData(80), new ColumnWeightData(20) };
-	String[] columnnames = { "Pattern", //$NON-NLS-1$
-			"Kind" }; //$NON-NLS-1$
+	String[] columnnames = {
+			Messages.ApiUsePatternTab_column_pattern,
+			Messages.ApiUsePatternTab_column_kind };
 
 	/*
 	 * (non-Javadoc)
