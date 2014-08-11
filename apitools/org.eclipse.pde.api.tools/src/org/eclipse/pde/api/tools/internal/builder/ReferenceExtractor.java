@@ -27,6 +27,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.model.AbstractApiTypeRoot;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.builder.IReference;
+import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiField;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiMember;
@@ -122,23 +123,11 @@ public class ReferenceExtractor extends ClassVisitor {
 			this.kind = this.originalkind;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.objectweb.asm.signature.SignatureVisitor#visitClassType(java.
-		 * lang.String)
-		 */
 		@Override
 		public void visitClassType(String name) {
 			this.processType(name);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.objectweb.asm.signature.SignatureVisitor#visitFormalTypeParameter
-		 * (java.lang.String)
-		 */
 		@Override
 		public void visitFormalTypeParameter(String name) {
 			if (this.type != TYPE) {
@@ -146,32 +135,15 @@ public class ReferenceExtractor extends ClassVisitor {
 			}
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.objectweb.asm.signature.SignatureVisitor#visitTypeVariable(java
-		 * .lang.String)
-		 */
 		@Override
 		public void visitTypeVariable(String name) {
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.objectweb.asm.signature.SignatureVisitor#visitInnerClassType(
-		 * java.lang.String)
-		 */
 		@Override
 		public void visitInnerClassType(String name) {
 			this.processType(name);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.objectweb.asm.signature.SignatureVisitor#visitParameterType()
-		 */
 		@Override
 		public SignatureVisitor visitParameterType() {
 			this.argumentcount++;
@@ -179,91 +151,52 @@ public class ReferenceExtractor extends ClassVisitor {
 			return this;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.objectweb.asm.signature.SignatureVisitor#visitInterface()
-		 */
 		@Override
 		public SignatureVisitor visitInterface() {
 			this.kind = IReference.REF_IMPLEMENTS;
 			return this;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.objectweb.asm.signature.SignatureVisitor#visitExceptionType()
-		 */
 		@Override
 		public SignatureVisitor visitExceptionType() {
 			this.kind = IReference.REF_THROWS;
 			return this;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.objectweb.asm.signature.SignatureVisitor#visitArrayType()
-		 */
 		@Override
 		public SignatureVisitor visitArrayType() {
 			return this;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.objectweb.asm.signature.SignatureVisitor#visitReturnType()
-		 */
 		@Override
 		public SignatureVisitor visitReturnType() {
 			this.kind = IReference.REF_RETURNTYPE;
 			return this;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.objectweb.asm.signature.SignatureVisitor#visitClassBound()
-		 */
 		@Override
 		public SignatureVisitor visitClassBound() {
 			this.kind = IReference.REF_PARAMETERIZED_TYPEDECL;
 			return this;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.objectweb.asm.signature.SignatureVisitor#visitInterfaceBound()
-		 */
 		@Override
 		public SignatureVisitor visitInterfaceBound() {
 			this.kind = IReference.REF_PARAMETERIZED_TYPEDECL;
 			return this;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.objectweb.asm.signature.SignatureVisitor#visitSuperclass()
-		 */
 		@Override
 		public SignatureVisitor visitSuperclass() {
 			this.kind = IReference.REF_EXTENDS;
 			return this;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.objectweb.asm.signature.SignatureVisitor#visitTypeArgument(char)
-		 */
 		@Override
 		public SignatureVisitor visitTypeArgument(char wildcard) {
 			return this;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.objectweb.asm.signature.SignatureVisitor#visitEnd()
-		 */
 		@Override
 		public void visitEnd() {
 		}
@@ -319,10 +252,6 @@ public class ReferenceExtractor extends ClassVisitor {
 			this.methodName = name;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.objectweb.asm.MethodAdapter#visitEnd()
-		 */
 		@Override
 		public void visitEnd() {
 			this.implicitConstructor = false;
@@ -332,10 +261,6 @@ public class ReferenceExtractor extends ClassVisitor {
 			this.labelsToLocalMarkers = null;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.objectweb.asm.MethodAdapter#visitVarInsn(int, int)
-		 */
 		@Override
 		public void visitVarInsn(int opcode, int var) {
 			this.stringLiteral = null;
@@ -352,11 +277,6 @@ public class ReferenceExtractor extends ClassVisitor {
 			}
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.objectweb.asm.MethodAdapter#visitFieldInsn(int,
-		 * java.lang.String, java.lang.String, java.lang.String)
-		 */
 		@Override
 		public void visitFieldInsn(int opcode, String owner, String name, String desc) {
 			int refType = -1;
@@ -392,13 +312,6 @@ public class ReferenceExtractor extends ClassVisitor {
 			}
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.objectweb.asm.MethodAdapter#visitTryCatchBlock(org.objectweb.
-		 * asm.Label, org.objectweb.asm.Label, org.objectweb.asm.Label,
-		 * java.lang.String)
-		 */
 		@Override
 		public void visitTryCatchBlock(Label start, Label end, Label handler, String type) {
 			if (type != null) {
@@ -411,10 +324,6 @@ public class ReferenceExtractor extends ClassVisitor {
 			}
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.objectweb.asm.MethodAdapter#visitLabel(Label)
-		 */
 		@Override
 		public void visitLabel(Label label) {
 			this.linePositionTracker.addLabel(label);
@@ -481,9 +390,29 @@ public class ReferenceExtractor extends ClassVisitor {
 						IApiMember member = ReferenceExtractor.this.getMember();
 						if (member != null) {
 							try {
-								IApiType type = member.getEnclosingType();
-								if (type != null && getDefaultDefined(type, name, desc, false) != null) {
-									flags = IReference.F_DEFAULT_METHOD;
+								IApiComponent comp = fType.getApiComponent();
+								if (comp != null) {
+									String owner_sig = processName(owner);
+									AbstractApiTypeRoot root = (AbstractApiTypeRoot) comp.findTypeRoot(owner_sig);
+									if (root == null) {
+										// a quick look did not find it, now ask
+										// for the components that provide the
+										// package
+										IApiBaseline baseline = comp.getBaseline();
+										IApiComponent[] comps = baseline.resolvePackage(comp, Signatures.getPackageName(owner_sig));
+										for (int i = 0; i < comps.length; i++) {
+											root = (AbstractApiTypeRoot) comps[i].findTypeRoot(owner_sig);
+											if (root != null) {
+												break;
+											}
+										}
+									}
+									if (root != null) {
+										IApiType type = root.getStructure();
+										if (type != null && getDefaultDefined(type, name, desc, false) != null) {
+											flags = IReference.F_DEFAULT_METHOD;
+										}
+									}
 								}
 							} catch (CoreException ce) {
 								// do nothing, give up
@@ -526,22 +455,11 @@ public class ReferenceExtractor extends ClassVisitor {
 			}
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.objectweb.asm.MethodVisitor#visitInsnAnnotation(int,
-		 * org.objectweb.asm.TypePath, java.lang.String, boolean)
-		 */
 		@Override
 		public AnnotationVisitor visitInsnAnnotation(int typeRef, TypePath typePath, String desc, boolean visible) {
 			return null;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.objectweb.asm.MethodAdapter#visitMultiANewArrayInsn(java.lang
-		 * .String, int)
-		 */
 		@Override
 		public void visitMultiANewArrayInsn(String desc, int dims) {
 			Type type = this.getTypeFromDescription(desc);
@@ -551,21 +469,12 @@ public class ReferenceExtractor extends ClassVisitor {
 			}
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.objectweb.asm.MethodAdapter#visitLineNumber(int,
-		 * org.objectweb.asm.Label)
-		 */
 		@Override
 		public void visitLineNumber(int line, Label start) {
 			this.lastLineNumber = line;
 			this.linePositionTracker.addLineInfo(line, start);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see java.lang.Object#toString()
-		 */
 		@Override
 		public String toString() {
 			StringBuffer buffer = new StringBuffer();
@@ -597,11 +506,6 @@ public class ReferenceExtractor extends ClassVisitor {
 			return type;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.objectweb.asm.MethodAdapter#visitTypeInsn(int,
-		 * java.lang.String)
-		 */
 		@Override
 		public void visitTypeInsn(int opcode, String desc) {
 			Type type = this.getTypeFromDescription(desc);
@@ -643,13 +547,6 @@ public class ReferenceExtractor extends ClassVisitor {
 			}
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.objectweb.asm.MethodAdapter#visitLocalVariable(java.lang.String,
-		 * java.lang.String, java.lang.String, org.objectweb.asm.Label,
-		 * org.objectweb.asm.Label, int)
-		 */
 		@Override
 		public void visitLocalVariable(String name, String desc, String signature, Label start, Label end, int index) {
 			if (desc.length() == 1) {
@@ -700,10 +597,6 @@ public class ReferenceExtractor extends ClassVisitor {
 			}
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.objectweb.asm.MethodAdapter#visitLdcInsn(java.lang.Object)
-		 */
 		@Override
 		public void visitLdcInsn(Object cst) {
 			if (cst instanceof Type) {
@@ -718,12 +611,6 @@ public class ReferenceExtractor extends ClassVisitor {
 			}
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.objectweb.asm.MethodAdapter#visitAnnotation(java.lang.String,
-		 * boolean)
-		 */
 		@Override
 		public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
 			Type ctype = this.getTypeFromDescription(desc);
@@ -746,31 +633,16 @@ public class ReferenceExtractor extends ClassVisitor {
 			super(Opcodes.ASM5);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.objectweb.asm.FieldVisitor#visitAnnotation(java.lang.String,
-		 * boolean)
-		 */
 		@Override
 		public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
 			addTypeReference(Type.getType(desc), IReference.REF_ANNOTATION_USE);
 			return null;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * org.objectweb.asm.FieldVisitor#visitAttribute(org.objectweb.asm.Attribute
-		 * )
-		 */
 		@Override
 		public void visitAttribute(Attribute attr) {
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.objectweb.asm.FieldVisitor#visitEnd()
-		 */
 		@Override
 		public void visitEnd() {
 			exitMember();
@@ -972,10 +844,6 @@ public class ReferenceExtractor extends ClassVisitor {
 			this.label = label;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see java.lang.Comparable#compareTo(java.lang.Object)
-		 */
 		@Override
 		public int compareTo(Object o) {
 			return this.line - ((LineInfo) o).line;
@@ -990,10 +858,6 @@ public class ReferenceExtractor extends ClassVisitor {
 			return super.equals(obj);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * @see java.lang.Object#hashCode()
-		 */
 		@Override
 		public int hashCode() {
 			return this.line + (this.label != null ? this.label.hashCode() : 0);
@@ -1150,10 +1014,6 @@ public class ReferenceExtractor extends ClassVisitor {
 		fieldtracker = tracker;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
@@ -1358,11 +1218,6 @@ public class ReferenceExtractor extends ClassVisitor {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.objectweb.asm.ClassVisitor#visit(int, int, java.lang.String,
-	 * java.lang.String, java.lang.String, java.lang.String[])
-	 */
 	@Override
 	public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
 		this.fVersion = version;
@@ -1400,10 +1255,6 @@ public class ReferenceExtractor extends ClassVisitor {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.objectweb.asm.ClassVisitor#visitEnd()
-	 */
 	@Override
 	public void visitEnd() {
 		this.exitMember();
@@ -1418,11 +1269,6 @@ public class ReferenceExtractor extends ClassVisitor {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.objectweb.asm.ClassVisitor#visitField(int, java.lang.String,
-	 * java.lang.String, java.lang.String, java.lang.Object)
-	 */
 	@Override
 	public FieldVisitor visitField(int access, String name, String desc, String signature, Object value) {
 		if (fIsVisitMembers) {
@@ -1450,11 +1296,6 @@ public class ReferenceExtractor extends ClassVisitor {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.objectweb.asm.ClassAdapter#visitInnerClass(java.lang.String,
-	 * java.lang.String, java.lang.String, int)
-	 */
 	@Override
 	public void visitInnerClass(String name, String outerName, String innerName, int access) {
 		try {
@@ -1510,11 +1351,6 @@ public class ReferenceExtractor extends ClassVisitor {
 		return refs;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.objectweb.asm.ClassAdapter#visitAnnotation(java.lang.String,
-	 * boolean)
-	 */
 	@Override
 	public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
 		try {
@@ -1526,11 +1362,6 @@ public class ReferenceExtractor extends ClassVisitor {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.objectweb.asm.ClassVisitor#visitMethod(int, java.lang.String,
-	 * java.lang.String, java.lang.String, java.lang.String[])
-	 */
 	@Override
 	public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
 		if (fIsVisitMembers) {

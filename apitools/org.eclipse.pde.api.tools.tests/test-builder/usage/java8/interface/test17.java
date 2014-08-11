@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) May 16, 2014 IBM Corporation and others.
+ * Copyright (c) Aug 11, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,14 +10,15 @@
  *******************************************************************************/
 package x.y.z;
 
-import i.INoRefJavadocDefaultInterface2;
+import c.NoRefJavadocDefaultInterfaceImpl;
 
 /**
- * Tests an impl and direct ref to a restricted default method
+ *
  */
-public class test10 implements INoRefJavadocDefaultInterface2 {
+public class test17 {
 
-	public void test3() {
-		m1();
+	public void method() {
+		NoRefJavadocDefaultInterfaceImpl clazz = new NoRefJavadocDefaultInterfaceImpl();
+		clazz.m1();
 	}
 }

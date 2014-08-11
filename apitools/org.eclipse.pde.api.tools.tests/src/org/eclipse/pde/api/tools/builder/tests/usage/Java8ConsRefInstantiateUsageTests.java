@@ -1,5 +1,3 @@
-package org.eclipse.pde.api.tools.builder.tests.usage;
-
 /*******************************************************************************
  * Copyright (c) 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
@@ -10,6 +8,7 @@ package org.eclipse.pde.api.tools.builder.tests.usage;
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
+package org.eclipse.pde.api.tools.builder.tests.usage;
 
 import junit.framework.Test;
 

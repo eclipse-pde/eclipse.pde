@@ -1,8 +1,19 @@
+/*******************************************************************************
+ * Copyright (c) 2014 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.pde.api.tools.builder.tests.usage;
 
 import junit.framework.Test;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.pde.api.tools.internal.problems.ApiProblemFactory;
 import org.eclipse.pde.api.tools.internal.provisional.descriptors.IElementDescriptor;
 import org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem;
@@ -494,5 +505,181 @@ public class Java8DefaultMethodUsageTests extends Java8UsageTest {
 		deployUsageTest(typename, inc);
 	}
 
+	/**
+	 * Tests that we do not find any problems referencing default methods in JDK
+	 * types
+	 * 
+	 * @throws Exception
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=438432
+	 */
+	public void testSystemComponentNoDefaultMethodsReportedF() throws Exception {
+		x15(false);
+	}
 
+	/**
+	 * Tests that we do not find any problems referencing default methods in JDK
+	 * types
+	 * 
+	 * @throws Exception
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=438432
+	 */
+	public void testSystemComponentNoDefaultMethodsReportedI() throws Exception {
+		x15(true);
+	}
+
+	private void x15(boolean inc) throws Exception {
+		String typename = "test15"; //$NON-NLS-1$
+		expectingNoJDTProblems();
+		IPath typepath = new Path(getTestingProjectName()).append(UsageTest.SOURCE_PATH).append(typename).addFileExtension("java"); //$NON-NLS-1$
+		expectingNoProblemsFor(typepath);
+		deployUsageTest(typename, inc);
+	}
+
+	/**
+	 * Tests that we find problems referencing default methods in other bundle
+	 * types
+	 * 
+	 * @throws Exception
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=438432
+	 */
+	public void testOtherBundleDefaultMethodCallF() throws Exception {
+		x16(false);
+	}
+
+	/**
+	 * Tests that we find problems referencing default methods in other bundle
+	 * types
+	 * 
+	 * @throws Exception
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=438432
+	 */
+	public void testOtherBundleDefaultMethodCallI() throws Exception {
+		x16(true);
+	}
+
+	private void x16(boolean inc) {
+		int[] pids = new int[] { getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD) };
+		String typename = "test16"; //$NON-NLS-1$
+		setExpectedProblemIds(pids);
+		String[][] args = new String[][] { {
+				"INoRefJavadocDefaultInterface2", typename, "m1()" } //$NON-NLS-1$//$NON-NLS-2$
+
+		};
+		setExpectedMessageArgs(args);
+		setExpectedLineMappings(new LineMapping[] { new LineMapping(22, pids[0], args[0])
+
+		});
+		deployUsageTest(typename, inc);
+	}
+
+	/**
+	 * Tests that we find problems referencing default methods in other bundle
+	 * types
+	 * 
+	 * @throws Exception
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=438432
+	 */
+	public void testOtherBundleDefaultMethodCall2F() throws Exception {
+		x17(false);
+	}
+
+	/**
+	 * Tests that we find problems referencing default methods in other bundle
+	 * types
+	 * 
+	 * @throws Exception
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=438432
+	 */
+	public void testOtherBundleDefaultMethodCall2I() throws Exception {
+		x17(true);
+	}
+
+	private void x17(boolean inc) {
+		int[] pids = new int[] { getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD) };
+		String typename = "test17"; //$NON-NLS-1$
+		setExpectedProblemIds(pids);
+		String[][] args = new String[][] { {
+				"INoRefJavadocDefaultInterface", typename, "m1()" } //$NON-NLS-1$//$NON-NLS-2$
+
+		};
+		setExpectedMessageArgs(args);
+		setExpectedLineMappings(new LineMapping[] { new LineMapping(22, pids[0], args[0])
+
+		});
+		deployUsageTest(typename, inc);
+	}
+
+	/**
+	 * Tests that we find problems referencing default methods in other bundle
+	 * types
+	 * 
+	 * @throws Exception
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=438432
+	 */
+	public void testOtherBundleDefaultMethodCall3F() throws Exception {
+		x18(false);
+	}
+
+	/**
+	 * Tests that we find problems referencing default methods in other bundle
+	 * types
+	 * 
+	 * @throws Exception
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=438432
+	 */
+	public void testOtherBundleDefaultMethodCall3I() throws Exception {
+		x18(true);
+	}
+
+	private void x18(boolean inc) {
+		int[] pids = new int[] { getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD) };
+		String typename = "test18"; //$NON-NLS-1$
+		setExpectedProblemIds(pids);
+		String[][] args = new String[][] { {
+				"INoRefJavadocDefaultInterface", typename, "m1()" } //$NON-NLS-1$//$NON-NLS-2$
+
+		};
+		setExpectedMessageArgs(args);
+		setExpectedLineMappings(new LineMapping[] { new LineMapping(23, pids[0], args[0])
+
+		});
+		deployUsageTest(typename, inc);
+	}
+
+	/**
+	 * Tests that we find problems referencing default methods in other bundle
+	 * types
+	 * 
+	 * @throws Exception
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=438432
+	 */
+	public void testOtherBundleDefaultMethodCall4F() throws Exception {
+		x19(false);
+	}
+
+	/**
+	 * Tests that we find problems referencing default methods in other bundle
+	 * types
+	 * 
+	 * @throws Exception
+	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=438432
+	 */
+	public void testOtherBundleDefaultMethodCall4I() throws Exception {
+		x19(true);
+	}
+
+	private void x19(boolean inc) {
+		int[] pids = new int[] { getProblemId(IApiProblem.ILLEGAL_REFERENCE, IApiProblem.METHOD) };
+		String typename = "test19"; //$NON-NLS-1$
+		setExpectedProblemIds(pids);
+		String[][] args = new String[][] { {
+				"INoRefJavadocDefaultInterface", typename, "m1()" } //$NON-NLS-1$//$NON-NLS-2$
+
+		};
+		setExpectedMessageArgs(args);
+		setExpectedLineMappings(new LineMapping[] { new LineMapping(22, pids[0], args[0])
+
+		});
+		deployUsageTest(typename, inc);
+	}
 }
