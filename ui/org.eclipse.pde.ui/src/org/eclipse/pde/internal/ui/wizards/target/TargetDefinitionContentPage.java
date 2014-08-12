@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 IBM Corporation and others.
+ * Copyright (c) 2009, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Simon Scholz <simon.scholz@vogella.com> - bug 440275
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.target;
 
@@ -21,14 +22,18 @@ import org.eclipse.equinox.frameworkadmin.BundleInfo;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.jdt.launching.environments.IExecutionEnvironmentsManager;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.util.VMUtil;
 import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.dialogs.PluginSelectionDialog;
 import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
 import org.eclipse.pde.internal.ui.shared.target.*;
 import org.eclipse.pde.internal.ui.util.LocaleUtil;
@@ -39,12 +44,11 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.progress.UIJob;
 
 /**
  * Wizard page for editing the content of a target platform using a tab layout
- * 
+ *
  * @see NewTargetDefinitionWizard2
  * @see EditTargetDefinitionWizard
  */
@@ -709,35 +713,66 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 	}
 
 	protected void handleAdd() {
-		ElementListSelectionDialog dialog = new ElementListSelectionDialog(getShell(), new StyledBundleLabelProvider(false, false));
-
+		Collection<IPluginModelBase> validPluginModelBundles = null;
 		try {
-			dialog.setElements(getValidBundles());
+			validPluginModelBundles = getValidPluginModelBundles();
 		} catch (CoreException e) {
-			dialog.setMessage(e.getMessage());
+			MessageDialog.openWarning(getShell(), PDEUIMessages.PluginSelectionDialog_title, e.getMessage());
+			return;
 		}
 
-		dialog.setTitle(PDEUIMessages.PluginSelectionDialog_title);
-		dialog.setMessage(PDEUIMessages.PluginSelectionDialog_message);
-		dialog.setMultipleSelection(true);
-		if (dialog.open() == Window.OK) {
+		if (validPluginModelBundles != null) {
+			PluginSelectionDialog pluginSelectionDialog = new PluginSelectionDialog(getShell(), validPluginModelBundles.toArray(new IPluginModelBase[validPluginModelBundles.size()]), true);
 
-			Object[] models = dialog.getResult();
-			ArrayList<NameVersionDescriptor> pluginsToAdd = new ArrayList<NameVersionDescriptor>();
-			for (int i = 0; i < models.length; i++) {
-				BundleInfo desc = ((BundleInfo) models[i]);
-				pluginsToAdd.add(new NameVersionDescriptor(desc.getSymbolicName(), null));
+			if (pluginSelectionDialog.open() == Window.OK) {
+				Object[] result = pluginSelectionDialog.getResult();
+				Set<NameVersionDescriptor> allDependencies = new HashSet<NameVersionDescriptor>();
+				for (Object resultItem : result) {
+					IPluginModelBase desc = (IPluginModelBase) resultItem;
+					allDependencies.add(new NameVersionDescriptor(desc.getBundleDescription().getSymbolicName(), null));
+				}
+				NameVersionDescriptor[] currentBundles = getTargetDefinition().getImplicitDependencies();
+				if (currentBundles != null) {
+					allDependencies.addAll(Arrays.asList(currentBundles));
+				}
+				getTargetDefinition().setImplicitDependencies(allDependencies.toArray(new NameVersionDescriptor[allDependencies.size()]));
+				fElementViewer.refresh();
+				updateImpButtons();
 			}
-			Set<NameVersionDescriptor> allDependencies = new HashSet<NameVersionDescriptor>();
-			allDependencies.addAll(pluginsToAdd);
-			NameVersionDescriptor[] currentBundles = getTargetDefinition().getImplicitDependencies();
-			if (currentBundles != null) {
-				allDependencies.addAll(Arrays.asList(currentBundles));
-			}
-			getTargetDefinition().setImplicitDependencies(allDependencies.toArray(new NameVersionDescriptor[allDependencies.size()]));
-			fElementViewer.refresh();
-			updateImpButtons();
 		}
+	}
+
+	/**
+	 * Gets a list of all the bundles that can be added as implicit dependencies
+	 * @return list of possible dependencies
+	 */
+	protected Collection<IPluginModelBase> getValidPluginModelBundles() throws CoreException {
+		NameVersionDescriptor[] current = getTargetDefinition().getImplicitDependencies();
+		Set<String> currentBundles = new HashSet<String>();
+		if (current != null) {
+			for (NameVersionDescriptor nameVersionDescriptor : current) {
+				currentBundles.add(nameVersionDescriptor.getId());
+			}
+		}
+
+		TargetBundle[] allTargetBundles = getTargetDefinition().getAllBundles();
+		List<IPluginModelBase> targetBundles = new ArrayList<IPluginModelBase>();
+
+		if (allTargetBundles == null || allTargetBundles.length == 0) {
+			throw new CoreException(new Status(IStatus.WARNING, PDEPlugin.getPluginId(), PDEUIMessages.ImplicitDependenciesSection_0));
+		}
+		for (TargetBundle targetBundle : allTargetBundles) {
+			BundleInfo bundleInfo = targetBundle.getBundleInfo();
+			// to avoid duplicate entries
+			if (currentBundles.add(bundleInfo.getSymbolicName())) {
+				IPluginModelBase pluginModelBase = PluginRegistry.findModel(bundleInfo.getSymbolicName());
+				if (pluginModelBase != null) {
+					targetBundles.add(pluginModelBase);
+				}
+			}
+		}
+
+		return targetBundles;
 	}
 
 	/**
@@ -746,12 +781,11 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 	 */
 	protected BundleInfo[] getValidBundles() throws CoreException {
 		NameVersionDescriptor[] current = getTargetDefinition().getImplicitDependencies();
+
 		Set<String> currentBundles = new HashSet<String>();
 		if (current != null) {
-			for (int i = 0; i < current.length; i++) {
-				if (!currentBundles.contains(current[i].getId())) {
-					currentBundles.add(current[i].getId());
-				}
+			for (NameVersionDescriptor nameVersionDescriptor : current) {
+					currentBundles.add(nameVersionDescriptor.getId());
 			}
 		}
 
@@ -760,10 +794,11 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		if (allTargetBundles == null || allTargetBundles.length == 0) {
 			throw new CoreException(new Status(IStatus.WARNING, PDEPlugin.getPluginId(), PDEUIMessages.ImplicitDependenciesSection_0));
 		}
-		for (int i = 0; i < allTargetBundles.length; i++) {
-			BundleInfo bundleInfo = allTargetBundles[i].getBundleInfo();
-			if (!currentBundles.contains(bundleInfo.getSymbolicName())) {
-				currentBundles.add(bundleInfo.getSymbolicName()); // to avoid duplicate entries
+
+		for (TargetBundle targetBundle : allTargetBundles) {
+			BundleInfo bundleInfo = targetBundle.getBundleInfo();
+			// to avoid duplicate entries
+			if (currentBundles.add(bundleInfo.getSymbolicName())) {
 				targetBundles.add(bundleInfo);
 			}
 		}

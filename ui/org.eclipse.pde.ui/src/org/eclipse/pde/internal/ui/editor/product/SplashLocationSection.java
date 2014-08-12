@@ -1,12 +1,13 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2012 IBM Corporation and others.
+ *  Copyright (c) 2005, 2014 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Simon Scholz <simon.scholz@vogella.com> - bug 440275
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
@@ -17,13 +18,13 @@ import org.eclipse.pde.core.plugin.PluginRegistry;
 import org.eclipse.pde.internal.core.iproduct.*;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.dialogs.PluginSelectionDialog;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.parts.FormEntry;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
@@ -108,13 +109,13 @@ public class SplashLocationSection extends PDESection {
 	}
 
 	private void handleBrowse() {
-		ElementListSelectionDialog dialog = new ElementListSelectionDialog(PDEPlugin.getActiveWorkbenchShell(), PDEPlugin.getDefault().getLabelProvider());
-		dialog.setElements(PluginRegistry.getActiveModels());
-		dialog.setMultipleSelection(false);
-		dialog.setTitle(PDEUIMessages.SplashSection_selection);
-		dialog.setMessage(PDEUIMessages.SplashSection_message);
-		if (dialog.open() == Window.OK) {
-			IPluginModelBase model = (IPluginModelBase) dialog.getFirstResult();
+
+		PluginSelectionDialog pluginSelectionDialog = new PluginSelectionDialog(PDEPlugin.getActiveWorkbenchShell(), PluginRegistry.getActiveModels(), false);
+
+		pluginSelectionDialog.setTitle(PDEUIMessages.SplashSection_selection);
+		pluginSelectionDialog.setMessage(PDEUIMessages.SplashSection_message);
+		if (pluginSelectionDialog.open() == Window.OK) {
+			IPluginModelBase model = (IPluginModelBase) pluginSelectionDialog.getFirstResult();
 			fPluginEntry.setValue(model.getPluginBase().getId());
 		}
 	}

@@ -9,26 +9,25 @@
  *     Code 9 Corporation - initial API and implementation
  *     Bartosz Michalik <bartosz.michalik@gmail.com> - bug 240737
  *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 265931
+ *     Simon Scholz <simon.scholz@vogella.com> - bug 440275
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
-import java.util.ArrayList;
-import java.util.StringTokenizer;
+import java.util.*;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.IModelChangedEvent;
-import org.eclipse.pde.core.IWritable;
-import org.eclipse.pde.core.plugin.IFragmentModel;
-import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.FeatureModelManager;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
 import org.eclipse.pde.internal.core.iproduct.*;
 import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.dialogs.PluginSelectionDialog;
 import org.eclipse.pde.internal.ui.editor.PDEFormPage;
 import org.eclipse.pde.internal.ui.editor.TableSection;
 import org.eclipse.pde.internal.ui.parts.TablePart;
@@ -39,7 +38,6 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
@@ -228,64 +226,79 @@ public class PluginConfigurationSection extends TableSection {
 	}
 
 	private void handleAdd() {
-		ElementListSelectionDialog dialog = new ElementListSelectionDialog(PDEPlugin.getActiveWorkbenchShell(), PDEPlugin.getDefault().getLabelProvider());
-		ArrayList<IWritable> plugins = new ArrayList<IWritable>();
 
-		// TODO there must be a better way to do this!
+		Collection<IPluginModelBase> pluginModelBases = null;
+
 		if (getProduct().useFeatures()) {
-			IProductFeature[] features = getProduct().getFeatures();
-			for (int i = 0; i < features.length; i++) {
-				IProductFeature feature = features[i];
-				FeatureModelManager manager = PDECore.getDefault().getFeatureModelManager();
-				IFeatureModel fModel = manager.findFeatureModelRelaxed(feature.getId(), feature.getVersion());
-				if (fModel == null)
-					fModel = manager.findFeatureModel(feature.getId());
-				if (fModel == null)
-					continue;
-				IFeaturePlugin[] fPlugins = fModel.getFeature().getPlugins();
-				for (int j = 0; j < fPlugins.length; j++) {
-					IFeaturePlugin fPlugin = fPlugins[j];
-					if (!fPlugin.isFragment())
-						plugins.add(fPlugin);
-				}
-			}
-			dialog.setElements(plugins.toArray(new IFeaturePlugin[plugins.size()]));
+			pluginModelBases = getPluginModelBasesByFeature();
 		} else {
-			IProductPlugin[] allPlugins = getProduct().getPlugins();
-			IPluginConfiguration[] configs = getProduct().getPluginConfigurations();
-			for (int i = 0; i < allPlugins.length; ++i) {
-				boolean match = false;
-				for (int j = 0; j < configs.length; ++j) {
-					String id = allPlugins[i].getId();
-					if (id.equals(configs[j].getId())) {
-						match = true;
-						break;
+			pluginModelBases = getPluginModelBasesByPlugin();
+		}
+
+		PluginSelectionDialog pluginSelectionDialog = new PluginSelectionDialog(PDEPlugin.getActiveWorkbenchShell(), pluginModelBases.toArray(new IPluginModelBase[pluginModelBases.size()]), true);
+		if (pluginSelectionDialog.open() == Window.OK) {
+			Object[] result = pluginSelectionDialog.getResult();
+			for (Object object : result) {
+				IPluginModelBase pluginModelBase = (IPluginModelBase) object;
+				addPlugin(pluginModelBase.getPluginBase().getId());
+			}
+		}
+	}
+
+	private Collection<IPluginModelBase> getPluginModelBasesByFeature() {
+
+		Collection<IPluginModelBase> pluginModelBases = new ArrayList<IPluginModelBase>();
+
+		IProductFeature[] features = getProduct().getFeatures();
+		for (IProductFeature feature : features) {
+			FeatureModelManager manager = PDECore.getDefault().getFeatureModelManager();
+			IFeatureModel fModel = manager.findFeatureModelRelaxed(feature.getId(), feature.getVersion());
+			if (fModel == null) {
+				fModel = manager.findFeatureModel(feature.getId());
+			}
+
+			if (fModel != null) {
+				IFeaturePlugin[] fPlugins = fModel.getFeature().getPlugins();
+				for (IFeaturePlugin fPlugin : fPlugins) {
+					if (!fPlugin.isFragment()) {
+						IPluginModelBase pluginModelBase = PluginRegistry.findModel(fPlugin.getId());
+						if (pluginModelBase != null) {
+							pluginModelBases.add(pluginModelBase);
+						}
 					}
 				}
-				if (!match) {
-					// ensure we don't add fragments
-					if (!(PluginRegistry.findModel(allPlugins[i].getId()) instanceof IFragmentModel))
-						plugins.add(allPlugins[i]);
-				}
 			}
-			dialog.setElements(plugins.toArray(new IProductPlugin[plugins.size()]));
 		}
 
-		dialog.setTitle(PDEUIMessages.PluginSelectionDialog_title);
-		dialog.setMessage(PDEUIMessages.PluginSelectionDialog_message);
-		dialog.setMultipleSelection(true);
-		if (dialog.open() == Window.OK) {
-			Object[] results = dialog.getResult();
-			for (int i = 0; i < results.length; i++) {
-				Object result = results[i];
-				if (result instanceof IProductPlugin) {
-					addPlugin(((IProductPlugin) result).getId());
-				} else if (result instanceof IFeaturePlugin) {
-					addPlugin(((IFeaturePlugin) result).getId());
+		return pluginModelBases;
+	}
+
+	private Collection<IPluginModelBase> getPluginModelBasesByPlugin() {
+		Collection<IPluginModelBase> pluginModelBases = new ArrayList<IPluginModelBase>();
+
+		IProductPlugin[] allPlugins = getProduct().getPlugins();
+		IPluginConfiguration[] configs = getProduct().getPluginConfigurations();
+		for (IProductPlugin productPlugin : allPlugins) {
+			if (!pluginConfigurationContainsProductPlugin(configs, productPlugin)) {
+				if (!(PluginRegistry.findModel(productPlugin.getId()) instanceof IFragmentModel)) {
+					IPluginModelBase pluginModelBase = PluginRegistry.findModel(productPlugin.getId());
+					pluginModelBases.add(pluginModelBase);
 				}
 			}
 		}
 
+		return pluginModelBases;
+	}
+
+	private boolean pluginConfigurationContainsProductPlugin(IPluginConfiguration[] configs, IProductPlugin productPlugin) {
+
+		for (IPluginConfiguration pluginConfiguration : configs) {
+			if (productPlugin.getId().equals(pluginConfiguration.getId())) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	private void handleRemove() {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 IBM Corporation and others.
+ * Copyright (c) 2005, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,10 +9,12 @@
  *     IBM Corporation - initial API and implementation
  *     EclipseSource Corporation - ongoing enhancements
  *     Alexander Kurtakov <akurtako@redhat.com> - bug 415649
+ *     Simon Scholz <simon.scholz@vogella.com> - bug 440275
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
 import java.util.*;
+import java.util.List;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
@@ -29,6 +31,7 @@ import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.iproduct.*;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.ui.*;
+import org.eclipse.pde.internal.ui.dialogs.PluginSelectionDialog;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.pde.internal.ui.editor.plugin.ManifestEditor;
 import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
@@ -46,12 +49,13 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
 public class PluginSection extends TableSection implements IPluginModelListener {
+
+	private static final String DEFAULT_VERSION = "0.0.0"; //$NON-NLS-1$
 
 	class ContentProvider extends DefaultTableProvider {
 		public Object[] getElements(Object parent) {
@@ -437,32 +441,30 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 	}
 
 	private void handleAdd() {
-		ElementListSelectionDialog dialog = new ElementListSelectionDialog(PDEPlugin.getActiveWorkbenchShell(), PDEPlugin.getDefault().getLabelProvider());
-		dialog.setElements(getBundles());
-		dialog.setTitle(PDEUIMessages.PluginSelectionDialog_title);
-		dialog.setMessage(PDEUIMessages.PluginSelectionDialog_message);
-		dialog.setMultipleSelection(true);
-		if (dialog.open() == Window.OK) {
-			Object[] bundles = dialog.getResult();
-			for (int i = 0; i < bundles.length; i++) {
-				BundleDescription desc = (BundleDescription) bundles[i];
-				addPlugin(desc.getSymbolicName(), "0.0.0"); //$NON-NLS-1$
-				//addPlugin(desc.getSymbolicName(), desc.getVersion().toString());
+		PluginSelectionDialog pluginSelectionDialog = new PluginSelectionDialog(PDEPlugin.getActiveWorkbenchShell(), getBundles(), true);
+		if (pluginSelectionDialog.open() == Window.OK) {
+			Object[] result = pluginSelectionDialog.getResult();
+			for (Object object : result) {
+				IPluginModelBase pluginModelBase = (IPluginModelBase) object;
+				addPlugin(pluginModelBase.getPluginBase().getId(), DEFAULT_VERSION);
 			}
 		}
 	}
 
-	private BundleDescription[] getBundles() {
-		TreeMap<String, BundleDescription> map = new TreeMap<String, BundleDescription>();
+	private IPluginModelBase[] getBundles() {
+		List<IPluginModelBase> pluginModelBaseList = new ArrayList<IPluginModelBase>();
 		IProduct product = getProduct();
 		BundleDescription[] bundles = TargetPlatformHelper.getState().getBundles();
-		for (int i = 0; i < bundles.length; i++) {
-			String id = bundles[i].getSymbolicName();
-			if (!product.containsPlugin(id)) {
-				map.put(id, bundles[i]);
+		for (BundleDescription bundleDescription : bundles) {
+			if (!product.containsPlugin(bundleDescription.getSymbolicName())) {
+				IPluginModelBase pluginModel = PluginRegistry.findModel(bundleDescription);
+				if (pluginModel != null) {
+					pluginModelBaseList.add(pluginModel);
+				}
 			}
 		}
-		return map.values().toArray(new BundleDescription[map.size()]);
+
+		return pluginModelBaseList.toArray(new IPluginModelBase[pluginModelBaseList.size()]);
 	}
 
 	private void addPlugin(String id, String version) {
