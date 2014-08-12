@@ -8,6 +8,7 @@
  *     IBM Corporation - initial API and implementation
  *     Code 9 Corporation - on going enhancements and maintenance
  *     Brian de Alwis (MTI) - bug 429420
+ *     Fabian Miehe - Bug 440420
  *******************************************************************************/
 package org.eclipse.pde.internal.ui;
 
@@ -699,6 +700,7 @@ public class PDEUIMessages extends NLS {
 	public static String FeatureEditor_IncludedFeatures_title;
 	public static String FeatureEditor_IncludedFeatures_desc;
 	public static String FeatureEditor_IncludedFeatures_new;
+	public static String FeatureEditor_IncludedFeatures_remove;
 	public static String FeatureEditor_IncludedFeatures_up;
 	public static String FeatureEditor_IncludedFeatures_down;
 	public static String FeatureEditor_IncludedFeatures_sortAlpha;
@@ -733,6 +735,7 @@ public class PDEUIMessages extends NLS {
 	public static String FeatureEditor_PluginSection_pluginTitle;
 	public static String FeatureEditor_PluginSection_pluginDesc;
 	public static String FeatureEditor_PluginSection_new;
+	public static String FeatureEditor_PluginSection_remove;
 	public static String FeatureEditor_PluginSection_sortAlpha;
 
 	public static String FeatureEditor_PluginPortabilitySection_title;
@@ -757,6 +760,7 @@ public class PDEUIMessages extends NLS {
 	public static String FeatureEditor_RequiresSection_plugin;
 	public static String FeatureEditor_RequiresSection_feature;
 	public static String FeatureEditor_RequiresSection_sortAlpha;
+	public static String FeatureEditor_RequiresSection_remove;
 
 	public static String FeatureEditor_URLSection_desc;
 	public static String FeatureEditor_URLSection_new;

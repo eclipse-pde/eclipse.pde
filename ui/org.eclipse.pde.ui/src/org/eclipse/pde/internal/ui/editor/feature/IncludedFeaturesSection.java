@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Alexander Kurtakov <akurtako@redhat.com> - bug 415649
+ *     Fabian Miehe - Bug 440420
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
@@ -43,6 +44,12 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
 public class IncludedFeaturesSection extends TableSection implements IFeatureModelListener, IPropertyChangeListener {
+
+	private static final int NEW = 0;
+	private static final int REMOVE = 1;
+	private static final int UP = 2;
+	private static final int DOWN = 3;
+
 	private TableViewer fIncludesViewer;
 
 	private Action fNewAction;
@@ -63,7 +70,7 @@ public class IncludedFeaturesSection extends TableSection implements IFeatureMod
 	}
 
 	public IncludedFeaturesSection(PDEFormPage page, Composite parent) {
-		super(page, parent, Section.DESCRIPTION, new String[] {PDEUIMessages.FeatureEditor_IncludedFeatures_new, PDEUIMessages.FeatureEditor_IncludedFeatures_up, PDEUIMessages.FeatureEditor_IncludedFeatures_down});
+		super(page, parent, Section.DESCRIPTION, new String[] {PDEUIMessages.FeatureEditor_IncludedFeatures_new, PDEUIMessages.FeatureEditor_IncludedFeatures_remove, PDEUIMessages.FeatureEditor_IncludedFeatures_up, PDEUIMessages.FeatureEditor_IncludedFeatures_down});
 		getSection().setText(PDEUIMessages.FeatureEditor_IncludedFeatures_title);
 		getSection().setDescription(PDEUIMessages.FeatureEditor_IncludedFeatures_desc);
 		getTablePart().setEditable(false);
@@ -124,13 +131,16 @@ public class IncludedFeaturesSection extends TableSection implements IFeatureMod
 	@Override
 	protected void buttonSelected(int index) {
 		switch (index) {
-			case 0 :
+			case NEW :
 				handleNew();
 				break;
-			case 1 :
+			case REMOVE :
+				handleDelete();
+				break;
+			case UP :
 				handleUp();
 				break;
-			case 2 :
+			case DOWN :
 				handleDown();
 				break;
 		}
@@ -433,10 +443,13 @@ public class IncludedFeaturesSection extends TableSection implements IFeatureMod
 		Table table = tablePart.getTableViewer().getTable();
 		TableItem[] tableSelection = table.getSelection();
 		boolean hasSelection = tableSelection.length > 0;
+		//delete
+		tablePart.setButtonEnabled(REMOVE, isEditable() && hasSelection);
+
 		// up/down buttons
 		boolean canMove = table.getItemCount() > 1 && tableSelection.length == 1 && !fSortAction.isChecked();
-		tablePart.setButtonEnabled(1, canMove && isEditable() && hasSelection && table.getSelectionIndex() > 0);
-		tablePart.setButtonEnabled(2, canMove && hasSelection && isEditable() && table.getSelectionIndex() < table.getItemCount() - 1);
+		tablePart.setButtonEnabled(UP, canMove && isEditable() && hasSelection && table.getSelectionIndex() > 0);
+		tablePart.setButtonEnabled(DOWN, canMove && hasSelection && isEditable() && table.getSelectionIndex() < table.getItemCount() - 1);
 	}
 
 	/**

@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Alexander Kurtakov <akurtako@redhat.com> - bug 415649
  *     Marc-Andre Laperle (Ericsson) - Handle double click (Bug 328467)
+ *     Fabian Miehe - Bug 440420
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
@@ -46,6 +47,12 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
 public class RequiresSection extends TableSection implements IPluginModelListener, IFeatureModelListener {
+
+	private static final int RECOMPUTE_IMPORT = 3;
+	private static final int REMOVE = 2;
+	private static final int NEW_FEATURE = 1;
+	private static final int NEW_PLUGIN = 0;
+
 	private Button fSyncButton;
 
 	private TableViewer fPluginViewer;
@@ -73,7 +80,7 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 	}
 
 	public RequiresSection(FeatureDependenciesPage page, Composite parent) {
-		super(page, parent, Section.DESCRIPTION, new String[] {PDEUIMessages.FeatureEditor_RequiresSection_plugin, PDEUIMessages.FeatureEditor_RequiresSection_feature, null, PDEUIMessages.FeatureEditor_RequiresSection_compute});
+		super(page, parent, Section.DESCRIPTION, new String[] {PDEUIMessages.FeatureEditor_RequiresSection_plugin, PDEUIMessages.FeatureEditor_RequiresSection_feature, PDEUIMessages.FeatureEditor_RequiresSection_remove, PDEUIMessages.FeatureEditor_RequiresSection_compute});
 		getSection().setText(PDEUIMessages.FeatureEditor_RequiresSection_title);
 		getSection().setDescription(PDEUIMessages.FeatureEditor_RequiresSection_desc);
 		getTablePart().setEditable(false);
@@ -150,15 +157,16 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 	@Override
 	protected void buttonSelected(int index) {
 		switch (index) {
-			case 0 :
+			case NEW_PLUGIN :
 				handleNewPlugin();
 				break;
-			case 1 :
+			case NEW_FEATURE :
 				handleNewFeature();
 				break;
-			case 2 :
+			case REMOVE :
+				handleDelete();
 				break;
-			case 3 :
+			case RECOMPUTE_IMPORT :
 				recomputeImports();
 				break;
 		}
@@ -393,15 +401,26 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 	protected void selectionChanged(IStructuredSelection selection) {
 		getPage().getPDEEditor().setSelection(selection);
 		getPage().getManagedForm().fireSelectionChanged(this, selection);
+		updateButtons();
+	}
+
+	private void updateButtons() {
+		TablePart tablePart = getTablePart();
+		Table table = tablePart.getTableViewer().getTable();
+		TableItem[] tableSelection = table.getSelection();
+		boolean hasSelection = tableSelection.length > 0;
+		//delete
+		tablePart.setButtonEnabled(REMOVE, isEditable() && hasSelection);
 	}
 
 	public void initialize() {
 		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		refresh();
 		if (model.isEditable() == false) {
-			getTablePart().setButtonEnabled(0, false);
-			getTablePart().setButtonEnabled(1, false);
-			getTablePart().setButtonEnabled(3, false);
+			getTablePart().setButtonEnabled(NEW_PLUGIN, false);
+			getTablePart().setButtonEnabled(NEW_FEATURE, false);
+			getTablePart().setButtonEnabled(REMOVE, false);
+			getTablePart().setButtonEnabled(RECOMPUTE_IMPORT, false);
 			fSyncButton.setEnabled(false);
 		}
 		model.addModelChangedListener(this);
@@ -506,6 +525,7 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		IFeature feature = model.getFeature();
 		fPluginViewer.setInput(feature);
+		updateButtons();
 		super.refresh();
 	}
 

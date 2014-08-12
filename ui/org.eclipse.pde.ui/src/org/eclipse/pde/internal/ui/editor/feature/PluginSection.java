@@ -8,6 +8,7 @@
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Alexander Kurtakov <akurtako@redhat.com> - bug 415649
+ *     Fabian Miehe - Bug 440420
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
@@ -43,6 +44,11 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
 public class PluginSection extends TableSection implements IPluginModelListener {
+
+	private static final int NEW = 0;
+	private static final int REMOVE = 1;
+	private static final int SYNC = 2;
+
 	private OpenReferenceAction fOpenAction;
 
 	private TableViewer fPluginViewer;
@@ -63,7 +69,7 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 	}
 
 	public PluginSection(PDEFormPage page, Composite parent) {
-		super(page, parent, Section.DESCRIPTION, new String[] {PDEUIMessages.FeatureEditor_PluginSection_new, null, PDEUIMessages.FeatureEditor_SpecSection_synchronize});
+		super(page, parent, Section.DESCRIPTION, new String[] {PDEUIMessages.FeatureEditor_PluginSection_new, PDEUIMessages.FeatureEditor_PluginSection_remove, PDEUIMessages.FeatureEditor_SpecSection_synchronize});
 		getSection().setText(PDEUIMessages.FeatureEditor_PluginSection_pluginTitle);
 		getSection().setDescription(PDEUIMessages.FeatureEditor_PluginSection_pluginDesc);
 		getTablePart().setEditable(false);
@@ -123,10 +129,17 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 
 	@Override
 	protected void buttonSelected(int index) {
-		if (index == 0)
-			handleNew();
-		if (index == 2)
-			handleSynchronize();
+		switch (index) {
+			case NEW :
+				handleNew();
+				break;
+			case REMOVE :
+				handleDelete();
+				break;
+			case SYNC :
+				handleSynchronize();
+				break;
+		}
 	}
 
 	@Override
@@ -281,6 +294,16 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 	@Override
 	protected void selectionChanged(IStructuredSelection selection) {
 		getPage().getPDEEditor().setSelection(selection);
+		updateButtons();
+	}
+
+	private void updateButtons() {
+		TablePart tablePart = getTablePart();
+		Table table = tablePart.getTableViewer().getTable();
+		TableItem[] tableSelection = table.getSelection();
+		boolean hasSelection = tableSelection.length > 0;
+		//delete
+		tablePart.setButtonEnabled(REMOVE, isEditable() && hasSelection);
 	}
 
 	public void initialize() {
@@ -371,6 +394,7 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		IFeature feature = model.getFeature();
 		fPluginViewer.setInput(feature);
+		updateButtons();
 		super.refresh();
 	}
 
