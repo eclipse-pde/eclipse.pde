@@ -20,16 +20,20 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.NotEnabledException;
 import org.eclipse.core.commands.NotHandledException;
 import org.eclipse.core.commands.common.NotDefinedException;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
+
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.JFaceResources;
+
 import org.eclipse.pde.api.tools.internal.model.StubApiComponent;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.ProfileModifiers;
@@ -38,6 +42,7 @@ import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
 import org.eclipse.pde.api.tools.ui.internal.SWTFactory;
 import org.eclipse.pde.internal.ui.preferences.ConfigurationBlock;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -61,6 +66,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Widget;
+
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.forms.events.ExpansionAdapter;
@@ -70,6 +76,7 @@ import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 import org.eclipse.ui.preferences.IWorkingCopyManager;
 import org.eclipse.ui.preferences.WorkingCopyManager;
+
 import org.osgi.service.prefs.BackingStoreException;
 
 import com.ibm.icu.text.MessageFormat;
@@ -1164,7 +1171,7 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 			}
 		}
 		if (installMore) {
-			ICommandService commandService = (ICommandService) PlatformUI.getWorkbench().getService(ICommandService.class);
+			ICommandService commandService = PlatformUI.getWorkbench().getService(ICommandService.class);
 			final Command command = commandService.getCommand(P2_INSTALL_COMMAND_HANDLER);
 			if (command.isHandled()) {
 				String linkedName = PreferenceMessages.ApiProblemSeveritiesConfigurationBlock_checkable_ees_link_label;
@@ -1177,16 +1184,16 @@ public class ApiErrorsWarningsConfigurationBlock extends ConfigurationBlock {
 				link.addSelectionListener(new SelectionAdapter() {
 					@Override
 					public void widgetSelected(SelectionEvent e) {
-						IHandlerService handlerService = (IHandlerService) PlatformUI.getWorkbench().getService(IHandlerService.class);
+						IHandlerService handlerService = PlatformUI.getWorkbench().getService(IHandlerService.class);
 						try {
 							handlerService.executeCommand(P2_INSTALL_COMMAND_HANDLER, null);
-						} catch (ExecutionException ex) {
+						} catch (@SuppressWarnings("unused") ExecutionException ex) {
 							handleCommandException();
-						} catch (NotDefinedException ex) {
+						} catch (@SuppressWarnings("unused") NotDefinedException ex) {
 							handleCommandException();
-						} catch (NotEnabledException ex) {
+						} catch (@SuppressWarnings("unused") NotEnabledException ex) {
 							handleCommandException();
-						} catch (NotHandledException ex) {
+						} catch (@SuppressWarnings("unused") NotHandledException ex) {
 							handleCommandException();
 						}
 					}

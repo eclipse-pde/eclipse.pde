@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2013 IBM Corporation and others.
+ * Copyright (c) 2011, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,19 +10,24 @@
  *******************************************************************************/
 package org.eclipse.pde.api.tools.ui.internal.markers;
 
+import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
+import org.eclipse.pde.api.tools.ui.internal.IApiToolsConstants;
+import org.eclipse.pde.api.tools.ui.internal.preferences.ApiErrorsWarningsConfigurationBlock;
+
+import org.eclipse.swt.graphics.Image;
+
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.NotEnabledException;
 import org.eclipse.core.commands.NotHandledException;
 import org.eclipse.core.commands.common.NotDefinedException;
-import org.eclipse.core.resources.IMarker;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.pde.api.tools.ui.internal.ApiUIPlugin;
-import org.eclipse.pde.api.tools.ui.internal.IApiToolsConstants;
-import org.eclipse.pde.api.tools.ui.internal.preferences.ApiErrorsWarningsConfigurationBlock;
-import org.eclipse.swt.graphics.Image;
+
+import org.eclipse.core.resources.IMarker;
+
 import org.eclipse.ui.IMarkerResolution2;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
@@ -61,19 +66,19 @@ public class InstallEEDescriptionProblemResolution implements IMarkerResolution2
 			 */
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
-				ICommandService commandService = (ICommandService) PlatformUI.getWorkbench().getService(ICommandService.class);
+				ICommandService commandService = PlatformUI.getWorkbench().getService(ICommandService.class);
 				final Command command = commandService.getCommand(ApiErrorsWarningsConfigurationBlock.P2_INSTALL_COMMAND_HANDLER);
 				if (command.isHandled()) {
-					IHandlerService handlerService = (IHandlerService) PlatformUI.getWorkbench().getService(IHandlerService.class);
+					IHandlerService handlerService = PlatformUI.getWorkbench().getService(IHandlerService.class);
 					try {
 						handlerService.executeCommand(ApiErrorsWarningsConfigurationBlock.P2_INSTALL_COMMAND_HANDLER, null);
-					} catch (ExecutionException ex) {
+					} catch (@SuppressWarnings("unused") ExecutionException ex) {
 						ApiErrorsWarningsConfigurationBlock.handleCommandException();
-					} catch (NotDefinedException ex) {
+					} catch (@SuppressWarnings("unused") NotDefinedException ex) {
 						ApiErrorsWarningsConfigurationBlock.handleCommandException();
-					} catch (NotEnabledException ex) {
+					} catch (@SuppressWarnings("unused") NotEnabledException ex) {
 						ApiErrorsWarningsConfigurationBlock.handleCommandException();
-					} catch (NotHandledException ex) {
+					} catch (@SuppressWarnings("unused") NotHandledException ex) {
 						ApiErrorsWarningsConfigurationBlock.handleCommandException();
 					}
 				}
