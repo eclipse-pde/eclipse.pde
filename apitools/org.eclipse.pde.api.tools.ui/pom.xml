@@ -21,4 +21,18 @@
   <artifactId>org.eclipse.pde.api.tools.ui</artifactId>
   <version>1.0.600-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>tycho-compiler-plugin</artifactId>
+        <version>${tycho.version}</version>
+        <configuration>
+          <compilerArgs>
+            <arg>-warn:-warningToken</arg>
+          </compilerArgs>
+        </configuration>
+      </plugin>
+    </plugins>
+ </build>
 </project>
