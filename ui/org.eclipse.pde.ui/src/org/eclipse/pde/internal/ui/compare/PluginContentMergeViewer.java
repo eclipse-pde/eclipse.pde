@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2012 IBM Corporation and others.
+ *  Copyright (c) 2005, 2014 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -25,6 +25,7 @@ import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.context.XMLDocumentSetupParticpant;
 import org.eclipse.pde.internal.ui.editor.text.*;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Font;
@@ -36,7 +37,7 @@ public class PluginContentMergeViewer extends TextMergeViewer {
 	private ArrayList<IPropertyChangeListener> fPropertyChangedListeners;
 
 	public PluginContentMergeViewer(Composite parent, CompareConfiguration config) {
-		super(parent, config);
+		super(parent, SWT.LEFT_TO_RIGHT, config);
 	}
 
 	protected void configureTextViewer(final TextViewer textViewer) {
