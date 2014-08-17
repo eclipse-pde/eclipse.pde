@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2009 IBM Corporation and others.
+ *  Copyright (c) 2005, 2014 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ import org.eclipse.jface.text.rules.FastPartitioner;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.editor.text.*;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
@@ -28,7 +29,7 @@ public class ManifestContentMergeViewer extends TextMergeViewer {
 	private IColorManager fColorManager;
 
 	public ManifestContentMergeViewer(Composite parent, CompareConfiguration configuration) {
-		super(parent, configuration);
+		super(parent, SWT.LEFT_TO_RIGHT, configuration);
 	}
 
 	protected void configureTextViewer(TextViewer textViewer) {
