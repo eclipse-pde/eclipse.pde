@@ -349,8 +349,8 @@ public class PluginConfigurationSection extends TableSection {
 					bundlesList.append(' ');
 					bundlesList.append(startLevel);
 				} else {
-					bundlesList.append("Default "); //$NON-NLS-1$ // "default is not translated in AbstractPluginBlock
-					bundlesList.append(PDEUIMessages.EquinoxPluginBlock_levelColumn);
+					String defaultLevelColumn = NLS.bind(PDEUIMessages.EquinoxPluginBlock_defaultLevelColumn, "Default"); //$NON-NLS-1$
+					bundlesList.append(defaultLevelColumn); 			
 				}
 				if ("start".equals(config[2])) { //$NON-NLS-1$
 					bundlesList.append(", "); //$NON-NLS-1$ 
