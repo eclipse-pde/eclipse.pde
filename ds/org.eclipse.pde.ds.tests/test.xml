@@ -45,13 +45,11 @@
     </ant>
   </target>
 
-	<!-- This target defines the performance tests that need to be run. -->
-	<target name="performance-suite">
-	</target>
 
-	<!-- This target runs the performance test suite. Any actions that need to happen -->
-	<!-- after all the tests have been run should go here. -->
-	<target name="performance" depends="init,performance-suite,cleanup">
-	</target>
+  <!-- This target runs the performance test suites.
+  Disabled for bug 442529: We should not have empty performance targets
+  <target name="performance">
+  </target>
+  -->
 
 </project>
