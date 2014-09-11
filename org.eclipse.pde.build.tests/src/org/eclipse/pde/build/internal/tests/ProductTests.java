@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2007, 2014 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -50,7 +50,7 @@ public class ProductTests extends PDETestCase {
 
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("product", "/rcp/rcp.product");
-		properties.put("configs", "macosx,cocoa,x86");
+		properties.put("configs", "macosx,cocoa,x86_64");
 		if (!delta.equals(new File((String) properties.get("baseLocation"))))
 			properties.put("pluginPath", delta.getAbsolutePath());
 		URL resource = FileLocator.find(Platform.getBundle("org.eclipse.pde.build"), new Path("/scripts/productBuild/allElements.xml"), null);
@@ -69,7 +69,7 @@ public class ProductTests extends PDETestCase {
 		entries.add("eclipse/Eclipse.app/");
 
 		//bug 206788 names the archive .zip
-		assertZipContents(buildFolder, "I.TestBuild/eclipse-macosx.cocoa.x86.zip", entries, false);
+		assertZipContents(buildFolder, "I.TestBuild/eclipse-macosx.cocoa.x86_64.zip", entries, false);
 		assertTrue(entries.contains("eclipse/Eclipse.app/"));
 		assertTrue(entries.size() == 1);
 	}
