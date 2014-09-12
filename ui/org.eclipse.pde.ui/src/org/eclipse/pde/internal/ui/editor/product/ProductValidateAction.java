@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 EclipseSource Corporation and others.
+ * Copyright (c) 2009, 2014 EclipseSource Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.core.plugin.IMatchRules;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.core.iproduct.*;
@@ -37,25 +38,25 @@ public class ProductValidateAction extends Action {
 	}
 
 	public void run() {
-		HashMap<String, IPluginModelBase> map = new HashMap<String, IPluginModelBase>();
+		Set<IPluginModelBase> launchPlugins = new HashSet<IPluginModelBase>();
 		if (fProduct.useFeatures()) {
 			IFeatureModel[] features = getUniqueFeatures();
 			for (int i = 0; i < features.length; i++) {
-				addFeaturePlugins(features[i].getFeature(), map);
+				addFeaturePlugins(features[i].getFeature(), launchPlugins);
 			}
 		} else {
 			IProductPlugin[] plugins = fProduct.getPlugins();
 			for (int i = 0; i < plugins.length; i++) {
 				String id = plugins[i].getId();
-				if (id == null || map.containsKey(id))
+				if (id == null)
 					continue;
 				IPluginModelBase model = PluginRegistry.findModel(id);
-				if (model != null && TargetPlatformHelper.matchesCurrentEnvironment(model))
-					map.put(id, model);
+				if (model != null && !launchPlugins.contains(model) && TargetPlatformHelper.matchesCurrentEnvironment(model))
+					launchPlugins.add(model);
 			}
 		}
 		try {
-			IPluginModelBase[] models = map.values().toArray(new IPluginModelBase[map.size()]);
+			IPluginModelBase[] models = launchPlugins.toArray(new IPluginModelBase[launchPlugins.size()]);
 			LaunchValidationOperation operation = new ProductValidationOperation(models);
 			LaunchPluginValidator.runValidationOperation(operation, new NullProgressMonitor());
 			if (!operation.hasErrors()) {
@@ -66,15 +67,18 @@ public class ProductValidateAction extends Action {
 		}
 	}
 
-	private void addFeaturePlugins(IFeature feature, HashMap<String, IPluginModelBase> map) {
+	private void addFeaturePlugins(IFeature feature, Set<IPluginModelBase> launchPlugins) {
 		IFeaturePlugin[] plugins = feature.getPlugins();
 		for (int i = 0; i < plugins.length; i++) {
 			String id = plugins[i].getId();
-			if (id == null || map.containsKey(id))
+			String version = plugins[i].getVersion();
+			if (id == null || version == null)
 				continue;
-			IPluginModelBase model = PluginRegistry.findModel(id);
-			if (model != null && TargetPlatformHelper.matchesCurrentEnvironment(model))
-				map.put(id, model);
+			IPluginModelBase model = PluginRegistry.findModel(id, version, IMatchRules.EQUIVALENT, null);
+			if (model == null)
+				model = PluginRegistry.findModel(id);
+			if (model != null && !launchPlugins.contains(model) && TargetPlatformHelper.matchesCurrentEnvironment(model))
+				launchPlugins.add(model);
 		}
 	}
 

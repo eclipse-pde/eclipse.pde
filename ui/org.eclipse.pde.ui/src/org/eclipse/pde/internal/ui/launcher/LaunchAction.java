@@ -23,6 +23,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.core.plugin.IMatchRules;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.core.iproduct.*;
@@ -173,24 +174,24 @@ public class LaunchAction extends Action {
 	}
 
 	private IPluginModelBase[] getModels() {
-		HashMap<String, IPluginModelBase> map = new HashMap<String, IPluginModelBase>();
+		Set<IPluginModelBase> launchPlugins = new HashSet<IPluginModelBase>();
 		if (fProduct.useFeatures()) {
 			IFeatureModel[] features = getUniqueFeatures();
 			for (int i = 0; i < features.length; i++) {
-				addFeaturePlugins(features[i].getFeature(), map);
+				addFeaturePlugins(features[i].getFeature(), launchPlugins);
 			}
 		} else {
 			IProductPlugin[] plugins = fProduct.getPlugins();
 			for (int i = 0; i < plugins.length; i++) {
 				String id = plugins[i].getId();
-				if (id == null || map.containsKey(id))
+				if (id == null)
 					continue;
 				IPluginModelBase model = PluginRegistry.findModel(id);
 				if (model != null && TargetPlatformHelper.matchesCurrentEnvironment(model))
-					map.put(id, model);
+					launchPlugins.add(model);
 			}
 		}
-		return map.values().toArray(new IPluginModelBase[map.size()]);
+		return launchPlugins.toArray(new IPluginModelBase[launchPlugins.size()]);
 	}
 
 	private IFeatureModel[] getUniqueFeatures() {
@@ -218,15 +219,18 @@ public class LaunchAction extends Action {
 		}
 	}
 
-	private void addFeaturePlugins(IFeature feature, HashMap<String, IPluginModelBase> map) {
+	private void addFeaturePlugins(IFeature feature, Set<IPluginModelBase> launchPlugins) {
 		IFeaturePlugin[] plugins = feature.getPlugins();
 		for (int i = 0; i < plugins.length; i++) {
 			String id = plugins[i].getId();
-			if (id == null || map.containsKey(id))
+			String version = plugins[i].getVersion();
+			if (id == null || version == null)
 				continue;
-			IPluginModelBase model = PluginRegistry.findModel(id);
-			if (model != null && TargetPlatformHelper.matchesCurrentEnvironment(model))
-				map.put(id, model);
+			IPluginModelBase model = PluginRegistry.findModel(id, version, IMatchRules.EQUIVALENT, null);
+			if (model == null)
+				model = PluginRegistry.findModel(id);
+			if (model != null && !launchPlugins.contains(model) && TargetPlatformHelper.matchesCurrentEnvironment(model))
+				launchPlugins.add(model);
 		}
 	}
 
