@@ -2251,6 +2251,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String EquinoxPluginBlock_levelColumn;
 
+	public static String EquinoxPluginBlock_defaultLevelColumn;
+
 	public static String EquinoxPluginBlock_autoColumn;
 
 	public static String EquinoxPluginsTab_defaultStart;
