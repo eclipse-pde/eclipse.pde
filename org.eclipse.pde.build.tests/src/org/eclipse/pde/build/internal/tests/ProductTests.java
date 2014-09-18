@@ -116,8 +116,8 @@ public class ProductTests extends PDETestCase {
 
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
 		properties.put("product", "test.product");
-		properties.put("configs", "macosx,cocoa,x86");
-		properties.put("archivesFormat", "macosx,cocoa,x86-folder");
+		properties.put("configs", "macosx,cocoa,x86_64");
+		properties.put("archivesFormat", "macosx,cocoa,x86_64-folder");
 		if (!delta.equals(new File((String) properties.get("baseLocation"))))
 			properties.put("pluginPath", delta.getAbsolutePath());
 		Utils.storeBuildProperties(buildFolder, properties);
