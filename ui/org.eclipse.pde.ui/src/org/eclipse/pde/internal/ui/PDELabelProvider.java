@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 218618
  *     Brian de Alwis (MTI) - bug 429420
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 444808
  *******************************************************************************/
 package org.eclipse.pde.internal.ui;
 
@@ -307,7 +308,7 @@ public class PDELabelProvider extends SharedLabelProvider {
 	}
 
 	public String getObjectText(ISiteFeature obj) {
-		IFeatureModel model = PDECore.getDefault().getFeatureModelManager().findFeatureModel(obj.getId(), obj.getVersion() != null ? obj.getVersion() : "0.0.0"); //$NON-NLS-1$
+		IFeatureModel model = PDECore.getDefault().getFeatureModelManager().findFeatureModel(obj.getId(), obj.getVersion() != null ? obj.getVersion() : ICoreConstants.DEFAULT_VERSION);
 		if (model != null)
 			return getObjectText(model);
 		String url = obj.getURL();
@@ -626,7 +627,7 @@ public class PDELabelProvider extends SharedLabelProvider {
 	}
 
 	private Image getObjectImage(IProductPlugin obj) {
-		Version version = (obj.getVersion() != null && obj.getVersion().length() > 0 && !obj.getVersion().equals("0.0.0")) ? Version.parseVersion(obj.getVersion()) : null; //$NON-NLS-1$
+		Version version = (obj.getVersion() != null && obj.getVersion().length() > 0 && !obj.getVersion().equals(ICoreConstants.DEFAULT_VERSION)) ? Version.parseVersion(obj.getVersion()) : null;
 		BundleDescription desc = TargetPlatformHelper.getState().getBundle(obj.getId(), version);
 		if (desc != null) {
 			return desc.getHost() == null ? get(PDEPluginImages.DESC_PLUGIN_OBJ) : get(PDEPluginImages.DESC_FRAGMENT_OBJ);
@@ -719,7 +720,7 @@ public class PDELabelProvider extends SharedLabelProvider {
 
 	private Image getObjectImage(IProductFeature feature) {
 		int flags = 0;
-		String version = feature.getVersion().length() > 0 ? feature.getVersion() : "0.0.0"; //$NON-NLS-1$
+		String version = feature.getVersion().length() > 0 ? feature.getVersion() : ICoreConstants.DEFAULT_VERSION;
 		IFeatureModel model = PDECore.getDefault().getFeatureModelManager().findFeatureModel(feature.getId(), version);
 		if (model == null)
 			flags = F_ERROR;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 IBM Corporation and others.
+ * Copyright (c) 2005, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Simon Muschel <smuschel@gmx.de> - bug 260549
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 444808
  *******************************************************************************/
 package org.eclipse.pde.internal.core.builders;
 
@@ -443,14 +444,14 @@ public class FeatureErrorReporter extends ManifestErrorReporter {
 	/**
 	 * Validates that the version of the given plug-in is available in the registry.  Adds a
 	 * warning if the plug-in could not be found.
-	 * 
+	 *
 	 * @param plugin xml element describing the plug-in to look for in the registry
-	 * @param attr set of element attributes 
+	 * @param attr set of element attributes
 	 */
 	private void validateVersion(Element plugin, Attr attr) {
 		String id = plugin.getAttribute("id"); //$NON-NLS-1$
 		String version = plugin.getAttribute("version"); //$NON-NLS-1$
-		if (id.trim().length() == 0 || version.trim().length() == 0 || version.equals("0.0.0")) //$NON-NLS-1$
+		if (id.trim().length() == 0 || version.trim().length() == 0 || version.equals(ICoreConstants.DEFAULT_VERSION))
 			return;
 		ModelEntry entry = PluginRegistry.findEntry(id);
 		if (entry != null) {

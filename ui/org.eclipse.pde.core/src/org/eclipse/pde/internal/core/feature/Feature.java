@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 444808
  *******************************************************************************/
 package org.eclipse.pde.internal.core.feature;
 
@@ -16,6 +17,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.core.plugin.PluginBase;
 import org.eclipse.pde.internal.core.util.VersionUtil;
@@ -269,7 +271,7 @@ public class Feature extends VersionableObject implements IFeature {
 			IPluginModelBase[] models = entry.getActiveModels();
 			for (int j = 0; j < models.length; j++) {
 				IPluginModelBase m = models[j];
-				if (fp.getVersion().equals(m.getPluginBase().getVersion()) || fp.getVersion().equals("0.0.0")) //$NON-NLS-1$
+				if (fp.getVersion().equals(m.getPluginBase().getVersion()) || fp.getVersion().equals(ICoreConstants.DEFAULT_VERSION))
 					model = m;
 			}
 			if (model != null) {

@@ -1,12 +1,13 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2008 IBM Corporation and others.
+ *  Copyright (c) 2005, 2014 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 444808
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.feature;
 
@@ -14,6 +15,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.core.plugin.IPluginBase;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.feature.FeaturePlugin;
 import org.eclipse.pde.internal.core.feature.WorkspaceFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
@@ -36,7 +38,7 @@ public class CreateFeatureProjectOperation extends AbstractCreateFeatureOperatio
 			IPluginBase plugin = fPlugins[i];
 			FeaturePlugin fplugin = (FeaturePlugin) model.getFactory().createPlugin();
 			fplugin.loadFrom(plugin);
-			fplugin.setVersion("0.0.0"); //$NON-NLS-1$
+			fplugin.setVersion(ICoreConstants.DEFAULT_VERSION);
 			fplugin.setUnpack(CoreUtility.guessUnpack(plugin.getPluginModel().getBundleDescription()));
 			added[i] = fplugin;
 		}

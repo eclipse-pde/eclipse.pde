@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2013 IBM Corporation and others.
+ *  Copyright (c) 2000, 2014 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 444808
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
@@ -22,6 +23,7 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.core.IBaseModel;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.feature.WorkspaceFeatureModel;
 import org.eclipse.pde.internal.core.ibundle.IBundleModel;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
@@ -210,8 +212,8 @@ public class SynchronizeVersionsWizardPage extends WizardPage {
 		String id = ref.getId();
 
 		if (mode == USE_PLUGINS_AT_BUILD) {
-			if (!"0.0.0".equals(ref.getVersion())) //$NON-NLS-1$
-				ref.setVersion("0.0.0"); //$NON-NLS-1$
+			if (!ICoreConstants.DEFAULT_VERSION.equals(ref.getVersion()))
+				ref.setVersion(ICoreConstants.DEFAULT_VERSION);
 		} else if (mode == USE_PLUGINS) {
 			IPluginModelBase modelBase = PluginRegistry.findModel(id);
 			if (modelBase == null)

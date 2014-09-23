@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     EclipseSource Corporation - ongoing enhancements
  *     Alexander Kurtakov <akurtako@redhat.com> - bug 415649
- *     Simon Scholz <simon.scholz@vogella.com> - bug 440275
+ *     Simon Scholz <simon.scholz@vogella.com> - bug 440275, 444808
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
@@ -54,8 +54,6 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 
 public class PluginSection extends TableSection implements IPluginModelListener {
-
-	private static final String DEFAULT_VERSION = "0.0.0"; //$NON-NLS-1$
 
 	class ContentProvider extends DefaultTableProvider {
 		public Object[] getElements(Object parent) {
@@ -446,7 +444,7 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 			Object[] result = pluginSelectionDialog.getResult();
 			for (Object object : result) {
 				IPluginModelBase pluginModelBase = (IPluginModelBase) object;
-				addPlugin(pluginModelBase.getPluginBase().getId(), DEFAULT_VERSION);
+				addPlugin(pluginModelBase.getPluginBase().getId(), ICoreConstants.DEFAULT_VERSION);
 			}
 		}
 	}

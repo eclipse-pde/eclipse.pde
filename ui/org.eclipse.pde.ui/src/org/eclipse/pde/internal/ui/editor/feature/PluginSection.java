@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2013 IBM Corporation and others.
+ *  Copyright (c) 2000, 2014 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Alexander Kurtakov <akurtako@redhat.com> - bug 415649
  *     Fabian Miehe - Bug 440420
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 444808
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
@@ -200,7 +201,7 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 			IPluginModelBase candidate = (IPluginModelBase) candidates[i];
 			FeaturePlugin fplugin = (FeaturePlugin) model.getFactory().createPlugin();
 			fplugin.loadFrom(candidate.getPluginBase());
-			fplugin.setVersion("0.0.0"); //$NON-NLS-1$
+			fplugin.setVersion(ICoreConstants.DEFAULT_VERSION);
 			fplugin.setUnpack(CoreUtility.guessUnpack(candidate.getBundleDescription()));
 			added[i] = fplugin;
 		}

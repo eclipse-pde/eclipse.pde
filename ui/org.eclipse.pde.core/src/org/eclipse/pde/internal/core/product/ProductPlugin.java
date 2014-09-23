@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,12 +9,14 @@
  *     IBM Corporation - initial API and implementation
  *     Code 9 Corporation - ongoing enhancements
  *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 264462
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 444808
  *******************************************************************************/
 package org.eclipse.pde.internal.core.product;
 
 import java.io.PrintWriter;
 import org.eclipse.pde.core.plugin.IFragmentModel;
 import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.iproduct.IProductModel;
 import org.eclipse.pde.internal.core.iproduct.IProductPlugin;
 import org.w3c.dom.Element;
@@ -54,11 +56,11 @@ public class ProductPlugin extends ProductObject implements IProductPlugin {
 	 */
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent + "<plugin id=\"" + fId + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-		if (fVersion != null && fVersion.length() > 0 && !fVersion.equals("0.0.0")) { //$NON-NLS-1$
+		if (fVersion != null && fVersion.length() > 0 && !fVersion.equals(ICoreConstants.DEFAULT_VERSION)) {
 			writer.print(" version=\"" + fVersion + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
-		// If the plugin is a known fragment or has a cached fragment setting, mark it as a fragment 		
+		// If the plugin is a known fragment or has a cached fragment setting, mark it as a fragment
 		if (PluginRegistry.findModel(fId) != null) {
 			if (PluginRegistry.findModel(fId) instanceof IFragmentModel) {
 				writer.print(" fragment=\"" + Boolean.TRUE.toString() + "\""); //$NON-NLS-1$ //$NON-NLS-2$

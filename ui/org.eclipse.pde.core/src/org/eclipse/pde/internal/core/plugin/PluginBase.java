@@ -4,9 +4,10 @@
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 444808
  *******************************************************************************/
 package org.eclipse.pde.internal.core.plugin;
 
@@ -17,6 +18,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.PDECoreMessages;
 import org.eclipse.pde.internal.core.PDEState;
 import org.eclipse.pde.internal.core.bundle.BundlePluginBase;
@@ -282,7 +284,7 @@ public abstract class PluginBase extends AbstractExtensions implements IPluginBa
 		if (getModel() != null && getModel().getUnderlyingResource() != null) {
 			fId = getModel().getUnderlyingResource().getProject().getName();
 			fName = fId;
-			fVersion = "0.0.0"; //$NON-NLS-1$
+			fVersion = ICoreConstants.DEFAULT_VERSION;
 		}
 		super.reset();
 	}

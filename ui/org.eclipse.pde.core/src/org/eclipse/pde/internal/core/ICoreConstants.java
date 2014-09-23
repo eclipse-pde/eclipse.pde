@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Les Jones <lesojones@gmail.com> - Bug 214457
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 444808
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
@@ -187,6 +188,12 @@ public interface ICoreConstants {
 	public final static String BUILD_FILENAME_DESCRIPTOR = "build.properties"; //$NON-NLS-1$
 
 	/**
+	 * Default version number for selected elements in
+	 * the PluginSelectionDialog and FeatureSelectionDialog
+	 */
+	String DEFAULT_VERSION = "0.0.0"; //$NON-NLS-1$
+
+	/**
 	 * Target version of <code>3.0</code>
 	 * <p>
 	 * PDE constant for the version of Eclipse a file/project/bundle is targeting.  The version of
@@ -195,7 +202,7 @@ public interface ICoreConstants {
 	 * can be used to process PDE files that have changed structure between releases.
 	 * </p><p>
 	 * Anytime a new version constant is added, {@link ICoreConstants#TARGET_VERSION_LATEST} must be updated to
-	 * the newest version.  {@link TargetPlatformHelper#getTargetVersionString()} must be updated to return the 
+	 * the newest version.  {@link TargetPlatformHelper#getTargetVersionString()} must be updated to return the
 	 * new version.
 	 * </p>
 	 */

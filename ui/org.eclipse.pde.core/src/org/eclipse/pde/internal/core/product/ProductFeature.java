@@ -7,10 +7,12 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 444808
  *******************************************************************************/
 package org.eclipse.pde.internal.core.product;
 
 import java.io.PrintWriter;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.iproduct.IProductFeature;
 import org.eclipse.pde.internal.core.iproduct.IProductModel;
 import org.w3c.dom.Element;
@@ -44,7 +46,7 @@ public class ProductFeature extends ProductObject implements IProductFeature {
 
 	public void write(String indent, PrintWriter writer) {
 		writer.print(indent + "<feature id=\"" + fId + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-		if (fVersion != null && fVersion.length() > 0 && !fVersion.equals("0.0.0")) { //$NON-NLS-1$
+		if (fVersion != null && fVersion.length() > 0 && !fVersion.equals(ICoreConstants.DEFAULT_VERSION)) {
 			writer.print(" version=\"" + fVersion + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (fInstallMode != null && !fInstallMode.equals("")) { //$NON-NLS-1$

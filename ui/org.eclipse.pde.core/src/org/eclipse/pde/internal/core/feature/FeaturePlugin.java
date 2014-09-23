@@ -1,25 +1,20 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2014 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 444808
  *******************************************************************************/
 package org.eclipse.pde.internal.core.feature;
 
 import java.io.PrintWriter;
-
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.pde.core.plugin.IFragment;
-import org.eclipse.pde.core.plugin.IFragmentModel;
-import org.eclipse.pde.core.plugin.IPluginBase;
-import org.eclipse.pde.core.plugin.IPluginModel;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.ModelEntry;
-import org.eclipse.pde.core.plugin.PluginRegistry;
+import org.eclipse.pde.core.plugin.*;
+import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
 import org.w3c.dom.Node;
 
@@ -48,7 +43,7 @@ public class FeaturePlugin extends FeatureData implements IFeaturePlugin {
 		}
 		String version = getVersion();
 		IPluginModelBase model = null;
-		if (version == null || version.equals("0.0.0")) //$NON-NLS-1$
+		if (version == null || version.equals(ICoreConstants.DEFAULT_VERSION))
 			model = PluginRegistry.findModel(id);
 		else {
 			ModelEntry entry = PluginRegistry.findEntry(id);
