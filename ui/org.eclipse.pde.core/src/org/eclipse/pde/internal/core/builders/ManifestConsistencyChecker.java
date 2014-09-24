@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -344,25 +344,25 @@ public class ManifestConsistencyChecker extends IncrementalProjectBuilder {
 				File metaFolder = location.toFile();
 				String[] fileList = metaFolder.list(new ManifestFilter());
 
-				// check for misspelled MANIFEST.MF files
-				for (int i = 0; i < fileList.length; i++) {
-					String fileName = fileList[i];
-					IFile currentFile = manifestFolder.getFile(fileName);
-					try {
-						IMarker marker = currentFile.createMarker(PDEMarkerFactory.MARKER_ID);
-						marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
-						marker.setAttribute(IMarker.MESSAGE, PDECoreMessages.ManifestConsistencyChecker_manifestMisspelled);
-					} catch (CoreException e) {
-					}
-				}
-
-				// no MANIFEST.MF at all -> flag the project
-				if (fileList.length == 0) {
+				if (fileList == null || fileList.length == 0) {
+					// no MANIFEST.MF at all -> flag the project
 					try {
 						IMarker marker = project.createMarker(PDEMarkerFactory.MARKER_ID);
 						marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
 						marker.setAttribute(IMarker.MESSAGE, PDECoreMessages.ManifestConsistencyChecker_manifestDoesNotExist);
 					} catch (CoreException e) {
+					}
+				} else {
+					// check for misspelled MANIFEST.MF files
+					for (int i = 0; i < fileList.length; i++) {
+						String fileName = fileList[i];
+						IFile currentFile = manifestFolder.getFile(fileName);
+						try {
+							IMarker marker = currentFile.createMarker(PDEMarkerFactory.MARKER_ID);
+							marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
+							marker.setAttribute(IMarker.MESSAGE, PDECoreMessages.ManifestConsistencyChecker_manifestMisspelled);
+						} catch (CoreException e) {
+						}
 					}
 				}
 			}
