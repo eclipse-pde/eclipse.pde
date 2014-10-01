@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2010, 2012 IBM Corporation and others.
+ *  Copyright (c) 2010, 2014 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -10,14 +10,13 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.feature;
 
-import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
-
 import java.util.ArrayList;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.IEditable;
 import org.eclipse.pde.internal.core.PDECore;
@@ -29,10 +28,12 @@ import org.eclipse.pde.internal.ui.editor.context.XMLDocumentSetupParticpant;
 import org.eclipse.pde.internal.ui.editor.text.XMLConfiguration;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.*;
+import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.*;
 
@@ -175,6 +176,11 @@ public class LicenseFeatureSection extends PDESection {
 		fSourceViewer = new SourceViewer(localLicenseComposite, null, styles);
 		fSourceViewer.configure(fSourceConfiguration);
 		fSourceViewer.setDocument(fDocument);
+		fSourceViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent event) {
+				updateSelection(event.getSelection());
+			}
+		});
 		StyledText styledText = fSourceViewer.getTextWidget();
 		styledText.setFont(JFaceResources.getTextFont());
 		styledText.setMenu(getPage().getPDEEditor().getContextMenu());
@@ -329,5 +335,38 @@ public class LicenseFeatureSection extends PDESection {
 		} catch (CoreException e) {
 		}
 		super.commit(onSave);
+	}
+
+	public boolean doGlobalAction(String actionId) {
+		if (actionId.equals(ActionFactory.CUT.getId())) {
+			fSourceViewer.doOperation(ITextOperationTarget.CUT);
+			return true;
+		} else if (actionId.equals(ActionFactory.COPY.getId())) {
+			fSourceViewer.doOperation(ITextOperationTarget.COPY);
+			return true;
+		} else if (actionId.equals(ActionFactory.PASTE.getId())) {
+			fSourceViewer.doOperation(ITextOperationTarget.PASTE);
+			return true;
+		} else if (actionId.equals(ActionFactory.DELETE.getId())) {
+			fSourceViewer.doOperation(ITextOperationTarget.DELETE);
+			return true;
+		} else if (actionId.equals(ActionFactory.UNDO.getId())) {
+			fSourceViewer.doOperation(ITextOperationTarget.UNDO);
+			return true;
+		} else if (actionId.equals(ActionFactory.REDO.getId())) {
+			fSourceViewer.doOperation(ITextOperationTarget.REDO);
+			return true;
+		} else if (actionId.equals(ActionFactory.SELECT_ALL.getId())) {
+			fSourceViewer.doOperation(ITextOperationTarget.SELECT_ALL);
+		}
+		return false;
+	}
+
+	public boolean canPaste(Clipboard clipboard) {
+		return fSourceViewer.canDoOperation(ITextOperationTarget.PASTE);
+	}
+
+	private void updateSelection(ISelection selection) {
+		getPage().getPDEEditor().setSelection(selection);
 	}
 }

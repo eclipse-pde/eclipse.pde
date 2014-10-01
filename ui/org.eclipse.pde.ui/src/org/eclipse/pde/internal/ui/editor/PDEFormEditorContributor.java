@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2012 IBM Corporation and others.
+ * Copyright (c) 2003, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,6 @@
  *     Joern Dinkla <devnull@dinkla.com> - bug 197821
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor;
-
-import org.eclipse.jface.action.Action;
 
 import java.util.Hashtable;
 import org.eclipse.jface.action.*;
@@ -42,6 +40,8 @@ public class PDEFormEditorContributor extends MultiPageEditorActionBarContributo
 	private ClipboardAction fCopyAction;
 
 	private ClipboardAction fPasteAction;
+
+	private SelectAllAction fSelectAllAction;
 
 	private Hashtable<String, Action> fGlobalActions = new Hashtable<String, Action>();
 
@@ -123,6 +123,15 @@ public class PDEFormEditorContributor extends MultiPageEditorActionBarContributo
 		}
 	}
 
+	class SelectAllAction extends ClipboardAction {
+		public SelectAllAction() {
+			super(ActionFactory.SELECT_ALL.getId());
+			setText(PDEUIMessages.EditorActions_selectall);
+			setActionDefinitionId(ActionFactory.SELECT_ALL.getCommandId());
+			setEnabled(true);
+		}
+	}
+
 	class SaveAction extends Action implements IUpdate {
 		public SaveAction() {
 		}
@@ -168,6 +177,8 @@ public class PDEFormEditorContributor extends MultiPageEditorActionBarContributo
 		mng.add(fCutAction);
 		mng.add(fCopyAction);
 		mng.add(fPasteAction);
+		mng.add(new Separator());
+		mng.add(fSelectAllAction);
 		mng.add(new Separator());
 		mng.add(fRevertAction);
 	}
@@ -221,6 +232,7 @@ public class PDEFormEditorContributor extends MultiPageEditorActionBarContributo
 		fCutAction = new CutAction();
 		fCopyAction = new CopyAction();
 		fPasteAction = new PasteAction();
+		fSelectAllAction = new SelectAllAction();
 		addGlobalAction(ActionFactory.CUT.getId(), fCutAction);
 		addGlobalAction(ActionFactory.COPY.getId(), fCopyAction);
 		addGlobalAction(ActionFactory.PASTE.getId(), fPasteAction);
@@ -229,7 +241,7 @@ public class PDEFormEditorContributor extends MultiPageEditorActionBarContributo
 		addGlobalAction(ActionFactory.UNDO.getId());
 		addGlobalAction(ActionFactory.REDO.getId());
 		// select/find
-		addGlobalAction(ActionFactory.SELECT_ALL.getId());
+		addGlobalAction(ActionFactory.SELECT_ALL.getId(), fSelectAllAction);
 		addGlobalAction(ActionFactory.FIND.getId());
 		// bookmark
 		addGlobalAction(IDEActionFactory.BOOKMARK.getId());
