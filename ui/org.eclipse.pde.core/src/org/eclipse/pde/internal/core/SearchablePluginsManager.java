@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,8 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
-
-import org.eclipse.jdt.core.IClasspathEntry;
 
 import java.io.*;
 import java.util.*;
@@ -29,7 +27,7 @@ import org.eclipse.pde.internal.core.util.CoreUtility;
  * JARs to the proxy project. This makes the libraries visible to the Java
  * model, and they can take part in various Java searches.
  */
-public class SearchablePluginsManager implements IFileAdapterFactory, IPluginModelListener, ISaveParticipant {
+public class SearchablePluginsManager implements IFileAdapterFactory, IPluginModelListener {
 
 	private static final String PROXY_FILE_NAME = ".searchable"; //$NON-NLS-1$
 	public static final String PROXY_PROJECT_NAME = "External Plug-in Libraries"; //$NON-NLS-1$
@@ -65,7 +63,7 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 						// We may be getting a queued delta from when the manager was initialized, ignore unless we don't already have data
 						if (fPluginIdSet == null || fPluginIdSet.size() == 0) {
 							// Something other than the manager created the project, check if it has a .searchable file to load from
-							initializeStates();
+							fPluginIdSet = loadStates();
 						}
 					}
 				}
@@ -76,14 +74,14 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 	}
 
 	public SearchablePluginsManager() {
-		initializeStates();
+		fPluginIdSet = loadStates();
 		fElementListener = new Listener();
 		JavaCore.addElementChangedListener(fElementListener);
 		PDECore.getDefault().getModelManager().addPluginModelListener(this);
 	}
 
-	private void initializeStates() {
-		fPluginIdSet = new TreeSet<String>();
+	private static Set<String> loadStates() {
+		Set<String> set = new TreeSet<String>();
 		IWorkspaceRoot root = PDECore.getWorkspace().getRoot();
 		IProject project = root.getProject(PROXY_PROJECT_NAME);
 		try {
@@ -98,13 +96,14 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 					if (value != null) {
 						StringTokenizer stok = new StringTokenizer(value, ","); //$NON-NLS-1$
 						while (stok.hasMoreTokens())
-							fPluginIdSet.add(stok.nextToken());
+							set.add(stok.nextToken());
 					}
 				}
 			}
 		} catch (IOException e) {
 		} catch (CoreException e) {
 		}
+		return set;
 	}
 
 	public IJavaProject getProxyProject() {
@@ -293,6 +292,7 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 		try {
 			if (jProject != null) {
 				JavaCore.setClasspathContainer(PDECore.JAVA_SEARCH_CONTAINER_PATH, new IJavaProject[] {jProject}, new IClasspathContainer[] {new ExternalJavaSearchClasspathContainer()}, null);
+				saveStates();
 			}
 		} catch (JavaModelException e) {
 		}
@@ -328,26 +328,14 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 			fListeners.remove(listener);
 	}
 
-	public void doneSaving(ISaveContext context) {
-		// nothing is required here
-	}
-
-	public void prepareToSave(ISaveContext context) {
-		// no need for preparation
-	}
-
-	public void rollback(ISaveContext context) {
-		// do nothing.  not the end of the world.
-	}
-
-	public void saving(ISaveContext context) throws CoreException {
-		if (context.getKind() != ISaveContext.FULL_SAVE)
-			return;
-
+	private void saveStates() {
 		// persist state
 		IWorkspaceRoot root = PDECore.getWorkspace().getRoot();
 		IProject project = root.getProject(PROXY_PROJECT_NAME);
 		if (project.exists() && project.isOpen()) {
+			// modify the .searchable file only if there is any change
+			if (loadStates().equals(fPluginIdSet))
+				return;
 			IFile file = project.getFile(PROXY_FILE_NAME);
 			Properties properties = new Properties();
 			StringBuffer buffer = new StringBuffer();
@@ -370,6 +358,8 @@ public class SearchablePluginsManager implements IFileAdapterFactory, IPluginMod
 					file.create(inStream, true, new NullProgressMonitor());
 				inStream.close();
 			} catch (IOException e) {
+				PDECore.log(e);
+			} catch (CoreException e) {
 				PDECore.log(e);
 			}
 		}

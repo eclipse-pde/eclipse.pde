@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -291,27 +291,15 @@ public class PDECore extends Plugin implements DebugOptionsListener {
 		ResourcesPlugin.getWorkspace().addSaveParticipant(PLUGIN_ID, new ISaveParticipant() {
 			public void saving(ISaveContext saveContext) throws CoreException {
 				P2TargetUtils.cleanOrphanedTargetDefinitionProfiles();
-				if (fSearchablePluginsManager != null) {
-					fSearchablePluginsManager.saving(saveContext);
-				}
 			}
 
 			public void rollback(ISaveContext saveContext) {
-				if (fSearchablePluginsManager != null) {
-					fSearchablePluginsManager.rollback(saveContext);
-				}
 			}
 
 			public void prepareToSave(ISaveContext saveContext) throws CoreException {
-				if (fSearchablePluginsManager != null) {
-					fSearchablePluginsManager.prepareToSave(saveContext);
-				}
 			}
 
 			public void doneSaving(ISaveContext saveContext) {
-				if (fSearchablePluginsManager != null) {
-					fSearchablePluginsManager.doneSaving(saveContext);
-				}
 			}
 		});
 
