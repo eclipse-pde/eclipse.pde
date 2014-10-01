@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -930,9 +930,8 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 		if (obj instanceof IPluginElement) {
 			IPluginElement element = (IPluginElement) obj;
 			Image customImage = getCustomImage(element);
-			if (customImage != null)
-				elementImage = customImage;
-			customImage = PDEPlugin.getDefault().getLabelProvider().getImage(obj);
+			if (customImage == null)
+				customImage = PDEPlugin.getDefault().getLabelProvider().getImage(obj);
 			if (customImage != null)
 				elementImage = customImage;
 		}
