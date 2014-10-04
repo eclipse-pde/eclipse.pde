@@ -22,8 +22,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.p2.core.helpers.FileUtils;
 import org.eclipse.equinox.internal.p2.metadata.IRequiredCapability;
-import org.eclipse.equinox.p2.metadata.IInstallableUnit;
-import org.eclipse.equinox.p2.metadata.VersionRange;
+import org.eclipse.equinox.p2.metadata.*;
 import org.eclipse.equinox.p2.query.IQueryResult;
 import org.eclipse.equinox.p2.query.QueryUtil;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
@@ -1578,7 +1577,7 @@ public class PublishingTests extends P2TestCase {
 		assertProvides(iu, P2InfUtils.NAMESPACE_IU, "testid0");
 	}
 
-	/* public void testBug268498() throws Exception {
+	public void testBug268498() throws Exception {
 		IFolder buildFolder = newTest("268498");
 		IFolder rcp = Utils.createFolder(buildFolder, "rcp");
 
@@ -1640,7 +1639,7 @@ public class PublishingTests extends P2TestCase {
 		assertEquals(iu.getVersion().toString(), "1.0.0");
 
 		IInstallableUnit common = getIU(repo, EQUINOX_COMMON);
-		Collection required = iu.getRequirements();// collection of <IRequirement>
+		Collection/*<IRequirement>*/required = iu.getRequirements();
 		assertEquals(required.size(), 2);
 		Iterator it = required.iterator();
 		IRequiredCapability req0 = (IRequiredCapability) it.next();
@@ -1649,7 +1648,7 @@ public class PublishingTests extends P2TestCase {
 			assertEquals(req0.getRange(), new VersionRange(common.getVersion(), true, Version.MAX_VERSION, true));
 		else
 			assertEquals(req1.getRange(), new VersionRange(common.getVersion(), true, Version.MAX_VERSION, true));
-	}*/
+	}
 
 	public void testPublish_P2InfConfigProperty() throws Exception {
 		IFolder buildFolder = newTest("infConfig");
