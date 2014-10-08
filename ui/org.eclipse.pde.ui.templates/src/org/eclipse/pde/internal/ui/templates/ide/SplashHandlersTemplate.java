@@ -78,9 +78,6 @@ public class SplashHandlersTemplate extends PDETemplateSection {
 		createUI();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#addPages(org.eclipse.jface.wizard.Wizard)
-	 */
 	@Override
 	public void addPages(Wizard wizard) {
 		// Create the page
@@ -93,9 +90,6 @@ public class SplashHandlersTemplate extends PDETemplateSection {
 		markPagesAdded();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.templates.PDETemplateSection#getFormattedPackageName(java.lang.String)
-	 */
 	@Override
 	protected String getFormattedPackageName(String id) {
 		// Package name addition to create a location for containing
@@ -109,9 +103,6 @@ public class SplashHandlersTemplate extends PDETemplateSection {
 		return packageName + '.' + ISplashHandlerConstants.F_UNQUALIFIED_EXTENSION_ID;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.templates.PDETemplateSection#getNewFiles()
-	 */
 	@Override
 	public String[] getNewFiles() {
 		// Note:  This does not even get called for non-project templates
@@ -131,43 +122,28 @@ public class SplashHandlersTemplate extends PDETemplateSection {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#getNumberOfWorkUnits()
-	 */
 	@Override
 	public int getNumberOfWorkUnits() {
 		return super.getNumberOfWorkUnits() + 1;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.templates.BaseOptionTemplateSection#initializeFields(org.eclipse.pde.ui.IFieldData)
-	 */
 	@Override
 	protected void initializeFields(IFieldData data) {
 		String id = data.getId();
 		initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(id));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.templates.BaseOptionTemplateSection#initializeFields(org.eclipse.pde.core.plugin.IPluginModelBase)
-	 */
 	@Override
 	public void initializeFields(IPluginModelBase model) {
 		String pluginId = model.getPluginBase().getId();
 		initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(pluginId));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.templates.BaseOptionTemplateSection#isDependentOnParentWizard()
-	 */
 	@Override
 	public boolean isDependentOnParentWizard() {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.templates.OptionTemplateSection#validateOptions(org.eclipse.pde.ui.templates.TemplateOption)
-	 */
 	@Override
 	public void validateOptions(TemplateOption source) {
 		// Update class name
@@ -267,9 +243,6 @@ public class SplashHandlersTemplate extends PDETemplateSection {
 		fFieldProducts = addComboChoiceOption(F_FIELD_PRODUCTS, PDETemplateMessages.SplashHandlersTemplate_fieldProductID, choices, initialChoice, F_PAGE_INDEX);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#getDependencies(java.lang.String)
-	 */
 	@Override
 	public IPluginReference[] getDependencies(String schemaVersion) {
 		// Ensure schema version was defined
@@ -286,17 +259,11 @@ public class SplashHandlersTemplate extends PDETemplateSection {
 		return dependencies;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.templates.OptionTemplateSection#getSectionId()
-	 */
 	@Override
 	public String getSectionId() {
 		return ISplashHandlerConstants.F_UNQUALIFIED_EXTENSION_ID;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#updateModel(org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	protected void updateModel(IProgressMonitor monitor) throws CoreException {
 		// Create the action to update the model with the associated 
@@ -330,17 +297,11 @@ public class SplashHandlersTemplate extends PDETemplateSection {
 				fFieldClass.getValue();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.templates.ITemplateSection#getUsedExtensionPoint()
-	 */
 	@Override
 	public String getUsedExtensionPoint() {
 		return ISplashHandlerConstants.F_SPLASH_HANDLERS_EXTENSION;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#isOkToCreateFile(java.io.File)
-	 */
 	@Override
 	protected boolean isOkToCreateFile(File sourceFile) {
 		// TODO: MP: SPLASH:  Sync this with org.eclipse.pde.internal.ui.util.TemplateFileGenerator
@@ -355,17 +316,11 @@ public class SplashHandlersTemplate extends PDETemplateSection {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.templates.PDETemplateSection#copyBrandingDirectory()
-	 */
 	@Override
 	protected boolean copyBrandingDirectory() {
 		return isSplashFieldSelected();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#isOkToCreateFolder(java.io.File)
-	 */
 	@Override
 	protected boolean isOkToCreateFolder(File sourceFolder) {
 		// TODO: MP: SPLASH:  Sync this with org.eclipse.pde.internal.ui.util.TemplateFileGenerator
@@ -381,17 +336,11 @@ public class SplashHandlersTemplate extends PDETemplateSection {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.templates.OptionTemplateSection#getLabel()
-	 */
 	@Override
 	public String getLabel() {
 		return getPluginResourceString("wizard.name.splash.handler"); //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.templates.OptionTemplateSection#getDescription()
-	 */
 	@Override
 	public String getDescription() {
 		return getPluginResourceString("wizard.description.splash.handler"); //$NON-NLS-1$

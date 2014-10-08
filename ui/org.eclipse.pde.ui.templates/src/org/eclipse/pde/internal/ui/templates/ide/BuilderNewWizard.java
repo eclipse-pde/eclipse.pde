@@ -33,11 +33,6 @@ public class BuilderNewWizard extends NewPluginTemplateWizard {
 		setWindowTitle(PDETemplateMessages.BuilderNewWizard_wtitle);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.ui.templates.NewPluginTemplateWizard#createTemplateSections()
-	 */
 	@Override
 	public ITemplateSection[] createTemplateSections() {
 		return new ITemplateSection[] {new BuilderTemplate()};

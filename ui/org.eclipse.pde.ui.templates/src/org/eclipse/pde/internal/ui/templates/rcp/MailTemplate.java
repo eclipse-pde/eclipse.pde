@@ -60,19 +60,11 @@ public class MailTemplate extends PDETemplateSection {
 		initializeOption(KEY_PACKAGE_NAME, packageName);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.ui.templates.OptionTemplateSection#getSectionId()
-	 */
 	@Override
 	public String getSectionId() {
 		return "mail"; //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#updateModel(org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	protected void updateModel(IProgressMonitor monitor) throws CoreException {
 		createApplicationExtension();
@@ -275,33 +267,21 @@ public class MailTemplate extends PDETemplateSection {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.templates.ITemplateSection#getUsedExtensionPoint()
-	 */
 	@Override
 	public String getUsedExtensionPoint() {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.templates.BaseOptionTemplateSection#isDependentOnParentWizard()
-	 */
 	@Override
 	public boolean isDependentOnParentWizard() {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#getNumberOfWorkUnits()
-	 */
 	@Override
 	public int getNumberOfWorkUnits() {
 		return super.getNumberOfWorkUnits() + 1;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#getDependencies(java.lang.String)
-	 */
 	@Override
 	public IPluginReference[] getDependencies(String schemaVersion) {
 		IPluginReference[] dep = new IPluginReference[2];
@@ -310,17 +290,11 @@ public class MailTemplate extends PDETemplateSection {
 		return dep;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.wizards.templates.PDETemplateSection#getNewFiles()
-	 */
 	@Override
 	public String[] getNewFiles() {
 		return new String[] {"icons/", "product_lg.gif", "splash.bmp"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.templates.PDETemplateSection#copyBrandingDirectory()
-	 */
 	@Override
 	protected boolean copyBrandingDirectory() {
 		return true;

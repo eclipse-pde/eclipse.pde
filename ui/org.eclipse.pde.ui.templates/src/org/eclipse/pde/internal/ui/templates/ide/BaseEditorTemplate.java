@@ -19,9 +19,6 @@ public abstract class BaseEditorTemplate extends PDETemplateSection {
 		return "org.eclipse.ui.editors"; //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.templates.ITemplateSection#getFoldersToInclude()
-	 */
 	@Override
 	public String[] getNewFiles() {
 		return new String[] {"icons/"}; //$NON-NLS-1$

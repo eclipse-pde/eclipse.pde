@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.templates.ide;
 
-import org.eclipse.pde.ui.templates.PluginReference;
-
 import java.io.File;
 import java.util.ArrayList;
 import org.eclipse.core.runtime.CoreException;
@@ -49,11 +47,6 @@ public class BuilderTemplate extends PDETemplateSection {
 		createOptions();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.ui.templates.OptionTemplateSection#getSectionId()
-	 */
 	@Override
 	public String getSectionId() {
 		return "builder"; //$NON-NLS-1$
@@ -111,11 +104,6 @@ public class BuilderTemplate extends PDETemplateSection {
 		initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(pluginId));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.ui.templates.ITemplateSection#getUsedExtensionPoint()
-	 */
 	@Override
 	public String getUsedExtensionPoint() {
 		return "org.eclipse.core.resources.builders"; //$NON-NLS-1$
@@ -307,11 +295,6 @@ public class BuilderTemplate extends PDETemplateSection {
 			plugin.add(extension8);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#getDependencies(java.lang.String)
-	 */
 	@Override
 	public IPluginReference[] getDependencies(String schemaVersion) {
 		ArrayList<PluginReference> result = new ArrayList<PluginReference>();
@@ -325,11 +308,6 @@ public class BuilderTemplate extends PDETemplateSection {
 		return result.toArray(new IPluginReference[result.size()]);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.pde.internal.ui.wizards.templates.PDETemplateSection#formatPackageName(java.lang.String)
-	 */
 	@Override
 	protected String getFormattedPackageName(String id) {
 		String packageName = super.getFormattedPackageName(id);
@@ -353,17 +331,11 @@ public class BuilderTemplate extends PDETemplateSection {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.templates.OptionTemplateSection#getLabel()
-	 */
 	@Override
 	public String getLabel() {
 		return getPluginResourceString("newExtension.templates.builder.name"); //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.templates.OptionTemplateSection#getDescription()
-	 */
 	@Override
 	public String getDescription() {
 		return getPluginResourceString("newExtension.templates.builder.desc"); //$NON-NLS-1$

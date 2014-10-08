@@ -11,8 +11,6 @@
 
 package org.eclipse.pde.internal.ui.templates.ide;
 
-import org.eclipse.pde.ui.templates.PluginReference;
-
 import java.io.File;
 import java.util.ArrayList;
 import org.eclipse.core.runtime.CoreException;
@@ -194,9 +192,6 @@ public class ViewTemplate extends PDETemplateSection {
 		extension.add(categoryElement);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.wizards.templates.PDETemplateSection#getFoldersToInclude()
-	 */
 	@Override
 	public String[] getNewFiles() {
 		if (contextHelp.isSelected())
@@ -204,9 +199,6 @@ public class ViewTemplate extends PDETemplateSection {
 		return new String[] {"icons/"}; //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#getDependencies(java.lang.String)
-	 */
 	@Override
 	public IPluginReference[] getDependencies(String schemaVersion) {
 		ArrayList<PluginReference> result = new ArrayList<PluginReference>();
@@ -216,9 +208,6 @@ public class ViewTemplate extends PDETemplateSection {
 		return result.toArray(new IPluginReference[result.size()]);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.wizards.templates.PDETemplateSection#formatPackageName(java.lang.String)
-	 */
 	@Override
 	protected String getFormattedPackageName(String id) {
 		String packageName = super.getFormattedPackageName(id);

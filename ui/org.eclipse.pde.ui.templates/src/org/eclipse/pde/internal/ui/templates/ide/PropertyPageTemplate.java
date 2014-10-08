@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.templates.ide;
 
-import org.eclipse.pde.ui.templates.PluginReference;
-
 import java.util.ArrayList;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -128,9 +126,6 @@ public class PropertyPageTemplate extends PDETemplateSection {
 		return "org.eclipse.ui.propertyPages"; //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#getDependencies(java.lang.String)
-	 */
 	@Override
 	public IPluginReference[] getDependencies(String schemaVersion) {
 		ArrayList<PluginReference> result = new ArrayList<PluginReference>();
@@ -142,9 +137,6 @@ public class PropertyPageTemplate extends PDETemplateSection {
 		return result.toArray(new IPluginReference[result.size()]);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.wizards.templates.PDETemplateSection#formatPackageName(java.lang.String)
-	 */
 	@Override
 	protected String getFormattedPackageName(String id) {
 		String packageName = super.getFormattedPackageName(id);

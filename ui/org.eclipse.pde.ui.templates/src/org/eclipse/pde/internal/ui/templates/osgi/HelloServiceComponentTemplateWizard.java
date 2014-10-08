@@ -19,18 +19,12 @@ import org.eclipse.pde.ui.templates.NewPluginTemplateWizard;
 
 public class HelloServiceComponentTemplateWizard extends NewPluginTemplateWizard {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.templates.AbstractNewPluginTemplateWizard#init(org.eclipse.pde.ui.IFieldData)
-	 */
 	@Override
 	public void init(IFieldData data) {
 		super.init(data);
 		setWindowTitle(PDETemplateMessages.DSTemplateWizard_title);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.templates.NewPluginTemplateWizard#createTemplateSections()
-	 */
 	@Override
 	public ITemplateSection[] createTemplateSections() {
 		return new ITemplateSection[] {new HelloServiceComponentTemplate()};

@@ -74,9 +74,6 @@ public abstract class PDETemplateSection extends OptionTemplateSection {
 		return result.toArray(new String[result.size()]);
 	}
 
-	/* (non-Javadoc)
-	* @see org.eclipse.pde.ui.templates.ITemplateSection#getFoldersToInclude()
-	*/
 	@Override
 	public String[] getNewFiles() {
 		return new String[0];

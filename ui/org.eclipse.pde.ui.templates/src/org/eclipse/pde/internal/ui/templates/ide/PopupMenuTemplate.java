@@ -149,9 +149,6 @@ public class PopupMenuTemplate extends PDETemplateSection {
 		return "org.eclipse.ui.popupMenus"; //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.wizards.templates.PDETemplateSection#formatPackageName(java.lang.String)
-	 */
 	@Override
 	protected String getFormattedPackageName(String id) {
 		String packageName = super.getFormattedPackageName(id);

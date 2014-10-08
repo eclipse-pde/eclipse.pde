@@ -34,43 +34,26 @@ public class OSGiPreferencesServiceTemplate extends PDETemplateSection {
 		markPagesAdded();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.ui.templates.OptionTemplateSection#getSectionId()
-	 */
 	@Override
 	public String getSectionId() {
 		return "OSGiPreferencesService"; //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#updateModel(org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	protected void updateModel(IProgressMonitor monitor) {
 		// do nothing
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.templates.ITemplateSection#getUsedExtensionPoint()
-	 */
 	@Override
 	public String getUsedExtensionPoint() {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.templates.BaseOptionTemplateSection#isDependentOnParentWizard()
-	 */
 	@Override
 	public boolean isDependentOnParentWizard() {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#getNumberOfWorkUnits()
-	 */
 	@Override
 	public int getNumberOfWorkUnits() {
 		return super.getNumberOfWorkUnits() + 1;

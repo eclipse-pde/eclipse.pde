@@ -208,17 +208,11 @@ public class HelpTemplate extends PDETemplateSection {
 		return "org.eclipse.help.toc"; //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#getDependencies(java.lang.String)
-	 */
 	@Override
 	public IPluginReference[] getDependencies(String schemaVersion) {
 		return new IPluginReference[0];
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.wizards.templates.PDETemplateSection#getFoldersToInclude()
-	 */
 	@Override
 	public String[] getNewFiles() {
 		return new String[] {"html/", "*.xml"}; //$NON-NLS-1$ //$NON-NLS-2$

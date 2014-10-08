@@ -154,9 +154,6 @@ public class MultiPageEditorTemplate extends BaseEditorTemplate {
 			plugin.add(extension);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.wizards.templates.PDETemplateSection#formatPackageName(java.lang.String)
-	 */
 	@Override
 	protected String getFormattedPackageName(String id) {
 		String packageName = super.getFormattedPackageName(id);

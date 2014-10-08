@@ -52,9 +52,6 @@ public class DecoratorTemplate extends PDETemplateSection {
 		alterOptionStates();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#getDependencies(java.lang.String)
-	 */
 	@Override
 	public IPluginReference[] getDependencies(String schemaVersion) {
 		// Additional dependency required to decorate resource objects
@@ -66,10 +63,6 @@ public class DecoratorTemplate extends PDETemplateSection {
 		return super.getDependencies(schemaVersion);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.templates.OptionTemplateSection#getSectionId()
-	 * @see org.eclipse.pde.internal.ui.wizards.templates.PDETemplateSection#getDirectoryCandidates()
-	 */
 	@Override
 	public String getSectionId() {
 		// Identifier used for the folder name within the templates_3.X
@@ -78,9 +71,6 @@ public class DecoratorTemplate extends PDETemplateSection {
 		return "decorator"; //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#getNumberOfWorkUnits()
-	 */
 	@Override
 	public int getNumberOfWorkUnits() {
 		return super.getNumberOfWorkUnits() + 1;
@@ -105,9 +95,6 @@ public class DecoratorTemplate extends PDETemplateSection {
 				0);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#addPages(org.eclipse.jface.wizard.Wizard)
-	 */
 	@Override
 	public void addPages(Wizard wizard) {
 		int pageIndex = 0;
@@ -126,9 +113,6 @@ public class DecoratorTemplate extends PDETemplateSection {
 		classOption.setEnabled(!projectOption.isEnabled());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#isOkToCreateFolder(java.io.File)
-	 */
 	@Override
 	protected boolean isOkToCreateFolder(File sourceFolder) {
 		//Define rules for creating folders from the Templates_3.X folders
@@ -140,9 +124,6 @@ public class DecoratorTemplate extends PDETemplateSection {
 		return isOk;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#isOkToCreateFile(java.io.File)
-	 */
 	@Override
 	protected boolean isOkToCreateFile(File sourceFile) {
 		//Define rules for creating files from the Templates_3.X folders
@@ -158,9 +139,6 @@ public class DecoratorTemplate extends PDETemplateSection {
 		return isOk;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.templates.BaseOptionTemplateSection#validateOptions(org.eclipse.pde.ui.templates.TemplateOption)
-	 */
 	@Override
 	public void validateOptions(TemplateOption source) {
 		if (source == readOnlyOption) {
@@ -169,17 +147,11 @@ public class DecoratorTemplate extends PDETemplateSection {
 		super.validateOptions(source);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.templates.BaseOptionTemplateSection#isDependentOnParentWizard()
-	 */
 	@Override
 	public boolean isDependentOnParentWizard() {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.templates.BaseOptionTemplateSection#initializeFields(org.eclipse.pde.ui.IFieldData)
-	 */
 	@Override
 	protected void initializeFields(IFieldData data) {
 		// In a new project wizard, we don't know this yet - the
@@ -188,9 +160,6 @@ public class DecoratorTemplate extends PDETemplateSection {
 		initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(id));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.templates.BaseOptionTemplateSection#initializeFields(org.eclipse.pde.core.plugin.IPluginModelBase)
-	 */
 	@Override
 	public void initializeFields(IPluginModelBase model) {
 		// In the new extension wizard, the model exists so 
@@ -199,9 +168,6 @@ public class DecoratorTemplate extends PDETemplateSection {
 		initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(pluginId));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#updateModel(org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	protected void updateModel(IProgressMonitor monitor) throws CoreException {
 		// This method creates the extension point structure through the use
@@ -269,17 +235,11 @@ public class DecoratorTemplate extends PDETemplateSection {
 			plugin.add(extension);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.wizards.templates.PDETemplateSection#getNewFiles()
-	 */
 	@Override
 	public String[] getNewFiles() {
 		return new String[] {"icons/"}; //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.wizards.templates.PDETemplateSection#getFormattedPackageName(java.lang.String)
-	 */
 	@Override
 	protected String getFormattedPackageName(String id) {
 		// Package name addition to create a location for containing
@@ -290,9 +250,6 @@ public class DecoratorTemplate extends PDETemplateSection {
 		return "decorators"; //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.templates.ITemplateSection#getUsedExtensionPoint()
-	 */
 	@Override
 	public String getUsedExtensionPoint() {
 		return "org.eclipse.ui.decorators"; //$NON-NLS-1$

@@ -68,19 +68,11 @@ public class HelloRCPTemplate extends PDETemplateSection {
 		initializeOption(KEY_PACKAGE_NAME, packageName);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.ui.templates.OptionTemplateSection#getSectionId()
-	 */
 	@Override
 	public String getSectionId() {
 		return "helloRCP"; //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#updateModel(org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	protected void updateModel(IProgressMonitor monitor) throws CoreException {
 		createApplicationExtension();
@@ -147,33 +139,21 @@ public class HelloRCPTemplate extends PDETemplateSection {
 			plugin.add(extension);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.templates.ITemplateSection#getUsedExtensionPoint()
-	 */
 	@Override
 	public String getUsedExtensionPoint() {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.templates.BaseOptionTemplateSection#isDependentOnParentWizard()
-	 */
 	@Override
 	public boolean isDependentOnParentWizard() {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#getNumberOfWorkUnits()
-	 */
 	@Override
 	public int getNumberOfWorkUnits() {
 		return super.getNumberOfWorkUnits() + 1;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#getDependencies(java.lang.String)
-	 */
 	@Override
 	public IPluginReference[] getDependencies(String schemaVersion) {
 		IPluginReference[] dep = new IPluginReference[2];
@@ -182,9 +162,6 @@ public class HelloRCPTemplate extends PDETemplateSection {
 		return dep;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.templates.PDETemplateSection#getNewFiles()
-	 */
 	@Override
 	public String[] getNewFiles() {
 		if (copyBrandingDirectory())
