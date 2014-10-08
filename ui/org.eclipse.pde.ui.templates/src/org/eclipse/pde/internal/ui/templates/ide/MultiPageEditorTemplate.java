@@ -35,10 +35,12 @@ public class MultiPageEditorTemplate extends BaseEditorTemplate {
 		createOptions();
 	}
 
+	@Override
 	public String getSectionId() {
 		return "multiPageEditor"; //$NON-NLS-1$
 	}
 
+	@Override
 	public IPluginReference[] getDependencies(String schemaVersion) {
 		if (schemaVersion != null) {
 			IPluginReference[] dep = new IPluginReference[6];
@@ -56,6 +58,7 @@ public class MultiPageEditorTemplate extends BaseEditorTemplate {
 	/*
 	 * @see ITemplateSection#getNumberOfWorkUnits()
 	 */
+	@Override
 	public int getNumberOfWorkUnits() {
 		return super.getNumberOfWorkUnits() + 1;
 	}
@@ -76,6 +79,7 @@ public class MultiPageEditorTemplate extends BaseEditorTemplate {
 				0);
 	}
 
+	@Override
 	protected void initializeFields(IFieldData data) {
 		// In a new project wizard, we don't know this yet - the
 		// model has not been created
@@ -83,6 +87,7 @@ public class MultiPageEditorTemplate extends BaseEditorTemplate {
 		initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(id));
 	}
 
+	@Override
 	public void initializeFields(IPluginModelBase model) {
 		// In the new extension wizard, the model exists so 
 		// we can initialize directly from it
@@ -90,10 +95,12 @@ public class MultiPageEditorTemplate extends BaseEditorTemplate {
 		initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(pluginId));
 	}
 
+	@Override
 	public boolean isDependentOnParentWizard() {
 		return true;
 	}
 
+	@Override
 	public void addPages(Wizard wizard) {
 		WizardPage page = createPage(0, IHelpContextIds.TEMPLATE_MULTIPAGE_EDITOR);
 		page.setTitle(PDETemplateMessages.MultiPageEditorTemplate_title);
@@ -102,6 +109,7 @@ public class MultiPageEditorTemplate extends BaseEditorTemplate {
 		markPagesAdded();
 	}
 
+	@Override
 	public void validateOptions(TemplateOption source) {
 		if (source.isRequired() && source.isEmpty()) {
 			flagMissingRequiredOption(source);
@@ -122,6 +130,7 @@ public class MultiPageEditorTemplate extends BaseEditorTemplate {
 		resetPageState();
 	}
 
+	@Override
 	protected void updateModel(IProgressMonitor monitor) throws CoreException {
 		IPluginBase plugin = model.getPluginBase();
 		IPluginExtension extension = createExtension("org.eclipse.ui.editors", true); //$NON-NLS-1$
@@ -148,6 +157,7 @@ public class MultiPageEditorTemplate extends BaseEditorTemplate {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.wizards.templates.PDETemplateSection#formatPackageName(java.lang.String)
 	 */
+	@Override
 	protected String getFormattedPackageName(String id) {
 		String packageName = super.getFormattedPackageName(id);
 		if (packageName.length() != 0)

@@ -58,6 +58,7 @@ public class UniversalWelcomeTemplate extends PDETemplateSection {
 		addOption(KEY_LINK_URL, PDETemplateMessages.UniversalWelcomeTemplate_linkUrl, "http://www.eclipse.org", 0); //$NON-NLS-1$
 	}
 
+	@Override
 	public void addPages(Wizard wizard) {
 		WizardPage page = createPage(0, IHelpContextIds.TEMPLATE_UNIVERSAL_WELCOME);
 		page.setTitle(PDETemplateMessages.IntroTemplate_title);
@@ -66,24 +67,29 @@ public class UniversalWelcomeTemplate extends PDETemplateSection {
 		markPagesAdded();
 	}
 
+	@Override
 	public boolean isDependentOnParentWizard() {
 		return true;
 	}
 
+	@Override
 	public String getSectionId() {
 		return "universalWelcome"; //$NON-NLS-1$
 	}
 
+	@Override
 	protected void initializeFields(IFieldData data) {
 		// In a new project wizard, we don't know this yet - the
 		// model has not been created
 		pluginId = data.getId();
 	}
 
+	@Override
 	public void initializeFields(IPluginModelBase model) {
 		pluginId = model.getPluginBase().getId();
 	}
 
+	@Override
 	protected void updateModel(IProgressMonitor monitor) throws CoreException {
 		IPluginBase plugin = model.getPluginBase();
 
@@ -101,6 +107,7 @@ public class UniversalWelcomeTemplate extends PDETemplateSection {
 			plugin.add(extension);
 	}
 
+	@Override
 	protected boolean isOkToCreateFolder(File sourceFolder) {
 		return true;
 	}
@@ -108,14 +115,17 @@ public class UniversalWelcomeTemplate extends PDETemplateSection {
 	/**
 	 * @see AbstractTemplateSection#isOkToCreateFile(File)
 	 */
+	@Override
 	protected boolean isOkToCreateFile(File sourceFile) {
 		return true;
 	}
 
+	@Override
 	public String getUsedExtensionPoint() {
 		return "org.eclipse.ui.intro.configExtension"; //$NON-NLS-1$
 	}
 
+	@Override
 	public IPluginReference[] getDependencies(String schemaVersion) {
 		ArrayList result = new ArrayList();
 
@@ -129,6 +139,7 @@ public class UniversalWelcomeTemplate extends PDETemplateSection {
 		return (IPluginReference[]) result.toArray(new IPluginReference[result.size()]);
 	}
 
+	@Override
 	public int getNumberOfWorkUnits() {
 		return super.getNumberOfWorkUnits() + 1;
 	}
@@ -137,6 +148,7 @@ public class UniversalWelcomeTemplate extends PDETemplateSection {
 	 * We are going to compute some values even though we are
 	 * not exposing them as options.
 	 */
+	@Override
 	public String getStringOption(String name) {
 		if (name.equals(KEY_EXTENSION_ID)) {
 			return stripNonAlphanumeric(pluginId) + "-introExtension"; //$NON-NLS-1$
@@ -161,6 +173,7 @@ public class UniversalWelcomeTemplate extends PDETemplateSection {
 		return result.toString();
 	}
 
+	@Override
 	public String[] getNewFiles() {
 		return new String[] {getStringOption(KEY_INTRO_DIR) + "/"}; //$NON-NLS-1$
 	}

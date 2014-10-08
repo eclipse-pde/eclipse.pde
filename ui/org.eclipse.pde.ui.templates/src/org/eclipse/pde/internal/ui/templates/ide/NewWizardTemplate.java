@@ -37,6 +37,7 @@ public class NewWizardTemplate extends PDETemplateSection {
 		createOptions();
 	}
 
+	@Override
 	public String getSectionId() {
 		return "newWizard"; //$NON-NLS-1$
 	}
@@ -44,6 +45,7 @@ public class NewWizardTemplate extends PDETemplateSection {
 	/*
 	 * @see ITemplateSection#getNumberOfWorkUnits()
 	 */
+	@Override
 	public int getNumberOfWorkUnits() {
 		return super.getNumberOfWorkUnits() + 1;
 	}
@@ -60,6 +62,7 @@ public class NewWizardTemplate extends PDETemplateSection {
 		addOption("initialFileName", PDETemplateMessages.NewWizardTemplate_fileName, "new_file.mpe", 0); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
+	@Override
 	protected void initializeFields(IFieldData data) {
 		// In a new project wizard, we don't know this yet - the
 		// model has not been created
@@ -68,6 +71,7 @@ public class NewWizardTemplate extends PDETemplateSection {
 		initializeOption("categoryId", id); //$NON-NLS-1$
 	}
 
+	@Override
 	public void initializeFields(IPluginModelBase model) {
 		// In the new extension wizard, the model exists so 
 		// we can initialize directly from it
@@ -79,6 +83,7 @@ public class NewWizardTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#getDependencies(java.lang.String)
 	 */
+	@Override
 	public IPluginReference[] getDependencies(String schemaVersion) {
 		ArrayList result = new ArrayList();
 		result.add(new PluginReference("org.eclipse.core.resources", null, 0)); //$NON-NLS-1$
@@ -90,10 +95,12 @@ public class NewWizardTemplate extends PDETemplateSection {
 		return (IPluginReference[]) result.toArray(new IPluginReference[result.size()]);
 	}
 
+	@Override
 	public boolean isDependentOnParentWizard() {
 		return true;
 	}
 
+	@Override
 	public void addPages(Wizard wizard) {
 		WizardPage page = createPage(0, IHelpContextIds.TEMPLATE_NEW_WIZARD);
 		page.setTitle(PDETemplateMessages.NewWizardTemplate_title);
@@ -102,10 +109,12 @@ public class NewWizardTemplate extends PDETemplateSection {
 		markPagesAdded();
 	}
 
+	@Override
 	public String getUsedExtensionPoint() {
 		return "org.eclipse.ui.newWizards"; //$NON-NLS-1$
 	}
 
+	@Override
 	protected void updateModel(IProgressMonitor monitor) throws CoreException {
 		IPluginBase plugin = model.getPluginBase();
 		IPluginExtension extension = createExtension("org.eclipse.ui.newWizards", true); //$NON-NLS-1$
@@ -151,6 +160,7 @@ public class NewWizardTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.wizards.templates.PDETemplateSection#getFoldersToInclude()
 	 */
+	@Override
 	public String[] getNewFiles() {
 		return new String[] {"icons/"}; //$NON-NLS-1$
 	}
@@ -158,6 +168,7 @@ public class NewWizardTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.wizards.templates.PDETemplateSection#formatPackageName(java.lang.String)
 	 */
+	@Override
 	protected String getFormattedPackageName(String id) {
 		String packageName = super.getFormattedPackageName(id);
 		if (packageName.length() != 0)

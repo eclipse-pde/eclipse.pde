@@ -20,6 +20,7 @@ public class HelloOSGiNewWizard extends NewPluginTemplateWizard {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.AbstractNewPluginTemplateWizard#init(org.eclipse.pde.ui.IFieldData)
 	 */
+	@Override
 	public void init(IFieldData data) {
 		super.init(data);
 		setWindowTitle(PDETemplateMessages.HelloOSGiNewWizard_title);
@@ -28,10 +29,12 @@ public class HelloOSGiNewWizard extends NewPluginTemplateWizard {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.NewPluginTemplateWizard#createTemplateSections()
 	 */
+	@Override
 	public ITemplateSection[] createTemplateSections() {
 		return new ITemplateSection[] {new HelloOSGiTemplate()};
 	}
 
+	@Override
 	public String[] getImportPackages() {
 		return new String[] {"org.osgi.framework;version=\"1.3.0\""}; //$NON-NLS-1$
 	}

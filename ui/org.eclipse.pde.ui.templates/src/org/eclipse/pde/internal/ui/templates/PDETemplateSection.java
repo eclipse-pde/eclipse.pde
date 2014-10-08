@@ -28,15 +28,18 @@ public abstract class PDETemplateSection extends OptionTemplateSection {
 	public static final String VALUE_PERSPECTIVE_NAME = "RCP Perspective"; //$NON-NLS-1$
 	public static final String VALUE_APPLICATION_ID = "application"; //$NON-NLS-1$
 
+	@Override
 	protected ResourceBundle getPluginResourceBundle() {
 		Bundle bundle = Platform.getBundle(Activator.getPluginId());
 		return Platform.getResourceBundle(bundle);
 	}
 
+	@Override
 	protected URL getInstallURL() {
 		return Activator.getDefault().getInstallURL();
 	}
 
+	@Override
 	public URL getTemplateLocation() {
 		try {
 			String[] candidates = getDirectoryCandidates();
@@ -74,6 +77,7 @@ public abstract class PDETemplateSection extends OptionTemplateSection {
 	/* (non-Javadoc)
 	* @see org.eclipse.pde.ui.templates.ITemplateSection#getFoldersToInclude()
 	*/
+	@Override
 	public String[] getNewFiles() {
 		return new String[0];
 	}
@@ -93,6 +97,7 @@ public abstract class PDETemplateSection extends OptionTemplateSection {
 		return buffer.toString().toLowerCase(Locale.ENGLISH);
 	}
 
+	@Override
 	protected void generateFiles(IProgressMonitor monitor) throws CoreException {
 		super.generateFiles(monitor);
 		// Copy the default splash screen if the branding option is selected

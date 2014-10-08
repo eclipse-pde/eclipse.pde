@@ -34,6 +34,7 @@ public class ViewTemplate extends PDETemplateSection {
 		createOptions();
 	}
 
+	@Override
 	public String getSectionId() {
 		return "view"; //$NON-NLS-1$
 	}
@@ -41,6 +42,7 @@ public class ViewTemplate extends PDETemplateSection {
 	/*
 	 * @see ITemplateSection#getNumberOfWorkUnits()
 	 */
+	@Override
 	public int getNumberOfWorkUnits() {
 		return super.getNumberOfWorkUnits() + 1;
 	}
@@ -61,6 +63,7 @@ public class ViewTemplate extends PDETemplateSection {
 		contextHelp = (BooleanOption) addOption("contextHelp", PDETemplateMessages.ViewTemplate_contextHelp, true, 0); //$NON-NLS-1$
 	}
 
+	@Override
 	protected void initializeFields(IFieldData data) {
 		// In a new project wizard, we don't know this yet - the
 		// model has not been created
@@ -68,6 +71,7 @@ public class ViewTemplate extends PDETemplateSection {
 
 	}
 
+	@Override
 	public void initializeFields(IPluginModelBase model) {
 		// In the new extension wizard, the model exists so 
 		// we can initialize directly from it
@@ -79,10 +83,12 @@ public class ViewTemplate extends PDETemplateSection {
 		initializeOption("viewCategoryId", id); //$NON-NLS-1$
 	}
 
+	@Override
 	public boolean isDependentOnParentWizard() {
 		return true;
 	}
 
+	@Override
 	public void addPages(Wizard wizard) {
 		WizardPage page0 = createPage(0, IHelpContextIds.TEMPLATE_VIEW);
 		page0.setTitle(PDETemplateMessages.ViewTemplate_title0);
@@ -95,6 +101,7 @@ public class ViewTemplate extends PDETemplateSection {
 	/**
 	 * @see AbstractTemplateSection#isOkToCreateFile(File)
 	 */
+	@Override
 	protected boolean isOkToCreateFile(File sourceFile) {
 		boolean isOk = true;
 		String fileName = sourceFile.getName();
@@ -104,10 +111,12 @@ public class ViewTemplate extends PDETemplateSection {
 		return isOk;
 	}
 
+	@Override
 	public String getUsedExtensionPoint() {
 		return "org.eclipse.ui.views"; //$NON-NLS-1$
 	}
 
+	@Override
 	protected void updateModel(IProgressMonitor monitor) throws CoreException {
 		IPluginBase plugin = model.getPluginBase();
 		IPluginExtension extension = createExtension("org.eclipse.ui.views", true); //$NON-NLS-1$
@@ -186,6 +195,7 @@ public class ViewTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.wizards.templates.PDETemplateSection#getFoldersToInclude()
 	 */
+	@Override
 	public String[] getNewFiles() {
 		if (contextHelp.isSelected())
 			return new String[] {"icons/", "contexts.xml"}; //$NON-NLS-1$ //$NON-NLS-2$
@@ -195,6 +205,7 @@ public class ViewTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#getDependencies(java.lang.String)
 	 */
+	@Override
 	public IPluginReference[] getDependencies(String schemaVersion) {
 		ArrayList result = new ArrayList();
 		if (schemaVersion != null)
@@ -206,6 +217,7 @@ public class ViewTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.wizards.templates.PDETemplateSection#formatPackageName(java.lang.String)
 	 */
+	@Override
 	protected String getFormattedPackageName(String id) {
 		String packageName = super.getFormattedPackageName(id);
 		if (packageName.length() != 0)
@@ -213,6 +225,7 @@ public class ViewTemplate extends PDETemplateSection {
 		return "views"; //$NON-NLS-1$
 	}
 
+	@Override
 	public Object getValue(String name) {
 		if (name.equals("useEnablement")) //$NON-NLS-1$
 			return new Boolean(getTargetVersion() >= 3.3);

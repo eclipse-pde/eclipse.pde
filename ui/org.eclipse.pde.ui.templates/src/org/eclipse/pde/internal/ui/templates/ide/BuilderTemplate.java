@@ -52,6 +52,7 @@ public class BuilderTemplate extends PDETemplateSection {
 	 *
 	 * @see org.eclipse.pde.ui.templates.OptionTemplateSection#getSectionId()
 	 */
+	@Override
 	public String getSectionId() {
 		return "builder"; //$NON-NLS-1$
 	}
@@ -59,6 +60,7 @@ public class BuilderTemplate extends PDETemplateSection {
 	/*
 	 * @see ITemplateSection#getNumberOfWorkUnits()
 	 */
+	@Override
 	public int getNumberOfWorkUnits() {
 		return super.getNumberOfWorkUnits() + 1;
 	}
@@ -77,6 +79,7 @@ public class BuilderTemplate extends PDETemplateSection {
 		actionOption = (BooleanOption) addOption(KEY_GEN_ACTION, PDETemplateMessages.BuilderTemplate_generateCommand, true, 0);
 	}
 
+	@Override
 	public void addPages(Wizard wizard) {
 		WizardPage page = createPage(0, IHelpContextIds.TEMPLATE_BUILDER);
 		page.setTitle(PDETemplateMessages.BuilderTemplate_title);
@@ -85,10 +88,12 @@ public class BuilderTemplate extends PDETemplateSection {
 		markPagesAdded();
 	}
 
+	@Override
 	public boolean isDependentOnParentWizard() {
 		return true;
 	}
 
+	@Override
 	protected void initializeFields(IFieldData data) {
 		// In a new project wizard, we don't know this yet - the
 		// model has not been created
@@ -96,6 +101,7 @@ public class BuilderTemplate extends PDETemplateSection {
 		initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(id));
 	}
 
+	@Override
 	public void initializeFields(IPluginModelBase model) {
 		// In the new extension wizard, the model exists so
 		// we can initialize directly from it
@@ -108,10 +114,12 @@ public class BuilderTemplate extends PDETemplateSection {
 	 *
 	 * @see org.eclipse.pde.ui.templates.ITemplateSection#getUsedExtensionPoint()
 	 */
+	@Override
 	public String getUsedExtensionPoint() {
 		return "org.eclipse.core.resources.builders"; //$NON-NLS-1$
 	}
 
+	@Override
 	protected void updateModel(IProgressMonitor monitor) throws CoreException {
 		IPluginBase plugin = model.getPluginBase();
 		IPluginModelFactory factory = model.getPluginFactory();
@@ -302,6 +310,7 @@ public class BuilderTemplate extends PDETemplateSection {
 	 *
 	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#getDependencies(java.lang.String)
 	 */
+	@Override
 	public IPluginReference[] getDependencies(String schemaVersion) {
 		ArrayList result = new ArrayList();
 		result.add(new PluginReference("org.eclipse.core.resources", null, 0)); //$NON-NLS-1$
@@ -319,6 +328,7 @@ public class BuilderTemplate extends PDETemplateSection {
 	 *
 	 * @see org.eclipse.pde.internal.ui.wizards.templates.PDETemplateSection#formatPackageName(java.lang.String)
 	 */
+	@Override
 	protected String getFormattedPackageName(String id) {
 		String packageName = super.getFormattedPackageName(id);
 		if (packageName.length() != 0)
@@ -329,6 +339,7 @@ public class BuilderTemplate extends PDETemplateSection {
 	/**
 	 * @see AbstractTemplateSection#isOkToCreateFile(File)
 	 */
+	@Override
 	protected boolean isOkToCreateFile(File sourceFile) {
 		String fileName = sourceFile.getName();
 		if (fileName.equals("AddRemove$natureClassName$Handler.java")) { //$NON-NLS-1$
@@ -343,6 +354,7 @@ public class BuilderTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.OptionTemplateSection#getLabel()
 	 */
+	@Override
 	public String getLabel() {
 		return getPluginResourceString("newExtension.templates.builder.name"); //$NON-NLS-1$
 	}
@@ -350,6 +362,7 @@ public class BuilderTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.OptionTemplateSection#getDescription()
 	 */
+	@Override
 	public String getDescription() {
 		return getPluginResourceString("newExtension.templates.builder.desc"); //$NON-NLS-1$
 	}

@@ -21,6 +21,7 @@ public class OSGiEventAdminTemplateWizard extends NewPluginTemplateWizard {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.AbstractNewPluginTemplateWizard#init(org.eclipse.pde.ui.IFieldData)
 	 */
+	@Override
 	public void init(IFieldData data) {
 		super.init(data);
 		setWindowTitle(PDETemplateMessages.OSGiEventAdminTemplateWizard_title);
@@ -29,14 +30,17 @@ public class OSGiEventAdminTemplateWizard extends NewPluginTemplateWizard {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.NewPluginTemplateWizard#createTemplateSections()
 	 */
+	@Override
 	public ITemplateSection[] createTemplateSections() {
 		return new ITemplateSection[] {new OSGiEventAdminTemplate()};
 	}
 
+	@Override
 	public String[] getImportPackages() {
 		return new String[] {"org.osgi.framework;version=\"1.3.0\"", "org.osgi.service.event;version=\"1.2.0\""}; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
+	@Override
 	public IPluginReference[] getDependencies(String schemaVersion) {
 		return new IPluginReference[0];
 	}

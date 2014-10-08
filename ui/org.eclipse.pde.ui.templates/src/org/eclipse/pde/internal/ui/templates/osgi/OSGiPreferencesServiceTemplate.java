@@ -25,6 +25,7 @@ public class OSGiPreferencesServiceTemplate extends PDETemplateSection {
 		addOption(COLOR, PDETemplateMessages.OSGiPreferencesServiceTemplate_label, PDETemplateMessages.OSGiPreferencesServiceTemplate_value, 0);
 	}
 
+	@Override
 	public void addPages(Wizard wizard) {
 		WizardPage page = createPage(0, IHelpContextIds.TEMPLATE_RCP_MAIL);
 		page.setTitle(PDETemplateMessages.OSGiPreferencesServiceTemplate_pageTitle);
@@ -38,6 +39,7 @@ public class OSGiPreferencesServiceTemplate extends PDETemplateSection {
 	 * 
 	 * @see org.eclipse.pde.ui.templates.OptionTemplateSection#getSectionId()
 	 */
+	@Override
 	public String getSectionId() {
 		return "OSGiPreferencesService"; //$NON-NLS-1$
 	}
@@ -45,6 +47,7 @@ public class OSGiPreferencesServiceTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#updateModel(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	protected void updateModel(IProgressMonitor monitor) {
 		// do nothing
 	}
@@ -52,6 +55,7 @@ public class OSGiPreferencesServiceTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.ITemplateSection#getUsedExtensionPoint()
 	 */
+	@Override
 	public String getUsedExtensionPoint() {
 		return null;
 	}
@@ -59,6 +63,7 @@ public class OSGiPreferencesServiceTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.BaseOptionTemplateSection#isDependentOnParentWizard()
 	 */
+	@Override
 	public boolean isDependentOnParentWizard() {
 		return true;
 	}
@@ -66,10 +71,12 @@ public class OSGiPreferencesServiceTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#getNumberOfWorkUnits()
 	 */
+	@Override
 	public int getNumberOfWorkUnits() {
 		return super.getNumberOfWorkUnits() + 1;
 	}
 
+	@Override
 	public IPluginReference[] getDependencies(String schemaVersion) {
 		return new IPluginReference[0];
 	}

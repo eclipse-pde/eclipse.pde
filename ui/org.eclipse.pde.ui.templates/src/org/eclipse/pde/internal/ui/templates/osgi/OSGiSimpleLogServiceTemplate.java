@@ -27,6 +27,7 @@ public class OSGiSimpleLogServiceTemplate extends PDETemplateSection {
 		addOption(STOP_LOG_MESSAGE, PDETemplateMessages.OSGiSimpleLogServiceTemplate_stopLogMessage, PDETemplateMessages.OSGiSimpleLogServiceTemplate_logMessage, 0);
 	}
 
+	@Override
 	public void addPages(Wizard wizard) {
 		WizardPage page = createPage(0, IHelpContextIds.TEMPLATE_RCP_MAIL);
 		page.setTitle(PDETemplateMessages.OSGiSimpleLogServiceTemplate_pageTitle);
@@ -40,6 +41,7 @@ public class OSGiSimpleLogServiceTemplate extends PDETemplateSection {
 	 * 
 	 * @see org.eclipse.pde.ui.templates.OptionTemplateSection#getSectionId()
 	 */
+	@Override
 	public String getSectionId() {
 		return "OSGiSimpleLogService"; //$NON-NLS-1$
 	}
@@ -47,6 +49,7 @@ public class OSGiSimpleLogServiceTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#updateModel(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	protected void updateModel(IProgressMonitor monitor) {
 		// do nothing
 	}
@@ -54,6 +57,7 @@ public class OSGiSimpleLogServiceTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.ITemplateSection#getUsedExtensionPoint()
 	 */
+	@Override
 	public String getUsedExtensionPoint() {
 		return null;
 	}
@@ -61,6 +65,7 @@ public class OSGiSimpleLogServiceTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.BaseOptionTemplateSection#isDependentOnParentWizard()
 	 */
+	@Override
 	public boolean isDependentOnParentWizard() {
 		return true;
 	}
@@ -68,10 +73,12 @@ public class OSGiSimpleLogServiceTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#getNumberOfWorkUnits()
 	 */
+	@Override
 	public int getNumberOfWorkUnits() {
 		return super.getNumberOfWorkUnits() + 1;
 	}
 
+	@Override
 	public IPluginReference[] getDependencies(String schemaVersion) {
 		return new IPluginReference[0];
 	}

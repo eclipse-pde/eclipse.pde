@@ -27,6 +27,7 @@ public class BuilderNewWizard extends NewPluginTemplateWizard {
 		super();
 	}
 
+	@Override
 	public void init(IFieldData data) {
 		super.init(data);
 		setWindowTitle(PDETemplateMessages.BuilderNewWizard_wtitle);
@@ -37,6 +38,7 @@ public class BuilderNewWizard extends NewPluginTemplateWizard {
 	 * 
 	 * @see org.eclipse.pde.ui.templates.NewPluginTemplateWizard#createTemplateSections()
 	 */
+	@Override
 	public ITemplateSection[] createTemplateSections() {
 		return new ITemplateSection[] {new BuilderTemplate()};
 	}

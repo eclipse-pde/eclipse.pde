@@ -48,6 +48,7 @@ public class PerspectiveTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#getDependencies(java.lang.String)
 	 */
+	@Override
 	public IPluginReference[] getDependencies(String schemaVersion) {
 		// Additional dependencies required
 		if (schemaVersion != null) {
@@ -63,6 +64,7 @@ public class PerspectiveTemplate extends PDETemplateSection {
 	 * @see org.eclipse.pde.ui.templates.OptionTemplateSection#getSectionId()
 	 * @see org.eclipse.pde.internal.ui.wizards.templates.PDETemplateSection#getDirectoryCandidates()
 	 */
+	@Override
 	public String getSectionId() {
 		return "perspective"; //$NON-NLS-1$
 	}
@@ -70,6 +72,7 @@ public class PerspectiveTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#getNumberOfWorkUnits()
 	 */
+	@Override
 	public int getNumberOfWorkUnits() {
 		return super.getNumberOfWorkUnits() + 1;
 	}
@@ -95,6 +98,7 @@ public class PerspectiveTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#addPages(org.eclipse.jface.wizard.Wizard)
 	 */
+	@Override
 	public void addPages(Wizard wizard) {
 		int pageIndex = 0;
 
@@ -109,6 +113,7 @@ public class PerspectiveTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.BaseOptionTemplateSection#isDependentOnParentWizard()
 	 */
+	@Override
 	public boolean isDependentOnParentWizard() {
 		return true;
 	}
@@ -116,6 +121,7 @@ public class PerspectiveTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.BaseOptionTemplateSection#initializeFields(org.eclipse.pde.ui.IFieldData)
 	 */
+	@Override
 	protected void initializeFields(IFieldData data) {
 		// In a new project wizard, we don't know this yet - the
 		// model has not been created
@@ -126,6 +132,7 @@ public class PerspectiveTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.BaseOptionTemplateSection#initializeFields(org.eclipse.pde.core.plugin.IPluginModelBase)
 	 */
+	@Override
 	public void initializeFields(IPluginModelBase model) {
 		// In the new extension wizard, the model exists so 
 		// we can initialize directly from it
@@ -136,6 +143,7 @@ public class PerspectiveTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#updateModel(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	protected void updateModel(IProgressMonitor monitor) throws CoreException {
 		// This method creates the extension point structure through the use
 		// of IPluginElement objects. The element attributes are set based on
@@ -160,6 +168,7 @@ public class PerspectiveTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.wizards.templates.PDETemplateSection#getNewFiles()
 	 */
+	@Override
 	public String[] getNewFiles() {
 		return new String[] {"icons/"}; //$NON-NLS-1$
 	}
@@ -167,6 +176,7 @@ public class PerspectiveTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.wizards.templates.PDETemplateSection#getFormattedPackageName(java.lang.String)
 	 */
+	@Override
 	protected String getFormattedPackageName(String id) {
 		// Package name addition to create a location for containing
 		// any classes required by the decorator. 
@@ -179,6 +189,7 @@ public class PerspectiveTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.ITemplateSection#getUsedExtensionPoint()
 	 */
+	@Override
 	public String getUsedExtensionPoint() {
 		return "org.eclipse.ui.perspectives"; //$NON-NLS-1$
 	}

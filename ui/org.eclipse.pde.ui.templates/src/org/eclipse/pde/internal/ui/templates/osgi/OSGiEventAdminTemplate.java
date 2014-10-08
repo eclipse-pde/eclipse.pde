@@ -28,6 +28,7 @@ public class OSGiEventAdminTemplate extends PDETemplateSection {
 		addOption(EVENT_TOPIC, PDETemplateMessages.OSGiEventAdminTemplate_eventTopicTitle, "org/osgi/framework/BundleEvent/STARTED", 0); //$NON-NLS-1$
 	}
 
+	@Override
 	public void addPages(Wizard wizard) {
 		WizardPage page = createPage(0, IHelpContextIds.TEMPLATE_RCP_MAIL);
 		page.setTitle(PDETemplateMessages.OSGiEventAdminTemplate_pageTitle);
@@ -41,6 +42,7 @@ public class OSGiEventAdminTemplate extends PDETemplateSection {
 	 * 
 	 * @see org.eclipse.pde.ui.templates.OptionTemplateSection#getSectionId()
 	 */
+	@Override
 	public String getSectionId() {
 		return "OSGiEventAdmin"; //$NON-NLS-1$
 	}
@@ -48,6 +50,7 @@ public class OSGiEventAdminTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#updateModel(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	protected void updateModel(IProgressMonitor monitor) { // do nothing
 		setManifestHeader("Service-Component", "OSGI-INF/*.xml"); //$NON-NLS-1$ //$NON-NLS-2$]
 	}
@@ -55,6 +58,7 @@ public class OSGiEventAdminTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.ITemplateSection#getUsedExtensionPoint()
 	 */
+	@Override
 	public String getUsedExtensionPoint() {
 		return null;
 	}
@@ -62,6 +66,7 @@ public class OSGiEventAdminTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.BaseOptionTemplateSection#isDependentOnParentWizard()
 	 */
+	@Override
 	public boolean isDependentOnParentWizard() {
 		return true;
 	}
@@ -69,14 +74,17 @@ public class OSGiEventAdminTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#getNumberOfWorkUnits()
 	 */
+	@Override
 	public int getNumberOfWorkUnits() {
 		return super.getNumberOfWorkUnits() + 1;
 	}
 
+	@Override
 	public IPluginReference[] getDependencies(String schemaVersion) {
 		return new IPluginReference[0];
 	}
 
+	@Override
 	protected void initializeFields(IFieldData data) {
 		// In a new project wizard, we don't know this yet - the
 		// model has not been created
@@ -85,6 +93,7 @@ public class OSGiEventAdminTemplate extends PDETemplateSection {
 		this.packageName = getFormattedPackageName(data.getId());
 	}
 
+	@Override
 	public void initializeFields(IPluginModelBase model) {
 		String id = model.getPluginBase().getId();
 		String packageName = getFormattedPackageName(id);
@@ -92,6 +101,7 @@ public class OSGiEventAdminTemplate extends PDETemplateSection {
 		this.packageName = getFormattedPackageName(id);
 	}
 
+	@Override
 	public String getStringOption(String name) {
 		if (name.equals(KEY_PACKAGE_NAME)) {
 			return packageName;

@@ -37,6 +37,7 @@ public class HelloWorldTemplate extends PDETemplateSection {
 		createOptions();
 	}
 
+	@Override
 	public String getSectionId() {
 		return "helloWorld"; //$NON-NLS-1$
 	}
@@ -44,6 +45,7 @@ public class HelloWorldTemplate extends PDETemplateSection {
 	/*
 	 * @see ITemplateSection#getNumberOfWorkUnits()
 	 */
+	@Override
 	public int getNumberOfWorkUnits() {
 		return super.getNumberOfWorkUnits() + 1;
 	}
@@ -54,6 +56,7 @@ public class HelloWorldTemplate extends PDETemplateSection {
 		addOption(KEY_MESSAGE, PDETemplateMessages.HelloWorldTemplate_messageText, PDETemplateMessages.HelloWorldTemplate_defaultMessage, 0);
 	}
 
+	@Override
 	public void addPages(Wizard wizard) {
 		WizardPage page = createPage(0, IHelpContextIds.TEMPLATE_HELLO_WORLD);
 		page.setTitle(PDETemplateMessages.HelloWorldTemplate_title);
@@ -62,10 +65,12 @@ public class HelloWorldTemplate extends PDETemplateSection {
 		markPagesAdded();
 	}
 
+	@Override
 	public boolean isDependentOnParentWizard() {
 		return true;
 	}
 
+	@Override
 	protected void initializeFields(IFieldData data) {
 		// In a new project wizard, we don't know this yet - the
 		// model has not been created
@@ -73,6 +78,7 @@ public class HelloWorldTemplate extends PDETemplateSection {
 		initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(id));
 	}
 
+	@Override
 	public void initializeFields(IPluginModelBase model) {
 		// In the new extension wizard, the model exists so 
 		// we can initialize directly from it
@@ -80,10 +86,12 @@ public class HelloWorldTemplate extends PDETemplateSection {
 		initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(pluginId));
 	}
 
+	@Override
 	public String getUsedExtensionPoint() {
 		return "org.eclipse.ui.actionSets"; //$NON-NLS-1$
 	}
 
+	@Override
 	protected void updateModel(IProgressMonitor monitor) throws CoreException {
 		IPluginBase plugin = model.getPluginBase();
 		IPluginExtension extension = createExtension("org.eclipse.ui.actionSets", true); //$NON-NLS-1$
@@ -126,6 +134,7 @@ public class HelloWorldTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.ITemplateSection#getFoldersToInclude()
 	 */
+	@Override
 	public String[] getNewFiles() {
 		return new String[] {"icons/"}; //$NON-NLS-1$
 	}
@@ -133,6 +142,7 @@ public class HelloWorldTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.wizards.templates.PDETemplateSection#formatPackageName(java.lang.String)
 	 */
+	@Override
 	protected String getFormattedPackageName(String id) {
 		String packageName = super.getFormattedPackageName(id);
 		if (packageName.length() != 0)

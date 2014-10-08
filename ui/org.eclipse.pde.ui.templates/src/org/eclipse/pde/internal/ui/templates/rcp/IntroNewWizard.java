@@ -18,11 +18,13 @@ import org.eclipse.pde.ui.templates.NewPluginTemplateWizard;
 
 public class IntroNewWizard extends NewPluginTemplateWizard {
 
+	@Override
 	public void init(IFieldData data) {
 		super.init(data);
 		setWindowTitle(PDETemplateMessages.IntroNewWizard_wtitle);
 	}
 
+	@Override
 	public ITemplateSection[] createTemplateSections() {
 		return new ITemplateSection[] {new IntroTemplate()};
 	}

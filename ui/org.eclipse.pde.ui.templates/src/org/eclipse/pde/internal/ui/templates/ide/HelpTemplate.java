@@ -53,6 +53,7 @@ public class HelpTemplate extends PDETemplateSection {
 		alterOptionStates();
 	}
 
+	@Override
 	public void addPages(Wizard wizard) {
 		WizardPage page = createPage(0, IHelpContextIds.TEMPLATE_HELP);
 		page.setTitle(PDETemplateMessages.HelpTemplate_title);
@@ -92,10 +93,12 @@ public class HelpTemplate extends PDETemplateSection {
 	/**
 	 * @see OptionTemplateSection#getSectionId()
 	 */
+	@Override
 	public String getSectionId() {
 		return "help"; //$NON-NLS-1$
 	}
 
+	@Override
 	protected boolean isOkToCreateFolder(File sourceFolder) {
 		boolean isOk = true;
 		String folderName = sourceFolder.getName();
@@ -116,6 +119,7 @@ public class HelpTemplate extends PDETemplateSection {
 	/**
 	 * @see AbstractTemplateSection#isOkToCreateFile(File)
 	 */
+	@Override
 	protected boolean isOkToCreateFile(File sourceFile) {
 		boolean isOk = true;
 		String fileName = sourceFile.getName();
@@ -141,6 +145,7 @@ public class HelpTemplate extends PDETemplateSection {
 	/**
 	 * @see BaseOptionTemplateSection#validateOptions(TemplateOption)
 	 */
+	@Override
 	public void validateOptions(TemplateOption changed) {
 		if (changed == tocLabelOption) {
 			if (changed.isEmpty()) {
@@ -156,6 +161,7 @@ public class HelpTemplate extends PDETemplateSection {
 	/**
 	 * @see AbstractTemplateSection#updateModel(IProgressMonitor)
 	 */
+	@Override
 	protected void updateModel(IProgressMonitor monitor) throws CoreException {
 		IPluginBase plugin = model.getPluginBase();
 		IPluginExtension extension = createExtension(getUsedExtensionPoint(), true);
@@ -197,6 +203,7 @@ public class HelpTemplate extends PDETemplateSection {
 	/**
 	 * @see ITemplateSection#getUsedExtensionPoint()
 	 */
+	@Override
 	public String getUsedExtensionPoint() {
 		return "org.eclipse.help.toc"; //$NON-NLS-1$
 	}
@@ -204,6 +211,7 @@ public class HelpTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#getDependencies(java.lang.String)
 	 */
+	@Override
 	public IPluginReference[] getDependencies(String schemaVersion) {
 		return new IPluginReference[0];
 	}
@@ -211,6 +219,7 @@ public class HelpTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.wizards.templates.PDETemplateSection#getFoldersToInclude()
 	 */
+	@Override
 	public String[] getNewFiles() {
 		return new String[] {"html/", "*.xml"}; //$NON-NLS-1$ //$NON-NLS-2$
 	}

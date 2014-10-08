@@ -23,6 +23,7 @@ public class PropertyPageNewWizard extends NewPluginTemplateWizard {
 		super();
 	}
 
+	@Override
 	public void init(IFieldData data) {
 		super.init(data);
 		setWindowTitle(PDETemplateMessages.PropertyPageNewWizard_wtitle);
@@ -31,6 +32,7 @@ public class PropertyPageNewWizard extends NewPluginTemplateWizard {
 	/**
 	 * @see NewPluginTemplateWizard#createTemplateSections()
 	 */
+	@Override
 	public ITemplateSection[] createTemplateSections() {
 		return new ITemplateSection[] {new PropertyPageTemplate()};
 	}

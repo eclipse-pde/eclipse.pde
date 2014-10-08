@@ -44,6 +44,7 @@ public class PopupMenuTemplate extends PDETemplateSection {
 		createOptions();
 	}
 
+	@Override
 	public void addPages(Wizard wizard) {
 		WizardPage page = createPage(0, IHelpContextIds.TEMPLATE_POPUP_MENU);
 		page.setTitle(PDETemplateMessages.PopupMenuTemplate_title);
@@ -67,14 +68,17 @@ public class PopupMenuTemplate extends PDETemplateSection {
 	/**
 	 * @see PDETemplateSection#getSectionId()
 	 */
+	@Override
 	public String getSectionId() {
 		return "popupMenus"; //$NON-NLS-1$
 	}
 
+	@Override
 	public boolean isDependentOnParentWizard() {
 		return true;
 	}
 
+	@Override
 	protected void initializeFields(IFieldData data) {
 		// In a new project wizard, we don't know this yet - the
 		// model has not been created
@@ -82,6 +86,7 @@ public class PopupMenuTemplate extends PDETemplateSection {
 		initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(id));
 	}
 
+	@Override
 	public void initializeFields(IPluginModelBase model) {
 		// In the new extension wizard, the model exists so 
 		// we can initialize directly from it
@@ -92,6 +97,7 @@ public class PopupMenuTemplate extends PDETemplateSection {
 	/**
 	 * @see AbstractTemplateSection#updateModel(IProgressMonitor)
 	 */
+	@Override
 	protected void updateModel(IProgressMonitor monitor) throws CoreException {
 		IPluginBase plugin = model.getPluginBase();
 		IPluginExtension extension = createExtension(getUsedExtensionPoint(), true);
@@ -138,6 +144,7 @@ public class PopupMenuTemplate extends PDETemplateSection {
 	/**
 	 * @see ITemplateSection#getUsedExtensionPoint()
 	 */
+	@Override
 	public String getUsedExtensionPoint() {
 		return "org.eclipse.ui.popupMenus"; //$NON-NLS-1$
 	}
@@ -145,6 +152,7 @@ public class PopupMenuTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.wizards.templates.PDETemplateSection#formatPackageName(java.lang.String)
 	 */
+	@Override
 	protected String getFormattedPackageName(String id) {
 		String packageName = super.getFormattedPackageName(id);
 		if (packageName.length() != 0)
@@ -152,6 +160,7 @@ public class PopupMenuTemplate extends PDETemplateSection {
 		return "popup.actions"; //$NON-NLS-1$
 	}
 
+	@Override
 	public IPluginReference[] getDependencies(String schemaVersion) {
 		IPluginReference[] result = new IPluginReference[2];
 		result[0] = new PluginReference("org.eclipse.ui", null, 0); //$NON-NLS-1$

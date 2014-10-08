@@ -28,6 +28,7 @@ public class HelloOSGiTemplate extends PDETemplateSection {
 		addOption(KEY_STOP_MESSAGE, PDETemplateMessages.HelloOSGiTemplate_stopMessage, PDETemplateMessages.HelloOSGiTemplate_goodbye, 0);
 	}
 
+	@Override
 	public void addPages(Wizard wizard) {
 		WizardPage page = createPage(0, IHelpContextIds.TEMPLATE_RCP_MAIL);
 		page.setTitle(PDETemplateMessages.HelloOSGiTemplate_pageTitle);
@@ -41,6 +42,7 @@ public class HelloOSGiTemplate extends PDETemplateSection {
 	 * 
 	 * @see org.eclipse.pde.ui.templates.OptionTemplateSection#getSectionId()
 	 */
+	@Override
 	public String getSectionId() {
 		return "helloOSGi"; //$NON-NLS-1$
 	}
@@ -48,6 +50,7 @@ public class HelloOSGiTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#updateModel(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	protected void updateModel(IProgressMonitor monitor) { // do nothing
 
 	}
@@ -55,6 +58,7 @@ public class HelloOSGiTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.ITemplateSection#getUsedExtensionPoint()
 	 */
+	@Override
 	public String getUsedExtensionPoint() {
 		return null;
 	}
@@ -62,6 +66,7 @@ public class HelloOSGiTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.BaseOptionTemplateSection#isDependentOnParentWizard()
 	 */
+	@Override
 	public boolean isDependentOnParentWizard() {
 		return true;
 	}
@@ -69,10 +74,12 @@ public class HelloOSGiTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#getNumberOfWorkUnits()
 	 */
+	@Override
 	public int getNumberOfWorkUnits() {
 		return super.getNumberOfWorkUnits() + 1;
 	}
 
+	@Override
 	public IPluginReference[] getDependencies(String schemaVersion) {
 		return new IPluginReference[0];
 	}

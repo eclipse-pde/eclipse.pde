@@ -35,6 +35,7 @@ public class HelloNonUIRCPTemplate extends PDETemplateSection {
 		createOptions();
 	}
 
+	@Override
 	public void addPages(Wizard wizard) {
 		WizardPage page = createPage(0, IHelpContextIds.TEMPLATE_RCP_MAIL);
 		page.setTitle(PDETemplateMessages.HelloNonUIRCPTemplate_title);
@@ -51,6 +52,7 @@ public class HelloNonUIRCPTemplate extends PDETemplateSection {
 		addOption(KEY_APPLICATION_MESSAGE, PDETemplateMessages.HelloNonUIRCPTemplate_messageText, PDETemplateMessages.HelloNonUIRCPTemplate_defaultMessage, 0);
 	}
 
+	@Override
 	protected void initializeFields(IFieldData data) {
 		// In a new project wizard, we don't know this yet - the
 		// model has not been created
@@ -58,6 +60,7 @@ public class HelloNonUIRCPTemplate extends PDETemplateSection {
 		initializeOption(KEY_PACKAGE_NAME, packageName);
 	}
 
+	@Override
 	public void initializeFields(IPluginModelBase model) {
 		String packageName = getFormattedPackageName(model.getPluginBase().getId());
 		initializeOption(KEY_PACKAGE_NAME, packageName);
@@ -68,6 +71,7 @@ public class HelloNonUIRCPTemplate extends PDETemplateSection {
 	 * 
 	 * @see org.eclipse.pde.ui.templates.OptionTemplateSection#getSectionId()
 	 */
+	@Override
 	public String getSectionId() {
 		return "helloNonUIRCP"; //$NON-NLS-1$
 	}
@@ -75,6 +79,7 @@ public class HelloNonUIRCPTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#updateModel(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	protected void updateModel(IProgressMonitor monitor) throws CoreException {
 		createApplicationExtension();
 	}
@@ -101,6 +106,7 @@ public class HelloNonUIRCPTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.ITemplateSection#getUsedExtensionPoint()
 	 */
+	@Override
 	public String getUsedExtensionPoint() {
 		return null;
 	}
@@ -108,6 +114,7 @@ public class HelloNonUIRCPTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.BaseOptionTemplateSection#isDependentOnParentWizard()
 	 */
+	@Override
 	public boolean isDependentOnParentWizard() {
 		return true;
 	}
@@ -115,6 +122,7 @@ public class HelloNonUIRCPTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#getNumberOfWorkUnits()
 	 */
+	@Override
 	public int getNumberOfWorkUnits() {
 		return super.getNumberOfWorkUnits() + 1;
 	}
@@ -122,6 +130,7 @@ public class HelloNonUIRCPTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#getDependencies(java.lang.String)
 	 */
+	@Override
 	public IPluginReference[] getDependencies(String schemaVersion) {
 		IPluginReference[] dep = new IPluginReference[1];
 		dep[0] = new PluginReference("org.eclipse.core.runtime", null, 0); //$NON-NLS-1$

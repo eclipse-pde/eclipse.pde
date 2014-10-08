@@ -30,6 +30,7 @@ public class ViewRCPTemplate extends PDETemplateSection {
 		createOptions();
 	}
 
+	@Override
 	public void addPages(Wizard wizard) {
 		WizardPage page = createPage(0, IHelpContextIds.TEMPLATE_RCP_MAIL);
 		page.setTitle(PDETemplateMessages.ViewRCPTemplate_title);
@@ -48,6 +49,7 @@ public class ViewRCPTemplate extends PDETemplateSection {
 		createBrandingOptions();
 	}
 
+	@Override
 	protected void initializeFields(IFieldData data) {
 		// In a new project wizard, we don't know this yet - the
 		// model has not been created
@@ -55,6 +57,7 @@ public class ViewRCPTemplate extends PDETemplateSection {
 		initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(id));
 	}
 
+	@Override
 	public void initializeFields(IPluginModelBase model) {
 		// In the new extension wizard, the model exists so 
 		// we can initialize directly from it
@@ -67,6 +70,7 @@ public class ViewRCPTemplate extends PDETemplateSection {
 	 * 
 	 * @see org.eclipse.pde.ui.templates.OptionTemplateSection#getSectionId()
 	 */
+	@Override
 	public String getSectionId() {
 		return "viewRCP"; //$NON-NLS-1$
 	}
@@ -74,6 +78,7 @@ public class ViewRCPTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#updateModel(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	protected void updateModel(IProgressMonitor monitor) throws CoreException {
 		createApplicationExtension();
 		createPerspectiveExtension();
@@ -210,6 +215,7 @@ public class ViewRCPTemplate extends PDETemplateSection {
 	 * 
 	 * @see org.eclipse.pde.ui.templates.ITemplateSection#getUsedExtensionPoint()
 	 */
+	@Override
 	public String getUsedExtensionPoint() {
 		return null;
 	}
@@ -217,6 +223,7 @@ public class ViewRCPTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.BaseOptionTemplateSection#isDependentOnParentWizard()
 	 */
+	@Override
 	public boolean isDependentOnParentWizard() {
 		return true;
 	}
@@ -224,6 +231,7 @@ public class ViewRCPTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#getNumberOfWorkUnits()
 	 */
+	@Override
 	public int getNumberOfWorkUnits() {
 		return super.getNumberOfWorkUnits() + 1;
 	}
@@ -231,6 +239,7 @@ public class ViewRCPTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#getDependencies(java.lang.String)
 	 */
+	@Override
 	public IPluginReference[] getDependencies(String schemaVersion) {
 		IPluginReference[] dep = new IPluginReference[2];
 		dep[0] = new PluginReference("org.eclipse.core.runtime", null, 0); //$NON-NLS-1$
@@ -241,6 +250,7 @@ public class ViewRCPTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.templates.PDETemplateSection#getNewFiles()
 	 */
+	@Override
 	public String[] getNewFiles() {
 		if (copyBrandingDirectory())
 			return new String[] {"icons/", "splash.bmp"}; //$NON-NLS-1$ //$NON-NLS-2$

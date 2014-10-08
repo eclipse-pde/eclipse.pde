@@ -14,6 +14,7 @@ import org.eclipse.pde.internal.ui.templates.PDETemplateSection;
 
 public abstract class BaseEditorTemplate extends PDETemplateSection {
 
+	@Override
 	public String getUsedExtensionPoint() {
 		return "org.eclipse.ui.editors"; //$NON-NLS-1$
 	}
@@ -21,6 +22,7 @@ public abstract class BaseEditorTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.ITemplateSection#getFoldersToInclude()
 	 */
+	@Override
 	public String[] getNewFiles() {
 		return new String[] {"icons/"}; //$NON-NLS-1$
 	}

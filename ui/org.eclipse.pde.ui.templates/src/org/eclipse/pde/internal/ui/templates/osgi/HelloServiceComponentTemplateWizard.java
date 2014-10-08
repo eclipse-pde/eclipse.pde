@@ -22,6 +22,7 @@ public class HelloServiceComponentTemplateWizard extends NewPluginTemplateWizard
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.AbstractNewPluginTemplateWizard#init(org.eclipse.pde.ui.IFieldData)
 	 */
+	@Override
 	public void init(IFieldData data) {
 		super.init(data);
 		setWindowTitle(PDETemplateMessages.DSTemplateWizard_title);
@@ -30,14 +31,17 @@ public class HelloServiceComponentTemplateWizard extends NewPluginTemplateWizard
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.NewPluginTemplateWizard#createTemplateSections()
 	 */
+	@Override
 	public ITemplateSection[] createTemplateSections() {
 		return new ITemplateSection[] {new HelloServiceComponentTemplate()};
 	}
 
+	@Override
 	public String[] getImportPackages() {
 		return new String[] {"org.osgi.framework;version=\"1.3.0\"", "org.osgi.util.tracker;version=\"1.3.1\"", "org.eclipse.osgi.framework.console;version=\"1.0.0\""}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
+	@Override
 	public IPluginReference[] getDependencies(String schemaVersion) {
 		return new IPluginReference[0];
 	}

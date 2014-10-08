@@ -24,6 +24,7 @@ public class HelloWorldCmdNewWizard extends NewPluginTemplateWizard {
 		super();
 	}
 
+	@Override
 	public void init(IFieldData data) {
 		super.init(data);
 		setWindowTitle(PDETemplateMessages.HelloWorldCmdNewWizard_wtitle);
@@ -32,6 +33,7 @@ public class HelloWorldCmdNewWizard extends NewPluginTemplateWizard {
 	/*
 	 * @see NewExtensionTemplateWizard#createTemplateSections()
 	 */
+	@Override
 	public ITemplateSection[] createTemplateSections() {
 		return new ITemplateSection[] {new HelloWorldCmdTemplate()};
 	}

@@ -28,6 +28,7 @@ public class PreferencePageTemplate extends PDETemplateSection {
 		createOptions();
 	}
 
+	@Override
 	public String getSectionId() {
 		return "preferences"; //$NON-NLS-1$
 	}
@@ -35,6 +36,7 @@ public class PreferencePageTemplate extends PDETemplateSection {
 	/*
 	 * @see ITemplateSection#getNumberOfWorkUnits()
 	 */
+	@Override
 	public int getNumberOfWorkUnits() {
 		return super.getNumberOfWorkUnits() + 1;
 	}
@@ -47,6 +49,7 @@ public class PreferencePageTemplate extends PDETemplateSection {
 		addOption(KEY_PAGE_NAME, PDETemplateMessages.PreferencePageTemplate_pageName, PDETemplateMessages.PreferencePageTemplate_defaultPageName, 0);
 	}
 
+	@Override
 	protected void initializeFields(IFieldData data) {
 		// In a new project wizard, we don't know this yet - the
 		// model has not been created
@@ -54,6 +57,7 @@ public class PreferencePageTemplate extends PDETemplateSection {
 		initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(id));
 	}
 
+	@Override
 	public void initializeFields(IPluginModelBase model) {
 		// In the new extension wizard, the model exists so 
 		// we can initialize directly from it
@@ -61,11 +65,13 @@ public class PreferencePageTemplate extends PDETemplateSection {
 		initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(pluginId));
 	}
 
+	@Override
 	protected String getTemplateDirectory() {
 		String schemaVersion = model.getPluginBase().getSchemaVersion();
 		return "templates_" + (schemaVersion == null ? "3.0" : schemaVersion); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
+	@Override
 	public boolean isDependentOnParentWizard() {
 		return true;
 	}
@@ -73,6 +79,7 @@ public class PreferencePageTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#getDependencies(java.lang.String)
 	 */
+	@Override
 	public IPluginReference[] getDependencies(String schemaVersion) {
 		if (schemaVersion == null)
 			return super.getDependencies(schemaVersion);
@@ -82,6 +89,7 @@ public class PreferencePageTemplate extends PDETemplateSection {
 		return deps;
 	}
 
+	@Override
 	public void addPages(Wizard wizard) {
 		WizardPage page = createPage(0, IHelpContextIds.TEMPLATE_PREFERENCE_PAGE);
 		page.setTitle(PDETemplateMessages.PreferencePageTemplate_title);
@@ -90,10 +98,12 @@ public class PreferencePageTemplate extends PDETemplateSection {
 		markPagesAdded();
 	}
 
+	@Override
 	public String getUsedExtensionPoint() {
 		return "org.eclipse.ui.preferencePages"; //$NON-NLS-1$
 	}
 
+	@Override
 	protected void updateModel(IProgressMonitor monitor) throws CoreException {
 		IPluginBase plugin = model.getPluginBase();
 		IPluginExtension extension = createExtension(getUsedExtensionPoint(), true);
@@ -122,6 +132,7 @@ public class PreferencePageTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.wizards.templates.PDETemplateSection#formatPackageName(java.lang.String)
 	 */
+	@Override
 	protected String getFormattedPackageName(String id) {
 		String packageName = super.getFormattedPackageName(id);
 		if (packageName.length() != 0)

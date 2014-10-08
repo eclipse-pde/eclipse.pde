@@ -49,6 +49,7 @@ public class CommonNavigatorTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.OptionTemplateSection#getSectionId()
 	 */
+	@Override
 	public String getSectionId() {
 		return "commonNavigator"; //$NON-NLS-1$
 	}
@@ -56,6 +57,7 @@ public class CommonNavigatorTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#updateModel(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	protected void updateModel(IProgressMonitor monitor) throws CoreException {
 		plugin = model.getPluginBase();
 		factory = model.getPluginFactory();
@@ -153,6 +155,7 @@ public class CommonNavigatorTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.templates.PDETemplateSection#getNewFiles()
 	 */
+	@Override
 	public String[] getNewFiles() {
 		return new String[0];
 	}
@@ -160,6 +163,7 @@ public class CommonNavigatorTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.ITemplateSection#getUsedExtensionPoint()
 	 */
+	@Override
 	public String getUsedExtensionPoint() {
 		return "org.eclipse.ui.navigator.CommonNavigator"; //$NON-NLS-1$
 	}
@@ -167,6 +171,7 @@ public class CommonNavigatorTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#addPages(org.eclipse.jface.wizard.Wizard)
 	 */
+	@Override
 	public void addPages(Wizard wizard) {
 		WizardPage page0 = createPage(0);
 		page0.setTitle(PDETemplateMessages.CommonNavigatorTemplate_pagetitle);
@@ -179,6 +184,7 @@ public class CommonNavigatorTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#getDependencies(java.lang.String)
 	 */
+	@Override
 	public IPluginReference[] getDependencies(String schemaVersion) {
 		ArrayList result = new ArrayList();
 		result.add(new PluginReference("org.eclipse.core.resources", null, 0)); //$NON-NLS-1$

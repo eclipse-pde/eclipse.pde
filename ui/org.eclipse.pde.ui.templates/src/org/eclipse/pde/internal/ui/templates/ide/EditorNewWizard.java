@@ -23,6 +23,7 @@ public class EditorNewWizard extends NewPluginTemplateWizard {
 		super();
 	}
 
+	@Override
 	public void init(IFieldData data) {
 		super.init(data);
 		setWindowTitle(PDETemplateMessages.EditorNewWizard_wtitle);
@@ -31,6 +32,7 @@ public class EditorNewWizard extends NewPluginTemplateWizard {
 	/*
 	 * @see NewExtensionTemplateWizard#createTemplateSections()
 	 */
+	@Override
 	public ITemplateSection[] createTemplateSections() {
 		return new ITemplateSection[] {new EditorTemplate()};
 	}

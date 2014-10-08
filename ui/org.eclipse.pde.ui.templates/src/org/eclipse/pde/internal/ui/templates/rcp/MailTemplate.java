@@ -29,6 +29,7 @@ public class MailTemplate extends PDETemplateSection {
 		createOptions();
 	}
 
+	@Override
 	public void addPages(Wizard wizard) {
 		WizardPage page = createPage(0, IHelpContextIds.TEMPLATE_RCP_MAIL);
 		page.setTitle(PDETemplateMessages.MailTemplate_title);
@@ -45,6 +46,7 @@ public class MailTemplate extends PDETemplateSection {
 		addOption(KEY_APPLICATION_CLASS, PDETemplateMessages.MailTemplate_appClass, "Application", 0); //$NON-NLS-1$ 
 	}
 
+	@Override
 	protected void initializeFields(IFieldData data) {
 		// In a new project wizard, we don't know this yet - the
 		// model has not been created
@@ -52,6 +54,7 @@ public class MailTemplate extends PDETemplateSection {
 		initializeOption(KEY_PACKAGE_NAME, packageName);
 	}
 
+	@Override
 	public void initializeFields(IPluginModelBase model) {
 		String packageName = getFormattedPackageName(model.getPluginBase().getId());
 		initializeOption(KEY_PACKAGE_NAME, packageName);
@@ -62,6 +65,7 @@ public class MailTemplate extends PDETemplateSection {
 	 * 
 	 * @see org.eclipse.pde.ui.templates.OptionTemplateSection#getSectionId()
 	 */
+	@Override
 	public String getSectionId() {
 		return "mail"; //$NON-NLS-1$
 	}
@@ -69,6 +73,7 @@ public class MailTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#updateModel(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	protected void updateModel(IProgressMonitor monitor) throws CoreException {
 		createApplicationExtension();
 		createPerspectiveExtension();
@@ -273,6 +278,7 @@ public class MailTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.ITemplateSection#getUsedExtensionPoint()
 	 */
+	@Override
 	public String getUsedExtensionPoint() {
 		return null;
 	}
@@ -280,6 +286,7 @@ public class MailTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.BaseOptionTemplateSection#isDependentOnParentWizard()
 	 */
+	@Override
 	public boolean isDependentOnParentWizard() {
 		return true;
 	}
@@ -287,6 +294,7 @@ public class MailTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#getNumberOfWorkUnits()
 	 */
+	@Override
 	public int getNumberOfWorkUnits() {
 		return super.getNumberOfWorkUnits() + 1;
 	}
@@ -294,6 +302,7 @@ public class MailTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#getDependencies(java.lang.String)
 	 */
+	@Override
 	public IPluginReference[] getDependencies(String schemaVersion) {
 		IPluginReference[] dep = new IPluginReference[2];
 		dep[0] = new PluginReference("org.eclipse.core.runtime", null, 0); //$NON-NLS-1$
@@ -304,6 +313,7 @@ public class MailTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.wizards.templates.PDETemplateSection#getNewFiles()
 	 */
+	@Override
 	public String[] getNewFiles() {
 		return new String[] {"icons/", "product_lg.gif", "splash.bmp"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
@@ -311,6 +321,7 @@ public class MailTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.templates.PDETemplateSection#copyBrandingDirectory()
 	 */
+	@Override
 	protected boolean copyBrandingDirectory() {
 		return true;
 	}

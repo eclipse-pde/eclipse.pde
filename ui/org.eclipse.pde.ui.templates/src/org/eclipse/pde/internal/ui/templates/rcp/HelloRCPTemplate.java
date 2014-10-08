@@ -35,6 +35,7 @@ public class HelloRCPTemplate extends PDETemplateSection {
 		createOptions();
 	}
 
+	@Override
 	public void addPages(Wizard wizard) {
 		WizardPage page = createPage(0, IHelpContextIds.TEMPLATE_RCP_MAIL);
 		page.setTitle(PDETemplateMessages.HelloRCPTemplate_title);
@@ -53,6 +54,7 @@ public class HelloRCPTemplate extends PDETemplateSection {
 		createBrandingOptions();
 	}
 
+	@Override
 	protected void initializeFields(IFieldData data) {
 		// In a new project wizard, we don't know this yet - the
 		// model has not been created
@@ -60,6 +62,7 @@ public class HelloRCPTemplate extends PDETemplateSection {
 		initializeOption(KEY_PACKAGE_NAME, packageName);
 	}
 
+	@Override
 	public void initializeFields(IPluginModelBase model) {
 		String packageName = getFormattedPackageName(model.getPluginBase().getId());
 		initializeOption(KEY_PACKAGE_NAME, packageName);
@@ -70,6 +73,7 @@ public class HelloRCPTemplate extends PDETemplateSection {
 	 * 
 	 * @see org.eclipse.pde.ui.templates.OptionTemplateSection#getSectionId()
 	 */
+	@Override
 	public String getSectionId() {
 		return "helloRCP"; //$NON-NLS-1$
 	}
@@ -77,6 +81,7 @@ public class HelloRCPTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#updateModel(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	protected void updateModel(IProgressMonitor monitor) throws CoreException {
 		createApplicationExtension();
 		createPerspectiveExtension();
@@ -145,6 +150,7 @@ public class HelloRCPTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.ITemplateSection#getUsedExtensionPoint()
 	 */
+	@Override
 	public String getUsedExtensionPoint() {
 		return null;
 	}
@@ -152,6 +158,7 @@ public class HelloRCPTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.BaseOptionTemplateSection#isDependentOnParentWizard()
 	 */
+	@Override
 	public boolean isDependentOnParentWizard() {
 		return true;
 	}
@@ -159,6 +166,7 @@ public class HelloRCPTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#getNumberOfWorkUnits()
 	 */
+	@Override
 	public int getNumberOfWorkUnits() {
 		return super.getNumberOfWorkUnits() + 1;
 	}
@@ -166,6 +174,7 @@ public class HelloRCPTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#getDependencies(java.lang.String)
 	 */
+	@Override
 	public IPluginReference[] getDependencies(String schemaVersion) {
 		IPluginReference[] dep = new IPluginReference[2];
 		dep[0] = new PluginReference("org.eclipse.core.runtime", null, 0); //$NON-NLS-1$
@@ -176,6 +185,7 @@ public class HelloRCPTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.templates.PDETemplateSection#getNewFiles()
 	 */
+	@Override
 	public String[] getNewFiles() {
 		if (copyBrandingDirectory())
 			return new String[] {"icons/", "splash.bmp"}; //$NON-NLS-1$ //$NON-NLS-2$

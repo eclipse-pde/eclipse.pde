@@ -81,6 +81,7 @@ public class SplashHandlersTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#addPages(org.eclipse.jface.wizard.Wizard)
 	 */
+	@Override
 	public void addPages(Wizard wizard) {
 		// Create the page
 		fPage = createPage(0, IHelpContextIds.TEMPLATE_SPLASH_HANDLERS);
@@ -95,6 +96,7 @@ public class SplashHandlersTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.templates.PDETemplateSection#getFormattedPackageName(java.lang.String)
 	 */
+	@Override
 	protected String getFormattedPackageName(String id) {
 		// Package name addition to create a location for containing
 		// any classes required by the splash handlers. 
@@ -110,6 +112,7 @@ public class SplashHandlersTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.templates.PDETemplateSection#getNewFiles()
 	 */
+	@Override
 	public String[] getNewFiles() {
 		// Note:  This does not even get called for non-project templates
 		// As a result, listed files are not added to the binary build 
@@ -131,6 +134,7 @@ public class SplashHandlersTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#getNumberOfWorkUnits()
 	 */
+	@Override
 	public int getNumberOfWorkUnits() {
 		return super.getNumberOfWorkUnits() + 1;
 	}
@@ -138,6 +142,7 @@ public class SplashHandlersTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.BaseOptionTemplateSection#initializeFields(org.eclipse.pde.ui.IFieldData)
 	 */
+	@Override
 	protected void initializeFields(IFieldData data) {
 		String id = data.getId();
 		initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(id));
@@ -146,6 +151,7 @@ public class SplashHandlersTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.BaseOptionTemplateSection#initializeFields(org.eclipse.pde.core.plugin.IPluginModelBase)
 	 */
+	@Override
 	public void initializeFields(IPluginModelBase model) {
 		String pluginId = model.getPluginBase().getId();
 		initializeOption(KEY_PACKAGE_NAME, getFormattedPackageName(pluginId));
@@ -154,6 +160,7 @@ public class SplashHandlersTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.BaseOptionTemplateSection#isDependentOnParentWizard()
 	 */
+	@Override
 	public boolean isDependentOnParentWizard() {
 		return true;
 	}
@@ -161,6 +168,7 @@ public class SplashHandlersTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.OptionTemplateSection#validateOptions(org.eclipse.pde.ui.templates.TemplateOption)
 	 */
+	@Override
 	public void validateOptions(TemplateOption source) {
 		// Update class name
 		if (source == fFieldTemplate) {
@@ -262,6 +270,7 @@ public class SplashHandlersTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#getDependencies(java.lang.String)
 	 */
+	@Override
 	public IPluginReference[] getDependencies(String schemaVersion) {
 		// Ensure schema version was defined
 		if (schemaVersion == null) {
@@ -280,6 +289,7 @@ public class SplashHandlersTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.OptionTemplateSection#getSectionId()
 	 */
+	@Override
 	public String getSectionId() {
 		return ISplashHandlerConstants.F_UNQUALIFIED_EXTENSION_ID;
 	}
@@ -287,6 +297,7 @@ public class SplashHandlersTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#updateModel(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	protected void updateModel(IProgressMonitor monitor) throws CoreException {
 		// Create the action to update the model with the associated 
 		// splash handler extensions, extension points, elements and attributes
@@ -322,6 +333,7 @@ public class SplashHandlersTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.ITemplateSection#getUsedExtensionPoint()
 	 */
+	@Override
 	public String getUsedExtensionPoint() {
 		return ISplashHandlerConstants.F_SPLASH_HANDLERS_EXTENSION;
 	}
@@ -329,6 +341,7 @@ public class SplashHandlersTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#isOkToCreateFile(java.io.File)
 	 */
+	@Override
 	protected boolean isOkToCreateFile(File sourceFile) {
 		// TODO: MP: SPLASH:  Sync this with org.eclipse.pde.internal.ui.util.TemplateFileGenerator
 		String javaSuffix = ".java"; //$NON-NLS-1$
@@ -345,6 +358,7 @@ public class SplashHandlersTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.templates.PDETemplateSection#copyBrandingDirectory()
 	 */
+	@Override
 	protected boolean copyBrandingDirectory() {
 		return isSplashFieldSelected();
 	}
@@ -352,6 +366,7 @@ public class SplashHandlersTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#isOkToCreateFolder(java.io.File)
 	 */
+	@Override
 	protected boolean isOkToCreateFolder(File sourceFolder) {
 		// TODO: MP: SPLASH:  Sync this with org.eclipse.pde.internal.ui.util.TemplateFileGenerator
 		boolean extensibleTemplateSelected = UpdateSplashHandlerAction.isExtensibleTemplateSelected((String) fFieldTemplate.getValue());
@@ -369,6 +384,7 @@ public class SplashHandlersTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.OptionTemplateSection#getLabel()
 	 */
+	@Override
 	public String getLabel() {
 		return getPluginResourceString("wizard.name.splash.handler"); //$NON-NLS-1$
 	}
@@ -376,6 +392,7 @@ public class SplashHandlersTemplate extends PDETemplateSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.OptionTemplateSection#getDescription()
 	 */
+	@Override
 	public String getDescription() {
 		return getPluginResourceString("wizard.description.splash.handler"); //$NON-NLS-1$
 	}
