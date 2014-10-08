@@ -4,7 +4,7 @@ Bundle-Name: %bundleName
 Bundle-SymbolicName: org.eclipse.pde.ui.templates;singleton:=true
 Bundle-Version: 3.4.800.qualifier
 Bundle-Vendor: %bundleVendor
-Bundle-RequiredExecutionEnvironment: J2SE-1.4
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.eclipse.pde.internal.ui.templates;x-internal:=true,
  org.eclipse.pde.internal.ui.templates.ide;x-internal:=true,
  org.eclipse.pde.internal.ui.templates.osgi;x-internal:=true,
