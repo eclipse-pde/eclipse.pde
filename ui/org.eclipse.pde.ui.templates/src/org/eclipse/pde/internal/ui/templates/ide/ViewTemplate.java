@@ -11,6 +11,8 @@
 
 package org.eclipse.pde.internal.ui.templates.ide;
 
+import org.eclipse.pde.ui.templates.PluginReference;
+
 import java.io.File;
 import java.util.ArrayList;
 import org.eclipse.core.runtime.CoreException;
@@ -207,11 +209,11 @@ public class ViewTemplate extends PDETemplateSection {
 	 */
 	@Override
 	public IPluginReference[] getDependencies(String schemaVersion) {
-		ArrayList result = new ArrayList();
+		ArrayList<PluginReference> result = new ArrayList<PluginReference>();
 		if (schemaVersion != null)
 			result.add(new PluginReference("org.eclipse.core.runtime", null, 0)); //$NON-NLS-1$
 		result.add(new PluginReference("org.eclipse.ui", null, 0)); //$NON-NLS-1$
-		return (IPluginReference[]) result.toArray(new IPluginReference[result.size()]);
+		return result.toArray(new IPluginReference[result.size()]);
 	}
 
 	/* (non-Javadoc)

@@ -127,7 +127,7 @@ public class UniversalWelcomeTemplate extends PDETemplateSection {
 
 	@Override
 	public IPluginReference[] getDependencies(String schemaVersion) {
-		ArrayList result = new ArrayList();
+		ArrayList<PluginReference> result = new ArrayList<PluginReference>();
 
 		// We really need Eclipse 3.2 or higher but since Universal
 		// appears in 3.2 for the first time, just depending on
@@ -136,7 +136,7 @@ public class UniversalWelcomeTemplate extends PDETemplateSection {
 		result.add(new PluginReference("org.eclipse.ui.intro.universal", null, 0)); //$NON-NLS-1$
 		result.add(new PluginReference("org.eclipse.ui", null, 0)); //$NON-NLS-1$
 
-		return (IPluginReference[]) result.toArray(new IPluginReference[result.size()]);
+		return result.toArray(new IPluginReference[result.size()]);
 	}
 
 	@Override
