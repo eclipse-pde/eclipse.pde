@@ -1599,7 +1599,7 @@ public class PublishingTests extends P2TestCase {
 		properties.put("product", product.getLocation().toOSString());
 		if (!delta.equals(new File((String) properties.get("baseLocation"))))
 			properties.put("pluginPath", delta.getAbsolutePath());
-		properties.put("configs", "macosx, cocoa, x86");
+		properties.put("configs", "macosx, cocoa, x86_64");
 		properties.put("p2.gathering", "true");
 		Utils.storeBuildProperties(buildFolder, properties);
 
@@ -1607,12 +1607,12 @@ public class PublishingTests extends P2TestCase {
 
 		IFile ini = buildFolder.getFile("eclipse.ini");
 		boolean lowerCase = true;
-		if (!Utils.extractFromZip(buildFolder, "I.TestBuild/eclipse-macosx.cocoa.x86.zip", "eclipse/eclipse.app/Contents/MacOS/eclipse.ini", ini)) {
+		if (!Utils.extractFromZip(buildFolder, "I.TestBuild/eclipse-macosx.cocoa.x86_64.zip", "eclipse/eclipse.app/Contents/MacOS/eclipse.ini", ini)) {
 			lowerCase = false;
-			Utils.extractFromZip(buildFolder, "I.TestBuild/eclipse-macosx.cocoa.x86.zip", "eclipse/Eclipse.app/Contents/MacOS/eclipse.ini", ini);
+			Utils.extractFromZip(buildFolder, "I.TestBuild/eclipse-macosx.cocoa.x86_64.zip", "eclipse/Eclipse.app/Contents/MacOS/eclipse.ini", ini);
 		}
 
-		IFile zip = buildFolder.getFile("I.TestBuild/eclipse-macosx.cocoa.x86.zip");
+		IFile zip = buildFolder.getFile("I.TestBuild/eclipse-macosx.cocoa.x86_64.zip");
 		String exeString = (lowerCase ? "eclipse/eclipse.app/" : "eclipse/Eclipse.app/") + "Contents/MacOS/eclipse";
 		assertZipPermissions(zip, exeString, "-rwxr-xr-x");
 
@@ -1635,7 +1635,7 @@ public class PublishingTests extends P2TestCase {
 		assertFalse(duplicate);
 
 		IMetadataRepository repo = loadMetadataRepository(buildFolder.getFolder("buildRepo").getLocationURI());
-		IInstallableUnit iu = getIU(repo, "toolingcocoa.macosx.x86org.eclipse.equinox.common");
+		IInstallableUnit iu = getIU(repo, "toolingcocoa.macosx.x86_64org.eclipse.equinox.common");
 		assertEquals(iu.getVersion().toString(), "1.0.0");
 
 		IInstallableUnit common = getIU(repo, EQUINOX_COMMON);
