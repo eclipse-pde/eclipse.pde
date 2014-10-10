@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2013 IBM Corporation and others.
+ *  Copyright (c) 2000, 2014 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -105,6 +105,9 @@ public class SampleWizard extends Wizard implements INewWizard, IExecutableExten
 			IWorkbenchPage page = PDEPlugin.getActivePage();
 			if (perspId != null && switchPerspective) {
 				PlatformUI.getWorkbench().showPerspective(perspId, page.getWorkbenchWindow());
+			}
+			if (namesPage.getProjectNames().length == 0) {
+				namesPage.updateEntries();
 			}
 			SampleOperation op = new SampleOperation(selection, namesPage.getProjectNames(), new ImportOverwriteQuery());
 			getContainer().run(true, true, op);
