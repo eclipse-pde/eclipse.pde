@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.pde.ui.tests.ee;
 
+import java.io.File;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.resources.IProject;
@@ -48,6 +49,22 @@ public class ExportBundleTests extends PDETestCase {
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
 		if (project.exists()) {
 			project.delete(true, null);
+		}
+	}
+
+	/**
+	 * Deletes the specified folder.
+	 * 
+	 * @param dir the file to delete
+	 */
+	protected void deleteFolder(File dir) {
+		if (dir.isDirectory()) {
+			File[] files = dir.listFiles();
+			for (int i = 0; i < files.length; i++) {
+				deleteFolder(files[i]);
+			}
+		} else {
+			dir.delete();
 		}
 	}
 
@@ -111,6 +128,7 @@ public class ExportBundleTests extends PDETestCase {
 			validateTargetLevel(path.toOSString(), "no/sound/export/Activator.class", 47);
 		} finally {
 			deleteProject("no.sound.export");
+			deleteFolder(EXPORT_PATH.toFile());
 		}
 	}
 
@@ -152,16 +170,35 @@ public class ExportBundleTests extends PDETestCase {
 
 			// The jar file may not have been copied to the file system yet, see Bug 424597
 			if (!path.toFile().exists()) {
-				try {
-					Thread.sleep(5000);
-				} catch (InterruptedException e) {
+				System.out.println("BUG 424597\n================================");
+				File exportContents = EXPORT_PATH.toFile();
+				if (exportContents.isDirectory()) {
+					// Should only have plugin/feature folders
+					File[] children = exportContents.listFiles();
+					for (int i = 0; i < children.length; i++) {
+						if (children[i].isDirectory()) {
+							System.out.println("Directory: " + children[i].getName());
+							File[] subChildren = children[i].listFiles();
+							for (int j = 0; j < subChildren.length; j++) {
+								if (subChildren[j].isDirectory()) {
+									System.out.println("   Directory: " + subChildren[j].getName());
+								} else {
+									System.out.println("   File: " + subChildren[j].getName());
+								}
+							}
+						} else {
+							System.out.println("File: " + children[i].getName());
+						}
+					}
 				}
+				System.out.println("================================\nEnd of BUG 424597");
 			}
 
 			assertTrue("Missing exported bundle", path.toFile().exists());
 			validateTargetLevel(path.toOSString(), "j2se14/export/Activator.class", 46);
 		} finally {
 			deleteProject("j2se14.export");
+			deleteFolder(EXPORT_PATH.toFile());
 		}
 	}
 
