@@ -10,7 +10,7 @@
 	<key>CFBundleIconFile</key>
 		<string>Eclipse.icns</string>
 	<key>CFBundleIdentifier</key>
-		<string>org.eclipse.eclipse</string>
+		<string>org.eclipse.Eclipse</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 		<string>6.0</string>
 	<key>CFBundleName</key>
