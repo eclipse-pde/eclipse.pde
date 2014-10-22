@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -518,7 +518,9 @@ public class ProductDefinitionOperation extends BaseManifestOperation {
 		synchronizeChild(element, IProductConstants.STARTUP_MESSAGE_RECT, getMessageRect());
 		synchronizeChild(element, IProductConstants.STARTUP_PROGRESS_RECT, getProgressRect());
 		synchronizeChild(element, IProductConstants.PREFERENCE_CUSTOMIZATION, getPreferenceCustomization());
-		synchronizeChild(element, APPLICATION_CSS, getApplicationCSS());
+		if (fProduct.getCSSInfo() != null) {
+			synchronizeChild(element, APPLICATION_CSS, getApplicationCSS());
+		}
 
 	}
 
