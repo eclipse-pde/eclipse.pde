@@ -177,8 +177,7 @@ public class TracingPreferencePage extends PreferencePage implements IWorkbenchP
 		}
 		// apply the font to this page
 		applyDialogFont(pageComposite);
-		// set focus on the enablement button
-		enableTracingButton.setFocus();
+
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(pageComposite, IHelpContextIds.TRACING_PREF_PAGE);
 
 		return pageComposite;
@@ -308,6 +307,7 @@ public class TracingPreferencePage extends PreferencePage implements IWorkbenchP
 				standardOutputStreamButton.setSelection(false);
 			}
 		});
+		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).applyTo(tracingOutputFileButton);
 		// add the 'tracing file' input field
 		tracingFileText = new Text(outputComp, SWT.SINGLE | SWT.BORDER);
 		tracingFileText.addListener(SWT.Verify, new Listener() {
@@ -324,7 +324,7 @@ public class TracingPreferencePage extends PreferencePage implements IWorkbenchP
 				}
 			}
 		});
-		GridDataFactory.fillDefaults().grab(true, false).applyTo(tracingFileText);
+		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).applyTo(tracingFileText);
 		// add the 'tracing file' browse button
 		tracingFileBrowseButton = new Button(outputComp, SWT.PUSH);
 		tracingFileBrowseButton.setText(Messages.tracingFileBrowseButton);
@@ -340,7 +340,7 @@ public class TracingPreferencePage extends PreferencePage implements IWorkbenchP
 				}
 			}
 		});
-		GridDataFactory.fillDefaults().applyTo(tracingFileBrowseButton);
+		setButtonLayoutData(tracingFileBrowseButton);
 
 		Composite detailsComp = new Composite(tracingOptionsGroup, SWT.NONE);
 		GridLayoutFactory.fillDefaults().numColumns(5).equalWidth(false).margins(0, 0).applyTo(detailsComp);
