@@ -188,8 +188,7 @@ public interface ICoreConstants {
 	public final static String BUILD_FILENAME_DESCRIPTOR = "build.properties"; //$NON-NLS-1$
 
 	/**
-	 * Default version number for selected elements in
-	 * the PluginSelectionDialog and FeatureSelectionDialog
+	 * Default version number for plugin and feature
 	 */
 	String DEFAULT_VERSION = "0.0.0"; //$NON-NLS-1$
 
