@@ -106,9 +106,6 @@ public class SampleWizard extends Wizard implements INewWizard, IExecutableExten
 			if (perspId != null && switchPerspective) {
 				PlatformUI.getWorkbench().showPerspective(perspId, page.getWorkbenchWindow());
 			}
-			if (namesPage.getProjectNames().length == 0) {
-				namesPage.updateEntries();
-			}
 			SampleOperation op = new SampleOperation(selection, namesPage.getProjectNames(), new ImportOverwriteQuery());
 			getContainer().run(true, true, op);
 			IFile sampleManifest = op.getSampleManifest();
@@ -289,5 +286,9 @@ public class SampleWizard extends Wizard implements INewWizard, IExecutableExten
 	 */
 	public void setActivitiesEnabled(boolean activitiesEnabled) {
 		this.activitiesEnabled = activitiesEnabled;
+	}
+
+	public void updateEntries() {
+		namesPage.updateEntries();
 	}
 }
