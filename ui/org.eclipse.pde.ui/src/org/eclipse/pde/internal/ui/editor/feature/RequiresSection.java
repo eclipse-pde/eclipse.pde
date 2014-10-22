@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2013 IBM Corporation and others.
+ *  Copyright (c) 2000, 2014 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -15,7 +15,8 @@ package org.eclipse.pde.internal.ui.editor.feature;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
@@ -24,8 +25,7 @@ import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.feature.FeatureImport;
 import org.eclipse.pde.internal.core.ifeature.*;
-import org.eclipse.pde.internal.ui.PDEPlugin;
-import org.eclipse.pde.internal.ui.PDEUIMessages;
+import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.dialogs.FeatureSelectionDialog;
 import org.eclipse.pde.internal.ui.dialogs.PluginSelectionDialog;
 import org.eclipse.pde.internal.ui.editor.*;
@@ -37,6 +37,8 @@ import org.eclipse.pde.internal.ui.wizards.ListUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
@@ -45,6 +47,7 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
+import org.osgi.service.prefs.Preferences;
 
 public class RequiresSection extends TableSection implements IPluginModelListener, IFeatureModelListener {
 
@@ -94,6 +97,7 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 	@Override
 	public void createClient(Section section, FormToolkit toolkit) {
 
+		final IFeatureModel model = (IFeatureModel) getPage().getModel();
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		GridData data = new GridData(GridData.FILL_BOTH);
 		section.setLayoutData(data);
@@ -105,6 +109,15 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan = 2;
 		fSyncButton.setLayoutData(gd);
+		
+		fSyncButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				IEclipsePreferences eclipsePrefs = Platform.getPreferencesService().getRootNode();
+				Preferences prefs = eclipsePrefs.node(Plugin.PLUGIN_PREFERENCE_SCOPE).node(IPDEUIConstants.PLUGIN_ID);
+				prefs.putBoolean(model.getFeature().getLabel(), fSyncButton.getSelection());
+			}
+		});
 
 		createViewerPartControl(container, SWT.MULTI, 2, toolkit);
 
@@ -423,6 +436,9 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 			getTablePart().setButtonEnabled(RECOMPUTE_IMPORT, false);
 			fSyncButton.setEnabled(false);
 		}
+		IEclipsePreferences eclipsePrefs = Platform.getPreferencesService().getRootNode();
+		Preferences prefs = eclipsePrefs.node(Plugin.PLUGIN_PREFERENCE_SCOPE).node(IPDEUIConstants.PLUGIN_ID);
+		fSyncButton.setSelection(prefs.getBoolean(model.getFeature().getLabel(), false));
 		model.addModelChangedListener(this);
 		PDECore.getDefault().getModelManager().addPluginModelListener(this);
 		PDECore.getDefault().getFeatureModelManager().addFeatureModelListener(this);
