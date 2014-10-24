@@ -156,41 +156,53 @@ public class ExportBundleTests extends PDETestCase {
 			info.signingInfo = null;
 			info.qualifier = "vXYZ";
 
+			long l1 = System.currentTimeMillis();
 			PluginExportOperation job = new PluginExportOperation(info, "Test-Export");
+			long l2 = System.currentTimeMillis();
 			job.schedule();
+			long l3 = System.currentTimeMillis();
 			job.join();
+			long l4 = System.currentTimeMillis();
 			if (job.hasAntErrors()){
 				fail("Export job had ant errors");
 			}
+			long l5 = System.currentTimeMillis();
 			IStatus result = job.getResult();
 			assertTrue("Export job had errors", result.isOK());
+			long l6 = System.currentTimeMillis();
 
 			// veriry exported bundle exists
 			IPath path = EXPORT_PATH.append("plugins/j2se14.export_1.0.0.jar");
+			long l7 = System.currentTimeMillis();
 
-			// The jar file may not have been copied to the file system yet, see Bug 424597
+			boolean didPathExistBeforeSleep = path.toFile().exists();
+			/*		give a 30 second delay when the path doesn't exist
+					( JUST IN CASE - unlikely to work but worth trying)*/
 			if (!path.toFile().exists()) {
-				System.out.println("BUG 424597\n================================");
-				File exportContents = EXPORT_PATH.toFile();
-				if (exportContents.isDirectory()) {
-					// Should only have plugin/feature folders
-					File[] children = exportContents.listFiles();
-					for (int i = 0; i < children.length; i++) {
-						if (children[i].isDirectory()) {
-							System.out.println("Directory: " + children[i].getName());
-							File[] subChildren = children[i].listFiles();
-							for (int j = 0; j < subChildren.length; j++) {
-								if (subChildren[j].isDirectory()) {
-									System.out.println("   Directory: " + subChildren[j].getName());
-								} else {
-									System.out.println("   File: " + subChildren[j].getName());
-								}
-							}
-						} else {
-							System.out.println("File: " + children[i].getName());
-						}
-					}
+				try {
+					Thread.sleep(30000);
+				} catch (InterruptedException e) {
 				}
+			}
+			boolean didPathExistAfterSleep = path.toFile().exists();
+
+			long l8 = System.currentTimeMillis();
+
+			/*	 print out the time taken and see if there is a pattern when this test breaks
+			     see Bug 424597. Further debug statement may be required in future  */
+			if (true) { //print information everytime - in PASS OR FAIL
+				System.out.println("BUG 424597\n================================");
+				System.out.println("Constructor of PluginExportOperation time: " + (l2 - l1));
+				System.out.println("Schedule                             time: " + (l3 - l2));
+				System.out.println("Job join                             time: " + (l4 - l3));
+				System.out.println("Ant Error                            time: " + (l5 - l4));
+				System.out.println("Job result                           time: " + (l6 - l5));
+				System.out.println("Append                               time: " + (l7 - l6));
+				System.out.println("Thread sleep time if file not pr     time: " + (l8 - l7));
+
+				System.out.println("Did file exist before sleep: " + didPathExistBeforeSleep);
+				System.out.println("Did file exist after  sleep: " + didPathExistAfterSleep);
+
 				System.out.println("================================\nEnd of BUG 424597");
 			}
 
