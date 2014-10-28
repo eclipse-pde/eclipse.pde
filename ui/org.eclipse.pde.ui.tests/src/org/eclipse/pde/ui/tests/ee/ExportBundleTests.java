@@ -59,9 +59,15 @@ public class ExportBundleTests extends PDETestCase {
 	 */
 	protected void deleteFolder(File dir) {
 		if (dir.isDirectory()) {
-			File[] files = dir.listFiles();
-			for (int i = 0; i < files.length; i++) {
-				deleteFolder(files[i]);
+			if (dir.list().length == 0)
+				dir.delete();
+			else {
+				File[] files = dir.listFiles();
+				for (int i = 0; i < files.length; i++) {
+					deleteFolder(files[i]);
+				}
+				if (dir.list().length == 0)
+					dir.delete();
 			}
 		} else {
 			dir.delete();
@@ -203,6 +209,31 @@ public class ExportBundleTests extends PDETestCase {
 				System.out.println("Did file exist before sleep: " + didPathExistBeforeSleep);
 				System.out.println("Did file exist after  sleep: " + didPathExistAfterSleep);
 
+				System.out.println("================================\nEnd of BUG 424597");
+			}
+
+			if (!path.toFile().exists()) {
+				System.out.println("BUG 424597\n================================");
+				File exportContents = EXPORT_PATH.toFile();
+				if (exportContents.isDirectory()) {
+					// Should only have plugin/feature folders
+					File[] children = exportContents.listFiles();
+					for (int i = 0; i < children.length; i++) {
+						if (children[i].isDirectory()) {
+							System.out.println("Directory: " + children[i].getName());
+							File[] subChildren = children[i].listFiles();
+							for (int j = 0; j < subChildren.length; j++) {
+								if (subChildren[j].isDirectory()) {
+									System.out.println("   Directory: " + subChildren[j].getName());
+								} else {
+									System.out.println("   File: " + subChildren[j].getName());
+								}
+							}
+						} else {
+							System.out.println("File: " + children[i].getName());
+						}
+					}
+				}
 				System.out.println("================================\nEnd of BUG 424597");
 			}
 
