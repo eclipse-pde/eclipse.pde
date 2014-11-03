@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,8 @@
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@vogella.com> - Fix for bug 376057 - Wildcard suport 
  *     for adding features in product configuration editor 
- *     Red Hat, Inc - 322352 
+ *     Red Hat, Inc - 322352
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 449348
  *******************************************************************************/
 
 package org.eclipse.pde.internal.ui.dialogs;
@@ -50,6 +51,15 @@ public class FeatureSelectionDialog extends FilteredItemsSelectionDialog {
 
 	private class FeatureSearchItemsFilter extends ItemsFilter {
 
+		public FeatureSearchItemsFilter() {
+			super();
+			String pattern = patternMatcher.getPattern();
+			if (pattern.indexOf("*") != 0 && pattern.indexOf("?") != 0 && pattern.indexOf(".") != 0) {//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				pattern = "*" + pattern; //$NON-NLS-1$
+				patternMatcher.setPattern(pattern);
+			}
+		}
+
 		@Override
 		public boolean isConsistentItem(Object item) {
 			return true;
@@ -88,16 +98,6 @@ public class FeatureSelectionDialog extends FilteredItemsSelectionDialog {
 				return true;
 			}
 			return false;
-		}
-
-		@Override
-		protected boolean matches(String text) {
-			String pattern = patternMatcher.getPattern();
-			if (pattern.indexOf("*") != 0 & pattern.indexOf("?") != 0 & pattern.indexOf(".") != 0) {//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				pattern = "*" + pattern; //$NON-NLS-1$
-				patternMatcher.setPattern(pattern);
-			}
-			return patternMatcher.matches(text);
 		}
 	}
 

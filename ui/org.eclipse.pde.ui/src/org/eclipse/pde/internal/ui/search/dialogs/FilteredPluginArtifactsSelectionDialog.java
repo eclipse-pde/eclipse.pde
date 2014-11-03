@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2012 IBM Corporation and others.
+ *  Copyright (c) 2007, 2014 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     Chris Aniszczyk <zx@us.ibm.com> - initial API and implementation
  *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - bug 230248
  *     Code 9 Corporation - onging enhancements
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 449348
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.search.dialogs;
 
@@ -619,11 +620,22 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 
 	private class PluginSearchItemsFilter extends ItemsFilter {
 
+		public PluginSearchItemsFilter() {
+			super();
+			String pattern = patternMatcher.getPattern();
+			if (pattern.indexOf("*") != 0 && pattern.indexOf("?") != 0 && pattern.indexOf(".") != 0) {//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				pattern = "*" + pattern; //$NON-NLS-1$
+				patternMatcher.setPattern(pattern);
+			}
+		}
+
 		// TODO probably have to make this realistic
+		@Override
 		public boolean isConsistentItem(Object item) {
 			return true;
 		}
 
+		@Override
 		public boolean matchItem(Object item) {
 			String id = null;
 			if (item instanceof IPluginModelBase) {
