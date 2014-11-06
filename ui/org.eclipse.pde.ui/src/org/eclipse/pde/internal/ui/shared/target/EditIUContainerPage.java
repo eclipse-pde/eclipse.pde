@@ -13,6 +13,7 @@ package org.eclipse.pde.internal.ui.shared.target;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.concurrent.atomic.AtomicBoolean;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.p2.ui.ProvUI;
 import org.eclipse.equinox.internal.p2.ui.actions.PropertyDialogAction;
@@ -40,6 +41,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.progress.ProgressMessages;
 
 /**
  * Wizard page allowing users to select which IUs they would like to download
@@ -57,6 +59,10 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 	private static final String SETTINGS_GROUP_BY_CATEGORY = "groupByCategory"; //$NON-NLS-1$
 	private static final String SETTINGS_SHOW_OLD_VERSIONS = "showVersions"; //$NON-NLS-1$
 	private static final String SETTINGS_SELECTED_REPOSITORY = "selectedRepository"; //$NON-NLS-1$
+
+	// Refresh settings
+	private static final int REFRESH_INTERVAL = 4000;
+	private static final int REFRESH_TRIES = 10;
 
 	/**
 	 * If the user is only downloading from a specific repository location, we store it here so it can be persisted in the target
@@ -91,6 +97,7 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 	private Button fConfigurePhaseButton;
 	private Text fDetailsText;
 	private ProvisioningUI profileUI;
+	private Thread refreshThread;
 
 	/**
 	 * Constructor for creating a new container
@@ -177,7 +184,7 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 	 * Combo at the top of the page allowing the user to select a specific repo or group of repositories
 	 * @param parent parent composite
 	 */
-	private void createRepositoryComboArea(Composite parent) {
+	private void createRepositoryComboArea(final Composite parent) {
 		profileUI.getPolicy().setRepositoryPreferencePageId(null);
 		fRepoSelector = new RepositorySelectionGroup(profileUI, getContainer(), parent, fQueryContext);
 		fRepoSelector.addRepositorySelectionListener(new IRepositorySelectionListener() {
@@ -188,17 +195,76 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 					setDescription(Messages.EditIUContainerPage_10);
 				} else {
 					setDescription(Messages.EditIUContainerPage_11);
+					refreshAvailableIUArea(parent);
 				}
 				pageChanged();
 			}
 		});
 	}
 
+	private void refreshAvailableIUArea(final Composite parent) {
+		try {
+			if (fEditContainer == null || fEditContainer.getInstallableUnits().length == 0) {
+				return;
+			}
+		} catch (CoreException e) {
+			PDEPlugin.log(e);
+		}
+
+		if (refreshThread != null && refreshThread.isAlive()) {
+			return;
+		}
+
+		refreshThread = new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				try {
+					final AtomicBoolean loaded = new AtomicBoolean(false);
+					int tries = 0;
+					while (!loaded.get()) {
+						if (REFRESH_TRIES == tries++) {
+							throw new InterruptedException("reached maximum number of tries"); //$NON-NLS-1$
+						}
+
+						Thread.sleep(REFRESH_INTERVAL);
+
+						parent.getDisplay().syncExec(new Runnable() {
+
+							@Override
+							public void run() {
+								final TreeItem[] children = fAvailableIUGroup.getCheckboxTreeViewer().getTree().getItems();
+								final String pendingLabel = ProgressMessages.PendingUpdateAdapter_PendingLabel;
+								if (children.length > 0 && !children[0].getText().equals(pendingLabel)) {
+									fSelectionCount.setText(NLS.bind(Messages.EditIUContainerPage_itemsSelected, Integer.toString(0)));
+									fSelectedIUStatus = BAD_IU_SELECTION;
+									try {
+										fAvailableIUGroup.getCheckboxTreeViewer().expandAll();
+										fAvailableIUGroup.setChecked(fEditContainer.getInstallableUnits());
+										fAvailableIUGroup.getCheckboxTreeViewer().collapseAll();
+									} catch (CoreException e) {
+										PDEPlugin.log(e);
+									}
+									loaded.set(true);
+								}
+							}
+
+						});
+					}
+				} catch (InterruptedException e) {
+					PDEPlugin.log(e);
+				}
+			}
+
+		});
+		refreshThread.start();
+	}
+
 	/**
 	 * Create the UI area where the user will be able to select which IUs they
 	 * would like to download.  There will also be buttons to see properties for
 	 * the selection and open the manage sites dialog.
-	 * 
+	 *
 	 * @param parent parent composite
 	 */
 	private void createAvailableIUArea(Composite parent) {
