@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2013 IBM Corporation and others.
+ * Copyright (c) 2012, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -31,7 +32,7 @@ public class AntFilterStore extends FilterStore {
 
 	String fComponentId = null;
 	String fFiltersRoot = null;
-
+	public static ArrayList<IApiProblem> filteredAPIProblems = new ArrayList<IApiProblem>();
 	/**
 	 * Constructor
 	 * 
@@ -42,6 +43,21 @@ public class AntFilterStore extends FilterStore {
 	public AntFilterStore(String filtersRoot, String componentID) {
 		fComponentId = componentID;
 		fFiltersRoot = filtersRoot;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.pde.api.tools.internal.provisional.IApiFilterStore#isFiltered
+	 * (org.eclipse.pde.api.tools.internal.provisional.problems.IApiProblem)
+	 */
+	@Override
+	public boolean isFiltered(IApiProblem problem) {
+		boolean isFiltered = super.isFiltered(problem);
+		if(isFiltered){
+			filteredAPIProblems.add(problem);
+		}
+		return isFiltered;
 	}
 
 	/*

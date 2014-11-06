@@ -110,6 +110,9 @@ public class SearchMessages extends NLS {
 	public static String UseReportConverter_writing_not_searched;
 	public static String UseReportConverter_writing_root_index;
 	public static String UseReportConverter___has_total_refs;
+	public static String UseReportConverter_filter_information;
+	public static String UseReportConverter_number_filtered;
+	public static String UseReportConverter_additional_filters;
 	public static String UseReportConverter_api_pattern;
 	public static String UseReportConverter_api_ref_description;
 	public static String UseReportConverter_api_references;

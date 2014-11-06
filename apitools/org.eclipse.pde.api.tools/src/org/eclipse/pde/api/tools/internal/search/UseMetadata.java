@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -84,10 +84,16 @@ public class UseMetadata implements IMetadata {
 	 */
 	public static final String DESCRIPTION = "description"; //$NON-NLS-1$
 
+	/**
+	 * XML tag name for additional filters
+	 */
+	public static final String ADDITIONALFILTERS = "additionalfilters"; //$NON-NLS-1$
+	
+
 	int searchflags = 0;
 	String[] apipatterns = null, intpatterns = null, archivepatterns = null;
 	String baselinelocation = null, reportlocation = null, scopepattern = null,
-			refpattern = null, runatdate = null, description = null;
+			refpattern = null, runatdate = null, description = null, additionalfilters = null;
 
 	/**
 	 * Constructor
@@ -123,6 +129,34 @@ public class UseMetadata implements IMetadata {
 		this.description = description;
 	}
 
+	/**
+	 * Constructor
+	 * 
+	 * @param searchflags
+	 * @param scopepattern
+	 * @param refpattern
+	 * @param baselinelocation
+	 * @param reportlocation
+	 * @param apipatterns
+	 * @param internalpatterns
+	 * @param archivepatterns
+	 * @param additionalfilters
+	 * @param runatdate
+	 * @param description
+	 */
+	public UseMetadata(int searchflags, String scopepattern, String refpattern, String baselinelocation, String reportlocation, String[] apipatterns, String[] internalpatterns, String[] archivepatterns, String additionalFilters, String runatdate, String description) {
+		this.searchflags = searchflags;
+		this.scopepattern = scopepattern;
+		this.refpattern = refpattern;
+		this.baselinelocation = baselinelocation;
+		this.reportlocation = reportlocation;
+		this.apipatterns = apipatterns;
+		this.intpatterns = internalpatterns;
+		this.archivepatterns = archivepatterns;
+		this.additionalfilters = additionalFilters;
+		this.runatdate = runatdate;
+		this.description = description;
+	}
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.pde.api.tools.internal.provisional.search.IMetadata#
@@ -184,6 +218,11 @@ public class UseMetadata implements IMetadata {
 					sub.setAttribute(VALUE, archivepatterns[i]);
 				}
 			}
+
+			child = doc.createElement(ADDITIONALFILTERS);
+			root.appendChild(child);
+			child.setAttribute(VALUE, this.additionalfilters);
+			
 			writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), IApiCoreConstants.UTF_8));
 			writer.write(Util.serializeDocument(doc));
 			writer.flush();
@@ -322,6 +361,25 @@ public class UseMetadata implements IMetadata {
 	 */
 	public void setArchivePatterns(String[] patterns) {
 		this.archivepatterns = patterns;
+	}
+
+	/**
+	 * Returns the additional filter set in this metadata or
+	 * <code>null</code> if none.
+	 * 
+	 * @return the additional filter or <code>null</code>
+	 */
+	public String getAdditionalfilters() {
+		return additionalfilters;
+	}
+
+	/**
+	 * Allows additional filters to be set. This method accepts <code>null</code>
+	 * 
+	 * @param additional filter to set
+	 */
+	public void setAdditionalfilters(String additionalfilters) {
+		this.additionalfilters = additionalfilters;
 	}
 
 	/**

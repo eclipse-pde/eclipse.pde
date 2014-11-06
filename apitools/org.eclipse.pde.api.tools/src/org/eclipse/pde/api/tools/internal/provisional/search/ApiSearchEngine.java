@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 IBM Corporation and others.
+ * Copyright (c) 2009, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.pde.api.tools.internal.AntFilterStore;
 import org.eclipse.pde.api.tools.internal.builder.ReferenceResolver;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.builder.IReference;
@@ -290,6 +291,7 @@ public final class ApiSearchEngine {
 		if (scope == null) {
 			return;
 		}
+		AntFilterStore.filteredAPIProblems.clear();
 		fRequestorContext = computeContext(requestor);
 		IApiElement[] scopeelements = scope.getApiElements();
 		SubMonitor localmonitor = SubMonitor.convert(monitor, MessageFormat.format(SearchMessages.ApiSearchEngine_searching_projects, new Object[] { fRequestorContext }), scopeelements.length * 2 + 1);

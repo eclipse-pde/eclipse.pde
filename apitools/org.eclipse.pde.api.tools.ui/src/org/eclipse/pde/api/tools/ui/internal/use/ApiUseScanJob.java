@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 IBM Corporation and others.
+ * Copyright (c) 2009, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -149,7 +149,7 @@ public class ApiUseScanJob extends Job {
 					localmonitor.setTaskName(Messages.ApiUseScanJob_cleaning_xml_loc);
 					scrubReportLocation(new File(xmlPath), localmonitor.newChild(1));
 				}
-				UseMetadata data = new UseMetadata(kinds, this.configuration.getAttribute(ApiUseLaunchDelegate.TARGET_SCOPE, (String) null), this.configuration.getAttribute(ApiUseLaunchDelegate.SEARCH_SCOPE, (String) null), baseline.getLocation(), xmlPath, sapi, sinternal, sjars, DateFormat.getDateTimeInstance().format(Calendar.getInstance().getTime()), this.configuration.getAttribute(ApiUseLaunchDelegate.DESCRIPTION, (String) null));
+				UseMetadata data = new UseMetadata(kinds, this.configuration.getAttribute(ApiUseLaunchDelegate.TARGET_SCOPE, (String) null), this.configuration.getAttribute(ApiUseLaunchDelegate.SEARCH_SCOPE, (String) null), baseline.getLocation(), xmlPath, sapi, sinternal, sjars, this.configuration.getAttribute(ApiUseLaunchDelegate.FILTER_ROOT, (String) null), DateFormat.getDateTimeInstance().format(Calendar.getInstance().getTime()), this.configuration.getAttribute(ApiUseLaunchDelegate.DESCRIPTION, (String) null));
 				IApiSearchReporter reporter = new XmlSearchReporter(xmlPath, false);
 				try {
 					ApiSearchEngine engine = new ApiSearchEngine();

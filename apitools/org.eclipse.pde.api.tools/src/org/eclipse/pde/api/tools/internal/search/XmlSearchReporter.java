@@ -26,6 +26,7 @@ import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.pde.api.tools.internal.AntFilterStore;
 import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 import org.eclipse.pde.api.tools.internal.IApiXmlConstants;
 import org.eclipse.pde.api.tools.internal.builder.Reference;
@@ -249,6 +250,7 @@ public class XmlSearchReporter implements IApiSearchReporter {
 			root.setAttribute(IApiXmlConstants.ATTR_TOTAL, Integer.toString(referenceCount));
 			root.setAttribute(IApiXmlConstants.ATTR_COUNT_ILLEGAL, Integer.toString(illegalCount));
 			root.setAttribute(IApiXmlConstants.ATTR_COUNT_INTERNAL, Integer.toString(internalCount));
+			root.setAttribute(IApiXmlConstants.ATTR_COUNT_FILTERED, Integer.toString(AntFilterStore.filteredAPIProblems.size()));
 
 			writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), IApiCoreConstants.UTF_8));
 			writer.write(Util.serializeDocument(doc));

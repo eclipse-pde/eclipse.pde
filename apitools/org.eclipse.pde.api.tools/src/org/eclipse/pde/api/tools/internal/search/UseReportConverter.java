@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 IBM Corporation and others.
+ * Copyright (c) 2009, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -64,6 +64,8 @@ import org.eclipse.pde.api.tools.internal.util.Signatures;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.osgi.framework.Version;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -653,6 +655,7 @@ public class UseReportConverter extends HTMLConvertor {
 	private boolean hasmissing = false;
 	SAXParser parser = null;
 	private UseMetadata metadata = null;
+	private int filteredCount = -1;
 	Pattern[] topatterns = null;
 	Pattern[] frompatterns = null;
 
@@ -1518,6 +1521,8 @@ public class UseReportConverter extends HTMLConvertor {
 			try {
 				getMetadata();
 				writeMetadataSummary(buffer);
+				getFilteredCount();
+				writeFilterCount(buffer);
 			} catch (Exception e) {
 				// do nothing, failed meta-data should not prevent the index
 				// from being written
@@ -1726,6 +1731,19 @@ public class UseReportConverter extends HTMLConvertor {
 			} else {
 				buffer.append(SearchMessages.UseReportConverter_none);
 			}
+			buffer.append(OPEN_TR);
+			buffer.append(openTD(14)).append(SearchMessages.UseReportConverter_additional_filters).append(CLOSE_TD);
+			buffer.append(openTD(36));
+			if (this.metadata.getAdditionalfilters() != null && !this.metadata.getAdditionalfilters().isEmpty()) {
+				buffer.append(this.metadata.getAdditionalfilters());
+			} else {
+				buffer.append(SearchMessages.UseReportConverter_none);
+			}
+			
+			buffer.append(CLOSE_TD);
+			buffer.append(CLOSE_TR);
+
+	
 			buffer.append(CLOSE_TD);
 			buffer.append(CLOSE_TR);
 			buffer.append(CLOSE_TABLE);
@@ -1734,6 +1752,19 @@ public class UseReportConverter extends HTMLConvertor {
 		}
 	}
 
+	
+	void writeFilterCount(StringBuffer buffer) throws Exception {
+		boolean isAdditionFilterProvided = this.metadata.getAdditionalfilters() != null && !this.metadata.getAdditionalfilters().isEmpty();
+
+		if (this.filteredCount != -1 && isAdditionFilterProvided) {
+			buffer.append(OPEN_H4).append(SearchMessages.UseReportConverter_filter_information).append(CLOSE_H4);
+			buffer.append(OPEN_TR);
+			buffer.append(openTD(14)).append(SearchMessages.UseReportConverter_number_filtered).append(CLOSE_TD);
+			buffer.append(openTD(36)).append(this.filteredCount).append(CLOSE_TD);
+			buffer.append(CLOSE_TR);
+		}
+
+	}
 	/**
 	 * Returns the use metadata from this scan
 	 * 
@@ -1806,6 +1837,10 @@ public class UseReportConverter extends HTMLConvertor {
 							this.metadata.setArchivePatterns(readPatterns(element));
 							continue;
 						}
+						if (UseMetadata.ADDITIONALFILTERS.equals(name)) {
+							this.metadata.setAdditionalfilters(value);
+							continue;
+						}
 					}
 				}
 			} catch (CoreException e) {
@@ -1813,6 +1848,44 @@ public class UseReportConverter extends HTMLConvertor {
 			}
 		}
 		return this.metadata;
+	}
+
+	/**
+	 * Returns the use filtered count from this scan
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
+	int getFilteredCount() throws Exception {
+		if (this.filteredCount == -1) {
+			File xml = null;
+			try {
+				xml = new File(getReportsRoot(), "counts" + XML_EXTENSION); //$NON-NLS-1$
+				if (!xml.exists()) {
+					// try looking in the default 'xml' directory as a raw
+					// report root
+					// might have been specified
+					xml = new File(getReportsRoot() + File.separator + "xml", "meta" + XML_EXTENSION); //$NON-NLS-1$//$NON-NLS-2$
+				}
+				if (xml.exists()) {
+					String xmlstr = Util.getFileContentAsString(xml);
+					Element doc = Util.parseDocument(xmlstr.trim());
+
+					NamedNodeMap nodes = doc.getAttributes();
+					for (int i = 0; i < nodes.getLength(); i++) {
+						Node element = nodes.item(i);
+						String value = element.getNodeValue();
+						String name = element.getNodeName();
+						if (name.equals(IApiXmlConstants.ATTR_COUNT_FILTERED)) {
+							filteredCount = Integer.parseInt(value);
+						}
+					}
+				}
+			} catch (CoreException e) {
+				throw new Exception(NLS.bind(SearchMessages.UseReportConverter_core_exep_reading_metadata, xml.getAbsolutePath()));
+			}
+		}
+		return filteredCount;
 	}
 
 	/**

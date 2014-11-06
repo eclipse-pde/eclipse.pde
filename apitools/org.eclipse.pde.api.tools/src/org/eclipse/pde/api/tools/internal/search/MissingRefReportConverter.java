@@ -382,6 +382,9 @@ public class MissingRefReportConverter extends UseReportConverter {
 
 			writeMetadataSummary(buffer);
 
+			getFilteredCount();
+			writeFilterCount(buffer);
+			
 			buffer.append(OPEN_H4).append(SearchMessages.MissingRefReportConverter_AddlBundleInfo).append(CLOSE_H4);
 			// if(hasMissing()) {
 			// buffer.append(OPEN_P);

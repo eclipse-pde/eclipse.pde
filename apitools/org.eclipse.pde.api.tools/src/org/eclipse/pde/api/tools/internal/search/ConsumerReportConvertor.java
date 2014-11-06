@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 IBM Corporation and others.
+ * Copyright (c) 2010, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -604,6 +604,8 @@ public class ConsumerReportConvertor extends UseReportConverter {
 			try {
 				getMetadata();
 				writeMetadataSummary(buffer);
+				getFilteredCount();
+				writeFilterCount(buffer);
 			} catch (Exception e) {
 				// do nothing, failed meta-data should not prevent the index
 				// from being written
