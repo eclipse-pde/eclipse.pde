@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,21 +8,24 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     EclipseSource Corporation - ongoing enhancements
+ *     Simon Scholz <simon.scholz@vogella.com> - Bug 452487
  *******************************************************************************/
 package org.eclipse.pde.internal.core.plugin;
 
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.pde.core.IEditableModel;
 import org.eclipse.pde.core.IModelChangedEvent;
+import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.internal.core.*;
+import org.eclipse.pde.internal.core.build.WorkspaceBuildModel;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelBase;
 import org.eclipse.pde.internal.core.ibundle.IBundlePluginModelProvider;
+import org.eclipse.pde.internal.core.project.PDEProject;
 import org.osgi.framework.Constants;
 
 public class WorkspaceExtensionsModel extends AbstractExtensionsModel implements IEditableModel, IBundlePluginModelProvider {
@@ -112,6 +115,7 @@ public class WorkspaceExtensionsModel extends AbstractExtensionsModel implements
 				fUnderlyingResource.setContents(stream, false, false, null);
 			} else {
 				fUnderlyingResource.create(stream, false, null);
+				adjustBuildPropertiesFile(fUnderlyingResource);
 			}
 		} catch (CoreException e) {
 			PDECore.logException(e);
@@ -123,6 +127,20 @@ public class WorkspaceExtensionsModel extends AbstractExtensionsModel implements
 					stream.close();
 			} catch (IOException e) {
 				PDECore.logException(e);
+			}
+		}
+	}
+
+	private void adjustBuildPropertiesFile(IFile underlyingResource) throws CoreException {
+		IProject project = underlyingResource.getProject();
+		IFile buildPropertiesFile = PDEProject.getBuildProperties(project);
+		if (buildPropertiesFile.exists()) {
+			WorkspaceBuildModel model = new WorkspaceBuildModel(buildPropertiesFile);
+			IBuildEntry entry = model.getBuild().getEntry(IBuildEntry.BIN_INCLUDES);
+			String relativePath = underlyingResource.getProjectRelativePath().toString();
+			if (!entry.contains(relativePath)) {
+				entry.addToken(relativePath);
+				model.save();
 			}
 		}
 	}
