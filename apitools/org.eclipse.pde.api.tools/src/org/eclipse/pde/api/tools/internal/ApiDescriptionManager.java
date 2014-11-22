@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 IBM Corporation and others.
+ * Copyright (c) 2008, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -250,6 +250,10 @@ public final class ApiDescriptionManager implements ISaveParticipant {
 	 */
 	@Override
 	public synchronized void saving(ISaveContext context) throws CoreException {
+		if (context.getKind() == ISaveContext.PROJECT_SAVE && !Util.isJavaProject(context.getProject())) {
+			return;
+		}
+
 		Iterator<Entry<IJavaProject, IApiDescription>> entries = fDescriptions.entrySet().iterator();
 		while (entries.hasNext()) {
 			Entry<IJavaProject, IApiDescription> entry = entries.next();
@@ -261,6 +265,7 @@ public final class ApiDescriptionManager implements ISaveParticipant {
 				String xml = desc.getXML();
 				try {
 					Util.saveFile(new File(dir, IApiCoreConstants.API_DESCRIPTION_XML_NAME), xml);
+					desc.setModified(false);
 				} catch (IOException e) {
 					abort(MessageFormat.format(ScannerMessages.ApiDescriptionManager_0, new Object[] { project.getElementName() }), e);
 				}
