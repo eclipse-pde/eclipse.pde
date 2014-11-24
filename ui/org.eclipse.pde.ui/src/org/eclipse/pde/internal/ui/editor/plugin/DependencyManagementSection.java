@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,8 +16,7 @@ package org.eclipse.pde.internal.ui.editor.plugin;
 import java.io.ByteArrayInputStream;
 import java.util.*;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -60,6 +59,7 @@ import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.ui.progress.UIJob;
 import org.osgi.service.prefs.BackingStoreException;
 
 public class DependencyManagementSection extends TableSection implements IPluginModelListener, IPropertyChangeListener {
@@ -84,6 +84,7 @@ public class DependencyManagementSection extends TableSection implements IPlugin
 	private static String OPEN = PDEUIMessages.RequiresSection_open;
 	private static String UP = PDEUIMessages.RequiresSection_up;
 	private static String DOWN = PDEUIMessages.RequiresSection_down;
+	private Object entrySelectedObject = null;
 
 	class ContentProvider extends DefaultTableProvider {
 
@@ -128,6 +129,7 @@ public class DependencyManagementSection extends TableSection implements IPlugin
 	class SecondaryTableLabelProvider extends SharedLabelProvider {
 		@Override
 		public String getColumnText(Object obj, int index) {
+			entrySelectedObject = obj;
 			return obj.toString();
 		}
 
@@ -396,7 +398,6 @@ public class DependencyManagementSection extends TableSection implements IPlugin
 					build.add(entry);
 				}
 				Object[] models = dialog.getResult();
-
 				for (int i = 0; i < models.length; i++) {
 					IPluginModel pmodel = (IPluginModel) models[i];
 					entry.addToken(pmodel.getPlugin().getId());
@@ -472,15 +473,25 @@ public class DependencyManagementSection extends TableSection implements IPlugin
 	}
 
 	@Override
-	public void modelChanged(IModelChangedEvent event) {
+	public void modelChanged(final IModelChangedEvent event) {
 		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
 			markStale();
 			return;
 		}
-		Object changedObject = event.getChangedObjects()[0];
-		if ((changedObject instanceof IBuildEntry && ((IBuildEntry) changedObject).getName().equals(IBuildEntry.SECONDARY_DEPENDENCIES))) {
-			refresh();
-		}
+		UIJob job = new UIJob("Update required bundles") { //$NON-NLS-1$
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+				Object changedObject = event.getChangedObjects()[0];
+				if ((changedObject instanceof IBuildEntry && ((IBuildEntry) changedObject).getName().equals(IBuildEntry.SECONDARY_DEPENDENCIES))) {
+					refresh();
+					fAdditionalTable.setSelection(new StructuredSelection(entrySelectedObject));
+					fAdditionalTable.getTable().setFocus();
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		job.setSystem(true);
+		job.schedule();
 	}
 
 	/* (non-Javadoc)
