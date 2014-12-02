@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 IBM Corporation and others.
+ * Copyright (c) 2009, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -236,8 +236,6 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 								final TreeItem[] children = fAvailableIUGroup.getCheckboxTreeViewer().getTree().getItems();
 								final String pendingLabel = ProgressMessages.PendingUpdateAdapter_PendingLabel;
 								if (children.length > 0 && !children[0].getText().equals(pendingLabel)) {
-									fSelectionCount.setText(NLS.bind(Messages.EditIUContainerPage_itemsSelected, Integer.toString(0)));
-									fSelectedIUStatus = BAD_IU_SELECTION;
 									try {
 										fAvailableIUGroup.getCheckboxTreeViewer().expandAll();
 										fAvailableIUGroup.setChecked(fEditContainer.getInstallableUnits());
@@ -283,8 +281,13 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 					}
 					fSelectedIUStatus = Status.OK_STATUS;
 				} else {
-					fSelectionCount.setText(NLS.bind(Messages.EditIUContainerPage_itemsSelected, Integer.toString(0)));
-					fSelectedIUStatus = BAD_IU_SELECTION;
+
+					final TreeItem[] children = fAvailableIUGroup.getCheckboxTreeViewer().getTree().getItems();
+					final String pendingLabel = ProgressMessages.PendingUpdateAdapter_PendingLabel;
+					if (children.length > 0 && !children[0].getText().equals(pendingLabel)) {
+						fSelectionCount.setText(NLS.bind(Messages.EditIUContainerPage_itemsSelected, Integer.toString(0)));
+						fSelectedIUStatus = BAD_IU_SELECTION;
+					}
 				}
 				pageChanged();
 			}
