@@ -1440,13 +1440,10 @@
                 id="org.eclipse.debug.ui.DebugPerspective">
           </perspectiveShortcut>
           <viewShortcut
-                id="org.eclipse.jdt.ui.PackagesView">
+                id="org.eclipse.ui.console.ConsoleView">
           </viewShortcut>
           <viewShortcut
                 id="org.eclipse.pde.ui.PluginsView">
-          </viewShortcut>
-          <viewShortcut
-                id="org.eclipse.ui.navigator.ProjectExplorer">
           </viewShortcut>
           <viewShortcut
                 id="org.eclipse.ui.views.ProblemView">
@@ -1481,6 +1478,24 @@
           <newWizardShortcut
                 id="org.eclipse.ui.wizards.new.folder">
           </newWizardShortcut>
+          <viewShortcut
+                id="org.eclipse.pde.ui.ImageBrowserView">
+          </viewShortcut>
+          <viewShortcut
+                id="org.eclipse.pde.ui.DependenciesView">
+          </viewShortcut>
+          <viewShortcut
+                id="org.eclipse.pde.runtime.RegistryBrowser">
+          </viewShortcut>
+          <viewShortcut
+                id="org.eclipse.jdt.ui.PackageExplorer">
+          </viewShortcut>
+          <viewShortcut
+                id="org.eclipse.pde.runtime.LogView">
+          </viewShortcut>
+          <viewShortcut
+                id="org.eclipse.pde.ui.TargetPlatformState">
+          </viewShortcut>
       </perspectiveExtension>
     </extension>
     <extension
