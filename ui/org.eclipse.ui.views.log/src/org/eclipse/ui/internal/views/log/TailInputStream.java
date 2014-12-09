@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2007 IBM Corporation and others.
+ *  Copyright (c) 2005, 2014 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -10,10 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.views.log;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.RandomAccessFile;
+import java.io.*;
 
 public class TailInputStream extends InputStream {
 
@@ -31,9 +28,9 @@ public class TailInputStream extends InputStream {
 	private void skipHead(File file) throws IOException {
 		if (file.length() > fTail) {
 			fRaf.seek(file.length() - fTail);
-			// skip bytes until a new line to be sure we start from a beginnng of valid UTF-8 character
+			// skip bytes until a new line to be sure we start from a beginning of valid UTF-8 character
 			int c = read();
-			while (c != '\n' && c != 'r' && c != -1) {
+			while (c != '\n' && c != '\r' && c != -1) {
 				c = read();
 			}
 

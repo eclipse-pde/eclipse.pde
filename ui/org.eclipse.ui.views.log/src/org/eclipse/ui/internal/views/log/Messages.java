@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 IBM Corporation and others.
+ * Copyright (c) 2007, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,8 @@ package org.eclipse.ui.internal.views.log;
 import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
+
+	public static String LogReader_warn_noEntryWithinMaxLogTailSize;
 
 	public static String LogView_column_message;
 	public static String LogView_column_plugin;
@@ -62,6 +64,7 @@ public class Messages extends NLS {
 	public static String LogView_FilterDialog_warning;
 	public static String LogView_FilterDialog_error;
 	public static String LogView_FilterDialog_limitTo;
+	public static String LogView_FilterDialog_maxLogTailSize;
 	public static String LogView_FilterDialog_eventsLogged;
 	public static String LogView_FilterDialog_allSessions;
 	public static String LogView_FilterDialog_ok;

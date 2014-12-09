@@ -57,6 +57,12 @@ public class LogView extends ViewPart implements ILogListener {
 	public static final String P_LOG_ERROR = "error"; //$NON-NLS-1$
 	public static final String P_LOG_INFO = "info"; //$NON-NLS-1$
 	public static final String P_LOG_OK = "ok"; //$NON-NLS-1$
+
+	/** 
+	 * Maximum tail size of the log file in Mega Bytes (1024 * 1024 Bytes) considers the last XYZ MB of the log file to create log entries.
+	 * This value should be increased if the size of the sub elements of the last (most recent) log entry in the log file exceeds the maximum tail size. 
+	 **/
+	public static final String P_LOG_MAX_TAIL_SIZE = "maxLogTailSize"; //$NON-NLS-1$
 	public static final String P_LOG_LIMIT = "limit"; //$NON-NLS-1$
 	public static final String P_USE_LIMIT = "useLimit"; //$NON-NLS-1$
 	public static final String P_SHOW_ALL_SESSIONS = "allSessions"; //$NON-NLS-1$
@@ -69,6 +75,9 @@ public class LogView extends ViewPart implements ILogListener {
 	public static final String P_ORDER_VALUE = "orderValue"; //$NON-NLS-1$
 	public static final String P_IMPORT_LOG = "importLog"; //$NON-NLS-1$
 	public static final String P_GROUP_BY = "groupBy"; //$NON-NLS-1$
+
+	/** default values **/
+	private static final int DEFAULT_LOG_MAX_TAIL_SIZE = 1; // 1 Mega Byte
 
 	private int MESSAGE_ORDER;
 	private int PLUGIN_ORDER;
@@ -810,7 +819,7 @@ public class LogView extends ViewPart implements ILogListener {
 		groups.clear();
 
 		List result = new ArrayList();
-		LogSession lastLogSession = LogReader.parseLogFile(fInputFile, result, fMemento);
+		LogSession lastLogSession = LogReader.parseLogFile(this.fInputFile, getLogMaxTailSize(), result, this.fMemento);
 		if (lastLogSession != null && (lastLogSession.getDate() == null || isEclipseStartTime(lastLogSession.getDate()))) {
 			currentSession = lastLogSession;
 		} else {
@@ -1578,6 +1587,19 @@ public class LogView extends ViewPart implements ILogListener {
 		fMemento.putInteger(P_ORDER_TYPE, instancePrefs.getInt(P_ORDER_TYPE, defaultPrefs.getInt(P_ORDER_TYPE, LogView.DATE)));
 		fMemento.putBoolean(P_SHOW_FILTER_TEXT, instancePrefs.getBoolean(P_SHOW_FILTER_TEXT, defaultPrefs.getBoolean(P_SHOW_FILTER_TEXT, true)));
 		fMemento.putInteger(P_GROUP_BY, instancePrefs.getInt(P_GROUP_BY, defaultPrefs.getInt(P_GROUP_BY, LogView.GROUP_BY_NONE)));
+		fMemento.putString(P_LOG_MAX_TAIL_SIZE, String.valueOf(getLogMaxTailSizePreference(instancePrefs, defaultPrefs, DEFAULT_LOG_MAX_TAIL_SIZE)));
+	}
+
+	private long getLogMaxTailSizePreference(Preferences instancePrefs, Preferences defaultPrefs, long defaultMaxLogTailSize) {
+		try {
+			return instancePrefs.getLong(P_LOG_MAX_TAIL_SIZE, defaultPrefs.getLong(P_LOG_MAX_TAIL_SIZE, defaultMaxLogTailSize));
+		} catch (IllegalStateException ex) {
+			return defaultMaxLogTailSize;
+		}
+	}
+
+	private long getLogMaxTailSize() {
+		return Long.valueOf(this.fMemento.getString(P_LOG_MAX_TAIL_SIZE)).longValue();
 	}
 
 	/**
@@ -1628,6 +1650,7 @@ public class LogView extends ViewPart implements ILogListener {
 		instancePrefs.putInt(P_ORDER_TYPE, fMemento.getInteger(P_ORDER_TYPE).intValue());
 		instancePrefs.putBoolean(P_SHOW_FILTER_TEXT, fMemento.getBoolean(P_SHOW_FILTER_TEXT).booleanValue());
 		instancePrefs.putInt(P_GROUP_BY, fMemento.getInteger(P_GROUP_BY).intValue());
+		instancePrefs.putLong(P_LOG_MAX_TAIL_SIZE, getLogMaxTailSize());
 		try {
 			instancePrefs.flush();
 		} catch (BackingStoreException e) {

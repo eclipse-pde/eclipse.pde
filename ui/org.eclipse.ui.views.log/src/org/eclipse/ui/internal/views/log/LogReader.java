@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,11 +17,14 @@ import java.io.*;
 import java.text.ParseException;
 import java.util.*;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.IMemento;
 
 class LogReader {
 	private static final int SESSION_STATE = 10;
 	public static final long MAX_FILE_LENGTH = 1024 * 1024;
+	private static final int ONE_MEGA_BYTE_IN_BYTES = 1024 * 1024;
 	private static final int ENTRY_STATE = 20;
 	private static final int SUBENTRY_STATE = 30;
 	private static final int MESSAGE_STATE = 40;
@@ -29,7 +32,7 @@ class LogReader {
 	private static final int TEXT_STATE = 60;
 	private static final int UNKNOWN_STATE = 70;
 
-	public static LogSession parseLogFile(File file, List entries, IMemento memento) {
+	public static LogSession parseLogFile(File file, long maxLogTailSizeInMegaByte, List entries, IMemento memento) {
 		if (!file.exists())
 			return null;
 
@@ -47,8 +50,8 @@ class LogReader {
 		LogSession currentSession = null;
 		BufferedReader reader = null;
 		try {
-
-			reader = new BufferedReader(new InputStreamReader(new TailInputStream(file, MAX_FILE_LENGTH), "UTF-8")); //$NON-NLS-1$
+			long maxTailSizeInBytes = maxLogTailSizeInMegaByte > 0 ? maxLogTailSizeInMegaByte * ONE_MEGA_BYTE_IN_BYTES : ONE_MEGA_BYTE_IN_BYTES;
+			reader = new BufferedReader(new InputStreamReader(new TailInputStream(file, maxTailSizeInBytes), "UTF-8")); //$NON-NLS-1$
 			for (;;) {
 				String line0 = reader.readLine();
 				if (line0 == null)
@@ -146,6 +149,9 @@ class LogReader {
 		} catch (FileNotFoundException e) { // do nothing
 		} catch (IOException e) { // do nothing
 		} finally {
+			if (file.length() > maxLogTailSizeInMegaByte && entries.size() == 0) {
+				entries.add(new LogEntry(new Status(IStatus.WARNING, Activator.PLUGIN_ID, NLS.bind(Messages.LogReader_warn_noEntryWithinMaxLogTailSize, Long.valueOf(maxLogTailSizeInMegaByte)))));
+			}
 			try {
 				if (reader != null)
 					reader.close();
@@ -158,6 +164,10 @@ class LogReader {
 		}
 
 		return currentSession;
+	}
+
+	public static LogSession parseLogFile(File file, List entries, IMemento memento) {
+		return parseLogFile(file, ONE_MEGA_BYTE_IN_BYTES, entries, memento);
 	}
 
 	/**
