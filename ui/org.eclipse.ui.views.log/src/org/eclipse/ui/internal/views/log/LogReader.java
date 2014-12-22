@@ -150,7 +150,9 @@ class LogReader {
 		} catch (IOException e) { // do nothing
 		} finally {
 			if (file.length() > maxLogTailSizeInMegaByte && entries.size() == 0) {
-				entries.add(new LogEntry(new Status(IStatus.WARNING, Activator.PLUGIN_ID, NLS.bind(Messages.LogReader_warn_noEntryWithinMaxLogTailSize, new Long(maxLogTailSizeInMegaByte)))));
+				LogEntry entry = new LogEntry(new Status(IStatus.WARNING, Activator.PLUGIN_ID, NLS.bind(Messages.LogReader_warn_noEntryWithinMaxLogTailSize, new Long(maxLogTailSizeInMegaByte))));
+				entry.setSession(currentSession == null ? new LogSession() : currentSession);
+				entries.add(entry);
 			}
 			try {
 				if (reader != null)
