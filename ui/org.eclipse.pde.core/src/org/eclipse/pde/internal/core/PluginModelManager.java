@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -526,7 +526,7 @@ public class PluginModelManager implements IModelProviderListener {
 		if (subMon.isCanceled()) {
 			// If target resolution is cancelled, externalUrls will be empty. Log warning so user knows how to reload the target.
 			if (PDECore.DEBUG_MODEL) {
-				System.out.println("Target platform initialization cancelled by user"); //$NON-NLS-1$
+				System.out.println("Target platform initialization cancelled by user");
 			}
 			PDECore.log(new Status(IStatus.WARNING, PDECore.PLUGIN_ID, PDECoreMessages.PluginModelManager_TargetInitCancelledLog));
 			// Set a flag so the feature model manager can avoid starting the target resolve again
@@ -566,6 +566,10 @@ public class PluginModelManager implements IModelProviderListener {
 			// Need to update classpath entries
 			updateAffectedEntries(null, true);
 		}
+
+		// TODO Only fire a state changed if the contents of the state differs from what was saved previously
+		// TODO Do we only need to compare external models? Will file system changes to the workspace projects cause a build?
+
 		fireStateChanged(fState);
 		subMon.worked(25);
 		if (PDECore.DEBUG_MODEL) {

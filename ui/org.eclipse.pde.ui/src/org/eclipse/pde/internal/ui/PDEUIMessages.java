@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 IBM Corporation and others.
+ * Copyright (c) 2014, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -2782,6 +2782,8 @@ public class PDEUIMessages extends NLS {
 
 	public static String OrganizeManifestsWizardPage_removeUnusedKeys;
 
+	public static String TargetPlatformPreferencePage_LoadDefaultTarget;
+
 	public static String TargetPlatformPreferencePage2_0;
 
 	public static String TargetPlatformPreferencePage2_1;
@@ -2880,6 +2882,8 @@ public class PDEUIMessages extends NLS {
 	public static String UpdatesSection_ErrorInvalidURL;
 	public static String UpdatesSection_LocationColumn;
 	public static String UpdatesSection_EnabledColumn;
+
+	public static String UpdateTargetJob_UpdateJobName;
 
 	public static String CustomizationPage_title;
 	

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 EclipseSource Corporation and others.
+ * Copyright (c) 2009, 2015 EclipseSource Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,6 +33,7 @@ import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.target.*;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.shared.target.*;
+import org.eclipse.pde.internal.ui.shared.target.Messages;
 import org.eclipse.pde.internal.ui.util.SWTUtil;
 import org.eclipse.pde.internal.ui.util.SharedLabelProvider;
 import org.eclipse.pde.internal.ui.wizards.target.*;
@@ -42,6 +43,7 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.progress.UIJob;
 import org.osgi.framework.Version;
 
 /**
@@ -65,10 +67,10 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 
 		public TargetLabelProvider() {
 			PDEPlugin.getDefault().getLabelProvider().connect(this);
-			ITargetPlatformService service = getTargetService();
-			if (service != null) {
-				fRunningHost = (TargetDefinition) service.newDefaultTarget();
-			}
+		}
+
+		public void setDefaultTarget(TargetDefinition newDefaultTarget) {
+			fRunningHost = newDefaultTarget;
 		}
 
 		/**
@@ -176,6 +178,30 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 	}
 
 	/**
+	 * Runs the creation of the default target definition in a non-UI thread. Normally
+	 * this operation is very fast, but in some cases loading vm arguments can take a while
+	 * and interrupt the UI thread.
+	 */
+	private class LoadDefaultTargetJob extends Job {
+		public LoadDefaultTargetJob() {
+			super(PDEUIMessages.TargetPlatformPreferencePage_LoadDefaultTarget);
+		}
+		public TargetDefinition defaultTarget;
+		public IStatus run(IProgressMonitor monitor) {
+			SubMonitor subMon = SubMonitor.convert(monitor);
+			ITargetPlatformService service = getTargetService();
+			if (service != null) {
+				defaultTarget = (TargetDefinition) service.newDefaultTarget();
+			}
+			subMon.done();
+			if (monitor != null) {
+				monitor.done();
+			}
+			return Status.OK_STATUS;
+		}
+	}
+
+	/**
 	 * Constant key value used to store data in table items if they are moved to a new location
 	 */
 	private final static String DATA_KEY_MOVED_LOCATION = "movedLocation"; //$NON-NLS-1$
@@ -193,6 +219,8 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 
 	// Text displaying additional information
 	private TreeViewer fDetails;
+
+	private TargetLabelProvider fLabelProvider;
 
 	/**
 	 * Initial collection of targets (handles are realized into definitions as working copies)
@@ -237,6 +265,32 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 	}
 
 	private void createTargetProfilesGroup(Composite container) {
+
+		// Start loading the default target as it is often fast enough to finish before UI is done rendering
+		fLabelProvider = new TargetLabelProvider();
+		LoadDefaultTargetJob job = new LoadDefaultTargetJob();
+		job.addJobChangeListener(new JobChangeAdapter() {
+			@Override
+			public void done(final IJobChangeEvent event) {
+				UIJob job = new UIJob(Messages.UpdateTargetJob_UpdateJobName) {
+					@Override
+					public IStatus runInUIThread(IProgressMonitor monitor) {
+						TargetDefinition target = ((LoadDefaultTargetJob) event.getJob()).defaultTarget;
+						if (target != null && fLabelProvider != null) {
+							fLabelProvider.setDefaultTarget(target);
+							if (fTableViewer != null && !fTableViewer.getTable().isDisposed()) {
+								fTableViewer.refresh(true);
+							}
+						}
+						return Status.OK_STATUS;
+					}
+				};
+				job.schedule();
+			}
+		});
+		job.setPriority(Job.SHORT);
+		job.schedule();
+
 		Composite comp = SWTFactory.createComposite(container, 1, 1, GridData.FILL_BOTH, 0, 0);
 		((GridData) comp.getLayoutData()).widthHint = 350;
 		SWTFactory.createWrapLabel(comp, PDEUIMessages.TargetPlatformPreferencePage2_0, 2);
@@ -249,7 +303,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.heightHint = 250;
 		fTableViewer.getControl().setLayoutData(gd);
-		fTableViewer.setLabelProvider(new TargetLabelProvider());
+		fTableViewer.setLabelProvider(fLabelProvider);
 		fTableViewer.setContentProvider(ArrayContentProvider.getInstance());
 		fTableViewer.addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent event) {
