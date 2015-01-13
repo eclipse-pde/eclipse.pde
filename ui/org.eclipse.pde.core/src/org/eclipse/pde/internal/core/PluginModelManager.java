@@ -453,6 +453,13 @@ public class PluginModelManager implements IModelProviderListener {
 	}
 
 	/**
+	 * Starts the model initialize process if the table has not been initialized
+	 */
+	public void initialize(IProgressMonitor monitor) {
+		initializeTable(monitor);
+	}
+
+	/**
 	 * Returns whether the model initialization was cancelled by the user.
 	 * Other initializations, such as FeatureModelManager should use this
 	 * setting to avoid resolving the target platform when the user has chosen

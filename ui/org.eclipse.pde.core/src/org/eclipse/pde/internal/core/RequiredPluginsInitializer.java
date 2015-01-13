@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2013 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 
 public class RequiredPluginsInitializer extends ClasspathContainerInitializer {
@@ -23,16 +24,20 @@ public class RequiredPluginsInitializer extends ClasspathContainerInitializer {
 	 * @see org.eclipse.jdt.core.ClasspathContainerInitializer#initialize(org.eclipse.core.runtime.IPath, org.eclipse.jdt.core.IJavaProject)
 	 */
 	@Override
-	public void initialize(IPath containerPath, IJavaProject javaProject) throws CoreException {
-		IProject project = javaProject.getProject();
+	public void initialize(IPath containerPath, final IJavaProject javaProject) throws CoreException {
+		final IProject project = javaProject.getProject();
 		// The first project to be built may initialize the PDE models, potentially long running, so allow cancellation
 		PluginModelManager manager = PDECore.getDefault().getModelManager();
 		if (!manager.isInitialized()) {
-			Job initPDEJob = new Job(PDECoreMessages.PluginModelManager_InitializingPluginModels) {
+			Job initPDEJob = new Job(NLS.bind(PDECoreMessages.RequiredPluginsInitializer_CreatingRequiredContainerForProject, project.getName())) {
 				@Override
 				protected IStatus run(IProgressMonitor monitor) {
-					if (!PDECore.getDefault().getModelManager().isInitialized()) {
-						PDECore.getDefault().getModelManager().targetReloaded(monitor);
+					PDECore.getDefault().getModelManager().initialize(monitor);
+					IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(project);
+					try {
+						JavaCore.setClasspathContainer(PDECore.REQUIRED_PLUGINS_CONTAINER_PATH, new IJavaProject[] {javaProject}, new IClasspathContainer[] {new RequiredPluginsClasspathContainer(model)}, null);
+					} catch (JavaModelException e) {
+						return new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.RequiredPluginsInitializer_ExceptionWhileCreatingClasspathContainer, e);
 					}
 					if (monitor.isCanceled())
 						return Status.CANCEL_STATUS;
@@ -40,13 +45,11 @@ public class RequiredPluginsInitializer extends ClasspathContainerInitializer {
 				}
 			};
 			initPDEJob.schedule();
-			try {
-				initPDEJob.join();
-			} catch (InterruptedException e) {
-			}
+		} else {
+			IPluginModelBase model = PDECore.getDefault().getModelManager().findModel(project);
+			JavaCore.setClasspathContainer(PDECore.REQUIRED_PLUGINS_CONTAINER_PATH, new IJavaProject[] {javaProject}, new IClasspathContainer[] {new RequiredPluginsClasspathContainer(model)}, null);
 		}
-		IPluginModelBase model = manager.findModel(project);
-		JavaCore.setClasspathContainer(PDECore.REQUIRED_PLUGINS_CONTAINER_PATH, new IJavaProject[] {javaProject}, new IClasspathContainer[] {new RequiredPluginsClasspathContainer(model)}, null);
+
 	}
 
 	/*
