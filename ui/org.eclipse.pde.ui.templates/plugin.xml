@@ -304,15 +304,6 @@
    <extension
          point="org.eclipse.pde.ui.pluginContent">
       <wizard
-            name="%pluginContent.helloWorld.name"
-            icon="$nl$/icons/etool16/newexprj_wiz.gif"
-            class="org.eclipse.pde.internal.ui.templates.ide.HelloWorldNewWizard"
-            id="org.eclipse.pde.ui.pluginContent.helloWorld">
-         <description>
-            %pluginContent.helloWorld.description
-         </description>
-      </wizard>
-      <wizard
             name="%pluginContent.helloWorldCmd.name"
             icon="$nl$/icons/etool16/newexprj_wiz.gif"
             class="org.eclipse.pde.internal.ui.templates.ide.HelloWorldCmdNewWizard"
