@@ -67,8 +67,6 @@ public class PDECoreMessages extends NLS {
 
 	public static String PropertiesTextChangeListener_editNames_remove;
 	public static String RequiredPluginsClasspathContainer_description;
-	public static String RequiredPluginsInitializer_CreatingRequiredContainerForProject;
-	public static String RequiredPluginsInitializer_ExceptionWhileCreatingClasspathContainer;
 	public static String ExternalJavaSearchClasspathContainer_description;
 
 	public static String SchemaElementReference_refElementMissing;
