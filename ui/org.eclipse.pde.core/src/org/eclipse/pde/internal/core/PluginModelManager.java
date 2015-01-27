@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.core;
 
-import java.io.File;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
@@ -29,7 +29,7 @@ import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.TargetBundle;
 
 public class PluginModelManager implements IModelProviderListener {
-
+	private static final String fExternalPluginListFile = "SavedExternalPluginList.txt"; //$NON-NLS-1$
 	private static PluginModelManager fModelManager;
 
 	/**
@@ -536,6 +536,11 @@ public class PluginModelManager implements IModelProviderListener {
 		fState = new PDEState(externalUrls, true, true, subMon.newChild(15));
 		fExternalManager.setModels(fState.getTargetModels());
 		addToTable(entries, fExternalManager.getAllModels());
+
+		// Check if the saved external bundle list has changed, if so target contents is different and projects should be rebuilt
+		boolean externalPluginsChanged = isSavedExternalPluginListDifferent(externalUrls);
+		saveExternalPluginList(externalUrls);
+
 		if (PDECore.DEBUG_MODEL) {
 			System.out.println(fState.getTargetModels().length + " target models created in  " + (System.currentTimeMillis() - startTargetModels) + " ms"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
@@ -565,7 +570,15 @@ public class PluginModelManager implements IModelProviderListener {
 			// Need to update classpath entries
 			updateAffectedEntries(null, true);
 		}
-		fireStateChanged(fState);
+
+		// Fire a state change event to touch all projects if the target content has changed since last model init
+		if (externalPluginsChanged) {
+			fireStateChanged(fState);
+			if (PDECore.DEBUG_MODEL) {
+				System.out.println("Loaded target models differ from saved list, PDE builder will run on all projects."); //$NON-NLS-1$
+			}
+		}
+
 		subMon.worked(25);
 		if (PDECore.DEBUG_MODEL) {
 			long time = System.currentTimeMillis() - startTime;
@@ -698,6 +711,89 @@ public class PluginModelManager implements IModelProviderListener {
 			if (base == null)
 				return false;
 			return ClasspathUtilCore.isPatchFragment(base);
+		}
+		return false;
+	}
+
+	/**
+	 * Saves the given list of external plugin urls to a file in the metadata folder
+	 * @param urls url list to save
+	 */
+	private void saveExternalPluginList(URL[] urls) {
+		File dir = new File(PDECore.getDefault().getStateLocation().toOSString());
+		File saveLocation = new File(dir, fExternalPluginListFile);
+		FileWriter fileWriter = null;
+		try {
+			fileWriter = new FileWriter(saveLocation, false);
+			fileWriter.write("# List of external plug-in models previously loaded. Timestamp: " + System.currentTimeMillis() + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
+			for (int i = 0; i < urls.length; i++) {
+				fileWriter.write(urls[i].toString());
+				fileWriter.write("\n"); //$NON-NLS-1$
+			}
+			fileWriter.flush();
+		} catch (IOException e) {
+			PDECore.log(e);
+		} finally {
+			if (fileWriter != null) {
+				try {
+					fileWriter.close();
+				} catch (IOException e) {
+				}
+			}
+		}
+	}
+
+	/**
+	 * Returns whether the saved list of external plugins is different from the given list of external plugins.
+	 * 
+	 * @param newUrls the urls to compare against the saved list
+	 * @return <code>true</code> if the two plug-in lists differ, <code>false</code> if they match
+	 */
+	private boolean isSavedExternalPluginListDifferent(URL[] newUrls) {
+		Set<String> newExternal = new HashSet<String>();
+		for (int i = 0; i < newUrls.length; i++) {
+			newExternal.add(newUrls[i].toString());
+		}
+
+		File dir = new File(PDECore.getDefault().getStateLocation().toOSString());
+		File saveLocation = new File(dir, fExternalPluginListFile);
+
+		if (!saveLocation.exists()) {
+			// If the external list has never been saved, but the target platform has nothing in it, there is no need to build
+			return !newExternal.isEmpty();
+		}
+
+		BufferedReader reader = null;
+		try {
+			Set<String> previousExternal = new HashSet<String>();
+			reader = new BufferedReader(new FileReader(saveLocation));
+			while (reader.ready()) {
+				String url = reader.readLine();
+				if (url != null && !url.trim().isEmpty() && !url.startsWith("#")) { //$NON-NLS-1$
+					previousExternal.add(url.trim());
+				}
+			}
+			if (previousExternal.size() != newExternal.size()) {
+				return true;
+			}
+			Iterator<String> iter = previousExternal.iterator();
+			while (iter.hasNext()) {
+				if (!newExternal.remove(iter.next())) {
+					return true;
+				}
+			}
+			if (!newExternal.isEmpty()) {
+				return true;
+			}
+		} catch (IOException e) {
+			PDECore.log(e);
+		} finally {
+			if (reader != null) {
+				try {
+					reader.close();
+				} catch (IOException e) {
+				}
+			}
 		}
 		return false;
 	}

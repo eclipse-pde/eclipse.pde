@@ -31,7 +31,9 @@ public class RequiredPluginsInitializer extends ClasspathContainerInitializer {
 			Job initPDEJob = new Job(PDECoreMessages.PluginModelManager_InitializingPluginModels) {
 				@Override
 				protected IStatus run(IProgressMonitor monitor) {
-					PDECore.getDefault().getModelManager().targetReloaded(monitor);
+					if (!PDECore.getDefault().getModelManager().isInitialized()) {
+						PDECore.getDefault().getModelManager().targetReloaded(monitor);
+					}
 					if (monitor.isCanceled())
 						return Status.CANCEL_STATUS;
 					return Status.OK_STATUS;
