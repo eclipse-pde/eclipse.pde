@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2013 IBM Corporation and others.
+ *  Copyright (c) 2005, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -61,6 +61,7 @@ public class Messages extends NLS {
 	public static String BundleContainerTable_15;
 	public static String BundleContainerTable_2;
 	public static String BundleContainerTable_3;
+	public static String BundleContainerTable_4;
 	public static String BundleContainerTable_8;
 	public static String BundleContainerTable_9;
 	public static String EditBundleContainerWizard_0;

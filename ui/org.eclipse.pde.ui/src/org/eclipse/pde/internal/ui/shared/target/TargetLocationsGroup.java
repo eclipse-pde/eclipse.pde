@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2014 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,8 +13,7 @@ package org.eclipse.pde.internal.ui.shared.target;
 import java.util.*;
 import java.util.List;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.jobs.IJobChangeEvent;
-import org.eclipse.core.runtime.jobs.JobChangeAdapter;
+import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
@@ -22,8 +21,8 @@ import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.pde.internal.core.target.AbstractBundleContainer;
-import org.eclipse.pde.internal.core.target.IUBundleContainer;
+import org.eclipse.pde.internal.core.target.*;
+import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.SWTFactory;
 import org.eclipse.pde.internal.ui.editor.FormLayoutFactory;
 import org.eclipse.pde.internal.ui.editor.targetdefinition.TargetEditor;
@@ -56,6 +55,7 @@ public class TargetLocationsGroup {
 	private Button fEditButton;
 	private Button fRemoveButton;
 	private Button fUpdateButton;
+	private Button fReloadButton;
 	private Button fShowContentButton;
 
 	private ITargetDefinition fTarget;
@@ -140,6 +140,7 @@ public class TargetLocationsGroup {
 		fEditButton = toolkit.createButton(buttonComp, Messages.BundleContainerTable_1, SWT.PUSH);
 		fRemoveButton = toolkit.createButton(buttonComp, Messages.BundleContainerTable_2, SWT.PUSH);
 		fUpdateButton = toolkit.createButton(buttonComp, Messages.BundleContainerTable_3, SWT.PUSH);
+		fReloadButton = toolkit.createButton(buttonComp, Messages.BundleContainerTable_4, SWT.PUSH);
 
 		fShowContentButton = toolkit.createButton(comp, Messages.TargetLocationsGroup_1, SWT.CHECK);
 
@@ -182,6 +183,7 @@ public class TargetLocationsGroup {
 		fEditButton = SWTFactory.createPushButton(buttonComp, Messages.BundleContainerTable_1, null);
 		fRemoveButton = SWTFactory.createPushButton(buttonComp, Messages.BundleContainerTable_2, null);
 		fUpdateButton = SWTFactory.createPushButton(buttonComp, Messages.BundleContainerTable_3, null);
+		fReloadButton = SWTFactory.createPushButton(buttonComp, Messages.BundleContainerTable_4, null);
 
 		fShowContentButton = SWTFactory.createCheckButton(comp, Messages.TargetLocationsGroup_1, null, false, 2);
 
@@ -267,6 +269,16 @@ public class TargetLocationsGroup {
 		fUpdateButton.setLayoutData(new GridData());
 		fUpdateButton.setEnabled(false);
 		SWTFactory.setButtonDimensionHint(fUpdateButton);
+
+		fReloadButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				handleReload();
+			}
+		});
+		fReloadButton.setLayoutData(new GridData());
+		fReloadButton.setEnabled(true);
+		SWTFactory.setButtonDimensionHint(fReloadButton);
 
 		fShowContentButton.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -541,6 +553,29 @@ public class TargetLocationsGroup {
 
 	}
 
+	private void handleReload() {
+
+		//delete profile
+		try {
+			P2TargetUtils.deleteProfile(fTarget.getHandle());
+		} catch (CoreException e) {
+			PDEPlugin.log(e);
+		}
+
+		// increase sequence number
+		if (fTarget instanceof TargetDefinition)
+			((TargetDefinition) fTarget).incrementSequenceNumber();
+
+		Job job = new UIJob("Reloading...") { //$NON-NLS-1$
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+				contentsChanged(true);
+				return Status.OK_STATUS;
+			}
+		};
+		job.schedule();
+
+	}
 	/**
 	 * Informs the reporter for this table that something has changed
 	 * and is dirty.
