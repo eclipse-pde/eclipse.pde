@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 458995
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.builder;
 
@@ -37,6 +38,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathEntry;
@@ -48,7 +50,6 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
-
 import org.eclipse.jdt.internal.core.JavaModelManager;
 import org.eclipse.jdt.internal.core.builder.State;
 import org.eclipse.osgi.service.resolver.BundleDescription;
@@ -477,7 +478,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 						try {
 							this.buildstate.setManifestState(ManifestElement.parseBundleManifest(manifest.getContents(), null));
 						} catch (Exception e) {
-							ApiPlugin.log(e);
+							ApiPlugin.log(new Status(IStatus.ERROR, ApiPlugin.PLUGIN_ID, "Error parsing the manifest of: " + currentproject.getName(), e));//$NON-NLS-1$
 						}
 					}
 					IPluginModelBase base = PluginRegistry.findModel(currentproject);
