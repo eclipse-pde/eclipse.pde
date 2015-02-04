@@ -2408,6 +2408,9 @@ public class PDEUIMessages extends NLS {
 
 	public static String OptionalRequireBundleResolution_label;
 
+	public static String ConfigureTargetPlatformResolution_label;
+	public static String ConfigureTargetPlatformResolution_description;
+
 	public static String OrganizeManifestJob_taskName;
 
 	public static String RemoveImportPkgResolution_description;
