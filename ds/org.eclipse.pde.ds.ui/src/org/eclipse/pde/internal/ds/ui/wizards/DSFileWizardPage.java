@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 Code 9 Corporation and others.
+ * Copyright (c) 2008, 2015 Code 9 Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -339,11 +339,6 @@ public class DSFileWizardPage extends WizardNewFileCreationPage {
 			return false;
 		}
 
-		if (fDSComponentNameText.getText().trim().length() == 0) {
-			setErrorMessage(Messages.DSFileWizardPage_ComponentNeedsName);
-			return false;
-		}
-		
 		IStatus status = ResourcesPlugin.getWorkspace().validateName(fDSImplementationClassText.getText().trim(),IResource.FILE);
 		if (!status.isOK()) {
 			setErrorMessage(Messages.DSFileWizardPage_ComponentNeedsClass);
