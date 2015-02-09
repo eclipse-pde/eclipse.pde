@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2014 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,9 +21,7 @@ import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.window.Window;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.core.plugin.PluginRegistry;
-import org.eclipse.pde.core.plugin.IMatchRules;
+import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ifeature.*;
 import org.eclipse.pde.internal.core.iproduct.*;
@@ -148,9 +146,9 @@ public class LaunchAction extends Action {
 	}
 
 	private String concatArgs(StringBuffer initialArgs, String userArgs) {
-		List<String> initialArgsList = Arrays.asList(DebugPlugin.parseArguments(initialArgs.toString()));
+		List<String> initialArgsList = Arrays.asList(DebugPlugin.splitArguments(initialArgs.toString()));
 		if (userArgs != null && userArgs.length() > 0) {
-			List<String> userArgsList = Arrays.asList(DebugPlugin.parseArguments(userArgs));
+			List<String> userArgsList = Arrays.asList(DebugPlugin.splitArguments(userArgs));
 			for (Iterator<String> iterator = userArgsList.iterator(); iterator.hasNext();) {
 				Object userArg = iterator.next();
 				if (!initialArgsList.contains(userArg)) {

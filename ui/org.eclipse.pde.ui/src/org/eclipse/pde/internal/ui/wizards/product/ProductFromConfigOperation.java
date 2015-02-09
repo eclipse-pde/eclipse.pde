@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -111,7 +111,7 @@ public class ProductFromConfigOperation extends BaseProductCreationOperation {
 				if (vmargs != null)
 					arguments.setVMArguments(vmargs, IArgumentsInfo.L_ARGS_ALL);
 				if (programArgs != null) {
-					String[] parsedArgs = DebugPlugin.parseArguments(programArgs);
+					String[] parsedArgs = DebugPlugin.splitArguments(programArgs);
 					List<String> unwantedArgs = Arrays.asList(new String[] {'-' + IEnvironment.P_ARCH, '-' + IEnvironment.P_NL, '-' + IEnvironment.P_OS, '-' + IEnvironment.P_WS});
 					StringBuffer filteredArgs = new StringBuffer();
 					for (int i = 0; i < parsedArgs.length; i++) {
