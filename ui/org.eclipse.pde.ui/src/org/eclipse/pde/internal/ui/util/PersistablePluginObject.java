@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2013 IBM Corporation and others.
+ *  Copyright (c) 2005, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -59,20 +59,21 @@ public class PersistablePluginObject extends PlatformObject implements IPersista
 	 * @see org.eclipse.core.runtime.PlatformObject#getAdapter(java.lang.Class)
 	 */
 	@Override
-	public Object getAdapter(Class adapter) {
+	@SuppressWarnings("unchecked")
+	public <T> T getAdapter(Class<T> adapter) {
 		if (adapter.equals(IPersistableElement.class))
-			return this;
+			return (T) this;
 		if (adapter.equals(IResource.class))
-			return getResource();
+			return (T) getResource();
 		if (adapter.equals(IContainmentAdapter.class))
-			return getPluginContainmentAdapter();
+			return (T) getPluginContainmentAdapter();
 		if (adapter.equals(IJavaElement.class)) {
 			IResource res = getResource();
 			if (res instanceof IProject) {
 				IProject project = (IProject) res;
 				try {
 					if (project.hasNature(JavaCore.NATURE_ID))
-						return JavaCore.create(project);
+						return (T) JavaCore.create(project);
 				} catch (CoreException e) {
 				}
 			}

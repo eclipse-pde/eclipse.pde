@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -459,7 +459,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 		if (selection.size() > 0) {
 			if (isShowInApplicable()) {
 				String showInLabel = PDEUIMessages.PluginsView_showIn;
-				IBindingService bindingService = (IBindingService) PlatformUI.getWorkbench().getAdapter(IBindingService.class);
+				IBindingService bindingService = PlatformUI.getWorkbench().getAdapter(IBindingService.class);
 				if (bindingService != null) {
 					String keyBinding = bindingService.getBestActiveBindingFormattedFor(IWorkbenchCommandConstants.NAVIGATE_SHOW_IN_QUICK_MENU);
 					if (keyBinding != null) {

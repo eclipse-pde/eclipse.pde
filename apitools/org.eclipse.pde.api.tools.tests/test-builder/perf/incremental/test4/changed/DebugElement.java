@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -65,7 +65,7 @@ public abstract class DebugElement extends PlatformObject implements IDebugEleme
     /* (non-Javadoc)
      * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
      */
-    public Object getAdapter(Class adapter) {
+    public <T> T getAdapter(Class<T> adapter) {
 		if (adapter == IDebugElement.class) {
 			return this;
 		}
@@ -73,22 +73,22 @@ public abstract class DebugElement extends PlatformObject implements IDebugEleme
 		// a debug target may not implement IStepFilters
 		if (adapter == IStepFilters.class) {
 			if (getDebugTarget() instanceof IStepFilters)
-				return getDebugTarget();
+				return (T)getDebugTarget();
 		}
 		if (adapter == IDebugTarget.class) {
-			return getDebugTarget();
+			return (T)getDebugTarget();
 		}
 		if (adapter == ILaunch.class) {
-		    return getLaunch();
+		    return (T)getLaunch();
 		}
 		if (adapter == IProcess.class) {
-		    return getDebugTarget().getProcess();
+		    return (T)getDebugTarget().getProcess();
 		}
 		//CONTEXTLAUNCHING
 		if(adapter == ILaunchConfiguration.class) {
-			return getLaunch().getLaunchConfiguration();
+			return (T)getLaunch().getLaunchConfiguration();
 		}
-		return super.getAdapter(adapter);
+		return (T)super.getAdapter(adapter);
     }
 
 	/**

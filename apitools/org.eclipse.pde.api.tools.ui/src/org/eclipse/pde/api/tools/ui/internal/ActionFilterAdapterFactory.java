@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,10 +23,11 @@ class ActionFilterAdapterFactory implements IAdapterFactory {
 	 * @see IAdapterFactory#getAdapter(Object, Class)
 	 */
 	@Override
-	public Object getAdapter(Object obj, Class adapterType) {
+	@SuppressWarnings("unchecked")
+	public <T> T getAdapter(Object obj, Class<T> adapterType) {
 		if (adapterType == IActionFilter.class) {
 			if (obj instanceof IJavaElement) {
-				return new JavaElementActionFilter();
+				return (T) new JavaElementActionFilter();
 			}
 		}
 		return null;

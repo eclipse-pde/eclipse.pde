@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -592,15 +592,15 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.PlatformObject#getAdapter(java.lang.Class)
 	 */
-	public Object getAdapter(Class adapter) {
+	public <T> T getAdapter(Class<T> adapter) {
 		if (adapter.equals(ILaunch.class)) {
-			return this;
+			return (T)this;
 		}
 		//CONTEXTLAUNCHING
 		if(adapter.equals(ILaunchConfiguration.class)) {
-			return getLaunchConfiguration();
+			return (T)getLaunchConfiguration();
 		}
-		return super.getAdapter(adapter);
+		return (T)super.getAdapter(adapter);
 	}
 	
 	

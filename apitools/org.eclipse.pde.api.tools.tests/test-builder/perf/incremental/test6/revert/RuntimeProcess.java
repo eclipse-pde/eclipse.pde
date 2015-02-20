@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -327,28 +327,28 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
-	public Object getAdapter(Class adapter) {
+	public <T> T  getAdapter(Class<T> adapter) {
 		if (adapter.equals(IProcess.class)) {
-			return this;
+			return (T)this;
 		}
 		if (adapter.equals(IDebugTarget.class)) {
 			ILaunch launch = getLaunch();
 			IDebugTarget[] targets = launch.getDebugTargets();
 			for (int i = 0; i < targets.length; i++) {
 				if (this.equals(targets[i].getProcess())) {
-					return targets[i];
+					return (T)targets[i];
 				}
 			}
 			return null;
 		}
 		if (adapter.equals(ILaunch.class)) {
-			return getLaunch();
+			return (T)getLaunch();
 		}
 		//CONTEXTLAUNCHING
 		if(adapter.equals(ILaunchConfiguration.class)) {
-			return getLaunch().getLaunchConfiguration();
+			return (T)getLaunch().getLaunchConfiguration();
 		}
-		return super.getAdapter(adapter);
+		return (T)super.getAdapter(adapter);
 	}
 	/**
 	 * @see IProcess#getExitValue()

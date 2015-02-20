@@ -209,7 +209,7 @@ public class ApiAnalysisBuilder extends IncrementalProjectBuilder {
 				IMarker[] markers = project.findMarkers(IApiMarkerConstants.API_USESCAN_PROBLEM_MARKER, false, IResource.DEPTH_ZERO);
 				for (int i = 0; i < markers.length; i++) {
 					String typeName = markers[i].getAttribute(IApiMarkerConstants.API_USESCAN_TYPE, null);
-					IJavaElement adaptor = (IJavaElement) resource.getAdapter(IJavaElement.class);
+					IJavaElement adaptor = resource.getAdapter(IJavaElement.class);
 					if (adaptor != null && adaptor instanceof ICompilationUnit) {
 						IType typeroot = ((ICompilationUnit) adaptor).findPrimaryType();
 						if (typeroot != null && typeName != null && typeName.startsWith(typeroot.getFullyQualifiedName())) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2014 IBM Corporation and others.
+ * Copyright (c) 2013, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -325,7 +325,7 @@ public class JavadocConversionPage extends UserInputWizardPage {
 								for (int i = 0; i < jps.length; i++) {
 									if (jps[i] instanceof IAdaptable) {
 										IAdaptable adapt = (IAdaptable) jps[i];
-										IProject pj = (IProject) adapt.getAdapter(IProject.class);
+										IProject pj = adapt.getAdapter(IProject.class);
 										if (Util.isApiProject(pj)) {
 											pjs.add(pj);
 										}

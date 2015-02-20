@@ -108,7 +108,7 @@ public class $className$ extends ViewPart {
 		public String toString() {
 			return getName();
 		}
-		public Object getAdapter(Class key) {
+		public <T> T getAdapter(Class<T> key) {
 			return null;
 		}
 	}

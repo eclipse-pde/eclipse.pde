@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2013 IBM Corporation and others.
+ * Copyright (c) 2011, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,22 +41,23 @@ public class IUFactory implements IAdapterFactory, ITargetLocationEditor, ITarge
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
 	 */
-	public Object getAdapter(Object adaptableObject, Class adapterType) {
+	@SuppressWarnings("unchecked")
+	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
 		if (adaptableObject instanceof IUBundleContainer) {
 			if (adapterType == ILabelProvider.class) {
-				return getLabelProvider();
+				return (T) getLabelProvider();
 			} else if (adapterType == ITreeContentProvider.class) {
-				return getContentProvider();
+				return (T) getContentProvider();
 			} else if (adapterType == ITargetLocationEditor.class) {
-				return this;
+				return (T) this;
 			} else if (adapterType == ITargetLocationUpdater.class) {
-				return this;
+				return (T) this;
 			}
 		} else if (adaptableObject instanceof IUWrapper) {
 			if (adapterType == ILabelProvider.class) {
-				return getLabelProvider();
+				return (T) getLabelProvider();
 			} else if (adapterType == IContentProvider.class) {
-				return getContentProvider();
+				return (T) getContentProvider();
 			}
 		}
 		return null;

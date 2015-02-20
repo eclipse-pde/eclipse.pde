@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2012 IBM Corporation and others.
+ *  Copyright (c) 2006, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -47,11 +47,11 @@ public abstract class AbstractNLModel extends AbstractModel {
 
 	protected abstract NLResourceHelper createNLResourceHelper();
 
-	@SuppressWarnings("rawtypes")
-	public Object getAdapter(Class adapter) {
+	@SuppressWarnings("unchecked")
+	public <T> T  getAdapter(Class<T> adapter) {
 		if (adapter == IResource.class) {
 			IResource resource = getUnderlyingResource();
-			return resource == null ? null : resource.getProject();
+			return resource == null ? null : (T)resource.getProject();
 		}
 		return super.getAdapter(adapter);
 	}
