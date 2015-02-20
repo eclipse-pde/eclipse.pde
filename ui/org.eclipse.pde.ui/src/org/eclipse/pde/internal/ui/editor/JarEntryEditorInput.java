@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2013 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -75,7 +75,7 @@ public class JarEntryEditorInput implements IStorageEditorInput {
 	 * @see IEditorInput#getToolTipText()
 	 */
 	public String getToolTipText() {
-		File file = (File) fJarEntryFile.getAdapter(File.class);
+		File file = fJarEntryFile.getAdapter(File.class);
 		if (file != null)
 			return file.getAbsolutePath();
 		return fJarEntryFile.getFullPath().toString();
@@ -100,9 +100,10 @@ public class JarEntryEditorInput implements IStorageEditorInput {
 	/*
 	 * @see IAdaptable#getAdapter(Class)
 	 */
-	public Object getAdapter(Class adapter) {
+	@SuppressWarnings("unchecked")
+	public <T> T getAdapter(Class<T> adapter) {
 		if (adapter.equals(File.class))
-			return fJarEntryFile.getAdapter(File.class);
+			return (T) fJarEntryFile.getAdapter(File.class);
 		return null;
 	}
 

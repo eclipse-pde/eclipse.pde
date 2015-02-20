@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -55,11 +55,11 @@ public class ImportObject extends PluginReference implements IWritable, Serializ
 		iimport.write(indent, writer);
 	}
 
-	@SuppressWarnings("rawtypes")
-	public Object getAdapter(Class key) {
+	@SuppressWarnings("unchecked")
+	public <T> T getAdapter(Class<T> key) {
 		if (key.equals(ISourceObject.class)) {
 			if (iimport instanceof ISourceObject)
-				return iimport;
+				return (T) iimport;
 		}
 		return super.getAdapter(key);
 	}

@@ -37,7 +37,7 @@ class ActionFilterAdapterFactory implements IAdapterFactory {
 	 * @see IAdapterFactory#getAdapterList()
 	 */
 	@Override
-	public Class[] getAdapterList() {
+	public Class<?>[] getAdapterList() {
 		return new Class[] { IActionFilter.class };
 	}
 }
