@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 IBM Corporation and others. All rights reserved. This
+ * Copyright (c) 2009, 2015 IBM Corporation and others. All rights reserved. This
  * program and the accompanying materials are made available under the terms of
  * the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors: 
  * 		IBM Corporation - initial API and implementation
- * 		Pascal Rapicault - Support for bundled macosx application - http://bugs.eclipse.org/57349
+ * 		Pascal Rapicault - Support for bundled macosx application - http://bugs.eclipse.org/431116
  ******************************************************************************/
 
 package org.eclipse.pde.internal.build.publisher;
@@ -26,7 +26,8 @@ import org.eclipse.equinox.internal.p2.engine.Phase;
 import org.eclipse.equinox.internal.p2.engine.PhaseSet;
 import org.eclipse.equinox.internal.p2.engine.phases.Collect;
 import org.eclipse.equinox.internal.p2.engine.phases.Install;
-import org.eclipse.equinox.internal.p2.metadata.*;
+import org.eclipse.equinox.internal.p2.metadata.TouchpointData;
+import org.eclipse.equinox.internal.p2.metadata.TouchpointInstruction;
 import org.eclipse.equinox.internal.p2.publisher.eclipse.BrandingIron;
 import org.eclipse.equinox.internal.p2.publisher.eclipse.ExecutablesDescriptor;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
@@ -35,7 +36,6 @@ import org.eclipse.equinox.p2.internal.repository.tools.Repo2Runnable;
 import org.eclipse.equinox.p2.internal.repository.tools.tasks.IUDescription;
 import org.eclipse.equinox.p2.internal.repository.tools.tasks.Repo2RunnableTask;
 import org.eclipse.equinox.p2.metadata.*;
-import org.eclipse.equinox.p2.metadata.MetadataFactory.InstallableUnitDescription;
 import org.eclipse.equinox.p2.repository.artifact.IArtifactRepository;
 import org.eclipse.equinox.p2.repository.artifact.IArtifactRepositoryManager;
 import org.eclipse.equinox.p2.repository.artifact.spi.ArtifactDescriptor;
@@ -103,9 +103,6 @@ public class BrandP2Task extends Repo2RunnableTask {
 			if (ius.size() == 1) {
 				callBrandingIron();
 				publishBrandedIU(metadataRepo, artifactRepo, ius.get(0));
-				if ("macosx".equals(config.getOs())) { //$NON-NLS-1$
-					publishBundledMacOS(metadataRepo, artifactRepo, ius.get(0));
-				}
 				FileUtils.deleteAll(new File(getRootFolder()));
 			}
 		} catch (BuildException e) {
@@ -212,25 +209,15 @@ public class BrandP2Task extends Repo2RunnableTask {
 		Version version = Version.parseVersion(productVersion);
 		if (version.equals(Version.emptyVersion))
 			version = originalIU.getVersion();
-		InstallableUnitDescription newIUDescription = new MetadataFactory.InstallableUnitDescription();
+		org.eclipse.equinox.p2.metadata.MetadataFactory.InstallableUnitDescription newIUDescription = new MetadataFactory.InstallableUnitDescription();
 		newIUDescription.setSingleton(originalIU.isSingleton());
 		newIUDescription.setId(id);
 		newIUDescription.setVersion(version);
 		newIUDescription.setCapabilities(new IProvidedCapability[] {PublisherHelper.createSelfCapability(id, version)});
 		newIUDescription.setTouchpointType(originalIU.getTouchpointType());
+		newIUDescription.setFilter(originalIU.getFilter());
 
-		//Tweak the filter to take macosx case into account
-		if ("macosx".equals(config.getOs())) { //$NON-NLS-1$
-			StringBuffer newLDAPFilter = new StringBuffer();
-			newLDAPFilter.append("(& (!(macosx-bundled=*))"); //$NON-NLS-1$
-			newLDAPFilter.append(createLDAPString());
-			newLDAPFilter.append(")"); //$NON-NLS-1$
-			newIUDescription.setFilter(InstallableUnit.parseFilter(newLDAPFilter.toString()));
-		} else {
-			newIUDescription.setFilter(originalIU.getFilter());
-		}
-
-		List<ITouchpointData> data = brandTouchpointData(originalIU.getTouchpointData(), false);
+		List<ITouchpointData> data = brandTouchpointData(originalIU.getTouchpointData());
 		for (int i = 0; i < data.size(); i++) {
 			newIUDescription.addTouchpointData(data.get(i));
 		}
@@ -242,39 +229,6 @@ public class BrandP2Task extends Repo2RunnableTask {
 		metadataRepo.addInstallableUnits(Arrays.asList(new IInstallableUnit[] {newIU}));
 
 		publishBrandedArtifact(artifactRepo, key);
-	}
-
-	public void publishBundledMacOS(IMetadataRepository metadataRepo, IArtifactRepository artifactRepo, IInstallableUnit originalIU) {
-		String nonBrandedId = productId + "_root." + getConfigString(); //$NON-NLS-1$
-		String id = productId + "_root." + getConfigString() + "-bundled"; //$NON-NLS-1$ //$NON-NLS-2$
-		Version version = Version.parseVersion(productVersion);
-		if (version.equals(Version.emptyVersion))
-			version = originalIU.getVersion();
-		InstallableUnitDescription newIUDescription = new MetadataFactory.InstallableUnitDescription();
-		newIUDescription.setSingleton(originalIU.isSingleton());
-		newIUDescription.setId(id);
-		newIUDescription.setVersion(version);
-		newIUDescription.setCapabilities(new IProvidedCapability[] {PublisherHelper.createSelfCapability(id, version), PublisherHelper.createSelfCapability(nonBrandedId, version)});
-		newIUDescription.setTouchpointType(originalIU.getTouchpointType());
-
-		//Tweak the filter for macosx-bundled
-		StringBuffer newLDAPFilter = new StringBuffer();
-		newLDAPFilter.append("(& (macosx-bundled=true)"); //$NON-NLS-1$
-		newLDAPFilter.append(createLDAPString());
-		newLDAPFilter.append(")"); //$NON-NLS-1$
-		newIUDescription.setFilter(InstallableUnit.parseFilter(newLDAPFilter.toString()));
-
-		List<ITouchpointData> data = brandTouchpointData(originalIU.getTouchpointData(), true);
-		for (int i = 0; i < data.size(); i++) {
-			newIUDescription.addTouchpointData(data.get(i));
-		}
-
-		//The same artifact is used for the two shapes of MacOS
-		IArtifactKey key = artifactRepo.createArtifactKey(PublisherHelper.BINARY_ARTIFACT_CLASSIFIER, nonBrandedId, newIUDescription.getVersion());
-		newIUDescription.setArtifacts(new IArtifactKey[] {key});
-
-		IInstallableUnit newIU = MetadataFactory.createInstallableUnit(newIUDescription);
-		metadataRepo.addInstallableUnits(Arrays.asList(new IInstallableUnit[] {newIU}));
 	}
 
 	protected String createLDAPString() {
@@ -307,14 +261,14 @@ public class BrandP2Task extends Repo2RunnableTask {
 	}
 
 	private static final String CHMOD = "chmod"; //$NON-NLS-1$
-	private static final String LN = "ln"; //$NON-NLS-1$
-	private static final String LINK_TARGET = "linkTarget"; //$NON-NLS-1$
-	private static final String LINK_NAME = "linkName"; //$NON-NLS-1$
 	private static final String TARGET_FILE = "targetFile"; //$NON-NLS-1$
 	private static final String INSTALL = "install"; //$NON-NLS-1$
+	private static final String UNINSTALL = "uninstall"; //$NON-NLS-1$
 	private static final String CONFIGURE = "configure"; //$NON-NLS-1$
 
-	private List<ITouchpointData> brandTouchpointData(Collection<ITouchpointData> data, boolean macosxBundled) {
+	private List<ITouchpointData> brandTouchpointData(Collection<ITouchpointData> data) {
+		if (config.getOs().equals("macosx")) //$NON-NLS-1$
+			return brandMacTouchpointData();
 		ArrayList<ITouchpointData> results = new ArrayList<ITouchpointData>(data.size() + 1);
 		results.addAll(data);
 
@@ -323,12 +277,7 @@ public class BrandP2Task extends Repo2RunnableTask {
 		String brandedLauncher = null;
 		if (config.getOs().equals("win32")) //$NON-NLS-1$
 			brandedLauncher = launcherName + ".exe"; //$NON-NLS-1$
-		else if (config.getOs().equals("macosx")) {//$NON-NLS-1$
-			if (macosxBundled)
-				brandedLauncher = "Contents/MacOS/" + launcherName; //$NON-NLS-1$
-			else
-				brandedLauncher = launcherName + ".app/Contents/MacOS/" + launcherName; //$NON-NLS-1$
-		} else
+		else
 			brandedLauncher = launcherName;
 
 		for (int i = 0; i < results.size(); i++) {
@@ -353,8 +302,7 @@ public class BrandP2Task extends Repo2RunnableTask {
 							continue; //data has properly branded chmod, nothing to do
 						}
 
-						if ((config.getOs().equals("macosx") && (targetFile.endsWith(".app/Contents/MacOS/launcher") || targetFile.endsWith(".app/Contents/MacOS/eclipse"))) || //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-								(config.getOs().equals("win32") && (targetFile.equals("launcher.exe") || targetFile.equals("eclipse.exe"))) || //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						if ((config.getOs().equals("win32") && (targetFile.equals("launcher.exe") || targetFile.equals("eclipse.exe"))) || //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 								(targetFile.equals("launcher") || targetFile.equals("eclipse"))) //$NON-NLS-1$ //$NON-NLS-2$
 						{
 							map.put(TARGET_FILE, brandedLauncher);
@@ -362,16 +310,6 @@ public class BrandP2Task extends Repo2RunnableTask {
 							haveChmod = true;
 							phaseChanged = true;
 							break;
-						}
-					} else if (actions[j].startsWith(LN) && config.getOs().equals("macosx")) { //$NON-NLS-1$
-						//for now only checking links on mac
-						Map<String, String> map = parseAction(actions[j]);
-						String linkTarget = map.get(LINK_TARGET);
-						if (linkTarget.endsWith(".app/Contents/MacOS/launcher") || linkTarget.endsWith(".app/Contents/MacOS/eclipse")) { //$NON-NLS-1$ //$NON-NLS-2$
-							map.put(LINK_TARGET, brandedLauncher);
-							map.put(LINK_NAME, launcherName);
-							actions[j] = LN + toString(map);
-							phaseChanged = true;
 						}
 					}
 				}
@@ -386,19 +324,32 @@ public class BrandP2Task extends Repo2RunnableTask {
 
 		//add a chmod if there wasn't one before
 		if (!haveChmod && !config.getOs().equals("win32")) { //$NON-NLS-1$
-			String body = null;
-			if (macosxBundled) {
-				body = "unzip(source:@artifact, target:${installFolder}, path:" + launcherName + ".app);"; //$NON-NLS-1$ //$NON-NLS-2$
-				body += " chmod(targetDir:${installFolder}/Contents/MacOS/, targetFile:" + launcherName + ", permissions:755);"; //$NON-NLS-1$ //$NON-NLS-2$
-			} else {
-				body = "chmod(targetDir:${installFolder}, targetFile:" + brandedLauncher + ", permissions:755)"; //$NON-NLS-1$ //$NON-NLS-2$
-			}
+			String body = "chmod(targetDir:${installFolder}, targetFile:" + brandedLauncher + ", permissions:755)"; //$NON-NLS-1$ //$NON-NLS-2$
 			TouchpointInstruction newInstruction = new TouchpointInstruction(body, null);
 			Map<String, ITouchpointInstruction> instructions = new HashMap<String, ITouchpointInstruction>();
 			instructions.put(INSTALL, newInstruction);
 			results.add(new TouchpointData(instructions));
 		}
 		return results;
+	}
+
+	private List<ITouchpointData> brandMacTouchpointData() {
+		Map<String, ITouchpointInstruction> instructions = new HashMap<String, ITouchpointInstruction>(3);
+		instructions.put(INSTALL, getMacInstallInstruction());
+		instructions.put(UNINSTALL, getMacUninstallInstruction());
+		List<ITouchpointData> result = new ArrayList<ITouchpointData>(2);
+		result.add(new TouchpointData(instructions));
+		return result;
+	}
+
+	private ITouchpointInstruction getMacUninstallInstruction() {
+		return new TouchpointInstruction("cleanupzip(source:@artifact, target:${installFolder}/../);", null); //$NON-NLS-1$
+	}
+
+	private ITouchpointInstruction getMacInstallInstruction() {
+		String body = "unzip(source:@artifact, target:${installFolder}/../);"; //$NON-NLS-1$
+		body += " chmod(targetDir:${installFolder}/../MacOS/, targetFile:" + launcherName + ", permissions:755);"; //$NON-NLS-1$ //$NON-NLS-2$
+		return new TouchpointInstruction(body, null);
 	}
 
 	private String toString(String[] elements, String separator) {
