@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2007, 2015 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -140,7 +140,7 @@ public abstract class PDETestCase extends TestCase {
 		String[] args = createAntRunnerArgs(script, targets, antHome, additionalProperties, listener, logger);
 		try {
 			AntRunner runner = new AntRunner();
-			runner.run((Object) args);
+			runner.run(args);
 		} catch (InvocationTargetException e) {
 			Throwable target = e.getTargetException();
 			if (target instanceof Exception)
