@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2013 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -26,15 +26,16 @@ public class TracingOptionsManager {
 		super();
 	}
 
-	private void createTemplate() {
-		template = new Properties();
+	private Properties createTemplate() {
+		Properties temp = new Properties();
 		IPluginModelBase[] models = PluginRegistry.getAllModels();
 		for (int i = 0; i < models.length; i++) {
-			addToTemplate(models[i]);
+			addToTemplate(temp, models[i]);
 		}
+		return temp;
 	}
 
-	private void addToTemplate(IPluginModelBase model) {
+	private void addToTemplate(Properties temp, IPluginModelBase model) {
 		Properties modelOptions = getOptions(model);
 		if (modelOptions == null)
 			return;
@@ -42,13 +43,13 @@ public class TracingOptionsManager {
 			String key = keys.nextElement().toString();
 			String value = modelOptions.getProperty(key);
 			if (key != null && value != null)
-				template.setProperty(key, value);
+				temp.setProperty(key, value);
 		}
 	}
 
-	public Hashtable<String, Object> getTemplateTable(String pluginId) {
+	public synchronized Hashtable<String, Object> getTemplateTable(String pluginId) {
 		if (template == null)
-			createTemplate();
+			template = createTemplate();
 		Hashtable<String, Object> defaults = new Hashtable<String, Object>();
 		for (Enumeration<Object> keys = template.keys(); keys.hasMoreElements();) {
 			String key = keys.nextElement().toString();
@@ -81,10 +82,10 @@ public class TracingOptionsManager {
 		return defaults;
 	}
 
-	public Properties getTracingTemplateCopy() {
+	public synchronized Properties getTracingTemplateCopy() {
 		if (template == null)
-			createTemplate();
-		return (Properties) template.clone();
+			template = createTemplate();
+		return (Properties) createTemplate().clone();
 	}
 
 	public static boolean isTraceable(IPluginModelBase model) {
@@ -118,7 +119,7 @@ public class TracingOptionsManager {
 		return stream != null;
 	}
 
-	public void reset() {
+	public synchronized void reset() {
 		template = null;
 	}
 
