@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2013 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -275,7 +275,9 @@ public abstract class BuildContentsSection extends TableSection implements IReso
 						while (iter.hasNext()) {
 							String resource = iter.next().toString();
 							boolean isIncluded = includes.contains(resource);
-							if (resource.equals(".") || resource.equals("./") || resource.equals(".\\")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+							if (resource.isEmpty()) {
+								// ignore - empty line
+							} else if (resource.equals(".") || resource.equals("./") || resource.equals(".\\")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 								// ignore - should be root directory
 							} else if (resource.lastIndexOf(IPath.SEPARATOR) == resource.length() - 1) {
 								IFolder folder = fBundleRoot.getFolder(new Path(resource));
