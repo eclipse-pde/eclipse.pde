@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2008 IBM Corporation and others.
+ *  Copyright (c) 2007, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -17,25 +17,12 @@ import org.eclipse.help.IContextProvider;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.IPreferencePage;
 import org.eclipse.jface.preference.PreferenceDialog;
-import org.eclipse.pde.internal.runtime.PDERuntimeMessages;
-import org.eclipse.pde.internal.runtime.PDERuntimePlugin;
-import org.eclipse.pde.internal.runtime.PDERuntimePluginImages;
+import org.eclipse.pde.internal.runtime.*;
 import org.eclipse.pde.internal.runtime.spy.SpyFormToolkit;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Widget;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IEditorReference;
-import org.eclipse.ui.IViewReference;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.forms.widgets.ExpandableComposite;
-import org.eclipse.ui.forms.widgets.FormText;
-import org.eclipse.ui.forms.widgets.ScrolledForm;
-import org.eclipse.ui.forms.widgets.Section;
-import org.eclipse.ui.forms.widgets.TableWrapData;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
+import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.internal.WorkbenchPartReference;
 import org.eclipse.ui.part.ViewPart;
@@ -69,7 +56,7 @@ public class ActiveHelpSection implements ISpySection {
 			helpBuffer.append(processControlHelp(event, toolkit));
 		}
 
-		if (helpBuffer != null && helpBuffer.length() > 0) {
+		if (helpBuffer.length() > 0) {
 			Section section = toolkit.createSection(form.getBody(), ExpandableComposite.TITLE_BAR);
 			section.setText(PDERuntimeMessages.SpyDialog_activeHelpSection_title);
 			section.clientVerticalSpacing = 9;
