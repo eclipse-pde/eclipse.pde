@@ -149,12 +149,16 @@ public class LaunchAction extends Action {
 		List<String> initialArgsList = Arrays.asList(DebugPlugin.splitArguments(initialArgs.toString()));
 		if (userArgs != null && userArgs.length() > 0) {
 			List<String> userArgsList = Arrays.asList(DebugPlugin.splitArguments(userArgs));
+			boolean previousHasSubArgument = false;
 			for (Iterator<String> iterator = userArgsList.iterator(); iterator.hasNext();) {
 				Object userArg = iterator.next();
-				if (!initialArgsList.contains(userArg)) {
+				boolean hasSubArgument = userArg.toString().equals('-' + IEnvironment.P_OS) || userArg.toString().equals('-' + IEnvironment.P_WS);
+				hasSubArgument = hasSubArgument || userArg.toString().equals('-' + IEnvironment.P_ARCH) || userArg.toString().equals('-' + IEnvironment.P_NL);
+				if (!initialArgsList.contains(userArg) || hasSubArgument || previousHasSubArgument) {
 					initialArgs.append(' ');
 					initialArgs.append(userArg);
 				}
+				previousHasSubArgument = hasSubArgument;
 			}
 		}
 		return initialArgs.toString();
