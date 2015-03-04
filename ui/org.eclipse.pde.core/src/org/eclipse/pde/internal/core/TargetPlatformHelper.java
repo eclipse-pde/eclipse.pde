@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
 package org.eclipse.pde.internal.core;
 
 import java.io.*;
+import java.net.URI;
 import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -20,10 +21,10 @@ import org.eclipse.jdt.launching.environments.IExecutionEnvironment;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.core.target.ITargetDefinition;
-import org.eclipse.pde.core.target.ITargetPlatformService;
+import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.internal.build.IPDEBuildConstants;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
+import org.eclipse.pde.internal.core.target.IUBundleContainer;
 import org.eclipse.pde.internal.core.util.*;
 import org.osgi.framework.*;
 
@@ -207,6 +208,41 @@ public class TargetPlatformHelper {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * Utility method to check if the workspace active target platform 
+	 * contains unresolved p2 repositories
+	 *
+	 * @return unresolved repository based  workspace active target platform  
+	 * or <code>null</code> if no repository based target or if such target is resolved.
+	 * @throws CoreException if there is a problem accessing the workspace target definition
+	 */
+
+	public static ITargetDefinition getUnresolvedRepositoryBasedWorkspaceTarget() throws CoreException {
+		ITargetPlatformService service = (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
+		if (service == null) {
+			throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.TargetPlatformHelper_CouldNotAcquireTargetService));
+		}
+		final ITargetDefinition target = service.getWorkspaceTargetDefinition();
+		if (target != null && !target.isResolved()) {
+			ITargetLocation[] locations = target.getTargetLocations();
+			if (locations != null) {
+				for (int i = 0; i < locations.length; i++) {
+					ITargetLocation iTargetLocation = locations[i];
+					if (iTargetLocation instanceof IUBundleContainer) {
+						IUBundleContainer bc = (IUBundleContainer) iTargetLocation;
+						URI[] uri = bc.getRepositories();
+						if (uri != null) {
+							if (uri.length > 0) {
+								return target;
+							}
+						}
+					}
+				}
+			}
+		}
+		return null;
 	}
 
 	public static Set<String> getApplicationNameSet() {

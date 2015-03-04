@@ -25,8 +25,7 @@ import org.eclipse.pde.core.*;
 import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.plugin.*;
-import org.eclipse.pde.core.target.ITargetDefinition;
-import org.eclipse.pde.core.target.TargetBundle;
+import org.eclipse.pde.core.target.*;
 
 public class PluginModelManager implements IModelProviderListener {
 	private static final String fExternalPluginListFile = "SavedExternalPluginList.txt"; //$NON-NLS-1$
@@ -520,6 +519,26 @@ public class PluginModelManager implements IModelProviderListener {
 		Map<String, LocalModelEntry> entries = Collections.synchronizedMap(new TreeMap<String, LocalModelEntry>());
 		fCancelled = false;
 
+		ITargetDefinition unresolvedRepoBasedtarget = null;
+		try {
+			unresolvedRepoBasedtarget = TargetPlatformHelper.getUnresolvedRepositoryBasedWorkspaceTarget();
+		} catch (CoreException e) {
+			PDECore.log(e);
+		}
+		if (unresolvedRepoBasedtarget != null) {
+			//Workspace target contains unresolved p2 repositories,
+			//set empty fState, fExternalManager, fEntries- scheduling target platform resolve
+			fState = new PDEState(new URL[0], true, true, subMon);
+			fExternalManager.setModels(new IPluginModelBase[0]);
+			fEntries = entries;
+			LoadTargetDefinitionJob.load(unresolvedRepoBasedtarget);
+			subMon.done();
+			if (monitor != null) {
+				monitor.done();
+			}
+			return;
+		}
+
 		long startTargetModels = System.currentTimeMillis();
 		// Target models
 		URL[] externalUrls = getExternalBundles(subMon.newChild(40));
@@ -614,8 +633,10 @@ public class PluginModelManager implements IModelProviderListener {
 		}
 
 		// Log any known issues with the target platform to warn user
-		if (target.getStatus().getSeverity() == IStatus.ERROR) {
-			PDECore.log(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.PluginModelManager_CurrentTargetPlatformContainsErrors, new CoreException(target.getStatus())));
+		if (target.isResolved()) {
+			if (target.getStatus().getSeverity() == IStatus.ERROR) {
+				PDECore.log(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, PDECoreMessages.PluginModelManager_CurrentTargetPlatformContainsErrors, new CoreException(target.getStatus())));
+			}
 		}
 
 		URL[] externalURLs = new URL[0];
