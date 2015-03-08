@@ -24,7 +24,8 @@ import org.eclipse.pde.internal.build.*;
 import org.eclipse.pde.internal.core.*;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeatureModel;
-import org.eclipse.pde.internal.core.iproduct.*;
+import org.eclipse.pde.internal.core.iproduct.IJREInfo;
+import org.eclipse.pde.internal.core.iproduct.ILauncherInfo;
 import org.eclipse.pde.internal.core.iproduct.IProduct;
 import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.w3c.dom.Element;
@@ -270,7 +271,7 @@ public class ProductExportOperation extends FeatureExportOperation {
 				if (file != null && file.exists() && !file.isDirectory()) {
 					appendAbsolutePath(buffer, file);
 				} else if (TargetPlatform.getOS().equals("macosx")) { //$NON-NLS-1$)
-					appendEclipsePath(buffer, new File(homeDir, ECLIPSE_APP_MACOS));
+					appendEclipsePath(buffer, new File(homeDir, "../MacOS/")); //$NON-NLS-1$
 				} else {
 					appendEclipsePath(buffer, homeDir);
 				}
