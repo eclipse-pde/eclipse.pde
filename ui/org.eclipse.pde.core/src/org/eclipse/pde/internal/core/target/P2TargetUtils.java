@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2014 EclipseSource Inc. and others.
+ * Copyright (c) 2010, 2015 EclipseSource Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     EclipseSource Inc. - initial API and implementation
  *     IBM Corporation - ongoing enhancements
+ *     Manumitting Technologies Inc - bug 437726: wrong error messages opening target definition
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target;
 
@@ -34,7 +35,6 @@ import org.eclipse.equinox.p2.repository.*;
 import org.eclipse.equinox.p2.repository.artifact.*;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager;
-import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.core.target.*;
 import org.eclipse.pde.internal.core.PDECore;
 import org.osgi.framework.*;
@@ -884,10 +884,10 @@ public class P2TargetUtils {
 	 * @throws CoreException if there is a problem with the requirements or there is a problem downloading
 	 */
 	private void resolveWithPlanner(ITargetDefinition target, IProgressMonitor monitor) throws CoreException {
-		SubMonitor subMonitor = SubMonitor.convert(monitor, Messages.IUBundleContainer_0, 200);
+		SubMonitor subMonitor = SubMonitor.convert(monitor, Messages.IUBundleContainer_0, 220);
 
 		// Get the root IUs for every relevant container in the target definition
-		IInstallableUnit[] units = getRootIUs(target);
+		IInstallableUnit[] units = getRootIUs(target, subMonitor.newChild(20));
 		if (subMonitor.isCanceled()) {
 			return;
 		}
@@ -1093,10 +1093,10 @@ public class P2TargetUtils {
 	 * @throws CoreException if there is a problem interacting with the repositories
 	 */
 	private void resolveWithSlicer(ITargetDefinition target, IProgressMonitor monitor) throws CoreException {
-		SubMonitor subMonitor = SubMonitor.convert(monitor, Messages.IUBundleContainer_0, 100);
+		SubMonitor subMonitor = SubMonitor.convert(monitor, Messages.IUBundleContainer_0, 110);
 
 		// resolve IUs
-		IInstallableUnit[] units = getRootIUs(target);
+		IInstallableUnit[] units = getRootIUs(target, subMonitor.newChild(10));
 		if (subMonitor.isCanceled()) {
 			return;
 		}
@@ -1318,28 +1318,29 @@ public class P2TargetUtils {
 	 * Returns the IU's for the given target related to the given containers
 	 * 
 	 * @param definition the definition to filter with
+	 * @param monitor 
 	 * @return the discovered IUs
 	 * @exception CoreException if unable to retrieve IU's
 	 */
-	private IInstallableUnit[] getRootIUs(ITargetDefinition definition) throws CoreException {
+	private IInstallableUnit[] getRootIUs(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
+
 		HashSet<IInstallableUnit> result = new HashSet<IInstallableUnit>();
 		ITargetLocation[] containers = definition.getTargetLocations();
+		SubMonitor subMonitor = SubMonitor.convert(monitor, Messages.IUBundleContainer_0, containers.length * 10);
+		MultiStatus status = new MultiStatus(PDECore.PLUGIN_ID, 0, Messages.IUBundleContainer_ProblemsLoadingRepositories, null);
 		for (int i = 0; i < containers.length; i++) {
 			ITargetLocation container = containers[i];
 			if (container instanceof IUBundleContainer) {
-				IUBundleContainer iuContainer = (IUBundleContainer) container;
-				IQueryable<IInstallableUnit> repos = getQueryableMetadata(iuContainer.getRepositories(), new NullProgressMonitor());
-				String[] ids = iuContainer.getIds();
-				Version[] versions = iuContainer.getVersions();
-				for (int j = 0; j < ids.length; j++) {
-					// For versions such as 0.0.0, the IU query may return multiple IUs, so we check which is the latest version
-					IQuery<IInstallableUnit> query = QueryUtil.createLatestQuery(QueryUtil.createIUQuery(ids[j], versions[j]));
-					IQueryResult<IInstallableUnit> queryResult = repos.query(query, null);
-					if (queryResult.isEmpty())
-						throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.IUBundleContainer_1, ids[j])));
-					result.add(queryResult.iterator().next());
+				try {
+					IUBundleContainer iuContainer = (IUBundleContainer) container;
+					Collections.addAll(result, iuContainer.getRootIUs(definition, subMonitor.newChild(10)));
+				} catch (CoreException e) {
+					status.add(e.getStatus());
 				}
 			}
+		}
+		if (!status.isOK()) {
+			throw new CoreException(status);
 		}
 		return result.toArray(new IInstallableUnit[result.size()]);
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Manumitting Technologies Inc - bug 437726: wrong error messages opening target definition
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target;
 
@@ -41,7 +42,7 @@ public abstract class AbstractBundleContainer extends PlatformObject implements 
 	/**
 	 * Status generated when this container was resolved, possibly <code>null</code>
 	 */
-	private IStatus fResolutionStatus;
+	protected IStatus fResolutionStatus;
 
 	/**
 	 * The Java VM Arguments specified by this bundle container 
@@ -72,14 +73,14 @@ public abstract class AbstractBundleContainer extends PlatformObject implements 
 	 * @see org.eclipse.pde.core.target.ITargetLocation#resolve(org.eclipse.pde.core.target.ITargetDefinition, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public final IStatus resolve(ITargetDefinition definition, IProgressMonitor monitor) {
-	  int resolveBundlesWork = getResolveBundlesWork();
-    int resolveFeaturesWork = getResolveFeaturesWork();
+		int resolveBundlesWork = getResolveBundlesWork();
+		int resolveFeaturesWork = getResolveFeaturesWork();
 
 		SubMonitor subMonitor = SubMonitor.convert(monitor, resolveBundlesWork + resolveFeaturesWork);
 		try {
+			fResolutionStatus = Status.OK_STATUS;
 			fBundles = resolveBundles(definition, subMonitor.newChild(resolveBundlesWork));
 			fFeatures = resolveFeatures(definition, subMonitor.newChild(resolveFeaturesWork));
-			fResolutionStatus = Status.OK_STATUS;
 			if (subMonitor.isCanceled()) {
 				fBundles = null;
 				fResolutionStatus = Status.CANCEL_STATUS;

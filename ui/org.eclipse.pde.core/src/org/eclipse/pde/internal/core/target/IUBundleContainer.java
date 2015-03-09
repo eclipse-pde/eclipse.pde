@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2014 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Sonatype, Inc. - ongoing development
  *     EclipseSource, Inc. - ongoing development
+ *     Manumitting Technologies Inc - bug 437726: wrong error messages opening target definition
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target;
 
@@ -262,12 +263,18 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	IInstallableUnit[] cacheIUs(ITargetDefinition target) throws CoreException {
 		IProfile profile = fSynchronizer.getProfile();
 		ArrayList<IInstallableUnit> result = new ArrayList<IInstallableUnit>();
+		MultiStatus status = new MultiStatus(PDECore.PLUGIN_ID, 0, Messages.IUBundleContainer_ProblemsLoadingRepositories, null);
 		for (int i = 0; i < fIds.length; i++) {
 			IQuery<IInstallableUnit> query = QueryUtil.createIUQuery(fIds[i], fVersions[i]);
 			IQueryResult<IInstallableUnit> queryResult = profile.query(query, null);
 			if (queryResult.isEmpty())
-				throw new CoreException(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.IUBundleContainer_1, fIds[i])));
-			result.add(queryResult.iterator().next());
+				status.add(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.IUBundleContainer_1, fIds[i] + " " + fVersions[i]))); //$NON-NLS-1$
+			else
+				result.add(queryResult.iterator().next());
+		}
+		if (!status.isOK()) {
+			fResolutionStatus = status;
+			throw new CoreException(status);
 		}
 		fUnits = result.toArray(new IInstallableUnit[result.size()]);
 		return fUnits;
@@ -326,10 +333,16 @@ public class IUBundleContainer extends AbstractBundleContainer {
 	 * It should NOT be called any other time.
 	 */
 	void synchronizerChanged(ITargetDefinition target) throws CoreException {
-		// cache the IUs first as they are used to slice the profile for the other caches.
-		cacheIUs(target);
-		cacheBundles(target);
-		cacheFeatures(target);
+		try {
+			// cache the IUs first as they are used to slice the profile for the other caches.
+			cacheIUs(target);
+			cacheBundles(target);
+			cacheFeatures(target);
+		} catch (CoreException e) {
+			fBundles = new TargetBundle[0];
+			fFeatures = new TargetFeature[0];
+			fResolutionStatus = e.getStatus();
+		}
 	}
 
 	/**
@@ -680,5 +693,46 @@ public class IUBundleContainer extends AbstractBundleContainer {
 		} catch (TransformerException ex) {
 			return null;
 		}
+	}
+
+	IInstallableUnit[] getRootIUs(ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
+		IQueryable<IInstallableUnit> repos = P2TargetUtils.getQueryableMetadata(getRepositories(), monitor);
+		MultiStatus status = new MultiStatus(PDECore.PLUGIN_ID, 0, Messages.IUBundleContainer_ProblemsLoadingRepositories, null);
+		List<IInstallableUnit> result = new ArrayList<IInstallableUnit>();
+		for (int j = 0; j < fIds.length; j++) {
+			// For versions such as 0.0.0, the IU query may return multiple IUs, so we check which is the latest version
+			IQuery<IInstallableUnit> query = QueryUtil.createLatestQuery(QueryUtil.createIUQuery(fIds[j], fVersions[j]));
+			IQueryResult<IInstallableUnit> queryResult = repos.query(query, null);
+			if (queryResult.isEmpty())
+				status.add(new Status(IStatus.ERROR, PDECore.PLUGIN_ID, NLS.bind(Messages.IUBundleContainer_1, fIds[j] + " " + fVersions[j])));//$NON-NLS-1$
+			else
+				result.add(queryResult.iterator().next());
+		}
+		if (!status.isOK()) {
+			fResolutionStatus = status;
+			throw new CoreException(status);
+		}
+		return result.toArray(new IInstallableUnit[0]);
+	}
+
+	@Override
+	public <T> T getAdapter(Class<T> adapter) {
+		if (adapter.isInstance(fSynchronizer)) {
+			return adapter.cast(fSynchronizer);
+		}
+		return super.getAdapter(adapter);
+	}
+
+	public String toString() {
+		StringBuilder sb = new StringBuilder(getClass().getSimpleName());
+		sb.append('[');
+		for (int i = 0; i < fRepos.length; i++) {
+			sb.append(fRepos[i]);
+			if (i > 0) {
+				sb.append(',');
+			}
+		}
+		sb.append(']');
+		return sb.toString();
 	}
 }

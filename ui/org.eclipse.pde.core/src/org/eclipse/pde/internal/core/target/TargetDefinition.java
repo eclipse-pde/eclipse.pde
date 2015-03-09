@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others.
+ * Copyright (c) 2008, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Manumitting Technologies Inc - bug 437726: wrong error messages opening target definition
  *******************************************************************************/
 package org.eclipse.pde.internal.core.target;
 
@@ -253,13 +254,35 @@ public class TargetDefinition implements ITargetDefinition {
 		SubMonitor subMonitor = SubMonitor.convert(monitor, Messages.TargetDefinition_1, num * 10);
 		try {
 			MultiStatus status = new MultiStatus(PDECore.PLUGIN_ID, 0, Messages.TargetDefinition_2, null);
+			Set<P2TargetUtils> seen = new HashSet<P2TargetUtils>();
 			if (containers != null) {
+				// Process synchronizers first, then perform resolves against the individual
+				// containers. A synchronizer may be shared among several containers, do we
+				// keep track of the synchronizers processed.
 				for (int i = 0; i < containers.length; i++) {
 					if (subMonitor.isCanceled()) {
 						return Status.CANCEL_STATUS;
 					}
 					subMonitor.subTask(Messages.TargetDefinition_4);
-					IStatus s = containers[i].resolve(this, subMonitor.newChild(10));
+					P2TargetUtils synchronizer = containers[i].getAdapter(P2TargetUtils.class);
+					if (synchronizer != null && !seen.contains(synchronizer)) {
+						seen.add(synchronizer);
+						try {
+							synchronizer.synchronize(this, subMonitor.newChild(4));
+						} catch (CoreException e) {
+							status.add(e.getStatus());
+						}
+					}
+				}
+				if (!status.isOK()) {
+					return status;
+				}
+				for (int i = 0; i < containers.length; i++) {
+					if (subMonitor.isCanceled()) {
+						return Status.CANCEL_STATUS;
+					}
+					subMonitor.subTask(Messages.TargetDefinition_4);
+					IStatus s = containers[i].resolve(this, subMonitor.newChild(6));
 					if (!s.isOK()) {
 						status.add(s);
 					}
