@@ -14,8 +14,6 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.pde.api.tools.internal.BundleVersionRange;
 import org.eclipse.pde.api.tools.internal.RequiredComponentDescription;
@@ -30,8 +28,19 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeContainer;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiTypeRoot;
 import org.eclipse.pde.api.tools.internal.util.Util;
 
+import junit.framework.TestCase;
+
 /**
  * Test creation of states and components.
+ * 
+ * The API Baseline Tests should be run as JUnit tests, not JUnit Plug-in Tests.
+ * This means that there is no OSGi environment available. The vm argument
+ * requiredBundles must be set to a valid baseline. In addition, rather than use
+ * the EE profiles provided by OSGi, the baseline will resolve using EEs found
+ * in the org.eclipse.pde.api.tools.internal.util.profiles inside the
+ * org.eclipse.pde.api.tools bundle.
+ * 
+ * "-DrequiredBundles=${eclipse_home}/plugins"
  * 
  * @since 1.0.0
  */

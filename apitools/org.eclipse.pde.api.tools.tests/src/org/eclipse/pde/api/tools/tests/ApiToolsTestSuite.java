@@ -11,9 +11,6 @@
 package org.eclipse.pde.api.tools.tests;
 
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.eclipse.pde.api.tools.builder.tests.OSGiLessAnalysisTests;
 import org.eclipse.pde.api.tools.comparator.tests.AllDeltaTests;
 import org.eclipse.pde.api.tools.model.tests.ApiBaselineTests;
@@ -41,8 +38,18 @@ import org.eclipse.pde.api.tools.util.tests.TarEntryTests;
 import org.eclipse.pde.api.tools.util.tests.TarExceptionTests;
 import org.eclipse.pde.api.tools.util.tests.UtilTests;
 
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
 /**
- * Test suite for all of the API tools test 
+ * Test suite for all of the API tools test
+ * 
+ * The API Baseline Tests should be run as JUnit tests, not JUnit Plug-in Tests.
+ * This means that there is no OSGi environment available. The vm argument
+ * requiredBundles must be set to a valid baseline. In addition, rather than use
+ * the EE profiles provided by OSGi, the baseline will resolve using EEs found
+ * in the org.eclipse.pde.api.tools.internal.util.profiles inside the
+ * org.eclipse.pde.api.tools bundle. "-DrequiredBundles=${eclipse_home}/plugins"
  * 
  * @since 1.0.0
  */
