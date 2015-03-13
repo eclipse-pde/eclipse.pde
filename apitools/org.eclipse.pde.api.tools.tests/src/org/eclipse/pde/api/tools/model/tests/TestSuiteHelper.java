@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -412,7 +412,7 @@ public class TestSuiteHelper {
 	public static File getEEDescriptionFile() {
 		String eePath = System.getProperty("ee.file"); //$NON-NLS-1$
 		if (eePath == null) {
-			// generate a fake 1.5 ee file
+			// generate a fake 1.7 ee file
 			File fakeEEFile = null;
 			PrintWriter writer = null;
 			try {
@@ -422,8 +422,8 @@ public class TestSuiteHelper {
 				writer.println(System.getProperty("java.home")); //$NON-NLS-1$
 				writer.print("-Dee.bootclasspath="); //$NON-NLS-1$
 				writer.println(org.eclipse.pde.api.tools.internal.util.Util.getJavaClassLibsAsString());
-				writer.println("-Dee.language.level=1.6"); //$NON-NLS-1$
-				writer.println("-Dee.class.library.level=JavaSE-1.6"); //$NON-NLS-1$
+				writer.println("-Dee.language.level=1.7"); //$NON-NLS-1$
+				writer.println("-Dee.class.library.level=JavaSE-1.7"); //$NON-NLS-1$
 				writer.flush();
 			} catch (IOException e) {
 				// ignore
