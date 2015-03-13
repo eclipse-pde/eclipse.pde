@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2000, 2015 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -145,9 +145,6 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 		//		if (featureGenerator != null && featureGenerator.getBuildProperties().containsKey(GENERATION_SOURCE_PLUGIN_PREFIX + model.getSymbolicName()))
 		//			return;
 
-		if (!AbstractScriptGenerator.isBuildingOSGi())
-			checkBootAndRuntime();
-
 		initializeVariables();
 		if (BundleHelper.getDefault().isDebugging())
 			System.out.println("Generating plugin " + model.getSymbolicName()); //$NON-NLS-1$
@@ -163,20 +160,6 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 			generateBuildScript();
 		} finally {
 			closeScript();
-		}
-	}
-
-	/**
-	 * Check that boot and runtime are available, otherwise throws an exception because the build will fail.
-	 */
-	private void checkBootAndRuntime() throws CoreException {
-		if (getSite(false).getRegistry().getResolvedBundle(PI_BOOT) == null) {
-			IStatus status = new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_PLUGIN_MISSING, NLS.bind(Messages.exception_missingPlugin, PI_BOOT), null);
-			throw new CoreException(status);
-		}
-		if (getSite(false).getRegistry().getResolvedBundle(PI_RUNTIME) == null) {
-			IStatus status = new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_PLUGIN_MISSING, NLS.bind(Messages.exception_missingPlugin, PI_RUNTIME), null);
-			throw new CoreException(status);
 		}
 	}
 
@@ -1241,11 +1224,7 @@ public class ModelBuildScriptGenerator extends AbstractBuildScriptGenerator {
 
 		// Put the jars in a correct compile order
 		String jarOrder = (String) getBuildProperties().get(PROPERTY_JAR_ORDER);
-		IClasspathComputer classpath;
-		if (AbstractScriptGenerator.isBuildingOSGi())
-			classpath = new ClasspathComputer3_0(this);
-		else
-			classpath = new ClasspathComputer2_1(this);
+		IClasspathComputer classpath = new ClasspathComputer3_0(this);
 
 		if (jarOrder != null) {
 			String[] order = Utils.getArrayFromString(jarOrder);

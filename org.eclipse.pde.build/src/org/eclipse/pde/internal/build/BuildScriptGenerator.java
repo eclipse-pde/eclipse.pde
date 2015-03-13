@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -168,7 +168,6 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 				generator.setPluginPath(pluginPath);
 				generator.setDevEntries(devEntries);
 				generator.setCompiledElements(generator.getCompiledElements());
-				generator.setBuildingOSGi(isBuildingOSGi());
 				generator.setSignJars(signJars);
 				generator.setGenerateSourceReferences(sourceReferences);
 				generator.generate();
@@ -185,7 +184,6 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 					generator.setPluginPath(pluginPath);
 					generator.setDevEntries(devEntries);
 					generator.setCompiledElements(generator.getCompiledElements());
-					generator.setBuildingOSGi(isBuildingOSGi());
 					generator.setSignJars(signJars);
 					generator.setGenerateSourceReferences(sourceReferences);
 					generator.generate();
@@ -229,7 +227,6 @@ public class BuildScriptGenerator extends AbstractScriptGenerator {
 			generator.setDevEntries(devEntries);
 			generator.setSourceToGather(new SourceFeatureInformation());//
 			generator.setCompiledElements(generator.getCompiledElements());
-			generator.setBuildingOSGi(isBuildingOSGi());
 			generator.includePlatformIndependent(includePlatformIndependent);
 			generator.setReportResolutionErrors(reportResolutionErrors);
 			generator.setIgnoreMissingPropertiesFile(ignoreMissingPropertiesFile);

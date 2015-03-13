@@ -1,5 +1,5 @@
 <!--
-    Copyright (c) 2003, 2010 IBM Corporation and others.
+    Copyright (c) 2003, 2015 IBM Corporation and others.
     All rights reserved. This program and the accompanying materials
     are made available under the terms of the Eclipse Public License v1.0
     which accompanies this distribution, and is available at
@@ -29,7 +29,6 @@
 <property name="fetchTag" value=""/>
 <property name="customEESources" value="" />
 <property name="transformedRepoLocation" value="" />
-<property name="buildingOSGi" value="true"/>
 <property name="generateJnlp" value="false"/>
 <property name="signJars" value="false"/>
 <property name="generateFeatureVersionSuffix" value="false" />
@@ -81,7 +80,6 @@
 		buildDirectory="${buildDirectory}"
 		configInfo="${configs}"
 		baseLocation="${baseLocation}"
-		buildingOSGi="${buildingOSGi}"
 		outputUpdateJars="${outputUpdateJars}"
 		archivesFormat="${archivesFormat}"
 		product="${product}"

@@ -382,7 +382,7 @@ public class PDEState implements IPDEBuildConstants, IBuildPropertiesConstants {
 		PluginConverter converter;
 		try {
 			converter = acquirePluginConverter();
-			Dictionary<String, String> manifest = converter.convertManifest(bundleLocation, false, AbstractScriptGenerator.isBuildingOSGi() ? null : "2.1", false, null); //$NON-NLS-1$
+			Dictionary<String, String> manifest = converter.convertManifest(bundleLocation, false, null, false, null);
 			if (convertedManifests != null)
 				convertedManifests.add(manifest);
 			return manifest;

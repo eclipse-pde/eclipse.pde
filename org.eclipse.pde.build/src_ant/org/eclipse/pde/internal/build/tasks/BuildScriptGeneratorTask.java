@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -199,14 +199,15 @@ public class BuildScriptGeneratorTask extends Task {
 	}
 
 	/**
-	 * Set the boolean value indicating whether or not the plug-ins and features for which scripts are being generated target eclipse 3.0 or greater. 
-	 * The default is set to true. 
-	 * This property is experimental and is likely to be renamed in the future.
-	 * @param osgi <code>true</code> if the scripts are generated for eclipse 3.0 or greated and <code>false</code> otherwise
+	 * Support for building Eclipse 2.x plug-ins has been removed. It is assumed that Eclipse 3.x-style OSGi bundles are always desired.
+	 * This setting will be removed in a future release.
+	 * @deprecated
+	 * @param osgi this parameter is ignored
 	 * @since 3.0.
 	 */
+	@Deprecated
 	public void setBuildingOSGi(boolean osgi) {
-		generator.setBuildingOSGi(osgi);
+		// this parameter is ignored
 	}
 
 	/**

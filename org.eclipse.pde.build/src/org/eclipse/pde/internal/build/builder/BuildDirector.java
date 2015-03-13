@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -542,7 +542,6 @@ public class BuildDirector extends AbstractBuildScriptGenerator {
 			generator.setModel(model); // setModel has to be called before configurePersistentProperties because it reads the model's properties
 			generator.setFeatureGenerator(this);
 			generator.setPluginPath(getPluginPath());
-			generator.setBuildingOSGi(isBuildingOSGi());
 			generator.setDevEntries(devEntries);
 			generator.includePlatformIndependent(isPlatformIndependentIncluded());
 			generator.setSignJars(signJars);

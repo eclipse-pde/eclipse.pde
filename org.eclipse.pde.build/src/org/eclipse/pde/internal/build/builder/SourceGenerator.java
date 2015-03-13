@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2013 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,11 +29,8 @@ import org.osgi.framework.Version;
 public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesConstants {
 	private static final String COMMENT_START_TAG = "<!--"; //$NON-NLS-1$
 	private static final String COMMENT_END_TAG = "-->"; //$NON-NLS-1$
-	private static final String PLUGIN_START_TAG = "<plugin"; //$NON-NLS-1$
 	private static final String FEATURE_START_TAG = "<feature";//$NON-NLS-1$
-	private static final String FRAGMENT_START_TAG = "<fragment"; //$NON-NLS-1$
 	private static final String VERSION = "version";//$NON-NLS-1$
-	private static final String PLUGIN_VERSION = "plugin-version"; //$NON-NLS-1$
 	private static final String TEMPLATE = "data"; //$NON-NLS-1$
 
 	private String featureRootLocation;
@@ -159,10 +156,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 			}
 		} else {
 			/* one source bundle + platform fragments */
-			if (AbstractScriptGenerator.isBuildingOSGi())
-				sourcePlugin = create30SourcePlugin(sourceFeature);
-			else
-				sourcePlugin = createSourcePlugin(sourceFeature);
+			sourcePlugin = create30SourcePlugin(sourceFeature);
 
 			generateSourceFragments(sourceFeature, sourcePlugin);
 		}
@@ -229,10 +223,7 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 			sourceFragment.setEnvironment(configInfo.getOs(), configInfo.getWs(), configInfo.getArch(), null);
 			sourceFragment.setFragment(true);
 			//sourceFeature.addPluginEntryModel(sourceFragment);
-			if (AbstractScriptGenerator.isBuildingOSGi())
-				create30SourceFragment(sourceFragment, sourcePlugin);
-			else
-				createSourceFragment(sourceFragment, sourcePlugin);
+			create30SourceFragment(sourceFragment, sourcePlugin);
 
 			sourceFeature.addEntry(sourceFragment);
 		}
@@ -279,71 +270,6 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 
 		int contextLength = featureExample instanceof BuildTimeFeature ? ((BuildTimeFeature) featureExample).getContextQualifierLength() : -1;
 		result.setContextQualifierLength(contextLength);
-		return result;
-	}
-
-	/**
-	 * Method createSourcePlugin.
-	 */
-	private FeatureEntry createSourcePlugin(BuildTimeFeature sourceFeature) throws CoreException {
-		//Create an object representing the plugin
-		FeatureEntry result = new FeatureEntry(sourceFeature.getId(), sourceFeature.getVersion(), true);
-		sourceFeature.addEntry(result);
-		// create the directory for the plugin
-		IPath sourcePluginDirURL = new Path(getWorkingDirectory() + '/' + DEFAULT_PLUGIN_LOCATION + '/' + getSourcePluginName(result, true));
-		File sourcePluginDir = sourcePluginDirURL.toFile();
-		sourcePluginDir.mkdirs();
-
-		// Create the plugin.xml
-		StringBuffer buffer;
-		Path templatePluginXML = new Path(TEMPLATE + "/21/plugin/" + Constants.PLUGIN_FILENAME_DESCRIPTOR); //$NON-NLS-1$
-		URL templatePluginURL = BundleHelper.getDefault().find(templatePluginXML);
-		if (templatePluginURL == null) {
-			IStatus status = new Status(IStatus.WARNING, PI_PDEBUILD, IPDEBuildConstants.EXCEPTION_READING_FILE, NLS.bind(Messages.error_readingDirectory, templatePluginXML), null);
-			BundleHelper.getDefault().getLog().log(status);
-			return null;
-		}
-		try {
-			buffer = Utils.readFile(templatePluginURL.openStream());
-		} catch (IOException e1) {
-			String message = NLS.bind(Messages.exception_readingFile, templatePluginURL.toExternalForm());
-			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_READING_FILE, message, e1));
-		}
-		int beginId = Utils.scan(buffer, 0, REPLACED_PLUGIN_ID);
-		buffer.replace(beginId, beginId + REPLACED_PLUGIN_ID.length(), result.getId());
-		//set the version number
-		beginId = Utils.scan(buffer, beginId, REPLACED_PLUGIN_VERSION);
-		buffer.replace(beginId, beginId + REPLACED_PLUGIN_VERSION.length(), result.getVersion());
-		try {
-			Utils.transferStreams(new ByteArrayInputStream(buffer.toString().getBytes()), new FileOutputStream(sourcePluginDirURL.append(Constants.PLUGIN_FILENAME_DESCRIPTOR).toOSString()));
-		} catch (IOException e1) {
-			String message = NLS.bind(Messages.exception_writingFile, templatePluginURL.toExternalForm());
-			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_READING_FILE, message, e1));
-		}
-		Collection<String> copiedFiles = Utils.copyFiles(featureRootLocation + '/' + "sourceTemplatePlugin", sourcePluginDir.getAbsolutePath()); //$NON-NLS-1$
-		if (copiedFiles.contains(Constants.PLUGIN_FILENAME_DESCRIPTOR)) {
-			replaceXMLAttribute(sourcePluginDirURL.append(Constants.PLUGIN_FILENAME_DESCRIPTOR).toOSString(), PLUGIN_START_TAG, VERSION, result.getVersion());
-		}
-		//	If a build.properties file already exist then we use it supposing it is correct.
-		File buildProperty = sourcePluginDirURL.append(PROPERTIES_FILE).toFile();
-		if (!buildProperty.exists()) {
-			copiedFiles.add(Constants.PLUGIN_FILENAME_DESCRIPTOR); //Because the plugin.xml is not copied, we need to add it to the file
-			copiedFiles.add("src/**/*.zip"); //$NON-NLS-1$
-			Properties sourceBuildProperties = new Properties();
-			sourceBuildProperties.put(PROPERTY_BIN_INCLUDES, Utils.getStringFromCollection(copiedFiles, ",")); //$NON-NLS-1$
-			sourceBuildProperties.put(SOURCE_PLUGIN_ATTRIBUTE, "true"); //$NON-NLS-1$
-			try {
-				Utils.writeProperties(sourceBuildProperties, buildProperty, null);
-			} catch (IOException e) {
-				String message = NLS.bind(Messages.exception_writingFile, buildProperty.getAbsolutePath());
-				throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, e));
-			}
-		}
-		PDEState state = getSite().getRegistry();
-		BundleDescription oldBundle = state.getResolvedBundle(result.getId());
-		if (oldBundle != null)
-			state.getState().removeBundle(oldBundle);
-		state.addBundle(sourcePluginDir);
 		return result;
 	}
 
@@ -402,65 +328,6 @@ public class SourceGenerator implements IPDEBuildConstants, IBuildPropertiesCons
 				copiedFiles.add(Constants.FRAGMENT_FILENAME_DESCRIPTOR); //Because the fragment.xml is not copied, we need to add it to the file
 				copiedFiles.add("src/**"); //$NON-NLS-1$
 				copiedFiles.add(Constants.BUNDLE_FILENAME_DESCRIPTOR);
-				Properties sourceBuildProperties = new Properties();
-				sourceBuildProperties.put(PROPERTY_BIN_INCLUDES, Utils.getStringFromCollection(copiedFiles, ",")); //$NON-NLS-1$
-				sourceBuildProperties.put("sourcePlugin", "true"); //$NON-NLS-1$ //$NON-NLS-2$
-				try {
-					Utils.writeProperties(sourceBuildProperties, buildProperty, null);
-				} catch (IOException e) {
-					String message = NLS.bind(Messages.exception_writingFile, buildProperty.getAbsolutePath());
-					throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, e));
-				}
-			}
-		} catch (IOException e) {
-			String message = NLS.bind(Messages.exception_writingFile, sourceFragmentDir.getName());
-			throw new CoreException(new Status(IStatus.ERROR, PI_PDEBUILD, EXCEPTION_WRITING_FILE, message, null));
-		}
-		PDEState state = getSite().getRegistry();
-		BundleDescription oldBundle = state.getResolvedBundle(fragment.getId());
-		if (oldBundle != null)
-			state.getState().removeBundle(oldBundle);
-		state.addBundle(sourceFragmentDir);
-	}
-
-	private void createSourceFragment(FeatureEntry fragment, FeatureEntry plugin) throws CoreException {
-		// create the directory for the plugin
-		Path sourceFragmentDirURL = new Path(getWorkingDirectory() + '/' + DEFAULT_PLUGIN_LOCATION + '/' + getSourcePluginName(fragment, false));
-		File sourceFragmentDir = new File(sourceFragmentDirURL.toOSString());
-		sourceFragmentDir.mkdirs();
-		try {
-			// read the content of the template file
-			Path fragmentPath = new Path(TEMPLATE + "/21/fragment/" + Constants.FRAGMENT_FILENAME_DESCRIPTOR);//$NON-NLS-1$
-			URL templateLocation = BundleHelper.getDefault().find(fragmentPath);
-			if (templateLocation == null) {
-				IStatus status = new Status(IStatus.WARNING, PI_PDEBUILD, IPDEBuildConstants.EXCEPTION_READING_FILE, NLS.bind(Messages.error_readingDirectory, fragmentPath), null);
-				BundleHelper.getDefault().getLog().log(status);
-				return;
-			}
-
-			StringBuffer buffer = Utils.readFile(templateLocation.openStream());
-			//Set the Id of the fragment
-			int beginId = Utils.scan(buffer, 0, REPLACED_FRAGMENT_ID);
-			buffer.replace(beginId, beginId + REPLACED_FRAGMENT_ID.length(), fragment.getId());
-			//		set the version number
-			beginId = Utils.scan(buffer, beginId, REPLACED_FRAGMENT_VERSION);
-			buffer.replace(beginId, beginId + REPLACED_FRAGMENT_VERSION.length(), fragment.getVersion());
-			// Set the Id of the plugin for the fragment
-			beginId = Utils.scan(buffer, beginId, REPLACED_PLUGIN_ID);
-			buffer.replace(beginId, beginId + REPLACED_PLUGIN_ID.length(), plugin.getId());
-			//		set the version number of the plugin to which the fragment is attached to
-			beginId = Utils.scan(buffer, beginId, REPLACED_PLUGIN_VERSION);
-			buffer.replace(beginId, beginId + REPLACED_PLUGIN_VERSION.length(), plugin.getVersion());
-			Utils.transferStreams(new ByteArrayInputStream(buffer.toString().getBytes()), new FileOutputStream(sourceFragmentDirURL.append(Constants.FRAGMENT_FILENAME_DESCRIPTOR).toOSString()));
-			Collection<String> copiedFiles = Utils.copyFiles(featureRootLocation + '/' + "sourceTemplateFragment", sourceFragmentDir.getAbsolutePath()); //$NON-NLS-1$
-			if (copiedFiles.contains(Constants.FRAGMENT_FILENAME_DESCRIPTOR)) {
-				replaceXMLAttribute(sourceFragmentDirURL.append(Constants.FRAGMENT_FILENAME_DESCRIPTOR).toOSString(), FRAGMENT_START_TAG, VERSION, fragment.getVersion());
-				replaceXMLAttribute(sourceFragmentDirURL.append(Constants.FRAGMENT_FILENAME_DESCRIPTOR).toOSString(), FRAGMENT_START_TAG, PLUGIN_VERSION, plugin.getVersion());
-			}
-			File buildProperty = sourceFragmentDirURL.append(PROPERTIES_FILE).toFile();
-			if (!buildProperty.exists()) { //If a build.properties file already exist  then we don't override it.
-				copiedFiles.add(Constants.FRAGMENT_FILENAME_DESCRIPTOR); //Because the fragment.xml is not copied, we need to add it to the file
-				copiedFiles.add("src/**"); //$NON-NLS-1$
 				Properties sourceBuildProperties = new Properties();
 				sourceBuildProperties.put(PROPERTY_BIN_INCLUDES, Utils.getStringFromCollection(copiedFiles, ",")); //$NON-NLS-1$
 				sourceBuildProperties.put("sourcePlugin", "true"); //$NON-NLS-1$ //$NON-NLS-2$

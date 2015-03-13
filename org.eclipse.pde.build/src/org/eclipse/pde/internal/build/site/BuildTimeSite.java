@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -84,16 +84,6 @@ public class BuildTimeSite /*extends Site*/implements IPDEBuildConstants, IXMLCo
 		return repositoryVersions;
 	}
 
-	/**
-	 * Create a PluginRegistryConverter, use this to avoid @deprecated warnings
-	 * @deprecated
-	 * @return PDEState
-	 */
-	@Deprecated
-	private PDEState createConverter() {
-		return new PluginRegistryConverter();
-	}
-
 	private Properties getUIPlatformProperties() {
 		Properties result = new Properties();
 		result.put(IPDEBuildConstants.PROPERTY_RESOLVE_OPTIONAL, IBuildPropertiesConstants.TRUE);
@@ -131,18 +121,14 @@ public class BuildTimeSite /*extends Site*/implements IPDEBuildConstants, IXMLCo
 				return state;
 			}
 
-			if (AbstractScriptGenerator.isBuildingOSGi()) {
-				if (filter) {
-					state = new FilteringState();
-					((FilteringState) state).setFilter(findAllReferencedPlugins());
-				} else {
-					state = new PDEState();
-				}
-				if (platformProperties != null)
-					state.setPlatformProperties(platformProperties);
+			if (filter) {
+				state = new FilteringState();
+				((FilteringState) state).setFilter(findAllReferencedPlugins());
 			} else {
-				state = createConverter();
+				state = new PDEState();
 			}
+			if (platformProperties != null)
+				state.setPlatformProperties(platformProperties);
 
 			Collection<File> bundles = removeDuplicates(provider.getPluginPaths());
 			state.addBundles(bundles);
