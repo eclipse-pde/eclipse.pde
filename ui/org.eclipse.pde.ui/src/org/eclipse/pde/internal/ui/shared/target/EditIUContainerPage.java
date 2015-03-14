@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2014 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import java.net.URISyntaxException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.eclipse.core.runtime.*;
 import org.eclipse.equinox.internal.p2.ui.ProvUI;
+import org.eclipse.equinox.internal.p2.ui.ProvUIMessages;
 import org.eclipse.equinox.internal.p2.ui.actions.PropertyDialogAction;
 import org.eclipse.equinox.internal.p2.ui.dialogs.*;
 import org.eclipse.equinox.internal.p2.ui.query.IUViewQueryContext;
@@ -303,7 +304,74 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 		GridData data = (GridData) fAvailableIUGroup.getStructuredViewer().getControl().getLayoutData();
 		data.heightHint = 200;
 
-		fSelectionCount = SWTFactory.createLabel(parent, NLS.bind(Messages.EditIUContainerPage_itemsSelected, Integer.toString(0)), 1);
+		Composite buttonParent = new Composite(parent, SWT.NONE);
+		GridLayout gridLayout = new GridLayout();
+		gridLayout.numColumns = 3;
+		gridLayout.marginWidth = 0;
+		gridLayout.horizontalSpacing = 10;
+		buttonParent.setLayout(gridLayout);
+
+		GridData gridData = new GridData(SWT.FILL, SWT.DEFAULT, true, false);
+		buttonParent.setLayoutData(gridData);
+
+		Button selectAll = new Button(buttonParent, SWT.PUSH);
+		selectAll.setText(ProvUIMessages.SelectableIUsPage_Select_All);
+		GridData selectAllData = setButtonLayoutData(selectAll);
+		selectAllData.widthHint = 90;
+
+		selectAll.addListener(SWT.Selection, new Listener() {
+			@Override
+			public void handleEvent(Event event) {
+				setAllChecked(true);
+			}
+		});
+
+		Button deselectAll = new Button(buttonParent, SWT.PUSH);
+		deselectAll.setText(ProvUIMessages.SelectableIUsPage_Deselect_All);
+		GridData deselectAllData = setButtonLayoutData(deselectAll);
+		deselectAllData.widthHint = 90;
+		deselectAll.addListener(SWT.Selection, new Listener() {
+			@Override
+			public void handleEvent(Event event) {
+				setAllChecked(false);
+			}
+		});
+		fSelectionCount = SWTFactory.createLabel(buttonParent, NLS.bind(Messages.EditIUContainerPage_itemsSelected, Integer.toString(0)), 1);
+		GridData labelData = new GridData();
+		labelData.widthHint = 200;
+		fSelectionCount.setLayoutData(labelData);
+	}
+
+	private void setAllChecked(boolean checked) {
+		if (checked) {
+			TreeItem[] items = fAvailableIUGroup.getCheckboxTreeViewer().getTree().getItems();
+			checkAll(checked, items);
+			fAvailableIUGroup.setChecked(fAvailableIUGroup.getCheckboxTreeViewer().getCheckedElements());
+		} else {
+			fAvailableIUGroup.setChecked(new Object[0]);
+		}
+		updateSelection();
+	}
+
+	private void checkAll(boolean checked, TreeItem[] items) {
+		for (int i = 0; i < items.length; i++) {
+			items[i].setChecked(checked);
+			TreeItem[] children = items[i].getItems();
+			checkAll(checked, children);
+		}
+	}
+
+	private void updateSelection() {
+		int count = fAvailableIUGroup.getCheckedLeafIUs().length;
+		setPageComplete(count > 0);
+		String message;
+		if (count == 0) {
+			message = ProvUIMessages.AvailableIUsPage_MultipleSelectionCount;
+			fSelectionCount.setText(NLS.bind(message, Integer.toString(count)));
+		} else {
+			message = count == 1 ? ProvUIMessages.AvailableIUsPage_SingleSelectionCount : ProvUIMessages.AvailableIUsPage_MultipleSelectionCount;
+			fSelectionCount.setText(NLS.bind(message, Integer.toString(count)));
+		}
 	}
 
 	/**
