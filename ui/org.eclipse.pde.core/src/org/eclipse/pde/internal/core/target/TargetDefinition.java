@@ -58,6 +58,11 @@ public class TargetDefinition implements ITargetDefinition {
 	// handle
 	private ITargetHandle fHandle;
 
+	/**
+	 * Status generated when this target was resolved, possibly <code>null</code>
+	 */
+	private IStatus fResolutionStatus;
+
 	// implicit dependencies
 	private NameVersionDescriptor[] fImplicit;
 
@@ -251,6 +256,7 @@ public class TargetDefinition implements ITargetDefinition {
 		if (containers != null) {
 			num = containers.length;
 		}
+		fResolutionStatus = null;
 		SubMonitor subMonitor = SubMonitor.convert(monitor, Messages.TargetDefinition_1, num * 10);
 		try {
 			MultiStatus status = new MultiStatus(PDECore.PLUGIN_ID, 0, Messages.TargetDefinition_2, null);
@@ -275,7 +281,10 @@ public class TargetDefinition implements ITargetDefinition {
 					}
 				}
 				if (!status.isOK()) {
-					return status;
+					return fResolutionStatus = status;
+				}
+				if (subMonitor.isCanceled()) {
+					return Status.CANCEL_STATUS;
 				}
 				for (int i = 0; i < containers.length; i++) {
 					if (subMonitor.isCanceled()) {
@@ -289,12 +298,12 @@ public class TargetDefinition implements ITargetDefinition {
 				}
 			}
 			if (status.isOK()) {
-				return Status.OK_STATUS;
+				return fResolutionStatus = Status.OK_STATUS;
 			}
 			if (subMonitor.isCanceled()) {
 				return Status.CANCEL_STATUS;
 			}
-			return status;
+			return fResolutionStatus = status;
 		} finally {
 			subMonitor.done();
 			if (monitor != null) {
@@ -323,6 +332,9 @@ public class TargetDefinition implements ITargetDefinition {
 	 * @see org.eclipse.pde.core.target.ITargetDefinition#getBundleStatus()
 	 */
 	public IStatus getStatus() {
+		if (fResolutionStatus != null && !fResolutionStatus.isOK()) {
+			return fResolutionStatus;
+		}
 		if (isResolved()) {
 			ITargetLocation[] containers = getTargetLocations();
 			if (containers != null) {
