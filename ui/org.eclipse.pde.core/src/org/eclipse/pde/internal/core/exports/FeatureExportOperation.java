@@ -664,7 +664,6 @@ public class FeatureExportOperation extends Job {
 	}
 
 	protected void setupGenerator(BuildScriptGenerator generator, String featureID, String versionId, String[][] configs, String featureLocation) throws CoreException {
-		generator.setBuildingOSGi(true);
 		generator.setChildren(true);
 		generator.setWorkingDirectory(featureLocation);
 		generator.setDevEntries(getDevProperties());
