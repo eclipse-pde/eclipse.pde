@@ -140,7 +140,9 @@ public class TargetLocationsGroup {
 		fEditButton = toolkit.createButton(buttonComp, Messages.BundleContainerTable_1, SWT.PUSH);
 		fRemoveButton = toolkit.createButton(buttonComp, Messages.BundleContainerTable_2, SWT.PUSH);
 		fUpdateButton = toolkit.createButton(buttonComp, Messages.BundleContainerTable_3, SWT.PUSH);
+		fUpdateButton.setToolTipText(Messages.TargetLocationsGroup_update);
 		fReloadButton = toolkit.createButton(buttonComp, Messages.BundleContainerTable_4, SWT.PUSH);
+		fReloadButton.setToolTipText(Messages.TargetLocationsGroup_reload);
 
 		fShowContentButton = toolkit.createButton(comp, Messages.TargetLocationsGroup_1, SWT.CHECK);
 

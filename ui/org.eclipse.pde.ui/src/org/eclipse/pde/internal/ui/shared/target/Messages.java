@@ -125,6 +125,8 @@ public class Messages extends NLS {
 	public static String TargetContentsGroup_OtherPluginsParent;
 	public static String TargetContentsGroup_PluginMode;
 	public static String TargetContentsGroup_resolveCancelled;
+	public static String TargetLocationsGroup_update;
+	public static String TargetLocationsGroup_reload;
 	public static String TargetLocationsGroup_1;
 	public static String TargetLocationsGroup_TargetUpdateErrorDialog;
 	public static String TargetStatus_NoActiveTargetPlatformStatus;
