@@ -557,14 +557,12 @@ public class TargetLocationsGroup {
 
 		//delete profile
 		try {
+			// TODO might want to merge forceCheckTarget into delete Profile?
+			P2TargetUtils.forceCheckTarget(fTarget);
 			P2TargetUtils.deleteProfile(fTarget.getHandle());
 		} catch (CoreException e) {
 			PDEPlugin.log(e);
 		}
-
-		// increase sequence number
-		if (fTarget instanceof TargetDefinition)
-			((TargetDefinition) fTarget).incrementSequenceNumber();
 
 		Job job = new UIJob("Reloading...") { //$NON-NLS-1$
 			@Override

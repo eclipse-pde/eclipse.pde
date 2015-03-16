@@ -218,6 +218,14 @@ public class P2TargetUtils {
 		}
 	}
 
+	@SuppressWarnings("restriction")
+	public static void forceCheckTarget(final ITargetDefinition target) {
+		final P2TargetUtils result = getSynchronizer(target);
+		if (result != null && result.fProfile != null && result.fProfile instanceof Profile) {
+			((Profile) result.fProfile).setProperty(PROP_SEQUENCE_NUMBER, "-1"); //$NON-NLS-1$
+		}
+	}
+
 	/**
 	 * Performs garbage collection based on remaining profiles. Should be called to avoid
 	 * having PDE's bundle pool area grow unbounded.
