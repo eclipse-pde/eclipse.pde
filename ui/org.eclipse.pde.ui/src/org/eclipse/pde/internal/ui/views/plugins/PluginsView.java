@@ -878,12 +878,13 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 	}
 
 	@Override
-	public Object getAdapter(Class adapter) {
+	@SuppressWarnings("unchecked")
+	public <T> T getAdapter(Class<T> adapter) {
 		if (isShowInApplicable()) {
 			if (adapter == IShowInSource.class && isShowInApplicable()) {
-				return getShowInSource();
+				return (T) getShowInSource();
 			} else if (adapter == IShowInTargetList.class) {
-				return getShowInTargetList();
+				return (T) getShowInTargetList();
 			}
 		}
 
