@@ -94,6 +94,16 @@ public class PDETemplateMessages extends NLS {
 	public static String ViewRCPTemplate_packageName;
 	public static String ViewRCPTemplate_windowTitle;
 
+	public static String E4ApplicationNewWizard_title;
+	public static String E4ApplicationTemplate_title;
+	public static String E4ApplicationTemplate_desc;
+	public static String E4ApplicationTemplate_appClass;
+	public static String E4ApplicationTemplate_packageName;
+	public static String E4ApplicationTemplate_windowTitle;
+	public static String E4ApplicationTemplate_createSampleContent;
+	public static String E4ApplicationTemplate_createLifeCycle;
+	public static String E4ApplicationTemplate_lifeCycleClassname;
+
 	public static String MultiPageEditorNewWizard_wtitle;
 	public static String MultiPageEditorTemplate_title;
 	public static String MultiPageEditorTemplate_desc;

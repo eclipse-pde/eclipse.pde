@@ -9,6 +9,7 @@
     
      Contributors:
          IBM Corporation - initial API and implementation
+         Olivier Prouvost <olivier.prouvost@opcoach.com> - Bug 441331
  -->
 
 <plugin>
@@ -500,6 +501,19 @@
             ui-content="false">
          <description>
             %pluginContent.OSGiEventAdminService.description
+         </description>
+      </wizard>
+            <wizard
+            class="org.eclipse.pde.internal.ui.templates.e4.E4ApplicationNewWizard"
+            icon="$nl$/icons/etool16/newexprj_wiz.gif"
+            id="org.eclipse.pde.ui.e4EmptyApplication"
+            java="true"
+            name="%pluginContent.e4RCP.name"
+            pureOSGi="false"
+            rcp="true"
+            ui-content="true">
+         <description>
+            %pluginContent.e4RCP.description
          </description>
       </wizard>
         
