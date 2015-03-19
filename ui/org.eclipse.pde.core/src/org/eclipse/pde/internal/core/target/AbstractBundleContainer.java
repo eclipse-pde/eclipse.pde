@@ -232,8 +232,8 @@ public abstract class AbstractBundleContainer extends PlatformObject implements 
 					String home = getLocation(true);
 					manipulator.getLauncherData().setLauncher(new File(home, "eclipse")); //$NON-NLS-1$
 					File installDirectory = new File(home);
-					if (Platform.getOS().equals(Platform.OS_MACOSX))
-						installDirectory = new File(installDirectory, "Eclipse.app/Contents/MacOS"); //$NON-NLS-1$
+//					if (Platform.getOS().equals(Platform.OS_MACOSX))
+//						installDirectory = new File(installDirectory, "Eclipse.app/Contents/MacOS"); //$NON-NLS-1$
 					manipulator.getLauncherData().setLauncherConfigLocation(new File(installDirectory, "eclipse.ini")); //$NON-NLS-1$
 					manipulator.getLauncherData().setHome(new File(home));
 

@@ -573,8 +573,8 @@ public class TargetPlatformHelper {
 	 */
 	public static String getIniVMArgs() {
 		File installDirectory = new File(Platform.getInstallLocation().getURL().getFile());
-		if (Platform.getOS().equals(Platform.OS_MACOSX))
-			installDirectory = new File(installDirectory, "Eclipse.app/Contents/MacOS"); //$NON-NLS-1$
+//		if (Platform.getOS().equals(Platform.OS_MACOSX))
+//			installDirectory = new File(installDirectory, "Eclipse.app/Contents/MacOS"); //$NON-NLS-1$
 		File eclipseIniFile = new File(installDirectory, "eclipse.ini"); //$NON-NLS-1$
 		BufferedReader in = null;
 		StringBuffer result = new StringBuffer();
