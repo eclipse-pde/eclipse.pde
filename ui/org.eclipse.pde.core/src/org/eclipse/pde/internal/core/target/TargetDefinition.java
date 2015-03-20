@@ -857,7 +857,7 @@ public class TargetDefinition implements ITargetDefinition {
 			buf.append("\n\tNo containers"); //$NON-NLS-1$
 		} else {
 			for (int i = 0; i < fContainers.length; i++) {
-				buf.append("\n\t").append(fContainers.toString()); //$NON-NLS-1$
+				buf.append("\n\t").append(fContainers[i].toString()); //$NON-NLS-1$
 			}
 		}
 		buf.append("\nEnv: ").append(fOS).append("/").append(fWS).append("/").append(fArch).append("/").append(fNL); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others.
+ * Copyright (c) 2008, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,19 +7,23 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Manumitting Technologies Inc - bug 324310
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.model;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.URIUtil;
@@ -31,9 +35,13 @@ import org.eclipse.pde.api.tools.internal.provisional.model.IApiComponent;
 import org.eclipse.pde.api.tools.internal.util.Util;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.core.target.ITargetDefinition;
+import org.eclipse.pde.core.target.ITargetHandle;
 import org.eclipse.pde.core.target.ITargetLocation;
 import org.eclipse.pde.core.target.ITargetPlatformService;
 import org.eclipse.pde.core.target.TargetBundle;
+import org.eclipse.pde.internal.core.target.ExternalFileTargetHandle;
+import org.eclipse.pde.internal.core.target.TargetDefinition;
+import org.eclipse.pde.internal.core.target.WorkspaceFileTargetHandle;
 
 /**
  * Utility class for creating new
@@ -46,6 +54,13 @@ public class ApiModelFactory {
 
 	private static final String CVS_FOLDER_NAME = "CVS"; //$NON-NLS-1$
 	public static final IApiComponent[] NO_COMPONENTS = new IApiComponent[0];
+
+	/**
+	 * Prefix for API baseline locations indicates the baseline was derived from
+	 * a target definition. These locations must be compatible with
+	 * {@link Path#fromPortableString(String)}.
+	 */
+	private static final String TARGET_PREFIX = "target:"; //$NON-NLS-1$
 
 	/**
 	 * {@link FilenameFilter} for CVS files
@@ -301,5 +316,127 @@ public class ApiModelFactory {
 		} finally {
 			subMonitor.done();
 		}
+	}
+
+	public static IApiBaseline newApiBaselineFromTarget(String name, ITargetDefinition definition, IProgressMonitor monitor) throws CoreException {
+		IApiBaseline baseline = new ApiBaseline(name);
+
+		SubMonitor subMonitor = SubMonitor.convert(monitor, Messages.configuring_baseline, 50);
+		try {
+			IStatus result = definition.resolve(subMonitor.newChild(30));
+			if (!result.isOK()) {
+				throw new CoreException(result);
+			}
+			Util.updateMonitor(subMonitor, 1);
+			TargetBundle[] bundles = definition.getBundles();
+			List<IApiComponent> components = new ArrayList<IApiComponent>();
+			if (bundles.length > 0) {
+				subMonitor.setWorkRemaining(bundles.length);
+				for (int i = 0; i < bundles.length; i++) {
+					Util.updateMonitor(subMonitor, 1);
+					if (!bundles[i].isSourceBundle()) {
+						IApiComponent component = ApiModelFactory.newApiComponent(baseline, URIUtil.toFile(bundles[i].getBundleInfo().getLocation()).getAbsolutePath());
+						if (component != null) {
+							subMonitor.subTask(NLS.bind(Messages.adding_component__0, component.getSymbolicName()));
+							components.add(component);
+						}
+					}
+				}
+			}
+			baseline.addApiComponents(components.toArray(new IApiComponent[components.size()]));
+			baseline.setLocation(generateTargetLocation(definition));
+			return baseline;
+		} finally {
+			subMonitor.done();
+		}
+	}
+
+	/**
+	 * Create predictable location description for a target definition. Form is
+	 * <code>target:/targetSeq/definitionLocation</code>. A location must be
+	 * compatible with
+	 * {@link org.eclipse.core.runtime.Path#fromPortableString(String)}.
+	 * 
+	 * @param definition the target platform definition
+	 * @return an encoded location
+	 * @see #isDerivedFromTarget
+	 * @see #getDefinitionIdentifier
+	 */
+	private static String generateTargetLocation(ITargetDefinition definition) {
+		StringBuilder sb = new StringBuilder(TARGET_PREFIX);
+		sb.append(IPath.SEPARATOR);
+		if (definition instanceof TargetDefinition) {
+			sb.append(((TargetDefinition) definition).getSequenceNumber());
+		}
+		sb.append(IPath.SEPARATOR);
+		sb.append(getDefinitionIdentifier(definition));
+		return sb.toString();
+	}
+
+	/**
+	 * Return a stable identifier for the provided definition.
+	 * 
+	 * @param definition
+	 * @return a stable identifier, in portable OS format as per
+	 *         {@link org.eclipse.core.runtime.Path#fromPortableString(String)}.
+	 */
+	private static String getDefinitionIdentifier(ITargetDefinition definition) {
+		ITargetHandle targetHandle = definition.getHandle();
+		// It would be nicer if ITargetHandle had #getURI() or something
+		String location;
+		if (targetHandle instanceof WorkspaceFileTargetHandle) {
+			IFile file = ((WorkspaceFileTargetHandle) targetHandle).getTargetFile();
+			location = file.getFullPath().toPortableString();
+		} else if (targetHandle instanceof ExternalFileTargetHandle) {
+			URI uri = ((ExternalFileTargetHandle) targetHandle).getLocation();
+			location = uri.toASCIIString();
+		} else {
+			// LocalTargetHandle#toString() returns file name,
+			// and hope any other impls do the same
+			location = targetHandle.toString();
+		}
+		return location.replace(':', IPath.SEPARATOR);
+	}
+
+	/**
+	 * Return true if the provided profile seems to have been derived from the
+	 * given target definition. The target definition may have evolved since
+	 * originally created.
+	 * 
+	 * @param profile the API profile
+	 * @param definition the target definition
+	 * @return true if the profile was derived from the given definition
+	 */
+	public static boolean isDerivedFromTarget(IApiBaseline profile, ITargetDefinition definition) {
+		// strip off the scheme and sequence number and compare
+		String location = profile.getLocation();
+		// location should be minimally "target://X" for some identifier X
+		if (location == null || !location.startsWith(TARGET_PREFIX) || location.length() <= TARGET_PREFIX.length() + 3 || location.charAt(TARGET_PREFIX.length()) != IPath.SEPARATOR) {
+			return false;
+		}
+		// 2 = ':/'
+		int seqEnd = location.indexOf(IPath.SEPARATOR, TARGET_PREFIX.length() + 2);
+		String targetIdentifier = location.substring(seqEnd + 1);
+		return targetIdentifier.equals(getDefinitionIdentifier(definition));
+	}
+
+	/**
+	 * Return true if the provided profile was derived from a target definition.
+	 */
+	public static boolean isDerivedFromTarget(IApiBaseline profile) {
+		return profile.getLocation() != null && profile.getLocation().startsWith(ApiModelFactory.TARGET_PREFIX);
+	}
+
+	/**
+	 * Return true if the provided profile is up-to-date with the given target
+	 * definition
+	 * 
+	 * @param profile the API profile
+	 * @param definition the target definition
+	 * @return true if the profile is up-to-date
+	 */
+	public static boolean isUpToDateWithTarget(IApiBaseline profile, ITargetDefinition definition) {
+		// The target's sequence number, if any, is generated into the location
+		return profile.getLocation() != null && profile.getLocation().equals(generateTargetLocation(definition));
 	}
 }

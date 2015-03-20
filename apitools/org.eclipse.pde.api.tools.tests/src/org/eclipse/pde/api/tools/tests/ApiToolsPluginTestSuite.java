@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,11 +7,9 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Manumitting Technologies Inc - bug 324310
  *******************************************************************************/
 package org.eclipse.pde.api.tools.tests;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
 
 import org.eclipse.pde.api.tools.anttasks.tests.ApiToolsAntTasksTestSuite;
 import org.eclipse.pde.api.tools.builder.tests.ApiBuilderTest;
@@ -22,6 +20,10 @@ import org.eclipse.pde.api.tools.util.tests.ApiBaselineManagerTests;
 import org.eclipse.pde.api.tools.util.tests.ApiDescriptionProcessorTests;
 import org.eclipse.pde.api.tools.util.tests.PreferencesTests;
 import org.eclipse.pde.api.tools.util.tests.ProjectCreationTests;
+import org.eclipse.pde.api.tools.util.tests.TargetAsBaselineTests;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 
 /**
@@ -51,6 +53,7 @@ public class ApiToolsPluginTestSuite extends TestSuite {
 		addTest(new TestSuite(ApiFilterStoreTests.class));
 		addTest(new TestSuite(FilterStoreTests.class));
 		addTest(new TestSuite(ApiProblemTests.class));
+		addTest(new TestSuite(TargetAsBaselineTests.class));
 		addTest(ApiBuilderTest.suite());
 		addTest(ApiToolsAntTasksTestSuite.suite());
 		//addTest(ExternalDependencyTestSuite.suite());

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2014 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Manumitting Technologies Inc - bug 324310
  *******************************************************************************/
 package org.eclipse.pde.api.tools.internal.model;
 
@@ -162,7 +163,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	 * Constructs a new API baseline with the given attributes.
 	 *
 	 * @param name baseline name
-	 * @param eeDescriptoin execution environment description file
+	 * @param eeDescription execution environment description file
 	 * @throws CoreException if unable to create a baseline with the given
 	 *             attributes
 	 */
@@ -174,7 +175,7 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 	 * Constructs a new API baseline with the given attributes.
 	 *
 	 * @param name baseline name
-	 * @param eeDescriptoin execution environment description file
+	 * @param eeDescription execution environment description file
 	 * @param location the given baseline location
 	 * @throws CoreException if unable to create a baseline with the given
 	 *             attributes

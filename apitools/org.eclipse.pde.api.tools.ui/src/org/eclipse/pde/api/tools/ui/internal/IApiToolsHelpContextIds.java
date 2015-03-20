@@ -22,7 +22,7 @@ import org.eclipse.pde.api.tools.ui.internal.use.DescriptionPatternPage;
 import org.eclipse.pde.api.tools.ui.internal.use.PatternSelectionPage;
 import org.eclipse.pde.api.tools.ui.internal.use.ReportPatternPage;
 import org.eclipse.pde.api.tools.ui.internal.views.APIToolingView;
-import org.eclipse.pde.api.tools.ui.internal.wizards.ApiBaselineWizardPage;
+import org.eclipse.pde.api.tools.ui.internal.wizards.DirectoryBasedApiBaselineWizardPage;
 import org.eclipse.pde.api.tools.ui.internal.wizards.ApiToolingSetupWizardPage;
 import org.eclipse.pde.api.tools.ui.internal.wizards.CompareToBaselineWizard;
 import org.eclipse.pde.api.tools.ui.internal.wizards.JavadocConversionPage;
@@ -41,7 +41,7 @@ public interface IApiToolsHelpContextIds {
 	 */
 	public static final String APIBASELINE_PREF_PAGE = PREFIX + "apiprofiles_preference_page"; //$NON-NLS-1$
 	/**
-	 * Constant representing the help id for the {@link ApiBaselineWizardPage}
+	 * Constant representing the help id for the {@link DirectoryBasedApiBaselineWizardPage}
 	 */
 	public static final String APIPROFILES_WIZARD_PAGE = PREFIX + "apiprofiles_wizard_page"; //$NON-NLS-1$
 	/**

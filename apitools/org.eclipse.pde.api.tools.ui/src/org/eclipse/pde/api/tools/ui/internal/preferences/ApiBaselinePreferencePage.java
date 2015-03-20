@@ -275,7 +275,7 @@ public class ApiBaselinePreferencePage extends PreferencePage implements IWorkbe
 	 */
 	protected void doEdit(final IApiBaseline baseline) {
 		ApiBaselineWizard wizard = new ApiBaselineWizard(baseline);
-		WizardDialog dialog = new WizardDialog(ApiUIPlugin.getShell(), wizard);
+		WizardDialog dialog = new WizardDialog(getShell(), wizard);
 		if (dialog.open() == IDialogConstants.OK_ID) {
 			IApiBaseline newbaseline = wizard.getProfile();
 			if (newbaseline != null) {

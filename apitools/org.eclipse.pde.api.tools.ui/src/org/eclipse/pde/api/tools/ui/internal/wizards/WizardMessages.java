@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others.
+ * Copyright (c) 2008, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Manumitting Technologies Inc - bug 324310
  *******************************************************************************/
 package org.eclipse.pde.api.tools.ui.internal.wizards;
 
@@ -35,6 +36,7 @@ public class WizardMessages extends NLS {
 	public static String ApiProfileWizardPage_create_working_copy;
 	public static String ApiProfileWizardPage_location_needs_reset;
 	public static String ApiProfileWizardPage_profile_with_that_name_exists;
+	public static String ApiProfileWizardPage_select_target;
 	public static String ApiToolingSetupWizard_0;
 	public static String ApiToolingSetupWizardPage_0;
 	public static String ApiToolingSetupWizardPage_1;
@@ -65,6 +67,10 @@ public class WizardMessages extends NLS {
 	public static String ProjectUpdateChange_add_nature_and_builder;
 	public static String ProjectUpdateChange_adding_nature_and_builder;
 	public static String ProjectUpdateChange_project_not_accessible;
+	public static String SelectApiBaselineTypeWizardPage_select_baseline_source;
+	public static String SelectApiBaselineTypeWizardPage_source_installation_directory;
+	public static String SelectApiBaselineTypeWizardPage_source_target_platform;
+	public static String TargetBasedApiBaselineWizardPage_loading_error;
 	public static String UpdateJavadocTagsWizard_0;
 	public static String UpdateJavadocTagsWizardPage_10;
 	public static String UpdateJavadocTagsWizardPage_11;
