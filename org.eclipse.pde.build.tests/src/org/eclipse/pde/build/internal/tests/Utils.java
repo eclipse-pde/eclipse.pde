@@ -323,6 +323,11 @@ public class Utils {
 			}
 		}
 
+		if (Platform.OS_MACOSX.equals(Platform.getOS())) {
+			// After https://bugs.eclipse.org/431116 and related changes, the install location on the Mac
+			// moved down two directories (from <folder-containing-Eclipse.app> to Eclipse.app/Contents/Eclipse).
+			baseLocation = baseLocation.getParentFile().getParentFile();
+		}
 		deltaLocation = findExecutable(new File(baseLocation.getParent(), "deltapack/eclipse"));
 		return deltaLocation;
 	}
