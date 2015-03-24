@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -79,7 +79,6 @@ public class PDERuntimePluginImages {
 	public static final ImageDescriptor DESC_PLUGINS_OBJ = create(PATH_OBJ, "plugins_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_FRAGMENT_OBJ = create(PATH_OBJ, "frgmt_obj.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_PACKAGE_OBJ = create(PATH_OBJ, "package_obj.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_REMOTE_SERVICE_PROXY_OBJ = create(PATH_OBJ, "rsvcproxy_obj.gif"); //$NON-NLS-1$
 
 	/*
 	 * Overlays
