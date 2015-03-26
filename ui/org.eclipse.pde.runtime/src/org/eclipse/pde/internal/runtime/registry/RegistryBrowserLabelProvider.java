@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime.registry;
 
-import org.eclipse.pde.internal.runtime.PDERuntimeMessages;
-
 import java.util.Arrays;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
@@ -20,6 +18,7 @@ import org.eclipse.pde.internal.runtime.*;
 import org.eclipse.pde.internal.runtime.registry.model.*;
 import org.eclipse.swt.graphics.Image;
 import org.osgi.framework.Constants;
+import org.osgi.framework.ServiceReference;
 
 public class RegistryBrowserLabelProvider extends StyledCellLabelProvider implements ILabelProvider {
 
@@ -47,6 +46,7 @@ public class RegistryBrowserLabelProvider extends StyledCellLabelProvider implem
 	private Image fServicePropertyImage;
 	private Image fFragmentImage;
 	private Image fPackageImage;
+	private Image fRemoteServiceProxyImage;
 	private RegistryBrowser fRegistryBrowser;
 
 	public RegistryBrowserLabelProvider(RegistryBrowser browser) {
@@ -70,6 +70,7 @@ public class RegistryBrowserLabelProvider extends StyledCellLabelProvider implem
 		fPluginsImage = PDERuntimePluginImages.DESC_PLUGINS_OBJ.createImage();
 		fFragmentImage = PDERuntimePluginImages.DESC_FRAGMENT_OBJ.createImage();
 		fPackageImage = PDERuntimePluginImages.DESC_PACKAGE_OBJ.createImage();
+		fRemoteServiceProxyImage = PDERuntimePluginImages.DESC_REMOTE_SERVICE_PROXY_OBJ.createImage();
 
 		ImageDescriptor activePluginDesc = new OverlayIcon(PDERuntimePluginImages.DESC_PLUGIN_OBJ, new ImageDescriptor[][] {{PDERuntimePluginImages.DESC_RUN_CO}});
 		fActivePluginImage = activePluginDesc.createImage();
@@ -115,6 +116,20 @@ public class RegistryBrowserLabelProvider extends StyledCellLabelProvider implem
 		fPackageImage.dispose();
 	}
 
+	private boolean isProxyService(ServiceReference ref) {
+		if (ref == null)
+			return false;
+		Object o = ref.getProperty(Constants.SERVICE_IMPORTED);
+		return (o != null);
+	}
+
+	private boolean isProxyService(ServiceRegistration reg) {
+		if (reg == null)
+			return false;
+		Object o = reg.getProperty(Constants.SERVICE_IMPORTED);
+		return (o != null);
+	}
+
 	public Image getImage(Object element) {
 		if (element instanceof Bundle) {
 			Bundle bundle = (Bundle) element;
@@ -139,10 +154,16 @@ public class RegistryBrowserLabelProvider extends StyledCellLabelProvider implem
 		}
 
 		if (element instanceof ServiceName) {
+			ServiceName serviceName = (ServiceName) element;
+			if (isProxyService(serviceName.getServiceReference()))
+				return fRemoteServiceProxyImage;
 			return fServiceImage;
 		}
 
 		if (element instanceof ServiceRegistration) {
+			ServiceRegistration reg = (ServiceRegistration) element;
+			if (isProxyService(reg))
+				return fRemoteServiceProxyImage;
 			return fPluginImage;
 		}
 
