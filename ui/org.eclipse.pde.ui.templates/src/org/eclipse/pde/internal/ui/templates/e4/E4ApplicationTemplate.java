@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Olivier Prouvost <olivier.prouvost@opcoach.com> - initial API and implementation (bug #441331)
+ *     Olivier Prouvost <olivier.prouvost@opcoach.com> - Bug 463821
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.templates.e4;
 
@@ -17,6 +18,8 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.ui.templates.*;
+import org.eclipse.pde.ui.IFieldData;
+import org.eclipse.pde.ui.IPluginFieldData;
 import org.eclipse.pde.ui.templates.PluginReference;
 import org.eclipse.pde.ui.templates.TemplateOption;
 import org.osgi.framework.Bundle;
@@ -25,15 +28,24 @@ import org.osgi.framework.Version;
 public class E4ApplicationTemplate extends PDETemplateSection {
 
 	private static final String E4_SWT_APPLICATION_ID = "org.eclipse.e4.ui.workbench.swt.E4Application"; //$NON-NLS-1$
-	public static final String KEY_CREATE_SAMPLE_CONTENT = "createContent"; //$NON-NLS-1$
-	public static final String KEY_CREATE_LIFE_CYCLE = "createLifeCycle"; //$NON-NLS-1$
-	public static final String KEY_LIFE_CYCLE_CLASS_NAME = "lifeCycleClassName"; //$NON-NLS-1$
-	public static final String KEY_WINDOW_TITLE = "windowTitle"; //$NON-NLS-1$
+	private static final String KEY_CREATE_SAMPLE_CONTENT = "createContent"; //$NON-NLS-1$
+	private static final String KEY_CREATE_LIFE_CYCLE = "createLifeCycle"; //$NON-NLS-1$
+	private static final String KEY_LIFE_CYCLE_CLASS_NAME = "lifeCycleClassName"; //$NON-NLS-1$
+	private static final String KEY_WINDOW_TITLE = "windowTitle"; //$NON-NLS-1$
 
+	// Set the names of the two template files to be tested in isOkToCreateFile method
+	// Those files are stored in the org.eclipse.pde.ui.templates/templates_3.5/E4Application/java folder
+	private static final String TEMPLATE_ACTIVATOR_FILENAME = "$activator$.java"; //$NON-NLS-1$
+	private static final String TEMPLATE_LIFECYCLE_FILENAME = "$lifeCycleClassName$.java"; //$NON-NLS-1$
+
+	// name of the non empty application model file stored in the org.eclipse.pde.ui.templates/templates_3.5/E4Application folder
 	static final String E4_MODEL_FILE = "Application.e4xmi"; //$NON-NLS-1$
+	// name of the EMPTY application model file stored in the org.eclipse.pde.ui.templates/templates_3.5/E4Application/bin folder
 	private static final String EMPTY_E4_MODEL_FILE = "bin/" + E4_MODEL_FILE; //$NON-NLS-1$
 
-	TemplateOption lifeCycleClassnameOption;
+	private TemplateOption lifeCycleClassnameOption;
+
+	private boolean mustGenerateActivator;
 
 	public E4ApplicationTemplate() {
 		setPageCount(1);
@@ -58,7 +70,6 @@ public class E4ApplicationTemplate extends PDETemplateSection {
 		lifeCycleClassnameOption.setRequired(false);
 		lifeCycleClassnameOption.setEnabled(false);
 	}
-
 
 	@Override
 	public void validateOptions(TemplateOption source) {
@@ -131,7 +142,12 @@ public class E4ApplicationTemplate extends PDETemplateSection {
 	protected boolean isOkToCreateFile(File sourceFile) {
 
 		// If file is the lifeCycleClassname (with a $ at the end) we keep it only if life cycle must be created.
-		if (sourceFile.getName().endsWith(KEY_LIFE_CYCLE_CLASS_NAME + "$.java")) //$NON-NLS-1$
+		String fname = sourceFile.getName();
+		// Fix bug #463821 : Check activator using the options saved in the overridden initializeFields method
+		if (fname.equals(TEMPLATE_ACTIVATOR_FILENAME))
+			return mustGenerateActivator;
+
+		if (fname.equals(TEMPLATE_LIFECYCLE_FILENAME))
 			return getBooleanOption(KEY_CREATE_LIFE_CYCLE);
 
 		// There are 2 application models :
@@ -139,7 +155,7 @@ public class E4ApplicationTemplate extends PDETemplateSection {
 		// the Application.e4xmi containing the customized model with content. 
 		// We must keep one of them depending on the KEY_CREATE_SAMPLE_CONTENT 
 
-		if (sourceFile.getName().endsWith(E4_MODEL_FILE)) {
+		if (fname.endsWith(E4_MODEL_FILE)) {
 
 			// This is one of the 2 files... 
 			// Check if this is the bin/Application.e4xmi. In this cas we must keep it if no content expected
@@ -160,14 +176,24 @@ public class E4ApplicationTemplate extends PDETemplateSection {
 
 	@Override
 	public boolean isDependentOnParentWizard() {
+		// Must return true here to call the initializeFields(IFieldData) from ancestor
 		return true;
+	}
+
+	@Override
+	protected void initializeFields(IFieldData data) {
+		// This is called because isDependentOnParentWizard returns true
+		// We can get values entered in previous pages and put them in the local options.
+		// At this point, we need to remember if we have to generate the activator or not.
+		if (data instanceof IPluginFieldData) {
+			mustGenerateActivator = ((IPluginFieldData) data).doGenerateClass();
+		}
 	}
 
 	@Override
 	public int getNumberOfWorkUnits() {
 		return super.getNumberOfWorkUnits() + 1;
 	}
-
 
 	@Override
 	public IPluginReference[] getDependencies(String schemaVersion) {
