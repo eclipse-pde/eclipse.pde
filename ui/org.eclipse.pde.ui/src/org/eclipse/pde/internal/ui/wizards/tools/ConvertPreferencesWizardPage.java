@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Rapicorp Corporation and others.
+ * Copyright (c) 2014, 2015 Rapicorp Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -67,13 +67,13 @@ public class ConvertPreferencesWizardPage extends WizardPage {
 		group.setText(PDEUIMessages.ConvertPreferencesWizardPage_sourceFileGroup);
 
 		Label label = new Label(group, SWT.NONE);
-		label.setText(PDEUIMessages.ConvertPreferencesWizardPage_file);
+		label.setText(PDEUIMessages.ConvertPreferencesWizardPage_source_file);
 
 		fPreferenceCombo = new Combo(group, SWT.BORDER);
 		fPreferenceCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		Button browse = new Button(group, SWT.PUSH);
-		browse.setText(PDEUIMessages.ConvertPreferencesWizardPage_browse);
+		browse.setText(PDEUIMessages.ConvertPreferencesWizardPage_source_browse);
 		browse.setLayoutData(new GridData());
 		browse.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -102,7 +102,7 @@ public class ConvertPreferencesWizardPage extends WizardPage {
 		group.setText(PDEUIMessages.ConvertPreferencesWizardPage_targetFileGroup);
 
 		label = new Label(group, SWT.NONE);
-		label.setText(PDEUIMessages.ConvertPreferencesWizardPage_file);
+		label.setText(PDEUIMessages.ConvertPreferencesWizardPage_target_file);
 
 		fPluginCustomizeCombo = new Combo(group, SWT.BORDER);
 		fPluginCustomizeCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -120,7 +120,7 @@ public class ConvertPreferencesWizardPage extends WizardPage {
 		});
 
 		browse = new Button(group, SWT.PUSH);
-		browse.setText(PDEUIMessages.ConvertPreferencesWizardPage_browse);
+		browse.setText(PDEUIMessages.ConvertPreferencesWizardPage_target_browse);
 		browse.setLayoutData(new GridData());
 		browse.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {

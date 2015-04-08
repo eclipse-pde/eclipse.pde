@@ -2900,8 +2900,10 @@ public class PDEUIMessages extends NLS {
 
 	public static String ConvertPreferencesWizardPage_title;
 	public static String ConvertPreferencesWizardPage_description;
-	public static String ConvertPreferencesWizardPage_file;
-	public static String ConvertPreferencesWizardPage_browse;
+	public static String ConvertPreferencesWizardPage_source_file;
+	public static String ConvertPreferencesWizardPage_source_browse;
+	public static String ConvertPreferencesWizardPage_target_file;
+	public static String ConvertPreferencesWizardPage_target_browse;
 	public static String ConvertPreferencesWizardPage_merge;
 	public static String ConvertPreferencesWizardPage_overwrite;
 	public static String ConvertPreferencesWizardPage_fileTitle;
