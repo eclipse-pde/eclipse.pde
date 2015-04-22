@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,8 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.runtime.registry;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
@@ -742,5 +743,19 @@ public class RegistryBrowser extends ViewPart {
 		}
 
 		return super.getAdapter(clazz);
+	}
+
+	/**
+	 * Internal api to set group_by value 
+	 * @param newGroupBy
+	 * returns the old group_by value.
+	 */
+	public int showGroupBy(int newGroupBy) {
+		int previousGroupBy = getGroupBy();
+		if (fTreeViewer != null && !fTreeViewer.getControl().isDisposed()) {
+			fMemento.putInteger(GROUP_BY, newGroupBy);
+			fRefreshAction.run();
+		}
+		return previousGroupBy;
 	}
 }
