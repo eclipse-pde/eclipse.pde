@@ -640,6 +640,33 @@ public class P2TargetUtils {
 			return false;
 		}
 	}
+	
+	/**
+	 * Return whether or not the given target's matching profile  is in sync
+	 * @param target the target to check
+	 * @return whether or not the target has been resolved at the p2 level
+	 */
+	public static boolean isProfileValid(ITargetDefinition target) {
+		P2TargetUtils synchronizer = getSynchronizer(target);
+		if (synchronizer == null)
+			return false;
+		try {
+			synchronizer.updateProfileFromRegistry(target);
+			return synchronizer.checkProfile(target);
+		} catch (CoreException e) {
+			return false;
+		}
+	}
+
+
+	private void updateProfileFromRegistry(ITargetDefinition target) {
+		if (fProfile == null) {
+			try {
+				fProfile = getProfileRegistry().getProfile(getProfileId(target));
+			} catch (CoreException e) {
+			}
+		}
+	}
 
 	/**
 	 * Get the synchronizer to use for the given target.  If there is already one on a

@@ -26,6 +26,7 @@ import org.eclipse.pde.core.build.IBuild;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.core.target.*;
+import org.eclipse.pde.internal.core.target.P2TargetUtils;
 
 public class PluginModelManager implements IModelProviderListener {
 	private static final String fExternalPluginListFile = "SavedExternalPluginList.txt"; //$NON-NLS-1$
@@ -525,7 +526,7 @@ public class PluginModelManager implements IModelProviderListener {
 		} catch (CoreException e) {
 			PDECore.log(e);
 		}
-		if (unresolvedRepoBasedtarget != null) {
+		if (unresolvedRepoBasedtarget != null && !P2TargetUtils.isProfileValid(unresolvedRepoBasedtarget)) {
 			//Workspace target contains unresolved p2 repositories,
 			//set empty fState, fExternalManager, fEntries- scheduling target platform resolve
 			fState = new PDEState(new URL[0], true, true, subMon);
