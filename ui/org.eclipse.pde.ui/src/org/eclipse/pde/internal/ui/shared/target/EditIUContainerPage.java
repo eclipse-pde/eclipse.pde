@@ -316,9 +316,9 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 
 		Button selectAll = new Button(buttonParent, SWT.PUSH);
 		selectAll.setText(ProvUIMessages.SelectableIUsPage_Select_All);
-		GridData selectAllData = setButtonLayoutData(selectAll);
-		selectAllData.widthHint = 90;
 
+		selectAll.setLayoutData(new GridData());
+		SWTFactory.setButtonDimensionHint(selectAll);
 		selectAll.addListener(SWT.Selection, new Listener() {
 			@Override
 			public void handleEvent(Event event) {
@@ -328,8 +328,8 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 
 		Button deselectAll = new Button(buttonParent, SWT.PUSH);
 		deselectAll.setText(ProvUIMessages.SelectableIUsPage_Deselect_All);
-		GridData deselectAllData = setButtonLayoutData(deselectAll);
-		deselectAllData.widthHint = 90;
+		deselectAll.setLayoutData(new GridData());
+		SWTFactory.setButtonDimensionHint(deselectAll);
 		deselectAll.addListener(SWT.Selection, new Listener() {
 			@Override
 			public void handleEvent(Event event) {
