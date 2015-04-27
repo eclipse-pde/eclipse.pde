@@ -14,7 +14,9 @@ import java.io.File;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.equinox.bidi.StructuredTextTypeHandlerFactory;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.util.BidiUtils;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.osgi.util.NLS;
@@ -70,6 +72,7 @@ public class ConvertPreferencesWizardPage extends WizardPage {
 		label.setText(PDEUIMessages.ConvertPreferencesWizardPage_source_file);
 
 		fPreferenceCombo = new Combo(group, SWT.BORDER);
+		BidiUtils.applyBidiProcessing(fPreferenceCombo, StructuredTextTypeHandlerFactory.FILE);
 		fPreferenceCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		Button browse = new Button(group, SWT.PUSH);
@@ -105,6 +108,7 @@ public class ConvertPreferencesWizardPage extends WizardPage {
 		label.setText(PDEUIMessages.ConvertPreferencesWizardPage_target_file);
 
 		fPluginCustomizeCombo = new Combo(group, SWT.BORDER);
+		BidiUtils.applyBidiProcessing(fPluginCustomizeCombo, StructuredTextTypeHandlerFactory.FILE);
 		fPluginCustomizeCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		IFile customization = getCustomizationFile(fPluginCustomizeFilePath);
