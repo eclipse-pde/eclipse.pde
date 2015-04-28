@@ -8,12 +8,14 @@
  * Contributors:
  *     Olivier Prouvost <olivier.prouvost@opcoach.com> - initial API and implementation (bug #441331)
  *     Olivier Prouvost <olivier.prouvost@opcoach.com> - Bug 463821
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 463821
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.templates.e4;
 
 import java.io.File;
 import java.util.ArrayList;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.core.plugin.*;
@@ -22,8 +24,6 @@ import org.eclipse.pde.ui.IFieldData;
 import org.eclipse.pde.ui.IPluginFieldData;
 import org.eclipse.pde.ui.templates.PluginReference;
 import org.eclipse.pde.ui.templates.TemplateOption;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.Version;
 
 public class E4ApplicationTemplate extends PDETemplateSection {
 
@@ -47,6 +47,8 @@ public class E4ApplicationTemplate extends PDETemplateSection {
 
 	private boolean mustGenerateActivator;
 
+	String initialPackage = null; // Name of package set in the activator class name (get from previous page).
+
 	public E4ApplicationTemplate() {
 		setPageCount(1);
 		createOptions();
@@ -65,6 +67,7 @@ public class E4ApplicationTemplate extends PDETemplateSection {
 	private void createOptions() {
 		addOption(KEY_WINDOW_TITLE, PDETemplateMessages.E4ApplicationTemplate_windowTitle, "Eclipse 4 RCP Application", 0); //$NON-NLS-1$ 
 		addOption(KEY_CREATE_SAMPLE_CONTENT, PDETemplateMessages.E4ApplicationTemplate_createSampleContent, false, 0);
+		addOption(KEY_PACKAGE_NAME, PDETemplateMessages.E4ApplicationTemplate_packageName, (String) null, 0);
 		addOption(KEY_CREATE_LIFE_CYCLE, PDETemplateMessages.E4ApplicationTemplate_createLifeCycle, false, 0);
 		lifeCycleClassnameOption = addOption(KEY_LIFE_CYCLE_CLASS_NAME, PDETemplateMessages.E4ApplicationTemplate_lifeCycleClassname, "E4LifeCycle", 0); //$NON-NLS-1$ 
 		lifeCycleClassnameOption.setRequired(false);
@@ -188,6 +191,17 @@ public class E4ApplicationTemplate extends PDETemplateSection {
 		if (data instanceof IPluginFieldData) {
 			mustGenerateActivator = ((IPluginFieldData) data).doGenerateClass();
 		}
+
+		// In a new project wizard, we don't know this yet - the
+		// model has not been created
+		initialPackage = getFormattedPackageName(data.getId());
+		initializeOption(KEY_PACKAGE_NAME, initialPackage);
+	}
+
+	@Override
+	public void initializeFields(IPluginModelBase model) {
+		initialPackage = getFormattedPackageName(model.getPluginBase().getId());
+		initializeOption(KEY_PACKAGE_NAME, initialPackage);
 	}
 
 	@Override
@@ -207,13 +221,7 @@ public class E4ApplicationTemplate extends PDETemplateSection {
 
 		final ArrayList<IPluginReference> result = new ArrayList<IPluginReference>(dependencies.length);
 		for (final String dependency : dependencies) {
-			final Bundle bundle = Platform.getBundle(dependency);
 			String versionString = "0.0.0"; //$NON-NLS-1$
-			if (dependency != null) {
-				final Version version = bundle.getVersion();
-				versionString = version.getMajor() + "." //$NON-NLS-1$
-						+ version.getMinor() + "." + version.getMicro(); //$NON-NLS-1$
-			}
 			result.add(new PluginReference(dependency, versionString, IMatchRules.GREATER_OR_EQUAL));
 		}
 		return result.toArray(new IPluginReference[0]);
