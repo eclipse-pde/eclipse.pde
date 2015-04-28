@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,9 +8,10 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Les Jones <lesojones@gmail.com> - Bug 185477
- *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 463272
  *******************************************************************************/
 package org.eclipse.pde.ui.templates;
+
+import java.util.zip.ZipEntry;
 
 import java.io.*;
 import java.net.MalformedURLException;
@@ -218,11 +219,12 @@ public abstract class AbstractTemplateSection implements ITemplateSection, IVari
 	 * @see org.eclipse.pde.ui.templates.ITemplateSection#getDependencies(java.lang.String)
 	 */
 	public IPluginReference[] getDependencies(String schemaVersion) {
-		return null;
+		return new IPluginReference[] {new PluginReference("org.eclipse.ui", //$NON-NLS-1$
+				null, 0)};
 	}
 
 	/**
-	 * Returns the folder with Java files in the target project	. The default
+	 * Returns the folder with Java files in the target project. The default
 	 * implementation looks for source folders in the classpath of the target
 	 * folders and picks the first one encountered. Subclasses may override this
 	 * behaviour.
