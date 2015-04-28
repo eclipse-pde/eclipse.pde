@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.ui.IActionFilter;
 
+
 /**
  * API Tools UI adapter factory
  */
