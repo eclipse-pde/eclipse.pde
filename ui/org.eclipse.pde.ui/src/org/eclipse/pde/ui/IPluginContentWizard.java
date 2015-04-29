@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -72,7 +72,7 @@ public interface IPluginContentWizard extends IBasePluginWizard {
 	 * variable. Since the tokens obtained by this method will be passed to the
 	 * variable as-is, it is legal to use all wild cards also legal in
 	 * <code>build.properties</code>,
-	 * such as "*.gif".
+	 * such as "*.png".
 	 * 
 	 * @return an array of new file and folder names
 	 */
