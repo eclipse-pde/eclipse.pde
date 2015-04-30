@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Code 9 Corporation and others.
+ * Copyright (c) 2008, 2015 Code 9 Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Code 9 Corporation - initial API and implementation
  *     Rafael Oliveira Nobrega <rafael.oliveira@gmail.com> - bug 242028
+ *     Lars.Vogel <Lars.Vogel@vogella.com> - Bug 465781
  *******************************************************************************/
 package org.eclipse.pde.internal.ds.ui;
 
@@ -29,26 +30,26 @@ public final class SharedImages {
 	private static final String PATH_OVR = ICONS_PATH + "ovr16/"; //$NON-NLS-1$
 	private static final String PATH_WIZBAN = ICONS_PATH + "wizban/"; //$NON-NLS-1$
 
-	public static final String DESC_IMPLEMENTATION = PATH_OBJ + "class_obj.gif"; //$NON-NLS-1$
-	public static final String DESC_PROPERTY = PATH_OBJ + "property_obj.gif"; //$NON-NLS-1$
+	public static final String DESC_IMPLEMENTATION = PATH_OBJ + "class_obj.png"; //$NON-NLS-1$
+	public static final String DESC_PROPERTY = PATH_OBJ + "property_obj.png"; //$NON-NLS-1$
 	public static final String DESC_PROPERTIES = PATH_OBJ
-			+ "properties_obj.gif"; //$NON-NLS-1$	
-	public static final String DESC_PROVIDE = PATH_OBJ + "int_obj.gif"; //$NON-NLS-1$
-	public static final String DESC_REFERENCE = PATH_OBJ + "reference_obj.gif"; //$NON-NLS-1$
+			+ "properties_obj.png"; //$NON-NLS-1$	
+	public static final String DESC_PROVIDE = PATH_OBJ + "int_obj.png"; //$NON-NLS-1$
+	public static final String DESC_REFERENCE = PATH_OBJ + "reference_obj.png"; //$NON-NLS-1$
 	public static final String DESC_REFERENCE_ONE_N = PATH_OBJ
-			+ "reference_one_n_obj.gif"; //$NON-NLS-1$
+			+ "reference_one_n_obj.png"; //$NON-NLS-1$
 	public static final String DESC_REFERENCE_ZERO_ONE = PATH_OBJ
-			+ "reference_zero_one_obj.gif"; //$NON-NLS-1$
+			+ "reference_zero_one_obj.png"; //$NON-NLS-1$
 	public static final String DESC_REFERENCE_ZERO_N = PATH_OBJ
-			+ "reference_zero_n_obj.gif"; //$NON-NLS-1$
-	public static final String DESC_ROOT = PATH_OBJ + "component_obj.gif"; //$NON-NLS-1$
-	public static final String DESC_SERVICE = PATH_OBJ + "service_obj.gif"; //$NON-NLS-1$
-	public static final String DESC_SERVICES = PATH_OBJ + "services_obj.gif"; //$NON-NLS-1$
-	public static final String DESC_DS = PATH_OBJ + "ds_obj.gif"; //$NON-NLS-1$
-	public static final String DESC_ATTR = PATH_OBJ + "attribute_obj.gif"; //$NON-NLS-1$
-	public static final String DESC_DETAILS = PATH_OBJ + "details_obj.gif"; //$NON-NLS-1$
+			+ "reference_zero_n_obj.png"; //$NON-NLS-1$
+	public static final String DESC_ROOT = PATH_OBJ + "component_obj.png"; //$NON-NLS-1$
+	public static final String DESC_SERVICE = PATH_OBJ + "service_obj.png"; //$NON-NLS-1$
+	public static final String DESC_SERVICES = PATH_OBJ + "services_obj.png"; //$NON-NLS-1$
+	public static final String DESC_DS = PATH_OBJ + "ds_obj.png"; //$NON-NLS-1$
+	public static final String DESC_ATTR = PATH_OBJ + "attribute_obj.png"; //$NON-NLS-1$
+	public static final String DESC_DETAILS = PATH_OBJ + "details_obj.png"; //$NON-NLS-1$
 
-	public static final String OVR_DYNAMIC = PATH_OVR + "synch_co.gif"; //$NON-NLS-1$
+	public static final String OVR_DYNAMIC = PATH_OVR + "synch_co.png"; //$NON-NLS-1$
 
 	public static final String DESC_DS_WIZ = PATH_WIZBAN + "defcon_wiz.png"; //$NON-NLS-1$
 
