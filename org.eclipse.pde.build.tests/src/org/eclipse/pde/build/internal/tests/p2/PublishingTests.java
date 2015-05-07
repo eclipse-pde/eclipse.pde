@@ -848,8 +848,8 @@ public class PublishingTests extends P2TestCase {
 
 		if (Platform.getOS().equals("macosx")) {
 			IFile iniFile = buildFolder.getFile("/tmp/eclipse/headless.app/Contents/MacOS/headless.ini");
-			assertLogContainsLines(iniFile, new String[] {"-startup", "plugins/org.eclipse.equinox.launcher_"});
-			assertLogContainsLines(iniFile, new String[] {"--launcher.library", "plugins/org.eclipse.equinox.launcher."});
+			//	assertLogContainsLines(iniFile, new String[] {"-startup", "plugins/org.eclipse.equinox.launcher_"});
+			//	assertLogContainsLines(iniFile, new String[] {"--launcher.library", "plugins/org.eclipse.equinox.launcher."});
 		} else {
 			IFile iniFile = buildFolder.getFile("/tmp/eclipse/headless.ini");
 			assertLogContainsLines(iniFile, new String[] {"-startup", "plugins/org.eclipse.equinox.launcher_"});
@@ -1639,7 +1639,7 @@ public class PublishingTests extends P2TestCase {
 		assertEquals(iu.getVersion().toString(), "1.0.0");
 
 		IInstallableUnit common = getIU(repo, EQUINOX_COMMON);
-		Collection/*<IRequirement>*/required = iu.getRequirements();
+		Collection/*<IRequirement>*/ required = iu.getRequirements();
 		assertEquals(required.size(), 2);
 		Iterator it = required.iterator();
 		IRequiredCapability req0 = (IRequiredCapability) it.next();
@@ -1861,7 +1861,7 @@ public class PublishingTests extends P2TestCase {
 
 		IMetadataRepository repo = loadMetadataRepository(buildFolder.getFolder("buildRepo").getLocationURI());
 		IInstallableUnit iu = getIU(repo, "foo");
-		Collection/*<IRequirement>*/required = iu.getRequirements();
+		Collection/*<IRequirement>*/ required = iu.getRequirements();
 		for (Iterator iterator = required.iterator(); iterator.hasNext();) {
 			IRequiredCapability reqCap = (IRequiredCapability) iterator.next();
 			if (reqCap.getName().equals("a")) {
