@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Rapicorp Corporation and others.
+ * Copyright (c) 2015 Rapicorp Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.build.IBuildEntry;
 import org.eclipse.pde.core.plugin.*;
@@ -102,8 +103,8 @@ public class PreferencesSection extends PDESection {
 	private String getWizardConfigText() {
 		IPreferencesInfo info = getPreferencesInfo();
 		String[] bindings = new String[3];
-		bindings[0] = info.getSourceFilePath() == null ? PDEUIMessages.PreferencesSection_epf : "<br></br><b>" + info.getSourceFilePath() + "</b><br></br><br></br>"; //$NON-NLS-1$ //$NON-NLS-2$
-		bindings[1] = info.getPreferenceCustomizationPath() == null ? PDEUIMessages.PreferencesSection_customize : "<br></br><b>" + info.getPreferenceCustomizationPath() + "</b><br></br>"; //$NON-NLS-1$ //$NON-NLS-2$
+		bindings[0] = info.getSourceFilePath() == null ? PDEUIMessages.PreferencesSection_epf : "<br></br><b>" + TextProcessor.process(info.getSourceFilePath()) + "</b><br></br><br></br>"; //$NON-NLS-1$ //$NON-NLS-2$
+		bindings[1] = info.getPreferenceCustomizationPath() == null ? PDEUIMessages.PreferencesSection_customize : "<br></br><b>" + TextProcessor.process(info.getPreferenceCustomizationPath()) + "</b><br></br>"; //$NON-NLS-1$ //$NON-NLS-2$
 		bindings[2] = getOverwrite() ? PDEUIMessages.PreferencesSection_overwrite : PDEUIMessages.PreferencesSection_merge;
 		String configText = NLS.bind(PDEUIMessages.PreferencesSection_generate, bindings);
 		return configText;
