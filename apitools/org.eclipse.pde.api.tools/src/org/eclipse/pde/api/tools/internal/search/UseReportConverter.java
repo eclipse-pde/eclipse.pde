@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2014 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,6 +49,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jdt.core.Signature;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.pde.api.tools.internal.IApiCoreConstants;
 import org.eclipse.pde.api.tools.internal.IApiXmlConstants;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
@@ -1655,7 +1656,7 @@ public class UseReportConverter extends HTMLConvertor {
 			buffer.append(CLOSE_TR);
 			buffer.append(OPEN_TR);
 			buffer.append(openTD(14)).append(SearchMessages.UseReportConverter_baseline_loc).append(CLOSE_TD);
-			buffer.append(openTD(36)).append(this.metadata.getBaselineLocation()).append(CLOSE_TD);
+			buffer.append(openTD(36)).append(TextProcessor.process(this.metadata.getBaselineLocation())).append(CLOSE_TD);
 			buffer.append(CLOSE_TR);
 			buffer.append(OPEN_TR);
 			buffer.append(openTD(14)).append(SearchMessages.UseReportConverter_scope_pattern).append(CLOSE_TD);
@@ -1667,7 +1668,7 @@ public class UseReportConverter extends HTMLConvertor {
 			buffer.append(CLOSE_TR);
 			buffer.append(OPEN_TR);
 			buffer.append(openTD(14)).append(SearchMessages.UseReportConverter_report_location).append(CLOSE_TD);
-			buffer.append(openTD(36)).append(this.metadata.getReportLocation()).append(CLOSE_TD);
+			buffer.append(openTD(36)).append(TextProcessor.process(this.metadata.getReportLocation())).append(CLOSE_TD);
 			buffer.append(CLOSE_TR);
 			buffer.append(OPEN_TR);
 			buffer.append(openTD(14)).append(SearchMessages.UseReportConverter_api_pattern).append(CLOSE_TD);
@@ -1735,7 +1736,7 @@ public class UseReportConverter extends HTMLConvertor {
 			buffer.append(openTD(14)).append(SearchMessages.UseReportConverter_additional_filters).append(CLOSE_TD);
 			buffer.append(openTD(36));
 			if (this.metadata.getAdditionalfilters() != null && !this.metadata.getAdditionalfilters().isEmpty()) {
-				buffer.append(this.metadata.getAdditionalfilters());
+				buffer.append(TextProcessor.process(this.metadata.getAdditionalfilters()));
 			} else {
 				buffer.append(SearchMessages.UseReportConverter_none);
 			}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,8 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
+import org.eclipse.equinox.bidi.StructuredTextTypeHandlerFactory;
+import org.eclipse.jface.util.BidiUtils;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.pde.api.tools.internal.provisional.ApiPlugin;
 import org.eclipse.pde.api.tools.internal.provisional.model.IApiBaseline;
@@ -235,6 +237,7 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 		filterGroup = SWTFactory.createGroup(comp, Messages.ApiUseScanTab_filters, 3, 2, GridData.FILL_HORIZONTAL);
 		SWTFactory.createLabel(filterGroup, Messages.ApiUseScanTab_additionalFilters, 1);
 		this.filterRoot = SWTFactory.createText(filterGroup, SWT.SINGLE | SWT.FLAT | SWT.BORDER, 1, GridData.FILL_HORIZONTAL);
+		BidiUtils.applyBidiProcessing(this.filterRoot, StructuredTextTypeHandlerFactory.FILE);
 		this.filterRoot.addModifyListener(modifyadapter);
 		Button filterBrowse = SWTFactory.createPushButton(filterGroup, Messages.ApiUseScanTab_Browse, null);
 		filterBrowse.addSelectionListener(new SelectionAdapter() {
@@ -255,6 +258,7 @@ public class ApiUseScanTab extends AbstractLaunchConfigurationTab {
 
 		SWTFactory.createLabel(reportGroup, Messages.ApiUseScanTab_report_location, 2);
 		this.reportlocation = SWTFactory.createText(reportGroup, SWT.SINGLE | SWT.FLAT | SWT.BORDER, 1, GridData.FILL_HORIZONTAL);
+		BidiUtils.applyBidiProcessing(this.reportlocation, StructuredTextTypeHandlerFactory.FILE);
 		this.reportlocation.addModifyListener(modifyadapter);
 		gd = (GridData) this.reportlocation.getLayoutData();
 		gd.grabExcessHorizontalSpace = true;
