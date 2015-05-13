@@ -199,6 +199,7 @@ public class PreferencesSection extends PDESection {
 			info.setSourceFilePath(wizard.getPreferencesFilePath());
 			info.setOverwrite(Boolean.toString(wizard.getOverwrite()));
 			configText.setText(getWizardConfigText(), true, true);
+			getSection().getParent().layout();
 		}
 	}
 
