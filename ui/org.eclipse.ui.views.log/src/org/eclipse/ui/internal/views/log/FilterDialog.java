@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2014 IBM Corporation and others.
+ * Copyright (c) 2003, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,7 +30,7 @@ public class FilterDialog extends TrayDialog {
 	// entries count limit
 	private Button limit;
 	Text limitText;
-	Spinner maxLogTailSizeSpinner;
+	Text maxLogTailSizeText;
 
 	// entry types filter
 	private Button errorCheckbox;
@@ -127,8 +127,8 @@ public class FilterDialog extends TrayDialog {
 				try {
 					if (okButton == null)
 						return;
-					Integer.parseInt(limitText.getText());
-					okButton.setEnabled(true);
+					int value = Integer.parseInt(limitText.getText());
+					okButton.setEnabled(value > 0);
 				} catch (NumberFormatException e1) {
 					okButton.setEnabled(false);
 				}
@@ -140,26 +140,31 @@ public class FilterDialog extends TrayDialog {
 
 		Label maxLogTailSizeLabel = new Label(comp, SWT.NONE);
 		maxLogTailSizeLabel.setText(Messages.LogView_FilterDialog_maxLogTailSize);
-		maxLogTailSizeSpinner = new Spinner(comp, SWT.BORDER);
-		maxLogTailSizeSpinner.addModifyListener(new ModifyListener() {
+
+		maxLogTailSizeText = new Text(comp, SWT.BORDER);
+		maxLogTailSizeText.addVerifyListener(new VerifyListener() {
+			public void verifyText(VerifyEvent e) {
+				if (Character.isLetter(e.character)) {
+					e.doit = false;
+				}
+			}
+		});
+
+		maxLogTailSizeText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				try {
 					if (okButton == null)
 						return;
-					Integer.parseInt(maxLogTailSizeSpinner.getText());
-					okButton.setEnabled(true);
+					int value = Integer.parseInt(maxLogTailSizeText.getText());
+					okButton.setEnabled(value > 0);
 				} catch (NumberFormatException e1) {
 					okButton.setEnabled(false);
 				}
 			}
 		});
-		maxLogTailSizeSpinner.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		maxLogTailSizeSpinner.setValues(memento.getInteger(LogView.P_LOG_MAX_TAIL_SIZE).intValue(), 1, Integer.MAX_VALUE, 0, 1, 1);
-		maxLogTailSizeSpinner.setMinimum(1);
-		maxLogTailSizeSpinner.setIncrement(1);
-		maxLogTailSizeSpinner.setMaximum(Integer.MAX_VALUE);
-
-		maxLogTailSizeSpinner.setEnabled(limit.getSelection());
+		maxLogTailSizeText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		maxLogTailSizeText.setText(memento.getString(LogView.P_LOG_MAX_TAIL_SIZE));
+		maxLogTailSizeText.setEnabled(limit.getSelection());
 	}
 
 	private void createSessionSection(Composite parent) {
@@ -300,7 +305,7 @@ public class FilterDialog extends TrayDialog {
 		memento.putString(LogView.P_LOG_ERROR, errorCheckbox.getSelection() ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
 		memento.putString(LogView.P_LOG_LIMIT, limitText.getText());
 		memento.putString(LogView.P_USE_LIMIT, limit.getSelection() ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
-		memento.putString(LogView.P_LOG_MAX_TAIL_SIZE, maxLogTailSizeSpinner.getText());
+		memento.putString(LogView.P_LOG_MAX_TAIL_SIZE, maxLogTailSizeText.getText());
 		memento.putString(LogView.P_SHOW_ALL_SESSIONS, showAllButton.getSelection() ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		// store Event Dialog stack trace filter preferences
