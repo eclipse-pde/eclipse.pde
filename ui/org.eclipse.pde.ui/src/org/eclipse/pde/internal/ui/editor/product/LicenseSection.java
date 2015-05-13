@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Code 9 Corporation and others.
+ * Copyright (c) 2015 Code 9 Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
+import org.eclipse.equinox.bidi.StructuredTextTypeHandlerFactory;
 import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.util.BidiUtils;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.iproduct.*;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
@@ -52,6 +54,7 @@ public class LicenseSection extends PDESection {
 		// Create form entry
 		IActionBars actionBars = getPage().getPDEEditor().getEditorSite().getActionBars();
 		fURLEntry = new FormEntry(client, toolkit, PDEUIMessages.LicenseSection_url, SWT.NONE);
+		BidiUtils.applyBidiProcessing(fURLEntry.getText(), StructuredTextTypeHandlerFactory.URL);
 		fURLEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
 			public void textValueChanged(FormEntry entry) {
 				getLicenseInfo().setURL(entry.getValue());

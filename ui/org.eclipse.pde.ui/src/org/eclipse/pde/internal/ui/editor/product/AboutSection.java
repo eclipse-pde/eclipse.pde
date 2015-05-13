@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2011 IBM Corporation and others.
+ *  Copyright (c) 2005, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -12,6 +12,8 @@
 package org.eclipse.pde.internal.ui.editor.product;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.equinox.bidi.StructuredTextTypeHandlerFactory;
+import org.eclipse.jface.util.BidiUtils;
 import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.internal.core.iproduct.*;
@@ -65,6 +67,7 @@ public class AboutSection extends PDESection {
 
 		IActionBars actionBars = getPage().getPDEEditor().getEditorSite().getActionBars();
 		fImageEntry = new FormEntry(client, toolkit, PDEUIMessages.AboutSection_image, PDEUIMessages.AboutSection_browse, isEditable());
+		BidiUtils.applyBidiProcessing(fImageEntry.getText(), StructuredTextTypeHandlerFactory.FILE);
 		fImageEntry.setEditable(isEditable());
 		// Create validator
 		fImageEntryValidator = new TextValidator(getManagedForm(), fImageEntry.getText(), getProject(), true) {

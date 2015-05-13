@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,9 @@ package org.eclipse.pde.internal.ui.editor.product;
 import java.util.ArrayList;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.equinox.bidi.StructuredTextTypeHandlerFactory;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.util.BidiUtils;
 import org.eclipse.jface.window.Window;
 import org.eclipse.pde.core.IModelChangedEvent;
 import org.eclipse.pde.core.plugin.TargetPlatform;
@@ -220,6 +222,7 @@ public class LauncherSection extends PDESection {
 		fMultipleWinIconValidator = new TextValidator[F_WIN_ICON_LABELS.length];
 		for (int i = 0; i < F_WIN_ICON_LABELS.length; i++) {
 			final IconEntry ientry = new IconEntry(comp, toolkit, F_WIN_ICON_LABELS[i], F_WIN_ICON_IDS[i]);
+			BidiUtils.applyBidiProcessing(ientry.getText(), StructuredTextTypeHandlerFactory.FILE);
 			final int index = i;
 			// Create validator
 			fMultipleWinIconValidator[index] = new TextValidator(getManagedForm(), ientry.getText(), getProject(), true) {
