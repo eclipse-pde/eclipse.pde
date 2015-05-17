@@ -233,8 +233,6 @@ set here?
 		metadataRepository="${p2.repo}" 
 		artifactRepository="${p2.repo}" 
 		destination="${p2.director.installPath}" 
-		bundlepool="${p2.director.bundlepool}"
-		agentLocation="${p2.director.dataArea}"
 		outputProperty="p2.director.java.output"
 		logFile="${p2.director.log}">
 		<iu id="${p2.director.iu}" version="${p2.director.version}" />
