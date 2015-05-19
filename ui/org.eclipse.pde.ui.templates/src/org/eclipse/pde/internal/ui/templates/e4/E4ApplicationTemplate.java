@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 OPCoach.
+ * Copyright (c) 2015 OPCoach
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Olivier Prouvost <olivier.prouvost@opcoach.com> - initial API and implementation (bug #441331)
- *     Olivier Prouvost <olivier.prouvost@opcoach.com> - Bug 463821
+ *     Olivier Prouvost <olivier.prouvost@opcoach.com> - Bug 463821,  466269, 466680
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 463821
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.templates.e4;
@@ -21,7 +21,6 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.pde.core.plugin.*;
 import org.eclipse.pde.internal.ui.templates.*;
 import org.eclipse.pde.ui.IFieldData;
-import org.eclipse.pde.ui.IPluginFieldData;
 import org.eclipse.pde.ui.templates.PluginReference;
 import org.eclipse.pde.ui.templates.TemplateOption;
 
@@ -35,7 +34,6 @@ public class E4ApplicationTemplate extends PDETemplateSection {
 
 	// Set the names of the two template files to be tested in isOkToCreateFile method
 	// Those files are stored in the org.eclipse.pde.ui.templates/templates_3.5/E4Application/java folder
-	private static final String TEMPLATE_ACTIVATOR_FILENAME = "$activator$.java"; //$NON-NLS-1$
 	private static final String TEMPLATE_LIFECYCLE_FILENAME = "$lifeCycleClassName$.java"; //$NON-NLS-1$
 
 	// name of the non empty application model file stored in the org.eclipse.pde.ui.templates/templates_3.5/E4Application folder
@@ -44,10 +42,6 @@ public class E4ApplicationTemplate extends PDETemplateSection {
 	private static final String EMPTY_E4_MODEL_FILE = "bin/" + E4_MODEL_FILE; //$NON-NLS-1$
 
 	private TemplateOption lifeCycleClassnameOption;
-
-	private boolean mustGenerateActivator;
-
-	String initialPackage = null; // Name of package set in the activator class name (get from previous page).
 
 	public E4ApplicationTemplate() {
 		setPageCount(1);
@@ -146,9 +140,6 @@ public class E4ApplicationTemplate extends PDETemplateSection {
 
 		// If file is the lifeCycleClassname (with a $ at the end) we keep it only if life cycle must be created.
 		String fname = sourceFile.getName();
-		// Fix bug #463821 : Check activator using the options saved in the overridden initializeFields method
-		if (fname.equals(TEMPLATE_ACTIVATOR_FILENAME))
-			return mustGenerateActivator;
 
 		if (fname.equals(TEMPLATE_LIFECYCLE_FILENAME))
 			return getBooleanOption(KEY_CREATE_LIFE_CYCLE);
@@ -187,20 +178,14 @@ public class E4ApplicationTemplate extends PDETemplateSection {
 	protected void initializeFields(IFieldData data) {
 		// This is called because isDependentOnParentWizard returns true
 		// We can get values entered in previous pages and put them in the local options.
-		// At this point, we need to remember if we have to generate the activator or not.
-		if (data instanceof IPluginFieldData) {
-			mustGenerateActivator = ((IPluginFieldData) data).doGenerateClass();
-		}
-
-		// In a new project wizard, we don't know this yet - the
-		// model has not been created
-		initialPackage = getFormattedPackageName(data.getId());
+		// At this point, we need to get package name for this plugin
+		String initialPackage = getFormattedPackageName(data.getId());
 		initializeOption(KEY_PACKAGE_NAME, initialPackage);
 	}
 
 	@Override
 	public void initializeFields(IPluginModelBase model) {
-		initialPackage = getFormattedPackageName(model.getPluginBase().getId());
+		String initialPackage = getFormattedPackageName(model.getPluginBase().getId());
 		initializeOption(KEY_PACKAGE_NAME, initialPackage);
 	}
 

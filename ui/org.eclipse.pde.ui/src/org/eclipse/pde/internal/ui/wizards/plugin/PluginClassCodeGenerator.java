@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Peter Friese <peter.friese@itemis.de> - bug 241074
+ *     Olivier Prouvost <olivier.prouvost@opcoach.com> - bug 466680
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
@@ -49,7 +50,7 @@ public class PluginClassCodeGenerator {
 		StringWriter swriter = new StringWriter();
 		PrintWriter writer = new PrintWriter(swriter);
 		// only generate/extend plug-in classes if it's a IU plug-in
-		if (fPluginData.getOSGiFramework() != null || !fPluginData.isUIPlugin()) {
+		if (fPluginData.getOSGiFramework() != null || !fPluginData.isUIPlugin() || fPluginData.isE4Plugin()) {
 			generateActivatorClass(packageName, className, writer);
 		} else {
 			generatePluginClass(packageName, className, writer);

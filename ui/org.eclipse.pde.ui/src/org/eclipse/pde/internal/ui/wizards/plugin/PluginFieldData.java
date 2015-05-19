@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Olivier Prouvost <olivier.prouvost@opcoach.com> - bug 466680
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.wizards.plugin;
 
@@ -21,6 +22,7 @@ public class PluginFieldData extends AbstractFieldData implements IPluginFieldDa
 	private boolean fDoGenerateClass = true;
 	private boolean fRCPAppPlugin = false;
 	private boolean fSetupAPITooling = false;
+	private boolean fE4Plugin = false;
 	private ArrayList<ITemplateSection> templates = new ArrayList<ITemplateSection>();
 
 	/* (non-Javadoc)
@@ -86,6 +88,14 @@ public class PluginFieldData extends AbstractFieldData implements IPluginFieldDa
 	 */
 	public void setEnableAPITooling(boolean enable) {
 		fSetupAPITooling = enable;
+	}
+
+	public boolean isE4Plugin() {
+		return fE4Plugin;
+	}
+
+	public void setE4Plugin(boolean e4Plugin) {
+		this.fE4Plugin = e4Plugin;
 	}
 
 }
