@@ -831,6 +831,8 @@ public class PublishingTests extends P2TestCase {
 		String config = Platform.getOS() + ',' + Platform.getWS() + ',' + Platform.getOSArch();
 		if (!delta.equals(new File((String) properties.get("baseLocation"))))
 			properties.put("pluginPath", delta.getAbsolutePath());
+		if (Platform.getOS().equals("macosx"))
+			properties.put("archivePrefix", "Headless.app");
 		properties.put("product", productFile.getLocation().toOSString());
 		properties.put("configs", config);
 		properties.put("archivesFormat", config + "-folder");
@@ -843,11 +845,13 @@ public class PublishingTests extends P2TestCase {
 		runProductBuild(buildFolder);
 
 		IFile configFile = buildFolder.getFile("/tmp/eclipse/configuration/config.ini");
+		if (Platform.getOS().equals("macosx"))
+			configFile = buildFolder.getFile("/tmp/Headless.app/Contents/Eclipse/configuration/config.ini");
 		assertLogContainsLine(configFile, "eclipse.application=headless.application");
 		assertLogContainsLine(configFile, "eclipse.product=headless.product");
 
 		if (Platform.getOS().equals("macosx")) {
-			IFile iniFile = buildFolder.getFile("/tmp/eclipse/headless.app/Contents/MacOS/headless.ini");
+			IFile iniFile = buildFolder.getFile("/tmp/Headless.app/Contents/Eclipse/headless.ini");
 			assertLogContainsLines(iniFile, new String[] {"-startup", "plugins/org.eclipse.equinox.launcher_"});
 			assertLogContainsLines(iniFile, new String[] {"--launcher.library", "plugins/org.eclipse.equinox.launcher."});
 		} else {
@@ -1323,10 +1327,6 @@ public class PublishingTests extends P2TestCase {
 		assertRequires(iu, "org.eclipse.equinox.p2.iu", "org.eclipse.equinox.executable_root.win32.win32.x86");
 		assertRequires(iu, "org.eclipse.equinox.p2.iu", "org.eclipse.equinox.executable_root.gtk.linux.x86");
 		assertRequires(iu, "org.eclipse.equinox.p2.iu", "org.eclipse.equinox.executable_root.carbon.macosx.ppc");
-
-		iu = getIU(metadata, "org.eclipse.equinox.executable_root.carbon.macosx.ppc");
-		assertTouchpoint(iu, "configure", "(linkTarget:Eclipse.app/Contents/MacOS/launcher,targetDir:${installFolder},linkName:launcher)");
-
 		//bug 273059, the action will be written out of a map, so there is no order on the parameters
 		iu = getIU(metadata, "rcp.product_root.carbon.macosx.ppc");
 		assertTouchpoint(iu, "configure", "linkTarget:rcp.app/Contents/MacOS/rcp");
