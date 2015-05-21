@@ -108,10 +108,14 @@ public class P2Tests extends P2TestCase {
 		//		assertRequires(iu, "toolingtest.product", "test.product.config");
 		//		assertRequires(iu, ius, true);
 
-		iu = getIU(repository, "toolingtest.product.rootfiles." + p2Config);
-		assertTouchpoint(iu, "configure", "setLauncherName(name:test");
-
+		if (!Platform.getOS().equals(Platform.OS_MACOSX)) {
+			iu = getIU(repository, "toolingtest.product.rootfiles." + p2Config);
+			assertTouchpoint(iu, "configure", "setLauncherName(name:test");
+		}
 		IFolder installFolder = buildFolder.getFolder("install");
+		if (Platform.getOS().equals(Platform.OS_MACOSX)) {
+			installFolder = buildFolder.getFolder("install.app");
+		}
 		properties.put("p2.director.installPath", installFolder.getLocation().toOSString());
 		properties.put("p2.repo", "file:" + buildFolder.getFolder("repo").getLocation().toOSString());
 		properties.put("p2.director.iu", "test.product");
@@ -123,7 +127,7 @@ public class P2Tests extends P2TestCase {
 		String buildXMLPath = FileLocator.toFileURL(resource).getPath();
 		runAntScript(buildXMLPath, new String[] {"runDirector"}, buildFolder.getLocation().toOSString(), properties);
 
-		IFile iniFile = os.equals("macosx") ? installFolder.getFile("test.app/Contents/MacOS/test.ini") : installFolder.getFile("test.ini");
+		IFile iniFile = os.equals("macosx") ? installFolder.getFile("Contents/Eclipse/test.ini") : installFolder.getFile("test.ini");
 		assertLogContainsLine(iniFile, "-startup");
 		assertLogContainsLine(iniFile, "--launcher.library");
 		assertLogContainsLine(iniFile, "-foo");
