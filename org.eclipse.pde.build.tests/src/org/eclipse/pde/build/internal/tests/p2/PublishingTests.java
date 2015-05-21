@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2008, 2015 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -1596,6 +1596,7 @@ public class PublishingTests extends P2TestCase {
 		Utils.generateProduct(product, "org.example.rcp", "1.0.0", null, new String[] {OSGI, EQUINOX_COMMON}, false, extra);
 
 		Properties properties = BuildConfiguration.getBuilderProperties(buildFolder);
+		properties.put("archivePrefix", "Eclipse.app");
 		properties.put("product", product.getLocation().toOSString());
 		if (!delta.equals(new File((String) properties.get("baseLocation"))))
 			properties.put("pluginPath", delta.getAbsolutePath());
@@ -1607,13 +1608,13 @@ public class PublishingTests extends P2TestCase {
 
 		IFile ini = buildFolder.getFile("eclipse.ini");
 		boolean lowerCase = true;
-		if (!Utils.extractFromZip(buildFolder, "I.TestBuild/eclipse-macosx.cocoa.x86_64.zip", "eclipse/eclipse.app/Contents/MacOS/eclipse.ini", ini)) {
+		if (!Utils.extractFromZip(buildFolder, "I.TestBuild/eclipse-macosx.cocoa.x86_64.zip", "eclipse.app/Contents/Eclipse/eclipse.ini", ini)) {
 			lowerCase = false;
-			Utils.extractFromZip(buildFolder, "I.TestBuild/eclipse-macosx.cocoa.x86_64.zip", "eclipse/Eclipse.app/Contents/MacOS/eclipse.ini", ini);
+			Utils.extractFromZip(buildFolder, "I.TestBuild/eclipse-macosx.cocoa.x86_64.zip", "Eclipse.app/Contents/Eclipse/eclipse.ini", ini);
 		}
 
 		IFile zip = buildFolder.getFile("I.TestBuild/eclipse-macosx.cocoa.x86_64.zip");
-		String exeString = (lowerCase ? "eclipse/eclipse.app/" : "eclipse/Eclipse.app/") + "Contents/MacOS/eclipse";
+		String exeString = (lowerCase ? "eclipse.app/" : "Eclipse.app/") + "Contents/MacOS/eclipse";
 		assertZipPermissions(zip, exeString, "-rwxr-xr-x");
 
 		assertLogContainsLines(ini, new String[] {"-vm", "myVm"});
@@ -1639,7 +1640,7 @@ public class PublishingTests extends P2TestCase {
 		assertEquals(iu.getVersion().toString(), "1.0.0");
 
 		IInstallableUnit common = getIU(repo, EQUINOX_COMMON);
-		Collection/*<IRequirement>*/required = iu.getRequirements();
+		Collection/*<IRequirement>*/ required = iu.getRequirements();
 		assertEquals(required.size(), 2);
 		Iterator it = required.iterator();
 		IRequiredCapability req0 = (IRequiredCapability) it.next();
@@ -1861,7 +1862,7 @@ public class PublishingTests extends P2TestCase {
 
 		IMetadataRepository repo = loadMetadataRepository(buildFolder.getFolder("buildRepo").getLocationURI());
 		IInstallableUnit iu = getIU(repo, "foo");
-		Collection/*<IRequirement>*/required = iu.getRequirements();
+		Collection/*<IRequirement>*/ required = iu.getRequirements();
 		for (Iterator iterator = required.iterator(); iterator.hasNext();) {
 			IRequiredCapability reqCap = (IRequiredCapability) iterator.next();
 			if (reqCap.getName().equals("a")) {
