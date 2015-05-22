@@ -177,7 +177,7 @@ public class ProductExportOperation extends FeatureExportOperation {
 				if (plist != null)
 					properties.put(rootPrefix + ".folder." + ECLIPSE_APP_CONTENTS, "absolute:file:" + plist); //$NON-NLS-1$ //$NON-NLS-2$
 				properties.put(rootPrefix + ".folder." + ECLIPSE_APP_MACOS, getLauncherLocations(hasLaunchers)); //$NON-NLS-1$
-				properties.put(rootPrefix + ".permissions.755", ECLIPSE_APP_MACOS + "/" + getLauncherName()); //$NON-NLS-1$ //$NON-NLS-2$
+				properties.put(rootPrefix + ".permissions.755", "Contents/MacOS/" + getLauncherName()); //$NON-NLS-1$ //$NON-NLS-2$
 			} else {
 				properties.put(rootPrefix, getLauncherLocations(hasLaunchers)); //To copy a folder
 				properties.put(rootPrefix + ".permissions.755", getLauncherName()); //$NON-NLS-1$
