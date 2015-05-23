@@ -1329,8 +1329,6 @@ public class PublishingTests extends P2TestCase {
 		assertRequires(iu, "org.eclipse.equinox.p2.iu", "org.eclipse.equinox.executable_root.carbon.macosx.ppc");
 		//bug 273059, the action will be written out of a map, so there is no order on the parameters
 		iu = getIU(metadata, "rcp.product_root.carbon.macosx.ppc");
-		assertTouchpoint(iu, "configure", "linkTarget:rcp.app/Contents/MacOS/rcp");
-		assertTouchpoint(iu, "configure", "linkName:rcp");
 
 		assertResourceFile(repo, "binary/org.eclipse.equinox.executable_root.win32.win32.x86_3.3.200");
 		assertResourceFile(repo, "binary/org.eclipse.equinox.executable_root.gtk.linux.x86_3.3.200");
