@@ -101,7 +101,7 @@ public class E4ApplicationTemplate extends PDETemplateSection {
 		IPluginElement element = model.getFactory().createElement(extension);
 		element.setName("product"); //$NON-NLS-1$
 		element.setAttribute("application", E4_SWT_APPLICATION_ID); //$NON-NLS-1$ 
-		element.setAttribute("name", getStringOption(KEY_WINDOW_TITLE)); //$NON-NLS-1$
+		element.setAttribute("name", getStringOption(KEY_PACKAGE_NAME)); //$NON-NLS-1$
 
 		IPluginElement property;
 
