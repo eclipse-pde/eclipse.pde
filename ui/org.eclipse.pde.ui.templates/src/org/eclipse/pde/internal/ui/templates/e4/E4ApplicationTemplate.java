@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 OPCoach
+ * Copyright (c) 2015 OPCoach and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *     Olivier Prouvost <olivier.prouvost@opcoach.com> - initial API and implementation (bug #441331)
  *     Olivier Prouvost <olivier.prouvost@opcoach.com> - Bug 463821,  466269, 466680
- *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 463821
+ *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 463821, 467819
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.templates.e4;
 
@@ -39,7 +39,7 @@ public class E4ApplicationTemplate extends PDETemplateSection {
 	// name of the non empty application model file stored in the org.eclipse.pde.ui.templates/templates_3.5/E4Application folder
 	static final String E4_MODEL_FILE = "Application.e4xmi"; //$NON-NLS-1$
 	// name of the EMPTY application model file stored in the org.eclipse.pde.ui.templates/templates_3.5/E4Application/bin folder
-	private static final String EMPTY_E4_MODEL_FILE = "bin/" + E4_MODEL_FILE; //$NON-NLS-1$
+	private static final String EMPTY_E4_MODEL_FILE = "bin" + File.separator + E4_MODEL_FILE; //$NON-NLS-1$
 
 	private TemplateOption lifeCycleClassnameOption;
 
@@ -150,14 +150,16 @@ public class E4ApplicationTemplate extends PDETemplateSection {
 		// We must keep one of them depending on the KEY_CREATE_SAMPLE_CONTENT 
 
 		if (fname.endsWith(E4_MODEL_FILE)) {
+			boolean createSampleContent = getBooleanOption(KEY_CREATE_SAMPLE_CONTENT);
+			// This is one of the 2 files...
+			// Check if this is the bin/Application.e4xmi. In this case we must copy it if an empty
+			// application model is expected
+			if (sourceFile.getAbsolutePath().endsWith(EMPTY_E4_MODEL_FILE)) {
+				return !createSampleContent;
+			}
 
-			// This is one of the 2 files... 
-			// Check if this is the bin/Application.e4xmi. In this cas we must keep it if no content expected
-			if (sourceFile.getAbsolutePath().endsWith(EMPTY_E4_MODEL_FILE))
-				return !getBooleanOption(KEY_CREATE_SAMPLE_CONTENT);
-
-			// This is the root file (containing the customized content), must keep it if content expected
-			return getBooleanOption(KEY_CREATE_SAMPLE_CONTENT);
+			// This is the root file (containing the customized content), must copy it if content expected
+			return createSampleContent;
 		}
 
 		return super.isOkToCreateFile(sourceFile);
