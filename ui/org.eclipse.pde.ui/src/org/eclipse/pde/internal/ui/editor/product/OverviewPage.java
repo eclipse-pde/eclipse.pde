@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,10 +11,15 @@
  *******************************************************************************/
 package org.eclipse.pde.internal.ui.editor.product;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import org.eclipse.pde.internal.ui.*;
 import org.eclipse.pde.internal.ui.editor.*;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.browser.IWebBrowser;
+import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.*;
@@ -89,8 +94,30 @@ public class OverviewPage extends LaunchShortcutOverviewPage {
 		} else if (href.equals("configuration")) { //$NON-NLS-1$
 			String pageId = ((ProductLauncherFormPageHelper) getLauncherHelper()).getProduct().useFeatures() ? DependenciesPage.FEATURE_ID : DependenciesPage.PLUGIN_ID;
 			getEditor().setActivePage(pageId);
+		} else if (href.equals("multi-platform-wiki")) { //$NON-NLS-1$
+			openBrowser("https://wiki.eclipse.org/Building#Cross-platform_build"); //$NON-NLS-1$
 		} else
 			super.linkActivated(e);
+	}
+
+	private static void openBrowser(String url) {
+		// Create the browser
+		IWorkbenchBrowserSupport support = PlatformUI.getWorkbench().getBrowserSupport();
+		IWebBrowser browser;
+		try {
+			browser = support.createBrowser(null);
+		} catch (PartInitException e) {
+			PDEPlugin.log(e);
+			return;
+		}
+
+		try {
+			browser.openURL(new URL(url));
+		} catch (PartInitException e) {
+			PDEPlugin.log(e);
+		} catch (MalformedURLException e) {
+			PDEPlugin.log(e);
+		}
 	}
 
 	protected ILauncherFormPageHelper getLauncherHelper() {
