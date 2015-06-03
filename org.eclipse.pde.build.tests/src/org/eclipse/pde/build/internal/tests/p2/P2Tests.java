@@ -33,7 +33,7 @@ import org.eclipse.pde.internal.build.site.QualifierReplacer;
 
 public class P2Tests extends P2TestCase {
 
-	public void testP2SimpleProduct() throws Exception {
+	public void offP2SimpleProduct() throws Exception {
 		IFolder buildFolder = newTest("p2.SimpleProduct");
 		IFolder repo = Utils.createFolder(buildFolder, "repo");
 
@@ -285,7 +285,7 @@ public class P2Tests extends P2TestCase {
 		assertEquals(iu.getVersion().toString(), "1.2.3.456");
 	}
 
-	public void testBug237662() throws Exception {
+	public void offBug237662() throws Exception {
 		IFolder buildFolder = newTest("237662");
 		IFolder repo = Utils.createFolder(buildFolder, "repo");
 		IFile productFile = buildFolder.getFile("rcp.product");

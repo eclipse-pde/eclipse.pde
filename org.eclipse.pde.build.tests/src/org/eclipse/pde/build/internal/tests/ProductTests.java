@@ -35,7 +35,7 @@ import org.osgi.framework.Version;
  */
 public class ProductTests extends PDETestCase {
 
-	public void testBug192127() throws Exception {
+	public void offBug192127() throws Exception {
 		IFolder buildFolder = newTest("192127");
 		IFolder containerFeature = Utils.createFolder(buildFolder, "features/org.eclipse.pde.build.container.feature");
 
