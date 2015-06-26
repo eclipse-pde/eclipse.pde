@@ -494,23 +494,29 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 			componentsForPackage = new HashMap<IApiComponent, IApiComponent[]>(8);
 			fComponentsProvidingPackageCache.put(packageName, componentsForPackage);
 		}
-		// check system packages first
+
+		if (sourceComponent != null) {
+			ArrayList<IApiComponent> componentsList = new ArrayList<IApiComponent>();
+			resolvePackage0(sourceComponent, packageName, componentsList);
+			if (componentsList.size() != 0) {
+				cachedComponents = new IApiComponent[componentsList.size()];
+				componentsList.toArray(cachedComponents);
+			}
+		}
 		if (isSystemPackage(packageName)) {
 			if (fSystemLibraryComponent != null) {
-				cachedComponents = new IApiComponent[] { fSystemLibraryComponent };
-			} else {
-				return EMPTY_COMPONENTS;
-			}
-		} else {
-			if (sourceComponent != null) {
-				ArrayList<IApiComponent> componentsList = new ArrayList<IApiComponent>();
-				resolvePackage0(sourceComponent, packageName, componentsList);
-				if (componentsList.size() != 0) {
-					cachedComponents = new IApiComponent[componentsList.size()];
-					componentsList.toArray(cachedComponents);
+				if (cachedComponents == null) {
+					cachedComponents = new IApiComponent[] {
+							fSystemLibraryComponent };
+				} else {
+					IApiComponent[] cachedComponents2 = new IApiComponent[cachedComponents.length + 1];
+					System.arraycopy(cachedComponents, 0, cachedComponents2, 0, cachedComponents.length);
+					cachedComponents2[cachedComponents.length] = fSystemLibraryComponent;
+					cachedComponents = cachedComponents2;
 				}
 			}
 		}
+
 		if (cachedComponents == null) {
 			cachedComponents = EMPTY_COMPONENTS;
 		}
