@@ -75,6 +75,7 @@ public class PublishingTests extends P2TestCase {
 		zip.close();
 
 		HashSet contents = new HashSet();
+
 		contents.add("about.txt");
 		contents.add("A.class");
 		contents.add("b/");
