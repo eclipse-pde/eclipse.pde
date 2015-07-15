@@ -495,6 +495,8 @@ public class ApiBaseline extends ApiElement implements IApiBaseline, IVMInstallC
 			fComponentsProvidingPackageCache.put(packageName, componentsForPackage);
 		}
 
+		// check resolvePackage0 before the system packages to avoid wrong
+		// add/remove API problems - see bug 430640
 		if (sourceComponent != null) {
 			ArrayList<IApiComponent> componentsList = new ArrayList<IApiComponent>();
 			resolvePackage0(sourceComponent, packageName, componentsList);
