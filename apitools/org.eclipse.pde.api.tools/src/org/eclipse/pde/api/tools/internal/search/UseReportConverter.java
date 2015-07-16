@@ -1644,15 +1644,15 @@ public class UseReportConverter extends HTMLConvertor {
 			buffer.append(CLOSE_TR);
 			buffer.append(OPEN_TR);
 			buffer.append(openTD(14)).append(SearchMessages.UseReportConverter_includes_API_refs).append(CLOSE_TD);
-			buffer.append(openTD(36)).append(this.metadata.includesAPI()).append(CLOSE_TD);
+			buffer.append(openTD(36)).append(this.metadata.includesAPI() ? SearchMessages.UseReportConverter_includes_true : SearchMessages.UseReportConverter_includes_false).append(CLOSE_TD);
 			buffer.append(CLOSE_TR);
 			buffer.append(OPEN_TR);
 			buffer.append(openTD(14)).append(SearchMessages.UseReportConverter_includes_internal_refs).append(CLOSE_TD);
-			buffer.append(openTD(36)).append(this.metadata.includesInternal()).append(CLOSE_TD);
+			buffer.append(openTD(36)).append(this.metadata.includesInternal() ? SearchMessages.UseReportConverter_includes_true : SearchMessages.UseReportConverter_includes_false).append(CLOSE_TD);
 			buffer.append(CLOSE_TR);
 			buffer.append(OPEN_TR);
 			buffer.append(openTD(14)).append(SearchMessages.UseReportConverter_includes_illegal_use).append(CLOSE_TD);
-			buffer.append(openTD(36)).append(this.metadata.includesIllegalUse()).append(CLOSE_TD);
+			buffer.append(openTD(36)).append(this.metadata.includesIllegalUse() ? SearchMessages.UseReportConverter_includes_true : SearchMessages.UseReportConverter_includes_false).append(CLOSE_TD);
 			buffer.append(CLOSE_TR);
 			buffer.append(OPEN_TR);
 			buffer.append(openTD(14)).append(SearchMessages.UseReportConverter_baseline_loc).append(CLOSE_TD);
