@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -103,7 +103,7 @@ public class JUnitLaunchConfigurationDelegate extends org.eclipse.jdt.junit.laun
 	 * @see org.eclipse.jdt.junit.launcher.JUnitLaunchConfigurationDelegate#collectExecutionArguments(org.eclipse.debug.core.ILaunchConfiguration, java.util.List, java.util.List)
 	 */
 	@Override
-	protected void collectExecutionArguments(ILaunchConfiguration configuration, List vmArguments, List programArgs) throws CoreException {
+	protected void collectExecutionArguments(ILaunchConfiguration configuration, List<String> vmArguments, List<String> programArgs) throws CoreException {
 		super.collectExecutionArguments(configuration, vmArguments, programArgs);
 
 		// Specify the JUnit Plug-in test application to launch
