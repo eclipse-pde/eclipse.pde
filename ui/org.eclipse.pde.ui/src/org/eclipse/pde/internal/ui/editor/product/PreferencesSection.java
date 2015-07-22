@@ -102,12 +102,10 @@ public class PreferencesSection extends PDESection {
 
 	private String getWizardConfigText() {
 		IPreferencesInfo info = getPreferencesInfo();
-		String[] bindings = new String[3];
+		String[] bindings = new String[2];
 		bindings[0] = info.getSourceFilePath() == null ? PDEUIMessages.PreferencesSection_epf : "<br></br><b>" + TextProcessor.process(info.getSourceFilePath()) + "</b><br></br><br></br>"; //$NON-NLS-1$ //$NON-NLS-2$
 		bindings[1] = info.getPreferenceCustomizationPath() == null ? PDEUIMessages.PreferencesSection_customize : "<br></br><b>" + TextProcessor.process(info.getPreferenceCustomizationPath()) + "</b><br></br>"; //$NON-NLS-1$ //$NON-NLS-2$
-		bindings[2] = getOverwrite() ? PDEUIMessages.PreferencesSection_overwrite : PDEUIMessages.PreferencesSection_merge;
-		String configText = NLS.bind(PDEUIMessages.PreferencesSection_generate, bindings);
-		return configText;
+		return getOverwrite() ? NLS.bind(PDEUIMessages.PreferencesSection_generate_overwrite, bindings) : NLS.bind(PDEUIMessages.PreferencesSection_generate_merge, bindings);
 	}
 
 
