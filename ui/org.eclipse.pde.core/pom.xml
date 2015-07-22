@@ -19,7 +19,7 @@
   </parent>
   <groupId>org.eclipse.pde</groupId>
   <artifactId>org.eclipse.pde.core</artifactId>
-  <version>3.10.100-SNAPSHOT</version>
+  <version>3.10.101-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
   <properties>
     <defaultSigning-excludeInnerJars>true</defaultSigning-excludeInnerJars>
