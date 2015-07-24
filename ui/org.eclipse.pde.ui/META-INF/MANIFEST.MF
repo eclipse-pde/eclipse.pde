@@ -123,5 +123,5 @@ Require-Bundle:
 Eclipse-LazyStart: true
 Import-Package: com.ibm.icu.text,
  org.eclipse.jdt.debug.core
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
