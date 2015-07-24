@@ -136,9 +136,6 @@ public class SchemaRootElementDetails extends AbstractSchemaDetails {
 		});
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.AbstractFormPart#commit(boolean)
-	 */
 	@Override
 	public void commit(boolean onSave) {
 		super.commit(onSave);

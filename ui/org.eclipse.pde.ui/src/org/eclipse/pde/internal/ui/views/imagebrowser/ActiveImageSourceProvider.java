@@ -31,9 +31,6 @@ public class ActiveImageSourceProvider extends AbstractSourceProvider {
 	public void dispose() {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.ISourceProvider#getCurrentState()
-	 */
 	@Override
 	public Map getCurrentState() {
 		HashMap<String, Object> map = new HashMap<String, Object>();

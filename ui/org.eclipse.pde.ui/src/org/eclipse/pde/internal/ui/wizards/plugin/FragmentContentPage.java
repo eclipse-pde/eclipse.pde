@@ -76,9 +76,6 @@ public class FragmentContentPage extends ContentPage {
 		fVersionPart = new PluginVersionPart(fNewVersion);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.wizards.plugin.ContentPage#createControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
@@ -321,9 +318,6 @@ public class FragmentContentPage extends ContentPage {
 		((FragmentFieldData) fData).setPluginVersion(version);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.wizards.plugin.ContentPage#validatePage()
-	 */
 	@Override
 	protected void validatePage() {
 		String errorMessage = validateProperties();
@@ -383,9 +377,6 @@ public class FragmentContentPage extends ContentPage {
 		setPageComplete(errorMessage == null);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.wizards.plugin.ContentPage#setVisible(boolean)
-	 */
 	@Override
 	public void setVisible(boolean visible) {
 		if (visible) {

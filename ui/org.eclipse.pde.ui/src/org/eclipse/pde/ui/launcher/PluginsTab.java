@@ -91,10 +91,6 @@ public class PluginsTab extends AbstractLauncherTab {
 		this();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#dispose()
-	 */
 	@Override
 	public void dispose() {
 		fBlock.dispose();
@@ -102,10 +98,6 @@ public class PluginsTab extends AbstractLauncherTab {
 		super.dispose();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		Composite composite = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_HORIZONTAL);
@@ -146,10 +138,6 @@ public class PluginsTab extends AbstractLauncherTab {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IHelpContextIds.LAUNCHER_ADVANCED);
 	}
 
-	/*
-	 * (non-Javadoc) 
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
-	 */
 	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		try {
@@ -174,10 +162,6 @@ public class PluginsTab extends AbstractLauncherTab {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
 	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		configuration.setAttribute(IPDELauncherConstants.USE_DEFAULT, true);
@@ -187,10 +171,6 @@ public class PluginsTab extends AbstractLauncherTab {
 		fBlock.setDefaults(configuration);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
 	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		int index = fSelectionCombo.getSelectionIndex();
@@ -215,19 +195,11 @@ public class PluginsTab extends AbstractLauncherTab {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
-	 */
 	@Override
 	public String getName() {
 		return PDEUIMessages.AdvancedLauncherTab_name;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
-	 */
 	@Override
 	public Image getImage() {
 		return fImage;
@@ -245,9 +217,6 @@ public class PluginsTab extends AbstractLauncherTab {
 		setErrorMessage(errorMessage);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getId()
-	 */
 	@Override
 	public String getId() {
 		return IPDELauncherConstants.TAB_PLUGINS_ID;

@@ -96,22 +96,12 @@ public class CategoryOutlinePage extends FormOutlinePage {
 		return super.getParentPageId(item);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ui.editor.FormOutlinePage#createLabelProvider()
-	 */
 	@Override
 	public ILabelProvider createLabelProvider() {
 		fLabelProvider = new CategoryLabelProvider();
 		return fLabelProvider;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ui.editor.FormOutlinePage#dispose()
-	 */
 	@Override
 	public void dispose() {
 		super.dispose();

@@ -26,11 +26,6 @@ public class DependenciesViewListPage extends DependenciesViewPage {
 		super(view, contentProvider);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ui.view.DependenciesViewPage#createViewer(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected StructuredViewer createViewer(Composite parent) {
 		Table table = new Table(parent, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);

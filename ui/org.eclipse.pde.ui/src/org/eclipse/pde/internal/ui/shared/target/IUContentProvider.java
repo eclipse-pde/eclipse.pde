@@ -25,18 +25,12 @@ import org.eclipse.pde.internal.ui.elements.DefaultTableProvider;
  *
  */
 public class IUContentProvider extends DefaultTableProvider implements ITreeContentProvider {
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
-	 */
+
 	@Override
 	public Object[] getElements(Object inputElement) {
 		return null;
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
-	 */
+
 	@Override
 	public Object[] getChildren(Object parentElement) {
 		IUBundleContainer location = (IUBundleContainer) parentElement;
@@ -61,10 +55,7 @@ public class IUContentProvider extends DefaultTableProvider implements ITreeCont
 		}
 		return new Object[0];
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
-	 */
+
 	@Override
 	public Object getParent(Object element) {
 		if (element instanceof IUWrapper) {
@@ -72,10 +63,7 @@ public class IUContentProvider extends DefaultTableProvider implements ITreeCont
 		}
 		return null;
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
-	 */
+
 	@Override
 	public boolean hasChildren(Object element) {
 		return false;

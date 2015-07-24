@@ -70,9 +70,6 @@ public class UpdateTargetJob extends Job {
 		fTarget = target;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
 		SubMonitor progress = SubMonitor.convert(monitor, Messages.UpdateTargetJob_UpdatingTarget, toUpdate.size() * 100);

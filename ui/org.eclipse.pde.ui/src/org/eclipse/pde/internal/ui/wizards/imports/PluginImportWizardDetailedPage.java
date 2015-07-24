@@ -74,9 +74,6 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 	private static final String SETTINGS_SHOW_LATEST = "showLatestPluginsOnly"; //$NON-NLS-1$
 
 	private class RepositoryFilter extends ViewerFilter {
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-		 */
 		@Override
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
 			if (fPage1.getImportType() == PluginImportOperation.IMPORT_FROM_REPOSITORY) {

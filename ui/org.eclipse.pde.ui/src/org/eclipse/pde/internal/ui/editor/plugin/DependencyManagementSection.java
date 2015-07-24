@@ -88,9 +88,6 @@ public class DependencyManagementSection extends TableSection implements IPlugin
 
 	class ContentProvider extends DefaultTableProvider {
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
-		 */
 		@Override
 		public Object[] getElements(Object inputElement) {
 			if (fAdditionalBundles == null)
@@ -455,9 +452,6 @@ public class DependencyManagementSection extends TableSection implements IPlugin
 		markDirty();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.TableSection#selectionChanged(org.eclipse.jface.viewers.IStructuredSelection)
-	 */
 	@Override
 	protected void selectionChanged(IStructuredSelection sel) {
 		// Update global selection
@@ -495,9 +489,6 @@ public class DependencyManagementSection extends TableSection implements IPlugin
 		job.schedule();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESection#doGlobalAction(java.lang.String)
-	 */
 	@Override
 	public boolean doGlobalAction(String actionId) {
 
@@ -523,9 +514,6 @@ public class DependencyManagementSection extends TableSection implements IPlugin
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(java.lang.Object, java.lang.Object[])
-	 */
 	@Override
 	protected boolean canPaste(Object targetObject, Object[] sourceObjects) {
 		HashSet<String> secondaryDepSet = null;
@@ -579,9 +567,6 @@ public class DependencyManagementSection extends TableSection implements IPlugin
 		return secondaryDepSet;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste(java.lang.Object, java.lang.Object[])
-	 */
 	@Override
 	protected void doPaste(Object targetObject, Object[] sourceObjects) {
 		// Get the build model
@@ -696,17 +681,11 @@ public class DependencyManagementSection extends TableSection implements IPlugin
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#isDragAndDropEnabled()
-	 */
 	@Override
 	protected boolean isDragAndDropEnabled() {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canDragMove(java.lang.Object[])
-	 */
 	@Override
 	public boolean canDragMove(Object[] sourceObjects) {
 		if (validateDragMoveSanity(sourceObjects) == false) {
@@ -732,9 +711,6 @@ public class DependencyManagementSection extends TableSection implements IPlugin
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canDropMove(java.lang.Object, java.lang.Object[], int)
-	 */
 	@Override
 	public boolean canDropMove(Object targetObject, Object[] sourceObjects, int targetLocation) {
 		// Sanity check
@@ -809,9 +785,6 @@ public class DependencyManagementSection extends TableSection implements IPlugin
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doDropMove(java.lang.Object, java.lang.Object[], int)
-	 */
 	@Override
 	public void doDropMove(Object targetObject, Object[] sourceObjects, int targetLocation) {
 		// Sanity check

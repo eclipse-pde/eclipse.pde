@@ -48,9 +48,6 @@ public class BundleInputContext extends UTF8InputContext {
 		create();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.neweditor.InputContext#createModel(org.eclipse.ui.IEditorInput)
-	 */
 	@Override
 	protected IBaseModel createModel(IEditorInput input) throws CoreException {
 		BundleModel model = null;
@@ -76,17 +73,11 @@ public class BundleInputContext extends UTF8InputContext {
 		return model;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.neweditor.InputContext#getId()
-	 */
 	@Override
 	public String getId() {
 		return CONTEXT_ID;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.neweditor.context.InputContext#addTextEditOperation(java.util.ArrayList, org.eclipse.pde.core.IModelChangedEvent)
-	 */
 	@Override
 	protected void addTextEditOperation(ArrayList<TextEdit> ops, IModelChangedEvent event) {
 		Object[] objects = event.getChangedObjects();
@@ -116,9 +107,6 @@ public class BundleInputContext extends UTF8InputContext {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.neweditor.context.InputContext#getMoveOperations()
-	 */
 	protected TextEdit[] getMoveOperations() {
 		return new TextEdit[0];
 	}

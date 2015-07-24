@@ -36,10 +36,7 @@ public class EnvironmentPage extends FormPage {
 	public EnvironmentPage(FormEditor editor) {
 		super(editor, PAGE_ID, PDEUIMessages.EnvironmentPage_title);
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.editor.FormPage#createFormContent(org.eclipse.ui.forms.IManagedForm)
-	 */
+
 	@Override
 	protected void createFormContent(IManagedForm managedForm) {
 		super.createFormContent(managedForm);
@@ -56,10 +53,7 @@ public class EnvironmentPage extends FormPage {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.TARGET_EDITOR_ENVIRONMENT_PAGE);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(form, IHelpContextIds.TARGET_EDITOR_ENVIRONMENT_PAGE);
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.editor.FormPage#dispose()
-	 */
+
 	@Override
 	public void dispose() {
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
@@ -75,10 +69,7 @@ public class EnvironmentPage extends FormPage {
 		managedForm.addPart(new ArgumentsSection(this, body));
 		managedForm.addPart(new ImplicitDependenciesSection(this, body));
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.editor.FormPage#canLeaveThePage()
-	 */
+
 	@Override
 	public boolean canLeaveThePage() {
 		((TargetEditor) getEditor()).setDirty(isDirty());

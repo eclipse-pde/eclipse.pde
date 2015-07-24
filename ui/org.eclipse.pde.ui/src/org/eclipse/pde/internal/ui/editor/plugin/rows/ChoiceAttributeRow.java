@@ -72,9 +72,6 @@ public class ChoiceAttributeRow extends ExtensionAttributeRow {
 		combo.getControl().setEnabled(part.isEditable());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.neweditor.plugin.ExtensionElementEditor#update(org.eclipse.pde.internal.ui.neweditor.plugin.DummyExtensionElement)
-	 */
 	@Override
 	protected void update() {
 		blockNotification = true;

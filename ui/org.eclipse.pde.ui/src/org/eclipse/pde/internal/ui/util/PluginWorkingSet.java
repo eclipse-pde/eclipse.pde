@@ -62,9 +62,6 @@ public class PluginWorkingSet extends WizardPage implements IWorkingSetPage {
 			PDEPlugin.getDefault().getLabelProvider().connect(this);
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
-		 */
 		@Override
 		public String getText(Object element) {
 			if (element instanceof IPluginModelBase) {
@@ -77,17 +74,11 @@ public class PluginWorkingSet extends WizardPage implements IWorkingSetPage {
 			return super.getText(element);
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.LabelProvider#getImage(java.lang.Object)
-		 */
 		@Override
 		public Image getImage(Object element) {
 			return PDEPlugin.getDefault().getLabelProvider().getImage(element);
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.LabelProvider#dispose()
-		 */
 		@Override
 		public void dispose() {
 			super.dispose();
@@ -123,9 +114,6 @@ public class PluginWorkingSet extends WizardPage implements IWorkingSetPage {
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.IWorkingSetPage#finish()
-	 */
 	@Override
 	public void finish() {
 		Object[] checked = fTree.getCheckboxTreeViewer().getCheckedElements();
@@ -147,25 +135,16 @@ public class PluginWorkingSet extends WizardPage implements IWorkingSetPage {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.IWorkingSetPage#getSelection()
-	 */
 	@Override
 	public IWorkingSet getSelection() {
 		return fWorkingSet;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.IWorkingSetPage#setSelection(org.eclipse.ui.IWorkingSet)
-	 */
 	@Override
 	public void setSelection(IWorkingSet workingSet) {
 		fWorkingSet = workingSet;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
@@ -276,9 +255,6 @@ public class PluginWorkingSet extends WizardPage implements IWorkingSetPage {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
-	 */
 	@Override
 	public void dispose() {
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);

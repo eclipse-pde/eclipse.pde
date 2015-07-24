@@ -31,33 +31,21 @@ public abstract class AbstractFieldData implements IFieldData {
 	private IWorkingSet[] fWorkingSets;
 	private String fExecutionEnvironment;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.IFieldData2#getId()
-	 */
 	@Override
 	public String getId() {
 		return fId;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.IFieldData2#getVersion()
-	 */
 	@Override
 	public String getVersion() {
 		return fVersion;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.IFieldData2#getName()
-	 */
 	@Override
 	public String getName() {
 		return fName;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.IFieldData2#getProvider()
-	 */
 	@Override
 	public String getProvider() {
 		return fProvider;
@@ -68,41 +56,26 @@ public abstract class AbstractFieldData implements IFieldData {
 		return fLegacy;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.IFieldData2#getLibraryName()
-	 */
 	@Override
 	public String getLibraryName() {
 		return fLibraryName;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.IFieldData2#getSourceFolderName()
-	 */
 	@Override
 	public String getSourceFolderName() {
 		return fSourceFolderName;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.IFieldData2#getOutputFolderName()
-	 */
 	@Override
 	public String getOutputFolderName() {
 		return fOutputFolderName;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.IFieldData2#hasBundleStructure()
-	 */
 	@Override
 	public boolean hasBundleStructure() {
 		return fHasBundleStructure;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.IFieldData2#isSimple()
-	 */
 	@Override
 	public boolean isSimple() {
 		return fSimple;
@@ -148,9 +121,6 @@ public abstract class AbstractFieldData implements IFieldData {
 		fSimple = simple;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.IFieldData#getTargetVersion()
-	 */
 	public String getTargetVersion() {
 		return fTargetVersion;
 	}

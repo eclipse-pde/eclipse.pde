@@ -36,9 +36,6 @@ public class NewProductFileAction extends Action implements ICheatSheetAction {
 		run(new String[] {}, null);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.cheatsheets.ICheatSheetAction#run(java.lang.String[], org.eclipse.ui.cheatsheets.ICheatSheetManager)
-	 */
 	@Override
 	public void run(String[] params, ICheatSheetManager manager) {
 		NewProductFileWizard wizard = new NewProductFileWizard();

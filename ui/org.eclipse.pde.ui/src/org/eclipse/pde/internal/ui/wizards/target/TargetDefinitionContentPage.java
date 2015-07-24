@@ -102,17 +102,11 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 			super(monitor);
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.core.runtime.ProgressMonitorWrapper#setBlocked(org.eclipse.core.runtime.IStatus)
-		 */
 		@Override
 		public void setBlocked(IStatus reason) {
 			subTask(reason.getMessage());
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.core.runtime.ProgressMonitorWrapper#clearBlocked()
-		 */
 		@Override
 		public void clearBlocked() {
 			subTask(""); //$NON-NLS-1$
@@ -130,9 +124,6 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		setImageDescriptor(PDEPluginImages.DESC_TARGET_WIZ);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		Composite comp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH, 0, 0);
@@ -245,9 +236,6 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		fLocationTree.addTargetChangedListener(listener);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.wizards.target.TargetDefinitionPage#targetChanged()
-	 */
 	@Override
 	protected void targetChanged(ITargetDefinition definition) {
 		super.targetChanged(definition);
@@ -850,9 +838,6 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		fRemoveAllButton.setEnabled(hasElements);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.WizardPage#isPageComplete()
-	 */
 	@Override
 	public boolean isPageComplete() {
 		if (fNameText.getText().trim().length() == 0)
@@ -860,11 +845,6 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.dialogs.DialogPage#setVisible(boolean)
-	 */
 
 	@Override
 	public void setVisible(boolean visible) {

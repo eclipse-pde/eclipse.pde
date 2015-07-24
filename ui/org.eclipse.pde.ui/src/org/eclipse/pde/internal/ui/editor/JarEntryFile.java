@@ -28,9 +28,6 @@ public class JarEntryFile extends PlatformObject implements IStorage {
 		fEntryName = entryName;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.IStorage#getContents()
-	 */
 	@Override
 	public InputStream getContents() throws CoreException {
 		try {
@@ -41,33 +38,21 @@ public class JarEntryFile extends PlatformObject implements IStorage {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.IStorage#getFullPath()
-	 */
 	@Override
 	public IPath getFullPath() {
 		return new Path(fEntryName);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.IStorage#getName()
-	 */
 	@Override
 	public String getName() {
 		return getFullPath().lastSegment();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.IStorage#isReadOnly()
-	 */
 	@Override
 	public boolean isReadOnly() {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
-	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getAdapter(Class<T> adapter) {

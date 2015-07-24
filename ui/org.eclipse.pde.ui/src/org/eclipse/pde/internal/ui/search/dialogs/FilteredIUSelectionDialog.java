@@ -195,17 +195,11 @@ public class FilteredIUSelectionDialog extends FilteredItemsSelectionDialog {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#createFilter()
-	 */
 	@Override
 	protected ItemsFilter createFilter() {
 		return new IUItemsFilter();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#fillContentProvider(org.eclipse.ui.dialogs.FilteredItemsSelectionDialog.AbstractContentProvider, org.eclipse.ui.dialogs.FilteredItemsSelectionDialog.ItemsFilter, org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	protected void fillContentProvider(AbstractContentProvider contentProvider, ItemsFilter itemsFilter, IProgressMonitor progressMonitor) throws CoreException {
 		// TODO clean up this code a bit...
@@ -235,25 +229,16 @@ public class FilteredIUSelectionDialog extends FilteredItemsSelectionDialog {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#getDialogSettings()
-	 */
 	@Override
 	protected IDialogSettings getDialogSettings() {
 		return new DialogSettings("org.eclipse.pde.internal.ui.search.dialogs.FilteredTargetRepoIUSelectionDialog"); //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#getElementName(java.lang.Object)
-	 */
 	@Override
 	public String getElementName(Object item) {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#getItemsComparator()
-	 */
 	@Override
 	protected Comparator<Object> getItemsComparator() {
 		return new Comparator<Object>() {
@@ -283,9 +268,6 @@ public class FilteredIUSelectionDialog extends FilteredItemsSelectionDialog {
 		};
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#validateItem(java.lang.Object)
-	 */
 	@Override
 	protected IStatus validateItem(Object item) {
 		return Status.OK_STATUS;

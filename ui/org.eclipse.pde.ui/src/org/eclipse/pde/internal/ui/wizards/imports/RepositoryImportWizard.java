@@ -58,9 +58,6 @@ public class RepositoryImportWizard extends Wizard {
 		fImportMap = importMap;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.Wizard#addPages()
-	 */
 	@Override
 	public void addPages() {
 		Iterator<?> iterator = fImportMap.entrySet().iterator();
@@ -93,9 +90,6 @@ public class RepositoryImportWizard extends Wizard {
 		return setting;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.Wizard#performFinish()
-	 */
 	@Override
 	public boolean performFinish() {
 		// collect the bundle descriptions from each page and import

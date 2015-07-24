@@ -40,20 +40,14 @@ public class EditTargetDefinitionWizard extends Wizard {
 		setTargetDefinition(definition, createWorkingCopy);
 		setNeedsProgressMonitor(true);
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.Wizard#performFinish()
-	 */
+
 	@Override
 	public boolean performFinish() {
 		// Do nothing, edited target is available 
 		return true;
 
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.Wizard#addPages()
-	 */
+
 	@Override
 	public void addPages() {
 		addPage(new TargetDefinitionContentPage(fDefinition));

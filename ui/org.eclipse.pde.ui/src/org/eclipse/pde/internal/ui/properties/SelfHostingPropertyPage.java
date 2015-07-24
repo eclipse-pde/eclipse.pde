@@ -47,9 +47,6 @@ public class SelfHostingPropertyPage extends PropertyPage {
 	}
 
 	class FolderLabelProvider extends LabelProvider {
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.LabelProvider#getImage(java.lang.Object)
-		 */
 		@Override
 		public Image getImage(Object element) {
 			return fImage;
@@ -83,9 +80,6 @@ public class SelfHostingPropertyPage extends PropertyPage {
 		fImage = PDEPluginImages.DESC_OUTPUT_FOLDER_OBJ.createImage();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
-	 */
 	@Override
 	public void dispose() {
 		if (fImage != null)
@@ -125,9 +119,6 @@ public class SelfHostingPropertyPage extends PropertyPage {
 		return composite;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
@@ -151,9 +142,6 @@ public class SelfHostingPropertyPage extends PropertyPage {
 		return new ProjectScope(project).getNode(PDECore.PLUGIN_ID);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
-	 */
 	@Override
 	protected void performDefaults() {
 		fViewer.setAllChecked(true);

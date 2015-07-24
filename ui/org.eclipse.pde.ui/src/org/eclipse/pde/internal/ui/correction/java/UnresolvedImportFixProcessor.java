@@ -33,10 +33,6 @@ public class UnresolvedImportFixProcessor extends ClasspathFixProcessor {
 
 		private ArrayList<Object> fList = new ArrayList<Object>();
 
-		/*
-		 * (non-Javadoc)
-		 * @see org.eclipse.pde.internal.ui.correction.java.FindClassResolutionsOperation.AbstractClassResolutionCollector#addResolutionModification(org.eclipse.core.resources.IProject, org.eclipse.osgi.service.resolver.ExportPackageDescription)
-		 */
 		@Override
 		public void addResolutionModification(IProject project, ExportPackageDescription desc) {
 			if (desc.getSupplier() == null)
@@ -55,9 +51,6 @@ public class UnresolvedImportFixProcessor extends ClasspathFixProcessor {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.ui.text.java.ClasspathFixProcessor#getFixImportProposals(org.eclipse.jdt.core.IJavaProject, java.lang.String)
-	 */
 	@Override
 	public ClasspathFixProposal[] getFixImportProposals(IJavaProject project, String name) throws CoreException {
 		if (!WorkspaceModelManager.isPluginProject(project.getProject()))

@@ -41,9 +41,6 @@ public class NewSiteProjectCreationOperation extends WorkspaceModifyOperation {
 		fWebLocation = webLocation;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.actions.WorkspaceModifyOperation#execute(org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	protected void execute(IProgressMonitor monitor) throws CoreException, InvocationTargetException, InterruptedException {
 		int numUnits = fWebLocation == null ? 3 : 4;

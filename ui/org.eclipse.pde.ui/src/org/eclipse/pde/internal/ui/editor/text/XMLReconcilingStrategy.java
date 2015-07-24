@@ -148,9 +148,6 @@ public class XMLReconcilingStrategy extends SpellingReconcileStrategy {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.texteditor.spelling.SpellingReconcileStrategy#createSpellingProblemCollector()
-	 */
 	@Override
 	protected ISpellingProblemCollector createSpellingProblemCollector() {
 		IAnnotationModel model = getAnnotationModel();

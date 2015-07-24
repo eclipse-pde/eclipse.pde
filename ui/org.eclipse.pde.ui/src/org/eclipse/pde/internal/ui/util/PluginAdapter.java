@@ -22,9 +22,6 @@ import org.eclipse.ui.IWorkingSetElementAdapter;
 
 public class PluginAdapter implements IWorkingSetElementAdapter {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkingSetElementAdapter#adaptElements(org.eclipse.ui.IWorkingSet, org.eclipse.core.runtime.IAdaptable[])
-	 */
 	@Override
 	public IAdaptable[] adaptElements(IWorkingSet ws, IAdaptable[] elements) {
 		HashSet<PersistablePluginObject> set = new HashSet<PersistablePluginObject>();
@@ -44,9 +41,6 @@ public class PluginAdapter implements IWorkingSetElementAdapter {
 		return set.toArray(new IAdaptable[set.size()]);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkingSetElementAdapter#dispose()
-	 */
 	@Override
 	public void dispose() {
 	}

@@ -69,17 +69,11 @@ public class SourceOutlinePage extends PDEOutlinePage implements IReconcilingPar
 		viewer.expandAll();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.views.contentoutline.ContentOutlinePage#init(org.eclipse.ui.part.IPageSite)
-	 */
 	@Override
 	public void init(IPageSite pageSite) {
 		super.init(pageSite);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.text.IReconcilingParticipant#reconciled(org.eclipse.jface.text.IDocument)
-	 */
 	@Override
 	public void reconciled(IDocument document) {
 		final Control control = getControl();
@@ -104,9 +98,6 @@ public class SourceOutlinePage extends PDEOutlinePage implements IReconcilingPar
 		});
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.ISortableContentOutlinePage#sort(boolean)
-	 */
 	@Override
 	public void sort(boolean sorting) {
 		sorted = sorting;
@@ -158,9 +149,6 @@ public class SourceOutlinePage extends PDEOutlinePage implements IReconcilingPar
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.views.contentoutline.ContentOutlinePage#addSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
-	 */
 	@Override
 	public void addSelectionChangedListener(ISelectionChangedListener listener) {
 		// Add the listener to our private list
@@ -168,9 +156,6 @@ public class SourceOutlinePage extends PDEOutlinePage implements IReconcilingPar
 		super.addSelectionChangedListener(listener);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.views.contentoutline.ContentOutlinePage#removeSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
-	 */
 	@Override
 	public void removeSelectionChangedListener(ISelectionChangedListener listener) {
 		// Remove the listener from our private list

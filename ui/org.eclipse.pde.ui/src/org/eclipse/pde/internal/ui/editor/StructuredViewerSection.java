@@ -111,9 +111,6 @@ public abstract class StructuredViewerSection extends PDESection implements IPDE
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESection#canPaste(org.eclipse.swt.dnd.Clipboard)
-	 */
 	@Override
 	public boolean canPaste(Clipboard clipboard) {
 		// TODO: MP: CCP: Checking clipboard data done incorrectly.  See Bug 37223
@@ -181,93 +178,60 @@ public abstract class StructuredViewerSection extends PDESection implements IPDE
 		return -1;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.IPDEDragParticipant#canDragCopy(java.lang.Object[])
-	 */
 	@Override
 	public boolean canDragCopy(Object[] sourceObjects) {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.IPDEDragParticipant#canDragLink(java.lang.Object[])
-	 */
 	@Override
 	public boolean canDragLink(Object[] sourceObjects) {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.IPDEDragParticipant#canDragMove(java.lang.Object[])
-	 */
 	@Override
 	public boolean canDragMove(Object[] sourceObjects) {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.IPDEDropParticipant#canDropCopy(java.lang.Object, java.lang.Object[], int)
-	 */
 	@Override
 	public boolean canDropCopy(Object targetObject, Object[] sourceObjects, int targetLocation) {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.IPDEDropParticipant#canDropLink(java.lang.Object, java.lang.Object[], int)
-	 */
 	@Override
 	public boolean canDropLink(Object targetObject, Object[] sourceObjects, int targetLocation) {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.IPDEDropParticipant#canDropMove(java.lang.Object, java.lang.Object[], int)
-	 */
 	@Override
 	public boolean canDropMove(Object targetObject, Object[] sourceObjects, int targetLocation) {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.IPDEDropParticipant#doDropCopy(java.lang.Object, java.lang.Object[], int)
-	 */
 	@Override
 	public void doDropCopy(Object targetObject, Object[] sourceObjects, int targetLocation) {
 		// NO-OP
 		// Sub-classes to override
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.IPDEDropParticipant#doDropLink(java.lang.Object, java.lang.Object[], int)
-	 */
 	@Override
 	public void doDropLink(Object targetObject, Object[] sourceObjects, int targetLocation) {
 		// NO-OP
 		// Sub-classes to override
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.IPDEDropParticipant#doDropMove(java.lang.Object, java.lang.Object[], int)
-	 */
 	@Override
 	public void doDropMove(Object targetObject, Object[] sourceObjects, int targetLocation) {
 		// NO-OP
 		// Sub-classes to override
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.IPDEDragParticipant#doDragRemove(java.lang.Object[])
-	 */
 	@Override
 	public void doDragRemove(Object[] sourceObjects) {
 		// NO-OP
 		// Sub-classes to override
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.IPDEDragParticipant#getSupportedDNDOperations()
-	 */
 	@Override
 	public int getSupportedDNDOperations() {
 		return DND.DROP_MOVE;

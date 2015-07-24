@@ -149,9 +149,6 @@ public class SchemaElementDetails extends AbstractSchemaDetails {
 		super.modelChanged(event);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.AbstractFormPart#commit(boolean)
-	 */
 	@Override
 	public void commit(boolean onSave) {
 		super.commit(onSave);

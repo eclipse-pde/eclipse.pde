@@ -30,9 +30,6 @@ public class LoopDialog extends TrayDialog {
 
 	class ContentProvider extends DefaultContentProvider implements ITreeContentProvider {
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
-		 */
 		@Override
 		public Object[] getChildren(Object parentElement) {
 			if (parentElement instanceof DependencyLoop)
@@ -40,25 +37,16 @@ public class LoopDialog extends TrayDialog {
 			return new Object[0];
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
-		 */
 		@Override
 		public Object getParent(Object element) {
 			return null;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
-		 */
 		@Override
 		public boolean hasChildren(Object element) {
 			return element instanceof DependencyLoop;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
-		 */
 		@Override
 		public Object[] getElements(Object inputElement) {
 			return fLoops;
@@ -67,9 +55,6 @@ public class LoopDialog extends TrayDialog {
 	}
 
 	class LoopLabelProvider extends LabelProvider {
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.LabelProvider#getImage(java.lang.Object)
-		 */
 		@Override
 		public Image getImage(Object element) {
 			if (element instanceof DependencyLoop)
@@ -77,9 +62,6 @@ public class LoopDialog extends TrayDialog {
 			return PDEPlugin.getDefault().getLabelProvider().getImage(element);
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
-		 */
 		@Override
 		public String getText(Object element) {
 			return PDEPlugin.getDefault().getLabelProvider().getText(element);

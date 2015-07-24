@@ -51,9 +51,6 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 		fPluginData.setOSGiFramework(osgiFramework);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.Wizard#addPages()
-	 */
 	@Override
 	public void addPages() {
 		fMainPage = new NewProjectCreationPage("main", fPluginData, false, getSelection()); //$NON-NLS-1$
@@ -92,20 +89,12 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 		addPage(fWizardListPage);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.Wizard#canFinish()
-	 */
 	@Override
 	public boolean canFinish() {
 		IWizardPage page = getContainer().getCurrentPage();
 		return super.canFinish() && page != fMainPage;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ui.wizards.NewWizard#performFinish()
-	 */
 	@Override
 	public boolean performFinish() {
 		try {
@@ -151,9 +140,6 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement, java.lang.String, java.lang.Object)
-	 */
 	@Override
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) throws CoreException {
 		fConfig = config;

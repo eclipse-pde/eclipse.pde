@@ -75,9 +75,6 @@ public class ConvertedProjectsPage extends WizardPage {
 		this.fInitialSelection = initialSelection.toArray(new IProject[initialSelection.size()]);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		Composite container = SWTFactory.createComposite(parent, 2, 1, GridData.FILL_BOTH);

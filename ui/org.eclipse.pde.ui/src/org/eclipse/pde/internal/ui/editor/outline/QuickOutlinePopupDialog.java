@@ -77,9 +77,6 @@ public class QuickOutlinePopupDialog extends PopupDialog implements IInformation
 		fTreeViewerDefaultComparator = null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.PopupDialog#createDialogArea(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		// Applies only to dialog body - not title.  See createTitleControl
@@ -104,9 +101,6 @@ public class QuickOutlinePopupDialog extends PopupDialog implements IInformation
 		fSortAction = new SortAction(fTreeViewer, PDEUIMessages.PDEMultiPageContentOutline_SortingAction_tooltip, fTreeViewerComparator, fTreeViewerDefaultComparator, null);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.PopupDialog#fillDialogMenu(org.eclipse.jface.action.IMenuManager)
-	 */
 	@Override
 	protected void fillDialogMenu(IMenuManager dialogMenu) {
 		// Add the sort action
@@ -220,25 +214,16 @@ public class QuickOutlinePopupDialog extends PopupDialog implements IInformation
 		return ((IStructuredSelection) fTreeViewer.getSelection()).getFirstElement();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.IInformationControl#addDisposeListener(org.eclipse.swt.events.DisposeListener)
-	 */
 	@Override
 	public void addDisposeListener(DisposeListener listener) {
 		getShell().addDisposeListener(listener);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.IInformationControl#addFocusListener(org.eclipse.swt.events.FocusListener)
-	 */
 	@Override
 	public void addFocusListener(FocusListener listener) {
 		getShell().addFocusListener(listener);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.IInformationControl#computeSizeHint()
-	 */
 	@Override
 	public Point computeSizeHint() {
 		// Return the shell's size
@@ -246,17 +231,11 @@ public class QuickOutlinePopupDialog extends PopupDialog implements IInformation
 		return getShell().getSize();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.IInformationControl#dispose()
-	 */
 	@Override
 	public void dispose() {
 		close();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.IInformationControl#isFocusControl()
-	 */
 	@Override
 	public boolean isFocusControl() {
 		if (fTreeViewer.getControl().isFocusControl() || fFilterText.isFocusControl()) {
@@ -265,59 +244,38 @@ public class QuickOutlinePopupDialog extends PopupDialog implements IInformation
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.IInformationControl#removeDisposeListener(org.eclipse.swt.events.DisposeListener)
-	 */
 	@Override
 	public void removeDisposeListener(DisposeListener listener) {
 		getShell().removeDisposeListener(listener);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.IInformationControl#removeFocusListener(org.eclipse.swt.events.FocusListener)
-	 */
 	@Override
 	public void removeFocusListener(FocusListener listener) {
 		getShell().removeFocusListener(listener);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.IInformationControl#setBackgroundColor(org.eclipse.swt.graphics.Color)
-	 */
 	@Override
 	public void setBackgroundColor(Color background) {
 		applyBackgroundColor(background, getContents());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.IInformationControl#setFocus()
-	 */
 	@Override
 	public void setFocus() {
 		getShell().forceFocus();
 		fFilterText.setFocus();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.IInformationControl#setForegroundColor(org.eclipse.swt.graphics.Color)
-	 */
 	@Override
 	public void setForegroundColor(Color foreground) {
 		applyForegroundColor(foreground, getContents());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.IInformationControl#setInformation(java.lang.String)
-	 */
 	@Override
 	public void setInformation(String information) {
 		// Ignore
 		// See IInformationControlExtension2
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.IInformationControl#setLocation(org.eclipse.swt.graphics.Point)
-	 */
 	@Override
 	public void setLocation(Point location) {
 		/*
@@ -336,25 +294,16 @@ public class QuickOutlinePopupDialog extends PopupDialog implements IInformation
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.IInformationControl#setSize(int, int)
-	 */
 	@Override
 	public void setSize(int width, int height) {
 		getShell().setSize(width, height);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.IInformationControl#setSizeConstraints(int, int)
-	 */
 	@Override
 	public void setSizeConstraints(int maxWidth, int maxHeight) {
 		// Ignore
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.IInformationControl#setVisible(boolean)
-	 */
 	@Override
 	public void setVisible(boolean visible) {
 		if (visible) {
@@ -365,9 +314,6 @@ public class QuickOutlinePopupDialog extends PopupDialog implements IInformation
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.IInformationControlExtension#hasContents()
-	 */
 	@Override
 	public boolean hasContents() {
 		if ((fTreeViewer == null) || (fTreeViewer.getInput() == null)) {
@@ -376,9 +322,6 @@ public class QuickOutlinePopupDialog extends PopupDialog implements IInformation
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.IInformationControlExtension2#setInput(java.lang.Object)
-	 */
 	@Override
 	public void setInput(Object input) {
 		// Input comes from PDESourceInfoProvider.getInformation2()
@@ -389,9 +332,6 @@ public class QuickOutlinePopupDialog extends PopupDialog implements IInformation
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
-	 */
 	@Override
 	public void widgetDisposed(DisposeEvent e) {
 		// Note: We do not reuse the dialog
@@ -399,9 +339,6 @@ public class QuickOutlinePopupDialog extends PopupDialog implements IInformation
 		fFilterText = null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.PopupDialog#createTitleControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected Control createTitleControl(Composite parent) {
 		// Applies only to dialog title - not body.  See createDialogArea

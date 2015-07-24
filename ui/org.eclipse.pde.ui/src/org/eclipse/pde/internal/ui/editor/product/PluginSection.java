@@ -109,9 +109,6 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 		return labels;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
-	 */
 	@Override
 	protected void createClient(Section section, FormToolkit toolkit) {
 
@@ -203,9 +200,6 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#buttonSelected(int)
-	 */
 	@Override
 	protected void buttonSelected(int index) {
 		switch (index) {
@@ -265,17 +259,11 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.TableSection#handleDoubleClick(org.eclipse.jface.viewers.IStructuredSelection)
-	 */
 	@Override
 	protected void handleDoubleClick(IStructuredSelection selection) {
 		handleOpen(selection);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
-	 */
 	@Override
 	public void dispose() {
 		IProductModel model = getModel();
@@ -284,9 +272,6 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 		super.dispose();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESection#doGlobalAction(java.lang.String)
-	 */
 	@Override
 	public boolean doGlobalAction(String actionId) {
 		if (actionId.equals(ActionFactory.DELETE.getId())) {
@@ -313,9 +298,6 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#fillContextMenu(org.eclipse.jface.action.IMenuManager)
-	 */
 	@Override
 	protected void fillContextMenu(IMenuManager manager) {
 		IStructuredSelection ssel = (IStructuredSelection) fPluginTable.getSelection();
@@ -484,9 +466,6 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 		return (IProductModel) getPage().getPDEEditor().getAggregateModel();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESection#modelChanged(org.eclipse.pde.core.IModelChangedEvent)
-	 */
 	@Override
 	public void modelChanged(IModelChangedEvent e) {
 		// No need to call super, handling world changed event here
@@ -545,9 +524,6 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 		refresh();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.AbstractFormPart#refresh()
-	 */
 	@Override
 	public void refresh() {
 		fPluginTable.refresh();
@@ -555,9 +531,6 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 		super.refresh();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.IPluginModelListener#modelsChanged(org.eclipse.pde.internal.core.PluginModelDelta)
-	 */
 	@Override
 	public void modelsChanged(PluginModelDelta delta) {
 		final Control control = fPluginTable.getControl();

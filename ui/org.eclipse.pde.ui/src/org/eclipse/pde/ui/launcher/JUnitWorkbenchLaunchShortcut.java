@@ -33,17 +33,11 @@ import org.eclipse.pde.launching.PDESourcePathProvider;
  */
 public class JUnitWorkbenchLaunchShortcut extends JUnitLaunchShortcut {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.junit.JUnitLaunchShortcut#getLaunchConfigurationTypeId()
-	 */
 	@Override
 	protected String getLaunchConfigurationTypeId() {
 		return "org.eclipse.pde.ui.JunitLaunchConfig"; //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.junit.JUnitLaunchShortcut#createLaunchConfiguration(org.eclipse.jdt.core.IJavaElement)
-	 */
 	@Override
 	protected ILaunchConfigurationWorkingCopy createLaunchConfiguration(IJavaElement element) throws CoreException {
 		ILaunchConfigurationWorkingCopy configuration = super.createLaunchConfiguration(element);

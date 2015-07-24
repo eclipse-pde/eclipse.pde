@@ -194,10 +194,7 @@ public class JRESection extends SectionPart {
 		fNamedJREsCombo.setEnabled(fNamedJREButton.getSelection());
 		fExecEnvsCombo.setEnabled(fExecEnvButton.getSelection());
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.AbstractFormPart#refresh()
-	 */
+
 	@Override
 	public void refresh() {
 		fBlockChanges = true;

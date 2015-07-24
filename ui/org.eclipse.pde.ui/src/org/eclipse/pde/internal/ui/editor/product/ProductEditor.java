@@ -38,50 +38,32 @@ public class ProductEditor extends PDELauncherFormEditor {
 		super();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getEditorID()
-	 */
 	@Override
 	protected String getEditorID() {
 		return IPDEUIConstants.PRODUCT_EDITOR_ID;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#isSaveAsAllowed()
-	 */
 	@Override
 	public boolean isSaveAsAllowed() {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getContextIDForSaveAs()
-	 */
 	@Override
 	public String getContextIDForSaveAs() {
 		return ProductInputContext.CONTEXT_ID;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#createInputContextManager()
-	 */
 	@Override
 	protected InputContextManager createInputContextManager() {
 		return new ProductInputContextManager(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#createResourceContexts(org.eclipse.pde.internal.ui.editor.context.InputContextManager, org.eclipse.ui.IFileEditorInput)
-	 */
 	@Override
 	protected void createResourceContexts(InputContextManager manager, IFileEditorInput input) {
 		manager.putContext(input, new ProductInputContext(this, input, true));
 		manager.monitorFile(input.getFile());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#createSystemFileContexts(org.eclipse.pde.internal.ui.editor.context.InputContextManager, org.eclipse.pde.internal.ui.editor.SystemFileEditorInput)
-	 */
 	@Override
 	protected void createSystemFileContexts(InputContextManager manager, FileStoreEditorInput input) {
 		File file = new File(input.getURI());
@@ -98,9 +80,6 @@ public class ProductEditor extends PDELauncherFormEditor {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#createStorageContexts(org.eclipse.pde.internal.ui.editor.context.InputContextManager, org.eclipse.ui.IStorageEditorInput)
-	 */
 	@Override
 	protected void createStorageContexts(InputContextManager manager, IStorageEditorInput input) {
 		if (input.getName().endsWith(".product")) { //$NON-NLS-1$
@@ -108,25 +87,16 @@ public class ProductEditor extends PDELauncherFormEditor {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#createContentOutline()
-	 */
 	@Override
 	protected ISortableContentOutlinePage createContentOutline() {
 		return new ProductOutlinePage(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getInputContext(java.lang.Object)
-	 */
 	@Override
 	protected InputContext getInputContext(Object object) {
 		return fInputContextManager.findContext(ProductInputContext.CONTEXT_ID);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.editor.FormEditor#addPages()
-	 */
 	@Override
 	protected void addEditorPages() {
 		try {
@@ -157,31 +127,19 @@ public class ProductEditor extends PDELauncherFormEditor {
 		return ((IProductModel) model).getProduct().useFeatures();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.context.IInputContextListener#contextAdded(org.eclipse.pde.internal.ui.editor.context.InputContext)
-	 */
 	@Override
 	public void editorContextAdded(InputContext context) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.context.IInputContextListener#contextRemoved(org.eclipse.pde.internal.ui.editor.context.InputContext)
-	 */
 	@Override
 	public void contextRemoved(InputContext context) {
 		close(false);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.context.IInputContextListener#monitoredFileAdded(org.eclipse.core.resources.IFile)
-	 */
 	@Override
 	public void monitoredFileAdded(IFile monitoredFile) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.context.IInputContextListener#monitoredFileRemoved(org.eclipse.core.resources.IFile)
-	 */
 	@Override
 	public boolean monitoredFileRemoved(IFile monitoredFile) {
 		return true;

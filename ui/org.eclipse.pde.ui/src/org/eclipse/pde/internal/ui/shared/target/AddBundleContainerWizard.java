@@ -32,17 +32,11 @@ public class AddBundleContainerWizard extends Wizard {
 		setForcePreviousAndNextButtons(true);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.Wizard#addPages()
-	 */
 	@Override
 	public void addPages() {
 		addPage(new AddBundleContainerSelectionPage(fTarget));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.Wizard#performFinish()
-	 */
 	@Override
 	public boolean performFinish() {
 		// Handled by the individual container wizards

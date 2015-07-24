@@ -48,9 +48,6 @@ public class DefinitionPage extends FormPage implements IHyperlinkListener {
 		return ((TargetEditor) getEditor()).getTarget();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#createFormContent(org.eclipse.ui.forms.IManagedForm)
-	 */
 	@Override
 	protected void createFormContent(IManagedForm managedForm) {
 		super.createFormContent(managedForm);
@@ -68,9 +65,6 @@ public class DefinitionPage extends FormPage implements IHyperlinkListener {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(form, IHelpContextIds.TARGET_EDITOR_DEFINITION_PAGE);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.editor.FormPage#dispose()
-	 */
 	@Override
 	public void dispose() {
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
@@ -146,9 +140,6 @@ public class DefinitionPage extends FormPage implements IHyperlinkListener {
 		mng.setMessage(null);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.editor.FormPage#canLeaveThePage()
-	 */
 	@Override
 	public boolean canLeaveThePage() {
 		((TargetEditor) getEditor()).setDirty(isDirty());

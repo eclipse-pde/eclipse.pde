@@ -68,9 +68,6 @@ public class TypeCompletionProposal extends AbstractJavaCompletionProposal imple
 		setImage(image);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#apply(org.eclipse.jface.text.IDocument)
-	 */
 	@Override
 	public void apply(ITextViewer viewer, char trigger, int stateMask, int offset) {
 		IDocument document = viewer.getDocument();
@@ -85,9 +82,6 @@ public class TypeCompletionProposal extends AbstractJavaCompletionProposal imple
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#getSelection(org.eclipse.jface.text.IDocument)
-	 */
 	@Override
 	public Point getSelection(IDocument document) {
 		if (getReplacementString().equals("\"\"")) //$NON-NLS-1$
@@ -109,9 +103,6 @@ public class TypeCompletionProposal extends AbstractJavaCompletionProposal imple
 		fAdditionalInfo = info;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension4#isAutoInsertable()
-	 */
 	@Override
 	public boolean isAutoInsertable() {
 		return true;

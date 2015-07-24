@@ -34,9 +34,6 @@ public class BuildEditor extends MultiSourceEditor {
 	public BuildEditor() {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getEditorID()
-	 */
 	@Override
 	protected String getEditorID() {
 		return IPDEUIConstants.BUILD_EDITOR_ID;
@@ -109,9 +106,6 @@ public class BuildEditor extends MultiSourceEditor {
 		addSourcePage(BuildInputContext.CONTEXT_ID);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#computeInitialPageId()
-	 */
 	@Override
 	protected String computeInitialPageId() {
 		// Retrieve the initial page
@@ -124,9 +118,6 @@ public class BuildEditor extends MultiSourceEditor {
 		return firstPageId;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.neweditor.MultiSourceEditor#createXMLSourcePage(org.eclipse.pde.internal.ui.neweditor.PDEFormEditor, java.lang.String, java.lang.String)
-	 */
 	@Override
 	protected PDESourcePage createSourcePage(PDEFormEditor editor, String title, String name, String contextId) {
 		return new BuildSourcePage(editor, title, name);
@@ -174,9 +165,6 @@ public class BuildEditor extends MultiSourceEditor {
 		return super.getAdapter(key);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getInputContext(java.lang.Object)
-	 */
 	@Override
 	protected InputContext getInputContext(Object object) {
 		InputContext context = null;

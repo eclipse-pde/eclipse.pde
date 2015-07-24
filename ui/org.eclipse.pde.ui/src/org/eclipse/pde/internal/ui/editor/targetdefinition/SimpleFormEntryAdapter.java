@@ -28,59 +28,35 @@ public class SimpleFormEntryAdapter implements IFormEntryListener {
 		fFormPart = formPart;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.parts.IFormEntryListener#browseButtonSelected(org.eclipse.pde.internal.ui.parts.FormEntry)
-	 */
 	@Override
 	public void browseButtonSelected(FormEntry entry) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.parts.IFormEntryListener#focusGained(org.eclipse.pde.internal.ui.parts.FormEntry)
-	 */
 	@Override
 	public void focusGained(FormEntry entry) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.parts.IFormEntryListener#selectionChanged(org.eclipse.pde.internal.ui.parts.FormEntry)
-	 */
 	@Override
 	public void selectionChanged(FormEntry entry) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.parts.IFormEntryListener#textDirty(org.eclipse.pde.internal.ui.parts.FormEntry)
-	 */
 	@Override
 	public void textDirty(FormEntry entry) {
 		fFormPart.markDirty();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.parts.IFormEntryListener#textValueChanged(org.eclipse.pde.internal.ui.parts.FormEntry)
-	 */
 	@Override
 	public void textValueChanged(FormEntry entry) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.events.IHyperlinkListener#linkActivated(org.eclipse.ui.forms.events.HyperlinkEvent)
-	 */
 	@Override
 	public void linkActivated(HyperlinkEvent e) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.events.IHyperlinkListener#linkEntered(org.eclipse.ui.forms.events.HyperlinkEvent)
-	 */
 	@Override
 	public void linkEntered(HyperlinkEvent e) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.events.IHyperlinkListener#linkExited(org.eclipse.ui.forms.events.HyperlinkEvent)
-	 */
 	@Override
 	public void linkExited(HyperlinkEvent e) {
 	}

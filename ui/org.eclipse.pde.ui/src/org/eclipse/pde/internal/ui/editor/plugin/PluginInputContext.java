@@ -38,9 +38,6 @@ public class PluginInputContext extends XMLInputContext {
 		create();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.InputContext#createModel(org.eclipse.ui.IEditorInput)
-	 */
 	@Override
 	protected IBaseModel createModel(IEditorInput input) throws CoreException {
 		PluginModelBase model = null;
@@ -70,9 +67,6 @@ public class PluginInputContext extends XMLInputContext {
 		return model;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.InputContext#getId()
-	 */
 	@Override
 	public String getId() {
 		return CONTEXT_ID;

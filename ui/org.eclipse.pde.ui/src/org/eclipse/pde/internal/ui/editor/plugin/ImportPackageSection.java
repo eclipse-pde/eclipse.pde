@@ -172,12 +172,6 @@ public class ImportPackageSection extends TableSection {
 		return model.isFragmentModel();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ui.editor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section,
-	 *      org.eclipse.ui.forms.widgets.FormToolkit)
-	 */
 	@Override
 	protected void createClient(Section section, FormToolkit toolkit) {
 		section.setText(PDEUIMessages.ImportPackageSection_required);
@@ -253,9 +247,6 @@ public class ImportPackageSection extends TableSection {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(java.lang.Object, java.lang.Object[])
-	 */
 	@Override
 	protected boolean canPaste(Object targetObject, Object[] sourceObjects) {
 		// Only non-duplicate import packages can be pasted 
@@ -293,9 +284,6 @@ public class ImportPackageSection extends TableSection {
 		super.dispose();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste(java.lang.Object, java.lang.Object[])
-	 */
 	@Override
 	protected void doPaste(Object targetObject, Object[] sourceObjects) {
 		// Get the model

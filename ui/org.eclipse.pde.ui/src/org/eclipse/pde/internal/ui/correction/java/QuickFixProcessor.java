@@ -29,9 +29,6 @@ import org.eclipse.pde.internal.ui.correction.java.FindClassResolutionsOperation
 
 public class QuickFixProcessor implements IQuickFixProcessor {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.ui.text.java.IQuickFixProcessor#getCorrections(org.eclipse.jdt.ui.text.java.IInvocationContext, org.eclipse.jdt.ui.text.java.IProblemLocation[])
-	 */
 	@Override
 	public IJavaCompletionProposal[] getCorrections(IInvocationContext context, IProblemLocation[] locations) throws CoreException {
 		ArrayList<Object> results = new ArrayList<Object>();
@@ -298,9 +295,6 @@ public class QuickFixProcessor implements IQuickFixProcessor {
 		return node;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.ui.text.java.IQuickFixProcessor#hasCorrections(org.eclipse.jdt.core.ICompilationUnit, int)
-	 */
 	@Override
 	public boolean hasCorrections(ICompilationUnit unit, int problemId) {
 		switch (problemId) {

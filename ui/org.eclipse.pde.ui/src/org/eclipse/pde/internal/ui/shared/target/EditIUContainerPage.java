@@ -131,9 +131,6 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 		fEditContainer = container;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.shared.target.IEditTargetLocationPage#getBundleContainer()
-	 */
 	@Override
 	public ITargetLocation getBundleContainer() {
 		ITargetPlatformService service = (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
@@ -148,9 +145,6 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 		return container;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.shared.target.IEditTargetLocationPage#storeSettings()
-	 */
 	@Override
 	public void storeSettings() {
 		IDialogSettings settings = getDialogSettings();
@@ -161,9 +155,6 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		Composite composite = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH, 0, 0);

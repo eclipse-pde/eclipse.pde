@@ -63,9 +63,6 @@ public class FeatureBlock {
 
 		PDELabelProvider pdeLabelProvider = new PDELabelProvider();
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.pde.internal.ui.util.SharedLabelProvider#getColumnImage(java.lang.Object, int)
-		 */
 		public Image getColumnImage(Object obj, int index) {
 			// If there is a workspace feature available, display the workspace feature icon, even if the user has selected external
 			if (index == COLUMN_FEATURE_NAME) {
@@ -164,18 +161,12 @@ public class FeatureBlock {
 			return styledString;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
-		 */
 		@Override
 		public Image getImage(Object element) {
 			// Only the name column gets an image, see getColumnImage()
 			return null;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
-		 */
 		@Override
 		public String getText(Object element) {
 			// If the label provider implement ILabelProvider the ViewerComparator calls getText() with whatever was passed to it, in our case we are already passing the label text based on sort order
@@ -616,9 +607,6 @@ public class FeatureBlock {
 			this.sortOrder = sortOrder;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ViewerComparator#compare(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-		 */
 		@Override
 		public int compare(Viewer viewer, Object e1, Object e2) {
 			if (e1 == fAdditionalPluginsParentElement) {
@@ -724,9 +712,6 @@ public class FeatureBlock {
 			return fPluginResolution;
 		}
 
-		/* (non-Javadoc)
-		 * @see java.lang.Object#toString()
-		 */
 		@Override
 		public String toString() {
 			if (fWorkspaceModel != null) {
@@ -856,9 +841,6 @@ public class FeatureBlock {
 		};
 		filter.setIncludeLeadingWildcard(true);
 		FilteredCheckboxTree tree = new FilteredCheckboxTree(parent, null, SWT.FULL_SELECTION, filter) {
-			/* (non-Javadoc)
-			 * @see org.eclipse.pde.internal.ui.shared.FilteredCheckboxTree#doCreateRefreshJob()
-			 */
 			@Override
 			protected WorkbenchJob doCreateRefreshJob() {
 				// If we are only showing selected items, we need to redo the filter after text filtering is applied.  The only selected filter uses the tree's check state, which hasn't been restored correctly at filter time. 

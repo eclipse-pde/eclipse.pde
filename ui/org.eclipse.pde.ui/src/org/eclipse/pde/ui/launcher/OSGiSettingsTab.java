@@ -53,10 +53,6 @@ public class OSGiSettingsTab extends AbstractLauncherTab {
 		fConfigurationBlock = new ConfigurationAreaBlock(this);
 	}
 
-	/*
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
@@ -71,18 +67,12 @@ public class OSGiSettingsTab extends AbstractLauncherTab {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.LAUNCHER_CONFIGURATION);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
 	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		fJREBlock.setDefaults(configuration);
 		fConfigurationBlock.setDefaults(configuration, false);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
-	 */
 	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		try {
@@ -94,64 +84,38 @@ public class OSGiSettingsTab extends AbstractLauncherTab {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
 	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		fJREBlock.performApply(configuration);
 		fConfigurationBlock.performApply(configuration);
 	}
 
-	/*
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
-	 */
 	@Override
 	public String getName() {
 		return PDEUIMessages.EquinoxSettingsTab_name;
 	}
 
-	/*
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getImage()
-	 */
 	@Override
 	public Image getImage() {
 		return fImage;
 	}
 
-	/*
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#dispose()
-	 */
 	@Override
 	public void dispose() {
 		if (fImage != null)
 			fImage.dispose();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.ui.launcher.AbstractLauncherTab#validateTab()
-	 */
 	@Override
 	public void validateTab() {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.ui.launcher.AbstractLauncherTab#updateLaunchConfigurationDialog()
-	 */
 	@Override
 	public void updateLaunchConfigurationDialog() {
 		if (!fInitializing)
 			super.updateLaunchConfigurationDialog();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getId()
-	 */
 	@Override
 	public String getId() {
 		return IPDELauncherConstants.TAB_OSGI_SETTINGS_ID;

@@ -69,9 +69,6 @@ public class SortAction extends Action {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.Action#run()
-	 */
 	@Override
 	public void run() {
 		// Toggle sorting on/off

@@ -26,9 +26,6 @@ public class ProductFromExtensionOperation extends BaseProductCreationOperation 
 		fId = productId;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.wizards.product.BaseProductCreationOperation#initializeProduct(org.eclipse.pde.internal.core.iproduct.IProduct)
-	 */
 	@Override
 	protected void initializeProduct(IProduct product) {
 		if (fId == null)

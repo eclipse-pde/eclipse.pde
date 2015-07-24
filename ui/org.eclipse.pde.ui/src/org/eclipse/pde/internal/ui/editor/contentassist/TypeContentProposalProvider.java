@@ -45,9 +45,6 @@ public class TypeContentProposalProvider extends TypePackageCompletionProcessor 
 			// NO-OP
 		}
 
-		/* (non-Javadoc)
-		 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-		 */
 		@Override
 		public int compare(Object arg0, Object arg1) {
 			String proposalSortKey1 = ((IContentProposal) arg0).getLabel();
@@ -56,9 +53,6 @@ public class TypeContentProposalProvider extends TypePackageCompletionProcessor 
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.fieldassist.IContentProposalProvider#getProposals(java.lang.String, int)
-	 */
 	@Override
 	public IContentProposal[] getProposals(String contents, int position) {
 		// Generate a list of proposals based on the current contents
@@ -95,9 +89,6 @@ public class TypeContentProposalProvider extends TypePackageCompletionProcessor 
 		fInitialContentProposals = null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.contentassist.TypePackageCompletionProcessor#addProposalToCollection(java.util.Collection, int, int, java.lang.String, java.lang.String, org.eclipse.swt.graphics.Image)
-	 */
 	@Override
 	protected void addProposalToCollection(Collection<Object> collection, int startOffset, int length, String label, String content, Image image) {
 		// Create content proposals for field assist

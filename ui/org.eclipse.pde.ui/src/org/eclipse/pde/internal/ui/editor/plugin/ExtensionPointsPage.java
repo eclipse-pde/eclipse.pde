@@ -69,9 +69,6 @@ public class ExtensionPointsPage extends PDEFormPage {
 		fBlock = new ExtensionPointsBlock();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#getHelpResource()
-	 */
 	@Override
 	protected String getHelpResource() {
 		return IHelpContextIds.MANIFEST_PLUGIN_EXT_POINTS;

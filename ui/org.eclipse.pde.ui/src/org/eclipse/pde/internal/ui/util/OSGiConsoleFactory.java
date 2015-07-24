@@ -26,9 +26,6 @@ public class OSGiConsoleFactory implements IConsoleFactory {
 		fConsoleManager = ConsolePlugin.getDefault().getConsoleManager();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.console.IConsoleFactory#openConsole()
-	 */
 	@Override
 	public void openConsole() {
 		IOConsole console = getConsole();

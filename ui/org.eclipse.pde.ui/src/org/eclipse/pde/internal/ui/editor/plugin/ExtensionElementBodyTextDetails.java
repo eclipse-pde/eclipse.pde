@@ -58,9 +58,6 @@ public class ExtensionElementBodyTextDetails extends AbstractPluginElementDetail
 		fSectionElementDetails = null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.IDetailsPage#createContents(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createContents(Composite parent) {
 		// Get the toolkit
@@ -231,9 +228,6 @@ public class ExtensionElementBodyTextDetails extends AbstractPluginElementDetail
 		fTextBody.getText().setLayoutData(data);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.IPartSelectionListener#selectionChanged(org.eclipse.ui.forms.IFormPart, org.eclipse.jface.viewers.ISelection)
-	 */
 	@Override
 	public void selectionChanged(IFormPart part, ISelection selection) {
 		// Get the structured selection
@@ -285,42 +279,27 @@ public class ExtensionElementBodyTextDetails extends AbstractPluginElementDetail
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.IContextPart#fireSaveNeeded()
-	 */
 	@Override
 	public void fireSaveNeeded() {
 		markDirty();
 		getPage().getPDEEditor().fireSaveNeeded(getContextId(), false);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.IContextPart#getContextId()
-	 */
 	@Override
 	public String getContextId() {
 		return PluginInputContext.CONTEXT_ID;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.IContextPart#getPage()
-	 */
 	@Override
 	public PDEFormPage getPage() {
 		return (PDEFormPage) getManagedForm().getContainer();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.IContextPart#isEditable()
-	 */
 	@Override
 	public boolean isEditable() {
 		return getPage().getPDEEditor().getAggregateModel().isEditable();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IModelChangedListener#modelChanged(org.eclipse.pde.core.IModelChangedEvent)
-	 */
 	@Override
 	public void modelChanged(IModelChangedEvent event) {
 		// Refresh the UI if the plugin element data changed
@@ -332,36 +311,24 @@ public class ExtensionElementBodyTextDetails extends AbstractPluginElementDetail
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.AbstractFormPart#refresh()
-	 */
 	@Override
 	public void refresh() {
 		updateUI();
 		super.refresh();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEDetails#cancelEdit()
-	 */
 	@Override
 	public void cancelEdit() {
 		fTextBody.cancelEdit();
 		super.cancelEdit();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.AbstractFormPart#commit(boolean)
-	 */
 	@Override
 	public void commit(boolean onSave) {
 		fTextBody.commit();
 		super.commit(onSave);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
-	 */
 	@Override
 	public void dispose() {
 		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
@@ -372,17 +339,11 @@ public class ExtensionElementBodyTextDetails extends AbstractPluginElementDetail
 		super.dispose();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.AbstractFormPart#setFocus()
-	 */
 	@Override
 	public void setFocus() {
 		fTextBody.getText().setFocus();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.text.TextHoverDescriptionProvider#getDescription(org.eclipse.swt.widgets.Control)
-	 */
 	@Override
 	public String getHoverContent(Control control) {
 		// Retrieve either the hyperlink, label or text description as the 

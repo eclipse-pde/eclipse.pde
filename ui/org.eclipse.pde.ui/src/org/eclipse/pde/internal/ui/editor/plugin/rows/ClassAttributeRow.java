@@ -41,11 +41,6 @@ public class ClassAttributeRow extends ButtonAttributeRow {
 		return !part.getPage().getModel().isEditable();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ui.neweditor.plugin.ReferenceAttributeRow#openReference()
-	 */
 	@Override
 	protected void openReference() {
 		String name = TextUtil.trimNonAlphaChars(text.getText()).replace('$', '.');
@@ -54,11 +49,6 @@ public class ClassAttributeRow extends ButtonAttributeRow {
 			text.setText(name);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ui.editor.plugin.rows.ReferenceAttributeRow#createContents(org.eclipse.swt.widgets.Composite, org.eclipse.ui.forms.widgets.FormToolkit, int)
-	 */
 	@Override
 	public void createContents(Composite parent, FormToolkit toolkit, int span) {
 		super.createContents(parent, toolkit, span);
@@ -68,11 +58,6 @@ public class ClassAttributeRow extends ButtonAttributeRow {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ui.neweditor.plugin.ReferenceAttributeRow#browse()
-	 */
 	@Override
 	protected void browse() {
 		BusyIndicator.showWhile(text.getDisplay(), new Runnable() {
@@ -114,9 +99,6 @@ public class ClassAttributeRow extends ButtonAttributeRow {
 		return ((IPluginModelBase) model).getPluginBase();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.plugin.rows.ExtensionAttributeRow#dispose()
-	 */
 	@Override
 	public void dispose() {
 		super.dispose();

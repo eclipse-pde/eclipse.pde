@@ -43,9 +43,6 @@ public class FormFilteredTree extends FilteredTree {
 		setLayout(layout);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.swt.widgets.Widget#dispose()
-	 */
 	@Override
 	public void dispose() {
 		if (toolkit != null) {

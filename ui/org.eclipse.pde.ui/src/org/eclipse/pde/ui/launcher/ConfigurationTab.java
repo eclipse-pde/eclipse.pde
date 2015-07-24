@@ -63,10 +63,6 @@ public class ConfigurationTab extends AbstractLauncherTab implements IPDELaunche
 		fJUnitConfig = isJUnitConfig;
 	}
 
-	/*
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
@@ -92,9 +88,6 @@ public class ConfigurationTab extends AbstractLauncherTab implements IPDELaunche
 		fSoftwareInstallArea.setDefaults(configuration);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
-	 */
 	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		try {
@@ -105,10 +98,6 @@ public class ConfigurationTab extends AbstractLauncherTab implements IPDELaunche
 		}
 	}
 
-	/*
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
 	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		fConfigurationArea.performApply(configuration);
@@ -116,28 +105,16 @@ public class ConfigurationTab extends AbstractLauncherTab implements IPDELaunche
 		fSoftwareInstallArea.performApply(configuration);
 	}
 
-	/*
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
-	 */
 	@Override
 	public String getName() {
 		return PDEUIMessages.ConfigurationTab_name;
 	}
 
-	/*
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getImage()
-	 */
 	@Override
 	public Image getImage() {
 		return fImage;
 	}
 
-	/*
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#dispose()
-	 */
 	@Override
 	public void dispose() {
 		if (fImage != null)
@@ -161,9 +138,6 @@ public class ConfigurationTab extends AbstractLauncherTab implements IPDELaunche
 		setErrorMessage(error);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getId()
-	 */
 	@Override
 	public String getId() {
 		return org.eclipse.pde.launching.IPDELauncherConstants.TAB_CONFIGURATION_ID;

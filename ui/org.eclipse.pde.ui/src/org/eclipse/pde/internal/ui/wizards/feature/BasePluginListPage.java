@@ -40,9 +40,6 @@ public class BasePluginListPage extends WizardPage {
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 

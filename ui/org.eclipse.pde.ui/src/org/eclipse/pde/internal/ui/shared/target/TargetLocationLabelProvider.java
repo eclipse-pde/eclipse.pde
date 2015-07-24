@@ -24,20 +24,14 @@ public class TargetLocationLabelProvider extends StyledBundleLabelProvider {
 	public TargetLocationLabelProvider(boolean showVersion, boolean appendResolvedVariables) {
 		super(showVersion, appendResolvedVariables);
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.StyledCellLabelProvider#update(org.eclipse.jface.viewers.ViewerCell)
-	 */
+
 	@Override
 	public void update(ViewerCell cell) {
 		Object element = cell.getElement();
 		cell.setText(getText(element));
 		cell.setImage(getImage(element));
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.shared.target.StyledBundleLabelProvider#getImage(java.lang.Object)
-	 */
+
 	@Override
 	public Image getImage(Object element) {
 		ILabelProvider provider = (ILabelProvider) Platform.getAdapterManager().getAdapter(element, ILabelProvider.class);
@@ -49,10 +43,7 @@ public class TargetLocationLabelProvider extends StyledBundleLabelProvider {
 
 		return super.getImage(element);
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.shared.target.StyledBundleLabelProvider#getText(java.lang.Object)
-	 */
+
 	@Override
 	public String getText(Object element) {
 		ILabelProvider provider = (ILabelProvider) Platform.getAdapterManager().getAdapter(element, ILabelProvider.class);

@@ -24,17 +24,11 @@ public class OSGiConsolePageParticipant implements IConsolePageParticipant {
 
 	private CloseConsoleAction fCloseAction;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
-	 */
 	@Override
 	public <T> T getAdapter(Class<T> adapter) {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.console.IConsolePageParticipant#init(org.eclipse.ui.part.IPageBookViewPage, org.eclipse.ui.console.IConsole)
-	 */
 	@Override
 	public void init(IPageBookViewPage page, IConsole console) {
 		fCloseAction = new CloseConsoleAction(console);
@@ -42,25 +36,16 @@ public class OSGiConsolePageParticipant implements IConsolePageParticipant {
 		manager.appendToGroup(IConsoleConstants.LAUNCH_GROUP, fCloseAction);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.console.IConsolePageParticipant#dispose()
-	 */
 	@Override
 	public void dispose() {
 		fCloseAction = null;
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.console.IConsolePageParticipant#activated()
-	 */
 	@Override
 	public void activated() {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.console.IConsolePageParticipant#deactivated()
-	 */
 	@Override
 	public void deactivated() {
 	}

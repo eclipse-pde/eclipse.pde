@@ -49,10 +49,6 @@ public class PluginsContentProvider extends DefaultContentProvider implements IT
 		fView.updateTitle(newInput);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
-	 */
 	@Override
 	public Object[] getChildren(Object parentElement) {
 		if (parentElement instanceof IDeferredWorkbenchAdapter) {
@@ -80,10 +76,6 @@ public class PluginsContentProvider extends DefaultContentProvider implements IT
 		return new Object[0];
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
-	 */
 	@Override
 	public Object getParent(Object element) {
 		if (element instanceof PluginModelManager) {
@@ -104,10 +96,6 @@ public class PluginsContentProvider extends DefaultContentProvider implements IT
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
-	 */
 	@Override
 	public boolean hasChildren(Object element) {
 		if (element instanceof IDeferredWorkbenchAdapter)

@@ -30,9 +30,6 @@ public class DependenciesPage extends PDEFormPage {
 		super(editor, PAGE_ID, PDEUIMessages.DependenciesPage_tabName);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#getHelpResource()
-	 */
 	@Override
 	protected String getHelpResource() {
 		return IHelpContextIds.MANIFEST_PLUGIN_DEPENDENCIES;

@@ -24,9 +24,6 @@ public class ProductInputContextManager extends InputContextManager {
 		super(editor);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.context.InputContextManager#getAggregateModel()
-	 */
 	@Override
 	public IBaseModel getAggregateModel() {
 		InputContext context = findContext(ProductInputContext.CONTEXT_ID);

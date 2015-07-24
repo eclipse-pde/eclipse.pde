@@ -50,9 +50,6 @@ public abstract class TextValidator extends AbstractControlValidator {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.validation.AbstractControlValidator#setEnabled(boolean)
-	 */
 	@Override
 	public void setEnabled(boolean enabled) {
 		// Nothing to do here if enablement is not being changed
@@ -107,9 +104,6 @@ public abstract class TextValidator extends AbstractControlValidator {
 		return (Text) getControl();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.validation.AbstractControlValidator#autoEnable()
-	 */
 	@Override
 	protected boolean autoEnable() {
 		// Enable validator if the text field is editable

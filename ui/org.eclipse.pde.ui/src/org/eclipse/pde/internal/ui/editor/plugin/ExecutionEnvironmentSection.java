@@ -489,17 +489,11 @@ public class ExecutionEnvironmentSection extends TableSection {
 		buildJob.schedule();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#isDragAndDropEnabled()
-	 */
 	@Override
 	protected boolean isDragAndDropEnabled() {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canDragMove(java.lang.Object[])
-	 */
 	@Override
 	public boolean canDragMove(Object[] sourceObjects) {
 		if (validateDragMoveSanity(sourceObjects) == false) {
@@ -508,9 +502,6 @@ public class ExecutionEnvironmentSection extends TableSection {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canDropMove(java.lang.Object, java.lang.Object[], int)
-	 */
 	@Override
 	public boolean canDropMove(Object targetObject, Object[] sourceObjects, int targetLocation) {
 		// Sanity check
@@ -582,9 +573,6 @@ public class ExecutionEnvironmentSection extends TableSection {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doDropMove(java.lang.Object, java.lang.Object[], int)
-	 */
 	@Override
 	public void doDropMove(Object targetObject, Object[] sourceObjects, int targetLocation) {
 		// Sanity check
@@ -633,9 +621,6 @@ public class ExecutionEnvironmentSection extends TableSection {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doDragRemove(java.lang.Object[])
-	 */
 	@Override
 	public void doDragRemove(Object[] sourceObjects) {
 		// Validate source

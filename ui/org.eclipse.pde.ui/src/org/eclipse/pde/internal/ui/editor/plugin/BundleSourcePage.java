@@ -236,9 +236,6 @@ public class BundleSourcePage extends KeyValueSourcePage {
 		return fCurrentHighlightRangeOffset;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#resetHighlightRange()
-	 */
 	@Override
 	public void resetHighlightRange() {
 		resetCurrentHighlightRangeOffset();
@@ -273,9 +270,6 @@ public class BundleSourcePage extends KeyValueSourcePage {
 		return new BundleOutlineContentProvider();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#getRangeElement(int, boolean)
-	 */
 	@Override
 	public IDocumentRange getRangeElement(int offset, boolean searchChildren) {
 		IBundleModel model = (IBundleModel) getInputContext().getModel();
@@ -603,9 +597,6 @@ public class BundleSourcePage extends KeyValueSourcePage {
 		return super.getAdapter(adapter);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#updateSelection(java.lang.Object)
-	 */
 	@Override
 	public void updateSelection(Object object) {
 
@@ -649,9 +640,6 @@ public class BundleSourcePage extends KeyValueSourcePage {
 		setSelectedRange(range, false);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#handleSelectionChangedSourcePage(org.eclipse.jface.viewers.SelectionChangedEvent)
-	 */
 	@Override
 	protected void handleSelectionChangedSourcePage(SelectionChangedEvent event) {
 		super.handleSelectionChangedSourcePage(event);
@@ -674,9 +662,6 @@ public class BundleSourcePage extends KeyValueSourcePage {
 		synchronizeOutlinePage(((ITextSelection) selection).getOffset());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#synchronizeOutlinePage(int)
-	 */
 	@Override
 	protected void synchronizeOutlinePage(int offset) {
 		// Prevent cyclical firing of events between source page and outline
@@ -717,9 +702,6 @@ public class BundleSourcePage extends KeyValueSourcePage {
 			menu.insertAfter(PDEActionConstants.COMMAND_ID_QUICK_OUTLINE, fRenameAction);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#setActive(boolean)
-	 */
 	@Override
 	public void setActive(boolean active) {
 		super.setActive(active);

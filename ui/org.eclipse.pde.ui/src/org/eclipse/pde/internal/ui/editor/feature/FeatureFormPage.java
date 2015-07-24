@@ -41,9 +41,6 @@ public class FeatureFormPage extends PDEFormPage implements IHyperlinkListener {
 		super(editor, PAGE_ID, title);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#getHelpResource()
-	 */
 	@Override
 	protected String getHelpResource() {
 		return IHelpContextIds.MANIFEST_FEATURE_OVERVIEW;
@@ -171,11 +168,6 @@ public class FeatureFormPage extends PDEFormPage implements IHyperlinkListener {
 		return section;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.forms.events.HyperlinkListener#linkActivated(org.eclipse.ui.forms.events.HyperlinkEvent)
-	 */
 	@Override
 	public void linkActivated(HyperlinkEvent e) {
 		String href = (String) e.getHref();
@@ -213,22 +205,12 @@ public class FeatureFormPage extends PDEFormPage implements IHyperlinkListener {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.forms.events.HyperlinkListener#linkEntered(org.eclipse.ui.forms.events.HyperlinkEvent)
-	 */
 	@Override
 	public void linkEntered(HyperlinkEvent e) {
 		IStatusLineManager mng = getEditor().getEditorSite().getActionBars().getStatusLineManager();
 		mng.setMessage(e.getLabel());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.forms.events.HyperlinkListener#linkExited(org.eclipse.ui.forms.events.HyperlinkEvent)
-	 */
 	@Override
 	public void linkExited(HyperlinkEvent e) {
 		IStatusLineManager mng = getEditor().getEditorSite().getActionBars().getStatusLineManager();

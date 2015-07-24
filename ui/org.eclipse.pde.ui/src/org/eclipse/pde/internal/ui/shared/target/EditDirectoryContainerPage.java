@@ -80,9 +80,6 @@ public class EditDirectoryContainerPage extends WizardPage implements IEditBundl
 		fContainer = container;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		setMessage(getDefaultMessage());
@@ -248,9 +245,6 @@ public class EditDirectoryContainerPage extends WizardPage implements IEditBundl
 		return "${eclipse_home}"; //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.shared.target.IEditTargetLocationPage#storeSettings()
-	 */
 	@Override
 	public void storeSettings() {
 		String newLocation = fInstallLocation.getText().trim();
@@ -280,9 +274,6 @@ public class EditDirectoryContainerPage extends WizardPage implements IEditBundl
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.shared.target.IEditTargetLocationPage#getBundleContainer()
-	 */
 	@Override
 	public ITargetLocation getBundleContainer() {
 		return fContainer;

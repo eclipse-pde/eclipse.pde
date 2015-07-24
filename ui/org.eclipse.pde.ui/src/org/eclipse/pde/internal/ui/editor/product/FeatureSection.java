@@ -87,9 +87,6 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 		return labels;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
-	 */
 	@Override
 	protected void createClient(Section section, FormToolkit toolkit) {
 
@@ -146,9 +143,6 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 		section.setTextClient(toolbar);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#buttonSelected(int)
-	 */
 	@Override
 	protected void buttonSelected(int index) {
 		switch (index) {
@@ -213,17 +207,11 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 		product.removeFeatures(product.getFeatures());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.TableSection#handleDoubleClick(org.eclipse.jface.viewers.IStructuredSelection)
-	 */
 	@Override
 	protected void handleDoubleClick(IStructuredSelection selection) {
 		handleOpen(selection);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
-	 */
 	@Override
 	public void dispose() {
 		IProductModel model = getModel();
@@ -232,9 +220,6 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 		super.dispose();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESection#doGlobalAction(java.lang.String)
-	 */
 	@Override
 	public boolean doGlobalAction(String actionId) {
 		if (actionId.equals(ActionFactory.DELETE.getId())) {
@@ -285,9 +270,6 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#fillContextMenu(org.eclipse.jface.action.IMenuManager)
-	 */
 	@Override
 	protected void fillContextMenu(IMenuManager manager) {
 		IStructuredSelection ssel = (IStructuredSelection) fFeatureTable.getSelection();
@@ -418,9 +400,6 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 		return (IProductModel) getPage().getPDEEditor().getAggregateModel();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESection#modelChanged(org.eclipse.pde.core.IModelChangedEvent)
-	 */
 	@Override
 	public void modelChanged(IModelChangedEvent e) {
 		Object[] objects = e.getChangedObjects();
@@ -478,9 +457,6 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 		refresh();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.AbstractFormPart#refresh()
-	 */
 	@Override
 	public void refresh() {
 		fFeatureTable.refresh();

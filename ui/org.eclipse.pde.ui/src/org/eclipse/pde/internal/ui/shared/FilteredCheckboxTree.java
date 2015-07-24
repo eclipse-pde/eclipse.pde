@@ -67,9 +67,6 @@ public class FilteredCheckboxTree extends FilteredTree {
 		init(treeStyle, filter);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.FilteredTree#doCreateTreeViewer(org.eclipse.swt.widgets.Composite, int)
-	 */
 	@Override
 	protected TreeViewer doCreateTreeViewer(Composite parent, int style) {
 		int treeStyle = style | SWT.CHECK | SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER;
@@ -110,9 +107,6 @@ public class FilteredCheckboxTree extends FilteredTree {
 		return filterJob;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.FilteredTree#doCreateFilterText(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected Text doCreateFilterText(Composite parent) {
 		// Overridden so the text gets create using the toolkit if we have one
@@ -129,10 +123,6 @@ public class FilteredCheckboxTree extends FilteredTree {
 		return checkboxViewer;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.FilteredTree#getRefreshJobDelay()
-	 */
 	@Override
 	protected long getRefreshJobDelay() {
 		return FILTER_DELAY;

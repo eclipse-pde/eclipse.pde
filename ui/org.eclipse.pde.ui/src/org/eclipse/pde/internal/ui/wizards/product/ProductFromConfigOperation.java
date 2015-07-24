@@ -41,9 +41,6 @@ public class ProductFromConfigOperation extends BaseProductCreationOperation {
 		fLaunchConfiguration = config;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.wizards.product.BaseProductCreationOperation#initializeProduct(org.eclipse.pde.internal.core.iproduct.IProduct)
-	 */
 	@Override
 	protected void initializeProduct(IProduct product) {
 		if (fLaunchConfiguration == null)

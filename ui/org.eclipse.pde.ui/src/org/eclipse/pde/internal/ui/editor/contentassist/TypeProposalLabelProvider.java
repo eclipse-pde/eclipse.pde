@@ -27,9 +27,6 @@ public class TypeProposalLabelProvider extends LabelProvider {
 		// NO-OP
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.LabelProvider#getImage(java.lang.Object)
-	 */
 	@Override
 	public Image getImage(Object element) {
 		if (element instanceof TypeContentProposal) {

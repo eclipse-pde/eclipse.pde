@@ -45,17 +45,11 @@ public class SchemaInputContext extends XMLInputContext {
 		create();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.neweditor.context.InputContext#getId()
-	 */
 	@Override
 	public String getId() {
 		return CONTEXT_ID;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.neweditor.context.InputContext#createModel(org.eclipse.ui.IEditorInput)
-	 */
 	@Override
 	protected IBaseModel createModel(IEditorInput input) throws CoreException {
 		if (input instanceof FileStoreEditorInput)
@@ -107,9 +101,6 @@ public class SchemaInputContext extends XMLInputContext {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.neweditor.context.InputContext#addTextEditOperation(java.util.ArrayList, org.eclipse.pde.core.IModelChangedEvent)
-	 */
 	@Override
 	protected void addTextEditOperation(ArrayList<TextEdit> ops, IModelChangedEvent event) {
 	}
@@ -144,9 +135,6 @@ public class SchemaInputContext extends XMLInputContext {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.context.InputContext#flushEditorInput()
-	 */
 	@Override
 	public void flushEditorInput() {
 		// Override parent, since this editor does not utilize edit operations
@@ -184,9 +172,6 @@ public class SchemaInputContext extends XMLInputContext {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.neweditor.context.XMLInputContext#reorderInsertEdits(java.util.ArrayList)
-	 */
 	@Override
 	protected void reorderInsertEdits(ArrayList<TextEdit> ops) {
 	}

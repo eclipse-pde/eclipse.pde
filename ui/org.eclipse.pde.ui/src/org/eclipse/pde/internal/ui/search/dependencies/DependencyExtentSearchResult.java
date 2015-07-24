@@ -31,33 +31,21 @@ public class DependencyExtentSearchResult extends SearchResult {
 		super(query);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.search.ui.text.AbstractTextSearchResult#getEditorMatchAdapter()
-	 */
 	@Override
 	public IEditorMatchAdapter getEditorMatchAdapter() {
 		return this;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.search.ui.text.AbstractTextSearchResult#getFileMatchAdapter()
-	 */
 	@Override
 	public IFileMatchAdapter getFileMatchAdapter() {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.search.ui.text.IEditorMatchAdapter#isShownInEditor(org.eclipse.search.ui.text.Match, org.eclipse.ui.IEditorPart)
-	 */
 	@Override
 	public boolean isShownInEditor(Match match, IEditorPart editor) {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.search.ui.text.IEditorMatchAdapter#computeContainedMatches(org.eclipse.search.ui.text.AbstractTextSearchResult, org.eclipse.ui.IEditorPart)
-	 */
 	@Override
 	public Match[] computeContainedMatches(AbstractTextSearchResult result, IEditorPart editor) {
 		IEditorInput editorInput = editor.getEditorInput();
@@ -91,34 +79,22 @@ public class DependencyExtentSearchResult extends SearchResult {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.search.ui.ISearchResult#getLabel()
-	 */
 	@Override
 	public String getLabel() {
 		int count = getMatchCount();
 		return fQuery.getLabel() + " - " + count + " " + (count == 1 ? PDEUIMessages.DependencyExtentSearchResult_dependency : PDEUIMessages.DependencyExtentSearchResult_dependencies); //$NON-NLS-1$ //$NON-NLS-2$  
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.search.ui.ISearchResult#getTooltip()
-	 */
 	@Override
 	public String getTooltip() {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.search.ui.ISearchResult#getImageDescriptor()
-	 */
 	@Override
 	public ImageDescriptor getImageDescriptor() {
 		return PDEPluginImages.DESC_PSEARCH_OBJ;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.search.ui.ISearchResult#getQuery()
-	 */
 	@Override
 	public ISearchQuery getQuery() {
 		return fQuery;

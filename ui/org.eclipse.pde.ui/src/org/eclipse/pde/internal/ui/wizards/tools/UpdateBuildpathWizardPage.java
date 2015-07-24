@@ -113,9 +113,6 @@ public class UpdateBuildpathWizardPage extends WizardPage {
 		setPageComplete(tablePart.getSelectionCount() > 0);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.WizardPage#isPageComplete()
-	 */
 	@Override
 	public boolean isPageComplete() {
 		return tablePart.getSelectionCount() > 0;

@@ -65,17 +65,11 @@ public class PluginExportWizardPage extends BaseExportWizardPage {
 		return file.exists();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.wizards.exports.BaseExportWizardPage#isValidModel(org.eclipse.pde.core.IModel)
-	 */
 	@Override
 	protected boolean isValidModel(IModel model) {
 		return model != null && model instanceof IPluginModelBase;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.wizards.exports.BaseExportWizardPage#findModelFor(org.eclipse.core.runtime.IAdaptable)
-	 */
 	@Override
 	protected IModel findModelFor(IAdaptable object) {
 		if (object instanceof IJavaProject)

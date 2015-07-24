@@ -38,9 +38,6 @@ public class MoveTargetDefinitionPage extends PDEWizardNewFileCreationPage {
 		setFileExtension(EXTENSION);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.WizardNewFileCreationPage#createAdvancedControls(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected void createAdvancedControls(Composite parent) {
 		//Hide the advanced control buttons
@@ -55,9 +52,6 @@ public class MoveTargetDefinitionPage extends PDEWizardNewFileCreationPage {
 		fFilterList = filterFileList;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.wizards.PDEWizardNewFileCreationPage#validatePage()
-	 */
 	@Override
 	protected boolean validatePage() {
 		IPath path = getContainerFullPath();

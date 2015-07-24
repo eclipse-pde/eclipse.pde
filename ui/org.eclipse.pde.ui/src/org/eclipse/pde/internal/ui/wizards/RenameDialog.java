@@ -161,18 +161,12 @@ public class RenameDialog extends SelectionStatusDialog {
 		return newName;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
-	 */
 	@Override
 	protected void okPressed() {
 		newName = text.getText().trim();
 		super.okPressed();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.SelectionStatusDialog#computeResult()
-	 */
 	@Override
 	protected void computeResult() {
 	}

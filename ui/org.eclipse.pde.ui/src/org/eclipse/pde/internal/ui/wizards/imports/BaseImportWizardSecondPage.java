@@ -248,9 +248,6 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 			settings.put(SETTINGS_AUTOBUILD, fAutoBuildButton.getSelection());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IModelProviderListener#modelsChanged(org.eclipse.pde.core.IModelProviderEvent)
-	 */
 	@Override
 	public void modelsChanged(IModelProviderEvent event) {
 		fRefreshNeeded = true;

@@ -44,9 +44,6 @@ public class PluginBlock extends AbstractPluginBlock {
 		super(tab);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.launcher.AbstractPluginBlock#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration, boolean)
-	 */
 	@Override
 	public void initializeFrom(ILaunchConfiguration config, boolean enableTable) throws CoreException {
 
@@ -134,9 +131,6 @@ public class PluginBlock extends AbstractPluginBlock {
 		fPluginTreeViewer.setGrayed(fExternalPlugins, fNumExternalChecked > 0 && fNumExternalChecked < getExternalModels().length);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.launcher.AbstractPluginBlock#isEnabled()
-	 */
 	@Override
 	protected boolean isEnabled() {
 		return fIsEnabled;
@@ -201,9 +195,6 @@ public class PluginBlock extends AbstractPluginBlock {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.launcher.AbstractPluginBlock#addRequiredPlugins()
-	 */
 	@Override
 	protected void addRequiredPlugins() {
 		// Check that the application or product we are launching has its requirements included

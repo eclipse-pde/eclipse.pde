@@ -32,9 +32,6 @@ public class PackageSelectionDialog extends ElementListSelectionDialog {
 		setMessage(PDEUIMessages.PackageSelectionDialog_label);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.ElementListSelectionDialog#createDialogArea(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		Control control = super.createDialogArea(parent);

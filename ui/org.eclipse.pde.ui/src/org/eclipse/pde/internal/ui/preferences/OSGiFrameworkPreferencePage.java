@@ -63,9 +63,6 @@ public class OSGiFrameworkPreferencePage extends PreferencePage implements IWork
 			return super.getText(element);
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IFontProvider#getFont(java.lang.Object)
-		 */
 		@Override
 		public Font getFont(Object element) {
 			if (element instanceof IConfigurationElement) {
@@ -87,9 +84,6 @@ public class OSGiFrameworkPreferencePage extends PreferencePage implements IWork
 			return null;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.BaseLabelProvider#dispose()
-		 */
 		@Override
 		public void dispose() {
 			if (this.font != null) {
@@ -117,9 +111,6 @@ public class OSGiFrameworkPreferencePage extends PreferencePage implements IWork
 		fDefaultFramework = preferenceManager.getString(ILaunchingPreferenceConstants.DEFAULT_OSGI_FRAMEOWRK);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected Control createContents(Composite parent) {
 		Composite comp = SWTFactory.createComposite(parent, 2, 1, GridData.FILL_BOTH);
@@ -162,9 +153,6 @@ public class OSGiFrameworkPreferencePage extends PreferencePage implements IWork
 		return comp;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
-	 */
 	@Override
 	public boolean performOk() {
 		IEclipsePreferences instancePrefs = InstanceScope.INSTANCE.getNode(IPDEConstants.PLUGIN_ID);
@@ -183,18 +171,12 @@ public class OSGiFrameworkPreferencePage extends PreferencePage implements IWork
 		return super.performOk();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
-	 */
 	@Override
 	protected void performDefaults() {
 		setDefaultFramework();
 		fTableViewer.refresh();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
-	 */
 	@Override
 	public void init(IWorkbench workbench) {
 	}

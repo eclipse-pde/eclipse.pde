@@ -86,9 +86,6 @@ public class OverwriteProjectsSelectionDialog extends SelectionStatusDialog {
 			return getStyledText(element).getString();
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.StyledCellLabelProvider#update(org.eclipse.jface.viewers.ViewerCell)
-		 */
 		@Override
 		public void update(ViewerCell cell) {
 			StyledString string = getStyledText(cell.getElement());
@@ -150,27 +147,18 @@ public class OverwriteProjectsSelectionDialog extends SelectionStatusDialog {
 		fPluginProjectList = plugins;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.SelectionStatusDialog#configureShell(org.eclipse.swt.widgets.Shell)
-	 */
 	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(shell, IHelpContextIds.PLUGIN_IMPORT_OVERWRITE_DIALOG);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.SelectionStatusDialog#computeResult()
-	 */
 	@Override
 	protected void computeResult() {
 		java.util.List<Object> result = Arrays.asList(fCheckboxTreeViewer.getCheckedLeafElements());
 		setResult(result);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite tableComposite = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH, 15, 15);

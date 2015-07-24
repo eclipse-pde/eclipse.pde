@@ -60,10 +60,7 @@ public class TargetCreationPage extends WizardSelectionPage {
 	protected ITargetPlatformService getTargetService() {
 		return (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
-	 */
+
 	@Override
 	public void createControl(Composite parent) {
 		Composite comp = SWTFactory.createComposite(parent, 2, 1, GridData.FILL_BOTH);
@@ -214,10 +211,7 @@ public class TargetCreationPage extends WizardSelectionPage {
 			service.loadTargetDefinition(definition, id);
 		}
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.WizardSelectionPage#getNextPage()
-	 */
+
 	@Override
 	public IWizardPage getNextPage() {
 		ITargetDefinition target = null;

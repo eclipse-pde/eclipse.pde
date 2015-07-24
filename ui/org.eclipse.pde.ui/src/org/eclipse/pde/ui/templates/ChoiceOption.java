@@ -50,9 +50,6 @@ public class ChoiceOption extends TemplateOption {
 		this.choices = choices;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.templates.TemplateField#createControl(org.eclipse.swt.widgets.Composite, int)
-	 */
 	@Override
 	public void createControl(Composite parent, int span) {
 		Composite container = createComposite(parent, span);
@@ -114,9 +111,6 @@ public class ChoiceOption extends TemplateOption {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.templates.TemplateOption#setEnabled(boolean)
-	 */
 	@Override
 	public void setEnabled(boolean enabled) {
 		super.setEnabled(enabled);

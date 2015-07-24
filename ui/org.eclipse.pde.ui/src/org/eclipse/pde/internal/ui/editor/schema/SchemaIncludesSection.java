@@ -254,9 +254,6 @@ public class SchemaIncludesSection extends TableSection {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.AbstractFormPart#refresh()
-	 */
 	@Override
 	public void refresh() {
 		getTablePart().setButtonEnabled(0, getSchema().isEditable());

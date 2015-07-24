@@ -228,9 +228,6 @@ public class DocSection extends PDESection {
 		fSchema.addModelChangedListener(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
-	 */
 	@Override
 	public void dispose() {
 		// Dispose of the source configuration

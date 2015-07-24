@@ -36,9 +36,6 @@ public class GetNonExternalizedStringsAction extends AbstractHandler {
 	 */
 	private boolean fSkipMessageDialog = false;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.commands.AbstractHandler#execute(org.eclipse.core.commands.ExecutionEvent)
-	 */
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		/* 

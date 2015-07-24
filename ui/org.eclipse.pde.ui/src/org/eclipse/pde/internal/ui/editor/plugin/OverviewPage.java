@@ -58,9 +58,6 @@ public class OverviewPage extends LaunchShortcutOverviewPage {
 		super(editor, PAGE_ID, PDEUIMessages.OverviewPage_tabName);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#getHelpResource()
-	 */
 	@Override
 	protected String getHelpResource() {
 		return IHelpContextIds.MANIFEST_PLUGIN_OVERVIEW;
@@ -223,11 +220,6 @@ public class OverviewPage extends LaunchShortcutOverviewPage {
 		return model.isEditable();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.forms.events.HyperlinkListener#linkActivated(org.eclipse.ui.forms.events.HyperlinkEvent)
-	 */
 	@Override
 	public void linkActivated(HyperlinkEvent e) {
 		String href = (String) e.getHref();

@@ -54,9 +54,6 @@ public abstract class AntGeneratingExportWizard extends BaseExportWizard {
 
 	protected abstract BaseExportWizardPage createPage1();
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.wizards.exports.BaseExportWizard#performPreliminaryChecks()
-	 */
 	@Override
 	protected boolean performPreliminaryChecks() {
 		// Check if we are going to overwrite an existing build.xml file

@@ -35,9 +35,6 @@ public class NewCategoryCreationOperation extends WorkspaceModifyOperation {
 		fFileName = fileName;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.actions.WorkspaceModifyOperation#execute(org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	protected void execute(IProgressMonitor monitor) throws CoreException, InvocationTargetException, InterruptedException {
 

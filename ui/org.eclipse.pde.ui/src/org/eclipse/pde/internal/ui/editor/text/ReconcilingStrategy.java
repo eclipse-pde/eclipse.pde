@@ -25,26 +25,17 @@ public class ReconcilingStrategy implements IReconcilingStrategy {
 	public ReconcilingStrategy() {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategy#setDocument(org.eclipse.jface.text.IDocument)
-	 */
 	@Override
 	public void setDocument(IDocument document) {
 		fDocument = document;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategy#reconcile(org.eclipse.jface.text.reconciler.DirtyRegion, org.eclipse.jface.text.IRegion)
-	 */
 	@Override
 	public void reconcile(DirtyRegion dirtyRegion, IRegion subRegion) {
 		if (fDocument != null)
 			notifyParticipants();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategy#reconcile(org.eclipse.jface.text.IRegion)
-	 */
 	@Override
 	public void reconcile(IRegion partition) {
 		if (fDocument != null)

@@ -101,9 +101,6 @@ public class MultiFixResolution extends WorkbenchMarkerResolution {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (!(obj instanceof MultiFixResolution))

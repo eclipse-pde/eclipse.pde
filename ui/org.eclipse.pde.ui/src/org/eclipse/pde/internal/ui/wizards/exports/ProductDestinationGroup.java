@@ -174,9 +174,6 @@ public class ProductDestinationGroup extends AbstractExportTab {
 		});
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.wizards.exports.AbstractExportTab#saveSettings(org.eclipse.jface.dialogs.IDialogSettings)
-	 */
 	@Override
 	protected void saveSettings(IDialogSettings settings) {
 		settings.put(S_EXPORT_DIRECTORY, fDirectoryButton.getSelection());

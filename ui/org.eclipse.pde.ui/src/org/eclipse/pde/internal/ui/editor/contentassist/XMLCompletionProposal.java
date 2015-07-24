@@ -549,9 +549,6 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension4#isAutoInsertable()
-	 */
 	@Override
 	public boolean isAutoInsertable() {
 		return true;

@@ -26,9 +26,6 @@ public class DependencyExtentOperation {
 	class TypeReferenceSearchRequestor extends SearchRequestor {
 		boolean fUsed = false;
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jdt.core.search.SearchRequestor#acceptSearchMatch(org.eclipse.jdt.core.search.SearchMatch)
-		 */
 		@Override
 		public void acceptSearchMatch(SearchMatch match) throws CoreException {
 			if (match.getAccuracy() == SearchMatch.A_ACCURATE && !match.isInsideDocComment()) {
@@ -45,9 +42,6 @@ public class DependencyExtentOperation {
 
 		private Match fMatch;
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jdt.core.search.SearchRequestor#acceptSearchMatch(org.eclipse.jdt.core.search.SearchMatch)
-		 */
 		@Override
 		public void acceptSearchMatch(SearchMatch match) throws CoreException {
 			if (!match.isInsideDocComment())

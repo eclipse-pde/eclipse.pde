@@ -250,9 +250,6 @@ public class IntroSection extends PDESection {
 		PDEModelUtility.modifyModel(mod, null);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESection#modelChanged(org.eclipse.pde.core.IModelChangedEvent)
-	 */
 	@Override
 	public void modelChanged(IModelChangedEvent e) {
 		// No need to call super, handling world changed event here
@@ -268,9 +265,6 @@ public class IntroSection extends PDESection {
 		refresh();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
-	 */
 	@Override
 	public void dispose() {
 		IProductModel model = getModel();

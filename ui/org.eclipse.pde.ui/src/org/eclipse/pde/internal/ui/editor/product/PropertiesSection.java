@@ -49,9 +49,6 @@ public class PropertiesSection extends TableSection {
 		ContentProvider() {
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
-		 */
 		@Override
 		public Object[] getElements(Object inputElement) {
 			if (inputElement instanceof IProduct) {
@@ -60,16 +57,10 @@ public class PropertiesSection extends TableSection {
 			return new Object[0];
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
-		 */
 		@Override
 		public void dispose() {
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-		 */
 		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
@@ -293,9 +284,6 @@ public class PropertiesSection extends TableSection {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
-	 */
 	@Override
 	protected void createClient(Section section, FormToolkit toolkit) {
 		section.setText(PDEUIMessages.PropertiesSection_PropertiesSectionTitle);
@@ -428,9 +416,6 @@ public class PropertiesSection extends TableSection {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.TableSection#selectionChanged(org.eclipse.jface.viewers.IStructuredSelection)
-	 */
 	@Override
 	protected void selectionChanged(IStructuredSelection selection) {
 		updateButtons();
@@ -450,9 +435,6 @@ public class PropertiesSection extends TableSection {
 		return (IProductModel) getPage().getPDEEditor().getAggregateModel();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.IPluginModelListener#modelsChanged(org.eclipse.pde.internal.core.PluginModelDelta)
-	 */
 	@Override
 	public void modelChanged(IModelChangedEvent e) {
 		// No need to call super, handling world changed event here

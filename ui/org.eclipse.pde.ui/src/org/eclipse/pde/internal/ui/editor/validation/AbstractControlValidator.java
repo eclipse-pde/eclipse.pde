@@ -60,17 +60,11 @@ public abstract class AbstractControlValidator implements IControlValidator, IVa
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.IControlValdiator#getEnabled()
-	 */
 	@Override
 	public boolean getEnabled() {
 		return fEnabled;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.IControlValdiator#setEnabled(boolean)
-	 */
 	@Override
 	public void setEnabled(boolean enabled) {
 		// Nothing to do here if enablement is not being changed
@@ -89,9 +83,6 @@ public abstract class AbstractControlValidator implements IControlValidator, IVa
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.IControlValdiator#validate()
-	 */
 	@Override
 	public boolean validate() {
 		// Skip validation if the validator is disabled
@@ -111,9 +102,6 @@ public abstract class AbstractControlValidator implements IControlValidator, IVa
 
 	protected abstract boolean validateControl();
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.validation.IValidatorMessageHandler#addMessage(java.lang.Object, java.lang.String, int)
-	 */
 	@Override
 	public void addMessage(Object key, String messageText, int messageType) {
 		// Add a prefix, if one was specified
@@ -124,9 +112,6 @@ public abstract class AbstractControlValidator implements IControlValidator, IVa
 		fManagedForm.getMessageManager().addMessage(key, messageText, null, messageType, fControl);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.validation.IValidatorMessageHandler#addMessage(java.lang.String, int)
-	 */
 	@Override
 	public void addMessage(String messageText, int messageType) {
 		// Add a prefix, if one was specified
@@ -166,73 +151,46 @@ public abstract class AbstractControlValidator implements IControlValidator, IVa
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.validation.IValidatorMessageHandler#removeMessage(java.lang.Object)
-	 */
 	@Override
 	public void removeMessage(Object key) {
 		fManagedForm.getMessageManager().removeMessage(key, fControl);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.validation.IValidatorMessageHandler#setMessagePrefix(java.lang.String)
-	 */
 	@Override
 	public void setMessagePrefix(String prefix) {
 		fMessagePrefix = prefix;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.validation.IValidatorMessageHandler#getMessagePrefix()
-	 */
 	@Override
 	public String getMessagePrefix() {
 		return fMessagePrefix;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.validation.IValidatorMessageHandler#getManagedForm()
-	 */
 	@Override
 	public IManagedForm getManagedForm() {
 		return fManagedForm;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.validation.IValidatorMessageHandler#getMessageManager()
-	 */
 	@Override
 	public IMessageManager getMessageManager() {
 		return fManagedForm.getMessageManager();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.validation.IControlValidator#setRefresh(boolean)
-	 */
 	@Override
 	public void setRefresh(boolean refresh) {
 		getMessageManager().setAutoUpdate(refresh);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.validation.IControlValdiator#getControl()
-	 */
 	@Override
 	public Control getControl() {
 		return fControl;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.validation.IControlValidator#isValid()
-	 */
 	@Override
 	public boolean isValid() {
 		return fIsValid;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.validation.IControlValidator#reset()
-	 */
 	@Override
 	public void reset() {
 		fIsValid = true;

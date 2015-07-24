@@ -21,9 +21,6 @@ public abstract class AbstractSearchResultPage extends AbstractTextSearchViewPag
 		private TableViewer fTableViewer;
 		private AbstractTextSearchResult fSearchResult;
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
-		 */
 		@Override
 		public Object[] getElements(Object inputElement) {
 			if (inputElement instanceof AbstractTextSearchResult)
@@ -31,16 +28,10 @@ public abstract class AbstractSearchResultPage extends AbstractTextSearchViewPag
 			return new Object[0];
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
-		 */
 		@Override
 		public void dispose() {
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-		 */
 		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			fTableViewer = (TableViewer) viewer;
@@ -71,35 +62,23 @@ public abstract class AbstractSearchResultPage extends AbstractTextSearchViewPag
 		super(AbstractTextSearchViewPage.FLAG_LAYOUT_FLAT);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.search.ui.text.AbstractTextSearchViewPage#elementsChanged(java.lang.Object[])
-	 */
 	@Override
 	protected void elementsChanged(Object[] objects) {
 		if (fContentProvider != null && fContentProvider.fSearchResult != null)
 			fContentProvider.elementsChanged(objects);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.search.ui.text.AbstractTextSearchViewPage#clear()
-	 */
 	@Override
 	protected void clear() {
 		if (fContentProvider != null)
 			fContentProvider.clear();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.search.ui.text.AbstractTextSearchViewPage#configureTreeViewer(org.eclipse.jface.viewers.TreeViewer)
-	 */
 	@Override
 	protected void configureTreeViewer(TreeViewer viewer) {
 		throw new IllegalStateException("Doesn't support tree mode."); //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.search.ui.text.AbstractTextSearchViewPage#configureTableViewer(org.eclipse.jface.viewers.TableViewer)
-	 */
 	@Override
 	protected void configureTableViewer(TableViewer viewer) {
 		viewer.setComparator(createViewerComparator());

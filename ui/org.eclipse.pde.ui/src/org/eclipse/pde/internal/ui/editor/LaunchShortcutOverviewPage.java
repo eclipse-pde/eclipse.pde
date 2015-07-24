@@ -46,11 +46,6 @@ public abstract class LaunchShortcutOverviewPage extends PDEFormPage implements 
 		return text;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.forms.events.HyperlinkListener#linkActivated(org.eclipse.ui.forms.events.HyperlinkEvent)
-	 */
 	@Override
 	public void linkActivated(HyperlinkEvent e) {
 		// target href takes the form of launchShortcut.<mode>.<id>
@@ -67,22 +62,12 @@ public abstract class LaunchShortcutOverviewPage extends PDEFormPage implements 
 	// returns the indent for each launcher
 	protected abstract short getIndent();
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.forms.events.HyperlinkListener#linkEntered(org.eclipse.ui.forms.events.HyperlinkEvent)
-	 */
 	@Override
 	public void linkEntered(HyperlinkEvent e) {
 		IStatusLineManager mng = getEditor().getEditorSite().getActionBars().getStatusLineManager();
 		mng.setMessage(e.getLabel());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.forms.events.HyperlinkListener#linkExited(org.eclipse.ui.forms.events.HyperlinkEvent)
-	 */
 	@Override
 	public void linkExited(HyperlinkEvent e) {
 		IStatusLineManager mng = getEditor().getEditorSite().getActionBars().getStatusLineManager();

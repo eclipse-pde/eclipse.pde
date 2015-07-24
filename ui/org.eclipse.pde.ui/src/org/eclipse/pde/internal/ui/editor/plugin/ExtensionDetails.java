@@ -52,9 +52,6 @@ public class ExtensionDetails extends AbstractPluginElementDetails {
 		super(masterSection);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.IDetailsPage#createContents(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createContents(Composite parent) {
 		FormToolkit toolkit = getManagedForm().getToolkit();
@@ -162,9 +159,6 @@ public class ExtensionDetails extends AbstractPluginElementDetails {
 		});
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.IDetailsPage#inputChanged(org.eclipse.jface.viewers.IStructuredSelection)
-	 */
 	@Override
 	public void selectionChanged(IFormPart part, ISelection selection) {
 		IStructuredSelection ssel = (IStructuredSelection) selection;
@@ -251,9 +245,6 @@ public class ExtensionDetails extends AbstractPluginElementDetails {
 		super.cancelEdit();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.IDetailsPage#commit()
-	 */
 	@Override
 	public void commit(boolean onSave) {
 		id.commit();
@@ -261,9 +252,6 @@ public class ExtensionDetails extends AbstractPluginElementDetails {
 		super.commit(onSave);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.IDetailsPage#setFocus()
-	 */
 	@Override
 	public void setFocus() {
 		id.getText().setFocus();
@@ -286,18 +274,12 @@ public class ExtensionDetails extends AbstractPluginElementDetails {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.IDetailsPage#refresh()
-	 */
 	@Override
 	public void refresh() {
 		update();
 		super.refresh();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.neweditor.IContextPart#fireSaveNeeded()
-	 */
 	@Override
 	public void fireSaveNeeded() {
 		markDirty();
@@ -305,9 +287,6 @@ public class ExtensionDetails extends AbstractPluginElementDetails {
 		page.getPDEEditor().fireSaveNeeded(getContextId(), false);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.neweditor.IContextPart#getContextId()
-	 */
 	@Override
 	public String getContextId() {
 		return PluginInputContext.CONTEXT_ID;

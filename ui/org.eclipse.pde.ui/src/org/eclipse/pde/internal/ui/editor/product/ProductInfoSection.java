@@ -151,9 +151,6 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 		createClient(getSection(), page.getEditor().getToolkit());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
-	 */
 	@Override
 	protected void createClient(Section section, FormToolkit toolkit) {
 		section.setText(PDEUIMessages.ProductInfoSection_title);
@@ -314,9 +311,6 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 		return getModel().getProduct();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.AbstractFormPart#refresh()
-	 */
 	@Override
 	public void refresh() {
 		IProduct product = getProduct();

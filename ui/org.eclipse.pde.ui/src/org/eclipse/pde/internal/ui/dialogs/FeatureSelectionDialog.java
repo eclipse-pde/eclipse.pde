@@ -180,9 +180,6 @@ public class FeatureSelectionDialog extends FilteredItemsSelectionDialog {
 		return settings;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#validateItem(java.lang.Object)
-	 */
 	@Override
 	protected IStatus validateItem(Object item) {
 		return new Status(IStatus.OK, IPDEUIConstants.PLUGIN_ID, 0, "", null); //$NON-NLS-1$

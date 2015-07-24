@@ -33,17 +33,11 @@ public class OverviewPage extends LaunchShortcutOverviewPage {
 		super(editor, PAGE_ID, PDEUIMessages.OverviewPage_title);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#getHelpResource()
-	 */
 	@Override
 	protected String getHelpResource() {
 		return IHelpContextIds.OVERVIEW_PAGE;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#createFormContent(org.eclipse.ui.forms.IManagedForm)
-	 */
 	@Override
 	protected void createFormContent(IManagedForm managedForm) {
 		super.createFormContent(managedForm);

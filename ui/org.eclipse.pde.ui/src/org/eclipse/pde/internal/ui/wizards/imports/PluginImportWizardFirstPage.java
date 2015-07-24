@@ -111,9 +111,6 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		Composite container = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH);
@@ -478,9 +475,6 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		return source;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.DialogPage#dispose()
-	 */
 	@Override
 	public void dispose() {
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
@@ -814,9 +808,6 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.WizardPage#isCurrentPage()
-	 */
 	@Override
 	public boolean isCurrentPage() {
 		return super.isCurrentPage();

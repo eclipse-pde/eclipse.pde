@@ -214,9 +214,6 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 		super.dispose();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESection#doGlobalAction(java.lang.String)
-	 */
 	@Override
 	public boolean doGlobalAction(String actionId) {
 
@@ -241,9 +238,6 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(java.lang.Object, java.lang.Object[])
-	 */
 	@Override
 	protected boolean canPaste(Object targetObject, Object[] sourceObjects) {
 		HashSet<?> existingImportsSet = null;
@@ -268,9 +262,6 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste(java.lang.Object, java.lang.Object[])
-	 */
 	@Override
 	protected void doPaste(Object targetObject, Object[] sourceObjects) {
 		// Get the model
@@ -687,17 +678,11 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#isDragAndDropEnabled()
-	 */
 	@Override
 	protected boolean isDragAndDropEnabled() {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canDragMove(java.lang.Object[])
-	 */
 	@Override
 	public boolean canDragMove(Object[] sourceObjects) {
 		if (validateDragMoveSanity(sourceObjects) == false) {
@@ -758,9 +743,6 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canDropMove(java.lang.Object, java.lang.Object[], int)
-	 */
 	@Override
 	public boolean canDropMove(Object targetObject, Object[] sourceObjects, int targetLocation) {
 		// Sanity check
@@ -802,9 +784,6 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doDropMove(java.lang.Object, java.lang.Object[], int)
-	 */
 	@Override
 	public void doDropMove(Object targetObject, Object[] sourceObjects, int targetLocation) {
 		// Sanity check

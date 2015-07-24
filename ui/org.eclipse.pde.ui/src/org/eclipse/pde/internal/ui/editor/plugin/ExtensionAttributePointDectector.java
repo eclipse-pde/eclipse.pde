@@ -149,17 +149,11 @@ public class ExtensionAttributePointDectector implements MouseListener, KeyListe
 		fStyledText.addKeyListener(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.swt.events.MouseListener#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
-	 */
 	@Override
 	public void mouseDoubleClick(MouseEvent e) {
 		// Ignore
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.swt.events.MouseListener#mouseDown(org.eclipse.swt.events.MouseEvent)
-	 */
 	@Override
 	public void mouseDown(MouseEvent e) {
 		// Ignore
@@ -175,9 +169,6 @@ public class ExtensionAttributePointDectector implements MouseListener, KeyListe
 		checkIfOnTarget();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.swt.events.KeyListener#keyReleased(org.eclipse.swt.events.KeyEvent)
-	 */
 	@Override
 	public void keyReleased(KeyEvent e) {
 		// Ignore

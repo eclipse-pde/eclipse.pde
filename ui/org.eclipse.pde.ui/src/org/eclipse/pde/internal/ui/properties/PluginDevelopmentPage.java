@@ -37,9 +37,6 @@ public class PluginDevelopmentPage extends PropertyPage {
 		noDefaultAndApplyButton();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected Control createContents(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
@@ -79,18 +76,12 @@ public class PluginDevelopmentPage extends PropertyPage {
 		return new ProjectScope(project).getNode(PDECore.PLUGIN_ID);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.PLUGIN_DEVELOPMENT_PROPERTY_PAGE);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
-	 */
 	@Override
 	public boolean performOk() {
 		Preferences pref = getPreferences((IProject) getElement().getAdapter(IProject.class));

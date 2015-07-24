@@ -25,17 +25,11 @@ import org.eclipse.ui.actions.ActionContext;
 public class PluginSearchResultPage extends AbstractSearchResultPage {
 
 	class SearchLabelProvider extends LabelProvider {
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.LabelProvider#getImage(java.lang.Object)
-		 */
 		@Override
 		public Image getImage(Object element) {
 			return PDEPlugin.getDefault().getLabelProvider().getImage(element);
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
-		 */
 		@Override
 		public String getText(Object object) {
 			if (object instanceof IPluginBase)
@@ -64,9 +58,6 @@ public class PluginSearchResultPage extends AbstractSearchResultPage {
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.search.ui.text.AbstractTextSearchViewPage#fillContextMenu(org.eclipse.jface.action.IMenuManager)
-	 */
 	@Override
 	protected void fillContextMenu(IMenuManager mgr) {
 		super.fillContextMenu(mgr);
@@ -89,33 +80,21 @@ public class PluginSearchResultPage extends AbstractSearchResultPage {
 		jsActionGroup.fillContextMenu(mgr);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.search.AbstractSearchResultPage#createLabelProvider()
-	 */
 	@Override
 	protected ILabelProvider createLabelProvider() {
 		return new SearchLabelProvider();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.search.AbstractSearchResultPage#createViewerSorter()
-	 */
 	@Override
 	protected ViewerComparator createViewerComparator() {
 		return new ViewerComparator();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.search.ui.text.AbstractTextSearchViewPage#showMatch(org.eclipse.search.ui.text.Match, int, int, boolean)
-	 */
 	@Override
 	protected void showMatch(Match match, int currentOffset, int currentLength, boolean activate) throws PartInitException {
 		ManifestEditorOpener.open(match, activate);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.search.ui.text.AbstractTextSearchViewPage#dispose()
-	 */
 	@Override
 	public void dispose() {
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);

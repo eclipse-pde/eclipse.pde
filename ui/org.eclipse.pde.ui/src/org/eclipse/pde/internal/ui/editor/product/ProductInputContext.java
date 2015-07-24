@@ -39,17 +39,11 @@ public class ProductInputContext extends UTF8InputContext {
 		create();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.context.InputContext#getId()
-	 */
 	@Override
 	public String getId() {
 		return CONTEXT_ID;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.context.InputContext#createModel(org.eclipse.ui.IEditorInput)
-	 */
 	@Override
 	protected IBaseModel createModel(IEditorInput input) throws CoreException {
 		IProductModel model = null;
@@ -77,16 +71,10 @@ public class ProductInputContext extends UTF8InputContext {
 		return model;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.context.InputContext#addTextEditOperation(java.util.ArrayList, org.eclipse.pde.core.IModelChangedEvent)
-	 */
 	@Override
 	protected void addTextEditOperation(ArrayList<TextEdit> ops, IModelChangedEvent event) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.context.InputContext#flushModel(org.eclipse.jface.text.IDocument)
-	 */
 	@Override
 	protected void flushModel(IDocument doc) {
 		if (!(getModel() instanceof IEditable))

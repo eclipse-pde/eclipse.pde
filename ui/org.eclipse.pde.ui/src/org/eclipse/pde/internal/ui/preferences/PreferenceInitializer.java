@@ -18,9 +18,6 @@ import org.eclipse.pde.internal.ui.editor.text.ColorManager;
 
 public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#initializeDefaultPreferences()
-	 */
 	@Override
 	public void initializeDefaultPreferences() {
 		IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();

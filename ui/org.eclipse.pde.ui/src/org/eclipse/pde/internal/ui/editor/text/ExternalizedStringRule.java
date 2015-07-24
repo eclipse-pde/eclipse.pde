@@ -32,9 +32,6 @@ public class ExternalizedStringRule extends WordPatternRule {
 			super();
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.text.rules.IWordDetector#isWordStart(char)
-		 */
 		@Override
 		public boolean isWordStart(char character) {
 			if (character == '%') {
@@ -43,9 +40,6 @@ public class ExternalizedStringRule extends WordPatternRule {
 			return false;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.text.rules.IWordDetector#isWordPart(char)
-		 */
 		@Override
 		public boolean isWordPart(char character) {
 			if (Character.isLetterOrDigit(character)) {
@@ -68,9 +62,6 @@ public class ExternalizedStringRule extends WordPatternRule {
 		super(new ExternalizedStringDetector(), "%", null, token); //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.rules.WordPatternRule#endSequenceDetected(org.eclipse.jface.text.rules.ICharacterScanner)
-	 */
 	@Override
 	protected boolean endSequenceDetected(ICharacterScanner scanner) {
 		// Read the next character

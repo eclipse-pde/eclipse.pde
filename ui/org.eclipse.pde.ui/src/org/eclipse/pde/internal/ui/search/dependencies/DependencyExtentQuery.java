@@ -32,9 +32,6 @@ public class DependencyExtentQuery implements ISearchQuery {
 		fImportID = importID;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.search.ui.ISearchQuery#run(org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public IStatus run(IProgressMonitor monitor) {
 		final AbstractTextSearchResult result = (AbstractTextSearchResult) getSearchResult();
@@ -44,33 +41,21 @@ public class DependencyExtentQuery implements ISearchQuery {
 		return Status.OK_STATUS;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.search.ui.ISearchQuery#getLabel()
-	 */
 	@Override
 	public String getLabel() {
 		return PDEUIMessages.DependencyExtentQuery_label + " " + fImportID; //$NON-NLS-1$ 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.search.ui.ISearchQuery#canRerun()
-	 */
 	@Override
 	public boolean canRerun() {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.search.ui.ISearchQuery#canRunInBackground()
-	 */
 	@Override
 	public boolean canRunInBackground() {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.search.ui.ISearchQuery#getSearchResult()
-	 */
 	@Override
 	public ISearchResult getSearchResult() {
 		if (fSearchResult == null)

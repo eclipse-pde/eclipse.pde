@@ -280,11 +280,6 @@ public class PortabilitySection extends PDESection implements IPartSelectionList
 		super.dispose();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.forms.AbstractFormPart#initialize(org.eclipse.ui.forms.IManagedForm)
-	 */
 	@Override
 	public void initialize(IManagedForm form) {
 		ISiteModel model = (ISiteModel) getPage().getModel();

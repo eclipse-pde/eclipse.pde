@@ -107,9 +107,6 @@ public class LauncherSection extends PDESection {
 		createClient(getSection(), page.getEditor().getToolkit());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
-	 */
 	@Override
 	public void createClient(Section section, FormToolkit toolkit) {
 
@@ -177,9 +174,6 @@ public class LauncherSection extends PDESection {
 		getModel().addModelChangedListener(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
-	 */
 	@Override
 	public void dispose() {
 		IProductModel model = getModel();
@@ -507,9 +501,6 @@ public class LauncherSection extends PDESection {
 			fNotebook.layout();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESection#modelChanged(org.eclipse.pde.core.IModelChangedEvent)
-	 */
 	@Override
 	public void modelChanged(IModelChangedEvent e) {
 		// No need to call super, handling world changed event here

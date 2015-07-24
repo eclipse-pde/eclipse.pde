@@ -146,9 +146,6 @@ public abstract class PDEProjectionSourcePage extends PDESourcePage implements I
 		return super.getAdapter(key);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#editorContextMenuAboutToShow(org.eclipse.jface.action.IMenuManager)
-	 */
 	@Override
 	protected void editorContextMenuAboutToShow(IMenuManager menu) {
 		// Add the quick outline menu entry to the context menu

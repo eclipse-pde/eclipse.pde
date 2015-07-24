@@ -152,9 +152,6 @@ public class PluginImportOperation extends WorkspaceJob {
 			fNamesOfNotImportedProjects = namesOfNotImportedProjects;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.dialogs.MessageDialog#createCustomArea(org.eclipse.swt.widgets.Composite)
-		 */
 		@Override
 		protected Control createCustomArea(Composite parent) {
 			Composite composite = new Composite(parent, SWT.NONE);
@@ -182,9 +179,6 @@ public class PluginImportOperation extends WorkspaceJob {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.WorkspaceJob#runInWorkspace(org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
 		try {

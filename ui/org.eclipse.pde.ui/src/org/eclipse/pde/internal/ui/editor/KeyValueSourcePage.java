@@ -23,9 +23,6 @@ public abstract class KeyValueSourcePage extends PDEProjectionSourcePage {
 		super(editor, id, title);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.neweditor.PDESourcePage#createViewerSorter()
-	 */
 	@Override
 	public ViewerComparator createDefaultOutlineComparator() {
 		return new ViewerComparator() {
@@ -62,17 +59,11 @@ public abstract class KeyValueSourcePage extends PDEProjectionSourcePage {
 		sourceViewer.setSelectedRange(offset, Math.min(nameLength, length));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#createOutlineSorter()
-	 */
 	@Override
 	public ViewerComparator createOutlineComparator() {
 		return new ViewerComparator();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEProjectionSourcePage#isQuickOutlineEnabled()
-	 */
 	@Override
 	public boolean isQuickOutlineEnabled() {
 		return true;

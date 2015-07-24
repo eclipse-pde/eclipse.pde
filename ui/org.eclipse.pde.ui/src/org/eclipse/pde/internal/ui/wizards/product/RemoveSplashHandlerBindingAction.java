@@ -55,9 +55,6 @@ public class RemoveSplashHandlerBindingAction extends Action implements ISplashH
 		fFieldTargetPackage = null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.Action#run()
-	 */
 	@Override
 	public void run() {
 		try {

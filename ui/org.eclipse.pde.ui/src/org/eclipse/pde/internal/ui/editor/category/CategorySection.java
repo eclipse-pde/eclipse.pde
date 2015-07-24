@@ -142,12 +142,6 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 		getSection().setDescription(PDEUIMessages.CategoryDefinitionCategorySection_desc);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.update.ui.forms.internal.FormSection#createClient(org.eclipse.swt.widgets.Composite,
-	 *      org.eclipse.update.ui.forms.internal.FormWidgetFactory)
-	 */
 	@Override
 	public void createClient(Section section, FormToolkit toolkit) {
 		fModel = (ISiteModel) getPage().getModel();
@@ -175,11 +169,6 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 					super.dragEnter(event);
 				}
 
-				/*
-				 * (non-Javadoc)
-				 * 
-				 * @see org.eclipse.jface.viewers.ViewerDropAdapter#dragOperationChanged(org.eclipse.swt.dnd.DropTargetEvent)
-				 */
 				@Override
 				public void dragOperationChanged(DropTargetEvent event) {
 					Object target = determineTarget(event);
@@ -189,11 +178,6 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 					super.dragOperationChanged(event);
 				}
 
-				/*
-				 * (non-Javadoc)
-				 * 
-				 * @see org.eclipse.jface.viewers.ViewerDropAdapter#dragOver(org.eclipse.swt.dnd.DropTargetEvent)
-				 */
 				@Override
 				public void dragOver(DropTargetEvent event) {
 					Object target = determineTarget(event);
@@ -649,12 +633,6 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 		mng.addFeatureModelListener(this);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste(java.lang.Object,
-	 *      java.lang.Object[])
-	 */
 	@Override
 	protected void doPaste(Object target, Object[] objects) {
 		try {
@@ -671,12 +649,6 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(java.lang.Object,
-	 *      java.lang.Object[])
-	 */
 	@Override
 	protected boolean canPaste(Object target, Object[] objects) {
 		if (target == null || target instanceof ISiteCategoryDefinition) {
@@ -928,9 +900,6 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 		fCategoryViewer.setSelection(fCategoryViewer.getSelection());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.AbstractFormPart#setFormInput(java.lang.Object)
-	 */
 	@Override
 	public boolean setFormInput(Object input) {
 		if (input instanceof ISiteCategoryDefinition) {

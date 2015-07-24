@@ -150,9 +150,6 @@ public class BuildSourcePage extends KeyValueSourcePage {
 		return super.getAdapter(adapter);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#updateSelection(java.lang.Object)
-	 */
 	@Override
 	public void updateSelection(Object object) {
 		if (object instanceof IDocumentKey) {

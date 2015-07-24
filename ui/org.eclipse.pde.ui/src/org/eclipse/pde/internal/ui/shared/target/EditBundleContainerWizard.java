@@ -40,9 +40,6 @@ public class EditBundleContainerWizard extends Wizard {
 		setWindowTitle(Messages.EditBundleContainerWizard_0);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.Wizard#addPages()
-	 */
 	@Override
 	public void addPages() {
 		if (fContainer instanceof DirectoryBundleContainer) {
@@ -59,9 +56,6 @@ public class EditBundleContainerWizard extends Wizard {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.Wizard#performFinish()
-	 */
 	@Override
 	public boolean performFinish() {
 		if (fPage != null) {

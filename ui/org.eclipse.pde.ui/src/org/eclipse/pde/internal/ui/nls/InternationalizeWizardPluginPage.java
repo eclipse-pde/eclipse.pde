@@ -152,9 +152,6 @@ public class InternationalizeWizardPluginPage extends InternationalizationWizard
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
@@ -356,9 +353,6 @@ public class InternationalizeWizardPluginPage extends InternationalizationWizard
 		return individualFragments.getSelection();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IModelProviderListener#modelsChanged(org.eclipse.pde.core.IModelProviderEvent)
-	 */
 	@Override
 	public void modelsChanged(IModelProviderEvent event) {
 		fRefreshNeeded = true;

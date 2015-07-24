@@ -152,9 +152,6 @@ public abstract class WizardListSelectionPage extends BaseWizardSelectionPage im
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement, java.lang.String, java.lang.Object)
-	 */
 	@Override
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) throws CoreException {
 	}
@@ -166,9 +163,6 @@ public abstract class WizardListSelectionPage extends BaseWizardSelectionPage im
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.WizardSelectionPage#canFlipToNextPage()
-	 */
 	@Override
 	public boolean canFlipToNextPage() {
 		IStructuredSelection ssel = (IStructuredSelection) wizardSelectionViewer.getSelection();

@@ -39,18 +39,12 @@ public class InstallableUnitWizard extends Wizard implements ITargetLocationWiza
 	public InstallableUnitWizard() {
 		setWindowTitle(Messages.AddBundleContainerSelectionPage_1);
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.target.ITargetLocationWizard#setTarget(org.eclipse.pde.core.target.ITargetDefinition)
-	 */
+
 	@Override
 	public void setTarget(ITargetDefinition target) {
 		fTarget = target;
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.Wizard#addPages()
-	 */
+
 	@Override
 	public void addPages() {
 		IDialogSettings settings = PDEPlugin.getDefault().getDialogSettings().getSection(SETTINGS_SECTION);
@@ -60,19 +54,13 @@ public class InstallableUnitWizard extends Wizard implements ITargetLocationWiza
 		setDialogSettings(settings);
 		addPage(new EditIUContainerPage(fTarget));
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.Wizard#performFinish()
-	 */
+
 	@Override
 	public boolean performFinish() {
 		fLocation = ((EditIUContainerPage) getPages()[0]).getBundleContainer();
 		return true;
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.ILocationWizard#getLocations()
-	 */
+
 	@Override
 	public ITargetLocation[] getLocations() {
 		return new ITargetLocation[] {fLocation};

@@ -22,10 +22,6 @@ import org.eclipse.jdt.debug.ui.launchConfigurations.JavaArgumentsTab;
  */
 public class JUnitTabGroup extends AbstractPDELaunchConfigurationTabGroup {
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTabGroup#createTabs(org.eclipse.debug.ui.ILaunchConfigurationDialog, java.lang.String)
-	 */
 	@Override
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
 		ILaunchConfigurationTab[] tabs = null;

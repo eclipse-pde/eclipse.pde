@@ -41,9 +41,6 @@ public abstract class AbstractNewPluginTemplateWizard extends Wizard implements 
 		setNeedsProgressMonitor(true);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.IPluginContentWizard#init(org.eclipse.pde.ui.IFieldData)
-	 */
 	@Override
 	public void init(IFieldData data) {
 		this.data = data;
@@ -73,9 +70,6 @@ public abstract class AbstractNewPluginTemplateWizard extends Wizard implements 
 		addAdditionalPages();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.Wizard#performFinish()
-	 */
 	@Override
 	public boolean performFinish() {
 		// do nothing - all the work is in the other 'performFinish'
@@ -122,9 +116,6 @@ public abstract class AbstractNewPluginTemplateWizard extends Wizard implements 
 	 */
 	public abstract ITemplateSection[] getTemplateSections();
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.IPluginContentWizard#getDependencies(java.lang.String)
-	 */
 	@Override
 	public IPluginReference[] getDependencies(String schemaVersion) {
 		ArrayList<IPluginReference> result = new ArrayList<IPluginReference>();
@@ -139,9 +130,6 @@ public abstract class AbstractNewPluginTemplateWizard extends Wizard implements 
 		return result.toArray(new IPluginReference[result.size()]);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.IPluginContentWizard#getNewFiles()
-	 */
 	@Override
 	public String[] getNewFiles() {
 		ArrayList<String> result = new ArrayList<String>();

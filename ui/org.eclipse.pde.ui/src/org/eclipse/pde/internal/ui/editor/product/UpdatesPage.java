@@ -28,17 +28,11 @@ public class UpdatesPage extends PDEFormPage {
 		super(editor, PLUGIN_ID, PDEUIMessages.UpdatesPage_title);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#getHelpResource()
-	 */
 	@Override
 	protected String getHelpResource() {
 		return IHelpContextIds.UPDATES_PAGE;
 	}
 
-	/* (non-Javadoc) 
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#createFormContent(org.eclipse.ui.forms.IManagedForm)
-	 */
 	@Override
 	protected void createFormContent(IManagedForm managedForm) {
 		super.createFormContent(managedForm);

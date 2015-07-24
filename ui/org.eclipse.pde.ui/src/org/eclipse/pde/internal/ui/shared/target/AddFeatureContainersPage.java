@@ -48,25 +48,16 @@ public class AddFeatureContainersPage extends EditDirectoryContainerPage {
 		super(null, "AddFeatureContainers"); //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.shared.target.EditDirectoryContainerPage#getDefaultTitle()
-	 */
 	@Override
 	protected String getDefaultTitle() {
 		return Messages.AddFeatureContainerPage_0;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.shared.target.EditDirectoryContainerPage#getDefaultMessage()
-	 */
 	@Override
 	protected String getDefaultMessage() {
 		return Messages.AddFeatureContainerPage_1;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.shared.target.EditDirectoryContainerPage#createLocationArea(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected void createLocationArea(Composite parent) {
 		super.createLocationArea(parent);
@@ -74,9 +65,6 @@ public class AddFeatureContainersPage extends EditDirectoryContainerPage {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IHelpContextIds.LOCATION_ADD_FEATURE_WIZARD);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.shared.target.AddDirectoryContainerPage#createTableArea(org.eclipse.swt.widgets.Composite)
-	 */
 	protected void createTableArea(Composite parent) {
 		Composite tableComp = SWTFactory.createComposite(parent, 2, 1, GridData.FILL_BOTH, 0, 0);
 
@@ -150,9 +138,6 @@ public class AddFeatureContainersPage extends EditDirectoryContainerPage {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.shared.target.EditDirectoryContainerPage#containerChanged(long)
-	 */
 	@Override
 	protected void containerChanged(long delay) {
 		if (fInstallLocation.getText().trim().length() > 0) {
@@ -208,9 +193,6 @@ public class AddFeatureContainersPage extends EditDirectoryContainerPage {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.DialogPage#dispose()
-	 */
 	@Override
 	public void dispose() {
 		// Disconnect the label provider so it can be disposed

@@ -26,18 +26,10 @@ import org.eclipse.ui.IWorkbenchPart;
 public class FindPluginReferencesAction implements IObjectActionDelegate {
 	private String fSearchString = null;
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.action.IAction, org.eclipse.ui.IWorkbenchPart)
-	 */
 	@Override
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
-	 */
 	@Override
 	public void run(IAction action) {
 		if (fSearchString != null) {
@@ -55,10 +47,6 @@ public class FindPluginReferencesAction implements IObjectActionDelegate {
 		return new PluginSearchQuery(input);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
-	 */
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		fSearchString = null;

@@ -78,9 +78,6 @@ public class ContentSection extends SectionPart {
 		section.setClient(client);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.AbstractFormPart#refresh()
-	 */
 	@Override
 	public void refresh() {
 		// Use the change listener as it can check if we are resolved, resolving, or cancelled bug 264908

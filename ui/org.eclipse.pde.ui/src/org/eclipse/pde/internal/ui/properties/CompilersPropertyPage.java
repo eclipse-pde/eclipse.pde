@@ -50,11 +50,6 @@ public class CompilersPropertyPage extends PropertyPage {
 	 */
 	private Link fWorkspaceLink = null;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected Control createContents(Composite parent) {
 		Composite comp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH, 0, 0);
@@ -107,18 +102,12 @@ public class CompilersPropertyPage extends PropertyPage {
 		return (IProject) getElement().getAdapter(IProject.class);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferencePage#performCancel()
-	 */
 	@Override
 	public boolean performCancel() {
 		fBlock.performCancel();
 		return super.performCancel();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
-	 */
 	@Override
 	public boolean performOk() {
 		fBlock.performOK();
@@ -134,18 +123,12 @@ public class CompilersPropertyPage extends PropertyPage {
 		super.performDefaults();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferencePage#performApply()
-	 */
 	@Override
 	protected void performApply() {
 		fBlock.performApply();
 		super.performApply();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.DialogPage#dispose()
-	 */
 	@Override
 	public void dispose() {
 		fBlock.dispose();
@@ -159,9 +142,6 @@ public class CompilersPropertyPage extends PropertyPage {
 		return fPageData == null || !Boolean.TRUE.equals(fPageData.get(CompilersPreferencePage.NO_LINK));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferencePage#applyData(java.lang.Object)
-	 */
 	@Override
 	public void applyData(Object data) {
 		if (data instanceof HashMap) {

@@ -116,9 +116,6 @@ public class FeatureSpecPage extends AbstractFeatureSpecPage {
 		fSelfModification = false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.wizards.feature.AbstractFeatureSpecPage#saveSettings(org.eclipse.jface.dialogs.IDialogSettings)
-	 */
 	@Override
 	protected void saveSettings(IDialogSettings settings) {
 		BundleProviderHistoryUtil.saveHistory(fFeatureProviderCombo, settings);

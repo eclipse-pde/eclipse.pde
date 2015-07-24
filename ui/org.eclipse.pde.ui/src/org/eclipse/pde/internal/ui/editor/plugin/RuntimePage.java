@@ -26,9 +26,6 @@ public class RuntimePage extends PDEFormPage {
 		super(editor, PAGE_ID, PDEUIMessages.RuntimePage_tabName);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#getHelpResource()
-	 */
 	@Override
 	protected String getHelpResource() {
 		if (((IPluginModelBase) getPDEEditor().getAggregateModel()).isFragmentModel())

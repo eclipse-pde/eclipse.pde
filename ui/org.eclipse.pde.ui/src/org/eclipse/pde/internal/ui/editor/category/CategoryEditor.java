@@ -28,9 +28,6 @@ import org.eclipse.ui.ide.FileStoreEditorInput;
 
 public class CategoryEditor extends PDEFormEditor {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getEditorID()
-	 */
 	@Override
 	protected String getEditorID() {
 		return IPDEUIConstants.CATEGORY_EDITOR_ID;
@@ -109,10 +106,6 @@ public class CategoryEditor extends PDEFormEditor {
 		return new CategoryOutlinePage(this);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getInputContext(java.lang.Object)
-	 */
 	@Override
 	protected InputContext getInputContext(Object object) {
 		InputContext context = null;

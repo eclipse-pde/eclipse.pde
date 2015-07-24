@@ -57,9 +57,6 @@ public class CollapseAction extends Action {
 		fTreeViewer = viewer;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.Action#run()
-	 */
 	@Override
 	public void run() {
 

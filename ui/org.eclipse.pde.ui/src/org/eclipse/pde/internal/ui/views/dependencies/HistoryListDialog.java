@@ -62,11 +62,6 @@ public class HistoryListDialog extends StatusDialog {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(newShell, IHelpContextIds.HISTORY_LIST_DIALOG);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.window.Window#create()
-	 */
 	@Override
 	public void create() {
 		setShellStyle(getShellStyle() | SWT.RESIZE);
@@ -120,11 +115,6 @@ public class HistoryListDialog extends StatusDialog {
 		fRemoveButton.setLayoutData(new GridData(SWT.CENTER, SWT.TOP, false, false));
 		SWTUtil.setButtonDimensionHint(fRemoveButton);
 		fRemoveButton.addSelectionListener(new SelectionAdapter() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.swt.events.SelectionAdapter#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)
-			 */
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				ISelection selection = fHistoryViewer.getSelection();
@@ -145,11 +135,6 @@ public class HistoryListDialog extends StatusDialog {
 		table.setLayoutData(gd);
 
 		table.addSelectionListener(new SelectionAdapter() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.swt.events.SelectionAdapter#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)
-			 */
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				if (fHistoryStatus.isOK()) {
@@ -180,11 +165,6 @@ public class HistoryListDialog extends StatusDialog {
 		fHistoryViewer.setSelection(sel);
 
 		fHistoryViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
-			 */
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				StatusInfo status = new StatusInfo();

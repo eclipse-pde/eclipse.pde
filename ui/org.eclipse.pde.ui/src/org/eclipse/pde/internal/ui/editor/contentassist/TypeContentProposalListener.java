@@ -26,17 +26,11 @@ public class TypeContentProposalListener implements IContentProposalListener, IC
 		// NO-OP
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.fieldassist.IContentProposalListener#proposalAccepted(org.eclipse.jface.fieldassist.IContentProposal)
-	 */
 	@Override
 	public void proposalAccepted(IContentProposal proposal) {
 		// NO-OP
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.fieldassist.IContentProposalListener2#proposalPopupClosed(org.eclipse.jface.fieldassist.ContentProposalAdapter)
-	 */
 	@Override
 	public void proposalPopupClosed(ContentProposalAdapter adapter) {
 		IContentProposalProvider provider = adapter.getContentProposalProvider();
@@ -46,9 +40,6 @@ public class TypeContentProposalListener implements IContentProposalListener, IC
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.fieldassist.IContentProposalListener2#proposalPopupOpened(org.eclipse.jface.fieldassist.ContentProposalAdapter)
-	 */
 	@Override
 	public void proposalPopupOpened(ContentProposalAdapter adapter) {
 		// NO-OP

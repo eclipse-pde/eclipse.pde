@@ -50,9 +50,6 @@ public class ManifestSourcePage extends XMLSourcePage {
 			fProvider = PDEPlugin.getDefault().getLabelProvider();
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.LabelProvider#dispose()
-		 */
 
 		@Override
 		public String getText(Object obj) {
@@ -89,9 +86,6 @@ public class ManifestSourcePage extends XMLSourcePage {
 
 	class ContentProvider extends DefaultContentProvider implements ITreeContentProvider {
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
-		 */
 		@Override
 		public Object[] getChildren(Object parent) {
 			PluginModelBase model = (PluginModelBase) getInputContext().getModel();
@@ -124,9 +118,6 @@ public class ManifestSourcePage extends XMLSourcePage {
 			return new Object[0];
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
-		 */
 		@Override
 		public Object getParent(Object element) {
 			if (element instanceof IDocumentElementNode)
@@ -134,9 +125,6 @@ public class ManifestSourcePage extends XMLSourcePage {
 			return null;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
-		 */
 		@Override
 		public boolean hasChildren(Object element) {
 			if (element instanceof IPluginBase) {
@@ -145,9 +133,6 @@ public class ManifestSourcePage extends XMLSourcePage {
 			return element == fLibraries || element == fImports || element == fExtensionPoints || element == fExtensions;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
-		 */
 		@Override
 		public Object[] getElements(Object inputElement) {
 			if (inputElement instanceof IPluginModelBase) {
@@ -158,9 +143,6 @@ public class ManifestSourcePage extends XMLSourcePage {
 	}
 
 	class OutlineComparator extends ViewerComparator {
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ViewerSorter#category(java.lang.Object)
-		 */
 		@Override
 		public int category(Object element) {
 			if (element == fLibraries)
@@ -191,9 +173,6 @@ public class ManifestSourcePage extends XMLSourcePage {
 		return new ContentProvider();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#updateSelection(java.lang.Object)
-	 */
 	@Override
 	public void updateSelection(Object object) {
 		if ((object instanceof IDocumentElementNode) && !((IDocumentElementNode) object).isErrorNode()) {
@@ -205,9 +184,6 @@ public class ManifestSourcePage extends XMLSourcePage {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#createOutlineSorter()
-	 */
 	@Override
 	public ViewerComparator createOutlineComparator() {
 		return new OutlineComparator();
@@ -260,9 +236,6 @@ public class ManifestSourcePage extends XMLSourcePage {
 		return super.getAdapter(adapter);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#editorContextMenuAboutToShow(org.eclipse.jface.action.IMenuManager)
-	 */
 	@Override
 	protected void editorContextMenuAboutToShow(IMenuManager menu) {
 
@@ -291,9 +264,6 @@ public class ManifestSourcePage extends XMLSourcePage {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEProjectionSourcePage#createPartControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
@@ -302,17 +272,11 @@ public class ManifestSourcePage extends XMLSourcePage {
 		fDetector.setTextEditor(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEProjectionSourcePage#isQuickOutlineEnabled()
-	 */
 	@Override
 	public boolean isQuickOutlineEnabled() {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#setActive(boolean)
-	 */
 	@Override
 	public void setActive(boolean active) {
 		super.setActive(active);

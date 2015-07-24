@@ -83,11 +83,6 @@ public class ExtensionPointDetails extends PDEDetails {
 		return getPage().getPDEEditor().getAggregateModel().isEditable();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.forms.IDetailsPage#createContents(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createContents(Composite parent) {
 		parent.setLayout(FormLayoutFactory.createDetailsGridLayout(false, 1));
@@ -374,11 +369,6 @@ public class ExtensionPointDetails extends PDEDetails {
 		});
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.forms.IDetailsPage#inputChanged(org.eclipse.jface.viewers.IStructuredSelection)
-	 */
 	@Override
 	public void selectionChanged(IFormPart masterPart, ISelection selection) {
 		IStructuredSelection ssel = (IStructuredSelection) selection;
@@ -389,11 +379,6 @@ public class ExtensionPointDetails extends PDEDetails {
 		update();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.forms.IDetailsPage#commit()
-	 */
 	@Override
 	public void commit(boolean onSave) {
 		fIdEntry.commit();
@@ -402,21 +387,11 @@ public class ExtensionPointDetails extends PDEDetails {
 		super.commit(onSave);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.forms.IDetailsPage#setFocus()
-	 */
 	@Override
 	public void setFocus() {
 		fIdEntry.getText().setFocus();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.forms.IDetailsPage#refresh()
-	 */
 	@Override
 	public void refresh() {
 		update();

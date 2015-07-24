@@ -36,50 +36,32 @@ public class SearchResult extends AbstractTextSearchResult implements IEditorMat
 		fQuery = query;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.search.ui.text.AbstractTextSearchResult#getEditorMatchAdapter()
-	 */
 	@Override
 	public IEditorMatchAdapter getEditorMatchAdapter() {
 		return this;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.search.ui.ISearchResult#getLabel()
-	 */
 	@Override
 	public String getLabel() {
 		int numMatches = getMatchCount();
 		return fQuery.getLabel() + " - " + numMatches + " " + (numMatches == 1 ? PDEUIMessages.SearchResult_match : PDEUIMessages.SearchResult_matches); //$NON-NLS-1$ //$NON-NLS-2$  
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.search.ui.ISearchResult#getTooltip()
-	 */
 	@Override
 	public String getTooltip() {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.search.ui.ISearchResult#getImageDescriptor()
-	 */
 	@Override
 	public ImageDescriptor getImageDescriptor() {
 		return PDEPluginImages.DESC_PSEARCH_OBJ;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.search.ui.ISearchResult#getQuery()
-	 */
 	@Override
 	public ISearchQuery getQuery() {
 		return fQuery;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.search.ui.text.IEditorMatchAdapter#isShownInEditor(org.eclipse.search.ui.text.Match, org.eclipse.ui.IEditorPart)
-	 */
 	@Override
 	public boolean isShownInEditor(Match match, IEditorPart editor) {
 		Object element = match.getElement();
@@ -88,9 +70,6 @@ public class SearchResult extends AbstractTextSearchResult implements IEditorMat
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.search.ui.text.IEditorMatchAdapter#computeContainedMatches(org.eclipse.search.ui.text.AbstractTextSearchResult, org.eclipse.ui.IEditorPart)
-	 */
 	@Override
 	public Match[] computeContainedMatches(AbstractTextSearchResult result, IEditorPart editor) {
 		ArrayList<Match> list = new ArrayList<Match>();
@@ -111,9 +90,6 @@ public class SearchResult extends AbstractTextSearchResult implements IEditorMat
 		return list.toArray(new Match[list.size()]);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.search.ui.text.AbstractTextSearchResult#getFileMatchAdapter()
-	 */
 	@Override
 	public IFileMatchAdapter getFileMatchAdapter() {
 		return null;

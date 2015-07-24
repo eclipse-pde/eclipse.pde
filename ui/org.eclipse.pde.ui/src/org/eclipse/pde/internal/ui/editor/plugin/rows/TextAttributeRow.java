@@ -82,11 +82,6 @@ public class TextAttributeRow extends ExtensionAttributeRow {
 		return gd;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ui.neweditor.plugin.ExtensionElementEditor#update(org.eclipse.pde.internal.ui.neweditor.plugin.DummyExtensionElement)
-	 */
 	@Override
 	protected void update() {
 		blockNotification = true;

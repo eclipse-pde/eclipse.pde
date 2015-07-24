@@ -276,11 +276,6 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 		return text;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.wizard.WizardPage#getNextPage()
-	 */
 	@Override
 	public IWizardPage getNextPage() {
 		updateData();

@@ -278,9 +278,6 @@ public class ImplicitDependenciesSection extends SectionPart {
 		refresh();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.AbstractFormPart#refresh()
-	 */
 	@Override
 	public void refresh() {
 		// TODO Try to retain selection during refresh, add and remove operations

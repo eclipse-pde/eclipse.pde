@@ -137,11 +137,6 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 			setImageDescriptor(PDEPluginImages.DESC_COLLAPSE_ALL);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.action.Action#run()
-		 */
 		@Override
 		public void run() {
 			fTreeViewer.collapseAll();
@@ -175,10 +170,6 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 		super.dispose();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createPartControl(Composite parent) {
 		fTreeViewer = new TreeViewer(parent, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.VIRTUAL);
@@ -790,10 +781,6 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 		});
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.part.WorkbenchPart#setFocus()
-	 */
 	@Override
 	public void setFocus() {
 		fTreeViewer.getTree().setFocus();

@@ -45,10 +45,6 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 	// key is a model, value is startLevel:autoStart
 	private Map<IPluginModelBase, String> fModels;
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.ui.launcher.AbstractPDELaunchConfiguration#getProgramArguments(org.eclipse.debug.core.ILaunchConfiguration)
-	 */
 	@Override
 	public String[] getProgramArguments(ILaunchConfiguration configuration) throws CoreException {
 		ArrayList<String> programArgs = new ArrayList<String>();
@@ -153,10 +149,6 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.ui.launcher.AbstractPDELaunchConfiguration#preLaunchCheck(org.eclipse.debug.core.ILaunchConfiguration, org.eclipse.debug.core.ILaunch, org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	protected void preLaunchCheck(ILaunchConfiguration configuration, ILaunch launch, IProgressMonitor monitor) throws CoreException {
 		fModels = BundleLauncherHelper.getMergedBundleMap(configuration, true);
@@ -181,10 +173,6 @@ public class EquinoxLaunchConfiguration extends AbstractPDELaunchConfiguration {
 		super.preLaunchCheck(configuration, launch, monitor);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.ui.launcher.AbstractPDELaunchConfiguration#validatePluginDependencies(org.eclipse.debug.core.ILaunchConfiguration, org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	protected void validatePluginDependencies(ILaunchConfiguration configuration, IProgressMonitor monitor) throws CoreException {
 		OSGiValidationOperation op = new OSGiValidationOperation(configuration);

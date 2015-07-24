@@ -57,17 +57,11 @@ public class TargetEditor extends FormEditor {
 	private TargetChangedListener fTargetChangedListener;
 	private boolean fDirty;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.editor.FormEditor#createToolkit(org.eclipse.swt.widgets.Display)
-	 */
 	@Override
 	protected FormToolkit createToolkit(Display display) {
 		return new FormToolkit(PDEPlugin.getDefault().getFormColors(display));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.editor.FormEditor#addPages()
-	 */
 	@Override
 	protected void addPages() {
 		try {
@@ -80,9 +74,6 @@ public class TargetEditor extends FormEditor {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.EditorPart#doSave(org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public void doSave(IProgressMonitor monitor) {
 		commitPages(true);
@@ -94,9 +85,6 @@ public class TargetEditor extends FormEditor {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.EditorPart#doSaveAs()
-	 */
 	@Override
 	public void doSaveAs() {
 		commitPages(true);
@@ -135,9 +123,6 @@ public class TargetEditor extends FormEditor {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.EditorPart#isSaveAsAllowed()
-	 */
 	@Override
 	public boolean isSaveAsAllowed() {
 		return true;
@@ -148,9 +133,6 @@ public class TargetEditor extends FormEditor {
 		editorDirtyStateChanged();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.editor.FormEditor#isDirty()
-	 */
 	@Override
 	public boolean isDirty() {
 		return fDirty || super.isDirty();
@@ -167,9 +149,6 @@ public class TargetEditor extends FormEditor {
 		super.init(site, input);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.EditorPart#setInput(org.eclipse.ui.IEditorInput)
-	 */
 	@Override
 	protected void setInput(IEditorInput input) {
 		super.setInput(input);
@@ -177,9 +156,6 @@ public class TargetEditor extends FormEditor {
 		fInputHandler.setInput(input);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.editor.FormEditor#dispose()
-	 */
 	@Override
 	public void dispose() {
 		// Cancel any resolution jobs that are runnning
@@ -406,9 +382,6 @@ public class TargetEditor extends FormEditor {
 			return service;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
-		 */
 		@Override
 		public void resourceChanged(IResourceChangeEvent event) {
 			if (event.getType() == IResourceChangeEvent.POST_CHANGE) {
@@ -483,9 +456,6 @@ public class TargetEditor extends FormEditor {
 				}
 				Job.getJobManager().cancel(getJobFamily());
 				Job resolveJob = new Job(PDEUIMessages.TargetEditor_1) {
-					/* (non-Javadoc)
-					 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
-					 */
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
 						getTarget().resolve(monitor);
@@ -496,9 +466,6 @@ public class TargetEditor extends FormEditor {
 						return Status.OK_STATUS;
 					}
 
-					/* (non-Javadoc)
-					 * @see org.eclipse.core.runtime.jobs.Job#belongsTo(java.lang.Object)
-					 */
 					@Override
 					public boolean belongsTo(Object family) {
 						return family.equals(getJobFamily());

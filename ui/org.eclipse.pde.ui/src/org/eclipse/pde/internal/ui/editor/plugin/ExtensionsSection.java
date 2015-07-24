@@ -355,9 +355,6 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
-	 */
 	@Override
 	public void dispose() {
 		// Explicitly call the dispose method on the extensions tree
@@ -371,9 +368,6 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 		super.dispose();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESection#doGlobalAction(java.lang.String)
-	 */
 	@Override
 	public boolean doGlobalAction(String actionId) {
 		if (actionId.equals(ActionFactory.FIND.getId()) && fFilterRelatedAction != null) {
@@ -1122,9 +1116,6 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 		return super.canPaste(clipboard);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(java.lang.Object, java.lang.Object[])
-	 */
 	@Override
 	protected boolean canPaste(Object targetObject, Object[] sourceObjects) {
 		// Note: Multi-select in is enabled and this function can support 
@@ -1269,9 +1260,6 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 		return ((IPluginModelBase) extensionModel);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste(java.lang.Object, java.lang.Object[])
-	 */
 	@Override
 	protected void doPaste(Object targetObject, Object[] sourceObjects) {
 		// By default, fragment.xml does not exist until the first extension
@@ -1431,9 +1419,6 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.TreeSection#createTreeViewer(org.eclipse.swt.widgets.Composite, int)
-	 */
 	@Override
 	protected TreeViewer createTreeViewer(Composite parent, int style) {
 		fPatternFilter = new ExtensionsPatternFilter();
@@ -1526,17 +1511,11 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 		fExtensionTree.setSelection(selection, true);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#isDragAndDropEnabled()
-	 */
 	@Override
 	protected boolean isDragAndDropEnabled() {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canDragMove(java.lang.Object[])
-	 */
 	@Override
 	public boolean canDragMove(Object[] sourceObjects) {
 		// Validate source objects
@@ -1603,9 +1582,6 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canDropMove(java.lang.Object, java.lang.Object[], int)
-	 */
 	@Override
 	public boolean canDropMove(Object targetObject, Object[] sourceObjects, int targetLocation) {
 		// Sanity check
@@ -1819,9 +1795,6 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doDragRemove(java.lang.Object[])
-	 */
 	@Override
 	public void doDragRemove(Object[] sourceObjects) {
 		// Validate source objects
@@ -1859,9 +1832,6 @@ public class ExtensionsSection extends TreeSection implements IPropertyChangeLis
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doDropMove(java.lang.Object, java.lang.Object[], int)
-	 */
 	@Override
 	public void doDropMove(Object targetObject, Object[] sourceObjects, int targetLocation) {
 		// Sanity check

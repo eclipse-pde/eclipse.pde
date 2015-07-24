@@ -25,33 +25,21 @@ public class GenericSourcePage extends PDESourcePage {
 		super(editor, id, title);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.neweditor.PDESourcePage#createOutlineLabelProvider()
-	 */
 	@Override
 	public ILabelProvider createOutlineLabelProvider() {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.neweditor.PDESourcePage#createOutlineContentProvider()
-	 */
 	@Override
 	public ITreeContentProvider createOutlineContentProvider() {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.neweditor.PDESourcePage#createOutlineContentProvider()
-	 */
 	@Override
 	public ViewerComparator createOutlineComparator() {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.neweditor.PDESourcePage#outlineSelectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
-	 */
 	@Override
 	public void updateSelection(SelectionChangedEvent e) {
 		// NO-OP
@@ -62,9 +50,6 @@ public class GenericSourcePage extends PDESourcePage {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#updateSelection(java.lang.Object)
-	 */
 	@Override
 	public void updateSelection(Object object) {
 		// NO-OP

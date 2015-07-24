@@ -163,11 +163,6 @@ public class PluginDetailsSection extends PDESection implements IPartSelectionLi
 		super.dispose();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.forms.AbstractFormPart#initialize(org.eclipse.ui.forms.IManagedForm)
-	 */
 	@Override
 	public void initialize(IManagedForm form) {
 		IFeatureModel model = (IFeatureModel) getPage().getModel();

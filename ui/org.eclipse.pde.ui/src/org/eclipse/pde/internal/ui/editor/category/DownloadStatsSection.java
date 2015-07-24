@@ -80,9 +80,6 @@ public class DownloadStatsSection extends TableSection {
 		return labels;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
-	 */
 	@Override
 	protected void createClient(Section section, FormToolkit toolkit) {
 		fModel = (ISiteModel) getPage().getModel();
@@ -225,9 +222,6 @@ public class DownloadStatsSection extends TableSection {
 		}
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESection#doGlobalAction(java.lang.String)
-	 */
 	@Override
 	public boolean doGlobalAction(String actionId) {
 		if (actionId.equals(ActionFactory.DELETE.getId())) {
@@ -426,9 +420,6 @@ public class DownloadStatsSection extends TableSection {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.AbstractFormPart#refresh()
-	 */
 	@Override
 	public void refresh() {
 		IStatsInfo info = getStatsInfo();
@@ -479,9 +470,6 @@ public class DownloadStatsSection extends TableSection {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESection#modelChanged(org.eclipse.pde.core.IModelChangedEvent)
-	 */
 	@Override
 	public void modelChanged(IModelChangedEvent e) {
 		// No need to call super, handling world changed event here
@@ -490,9 +478,6 @@ public class DownloadStatsSection extends TableSection {
 		updateButtons();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
-	 */
 	@Override
 	public void dispose() {
 		ISiteModel model = getModel();

@@ -45,9 +45,6 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 
 	private Action fExportAction;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getEditorID()
-	 */
 	@Override
 	protected String getEditorID() {
 		return IPDEUIConstants.FEATURE_EDITOR_ID;
@@ -246,12 +243,6 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 		return firstPageId;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ui.neweditor.MultiSourceEditor#createXMLSourcePage(org.eclipse.pde.internal.ui.neweditor.PDEFormEditor,
-	 *      java.lang.String, java.lang.String)
-	 */
 	@Override
 	protected PDESourcePage createSourcePage(PDEFormEditor editor, String title, String name, String contextId) {
 		if (contextId.equals(FeatureInputContext.CONTEXT_ID))
@@ -326,11 +317,6 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 		return super.getAdapter(key);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getInputContext(java.lang.Object)
-	 */
 	@Override
 	protected InputContext getInputContext(Object object) {
 		InputContext context = null;

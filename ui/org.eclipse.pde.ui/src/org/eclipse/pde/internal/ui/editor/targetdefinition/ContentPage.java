@@ -42,9 +42,6 @@ public class ContentPage extends FormPage {
 		return ((TargetEditor) getEditor()).getTarget();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#createFormContent(org.eclipse.ui.forms.IManagedForm)
-	 */
 	@Override
 	protected void createFormContent(IManagedForm managedForm) {
 		super.createFormContent(managedForm);
@@ -62,9 +59,6 @@ public class ContentPage extends FormPage {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(form, IHelpContextIds.TARGET_EDITOR_CONTENT_PAGE);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.editor.FormPage#dispose()
-	 */
 	@Override
 	public void dispose() {
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
@@ -77,9 +71,6 @@ public class ContentPage extends FormPage {
 		managedForm.addPart(new ContentSection(this, body));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.editor.FormPage#canLeaveThePage()
-	 */
 	@Override
 	public boolean canLeaveThePage() {
 		((TargetEditor) getEditor()).setDirty(isDirty());

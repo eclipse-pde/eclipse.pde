@@ -30,9 +30,6 @@ import org.eclipse.ui.IEditorLauncher;
  */
 public class SchemaPreviewLauncher implements IEditorLauncher {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IEditorLauncher#open(org.eclipse.core.runtime.IPath)
-	 */
 	@Override
 	public void open(IPath filePath) {
 		// Create the preview action

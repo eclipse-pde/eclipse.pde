@@ -560,9 +560,6 @@ public class FeatureImportWizardPage extends WizardPage {
 		setPageComplete(fFeatureViewer.getCheckedLeafCount() > 0);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.WizardPage#isPageComplete()
-	 */
 	@Override
 	public boolean isPageComplete() {
 		return fFeatureViewer.getCheckedLeafCount() > 0;

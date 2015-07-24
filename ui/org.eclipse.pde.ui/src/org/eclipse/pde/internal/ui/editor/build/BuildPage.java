@@ -42,9 +42,6 @@ public class BuildPage extends PDEFormPage {
 		super(editor, PAGE_ID, PDEUIMessages.BuildPage_name);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#getHelpResource()
-	 */
 	@Override
 	protected String getHelpResource() {
 		return IHelpContextIds.BUILD_PAGE;

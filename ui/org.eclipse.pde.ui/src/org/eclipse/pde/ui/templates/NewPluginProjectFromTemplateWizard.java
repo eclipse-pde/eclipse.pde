@@ -83,9 +83,6 @@ public abstract class NewPluginProjectFromTemplateWizard extends NewWizard imple
 	 */
 	protected abstract String getTemplateID();
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.Wizard#addPages()
-	 */
 	@Override
 	public void addPages() {
 		WizardElement templateWizardElement = getTemplateWizard();
@@ -136,9 +133,6 @@ public abstract class NewPluginProjectFromTemplateWizard extends NewWizard imple
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.Wizard#canFinish()
-	 */
 	@Override
 	public boolean canFinish() {
 		if (super.canFinish() && !getContainer().getCurrentPage().equals(fProjectPage)) {
@@ -149,11 +143,6 @@ public abstract class NewPluginProjectFromTemplateWizard extends NewWizard imple
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ui.wizards.NewWizard#performFinish()
-	 */
 	@Override
 	public boolean performFinish() {
 		try {
@@ -199,9 +188,6 @@ public abstract class NewPluginProjectFromTemplateWizard extends NewWizard imple
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement, java.lang.String, java.lang.Object)
-	 */
 	@Override
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) throws CoreException {
 		fConfig = config;

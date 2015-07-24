@@ -55,9 +55,6 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 	private PluginExportAction fExportAction;
 	private ILauncherFormPageHelper fLauncherHelper;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getEditorID()
-	 */
 	@Override
 	protected String getEditorID() {
 		return IPDEUIConstants.MANIFEST_EDITOR_ID;
@@ -477,9 +474,6 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#computeInitialPageId()
-	 */
 	@Override
 	protected String computeInitialPageId() {
 		// Used by plug-in search view to open query results, etc.
@@ -502,9 +496,6 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 		return firstPageId;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getPropertyEditorPageKey(org.eclipse.ui.IFileEditorInput)
-	 */
 	@Override
 	protected String getPropertyEditorPageKey(IFileEditorInput input) {
 		// We are using the project itself to persist the editor page key property
@@ -530,9 +521,6 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#setPropertyEditorPageKey(org.eclipse.ui.IFileEditorInput, java.lang.String)
-	 */
 	@Override
 	protected void setPropertyEditorPageKey(IFileEditorInput input, String pageId) {
 		// We are using the project itself to persist the editor page key property
@@ -571,9 +559,6 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 		return primary.getId();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.neweditor.MultiSourceEditor#createXMLSourcePage(org.eclipse.pde.internal.ui.neweditor.PDEFormEditor, java.lang.String, java.lang.String)
-	 */
 	@Override
 	protected PDESourcePage createSourcePage(PDEFormEditor editor, String title, String name, String contextId) {
 		if (contextId.equals(PluginInputContext.CONTEXT_ID))
@@ -627,9 +612,6 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 		return pluginBase.getId();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getInputContext(java.lang.Object)
-	 */
 	@Override
 	protected InputContext getInputContext(Object object) {
 		InputContext context = null;
@@ -653,9 +635,6 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 		return context;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IShowEditorInput#showEditorInput(org.eclipse.ui.IEditorInput)
-	 */
 	@Override
 	public void showEditorInput(IEditorInput editorInput) {
 		String name = editorInput.getName();

@@ -70,9 +70,6 @@ public class SplashConfigurationSection extends PDESection {
 		createClient(getSection(), page.getEditor().getToolkit());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
-	 */
 	@Override
 	protected void createClient(Section section, FormToolkit toolkit) {
 		// Set globals
@@ -415,9 +412,6 @@ public class SplashConfigurationSection extends PDESection {
 		fMessageSpinners[3].setSelection(SplashInfo.F_DEFAULT_MESSAGE_HEIGHT);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.AbstractFormPart#refresh()
-	 */
 	@Override
 	public void refresh() {
 		ISplashInfo info = getSplashInfo();
@@ -531,9 +525,6 @@ public class SplashConfigurationSection extends PDESection {
 		return new RGB(Integer.parseInt(hexValue.substring(0, 2), 16), Integer.parseInt(hexValue.substring(2, 4), 16), Integer.parseInt(hexValue.substring(4, 6), 16));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESection#modelChanged(org.eclipse.pde.core.IModelChangedEvent)
-	 */
 	@Override
 	public void modelChanged(IModelChangedEvent e) {
 		// No need to call super, handling world changed event here
@@ -565,9 +556,6 @@ public class SplashConfigurationSection extends PDESection {
 		refresh();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
-	 */
 	@Override
 	public void dispose() {
 		IProductModel model = getModel();

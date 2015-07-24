@@ -41,9 +41,6 @@ public class PDEDragAdapter implements DragSourceListener, IPDESourceParticipant
 		fSourceObjects = objects;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.IPDESourceParticipant#getSourceObjects()
-	 */
 	@Override
 	public Object[] getSourceObjects() {
 		return fSourceObjects;
@@ -75,9 +72,6 @@ public class PDEDragAdapter implements DragSourceListener, IPDESourceParticipant
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.swt.dnd.DragSourceListener#dragFinished(org.eclipse.swt.dnd.DragSourceEvent)
-	 */
 	@Override
 	public void dragFinished(DragSourceEvent event) {
 		// Nothing to do if drag event is not enabled
@@ -142,9 +136,6 @@ public class PDEDragAdapter implements DragSourceListener, IPDESourceParticipant
 		// event.doit is true by default
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.swt.dnd.DragSourceListener#dragSetData(org.eclipse.swt.dnd.DragSourceEvent)
-	 */
 	@Override
 	public void dragSetData(DragSourceEvent event) {
 		// Check to see if the drag event is valid
@@ -203,9 +194,6 @@ public class PDEDragAdapter implements DragSourceListener, IPDESourceParticipant
 		return textualRepresentation;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.swt.dnd.DragSourceListener#dragStart(org.eclipse.swt.dnd.DragSourceEvent)
-	 */
 	@Override
 	public void dragStart(DragSourceEvent event) {
 		// Clear the previous source objects

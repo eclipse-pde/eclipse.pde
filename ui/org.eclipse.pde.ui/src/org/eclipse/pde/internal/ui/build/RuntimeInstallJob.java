@@ -79,9 +79,6 @@ public class RuntimeInstallJob extends Job {
 		info.qualifier = QualifierReplacer.getDateQualifier();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
 		try {

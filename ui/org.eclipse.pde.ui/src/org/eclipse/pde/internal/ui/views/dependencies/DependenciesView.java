@@ -259,11 +259,6 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 		manager.appendToGroup("history", fHistoryDropDownAction); //$NON-NLS-1$
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.part.PageBookView#createDefaultPage(org.eclipse.ui.part.PageBook)
-	 */
 	@Override
 	protected IPage createDefaultPage(PageBook book) {
 		return createPage(getDefaultPart());
@@ -306,11 +301,6 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 		return page;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.part.PageBookView#createPartControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createPartControl(Composite parent) {
 		fShowCallees = new ShowCalleesAction();
@@ -338,11 +328,6 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IHelpContextIds.DEPENDENCIES_VIEW);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.part.PageBookView#doCreatePage(org.eclipse.ui.IWorkbenchPart)
-	 */
 	@Override
 	protected PageRec doCreatePage(IWorkbenchPart part) {
 		IPageBookViewPage page = fPartsToPages.get(part);
@@ -355,12 +340,6 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.part.PageBookView#doDestroyPage(org.eclipse.ui.IWorkbenchPart,
-	 *      org.eclipse.ui.part.PageBookView.PageRec)
-	 */
 	@Override
 	protected void doDestroyPage(IWorkbenchPart part, PageRec pageRecord) {
 		IPage page = pageRecord.page;
@@ -371,22 +350,11 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 		fPartsToPages.remove(part);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.part.PageBookView#getBootstrapPart()
-	 */
 	@Override
 	protected IWorkbenchPart getBootstrapPart() {
 		return getDefaultPart();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.part.ViewPart#init(org.eclipse.ui.IViewSite,
-	 *      org.eclipse.ui.IMemento)
-	 */
 	@Override
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		super.init(site, memento);
@@ -408,11 +376,6 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.part.PageBookView#isImportant(org.eclipse.ui.IWorkbenchPart)
-	 */
 	@Override
 	protected boolean isImportant(IWorkbenchPart part) {
 		return part instanceof DummyPart;
@@ -459,11 +422,6 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 		fLoops = NO_LOOPS;
 		if (fInput != null && fInput instanceof IPluginModel) {
 			BusyIndicator.showWhile(PDEPlugin.getActiveWorkbenchShell().getDisplay(), new Runnable() {
-				/*
-				 * (non-Javadoc)
-				 * 
-				 * @see java.lang.Runnable#run()
-				 */
 				@Override
 				public void run() {
 					IPlugin plugin = ((IPluginModel) fInput).getPlugin();
@@ -478,11 +436,6 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 			fShowLoops.setEnabled(fLoops != NO_LOOPS);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.part.ViewPart#saveState(org.eclipse.ui.IMemento)
-	 */
 	@Override
 	public void saveState(IMemento memento) {
 		super.saveState(memento);
@@ -530,11 +483,6 @@ public class DependenciesView extends PageBookView implements IPreferenceConstan
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.part.PageBookView#showPageRec(org.eclipse.ui.part.PageBookView.PageRec)
-	 */
 	@Override
 	protected void showPageRec(PageRec pageRec) {
 		IPage currPage = getCurrentPage();

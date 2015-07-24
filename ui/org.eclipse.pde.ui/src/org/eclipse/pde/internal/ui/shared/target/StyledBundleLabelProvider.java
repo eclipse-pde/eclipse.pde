@@ -53,18 +53,12 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 		fTranslations = TranslationSupport.getInstance();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.StyledCellLabelProvider#dispose()
-	 */
 	@Override
 	public void dispose() {
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 		super.dispose();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.StyledCellLabelProvider#update(org.eclipse.jface.viewers.ViewerCell)
-	 */
 	@Override
 	public void update(ViewerCell cell) {
 		Object element = cell.getElement();
@@ -299,9 +293,6 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
-	 */
 	@Override
 	public String getText(Object element) {
 		StyledString string = getStyledString(element);

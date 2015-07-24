@@ -28,28 +28,16 @@ import org.eclipse.ui.IEditorPart;
  */
 public class OSGiLaunchShortcut extends AbstractLaunchShortcut {
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchShortcut#launch(org.eclipse.jface.viewers.ISelection, java.lang.String)
-	 */
 	@Override
 	public void launch(ISelection selection, String mode) {
 		launch(mode);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchShortcut#launch(org.eclipse.ui.IEditorPart, java.lang.String)
-	 */
 	@Override
 	public void launch(IEditorPart editor, String mode) {
 		launch(mode);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.ui.launcher.AbstractLaunchShortcut#getLaunchConfigurationTypeName()
-	 */
 	@Override
 	protected String getLaunchConfigurationTypeName() {
 		return IPDELauncherConstants.OSGI_CONFIGURATION_TYPE;
@@ -69,10 +57,6 @@ public class OSGiLaunchShortcut extends AbstractLaunchShortcut {
 		manager.getDefaultInitializer().initialize(configuration);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.ui.launcher.AbstractLaunchShortcut#isGoodMatch(org.eclipse.debug.core.ILaunchConfiguration)
-	 */
 	@Override
 	protected boolean isGoodMatch(ILaunchConfiguration configuration) {
 		return true;

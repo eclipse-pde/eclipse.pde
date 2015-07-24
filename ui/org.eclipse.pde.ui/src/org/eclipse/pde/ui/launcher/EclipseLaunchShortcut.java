@@ -56,10 +56,6 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 
 	private String fApplicationName = null;
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchShortcut#launch(org.eclipse.ui.IEditorPart, java.lang.String)
-	 */
 	@Override
 	public void launch(IEditorPart editor, String mode) {
 		fApplicationName = null;
@@ -67,10 +63,6 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 		launch(mode);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchShortcut#launch(org.eclipse.jface.viewers.ISelection, java.lang.String)
-	 */
 	@Override
 	public void launch(ISelection selection, String mode) {
 		IPluginModelBase model = null;
@@ -121,9 +113,6 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 		launch(mode);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.launcher.AbstractLaunchShortcut#findLaunchConfiguration(java.lang.String)
-	 */
 	@Override
 	protected ILaunchConfiguration findLaunchConfiguration(String mode) {
 		ILaunchConfiguration config = super.findLaunchConfiguration(mode);
@@ -282,9 +271,6 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 		return CONFIGURATION_TYPE;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.launcher.AbstractLaunchShortcut#getName(org.eclipse.debug.core.ILaunchConfigurationType)
-	 */
 	@Override
 	protected String getName(ILaunchConfigurationType type) {
 		// if launching default product, use default naming convention

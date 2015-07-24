@@ -24,10 +24,7 @@ public class EditTargetNode implements IWizardNode {
 
 	private EditTargetDefinitionWizard fWizard;
 	private ITargetDefinition fDefinition;
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.IWizardNode#dispose()
-	 */
+
 	@Override
 	public void dispose() {
 		if (fWizard != null) {
@@ -36,18 +33,12 @@ public class EditTargetNode implements IWizardNode {
 			fDefinition = null;
 		}
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.IWizardNode#getExtent()
-	 */
+
 	@Override
 	public Point getExtent() {
 		return new Point(-1, -1);
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.IWizardNode#getWizard()
-	 */
+
 	@Override
 	public IWizard getWizard() {
 		if (fWizard == null) {
@@ -56,10 +47,7 @@ public class EditTargetNode implements IWizardNode {
 		}
 		return fWizard;
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.IWizardNode#isContentCreated()
-	 */
+
 	@Override
 	public boolean isContentCreated() {
 		return fWizard != null;

@@ -1090,9 +1090,6 @@ public class TargetContentsGroup {
 		return result;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.swt.widgets.Control#setEnabled(boolean)
-	 */
 	public void setEnabled(boolean enabled) {
 		fTree.getControl().setEnabled(enabled);
 		if (enabled) {

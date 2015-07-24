@@ -242,9 +242,6 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 		return Boolean.toString(lazyStart);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.plugin.GeneralInfoSection#dispose()
-	 */
 	@Override
 	public void dispose() {
 		super.dispose();

@@ -217,9 +217,6 @@ public abstract class TypePackageCompletionProcessor implements IContentAssistPr
 	private Comparator<Object> getComparator() {
 		if (fComparator == null) {
 			fComparator = new Comparator<Object>() {
-				/* (non-Javadoc)
-				 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-				 */
 				@Override
 				public int compare(Object arg0, Object arg1) {
 					if (arg0 instanceof ICompletionProposal && arg1 instanceof ICompletionProposal) {

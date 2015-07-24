@@ -87,12 +87,6 @@ public class ExportPackageSection extends TableSection {
 		return model.isFragmentModel();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ui.editor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section,
-	 *      org.eclipse.ui.forms.widgets.FormToolkit)
-	 */
 	@Override
 	protected void createClient(Section section, FormToolkit toolkit) {
 		section.setText(PDEUIMessages.ExportPackageSection_title);
@@ -168,9 +162,6 @@ public class ExportPackageSection extends TableSection {
 		super.dispose();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(java.lang.Object, java.lang.Object[])
-	 */
 	@Override
 	protected boolean canPaste(Object targetObject, Object[] sourceObjects) {
 		HashMap<?, ?> currentPackageFragments = null;
@@ -289,9 +280,6 @@ public class ExportPackageSection extends TableSection {
 		return "true".equals(getBundle().getHeader(ICoreConstants.ECLIPSE_JREBUNDLE)); //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste()
-	 */
 	@Override
 	protected void doPaste(Object targetObject, Object[] sourceObjects) {
 		// Get the model

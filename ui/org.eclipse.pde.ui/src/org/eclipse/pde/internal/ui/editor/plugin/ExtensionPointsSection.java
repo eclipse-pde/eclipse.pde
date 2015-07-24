@@ -304,9 +304,6 @@ public class ExtensionPointsSection extends TableSection {
 		return ((IPluginModelBase) extensionModel);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste(java.lang.Object, java.lang.Object[])
-	 */
 	@Override
 	protected void doPaste(Object targetObject, Object[] sourceObjects) {
 		// By default, fragment.xml does not exist until the first extension
@@ -343,9 +340,6 @@ public class ExtensionPointsSection extends TableSection {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(java.lang.Object, java.lang.Object[])
-	 */
 	@Override
 	protected boolean canPaste(Object targetObject, Object[] sourceObjects) {
 		// All source objects must be extension points

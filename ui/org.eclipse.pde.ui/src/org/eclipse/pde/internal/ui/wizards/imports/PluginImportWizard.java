@@ -53,9 +53,6 @@ public class PluginImportWizard extends Wizard implements IImportWizard, IPageCh
 		this.selection = selection;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.Wizard#createPageControls(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createPageControls(Composite pageContainer) {
 		super.createPageControls(pageContainer);
@@ -223,9 +220,6 @@ public class PluginImportWizard extends Wizard implements IImportWizard, IPageCh
 		return !page1.isCurrentPage() && page1.getNextPage().isPageComplete() && page1.arePagesComplete();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IPageChangingListener#handlePageChanging(org.eclipse.jface.dialogs.PageChangingEvent)
-	 */
 	@Override
 	public void handlePageChanging(PageChangingEvent event) {
 		if (event.getCurrentPage() instanceof BaseImportWizardSecondPage && event.getTargetPage() instanceof IScmUrlImportWizardPage) {

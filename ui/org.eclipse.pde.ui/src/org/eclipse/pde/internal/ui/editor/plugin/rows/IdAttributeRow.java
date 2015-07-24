@@ -83,9 +83,6 @@ public class IdAttributeRow extends ButtonAttributeRow {
 		return !part.getPage().getModel().isEditable();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.plugin.rows.ButtonAttributeRow#browse()
-	 */
 	@Override
 	protected void browse() {
 		ElementListSelectionDialog dialog = new ElementListSelectionDialog(PDEPlugin.getActiveWorkbenchShell(), new IdAttributeLabelProvider());
@@ -102,9 +99,6 @@ public class IdAttributeRow extends ButtonAttributeRow {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.plugin.rows.ReferenceAttributeRow#openReference()
-	 */
 	@Override
 	protected void openReference() {
 		Map<String, IConfigurationElement> attributeMap = PDESchemaHelper.getValidAttributes(getAttribute());

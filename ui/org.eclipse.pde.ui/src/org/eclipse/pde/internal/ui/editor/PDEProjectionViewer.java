@@ -45,9 +45,6 @@ public class PDEProjectionViewer extends ProjectionViewer {
 		fIsQuickOutlineEnabled = isQuickOutlineEnabled;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.source.projection.ProjectionViewer#doOperation(int)
-	 */
 	@Override
 	public void doOperation(int operation) {
 		// Ensure underlying text widget is defined
@@ -65,9 +62,6 @@ public class PDEProjectionViewer extends ProjectionViewer {
 		super.doOperation(operation);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.source.projection.ProjectionViewer#canDoOperation(int)
-	 */
 	@Override
 	public boolean canDoOperation(int operation) {
 		// Verify quick outline operation
@@ -81,9 +75,6 @@ public class PDEProjectionViewer extends ProjectionViewer {
 		return super.canDoOperation(operation);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.source.SourceViewer#configure(org.eclipse.jface.text.source.SourceViewerConfiguration)
-	 */
 	@Override
 	public void configure(SourceViewerConfiguration configuration) {
 		// Ensure underlying text widget is defined
@@ -103,9 +94,6 @@ public class PDEProjectionViewer extends ProjectionViewer {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.source.SourceViewer#unconfigure()
-	 */
 	@Override
 	public void unconfigure() {
 		// Unconfigure quick outline operation

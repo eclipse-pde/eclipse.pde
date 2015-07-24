@@ -38,9 +38,6 @@ public class NewFragmentProjectWizard extends NewWizard implements IExecutableEx
 		fFragmentData = new FragmentFieldData();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.Wizard#addPages()
-	 */
 	@Override
 	public void addPages() {
 		fMainPage = new NewProjectCreationPage("main", fFragmentData, true, getSelection()); //$NON-NLS-1$
@@ -68,20 +65,12 @@ public class NewFragmentProjectWizard extends NewWizard implements IExecutableEx
 		addPage(fContentPage);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.Wizard#canFinish()
-	 */
 	@Override
 	public boolean canFinish() {
 		IWizardPage page = getContainer().getCurrentPage();
 		return (page.isPageComplete() && page != fMainPage);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ui.wizards.NewWizard#performFinish()
-	 */
 	@Override
 	public boolean performFinish() {
 		try {
@@ -107,18 +96,12 @@ public class NewFragmentProjectWizard extends NewWizard implements IExecutableEx
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.Wizard#dispose()
-	 */
 	@Override
 	public void dispose() {
 		super.dispose();
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement, java.lang.String, java.lang.Object)
-	 */
 	@Override
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) throws CoreException {
 		fConfig = config;

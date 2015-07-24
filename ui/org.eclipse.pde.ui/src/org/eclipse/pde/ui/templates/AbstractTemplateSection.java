@@ -183,9 +183,6 @@ public abstract class AbstractTemplateSection implements ITemplateSection, IVari
 	 */
 	protected abstract ResourceBundle getPluginResourceBundle();
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.templates.ITemplateSection#addPages(org.eclipse.jface.wizard.Wizard)
-	 */
 	@Override
 	public void addPages(Wizard wizard) {
 	}
@@ -222,9 +219,6 @@ public abstract class AbstractTemplateSection implements ITemplateSection, IVari
 		return 1;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.templates.ITemplateSection#getDependencies(java.lang.String)
-	 */
 	@Override
 	public IPluginReference[] getDependencies(String schemaVersion) {
 		return new IPluginReference[] {new PluginReference("org.eclipse.ui", //$NON-NLS-1$

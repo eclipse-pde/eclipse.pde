@@ -74,9 +74,6 @@ public class FormOutlinePage extends PDEOutlinePage implements IModelChangedList
 	}
 
 	public class BasicComparator extends ViewerComparator {
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ViewerSorter#category(java.lang.Object)
-		 */
 		@Override
 		public int category(Object element) {
 			Object[] pages = getPages();
@@ -240,9 +237,6 @@ public class FormOutlinePage extends PDEOutlinePage implements IModelChangedList
 				fTreeViewer.setComparator(null);
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on ISelectionProvider.
-	 */
 	@Override
 	public void setSelection(ISelection selection) {
 		if (fOutlineSelection)

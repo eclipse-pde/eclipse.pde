@@ -23,12 +23,6 @@ public class BooleanAttributeRow extends ChoiceAttributeRow {
 		super(part, att);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ui.neweditor.plugin.ExtensionElementEditor#createContents(org.eclipse.swt.widgets.Composite,
-	 *      org.eclipse.ui.forms.widgets.FormToolkit, int)
-	 */
 	@Override
 	public void createContents(Composite parent, FormToolkit toolkit, int span) {
 		super.createContents(parent, toolkit, span);
@@ -38,9 +32,6 @@ public class BooleanAttributeRow extends ChoiceAttributeRow {
 		combo.add("false"); //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.plugin.rows.ChoiceAttributeRow#isValid(java.lang.String)
-	 */
 	@Override
 	protected boolean isValid(String value) {
 		if (getUse() == ISchemaAttribute.REQUIRED)
@@ -48,9 +39,6 @@ public class BooleanAttributeRow extends ChoiceAttributeRow {
 		return (value.equals("true") || value.equals("false") || value.equals("")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.plugin.rows.ChoiceAttributeRow#getValidValue()
-	 */
 	@Override
 	protected String getValidValue() {
 		return "true"; //$NON-NLS-1$

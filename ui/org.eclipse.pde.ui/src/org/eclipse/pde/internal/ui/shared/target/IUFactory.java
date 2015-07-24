@@ -31,17 +31,11 @@ public class IUFactory implements IAdapterFactory, ITargetLocationEditor, ITarge
 	private ILabelProvider fLabelProvider;
 	private ITreeContentProvider fContentProvider;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
-	 */
 	@Override
 	public Class<?>[] getAdapterList() {
 		return new Class[] {ILabelProvider.class, ITreeContentProvider.class, ITargetLocationEditor.class, ITargetLocationUpdater.class};
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
-	 */
 	@Override
 	@SuppressWarnings("unchecked")
 	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
@@ -65,33 +59,21 @@ public class IUFactory implements IAdapterFactory, ITargetLocationEditor, ITarge
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.target.ITargetLocationEditor#canEdit(org.eclipse.pde.core.target.ITargetDefinition, org.eclipse.pde.core.target.ITargetLocation)
-	 */
 	@Override
 	public boolean canEdit(ITargetDefinition target, ITargetLocation targetLocation) {
 		return targetLocation instanceof IUBundleContainer;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.target.ITargetLocationEditor#getEditWizard(org.eclipse.pde.core.target.ITargetDefinition, org.eclipse.pde.core.target.ITargetLocation)
-	 */
 	@Override
 	public IWizard getEditWizard(ITargetDefinition target, ITargetLocation targetLocation) {
 		return new EditBundleContainerWizard(target, targetLocation);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.target.ITargetLocationUpdater#canUpdate(org.eclipse.pde.core.target.ITargetDefinition, org.eclipse.pde.core.target.ITargetLocation)
-	 */
 	@Override
 	public boolean canUpdate(ITargetDefinition target, ITargetLocation targetLocation) {
 		return targetLocation instanceof IUBundleContainer;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.target.ITargetLocationUpdater#update(org.eclipse.pde.core.target.ITargetDefinition, org.eclipse.pde.core.target.ITargetLocation, org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public IStatus update(ITargetDefinition target, ITargetLocation targetLocation, IProgressMonitor monitor) {
 		// This method has to run synchronously, so we do the update ourselves instead of using UpdateTargetJob

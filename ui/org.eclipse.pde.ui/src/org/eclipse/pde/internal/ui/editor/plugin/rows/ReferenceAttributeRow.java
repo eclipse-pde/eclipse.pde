@@ -34,12 +34,6 @@ public abstract class ReferenceAttributeRow extends TextAttributeRow {
 		super(part, att);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ui.neweditor.plugin.ExtensionElementEditor#createContents(org.eclipse.swt.widgets.Composite,
-	 *      org.eclipse.ui.forms.widgets.FormToolkit, int)
-	 */
 	@Override
 	protected void createLabel(Composite parent, FormToolkit toolkit) {
 		if (!part.isEditable()) {

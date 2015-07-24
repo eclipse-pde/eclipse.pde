@@ -23,11 +23,6 @@ public abstract class PDEDetailsSections extends PDEDetails {
 
 	protected abstract PDESection[] createSections(PDEFormPage page, Composite parent);
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.forms.IDetailsPage#createContents(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createContents(Composite parent) {
 		sections = createSections(getPage(), parent);
@@ -58,11 +53,6 @@ public abstract class PDEDetailsSections extends PDEDetails {
 		return (PDEFormPage) getManagedForm().getContainer();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.forms.AbstractFormPart#isDirty()
-	 */
 	@Override
 	public boolean isDirty() {
 		for (int i = 0; i < sections.length; i++) {
@@ -78,11 +68,6 @@ public abstract class PDEDetailsSections extends PDEDetails {
 		return getPage().getPDEEditor().getAggregateModel().isEditable();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.forms.AbstractFormPart#isStale()
-	 */
 	@Override
 	public boolean isStale() {
 		for (int i = 0; i < sections.length; i++) {
@@ -93,29 +78,14 @@ public abstract class PDEDetailsSections extends PDEDetails {
 		return super.isStale();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.core.IModelChangedListener#modelChanged(org.eclipse.pde.core.IModelChangedEvent)
-	 */
 	@Override
 	public void modelChanged(IModelChangedEvent event) {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.forms.IDetailsPage#inputChanged(org.eclipse.jface.viewers.IStructuredSelection)
-	 */
 	@Override
 	public void selectionChanged(IFormPart masterPart, ISelection selection) {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.forms.IDetailsPage#setFocus()
-	 */
 	@Override
 	public void setFocus() {
 		if (sections.length > 0) {

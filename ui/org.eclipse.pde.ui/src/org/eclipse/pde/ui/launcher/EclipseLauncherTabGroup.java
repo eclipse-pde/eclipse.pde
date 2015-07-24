@@ -27,10 +27,6 @@ import org.eclipse.pde.internal.ui.IPDEUIConstants;
  */
 public class EclipseLauncherTabGroup extends AbstractPDELaunchConfigurationTabGroup {
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTabGroup#createTabs(org.eclipse.debug.ui.ILaunchConfigurationDialog, java.lang.String)
-	 */
 	@Override
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
 		ILaunchConfigurationTab[] tabs = null;
@@ -38,9 +34,6 @@ public class EclipseLauncherTabGroup extends AbstractPDELaunchConfigurationTabGr
 		setTabs(tabs);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTabGroup#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
 	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		super.performApply(configuration);

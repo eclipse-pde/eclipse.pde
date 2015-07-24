@@ -31,9 +31,6 @@ public class LicensingPage extends PDEFormPage {
 		super(editor, PAGE_ID, PDEUIMessages.LicensingPage_title);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#createFormContent(org.eclipse.ui.forms.IManagedForm)
-	 */
 	@Override
 	protected void createFormContent(IManagedForm managedForm) {
 		super.createFormContent(managedForm);

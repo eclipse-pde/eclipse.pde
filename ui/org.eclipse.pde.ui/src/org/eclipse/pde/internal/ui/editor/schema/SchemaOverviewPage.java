@@ -48,9 +48,6 @@ public class SchemaOverviewPage extends PDEFormPage {
 		super(editor, PAGE_ID, PDEUIMessages.SchemaEditor_DocPage_title);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#getHelpResource()
-	 */
 	@Override
 	protected String getHelpResource() {
 		return IHelpContextIds.SCHEMA_EDITOR_DOC;

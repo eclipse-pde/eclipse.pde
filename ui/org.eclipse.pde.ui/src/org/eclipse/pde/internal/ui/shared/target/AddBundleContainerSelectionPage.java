@@ -84,18 +84,12 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 		return fTargetService;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.WizardSelectionPage#dispose()
-	 */
 	@Override
 	public void dispose() {
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 		super.dispose();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		Composite comp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH, 0, 0);

@@ -68,9 +68,6 @@ public class TargetStatus {
 			node.addPreferenceChangeListener(prefListener);
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.action.ContributionItem#dispose()
-		 */
 		@Override
 		public void dispose() {
 			PDEPlugin.getDefault().getLabelProvider().disconnect(this);
@@ -79,9 +76,6 @@ public class TargetStatus {
 			node.removePreferenceChangeListener(prefListener);
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.action.ContributionItem#update()
-		 */
 		@Override
 		public void update() {
 			int flag = 0;

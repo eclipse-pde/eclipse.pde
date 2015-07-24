@@ -34,33 +34,21 @@ public class PersistablePluginObject extends PlatformObject implements IPersista
 		fPluginID = pluginID;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPersistableElement#getFactoryId()
-	 */
 	@Override
 	public String getFactoryId() {
 		return FACTORY_ID;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPersistableElement#saveState(org.eclipse.ui.IMemento)
-	 */
 	@Override
 	public void saveState(IMemento memento) {
 		memento.putString(KEY, fPluginID);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IElementFactory#createElement(org.eclipse.ui.IMemento)
-	 */
 	@Override
 	public IAdaptable createElement(IMemento memento) {
 		return new PersistablePluginObject(memento.getString(KEY));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.PlatformObject#getAdapter(java.lang.Class)
-	 */
 	@Override
 	@SuppressWarnings("unchecked")
 	public <T> T getAdapter(Class<T> adapter) {

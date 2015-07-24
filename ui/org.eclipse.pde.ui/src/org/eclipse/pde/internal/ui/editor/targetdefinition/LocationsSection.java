@@ -77,9 +77,6 @@ public class LocationsSection extends SectionPart {
 		section.setClient(client);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.AbstractFormPart#refresh()
-	 */
 	@Override
 	public void refresh() {
 		fContainerGroup.setInput(getTarget());

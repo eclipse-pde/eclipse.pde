@@ -36,9 +36,6 @@ public class InfoFormPage extends PDEFormPage {
 		super(editor, PAGE_ID, title);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#getHelpResource()
-	 */
 	@Override
 	protected String getHelpResource() {
 		return IHelpContextIds.MANIFEST_FEATURE_INFO;

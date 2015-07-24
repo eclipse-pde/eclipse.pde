@@ -67,9 +67,6 @@ public class EditProfileContainerPage extends EditDirectoryContainerPage {
 		super(container, "EditProfileContainer"); //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.shared.target.EditDirectoryContainerPage#getDefaultTitle()
-	 */
 	@Override
 	protected String getDefaultTitle() {
 		if (fContainer != null) {
@@ -78,17 +75,11 @@ public class EditProfileContainerPage extends EditDirectoryContainerPage {
 		return Messages.AddProfileContainerPage_0;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.shared.target.EditDirectoryContainerPage#getDefaultMessage()
-	 */
 	@Override
 	protected String getDefaultMessage() {
 		return Messages.AddProfileContainerPage_1;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.shared.target.AddDirectoryContainerPage#createLocationArea(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected void createLocationArea(Composite parent) {
 		super.createLocationArea(parent);
@@ -189,9 +180,6 @@ public class EditProfileContainerPage extends EditDirectoryContainerPage {
 		return previousConfigs.toArray(new String[previousConfigs.size()]);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.shared.target.EditDirectoryContainerPage#storeSettings()
-	 */
 	@Override
 	public void storeSettings() {
 		super.storeSettings();
@@ -220,9 +208,6 @@ public class EditProfileContainerPage extends EditDirectoryContainerPage {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.shared.target.EditDirectoryContainerPage#initializeInputFields(org.eclipse.pde.core.target.ITargetLocation)
-	 */
 	@Override
 	protected void initializeInputFields(ITargetLocation container) {
 		if (container instanceof ProfileBundleContainer) {
@@ -251,9 +236,6 @@ public class EditProfileContainerPage extends EditDirectoryContainerPage {
 		fConfigVariables.setEnabled(!isDefault);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.shared.target.EditDirectoryContainerPage#validateInput()
-	 */
 	@Override
 	protected boolean validateInput() {
 		boolean valid = super.validateInput();
@@ -286,9 +268,6 @@ public class EditProfileContainerPage extends EditDirectoryContainerPage {
 		return valid;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.shared.target.EditDirectoryContainerPage#createContainer(org.eclipse.pde.core.target.ITargetLocation)
-	 */
 	@Override
 	protected ITargetLocation createContainer(ITargetLocation previous) throws CoreException {
 		return getTargetPlatformService().newProfileLocation(fInstallLocation.getText(), fConfigLocation.isEnabled() ? fConfigLocation.getText() : null);

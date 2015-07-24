@@ -53,20 +53,12 @@ public class MainTab extends AbstractLauncherTab implements IPDELauncherConstant
 		fImage = PDEPluginImages.DESC_MAIN_TAB.createImage();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#dispose()
-	 */
 	@Override
 	public void dispose() {
 		fImage.dispose();
 		super.dispose();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		final ScrolledComposite scrollContainer = new ScrolledComposite(parent, SWT.V_SCROLL);
@@ -125,10 +117,6 @@ public class MainTab extends AbstractLauncherTab implements IPDELauncherConstant
 			fDataBlock.selectWorkspaceLocation();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
-	 */
 	@Override
 	public void initializeFrom(ILaunchConfiguration config) {
 		try {
@@ -141,10 +129,6 @@ public class MainTab extends AbstractLauncherTab implements IPDELauncherConstant
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
 	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 		fDataBlock.setDefaults(config, false);
@@ -152,10 +136,6 @@ public class MainTab extends AbstractLauncherTab implements IPDELauncherConstant
 		fJreBlock.setDefaults(config);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
 	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
 		fDataBlock.performApply(config, false);
@@ -163,19 +143,11 @@ public class MainTab extends AbstractLauncherTab implements IPDELauncherConstant
 		fJreBlock.performApply(config);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
-	 */
 	@Override
 	public String getName() {
 		return PDEUIMessages.MainTab_name;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
-	 */
 	@Override
 	public Image getImage() {
 		return fImage;
@@ -205,10 +177,6 @@ public class MainTab extends AbstractLauncherTab implements IPDELauncherConstant
 		fJreBlock = new JREBlock(this);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.ui.launcher.AbstractLauncherTab#validateTab()
-	 */
 	@Override
 	public void validateTab() {
 		String error = fDataBlock.validate();
@@ -217,9 +185,6 @@ public class MainTab extends AbstractLauncherTab implements IPDELauncherConstant
 		setErrorMessage(error);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getId()
-	 */
 	@Override
 	public String getId() {
 		return org.eclipse.pde.launching.IPDELauncherConstants.TAB_MAIN_ID;

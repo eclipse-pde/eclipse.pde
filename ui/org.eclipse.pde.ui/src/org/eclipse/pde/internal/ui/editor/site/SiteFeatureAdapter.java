@@ -27,9 +27,6 @@ public class SiteFeatureAdapter implements Serializable, IWritable {
 		this.feature = feature;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IWritable#write(java.lang.String, java.io.PrintWriter)
-	 */
 	@Override
 	public void write(String indent, PrintWriter writer) {
 		feature.write(indent, writer);
@@ -59,9 +56,6 @@ public class SiteFeatureAdapter implements Serializable, IWritable {
 		return super.equals(obj);
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		if (feature.getId() == null) {

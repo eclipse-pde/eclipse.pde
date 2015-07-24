@@ -51,9 +51,6 @@ public class JUnitProgramBlock extends ProgramBlock {
 		return result.toArray(new String[result.size()]);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.launcher.BasicLauncherTab#initializeApplicationSection(org.eclipse.debug.core.ILaunchConfiguration)
-	 */
 	@Override
 	protected void initializeApplicationSection(ILaunchConfiguration config) throws CoreException {
 		String application = config.getAttribute(IPDELauncherConstants.APPLICATION, (String) null);
@@ -63,9 +60,6 @@ public class JUnitProgramBlock extends ProgramBlock {
 			super.initializeApplicationSection(config);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.launcher.BasicLauncherTab#saveApplicationSection(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
 	@Override
 	protected void saveApplicationSection(ILaunchConfigurationWorkingCopy config) {
 		if (fApplicationCombo.getText().equals(PDEUIMessages.JUnitProgramBlock_headless)) {

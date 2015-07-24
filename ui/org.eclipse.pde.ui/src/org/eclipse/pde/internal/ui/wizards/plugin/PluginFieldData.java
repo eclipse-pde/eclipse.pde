@@ -25,9 +25,6 @@ public class PluginFieldData extends AbstractFieldData implements IPluginFieldDa
 	private boolean fE4Plugin = false;
 	private ArrayList<ITemplateSection> templates = new ArrayList<ITemplateSection>();
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.IPluginFieldData#getClassname()
-	 */
 	@Override
 	public String getClassname() {
 		return fClassname;
@@ -37,9 +34,6 @@ public class PluginFieldData extends AbstractFieldData implements IPluginFieldDa
 		fClassname = classname;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.IPluginFieldData#isUIPlugin()
-	 */
 	@Override
 	public boolean isUIPlugin() {
 		return fIsUIPlugin;
@@ -62,9 +56,6 @@ public class PluginFieldData extends AbstractFieldData implements IPluginFieldDa
 		fDoGenerateClass = doGenerate;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.IPluginFieldData#doGenerateClass()
-	 */
 	@Override
 	public boolean doGenerateClass() {
 		return fDoGenerateClass;

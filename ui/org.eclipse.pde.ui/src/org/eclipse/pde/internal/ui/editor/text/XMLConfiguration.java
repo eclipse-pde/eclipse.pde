@@ -163,17 +163,11 @@ public class XMLConfiguration extends ChangeAwareSourceViewerConfiguration {
 		return SourceInformationProvider.F_XML_IMP;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getConfiguredDocumentPartitioning(org.eclipse.jface.text.source.ISourceViewer)
-	 */
 	@Override
 	public String getConfiguredDocumentPartitioning(ISourceViewer sourceViewer) {
 		return XMLDocumentSetupParticpant.XML_PARTITIONING;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.text.ChangeAwareSourceViewerConfiguration#getReconciler(org.eclipse.jface.text.source.ISourceViewer)
-	 */
 	@Override
 	public IReconciler getReconciler(ISourceViewer sourceViewer) {
 		if (fSourcePage != null && fReconciler == null) {

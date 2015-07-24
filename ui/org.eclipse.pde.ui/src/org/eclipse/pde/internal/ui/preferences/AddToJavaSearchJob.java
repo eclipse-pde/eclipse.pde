@@ -98,9 +98,6 @@ public class AddToJavaSearchJob extends WorkspaceJob {
 		fAdd = add;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.WorkspaceJob#runInWorkspace(org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
 		int ticks = fTargetDefinition != null ? 100 : 25;
@@ -166,9 +163,6 @@ public class AddToJavaSearchJob extends WorkspaceJob {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.jobs.Job#belongsTo(java.lang.Object)
-	 */
 	@Override
 	public boolean belongsTo(Object family) {
 		return JOB_FAMILY_ID.equals(family);

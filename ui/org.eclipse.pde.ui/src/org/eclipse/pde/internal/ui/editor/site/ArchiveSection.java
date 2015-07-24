@@ -97,12 +97,6 @@ public class ArchiveSection extends PDESection {
 		createClient(getSection(), formPage.getManagedForm().getToolkit());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.update.ui.forms.internal.FormSection#createClient(org.eclipse.swt.widgets.Composite,
-	 *      org.eclipse.update.ui.forms.internal.FormWidgetFactory)
-	 */
 	@Override
 	public void createClient(Section section, FormToolkit toolkit) {
 		fModel = (ISiteModel) getPage().getModel();
@@ -124,9 +118,6 @@ public class ArchiveSection extends PDESection {
 		initialize();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
-	 */
 	@Override
 	public void dispose() {
 		fModel.removeModelChangedListener(this);
@@ -246,11 +237,6 @@ public class ArchiveSection extends PDESection {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.update.ui.forms.internal.FormSection#doGlobalAction(java.lang.String)
-	 */
 	@Override
 	public boolean doGlobalAction(String actionId) {
 		if (actionId.equals(ActionFactory.DELETE.getId())) {
@@ -303,9 +289,6 @@ public class ArchiveSection extends PDESection {
 		control.setMenu(popupMenuManager.createContextMenu(control));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.AbstractFormPart#setFormInput(java.lang.Object)
-	 */
 	@Override
 	public boolean setFormInput(Object input) {
 		if (input instanceof ISiteArchive) {

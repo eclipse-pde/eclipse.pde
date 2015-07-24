@@ -28,9 +28,6 @@ public class PDESourceInfoProvider implements IInformationProvider, IInformation
 		fSourcePage = sourcePage;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.information.IInformationProvider#getInformation(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
-	 */
 	/**
 	 * @deprecated
 	 */
@@ -41,9 +38,6 @@ public class PDESourceInfoProvider implements IInformationProvider, IInformation
 		return getInformation2(textViewer, subject).toString();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.information.IInformationProvider#getSubject(org.eclipse.jface.text.ITextViewer, int)
-	 */
 	@Override
 	public IRegion getSubject(ITextViewer textViewer, int offset) {
 		// Subject used in getInformation2
@@ -59,9 +53,6 @@ public class PDESourceInfoProvider implements IInformationProvider, IInformation
 		return region;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.information.IInformationProviderExtension#getInformation2(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
-	 */
 	@Override
 	public Object getInformation2(ITextViewer textViewer, IRegion subject) {
 		// Calls setInput on the quick outline popup dialog

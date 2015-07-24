@@ -151,11 +151,6 @@ public abstract class ContentPage extends WizardPage {
 		return super.getNextPage();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.dialogs.IDialogPage#setVisible(boolean)
-	 */
 	@Override
 	public void setVisible(boolean visible) {
 		if (visible) {

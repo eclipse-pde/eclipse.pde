@@ -166,9 +166,6 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 			}
 		}
 
-		/* (non-Javadoc)
-		 * @see java.lang.Object#toString()
-		 */
 		@Override
 		public String toString() {
 			return qualifier + '/' + this.key;

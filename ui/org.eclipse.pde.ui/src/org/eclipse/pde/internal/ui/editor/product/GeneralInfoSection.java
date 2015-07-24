@@ -42,9 +42,6 @@ public class GeneralInfoSection extends PDESection {
 		createClient(getSection(), page.getEditor().getToolkit());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
-	 */
 	@Override
 	protected void createClient(Section section, FormToolkit toolkit) {
 		section.setText(PDEUIMessages.GeneralInfoSection_title);
@@ -150,9 +147,6 @@ public class GeneralInfoSection extends PDESection {
 		});
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.AbstractFormPart#commit(boolean)
-	 */
 	@Override
 	public void commit(boolean onSave) {
 		fIdEntry.commit();
@@ -161,9 +155,6 @@ public class GeneralInfoSection extends PDESection {
 		super.commit(onSave);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESection#cancelEdit()
-	 */
 	@Override
 	public void cancelEdit() {
 		fIdEntry.cancelEdit();
@@ -180,9 +171,6 @@ public class GeneralInfoSection extends PDESection {
 		return getModel().getProduct();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.AbstractFormPart#refresh()
-	 */
 	@Override
 	public void refresh() {
 		IProduct product = getProduct();

@@ -88,9 +88,6 @@ public class TemplateListSelectionPage extends WizardListSelectionPage {
 		setDescription(PDEUIMessages.WizardListSelectionPage_desc);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.wizards.WizardListSelectionPage#createControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
@@ -164,9 +161,6 @@ public class TemplateListSelectionPage extends WizardListSelectionPage {
 		return !rcp || (fUseTemplate.getSelection() && rcp && getSelectedNode() != null);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.WizardSelectionPage#canFlipToNextPage()
-	 */
 	@Override
 	public boolean canFlipToNextPage() {
 		IStructuredSelection ssel = (IStructuredSelection) wizardSelectionViewer.getSelection();

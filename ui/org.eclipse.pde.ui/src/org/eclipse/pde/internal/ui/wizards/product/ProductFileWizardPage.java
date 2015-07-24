@@ -72,9 +72,6 @@ public class ProductFileWizardPage extends PDEWizardNewFileCreationPage {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.WizardNewFileCreationPage#createAdvancedControls(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected void createAdvancedControls(Composite parent) {
 		fGroup = new Group(parent, SWT.NONE);

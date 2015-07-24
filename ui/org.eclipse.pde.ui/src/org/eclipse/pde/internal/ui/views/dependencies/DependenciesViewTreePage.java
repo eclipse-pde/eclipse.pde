@@ -33,11 +33,6 @@ public class DependenciesViewTreePage extends DependenciesViewPage {
 			setDisabledImageDescriptor(PDEPluginImages.DESC_COLLAPSE_ALL);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.action.Action#run()
-		 */
 		@Override
 		public void run() {
 			super.run();
@@ -64,11 +59,6 @@ public class DependenciesViewTreePage extends DependenciesViewPage {
 		super(view, contentProvider);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ui.view.DependenciesViewPage#createViewer(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected StructuredViewer createViewer(Composite parent) {
 		fTreeViewer = new TreeViewer(parent, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
@@ -86,13 +76,6 @@ public class DependenciesViewTreePage extends DependenciesViewPage {
 		return fTreeViewer;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.part.Page#makeContributions(org.eclipse.jface.action.IMenuManager,
-	 *      org.eclipse.jface.action.IToolBarManager,
-	 *      org.eclipse.jface.action.IStatusLineManager)
-	 */
 	@Override
 	public void makeContributions(IMenuManager menuManager, IToolBarManager toolBarManager, IStatusLineManager statusLineManager) {
 		super.makeContributions(menuManager, toolBarManager, statusLineManager);

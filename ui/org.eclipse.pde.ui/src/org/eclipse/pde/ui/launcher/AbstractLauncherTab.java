@@ -53,16 +53,10 @@ public abstract class AbstractLauncherTab extends AbstractLaunchConfigurationTab
 		return getErrorMessage() == null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#activated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
 	@Override
 	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#deactivated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
 	@Override
 	public void deactivated(ILaunchConfigurationWorkingCopy workingCopy) {
 	}
@@ -78,9 +72,6 @@ public abstract class AbstractLauncherTab extends AbstractLaunchConfigurationTab
 		super.updateLaunchConfigurationDialog();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#scheduleUpdateJob()
-	 */
 	@Override
 	public void scheduleUpdateJob() {
 		super.scheduleUpdateJob();

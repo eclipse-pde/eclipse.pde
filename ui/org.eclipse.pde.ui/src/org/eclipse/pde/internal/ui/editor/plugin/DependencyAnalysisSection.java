@@ -47,9 +47,6 @@ public class DependencyAnalysisSection extends PDESection {
 		return PDEUIMessages.DependencyAnalysisSection_fragment_notEditable;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.neweditor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
-	 */
 	@Override
 	protected void createClient(Section section, FormToolkit toolkit) {
 		section.setText(PDEUIMessages.DependencyAnalysisSection_title);

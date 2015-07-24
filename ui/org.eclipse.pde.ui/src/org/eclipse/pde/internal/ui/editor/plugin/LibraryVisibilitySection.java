@@ -174,9 +174,6 @@ public class LibraryVisibilitySection extends TableSection implements IPartSelec
 			handleRemove();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESection#doGlobalAction(java.lang.String)
-	 */
 	@Override
 	public boolean doGlobalAction(String actionId) {
 
@@ -311,9 +308,6 @@ public class LibraryVisibilitySection extends TableSection implements IPartSelec
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(org.eclipse.swt.dnd.Clipboard)
-	 */
 	@Override
 	public boolean canPaste(Clipboard clipboard) {
 		// Paste not supported for plug-ins that do not have a MANIFEST.MF

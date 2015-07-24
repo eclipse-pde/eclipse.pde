@@ -31,9 +31,6 @@ public class PluginSearchActionGroup extends ActionGroup {
 		fModel = model;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.actions.ActionGroup#fillContextMenu(org.eclipse.jface.action.IMenuManager)
-	 */
 	@Override
 	public void fillContextMenu(IMenuManager menu) {
 		ActionContext context = getContext();

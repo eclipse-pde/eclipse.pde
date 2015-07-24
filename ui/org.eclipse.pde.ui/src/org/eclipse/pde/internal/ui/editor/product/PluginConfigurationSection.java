@@ -50,25 +50,16 @@ public class PluginConfigurationSection extends TableSection {
 		ContentProvider() {
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
-		 */
 		@Override
 		public Object[] getElements(Object inputElement) {
 			return fProduct.getPluginConfigurations();
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
-		 */
 		@Override
 		public void dispose() {
 
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-		 */
 		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			if (oldInput == newInput)
@@ -162,9 +153,6 @@ public class PluginConfigurationSection extends TableSection {
 
 	private static final char VERSION_SEPARATOR = '*';
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
-	 */
 	@Override
 	protected void createClient(Section section, FormToolkit toolkit) {
 		section.setText(PDEUIMessages.ConfigurationPageMock_sectionTitle);
@@ -514,9 +502,6 @@ public class PluginConfigurationSection extends TableSection {
 		return (IProductModel) getPage().getPDEEditor().getAggregateModel();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.IPluginModelListener#modelsChanged(org.eclipse.pde.internal.core.PluginModelDelta)
-	 */
 	@Override
 	public void modelChanged(IModelChangedEvent e) {
 		//TODO update modelChanged method

@@ -28,10 +28,6 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 
 	private static IMarkerResolution[] NO_RESOLUTIONS = new IMarkerResolution[0];
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.IMarkerResolutionGenerator#getResolutions(org.eclipse.core.resources.IMarker)
-	 */
 	@Override
 	public IMarkerResolution[] getResolutions(IMarker marker) {
 		int problemID = getProblemId(marker);
@@ -211,10 +207,6 @@ public class ResolutionGenerator implements IMarkerResolutionGenerator2 {
 		};
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.IMarkerResolutionGenerator2#hasResolutions(org.eclipse.core.resources.IMarker)
-	 */
 	@Override
 	public boolean hasResolutions(IMarker marker) {
 		return getProblemId(marker) > 0;

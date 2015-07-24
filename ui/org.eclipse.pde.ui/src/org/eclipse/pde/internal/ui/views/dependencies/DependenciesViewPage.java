@@ -115,11 +115,6 @@ public abstract class DependenciesViewPage extends Page {
 		};
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.part.IPage#createControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		fViewer = createViewer(parent);
@@ -201,11 +196,6 @@ public abstract class DependenciesViewPage extends Page {
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.part.IPage#getControl()
-	 */
 	@Override
 	public Control getControl() {
 		return fViewer.getControl();
@@ -365,13 +355,6 @@ public abstract class DependenciesViewPage extends Page {
 
 	protected abstract boolean isShowingOptional();
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.part.Page#makeContributions(org.eclipse.jface.action.IMenuManager,
-	 *      org.eclipse.jface.action.IToolBarManager,
-	 *      org.eclipse.jface.action.IStatusLineManager)
-	 */
 	@Override
 	public void makeContributions(IMenuManager menuManager, IToolBarManager toolBarManager, IStatusLineManager statusLineManager) {
 		super.makeContributions(menuManager, toolBarManager, statusLineManager);
@@ -381,11 +364,6 @@ public abstract class DependenciesViewPage extends Page {
 		contributeToActionBars(getSite().getActionBars());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.part.IPage#setFocus()
-	 */
 	@Override
 	public void setFocus() {
 		if (fViewer != null) {

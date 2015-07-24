@@ -40,27 +40,16 @@ public class ModelDataTransfer extends ByteArrayTransfer {
 		super();
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on Transfer.
-	 */
 	@Override
 	protected int[] getTypeIds() {
 		return new int[] {TYPEID};
 	}
 
-	/* (non-Javadoc)
-	 * Returns the type names.
-	 *
-	 * @return the list of type names
-	 */
 	@Override
 	protected String[] getTypeNames() {
 		return new String[] {TYPE_NAME};
 	}
 
-	/* (non-Javadoc)
-		* Method declared on Transfer.
-		*/
 	@Override
 	protected void javaToNative(Object data, TransferData transferData) {
 		if (!(data instanceof Object[])) {
@@ -93,9 +82,6 @@ public class ModelDataTransfer extends ByteArrayTransfer {
 
 	}
 
-	/* (non-Javadoc)
-	 * Method declared on Transfer.
-	 */
 	@Override
 	protected Object nativeToJava(TransferData transferData) {
 		byte[] bytes = (byte[]) super.nativeToJava(transferData);

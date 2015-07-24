@@ -31,17 +31,11 @@ public class TypeContentProposal implements IContentProposal {
 		fImage = image;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.fieldassist.IContentProposal#getContent()
-	 */
 	@Override
 	public String getContent() {
 		return fContent;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.fieldassist.IContentProposal#getCursorPosition()
-	 */
 	@Override
 	public int getCursorPosition() {
 		if (fContent != null) {
@@ -50,17 +44,11 @@ public class TypeContentProposal implements IContentProposal {
 		return 0;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.fieldassist.IContentProposal#getDescription()
-	 */
 	@Override
 	public String getDescription() {
 		return fDescription;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.fieldassist.IContentProposal#getLabel()
-	 */
 	@Override
 	public String getLabel() {
 		return fLabel;
@@ -70,9 +58,6 @@ public class TypeContentProposal implements IContentProposal {
 		return fImage;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		return fLabel;

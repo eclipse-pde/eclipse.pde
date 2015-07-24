@@ -27,9 +27,6 @@ public class SiteBundleAdapter implements Serializable, IWritable {
 		this.bundle = bundle;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.core.IWritable#write(java.lang.String, java.io.PrintWriter)
-	 */
 	@Override
 	public void write(String indent, PrintWriter writer) {
 		bundle.write(indent, writer);
@@ -59,9 +56,6 @@ public class SiteBundleAdapter implements Serializable, IWritable {
 		return super.equals(obj);
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		if (bundle.getId() == null) {

@@ -163,9 +163,6 @@ public class OpenSchemaAction extends Action {
 		MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), title, message);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.Action#run()
-	 */
 	@Override
 	public void run() {
 		// Ensure the schema is defined

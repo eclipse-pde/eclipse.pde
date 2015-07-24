@@ -258,10 +258,7 @@ public abstract class PDEFormPage extends FormPage {
 				((IContextPart) part).cancelEdit();
 		}
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.editor.FormPage#createPartControl(org.eclipse.swt.widgets.Composite)
-	 */
+
 	@Override
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);

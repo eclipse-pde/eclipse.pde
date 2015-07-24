@@ -39,11 +39,6 @@ public class ResourceAttributeRow extends ButtonAttributeRow {
 		super(part, att);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ui.neweditor.plugin.ReferenceAttributeRow#openReference()
-	 */
 	@Override
 	protected boolean isReferenceModel() {
 		return !part.getPage().getModel().isEditable();
@@ -111,11 +106,6 @@ public class ResourceAttributeRow extends ButtonAttributeRow {
 		return getProject().getWorkspace().getRoot().getFile(path);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ui.neweditor.plugin.ReferenceAttributeRow#browse()
-	 */
 	@Override
 	protected void browse() {
 		final IProject project = part.getPage().getPDEEditor().getCommonProject();

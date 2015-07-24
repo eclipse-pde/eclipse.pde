@@ -126,9 +126,6 @@ public abstract class BuildContentsSection extends TableSection implements IReso
 		control.setMenu(menu);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#fillContextMenu(org.eclipse.jface.action.IMenuManager)
-	 */
 	@Override
 	protected void fillContextMenu(IMenuManager manager) {
 		manager.add(getPage().getPDEEditor().getContributor().getRevertAction());
@@ -537,11 +534,6 @@ public abstract class BuildContentsSection extends TableSection implements IReso
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ui.editor.TableSection#selectionChanged(org.eclipse.jface.viewers.IStructuredSelection)
-	 */
 	@Override
 	protected void selectionChanged(IStructuredSelection selection) {
 		getPage().getPDEEditor().setSelection(selection);

@@ -67,9 +67,6 @@ public class PatchSpecPage extends AbstractFeatureSpecPage {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.WizardPage#getNextPage()
-	 */
 	@Override
 	public IWizardPage getNextPage() {
 		if (fFeatureToPatch == null)

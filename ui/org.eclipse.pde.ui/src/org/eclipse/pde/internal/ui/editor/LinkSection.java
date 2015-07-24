@@ -71,12 +71,6 @@ public class LinkSection extends PDESection {
 		createClient(getSection(), toolkit);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ui.neweditor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section,
-	 *      org.eclipse.ui.forms.widgets.FormToolkit)
-	 */
 	@Override
 	protected void createClient(Section section, FormToolkit toolkit) {
 		container = toolkit.createComposite(section);

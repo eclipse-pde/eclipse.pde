@@ -110,17 +110,11 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 			return null;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension4#isAutoInsertable()
-		 */
 		@Override
 		public boolean isAutoInsertable() {
 			return true;
 		}
 
-		/* (non-Javadoc)
-		 * @see java.lang.Object#equals(java.lang.Object)
-		 */
 		@Override
 		public boolean equals(Object obj) {
 			if (!(obj instanceof PDECompletionProposal)) {
@@ -135,9 +129,6 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 			return fPosition.hashCode() + fResolution.hashCode();
 		}
 
-		/* (non-Javadoc)
-		 * @see java.lang.Comparable#compareTo(java.lang.Object)
-		 */
 		@Override
 		public int compareTo(Object arg0) {
 			if (!(arg0 instanceof PDECompletionProposal))

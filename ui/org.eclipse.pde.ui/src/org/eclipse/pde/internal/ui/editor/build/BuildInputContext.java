@@ -37,9 +37,6 @@ public class BuildInputContext extends InputContext {
 		create();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.neweditor.context.InputContext#getCharSet()
-	 */
 	@Override
 	protected String getDefaultCharset() {
 		return "ISO-8859-1"; //$NON-NLS-1$
@@ -71,17 +68,11 @@ public class BuildInputContext extends InputContext {
 		return model;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.neweditor.InputContext#getId()
-	 */
 	@Override
 	public String getId() {
 		return CONTEXT_ID;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.neweditor.context.InputContext#addTextEditOperation(java.util.ArrayList, org.eclipse.pde.core.IModelChangedEvent)
-	 */
 	@Override
 	protected void addTextEditOperation(ArrayList<TextEdit> ops, IModelChangedEvent event) {
 		Object[] objects = event.getChangedObjects();

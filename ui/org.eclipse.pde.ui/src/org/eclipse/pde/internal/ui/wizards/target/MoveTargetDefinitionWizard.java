@@ -43,9 +43,6 @@ public class MoveTargetDefinitionWizard extends BasicNewResourceWizard {
 		fPage.setFilter(fFilter);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.Wizard#performFinish()
-	 */
 	@Override
 	public boolean performFinish() {
 		fPath = fPage.getContainerFullPath().append(fPage.getFileName());

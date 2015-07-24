@@ -37,25 +37,16 @@ import org.eclipse.ui.part.FileEditorInput;
 public class SchemaEditor extends MultiSourceEditor {
 	private ShowDescriptionAction fPreviewAction;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getEditorID()
-	 */
 	@Override
 	protected String getEditorID() {
 		return IPDEUIConstants.SCHEMA_EDITOR_ID;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#isSaveAsAllowed()
-	 */
 	@Override
 	public boolean isSaveAsAllowed() {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getContextIDForSaveAs()
-	 */
 	@Override
 	public String getContextIDForSaveAs() {
 		return SchemaInputContext.CONTEXT_ID;
@@ -146,9 +137,6 @@ public class SchemaEditor extends MultiSourceEditor {
 		return firstPageId;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.neweditor.MultiSourceEditor#createXMLSourcePage(org.eclipse.pde.internal.ui.neweditor.PDEFormEditor, java.lang.String, java.lang.String)
-	 */
 	@Override
 	protected PDESourcePage createSourcePage(PDEFormEditor editor, String title, String name, String contextId) {
 		return new SchemaSourcePage(editor, title, name);
@@ -159,9 +147,6 @@ public class SchemaEditor extends MultiSourceEditor {
 		return new SchemaFormOutlinePage(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getInputContext(java.lang.Object)
-	 */
 	@Override
 	protected InputContext getInputContext(Object object) {
 		InputContext context = null;

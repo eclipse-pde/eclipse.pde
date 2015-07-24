@@ -42,9 +42,6 @@ public class PDEDropAdapter extends ViewerDropAdapter {
 		return fLastValidOperation;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ViewerDropAdapter#performDrop(java.lang.Object)
-	 */
 	@Override
 	public boolean performDrop(Object data) {
 		// Clear the last valid operation for the next drop event
@@ -79,9 +76,6 @@ public class PDEDropAdapter extends ViewerDropAdapter {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ViewerDropAdapter#validateDrop(java.lang.Object, int, org.eclipse.swt.dnd.TransferData)
-	 */
 	@Override
 	public boolean validateDrop(Object targetObject, int operation, TransferData transferType) {
 		// Current operation listed is not set until after the drop is validated

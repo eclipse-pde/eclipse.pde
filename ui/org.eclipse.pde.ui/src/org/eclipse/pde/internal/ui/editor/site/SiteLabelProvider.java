@@ -69,9 +69,6 @@ class SiteLabelProvider extends LabelProvider {
 		return fSharedProvider.getText(element);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.BaseLabelProvider#dispose()
-	 */
 	@Override
 	public void dispose() {
 		fSharedProvider.disconnect(this);

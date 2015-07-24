@@ -341,9 +341,6 @@ public class InfoSection extends PDESection {
 		updateEditorInput(featureModel.getFeature().getFeatureInfo(0), false);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
-	 */
 	@Override
 	public void dispose() {
 		// Dispose of the source configuration

@@ -20,9 +20,6 @@ public class XMLElementProposalComparator implements Comparator<Object> {
 		// NO-OP
 	}
 
-	/* (non-Javadoc)
-	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-	 */
 	@Override
 	public int compare(Object object1, Object object2) {
 		String proposal1 = getSortKey((ISchemaElement) object1);

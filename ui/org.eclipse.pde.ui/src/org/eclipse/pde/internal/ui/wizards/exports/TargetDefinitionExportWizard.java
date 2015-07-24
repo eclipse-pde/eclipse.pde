@@ -64,9 +64,6 @@ public class TargetDefinitionExportWizard extends Wizard implements IExportWizar
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_TARGET_WIZ);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.Wizard#addPages()
-	 */
 	@Override
 	public void addPages() {
 		IDialogSettings settings = PDEPlugin.getDefault().getDialogSettings().getSection(SETTINGS_SECTION);
@@ -79,9 +76,6 @@ public class TargetDefinitionExportWizard extends Wizard implements IExportWizar
 		addPage(fPage);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.Wizard#performFinish()
-	 */
 	@Override
 	public boolean performFinish() {
 		fPage.storeSettings();
@@ -95,9 +89,6 @@ public class TargetDefinitionExportWizard extends Wizard implements IExportWizar
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchWizard#init(org.eclipse.ui.IWorkbench, org.eclipse.jface.viewers.IStructuredSelection)
-	 */
 	@Override
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 	}

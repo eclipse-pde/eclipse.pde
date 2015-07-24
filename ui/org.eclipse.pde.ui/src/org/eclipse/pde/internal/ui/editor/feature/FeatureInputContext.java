@@ -46,17 +46,11 @@ public class FeatureInputContext extends XMLInputContext {
 		create();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.neweditor.context.InputContext#getId()
-	 */
 	@Override
 	public String getId() {
 		return CONTEXT_ID;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.neweditor.context.InputContext#createModel(org.eclipse.ui.IEditorInput)
-	 */
 	@Override
 	protected IBaseModel createModel(IEditorInput input) throws CoreException {
 		if (input instanceof IFileEditorInput)
@@ -110,9 +104,6 @@ public class FeatureInputContext extends XMLInputContext {
 		return model;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.neweditor.context.InputContext#addTextEditOperation(java.util.ArrayList, org.eclipse.pde.core.IModelChangedEvent)
-	 */
 	@Override
 	protected void addTextEditOperation(ArrayList<TextEdit> ops, IModelChangedEvent event) {
 	}
@@ -164,9 +155,6 @@ public class FeatureInputContext extends XMLInputContext {
 		return cleanModel;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.neweditor.context.XMLInputContext#reorderInsertEdits(java.util.ArrayList)
-	 */
 	@Override
 	protected void reorderInsertEdits(ArrayList<TextEdit> ops) {
 	}

@@ -103,10 +103,7 @@ public class InformationSection extends SectionPart {
 		toolkit.paintBordersFor(client);
 		section.setClient(client);
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.AbstractFormPart#refresh()
-	 */
+
 	@Override
 	public void refresh() {
 		fNameText.setText(getTarget().getName() != null ? getTarget().getName() : ""); //$NON-NLS-1$

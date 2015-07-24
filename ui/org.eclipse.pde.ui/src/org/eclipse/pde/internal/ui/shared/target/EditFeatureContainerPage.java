@@ -30,25 +30,16 @@ public class EditFeatureContainerPage extends EditDirectoryContainerPage {
 		super(container, "EditFeatureContainer"); //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.shared.target.EditDirectoryContainerPage#getDefaultTitle()
-	 */
 	@Override
 	protected String getDefaultTitle() {
 		return Messages.EditFeatureContainerPage_0;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.shared.target.EditDirectoryContainerPage#getDefaultMessage()
-	 */
 	@Override
 	protected String getDefaultMessage() {
 		return Messages.EditFeatureContainerPage_1;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.shared.target.AddDirectoryContainerPage#createLocationArea(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected void createLocationArea(Composite parent) {
 		FeatureBundleContainer container = (FeatureBundleContainer) getBundleContainer();
@@ -73,33 +64,21 @@ public class EditFeatureContainerPage extends EditDirectoryContainerPage {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.shared.target.EditDirectoryContainerPage#initializeInputFields(org.eclipse.pde.core.target.ITargetLocation)
-	 */
 	@Override
 	protected void initializeInputFields(ITargetLocation container) {
 		containerChanged(0);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.shared.target.EditDirectoryContainerPage#storeSettings()
-	 */
 	@Override
 	public void storeSettings() {
 		// Do nothing, no settings
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.shared.target.EditDirectoryContainerPage#validateInput()
-	 */
 	@Override
 	protected boolean validateInput() {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.shared.target.EditDirectoryContainerPage#createContainer(org.eclipse.pde.core.target.ITargetLocation)
-	 */
 	@Override
 	protected ITargetLocation createContainer(ITargetLocation previous) throws CoreException {
 		return getBundleContainer();

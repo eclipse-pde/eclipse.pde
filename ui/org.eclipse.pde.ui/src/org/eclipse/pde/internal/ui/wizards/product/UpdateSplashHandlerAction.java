@@ -109,9 +109,6 @@ public class UpdateSplashHandlerAction extends Action implements ISplashHandlerC
 		fMonitor = monitor;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.Action#run()
-	 */
 	@Override
 	public void run() {
 		try {

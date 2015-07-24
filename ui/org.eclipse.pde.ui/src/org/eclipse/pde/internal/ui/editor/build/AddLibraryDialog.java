@@ -174,9 +174,6 @@ public class AddLibraryDialog extends SelectionStatusDialog {
 		return newName;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
-	 */
 	@Override
 	protected void okPressed() {
 		newName = text.getText();

@@ -37,9 +37,6 @@ public abstract class XMLInputContext extends UTF8InputContext {
 		return new XMLDocumentSetupParticpant();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.neweditor.context.InputContext#addTextEditOperation(java.util.ArrayList, org.eclipse.pde.core.IModelChangedEvent)
-	 */
 	@Override
 	protected void addTextEditOperation(ArrayList<TextEdit> ops, IModelChangedEvent event) {
 		Object[] objects = event.getChangedObjects();
@@ -450,9 +447,6 @@ public abstract class XMLInputContext extends UTF8InputContext {
 		return getHighestNodeToBeWritten(parent);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.neweditor.context.InputContext#flushModel(org.eclipse.jface.text.IDocument)
-	 */
 	@Override
 	protected void flushModel(IDocument doc) {
 		removeUnnecessaryOperations();

@@ -41,9 +41,6 @@ public class ConfigurationPage extends PDEFormPage {
 		super(editor, PLUGIN_ID, PDEUIMessages.ConfigurationPageMock_pageTitle);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#createFormContent(org.eclipse.ui.forms.IManagedForm)
-	 */
 	@Override
 	protected void createFormContent(IManagedForm managedForm) {
 		super.createFormContent(managedForm);

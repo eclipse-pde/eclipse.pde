@@ -18,25 +18,16 @@ public class FragmentFieldData extends AbstractFieldData implements IFragmentFie
 	private String fPluginVersion;
 	private int fMatch;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.IFragmentFieldData#getPluginId()
-	 */
 	@Override
 	public String getPluginId() {
 		return fPluginId;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.IFragmentFieldData#getPluginVersion()
-	 */
 	@Override
 	public String getPluginVersion() {
 		return fPluginVersion;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.IFragmentFieldData#getMatch()
-	 */
 	@Override
 	public int getMatch() {
 		return fMatch;

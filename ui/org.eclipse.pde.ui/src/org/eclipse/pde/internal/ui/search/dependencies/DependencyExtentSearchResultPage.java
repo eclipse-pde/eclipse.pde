@@ -28,9 +28,6 @@ import org.eclipse.ui.actions.ActionContext;
 public class DependencyExtentSearchResultPage extends AbstractSearchResultPage {
 
 	class Comparator extends ViewerComparator {
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ViewerSorter#category(java.lang.Object)
-		 */
 		@Override
 		public int category(Object element) {
 			try {
@@ -46,9 +43,6 @@ public class DependencyExtentSearchResultPage extends AbstractSearchResultPage {
 	}
 
 	class LabelProvider extends JavaElementLabelProvider {
-		/* (non-Javadoc)
-		 * @see org.eclipse.jdt.ui.JavaElementLabelProvider#getImage(java.lang.Object)
-		 */
 		@Override
 		public Image getImage(Object element) {
 			if (element instanceof IPluginObject)
@@ -56,9 +50,6 @@ public class DependencyExtentSearchResultPage extends AbstractSearchResultPage {
 			return super.getImage(element);
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jdt.ui.JavaElementLabelProvider#getText(java.lang.Object)
-		 */
 		@Override
 		public String getText(Object element) {
 			if (element instanceof IPluginExtensionPoint)
@@ -90,18 +81,12 @@ public class DependencyExtentSearchResultPage extends AbstractSearchResultPage {
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.search.ui.text.AbstractTextSearchViewPage#dispose()
-	 */
 	@Override
 	public void dispose() {
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 		super.dispose();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.search.ui.text.AbstractTextSearchViewPage#fillContextMenu(org.eclipse.jface.action.IMenuManager)
-	 */
 	@Override
 	protected void fillContextMenu(IMenuManager mgr) {
 		super.fillContextMenu(mgr);
@@ -135,9 +120,6 @@ public class DependencyExtentSearchResultPage extends AbstractSearchResultPage {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.search.ui.text.AbstractTextSearchViewPage#showMatch(org.eclipse.search.ui.text.Match, int, int, boolean)
-	 */
 	@Override
 	protected void showMatch(Match match, int currentOffset, int currentLength, boolean activate) throws PartInitException {
 		if (match.getElement() instanceof IPluginObject) {
@@ -151,17 +133,11 @@ public class DependencyExtentSearchResultPage extends AbstractSearchResultPage {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.search.AbstractSearchResultPage#createLabelProvider()
-	 */
 	@Override
 	protected ILabelProvider createLabelProvider() {
 		return new LabelProvider();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.search.AbstractSearchResultPage#createViewerSorter()
-	 */
 	@Override
 	protected ViewerComparator createViewerComparator() {
 		return new Comparator();

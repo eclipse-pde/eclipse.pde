@@ -32,9 +32,6 @@ public class ShowResultsAction extends Action {
 		fReadOnly = readOnly;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.Action#run()
-	 */
 	@Override
 	public void run() {
 		if (fUnusedImports.length == 0) {

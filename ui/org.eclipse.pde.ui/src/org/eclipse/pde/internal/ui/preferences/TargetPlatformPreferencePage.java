@@ -90,9 +90,6 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 			return fTextFont;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.StyledCellLabelProvider#update(org.eclipse.jface.viewers.ViewerCell)
-		 */
 		@Override
 		public void update(ViewerCell cell) {
 			final Object element = cell.getElement();
@@ -163,9 +160,6 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 			return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_TARGET_DEFINITION, flag);
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.StyledCellLabelProvider#dispose()
-		 */
 		@Override
 		public void dispose() {
 			PDEPlugin.getDefault().getLabelProvider().disconnect(this);
@@ -253,9 +247,6 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 	 */
 	private boolean isOutOfSynch = false;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public Control createContents(Composite parent) {
 		Composite container = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH, 0, 0);
@@ -682,9 +673,6 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		return (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
-	 */
 	@Override
 	public void init(IWorkbench workbench) {
 		// ensures default targets are created when page is opened (if not created yet)
@@ -694,9 +682,6 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
-	 */
 	@Override
 	public void performDefaults() {
 		// add a default target platform and select it (or just select it if present)
@@ -726,9 +711,6 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		super.performDefaults();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
-	 */
 	@Override
 	public boolean performOk() {
 		ITargetPlatformService service = getTargetService();

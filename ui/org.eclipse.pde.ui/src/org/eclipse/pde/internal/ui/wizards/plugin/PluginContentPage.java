@@ -89,9 +89,6 @@ public class PluginContentPage extends ContentPage {
 		setDescription(PDEUIMessages.ContentPage_desc);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.wizards.plugin.ContentPage#createControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
@@ -234,9 +231,6 @@ public class PluginContentPage extends ContentPage {
 		});
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.wizards.plugin.ContentPage#updateData()
-	 */
 	@Override
 	public void updateData() {
 		super.updateData();
@@ -298,9 +292,6 @@ public class PluginContentPage extends ContentPage {
 		fNoButton.setLayoutData(gd);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.wizards.plugin.ContentPage#setVisible(boolean)
-	 */
 	@Override
 	public void setVisible(boolean visible) {
 		if (visible) {
@@ -356,9 +347,6 @@ public class PluginContentPage extends ContentPage {
 		return ((PluginFieldData) fData).getOSGiFramework() != null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.wizards.plugin.ContentPage#validatePage()
-	 */
 	@Override
 	protected void validatePage() {
 		String errorMessage = validateProperties();
@@ -402,9 +390,6 @@ public class PluginContentPage extends ContentPage {
 		settings.put(S_RCP_PLUGIN, fYesButton.getSelection());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.WizardPage#canFlipToNextPage()
-	 */
 	@Override
 	public boolean canFlipToNextPage() {
 		if (getNextPage() instanceof TemplateListSelectionPage) {

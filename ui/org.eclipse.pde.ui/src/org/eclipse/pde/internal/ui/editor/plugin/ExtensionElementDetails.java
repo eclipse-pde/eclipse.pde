@@ -65,11 +65,6 @@ public class ExtensionElementDetails extends AbstractPluginElementDetails {
 		return getPage().getPDEEditor().getAggregateModel().isEditable();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.forms.IDetailsPage#createContents(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createContents(Composite parent) {
 		parent.setLayout(FormLayoutFactory.createDetailsGridLayout(false, 1));
@@ -161,11 +156,6 @@ public class ExtensionElementDetails extends AbstractPluginElementDetails {
 		return row;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.forms.IDetailsPage#inputChanged(org.eclipse.jface.viewers.IStructuredSelection)
-	 */
 	@Override
 	public void selectionChanged(IFormPart masterPart, ISelection selection) {
 		IStructuredSelection ssel = (IStructuredSelection) selection;
@@ -277,11 +267,6 @@ public class ExtensionElementDetails extends AbstractPluginElementDetails {
 		section.layout();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.forms.IDetailsPage#commit()
-	 */
 	@Override
 	public void commit(boolean onSave) {
 		for (int i = 0; i < rows.size(); i++) {
@@ -291,22 +276,12 @@ public class ExtensionElementDetails extends AbstractPluginElementDetails {
 		super.commit(onSave);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.forms.IDetailsPage#setFocus()
-	 */
 	@Override
 	public void setFocus() {
 		if (rows.size() > 0)
 			rows.get(0).setFocus();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.forms.IDetailsPage#dispose()
-	 */
 	@Override
 	public void dispose() {
 		for (int i = 0; i < rows.size(); i++) {
@@ -319,11 +294,6 @@ public class ExtensionElementDetails extends AbstractPluginElementDetails {
 		super.dispose();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.forms.IDetailsPage#refresh()
-	 */
 	@Override
 	public void refresh() {
 		update();

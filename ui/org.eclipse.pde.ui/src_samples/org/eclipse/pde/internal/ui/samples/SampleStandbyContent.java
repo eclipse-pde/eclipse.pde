@@ -58,12 +58,6 @@ public class SampleStandbyContent implements IStandbyContentPart {
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.intro.internal.parts.IStandbyContentPart#createPartControl(org.eclipse.swt.widgets.Composite,
-	 *      org.eclipse.ui.forms.widgets.FormToolkit)
-	 */
 	@Override
 	public void createPartControl(Composite parent, FormToolkit toolkit) {
 		form = toolkit.createScrolledForm(parent);
@@ -196,29 +190,14 @@ public class SampleStandbyContent implements IStandbyContentPart {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.intro.internal.parts.IStandbyContentPart#getControl()
-	 */
 	@Override
 	public Control getControl() {
 		return form;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.intro.internal.parts.IStandbyContentPart#init(org.eclipse.ui.intro.IIntroPart)
-	 */
 	public void init(IIntroPart introPart) {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.intro.internal.parts.IStandbyContentPart#setInput(java.lang.Object)
-	 */
 	@Override
 	public void setInput(Object input) {
 		// if the new input is null, use cached input from momento.
@@ -264,29 +243,16 @@ public class SampleStandbyContent implements IStandbyContentPart {
 		form.reflow(true);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.intro.internal.parts.IStandbyContentPart#setFocus()
-	 */
 	@Override
 	public void setFocus() {
 		form.setFocus();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.intro.internal.parts.IStandbyContentPart#dispose()
-	 */
 	@Override
 	public void dispose() {
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.intro.config.IStandbyContentPart#init(org.eclipse.ui.intro.IIntroPart, org.eclipse.ui.IMemento)
-	 */
 	@Override
 	public void init(IIntroPart introPart, IMemento memento) {
 		// try to restore last state.
@@ -306,9 +272,6 @@ public class SampleStandbyContent implements IStandbyContentPart {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.intro.config.IStandbyContentPart#saveState(org.eclipse.ui.IMemento)
-	 */
 	@Override
 	public void saveState(IMemento memento) {
 		String currentSampleId = input;

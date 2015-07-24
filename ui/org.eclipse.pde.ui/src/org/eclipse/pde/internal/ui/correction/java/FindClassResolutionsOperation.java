@@ -97,10 +97,6 @@ public class FindClassResolutionsOperation implements IRunnableWithProgress {
 		fCollector = collector;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public void run(IProgressMonitor monitor) {
 		int idx = fClassName.lastIndexOf('.');

@@ -65,11 +65,6 @@ public class NewLibraryPluginProjectWizard extends NewWizard implements IExecuta
 		this(null, null);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.wizard.Wizard#addPages()
-	 */
 	@Override
 	public void addPages() {
 		fJarsPage = new LibraryPluginJarsPage("jars", fPluginData, fInitialJarPaths); //$NON-NLS-1$ 
@@ -116,22 +111,12 @@ public class NewLibraryPluginProjectWizard extends NewWizard implements IExecuta
 		return element;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.wizard.Wizard#dispose()
-	 */
 	@Override
 	public void dispose() {
 		super.dispose();
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ui.wizards.NewWizard#performFinish()
-	 */
 	@Override
 	public boolean performFinish() {
 		try {
@@ -150,12 +135,6 @@ public class NewLibraryPluginProjectWizard extends NewWizard implements IExecuta
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement,
-	 *      java.lang.String, java.lang.Object)
-	 */
 	@Override
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) throws CoreException {
 		fConfig = config;

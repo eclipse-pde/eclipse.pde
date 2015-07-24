@@ -68,9 +68,6 @@ public class FeatureOptionsTab extends ExportOptionsTab {
 			});
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.ui.dialogs.FilteredResourcesSelectionDialog#validateItem(java.lang.Object)
-		 */
 		@Override
 		protected IStatus validateItem(Object item) {
 			if (item instanceof IResource) {

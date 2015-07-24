@@ -152,17 +152,11 @@ public class WizardElement extends NamedElement implements IPluginContribution {
 		return (tel == null) ? null : tel.getAttribute("contributingId"); //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPluginContribution#getLocalId()
-	 */
 	@Override
 	public String getLocalId() {
 		return getID();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPluginContribution#getPluginId()
-	 */
 	@Override
 	public String getPluginId() {
 		return null;

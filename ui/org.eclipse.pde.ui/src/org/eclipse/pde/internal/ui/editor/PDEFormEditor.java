@@ -220,11 +220,6 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 
 	protected abstract void createStorageContexts(InputContextManager contexts, IStorageEditorInput input);
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.forms.editor.FormEditor#createToolkit(org.eclipse.swt.widgets.Display)
-	 */
 	@Override
 	protected FormToolkit createToolkit(Display display) {
 		// Create a toolkit that shares colors between editors.
@@ -262,9 +257,6 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 		PDEModelUtility.connect(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.editor.FormEditor#pageChange(int)
-	 */
 	@Override
 	protected void pageChange(int newPageIndex) {
 		super.pageChange(newPageIndex);
@@ -275,9 +267,6 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.MultiPageEditorPart#setFocus()
-	 */
 	@Override
 	public void setFocus() {
 		super.setFocus();
@@ -350,11 +339,6 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 		return ""; //$NON-NLS-1$
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.ISaveablePart#doSave(org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public void doSave(IProgressMonitor monitor) {
 		commitPages(true);
@@ -455,11 +439,6 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.ISaveablePart#doSaveAs()
-	 */
 	@Override
 	public void doSaveAs() {
 		try {
@@ -489,11 +468,6 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.ISaveablePart#isSaveAsAllowed()
-	 */
 	@Override
 	public boolean isSaveAsAllowed() {
 		return false;
@@ -764,9 +738,6 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 		fContentOutline.setPageActive(outline);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.editor.FormEditor#setActivePage(java.lang.String)
-	 */
 	@Override
 	public IFormPage setActivePage(String pageId) {
 		IFormPage page = super.setActivePage(pageId);
@@ -915,18 +886,12 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.search.ui.text.ISearchEditorAccess#getDocument(org.eclipse.search.ui.text.Match)
-	 */
 	@Override
 	public IDocument getDocument(Match match) {
 		InputContext context = getInputContext(match.getElement());
 		return context == null ? null : context.getDocumentProvider().getDocument(context.getInput());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.search.ui.text.ISearchEditorAccess#getAnnotationModel(org.eclipse.search.ui.text.Match)
-	 */
 	@Override
 	public IAnnotationModel getAnnotationModel(Match match) {
 		InputContext context = getInputContext(match.getElement());

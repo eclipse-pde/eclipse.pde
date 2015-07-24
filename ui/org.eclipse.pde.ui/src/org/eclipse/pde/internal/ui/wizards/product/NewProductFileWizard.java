@@ -22,18 +22,12 @@ public class NewProductFileWizard extends BasicNewResourceWizard {
 
 	private ProductFileWizardPage fMainPage;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.Wizard#addPages()
-	 */
 	@Override
 	public void addPages() {
 		fMainPage = new ProductFileWizardPage("product", getSelection()); //$NON-NLS-1$
 		addPage(fMainPage);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.IWizard#performFinish()
-	 */
 	@Override
 	public boolean performFinish() {
 		try {
@@ -57,9 +51,6 @@ public class NewProductFileWizard extends BasicNewResourceWizard {
 		return new BaseProductCreationOperation(file);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.wizards.newresource.BasicNewResourceWizard#init(org.eclipse.ui.IWorkbench, org.eclipse.jface.viewers.IStructuredSelection)
-	 */
 	@Override
 	public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
 		super.init(workbench, currentSelection);
@@ -67,9 +58,6 @@ public class NewProductFileWizard extends BasicNewResourceWizard {
 		setNeedsProgressMonitor(true);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.wizards.newresource.BasicNewResourceWizard#initializeDefaultPageImageDescriptor()
-	 */
 	@Override
 	protected void initializeDefaultPageImageDescriptor() {
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_PRODUCT_WIZ);

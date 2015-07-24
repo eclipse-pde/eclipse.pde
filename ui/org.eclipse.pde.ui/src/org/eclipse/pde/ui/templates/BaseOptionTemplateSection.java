@@ -329,9 +329,6 @@ public abstract class BaseOptionTemplateSection extends AbstractTemplateSection 
 		return super.getReplacementString(fileName, key);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#execute(org.eclipse.core.resources.IProject, org.eclipse.pde.core.plugin.IPluginModelBase, org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public void execute(IProject project, IPluginModelBase model, IProgressMonitor monitor) throws CoreException {
 		/*

@@ -42,9 +42,6 @@ public class SiteEditor extends MultiSourceEditor {
 
 	private Action fBuildAllAction;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getEditorID()
-	 */
 	@Override
 	protected String getEditorID() {
 		return IPDEUIConstants.SITE_EDITOR_ID;
@@ -144,9 +141,6 @@ public class SiteEditor extends MultiSourceEditor {
 		return FeaturesPage.PAGE_ID;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.neweditor.MultiSourceEditor#createXMLSourcePage(org.eclipse.pde.internal.ui.neweditor.PDEFormEditor, java.lang.String, java.lang.String)
-	 */
 	@Override
 	protected PDESourcePage createSourcePage(PDEFormEditor editor, String title, String name, String contextId) {
 		return new SiteSourcePage(editor, title, name);
@@ -157,10 +151,6 @@ public class SiteEditor extends MultiSourceEditor {
 		return new SiteOutlinePage(this);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getInputContext(java.lang.Object)
-	 */
 	@Override
 	protected InputContext getInputContext(Object object) {
 		InputContext context = null;

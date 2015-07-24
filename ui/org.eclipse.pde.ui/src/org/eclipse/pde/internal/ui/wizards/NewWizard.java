@@ -46,11 +46,6 @@ public class NewWizard extends Wizard implements INewWizard, IDefaultValueConsum
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ui.wizards.IDefaultValueConsumer#getDefaultValue(java.lang.String)
-	 */
 	@Override
 	public final String getDefaultValue(String key) {
 		if (defaultValues == null)
@@ -58,11 +53,6 @@ public class NewWizard extends Wizard implements INewWizard, IDefaultValueConsum
 		return (String) defaultValues.get(key);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.pde.internal.ui.wizards.IDefaultValueConsumer#init(java.util.Dictionary)
-	 */
 	@Override
 	public final void init(Dictionary<?, ?> defaultValues) {
 		this.defaultValues = defaultValues;

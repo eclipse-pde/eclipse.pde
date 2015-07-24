@@ -588,9 +588,6 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.wizards.BaseWizardSelectionPage#createWizardNode(org.eclipse.pde.internal.ui.wizards.WizardElement)
-	 */
 	@Override
 	protected IWizardNode createWizardNode(WizardElement element) {
 		return new WizardNode(this, element) {

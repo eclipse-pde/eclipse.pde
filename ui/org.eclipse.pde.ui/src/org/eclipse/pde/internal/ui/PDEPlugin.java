@@ -189,9 +189,6 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 		return fFormColors;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.Plugin#start(org.osgi.framework.BundleContext)
-	 */
 	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
@@ -201,9 +198,6 @@ public class PDEPlugin extends AbstractUIPlugin implements IPDEUIConstants {
 		TargetStatus.initializeTargetStatus();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
-	 */
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		if (fFormColors != null) {

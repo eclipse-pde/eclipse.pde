@@ -97,9 +97,6 @@ public class UpdateSplashProgressOperation implements IWorkspaceRunnable {
 		fProject = project;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.IWorkspaceRunnable#run(org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public void run(IProgressMonitor monitor) throws CoreException {
 		// Set the progress monitor

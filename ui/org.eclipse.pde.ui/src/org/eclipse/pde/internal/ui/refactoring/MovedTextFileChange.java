@@ -30,13 +30,6 @@ public class MovedTextFileChange extends TextFileChange {
 		fCurrentFile = currentFile;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.TextChange#getCurrentDocument(org.eclipse.core.runtime.IProgressMonitor)
-	 * 
-	 * Override getCurrentDocument to return the document of the fCurrentFile instead of the fFile.  Since fFile
-	 * does not exist, it creates problems when displaying preview information
-	 */
 	@Override
 	public IDocument getCurrentDocument(IProgressMonitor pm) throws CoreException {
 		if (pm == null)

@@ -103,9 +103,6 @@ public class SchemaSpecSection extends PDESection {
 		schema.addModelChangedListener(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.SectionPart#setFocus()
-	 */
 	@Override
 	public void setFocus() {
 		if (fPluginText != null) {

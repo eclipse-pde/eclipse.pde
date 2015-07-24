@@ -34,17 +34,11 @@ public class SiteSourcePage extends XMLSourcePage {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#createOutlineSorter()
-	 */
 	@Override
 	public ViewerComparator createOutlineComparator() {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#updateSelection(org.eclipse.jface.viewers.SelectionChangedEvent)
-	 */
 	@Override
 	public void updateSelection(SelectionChangedEvent e) {
 		// NO-OP
@@ -57,17 +51,11 @@ public class SiteSourcePage extends XMLSourcePage {
 		return new SiteOutlinePage((PDEFormEditor) getEditor());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEProjectionSourcePage#isQuickOutlineEnabled()
-	 */
 	@Override
 	public boolean isQuickOutlineEnabled() {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#updateSelection(java.lang.Object)
-	 */
 	@Override
 	public void updateSelection(Object object) {
 		// NO-OP

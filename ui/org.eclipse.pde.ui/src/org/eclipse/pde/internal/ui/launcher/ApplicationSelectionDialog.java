@@ -44,9 +44,6 @@ public class ApplicationSelectionDialog extends TrayDialog {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(shell, IHelpContextIds.LAUNCHER_APPLICATION_SELECTION);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
@@ -85,9 +82,6 @@ public class ApplicationSelectionDialog extends TrayDialog {
 		return container;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
-	 */
 	@Override
 	protected void okPressed() {
 		fSelectedApplication = applicationCombo.getText();

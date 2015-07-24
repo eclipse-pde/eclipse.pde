@@ -38,18 +38,12 @@ public class NewTargetDefinitionWizard2 extends Wizard {
 		addPage(fPage);
 		addPage(new TargetDefinitionContentPage(null));
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.Wizard#canFinish()
-	 */
+
 	@Override
 	public boolean canFinish() {
 		return false;
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.Wizard#performFinish()
-	 */
+
 	@Override
 	public boolean performFinish() {
 		return true;

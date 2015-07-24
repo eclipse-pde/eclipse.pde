@@ -62,9 +62,6 @@ public class NewRuntimeLibraryDialog extends SelectionStatusDialog {
 		setStatusLineAboveButtons(true);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.SelectionStatusDialog#computeResult()
-	 */
 	@Override
 	protected void computeResult() {
 	}
@@ -78,9 +75,6 @@ public class NewRuntimeLibraryDialog extends SelectionStatusDialog {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(shell, IHelpContextIds.NEW_LIBRARY);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
@@ -111,9 +105,6 @@ public class NewRuntimeLibraryDialog extends SelectionStatusDialog {
 		return container;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.window.Window#open()
-	 */
 	@Override
 	public int open() {
 		libraryText.setText("library.jar"); //$NON-NLS-1$
@@ -125,9 +116,6 @@ public class NewRuntimeLibraryDialog extends SelectionStatusDialog {
 		return libraryName;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.SelectionStatusDialog#okPressed()
-	 */
 	@Override
 	protected void okPressed() {
 		libraryName = libraryText.getText();

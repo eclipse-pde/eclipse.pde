@@ -25,25 +25,16 @@ import org.osgi.framework.Version;
  */
 public class PluginImportLabelProvider extends StyledCellLabelProvider implements ILabelProvider {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
-	 */
 	@Override
 	public Image getImage(Object element) {
 		return PDEPlugin.getDefault().getLabelProvider().getImage(element);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
-	 */
 	@Override
 	public String getText(Object element) {
 		return getStyledText(element).getString();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.StyledCellLabelProvider#update(org.eclipse.jface.viewers.ViewerCell)
-	 */
 	@Override
 	public void update(ViewerCell cell) {
 		StyledString string = getStyledText(cell.getElement());

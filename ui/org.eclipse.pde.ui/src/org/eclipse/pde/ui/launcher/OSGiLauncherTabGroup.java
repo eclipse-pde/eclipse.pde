@@ -28,10 +28,6 @@ import org.eclipse.pde.internal.launching.launcher.OSGiFrameworkManager;
  */
 public class OSGiLauncherTabGroup extends AbstractLaunchConfigurationTabGroup {
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTabGroup#createTabs(org.eclipse.debug.ui.ILaunchConfigurationDialog, java.lang.String)
-	 */
 	@Override
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
 		ILaunchConfigurationTab[] tabs = new ILaunchConfigurationTab[] {new BundlesTab(), new JavaArgumentsTab(), new OSGiSettingsTab(), new TracingTab(), new EnvironmentTab(), new CommonTab()};

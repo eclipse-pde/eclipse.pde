@@ -53,10 +53,6 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 	 */
 	private String fWorkspaceLocation;
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.ui.launcher.AbstractPDELaunchConfiguration#getProgramArguments(org.eclipse.debug.core.ILaunchConfiguration)
-	 */
 	@Override
 	public String[] getProgramArguments(ILaunchConfiguration configuration) throws CoreException {
 		ArrayList<String> programArgs = new ArrayList<String>();
@@ -193,10 +189,6 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 			CoreUtility.copyFile(eclipsePath.append("configuration"), "config.ini", ini); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.pde.ui.launcher.AbstractPDELaunchConfiguration#getConfigDir(org.eclipse.debug.core.ILaunchConfiguration)
-	 */
 	@Override
 	protected File getConfigDir(ILaunchConfiguration config) {
 		if (fConfigDir == null) {
@@ -253,9 +245,6 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 		subMon.done();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.launcher.AbstractPDELaunchConfiguration#preLaunchCheck(org.eclipse.debug.core.ILaunchConfiguration, org.eclipse.debug.core.ILaunch, org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	protected void preLaunchCheck(ILaunchConfiguration configuration, ILaunch launch, IProgressMonitor monitor) throws CoreException {
 		fWorkspaceLocation = null;
@@ -287,9 +276,6 @@ public class EclipseApplicationLaunchConfiguration extends AbstractPDELaunchConf
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.launcher.AbstractPDELaunchConfiguration#getVMArguments(org.eclipse.debug.core.ILaunchConfiguration)
-	 */
 	@Override
 	public String[] getVMArguments(ILaunchConfiguration configuration) throws CoreException {
 		String[] vmArgs = super.getVMArguments(configuration);

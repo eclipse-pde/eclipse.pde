@@ -140,9 +140,6 @@ public class RepositoryReferenceSection extends TableSection {
 		ContentProvider() {
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
-		 */
 		@Override
 		public Object[] getElements(Object inputElement) {
 			if (inputElement instanceof ISite) {
@@ -151,16 +148,10 @@ public class RepositoryReferenceSection extends TableSection {
 			return new Object[0];
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
-		 */
 		@Override
 		public void dispose() {
 		}
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-		 */
 		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
@@ -206,9 +197,6 @@ public class RepositoryReferenceSection extends TableSection {
 		return labels;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
-	 */
 	@Override
 	protected void createClient(Section section, FormToolkit toolkit) {
 		fModel = (ISiteModel) getPage().getModel();
@@ -282,9 +270,6 @@ public class RepositoryReferenceSection extends TableSection {
 	}
 
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#buttonSelected(int)
-	 */
 	@Override
 	protected void buttonSelected(int index) {
 		switch (index) {
@@ -304,17 +289,11 @@ public class RepositoryReferenceSection extends TableSection {
 	}
 
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.TableSection#handleDoubleClick(org.eclipse.jface.viewers.IStructuredSelection)
-	 */
 	@Override
 	protected void handleDoubleClick(IStructuredSelection selection) {
 		handleEdit(selection);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDESection#doGlobalAction(java.lang.String)
-	 */
 	@Override
 	public boolean doGlobalAction(String actionId) {
 		if (actionId.equals(ActionFactory.DELETE.getId())) {
@@ -386,9 +365,6 @@ public class RepositoryReferenceSection extends TableSection {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.AbstractFormPart#refresh()
-	 */
 	@Override
 	public void refresh() {
 		fRepositoryTable.refresh();
@@ -412,9 +388,6 @@ public class RepositoryReferenceSection extends TableSection {
 		return super.setFormInput(input);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.core.IPluginModelListener#modelsChanged(org.eclipse.pde.internal.core.PluginModelDelta)
-	 */
 	@Override
 	public void modelChanged(IModelChangedEvent e) {
 		// No need to call super, handling world changed event here

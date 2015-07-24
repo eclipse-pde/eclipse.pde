@@ -32,9 +32,6 @@ public class PDEWizardNewFileCreationPage extends WizardNewFileCreationPage {
 		super(pageName, selection);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.WizardNewFileCreationPage#validatePage()
-	 */
 	@Override
 	protected boolean validatePage() {
 		String filename = getFileName().trim();
@@ -53,17 +50,11 @@ public class PDEWizardNewFileCreationPage extends WizardNewFileCreationPage {
 		return super.validatePage();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.WizardNewFileCreationPage#validateLinkedResource()
-	 */
 	@Override
 	protected IStatus validateLinkedResource() {
 		return new Status(IStatus.OK, PDEPlugin.getPluginId(), IStatus.OK, "", null); //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.WizardNewFileCreationPage#createLinkTarget()
-	 */
 	@Override
 	protected void createLinkTarget() {
 		// NOOP

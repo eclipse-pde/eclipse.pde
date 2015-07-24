@@ -101,9 +101,6 @@ public class SchemaFormPage extends PDEFormPage implements IModelChangedListener
 		fBlock = new SchemaBlock();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#getHelpResource()
-	 */
 	@Override
 	protected String getHelpResource() {
 		return IHelpContextIds.SCHEMA_EDITOR_MAIN;

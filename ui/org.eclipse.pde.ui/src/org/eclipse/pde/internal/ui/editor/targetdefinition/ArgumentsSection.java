@@ -185,30 +185,21 @@ public class ArgumentsSection extends SectionPart {
 		toolkit.paintBordersFor(client);
 		section.setClient(client);
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.AbstractFormPart#refresh()
-	 */
+
 	@Override
 	public void refresh() {
 		fProgramArguments.setValue(getTarget().getProgramArguments(), true);
 		fVMArguments.setValue(getTarget().getVMArguments(), true);
 		super.refresh();
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.AbstractFormPart#commit(boolean)
-	 */
+
 	@Override
 	public void commit(boolean onSave) {
 		fProgramArguments.commit();
 		fVMArguments.commit();
 		super.commit(onSave);
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
-	 */
+
 	@Override
 	public void dispose() {
 		if (fImage != null)

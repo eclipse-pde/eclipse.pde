@@ -88,9 +88,6 @@ public abstract class AbstractChoiceOption extends TemplateOption {
 
 	protected abstract void setOptionValue(Object value);
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.pde.ui.templates.TemplateOption#setEnabled(boolean)
-	 */
 	@Override
 	public void setEnabled(boolean enabled) {
 		super.setEnabled(enabled);
