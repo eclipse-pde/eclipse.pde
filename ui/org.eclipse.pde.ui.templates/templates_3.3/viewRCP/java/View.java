@@ -1,8 +1,12 @@
 package $packageName$;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
@@ -14,40 +18,47 @@ public class View extends ViewPart {
 	public static final String ID = "$pluginId$.view";
 
 	private TableViewer viewer;
-
-
-	class ViewLabelProvider extends LabelProvider  {
-		public String getColumnText(Object obj, int index) {
-			return getText(obj);
+	
+	private class StringLabelProvider extends ColumnLabelProvider {
+		@Override
+		public String getText(Object element) {
+			return super.getText(element);
 		}
 
-		public Image getColumnImage(Object obj, int index) {
-			return getImage(obj);
-		}
-
+		@Override
 		public Image getImage(Object obj) {
-			return PlatformUI.getWorkbench().getSharedImages().getImage(
-					ISharedImages.IMG_OBJ_ELEMENT);
+			return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_ELEMENT);
 		}
+
 	}
 
-	/**
-	 * This is a callback that will allow us to create the viewer and initialize
-	 * it.
-	 */
+	@Override
 	public void createPartControl(Composite parent) {
-		viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL
-				| SWT.V_SCROLL);
+		viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+		viewer.getTable().setLinesVisible(true);
+
+		TableViewerColumn column = new TableViewerColumn(viewer, SWT.NONE);
+		column.setLabelProvider(new StringLabelProvider());
+
+		viewer.getTable().getColumn(0).setWidth(200);
+		
 		viewer.setContentProvider(ArrayContentProvider.getInstance());
-		viewer.setLabelProvider(new ViewLabelProvider());
+		
 		// Provide the input to the ContentProvider
-		viewer.setInput(new String[] {"One", "Two", "Three"});
+		viewer.setInput(createInitialDataModel());
 	}
 
-	/**
-	 * Passing the focus request to the viewer's control.
-	 */
+
+	@Override
 	public void setFocus() {
 		viewer.getControl().setFocus();
+	}
+	
+	private List<String> createInitialDataModel() {
+		List<String> input = new ArrayList<>();
+		input.add("One");
+		input.add("Two");
+		input.add("Three");
+		return input;
 	}
 }
