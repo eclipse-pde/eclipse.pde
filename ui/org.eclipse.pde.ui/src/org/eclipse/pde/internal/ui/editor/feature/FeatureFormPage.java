@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,10 +44,12 @@ public class FeatureFormPage extends PDEFormPage implements IHyperlinkListener {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#getHelpResource()
 	 */
+	@Override
 	protected String getHelpResource() {
 		return IHelpContextIds.MANIFEST_FEATURE_OVERVIEW;
 	}
 
+	@Override
 	protected void createFormContent(IManagedForm managedForm) {
 		super.createFormContent(managedForm);
 		ScrolledForm form = managedForm.getForm();
@@ -174,6 +176,7 @@ public class FeatureFormPage extends PDEFormPage implements IHyperlinkListener {
 	 * 
 	 * @see org.eclipse.ui.forms.events.HyperlinkListener#linkActivated(org.eclipse.ui.forms.events.HyperlinkEvent)
 	 */
+	@Override
 	public void linkActivated(HyperlinkEvent e) {
 		String href = (String) e.getHref();
 		// try page references
@@ -191,6 +194,7 @@ public class FeatureFormPage extends PDEFormPage implements IHyperlinkListener {
 			getEditor().setActivePage(FeatureReferencePage.PAGE_ID);
 			final FeatureEditorContributor contributor = (FeatureEditorContributor) getPDEEditor().getContributor();
 			BusyIndicator.showWhile(e.display, new Runnable() {
+				@Override
 				public void run() {
 					contributor.getSynchronizeAction().run();
 				}
@@ -201,6 +205,7 @@ public class FeatureFormPage extends PDEFormPage implements IHyperlinkListener {
 			getEditor().doSave(null);
 			final FeatureEditorContributor contributor = (FeatureEditorContributor) getPDEEditor().getContributor();
 			BusyIndicator.showWhile(e.display, new Runnable() {
+				@Override
 				public void run() {
 					contributor.getNewSiteAction().run();
 				}
@@ -213,6 +218,7 @@ public class FeatureFormPage extends PDEFormPage implements IHyperlinkListener {
 	 * 
 	 * @see org.eclipse.ui.forms.events.HyperlinkListener#linkEntered(org.eclipse.ui.forms.events.HyperlinkEvent)
 	 */
+	@Override
 	public void linkEntered(HyperlinkEvent e) {
 		IStatusLineManager mng = getEditor().getEditorSite().getActionBars().getStatusLineManager();
 		mng.setMessage(e.getLabel());
@@ -223,6 +229,7 @@ public class FeatureFormPage extends PDEFormPage implements IHyperlinkListener {
 	 * 
 	 * @see org.eclipse.ui.forms.events.HyperlinkListener#linkExited(org.eclipse.ui.forms.events.HyperlinkEvent)
 	 */
+	@Override
 	public void linkExited(HyperlinkEvent e) {
 		IStatusLineManager mng = getEditor().getEditorSite().getActionBars().getStatusLineManager();
 		mng.setMessage(null);

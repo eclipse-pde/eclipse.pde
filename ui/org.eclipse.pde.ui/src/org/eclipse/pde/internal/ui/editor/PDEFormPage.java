@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2009 IBM Corporation and others.
+ * Copyright (c) 2003, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,6 +47,7 @@ public abstract class PDEFormPage extends FormPage {
 		fLastFocusControl = null;
 	}
 
+	@Override
 	public void dispose() {
 		Control c = getPartControl();
 		if (c != null && !c.isDisposed()) {
@@ -71,6 +72,7 @@ public abstract class PDEFormPage extends FormPage {
 		}
 	}
 
+	@Override
 	protected void createFormContent(IManagedForm managedForm) {
 		final ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
@@ -83,6 +85,7 @@ public abstract class PDEFormPage extends FormPage {
 		final String helpContextID = getHelpResource();
 		if (helpContextID != null) {
 			Action helpAction = new Action("help") { //$NON-NLS-1$
+				@Override
 				public void run() {
 					PlatformUI.getWorkbench().getHelpSystem().displayHelp(helpContextID);
 				}
@@ -259,6 +262,7 @@ public abstract class PDEFormPage extends FormPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.editor.FormPage#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
 		// Dynamically add focus listeners to all the forms children in order
@@ -308,10 +312,12 @@ public abstract class PDEFormPage extends FormPage {
 	 */
 	private void addLastFocusListener(final Control control) {
 		control.addFocusListener(new FocusListener() {
+			@Override
 			public void focusGained(FocusEvent e) {
 				// NO-OP
 			}
 
+			@Override
 			public void focusLost(FocusEvent e) {
 				fLastFocusControl = control;
 			}

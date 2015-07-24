@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2012, 2013 Christian Pontesegger and others.
+ *  Copyright (c) 2012, 2015 Christian Pontesegger and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -27,18 +27,21 @@ public class ActiveImageSourceProvider extends AbstractSourceProvider {
 
 	private ImageElement mImageData = null;
 
+	@Override
 	public void dispose() {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.ISourceProvider#getCurrentState()
 	 */
+	@Override
 	public Map getCurrentState() {
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put(ACTIVE_IMAGE, mImageData);
 		return map;
 	}
 
+	@Override
 	public String[] getProvidedSourceNames() {
 		return new String[] {ACTIVE_IMAGE};
 	}

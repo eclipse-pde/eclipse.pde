@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -55,6 +55,7 @@ public class LibraryVisibilitySection extends TableSection implements IPartSelec
 	private Action fRemoveAction;
 
 	class TableContentProvider extends DefaultContentProvider implements IStructuredContentProvider {
+		@Override
 		public Object[] getElements(Object parent) {
 			if (parent instanceof IPluginLibrary) {
 				String[] filters = ((IPluginLibrary) parent).getContentFilters();
@@ -66,10 +67,12 @@ public class LibraryVisibilitySection extends TableSection implements IPartSelec
 
 	class TableLabelProvider extends LabelProvider implements ITableLabelProvider {
 
+		@Override
 		public String getColumnText(Object obj, int index) {
 			return obj.toString();
 		}
 
+		@Override
 		public Image getColumnImage(Object obj, int index) {
 			return JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_PACKAGE);
 		}
@@ -82,6 +85,7 @@ public class LibraryVisibilitySection extends TableSection implements IPartSelec
 		fHandleDefaultButton = false;
 	}
 
+	@Override
 	public void createClient(Section section, FormToolkit toolkit) {
 		Composite container = toolkit.createComposite(section);
 		container.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 1));
@@ -90,6 +94,7 @@ public class LibraryVisibilitySection extends TableSection implements IPartSelec
 		fFullExportButton = toolkit.createButton(container, label, SWT.RADIO);
 		fFullExportButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fFullExportButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				try {
 					if (fCurrentLibrary != null)
@@ -119,6 +124,7 @@ public class LibraryVisibilitySection extends TableSection implements IPartSelec
 
 	private void makeActions() {
 		fAddAction = new Action(PDEUIMessages.ManifestEditor_ExportSection_add) {
+			@Override
 			public void run() {
 				handleAdd();
 			}
@@ -126,6 +132,7 @@ public class LibraryVisibilitySection extends TableSection implements IPartSelec
 		fAddAction.setEnabled(isEditable());
 
 		fRemoveAction = new Action(PDEUIMessages.ManifestEditor_ExportSection_remove) {
+			@Override
 			public void run() {
 				handleRemove();
 			}
@@ -153,11 +160,13 @@ public class LibraryVisibilitySection extends TableSection implements IPartSelec
 		toolkit.paintBordersFor(parent);
 	}
 
+	@Override
 	protected void selectionChanged(IStructuredSelection selection) {
 		Object item = selection.getFirstElement();
 		getTablePart().setButtonEnabled(1, item != null);
 	}
 
+	@Override
 	protected void buttonSelected(int index) {
 		if (index == ADD_INDEX)
 			handleAdd();
@@ -168,6 +177,7 @@ public class LibraryVisibilitySection extends TableSection implements IPartSelec
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#doGlobalAction(java.lang.String)
 	 */
+	@Override
 	public boolean doGlobalAction(String actionId) {
 
 		if (!isEditable()) {
@@ -181,6 +191,7 @@ public class LibraryVisibilitySection extends TableSection implements IPartSelec
 		return false;
 	}
 
+	@Override
 	public void dispose() {
 		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
 		if (model != null)
@@ -188,6 +199,7 @@ public class LibraryVisibilitySection extends TableSection implements IPartSelec
 		super.dispose();
 	}
 
+	@Override
 	protected void fillContextMenu(IMenuManager manager) {
 		if (fSelectedExportButton.isEnabled() && fSelectedExportButton.getSelection()) {
 			manager.add(fAddAction);
@@ -240,6 +252,7 @@ public class LibraryVisibilitySection extends TableSection implements IPartSelec
 		}
 	}
 
+	@Override
 	public void modelChanged(IModelChangedEvent e) {
 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
 			if (fCurrentLibrary != null)
@@ -250,11 +263,13 @@ public class LibraryVisibilitySection extends TableSection implements IPartSelec
 		refresh();
 	}
 
+	@Override
 	public void refresh() {
 		update(fCurrentLibrary);
 		super.refresh();
 	}
 
+	@Override
 	public void selectionChanged(IFormPart source, ISelection selection) {
 		if (selection == null || selection.isEmpty())
 			update(null);
@@ -299,6 +314,7 @@ public class LibraryVisibilitySection extends TableSection implements IPartSelec
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(org.eclipse.swt.dnd.Clipboard)
 	 */
+	@Override
 	public boolean canPaste(Clipboard clipboard) {
 		// Paste not supported for plug-ins that do not have a MANIFEST.MF
 		return false;

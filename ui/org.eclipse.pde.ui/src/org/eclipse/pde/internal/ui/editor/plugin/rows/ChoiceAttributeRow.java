@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2008 IBM Corporation and others.
+ *  Copyright (c) 2003, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -39,6 +39,7 @@ public class ChoiceAttributeRow extends ExtensionAttributeRow {
 		super(part, att);
 	}
 
+	@Override
 	public void createContents(Composite parent, FormToolkit toolkit, int span) {
 		super.createContents(parent, toolkit, span);
 		createLabel(parent, toolkit);
@@ -62,6 +63,7 @@ public class ChoiceAttributeRow extends ExtensionAttributeRow {
 		gd.horizontalIndent = FormLayoutFactory.CONTROL_HORIZONTAL_INDENT;
 		combo.getControl().setLayoutData(gd);
 		combo.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (!blockNotification)
 					markDirty();
@@ -73,6 +75,7 @@ public class ChoiceAttributeRow extends ExtensionAttributeRow {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.plugin.ExtensionElementEditor#update(org.eclipse.pde.internal.ui.neweditor.plugin.DummyExtensionElement)
 	 */
+	@Override
 	protected void update() {
 		blockNotification = true;
 		String value = getValue();
@@ -109,6 +112,7 @@ public class ChoiceAttributeRow extends ExtensionAttributeRow {
 		return false;
 	}
 
+	@Override
 	public void commit() {
 		if (dirty && input != null) {
 			try {
@@ -123,6 +127,7 @@ public class ChoiceAttributeRow extends ExtensionAttributeRow {
 		}
 	}
 
+	@Override
 	public void setFocus() {
 		combo.getControl().setFocus();
 	}

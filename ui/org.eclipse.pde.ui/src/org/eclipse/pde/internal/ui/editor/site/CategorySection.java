@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2012 IBM Corporation and others.
+ * Copyright (c) 2003, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -69,6 +69,7 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 	private IStructuredSelection cachedSelection;
 
 	class CategoryContentProvider extends DefaultContentProvider implements ITreeContentProvider {
+		@Override
 		public Object[] getElements(Object inputElement) {
 			// model = (ISite) inputElement;
 			ArrayList<IWritable> result = new ArrayList<IWritable>();
@@ -84,6 +85,7 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 			return result.toArray();
 		}
 
+		@Override
 		public Object[] getChildren(Object parent) {
 			if (parent instanceof ISiteCategoryDefinition) {
 				ISiteCategoryDefinition catDef = (ISiteCategoryDefinition) parent;
@@ -102,10 +104,12 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 			return new Object[0];
 		}
 
+		@Override
 		public Object getParent(Object element) {
 			return null;
 		}
 
+		@Override
 		public boolean hasChildren(Object element) {
 			if (element instanceof ISiteCategoryDefinition) {
 				ISiteCategoryDefinition catDef = (ISiteCategoryDefinition) element;
@@ -135,6 +139,7 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 	 * @see org.eclipse.update.ui.forms.internal.FormSection#createClient(org.eclipse.swt.widgets.Composite,
 	 *      org.eclipse.update.ui.forms.internal.FormWidgetFactory)
 	 */
+	@Override
 	public void createClient(Section section, FormToolkit toolkit) {
 		fModel = (ISiteModel) getPage().getModel();
 		fModel.addModelChangedListener(this);
@@ -152,6 +157,7 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 		Transfer[] transfers = new Transfer[] {ModelDataTransfer.getInstance()};
 		if (isEditable()) {
 			fCategoryViewer.addDropSupport(ops, transfers, new ViewerDropAdapter(fCategoryViewer) {
+				@Override
 				public void dragEnter(DropTargetEvent event) {
 					Object target = determineTarget(event);
 					if (target == null && event.detail == DND.DROP_COPY) {
@@ -165,6 +171,7 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 				 * 
 				 * @see org.eclipse.jface.viewers.ViewerDropAdapter#dragOperationChanged(org.eclipse.swt.dnd.DropTargetEvent)
 				 */
+				@Override
 				public void dragOperationChanged(DropTargetEvent event) {
 					Object target = determineTarget(event);
 					if (target == null && event.detail == DND.DROP_COPY) {
@@ -178,6 +185,7 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 				 * 
 				 * @see org.eclipse.jface.viewers.ViewerDropAdapter#dragOver(org.eclipse.swt.dnd.DropTargetEvent)
 				 */
+				@Override
 				public void dragOver(DropTargetEvent event) {
 					Object target = determineTarget(event);
 					if (target == null && event.detail == DND.DROP_COPY) {
@@ -197,6 +205,7 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 				 * @return one of the <code>LOCATION_* </code>
 				 *         constants defined in this class
 				 */
+				@Override
 				protected int determineLocation(DropTargetEvent event) {
 					if (!(event.item instanceof Item)) {
 						return LOCATION_NONE;
@@ -213,6 +222,7 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 					return LOCATION_ON;
 				}
 
+				@Override
 				public boolean performDrop(Object data) {
 					if (!(data instanceof Object[]))
 						return false;
@@ -231,6 +241,7 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 					return false;
 				}
 
+				@Override
 				public boolean validateDrop(Object target, int operation, TransferData transferType) {
 					return (target instanceof ISiteCategoryDefinition || target == null);
 				}
@@ -239,6 +250,7 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 		}
 
 		fCategoryViewer.addDragSupport(DND.DROP_MOVE | DND.DROP_COPY, transfers, new DragSourceListener() {
+			@Override
 			public void dragStart(DragSourceEvent event) {
 				IStructuredSelection ssel = (IStructuredSelection) fCategoryViewer.getSelection();
 				if (ssel == null || ssel.isEmpty() || !(ssel.getFirstElement() instanceof SiteFeatureAdapter)) {
@@ -246,11 +258,13 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 				}
 			}
 
+			@Override
 			public void dragSetData(DragSourceEvent event) {
 				IStructuredSelection ssel = (IStructuredSelection) fCategoryViewer.getSelection();
 				event.data = ssel.toArray();
 			}
 
+			@Override
 			public void dragFinished(DragSourceEvent event) {
 			}
 		});
@@ -324,6 +338,7 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 		}
 	}
 
+	@Override
 	protected void buttonSelected(int index) {
 		switch (index) {
 			case BUTTON_ADD_CATEGORY :
@@ -343,6 +358,7 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 		}
 	}
 
+	@Override
 	protected void handleDoubleClick(IStructuredSelection ssel) {
 		super.handleDoubleClick(ssel);
 		Object selected = ssel.getFirstElement();
@@ -352,6 +368,7 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 		}
 	}
 
+	@Override
 	protected void selectionChanged(IStructuredSelection selection) {
 		getPage().getPDEEditor().setSelection(selection);
 		updateButtons();
@@ -462,6 +479,7 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 		return null;
 	}
 
+	@Override
 	public void dispose() {
 		super.dispose();
 		FeatureModelManager mng = PDECore.getDefault().getFeatureModelManager();
@@ -471,8 +489,10 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 			fSiteLabelProvider.dispose();
 	}
 
+	@Override
 	protected void fillContextMenu(IMenuManager manager) {
 		Action removeAction = new Action(PDEUIMessages.CategorySection_remove) {
+			@Override
 			public void run() {
 				doGlobalAction(ActionFactory.DELETE.getId());
 			}
@@ -489,6 +509,7 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 				Action synchronizeAction = new SynchronizePropertiesAction(features, fModel);
 				manager.add(synchronizeAction);
 				Action buildAction = new Action(PDEUIMessages.CategorySection_build) {
+					@Override
 					public void run() {
 						((SiteEditor) getPage().getPDEEditor()).handleBuild(features);
 					}
@@ -499,6 +520,7 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 		}
 	}
 
+	@Override
 	public boolean doGlobalAction(String actionId) {
 		if (actionId.equals(ActionFactory.CUT.getId())) {
 			handleRemove();
@@ -518,6 +540,7 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 		return false;
 	}
 
+	@Override
 	public void refresh() {
 		fCategoryViewer.refresh();
 		updateButtons();
@@ -535,6 +558,7 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 		fCategoryTreePart.setButtonEnabled(BUTTON_IMPORT_ENVIRONMENT, featureCount > 0);
 	}
 
+	@Override
 	public void modelChanged(IModelChangedEvent e) {
 		markStale();
 	}
@@ -551,6 +575,7 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste(java.lang.Object,
 	 *      java.lang.Object[])
 	 */
+	@Override
 	protected void doPaste(Object target, Object[] objects) {
 		try {
 			for (int i = 0; i < objects.length; i++) {
@@ -570,6 +595,7 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(java.lang.Object,
 	 *      java.lang.Object[])
 	 */
+	@Override
 	protected boolean canPaste(Object target, Object[] objects) {
 		if (target == null || target instanceof ISiteCategoryDefinition) {
 			for (int i = 0; i < objects.length; i++) {
@@ -635,6 +661,7 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 		IStructuredSelection sel = (IStructuredSelection) fCategoryViewer.getSelection();
 		final ISiteFeature[] selectedFeatures = getFeaturesFromSelection(sel);
 		BusyIndicator.showWhile(fCategoryTreePart.getControl().getDisplay(), new Runnable() {
+			@Override
 			public void run() {
 				new SynchronizePropertiesAction(selectedFeatures, getModel()).run();
 			}
@@ -644,6 +671,7 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 	private void handleNewFeature() {
 		final Control control = fCategoryViewer.getControl();
 		BusyIndicator.showWhile(control.getDisplay(), new Runnable() {
+			@Override
 			public void run() {
 				IFeatureModel[] allModels = PDECore.getDefault().getFeatureModelManager().getModels();
 				ArrayList<IFeatureModel> newModels = new ArrayList<IFeatureModel>();
@@ -764,6 +792,7 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#setFormInput(java.lang.Object)
 	 */
+	@Override
 	public boolean setFormInput(Object input) {
 		if (input instanceof ISiteCategoryDefinition) {
 			fCategoryViewer.setSelection(new StructuredSelection(input), true);
@@ -794,6 +823,7 @@ public class CategorySection extends TreeSection implements IFeatureModelListene
 
 	}
 
+	@Override
 	public void modelsChanged(IFeatureModelDelta delta) {
 		markStale();
 	}

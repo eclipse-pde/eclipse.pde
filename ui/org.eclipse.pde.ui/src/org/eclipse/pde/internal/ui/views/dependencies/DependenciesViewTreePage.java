@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -38,6 +38,7 @@ public class DependenciesViewTreePage extends DependenciesViewPage {
 		 * 
 		 * @see org.eclipse.jface.action.Action#run()
 		 */
+		@Override
 		public void run() {
 			super.run();
 			fTreeViewer.collapseAll();
@@ -46,6 +47,7 @@ public class DependenciesViewTreePage extends DependenciesViewPage {
 
 	class OptionalFilter extends ViewerFilter {
 
+		@Override
 		public boolean select(Viewer v, Object parent, Object element) {
 			if (element instanceof BundleSpecification) {
 				return !((BundleSpecification) element).isOptional();
@@ -67,12 +69,14 @@ public class DependenciesViewTreePage extends DependenciesViewPage {
 	 * 
 	 * @see org.eclipse.pde.internal.ui.view.DependenciesViewPage#createViewer(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected StructuredViewer createViewer(Composite parent) {
 		fTreeViewer = new TreeViewer(parent, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
 		fTreeViewer.setContentProvider(fContentProvider);
 		final DependenciesLabelProvider labelProvider = new DependenciesLabelProvider(true);
 		fTreeViewer.setLabelProvider(labelProvider);
 		fTreeViewer.getControl().addDisposeListener(new DisposeListener() {
+			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				labelProvider.dispose();
 			}
@@ -89,6 +93,7 @@ public class DependenciesViewTreePage extends DependenciesViewPage {
 	 *      org.eclipse.jface.action.IToolBarManager,
 	 *      org.eclipse.jface.action.IStatusLineManager)
 	 */
+	@Override
 	public void makeContributions(IMenuManager menuManager, IToolBarManager toolBarManager, IStatusLineManager statusLineManager) {
 		super.makeContributions(menuManager, toolBarManager, statusLineManager);
 		if (toolBarManager.find(DependenciesView.TREE_ACTION_GROUP) != null)
@@ -97,6 +102,7 @@ public class DependenciesViewTreePage extends DependenciesViewPage {
 			toolBarManager.add(new CollapseAllAction());
 	}
 
+	@Override
 	protected void handleShowOptional(boolean isChecked, boolean refreshIfNecessary) {
 		if (isChecked)
 			fTreeViewer.removeFilter(fHideOptionalFilter);
@@ -105,6 +111,7 @@ public class DependenciesViewTreePage extends DependenciesViewPage {
 		// filter automatically refreshes tree, therefore can ignore refreshIfNecessary
 	}
 
+	@Override
 	protected boolean isShowingOptional() {
 		ViewerFilter[] filters = fTreeViewer.getFilters();
 		for (int i = 0; i < filters.length; i++)

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,26 +40,32 @@ public abstract class TypePackageCompletionProcessor implements IContentAssistPr
 		fSearchEngine = new SearchEngine();
 	}
 
+	@Override
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int offset) {
 		return null;
 	}
 
+	@Override
 	public IContextInformation[] computeContextInformation(ITextViewer viewer, int offset) {
 		return null;
 	}
 
+	@Override
 	public char[] getCompletionProposalAutoActivationCharacters() {
 		return null;
 	}
 
+	@Override
 	public char[] getContextInformationAutoActivationCharacters() {
 		return null;
 	}
 
+	@Override
 	public IContextInformationValidator getContextInformationValidator() {
 		return null;
 	}
 
+	@Override
 	public String getErrorMessage() {
 		return fErrorMessage;
 	}
@@ -86,6 +92,7 @@ public abstract class TypePackageCompletionProcessor implements IContentAssistPr
 				setIgnored(CompletionProposal.TYPE_REF, false);
 			}
 
+			@Override
 			public void accept(CompletionProposal proposal) {
 				if (proposal.getKind() == CompletionProposal.PACKAGE_REF) {
 					String pkgName = new String(proposal.getCompletion());
@@ -180,6 +187,7 @@ public abstract class TypePackageCompletionProcessor implements IContentAssistPr
 
 		try {
 			TypeNameRequestor req = new TypeNameRequestor() {
+				@Override
 				public void acceptType(int modifiers, char[] packageName, char[] simpleTypeName, char[][] enclosingTypeNames, String path) {
 					// Accept search results from the JDT SearchEngine
 					String cName = new String(simpleTypeName);
@@ -212,6 +220,7 @@ public abstract class TypePackageCompletionProcessor implements IContentAssistPr
 				/* (non-Javadoc)
 				 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 				 */
+				@Override
 				public int compare(Object arg0, Object arg1) {
 					if (arg0 instanceof ICompletionProposal && arg1 instanceof ICompletionProposal) {
 						ICompletionProposal p1 = (ICompletionProposal) arg0;

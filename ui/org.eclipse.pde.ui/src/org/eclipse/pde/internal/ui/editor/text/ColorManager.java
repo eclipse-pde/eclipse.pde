@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -91,6 +91,7 @@ public class ColorManager implements IColorManager, IPDEColorConstants {
 
 	}
 
+	@Override
 	public void dispose() {
 		counter--;
 		if (counter == 0)
@@ -111,6 +112,7 @@ public class ColorManager implements IColorManager, IPDEColorConstants {
 		fColorTable.put(property, new Color(Display.getCurrent(), setting));
 	}
 
+	@Override
 	public Color getColor(String key) {
 		Color color = fColorTable.get(key);
 		if (color == null)
@@ -118,6 +120,7 @@ public class ColorManager implements IColorManager, IPDEColorConstants {
 		return color;
 	}
 
+	@Override
 	public void handlePropertyChangeEvent(PropertyChangeEvent event) {
 		Object color = event.getNewValue();
 		if (color instanceof RGB) {

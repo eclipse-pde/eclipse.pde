@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -61,6 +61,7 @@ public class OrganizeManifestsWizardPage extends UserInputWizardPage implements 
 		fCustomProjects = customProjects;
 	}
 
+	@Override
 	public void createControl(Composite parent) {
 		Composite container = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_HORIZONTAL);
 
@@ -307,23 +308,27 @@ public class OrganizeManifestsWizardPage extends UserInputWizardPage implements 
 
 	private void hookListeners() {
 		hookSelectionListener(new Button[] {fMarkInternal, fModifyDependencies}, new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				setEnabledStates();
 				doProcessorSetting(e.getSource());
 			}
 		});
 		hookSelectionListener(fTopLevelButtons, new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				setPageComplete();
 				doProcessorSetting(e.getSource());
 			}
 		});
 		hookSelectionListener(new Button[] {fRemoveImport, fOptionalImport}, new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				doProcessorSetting(e.getSource());
 			}
 		});
 		hookTextListener(new Text[] {fPackageFilter}, new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				doProcessorSetting(e.getSource());
 			}

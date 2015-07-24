@@ -86,6 +86,7 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 		/*
 		 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 		 */
+		@Override
 		public void selectionChanged(SelectionChangedEvent event) {
 			if (PDEPlugin.getDefault().getPreferenceStore().getBoolean("ToggleLinkWithEditorAction.isChecked")) //$NON-NLS-1$
 				if (getFormOutline() != null) {
@@ -238,6 +239,7 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 		clipboard = new Clipboard(getContainer().getDisplay());
 		MenuManager manager = new MenuManager();
 		IMenuListener listener = new IMenuListener() {
+			@Override
 			public void menuAboutToShow(IMenuManager manager) {
 				contextMenuAboutToShow(manager);
 			}
@@ -646,6 +648,7 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 		final InputContext context = fInputContextManager.getContext(input);
 		if (!context.validateEdit()) {
 			getSite().getShell().getDisplay().asyncExec(new Runnable() {
+				@Override
 				public void run() {
 					doRevert(context.getInput());
 					context.setValidated(false);
@@ -668,6 +671,7 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 		return section;
 	}
 
+	@Override
 	public void gotoMarker(IMarker marker) {
 		IResource resource = marker.getResource();
 		InputContext context = fInputContextManager.findContext(resource);
@@ -914,6 +918,7 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 	/* (non-Javadoc)
 	 * @see org.eclipse.search.ui.text.ISearchEditorAccess#getDocument(org.eclipse.search.ui.text.Match)
 	 */
+	@Override
 	public IDocument getDocument(Match match) {
 		InputContext context = getInputContext(match.getElement());
 		return context == null ? null : context.getDocumentProvider().getDocument(context.getInput());
@@ -922,6 +927,7 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 	/* (non-Javadoc)
 	 * @see org.eclipse.search.ui.text.ISearchEditorAccess#getAnnotationModel(org.eclipse.search.ui.text.Match)
 	 */
+	@Override
 	public IAnnotationModel getAnnotationModel(Match match) {
 		InputContext context = getInputContext(match.getElement());
 		return context == null ? null : context.getDocumentProvider().getAnnotationModel(context.getInput());
@@ -944,6 +950,7 @@ public abstract class PDEFormEditor extends FormEditor implements IInputContextL
 
 	protected abstract void addEditorPages();
 
+	@Override
 	public final void contextAdded(InputContext context) {
 		if (fError) {
 			removePage(0);

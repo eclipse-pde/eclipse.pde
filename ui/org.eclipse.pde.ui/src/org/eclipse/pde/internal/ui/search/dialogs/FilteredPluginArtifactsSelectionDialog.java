@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2014 IBM Corporation and others.
+ *  Copyright (c) 2007, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -60,6 +60,7 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 	private ILabelProvider detailsLabelProvider = new DetailedLabelProvider();
 
 	private class SearchLabelProvider extends LabelProvider implements ILabelDecorator {
+		@Override
 		public Image getImage(Object element) {
 			if (element instanceof ExportPackageDescription) {
 				return JavaUI.getSharedImages().getImage(org.eclipse.jdt.ui.ISharedImages.IMG_OBJS_PACKAGE);
@@ -67,6 +68,7 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 			return PDEPlugin.getDefault().getLabelProvider().getImage(element);
 		}
 
+		@Override
 		public String getText(Object object) {
 			if (object instanceof IPluginBase)
 				return ((IPluginBase) object).getId();
@@ -99,10 +101,12 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 			return PDEPlugin.getDefault().getLabelProvider().getText(object);
 		}
 
+		@Override
 		public Image decorateImage(Image image, Object element) {
 			return null;
 		}
 
+		@Override
 		public String decorateText(String text, Object element) {
 			if (element instanceof ExportPackageDescription) {
 				ExportPackageDescription epd = (ExportPackageDescription) element;
@@ -114,6 +118,7 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 
 	private class DetailedLabelProvider extends LabelProvider {
 
+		@Override
 		public Image getImage(Object element) {
 			if (element instanceof IPluginModelBase) {
 				IPluginModelBase model = (IPluginModelBase) element;
@@ -137,6 +142,7 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 			return null;
 		}
 
+		@Override
 		public String getText(Object element) {
 			if (element instanceof IPluginModelBase) {
 				IPluginModelBase model = (IPluginModelBase) element;
@@ -172,6 +178,7 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 
 		private boolean enabled = true;
 
+		@Override
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
 			if (enabled) // select everything
 				return true;
@@ -191,6 +198,7 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 
 		private boolean enabled = true;
 
+		@Override
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
 			if (enabled) // select everything
 				return true;
@@ -211,6 +219,7 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 
 		private boolean enabled = true;
 
+		@Override
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
 			if (enabled) // select everything
 				return true;
@@ -231,6 +240,7 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 
 		private boolean enabled = true;
 
+		@Override
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
 			if (enabled) // select everything
 				return true;
@@ -254,6 +264,7 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 			setChecked(true);
 		}
 
+		@Override
 		public void run() {
 			extensionsFilter.setEnabled(isChecked());
 			scheduleRefresh();
@@ -268,6 +279,7 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 			setChecked(true);
 		}
 
+		@Override
 		public void run() {
 			extensionPointsFilter.setEnabled(isChecked());
 			scheduleRefresh();
@@ -282,6 +294,7 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 			setChecked(true);
 		}
 
+		@Override
 		public void run() {
 			exportedPackagesFilter.setEnabled(isChecked());
 			scheduleRefresh();
@@ -296,6 +309,7 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 			setChecked(true);
 		}
 
+		@Override
 		public void run() {
 			featuresFilter.setEnabled(isChecked());
 			scheduleRefresh();
@@ -319,6 +333,7 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 	/*
 	 * @see org.eclipse.jface.window.Window#configureShell(Shell)
 	 */
+	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(shell, IHelpContextIds.FILTERED_PLUGIN_ARTIFACTS_DIALOG);
@@ -327,6 +342,7 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#createExtendedContentArea(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createExtendedContentArea(Composite parent) {
 		return null;
 	}
@@ -334,6 +350,7 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#createFilter()
 	 */
+	@Override
 	protected ItemsFilter createFilter() {
 		return new PluginSearchItemsFilter();
 	}
@@ -341,6 +358,7 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#fillContentProvider(org.eclipse.ui.dialogs.FilteredItemsSelectionDialog.AbstractContentProvider, org.eclipse.ui.dialogs.FilteredItemsSelectionDialog.ItemsFilter, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	protected void fillContentProvider(AbstractContentProvider contentProvider, ItemsFilter itemsFilter, IProgressMonitor progressMonitor) throws CoreException {
 
 		PluginModelManager manager = PDECore.getDefault().getModelManager();
@@ -398,6 +416,7 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#getDialogSettings()
 	 */
+	@Override
 	protected IDialogSettings getDialogSettings() {
 		IDialogSettings settings = PDEPlugin.getDefault().getDialogSettings().getSection(DIALOG_SETTINGS);
 
@@ -411,6 +430,7 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#getElementName(java.lang.Object)
 	 */
+	@Override
 	public String getElementName(Object item) {
 		if (item instanceof IPluginModelBase) {
 			IPluginModelBase model = (IPluginModelBase) item;
@@ -434,6 +454,7 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#getItemsComparator()
 	 */
+	@Override
 	protected Comparator<?> getItemsComparator() {
 		return new PluginSearchComparator();
 	}
@@ -441,10 +462,12 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#validateItem(java.lang.Object)
 	 */
+	@Override
 	protected IStatus validateItem(Object item) {
 		return new Status(IStatus.OK, "org.eclipse.pde.ui", 0, "", null); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
+	@Override
 	protected void fillViewMenu(IMenuManager menuManager) {
 		super.fillViewMenu(menuManager);
 		menuManager.add(new Separator());
@@ -454,6 +477,7 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 		menuManager.add(featuresAction);
 	}
 
+	@Override
 	protected void restoreDialog(IDialogSettings settings) {
 		super.restoreDialog(settings);
 
@@ -484,6 +508,7 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 		applyFilter();
 	}
 
+	@Override
 	protected void storeDialog(IDialogSettings settings) {
 		super.storeDialog(settings);
 		settings.put(S_EXTENSIONS, extensionsAction.isChecked());
@@ -499,6 +524,7 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 		private static final String M_PLUGIN_ID = "p_id"; //$NON-NLS-1$
 		private static final String M_TYPE = "type"; //$NON-NLS-1$
 
+		@Override
 		protected Object restoreItemFromMemento(IMemento memento) {
 			Integer itype = memento.getInteger(M_TYPE);
 			if (itype == null)
@@ -584,6 +610,7 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 			return null;
 		}
 
+		@Override
 		protected void storeItemToMemento(Object item, IMemento memento) {
 			if (item instanceof IPluginModelBase) {
 				IPluginModelBase model = (IPluginModelBase) item;
@@ -683,6 +710,7 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 
 	private class PluginSearchComparator implements Comparator<Object> {
 
+		@Override
 		public int compare(Object o1, Object o2) {
 			int id1 = getId(o1);
 			int id2 = getId(o2);
@@ -757,6 +785,7 @@ public class FilteredPluginArtifactsSelectionDialog extends FilteredItemsSelecti
 		}
 	}
 
+	@Override
 	public boolean close() {
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 		return super.close();

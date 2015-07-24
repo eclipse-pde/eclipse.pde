@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2012 IBM Corporation and others.
+ *  Copyright (c) 2007, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -31,6 +31,7 @@ public class RenameExtensionPointProcessor extends RefactoringProcessor {
 		fInfo = info;
 	}
 
+	@Override
 	public RefactoringStatus checkFinalConditions(IProgressMonitor pm, CheckConditionsContext context) throws CoreException, OperationCanceledException {
 		RefactoringStatus status = new RefactoringStatus();
 		IResource res = fInfo.getBase().getUnderlyingResource();
@@ -39,10 +40,12 @@ public class RenameExtensionPointProcessor extends RefactoringProcessor {
 		return status;
 	}
 
+	@Override
 	public RefactoringStatus checkInitialConditions(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		return null;
 	}
 
+	@Override
 	public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		CompositeChange change = new CompositeChange(MessageFormat.format(PDEUIMessages.RenameExtensionPointProcessor_changeTitle, new Object[] {fInfo.getCurrentValue(), fInfo.getNewValue()}));
 		pm.beginTask("", 2); //$NON-NLS-1$
@@ -52,22 +55,27 @@ public class RenameExtensionPointProcessor extends RefactoringProcessor {
 		return change;
 	}
 
+	@Override
 	public Object[] getElements() {
 		return new Object[] {fInfo.getSelection()};
 	}
 
+	@Override
 	public String getIdentifier() {
 		return getClass().getName();
 	}
 
+	@Override
 	public String getProcessorName() {
 		return PDEUIMessages.RenameExtensionPointProcessor_processorName;
 	}
 
+	@Override
 	public boolean isApplicable() throws CoreException {
 		return true;
 	}
 
+	@Override
 	public RefactoringParticipant[] loadParticipants(RefactoringStatus status, SharableParticipants sharedParticipants) throws CoreException {
 		return new RefactoringParticipant[0];
 	}
@@ -119,6 +127,7 @@ public class RenameExtensionPointProcessor extends RefactoringProcessor {
 	protected ModelModification getExtensionPointModification(IFile file) {
 		return new ModelModification(file) {
 
+			@Override
 			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
 				if (!(model instanceof IPluginModelBase))
 					return;
@@ -139,6 +148,7 @@ public class RenameExtensionPointProcessor extends RefactoringProcessor {
 	protected ModelModification getExtensionModification(IFile file) {
 		return new ModelModification(file) {
 
+			@Override
 			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
 				if (!(model instanceof IPluginModelBase))
 					return;

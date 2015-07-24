@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2013 IBM Corporation and others.
+ * Copyright (c) 2003, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,6 +45,7 @@ import org.osgi.framework.Version;
 public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 
 	class ContentProvider extends DefaultContentProvider implements IStructuredContentProvider {
+		@Override
 		public Object[] getElements(Object element) {
 			return fModels;
 		}
@@ -159,6 +160,7 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 		fSelected = new HashSet<Object>();
 	}
 
+	@Override
 	public void createControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -238,30 +240,35 @@ public class PluginImportWizardDetailedPage extends BaseImportWizardSecondPage {
 
 	private void addViewerListeners() {
 		fAvailableListViewer.addDoubleClickListener(new IDoubleClickListener() {
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				handleAdd();
 			}
 		});
 
 		fImportListViewer.addDoubleClickListener(new IDoubleClickListener() {
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				handleRemove();
 			}
 		});
 
 		fAvailableListViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				updateSelectionBasedEnablement(event.getSelection(), true);
 			}
 		});
 
 		fImportListViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				updateSelectionBasedEnablement(event.getSelection(), false);
 			}
 		});
 
 		fFilterText.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				fFilterJob.cancel();
 				fFilterJob.schedule(200);

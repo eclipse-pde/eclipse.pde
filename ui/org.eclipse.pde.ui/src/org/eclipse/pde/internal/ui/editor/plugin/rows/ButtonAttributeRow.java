@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2008 IBM Corporation and others.
+ *  Copyright (c) 2006, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -37,11 +37,13 @@ public abstract class ButtonAttributeRow extends ReferenceAttributeRow {
 		super(part, att);
 	}
 
+	@Override
 	public void createContents(Composite parent, FormToolkit toolkit, int span) {
 		super.createContents(parent, toolkit, span);
 		if (part.isEditable()) {
 			Button button = toolkit.createButton(parent, PDEUIMessages.ReferenceAttributeRow_browse, SWT.PUSH);
 			button.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					if (!isReferenceModel())
 						browse();
@@ -51,6 +53,7 @@ public abstract class ButtonAttributeRow extends ReferenceAttributeRow {
 		}
 	}
 
+	@Override
 	protected GridData createGridData(int span) {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint = 20;

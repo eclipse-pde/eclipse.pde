@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -38,6 +38,7 @@ public class NewExtensionPointMainPage extends BaseExtensionPointMainPage {
 		setDescription(PDEUIMessages.NewExtensionPointWizard_desc);
 	}
 
+	@Override
 	protected boolean isPluginIdFinal() {
 		return true;
 	}
@@ -77,10 +78,12 @@ public class NewExtensionPointMainPage extends BaseExtensionPointMainPage {
 		return true;
 	}
 
+	@Override
 	public String getPluginId() {
 		return fModel.getPluginBase().getId();
 	}
 
+	@Override
 	protected void initializeValues() {
 		if (fPoint == null)
 			return;
@@ -92,6 +95,7 @@ public class NewExtensionPointMainPage extends BaseExtensionPointMainPage {
 			fSchemaText.setText(fPoint.getSchema());
 	}
 
+	@Override
 	protected String validateFieldContents() {
 		String message = validateExtensionPointID();
 		if (message != null)
@@ -108,6 +112,7 @@ public class NewExtensionPointMainPage extends BaseExtensionPointMainPage {
 		return null;
 	}
 
+	@Override
 	protected String validateExtensionPointSchema() {
 		// Do not validate "Extension Point Schema" Field
 		return null;

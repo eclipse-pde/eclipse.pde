@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2008 IBM Corporation and others.
+ *  Copyright (c) 2005, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -21,14 +21,17 @@ public class RemoveStaticProjectReferences extends AbstractPDEMarkerResolution {
 		super(type);
 	}
 
+	@Override
 	public String getDescription() {
 		return PDEUIMessages.RemoveBuildOrderEntries_desc;
 	}
 
+	@Override
 	public String getLabel() {
 		return PDEUIMessages.RemoveBuildOrderEntries_label;
 	}
 
+	@Override
 	public void run(IMarker marker) {
 		try {
 			IProject project = marker.getResource().getProject();
@@ -43,6 +46,7 @@ public class RemoveStaticProjectReferences extends AbstractPDEMarkerResolution {
 		}
 	}
 
+	@Override
 	protected void createChange(IBaseModel model) {
 		// overridden run method handles everything
 	}

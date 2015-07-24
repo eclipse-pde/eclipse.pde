@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2009 IBM Corporation and others.
+ *  Copyright (c) 2005, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -39,6 +39,7 @@ public class ProgramBlock {
 	private ControlDecoration fProductComboDecoration;
 
 	class Listener extends SelectionAdapter implements ModifyListener {
+		@Override
 		public void widgetSelected(SelectionEvent e) {
 			Object source = e.getSource();
 			if (source == fProductButton) {
@@ -51,6 +52,7 @@ public class ProgramBlock {
 			fTab.scheduleUpdateJob();
 		}
 
+		@Override
 		public void modifyText(ModifyEvent e) {
 			if (e.getSource() == fProductCombo) {
 				updateProductDecorator();

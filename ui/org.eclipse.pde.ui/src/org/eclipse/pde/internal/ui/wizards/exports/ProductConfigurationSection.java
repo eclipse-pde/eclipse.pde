@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2008 IBM Corporation and others.
+ *  Copyright (c) 2005, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -57,6 +57,7 @@ public class ProductConfigurationSection {
 		browse.setText(PDEUIMessages.ProductExportWizardPage_browse);
 		browse.setLayoutData(new GridData());
 		browse.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleBrowse();
 			}
@@ -98,6 +99,7 @@ public class ProductConfigurationSection {
 
 	protected void hookListeners() {
 		fProductCombo.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				updateProductFields();
 				fPage.pageChanged();

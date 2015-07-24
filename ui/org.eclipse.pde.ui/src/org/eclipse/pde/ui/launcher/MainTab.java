@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,6 +57,7 @@ public class MainTab extends AbstractLauncherTab implements IPDELauncherConstant
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#dispose()
 	 */
+	@Override
 	public void dispose() {
 		fImage.dispose();
 		super.dispose();
@@ -66,6 +67,7 @@ public class MainTab extends AbstractLauncherTab implements IPDELauncherConstant
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		final ScrolledComposite scrollContainer = new ScrolledComposite(parent, SWT.V_SCROLL);
 		scrollContainer.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -82,6 +84,7 @@ public class MainTab extends AbstractLauncherTab implements IPDELauncherConstant
 		// Add listener for each control to recalculate scroll bar when it is entered.
 		// This results in scrollbar scrolling when user tabs to a control that is not in the field of view.
 		Listener listener = new Listener() {
+			@Override
 			public void handleEvent(Event e) {
 				Control child = (Control) e.widget;
 				Rectangle bounds = child.getBounds();
@@ -126,6 +129,7 @@ public class MainTab extends AbstractLauncherTab implements IPDELauncherConstant
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public void initializeFrom(ILaunchConfiguration config) {
 		try {
 			fDataBlock.initializeFrom(config, false);
@@ -141,6 +145,7 @@ public class MainTab extends AbstractLauncherTab implements IPDELauncherConstant
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 		fDataBlock.setDefaults(config, false);
 		fProgramBlock.setDefaults(config);
@@ -151,6 +156,7 @@ public class MainTab extends AbstractLauncherTab implements IPDELauncherConstant
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
 		fDataBlock.performApply(config, false);
 		fProgramBlock.performApply(config);
@@ -161,6 +167,7 @@ public class MainTab extends AbstractLauncherTab implements IPDELauncherConstant
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
+	@Override
 	public String getName() {
 		return PDEUIMessages.MainTab_name;
 	}
@@ -169,6 +176,7 @@ public class MainTab extends AbstractLauncherTab implements IPDELauncherConstant
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
 	 */
+	@Override
 	public Image getImage() {
 		return fImage;
 	}
@@ -201,6 +209,7 @@ public class MainTab extends AbstractLauncherTab implements IPDELauncherConstant
 	 * (non-Javadoc)
 	 * @see org.eclipse.pde.ui.launcher.AbstractLauncherTab#validateTab()
 	 */
+	@Override
 	public void validateTab() {
 		String error = fDataBlock.validate();
 		if (error == null)
@@ -211,6 +220,7 @@ public class MainTab extends AbstractLauncherTab implements IPDELauncherConstant
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getId()
 	 */
+	@Override
 	public String getId() {
 		return org.eclipse.pde.launching.IPDELauncherConstants.TAB_MAIN_ID;
 	}

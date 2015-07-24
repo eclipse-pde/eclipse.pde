@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others.
+ * Copyright (c) 2008, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -169,6 +169,7 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 		/* (non-Javadoc)
 		 * @see java.lang.Object#toString()
 		 */
+		@Override
 		public String toString() {
 			return qualifier + '/' + this.key;
 		}
@@ -295,6 +296,7 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 	 * Default selection listener for combo and check controls 
 	 */
 	private SelectionListener selectionlistener = new SelectionAdapter() {
+		@Override
 		public void widgetSelected(SelectionEvent e) {
 			if (e.widget instanceof Combo) {
 				Combo combo = (Combo) e.widget;
@@ -317,6 +319,7 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 	 * Default modify listener for text controls
 	 */
 	private ModifyListener modifylistener = new ModifyListener() {
+		@Override
 		public void modifyText(ModifyEvent e) {
 			if (e.widget instanceof Text) {
 				Text text = (Text) e.widget;
@@ -667,6 +670,7 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 		scomp.setLayout(new GridLayout(1, false));
 		scomp.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		scomp.addListener(SWT.Resize, new Listener() {
+			@Override
 			public void handleEvent(Event event) {
 				handleExpand(getScrollingParent(event.widget));
 			}
@@ -683,6 +687,7 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 	private Composite createExpansibleComposite(Composite parent, String title) {
 		ExpandableComposite ecomp = SWTFactory.createExpandibleComposite(parent, title, 1, GridData.FILL_HORIZONTAL);
 		ecomp.addExpansionListener(new ExpansionAdapter() {
+			@Override
 			public void expansionStateChanged(ExpansionEvent e) {
 				Object obj = e.getSource();
 				handleExpand(getScrollingParent(obj));
@@ -892,10 +897,12 @@ public class PDECompilersConfigurationBlock extends ConfigurationBlock {
 	 */
 	private void doFullBuild() {
 		Job buildJob = new Job(PDEUIMessages.CompilersConfigurationBlock_building) {
+			@Override
 			public boolean belongsTo(Object family) {
 				return ResourcesPlugin.FAMILY_MANUAL_BUILD == family;
 			}
 
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					IProject[] projects = null;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2008 IBM Corporation and others.
+ *  Copyright (c) 2005, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -26,6 +26,7 @@ public class ChooseManifestClassResolution extends AbstractManifestMarkerResolut
 		fHeader = headerName;
 	}
 
+	@Override
 	protected void createChange(BundleModel model) {
 		IManifestHeader header = model.getBundle().getManifestHeader(fHeader);
 		String type = PDEJavaHelperUI.selectType(fResource, IJavaElementSearchConstants.CONSIDER_CLASSES);
@@ -33,6 +34,7 @@ public class ChooseManifestClassResolution extends AbstractManifestMarkerResolut
 			header.setValue(type);
 	}
 
+	@Override
 	public String getLabel() {
 		return NLS.bind(PDEUIMessages.ChooseManifestClassResolution_label, fHeader);
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -43,6 +43,7 @@ public class RequiredPluginsContainerPage extends WizardPage implements IClasspa
 	private IJavaProject javaProject;
 
 	class EntryContentProvider extends DefaultContentProvider implements IStructuredContentProvider {
+		@Override
 		public Object[] getElements(Object parent) {
 			if (realEntries != null)
 				return realEntries;
@@ -60,6 +61,7 @@ public class RequiredPluginsContainerPage extends WizardPage implements IClasspa
 //	}
 
 	class EntryLabelProvider extends LabelProvider implements ITableLabelProvider {
+		@Override
 		public String getText(Object obj) {
 			IClasspathEntry entry = (IClasspathEntry) obj;
 			int kind = entry.getEntryKind();
@@ -71,6 +73,7 @@ public class RequiredPluginsContainerPage extends WizardPage implements IClasspa
 					+ path.uptoSegment(path.segmentCount() - 1).toOSString();
 		}
 
+		@Override
 		public Image getImage(Object obj) {
 			IClasspathEntry entry = (IClasspathEntry) obj;
 			int kind = entry.getEntryKind();
@@ -83,10 +86,12 @@ public class RequiredPluginsContainerPage extends WizardPage implements IClasspa
 			return null;
 		}
 
+		@Override
 		public String getColumnText(Object obj, int col) {
 			return getText(obj);
 		}
 
+		@Override
 		public Image getColumnImage(Object obj, int col) {
 			return getImage(obj);
 		}
@@ -110,6 +115,7 @@ public class RequiredPluginsContainerPage extends WizardPage implements IClasspa
 	 * Insert the method's description here.
 	 * @see WizardPage#createControl
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NULL);
 		container.setLayout(new GridLayout());
@@ -138,6 +144,7 @@ public class RequiredPluginsContainerPage extends WizardPage implements IClasspa
 	 * Insert the method's description here.
 	 * @see WizardPage#finish
 	 */
+	@Override
 	public boolean finish() {
 		return true;
 	}
@@ -146,10 +153,12 @@ public class RequiredPluginsContainerPage extends WizardPage implements IClasspa
 	 * Insert the method's description here.
 	 * @see WizardPage#getSelection
 	 */
+	@Override
 	public IClasspathEntry getSelection() {
 		return entry;
 	}
 
+	@Override
 	public void initialize(IJavaProject project, IClasspathEntry[] currentEntries) {
 		javaProject = project;
 	}
@@ -158,6 +167,7 @@ public class RequiredPluginsContainerPage extends WizardPage implements IClasspa
 	 * Insert the method's description here.
 	 * @see WizardPage#setSelection
 	 */
+	@Override
 	public void setSelection(IClasspathEntry containerEntry) {
 		this.entry = containerEntry;
 		createRealEntries();

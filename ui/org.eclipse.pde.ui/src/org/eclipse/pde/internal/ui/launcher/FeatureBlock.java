@@ -167,6 +167,7 @@ public class FeatureBlock {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
 		 */
+		@Override
 		public Image getImage(Object element) {
 			// Only the name column gets an image, see getColumnImage()
 			return null;
@@ -175,6 +176,7 @@ public class FeatureBlock {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
 		 */
+		@Override
 		public String getText(Object element) {
 			// If the label provider implement ILabelProvider the ViewerComparator calls getText() with whatever was passed to it, in our case we are already passing the label text based on sort order
 			if (element instanceof String) {
@@ -487,6 +489,7 @@ public class FeatureBlock {
 	}
 
 	class LocationCellModifier implements ICellModifier {
+		@Override
 		public boolean canModify(Object element, String property) {
 			if (element instanceof FeatureLaunchModel || element instanceof PluginLaunchModel) {
 				return fTree.getChecked(element);
@@ -494,6 +497,7 @@ public class FeatureBlock {
 			return false;
 		}
 
+		@Override
 		public Object getValue(Object element, String property) {
 			if (property == PROPERTY_RESOLUTION) {
 				if (element instanceof FeatureLaunchModel) {
@@ -518,6 +522,7 @@ public class FeatureBlock {
 			return null;
 		}
 
+		@Override
 		public void modify(Object item, String property, Object value) {
 			if (property == PROPERTY_RESOLUTION && value != null) {
 				Object data = ((TreeItem) item).getData();
@@ -560,6 +565,7 @@ public class FeatureBlock {
 
 	class PluginContentProvider implements ITreeContentProvider {
 
+		@Override
 		public Object[] getElements(Object input) {
 			if (input instanceof Collection) {
 				return ((Collection<?>) input).toArray();
@@ -570,12 +576,15 @@ public class FeatureBlock {
 			return new Object[0];
 		}
 
+		@Override
 		public void dispose() {
 		}
 
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 
+		@Override
 		public Object[] getChildren(Object parentElement) {
 			if (parentElement == fAdditionalPluginsParentElement) {
 				return fAdditionalPlugins.toArray();
@@ -583,12 +592,14 @@ public class FeatureBlock {
 			return new Object[0];
 		}
 
+		@Override
 		public Object getParent(Object element) {
 			if (element instanceof PluginLaunchModel)
 				return fAdditionalPluginsParentElement;
 			return null;
 		}
 
+		@Override
 		public boolean hasChildren(Object element) {
 			if (element instanceof NamedElement)
 				return true;
@@ -857,6 +868,7 @@ public class FeatureBlock {
 					public void done(IJobChangeEvent event) {
 						if (event.getResult().isOK()) {
 							getDisplay().asyncExec(new Runnable() {
+								@Override
 								public void run() {
 									fTree.getControl().setRedraw(false);
 									fTree.removeFilter(fSelectedOnlyFilter);
@@ -901,6 +913,7 @@ public class FeatureBlock {
 		fTree.setLabelProvider(new FeatureTreeLabelProvider());
 		fTree.setContentProvider(new PluginContentProvider());
 		fTree.addCheckStateListener(new ICheckStateListener() {
+			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				updateCounter();
 				fTab.updateLaunchConfigurationDialog();
@@ -913,6 +926,7 @@ public class FeatureBlock {
 		fTree.setColumnProperties(new String[] {null, PROPERTY_RESOLUTION});
 		fTree.setCellModifier(new LocationCellModifier());
 		fTree.addDoubleClickListener(new IDoubleClickListener() {
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				ISelection selection = event.getSelection();
 				if (selection == null || !(selection instanceof IStructuredSelection)) {
@@ -925,6 +939,7 @@ public class FeatureBlock {
 		});
 		fTree.addSelectionChangedListener(new ISelectionChangedListener() {
 
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				IStructuredSelection selection = (IStructuredSelection) fTree.getSelection();
 				boolean allPlugins = true;

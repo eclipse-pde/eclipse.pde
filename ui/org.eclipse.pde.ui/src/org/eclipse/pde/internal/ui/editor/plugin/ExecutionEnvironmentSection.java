@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -60,16 +60,19 @@ public class ExecutionEnvironmentSection extends TableSection {
 			fImage = PDEPluginImages.DESC_JAVA_LIB_OBJ.createImage();
 		}
 
+		@Override
 		public Image getImage(Object element) {
 			return fImage;
 		}
 
+		@Override
 		public String getText(Object element) {
 			if (element instanceof IExecutionEnvironment)
 				return ((IExecutionEnvironment) element).getId();
 			return super.getText(element);
 		}
 
+		@Override
 		public void dispose() {
 			if (fImage != null)
 				fImage.dispose();
@@ -78,6 +81,7 @@ public class ExecutionEnvironmentSection extends TableSection {
 	}
 
 	class ContentProvider extends DefaultTableProvider {
+		@Override
 		public Object[] getElements(Object inputElement) {
 			if (inputElement instanceof IBundleModel) {
 				IBundleModel model = (IBundleModel) inputElement;
@@ -96,6 +100,7 @@ public class ExecutionEnvironmentSection extends TableSection {
 		createClient(getSection(), page.getEditor().getToolkit());
 	}
 
+	@Override
 	protected void createClient(Section section, FormToolkit toolkit) {
 		section.setText(PDEUIMessages.RequiredExecutionEnvironmentSection_title);
 		if (isFragment())
@@ -120,12 +125,15 @@ public class ExecutionEnvironmentSection extends TableSection {
 		Hyperlink link = toolkit.createHyperlink(container, PDEUIMessages.BuildExecutionEnvironmentSection_configure, SWT.NONE);
 		link.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 		link.addHyperlinkListener(new IHyperlinkListener() {
+			@Override
 			public void linkEntered(HyperlinkEvent e) {
 			}
 
+			@Override
 			public void linkExited(HyperlinkEvent e) {
 			}
 
+			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				SWTFactory.showPreferencePage(PDEPlugin.getActiveWorkbenchShell(), "org.eclipse.jdt.debug.ui.jreProfiles", null); //$NON-NLS-1$
 			}
@@ -140,12 +148,15 @@ public class ExecutionEnvironmentSection extends TableSection {
 				link = toolkit.createHyperlink(container, PDEUIMessages.ExecutionEnvironmentSection_updateClasspath, SWT.NONE);
 				link.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 				link.addHyperlinkListener(new IHyperlinkListener() {
+					@Override
 					public void linkEntered(HyperlinkEvent e) {
 					}
 
+					@Override
 					public void linkExited(HyperlinkEvent e) {
 					}
 
+					@Override
 					public void linkActivated(HyperlinkEvent e) {
 						try {
 							getPage().getEditor().doSave(null);
@@ -178,17 +189,20 @@ public class ExecutionEnvironmentSection extends TableSection {
 		section.setClient(container);
 	}
 
+	@Override
 	public void dispose() {
 		IBundleModel model = getBundleModel();
 		if (model != null)
 			model.removeModelChangedListener(this);
 	}
 
+	@Override
 	public void refresh() {
 		fEETable.refresh();
 		updateButtons();
 	}
 
+	@Override
 	protected void buttonSelected(int index) {
 		switch (index) {
 			case 0 :
@@ -206,6 +220,7 @@ public class ExecutionEnvironmentSection extends TableSection {
 		}
 	}
 
+	@Override
 	protected void fillContextMenu(IMenuManager manager) {
 		manager.add(fAddAction);
 		if (!fEETable.getSelection().isEmpty()) {
@@ -217,6 +232,7 @@ public class ExecutionEnvironmentSection extends TableSection {
 
 	private void makeActions() {
 		fAddAction = new Action(PDEUIMessages.RequiredExecutionEnvironmentSection_add) {
+			@Override
 			public void run() {
 				handleAdd();
 			}
@@ -224,6 +240,7 @@ public class ExecutionEnvironmentSection extends TableSection {
 		fAddAction.setEnabled(isEditable());
 
 		fRemoveAction = new Action(PDEUIMessages.NewManifestEditor_LibrarySection_remove) {
+			@Override
 			public void run() {
 				handleRemove();
 			}
@@ -333,6 +350,7 @@ public class ExecutionEnvironmentSection extends TableSection {
 		return list.toArray();
 	}
 
+	@Override
 	public void modelChanged(IModelChangedEvent e) {
 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
 			markStale();
@@ -400,6 +418,7 @@ public class ExecutionEnvironmentSection extends TableSection {
 		return model.isFragmentModel();
 	}
 
+	@Override
 	public boolean doGlobalAction(String actionId) {
 		if (!isEditable()) {
 			return false;
@@ -425,6 +444,7 @@ public class ExecutionEnvironmentSection extends TableSection {
 		return false;
 	}
 
+	@Override
 	protected boolean canPaste(Object target, Object[] objects) {
 		RequiredExecutionEnvironmentHeader header = getHeader();
 		for (int i = 0; i < objects.length; i++) {
@@ -437,22 +457,26 @@ public class ExecutionEnvironmentSection extends TableSection {
 		return false;
 	}
 
+	@Override
 	protected void selectionChanged(IStructuredSelection selection) {
 		getPage().getPDEEditor().setSelection(selection);
 		if (getPage().getModel().isEditable())
 			updateButtons();
 	}
 
+	@Override
 	protected void doPaste(Object target, Object[] objects) {
 		addExecutionEnvironments(objects);
 	}
 
 	private void doFullBuild(final IProject project) {
 		Job buildJob = new Job(PDEUIMessages.CompilersConfigurationBlock_building) {
+			@Override
 			public boolean belongsTo(Object family) {
 				return ResourcesPlugin.FAMILY_MANUAL_BUILD == family;
 			}
 
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					project.build(IncrementalProjectBuilder.FULL_BUILD, JavaCore.BUILDER_ID, null, monitor);
@@ -468,6 +492,7 @@ public class ExecutionEnvironmentSection extends TableSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#isDragAndDropEnabled()
 	 */
+	@Override
 	protected boolean isDragAndDropEnabled() {
 		return true;
 	}
@@ -475,6 +500,7 @@ public class ExecutionEnvironmentSection extends TableSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canDragMove(java.lang.Object[])
 	 */
+	@Override
 	public boolean canDragMove(Object[] sourceObjects) {
 		if (validateDragMoveSanity(sourceObjects) == false) {
 			return false;
@@ -485,6 +511,7 @@ public class ExecutionEnvironmentSection extends TableSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canDropMove(java.lang.Object, java.lang.Object[], int)
 	 */
+	@Override
 	public boolean canDropMove(Object targetObject, Object[] sourceObjects, int targetLocation) {
 		// Sanity check
 		if (validateDropMoveSanity(targetObject, sourceObjects) == false) {
@@ -558,6 +585,7 @@ public class ExecutionEnvironmentSection extends TableSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doDropMove(java.lang.Object, java.lang.Object[], int)
 	 */
+	@Override
 	public void doDropMove(Object targetObject, Object[] sourceObjects, int targetLocation) {
 		// Sanity check
 		if (validateDropMoveSanity(targetObject, sourceObjects) == false) {
@@ -608,6 +636,7 @@ public class ExecutionEnvironmentSection extends TableSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doDragRemove(java.lang.Object[])
 	 */
+	@Override
 	public void doDragRemove(Object[] sourceObjects) {
 		// Validate source
 		if (validateDragMoveSanity(sourceObjects) == false) {

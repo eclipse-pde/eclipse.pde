@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,6 +53,7 @@ public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
 		fFileChanges = new HashMap<IFile, TextFileChange>();
 	}
 
+	@Override
 	protected void execute(IProgressMonitor monitor) throws CoreException, InvocationTargetException, InterruptedException {
 		for (int i = 0; i < fChangeFiles.length; i++) {
 			if (fChangeFiles[i] instanceof ModelChangeFile) {
@@ -97,6 +98,7 @@ public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
 	private void getChangeForBuild(IFile buildPropsFile, IProgressMonitor monitor, CompositeChange parent, final String localization) {
 		// Create change
 		TextFileChange[] changes = PDEModelUtility.changesForModelModication(new ModelModification(buildPropsFile) {
+			@Override
 			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
 
 				// Get model & set includes entry...				
@@ -183,6 +185,7 @@ public class ExternalizeStringsOperation extends WorkspaceModifyOperation {
 			return;
 		final String localiz = change.getBundleLocalization();
 		TextFileChange[] result = PDEModelUtility.changesForModelModication(new ModelModification(manifest) {
+			@Override
 			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
 				if (model instanceof IBundlePluginModelBase) {
 					IBundlePluginModelBase bundleModel = (IBundlePluginModelBase) model;

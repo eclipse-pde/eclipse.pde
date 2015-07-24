@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2013 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -48,6 +48,7 @@ public class PluginImportWizard extends Wizard implements IImportWizard, IPageCh
 		setWindowTitle(PDEUIMessages.ImportWizard_title);
 	}
 
+	@Override
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		this.selection = selection;
 	}
@@ -225,6 +226,7 @@ public class PluginImportWizard extends Wizard implements IImportWizard, IPageCh
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IPageChangingListener#handlePageChanging(org.eclipse.jface.dialogs.PageChangingEvent)
 	 */
+	@Override
 	public void handlePageChanging(PageChangingEvent event) {
 		if (event.getCurrentPage() instanceof BaseImportWizardSecondPage && event.getTargetPage() instanceof IScmUrlImportWizardPage) {
 			IPluginModelBase[] models = getModelsToImport();

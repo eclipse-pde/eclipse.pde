@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,6 +52,7 @@ public class TracingTab extends AbstractLauncherTab {
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NULL);
 		container.setLayout(new GridLayout());
@@ -65,6 +66,7 @@ public class TracingTab extends AbstractLauncherTab {
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#activated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
 		fTracingBlock.activated(workingCopy);
 	}
@@ -73,6 +75,7 @@ public class TracingTab extends AbstractLauncherTab {
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#dispose()
 	 */
+	@Override
 	public void dispose() {
 		fTracingBlock.dispose();
 		if (fImage != null)
@@ -85,6 +88,7 @@ public class TracingTab extends AbstractLauncherTab {
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public void initializeFrom(ILaunchConfiguration config) {
 		fTracingBlock.initializeFrom(config);
 	}
@@ -93,6 +97,7 @@ public class TracingTab extends AbstractLauncherTab {
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
 		fTracingBlock.performApply(config);
 	}
@@ -101,6 +106,7 @@ public class TracingTab extends AbstractLauncherTab {
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 		fTracingBlock.setDefaults(config);
 	}
@@ -109,6 +115,7 @@ public class TracingTab extends AbstractLauncherTab {
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
+	@Override
 	public String getName() {
 		return PDEUIMessages.TracingLauncherTab_name;
 	}
@@ -117,6 +124,7 @@ public class TracingTab extends AbstractLauncherTab {
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
 	 */
+	@Override
 	public Image getImage() {
 		return fImage;
 	}
@@ -125,12 +133,14 @@ public class TracingTab extends AbstractLauncherTab {
 	 * (non-Javadoc)
 	 * @see org.eclipse.pde.ui.launcher.AbstractLauncherTab#validateTab()
 	 */
+	@Override
 	public void validateTab() {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getId()
 	 */
+	@Override
 	public String getId() {
 		return IPDELauncherConstants.TAB_TRACING_ID;
 	}

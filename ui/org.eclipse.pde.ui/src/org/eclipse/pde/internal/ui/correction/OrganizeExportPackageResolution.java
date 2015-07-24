@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2008 IBM Corporation and others.
+ *  Copyright (c) 2005, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -20,14 +20,17 @@ public class OrganizeExportPackageResolution extends AbstractManifestMarkerResol
 		super(type);
 	}
 
+	@Override
 	protected void createChange(BundleModel model) {
 		OrganizeManifest.organizeExportPackages(model.getBundle(), fResource.getProject(), true, true);
 	}
 
+	@Override
 	public String getDescription() {
 		return PDEUIMessages.OrganizeExportPackageResolution_Description;
 	}
 
+	@Override
 	public String getLabel() {
 		return PDEUIMessages.OrganizeExportPackageResolution_Label;
 	}

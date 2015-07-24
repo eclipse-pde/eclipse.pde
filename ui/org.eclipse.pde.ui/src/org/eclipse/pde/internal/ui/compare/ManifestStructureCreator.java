@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2013 IBM Corporation and others.
+ *  Copyright (c) 2005, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -33,27 +33,33 @@ public class ManifestStructureCreator extends StructureCreator {
 			}
 		}
 
+		@Override
 		public String getName() {
 			return this.getId();
 		}
 
+		@Override
 		public String getType() {
 			return "MF2"; //$NON-NLS-1$
 		}
 
+		@Override
 		public Image getImage() {
 			return CompareUI.getImage(getType());
 		}
 	}
 
+	@Override
 	public String getName() {
 		return PDEUIMessages.ManifestStructureCreator_name;
 	}
 
+	@Override
 	public IStructureComparator locate(Object path, Object input) {
 		return null;
 	}
 
+	@Override
 	public String getContents(Object node, boolean ignoreWhitespace) {
 		if (node instanceof IStreamContentAccessor) {
 			IStreamContentAccessor sca = (IStreamContentAccessor) node;
@@ -200,14 +206,17 @@ public class ManifestStructureCreator extends StructureCreator {
 		return null;
 	}
 
+	@Override
 	protected IDocumentPartitioner getDocumentPartitioner() {
 		return new FastPartitioner(new ManifestPartitionScanner(), ManifestPartitionScanner.PARTITIONS);
 	}
 
+	@Override
 	protected String getDocumentPartitioning() {
 		return ManifestPartitionScanner.MANIFEST_FILE_PARTITIONING;
 	}
 
+	@Override
 	protected IStructureComparator createStructureComparator(Object input, IDocument document, ISharedDocumentAdapter adapter, IProgressMonitor monitor) throws CoreException {
 
 		final boolean isEditable;
@@ -217,6 +226,7 @@ public class ManifestStructureCreator extends StructureCreator {
 			isEditable = false;
 
 		DocumentRangeNode rootNode = new StructureRootNode(document, input, this, adapter) {
+			@Override
 			public boolean isEditable() {
 				return isEditable;
 			}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2008 IBM Corporation and others.
+ *  Copyright (c) 2005, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -28,6 +28,7 @@ public class PluginSearchResultPage extends AbstractSearchResultPage {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.LabelProvider#getImage(java.lang.Object)
 		 */
+		@Override
 		public Image getImage(Object element) {
 			return PDEPlugin.getDefault().getLabelProvider().getImage(element);
 		}
@@ -35,6 +36,7 @@ public class PluginSearchResultPage extends AbstractSearchResultPage {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
 		 */
+		@Override
 		public String getText(Object object) {
 			if (object instanceof IPluginBase)
 				return ((IPluginBase) object).getId();
@@ -65,6 +67,7 @@ public class PluginSearchResultPage extends AbstractSearchResultPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.search.ui.text.AbstractTextSearchViewPage#fillContextMenu(org.eclipse.jface.action.IMenuManager)
 	 */
+	@Override
 	protected void fillContextMenu(IMenuManager mgr) {
 		super.fillContextMenu(mgr);
 		mgr.add(new Separator());
@@ -89,6 +92,7 @@ public class PluginSearchResultPage extends AbstractSearchResultPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.search.AbstractSearchResultPage#createLabelProvider()
 	 */
+	@Override
 	protected ILabelProvider createLabelProvider() {
 		return new SearchLabelProvider();
 	}
@@ -96,6 +100,7 @@ public class PluginSearchResultPage extends AbstractSearchResultPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.search.AbstractSearchResultPage#createViewerSorter()
 	 */
+	@Override
 	protected ViewerComparator createViewerComparator() {
 		return new ViewerComparator();
 	}
@@ -103,6 +108,7 @@ public class PluginSearchResultPage extends AbstractSearchResultPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.search.ui.text.AbstractTextSearchViewPage#showMatch(org.eclipse.search.ui.text.Match, int, int, boolean)
 	 */
+	@Override
 	protected void showMatch(Match match, int currentOffset, int currentLength, boolean activate) throws PartInitException {
 		ManifestEditorOpener.open(match, activate);
 	}
@@ -110,6 +116,7 @@ public class PluginSearchResultPage extends AbstractSearchResultPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.search.ui.text.AbstractTextSearchViewPage#dispose()
 	 */
+	@Override
 	public void dispose() {
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 		super.dispose();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2008 IBM Corporation and others.
+ *  Copyright (c) 2007, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -29,6 +29,7 @@ public class AddDefaultExecutionEnvironmentResolution extends AbstractManifestMa
 		this.id = id;
 	}
 
+	@Override
 	protected void createChange(BundleModel model) {
 
 		IManifestHeader header = model.getBundle().getManifestHeader(Constants.BUNDLE_REQUIREDEXECUTIONENVIRONMENT);
@@ -46,6 +47,7 @@ public class AddDefaultExecutionEnvironmentResolution extends AbstractManifestMa
 		}
 	}
 
+	@Override
 	public String getLabel() {
 		return NLS.bind(PDEUIMessages.AddDefaultExecutionEnvironment_label, id);
 	}

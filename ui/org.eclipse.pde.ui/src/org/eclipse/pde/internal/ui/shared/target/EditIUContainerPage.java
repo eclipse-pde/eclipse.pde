@@ -134,6 +134,7 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.shared.target.IEditTargetLocationPage#getBundleContainer()
 	 */
+	@Override
 	public ITargetLocation getBundleContainer() {
 		ITargetPlatformService service = (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
 		if (service == null) {
@@ -150,6 +151,7 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.shared.target.IEditTargetLocationPage#storeSettings()
 	 */
+	@Override
 	public void storeSettings() {
 		IDialogSettings settings = getDialogSettings();
 		if (settings != null) {
@@ -162,6 +164,7 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		Composite composite = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH, 0, 0);
 
@@ -189,6 +192,7 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 		profileUI.getPolicy().setRepositoryPreferencePageId(null);
 		fRepoSelector = new RepositorySelectionGroup(profileUI, getContainer(), parent, fQueryContext);
 		fRepoSelector.addRepositorySelectionListener(new IRepositorySelectionListener() {
+			@Override
 			public void repositorySelectionChanged(int repoChoice, URI repoLocation) {
 				fAvailableIUGroup.setRepositoryFilter(repoChoice, repoLocation);
 				fRepoLocation = repoChoice == AvailableIUGroup.AVAILABLE_SPECIFIED ? repoLocation : null;
@@ -272,6 +276,7 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 			filterConstant = AvailableIUGroup.AVAILABLE_ALL;
 		fAvailableIUGroup = new AvailableIUGroup(profileUI, parent, parent.getFont(), fQueryContext, null, filterConstant);
 		fAvailableIUGroup.getCheckboxTreeViewer().addCheckStateListener(new ICheckStateListener() {
+			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				IInstallableUnit[] units = fAvailableIUGroup.getCheckedLeafIUs();
 				if (units.length > 0) {
@@ -294,6 +299,7 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 			}
 		});
 		fAvailableIUGroup.getCheckboxTreeViewer().addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				updateDetails();
 				fPropertiesButton.setEnabled(fAvailableIUGroup.getSelectedIUElements().length == 1);
@@ -391,6 +397,7 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 		fPropertiesButton = SWTFactory.createPushButton(detailsGroup, Messages.EditIUContainerPage_13, null);
 		((GridData) fPropertiesButton.getLayoutData()).horizontalAlignment = SWT.RIGHT;
 		fPropertiesButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent event) {
 				fPropertyAction.run();
 			}
@@ -408,12 +415,14 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 		checkComp.setLayout(new GridLayout(2, true));
 		fShowCategoriesButton = SWTFactory.createCheckButton(checkComp, Messages.EditIUContainerPage_14, null, true, 1);
 		fShowCategoriesButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateViewContext();
 			}
 		});
 		fShowOldVersionsButton = SWTFactory.createCheckButton(checkComp, Messages.EditIUContainerPage_15, null, true, 1);
 		fShowOldVersionsButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateViewContext();
 			}
@@ -423,6 +432,7 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 		SWTFactory.createWrapLabel(slicerGroup, Messages.EditIUContainerPage_2, 1, 400);
 		fIncludeRequiredButton = SWTFactory.createCheckButton(slicerGroup, Messages.EditIUContainerPage_3, null, true, 1);
 		fIncludeRequiredButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fAllPlatformsButton.setEnabled(!fIncludeRequiredButton.getSelection());
 				warnIfGlobalSettingChanged();
@@ -430,6 +440,7 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 		});
 		fAllPlatformsButton = SWTFactory.createCheckButton(slicerGroup, Messages.EditIUContainerPage_8, null, false, 1);
 		fAllPlatformsButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				warnIfGlobalSettingChanged();
 			}
@@ -437,12 +448,14 @@ public class EditIUContainerPage extends WizardPage implements IEditBundleContai
 		((GridData) fAllPlatformsButton.getLayoutData()).horizontalIndent = 10;
 		fIncludeSourceButton = SWTFactory.createCheckButton(slicerGroup, Messages.EditIUContainerPage_16, null, true, 1);
 		fIncludeSourceButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				warnIfGlobalSettingChanged();
 			}
 		});
 		fConfigurePhaseButton = SWTFactory.createCheckButton(slicerGroup, Messages.EditIUContainerPage_IncludeConfigurePhase, null, true, 1);
 		fConfigurePhaseButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				warnIfGlobalSettingChanged();
 			}

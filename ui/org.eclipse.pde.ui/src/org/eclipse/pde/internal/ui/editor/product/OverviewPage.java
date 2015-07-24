@@ -36,6 +36,7 @@ public class OverviewPage extends LaunchShortcutOverviewPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#getHelpResource()
 	 */
+	@Override
 	protected String getHelpResource() {
 		return IHelpContextIds.OVERVIEW_PAGE;
 	}
@@ -43,6 +44,7 @@ public class OverviewPage extends LaunchShortcutOverviewPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#createFormContent(org.eclipse.ui.forms.IManagedForm)
 	 */
+	@Override
 	protected void createFormContent(IManagedForm managedForm) {
 		super.createFormContent(managedForm);
 		ScrolledForm form = managedForm.getForm();
@@ -83,6 +85,7 @@ public class OverviewPage extends LaunchShortcutOverviewPage {
 		section.setClient(createClient(section, PDEUIMessages.Product_overview_exporting, toolkit));
 	}
 
+	@Override
 	public void linkActivated(HyperlinkEvent e) {
 		String href = (String) e.getHref();
 		if (href.equals("action.synchronize")) { //$NON-NLS-1$
@@ -126,6 +129,7 @@ public class OverviewPage extends LaunchShortcutOverviewPage {
 		return fLauncherHelper;
 	}
 
+	@Override
 	protected short getIndent() {
 		return 35;
 	}

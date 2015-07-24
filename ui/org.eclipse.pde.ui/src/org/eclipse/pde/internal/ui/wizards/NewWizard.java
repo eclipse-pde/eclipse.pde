@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,11 +35,13 @@ public class NewWizard extends Wizard implements INewWizard, IDefaultValueConsum
 		return workbench;
 	}
 
+	@Override
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		this.workbench = workbench;
 		this.selection = selection;
 	}
 
+	@Override
 	public boolean performFinish() {
 		return true;
 	}
@@ -49,6 +51,7 @@ public class NewWizard extends Wizard implements INewWizard, IDefaultValueConsum
 	 * 
 	 * @see org.eclipse.pde.internal.ui.wizards.IDefaultValueConsumer#getDefaultValue(java.lang.String)
 	 */
+	@Override
 	public final String getDefaultValue(String key) {
 		if (defaultValues == null)
 			return null;
@@ -60,6 +63,7 @@ public class NewWizard extends Wizard implements INewWizard, IDefaultValueConsum
 	 * 
 	 * @see org.eclipse.pde.internal.ui.wizards.IDefaultValueConsumer#init(java.util.Dictionary)
 	 */
+	@Override
 	public final void init(Dictionary<?, ?> defaultValues) {
 		this.defaultValues = defaultValues;
 	}

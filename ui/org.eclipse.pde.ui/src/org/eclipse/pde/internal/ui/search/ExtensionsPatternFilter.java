@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2011, 2012 IBM Corporation and others.
+ *  Copyright (c) 2011, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -56,6 +56,7 @@ public class ExtensionsPatternFilter extends PatternFilter {
 	 *            the tree element to check
 	 * @return true if the given element's label matches the filter text
 	 */
+	@Override
 	protected boolean isLeafMatch(Viewer viewer, Object element) {
 		// match element name or extension point with wildcards; modified default behaviour
 		if (isNameMatch(element)) {
@@ -203,6 +204,7 @@ public class ExtensionsPatternFilter extends PatternFilter {
 		return new String[] {text};
 	}
 
+	@Override
 	public boolean isElementVisible(Viewer viewer, Object element) {
 		if (fFoundAnyElementsCache.contains(element)) {
 			return true;
@@ -210,6 +212,7 @@ public class ExtensionsPatternFilter extends PatternFilter {
 		return isLeafMatch(viewer, element);
 	}
 
+	@Override
 	public Object[] filter(Viewer viewer, Object parent, Object[] elements) {
 		if (parent != null && parent instanceof BundlePlugin) {
 			if (fFoundAnyElementsCache.size() == 0 && fSearchPattern != null && fSearchPattern.length() > 0) {
@@ -314,6 +317,7 @@ public class ExtensionsPatternFilter extends PatternFilter {
 	 * 
 	 * @see org.eclipse.ui.dialogs.PatternFilter#setPattern(java.lang.String)
 	 */
+	@Override
 	public final void setPattern(String patternString) {
 		super.setPattern(patternString);
 		fSearchPattern = patternString;

@@ -123,6 +123,7 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 		return manager;
 	}
 
+	@Override
 	public void monitoredFileAdded(IFile file) {
 		if (fInputContextManager == null)
 			return;
@@ -141,6 +142,7 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 		}
 	}
 
+	@Override
 	public boolean monitoredFileRemoved(IFile file) {
 		// TODO may need to check with the user if there
 		// are unsaved changes in the model for the
@@ -153,6 +155,7 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 		addSourcePage(context.getId());
 	}
 
+	@Override
 	public void contextRemoved(InputContext context) {
 		if (context.isPrimary()) {
 			close(true);
@@ -354,6 +357,7 @@ public class FeatureEditor extends MultiSourceEditor implements IShowEditorInput
 		return false;
 	}
 
+	@Override
 	public void showEditorInput(IEditorInput editorInput) {
 		String name = editorInput.getName();
 		if (name.equals(ICoreConstants.FEATURE_FILENAME_DESCRIPTOR)) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2011 IBM Corporation and others.
+ *  Copyright (c) 2003, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -28,9 +28,11 @@ public class ManifestEditorContributor extends PDEFormTextEditorContributor {
 		public ExternalizeAction() {
 		}
 
+		@Override
 		public void run() {
 			if (getEditor() != null) {
 				BusyIndicator.showWhile(SWTUtil.getStandardDisplay(), new Runnable() {
+					@Override
 					public void run() {
 						GetNonExternalizedStringsAction externalizeAction = new GetNonExternalizedStringsAction();
 						IStructuredSelection selection = new StructuredSelection(getEditor().getCommonProject());
@@ -45,6 +47,7 @@ public class ManifestEditorContributor extends PDEFormTextEditorContributor {
 		super("&Plugin"); //$NON-NLS-1$
 	}
 
+	@Override
 	public void contextMenuAboutToShow(IMenuManager mm, boolean addClipboard) {
 		super.contextMenuAboutToShow(mm, addClipboard);
 		IBaseModel model = getEditor().getAggregateModel();
@@ -54,24 +57,29 @@ public class ManifestEditorContributor extends PDEFormTextEditorContributor {
 		}
 	}
 
+	@Override
 	protected void makeActions() {
 		super.makeActions();
 		fExternalizeAction = new ExternalizeAction();
 		fExternalizeAction.setText(PDEUIMessages.ManifestEditorContributor_externStringsActionName);
 	}
 
+	@Override
 	public boolean supportsContentAssist() {
 		return true;
 	}
 
+	@Override
 	public boolean supportsFormatAction() {
 		return true;
 	}
 
+	@Override
 	public boolean supportsCorrectionAssist() {
 		return true;
 	}
 
+	@Override
 	public boolean supportsHyperlinking() {
 		return true;
 	}

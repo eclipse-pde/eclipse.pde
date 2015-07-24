@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,6 +52,7 @@ public abstract class SchemaAttributeDetails extends AbstractSchemaDetails {
 	}
 
 	class SchemaAttributeContentProvider extends DefaultTableProvider {
+		@Override
 		public Object[] getElements(Object inputElement) {
 			ISchemaSimpleType type = fAttribute.getType();
 			ISchemaRestriction restriction = type.getRestriction();
@@ -61,6 +62,7 @@ public abstract class SchemaAttributeDetails extends AbstractSchemaDetails {
 		}
 	}
 
+	@Override
 	public void createDetails(Composite parent) {
 		FormToolkit toolkit = getManagedForm().getToolkit();
 		Color foreground = toolkit.getColors().getColor(IFormColors.TITLE);
@@ -108,6 +110,7 @@ public abstract class SchemaAttributeDetails extends AbstractSchemaDetails {
 
 	protected abstract void createTypeDetails(Composite parent, FormToolkit toolkit);
 
+	@Override
 	public void updateFields(ISchemaObject object) {
 		if (!(object instanceof SchemaAttribute))
 			return;
@@ -142,8 +145,10 @@ public abstract class SchemaAttributeDetails extends AbstractSchemaDetails {
 		fValue.setEditable(editable);
 	}
 
+	@Override
 	public void hookListeners() {
 		fValue.setFormEntryListener(new FormEntryAdapter(this) {
+			@Override
 			public void textValueChanged(FormEntry entry) {
 				if (blockListeners())
 					return;
@@ -151,6 +156,7 @@ public abstract class SchemaAttributeDetails extends AbstractSchemaDetails {
 			}
 		});
 		fName.setFormEntryListener(new FormEntryAdapter(this) {
+			@Override
 			public void textValueChanged(FormEntry entry) {
 				if (blockListeners())
 					return;
@@ -179,6 +185,7 @@ public abstract class SchemaAttributeDetails extends AbstractSchemaDetails {
 			}
 		});
 		fDepTrue.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (blockListeners())
 					return;
@@ -186,6 +193,7 @@ public abstract class SchemaAttributeDetails extends AbstractSchemaDetails {
 			}
 		});
 		fType.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (blockListeners())
 					return;
@@ -206,6 +214,7 @@ public abstract class SchemaAttributeDetails extends AbstractSchemaDetails {
 			}
 		});
 		fUseDefault.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (blockListeners())
 					return;
@@ -217,6 +226,7 @@ public abstract class SchemaAttributeDetails extends AbstractSchemaDetails {
 			}
 		});
 		fUseOther.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (blockListeners())
 					return;
@@ -245,6 +255,7 @@ public abstract class SchemaAttributeDetails extends AbstractSchemaDetails {
 		}
 	}
 
+	@Override
 	public void modelChanged(IModelChangedEvent event) {
 		Object[] changedObjs = event.getChangedObjects();
 		if (event.getChangeType() == IModelChangedEvent.INSERT && changedObjs.length > 0) {
@@ -258,6 +269,7 @@ public abstract class SchemaAttributeDetails extends AbstractSchemaDetails {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#commit(boolean)
 	 */
+	@Override
 	public void commit(boolean onSave) {
 		super.commit(onSave);
 		// Only required for form entries

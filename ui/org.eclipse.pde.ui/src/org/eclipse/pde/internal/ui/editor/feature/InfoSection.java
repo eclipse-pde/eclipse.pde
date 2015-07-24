@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2014 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -75,11 +75,13 @@ public class InfoSection extends PDESection {
 		createClient(getSection(), page.getManagedForm().getToolkit());
 	}
 
+	@Override
 	public void commit(boolean onSave) {
 		handleApply();
 		super.commit(onSave);
 	}
 
+	@Override
 	public void createClient(Section section, FormToolkit toolkit) {
 
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
@@ -103,6 +105,7 @@ public class InfoSection extends PDESection {
 		fTabFolder.setSelectionBackground(new Color[] {selectedColor, toolkit.getColors().getBackground()}, new int[] {100}, true);
 
 		fTabFolder.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateTabSelection();
 			}
@@ -164,6 +167,7 @@ public class InfoSection extends PDESection {
 		label.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 		fUrlText = toolkit.createText(page, null, SWT.SINGLE);
 		fUrlText.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				infoModified();
 			}
@@ -179,6 +183,7 @@ public class InfoSection extends PDESection {
 		fSourceViewer.configure(fSourceConfiguration);
 		fSourceViewer.setDocument(fDocument);
 		fSourceViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				updateSelection(event.getSelection());
 			}
@@ -229,6 +234,7 @@ public class InfoSection extends PDESection {
 		getPage().getPDEEditor().setSelection(selection);
 	}
 
+	@Override
 	public boolean doGlobalAction(String actionId) {
 		if (actionId.equals(ActionFactory.CUT.getId())) {
 			fSourceViewer.doOperation(ITextOperationTarget.CUT);
@@ -254,6 +260,7 @@ public class InfoSection extends PDESection {
 		return false;
 	}
 
+	@Override
 	public boolean setFormInput(Object input) {
 		if (input instanceof IFeatureInfo) {
 			IFeatureInfo info = (IFeatureInfo) input;
@@ -319,10 +326,12 @@ public class InfoSection extends PDESection {
 	public void initialize() {
 		IFeatureModel featureModel = (IFeatureModel) getPage().getModel();
 		fDocument.addDocumentListener(new IDocumentListener() {
+			@Override
 			public void documentChanged(DocumentEvent e) {
 				infoModified();
 			}
 
+			@Override
 			public void documentAboutToBeChanged(DocumentEvent e) {
 			}
 		});
@@ -335,6 +344,7 @@ public class InfoSection extends PDESection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
 	 */
+	@Override
 	public void dispose() {
 		// Dispose of the source configuration
 		if (fSourceConfiguration != null) {
@@ -353,12 +363,14 @@ public class InfoSection extends PDESection {
 		}
 	}
 
+	@Override
 	public void modelChanged(IModelChangedEvent e) {
 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
 			markStale();
 		}
 	}
 
+	@Override
 	public void refresh() {
 		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		int index = fTabFolder.getSelectionIndex();
@@ -425,6 +437,7 @@ public class InfoSection extends PDESection {
 			fNotebook.layout();
 	}
 
+	@Override
 	public void setFocus() {
 		fSourceViewer.getTextWidget().setFocus();
 		updateSelection(fSourceViewer.getSelection());
@@ -481,6 +494,7 @@ public class InfoSection extends PDESection {
 		fIgnoreChange = false;
 	}
 
+	@Override
 	public boolean canPaste(Clipboard clipboard) {
 		return fSourceViewer.canDoOperation(ITextOperationTarget.PASTE);
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2009 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -51,16 +51,19 @@ public class SchemaOverviewPage extends PDEFormPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#getHelpResource()
 	 */
+	@Override
 	protected String getHelpResource() {
 		return IHelpContextIds.SCHEMA_EDITOR_DOC;
 	}
 
+	@Override
 	public void setActive(boolean active) {
 		if (!active)
 			getManagedForm().commit(false);
 		super.setActive(active);
 	}
 
+	@Override
 	protected void createFormContent(IManagedForm managedForm) {
 		ScrolledForm form = managedForm.getForm();
 		ISchema schema = (ISchema) ((SchemaEditor) getEditor()).getAggregateModel();
@@ -91,6 +94,7 @@ public class SchemaOverviewPage extends PDEFormPage {
 
 	private ControlContribution createUIControlConPreviewRefDoc() {
 		return new ControlContribution("Preview") { //$NON-NLS-1$
+			@Override
 			protected Control createControl(Composite parent) {
 				// Create UI
 				createUIImageHyperlinkPreviewRefDoc(parent);
@@ -116,14 +120,17 @@ public class SchemaOverviewPage extends PDEFormPage {
 	 */
 	private void createUIListenerImageHyperlinkPreviewRefDoc() {
 		fImageHyperlinkPreviewRefDoc.addHyperlinkListener(new IHyperlinkListener() {
+			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				handleLinkActivatedPreviewRefDoc();
 			}
 
+			@Override
 			public void linkEntered(HyperlinkEvent e) {
 				handleLinkEnteredPreviewRefDoc(e.getLabel());
 			}
 
+			@Override
 			public void linkExited(HyperlinkEvent e) {
 				handleLinkExitedPreviewRefDoc();
 			}
@@ -164,6 +171,7 @@ public class SchemaOverviewPage extends PDEFormPage {
 		fPreviewAction.run();
 	}
 
+	@Override
 	public void dispose() {
 		fColorManager.dispose();
 		super.dispose();

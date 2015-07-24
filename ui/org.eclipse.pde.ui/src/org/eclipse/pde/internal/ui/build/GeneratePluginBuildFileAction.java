@@ -32,6 +32,7 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
  */
 public class GeneratePluginBuildFileAction extends BaseBuildAction {
 
+	@Override
 	protected void makeScripts(IProgressMonitor monitor) throws InvocationTargetException, CoreException {
 
 		IProject project = fManifestFile.getProject();

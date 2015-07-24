@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2011 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.*;
  * @since 2.0
  * @deprecated see {@link RadioChoiceOption} and {@link ComboChoiceOption}
  */
+@Deprecated
 public class ChoiceOption extends TemplateOption {
 	private String[][] choices;
 	private Control labelControl;
@@ -52,6 +53,7 @@ public class ChoiceOption extends TemplateOption {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.TemplateField#createControl(org.eclipse.swt.widgets.Composite, int)
 	 */
+	@Override
 	public void createControl(Composite parent, int span) {
 		Composite container = createComposite(parent, span);
 		fill(container, span);
@@ -65,6 +67,7 @@ public class ChoiceOption extends TemplateOption {
 		buttons = new Button[choices.length];
 
 		SelectionListener listener = new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				Button b = (Button) e.widget;
 				if (blockListener)
@@ -103,6 +106,7 @@ public class ChoiceOption extends TemplateOption {
 	 * @param value
 	 *            the new value.
 	 */
+	@Override
 	public void setValue(Object value) {
 		super.setValue(value);
 		if (buttons != null && value != null) {
@@ -113,6 +117,7 @@ public class ChoiceOption extends TemplateOption {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.TemplateOption#setEnabled(boolean)
 	 */
+	@Override
 	public void setEnabled(boolean enabled) {
 		super.setEnabled(enabled);
 		if (labelControl != null) {

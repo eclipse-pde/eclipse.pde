@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -34,6 +34,7 @@ public abstract class AbstractFieldData implements IFieldData {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.IFieldData2#getId()
 	 */
+	@Override
 	public String getId() {
 		return fId;
 	}
@@ -41,6 +42,7 @@ public abstract class AbstractFieldData implements IFieldData {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.IFieldData2#getVersion()
 	 */
+	@Override
 	public String getVersion() {
 		return fVersion;
 	}
@@ -48,6 +50,7 @@ public abstract class AbstractFieldData implements IFieldData {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.IFieldData2#getName()
 	 */
+	@Override
 	public String getName() {
 		return fName;
 	}
@@ -55,10 +58,12 @@ public abstract class AbstractFieldData implements IFieldData {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.IFieldData2#getProvider()
 	 */
+	@Override
 	public String getProvider() {
 		return fProvider;
 	}
 
+	@Override
 	public boolean isLegacy() {
 		return fLegacy;
 	}
@@ -66,6 +71,7 @@ public abstract class AbstractFieldData implements IFieldData {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.IFieldData2#getLibraryName()
 	 */
+	@Override
 	public String getLibraryName() {
 		return fLibraryName;
 	}
@@ -73,6 +79,7 @@ public abstract class AbstractFieldData implements IFieldData {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.IFieldData2#getSourceFolderName()
 	 */
+	@Override
 	public String getSourceFolderName() {
 		return fSourceFolderName;
 	}
@@ -80,6 +87,7 @@ public abstract class AbstractFieldData implements IFieldData {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.IFieldData2#getOutputFolderName()
 	 */
+	@Override
 	public String getOutputFolderName() {
 		return fOutputFolderName;
 	}
@@ -87,6 +95,7 @@ public abstract class AbstractFieldData implements IFieldData {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.IFieldData2#hasBundleStructure()
 	 */
+	@Override
 	public boolean hasBundleStructure() {
 		return fHasBundleStructure;
 	}
@@ -94,6 +103,7 @@ public abstract class AbstractFieldData implements IFieldData {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.IFieldData2#isSimple()
 	 */
+	@Override
 	public boolean isSimple() {
 		return fSimple;
 	}

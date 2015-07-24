@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -32,6 +32,7 @@ public class UpdateBuildpathWizardPage extends WizardPage {
 	private TablePart tablePart;
 
 	public class BuildpathContentProvider extends DefaultContentProvider implements IStructuredContentProvider {
+		@Override
 		public Object[] getElements(Object parent) {
 			if (fUnmigrated != null)
 				return fUnmigrated;
@@ -44,11 +45,13 @@ public class UpdateBuildpathWizardPage extends WizardPage {
 			super(mainLabel);
 		}
 
+		@Override
 		public void updateCounter(int count) {
 			super.updateCounter(count);
 			dialogChanged();
 		}
 
+		@Override
 		protected StructuredViewer createStructuredViewer(Composite parent, int style, FormToolkit toolkit) {
 			StructuredViewer viewer = super.createStructuredViewer(parent, style, toolkit);
 			viewer.setComparator(ListUtil.PLUGIN_COMPARATOR);
@@ -66,11 +69,13 @@ public class UpdateBuildpathWizardPage extends WizardPage {
 		PDEPlugin.getDefault().getLabelProvider().connect(this);
 	}
 
+	@Override
 	public void dispose() {
 		super.dispose();
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 	}
 
+	@Override
 	public void createControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -111,6 +116,7 @@ public class UpdateBuildpathWizardPage extends WizardPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.WizardPage#isPageComplete()
 	 */
+	@Override
 	public boolean isPageComplete() {
 		return tablePart.getSelectionCount() > 0;
 	}

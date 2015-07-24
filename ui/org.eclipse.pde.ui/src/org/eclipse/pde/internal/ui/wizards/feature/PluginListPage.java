@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,6 +38,7 @@ import org.eclipse.ui.PlatformUI;
 
 public class PluginListPage extends BasePluginListPage {
 	class PluginContentProvider extends DefaultContentProvider implements IStructuredContentProvider {
+		@Override
 		public Object[] getElements(Object parent) {
 			return PluginRegistry.getActiveModels();
 		}
@@ -48,6 +49,7 @@ public class PluginListPage extends BasePluginListPage {
 			if (newInput != null && !PDECore.getDefault().areModelsInitialized()) {
 				try {
 					getContainer().run(true, false, new IRunnableWithProgress() {
+						@Override
 						public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 							// Target reloaded method clears existing models (which don't exist currently) and inits them with a progress monitor
 							PDECore.getDefault().getModelManager().targetReloaded(monitor);
@@ -138,6 +140,7 @@ public class PluginListPage extends BasePluginListPage {
 		Dialog.applyDialogFont(container);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(container, IHelpContextIds.NEW_FEATURE_REFERENCED_PLUGINS);
 		pluginViewer.addDoubleClickListener(new IDoubleClickListener() {
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				TableItem firstTI = pluginViewer.getTable().getSelection()[0];
 				if (firstTI.getChecked()) {

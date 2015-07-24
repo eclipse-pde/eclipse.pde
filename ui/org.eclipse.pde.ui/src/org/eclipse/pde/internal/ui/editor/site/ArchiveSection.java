@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2013 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -61,6 +61,7 @@ public class ArchiveSection extends PDESection {
 	}
 
 	class ContentProvider extends DefaultContentProvider implements IStructuredContentProvider {
+		@Override
 		public Object[] getElements(Object parent) {
 			ISiteModel model = (ISiteModel) parent;
 			return model.getSite().getArchives();
@@ -68,6 +69,7 @@ public class ArchiveSection extends PDESection {
 	}
 
 	class ArchiveLabelProvider extends LabelProvider implements ITableLabelProvider {
+		@Override
 		public String getColumnText(Object obj, int index) {
 			ISiteArchive archive = (ISiteArchive) obj;
 			switch (index) {
@@ -79,6 +81,7 @@ public class ArchiveSection extends PDESection {
 			return ""; //$NON-NLS-1$
 		}
 
+		@Override
 		public Image getColumnImage(Object obj, int index) {
 			return null;
 		}
@@ -191,6 +194,7 @@ public class ArchiveSection extends PDESection {
 		fViewer.setLabelProvider(new ArchiveLabelProvider());
 		fViewer.setInput(getPage().getModel());
 		fViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				handleSelectionChanged();
 			}
@@ -217,6 +221,7 @@ public class ArchiveSection extends PDESection {
 	private void showDialog(final ISiteArchive archive) {
 		final ISiteModel model = (ISiteModel) getPage().getModel();
 		BusyIndicator.showWhile(fTable.getDisplay(), new Runnable() {
+			@Override
 			public void run() {
 				NewArchiveDialog dialog = new NewArchiveDialog(fTable.getShell(), model, archive);
 				dialog.create();
@@ -250,6 +255,7 @@ public class ArchiveSection extends PDESection {
 	public boolean doGlobalAction(String actionId) {
 		if (actionId.equals(ActionFactory.DELETE.getId())) {
 			BusyIndicator.showWhile(fTable.getDisplay(), new Runnable() {
+				@Override
 				public void run() {
 					handleDelete();
 				}
@@ -277,6 +283,7 @@ public class ArchiveSection extends PDESection {
 	private void createContextMenu(Control control) {
 		MenuManager popupMenuManager = new MenuManager();
 		IMenuListener listener = new IMenuListener() {
+			@Override
 			public void menuAboutToShow(IMenuManager mng) {
 				Action removeAction = new Action(PDEUIMessages.SiteEditor_remove) {
 					@Override

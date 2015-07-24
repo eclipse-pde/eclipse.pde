@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2008 IBM Corporation and others.
+ *  Copyright (c) 2003, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -55,6 +55,7 @@ public class ExtensionDetails extends AbstractPluginElementDetails {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.IDetailsPage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createContents(Composite parent) {
 		FormToolkit toolkit = getManagedForm().getToolkit();
 		parent.setLayout(FormLayoutFactory.createDetailsGridLayout(false, 1));
@@ -89,6 +90,7 @@ public class ExtensionDetails extends AbstractPluginElementDetails {
 		rtext.setImage("open", PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_SCHEMA_OBJ)); //$NON-NLS-1$
 		rtext.setImage("search", PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_PSEARCH_OBJ)); //$NON-NLS-1$
 		rtext.addHyperlinkListener(new HyperlinkAdapter() {
+			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				if (e.getHref().equals("search")) { //$NON-NLS-1$
 					FindDeclarationsAction findDeclarationsAction = new FindDeclarationsAction(input);
@@ -129,6 +131,7 @@ public class ExtensionDetails extends AbstractPluginElementDetails {
 	private void createNameEntryField(FormToolkit toolkit, Composite client) {
 		name = new FormEntry(client, toolkit, PDEUIMessages.ExtensionDetails_name, null, false);
 		name.setFormEntryListener(new FormEntryAdapter(this) {
+			@Override
 			public void textValueChanged(FormEntry entry) {
 				if (input != null)
 					try {
@@ -147,6 +150,7 @@ public class ExtensionDetails extends AbstractPluginElementDetails {
 	private void createIDEntryField(FormToolkit toolkit, Composite client) {
 		id = new FormEntry(client, toolkit, PDEUIMessages.ExtensionDetails_id, null, false);
 		id.setFormEntryListener(new FormEntryAdapter(this) {
+			@Override
 			public void textValueChanged(FormEntry entry) {
 				if (input != null)
 					try {
@@ -161,6 +165,7 @@ public class ExtensionDetails extends AbstractPluginElementDetails {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.IDetailsPage#inputChanged(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
+	@Override
 	public void selectionChanged(IFormPart part, ISelection selection) {
 		IStructuredSelection ssel = (IStructuredSelection) selection;
 		if (ssel.size() == 1) {
@@ -239,6 +244,7 @@ public class ExtensionDetails extends AbstractPluginElementDetails {
 		labelControl.getParent().layout();
 	}
 
+	@Override
 	public void cancelEdit() {
 		id.cancelEdit();
 		name.cancelEdit();
@@ -248,6 +254,7 @@ public class ExtensionDetails extends AbstractPluginElementDetails {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.IDetailsPage#commit()
 	 */
+	@Override
 	public void commit(boolean onSave) {
 		id.commit();
 		name.commit();
@@ -257,10 +264,12 @@ public class ExtensionDetails extends AbstractPluginElementDetails {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.IDetailsPage#setFocus()
 	 */
+	@Override
 	public void setFocus() {
 		id.getText().setFocus();
 	}
 
+	@Override
 	public void dispose() {
 		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
 		if (model != null)
@@ -268,6 +277,7 @@ public class ExtensionDetails extends AbstractPluginElementDetails {
 		super.dispose();
 	}
 
+	@Override
 	public void modelChanged(IModelChangedEvent e) {
 		if (e.getChangeType() == IModelChangedEvent.CHANGE) {
 			Object obj = e.getChangedObjects()[0];
@@ -279,6 +289,7 @@ public class ExtensionDetails extends AbstractPluginElementDetails {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.IDetailsPage#refresh()
 	 */
+	@Override
 	public void refresh() {
 		update();
 		super.refresh();
@@ -287,6 +298,7 @@ public class ExtensionDetails extends AbstractPluginElementDetails {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.IContextPart#fireSaveNeeded()
 	 */
+	@Override
 	public void fireSaveNeeded() {
 		markDirty();
 		PDEFormPage page = (PDEFormPage) getManagedForm().getContainer();
@@ -296,14 +308,17 @@ public class ExtensionDetails extends AbstractPluginElementDetails {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.IContextPart#getContextId()
 	 */
+	@Override
 	public String getContextId() {
 		return PluginInputContext.CONTEXT_ID;
 	}
 
+	@Override
 	public PDEFormPage getPage() {
 		return (PDEFormPage) getManagedForm().getContainer();
 	}
 
+	@Override
 	public boolean isEditable() {
 		return getPage().getPDEEditor().getAggregateModel().isEditable();
 	}

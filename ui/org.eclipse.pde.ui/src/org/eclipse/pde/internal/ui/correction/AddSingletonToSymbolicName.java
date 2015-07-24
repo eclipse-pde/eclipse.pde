@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2008 IBM Corporation and others.
+ *  Copyright (c) 2005, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -26,18 +26,21 @@ public class AddSingletonToSymbolicName extends AbstractManifestMarkerResolution
 		fisDirective = directive;
 	}
 
+	@Override
 	public String getDescription() {
 		if (fisDirective)
 			return PDEUIMessages.AddSingleon_dir_desc;
 		return PDEUIMessages.AddSingleon_att_desc;
 	}
 
+	@Override
 	public String getLabel() {
 		if (fisDirective)
 			return PDEUIMessages.AddSingleon_dir_label;
 		return PDEUIMessages.AddSingleon_att_label;
 	}
 
+	@Override
 	protected void createChange(BundleModel model) {
 		IBundle bundle = model.getBundle();
 		if (bundle instanceof Bundle) {

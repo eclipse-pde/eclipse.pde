@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,6 +49,7 @@ public class SchemaIncludesSection extends TableSection {
 	private TableViewer fViewer;
 
 	class PDEProjectFilter extends ViewerFilter {
+		@Override
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
 			if (element instanceof IProject) {
 				try {
@@ -68,6 +69,7 @@ public class SchemaIncludesSection extends TableSection {
 		getSection().setDescription(PDEUIMessages.SchemaIncludesSection_description);
 	}
 
+	@Override
 	public void createClient(Section section, FormToolkit toolkit) {
 		Composite container = createClientContainer(section, 2, toolkit);
 		createViewerPartControl(container, SWT.MULTI, 2, toolkit);
@@ -85,6 +87,7 @@ public class SchemaIncludesSection extends TableSection {
 		initialize();
 	}
 
+	@Override
 	protected void buttonSelected(int index) {
 		if (index == 0)
 			handleNewInclude();
@@ -92,6 +95,7 @@ public class SchemaIncludesSection extends TableSection {
 			handleRemoveInclude();
 	}
 
+	@Override
 	protected void selectionChanged(IStructuredSelection selection) {
 		getPage().getManagedForm().fireSelectionChanged(this, selection);
 		getPage().getPDEEditor().setSelection(selection);
@@ -101,6 +105,7 @@ public class SchemaIncludesSection extends TableSection {
 		getTablePart().setButtonEnabled(1, object instanceof ISchemaInclude);
 	}
 
+	@Override
 	public void dispose() {
 		ISchema schema = getSchema();
 		if (schema != null)
@@ -109,6 +114,7 @@ public class SchemaIncludesSection extends TableSection {
 		super.dispose();
 	}
 
+	@Override
 	public void modelChanged(IModelChangedEvent e) {
 		int changeType = e.getChangeType();
 		if (changeType == IModelChangedEvent.WORLD_CHANGED) {
@@ -127,6 +133,7 @@ public class SchemaIncludesSection extends TableSection {
 		}
 	}
 
+	@Override
 	public boolean doGlobalAction(String actionId) {
 		if (actionId.equals(ActionFactory.DELETE.getId())) {
 			handleRemoveInclude();
@@ -223,6 +230,7 @@ public class SchemaIncludesSection extends TableSection {
 		return unlisted;
 	}
 
+	@Override
 	protected void handleDoubleClick(IStructuredSelection selection) {
 		Object object = selection.getFirstElement();
 		if (object instanceof ISchemaInclude) {
@@ -249,6 +257,7 @@ public class SchemaIncludesSection extends TableSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#refresh()
 	 */
+	@Override
 	public void refresh() {
 		getTablePart().setButtonEnabled(0, getSchema().isEditable());
 		getTablePart().setButtonEnabled(1, false);

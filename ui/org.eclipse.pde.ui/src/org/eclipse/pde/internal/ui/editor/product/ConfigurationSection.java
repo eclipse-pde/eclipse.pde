@@ -66,6 +66,7 @@ public class ConfigurationSection extends PDESection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
 	 */
+	@Override
 	protected void createClient(Section section, FormToolkit toolkit) {
 
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
@@ -91,6 +92,7 @@ public class ConfigurationSection extends PDESection {
 		fTabFolder.setSelectionBackground(new Color[] {selectedColor, toolkit.getColors().getBackground()}, new int[] {100}, true);
 
 		fTabFolder.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (fCustomEntry.isDirty())
 					fCustomEntry.commit();
@@ -105,6 +107,7 @@ public class ConfigurationSection extends PDESection {
 		fDefault.setLayoutData(gd);
 		fDefault.setEnabled(isEditable());
 		fDefault.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (!fBlockChanges) {
 					boolean selected = fDefault.getSelection();
@@ -128,6 +131,7 @@ public class ConfigurationSection extends PDESection {
 		fCustomEntry = new FormEntry(client, toolkit, PDEUIMessages.ConfigurationSection_file, PDEUIMessages.ConfigurationSection_browse, isEditable(), 35); //
 		BidiUtils.applyBidiProcessing(fCustomEntry.getText(), StructuredTextTypeHandlerFactory.FILE);
 		fCustomEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
+			@Override
 			public void textValueChanged(FormEntry entry) {
 				if (!fBlockChanges) {
 					IConfigurationFileInfo info = getConfigurationFileInfo();
@@ -137,10 +141,12 @@ public class ConfigurationSection extends PDESection {
 				}
 			}
 
+			@Override
 			public void browseButtonSelected(FormEntry entry) {
 				handleBrowse();
 			}
 
+			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				handleOpen();
 			}
@@ -157,6 +163,7 @@ public class ConfigurationSection extends PDESection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
 	 */
+	@Override
 	public void dispose() {
 		IProductModel model = getModel();
 		if (model != null) {
@@ -181,6 +188,7 @@ public class ConfigurationSection extends PDESection {
 		}
 	}
 
+	@Override
 	public void refresh() {
 		fBlockChanges = true;
 		fLastTab = fTabFolder.getSelectionIndex();
@@ -218,16 +226,19 @@ public class ConfigurationSection extends PDESection {
 		return (IProductModel) getPage().getPDEEditor().getAggregateModel();
 	}
 
+	@Override
 	public void commit(boolean onSave) {
 		fCustomEntry.commit();
 		super.commit(onSave);
 	}
 
+	@Override
 	public void cancelEdit() {
 		fCustomEntry.cancelEdit();
 		super.cancelEdit();
 	}
 
+	@Override
 	public boolean canPaste(Clipboard clipboard) {
 		Display d = getSection().getDisplay();
 		Control c = d.getFocusControl();
@@ -256,6 +267,7 @@ public class ConfigurationSection extends PDESection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#modelChanged(org.eclipse.pde.core.IModelChangedEvent)
 	 */
+	@Override
 	public void modelChanged(IModelChangedEvent e) {
 		// No need to call super, handling world changed event here
 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {

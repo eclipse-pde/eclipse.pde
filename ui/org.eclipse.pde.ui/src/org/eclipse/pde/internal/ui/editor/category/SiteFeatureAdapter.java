@@ -1,5 +1,5 @@
 /******************************************************************************* 
-* Copyright (c) 2009 EclipseSource and others. All rights reserved. This
+* Copyright (c) 2009, 2015 EclipseSource and others. All rights reserved. This
 * program and the accompanying materials are made available under the terms of
 * the Eclipse Public License v1.0 which accompanies this distribution, and is
 * available at http://www.eclipse.org/legal/epl-v10.html
@@ -29,6 +29,7 @@ public class SiteFeatureAdapter implements Serializable, IWritable {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IWritable#write(java.lang.String, java.io.PrintWriter)
 	 */
+	@Override
 	public void write(String indent, PrintWriter writer) {
 		feature.write(indent, writer);
 	}
@@ -39,6 +40,7 @@ public class SiteFeatureAdapter implements Serializable, IWritable {
 	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof SiteFeatureAdapter) {
 			SiteFeatureAdapter adapter = (SiteFeatureAdapter) obj;
@@ -59,6 +61,7 @@ public class SiteFeatureAdapter implements Serializable, IWritable {
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		if (feature.getId() == null) {
 			return super.hashCode();

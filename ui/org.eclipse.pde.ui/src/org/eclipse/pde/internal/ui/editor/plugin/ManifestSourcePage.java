@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2013 IBM Corporation and others.
+ * Copyright (c) 2003, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -92,6 +92,7 @@ public class ManifestSourcePage extends XMLSourcePage {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 		 */
+		@Override
 		public Object[] getChildren(Object parent) {
 			PluginModelBase model = (PluginModelBase) getInputContext().getModel();
 
@@ -126,6 +127,7 @@ public class ManifestSourcePage extends XMLSourcePage {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
 		 */
+		@Override
 		public Object getParent(Object element) {
 			if (element instanceof IDocumentElementNode)
 				return ((IDocumentElementNode) element).getParentNode();
@@ -135,6 +137,7 @@ public class ManifestSourcePage extends XMLSourcePage {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
 		 */
+		@Override
 		public boolean hasChildren(Object element) {
 			if (element instanceof IPluginBase) {
 				return ((IDocumentElementNode) element).getChildNodes().length > 0;
@@ -145,6 +148,7 @@ public class ManifestSourcePage extends XMLSourcePage {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 		 */
+		@Override
 		public Object[] getElements(Object inputElement) {
 			if (inputElement instanceof IPluginModelBase) {
 				return new Object[] {((IPluginModelBase) inputElement).getPluginBase()};

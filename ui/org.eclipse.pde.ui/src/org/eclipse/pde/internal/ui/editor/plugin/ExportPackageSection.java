@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2013 IBM Corporation and others.
+ *  Copyright (c) 2005, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -60,6 +60,7 @@ public class ExportPackageSection extends TableSection {
 	private static final int CALCULATE_USE_INDEX = 3;
 
 	class ExportPackageContentProvider extends DefaultTableProvider {
+		@Override
 		public Object[] getElements(Object parent) {
 			if (fHeader == null) {
 				Bundle bundle = (Bundle) getBundle();
@@ -449,6 +450,7 @@ public class ExportPackageSection extends TableSection {
 				final Collection<?> pckgs = fHeader == null ? new Vector<Object>() : fHeader.getPackageNames();
 				final boolean allowJava = "true".equals(getBundle().getHeader(ICoreConstants.ECLIPSE_JREBUNDLE)); //$NON-NLS-1$
 				Runnable runnable = new Runnable() {
+					@Override
 					public void run() {
 						ArrayList<IPackageFragment> elements = new ArrayList<IPackageFragment>();
 						ArrayList<IPackageFragment> conditional = new ArrayList<IPackageFragment>();

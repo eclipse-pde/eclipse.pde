@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2014 IBM Corporation and others.
+ * Copyright (c) 2003, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,11 +54,13 @@ public class PDEFormEditorContributor extends MultiPageEditorActionBarContributo
 			this.id = id;
 		}
 
+		@Override
 		public void run() {
 			fEditor.performGlobalAction(id);
 			updateSelectableActions(fEditor.getSelection());
 		}
 
+		@Override
 		public void update() {
 			getActionBars().updateActionBars();
 		}
@@ -90,6 +92,7 @@ public class PDEFormEditorContributor extends MultiPageEditorActionBarContributo
 			setActionDefinitionId(ActionFactory.CUT.getCommandId());
 		}
 
+		@Override
 		public void selectionChanged(ISelection selection) {
 			setEnabled(isEditable() && fEditor.canCut(selection));
 		}
@@ -104,6 +107,7 @@ public class PDEFormEditorContributor extends MultiPageEditorActionBarContributo
 			setActionDefinitionId(ActionFactory.COPY.getCommandId());
 		}
 
+		@Override
 		public void selectionChanged(ISelection selection) {
 			setEnabled(fEditor.canCopy(selection));
 		}
@@ -118,6 +122,7 @@ public class PDEFormEditorContributor extends MultiPageEditorActionBarContributo
 			setActionDefinitionId(ActionFactory.PASTE.getCommandId());
 		}
 
+		@Override
 		public void selectionChanged(ISelection selection) {
 			setEnabled(isEditable() && fEditor.canPasteFromClipboard());
 		}
@@ -136,11 +141,13 @@ public class PDEFormEditorContributor extends MultiPageEditorActionBarContributo
 		public SaveAction() {
 		}
 
+		@Override
 		public void run() {
 			if (fEditor != null)
 				PDEPlugin.getActivePage().saveEditor(fEditor, false);
 		}
 
+		@Override
 		public void update() {
 			setEnabled(fEditor != null ? fEditor.isDirty() : false);
 		}
@@ -150,11 +157,13 @@ public class PDEFormEditorContributor extends MultiPageEditorActionBarContributo
 		public RevertAction() {
 		}
 
+		@Override
 		public void run() {
 			if (fEditor != null)
 				fEditor.doRevert();
 		}
 
+		@Override
 		public void update() {
 			setEnabled(fEditor != null ? fEditor.isDirty() : false);
 		}
@@ -195,15 +204,19 @@ public class PDEFormEditorContributor extends MultiPageEditorActionBarContributo
 		mng.add(fSaveAction);
 	}
 
+	@Override
 	public void contributeToMenu(IMenuManager mm) {
 	}
 
+	@Override
 	public void contributeToStatusLine(IStatusLineManager slm) {
 	}
 
+	@Override
 	public void contributeToToolBar(IToolBarManager tbm) {
 	}
 
+	@Override
 	public void contributeToCoolBar(ICoolBarManager cbm) {
 	}
 
@@ -253,6 +266,7 @@ public class PDEFormEditorContributor extends MultiPageEditorActionBarContributo
 		addGlobalAction(ActionFactory.REVERT.getId(), fRevertAction);
 	}
 
+	@Override
 	public void setActiveEditor(IEditorPart targetEditor) {
 		if (targetEditor instanceof PDESourcePage) {
 			// Fixing the 'goto line' problem -
@@ -272,6 +286,7 @@ public class PDEFormEditorContributor extends MultiPageEditorActionBarContributo
 		updateSelectableActions(fEditor.getSelection());
 	}
 
+	@Override
 	public void setActivePage(IEditorPart newEditor) {
 		if (fEditor == null)
 			return;
@@ -302,6 +317,7 @@ public class PDEFormEditorContributor extends MultiPageEditorActionBarContributo
 		return null;
 	}
 
+	@Override
 	public void init(IActionBars bars) {
 		super.init(bars);
 		makeActions();

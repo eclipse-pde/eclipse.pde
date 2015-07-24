@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -30,6 +30,7 @@ public abstract class WizardNode implements IWizardNode {
 
 	protected abstract IBasePluginWizard createWizard() throws CoreException;
 
+	@Override
 	public void dispose() {
 		if (wizard != null) {
 			wizard.dispose();
@@ -41,10 +42,12 @@ public abstract class WizardNode implements IWizardNode {
 		return wizardElement;
 	}
 
+	@Override
 	public Point getExtent() {
 		return new Point(-1, -1);
 	}
 
+	@Override
 	public IWizard getWizard() {
 		if (wizard != null)
 			return wizard; // we've already created it
@@ -65,6 +68,7 @@ public abstract class WizardNode implements IWizardNode {
 		return wizard;
 	}
 
+	@Override
 	public boolean isContentCreated() {
 		return wizard != null;
 	}

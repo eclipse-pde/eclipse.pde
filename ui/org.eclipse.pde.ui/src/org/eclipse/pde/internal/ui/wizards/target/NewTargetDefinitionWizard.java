@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,6 +30,7 @@ public class NewTargetDefinitionWizard extends BasicNewResourceWizard {
 	IPath fInitialPath = null;
 	IPath fFilePath = null;
 
+	@Override
 	public void addPages() {
 		ftargetCreationPage = new TargetCreationPage("profile"); //$NON-NLS-1$
 		fPage = new TargetDefinitionWizardPage("profile", getSelection()); //$NON-NLS-1$
@@ -38,6 +39,7 @@ public class NewTargetDefinitionWizard extends BasicNewResourceWizard {
 		addPage(fPage);
 	}
 
+	@Override
 	public boolean performFinish() {
 		try {
 			int option = fPage.getInitializationOption();
@@ -75,12 +77,14 @@ public class NewTargetDefinitionWizard extends BasicNewResourceWizard {
 		return true;
 	}
 
+	@Override
 	public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
 		super.init(workbench, currentSelection);
 		setWindowTitle(PDEUIMessages.NewTargetProfileWizard_title);
 		setNeedsProgressMonitor(true);
 	}
 
+	@Override
 	protected void initializeDefaultPageImageDescriptor() {
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_TARGET_WIZ);
 	}

@@ -80,14 +80,17 @@ public class LauncherSection extends PDESection {
 		private void addEntryFormListener() {
 			IActionBars actionBars = getPage().getPDEEditor().getEditorSite().getActionBars();
 			setFormEntryListener(new FormEntryAdapter(LauncherSection.this, actionBars) {
+				@Override
 				public void textValueChanged(FormEntry entry) {
 					getLauncherInfo().setIconPath(fIconId, entry.getValue());
 				}
 
+				@Override
 				public void browseButtonSelected(FormEntry entry) {
 					handleBrowse((IconEntry) entry);
 				}
 
+				@Override
 				public void linkActivated(HyperlinkEvent e) {
 					openImage(IconEntry.this.getValue());
 				}
@@ -107,6 +110,7 @@ public class LauncherSection extends PDESection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
 	 */
+	@Override
 	public void createClient(Section section, FormToolkit toolkit) {
 
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
@@ -125,6 +129,7 @@ public class LauncherSection extends PDESection {
 		IActionBars actionBars = getPage().getPDEEditor().getEditorSite().getActionBars();
 		fNameEntry = new FormEntry(container, toolkit, PDEUIMessages.LauncherSection_launcherName, null, false);
 		fNameEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
+			@Override
 			public void textValueChanged(FormEntry entry) {
 				getLauncherInfo().setLauncherName(entry.getValue());
 			}
@@ -145,6 +150,7 @@ public class LauncherSection extends PDESection {
 		fTabFolder.setSelectionBackground(new Color[] {selectedColor, toolkit.getColors().getBackground()}, new int[] {100}, true);
 
 		fTabFolder.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateTabSelection();
 			}
@@ -174,6 +180,7 @@ public class LauncherSection extends PDESection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
 	 */
+	@Override
 	public void dispose() {
 		IProductModel model = getModel();
 		if (model != null) {
@@ -226,6 +233,7 @@ public class LauncherSection extends PDESection {
 			final int index = i;
 			// Create validator
 			fMultipleWinIconValidator[index] = new TextValidator(getManagedForm(), ientry.getText(), getProject(), true) {
+				@Override
 				protected boolean validateControl() {
 					return validateMultipleWinIcon(ientry, index);
 				}
@@ -234,6 +242,7 @@ public class LauncherSection extends PDESection {
 			fMultipleWinIconValidator[index].setEnabled(false);
 			// Validate on modify
 			ientry.getText().addModifyListener(new ModifyListener() {
+				@Override
 				public void modifyText(ModifyEvent e) {
 					fMultipleWinIconValidator[index].validate();
 				}
@@ -247,6 +256,7 @@ public class LauncherSection extends PDESection {
 		td.colspan = 3;
 		fIcoButton.setLayoutData(td);
 		fIcoButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				boolean selected = fIcoButton.getSelection();
 				getLauncherInfo().setUseWinIcoFile(selected);
@@ -258,6 +268,7 @@ public class LauncherSection extends PDESection {
 		final IconEntry ientry = new IconEntry(comp, toolkit, PDEUIMessages.LauncherSection_file, ILauncherInfo.P_ICO_PATH);
 		// Create validator
 		fSingleWinIconValidator = new TextValidator(getManagedForm(), ientry.getText(), getProject(), true) {
+			@Override
 			protected boolean validateControl() {
 				return validateSingleWinIcon(ientry);
 			}
@@ -331,6 +342,7 @@ public class LauncherSection extends PDESection {
 		return comp;
 	}
 
+	@Override
 	public void refresh() {
 		ILauncherInfo info = getLauncherInfo();
 		fNameEntry.setValue(info.getLauncherName(), true);
@@ -400,6 +412,7 @@ public class LauncherSection extends PDESection {
 		return (IProductModel) getPage().getPDEEditor().getAggregateModel();
 	}
 
+	@Override
 	public void commit(boolean onSave) {
 		fNameEntry.commit();
 		for (int i = 0; i < fIcons.size(); i++)
@@ -407,6 +420,7 @@ public class LauncherSection extends PDESection {
 		super.commit(onSave);
 	}
 
+	@Override
 	public void cancelEdit() {
 		fNameEntry.cancelEdit();
 		for (int i = 0; i < fIcons.size(); i++)
@@ -466,6 +480,7 @@ public class LauncherSection extends PDESection {
 		return "bmp"; //$NON-NLS-1$
 	}
 
+	@Override
 	public boolean canPaste(Clipboard clipboard) {
 		Display d = getSection().getDisplay();
 		return (d.getFocusControl() instanceof Text);
@@ -495,6 +510,7 @@ public class LauncherSection extends PDESection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#modelChanged(org.eclipse.pde.core.IModelChangedEvent)
 	 */
+	@Override
 	public void modelChanged(IModelChangedEvent e) {
 		// No need to call super, handling world changed event here
 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {

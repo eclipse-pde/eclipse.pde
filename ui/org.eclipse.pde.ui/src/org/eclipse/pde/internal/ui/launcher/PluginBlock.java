@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,6 +47,7 @@ public class PluginBlock extends AbstractPluginBlock {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.launcher.AbstractPluginBlock#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration, boolean)
 	 */
+	@Override
 	public void initializeFrom(ILaunchConfiguration config, boolean enableTable) throws CoreException {
 
 		if (fLaunchConfig != null && fLaunchConfig.equals(config) && fIsEnabled == enableTable) {
@@ -136,10 +137,12 @@ public class PluginBlock extends AbstractPluginBlock {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.launcher.AbstractPluginBlock#isEnabled()
 	 */
+	@Override
 	protected boolean isEnabled() {
 		return fIsEnabled;
 	}
 
+	@Override
 	protected void savePluginState(ILaunchConfigurationWorkingCopy config) {
 		// If the table is populated, store what is checked.  If we are lazy loading and need to init, store the default checkstate
 		if (isEnabled() || fInitDefaultCheckState) {
@@ -201,6 +204,7 @@ public class PluginBlock extends AbstractPluginBlock {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.launcher.AbstractPluginBlock#addRequiredPlugins()
 	 */
+	@Override
 	protected void addRequiredPlugins() {
 		// Check that the application or product we are launching has its requirements included
 		try {
@@ -221,6 +225,7 @@ public class PluginBlock extends AbstractPluginBlock {
 		super.addRequiredPlugins();
 	}
 
+	@Override
 	protected LaunchValidationOperation createValidationOperation() {
 		return new EclipsePluginValidationOperation(fLaunchConfig);
 	}

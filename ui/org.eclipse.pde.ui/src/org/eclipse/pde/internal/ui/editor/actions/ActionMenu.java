@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2013 IBM Corporation and others.
+ *  Copyright (c) 2007, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -37,6 +37,7 @@ public class ActionMenu extends Action implements IMenuCreator {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.Action#run()
 	 */
+	@Override
 	public void run() {
 		if (!fActions.isEmpty())
 			fActions.get(0).run();
@@ -45,6 +46,7 @@ public class ActionMenu extends Action implements IMenuCreator {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.IMenuCreator#dispose()
 	 */
+	@Override
 	public void dispose() {
 		if (fMenu != null) {
 			fMenu.dispose();
@@ -55,6 +57,7 @@ public class ActionMenu extends Action implements IMenuCreator {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets.Control)
 	 */
+	@Override
 	public Menu getMenu(Control parent) {
 		if (fMenu != null)
 			fMenu.dispose();
@@ -69,6 +72,7 @@ public class ActionMenu extends Action implements IMenuCreator {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets.Menu)
 	 */
+	@Override
 	public Menu getMenu(Menu parent) {
 		return null;
 	}
@@ -81,6 +85,7 @@ public class ActionMenu extends Action implements IMenuCreator {
 	public void updateActionOrder(final List<String> orderedLauncherIds) {
 		if (!fActions.isEmpty()) {
 			Collections.sort(fActions, new Comparator<LauncherAction>() {
+				@Override
 				public int compare(LauncherAction o1, LauncherAction o2) {
 					// Entries in the recent launcher list go first
 					String id1 = o1.getConfigurationElement().getAttribute("id"); //$NON-NLS-1$

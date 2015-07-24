@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,6 +47,7 @@ public class ConfigurationAreaBlock extends BaseBlock {
 		fUseDefaultLocationButton.setLayoutData(gd);
 		fUseDefaultLocationButton.setText(PDEUIMessages.ConfigurationTab_useDefaultLoc);
 		fUseDefaultLocationButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				boolean useDefaultArea = fUseDefaultLocationButton.getSelection();
 				if (useDefaultArea)
@@ -62,6 +63,7 @@ public class ConfigurationAreaBlock extends BaseBlock {
 
 		createText(group, PDEUIMessages.ConfigurationTab_configLog, 20);
 		fLocationText.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				if (!fUseDefaultLocationButton.getSelection()) {
 					// As the user types, save the text and restore it if default button is toggled
@@ -132,14 +134,17 @@ public class ConfigurationAreaBlock extends BaseBlock {
 		configuration.setAttribute(IPDELauncherConstants.CONFIG_LOCATION, location);
 	}
 
+	@Override
 	protected String getName() {
 		return PDEUIMessages.ConfigurationAreaBlock_name;
 	}
 
+	@Override
 	protected boolean isFile() {
 		return false;
 	}
 
+	@Override
 	public String validate() {
 		if (fUseDefaultLocationButton.getSelection())
 			return null;

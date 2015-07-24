@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -67,6 +67,7 @@ public class ContentSection extends SectionPart {
 		fEditor.getTargetChangedListener().setContentTree(fContentGroup);
 		fContentGroup.addTargetChangedListener(fEditor.getTargetChangedListener());
 		fContentGroup.addTargetChangedListener(new ITargetChangedListener() {
+			@Override
 			public void contentsChanged(ITargetDefinition definition, Object source, boolean resolve, boolean forceResolve) {
 				markDirty();
 			}
@@ -80,6 +81,7 @@ public class ContentSection extends SectionPart {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#refresh()
 	 */
+	@Override
 	public void refresh() {
 		// Use the change listener as it can check if we are resolved, resolving, or cancelled bug 264908
 		fEditor.getTargetChangedListener().contentsChanged(getTarget(), this, false, false);

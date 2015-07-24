@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,6 +57,7 @@ public class OSGiSettingsTab extends AbstractLauncherTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
 		container.setLayout(new GridLayout());
@@ -73,6 +74,7 @@ public class OSGiSettingsTab extends AbstractLauncherTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		fJREBlock.setDefaults(configuration);
 		fConfigurationBlock.setDefaults(configuration, false);
@@ -81,6 +83,7 @@ public class OSGiSettingsTab extends AbstractLauncherTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		try {
 			fInitializing = true;
@@ -94,6 +97,7 @@ public class OSGiSettingsTab extends AbstractLauncherTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		fJREBlock.performApply(configuration);
 		fConfigurationBlock.performApply(configuration);
@@ -103,6 +107,7 @@ public class OSGiSettingsTab extends AbstractLauncherTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
+	@Override
 	public String getName() {
 		return PDEUIMessages.EquinoxSettingsTab_name;
 	}
@@ -111,6 +116,7 @@ public class OSGiSettingsTab extends AbstractLauncherTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getImage()
 	 */
+	@Override
 	public Image getImage() {
 		return fImage;
 	}
@@ -119,6 +125,7 @@ public class OSGiSettingsTab extends AbstractLauncherTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#dispose()
 	 */
+	@Override
 	public void dispose() {
 		if (fImage != null)
 			fImage.dispose();
@@ -128,6 +135,7 @@ public class OSGiSettingsTab extends AbstractLauncherTab {
 	 * (non-Javadoc)
 	 * @see org.eclipse.pde.ui.launcher.AbstractLauncherTab#validateTab()
 	 */
+	@Override
 	public void validateTab() {
 	}
 
@@ -135,6 +143,7 @@ public class OSGiSettingsTab extends AbstractLauncherTab {
 	 * (non-Javadoc)
 	 * @see org.eclipse.pde.ui.launcher.AbstractLauncherTab#updateLaunchConfigurationDialog()
 	 */
+	@Override
 	public void updateLaunchConfigurationDialog() {
 		if (!fInitializing)
 			super.updateLaunchConfigurationDialog();
@@ -143,6 +152,7 @@ public class OSGiSettingsTab extends AbstractLauncherTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getId()
 	 */
+	@Override
 	public String getId() {
 		return IPDELauncherConstants.TAB_OSGI_SETTINGS_ID;
 	}

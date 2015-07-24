@@ -153,6 +153,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 	 */
 	public PluginsView() {
 		fPropertyListener = new IPropertyChangeListener() {
+			@Override
 			public void propertyChange(PropertyChangeEvent event) {
 				String property = event.getProperty();
 				if (property.equals(IPreferenceConstants.PROP_SHOW_OBJECTS)) {
@@ -207,6 +208,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 		hookContextMenu();
 		hookDoubleClickAction();
 		fTreeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent e) {
 				handleSelectionChanged(e.getSelection());
 			}
@@ -578,6 +580,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 		MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {
+			@Override
 			public void menuAboutToShow(IMenuManager manager) {
 				PluginsView.this.fillContextMenu(manager);
 			}
@@ -715,6 +718,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 		final File file = localFile;
 		final boolean result[] = new boolean[1];
 		BusyIndicator.showWhile(fTreeViewer.getTree().getDisplay(), new Runnable() {
+			@Override
 			public void run() {
 				// Open file using shell.
 				String path = file.getAbsolutePath();
@@ -779,6 +783,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 
 	private void hookDoubleClickAction() {
 		fTreeViewer.addDoubleClickListener(new IDoubleClickListener() {
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				handleDoubleClick();
 			}
@@ -836,11 +841,13 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 		setContentDescription(NLS.bind(PDEUIMessages.PluginsView_description, visible, total));
 	}
 
+	@Override
 	public void modelsChanged(final PluginModelDelta delta) {
 		if (fTreeViewer == null || fTreeViewer.getTree().isDisposed())
 			return;
 
 		fTreeViewer.getTree().getDisplay().asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				int kind = delta.getKind();
 				if (fTreeViewer.getTree().isDisposed())
@@ -897,6 +904,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 	 */
 	protected IShowInSource getShowInSource() {
 		return new IShowInSource() {
+			@Override
 			public ShowInContext getShowInContext() {
 				ArrayList<IResource> resourceList = new ArrayList<IResource>();
 				IStructuredSelection selection = (IStructuredSelection) fTreeViewer.getSelection();
@@ -924,6 +932,7 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 	 */
 	protected IShowInTargetList getShowInTargetList() {
 		return new IShowInTargetList() {
+			@Override
 			public String[] getShowInTargetIds() {
 				return new String[] {JavaUI.ID_PACKAGES, IPageLayout.ID_PROJECT_EXPLORER};
 			}
@@ -936,32 +945,39 @@ public class PluginsView extends ViewPart implements IPluginModelListener {
 	private IDeferredWorkbenchAdapter getDeferredTreeRoot() {
 		return new IDeferredWorkbenchAdapter() {
 
+			@Override
 			public void fetchDeferredChildren(Object object, IElementCollector collector, IProgressMonitor monitor) {
 				Object[] bases = getChildren(object);
 				collector.add(bases, monitor);
 				monitor.done();
 			}
 
+			@Override
 			public ISchedulingRule getRule(Object object) {
 				return null;
 			}
 
+			@Override
 			public boolean isContainer() {
 				return true;
 			}
 
+			@Override
 			public Object[] getChildren(Object o) {
 				return PDECore.getDefault().getModelManager().getAllModels();
 			}
 
+			@Override
 			public ImageDescriptor getImageDescriptor(Object object) {
 				return null;
 			}
 
+			@Override
 			public String getLabel(Object o) {
 				return PDEUIMessages.PluginsView_deferredLabel0;
 			}
 
+			@Override
 			public Object getParent(Object o) {
 				return null;
 			}

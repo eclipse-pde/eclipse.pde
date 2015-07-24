@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,6 +50,7 @@ public class ProductExportWizard extends BaseExportWizard {
 		fProject = project;
 	}
 
+	@Override
 	public void addPages() {
 		fPage = new ProductExportWizardPage(getSelection());
 		addPage(fPage);
@@ -61,10 +62,12 @@ public class ProductExportWizard extends BaseExportWizard {
 		}
 	}
 
+	@Override
 	protected String getSettingsSectionName() {
 		return STORE_SECTION;
 	}
 
+	@Override
 	protected void scheduleExportJob() {
 		FeatureExportInfo info = new FeatureExportInfo();
 		info.toDirectory = fPage.doExportToDirectory();
@@ -122,6 +125,7 @@ public class ProductExportWizard extends BaseExportWizard {
 		return list.toArray(new BundleDescription[list.size()]);
 	}
 
+	@Override
 	protected boolean performPreliminaryChecks() {
 		fProductModel = new WorkspaceProductModel(fPage.getProductFile(), false);
 		try {
@@ -148,6 +152,7 @@ public class ProductExportWizard extends BaseExportWizard {
 		return true;
 	}
 
+	@Override
 	protected boolean confirmDelete() {
 		if (!fPage.doExportToDirectory()) {
 			File zipFile = new File(fPage.getDestination(), fPage.getFileName());
@@ -160,6 +165,7 @@ public class ProductExportWizard extends BaseExportWizard {
 		return true;
 	}
 
+	@Override
 	public boolean canFinish() {
 		return (fPage.getNextPage() != null) ? super.canFinish() : fPage.isPageComplete();
 	}

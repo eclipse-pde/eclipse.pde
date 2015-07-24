@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,10 +45,12 @@ public class BuildPage extends PDEFormPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#getHelpResource()
 	 */
+	@Override
 	protected String getHelpResource() {
 		return IHelpContextIds.BUILD_PAGE;
 	}
 
+	@Override
 	protected void createFormContent(IManagedForm mform) {
 		super.createFormContent(mform);
 		FormToolkit toolkit = mform.getToolkit();
@@ -64,6 +66,7 @@ public class BuildPage extends PDEFormPage {
 		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		fCustomButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				boolean isCustom = fCustomButton.getSelection();
 				IBuildEntry customEntry = getCustomBuildEntry();

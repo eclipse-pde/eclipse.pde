@@ -51,6 +51,7 @@ public class AboutSection extends PDESection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
 	 */
+	@Override
 	protected void createClient(Section section, FormToolkit toolkit) {
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		GridData data = new GridData(GridData.FILL_BOTH);
@@ -71,19 +72,23 @@ public class AboutSection extends PDESection {
 		fImageEntry.setEditable(isEditable());
 		// Create validator
 		fImageEntryValidator = new TextValidator(getManagedForm(), fImageEntry.getText(), getProject(), true) {
+			@Override
 			protected boolean validateControl() {
 				return validateImageEntry();
 			}
 		};
 		fImageEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
+			@Override
 			public void textValueChanged(FormEntry entry) {
 				getAboutInfo().setImagePath(entry.getValue());
 			}
 
+			@Override
 			public void browseButtonSelected(FormEntry entry) {
 				handleBrowse();
 			}
 
+			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				EditorUtilities.openImage(fImageEntry.getValue(), getProduct().getDefiningPluginId());
 			}
@@ -107,6 +112,7 @@ public class AboutSection extends PDESection {
 		fTextEntry.setEditable(isEditable());
 		// Create Text field listener
 		fTextEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
+			@Override
 			public void textValueChanged(FormEntry entry) {
 				getAboutInfo().setText(entry.getValue());
 			}
@@ -141,18 +147,21 @@ public class AboutSection extends PDESection {
 		}
 	}
 
+	@Override
 	public void refresh() {
 		fImageEntry.setValue(getAboutInfo().getImagePath(), true);
 		fTextEntry.setValue(getAboutInfo().getText(), true);
 		super.refresh();
 	}
 
+	@Override
 	public void commit(boolean onSave) {
 		fImageEntry.commit();
 		fTextEntry.commit();
 		super.commit(onSave);
 	}
 
+	@Override
 	public void cancelEdit() {
 		fImageEntry.cancelEdit();
 		fTextEntry.cancelEdit();
@@ -176,6 +185,7 @@ public class AboutSection extends PDESection {
 		return (IProductModel) getPage().getPDEEditor().getAggregateModel();
 	}
 
+	@Override
 	public boolean canPaste(Clipboard clipboard) {
 		Display d = getSection().getDisplay();
 		Control c = d.getFocusControl();
@@ -187,6 +197,7 @@ public class AboutSection extends PDESection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#modelChanged(org.eclipse.pde.core.IModelChangedEvent)
 	 */
+	@Override
 	public void modelChanged(IModelChangedEvent e) {
 		// No need to call super, handling world changed event here
 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
@@ -204,6 +215,7 @@ public class AboutSection extends PDESection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
 	 */
+	@Override
 	public void dispose() {
 		IProductModel model = getModel();
 		if (model != null) {

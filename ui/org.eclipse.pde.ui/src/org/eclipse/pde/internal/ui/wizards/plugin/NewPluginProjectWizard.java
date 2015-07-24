@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -65,14 +65,17 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 		addPage(fMainPage);
 
 		fProjectProvider = new IProjectProvider() {
+			@Override
 			public String getProjectName() {
 				return fMainPage.getProjectName();
 			}
 
+			@Override
 			public IProject getProject() {
 				return fMainPage.getProjectHandle();
 			}
 
+			@Override
 			public IPath getLocationPath() {
 				return fMainPage.getLocationPath();
 			}
@@ -119,6 +122,7 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 			if (!PDECore.getDefault().areModelsInitialized()) {
 				try {
 					getContainer().run(true, true, new IRunnableWithProgress() {
+						@Override
 						public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 							// Target reloaded method clears existing models (which don't exist currently) and inits them with a progress monitor
 							PDECore.getDefault().getModelManager().targetReloaded(monitor);
@@ -150,6 +154,7 @@ public class NewPluginProjectWizard extends NewWizard implements IExecutableExte
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement, java.lang.String, java.lang.Object)
 	 */
+	@Override
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) throws CoreException {
 		fConfig = config;
 	}

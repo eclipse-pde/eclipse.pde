@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -45,6 +45,7 @@ public abstract class NewPluginTemplateWizard extends AbstractNewPluginTemplateW
 	 * 
 	 * @return an array of templates
 	 */
+	@Override
 	public final ITemplateSection[] getTemplateSections() {
 		return sections;
 	}
@@ -53,6 +54,7 @@ public abstract class NewPluginTemplateWizard extends AbstractNewPluginTemplateW
 	 * Implemented by asking templates in this wizard to contribute pages.
 	 *  
 	 */
+	@Override
 	protected final void addAdditionalPages() {
 		// add template pages
 		for (int i = 0; i < sections.length; i++) {

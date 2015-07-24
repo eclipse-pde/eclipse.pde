@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2008 IBM Corporation and others.
+ *  Copyright (c) 2005, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -20,9 +20,11 @@ public class ProductOutlinePage extends FormOutlinePage {
 		super(editor);
 	}
 
+	@Override
 	public void sort(boolean sorting) {
 	}
 
+	@Override
 	protected Object[] getChildren(Object parent) {
 		if (parent instanceof DependenciesPage) {
 			DependenciesPage page = (DependenciesPage) parent;
@@ -34,6 +36,7 @@ public class ProductOutlinePage extends FormOutlinePage {
 		return new Object[0];
 	}
 
+	@Override
 	protected String getParentPageId(Object item) {
 		if (item instanceof IProductPlugin)
 			return DependenciesPage.PLUGIN_ID;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2009 IBM Corporation and others.
+ * Copyright (c) 2003, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,6 +50,7 @@ public class DependencyAnalysisSection extends PDESection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
 	 */
+	@Override
 	protected void createClient(Section section, FormToolkit toolkit) {
 		section.setText(PDEUIMessages.DependencyAnalysisSection_title);
 
@@ -61,6 +62,7 @@ public class DependencyAnalysisSection extends PDESection {
 		formText.setImage("hierarchy", lp.get(PDEPluginImages.DESC_CALLEES)); //$NON-NLS-1$
 		formText.setImage("dependencies", lp.get(PDEPluginImages.DESC_CALLERS)); //$NON-NLS-1$
 		formText.addHyperlinkListener(new HyperlinkAdapter() {
+			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				if (e.getHref().equals("unused")) //$NON-NLS-1$
 					doFindUnusedDependencies();

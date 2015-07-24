@@ -187,6 +187,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 			super(PDEUIMessages.TargetPlatformPreferencePage_LoadDefaultTarget);
 		}
 		public TargetDefinition defaultTarget;
+		@Override
 		public IStatus run(IProgressMonitor monitor) {
 			SubMonitor subMon = SubMonitor.convert(monitor);
 			ITargetPlatformService service = getTargetService();
@@ -306,6 +307,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 		fTableViewer.setLabelProvider(fLabelProvider);
 		fTableViewer.setContentProvider(ArrayContentProvider.getInstance());
 		fTableViewer.addCheckStateListener(new ICheckStateListener() {
+			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				if (event.getChecked()) {
 					fTableViewer.setCheckedElements(new Object[] {event.getElement()});
@@ -317,12 +319,14 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 			}
 		});
 		fTableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				updateButtons();
 				updateDetails();
 			}
 		});
 		fTableViewer.addDoubleClickListener(new IDoubleClickListener() {
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				handleEdit();
 			}
@@ -474,6 +478,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 			};
 			try {
 				dialog.run(true, true, new IRunnableWithProgress() {
+					@Override
 					public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 						if (monitor.isCanceled()) {
 							throw new InterruptedException();
@@ -680,6 +685,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */
+	@Override
 	public void init(IWorkbench workbench) {
 		// ensures default targets are created when page is opened (if not created yet)
 		PluginModelManager manager = PDECore.getDefault().getModelManager();
@@ -852,6 +858,7 @@ public class TargetPlatformPreferencePage extends PreferencePage implements IWor
 										bundleVersion = new Version(bundleVersion.getMajor(), bundleVersion.getMinor(), bundleVersion.getMicro());
 										if (platformOsgiVersion.compareTo(bundleVersion) < 0) {
 											Display.getDefault().syncExec(new Runnable() {
+												@Override
 												public void run() {
 													MessageDialog.openWarning(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.TargetPlatformPreferencePage2_28, PDEUIMessages.TargetPlatformPreferencePage2_10);
 												}

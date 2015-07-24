@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2008, 2012 IBM Corporation and others.
+ *  Copyright (c) 2008, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -82,6 +82,7 @@ public class RuntimeInstallJob extends Job {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	protected IStatus run(IProgressMonitor monitor) {
 		try {
 			ProvisioningSession session = ui.getSession();

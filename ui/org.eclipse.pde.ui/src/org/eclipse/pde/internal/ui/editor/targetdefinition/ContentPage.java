@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,6 +45,7 @@ public class ContentPage extends FormPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#createFormContent(org.eclipse.ui.forms.IManagedForm)
 	 */
+	@Override
 	protected void createFormContent(IManagedForm managedForm) {
 		super.createFormContent(managedForm);
 		ScrolledForm form = managedForm.getForm();
@@ -64,6 +65,7 @@ public class ContentPage extends FormPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.editor.FormPage#dispose()
 	 */
+	@Override
 	public void dispose() {
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 		super.dispose();
@@ -78,6 +80,7 @@ public class ContentPage extends FormPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.editor.FormPage#canLeaveThePage()
 	 */
+	@Override
 	public boolean canLeaveThePage() {
 		((TargetEditor) getEditor()).setDirty(isDirty());
 		return true;

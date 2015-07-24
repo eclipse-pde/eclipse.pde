@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 eXXcellent solutions gmbh, EclipseSource Corporation
+ * Copyright (c) 2009, 2015 eXXcellent solutions gmbh, EclipseSource Corporation
  * and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -24,6 +24,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 
 public class PluginValidationStatusHandler implements IStatusHandler {
+	@Override
 	public Object handleStatus(IStatus status, Object source) throws CoreException {
 		if (status.getCode() == EclipsePluginValidationOperation.CREATE_EXTENSION_ERROR_CODE)
 			return createExtensionError((String) source);
@@ -43,6 +44,7 @@ public class PluginValidationStatusHandler implements IStatusHandler {
 		final int[] result = new int[1];
 		final Display display = LauncherUtilsStatusHandler.getDisplay();
 		display.syncExec(new Runnable() {
+			@Override
 			public void run() {
 				PluginStatusDialog dialog = new PluginStatusDialog(display.getActiveShell());
 				dialog.showCancelButton(true);

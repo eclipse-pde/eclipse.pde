@@ -133,6 +133,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		Composite comp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH, 0, 0);
 
@@ -142,6 +143,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 
 		fNameText = SWTFactory.createSingleText(nameComp, 1);
 		fNameText.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				String name = fNameText.getText().trim();
 				if (name.length() == 0) {
@@ -202,11 +204,13 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 
 	private void initializeListeners() {
 		ITargetChangedListener listener = new ITargetChangedListener() {
+			@Override
 			public void contentsChanged(ITargetDefinition definition, Object source, boolean resolve, boolean forceResolve) {
 				boolean setCancelled = false;
 				if (forceResolve || (resolve && !definition.isResolved())) {
 					try {
 						getContainer().run(true, true, new IRunnableWithProgress() {
+							@Override
 							public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 								getTargetDefinition().resolve(new ResolutionProgressMonitor(monitor));
 								if (monitor.isCanceled()) {
@@ -256,6 +260,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 					if (!definition.isResolved()) {
 						try {
 							getContainer().run(true, true, new IRunnableWithProgress() {
+								@Override
 								public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 									getTargetDefinition().resolve(new ResolutionProgressMonitor(monitor));
 									if (monitor.isCanceled()) {
@@ -347,6 +352,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 
 		fOSCombo = SWTFactory.createCombo(group, SWT.SINGLE | SWT.BORDER, 1, fOSChoices.toArray(new String[fOSChoices.size()]));
 		fOSCombo.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				getTargetDefinition().setOS(getModelValue(fOSCombo.getText()));
 			}
@@ -356,6 +362,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 
 		fWSCombo = SWTFactory.createCombo(group, SWT.SINGLE | SWT.BORDER, 1, fWSChoices.toArray(new String[fWSChoices.size()]));
 		fWSCombo.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				getTargetDefinition().setWS(getModelValue(fWSCombo.getText()));
 			}
@@ -365,6 +372,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 
 		fArchCombo = SWTFactory.createCombo(group, SWT.SINGLE | SWT.BORDER, 1, fArchChoices.toArray(new String[fArchChoices.size()]));
 		fArchCombo.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				getTargetDefinition().setArch(getModelValue(fArchCombo.getText()));
 			}
@@ -374,6 +382,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 
 		fNLCombo = SWTFactory.createCombo(group, SWT.SINGLE | SWT.BORDER, 1, fNLChoices.toArray(new String[fNLChoices.size()]));
 		fNLCombo.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				String value = fNLCombo.getText();
 				int index = value.indexOf("-"); //$NON-NLS-1$
@@ -487,6 +496,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 
 		fNamedJREsCombo = SWTFactory.createCombo(group, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY, 1, VMUtil.getVMInstallNames());
 		fNamedJREsCombo.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				getTargetDefinition().setJREContainer(JavaRuntime.newJREContainerPath(VMUtil.getVMInstall(fNamedJREsCombo.getText())));
 			}
@@ -503,6 +513,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 
 		fExecEnvsCombo = SWTFactory.createCombo(group, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY, 1, fExecEnvChoices.toArray(new String[fExecEnvChoices.size()]));
 		fExecEnvsCombo.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				getTargetDefinition().setJREContainer(JavaRuntime.newJREContainerPath(VMUtil.getExecutionEnvironment(fExecEnvsCombo.getText())));
 			}
@@ -535,6 +546,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 
 		fProgramArgs = SWTFactory.createText(programGroup, SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL, 1, 200, 60, GridData.FILL_BOTH);
 		fProgramArgs.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				getTargetDefinition().setProgramArguments(fProgramArgs.getText().trim());
 			}
@@ -553,6 +565,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 
 		fVMArgs = SWTFactory.createText(vmGroup, SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL, 1, 200, 60, GridData.FILL_BOTH);
 		fVMArgs.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				getTargetDefinition().setVMArguments(fVMArgs.getText().trim());
 			}
@@ -646,6 +659,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 		fElementViewer.getControl().setLayoutData(gd);
 		fElementViewer.getControl().setFont(container.getFont());
 		fElementViewer.setContentProvider(new DefaultTableProvider() {
+			@Override
 			public Object[] getElements(Object inputElement) {
 				ITargetDefinition target = getTargetDefinition();
 				if (target != null) {
@@ -668,6 +682,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 			}
 		});
 		fElementViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				updateImpButtons();
 			}
@@ -851,6 +866,7 @@ public class TargetDefinitionContentPage extends TargetDefinitionPage {
 	 * @see org.eclipse.jface.dialogs.DialogPage#setVisible(boolean)
 	 */
 
+	@Override
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
 		if (visible) {

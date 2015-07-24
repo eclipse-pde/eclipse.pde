@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,6 +32,7 @@ public class OSGiLaunchShortcut extends AbstractLaunchShortcut {
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchShortcut#launch(org.eclipse.jface.viewers.ISelection, java.lang.String)
 	 */
+	@Override
 	public void launch(ISelection selection, String mode) {
 		launch(mode);
 	}
@@ -40,6 +41,7 @@ public class OSGiLaunchShortcut extends AbstractLaunchShortcut {
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchShortcut#launch(org.eclipse.ui.IEditorPart, java.lang.String)
 	 */
+	@Override
 	public void launch(IEditorPart editor, String mode) {
 		launch(mode);
 	}
@@ -48,6 +50,7 @@ public class OSGiLaunchShortcut extends AbstractLaunchShortcut {
 	 * (non-Javadoc)
 	 * @see org.eclipse.pde.ui.launcher.AbstractLaunchShortcut#getLaunchConfigurationTypeName()
 	 */
+	@Override
 	protected String getLaunchConfigurationTypeName() {
 		return IPDELauncherConstants.OSGI_CONFIGURATION_TYPE;
 	}
@@ -60,6 +63,7 @@ public class OSGiLaunchShortcut extends AbstractLaunchShortcut {
 	 * </p>
 	 * @see org.eclipse.pde.ui.launcher.AbstractLaunchShortcut#initializeConfiguration(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	protected void initializeConfiguration(ILaunchConfigurationWorkingCopy configuration) {
 		OSGiFrameworkManager manager = PDELaunchingPlugin.getDefault().getOSGiFrameworkManager();
 		manager.getDefaultInitializer().initialize(configuration);
@@ -69,6 +73,7 @@ public class OSGiLaunchShortcut extends AbstractLaunchShortcut {
 	 * (non-Javadoc)
 	 * @see org.eclipse.pde.ui.launcher.AbstractLaunchShortcut#isGoodMatch(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	protected boolean isGoodMatch(ILaunchConfiguration configuration) {
 		return true;
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2011 IBM Corporation and others.
+ *  Copyright (c) 2005, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -34,6 +34,7 @@ public abstract class AbstractLauncherTab extends AbstractLaunchConfigurationTab
 	 * @param span the span of the label
 	 * @deprecated
 	 */
+	@Deprecated
 	protected void createStartingSpace(Composite parent, int span) {
 		Label label = new Label(parent, SWT.NULL);
 		GridData data = new GridData();
@@ -47,6 +48,7 @@ public abstract class AbstractLauncherTab extends AbstractLaunchConfigurationTab
 	 * @return <code>true</code> if the tab is valid, <code>false</code> otherwise
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public boolean isValid(ILaunchConfiguration config) {
 		return getErrorMessage() == null;
 	}
@@ -54,12 +56,14 @@ public abstract class AbstractLauncherTab extends AbstractLaunchConfigurationTab
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#activated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#deactivated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void deactivated(ILaunchConfigurationWorkingCopy workingCopy) {
 	}
 
@@ -68,6 +72,7 @@ public abstract class AbstractLauncherTab extends AbstractLaunchConfigurationTab
 	 * 
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#updateLaunchConfigurationDialog()
 	 */
+	@Override
 	public void updateLaunchConfigurationDialog() {
 		validateTab();
 		super.updateLaunchConfigurationDialog();
@@ -76,6 +81,7 @@ public abstract class AbstractLauncherTab extends AbstractLaunchConfigurationTab
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#scheduleUpdateJob()
 	 */
+	@Override
 	public void scheduleUpdateJob() {
 		super.scheduleUpdateJob();
 	}

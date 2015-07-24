@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -49,6 +49,7 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 		createClient(getSection(), formPage.getEditor().getToolkit());
 	}
 
+	@Override
 	public void commit(boolean onSave) {
 		if (isDirty() == false)
 			return;
@@ -65,11 +66,13 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 		super.commit(onSave);
 	}
 
+	@Override
 	public void cancelEdit() {
 		fVersionText.cancelEdit();
 		super.cancelEdit();
 	}
 
+	@Override
 	public void createClient(Section section, FormToolkit toolkit) {
 		Composite container = toolkit.createComposite(section);
 		container.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 2));
@@ -80,10 +83,12 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 
 		fVersionText = new FormEntry(container, toolkit, PDEUIMessages.ManifestEditor_MatchSection_version, null, false);
 		fVersionText.setFormEntryListener(new FormEntryAdapter(this, getPage().getEditor().getEditorSite().getActionBars()) {
+			@Override
 			public void textValueChanged(FormEntry text) {
 				applyVersion(text.getValue());
 			}
 
+			@Override
 			public void textDirty(FormEntry text) {
 				if (fBlockChanges)
 					return;
@@ -106,6 +111,7 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 		fMatchCombo.add(PDEUIMessages.ManifestEditor_MatchSection_greater);
 		fMatchCombo.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fMatchCombo.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (!fBlockChanges) {
 					applyMatch(fMatchCombo.getSelectionIndex());
@@ -126,6 +132,7 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 	private void createReexportButton(FormToolkit toolkit, Composite container) {
 		fReexportButton = toolkit.createButton(container, PDEUIMessages.ManifestEditor_MatchSection_reexport, SWT.CHECK);
 		fReexportButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (!fBlockChanges && fCurrentImport instanceof IPluginImport) {
 					try {
@@ -145,6 +152,7 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 	private void createOptionalButton(FormToolkit toolkit, Composite container) {
 		fOptionalButton = toolkit.createButton(container, PDEUIMessages.ManifestEditor_MatchSection_optional, SWT.CHECK);
 		fOptionalButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (fBlockChanges)
 					return;
@@ -187,6 +195,7 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 		return fMatchCombo.getSelectionIndex();
 	}
 
+	@Override
 	public void dispose() {
 		IModel model = (IModel) getPage().getModel();
 		if (model instanceof IModelChangeProvider)
@@ -200,6 +209,7 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 			((IModelChangeProvider) model).addModelChangedListener(this);
 	}
 
+	@Override
 	public void modelChanged(IModelChangedEvent e) {
 		if (e.getChangeType() == IModelChangedEvent.REMOVE) {
 			Object obj = e.getChangedObjects()[0];
@@ -214,6 +224,7 @@ public class MatchSection extends PDESection implements IPartSelectionListener {
 		}
 	}
 
+	@Override
 	public void selectionChanged(IFormPart part, ISelection selection) {
 		IStructuredSelection ssel = (IStructuredSelection) selection;
 		if (ssel.size() == 1) {

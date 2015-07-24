@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,6 +28,7 @@ public class PluginXMLConfiguration extends XMLConfiguration {
 		super(colorManager, page);
 	}
 
+	@Override
 	public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
 		if (sourceViewer.isEditable() && fContentAssistant == null) {
 			fContentAssistProcessor = new XMLContentAssistProcessor(fSourcePage);
@@ -43,12 +44,14 @@ public class PluginXMLConfiguration extends XMLConfiguration {
 		return fContentAssistant;
 	}
 
+	@Override
 	public void dispose() {
 		if (fContentAssistProcessor != null)
 			fContentAssistProcessor.dispose();
 		super.dispose();
 	}
 
+	@Override
 	public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType) {
 		if (fTextHover == null && fSourcePage != null)
 			fTextHover = new PluginXMLTextHover(fSourcePage);

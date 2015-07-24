@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,6 +33,7 @@ public class PDEStorageDocumentProvider extends StorageDocumentProvider {
 
 	// we need to override this method when dealing with IURIEditorInput's...
 	// is there a better way to do this?
+	@Override
 	protected boolean setDocumentContent(IDocument document, IEditorInput editorInput, String encoding) throws CoreException {
 		boolean set = super.setDocumentContent(document, editorInput, encoding);
 		if (!set) {
@@ -47,6 +48,7 @@ public class PDEStorageDocumentProvider extends StorageDocumentProvider {
 		return set;
 	}
 
+	@Override
 	protected void setupDocument(Object element, IDocument document) {
 		if (document != null && fSetupParticipant != null) {
 			fSetupParticipant.setup(document);
@@ -56,6 +58,7 @@ public class PDEStorageDocumentProvider extends StorageDocumentProvider {
 	/*
 	 * @see AbstractDocumentProvider#createAnnotationModel(Object)
 	 */
+	@Override
 	protected IAnnotationModel createAnnotationModel(Object element) throws CoreException {
 		if (element instanceof IAdaptable) {
 			IAdaptable input = (IAdaptable) element;

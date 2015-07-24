@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -44,6 +44,7 @@ public class URLSection extends TableSection {
 	private Image fUrlImage;
 
 	class URLContentProvider extends DefaultContentProvider implements IStructuredContentProvider {
+		@Override
 		public Object[] getElements(Object input) {
 			IFeature feature = (IFeature) input;
 			IFeatureURL featureUrl = feature.getURL();
@@ -56,6 +57,7 @@ public class URLSection extends TableSection {
 
 	class URLLabelProvider extends LabelProvider {
 
+		@Override
 		public Image getImage(Object obj) {
 			if (obj instanceof IFeatureURLElement) {
 				return fUrlImage;
@@ -74,10 +76,12 @@ public class URLSection extends TableSection {
 		getSection().setDescription(PDEUIMessages.FeatureEditor_URLSection_desc);
 	}
 
+	@Override
 	public void commit(boolean onSave) {
 		super.commit(onSave);
 	}
 
+	@Override
 	public void createClient(Section section, FormToolkit toolkit) {
 		Composite container = createClientContainer(section, 2, toolkit);
 		GridLayout layout = (GridLayout) container.getLayout();
@@ -94,11 +98,13 @@ public class URLSection extends TableSection {
 		initialize();
 	}
 
+	@Override
 	protected void buttonSelected(int index) {
 		if (index == 0)
 			handleNew();
 	}
 
+	@Override
 	public void dispose() {
 		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		if (model != null)
@@ -106,6 +112,7 @@ public class URLSection extends TableSection {
 		super.dispose();
 	}
 
+	@Override
 	protected void fillContextMenu(IMenuManager manager) {
 		IModel model = (IModel) getPage().getModel();
 		ISelection selection = fUrlViewer.getSelection();
@@ -183,9 +190,11 @@ public class URLSection extends TableSection {
 		}
 	}
 
+	@Override
 	public boolean doGlobalAction(String actionId) {
 		if (actionId.equals(ActionFactory.DELETE.getId())) {
 			BusyIndicator.showWhile(fUrlViewer.getTable().getDisplay(), new Runnable() {
+				@Override
 				public void run() {
 					handleDelete();
 				}
@@ -204,6 +213,7 @@ public class URLSection extends TableSection {
 		}
 		if (actionId.equals(ActionFactory.SELECT_ALL.getId())) {
 			BusyIndicator.showWhile(fUrlViewer.getTable().getDisplay(), new Runnable() {
+				@Override
 				public void run() {
 					handleSelectAll();
 				}
@@ -213,6 +223,7 @@ public class URLSection extends TableSection {
 		return false;
 	}
 
+	@Override
 	protected void selectionChanged(IStructuredSelection selection) {
 		getPage().getPDEEditor().setSelection(selection);
 	}
@@ -224,6 +235,7 @@ public class URLSection extends TableSection {
 		model.addModelChangedListener(this);
 	}
 
+	@Override
 	public void modelChanged(IModelChangedEvent e) {
 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
 			markStale();
@@ -256,6 +268,7 @@ public class URLSection extends TableSection {
 	private void makeActions() {
 		IModel model = (IModel) getPage().getModel();
 		fNewAction = new Action() {
+			@Override
 			public void run() {
 				handleNew();
 			}
@@ -264,8 +277,10 @@ public class URLSection extends TableSection {
 		fNewAction.setEnabled(model.isEditable());
 
 		fDeleteAction = new Action() {
+			@Override
 			public void run() {
 				BusyIndicator.showWhile(fUrlViewer.getTable().getDisplay(), new Runnable() {
+					@Override
 					public void run() {
 						handleDelete();
 					}
@@ -276,11 +291,13 @@ public class URLSection extends TableSection {
 		fDeleteAction.setEnabled(model.isEditable());
 	}
 
+	@Override
 	public void setFocus() {
 		if (fUrlViewer != null)
 			fUrlViewer.getTable().setFocus();
 	}
 
+	@Override
 	public void refresh() {
 		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		IFeature feature = model.getFeature();
@@ -288,6 +305,7 @@ public class URLSection extends TableSection {
 		super.refresh();
 	}
 
+	@Override
 	public boolean canPaste(Clipboard clipboard) {
 		ModelDataTransfer modelTransfer = ModelDataTransfer.getInstance();
 		Object[] objects = (Object[]) clipboard.getContents(modelTransfer);
@@ -301,6 +319,7 @@ public class URLSection extends TableSection {
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(Object,
 	 *      Object[])
 	 */
+	@Override
 	protected boolean canPaste(Object target, Object[] objects) {
 		for (int i = 0; i < objects.length; i++) {
 			if (!(objects[i] instanceof FeatureURLElement))
@@ -309,6 +328,7 @@ public class URLSection extends TableSection {
 		return true;
 	}
 
+	@Override
 	protected void doPaste() {
 		Clipboard clipboard = getPage().getPDEEditor().getClipboard();
 		ModelDataTransfer modelTransfer = ModelDataTransfer.getInstance();
@@ -322,6 +342,7 @@ public class URLSection extends TableSection {
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste(Object,
 	 *      Object[])
 	 */
+	@Override
 	protected void doPaste(Object target, Object[] objects) {
 		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		if (!model.isEditable()) {

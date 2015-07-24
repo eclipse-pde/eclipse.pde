@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2012 IBM Corporation and others.
+ *  Copyright (c) 2006, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -48,6 +48,7 @@ public class TypeContentProposalProvider extends TypePackageCompletionProcessor 
 		/* (non-Javadoc)
 		 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 		 */
+		@Override
 		public int compare(Object arg0, Object arg1) {
 			String proposalSortKey1 = ((IContentProposal) arg0).getLabel();
 			String proposalSortKey2 = ((IContentProposal) arg1).getLabel();
@@ -58,6 +59,7 @@ public class TypeContentProposalProvider extends TypePackageCompletionProcessor 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.fieldassist.IContentProposalProvider#getProposals(java.lang.String, int)
 	 */
+	@Override
 	public IContentProposal[] getProposals(String contents, int position) {
 		// Generate a list of proposals based on the current contents
 		ArrayList<Object> currentContentProposals = null;
@@ -96,6 +98,7 @@ public class TypeContentProposalProvider extends TypePackageCompletionProcessor 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.contentassist.TypePackageCompletionProcessor#addProposalToCollection(java.util.Collection, int, int, java.lang.String, java.lang.String, org.eclipse.swt.graphics.Image)
 	 */
+	@Override
 	protected void addProposalToCollection(Collection<Object> collection, int startOffset, int length, String label, String content, Image image) {
 		// Create content proposals for field assist
 		// start offset and length not required

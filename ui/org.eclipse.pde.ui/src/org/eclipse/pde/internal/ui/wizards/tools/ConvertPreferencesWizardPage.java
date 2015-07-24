@@ -50,11 +50,13 @@ public class ConvertPreferencesWizardPage extends WizardPage {
 		this.fOverwrite = overwrite;
 	}
 
+	@Override
 	public void dispose() {
 		super.dispose();
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 	}
 
+	@Override
 	public void createControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -79,6 +81,7 @@ public class ConvertPreferencesWizardPage extends WizardPage {
 		browse.setText(PDEUIMessages.ConvertPreferencesWizardPage_source_browse);
 		browse.setLayoutData(new GridData());
 		browse.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleBrowsePreferences();
 			}
@@ -94,6 +97,7 @@ public class ConvertPreferencesWizardPage extends WizardPage {
 			}
 		}
 		fPreferenceCombo.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent event) {
 				pageChanged(true);
 			}
@@ -118,6 +122,7 @@ public class ConvertPreferencesWizardPage extends WizardPage {
 		}
 
 		fPluginCustomizeCombo.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent event) {
 				pageChanged(true);
 			}
@@ -127,6 +132,7 @@ public class ConvertPreferencesWizardPage extends WizardPage {
 		browse.setText(PDEUIMessages.ConvertPreferencesWizardPage_target_browse);
 		browse.setLayoutData(new GridData());
 		browse.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleBrowsePluginCustomization();
 			}

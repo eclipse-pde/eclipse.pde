@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,10 +44,12 @@ public class TemplateWizardHelper {
 		final String pluginId = config.getNamespaceIdentifier();
 		final String contributionId = config.getAttribute("id"); //$NON-NLS-1$
 		IPluginContribution contribution = new IPluginContribution() {
+			@Override
 			public String getLocalId() {
 				return contributionId;
 			}
 
+			@Override
 			public String getPluginId() {
 				return pluginId;
 			}

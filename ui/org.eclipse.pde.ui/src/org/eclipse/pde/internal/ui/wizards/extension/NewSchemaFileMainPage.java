@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -57,18 +57,22 @@ public class NewSchemaFileMainPage extends BaseExtensionPointMainPage {
 		return true;
 	}
 
+	@Override
 	protected boolean isPluginIdNeeded() {
 		return true;
 	}
 
+	@Override
 	protected boolean isPluginIdFinal() {
 		return isPluginIdFinal;
 	}
 
+	@Override
 	protected boolean isSharedSchemaSwitchNeeded() {
 		return true;
 	}
 
+	@Override
 	public void initializeValues() {
 		if (fContainer != null) {
 			fPluginIdText.setText(fContainer.getProject().getName());
@@ -88,6 +92,7 @@ public class NewSchemaFileMainPage extends BaseExtensionPointMainPage {
 		fPluginBrowseButton.setEnabled(!isPluginIdFinal);
 	}
 
+	@Override
 	protected String validateFieldContents() {
 		String message = validatePluginID();
 		if (message != null)

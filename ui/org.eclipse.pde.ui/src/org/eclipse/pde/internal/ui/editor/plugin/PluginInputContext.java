@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2012 IBM Corporation and others.
+ *  Copyright (c) 2003, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -41,6 +41,7 @@ public class PluginInputContext extends XMLInputContext {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.InputContext#createModel(org.eclipse.ui.IEditorInput)
 	 */
+	@Override
 	protected IBaseModel createModel(IEditorInput input) throws CoreException {
 		PluginModelBase model = null;
 		boolean isReconciling = input instanceof IFileEditorInput;
@@ -72,6 +73,7 @@ public class PluginInputContext extends XMLInputContext {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.InputContext#getId()
 	 */
+	@Override
 	public String getId() {
 		return CONTEXT_ID;
 	}
@@ -80,6 +82,7 @@ public class PluginInputContext extends XMLInputContext {
 		return fIsFragment;
 	}
 
+	@Override
 	protected void reorderInsertEdits(ArrayList<TextEdit> ops) {
 		HashMap<Object, TextEdit> map = getOperationTable();
 		Iterator<Object> iter = map.keySet().iterator();
@@ -130,6 +133,7 @@ public class PluginInputContext extends XMLInputContext {
 		}
 	}
 
+	@Override
 	public void doRevert() {
 		fEditOperations.clear();
 		fOperationTable.clear();
@@ -138,6 +142,7 @@ public class PluginInputContext extends XMLInputContext {
 		model.reconciled(model.getDocument());
 	}
 
+	@Override
 	protected String getPartitionName() {
 		return "___plugin_partition"; //$NON-NLS-1$
 	}

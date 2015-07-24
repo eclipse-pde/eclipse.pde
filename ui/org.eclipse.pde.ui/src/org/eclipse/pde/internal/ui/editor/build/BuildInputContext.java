@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,10 +40,12 @@ public class BuildInputContext extends InputContext {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.context.InputContext#getCharSet()
 	 */
+	@Override
 	protected String getDefaultCharset() {
 		return "ISO-8859-1"; //$NON-NLS-1$
 	}
 
+	@Override
 	protected IBaseModel createModel(IEditorInput input) throws CoreException {
 		BuildModel model = null;
 		if (input instanceof IStorageEditorInput) {
@@ -72,6 +74,7 @@ public class BuildInputContext extends InputContext {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.InputContext#getId()
 	 */
+	@Override
 	public String getId() {
 		return CONTEXT_ID;
 	}
@@ -79,6 +82,7 @@ public class BuildInputContext extends InputContext {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.context.InputContext#addTextEditOperation(java.util.ArrayList, org.eclipse.pde.core.IModelChangedEvent)
 	 */
+	@Override
 	protected void addTextEditOperation(ArrayList<TextEdit> ops, IModelChangedEvent event) {
 		Object[] objects = event.getChangedObjects();
 		for (int i = 0; i < objects.length; i++) {
@@ -129,6 +133,7 @@ public class BuildInputContext extends InputContext {
 		}
 	}
 
+	@Override
 	public void doRevert() {
 		fEditOperations.clear();
 		fOperationTable.clear();
@@ -136,6 +141,7 @@ public class BuildInputContext extends InputContext {
 		model.reconciled(model.getDocument());
 	}
 
+	@Override
 	protected String getPartitionName() {
 		return "___build_partition"; //$NON-NLS-1$
 	}

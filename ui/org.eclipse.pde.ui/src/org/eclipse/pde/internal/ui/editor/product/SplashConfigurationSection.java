@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -73,6 +73,7 @@ public class SplashConfigurationSection extends PDESection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
 	 */
+	@Override
 	protected void createClient(Section section, FormToolkit toolkit) {
 		// Set globals
 		fSection = section;
@@ -92,12 +93,14 @@ public class SplashConfigurationSection extends PDESection {
 	private void createUIListenersFieldTemplateCombo() {
 		// Selection listener
 		fFieldTemplateCombo.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleTemplateComboWidgetSelected();
 			}
 		});
 		// Focus listener
 		fFieldTemplateCombo.getControl().addFocusListener(new FocusAdapter() {
+			@Override
 			public void focusGained(FocusEvent e) {
 				double currentTarget = TargetPlatformHelper.getTargetVersion();
 				if (currentTarget <= 3.2) {
@@ -105,6 +108,7 @@ public class SplashConfigurationSection extends PDESection {
 				}
 			}
 
+			@Override
 			public void focusLost(FocusEvent e) {
 				fControlDecoration.hide();
 			}
@@ -248,6 +252,7 @@ public class SplashConfigurationSection extends PDESection {
 	private void createProgressBarConfig(Composite parent) {
 		fAddBarButton = createButton(parent, fToolkit, PDEUIMessages.SplashSection_progressBar);
 		fAddBarButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				boolean enable = fAddBarButton.getSelection();
 				getSplashInfo().addProgressBar(enable, false);
@@ -276,6 +281,7 @@ public class SplashConfigurationSection extends PDESection {
 		for (int i = 0; i < fBarSpinners.length; i++) {
 			fBarSpinners[i].setEnabled(isEditable());
 			fBarSpinners[i].addModifyListener(new ModifyListener() {
+				@Override
 				public void modifyText(ModifyEvent e) {
 					applySpinners(true);
 				}
@@ -292,6 +298,7 @@ public class SplashConfigurationSection extends PDESection {
 	private void createProgressMessageConfig(Composite parent) {
 		fAddMessageButton = createButton(parent, fToolkit, PDEUIMessages.SplashSection_progressMessage);
 		fAddMessageButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				boolean enable = fAddMessageButton.getSelection();
 				getSplashInfo().addProgressMessage(enable, false);
@@ -315,6 +322,7 @@ public class SplashConfigurationSection extends PDESection {
 		fMessageControls[8] = createLabel(parent, fToolkit, foreground, PDEUIMessages.SplashSection_messageColor);
 		fColorSelector = new ColorSelector(parent);
 		fColorSelector.addListener(new IPropertyChangeListener() {
+			@Override
 			public void propertyChange(PropertyChangeEvent event) {
 				if (!event.getNewValue().equals(event.getOldValue()))
 					applyColor();
@@ -328,6 +336,7 @@ public class SplashConfigurationSection extends PDESection {
 		for (int i = 0; i < fMessageSpinners.length; i++) {
 			fMessageSpinners[i].setEnabled(isEditable());
 			fMessageSpinners[i].addModifyListener(new ModifyListener() {
+				@Override
 				public void modifyText(ModifyEvent e) {
 					applySpinners(false);
 				}
@@ -409,6 +418,7 @@ public class SplashConfigurationSection extends PDESection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#refresh()
 	 */
+	@Override
 	public void refresh() {
 		ISplashInfo info = getSplashInfo();
 		fBlockNotification = true;
@@ -491,6 +501,7 @@ public class SplashConfigurationSection extends PDESection {
 		return (IProductModel) getPage().getPDEEditor().getAggregateModel();
 	}
 
+	@Override
 	public boolean canPaste(Clipboard clipboard) {
 		Display d = getSection().getDisplay();
 		Control c = d.getFocusControl();
@@ -523,6 +534,7 @@ public class SplashConfigurationSection extends PDESection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#modelChanged(org.eclipse.pde.core.IModelChangedEvent)
 	 */
+	@Override
 	public void modelChanged(IModelChangedEvent e) {
 		// No need to call super, handling world changed event here
 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
@@ -556,6 +568,7 @@ public class SplashConfigurationSection extends PDESection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
 	 */
+	@Override
 	public void dispose() {
 		IProductModel model = getModel();
 		if (model != null) {

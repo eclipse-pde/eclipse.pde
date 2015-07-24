@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2012 IBM Corporation and others.
+ *  Copyright (c) 2007, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -33,6 +33,7 @@ public class CalculateUsesAction extends Action {
 		fModel = model;
 	}
 
+	@Override
 	public void run() {
 		Job job = createJob();
 		job.setUser(true);
@@ -43,6 +44,7 @@ public class CalculateUsesAction extends Action {
 	protected Job createJob() {
 		return new WorkspaceJob(PDEUIMessages.CalculateUsesAction_jobName) {
 
+			@Override
 			public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
 				CalculateUsesOperation op = getOperation();
 				try {
@@ -60,8 +62,10 @@ public class CalculateUsesAction extends Action {
 	protected CalculateUsesOperation getOperation() {
 		return new CalculateUsesOperation(fProject, fModel) {
 
+			@Override
 			protected void handleSetUsesDirectives(final Map<String, HashSet<String>> pkgsAndUses) {
 				Display.getDefault().asyncExec(new Runnable() {
+					@Override
 					public void run() {
 						if (pkgsAndUses.isEmpty())
 							return;

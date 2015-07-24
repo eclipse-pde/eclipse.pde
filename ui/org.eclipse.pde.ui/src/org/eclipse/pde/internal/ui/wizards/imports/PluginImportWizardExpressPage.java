@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2012 IBM Corporation and others.
+ *  Copyright (c) 2003, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -44,6 +44,7 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 	private Label fCounterLabel;
 
 	class PluginContentProvider extends DefaultContentProvider implements IStructuredContentProvider {
+		@Override
 		public Object[] getElements(Object parent) {
 			IProject[] projects = PDEPlugin.getWorkspace().getRoot().getProjects();
 			ArrayList<IPluginModelBase> result = new ArrayList<IPluginModelBase>();
@@ -63,20 +64,24 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 			super(mainLabel, buttonLabels);
 		}
 
+		@Override
 		public void updateCounter(int count) {
 			super.updateCounter(count);
 		}
 
+		@Override
 		protected StructuredViewer createStructuredViewer(Composite parent, int style, FormToolkit toolkit) {
 			StructuredViewer viewer = super.createStructuredViewer(parent, style, toolkit);
 			return viewer;
 		}
 
+		@Override
 		protected void elementChecked(Object element, boolean checked) {
 			super.elementChecked(element, checked);
 			pageChanged();
 		}
 
+		@Override
 		protected void handleSelectAll(boolean select) {
 			super.handleSelectAll(select);
 			pageChanged();
@@ -90,6 +95,7 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 		setMessage(PDEUIMessages.ImportWizard_expressPage_desc);
 	}
 
+	@Override
 	public void createControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -108,6 +114,7 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 		createComputationsOption(optionsComp);
 
 		fAddFragmentsButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				pageChanged();
 			}
@@ -132,6 +139,7 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 		selectAll.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		selectAll.setText(PDEUIMessages.WizardCheckboxTablePart_selectAll);
 		selectAll.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fTablePart.handleSelectAll(true);
 				pageChanged();
@@ -141,6 +149,7 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 		deselectAll.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		deselectAll.setText(PDEUIMessages.WizardCheckboxTablePart_deselectAll);
 		deselectAll.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fTablePart.handleSelectAll(false);
 				pageChanged();
@@ -262,6 +271,7 @@ public class PluginImportWizardExpressPage extends BaseImportWizardSecondPage {
 		}
 	}
 
+	@Override
 	protected void refreshPage() {
 		pageChanged();
 	}

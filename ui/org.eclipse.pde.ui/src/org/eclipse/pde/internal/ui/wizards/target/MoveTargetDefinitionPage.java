@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,6 +41,7 @@ public class MoveTargetDefinitionPage extends PDEWizardNewFileCreationPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.WizardNewFileCreationPage#createAdvancedControls(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected void createAdvancedControls(Composite parent) {
 		//Hide the advanced control buttons
 	}
@@ -57,6 +58,7 @@ public class MoveTargetDefinitionPage extends PDEWizardNewFileCreationPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.wizards.PDEWizardNewFileCreationPage#validatePage()
 	 */
+	@Override
 	protected boolean validatePage() {
 		IPath path = getContainerFullPath();
 		if (fFilterList != null && path != null) {
@@ -70,6 +72,7 @@ public class MoveTargetDefinitionPage extends PDEWizardNewFileCreationPage {
 		return super.validatePage();
 	}
 
+	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.MOVE_TARGET_WIZARD);

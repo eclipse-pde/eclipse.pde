@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,18 +33,22 @@ import org.eclipse.ui.dialogs.*;
 public class PluginWorkingSet extends WizardPage implements IWorkingSetPage {
 
 	class ContentProvider extends DefaultContentProvider implements ITreeContentProvider {
+		@Override
 		public Object[] getElements(Object inputElement) {
 			return PluginRegistry.getAllModels();
 		}
 
+		@Override
 		public Object[] getChildren(Object parentElement) {
 			return null;
 		}
 
+		@Override
 		public Object getParent(Object element) {
 			return null;
 		}
 
+		@Override
 		public boolean hasChildren(Object element) {
 			return false;
 		}
@@ -61,6 +65,7 @@ public class PluginWorkingSet extends WizardPage implements IWorkingSetPage {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
 		 */
+		@Override
 		public String getText(Object element) {
 			if (element instanceof IPluginModelBase) {
 				IPluginBase plugin = ((IPluginModelBase) element).getPluginBase();
@@ -75,6 +80,7 @@ public class PluginWorkingSet extends WizardPage implements IWorkingSetPage {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.LabelProvider#getImage(java.lang.Object)
 		 */
+		@Override
 		public Image getImage(Object element) {
 			return PDEPlugin.getDefault().getLabelProvider().getImage(element);
 		}
@@ -82,6 +88,7 @@ public class PluginWorkingSet extends WizardPage implements IWorkingSetPage {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.LabelProvider#dispose()
 		 */
+		@Override
 		public void dispose() {
 			super.dispose();
 			PDEPlugin.getDefault().getLabelProvider().disconnect(this);
@@ -95,6 +102,7 @@ public class PluginWorkingSet extends WizardPage implements IWorkingSetPage {
 			super(parent, treeStyle, filter, true);
 		}
 
+		@Override
 		protected TreeViewer doCreateTreeViewer(Composite parent, int style) {
 			return new CheckboxTreeViewer(parent, style);
 		}
@@ -118,6 +126,7 @@ public class PluginWorkingSet extends WizardPage implements IWorkingSetPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.IWorkingSetPage#finish()
 	 */
+	@Override
 	public void finish() {
 		Object[] checked = fTree.getCheckboxTreeViewer().getCheckedElements();
 		ArrayList<PersistablePluginObject> list = new ArrayList<PersistablePluginObject>();
@@ -141,6 +150,7 @@ public class PluginWorkingSet extends WizardPage implements IWorkingSetPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.IWorkingSetPage#getSelection()
 	 */
+	@Override
 	public IWorkingSet getSelection() {
 		return fWorkingSet;
 	}
@@ -148,6 +158,7 @@ public class PluginWorkingSet extends WizardPage implements IWorkingSetPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.IWorkingSetPage#setSelection(org.eclipse.ui.IWorkingSet)
 	 */
+	@Override
 	public void setSelection(IWorkingSet workingSet) {
 		fWorkingSet = workingSet;
 	}
@@ -155,6 +166,7 @@ public class PluginWorkingSet extends WizardPage implements IWorkingSetPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout());
@@ -168,6 +180,7 @@ public class PluginWorkingSet extends WizardPage implements IWorkingSetPage {
 		fWorkingSetName = new Text(composite, SWT.SINGLE | SWT.BORDER);
 		fWorkingSetName.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fWorkingSetName.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				validatePage();
 			}
@@ -189,6 +202,7 @@ public class PluginWorkingSet extends WizardPage implements IWorkingSetPage {
 		fTree.getCheckboxTreeViewer().setInput(PDECore.getDefault());
 
 		fTree.getCheckboxTreeViewer().addCheckStateListener(new ICheckStateListener() {
+			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				validatePage();
 			}
@@ -203,6 +217,7 @@ public class PluginWorkingSet extends WizardPage implements IWorkingSetPage {
 		selectAllButton.setText(PDEUIMessages.PluginWorkingSet_selectAll_label);
 		selectAllButton.setToolTipText(PDEUIMessages.PluginWorkingSet_selectAll_toolTip);
 		selectAllButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent selectionEvent) {
 				fTree.getCheckboxTreeViewer().setCheckedElements(fTableContentProvider.getElements(fTree.getCheckboxTreeViewer().getInput()));
 				validatePage();
@@ -215,6 +230,7 @@ public class PluginWorkingSet extends WizardPage implements IWorkingSetPage {
 		deselectAllButton.setText(PDEUIMessages.PluginWorkingSet_deselectAll_label);
 		deselectAllButton.setToolTipText(PDEUIMessages.PluginWorkingSet_deselectAll_toolTip);
 		deselectAllButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent selectionEvent) {
 				fTree.getCheckboxTreeViewer().setCheckedElements(new Object[0]);
 				validatePage();
@@ -263,6 +279,7 @@ public class PluginWorkingSet extends WizardPage implements IWorkingSetPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
 	 */
+	@Override
 	public void dispose() {
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 		super.dispose();

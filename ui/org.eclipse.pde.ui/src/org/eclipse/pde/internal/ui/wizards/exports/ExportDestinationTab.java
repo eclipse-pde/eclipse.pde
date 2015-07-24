@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,6 +47,7 @@ public class ExportDestinationTab extends AbstractExportTab {
 		super(page);
 	}
 
+	@Override
 	public Control createControl(Composite parent) {
 		Composite composite = SWTFactory.createComposite(parent, 2, 1, GridData.FILL_HORIZONTAL);
 
@@ -77,6 +78,7 @@ public class ExportDestinationTab extends AbstractExportTab {
 		return composite;
 	}
 
+	@Override
 	protected void initialize(IDialogSettings settings) {
 		String exportType = settings.get(S_EXPORT_TYPE);
 		int exportTypeCode = 1;
@@ -101,6 +103,7 @@ public class ExportDestinationTab extends AbstractExportTab {
 		hookListeners();
 	}
 
+	@Override
 	protected void initializeCombo(IDialogSettings settings, String key, Combo combo) {
 		super.initializeCombo(settings, key, combo);
 		if (!isValidLocation(combo.getText().trim())) // If default value is invalid, make it blank
@@ -121,35 +124,41 @@ public class ExportDestinationTab extends AbstractExportTab {
 
 	protected void hookListeners() {
 		fArchiveFileButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateExportType();
 				fPage.pageChanged();
 			}
 		});
 		fBrowseFile.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				chooseFile(fArchiveCombo, new String[] {"*" + ZIP_EXTENSION}); //$NON-NLS-1$
 			}
 		});
 		fArchiveCombo.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				fPage.pageChanged();
 			}
 		});
 
 		fDirectoryCombo.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				fPage.pageChanged();
 			}
 		});
 
 		fBrowseDirectory.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				chooseDestination(fDirectoryCombo);
 			}
 		});
 
 		fInstallButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateExportType();
 				if (fInstallCombo.getText().trim().length() == 0 && fInstallCombo.getItemCount() > 0) {
@@ -158,11 +167,13 @@ public class ExportDestinationTab extends AbstractExportTab {
 			}
 		});
 		fInstallCombo.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				fPage.pageChanged();
 			}
 		});
 		fBrowseInstall.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				chooseDestination(fInstallCombo);
 			}
@@ -185,6 +196,7 @@ public class ExportDestinationTab extends AbstractExportTab {
 		}
 	}
 
+	@Override
 	protected void saveSettings(IDialogSettings settings) {
 		int type = fDirectoryButton.getSelection() ? 1 : 3;
 		if (fArchiveFileButton.getSelection()) {

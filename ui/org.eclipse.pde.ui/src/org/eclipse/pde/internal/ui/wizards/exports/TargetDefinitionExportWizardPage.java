@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 EclipseSource Corporation and others.
+ * Copyright (c) 2010, 2015 EclipseSource Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -62,6 +62,7 @@ public class TargetDefinitionExportWizardPage extends WizardPage {
 		setMessage(PDEUIMessages.ExportActiveTargetDefinition_message);
 	}
 
+	@Override
 	public void createControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout(1, false);
@@ -86,6 +87,7 @@ public class TargetDefinitionExportWizardPage extends WizardPage {
 
 		fDestinationCombo = SWTFactory.createCombo(parent, SWT.BORDER, 1, null);
 		fDestinationCombo.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				controlChanged();
 			}
@@ -94,6 +96,7 @@ public class TargetDefinitionExportWizardPage extends WizardPage {
 		fBrowseButton = new Button(parent, SWT.PUSH);
 		fBrowseButton.setText(PDEUIMessages.ExportTargetBrowse);
 		fBrowseButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				DirectoryDialog dialog = new DirectoryDialog(getShell());
 				dialog.setText(PDEUIMessages.ExportTargetSelectDestination);

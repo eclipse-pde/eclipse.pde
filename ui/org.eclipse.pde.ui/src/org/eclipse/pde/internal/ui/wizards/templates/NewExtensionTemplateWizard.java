@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -55,11 +55,13 @@ public class NewExtensionTemplateWizard extends Wizard implements IExtensionWiza
 		fSection = section;
 	}
 
+	@Override
 	public void init(IProject project, IPluginModelBase model) {
 		this.fProject = project;
 		this.fModel = model;
 	}
 
+	@Override
 	public void addPages() {
 		fSection.addPages(this);
 		setWindowTitle(fSection.getLabel());
@@ -68,8 +70,10 @@ public class NewExtensionTemplateWizard extends Wizard implements IExtensionWiza
 		}
 	}
 
+	@Override
 	public boolean performFinish() {
 		IRunnableWithProgress operation = new WorkspaceModifyOperation() {
+			@Override
 			public void execute(IProgressMonitor monitor) {
 				try {
 					int totalWork = fSection.getNumberOfWorkUnits();

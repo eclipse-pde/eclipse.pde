@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2014 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -259,6 +259,7 @@ public class TargetContentsGroup {
 			}
 		});
 		fTree.addDoubleClickListener(new IDoubleClickListener() {
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				IStructuredSelection selection = (IStructuredSelection) event.getSelection();
 				Object first = selection.getFirstElement();
@@ -270,6 +271,7 @@ public class TargetContentsGroup {
 			}
 		});
 		fTree.addCheckStateListener(new ICheckStateListener() {
+			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				saveIncludedBundleState();
 				contentChanged();
@@ -278,6 +280,7 @@ public class TargetContentsGroup {
 			}
 		});
 		fTree.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				updateButtons();
 			}
@@ -738,6 +741,7 @@ public class TargetContentsGroup {
 	private List<TargetBundle> getRequiredPlugins(final Collection<TargetBundle> allBundles, final Object[] checkedBundles) {
 		final Set<String> dependencies = new HashSet<String>();
 		IRunnableWithProgress op = new IRunnableWithProgress() {
+			@Override
 			public void run(IProgressMonitor monitor) {
 				try {
 					monitor.beginTask(Messages.TargetContentsGroup_5, 150);
@@ -1194,14 +1198,17 @@ public class TargetContentsGroup {
 	 *
 	 */
 	class TreeContentProvider implements ITreeContentProvider {
+		@Override
 		public Object[] getChildren(Object parentElement) {
 			return getBundleChildren(parentElement);
 		}
 
+		@Override
 		public Object getParent(Object element) {
 			return null;
 		}
 
+		@Override
 		public boolean hasChildren(Object element) {
 			if (fFeaureModeButton.getSelection() && element == OTHER_CATEGORY) {
 				return true;
@@ -1215,6 +1222,7 @@ public class TargetContentsGroup {
 			return false;
 		}
 
+		@Override
 		public Object[] getElements(Object inputElement) {
 			if (inputElement instanceof ITargetDefinition) {
 				List<Object> result = new ArrayList<Object>();
@@ -1265,9 +1273,11 @@ public class TargetContentsGroup {
 			return new Object[] {inputElement};
 		}
 
+		@Override
 		public void dispose() {
 		}
 
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 	}

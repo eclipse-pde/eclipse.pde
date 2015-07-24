@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 IBM Corporation and others.
+ * Copyright (c) 2008, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -87,6 +87,7 @@ public class InternationalizeWizardPluginPage extends InternationalizationWizard
 		/**
 		 * @return the list of available non-selected plug-ins
 		 */
+		@Override
 		public Object[] getElements(Object parent) {
 			return fInternationalizeModelTable.getModels();
 		}
@@ -96,6 +97,7 @@ public class InternationalizeWizardPluginPage extends InternationalizationWizard
 		/**
 		 * @return the list of selected plug-ins
 		 */
+		@Override
 		public Object[] getElements(Object parent) {
 			return fInternationalizeModelTable.getPreSelected();
 		}
@@ -124,6 +126,7 @@ public class InternationalizeWizardPluginPage extends InternationalizationWizard
 		fFilter = new AvailableFilter(fSelected, PDEPlugin.getDefault().getLabelProvider());
 		fAvailableViewer.addFilter(fFilter);
 		fFilterJob = new WorkbenchJob("FilterJob") { //$NON-NLS-1$
+			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				handleFilter();
 				return Status.OK_STATUS;
@@ -152,6 +155,7 @@ public class InternationalizeWizardPluginPage extends InternationalizationWizard
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -183,6 +187,7 @@ public class InternationalizeWizardPluginPage extends InternationalizationWizard
 		fTemplateText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fTemplateText.setText(template != null ? template : NLSFragmentGenerator.PLUGIN_NAME_MACRO + ".nl1"); //$NON-NLS-1$
 		fTemplateText.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				pageChanged();
 			}
@@ -354,6 +359,7 @@ public class InternationalizeWizardPluginPage extends InternationalizationWizard
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModelProviderListener#modelsChanged(org.eclipse.pde.core.IModelProviderEvent)
 	 */
+	@Override
 	public void modelsChanged(IModelProviderEvent event) {
 		fRefreshNeeded = true;
 	}
@@ -365,18 +371,21 @@ public class InternationalizeWizardPluginPage extends InternationalizationWizard
 
 	private void addViewerListeners() {
 		fAvailableViewer.addDoubleClickListener(new IDoubleClickListener() {
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				handleAdd();
 			}
 		});
 
 		fSelectedViewer.addDoubleClickListener(new IDoubleClickListener() {
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				handleRemove();
 			}
 		});
 
 		fAvailableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				if (!fBlockSelectionListeners)
 					updateSelectionBasedEnablement(event.getSelection(), true);
@@ -384,6 +393,7 @@ public class InternationalizeWizardPluginPage extends InternationalizationWizard
 		});
 
 		fSelectedViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				if (!fBlockSelectionListeners)
 					updateSelectionBasedEnablement(event.getSelection(), false);
@@ -391,6 +401,7 @@ public class InternationalizeWizardPluginPage extends InternationalizationWizard
 		});
 
 		fFilterText.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				fFilterJob.cancel();
 				fFilterJob.schedule(200);
@@ -417,6 +428,7 @@ public class InternationalizeWizardPluginPage extends InternationalizationWizard
 		fAddButton.setText(PDEUIMessages.ImportWizard_DetailedPage_add);
 		fAddButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fAddButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleAdd();
 			}
@@ -427,6 +439,7 @@ public class InternationalizeWizardPluginPage extends InternationalizationWizard
 		fAddAllButton.setText(PDEUIMessages.ImportWizard_DetailedPage_addAll);
 		fAddAllButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fAddAllButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleAddAll();
 			}
@@ -437,6 +450,7 @@ public class InternationalizeWizardPluginPage extends InternationalizationWizard
 		fRemoveButton.setText(PDEUIMessages.ImportWizard_DetailedPage_remove);
 		fRemoveButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fRemoveButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleRemove();
 			}
@@ -447,6 +461,7 @@ public class InternationalizeWizardPluginPage extends InternationalizationWizard
 		fRemoveAllButton.setText(PDEUIMessages.ImportWizard_DetailedPage_removeAll);
 		fRemoveAllButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fRemoveAllButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleRemoveAll();
 			}
@@ -614,6 +629,7 @@ public class InternationalizeWizardPluginPage extends InternationalizationWizard
 		}
 	}
 
+	@Override
 	public void dispose() {
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 		PDECore.getDefault().getModelManager().getExternalModelManager().removeModelProviderListener(this);
@@ -623,10 +639,12 @@ public class InternationalizeWizardPluginPage extends InternationalizationWizard
 		fBlockSelectionListeners = blockSelectionListeners;
 	}
 
+	@Override
 	public boolean isCurrentPage() {
 		return super.isCurrentPage();
 	}
 
+	@Override
 	public boolean canFlipToNextPage() {
 		if (fSelectedViewer.getTable().getItems().length > 0 && getTemplate().length() > 0) {
 			return true;

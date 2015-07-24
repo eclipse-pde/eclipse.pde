@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2008 IBM Corporation and others.
+ *  Copyright (c) 2005, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -29,6 +29,7 @@ public class MissingResourcePage extends PDEFormPage {
 		super(editor, "missing", PDEUIMessages.MissingResourcePage_missingResource); //$NON-NLS-1$
 	}
 
+	@Override
 	protected void createFormContent(IManagedForm managedForm) {
 		ScrolledForm form = managedForm.getForm();
 		Composite comp = managedForm.getToolkit().createComposite(form);

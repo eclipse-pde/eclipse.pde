@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2009 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -36,23 +36,28 @@ public class FeatureExportWizardPage extends BaseExportWizardPage {
 		setTitle(PDEUIMessages.ExportWizard_Feature_pageTitle);
 	}
 
+	@Override
 	protected Object getInput() {
 		return PDECore.getDefault().getFeatureModelManager();
 	}
 
+	@Override
 	public Object[] getListElements() {
 		FeatureModelManager manager = PDECore.getDefault().getFeatureModelManager();
 		return manager.getWorkspaceModels();
 	}
 
+	@Override
 	protected void hookHelpContext(Control control) {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(control, IHelpContextIds.FEATURE_EXPORT_WIZARD);
 	}
 
+	@Override
 	protected boolean isValidModel(IModel model) {
 		return model instanceof IFeatureModel;
 	}
 
+	@Override
 	protected void createTabs(TabFolder folder, IDialogSettings settings) {
 		super.createTabs(folder, settings);
 		if (fDestinationTab.doExportToDirectory() && fOptionsTab.useJARFormat()) {
@@ -61,6 +66,7 @@ public class FeatureExportWizardPage extends BaseExportWizardPage {
 		}
 	}
 
+	@Override
 	protected void createDestinationTab(TabFolder folder) {
 		fDestinationTab = new FeatureDestinationTab(this);
 		TabItem item = new TabItem(folder, SWT.NONE);
@@ -68,6 +74,7 @@ public class FeatureExportWizardPage extends BaseExportWizardPage {
 		item.setText(PDEUIMessages.ExportWizard_destination);
 	}
 
+	@Override
 	protected void createOptionsTab(TabFolder folder) {
 		fOptionsTab = new FeatureOptionsTab(this);
 		TabItem item = new TabItem(folder, SWT.NONE);
@@ -82,6 +89,7 @@ public class FeatureExportWizardPage extends BaseExportWizardPage {
 		item.setText(PDEUIMessages.AdvancedFeatureExportPage_jnlp);
 	}
 
+	@Override
 	protected IModel findModelFor(IAdaptable object) {
 		IProject project = (IProject) object.getAdapter(IProject.class);
 		if (project != null)
@@ -89,12 +97,14 @@ public class FeatureExportWizardPage extends BaseExportWizardPage {
 		return null;
 	}
 
+	@Override
 	protected void saveSettings(IDialogSettings settings) {
 		super.saveSettings(settings);
 		if (fJNLPTab != null)
 			fJNLPTab.saveSettings(settings);
 	}
 
+	@Override
 	protected String validateTabs() {
 		String message = super.validateTabs();
 		if (message == null && fTabFolder.getItemCount() > 3)
@@ -102,6 +112,7 @@ public class FeatureExportWizardPage extends BaseExportWizardPage {
 		return message;
 	}
 
+	@Override
 	protected void adjustAdvancedTabsVisibility() {
 		adjustJARSigningTabVisibility();
 		adjustJNLPTabVisibility();
@@ -154,6 +165,7 @@ public class FeatureExportWizardPage extends BaseExportWizardPage {
 		return null;
 	}
 
+	@Override
 	public IWizardPage getNextPage() {
 		return doMultiPlatform() ? getWizard().getNextPage(this) : null;
 	}

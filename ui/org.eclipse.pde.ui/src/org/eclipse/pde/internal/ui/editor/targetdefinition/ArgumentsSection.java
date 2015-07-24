@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -96,6 +96,7 @@ public class ArgumentsSection extends SectionPart {
 		fProgramArguments = new FormEntry(programComp, toolkit, PDEUIMessages.ArgumentsSection_0, SWT.MULTI | SWT.WRAP);
 		fProgramArguments.getText().setLayoutData(new GridData(GridData.FILL_BOTH));
 		fProgramArguments.setFormEntryListener(new SimpleFormEntryAdapter(this) {
+			@Override
 			public void textValueChanged(FormEntry entry) {
 				String value = entry.getValue().trim();
 				getTarget().setProgramArguments(value.length() > 0 ? value : null);
@@ -104,6 +105,7 @@ public class ArgumentsSection extends SectionPart {
 		Button variables = toolkit.createButton(programComp, PDEUIMessages.ArgumentsSection_variableButtonTitle, SWT.NONE);
 		variables.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 		variables.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				StringVariableSelectionDialog dialog = new StringVariableSelectionDialog(getSection().getShell());
 				dialog.open();
@@ -125,6 +127,7 @@ public class ArgumentsSection extends SectionPart {
 		fVMArguments = new FormEntry(vmComp, toolkit, PDEUIMessages.ArgumentsSection_1, SWT.MULTI | SWT.WRAP);
 		fVMArguments.getText().setLayoutData(new GridData(GridData.FILL_BOTH));
 		fVMArguments.setFormEntryListener(new SimpleFormEntryAdapter(this) {
+			@Override
 			public void textValueChanged(FormEntry entry) {
 				String value = entry.getValue().trim();
 				getTarget().setVMArguments(value.length() > 0 ? value : null);
@@ -142,6 +145,7 @@ public class ArgumentsSection extends SectionPart {
 		Button vmArgs = toolkit.createButton(buttons, PDEUIMessages.ArgumentsSection_argumentsButtonTitle, SWT.NONE);
 		vmArgs.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 		vmArgs.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				ArgumentsFromContainerSelectionDialog dialog = new ArgumentsFromContainerSelectionDialog(getSection().getShell(), getTarget());
 				if (dialog.open() == Window.OK) {
@@ -160,6 +164,7 @@ public class ArgumentsSection extends SectionPart {
 		variables = toolkit.createButton(buttons, PDEUIMessages.ArgumentsSection_variableButtonTitle, SWT.NONE);
 		variables.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 		variables.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				StringVariableSelectionDialog dialog = new StringVariableSelectionDialog(getSection().getShell());
 				dialog.open();
@@ -184,6 +189,7 @@ public class ArgumentsSection extends SectionPart {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#refresh()
 	 */
+	@Override
 	public void refresh() {
 		fProgramArguments.setValue(getTarget().getProgramArguments(), true);
 		fVMArguments.setValue(getTarget().getVMArguments(), true);
@@ -193,6 +199,7 @@ public class ArgumentsSection extends SectionPart {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#commit(boolean)
 	 */
+	@Override
 	public void commit(boolean onSave) {
 		fProgramArguments.commit();
 		fVMArguments.commit();
@@ -202,6 +209,7 @@ public class ArgumentsSection extends SectionPart {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
 	 */
+	@Override
 	public void dispose() {
 		if (fImage != null)
 			fImage.dispose();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,6 +43,7 @@ public abstract class BaseExportWizardPage extends AbstractExportWizardPage {
 	protected TabFolder fTabFolder;
 
 	class ExportListProvider extends DefaultContentProvider implements IStructuredContentProvider {
+		@Override
 		public Object[] getElements(Object parent) {
 			return getListElements();
 		}
@@ -53,11 +54,13 @@ public abstract class BaseExportWizardPage extends AbstractExportWizardPage {
 			super(label, buttonLabels);
 		}
 
+		@Override
 		public void updateCounter(int count) {
 			super.updateCounter(count);
 			pageChanged();
 		}
 
+		@Override
 		protected void buttonSelected(Button button, int index) {
 			switch (index) {
 				case 0 :
@@ -79,6 +82,7 @@ public abstract class BaseExportWizardPage extends AbstractExportWizardPage {
 		setDescription(PDEUIMessages.ExportWizard_Plugin_description);
 	}
 
+	@Override
 	public void createControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
@@ -154,6 +158,7 @@ public abstract class BaseExportWizardPage extends AbstractExportWizardPage {
 		viewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 		viewer.setComparator(ListUtil.PLUGIN_COMPARATOR);
 		viewer.addDoubleClickListener(new IDoubleClickListener() {
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				if (event.getSource() instanceof CheckboxTableViewer) {
 					IStructuredSelection selection = (IStructuredSelection) event.getSelection();
@@ -218,6 +223,7 @@ public abstract class BaseExportWizardPage extends AbstractExportWizardPage {
 		return fExportPart.getSelection();
 	}
 
+	@Override
 	protected void pageChanged() {
 		if (getMessage() != null)
 			setMessage(null);
@@ -252,6 +258,7 @@ public abstract class BaseExportWizardPage extends AbstractExportWizardPage {
 
 	protected abstract IModel findModelFor(IAdaptable object);
 
+	@Override
 	protected void saveSettings(IDialogSettings settings) {
 		fDestinationTab.saveSettings(settings);
 		fOptionsTab.saveSettings(settings);

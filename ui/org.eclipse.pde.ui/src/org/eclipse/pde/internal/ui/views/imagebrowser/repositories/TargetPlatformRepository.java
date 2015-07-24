@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2012, 2014 Christian Pontesegger and others.
+ *  Copyright (c) 2012, 2015 Christian Pontesegger and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -41,6 +41,7 @@ public class TargetPlatformRepository extends AbstractRepository {
 		fUseCurrent = useCurrent;
 	}
 
+	@Override
 	protected boolean populateCache(final IProgressMonitor monitor) {
 		if (fBundles == null)
 			initialize(monitor);

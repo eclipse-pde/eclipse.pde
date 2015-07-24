@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2008 IBM Corporation and others.
+ *  Copyright (c) 2005, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -25,10 +25,12 @@ public class UpdateClasspathResolution extends AbstractPDEMarkerResolution {
 		super(type);
 	}
 
+	@Override
 	public String getLabel() {
 		return PDEUIMessages.UpdateClasspathResolution_label;
 	}
 
+	@Override
 	public void run(IMarker marker) {
 		IProject project = marker.getResource().getProject();
 		IPluginModelBase model = PluginRegistry.findModel(project);
@@ -38,6 +40,7 @@ public class UpdateClasspathResolution extends AbstractPDEMarkerResolution {
 		}
 	}
 
+	@Override
 	protected void createChange(IBaseModel model) {
 		// handled by run
 	}

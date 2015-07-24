@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2012 IBM Corporation and others.
+ *  Copyright (c) 2005, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -37,6 +37,7 @@ public class FormatOperation implements IRunnableWithProgress {
 		fObjects = objects;
 	}
 
+	@Override
 	public void run(IProgressMonitor mon) throws InvocationTargetException, InterruptedException {
 		mon.beginTask(PDEUIMessages.FormatManifestOperation_task, fObjects.length);
 		for (int i = 0; !mon.isCanceled() && i < fObjects.length; i++) {
@@ -53,6 +54,7 @@ public class FormatOperation implements IRunnableWithProgress {
 
 	public static void format(IFile file, IProgressMonitor mon) {
 		PDEModelUtility.modifyModel(new ModelModification(file) {
+			@Override
 			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
 				if (model instanceof IBundlePluginModelBase) {
 					IBundleModel bundleModel = ((IBundlePluginModelBase) model).getBundleModel();
@@ -65,6 +67,7 @@ public class FormatOperation implements IRunnableWithProgress {
 				}
 			}
 
+			@Override
 			public boolean saveOpenEditor() {
 				return false;
 			}

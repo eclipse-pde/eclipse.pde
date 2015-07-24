@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,16 +43,19 @@ public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration 
 			super(fColorManager);
 		}
 
+		@Override
 		public boolean affectsTextPresentation(String property) {
 			return property.startsWith(IPDEColorConstants.P_HEADER_KEY) || property.startsWith(IPDEColorConstants.P_HEADER_OSGI);
 		}
 
+		@Override
 		protected Token getTokenAffected(PropertyChangeEvent event) {
 			if (event.getProperty().startsWith(IPDEColorConstants.P_HEADER_OSGI))
 				return fToken;
 			return (Token) fDefaultReturnToken;
 		}
 
+		@Override
 		protected void initialize() {
 			fToken = new Token(createTextAttribute(IPDEColorConstants.P_HEADER_OSGI));
 			WordRule rule = new WordRule(new KeywordDetector(), Token.UNDEFINED, true);
@@ -95,10 +98,12 @@ public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration 
 			super(fColorManager);
 		}
 
+		@Override
 		public boolean affectsTextPresentation(String property) {
 			return property.startsWith(IPDEColorConstants.P_HEADER_ASSIGNMENT) || property.startsWith(IPDEColorConstants.P_HEADER_VALUE) || property.startsWith(IPDEColorConstants.P_HEADER_ATTRIBUTES);
 		}
 
+		@Override
 		protected Token getTokenAffected(PropertyChangeEvent event) {
 			String property = event.getProperty();
 			if (property.startsWith(IPDEColorConstants.P_HEADER_ASSIGNMENT))
@@ -108,6 +113,7 @@ public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration 
 			return (Token) fDefaultReturnToken;
 		}
 
+		@Override
 		protected void initialize() {
 			IRule[] rules = new IRule[2];
 			fAssignmentToken = new Token(createTextAttribute(IPDEColorConstants.P_HEADER_ASSIGNMENT));
@@ -144,20 +150,24 @@ public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration 
 	}
 
 	class AssignmentDetector implements IWordDetector {
+		@Override
 		public boolean isWordStart(char c) {
 			return c == ':' || c == '=';
 		}
 
+		@Override
 		public boolean isWordPart(char c) {
 			return false;
 		}
 	}
 
 	class KeywordDetector implements IWordDetector {
+		@Override
 		public boolean isWordStart(char c) {
 			return Character.isJavaIdentifierStart(c);
 		}
 
+		@Override
 		public boolean isWordPart(char c) {
 			return c != ':' && c != '=' && !Character.isSpaceChar(c);
 		}
@@ -178,6 +188,7 @@ public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration 
 		this.fDocumentPartitioning = documentPartitioning;
 	}
 
+	@Override
 	public String[] getConfiguredContentTypes(ISourceViewer sourceViewer) {
 		String[] partitions = ManifestPartitionScanner.PARTITIONS;
 		String[] all = new String[partitions.length + 1];
@@ -186,12 +197,14 @@ public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration 
 		return all;
 	}
 
+	@Override
 	public IAnnotationHover getAnnotationHover(ISourceViewer sourceViewer) {
 		if (fAnnotationHover == null)
 			fAnnotationHover = new AnnotationHover();
 		return fAnnotationHover;
 	}
 
+	@Override
 	public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) {
 		PresentationReconciler reconciler = new PresentationReconciler();
 		reconciler.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
@@ -207,16 +220,19 @@ public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration 
 		return reconciler;
 	}
 
+	@Override
 	public boolean affectsTextPresentation(PropertyChangeEvent event) {
 		String property = event.getProperty();
 		return property.startsWith(IPDEColorConstants.P_HEADER_KEY) || property.startsWith(IPDEColorConstants.P_HEADER_OSGI) || property.startsWith(IPDEColorConstants.P_HEADER_VALUE) || property.startsWith(IPDEColorConstants.P_HEADER_ATTRIBUTES) || property.startsWith(IPDEColorConstants.P_HEADER_ASSIGNMENT);
 	}
 
+	@Override
 	public boolean affectsColorPresentation(PropertyChangeEvent event) {
 		String property = event.getProperty();
 		return property.equals(IPDEColorConstants.P_HEADER_KEY) || property.equals(IPDEColorConstants.P_HEADER_OSGI) || property.equals(IPDEColorConstants.P_HEADER_VALUE) || property.equals(IPDEColorConstants.P_HEADER_ATTRIBUTES) || property.equals(IPDEColorConstants.P_HEADER_ASSIGNMENT);
 	}
 
+	@Override
 	public void adaptToPreferenceChange(PropertyChangeEvent event) {
 		if (affectsColorPresentation(event))
 			fColorManager.handlePropertyChangeEvent(event);
@@ -224,12 +240,14 @@ public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration 
 		fPropertyValueScanner.adaptToPreferenceChange(event);
 	}
 
+	@Override
 	public void dispose() {
 		super.dispose();
 		if (fContentAssistant != null)
 			fContentAssistantProcessor.dispose();
 	}
 
+	@Override
 	public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
 		if (fSourcePage != null && fSourcePage.isEditable()) {
 			if (fContentAssistant == null) {
@@ -241,6 +259,7 @@ public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration 
 				fContentAssistant.addCompletionListener(fContentAssistantProcessor);
 				fContentAssistant.enableAutoInsert(true);
 				fContentAssistant.setInformationControlCreator(new IInformationControlCreator() {
+					@Override
 					public IInformationControl createInformationControl(Shell parent) {
 						return new DefaultInformationControl(parent, false);
 					}
@@ -252,16 +271,19 @@ public class ManifestConfiguration extends ChangeAwareSourceViewerConfiguration 
 		return null;
 	}
 
+	@Override
 	public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType) {
 		if (fTextHover == null && fSourcePage != null)
 			fTextHover = new ManifestTextHover(fSourcePage);
 		return fTextHover;
 	}
 
+	@Override
 	protected int getInfoImplementationType() {
 		return SourceInformationProvider.F_MANIFEST_IMP;
 	}
 
+	@Override
 	public String getConfiguredDocumentPartitioning(ISourceViewer sourceViewer) {
 		if (fDocumentPartitioning != null)
 			return fDocumentPartitioning;

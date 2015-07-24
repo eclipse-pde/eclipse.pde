@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 eXXcellent solutions gmbh, EclipseSource Corporation
+ * Copyright (c) 2009, 2015 eXXcellent solutions gmbh, EclipseSource Corporation
  * and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -34,6 +34,7 @@ public class LaunchTerminationStatusHandler implements IStatusHandler {
 	public static final int OPEN_IN_ERROR_LOG_VIEW = 0;
 	public static final int OPEN_IN_SYSTEM_EDITOR = 1;
 
+	@Override
 	public Object handleStatus(IStatus status, Object source) throws CoreException {
 		if (status.getCode() == 13)
 			handleOtherReasonsFoundInLog((ILaunch) source);
@@ -44,6 +45,7 @@ public class LaunchTerminationStatusHandler implements IStatusHandler {
 
 	private void handleWorkspaceInUse() {
 		Display.getDefault().asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				MessageDialog.openError(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.Launcher_error_title, PDEMessages.Launcher_error_code15);
 			}
@@ -52,6 +54,7 @@ public class LaunchTerminationStatusHandler implements IStatusHandler {
 
 	private void handleOtherReasonsFoundInLog(final ILaunch launch) {
 		Display.getDefault().asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				try {
 					File log = LaunchListener.getMostRecentLogFile(launch.getLaunchConfiguration());

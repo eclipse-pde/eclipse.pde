@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2008 IBM Corporation and others.
+ *  Copyright (c) 2003, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -40,12 +40,14 @@ public class TextAttributeRow extends ExtensionAttributeRow {
 		super(part, att);
 	}
 
+	@Override
 	public void createContents(Composite parent, FormToolkit toolkit, int span) {
 		super.createContents(parent, toolkit, span);
 		createLabel(parent, toolkit);
 		text = toolkit.createText(parent, "", SWT.SINGLE); //$NON-NLS-1$
 		text.setLayoutData(createGridData(span));
 		text.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				if (!blockNotification)
 					markDirty();
@@ -64,6 +66,7 @@ public class TextAttributeRow extends ExtensionAttributeRow {
 	private void createUITextFocusListener() {
 		// Required to enable Ctrl-V paste operations
 		text.addFocusListener(new FocusAdapter() {
+			@Override
 			public void focusGained(FocusEvent e) {
 				ITextSelection selection = new TextSelection(1, 1);
 				part.getPage().getPDEEditor().getContributor().updateSelectableActions(selection);
@@ -84,12 +87,14 @@ public class TextAttributeRow extends ExtensionAttributeRow {
 	 * 
 	 * @see org.eclipse.pde.internal.ui.neweditor.plugin.ExtensionElementEditor#update(org.eclipse.pde.internal.ui.neweditor.plugin.DummyExtensionElement)
 	 */
+	@Override
 	protected void update() {
 		blockNotification = true;
 		text.setText(getValue());
 		blockNotification = false;
 	}
 
+	@Override
 	public void commit() {
 		if (dirty && input != null) {
 			String value = text.getText();
@@ -102,6 +107,7 @@ public class TextAttributeRow extends ExtensionAttributeRow {
 		}
 	}
 
+	@Override
 	public void setFocus() {
 		text.setFocus();
 	}

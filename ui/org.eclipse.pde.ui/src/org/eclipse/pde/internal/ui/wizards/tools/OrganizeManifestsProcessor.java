@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,6 +54,7 @@ public class OrganizeManifestsProcessor extends RefactoringProcessor implements 
 		fProjectList = projects;
 	}
 
+	@Override
 	public RefactoringStatus checkFinalConditions(IProgressMonitor pm, CheckConditionsContext context) throws CoreException, OperationCanceledException {
 		RefactoringStatus status = new RefactoringStatus();
 		for (Iterator<?> i = fProjectList.iterator(); i.hasNext();) {
@@ -63,10 +64,12 @@ public class OrganizeManifestsProcessor extends RefactoringProcessor implements 
 		return status;
 	}
 
+	@Override
 	public RefactoringStatus checkInitialConditions(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		return null;
 	}
 
+	@Override
 	public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		CompositeChange change = new CompositeChange(""); //$NON-NLS-1$
 		change.markAsSynthetic();
@@ -87,6 +90,7 @@ public class OrganizeManifestsProcessor extends RefactoringProcessor implements 
 		final Change[] result = {null, null};
 		final Exception[] ee = new Exception[1];
 		ModelModification modification = new ModelModification(fCurrentProject) {
+			@Override
 			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
 				if (model instanceof IBundlePluginModelBase)
 					try {
@@ -209,22 +213,27 @@ public class OrganizeManifestsProcessor extends RefactoringProcessor implements 
 		}
 	}
 
+	@Override
 	public Object[] getElements() {
 		return fProjectList.toArray();
 	}
 
+	@Override
 	public String getIdentifier() {
 		return getClass().getName();
 	}
 
+	@Override
 	public String getProcessorName() {
 		return PDEUIMessages.OrganizeManifestsWizardPage_title;
 	}
 
+	@Override
 	public boolean isApplicable() throws CoreException {
 		return true;
 	}
 
+	@Override
 	public RefactoringParticipant[] loadParticipants(RefactoringStatus status, SharableParticipants sharedParticipants) throws CoreException {
 		return new RefactoringParticipant[0];
 	}

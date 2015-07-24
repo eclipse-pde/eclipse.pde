@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2008 IBM Corporation and others.
+ *  Copyright (c) 2005, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ import org.eclipse.ui.dialogs.ISelectionStatusValidator;
 
 public class FileValidator implements ISelectionStatusValidator {
 
+	@Override
 	public IStatus validate(Object[] selection) {
 		if (selection.length > 0 && selection[0] instanceof IFile) {
 			return new Status(IStatus.OK, PDEPlugin.getPluginId(), IStatus.OK, "", //$NON-NLS-1$

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2014 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,6 +41,7 @@ public class ProductEditor extends PDELauncherFormEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getEditorID()
 	 */
+	@Override
 	protected String getEditorID() {
 		return IPDEUIConstants.PRODUCT_EDITOR_ID;
 	}
@@ -48,6 +49,7 @@ public class ProductEditor extends PDELauncherFormEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#isSaveAsAllowed()
 	 */
+	@Override
 	public boolean isSaveAsAllowed() {
 		return true;
 	}
@@ -55,6 +57,7 @@ public class ProductEditor extends PDELauncherFormEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getContextIDForSaveAs()
 	 */
+	@Override
 	public String getContextIDForSaveAs() {
 		return ProductInputContext.CONTEXT_ID;
 	}
@@ -62,6 +65,7 @@ public class ProductEditor extends PDELauncherFormEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#createInputContextManager()
 	 */
+	@Override
 	protected InputContextManager createInputContextManager() {
 		return new ProductInputContextManager(this);
 	}
@@ -69,6 +73,7 @@ public class ProductEditor extends PDELauncherFormEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#createResourceContexts(org.eclipse.pde.internal.ui.editor.context.InputContextManager, org.eclipse.ui.IFileEditorInput)
 	 */
+	@Override
 	protected void createResourceContexts(InputContextManager manager, IFileEditorInput input) {
 		manager.putContext(input, new ProductInputContext(this, input, true));
 		manager.monitorFile(input.getFile());
@@ -77,6 +82,7 @@ public class ProductEditor extends PDELauncherFormEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#createSystemFileContexts(org.eclipse.pde.internal.ui.editor.context.InputContextManager, org.eclipse.pde.internal.ui.editor.SystemFileEditorInput)
 	 */
+	@Override
 	protected void createSystemFileContexts(InputContextManager manager, FileStoreEditorInput input) {
 		File file = new File(input.getURI());
 		String name = file.getName();
@@ -95,6 +101,7 @@ public class ProductEditor extends PDELauncherFormEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#createStorageContexts(org.eclipse.pde.internal.ui.editor.context.InputContextManager, org.eclipse.ui.IStorageEditorInput)
 	 */
+	@Override
 	protected void createStorageContexts(InputContextManager manager, IStorageEditorInput input) {
 		if (input.getName().endsWith(".product")) { //$NON-NLS-1$
 			manager.putContext(input, new ProductInputContext(this, input, true));
@@ -104,6 +111,7 @@ public class ProductEditor extends PDELauncherFormEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#createContentOutline()
 	 */
+	@Override
 	protected ISortableContentOutlinePage createContentOutline() {
 		return new ProductOutlinePage(this);
 	}
@@ -111,6 +119,7 @@ public class ProductEditor extends PDELauncherFormEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getInputContext(java.lang.Object)
 	 */
+	@Override
 	protected InputContext getInputContext(Object object) {
 		return fInputContextManager.findContext(ProductInputContext.CONTEXT_ID);
 	}
@@ -118,6 +127,7 @@ public class ProductEditor extends PDELauncherFormEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.editor.FormEditor#addPages()
 	 */
+	@Override
 	protected void addEditorPages() {
 		try {
 			addPage(new OverviewPage(this));
@@ -150,12 +160,14 @@ public class ProductEditor extends PDELauncherFormEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.context.IInputContextListener#contextAdded(org.eclipse.pde.internal.ui.editor.context.InputContext)
 	 */
+	@Override
 	public void editorContextAdded(InputContext context) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.context.IInputContextListener#contextRemoved(org.eclipse.pde.internal.ui.editor.context.InputContext)
 	 */
+	@Override
 	public void contextRemoved(InputContext context) {
 		close(false);
 	}
@@ -163,16 +175,19 @@ public class ProductEditor extends PDELauncherFormEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.context.IInputContextListener#monitoredFileAdded(org.eclipse.core.resources.IFile)
 	 */
+	@Override
 	public void monitoredFileAdded(IFile monitoredFile) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.context.IInputContextListener#monitoredFileRemoved(org.eclipse.core.resources.IFile)
 	 */
+	@Override
 	public boolean monitoredFileRemoved(IFile monitoredFile) {
 		return true;
 	}
 
+	@Override
 	public void contributeToToolbar(IToolBarManager manager) {
 		contributeLaunchersToToolbar(manager);
 		manager.add(getExportAction());
@@ -189,6 +204,7 @@ public class ProductEditor extends PDELauncherFormEditor {
 		return fExportAction;
 	}
 
+	@Override
 	protected ILauncherFormPageHelper getLauncherHelper() {
 		if (fLauncherHelper == null)
 			fLauncherHelper = new ProductLauncherFormPageHelper(this);

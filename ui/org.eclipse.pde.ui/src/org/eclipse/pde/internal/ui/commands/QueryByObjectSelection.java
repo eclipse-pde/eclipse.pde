@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2012 IBM Corporation and others.
+ *  Copyright (c) 2006, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -36,6 +36,7 @@ public class QueryByObjectSelection extends QueryControl {
 		super(csp, comp);
 	}
 
+	@Override
 	protected void createGroupContents(Group parent) {
 		Composite comp = fToolkit.createComposite(parent);
 		GridLayout layout = new GridLayout(2, false);
@@ -55,6 +56,7 @@ public class QueryByObjectSelection extends QueryControl {
 		}
 
 		parent.addDisposeListener(new DisposeListener() {
+			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				if (fSelectionTracker != null) {
 					fSelectionTracker.dispose();
@@ -63,6 +65,7 @@ public class QueryByObjectSelection extends QueryControl {
 		});
 	}
 
+	@Override
 	protected String getName() {
 		return "Query Commands by selected object"; //$NON-NLS-1$
 	}
@@ -76,6 +79,7 @@ public class QueryByObjectSelection extends QueryControl {
 			_selectionService.addSelectionListener(this);
 		}
 
+		@Override
 		public void selectionChanged(IWorkbenchPart part, ISelection selection) {
 			if (selection instanceof IStructuredSelection) {
 				Object selected = ((IStructuredSelection) selection).getFirstElement();
@@ -115,6 +119,7 @@ public class QueryByObjectSelection extends QueryControl {
 		return false;
 	}
 
+	@Override
 	protected Command[] getCommands() {
 		Object objectSelection = fObjectSelection;
 		if (objectSelection == null)
@@ -134,6 +139,7 @@ public class QueryByObjectSelection extends QueryControl {
 		return hitList.toArray(new Command[hitList.size()]);
 	}
 
+	@Override
 	protected void enable(boolean enable) {
 		fGroup.setEnabled(enable);
 		fLabel.setEnabled(enable);

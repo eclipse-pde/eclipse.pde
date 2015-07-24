@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2009 IBM Corporation and others.
+ * Copyright (c) 2003, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,11 +40,13 @@ public class ExtensionsPage extends PDEFormPage {
 			super(ExtensionsPage.this);
 		}
 
+		@Override
 		protected PDESection createMasterSection(IManagedForm managedForm, Composite parent) {
 			fSection = new ExtensionsSection(getPage(), parent);
 			return fSection;
 		}
 
+		@Override
 		protected void registerPages(DetailsPart detailsPart) {
 			detailsPart.setPageLimit(10);
 			// register static page for the extensions
@@ -58,6 +60,7 @@ public class ExtensionsPage extends PDEFormPage {
 			detailsPart.setPageProvider(this);
 		}
 
+		@Override
 		public Object getPageKey(Object object) {
 			if (object instanceof IPluginExtension)
 				return IPluginExtension.class;
@@ -93,6 +96,7 @@ public class ExtensionsPage extends PDEFormPage {
 			return object.getClass();
 		}
 
+		@Override
 		public IDetailsPage getPage(Object object) {
 			if (object instanceof ISchemaElement)
 				return new ExtensionElementDetails(fSection, (ISchemaElement) object);
@@ -115,10 +119,12 @@ public class ExtensionsPage extends PDEFormPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#getHelpResource()
 	 */
+	@Override
 	protected String getHelpResource() {
 		return IHelpContextIds.MANIFEST_PLUGIN_EXTENSIONS;
 	}
 
+	@Override
 	protected void createFormContent(IManagedForm managedForm) {
 		ScrolledForm form = managedForm.getForm();
 		form.setText(PDEUIMessages.ExtensionsPage_title);
@@ -130,6 +136,7 @@ public class ExtensionsPage extends PDEFormPage {
 		super.createFormContent(managedForm);
 	}
 
+	@Override
 	public void updateFormSelection() {
 		super.updateFormSelection();
 		IFormPage page = getPDEEditor().findPage(PluginInputContext.CONTEXT_ID);

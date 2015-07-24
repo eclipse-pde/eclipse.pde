@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2011 IBM Corporation and others.
+ *  Copyright (c) 2011, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -42,6 +42,7 @@ public class NoLineTerminationResolution extends AbstractManifestMarkerResolutio
 	 * 
 	 * <p>The post-condition will be that the manifest ends with a line delimiter.</p>
 	 */
+	@Override
 	protected void createChange(BundleModel model) {
 		if (getType() == AbstractPDEMarkerResolution.REMOVE_TYPE) {
 			// indicates last line is purely whitespace; we need to delete the whitespace.
@@ -66,6 +67,7 @@ public class NoLineTerminationResolution extends AbstractManifestMarkerResolutio
 		}
 	}
 
+	@Override
 	public String getDescription() {
 		if (getType() == AbstractPDEMarkerResolution.REMOVE_TYPE) {
 			return PDEUIMessages.NoLineTerminationResolutionRemove_description;
@@ -73,6 +75,7 @@ public class NoLineTerminationResolution extends AbstractManifestMarkerResolutio
 		return PDEUIMessages.NoLineTerminationResolutionCreate_description;
 	}
 
+	@Override
 	public String getLabel() {
 		if (getType() == AbstractPDEMarkerResolution.REMOVE_TYPE) {
 			return PDEUIMessages.NoLineTerminationResolutionRemove_label;

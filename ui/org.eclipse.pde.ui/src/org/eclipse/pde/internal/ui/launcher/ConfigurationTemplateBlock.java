@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,6 +57,7 @@ public class ConfigurationTemplateBlock extends BaseBlock {
 		gd.horizontalSpan = 2;
 		fGenerateFileButton.setLayoutData(gd);
 		fGenerateFileButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				enableBrowseSection(!fGenerateFileButton.getSelection());
 				boolean generateConfig = fGenerateFileButton.getSelection();
@@ -110,14 +111,17 @@ public class ConfigurationTemplateBlock extends BaseBlock {
 		configuration.setAttribute(IPDELauncherConstants.CONFIG_TEMPLATE_LOCATION, "${target_home}" + File.separatorChar + "configuration" + File.separatorChar + "config.ini"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
+	@Override
 	protected String getName() {
 		return PDEUIMessages.ConfigurationTemplateBlock_name;
 	}
 
+	@Override
 	protected boolean isFile() {
 		return true;
 	}
 
+	@Override
 	protected void handleBrowseWorkspace() {
 		ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(fTab.getControl().getShell(), new WorkbenchLabelProvider(), new WorkbenchContentProvider());
 
@@ -130,6 +134,7 @@ public class ConfigurationTemplateBlock extends BaseBlock {
 		dialog.setTitle(PDEUIMessages.ConfigurationTab_fileSelection);
 		dialog.setMessage(PDEUIMessages.ConfigurationTab_fileDialogMessage);
 		dialog.setValidator(new ISelectionStatusValidator() {
+			@Override
 			public IStatus validate(Object[] selection) {
 				if (selection.length > 0 && selection[0] instanceof IFile)
 					return new Status(IStatus.OK, PDEPlugin.getPluginId(), IStatus.OK, "", null); //$NON-NLS-1$
@@ -168,6 +173,7 @@ public class ConfigurationTemplateBlock extends BaseBlock {
 		return null;
 	}
 
+	@Override
 	protected void handleBrowseFileSystem() {
 		FileDialog dialog = new FileDialog(fTab.getControl().getShell());
 		dialog.setFilterExtensions(new String[] {"*.ini"}); //$NON-NLS-1$
@@ -178,6 +184,7 @@ public class ConfigurationTemplateBlock extends BaseBlock {
 			fLocationText.setText(res);
 	}
 
+	@Override
 	protected String getLocation() {
 		String path = fLocationText.getText().trim();
 		IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
@@ -188,6 +195,7 @@ public class ConfigurationTemplateBlock extends BaseBlock {
 		}
 	}
 
+	@Override
 	public String validate() {
 		if (fGenerateFileButton.getSelection())
 			return null;

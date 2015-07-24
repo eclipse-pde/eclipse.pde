@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 ThoughtWorks, Inc. and others.
+ * Copyright (c) 2009, 2015 ThoughtWorks, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,6 +50,7 @@ public class TestTab extends AbstractLaunchConfigurationTab {
 		this.junitLaunchTab = new JUnitLaunchConfigurationTab();
 	}
 
+	@Override
 	public void createControl(Composite parent) {
 		junitLaunchTab.createControl(parent);
 
@@ -61,6 +62,7 @@ public class TestTab extends AbstractLaunchConfigurationTab {
 	private void createRunInUIThreadGroup(Composite comp) {
 		runInUIThread = new Button(comp, SWT.CHECK);
 		runInUIThread.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateLaunchConfigurationDialog();
 			}
@@ -74,6 +76,7 @@ public class TestTab extends AbstractLaunchConfigurationTab {
 		GridDataFactory.fillDefaults().span(3, 0).applyTo(label);
 	}
 
+	@Override
 	public void initializeFrom(ILaunchConfiguration config) {
 		junitLaunchTab.initializeFrom(config);
 		updateRunInUIThreadGroup(config);
@@ -88,65 +91,80 @@ public class TestTab extends AbstractLaunchConfigurationTab {
 		runInUIThread.setSelection(shouldRunInUIThread);
 	}
 
+	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy config) {
 		junitLaunchTab.performApply(config);
 		boolean selection = runInUIThread.getSelection();
 		config.setAttribute(IPDELauncherConstants.RUN_IN_UI_THREAD, selection);
 	}
 
+	@Override
 	public String getId() {
 		return IPDELauncherConstants.TAB_TEST_ID;
 	}
 
+	@Override
 	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
 		junitLaunchTab.activated(workingCopy);
 	}
 
+	@Override
 	public boolean canSave() {
 		return junitLaunchTab.canSave();
 	}
 
+	@Override
 	public void deactivated(ILaunchConfigurationWorkingCopy workingCopy) {
 		junitLaunchTab.deactivated(workingCopy);
 	}
 
+	@Override
 	public void dispose() {
 		junitLaunchTab.dispose();
 	}
 
+	@Override
 	public String getErrorMessage() {
 		return junitLaunchTab.getErrorMessage();
 	}
 
+	@Override
 	public Image getImage() {
 		return junitLaunchTab.getImage();
 	}
 
+	@Override
 	public String getMessage() {
 		return junitLaunchTab.getMessage();
 	}
 
+	@Override
 	public String getName() {
 		return junitLaunchTab.getName();
 	}
 
+	@Override
 	public boolean isValid(ILaunchConfiguration config) {
 		return junitLaunchTab.isValid(config);
 	}
 
+	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 		junitLaunchTab.setDefaults(config);
 	}
 
+	@Override
 	public void setLaunchConfigurationDialog(ILaunchConfigurationDialog dialog) {
 		junitLaunchTab.setLaunchConfigurationDialog(dialog);
 		this.fLaunchConfigurationDialog = dialog;
 	}
 
+	@Override
 	public Control getControl() {
 		return junitLaunchTab.getControl();
 	}
 
+	@Override
 	protected ILaunchConfigurationDialog getLaunchConfigurationDialog() {
 		return fLaunchConfigurationDialog;
 	}

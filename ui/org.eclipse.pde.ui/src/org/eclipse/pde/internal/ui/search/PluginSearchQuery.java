@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,10 +33,12 @@ public class PluginSearchQuery implements ISearchQuery {
 	 * 
 	 * @see org.eclipse.search.ui.ISearchQuery#run(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public IStatus run(IProgressMonitor monitor) {
 		final AbstractTextSearchResult result = (AbstractTextSearchResult) getSearchResult();
 		result.removeAll();
 		ISearchResultCollector collector = new ISearchResultCollector() {
+			@Override
 			public void accept(Object match) {
 				if (match instanceof ISourceObject) {
 					ISourceObject object = (ISourceObject) match;
@@ -55,6 +57,7 @@ public class PluginSearchQuery implements ISearchQuery {
 	 * 
 	 * @see org.eclipse.search.ui.ISearchQuery#getLabel()
 	 */
+	@Override
 	public String getLabel() {
 		return fSearchInput.getSearchString();
 	}
@@ -64,6 +67,7 @@ public class PluginSearchQuery implements ISearchQuery {
 	 * 
 	 * @see org.eclipse.search.ui.ISearchQuery#canRerun()
 	 */
+	@Override
 	public boolean canRerun() {
 		return true;
 	}
@@ -73,6 +77,7 @@ public class PluginSearchQuery implements ISearchQuery {
 	 * 
 	 * @see org.eclipse.search.ui.ISearchQuery#canRunInBackground()
 	 */
+	@Override
 	public boolean canRunInBackground() {
 		return true;
 	}
@@ -82,6 +87,7 @@ public class PluginSearchQuery implements ISearchQuery {
 	 * 
 	 * @see org.eclipse.search.ui.ISearchQuery#getSearchResult()
 	 */
+	@Override
 	public ISearchResult getSearchResult() {
 		if (fSearchResult == null)
 			fSearchResult = new SearchResult(this);

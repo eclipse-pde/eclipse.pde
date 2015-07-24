@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2008 IBM Corporation and others.
+ *  Copyright (c) 2007, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ public class ExternalizeStringsProcessor extends RefactoringProcessor {
 
 	Object[] fChangeFiles = null;
 
+	@Override
 	public RefactoringStatus checkFinalConditions(IProgressMonitor pm, CheckConditionsContext context) throws CoreException, OperationCanceledException {
 		RefactoringStatus status = new RefactoringStatus();
 		if (fChangeFiles == null)
@@ -27,10 +28,12 @@ public class ExternalizeStringsProcessor extends RefactoringProcessor {
 		return status;
 	}
 
+	@Override
 	public RefactoringStatus checkInitialConditions(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		return null;
 	}
 
+	@Override
 	public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		CompositeChange change = new CompositeChange(""); //$NON-NLS-1$
 		change.markAsSynthetic();
@@ -43,22 +46,27 @@ public class ExternalizeStringsProcessor extends RefactoringProcessor {
 		return change;
 	}
 
+	@Override
 	public Object[] getElements() {
 		return fChangeFiles;
 	}
 
+	@Override
 	public String getIdentifier() {
 		return getClass().getName();
 	}
 
+	@Override
 	public String getProcessorName() {
 		return PDEUIMessages.ExternalizeStringsWizard_title;
 	}
 
+	@Override
 	public boolean isApplicable() throws CoreException {
 		return true;
 	}
 
+	@Override
 	public RefactoringParticipant[] loadParticipants(RefactoringStatus status, SharableParticipants sharedParticipants) throws CoreException {
 		return new RefactoringParticipant[0];
 	}

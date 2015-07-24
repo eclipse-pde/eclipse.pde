@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2008 IBM Corporation and others.
+ *  Copyright (c) 2006, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -24,10 +24,12 @@ public abstract class OrientableBlock extends PDEMasterDetailsBlock {
 		super(page);
 	}
 
+	@Override
 	protected void createToolBarActions(IManagedForm managedForm) {
 		final ScrolledForm form = managedForm.getForm();
 
 		Action haction = new Action("hor", IAction.AS_RADIO_BUTTON) { //$NON-NLS-1$
+			@Override
 			public void run() {
 				sashForm.setOrientation(SWT.HORIZONTAL);
 				form.reflow(true);
@@ -39,6 +41,7 @@ public abstract class OrientableBlock extends PDEMasterDetailsBlock {
 		haction.setDisabledImageDescriptor(PDEPluginImages.DESC_HORIZONTAL_DISABLED);
 
 		Action vaction = new Action("ver", IAction.AS_RADIO_BUTTON) { //$NON-NLS-1$
+			@Override
 			public void run() {
 				sashForm.setOrientation(SWT.VERTICAL);
 				form.reflow(true);

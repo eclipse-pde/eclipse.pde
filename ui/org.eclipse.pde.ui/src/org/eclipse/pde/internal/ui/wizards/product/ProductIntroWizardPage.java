@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2012 IBM Corporation and others.
+ *  Copyright (c) 2005, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -44,6 +44,7 @@ public class ProductIntroWizardPage extends WizardPage implements IHyperlinkList
 	private IProduct fProduct;
 
 	private ModifyListener fListener = new ModifyListener() {
+		@Override
 		public void modifyText(ModifyEvent e) {
 			validatePage();
 		}
@@ -57,6 +58,7 @@ public class ProductIntroWizardPage extends WizardPage implements IHyperlinkList
 		fProduct = product;
 	}
 
+	@Override
 	public void createControl(Composite parent) {
 		Composite comp = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -98,6 +100,7 @@ public class ProductIntroWizardPage extends WizardPage implements IHyperlinkList
 		button.setText(PDEUIMessages.ProductIntroWizardPage_browse);
 		SWTUtil.setButtonDimensionHint(button);
 		button.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleBrowse();
 			}
@@ -120,6 +123,7 @@ public class ProductIntroWizardPage extends WizardPage implements IHyperlinkList
 		fIntroIdText.addModifyListener(fListener);
 	}
 
+	@Override
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
 		if (visible) {
@@ -213,12 +217,15 @@ public class ProductIntroWizardPage extends WizardPage implements IHyperlinkList
 		return (model == null) ? null : model.getPluginBase().getId();
 	}
 
+	@Override
 	public void linkEntered(HyperlinkEvent e) {
 	}
 
+	@Override
 	public void linkExited(HyperlinkEvent e) {
 	}
 
+	@Override
 	public void linkActivated(HyperlinkEvent e) {
 		String extPoint = "org.eclipse.ui." + e.getHref().toString(); //$NON-NLS-1$
 		IPluginExtensionPoint point = PDECore.getDefault().getExtensionsRegistry().findExtensionPoint(extPoint);

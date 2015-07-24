@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2011 IBM Corporation and others.
+ *  Copyright (c) 2005, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -25,8 +25,10 @@ public class ExternalizeStringsResolution extends AbstractPDEMarkerResolution {
 		super(type);
 	}
 
+	@Override
 	public void run(final IMarker marker) {
 		BusyIndicator.showWhile(SWTUtil.getStandardDisplay(), new Runnable() {
+			@Override
 			public void run() {
 				GetNonExternalizedStringsAction fGetExternAction = new GetNonExternalizedStringsAction();
 				IStructuredSelection selection = new StructuredSelection(marker.getResource().getProject());
@@ -35,14 +37,17 @@ public class ExternalizeStringsResolution extends AbstractPDEMarkerResolution {
 		});
 	}
 
+	@Override
 	protected void createChange(IBaseModel model) {
 		// nothin to do - all handled by run
 	}
 
+	@Override
 	public String getDescription() {
 		return PDEUIMessages.ExternalizeStringsResolution_desc;
 	}
 
+	@Override
 	public String getLabel() {
 		return PDEUIMessages.ExternalizeStringsResolution_label;
 	}

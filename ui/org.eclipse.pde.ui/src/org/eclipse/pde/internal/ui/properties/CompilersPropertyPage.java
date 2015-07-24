@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,6 +55,7 @@ public class CompilersPropertyPage extends PropertyPage {
 	 * 
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createContents(Composite parent) {
 		Composite comp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH, 0, 0);
 		Composite tcomp = SWTFactory.createComposite(comp, 2, 1, GridData.FILL_HORIZONTAL, 0, 0);
@@ -62,6 +63,7 @@ public class CompilersPropertyPage extends PropertyPage {
 		fProjectSpecific.setLayoutData(new GridData(SWT.BEGINNING, SWT.TOP, true, false));
 		fProjectSpecific.setText(PDEUIMessages.CompilersPropertyPage_useprojectsettings_label);
 		fProjectSpecific.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				boolean psp = fProjectSpecific.getSelection();
 				fBlock.useProjectSpecificSettings(psp);
@@ -75,6 +77,7 @@ public class CompilersPropertyPage extends PropertyPage {
 			fWorkspaceLink = new Link(tcomp, SWT.NONE);
 			fWorkspaceLink.setText(PDEUIMessages.CompilersPropertyPage_useworkspacesettings_change);
 			fWorkspaceLink.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					HashMap<String, Boolean> data = new HashMap<String, Boolean>();
 					data.put(CompilersPreferencePage.NO_LINK, Boolean.TRUE);
@@ -107,6 +110,7 @@ public class CompilersPropertyPage extends PropertyPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#performCancel()
 	 */
+	@Override
 	public boolean performCancel() {
 		fBlock.performCancel();
 		return super.performCancel();
@@ -115,6 +119,7 @@ public class CompilersPropertyPage extends PropertyPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
 	 */
+	@Override
 	public boolean performOk() {
 		fBlock.performOK();
 		return super.performOk();
@@ -123,6 +128,7 @@ public class CompilersPropertyPage extends PropertyPage {
 	/**
 	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
+	@Override
 	protected void performDefaults() {
 		fBlock.performDefaults();
 		super.performDefaults();
@@ -131,6 +137,7 @@ public class CompilersPropertyPage extends PropertyPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#performApply()
 	 */
+	@Override
 	protected void performApply() {
 		fBlock.performApply();
 		super.performApply();
@@ -139,6 +146,7 @@ public class CompilersPropertyPage extends PropertyPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.DialogPage#dispose()
 	 */
+	@Override
 	public void dispose() {
 		fBlock.dispose();
 		super.dispose();
@@ -154,6 +162,7 @@ public class CompilersPropertyPage extends PropertyPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#applyData(java.lang.Object)
 	 */
+	@Override
 	public void applyData(Object data) {
 		if (data instanceof HashMap) {
 			fPageData = (HashMap<?, ?>) data;

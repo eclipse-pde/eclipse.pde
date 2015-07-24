@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2014 IBM Corporation and others.
+ * Copyright (c) 2003, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,19 +44,23 @@ public class ExtensionElementDetails extends AbstractPluginElementDetails {
 		rows = new ArrayList<ExtensionAttributeRow>();
 	}
 
+	@Override
 	public String getContextId() {
 		return PluginInputContext.CONTEXT_ID;
 	}
 
+	@Override
 	public void fireSaveNeeded() {
 		markDirty();
 		getPage().getPDEEditor().fireSaveNeeded(getContextId(), false);
 	}
 
+	@Override
 	public PDEFormPage getPage() {
 		return (PDEFormPage) getManagedForm().getContainer();
 	}
 
+	@Override
 	public boolean isEditable() {
 		return getPage().getPDEEditor().getAggregateModel().isEditable();
 	}
@@ -66,6 +70,7 @@ public class ExtensionElementDetails extends AbstractPluginElementDetails {
 	 * 
 	 * @see org.eclipse.ui.forms.IDetailsPage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createContents(Composite parent) {
 		parent.setLayout(FormLayoutFactory.createDetailsGridLayout(false, 1));
 		FormToolkit toolkit = getManagedForm().getToolkit();
@@ -161,6 +166,7 @@ public class ExtensionElementDetails extends AbstractPluginElementDetails {
 	 * 
 	 * @see org.eclipse.ui.forms.IDetailsPage#inputChanged(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
+	@Override
 	public void selectionChanged(IFormPart masterPart, ISelection selection) {
 		IStructuredSelection ssel = (IStructuredSelection) selection;
 		if (ssel.size() == 1) {
@@ -170,6 +176,7 @@ public class ExtensionElementDetails extends AbstractPluginElementDetails {
 		update();
 	}
 
+	@Override
 	public void modelChanged(IModelChangedEvent e) {
 		if (e.getChangeType() == IModelChangedEvent.CHANGE) {
 			Object obj = e.getChangedObjects()[0];
@@ -275,6 +282,7 @@ public class ExtensionElementDetails extends AbstractPluginElementDetails {
 	 * 
 	 * @see org.eclipse.ui.forms.IDetailsPage#commit()
 	 */
+	@Override
 	public void commit(boolean onSave) {
 		for (int i = 0; i < rows.size(); i++) {
 			ExtensionAttributeRow row = rows.get(i);
@@ -288,6 +296,7 @@ public class ExtensionElementDetails extends AbstractPluginElementDetails {
 	 * 
 	 * @see org.eclipse.ui.forms.IDetailsPage#setFocus()
 	 */
+	@Override
 	public void setFocus() {
 		if (rows.size() > 0)
 			rows.get(0).setFocus();
@@ -298,6 +307,7 @@ public class ExtensionElementDetails extends AbstractPluginElementDetails {
 	 * 
 	 * @see org.eclipse.ui.forms.IDetailsPage#dispose()
 	 */
+	@Override
 	public void dispose() {
 		for (int i = 0; i < rows.size(); i++) {
 			ExtensionAttributeRow row = rows.get(i);
@@ -314,6 +324,7 @@ public class ExtensionElementDetails extends AbstractPluginElementDetails {
 	 * 
 	 * @see org.eclipse.ui.forms.IDetailsPage#refresh()
 	 */
+	@Override
 	public void refresh() {
 		update();
 		super.refresh();

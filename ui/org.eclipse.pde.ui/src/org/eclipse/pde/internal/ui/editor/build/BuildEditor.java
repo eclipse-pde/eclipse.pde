@@ -57,6 +57,7 @@ public class BuildEditor extends MultiSourceEditor {
 		return manager;
 	}
 
+	@Override
 	public void monitoredFileAdded(IFile file) {
 		if (fInputContextManager == null)
 			return;
@@ -69,6 +70,7 @@ public class BuildEditor extends MultiSourceEditor {
 		}
 	}
 
+	@Override
 	public boolean monitoredFileRemoved(IFile file) {
 		//TODO may need to check with the user if there
 		//are unsaved changes in the model for the
@@ -81,6 +83,7 @@ public class BuildEditor extends MultiSourceEditor {
 		addSourcePage(context.getId());
 	}
 
+	@Override
 	public void contextRemoved(InputContext context) {
 		close(false);
 	}

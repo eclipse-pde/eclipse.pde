@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2013 IBM Corporation and others.
+ * Copyright (c) 2003, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -76,6 +76,7 @@ public class SchemaEditor extends MultiSourceEditor {
 		return contextManager;
 	}
 
+	@Override
 	public void monitoredFileAdded(IFile file) {
 		/*
 		String name = file.getName();
@@ -86,6 +87,7 @@ public class SchemaEditor extends MultiSourceEditor {
 		*/
 	}
 
+	@Override
 	public boolean monitoredFileRemoved(IFile file) {
 		/*
 		//TODO may need to check with the user if there
@@ -100,6 +102,7 @@ public class SchemaEditor extends MultiSourceEditor {
 		addSourcePage(context.getId());
 	}
 
+	@Override
 	public void contextRemoved(InputContext context) {
 		close(false);
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,6 +60,7 @@ public class IntroSection extends PDESection {
 		createClient(getSection(), page.getEditor().getToolkit());
 	}
 
+	@Override
 	public void createClient(Section section, FormToolkit toolkit) {
 
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
@@ -92,6 +93,7 @@ public class IntroSection extends PDESection {
 			fIntroCombo.setItems(fAvailableIntroIds);
 		fIntroCombo.add(""); //$NON-NLS-1$
 		fIntroCombo.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleSelection();
 			}
@@ -102,6 +104,7 @@ public class IntroSection extends PDESection {
 			button.setEnabled(isEditable());
 			button.setLayoutData(new GridData(GridData.FILL));
 			button.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					handleNewIntro();
 				}
@@ -173,6 +176,7 @@ public class IntroSection extends PDESection {
 		}
 	}
 
+	@Override
 	public void refresh() {
 		String introId = getIntroInfo().getId();
 		if (introId == null) {
@@ -226,6 +230,7 @@ public class IntroSection extends PDESection {
 
 	private void addRequiredBundle() {
 		ModelModification mod = new ModelModification(fManifest) {
+			@Override
 			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
 				if (!(model instanceof IBundlePluginModelBase))
 					return;
@@ -248,6 +253,7 @@ public class IntroSection extends PDESection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#modelChanged(org.eclipse.pde.core.IModelChangedEvent)
 	 */
+	@Override
 	public void modelChanged(IModelChangedEvent e) {
 		// No need to call super, handling world changed event here
 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
@@ -265,6 +271,7 @@ public class IntroSection extends PDESection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
 	 */
+	@Override
 	public void dispose() {
 		IProductModel model = getModel();
 		if (model != null) {

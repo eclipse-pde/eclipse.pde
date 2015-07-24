@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -101,6 +101,7 @@ public class AddToJavaSearchJob extends WorkspaceJob {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.WorkspaceJob#runInWorkspace(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
 		int ticks = fTargetDefinition != null ? 100 : 25;
 		SubMonitor subMon = SubMonitor.convert(monitor, ticks);
@@ -168,6 +169,7 @@ public class AddToJavaSearchJob extends WorkspaceJob {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.jobs.Job#belongsTo(java.lang.Object)
 	 */
+	@Override
 	public boolean belongsTo(Object family) {
 		return JOB_FAMILY_ID.equals(family);
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2014 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -35,6 +35,7 @@ public abstract class ModelUndoManager implements IModelUndoManager, IModelChang
 	/*
 	 * @see IModelUndoManager#connect(IModelChangeProvider)
 	 */
+	@Override
 	public void connect(IModelChangeProvider provider) {
 		provider.addModelChangedListener(this);
 		if (operations == null)
@@ -44,6 +45,7 @@ public abstract class ModelUndoManager implements IModelUndoManager, IModelChang
 	/*
 	 * @see IModelUndoManager#disconnect(IModelChangeProvider)
 	 */
+	@Override
 	public void disconnect(IModelChangeProvider provider) {
 		provider.removeModelChangedListener(this);
 	}
@@ -57,6 +59,7 @@ public abstract class ModelUndoManager implements IModelUndoManager, IModelChang
 	/*
 	 * @see IModelUndoManager#isUndoable()
 	 */
+	@Override
 	public boolean isUndoable() {
 		return cursor >= 0;
 	}
@@ -64,6 +67,7 @@ public abstract class ModelUndoManager implements IModelUndoManager, IModelChang
 	/*
 	 * @see IModelUndoManager#isRedoable()
 	 */
+	@Override
 	public boolean isRedoable() {
 		if (operations == null)
 			initialize();
@@ -73,6 +77,7 @@ public abstract class ModelUndoManager implements IModelUndoManager, IModelChang
 	/*
 	 * @see IModelUndoManager#undo()
 	 */
+	@Override
 	public void undo() {
 		IModelChangedEvent op = getCurrentOperation();
 		if (op == null)
@@ -88,6 +93,7 @@ public abstract class ModelUndoManager implements IModelUndoManager, IModelChang
 	/*
 	 * @see IModelUndoManager#redo()
 	 */
+	@Override
 	public void redo() {
 		cursor++;
 		IModelChangedEvent op = getCurrentOperation();
@@ -118,6 +124,7 @@ public abstract class ModelUndoManager implements IModelUndoManager, IModelChang
 	/*
 	 * @see IModelChangedListener#modelChanged(IModelChangedEvent)
 	 */
+	@Override
 	public void modelChanged(IModelChangedEvent event) {
 		if (ignoreChanges)
 			return;
@@ -156,6 +163,7 @@ public abstract class ModelUndoManager implements IModelUndoManager, IModelChang
 		updateActions();
 	}
 
+	@Override
 	public void setActions(IAction undoAction, IAction redoAction) {
 		this.undoAction = undoAction;
 		this.redoAction = redoAction;
@@ -203,10 +211,12 @@ public abstract class ModelUndoManager implements IModelUndoManager, IModelChang
 		return opText;
 	}
 
+	@Override
 	public void setUndoLevelLimit(int limit) {
 		this.undoLevelLimit = limit;
 	}
 
+	@Override
 	public void setIgnoreChanges(boolean ignore) {
 		this.ignoreChanges = ignore;
 	}

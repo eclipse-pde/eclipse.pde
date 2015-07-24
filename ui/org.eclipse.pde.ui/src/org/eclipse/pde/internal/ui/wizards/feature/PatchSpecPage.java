@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,6 +44,7 @@ public class PatchSpecPage extends AbstractFeatureSpecPage {
 		setDescription(PDEUIMessages.NewFeatureWizard_SpecPage_desc);
 	}
 
+	@Override
 	protected void initialize() {
 		String projectName = getProjectName();
 		if (fInitialId == null)
@@ -53,6 +54,7 @@ public class PatchSpecPage extends AbstractFeatureSpecPage {
 		setMessage(PDEUIMessages.FeaturePatch_MainPage_desc);
 	}
 
+	@Override
 	protected String validateContent() {
 		fFeatureToPatch = PDECore.getDefault().getFeatureModelManager().findFeatureModel(fFeatureIdText.getText(), fFeatureVersionText.getText());
 		if (fFeatureToPatch != null) {
@@ -68,6 +70,7 @@ public class PatchSpecPage extends AbstractFeatureSpecPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.WizardPage#getNextPage()
 	 */
+	@Override
 	public IWizardPage getNextPage() {
 		if (fFeatureToPatch == null)
 			return null;
@@ -92,6 +95,7 @@ public class PatchSpecPage extends AbstractFeatureSpecPage {
 		return fPatchProviderCombo.getText();
 	}
 
+	@Override
 	public FeatureData getFeatureData() {
 		FeatureData data = new FeatureData();
 		data.id = getPatchId();
@@ -105,6 +109,7 @@ public class PatchSpecPage extends AbstractFeatureSpecPage {
 		return data;
 	}
 
+	@Override
 	protected String verifyIdRules() {
 		String id = fPatchIdText.getText();
 		if (id == null || id.length() == 0)
@@ -115,6 +120,7 @@ public class PatchSpecPage extends AbstractFeatureSpecPage {
 		return super.verifyIdRules();
 	}
 
+	@Override
 	protected String getHelpId() {
 		return IHelpContextIds.NEW_PATCH_REQUIRED_DATA;
 	}
@@ -145,6 +151,7 @@ public class PatchSpecPage extends AbstractFeatureSpecPage {
 		createInstallHandlerText(patchGroup);
 	}
 
+	@Override
 	protected void createContents(Composite container) {
 
 		createTopGroup(container);
@@ -174,6 +181,7 @@ public class PatchSpecPage extends AbstractFeatureSpecPage {
 		fBrowseButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 		fBrowseButton.addSelectionListener(new SelectionAdapter() {
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				FeatureSelectionDialog dialog = new FeatureSelectionDialog(getShell(), PDECore.getDefault().getFeatureModelManager().getModels(), false);
 				dialog.create();
@@ -197,6 +205,7 @@ public class PatchSpecPage extends AbstractFeatureSpecPage {
 		createCommonInput(group);
 	}
 
+	@Override
 	protected void attachListeners(ModifyListener listener) {
 		fPatchIdText.addModifyListener(listener);
 		fPatchNameText.addModifyListener(listener);
@@ -204,10 +213,12 @@ public class PatchSpecPage extends AbstractFeatureSpecPage {
 		fFeatureIdText.addModifyListener(listener);
 	}
 
+	@Override
 	protected String getFeatureId() {
 		return fFeatureIdText.getText();
 	}
 
+	@Override
 	protected void updateNameRelativeFields() {
 		if (fPatchIdText == null || fPatchNameText == null)
 			return;
@@ -221,6 +232,7 @@ public class PatchSpecPage extends AbstractFeatureSpecPage {
 		fSelfModification = false;
 	}
 
+	@Override
 	protected void saveSettings(IDialogSettings settings) {
 		BundleProviderHistoryUtil.saveHistory(fPatchProviderCombo, settings);
 	}

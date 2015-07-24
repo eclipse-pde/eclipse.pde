@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,25 +44,31 @@ public class OverwriteProjectsSelectionDialog extends SelectionStatusDialog {
 
 	private class PluginContentProvider implements ITreeContentProvider {
 
+		@Override
 		public Object[] getChildren(Object parentElement) {
 			return new Object[0];
 		}
 
+		@Override
 		public Object getParent(Object element) {
 			return null;
 		}
 
+		@Override
 		public boolean hasChildren(Object element) {
 			return false;
 		}
 
+		@Override
 		public Object[] getElements(Object inputElement) {
 			return (IPluginModelBase[]) inputElement;
 		}
 
+		@Override
 		public void dispose() {
 		}
 
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 
@@ -70,10 +76,12 @@ public class OverwriteProjectsSelectionDialog extends SelectionStatusDialog {
 
 	private class StyledPluginLabelProvider extends StyledCellLabelProvider implements ILabelProvider {
 
+		@Override
 		public Image getImage(Object element) {
 			return PlatformUI.getWorkbench().getSharedImages().getImage(IDE.SharedImages.IMG_OBJ_PROJECT);
 		}
 
+		@Override
 		public String getText(Object element) {
 			return getStyledText(element).getString();
 		}
@@ -81,6 +89,7 @@ public class OverwriteProjectsSelectionDialog extends SelectionStatusDialog {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.StyledCellLabelProvider#update(org.eclipse.jface.viewers.ViewerCell)
 		 */
+		@Override
 		public void update(ViewerCell cell) {
 			StyledString string = getStyledText(cell.getElement());
 			cell.setText(string.getString());
@@ -114,6 +123,7 @@ public class OverwriteProjectsSelectionDialog extends SelectionStatusDialog {
 	 * Common listener for the Select All and Deselect All buttons
 	 */
 	private class ButtonSelectionListener extends SelectionAdapter {
+		@Override
 		public void widgetSelected(SelectionEvent e) {
 			String buttonID = (String) e.widget.getData(ID);
 			if (PDEUIMessages.DuplicatePluginResolutionDialog_selectAll.equals(buttonID)) {
@@ -143,6 +153,7 @@ public class OverwriteProjectsSelectionDialog extends SelectionStatusDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.SelectionStatusDialog#configureShell(org.eclipse.swt.widgets.Shell)
 	 */
+	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(shell, IHelpContextIds.PLUGIN_IMPORT_OVERWRITE_DIALOG);
@@ -151,6 +162,7 @@ public class OverwriteProjectsSelectionDialog extends SelectionStatusDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.SelectionStatusDialog#computeResult()
 	 */
+	@Override
 	protected void computeResult() {
 		java.util.List<Object> result = Arrays.asList(fCheckboxTreeViewer.getCheckedLeafElements());
 		setResult(result);
@@ -159,6 +171,7 @@ public class OverwriteProjectsSelectionDialog extends SelectionStatusDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite tableComposite = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH, 15, 15);
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);

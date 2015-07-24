@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2012 IBM Corporation and others.
+ * Copyright (c) 2003, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,6 +32,7 @@ public abstract class XMLInputContext extends UTF8InputContext {
 		super(editor, input, primary);
 	}
 
+	@Override
 	protected IDocumentSetupParticipant getDocumentSetupParticipant() {
 		return new XMLDocumentSetupParticpant();
 	}
@@ -39,6 +40,7 @@ public abstract class XMLInputContext extends UTF8InputContext {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.context.InputContext#addTextEditOperation(java.util.ArrayList, org.eclipse.pde.core.IModelChangedEvent)
 	 */
+	@Override
 	protected void addTextEditOperation(ArrayList<TextEdit> ops, IModelChangedEvent event) {
 		Object[] objects = event.getChangedObjects();
 		if (objects != null) {
@@ -451,6 +453,7 @@ public abstract class XMLInputContext extends UTF8InputContext {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.context.InputContext#flushModel(org.eclipse.jface.text.IDocument)
 	 */
+	@Override
 	protected void flushModel(IDocument doc) {
 		removeUnnecessaryOperations();
 		if (fOperationTable.size() == 1) {

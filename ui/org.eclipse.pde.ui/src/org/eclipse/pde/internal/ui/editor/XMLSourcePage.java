@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2009 IBM Corporation and others.
+ * Copyright (c) 2003, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,10 +22,12 @@ public abstract class XMLSourcePage extends PDEProjectionSourcePage {
 		setRangeIndicator(new DefaultRangeIndicator());
 	}
 
+	@Override
 	public boolean canLeaveThePage() {
 		return true;
 	}
 
+	@Override
 	protected String[] collectContextMenuPreferencePages() {
 		String[] ids = super.collectContextMenuPreferencePages();
 		String[] more = new String[ids.length + 1];
@@ -34,6 +36,7 @@ public abstract class XMLSourcePage extends PDEProjectionSourcePage {
 		return more;
 	}
 
+	@Override
 	protected ChangeAwareSourceViewerConfiguration createSourceViewerConfiguration(IColorManager colorManager) {
 		if (getEditor() instanceof ManifestEditor)
 			return new PluginXMLConfiguration(colorManager, this);

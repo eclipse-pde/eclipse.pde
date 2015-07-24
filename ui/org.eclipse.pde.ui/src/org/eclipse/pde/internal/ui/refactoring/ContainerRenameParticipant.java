@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2012 IBM Corporation and others.
+ *  Copyright (c) 2006, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -32,10 +32,12 @@ import org.osgi.framework.Constants;
 
 public class ContainerRenameParticipant extends PDERenameParticipant {
 
+	@Override
 	public String getName() {
 		return PDEUIMessages.ContainerRenameParticipant_renameFolders;
 	}
 
+	@Override
 	protected boolean initialize(Object element) {
 		if (element instanceof IContainer) {
 			IProject project = ((IContainer) element).getProject();
@@ -51,6 +53,7 @@ public class ContainerRenameParticipant extends PDERenameParticipant {
 		return false;
 	}
 
+	@Override
 	public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		// for the special case of a project rename, we need to only check the manifest for changes
 		if (fElements.size() == 1 && fElements.keySet().iterator().next() instanceof IProject) {

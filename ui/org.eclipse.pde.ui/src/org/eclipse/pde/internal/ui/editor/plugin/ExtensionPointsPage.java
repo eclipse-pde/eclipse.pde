@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2009 IBM Corporation and others.
+ * Copyright (c) 2003, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,19 +38,23 @@ public class ExtensionPointsPage extends PDEFormPage {
 			super(ExtensionPointsPage.this);
 		}
 
+		@Override
 		protected PDESection createMasterSection(IManagedForm managedForm, Composite parent) {
 			fExtensionPointsSection = new ExtensionPointsSection(getPage(), parent);
 			return fExtensionPointsSection;
 		}
 
+		@Override
 		protected void registerPages(DetailsPart detailsPart) {
 			detailsPart.setPageProvider(new IDetailsPageProvider() {
+				@Override
 				public Object getPageKey(Object object) {
 					if (object instanceof IPluginExtensionPoint)
 						return IPluginExtensionPoint.class;
 					return object.getClass();
 				}
 
+				@Override
 				public IDetailsPage getPage(Object key) {
 					if (key.equals(IPluginExtensionPoint.class))
 						return new ExtensionPointDetails();
@@ -68,10 +72,12 @@ public class ExtensionPointsPage extends PDEFormPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#getHelpResource()
 	 */
+	@Override
 	protected String getHelpResource() {
 		return IHelpContextIds.MANIFEST_PLUGIN_EXT_POINTS;
 	}
 
+	@Override
 	protected void createFormContent(IManagedForm managedForm) {
 		super.createFormContent(managedForm);
 		ScrolledForm form = managedForm.getForm();
@@ -82,6 +88,7 @@ public class ExtensionPointsPage extends PDEFormPage {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(form.getBody(), IHelpContextIds.MANIFEST_PLUGIN_EXT_POINTS);
 	}
 
+	@Override
 	public void updateFormSelection() {
 		super.updateFormSelection();
 		IFormPage page = getPDEEditor().findPage(PluginInputContext.CONTEXT_ID);

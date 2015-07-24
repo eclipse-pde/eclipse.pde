@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,6 +32,7 @@ public class PDEFormTextEditorContributor extends PDEFormEditorContributor {
 	private SubActionBars fSourceActionBars;
 
 	class PDETextEditorActionContributor extends TextEditorActionContributor {
+		@Override
 		public void contributeToMenu(IMenuManager mm) {
 			super.contributeToMenu(mm);
 			IMenuManager editMenu = mm.findMenuUsingPath(IWorkbenchActionConstants.M_EDIT);
@@ -44,12 +45,14 @@ public class PDEFormTextEditorContributor extends PDEFormEditorContributor {
 			}
 		}
 
+		@Override
 		public void contributeToToolBar(IToolBarManager toolBarManager) {
 			super.contributeToToolBar(toolBarManager);
 			if (fHyperlinkAction != null)
 				toolBarManager.add(fHyperlinkAction);
 		}
 
+		@Override
 		public void setActiveEditor(IEditorPart part) {
 			super.setActiveEditor(part);
 			IActionBars actionBars = getActionBars();
@@ -106,16 +109,19 @@ public class PDEFormTextEditorContributor extends PDEFormEditorContributor {
 		return false;
 	}
 
+	@Override
 	public IEditorActionBarContributor getSourceContributor() {
 		return fSourceContributor;
 	}
 
+	@Override
 	public void init(IActionBars bars) {
 		super.init(bars);
 		fSourceActionBars = new SubActionBars(bars);
 		fSourceContributor.init(fSourceActionBars);
 	}
 
+	@Override
 	public void dispose() {
 		fSourceActionBars.dispose();
 		fSourceContributor.dispose();
@@ -164,6 +170,7 @@ public class PDEFormTextEditorContributor extends PDEFormEditorContributor {
 		getActionBars().setGlobalActionHandler(id, action);
 	}
 
+	@Override
 	public void setActivePage(IEditorPart newEditor) {
 		if (fEditor == null)
 			return;

@@ -217,6 +217,7 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 		return manager;
 	}
 
+	@Override
 	public void monitoredFileAdded(IFile file) {
 		if (fInputContextManager == null)
 			return;
@@ -288,6 +289,7 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 		}
 	}
 
+	@Override
 	public boolean monitoredFileRemoved(IFile file) {
 		//TODO may need to check with the user if there
 		//are unsaved changes in the model for the
@@ -309,6 +311,7 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 		}
 	}
 
+	@Override
 	public void contextRemoved(InputContext context) {
 		close(true);
 	}
@@ -653,6 +656,7 @@ public class ManifestEditor extends PDELauncherFormEditor implements IShowEditor
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IShowEditorInput#showEditorInput(org.eclipse.ui.IEditorInput)
 	 */
+	@Override
 	public void showEditorInput(IEditorInput editorInput) {
 		String name = editorInput.getName();
 		String id = getActivePageInstance().getId();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -62,10 +62,12 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 		super(page, parent);
 	}
 
+	@Override
 	protected String getSectionDescription() {
 		return PDEUIMessages.ManifestEditor_PluginSpecSection_fdesc;
 	}
 
+	@Override
 	protected void createSpecificControls(Composite parent, FormToolkit toolkit, IActionBars actionBars) {
 		createPluginIdEntry(parent, toolkit, actionBars);
 		createPluginVersionEntry(parent, toolkit, actionBars);
@@ -78,6 +80,7 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 		fPluginIdEntry = new FormEntry(parent, toolkit, PDEUIMessages.GeneralInfoSection_pluginId, PDEUIMessages.GeneralInfoSection_browse, // 
 				isEditable());
 		fPluginIdEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
+			@Override
 			public void textValueChanged(FormEntry entry) {
 				try {
 					((IFragment) getPluginBase()).setPluginId(fPluginIdEntry.getValue());
@@ -86,6 +89,7 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 				}
 			}
 
+			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				String plugin = fPluginIdEntry.getValue();
 				if (!(PluginRegistry.findModel(plugin) instanceof IPluginModel)) {
@@ -94,6 +98,7 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 				ManifestEditor.openPluginEditor(fPluginIdEntry.getValue());
 			}
 
+			@Override
 			public void browseButtonSelected(FormEntry entry) {
 				handleOpenDialog();
 			}
@@ -118,6 +123,7 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 		fPluginIdEntry.setEditable(isEditable());
 		// Create validator
 		fPluginIdValidator = new TextValidator(getManagedForm(), fPluginIdEntry.getText(), getProject(), true) {
+			@Override
 			protected boolean validateControl() {
 				return validatePluginId();
 			}
@@ -157,6 +163,7 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 	private void createBundlePluginVersionEntry(Composite client, FormToolkit toolkit, IActionBars actionBars) {
 
 		FormEntryAdapter textListener = new FormEntryAdapter(this, actionBars) {
+			@Override
 			public void textValueChanged(FormEntry entry) {
 				try {
 					((IFragment) getPluginBase()).setPluginVersion(getVersion());
@@ -165,6 +172,7 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 				}
 			}
 
+			@Override
 			public void textDirty(FormEntry entry) {
 				setFieldsEnabled();
 				super.textDirty(entry);
@@ -176,12 +184,14 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 		fPluginMinVersionEntry.setEditable(isEditable());
 		// Create validator
 		fPluginMinVersionValidator = new TextValidator(getManagedForm(), fPluginMinVersionEntry.getText(), getProject(), true) {
+			@Override
 			protected boolean validateControl() {
 				return validatePluginMinVersion();
 			}
 		};
 
 		SelectionAdapter comboListener = new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent event) {
 				try {
 					((IFragment) getPluginBase()).setPluginVersion(getVersion());
@@ -202,6 +212,7 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 		fPluginMaxVersionEntry.setEditable(isEditable());
 		// Create validator
 		fPluginMaxVersionValidator = new TextValidator(getManagedForm(), fPluginMaxVersionEntry.getText(), getProject(), true) {
+			@Override
 			protected boolean validateControl() {
 				return validatePluginMaxVersion();
 			}
@@ -235,6 +246,7 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 	private void createNonBundlePluginVersionEntry(Composite client, FormToolkit toolkit, IActionBars actionBars) {
 		fPluginMinVersionEntry = new FormEntry(client, toolkit, PDEUIMessages.GeneralInfoSection_pluginVersion, null, false);
 		fPluginMinVersionEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
+			@Override
 			public void textValueChanged(FormEntry entry) {
 				try {
 					((IFragment) getPluginBase()).setPluginVersion(entry.getValue());
@@ -264,6 +276,7 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 				PDEUIMessages.ManifestEditor_MatchSection_equivalent, PDEUIMessages.ManifestEditor_MatchSection_compatible, PDEUIMessages.ManifestEditor_MatchSection_perfect, PDEUIMessages.ManifestEditor_MatchSection_greater};
 		fMatchCombo.setItems(items);
 		fMatchCombo.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent event) {
 				int match = fMatchCombo.getSelectionIndex();
 				try {
@@ -276,6 +289,7 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 		fMatchCombo.getControl().setEnabled(isEditable());
 	}
 
+	@Override
 	public void commit(boolean onSave) {
 		fPluginIdEntry.commit();
 		fPluginMinVersionEntry.commit();
@@ -283,6 +297,7 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 		super.commit(onSave);
 	}
 
+	@Override
 	public void cancelEdit() {
 		fPluginIdEntry.cancelEdit();
 		fPluginMinVersionEntry.cancelEdit();
@@ -290,6 +305,7 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 		super.cancelEdit();
 	}
 
+	@Override
 	public void refresh() {
 		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
 		IFragment fragment = (IFragment) model.getPluginBase();
@@ -378,6 +394,7 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 	}
 
 	// added for bug 172675
+	@Override
 	protected void addListeners() {
 		if (isBundle()) {
 			IBundleModel model = getBundle().getModel();
@@ -387,6 +404,7 @@ public class FragmentGeneralInfoSection extends GeneralInfoSection {
 		super.addListeners();
 	}
 
+	@Override
 	protected void removeListeners() {
 		if (isBundle()) {
 			IBundleModel model = getBundle().getModel();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -24,6 +24,7 @@ public class ModelChangeLabelProvider extends PDELabelProvider {
 		manifestImage = PDEPluginImages.DESC_PAGE_OBJ.createImage();
 	}
 
+	@Override
 	public String getText(Object obj) {
 		if (obj instanceof ModelChange)
 			return getObjectText(((ModelChange) obj).getParentModel().getPluginBase());
@@ -46,6 +47,7 @@ public class ModelChangeLabelProvider extends PDELabelProvider {
 		return text.toString();
 	}
 
+	@Override
 	public Image getImage(Object obj) {
 		if (obj instanceof ModelChange) {
 			IPluginModelBase model = ((ModelChange) obj).getParentModel();
@@ -68,6 +70,7 @@ public class ModelChangeLabelProvider extends PDELabelProvider {
 		return null;
 	}
 
+	@Override
 	public void dispose() {
 		if (manifestImage != null)
 			manifestImage.dispose();

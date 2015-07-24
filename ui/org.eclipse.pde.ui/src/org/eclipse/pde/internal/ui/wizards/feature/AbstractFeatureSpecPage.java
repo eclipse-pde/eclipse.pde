@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2011 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -41,6 +41,7 @@ public abstract class AbstractFeatureSpecPage extends WizardNewProjectCreationPa
 		super("specPage"); //$NON-NLS-1$
 	}
 
+	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		Composite comp = (Composite) getControl();
@@ -85,6 +86,7 @@ public abstract class AbstractFeatureSpecPage extends WizardNewProjectCreationPa
 
 	protected abstract void updateNameRelativeFields();
 
+	@Override
 	protected boolean validatePage() {
 		boolean valid = super.validatePage();
 		if (!valid)
@@ -169,6 +171,7 @@ public abstract class AbstractFeatureSpecPage extends WizardNewProjectCreationPa
 
 	private void attachListeners() {
 		ModifyListener listener = new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				if (!fSelfModification) {
 					fUpdateName = false;

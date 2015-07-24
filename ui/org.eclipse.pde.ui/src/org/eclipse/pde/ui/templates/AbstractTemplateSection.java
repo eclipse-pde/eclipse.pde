@@ -84,6 +84,7 @@ public abstract class AbstractTemplateSection implements ITemplateSection, IVari
 	 * 
 	 * @see ITemplateSection#getReplacementString(String,String)
 	 */
+	@Override
 	public String getReplacementString(String fileName, String key) {
 		String result = getKeyValue(key);
 		return result != null ? result : key;
@@ -93,6 +94,7 @@ public abstract class AbstractTemplateSection implements ITemplateSection, IVari
 	 * @see IVariableProvider#getValue(String)
 	 */
 
+	@Override
 	public Object getValue(String key) {
 		return getKeyValue(key);
 	}
@@ -137,6 +139,7 @@ public abstract class AbstractTemplateSection implements ITemplateSection, IVari
 	/**
 	 * @see ITemplateSection#getTemplateLocation()
 	 */
+	@Override
 	public URL getTemplateLocation() {
 		return null;
 	}
@@ -144,6 +147,7 @@ public abstract class AbstractTemplateSection implements ITemplateSection, IVari
 	/**
 	 * @see ITemplateSection#getDescription()
 	 */
+	@Override
 	public String getDescription() {
 		return ""; //$NON-NLS-1$
 	}
@@ -182,6 +186,7 @@ public abstract class AbstractTemplateSection implements ITemplateSection, IVari
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.ITemplateSection#addPages(org.eclipse.jface.wizard.Wizard)
 	 */
+	@Override
 	public void addPages(Wizard wizard) {
 	}
 
@@ -191,6 +196,7 @@ public abstract class AbstractTemplateSection implements ITemplateSection, IVari
 	 * @return <code>true</code> if wizard pages for this section have been
 	 *         added, <code>false</code> otherwise.
 	 */
+	@Override
 	public boolean getPagesAdded() {
 		return pagesAdded;
 	}
@@ -211,6 +217,7 @@ public abstract class AbstractTemplateSection implements ITemplateSection, IVari
 	 * 
 	 * @see ITemplateSection#getNumberOfWorkUnits()
 	 */
+	@Override
 	public int getNumberOfWorkUnits() {
 		return 1;
 	}
@@ -218,6 +225,7 @@ public abstract class AbstractTemplateSection implements ITemplateSection, IVari
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.ITemplateSection#getDependencies(java.lang.String)
 	 */
+	@Override
 	public IPluginReference[] getDependencies(String schemaVersion) {
 		return new IPluginReference[] {new PluginReference("org.eclipse.ui", //$NON-NLS-1$
 				null, 0)};
@@ -390,6 +398,7 @@ public abstract class AbstractTemplateSection implements ITemplateSection, IVari
 	 * @see ITemplateSection#execute(IProject, IPluginModelBase,
 	 *      IProgressMonitor)
 	 */
+	@Override
 	public void execute(IProject project, IPluginModelBase model, IProgressMonitor monitor) throws CoreException {
 		this.project = project;
 		this.model = model;

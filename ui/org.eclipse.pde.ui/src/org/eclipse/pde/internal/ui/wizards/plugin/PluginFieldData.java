@@ -28,6 +28,7 @@ public class PluginFieldData extends AbstractFieldData implements IPluginFieldDa
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.IPluginFieldData#getClassname()
 	 */
+	@Override
 	public String getClassname() {
 		return fClassname;
 	}
@@ -39,6 +40,7 @@ public class PluginFieldData extends AbstractFieldData implements IPluginFieldDa
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.IPluginFieldData#isUIPlugin()
 	 */
+	@Override
 	public boolean isUIPlugin() {
 		return fIsUIPlugin;
 	}
@@ -63,6 +65,7 @@ public class PluginFieldData extends AbstractFieldData implements IPluginFieldDa
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.IPluginFieldData#doGenerateClass()
 	 */
+	@Override
 	public boolean doGenerateClass() {
 		return fDoGenerateClass;
 	}

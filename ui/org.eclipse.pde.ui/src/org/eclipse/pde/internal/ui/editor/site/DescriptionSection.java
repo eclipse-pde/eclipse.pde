@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,6 +40,7 @@ public class DescriptionSection extends PDESection {
 		createClient(getSection(), page.getManagedForm().getToolkit());
 	}
 
+	@Override
 	public void commit(boolean onSave) {
 		fNameEntry.commit();
 		fURLEntry.commit();
@@ -47,6 +48,7 @@ public class DescriptionSection extends PDESection {
 		super.commit(onSave);
 	}
 
+	@Override
 	public void createClient(Section section, FormToolkit toolkit) {
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
 		Composite container = toolkit.createComposite(section);
@@ -58,6 +60,7 @@ public class DescriptionSection extends PDESection {
 
 		fNameEntry = new FormEntry(container, toolkit, PDEUIMessages.DescriptionSection_nameLabel, null, false);
 		fNameEntry.setFormEntryListener(new FormEntryAdapter(this) {
+			@Override
 			public void textValueChanged(FormEntry text) {
 				setName(text.getValue());
 			}
@@ -66,6 +69,7 @@ public class DescriptionSection extends PDESection {
 
 		fURLEntry = new FormEntry(container, toolkit, PDEUIMessages.SiteEditor_DescriptionSection_urlLabel, null, false);
 		fURLEntry.setFormEntryListener(new FormEntryAdapter(this) {
+			@Override
 			public void textValueChanged(FormEntry text) {
 				setDescriptionURL(text.getValue());
 			}
@@ -79,6 +83,7 @@ public class DescriptionSection extends PDESection {
 		fDescEntry.getText().setLayoutData(gd);
 		fDescEntry.getLabel().setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 		fDescEntry.setFormEntryListener(new FormEntryAdapter(this) {
+			@Override
 			public void textValueChanged(FormEntry text) {
 				setDescriptionText(text.getValue());
 			}
@@ -147,6 +152,7 @@ public class DescriptionSection extends PDESection {
 		}
 	}
 
+	@Override
 	public void dispose() {
 		ISiteModel model = (ISiteModel) getPage().getModel();
 		if (model != null)
@@ -160,10 +166,12 @@ public class DescriptionSection extends PDESection {
 		model.addModelChangedListener(this);
 	}
 
+	@Override
 	public void modelChanged(IModelChangedEvent e) {
 		markStale();
 	}
 
+	@Override
 	public void setFocus() {
 		if (fNameEntry != null)
 			fNameEntry.getText().setFocus();
@@ -175,6 +183,7 @@ public class DescriptionSection extends PDESection {
 		}
 	}
 
+	@Override
 	public void refresh() {
 		ISiteModel model = (ISiteModel) getPage().getModel();
 		ISite site = model.getSite();
@@ -184,6 +193,7 @@ public class DescriptionSection extends PDESection {
 		super.refresh();
 	}
 
+	@Override
 	public void cancelEdit() {
 		fNameEntry.cancelEdit();
 		fURLEntry.cancelEdit();
@@ -194,6 +204,7 @@ public class DescriptionSection extends PDESection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#canPaste(org.eclipse.swt.dnd.Clipboard)
 	 */
+	@Override
 	public boolean canPaste(Clipboard clipboard) {
 		TransferData[] types = clipboard.getAvailableTypes();
 		Transfer[] transfers = new Transfer[] {TextTransfer.getInstance(), RTFTransfer.getInstance()};

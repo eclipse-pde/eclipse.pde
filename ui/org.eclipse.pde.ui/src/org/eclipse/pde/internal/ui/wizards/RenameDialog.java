@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -86,11 +86,13 @@ public class RenameDialog extends SelectionStatusDialog {
 	/*
 	 * @see org.eclipse.jface.window.Window#configureShell(Shell)
 	 */
+	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(shell, IHelpContextIds.RENAME_DIALOG);
 	}
 
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite container = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
@@ -106,6 +108,7 @@ public class RenameDialog extends SelectionStatusDialog {
 
 		text = new Text(container, SWT.SINGLE | SWT.BORDER);
 		text.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				textChanged(text.getText());
 			}
@@ -116,6 +119,7 @@ public class RenameDialog extends SelectionStatusDialog {
 		return container;
 	}
 
+	@Override
 	public int open() {
 		text.setText(oldName);
 		text.selectAll();
@@ -160,6 +164,7 @@ public class RenameDialog extends SelectionStatusDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
+	@Override
 	protected void okPressed() {
 		newName = text.getText().trim();
 		super.okPressed();
@@ -168,9 +173,11 @@ public class RenameDialog extends SelectionStatusDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.SelectionStatusDialog#computeResult()
 	 */
+	@Override
 	protected void computeResult() {
 	}
 
+	@Override
 	public void setTitle(String title) {
 		getShell().setText(title);
 	}

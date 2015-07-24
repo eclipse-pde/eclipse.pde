@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2008 IBM Corporation and others.
+ *  Copyright (c) 2005, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -31,6 +31,7 @@ public class NewProductFileAction extends Action implements ICheatSheetAction {
 	/**
 	 * @see IActionDelegate#run(IAction)
 	 */
+	@Override
 	public void run() {
 		run(new String[] {}, null);
 	}
@@ -38,6 +39,7 @@ public class NewProductFileAction extends Action implements ICheatSheetAction {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.cheatsheets.ICheatSheetAction#run(java.lang.String[], org.eclipse.ui.cheatsheets.ICheatSheetManager)
 	 */
+	@Override
 	public void run(String[] params, ICheatSheetManager manager) {
 		NewProductFileWizard wizard = new NewProductFileWizard();
 		wizard.init(PlatformUI.getWorkbench(), new StructuredSelection());

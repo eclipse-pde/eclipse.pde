@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,6 +56,7 @@ public abstract class ChangeAwareSourceViewerConfiguration extends TextSourceVie
 				}));
 	}
 
+	@Override
 	public IReconciler getReconciler(ISourceViewer sourceViewer) {
 		if (fSourcePage != null && fReconciler == null) {
 			IBaseModel model = fSourcePage.getInputContext().getModel();
@@ -72,6 +73,7 @@ public abstract class ChangeAwareSourceViewerConfiguration extends TextSourceVie
 		return fReconciler;
 	}
 
+	@Override
 	public IInformationPresenter getInformationPresenter(ISourceViewer sourceViewer) {
 		if (fSourcePage == null)
 			return null;
@@ -127,6 +129,7 @@ public abstract class ChangeAwareSourceViewerConfiguration extends TextSourceVie
 	 */
 	private IInformationControlCreator getOutlinePresenterControlCreator(ISourceViewer sourceViewer, final String commandId) {
 		return new IInformationControlCreator() {
+			@Override
 			public IInformationControl createInformationControl(Shell parent) {
 				int shellStyle = SWT.RESIZE;
 				QuickOutlinePopupDialog dialog = new QuickOutlinePopupDialog(parent, shellStyle, fSourcePage, fSourcePage);
@@ -141,12 +144,14 @@ public abstract class ChangeAwareSourceViewerConfiguration extends TextSourceVie
 
 	protected IInformationControlCreator getInformationControlCreator(final boolean cutDown) {
 		return new IInformationControlCreator() {
+			@Override
 			public IInformationControl createInformationControl(Shell parent) {
 				return new DefaultInformationControl(parent, !cutDown);
 			}
 		};
 	}
 
+	@Override
 	public IHyperlinkDetector[] getHyperlinkDetectors(ISourceViewer sourceViewer) {
 		IHyperlinkDetector[] registeredDetectors = super.getHyperlinkDetectors(sourceViewer);
 		if (registeredDetectors == null)
@@ -165,6 +170,7 @@ public abstract class ChangeAwareSourceViewerConfiguration extends TextSourceVie
 		return allDetectors;
 	}
 
+	@Override
 	public IQuickAssistAssistant getQuickAssistAssistant(ISourceViewer sourceViewer) {
 		if (sourceViewer.isEditable()) {
 			if (fQuickAssistant == null) {

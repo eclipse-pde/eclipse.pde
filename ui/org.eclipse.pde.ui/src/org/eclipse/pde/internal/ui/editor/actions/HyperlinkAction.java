@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2008 IBM Corporation and others.
+ *  Copyright (c) 2005, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -35,6 +35,7 @@ public class HyperlinkAction extends Action implements MouseListener, KeyListene
 		setEnabled(false);
 	}
 
+	@Override
 	public void run() {
 		if (fLink != null)
 			fLink.open();
@@ -117,24 +118,29 @@ public class HyperlinkAction extends Action implements MouseListener, KeyListene
 		setToolTipText(text);
 	}
 
+	@Override
 	public void mouseDoubleClick(MouseEvent e) {
 		// Ignore
 	}
 
+	@Override
 	public void mouseDown(MouseEvent e) {
 		// Ignore
 	}
 
+	@Override
 	public void mouseUp(MouseEvent e) {
 		setEnabled(detectHyperlink());
 		generateActionText();
 	}
 
+	@Override
 	public void keyPressed(KeyEvent e) {
 		setEnabled(detectHyperlink());
 		generateActionText();
 	}
 
+	@Override
 	public void keyReleased(KeyEvent e) {
 		// Ignore
 	}

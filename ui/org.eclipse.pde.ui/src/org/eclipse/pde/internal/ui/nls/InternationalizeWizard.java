@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 IBM Corporation and others.
+ * Copyright (c) 2008, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -72,12 +72,14 @@ public class InternationalizeWizard extends Wizard implements IImportWizard {
 	/**
 	 * Initialises selections
 	 */
+	@Override
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 	}
 
 	/**
 	 * Adds the plug-in and locale pages to the wizard
 	 */
+	@Override
 	public void addPages() {
 		setNeedsProgressMonitor(true);
 		page1 = new InternationalizeWizardPluginPage(fInternationalizePluginModelTable, "Plug-ins"); //$NON-NLS-1$
@@ -116,6 +118,7 @@ public class InternationalizeWizard extends Wizard implements IImportWizard {
 		return page2.getLocalesForInternationalization();
 	}
 
+	@Override
 	public boolean performFinish() {
 		page1.storeSettings();
 		page2.storeSettings();
@@ -131,6 +134,7 @@ public class InternationalizeWizard extends Wizard implements IImportWizard {
 	 * @param currentPage
 	 * @return the next wizard page
 	 */
+	@Override
 	public IWizardPage getNextPage(IWizardPage currentPage) {
 		if (currentPage.equals(page1)) {
 			ensurePluginsAreExternalized();
@@ -144,6 +148,7 @@ public class InternationalizeWizard extends Wizard implements IImportWizard {
 	 * @param currentPage
 	 * @return the previous wizard page
 	 */
+	@Override
 	public IWizardPage getPreviousPage(IWizardPage currentPage) {
 		if (currentPage.equals(page2)) {
 			return page1;
@@ -151,6 +156,7 @@ public class InternationalizeWizard extends Wizard implements IImportWizard {
 		return null;
 	}
 
+	@Override
 	public boolean canFinish() {
 		return getPluginModelsForInternationalization().size() > 0 && getLocalesForInternationalization().size() > 0;
 	}
@@ -182,10 +188,12 @@ public class InternationalizeWizard extends Wizard implements IImportWizard {
 		externalize.runGetNonExternalizedStringsAction(externalizeSelection);
 	}
 
+	@Override
 	public boolean performCancel() {
 		return super.performCancel();
 	}
 
+	@Override
 	public void setContainer(IWizardContainer wizardContainer) {
 		super.setContainer(wizardContainer);
 		if (getContainer() instanceof TrayDialog)

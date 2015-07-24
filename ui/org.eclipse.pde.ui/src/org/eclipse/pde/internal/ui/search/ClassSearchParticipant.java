@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -67,6 +67,7 @@ public class ClassSearchParticipant implements IQueryParticipant {
 	public ClassSearchParticipant() {
 	}
 
+	@Override
 	public void search(ISearchRequestor requestor, QuerySpecification querySpecification, IProgressMonitor monitor) throws CoreException {
 
 		if (querySpecification.getLimitTo() != S_LIMIT_REF && querySpecification.getLimitTo() != S_LIMIT_ALL)
@@ -112,6 +113,7 @@ public class ClassSearchParticipant implements IQueryParticipant {
 
 	private void searchProject(IProject project, IProgressMonitor monitor) {
 		ModelModification mod = new ModelModification(project) {
+			@Override
 			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
 				if (model instanceof IBundlePluginModelBase) {
 					IBundleModel bmodel = ((IBundlePluginModelBase) model).getBundleModel();
@@ -274,10 +276,12 @@ public class ClassSearchParticipant implements IQueryParticipant {
 		return value;
 	}
 
+	@Override
 	public int estimateTicks(QuerySpecification specification) {
 		return 100;
 	}
 
+	@Override
 	public IMatchPresentation getUIParticipant() {
 		return null;
 	}

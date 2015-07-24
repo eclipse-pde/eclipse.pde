@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -60,6 +60,7 @@ public class AddLibraryDialog extends SelectionStatusDialog {
 	}
 
 	class TableContentProvider extends DefaultContentProvider implements IStructuredContentProvider {
+		@Override
 		public Object[] getElements(Object input) {
 			if (input instanceof IPluginModelBase) {
 				return ((IPluginModelBase) input).getPluginBase().getLibraries();
@@ -69,10 +70,12 @@ public class AddLibraryDialog extends SelectionStatusDialog {
 	}
 
 	class TableLabelProvider extends LabelProvider implements ITableLabelProvider {
+		@Override
 		public String getColumnText(Object obj, int index) {
 			return ((IPluginLibrary) obj).getName();
 		}
 
+		@Override
 		public Image getColumnImage(Object obj, int index) {
 			return libImage;
 		}
@@ -101,6 +104,7 @@ public class AddLibraryDialog extends SelectionStatusDialog {
 		this.libraries = libraries;
 	}
 
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite container = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
@@ -117,6 +121,7 @@ public class AddLibraryDialog extends SelectionStatusDialog {
 
 		text = new Text(container, SWT.SINGLE | SWT.BORDER);
 		text.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				updateStatus(validator.validate(text.getText()));
 			}
@@ -132,6 +137,7 @@ public class AddLibraryDialog extends SelectionStatusDialog {
 		libraryViewer.setContentProvider(new TableContentProvider());
 		libraryViewer.setLabelProvider(new TableLabelProvider());
 		libraryViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent e) {
 				ISelection sel = e.getSelection();
 				IPluginLibrary obj = (IPluginLibrary) ((IStructuredSelection) sel).getFirstElement();
@@ -146,17 +152,20 @@ public class AddLibraryDialog extends SelectionStatusDialog {
 	/*
 	 * @see org.eclipse.jface.window.Window#configureShell(Shell)
 	 */
+	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(shell, IHelpContextIds.BUILD_ADD_LIBRARY_DIALOG);
 	}
 
+	@Override
 	public int open() {
 		text.setText(init);
 		text.selectAll();
 		return super.open();
 	}
 
+	@Override
 	protected void computeResult() {
 
 	}
@@ -168,6 +177,7 @@ public class AddLibraryDialog extends SelectionStatusDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
+	@Override
 	protected void okPressed() {
 		newName = text.getText();
 		super.okPressed();

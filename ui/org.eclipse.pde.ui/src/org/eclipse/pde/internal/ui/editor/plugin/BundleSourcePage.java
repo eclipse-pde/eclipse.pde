@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2013 IBM Corporation and others.
+ * Copyright (c) 2003, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -70,6 +70,7 @@ public class BundleSourcePage extends KeyValueSourcePage {
 	 */
 	private class BundleOutlineContentProvider extends DefaultContentProvider implements ITreeContentProvider {
 
+		@Override
 		public Object[] getChildren(Object parent) {
 			// Need an identifying class for label provider
 			if (parent instanceof ImportPackageHeader) {
@@ -94,14 +95,17 @@ public class BundleSourcePage extends KeyValueSourcePage {
 			return libraries;
 		}
 
+		@Override
 		public boolean hasChildren(Object parent) {
 			return getChildren(parent).length > 0;
 		}
 
+		@Override
 		public Object getParent(Object child) {
 			return null;
 		}
 
+		@Override
 		public Object[] getElements(Object parent) {
 			if (parent instanceof BundleModel) {
 				BundleModel model = (BundleModel) parent;
@@ -570,10 +574,12 @@ public class BundleSourcePage extends KeyValueSourcePage {
 			range[1] = header.getName().length();
 		}
 		return new IDocumentRange() {
+			@Override
 			public int getOffset() {
 				return range[0];
 			}
 
+			@Override
 			public int getLength() {
 				return range[1];
 			}

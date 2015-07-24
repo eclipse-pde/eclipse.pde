@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -38,6 +38,7 @@ public class ConvertProjectsAction implements IObjectActionDelegate {
 	 * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.action.IAction,
 	 *      org.eclipse.ui.IWorkbenchPart)
 	 */
+	@Override
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 	}
 
@@ -46,6 +47,7 @@ public class ConvertProjectsAction implements IObjectActionDelegate {
 	 * 
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run(IAction action) {
 		IProject[] unconverted = getUnconvertedProjects();
 		if (unconverted.length == 0) {
@@ -78,6 +80,7 @@ public class ConvertProjectsAction implements IObjectActionDelegate {
 			final Display display = getDisplay();
 			final WizardDialog dialog = new WizardDialog(display.getActiveShell(), wizard);
 			BusyIndicator.showWhile(display, new Runnable() {
+				@Override
 				public void run() {
 					dialog.open();
 				}
@@ -91,6 +94,7 @@ public class ConvertProjectsAction implements IObjectActionDelegate {
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction,
 	 *      org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		fSelection = selection;
 	}

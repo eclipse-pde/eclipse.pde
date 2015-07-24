@@ -55,6 +55,7 @@ public class PreferencesSection extends PDESection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
 	 */
+	@Override
 	protected void createClient(Section section, FormToolkit toolkit) {
 		section.setLayout(FormLayoutFactory.createClearTableWrapLayout(false, 1));
 		TableWrapData data = new TableWrapData(TableWrapData.FILL_GRAB);
@@ -74,16 +75,19 @@ public class PreferencesSection extends PDESection {
 		configText.setLayoutData(data);
 
 		configText.addHyperlinkListener(new IHyperlinkListener() {
+			@Override
 			public void linkEntered(HyperlinkEvent e) {
 				IStatusLineManager mng = getPage().getEditor().getEditorSite().getActionBars().getStatusLineManager();
 				mng.setMessage(e.getLabel());
 			}
 
+			@Override
 			public void linkExited(HyperlinkEvent e) {
 				IStatusLineManager mng = getPage().getEditor().getEditorSite().getActionBars().getStatusLineManager();
 				mng.setMessage(null);
 			}
 
+			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				String href = (String) e.getHref();
 				if (href.equals("command.generate")) { //$NON-NLS-1$
@@ -302,6 +306,7 @@ public class PreferencesSection extends PDESection {
 	}
 
 
+	@Override
 	public boolean canPaste(Clipboard clipboard) {
 		Display d = getSection().getDisplay();
 		Control c = d.getFocusControl();
@@ -313,6 +318,7 @@ public class PreferencesSection extends PDESection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#modelChanged(org.eclipse.pde.core.IModelChangedEvent)
 	 */
+	@Override
 	public void modelChanged(IModelChangedEvent e) {
 		// No need to call super, handling world changed event here
 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
@@ -330,6 +336,7 @@ public class PreferencesSection extends PDESection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
 	 */
+	@Override
 	public void dispose() {
 		IProductModel model = getModel();
 		if (model != null) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 Code 9 Corporation and others.
+ * Copyright (c) 2008, 2015 Code 9 Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,6 +53,7 @@ public class PluginConfigurationSection extends TableSection {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 		 */
+		@Override
 		public Object[] getElements(Object inputElement) {
 			return fProduct.getPluginConfigurations();
 		}
@@ -60,6 +61,7 @@ public class PluginConfigurationSection extends TableSection {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 		 */
+		@Override
 		public void dispose() {
 
 		}
@@ -67,6 +69,7 @@ public class PluginConfigurationSection extends TableSection {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 		 */
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			if (oldInput == newInput)
 				return;
@@ -78,12 +81,14 @@ public class PluginConfigurationSection extends TableSection {
 
 	private class LabelProvider extends PDELabelProvider {
 
+		@Override
 		public Image getColumnImage(Object obj, int index) {
 			if (index == 0)
 				return super.getColumnImage(PluginRegistry.findModel(((IPluginConfiguration) obj).getId()), index);
 			return null;
 		}
 
+		@Override
 		public String getColumnText(Object obj, int index) {
 			IPluginConfiguration configuration = (IPluginConfiguration) obj;
 			switch (index) {
@@ -160,6 +165,7 @@ public class PluginConfigurationSection extends TableSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
 	 */
+	@Override
 	protected void createClient(Section section, FormToolkit toolkit) {
 		section.setText(PDEUIMessages.ConfigurationPageMock_sectionTitle);
 		section.setDescription(PDEUIMessages.ConfigurationPageMock_sectionDesc);
@@ -183,9 +189,11 @@ public class PluginConfigurationSection extends TableSection {
 
 		table.addControlListener(new ControlListener() {
 
+			@Override
 			public void controlMoved(ControlEvent e) {
 			}
 
+			@Override
 			public void controlResized(ControlEvent e) {
 				int size = table.getSize().x;
 				column1.setWidth(size / 7 * 4);
@@ -208,6 +216,7 @@ public class PluginConfigurationSection extends TableSection {
 		updateRemoveButtons(true, true);
 	}
 
+	@Override
 	protected void buttonSelected(int index) {
 		switch (index) {
 			case 0 :
@@ -396,6 +405,7 @@ public class PluginConfigurationSection extends TableSection {
 		}
 	}
 
+	@Override
 	protected void selectionChanged(IStructuredSelection selection) {
 		updateRemoveButtons(true, false);
 	}
@@ -440,6 +450,7 @@ public class PluginConfigurationSection extends TableSection {
 		fAutoColumnEditor.minimumWidth = 50;
 
 		table.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				showControls();
 			}
@@ -469,6 +480,7 @@ public class PluginConfigurationSection extends TableSection {
 			int defaultLevel = level.length() == 0 || "default".equals(level) ? 0 : Integer.parseInt(level); //$NON-NLS-1$
 			spinner.setSelection(defaultLevel);
 			spinner.addModifyListener(new ModifyListener() {
+				@Override
 				public void modifyText(ModifyEvent e) {
 					int selection = spinner.getSelection();
 					item.setText(1, selection == 0 ? "default" //$NON-NLS-1$
@@ -484,6 +496,7 @@ public class PluginConfigurationSection extends TableSection {
 			combo.setText(item.getText(2));
 			combo.pack();
 			combo.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					item.setText(2, combo.getText());
 					ppc.setAutoStart(Boolean.valueOf(combo.getText()).booleanValue());
@@ -504,6 +517,7 @@ public class PluginConfigurationSection extends TableSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.IPluginModelListener#modelsChanged(org.eclipse.pde.internal.core.PluginModelDelta)
 	 */
+	@Override
 	public void modelChanged(IModelChangedEvent e) {
 		//TODO update modelChanged method
 		// No need to call super, handling world changed event here

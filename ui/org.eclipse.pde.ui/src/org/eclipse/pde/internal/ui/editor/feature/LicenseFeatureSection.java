@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2010, 2014 IBM Corporation and others.
+ *  Copyright (c) 2010, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -72,6 +72,7 @@ public class LicenseFeatureSection extends PDESection {
 	 * @param toolkit
 	 * @param parent
 	 */
+	@Override
 	public void createClient(Section section, FormToolkit toolkit) {
 		Composite page = toolkit.createComposite(section);
 		final StackLayout stackLayout = new StackLayout();
@@ -111,6 +112,7 @@ public class LicenseFeatureSection extends PDESection {
 
 		fLicenseFeatureIDText = toolkit.createText(licenseFeatureComposite, null, SWT.SINGLE);
 		fLicenseFeatureIDText.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				infoModified();
 			}
@@ -122,6 +124,7 @@ public class LicenseFeatureSection extends PDESection {
 
 		fLicenseButton = toolkit.createButton(licenseFeatureComposite, PDEUIMessages.FeatureEditor_licenseFeatureSection_browse, SWT.PUSH);
 		fLicenseButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleSelect();
 			}
@@ -132,6 +135,7 @@ public class LicenseFeatureSection extends PDESection {
 
 		fLicenseFeatureVersionText = toolkit.createText(licenseFeatureComposite, null, SWT.SINGLE);
 		fLicenseFeatureVersionText.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				infoModified();
 			}
@@ -160,6 +164,7 @@ public class LicenseFeatureSection extends PDESection {
 
 		fUrlText = toolkit.createText(localLicenseComposite, null, SWT.SINGLE);
 		fUrlText.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				infoModified();
 			}
@@ -177,6 +182,7 @@ public class LicenseFeatureSection extends PDESection {
 		fSourceViewer.configure(fSourceConfiguration);
 		fSourceViewer.setDocument(fDocument);
 		fSourceViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				updateSelection(event.getSelection());
 			}
@@ -186,10 +192,12 @@ public class LicenseFeatureSection extends PDESection {
 		styledText.setMenu(getPage().getPDEEditor().getContextMenu());
 		styledText.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
 		fDocument.addDocumentListener(new IDocumentListener() {
+			@Override
 			public void documentChanged(DocumentEvent e) {
 				infoModified();
 			}
 
+			@Override
 			public void documentAboutToBeChanged(DocumentEvent e) {
 			}
 		});
@@ -204,6 +212,7 @@ public class LicenseFeatureSection extends PDESection {
 		styledText.setLayoutData(gd);
 
 		fSharedLicenseButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (((Button) e.widget).getSelection()) {
 					stackLayout.topControl = licenseFeatureComposite;
@@ -212,6 +221,7 @@ public class LicenseFeatureSection extends PDESection {
 			}
 		});
 		fLocalLicenseButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (((Button) e.widget).getSelection()) {
 					stackLayout.topControl = localLicenseComposite;
@@ -241,6 +251,7 @@ public class LicenseFeatureSection extends PDESection {
 
 	private void handleSelect() {
 		BusyIndicator.showWhile(fLicenseFeatureIDText.getDisplay(), new Runnable() {
+			@Override
 			public void run() {
 				IFeatureModel[] allModels = PDECore.getDefault().getFeatureModelManager().getModels();
 				ArrayList<IFeatureModel> newModels = new ArrayList<IFeatureModel>();
@@ -286,6 +297,7 @@ public class LicenseFeatureSection extends PDESection {
 		}
 	}
 
+	@Override
 	public void refresh() {
 		fIgnoreChange = true;
 		IFeatureModel model = (IFeatureModel) getPage().getModel();
@@ -305,6 +317,7 @@ public class LicenseFeatureSection extends PDESection {
 		fIgnoreChange = false;
 	}
 
+	@Override
 	public void commit(boolean onSave) {
 		IFeatureModel featureModel = (IFeatureModel) getPage().getModel();
 		IFeature feature = featureModel.getFeature();
@@ -337,6 +350,7 @@ public class LicenseFeatureSection extends PDESection {
 		super.commit(onSave);
 	}
 
+	@Override
 	public boolean doGlobalAction(String actionId) {
 		if (actionId.equals(ActionFactory.CUT.getId())) {
 			fSourceViewer.doOperation(ITextOperationTarget.CUT);
@@ -362,6 +376,7 @@ public class LicenseFeatureSection extends PDESection {
 		return false;
 	}
 
+	@Override
 	public boolean canPaste(Clipboard clipboard) {
 		return fSourceViewer.canDoOperation(ITextOperationTarget.PASTE);
 	}

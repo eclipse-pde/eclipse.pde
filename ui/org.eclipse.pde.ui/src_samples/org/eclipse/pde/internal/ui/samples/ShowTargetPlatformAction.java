@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@ import org.eclipse.ui.PlatformUI;
 public class ShowTargetPlatformAction extends Action {
 
 	// Bring up Target Platform prefrences page
+	@Override
 	public void run() {
 		final IPreferenceNode targetNode = new TargetPlatformPreferenceNode();
 		PreferenceManager manager = new PreferenceManager();
@@ -28,6 +29,7 @@ public class ShowTargetPlatformAction extends Action {
 		Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 		final PreferenceDialog dialog = new PreferenceDialog(shell, manager);
 		BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
+			@Override
 			public void run() {
 				dialog.create();
 				dialog.setMessage(targetNode.getLabelText());

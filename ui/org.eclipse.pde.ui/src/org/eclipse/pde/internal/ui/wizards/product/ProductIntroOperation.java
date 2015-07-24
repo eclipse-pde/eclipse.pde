@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,6 +49,7 @@ public class ProductIntroOperation extends BaseManifestOperation implements IVar
 		fProject = PluginRegistry.findModel(pluginId).getUnderlyingResource().getProject();
 	}
 
+	@Override
 	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 		try {
 			IFile file = getFile();
@@ -141,6 +142,7 @@ public class ProductIntroOperation extends BaseManifestOperation implements IVar
 			throw new CoreException(new Status(IStatus.ERROR, "org.eclipse.pde.ui", IStatus.ERROR, NLS.bind(PDEUIMessages.ProductDefinitionOperation_readOnly, fPluginId), null)); //$NON-NLS-1$ 
 
 		ModelModification mod = new ModelModification(file) {
+			@Override
 			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
 				if (!(model instanceof IPluginModelBase))
 					return;
@@ -317,6 +319,7 @@ public class ProductIntroOperation extends BaseManifestOperation implements IVar
 		return key;
 	}
 
+	@Override
 	public Object getValue(String variable) {
 		return null;
 	}

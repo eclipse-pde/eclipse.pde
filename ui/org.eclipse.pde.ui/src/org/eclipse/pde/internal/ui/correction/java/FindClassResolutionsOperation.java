@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others.
+ * Copyright (c) 2008, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -101,6 +101,7 @@ public class FindClassResolutionsOperation implements IRunnableWithProgress {
 	 * (non-Javadoc)
 	 * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public void run(IProgressMonitor monitor) {
 		int idx = fClassName.lastIndexOf('.');
 		String packageName = idx != -1 ? fClassName.substring(0, idx) : null;
@@ -215,6 +216,7 @@ public class FindClassResolutionsOperation implements IRunnableWithProgress {
 			final Map<String, IPackageFragment> packages = new HashMap<String, IPackageFragment>();
 			SearchRequestor requestor = new SearchRequestor() {
 
+				@Override
 				public void acceptSearchMatch(SearchMatch aMatch) throws CoreException {
 					Object element = aMatch.getElement();
 					if (element instanceof IType) {

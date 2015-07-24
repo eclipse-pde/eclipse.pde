@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -29,6 +29,7 @@ public class ElementSectionDropAdapter extends ViewerDropAdapter {
 	/**
 	 * @see org.eclipse.jface.viewers.ViewerDropAdapter#performDrop(java.lang.Object)
 	 */
+	@Override
 	public boolean performDrop(Object data) {
 		fSsection.handleOp(getCurrentTarget(), fDragAdapter.getDragData(), getCurrentOperation());
 		return true;
@@ -37,6 +38,7 @@ public class ElementSectionDropAdapter extends ViewerDropAdapter {
 	/**
 	 * @see org.eclipse.jface.viewers.ViewerDropAdapter#validateDrop(java.lang.Object, int, org.eclipse.swt.dnd.TransferData)
 	 */
+	@Override
 	public boolean validateDrop(Object target, int operation, TransferData transferType) {
 		fCurrentTransfer = transferType;
 		if (!ModelDataTransfer.getInstance().isSupportedType(fCurrentTransfer))

@@ -1,5 +1,5 @@
 /******************************************************************************* 
-* Copyright (c) 2013 EclipseSource and others. All rights reserved. This
+* Copyright (c) 2013, 2015 EclipseSource and others. All rights reserved. This
 * program and the accompanying materials are made available under the terms of
 * the Eclipse Public License v1.0 which accompanies this distribution, and is
 * available at http://www.eclipse.org/legal/epl-v10.html
@@ -263,6 +263,7 @@ public class CategoryDetailsSection extends PDESection implements IPartSelection
 		super.refresh();
 	}
 
+	@Override
 	public void selectionChanged(IFormPart part, ISelection selection) {
 		if (selection instanceof IStructuredSelection && !selection.isEmpty()) {
 			Object o = ((IStructuredSelection) selection).getFirstElement();

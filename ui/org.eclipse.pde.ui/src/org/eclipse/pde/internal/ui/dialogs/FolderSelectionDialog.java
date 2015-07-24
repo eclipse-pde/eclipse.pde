@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -39,6 +39,7 @@ public class FolderSelectionDialog extends ElementTreeSelectionDialog implements
 	/*
 	 * @see org.eclipse.jface.window.Window#configureShell(Shell)
 	 */
+	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(shell, IHelpContextIds.FOLDER_SELECTION_DIALOG);
@@ -47,6 +48,7 @@ public class FolderSelectionDialog extends ElementTreeSelectionDialog implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite result = (Composite) super.createDialogArea(parent);
 
@@ -55,6 +57,7 @@ public class FolderSelectionDialog extends ElementTreeSelectionDialog implements
 		fNewFolderButton = new Button(result, SWT.PUSH);
 		fNewFolderButton.setText(PDEUIMessages.BuildEditor_SourceFolderSelectionDialog_button);
 		fNewFolderButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent event) {
 				newFolderButtonPressed();
 			}
@@ -96,6 +99,7 @@ public class FolderSelectionDialog extends ElementTreeSelectionDialog implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 	 */
+	@Override
 	public void selectionChanged(SelectionChangedEvent event) {
 		updateNewFolderButtonState();
 	}

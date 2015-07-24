@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2012 IBM Corporation and others.
+ *  Copyright (c) 2003, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -40,6 +40,7 @@ public class SelfHostingPropertyPage extends PropertyPage {
 	private CheckboxTableViewer fViewer;
 
 	class ContentProvider extends DefaultTableProvider {
+		@Override
 		public Object[] getElements(Object input) {
 			return getOutputFolders();
 		}
@@ -49,6 +50,7 @@ public class SelfHostingPropertyPage extends PropertyPage {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.LabelProvider#getImage(java.lang.Object)
 		 */
+		@Override
 		public Image getImage(Object element) {
 			return fImage;
 		}
@@ -84,6 +86,7 @@ public class SelfHostingPropertyPage extends PropertyPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
 	 */
+	@Override
 	public void dispose() {
 		if (fImage != null)
 			fImage.dispose();
@@ -92,6 +95,7 @@ public class SelfHostingPropertyPage extends PropertyPage {
 	/**
 	 * @see PreferencePage#createContents(Composite)
 	 */
+	@Override
 	protected Control createContents(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout());
@@ -124,6 +128,7 @@ public class SelfHostingPropertyPage extends PropertyPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.SELFHOSTING_PROPERTY_PAGE);
@@ -149,10 +154,12 @@ public class SelfHostingPropertyPage extends PropertyPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
+	@Override
 	protected void performDefaults() {
 		fViewer.setAllChecked(true);
 	}
 
+	@Override
 	public boolean performOk() {
 		Preferences pref = getPreferences((IProject) getElement().getAdapter(IProject.class));
 		StringBuffer buffer = new StringBuffer();

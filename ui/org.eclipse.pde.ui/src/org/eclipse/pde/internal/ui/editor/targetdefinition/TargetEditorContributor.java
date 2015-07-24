@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,16 +30,19 @@ public class TargetEditorContributor extends EditorActionBarContributor {
 	private IAction fRevertAction;
 
 	class RevertAction extends Action implements IUpdate {
+		@Override
 		public void run() {
 			if (fEditor != null)
 				fEditor.doRevert();
 		}
 
+		@Override
 		public void update() {
 			setEnabled(fEditor != null ? fEditor.isDirty() : false);
 		}
 	}
 
+	@Override
 	public void setActiveEditor(IEditorPart targetEditor) {
 		if (targetEditor instanceof TargetEditor) {
 			fEditor = (TargetEditor) targetEditor;

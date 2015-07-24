@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,6 +50,7 @@ public class ExportOptionsTab extends AbstractExportTab {
 		super(page);
 	}
 
+	@Override
 	protected Control createControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
 		container.setLayout(new GridLayout());
@@ -87,6 +88,7 @@ public class ExportOptionsTab extends AbstractExportTab {
 		fJarButton = new Button(comp, SWT.CHECK);
 		fJarButton.setText(getJarButtonText());
 		fJarButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 			}
 		});
@@ -149,12 +151,14 @@ public class ExportOptionsTab extends AbstractExportTab {
 		fQualifierText = new Text(comp, SWT.SINGLE | SWT.BORDER);
 		fQualifierText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fQualifierText.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				fPage.pageChanged();
 			}
 		});
 	}
 
+	@Override
 	protected void initialize(IDialogSettings settings) {
 		fIncludeSourceButton.setSelection(settings.getBoolean(S_EXPORT_SOURCE));
 		fIncludeSourceCombo.setItems(new String[] {PDEUIMessages.ExportWizard_generateAssociatedSourceBundles, PDEUIMessages.ExportWizard_includeSourceInBinaryBundles});
@@ -174,6 +178,7 @@ public class ExportOptionsTab extends AbstractExportTab {
 		hookListeners();
 	}
 
+	@Override
 	protected void saveSettings(IDialogSettings settings) {
 		settings.put(S_JAR_FORMAT, fJarButton.getSelection());
 		settings.put(S_EXPORT_SOURCE, fIncludeSourceButton.getSelection());
@@ -210,17 +215,20 @@ public class ExportOptionsTab extends AbstractExportTab {
 
 	protected void hookListeners() {
 		fIncludeSourceButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fIncludeSourceCombo.setEnabled(fIncludeSourceButton.getSelection());
 			}
 		});
 
 		fJarButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				((BaseExportWizardPage) fPage).adjustAdvancedTabsVisibility();
 			}
 		});
 		fSaveAsAntButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fAntCombo.setEnabled(fSaveAsAntButton.getSelection());
 				fBrowseAnt.setEnabled(fSaveAsAntButton.getSelection());
@@ -229,23 +237,27 @@ public class ExportOptionsTab extends AbstractExportTab {
 		});
 
 		fBrowseAnt.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				chooseFile(fAntCombo, new String[] {"*.xml"}); //$NON-NLS-1$
 			}
 		});
 
 		fAntCombo.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fPage.pageChanged();
 			}
 		});
 
 		fAntCombo.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				fPage.pageChanged();
 			}
 		});
 		fQualifierButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fQualifierText.setEnabled(fQualifierButton.getSelection());
 				fPage.pageChanged();

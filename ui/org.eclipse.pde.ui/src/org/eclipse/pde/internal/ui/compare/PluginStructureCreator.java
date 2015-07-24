@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,14 +43,17 @@ public class PluginStructureCreator extends StructureCreator {
 			}
 		}
 
+		@Override
 		public String getName() {
 			return this.getId();
 		}
 
+		@Override
 		public String getType() {
 			return "PLUGIN2"; //$NON-NLS-1$
 		}
 
+		@Override
 		public Image getImage() {
 			return image;
 		}
@@ -60,6 +63,7 @@ public class PluginStructureCreator extends StructureCreator {
 		// Nothing to do
 	}
 
+	@Override
 	protected IStructureComparator createStructureComparator(Object input, IDocument document, ISharedDocumentAdapter adapter, IProgressMonitor monitor) throws CoreException {
 		final boolean isEditable;
 		if (input instanceof IEditableContent)
@@ -75,10 +79,12 @@ public class PluginStructureCreator extends StructureCreator {
 		// managers reference it.
 		final ResourceManager resources = new LocalResourceManager(JFaceResources.getResources());
 		DocumentRangeNode rootNode = new StructureRootNode(document, input, this, adapter) {
+			@Override
 			public boolean isEditable() {
 				return isEditable;
 			}
 
+			@Override
 			public void dispose() {
 				// Dispose the label provider and the local resource manager
 				labelProvider.dispose();
@@ -97,6 +103,7 @@ public class PluginStructureCreator extends StructureCreator {
 		return rootNode;
 	}
 
+	@Override
 	public String getContents(Object node, boolean ignoreWhitespace) {
 		if (node instanceof IStreamContentAccessor) {
 			IStreamContentAccessor sca = (IStreamContentAccessor) node;
@@ -108,6 +115,7 @@ public class PluginStructureCreator extends StructureCreator {
 		return null;
 	}
 
+	@Override
 	public String getName() {
 		return PDEUIMessages.PluginStructureCreator_name;
 	}

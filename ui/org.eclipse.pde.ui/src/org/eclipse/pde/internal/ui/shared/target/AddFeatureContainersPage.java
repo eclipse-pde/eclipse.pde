@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,6 +51,7 @@ public class AddFeatureContainersPage extends EditDirectoryContainerPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.shared.target.EditDirectoryContainerPage#getDefaultTitle()
 	 */
+	@Override
 	protected String getDefaultTitle() {
 		return Messages.AddFeatureContainerPage_0;
 	}
@@ -58,6 +59,7 @@ public class AddFeatureContainersPage extends EditDirectoryContainerPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.shared.target.EditDirectoryContainerPage#getDefaultMessage()
 	 */
+	@Override
 	protected String getDefaultMessage() {
 		return Messages.AddFeatureContainerPage_1;
 	}
@@ -65,6 +67,7 @@ public class AddFeatureContainersPage extends EditDirectoryContainerPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.shared.target.EditDirectoryContainerPage#createLocationArea(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected void createLocationArea(Composite parent) {
 		super.createLocationArea(parent);
 		createTableArea(parent);
@@ -92,11 +95,13 @@ public class AddFeatureContainersPage extends EditDirectoryContainerPage {
 		fFeatureTable.getControl().setFont(tableComp.getFont());
 
 		fFeatureTable.addCheckStateListener(new ICheckStateListener() {
+			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				AddFeatureContainersPage.this.checkStateChanged();
 			}
 		});
 		fFeatureTable.addDoubleClickListener(new IDoubleClickListener() {
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				if (!event.getSelection().isEmpty()) {
 					Object selection = ((IStructuredSelection) event.getSelection()).getFirstElement();
@@ -109,6 +114,7 @@ public class AddFeatureContainersPage extends EditDirectoryContainerPage {
 		Composite buttonComp = SWTFactory.createComposite(tableComp, 1, 1, GridData.FILL_VERTICAL, 0, 0);
 		fSelectAllButton = SWTFactory.createPushButton(buttonComp, Messages.AddFeatureContainersPage_0, null);
 		fSelectAllButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fFeatureTable.setAllChecked(true);
 				checkStateChanged();
@@ -116,6 +122,7 @@ public class AddFeatureContainersPage extends EditDirectoryContainerPage {
 		});
 		fDeselectAllButton = SWTFactory.createPushButton(buttonComp, Messages.AddFeatureContainersPage_1, null);
 		fDeselectAllButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fFeatureTable.setAllChecked(false);
 				checkStateChanged();
@@ -146,6 +153,7 @@ public class AddFeatureContainersPage extends EditDirectoryContainerPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.shared.target.EditDirectoryContainerPage#containerChanged(long)
 	 */
+	@Override
 	protected void containerChanged(long delay) {
 		if (fInstallLocation.getText().trim().length() > 0) {
 			try {
@@ -203,6 +211,7 @@ public class AddFeatureContainersPage extends EditDirectoryContainerPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.DialogPage#dispose()
 	 */
+	@Override
 	public void dispose() {
 		// Disconnect the label provider so it can be disposed
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);

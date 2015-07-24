@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2012 IBM Corporation and others.
+ *  Copyright (c) 2003, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -47,6 +47,7 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 	private boolean fRefreshNeeded = true;
 
 	class ContentProvider extends DefaultContentProvider implements IStructuredContentProvider {
+		@Override
 		public Object[] getElements(Object element) {
 			return new Object[0];
 		}
@@ -94,10 +95,12 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 		}
 	}
 
+	@Override
 	public void dispose() {
 		PDECore.getDefault().getModelManager().getExternalModelManager().removeModelProviderListener(this);
 	}
 
+	@Override
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
 		if (visible && isRefreshNeeded()) {
@@ -248,6 +251,7 @@ public abstract class BaseImportWizardSecondPage extends WizardPage implements I
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModelProviderListener#modelsChanged(org.eclipse.pde.core.IModelProviderEvent)
 	 */
+	@Override
 	public void modelsChanged(IModelProviderEvent event) {
 		fRefreshNeeded = true;
 	}

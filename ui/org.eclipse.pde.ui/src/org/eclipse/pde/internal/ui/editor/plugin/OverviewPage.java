@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2014 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -61,10 +61,12 @@ public class OverviewPage extends LaunchShortcutOverviewPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#getHelpResource()
 	 */
+	@Override
 	protected String getHelpResource() {
 		return IHelpContextIds.MANIFEST_PLUGIN_OVERVIEW;
 	}
 
+	@Override
 	protected void createFormContent(IManagedForm managedForm) {
 		super.createFormContent(managedForm);
 		ScrolledForm form = managedForm.getForm();
@@ -226,6 +228,7 @@ public class OverviewPage extends LaunchShortcutOverviewPage {
 	 * 
 	 * @see org.eclipse.ui.forms.events.HyperlinkListener#linkActivated(org.eclipse.ui.forms.events.HyperlinkEvent)
 	 */
+	@Override
 	public void linkActivated(HyperlinkEvent e) {
 		String href = (String) e.getHref();
 		// try page references
@@ -355,11 +358,13 @@ public class OverviewPage extends LaunchShortcutOverviewPage {
 		}
 	}
 
+	@Override
 	public void dispose() {
 		fDisposed = true;
 		super.dispose();
 	}
 
+	@Override
 	protected short getIndent() {
 		return 5;
 	}

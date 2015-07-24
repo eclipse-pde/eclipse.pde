@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,6 +55,7 @@ public class FeatureOptionsTab extends ExportOptionsTab {
 			super(shell, multi, container, typesMask);
 			addListFilter(new ViewerFilter() {
 
+				@Override
 				public boolean select(Viewer viewer, Object parentElement, Object element) {
 					IResource resource = (IResource) element;
 					if (resource != null && resource instanceof IFile) {
@@ -70,6 +71,7 @@ public class FeatureOptionsTab extends ExportOptionsTab {
 		/* (non-Javadoc)
 		 * @see org.eclipse.ui.dialogs.FilteredResourcesSelectionDialog#validateItem(java.lang.Object)
 		 */
+		@Override
 		protected IStatus validateItem(Object item) {
 			if (item instanceof IResource) {
 				IResource resource = (IResource) item;
@@ -96,8 +98,10 @@ public class FeatureOptionsTab extends ExportOptionsTab {
 		super(page);
 	}
 
+	@Override
 	protected void addAdditionalOptions(Composite comp) {
 		fJarButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fExportMetadata.setEnabled(fJarButton.getSelection());
 				fCategoryButton.setEnabled(fExportMetadata.getSelection() && fJarButton.getSelection());
@@ -143,6 +147,7 @@ public class FeatureOptionsTab extends ExportOptionsTab {
 
 	}
 
+	@Override
 	protected String getJarButtonText() {
 		return PDEUIMessages.BaseExportWizardPage_fPackageJARs;
 	}
@@ -170,6 +175,7 @@ public class FeatureOptionsTab extends ExportOptionsTab {
 		return doExportMetadata() && fCategoryButton.getSelection() && fCategoryCombo.getText().trim().length() > 0;
 	}
 
+	@Override
 	protected void initialize(IDialogSettings settings) {
 		super.initialize(settings);
 		if (fMultiPlatform != null) {
@@ -201,6 +207,7 @@ public class FeatureOptionsTab extends ExportOptionsTab {
 		updateCategoryGeneration();
 	}
 
+	@Override
 	protected void saveSettings(IDialogSettings settings) {
 		super.saveSettings(settings);
 		if (fMultiPlatform != null) {
@@ -211,10 +218,12 @@ public class FeatureOptionsTab extends ExportOptionsTab {
 		settings.put(S_CATEGORY_FILE, fCategoryCombo.getText());
 	}
 
+	@Override
 	protected void hookListeners() {
 		super.hookListeners();
 		if (fMultiPlatform != null) {
 			fMultiPlatform.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					fPage.pageChanged();
 				}
@@ -222,18 +231,21 @@ public class FeatureOptionsTab extends ExportOptionsTab {
 		}
 
 		fExportMetadata.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fCategoryButton.setEnabled(fExportMetadata.getSelection() && fJarButton.getSelection());
 				updateCategoryGeneration();
 			}
 		});
 		fCategoryButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateCategoryGeneration();
 			}
 		});
 
 		fCategoryBrowse.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				openFile(fCategoryCombo);
 			}
@@ -249,6 +261,7 @@ public class FeatureOptionsTab extends ExportOptionsTab {
 		return fMultiPlatform != null && fMultiPlatform.getSelection();
 	}
 
+	@Override
 	protected void setEnabledForInstall(boolean enabled) {
 		super.setEnabledForInstall(enabled);
 		fExportMetadata.setEnabled(enabled);

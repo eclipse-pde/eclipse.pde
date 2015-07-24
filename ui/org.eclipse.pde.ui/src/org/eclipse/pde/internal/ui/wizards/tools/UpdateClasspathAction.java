@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -35,6 +35,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
  */
 public class UpdateClasspathAction extends AbstractHandler {
 
+	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		IPluginModelBase[] fUnupdated = getModelsToUpdate();
 		if (fUnupdated.length == 0) {
@@ -74,6 +75,7 @@ public class UpdateClasspathAction extends AbstractHandler {
 			UpdateBuildpathWizard wizard = new UpdateBuildpathWizard(fUnupdated, modelArray);
 			final WizardDialog dialog = new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
 			BusyIndicator.showWhile(PDEPlugin.getActiveWorkbenchShell().getDisplay(), new Runnable() {
+				@Override
 				public void run() {
 					dialog.open();
 				}

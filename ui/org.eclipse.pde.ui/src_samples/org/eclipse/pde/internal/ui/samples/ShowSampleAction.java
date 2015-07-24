@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2013 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -56,12 +56,14 @@ public class ShowSampleAction extends Action implements IIntroAction {
 		provUI = ProvisioningUI.getDefaultUI();
 	}
 
+	@Override
 	public void run(IIntroSite site, Properties params) {
 		sampleId = params.getProperty("id"); //$NON-NLS-1$
 		if (sampleId == null)
 			return;
 
 		Runnable r = new Runnable() {
+			@Override
 			public void run() {
 				if (!ensureSampleFeaturePresent())
 					return;
@@ -170,6 +172,7 @@ public class ShowSampleAction extends Action implements IIntroAction {
 	 */
 	private boolean downloadFeature() {
 		IRunnableWithProgress op = new IRunnableWithProgress() {
+			@Override
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				try {
 					SubMonitor sub = SubMonitor.convert(monitor, PDEUIMessages.ShowSampleAction_installing, 100);

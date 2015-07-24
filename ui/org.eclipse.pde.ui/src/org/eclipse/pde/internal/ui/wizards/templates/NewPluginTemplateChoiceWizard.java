@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -26,6 +26,7 @@ public class NewPluginTemplateChoiceWizard extends AbstractNewPluginTemplateWiza
 	public NewPluginTemplateChoiceWizard() {
 	}
 
+	@Override
 	public ITemplateSection[] getTemplateSections() {
 		if (fSelectionPage != null) {
 			return fSelectionPage.getSelectedTemplates();
@@ -33,17 +34,20 @@ public class NewPluginTemplateChoiceWizard extends AbstractNewPluginTemplateWiza
 		return getCandidates();
 	}
 
+	@Override
 	public void addAdditionalPages() {
 		fSelectionPage = new TemplateSelectionPage(getCandidates());
 		addPage(fSelectionPage);
 	}
 
+	@Override
 	public IWizardPage getNextPage(IWizardPage page) {
 		if (fSelectionPage == null)
 			return null;
 		return fSelectionPage.getNextVisiblePage(page);
 	}
 
+	@Override
 	public IWizardPage getPreviousPage(IWizardPage page) {
 		return null;
 	}
@@ -57,6 +61,7 @@ public class NewPluginTemplateChoiceWizard extends AbstractNewPluginTemplateWiza
 	}
 
 	// calculate canFinish only on selected templateSections and the status of their pages
+	@Override
 	public boolean canFinish() {
 		ITemplateSection[] sections = fSelectionPage.getSelectedTemplates();
 		for (int i = 0; i < sections.length; i++) {
@@ -98,6 +103,7 @@ public class NewPluginTemplateChoiceWizard extends AbstractNewPluginTemplateWiza
 
 	// by default, all pages in wizard get created.  We add all the pages from the template sections and we don't want to initialize them yet
 	// Therefore, the createPageControls only initializes the first page, allowing the other to be created as needed.
+	@Override
 	public void createPageControls(Composite pageContainer) {
 		fSelectionPage.createControl(pageContainer);
 	}

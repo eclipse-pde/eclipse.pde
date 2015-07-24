@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -69,6 +69,7 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 	private int fImportInsertIndex;
 
 	class ImportContentProvider extends DefaultTableProvider {
+		@Override
 		public Object[] getElements(Object parent) {
 			if (fImports == null)
 				createImportObjects();
@@ -628,11 +629,13 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 		job.schedule();
 	}
 
+	@Override
 	public void modelsChanged(PluginModelDelta delta) {
 		fImports = null;
 		final Control control = fImportViewer.getControl();
 		if (!control.isDisposed()) {
 			control.getDisplay().asyncExec(new Runnable() {
+				@Override
 				public void run() {
 					if (!control.isDisposed())
 						fImportViewer.refresh();
@@ -677,6 +680,7 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 		return true;
 	}
 
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		if (fSortAction.equals(event.getSource()) && IAction.RESULT.equals(event.getProperty())) {
 			updateUpDownButtons();

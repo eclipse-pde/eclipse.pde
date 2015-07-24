@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 IBM Corporation and others.
+ * Copyright (c) 2010, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,6 +40,7 @@ public class CachedCheckboxTreeViewer extends ContainerCheckedTreeViewer {
 	protected CachedCheckboxTreeViewer(Tree tree) {
 		super(tree);
 		addCheckStateListener(new ICheckStateListener() {
+			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				updateCheckState(event.getElement(), event.getChecked());
 			}
@@ -153,6 +154,7 @@ public class CachedCheckboxTreeViewer extends ContainerCheckedTreeViewer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ICheckable#setChecked(java.lang.Object, boolean)
 	 */
+	@Override
 	public boolean setChecked(Object element, boolean state) {
 		updateCheckState(element, state);
 		return super.setChecked(element, state);
@@ -161,6 +163,7 @@ public class CachedCheckboxTreeViewer extends ContainerCheckedTreeViewer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.CheckboxTreeViewer#setCheckedElements(java.lang.Object[])
 	 */
+	@Override
 	public void setCheckedElements(Object[] elements) {
 		super.setCheckedElements(elements);
 		if (checkState == null) {
@@ -186,6 +189,7 @@ public class CachedCheckboxTreeViewer extends ContainerCheckedTreeViewer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.CheckboxTreeViewer#setAllChecked(boolean)
 	 */
+	@Override
 	public void setAllChecked(boolean state) {
 		super.setAllChecked(state);
 		if (state) {
@@ -246,6 +250,7 @@ public class CachedCheckboxTreeViewer extends ContainerCheckedTreeViewer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#remove(java.lang.Object[])
 	 */
+	@Override
 	public void remove(Object[] elementsOrTreePaths) {
 		for (int i = 0; i < elementsOrTreePaths.length; i++) {
 			updateCheckState(elementsOrTreePaths[i], false);
@@ -256,6 +261,7 @@ public class CachedCheckboxTreeViewer extends ContainerCheckedTreeViewer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#remove(java.lang.Object)
 	 */
+	@Override
 	public void remove(Object elementsOrTreePaths) {
 		updateCheckState(elementsOrTreePaths, false);
 		super.remove(elementsOrTreePaths);

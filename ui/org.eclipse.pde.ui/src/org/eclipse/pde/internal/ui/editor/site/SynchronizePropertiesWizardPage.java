@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2013 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -61,6 +61,7 @@ public class SynchronizePropertiesWizardPage extends WizardPage {
 		fModel = model;
 	}
 
+	@Override
 	public void createControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
@@ -94,6 +95,7 @@ public class SynchronizePropertiesWizardPage extends WizardPage {
 		final int mode = saveSettings();
 
 		IRunnableWithProgress operation = new WorkspaceModifyOperation() {
+			@Override
 			public void execute(IProgressMonitor monitor) {
 				try {
 					runOperation(mode, monitor);
@@ -144,6 +146,7 @@ public class SynchronizePropertiesWizardPage extends WizardPage {
 		}
 		final boolean isPatch = patch;
 		getShell().getDisplay().syncExec(new Runnable() {
+			@Override
 			public void run() {
 				try {
 					siteFeature.setNL(feature.getNL());

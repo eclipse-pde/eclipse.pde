@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -91,6 +91,7 @@ public class DependencyManagementSection extends TableSection implements IPlugin
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 		 */
+		@Override
 		public Object[] getElements(Object inputElement) {
 			if (fAdditionalBundles == null)
 				return createAdditionalBundles();
@@ -631,11 +632,13 @@ public class DependencyManagementSection extends TableSection implements IPlugin
 		super.dispose();
 	}
 
+	@Override
 	public void modelsChanged(PluginModelDelta delta) {
 		fAdditionalBundles = null;
 		final Control control = fAdditionalTable.getControl();
 		if (!control.isDisposed()) {
 			control.getDisplay().asyncExec(new Runnable() {
+				@Override
 				public void run() {
 					if (!control.isDisposed())
 						fAdditionalTable.refresh();
@@ -681,6 +684,7 @@ public class DependencyManagementSection extends TableSection implements IPlugin
 		updateButtons();
 	}
 
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		if (fSortAction.equals(event.getSource()) && IAction.RESULT.equals(event.getProperty())) {
 			updateUpDownButtons();

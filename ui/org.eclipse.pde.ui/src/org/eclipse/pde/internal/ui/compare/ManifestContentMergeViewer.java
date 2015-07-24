@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2014 IBM Corporation and others.
+ *  Copyright (c) 2005, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -32,6 +32,7 @@ public class ManifestContentMergeViewer extends TextMergeViewer {
 		super(parent, SWT.LEFT_TO_RIGHT, configuration);
 	}
 
+	@Override
 	protected void configureTextViewer(TextViewer textViewer) {
 		if (textViewer instanceof SourceViewer) {
 			if (fColorManager == null)
@@ -43,18 +44,22 @@ public class ManifestContentMergeViewer extends TextMergeViewer {
 		}
 	}
 
+	@Override
 	protected IDocumentPartitioner getDocumentPartitioner() {
 		return new FastPartitioner(new ManifestPartitionScanner(), ManifestPartitionScanner.PARTITIONS);
 	}
 
+	@Override
 	protected String getDocumentPartitioning() {
 		return ManifestPartitionScanner.MANIFEST_FILE_PARTITIONING;
 	}
 
+	@Override
 	public String getTitle() {
 		return PDEUIMessages.ManifestContentMergeViewer_title;
 	}
 
+	@Override
 	protected void handleDispose(DisposeEvent event) {
 		super.handleDispose(event);
 		if (fColorManager != null)

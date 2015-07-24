@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,10 +45,12 @@ public class SiteEditor extends MultiSourceEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getEditorID()
 	 */
+	@Override
 	protected String getEditorID() {
 		return IPDEUIConstants.SITE_EDITOR_ID;
 	}
 
+	@Override
 	protected void createResourceContexts(InputContextManager manager, IFileEditorInput input) {
 		IFile file = input.getFile();
 		IFile siteFile = null;
@@ -63,15 +65,18 @@ public class SiteEditor extends MultiSourceEditor {
 		}
 	}
 
+	@Override
 	protected InputContextManager createInputContextManager() {
 		SiteInputContextManager contextManager = new SiteInputContextManager(this);
 		contextManager.setUndoManager(new SiteUndoManager(this));
 		return contextManager;
 	}
 
+	@Override
 	public void monitoredFileAdded(IFile file) {
 	}
 
+	@Override
 	public boolean monitoredFileRemoved(IFile file) {
 		//TODO may need to check with the user if there
 		//are unsaved changes in the model for the
@@ -79,14 +84,17 @@ public class SiteEditor extends MultiSourceEditor {
 		return true;
 	}
 
+	@Override
 	public void editorContextAdded(InputContext context) {
 		addSourcePage(context.getId());
 	}
 
+	@Override
 	public void contextRemoved(InputContext context) {
 		close(false);
 	}
 
+	@Override
 	protected void createSystemFileContexts(InputContextManager manager, FileStoreEditorInput input) {
 		File file = new File(input.getURI());
 		File siteFile = null;
@@ -107,6 +115,7 @@ public class SiteEditor extends MultiSourceEditor {
 		}
 	}
 
+	@Override
 	protected void createStorageContexts(InputContextManager manager, IStorageEditorInput input) {
 		String name = input.getName().toLowerCase(Locale.ENGLISH);
 		if (name.startsWith("site.xml")) { //$NON-NLS-1$
@@ -114,10 +123,12 @@ public class SiteEditor extends MultiSourceEditor {
 		}
 	}
 
+	@Override
 	protected void contextMenuAboutToShow(IMenuManager manager) {
 		super.contextMenuAboutToShow(manager);
 	}
 
+	@Override
 	protected void addEditorPages() {
 		try {
 			addPage(new FeaturesPage(this));
@@ -128,6 +139,7 @@ public class SiteEditor extends MultiSourceEditor {
 		addSourcePage(SiteInputContext.CONTEXT_ID);
 	}
 
+	@Override
 	protected String computeInitialPageId() {
 		return FeaturesPage.PAGE_ID;
 	}
@@ -135,10 +147,12 @@ public class SiteEditor extends MultiSourceEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.MultiSourceEditor#createXMLSourcePage(org.eclipse.pde.internal.ui.neweditor.PDEFormEditor, java.lang.String, java.lang.String)
 	 */
+	@Override
 	protected PDESourcePage createSourcePage(PDEFormEditor editor, String title, String name, String contextId) {
 		return new SiteSourcePage(editor, title, name);
 	}
 
+	@Override
 	protected ISortableContentOutlinePage createContentOutline() {
 		return new SiteOutlinePage(this);
 	}
@@ -147,6 +161,7 @@ public class SiteEditor extends MultiSourceEditor {
 	 * (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getInputContext(java.lang.Object)
 	 */
+	@Override
 	protected InputContext getInputContext(Object object) {
 		InputContext context = null;
 		if (object instanceof ISiteObject) {
@@ -155,6 +170,7 @@ public class SiteEditor extends MultiSourceEditor {
 		return context;
 	}
 
+	@Override
 	public void contributeToToolbar(IToolBarManager manager) {
 		manager.add(getBuildAllAction());
 	}
@@ -162,6 +178,7 @@ public class SiteEditor extends MultiSourceEditor {
 	protected Action getBuildAllAction() {
 		if (fBuildAllAction == null) {
 			fBuildAllAction = new Action() {
+				@Override
 				public void run() {
 					handleBuild(((ISiteModel) getAggregateModel()).getSite().getFeatures());
 				}
@@ -171,6 +188,7 @@ public class SiteEditor extends MultiSourceEditor {
 			updateActionEnablement();
 
 			((ISiteModel) getAggregateModel()).addModelChangedListener(new IModelChangedListener() {
+				@Override
 				public void modelChanged(IModelChangedEvent event) {
 					updateActionEnablement();
 				}
@@ -220,6 +238,7 @@ public class SiteEditor extends MultiSourceEditor {
 		if (isDirty()) {
 			try {
 				IRunnableWithProgress op = new IRunnableWithProgress() {
+					@Override
 					public void run(IProgressMonitor monitor) {
 						doSave(monitor);
 					}

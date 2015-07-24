@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,6 +43,7 @@ public class SiteInputContext extends XMLInputContext {
 		create();
 	}
 
+	@Override
 	protected IBaseModel createModel(IEditorInput input) {
 		IBaseModel model = null;
 		InputStream is = null;
@@ -95,6 +96,7 @@ public class SiteInputContext extends XMLInputContext {
 		return model;
 	}
 
+	@Override
 	public void dispose() {
 		ISiteModel model = (ISiteModel) getModel();
 		if (storageModel) {
@@ -103,6 +105,7 @@ public class SiteInputContext extends XMLInputContext {
 		super.dispose();
 	}
 
+	@Override
 	protected void flushModel(IDocument doc) {
 		// if model is dirty, flush its content into
 		// the document so that the source editor will
@@ -128,6 +131,7 @@ public class SiteInputContext extends XMLInputContext {
 		}
 	}
 
+	@Override
 	protected boolean synchronizeModel(IDocument doc) {
 		ISiteModel model = (ISiteModel) getModel();
 		boolean cleanModel = true;
@@ -154,6 +158,7 @@ public class SiteInputContext extends XMLInputContext {
 	 * 
 	 * @see org.eclipse.pde.internal.ui.neweditor.InputContext#getId()
 	 */
+	@Override
 	public String getId() {
 		return CONTEXT_ID;
 	}
@@ -164,15 +169,18 @@ public class SiteInputContext extends XMLInputContext {
 	 * @see org.eclipse.pde.internal.ui.neweditor.context.InputContext#addTextEditOperation(java.util.ArrayList,
 	 *      org.eclipse.pde.core.IModelChangedEvent)
 	 */
+	@Override
 	protected void addTextEditOperation(ArrayList<TextEdit> ops, IModelChangedEvent event) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.context.XMLInputContext#reorderInsertEdits(java.util.ArrayList)
 	 */
+	@Override
 	protected void reorderInsertEdits(ArrayList<TextEdit> ops) {
 	}
 
+	@Override
 	protected String getPartitionName() {
 		return "___site_partition"; //$NON-NLS-1$
 	}

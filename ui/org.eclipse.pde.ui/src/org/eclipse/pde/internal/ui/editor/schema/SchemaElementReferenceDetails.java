@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -37,6 +37,7 @@ public class SchemaElementReferenceDetails extends AbstractSchemaDetails {
 		super(section, true, false);
 	}
 
+	@Override
 	public void createDetails(Composite parent) {
 		FormToolkit toolkit = getManagedForm().getToolkit();
 
@@ -53,6 +54,7 @@ public class SchemaElementReferenceDetails extends AbstractSchemaDetails {
 		setText(PDEUIMessages.SchemaElementReferenceDetails_title);
 	}
 
+	@Override
 	public void updateFields(ISchemaObject object) {
 		if (!(object instanceof SchemaElementReference))
 			return;
@@ -68,8 +70,10 @@ public class SchemaElementReferenceDetails extends AbstractSchemaDetails {
 		enableMinMax(editable);
 	}
 
+	@Override
 	public void hookListeners() {
 		hookMinOccur(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (blockListeners())
 					return;
@@ -77,6 +81,7 @@ public class SchemaElementReferenceDetails extends AbstractSchemaDetails {
 			}
 		});
 		hookMaxOccur(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (blockListeners())
 					return;
@@ -84,6 +89,7 @@ public class SchemaElementReferenceDetails extends AbstractSchemaDetails {
 			}
 		});
 		fReferenceLink.addHyperlinkListener(new HyperlinkAdapter() {
+			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				if (blockListeners())
 					return;
@@ -95,6 +101,7 @@ public class SchemaElementReferenceDetails extends AbstractSchemaDetails {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#commit(boolean)
 	 */
+	@Override
 	public void commit(boolean onSave) {
 		super.commit(onSave);
 		// Only required for form entries

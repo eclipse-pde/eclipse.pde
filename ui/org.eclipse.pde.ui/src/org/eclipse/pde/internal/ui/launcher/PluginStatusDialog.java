@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2012 IBM Corporation and others.
+ *  Copyright (c) 2005, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -32,6 +32,7 @@ public class PluginStatusDialog extends TrayDialog {
 
 	class ContentProvider extends DefaultContentProvider implements ITreeContentProvider {
 
+		@Override
 		public Object[] getChildren(Object parentElement) {
 			if (fInput.containsKey(parentElement)) {
 				return (Object[]) fInput.get(parentElement);
@@ -42,10 +43,12 @@ public class PluginStatusDialog extends TrayDialog {
 			return new Object[0];
 		}
 
+		@Override
 		public Object getParent(Object element) {
 			return null;
 		}
 
+		@Override
 		public boolean hasChildren(Object element) {
 			if (fInput.containsKey(element) && element instanceof BundleDescription) {
 				return true;
@@ -56,6 +59,7 @@ public class PluginStatusDialog extends TrayDialog {
 			return false;
 		}
 
+		@Override
 		public Object[] getElements(Object inputElement) {
 			return ((Map<?, ?>) inputElement).keySet().toArray();
 		}
@@ -89,6 +93,7 @@ public class PluginStatusDialog extends TrayDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
 		if (fShowCancelButton) {
@@ -99,11 +104,13 @@ public class PluginStatusDialog extends TrayDialog {
 	/*
 	 * @see org.eclipse.jface.window.Window#configureShell(Shell)
 	 */
+	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(shell, IHelpContextIds.PLUGIN_STATUS_DIALOG);
 	}
 
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite container = (Composite) super.createDialogArea(parent);
 		GridData gd = new GridData(GridData.FILL_BOTH);
@@ -126,6 +133,7 @@ public class PluginStatusDialog extends TrayDialog {
 		return container;
 	}
 
+	@Override
 	public boolean close() {
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 		return super.close();
@@ -143,6 +151,7 @@ public class PluginStatusDialog extends TrayDialog {
 		return PDEPlugin.getPluginId() + ".PLUGIN_STATUS_DIALOG"; //$NON-NLS-1$
 	}
 
+	@Override
 	protected IDialogSettings getDialogBoundsSettings() {
 		return getDialogSettings();
 	}

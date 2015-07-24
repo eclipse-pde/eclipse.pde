@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 IBM Corporation and others.
+ * Copyright (c) 2008, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -95,6 +95,7 @@ public class JavaResolutionFactory {
 		/* (non-Javadoc)
 		 * @see org.eclipse.ltk.core.refactoring.Change#isValid(org.eclipse.core.runtime.IProgressMonitor)
 		 */
+		@Override
 		public RefactoringStatus isValid(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 			return RefactoringStatus.create(Status.OK_STATUS);
 		}
@@ -102,6 +103,7 @@ public class JavaResolutionFactory {
 		/* (non-Javadoc)
 		 * @see org.eclipse.ltk.core.refactoring.Change#getModifiedElement()
 		 */
+		@Override
 		public Object getModifiedElement() {
 			return getProject();
 		}
@@ -109,6 +111,7 @@ public class JavaResolutionFactory {
 		/* (non-Javadoc)
 		 * @see org.eclipse.ltk.core.refactoring.Change#initializeValidationData(org.eclipse.core.runtime.IProgressMonitor)
 		 */
+		@Override
 		public void initializeValidationData(IProgressMonitor pm) {
 		}
 	}
@@ -126,8 +129,10 @@ public class JavaResolutionFactory {
 		 * (non-Javadoc)
 		 * @see org.eclipse.ltk.core.refactoring.Change#perform(org.eclipse.core.runtime.IProgressMonitor)
 		 */
+		@Override
 		public Change perform(IProgressMonitor pm) throws CoreException {
 			PDEModelUtility.modifyModel(new ModelModification(getProject()) {
+				@Override
 				protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
 					if (!(model instanceof IPluginModelBase))
 						return;
@@ -148,6 +153,7 @@ public class JavaResolutionFactory {
 
 			if (!isUndo())
 				return new RequireBundleManifestChange(getProject(), (ExportPackageDescription) getChangeObject()) {
+					@Override
 					public boolean isUndo() {
 						return true;
 					}
@@ -159,6 +165,7 @@ public class JavaResolutionFactory {
 		 * (non-Javadoc)
 		 * @see org.eclipse.pde.internal.ui.correction.java.JavaResolutionFactory.AbstractManifestChange#getImage()
 		 */
+		@Override
 		public Image getImage() {
 			return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_REQ_PLUGIN_OBJ);
 		}
@@ -167,6 +174,7 @@ public class JavaResolutionFactory {
 		 * (non-Javadoc)
 		 * @see org.eclipse.pde.internal.ui.correction.java.JavaResolutionFactory.AbstractManifestChange#getDescription()
 		 */
+		@Override
 		public String getDescription() {
 			return PDEUIMessages.UnresolvedImportFixProcessor_2;
 		}
@@ -175,6 +183,7 @@ public class JavaResolutionFactory {
 		 * (non-Javadoc)
 		 * @see org.eclipse.ltk.core.refactoring.Change#getName()
 		 */
+		@Override
 		public String getName() {
 			if (!isUndo()) {
 				return MessageFormat.format(PDEUIMessages.UnresolvedImportFixProcessor_0, new Object[] {((ExportPackageDescription) getChangeObject()).getExporter().getName()});
@@ -186,6 +195,7 @@ public class JavaResolutionFactory {
 		 * (non-Javadoc)
 		 * @see org.eclipse.pde.internal.ui.correction.java.JavaResolutionFactory.AbstractManifestChange#getModifiedElement()
 		 */
+		@Override
 		public Object getModifiedElement() {
 			IFile[] files = new IFile[] {PDEProject.getManifest(getProject()), PDEProject.getPluginXml(getProject())};
 			for (int i = 0; i < files.length; i++) {
@@ -210,8 +220,10 @@ public class JavaResolutionFactory {
 		 * (non-Javadoc)
 		 * @see org.eclipse.ltk.core.refactoring.Change#perform(org.eclipse.core.runtime.IProgressMonitor)
 		 */
+		@Override
 		public Change perform(IProgressMonitor pm) throws CoreException {
 			PDEModelUtility.modifyModel(new ModelModification(getProject()) {
+				@Override
 				protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
 					if (!(model instanceof IBundlePluginModelBase))
 						return;
@@ -237,6 +249,7 @@ public class JavaResolutionFactory {
 
 			if (!isUndo())
 				return new ImportPackageManifestChange(getProject(), (ExportPackageDescription) getChangeObject()) {
+					@Override
 					public boolean isUndo() {
 						return true;
 					}
@@ -248,6 +261,7 @@ public class JavaResolutionFactory {
 		 * (non-Javadoc)
 		 * @see org.eclipse.pde.internal.ui.correction.java.JavaResolutionFactory.AbstractManifestChange#getDescription()
 		 */
+		@Override
 		public String getDescription() {
 			return PDEUIMessages.UnresolvedImportFixProcessor_5;
 		}
@@ -256,6 +270,7 @@ public class JavaResolutionFactory {
 		 * (non-Javadoc)
 		 * @see org.eclipse.pde.internal.ui.correction.java.JavaResolutionFactory.AbstractManifestChange#getImage()
 		 */
+		@Override
 		public Image getImage() {
 			return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_BUNDLE_OBJ);
 		}
@@ -264,6 +279,7 @@ public class JavaResolutionFactory {
 		 * (non-Javadoc)
 		 * @see org.eclipse.ltk.core.refactoring.Change#getName()
 		 */
+		@Override
 		public String getName() {
 			if (!isUndo()) {
 				return MessageFormat.format(PDEUIMessages.UnresolvedImportFixProcessor_3, new Object[] {((ExportPackageDescription) getChangeObject()).getName()});
@@ -275,6 +291,7 @@ public class JavaResolutionFactory {
 		 * (non-Javadoc)
 		 * @see org.eclipse.pde.internal.ui.correction.java.JavaResolutionFactory.AbstractManifestChange#getModifiedElement()
 		 */
+		@Override
 		public Object getModifiedElement() {
 			IFile file = PDEProject.getManifest(getProject());
 			if (file.exists())
@@ -294,8 +311,10 @@ public class JavaResolutionFactory {
 		 * (non-Javadoc)
 		 * @see org.eclipse.ltk.core.refactoring.Change#perform(org.eclipse.core.runtime.IProgressMonitor)
 		 */
+		@Override
 		public Change perform(IProgressMonitor pm) throws CoreException {
 			ModelModification mod = new ModelModification(getProject()) {
+				@Override
 				protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
 					if (model instanceof IBundlePluginModelBase) {
 						IBundle bundle = ((IBundlePluginModelBase) model).getBundleModel().getBundle();
@@ -318,6 +337,7 @@ public class JavaResolutionFactory {
 		 * (non-Javadoc)
 		 * @see org.eclipse.ltk.core.refactoring.Change#getName()
 		 */
+		@Override
 		public String getName() {
 			return NLS.bind(PDEUIMessages.ForbiddenAccessProposal_quickfixMessage, new String[] {((IPackageFragment) getChangeObject()).getElementName(), getProject().getName()});
 		}
@@ -326,6 +346,7 @@ public class JavaResolutionFactory {
 		 * (non-Javadoc)
 		 * @see org.eclipse.pde.internal.ui.correction.java.JavaResolutionFactory.AbstractManifestChange#getImage()
 		 */
+		@Override
 		public Image getImage() {
 			return PDEPluginImages.get(PDEPluginImages.OBJ_DESC_BUNDLE);
 		}
@@ -334,6 +355,7 @@ public class JavaResolutionFactory {
 		 * (non-Javadoc)
 		 * @see org.eclipse.pde.internal.ui.correction.java.JavaResolutionFactory.AbstractManifestChange#getModifiedElement()
 		 */
+		@Override
 		public Object getModifiedElement() {
 			IFile file = PDEProject.getManifest(getProject());
 			if (file.exists())
@@ -345,6 +367,7 @@ public class JavaResolutionFactory {
 		 * (non-Javadoc)
 		 * @see org.eclipse.pde.internal.ui.correction.java.JavaResolutionFactory.AbstractManifestChange#getDescription()
 		 */
+		@Override
 		public String getDescription() {
 			// No plans to use as ClasspathFixProposal, therefore we don't have to implement a description
 			return null;
@@ -423,6 +446,7 @@ public class JavaResolutionFactory {
 			/* (non-Javadoc)
 			 * @see org.eclipse.jdt.ui.text.java.ClasspathFixProcessor.ClasspathFixProposal#createChange(org.eclipse.core.runtime.IProgressMonitor)
 			 */
+			@Override
 			public Change createChange(IProgressMonitor monitor) throws CoreException {
 				return change;
 			}
@@ -430,6 +454,7 @@ public class JavaResolutionFactory {
 			/* (non-Javadoc)
 			 * @see org.eclipse.jdt.ui.text.java.ClasspathFixProcessor.ClasspathFixProposal#getAdditionalProposalInfo()
 			 */
+			@Override
 			public String getAdditionalProposalInfo() {
 				return change.getDescription();
 			}
@@ -437,6 +462,7 @@ public class JavaResolutionFactory {
 			/* (non-Javadoc)
 			 * @see org.eclipse.jdt.ui.text.java.ClasspathFixProcessor.ClasspathFixProposal#getDisplayString()
 			 */
+			@Override
 			public String getDisplayString() {
 				return change.getName();
 			}
@@ -444,6 +470,7 @@ public class JavaResolutionFactory {
 			/* (non-Javadoc)
 			 * @see org.eclipse.jdt.ui.text.java.ClasspathFixProcessor.ClasspathFixProposal#getImage()
 			 */
+			@Override
 			public Image getImage() {
 				return change.getImage();
 			}
@@ -451,6 +478,7 @@ public class JavaResolutionFactory {
 			/* (non-Javadoc)
 			 * @see org.eclipse.jdt.ui.text.java.ClasspathFixProcessor.ClasspathFixProposal#getRelevance()
 			 */
+			@Override
 			public int getRelevance() {
 				return relevance;
 			}
@@ -472,6 +500,7 @@ public class JavaResolutionFactory {
 			 * (non-Javadoc)
 			 * @see org.eclipse.jdt.ui.text.java.IJavaCompletionProposal#getRelevance()
 			 */
+			@Override
 			public int getRelevance() {
 				return relevance;
 			}
@@ -480,6 +509,7 @@ public class JavaResolutionFactory {
 			 * (non-Javadoc)
 			 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#apply(org.eclipse.jface.text.IDocument)
 			 */
+			@Override
 			public void apply(IDocument document) {
 				try {
 					change.perform(new NullProgressMonitor());
@@ -491,6 +521,7 @@ public class JavaResolutionFactory {
 			 * (non-Javadoc)
 			 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#getAdditionalProposalInfo()
 			 */
+			@Override
 			public String getAdditionalProposalInfo() {
 				return change.getDescription();
 			}
@@ -499,6 +530,7 @@ public class JavaResolutionFactory {
 			 * (non-Javadoc)
 			 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#getContextInformation()
 			 */
+			@Override
 			public IContextInformation getContextInformation() {
 				return null;
 			}
@@ -507,6 +539,7 @@ public class JavaResolutionFactory {
 			 * (non-Javadoc)
 			 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#getDisplayString()
 			 */
+			@Override
 			public String getDisplayString() {
 				return change.getName();
 			}
@@ -515,6 +548,7 @@ public class JavaResolutionFactory {
 			 * (non-Javadoc)
 			 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#getImage()
 			 */
+			@Override
 			public Image getImage() {
 				return change.getImage();
 			}
@@ -523,6 +557,7 @@ public class JavaResolutionFactory {
 			 * (non-Javadoc)
 			 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#getSelection(org.eclipse.jface.text.IDocument)
 			 */
+			@Override
 			public Point getSelection(IDocument document) {
 				return null;
 			}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2011 IBM Corporation and others.
+ *  Copyright (c) 2007, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -53,6 +53,7 @@ public abstract class TextValidator extends AbstractControlValidator {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.validation.AbstractControlValidator#setEnabled(boolean)
 	 */
+	@Override
 	public void setEnabled(boolean enabled) {
 		// Nothing to do here if enablement is not being changed
 		if (getEnabled() == enabled) {
@@ -74,6 +75,7 @@ public abstract class TextValidator extends AbstractControlValidator {
 
 	protected void createListeners() {
 		fModifyListener = new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				handleModifyTextEvent(e);
 			}
@@ -108,6 +110,7 @@ public abstract class TextValidator extends AbstractControlValidator {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.validation.AbstractControlValidator#autoEnable()
 	 */
+	@Override
 	protected boolean autoEnable() {
 		// Enable validator if the text field is editable
 		if (getText().getEditable() == false) {

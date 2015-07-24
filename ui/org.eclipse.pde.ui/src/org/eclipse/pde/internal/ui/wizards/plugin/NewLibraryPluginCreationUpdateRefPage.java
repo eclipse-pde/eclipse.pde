@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 IBM Corporation and others.
+ * Copyright (c) 2008, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,6 +40,7 @@ public class NewLibraryPluginCreationUpdateRefPage extends WizardPage {
 	private LibraryPluginFieldData fData;
 
 	public class BuildpathContentProvider extends DefaultContentProvider implements IStructuredContentProvider {
+		@Override
 		public Object[] getElements(Object parent) {
 			if (fUnmigrated != null)
 				return fUnmigrated;
@@ -52,6 +53,7 @@ public class NewLibraryPluginCreationUpdateRefPage extends WizardPage {
 			super(mainLabel);
 		}
 
+		@Override
 		protected StructuredViewer createStructuredViewer(Composite parent, int style, FormToolkit toolkit) {
 			StructuredViewer viewer = super.createStructuredViewer(parent, style, toolkit);
 			viewer.setComparator(ListUtil.PLUGIN_COMPARATOR);
@@ -88,6 +90,7 @@ public class NewLibraryPluginCreationUpdateRefPage extends WizardPage {
 
 	}
 
+	@Override
 	public void createControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2008 IBM Corporation and others.
+ *  Copyright (c) 2005, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -29,6 +29,7 @@ public class ConditionalListSelectionDialog extends ElementListSelectionDialog {
 		fButtonText = buttonText;
 	}
 
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite comp = (Composite) super.createDialogArea(parent);
 		int size = ((fElements != null) ? fElements.length : 0) + ((fConditionalElements != null) ? fConditionalElements.length : 0);
@@ -45,6 +46,7 @@ public class ConditionalListSelectionDialog extends ElementListSelectionDialog {
 		Assert.isNotNull(fButtonText);
 		button.setText(fButtonText);
 		button.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (button.getSelection())
 					setListElements(allElements);
@@ -55,6 +57,7 @@ public class ConditionalListSelectionDialog extends ElementListSelectionDialog {
 		return comp;
 	}
 
+	@Override
 	public void setElements(Object[] elements) {
 		super.setElements(elements);
 		fElements = elements;

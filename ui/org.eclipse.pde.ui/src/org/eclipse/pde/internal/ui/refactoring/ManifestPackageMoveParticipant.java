@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2012 IBM Corporation and others.
+ *  Copyright (c) 2005, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 public class ManifestPackageMoveParticipant extends PDEMoveParticipant {
 
+	@Override
 	protected boolean initialize(Object element) {
 		if (element instanceof IPackageFragment) {
 			IPackageFragment fragment = (IPackageFragment) element;
@@ -36,10 +37,12 @@ public class ManifestPackageMoveParticipant extends PDEMoveParticipant {
 		return false;
 	}
 
+	@Override
 	public String getName() {
 		return PDEUIMessages.ManifestPackageRenameParticipant_packageRename;
 	}
 
+	@Override
 	protected void addChange(CompositeChange result, IProgressMonitor pm) throws CoreException {
 		IFile file = PDEProject.getManifest(fProject);
 		if (file.exists()) {
@@ -69,6 +72,7 @@ public class ManifestPackageMoveParticipant extends PDEMoveParticipant {
 		return null;
 	}
 
+	@Override
 	protected boolean isInterestingForExtensions() {
 		return false;
 	}

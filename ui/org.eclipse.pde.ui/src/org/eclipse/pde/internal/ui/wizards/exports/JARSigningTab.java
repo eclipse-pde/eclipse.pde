@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -61,6 +61,7 @@ public class JARSigningTab {
 		gd.horizontalSpan = 3;
 		fButton.setLayoutData(gd);
 		fButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateGroup(fButton.getSelection());
 				fPage.pageChanged();
@@ -75,6 +76,7 @@ public class JARSigningTab {
 		fBrowseButton.setLayoutData(new GridData());
 		SWTUtil.setButtonDimensionHint(fBrowseButton);
 		fBrowseButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				FileDialog dialog = new FileDialog(fPage.getShell(), SWT.OPEN);
 				String path = fKeystoreText.getText();
@@ -133,6 +135,7 @@ public class JARSigningTab {
 		gd.horizontalSpan = span;
 		text.setLayoutData(gd);
 		text.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				fPage.pageChanged();
 			}

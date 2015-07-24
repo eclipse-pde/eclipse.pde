@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -43,14 +43,17 @@ public class LinkSection extends PDESection {
 	private LinkHandler linkHandler;
 
 	class LinkHandler implements IHyperlinkListener {
+		@Override
 		public void linkActivated(HyperlinkEvent e) {
 			doLinkActivated((Hyperlink) e.widget);
 		}
 
+		@Override
 		public void linkEntered(HyperlinkEvent e) {
 			doEnter((Hyperlink) e.widget);
 		}
 
+		@Override
 		public void linkExited(HyperlinkEvent e) {
 			doExit((Hyperlink) e.widget);
 		}
@@ -74,6 +77,7 @@ public class LinkSection extends PDESection {
 	 * @see org.eclipse.pde.internal.ui.neweditor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section,
 	 *      org.eclipse.ui.forms.widgets.FormToolkit)
 	 */
+	@Override
 	protected void createClient(Section section, FormToolkit toolkit) {
 		container = toolkit.createComposite(section);
 		GridLayout layout = new GridLayout();
@@ -93,8 +97,10 @@ public class LinkSection extends PDESection {
 		moreButton = getManagedForm().getToolkit().createButton(container, "More...", //$NON-NLS-1$
 				SWT.PUSH);
 		moreButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				BusyIndicator.showWhile(getSection().getDisplay(), new Runnable() {
+					@Override
 					public void run() {
 						getPage().getEditor().setActivePage(morePageId);
 					}
@@ -160,6 +166,7 @@ public class LinkSection extends PDESection {
 		reflow();
 	}
 
+	@Override
 	public void refresh() {
 		// dispose old links
 		Control[] children = linkContainer.getChildren();

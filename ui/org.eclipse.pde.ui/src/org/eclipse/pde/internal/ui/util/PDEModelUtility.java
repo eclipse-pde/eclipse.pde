@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -284,6 +284,7 @@ public class PDEModelUtility {
 		final PDEFormEditor editor = getOpenEditor(modification);
 		if (editor != null) {
 			Display.getDefault().syncExec(new Runnable() {
+				@Override
 				public void run() {
 					if (editor.isDirty())
 						editor.flushEdits();
@@ -398,6 +399,7 @@ public class PDEModelUtility {
 
 	private static void modifyEditorModel(final ModelModification mod, final PDEFormEditor editor, final IBaseModel model, final IProgressMonitor monitor) {
 		getDisplay().syncExec(new Runnable() {
+			@Override
 			public void run() {
 				try {
 					mod.modifyModel(model, monitor);

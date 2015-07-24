@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,6 +51,7 @@ public class DefinitionPage extends FormPage implements IHyperlinkListener {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#createFormContent(org.eclipse.ui.forms.IManagedForm)
 	 */
+	@Override
 	protected void createFormContent(IManagedForm managedForm) {
 		super.createFormContent(managedForm);
 		ScrolledForm form = managedForm.getForm();
@@ -70,6 +71,7 @@ public class DefinitionPage extends FormPage implements IHyperlinkListener {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.editor.FormPage#dispose()
 	 */
+	@Override
 	public void dispose() {
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 		super.dispose();
@@ -123,6 +125,7 @@ public class DefinitionPage extends FormPage implements IHyperlinkListener {
 		return text;
 	}
 
+	@Override
 	public void linkActivated(HyperlinkEvent e) {
 		String href = (String) e.getHref();
 		if (href.equals("content")) //$NON-NLS-1$
@@ -131,11 +134,13 @@ public class DefinitionPage extends FormPage implements IHyperlinkListener {
 			getEditor().setActivePage(EnvironmentPage.PAGE_ID);
 	}
 
+	@Override
 	public void linkEntered(HyperlinkEvent e) {
 		IStatusLineManager mng = getEditor().getEditorSite().getActionBars().getStatusLineManager();
 		mng.setMessage(e.getLabel());
 	}
 
+	@Override
 	public void linkExited(HyperlinkEvent e) {
 		IStatusLineManager mng = getEditor().getEditorSite().getActionBars().getStatusLineManager();
 		mng.setMessage(null);
@@ -144,6 +149,7 @@ public class DefinitionPage extends FormPage implements IHyperlinkListener {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.editor.FormPage#canLeaveThePage()
 	 */
+	@Override
 	public boolean canLeaveThePage() {
 		((TargetEditor) getEditor()).setDirty(isDirty());
 		return true;

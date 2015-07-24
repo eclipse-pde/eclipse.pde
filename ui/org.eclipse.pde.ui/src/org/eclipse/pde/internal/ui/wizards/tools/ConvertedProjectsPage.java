@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -56,10 +56,12 @@ public class ConvertedProjectsPage extends WizardPage {
 	 * Label provider for the table
 	 */
 	public class ProjectLabelProvider extends LabelProvider {
+		@Override
 		public Image getImage(Object element) {
 			return PlatformUI.getWorkbench().getSharedImages().getImage(IDE.SharedImages.IMG_OBJ_PROJECT);
 		}
 
+		@Override
 		public String getText(Object element) {
 			return ((IProject) element).getName();
 		}
@@ -76,6 +78,7 @@ public class ConvertedProjectsPage extends WizardPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		Composite container = SWTFactory.createComposite(parent, 2, 1, GridData.FILL_BOTH);
 
@@ -88,6 +91,7 @@ public class ConvertedProjectsPage extends WizardPage {
 		fProjectViewer.setInput(fAllUnconvertedProjects);
 		fProjectViewer.setCheckedElements(fInitialSelection);
 		fProjectViewer.addCheckStateListener(new ICheckStateListener() {
+			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				updateButtons();
 			}
@@ -97,6 +101,7 @@ public class ConvertedProjectsPage extends WizardPage {
 
 		fSelectButton = SWTFactory.createPushButton(buttonContainer, PDEUIMessages.ConvertedProjectsPage_SelectAll, null);
 		fSelectButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fProjectViewer.setAllChecked(true);
 				updateButtons();
@@ -104,6 +109,7 @@ public class ConvertedProjectsPage extends WizardPage {
 		});
 		fDeselectButton = SWTFactory.createPushButton(buttonContainer, PDEUIMessages.ConvertedProjectsPage_DeselectAll, null);
 		fDeselectButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fProjectViewer.setAllChecked(false);
 				updateButtons();

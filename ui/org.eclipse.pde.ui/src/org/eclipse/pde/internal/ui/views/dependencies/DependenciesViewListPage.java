@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2008 IBM Corporation and others.
+ *  Copyright (c) 2007, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -31,6 +31,7 @@ public class DependenciesViewListPage extends DependenciesViewPage {
 	 * 
 	 * @see org.eclipse.pde.internal.ui.view.DependenciesViewPage#createViewer(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected StructuredViewer createViewer(Composite parent) {
 		Table table = new Table(parent, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
 
@@ -39,6 +40,7 @@ public class DependenciesViewListPage extends DependenciesViewPage {
 		final DependenciesLabelProvider labelProvider = new DependenciesLabelProvider(false);
 		fViewer.setLabelProvider(labelProvider);
 		fViewer.getControl().addDisposeListener(new DisposeListener() {
+			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				labelProvider.dispose();
 			}
@@ -47,6 +49,7 @@ public class DependenciesViewListPage extends DependenciesViewPage {
 		return fViewer;
 	}
 
+	@Override
 	protected void handleShowOptional(boolean isChecked, boolean refreshIfNecessary) {
 		if (fContentProvider instanceof CalleesListContentProvider) {
 			((CalleesListContentProvider) fContentProvider).setShowOptional(isChecked);
@@ -55,6 +58,7 @@ public class DependenciesViewListPage extends DependenciesViewPage {
 		}
 	}
 
+	@Override
 	protected boolean isShowingOptional() {
 		if (fContentProvider instanceof CalleesListContentProvider) {
 			return ((CalleesListContentProvider) fContentProvider).getShowOptional();

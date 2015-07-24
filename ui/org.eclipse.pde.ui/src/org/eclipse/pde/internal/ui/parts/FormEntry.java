@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2011 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -92,6 +92,7 @@ public class FormEntry {
 		if (browseText != null) {
 			fBrowse = toolkit.createButton(parent, browseText, SWT.PUSH);
 			fBrowse.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					if (fListener != null)
 						fListener.browseButtonSelected(FormEntry.this);
@@ -186,22 +187,26 @@ public class FormEntry {
 
 	private void addListeners() {
 		fText.addKeyListener(new KeyAdapter() {
+			@Override
 			public void keyReleased(KeyEvent e) {
 				keyReleaseOccured(e);
 			}
 		});
 		fText.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				editOccured(e);
 			}
 		});
 		fText.addFocusListener(new FocusAdapter() {
+			@Override
 			public void focusGained(FocusEvent e) {
 				fText.selectAll();
 				if (fListener != null)
 					fListener.focusGained(FormEntry.this);
 			}
 
+			@Override
 			public void focusLost(FocusEvent e) {
 				if (fDirty)
 					commit();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -58,6 +58,7 @@ public class XMLReconcilingStrategy extends SpellingReconcileStrategy {
 		/*
 		 * @see org.eclipse.ui.texteditor.spelling.ISpellingProblemCollector#accept(org.eclipse.ui.texteditor.spelling.SpellingProblem)
 		 */
+		@Override
 		public void accept(SpellingProblem problem) {
 			fAddAnnotations.put(new SpellingAnnotation(problem), new Position(problem.getOffset(), problem.getLength()));
 		}
@@ -65,6 +66,7 @@ public class XMLReconcilingStrategy extends SpellingReconcileStrategy {
 		/*
 		 * @see org.eclipse.ui.texteditor.spelling.ISpellingProblemCollector#beginCollecting()
 		 */
+		@Override
 		public void beginCollecting() {
 			fAddAnnotations = new HashMap<SpellingAnnotation, Position>();
 		}
@@ -72,6 +74,7 @@ public class XMLReconcilingStrategy extends SpellingReconcileStrategy {
 		/*
 		 * @see org.eclipse.ui.texteditor.spelling.ISpellingProblemCollector#endCollecting()
 		 */
+		@Override
 		public void endCollecting() {
 			synchronized (fLockObject) {
 				for (Iterator<SpellingAnnotation> iter = fAddAnnotations.keySet().iterator(); iter.hasNext();) {
@@ -89,6 +92,7 @@ public class XMLReconcilingStrategy extends SpellingReconcileStrategy {
 		super(viewer, EditorsUI.getSpellingService());
 	}
 
+	@Override
 	public void reconcile(IRegion region) {
 
 		deleteAllAnnotations(region);
@@ -147,6 +151,7 @@ public class XMLReconcilingStrategy extends SpellingReconcileStrategy {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.texteditor.spelling.SpellingReconcileStrategy#createSpellingProblemCollector()
 	 */
+	@Override
 	protected ISpellingProblemCollector createSpellingProblemCollector() {
 		IAnnotationModel model = getAnnotationModel();
 		if (model == null)

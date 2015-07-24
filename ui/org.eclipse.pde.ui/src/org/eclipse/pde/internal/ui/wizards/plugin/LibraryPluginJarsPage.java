@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -96,6 +96,7 @@ public class LibraryPluginJarsPage extends WizardPage {
 		}
 	}
 
+	@Override
 	public void createControl(Composite parent) {
 		Composite control = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -110,11 +111,13 @@ public class LibraryPluginJarsPage extends WizardPage {
 		l.setLayoutData(data);
 		fTableViewer = new TableViewer(control, SWT.MULTI | SWT.BORDER);
 		fTableViewer.setContentProvider(new DefaultTableProvider() {
+			@Override
 			public Object[] getElements(Object inputElement) {
 				return fJarPaths.toArray();
 			}
 		});
 		fTableViewer.setLabelProvider(new LabelProvider() {
+			@Override
 			public String getText(Object obj) {
 				String name;
 				String location;
@@ -131,6 +134,7 @@ public class LibraryPluginJarsPage extends WizardPage {
 
 			}
 
+			@Override
 			public Image getImage(Object obj) {
 				if (obj instanceof IFile) {
 					return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_JAR_OBJ);
@@ -144,6 +148,7 @@ public class LibraryPluginJarsPage extends WizardPage {
 		fTableViewer.getControl().setLayoutData(data);
 		fTableViewer.setInput(fJarPaths);
 		fTableViewer.getTable().addKeyListener(new KeyAdapter() {
+			@Override
 			public void keyPressed(KeyEvent event) {
 				if (event.character == SWT.DEL && event.stateMask == 0) {
 					handleRemove();
@@ -166,6 +171,7 @@ public class LibraryPluginJarsPage extends WizardPage {
 		browseWorkspace.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_HORIZONTAL));
 		SWTUtil.setButtonDimensionHint(browseWorkspace);
 		browseWorkspace.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				chooseWorkspaceFile();
 			}
@@ -176,6 +182,7 @@ public class LibraryPluginJarsPage extends WizardPage {
 		browseFile.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		SWTUtil.setButtonDimensionHint(browseFile);
 		browseFile.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				chooseFile();
 			}
@@ -188,6 +195,7 @@ public class LibraryPluginJarsPage extends WizardPage {
 		fRemove.setEnabled(fJarPaths.size() > 0);
 		setPageComplete(fJarPaths.size() > 0);
 		fRemove.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleRemove();
 			}
@@ -213,6 +221,7 @@ public class LibraryPluginJarsPage extends WizardPage {
 		}
 	}
 
+	@Override
 	public boolean isPageComplete() {
 		return fJarPaths.size() > 0;
 	}

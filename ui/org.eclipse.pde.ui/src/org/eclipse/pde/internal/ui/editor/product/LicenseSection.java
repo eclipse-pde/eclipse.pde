@@ -39,6 +39,7 @@ public class LicenseSection extends PDESection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
 	 */
+	@Override
 	protected void createClient(Section section, FormToolkit toolkit) {
 
 		// Configure section
@@ -56,6 +57,7 @@ public class LicenseSection extends PDESection {
 		fURLEntry = new FormEntry(client, toolkit, PDEUIMessages.LicenseSection_url, SWT.NONE);
 		BidiUtils.applyBidiProcessing(fURLEntry.getText(), StructuredTextTypeHandlerFactory.URL);
 		fURLEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
+			@Override
 			public void textValueChanged(FormEntry entry) {
 				getLicenseInfo().setURL(entry.getValue());
 			}
@@ -65,6 +67,7 @@ public class LicenseSection extends PDESection {
 
 		fLicenseEntry = new FormEntry(client, toolkit, PDEUIMessages.LicenseSection_text, SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
 		fLicenseEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
+			@Override
 			public void textValueChanged(FormEntry entry) {
 				getLicenseInfo().setLicense(entry.getValue());
 			}
@@ -83,6 +86,7 @@ public class LicenseSection extends PDESection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#refresh()
 	 */
+	@Override
 	public void refresh() {
 		ILicenseInfo info = getLicenseInfo();
 		fURLEntry.setValue(info.getURL(), true);
@@ -90,12 +94,14 @@ public class LicenseSection extends PDESection {
 		super.refresh();
 	}
 
+	@Override
 	public void commit(boolean onSave) {
 		fURLEntry.commit();
 		fLicenseEntry.commit();
 		super.commit(onSave);
 	}
 
+	@Override
 	public void cancelEdit() {
 		fURLEntry.cancelEdit();
 		fLicenseEntry.cancelEdit();
@@ -119,6 +125,7 @@ public class LicenseSection extends PDESection {
 		return (IProductModel) getPage().getPDEEditor().getAggregateModel();
 	}
 
+	@Override
 	public boolean canPaste(Clipboard clipboard) {
 		Display d = getSection().getDisplay();
 		Control c = d.getFocusControl();
@@ -130,6 +137,7 @@ public class LicenseSection extends PDESection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#modelChanged(org.eclipse.pde.core.IModelChangedEvent)
 	 */
+	@Override
 	public void modelChanged(IModelChangedEvent e) {
 		// No need to call super, handling world changed event here
 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
@@ -147,6 +155,7 @@ public class LicenseSection extends PDESection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
 	 */
+	@Override
 	public void dispose() {
 		IProductModel model = getModel();
 		if (model != null)

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,6 +43,7 @@ public class ProductDestinationGroup extends AbstractExportTab {
 		super(page);
 	}
 
+	@Override
 	public Control createControl(Composite parent) {
 		Group group = new Group(parent, SWT.NONE);
 		group.setText(PDEUIMessages.ExportWizard_destination);
@@ -74,6 +75,7 @@ public class ProductDestinationGroup extends AbstractExportTab {
 		return group;
 	}
 
+	@Override
 	protected void initialize(IDialogSettings settings) {
 		initialize(settings, null);
 	}
@@ -97,6 +99,7 @@ public class ProductDestinationGroup extends AbstractExportTab {
 		}
 	}
 
+	@Override
 	protected void initializeCombo(IDialogSettings settings, String key, Combo combo) {
 		super.initializeCombo(settings, key, combo);
 		if (!isValidLocation(combo.getText().trim())) // If default value is invalid, make it blank
@@ -135,6 +138,7 @@ public class ProductDestinationGroup extends AbstractExportTab {
 
 	protected void hookListeners() {
 		fArchiveFileButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				toggleDestinationGroup(!fArchiveFileButton.getSelection());
 				fPage.pageChanged();
@@ -142,24 +146,28 @@ public class ProductDestinationGroup extends AbstractExportTab {
 		});
 
 		fBrowseFile.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				chooseFile(fArchiveCombo, new String[] {"*" + ZIP_EXTENSION, "*" + WAR_EXTENSION}); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		});
 
 		fArchiveCombo.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				fPage.pageChanged();
 			}
 		});
 
 		fDirectoryCombo.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				fPage.pageChanged();
 			}
 		});
 
 		fBrowseDirectory.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				chooseDestination();
 			}
@@ -169,6 +177,7 @@ public class ProductDestinationGroup extends AbstractExportTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.wizards.exports.AbstractExportTab#saveSettings(org.eclipse.jface.dialogs.IDialogSettings)
 	 */
+	@Override
 	protected void saveSettings(IDialogSettings settings) {
 		settings.put(S_EXPORT_DIRECTORY, fDirectoryButton.getSelection());
 		saveCombo(settings, S_DESTINATION, fDirectoryCombo);

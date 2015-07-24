@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2013 IBM Corporation and others.
+ *  Copyright (c) 2006, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -228,6 +228,7 @@ public class CommandList {
 		clearButton.setImage(hoverImg);
 		clearButton.setToolTipText(PDEUIMessages.CommandList_clearTooltip);
 		clearButton.addDisposeListener(new DisposeListener() {
+			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				hoverImg.dispose();
 			}
@@ -241,6 +242,7 @@ public class CommandList {
 		clearButton.setVisible(false);
 
 		fFilterText.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				fTreeViewer.refresh();
 				clearButton.setVisible(fFilterText.getText().length() > 0);

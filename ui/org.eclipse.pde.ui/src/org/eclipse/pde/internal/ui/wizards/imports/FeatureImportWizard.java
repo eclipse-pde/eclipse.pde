@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -40,12 +40,14 @@ public class FeatureImportWizard extends Wizard implements IImportWizard {
 	/*
 	 * @see IWorkbenchWizard#init(IWorkbench, IStructuredSelection)
 	 */
+	@Override
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 	}
 
 	/*
 	 * @see org.eclipse.jface.wizard.IWizard#addPages
 	 */
+	@Override
 	public void addPages() {
 		setNeedsProgressMonitor(false);
 
@@ -64,6 +66,7 @@ public class FeatureImportWizard extends Wizard implements IImportWizard {
 	/*
 	 * @see Wizard#performFinish()
 	 */
+	@Override
 	public boolean performFinish() {
 		IFeatureModel[] models = fPage.getSelectedModels();
 		fPage.storeSettings(true);
@@ -72,6 +75,7 @@ public class FeatureImportWizard extends Wizard implements IImportWizard {
 		IReplaceQuery query = new ReplaceQuery(getShell());
 		final FeatureImportOperation op = new FeatureImportOperation(models, fPage.isBinary(), targetPath, query);
 		Job job = new Job(PDEUIMessages.FeatureImportWizard_title) {
+			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					PDEPlugin.getWorkspace().run(op, monitor);
@@ -111,6 +115,7 @@ public class FeatureImportWizard extends Wizard implements IImportWizard {
 		private int yesToAll = 0;
 		private int[] RETURNCODES = {IReplaceQuery.YES, IReplaceQuery.YES, IReplaceQuery.NO, IReplaceQuery.NO, IReplaceQuery.CANCEL};
 
+		@Override
 		public int doQuery(IProject project) {
 			if (yesToAll != 0)
 				return yesToAll > 0 ? IReplaceQuery.YES : IReplaceQuery.NO;
@@ -119,6 +124,7 @@ public class FeatureImportWizard extends Wizard implements IImportWizard {
 			final int[] result = {IReplaceQuery.CANCEL};
 
 			Display.getDefault().syncExec(new Runnable() {
+				@Override
 				public void run() {
 					ReplaceDialog dialog = new ReplaceDialog(Display.getDefault().getActiveShell(), message);
 					int retVal = dialog.open();

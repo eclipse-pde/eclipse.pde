@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2012 IBM Corporation and others.
+ *  Copyright (c) 2005, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 public class ManifestTypeRenameParticipant extends PDERenameParticipant {
 
+	@Override
 	protected boolean initialize(Object element) {
 		if (element instanceof IType) {
 			IType type = (IType) element;
@@ -42,6 +43,7 @@ public class ManifestTypeRenameParticipant extends PDERenameParticipant {
 		return result;
 	}
 
+	@Override
 	protected String[] getNewNames() {
 		String[] result = new String[fElements.size()];
 		Iterator<Object> iter = fElements.keySet().iterator();
@@ -56,6 +58,7 @@ public class ManifestTypeRenameParticipant extends PDERenameParticipant {
 		return result;
 	}
 
+	@Override
 	public String getName() {
 		return PDEUIMessages.ManifestTypeRenameParticipant_composite;
 	}

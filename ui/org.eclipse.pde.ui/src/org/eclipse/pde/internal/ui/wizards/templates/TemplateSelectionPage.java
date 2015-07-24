@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -41,10 +41,12 @@ public class TemplateSelectionPage extends WizardPage {
 			super(mainLabel);
 		}
 
+		@Override
 		protected StructuredViewer createStructuredViewer(Composite parent, int style, FormToolkit toolkit) {
 			return super.createStructuredViewer(parent, style | SWT.FULL_SELECTION, toolkit);
 		}
 
+		@Override
 		protected void updateCounter(int amount) {
 			super.updateCounter(amount);
 			if (getContainer() != null)
@@ -53,12 +55,14 @@ public class TemplateSelectionPage extends WizardPage {
 	}
 
 	class ListContentProvider extends DefaultContentProvider implements IStructuredContentProvider {
+		@Override
 		public Object[] getElements(Object parent) {
 			return fCandidates;
 		}
 	}
 
 	class ListLabelProvider extends LabelProvider implements ITableLabelProvider {
+		@Override
 		public String getColumnText(Object obj, int index) {
 			ITemplateSection section = (ITemplateSection) obj;
 			if (index == 0)
@@ -66,6 +70,7 @@ public class TemplateSelectionPage extends WizardPage {
 			return section.getUsedExtensionPoint();
 		}
 
+		@Override
 		public Image getColumnImage(Object obj, int index) {
 			if (index == 0)
 				return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_EXTENSION_OBJ);
@@ -93,6 +98,7 @@ public class TemplateSelectionPage extends WizardPage {
 		fVisiblePages = new ArrayList<WizardPage>();
 	}
 
+	@Override
 	public void dispose() {
 		super.dispose();
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
@@ -101,6 +107,7 @@ public class TemplateSelectionPage extends WizardPage {
 	/**
 	 * @see IDialogPage#createControl(Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
@@ -113,6 +120,7 @@ public class TemplateSelectionPage extends WizardPage {
 		initializeTable(viewer.getTable());
 
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				IStructuredSelection sel = (IStructuredSelection) event.getSelection();
 				handleSelectionChanged((ITemplateSection) sel.getFirstElement());
@@ -169,12 +177,14 @@ public class TemplateSelectionPage extends WizardPage {
 		fDescriptionBrowser.setText(text);
 	}
 
+	@Override
 	public boolean canFlipToNextPage() {
 		if (fTablePart.getSelectionCount() == 0)
 			return false;
 		return super.canFlipToNextPage();
 	}
 
+	@Override
 	public IWizardPage getNextPage() {
 		ITemplateSection[] sections = getSelectedTemplates();
 		fVisiblePages.clear();

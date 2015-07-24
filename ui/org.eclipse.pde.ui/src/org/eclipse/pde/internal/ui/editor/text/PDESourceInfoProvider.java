@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,6 +34,8 @@ public class PDESourceInfoProvider implements IInformationProvider, IInformation
 	/**
 	 * @deprecated
 	 */
+	@Deprecated
+	@Override
 	public String getInformation(ITextViewer textViewer, IRegion subject) {
 		// This method is deprecated.  Call the non-deprecated method
 		return getInformation2(textViewer, subject).toString();
@@ -42,6 +44,7 @@ public class PDESourceInfoProvider implements IInformationProvider, IInformation
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.information.IInformationProvider#getSubject(org.eclipse.jface.text.ITextViewer, int)
 	 */
+	@Override
 	public IRegion getSubject(ITextViewer textViewer, int offset) {
 		// Subject used in getInformation2
 		if ((textViewer == null) || (fSourcePage == null)) {
@@ -59,6 +62,7 @@ public class PDESourceInfoProvider implements IInformationProvider, IInformation
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.information.IInformationProviderExtension#getInformation2(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
 	 */
+	@Override
 	public Object getInformation2(ITextViewer textViewer, IRegion subject) {
 		// Calls setInput on the quick outline popup dialog
 		if ((textViewer == null) || (fSourcePage == null)) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 IBM Corporation and others.
+ * Copyright (c) 2008, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,6 +40,7 @@ import org.eclipse.ui.dialogs.SelectionStatusDialog;
 public class ProjectSelectionDialog extends SelectionStatusDialog {
 
 	class ApiJavaElementContentProvider extends StandardJavaElementContentProvider {
+		@Override
 		public Object[] getChildren(Object element) {
 			if (element instanceof IJavaModel) {
 				IJavaModel model = (IJavaModel) element;
@@ -89,6 +90,7 @@ public class ProjectSelectionDialog extends SelectionStatusDialog {
 		fProjectsWithSpecifics = projectsWithSpecifics;
 
 		fFilter = new ViewerFilter() {
+			@Override
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
 				return fProjectsWithSpecifics.contains(element);
 			}
@@ -98,6 +100,7 @@ public class ProjectSelectionDialog extends SelectionStatusDialog {
 	/* (non-Javadoc)
 	 * Method declared on Dialog.
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		// page group
 		Composite composite = (Composite) super.createDialogArea(parent);
@@ -109,11 +112,13 @@ public class ProjectSelectionDialog extends SelectionStatusDialog {
 
 		fTableViewer = new TableViewer(composite, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		fTableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				doSelectionChanged(((IStructuredSelection) event.getSelection()).toArray());
 			}
 		});
 		fTableViewer.addDoubleClickListener(new IDoubleClickListener() {
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				okPressed();
 			}
@@ -130,10 +135,12 @@ public class ProjectSelectionDialog extends SelectionStatusDialog {
 
 		Button checkbox = SWTFactory.createCheckButton(composite, PDEUIMessages.ProjectSelectionDialog_settingsTitle, null, false, 1);
 		checkbox.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateFilter(((Button) e.widget).getSelection());
 			}
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				updateFilter(((Button) e.widget).getSelection());
 			}
@@ -182,6 +189,7 @@ public class ProjectSelectionDialog extends SelectionStatusDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.SelectionStatusDialog#computeResult()
 	 */
+	@Override
 	protected void computeResult() {
 	}
 }

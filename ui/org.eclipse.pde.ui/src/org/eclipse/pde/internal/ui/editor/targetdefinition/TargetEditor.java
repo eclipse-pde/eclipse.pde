@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,6 +60,7 @@ public class TargetEditor extends FormEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.editor.FormEditor#createToolkit(org.eclipse.swt.widgets.Display)
 	 */
+	@Override
 	protected FormToolkit createToolkit(Display display) {
 		return new FormToolkit(PDEPlugin.getDefault().getFormColors(display));
 	}
@@ -67,6 +68,7 @@ public class TargetEditor extends FormEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.editor.FormEditor#addPages()
 	 */
+	@Override
 	protected void addPages() {
 		try {
 			setActiveEditor(this);
@@ -81,6 +83,7 @@ public class TargetEditor extends FormEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.EditorPart#doSave(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public void doSave(IProgressMonitor monitor) {
 		commitPages(true);
 		try {
@@ -94,6 +97,7 @@ public class TargetEditor extends FormEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.EditorPart#doSaveAs()
 	 */
+	@Override
 	public void doSaveAs() {
 		commitPages(true);
 		ITargetDefinition target = getTarget();
@@ -134,6 +138,7 @@ public class TargetEditor extends FormEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.EditorPart#isSaveAsAllowed()
 	 */
+	@Override
 	public boolean isSaveAsAllowed() {
 		return true;
 	}
@@ -146,6 +151,7 @@ public class TargetEditor extends FormEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.editor.FormEditor#isDirty()
 	 */
+	@Override
 	public boolean isDirty() {
 		return fDirty || super.isDirty();
 	}
@@ -154,6 +160,7 @@ public class TargetEditor extends FormEditor {
 	 * @see org.eclipse.ui.forms.editor.FormEditor#init(org.eclipse.ui.IEditorSite, org.eclipse.ui.IEditorInput)
 	 * @since 3.7
 	 */
+	@Override
 	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
 		if (!(input instanceof IFileEditorInput) && !(input instanceof IURIEditorInput))
 			throw new PartInitException(NLS.bind(PDEUIMessages.TargetEditor_6, input.getClass().getName()));
@@ -163,6 +170,7 @@ public class TargetEditor extends FormEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.EditorPart#setInput(org.eclipse.ui.IEditorInput)
 	 */
+	@Override
 	protected void setInput(IEditorInput input) {
 		super.setInput(input);
 		setPartName(getEditorInput().getName());
@@ -172,6 +180,7 @@ public class TargetEditor extends FormEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.editor.FormEditor#dispose()
 	 */
+	@Override
 	public void dispose() {
 		// Cancel any resolution jobs that are runnning
 		Job.getJobManager().cancel(getTargetChangedListener().getJobFamily());
@@ -219,20 +228,24 @@ public class TargetEditor extends FormEditor {
 
 	public void contributeToToolbar(final ScrolledForm form, String contextID) {
 		ControlContribution setAsTarget = new ControlContribution("Set") { //$NON-NLS-1$
+			@Override
 			protected Control createControl(Composite parent) {
 				final ImageHyperlink hyperlink = new ImageHyperlink(parent, SWT.NONE);
 				hyperlink.setText(PDEUIMessages.AbstractTargetPage_setTarget);
 				hyperlink.setUnderlined(true);
 				hyperlink.setForeground(getToolkit().getHyperlinkGroup().getForeground());
 				hyperlink.addHyperlinkListener(new IHyperlinkListener() {
+					@Override
 					public void linkActivated(HyperlinkEvent e) {
 						LoadTargetDefinitionJob.load(getTarget());
 					}
 
+					@Override
 					public void linkEntered(HyperlinkEvent e) {
 						hyperlink.setForeground(getToolkit().getHyperlinkGroup().getActiveForeground());
 					}
 
+					@Override
 					public void linkExited(HyperlinkEvent e) {
 						hyperlink.setForeground(getToolkit().getHyperlinkGroup().getForeground());
 					}
@@ -243,8 +256,10 @@ public class TargetEditor extends FormEditor {
 
 		final String helpContextID = contextID;
 		Action help = new Action("help") { //$NON-NLS-1$
+			@Override
 			public void run() {
 				BusyIndicator.showWhile(form.getForm().getDisplay(), new Runnable() {
+					@Override
 					public void run() {
 						PlatformUI.getWorkbench().getHelpSystem().displayHelp(helpContextID);
 					}
@@ -255,6 +270,7 @@ public class TargetEditor extends FormEditor {
 		help.setImageDescriptor(PDEPluginImages.DESC_HELP);
 
 		Action export = new Action("export") { //$NON-NLS-1$
+			@Override
 			public void run() {
 				TargetDefinitionExportWizard wizard = new TargetDefinitionExportWizard(getTarget());
 				wizard.setWindowTitle(PDEUIMessages.ExportActiveTargetDefinition);
@@ -289,6 +305,7 @@ public class TargetEditor extends FormEditor {
 	public void showError(final String message, final CoreException exception) {
 		Display display = getSite().getShell().getDisplay();
 		display.asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				ErrorDialog.openError(getSite().getShell(), PDEUIMessages.TargetEditor_4, message, exception.getStatus());
 			}
@@ -392,6 +409,7 @@ public class TargetEditor extends FormEditor {
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
 		 */
+		@Override
 		public void resourceChanged(IResourceChangeEvent event) {
 			if (event.getType() == IResourceChangeEvent.POST_CHANGE) {
 				IResourceDelta delta = event.getDelta().findMember(fTargetFileInWorkspace.getFullPath());
@@ -402,6 +420,7 @@ public class TargetEditor extends FormEditor {
 						if (!fSaving) {
 							Display display = getSite().getShell().getDisplay();
 							display.asyncExec(new Runnable() {
+								@Override
 								public void run() {
 									TargetEditor.this.doRevert();
 								}
@@ -437,6 +456,7 @@ public class TargetEditor extends FormEditor {
 			return fJobFamily;
 		}
 
+		@Override
 		public void contentsChanged(ITargetDefinition definition, Object source, boolean resolve, boolean forceResolve) {
 			if (!forceResolve && (!resolve || definition.isResolved())) {
 				if (fContentTree != null && source != fContentTree) {
@@ -466,6 +486,7 @@ public class TargetEditor extends FormEditor {
 					/* (non-Javadoc)
 					 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 					 */
+					@Override
 					protected IStatus run(IProgressMonitor monitor) {
 						getTarget().resolve(monitor);
 						if (monitor.isCanceled()) {
@@ -478,14 +499,17 @@ public class TargetEditor extends FormEditor {
 					/* (non-Javadoc)
 					 * @see org.eclipse.core.runtime.jobs.Job#belongsTo(java.lang.Object)
 					 */
+					@Override
 					public boolean belongsTo(Object family) {
 						return family.equals(getJobFamily());
 					}
 				};
 				resolveJob.addJobChangeListener(new JobChangeAdapter() {
+					@Override
 					public void done(org.eclipse.core.runtime.jobs.IJobChangeEvent event) {
 						final IStatus status = event.getResult();
 						UIJob job = new UIJob(PDEUIMessages.TargetEditor_2) {
+							@Override
 							public IStatus runInUIThread(IProgressMonitor monitor) {
 								if (fContentTree != null) {
 									if (status.getSeverity() == IStatus.CANCEL) {

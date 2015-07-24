@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -70,6 +70,7 @@ public class ConvertProjectToPluginOperation extends WorkspaceModifyOperation {
 	 * @param monitor
 	 *            Progress monitor
 	 */
+	@Override
 	protected void execute(IProgressMonitor monitor) throws CoreException, InvocationTargetException, InterruptedException {
 
 		try {
@@ -201,6 +202,7 @@ public class ConvertProjectToPluginOperation extends WorkspaceModifyOperation {
 
 	private void organizeExports(final IProject project) {
 		PDEModelUtility.modifyModel(new ModelModification(PDEProject.getManifest(project)) {
+			@Override
 			protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
 				if (!(model instanceof IBundlePluginModelBase))
 					return;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2008 IBM Corporation and others.
+ *  Copyright (c) 2005, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -25,6 +25,7 @@ public class NewProductFileWizard extends BasicNewResourceWizard {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.Wizard#addPages()
 	 */
+	@Override
 	public void addPages() {
 		fMainPage = new ProductFileWizardPage("product", getSelection()); //$NON-NLS-1$
 		addPage(fMainPage);
@@ -33,6 +34,7 @@ public class NewProductFileWizard extends BasicNewResourceWizard {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.IWizard#performFinish()
 	 */
+	@Override
 	public boolean performFinish() {
 		try {
 			getContainer().run(false, true, getOperation());
@@ -58,6 +60,7 @@ public class NewProductFileWizard extends BasicNewResourceWizard {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.wizards.newresource.BasicNewResourceWizard#init(org.eclipse.ui.IWorkbench, org.eclipse.jface.viewers.IStructuredSelection)
 	 */
+	@Override
 	public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
 		super.init(workbench, currentSelection);
 		setWindowTitle(PDEUIMessages.NewProductFileWizard_windowTitle);
@@ -67,6 +70,7 @@ public class NewProductFileWizard extends BasicNewResourceWizard {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.wizards.newresource.BasicNewResourceWizard#initializeDefaultPageImageDescriptor()
 	 */
+	@Override
 	protected void initializeDefaultPageImageDescriptor() {
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_PRODUCT_WIZ);
 	}

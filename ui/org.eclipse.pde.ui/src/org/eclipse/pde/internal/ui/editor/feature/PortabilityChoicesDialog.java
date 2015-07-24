@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -32,16 +32,19 @@ public class PortabilityChoicesDialog extends TrayDialog {
 	private WizardCheckboxTablePart checkboxTablePart;
 
 	class ContentProvider extends DefaultTableProvider {
+		@Override
 		public Object[] getElements(Object parent) {
 			return choices;
 		}
 	}
 
 	class ChoiceLabelProvider extends LabelProvider implements ITableLabelProvider {
+		@Override
 		public String getColumnText(Object obj, int index) {
 			return ((Choice) obj).getLabel();
 		}
 
+		@Override
 		public Image getColumnImage(Object obj, int index) {
 			return null;
 		}
@@ -55,12 +58,14 @@ public class PortabilityChoicesDialog extends TrayDialog {
 		checkboxTablePart = new WizardCheckboxTablePart(PDEUIMessages.FeatureEditor_PortabilityChoicesDialog_choices);
 	}
 
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		// create OK and Cancel buttons by default
 		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
 		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 	}
 
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite container = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
@@ -115,6 +120,7 @@ public class PortabilityChoicesDialog extends TrayDialog {
 		return null;
 	}
 
+	@Override
 	protected void okPressed() {
 		value = computeNewValue();
 		super.okPressed();

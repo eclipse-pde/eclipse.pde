@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2014 IBM Corporation and others.
+ * Copyright (c) 2010, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,6 +52,7 @@ public class PropertiesSection extends TableSection {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 		 */
+		@Override
 		public Object[] getElements(Object inputElement) {
 			if (inputElement instanceof IProduct) {
 				return ((IProduct) inputElement).getConfigurationProperties();
@@ -62,24 +63,28 @@ public class PropertiesSection extends TableSection {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 		 */
+		@Override
 		public void dispose() {
 		}
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 		 */
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 
 	}
 
 	private class LabelProvider extends PDELabelProvider {
+		@Override
 		public Image getColumnImage(Object obj, int index) {
 			if (index == 0)
 				return get(PDEPluginImages.DESC_PROPERTIES);
 			return null;
 		}
 
+		@Override
 		public String getColumnText(Object obj, int index) {
 			IConfigurationProperty configuration = (IConfigurationProperty) obj;
 			switch (index) {
@@ -116,12 +121,14 @@ public class PropertiesSection extends TableSection {
 			setTitle(PDEUIMessages.PropertiesSection_PropertyDialogTitle);
 		}
 
+		@Override
 		protected Control createDialogArea(Composite parent) {
 			Composite comp = (Composite) super.createDialogArea(parent);
 			((GridLayout) comp.getLayout()).numColumns = 2;
 			SWTFactory.createLabel(comp, PDEUIMessages.PropertiesSection_Name, 1);
 			fName = SWTFactory.createSingleText(comp, 1);
 			fName.addModifyListener(new ModifyListener() {
+				@Override
 				public void modifyText(ModifyEvent e) {
 					validate();
 				}
@@ -129,6 +136,7 @@ public class PropertiesSection extends TableSection {
 			SWTFactory.createLabel(comp, PDEUIMessages.PropertiesSection_Value, 1);
 			fValue = SWTFactory.createSingleText(comp, 1);
 			fValue.addModifyListener(new ModifyListener() {
+				@Override
 				public void modifyText(ModifyEvent e) {
 					validate();
 				}
@@ -136,10 +144,12 @@ public class PropertiesSection extends TableSection {
 			SWTFactory.createLabel(comp, PDEUIMessages.PropertiesSection_OS, 1);
 			fOS = SWTFactory.createCombo(comp, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY, 1, COMBO_OSLABELS);
 			fOS.addSelectionListener(new SelectionListener() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					updateStatus(Status.OK_STATUS);
 				}
 
+				@Override
 				public void widgetDefaultSelected(SelectionEvent e) {
 					updateStatus(Status.OK_STATUS);
 				}
@@ -149,10 +159,12 @@ public class PropertiesSection extends TableSection {
 			SWTFactory.createLabel(comp, PDEUIMessages.PropertiesSection_Arch, 1);
 			fArch = SWTFactory.createCombo(comp, SWT.SINGLE | SWT.BORDER | SWT.READ_ONLY, 1, COMBO_ARCHLABELS);
 			fArch.addSelectionListener(new SelectionListener() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					updateStatus(Status.OK_STATUS);
 				}
 
+				@Override
 				public void widgetDefaultSelected(SelectionEvent e) {
 					updateStatus(Status.OK_STATUS);
 				}
@@ -197,6 +209,7 @@ public class PropertiesSection extends TableSection {
 			}
 		}
 
+		@Override
 		protected void okPressed() {
 			if (fEdit != null) {
 				// Product properties are stored in a map that isn't updated on edit, remove the property and add a new one
@@ -215,6 +228,7 @@ public class PropertiesSection extends TableSection {
 			super.okPressed();
 		}
 
+		@Override
 		protected Control createHelpControl(Composite parent) {
 			return parent;
 		}
@@ -229,14 +243,17 @@ public class PropertiesSection extends TableSection {
 	}
 
 	class ValueCellModifier implements ICellModifier {
+		@Override
 		public boolean canModify(Object element, String property) {
 			return element instanceof IConfigurationProperty;
 		}
 
+		@Override
 		public Object getValue(Object element, String property) {
 			return ((IConfigurationProperty) element).getValue();
 		}
 
+		@Override
 		public void modify(Object item, String property, Object value) {
 			Object data = ((TableItem) item).getData();
 			if (data instanceof IConfigurationProperty) {
@@ -261,6 +278,7 @@ public class PropertiesSection extends TableSection {
 		return labels;
 	}
 
+	@Override
 	protected void buttonSelected(int index) {
 		switch (index) {
 			case 0 :
@@ -278,6 +296,7 @@ public class PropertiesSection extends TableSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
 	 */
+	@Override
 	protected void createClient(Section section, FormToolkit toolkit) {
 		section.setText(PDEUIMessages.PropertiesSection_PropertiesSectionTitle);
 		section.setDescription(PDEUIMessages.PropertiesSection_PropertiesSectionDescription);
@@ -289,11 +308,13 @@ public class PropertiesSection extends TableSection {
 		fPropertiesTable = getTablePart().getTableViewer();
 		fPropertiesTable.setSorter(new ViewerSorter());
 		fPropertiesTable.addDoubleClickListener(new IDoubleClickListener() {
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				handleEdit();
 			}
 		});
 		fPropertiesTable.getTable().addKeyListener(new KeyAdapter() {
+			@Override
 			public void keyReleased(KeyEvent e) {
 				if (e.keyCode == SWT.DEL) {
 					handleRemove();
@@ -321,9 +342,11 @@ public class PropertiesSection extends TableSection {
 
 		table.addControlListener(new ControlListener() {
 
+			@Override
 			public void controlMoved(ControlEvent e) {
 			}
 
+			@Override
 			public void controlResized(ControlEvent e) {
 				int size = table.getSize().x;
 				nameColumn.setWidth(size / 9 * 3);
@@ -408,6 +431,7 @@ public class PropertiesSection extends TableSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.TableSection#selectionChanged(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
+	@Override
 	protected void selectionChanged(IStructuredSelection selection) {
 		updateButtons();
 	}
@@ -429,6 +453,7 @@ public class PropertiesSection extends TableSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.IPluginModelListener#modelsChanged(org.eclipse.pde.internal.core.PluginModelDelta)
 	 */
+	@Override
 	public void modelChanged(IModelChangedEvent e) {
 		// No need to call super, handling world changed event here
 		fPropertiesTable.setInput(getProduct());

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2008 IBM Corporation and others.
+ *  Copyright (c) 2006, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -39,11 +39,13 @@ public class CommandComposerDialog extends FormDialog {
 		fCCP.setSnapshotContext(snapshot);
 	}
 
+	@Override
 	protected void createFormContent(IManagedForm mform) {
 		ScrolledForm form = mform.getForm();
 		mform.getToolkit().decorateFormHeading(form.getForm());
 		initializeDialogUnits(form);
 		fCCP.createCC(form, mform.getToolkit(), new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				updateOkButtonEnablement(event.getSelection());
 			}
@@ -54,6 +56,7 @@ public class CommandComposerDialog extends FormDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		super.createButtonsForButtonBar(parent);
 		// Update the button enablement only after the button is created
@@ -105,17 +108,20 @@ public class CommandComposerDialog extends FormDialog {
 		}
 	}
 
+	@Override
 	protected void configureShell(Shell newShell) {
 		newShell.setText(PDEUIMessages.CommandSerializerPart_name);
 		super.configureShell(newShell);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(newShell, IHelpContextIds.COMMAND_COMPOSER_DIALOG);
 	}
 
+	@Override
 	public void okPressed() {
 		fPC = fCCP.getParameterizedCommand();
 		super.okPressed();
 	}
 
+	@Override
 	public boolean close() {
 		fCCP.dispose();
 		return super.close();

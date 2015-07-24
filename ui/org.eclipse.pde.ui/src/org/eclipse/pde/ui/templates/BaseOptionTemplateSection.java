@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -241,6 +241,7 @@ public abstract class BaseOptionTemplateSection extends AbstractTemplateSection 
 	 * @return the current value of the option with a specified name or
 	 *         <samp>null </samp> if not found or not applicable.
 	 */
+	@Override
 	public Object getValue(String name) {
 		TemplateOption option = options.get(name);
 		if (option != null)
@@ -320,6 +321,7 @@ public abstract class BaseOptionTemplateSection extends AbstractTemplateSection 
 	 * 
 	 * @see AbstractTemplateSection#getReplacementString(String, String)
 	 */
+	@Override
 	public String getReplacementString(String fileName, String key) {
 		String value = getStringOption(key);
 		if (value != null)
@@ -330,6 +332,7 @@ public abstract class BaseOptionTemplateSection extends AbstractTemplateSection 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.templates.AbstractTemplateSection#execute(org.eclipse.core.resources.IProject, org.eclipse.pde.core.plugin.IPluginModelBase, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	public void execute(IProject project, IPluginModelBase model, IProgressMonitor monitor) throws CoreException {
 		/*
 		 * Modifies the superclass implementation by adding the initialization step

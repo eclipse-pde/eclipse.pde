@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -90,6 +90,7 @@ public class JRESection extends SectionPart {
 		gd.horizontalSpan = 3;
 		fDefaultJREButton.setLayoutData(gd);
 		fDefaultJREButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateWidgets();
 				if (!fBlockChanges) {
@@ -101,6 +102,7 @@ public class JRESection extends SectionPart {
 
 		fNamedJREButton = toolkit.createButton(client, PDEUIMessages.JRESection_JREName, SWT.RADIO);
 		fNamedJREButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateWidgets();
 				if (!fBlockChanges) {
@@ -117,6 +119,7 @@ public class JRESection extends SectionPart {
 		fNamedJREsCombo.setItems(installs);
 		fNamedJREsCombo.setVisibleItemCount(30);
 		fNamedJREsCombo.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				if (!fBlockChanges) {
 					getTarget().setJREContainer(JavaRuntime.newJREContainerPath(VMUtil.getVMInstall(fNamedJREsCombo.getSelection())));
@@ -127,6 +130,7 @@ public class JRESection extends SectionPart {
 
 		fConfigureJREButton = toolkit.createButton(client, PDEUIMessages.JRESection_jrePreference, SWT.PUSH);
 		fConfigureJREButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				openPreferencePage(JRE_PREF_PAGE_ID);
 			}
@@ -136,6 +140,7 @@ public class JRESection extends SectionPart {
 
 		fExecEnvButton = toolkit.createButton(client, PDEUIMessages.JRESection_ExecutionEnv, SWT.RADIO);
 		fExecEnvButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateWidgets();
 				if (!fBlockChanges) {
@@ -151,6 +156,7 @@ public class JRESection extends SectionPart {
 		fExecEnvsCombo.setItems(fExecEnvChoices.toArray(new String[fExecEnvChoices.size()]));
 		fExecEnvsCombo.setVisibleItemCount(30);
 		fExecEnvsCombo.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				if (!fBlockChanges) {
 					getTarget().setJREContainer(JavaRuntime.newJREContainerPath(VMUtil.getExecutionEnvironment(fExecEnvsCombo.getSelection())));
@@ -161,6 +167,7 @@ public class JRESection extends SectionPart {
 
 		Button configureEEButton = toolkit.createButton(client, PDEUIMessages.JRESection_eePreference, SWT.PUSH);
 		configureEEButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				openPreferencePage(EE_PREF_PAGE_ID);
 			}
@@ -191,6 +198,7 @@ public class JRESection extends SectionPart {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#refresh()
 	 */
+	@Override
 	public void refresh() {
 		fBlockChanges = true;
 		IPath jrePath = getTarget().getJREContainer();

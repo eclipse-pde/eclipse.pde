@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 IBM Corporation and others.
+ * Copyright (c) 2008, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,6 +43,7 @@ public class FilteredSchemaAttributeSelectionDialog extends FilteredItemsSelecti
 			setChecked(true);
 		}
 
+		@Override
 		public void run() {
 			optionalAttributesFilter.setEnabled(isChecked());
 			scheduleRefresh();
@@ -54,6 +55,7 @@ public class FilteredSchemaAttributeSelectionDialog extends FilteredItemsSelecti
 
 		private boolean enabled = true;
 
+		@Override
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
 			if (enabled) // select everything
 				return true;
@@ -85,16 +87,19 @@ public class FilteredSchemaAttributeSelectionDialog extends FilteredItemsSelecti
 	/*
 	 * @see org.eclipse.jface.window.Window#configureShell(Shell)
 	 */
+	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(shell, IHelpContextIds.FILTERED_SCHEMA_ATTRIBUTE_SELECTION_DIALOG);
 	}
 
 	private class SchemaListLabelProvider extends LabelProvider implements ILabelDecorator {
+		@Override
 		public Image getImage(Object element) {
 			return PDEPlugin.getDefault().getLabelProvider().getImage(element);
 		}
 
+		@Override
 		public String getText(Object element) {
 			if (element instanceof ISchemaAttribute) {
 				ISchemaAttribute attribute = (ISchemaAttribute) element;
@@ -107,10 +112,12 @@ public class FilteredSchemaAttributeSelectionDialog extends FilteredItemsSelecti
 			return PDEPlugin.getDefault().getLabelProvider().getText(element);
 		}
 
+		@Override
 		public Image decorateImage(Image image, Object element) {
 			return image; // nothing to decorate
 		}
 
+		@Override
 		public String decorateText(String text, Object element) {
 			if (element instanceof ISchemaAttribute) {
 				ISchemaAttribute attribute = (ISchemaAttribute) element;
@@ -125,10 +132,12 @@ public class FilteredSchemaAttributeSelectionDialog extends FilteredItemsSelecti
 
 	private class SchemaDetailsLabelProvider extends LabelProvider {
 
+		@Override
 		public Image getImage(Object element) {
 			return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_EXT_POINT_OBJ);
 		}
 
+		@Override
 		public String getText(Object element) {
 			if (element instanceof ISchemaAttribute) {
 				ISchemaAttribute attribute = (ISchemaAttribute) element;
@@ -141,10 +150,12 @@ public class FilteredSchemaAttributeSelectionDialog extends FilteredItemsSelecti
 
 	private class SchemaItemsFilter extends ItemsFilter {
 
+		@Override
 		public boolean isConsistentItem(Object item) {
 			return true;
 		}
 
+		@Override
 		public boolean matchItem(Object item) {
 			if (item instanceof ISchemaAttribute) {
 				ISchemaAttribute attribute = (ISchemaAttribute) item;
@@ -160,16 +171,19 @@ public class FilteredSchemaAttributeSelectionDialog extends FilteredItemsSelecti
 
 	private class SchemaComparator implements Comparator<Object> {
 
+		@Override
 		public int compare(Object arg0, Object arg1) {
 			return 0;
 		}
 
 	}
 
+	@Override
 	protected ItemsFilter createFilter() {
 		return new SchemaItemsFilter();
 	}
 
+	@Override
 	protected void fillContentProvider(AbstractContentProvider contentProvider, ItemsFilter itemsFilter, IProgressMonitor progressMonitor) throws CoreException {
 
 		IPluginModelBase[] models = PluginRegistry.getActiveModels();
@@ -207,6 +221,7 @@ public class FilteredSchemaAttributeSelectionDialog extends FilteredItemsSelecti
 
 	}
 
+	@Override
 	protected IDialogSettings getDialogSettings() {
 		IDialogSettings settings = PDEPlugin.getDefault().getDialogSettings().getSection(DIALOG_SETTINGS);
 		if (settings == null) {
@@ -215,6 +230,7 @@ public class FilteredSchemaAttributeSelectionDialog extends FilteredItemsSelecti
 		return settings;
 	}
 
+	@Override
 	public String getElementName(Object item) {
 		if (item instanceof ISchemaAttribute) {
 			ISchemaAttribute attribute = (ISchemaAttribute) item;
@@ -223,20 +239,24 @@ public class FilteredSchemaAttributeSelectionDialog extends FilteredItemsSelecti
 		return null;
 	}
 
+	@Override
 	protected void fillViewMenu(IMenuManager menuManager) {
 		super.fillViewMenu(menuManager);
 		menuManager.add(new Separator());
 		menuManager.add(optionalAttributesAction);
 	}
 
+	@Override
 	protected Comparator<?> getItemsComparator() {
 		return new SchemaComparator();
 	}
 
+	@Override
 	protected IStatus validateItem(Object item) {
 		return new Status(IStatus.OK, "org.eclipse.pde.ui", 0, "", null); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
+	@Override
 	protected void restoreDialog(IDialogSettings settings) {
 		super.restoreDialog(settings);
 
@@ -249,16 +269,19 @@ public class FilteredSchemaAttributeSelectionDialog extends FilteredItemsSelecti
 		applyFilter();
 	}
 
+	@Override
 	protected void storeDialog(IDialogSettings settings) {
 		super.storeDialog(settings);
 		settings.put(S_OPTIONAL_ATTRIBUTES, optionalAttributesAction.isChecked());
 	}
 
+	@Override
 	public boolean close() {
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 		return super.close();
 	}
 
+	@Override
 	protected Control createExtendedContentArea(Composite parent) {
 		return null;
 	}

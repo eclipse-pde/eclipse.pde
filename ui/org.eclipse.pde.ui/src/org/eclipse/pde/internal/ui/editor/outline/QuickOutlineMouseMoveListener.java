@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2008 IBM Corporation and others.
+ *  Copyright (c) 2006, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -38,6 +38,7 @@ public class QuickOutlineMouseMoveListener implements MouseMoveListener {
 	/* (non-Javadoc)
 	 * @see org.eclipse.swt.events.MouseMoveListener#mouseMove(org.eclipse.swt.events.MouseEvent)
 	 */
+	@Override
 	public void mouseMove(MouseEvent e) {
 		Tree tree = fTreeViewer.getTree();
 		if (tree.equals(e.getSource())) {

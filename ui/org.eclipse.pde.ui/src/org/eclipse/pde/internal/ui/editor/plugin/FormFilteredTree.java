@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2009 IBM Corporation and others.
+ *  Copyright (c) 2006, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -33,6 +33,7 @@ public class FormFilteredTree extends FilteredTree {
 		super(parent, treeStyle, filter, true);
 	}
 
+	@Override
 	protected void createControl(Composite parent, int treeStyle) {
 		toolkit = new FormToolkit(parent.getDisplay());
 		GridLayout layout = FormLayoutFactory.createClearGridLayout(false, 1);
@@ -45,6 +46,7 @@ public class FormFilteredTree extends FilteredTree {
 	/* (non-Javadoc)
 	 * @see org.eclipse.swt.widgets.Widget#dispose()
 	 */
+	@Override
 	public void dispose() {
 		if (toolkit != null) {
 			toolkit.dispose();
@@ -53,6 +55,7 @@ public class FormFilteredTree extends FilteredTree {
 		super.dispose();
 	}
 
+	@Override
 	protected Text doCreateFilterText(Composite parent) {
 		int borderStyle = toolkit.getBorderStyle();
 
@@ -69,6 +72,7 @@ public class FormFilteredTree extends FilteredTree {
 		return fEntryFilter.getText();
 	}
 
+	@Override
 	protected TreeViewer doCreateTreeViewer(Composite parent, int style) {
 		TreeViewer viewer = super.doCreateTreeViewer(parent, toolkit.getBorderStyle() | style);
 		toolkit.paintBordersFor(viewer.getTree().getParent());
@@ -84,30 +88,37 @@ public class FormFilteredTree extends FilteredTree {
 		fEntryFilter.setFormEntryListener(new FormEntryAdapter(part) {
 			// Override all callback methods except focusGained
 			// See Bug # 184085
+			@Override
 			public void browseButtonSelected(FormEntry entry) {
 				// NO-OP
 			}
 
+			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				// NO-OP
 			}
 
+			@Override
 			public void linkEntered(HyperlinkEvent e) {
 				// NO-OP
 			}
 
+			@Override
 			public void linkExited(HyperlinkEvent e) {
 				// NO-OP
 			}
 
+			@Override
 			public void selectionChanged(FormEntry entry) {
 				// NO-OP
 			}
 
+			@Override
 			public void textDirty(FormEntry entry) {
 				// NO-OP
 			}
 
+			@Override
 			public void textValueChanged(FormEntry entry) {
 				// NO-OP
 			}

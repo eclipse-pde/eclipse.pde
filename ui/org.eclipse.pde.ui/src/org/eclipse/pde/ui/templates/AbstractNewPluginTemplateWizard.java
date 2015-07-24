@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -44,6 +44,7 @@ public abstract class AbstractNewPluginTemplateWizard extends Wizard implements 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.IPluginContentWizard#init(org.eclipse.pde.ui.IFieldData)
 	 */
+	@Override
 	public void init(IFieldData data) {
 		this.data = data;
 		setWindowTitle(PDEUIMessages.PluginCodeGeneratorWizard_title);
@@ -67,6 +68,7 @@ public abstract class AbstractNewPluginTemplateWizard extends Wizard implements 
 	/**
 	 * Implements wizard method. Subclasses cannot override it.
 	 */
+	@Override
 	public final void addPages() {
 		addAdditionalPages();
 	}
@@ -74,6 +76,7 @@ public abstract class AbstractNewPluginTemplateWizard extends Wizard implements 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.Wizard#performFinish()
 	 */
+	@Override
 	public boolean performFinish() {
 		// do nothing - all the work is in the other 'performFinish'
 		return true;
@@ -93,6 +96,7 @@ public abstract class AbstractNewPluginTemplateWizard extends Wizard implements 
 	 * @return <code>true</code> if the wizard completed the operation with
 	 *         success, <code>false</code> otherwise.
 	 */
+	@Override
 	public boolean performFinish(IProject project, IPluginModelBase model, IProgressMonitor monitor) {
 		try {
 			ITemplateSection[] sections = getTemplateSections();
@@ -121,6 +125,7 @@ public abstract class AbstractNewPluginTemplateWizard extends Wizard implements 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.IPluginContentWizard#getDependencies(java.lang.String)
 	 */
+	@Override
 	public IPluginReference[] getDependencies(String schemaVersion) {
 		ArrayList<IPluginReference> result = new ArrayList<IPluginReference>();
 		ITemplateSection[] sections = getTemplateSections();
@@ -137,6 +142,7 @@ public abstract class AbstractNewPluginTemplateWizard extends Wizard implements 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.IPluginContentWizard#getNewFiles()
 	 */
+	@Override
 	public String[] getNewFiles() {
 		ArrayList<String> result = new ArrayList<String>();
 		ITemplateSection[] sections = getTemplateSections();
@@ -158,6 +164,7 @@ public abstract class AbstractNewPluginTemplateWizard extends Wizard implements 
 		return getTemplateSections().length > 0;
 	}
 
+	@Override
 	public String[] getImportPackages() {
 		return new String[0];
 	}

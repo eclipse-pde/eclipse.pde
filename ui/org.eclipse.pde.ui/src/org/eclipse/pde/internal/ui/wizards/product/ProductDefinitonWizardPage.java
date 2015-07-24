@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,6 +47,7 @@ public class ProductDefinitonWizardPage extends WizardPage implements IHyperlink
 	private IProduct fProduct;
 
 	private ModifyListener fListener = new ModifyListener() {
+		@Override
 		public void modifyText(ModifyEvent e) {
 			validatePage();
 		}
@@ -62,6 +63,7 @@ public class ProductDefinitonWizardPage extends WizardPage implements IHyperlink
 			setDescription(PDEUIMessages.ProductDefinitonWizardPage_descNoName);
 	}
 
+	@Override
 	public void createControl(Composite parent) {
 		Composite comp = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -120,6 +122,7 @@ public class ProductDefinitonWizardPage extends WizardPage implements IHyperlink
 		button.setText(PDEUIMessages.ProductDefinitonWizardPage_browse);
 		SWTUtil.setButtonDimensionHint(button);
 		button.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleBrowse();
 			}
@@ -165,6 +168,7 @@ public class ProductDefinitonWizardPage extends WizardPage implements IHyperlink
 			fApplicationCombo.setText(fApplicationCombo.getItem(0));
 	}
 
+	@Override
 	public void setVisible(boolean visible) {
 		if (visible) {
 			if (fProductName != null)
@@ -217,12 +221,15 @@ public class ProductDefinitonWizardPage extends WizardPage implements IHyperlink
 		return null;
 	}
 
+	@Override
 	public void linkEntered(HyperlinkEvent e) {
 	}
 
+	@Override
 	public void linkExited(HyperlinkEvent e) {
 	}
 
+	@Override
 	public void linkActivated(HyperlinkEvent e) {
 		String extPoint = Platform.PI_RUNTIME + "." + e.getHref().toString(); //$NON-NLS-1$
 		IPluginExtensionPoint point = PDECore.getDefault().getExtensionsRegistry().findExtensionPoint(extPoint);

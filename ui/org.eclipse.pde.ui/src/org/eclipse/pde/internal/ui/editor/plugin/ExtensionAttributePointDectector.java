@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2012 IBM Corporation and others.
+ *  Copyright (c) 2006, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -152,6 +152,7 @@ public class ExtensionAttributePointDectector implements MouseListener, KeyListe
 	/* (non-Javadoc)
 	 * @see org.eclipse.swt.events.MouseListener#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
 	 */
+	@Override
 	public void mouseDoubleClick(MouseEvent e) {
 		// Ignore
 	}
@@ -159,14 +160,17 @@ public class ExtensionAttributePointDectector implements MouseListener, KeyListe
 	/* (non-Javadoc)
 	 * @see org.eclipse.swt.events.MouseListener#mouseDown(org.eclipse.swt.events.MouseEvent)
 	 */
+	@Override
 	public void mouseDown(MouseEvent e) {
 		// Ignore
 	}
 
+	@Override
 	public void mouseUp(MouseEvent e) {
 		checkIfOnTarget();
 	}
 
+	@Override
 	public void keyPressed(KeyEvent e) {
 		checkIfOnTarget();
 	}
@@ -174,6 +178,7 @@ public class ExtensionAttributePointDectector implements MouseListener, KeyListe
 	/* (non-Javadoc)
 	 * @see org.eclipse.swt.events.KeyListener#keyReleased(org.eclipse.swt.events.KeyEvent)
 	 */
+	@Override
 	public void keyReleased(KeyEvent e) {
 		// Ignore
 	}

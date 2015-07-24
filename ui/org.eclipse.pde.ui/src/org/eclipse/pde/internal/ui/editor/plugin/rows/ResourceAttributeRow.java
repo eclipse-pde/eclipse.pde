@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2008 IBM Corporation and others.
+ *  Copyright (c) 2003, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -44,10 +44,12 @@ public class ResourceAttributeRow extends ButtonAttributeRow {
 	 * 
 	 * @see org.eclipse.pde.internal.ui.neweditor.plugin.ReferenceAttributeRow#openReference()
 	 */
+	@Override
 	protected boolean isReferenceModel() {
 		return !part.getPage().getModel().isEditable();
 	}
 
+	@Override
 	protected void openReference() {
 		IResource file = getFile();
 		boolean successful = false;
@@ -114,6 +116,7 @@ public class ResourceAttributeRow extends ButtonAttributeRow {
 	 * 
 	 * @see org.eclipse.pde.internal.ui.neweditor.plugin.ReferenceAttributeRow#browse()
 	 */
+	@Override
 	protected void browse() {
 		final IProject project = part.getPage().getPDEEditor().getCommonProject();
 		ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(PDEPlugin.getActiveWorkbenchShell(), new WorkbenchLabelProvider(), new WorkbenchContentProvider());
@@ -122,6 +125,7 @@ public class ResourceAttributeRow extends ButtonAttributeRow {
 		if (resource != null)
 			dialog.setInitialSelection(resource);
 		dialog.addFilter(new ViewerFilter() {
+			@Override
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
 				if (element instanceof IProject)
 					return ((IProject) element).equals(project);
@@ -132,6 +136,7 @@ public class ResourceAttributeRow extends ButtonAttributeRow {
 		dialog.setTitle(PDEUIMessages.ResourceAttributeCellEditor_title);
 		dialog.setMessage(PDEUIMessages.ResourceAttributeCellEditor_message);
 		dialog.setValidator(new ISelectionStatusValidator() {
+			@Override
 			public IStatus validate(Object[] selection) {
 				if (selection != null && selection.length > 0 && (selection[0] instanceof IFile || selection[0] instanceof IContainer))
 					return new Status(IStatus.OK, PDEPlugin.getPluginId(), IStatus.OK, "", null); //$NON-NLS-1$

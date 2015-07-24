@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2008 IBM Corporation and others.
+ *  Copyright (c) 2007, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -25,10 +25,12 @@ public class RefactoringActionFactory {
 	public static PDERefactoringAction createRefactorPluginIdAction(String label) {
 		return new PDERefactoringAction(label, new RefactoringPluginInfo()) {
 
+			@Override
 			public RefactoringProcessor getRefactoringProcessor(RefactoringInfo info) {
 				return new RenamePluginProcessor(info);
 			}
 
+			@Override
 			public RefactoringWizard getRefactoringWizard(PDERefactor refactor, RefactoringInfo info) {
 				return new RenamePluginWizard(refactor, info);
 			}
@@ -39,10 +41,12 @@ public class RefactoringActionFactory {
 	public static PDERefactoringAction createRefactorExtPointAction(String label) {
 		return new PDERefactoringAction(label, getExtensionPointInfo()) {
 
+			@Override
 			public RefactoringProcessor getRefactoringProcessor(RefactoringInfo info) {
 				return new RenameExtensionPointProcessor(info);
 			}
 
+			@Override
 			public RefactoringWizard getRefactoringWizard(PDERefactor refactor, RefactoringInfo info) {
 				return new RenameExtensionPointWizard(refactor, info);
 			}
@@ -53,6 +57,7 @@ public class RefactoringActionFactory {
 	private static RefactoringInfo getExtensionPointInfo() {
 		return new RefactoringInfo() {
 
+			@Override
 			public IPluginModelBase getBase() {
 				if (fSelection instanceof IPluginExtensionPoint) {
 					return ((IPluginExtensionPoint) fSelection).getPluginModel();
@@ -60,6 +65,7 @@ public class RefactoringActionFactory {
 				return null;
 			}
 
+			@Override
 			public String getCurrentValue() {
 				if (fSelection instanceof IPluginExtensionPoint) {
 					return ((IPluginExtensionPoint) fSelection).getId();

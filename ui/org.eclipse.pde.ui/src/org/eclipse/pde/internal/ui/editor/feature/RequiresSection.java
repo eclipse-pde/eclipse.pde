@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2014 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -66,6 +66,7 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 	private Action fOpenAction;
 
 	class ImportContentProvider extends DefaultContentProvider implements IStructuredContentProvider {
+		@Override
 		public Object[] getElements(Object parent) {
 			if (parent instanceof IFeature) {
 				IFeatureImport[] imports = ((IFeature) parent).getImports();
@@ -187,6 +188,7 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 
 	private void handleNewPlugin() {
 		BusyIndicator.showWhile(fPluginViewer.getTable().getDisplay(), new Runnable() {
+			@Override
 			public void run() {
 				IPluginModelBase[] allModels = PluginRegistry.getActiveModels();
 				ArrayList<IPluginModelBase> newModels = new ArrayList<IPluginModelBase>();
@@ -233,6 +235,7 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 
 	private void handleNewFeature() {
 		BusyIndicator.showWhile(fPluginViewer.getTable().getDisplay(), new Runnable() {
+			@Override
 			public void run() {
 				IFeatureModel[] allModels = PDECore.getDefault().getFeatureModelManager().getModels();
 				ArrayList<IFeatureModel> newModels = new ArrayList<IFeatureModel>();
@@ -358,6 +361,7 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 	public boolean doGlobalAction(String actionId) {
 		if (actionId.equals(ActionFactory.DELETE.getId())) {
 			BusyIndicator.showWhile(fPluginViewer.getTable().getDisplay(), new Runnable() {
+				@Override
 				public void run() {
 					handleDelete();
 				}
@@ -376,6 +380,7 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 		}
 		if (actionId.equals(ActionFactory.SELECT_ALL.getId())) {
 			BusyIndicator.showWhile(fPluginViewer.getTable().getDisplay(), new Runnable() {
+				@Override
 				public void run() {
 					handleSelectAll();
 				}
@@ -482,8 +487,10 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 		}
 	}
 
+	@Override
 	public void modelsChanged(final PluginModelDelta delta) {
 		getSection().getDisplay().asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				if (getSection().isDisposed()) {
 					return;
@@ -503,8 +510,10 @@ public class RequiresSection extends TableSection implements IPluginModelListene
 		return entries.length > 0;
 	}
 
+	@Override
 	public void modelsChanged(final IFeatureModelDelta delta) {
 		getSection().getDisplay().asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				if (getSection().isDisposed()) {
 					return;

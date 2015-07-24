@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,6 +34,7 @@ public class EditorPreferencePage extends PreferencePage implements IWorkbenchPr
 		fColorManager = new ColorManager();
 	}
 
+	@Override
 	public boolean performOk() {
 		fXMLTab.performOk();
 		fManifestTab.performOk();
@@ -41,6 +42,7 @@ public class EditorPreferencePage extends PreferencePage implements IWorkbenchPr
 		return super.performOk();
 	}
 
+	@Override
 	public void dispose() {
 		fColorManager.disposeColors(false);
 		fXMLTab.dispose();
@@ -48,19 +50,23 @@ public class EditorPreferencePage extends PreferencePage implements IWorkbenchPr
 		super.dispose();
 	}
 
+	@Override
 	protected void performDefaults() {
 		fXMLTab.performDefaults();
 		fManifestTab.performDefaults();
 		super.performDefaults();
 	}
 
+	@Override
 	public void init(IWorkbench workbench) {
 	}
 
+	@Override
 	protected Control createContents(Composite parent) {
 		final Link link = new Link(parent, SWT.NONE);
 		link.setText(PDEUIMessages.EditorPreferencePage_link);
 		link.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if ("org.eclipse.ui.preferencePages.GeneralTextEditor".equals(e.text)) //$NON-NLS-1$
 					PreferencesUtil.createPreferenceDialogOn(link.getShell(), e.text, null, null);
@@ -76,6 +82,7 @@ public class EditorPreferencePage extends PreferencePage implements IWorkbenchPr
 		foldingButton.setLayoutData(gd);
 		foldingButton.setSelection(PDEPlugin.getDefault().getPreferenceStore().getBoolean(IPreferenceConstants.EDITOR_FOLDING_ENABLED));
 		foldingButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				IPreferenceStore store = PDEPlugin.getDefault().getPreferenceStore();
 				store.setValue(IPreferenceConstants.EDITOR_FOLDING_ENABLED, ((Button) e.getSource()).getSelection());

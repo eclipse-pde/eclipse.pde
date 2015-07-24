@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,24 +49,29 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 			fMarker = marker;
 		}
 
+		@Override
 		public void apply(IDocument document) {
 			fResolution.run(fMarker);
 		}
 
+		@Override
 		public Point getSelection(IDocument document) {
 			return new Point(fPosition.offset, 0);
 		}
 
+		@Override
 		public String getAdditionalProposalInfo() {
 			if (fResolution instanceof IMarkerResolution2)
 				return ((IMarkerResolution2) fResolution).getDescription();
 			return null;
 		}
 
+		@Override
 		public String getDisplayString() {
 			return fResolution.getLabel();
 		}
 
+		@Override
 		public Image getImage() {
 			if (fResolution instanceof AbstractPDEMarkerResolution) {
 				switch (((AbstractPDEMarkerResolution) fResolution).getType()) {
@@ -85,18 +90,22 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 			return null;
 		}
 
+		@Override
 		public IContextInformation getContextInformation() {
 			return null;
 		}
 
+		@Override
 		public IInformationControlCreator getInformationControlCreator() {
 			return null;
 		}
 
+		@Override
 		public int getPrefixCompletionStart(IDocument document, int completionOffset) {
 			return 0;
 		}
 
+		@Override
 		public CharSequence getPrefixCompletionText(IDocument document, int completionOffset) {
 			return null;
 		}
@@ -104,6 +113,7 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension4#isAutoInsertable()
 		 */
+		@Override
 		public boolean isAutoInsertable() {
 			return true;
 		}
@@ -128,6 +138,7 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 		/* (non-Javadoc)
 		 * @see java.lang.Comparable#compareTo(java.lang.Object)
 		 */
+		@Override
 		public int compareTo(Object arg0) {
 			if (!(arg0 instanceof PDECompletionProposal))
 				return -1;
@@ -148,10 +159,12 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 		ResolutionGenerator fGenerator = new ResolutionGenerator();
 		HashMap<IMarker, IMarkerResolution[]> fResMap = new HashMap<IMarker, IMarkerResolution[]>();
 
+		@Override
 		public String getErrorMessage() {
 			return null;
 		}
 
+		@Override
 		public boolean canFix(Annotation annotation) {
 			boolean bRetVal = false;
 			if (annotation instanceof SimpleMarkerAnnotation) {
@@ -195,10 +208,12 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 			}
 		}
 
+		@Override
 		public boolean canAssist(IQuickAssistInvocationContext invocationContext) {
 			return false;
 		}
 
+		@Override
 		public ICompletionProposal[] computeQuickAssistProposals(IQuickAssistInvocationContext invocationContext) {
 			IAnnotationModel amodel = invocationContext.getSourceViewer().getAnnotationModel();
 			IDocument doc = invocationContext.getSourceViewer().getDocument();
@@ -207,6 +222,7 @@ public class PDEQuickAssistAssistant extends QuickAssistAssistant {
 			Iterator<?> it = amodel.getAnnotationIterator();
 			TreeSet<ICompletionProposal> proposalSet = new TreeSet<ICompletionProposal>(new Comparator<Object>() {
 
+				@Override
 				public int compare(Object o1, Object o2) {
 					if (o1 instanceof ICompletionProposal && o2 instanceof ICompletionProposal) {
 						ICompletionProposal proposal1 = (ICompletionProposal) o1;

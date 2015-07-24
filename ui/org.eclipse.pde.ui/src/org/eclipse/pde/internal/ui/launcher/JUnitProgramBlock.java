@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,10 +27,12 @@ public class JUnitProgramBlock extends ProgramBlock {
 		super(tab);
 	}
 
+	@Override
 	protected String getApplicationAttribute() {
 		return IPDELauncherConstants.APP_TO_TEST;
 	}
 
+	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 		if (!LauncherUtils.requiresUI(config))
 			config.setAttribute(IPDELauncherConstants.APPLICATION, IPDEConstants.CORE_TEST_APPLICATION);
@@ -38,6 +40,7 @@ public class JUnitProgramBlock extends ProgramBlock {
 			super.setDefaults(config);
 	}
 
+	@Override
 	protected String[] getApplicationNames() {
 		TreeSet<String> result = new TreeSet<String>();
 		result.add(PDEUIMessages.JUnitProgramBlock_headless);
@@ -51,6 +54,7 @@ public class JUnitProgramBlock extends ProgramBlock {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.launcher.BasicLauncherTab#initializeApplicationSection(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	protected void initializeApplicationSection(ILaunchConfiguration config) throws CoreException {
 		String application = config.getAttribute(IPDELauncherConstants.APPLICATION, (String) null);
 		if (IPDEConstants.CORE_TEST_APPLICATION.equals(application))
@@ -62,6 +66,7 @@ public class JUnitProgramBlock extends ProgramBlock {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.launcher.BasicLauncherTab#saveApplicationSection(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	protected void saveApplicationSection(ILaunchConfigurationWorkingCopy config) {
 		if (fApplicationCombo.getText().equals(PDEUIMessages.JUnitProgramBlock_headless)) {
 			String appName = fApplicationCombo.isEnabled() ? IPDEConstants.CORE_TEST_APPLICATION : null;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,10 +46,12 @@ public abstract class AbstractPDELaunchConfigurationTabGroup extends AbstractLau
 	 * 
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTabGroup#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		final ILaunchConfiguration config = configuration;
 		final ILaunchConfigurationTab[] tabs = getTabs();
 		BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
+			@Override
 			public void run() {
 				try {
 					if (config instanceof ILaunchConfigurationWorkingCopy) {
@@ -110,6 +112,7 @@ public abstract class AbstractPDELaunchConfigurationTabGroup extends AbstractLau
 	 * 
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTabGroup#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		super.setDefaults(configuration);
 		if (TargetPlatformHelper.usesNewApplicationModel())

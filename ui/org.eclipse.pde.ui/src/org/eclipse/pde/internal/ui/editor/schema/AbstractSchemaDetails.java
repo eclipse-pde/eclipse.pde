@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -58,6 +58,7 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 		fShowDescription = showDescription;
 	}
 
+	@Override
 	public void modelChanged(IModelChangedEvent event) {
 		if ((event.getChangeType() == IModelChangedEvent.REMOVE) || (fShowDTD == false) || (fDtdSection == null)) {
 			return;
@@ -69,6 +70,7 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 		}
 	}
 
+	@Override
 	public final void createContents(Composite parent) {
 		// This is a hacked fix to ensure that the label columns on every details
 		// page have the same width. SchemaDetails_translatable plus 11 pixels
@@ -146,6 +148,7 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 		//gd.horizontalIndent = FormLayoutFactory.CONTROL_HORIZONTAL_INDENT;
 		fDescriptionViewer.createUI(container, gd);
 		fDescriptionViewer.getDocument().addDocumentListener(new IDocumentListener() {
+			@Override
 			public void documentChanged(DocumentEvent event) {
 				if (blockListeners())
 					return;
@@ -161,6 +164,7 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 				}
 			}
 
+			@Override
 			public void documentAboutToBeChanged(DocumentEvent event) {
 			}
 		});
@@ -184,35 +188,42 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 		fSection.setText(title);
 	}
 
+	@Override
 	public String getContextId() {
 		return SchemaInputContext.CONTEXT_ID;
 	}
 
+	@Override
 	public PDEFormPage getPage() {
 		return (PDEFormPage) getManagedForm().getContainer();
 	}
 
+	@Override
 	public boolean isEditable() {
 		return getPage().getPDEEditor().getAggregateModel().isEditable();
 	}
 
+	@Override
 	public void fireSaveNeeded() {
 		markDirty();
 		getPage().getPDEEditor().fireSaveNeeded(getContextId(), false);
 	}
 
+	@Override
 	public boolean canPaste(Clipboard clipboard) {
 		if (fShowDescription && fDescriptionViewer != null && fDescriptionViewer.getViewer().getTextWidget().isFocusControl())
 			return fDescriptionViewer.canPaste();
 		return super.canPaste(clipboard);
 	}
 
+	@Override
 	public boolean doGlobalAction(String actionId) {
 		if (fShowDescription && fDescriptionViewer != null && fDescriptionViewer.getViewer().getTextWidget().isFocusControl())
 			return fDescriptionViewer.doGlobalAction(actionId);
 		return super.doGlobalAction(actionId);
 	}
 
+	@Override
 	public void selectionChanged(IFormPart part, ISelection selection) {
 		if (!(part instanceof ElementSection))
 			return;
@@ -322,6 +333,7 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 		gd.horizontalIndent = 10;
 		fUnboundSelect.setLayoutData(gd);
 		fUnboundSelect.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (blockListeners())
 					return;
@@ -365,6 +377,7 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 	protected void hookMinOccur(SelectionAdapter adapter) {
 		fMinOccurSpinner.addSelectionListener(adapter);
 		fMinOccurSpinner.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				if (blockListeners())
 					return;
@@ -379,6 +392,7 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 		fUnboundSelect.addSelectionListener(adapter);
 		fMaxOccurSpinner.addSelectionListener(adapter);
 		fMaxOccurSpinner.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				if (blockListeners())
 					return;
@@ -405,6 +419,7 @@ public abstract class AbstractSchemaDetails extends PDEDetails {
 		fBlockListeners = blockListeners;
 	}
 
+	@Override
 	public void dispose() {
 		// Set the context menu to null to prevent the editor context menu
 		// from being disposed along with the source viewer

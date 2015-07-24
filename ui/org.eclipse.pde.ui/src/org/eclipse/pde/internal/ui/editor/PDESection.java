@@ -38,6 +38,7 @@ public abstract class PDESection extends SectionPart implements IContextPart, IA
 
 	protected abstract void createClient(Section section, FormToolkit toolkit);
 
+	@Override
 	public PDEFormPage getPage() {
 		return fPage;
 	}
@@ -50,21 +51,25 @@ public abstract class PDESection extends SectionPart implements IContextPart, IA
 		return false;
 	}
 
+	@Override
 	public void modelChanged(IModelChangedEvent e) {
 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED)
 			markStale();
 	}
 
+	@Override
 	public String getContextId() {
 		return null;
 	}
 
+	@Override
 	public void fireSaveNeeded() {
 		markDirty();
 		if (getContextId() != null)
 			getPage().getPDEEditor().fireSaveNeeded(getContextId(), false);
 	}
 
+	@Override
 	public boolean isEditable() {
 		// getAggregateModel() can (though never should) return null
 		IBaseModel model = getPage().getPDEEditor().getAggregateModel();
@@ -85,10 +90,12 @@ public abstract class PDESection extends SectionPart implements IContextPart, IA
 		return false;
 	}
 
+	@Override
 	public void cancelEdit() {
 		super.refresh();
 	}
 
+	@Override
 	public <T> T getAdapter(Class<T> adapter) {
 		return null;
 	}

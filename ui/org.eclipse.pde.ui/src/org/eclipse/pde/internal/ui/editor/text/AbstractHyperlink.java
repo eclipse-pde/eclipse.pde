@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2008 IBM Corporation and others.
+ *  Copyright (c) 2006, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -23,14 +23,17 @@ public abstract class AbstractHyperlink implements IHyperlink {
 		fElement = element;
 	}
 
+	@Override
 	public IRegion getHyperlinkRegion() {
 		return fRegion;
 	}
 
+	@Override
 	public String getHyperlinkText() {
 		return null;
 	}
 
+	@Override
 	public String getTypeLabel() {
 		return null;
 	}

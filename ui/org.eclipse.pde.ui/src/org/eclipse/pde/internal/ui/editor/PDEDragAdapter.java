@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2011 IBM Corporation and others.
+ *  Copyright (c) 2007, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -44,6 +44,7 @@ public class PDEDragAdapter implements DragSourceListener, IPDESourceParticipant
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.IPDESourceParticipant#getSourceObjects()
 	 */
+	@Override
 	public Object[] getSourceObjects() {
 		return fSourceObjects;
 	}
@@ -77,6 +78,7 @@ public class PDEDragAdapter implements DragSourceListener, IPDESourceParticipant
 	/* (non-Javadoc)
 	 * @see org.eclipse.swt.dnd.DragSourceListener#dragFinished(org.eclipse.swt.dnd.DragSourceEvent)
 	 */
+	@Override
 	public void dragFinished(DragSourceEvent event) {
 		// Nothing to do if drag event is not enabled
 		if (event.doit == false) {
@@ -143,6 +145,7 @@ public class PDEDragAdapter implements DragSourceListener, IPDESourceParticipant
 	/* (non-Javadoc)
 	 * @see org.eclipse.swt.dnd.DragSourceListener#dragSetData(org.eclipse.swt.dnd.DragSourceEvent)
 	 */
+	@Override
 	public void dragSetData(DragSourceEvent event) {
 		// Check to see if the drag event is valid
 		if (event.doit == false) {
@@ -203,6 +206,7 @@ public class PDEDragAdapter implements DragSourceListener, IPDESourceParticipant
 	/* (non-Javadoc)
 	 * @see org.eclipse.swt.dnd.DragSourceListener#dragStart(org.eclipse.swt.dnd.DragSourceEvent)
 	 */
+	@Override
 	public void dragStart(DragSourceEvent event) {
 		// Clear the previous source objects
 		// New drag starting

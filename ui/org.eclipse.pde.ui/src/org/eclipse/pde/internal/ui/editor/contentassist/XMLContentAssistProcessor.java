@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -633,6 +633,7 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 		return proposals;
 	}
 
+	@Override
 	public void assistSessionEnded(ContentAssistEvent event) {
 		fRange = null;
 
@@ -647,10 +648,12 @@ public class XMLContentAssistProcessor extends TypePackageCompletionProcessor im
 		fDocLen = -1;
 	}
 
+	@Override
 	public void assistSessionStarted(ContentAssistEvent event) {
 		fAssistSessionStarted = true;
 	}
 
+	@Override
 	public void selectionChanged(ICompletionProposal proposal, boolean smartToggle) {
 	}
 

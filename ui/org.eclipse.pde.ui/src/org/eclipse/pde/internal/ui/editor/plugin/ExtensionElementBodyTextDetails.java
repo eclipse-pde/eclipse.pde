@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2014 IBM Corporation and others.
+ *  Copyright (c) 2007, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -61,6 +61,7 @@ public class ExtensionElementBodyTextDetails extends AbstractPluginElementDetail
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.IDetailsPage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createContents(Composite parent) {
 		// Get the toolkit
 		createUIToolkit();
@@ -84,6 +85,7 @@ public class ExtensionElementBodyTextDetails extends AbstractPluginElementDetail
 	private void createListenersHyperlinkBody() {
 		// Listen to hyperlink clicks
 		fHyperlinkBody.addHyperlinkListener(new HyperlinkAdapter() {
+			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				handleHyperlinkBodyLinkActivated();
 			}
@@ -125,6 +127,7 @@ public class ExtensionElementBodyTextDetails extends AbstractPluginElementDetail
 	private void createListenersTextBody() {
 		// Listen for text input
 		fTextBody.setFormEntryListener(new FormEntryAdapter(this) {
+			@Override
 			public void textValueChanged(FormEntry entry) {
 				handleTextBodyValueChanged();
 			}
@@ -231,6 +234,7 @@ public class ExtensionElementBodyTextDetails extends AbstractPluginElementDetail
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.IPartSelectionListener#selectionChanged(org.eclipse.ui.forms.IFormPart, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void selectionChanged(IFormPart part, ISelection selection) {
 		// Get the structured selection
 		IStructuredSelection structured_selection = (IStructuredSelection) selection;
@@ -284,6 +288,7 @@ public class ExtensionElementBodyTextDetails extends AbstractPluginElementDetail
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.IContextPart#fireSaveNeeded()
 	 */
+	@Override
 	public void fireSaveNeeded() {
 		markDirty();
 		getPage().getPDEEditor().fireSaveNeeded(getContextId(), false);
@@ -292,6 +297,7 @@ public class ExtensionElementBodyTextDetails extends AbstractPluginElementDetail
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.IContextPart#getContextId()
 	 */
+	@Override
 	public String getContextId() {
 		return PluginInputContext.CONTEXT_ID;
 	}
@@ -299,6 +305,7 @@ public class ExtensionElementBodyTextDetails extends AbstractPluginElementDetail
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.IContextPart#getPage()
 	 */
+	@Override
 	public PDEFormPage getPage() {
 		return (PDEFormPage) getManagedForm().getContainer();
 	}
@@ -306,6 +313,7 @@ public class ExtensionElementBodyTextDetails extends AbstractPluginElementDetail
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.IContextPart#isEditable()
 	 */
+	@Override
 	public boolean isEditable() {
 		return getPage().getPDEEditor().getAggregateModel().isEditable();
 	}
@@ -313,6 +321,7 @@ public class ExtensionElementBodyTextDetails extends AbstractPluginElementDetail
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.core.IModelChangedListener#modelChanged(org.eclipse.pde.core.IModelChangedEvent)
 	 */
+	@Override
 	public void modelChanged(IModelChangedEvent event) {
 		// Refresh the UI if the plugin element data changed
 		if (event.getChangeType() == IModelChangedEvent.CHANGE) {
@@ -326,6 +335,7 @@ public class ExtensionElementBodyTextDetails extends AbstractPluginElementDetail
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#refresh()
 	 */
+	@Override
 	public void refresh() {
 		updateUI();
 		super.refresh();
@@ -334,6 +344,7 @@ public class ExtensionElementBodyTextDetails extends AbstractPluginElementDetail
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEDetails#cancelEdit()
 	 */
+	@Override
 	public void cancelEdit() {
 		fTextBody.cancelEdit();
 		super.cancelEdit();
@@ -342,6 +353,7 @@ public class ExtensionElementBodyTextDetails extends AbstractPluginElementDetail
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#commit(boolean)
 	 */
+	@Override
 	public void commit(boolean onSave) {
 		fTextBody.commit();
 		super.commit(onSave);
@@ -350,6 +362,7 @@ public class ExtensionElementBodyTextDetails extends AbstractPluginElementDetail
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
 	 */
+	@Override
 	public void dispose() {
 		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
 		// Remove the model listener
@@ -362,6 +375,7 @@ public class ExtensionElementBodyTextDetails extends AbstractPluginElementDetail
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#setFocus()
 	 */
+	@Override
 	public void setFocus() {
 		fTextBody.getText().setFocus();
 	}
@@ -369,6 +383,7 @@ public class ExtensionElementBodyTextDetails extends AbstractPluginElementDetail
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.text.TextHoverDescriptionProvider#getDescription(org.eclipse.swt.widgets.Control)
 	 */
+	@Override
 	public String getHoverContent(Control control) {
 		// Retrieve either the hyperlink, label or text description as the 
 		// hover content

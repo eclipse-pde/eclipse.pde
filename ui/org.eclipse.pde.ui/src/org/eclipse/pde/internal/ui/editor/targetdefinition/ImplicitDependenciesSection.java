@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -108,6 +108,7 @@ public class ImplicitDependenciesSection extends SectionPart {
 		table.setLayoutData(new GridData(GridData.FILL_BOTH));
 		fViewer = new TableViewer(table);
 		fViewer.setContentProvider(new DefaultTableProvider() {
+			@Override
 			public Object[] getElements(Object inputElement) {
 				NameVersionDescriptor[] bundles = getTarget().getImplicitDependencies();
 				if (bundles == null) {
@@ -118,6 +119,7 @@ public class ImplicitDependenciesSection extends SectionPart {
 		});
 		fViewer.setLabelProvider(new StyledBundleLabelProvider(true, false));
 		fViewer.setComparator(new ViewerComparator() {
+			@Override
 			public int compare(Viewer viewer, Object e1, Object e2) {
 				NameVersionDescriptor bundle1 = (NameVersionDescriptor) e1;
 				NameVersionDescriptor bundle2 = (NameVersionDescriptor) e2;
@@ -126,11 +128,13 @@ public class ImplicitDependenciesSection extends SectionPart {
 		});
 		fViewer.setInput(getTarget());
 		fViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				updateButtons();
 			}
 		});
 		fViewer.addDoubleClickListener(new IDoubleClickListener() {
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				Object object = ((IStructuredSelection) event.getSelection()).getFirstElement();
 				ManifestEditor.openPluginEditor(((NameVersionDescriptor) object).getId());
@@ -147,6 +151,7 @@ public class ImplicitDependenciesSection extends SectionPart {
 		fAdd = toolkit.createButton(parent, PDEUIMessages.ImplicitDependenicesSection_Add, SWT.PUSH);
 		fAdd.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING));
 		fAdd.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleAdd();
 			}
@@ -155,6 +160,7 @@ public class ImplicitDependenciesSection extends SectionPart {
 		fRemove = toolkit.createButton(parent, PDEUIMessages.ImplicitDependenicesSection_Remove, SWT.PUSH);
 		fRemove.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING));
 		fRemove.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleRemove();
 			}
@@ -163,6 +169,7 @@ public class ImplicitDependenciesSection extends SectionPart {
 		fRemoveAll = toolkit.createButton(parent, PDEUIMessages.ImplicitDependenicesSection_RemoveAll, SWT.PUSH);
 		fRemoveAll.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING));
 		fRemoveAll.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleRemoveAll();
 			}
@@ -274,6 +281,7 @@ public class ImplicitDependenciesSection extends SectionPart {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#refresh()
 	 */
+	@Override
 	public void refresh() {
 		// TODO Try to retain selection during refresh, add and remove operations
 		fViewer.setInput(getTarget());

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 EclipseSource Corporation and others.
+ * Copyright (c) 2010, 2015 EclipseSource Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,10 +31,12 @@ public class SearchRepositoriesForIUProposal implements IJavaCompletionProposal 
 		fPackageName = packageName;
 	}
 
+	@Override
 	public int getRelevance() {
 		return 0;
 	}
 
+	@Override
 	public void apply(IDocument document) {
 		try {
 			IHandlerService handlerService = (IHandlerService) PlatformUI.getWorkbench().getService(IHandlerService.class);
@@ -55,22 +57,27 @@ public class SearchRepositoriesForIUProposal implements IJavaCompletionProposal 
 		}
 	}
 
+	@Override
 	public String getAdditionalProposalInfo() {
 		return NLS.bind(PDEUIMessages.SearchRepositoriesForIUProposal_description, fPackageName);
 	}
 
+	@Override
 	public IContextInformation getContextInformation() {
 		return null;
 	}
 
+	@Override
 	public String getDisplayString() {
 		return NLS.bind(PDEUIMessages.SearchRepositoriesForIUProposal_message, fPackageName);
 	}
 
+	@Override
 	public Image getImage() {
 		return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_SITE_OBJ);
 	}
 
+	@Override
 	public Point getSelection(IDocument document) {
 		return null;
 	}

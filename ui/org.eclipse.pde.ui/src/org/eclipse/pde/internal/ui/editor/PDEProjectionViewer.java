@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2008 IBM Corporation and others.
+ *  Copyright (c) 2006, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -48,6 +48,7 @@ public class PDEProjectionViewer extends ProjectionViewer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.source.projection.ProjectionViewer#doOperation(int)
 	 */
+	@Override
 	public void doOperation(int operation) {
 		// Ensure underlying text widget is defined
 		if ((getTextWidget() == null) || getTextWidget().isDisposed()) {
@@ -67,6 +68,7 @@ public class PDEProjectionViewer extends ProjectionViewer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.source.projection.ProjectionViewer#canDoOperation(int)
 	 */
+	@Override
 	public boolean canDoOperation(int operation) {
 		// Verify quick outline operation
 		if (operation == QUICK_OUTLINE) {
@@ -82,6 +84,7 @@ public class PDEProjectionViewer extends ProjectionViewer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.source.SourceViewer#configure(org.eclipse.jface.text.source.SourceViewerConfiguration)
 	 */
+	@Override
 	public void configure(SourceViewerConfiguration configuration) {
 		// Ensure underlying text widget is defined
 		if ((getTextWidget() == null) || getTextWidget().isDisposed()) {
@@ -103,6 +106,7 @@ public class PDEProjectionViewer extends ProjectionViewer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.source.SourceViewer#unconfigure()
 	 */
+	@Override
 	public void unconfigure() {
 		// Unconfigure quick outline operation
 		if (fOutlinePresenter != null) {

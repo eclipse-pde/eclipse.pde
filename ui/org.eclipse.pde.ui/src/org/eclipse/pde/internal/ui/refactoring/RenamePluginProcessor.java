@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,6 +31,7 @@ public class RenamePluginProcessor extends RefactoringProcessor {
 		fInfo = (RefactoringPluginInfo) info;
 	}
 
+	@Override
 	public RefactoringStatus checkFinalConditions(IProgressMonitor pm, CheckConditionsContext context) throws CoreException, OperationCanceledException {
 		RefactoringStatus status = new RefactoringStatus();
 		IResource res = fInfo.getBase().getUnderlyingResource();
@@ -48,32 +49,39 @@ public class RenamePluginProcessor extends RefactoringProcessor {
 		return status;
 	}
 
+	@Override
 	public RefactoringStatus checkInitialConditions(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		return null;
 	}
 
+	@Override
 	public Object[] getElements() {
 		return new Object[] {fInfo.getBase()};
 	}
 
+	@Override
 	public String getIdentifier() {
 		return getClass().getName();
 	}
 
+	@Override
 	public String getProcessorName() {
 		return PDEUIMessages.RenamePluginProcessor_processorName;
 	}
 
+	@Override
 	public boolean isApplicable() throws CoreException {
 		return true;
 	}
 
+	@Override
 	public RefactoringParticipant[] loadParticipants(RefactoringStatus status, SharableParticipants sharedParticipants) throws CoreException {
 		if (fInfo.isRenameProject()) {
 			// filter out PDE's container rename refactor participant.  We will already update the Manifest, so we don't need to run our participant
 			IParticipantDescriptorFilter filter = new IParticipantDescriptorFilter() {
 				static final String PDE_CONTAINER_RENAME_PARTICIPANT = "org.eclipse.pde.ui.manifestFolderRenameParticipant"; //$NON-NLS-1$
 
+				@Override
 				public boolean select(IConfigurationElement element, RefactoringStatus status) {
 					if (PDE_CONTAINER_RENAME_PARTICIPANT.equals(element.getAttribute("id"))) //$NON-NLS-1$
 						return false;
@@ -92,6 +100,7 @@ public class RenamePluginProcessor extends RefactoringProcessor {
 		return project.getDescription().getNatureIds();
 	}
 
+	@Override
 	public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		CompositeChange change = new CompositeChange(MessageFormat.format(PDEUIMessages.RenamePluginProcessor_changeTitle, new Object[] {fInfo.getCurrentValue(), fInfo.getNewValue()}));
 		pm.beginTask("", getTotalWork()); //$NON-NLS-1$

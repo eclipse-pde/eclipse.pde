@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,6 +46,7 @@ public abstract class AntGeneratingExportWizard extends BaseExportWizard {
 
 	protected BaseExportWizardPage fPage;
 
+	@Override
 	public void addPages() {
 		fPage = createPage1();
 		addPage(fPage);
@@ -56,6 +57,7 @@ public abstract class AntGeneratingExportWizard extends BaseExportWizard {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.wizards.exports.BaseExportWizard#performPreliminaryChecks()
 	 */
+	@Override
 	protected boolean performPreliminaryChecks() {
 		// Check if we are going to overwrite an existing build.xml file
 		if (!MessageDialogWithToggle.ALWAYS.equals(PDEPlugin.getDefault().getPreferenceStore().getString(IPreferenceConstants.OVERWRITE_BUILD_FILES_ON_EXPORT))) {
@@ -114,6 +116,7 @@ public abstract class AntGeneratingExportWizard extends BaseExportWizard {
 		return true;
 	}
 
+	@Override
 	protected boolean confirmDelete() {
 		if (!fPage.doExportToDirectory()) {
 			File zipFile = new File(fPage.getDestination(), fPage.getFileName());
@@ -177,6 +180,7 @@ public abstract class AntGeneratingExportWizard extends BaseExportWizard {
 			fLogLocation = logLocation;
 		}
 
+		@Override
 		protected Control createMessageArea(Composite composite) {
 			Link link = new Link(composite, SWT.WRAP);
 			try {
@@ -188,6 +192,7 @@ public abstract class AntGeneratingExportWizard extends BaseExportWizard {
 			data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);
 			link.setLayoutData(data);
 			link.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					try {
 						Program.launch(fLogLocation.getCanonicalPath());

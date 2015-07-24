@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2012 Red Hat and others.
+ * Copyright (c) 2010, 2015 Red Hat and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,20 +35,24 @@ public class OSGiConsole extends IOConsole {
 		super(NLS.bind(PDEUIMessages.OSGiConsole_name, Platform.getInstallLocation().getURL().getPath()), TYPE, null, true);
 		session = new ConsoleSession() {
 
+			@Override
 			public OutputStream getOutput() {
 				return newOutputStream();
 			}
 
+			@Override
 			public InputStream getInput() {
 				return getInputStream();
 			}
 
+			@Override
 			protected void doClose() {
 				factory.closeConsole(OSGiConsole.this);
 			}
 		};
 	}
 
+	@Override
 	protected void init() {
 		super.init();
 		IOConsoleOutputStream info = newOutputStream(); // create a stream to write info message to
@@ -68,6 +72,7 @@ public class OSGiConsole extends IOConsole {
 		context.registerService(ConsoleSession.class.getName(), session, null);
 	}
 
+	@Override
 	protected void dispose() {
 		super.dispose();
 	}

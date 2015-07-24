@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -365,6 +365,7 @@ public class NewLibraryPluginCreationOperation extends NewProjectCreationOperati
 				input = new ZipFile(jar);
 				ZipFileStructureProvider provider = new ZipFileStructureProvider(input);
 				ImportOperation op = new ImportOperation(destination.getFullPath(), provider.getRoot(), provider, new IOverwriteQuery() {
+					@Override
 					public String queryOverwrite(String pathString) {
 						return IOverwriteQuery.ALL;
 					}

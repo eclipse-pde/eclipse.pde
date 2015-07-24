@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2013 IBM Corporation and others.
+ *  Copyright (c) 2007, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -51,6 +51,7 @@ public abstract class LaunchShortcutOverviewPage extends PDEFormPage implements 
 	 * 
 	 * @see org.eclipse.ui.forms.events.HyperlinkListener#linkActivated(org.eclipse.ui.forms.events.HyperlinkEvent)
 	 */
+	@Override
 	public void linkActivated(HyperlinkEvent e) {
 		// target href takes the form of launchShortcut.<mode>.<id>
 		String href = (String) e.getHref();
@@ -71,6 +72,7 @@ public abstract class LaunchShortcutOverviewPage extends PDEFormPage implements 
 	 * 
 	 * @see org.eclipse.ui.forms.events.HyperlinkListener#linkEntered(org.eclipse.ui.forms.events.HyperlinkEvent)
 	 */
+	@Override
 	public void linkEntered(HyperlinkEvent e) {
 		IStatusLineManager mng = getEditor().getEditorSite().getActionBars().getStatusLineManager();
 		mng.setMessage(e.getLabel());
@@ -81,6 +83,7 @@ public abstract class LaunchShortcutOverviewPage extends PDEFormPage implements 
 	 * 
 	 * @see org.eclipse.ui.forms.events.HyperlinkListener#linkExited(org.eclipse.ui.forms.events.HyperlinkEvent)
 	 */
+	@Override
 	public void linkExited(HyperlinkEvent e) {
 		IStatusLineManager mng = getEditor().getEditorSite().getActionBars().getStatusLineManager();
 		mng.setMessage(null);

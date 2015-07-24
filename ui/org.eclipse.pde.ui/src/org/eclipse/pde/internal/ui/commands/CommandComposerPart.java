@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2012 IBM Corporation and others.
+ *  Copyright (c) 2006, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -179,6 +179,7 @@ public class CommandComposerPart implements ISelectionChangedListener {
 		return comp;
 	}
 
+	@Override
 	public void selectionChanged(SelectionChangedEvent event) {
 		// Clear the previous error message (if any)
 		// Field input value is lost on selection any way

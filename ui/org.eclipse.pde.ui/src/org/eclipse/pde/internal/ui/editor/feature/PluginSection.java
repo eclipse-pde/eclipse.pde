@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2014 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -61,6 +61,7 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 	private SortAction fSortAction;
 
 	class PluginContentProvider extends DefaultContentProvider implements IStructuredContentProvider {
+		@Override
 		public Object[] getElements(Object parent) {
 			if (parent instanceof IFeature) {
 				return ((IFeature) parent).getPlugins();
@@ -172,6 +173,7 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 
 	private void handleNew() {
 		BusyIndicator.showWhile(fPluginViewer.getTable().getDisplay(), new Runnable() {
+			@Override
 			public void run() {
 				IPluginModelBase[] allModels = PluginRegistry.getActiveModels();
 				ArrayList<IPluginModelBase> newModels = new ArrayList<IPluginModelBase>();
@@ -255,6 +257,7 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 	private void handleSynchronize() {
 		final FeatureEditorContributor contributor = (FeatureEditorContributor) getPage().getPDEEditor().getContributor();
 		BusyIndicator.showWhile(fPluginViewer.getControl().getDisplay(), new Runnable() {
+			@Override
 			public void run() {
 				contributor.getSynchronizeAction().run();
 			}
@@ -265,6 +268,7 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 	public boolean doGlobalAction(String actionId) {
 		if (actionId.equals(ActionFactory.DELETE.getId())) {
 			BusyIndicator.showWhile(fPluginViewer.getTable().getDisplay(), new Runnable() {
+				@Override
 				public void run() {
 					handleDelete();
 				}
@@ -283,6 +287,7 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 		}
 		if (actionId.equals(ActionFactory.SELECT_ALL.getId())) {
 			BusyIndicator.showWhile(fPluginViewer.getTable().getDisplay(), new Runnable() {
+				@Override
 				public void run() {
 					handleSelectAll();
 				}
@@ -352,6 +357,7 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 			@Override
 			public void run() {
 				BusyIndicator.showWhile(fPluginViewer.getTable().getDisplay(), new Runnable() {
+					@Override
 					public void run() {
 						handleDelete();
 					}
@@ -363,8 +369,10 @@ public class PluginSection extends TableSection implements IPluginModelListener 
 		fOpenAction = new OpenReferenceAction(fPluginViewer);
 	}
 
+	@Override
 	public void modelsChanged(final PluginModelDelta delta) {
 		getSection().getDisplay().asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				if (getSection().isDisposed()) {
 					return;

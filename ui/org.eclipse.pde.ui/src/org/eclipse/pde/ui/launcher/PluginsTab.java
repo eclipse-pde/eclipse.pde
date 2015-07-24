@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,6 +49,7 @@ public class PluginsTab extends AbstractLauncherTab {
 	private static final int FEATURE_SELECTION = 2;
 
 	class Listener extends SelectionAdapter implements ModifyListener {
+		@Override
 		public void widgetSelected(SelectionEvent e) {
 			int index = fSelectionCombo.getSelectionIndex();
 			try {
@@ -60,6 +61,7 @@ public class PluginsTab extends AbstractLauncherTab {
 			updateLaunchConfigurationDialog();
 		}
 
+		@Override
 		public void modifyText(ModifyEvent e) {
 			updateLaunchConfigurationDialog();
 		}
@@ -84,6 +86,7 @@ public class PluginsTab extends AbstractLauncherTab {
 	 * self-hosting option.
 	 * @deprecated As of 3.6 the feature-based workspace launch option is no longer available, so there is no need to set this flag
 	 */
+	@Deprecated
 	public PluginsTab(boolean showFeatures) {
 		this();
 	}
@@ -92,6 +95,7 @@ public class PluginsTab extends AbstractLauncherTab {
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#dispose()
 	 */
+	@Override
 	public void dispose() {
 		fBlock.dispose();
 		fImage.dispose();
@@ -102,6 +106,7 @@ public class PluginsTab extends AbstractLauncherTab {
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		Composite composite = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_HORIZONTAL);
 
@@ -145,6 +150,7 @@ public class PluginsTab extends AbstractLauncherTab {
 	 * (non-Javadoc) 
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		try {
 			int index = DEFAULT_SELECTION;
@@ -172,6 +178,7 @@ public class PluginsTab extends AbstractLauncherTab {
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		configuration.setAttribute(IPDELauncherConstants.USE_DEFAULT, true);
 		// The use features option was removed in 3.6
@@ -184,6 +191,7 @@ public class PluginsTab extends AbstractLauncherTab {
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		int index = fSelectionCombo.getSelectionIndex();
 		configuration.setAttribute(IPDELauncherConstants.USE_DEFAULT, index == DEFAULT_SELECTION);
@@ -211,6 +219,7 @@ public class PluginsTab extends AbstractLauncherTab {
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
+	@Override
 	public String getName() {
 		return PDEUIMessages.AdvancedLauncherTab_name;
 	}
@@ -219,6 +228,7 @@ public class PluginsTab extends AbstractLauncherTab {
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
 	 */
+	@Override
 	public Image getImage() {
 		return fImage;
 	}
@@ -229,6 +239,7 @@ public class PluginsTab extends AbstractLauncherTab {
 	 * 
 	 * @see org.eclipse.pde.ui.launcher.AbstractLauncherTab#validateTab()
 	 */
+	@Override
 	public void validateTab() {
 		String errorMessage = null;
 		setErrorMessage(errorMessage);
@@ -237,6 +248,7 @@ public class PluginsTab extends AbstractLauncherTab {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getId()
 	 */
+	@Override
 	public String getId() {
 		return IPDELauncherConstants.TAB_PLUGINS_ID;
 	}

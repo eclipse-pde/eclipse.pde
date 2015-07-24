@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,6 +55,7 @@ public class SourceOutlinePage extends PDEOutlinePage implements IReconcilingPar
 	/**  
 	 * Creates the control for this outline page.
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		viewer = getTreeViewer();
@@ -71,6 +72,7 @@ public class SourceOutlinePage extends PDEOutlinePage implements IReconcilingPar
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.views.contentoutline.ContentOutlinePage#init(org.eclipse.ui.part.IPageSite)
 	 */
+	@Override
 	public void init(IPageSite pageSite) {
 		super.init(pageSite);
 	}
@@ -78,11 +80,13 @@ public class SourceOutlinePage extends PDEOutlinePage implements IReconcilingPar
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.text.IReconcilingParticipant#reconciled(org.eclipse.jface.text.IDocument)
 	 */
+	@Override
 	public void reconciled(IDocument document) {
 		final Control control = getControl();
 		if (control == null || control.isDisposed())
 			return;
 		control.getDisplay().asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				if (control.isDisposed())
 					return;
@@ -103,6 +107,7 @@ public class SourceOutlinePage extends PDEOutlinePage implements IReconcilingPar
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.ISortableContentOutlinePage#sort(boolean)
 	 */
+	@Override
 	public void sort(boolean sorting) {
 		sorted = sorting;
 		if (isViewerDefined()) {
@@ -156,6 +161,7 @@ public class SourceOutlinePage extends PDEOutlinePage implements IReconcilingPar
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.views.contentoutline.ContentOutlinePage#addSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
 	 */
+	@Override
 	public void addSelectionChangedListener(ISelectionChangedListener listener) {
 		// Add the listener to our private list
 		fListenerList.add(listener);
@@ -165,6 +171,7 @@ public class SourceOutlinePage extends PDEOutlinePage implements IReconcilingPar
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.views.contentoutline.ContentOutlinePage#removeSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
 	 */
+	@Override
 	public void removeSelectionChangedListener(ISelectionChangedListener listener) {
 		// Remove the listener from our private list
 		fListenerList.remove(listener);

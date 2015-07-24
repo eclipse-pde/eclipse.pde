@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,12 +47,14 @@ public class TargetDefinitionWizardPage extends PDEWizardNewFileCreationPage {
 		setFileExtension(EXTENSION);
 	}
 
+	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.TARGET_DEFINITION_PAGE);
 	}
 
+	@Override
 	protected void createAdvancedControls(Composite parent) {
 		Composite comp = SWTFactory.createComposite(parent, 2, 1, GridData.FILL_BOTH);
 		SWTFactory.createLabel(comp, PDEUIMessages.TargetCreationPage_0, 2);
@@ -62,6 +64,7 @@ public class TargetDefinitionWizardPage extends PDEWizardNewFileCreationPage {
 		fCurrentTPButton = SWTFactory.createRadioButton(comp, PDEUIMessages.TargetCreationPage_3, 2);
 		fExistingTargetButton = SWTFactory.createRadioButton(comp, PDEUIMessages.TargetCreationPage_4, 1);
 		fExistingTargetButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				boolean enabled = fExistingTargetButton.getSelection();
 				fTargets.setEnabled(enabled);

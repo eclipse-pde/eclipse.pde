@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2010 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -37,6 +37,7 @@ public class BuildSourceViewerConfiguration extends ChangeAwareSourceViewerConfi
 
 	private abstract class AbstractJavaScanner extends BasePDEScanner {
 
+		@Override
 		public void adaptToPreferenceChange(PropertyChangeEvent event) {
 			String property = event.getProperty();
 			if (affectsTextPresentation(property)) {
@@ -54,6 +55,7 @@ public class BuildSourceViewerConfiguration extends ChangeAwareSourceViewerConfi
 			}
 		}
 
+		@Override
 		protected TextAttribute createTextAttribute(String property) {
 			Color color = fColorManager.getColor(property);
 			int style = SWT.NORMAL;
@@ -79,14 +81,17 @@ public class BuildSourceViewerConfiguration extends ChangeAwareSourceViewerConfi
 			initialize();
 		}
 
+		@Override
 		public boolean affectsTextPresentation(String property) {
 			return property.startsWith(fProperty);
 		}
 
+		@Override
 		protected Token getTokenAffected(PropertyChangeEvent event) {
 			return (Token) fDefaultReturnToken;
 		}
 
+		@Override
 		protected void initialize() {
 			setDefaultReturnToken(new Token(createTextAttribute(fProperty)));
 		}
@@ -96,6 +101,7 @@ public class BuildSourceViewerConfiguration extends ChangeAwareSourceViewerConfi
 
 		public class AssignmentDetector implements IWordDetector {
 
+			@Override
 			public boolean isWordStart(char c) {
 				if ('=' != c && ':' != c || fDocument == null)
 					return false;
@@ -112,6 +118,7 @@ public class BuildSourceViewerConfiguration extends ChangeAwareSourceViewerConfi
 				}
 			}
 
+			@Override
 			public boolean isWordPart(char c) {
 				return false;
 			}
@@ -125,10 +132,12 @@ public class BuildSourceViewerConfiguration extends ChangeAwareSourceViewerConfi
 			initialize();
 		}
 
+		@Override
 		public boolean affectsTextPresentation(String property) {
 			return property.startsWith(PreferenceConstants.PROPERTIES_FILE_COLORING_VALUE) || property.startsWith(PreferenceConstants.PROPERTIES_FILE_COLORING_ARGUMENT) || property.startsWith(PreferenceConstants.PROPERTIES_FILE_COLORING_ASSIGNMENT);
 		}
 
+		@Override
 		protected Token getTokenAffected(PropertyChangeEvent event) {
 			String property = event.getProperty();
 			if (property.startsWith(PreferenceConstants.PROPERTIES_FILE_COLORING_ARGUMENT))
@@ -138,6 +147,7 @@ public class BuildSourceViewerConfiguration extends ChangeAwareSourceViewerConfi
 			return (Token) fDefaultReturnToken;
 		}
 
+		@Override
 		protected void initialize() {
 			IRule[] rules = new IRule[3];
 			fArgumentToken = new Token(createTextAttribute(PreferenceConstants.PROPERTIES_FILE_COLORING_ARGUMENT));
@@ -147,6 +157,7 @@ public class BuildSourceViewerConfiguration extends ChangeAwareSourceViewerConfi
 			rules[1] = new WordRule(new AssignmentDetector(), fAssignmentToken);
 
 			rules[2] = new WhitespaceRule(new IWhitespaceDetector() {
+				@Override
 				public boolean isWhitespace(char c) {
 					return Character.isWhitespace(c);
 				}
@@ -167,6 +178,7 @@ public class BuildSourceViewerConfiguration extends ChangeAwareSourceViewerConfi
 		fCommentScanner = new SingleTokenJavaScanner(PreferenceConstants.PROPERTIES_FILE_COLORING_COMMENT);
 	}
 
+	@Override
 	public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) {
 		PresentationReconciler reconciler = new PresentationReconciler();
 		reconciler.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
@@ -186,6 +198,7 @@ public class BuildSourceViewerConfiguration extends ChangeAwareSourceViewerConfi
 		return reconciler;
 	}
 
+	@Override
 	public void adaptToPreferenceChange(PropertyChangeEvent event) {
 		if (affectsColorPresentation(event))
 			fColorManager.handlePropertyChangeEvent(event);
@@ -194,6 +207,7 @@ public class BuildSourceViewerConfiguration extends ChangeAwareSourceViewerConfi
 		fPropertyValueScanner.adaptToPreferenceChange(event);
 	}
 
+	@Override
 	public String[] getConfiguredContentTypes(ISourceViewer sourceViewer) {
 		int length = PARTITIONS.length;
 		String[] contentTypes = new String[length + 1];
@@ -204,15 +218,18 @@ public class BuildSourceViewerConfiguration extends ChangeAwareSourceViewerConfi
 		return contentTypes;
 	}
 
+	@Override
 	public String getConfiguredDocumentPartitioning(ISourceViewer sourceViewer) {
 		return PROPERTIES_FILE_PARTITIONING;
 	}
 
+	@Override
 	public boolean affectsTextPresentation(PropertyChangeEvent event) {
 		String property = event.getProperty();
 		return fCommentScanner.affectsTextPresentation(property) || fPropertyKeyScanner.affectsTextPresentation(property) || fPropertyValueScanner.affectsTextPresentation(property);
 	}
 
+	@Override
 	public boolean affectsColorPresentation(PropertyChangeEvent event) {
 		String property = event.getProperty();
 		return property.equals(PreferenceConstants.PROPERTIES_FILE_COLORING_VALUE) || property.equals(PreferenceConstants.PROPERTIES_FILE_COLORING_ARGUMENT) || property.equals(PreferenceConstants.PROPERTIES_FILE_COLORING_ASSIGNMENT) || property.equals(PreferenceConstants.PROPERTIES_FILE_COLORING_KEY) || property.equals(PreferenceConstants.PROPERTIES_FILE_COLORING_COMMENT);

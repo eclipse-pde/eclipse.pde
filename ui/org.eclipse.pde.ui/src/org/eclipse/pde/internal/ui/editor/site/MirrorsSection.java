@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -36,11 +36,13 @@ public class MirrorsSection extends PDESection {
 		createClient(getSection(), page.getManagedForm().getToolkit());
 	}
 
+	@Override
 	public void commit(boolean onSave) {
 		fMirrorsURLEntry.commit();
 		super.commit(onSave);
 	}
 
+	@Override
 	public void createClient(Section section, FormToolkit toolkit) {
 
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
@@ -55,6 +57,7 @@ public class MirrorsSection extends PDESection {
 
 		fMirrorsURLEntry = new FormEntry(container, toolkit, PDEUIMessages.SiteEditor_MirrorsSection_urlLabel, null, false);
 		fMirrorsURLEntry.setFormEntryListener(new FormEntryAdapter(this) {
+			@Override
 			public void textValueChanged(FormEntry text) {
 				setMirrorsURL(text.getValue());
 			}
@@ -76,6 +79,7 @@ public class MirrorsSection extends PDESection {
 		}
 	}
 
+	@Override
 	public void dispose() {
 		ISiteModel model = (ISiteModel) getPage().getModel();
 		if (model != null)
@@ -89,10 +93,12 @@ public class MirrorsSection extends PDESection {
 		model.addModelChangedListener(this);
 	}
 
+	@Override
 	public void modelChanged(IModelChangedEvent e) {
 		markStale();
 	}
 
+	@Override
 	public void setFocus() {
 		if (fMirrorsURLEntry != null)
 			fMirrorsURLEntry.getText().setFocus();
@@ -104,6 +110,7 @@ public class MirrorsSection extends PDESection {
 		}
 	}
 
+	@Override
 	public void refresh() {
 		ISiteModel model = (ISiteModel) getPage().getModel();
 		ISite site = model.getSite();
@@ -111,6 +118,7 @@ public class MirrorsSection extends PDESection {
 		super.refresh();
 	}
 
+	@Override
 	public void cancelEdit() {
 		fMirrorsURLEntry.cancelEdit();
 		super.cancelEdit();
@@ -119,6 +127,7 @@ public class MirrorsSection extends PDESection {
 	/**
 	 * @see org.eclipse.update.ui.forms.internal.FormSection#canPaste(Clipboard)
 	 */
+	@Override
 	public boolean canPaste(Clipboard clipboard) {
 		TransferData[] types = clipboard.getAvailableTypes();
 		Transfer[] transfers = new Transfer[] {TextTransfer.getInstance(), RTFTransfer.getInstance()};

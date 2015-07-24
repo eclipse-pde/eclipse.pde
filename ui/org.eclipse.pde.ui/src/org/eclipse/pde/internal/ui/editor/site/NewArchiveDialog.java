@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -44,11 +44,13 @@ public class NewArchiveDialog extends StatusDialog {
 		this.fSiteArchive = archive;
 	}
 
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		super.createButtonsForButtonBar(parent);
 		dialogChanged();
 	}
 
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite container = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
@@ -61,6 +63,7 @@ public class NewArchiveDialog extends StatusDialog {
 		createEntries(container);
 
 		ModifyListener listener = new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				dialogChanged();
 			}
@@ -154,6 +157,7 @@ public class NewArchiveDialog extends StatusDialog {
 		return false;
 	}
 
+	@Override
 	protected void okPressed() {
 		execute();
 		super.okPressed();

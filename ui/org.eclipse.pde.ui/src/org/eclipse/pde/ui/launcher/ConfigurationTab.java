@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -67,6 +67,7 @@ public class ConfigurationTab extends AbstractLauncherTab implements IPDELaunche
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
 		container.setLayout(new GridLayout());
@@ -84,6 +85,7 @@ public class ConfigurationTab extends AbstractLauncherTab implements IPDELaunche
 	/*
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		fConfigurationArea.setDefaults(configuration, fJUnitConfig);
 		fTemplateArea.setDefaults(configuration);
@@ -93,6 +95,7 @@ public class ConfigurationTab extends AbstractLauncherTab implements IPDELaunche
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
+	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		try {
 			fConfigurationArea.initializeFrom(configuration);
@@ -106,6 +109,7 @@ public class ConfigurationTab extends AbstractLauncherTab implements IPDELaunche
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
+	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		fConfigurationArea.performApply(configuration);
 		fTemplateArea.performApply(configuration);
@@ -116,6 +120,7 @@ public class ConfigurationTab extends AbstractLauncherTab implements IPDELaunche
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
+	@Override
 	public String getName() {
 		return PDEUIMessages.ConfigurationTab_name;
 	}
@@ -124,6 +129,7 @@ public class ConfigurationTab extends AbstractLauncherTab implements IPDELaunche
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getImage()
 	 */
+	@Override
 	public Image getImage() {
 		return fImage;
 	}
@@ -132,6 +138,7 @@ public class ConfigurationTab extends AbstractLauncherTab implements IPDELaunche
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#dispose()
 	 */
+	@Override
 	public void dispose() {
 		if (fImage != null)
 			fImage.dispose();
@@ -143,6 +150,7 @@ public class ConfigurationTab extends AbstractLauncherTab implements IPDELaunche
 	 * 
 	 * @see org.eclipse.pde.ui.launcher.AbstractLauncherTab#validateTab()
 	 */
+	@Override
 	public void validateTab() {
 		String error = fConfigurationArea.validate();
 		if (error == null)
@@ -156,6 +164,7 @@ public class ConfigurationTab extends AbstractLauncherTab implements IPDELaunche
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getId()
 	 */
+	@Override
 	public String getId() {
 		return org.eclipse.pde.launching.IPDELauncherConstants.TAB_CONFIGURATION_ID;
 	}

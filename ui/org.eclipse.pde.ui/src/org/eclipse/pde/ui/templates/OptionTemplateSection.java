@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -99,6 +99,7 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 	 * @return the URL of the location where files to be emitted by this
 	 *         template are located.
 	 */
+	@Override
 	public URL getTemplateLocation() {
 		URL url = getInstallURL();
 		try {
@@ -119,6 +120,7 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 	 *         invalid index.
 	 * @see #createPage(int)
 	 */
+	@Override
 	public WizardPage getPage(int pageIndex) {
 		if (pageIndex < 0 || pageIndex >= pages.size())
 			return null;
@@ -182,6 +184,7 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 	 * @return the number of pages
 	 * @see #setPageCount(int)
 	 */
+	@Override
 	public int getPageCount() {
 		return pages.size();
 	}
@@ -260,6 +263,7 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 	 * 
 	 * @return the translated label of this template
 	 */
+	@Override
 	public String getLabel() {
 		String key = "template." + getSectionId() + ".name"; //$NON-NLS-1$ //$NON-NLS-2$
 		return getPluginResourceString(key);
@@ -274,6 +278,7 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 	 * 
 	 * @return the translated description of this template
 	 */
+	@Override
 	public String getDescription() {
 		String key = "template." + getSectionId() + ".desc"; //$NON-NLS-1$ //$NON-NLS-2$
 		return getPluginResourceString(key);
@@ -319,6 +324,7 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 		currentPage.setPageComplete(true);
 	}
 
+	@Override
 	protected void registerOption(TemplateOption option, Object value, int pageIndex) {
 		super.registerOption(option, value, pageIndex);
 		if (pageIndex >= 0 && pageIndex < pages.size()) {
@@ -332,6 +338,7 @@ public abstract class OptionTemplateSection extends BaseOptionTemplateSection {
 	 * 
 	 * @param source the template option to validate
 	 */
+	@Override
 	public void validateOptions(TemplateOption source) {
 		if (source.isRequired() && source.isEmpty()) {
 			flagMissingRequiredOption(source);

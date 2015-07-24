@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2008 IBM Corporation and others.
+ *  Copyright (c) 2005, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -48,6 +48,7 @@ public class JNLPTab {
 		gd.horizontalSpan = 2;
 		fButton.setLayoutData(gd);
 		fButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateGroup(fButton.getSelection());
 				fPage.pageChanged();
@@ -77,6 +78,7 @@ public class JNLPTab {
 		Text text = new Text(parent, SWT.SINGLE | SWT.BORDER);
 		text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		text.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				fPage.pageChanged();
 			}

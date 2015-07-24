@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,6 +43,7 @@ public class SchemaRootElementDetails extends AbstractSchemaDetails {
 		super(section, true, true);
 	}
 
+	@Override
 	public void createDetails(Composite parent) {
 		FormToolkit toolkit = getManagedForm().getToolkit();
 		Color foreground = toolkit.getColors().getColor(IFormColors.TITLE);
@@ -68,6 +69,7 @@ public class SchemaRootElementDetails extends AbstractSchemaDetails {
 		setText(PDEUIMessages.SchemaElementDetails_rootTitle);
 	}
 
+	@Override
 	public void updateFields(ISchemaObject element) {
 		if (!(element instanceof ISchemaElement))
 			return;
@@ -100,8 +102,10 @@ public class SchemaRootElementDetails extends AbstractSchemaDetails {
 		}
 	}
 
+	@Override
 	public void hookListeners() {
 		fDepTrue.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (blockListeners())
 					return;
@@ -113,6 +117,7 @@ public class SchemaRootElementDetails extends AbstractSchemaDetails {
 		});
 
 		fInternalTrue.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (blockListeners())
 					return;
@@ -122,6 +127,7 @@ public class SchemaRootElementDetails extends AbstractSchemaDetails {
 		});
 
 		fSuggestion.setFormEntryListener(new FormEntryAdapter(this) {
+			@Override
 			public void textValueChanged(FormEntry entry) {
 				if (blockListeners())
 					return;
@@ -133,6 +139,7 @@ public class SchemaRootElementDetails extends AbstractSchemaDetails {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#commit(boolean)
 	 */
+	@Override
 	public void commit(boolean onSave) {
 		super.commit(onSave);
 		// Only required for form entries

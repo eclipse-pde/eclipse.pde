@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,6 +46,7 @@ public class ComboChoiceOption extends AbstractChoiceOption {
 		super(section, name, label, choices);
 	}
 
+	@Override
 	public void createControl(Composite parent, int span) {
 		fLabel = createLabel(parent, 1);
 		fLabel.setEnabled(isEnabled());
@@ -59,6 +60,7 @@ public class ComboChoiceOption extends AbstractChoiceOption {
 			fCombo.setEnabled(isEnabled());
 		}
 		fCombo.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (isBlocked())
 					return;
@@ -76,12 +78,14 @@ public class ComboChoiceOption extends AbstractChoiceOption {
 			selectChoice(getChoice());
 	}
 
+	@Override
 	protected void setOptionValue(Object value) {
 		if (fCombo != null && value != null) {
 			selectChoice(value.toString());
 		}
 	}
 
+	@Override
 	protected void setOptionEnabled(boolean enabled) {
 		if (fLabel != null) {
 			fLabel.setEnabled(enabled);
@@ -89,6 +93,7 @@ public class ComboChoiceOption extends AbstractChoiceOption {
 		}
 	}
 
+	@Override
 	protected void selectOptionChoice(String choice) {
 		// choice is the value not the description
 		int index = getIndexOfChoice(choice);

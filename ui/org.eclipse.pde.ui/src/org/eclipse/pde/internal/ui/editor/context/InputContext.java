@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2012 IBM Corporation and others.
+ *  Copyright (c) 2003, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -57,24 +57,29 @@ public abstract class InputContext {
 	private boolean fMustSynchronize;
 
 	class ElementListener implements IElementStateListener {
+		@Override
 		public void elementContentAboutToBeReplaced(Object element) {
 		}
 
+		@Override
 		public void elementContentReplaced(Object element) {
 			if (element != null && element.equals(fEditorInput))
 				doRevert();
 		}
 
+		@Override
 		public void elementDeleted(Object element) {
 			if (element != null && element.equals(fEditorInput))
 				dispose();
 		}
 
+		@Override
 		public void elementDirtyStateChanged(Object element, boolean isDirty) {
 			if (element != null && element.equals(fEditorInput))
 				fMustSynchronize = true;
 		}
 
+		@Override
 		public void elementMoved(Object originalElement, Object movedElement) {
 			if (originalElement != null && originalElement.equals(fEditorInput)) {
 				dispose();
@@ -116,6 +121,7 @@ public abstract class InputContext {
 
 	protected IDocumentSetupParticipant getDocumentSetupParticipant() {
 		return new IDocumentSetupParticipant() {
+			@Override
 			public void setup(IDocument document) {
 			}
 		};
@@ -134,6 +140,7 @@ public abstract class InputContext {
 			fModel = createModel(fEditorInput);
 			if (fModel instanceof IModelChangeProvider) {
 				fModelListener = new IModelChangedListener() {
+					@Override
 					public void modelChanged(IModelChangedEvent e) {
 						if (e.getChangeType() != IModelChangedEvent.WORLD_CHANGED) {
 							if (!fEditor.getLastDirtyState())
@@ -524,6 +531,7 @@ public abstract class InputContext {
 
 	private WorkspaceModifyOperation createWorkspaceModifyOperation(final IEditorInput newInput) {
 		WorkspaceModifyOperation operation = new WorkspaceModifyOperation() {
+			@Override
 			public void execute(final IProgressMonitor monitor) throws CoreException {
 				// Save the old editor input content to the new editor input
 				// location

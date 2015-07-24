@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,6 +47,7 @@ public abstract class BaseBlock {
 	protected Link fLocationLink;
 
 	class Listener extends SelectionAdapter implements ModifyListener {
+		@Override
 		public void widgetSelected(SelectionEvent e) {
 			Object source = e.getSource();
 			if (source == fFileSystemButton) {
@@ -60,6 +61,7 @@ public abstract class BaseBlock {
 			}
 		}
 
+		@Override
 		public void modifyText(ModifyEvent e) {
 			if (fTab != null)
 				fTab.scheduleUpdateJob();
@@ -86,6 +88,7 @@ public abstract class BaseBlock {
 		fLocationText.addModifyListener(fListener);
 
 		fLocationLink.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				try {
 					String path = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(getLocation(), false);

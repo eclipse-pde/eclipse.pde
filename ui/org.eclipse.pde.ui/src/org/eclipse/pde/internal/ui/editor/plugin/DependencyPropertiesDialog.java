@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2008 IBM Corporation and others.
+ *  Copyright (c) 2005, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -65,6 +65,7 @@ public class DependencyPropertiesDialog extends StatusDialog {
 			fVersionPart = new PluginVersionPart(true);
 		else
 			fVersionPart = new PluginVersionPart(false) {
+				@Override
 				protected String getGroupText() {
 					return PDEUIMessages.DependencyPropertiesDialog_exportGroupText;
 				}
@@ -72,10 +73,12 @@ public class DependencyPropertiesDialog extends StatusDialog {
 		fVersionPart.setVersion(version);
 	}
 
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		super.createButtonsForButtonBar(parent);
 	}
 
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite comp = (Composite) super.createDialogArea(parent);
 
@@ -108,6 +111,7 @@ public class DependencyPropertiesDialog extends StatusDialog {
 
 		fVersionPart.createVersionFields(comp, true, fEditable);
 		ModifyListener ml = new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				updateStatus(fVersionPart.validateFullVersionRangeText(true));
 			}
@@ -133,6 +137,7 @@ public class DependencyPropertiesDialog extends StatusDialog {
 		return fVersion;
 	}
 
+	@Override
 	protected void okPressed() {
 		fOptional = (fOptionalButton == null) ? false : fOptionalButton.getSelection();
 		fExported = (fReexportButton == null) ? false : fReexportButton.getSelection();

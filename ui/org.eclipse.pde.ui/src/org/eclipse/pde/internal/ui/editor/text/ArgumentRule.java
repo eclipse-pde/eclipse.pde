@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2008 IBM Corporation and others.
+ *  Copyright (c) 2005, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ public class ArgumentRule extends WordPatternRule {
 		/*
 		 * @see IWordDetector#isWordStart
 		 */
+		@Override
 		public boolean isWordStart(char c) {
 			return '{' == c;
 		}
@@ -26,6 +27,7 @@ public class ArgumentRule extends WordPatternRule {
 		/*
 		 * @see IWordDetector#isWordPart
 		 */
+		@Override
 		public boolean isWordPart(char c) {
 			return c == '}' || Character.isDigit(c);
 		}
@@ -45,6 +47,7 @@ public class ArgumentRule extends WordPatternRule {
 	/*
 	 * @see org.eclipse.jface.text.rules.WordPatternRule#endSequenceDetected(org.eclipse.jface.text.rules.ICharacterScanner)
 	 */
+	@Override
 	protected boolean endSequenceDetected(ICharacterScanner scanner) {
 		fCount++;
 
@@ -58,6 +61,7 @@ public class ArgumentRule extends WordPatternRule {
 	/*
 	 * @see org.eclipse.jface.text.rules.PatternRule#sequenceDetected(org.eclipse.jface.text.rules.ICharacterScanner, char[], boolean)
 	 */
+	@Override
 	protected boolean sequenceDetected(ICharacterScanner scanner, char[] sequence, boolean eofAllowed) {
 		fCount = 0;
 		return super.sequenceDetected(scanner, sequence, eofAllowed);

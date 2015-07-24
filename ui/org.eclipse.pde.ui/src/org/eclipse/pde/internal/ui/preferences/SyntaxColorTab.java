@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2009 IBM Corporation and others.
+ *  Copyright (c) 2005, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -100,6 +100,7 @@ public abstract class SyntaxColorTab {
 			return fItalic;
 		}
 
+		@Override
 		public String toString() {
 			return getDisplayName();
 		}
@@ -172,6 +173,7 @@ public abstract class SyntaxColorTab {
 		colorButton.setLayoutData(new GridData(GridData.BEGINNING));
 
 		colorButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				ColorElement item = getColorElement(fElementViewer);
 				item.setColorValue(colorSelector.getColorValue());
@@ -184,6 +186,7 @@ public abstract class SyntaxColorTab {
 		fBoldButton.setLayoutData(gd);
 		fBoldButton.setText(PDEUIMessages.SyntaxColorTab_bold);
 		fBoldButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				ColorElement item = getColorElement(fElementViewer);
 				item.setBold(fBoldButton.getSelection());
@@ -196,6 +199,7 @@ public abstract class SyntaxColorTab {
 		fItalicButton.setLayoutData(gd);
 		fItalicButton.setText(PDEUIMessages.SyntaxColorTab_italic);
 		fItalicButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				ColorElement item = getColorElement(fElementViewer);
 				item.setItalic(fItalicButton.getSelection());
@@ -203,6 +207,7 @@ public abstract class SyntaxColorTab {
 		});
 
 		fElementViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				ColorElement item = getColorElement(fElementViewer);
 				colorSelector.setColorValue(item.getColorValue());

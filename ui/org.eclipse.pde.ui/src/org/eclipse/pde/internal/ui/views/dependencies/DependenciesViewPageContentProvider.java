@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,6 +40,7 @@ public class DependenciesViewPageContentProvider extends DefaultContentProvider 
 		PDECore.getDefault().getModelManager().removePluginModelListener(this);
 	}
 
+	@Override
 	public void dispose() {
 		removeModelListener();
 	}
@@ -76,16 +77,19 @@ public class DependenciesViewPageContentProvider extends DefaultContentProvider 
 		return false;
 	}
 
+	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		fView.updateTitle(newInput);
 		this.fViewer = (StructuredViewer) viewer;
 	}
 
+	@Override
 	public void modelsChanged(final PluginModelDelta delta) {
 		if (fViewer == null || fViewer.getControl().isDisposed())
 			return;
 
 		fViewer.getControl().getDisplay().asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				int kind = delta.getKind();
 				if (fViewer.getControl().isDisposed())

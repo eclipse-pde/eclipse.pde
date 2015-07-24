@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,6 +33,7 @@ public class FeatureSpecPage extends AbstractFeatureSpecPage {
 		setDescription(PDEUIMessages.NewFeatureWizard_SpecPage_desc);
 	}
 
+	@Override
 	protected void initialize() {
 		String projectName = getProjectName();
 		if (fInitialId == null)
@@ -43,6 +44,7 @@ public class FeatureSpecPage extends AbstractFeatureSpecPage {
 		setMessage(PDEUIMessages.NewFeatureWizard_MainPage_desc);
 	}
 
+	@Override
 	public FeatureData getFeatureData() {
 		FeatureData data = new FeatureData();
 		data.id = fFeatureIdText.getText();
@@ -53,15 +55,18 @@ public class FeatureSpecPage extends AbstractFeatureSpecPage {
 		return data;
 	}
 
+	@Override
 	protected String validateContent() {
 		setMessage(null);
 		return null;
 	}
 
+	@Override
 	protected String getHelpId() {
 		return IHelpContextIds.NEW_FEATURE_DATA;
 	}
 
+	@Override
 	protected void createContents(Composite container) {
 		Group group = new Group(container, SWT.NULL);
 		group.setLayout(new GridLayout(2, false));
@@ -86,15 +91,18 @@ public class FeatureSpecPage extends AbstractFeatureSpecPage {
 		createInstallHandlerText(group);
 	}
 
+	@Override
 	protected void attachListeners(ModifyListener listener) {
 		fFeatureProviderCombo.addModifyListener(listener);
 		fFeatureIdText.addModifyListener(listener);
 	}
 
+	@Override
 	protected String getFeatureId() {
 		return fFeatureIdText.getText();
 	}
 
+	@Override
 	protected void updateNameRelativeFields() {
 		if (fFeatureIdText == null || fFeatureNameText == null)
 			return;
@@ -111,6 +119,7 @@ public class FeatureSpecPage extends AbstractFeatureSpecPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.wizards.feature.AbstractFeatureSpecPage#saveSettings(org.eclipse.jface.dialogs.IDialogSettings)
 	 */
+	@Override
 	protected void saveSettings(IDialogSettings settings) {
 		BundleProviderHistoryUtil.saveHistory(fFeatureProviderCombo, settings);
 	}

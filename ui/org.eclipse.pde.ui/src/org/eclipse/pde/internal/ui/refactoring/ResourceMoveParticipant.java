@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,10 +22,12 @@ import org.eclipse.pde.internal.core.project.PDEProject;
 
 public abstract class ResourceMoveParticipant extends PDEMoveParticipant {
 
+	@Override
 	protected boolean isInterestingForExtensions() {
 		return true;
 	}
 
+	@Override
 	protected boolean initialize(Object element) {
 		if (element instanceof IResource) {
 			IProject project = ((IResource) element).getProject();
@@ -39,6 +41,7 @@ public abstract class ResourceMoveParticipant extends PDEMoveParticipant {
 		return false;
 	}
 
+	@Override
 	protected void addChange(CompositeChange result, IFile file, IProgressMonitor pm) throws CoreException {
 		if (file.exists()) {
 			Change change = PluginManifestChange.createRenameChange(file, fElements.keySet().toArray(), getNewNames(), getTextChange(file), pm);
@@ -47,6 +50,7 @@ public abstract class ResourceMoveParticipant extends PDEMoveParticipant {
 		}
 	}
 
+	@Override
 	protected String getNewName(Object destination, Object element) {
 		if (destination instanceof IContainer && element instanceof IResource) {
 			StringBuffer buffer = new StringBuffer();
@@ -58,6 +62,7 @@ public abstract class ResourceMoveParticipant extends PDEMoveParticipant {
 		return super.getNewName(destination, element);
 	}
 
+	@Override
 	protected void addChange(CompositeChange result, IProgressMonitor pm) throws CoreException {
 		IFile file = PDEProject.getBuildProperties(fProject);
 		if (file.exists()) {

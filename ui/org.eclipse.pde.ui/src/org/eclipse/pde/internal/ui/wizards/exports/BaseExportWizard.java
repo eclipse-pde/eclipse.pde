@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2009 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -34,6 +34,7 @@ public abstract class BaseExportWizard extends Wizard implements IExportWizard, 
 		setWindowTitle(PDEUIMessages.BaseExportWizard_wtitle);
 	}
 
+	@Override
 	public void dispose() {
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 		super.dispose();
@@ -53,10 +54,12 @@ public abstract class BaseExportWizard extends Wizard implements IExportWizard, 
 
 	protected abstract String getSettingsSectionName();
 
+	@Override
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		fSelection = selection;
 	}
 
+	@Override
 	public boolean performFinish() {
 		saveSettings();
 		if (!PlatformUI.getWorkbench().saveAllEditors(true))

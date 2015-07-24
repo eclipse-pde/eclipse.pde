@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2008 IBM Corporation and others.
+ *  Copyright (c) 2005, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -26,6 +26,7 @@ public class XMLSyntaxColorTab extends SyntaxColorTab {
 		super(manager);
 	}
 
+	@Override
 	protected IDocument getDocument() {
 		StringBuffer buffer = new StringBuffer();
 		String delimiter = System.getProperty("line.separator"); //$NON-NLS-1$
@@ -48,10 +49,12 @@ public class XMLSyntaxColorTab extends SyntaxColorTab {
 		return document;
 	}
 
+	@Override
 	protected ChangeAwareSourceViewerConfiguration getSourceViewerConfiguration() {
 		return new XMLConfiguration(fColorManager);
 	}
 
+	@Override
 	protected String[][] getColorStrings() {
 		return COLOR_STRINGS;
 	}

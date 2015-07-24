@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Code 9 Corporation and others.
+ * Copyright (c) 2008, 2015 Code 9 Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,6 +27,7 @@ public class VersionDialog extends StatusDialog {
 		super(parent);
 		fEditable = editable;
 		fVersionPart = new PluginVersionPart(false) {
+			@Override
 			protected String getGroupText() {
 				return PDEUIMessages.VersionDialog_text;
 			}
@@ -35,11 +36,13 @@ public class VersionDialog extends StatusDialog {
 		setTitle(PDEUIMessages.VersionDialog_title);
 	}
 
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite comp = (Composite) super.createDialogArea(parent);
 
 		fVersionPart.createVersionFields(comp, true, fEditable);
 		ModifyListener ml = new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				updateStatus(fVersionPart.validateFullVersionRangeText(true));
 			}
@@ -53,6 +56,7 @@ public class VersionDialog extends StatusDialog {
 		return fVersion;
 	}
 
+	@Override
 	protected void okPressed() {
 		fVersion = fVersionPart.getVersion();
 		super.okPressed();

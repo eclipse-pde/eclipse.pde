@@ -32,39 +32,49 @@ public class TargetStateView extends PageBookView {
 			fSite = site;
 		}
 
+		@Override
 		public void addPropertyListener(IPropertyListener listener) {/* dummy */
 		}
 
+		@Override
 		public void createPartControl(Composite parent) {/* dummy */
 		}
 
+		@Override
 		public void dispose() {
 			fSite = null;
 		}
 
+		@Override
 		public <T> T getAdapter(Class<T> adapter) {
 			return null;
 		}
 
+		@Override
 		public IWorkbenchPartSite getSite() {
 			return fSite;
 		}
 
+		@Override
 		public String getTitle() {
 			return null;
 		}
 
+		@Override
 		public Image getTitleImage() {
 			return null;
 		}
 
+		@Override
 		public String getTitleToolTip() {
 			return null;
 		}
 
+		@Override
 		public void removePropertyListener(IPropertyListener listener) {/* dummy */
 		}
 
+		@Override
 		public void setFocus() {/* dummy */
 		}
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2011 IBM Corporation and others.
+ *  Copyright (c) 2003, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -27,6 +27,7 @@ public abstract class PDEMasterDetailsBlock extends MasterDetailsBlock {
 		return fPage;
 	}
 
+	@Override
 	protected void createMasterPart(final IManagedForm managedForm, Composite parent) {
 		Composite container = managedForm.getToolkit().createComposite(parent);
 		container.setLayout(FormLayoutFactory.createMasterGridLayout(false, 1));
@@ -38,11 +39,13 @@ public abstract class PDEMasterDetailsBlock extends MasterDetailsBlock {
 		section.setLayoutData(new GridData(GridData.FILL_BOTH));
 	}
 
+	@Override
 	protected void createToolBarActions(IManagedForm managedForm) {
 	}
 
 	protected abstract PDESection createMasterSection(IManagedForm managedForm, Composite parent);
 
+	@Override
 	public void createContent(IManagedForm managedForm) {
 		super.createContent(managedForm);
 		managedForm.getForm().getBody().setLayout(FormLayoutFactory.createFormGridLayout(false, 1));

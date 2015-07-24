@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2012 IBM Corporation and others.
+ *  Copyright (c) 2007, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -36,6 +36,7 @@ public class AddNewBinaryDependenciesOperation extends AddNewDependenciesOperati
 		fClassFiles = classFiles;
 	}
 
+	@Override
 	protected void findSecondaryDependencies(String[] secDeps, Set<String> ignorePkgs, Map<ExportPackageDescription, String> additionalDeps, IBundle bundle, boolean useRequireBundle, IProgressMonitor monitor) {
 		monitor.beginTask(PDEUIMessages.AddNewDependenciesOperation_searchProject, 100);
 		Set<?> projectPkgs = PackageFinder.findPackagesInClassFiles(fClassFiles, new SubProgressMonitor(monitor, 75));

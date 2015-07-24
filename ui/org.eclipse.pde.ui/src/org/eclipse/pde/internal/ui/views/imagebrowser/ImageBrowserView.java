@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2012, 2014 Christian Pontesegger and others.
+ *  Copyright (c) 2012, 2015 Christian Pontesegger and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -102,6 +102,7 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 		sourceCombo = new ComboViewer(SWTFactory.createCombo(sourceComp, SWT.READ_ONLY, 1, null));
 		sourceCombo.setContentProvider(new ArrayContentProvider());
 		sourceCombo.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				scanImages();
 			}
@@ -218,6 +219,7 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 		}
 	}
 
+	@Override
 	public void notifyImage(final ImageElement element) {
 		for (final IFilter filter : mFilters) {
 			if (!filter.accept(element))
@@ -230,6 +232,7 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 		if (mImageCounter <= 0) {
 			Display.getDefault().asyncExec(new Runnable() {
 
+				@Override
 				public void run() {
 					nextButton.setEnabled(true);
 				}
@@ -237,6 +240,7 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 		}
 	}
 
+	@Override
 	public boolean needsMore() {
 		return mImageCounter > 0;
 	}
@@ -308,6 +312,7 @@ public class ImageBrowserView extends ViewPart implements IImageTarget {
 				Display.getDefault().asyncExec(this);
 		}
 
+		@Override
 		public synchronized void run() {
 
 			if (!mElements.isEmpty()) {

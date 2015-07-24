@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2008 IBM Corporation and others.
+ *  Copyright (c) 2007, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -35,6 +35,7 @@ public class ExternalizedStringRule extends WordPatternRule {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.text.rules.IWordDetector#isWordStart(char)
 		 */
+		@Override
 		public boolean isWordStart(char character) {
 			if (character == '%') {
 				return true;
@@ -45,6 +46,7 @@ public class ExternalizedStringRule extends WordPatternRule {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.text.rules.IWordDetector#isWordPart(char)
 		 */
+		@Override
 		public boolean isWordPart(char character) {
 			if (Character.isLetterOrDigit(character)) {
 				return true;
@@ -69,6 +71,7 @@ public class ExternalizedStringRule extends WordPatternRule {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.rules.WordPatternRule#endSequenceDetected(org.eclipse.jface.text.rules.ICharacterScanner)
 	 */
+	@Override
 	protected boolean endSequenceDetected(ICharacterScanner scanner) {
 		// Read the next character
 		char character = (char) scanner.read();

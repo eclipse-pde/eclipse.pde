@@ -58,6 +58,7 @@ public class CSSSection extends PDESection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
 	 */
+	@Override
 	protected void createClient(Section section, FormToolkit toolkit) {
 		section.setLayout(FormLayoutFactory.createClearTableWrapLayout(false, 1));
 		TableWrapData data = new TableWrapData(TableWrapData.FILL_GRAB);
@@ -81,10 +82,12 @@ public class CSSSection extends PDESection {
 		fFileEntry.setEditable(isEditable());
 		fFileEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
 
+			@Override
 			public void textValueChanged(FormEntry entry) {
 				getCSSInfo().setFilePath(entry.getValue());
 			}
 
+			@Override
 			public void browseButtonSelected(FormEntry entry) {
 				handleBrowse();
 			}
@@ -96,16 +99,19 @@ public class CSSSection extends PDESection {
 		text.setLayoutData(data);
 
 		text.addHyperlinkListener(new IHyperlinkListener() {
+			@Override
 			public void linkEntered(HyperlinkEvent e) {
 				IStatusLineManager mng = getPage().getEditor().getEditorSite().getActionBars().getStatusLineManager();
 				mng.setMessage(e.getLabel());
 			}
 
+			@Override
 			public void linkExited(HyperlinkEvent e) {
 				IStatusLineManager mng = getPage().getEditor().getEditorSite().getActionBars().getStatusLineManager();
 				mng.setMessage(null);
 			}
 
+			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				String href = (String) e.getHref();
 				if (href.equals("command.synchronize")) { //$NON-NLS-1$
@@ -178,16 +184,19 @@ public class CSSSection extends PDESection {
 		}
 	}
 
+	@Override
 	public void refresh() {
 		fFileEntry.setValue(getCSSInfo().getFilePath(), true);
 		super.refresh();
 	}
 
+	@Override
 	public void commit(boolean onSave) {
 		fFileEntry.commit();
 		super.commit(onSave);
 	}
 
+	@Override
 	public void cancelEdit() {
 		fFileEntry.cancelEdit();
 		super.cancelEdit();
@@ -210,6 +219,7 @@ public class CSSSection extends PDESection {
 		return (IProductModel) getPage().getPDEEditor().getAggregateModel();
 	}
 
+	@Override
 	public boolean canPaste(Clipboard clipboard) {
 		Display d = getSection().getDisplay();
 		Control c = d.getFocusControl();
@@ -221,6 +231,7 @@ public class CSSSection extends PDESection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#modelChanged(org.eclipse.pde.core.IModelChangedEvent)
 	 */
+	@Override
 	public void modelChanged(IModelChangedEvent e) {
 		// No need to call super, handling world changed event here
 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
@@ -238,6 +249,7 @@ public class CSSSection extends PDESection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
 	 */
+	@Override
 	public void dispose() {
 		IProductModel model = getModel();
 		if (model != null) {

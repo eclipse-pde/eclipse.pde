@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -58,6 +58,7 @@ public class AlternateSourceLocations extends SourceLocationManager {
 	 * platform.
 	 * @return bundle manifest source location manager
 	 */
+	@Override
 	protected BundleManifestSourceLocationManager initializeBundleManifestLocations() {
 		BundleManifestSourceLocationManager manager = new BundleManifestSourceLocationManager();
 		manager.setPlugins(models);
@@ -72,6 +73,7 @@ public class AlternateSourceLocations extends SourceLocationManager {
 	 * @return collection of old-style source locations that have been contributed via
 	 * 	extension point
 	 */
+	@Override
 	public List<SourceLocation> getExtensionLocations() {
 		if (oldSourceRoots == null) {
 			oldSourceRoots = new ArrayList<SourceLocation>();

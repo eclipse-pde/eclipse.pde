@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -75,6 +75,7 @@ public class ProductFileWizardPage extends PDEWizardNewFileCreationPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.WizardNewFileCreationPage#createAdvancedControls(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected void createAdvancedControls(Composite parent) {
 		fGroup = new Group(parent, SWT.NONE);
 		fGroup.setText(PDEUIMessages.ProductFileWizadPage_groupTitle);
@@ -90,6 +91,7 @@ public class ProductFileWizardPage extends PDEWizardNewFileCreationPage {
 		fProductButton = new Button(fGroup, SWT.RADIO);
 		fProductButton.setText(PDEUIMessages.ProductFileWizadPage_existingProduct);
 		fProductButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fProductCombo.setEnabled(fProductButton.getSelection());
 			}
@@ -102,6 +104,7 @@ public class ProductFileWizardPage extends PDEWizardNewFileCreationPage {
 		fLaunchConfigButton = new Button(fGroup, SWT.RADIO);
 		fLaunchConfigButton.setText(PDEUIMessages.ProductFileWizadPage_existingLaunchConfig);
 		fLaunchConfigButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fLaunchConfigCombo.setEnabled(fLaunchConfigButton.getSelection());
 			}
@@ -204,6 +207,7 @@ public class ProductFileWizardPage extends PDEWizardNewFileCreationPage {
 		return USE_LAUNCH_CONFIG;
 	}
 
+	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		Dialog.applyDialogFont(fGroup);

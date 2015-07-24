@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 IBM Corporation and others.
+ * Copyright (c) 2008, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,6 +32,7 @@ public class PluginImportFinishDialog extends TitleAreaDialog {
 	private String fMessage;
 	private boolean fConfigured;
 
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite composite = (Composite) super.createDialogArea(parent);
 		super.setTitle(fTitle);
@@ -51,12 +52,14 @@ public class PluginImportFinishDialog extends TitleAreaDialog {
 
 	}
 
+	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		newShell.setText(PDEUIMessages.ImportWizard_title);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(newShell, IHelpContextIds.PLUGIN_IMPORT_FINISH_DIALOG);
 	}
 
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
 	}
@@ -72,17 +75,20 @@ public class PluginImportFinishDialog extends TitleAreaDialog {
 
 	static private class PluginImportTableContentProvider extends DefaultTableProvider {
 
+		@Override
 		public Object[] getElements(Object inputElement) {
 			return ((List<?>) inputElement).toArray();
 		}
 	}
 
+	@Override
 	public void setMessage(String newMessage) {
 		fMessage = newMessage;
 		if (fConfigured)
 			super.setMessage(fMessage, IMessageProvider.INFORMATION);
 	}
 
+	@Override
 	public void setTitle(String newTitle) {
 		fTitle = newTitle;
 		if (fConfigured)

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,6 +34,7 @@ public class UnusedImportsDialog extends TrayDialog {
 
 	static class Comparator extends PluginComparator {
 
+		@Override
 		public int compare(Viewer viewer, Object e1, Object e2) {
 			if (e1.getClass() == e2.getClass())
 				return super.compare(viewer, e1, e2);
@@ -45,6 +46,7 @@ public class UnusedImportsDialog extends TrayDialog {
 	}
 
 	class ContentProvider extends DefaultTableProvider {
+		@Override
 		public Object[] getElements(Object parent) {
 			return unused;
 		}
@@ -58,6 +60,7 @@ public class UnusedImportsDialog extends TrayDialog {
 		checkboxTablePart = new WizardCheckboxTablePart(PDEUIMessages.UnusedDependencies_remove);
 	}
 
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
 		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
@@ -66,11 +69,13 @@ public class UnusedImportsDialog extends TrayDialog {
 	/*
 	 * @see org.eclipse.jface.window.Window#configureShell(Shell)
 	 */
+	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(shell, IHelpContextIds.UNUSED_IMPORTS_DIALOG);
 	}
 
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite container = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
@@ -95,6 +100,7 @@ public class UnusedImportsDialog extends TrayDialog {
 		return container;
 	}
 
+	@Override
 	protected void okPressed() {
 		GatherUnusedDependenciesOperation.removeDependencies(model, choiceViewer.getCheckedElements());
 		super.okPressed();

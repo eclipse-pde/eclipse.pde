@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2008 IBM Corporation and others.
+ *  Copyright (c) 2003, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -26,8 +26,10 @@ public abstract class KeyValueSourcePage extends PDEProjectionSourcePage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.PDESourcePage#createViewerSorter()
 	 */
+	@Override
 	public ViewerComparator createDefaultOutlineComparator() {
 		return new ViewerComparator() {
+			@Override
 			public int compare(Viewer viewer, Object e1, Object e2) {
 				if ((e1 instanceof IDocumentKey) && (e2 instanceof IDocumentKey)) {
 					IDocumentKey key1 = (IDocumentKey) e1;
@@ -63,6 +65,7 @@ public abstract class KeyValueSourcePage extends PDEProjectionSourcePage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#createOutlineSorter()
 	 */
+	@Override
 	public ViewerComparator createOutlineComparator() {
 		return new ViewerComparator();
 	}
@@ -70,6 +73,7 @@ public abstract class KeyValueSourcePage extends PDEProjectionSourcePage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEProjectionSourcePage#isQuickOutlineEnabled()
 	 */
+	@Override
 	public boolean isQuickOutlineEnabled() {
 		return true;
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2014 IBM Corporation and others.
+ *  Copyright (c) 2005, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -32,6 +32,7 @@ public class CreateFeatureProjectOperation extends AbstractCreateFeatureOperatio
 		fPlugins = plugins != null ? plugins : new IPluginBase[0];
 	}
 
+	@Override
 	protected void configureFeature(IFeature feature, WorkspaceFeatureModel model) throws CoreException {
 		IFeaturePlugin[] added = new IFeaturePlugin[fPlugins.length];
 		for (int i = 0; i < fPlugins.length; i++) {

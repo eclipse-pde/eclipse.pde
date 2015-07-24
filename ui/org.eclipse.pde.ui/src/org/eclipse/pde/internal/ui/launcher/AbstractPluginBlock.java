@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -219,10 +219,12 @@ public abstract class AbstractPluginBlock {
 	}
 
 	class PluginContentProvider extends DefaultContentProvider implements ITreeContentProvider {
+		@Override
 		public boolean hasChildren(Object parent) {
 			return !(parent instanceof IPluginModelBase);
 		}
 
+		@Override
 		public Object[] getChildren(Object parent) {
 			if (parent == fExternalPlugins)
 				return getExternalModels();
@@ -231,6 +233,7 @@ public abstract class AbstractPluginBlock {
 			return new Object[0];
 		}
 
+		@Override
 		public Object getParent(Object child) {
 			if (child instanceof IPluginModelBase) {
 				IResource resource = ((IPluginModelBase) child).getUnderlyingResource();
@@ -239,6 +242,7 @@ public abstract class AbstractPluginBlock {
 			return null;
 		}
 
+		@Override
 		public Object[] getElements(Object input) {
 			ArrayList<NamedElement> list = new ArrayList<NamedElement>();
 			if (getWorkspaceModels().length > 0)
@@ -339,6 +343,7 @@ public abstract class AbstractPluginBlock {
 
 			boolean previousFilter = false;
 
+			@Override
 			public void preRefresh(FilterableCheckboxTreeViewer viewer, boolean filtered) {
 				refreshTreeView(fPluginTreeViewer);
 				if (previousFilter != filtered) {
@@ -360,6 +365,7 @@ public abstract class AbstractPluginBlock {
 
 		fPluginTreeViewer.addCheckStateListener(new ICheckStateListener() {
 
+			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				// Since a check on the root of a CheckBoxTreeViewer selects all its children 
 				// (hidden or not), we need to ensure that all items are shown
@@ -386,6 +392,7 @@ public abstract class AbstractPluginBlock {
 		fPluginTreeViewer.setLabelProvider(getLabelProvider());
 		fPluginTreeViewer.setAutoExpandLevel(2);
 		fPluginTreeViewer.addCheckStateListener(new ICheckStateListener() {
+			@Override
 			public void checkStateChanged(final CheckStateChangedEvent event) {
 				Object element = event.getElement();
 				if (element instanceof IPluginModelBase) {
@@ -477,6 +484,7 @@ public abstract class AbstractPluginBlock {
 					int defaultLevel = level.length() == 0 || "default".equals(level) ? 0 : Integer.parseInt(level); //$NON-NLS-1$
 					spinner.setSelection(defaultLevel);
 					spinner.addModifyListener(new ModifyListener() {
+						@Override
 						public void modifyText(ModifyEvent e) {
 							if (item.getChecked()) {
 								int selection = spinner.getSelection();

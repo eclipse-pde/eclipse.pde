@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,6 +37,7 @@ public class UnresolvedImportFixProcessor extends ClasspathFixProcessor {
 		 * (non-Javadoc)
 		 * @see org.eclipse.pde.internal.ui.correction.java.FindClassResolutionsOperation.AbstractClassResolutionCollector#addResolutionModification(org.eclipse.core.resources.IProject, org.eclipse.osgi.service.resolver.ExportPackageDescription)
 		 */
+		@Override
 		public void addResolutionModification(IProject project, ExportPackageDescription desc) {
 			if (desc.getSupplier() == null)
 				return;
@@ -57,6 +58,7 @@ public class UnresolvedImportFixProcessor extends ClasspathFixProcessor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.ui.text.java.ClasspathFixProcessor#getFixImportProposals(org.eclipse.jdt.core.IJavaProject, java.lang.String)
 	 */
+	@Override
 	public ClasspathFixProposal[] getFixImportProposals(IJavaProject project, String name) throws CoreException {
 		if (!WorkspaceModelManager.isPluginProject(project.getProject()))
 			return new ClasspathFixProposal[0];

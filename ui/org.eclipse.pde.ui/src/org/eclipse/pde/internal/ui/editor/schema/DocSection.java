@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -58,11 +58,13 @@ public class DocSection extends PDESection {
 		createClient(getSection(), page.getManagedForm().getToolkit());
 	}
 
+	@Override
 	public void commit(boolean onSave) {
 		handleApply();
 		super.commit(onSave);
 	}
 
+	@Override
 	public void createClient(Section section, FormToolkit toolkit) {
 		Composite container = toolkit.createComposite(section);
 		container.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 1));
@@ -81,6 +83,7 @@ public class DocSection extends PDESection {
 		fTabFolder.setSelectionBackground(new Color[] {selectedColor, toolkit.getColors().getBackground()}, new int[] {100}, true);
 
 		fTabFolder.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateTabSelection();
 			}
@@ -91,6 +94,7 @@ public class DocSection extends PDESection {
 		fSourceViewer.configure(fSourceConfiguration);
 		fSourceViewer.setDocument(fDocument);
 		fSourceViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				updateSelection(event.getSelection());
 			}
@@ -100,6 +104,7 @@ public class DocSection extends PDESection {
 		styledText.setMenu(getPage().getPDEEditor().getContextMenu());
 		styledText.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
 		styledText.addFocusListener(new FocusAdapter() {
+			@Override
 			public void focusGained(FocusEvent e) {
 				getPage().getPDEEditor().getContributor().updateSelectableActions(null);
 			}
@@ -123,6 +128,7 @@ public class DocSection extends PDESection {
 		}
 	}
 
+	@Override
 	public boolean doGlobalAction(String actionId) {
 		if (actionId.equals(ActionFactory.CUT.getId())) {
 			fSourceViewer.doOperation(ITextOperationTarget.CUT);
@@ -153,6 +159,7 @@ public class DocSection extends PDESection {
 		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(manager);
 	}
 
+	@Override
 	public boolean setFormInput(Object input) {
 		int index = -1;
 		if (input instanceof ISchema) {
@@ -206,12 +213,14 @@ public class DocSection extends PDESection {
 	public void initialize() {
 		fSourceViewer.setEditable(fSchema.isEditable());
 		fDocument.addDocumentListener(new IDocumentListener() {
+			@Override
 			public void documentChanged(DocumentEvent e) {
 				if (!fIgnoreChange && fSchema.isEditable()) {
 					markDirty();
 				}
 			}
 
+			@Override
 			public void documentAboutToBeChanged(DocumentEvent e) {
 			}
 		});
@@ -222,6 +231,7 @@ public class DocSection extends PDESection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
 	 */
+	@Override
 	public void dispose() {
 		// Dispose of the source configuration
 		if (fSourceConfiguration != null) {
@@ -269,6 +279,7 @@ public class DocSection extends PDESection {
 		}
 	}
 
+	@Override
 	public void setFocus() {
 		fSourceViewer.getTextWidget().setFocus();
 		updateSelection(fSourceViewer.getSelection());
@@ -288,12 +299,14 @@ public class DocSection extends PDESection {
 		fIgnoreChange = false;
 	}
 
+	@Override
 	public void modelChanged(IModelChangedEvent e) {
 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
 			markStale();
 		}
 	}
 
+	@Override
 	public void refresh() {
 		IDocumentSection[] sections = fSchema.getDocumentSections();
 		int index = fTabFolder.getSelectionIndex();
@@ -305,6 +318,7 @@ public class DocSection extends PDESection {
 		super.refresh();
 	}
 
+	@Override
 	public boolean canPaste(Clipboard clipboard) {
 		return fSourceViewer.canDoOperation(ITextOperationTarget.PASTE);
 	}

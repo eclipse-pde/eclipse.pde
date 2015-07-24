@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2012 IBM Corporation and others.
+ *  Copyright (c) 2006, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -38,6 +38,7 @@ public class CommandTreeContentProvider implements ITreeContentProvider {
 
 	private void init() {
 		fCatMap = new TreeMap<Category, ArrayList<Command>>(new Comparator<Object>() {
+			@Override
 			public int compare(Object arg0, Object arg1) {
 				String comA = CommandList.getText(arg0);
 				String comB = CommandList.getText(arg1);
@@ -70,6 +71,7 @@ public class CommandTreeContentProvider implements ITreeContentProvider {
 		}
 	}
 
+	@Override
 	public Object getParent(Object element) {
 		if (element instanceof Command)
 			try {
@@ -81,11 +83,13 @@ public class CommandTreeContentProvider implements ITreeContentProvider {
 		return null;
 	}
 
+	@Override
 	public void dispose() {
 		fCatMap.clear();
 		fConMap.clear();
 	}
 
+	@Override
 	public Object[] getChildren(Object parentElement) {
 		if (parentElement instanceof Category) {
 			ArrayList<?> list = fCatMap.get(parentElement);
@@ -95,6 +99,7 @@ public class CommandTreeContentProvider implements ITreeContentProvider {
 		return null;
 	}
 
+	@Override
 	public boolean hasChildren(Object element) {
 		if (element instanceof Category) {
 			ArrayList<?> list = fCatMap.get(element);
@@ -104,6 +109,7 @@ public class CommandTreeContentProvider implements ITreeContentProvider {
 		return false;
 	}
 
+	@Override
 	public Object[] getElements(Object inputElement) {
 		switch (fCurContent) {
 			case F_CAT_CONTENT :
@@ -114,6 +120,7 @@ public class CommandTreeContentProvider implements ITreeContentProvider {
 		return null;
 	}
 
+	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		fViewer = viewer;
 	}

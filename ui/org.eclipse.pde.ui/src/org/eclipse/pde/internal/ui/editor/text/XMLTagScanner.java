@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@ public class XMLTagScanner extends BasePDEScanner {
 		super(manager);
 	}
 
+	@Override
 	protected void initialize() {
 		fStringToken = new Token(createTextAttribute(IPDEColorConstants.P_STRING));
 		fExternalizedStringToken = new Token(createTextAttribute(IPDEColorConstants.P_EXTERNALIZED_STRING));
@@ -38,6 +39,7 @@ public class XMLTagScanner extends BasePDEScanner {
 		setDefaultReturnToken(new Token(createTextAttribute(IPDEColorConstants.P_TAG)));
 	}
 
+	@Override
 	protected Token getTokenAffected(PropertyChangeEvent event) {
 		String property = event.getProperty();
 		if (property.startsWith(IPDEColorConstants.P_STRING)) {
@@ -48,6 +50,7 @@ public class XMLTagScanner extends BasePDEScanner {
 		return (Token) fDefaultReturnToken;
 	}
 
+	@Override
 	public boolean affectsTextPresentation(String property) {
 		return property.startsWith(IPDEColorConstants.P_TAG) || property.startsWith(IPDEColorConstants.P_STRING) || property.startsWith(IPDEColorConstants.P_EXTERNALIZED_STRING);
 	}

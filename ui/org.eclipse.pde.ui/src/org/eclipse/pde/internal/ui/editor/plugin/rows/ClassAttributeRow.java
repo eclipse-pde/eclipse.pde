@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,6 +36,7 @@ public class ClassAttributeRow extends ButtonAttributeRow {
 		super(part, att);
 	}
 
+	@Override
 	protected boolean isReferenceModel() {
 		return !part.getPage().getModel().isEditable();
 	}
@@ -45,6 +46,7 @@ public class ClassAttributeRow extends ButtonAttributeRow {
 	 * 
 	 * @see org.eclipse.pde.internal.ui.neweditor.plugin.ReferenceAttributeRow#openReference()
 	 */
+	@Override
 	protected void openReference() {
 		String name = TextUtil.trimNonAlphaChars(text.getText()).replace('$', '.');
 		name = PDEJavaHelperUI.createClass(name, getProject(), createJavaAttributeValue(name), true);
@@ -57,6 +59,7 @@ public class ClassAttributeRow extends ButtonAttributeRow {
 	 * 
 	 * @see org.eclipse.pde.internal.ui.editor.plugin.rows.ReferenceAttributeRow#createContents(org.eclipse.swt.widgets.Composite, org.eclipse.ui.forms.widgets.FormToolkit, int)
 	 */
+	@Override
 	public void createContents(Composite parent, FormToolkit toolkit, int span) {
 		super.createContents(parent, toolkit, span);
 
@@ -70,8 +73,10 @@ public class ClassAttributeRow extends ButtonAttributeRow {
 	 * 
 	 * @see org.eclipse.pde.internal.ui.neweditor.plugin.ReferenceAttributeRow#browse()
 	 */
+	@Override
 	protected void browse() {
 		BusyIndicator.showWhile(text.getDisplay(), new Runnable() {
+			@Override
 			public void run() {
 				doOpenSelectionDialog();
 			}
@@ -112,6 +117,7 @@ public class ClassAttributeRow extends ButtonAttributeRow {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.plugin.rows.ExtensionAttributeRow#dispose()
 	 */
+	@Override
 	public void dispose() {
 		super.dispose();
 		if (fTypeFieldAssistDisposer != null) {

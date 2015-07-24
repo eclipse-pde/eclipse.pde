@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -30,6 +30,7 @@ public class SchemaSourcePage extends XMLSourcePage {
 		 */
 	}
 
+	@Override
 	protected void editorContextMenuAboutToShow(IMenuManager menu) {
 		super.editorContextMenuAboutToShow(menu);
 		menu.add(new Separator());
@@ -37,10 +38,12 @@ public class SchemaSourcePage extends XMLSourcePage {
 		menu.add(contributor.getPreviewAction());
 	}
 
+	@Override
 	public ILabelProvider createOutlineLabelProvider() {
 		return null;
 	}
 
+	@Override
 	public ITreeContentProvider createOutlineContentProvider() {
 		return null;
 	}
@@ -48,6 +51,7 @@ public class SchemaSourcePage extends XMLSourcePage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#createOutlineSorter()
 	 */
+	@Override
 	public ViewerComparator createOutlineComparator() {
 		return null;
 	}
@@ -55,10 +59,12 @@ public class SchemaSourcePage extends XMLSourcePage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#updateSelection(org.eclipse.jface.viewers.SelectionChangedEvent)
 	 */
+	@Override
 	public void updateSelection(SelectionChangedEvent e) {
 		// NO-OP
 	}
 
+	@Override
 	protected ISortableContentOutlinePage createOutlinePage() {
 		//TODO remove this method when the above three stubs
 		// are implemented
@@ -68,6 +74,7 @@ public class SchemaSourcePage extends XMLSourcePage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEProjectionSourcePage#isQuickOutlineEnabled()
 	 */
+	@Override
 	public boolean isQuickOutlineEnabled() {
 		return false;
 	}
@@ -75,10 +82,12 @@ public class SchemaSourcePage extends XMLSourcePage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESourcePage#updateSelection(java.lang.Object)
 	 */
+	@Override
 	public void updateSelection(Object object) {
 		// NO-OP
 	}
 
+	@Override
 	protected void setPartName(String partName) {
 		super.setPartName(PDEUIMessages.EditorSourcePage_name);
 	}

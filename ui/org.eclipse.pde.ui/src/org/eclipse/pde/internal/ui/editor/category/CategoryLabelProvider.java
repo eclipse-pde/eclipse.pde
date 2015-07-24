@@ -1,5 +1,5 @@
 /******************************************************************************* 
-* Copyright (c) 2009, 2013 EclipseSource and others. All rights reserved. This
+* Copyright (c) 2009, 2015 EclipseSource and others. All rights reserved. This
 * program and the accompanying materials are made available under the terms of
 * the Eclipse Public License v1.0 which accompanies this distribution, and is
 * available at http://www.eclipse.org/legal/epl-v10.html
@@ -42,6 +42,7 @@ class CategoryLabelProvider extends LabelProvider {
 		fSharedProvider.connect(this);
 	}
 
+	@Override
 	public Image getImage(Object element) {
 		if (element instanceof ISiteCategoryDefinition)
 			return fCatDefImage;
@@ -62,6 +63,7 @@ class CategoryLabelProvider extends LabelProvider {
 		return fSharedProvider.getImage(element);
 	}
 
+	@Override
 	public String getText(Object element) {
 		if (element instanceof ISiteCategoryDefinition)
 			return ((ISiteCategoryDefinition) element).getName();
@@ -81,6 +83,7 @@ class CategoryLabelProvider extends LabelProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.BaseLabelProvider#dispose()
 	 */
+	@Override
 	public void dispose() {
 		fSharedProvider.disconnect(this);
 		// Dispose of images

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -70,6 +70,7 @@ public class NewLibraryPluginProjectWizard extends NewWizard implements IExecuta
 	 * 
 	 * @see org.eclipse.jface.wizard.Wizard#addPages()
 	 */
+	@Override
 	public void addPages() {
 		fJarsPage = new LibraryPluginJarsPage("jars", fPluginData, fInitialJarPaths); //$NON-NLS-1$ 
 		fMainPage = new NewLibraryPluginCreationPage("main", fPluginData, getSelection()); //$NON-NLS-1$
@@ -79,14 +80,17 @@ public class NewLibraryPluginProjectWizard extends NewWizard implements IExecuta
 			fMainPage.setInitialProjectName(pname);
 
 		fProjectProvider = new IProjectProvider() {
+			@Override
 			public IPath getLocationPath() {
 				return fMainPage.getLocationPath();
 			}
 
+			@Override
 			public IProject getProject() {
 				return fMainPage.getProjectHandle();
 			}
 
+			@Override
 			public String getProjectName() {
 				return fMainPage.getProjectName();
 			}
@@ -117,6 +121,7 @@ public class NewLibraryPluginProjectWizard extends NewWizard implements IExecuta
 	 * 
 	 * @see org.eclipse.jface.wizard.Wizard#dispose()
 	 */
+	@Override
 	public void dispose() {
 		super.dispose();
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
@@ -127,6 +132,7 @@ public class NewLibraryPluginProjectWizard extends NewWizard implements IExecuta
 	 * 
 	 * @see org.eclipse.pde.internal.ui.wizards.NewWizard#performFinish()
 	 */
+	@Override
 	public boolean performFinish() {
 		try {
 			fJarsPage.updateData();
@@ -150,17 +156,21 @@ public class NewLibraryPluginProjectWizard extends NewWizard implements IExecuta
 	 * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement,
 	 *      java.lang.String, java.lang.Object)
 	 */
+	@Override
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) throws CoreException {
 		fConfig = config;
 	}
 
+	@Override
 	public void createPageControls(Composite pageContainer) {
 		super.createPageControls(pageContainer);
 		fMainPage.addSelectionListener(new SelectionListener() {
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				Button updateRefsCheck = (Button) e.getSource();
 				if (updateRefsCheck.getSelection()) {

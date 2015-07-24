@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,12 +29,14 @@ public class RuntimePage extends PDEFormPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#getHelpResource()
 	 */
+	@Override
 	protected String getHelpResource() {
 		if (((IPluginModelBase) getPDEEditor().getAggregateModel()).isFragmentModel())
 			return IHelpContextIds.MANIFEST_FRAGMENT_RUNTIME;
 		return IHelpContextIds.MANIFEST_PLUGIN_RUNTIME;
 	}
 
+	@Override
 	protected void createFormContent(IManagedForm mform) {
 		super.createFormContent(mform);
 		ScrolledForm form = mform.getForm();

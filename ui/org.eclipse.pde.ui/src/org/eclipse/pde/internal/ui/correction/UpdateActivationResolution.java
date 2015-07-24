@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 IBM Corporation and others.
+ * Copyright (c) 2008, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,6 +28,7 @@ public class UpdateActivationResolution extends AbstractManifestMarkerResolution
 		fHeader = currentHeader;
 	}
 
+	@Override
 	protected void createChange(BundleModel model) {
 		if (TargetPlatformHelper.getTargetVersion() >= 3.4) {
 			// get the header we wish to replace
@@ -65,12 +66,14 @@ public class UpdateActivationResolution extends AbstractManifestMarkerResolution
 		}
 	}
 
+	@Override
 	public String getDescription() {
 		if (TargetPlatformHelper.getTargetVersion() >= 3.4)
 			return PDEUIMessages.UpdateActivationResolution_bundleActivationPolicy_label;
 		return PDEUIMessages.UpdateActivationResolution_lazyStart_label;
 	}
 
+	@Override
 	public String getLabel() {
 		if (TargetPlatformHelper.getTargetVersion() >= 3.4)
 			return NLS.bind(PDEUIMessages.UpdateActivationResolution_bundleActivationPolicy_desc, fHeader);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@ import org.eclipse.pde.internal.ui.editor.PDEFormEditor;
 public class SchemaFormOutlinePage extends FormOutlinePage {
 	private Object[] fTopics;
 
+	@Override
 	public Object[] getChildren(Object parent) {
 		ISchema schema = (ISchema) fEditor.getAggregateModel();
 		if (schema != null && schema.isValid()) {
@@ -42,6 +43,7 @@ public class SchemaFormOutlinePage extends FormOutlinePage {
 			super(ilp);
 		}
 
+		@Override
 		public String getText(Object obj) {
 			String label = getObjectLabel(obj);
 			return (label == null) ? super.getText(obj) : label;
@@ -52,6 +54,7 @@ public class SchemaFormOutlinePage extends FormOutlinePage {
 		super(editor);
 	}
 
+	@Override
 	public ILabelProvider createLabelProvider() {
 		return new SchemaLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 	}
@@ -108,6 +111,7 @@ public class SchemaFormOutlinePage extends FormOutlinePage {
 		return fTopics;
 	}
 
+	@Override
 	protected String getParentPageId(Object item) {
 		if (item instanceof ISchemaElement || item instanceof ISchemaAttribute)
 			return SchemaFormPage.PAGE_ID;
@@ -116,6 +120,7 @@ public class SchemaFormOutlinePage extends FormOutlinePage {
 		return super.getParentPageId(item);
 	}
 
+	@Override
 	public void modelChanged(IModelChangedEvent event) {
 		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
 			fTopics = null;

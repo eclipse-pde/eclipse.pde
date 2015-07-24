@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2010 IBM Corporation and others.
+ *  Copyright (c) 2003, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -48,10 +48,12 @@ public class XMLConfiguration extends ChangeAwareSourceViewerConfiguration {
 		super(page, colorManager);
 	}
 
+	@Override
 	public String[] getConfiguredContentTypes(ISourceViewer sourceViewer) {
 		return new String[] {IDocument.DEFAULT_CONTENT_TYPE, XMLPartitionScanner.XML_COMMENT, XMLPartitionScanner.XML_TAG, XMLStringPartitionScanner.XML_STRING};
 	}
 
+	@Override
 	public ITextDoubleClickStrategy getDoubleClickStrategy(ISourceViewer sourceViewer, String contentType) {
 		if (fDoubleClickStrategy == null)
 			fDoubleClickStrategy = new XMLDoubleClickStrategy();
@@ -70,6 +72,7 @@ public class XMLConfiguration extends ChangeAwareSourceViewerConfiguration {
 		return fTagScanner;
 	}
 
+	@Override
 	public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) {
 		PresentationReconciler reconciler = new PresentationReconciler();
 		reconciler.setDocumentPartitioning(XMLDocumentSetupParticpant.XML_PARTITIONING);
@@ -90,6 +93,7 @@ public class XMLConfiguration extends ChangeAwareSourceViewerConfiguration {
 		return reconciler;
 	}
 
+	@Override
 	public IAnnotationHover getAnnotationHover(ISourceViewer sourceViewer) {
 		if (fAnnotationHover == null)
 			fAnnotationHover = new AnnotationHover();
@@ -100,6 +104,7 @@ public class XMLConfiguration extends ChangeAwareSourceViewerConfiguration {
 	 * Preference colors or fonts have changed.  
 	 * Update the default tokens of the scanners.
 	 */
+	@Override
 	public void adaptToPreferenceChange(PropertyChangeEvent event) {
 		if (fTagScanner == null)
 			return; //property change before the editor is fully created
@@ -141,16 +146,19 @@ public class XMLConfiguration extends ChangeAwareSourceViewerConfiguration {
 		return textAttribute;
 	}
 
+	@Override
 	public boolean affectsTextPresentation(PropertyChangeEvent event) {
 		String property = event.getProperty();
 		return property.startsWith(IPDEColorConstants.P_DEFAULT) || property.startsWith(IPDEColorConstants.P_PROC_INSTR) || property.startsWith(IPDEColorConstants.P_STRING) || property.startsWith(IPDEColorConstants.P_EXTERNALIZED_STRING) || property.startsWith(IPDEColorConstants.P_TAG) || property.startsWith(IPDEColorConstants.P_XML_COMMENT);
 	}
 
+	@Override
 	public boolean affectsColorPresentation(PropertyChangeEvent event) {
 		String property = event.getProperty();
 		return property.equals(IPDEColorConstants.P_DEFAULT) || property.equals(IPDEColorConstants.P_PROC_INSTR) || property.equals(IPDEColorConstants.P_STRING) || property.equals(IPDEColorConstants.P_EXTERNALIZED_STRING) || property.equals(IPDEColorConstants.P_TAG) || property.equals(IPDEColorConstants.P_XML_COMMENT);
 	}
 
+	@Override
 	protected int getInfoImplementationType() {
 		return SourceInformationProvider.F_XML_IMP;
 	}
@@ -158,6 +166,7 @@ public class XMLConfiguration extends ChangeAwareSourceViewerConfiguration {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getConfiguredDocumentPartitioning(org.eclipse.jface.text.source.ISourceViewer)
 	 */
+	@Override
 	public String getConfiguredDocumentPartitioning(ISourceViewer sourceViewer) {
 		return XMLDocumentSetupParticpant.XML_PARTITIONING;
 	}
@@ -165,6 +174,7 @@ public class XMLConfiguration extends ChangeAwareSourceViewerConfiguration {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.text.ChangeAwareSourceViewerConfiguration#getReconciler(org.eclipse.jface.text.source.ISourceViewer)
 	 */
+	@Override
 	public IReconciler getReconciler(ISourceViewer sourceViewer) {
 		if (fSourcePage != null && fReconciler == null) {
 			IBaseModel model = fSourcePage.getInputContext().getModel();

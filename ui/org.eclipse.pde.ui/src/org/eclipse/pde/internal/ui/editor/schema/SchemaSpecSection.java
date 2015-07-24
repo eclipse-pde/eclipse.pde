@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -34,6 +34,7 @@ public class SchemaSpecSection extends PDESection {
 		createClient(getSection(), page.getManagedForm().getToolkit());
 	}
 
+	@Override
 	public void commit(boolean onSave) {
 		fPluginText.commit();
 		fPointText.commit();
@@ -41,6 +42,7 @@ public class SchemaSpecSection extends PDESection {
 		super.commit(onSave);
 	}
 
+	@Override
 	public void cancelEdit() {
 		fPluginText.cancelEdit();
 		fPointText.cancelEdit();
@@ -48,6 +50,7 @@ public class SchemaSpecSection extends PDESection {
 		super.cancelEdit();
 	}
 
+	@Override
 	public void createClient(Section section, FormToolkit toolkit) {
 		Composite container = toolkit.createComposite(section);
 		container.setLayout(FormLayoutFactory.createSectionClientGridLayout(false, 2));
@@ -57,18 +60,21 @@ public class SchemaSpecSection extends PDESection {
 		final Schema schema = (Schema) getPage().getModel();
 		fPluginText = new FormEntry(container, toolkit, PDEUIMessages.SchemaEditor_SpecSection_plugin, null, false);
 		fPluginText.setFormEntryListener(new FormEntryAdapter(this) {
+			@Override
 			public void textValueChanged(FormEntry text) {
 				schema.setPluginId(text.getValue());
 			}
 		});
 		fPointText = new FormEntry(container, toolkit, PDEUIMessages.SchemaEditor_SpecSection_point, null, false);
 		fPointText.setFormEntryListener(new FormEntryAdapter(this) {
+			@Override
 			public void textValueChanged(FormEntry text) {
 				schema.setPointId(text.getValue());
 			}
 		});
 		fNameText = new FormEntry(container, toolkit, PDEUIMessages.SchemaEditor_SpecSection_name, null, false);
 		fNameText.setFormEntryListener(new FormEntryAdapter(this) {
+			@Override
 			public void textValueChanged(FormEntry text) {
 				schema.setName(text.getValue());
 				getPage().getManagedForm().getForm().setText(schema.getName());
@@ -80,6 +86,7 @@ public class SchemaSpecSection extends PDESection {
 		initialize();
 	}
 
+	@Override
 	public void dispose() {
 		ISchema schema = (ISchema) getPage().getModel();
 		if (schema != null)
@@ -99,12 +106,14 @@ public class SchemaSpecSection extends PDESection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.SectionPart#setFocus()
 	 */
+	@Override
 	public void setFocus() {
 		if (fPluginText != null) {
 			fPluginText.getText().setFocus();
 		}
 	}
 
+	@Override
 	public void refresh() {
 		ISchema schema = (ISchema) getPage().getModel();
 		fPluginText.setValue(schema.getPluginId(), true);
@@ -114,6 +123,7 @@ public class SchemaSpecSection extends PDESection {
 		super.refresh();
 	}
 
+	@Override
 	public boolean canPaste(Clipboard clipboard) {
 		return isEditable();
 	}

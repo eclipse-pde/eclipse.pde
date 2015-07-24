@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -78,6 +78,7 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 	private Browser fPointDescBrowser;
 
 	class PointFilter extends ViewerFilter {
+		@Override
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
 			if (!fFilterCheck.getSelection())
 				return true;
@@ -100,6 +101,7 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 			wMatch = match + "*"; //$NON-NLS-1$
 		}
 
+		@Override
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
 			String text = ((PointLabelProvider) fPointListViewer.getLabelProvider()).getColumnText(element, 0);
 			Pattern pattern = null;
@@ -113,6 +115,7 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 	}
 
 	class TemplateContentProvider extends DefaultContentProvider implements IStructuredContentProvider {
+		@Override
 		public Object[] getElements(Object inputElement) {
 			if (inputElement instanceof IPluginExtensionPoint) {
 				IPluginExtensionPoint point = (IPluginExtensionPoint) inputElement;
@@ -135,6 +138,7 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 	}
 
 	class PointContentProvider extends DefaultContentProvider implements IStructuredContentProvider {
+		@Override
 		public Object[] getElements(Object parent) {
 			ArrayList<IPluginExtensionPoint> extPoints = new ArrayList<IPluginExtensionPoint>();
 			IPluginModelBase[] plugins = PluginRegistry.getActiveModels();
@@ -156,10 +160,12 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 	}
 
 	class PointLabelProvider extends LabelProvider implements ITableLabelProvider {
+		@Override
 		public String getText(Object obj) {
 			return getColumnText(obj, 0);
 		}
 
+		@Override
 		public String getColumnText(Object obj, int index) {
 			IPluginExtensionPoint extPoint = (IPluginExtensionPoint) obj;
 			PDELabelProvider provider = PDEPlugin.getDefault().getLabelProvider();
@@ -169,10 +175,12 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 			return IdUtil.getFullId(extPoint, fModel);
 		}
 
+		@Override
 		public Image getImage(Object obj) {
 			return getColumnImage(obj, 0);
 		}
 
+		@Override
 		public Image getColumnImage(Object obj, int index) {
 			IPluginExtensionPoint exp = (IPluginExtensionPoint) obj;
 
@@ -206,6 +214,7 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 		setDescription(PDEUIMessages.NewExtensionWizard_PointSelectionPage_desc);
 	}
 
+	@Override
 	public void createControl(Composite parent) {
 		// tab folder
 		final TabFolder tabFolder = new TabFolder(parent, SWT.FLAT);
@@ -215,6 +224,7 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 		secondTab.setText(PDEUIMessages.PointSelectionPage_tab2);
 		secondTab.setControl(createWizardsPage(tabFolder));
 		tabFolder.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateTabSelection(tabFolder.getSelectionIndex());
 			}
@@ -248,17 +258,20 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 		fFilterText = new Text(labelContainer, SWT.BORDER);
 		fFilterText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fFilterText.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				fWildCardFilter.setMatchText(fFilterText.getText());
 				fPointListViewer.refresh();
 			}
 		});
 		fFilterText.addKeyListener(new KeyListener() {
+			@Override
 			public void keyPressed(KeyEvent e) {
 				if (e.keyCode == SWT.ARROW_DOWN)
 					fPointListViewer.getControl().setFocus();
 			}
 
+			@Override
 			public void keyReleased(KeyEvent e) {
 			}
 		});
@@ -269,6 +282,7 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 		fFilterCheck.setLayoutData(gd);
 		fFilterCheck.setSelection(true);
 		fFilterCheck.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fPointListViewer.refresh();
 			}
@@ -279,6 +293,7 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 		fPointListViewer.setLabelProvider(new PointLabelProvider());
 		fPointListViewer.addSelectionChangedListener(this);
 		fPointListViewer.addDoubleClickListener(new IDoubleClickListener() {
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				if (canFinish()) {
 					fWizard.performFinish();
@@ -305,6 +320,7 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 		fDescLink = new Link(templateComposite, SWT.NONE);
 		fDescLink.setText(NLS.bind(PDEUIMessages.PointSelectionPage_extPointDesc, "")); //$NON-NLS-1$
 		fDescLink.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (fCurrentPoint != null)
 					new ShowDescriptionAction(fCurrentPoint, true).run();
@@ -360,6 +376,7 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 		if (selection != null && selection.length > 0)
 			fTemplateViewer.setInput(selection[0]);
 		fTemplateViewer.addDoubleClickListener(new IDoubleClickListener() {
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				if (canFlipToNextPage()) {
 					advanceToNextPage();
@@ -395,6 +412,7 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 		getContainer().showPage(getNextPage());
 	}
 
+	@Override
 	public boolean canFlipToNextPage() {
 		return getNextPage() != null;
 	}
@@ -419,6 +437,7 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 		return false;
 	}
 
+	@Override
 	public void dispose() {
 		fWizardsPage.dispose();
 		super.dispose();
@@ -477,6 +496,7 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 		fPointListViewer.getTable().setFocus();
 	}
 
+	@Override
 	public void selectionChanged(SelectionChangedEvent event) {
 		ISelection selection = event.getSelection();
 		if (selection instanceof IStructuredSelection) {
@@ -571,8 +591,10 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.wizards.BaseWizardSelectionPage#createWizardNode(org.eclipse.pde.internal.ui.wizards.WizardElement)
 	 */
+	@Override
 	protected IWizardNode createWizardNode(WizardElement element) {
 		return new WizardNode(this, element) {
+			@Override
 			public IBasePluginWizard createWizard() throws CoreException {
 				IExtensionWizard wizard = createWizard(wizardElement);
 				if (wizard == null)
@@ -608,6 +630,7 @@ public class PointSelectionPage extends BaseWizardSelectionPage {
 		}
 	}
 
+	@Override
 	public void setVisible(boolean visible) {
 		if (visible)
 			fFilterText.setFocus();

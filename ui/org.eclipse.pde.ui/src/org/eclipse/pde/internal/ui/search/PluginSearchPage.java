@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2013 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -66,6 +66,7 @@ public class PluginSearchPage extends DialogPage implements ISearchPage {
 	private Combo patternCombo;
 	private Button[] searchForButtons = new Button[3];
 
+	@Override
 	public void createControl(Composite parent) {
 		Composite result = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout(1, true);
@@ -246,12 +247,14 @@ public class PluginSearchPage extends DialogPage implements ISearchPage {
 		});
 
 		patternCombo.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				container.setPerformActionEnabled(patternCombo.getText().trim().length() > 0);
 			}
 		});
 	}
 
+	@Override
 	public boolean performAction() {
 		saveQueryData();
 		NewSearchUI.activateSearchResultView();
@@ -299,6 +302,7 @@ public class PluginSearchPage extends DialogPage implements ISearchPage {
 			previousQueries.remove(0);
 	}
 
+	@Override
 	public void setContainer(ISearchPageContainer container) {
 		this.container = container;
 	}

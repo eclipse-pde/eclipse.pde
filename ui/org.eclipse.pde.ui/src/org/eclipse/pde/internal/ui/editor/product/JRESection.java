@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,6 +42,7 @@ import org.eclipse.ui.forms.widgets.*;
 public class JRESection extends PDESection {
 
 	private final class EELabelProvider extends LabelProvider {
+		@Override
 		public String getText(Object element) {
 			if (!(element instanceof IExecutionEnvironment))
 				return ""; //$NON-NLS-1$
@@ -74,6 +75,7 @@ public class JRESection extends PDESection {
 		createClient(getSection(), page.getEditor().getToolkit());
 	}
 
+	@Override
 	protected void createClient(Section section, FormToolkit toolkit) {
 
 		section.setLayout(FormLayoutFactory.createClearGridLayout(false, 1));
@@ -100,6 +102,7 @@ public class JRESection extends PDESection {
 		fTabFolder.setSelectionBackground(new Color[] {selectedColor, toolkit.getColors().getBackground()}, new int[] {100}, true);
 
 		fTabFolder.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				refresh();
 			}
@@ -118,6 +121,7 @@ public class JRESection extends PDESection {
 		fEEsCombo.setItems(VMUtil.getExecutionEnvironments());
 		fEEsCombo.addItem("", 0); //$NON-NLS-1$
 		fEEsCombo.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				if (!fBlockChanges) {
 					Object selection = ((IStructuredSelection) event.getSelection()).getFirstElement();
@@ -131,6 +135,7 @@ public class JRESection extends PDESection {
 		fExecutionEnvironmentsButton = toolkit.createButton(client, PDEUIMessages.ProductJRESection_browseEEs, SWT.PUSH);
 		GridDataFactory.fillDefaults().applyTo(fExecutionEnvironmentsButton);
 		fExecutionEnvironmentsButton.addListener(SWT.Selection, new Listener() {
+			@Override
 			public void handleEvent(Event event) {
 				PreferencesUtil.createPreferenceDialogOn(getSection().getShell(), "org.eclipse.jdt.debug.ui.jreProfiles", //$NON-NLS-1$
 						new String[] {"org.eclipse.jdt.debug.ui.jreProfiles"}, null).open(); //$NON-NLS-1$ 
@@ -143,6 +148,7 @@ public class JRESection extends PDESection {
 		buttonLayout.horizontalSpan = 2;
 		fEEButton.setLayoutData(buttonLayout);
 		fEEButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				getJVMLocations().setIncludeJREWithProduct(getOS(fLastTab), fEEButton.getSelection());
 			}
@@ -171,6 +177,7 @@ public class JRESection extends PDESection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
 	 */
+	@Override
 	public void dispose() {
 		IProductModel model = getProductModel();
 		if (model != null) {
@@ -199,6 +206,7 @@ public class JRESection extends PDESection {
 		}
 	}
 
+	@Override
 	public void refresh() {
 		fBlockChanges = true;
 		fLastTab = fTabFolder.getSelectionIndex();
@@ -249,6 +257,7 @@ public class JRESection extends PDESection {
 		return (IProductModel) getPage().getPDEEditor().getAggregateModel();
 	}
 
+	@Override
 	public boolean canPaste(Clipboard clipboard) {
 		Display d = getSection().getDisplay();
 		return d.getFocusControl() instanceof Text;
@@ -261,6 +270,7 @@ public class JRESection extends PDESection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#modelChanged(org.eclipse.pde.core.IModelChangedEvent)
 	 */
+	@Override
 	public void modelChanged(IModelChangedEvent e) {
 		// No need to call super, handling world changed event here
 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {

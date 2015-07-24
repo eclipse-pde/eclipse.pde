@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,16 +55,19 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 	class ExtensionIdComboPart extends ComboPart implements SelectionListener {
 		private String fRemovedId;
 
+		@Override
 		public void createControl(Composite parent, FormToolkit toolkit, int style) {
 			super.createControl(parent, toolkit, style);
 			addSelectionListener(this);
 		}
 
+		@Override
 		public void widgetSelected(SelectionEvent e) {
 			if (getSelectionIndex() != getItemCount() - 1)
 				fRemovedId = null;
 		}
 
+		@Override
 		public void widgetDefaultSelected(SelectionEvent e) {
 		}
 
@@ -151,6 +154,7 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
 	 */
+	@Override
 	protected void createClient(Section section, FormToolkit toolkit) {
 		section.setText(PDEUIMessages.ProductInfoSection_title);
 		section.setDescription(PDEUIMessages.ProductInfoSection_desc);
@@ -177,6 +181,7 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 		PDECore.getDefault().getModelManager().addStateDeltaListener(this);
 	}
 
+	@Override
 	public void dispose() {
 		IProductModel model = getModel();
 		if (model != null)
@@ -197,6 +202,7 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 		fProductCombo.setItems(TargetPlatform.getProducts());
 		fProductCombo.add(""); //$NON-NLS-1$
 		fProductCombo.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				getProduct().setProductId(fProductCombo.getSelection());
 			}
@@ -205,6 +211,7 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 		Button button = toolkit.createButton(client, PDEUIMessages.ProductInfoSection_new, SWT.PUSH);
 		button.setEnabled(isEditable());
 		button.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				handleNewDefinition();
 			}
@@ -237,6 +244,7 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 		fAppCombo.setItems(TargetPlatform.getApplications());
 		fAppCombo.add(""); //$NON-NLS-1$
 		fAppCombo.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				getProduct().setApplication(fAppCombo.getSelection());
 			}
@@ -257,14 +265,17 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 		FormText text = toolkit.createFormText(comp, true);
 		text.setText(PDEUIMessages.Product_overview_configuration, true, true);
 		text.addHyperlinkListener(new IHyperlinkListener() {
+			@Override
 			public void linkEntered(HyperlinkEvent e) {
 				getStatusLineManager().setMessage(e.getLabel());
 			}
 
+			@Override
 			public void linkExited(HyperlinkEvent e) {
 				getStatusLineManager().setMessage(null);
 			}
 
+			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				String pageId = fPluginButton.getSelection() ? DependenciesPage.PLUGIN_ID : DependenciesPage.FEATURE_ID;
 				getPage().getEditor().setActivePage(pageId);
@@ -277,6 +288,7 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 		fPluginButton.setLayoutData(gd);
 		fPluginButton.setEnabled(isEditable());
 		fPluginButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				boolean selected = fPluginButton.getSelection();
 				IProduct product = getProduct();
@@ -305,6 +317,7 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#refresh()
 	 */
+	@Override
 	public void refresh() {
 		IProduct product = getProduct();
 		if (product.getProductId() != null) {
@@ -318,6 +331,7 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 		super.refresh();
 	}
 
+	@Override
 	public void modelChanged(IModelChangedEvent e) {
 		// No need to call super, handling world changed event here
 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
@@ -385,6 +399,7 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 		return site.getActionBars().getStatusLineManager();
 	}
 
+	@Override
 	public boolean canPaste(Clipboard clipboard) {
 		Display d = getSection().getDisplay();
 		Control c = d.getFocusControl();
@@ -393,6 +408,7 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 		return false;
 	}
 
+	@Override
 	public void registryChanged(IRegistryChangeEvent event) {
 		final IExtensionDelta[] applicationDeltas = event.getExtensionDeltas(IPDEBuildConstants.BUNDLE_CORE_RUNTIME, "applications"); //$NON-NLS-1$
 		final IExtensionDelta[] productDeltas = event.getExtensionDeltas(IPDEBuildConstants.BUNDLE_CORE_RUNTIME, "products"); //$NON-NLS-1$
@@ -400,6 +416,7 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 			return;
 
 		Display.getDefault().syncExec(new Runnable() {
+			@Override
 			public void run() {
 				fAppCombo.handleExtensionDelta(applicationDeltas);
 				fProductCombo.handleExtensionDelta(productDeltas);
@@ -407,6 +424,7 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 		});
 	}
 
+	@Override
 	public void stateChanged(State newState) {
 		String[] products = TargetPlatform.getProducts();
 		final String[] finalProducts = new String[products.length + 1];
@@ -419,6 +437,7 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 		finalApps[apps.length] = ""; //$NON-NLS-1$
 
 		Display.getDefault().syncExec(new Runnable() {
+			@Override
 			public void run() {
 				fAppCombo.reload(finalApps);
 				fProductCombo.reload(finalProducts);
@@ -426,6 +445,7 @@ public class ProductInfoSection extends PDESection implements IRegistryChangeLis
 		});
 	}
 
+	@Override
 	public void stateResolved(StateDelta delta) {
 		// do nothing
 	}

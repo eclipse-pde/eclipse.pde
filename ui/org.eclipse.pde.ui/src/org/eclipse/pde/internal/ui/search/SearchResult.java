@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2012 IBM Corporation and others.
+ *  Copyright (c) 2005, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -39,6 +39,7 @@ public class SearchResult extends AbstractTextSearchResult implements IEditorMat
 	/* (non-Javadoc)
 	 * @see org.eclipse.search.ui.text.AbstractTextSearchResult#getEditorMatchAdapter()
 	 */
+	@Override
 	public IEditorMatchAdapter getEditorMatchAdapter() {
 		return this;
 	}
@@ -46,6 +47,7 @@ public class SearchResult extends AbstractTextSearchResult implements IEditorMat
 	/* (non-Javadoc)
 	 * @see org.eclipse.search.ui.ISearchResult#getLabel()
 	 */
+	@Override
 	public String getLabel() {
 		int numMatches = getMatchCount();
 		return fQuery.getLabel() + " - " + numMatches + " " + (numMatches == 1 ? PDEUIMessages.SearchResult_match : PDEUIMessages.SearchResult_matches); //$NON-NLS-1$ //$NON-NLS-2$  
@@ -54,6 +56,7 @@ public class SearchResult extends AbstractTextSearchResult implements IEditorMat
 	/* (non-Javadoc)
 	 * @see org.eclipse.search.ui.ISearchResult#getTooltip()
 	 */
+	@Override
 	public String getTooltip() {
 		return null;
 	}
@@ -61,6 +64,7 @@ public class SearchResult extends AbstractTextSearchResult implements IEditorMat
 	/* (non-Javadoc)
 	 * @see org.eclipse.search.ui.ISearchResult#getImageDescriptor()
 	 */
+	@Override
 	public ImageDescriptor getImageDescriptor() {
 		return PDEPluginImages.DESC_PSEARCH_OBJ;
 	}
@@ -68,6 +72,7 @@ public class SearchResult extends AbstractTextSearchResult implements IEditorMat
 	/* (non-Javadoc)
 	 * @see org.eclipse.search.ui.ISearchResult#getQuery()
 	 */
+	@Override
 	public ISearchQuery getQuery() {
 		return fQuery;
 	}
@@ -75,6 +80,7 @@ public class SearchResult extends AbstractTextSearchResult implements IEditorMat
 	/* (non-Javadoc)
 	 * @see org.eclipse.search.ui.text.IEditorMatchAdapter#isShownInEditor(org.eclipse.search.ui.text.Match, org.eclipse.ui.IEditorPart)
 	 */
+	@Override
 	public boolean isShownInEditor(Match match, IEditorPart editor) {
 		Object element = match.getElement();
 		if (element instanceof IPluginObject)
@@ -85,6 +91,7 @@ public class SearchResult extends AbstractTextSearchResult implements IEditorMat
 	/* (non-Javadoc)
 	 * @see org.eclipse.search.ui.text.IEditorMatchAdapter#computeContainedMatches(org.eclipse.search.ui.text.AbstractTextSearchResult, org.eclipse.ui.IEditorPart)
 	 */
+	@Override
 	public Match[] computeContainedMatches(AbstractTextSearchResult result, IEditorPart editor) {
 		ArrayList<Match> list = new ArrayList<Match>();
 		Object[] objects = result.getElements();
@@ -107,6 +114,7 @@ public class SearchResult extends AbstractTextSearchResult implements IEditorMat
 	/* (non-Javadoc)
 	 * @see org.eclipse.search.ui.text.AbstractTextSearchResult#getFileMatchAdapter()
 	 */
+	@Override
 	public IFileMatchAdapter getFileMatchAdapter() {
 		return null;
 	}

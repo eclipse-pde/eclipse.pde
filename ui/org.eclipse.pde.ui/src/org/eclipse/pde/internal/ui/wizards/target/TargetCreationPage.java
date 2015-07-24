@@ -64,6 +64,7 @@ public class TargetCreationPage extends WizardSelectionPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		Composite comp = SWTFactory.createComposite(parent, 2, 1, GridData.FILL_BOTH);
 		SWTFactory.createLabel(comp, PDEUIMessages.TargetCreationPage_0, 3);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -34,6 +34,7 @@ public class PluginInputContextManager extends InputContextManager {
 		super(editor);
 	}
 
+	@Override
 	public IBaseModel getAggregateModel() {
 		if (bmodel != null)
 			return bmodel;
@@ -46,6 +47,7 @@ public class PluginInputContextManager extends InputContextManager {
 		return findPluginModel();
 	}
 
+	@Override
 	protected void structureChanged(IFile file, boolean added) {
 		// If a plugin.xml file has been added to the project the editor should update
 		if (added && ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR.equalsIgnoreCase(file.getName())) {
@@ -57,6 +59,7 @@ public class PluginInputContextManager extends InputContextManager {
 		super.structureChanged(file, added);
 	}
 
+	@Override
 	protected void fireContextChange(InputContext context, boolean added) {
 		super.fireContextChange(context, added);
 		if (context.getId().equals(BundleInputContext.CONTEXT_ID)) {
@@ -121,6 +124,7 @@ public class PluginInputContextManager extends InputContextManager {
 			smodel.fireModelChanged(new ModelChangedEvent(smodel, IModelChangedEvent.WORLD_CHANGED, null, null));
 			// now pass the listener to the target model
 			smodel.transferListenersTo(tmodel, new IModelChangedListenerFilter() {
+				@Override
 				public boolean accept(IModelChangedListener listener) {
 					if (listener instanceof IFormPart || listener instanceof FormOutlinePage)
 						return true;

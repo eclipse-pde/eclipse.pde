@@ -31,6 +31,7 @@ public class JarEntryFile extends PlatformObject implements IStorage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.IStorage#getContents()
 	 */
+	@Override
 	public InputStream getContents() throws CoreException {
 		try {
 			ZipEntry zipEntry = fZipFile.getEntry(fEntryName);
@@ -43,6 +44,7 @@ public class JarEntryFile extends PlatformObject implements IStorage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.IStorage#getFullPath()
 	 */
+	@Override
 	public IPath getFullPath() {
 		return new Path(fEntryName);
 	}
@@ -50,6 +52,7 @@ public class JarEntryFile extends PlatformObject implements IStorage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.IStorage#getName()
 	 */
+	@Override
 	public String getName() {
 		return getFullPath().lastSegment();
 	}
@@ -57,6 +60,7 @@ public class JarEntryFile extends PlatformObject implements IStorage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.IStorage#isReadOnly()
 	 */
+	@Override
 	public boolean isReadOnly() {
 		return true;
 	}

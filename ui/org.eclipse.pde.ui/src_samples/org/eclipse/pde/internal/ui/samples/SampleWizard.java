@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2014 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -38,6 +38,7 @@ public class SampleWizard extends Wizard implements INewWizard, IExecutableExten
 	private boolean activitiesEnabled = true;
 
 	private class ImportOverwriteQuery implements IOverwriteQuery {
+		@Override
 		public String queryOverwrite(String file) {
 			String[] returnCodes = {YES, NO, ALL, CANCEL};
 			int returnVal = openDialog(file);
@@ -47,6 +48,7 @@ public class SampleWizard extends Wizard implements INewWizard, IExecutableExten
 		private int openDialog(final String file) {
 			final int[] result = {IDialogConstants.CANCEL_ID};
 			getShell().getDisplay().syncExec(new Runnable() {
+				@Override
 				public void run() {
 					String title = PDEUIMessages.SampleWizard_title;
 					String msg = NLS.bind(PDEUIMessages.SampleWizard_overwrite, file);
@@ -193,6 +195,7 @@ public class SampleWizard extends Wizard implements INewWizard, IExecutableExten
 	/**
 	 *  
 	 */
+	@Override
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) throws CoreException {
 		String variable = data != null && data instanceof String ? data.toString() : null;
 		if (variable != null) {
@@ -207,6 +210,7 @@ public class SampleWizard extends Wizard implements INewWizard, IExecutableExten
 		}
 	}
 
+	@Override
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Rapicorp Corporation and others.
+ * Copyright (c) 2014, 2015 Rapicorp Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -64,6 +64,7 @@ public class ConvertPreferencesWizard extends Wizard {
 		setNeedsProgressMonitor(true);
 	}
 
+	@Override
 	public boolean performFinish() {
 		this.fPluginCustomizeFilePath = page.getPluginCustomizeFile().getFullPath().toString();
 		this.fPreferencesFilePath = page.getPreferencesFile().getAbsolutePath();
@@ -79,6 +80,7 @@ public class ConvertPreferencesWizard extends Wizard {
 		return true;
 	}
 
+	@Override
 	public void addPages() {
 		page = new ConvertPreferencesWizardPage(fPluginCustomizeFilePath, fPreferencesFilePath, fOverwrite);
 		addPage(page);
@@ -87,6 +89,7 @@ public class ConvertPreferencesWizard extends Wizard {
 	private IRunnableWithProgress getGenerateOperation() {
 		return new IRunnableWithProgress() {
 
+			@Override
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				monitor.beginTask(PDEUIMessages.ConvertPreferencesWizard_progress, 100);
 				File prefsFile = page.getPreferencesFile();

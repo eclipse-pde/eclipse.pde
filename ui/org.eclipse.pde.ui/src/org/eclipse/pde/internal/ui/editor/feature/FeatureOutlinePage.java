@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -25,6 +25,7 @@ import org.eclipse.ui.forms.editor.IFormPage;
 
 public class FeatureOutlinePage extends FormOutlinePage {
 	class ContentProvider extends BasicContentProvider {
+		@Override
 		public Object[] getChildren(Object parent) {
 			IFeatureModel model = (IFeatureModel) fEditor.getAggregateModel();
 			if (model != null && model.isValid()) {
@@ -50,6 +51,7 @@ public class FeatureOutlinePage extends FormOutlinePage {
 			return super.getChildren(parent);
 		}
 
+		@Override
 		public Object getParent(Object child) {
 			String pageId = getParentPageId(child);
 			if (pageId != null)
@@ -66,10 +68,12 @@ public class FeatureOutlinePage extends FormOutlinePage {
 		fDiscoveryUrls = new NamedElement(PDEUIMessages.FeatureOutlinePage_discoverUrls, folderImage);
 	}
 
+	@Override
 	public ITreeContentProvider createContentProvider() {
 		return new ContentProvider();
 	}
 
+	@Override
 	public String getParentPageId(Object item) {
 		if (item instanceof IFeaturePlugin)
 			return FeatureReferencePage.PAGE_ID;
@@ -131,6 +135,7 @@ public class FeatureOutlinePage extends FormOutlinePage {
 		return fEditor.findPage(getParentPageId(object));
 	}
 
+	@Override
 	public void modelChanged(IModelChangedEvent event) {
 		if (fTreeViewer.getControl().isDisposed()) {
 			return;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,6 +36,7 @@ public class JUnitWorkbenchLaunchShortcut extends JUnitLaunchShortcut {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.junit.JUnitLaunchShortcut#getLaunchConfigurationTypeId()
 	 */
+	@Override
 	protected String getLaunchConfigurationTypeId() {
 		return "org.eclipse.pde.ui.JunitLaunchConfig"; //$NON-NLS-1$
 	}
@@ -43,6 +44,7 @@ public class JUnitWorkbenchLaunchShortcut extends JUnitLaunchShortcut {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.junit.JUnitLaunchShortcut#createLaunchConfiguration(org.eclipse.jdt.core.IJavaElement)
 	 */
+	@Override
 	protected ILaunchConfigurationWorkingCopy createLaunchConfiguration(IJavaElement element) throws CoreException {
 		ILaunchConfigurationWorkingCopy configuration = super.createLaunchConfiguration(element);
 		String configName = configuration.getName();

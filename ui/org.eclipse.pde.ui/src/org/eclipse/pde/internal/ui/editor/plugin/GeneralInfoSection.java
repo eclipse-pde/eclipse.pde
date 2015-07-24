@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2010 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -71,6 +71,7 @@ public abstract class GeneralInfoSection extends PDESection {
 	 * @see org.eclipse.pde.internal.ui.neweditor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section,
 	 *      org.eclipse.ui.forms.widgets.FormToolkit)
 	 */
+	@Override
 	protected void createClient(Section section, FormToolkit toolkit) {
 		section.setText(PDEUIMessages.ManifestEditor_PluginSpecSection_title);
 		section.setLayout(FormLayoutFactory.createClearTableWrapLayout(false, 1));
@@ -139,6 +140,7 @@ public abstract class GeneralInfoSection extends PDESection {
 	private void createIDEntry(Composite client, FormToolkit toolkit, IActionBars actionBars) {
 		fIdEntry = new FormEntry(client, toolkit, PDEUIMessages.GeneralInfoSection_id, null, false);
 		fIdEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
+			@Override
 			public void textValueChanged(FormEntry entry) {
 				try {
 					getPluginBase().setId(entry.getValue());
@@ -150,6 +152,7 @@ public abstract class GeneralInfoSection extends PDESection {
 		fIdEntry.setEditable(isEditable());
 		// Create validator
 		fIdEntryValidator = new TextValidator(getManagedForm(), fIdEntry.getText(), getProject(), true) {
+			@Override
 			protected boolean validateControl() {
 				return validateIdEntry();
 			}
@@ -164,6 +167,7 @@ public abstract class GeneralInfoSection extends PDESection {
 	private void createVersionEntry(Composite client, FormToolkit toolkit, IActionBars actionBars) {
 		fVersionEntry = new FormEntry(client, toolkit, PDEUIMessages.GeneralInfoSection_version, null, false);
 		fVersionEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
+			@Override
 			public void textValueChanged(FormEntry entry) {
 				try {
 					getPluginBase().setVersion(entry.getValue());
@@ -175,6 +179,7 @@ public abstract class GeneralInfoSection extends PDESection {
 		fVersionEntry.setEditable(isEditable());
 		// Create validator
 		fVersionEntryValidator = new TextValidator(getManagedForm(), fVersionEntry.getText(), getProject(), true) {
+			@Override
 			protected boolean validateControl() {
 				return validateVersionEntry();
 			}
@@ -193,6 +198,7 @@ public abstract class GeneralInfoSection extends PDESection {
 	private void createNameEntry(Composite client, FormToolkit toolkit, IActionBars actionBars) {
 		fNameEntry = new FormEntry(client, toolkit, PDEUIMessages.GeneralInfoSection_name, null, false);
 		fNameEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
+			@Override
 			public void textValueChanged(FormEntry entry) {
 				try {
 					getPluginBase().setName(entry.getValue());
@@ -204,6 +210,7 @@ public abstract class GeneralInfoSection extends PDESection {
 		fNameEntry.setEditable(isEditable());
 		// Create validator
 		fNameEntryValidator = new TextValidator(getManagedForm(), fNameEntry.getText(), getProject(), true) {
+			@Override
 			protected boolean validateControl() {
 				return validateNameEntry();
 			}
@@ -218,6 +225,7 @@ public abstract class GeneralInfoSection extends PDESection {
 	private void createProviderEntry(Composite client, FormToolkit toolkit, IActionBars actionBars) {
 		fProviderEntry = new FormEntry(client, toolkit, PDEUIMessages.GeneralInfoSection_provider, null, false);
 		fProviderEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
+			@Override
 			public void textValueChanged(FormEntry entry) {
 				try {
 					getPluginBase().setProviderName(entry.getValue());
@@ -229,6 +237,7 @@ public abstract class GeneralInfoSection extends PDESection {
 		fProviderEntry.setEditable(isEditable());
 		// Create validator
 		fProviderEntryValidator = new TextValidator(getManagedForm(), fProviderEntry.getText(), getProject(), true) {
+			@Override
 			protected boolean validateControl() {
 				return validateProviderEntry();
 			}
@@ -247,6 +256,7 @@ public abstract class GeneralInfoSection extends PDESection {
 	private void createPlatformFilterEntry(Composite client, FormToolkit toolkit, IActionBars actionBars) {
 		fPlatformFilterEntry = new FormEntry(client, toolkit, PDEUIMessages.GeneralInfoSection_platformFilter, null, false);
 		fPlatformFilterEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
+			@Override
 			public void textValueChanged(FormEntry entry) {
 				getBundle().setHeader(PLATFORM_FILTER, fPlatformFilterEntry.getValue());
 			}
@@ -254,6 +264,7 @@ public abstract class GeneralInfoSection extends PDESection {
 		fPlatformFilterEntry.setEditable(isEditable());
 		// Create validator
 		fPlatformEntryValidator = new TextValidator(getManagedForm(), fPlatformFilterEntry.getText(), getProject(), true) {
+			@Override
 			protected boolean validateControl() {
 				return validatePlatformEntry();
 			}
@@ -269,6 +280,7 @@ public abstract class GeneralInfoSection extends PDESection {
 		return ControlValidationUtility.validatePlatformFilterField(fPlatformFilterEntry.getText().getText(), fPlatformEntryValidator);
 	}
 
+	@Override
 	public void commit(boolean onSave) {
 		fIdEntry.commit();
 		fVersionEntry.commit();
@@ -284,6 +296,7 @@ public abstract class GeneralInfoSection extends PDESection {
 	 * 
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#modelChanged(org.eclipse.pde.core.IModelChangedEvent)
 	 */
+	@Override
 	public void modelChanged(IModelChangedEvent e) {
 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
 			markStale();
@@ -300,6 +313,7 @@ public abstract class GeneralInfoSection extends PDESection {
 		}
 	}
 
+	@Override
 	public void refresh() {
 		IPluginModelBase model = (IPluginModelBase) getPage().getPDEEditor().getContextManager().getAggregateModel();
 		IPluginBase pluginBase = model.getPluginBase();
@@ -320,6 +334,7 @@ public abstract class GeneralInfoSection extends PDESection {
 		super.refresh();
 	}
 
+	@Override
 	public void cancelEdit() {
 		fIdEntry.cancelEdit();
 		fNameEntry.cancelEdit();
@@ -330,6 +345,7 @@ public abstract class GeneralInfoSection extends PDESection {
 		super.cancelEdit();
 	}
 
+	@Override
 	public void dispose() {
 		removeListeners();
 		super.dispose();
@@ -347,6 +363,7 @@ public abstract class GeneralInfoSection extends PDESection {
 			((IModelChangeProvider) model).addModelChangedListener(this);
 	}
 
+	@Override
 	public boolean canPaste(Clipboard clipboard) {
 		Display d = getSection().getDisplay();
 		return (d.getFocusControl() instanceof Text);
@@ -368,6 +385,7 @@ public abstract class GeneralInfoSection extends PDESection {
 		fSingleton.setLayoutData(td);
 		fSingleton.setEnabled(isEditable());
 		fSingleton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				IManifestHeader header = getSingletonHeader();
 				if (header instanceof BundleSymbolicNameHeader)

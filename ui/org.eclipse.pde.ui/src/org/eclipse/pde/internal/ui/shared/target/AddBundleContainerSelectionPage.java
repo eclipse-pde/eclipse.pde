@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -87,6 +87,7 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.WizardSelectionPage#dispose()
 	 */
+	@Override
 	public void dispose() {
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 		super.dispose();
@@ -95,6 +96,7 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		Composite comp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH, 0, 0);
 
@@ -109,6 +111,7 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 		wizardSelectionViewer.setContentProvider(new ArrayContentProvider());
 		wizardSelectionViewer.setLabelProvider(new LabelProvider() {
 
+			@Override
 			public String getText(Object element) {
 				if (element instanceof AbstractBundleContainerNode) {
 					return ((AbstractBundleContainerNode) element).getName();
@@ -116,6 +119,7 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 				return super.getText(element);
 			}
 
+			@Override
 			public Image getImage(Object element) {
 				if (element instanceof AbstractBundleContainerNode) {
 					return ((AbstractBundleContainerNode) element).getImage();
@@ -124,6 +128,7 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 			}
 		});
 		wizardSelectionViewer.addDoubleClickListener(new IDoubleClickListener() {
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				IStructuredSelection selection = (IStructuredSelection) event.getSelection();
 				if (!selection.isEmpty()) {
@@ -133,6 +138,7 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 			}
 		});
 		wizardSelectionViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				IStructuredSelection selection = (IStructuredSelection) event.getSelection();
 				if (!selection.isEmpty()) {
@@ -175,10 +181,12 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 		List<AbstractBundleContainerNode> standardChoices = new ArrayList<AbstractBundleContainerNode>(4);
 		// Directory Containers
 		standardChoices.add(new AbstractBundleContainerNode(Messages.AddBundleContainerSelectionPage_3, Messages.AddBundleContainerSelectionPage_4, PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER)) {
+			@Override
 			public IWizard createWizard() {
 				Wizard wizard = new Wizard() {
 					private EditDirectoryContainerPage fPage1;
 
+					@Override
 					public void addPages() {
 						IDialogSettings settings = PDEPlugin.getDefault().getDialogSettings().getSection(SETTINGS_SECTION);
 						if (settings == null) {
@@ -191,6 +199,7 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 						setNeedsProgressMonitor(true);
 					}
 
+					@Override
 					public boolean performFinish() {
 						ITargetLocation container = fPage1.getBundleContainer();
 						if (container != null) {
@@ -214,10 +223,12 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 		});
 		// Installation/Profile Containers
 		standardChoices.add(new AbstractBundleContainerNode(Messages.AddBundleContainerSelectionPage_6, Messages.AddBundleContainerSelectionPage_7, PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_PRODUCT_DEFINITION)) {
+			@Override
 			public IWizard createWizard() {
 				Wizard wizard = new Wizard() {
 					private EditProfileContainerPage fPage1;
 
+					@Override
 					public void addPages() {
 						IDialogSettings settings = PDEPlugin.getDefault().getDialogSettings().getSection(SETTINGS_SECTION);
 						if (settings == null) {
@@ -231,6 +242,7 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 						setNeedsProgressMonitor(true);
 					}
 
+					@Override
 					public boolean performFinish() {
 						ITargetLocation container = fPage1.getBundleContainer();
 						if (container != null) {
@@ -254,8 +266,10 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 		});
 		// Feature Containers
 		standardChoices.add(new AbstractBundleContainerNode(Messages.AddBundleContainerSelectionPage_9, Messages.AddBundleContainerSelectionPage_10, PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_FEATURE_OBJ)) {
+			@Override
 			public IWizard createWizard() {
 				Wizard wizard = new Wizard() {
+					@Override
 					public void addPages() {
 						IDialogSettings settings = PDEPlugin.getDefault().getDialogSettings().getSection(SETTINGS_SECTION);
 						if (settings == null) {
@@ -265,6 +279,7 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 						addPage(new AddFeatureContainersPage());
 					}
 
+					@Override
 					public boolean performFinish() {
 						try {
 							ITargetLocation[] containers = ((AddFeatureContainersPage) getPages()[0]).getBundleContainers();
@@ -314,10 +329,12 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 					final String pluginId = element.getPluginId();
 					final String contributionId = element.getID();
 					IPluginContribution pc = new IPluginContribution() {
+						@Override
 						public String getLocalId() {
 							return contributionId;
 						}
 
+						@Override
 						public String getPluginId() {
 							return pluginId;
 						}
@@ -351,10 +368,12 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 					final String pluginId = element.getPluginId();
 					final String contributionId = element.getID();
 					IPluginContribution pc = new IPluginContribution() {
+						@Override
 						public String getLocalId() {
 							return contributionId;
 						}
 
+						@Override
 						public String getPluginId() {
 							return pluginId;
 						}
@@ -397,10 +416,12 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 	 */
 	private AbstractBundleContainerNode createTargetLocationProvisionerNode(final WizardElement element) {
 		return new AbstractBundleContainerNode(element.getLabel(), element.getDescription(), element.getImage()) {
+			@Override
 			public IWizard createWizard() {
 				Wizard wizard = new Wizard() {
 					private ITargetLocationWizard fWizard;
 
+					@Override
 					public void addPages() {
 						try {
 							fWizard = (ITargetLocationWizard) element.createExecutableExtension();
@@ -416,6 +437,7 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 							addPage(pages[i]);
 					}
 
+					@Override
 					public boolean performFinish() {
 						if (fWizard != null) {
 							if (!fWizard.performFinish()) {
@@ -451,10 +473,12 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 	 */
 	private AbstractBundleContainerNode createDeprecatedExtensionNode(final WizardElement element) {
 		return new AbstractBundleContainerNode(element.getLabel(), element.getDescription(), element.getImage()) {
+			@Override
 			public IWizard createWizard() {
 				Wizard wizard = new Wizard() {
 					private IProvisionerWizard fWizard;
 
+					@Override
 					public void addPages() {
 						try {
 							fWizard = (IProvisionerWizard) element.createExecutableExtension();
@@ -469,6 +493,7 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 							addPage(pages[i]);
 					}
 
+					@Override
 					public boolean performFinish() {
 						if (fWizard != null) {
 							if (!fWizard.performFinish()) {
@@ -526,6 +551,7 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 
 		public abstract IWizard createWizard();
 
+		@Override
 		public void dispose() {
 			if (fWizard != null) {
 				fWizard.dispose();
@@ -533,10 +559,12 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 			}
 		}
 
+		@Override
 		public Point getExtent() {
 			return new Point(-1, -1);
 		}
 
+		@Override
 		public IWizard getWizard() {
 			if (fWizard == null) {
 				fWizard = createWizard();
@@ -544,6 +572,7 @@ public class AddBundleContainerSelectionPage extends WizardSelectionPage {
 			return fWizard;
 		}
 
+		@Override
 		public boolean isContentCreated() {
 			return fWizard != null;
 		}

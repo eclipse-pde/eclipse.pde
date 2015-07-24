@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -39,6 +39,7 @@ public class SchemaElementDetails extends AbstractSchemaDetails {
 		super(section, true, true);
 	}
 
+	@Override
 	public void createDetails(Composite parent) {
 		FormToolkit toolkit = getManagedForm().getToolkit();
 		Color foreground = toolkit.getColors().getColor(IFormColors.TITLE);
@@ -62,6 +63,7 @@ public class SchemaElementDetails extends AbstractSchemaDetails {
 		setText(PDEUIMessages.SchemaElementDetails_title);
 	}
 
+	@Override
 	public void updateFields(ISchemaObject object) {
 		if (object instanceof SchemaElementReference)
 			object = ((SchemaElementReference) object).getReferencedObject();
@@ -90,8 +92,10 @@ public class SchemaElementDetails extends AbstractSchemaDetails {
 		fTransFalse.setEnabled(editable && isTranslatable);
 	}
 
+	@Override
 	public void hookListeners() {
 		fName.setFormEntryListener(new FormEntryAdapter(this) {
+			@Override
 			public void textValueChanged(FormEntry entry) {
 				if (blockListeners())
 					return;
@@ -117,6 +121,7 @@ public class SchemaElementDetails extends AbstractSchemaDetails {
 			}
 		});
 		fDepTrue.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (blockListeners())
 					return;
@@ -124,6 +129,7 @@ public class SchemaElementDetails extends AbstractSchemaDetails {
 			}
 		});
 		fTransTrue.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (blockListeners())
 					return;
@@ -132,6 +138,7 @@ public class SchemaElementDetails extends AbstractSchemaDetails {
 		});
 	}
 
+	@Override
 	public void modelChanged(IModelChangedEvent event) {
 		Object[] changedObjs = event.getChangedObjects();
 		if (event.getChangeType() == IModelChangedEvent.INSERT && changedObjs.length > 0) {
@@ -145,6 +152,7 @@ public class SchemaElementDetails extends AbstractSchemaDetails {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#commit(boolean)
 	 */
+	@Override
 	public void commit(boolean onSave) {
 		super.commit(onSave);
 		// Only required for form entries

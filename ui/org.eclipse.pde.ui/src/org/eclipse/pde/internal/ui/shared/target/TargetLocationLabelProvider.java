@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 IBM Corporation and others.
+ * Copyright (c) 2011, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,6 +28,7 @@ public class TargetLocationLabelProvider extends StyledBundleLabelProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.StyledCellLabelProvider#update(org.eclipse.jface.viewers.ViewerCell)
 	 */
+	@Override
 	public void update(ViewerCell cell) {
 		Object element = cell.getElement();
 		cell.setText(getText(element));
@@ -37,6 +38,7 @@ public class TargetLocationLabelProvider extends StyledBundleLabelProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.shared.target.StyledBundleLabelProvider#getImage(java.lang.Object)
 	 */
+	@Override
 	public Image getImage(Object element) {
 		ILabelProvider provider = (ILabelProvider) Platform.getAdapterManager().getAdapter(element, ILabelProvider.class);
 		if (provider != null) {
@@ -51,6 +53,7 @@ public class TargetLocationLabelProvider extends StyledBundleLabelProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.shared.target.StyledBundleLabelProvider#getText(java.lang.Object)
 	 */
+	@Override
 	public String getText(Object element) {
 		ILabelProvider provider = (ILabelProvider) Platform.getAdapterManager().getAdapter(element, ILabelProvider.class);
 		if (provider != null) {

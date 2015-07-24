@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2011 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -29,10 +29,12 @@ public abstract class SharedPartWithButtons extends SharedPart {
 	protected Composite fButtonContainer;
 
 	private class SelectionHandler implements SelectionListener {
+		@Override
 		public void widgetSelected(SelectionEvent e) {
 			buttonSelected(e);
 		}
 
+		@Override
 		public void widgetDefaultSelected(SelectionEvent e) {
 			buttonSelected(e);
 		}
@@ -72,6 +74,7 @@ public abstract class SharedPartWithButtons extends SharedPart {
 	/*
 	 * @see SharedPart#createControl(Composite, FormWidgetFactory)
 	 */
+	@Override
 	public void createControl(Composite parent, int style, int span, FormToolkit toolkit) {
 		createMainLabel(parent, span, toolkit);
 		createMainControl(parent, style, span - 1, toolkit);
@@ -126,6 +129,7 @@ public abstract class SharedPartWithButtons extends SharedPart {
 		return button;
 	}
 
+	@Override
 	protected void updateEnabledState() {
 		for (int i = 0; i < fButtons.length; i++) {
 			fButtons[i].setEnabled(isEnabled());

@@ -1,5 +1,5 @@
 /******************************************************************************* 
-* Copyright (c) 2009, 2013 EclipseSource and others. All rights reserved. This
+* Copyright (c) 2009, 2015 EclipseSource and others. All rights reserved. This
 * program and the accompanying materials are made available under the terms of
 * the Eclipse Public License v1.0 which accompanies this distribution, and is
 * available at http://www.eclipse.org/legal/epl-v10.html
@@ -24,6 +24,7 @@ public class CategoryUndoManager extends ModelUndoManager {
 		setUndoLevelLimit(30);
 	}
 
+	@Override
 	protected String getPageId(Object obj) {
 		if (obj instanceof ISiteFeature || obj instanceof ISiteBundle || obj instanceof ISiteCategory || obj instanceof ISiteCategoryDefinition) {
 			return IUsPage.PAGE_ID;
@@ -36,6 +37,7 @@ public class CategoryUndoManager extends ModelUndoManager {
 	/*
 	 * @see IModelUndoManager#execute(ModelUndoOperation)
 	 */
+	@Override
 	protected void execute(IModelChangedEvent event, boolean undo) {
 		IModelChangeProvider model = event.getChangeProvider();
 		Object[] elements = event.getChangedObjects();
@@ -138,6 +140,7 @@ public class CategoryUndoManager extends ModelUndoManager {
 		}
 	}
 
+	@Override
 	public void modelChanged(IModelChangedEvent event) {
 		if (event.getChangeType() == IModelChangedEvent.CHANGE) {
 			Object object = event.getChangedObjects()[0];

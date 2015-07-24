@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,10 +26,12 @@ public class AddNewExtensionResolution extends AbstractPDEMarkerResolution {
 		super(type);
 	}
 
+	@Override
 	public String getLabel() {
 		return PDEUIMessages.AddNewExtensionResolution_description;
 	}
 
+	@Override
 	protected void createChange(IBaseModel model) {
 		IEditorPart part = PDEPlugin.getActivePage().getActiveEditor();
 		if (part instanceof ManifestEditor) {
@@ -38,6 +40,7 @@ public class AddNewExtensionResolution extends AbstractPDEMarkerResolution {
 			if (base instanceof IBundlePluginModelBase) {
 				IBundlePluginModelBase pluginModel = (IBundlePluginModelBase) base;
 				NewExtensionWizard wizard = new NewExtensionWizard(pluginModel.getUnderlyingResource().getProject(), pluginModel, editor) {
+					@Override
 					public boolean performFinish() {
 						return super.performFinish();
 					}

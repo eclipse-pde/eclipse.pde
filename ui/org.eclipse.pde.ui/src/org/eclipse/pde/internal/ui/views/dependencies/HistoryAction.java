@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -41,6 +41,7 @@ public class HistoryAction extends Action {
 		 * 
 		 * @see Object#equals(Object)
 		 */
+		@Override
 		public boolean equals(Object obj) {
 			return (obj != null) && getClass().equals(obj.getClass()) && fImage.equals(((ImageImageDescriptor) obj).fImage);
 		}
@@ -50,6 +51,7 @@ public class HistoryAction extends Action {
 		 * 
 		 * @see ImageDescriptor#getImageData()
 		 */
+		@Override
 		public ImageData getImageData() {
 			return fImage.getImageData();
 		}
@@ -59,6 +61,7 @@ public class HistoryAction extends Action {
 		 * 
 		 * @see Object#hashCode()
 		 */
+		@Override
 		public int hashCode() {
 			return fImage.hashCode();
 		}
@@ -94,6 +97,7 @@ public class HistoryAction extends Action {
 	/*
 	 * @see Action#run()
 	 */
+	@Override
 	public void run() {
 		fView.gotoHistoryEntry(fElement);
 	}

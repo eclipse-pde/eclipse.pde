@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2014 IBM Corporation and others.
+ *  Copyright (c) 2005, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -40,6 +40,7 @@ public class SplashLocationSection extends PDESection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
 	 */
+	@Override
 	protected void createClient(Section section, FormToolkit toolkit) {
 
 		// Configure section
@@ -56,10 +57,12 @@ public class SplashLocationSection extends PDESection {
 		IActionBars actionBars = getPage().getPDEEditor().getEditorSite().getActionBars();
 		fPluginEntry = new FormEntry(client, toolkit, PDEUIMessages.SplashSection_plugin, PDEUIMessages.SplashSection_browse, false);
 		fPluginEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
+			@Override
 			public void textValueChanged(FormEntry entry) {
 				getSplashInfo().setLocation(entry.getValue(), false);
 			}
 
+			@Override
 			public void browseButtonSelected(FormEntry entry) {
 				handleBrowse();
 			}
@@ -75,17 +78,20 @@ public class SplashLocationSection extends PDESection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#refresh()
 	 */
+	@Override
 	public void refresh() {
 		ISplashInfo info = getSplashInfo();
 		fPluginEntry.setValue(info.getLocation(), true);
 		super.refresh();
 	}
 
+	@Override
 	public void commit(boolean onSave) {
 		fPluginEntry.commit();
 		super.commit(onSave);
 	}
 
+	@Override
 	public void cancelEdit() {
 		fPluginEntry.cancelEdit();
 		super.cancelEdit();
@@ -120,6 +126,7 @@ public class SplashLocationSection extends PDESection {
 		}
 	}
 
+	@Override
 	public boolean canPaste(Clipboard clipboard) {
 		Display d = getSection().getDisplay();
 		Control c = d.getFocusControl();
@@ -131,6 +138,7 @@ public class SplashLocationSection extends PDESection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#modelChanged(org.eclipse.pde.core.IModelChangedEvent)
 	 */
+	@Override
 	public void modelChanged(IModelChangedEvent e) {
 		// No need to call super, handling world changed event here
 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
@@ -148,6 +156,7 @@ public class SplashLocationSection extends PDESection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
 	 */
+	@Override
 	public void dispose() {
 		IProductModel model = getModel();
 		if (model != null) {

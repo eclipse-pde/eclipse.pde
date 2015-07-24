@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 IBM Corporation and others.
+ * Copyright (c) 2012, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,18 +40,22 @@ public abstract class ConfigurationBlock {
 	
 	protected void addHighlight(final Composite parent, final Label labelControl, final Combo comboBox) {
 		comboBox.addFocusListener(new FocusListener() {
+			@Override
 			public void focusLost(FocusEvent e) {
 				highlight(parent, labelControl, comboBox, HIGHLIGHT_NONE);
 			}
+			@Override
 			public void focusGained(FocusEvent e) {
 				highlight(parent, labelControl, comboBox, HIGHLIGHT_FOCUS);
 			}
 		});
 		
 		MouseTrackAdapter labelComboListener= new MouseTrackAdapter() {
+			@Override
 			public void mouseEnter(MouseEvent e) {
 				highlight(parent, labelControl, comboBox, comboBox.isFocusControl() ? HIGHLIGHT_FOCUS : HIGHLIGHT_MOUSE);
 			}
+			@Override
 			public void mouseExit(MouseEvent e) {
 				if (! comboBox.isFocusControl())
 					highlight(parent, labelControl, comboBox, HIGHLIGHT_NONE);
@@ -61,21 +65,26 @@ public abstract class ConfigurationBlock {
 		labelControl.addMouseTrackListener(labelComboListener);
 		
 		class MouseMoveTrackListener extends MouseTrackAdapter implements MouseMoveListener, MouseListener {
+			@Override
 			public void mouseExit(MouseEvent e) {
 				if (! comboBox.isFocusControl())
 					highlight(parent, labelControl, comboBox, HIGHLIGHT_NONE);
 			}
+			@Override
 			public void mouseMove(MouseEvent e) {
 				int color= comboBox.isFocusControl() ? HIGHLIGHT_FOCUS : isAroundLabel(e) ? HIGHLIGHT_MOUSE : HIGHLIGHT_NONE;
 				highlight(parent, labelControl, comboBox, color);
 			}
+			@Override
 			public void mouseDown(MouseEvent e) {
 				if (isAroundLabel(e))
 					comboBox.setFocus();
 			}
+			@Override
 			public void mouseDoubleClick(MouseEvent e) {
 				// not used
 			}
+			@Override
 			public void mouseUp(MouseEvent e) {
 				// not used
 			}
@@ -94,6 +103,7 @@ public abstract class ConfigurationBlock {
 		parent.addMouseListener(parentListener);
 		
 		MouseAdapter labelClickListener= new MouseAdapter() {
+			@Override
 			public void mouseDown(MouseEvent e) {
 				comboBox.setFocus();
 			}
@@ -107,6 +117,7 @@ public abstract class ConfigurationBlock {
 			
 			private int fColor= color;
 
+			@Override
 			public void paintControl(PaintEvent e) {
 				if (((GridData) labelControl.getLayoutData()).exclude) {
 					parent.removePaintListener(this);

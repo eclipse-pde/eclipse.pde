@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,6 +60,7 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchShortcut#launch(org.eclipse.ui.IEditorPart, java.lang.String)
 	 */
+	@Override
 	public void launch(IEditorPart editor, String mode) {
 		fApplicationName = null;
 		fModel = null;
@@ -70,6 +71,7 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchShortcut#launch(org.eclipse.jface.viewers.ISelection, java.lang.String)
 	 */
+	@Override
 	public void launch(ISelection selection, String mode) {
 		IPluginModelBase model = null;
 		if (selection instanceof IStructuredSelection) {
@@ -122,6 +124,7 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.launcher.AbstractLaunchShortcut#findLaunchConfiguration(java.lang.String)
 	 */
+	@Override
 	protected ILaunchConfiguration findLaunchConfiguration(String mode) {
 		ILaunchConfiguration config = super.findLaunchConfiguration(mode);
 		if (config != null) {
@@ -191,6 +194,7 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 	 * @return <code>true</coded> if the launch configuration is suitable for the application
 	 * or product to launch with, <code>false</code> otherwise.
 	 */
+	@Override
 	protected boolean isGoodMatch(ILaunchConfiguration configuration) {
 		try {
 			if (!configuration.getAttribute(IPDELauncherConstants.USE_PRODUCT, false)) {
@@ -221,6 +225,7 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 	 * 
 	 * @since 3.3
 	 */
+	@Override
 	protected void initializeConfiguration(ILaunchConfigurationWorkingCopy wc) {
 		if (TargetPlatformHelper.usesNewApplicationModel())
 			wc.setAttribute(IPDEConstants.LAUNCHER_PDE_VERSION, "3.3"); //$NON-NLS-1$
@@ -272,6 +277,7 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 	 * 
 	 * @return the Eclipse application configuration type ID
 	 */
+	@Override
 	protected String getLaunchConfigurationTypeName() {
 		return CONFIGURATION_TYPE;
 	}
@@ -279,6 +285,7 @@ public class EclipseLaunchShortcut extends AbstractLaunchShortcut {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.launcher.AbstractLaunchShortcut#getName(org.eclipse.debug.core.ILaunchConfigurationType)
 	 */
+	@Override
 	protected String getName(ILaunchConfigurationType type) {
 		// if launching default product, use default naming convention
 		if (fApplicationName == null)

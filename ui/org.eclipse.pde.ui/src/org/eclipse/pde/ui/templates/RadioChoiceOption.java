@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2008 IBM Corporation and others.
+ *  Copyright (c) 2006, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -59,6 +59,7 @@ public class RadioChoiceOption extends AbstractChoiceOption {
 		return button;
 	}
 
+	@Override
 	public void createControl(Composite parent, int span) {
 
 		fLabel = createLabel(parent, 1);
@@ -75,6 +76,7 @@ public class RadioChoiceOption extends AbstractChoiceOption {
 		fButtons = new Button[fChoices.length];
 
 		SelectionListener listener = new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				Button b = (Button) e.widget;
 				if (isBlocked())
@@ -96,12 +98,14 @@ public class RadioChoiceOption extends AbstractChoiceOption {
 			selectChoice(getChoice());
 	}
 
+	@Override
 	protected void setOptionValue(Object value) {
 		if (fButtons != null && value != null) {
 			selectChoice(value.toString());
 		}
 	}
 
+	@Override
 	protected void setOptionEnabled(boolean enabled) {
 		if (fLabel != null) {
 			fLabel.setEnabled(enabled);
@@ -111,6 +115,7 @@ public class RadioChoiceOption extends AbstractChoiceOption {
 		}
 	}
 
+	@Override
 	protected void selectOptionChoice(String choice) {
 		for (int i = 0; i < fButtons.length; i++) {
 			Button button = fButtons[i];

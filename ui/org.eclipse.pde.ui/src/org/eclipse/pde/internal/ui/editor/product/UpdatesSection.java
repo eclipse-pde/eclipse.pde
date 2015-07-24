@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Rapicorp Corporation and others.
+ * Copyright (c) 2014, 2015 Rapicorp Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,6 +49,7 @@ public class UpdatesSection extends TableSection {
 			setTitle(PDEUIMessages.UpdatesSection_RepositoryDialogTitle);
 		}
 
+		@Override
 		protected Control createDialogArea(Composite parent) {
 			Composite comp = (Composite) super.createDialogArea(parent);
 			((GridLayout) comp.getLayout()).numColumns = 2;
@@ -61,6 +62,7 @@ public class UpdatesSection extends TableSection {
 			target.setTransfer(new Transfer[] {URLTransfer.getInstance(), FileTransfer.getInstance()});
 			target.addDropListener(new TextURLDropAdapter(fLocation, true));
 			fLocation.addModifyListener(new ModifyListener() {
+				@Override
 				public void modifyText(ModifyEvent e) {
 					validate();
 				}
@@ -96,6 +98,7 @@ public class UpdatesSection extends TableSection {
 			updateStatus(Status.OK_STATUS);
 		}
 
+		@Override
 		protected void okPressed() {
 			if (fEdit != null) {
 				// Remove the repository and add a new one
@@ -113,6 +116,7 @@ public class UpdatesSection extends TableSection {
 			super.okPressed();
 		}
 
+		@Override
 		protected Control createHelpControl(Composite parent) {
 			return parent;
 		}
@@ -135,6 +139,7 @@ public class UpdatesSection extends TableSection {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 		 */
+		@Override
 		public Object[] getElements(Object inputElement) {
 			if (inputElement instanceof IProduct) {
 				return ((IProduct) inputElement).getRepositories();
@@ -145,24 +150,28 @@ public class UpdatesSection extends TableSection {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 		 */
+		@Override
 		public void dispose() {
 		}
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 		 */
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 
 	}
 
 	private class LabelProvider extends PDELabelProvider {
+		@Override
 		public Image getColumnImage(Object obj, int index) {
 			if (index == 0)
 				return get(PDEPluginImages.DESC_REPOSITORY_OBJ);
 			return null;
 		}
 
+		@Override
 		public String getColumnText(Object obj, int index) {
 			IRepositoryInfo repo = (IRepositoryInfo) obj;
 			switch (index) {
@@ -231,9 +240,11 @@ public class UpdatesSection extends TableSection {
 
 		table.addControlListener(new ControlListener() {
 
+			@Override
 			public void controlMoved(ControlEvent e) {
 			}
 
+			@Override
 			public void controlResized(ControlEvent e) {
 				int size = table.getSize().x;
 				locationColumn.setWidth(size / 6 * 5);
@@ -397,6 +408,7 @@ public class UpdatesSection extends TableSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.core.IPluginModelListener#modelsChanged(org.eclipse.pde.internal.core.PluginModelDelta)
 	 */
+	@Override
 	public void modelChanged(IModelChangedEvent e) {
 		// No need to call super, handling world changed event here
 		fRepositoryTable.setInput(getProduct());
@@ -430,6 +442,7 @@ public class UpdatesSection extends TableSection {
 		fEnabledColumnEditor.minimumWidth = 50;
 
 		table.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				showControls();
 			}
@@ -456,6 +469,7 @@ public class UpdatesSection extends TableSection {
 			combo.setText(item.getText(1));
 			combo.pack();
 			combo.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					item.setText(1, combo.getText());
 					repo.setEnabled(Boolean.valueOf(combo.getText()).booleanValue());

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2014 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -66,6 +66,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		fContainer = container;
 	}
 
+	@Override
 	public void createControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -84,6 +85,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 			gd.widthHint = 275;
 			fPluginIdText.setLayoutData(gd);
 			fPluginIdText.addModifyListener(new ModifyListener() {
+				@Override
 				public void modifyText(ModifyEvent e) {
 					validatePage();
 				}
@@ -96,6 +98,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 			fPluginBrowseButton.setText(PDEUIMessages.BaseExtensionPointMainPage_pluginBrowse);
 			fPluginBrowseButton.setToolTipText(PDEUIMessages.BaseExtensionPointMainPage_pluginId_tooltip);
 			fPluginBrowseButton.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					handlePluginBrowse();
 				}
@@ -109,6 +112,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		gd.horizontalSpan = 2;
 		fIdText.setLayoutData(gd);
 		fIdText.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				// setting the text will trigger validation
 				// do not implicitly validate here
@@ -122,6 +126,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		gd.horizontalSpan = 2;
 		fNameText.setLayoutData(gd);
 		fNameText.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				validatePage();
 			}
@@ -135,6 +140,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 			gd.grabExcessHorizontalSpace = true;
 			fSchemaLocationText.setLayoutData(gd);
 			fSchemaLocationText.addModifyListener(new ModifyListener() {
+				@Override
 				public void modifyText(ModifyEvent e) {
 					validatePage();
 				}
@@ -146,6 +152,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 			fFindLocationButton.setText(PDEUIMessages.BaseExtensionPointMainPage_findBrowse);
 			fFindLocationButton.setToolTipText(PDEUIMessages.BaseExtensionPointMainPage_schemaLocation_tooltip);
 			fFindLocationButton.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					handleSchemaLocation();
 				}
@@ -159,6 +166,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		gd.horizontalSpan = 2;
 		fSchemaText.setLayoutData(gd);
 		fSchemaText.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				validatePage();
 			}
@@ -280,10 +288,12 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		final String schema = fSchemaText.getText();
 		final boolean shared = fSharedSchemaButton != null ? fSharedSchemaButton.getSelection() : false;
 		IRunnableWithProgress operation = new WorkspaceModifyOperation() {
+			@Override
 			public void execute(final IProgressMonitor monitor) {
 				try {
 					Display.getDefault().syncExec(new Runnable() {
 
+						@Override
 						public void run() {
 							String schemaName = schema;
 							if (!schema.endsWith(".exsd")) //$NON-NLS-1$
@@ -354,6 +364,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		final IWorkbenchWindow ww = PDEPlugin.getActiveWorkbenchWindow();
 		Display d = ww.getShell().getDisplay();
 		d.asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				try {
 					String editorId = IPDEUIConstants.SCHEMA_EDITOR_ID;
@@ -437,6 +448,7 @@ public abstract class BaseExtensionPointMainPage extends WizardPage {
 		dialog.setDoubleClickSelects(false);
 		dialog.setAllowMultiple(false);
 		dialog.addFilter(new ViewerFilter() {
+			@Override
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
 				if (element instanceof IFile)
 					return false;

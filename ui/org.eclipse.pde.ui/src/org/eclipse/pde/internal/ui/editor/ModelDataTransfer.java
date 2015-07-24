@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -43,6 +43,7 @@ public class ModelDataTransfer extends ByteArrayTransfer {
 	/* (non-Javadoc)
 	 * Method declared on Transfer.
 	 */
+	@Override
 	protected int[] getTypeIds() {
 		return new int[] {TYPEID};
 	}
@@ -52,6 +53,7 @@ public class ModelDataTransfer extends ByteArrayTransfer {
 	 *
 	 * @return the list of type names
 	 */
+	@Override
 	protected String[] getTypeNames() {
 		return new String[] {TYPE_NAME};
 	}
@@ -59,6 +61,7 @@ public class ModelDataTransfer extends ByteArrayTransfer {
 	/* (non-Javadoc)
 		* Method declared on Transfer.
 		*/
+	@Override
 	protected void javaToNative(Object data, TransferData transferData) {
 		if (!(data instanceof Object[])) {
 			return;
@@ -93,6 +96,7 @@ public class ModelDataTransfer extends ByteArrayTransfer {
 	/* (non-Javadoc)
 	 * Method declared on Transfer.
 	 */
+	@Override
 	protected Object nativeToJava(TransferData transferData) {
 		byte[] bytes = (byte[]) super.nativeToJava(transferData);
 		if (bytes == null)

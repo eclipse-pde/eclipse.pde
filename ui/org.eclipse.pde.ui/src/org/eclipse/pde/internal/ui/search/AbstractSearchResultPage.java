@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2008 IBM Corporation and others.
+ *  Copyright (c) 2005, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -24,6 +24,7 @@ public abstract class AbstractSearchResultPage extends AbstractTextSearchViewPag
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 		 */
+		@Override
 		public Object[] getElements(Object inputElement) {
 			if (inputElement instanceof AbstractTextSearchResult)
 				return ((AbstractTextSearchResult) inputElement).getElements();
@@ -33,12 +34,14 @@ public abstract class AbstractSearchResultPage extends AbstractTextSearchViewPag
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 		 */
+		@Override
 		public void dispose() {
 		}
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 		 */
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			fTableViewer = (TableViewer) viewer;
 			fSearchResult = (AbstractTextSearchResult) newInput;
@@ -71,6 +74,7 @@ public abstract class AbstractSearchResultPage extends AbstractTextSearchViewPag
 	/* (non-Javadoc)
 	 * @see org.eclipse.search.ui.text.AbstractTextSearchViewPage#elementsChanged(java.lang.Object[])
 	 */
+	@Override
 	protected void elementsChanged(Object[] objects) {
 		if (fContentProvider != null && fContentProvider.fSearchResult != null)
 			fContentProvider.elementsChanged(objects);
@@ -79,6 +83,7 @@ public abstract class AbstractSearchResultPage extends AbstractTextSearchViewPag
 	/* (non-Javadoc)
 	 * @see org.eclipse.search.ui.text.AbstractTextSearchViewPage#clear()
 	 */
+	@Override
 	protected void clear() {
 		if (fContentProvider != null)
 			fContentProvider.clear();
@@ -87,6 +92,7 @@ public abstract class AbstractSearchResultPage extends AbstractTextSearchViewPag
 	/* (non-Javadoc)
 	 * @see org.eclipse.search.ui.text.AbstractTextSearchViewPage#configureTreeViewer(org.eclipse.jface.viewers.TreeViewer)
 	 */
+	@Override
 	protected void configureTreeViewer(TreeViewer viewer) {
 		throw new IllegalStateException("Doesn't support tree mode."); //$NON-NLS-1$
 	}
@@ -94,6 +100,7 @@ public abstract class AbstractSearchResultPage extends AbstractTextSearchViewPag
 	/* (non-Javadoc)
 	 * @see org.eclipse.search.ui.text.AbstractTextSearchViewPage#configureTableViewer(org.eclipse.jface.viewers.TableViewer)
 	 */
+	@Override
 	protected void configureTableViewer(TableViewer viewer) {
 		viewer.setComparator(createViewerComparator());
 		viewer.setLabelProvider(createLabelProvider());

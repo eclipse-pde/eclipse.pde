@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -28,21 +28,25 @@ public abstract class TreeSection extends StructuredViewerSection {
 			super(buttonLabels);
 		}
 
+		@Override
 		public void selectionChanged(IStructuredSelection selection) {
 			getManagedForm().fireSelectionChanged(TreeSection.this, selection);
 			TreeSection.this.selectionChanged(selection);
 		}
 
+		@Override
 		public void handleDoubleClick(IStructuredSelection selection) {
 			TreeSection.this.handleDoubleClick(selection);
 		}
 
+		@Override
 		public void buttonSelected(Button button, int index) {
 			TreeSection.this.buttonSelected(index);
 			if (fHandleDefaultButton)
 				button.getShell().setDefaultButton(null);
 		}
 
+		@Override
 		protected void createButtons(Composite parent, FormToolkit toolkit) {
 			super.createButtons(parent, toolkit);
 			enableButtons();
@@ -52,6 +56,7 @@ public abstract class TreeSection extends StructuredViewerSection {
 			}
 		}
 
+		@Override
 		protected TreeViewer createTreeViewer(Composite parent, int style) {
 			return TreeSection.this.createTreeViewer(parent, style);
 		}
@@ -66,6 +71,7 @@ public abstract class TreeSection extends StructuredViewerSection {
 		super(formPage, parent, style, buttonLabels);
 	}
 
+	@Override
 	protected StructuredViewerPart createViewerPart(String[] buttonLabels) {
 		return new PartAdapter(buttonLabels);
 	}

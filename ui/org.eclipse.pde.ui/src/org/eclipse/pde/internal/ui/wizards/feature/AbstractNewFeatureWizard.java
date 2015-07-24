@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2011 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -40,14 +40,17 @@ public abstract class AbstractNewFeatureWizard extends NewWizard implements IExe
 			super();
 		}
 
+		@Override
 		public String getProjectName() {
 			return fSpecPage.getProjectName();
 		}
 
+		@Override
 		public IProject getProject() {
 			return fSpecPage.getProjectHandle();
 		}
 
+		@Override
 		public IPath getLocationPath() {
 			return fSpecPage.getLocationPath();
 		}
@@ -79,6 +82,7 @@ public abstract class AbstractNewFeatureWizard extends NewWizard implements IExe
 		setNeedsProgressMonitor(true);
 	}
 
+	@Override
 	public void addPages() {
 		fSpecPage = createFirstPage();
 		String pname = getDefaultValue(DEF_PROJECT_NAME);
@@ -94,6 +98,7 @@ public abstract class AbstractNewFeatureWizard extends NewWizard implements IExe
 
 	protected abstract AbstractFeatureSpecPage createFirstPage();
 
+	@Override
 	public boolean canFinish() {
 		IWizardPage page = getContainer().getCurrentPage();
 		return ((page == fSpecPage && page.isPageComplete()) || (page == fSecondPage && page.isPageComplete()));
@@ -102,6 +107,7 @@ public abstract class AbstractNewFeatureWizard extends NewWizard implements IExe
 	// get creation operation
 	protected abstract IRunnableWithProgress getOperation();
 
+	@Override
 	public boolean performFinish() {
 		try {
 			IDialogSettings settings = getDialogSettings();
@@ -120,6 +126,7 @@ public abstract class AbstractNewFeatureWizard extends NewWizard implements IExe
 		return true;
 	}
 
+	@Override
 	public void setInitializationData(IConfigurationElement config, String property, Object data) throws CoreException {
 		this.fConfig = config;
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -64,6 +64,7 @@ public class PluginSelectionDialog extends FilteredItemsSelectionDialog {
 
 	private class PluginSearchComparator implements Comparator<Object> {
 
+		@Override
 		public int compare(Object o1, Object o2) {
 			int id1 = getId(o1);
 			int id2 = getId(o2);
@@ -111,11 +112,13 @@ public class PluginSelectionDialog extends FilteredItemsSelectionDialog {
 	/*
 	 * @see org.eclipse.jface.window.Window#configureShell(Shell)
 	 */
+	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(newShell, IHelpContextIds.PLUGIN_SELECTION);
 	}
 
+	@Override
 	public boolean close() {
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 		return super.close();
@@ -207,14 +210,17 @@ public class PluginSelectionDialog extends FilteredItemsSelectionDialog {
 		return null;
 	}
 
+	@Override
 	protected Control createExtendedContentArea(Composite parent) {
 		return null;
 	}
 
+	@Override
 	protected ItemsFilter createFilter() {
 		return new PluginSearchItemsFilter();
 	}
 
+	@Override
 	protected void fillContentProvider(AbstractContentProvider contentProvider, ItemsFilter itemsFilter, IProgressMonitor progressMonitor) throws CoreException {
 		for (int i = 0; i < fModels.length; i++) {
 			contentProvider.add(fModels[i], itemsFilter);
@@ -223,6 +229,7 @@ public class PluginSelectionDialog extends FilteredItemsSelectionDialog {
 		progressMonitor.done();
 	}
 
+	@Override
 	protected IDialogSettings getDialogSettings() {
 		IDialogSettings settings = PDEPlugin.getDefault().getDialogSettings().getSection(DIALOG_SETTINGS);
 
@@ -233,6 +240,7 @@ public class PluginSelectionDialog extends FilteredItemsSelectionDialog {
 		return settings;
 	}
 
+	@Override
 	public String getElementName(Object item) {
 		if (item instanceof IPluginModelBase) {
 			IPluginModelBase model = (IPluginModelBase) item;
@@ -241,6 +249,7 @@ public class PluginSelectionDialog extends FilteredItemsSelectionDialog {
 		return null;
 	}
 
+	@Override
 	protected Comparator<?> getItemsComparator() {
 		return new PluginSearchComparator();
 	}
@@ -248,6 +257,7 @@ public class PluginSelectionDialog extends FilteredItemsSelectionDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#validateItem(java.lang.Object)
 	 */
+	@Override
 	protected IStatus validateItem(Object item) {
 		return new Status(IStatus.OK, IPDEUIConstants.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
 	}

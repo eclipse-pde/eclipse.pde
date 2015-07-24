@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -90,6 +90,7 @@ public class StringOption extends TemplateOption {
 	 * @param value
 	 *            the new option value
 	 */
+	@Override
 	public void setValue(Object value) {
 		super.setValue(value);
 		if (text != null) {
@@ -108,6 +109,7 @@ public class StringOption extends TemplateOption {
 	 * @param span
 	 *            the number of columns that the widget should span
 	 */
+	@Override
 	public void createControl(Composite parent, int span) {
 		labelControl = createLabel(parent, 1);
 		labelControl.setEnabled(isEnabled());
@@ -119,6 +121,7 @@ public class StringOption extends TemplateOption {
 		text.setLayoutData(gd);
 		text.setEnabled(isEnabled());
 		text.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				if (ignoreListener)
 					return;
@@ -133,6 +136,7 @@ public class StringOption extends TemplateOption {
 	 * 
 	 * @return true if there is no text in the text field.
 	 */
+	@Override
 	public boolean isEmpty() {
 		return getValue() == null || getValue().toString().length() == 0;
 	}
@@ -143,6 +147,7 @@ public class StringOption extends TemplateOption {
 	 * 
 	 * @param enabled
 	 */
+	@Override
 	public void setEnabled(boolean enabled) {
 		super.setEnabled(enabled);
 		if (labelControl != null) {

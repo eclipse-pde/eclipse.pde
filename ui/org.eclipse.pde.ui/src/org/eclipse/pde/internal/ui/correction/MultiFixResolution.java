@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2009, 2013 IBM Corporation and others.
+ *  Copyright (c) 2009, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -57,18 +57,22 @@ public class MultiFixResolution extends WorkbenchMarkerResolution {
 		return relatedMarkers.toArray(new IMarker[relatedMarkers.size()]);
 	}
 
+	@Override
 	public String getDescription() {
 		return getLabel();
 	}
 
+	@Override
 	public Image getImage() {
 		return PDEPluginImages.DESC_ADD_ATT.createImage();
 	}
 
+	@Override
 	public String getLabel() {
 		return fLabel;
 	}
 
+	@Override
 	public void run(IMarker marker) {
 		IResource resource = marker.getResource();
 		IMarker[] markers = new IMarker[0];

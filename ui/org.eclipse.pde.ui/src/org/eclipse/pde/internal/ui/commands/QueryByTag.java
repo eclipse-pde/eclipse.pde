@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2008 IBM Corporation and others.
+ *  Copyright (c) 2006, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -27,6 +27,7 @@ public class QueryByTag extends QueryControl {
 		super(csp, comp);
 	}
 
+	@Override
 	protected void createGroupContents(Group parent) {
 		fTagManager = fCSP.getTagManager();
 
@@ -38,6 +39,7 @@ public class QueryByTag extends QueryControl {
 		fCSP.getTagManager().addListener(fTagManagerListener);
 
 		parent.addDisposeListener(new DisposeListener() {
+			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				if (fTagManagerListener != null) {
 					fTagManager.removeListener(fTagManagerListener);
@@ -46,6 +48,7 @@ public class QueryByTag extends QueryControl {
 		});
 	}
 
+	@Override
 	protected String getName() {
 		return "Query Commands by Tags"; //$NON-NLS-1$
 	}
@@ -59,16 +62,19 @@ public class QueryByTag extends QueryControl {
 	}
 
 	private class TagManagerListener implements TagManager.Listener {
+		@Override
 		public void tagManagerChanged() {
 			refreshTags();
 		}
 	}
 
+	@Override
 	protected Command[] getCommands() {
 		String tagText = fTagsCombo.getText();
 		return fCSP.getTagManager().getCommands(tagText);
 	}
 
+	@Override
 	protected void enable(boolean enable) {
 		fGroup.setEnabled(enable);
 		fTagsCombo.setEnabled(enable);

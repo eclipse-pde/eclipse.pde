@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,6 +27,7 @@ public class ListUtil {
 
 	private static final Comparator<String> stringComparator = new Comparator<String>() {
 
+		@Override
 		public int compare(String arg0, String arg1) {
 			return arg0.compareToIgnoreCase(arg1);
 		}
@@ -63,6 +64,7 @@ public class ListUtil {
 
 		private static IPropertyChangeListener listener = new IPropertyChangeListener() {
 
+			@Override
 			public void propertyChange(PropertyChangeEvent event) {
 				if (IPreferenceConstants.PROP_SHOW_OBJECTS.equals(event.getProperty())) {
 					cachedIsFullNameModelEnabled = IPreferenceConstants.VALUE_USE_NAMES.equals(event.getNewValue());
@@ -112,10 +114,12 @@ public class ListUtil {
 	public static final ViewerComparator FEATURE_COMPARATOR = new FeatureComparator();
 
 	static class TableLabelProvider extends ElementLabelProvider implements ITableLabelProvider {
+		@Override
 		public String getColumnText(Object o, int index) {
 			return getText(o);
 		}
 
+		@Override
 		public Image getColumnImage(Object o, int index) {
 			return getImage(o);
 		}

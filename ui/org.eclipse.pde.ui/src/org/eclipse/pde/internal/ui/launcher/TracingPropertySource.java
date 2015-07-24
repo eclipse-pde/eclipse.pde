@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -65,6 +65,7 @@ public class TracingPropertySource {
 			super(key, label);
 		}
 
+		@Override
 		public void create(Composite parent, boolean enabled) {
 			checkbox = fBlock.getToolkit().createButton(parent, getLabel(), SWT.CHECK);
 			TableWrapData td = new TableWrapData();
@@ -78,9 +79,11 @@ public class TracingPropertySource {
 			checkbox.setSelection(value.intValue() == 1);
 		}
 
+		@Override
 		public void initialize() {
 			update();
 			checkbox.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					int value = checkbox.getSelection() ? 1 : 0;
 					valueModified(new Integer(value));
@@ -96,6 +99,7 @@ public class TracingPropertySource {
 			super(key, label);
 		}
 
+		@Override
 		public void create(Composite parent, boolean enabled) {
 			Label label = fBlock.getToolkit().createLabel(parent, getLabel());
 			label.setEnabled(enabled);
@@ -114,9 +118,11 @@ public class TracingPropertySource {
 			text.setText(value);
 		}
 
+		@Override
 		public void initialize() {
 			update();
 			text.addModifyListener(new ModifyListener() {
+				@Override
 				public void modifyText(ModifyEvent e) {
 					valueModified(text.getText());
 				}
@@ -144,6 +150,7 @@ public class TracingPropertySource {
 			keyArray[i++] = key;
 		}
 		Arrays.sort(keyArray, new Comparator<Object>() {
+			@Override
 			public int compare(Object o1, Object o2) {
 				return compareKeys(o1, o2);
 			}

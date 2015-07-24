@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,6 +33,7 @@ public class LoopDialog extends TrayDialog {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 		 */
+		@Override
 		public Object[] getChildren(Object parentElement) {
 			if (parentElement instanceof DependencyLoop)
 				return ((DependencyLoop) parentElement).getMembers();
@@ -42,6 +43,7 @@ public class LoopDialog extends TrayDialog {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
 		 */
+		@Override
 		public Object getParent(Object element) {
 			return null;
 		}
@@ -49,6 +51,7 @@ public class LoopDialog extends TrayDialog {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
 		 */
+		@Override
 		public boolean hasChildren(Object element) {
 			return element instanceof DependencyLoop;
 		}
@@ -56,6 +59,7 @@ public class LoopDialog extends TrayDialog {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 		 */
+		@Override
 		public Object[] getElements(Object inputElement) {
 			return fLoops;
 		}
@@ -66,6 +70,7 @@ public class LoopDialog extends TrayDialog {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.LabelProvider#getImage(java.lang.Object)
 		 */
+		@Override
 		public Image getImage(Object element) {
 			if (element instanceof DependencyLoop)
 				return fLoopImage;
@@ -75,6 +80,7 @@ public class LoopDialog extends TrayDialog {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
 		 */
+		@Override
 		public String getText(Object element) {
 			return PDEPlugin.getDefault().getLabelProvider().getText(element);
 		}
@@ -87,6 +93,7 @@ public class LoopDialog extends TrayDialog {
 		fLoopImage = provider.get(PDEPluginImages.DESC_LOOP_OBJ);
 	}
 
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
 	}
@@ -94,11 +101,13 @@ public class LoopDialog extends TrayDialog {
 	/*
 	 * @see org.eclipse.jface.window.Window#configureShell(Shell)
 	 */
+	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(shell, IHelpContextIds.LOOP_DIALOG);
 	}
 
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite container = (Composite) super.createDialogArea(parent);
 		GridLayout layout = new GridLayout();
@@ -125,6 +134,7 @@ public class LoopDialog extends TrayDialog {
 	/**
 	 * @since 3.5
 	 */
+	@Override
 	protected boolean isResizable() {
 		return true;
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -32,6 +32,7 @@ public class NewSiteProjectWizard extends NewWizard implements IExecutableExtens
 		setWindowTitle(PDEUIMessages.NewSiteWizard_wtitle);
 	}
 
+	@Override
 	public void addPages() {
 		fMainPage = new NewSiteProjectCreationPage("main"); //$NON-NLS-1$
 		fMainPage.setTitle(PDEUIMessages.NewSiteWizard_MainPage_title);
@@ -42,6 +43,7 @@ public class NewSiteProjectWizard extends NewWizard implements IExecutableExtens
 		addPage(fMainPage);
 	}
 
+	@Override
 	public boolean performFinish() {
 		try {
 			BasicNewProjectResourceWizard.updatePerspective(fConfig);
@@ -59,6 +61,7 @@ public class NewSiteProjectWizard extends NewWizard implements IExecutableExtens
 		return true;
 	}
 
+	@Override
 	public void setInitializationData(IConfigurationElement config, String property, Object data) throws CoreException {
 		this.fConfig = config;
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,6 +56,7 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.StyledCellLabelProvider#dispose()
 	 */
+	@Override
 	public void dispose() {
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 		super.dispose();
@@ -64,6 +65,7 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.StyledCellLabelProvider#update(org.eclipse.jface.viewers.ViewerCell)
 	 */
+	@Override
 	public void update(ViewerCell cell) {
 		Object element = cell.getElement();
 		StyledString styledString = getStyledString(element);
@@ -227,6 +229,7 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 	 * @param element 
 	 * @return image or <code>null</code>
 	 */
+	@Override
 	public Image getImage(Object element) {
 		if (element instanceof TargetBundle) {
 
@@ -299,6 +302,7 @@ public class StyledBundleLabelProvider extends StyledCellLabelProvider implement
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
 	 */
+	@Override
 	public String getText(Object element) {
 		StyledString string = getStyledString(element);
 		return string.getString();

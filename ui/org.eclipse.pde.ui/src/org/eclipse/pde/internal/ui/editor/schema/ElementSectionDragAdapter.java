@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -35,6 +35,7 @@ public class ElementSectionDragAdapter extends DragSourceAdapter {
 	 * Returns the data to be transferred in a drag and drop
 	 * operation.
 	 */
+	@Override
 	public void dragSetData(DragSourceEvent event) {
 		if (event.doit == false)
 			return;
@@ -63,6 +64,7 @@ public class ElementSectionDragAdapter extends DragSourceAdapter {
 	/**
 	 * All selection must be named model objects.
 	 */
+	@Override
 	public void dragStart(DragSourceEvent event) {
 
 		// Workaround for 1GEUS9V
@@ -76,6 +78,7 @@ public class ElementSectionDragAdapter extends DragSourceAdapter {
 		event.doit = canDrag();
 	}
 
+	@Override
 	public void dragFinished(DragSourceEvent event) {
 		if (event.doit == false || fDragData == null)
 			return;

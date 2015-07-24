@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2010 IBM Corporation and others.
+ * Copyright (c) 2003, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,6 +49,7 @@ public class ExtensionPointsSection extends TableSection {
 	private TableViewer pointTable;
 
 	class TableContentProvider extends DefaultContentProvider implements IStructuredContentProvider {
+		@Override
 		public Object[] getElements(Object parent) {
 			IPluginModelBase model = (IPluginModelBase) getPage().getModel();
 			IPluginBase pluginBase = model.getPluginBase();
@@ -66,6 +67,7 @@ public class ExtensionPointsSection extends TableSection {
 		getTablePart().setEditable(false);
 	}
 
+	@Override
 	public void createClient(Section section, FormToolkit toolkit) {
 		Composite container = createClientContainer(section, 2, toolkit);
 		TablePart tablePart = getTablePart();
@@ -97,6 +99,7 @@ public class ExtensionPointsSection extends TableSection {
 		pointTable.setSelection(pointTable.getSelection());
 	}
 
+	@Override
 	public void dispose() {
 		IBaseModel model = getPage().getModel();
 		if (model instanceof IModelChangeProvider)
@@ -104,6 +107,7 @@ public class ExtensionPointsSection extends TableSection {
 		super.dispose();
 	}
 
+	@Override
 	public boolean doGlobalAction(String actionId) {
 
 		if (!isEditable()) {
@@ -127,12 +131,14 @@ public class ExtensionPointsSection extends TableSection {
 		return false;
 	}
 
+	@Override
 	public void refresh() {
 		pointTable.refresh();
 		getManagedForm().fireSelectionChanged(this, pointTable.getSelection());
 		super.refresh();
 	}
 
+	@Override
 	public boolean setFormInput(Object object) {
 		if (object instanceof IPluginExtensionPoint) {
 			pointTable.setSelection(new StructuredSelection(object), true);
@@ -141,11 +147,13 @@ public class ExtensionPointsSection extends TableSection {
 		return false;
 	}
 
+	@Override
 	protected void selectionChanged(IStructuredSelection selection) {
 		getPage().getPDEEditor().setSelection(selection);
 		super.selectionChanged(selection);
 	}
 
+	@Override
 	public void modelChanged(IModelChangedEvent event) {
 		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
 			markStale();
@@ -165,10 +173,12 @@ public class ExtensionPointsSection extends TableSection {
 		}
 	}
 
+	@Override
 	protected void fillContextMenu(IMenuManager manager) {
 		ISelection selection = pointTable.getSelection();
 
 		Action newAction = new Action(PDEUIMessages.ManifestEditor_DetailExtensionPointSection_newExtensionPoint) {
+			@Override
 			public void run() {
 				handleNew();
 			}
@@ -195,6 +205,7 @@ public class ExtensionPointsSection extends TableSection {
 		}
 
 		Action deleteAction = new Action(PDEUIMessages.Actions_delete_label) {
+			@Override
 			public void run() {
 				handleDelete();
 			}
@@ -204,6 +215,7 @@ public class ExtensionPointsSection extends TableSection {
 		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(manager);
 	}
 
+	@Override
 	protected void buttonSelected(int index) {
 		if (index == 0)
 			handleNew();
@@ -211,6 +223,7 @@ public class ExtensionPointsSection extends TableSection {
 			handleDelete();
 	}
 
+	@Override
 	protected void handleDoubleClick(IStructuredSelection selection) {
 		if (!selection.isEmpty()) {
 			PluginExtensionPointNode extensionPoint = (PluginExtensionPointNode) selection.getFirstElement();
@@ -262,6 +275,7 @@ public class ExtensionPointsSection extends TableSection {
 		IFile file = ((IFileEditorInput) getPage().getPDEEditor().getEditorInput()).getFile();
 		final IProject project = file.getProject();
 		BusyIndicator.showWhile(pointTable.getTable().getDisplay(), new Runnable() {
+			@Override
 			public void run() {
 				NewExtensionPointWizard wizard = new NewExtensionPointWizard(project, (IPluginModelBase) getPage().getModel(), (ManifestEditor) getPage().getPDEEditor());
 				WizardDialog dialog = new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
@@ -293,6 +307,7 @@ public class ExtensionPointsSection extends TableSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste(java.lang.Object, java.lang.Object[])
 	 */
+	@Override
 	protected void doPaste(Object targetObject, Object[] sourceObjects) {
 		// By default, fragment.xml does not exist until the first extension
 		// or extension point is created.
@@ -331,6 +346,7 @@ public class ExtensionPointsSection extends TableSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(java.lang.Object, java.lang.Object[])
 	 */
+	@Override
 	protected boolean canPaste(Object targetObject, Object[] sourceObjects) {
 		// All source objects must be extension points
 		// No restriction on duplicates

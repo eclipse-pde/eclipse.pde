@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -70,6 +70,7 @@ public class EditProfileContainerPage extends EditDirectoryContainerPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.shared.target.EditDirectoryContainerPage#getDefaultTitle()
 	 */
+	@Override
 	protected String getDefaultTitle() {
 		if (fContainer != null) {
 			return Messages.EditProfileContainerPage_3;
@@ -80,6 +81,7 @@ public class EditProfileContainerPage extends EditDirectoryContainerPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.shared.target.EditDirectoryContainerPage#getDefaultMessage()
 	 */
+	@Override
 	protected String getDefaultMessage() {
 		return Messages.AddProfileContainerPage_1;
 	}
@@ -87,6 +89,7 @@ public class EditProfileContainerPage extends EditDirectoryContainerPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.shared.target.AddDirectoryContainerPage#createLocationArea(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected void createLocationArea(Composite parent) {
 		super.createLocationArea(parent);
 
@@ -105,6 +108,7 @@ public class EditProfileContainerPage extends EditDirectoryContainerPage {
 		fUseDefaultConfig.setFont(parent.getFont());
 		fUseDefaultConfig.setText(Messages.AddProfileContainerPage_2);
 		fUseDefaultConfig.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateConfigEnablement();
 				containerChanged(0);
@@ -116,6 +120,7 @@ public class EditProfileContainerPage extends EditDirectoryContainerPage {
 
 		fConfigLocation = SWTFactory.createCombo(configComp, SWT.BORDER, 1, getConfigComboItems());
 		fConfigLocation.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				// If the text is a combo item, immediately try to resolve, otherwise wait in case they type more
 				boolean isItem = false;
@@ -136,6 +141,7 @@ public class EditProfileContainerPage extends EditDirectoryContainerPage {
 
 		fConfigBrowse = SWTFactory.createPushButton(buttonComp, Messages.AddProfileContainerPage_4, null);
 		fConfigBrowse.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				DirectoryDialog dialog = new DirectoryDialog(getShell());
 				dialog.setFilterPath(fConfigLocation.getText());
@@ -149,6 +155,7 @@ public class EditProfileContainerPage extends EditDirectoryContainerPage {
 
 		fConfigVariables = SWTFactory.createPushButton(buttonComp, Messages.EditProfileContainerPage_1, null);
 		fConfigVariables.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				StringVariableSelectionDialog dialog = new StringVariableSelectionDialog(getShell());
 				dialog.open();
@@ -185,6 +192,7 @@ public class EditProfileContainerPage extends EditDirectoryContainerPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.shared.target.EditDirectoryContainerPage#storeSettings()
 	 */
+	@Override
 	public void storeSettings() {
 		super.storeSettings();
 		if (fConfigLocation.isEnabled()) {
@@ -215,6 +223,7 @@ public class EditProfileContainerPage extends EditDirectoryContainerPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.shared.target.EditDirectoryContainerPage#initializeInputFields(org.eclipse.pde.core.target.ITargetLocation)
 	 */
+	@Override
 	protected void initializeInputFields(ITargetLocation container) {
 		if (container instanceof ProfileBundleContainer) {
 			String configLocation = ((ProfileBundleContainer) container).getConfigurationLocation();
@@ -245,6 +254,7 @@ public class EditProfileContainerPage extends EditDirectoryContainerPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.shared.target.EditDirectoryContainerPage#validateInput()
 	 */
+	@Override
 	protected boolean validateInput() {
 		boolean valid = super.validateInput();
 		if (valid) {
@@ -279,6 +289,7 @@ public class EditProfileContainerPage extends EditDirectoryContainerPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.shared.target.EditDirectoryContainerPage#createContainer(org.eclipse.pde.core.target.ITargetLocation)
 	 */
+	@Override
 	protected ITargetLocation createContainer(ITargetLocation previous) throws CoreException {
 		return getTargetPlatformService().newProfileLocation(fInstallLocation.getText(), fConfigLocation.isEnabled() ? fConfigLocation.getText() : null);
 	}

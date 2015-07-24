@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -24,10 +24,12 @@ public class SchemaEditorContributor extends PDEFormTextEditorContributor {
 		public PreviewAction() {
 		}
 
+		@Override
 		public void run() {
 			if (getEditor() != null) {
 				final SchemaEditor schemaEditor = (SchemaEditor) getEditor();
 				BusyIndicator.showWhile(SWTUtil.getStandardDisplay(), new Runnable() {
+					@Override
 					public void run() {
 						schemaEditor.previewReferenceDocument();
 					}
@@ -44,6 +46,7 @@ public class SchemaEditorContributor extends PDEFormTextEditorContributor {
 		return true;
 	}
 
+	@Override
 	public void contextMenuAboutToShow(IMenuManager mm, boolean addClipboard) {
 		super.contextMenuAboutToShow(mm, addClipboard);
 		mm.add(new Separator());
@@ -54,6 +57,7 @@ public class SchemaEditorContributor extends PDEFormTextEditorContributor {
 		return fPreviewAction;
 	}
 
+	@Override
 	protected void makeActions() {
 		super.makeActions();
 		fPreviewAction = new PreviewAction();

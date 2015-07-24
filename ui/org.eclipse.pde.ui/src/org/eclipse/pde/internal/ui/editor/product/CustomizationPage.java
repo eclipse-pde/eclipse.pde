@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Rapicorp Corporation and others.
+ * Copyright (c) 2014, 2015 Rapicorp Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,6 +32,7 @@ public class CustomizationPage extends PDEFormPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#getHelpResource()
 	 */
+	@Override
 	protected String getHelpResource() {
 		return IHelpContextIds.CUSTOMIZATION_PAGE;
 	}
@@ -39,6 +40,7 @@ public class CustomizationPage extends PDEFormPage {
 	/* (non-Javadoc) 
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#createFormContent(org.eclipse.ui.forms.IManagedForm)
 	 */
+	@Override
 	protected void createFormContent(IManagedForm managedForm) {
 		super.createFormContent(managedForm);
 		ScrolledForm form = managedForm.getForm();

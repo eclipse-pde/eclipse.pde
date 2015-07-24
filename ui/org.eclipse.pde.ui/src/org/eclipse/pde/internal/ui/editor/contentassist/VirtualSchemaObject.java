@@ -35,6 +35,7 @@ public class VirtualSchemaObject implements ISchemaObject {
 		fType = type;
 	}
 
+	@Override
 	public String getDescription() {
 		if (fDescription instanceof String) {
 			return (String) fDescription;
@@ -50,25 +51,31 @@ public class VirtualSchemaObject implements ISchemaObject {
 		return null;
 	}
 
+	@Override
 	public String getName() {
 		return fName;
 	}
 
+	@Override
 	public ISchemaObject getParent() {
 		return null;
 	}
 
+	@Override
 	public ISchema getSchema() {
 		return null;
 	}
 
+	@Override
 	public void setParent(ISchemaObject parent) {
 	}
 
+	@Override
 	public <T> T getAdapter(Class<T> adapter) {
 		return null;
 	}
 
+	@Override
 	public void write(String indent, PrintWriter writer) {
 	}
 

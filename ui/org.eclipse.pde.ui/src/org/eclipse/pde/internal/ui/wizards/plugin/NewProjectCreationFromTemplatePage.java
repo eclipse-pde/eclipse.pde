@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,6 +26,7 @@ public class NewProjectCreationFromTemplatePage extends NewProjectCreationPage {
 		fTemplateWizard = templateWizard;
 	}
 
+	@Override
 	protected void createFormatGroup(Composite container) {
 		super.createFormatGroup(container);
 		Boolean osgiFlag = TemplateWizardHelper.getFlag(fTemplateWizard, TemplateWizardHelper.FLAG_OSGI);
@@ -40,6 +41,7 @@ public class NewProjectCreationFromTemplatePage extends NewProjectCreationPage {
 		}
 	}
 
+	@Override
 	protected void createProjectTypeGroup(Composite container) {
 		super.createProjectTypeGroup(container);
 		Boolean javaFlag = TemplateWizardHelper.getFlag(fTemplateWizard, TemplateWizardHelper.FLAG_JAVA);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -62,6 +62,7 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 		fProcessor = processor;
 	}
 
+	@Override
 	public void apply(IDocument document) {
 		ITextSelection sel = fProcessor.getCurrentSelection();
 		if (sel == null) {
@@ -452,6 +453,7 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 		return indBuff.toString();
 	}
 
+	@Override
 	public String getAdditionalProposalInfo() {
 		if (fAddInfo == null) {
 			if (fSchemaObject == null)
@@ -473,10 +475,12 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 		return fAddInfo;
 	}
 
+	@Override
 	public IContextInformation getContextInformation() {
 		return null;
 	}
 
+	@Override
 	public String getDisplayString() {
 		if (fSchemaObject instanceof VirtualSchemaObject) {
 			switch (((VirtualSchemaObject) fSchemaObject).getVType()) {
@@ -497,6 +501,7 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 		return null;
 	}
 
+	@Override
 	public Image getImage() {
 		if (fSchemaObject instanceof VirtualSchemaObject)
 			return fProcessor.getImage(((VirtualSchemaObject) fSchemaObject).getVType());
@@ -507,19 +512,23 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 		return null;
 	}
 
+	@Override
 	public Point getSelection(IDocument document) {
 		if (fSelOffset == -1)
 			return null;
 		return new Point(fSelOffset, fSelLen);
 	}
 
+	@Override
 	public Object getAdditionalProposalInfo(IProgressMonitor monitor) {
 		return getAdditionalProposalInfo();
 	}
 
+	@Override
 	public IInformationControlCreator getInformationControlCreator() {
 		if (fCreator == null) {
 			fCreator = new AbstractReusableInformationControlCreator() {
+				@Override
 				public IInformationControl doCreateInformationControl(Shell parent) {
 					if (BrowserInformationControl.isAvailable(parent))
 						return new BrowserInformationControl(parent, JFaceResources.DIALOG_FONT, false);
@@ -530,10 +539,12 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 		return fCreator;
 	}
 
+	@Override
 	public int getPrefixCompletionStart(IDocument document, int completionOffset) {
 		return 0;
 	}
 
+	@Override
 	public CharSequence getPrefixCompletionText(IDocument document, int completionOffset) {
 		return null;
 	}
@@ -541,6 +552,7 @@ public class XMLCompletionProposal implements ICompletionProposal, ICompletionPr
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension4#isAutoInsertable()
 	 */
+	@Override
 	public boolean isAutoInsertable() {
 		return true;
 	}

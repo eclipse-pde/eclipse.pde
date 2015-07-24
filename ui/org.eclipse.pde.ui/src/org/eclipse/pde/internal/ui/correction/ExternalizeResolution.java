@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2010 IBM Corporation and others.
+ *  Copyright (c) 2005, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -40,6 +40,7 @@ public class ExternalizeResolution extends AbstractXMLMarkerResolution {
 		super(resolutionType, marker);
 	}
 
+	@Override
 	protected void createChange(IPluginModelBase model) {
 		Object node = findNode(model);
 		ModelChange change = new ModelChange(model, true);
@@ -77,6 +78,7 @@ public class ExternalizeResolution extends AbstractXMLMarkerResolution {
 		}
 	}
 
+	@Override
 	public String getLabel() {
 		if (isAttrNode())
 			return NLS.bind(PDEUIMessages.ExternalizeResolution_attrib, getNameOfNode());
@@ -95,6 +97,7 @@ public class ExternalizeResolution extends AbstractXMLMarkerResolution {
 		}
 	}
 
+	@Override
 	public void run(IMarker marker) {
 		fResource = marker.getResource();
 		IFile file = ((IFile) marker.getResource());
@@ -104,6 +107,7 @@ public class ExternalizeResolution extends AbstractXMLMarkerResolution {
 			IFile manifest = PDEProject.getManifest(file.getProject());
 			if (manifest.exists()) {
 				modification = new ModelModification(manifest, file) {
+					@Override
 					protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
 						createChange(model);
 					}
@@ -112,6 +116,7 @@ public class ExternalizeResolution extends AbstractXMLMarkerResolution {
 		}
 		if (modification == null) {
 			modification = new ModelModification(file) {
+				@Override
 				protected void modifyModel(IBaseModel model, IProgressMonitor monitor) throws CoreException {
 					createChange(model);
 				}

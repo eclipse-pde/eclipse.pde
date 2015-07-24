@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,6 +33,7 @@ public class EditFeatureContainerPage extends EditDirectoryContainerPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.shared.target.EditDirectoryContainerPage#getDefaultTitle()
 	 */
+	@Override
 	protected String getDefaultTitle() {
 		return Messages.EditFeatureContainerPage_0;
 	}
@@ -40,6 +41,7 @@ public class EditFeatureContainerPage extends EditDirectoryContainerPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.shared.target.EditDirectoryContainerPage#getDefaultMessage()
 	 */
+	@Override
 	protected String getDefaultMessage() {
 		return Messages.EditFeatureContainerPage_1;
 	}
@@ -47,6 +49,7 @@ public class EditFeatureContainerPage extends EditDirectoryContainerPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.shared.target.AddDirectoryContainerPage#createLocationArea(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected void createLocationArea(Composite parent) {
 		FeatureBundleContainer container = (FeatureBundleContainer) getBundleContainer();
 		Composite comp = SWTFactory.createComposite(parent, 2, 1, GridData.FILL_HORIZONTAL);
@@ -73,6 +76,7 @@ public class EditFeatureContainerPage extends EditDirectoryContainerPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.shared.target.EditDirectoryContainerPage#initializeInputFields(org.eclipse.pde.core.target.ITargetLocation)
 	 */
+	@Override
 	protected void initializeInputFields(ITargetLocation container) {
 		containerChanged(0);
 	}
@@ -80,6 +84,7 @@ public class EditFeatureContainerPage extends EditDirectoryContainerPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.shared.target.EditDirectoryContainerPage#storeSettings()
 	 */
+	@Override
 	public void storeSettings() {
 		// Do nothing, no settings
 	}
@@ -87,6 +92,7 @@ public class EditFeatureContainerPage extends EditDirectoryContainerPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.shared.target.EditDirectoryContainerPage#validateInput()
 	 */
+	@Override
 	protected boolean validateInput() {
 		return true;
 	}
@@ -94,6 +100,7 @@ public class EditFeatureContainerPage extends EditDirectoryContainerPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.shared.target.EditDirectoryContainerPage#createContainer(org.eclipse.pde.core.target.ITargetLocation)
 	 */
+	@Override
 	protected ITargetLocation createContainer(ITargetLocation previous) throws CoreException {
 		return getBundleContainer();
 	}

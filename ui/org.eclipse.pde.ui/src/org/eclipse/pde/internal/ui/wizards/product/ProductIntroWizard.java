@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,6 +37,7 @@ public class ProductIntroWizard extends Wizard {
 		setWindowTitle(PDEUIMessages.ProductIntroWizard_title);
 	}
 
+	@Override
 	public void addPages() {
 		if (fNeedNewProduct) {
 			fProductDefinitionPage = new ProductDefinitonWizardPage("product", fProduct); //$NON-NLS-1$
@@ -46,6 +47,7 @@ public class ProductIntroWizard extends Wizard {
 		addPage(fNewIntroPage);
 	}
 
+	@Override
 	public boolean performFinish() {
 		try {
 			if (fNeedNewProduct) {

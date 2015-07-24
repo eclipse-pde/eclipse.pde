@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2008 IBM Corporation and others.
+ *  Copyright (c) 2006, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@ public class CommandView extends ViewPart implements ISelectionChangedListener {
 
 	private CommandComposerPart fCSP;
 
+	@Override
 	public void createPartControl(Composite parent) {
 		fCSP = new CommandComposerPart();
 	}
@@ -38,15 +39,18 @@ public class CommandView extends ViewPart implements ISelectionChangedListener {
 		return fCSP.getTagManager();
 	}
 
+	@Override
 	public void setFocus() {
 		fCSP.setFocus();
 	}
 
+	@Override
 	public void dispose() {
 		fCSP.dispose();
 		super.dispose();
 	}
 
+	@Override
 	public void selectionChanged(SelectionChangedEvent event) {
 		fCSP.selectionChanged(event);
 	}

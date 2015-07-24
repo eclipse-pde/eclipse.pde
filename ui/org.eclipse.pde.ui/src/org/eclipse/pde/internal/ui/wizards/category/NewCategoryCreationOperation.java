@@ -1,5 +1,5 @@
 /******************************************************************************* 
-* Copyright (c) 2009 EclipseSource and others. All rights reserved. This
+* Copyright (c) 2009, 2015 EclipseSource and others. All rights reserved. This
 * program and the accompanying materials are made available under the terms of
 * the Eclipse Public License v1.0 which accompanies this distribution, and is
 * available at http://www.eclipse.org/legal/epl-v10.html
@@ -38,6 +38,7 @@ public class NewCategoryCreationOperation extends WorkspaceModifyOperation {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.actions.WorkspaceModifyOperation#execute(org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	protected void execute(IProgressMonitor monitor) throws CoreException, InvocationTargetException, InterruptedException {
 
 		monitor.beginTask(PDEUIMessages.NewCategoryDefinitionWizard_creatingManifest, 2);
@@ -69,6 +70,7 @@ public class NewCategoryCreationOperation extends WorkspaceModifyOperation {
 
 	private void openFile(final IFile file) {
 		fDisplay.asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				IWorkbenchWindow ww = PDEPlugin.getActiveWorkbenchWindow();
 				if (ww == null) {

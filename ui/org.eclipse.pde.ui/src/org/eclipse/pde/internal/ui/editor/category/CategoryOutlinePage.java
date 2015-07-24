@@ -1,5 +1,5 @@
 /******************************************************************************* 
-* Copyright (c) 2009, 2013 EclipseSource and others. All rights reserved. This
+* Copyright (c) 2009, 2015 EclipseSource and others. All rights reserved. This
 * program and the accompanying materials are made available under the terms of
 * the Eclipse Public License v1.0 which accompanies this distribution, and is
 * available at http://www.eclipse.org/legal/epl-v10.html
@@ -28,6 +28,7 @@ public class CategoryOutlinePage extends FormOutlinePage {
 		super(editor);
 	}
 
+	@Override
 	protected Object[] getChildren(Object parent) {
 		if (parent instanceof PDEFormPage) {
 			PDEFormPage page = (PDEFormPage) parent;
@@ -85,6 +86,7 @@ public class CategoryOutlinePage extends FormOutlinePage {
 		return new Object[0];
 	}
 
+	@Override
 	protected String getParentPageId(Object item) {
 		String pageId = null;
 		if (item instanceof ISiteCategoryDefinition || item instanceof SiteFeatureAdapter || item instanceof SiteBundleAdapter)
@@ -99,6 +101,7 @@ public class CategoryOutlinePage extends FormOutlinePage {
 	 * 
 	 * @see org.eclipse.pde.internal.ui.editor.FormOutlinePage#createLabelProvider()
 	 */
+	@Override
 	public ILabelProvider createLabelProvider() {
 		fLabelProvider = new CategoryLabelProvider();
 		return fLabelProvider;
@@ -109,6 +112,7 @@ public class CategoryOutlinePage extends FormOutlinePage {
 	 * 
 	 * @see org.eclipse.pde.internal.ui.editor.FormOutlinePage#dispose()
 	 */
+	@Override
 	public void dispose() {
 		super.dispose();
 		if (fLabelProvider != null)

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2008 IBM Corporation and others.
+ *  Copyright (c) 2003, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -42,6 +42,7 @@ class SiteLabelProvider extends LabelProvider {
 		fSharedProvider.connect(this);
 	}
 
+	@Override
 	public Image getImage(Object element) {
 		if (element instanceof ISiteCategoryDefinition)
 			return fCatDefImage;
@@ -55,6 +56,7 @@ class SiteLabelProvider extends LabelProvider {
 		return fSharedProvider.getImage(element);
 	}
 
+	@Override
 	public String getText(Object element) {
 		if (element instanceof ISiteCategoryDefinition)
 			return ((ISiteCategoryDefinition) element).getName();
@@ -70,6 +72,7 @@ class SiteLabelProvider extends LabelProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.BaseLabelProvider#dispose()
 	 */
+	@Override
 	public void dispose() {
 		fSharedProvider.disconnect(this);
 		// Dispose of images

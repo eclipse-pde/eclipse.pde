@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2011 IBM Corporation and others.
+ *  Copyright (c) 2007, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -45,6 +45,7 @@ public class PDEDropAdapter extends ViewerDropAdapter {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ViewerDropAdapter#performDrop(java.lang.Object)
 	 */
+	@Override
 	public boolean performDrop(Object data) {
 		// Clear the last valid operation for the next drop event
 		resetLastValidOperation();
@@ -81,6 +82,7 @@ public class PDEDropAdapter extends ViewerDropAdapter {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ViewerDropAdapter#validateDrop(java.lang.Object, int, org.eclipse.swt.dnd.TransferData)
 	 */
+	@Override
 	public boolean validateDrop(Object targetObject, int operation, TransferData transferType) {
 		// Current operation listed is not set until after the drop is validated
 		// i.e. This method call

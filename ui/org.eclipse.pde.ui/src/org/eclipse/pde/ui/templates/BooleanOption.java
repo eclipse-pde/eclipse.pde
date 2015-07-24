@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -67,6 +67,7 @@ public class BooleanOption extends TemplateOption {
 	 * @param value
 	 *            the new option value
 	 */
+	@Override
 	public void setValue(Object value) {
 		super.setValue(value);
 		if (button != null)
@@ -82,6 +83,7 @@ public class BooleanOption extends TemplateOption {
 	 * @param span
 	 *            the number of columns that the widget should span
 	 */
+	@Override
 	public void createControl(Composite parent, int span) {
 		button = new Button(parent, SWT.CHECK);
 		button.setText(getLabel());
@@ -90,6 +92,7 @@ public class BooleanOption extends TemplateOption {
 		button.setLayoutData(gd);
 		button.setSelection(isSelected());
 		button.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				BooleanOption.super.setValue(button.getSelection() ? Boolean.TRUE : Boolean.FALSE);
 				getSection().validateOptions(BooleanOption.this);
@@ -105,6 +108,7 @@ public class BooleanOption extends TemplateOption {
 	 * @param enabled
 	 *            the new enabled state.
 	 */
+	@Override
 	public void setEnabled(boolean enabled) {
 		super.setEnabled(enabled);
 		if (button != null)

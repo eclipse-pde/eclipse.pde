@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -58,10 +58,12 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 		super(page, parent);
 	}
 
+	@Override
 	protected String getSectionDescription() {
 		return PDEUIMessages.ManifestEditor_PluginSpecSection_desc;
 	}
 
+	@Override
 	protected void createSpecificControls(Composite parent, FormToolkit toolkit, IActionBars actionBars) {
 		createClassEntry(parent, toolkit, actionBars);
 		FormEditor formEditor = getPage().getEditor();
@@ -71,6 +73,7 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 		}
 	}
 
+	@Override
 	protected void addListeners() {
 		if (isBundle()) {
 			IBundleModel model = getBundle().getModel();
@@ -80,6 +83,7 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 		super.addListeners();
 	}
 
+	@Override
 	protected void removeListeners() {
 		if (isBundle()) {
 			IBundleModel model = getBundle().getModel();
@@ -96,6 +100,7 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 		fLazyStart.setLayoutData(td);
 		fLazyStart.setEnabled(isEditable());
 		fLazyStart.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				LazyStartHeader[] headers = getLazyStartHeaders();
 				// must block the refresh otherwise we have problems with multiple activation headers. 
@@ -114,6 +119,7 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 		fClassEntry = new FormEntry(client, toolkit, PDEUIMessages.GeneralInfoSection_class, PDEUIMessages.GeneralInfoSection_browse, // 
 				isEditable());
 		fClassEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
+			@Override
 			public void textValueChanged(FormEntry entry) {
 				try {
 					((IPlugin) getPluginBase()).setClassName(entry.getValue());
@@ -122,6 +128,7 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 				}
 			}
 
+			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				String value = fClassEntry.getValue();
 				IProject project = getPage().getPDEEditor().getCommonProject();
@@ -130,6 +137,7 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 					fClassEntry.setValue(value);
 			}
 
+			@Override
 			public void browseButtonSelected(FormEntry entry) {
 				doOpenSelectionDialog(entry.getValue());
 			}
@@ -154,16 +162,19 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 		return new JavaAttributeValue(project, model, null, fClassEntry.getValue());
 	}
 
+	@Override
 	public void cancelEdit() {
 		fClassEntry.cancelEdit();
 		super.cancelEdit();
 	}
 
+	@Override
 	public void commit(boolean onSave) {
 		fClassEntry.commit();
 		super.commit(onSave);
 	}
 
+	@Override
 	public void refresh() {
 		if (fBlockListener)
 			return;
@@ -234,6 +245,7 @@ public class PluginGeneralInfoSection extends GeneralInfoSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.plugin.GeneralInfoSection#dispose()
 	 */
+	@Override
 	public void dispose() {
 		super.dispose();
 		if (fTypeFieldAssistDisposer != null) {

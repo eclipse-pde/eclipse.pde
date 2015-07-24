@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -68,6 +68,7 @@ public class FeatureImportOperation implements IWorkspaceRunnable {
 	/*
 	 * @see IWorkspaceRunnable#run(IProgressMonitor)
 	 */
+	@Override
 	public void run(IProgressMonitor monitor) throws CoreException, OperationCanceledException {
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
@@ -158,6 +159,7 @@ public class FeatureImportOperation implements IWorkspaceRunnable {
 
 	private void importContent(Object source, IPath destPath, IImportStructureProvider provider, List<?> filesToImport, IProgressMonitor monitor) throws CoreException {
 		IOverwriteQuery query = new IOverwriteQuery() {
+			@Override
 			public String queryOverwrite(String file) {
 				return ALL;
 			}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2013 IBM Corporation and others.
+ * Copyright (c) 2003, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -114,6 +114,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		Composite container = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH);
 		GridLayout layout = (GridLayout) container.getLayout();
@@ -236,6 +237,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 			}
 			Collections.sort(targetDefinitions, new Comparator<Object>() {
 
+				@Override
 				public int compare(Object o1, Object o2) {
 					ITargetDefinition td1 = (ITargetDefinition) o1;
 					ITargetDefinition td2 = (ITargetDefinition) o2;
@@ -346,6 +348,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 
 		importDirectory = SWTFactory.createCombo(composite, SWT.DROP_DOWN, 1, GridData.FILL_HORIZONTAL, null);
 		importDirectory.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				validateDropLocation();
 			}
@@ -368,6 +371,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 		final PreferenceDialog dialog = new PreferenceDialog(shell, manager);
 		final boolean[] result = new boolean[] {false};
 		BusyIndicator.showWhile(shell.getDisplay(), new Runnable() {
+			@Override
 			public void run() {
 				dialog.create();
 				dialog.setMessage(targetNode.getLabelText());
@@ -544,6 +548,7 @@ public class PluginImportWizardFirstPage extends WizardPage {
 	 */
 	private void resolveTargetDefinition(final ITargetDefinition target, final int type) {
 		IRunnableWithProgress op = new IRunnableWithProgress() {
+			@Override
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				SubMonitor subMon = SubMonitor.convert(monitor);
 				subMon.beginTask(PDEUIMessages.PluginImportWizardFirstPage_1, 100);

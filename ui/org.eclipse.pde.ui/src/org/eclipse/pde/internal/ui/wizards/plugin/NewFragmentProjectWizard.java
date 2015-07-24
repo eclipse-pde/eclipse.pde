@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,6 +41,7 @@ public class NewFragmentProjectWizard extends NewWizard implements IExecutableEx
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.Wizard#addPages()
 	 */
+	@Override
 	public void addPages() {
 		fMainPage = new NewProjectCreationPage("main", fFragmentData, true, getSelection()); //$NON-NLS-1$
 		fMainPage.setTitle(PDEUIMessages.NewProjectWizard_MainPage_ftitle);
@@ -48,14 +49,17 @@ public class NewFragmentProjectWizard extends NewWizard implements IExecutableEx
 		addPage(fMainPage);
 
 		fProjectProvider = new IProjectProvider() {
+			@Override
 			public String getProjectName() {
 				return fMainPage.getProjectName();
 			}
 
+			@Override
 			public IProject getProject() {
 				return fMainPage.getProjectHandle();
 			}
 
+			@Override
 			public IPath getLocationPath() {
 				return fMainPage.getLocationPath();
 			}
@@ -67,6 +71,7 @@ public class NewFragmentProjectWizard extends NewWizard implements IExecutableEx
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.Wizard#canFinish()
 	 */
+	@Override
 	public boolean canFinish() {
 		IWizardPage page = getContainer().getCurrentPage();
 		return (page.isPageComplete() && page != fMainPage);
@@ -77,6 +82,7 @@ public class NewFragmentProjectWizard extends NewWizard implements IExecutableEx
 	 * 
 	 * @see org.eclipse.pde.internal.ui.wizards.NewWizard#performFinish()
 	 */
+	@Override
 	public boolean performFinish() {
 		try {
 			fMainPage.updateData();
@@ -104,6 +110,7 @@ public class NewFragmentProjectWizard extends NewWizard implements IExecutableEx
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.Wizard#dispose()
 	 */
+	@Override
 	public void dispose() {
 		super.dispose();
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
@@ -112,6 +119,7 @@ public class NewFragmentProjectWizard extends NewWizard implements IExecutableEx
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement, java.lang.String, java.lang.Object)
 	 */
+	@Override
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) throws CoreException {
 		fConfig = config;
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2013 IBM Corporation and others.
+ *  Copyright (c) 2005, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -61,16 +61,19 @@ public class ExternalizeStringsWizardPage extends UserInputWizardPage {
 
 	private class ModelChangeContentProvider implements ITreeContentProvider {
 
+		@Override
 		public Object[] getElements(Object parent) {
 			return fModelChangeTable.getAllModelChanges().toArray();
 		}
 
+		@Override
 		public Object[] getChildren(Object parentElement) {
 			if (!(parentElement instanceof ModelChange))
 				return new Object[0];
 			return ((ModelChange) parentElement).getModelChangeFiles();
 		}
 
+		@Override
 		public Object getParent(Object element) {
 			if (element instanceof ModelChangeFile) {
 				return ((ModelChangeFile) element).getModel();
@@ -78,24 +81,29 @@ public class ExternalizeStringsWizardPage extends UserInputWizardPage {
 			return null;
 		}
 
+		@Override
 		public boolean hasChildren(Object element) {
 			return element instanceof ModelChange;
 		}
 
+		@Override
 		public void dispose() {
 		}
 
+		@Override
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 	}
 
 	private class ExternalizeStringsCellModifier implements ICellModifier {
 
+		@Override
 		public boolean canModify(Object element, String property) {
 			return (property != null && (element instanceof ModelChangeElement) && !TABLE_PROPERTIES[VALUE].equals(property) && (isPageComplete() || element.equals(fErrorElement)) && (TABLE_PROPERTIES[KEY].equals(property) && ((ModelChangeElement) element).isExternalized()));
 
 		}
 
+		@Override
 		public Object getValue(Object element, String property) {
 			if (element instanceof ModelChangeElement) {
 				ModelChangeElement changeElement = (ModelChangeElement) element;
@@ -106,6 +114,7 @@ public class ExternalizeStringsWizardPage extends UserInputWizardPage {
 			return ""; //$NON-NLS-1$
 		}
 
+		@Override
 		public void modify(Object element, String property, Object value) {
 			if (element instanceof TableItem) {
 				Object data = ((TableItem) element).getData();
@@ -163,6 +172,7 @@ public class ExternalizeStringsWizardPage extends UserInputWizardPage {
 			}
 		};
 		fModifyListener = new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				String localization = fLocalizationText.getText();
 				if (StringHelper.isValidLocalization(localization)) {
@@ -195,6 +205,7 @@ public class ExternalizeStringsWizardPage extends UserInputWizardPage {
 		super.dispose();
 	}
 
+	@Override
 	public void createControl(Composite parent) {
 
 		SashForm superSash = new SashForm(parent, SWT.HORIZONTAL);
@@ -234,11 +245,13 @@ public class ExternalizeStringsWizardPage extends UserInputWizardPage {
 		gd.heightHint = 250;
 		fInputViewer.getTree().setLayoutData(gd);
 		fInputViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				handleSelectionChanged(event);
 			}
 		});
 		fInputViewer.addCheckStateListener(new ICheckStateListener() {
+			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				setPageComplete(hasCheckedElements());
 			}
@@ -328,6 +341,7 @@ public class ExternalizeStringsWizardPage extends UserInputWizardPage {
 		fPropertiesViewer.setColumnProperties(TABLE_PROPERTIES);
 		fPropertiesViewer.setCellModifier(new ExternalizeStringsCellModifier());
 		fPropertiesViewer.setContentProvider(new IStructuredContentProvider() {
+			@Override
 			public Object[] getElements(Object inputElement) {
 				if (fInputViewer.getSelection() instanceof IStructuredSelection) {
 					Object selection = ((IStructuredSelection) fInputViewer.getSelection()).getFirstElement();
@@ -339,19 +353,23 @@ public class ExternalizeStringsWizardPage extends UserInputWizardPage {
 				return new Object[0];
 			}
 
+			@Override
 			public void dispose() {
 			}
 
+			@Override
 			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			}
 		});
 		fPropertiesViewer.setLabelProvider(new ExternalizeStringsLabelProvider());
 		fPropertiesViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				handlePropertySelection();
 			}
 		});
 		fPropertiesViewer.addCheckStateListener(new ICheckStateListener() {
+			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				Object element = event.getElement();
 				if (element instanceof ModelChangeElement) {

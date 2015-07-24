@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -35,10 +35,12 @@ public class PluginExportWizardPage extends BaseExportWizardPage {
 		setTitle(PDEUIMessages.ExportWizard_Plugin_pageTitle);
 	}
 
+	@Override
 	protected Object getInput() {
 		return PDECore.getDefault().getModelManager();
 	}
 
+	@Override
 	public Object[] getListElements() {
 		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		ArrayList<IModel> result = new ArrayList<IModel>();
@@ -53,6 +55,7 @@ public class PluginExportWizardPage extends BaseExportWizardPage {
 		return result.toArray();
 	}
 
+	@Override
 	protected void hookHelpContext(Control control) {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(control, IHelpContextIds.PLUGIN_EXPORT_WIZARD);
 	}
@@ -65,6 +68,7 @@ public class PluginExportWizardPage extends BaseExportWizardPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.wizards.exports.BaseExportWizardPage#isValidModel(org.eclipse.pde.core.IModel)
 	 */
+	@Override
 	protected boolean isValidModel(IModel model) {
 		return model != null && model instanceof IPluginModelBase;
 	}
@@ -72,6 +76,7 @@ public class PluginExportWizardPage extends BaseExportWizardPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.wizards.exports.BaseExportWizardPage#findModelFor(org.eclipse.core.runtime.IAdaptable)
 	 */
+	@Override
 	protected IModel findModelFor(IAdaptable object) {
 		if (object instanceof IJavaProject)
 			object = ((IJavaProject) object).getProject();
@@ -90,6 +95,7 @@ public class PluginExportWizardPage extends BaseExportWizardPage {
 		return getSelectedItems().length <= 1;
 	}
 
+	@Override
 	protected void adjustAdvancedTabsVisibility() {
 		adjustJARSigningTabVisibility();
 		pageChanged();

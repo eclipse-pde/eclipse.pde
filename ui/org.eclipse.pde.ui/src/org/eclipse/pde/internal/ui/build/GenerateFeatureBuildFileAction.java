@@ -28,6 +28,7 @@ public class GenerateFeatureBuildFileAction extends BaseBuildAction {
 
 	private IFeatureModel fFeatureModel;
 
+	@Override
 	protected void makeScripts(IProgressMonitor monitor) throws InvocationTargetException, CoreException {
 
 		IFeatureModel[] models = PDECore.getDefault().getFeatureModelManager().getModels();
@@ -82,6 +83,7 @@ public class GenerateFeatureBuildFileAction extends BaseBuildAction {
 		}
 	}
 
+	@Override
 	protected void refreshLocal(IProgressMonitor monitor) throws CoreException {
 		super.refreshLocal(monitor);
 		refreshLocal(fFeatureModel.getFeature(), monitor);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 IBM Corporation and others.
+ * Copyright (c) 2008, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -80,6 +80,7 @@ public class NLSFragmentGenerator {
 	private final Filters resourceFilter = new Filters(false) {
 		{
 			add(new AbstractFilter(false) {
+				@Override
 				public boolean matches(Object object) {
 					String resource = object.toString();
 					return resource.endsWith(PROPERTIES_EXTENSION) || resource.endsWith(CLASS_EXTENSION) || resource.endsWith(JAVA_EXTENSION);
@@ -87,6 +88,7 @@ public class NLSFragmentGenerator {
 			});
 
 			add(new AbstractFilter(false) {
+				@Override
 				public boolean matches(Object object) {
 					String path = object.toString();
 					return path.indexOf(BIN) != -1 || path.endsWith(SLASH) || path.endsWith(ICoreConstants.PLUGIN_FILENAME_DESCRIPTOR);
@@ -94,6 +96,7 @@ public class NLSFragmentGenerator {
 			});
 
 			add(new AbstractFilter(true) {
+				@Override
 				public boolean matches(Object object) {
 					String path = object.toString();
 					return path.endsWith(XML_EXTENSION) || path.endsWith(HTML_EXTENSION);
@@ -105,6 +108,7 @@ public class NLSFragmentGenerator {
 	private final Filters propertiesFilter = new Filters(false) {
 		{
 			add(new AbstractFilter(false) {
+				@Override
 				public boolean matches(Object object) {
 					String path = object.toString();
 					return path.indexOf(BIN) != -1 || path.endsWith(ICoreConstants.BUILD_FILENAME_DESCRIPTOR);
@@ -112,6 +116,7 @@ public class NLSFragmentGenerator {
 			});
 
 			add(new AbstractFilter(true) {
+				@Override
 				public boolean matches(Object object) {
 					return object.toString().endsWith(PROPERTIES_EXTENSION);
 				}
@@ -140,12 +145,14 @@ public class NLSFragmentGenerator {
 			final Map<String, Object> overwrites = promptForOverwrite(plugins, locales);
 
 			container.run(false, false, new IRunnableWithProgress() {
+				@Override
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 					setProgressMonitor(monitor);
 					try {
 						internationalizePlugins(plugins, locales, overwrites);
 					} catch (final Exception ex) {
 						Display.getDefault().syncExec(new Runnable() {
+							@Override
 							public void run() {
 								PDEPlugin.logException(ex, ex.getMessage(), PDEUIMessages.InternationalizeWizard_NLSFragmentGenerator_errorMessage);
 							}
@@ -236,14 +243,17 @@ public class NLSFragmentGenerator {
 		FragmentFieldData fragmentData = populateFieldData(plugin, locale);
 
 		IProjectProvider projectProvider = new IProjectProvider() {
+			@Override
 			public String getProjectName() {
 				return project.getName();
 			}
 
+			@Override
 			public IProject getProject() {
 				return project;
 			}
 
+			@Override
 			public IPath getLocationPath() {
 				return project.getLocation();
 			}
@@ -363,6 +373,7 @@ public class NLSFragmentGenerator {
 			//Case 1b: External plug-in has a folder structure
 			else {
 				Visitor visitor = new Visitor() {
+					@Override
 					public void visit(File file) throws CoreException, FileNotFoundException {
 						worked();
 
@@ -400,6 +411,7 @@ public class NLSFragmentGenerator {
 			final IProject project = plugin.getUnderlyingResource().getProject();
 
 			project.accept(new IResourceVisitor() {
+				@Override
 				public boolean visit(IResource resource) throws CoreException {
 					worked();
 
@@ -502,6 +514,7 @@ public class NLSFragmentGenerator {
 
 		}
 
+		@Override
 		public boolean inclusive() {
 			return inclusive;
 		}

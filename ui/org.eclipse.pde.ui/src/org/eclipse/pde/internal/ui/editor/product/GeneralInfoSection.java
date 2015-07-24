@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 EclipseSource Corporation and others.
+ * Copyright (c) 2009, 2015 EclipseSource Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,6 +45,7 @@ public class GeneralInfoSection extends PDESection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
 	 */
+	@Override
 	protected void createClient(Section section, FormToolkit toolkit) {
 		section.setText(PDEUIMessages.GeneralInfoSection_title);
 		section.setDescription(PDEUIMessages.GeneralInfoSection_desc);
@@ -70,6 +71,7 @@ public class GeneralInfoSection extends PDESection {
 		getModel().addModelChangedListener(this);
 	}
 
+	@Override
 	public void dispose() {
 		IProductModel model = getModel();
 		if (model != null)
@@ -80,6 +82,7 @@ public class GeneralInfoSection extends PDESection {
 	private void createNameEntry(Composite client, FormToolkit toolkit, IActionBars actionBars) {
 		fNameEntry = new FormEntry(client, toolkit, PDEUIMessages.ProductInfoSection_productname, null, false);
 		fNameEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
+			@Override
 			public void textValueChanged(FormEntry entry) {
 				getProduct().setName(entry.getValue().trim());
 			}
@@ -94,6 +97,7 @@ public class GeneralInfoSection extends PDESection {
 	private void createIdEntry(Composite client, FormToolkit toolkit, IActionBars actionBars) {
 		fIdEntry = new FormEntry(client, toolkit, PDEUIMessages.ProductInfoSection_id, null, false);
 		fIdEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
+			@Override
 			public void textValueChanged(FormEntry entry) {
 				getProduct().setId(entry.getValue().trim());
 				validateProductId();
@@ -120,6 +124,7 @@ public class GeneralInfoSection extends PDESection {
 	private void createVersionEntry(Composite client, FormToolkit toolkit, IActionBars actionBars) {
 		fVersionEntry = new FormEntry(client, toolkit, PDEUIMessages.ProductInfoSection_version, null, false);
 		fVersionEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
+			@Override
 			public void textValueChanged(FormEntry entry) {
 				getProduct().setVersion(entry.getValue().trim());
 			}
@@ -138,6 +143,7 @@ public class GeneralInfoSection extends PDESection {
 		fLaunchersButton.setLayoutData(data);
 		fLaunchersButton.setEnabled(isEditable());
 		fLaunchersButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				getProduct().setIncludeLaunchers(fLaunchersButton.getSelection());
 			}
@@ -147,6 +153,7 @@ public class GeneralInfoSection extends PDESection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#commit(boolean)
 	 */
+	@Override
 	public void commit(boolean onSave) {
 		fIdEntry.commit();
 		fNameEntry.commit();
@@ -157,6 +164,7 @@ public class GeneralInfoSection extends PDESection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#cancelEdit()
 	 */
+	@Override
 	public void cancelEdit() {
 		fIdEntry.cancelEdit();
 		fNameEntry.cancelEdit();
@@ -175,6 +183,7 @@ public class GeneralInfoSection extends PDESection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#refresh()
 	 */
+	@Override
 	public void refresh() {
 		IProduct product = getProduct();
 		if (product.getId() != null) {
@@ -190,6 +199,7 @@ public class GeneralInfoSection extends PDESection {
 		super.refresh();
 	}
 
+	@Override
 	public void modelChanged(IModelChangedEvent e) {
 		// No need to call super, handling world changed event here
 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
@@ -228,6 +238,7 @@ public class GeneralInfoSection extends PDESection {
 		getPage().setLastFocusControl(fIdEntry.getText());
 	}
 
+	@Override
 	public boolean canPaste(Clipboard clipboard) {
 		Display d = getSection().getDisplay();
 		Control c = d.getFocusControl();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2008 IBM Corporation and others.
+ *  Copyright (c) 2003, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -40,6 +40,7 @@ public abstract class ReferenceAttributeRow extends TextAttributeRow {
 	 * @see org.eclipse.pde.internal.ui.neweditor.plugin.ExtensionElementEditor#createContents(org.eclipse.swt.widgets.Composite,
 	 *      org.eclipse.ui.forms.widgets.FormToolkit, int)
 	 */
+	@Override
 	protected void createLabel(Composite parent, FormToolkit toolkit) {
 		if (!part.isEditable()) {
 			super.createLabel(parent, toolkit);
@@ -48,6 +49,7 @@ public abstract class ReferenceAttributeRow extends TextAttributeRow {
 
 		Hyperlink link = toolkit.createHyperlink(parent, getPropertyLabel(), SWT.NULL);
 		link.addHyperlinkListener(new HyperlinkAdapter() {
+			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				if (!isReferenceModel()) {
 					openReference();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,6 +48,7 @@ public class SchemaInputContext extends XMLInputContext {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.context.InputContext#getId()
 	 */
+	@Override
 	public String getId() {
 		return CONTEXT_ID;
 	}
@@ -55,6 +56,7 @@ public class SchemaInputContext extends XMLInputContext {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.context.InputContext#createModel(org.eclipse.ui.IEditorInput)
 	 */
+	@Override
 	protected IBaseModel createModel(IEditorInput input) throws CoreException {
 		if (input instanceof FileStoreEditorInput)
 			return createExternalModel((FileStoreEditorInput) input);
@@ -108,9 +110,11 @@ public class SchemaInputContext extends XMLInputContext {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.context.InputContext#addTextEditOperation(java.util.ArrayList, org.eclipse.pde.core.IModelChangedEvent)
 	 */
+	@Override
 	protected void addTextEditOperation(ArrayList<TextEdit> ops, IModelChangedEvent event) {
 	}
 
+	@Override
 	protected void flushModel(IDocument doc) {
 		// if model is dirty, flush its content into
 		// the document so that the source editor will
@@ -143,6 +147,7 @@ public class SchemaInputContext extends XMLInputContext {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.context.InputContext#flushEditorInput()
 	 */
+	@Override
 	public void flushEditorInput() {
 		// Override parent, since this editor does not utilize edit operations
 		IDocumentProvider provider = getDocumentProvider();
@@ -154,6 +159,7 @@ public class SchemaInputContext extends XMLInputContext {
 		setValidated(false);
 	}
 
+	@Override
 	protected boolean synchronizeModel(IDocument doc) {
 		Schema schema = (Schema) getModel();
 		if (schema == null) {
@@ -181,9 +187,11 @@ public class SchemaInputContext extends XMLInputContext {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.context.XMLInputContext#reorderInsertEdits(java.util.ArrayList)
 	 */
+	@Override
 	protected void reorderInsertEdits(ArrayList<TextEdit> ops) {
 	}
 
+	@Override
 	protected String getPartitionName() {
 		return "___schema_partition"; //$NON-NLS-1$
 	}

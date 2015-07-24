@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,6 +44,7 @@ public class SchemaJavaAttributeDetails extends SchemaAttributeDetails {
 		super(section);
 	}
 
+	@Override
 	protected void createTypeDetails(Composite parent, FormToolkit toolkit) {
 		fClassEntry = new FormEntry(parent, toolkit, PDEUIMessages.SchemaAttributeDetails_extends, PDEUIMessages.SchemaAttributeDetails_browseButton, isEditable(), 13);
 		fInterfaceEntry = new FormEntry(parent, toolkit, PDEUIMessages.SchemaAttributeDetails_implements, PDEUIMessages.SchemaAttributeDetails_browseButton, isEditable(), 13);
@@ -51,6 +52,7 @@ public class SchemaJavaAttributeDetails extends SchemaAttributeDetails {
 		fInterfaceEntryFieldAssistDisposer = PDEJavaHelperUI.addTypeFieldAssistToText(fInterfaceEntry.getText(), getPage().getPDEEditor().getCommonProject(), IJavaSearchConstants.INTERFACE);
 	}
 
+	@Override
 	public void updateFields(ISchemaObject object) {
 		if (!(object instanceof SchemaAttribute))
 			return;
@@ -82,16 +84,19 @@ public class SchemaJavaAttributeDetails extends SchemaAttributeDetails {
 		fInterfaceEntry.setEditable(editable);
 	}
 
+	@Override
 	public void hookListeners() {
 		super.hookListeners();
 		IActionBars actionBars = getPage().getPDEEditor().getEditorSite().getActionBars();
 		fClassEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
+			@Override
 			public void textValueChanged(FormEntry entry) {
 				if (blockListeners())
 					return;
 				setBasedOn();
 			}
 
+			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				if (blockListeners())
 					return;
@@ -101,6 +106,7 @@ public class SchemaJavaAttributeDetails extends SchemaAttributeDetails {
 					fClassEntry.setValue(value);
 			}
 
+			@Override
 			public void browseButtonSelected(FormEntry entry) {
 				if (blockListeners())
 					return;
@@ -108,12 +114,14 @@ public class SchemaJavaAttributeDetails extends SchemaAttributeDetails {
 			}
 		});
 		fInterfaceEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
+			@Override
 			public void textValueChanged(FormEntry entry) {
 				if (blockListeners())
 					return;
 				setBasedOn();
 			}
 
+			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				if (blockListeners())
 					return;
@@ -123,6 +131,7 @@ public class SchemaJavaAttributeDetails extends SchemaAttributeDetails {
 					fInterfaceEntry.setValue(value);
 			}
 
+			@Override
 			public void browseButtonSelected(FormEntry entry) {
 				if (blockListeners())
 					return;
@@ -183,6 +192,7 @@ public class SchemaJavaAttributeDetails extends SchemaAttributeDetails {
 		}
 	}
 
+	@Override
 	public void commit(boolean onSave) {
 		super.commit(onSave);
 		// Only required for form entries
@@ -190,6 +200,7 @@ public class SchemaJavaAttributeDetails extends SchemaAttributeDetails {
 		fInterfaceEntry.commit();
 	}
 
+	@Override
 	public void dispose() {
 		super.dispose();
 		if (fClassEntryFieldAssistDisposer != null)

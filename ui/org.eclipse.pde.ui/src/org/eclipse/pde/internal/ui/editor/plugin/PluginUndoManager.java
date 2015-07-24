@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2014 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -36,6 +36,7 @@ public class PluginUndoManager extends ModelUndoManager {
 		setUndoLevelLimit(30);
 	}
 
+	@Override
 	protected String getPageId(Object obj) {
 		if (obj instanceof IPluginBase)
 			return OverviewPage.PAGE_ID;
@@ -50,6 +51,7 @@ public class PluginUndoManager extends ModelUndoManager {
 		return null;
 	}
 
+	@Override
 	protected void execute(IModelChangedEvent event, boolean undo) {
 		Object[] elements = event.getChangedObjects();
 		int type = event.getChangeType();
@@ -277,6 +279,7 @@ public class PluginUndoManager extends ModelUndoManager {
 		}
 	}
 
+	@Override
 	public void modelChanged(IModelChangedEvent event) {
 		if (event.getChangeType() == IModelChangedEvent.CHANGE) {
 			Object changedObject = event.getChangedObjects()[0];

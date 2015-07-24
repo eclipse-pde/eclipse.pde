@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -23,9 +23,11 @@ import org.eclipse.ui.PlatformUI;
  * welcome and cheat sheet files.
  */
 public class RunWorkbenchAction extends Action {
+	@Override
 	public void run() {
 		final EclipseLaunchShortcut shortcut = new EclipseLaunchShortcut();
 		BusyIndicator.showWhile(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell().getDisplay(), new Runnable() {
+			@Override
 			public void run() {
 				shortcut.launch(new StructuredSelection(), ILaunchManager.RUN_MODE);
 				notifyResult(true);

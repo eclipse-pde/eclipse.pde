@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -77,6 +77,7 @@ public class InformationSection extends SectionPart {
 		fNameText = toolkit.createText(client, getTarget().getName());
 		fNameText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fNameText.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				String value = fNameText.getText().trim();
 				getTarget().setName(value.length() > 0 ? value : null);
@@ -86,6 +87,7 @@ public class InformationSection extends SectionPart {
 
 		fNameTextValidator = new TextValidator(fPage.getManagedForm(), fNameText, null, true) {
 
+			@Override
 			protected boolean autoEnable() {
 				if (getText().getEditable() == false) {
 					return false;
@@ -93,6 +95,7 @@ public class InformationSection extends SectionPart {
 				return true;
 			}
 
+			@Override
 			protected boolean validateControl() {
 				return ControlValidationUtility.validateRequiredField(fNameText.getText(), fNameTextValidator, IMessageProvider.ERROR);
 			}
@@ -104,6 +107,7 @@ public class InformationSection extends SectionPart {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#refresh()
 	 */
+	@Override
 	public void refresh() {
 		fNameText.setText(getTarget().getName() != null ? getTarget().getName() : ""); //$NON-NLS-1$
 		super.refresh();

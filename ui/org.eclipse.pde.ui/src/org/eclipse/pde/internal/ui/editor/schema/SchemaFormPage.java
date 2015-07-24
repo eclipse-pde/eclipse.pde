@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2011 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -42,11 +42,13 @@ public class SchemaFormPage extends PDEFormPage implements IModelChangedListener
 			super(SchemaFormPage.this);
 		}
 
+		@Override
 		protected PDESection createMasterSection(IManagedForm managedForm, Composite parent) {
 			fSection = new ElementSection(getPage(), parent);
 			return fSection;
 		}
 
+		@Override
 		protected void registerPages(DetailsPart detailsPart) {
 			fDetailsPart = detailsPart;
 			detailsPart.setPageLimit(5);
@@ -61,6 +63,7 @@ public class SchemaFormPage extends PDEFormPage implements IModelChangedListener
 			detailsPart.setPageProvider(this);
 		}
 
+		@Override
 		public Object getPageKey(Object object) {
 			if (object instanceof ISchemaObjectReference)
 				return ISchemaObjectReference.class;
@@ -87,6 +90,7 @@ public class SchemaFormPage extends PDEFormPage implements IModelChangedListener
 				return null;
 		}
 
+		@Override
 		public IDetailsPage getPage(Object object) {
 			return null;
 		}
@@ -100,10 +104,12 @@ public class SchemaFormPage extends PDEFormPage implements IModelChangedListener
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormPage#getHelpResource()
 	 */
+	@Override
 	protected String getHelpResource() {
 		return IHelpContextIds.SCHEMA_EDITOR_MAIN;
 	}
 
+	@Override
 	protected void createFormContent(IManagedForm managedForm) {
 		ScrolledForm form = managedForm.getForm();
 		ISchema schema = (ISchema) ((SchemaEditor) getEditor()).getAggregateModel();
@@ -121,6 +127,7 @@ public class SchemaFormPage extends PDEFormPage implements IModelChangedListener
 
 	private ControlContribution createUIControlConPreviewRefDoc() {
 		return new ControlContribution("Preview") { //$NON-NLS-1$
+			@Override
 			protected Control createControl(Composite parent) {
 				// Create UI
 				createUIImageHyperlinkPreviewRefDoc(parent);
@@ -140,14 +147,17 @@ public class SchemaFormPage extends PDEFormPage implements IModelChangedListener
 
 	private void createUIListenerImageHyperlinkPreviewRefDoc() {
 		fImageHyperlinkPreviewRefDoc.addHyperlinkListener(new IHyperlinkListener() {
+			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				handleLinkActivatedPreviewRefDoc();
 			}
 
+			@Override
 			public void linkEntered(HyperlinkEvent e) {
 				handleLinkEnteredPreviewRefDoc(e.getLabel());
 			}
 
+			@Override
 			public void linkExited(HyperlinkEvent e) {
 				handleLinkExitedPreviewRefDoc();
 			}
@@ -185,6 +195,7 @@ public class SchemaFormPage extends PDEFormPage implements IModelChangedListener
 		schema.addModelChangedListener(this);
 	}
 
+	@Override
 	public void dispose() {
 		ISchema schema = (ISchema) getModel();
 		if (schema != null)
@@ -192,6 +203,7 @@ public class SchemaFormPage extends PDEFormPage implements IModelChangedListener
 		super.dispose();
 	}
 
+	@Override
 	public void modelChanged(IModelChangedEvent event) {
 		if (event.getChangeType() == IModelChangedEvent.CHANGE) {
 			String changeProperty = event.getChangedProperty();

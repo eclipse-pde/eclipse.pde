@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2014 IBM Corporation and others.
+ *  Copyright (c) 2005, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -40,17 +40,20 @@ public class PluginContentMergeViewer extends TextMergeViewer {
 		super(parent, SWT.LEFT_TO_RIGHT, config);
 	}
 
+	@Override
 	protected void configureTextViewer(final TextViewer textViewer) {
 		if (textViewer instanceof SourceViewer) {
 			if (fColorManager == null)
 				fColorManager = ColorManager.getDefault();
 			final XMLConfiguration configuration = new XMLConfiguration(fColorManager);
 			textViewer.getControl().addDisposeListener(new DisposeListener() {
+				@Override
 				public void widgetDisposed(DisposeEvent e) {
 					configuration.dispose();
 				}
 			});
 			IPropertyChangeListener propertyChangedListener = new IPropertyChangeListener() {
+				@Override
 				public void propertyChange(PropertyChangeEvent event) {
 					// the configuration will test if the properties affect the presentation also,
 					// but checking it here allows us to prevent the viewer from being invalidated
@@ -73,18 +76,22 @@ public class PluginContentMergeViewer extends TextMergeViewer {
 		}
 	}
 
+	@Override
 	protected IDocumentPartitioner getDocumentPartitioner() {
 		return new FastPartitioner(new XMLPartitionScanner(), XMLPartitionScanner.PARTITIONS);
 	}
 
+	@Override
 	protected String getDocumentPartitioning() {
 		return XMLDocumentSetupParticpant.XML_PARTITIONING;
 	}
 
+	@Override
 	public String getTitle() {
 		return PDEUIMessages.PluginContentMergeViewer_title;
 	}
 
+	@Override
 	protected void handleDispose(DisposeEvent event) {
 		super.handleDispose(event);
 		if (fColorManager != null)

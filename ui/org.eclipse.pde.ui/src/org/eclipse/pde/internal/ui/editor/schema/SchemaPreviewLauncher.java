@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2008 IBM Corporation and others.
+ *  Copyright (c) 2007, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -33,6 +33,7 @@ public class SchemaPreviewLauncher implements IEditorLauncher {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IEditorLauncher#open(org.eclipse.core.runtime.IPath)
 	 */
+	@Override
 	public void open(IPath filePath) {
 		// Create the preview action
 		PreviewReferenceAction action = new PreviewReferenceAction();

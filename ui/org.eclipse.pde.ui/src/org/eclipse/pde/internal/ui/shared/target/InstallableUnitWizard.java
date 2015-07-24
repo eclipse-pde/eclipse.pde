@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 IBM Corporation and others.
+ * Copyright (c) 2011, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,6 +43,7 @@ public class InstallableUnitWizard extends Wizard implements ITargetLocationWiza
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.target.ITargetLocationWizard#setTarget(org.eclipse.pde.core.target.ITargetDefinition)
 	 */
+	@Override
 	public void setTarget(ITargetDefinition target) {
 		fTarget = target;
 	}
@@ -50,6 +51,7 @@ public class InstallableUnitWizard extends Wizard implements ITargetLocationWiza
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.Wizard#addPages()
 	 */
+	@Override
 	public void addPages() {
 		IDialogSettings settings = PDEPlugin.getDefault().getDialogSettings().getSection(SETTINGS_SECTION);
 		if (settings == null) {
@@ -62,6 +64,7 @@ public class InstallableUnitWizard extends Wizard implements ITargetLocationWiza
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.Wizard#performFinish()
 	 */
+	@Override
 	public boolean performFinish() {
 		fLocation = ((EditIUContainerPage) getPages()[0]).getBundleContainer();
 		return true;
@@ -70,6 +73,7 @@ public class InstallableUnitWizard extends Wizard implements ITargetLocationWiza
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.ui.ILocationWizard#getLocations()
 	 */
+	@Override
 	public ITargetLocation[] getLocations() {
 		return new ITargetLocation[] {fLocation};
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,6 +26,7 @@ public class PluginContentFromTemplatePage extends PluginContentPage {
 		fTemplateWizard = templateWizard;
 	}
 
+	@Override
 	protected void createRCPQuestion(Composite parent, int horizontalSpan) {
 		super.createRCPQuestion(parent, horizontalSpan);
 		Boolean rcpFlag = TemplateWizardHelper.getFlag(fTemplateWizard, TemplateWizardHelper.FLAG_RCP);
@@ -38,6 +39,7 @@ public class PluginContentFromTemplatePage extends PluginContentPage {
 		}
 	}
 
+	@Override
 	protected void createPluginClassGroup(Composite container) {
 		super.createPluginClassGroup(container);
 		Boolean activatorFlag = TemplateWizardHelper.getFlag(fTemplateWizard, TemplateWizardHelper.FLAG_ACTIVATOR);

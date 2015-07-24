@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2008 IBM Corporation and others.
+ *  Copyright (c) 2005, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -31,6 +31,7 @@ public class DependencyExtentSearchResultPage extends AbstractSearchResultPage {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ViewerSorter#category(java.lang.Object)
 		 */
+		@Override
 		public int category(Object element) {
 			try {
 				if (element instanceof IType) {
@@ -48,6 +49,7 @@ public class DependencyExtentSearchResultPage extends AbstractSearchResultPage {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jdt.ui.JavaElementLabelProvider#getImage(java.lang.Object)
 		 */
+		@Override
 		public Image getImage(Object element) {
 			if (element instanceof IPluginObject)
 				return PDEPlugin.getDefault().getLabelProvider().getImage(element);
@@ -57,6 +59,7 @@ public class DependencyExtentSearchResultPage extends AbstractSearchResultPage {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jdt.ui.JavaElementLabelProvider#getText(java.lang.Object)
 		 */
+		@Override
 		public String getText(Object element) {
 			if (element instanceof IPluginExtensionPoint)
 				return ((IPluginExtensionPoint) element).getFullId();
@@ -90,6 +93,7 @@ public class DependencyExtentSearchResultPage extends AbstractSearchResultPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.search.ui.text.AbstractTextSearchViewPage#dispose()
 	 */
+	@Override
 	public void dispose() {
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 		super.dispose();
@@ -98,6 +102,7 @@ public class DependencyExtentSearchResultPage extends AbstractSearchResultPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.search.ui.text.AbstractTextSearchViewPage#fillContextMenu(org.eclipse.jface.action.IMenuManager)
 	 */
+	@Override
 	protected void fillContextMenu(IMenuManager mgr) {
 		super.fillContextMenu(mgr);
 		mgr.add(new Separator());
@@ -117,6 +122,7 @@ public class DependencyExtentSearchResultPage extends AbstractSearchResultPage {
 			if (object instanceof IType) {
 				mgr.add(new Separator());
 				mgr.add(new Action(PDEUIMessages.DependencyExtentSearchResultPage_referencesInPlugin) {
+					@Override
 					public void run() {
 						DependencyExtentQuery query = (DependencyExtentQuery) getInput().getQuery();
 						IWorkingSetManager manager = PlatformUI.getWorkbench().getWorkingSetManager();
@@ -132,6 +138,7 @@ public class DependencyExtentSearchResultPage extends AbstractSearchResultPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.search.ui.text.AbstractTextSearchViewPage#showMatch(org.eclipse.search.ui.text.Match, int, int, boolean)
 	 */
+	@Override
 	protected void showMatch(Match match, int currentOffset, int currentLength, boolean activate) throws PartInitException {
 		if (match.getElement() instanceof IPluginObject) {
 			ManifestEditorOpener.open(match, activate);
@@ -147,6 +154,7 @@ public class DependencyExtentSearchResultPage extends AbstractSearchResultPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.search.AbstractSearchResultPage#createLabelProvider()
 	 */
+	@Override
 	protected ILabelProvider createLabelProvider() {
 		return new LabelProvider();
 	}
@@ -154,6 +162,7 @@ public class DependencyExtentSearchResultPage extends AbstractSearchResultPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.search.AbstractSearchResultPage#createViewerSorter()
 	 */
+	@Override
 	protected ViewerComparator createViewerComparator() {
 		return new Comparator();
 	}

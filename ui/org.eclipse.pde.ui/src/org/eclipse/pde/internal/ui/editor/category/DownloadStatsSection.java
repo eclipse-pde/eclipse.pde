@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Rapicorp Corporation and others.
+ * Copyright (c) 2014, 2015 Rapicorp Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,6 +49,7 @@ public class DownloadStatsSection extends TableSection {
 	private ISiteModel fModel;
 	
 	class ArtifactsContentProvider extends DefaultTableProvider {
+		@Override
 		public Object[] getElements(Object inputElement) {
 			// model = (IStatsInfo) inputElement;
 			ArrayList<IWritable> result = new ArrayList<IWritable>();
@@ -82,6 +83,7 @@ public class DownloadStatsSection extends TableSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#createClient(org.eclipse.ui.forms.widgets.Section, org.eclipse.ui.forms.widgets.FormToolkit)
 	 */
+	@Override
 	protected void createClient(Section section, FormToolkit toolkit) {
 		fModel = (ISiteModel) getPage().getModel();
 		fModel.addModelChangedListener(this);
@@ -103,6 +105,7 @@ public class DownloadStatsSection extends TableSection {
 		IActionBars actionBars = getPage().getPDEEditor().getEditorSite().getActionBars();
 		fURLEntry = new FormEntry(urlContainer, toolkit, PDEUIMessages.StatsSection_url, SWT.NONE);
 		fURLEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
+			@Override
 			public void textValueChanged(FormEntry entry) {
 				try {
 					getStatsInfo().setURL(entry.getValue());
@@ -145,6 +148,7 @@ public class DownloadStatsSection extends TableSection {
 		section.setDescription(PDEUIMessages.StatsSection_description);
 	}
 
+	@Override
 	protected void buttonSelected(int index) {
 		switch (index) {
 			case 0 :
@@ -209,6 +213,7 @@ public class DownloadStatsSection extends TableSection {
 		updateButtons();
 	}
 
+	@Override
 	protected void handleDoubleClick(IStructuredSelection ssel) {
 		super.handleDoubleClick(ssel);
 		Object selected = ssel.getFirstElement();
@@ -255,6 +260,7 @@ public class DownloadStatsSection extends TableSection {
 	private void handleNewFeature() {
 		final Control control = fArtifactTable.getControl();
 		BusyIndicator.showWhile(control.getDisplay(), new Runnable() {
+			@Override
 			public void run() {
 				IFeatureModel[] allModels = PDECore.getDefault().getFeatureModelManager().getModels();
 				ArrayList<IFeatureModel> newModels = new ArrayList<IFeatureModel>();
@@ -279,6 +285,7 @@ public class DownloadStatsSection extends TableSection {
 	private void handleNewBundle() {
 		final Control control = fArtifactTable.getControl();
 		BusyIndicator.showWhile(control.getDisplay(), new Runnable() {
+			@Override
 			public void run() {
 				IPluginModelBase[] allModels = PluginRegistry.getAllModels();
 				ArrayList<IPluginModelBase> newModels = new ArrayList<IPluginModelBase>();
@@ -412,6 +419,7 @@ public class DownloadStatsSection extends TableSection {
 		}
 	}
 
+	@Override
 	protected void selectionChanged(IStructuredSelection selection) {
 		getPage().getPDEEditor().setSelection(selection);
 		updateButtons();
@@ -421,6 +429,7 @@ public class DownloadStatsSection extends TableSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#refresh()
 	 */
+	@Override
 	public void refresh() {
 		IStatsInfo info = getStatsInfo();
 		fURLEntry.setValue(info.getURL(), true);
@@ -428,11 +437,13 @@ public class DownloadStatsSection extends TableSection {
 		super.refresh();
 	}
 
+	@Override
 	public void commit(boolean onSave) {
 		fURLEntry.commit();
 		super.commit(onSave);
 	}
 
+	@Override
 	public void cancelEdit() {
 		fURLEntry.cancelEdit();
 		super.cancelEdit();
@@ -459,6 +470,7 @@ public class DownloadStatsSection extends TableSection {
 		return fModel.getSite();
 	}
 
+	@Override
 	public boolean canPaste(Clipboard clipboard) {
 		Display d = getSection().getDisplay();
 		Control c = d.getFocusControl();
@@ -470,6 +482,7 @@ public class DownloadStatsSection extends TableSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#modelChanged(org.eclipse.pde.core.IModelChangedEvent)
 	 */
+	@Override
 	public void modelChanged(IModelChangedEvent e) {
 		// No need to call super, handling world changed event here
 		fArtifactTable.setInput(getStatsInfo());
@@ -480,6 +493,7 @@ public class DownloadStatsSection extends TableSection {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
 	 */
+	@Override
 	public void dispose() {
 		ISiteModel model = getModel();
 		if (model != null)

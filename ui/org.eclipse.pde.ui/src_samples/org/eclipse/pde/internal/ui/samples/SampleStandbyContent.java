@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2013 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -64,6 +64,7 @@ public class SampleStandbyContent implements IStandbyContentPart {
 	 * @see org.eclipse.ui.intro.internal.parts.IStandbyContentPart#createPartControl(org.eclipse.swt.widgets.Composite,
 	 *      org.eclipse.ui.forms.widgets.FormToolkit)
 	 */
+	@Override
 	public void createPartControl(Composite parent, FormToolkit toolkit) {
 		form = toolkit.createScrolledForm(parent);
 		//form.setBackgroundImage(PDEPlugin.getDefault().getLabelProvider().get(
@@ -81,6 +82,7 @@ public class SampleStandbyContent implements IStandbyContentPart {
 		moreLink = toolkit.createHyperlink(form.getBody(), "Read More", //$NON-NLS-1$
 				SWT.NULL);
 		moreLink.addHyperlinkListener(new HyperlinkAdapter() {
+			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				if (helpURL != null)
 					PlatformUI.getWorkbench().getHelpSystem().displayHelpResource(helpURL);
@@ -92,6 +94,7 @@ public class SampleStandbyContent implements IStandbyContentPart {
 		buf.append(PDEUIMessages.SampleStandbyContent_content);
 		instText.setText(buf.toString(), true, false);
 		instText.addHyperlinkListener(new HyperlinkAdapter() {
+			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				Object href = e.getHref();
 				if (href.equals("help")) { //$NON-NLS-1$
@@ -122,6 +125,7 @@ public class SampleStandbyContent implements IStandbyContentPart {
 			selection = new StructuredSelection();
 		final ILaunchShortcut fshortcut = shortcut;
 		BusyIndicator.showWhile(form.getDisplay(), new Runnable() {
+			@Override
 			public void run() {
 				fshortcut.launch(selection, debug ? ILaunchManager.DEBUG_MODE : ILaunchManager.RUN_MODE);
 			}
@@ -197,6 +201,7 @@ public class SampleStandbyContent implements IStandbyContentPart {
 	 * 
 	 * @see org.eclipse.ui.intro.internal.parts.IStandbyContentPart#getControl()
 	 */
+	@Override
 	public Control getControl() {
 		return form;
 	}
@@ -214,6 +219,7 @@ public class SampleStandbyContent implements IStandbyContentPart {
 	 * 
 	 * @see org.eclipse.ui.intro.internal.parts.IStandbyContentPart#setInput(java.lang.Object)
 	 */
+	@Override
 	public void setInput(Object input) {
 		// if the new input is null, use cached input from momento.
 		if (input != null)
@@ -263,6 +269,7 @@ public class SampleStandbyContent implements IStandbyContentPart {
 	 * 
 	 * @see org.eclipse.ui.intro.internal.parts.IStandbyContentPart#setFocus()
 	 */
+	@Override
 	public void setFocus() {
 		form.setFocus();
 	}
@@ -272,6 +279,7 @@ public class SampleStandbyContent implements IStandbyContentPart {
 	 * 
 	 * @see org.eclipse.ui.intro.internal.parts.IStandbyContentPart#dispose()
 	 */
+	@Override
 	public void dispose() {
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);
 	}
@@ -279,6 +287,7 @@ public class SampleStandbyContent implements IStandbyContentPart {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.intro.config.IStandbyContentPart#init(org.eclipse.ui.intro.IIntroPart, org.eclipse.ui.IMemento)
 	 */
+	@Override
 	public void init(IIntroPart introPart, IMemento memento) {
 		// try to restore last state.
 		input = getCachedInput(memento);
@@ -300,6 +309,7 @@ public class SampleStandbyContent implements IStandbyContentPart {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.intro.config.IStandbyContentPart#saveState(org.eclipse.ui.IMemento)
 	 */
+	@Override
 	public void saveState(IMemento memento) {
 		String currentSampleId = input;
 		if (input != null)

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,6 +52,7 @@ public class ArgumentsFromContainerSelectionDialog extends TrayDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
 	 */
+	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		newShell.setText(Messages.ArgumentsFromContainerSelectionDialog_0);
@@ -60,6 +61,7 @@ public class ArgumentsFromContainerSelectionDialog extends TrayDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		super.createButtonsForButtonBar(parent);
 		getButton(IDialogConstants.OK_ID).setEnabled(false);
@@ -68,6 +70,7 @@ public class ArgumentsFromContainerSelectionDialog extends TrayDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		ITargetLocation[] containers = fTarget.getTargetLocations();
 		boolean foundArguments = false;
@@ -102,6 +105,7 @@ public class ArgumentsFromContainerSelectionDialog extends TrayDialog {
 
 		fTree.setLabelProvider(new StyledBundleLabelProvider(true, false));
 		fTree.setContentProvider(new ITreeContentProvider() {
+			@Override
 			public Object[] getChildren(Object element) {
 				if (element instanceof ITargetLocation) {
 					Object args = fAllArguments.get(element);
@@ -112,10 +116,12 @@ public class ArgumentsFromContainerSelectionDialog extends TrayDialog {
 				return new Object[0];
 			}
 
+			@Override
 			public boolean hasChildren(Object element) {
 				return getChildren(element).length > 0;
 			}
 
+			@Override
 			public Object[] getElements(Object element) {
 				if (element instanceof Map) {
 					return ((Map<?, ?>) element).keySet().toArray();
@@ -123,24 +129,29 @@ public class ArgumentsFromContainerSelectionDialog extends TrayDialog {
 				return new Object[0];
 			}
 
+			@Override
 			public Object getParent(Object element) {
 				return null;
 			}
 
+			@Override
 			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			}
 
+			@Override
 			public void dispose() {
 			}
 
 		});
 		fTree.addCheckStateListener(new ICheckStateListener() {
+			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				updateCheckState(event.getElement());
 				updateOKButton();
 			}
 		});
 		fTree.addDoubleClickListener(new IDoubleClickListener() {
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				if (!event.getSelection().isEmpty()) {
 					Object selected = ((IStructuredSelection) event.getSelection()).getFirstElement();
@@ -157,6 +168,7 @@ public class ArgumentsFromContainerSelectionDialog extends TrayDialog {
 
 		fSelectAllButton = SWTFactory.createPushButton(buttonComp, Messages.ArgumentsFromContainerSelectionDialog_3, null);
 		fSelectAllButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fTree.setAllChecked(true);
 				// TODO These buttons don't update as the check state changes
@@ -169,6 +181,7 @@ public class ArgumentsFromContainerSelectionDialog extends TrayDialog {
 
 		fDeselectAllButton = SWTFactory.createPushButton(buttonComp, Messages.ArgumentsFromContainerSelectionDialog_4, null);
 		fDeselectAllButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fTree.setAllChecked(false);
 				updateOKButton();
@@ -190,6 +203,7 @@ public class ArgumentsFromContainerSelectionDialog extends TrayDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#isResizable()
 	 */
+	@Override
 	protected boolean isResizable() {
 		return true;
 	}
@@ -258,6 +272,7 @@ public class ArgumentsFromContainerSelectionDialog extends TrayDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
+	@Override
 	protected void okPressed() {
 		List<String> arguments = new ArrayList<String>();
 		Object[] checked = fTree.getCheckedElements();

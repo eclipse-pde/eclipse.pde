@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -28,6 +28,7 @@ public abstract class PDEDetailsSections extends PDEDetails {
 	 * 
 	 * @see org.eclipse.ui.forms.IDetailsPage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createContents(Composite parent) {
 		sections = createSections(getPage(), parent);
 		parent.setLayout(FormLayoutFactory.createDetailsGridLayout(false, 1));
@@ -36,19 +37,23 @@ public abstract class PDEDetailsSections extends PDEDetails {
 		}
 	}
 
+	@Override
 	public void dispose() {
 		for (int i = 0; i < sections.length; i++) {
 			sections[i].dispose();
 		}
 	}
 
+	@Override
 	public void fireSaveNeeded() {
 		markDirty();
 		getPage().getPDEEditor().fireSaveNeeded(getContextId(), false);
 	}
 
+	@Override
 	public abstract String getContextId();
 
+	@Override
 	public PDEFormPage getPage() {
 		return (PDEFormPage) getManagedForm().getContainer();
 	}
@@ -58,6 +63,7 @@ public abstract class PDEDetailsSections extends PDEDetails {
 	 * 
 	 * @see org.eclipse.ui.forms.AbstractFormPart#isDirty()
 	 */
+	@Override
 	public boolean isDirty() {
 		for (int i = 0; i < sections.length; i++) {
 			if (sections[i].isDirty()) {
@@ -67,6 +73,7 @@ public abstract class PDEDetailsSections extends PDEDetails {
 		return super.isDirty();
 	}
 
+	@Override
 	public boolean isEditable() {
 		return getPage().getPDEEditor().getAggregateModel().isEditable();
 	}
@@ -76,6 +83,7 @@ public abstract class PDEDetailsSections extends PDEDetails {
 	 * 
 	 * @see org.eclipse.ui.forms.AbstractFormPart#isStale()
 	 */
+	@Override
 	public boolean isStale() {
 		for (int i = 0; i < sections.length; i++) {
 			if (sections[i].isStale()) {
@@ -90,6 +98,7 @@ public abstract class PDEDetailsSections extends PDEDetails {
 	 * 
 	 * @see org.eclipse.pde.core.IModelChangedListener#modelChanged(org.eclipse.pde.core.IModelChangedEvent)
 	 */
+	@Override
 	public void modelChanged(IModelChangedEvent event) {
 	}
 
@@ -98,6 +107,7 @@ public abstract class PDEDetailsSections extends PDEDetails {
 	 * 
 	 * @see org.eclipse.ui.forms.IDetailsPage#inputChanged(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
+	@Override
 	public void selectionChanged(IFormPart masterPart, ISelection selection) {
 	}
 
@@ -106,6 +116,7 @@ public abstract class PDEDetailsSections extends PDEDetails {
 	 * 
 	 * @see org.eclipse.ui.forms.IDetailsPage#setFocus()
 	 */
+	@Override
 	public void setFocus() {
 		if (sections.length > 0) {
 			sections[0].setFocus();

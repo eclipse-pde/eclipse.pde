@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 IBM Corporation and others.
+ * Copyright (c) 2008, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,6 +44,7 @@ public class SchemaIdentifierAttributeDetails extends SchemaAttributeDetails {
 	}
 
 	// TODO we should reuse our attribute tables when possible
+	@Override
 	protected void createTypeDetails(Composite parent, FormToolkit toolkit) {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.heightHint = 40;
@@ -85,6 +86,7 @@ public class SchemaIdentifierAttributeDetails extends SchemaAttributeDetails {
 		fRemoveRestriction.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	}
 
+	@Override
 	public void updateFields(ISchemaObject object) {
 		if (!(object instanceof SchemaAttribute))
 			return;
@@ -106,16 +108,19 @@ public class SchemaIdentifierAttributeDetails extends SchemaAttributeDetails {
 		fRemoveRestriction.setEnabled(!fRestrictionsTable.getSelection().isEmpty() && editable);
 	}
 
+	@Override
 	public void hookListeners() {
 		super.hookListeners();
 		IActionBars actionBars = getPage().getPDEEditor().getEditorSite().getActionBars();
 		fReferenceEntry.setFormEntryListener(new FormEntryAdapter(this, actionBars) {
+			@Override
 			public void textValueChanged(FormEntry entry) {
 				if (blockListeners())
 					return;
 				getAttribute().setBasedOn(fReferenceEntry.getValue());
 			}
 
+			@Override
 			public void browseButtonSelected(FormEntry entry) {
 				if (blockListeners())
 					return;
@@ -123,6 +128,7 @@ public class SchemaIdentifierAttributeDetails extends SchemaAttributeDetails {
 			}
 		});
 		fAddRestriction.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (blockListeners())
 					return;
@@ -151,6 +157,7 @@ public class SchemaIdentifierAttributeDetails extends SchemaAttributeDetails {
 			}
 		});
 		fRemoveRestriction.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (blockListeners())
 					return;
@@ -187,6 +194,7 @@ public class SchemaIdentifierAttributeDetails extends SchemaAttributeDetails {
 			}
 		});
 		fRestrictionsTable.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				if (blockListeners())
 					return;

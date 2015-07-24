@@ -1,5 +1,5 @@
 /******************************************************************************* 
- * Copyright (c) 2009, 2014 EclipseSource and others. All rights reserved. This
+ * Copyright (c) 2009, 2015 EclipseSource and others. All rights reserved. This
  * program and the accompanying materials are made available under the terms of
  * the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -31,36 +31,44 @@ public class CategoryEditor extends PDEFormEditor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getEditorID()
 	 */
+	@Override
 	protected String getEditorID() {
 		return IPDEUIConstants.CATEGORY_EDITOR_ID;
 	}
 
+	@Override
 	protected void createResourceContexts(InputContextManager manager, IFileEditorInput input) {
 		manager.putContext(input, new CategoryInputContext(this, input, true));
 		manager.monitorFile(input.getFile());
 	}
 
+	@Override
 	protected InputContextManager createInputContextManager() {
 		CategoryInputContextManager contextManager = new CategoryInputContextManager(this);
 		contextManager.setUndoManager(new CategoryUndoManager(this));
 		return contextManager;
 	}
 
+	@Override
 	public void monitoredFileAdded(IFile file) {
 		// do nothing
 	}
 
+	@Override
 	public boolean monitoredFileRemoved(IFile file) {
 		return true;
 	}
 
+	@Override
 	public void editorContextAdded(InputContext context) {
 	}
 
+	@Override
 	public void contextRemoved(InputContext context) {
 		close(false);
 	}
 
+	@Override
 	protected void createSystemFileContexts(InputContextManager manager, FileStoreEditorInput input) {
 		try {
 			IFileStore store = EFS.getStore(input.getURI());
@@ -71,14 +79,17 @@ public class CategoryEditor extends PDEFormEditor {
 		}
 	}
 
+	@Override
 	protected void createStorageContexts(InputContextManager manager, IStorageEditorInput input) {
 		manager.putContext(input, new CategoryInputContext(this, input, true));
 	}
 
+	@Override
 	protected void contextMenuAboutToShow(IMenuManager manager) {
 		super.contextMenuAboutToShow(manager);
 	}
 
+	@Override
 	protected void addEditorPages() {
 		try {
 			addPage(new IUsPage(this));
@@ -88,10 +99,12 @@ public class CategoryEditor extends PDEFormEditor {
 		}
 	}
 
+	@Override
 	protected String computeInitialPageId() {
 		return IUsPage.PAGE_ID;
 	}
 
+	@Override
 	protected ISortableContentOutlinePage createContentOutline() {
 		return new CategoryOutlinePage(this);
 	}
@@ -100,6 +113,7 @@ public class CategoryEditor extends PDEFormEditor {
 	 * (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDEFormEditor#getInputContext(java.lang.Object)
 	 */
+	@Override
 	protected InputContext getInputContext(Object object) {
 		InputContext context = null;
 		if (object instanceof ISiteObject) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2008 IBM Corporation and others.
+ *  Copyright (c) 2003, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -29,6 +29,7 @@ public class BooleanAttributeRow extends ChoiceAttributeRow {
 	 * @see org.eclipse.pde.internal.ui.neweditor.plugin.ExtensionElementEditor#createContents(org.eclipse.swt.widgets.Composite,
 	 *      org.eclipse.ui.forms.widgets.FormToolkit, int)
 	 */
+	@Override
 	public void createContents(Composite parent, FormToolkit toolkit, int span) {
 		super.createContents(parent, toolkit, span);
 		if (getUse() != ISchemaAttribute.REQUIRED)
@@ -40,6 +41,7 @@ public class BooleanAttributeRow extends ChoiceAttributeRow {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.plugin.rows.ChoiceAttributeRow#isValid(java.lang.String)
 	 */
+	@Override
 	protected boolean isValid(String value) {
 		if (getUse() == ISchemaAttribute.REQUIRED)
 			return (value.equals("true") || value.equals("false")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -49,6 +51,7 @@ public class BooleanAttributeRow extends ChoiceAttributeRow {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.plugin.rows.ChoiceAttributeRow#getValidValue()
 	 */
+	@Override
 	protected String getValidValue() {
 		return "true"; //$NON-NLS-1$
 	}

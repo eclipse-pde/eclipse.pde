@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2011, 2012 IBM Corporation and others.
+ *  Copyright (c) 2011, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -35,6 +35,7 @@ public class AcceleratedTreeScrolling implements MouseWheelListener {
 		fSkipLines = (skipLines > 1) ? skipLines : 2;
 	}
 
+	@Override
 	public void mouseScrolled(MouseEvent e) {
 		// scroll only when MOD1 is pressed
 		if ((e.stateMask & SWT.MOD1) == SWT.MOD1 && fTree != null) {

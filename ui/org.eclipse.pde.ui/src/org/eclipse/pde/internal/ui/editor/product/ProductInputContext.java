@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,6 +42,7 @@ public class ProductInputContext extends UTF8InputContext {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.context.InputContext#getId()
 	 */
+	@Override
 	public String getId() {
 		return CONTEXT_ID;
 	}
@@ -49,6 +50,7 @@ public class ProductInputContext extends UTF8InputContext {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.context.InputContext#createModel(org.eclipse.ui.IEditorInput)
 	 */
+	@Override
 	protected IBaseModel createModel(IEditorInput input) throws CoreException {
 		IProductModel model = null;
 		if (input instanceof IStorageEditorInput) {
@@ -78,12 +80,14 @@ public class ProductInputContext extends UTF8InputContext {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.context.InputContext#addTextEditOperation(java.util.ArrayList, org.eclipse.pde.core.IModelChangedEvent)
 	 */
+	@Override
 	protected void addTextEditOperation(ArrayList<TextEdit> ops, IModelChangedEvent event) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.context.InputContext#flushModel(org.eclipse.jface.text.IDocument)
 	 */
+	@Override
 	protected void flushModel(IDocument doc) {
 		if (!(getModel() instanceof IEditable))
 			return;
@@ -104,6 +108,7 @@ public class ProductInputContext extends UTF8InputContext {
 		}
 	}
 
+	@Override
 	public void doRevert() {
 		fEditOperations.clear();
 		IProductModel model = (IProductModel) getModel();
@@ -115,6 +120,7 @@ public class ProductInputContext extends UTF8InputContext {
 		}
 	}
 
+	@Override
 	protected String getPartitionName() {
 		return "___prod_partition"; //$NON-NLS-1$
 	}

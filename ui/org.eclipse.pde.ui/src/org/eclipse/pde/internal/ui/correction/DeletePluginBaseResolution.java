@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,10 +30,12 @@ public class DeletePluginBaseResolution extends AbstractPDEMarkerResolution {
 		super(type);
 	}
 
+	@Override
 	public String getLabel() {
 		return PDEUIMessages.RemoveUselessPluginFile_description;
 	}
 
+	@Override
 	public void run(final IMarker marker) {
 		try {
 			marker.delete();
@@ -56,6 +58,7 @@ public class DeletePluginBaseResolution extends AbstractPDEMarkerResolution {
 		}
 	}
 
+	@Override
 	protected void createChange(IBaseModel model) {
 		// handled by run
 	}

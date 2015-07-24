@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2012 IBM Corporation and others.
+ * Copyright (c) 2003, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,6 +52,7 @@ public class BuildSiteAction implements IObjectActionDelegate {
 	 * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.action.IAction,
 	 *      org.eclipse.ui.IWorkbenchPart)
 	 */
+	@Override
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 	}
 
@@ -60,6 +61,7 @@ public class BuildSiteAction implements IObjectActionDelegate {
 	 * 
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run(IAction action) {
 		if (fModel == null)
 			return;
@@ -91,6 +93,7 @@ public class BuildSiteAction implements IObjectActionDelegate {
 		return list.toArray(new IFeatureModel[list.size()]);
 	}
 
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		if (selection instanceof IStructuredSelection) {
 			Object obj = ((IStructuredSelection) selection).getFirstElement();
@@ -116,6 +119,7 @@ public class BuildSiteAction implements IObjectActionDelegate {
 			if (editor != null && editor.isDirty()) {
 				try {
 					IRunnableWithProgress op = new IRunnableWithProgress() {
+						@Override
 						public void run(IProgressMonitor monitor) {
 							editor.doSave(monitor);
 						}

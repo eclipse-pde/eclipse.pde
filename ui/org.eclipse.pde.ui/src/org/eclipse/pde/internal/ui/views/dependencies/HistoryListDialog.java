@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2012 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -31,6 +31,7 @@ import org.eclipse.ui.PlatformUI;
 
 public class HistoryListDialog extends StatusDialog {
 	class ContentProvider extends DefaultContentProvider implements IStructuredContentProvider {
+		@Override
 		public Object[] getElements(Object element) {
 			return fHistoryList.toArray();
 		}
@@ -55,6 +56,7 @@ public class HistoryListDialog extends StatusDialog {
 	/*
 	 * @see org.eclipse.jface.window.Window#configureShell(Shell)
 	 */
+	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(newShell, IHelpContextIds.HISTORY_LIST_DIALOG);
@@ -65,6 +67,7 @@ public class HistoryListDialog extends StatusDialog {
 	 * 
 	 * @see org.eclipse.jface.window.Window#create()
 	 */
+	@Override
 	public void create() {
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 		super.create();
@@ -73,6 +76,7 @@ public class HistoryListDialog extends StatusDialog {
 	/*
 	 * @see Dialog#createDialogArea(Composite)
 	 */
+	@Override
 	protected Control createDialogArea(Composite parent) {
 		initializeDialogUnits(parent);
 
@@ -121,6 +125,7 @@ public class HistoryListDialog extends StatusDialog {
 			 * 
 			 * @see org.eclipse.swt.events.SelectionAdapter#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)
 			 */
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				ISelection selection = fHistoryViewer.getSelection();
 				if (!selection.isEmpty() && selection instanceof IStructuredSelection) {
@@ -145,6 +150,7 @@ public class HistoryListDialog extends StatusDialog {
 			 * 
 			 * @see org.eclipse.swt.events.SelectionAdapter#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)
 			 */
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 				if (fHistoryStatus.isOK()) {
 					okPressed();
@@ -156,6 +162,7 @@ public class HistoryListDialog extends StatusDialog {
 		final DependenciesLabelProvider labelProvider = new DependenciesLabelProvider(false);
 		fHistoryViewer.setLabelProvider(labelProvider);
 		fHistoryViewer.getControl().addDisposeListener(new DisposeListener() {
+			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				labelProvider.dispose();
 			}
@@ -178,6 +185,7 @@ public class HistoryListDialog extends StatusDialog {
 			 * 
 			 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 			 */
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				StatusInfo status = new StatusInfo();
 				ISelection selection = fHistoryViewer.getSelection();

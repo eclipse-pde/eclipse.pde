@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -44,6 +44,7 @@ public class ChoicePropertyDescriptor extends PropertyDescriptor {
 	 * The editor is configured with the current validator if there is one.
 	 * </p>
 	 */
+	@Override
 	public CellEditor createPropertyEditor(Composite parent) {
 		CellEditor editor = new ComboBoxCellEditor(parent, values, SWT.READ_ONLY);
 		if (getValidator() != null)

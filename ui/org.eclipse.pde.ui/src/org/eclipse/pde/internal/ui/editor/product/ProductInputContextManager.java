@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2008 IBM Corporation and others.
+ *  Copyright (c) 2005, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -27,6 +27,7 @@ public class ProductInputContextManager extends InputContextManager {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.context.InputContextManager#getAggregateModel()
 	 */
+	@Override
 	public IBaseModel getAggregateModel() {
 		InputContext context = findContext(ProductInputContext.CONTEXT_ID);
 		return (context != null) ? context.getModel() : null;

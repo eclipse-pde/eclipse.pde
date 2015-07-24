@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -66,6 +66,7 @@ public class OSGiFrameworkPreferencePage extends PreferencePage implements IWork
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IFontProvider#getFont(java.lang.Object)
 		 */
+		@Override
 		public Font getFont(Object element) {
 			if (element instanceof IConfigurationElement) {
 				String id = ((IConfigurationElement) element).getAttribute(OSGiFrameworkManager.ATT_ID);
@@ -142,6 +143,7 @@ public class OSGiFrameworkPreferencePage extends PreferencePage implements IWork
 		fTableViewer.setLabelProvider(new FrameworkLabelProvider());
 		fTableViewer.setInput(PDELaunchingPlugin.getDefault().getOSGiFrameworkManager().getSortedFrameworks());
 		fTableViewer.addCheckStateListener(new ICheckStateListener() {
+			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				IConfigurationElement element = (IConfigurationElement) event.getElement();
 				fTableViewer.setCheckedElements(new Object[] {element});
@@ -193,6 +195,7 @@ public class OSGiFrameworkPreferencePage extends PreferencePage implements IWork
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */
+	@Override
 	public void init(IWorkbench workbench) {
 	}
 

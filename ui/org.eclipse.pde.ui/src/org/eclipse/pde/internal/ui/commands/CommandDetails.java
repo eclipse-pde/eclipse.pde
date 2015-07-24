@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2012 IBM Corporation and others.
+ * Copyright (c) 2006, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -111,6 +111,7 @@ public class CommandDetails {
 		fExecLink.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 		fExecLink.setVisible(false);
 		fExecLink.addDisposeListener(new DisposeListener() {
+			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				execImage.dispose();
 			}
@@ -125,6 +126,7 @@ public class CommandDetails {
 		fCopyLink.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 		fCopyLink.setVisible(false);
 		fCopyLink.addDisposeListener(new DisposeListener() {
+			@Override
 			public void widgetDisposed(DisposeEvent e) {
 				clipImage.dispose();
 			}
@@ -138,6 +140,7 @@ public class CommandDetails {
 		fSurroundCopyText = fToolkit.createButton(preLabelComp, PDEUIMessages.CommandDetails_includeMarkup, SWT.CHECK);
 		fSurroundCopyText.setToolTipText(PDEUIMessages.CommandDetails_markupTooltip);
 		fSurroundCopyText.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updatePreviewText();
 			}
@@ -149,6 +152,7 @@ public class CommandDetails {
 			fFilterCombo.add(filters[i].getLabelText());
 		fFilterCombo.select(CommandCopyFilter.indexOf(CommandCopyFilter.NONE));
 		fFilterCombo.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updatePreviewText();
 			}
@@ -177,6 +181,7 @@ public class CommandDetails {
 	}
 
 	private class ExecCommand extends HyperlinkAdapter {
+		@Override
 		public void linkActivated(HyperlinkEvent e) {
 			ParameterizedCommand pCommand = buildParameterizedCommand();
 			try {
@@ -223,6 +228,7 @@ public class CommandDetails {
 	}
 
 	private class CopyToClipboard extends HyperlinkAdapter {
+		@Override
 		public void linkActivated(HyperlinkEvent e) {
 			String filteredCommand = getFilteredCommand();
 
@@ -265,12 +271,14 @@ public class CommandDetails {
 		}
 
 		// clear button pressed
+		@Override
 		public void widgetSelected(SelectionEvent e) {
 			fValuesCombo.deselectAll();
 			fParameterToValue.remove(fParameter);
 		}
 
 		// values combo changed
+		@Override
 		public void modifyText(ModifyEvent e) {
 			String key = fValuesCombo.getText();
 			String value = (String) fValues.get(key);
@@ -311,6 +319,7 @@ public class CommandDetails {
 			}
 		}
 
+		@Override
 		public void modifyText(ModifyEvent e) {
 			String text = fParameterText.getText();
 			if ((text == null) || (text.trim().equals(""))) //$NON-NLS-1$
@@ -369,6 +378,7 @@ public class CommandDetails {
 			}
 		}
 
+		@Override
 		public void modifyText(ModifyEvent e) {
 			String text = fParameterText.getText();
 			if ((text == null) || (text.trim().equals(""))) //$NON-NLS-1$

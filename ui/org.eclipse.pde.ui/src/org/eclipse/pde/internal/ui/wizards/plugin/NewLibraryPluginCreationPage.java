@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,6 +51,7 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 			return fChanged;
 		}
 
+		@Override
 		public void modifyText(ModifyEvent e) {
 			if (!fBlocked) {
 				fChanged = true;
@@ -88,6 +89,7 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 		setDescription(PDEUIMessages.NewLibraryPluginCreationPage_desc);
 	}
 
+	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		Composite control = (Composite) getControl();
@@ -126,6 +128,7 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 		fEclipseButton.setText(PDEUIMessages.NewProjectCreationPage_pDependsOnRuntime);
 		fEclipseButton.setSelection(fData.getOSGiFramework() == null);
 		fEclipseButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateRuntimeDependency();
 			}
@@ -164,6 +167,7 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 		//enable by default
 		fUpdateRefsCheck.setSelection(false);
 		fUpdateRefsCheck.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (getNextPage() instanceof NewLibraryPluginCreationUpdateRefPage) {
 					((NewLibraryPluginCreationUpdateRefPage) getNextPage()).setEnable(fUpdateRefsCheck.getSelection());
@@ -198,6 +202,7 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 		// Set data 
 		fEEChoice.setItems(availableEEs.toArray(new String[availableEEs.size() - 1]));
 		fEEChoice.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				validatePage();
 			}
@@ -220,6 +225,7 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 		fExeEnvButton.setLayoutData(new GridData());
 		fExeEnvButton.setText(PDEUIMessages.NewProjectCreationPage_environmentsButton);
 		fExeEnvButton.addListener(SWT.Selection, new Listener() {
+			@Override
 			public void handleEvent(Event event) {
 				PreferencesUtil.createPreferenceDialogOn(getShell(), "org.eclipse.jdt.debug.ui.jreProfiles", //$NON-NLS-1$
 						new String[] {"org.eclipse.jdt.debug.ui.jreProfiles"}, null).open(); //$NON-NLS-1$ 
@@ -275,6 +281,7 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 	 * 
 	 * @see org.eclipse.jface.wizard.WizardPage#getNextPage()
 	 */
+	@Override
 	public IWizardPage getNextPage() {
 		updateData();
 		return super.getNextPage();
@@ -335,6 +342,7 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 		return null;
 	}
 
+	@Override
 	protected boolean validatePage() {
 		String id = IdUtil.getValidId(getProjectName());
 
@@ -410,6 +418,7 @@ public class NewLibraryPluginCreationPage extends WizardNewProjectCreationPage {
 		}
 	}
 
+	@Override
 	public boolean canFlipToNextPage() {
 		return isPageComplete() && fUpdateRefsCheck.getSelection();
 	}

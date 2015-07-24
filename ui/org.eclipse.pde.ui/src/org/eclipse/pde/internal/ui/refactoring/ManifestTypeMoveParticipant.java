@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2012 IBM Corporation and others.
+ *  Copyright (c) 2005, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -24,6 +24,7 @@ import org.eclipse.pde.internal.ui.PDEUIMessages;
 
 public class ManifestTypeMoveParticipant extends PDEMoveParticipant {
 
+	@Override
 	protected boolean initialize(Object element) {
 		if (element instanceof IType) {
 			IType type = (IType) element;
@@ -39,10 +40,12 @@ public class ManifestTypeMoveParticipant extends PDEMoveParticipant {
 		return false;
 	}
 
+	@Override
 	public String getName() {
 		return PDEUIMessages.ManifestTypeRenameParticipant_composite;
 	}
 
+	@Override
 	protected boolean isInterestingForExtensions() {
 		Object dest = getArguments().getDestination();
 		if (dest instanceof IJavaElement) {
@@ -53,6 +56,7 @@ public class ManifestTypeMoveParticipant extends PDEMoveParticipant {
 		return false;
 	}
 
+	@Override
 	protected void addChange(CompositeChange result, IFile file, IProgressMonitor pm) throws CoreException {
 		if (file.exists()) {
 			Change change = PluginManifestChange.createRenameChange(file, fElements.keySet().toArray(), getNewNames(), getTextChange(file), pm);
@@ -61,6 +65,7 @@ public class ManifestTypeMoveParticipant extends PDEMoveParticipant {
 		}
 	}
 
+	@Override
 	protected String getNewName(Object destination, Object element) {
 		if (destination instanceof IPackageFragment && element instanceof IJavaElement) {
 			StringBuffer buffer = new StringBuffer();
@@ -72,6 +77,7 @@ public class ManifestTypeMoveParticipant extends PDEMoveParticipant {
 		return super.getNewName(destination, element);
 	}
 
+	@Override
 	protected void addChange(CompositeChange result, IProgressMonitor pm) throws CoreException {
 		IFile file = PDEProject.getManifest(fProject);
 		if (file.exists()) {

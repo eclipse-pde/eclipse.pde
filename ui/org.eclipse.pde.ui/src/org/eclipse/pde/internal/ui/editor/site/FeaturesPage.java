@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,13 +32,16 @@ public class FeaturesPage extends PDEFormPage {
 			super(FeaturesPage.this);
 		}
 
+		@Override
 		protected PDESection createMasterSection(IManagedForm managedForm, Composite parent) {
 			fCategorySection = new CategorySection(getPage(), parent);
 			return fCategorySection;
 		}
 
+		@Override
 		protected void registerPages(DetailsPart detailsPart) {
 			detailsPart.setPageProvider(new IDetailsPageProvider() {
+				@Override
 				public Object getPageKey(Object object) {
 					if (object instanceof SiteFeatureAdapter)
 						return SiteFeatureAdapter.class;
@@ -47,6 +50,7 @@ public class FeaturesPage extends PDEFormPage {
 					return object.getClass();
 				}
 
+				@Override
 				public IDetailsPage getPage(Object key) {
 					if (key.equals(SiteFeatureAdapter.class))
 						return createFeatureDetails();
@@ -63,6 +67,7 @@ public class FeaturesPage extends PDEFormPage {
 		fBlock = new SiteFeaturesBlock();
 	}
 
+	@Override
 	protected void createFormContent(IManagedForm managedForm) {
 		super.createFormContent(managedForm);
 		ScrolledForm form = managedForm.getForm();
@@ -75,10 +80,12 @@ public class FeaturesPage extends PDEFormPage {
 
 	private IDetailsPage createFeatureDetails() {
 		return new PDEDetailsSections() {
+			@Override
 			protected PDESection[] createSections(PDEFormPage page, Composite parent) {
 				return new PDESection[] {new FeatureDetailsSection(getPage(), parent), new PortabilitySection(getPage(), parent)};
 			}
 
+			@Override
 			public String getContextId() {
 				return SiteInputContext.CONTEXT_ID;
 			}
@@ -87,16 +94,19 @@ public class FeaturesPage extends PDEFormPage {
 
 	private IDetailsPage createCategoryDetails() {
 		return new PDEDetailsSections() {
+			@Override
 			protected PDESection[] createSections(PDEFormPage page, Composite parent) {
 				return new PDESection[] {new CategoryDetailsSection(getPage(), parent)};
 			}
 
+			@Override
 			public String getContextId() {
 				return SiteInputContext.CONTEXT_ID;
 			}
 		};
 	}
 
+	@Override
 	protected String getHelpResource() {
 		return IHelpContextIds.MANIFEST_SITE_FEATURES;
 	}

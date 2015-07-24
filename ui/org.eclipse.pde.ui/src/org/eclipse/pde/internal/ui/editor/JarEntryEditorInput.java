@@ -46,6 +46,7 @@ public class JarEntryEditorInput implements IStorageEditorInput {
 	/*
 	 * @see IEditorInput#getPersistable()
 	 */
+	@Override
 	public IPersistableElement getPersistable() {
 		return null;
 	}
@@ -53,6 +54,7 @@ public class JarEntryEditorInput implements IStorageEditorInput {
 	/*
 	 * @see IEditorInput#getName()
 	 */
+	@Override
 	public String getName() {
 		return fJarEntryFile.getName();
 	}
@@ -74,6 +76,7 @@ public class JarEntryEditorInput implements IStorageEditorInput {
 	/*
 	 * @see IEditorInput#getToolTipText()
 	 */
+	@Override
 	public String getToolTipText() {
 		File file = fJarEntryFile.getAdapter(File.class);
 		if (file != null)
@@ -84,6 +87,7 @@ public class JarEntryEditorInput implements IStorageEditorInput {
 	/*
 	 * @see IEditorInput#getImageDescriptor()
 	 */
+	@Override
 	public ImageDescriptor getImageDescriptor() {
 		IEditorRegistry registry = PlatformUI.getWorkbench().getEditorRegistry();
 		return registry.getImageDescriptor(fJarEntryFile.getFullPath().getFileExtension());
@@ -92,6 +96,7 @@ public class JarEntryEditorInput implements IStorageEditorInput {
 	/*
 	 * @see IEditorInput#exists()
 	 */
+	@Override
 	public boolean exists() {
 		// JAR entries can't be deleted
 		return true;
@@ -100,6 +105,7 @@ public class JarEntryEditorInput implements IStorageEditorInput {
 	/*
 	 * @see IAdaptable#getAdapter(Class)
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public <T> T getAdapter(Class<T> adapter) {
 		if (adapter.equals(File.class))
@@ -110,6 +116,7 @@ public class JarEntryEditorInput implements IStorageEditorInput {
 	/*
 	 * see IStorageEditorInput#getStorage()
 	 */
+	@Override
 	public IStorage getStorage() {
 		return fJarEntryFile;
 	}

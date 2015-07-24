@@ -1,5 +1,5 @@
 /******************************************************************************* 
-* Copyright (c) 2009, 2012 EclipseSource and others. All rights reserved. This
+* Copyright (c) 2009, 2015 EclipseSource and others. All rights reserved. This
 * program and the accompanying materials are made available under the terms of
 * the Eclipse Public License v1.0 which accompanies this distribution, and is
 * available at http://www.eclipse.org/legal/epl-v10.html
@@ -42,6 +42,7 @@ public class CategoryInputContext extends XMLInputContext {
 		create();
 	}
 
+	@Override
 	protected IBaseModel createModel(IEditorInput input) {
 		IBaseModel model = null;
 		InputStream is = null;
@@ -94,6 +95,7 @@ public class CategoryInputContext extends XMLInputContext {
 		return model;
 	}
 
+	@Override
 	public void dispose() {
 		ISiteModel model = (ISiteModel) getModel();
 		if (storageModel) {
@@ -102,6 +104,7 @@ public class CategoryInputContext extends XMLInputContext {
 		super.dispose();
 	}
 
+	@Override
 	protected void flushModel(IDocument doc) {
 		// if model is dirty, flush its content into
 		// the document so that the source editor will
@@ -127,6 +130,7 @@ public class CategoryInputContext extends XMLInputContext {
 		}
 	}
 
+	@Override
 	protected boolean synchronizeModel(IDocument doc) {
 		ISiteModel model = (ISiteModel) getModel();
 		boolean cleanModel = true;
@@ -153,6 +157,7 @@ public class CategoryInputContext extends XMLInputContext {
 	 * 
 	 * @see org.eclipse.pde.internal.ui.neweditor.InputContext#getId()
 	 */
+	@Override
 	public String getId() {
 		return CONTEXT_ID;
 	}
@@ -163,15 +168,18 @@ public class CategoryInputContext extends XMLInputContext {
 	 * @see org.eclipse.pde.internal.ui.neweditor.context.InputContext#addTextEditOperation(java.util.ArrayList,
 	 *      org.eclipse.pde.core.IModelChangedEvent)
 	 */
+	@Override
 	protected void addTextEditOperation(ArrayList<TextEdit> ops, IModelChangedEvent event) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.neweditor.context.XMLInputContext#reorderInsertEdits(java.util.ArrayList)
 	 */
+	@Override
 	protected void reorderInsertEdits(ArrayList<TextEdit> ops) {
 	}
 
+	@Override
 	protected String getPartitionName() {
 		return "___category_partition"; //$NON-NLS-1$
 	}

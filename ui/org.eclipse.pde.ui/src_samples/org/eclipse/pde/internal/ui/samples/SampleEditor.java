@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -45,6 +45,7 @@ public class SampleEditor extends EditorPart {
 	private InputFileListener inputFileListener;
 
 	class InputFileListener implements IResourceChangeListener, IResourceDeltaVisitor {
+		@Override
 		public void resourceChanged(IResourceChangeEvent event) {
 			if (event.getType() == IResourceChangeEvent.POST_CHANGE) {
 				IResourceDelta delta = event.getDelta();
@@ -56,6 +57,7 @@ public class SampleEditor extends EditorPart {
 			}
 		}
 
+		@Override
 		public boolean visit(IResourceDelta delta) throws CoreException {
 			IResource resource = delta.getResource();
 			if (resource instanceof IFile) {
@@ -81,6 +83,7 @@ public class SampleEditor extends EditorPart {
 	/**
 	 * @see EditorPart#createPartControl
 	 */
+	@Override
 	public void createPartControl(Composite parent) {
 		toolkit = new FormToolkit(parent.getDisplay());
 		form = toolkit.createScrolledForm(parent);
@@ -106,6 +109,7 @@ public class SampleEditor extends EditorPart {
 		if (helpURL != null) {
 			Hyperlink moreLink = toolkit.createHyperlink(form.getBody(), "Read More", SWT.NULL); //$NON-NLS-1$
 			moreLink.addHyperlinkListener(new HyperlinkAdapter() {
+				@Override
 				public void linkActivated(HyperlinkEvent e) {
 					PlatformUI.getWorkbench().getHelpSystem().displayHelpResource(helpURL);
 				}
@@ -117,6 +121,7 @@ public class SampleEditor extends EditorPart {
 		buf.append(PDEUIMessages.SampleEditor_content);
 		instText.setText(buf.toString(), true, false);
 		instText.addHyperlinkListener(new HyperlinkAdapter() {
+			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				Object href = e.getHref();
 				if (href.equals("help")) { //$NON-NLS-1$
@@ -142,6 +147,7 @@ public class SampleEditor extends EditorPart {
 			selection = new StructuredSelection();
 		final ILaunchShortcut fshortcut = shortcut;
 		BusyIndicator.showWhile(form.getDisplay(), new Runnable() {
+			@Override
 			public void run() {
 				fshortcut.launch(selection, debug ? ILaunchManager.DEBUG_MODE : ILaunchManager.RUN_MODE);
 			}
@@ -164,6 +170,7 @@ public class SampleEditor extends EditorPart {
 		return properties;
 	}
 
+	@Override
 	public void dispose() {
 		if (inputFileListener != null) {
 			PDEPlugin.getWorkspace().removeResourceChangeListener(inputFileListener);
@@ -177,6 +184,7 @@ public class SampleEditor extends EditorPart {
 	/**
 	 * @see EditorPart#setFocus
 	 */
+	@Override
 	public void setFocus() {
 		form.setFocus();
 	}
@@ -184,18 +192,21 @@ public class SampleEditor extends EditorPart {
 	/**
 	 * @see EditorPart#doSave
 	 */
+	@Override
 	public void doSave(IProgressMonitor monitor) {
 	}
 
 	/**
 	 * @see EditorPart#doSaveAs
 	 */
+	@Override
 	public void doSaveAs() {
 	}
 
 	/**
 	 * @see EditorPart#isDirty
 	 */
+	@Override
 	public boolean isDirty() {
 		return false;
 	}
@@ -203,6 +214,7 @@ public class SampleEditor extends EditorPart {
 	/**
 	 * @see EditorPart#isSaveAsAllowed
 	 */
+	@Override
 	public boolean isSaveAsAllowed() {
 		return false;
 	}
@@ -210,6 +222,7 @@ public class SampleEditor extends EditorPart {
 	/**
 	 * @see EditorPart#init
 	 */
+	@Override
 	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
 		setSite(site);
 		setInput(input);
@@ -220,6 +233,7 @@ public class SampleEditor extends EditorPart {
 	public void close() {
 		Display display = getSite().getShell().getDisplay();
 		display.asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				if (toolkit != null) {
 					getSite().getPage().closeEditor(SampleEditor.this, false);

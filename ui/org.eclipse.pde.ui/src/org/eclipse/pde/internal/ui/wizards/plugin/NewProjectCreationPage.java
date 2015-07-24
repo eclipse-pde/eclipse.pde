@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,6 +53,7 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 		fSelection = selection;
 	}
 
+	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		Composite control = (Composite) getControl();
@@ -83,6 +84,7 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 		fJavaButton.setText(PDEUIMessages.ProjectStructurePage_java);
 		fJavaButton.setSelection(true);
 		fJavaButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				boolean enabled = fJavaButton.getSelection();
 				fSourceLabel.setEnabled(enabled);
@@ -125,6 +127,7 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 		fEclipseButton.setText(PDEUIMessages.NewProjectCreationPage_pDependsOnRuntime);
 		fEclipseButton.setSelection(!osgiProject);
 		fEclipseButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateRuntimeDependency();
 			}
@@ -193,6 +196,7 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 		gd.widthHint = 300;
 		text.setLayoutData(gd);
 		text.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				setPageComplete(validatePage());
 			}
@@ -219,6 +223,7 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage {
 		fData.setWorkingSets(getSelectedWorkingSets());
 	}
 
+	@Override
 	protected boolean validatePage() {
 		if (!super.validatePage())
 			return false;

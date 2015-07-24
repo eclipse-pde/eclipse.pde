@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -58,6 +58,7 @@ public class ExportPackageVisibilitySection extends TableSection implements IPar
 	private Button fVisibleButton;
 
 	class TableContentProvider extends DefaultContentProvider implements IStructuredContentProvider {
+		@Override
 		public Object[] getElements(Object parent) {
 			ExportPackageObject object = (ExportPackageObject) parent;
 			if (object == null || !object.isInternal())
@@ -68,10 +69,12 @@ public class ExportPackageVisibilitySection extends TableSection implements IPar
 
 	class TableLabelProvider extends LabelProvider implements ITableLabelProvider {
 
+		@Override
 		public String getColumnText(Object obj, int index) {
 			return obj.toString();
 		}
 
+		@Override
 		public Image getColumnImage(Object obj, int index) {
 			return fImage;
 		}
@@ -82,6 +85,7 @@ public class ExportPackageVisibilitySection extends TableSection implements IPar
 		fHandleDefaultButton = false;
 	}
 
+	@Override
 	public void createClient(Section section, FormToolkit toolkit) {
 		section.setText(PDEUIMessages.ExportPackageVisibilitySection_title);
 		section.setDescription(PDEUIMessages.ExportPackageVisibilitySection_default);
@@ -92,6 +96,7 @@ public class ExportPackageVisibilitySection extends TableSection implements IPar
 
 		fInternalButton = toolkit.createButton(comp, PDEUIMessages.ExportPackageVisibilitySection_hideAll, SWT.RADIO);
 		fInternalButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(org.eclipse.swt.events.SelectionEvent e) {
 				if (!fBlockChanges) {
 					for (int i = 0; i < fSelectedObjects.length; i++) {
@@ -132,6 +137,7 @@ public class ExportPackageVisibilitySection extends TableSection implements IPar
 
 	private void makeActions() {
 		fAddAction = new Action(PDEUIMessages.ManifestEditor_ExportSection_add) {
+			@Override
 			public void run() {
 				handleAdd();
 			}
@@ -139,6 +145,7 @@ public class ExportPackageVisibilitySection extends TableSection implements IPar
 		fAddAction.setEnabled(isEditable());
 
 		fRemoveAction = new Action(PDEUIMessages.ManifestEditor_ExportSection_remove) {
+			@Override
 			public void run() {
 				handleRemove();
 			}
@@ -146,6 +153,7 @@ public class ExportPackageVisibilitySection extends TableSection implements IPar
 		fRemoveAction.setEnabled(isEditable());
 	}
 
+	@Override
 	protected void selectionChanged(IStructuredSelection selection) {
 		// Update global selection
 		getPage().getPDEEditor().setSelection(selection);
@@ -154,6 +162,7 @@ public class ExportPackageVisibilitySection extends TableSection implements IPar
 		getTablePart().setButtonEnabled(1, item != null);
 	}
 
+	@Override
 	protected void buttonSelected(int index) {
 		if (index == ADD_INDEX)
 			handleAdd();
@@ -164,6 +173,7 @@ public class ExportPackageVisibilitySection extends TableSection implements IPar
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.PDESection#doGlobalAction(java.lang.String)
 	 */
+	@Override
 	public boolean doGlobalAction(String actionId) {
 
 		if (!isEditable()) {
@@ -190,6 +200,7 @@ public class ExportPackageVisibilitySection extends TableSection implements IPar
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#canPaste(java.lang.Object, java.lang.Object[])
 	 */
+	@Override
 	protected boolean canPaste(Object targetObject, Object[] sourceObjects) {
 		// One export package object must be selected
 		if (isOneObjectSelected() == false) {
@@ -221,6 +232,7 @@ public class ExportPackageVisibilitySection extends TableSection implements IPar
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.StructuredViewerSection#doPaste(java.lang.Object, java.lang.Object[])
 	 */
+	@Override
 	protected void doPaste(Object targetObject, Object[] sourceObjects) {
 		// Paste all source objects
 		for (int i = 0; i < sourceObjects.length; i++) {
@@ -237,6 +249,7 @@ public class ExportPackageVisibilitySection extends TableSection implements IPar
 		}
 	}
 
+	@Override
 	public void dispose() {
 		IBundleModel model = getBundleModel();
 		if (model != null)
@@ -246,6 +259,7 @@ public class ExportPackageVisibilitySection extends TableSection implements IPar
 		super.dispose();
 	}
 
+	@Override
 	protected void fillContextMenu(IMenuManager manager) {
 		getPage().getPDEEditor().getContributor().contextMenuAboutToShow(manager);
 	}
@@ -284,6 +298,7 @@ public class ExportPackageVisibilitySection extends TableSection implements IPar
 		}
 	}
 
+	@Override
 	public void modelChanged(IModelChangedEvent event) {
 		if (event.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
 			markStale();
@@ -307,11 +322,13 @@ public class ExportPackageVisibilitySection extends TableSection implements IPar
 		fFriendViewer.getTable().setSelection(Math.min(index, fFriendViewer.getTable().getItemCount() - 1));
 	}
 
+	@Override
 	public void refresh() {
 		update(null);
 		super.refresh();
 	}
 
+	@Override
 	public void selectionChanged(IFormPart source, ISelection selection) {
 		List<?> list = ((IStructuredSelection) selection).toList();
 		if (list.size() > 0) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2013 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -108,6 +108,7 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 
 	public class LibraryContentProvider extends DefaultContentProvider implements IStructuredContentProvider {
 
+		@Override
 		public Object[] getElements(Object parent) {
 			if (parent instanceof IBuildModel) {
 				IBuild build = ((IBuildModel) parent).getBuild();
@@ -133,6 +134,7 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 	}
 
 	public class LibraryLabelProvider extends LabelProvider implements ITableLabelProvider {
+		@Override
 		public String getColumnText(Object obj, int index) {
 			String name = ((IBuildEntry) obj).getName();
 			if (name.startsWith(IBuildEntry.JAR_PREFIX))
@@ -140,6 +142,7 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 			return name;
 		}
 
+		@Override
 		public Image getColumnImage(Object obj, int index) {
 			PDELabelProvider provider = PDEPlugin.getDefault().getLabelProvider();
 			return provider.get(PDEPluginImages.DESC_JAVA_LIB_OBJ);
@@ -158,16 +161,19 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 	}
 
 	public class FolderContentProvider extends DefaultContentProvider implements IStructuredContentProvider {
+		@Override
 		public Object[] getElements(Object parent) {
 			return (parent instanceof IBuildEntry) ? ((IBuildEntry) parent).getTokens() : new Object[0];
 		}
 	}
 
 	public class FolderLabelProvider extends LabelProvider implements ITableLabelProvider {
+		@Override
 		public String getColumnText(Object obj, int index) {
 			return obj.toString();
 		}
 
+		@Override
 		public Image getColumnImage(Object obj, int index) {
 			ISharedImages sharedImages = PlatformUI.getWorkbench().getSharedImages();
 			return sharedImages.getImage(ISharedImages.IMG_OBJ_FOLDER);
@@ -320,6 +326,7 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 		MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {
+			@Override
 			public void menuAboutToShow(IMenuManager manager) {
 				fillLibraryContextMenu(manager);
 			}
@@ -345,6 +352,7 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 		MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {
+			@Override
 			public void menuAboutToShow(IMenuManager manager) {
 				fillFolderViewerContextMenu(manager);
 			}
@@ -504,6 +512,7 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 			String oldName = entry.getName().substring(7);
 			RenameDialog dialog = new RenameDialog(fLibraryViewer.getControl().getShell(), true, getLibraryNames(), oldName);
 			dialog.setInputValidator(new IInputValidator() {
+				@Override
 				public String isValid(String newText) {
 					if (newText.indexOf(' ') != -1)
 						return PDEUIMessages.AddLibraryDialog_nospaces;
@@ -624,6 +633,7 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 		final IPluginModelBase pluginModelBase = (pmodel instanceof IPluginModelBase) ? (IPluginModelBase) pmodel : null;
 
 		BusyIndicator.showWhile(fLibraryViewer.getTable().getDisplay(), new Runnable() {
+			@Override
 			public void run() {
 				IBuildModel buildModel = getBuildModel();
 				IBuild build = buildModel.getBuild();
@@ -796,6 +806,7 @@ public class RuntimeInfoSection extends PDESection implements IBuildPropertiesCo
 		dialog.setMessage(message);
 
 		dialog.setValidator(new ISelectionStatusValidator() {
+			@Override
 			public IStatus validate(Object[] selection) {
 				String id = PDEPlugin.getPluginId();
 				if (selection == null || selection.length != 1 || !(selection[0] instanceof IFolder))

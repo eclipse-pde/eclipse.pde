@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2010 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -62,19 +62,23 @@ public class ExtensionPointDetails extends PDEDetails {
 	public ExtensionPointDetails() {
 	}
 
+	@Override
 	public String getContextId() {
 		return PluginInputContext.CONTEXT_ID;
 	}
 
+	@Override
 	public void fireSaveNeeded() {
 		markDirty();
 		getPage().getPDEEditor().fireSaveNeeded(getContextId(), false);
 	}
 
+	@Override
 	public PDEFormPage getPage() {
 		return (PDEFormPage) getManagedForm().getContainer();
 	}
 
+	@Override
 	public boolean isEditable() {
 		return getPage().getPDEEditor().getAggregateModel().isEditable();
 	}
@@ -84,6 +88,7 @@ public class ExtensionPointDetails extends PDEDetails {
 	 * 
 	 * @see org.eclipse.ui.forms.IDetailsPage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createContents(Composite parent) {
 		parent.setLayout(FormLayoutFactory.createDetailsGridLayout(false, 1));
 		FormToolkit toolkit = getManagedForm().getToolkit();
@@ -100,6 +105,7 @@ public class ExtensionPointDetails extends PDEDetails {
 
 		fIdEntry = new FormEntry(client, toolkit, PDEUIMessages.ExtensionPointDetails_id, null, false);
 		fIdEntry.setFormEntryListener(new FormEntryAdapter(this) {
+			@Override
 			public void textValueChanged(FormEntry entry) {
 				if (fInput != null) {
 					try {
@@ -112,6 +118,7 @@ public class ExtensionPointDetails extends PDEDetails {
 		});
 		fNameEntry = new FormEntry(client, toolkit, PDEUIMessages.ExtensionPointDetails_name, null, false);
 		fNameEntry.setFormEntryListener(new FormEntryAdapter(this) {
+			@Override
 			public void textValueChanged(FormEntry entry) {
 				if (fInput != null)
 					try {
@@ -124,6 +131,7 @@ public class ExtensionPointDetails extends PDEDetails {
 		boolean editable = getPage().getModel().isEditable();
 		fSchemaEntry = new FormEntry(client, toolkit, PDEUIMessages.ExtensionPointDetails_schema, PDEUIMessages.ExtensionPointDetails_browse, editable); // 
 		fSchemaEntry.setFormEntryListener(new FormEntryAdapter(this) {
+			@Override
 			public void textValueChanged(FormEntry entry) {
 				if (fInput != null) {
 					try {
@@ -135,6 +143,7 @@ public class ExtensionPointDetails extends PDEDetails {
 				}
 			}
 
+			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				IProject project = getPage().getPDEEditor().getCommonProject();
 				if (fSchemaEntry.getValue() == null || fSchemaEntry.getValue().length() == 0) {
@@ -148,6 +157,7 @@ public class ExtensionPointDetails extends PDEDetails {
 					generateSchema();
 			}
 
+			@Override
 			public void browseButtonSelected(FormEntry entry) {
 				final IProject project = getPage().getPDEEditor().getCommonProject();
 				ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(PDEPlugin.getActiveWorkbenchShell(), new WorkbenchLabelProvider(), new WorkbenchContentProvider());
@@ -156,6 +166,7 @@ public class ExtensionPointDetails extends PDEDetails {
 				dialog.setDoubleClickSelects(false);
 				dialog.setAllowMultiple(false);
 				dialog.addFilter(new ViewerFilter() {
+					@Override
 					public boolean select(Viewer viewer, Object parent, Object element) {
 						if (element instanceof IFile) {
 							String ext = ((IFile) element).getFullPath().getFileExtension();
@@ -175,6 +186,7 @@ public class ExtensionPointDetails extends PDEDetails {
 					}
 				});
 				dialog.setValidator(new ISelectionStatusValidator() {
+					@Override
 					public IStatus validate(Object[] selection) {
 						IPluginModelBase model = (IPluginModelBase) getPage().getPDEEditor().getAggregateModel();
 						String pluginName = model.getPluginBase().getId();
@@ -222,6 +234,7 @@ public class ExtensionPointDetails extends PDEDetails {
 		fRichText.setImage("search", PDEPlugin.getDefault().getLabelProvider().get( //$NON-NLS-1$
 				PDEPluginImages.DESC_PSEARCH_OBJ));
 		fRichText.addHyperlinkListener(new HyperlinkAdapter() {
+			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				IBaseModel model = getPage().getPDEEditor().getAggregateModel();
 				String pointID = null;
@@ -284,6 +297,7 @@ public class ExtensionPointDetails extends PDEDetails {
 		markDetailsPart(section);
 	}
 
+	@Override
 	public void dispose() {
 		IPluginModelBase model = (IPluginModelBase) getPage().getModel();
 		if (model != null)
@@ -291,6 +305,7 @@ public class ExtensionPointDetails extends PDEDetails {
 		super.dispose();
 	}
 
+	@Override
 	public void modelChanged(IModelChangedEvent e) {
 		if (e.getChangeType() == IModelChangedEvent.CHANGE) {
 			Object obj = e.getChangedObjects()[0];
@@ -307,6 +322,7 @@ public class ExtensionPointDetails extends PDEDetails {
 		updateRichText();
 	}
 
+	@Override
 	public void cancelEdit() {
 		fIdEntry.cancelEdit();
 		fNameEntry.cancelEdit();
@@ -331,6 +347,7 @@ public class ExtensionPointDetails extends PDEDetails {
 
 		Display d = ww.getShell().getDisplay();
 		d.asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				try {
 					String editorId = IPDEUIConstants.SCHEMA_EDITOR_ID;
@@ -345,6 +362,7 @@ public class ExtensionPointDetails extends PDEDetails {
 	private void generateSchema() {
 		final IProject project = getPage().getPDEEditor().getCommonProject();
 		BusyIndicator.showWhile(getPage().getPartControl().getDisplay(), new Runnable() {
+			@Override
 			public void run() {
 				NewSchemaFileWizard wizard = new NewSchemaFileWizard(project, fInput, true);
 				WizardDialog dialog = new WizardDialog(PDEPlugin.getActiveWorkbenchShell(), wizard);
@@ -361,6 +379,7 @@ public class ExtensionPointDetails extends PDEDetails {
 	 * 
 	 * @see org.eclipse.ui.forms.IDetailsPage#inputChanged(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
+	@Override
 	public void selectionChanged(IFormPart masterPart, ISelection selection) {
 		IStructuredSelection ssel = (IStructuredSelection) selection;
 		if (ssel.size() == 1) {
@@ -375,6 +394,7 @@ public class ExtensionPointDetails extends PDEDetails {
 	 * 
 	 * @see org.eclipse.ui.forms.IDetailsPage#commit()
 	 */
+	@Override
 	public void commit(boolean onSave) {
 		fIdEntry.commit();
 		fNameEntry.commit();
@@ -387,6 +407,7 @@ public class ExtensionPointDetails extends PDEDetails {
 	 * 
 	 * @see org.eclipse.ui.forms.IDetailsPage#setFocus()
 	 */
+	@Override
 	public void setFocus() {
 		fIdEntry.getText().setFocus();
 	}
@@ -396,6 +417,7 @@ public class ExtensionPointDetails extends PDEDetails {
 	 * 
 	 * @see org.eclipse.ui.forms.IDetailsPage#refresh()
 	 */
+	@Override
 	public void refresh() {
 		update();
 		super.refresh();

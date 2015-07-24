@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2010 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -63,6 +63,7 @@ public class WizardCheckboxTablePart extends CheckboxTablePart {
 		this.deselectIndex = index;
 	}
 
+	@Override
 	protected void buttonSelected(Button button, int index) {
 		if (index == selectAllIndex) {
 			handleSelectAll(true);
@@ -115,18 +116,21 @@ public class WizardCheckboxTablePart extends CheckboxTablePart {
 		updateCounter(0);
 	}
 
+	@Override
 	protected Button createButton(Composite parent, String label, int index, FormToolkit toolkit) {
 		Button button = super.createButton(parent, label, index, toolkit);
 		SWTUtil.setButtonDimensionHint(button);
 		return button;
 	}
 
+	@Override
 	protected StructuredViewer createStructuredViewer(Composite parent, int style, FormToolkit toolkit) {
 		StructuredViewer viewer = super.createStructuredViewer(parent, style, toolkit);
 		viewer.setComparator(ListUtil.NAME_COMPARATOR);
 		return viewer;
 	}
 
+	@Override
 	protected void createMainLabel(Composite parent, int span, FormToolkit toolkit) {
 		if (tableName == null)
 			return;
@@ -190,6 +194,7 @@ public class WizardCheckboxTablePart extends CheckboxTablePart {
 		}
 	}
 
+	@Override
 	protected void elementChecked(Object element, boolean checked) {
 		int count = getSelectionCount();
 		updateCounter(checked ? count + 1 : count - 1);

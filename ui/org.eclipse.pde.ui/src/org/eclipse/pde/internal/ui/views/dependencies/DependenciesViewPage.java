@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,6 +37,7 @@ import org.eclipse.ui.part.Page;
 
 public abstract class DependenciesViewPage extends Page {
 	class FocusOnSelectionAction extends Action {
+		@Override
 		public void run() {
 			handleFocusOn(getSelectedObject());
 		}
@@ -77,6 +78,7 @@ public abstract class DependenciesViewPage extends Page {
 
 	class FragmentFilter extends ViewerFilter {
 
+		@Override
 		public boolean select(Viewer v, Object parent, Object element) {
 			BundleDescription desc = null;
 			if (element instanceof BundleSpecification) {
@@ -103,6 +105,7 @@ public abstract class DependenciesViewPage extends Page {
 		this.fView = view;
 		this.fContentProvider = contentProvider;
 		fPropertyListener = new IPropertyChangeListener() {
+			@Override
 			public void propertyChange(PropertyChangeEvent event) {
 				String property = event.getProperty();
 				if (property.equals(IPreferenceConstants.PROP_SHOW_OBJECTS)) {
@@ -117,6 +120,7 @@ public abstract class DependenciesViewPage extends Page {
 	 * 
 	 * @see org.eclipse.ui.part.IPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		fViewer = createViewer(parent);
 		fViewer.setComparator(DependenciesViewComparator.getViewerComparator());
@@ -126,6 +130,7 @@ public abstract class DependenciesViewPage extends Page {
 
 	protected abstract StructuredViewer createViewer(Composite parent);
 
+	@Override
 	public void dispose() {
 		PDEPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(fPropertyListener);
 		super.dispose();
@@ -201,6 +206,7 @@ public abstract class DependenciesViewPage extends Page {
 	 * 
 	 * @see org.eclipse.ui.part.IPage#getControl()
 	 */
+	@Override
 	public Control getControl() {
 		return fViewer.getControl();
 	}
@@ -289,6 +295,7 @@ public abstract class DependenciesViewPage extends Page {
 		MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {
+			@Override
 			public void menuAboutToShow(IMenuManager manager) {
 				DependenciesViewPage.this.fillContextMenu(manager);
 			}
@@ -301,6 +308,7 @@ public abstract class DependenciesViewPage extends Page {
 
 	private void hookDoubleClickAction() {
 		fViewer.addDoubleClickListener(new IDoubleClickListener() {
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				handleDoubleClick();
 			}
@@ -309,6 +317,7 @@ public abstract class DependenciesViewPage extends Page {
 
 	private void makeActions() {
 		fOpenAction = new Action() {
+			@Override
 			public void run() {
 				handleDoubleClick();
 			}
@@ -318,6 +327,7 @@ public abstract class DependenciesViewPage extends Page {
 		fFocusOnSelectionAction = new FocusOnSelectionAction();
 
 		fFocusOnAction = new Action() {
+			@Override
 			public void run() {
 				handleFocusOn();
 			}
@@ -328,6 +338,7 @@ public abstract class DependenciesViewPage extends Page {
 		fRefactorAction = RefactoringActionFactory.createRefactorPluginIdAction();
 
 		fHideFragmentFilterAction = new Action() {
+			@Override
 			public void run() {
 				boolean checked = fHideFragmentFilterAction.isChecked();
 				if (checked)
@@ -340,6 +351,7 @@ public abstract class DependenciesViewPage extends Page {
 		fHideFragmentFilterAction.setText(PDEUIMessages.DependenciesViewPage_showFragments);
 
 		fHideOptionalFilterAction = new Action() {
+			@Override
 			public void run() {
 				boolean checked = isChecked();
 				handleShowOptional(isChecked(), true);
@@ -360,6 +372,7 @@ public abstract class DependenciesViewPage extends Page {
 	 *      org.eclipse.jface.action.IToolBarManager,
 	 *      org.eclipse.jface.action.IStatusLineManager)
 	 */
+	@Override
 	public void makeContributions(IMenuManager menuManager, IToolBarManager toolBarManager, IStatusLineManager statusLineManager) {
 		super.makeContributions(menuManager, toolBarManager, statusLineManager);
 		makeActions();
@@ -373,6 +386,7 @@ public abstract class DependenciesViewPage extends Page {
 	 * 
 	 * @see org.eclipse.ui.part.IPage#setFocus()
 	 */
+	@Override
 	public void setFocus() {
 		if (fViewer != null) {
 			Control c = fViewer.getControl();

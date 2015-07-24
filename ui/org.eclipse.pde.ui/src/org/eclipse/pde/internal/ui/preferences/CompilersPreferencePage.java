@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,6 +57,7 @@ public class CompilersPreferencePage extends PreferencePage implements IWorkbenc
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite composite) {
 		super.createControl(composite);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IHelpContextIds.COMPILERS_PREFERENCE_PAGE);
@@ -67,6 +68,7 @@ public class CompilersPreferencePage extends PreferencePage implements IWorkbenc
 	 * 
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	protected Control createContents(Composite parent) {
 		Composite comp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH, 0, 0);
 		link = new Link(comp, SWT.NONE);
@@ -74,6 +76,7 @@ public class CompilersPreferencePage extends PreferencePage implements IWorkbenc
 		link.setFont(comp.getFont());
 		link.setText(PDEUIMessages.CompilersPreferencePage_configure_project_specific_settings);
 		link.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				HashSet<IJavaProject> set = new HashSet<IJavaProject>();
 				try {
@@ -113,6 +116,7 @@ public class CompilersPreferencePage extends PreferencePage implements IWorkbenc
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.DialogPage#dispose()
 	 */
+	@Override
 	public void dispose() {
 		if (fBlock != null) {
 			fBlock.dispose();
@@ -123,12 +127,14 @@ public class CompilersPreferencePage extends PreferencePage implements IWorkbenc
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */
+	@Override
 	public void init(IWorkbench workbench) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#performCancel()
 	 */
+	@Override
 	public boolean performCancel() {
 		fBlock.performCancel();
 		return super.performCancel();
@@ -137,6 +143,7 @@ public class CompilersPreferencePage extends PreferencePage implements IWorkbenc
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
 	 */
+	@Override
 	public boolean performOk() {
 		fBlock.performOK();
 		return super.performOk();
@@ -145,6 +152,7 @@ public class CompilersPreferencePage extends PreferencePage implements IWorkbenc
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#performApply()
 	 */
+	@Override
 	protected void performApply() {
 		fBlock.performApply();
 		super.performApply();
@@ -153,6 +161,7 @@ public class CompilersPreferencePage extends PreferencePage implements IWorkbenc
 	/**
 	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
+	@Override
 	protected void performDefaults() {
 		fBlock.performDefaults();
 		super.performDefaults();
@@ -161,6 +170,7 @@ public class CompilersPreferencePage extends PreferencePage implements IWorkbenc
 	/**
 	 * @see org.eclipse.jface.preference.PreferencePage#applyData(java.lang.Object)
 	 */
+	@Override
 	public void applyData(Object data) {
 		if (data instanceof Map) {
 			fPageData = (Map<?, ?>) data;

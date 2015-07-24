@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -62,6 +62,7 @@ public class IncludedFeaturesSection extends TableSection implements IFeatureMod
 	private SortAction fSortAction;
 
 	class IncludedFeaturesContentProvider extends DefaultContentProvider implements IStructuredContentProvider {
+		@Override
 		public Object[] getElements(Object parent) {
 			if (parent instanceof IFeature) {
 				return ((IFeature) parent).getIncludedFeatures();
@@ -193,6 +194,7 @@ public class IncludedFeaturesSection extends TableSection implements IFeatureMod
 
 	private void handleNew() {
 		BusyIndicator.showWhile(fIncludesViewer.getTable().getDisplay(), new Runnable() {
+			@Override
 			public void run() {
 				IFeatureModel[] allModels = PDECore.getDefault().getFeatureModelManager().getModels();
 				ArrayList<IFeatureModel> newModels = new ArrayList<IFeatureModel>();
@@ -306,6 +308,7 @@ public class IncludedFeaturesSection extends TableSection implements IFeatureMod
 	public boolean doGlobalAction(String actionId) {
 		if (actionId.equals(ActionFactory.DELETE.getId())) {
 			BusyIndicator.showWhile(fIncludesViewer.getTable().getDisplay(), new Runnable() {
+				@Override
 				public void run() {
 					handleDelete();
 				}
@@ -314,6 +317,7 @@ public class IncludedFeaturesSection extends TableSection implements IFeatureMod
 		}
 		if (actionId.equals(ActionFactory.SELECT_ALL.getId())) {
 			BusyIndicator.showWhile(fIncludesViewer.getTable().getDisplay(), new Runnable() {
+				@Override
 				public void run() {
 					handleSelectAll();
 				}
@@ -384,6 +388,7 @@ public class IncludedFeaturesSection extends TableSection implements IFeatureMod
 			@Override
 			public void run() {
 				BusyIndicator.showWhile(fIncludesViewer.getTable().getDisplay(), new Runnable() {
+					@Override
 					public void run() {
 						handleDelete();
 					}
@@ -395,8 +400,10 @@ public class IncludedFeaturesSection extends TableSection implements IFeatureMod
 		fOpenAction = new OpenReferenceAction(fIncludesViewer);
 	}
 
+	@Override
 	public void modelsChanged(final IFeatureModelDelta delta) {
 		getSection().getDisplay().asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				if (getSection().isDisposed()) {
 					return;
@@ -533,6 +540,7 @@ public class IncludedFeaturesSection extends TableSection implements IFeatureMod
 		return true;
 	}
 
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		if (fSortAction.equals(event.getSource()) && IAction.RESULT.equals(event.getProperty())) {
 			updateButtons();

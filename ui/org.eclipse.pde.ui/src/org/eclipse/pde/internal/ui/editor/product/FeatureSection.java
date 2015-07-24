@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,6 +50,7 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 	private Action fNewFeatureAction;
 
 	class ContentProvider extends DefaultTableProvider {
+		@Override
 		public Object[] getElements(Object parent) {
 			return getProduct().getFeatures();
 		}
@@ -551,6 +552,7 @@ public class FeatureSection extends TableSection implements IPropertyChangeListe
 		product.swap(feature1, feature2);
 	}
 
+	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		if (fSortAction.equals(event.getSource()) && IAction.RESULT.equals(event.getProperty())) {
 			updateButtons(true, true);

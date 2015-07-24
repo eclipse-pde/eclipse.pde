@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -63,6 +63,7 @@ public class FeatureSpecSection extends PDESection {
 		createClient(getSection(), page.getManagedForm().getToolkit());
 	}
 
+	@Override
 	public void commit(boolean onSave) {
 		fTitleText.commit();
 		fProviderText.commit();
@@ -192,6 +193,7 @@ public class FeatureSpecSection extends PDESection {
 		return fPatch;
 	}
 
+	@Override
 	public void createClient(Section section, FormToolkit toolkit) {
 
 		section.setLayout(FormLayoutFactory.createClearTableWrapLayout(false, 1));
@@ -216,6 +218,7 @@ public class FeatureSpecSection extends PDESection {
 
 		fIdText = new FormEntry(container, toolkit, PDEUIMessages.FeatureEditor_SpecSection_id, null, false);
 		fIdText.setFormEntryListener(new FormEntryAdapter(this) {
+			@Override
 			public void textValueChanged(FormEntry text) {
 				try {
 					feature.setId(text.getValue().trim());
@@ -227,6 +230,7 @@ public class FeatureSpecSection extends PDESection {
 
 		fVersionText = new FormEntry(container, toolkit, PDEUIMessages.FeatureEditor_SpecSection_version, null, false);
 		fVersionText.setFormEntryListener(new FormEntryAdapter(this) {
+			@Override
 			public void textValueChanged(FormEntry text) {
 				if (verifySetVersion(feature, text.getValue()) == false) {
 					warnBadVersionFormat(text.getValue());
@@ -237,6 +241,7 @@ public class FeatureSpecSection extends PDESection {
 
 		fTitleText = new FormEntry(container, toolkit, PDEUIMessages.FeatureEditor_SpecSection_name, null, false);
 		fTitleText.setFormEntryListener(new FormEntryAdapter(this) {
+			@Override
 			public void textValueChanged(FormEntry text) {
 				try {
 					feature.setLabel(text.getValue());
@@ -249,6 +254,7 @@ public class FeatureSpecSection extends PDESection {
 		});
 		fProviderText = new FormEntry(container, toolkit, PDEUIMessages.FeatureEditor_SpecSection_provider, null, false);
 		fProviderText.setFormEntryListener(new FormEntryAdapter(this) {
+			@Override
 			public void textValueChanged(FormEntry text) {
 				try {
 					String value = text.getValue();
@@ -262,6 +268,7 @@ public class FeatureSpecSection extends PDESection {
 		fPluginText = new FormEntry(container, toolkit, PDEUIMessages.FeatureEditor_SpecSection_plugin, PDEUIMessages.GeneralInfoSection_browse, isEditable());
 
 		fPluginText.setFormEntryListener(new FormEntryAdapter(this) {
+			@Override
 			public void textValueChanged(FormEntry text) {
 				try {
 					String value = text.getValue();
@@ -271,6 +278,7 @@ public class FeatureSpecSection extends PDESection {
 				}
 			}
 
+			@Override
 			public void linkActivated(HyperlinkEvent e) {
 				String plugin = fPluginText.getValue();
 				if (PluginRegistry.findModel(plugin) == null) {
@@ -279,6 +287,7 @@ public class FeatureSpecSection extends PDESection {
 				ManifestEditor.openPluginEditor(fPluginText.getValue());
 			}
 
+			@Override
 			public void browseButtonSelected(FormEntry entry) {
 				handleOpenDialog();
 			}
@@ -303,6 +312,7 @@ public class FeatureSpecSection extends PDESection {
 		if (isPatch()) {
 			fPatchedIdText = new FormEntry(container, toolkit, PDEUIMessages.FeatureEditor_SpecSection_patchedId, null, false);
 			fPatchedIdText.setFormEntryListener(new FormEntryAdapter(this) {
+				@Override
 				public void textValueChanged(FormEntry text) {
 					try {
 						IFeatureImport patchImport = getPatchedFeature();
@@ -317,6 +327,7 @@ public class FeatureSpecSection extends PDESection {
 
 			fPatchedVersionText = new FormEntry(container, toolkit, PDEUIMessages.FeatureEditor_SpecSection_patchedVersion, null, false);
 			fPatchedVersionText.setFormEntryListener(new FormEntryAdapter(this) {
+				@Override
 				public void textValueChanged(FormEntry text) {
 					IFeatureImport patchImport = getPatchedFeature();
 					if (patchImport != null) {
@@ -332,6 +343,7 @@ public class FeatureSpecSection extends PDESection {
 
 		fUpdateSiteUrlText = new FormEntry(container, toolkit, PDEUIMessages.FeatureEditor_SpecSection_updateUrl, null, false);
 		fUpdateSiteUrlText.setFormEntryListener(new FormEntryAdapter(this) {
+			@Override
 			public void textValueChanged(FormEntry text) {
 				String url = text.getValue() != null ? text.getValue() : ""; //$NON-NLS-1$
 				if (url.length() > 0 && !verifySiteUrl(feature, url)) {
@@ -345,6 +357,7 @@ public class FeatureSpecSection extends PDESection {
 
 		fUpdateSiteNameText = new FormEntry(container, toolkit, PDEUIMessages.FeatureEditor_SpecSection_updateUrlLabel, null, false);
 		fUpdateSiteNameText.setFormEntryListener(new FormEntryAdapter(this) {
+			@Override
 			public void textValueChanged(FormEntry text) {
 				String name = text.getValue() != null ? text.getValue() : ""; //$NON-NLS-1$
 				commitSiteName(name);
@@ -396,6 +409,7 @@ public class FeatureSpecSection extends PDESection {
 		MessageDialog.openError(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.FeatureEditor_SpecSection_badUrlTitle, PDEUIMessages.FeatureEditor_SpecSection_badUrlMessage);
 	}
 
+	@Override
 	public void dispose() {
 		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		if (model != null)
@@ -422,6 +436,7 @@ public class FeatureSpecSection extends PDESection {
 		model.addModelChangedListener(this);
 	}
 
+	@Override
 	public void modelChanged(IModelChangedEvent e) {
 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
 			markStale();
@@ -448,6 +463,7 @@ public class FeatureSpecSection extends PDESection {
 		}
 	}
 
+	@Override
 	public void setFocus() {
 		if (fIdText != null)
 			fIdText.getText().setFocus();
@@ -459,6 +475,7 @@ public class FeatureSpecSection extends PDESection {
 		}
 	}
 
+	@Override
 	public void refresh() {
 		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		IFeature feature = model.getFeature();
@@ -515,6 +532,7 @@ public class FeatureSpecSection extends PDESection {
 		fUpdateSiteNameText.setValue(updateSiteLabel != null ? updateSiteLabel : "", true); //$NON-NLS-1$
 	}
 
+	@Override
 	public void cancelEdit() {
 		fIdText.cancelEdit();
 		fTitleText.cancelEdit();
@@ -533,6 +551,7 @@ public class FeatureSpecSection extends PDESection {
 	/**
 	 * @see org.eclipse.update.ui.forms.internal.FormSection#canPaste(Clipboard)
 	 */
+	@Override
 	public boolean canPaste(Clipboard clipboard) {
 		TransferData[] types = clipboard.getAvailableTypes();
 		Transfer[] transfers = new Transfer[] {TextTransfer.getInstance(), RTFTransfer.getInstance()};

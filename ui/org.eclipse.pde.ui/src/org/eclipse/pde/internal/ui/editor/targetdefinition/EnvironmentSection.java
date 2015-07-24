@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2012 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -140,29 +140,34 @@ public class EnvironmentSection extends SectionPart {
 		refresh();
 
 		fOSCombo.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				markDirty();
 				getTarget().setOS(getText(fOSCombo));
 			}
 		});
 		fWSCombo.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				markDirty();
 				getTarget().setWS(getText(fWSCombo));
 			}
 		});
 		fArchCombo.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				markDirty();
 				getTarget().setArch(getText(fArchCombo));
 			}
 		});
 		fNLCombo.getControl().addFocusListener(new FocusAdapter() {
+			@Override
 			public void focusGained(FocusEvent event) {
 				// if we haven't gotten all the values for the NL's, display a busy cursor to the user while we find them.
 				if (!LOCALES_INITIALIZED) {
 					try {
 						PlatformUI.getWorkbench().getProgressService().busyCursorWhile(new IRunnableWithProgress() {
+							@Override
 							public void run(IProgressMonitor monitor) {
 								initializeAllLocales();
 								LOCALES_INITIALIZED = true;
@@ -186,6 +191,7 @@ public class EnvironmentSection extends SectionPart {
 					}
 
 					fNLCombo.addModifyListener(new ModifyListener() {
+						@Override
 						public void modifyText(ModifyEvent e) {
 							String value = getText(fNLCombo);
 							if (value == null) {
@@ -271,6 +277,7 @@ public class EnvironmentSection extends SectionPart {
 		return text;
 	}
 
+	@Override
 	public void refresh() {
 		ITargetDefinition target = getTarget();
 		String presetValue = (target.getOS() == null) ? "" : target.getOS(); //$NON-NLS-1$
@@ -289,6 +296,7 @@ public class EnvironmentSection extends SectionPart {
 			return;
 		// kick off thread in background to find the NL values
 		new Thread(new Runnable() {
+			@Override
 			public void run() {
 				initializeAllLocales();
 			}

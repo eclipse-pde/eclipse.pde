@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2013 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -71,6 +71,7 @@ public class BuildClasspathSection extends TableSection {
 		/*
 		 * @see org.eclipse.ui.dialogs.ISelectionValidator#isValid(java.lang.Object)
 		 */
+		@Override
 		public IStatus validate(Object[] elements) {
 			if (isValid(elements)) {
 				return new Status(IStatus.OK, PDEPlugin.getPluginId(), IStatus.OK, "", //$NON-NLS-1$
@@ -109,6 +110,7 @@ public class BuildClasspathSection extends TableSection {
 	}
 
 	class TableContentProvider extends DefaultContentProvider implements IStructuredContentProvider {
+		@Override
 		public Object[] getElements(Object parent) {
 			if (parent instanceof IBuildModel) {
 				IBuild build = ((IBuildModel) parent).getBuild();
@@ -122,10 +124,12 @@ public class BuildClasspathSection extends TableSection {
 	}
 
 	class TableLabelProvider extends LabelProvider implements ITableLabelProvider {
+		@Override
 		public String getColumnText(Object obj, int index) {
 			return obj.toString();
 		}
 
+		@Override
 		public Image getColumnImage(Object obj, int index) {
 			ISharedImages sharedImages = PlatformUI.getWorkbench().getSharedImages();
 			return sharedImages.getImage(ISharedImages.IMG_OBJ_FILE);

@@ -1,5 +1,5 @@
 /******************************************************************************* 
-* Copyright (c) 2010, 2012 EclipseSource and others. All rights reserved. This
+* Copyright (c) 2010, 2015 EclipseSource and others. All rights reserved. This
 * program and the accompanying materials are made available under the terms of
 * the Eclipse Public License v1.0 which accompanies this distribution, and is
 * available at http://www.eclipse.org/legal/epl-v10.html
@@ -57,6 +57,7 @@ public class FilteredIUSelectionDialog extends FilteredItemsSelectionDialog {
 			labelProvider.connect(this);
 		}
 
+		@Override
 		public StyledString getStyledText(Object element) {
 			StyledString styledString = new StyledString();
 
@@ -89,6 +90,7 @@ public class FilteredIUSelectionDialog extends FilteredItemsSelectionDialog {
 			return styledString;
 		}
 
+		@Override
 		public Image getImage(Object element) {
 			if (element instanceof IUPackage) {
 				return labelProvider.get(PDEPluginImages.DESC_PACKAGE_OBJ);
@@ -101,11 +103,13 @@ public class FilteredIUSelectionDialog extends FilteredItemsSelectionDialog {
 			return null;
 		}
 
+		@Override
 		public String getText(Object element) {
 			StyledString string = getStyledText(element);
 			return string.getString();
 		}
 
+		@Override
 		public void dispose() {
 			labelProvider.disconnect(this);
 		}
@@ -120,6 +124,7 @@ public class FilteredIUSelectionDialog extends FilteredItemsSelectionDialog {
 		setDetailsLabelProvider(fLabelProvider);
 	}
 
+	@Override
 	protected Control createExtendedContentArea(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout(1, false));
@@ -128,6 +133,7 @@ public class FilteredIUSelectionDialog extends FilteredItemsSelectionDialog {
 		fShowLatestVersionOnlyButton.setText(PDEUIMessages.FilteredIUSelectionDialog_showLatestVersionOnly);
 		fShowLatestVersionOnlyButton.addSelectionListener(new SelectionAdapter() {
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fShowLatestVersionOnly = fShowLatestVersionOnlyButton.getSelection();
 				applyFilter();
@@ -144,6 +150,7 @@ public class FilteredIUSelectionDialog extends FilteredItemsSelectionDialog {
 			latest = fShowLatestVersionOnly;
 		}
 
+		@Override
 		public boolean matchItem(Object item) {
 			if (item instanceof IUPackage)
 				return patternMatcher.matches(((IUPackage) item).getId());
@@ -153,16 +160,19 @@ public class FilteredIUSelectionDialog extends FilteredItemsSelectionDialog {
 			return false;
 		}
 
+		@Override
 		public boolean isConsistentItem(Object item) {
 			return true;
 		}
 
+		@Override
 		public boolean isSubFilter(ItemsFilter filter) {
 			if (latest != ((IUItemsFilter) filter).latest)
 				return false;
 			return super.isSubFilter(filter);
 		}
 
+		@Override
 		public boolean equalsFilter(ItemsFilter obj) {
 			if (latest != ((IUItemsFilter) obj).latest)
 				return false;
@@ -188,6 +198,7 @@ public class FilteredIUSelectionDialog extends FilteredItemsSelectionDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#createFilter()
 	 */
+	@Override
 	protected ItemsFilter createFilter() {
 		return new IUItemsFilter();
 	}
@@ -195,6 +206,7 @@ public class FilteredIUSelectionDialog extends FilteredItemsSelectionDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#fillContentProvider(org.eclipse.ui.dialogs.FilteredItemsSelectionDialog.AbstractContentProvider, org.eclipse.ui.dialogs.FilteredItemsSelectionDialog.ItemsFilter, org.eclipse.core.runtime.IProgressMonitor)
 	 */
+	@Override
 	protected void fillContentProvider(AbstractContentProvider contentProvider, ItemsFilter itemsFilter, IProgressMonitor progressMonitor) throws CoreException {
 		// TODO clean up this code a bit...
 		IMetadataRepositoryManager manager = P2TargetUtils.getRepoManager();
@@ -226,6 +238,7 @@ public class FilteredIUSelectionDialog extends FilteredItemsSelectionDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#getDialogSettings()
 	 */
+	@Override
 	protected IDialogSettings getDialogSettings() {
 		return new DialogSettings("org.eclipse.pde.internal.ui.search.dialogs.FilteredTargetRepoIUSelectionDialog"); //$NON-NLS-1$
 	}
@@ -233,6 +246,7 @@ public class FilteredIUSelectionDialog extends FilteredItemsSelectionDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#getElementName(java.lang.Object)
 	 */
+	@Override
 	public String getElementName(Object item) {
 		return null;
 	}
@@ -240,8 +254,10 @@ public class FilteredIUSelectionDialog extends FilteredItemsSelectionDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#getItemsComparator()
 	 */
+	@Override
 	protected Comparator<Object> getItemsComparator() {
 		return new Comparator<Object>() {
+			@Override
 			public int compare(Object o1, Object o2) {
 				String id1 = null;
 				String id2 = null;
@@ -270,6 +286,7 @@ public class FilteredIUSelectionDialog extends FilteredItemsSelectionDialog {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#validateItem(java.lang.Object)
 	 */
+	@Override
 	protected IStatus validateItem(Object item) {
 		return Status.OK_STATUS;
 	}

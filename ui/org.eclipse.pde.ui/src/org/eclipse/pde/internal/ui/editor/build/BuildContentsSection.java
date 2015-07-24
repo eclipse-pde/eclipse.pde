@@ -43,6 +43,7 @@ public abstract class BuildContentsSection extends TableSection implements IReso
 
 	public class TreeContentProvider extends DefaultContentProvider implements ITreeContentProvider {
 
+		@Override
 		public Object[] getElements(Object parent) {
 			if (parent instanceof IContainer) {
 				try {
@@ -57,6 +58,7 @@ public abstract class BuildContentsSection extends TableSection implements IReso
 		/**
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 		 */
+		@Override
 		public Object[] getChildren(Object parent) {
 			try {
 				if (parent instanceof IFolder)
@@ -89,6 +91,7 @@ public abstract class BuildContentsSection extends TableSection implements IReso
 		/**
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
 		 */
+		@Override
 		public Object getParent(Object element) {
 			if (element != null && element instanceof IResource) {
 				return ((IResource) element).getParent();
@@ -99,6 +102,7 @@ public abstract class BuildContentsSection extends TableSection implements IReso
 		/**
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
 		 */
+		@Override
 		public boolean hasChildren(Object element) {
 			if (element instanceof IFolder)
 				return getChildren(element).length > 0;
@@ -110,6 +114,7 @@ public abstract class BuildContentsSection extends TableSection implements IReso
 	protected void createViewerPartControl(Composite parent, int style, int span, FormToolkit toolkit) {
 		MenuManager popupMenuManager = new MenuManager();
 		IMenuListener listener = new IMenuListener() {
+			@Override
 			public void menuAboutToShow(IMenuManager mng) {
 				fillContextMenu(mng);
 			}
@@ -153,10 +158,12 @@ public abstract class BuildContentsSection extends TableSection implements IReso
 		fTreeViewer.setAutoExpandLevel(0);
 		fTreeViewer.addCheckStateListener(new ICheckStateListener() {
 
+			@Override
 			public void checkStateChanged(final CheckStateChangedEvent event) {
 				final Object element = event.getElement();
 				BusyIndicator.showWhile(section.getDisplay(), new Runnable() {
 
+					@Override
 					public void run() {
 						if (element instanceof IFile) {
 							IFile file = (IFile) event.getElement();
@@ -252,10 +259,12 @@ public abstract class BuildContentsSection extends TableSection implements IReso
 	protected void initializeCheckState(final IBuildEntry includes, final IBuildEntry excludes) {
 		fTreeViewer.getTree().getDisplay().asyncExec(new Runnable() {
 
+			@Override
 			public void run() {
 				// found slight improvements using Display.getCurrent() instead of fTreeViewer.getTree().getDisplay()
 				BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
 
+					@Override
 					public void run() {
 						if (fTreeViewer.getTree().isDisposed())
 							return;
@@ -479,6 +488,7 @@ public abstract class BuildContentsSection extends TableSection implements IReso
 		}
 	}
 
+	@Override
 	public void resourceChanged(IResourceChangeEvent event) {
 		if (fTreeViewer.getControl().isDisposed())
 			return;
@@ -495,6 +505,7 @@ public abstract class BuildContentsSection extends TableSection implements IReso
 		}
 	}
 
+	@Override
 	public boolean visit(IResourceDelta delta) throws CoreException {
 		IResource resource = delta.getResource();
 		IProject project = fBuildModel.getUnderlyingResource().getProject();
@@ -515,6 +526,7 @@ public abstract class BuildContentsSection extends TableSection implements IReso
 		if (!control.isDisposed()) {
 			control.getDisplay().asyncExec(new Runnable() {
 
+				@Override
 				public void run() {
 					if (!fTreeViewer.getControl().isDisposed()) {
 						fTreeViewer.refresh(true);

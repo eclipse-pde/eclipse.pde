@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -83,6 +83,7 @@ public class EditDirectoryContainerPage extends WizardPage implements IEditBundl
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		setMessage(getDefaultMessage());
 		setTitle(getDefaultTitle());
@@ -129,6 +130,7 @@ public class EditDirectoryContainerPage extends WizardPage implements IEditBundl
 
 		fInstallLocation = SWTFactory.createCombo(locationComp, SWT.BORDER, 1, getLocationComboItems());
 		fInstallLocation.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				// If the text is a combo item, immediately try to resolve, otherwise wait in case they type more
 				boolean isItem = false;
@@ -158,6 +160,7 @@ public class EditDirectoryContainerPage extends WizardPage implements IEditBundl
 
 		Button browseButton = SWTFactory.createPushButton(buttonComp, Messages.AddDirectoryContainerPage_3, null);
 		browseButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				DirectoryDialog dialog = new DirectoryDialog(getShell());
 				dialog.setFilterPath(fInstallLocation.getText());
@@ -171,6 +174,7 @@ public class EditDirectoryContainerPage extends WizardPage implements IEditBundl
 
 		Button variablesButton = SWTFactory.createPushButton(buttonComp, Messages.EditDirectoryContainerPage_1, null);
 		variablesButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				StringVariableSelectionDialog dialog = new StringVariableSelectionDialog(getShell());
 				dialog.open();
@@ -247,6 +251,7 @@ public class EditDirectoryContainerPage extends WizardPage implements IEditBundl
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.shared.target.IEditTargetLocationPage#storeSettings()
 	 */
+	@Override
 	public void storeSettings() {
 		String newLocation = fInstallLocation.getText().trim();
 
@@ -278,6 +283,7 @@ public class EditDirectoryContainerPage extends WizardPage implements IEditBundl
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.shared.target.IEditTargetLocationPage#getBundleContainer()
 	 */
+	@Override
 	public ITargetLocation getBundleContainer() {
 		return fContainer;
 	}
@@ -367,6 +373,7 @@ public class EditDirectoryContainerPage extends WizardPage implements IEditBundl
 			super(jobDisplay, name);
 		}
 
+		@Override
 		public IStatus runInUIThread(IProgressMonitor monitor) {
 			if (monitor.isCanceled()) {
 				return Status.CANCEL_STATUS;

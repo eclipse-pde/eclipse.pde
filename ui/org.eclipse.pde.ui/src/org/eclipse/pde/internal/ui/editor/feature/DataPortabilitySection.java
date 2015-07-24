@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2013 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -163,6 +163,7 @@ public class DataPortabilitySection extends PDESection implements IPartSelection
 			@Override
 			public void browseButtonSelected(FormEntry entry) {
 				BusyIndicator.showWhile(fOsText.getText().getDisplay(), new Runnable() {
+					@Override
 					public void run() {
 						Choice[] choices = getOSChoices();
 						openPortabilityChoiceDialog(IEnvironment.P_OS, fOsText, choices);
@@ -188,6 +189,7 @@ public class DataPortabilitySection extends PDESection implements IPartSelection
 			@Override
 			public void browseButtonSelected(FormEntry entry) {
 				BusyIndicator.showWhile(fWsText.getText().getDisplay(), new Runnable() {
+					@Override
 					public void run() {
 						Choice[] choices = getWSChoices();
 						openPortabilityChoiceDialog(IEnvironment.P_WS, fWsText, choices);
@@ -214,6 +216,7 @@ public class DataPortabilitySection extends PDESection implements IPartSelection
 			@Override
 			public void browseButtonSelected(FormEntry entry) {
 				BusyIndicator.showWhile(fNlText.getText().getDisplay(), new Runnable() {
+					@Override
 					public void run() {
 						Choice[] choices = getNLChoices();
 						openPortabilityChoiceDialog(IEnvironment.P_NL, fNlText, choices);
@@ -239,6 +242,7 @@ public class DataPortabilitySection extends PDESection implements IPartSelection
 			@Override
 			public void browseButtonSelected(FormEntry entry) {
 				BusyIndicator.showWhile(fArchText.getText().getDisplay(), new Runnable() {
+					@Override
 					public void run() {
 						Choice[] choices = getArchChoices();
 						openPortabilityChoiceDialog(IEnvironment.P_ARCH, fArchText, choices);
@@ -332,6 +336,7 @@ public class DataPortabilitySection extends PDESection implements IPartSelection
 		super.refresh();
 	}
 
+	@Override
 	public void selectionChanged(IFormPart part, ISelection selection) {
 		if (selection instanceof IStructuredSelection && ((IStructuredSelection) selection).size() == 1) {
 			Object o = ((IStructuredSelection) selection).getFirstElement();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -78,6 +78,7 @@ public class FeatureImportWizardPage extends WizardPage {
 	private Button fBinaryButton;
 
 	class ContentProvider extends DefaultContentProvider implements IStructuredContentProvider {
+		@Override
 		public Object[] getElements(Object parent) {
 			if (fModels != null)
 				return fModels;
@@ -119,6 +120,7 @@ public class FeatureImportWizardPage extends WizardPage {
 	/*
 	 * @see IDialogPage#createControl(Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		initializeDialogUnits(parent);
 
@@ -193,6 +195,7 @@ public class FeatureImportWizardPage extends WizardPage {
 		});
 
 		fDropLocation.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				// If the text is a combo item, immediately try to resolve, otherwise wait in case they type more
 				boolean isItem = false;
@@ -382,12 +385,15 @@ public class FeatureImportWizardPage extends WizardPage {
 		FilteredCheckboxTree tree = new FilteredCheckboxTree(container, null, SWT.NONE, filter);
 		fFeatureViewer = tree.getCheckboxTreeViewer();
 		fFeatureViewer.setContentProvider(new ITreeContentProvider() {
+			@Override
 			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			}
 
+			@Override
 			public void dispose() {
 			}
 
+			@Override
 			public Object[] getElements(Object inputElement) {
 				if (inputElement instanceof Object[]) {
 					return (Object[]) inputElement;
@@ -395,14 +401,17 @@ public class FeatureImportWizardPage extends WizardPage {
 				return new Object[0];
 			}
 
+			@Override
 			public boolean hasChildren(Object element) {
 				return false;
 			}
 
+			@Override
 			public Object getParent(Object element) {
 				return null;
 			}
 
+			@Override
 			public Object[] getChildren(Object parentElement) {
 				return new Object[0];
 			}
@@ -410,12 +419,14 @@ public class FeatureImportWizardPage extends WizardPage {
 		fFeatureViewer.setLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 		fFeatureViewer.setComparator(ListUtil.FEATURE_COMPARATOR);
 		fFeatureViewer.addCheckStateListener(new ICheckStateListener() {
+			@Override
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				updateCounter();
 				dialogChanged();
 			}
 		});
 		fFeatureViewer.addDoubleClickListener(new IDoubleClickListener() {
+			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				ISelection selection = fFeatureViewer.getSelection();
 				if (!selection.isEmpty()) {
@@ -448,6 +459,7 @@ public class FeatureImportWizardPage extends WizardPage {
 		final IPath home = getDropLocation();
 		final boolean useRuntimeLocation = fRuntimeLocationButton.getSelection() || TargetPlatform.getLocation().equals(fDropLocation.getText().trim());
 		IRunnableWithProgress runnable = new IRunnableWithProgress() {
+			@Override
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				monitor.beginTask(PDEUIMessages.FeatureImportWizard_messages_updating, IProgressMonitor.UNKNOWN);
 				ArrayList<IFeatureModel> result = new ArrayList<IFeatureModel>();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2012 IBM Corporation and others.
+ *  Copyright (c) 2007, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -38,6 +38,7 @@ public class SchemaStringAttributeDetails extends SchemaAttributeDetails {
 		super(section);
 	}
 
+	@Override
 	protected void createTypeDetails(Composite parent, FormToolkit toolkit) {
 		Color foreground = toolkit.getColors().getColor(IFormColors.TITLE);
 
@@ -84,6 +85,7 @@ public class SchemaStringAttributeDetails extends SchemaAttributeDetails {
 		fRemoveRestriction.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	}
 
+	@Override
 	public void updateFields(ISchemaObject object) {
 		if (!(object instanceof SchemaAttribute))
 			return;
@@ -101,9 +103,11 @@ public class SchemaStringAttributeDetails extends SchemaAttributeDetails {
 		fRemoveRestriction.setEnabled(!fRestrictionsTable.getSelection().isEmpty() && editable);
 	}
 
+	@Override
 	public void hookListeners() {
 		super.hookListeners();
 		fTransTrue.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (blockListeners())
 					return;
@@ -111,6 +115,7 @@ public class SchemaStringAttributeDetails extends SchemaAttributeDetails {
 			}
 		});
 		fAddRestriction.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (blockListeners())
 					return;
@@ -139,6 +144,7 @@ public class SchemaStringAttributeDetails extends SchemaAttributeDetails {
 			}
 		});
 		fRemoveRestriction.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (blockListeners())
 					return;
@@ -175,6 +181,7 @@ public class SchemaStringAttributeDetails extends SchemaAttributeDetails {
 			}
 		});
 		fRestrictionsTable.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				if (blockListeners())
 					return;

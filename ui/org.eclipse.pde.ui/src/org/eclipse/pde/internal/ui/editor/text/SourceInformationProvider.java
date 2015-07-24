@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -27,21 +27,26 @@ public class SourceInformationProvider implements IInformationProvider, IInforma
 	protected ITextHover fImplementation;
 	protected int fImpType;
 
+	@Override
 	public void partOpened(IWorkbenchPart part) {
 	}
 
+	@Override
 	public void partDeactivated(IWorkbenchPart part) {
 	}
 
+	@Override
 	public void partClosed(IWorkbenchPart part) {
 		if (fSourcePage != null && part == fSourcePage.getEditor() && fImpType != F_NO_IMP)
 			fSourcePage.getSite().getWorkbenchWindow().getPartService().removePartListener(this);
 	}
 
+	@Override
 	public void partActivated(IWorkbenchPart part) {
 		update();
 	}
 
+	@Override
 	public void partBroughtToTop(IWorkbenchPart part) {
 		update();
 	}
@@ -79,12 +84,14 @@ public class SourceInformationProvider implements IInformationProvider, IInforma
 		}
 	}
 
+	@Override
 	public IRegion getSubject(ITextViewer textViewer, int offset) {
 		if (textViewer != null)
 			return PDEWordFinder.findWord(textViewer.getDocument(), offset);
 		return null;
 	}
 
+	@Override
 	public String getInformation(ITextViewer textViewer, IRegion subject) {
 		if (fImplementation != null) {
 			String s = fImplementation.getHoverInfo(textViewer, subject);
@@ -94,6 +101,7 @@ public class SourceInformationProvider implements IInformationProvider, IInforma
 		return null;
 	}
 
+	@Override
 	public IInformationControlCreator getInformationPresenterControlCreator() {
 		return fPresenterControlCreator;
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -40,6 +40,7 @@ public class NewSiteProjectCreationPage extends WizardNewProjectCreationPage {
 	/** (non-Javadoc)
 	 * Method declared on IDialogPage.
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		Composite control = (Composite) getControl();
@@ -62,6 +63,7 @@ public class NewSiteProjectCreationPage extends WizardNewProjectCreationPage {
 		gd.horizontalSpan = 2;
 		fWebButton.setLayoutData(gd);
 		fWebButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fWebLabel.setEnabled(fWebButton.getSelection());
 				fWebText.setEnabled(fWebButton.getSelection());
@@ -78,6 +80,7 @@ public class NewSiteProjectCreationPage extends WizardNewProjectCreationPage {
 		fWebText.setText("web"); //$NON-NLS-1$
 		fWebText.setEnabled(false);
 		fWebText.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				setPageComplete(validatePage());
 			}
@@ -104,6 +107,7 @@ public class NewSiteProjectCreationPage extends WizardNewProjectCreationPage {
 		return text.trim();
 	}
 
+	@Override
 	protected boolean validatePage() {
 		if (!super.validatePage())
 			return false;

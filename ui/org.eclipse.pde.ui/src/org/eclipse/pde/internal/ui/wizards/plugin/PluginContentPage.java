@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -68,6 +68,7 @@ public class PluginContentPage extends ContentPage {
 	 * default tText modify listener
 	 */
 	private ModifyListener classListener = new ModifyListener() {
+		@Override
 		public void modifyText(ModifyEvent e) {
 			if (fInitialized)
 				fChangedGroups |= P_CLASS_GROUP;
@@ -91,6 +92,7 @@ public class PluginContentPage extends ContentPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.wizards.plugin.ContentPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
+	@Override
 	public void createControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
 		container.setLayout(new GridLayout());
@@ -154,6 +156,7 @@ public class PluginContentPage extends ContentPage {
 		// Set data 
 		fEEChoice.setItems(availableEEs.toArray(new String[availableEEs.size() - 1]));
 		fEEChoice.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				validatePage();
 			}
@@ -176,6 +179,7 @@ public class PluginContentPage extends ContentPage {
 		fExeEnvButton.setLayoutData(new GridData());
 		fExeEnvButton.setText(PDEUIMessages.NewProjectCreationPage_environmentsButton);
 		fExeEnvButton.addListener(SWT.Selection, new Listener() {
+			@Override
 			public void handleEvent(Event event) {
 				PreferencesUtil.createPreferenceDialogOn(getShell(), "org.eclipse.jdt.debug.ui.jreProfiles", //$NON-NLS-1$
 						new String[] {"org.eclipse.jdt.debug.ui.jreProfiles"}, null).open(); //$NON-NLS-1$ 
@@ -194,6 +198,7 @@ public class PluginContentPage extends ContentPage {
 
 		fGenerateActivator = SWTFactory.createCheckButton(classGroup, PDEUIMessages.ContentPage_generate, null, (settings != null) ? !settings.getBoolean(S_GENERATE_ACTIVATOR) : true, 2);
 		fGenerateActivator.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fClassLabel.setEnabled(fGenerateActivator.getSelection());
 				fClassText.setEnabled(fGenerateActivator.getSelection());
@@ -211,6 +216,7 @@ public class PluginContentPage extends ContentPage {
 
 		fUIPlugin = SWTFactory.createCheckButton(classGroup, PDEUIMessages.ContentPage_uicontribution, null, (settings != null) ? !settings.getBoolean(S_UI_PLUGIN) : true, 2);
 		fUIPlugin.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateData();
 				validatePage();
@@ -220,6 +226,7 @@ public class PluginContentPage extends ContentPage {
 		fApiAnalysisButton = SWTFactory.createCheckButton(classGroup, PDEUIMessages.PluginContentPage_enable_api_analysis, null, false, 2);
 		fApiAnalysisButton.setSelection((settings != null) ? settings.getBoolean(S_API_ANALYSIS) : false);
 		fApiAnalysisButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateData();
 				validatePage();
@@ -230,6 +237,7 @@ public class PluginContentPage extends ContentPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.wizards.plugin.ContentPage#updateData()
 	 */
+	@Override
 	public void updateData() {
 		super.updateData();
 		PluginFieldData data = (PluginFieldData) fData;
@@ -275,6 +283,7 @@ public class PluginContentPage extends ContentPage {
 		gd.widthHint = SWTFactory.getButtonWidthHint(fYesButton, 50);
 		fYesButton.setLayoutData(gd);
 		fYesButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateData();
 				getContainer().updateButtons();
@@ -292,6 +301,7 @@ public class PluginContentPage extends ContentPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.wizards.plugin.ContentPage#setVisible(boolean)
 	 */
+	@Override
 	public void setVisible(boolean visible) {
 		if (visible) {
 			fMainPage.updateData();
@@ -349,6 +359,7 @@ public class PluginContentPage extends ContentPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.wizards.plugin.ContentPage#validatePage()
 	 */
+	@Override
 	protected void validatePage() {
 		String errorMessage = validateProperties();
 		if (errorMessage == null && fGenerateActivator.getSelection()) {
@@ -376,6 +387,7 @@ public class PluginContentPage extends ContentPage {
 	 * Saves the current state of widgets of interest in the dialog settings for the wizard
 	 * @param settings
 	 */
+	@Override
 	public void saveSettings(IDialogSettings settings) {
 		super.saveSettings(settings);
 		if (fGenerateActivator.isEnabled()) {
@@ -393,6 +405,7 @@ public class PluginContentPage extends ContentPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.WizardPage#canFlipToNextPage()
 	 */
+	@Override
 	public boolean canFlipToNextPage() {
 		if (getNextPage() instanceof TemplateListSelectionPage) {
 			TemplateListSelectionPage templatePage = (TemplateListSelectionPage) getNextPage();

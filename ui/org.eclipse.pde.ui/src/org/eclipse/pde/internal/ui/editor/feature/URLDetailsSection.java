@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -43,6 +43,7 @@ public class URLDetailsSection extends PDESection implements IPartSelectionListe
 		createClient(getSection(), page.getManagedForm().getToolkit());
 	}
 
+	@Override
 	public void commit(boolean onSave) {
 		fUrlText.commit();
 		fNameText.commit();
@@ -78,6 +79,7 @@ public class URLDetailsSection extends PDESection implements IPartSelectionListe
 		}
 	}
 
+	@Override
 	public void createClient(Section section, FormToolkit toolkit) {
 		Composite container = toolkit.createComposite(section);
 		GridLayout layout = new GridLayout();
@@ -91,6 +93,7 @@ public class URLDetailsSection extends PDESection implements IPartSelectionListe
 
 		fUrlText = new FormEntry(container, toolkit, PDEUIMessages.FeatureEditor_URLDetailsSection_updateUrl, null, false);
 		fUrlText.setFormEntryListener(new FormEntryAdapter(this) {
+			@Override
 			public void textValueChanged(FormEntry text) {
 				String url = text.getValue() != null ? text.getValue() : ""; //$NON-NLS-1$
 				if (url.length() > 0 && !verifySiteUrl(feature, url)) {
@@ -104,6 +107,7 @@ public class URLDetailsSection extends PDESection implements IPartSelectionListe
 
 		fNameText = new FormEntry(container, toolkit, PDEUIMessages.FeatureEditor_URLDetailsSection_updateUrlLabel, null, false);
 		fNameText.setFormEntryListener(new FormEntryAdapter(this) {
+			@Override
 			public void textValueChanged(FormEntry text) {
 				String name = text.getValue() != null ? text.getValue() : ""; //$NON-NLS-1$
 				commitSiteName(name);
@@ -131,6 +135,7 @@ public class URLDetailsSection extends PDESection implements IPartSelectionListe
 		MessageDialog.openError(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.FeatureEditor_URLDetailsSection_badUrlTitle, PDEUIMessages.FeatureEditor_URLDetailsSection_badUrlMessage);
 	}
 
+	@Override
 	public void dispose() {
 		IFeatureModel model = (IFeatureModel) getPage().getModel();
 		if (model != null)
@@ -148,6 +153,7 @@ public class URLDetailsSection extends PDESection implements IPartSelectionListe
 		model.addModelChangedListener(this);
 	}
 
+	@Override
 	public void modelChanged(IModelChangedEvent e) {
 		if (e.getChangeType() == IModelChangedEvent.WORLD_CHANGED) {
 			markStale();
@@ -165,11 +171,13 @@ public class URLDetailsSection extends PDESection implements IPartSelectionListe
 		}
 	}
 
+	@Override
 	public void setFocus() {
 		if (fUrlText != null)
 			fUrlText.getText().setFocus();
 	}
 
+	@Override
 	public void refresh() {
 		update();
 		super.refresh();
@@ -200,6 +208,7 @@ public class URLDetailsSection extends PDESection implements IPartSelectionListe
 		fNameText.setValue(updateSiteLabel != null ? updateSiteLabel : "", true); //$NON-NLS-1$
 	}
 
+	@Override
 	public void cancelEdit() {
 		fNameText.cancelEdit();
 		fUrlText.cancelEdit();
@@ -209,6 +218,7 @@ public class URLDetailsSection extends PDESection implements IPartSelectionListe
 	/**
 	 * @see org.eclipse.update.ui.forms.internal.FormSection#canPaste(Clipboard)
 	 */
+	@Override
 	public boolean canPaste(Clipboard clipboard) {
 		TransferData[] types = clipboard.getAvailableTypes();
 		Transfer[] transfers = new Transfer[] {TextTransfer.getInstance(), RTFTransfer.getInstance()};
@@ -221,6 +231,7 @@ public class URLDetailsSection extends PDESection implements IPartSelectionListe
 		return false;
 	}
 
+	@Override
 	public void selectionChanged(IFormPart part, ISelection selection) {
 		if (selection instanceof IStructuredSelection && !selection.isEmpty()) {
 			Object o = ((IStructuredSelection) selection).getFirstElement();

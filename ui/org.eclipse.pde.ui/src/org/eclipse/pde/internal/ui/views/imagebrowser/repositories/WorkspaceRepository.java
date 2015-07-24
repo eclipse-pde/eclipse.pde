@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2012, 2014 Christian Pontesegger and others.
+ *  Copyright (c) 2012, 2015 Christian Pontesegger and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -47,6 +47,7 @@ public class WorkspaceRepository extends AbstractRepository {
 					// parse all folders
 					project.accept(new IResourceProxyVisitor() {
 
+						@Override
 						public boolean visit(IResourceProxy proxy) throws CoreException {
 
 							switch (proxy.getType()) {
@@ -109,6 +110,7 @@ public class WorkspaceRepository extends AbstractRepository {
 	}
 
 
+	@Override
 	public String toString() {
 		return "Workspace"; //$NON-NLS-1$
 	}

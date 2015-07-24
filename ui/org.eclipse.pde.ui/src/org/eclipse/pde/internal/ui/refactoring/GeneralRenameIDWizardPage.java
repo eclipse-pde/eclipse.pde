@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2008 IBM Corporation and others.
+ *  Copyright (c) 2007, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -31,6 +31,7 @@ public abstract class GeneralRenameIDWizardPage extends UserInputWizardPage {
 		fInfo = info;
 	}
 
+	@Override
 	public void createControl(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout(2, false));
@@ -55,6 +56,7 @@ public abstract class GeneralRenameIDWizardPage extends UserInputWizardPage {
 		fNewId.setText(fInfo.getCurrentValue());
 		fNewId.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fNewId.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				fInfo.setNewValue(fNewId.getText());
 				validatePage();
@@ -67,6 +69,7 @@ public abstract class GeneralRenameIDWizardPage extends UserInputWizardPage {
 		fUpdateReferences.setText(PDEUIMessages.RenamePluginWizardPage_updateReferences);
 		fUpdateReferences.setLayoutData(new GridData(GridData.BEGINNING, GridData.CENTER, true, false, 2, 1));
 		fUpdateReferences.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fInfo.setUpdateReferences(fUpdateReferences.getSelection());
 			}

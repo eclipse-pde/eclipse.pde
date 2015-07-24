@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -37,6 +37,7 @@ public class ExtensionEditorWizard extends Wizard {
 		loadWizardCollection();
 	}
 
+	@Override
 	public void addPages() {
 		pointPage = new ExtensionEditorSelectionPage(wizards);
 		pointPage.init(project, model.getPluginBase(), selection);
@@ -48,10 +49,12 @@ public class ExtensionEditorWizard extends Wizard {
 		wizards = reader.readRegistry(PDEPlugin.getPluginId(), PLUGIN_POINT, true);
 	}
 
+	@Override
 	public boolean performFinish() {
 		return true;
 	}
 
+	@Override
 	public void dispose() {
 		super.dispose();
 		PDEPlugin.getDefault().getLabelProvider().disconnect(this);

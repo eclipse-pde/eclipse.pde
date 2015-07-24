@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2012 IBM Corporation and others.
+ *  Copyright (c) 2007, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -45,16 +45,19 @@ public final class RenameProjectChange extends Change {
 		this(descriptor, resource.getFullPath(), newName, comment, IResource.NULL_STAMP);
 	}
 
+	@Override
 	public ChangeDescriptor getDescriptor() {
 		if (fDescriptor != null)
 			return new RefactoringChangeDescriptor(fDescriptor);
 		return null;
 	}
 
+	@Override
 	public Object getModifiedElement() {
 		return getResource();
 	}
 
+	@Override
 	public String getName() {
 		return MessageFormat.format(PDEUIMessages.RenameProjectChange_name, new Object[] {fResourcePath.lastSegment(), fNewName});
 	}
@@ -67,6 +70,7 @@ public final class RenameProjectChange extends Change {
 		return ResourcesPlugin.getWorkspace().getRoot().findMember(fResourcePath);
 	}
 
+	@Override
 	public RefactoringStatus isValid(IProgressMonitor pm) throws CoreException {
 		IResource resource = getResource();
 		if (resource == null || !resource.exists())
@@ -76,6 +80,7 @@ public final class RenameProjectChange extends Change {
 		return new RefactoringStatus();
 	}
 
+	@Override
 	public Change perform(IProgressMonitor pm) throws CoreException {
 		try {
 			pm.beginTask(PDEUIMessages.RenameProjectChange_taskTitle, 1);
@@ -95,6 +100,7 @@ public final class RenameProjectChange extends Change {
 		}
 	}
 
+	@Override
 	public void initializeValidationData(IProgressMonitor pm) {
 		// nothing to do
 	}

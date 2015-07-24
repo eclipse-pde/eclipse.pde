@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2012 IBM Corporation and others.
+ *  Copyright (c) 2006, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -57,18 +57,22 @@ public abstract class CommandCopyFilter {
 	}
 
 	public static final CommandCopyFilter NONE = new CommandCopyFilter() {
+		@Override
 		public String getLabelText() {
 			return PDEUIMessages.CommandCopyFilter_noFilter;
 		}
 
+		@Override
 		public String getToolTipText() {
 			return PDEUIMessages.CommandCopyFilter_noFilterDesc;
 		}
 
+		@Override
 		protected String escape(String serializedCommand) {
 			return serializedCommand;
 		}
 
+		@Override
 		protected String markup(String escapedSerializedCommand, String markupLabel) {
 			return escapedSerializedCommand;
 		}
@@ -76,19 +80,23 @@ public abstract class CommandCopyFilter {
 	};
 
 	public static final CommandCopyFilter HELP = new CommandCopyFilter() {
+		@Override
 		public String getLabelText() {
 			return PDEUIMessages.CommandCopyFilter_help;
 		}
 
+		@Override
 		public String getToolTipText() {
 			return PDEUIMessages.CommandCopyFilter_helpDesc;
 		}
 
+		@Override
 		protected String escape(String serializedCommand) {
 			// TODO: escape for Help
 			return serializedCommand;
 		}
 
+		@Override
 		protected String markup(String escapedSerializedCommand, String markupLabel) {
 			StringBuffer sb = new StringBuffer();
 
@@ -105,19 +113,23 @@ public abstract class CommandCopyFilter {
 	};
 
 	public static final CommandCopyFilter CHEATSHEET = new CommandCopyFilter() {
+		@Override
 		public String getLabelText() {
 			return PDEUIMessages.CommandCopyFilter_cheatsheet;
 		}
 
+		@Override
 		public String getToolTipText() {
 			return PDEUIMessages.CommandCopyFilter_cheatsheetDesc;
 		}
 
+		@Override
 		protected String escape(String serializedCommand) {
 			// TODO: escape for Cheatsheets
 			return serializedCommand;
 		}
 
+		@Override
 		protected String markup(String escapedSerializedCommand, String markupLabel) {
 			StringBuffer sb = new StringBuffer();
 
@@ -131,19 +143,23 @@ public abstract class CommandCopyFilter {
 	};
 
 	public static final CommandCopyFilter INTRO = new CommandCopyFilter() {
+		@Override
 		public String getLabelText() {
 			return PDEUIMessages.CommandCopyFilter_intro;
 		}
 
+		@Override
 		public String getToolTipText() {
 			return PDEUIMessages.CommandCopyFilter_introDesc;
 		}
 
+		@Override
 		protected String escape(String serializedCommand) {
 			// TODO: escape for Intro
 			return serializedCommand;
 		}
 
+		@Override
 		protected String markup(String escapedSerializedCommand, String markupLabel) {
 			StringBuffer sb = new StringBuffer();
 

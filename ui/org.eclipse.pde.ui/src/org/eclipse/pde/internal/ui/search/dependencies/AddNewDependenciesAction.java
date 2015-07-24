@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2012 IBM Corporation and others.
+ *  Copyright (c) 2005, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -31,9 +31,11 @@ public class AddNewDependenciesAction extends Action {
 			super(project, base);
 		}
 
+		@Override
 		protected void handleNewDependencies(final Map<ExportPackageDescription, String> additionalDeps, final boolean useRequireBundle, IProgressMonitor monitor) {
 			if (!additionalDeps.isEmpty())
 				Display.getDefault().asyncExec(new Runnable() {
+					@Override
 					public void run() {
 						addDependencies(additionalDeps, useRequireBundle);
 					}
@@ -50,15 +52,18 @@ public class AddNewDependenciesAction extends Action {
 		fBase = base;
 	}
 
+	@Override
 	public void run() {
 		Job job = new WorkspaceJob(PDEUIMessages.DependencyManagementSection_jobName) {
 
+			@Override
 			public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
 				try {
 					AddNewDependenciesOperation op = getOperation();
 					op.run(monitor);
 					if (!op.foundNewDependencies())
 						Display.getDefault().asyncExec(new Runnable() {
+							@Override
 							public void run() {
 								MessageDialog.openInformation(PDEPlugin.getActiveWorkbenchShell(), PDEUIMessages.AddNewDependenciesAction_title, PDEUIMessages.AddNewDependenciesAction_notFound);
 							}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2013 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,6 +46,7 @@ public class ElementSection extends TreeSection {
 	private CollapseAction fCollapseAction;
 
 	class ContentProvider extends DefaultContentProvider implements ITreeContentProvider {
+		@Override
 		public Object[] getElements(Object object) {
 			if (object instanceof Schema) {
 				Schema schema = (Schema) object;
@@ -54,6 +55,7 @@ public class ElementSection extends TreeSection {
 			return new Object[0];
 		}
 
+		@Override
 		public Object[] getChildren(Object parent) {
 			Object[] children = new Object[0];
 			if (parent instanceof ISchemaElement) {
@@ -74,12 +76,14 @@ public class ElementSection extends TreeSection {
 			return children;
 		}
 
+		@Override
 		public Object getParent(Object child) {
 			if (child instanceof ISchemaObject)
 				return ((ISchemaObject) child).getParent();
 			return null;
 		}
 
+		@Override
 		public boolean hasChildren(Object parent) {
 			if (parent instanceof ISchemaAttribute || parent instanceof ISchemaObjectReference)
 				return false;
@@ -544,6 +548,7 @@ public class ElementSection extends TreeSection {
 				} else if (e.getChangeType() == IModelChangedEvent.INSERT) {
 					fTreeViewer.add(parent, sobj);
 					fTreeViewer.getTree().getDisplay().asyncExec(new Runnable() {
+						@Override
 						public void run() {
 							fTreeViewer.setSelection(new StructuredSelection(sobj), true);
 						}
@@ -565,6 +570,7 @@ public class ElementSection extends TreeSection {
 					final ISchemaCompositor compositor = type.getCompositor();
 					if (compositor != null) {
 						fTreeViewer.getTree().getDisplay().asyncExec(new Runnable() {
+							@Override
 							public void run() {
 								fTreeViewer.setSelection(new StructuredSelection(compositor), true);
 							}

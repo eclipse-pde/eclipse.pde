@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2013 IBM Corporation and others.
+ * Copyright (c) 2003, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -90,6 +90,7 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 		/*
 		 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 		 */
+		@Override
 		public void selectionChanged(SelectionChangedEvent event) {
 			handleSelectionChangedSourcePage(event);
 		}
@@ -143,6 +144,7 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.editor.IFormPage#initialize(org.eclipse.ui.forms.editor.FormEditor)
 	 */
+	@Override
 	public void initialize(FormEditor editor) {
 		fEditor = (PDEFormEditor) editor;
 	}
@@ -166,21 +168,25 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.outline.IOutlineContentCreator#createOutlineLabelProvider()
 	 */
+	@Override
 	public abstract ILabelProvider createOutlineLabelProvider();
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.outline.IOutlineContentCreator#createOutlineContentProvider()
 	 */
+	@Override
 	public abstract ITreeContentProvider createOutlineContentProvider();
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.outline.IOutlineContentCreator#createOutlineComparator()
 	 */
+	@Override
 	public abstract ViewerComparator createOutlineComparator();
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.outline.IOutlineSelectionHandler#updateSelection(org.eclipse.jface.viewers.SelectionChangedEvent)
 	 */
+	@Override
 	public void updateSelection(SelectionChangedEvent event) {
 		ISelection sel = event.getSelection();
 		if (sel instanceof IStructuredSelection) {
@@ -192,11 +198,13 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.outline.IOutlineSelectionHandler#updateSelection(java.lang.Object)
 	 */
+	@Override
 	public abstract void updateSelection(Object object);
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.outline.IOutlineContentCreator#createDefaultOutlineComparator()
 	 */
+	@Override
 	public ViewerComparator createDefaultOutlineComparator() {
 		return null;
 	}
@@ -205,6 +213,7 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 		SourceOutlinePage sourceOutlinePage = new SourceOutlinePage(fEditor, (IEditingModel) getInputContext().getModel(), createOutlineLabelProvider(), createOutlineContentProvider(), createDefaultOutlineComparator(), createOutlineComparator());
 		fOutlinePage = sourceOutlinePage;
 		fOutlineSelectionChangedListener = new ISelectionChangedListener() {
+			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				updateSelection(event);
 			}
@@ -219,6 +228,7 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.outline.IOutlineSelectionHandler#getContentOutline()
 	 */
+	@Override
 	public ISortableContentOutlinePage getContentOutline() {
 		if (fOutlinePage == null)
 			fOutlinePage = createOutlinePage();
@@ -228,6 +238,7 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.editor.IFormPage#getEditor()
 	 */
+	@Override
 	public FormEditor getEditor() {
 		return fEditor;
 	}
@@ -235,6 +246,7 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.editor.IFormPage#getManagedForm()
 	 */
+	@Override
 	public IManagedForm getManagedForm() {
 		// not a form page
 		return null;
@@ -251,6 +263,7 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.editor.IFormPage#setActive(boolean)
 	 */
+	@Override
 	public void setActive(boolean active) {
 		fInputContext.setSourceEditingMode(active);
 		// Update the text selection if this page is being activated
@@ -259,6 +272,7 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 		}
 	}
 
+	@Override
 	public boolean canLeaveThePage() {
 		return true;
 	}
@@ -266,6 +280,7 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.editor.IFormPage#isActive()
 	 */
+	@Override
 	public boolean isActive() {
 		return this.equals(fEditor.getActivePageInstance());
 	}
@@ -282,6 +297,7 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.editor.IFormPage#getPartControl()
 	 */
+	@Override
 	public Control getPartControl() {
 		return fControl;
 	}
@@ -289,6 +305,7 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.editor.IFormPage#getId()
 	 */
+	@Override
 	public String getId() {
 		return fId;
 	}
@@ -296,6 +313,7 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.editor.IFormPage#getIndex()
 	 */
+	@Override
 	public int getIndex() {
 		return fIndex;
 	}
@@ -303,6 +321,7 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.editor.IFormPage#setIndex(int)
 	 */
+	@Override
 	public void setIndex(int index) {
 		fIndex = index;
 	}
@@ -310,6 +329,7 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.editor.IFormPage#isSource()
 	 */
+	@Override
 	public boolean isEditor() {
 		return true;
 	}
@@ -332,6 +352,7 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.forms.editor.IFormPage#focusOn(java.lang.Object)
 	 */
+	@Override
 	public boolean selectReveal(Object object) {
 		if (object instanceof IMarker) {
 			IDE.gotoMarker(this, (IMarker) object);
@@ -419,6 +440,7 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 		setAction(PDEActionConstants.COMMAND_ID_QUICK_OUTLINE, action);
 	}
 
+	@Override
 	public final void selectionChanged(SelectionChangedEvent event) {
 		if (event.getSource() == getSelectionProvider())
 			return;
@@ -515,6 +537,7 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 	/* (non-Javadoc)
 	 * @see org.eclipse.pde.internal.ui.editor.outline.IOutlineContentCreator#getOutlineInput()
 	 */
+	@Override
 	public Object getOutlineInput() {
 		return getInputContext().getModel();
 	}
@@ -686,6 +709,7 @@ public abstract class PDESourcePage extends TextEditor implements IFormPage, IGo
 	 */
 	protected IShowInTargetList getShowInTargetList() {
 		return new IShowInTargetList() {
+			@Override
 			public String[] getShowInTargetIds() {
 				return new String[] {JavaUI.ID_PACKAGES, IPageLayout.ID_RES_NAV};
 			}

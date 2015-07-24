@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2013 IBM Corporation and others.
+ * Copyright (c) 2003, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,20 +35,24 @@ import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 
 public class BuildSourcePage extends KeyValueSourcePage {
 	class BuildOutlineContentProvider extends DefaultContentProvider implements ITreeContentProvider {
+		@Override
 		public Object[] getChildren(Object parent) {
 			return new Object[0];
 		}
 
+		@Override
 		public boolean hasChildren(Object parent) {
 			return false;
 		}
 
+		@Override
 		public Object getParent(Object child) {
 			if (child instanceof IBuildEntry)
 				return ((IBuildEntry) child).getModel();
 			return null;
 		}
 
+		@Override
 		public Object[] getElements(Object parent) {
 			if (parent instanceof IBuildModel) {
 				IBuildModel model = (IBuildModel) parent;

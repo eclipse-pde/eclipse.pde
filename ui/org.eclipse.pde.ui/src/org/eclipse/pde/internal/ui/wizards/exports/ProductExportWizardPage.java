@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,6 +52,7 @@ public class ProductExportWizardPage extends AbstractExportWizardPage {
 		setDescription(PDEUIMessages.ProductExportWizardPage_desc);
 	}
 
+	@Override
 	public void createControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -130,6 +131,7 @@ public class ProductExportWizardPage extends AbstractExportWizardPage {
 			fMultiPlatform = new Button(group, SWT.CHECK);
 			fMultiPlatform.setText(PDEUIMessages.ExportWizard_multi_platform);
 			fMultiPlatform.addSelectionListener(new SelectionAdapter() {
+				@Override
 				public void widgetSelected(SelectionEvent e) {
 					getContainer().updateButtons();
 				}
@@ -169,6 +171,7 @@ public class ProductExportWizardPage extends AbstractExportWizardPage {
 
 	protected void hookListeners() {
 		fExportSourceButton.addSelectionListener(new SelectionAdapter() {
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fExportSourceCombo.setEnabled(fExportSourceButton.getSelection());
 			}
@@ -179,6 +182,7 @@ public class ProductExportWizardPage extends AbstractExportWizardPage {
 		fExportGroup.updateDestination(fConfigurationGroup.getProductFile());
 	}
 
+	@Override
 	protected void pageChanged() {
 		if (getMessage() != null)
 			setMessage(null);
@@ -192,6 +196,7 @@ public class ProductExportWizardPage extends AbstractExportWizardPage {
 		setPageComplete(error == null);
 	}
 
+	@Override
 	public IWizardPage getNextPage() {
 		return doMultiPlatform() ? getWizard().getNextPage(this) : null;
 	}
@@ -200,6 +205,7 @@ public class ProductExportWizardPage extends AbstractExportWizardPage {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(control, IHelpContextIds.PRODUCT_EXPORT_WIZARD);
 	}
 
+	@Override
 	protected void saveSettings(IDialogSettings settings) {
 		fConfigurationGroup.saveSettings(settings);
 		settings.put(S_SYNC_PRODUCT, fSyncButton.getSelection());

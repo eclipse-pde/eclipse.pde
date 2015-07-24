@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 eXXcellent solutions gmbh, EclipseSource Corporation,
+ * Copyright (c) 2009, 2015 eXXcellent solutions gmbh, EclipseSource Corporation,
  * IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -39,6 +39,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 
 public class LauncherUtilsStatusHandler implements IStatusHandler {
 
+	@Override
 	public Object handleStatus(IStatus status, Object source) throws CoreException {
 		int code = status.getCode();
 		switch (code) {
@@ -101,6 +102,7 @@ public class LauncherUtilsStatusHandler implements IStatusHandler {
 
 	private void organizeManifests(final ArrayList<?> projects, final IProgressMonitor monitor, final Properties lastRun) {
 		Display.getDefault().syncExec(new Runnable() {
+			@Override
 			public void run() {
 				OrganizeManifestsProcessor processor = new OrganizeManifestsProcessor(projects);
 				initializeProcessor(processor);
@@ -162,6 +164,7 @@ public class LauncherUtilsStatusHandler implements IStatusHandler {
 	private static Integer generateDialog(final String message) {
 		final int[] result = new int[1];
 		getDisplay().syncExec(new Runnable() {
+			@Override
 			public void run() {
 				String title = PDEUIMessages.LauncherUtils_title;
 				MessageDialog dialog = new MessageDialog(getActiveShell(), title, null, message, MessageDialog.QUESTION, new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL}, 0);
@@ -173,6 +176,7 @@ public class LauncherUtilsStatusHandler implements IStatusHandler {
 
 	private static void generateErrorDialog(final String title, final String message, final ILaunchConfiguration launchConfig, final String mode) {
 		getDisplay().syncExec(new Runnable() {
+			@Override
 			public void run() {
 				Shell parentShell = getActiveShell();
 				MessageDialog dialog = new MessageDialog(parentShell, title, null, message, MessageDialog.ERROR, new String[] {PDEUIMessages.LauncherUtils_edit, IDialogConstants.OK_LABEL}, 1);

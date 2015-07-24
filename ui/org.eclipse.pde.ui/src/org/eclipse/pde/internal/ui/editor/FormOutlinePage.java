@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,18 +30,22 @@ public class FormOutlinePage extends PDEOutlinePage implements IModelChangedList
 	private boolean fSorted;
 
 	public class BasicContentProvider extends DefaultContentProvider implements ITreeContentProvider {
+		@Override
 		public Object[] getElements(Object obj) {
 			return getPages();
 		}
 
+		@Override
 		public Object[] getChildren(Object obj) {
 			return FormOutlinePage.this.getChildren(obj);
 		}
 
+		@Override
 		public boolean hasChildren(Object obj) {
 			return getChildren(obj).length > 0;
 		}
 
+		@Override
 		public Object getParent(Object obj) {
 			return null;
 		}
@@ -54,12 +58,14 @@ public class FormOutlinePage extends PDEOutlinePage implements IModelChangedList
 			fWrappedLabelProvider = ilp;
 		}
 
+		@Override
 		public String getText(Object obj) {
 			if (obj instanceof IFormPage)
 				return ((IFormPage) obj).getTitle();
 			return fWrappedLabelProvider.getText(obj);
 		}
 
+		@Override
 		public Image getImage(Object obj) {
 			if (obj instanceof IFormPage)
 				return PDEPlugin.getDefault().getLabelProvider().get(PDEPluginImages.DESC_PAGE_OBJ);
@@ -71,6 +77,7 @@ public class FormOutlinePage extends PDEOutlinePage implements IModelChangedList
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ViewerSorter#category(java.lang.Object)
 		 */
+		@Override
 		public int category(Object element) {
 			Object[] pages = getPages();
 			for (int i = 0; i < pages.length; i++) {
@@ -98,6 +105,7 @@ public class FormOutlinePage extends PDEOutlinePage implements IModelChangedList
 		return new BasicComparator();
 	}
 
+	@Override
 	public void createControl(Composite parent) {
 		Tree widget = new Tree(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		fTreeViewer = new TreeViewer(widget);
@@ -121,6 +129,7 @@ public class FormOutlinePage extends PDEOutlinePage implements IModelChangedList
 		return new BasicLabelProvider(PDEPlugin.getDefault().getLabelProvider());
 	}
 
+	@Override
 	public void dispose() {
 		IBaseModel model = fEditor.getAggregateModel();
 		if (model instanceof IModelChangeProvider)
@@ -128,6 +137,7 @@ public class FormOutlinePage extends PDEOutlinePage implements IModelChangedList
 		super.dispose();
 	}
 
+	@Override
 	public Control getControl() {
 		return fTreeViewer != null ? fTreeViewer.getControl() : null;
 	}
@@ -142,6 +152,7 @@ public class FormOutlinePage extends PDEOutlinePage implements IModelChangedList
 		return formPages.toArray();
 	}
 
+	@Override
 	public void modelChanged(IModelChangedEvent event) {
 		IFormPage page = fEditor.getActivePageInstance();
 		fStale = true;
@@ -155,6 +166,7 @@ public class FormOutlinePage extends PDEOutlinePage implements IModelChangedList
 			if (control == null || control.isDisposed())
 				return;
 			control.getDisplay().asyncExec(new Runnable() {
+				@Override
 				public void run() {
 					if (!fTreeViewer.getControl().isDisposed()) {
 						fTreeViewer.refresh();
@@ -187,6 +199,7 @@ public class FormOutlinePage extends PDEOutlinePage implements IModelChangedList
 			revealPage.selectReveal(item);
 	}
 
+	@Override
 	public void selectionChanged(SelectionChangedEvent event) {
 		if (fEditorSelection)
 			return;
@@ -204,17 +217,20 @@ public class FormOutlinePage extends PDEOutlinePage implements IModelChangedList
 		}
 	}
 
+	@Override
 	public void setFocus() {
 		if (fTreeViewer != null)
 			fTreeViewer.getTree().setFocus();
 	}
 
+	@Override
 	public ISelection getSelection() {
 		if (fTreeViewer == null)
 			return StructuredSelection.EMPTY;
 		return fTreeViewer.getSelection();
 	}
 
+	@Override
 	public void sort(boolean sorting) {
 		fSorted = sorting;
 		if (fTreeViewer != null)
@@ -227,6 +243,7 @@ public class FormOutlinePage extends PDEOutlinePage implements IModelChangedList
 	/*
 	 * (non-Javadoc) Method declared on ISelectionProvider.
 	 */
+	@Override
 	public void setSelection(ISelection selection) {
 		if (fOutlineSelection)
 			return;
@@ -255,6 +272,7 @@ public class FormOutlinePage extends PDEOutlinePage implements IModelChangedList
 		}
 	}
 
+	@Override
 	protected TreeViewer getTreeViewer() {
 		return fTreeViewer;
 	}

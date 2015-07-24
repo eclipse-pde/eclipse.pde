@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,6 +40,7 @@ public class FeatureExportWizard extends AntGeneratingExportWizard {
 		setDefaultPageImageDescriptor(PDEPluginImages.DESC_FEATURE_EXPORT_WIZ);
 	}
 
+	@Override
 	public void addPages() {
 		super.addPages();
 		FeatureModelManager manager = PDECore.getDefault().getFeatureModelManager();
@@ -50,14 +51,17 @@ public class FeatureExportWizard extends AntGeneratingExportWizard {
 		}
 	}
 
+	@Override
 	protected BaseExportWizardPage createPage1() {
 		return new FeatureExportWizardPage(getSelection());
 	}
 
+	@Override
 	protected String getSettingsSectionName() {
 		return STORE_SECTION;
 	}
 
+	@Override
 	protected void scheduleExportJob() {
 		// NOTE: Any changes to the content here must also be copied to generateAntTask() and FeatureExportTask
 		final FeatureExportInfo info = new FeatureExportInfo();
@@ -94,12 +98,14 @@ public class FeatureExportWizard extends AntGeneratingExportWizard {
 		job.setRule(ResourcesPlugin.getWorkspace().getRoot());
 		job.setProperty(IProgressConstants.ICON_PROPERTY, PDEPluginImages.DESC_FEATURE_OBJ);
 		job.addJobChangeListener(new JobChangeAdapter() {
+			@Override
 			public void done(IJobChangeEvent event) {
 				if (job.hasAntErrors()) {
 					// If there were errors when running the ant scripts, inform the user where the logs can be found.
 					final File logLocation = new File(info.destinationDirectory, "logs.zip"); //$NON-NLS-1$
 					if (logLocation.exists()) {
 						PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+							@Override
 							public void run() {
 								AntErrorDialog dialog = new AntErrorDialog(logLocation);
 								dialog.open();
@@ -118,6 +124,7 @@ public class FeatureExportWizard extends AntGeneratingExportWizard {
 		job.schedule();
 	}
 
+	@Override
 	protected Document generateAntTask() {
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();

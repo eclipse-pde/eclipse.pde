@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 IBM Corporation and others.
+ * Copyright (c) 2009, 2015 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,6 +36,7 @@ public class MoveTargetDefinitionWizard extends BasicNewResourceWizard {
 		setNeedsProgressMonitor(true);
 	}
 
+	@Override
 	public void addPages() {
 		fPage = new MoveTargetDefinitionPage("New Target Definition", StructuredSelection.EMPTY); //$NON-NLS-1$
 		addPage(fPage);
@@ -45,6 +46,7 @@ public class MoveTargetDefinitionWizard extends BasicNewResourceWizard {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.Wizard#performFinish()
 	 */
+	@Override
 	public boolean performFinish() {
 		fPath = fPage.getContainerFullPath().append(fPage.getFileName());
 		return true;

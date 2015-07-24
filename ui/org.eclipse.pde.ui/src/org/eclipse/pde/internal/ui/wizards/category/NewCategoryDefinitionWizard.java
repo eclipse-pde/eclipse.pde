@@ -1,5 +1,5 @@
 /******************************************************************************* 
-* Copyright (c) 2009 EclipseSource and others. All rights reserved. This
+* Copyright (c) 2009, 2015 EclipseSource and others. All rights reserved. This
 * program and the accompanying materials are made available under the terms of
 * the Eclipse Public License v1.0 which accompanies this distribution, and is
 * available at http://www.eclipse.org/legal/epl-v10.html
@@ -25,15 +25,18 @@ public class NewCategoryDefinitionWizard extends NewWizard implements IExecutabl
 	private IConfigurationElement fConfig;
 	private CategoryDefinitionWizardPage fPage;
 
+	@Override
 	public void setInitializationData(IConfigurationElement config, String property, Object data) throws CoreException {
 		this.fConfig = config;
 	}
 
+	@Override
 	public void addPages() {
 		fPage = new CategoryDefinitionWizardPage("profile", getSelection()); //$NON-NLS-1$
 		addPage(fPage);
 	}
 
+	@Override
 	public boolean performFinish() {
 		System.out.println(fConfig);
 
@@ -52,6 +55,7 @@ public class NewCategoryDefinitionWizard extends NewWizard implements IExecutabl
 		return true;
 	}
 
+	@Override
 	public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
 		super.init(workbench, currentSelection);
 		setWindowTitle(PDEUIMessages.NewCategoryDefinitionWizard_title);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2008 IBM Corporation and others.
+ *  Copyright (c) 2005, 2015 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ import org.eclipse.pde.internal.ui.editor.SystemFileMarkerAnnotationModel;
 
 public class AnnotationModelFactory implements IAnnotationModelFactory {
 
+	@Override
 	public IAnnotationModel createAnnotationModel(IPath location) {
 		IFile file = FileBuffers.getWorkspaceFileAtLocation(location);
 		if (file == null)
